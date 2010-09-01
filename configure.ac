@@ -107,11 +107,16 @@ PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
 
-PKG_CHECK_MODULES(NUX_CORE,
-                  glib-2.0 >= 2.25.14
-                  )
+PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14)
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
+
+PKG_CHECK_MODULES(NUX_IMAGE,
+                  glib-2.0 >= 2.25.14
+                  cairo >= 1.9.14
+                  libpng >= 1.2.44)
+AC_SUBST(NUX_IMAGE_CFLAGS)
+AC_SUBST(NUX_IMAGE_LIBS)
 
 dnl ===========================================================================
 
@@ -144,6 +149,8 @@ AC_CONFIG_FILES([
   data/Makefile
   NuxCore/Makefile
   NuxCore/nux-core.pc
+  NuxImage/Makefile
+  NuxImage/nux-image.pc
   tests/Makefile
 ])
 
