@@ -118,6 +118,11 @@ PKG_CHECK_MODULES(NUX_IMAGE,
 AC_SUBST(NUX_IMAGE_CFLAGS)
 AC_SUBST(NUX_IMAGE_LIBS)
 
+PKG_CHECK_MODULES(NUX_MESH,
+                  glib-2.0 >= 2.25.14)
+AC_SUBST(NUX_MESH_CFLAGS)
+AC_SUBST(NUX_MESH_LIBS)
+
 PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   xxf86vm)
@@ -158,6 +163,8 @@ AC_CONFIG_FILES([
   NuxCore/nux-core.pc
   NuxImage/Makefile
   NuxImage/nux-image.pc
+  NuxMesh/Makefile
+  NuxMesh/nux-mesh.pc
   NuxGraphics/Makefile
   NuxGraphics/nux-graphics.pc
   tests/Makefile
