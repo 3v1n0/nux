@@ -1,0 +1,56 @@
+/*
+ * Copyright 2010 Inalogic Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it 
+ * under the terms of the GNU Lesser General Public License version 3, as
+ * published by the  Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranties of 
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * License for more details.
+ * 
+ * You should have received a copy of both the GNU Lesser General Public 
+ * License version 3 along with this program.  If not, see 
+ * <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ *
+ */
+
+
+#ifndef COLORRANGEVALUATOR_H
+#define COLORRANGEVALUATOR_H
+
+NAMESPACE_BEGIN_GUI
+
+class ColorRangeValuator : public RangeValue
+{
+public:
+    ColorRangeValuator(float value = 0.0f, Color StartColor = Color(0xFFFFFFFF), Color EndColor = Color(0x00000000));
+    ~ColorRangeValuator();
+
+    virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
+    
+    //! Get the interpolated color.
+    /*!
+        @return The interpolated color.
+    */
+    Color GetColor() const;
+
+protected:
+    void InitializeWidgets();
+    void InitializeLayout();
+    void DestroyLayout();
+
+private:
+    Color m_StartColor;
+    Color m_EndColor;
+};
+
+NAMESPACE_END_GUI
+
+#endif // COLORRANGEVALUATOR_H
+
+
