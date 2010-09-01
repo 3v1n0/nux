@@ -13,12 +13,12 @@
 #   - Increase micro_version to the next odd number
 #   - Increase interface_version to the next odd number
 # 
-m4_define([nux_major_version], [1])
-m4_define([nux_minor_version], [1])
+m4_define([nux_major_version], [0])
+m4_define([nux_minor_version], [9])
 m4_define([nux_micro_version], [0])
 
 # Bump this when we break ABI
-m4_define([nux_api_version], [1.0])
+m4_define([nux_api_version], [0.9])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -50,6 +50,9 @@ AC_PREREQ(2.59)
 AC_INIT([nux],
         [nux_version],
         [https://bugs.launchpad.net/nux])
+AC_COPYRIGHT([Copyright 2010 Inalogic Inc.])
+
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 AC_CONFIG_SRCDIR([Makefile.am])
 AM_CONFIG_HEADER([config.h])
@@ -140,6 +143,7 @@ AC_CONFIG_FILES([
   Makefile
   data/Makefile
   NuxCore/Makefile
+  NuxCore/nux-core.pc
   tests/Makefile
 ])
 

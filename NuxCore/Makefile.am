@@ -1,3 +1,7 @@
+CLEANFILES = 
+DISTCLEANFILES =
+EXTRA_DIST =
+
 AM_CPPFLAGS = \
   -I$(srcdir) \
   -I$(top_srcdir) \
@@ -169,3 +173,14 @@ libnux_core_@NUX_API_VERSION@_la_SOURCES = \
 nux_coredir = $(includedir)/Nux-@NUX_API_VERSION@/NuxCore
 nux_core_HEADERS = \
   $(source_h)
+
+
+nux-core-@NUX_API_VERSION@.pc: nux-core.pc
+	$(AM_V_GEN) cp -f nux-core.pc nux-core-@NUX_API_VERSION@.pc
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = nux-core-@NUX_API_VERSION@.pc
+
+CLEANFILES += nux-core-@NUX_API_VERSION@.pc
+DISTCLEANFILES += nux-core.pc
+EXTRA_DIST += nux-core.pc.in
