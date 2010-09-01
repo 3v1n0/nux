@@ -125,10 +125,15 @@ AC_SUBST(NUX_MESH_LIBS)
 
 PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
+                  gl
                   xxf86vm)
 AC_SUBST(NUX_GRAPHICS_CFLAGS)
 AC_SUBST(NUX_GRAPHICS_LIBS)
 
+# Boost for NUXGraphics
+#AC_CHECK_HEADER([boost/shared_ptr.hpp],
+#                 [],
+#                 [AC_MSG_ERROR([Unable to locate required libboost headers])])
 
 dnl ===========================================================================
 

@@ -20,68 +20,66 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
 
 libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxCore/libnux-image-@NUX_API_VERSION@.la \
+  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+  $(top_builddir)/NuxMesh/libnux-mesh-@NUX_API_VERSION@.la \
   $(NUX_GRAPHICS_LIBS)
 
 libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_h = \
-  $(srcdir)/GlobalGraphicsInitializer.h \
-  $(srcdir)/OpenGLDefinitions.h \
-  $(srcdir)/IOpenGLVertexBuffer.h \
-  $(srcdir)/IOpenGLBaseTexture.h \
-  $(srcdir)/GLRenderStates.h \
-  $(srcdir)/VirtualKeyCodes.h \
-  $(srcdir)/IOpenGLTexture2D.h \
-  $(srcdir)/UIColorTheme.h \
-  $(srcdir)/IOpenGLFrameBufferObject.h \
-  $(srcdir)/FreetypeFont.h \
-  $(srcdir)/IOpenGLVolumeTexture.h \
-  $(srcdir)/GLShaderParameter.h \
-  $(srcdir)/GLShader.h \
-  $(srcdir)/IOpenGLIndexBuffer.h \
-  $(srcdir)/IOpenGLAnimatedTexture.h \
-  $(srcdir)/RenderingPipeAsm.h \
-  $(srcdir)/GLWindowManager.h \
-  $(srcdir)/GLResourceManager.h \
-  $(srcdir)/IOpenGLQuery.h \
-  $(srcdir)/IOpenGLVertexDeclaration.h \
-  $(srcdir)/GLTimer.h \
-  $(srcdir)/GLTextureResourceManager.h \
-  $(srcdir)/GLDeviceFrameBufferObject.h \
   $(srcdir)/FontTexture.h \
-  $(srcdir)/IOpenGLSurface.h \
-  $(srcdir)/GLDeviceFactory.h \
-  $(srcdir)/RunTimeStats.h \
-  $(srcdir)/IOpenGLRectangleTexture.h \
-  $(srcdir)/IOpenGLGLSLShader.h \
-  $(srcdir)/GLSh_DrawFunction.h \
-  $(srcdir)/GLSh_ColorPicker.h \
   $(srcdir)/GfxEventsX11.h \
-  $(srcdir)/VirtualKeyCodesX11.h \
-  $(srcdir)/GLError.h \
-  $(srcdir)/Gfx_OpenGL.h \
-  $(srcdir)/GLTextureStates.h \
-  $(srcdir)/GLVertexResourceManager.h \
-  $(srcdir)/OpenGLEngine.h \
-  $(srcdir)/RenderingPipeGLSL.h \
-  $(srcdir)/GLThread.h \
-  $(srcdir)/GLTemplatePrimitiveBuffer.h \
   $(srcdir)/GfxSetupX11.h \
-  $(srcdir)/GLResource.h \
-  $(srcdir)/IOpenGLPixelBufferOject.h \
-  $(srcdir)/Gfx_Interface.h \
-  $(srcdir)/IOpenGLAsmShader.h \
-  $(srcdir)/GLSh_Fill.h \
-  $(srcdir)/GLPBuffer.h \
-  $(srcdir)/IOpenGLResource.h \
   $(srcdir)/Gfx_Events.h \
-  $(srcdir)/RenderingPipe.h \
+  $(srcdir)/Gfx_Interface.h \
+  $(srcdir)/GLDeviceFactory.h \
+  $(srcdir)/GLDeviceFrameBufferObject.h \
   $(srcdir)/GLDeviceObjects.h \
+  $(srcdir)/GLError.h \
+  $(srcdir)/GLPBuffer.h \
+  $(srcdir)/GLRenderStates.h \
+  $(srcdir)/GLResource.h \
+  $(srcdir)/GLResourceManager.h \
+  $(srcdir)/GLShader.h \
+  $(srcdir)/GLShaderParameter.h \
+  $(srcdir)/GLSh_ColorPicker.h \
+  $(srcdir)/GLSh_DrawFunction.h \
+  $(srcdir)/GLSh_Fill.h \
+  $(srcdir)/GLTemplatePrimitiveBuffer.h \
+  $(srcdir)/GLTextureResourceManager.h \
+  $(srcdir)/GLTextureStates.h \
+  $(srcdir)/GLThread.h \
+  $(srcdir)/GLTimer.h \
+  $(srcdir)/GLVertexResourceManager.h \
+  $(srcdir)/GLWindowManager.h \
   $(srcdir)/IniFile.h \
+  $(srcdir)/IOpenGLAnimatedTexture.h \
+  $(srcdir)/IOpenGLAsmShader.h \
+  $(srcdir)/IOpenGLBaseTexture.h \
   $(srcdir)/IOpenGLCubeTexture.h \
-  $(srcdir)/IOpenGLVolume.h
+  $(srcdir)/IOpenGLFrameBufferObject.h \
+  $(srcdir)/IOpenGLGLSLShader.h \
+  $(srcdir)/IOpenGLIndexBuffer.h \
+  $(srcdir)/IOpenGLPixelBufferOject.h \
+  $(srcdir)/IOpenGLQuery.h \
+  $(srcdir)/IOpenGLRectangleTexture.h \
+  $(srcdir)/IOpenGLResource.h \
+  $(srcdir)/IOpenGLSurface.h \
+  $(srcdir)/IOpenGLTexture2D.h \
+  $(srcdir)/IOpenGLVertexBuffer.h \
+  $(srcdir)/IOpenGLVertexDeclaration.h \
+  $(srcdir)/IOpenGLVolume.h \
+  $(srcdir)/IOpenGLVolumeTexture.h \
+  $(srcdir)/OpenGLDefinitions.h \
+  $(srcdir)/OpenGLEngine.h \
+  $(srcdir)/UIColorTheme.h \
+  $(srcdir)/VirtualKeyCodesX11.h \
+  $(srcdir)/GlobalGraphicsInitializer.h \
+  $(srcdir)/RunTimeStats.h \
+  $(srcdir)/RenderingPipe.h \
+  $(srcdir)/RenderingPipeAsm.h \
+  $(srcdir)/RenderingPipeGLSL.h
 
 source_cpp = \
   $(srcdir)/UIColorTheme.cpp \
@@ -91,7 +89,6 @@ source_cpp = \
   $(srcdir)/GLSh_ColorPicker.cpp \
   $(srcdir)/RenderingPipeGLSL.cpp \
   $(srcdir)/IOpenGLVolumeTexture.cpp \
-  $(srcdir)/FreetypeFont.cpp \
   $(srcdir)/IOpenGLIndexBuffer.cpp \
   $(srcdir)/GLShaderParameter.cpp \
   $(srcdir)/OpenGLEngine.cpp \
@@ -129,7 +126,6 @@ source_cpp = \
   $(srcdir)/GfxSetupX11.cpp \
   $(srcdir)/IOpenGLQuery.cpp \
   $(srcdir)/GLPBuffer.cpp \
-  $(srcdir)/Gfx_OpenGL.cpp \
   $(srcdir)/GLShader.cpp \
   $(srcdir)/IOpenGLGLSLShader.cpp \
   $(srcdir)/GLTimer.cpp \
