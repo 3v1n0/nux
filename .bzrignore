@@ -17,3 +17,8 @@ libtool
 ltmain.sh
 missing
 stamp-h1
+*.lo
+depcomp
+*.deps
+*.libs
+NuxCore/libnux-core-1.0.la

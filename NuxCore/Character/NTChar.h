@@ -1,0 +1,56 @@
+#ifndef NTCHAR_H
+#define NTCHAR_H
+
+NAMESPACE_BEGIN
+
+inline TCHAR ToUpperCase( TCHAR c )
+{
+    return (c<TEXT('a') || c>TEXT('z')) ? (c) : (c+TEXT('A')-TEXT('a'));
+}
+inline TCHAR ToLowerCase( TCHAR c )
+{
+    return (c<TEXT('A') || c>TEXT('Z')) ? (c) : (c+TEXT('a')-TEXT('A'));
+}
+inline BOOL IsUpperCase( TCHAR c )
+{
+    return (c>=TEXT('A') && c<=TEXT('Z'));
+}
+inline BOOL IsLowerCase( TCHAR c )
+{
+    return (c>=TEXT('a') && c<=TEXT('z'));
+}
+inline BOOL IsAlphaChar( TCHAR c )
+{
+    return (c>=TEXT('a') && c<=TEXT('z')) || (c>=TEXT('A') && c<=TEXT('Z'));
+}
+inline BOOL IsDigitChar( TCHAR c )
+{
+    return c>=TEXT('0') && c<=TEXT('9');
+}
+inline BOOL IsAlphanumericChar( TCHAR c )
+{
+    return (c>=TEXT('a') && c<=TEXT('z')) || (c>=TEXT('A') && c<=TEXT('Z')) || (c>=TEXT('0') && c<=TEXT('9'));
+}
+inline BOOL IsWhitespaceChar( TCHAR c )
+{
+    return c == TEXT(' ') || c == TEXT('\t');
+}
+inline BOOL IsLinebreakChar( TCHAR c )
+{
+    //@todo - support for language-specific line break characters
+    return c == TEXT('\n');
+}
+
+/** Returns nonzero if character is a space character. */
+inline BOOL IsSpaceChar( TCHAR c )
+{
+#ifdef INL_UNICODE
+    return( std::iswspace(c) != 0 );
+#else
+    return( std::isspace(c) != 0 );
+#endif
+}
+
+NAMESPACE_END
+
+#endif // NTCHAR_H

@@ -1,0 +1,75 @@
+#include "../NKernel.h"
+#include "MathFunctions.h"
+#include "Bezier.h"
+
+NAMESPACE_BEGIN
+
+INL_DECLSPEC_DLL t_double* Bernstein(t_int n, t_double t)
+{
+    if(n < 0)
+    {
+        INL_BREAK_ASM_INT3;
+    }
+
+    t_double *bernstein;
+    t_int i;
+
+    bernstein = new t_double[n+1];
+
+    for (i = 0; i <= n; i++ )
+    {
+        bernstein[i] = BinomialCoefficient(n, i) * PowerInt<t_double>(t, i) * PowerInt<t_double>(1.0 - t, n-i);
+    }
+    return bernstein;
+}
+
+INL_DECLSPEC_DLL void Bezier_XY(t_int n, t_double t, t_double xcon[], t_double ycon[], t_double *xval, t_double *yval)
+{
+    if(n < 0)
+    {
+        INL_BREAK_ASM_INT3;
+    }
+
+    double *bval;
+    int i;
+
+    bval = Bernstein ( n, t );
+
+    *xval = 0.0;
+    for( i = 0; i <= n; i++ )
+        *xval = *xval + xcon[i] * bval[i];
+
+    *yval = 0.0;
+    for ( i = 0; i <= n; i++ )
+        *yval = *yval + ycon[i] * bval[i];
+
+    delete [] bval;
+}
+
+INL_DECLSPEC_DLL void Bezier_XYZ(t_int n, t_double t, t_double xcon[], t_double ycon[], t_double zcon[], t_double *xval, t_double *yval, t_double *zval)
+{
+    if(n < 0)
+        INL_BREAK_ASM_INT3;
+
+    double *bval;
+    int i;
+
+    bval = Bernstein ( n, t );
+
+    *xval = 0.0;
+    for( i = 0; i <= n; i++ )
+        *xval = *xval + xcon[i] * bval[i];
+    
+    *yval = 0.0;
+    for ( i = 0; i <= n; i++ )
+        *yval = *yval + ycon[i] * bval[i];
+    
+    *zval = 0.0;
+    for ( i = 0; i <= n; i++ )
+        *zval = *zval + zcon[i] * bval[i];
+
+    delete [] bval;
+}
+
+NAMESPACE_END
+

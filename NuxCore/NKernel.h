@@ -1,0 +1,695 @@
+#ifndef KERNEL_H
+#define KERNEL_H
+
+
+#include "NSystem.h"
+#include <iostream>
+#include <stdexcept>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <iomanip>
+#include <map>
+#include <vector>
+#include <list>
+#include <algorithm>
+#include <new>
+#include <set>
+
+#include <cstddef>
+#include <cwchar>   // formerly C language <wchar.h>
+#include <cstdio>   // formerly C language <stdio.h>
+#include <cstdlib>  // formerly C language <stdlib.h>
+#include <cstring>  // formerly C language <string.h>
+#include <cmath>    // formerly C language <math.h>
+#include <cfloat>   // formerly C language <float.h>
+#include <ctime>    // formerly C language <time.h>
+#include <cctype>   // formerly C language <ctype.h>
+#include <cwctype>  // formerly C language <wctype.h>
+#include <climits>  // formerly C language <limits.h>
+#include <exception>
+#include <stdexcept>
+
+#include "NNamespace.h"
+#include "NSystemTypes.h"
+
+
+// WIN32_SECURE if define for the latest version of Visual Studio starting at VS 2005. We use it for security improvement.
+#if (defined INL_VISUAL_STUDIO_2005) || (defined INL_VISUAL_STUDIO_2008)
+	#define WIN32_SECURE
+#endif
+
+#define INL_STATIC_CAST(a, b)       static_cast<a>(b)
+#define INL_REINTERPRET_CAST(a, b)  reinterpret_cast<a>(b)
+#define INL_CONST_CAST(a, b)        const_cast<a>(b)
+#define INL_DYNAMIC_CAST(a, b)      dynamic_cast<a>(b)
+
+#define INL_INVALID_INDEX           -1
+#define INL_INVALID_HANDLE          -1
+
+#define INL_IN
+#define INL_OUT
+
+#define INL_0       0
+#define INL_1       1
+#define INL_2       2
+#define INL_4       4
+#define INL_8       8
+#define INL_16      16
+#define INL_32      32
+#define INL_64      64
+#define INL_128     128
+#define INL_256     256
+#define INL_512     512
+#define INL_1024    1024
+#define INL_2048    2048
+#define INL_4096    4096
+#define INL_8192    8192
+#define INL_16384   16384
+#define INL_65536   65536
+
+#define INL_MAKEFOURCHARTAG(ch0, ch1, ch2, ch3)  \
+    ((DWORD)(BYTE)(ch0) |               \
+    ((DWORD)(BYTE)(ch1) << 8) |         \
+    ((DWORD)(BYTE)(ch2) << 16) |        \
+    ((DWORD)(BYTE)(ch3) << 24 ))
+
+
+#define INLNEW new
+#define INLDELETE delete
+#define INLDELETEARRAY delete []
+
+#define INL_RUNTIME_ERROR(str, ...)             LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define INL_ERROR_IF_NULL(test, str, ...)       if(test == 0)   LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define INL_ERROR_IF_TRUE(test, str, ...)       if(test)        LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define INL_ERROR_IF_FALSE(test, str, ...)      if(!(test))     LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+
+#define INL_RETURN_IF_NULL(test)                if(test == 0)   return;
+#define INL_RETURN_IF_TRUE(test)                if(test)        return;
+#define INL_RETURN_IF_FALSE(test)               if(!(test))     return;
+
+#define INL_RETURN_VALUE_IF_NULL(test, value)   if(test == 0)   return value;
+#define INL_RETURN_VALUE_IF_TRUE(test, value)   if(test)        return value;
+#define INL_RETURN_VALUE_IF_FALSE(test, value)  if(!(test))     return value;
+
+
+// Structure Alignment
+#if defined(INL_MICROSOFT_COMPILER)
+    #define INL_DATA_ALIGN(declaration, alignment) __declspec(align(alignment)) declaration
+#elif defined(INL_PS3)
+    #define INL_DATA_ALIGN(declaration, alignment) declaration __attribute__ ((aligned (alignment)))
+#elif defined (INL_GNUCPP_COMPILER)
+    #define INL_DATA_ALIGN(declaration, alignment) declaration __attribute__ ((aligned (alignment)))
+#endif
+
+// Sizeof is a compile time function. So array must be totally defined if sizeof is used on it.
+// The number of elements in array must be a constant at compile time.
+// Example: int array[10] is valid.
+#define INL_ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
+
+// Compiler specific include.
+#ifdef XBOX360
+    #error Unknown Compiler
+#elif defined (INL_OS_WINDOWS) && defined (INL_MICROSOFT_COMPILER)
+    #include "NSystemWindows.h"
+#elif defined (INL_PS3)
+    #include "NSystemPS3.h"
+#elif defined (INL_OS_LINUX) && defined (INL_GNUCPP_COMPILER)
+    #include "NSystemGNU.h"
+#elif defined (INL_OS_MACOSX) && defined (INL_GNUCPP_COMPILER)
+    #error Unknown Compiler
+#else
+    #error Unknown Compiler
+#endif
+
+
+NAMESPACE_BEGIN
+
+// Variable arguments.
+t_u32 GetVariableArgs(TCHAR* Dest, t_u32 Size, t_u32 Count, const TCHAR*& Fmt, va_list ArgPtr);
+t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHAR*& Fmt, va_list ArgPtr);
+
+
+#define GET_VARARGS(msg, size, len, fmt)       \
+{                                           \
+    va_list arg_list;                       \
+    va_start(arg_list,fmt);            \
+    VSNTPRINTF_S( msg, size, len, fmt, arg_list );  \
+    va_end( arg_list );                     \
+}
+#define GET_VARARGS_ANSI(msg, size, len, fmt)      \
+{                                               \
+    va_list arg_list;                           \
+    va_start(arg_list,fmt);                \
+    VSNPRINTF_S( msg, size, len, fmt, arg_list );  \
+    va_end( arg_list );                         \
+}
+#define GET_VARARGS_RESULT(msg, size, len, fmt, result)     \
+{                                                       \
+    va_list arg_list;                                   \
+    va_start(arg_list, fmt);                       \
+    result = GetVariableArgs(msg, size, len, fmt, arg_list);     \
+}
+
+//////////////////////////////////////////////////////////////////////////
+//	Check macros for assertions.                                        //
+//////////////////////////////////////////////////////////////////////////
+
+#ifdef INL_ENABLE_ASSERT_MACROS
+    #define nuxAssert(expr)             { if(!(expr)) nuxFailAssert(TEXT(#expr)); }
+    // Expression is always evaluated no matter if INL_ENABLE_ASSERT_MACROS is enabled. nuxFailAssert is called if enabled.
+    #define nuxVerifyExpr(expr)         { if(!(expr)) nuxFailAssert(TEXT(#expr)); }
+    
+    #define DEBUGTRACE(str, ...)    nuxDebugMsg(str, ##__VA_ARGS__)
+
+    #ifdef INL_VARIADIC_MACROS_SUPPORT
+        #define nuxFailAssert(str, ...)         { if(nuxIsDebuggerPresent()){nux::LogOutputAssertMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);} inlDebugBreak();}
+        #define nuxError(str, ...)              { if(nuxIsDebuggerPresent()){nux::LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);} inlDebugBreak();}
+        #define nuxDebugMsg(str, ...)           { if(nuxIsDebuggerPresent()) nux::LogOutputDebugMessage(str, ##__VA_ARGS__);}
+    
+        #define nuxAssertMsg(expr, a, ...)      { if(!(expr)) nuxFailAssert( TEXT(#expr) TEXT(" : ") a, ##__VA_ARGS__); }
+        #define nuxVerifyExprMsg(expr, a, ...)  { if(!(expr)) nuxFailAssert( TEXT(#expr) TEXT(" : ") a, ##__VA_ARGS__); }   // Expression is always evaluated. nuxFailAssert is called if enabled.
+    #else
+        #define nuxFailAssert(a,b,c,d,e,f,g,h,i,j,k,l)          { if(nuxIsDebuggerPresent()){nux::LogOutputAssertMessage(__FILE__,__LINE__,VARG(a),VARG(b),VARG(c),VARG(d),VARG(e),VARG(f),VARG(g),VARG(h),VARG(i),VARG(j),VARG(k),VARG(l));} inlDebugBreak();}
+        #define nuxError(a,b,c,d,e,f,g,h,i,j,k,l)               { if(nuxIsDebuggerPresent()) {nux::LogOutputErrorMessage(__FILE__,__LINE__,VARG(a),VARG(b),VARG(c),VARG(d),VARG(e),VARG(f),VARG(g),VARG(h),VARG(i),VARG(j),VARG(k),VARG(l));} inlDebugBreak();}
+        #define nuxAssertMsg(expr,a,b,c,d,e,f,g,h,i,j,k,l)      { if(!(expr)) { nuxFailAssert( TEXT(#expr) TEXT(" : ") a,b,c,d,e,f,g,h,i,j,k,l); } }
+        #define nuxVerifyExprMsg(expr,a,b,c,d,e,f,g,h,i,j,k,l)  { if(!(expr)) { nuxFailAssert( TEXT(#expr) TEXT(" : ") a,b,c,d,e,f,g,h,i,j,k,l); } }    // Expression is always evaluated. nuxFailAssert is called if enabled.
+        #define nuxDebugMsg(a,b,c,d,e,f,g,h,i,j,k,l)            { if(nuxIsDebuggerPresent() && NOutputDeviceRedirector::Ready()) GLogDevice.LogFunction(a,b,c,d,e,f,g,h,i,j,k,l); }
+    #endif
+
+    // Break if codepaths should never be reached.
+    #define nuxAssertNoEntry()           { nuxFailAssert( TEXT("This section of code should not be executed.") ); }
+    // Break if codepaths should not be executed more than once.
+    #define nuxAssertNoReEntry() \
+    { \
+        static bool s_inlRuntimeHasBeenHere##__LINE__ = false; \
+        nuxAssertMsg( !s_inlRuntimeHasBeenHere##__LINE__, TEXT("This section of code has already been called.") ); \
+        s_inlRuntimeHasBeenHere##__LINE__ = true; \
+    }
+
+    class NRecursionScopeCounter
+    {
+    public: 
+        NRecursionScopeCounter(WORD &InCounter) : Counter( InCounter ) { ++Counter; }
+        ~NRecursionScopeCounter() { --Counter; }
+    private:
+        WORD& Counter;
+    };
+
+    // Break if codepaths should never be called recursively.
+    #define nuxAssertNoRecursion()  \
+        static WORD RecursionCounter##__LINE__ = 0; \
+        nuxAssertMsg( RecursionCounter##__LINE__ == 0, TEXT("This section of code was entered recursively.") ); \
+        const NRecursionScopeCounter ScopeMarker##__LINE__( RecursionCounter##__LINE__ )
+
+    // Compile time assertion. Break if the assertion fails.
+    // @param expr  Must be evaluated at compile time.
+    #define nuxAssertAtCompileTime(expr)  typedef BYTE CompileTimeCheckType##__LINE__[(expr) ? 1 : -1]
+#else
+    #ifdef INL_MICROSOFT_COMPILER
+        #define nuxAssert(expr)                     INL_NOOP
+        #define nuxVerifyExpr(expr)                 { if(!(expr)) {} }
+        #define nuxDebugMsg(a, ...)                 INL_NOOP
+        #ifdef INL_VARIADIC_MACROS_SUPPORT
+            #define nuxAssertMsg(expr, a, ...)      INL_NOOP
+            #define nuxVerifyExprMsg(expr, a, ...)  { if(!(expr)) {} }
+            #define nuxError(a, ...)                INL_NOOP
+        #else
+            #define nuxAssertMsg(expr,a,b,c,d,e,f,g,h,i,j,k,l)      INL_NOOP
+            #define nuxVerifyExprMsg(expr,a,b,c,d,e,f,g,h,i,j,k,l)  { if(!(expr)) {} }
+            #define nuxError(a,b,c,d,e,f,g,h,i,j,k,l)               INL_NOOP
+        #endif
+        #define nuxAssertNoEntry()              INL_NOOP
+        #define nuxAssertNoReentry()            INL_NOOP
+        #define nuxAssertNoRecursion()          INL_NOOP
+        #define nuxAssertAtCompileTime(expr)    INL_NOOP    
+    #else
+        #define nuxDebugMsg(a, ...)
+        #define nuxError(a, ...)                {}
+        #define nuxAssert(expr)                 {}
+        #define nuxVerifyExpr(expr)             { if(!(expr)) {} }
+        #define nuxAssertMsg(expr,msg, ...)     {}
+        #define nuxVerifyExprMsg(expr, a, ...)  { if(!(expr)) {} }
+        #define nuxAssertNoEntry()              {}
+        #define nuxAssertNoReentry()            {}
+        #define nuxAssertNoRecursion()          {}
+        #define nuxAssertAtCompileTime(expr)    {}
+    #endif
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+// String conversion classes                                            //
+//////////////////////////////////////////////////////////////////////////
+
+#ifndef _UNICODE
+    #define CALL_OS_TCHAR_FUNCTION(funcW,funcA) funcA
+    #define TCHAR_TO_ANSI(str) str
+    #define ANSI_TO_TCHAR(str) (const TCHAR*)((const ANSICHAR*)str)
+
+    #define UTF8ToTCHAR(str) str
+    #define TCHARToUTF8(str) str
+    #define UTF16ToTCHAR(str) (const char*)NUTF8(str)
+    #define TCHARToUTF16(str) (const wchar_t*)NUTF16(str)
+#else
+    #define CALL_OS_TCHAR_FUNCTION(funcW,funcA) funcW
+
+    /*!
+    NOTE: Theses macros creates objects with very short lifespan. They are
+    meant to be used as parameters to functions. Do not assign a variable to the content 
+    of the converted string as the object will go out of scope and the string released.
+
+    Usage:
+    SomeApi(TCHAR_TO_ANSI(SomeUnicodeString));
+    const char* SomePointer = TCHAR_TO_ANSI(SomeUnicodeString); <--- Bad!!!
+    */
+    #define TCHAR_TO_ANSI(str)  (ANSICHAR*)typedef NCharacterConversion<ANSICHAR, TCHAR, TCharToAnsiConvertion>((const TCHAR*)str)
+    #define ANSI_TO_TCHAR(str)  (TCHAR*)NCharacterConversion<TCHAR, ANSICHAR, AnsiToTCharConversion>((const ANSICHAR*)str)
+
+    #define UTF8ToTCHAR(str) (const wchar_t*)NUTF16(str)
+    #define TCHARToUTF8(str) (const char*)NUTF8(str)
+    #define UTF16ToTCHAR(str) str
+    #define TCHARToUTF16(str) str
+#endif
+
+#define inlUTF16ToUTF8(s) (const char*)nux::NUTF8(s)
+#define inlUTF8ToUTF16(s) (const wchar_t*)nux::NUTF16(s)
+
+#define ANSICHAR_TO_UNICHAR(str) (UNICHAR*)nux::NCharacterConversion<UNICHAR, ANSICHAR, nux::AnsicharToUnicharConvertion>((const ANSICHAR*)str)
+#define UNICHAR_TO_ANSICHAR(str) (ANSICHAR*)nux::NCharacterConversion<ANSICHAR, UNICHAR, nux::UnicharToAnsicharConvertion>((const UNICHAR*)str)
+
+
+#define INL_WIN32_LINE_TERMINATOR   TEXT("\r\n")
+#define INL_UNIX_LINE_TERMINATOR    TEXT("\n")
+#define INL_MACOSX_LINE_TERMINATOR  TEXT("\n")
+
+#if defined(INL_OS_WINDOWS)
+    #define INL_LINE_TERMINATOR INL_WIN32_LINE_TERMINATOR
+#elif defined(INL_OS_LINUX) || defined(INL_OS_MACOSX)
+    #define INL_LINE_TERMINATOR INL_UNIX_LINE_TERMINATOR
+#elif defined(INL_PS3)
+    #define INL_LINE_TERMINATOR INL_UNIX_LINE_TERMINATOR
+#endif
+
+
+#if defined(INL_OS_WINDOWS)
+    #define INL_PATH_SEPARATOR_STRING   INL_BACKSLASH_STRING
+    #define INL_PATH_SEPARATOR_CHAR     INL_BACKSLASH_CHAR
+#elif defined(INL_OS_LINUX) || defined(INL_OS_MACOSX)
+    #define INL_PATH_SEPARATOR_STRING   INL_SLASH_STRING
+    #define INL_PATH_SEPARATOR_CHAR     INL_SLASH_CHAR
+#elif defined(INL_PS3)
+    #define INL_PATH_SEPARATOR_STRING   INL_SLASH_STRING
+    #define INL_PATH_SEPARATOR_CHAR     INL_SLASH_CHAR
+#endif
+
+#define INL_BACKSLASH_CHAR      TEXT('\\')
+#define INL_BACKSLASH_STRING    TEXT("\\")
+#define INL_SLASH_CHAR          TEXT('/')
+#define INL_SLASH_STRING        TEXT("/")
+
+#define INL_MAX_FILEPATH_SIZE   1024
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#if (defined _WIN32) && (defined WIN32_SECURE)
+    #define WCSNCPY_S(strDest, numberOfElements, strSource, count)  wcsncpy_s (strDest, numberOfElements, strSource, count)
+    #define STRNCPY_S(strDest, numberOfElements, strSource, count)  _tcsncpy_s(strDest, numberOfElements, strSource, count)
+    #define STRCPY_S(strDest, numberOfElements, strSource)          _tcscpy_s(strDest, numberOfElements, strSource)
+    #define STRCAT_S(strDest, numberOfElements, strSource)          _tcscat_s(strDest, numberOfElements, strSource)
+
+    #define VSNPRINTF_S(strDest, numberOfElements, Count, format, VA_Arg_List)  vsnprintf_s(strDest, numberOfElements, Count, format, VA_Arg_List)
+    #define VSNTPRINTF_S(strDest, numberOfElements, Count, format, VA_Arg_List) _vsntprintf_s(strDest, numberOfElements, Count, format, VA_Arg_List)
+    #define SPRINTF_S(strDest, numberOfElements, format, ...)                   _stprintf_s(strDest, numberOfElements, format, ##__VA_ARGS__)
+    #define SNPRINTF_S(strDest, numberOfElements, Count, format, ...)           _sntprintf_s(strDest, numberOfElements, Count, format, ##__VA_ARGS__)
+
+    #define STRDATE_S(strDest, numberOfElements) _tstrdate_s(strDest, numberOfElements)
+    #define STRTIME_S(strDest, numberOfElements)       _tstrtime_s(strDest, numberOfElements)
+    
+    #define FOPEN_S(file, filename, mode)           _tfopen_s(file, filename, mode)
+
+    #define STRLEN_S(str, numberOfElements)         _tcsnlen(str, numberOfElements)
+
+    #define SPLITPATH_S(path, Drive, DriveNumElements, Dir, DirNumElements, Filename, FileNumElements, Extension, ExtNumElements) _tsplitpath_s(path, Drive, DriveNumElements, Dir, DirNumElements, Filename, FileNumElements, Extension, ExtNumElements)
+    #define MAKEPATH_S(path, numberOfElements, Drive, Dir, Filename, Extension) _tmakepath_s(path, numberOfElements, Drive, Dir, Filename, Extension)
+
+    #define SSCANF_S(buffer, format, ...)           _stscanf_s(buffer, format, ##__VA_ARGS__)
+    #define SNSCANF_S(input, length, format, ...)   _sntscanf_s(input, length, format, ##__VA_ARGS__)
+
+#else
+    #define WCSNCPY_S(strDest, numberOfElements, strSource, count)  wcsncpy (strDest, strSource, count)
+    #define STRNCPY_S(strDest, numberOfElements, strSource, count)  _tcsncpy(strDest, strSource, count)
+    #define STRCPY_S(strDest, numberOfElements, strSource)          _tcscpy(strDest, strSource)
+    #define STRCAT_S(strDest, numberOfElements, strSource)          _tcscat(strDest, strSource)
+
+    #define VSNPRINTF_S(strDest, numberOfElements, Count, format, VA_Arg_List)              vsnprintf(strDest, Count, format, VA_Arg_List)
+    #define VSNTPRINTF_S(strDest, numberOfElements, Count, format, VA_Arg_List)             _vsntprintf(strDest, Count, format, VA_Arg_List)
+    #define SPRINTF_S(strDest, numberOfElements, format, a,b,c,d,e,f,g,h,i,j,k,l)           _stprintf(strDest, format, VARG(a),VARG(b),VARG(c),VARG(d),VARG(e),VARG(f),VARG(g),VARG(h),VARG(i),VARG(j),VARG(k),VARG(l))
+    #define SNPRINTF_S(strDest, numberOfElements, Count, format, a,b,c,d,e,f,g,h,i,j,k,l)   _sntprintf(strDest, Count, format, VARG(a),VARG(b),VARG(c),VARG(d),VARG(e),VARG(f),VARG(g),VARG(h),VARG(i),VARG(j),VARG(k),VARG(l))
+
+    #define STRDATE_S(strDest, numberOfElements)        _tstrdate(strDest)
+    #define STRTIME_S(strDest, numberOfElements)        _tstrtime(strDest)
+
+    #define FOPEN_S(file, filename, mode)               (file = _tfopen(filename, mode))
+
+    #define STRLEN_S(str, numberOfElements)             _tcslen(str)
+
+    #define SPLITPATH_S(path, Drive, DriveNumElements, Dir, DirNumElements, Filename, FileNumElements, Extension, ExtNumElements) _tsplitpath(path, Drive, Dir, Filename, Extension)
+    #define MAKEPATH_S(path, numberOfElements, Drive, Dir, Filename, Extension) _makepath(path, Drive, Dir, Filename, Extension)
+
+    #define SSCANF_S(buffer, format, ...)           _stscanf(buffer, format, ##__VA_ARGS__)
+    #define SNSCANF_S(input, length, format, ...)   _sntscanf(input, length, format, ##__VA_ARGS__)
+
+#endif
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+extern const t_bool GNoDialog;         // Set to true to disable the popping of dialog box. The message will go to the log.
+
+#ifdef INL_VISUAL_STUDIO_2003
+    //Visual Studio C++ 2003 doesn't support it, but there is a workaround:
+    #pragma warning(disable: 4002)		// Warning: too many actual parameters for macro 'ident'
+    #pragma warning(disable: 4003)		// Warning: not enough actual parameters for macro 'ident'
+    template <typename T>
+    inline const T &		VARG( const T &t )				{ return t; }
+    inline const TCHAR *	VARG( )							{ return TEXT(""); }
+#endif
+
+#ifdef _UNICODE
+    #define tstring std::wstring
+    #define tostream std::wostream
+    #define tistream std::wistream
+    #define tiostream std::wiostream
+    #define tofstream std::wofstream
+    #define tfstream std::wfstream
+#else
+    #define tstring std::string
+    #define tostream std::ostream
+    #define tistream std::istream
+    #define tiostream std::iostream
+    #define tofstream std::ofstream
+    #define tfstream std::fstream
+#endif
+
+// // UTF-16 is the primary encoding mechanism used by Microsoft Windows 2000, Windows 2000 Server, Windows XP and Windows 2003 Server.
+// // Unicode Byte Order Mark (BOM)
+// enum {UNICODE_UTF32_BE   = 0x0000FEFF };
+// enum {UNICODE_UTF32_LE   = 0xFFFE0000 };
+// enum {UNICODE_UTF16_BE   = 0xFEFF };
+// enum {UNICODE_UTF16_LE   = 0xFFFE };
+// enum {UNICODE_UTF8       = 0xEFBBBF };
+
+const BYTE INL_UTF32_BE[]   = {0x04 /*size*/, 0x00, 0x00, 0xFE, 0xFF };
+const BYTE INL_UTF32_LE[]   = {0x04 /*size*/, 0xFF, 0xFE, 0x00, 0x00 };
+const BYTE INL_UTF16_BE[]   = {0x02 /*size*/, 0xFE, 0xFF };
+const BYTE INL_UTF16_LE[]   = {0x02 /*size*/, 0xFF, 0xFE };
+const BYTE INL_UTF8[]       = {0x03 /*size*/, 0xEF, 0xBB, 0xBF };
+
+// enum {UNICODE_BOM   = 0xfeff     };
+
+
+class NOutputDeviceManager;
+class NOutputDevice;
+class NFileManager;
+
+
+#define GNullDevice         INL_GLOBAL_OBJECT_INSTANCE(nux::NNullOutput)
+#define GLogDevice          INL_GLOBAL_OBJECT_INSTANCE(nux::NOutputDeviceRedirector)
+#define GThrow              INL_GLOBAL_OBJECT_INSTANCE(nux::NThrowOutput)
+
+#if (defined INL_OS_WINDOWS)
+    #define GFileManager    INL_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerWindows)
+#elif (defined INL_OS_LINUX)
+    #define GFileManager    INL_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerGNU)
+#elif (defined INL_PS3)
+    #define GFileManager    INL_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerPS3)
+#endif
+
+
+//////////////////////////////////////////////////////////////////////////
+// Breaks into the debugger.  Forces a GPF in non-debug builds.         //
+//////////////////////////////////////////////////////////////////////////
+#if (defined _DEBUG) && (defined INL_MICROSOFT_COMPILER)
+    #define nuxIsDebuggerPresent()  IsDebuggerPresent()
+    #define inlDebugBreak()         ( IsDebuggerPresent() ? (DebugBreak(),1) : 1 )
+#elif (defined _WIN32)
+    #define nuxIsDebuggerPresent()	IsDebuggerPresent()
+    #define inlDebugBreak()			( IsDebuggerPresent() ? *((INT*)3)=13 : 1 )
+#elif (defined _DEBUG) && (defined INL_GNUCPP_COMPILER)
+    #define nuxIsDebuggerPresent()  1
+    #define inlDebugBreak()         asm("int3");
+#elif (defined _DEBUG) && (defined INL_PS3)
+    #define nuxIsDebuggerPresent()	1
+    #define inlDebugBreak()			__asm__ volatile("tw 31, 1, 1");
+#else
+    #define nuxIsDebuggerPresent()	0
+    #define inlDebugBreak()			
+#endif
+
+#if defined(INL_MICROSOFT_COMPILER)
+    #define INL_HARDWARE_BREAK      {__debugbreak();}
+    #define INL_BREAK_ASM_INT3      {__debugbreak();}
+#elif defined(INL_GNUC_COMPILER)
+    #define INL_HARDWARE_BREAK      asm("int3");
+    #define INL_BREAK_ASM_INT3      asm("int3");
+#elif defined(INL_PS3)
+    #define INL_HARDWARE_BREAK      __asm__ volatile("tw 31, 1, 1");
+    #define INL_BREAK_ASM_INT3      __asm__ volatile("tw 31, 1, 1");
+#else
+    #define INL_HARDWARE_BREAK
+    #define INL_BREAK_ASM_INT3
+#endif
+
+// Simple version of the PURE_VIRTUAL. Use it before output macros nuxError is define.
+#if INL_CHECK_PUREVIRTUALS
+    #define INL_PURE_VIRTUAL =0;
+#else
+    #define INL_PURE_VIRTUAL { inlDebugBreak(); }
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+//      Variadic function prototypes.
+//////////////////////////////////////////////////////////////////////////
+
+#define VARARG_EXTRA(A) A,
+#define VARARG_NONE
+#define VARARG_PURE =0
+
+#if _MSC_VER
+
+    static inline DWORD         VAType(DWORD dw)        { return dw; }
+    static inline t_byte        VAType(t_byte b)        { return b; }
+    static inline t_u32        VAType(t_u32 ui)       { return ui; }
+    static inline t_int         VAType(t_s32 i)         { return i; }
+    static inline t_u64         VAType(t_u64 qw)        { return qw; } // possible conflict with t_size when compiling in 64 bits
+    static inline t_s64         VAType(t_s64 sqw)       { return sqw; }
+    static inline double        VAType(double d)        { return d; }
+    static inline TCHAR         VAType(TCHAR c)         { return c; }
+    static inline ANSICHAR*     VAType(ANSICHAR* s)     { return s; }
+    static inline UNICHAR*      VAType(UNICHAR* s)      { return s; }
+    template<class T> T*        VAType(T* p)            { return p; }
+    template<class T> const T*  VAType(const T* p)      { return p; }
+
+    //  Declaration of prototypes with lots of arguments
+    //  If(the function return nothing)
+    //  {
+    //      Return = {}
+    //      StaticFuncRet = void
+    //  }
+    //  else
+    //  {
+    //      Return = return 
+    //      StaticFuncRet = type0
+    //      FuncRet = type1
+    //  }
+    //  
+    //  If this is a pure virtual function then PURE is equal to: ==0
+    //  ExtraParamDecl is declaration for additional parameters: VARARG_EXTRA(TCHAR* Dest) VARARG_EXTRA(INT Size) VARARG_EXTRA(INT Count)
+    //  ExtraParam is the parameters presented in ExtraParamDecl: VARARG_EXTRA(Dest) VARARG_EXTRA(Size) VARARG_EXTRA(Count) 
+#define VARARG_DECL( FuncRet, StaticFuncRet, Return, FuncName, Pure, FmtType, ExtraParamDecl, ExtraParam )	\
+    FuncRet FuncName##__VA(ExtraParamDecl FmtType Fmt, ... ) Pure;  \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt) {Return FuncName##__VA(ExtraParam (Fmt));} \
+    template<class T1> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1) {T1 v1=VAType(V1);Return FuncName##__VA(ExtraParam (Fmt),(v1));} \
+    template<class T1,class T2> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2) {T1 v1=VAType(V1);T2 v2=VAType(V2);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2));} \
+    template<class T1,class T2,class T3> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3));} \
+    template<class T1,class T2,class T3,class T4> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4));} \
+    template<class T1,class T2,class T3,class T4,class T5> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11,class T12> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11,T12 V12) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);T12 v12=VAType(V12);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11),(v12));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11,class T12,class T13> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11,T12 V12,T13 V13) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);T12 v12=VAType(V12);T13 v13=VAType(V13);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11),(v12),(v13));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11,class T12,class T13,class T14> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11,T12 V12,T13 V13,T14 V14) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);T12 v12=VAType(V12);T13 v13=VAType(V13);T14 v14=VAType(V14);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11),(v12),(v13),(v14));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11,class T12,class T13,class T14,class T15> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11,T12 V12,T13 V13,T14 V14,T15 V15) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);T12 v12=VAType(V12);T13 v13=VAType(V13);T14 v14=VAType(V14);T15 v15=VAType(V15);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11),(v12),(v13),(v14),(v15));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11,class T12,class T13,class T14,class T15,class T16> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11,T12 V12,T13 V13,T14 V14,T15 V15,T16 V16) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);T12 v12=VAType(V12);T13 v13=VAType(V13);T14 v14=VAType(V14);T15 v15=VAType(V15);T16 v16=VAType(V16);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11),(v12),(v13),(v14),(v15),(v16));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11,class T12,class T13,class T14,class T15,class T16,class T17> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11,T12 V12,T13 V13,T14 V14,T15 V15,T16 V16,T17 V17) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);T12 v12=VAType(V12);T13 v13=VAType(V13);T14 v14=VAType(V14);T15 v15=VAType(V15);T16 v16=VAType(V16);T17 v17=VAType(V17);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11),(v12),(v13),(v14),(v15),(v16),(v17));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11,class T12,class T13,class T14,class T15,class T16,class T17,class T18> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11,T12 V12,T13 V13,T14 V14,T15 V15,T16 V16,T17 V17,T18 V18) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);T12 v12=VAType(V12);T13 v13=VAType(V13);T14 v14=VAType(V14);T15 v15=VAType(V15);T16 v16=VAType(V16);T17 v17=VAType(V17);T18 v18=VAType(V18);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11),(v12),(v13),(v14),(v15),(v16),(v17),(v18));} \
+    template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11,class T12,class T13,class T14,class T15,class T16,class T17,class T18,class T19> \
+    StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11,T12 V12,T13 V13,T14 V14,T15 V15,T16 V16,T17 V17,T18 V18,T19 V19) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);T12 v12=VAType(V12);T13 v13=VAType(V13);T14 v14=VAType(V14);T15 v15=VAType(V15);T16 v16=VAType(V16);T17 v17=VAType(V17);T18 v18=VAType(V18);T19 v19=VAType(V19);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11),(v12),(v13),(v14),(v15),(v16),(v17),(v18),(v19));}
+
+#define VARARG_BODY( FuncRet, FuncName, FmtType, ExtraParamDecl )		\
+    FuncRet FuncName##__VA( ExtraParamDecl  FmtType Fmt, ... )
+
+#else  // !_MSC_VER
+
+#define VARARG_DECL( FuncRet, StaticFuncRet, Return, FuncName, Pure, FmtType, ExtraParamDecl, ExtraParam )	\
+    FuncRet FuncName( ExtraParamDecl FmtType Fmt, ... ) Pure
+#define VARARG_BODY( FuncRet, FuncName, FmtType, ExtraParamDecl )		\
+    FuncRet FuncName( ExtraParamDecl FmtType Fmt, ... )
+
+#endif // _MSC_VER
+
+
+/** Sends the formatted message to the debugging output. */
+void inlOutputDebugString( const TCHAR *Format, ... );
+
+/** Failed assertion handler.  Warning: May be called at library startup time. */
+void LogOutputAssertMessage( const ANSICHAR* File, int Line, const TCHAR* Format = TEXT(""), ... );
+
+void LogOutputErrorMessage( const ANSICHAR* File, int Line, const TCHAR* Format = TEXT(""), ... );
+
+// Returns true is the output redirector is ready
+bool inlOutputRedirectorReady();
+
+void LogOutputDebugMessage(const TCHAR* Format, ... );
+
+
+#if CHECK_PUREVIRTUALS
+	#define PURE_VIRTUAL(func,extra) =0;
+#else
+	#define PURE_VIRTUAL(func,extra) { nuxError(TEXT("Pure virtual not implemented (%s)"), TEXT(#func)); extra }
+#endif
+
+enum EFileWrite
+{
+    FILEWRITE_NoFail            = 0x01,
+    FILEWRITE_NoReplaceExisting = 0x02,
+    FILEWRITE_EvenIfReadOnly    = 0x04,
+    FILEWRITE_Unbuffered        = 0x08,
+    FILEWRITE_Append			= 0x10,
+    FILEWRITE_AllowRead         = 0x20,
+};
+
+enum ECopyResult
+{
+    COPY_OK						= 0x00,
+    COPY_MiscFail				= 0x01,
+    COPY_ReadFail				= 0x02,
+    COPY_WriteFail				= 0x03,
+    COPY_Canceled				= 0x06,
+};
+
+enum INL_STATUS
+{
+    INL_OK,
+    INL_ERROR,
+    INL_FILENOTFOUND,
+    INL_COPYFILE_ERROR,
+    INL_DELETEFILE_ERROR,
+};
+
+NAMESPACE_END
+
+
+#include "NMacros.h"
+#include "NMemory.h"
+
+#include "Character/NUni.h"
+#if defined(INL_OS_WINDOWS)
+    #include "Character/NUnicode.h"
+#elif defined(INL_OS_LINUX)
+    #include "Character/NUnicode.h"
+#elif INL_PS3
+    #include "Character/NUnicodePS3.h"
+#endif
+
+#include "NTemplate.h"
+
+#include "NArray.h"
+
+#include "NString.h"
+
+#if defined(INL_OS_WINDOWS)
+    #include "NThread.h"
+#elif defined(INL_OS_LINUX)
+    #include "NThreadGNU.h"
+#elif INL_PS3
+    #include "NThreadPS3.h"
+#endif
+
+#include "Memory/NMemoryAllocatorInterface.h"
+#include "Memory/NDefaultMemoryAllocator.h"
+#include "Memory/NMemoryHook.h"
+#include "Memory/NMemoryAllocator.h"
+
+
+#include "NUniqueIndex.h"
+#include "SmartPtr/NRefCount.h"
+#include "SmartPtr/NSmartPtr.h"
+
+//#include "NGlobalInitializer.h"
+
+#ifdef INL_OS_WINDOWS
+    #include "Win32Dialogs/NWin32MessageBox.h"
+#endif
+
+#include "Character/NTChar.h"
+
+#include "NTime.h"
+#include "NCPU.h"
+#include "NPlatform.h"
+#include "FileManager/NSerializer.h"
+#include "NProcess.h"
+
+#include "NOutputDevice.h"
+#include "FileManager/NFileManagerGeneric.h"
+
+#ifdef INL_OS_WINDOWS
+    #include "FileManager/NFileManagerStandardAnsi.h"
+    #include "FileManager/NFileManagerWindows.h"
+#elif defined INL_OS_LINUX
+    #include "FileManager/NFileManagerGNU.h"
+#elif defined INL_PS3
+    #include "FileManager/NFileManagerPS3.h"
+#endif
+
+#include "NFile.h"
+#include "NObjectType.h"
+#include "NFileName.h"
+#include "Color.h"
+
+#ifdef INL_OS_WINDOWS
+    #include "Win32Dialogs/NWin32CustomDialog.h"
+#endif
+
+#include "NPrintf.h"
+
+#ifdef INL_OS_WINDOWS
+    #include "Win32Dialogs/NWin32Clipboard.h"
+#endif
+//#include "NSocket.h"
+
+#include "NGlobalInitializer.h"
+
+#endif // KERNEL_H

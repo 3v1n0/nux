@@ -104,7 +104,9 @@ PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
 
-PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14)
+PKG_CHECK_MODULES(NUX_CORE,
+                  glib-2.0 >= 2.25.14
+                  )
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 
@@ -126,7 +128,7 @@ AC_ARG_ENABLE([maintainer-flags],
 MAINTAINER_CFLAGS=""
 AS_IF([test "x$enable_maintainer_flags" = "xyes" && test "x$GCC" = "xyes"],
       [
-        MAINTAINER_CFLAGS="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
+#        MAINTAINER_CFLAGS="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
       ]
 )
 
@@ -137,6 +139,7 @@ dnl ===========================================================================
 AC_CONFIG_FILES([
   Makefile
   data/Makefile
+  NuxCore/Makefile
   tests/Makefile
 ])
 
