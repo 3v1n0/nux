@@ -19,6 +19,7 @@ libnux_image_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(MAINTAINER_CFLAGS)
 
 libnux_image_@NUX_API_VERSION@_la_LIBADD = \
+  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(NUX_IMAGE_LIBS)
 
 libnux_image_@NUX_API_VERSION@_la_LDFLAGS = \
