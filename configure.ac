@@ -77,7 +77,7 @@ NUX_LT_CURRENT=lt_current
 NUX_LT_REV=lt_revision
 NUX_LT_AGE=lt_age
 NUX_LT_VERSION="$NUX_LT_CURRENT:$NUX_LT_REV:$NUX_LT_AGE"
-NUX_LT_LDFLAGS="-version-info $NUX_LT_VERSION"
+NUX_LT_LDFLAG="-version-info $NUX_LT_VERSION -export-dynamic"
 
 AC_SUBST(NUX_LT_VERSION)
 AC_SUBST(NUX_LT_LDFLAGS)
@@ -87,6 +87,8 @@ dnl ===========================================================================
 # Checks for programs
 AC_PROG_CXX
 AM_PROG_CC_C_O
+AC_PROG_LIBTOOL
+AC_DISABLE_STATIC
 
 # require libtool >= 2.2
 LT_PREREQ([2.2.6])
@@ -114,19 +116,26 @@ AC_SUBST(NUX_CORE_LIBS)
 PKG_CHECK_MODULES(NUX_IMAGE,
                   glib-2.0 >= 2.25.14
                   cairo >= 1.9.14
-                  libpng >= 1.2.44)
+                  libpng >= 1.2.44
+                  )
 AC_SUBST(NUX_IMAGE_CFLAGS)
 AC_SUBST(NUX_IMAGE_LIBS)
 
 PKG_CHECK_MODULES(NUX_MESH,
-                  glib-2.0 >= 2.25.14)
+                  glib-2.0 >= 2.25.14
+                  glew
+                  glewmx
+                  )
 AC_SUBST(NUX_MESH_CFLAGS)
 AC_SUBST(NUX_MESH_LIBS)
 
 PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   gl
-                  xxf86vm)
+                  glew
+                  glewmx
+                  xxf86vm
+                  )
 AC_SUBST(NUX_GRAPHICS_CFLAGS)
 AC_SUBST(NUX_GRAPHICS_LIBS)
 
@@ -134,6 +143,17 @@ AC_SUBST(NUX_GRAPHICS_LIBS)
 #AC_CHECK_HEADER([boost/shared_ptr.hpp],
 #                 [],
 #                 [AC_MSG_ERROR([Unable to locate required libboost headers])])
+
+PKG_CHECK_MODULES(NUX,
+                  glib-2.0 >= 2.25.14
+                  gl
+                  glew
+                  glewmx
+                  sigc++-2.0
+                  )
+AC_SUBST(NUX_CFLAGS)
+AC_SUBST(NUX_LIBS)
+
 
 dnl ===========================================================================
 
@@ -172,6 +192,7 @@ AC_CONFIG_FILES([
   NuxMesh/nux-mesh.pc
   NuxGraphics/Makefile
   NuxGraphics/nux-graphics.pc
+  Nux/Makefile
   tests/Makefile
 ])
 
