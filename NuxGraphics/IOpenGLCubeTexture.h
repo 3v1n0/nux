@@ -1,0 +1,96 @@
+/*
+ * Copyright 2010 Inalogic Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it 
+ * under the terms of the GNU Lesser General Public License version 3, as
+ * published by the  Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranties of 
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * License for more details.
+ * 
+ * You should have received a copy of both the GNU Lesser General Public 
+ * License version 3 along with this program.  If not, see 
+ * <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ *
+ */
+
+
+#ifndef IOPENGLCUBETEXTURE_H
+#define IOPENGLCUBETEXTURE_H
+
+NAMESPACE_BEGIN_OGL
+
+class IOpenGLBaseTexture;
+class IOpenGLCubeTexture: public IOpenGLBaseTexture
+{
+    DECLARE_OBJECT_TYPE(IOpenGLCubeTexture, IOpenGLBaseTexture);
+
+public:
+    virtual ~IOpenGLCubeTexture();
+
+    int GetCubeMapSurface(
+        eCUBEMAP_FACES FaceType,
+        int Level,
+        IOpenGLSurface ** ppCubeMapSurface
+        );
+
+    int LockRect(
+        eCUBEMAP_FACES FaceType,
+        int Level,
+        SURFACE_LOCKED_RECT * pLockedRect,
+        const SURFACE_RECT * pRect);
+
+    int UnlockRect(
+        eCUBEMAP_FACES FaceType,
+        int Level
+        );
+
+    unsigned int EnableGammaCorrection(bool b);
+
+    int GetLevelDesc(
+        int Level,
+        SURFACE_DESC * pDesc
+        )
+    {
+        nuxAssert(Level >= 0 );
+        nuxAssert(Level < _NumMipLevel);
+
+        if((Level < 0) || (Level > _NumMipLevel))
+        {
+            pDesc->Width    = 0;
+            pDesc->Height   = 0;
+            pDesc->PixelFormat   = BITFMT_UNKNOWN;
+            pDesc->Type     = _ResourceType;
+        }
+        else
+        {
+            pDesc->Width    = Max<unsigned int>(1, _Width >> Level);
+            pDesc->Height   = Max<unsigned int>(1, _Height >> Level);
+            pDesc->PixelFormat   = _PixelFormat;
+            pDesc->Type     = _ResourceType;
+        }
+
+        return 1;
+    }
+private:
+
+    IOpenGLCubeTexture(
+        unsigned int EdgeLength
+        , int Levels
+        , BitmapFormat PixelFormat);
+
+    //    unsigned int        _Width;
+    //    unsigned int        _Height;
+    std::map<eCUBEMAP_FACES, std::vector<IOpenGLSurface*>* > _SurfaceArray;
+
+    friend class GLDeviceFactory;
+    friend class IOpenGLSurface;
+};
+
+NAMESPACE_END_OGL
+#endif // IOPENGLCUBETEXTURE_H

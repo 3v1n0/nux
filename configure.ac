@@ -118,6 +118,13 @@ PKG_CHECK_MODULES(NUX_IMAGE,
 AC_SUBST(NUX_IMAGE_CFLAGS)
 AC_SUBST(NUX_IMAGE_LIBS)
 
+PKG_CHECK_MODULES(NUX_GRAPHICS,
+                  glib-2.0 >= 2.25.14
+                  xxf86vm)
+AC_SUBST(NUX_GRAPHICS_CFLAGS)
+AC_SUBST(NUX_GRAPHICS_LIBS)
+
+
 dnl ===========================================================================
 
 if test "x$GCC" = "xyes"; then
@@ -151,6 +158,8 @@ AC_CONFIG_FILES([
   NuxCore/nux-core.pc
   NuxImage/Makefile
   NuxImage/nux-image.pc
+  NuxGraphics/Makefile
+  NuxGraphics/nux-graphics.pc
   tests/Makefile
 ])
 

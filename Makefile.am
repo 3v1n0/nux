@@ -1,4 +1,4 @@
-SUBDIRS = data NuxCore NuxImage tests
+SUBDIRS = data NuxCore NuxImage NuxGraphics tests
 
 
 CLEANFILES =
