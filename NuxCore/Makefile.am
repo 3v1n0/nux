@@ -130,11 +130,20 @@ source_math_h = \
   $(srcdir)/Math/Matrix4.h \
   $(srcdir)/Math/MathUtility.h
 
+source_tiny_xml_h = \
+  $(srcdir)/TinyXML/tinystr.h \
+  $(srcdir)/TinyXML/tinyxml.h
+
+source_smart_ptr_h = \
+  $(srcdir)/SmartPtr/NRefCount.h \
+  $(srcdir)/SmartPtr/NSmartPtr.h
+
+source_datastruct_h = \
+  $(srcdir)/DataStruct/NList.h
+
 source_h = \
   $(srcdir)/NSystemTypes.h \
   $(srcdir)/Point.h \
-  $(srcdir)/TinyXML/tinystr.h \
-  $(srcdir)/TinyXML/tinyxml.h \
   $(srcdir)/NCPU.h \
   $(srcdir)/BitmapFormats.h \
   $(srcdir)/FilePath.h \
@@ -145,9 +154,6 @@ source_h = \
   $(srcdir)/NPrintf.h \
   $(srcdir)/Rect.h \
   $(srcdir)/NPlatform.h \
-  $(srcdir)/SmartPtr/NRefCount.h \
-  $(srcdir)/SmartPtr/NSmartPtr.h \
-  $(srcdir)/DataStruct/NList.h \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
   $(srcdir)/NArray.h \
@@ -180,7 +186,10 @@ libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_character_h) \
   $(source_file_manager_h) \
   $(source_math_h) \
-  $(source_memory_h)
+  $(source_memory_h) \
+  $(source_tiny_xml_h) \
+  $(source_smart_ptr_h) \
+  $(source_datastruct_h)
 
 nux_coredir = $(includedir)/Nux-@NUX_API_VERSION@/NuxCore
 nux_core_HEADERS = $(source_h)
@@ -196,6 +205,15 @@ nux_math_HEADERS = $(source_math_h)
 
 nux_memorydir = $(nux_coredir)/Memory
 nux_memory_HEADERS = $(source_memory_h)
+
+nux_tiny_xmldir = $(nux_coredir)/TinyXML
+nux_tiny_xml_HEADERS = $(source_tiny_xml_h)
+
+nux_smart_ptrdir = $(nux_coredir)/SmartPtr
+nux_smart_ptr_HEADERS = $(source_smart_ptr_h)
+
+nux_datastructdir = $(nux_coredir)/DataStruct
+nux_datastruct_HEADERS = $(source_datastruct_h)
 
 # pkg-config file
 nux-core-@NUX_API_VERSION@.pc: nux-core.pc
