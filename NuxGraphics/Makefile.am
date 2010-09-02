@@ -35,6 +35,7 @@ source_h = \
   $(srcdir)/GLDeviceFrameBufferObject.h \
   $(srcdir)/GLDeviceObjects.h \
   $(srcdir)/GLError.h \
+  $(srcdir)/GLPBuffer.h \
   $(srcdir)/GLRenderStates.h \
   $(srcdir)/GLResource.h \
   $(srcdir)/GLResourceManager.h \
@@ -92,6 +93,7 @@ source_cpp = \
   $(srcdir)/GLResource.cpp \
   $(srcdir)/GLDeviceObjects.cpp \
   $(srcdir)/GLResourceManager.cpp \
+  $(srcdir)/GLPBuffer.cpp \
   $(srcdir)/IOpenGLCubeTexture.cpp \
   $(srcdir)/GlobalGraphicsInitializer.cpp \
   $(srcdir)/IOpenGLAnimatedTexture.cpp \

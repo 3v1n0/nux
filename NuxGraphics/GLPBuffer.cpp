@@ -22,10 +22,6 @@
 
 #include "NuxCore/NKernel.h"
 #include "GLResource.h"
-
-#include <string>
-#include <vector>
-
 #include "GLPBuffer.h"
 
 #ifndef PB_FPF
@@ -38,7 +34,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-#if defined(WIN32)
+#if defined(INL_OS_WINDOWS)
 
 PBuffer::PBuffer(const char *strMode, bool managed) 
   : m_hDC(0), m_hGLRC(0), m_hPBuffer(0), m_hOldGLRC(0), m_hOldDC(0), 
@@ -630,7 +626,7 @@ void PBuffer::Deactivate()
     m_bIsActive = false;
 }
 
-#elif defined(UNIX)
+#elif defined(INL_OS_LINUX)
 
 PBuffer::PBuffer(const char *strMode, bool managed) 
   : m_pDisplay(0), m_glxPbuffer(0), m_glxContext(0), m_pOldDisplay(0), m_glxOldDrawable(0), 
@@ -748,7 +744,7 @@ void PBuffer::Destroy()
     m_pDisplay = 0;
 }
 
-void PBuffer::parseModeString(const char *modeString, vector<int> *pfAttribList, vector<int> *pbAttribList)
+void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttribList, std::vector<int> *pbAttribList)
 {
     if (!modeString || strcmp(modeString, "") == 0)
         return;
@@ -760,7 +756,7 @@ void PBuffer::parseModeString(const char *modeString, vector<int> *pfAttribList,
     
     char *mode = strdup(modeString);
 
-    vector<string> tokens;
+    std::vector<std::string> tokens;
     char *buf = strtok(mode, " ");
     while (buf != NULL)
     {
@@ -776,7 +772,7 @@ void PBuffer::parseModeString(const char *modeString, vector<int> *pfAttribList,
     
     for (unsigned int i = 0; i < tokens.size(); i++)
     {
-        string token = tokens[i];
+        std::string token = tokens[i];
 
         if (token == "rgb" && !bIsFloatBuffer)
         {
@@ -899,7 +895,7 @@ void PBuffer::Deactivate()
     m_glxOldContext = 0;
 }
 
-#elif defined(__APPLE__)
+#elif defined(INL_OS_MACOSX)
 
 PBuffer::PBuffer(const char *strMode) 
   : 

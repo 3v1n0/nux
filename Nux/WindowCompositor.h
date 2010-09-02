@@ -43,7 +43,7 @@ public:
 
     void SetClientSize(int w, int h);
 //    void DrawGrid(Graphics *g);
-    void Draw(IEvent &event, bool force_draw);
+    void Draw(bool SizeConfigurationEvent, bool force_draw);
     //void DrawList();
 
     void DrawPopup(bool force_draw);
@@ -255,7 +255,6 @@ public:
     WindowCompositor* operator &();
     ~WindowCompositor();
 
-    friend class GfxServerImpl;
     friend class BaseArea;
     friend class WindowThread;
 };

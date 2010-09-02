@@ -193,6 +193,23 @@ public:
     */
     virtual bool ThreadCtor();
 
+#if defined(INL_OS_WINDOWS)
+    /*!
+        Constructor-like function for the thread. 
+        Will be called by EntryPoint before executing the thread body.
+        For the main window, ThreadCtor is called in nux::CreateMainWindow.
+        ThreadCtor creates and initialize the following elements:
+            - Graphics Window (from the externally created window)
+            - Timer
+            - Painter
+            - Compositor
+            - Theme engine
+        After ThreadCtor is called, m_ThreadCtorCalled is set to true;
+        
+        
+    */
+    virtual bool ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
+#elif defined(INL_OS_LINUX)
     /*!
         Constructor-like function for the thread. 
         Will be called by EntryPoint before executing the thread body.
@@ -208,7 +225,8 @@ public:
         
     */
     virtual bool ThreadCtor(Display *X11Display, Window X11Window, GLXContext OpenGLContext);
-    
+#endif
+
     /*!
         Destructor-like function for the thread. 
         Will be called by EntryPoint after executing the thread body.
@@ -256,6 +274,16 @@ public:
     t_u32 GetFrameCounter() const;
     t_u32 GetFramePeriodeCounter() const;
 
+    bool IsEmbeddedWindow();
+
+#if defined(INL_OS_WINDOWS)
+    void ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data);
+#elif defined(INL_OS_LINUX)
+    void ProcessForeignEvent(XEvent* event, void* data);
+#endif
+
+    void RenderInterfaceFromForeignCmd();
+
 private:
     float m_FrameRate;
     t_u32 m_FrameCounter;
@@ -282,17 +310,20 @@ private:
     WindowStyle m_WindowStyle;
     bool m_bIsModal;
 
-    /*!
-        True is the thread constructor has been called.
-    */
-    bool m_ThreadCtorCalled;
+    bool m_ThreadCtorCalled;	//!< True is the thread constructor has been called.
+
+    bool m_ThreadDtorCalled;	//!< True is the thread destructor has been called.
     
+    bool m_embedded_window;		//!< Flag to run the interface in embedded mode.
+
     /*!
-        True is the thread destructor has been called.
+        Record if there was a configuration nux_event (INL_SIZE_CONFIGURATION) that requires a full redraw.
+        Used in the case where event processing and rendering are decoupled (with foreign windows).
     */
-    bool m_ThreadDtorCalled;
-    
-    friend class GfxServerImpl;
+    bool m_size_configuration_event;
+
+    bool m_force_redraw;
+
     friend class BasePainter;
     friend class SystemThread;
 

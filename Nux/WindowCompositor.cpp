@@ -440,7 +440,7 @@ void WindowCompositor::MoveWindowToBack(smptr(BaseWindow) window)
     }
 }
 
-void WindowCompositor::Draw(IEvent &event, bool force_draw)
+void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
 {
     if(!GetGraphicsThread()->GetWindow().isWindowMinimized())
     {
@@ -471,7 +471,7 @@ void WindowCompositor::Draw(IEvent &event, bool force_draw)
 //             }
 //             glEnd();
 //             GetGraphicsThread()->GetGraphicsContext().QRP_Color(10, 10, 100, 100, Color::RoyalBlue);
-            if(force_draw || (event.e_event == INL_SIZE_CONFIGURATION))
+            if(force_draw || SizeConfigurationEvent)
             {
                 // We fall here after something dramatic has happen to the window such as a resizing. In this case
                 // everything must be rendered This is very intensize and should happen rarely.
@@ -550,7 +550,7 @@ void WindowCompositor::Draw(IEvent &event, bool force_draw)
         }
         else
         {
-            if(force_draw || (event.e_event == INL_SIZE_CONFIGURATION))
+            if(force_draw || SizeConfigurationEvent)
             {
                 gPainter.PushDrawColorLayer(GetGraphicsThread()->GetGraphicsContext(), Geometry(0, 0, m_Width, m_Height), Color(0xFF4D4D4D), true);
                 RenderMainWindowComposition(true, false);

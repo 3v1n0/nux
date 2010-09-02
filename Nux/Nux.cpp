@@ -91,7 +91,29 @@ WindowThread* CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGL
     void* InitData
 )
 {
-    
+    if(GetThreadApplication())
+    {   
+        // An WindowThread already exist for this thread.
+        nuxAssertMsg(0, "[CreateGUIThread] Only one WindowThread per thread is allowed");
+        return 0;
+    }
+    inlSetThreadLocalStorage(ThreadLocal_InalogicAppImpl, 0);
+
+    WindowThread* w = new WindowThread("WindowTitle", 400, 300, 0, true);
+
+    if(w == 0)
+    {
+        nuxAssertMsg(0, TEXT("[CreateGUIThread] WindowThread creation failed."));
+        return 0;
+    }
+
+    w->m_UserInitFunc = UserInitFunc;
+    w->m_UserExitFunc = 0;
+    w->m_InitData = InitData;
+    w->m_ExitData = 0;
+    w->SetWindowStyle(WINDOWSTYLE_NORMAL);
+    w->ThreadCtor(WindowHandle, WindowDCHandle, OpenGLRenderingContext);
+    return w;
 }
 
 #elif defined(INL_OS_LINUX)
@@ -120,6 +142,7 @@ WindowThread* CreateFromForeignWindow(Display *X11Display, Window X11Window, GLX
     w->m_InitData = InitData;
     w->m_ExitData = 0;
     w->SetWindowStyle(WINDOWSTYLE_NORMAL);
+    w->m_embedded_window = true;
     w->ThreadCtor(X11Display, X11Window, OpenGLContext);
     return w;
 }
@@ -227,7 +250,7 @@ GLWindowImpl& GetWindow()
     NThread* thread = GetThreadApplication();
     if(!thread->Type().IsObjectType(WindowThread::StaticObjectType))
     {
-        nuxAssertMsg(0, TEXT("[GfxServerImpl::GetWindow] You can't call GetWindow on this type of thread: s"), thread->Type().GetName());
+        nuxAssertMsg(0, TEXT("[GetWindow] You can't call GetWindow on this type of thread: s"), thread->Type().GetName());
     }
     return (static_cast<WindowThread*> (thread))->GetWindow();
 }
@@ -237,7 +260,7 @@ GraphicsContext& GetGraphicsContext()
     NThread* thread = GetThreadApplication();
     if(!thread->Type().IsObjectType(WindowThread::StaticObjectType))
     {
-        nuxAssertMsg(0, TEXT("[GfxServerImpl::GetGraphicsContext] You can't call GetGraphicsContext on this type of thread: s"), thread->Type().GetName());
+        nuxAssertMsg(0, TEXT("[GetGraphicsContext] You can't call GetGraphicsContext on this type of thread: s"), thread->Type().GetName());
     }
     return (static_cast<WindowThread*> (thread))->GetGraphicsContext();
 }

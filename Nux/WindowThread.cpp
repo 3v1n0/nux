@@ -225,6 +225,13 @@ t_u32 WindowThread::AddGLibTimeout(t_u32 duration)
     g_source_set_callback(timeout_source, nux_timeout_dispatch, dd, NULL);
 
     return id;
+
+    /////////////
+//     TimeoutData* dd = new TimeoutData;
+//     dd->window_thread = this;
+//     dd->id = g_timeout_add (duration, nux_timeout_dispatch, dd);
+// 
+//     return dd->id;
 }
 #endif
 
@@ -237,6 +244,9 @@ WindowThread::WindowThread(const TCHAR* WindowTitle, unsigned int width, unsigne
 ,   m_WindowTitle(WindowTitle)
 ,   m_WidgetInitialized(false)
 ,   m_WindowStyle(WINDOWSTYLE_NORMAL)
+,	m_embedded_window(false)
+,   m_size_configuration_event(false)
+,   m_force_redraw(false)
 {
     // Thread specific objects
     m_GLWindow      = 0;
@@ -468,7 +478,14 @@ unsigned int WindowThread::Run(void* arg)
         (*m_UserInitFunc)(this, m_InitData);
         m_WidgetInitialized = true;
     }
-    RunUserInterface();
+
+    // If this window is embedded, do not go into RunUserInterface.
+    // Instead, this window will rely on the container (wm such as Compiz) to provide the X events and request the interface to draw.
+    if(!IsEmbeddedWindow())
+    {
+        RunUserInterface();
+    }
+
     return 0;
 }
 
@@ -598,6 +615,7 @@ t_u32 WindowThread::ExecutionLoop()
                 m_StackManager->FormatRenderTargets(event.width, event.height);
             }
             m_StackManager->FloatingAreaConfigureNotify(event.width, event.height);
+            m_size_configuration_event = true;
         }
 
         // Some action may have caused layouts and areas to request a recompute. 
@@ -613,14 +631,14 @@ t_u32 WindowThread::ExecutionLoop()
 #else
         GetThreadTimer().ExecTimerHandler();
 #endif
-        //gTimerManager.Update(ms);
+
 
         if(GetWindow().IsPauseThreadGraphicsRendering() == false)
         {
             bool SwapGLBuffer = false;
             if(Application->m_bFirstDrawPass)
             {
-                m_StackManager->Draw(event, true);
+                m_StackManager->Draw(m_size_configuration_event, true);
                 Application->m_bFirstDrawPass = false;
             }
             else
@@ -655,25 +673,25 @@ t_u32 WindowThread::ExecutionLoop()
                 if( n & (b || IsRedrawNeeded()) )
                 {
                     //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-                    m_StackManager->Draw(event, false);
+                    m_StackManager->Draw(m_size_configuration_event, false);
                     SwapGLBuffer = true;
                 }
                 else if(b || IsRedrawNeeded())
                 {
                     //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-                    m_StackManager->Draw(event, false);
+                    m_StackManager->Draw(m_size_configuration_event, false);
                     SwapGLBuffer = true;
                 }
                 else if(n)
                 {
                     //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-                    m_StackManager->Draw(event, false);
+                    m_StackManager->Draw(m_size_configuration_event, false);
                     SwapGLBuffer = true;
                 }
                 else if(m_StackManager->GetWidgetDrawingOverlay() != 0)
                 {
                     //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-                    m_StackManager->Draw(event, false);
+                    m_StackManager->Draw(m_size_configuration_event, false);
                     SwapGLBuffer = false;
                 }
             }
@@ -712,6 +730,7 @@ t_u32 WindowThread::ExecutionLoop()
             GetGraphicsThread()->GetGraphicsContext().ResetStats();
             m_ClientAreaList.clear();
             ClearRedrawFlag();
+            m_size_configuration_event = false;
         }
     }
 
@@ -951,15 +970,62 @@ bool WindowThread::ThreadCtor()
     return true;
 }
 
+#if defined(INL_OS_WINDOWS)
+bool WindowThread::ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
+{
+    nuxAssertMsg (m_ThreadCtorCalled == false, TEXT("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once."));
+    INL_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
+
+#if defined(INL_OS_WINDOWS)
+    SetWin32ThreadName(GetThreadId(), m_WindowTitle.GetTCharPtr());
+#endif
+
+    if(RegisterNuxThread(this) == FALSE)
+    {
+        nuxDebugMsg(TEXT("[WindowThread::ThreadCtor] Failed to register the WindowThread."));
+        return false;
+    }
+
+    inlSetThreadLocalStorage(ThreadLocal_InalogicAppImpl, this);
+    GLWindowImpl* ParentWindow = 0;
+    if(m_Parent && static_cast<WindowThread*>(m_Parent)->Type().IsObjectType(WindowThread::StaticObjectType))
+    {
+        ParentWindow = &static_cast<WindowThread*>(m_Parent)->GetWindow();
+    }
+    else
+    {
+        ParentWindow = 0;
+    }
+
+    m_GLWindow = gGLWindowManager.CreateFromForeignWindow(WindowHandle, WindowDCHandle, OpenGLRenderingContext);
+    if(m_GLWindow == 0)
+    {
+        nuxDebugMsg(TEXT("[WindowThread::ThreadCtor] Failed to create the window."));
+        return false;
+    }
+
+    if(m_Parent && m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
+    {
+        // Cancel the effect of PauseThreadGraphicsRendering on the parent window.
+        //PostThreadMessage(m_Parent->GetThreadId(), INL_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
+    }
+
+    m_Painter = new BasePainter();
+    m_TimerHandler = new TimerHandler();
+    m_StackManager = new WindowCompositor;
+    m_Theme = new UXTheme();
+
+    SetThreadState(THREADRUNNING);
+    m_ThreadCtorCalled = true;
+
+    return true;
+}
+#elif defined(INL_OS_LINUX)
 bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, GLXContext OpenGLContext)
 {
     nuxAssertMsg (m_ThreadCtorCalled == false, TEXT("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once."));
     INL_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
     
-#if defined(INL_OS_WINDOWS)
-    SetWin32ThreadName(GetThreadId(), m_WindowTitle.GetTCharPtr());
-#endif
-
     if(RegisterNuxThread(this) == FALSE)
     {
         nuxDebugMsg(TEXT("[WindowThread::ThreadCtor] Failed to register the WindowThread."));
@@ -1000,6 +1066,7 @@ bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, GLXContext 
 
     return true;
 }
+#endif
 
 bool WindowThread::ThreadDtor()
 {
@@ -1062,6 +1129,188 @@ t_u32 WindowThread::GetFrameCounter() const
 t_u32 WindowThread::GetFramePeriodeCounter() const
 {
     return m_FramePeriodeCounter;
+}
+
+bool WindowThread::IsEmbeddedWindow()
+{
+    return m_embedded_window;
+}
+
+#if defined(INL_OS_WINDOWS)
+void WindowThread::ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data)
+#elif defined(INL_OS_LINUX)
+void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
+#endif
+{
+    if(GetWindow().IsPauseThreadGraphicsRendering())
+    {
+        return;
+    }
+
+    IEvent nux_event;
+    memset(&nux_event, 0, sizeof(IEvent));
+#if defined(INL_OS_WINDOWS)
+    m_GLWindow->ProcessForeignWin32Event(hWnd, msg, wParam, lParam, &nux_event);
+#elif defined(INL_OS_LINUX)
+    m_GLWindow->ProcessForeignX11Event(xevent, &nux_event);
+#endif
+
+    if(nux_event.e_event ==	INL_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
+    {
+        return;
+    }
+
+    if(nux_event.e_event ==	INL_SIZE_CONFIGURATION)
+        m_size_configuration_event = true;
+
+    int w, h;
+    // Call gGfx_OpenGL.getWindowSize after the gGfx_OpenGL.get_event.
+    // Otherwise, w and h may not be correct for the current frame if a resizing happened.
+    GetWindow().GetWindowSize(w, h);
+
+    if(nux_event.e_event == INL_MOUSE_PRESSED ||
+        (nux_event.e_event == INL_MOUSE_RELEASED) ||
+        (nux_event.e_event == INL_MOUSE_MOVE) ||
+        (nux_event.e_event == INL_SIZE_CONFIGURATION) ||
+        (nux_event.e_event == INL_KEYDOWN) ||
+        (nux_event.e_event == INL_KEYUP) ||
+        (nux_event.e_event == INL_WINDOW_CONFIGURATION) ||
+        (nux_event.e_event == INL_WINDOW_ENTER_FOCUS) ||
+        (nux_event.e_event == INL_WINDOW_EXIT_FOCUS) ||
+        (nux_event.e_event == INL_WINDOW_MOUSELEAVE) ||
+        (nux_event.e_event == INL_MOUSEWHEEL))
+    {
+        if((nux_event.e_event == INL_SIZE_CONFIGURATION) ||
+            (nux_event.e_event == INL_WINDOW_ENTER_FOCUS) ||
+            (nux_event.e_event == INL_WINDOW_EXIT_FOCUS))
+        {
+            m_StackManager->SetMouseFocusArea(smptr(BaseArea)(0));
+            m_StackManager->SetMouseOverArea(smptr(BaseArea)(0));
+            m_StackManager->SetPreviousMouseOverArea(smptr(BaseArea)(0));
+        }
+
+        //DISPATCH EVENT HERE
+        m_StackManager->ClearDrawList();
+        m_StackManager->PushEventRectangle(Rect(0, 0, w, h));
+        //nux_event.Application = Application;
+        m_StackManager->ProcessEvent(nux_event);
+        m_StackManager->EmptyEventRegion();
+    }
+
+    if(nux_event.e_event == INL_SIZE_CONFIGURATION)
+    {
+        if(!GetWindow().isWindowMinimized())
+        {
+            GetWindow().SetViewPort(0, 0, nux_event.width, nux_event.height);
+            ReconfigureLayout();
+            m_StackManager->FormatRenderTargets(nux_event.width, nux_event.height);
+        }
+        m_StackManager->FloatingAreaConfigureNotify(nux_event.width, nux_event.height);
+        m_size_configuration_event = true;
+    }
+
+    // Some action may have caused layouts and areas to request a recompute. 
+    // Process them here before the Draw section.
+    if(!GetWindow().isWindowMinimized())
+    {
+        // Process the layouts that requested a recompute.
+        RefreshLayout();
+    }
+
+    bool RequestRedraw = false;
+
+    bool SwapGLBuffer = false;
+    if(this->m_bFirstDrawPass)
+    {
+        RequestRedraw = true;
+        m_force_redraw = true;
+        //m_StackManager->Draw(m_size_configuration_event, true);
+        this->m_bFirstDrawPass = false;
+    }
+    else
+    {
+        bool b = (nux_event.e_event == INL_MOUSE_PRESSED) ||
+            (nux_event.e_event == INL_MOUSE_RELEASED) ||
+            //(event.e_event == INL_MOUSE_MOVE) ||
+            (nux_event.e_event == INL_SIZE_CONFIGURATION) ||
+            (nux_event.e_event == INL_KEYDOWN) ||
+            (nux_event.e_event == INL_KEYUP) ||
+            (nux_event.e_event == INL_WINDOW_CONFIGURATION) ||
+            (nux_event.e_event == INL_WINDOW_ENTER_FOCUS) ||
+            (nux_event.e_event == INL_WINDOW_EXIT_FOCUS) ||
+            (nux_event.e_event == INL_WINDOW_DIRTY);
+
+        if(b && m_StackManager->IsTooltipActive())
+        { 
+            // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
+            m_StackManager->CancelTooltip();
+            b |= true;
+        }
+
+        if(!m_StackManager->ValidateMouseInsideTooltipArea(nux_event.e_x, nux_event.e_y) && m_StackManager->IsTooltipActive())
+        {
+            // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
+            m_StackManager->CancelTooltip();
+            b |= true;
+        }
+
+        int n = (int)m_ClientAreaList.size();
+
+        if( n & (b || IsRedrawNeeded()) )
+        {
+            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
+            RequestRedraw = true;
+            //m_StackManager->Draw(event, false);
+            SwapGLBuffer = true;
+        }
+        else if(b || IsRedrawNeeded())
+        {
+            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
+            RequestRedraw = true;
+            //m_StackManager->Draw(event, false);
+            SwapGLBuffer = true;
+        }
+        else if(n)
+        {
+            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
+            RequestRedraw = true;
+            //m_StackManager->Draw(event, false);
+            SwapGLBuffer = true;
+        }
+        else if(m_StackManager->GetWidgetDrawingOverlay() != 0)
+        {
+            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
+            RequestRedraw = true;
+            //m_StackManager->Draw(event, false);
+            SwapGLBuffer = false;
+        }
+    }
+
+    // ?
+    // return RequestRedraw;
+}
+
+void WindowThread::RenderInterfaceFromForeignCmd()
+{
+    nuxAssertMsg(IsEmbeddedWindow() == true, TEXT("[WindowThread::RenderInterfaceFromForeignCmd] You can only call RenderInterfaceFromForeignCmd if the window was created with CreateFromForeignWindow."));
+    if(!IsEmbeddedWindow())
+        return;
+
+    if(GetWindow().IsPauseThreadGraphicsRendering() == false)
+    {
+
+        m_StackManager->Draw(m_size_configuration_event, m_force_redraw);
+
+        // When rendering in embedded mode, nux does not attempt to mesure the frame rate...
+
+        // Cleanup
+        GetGraphicsThread()->GetGraphicsContext().ResetStats();
+        m_ClientAreaList.clear();
+        ClearRedrawFlag();
+
+        m_size_configuration_event = false;
+        m_force_redraw = false;
+    }
 }
 
 NAMESPACE_END_GUI
