@@ -1063,6 +1063,14 @@ bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, GLXContext 
 
     SetThreadState(THREADRUNNING);
     m_ThreadCtorCalled = true;
+    
+    int width, height;
+    
+    width = m_GLWindow->GetWindowWidth ();
+    height = m_GLWindow->GetWindowHeight ();
+    
+    m_StackManager->FormatRenderTargets(width, height);
+    m_StackManager->FloatingAreaConfigureNotify(width, height);
 
     return true;
 }
