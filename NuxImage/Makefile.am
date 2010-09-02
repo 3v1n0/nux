@@ -2,18 +2,16 @@ CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST =
 
-AM_CPPFLAGS = \
+lib_LTLIBRARIES = \
+  libnux-image-@NUX_API_VERSION@.la
+
+libnux_image_@NUX_API_VERSION@_la_CPPFLAGS= \
   -I$(srcdir) \
   -I$(top_srcdir) \
   -DPREFIX=\""$(prefix)"\" \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxImage\"
-
-lib_LTLIBRARIES = \
-  libnux-image-@NUX_API_VERSION@.la
-
-libnux_image_@NUX_API_VERSION@_la_CPPFLAGS= \
+  -DG_LOG_DOMAIN=\"NuxImage\" \
   $(GCC_FLAGS) \
   $(NUX_IMAGE_CFLAGS) \
   $(MAINTAINER_CFLAGS)

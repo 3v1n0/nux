@@ -2,18 +2,16 @@ CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST =
 
-AM_CPPFLAGS = \
+lib_LTLIBRARIES = \
+  libnux-mesh-@NUX_API_VERSION@.la
+
+libnux_mesh_@NUX_API_VERSION@_la_CPPFLAGS= \
   -I$(srcdir) \
   -I$(top_srcdir) \
   -DPREFIX=\""$(prefix)"\" \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxMesh\"
-
-lib_LTLIBRARIES = \
-  libnux-mesh-@NUX_API_VERSION@.la
-
-libnux_mesh_@NUX_API_VERSION@_la_CPPFLAGS= \
+  -DG_LOG_DOMAIN=\"NuxMesh\" \
   $(GCC_FLAGS) \
   $(NUX_MESH_CFLAGS) \
   $(MAINTAINER_CFLAGS)
