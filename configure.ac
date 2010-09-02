@@ -173,6 +173,7 @@ MAINTAINER_CFLAGS=""
 AS_IF([test "x$enable_maintainer_flags" = "xyes" && test "x$GCC" = "xyes"],
       [
 #        MAINTAINER_CFLAGS="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
+         MAINTAINER_CFLAGS="-D_DEBUG"
       ]
 )
 
@@ -204,3 +205,6 @@ echo " =========="
 echo ""
 echo " Prefix                   : ${prefix}"
 echo ""
+echo " Maintainer CFlags        : ${MAINTAINER_CFLAGS}"
+echo ""
+
