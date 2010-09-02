@@ -1,25 +1,3 @@
-/*
- * Copyright 2010 Inalogic Inc.
- *
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
- * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
- * <http://www.gnu.org/licenses/>
- *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
- *
- */
-
-
 #ifndef __PBUFFERS_H__
 #define __PBUFFERS_H__
 
@@ -108,7 +86,7 @@ class PBuffer
 #endif
 
     protected:
-#if defined(WIN32)
+#if defined(INL_OS_WINDOWS)
         HDC         m_hDC;     ///< Handle to a device context.
         HGLRC       m_hGLRC;   ///< Handle to a GL context.
         HPBUFFERARB m_hPBuffer;///< Handle to a pbuffer.
@@ -120,7 +98,7 @@ class PBuffer
         std::vector<int> m_pbAttribList;
 
         bool m_bIsTexture;
-#elif defined(UNIX)
+#elif defined(INL_OS_LINUX)
         Display    *m_pDisplay;
         GLXPbuffer  m_glxPbuffer;
         GLXContext  m_glxContext;
@@ -131,7 +109,7 @@ class PBuffer
         
         std::vector<int> m_pfAttribList;
         std::vector<int> m_pbAttribList;
-#elif defined(__APPLE__)
+#elif defined(INL_OS_MACOSX)
         AGLContext  m_context;
         WindowPtr   m_window;
         std::vector<int> m_pfAttribList;
@@ -149,7 +127,7 @@ class PBuffer
     private:
         std::string getStringValue(std::string token);
         int getIntegerValue(std::string token);
-#if defined(UNIX) || defined(WIN32)        
+#if defined(INL_OS_WINDOWS) || defined(INL_OS_LINUX)        
         void parseModeString(const char *modeString, std::vector<int> *pfAttribList, std::vector<int> *pbAttribList);
 
         bool m_bIsBound;

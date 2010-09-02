@@ -1,25 +1,3 @@
-/*
- * Copyright 2010 Inalogic Inc.
- *
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
- * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
- * <http://www.gnu.org/licenses/>
- *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
- *
- */
-
-
 #include "GLResource.h"
 #include "GLDeviceFactory.h"
 #include "GLDeviceObjects.h"
@@ -308,17 +286,17 @@ bool GLWindowImpl::CreateOpenGLWindow(const TCHAR* WindowTitle,
 {
     NScopeLock Scope(&CreateOpenGLWindow_CriticalSection);
 
-	m_GfxInterfaceCreated = false;
+    m_GfxInterfaceCreated = false;
 
-	// FIXME : put at the end
-	m_ViewportSize.SetWidth(WindowWidth);
-	m_ViewportSize.SetHeight(WindowHeight);
-	m_WindowSize.SetWidth(WindowWidth);
-	m_WindowSize.SetHeight(WindowHeight);
-	// end of fixme
+    // FIXME : put at the end
+    m_ViewportSize.SetWidth(WindowWidth);
+    m_ViewportSize.SetHeight(WindowHeight);
+    m_WindowSize.SetWidth(WindowWidth);
+    m_WindowSize.SetHeight(WindowHeight);
+    // end of fixme
 
-	m_Fullscreen = FullscreenFlag;								// Set The Global Fullscreen Flag
-	m_BestMode = -1;								// assume -1 if the mode is not fullscreen
+    m_Fullscreen = FullscreenFlag;  // Set The Global Fullscreen Flag
+    m_BestMode = -1;                // assume -1 if the mode is not fullscreen
 
     m_X11Display = XOpenDisplay(0);
     if(m_X11Display == 0)
@@ -332,26 +310,26 @@ bool GLWindowImpl::CreateOpenGLWindow(const TCHAR* WindowTitle,
     XF86VidModeGetAllModeLines(m_X11Display, m_X11Screen, &m_NumVideoModes, &m_X11VideoModes);
     m_X11OriginalVideoMode = *m_X11VideoModes[0];
 
-	if(m_Fullscreen)									        // Attempt Fullscreen Mode?
-	{
-		// check if resolution is supported
-		bool mode_supported = false;
-		for(int num_modes = 0 ; num_modes < m_NumVideoModes; num_modes++)
-		{
-			if((m_X11VideoModes[num_modes]->hdisplay == m_ViewportSize.GetWidth()) 
-				&& (m_X11VideoModes[num_modes]->vdisplay == m_ViewportSize.GetHeight()))
-			{
-				mode_supported = true;
-				m_BestMode = num_modes;
-				break;
-			}
-		}
+    if(m_Fullscreen)                // Attempt Fullscreen Mode?
+    {
+        // check if resolution is supported
+        bool mode_supported = false;
+        for(int num_modes = 0 ; num_modes < m_NumVideoModes; num_modes++)
+        {
+            if((m_X11VideoModes[num_modes]->hdisplay == m_ViewportSize.GetWidth()) 
+                && (m_X11VideoModes[num_modes]->vdisplay == m_ViewportSize.GetHeight()))
+            {
+                mode_supported = true;
+                m_BestMode = num_modes;
+                break;
+            }
+        }
 
-		if(mode_supported == false)
-		{
+        if(mode_supported == false)
+        {
             m_Fullscreen = false;
-		}
-	}
+        }
+    }
 
     glXQueryVersion(m_X11Display, &m_GLXVerMajor, &m_GLXVerMinor);
 
@@ -471,12 +449,12 @@ bool GLWindowImpl::CreateOpenGLWindow(const TCHAR* WindowTitle,
         XMapRaised(m_X11Display, m_X11Window);
     } 
     
-	MakeGLContextCurrent();
+    MakeGLContextCurrent();
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     SwapBuffer();
 
-	m_GfxInterfaceCreated = true;
+    m_GfxInterfaceCreated = true;
 
     m_DeviceFactory = new GLDeviceFactory(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
     m_GraphicsContext = new GraphicsContext(*this);
@@ -484,7 +462,7 @@ bool GLWindowImpl::CreateOpenGLWindow(const TCHAR* WindowTitle,
     EnableVSyncSwapControl();
     //DisableVSyncSwapControl();
 
-	return TRUE;
+    return TRUE;
 }
 
 bool GLWindowImpl::CreateFromOpenGLWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext)
@@ -627,8 +605,8 @@ bool GLWindowImpl::HasFrameBufferSupport()
 //---------------------------------------------------------------------------------------------------------
 void GLWindowImpl::GetWindowSize(int &w, int &h)
 {
-	w = m_WindowSize.GetWidth();
-	h = m_WindowSize.GetHeight();
+    w = m_WindowSize.GetWidth();
+    h = m_WindowSize.GetHeight();
 }
 
 void GLWindowImpl::GetDesktopSize(int &w, int &h)
@@ -647,7 +625,6 @@ void GLWindowImpl::GetDesktopSize(int &w, int &h)
         w = 0; h = 0;
     }
 }
-
 
 //---------------------------------------------------------------------------------------------------------
 void GLWindowImpl::SetWindowSize(int width, int height)
@@ -670,13 +647,13 @@ void GLWindowImpl::SetWindowPosition(int x, int y)
 //---------------------------------------------------------------------------------------------------------
 unsigned int GLWindowImpl::GetWindowWidth()
 {
-	return m_WindowSize.GetWidth();
+    return m_WindowSize.GetWidth();
 }
 
 //---------------------------------------------------------------------------------------------------------
 unsigned int GLWindowImpl::GetWindowHeight()
 {
-	return m_WindowSize.GetHeight();
+    return m_WindowSize.GetHeight();
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -841,7 +818,7 @@ void GLWindowImpl::SwapBuffer(bool glswap)
 
     if(glswap)
     {
-	    glXSwapBuffers(m_X11Display, m_X11Window);
+        glXSwapBuffers(m_X11Display, m_X11Window);
     }
 
     m_FrameTime = m_Timer.PassedMilliseconds();
@@ -1101,12 +1078,12 @@ unsigned int GetModifierKeyState(unsigned int modifier_key_state)
 }
 
 //---------------------------------------------------------------------------------------------------------
-Bool CheckEventWindow(Display *display, XEvent *xevent, XPointer arg)
+Bool CheckEventWindow(Display* display, XEvent* xevent, XPointer arg)
 {
     return xevent->xany.window == INL_REINTERPRET_CAST(Window, arg);
 }
 
-void GLWindowImpl::GetSystemEvent(IEvent *evt)
+void GLWindowImpl::GetSystemEvent(IEvent* evt)
 {
     static bool previous_event_motion = false;
     static int motion_x = 0;
@@ -1192,7 +1169,7 @@ void GLWindowImpl::GetSystemEvent(IEvent *evt)
         }*/
 
         if(bProcessEvent)
-            ProcessXEvents(xevent);
+            ProcessXEvent(xevent);
 
         memcpy(evt, m_pEvent, sizeof(IEvent));
 
@@ -1202,6 +1179,72 @@ void GLWindowImpl::GetSystemEvent(IEvent *evt)
         memcpy(evt, m_pEvent, sizeof(IEvent));
     }
 } 
+
+void GLWindowImpl::ProcessForeignX11Event(XEvent* xevent, IEvent* nux_event)
+{
+    static bool previous_event_motion = false;
+    static int motion_x = 0;
+    static int motion_y = 0;
+
+    m_pEvent->Reset();
+    // Erase mouse event and mouse doubleclick states. Keep the mouse states.
+    m_pEvent->e_mouse_state &= 0x0F000000;
+    bool bProcessEvent = true;
+
+    // Process event matching this window
+    if((INL_REINTERPRET_CAST(XAnyEvent*, xevent))->window == m_X11Window)
+    {
+        // Detect auto repeat keys. X11 sends a combination of KeyRelease/KeyPress (at the same time) when a key auto repeats.
+        // Here, we make sure we process only the keyRelease when the key is effectively released.
+        if ((xevent->type == KeyPress) || (xevent->type == KeyRelease))
+        {
+            if (xevent->xkey.keycode < 256)
+            {
+                // Detect if a key is repeated
+                char Keys[32];
+                // The XQueryKeymap function returns a bit vector for the logical state of the keyboard, where each bit set
+                // to 1 indicates that the corresponding key is currently pressed down. The vector is represented as 32 bytes.
+                // Byte N (from 0) contains the bits for keys 8N to 8N + 7 with the least significant bit in the byte representing
+                // key 8N.
+                // Note that the logical state of a device (as seen by client applications) may lag the physical state if device
+                // event processing is frozen.
+
+                XQueryKeymap(m_X11Display, Keys);
+                if (Keys[xevent->xkey.keycode >> 3] & (1 << (xevent->xkey.keycode % 8)))
+                {
+                    // KeyRelease event + KeyDown = discard repeated event
+                    if (xevent->type == KeyRelease)
+                    {
+                        m_X11LastEvent = *xevent;
+                        bProcessEvent = false;
+                    }
+
+                    // KeyPress event + key repeat disabled + matching KeyRelease event = discard repeated event
+                    if ((xevent->type == KeyPress) && (!m_X11RepeatKey) &&
+                        (m_X11LastEvent.xkey.keycode == xevent->xkey.keycode) &&
+                        (m_X11LastEvent.xkey.time == xevent->xkey.time))
+                    {
+                        bProcessEvent = false;;
+                    }
+                }
+            }
+        }
+        
+        if(xevent->type == MotionNotify)
+        {
+            while(XCheckTypedEvent(m_X11Display, MotionNotify, xevent));
+        }
+
+        if(bProcessEvent)
+            ProcessXEvent(*xevent);
+
+        memcpy(nux_event, m_pEvent, sizeof(IEvent));
+    }
+    else
+    {
+        memcpy(nux_event, m_pEvent, sizeof(IEvent));
+    }
+}
 
 IEvent& GLWindowImpl::GetCurrentEvent()
 {
@@ -1213,11 +1256,11 @@ bool GLWindowImpl::HasXPendingEvent() const
     return XPending(m_X11Display) ? true : false;
 }
 
-void GLWindowImpl::ProcessXEvents(XEvent xevent)
+void GLWindowImpl::ProcessXEvent(XEvent xevent)
 {
     KeySym key;
-	switch (xevent.type)
-	{
+    switch (xevent.type)
+    {
         case DestroyNotify:
             {
                 m_pEvent->e_event = INL_DESTROY_WINDOW;
@@ -1225,15 +1268,15 @@ void GLWindowImpl::ProcessXEvents(XEvent xevent)
                 break;
             }
 
-		case Expose:
+        case Expose:
             {
                 m_pEvent->e_event = INL_WINDOW_DIRTY;
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: Expose event."));
                 break;
-		    }
+            }
 
 
-		case ConfigureNotify:
+        case ConfigureNotify:
             {
                 m_pEvent->e_event = INL_SIZE_CONFIGURATION;
                 m_pEvent->width =  xevent.xconfigure.width;
@@ -1375,7 +1418,7 @@ void GLWindowImpl::ProcessXEvents(XEvent xevent)
                 m_pEvent->e_event = INL_NO_EVENT;
                 break;
             }
-	}
+    }
 }
 
 int GLWindowImpl::X11KeySymToINL(int Keysym)

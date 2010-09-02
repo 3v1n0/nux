@@ -1,25 +1,3 @@
-/*
- * Copyright 2010 Inalogic Inc.
- *
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
- * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
- * <http://www.gnu.org/licenses/>
- *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
- *
- */
-
-
 #ifndef OPENGL_GFX_H
 #define OPENGL_GFX_H
 
@@ -32,7 +10,6 @@ NAMESPACE_BEGIN_OGL
 
 struct IEvent;
 class MainFBO;
-class GfxServerImpl;
 class GLDeviceFactory;
 class GraphicsContext;
 class IOpenGLFrameBufferObject;
@@ -54,7 +31,6 @@ enum WindowStyle
 // This will become GLWindow
 class GLWindowImpl : public GraphicSystem
 {
-    friend class GfxServerImpl;
     friend class GraphicsContext;
 
 private:
@@ -196,10 +172,8 @@ public:
     void SetWindowCursor(HCURSOR cursor);
     HCURSOR GetWindowCursor() const;
 
-#ifdef WIN32
-    LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-#endif
+    void ProcessForeignWin32Event(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, IEvent* event);
+    LRESULT ProcessWin32Event(HWND hWnd, t_u32 uMsg, WPARAM wParam, LPARAM lParam);
 
     //! Pause graphics rendering.
     /*!
@@ -256,7 +230,7 @@ private:
 };
 
 LRESULT CALLBACK WndProcManager(HWND    hWnd,           // Handle For This Window
-                                UINT    uMsg,           // Message For This Window
+                                t_u32   uMsg,           // Message For This Window
                                 WPARAM  wParam,         // Additional Message Information
                                 LPARAM  lParam);        // Additional Message Information
 

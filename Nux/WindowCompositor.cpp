@@ -1,25 +1,3 @@
-/*
- * Copyright 2010 Inalogic Inc.
- *
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
- * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
- * <http://www.gnu.org/licenses/>
- *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
- *
- */
-
-
 #include "Nux.h"
 #include "WindowCompositor.h"
 
@@ -440,7 +418,7 @@ void WindowCompositor::MoveWindowToBack(smptr(BaseWindow) window)
     }
 }
 
-void WindowCompositor::Draw(IEvent &event, bool force_draw)
+void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
 {
     if(!GetGraphicsThread()->GetWindow().isWindowMinimized())
     {
@@ -471,7 +449,7 @@ void WindowCompositor::Draw(IEvent &event, bool force_draw)
 //             }
 //             glEnd();
 //             GetGraphicsThread()->GetGraphicsContext().QRP_Color(10, 10, 100, 100, Color::RoyalBlue);
-            if(force_draw || (event.e_event == INL_SIZE_CONFIGURATION))
+            if(force_draw || SizeConfigurationEvent)
             {
                 // We fall here after something dramatic has happen to the window such as a resizing. In this case
                 // everything must be rendered This is very intensize and should happen rarely.
@@ -550,7 +528,7 @@ void WindowCompositor::Draw(IEvent &event, bool force_draw)
         }
         else
         {
-            if(force_draw || (event.e_event == INL_SIZE_CONFIGURATION))
+            if(force_draw || SizeConfigurationEvent)
             {
                 gPainter.PushDrawColorLayer(GetGraphicsThread()->GetGraphicsContext(), Geometry(0, 0, m_Width, m_Height), Color(0xFF4D4D4D), true);
                 RenderMainWindowComposition(true, false);

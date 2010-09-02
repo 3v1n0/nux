@@ -1,25 +1,3 @@
-/*
- * Copyright 2010 Inalogic Inc.
- *
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
- * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
- * <http://www.gnu.org/licenses/>
- *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
- *
- */
-
-
 #ifndef GFXSETUPX11_H
 #define GFXSETUPX11_H
 
@@ -63,7 +41,6 @@ enum WindowStyle
 // This will become GLWindow
 class GLWindowImpl : public GraphicSystem
 {
-    friend class GfxServerImpl;
     friend class GraphicsContext;
 
 private:
@@ -98,35 +75,35 @@ private:
     NString     m_WindowTitle;
 
 
-	// size, position
+    // size, position
     Size m_ViewportSize;
-	Size m_WindowSize;
+    Size m_WindowSize;
 
-	// surface attibute;
-	bool m_Fullscreen;
+    // surface attibute;
+    bool m_Fullscreen;
     unsigned int m_ScreenBitDepth;
 
-	// verifiy that the interface is properly created
-	bool m_GfxInterfaceCreated;
+    // verifiy that the interface is properly created
+    bool m_GfxInterfaceCreated;
 
-	// Device information
-	void GetDisplayInfo();
-	int m_BestMode;
+    // Device information
+    void GetDisplayInfo();
+    int m_BestMode;
 
     bool m_is_window_minimized;
-	
+
     static int X11KeySymToINL(int Keysym);
 
 public:
     bool HasXPendingEvent() const;
     Display* GetX11Display() {return m_X11Display;}
-	// Device
-	int m_num_device_modes;
+    // Device
+    int m_num_device_modes;
 
-	// Event object
-	IEvent* m_pEvent;
-	
-	bool IsGfxInterfaceCreated();
+    // Event object
+    IEvent* m_pEvent;
+
+    bool IsGfxInterfaceCreated();
 
     //! Create a window with and OpenGL context.
     /*!
@@ -137,7 +114,7 @@ public:
         @param ParentWindow     The parent window.
         @param FullscreenFlag   Full screen flag.
     */
-	bool CreateOpenGLWindow(
+    bool CreateOpenGLWindow(
         const TCHAR* WindowTitle,
         unsigned int WindowWidth,
         unsigned int WindowHeight,
@@ -152,7 +129,7 @@ public:
     */
     bool CreateFromOpenGLWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext);
 
-	void DestroyOpenGLWindow();
+    void DestroyOpenGLWindow();
     
     void SetWindowTitle(const TCHAR* Title);
     void SetWindowSize(int width, int height);
@@ -163,11 +140,11 @@ public:
     Point GetWindowCoord();
     Rect GetWindowGeometry();
     Rect GetNCWindowGeometry();
-	void MakeGLContextCurrent();
-	void SwapBuffer(bool glswap = true);
+    void MakeGLContextCurrent();
+    void SwapBuffer(bool glswap = true);
 
-	// Event methods
-	void GetSystemEvent(IEvent *evt);
+    // Event methods
+    void GetSystemEvent(IEvent *evt);
     IEvent& GetCurrentEvent();
  
     bool isWindowMinimized() const {return m_is_window_minimized;}
@@ -231,7 +208,8 @@ public:
     void PauseThreadGraphicsRendering();
     bool IsPauseThreadGraphicsRendering() const;
 
-    void ProcessXEvents(XEvent xevent);
+    void ProcessForeignX11Event(XEvent* xevent, IEvent* nux_event);
+    void ProcessXEvent(XEvent xevent);
 
 private:
     bool m_PauseGraphicsRendering;
@@ -261,13 +239,10 @@ private:
     std::vector<NString> m_UITextureSearchPath;
     FilePath m_ResourcePathLocation;
 
-
-
     GLWindowImpl();
     GLWindowImpl(const GLWindowImpl&);
     // Does not make sense for a singleton. This is a self assignment.
     GLWindowImpl& operator=(const GLWindowImpl&);
-
 
     GLEWContext m_GLEWContext;
     GLXEWContext m_GLXEWContext;

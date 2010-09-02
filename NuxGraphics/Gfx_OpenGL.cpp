@@ -1,25 +1,3 @@
-/*
- * Copyright 2010 Inalogic Inc.
- *
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
- * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
- * <http://www.gnu.org/licenses/>
- *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
- *
- */
-
-
 #include "GLResource.h"
 #include "GLDeviceFactory.h"
 #include "GLDeviceObjects.h"
@@ -1225,6 +1203,36 @@ void GLWindowImpl::GetSystemEvent(IEvent *evt)
     }
 } 
 
+void GLWindowImpl::ProcessForeignWin32Event(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, IEvent* event)
+{
+    m_pEvent->Reset();
+    // Erase mouse event and mouse doubleclick states. Keep the mouse states.
+    m_pEvent->e_mouse_state &= 0x0F000000;
+
+    // Always set the second parameter of PeekMessage to NULL. Indeed, many services creates
+    // windows on the program behalf. If pass the main window as filter, we will miss all the
+    // messages from the other windows.
+    // Same with GetMessage.
+    ProcessWin32Event(hWnd, msg.message, wParam, lParam);
+    memcpy(event, m_pEvent, sizeof(IEvent));
+
+    if(msg.message != WM_QUIT)
+    {
+        // Re-post the message that we retrieved so other modal loops will catch it.
+        // See [Modality, part 3: The WM_QUIT message] http://blogs.msdn.com/oldnewthing/archive/2005/02/22/378018.aspx
+        PostQuitMessage(msg.wParam);
+
+        m_pEvent->e_event = INL_TERMINATE_APP;
+        memcpy(event, m_pEvent, sizeof(IEvent));
+    }
+
+    if(msg.message == -1)  // error
+    {
+        m_pEvent->e_event = INL_NO_EVENT;
+        memcpy(event, m_pEvent, sizeof(IEvent));
+    }
+}
+
 IEvent& GLWindowImpl::GetCurrentEvent()
 {
     return *m_pEvent;
@@ -1267,10 +1275,10 @@ LRESULT CALLBACK WndProcManager(HWND	hWnd,			// Handle For This Window
         }
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
-    return GLWindow->WndProc(hWnd, uMsg, wParam, lParam);
+    return GLWindow->ProcessWin32Event(hWnd, uMsg, wParam, lParam);
 }
 
-LRESULT GLWindowImpl::WndProc(HWND	hWnd,           // Handle For This Window
+LRESULT GLWindowImpl::ProcessWin32Event(HWND	hWnd,           // Handle For This Window
                               UINT	uMsg,           // Message For This Window
                               WPARAM	wParam,		// Additional Message Information
                               LPARAM	lParam)		// Additional Message Information
@@ -1637,7 +1645,7 @@ LRESULT GLWindowImpl::WndProc(HWND	hWnd,           // Handle For This Window
             }
 	}
 
-	return DefWindowProc(hWnd,uMsg,wParam,lParam);
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 int GLWindowImpl::Win32KeySymToINL(int Keysym)
