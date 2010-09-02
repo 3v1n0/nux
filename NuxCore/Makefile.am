@@ -24,82 +24,6 @@ libnux_core_@NUX_API_VERSION@_la_LIBADD = \
 libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
-source_h = \
-  $(srcdir)/NSystemTypes.h \
-  $(srcdir)/Point.h \
-  $(srcdir)/TinyXML/tinystr.h \
-  $(srcdir)/TinyXML/tinyxml.h \
-  $(srcdir)/NCPU.h \
-  $(srcdir)/Memory/NMemoryHook.h \
-  $(srcdir)/Memory/NDefaultMemoryAllocator.h \
-  $(srcdir)/Memory/NMemoryDebugHook.h \
-  $(srcdir)/Memory/NMemoryAllocatorInterface.h \
-  $(srcdir)/Memory/NMemoryAllocator.h \
-  $(srcdir)/FileManager/NFileManagerGNU.h \
-  $(srcdir)/FileManager/NFileManagerGeneric.h \
-  $(srcdir)/FileManager/NSerializer.h \
-  $(srcdir)/BitmapFormats.h \
-  $(srcdir)/FilePath.h \
-  $(srcdir)/NSystem.h \
-  $(srcdir)/NParsing.h \
-  $(srcdir)/NStringConversion.h \
-  $(srcdir)/NGlobalInitializer.h \
-  $(srcdir)/NPrintf.h \
-  $(srcdir)/Rect.h \
-  $(srcdir)/NPlatform.h \
-  $(srcdir)/SmartPtr/NRefCount.h \
-  $(srcdir)/SmartPtr/NSmartPtr.h \
-  $(srcdir)/DataStruct/NList.h \
-  $(srcdir)/Inalogic.h \
-  $(srcdir)/Color.h \
-  $(srcdir)/NArray.h \
-  $(srcdir)/NStreamBuffer.h \
-  $(srcdir)/Character/NUTF.h \
-  $(srcdir)/Character/NUni.h \
-  $(srcdir)/Character/NUnicode.h \
-  $(srcdir)/Character/NTChar.h \
-  $(srcdir)/NMemory.h \
-  $(srcdir)/Error.h \
-  $(srcdir)/NNamespace.h \
-  $(srcdir)/NSystemGNU.h \
-  $(srcdir)/NKernel.h \
-  $(srcdir)/NFileName.h \
-  $(srcdir)/NOutputDevice.h \
-  $(srcdir)/NProcess.h \
-  $(srcdir)/NObjectType.h \
-  $(srcdir)/ColorFunctions.h \
-  $(srcdir)/Size.h \
-  $(srcdir)/Exception.h \
-  $(srcdir)/NSystemPS3.h \
-  $(srcdir)/Math/Constants.h \
-  $(srcdir)/Math/Bezier.h \
-  $(srcdir)/Math/Point3D.h \
-  $(srcdir)/Math/Vector4.h \
-  $(srcdir)/Math/Matrix2.h \
-  $(srcdir)/Math/Spline.h \
-  $(srcdir)/Math/Vector3.h \
-  $(srcdir)/Math/MathFunctions.h \
-  $(srcdir)/Math/Quaternion.h \
-  $(srcdir)/Math/Trigonometry.h \
-  $(srcdir)/Math/Line3D.h \
-  $(srcdir)/Math/MathInc.h \
-  $(srcdir)/Math/Complex.h \
-  $(srcdir)/Math/Matrix3.h \
-  $(srcdir)/Math/Vector2.h \
-  $(srcdir)/Math/Line2D.h \
-  $(srcdir)/Math/Point2D.h \
-  $(srcdir)/Math/Tweening.h \
-  $(srcdir)/Math/Matrix4.h \
-  $(srcdir)/Math/MathUtility.h \
-  $(srcdir)/NTime.h \
-  $(srcdir)/NCRC32.h \
-  $(srcdir)/NMacros.h \
-  $(srcdir)/NThreadGNU.h \
-  $(srcdir)/NString.h \
-  $(srcdir)/NTemplate.h \
-  $(srcdir)/NUniqueIndex.h \
-  $(srcdir)/NFile.h
-
 source_cpp = \
   $(srcdir)/NString.cpp \
   $(srcdir)/NTime.cpp \
@@ -166,15 +90,114 @@ source_cpp = \
   $(srcdir)/BitmapFormats.cpp \
   $(srcdir)/Size.cpp
 
+source_memory_h = \
+  $(srcdir)/Memory/NMemoryHook.h \
+  $(srcdir)/Memory/NDefaultMemoryAllocator.h \
+  $(srcdir)/Memory/NMemoryDebugHook.h \
+  $(srcdir)/Memory/NMemoryAllocatorInterface.h \
+  $(srcdir)/Memory/NMemoryAllocator.h
+
+source_file_manager_h = \
+  $(srcdir)/FileManager/NFileManagerGNU.h \
+  $(srcdir)/FileManager/NFileManagerGeneric.h \
+  $(srcdir)/FileManager/NSerializer.h
+
+source_character_h = \
+  $(srcdir)/Character/NUTF.h \
+  $(srcdir)/Character/NUni.h \
+  $(srcdir)/Character/NUnicode.h \
+  $(srcdir)/Character/NTChar.h
+
+source_math_h = \
+  $(srcdir)/Math/Constants.h \
+  $(srcdir)/Math/Bezier.h \
+  $(srcdir)/Math/Point3D.h \
+  $(srcdir)/Math/Vector4.h \
+  $(srcdir)/Math/Matrix2.h \
+  $(srcdir)/Math/Spline.h \
+  $(srcdir)/Math/Vector3.h \
+  $(srcdir)/Math/MathFunctions.h \
+  $(srcdir)/Math/Quaternion.h \
+  $(srcdir)/Math/Trigonometry.h \
+  $(srcdir)/Math/Line3D.h \
+  $(srcdir)/Math/MathInc.h \
+  $(srcdir)/Math/Complex.h \
+  $(srcdir)/Math/Matrix3.h \
+  $(srcdir)/Math/Vector2.h \
+  $(srcdir)/Math/Line2D.h \
+  $(srcdir)/Math/Point2D.h \
+  $(srcdir)/Math/Tweening.h \
+  $(srcdir)/Math/Matrix4.h \
+  $(srcdir)/Math/MathUtility.h
+
+source_h = \
+  $(srcdir)/NSystemTypes.h \
+  $(srcdir)/Point.h \
+  $(srcdir)/TinyXML/tinystr.h \
+  $(srcdir)/TinyXML/tinyxml.h \
+  $(srcdir)/NCPU.h \
+  $(srcdir)/BitmapFormats.h \
+  $(srcdir)/FilePath.h \
+  $(srcdir)/NSystem.h \
+  $(srcdir)/NParsing.h \
+  $(srcdir)/NStringConversion.h \
+  $(srcdir)/NGlobalInitializer.h \
+  $(srcdir)/NPrintf.h \
+  $(srcdir)/Rect.h \
+  $(srcdir)/NPlatform.h \
+  $(srcdir)/SmartPtr/NRefCount.h \
+  $(srcdir)/SmartPtr/NSmartPtr.h \
+  $(srcdir)/DataStruct/NList.h \
+  $(srcdir)/Inalogic.h \
+  $(srcdir)/Color.h \
+  $(srcdir)/NArray.h \
+  $(srcdir)/NStreamBuffer.h \
+  $(srcdir)/NMemory.h \
+  $(srcdir)/Error.h \
+  $(srcdir)/NNamespace.h \
+  $(srcdir)/NSystemGNU.h \
+  $(srcdir)/NKernel.h \
+  $(srcdir)/NFileName.h \
+  $(srcdir)/NOutputDevice.h \
+  $(srcdir)/NProcess.h \
+  $(srcdir)/NObjectType.h \
+  $(srcdir)/ColorFunctions.h \
+  $(srcdir)/Size.h \
+  $(srcdir)/Exception.h \
+  $(srcdir)/NSystemPS3.h \
+  $(srcdir)/NTime.h \
+  $(srcdir)/NCRC32.h \
+  $(srcdir)/NMacros.h \
+  $(srcdir)/NThreadGNU.h \
+  $(srcdir)/NString.h \
+  $(srcdir)/NTemplate.h \
+  $(srcdir)/NUniqueIndex.h \
+  $(srcdir)/NFile.h
+
 libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
-  $(source_h)
+  $(source_h) \
+  $(source_character_h) \
+  $(source_file_manager_h) \
+  $(source_math_h) \
+  $(source_memory_h)
 
 nux_coredir = $(includedir)/Nux-@NUX_API_VERSION@/NuxCore
-nux_core_HEADERS = \
-  $(source_h)
+nux_core_HEADERS = $(source_h)
 
+nux_chardir = $(nux_coredir)/Character
+nux_char_HEADERS = $(source_character_h)
 
+nux_file_managerdir = $(nux_coredir)/FileManager
+nux_file_manager_HEADERS = $(source_file_manager_h)
+
+nux_mathdir = $(nux_coredir)/Math
+nux_math_HEADERS = $(source_math_h)
+
+nux_memorydir = $(nux_coredir)/Memory
+nux_memory_HEADERS = $(source_memory_h)
+
+# pkg-config file
 nux-core-@NUX_API_VERSION@.pc: nux-core.pc
 	$(AM_V_GEN) cp -f nux-core.pc nux-core-@NUX_API_VERSION@.pc
 
