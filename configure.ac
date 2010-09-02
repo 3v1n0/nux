@@ -6,7 +6,7 @@
 # 
 # Making a point release:
 #   - Increase micro_version to the next even number
-#   - Increasde interface_age to the next even number UNLESS there was an API
+#   - Increase interface_age to the next even number UNLESS there was an API
 #     addition/deprecation, at which point you should set it to 0
 #
 # After the release:
