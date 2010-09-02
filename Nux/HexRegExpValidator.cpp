@@ -29,7 +29,7 @@ HexRegExpValidator::HexRegExpValidator(int Minimum, int Maximum)
 :   m_Minimum(Minimum)
 ,   m_Maximum(Maximum)
 {
-    m_RegExp = TEXT("(0[xX])*[0-9a-fA-F]+");
+   // m_RegExp = TEXT("(0[xX])*[0-9a-fA-F]+");
     if(m_Minimum > m_Maximum)
     {
         int temp = m_Minimum;
@@ -42,7 +42,7 @@ HexRegExpValidator::HexRegExpValidator(const HexRegExpValidator& copy)
 {
     m_Minimum   = copy.m_Minimum;
     m_Minimum   = copy.m_Maximum;
-    m_RegExp    = copy.m_RegExp; // boost::regex has an assignment constructor defined.
+    //m_RegExp    = copy.m_RegExp; // boost::regex has an assignment constructor defined.
 }
 
 HexRegExpValidator& HexRegExpValidator::operator=(const HexRegExpValidator& rhs)
@@ -51,7 +51,7 @@ HexRegExpValidator& HexRegExpValidator::operator=(const HexRegExpValidator& rhs)
     {
         m_Minimum   = rhs.m_Minimum;
         m_Minimum   = rhs.m_Maximum;
-        m_RegExp    = rhs.m_RegExp; // boost::regex has an assignment constructor defined.
+        //m_RegExp    = rhs.m_RegExp; // boost::regex has an assignment constructor defined.
     }
     return *this;
 }
@@ -109,11 +109,11 @@ int HexRegExpValidator::Validate(int i) const
 
 Validator::State HexRegExpValidator::Validate(const TCHAR* str) const
 {
-    if (!boost::regex_match(str, m_RegExp))
+/*    if (!boost::regex_match(str, m_RegExp))
     {
         return Validator::Invalid;
     }
-
+*/
     return Validator::Acceptable;
 }
 

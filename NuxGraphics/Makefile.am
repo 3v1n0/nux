@@ -37,7 +37,6 @@ source_h = \
   $(srcdir)/GLDeviceFrameBufferObject.h \
   $(srcdir)/GLDeviceObjects.h \
   $(srcdir)/GLError.h \
-  $(srcdir)/GLPBuffer.h \
   $(srcdir)/GLRenderStates.h \
   $(srcdir)/GLResource.h \
   $(srcdir)/GLResourceManager.h \
@@ -125,7 +124,6 @@ source_cpp = \
   $(srcdir)/IOpenGLVertexBuffer.cpp \
   $(srcdir)/GfxSetupX11.cpp \
   $(srcdir)/IOpenGLQuery.cpp \
-  $(srcdir)/GLPBuffer.cpp \
   $(srcdir)/GLShader.cpp \
   $(srcdir)/IOpenGLGLSLShader.cpp \
   $(srcdir)/GLTimer.cpp \

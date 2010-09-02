@@ -29,7 +29,7 @@ IntegerValidator::IntegerValidator(int Minimum, int Maximum)
 :   m_Minimum(Minimum)
 ,   m_Maximum(Maximum)
 {
-    m_RegExp = TEXT("[-+]?[0-9]+");
+    //m_RegExp = TEXT("[-+]?[0-9]+");
     if(m_Minimum > m_Maximum)
     {
         int temp = m_Minimum;
@@ -42,7 +42,7 @@ IntegerValidator::IntegerValidator(const IntegerValidator& copy)
 {
     m_Minimum   = copy.m_Minimum;
     m_Minimum   = copy.m_Maximum;
-    m_RegExp    = copy.m_RegExp; // boost::regex has an assignment constructor defined.
+    //m_RegExp    = copy.m_RegExp; // boost::regex has an assignment constructor defined.
 }
 
 IntegerValidator& IntegerValidator::operator=(const IntegerValidator& rhs)
@@ -51,7 +51,7 @@ IntegerValidator& IntegerValidator::operator=(const IntegerValidator& rhs)
     {
         m_Minimum   = rhs.m_Minimum;
         m_Minimum   = rhs.m_Maximum;
-        m_RegExp    = rhs.m_RegExp; // boost::regex has an assignment constructor defined.
+        //m_RegExp    = rhs.m_RegExp; // boost::regex has an assignment constructor defined.
     }
     return *this;
 }
@@ -109,11 +109,12 @@ int IntegerValidator::Validate(int i) const
 
 Validator::State IntegerValidator::Validate(const TCHAR* str) const
 {
+  /*
     if (!boost::regex_match(str, m_RegExp))
     {
         return Validator::Invalid;
     }
-
+*/
     return Validator::Acceptable;
 }
 

@@ -24,7 +24,7 @@
 #define INTEGERVALIDATOR_H
 
 #include "Validator.h"
-#include <boost/regex.hpp>
+//#include <boost/regex.hpp>
 
 NAMESPACE_BEGIN_GUI
 
@@ -53,7 +53,7 @@ public:
 private:
     int m_Minimum;
     int m_Maximum;
-    boost::regex m_RegExp;
+//    boost::regex m_RegExp;
 };
 NAMESPACE_END_GUI
 

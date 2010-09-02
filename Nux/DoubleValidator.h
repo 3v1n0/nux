@@ -24,7 +24,7 @@
 #define DOUBLEVALIDATOR_H
 
 #include "Validator.h"
-#include <boost/regex.hpp>
+
 
 NAMESPACE_BEGIN_GUI
 
@@ -55,7 +55,7 @@ public:
 private:
     double m_Minimum;
     double m_Maximum;
-    boost::regex m_RegExp;
+    //boost::regex m_RegExp;
     int m_Decimals;
 };
 

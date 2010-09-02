@@ -87,8 +87,6 @@ dnl ===========================================================================
 # Checks for programs
 AC_PROG_CXX
 AM_PROG_CC_C_O
-AC_PROG_LIBTOOL
-AC_DISABLE_STATIC
 
 # require libtool >= 2.2
 LT_PREREQ([2.2.6])
@@ -109,7 +107,7 @@ PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
 
-PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14)
+PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0)
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 
@@ -146,6 +144,7 @@ AC_SUBST(NUX_GRAPHICS_LIBS)
 
 PKG_CHECK_MODULES(NUX,
                   glib-2.0 >= 2.25.14
+                  gthread-2.0
                   gl
                   glew
                   glewmx
@@ -193,6 +192,7 @@ AC_CONFIG_FILES([
   NuxGraphics/Makefile
   NuxGraphics/nux-graphics.pc
   Nux/Makefile
+  Nux/nux.pc
   tests/Makefile
 ])
 

@@ -23,8 +23,7 @@ libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxMesh/libnux-mesh-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(NUX_LIBS) \
-  -lboost_regex
+  $(NUX_LIBS)
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
@@ -296,12 +295,12 @@ nuxdir = $(includedir)/Nux-@NUX_API_VERSION@/Nux
 nux_HEADERS = \
   $(source_h)
 
-#nux-@NUX_API_VERSION@.pc: nux.pc
-#	$(AM_V_GEN) cp -f nux.pc nux-@NUX_API_VERSION@.pc
+nux-@NUX_API_VERSION@.pc: nux.pc
+	$(AM_V_GEN) cp -f nux.pc nux-@NUX_API_VERSION@.pc
 
-#pkgconfigdir = $(libdir)/pkgconfig
-#pkgconfig_DATA = nux-@NUX_API_VERSION@.pc
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = nux-@NUX_API_VERSION@.pc
 
-#CLEANFILES += nux-@NUX_API_VERSION@.pc
-#DISTCLEANFILES += nux.pc
-#EXTRA_DIST += nux.pc.in
+CLEANFILES += nux-@NUX_API_VERSION@.pc
+DISTCLEANFILES += nux.pc
+EXTRA_DIST += nux.pc.in
