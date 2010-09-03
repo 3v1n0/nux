@@ -155,21 +155,21 @@ GLuint GLFramebufferObject::_GenerateFboId()
 
 void GLFramebufferObject::_GuardedBind() 
 {
-//     // Only binds if m_fboId is different than the currently bound FBO
-//     CHECKGL( glGetIntegerv( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ) );
-//     if (m_fboId != m_savedFboId)
-//     {
-//         CHECKGL( glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId) );
-//     }
+     // Only binds if m_fboId is different than the currently bound FBO
+     CHECKGL( glGetIntegerv( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ) );
+     if (m_fboId != m_savedFboId)
+     {
+         CHECKGL( glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId) );
+     }
 }
 
 void GLFramebufferObject::_GuardedUnbind() 
 {
-//     // Returns FBO binding to the previously enabled FBO
-//     if (m_savedFboId != m_fboId) 
-//     {
-//         CHECKGL( glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, (GLuint)m_savedFboId) );
-//     }
+     // Returns FBO binding to the previously enabled FBO
+     if (m_savedFboId != m_fboId) 
+     {
+         CHECKGL( glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, (GLuint)m_savedFboId) );
+     }
 }
 
 void
@@ -337,12 +337,12 @@ GLRenderbuffer::~GLRenderbuffer()
 
 void GLRenderbuffer::Bind() 
 {
-    //CHECKGL( glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_bufId) );
+    CHECKGL( glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_bufId) );
 }
 
 void GLRenderbuffer::Unbind() 
 {
-    //CHECKGL( glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0) );
+    CHECKGL( glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0) );
 }
 
 void GLRenderbuffer::Set(GLenum internalFormat, int width, int height)

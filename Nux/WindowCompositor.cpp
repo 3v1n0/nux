@@ -478,7 +478,8 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
                 // We fall here after something dramatic has happen to the window such as a resizing. In this case
                 // everything must be rendered This is very intensize and should happen rarely.
                 RenderMainWindowComposition(true, true);
-//                 if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
+                //if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
+                if (true)
                 {   
                     CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
                     UpdatePostProcessRT();
@@ -494,10 +495,10 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
 
                     PresentBufferToScreen(m_CompositionRT, 0, 0, false, false);
                 }
-//                 else
-//                 {
-//                     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
-//                 }
+                else
+                {
+                     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
+                }
             }
             else if(m_PopupRemoved || m_MenuRemoved)
             {
@@ -505,6 +506,7 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
                 // So exchange DrawList with a real Draw.
                 RenderMainWindowComposition(false, true);
 //                 if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
+                if (true)
                 {   
                     CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
                     UpdatePostProcessRT();
@@ -520,15 +522,16 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
 
                     PresentBufferToScreen(m_CompositionRT, 0, 0, false, false);
                 }
-//                 else
-//                 {
-//                     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
-//                 }
+                 else
+                 {
+                     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
+                 }
             }
             else
             {
                 RenderMainWindowComposition(false, true);
 //                 if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
+                if (true)
                 {
                     CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
                     UpdatePostProcessRT();
@@ -544,10 +547,10 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
 
                     PresentBufferToScreen(m_CompositionRT, 0, 0, false, false);
                 }
-//                 else
-//                 {
-//                     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
-//                 }
+                 else
+                 {
+                     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
+                 }
             }
         }
         else
@@ -1040,6 +1043,7 @@ void WindowCompositor::PresentBufferToScreen(TRefGL<IOpenGLTexture2D> HWTexture,
     GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion(0, 0, window_width, window_height);
     GetGraphicsThread()->GetGraphicsContext().SetViewport(0, 0, window_width, window_height);
     GetGraphicsThread()->GetGraphicsContext().Push2DWindow(window_width, window_height);
+    
 
     // Render the MAINFBO
     {
@@ -1082,8 +1086,8 @@ void WindowCompositor::PresentBufferToScreen(TRefGL<IOpenGLTexture2D> HWTexture,
                 HWTexture, texxform0, Color::White, 
                 m_BlurTexture, texxform1, Color::White);
         }
-        GetGraphicsThread()->GetGraphicsContext().DisableAllTextureMode(GL_TEXTURE1);
-        GetGraphicsThread()->GetGraphicsContext().SetEnvModeSelectColor(GL_TEXTURE0);
+        //GetGraphicsThread()->GetGraphicsContext().DisableAllTextureMode(GL_TEXTURE1);
+        //GetGraphicsThread()->GetGraphicsContext().SetEnvModeSelectColor(GL_TEXTURE0);
     }
 }
 

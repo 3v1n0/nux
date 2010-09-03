@@ -1079,7 +1079,7 @@ bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, GLXContext 
     m_GLWindow->SetViewPort(0, 0, w, h);
     m_window_compositor->FormatRenderTargets(w, h);
     m_window_compositor->FloatingAreaConfigureNotify(w, h);
-
+    
     return true;
 }
 #endif
@@ -1314,7 +1314,6 @@ void WindowThread::RenderInterfaceFromForeignCmd()
 
     if(GetWindow().IsPauseThreadGraphicsRendering() == false)
     {
-
         m_window_compositor->Draw(m_size_configuration_event, m_force_redraw);
 
         // When rendering in embedded mode, nux does not attempt to mesure the frame rate...
@@ -1328,14 +1327,6 @@ void WindowThread::RenderInterfaceFromForeignCmd()
         m_force_redraw = false;
     }
 
-    // Restore default fbo
-    CHECKGL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ) );
-    CHECKGL( glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0) );
-    
-    // Restore Viewport and scissoring
-    //CHECKGL( glViewport(...) );
-    //CHECKGL( glScissor(...) );
-    
     CHECKGL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
     // Deactivate ARB shaders
@@ -1345,7 +1336,12 @@ void WindowThread::RenderInterfaceFromForeignCmd()
     CHECKGL( glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, 0) );
     // Deactivate GLSL shaders
     CHECKGL( glUseProgramObjectARB(0) );
-
+    
+    /*GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
+    GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
+    GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);
+    GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE3, GL_TEXTURE_RECTANGLE);*/
+    
 }
 
 NAMESPACE_END_GUI
