@@ -489,6 +489,11 @@ bool GLWindowImpl::CreateOpenGLWindow(const TCHAR* WindowTitle,
 
 bool GLWindowImpl::CreateFromOpenGLWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext)
 {
+    // Do not make the opengl context current
+    // Do not swap the framebuffer
+    // Do not clear the depth or color buffer
+    // Do not enable/disbale VSync
+
     m_X11Display = X11Display;
     m_X11Window = X11Window;
     m_GLCtx = OpenGLContext;
@@ -503,17 +508,10 @@ bool GLWindowImpl::CreateFromOpenGLWindow(Display *X11Display, Window X11Window,
     m_WindowSize = Size(width_return, height_return);
     m_ViewportSize = Size(width_return, height_return);
 
-    MakeGLContextCurrent();
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    SwapBuffer();
-
     m_GfxInterfaceCreated = true;
 
     m_DeviceFactory = new GLDeviceFactory(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
     m_GraphicsContext = new GraphicsContext(*this);
-
-    EnableVSyncSwapControl();
 }
 
 // bool GLWindowImpl::CreateVisual(unsigned int WindowWidth, unsigned int WindowHeight, XVisualInfo& ChosenVisual, XVisualInfo& Template, unsigned long Mask)

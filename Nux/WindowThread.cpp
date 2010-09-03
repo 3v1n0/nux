@@ -250,7 +250,7 @@ WindowThread::WindowThread(const TCHAR* WindowTitle, unsigned int width, unsigne
 {
     // Thread specific objects
     m_GLWindow      = 0;
-    m_StackManager  = 0;
+    m_window_compositor  = 0;
     m_Painter       = 0;
     m_TimerHandler  = 0;
     m_Theme         = 0;
@@ -494,7 +494,7 @@ void WindowThread::RunUserInterface()
     m_GLWindow->ShowWindow();
     // Called the first time so we can initialize the size of the render targets
     // At this stage, the size of the window is known.
-    m_StackManager->FormatRenderTargets(m_GLWindow->GetWindowWidth(), m_GLWindow->GetWindowHeight());
+    m_window_compositor->FormatRenderTargets(m_GLWindow->GetWindowWidth(), m_GLWindow->GetWindowHeight());
 
     while(GetThreadState() != THREADSTOP)
     {
@@ -593,17 +593,17 @@ t_u32 WindowThread::ExecutionLoop()
                 (event.e_event == INL_WINDOW_ENTER_FOCUS) ||
                 (event.e_event == INL_WINDOW_EXIT_FOCUS))
             {
-                m_StackManager->SetMouseFocusArea(smptr(BaseArea)(0));
-                m_StackManager->SetMouseOverArea(smptr(BaseArea)(0));
-                m_StackManager->SetPreviousMouseOverArea(smptr(BaseArea)(0));
+                m_window_compositor->SetMouseFocusArea(smptr(BaseArea)(0));
+                m_window_compositor->SetMouseOverArea(smptr(BaseArea)(0));
+                m_window_compositor->SetPreviousMouseOverArea(smptr(BaseArea)(0));
             }
 
             //DISPATCH EVENT HERE
-            m_StackManager->ClearDrawList();
-            m_StackManager->PushEventRectangle(Rect(0, 0, w, h));
+            m_window_compositor->ClearDrawList();
+            m_window_compositor->PushEventRectangle(Rect(0, 0, w, h));
             //event.Application = Application;
-            m_StackManager->ProcessEvent(event);
-            m_StackManager->EmptyEventRegion();
+            m_window_compositor->ProcessEvent(event);
+            m_window_compositor->EmptyEventRegion();
         }
 
         if(event.e_event == INL_SIZE_CONFIGURATION)
@@ -612,9 +612,9 @@ t_u32 WindowThread::ExecutionLoop()
             {
                 GetWindow().SetViewPort(0, 0, event.width, event.height);
                 ReconfigureLayout();
-                m_StackManager->FormatRenderTargets(event.width, event.height);
+                m_window_compositor->FormatRenderTargets(event.width, event.height);
             }
-            m_StackManager->FloatingAreaConfigureNotify(event.width, event.height);
+            m_window_compositor->FloatingAreaConfigureNotify(event.width, event.height);
             m_size_configuration_event = true;
         }
 
@@ -638,7 +638,7 @@ t_u32 WindowThread::ExecutionLoop()
             bool SwapGLBuffer = false;
             if(Application->m_bFirstDrawPass)
             {
-                m_StackManager->Draw(m_size_configuration_event, true);
+                m_window_compositor->Draw(m_size_configuration_event, true);
                 Application->m_bFirstDrawPass = false;
             }
             else
@@ -654,17 +654,17 @@ t_u32 WindowThread::ExecutionLoop()
                     (event.e_event == INL_WINDOW_EXIT_FOCUS) ||
                     (event.e_event == INL_WINDOW_DIRTY);
 
-                if(b && m_StackManager->IsTooltipActive())
+                if(b && m_window_compositor->IsTooltipActive())
                 { 
                     // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-                    m_StackManager->CancelTooltip();
+                    m_window_compositor->CancelTooltip();
                     b |= true;
                 }
 
-                if(!m_StackManager->ValidateMouseInsideTooltipArea(event.e_x, event.e_y) && m_StackManager->IsTooltipActive())
+                if(!m_window_compositor->ValidateMouseInsideTooltipArea(event.e_x, event.e_y) && m_window_compositor->IsTooltipActive())
                 {
                     // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-                    m_StackManager->CancelTooltip();
+                    m_window_compositor->CancelTooltip();
                     b |= true;
                 }
 
@@ -673,25 +673,25 @@ t_u32 WindowThread::ExecutionLoop()
                 if( n & (b || IsRedrawNeeded()) )
                 {
                     //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-                    m_StackManager->Draw(m_size_configuration_event, false);
+                    m_window_compositor->Draw(m_size_configuration_event, false);
                     SwapGLBuffer = true;
                 }
                 else if(b || IsRedrawNeeded())
                 {
                     //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-                    m_StackManager->Draw(m_size_configuration_event, false);
+                    m_window_compositor->Draw(m_size_configuration_event, false);
                     SwapGLBuffer = true;
                 }
                 else if(n)
                 {
                     //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-                    m_StackManager->Draw(m_size_configuration_event, false);
+                    m_window_compositor->Draw(m_size_configuration_event, false);
                     SwapGLBuffer = true;
                 }
-                else if(m_StackManager->GetWidgetDrawingOverlay() != 0)
+                else if(m_window_compositor->GetWidgetDrawingOverlay() != 0)
                 {
                     //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-                    m_StackManager->Draw(m_size_configuration_event, false);
+                    m_window_compositor->Draw(m_size_configuration_event, false);
                     SwapGLBuffer = false;
                 }
             }
@@ -961,7 +961,7 @@ bool WindowThread::ThreadCtor()
 
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
-    m_StackManager = new WindowCompositor;
+    m_window_compositor = new WindowCompositor;
     m_Theme = new UXTheme();
 
     SetThreadState(THREADRUNNING);
@@ -1012,11 +1012,19 @@ bool WindowThread::ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenG
 
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
-    m_StackManager = new WindowCompositor;
+    m_window_compositor = new WindowCompositor;
     m_Theme = new UXTheme();
 
     SetThreadState(THREADRUNNING);
     m_ThreadCtorCalled = true;
+
+    // Set initial states
+    int w = m_GLWindow->GetWindowWidth();
+    int h = m_GLWindow->GetWindowHeight();
+
+    m_GLWindow->SetViewPort(0, 0, w, h);
+    m_window_compositor->FormatRenderTargets(w, h);
+    m_window_compositor->FloatingAreaConfigureNotify(w, h);
 
     return true;
 }
@@ -1058,19 +1066,19 @@ bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, GLXContext 
 
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
-    m_StackManager = new WindowCompositor;
+    m_window_compositor = new WindowCompositor;
     m_Theme = new UXTheme();
 
     SetThreadState(THREADRUNNING);
     m_ThreadCtorCalled = true;
     
-    int width, height;
-    
-    width = m_GLWindow->GetWindowWidth ();
-    height = m_GLWindow->GetWindowHeight ();
-    
-    m_StackManager->FormatRenderTargets(width, height);
-    m_StackManager->FloatingAreaConfigureNotify(width, height);
+    // Set initial states
+    int w = m_GLWindow->GetWindowWidth();
+    int h = m_GLWindow->GetWindowHeight();
+
+    m_GLWindow->SetViewPort(0, 0, w, h);
+    m_window_compositor->FormatRenderTargets(w, h);
+    m_window_compositor->FloatingAreaConfigureNotify(w, h);
 
     return true;
 }
@@ -1089,7 +1097,7 @@ bool WindowThread::ThreadDtor()
         m_AppLayout = smptr(Layout)(0);
     }
 
-    INL_SAFE_DELETE(m_StackManager);
+    INL_SAFE_DELETE(m_window_compositor);
     INL_SAFE_DELETE(m_TimerHandler);
     INL_SAFE_DELETE(m_Painter);
     INL_SAFE_DELETE(m_GLWindow);
@@ -1120,8 +1128,8 @@ void WindowThread::SetWindowSize(int width, int height)
 
 void WindowThread::SetWindowBackgroundPaintLayer(AbstractPaintLayer* bkg)
 {
-    if(m_StackManager)
-        m_StackManager->SetBackgroundPaintLayer(bkg);
+    if(m_window_compositor)
+        m_window_compositor->SetBackgroundPaintLayer(bkg);
 }
 
 float WindowThread::GetFrameRate() const
@@ -1192,17 +1200,17 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
             (nux_event.e_event == INL_WINDOW_ENTER_FOCUS) ||
             (nux_event.e_event == INL_WINDOW_EXIT_FOCUS))
         {
-            m_StackManager->SetMouseFocusArea(smptr(BaseArea)(0));
-            m_StackManager->SetMouseOverArea(smptr(BaseArea)(0));
-            m_StackManager->SetPreviousMouseOverArea(smptr(BaseArea)(0));
+            m_window_compositor->SetMouseFocusArea(smptr(BaseArea)(0));
+            m_window_compositor->SetMouseOverArea(smptr(BaseArea)(0));
+            m_window_compositor->SetPreviousMouseOverArea(smptr(BaseArea)(0));
         }
 
         //DISPATCH EVENT HERE
-        m_StackManager->ClearDrawList();
-        m_StackManager->PushEventRectangle(Rect(0, 0, w, h));
+        m_window_compositor->ClearDrawList();
+        m_window_compositor->PushEventRectangle(Rect(0, 0, w, h));
         //nux_event.Application = Application;
-        m_StackManager->ProcessEvent(nux_event);
-        m_StackManager->EmptyEventRegion();
+        m_window_compositor->ProcessEvent(nux_event);
+        m_window_compositor->EmptyEventRegion();
     }
 
     if(nux_event.e_event == INL_SIZE_CONFIGURATION)
@@ -1211,9 +1219,9 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
         {
             GetWindow().SetViewPort(0, 0, nux_event.width, nux_event.height);
             ReconfigureLayout();
-            m_StackManager->FormatRenderTargets(nux_event.width, nux_event.height);
+            m_window_compositor->FormatRenderTargets(nux_event.width, nux_event.height);
         }
-        m_StackManager->FloatingAreaConfigureNotify(nux_event.width, nux_event.height);
+        m_window_compositor->FloatingAreaConfigureNotify(nux_event.width, nux_event.height);
         m_size_configuration_event = true;
     }
 
@@ -1232,7 +1240,7 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
     {
         RequestRedraw = true;
         m_force_redraw = true;
-        //m_StackManager->Draw(m_size_configuration_event, true);
+        //m_window_compositor->Draw(m_size_configuration_event, true);
         this->m_bFirstDrawPass = false;
     }
     else
@@ -1248,17 +1256,17 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
             (nux_event.e_event == INL_WINDOW_EXIT_FOCUS) ||
             (nux_event.e_event == INL_WINDOW_DIRTY);
 
-        if(b && m_StackManager->IsTooltipActive())
+        if(b && m_window_compositor->IsTooltipActive())
         { 
             // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-            m_StackManager->CancelTooltip();
+            m_window_compositor->CancelTooltip();
             b |= true;
         }
 
-        if(!m_StackManager->ValidateMouseInsideTooltipArea(nux_event.e_x, nux_event.e_y) && m_StackManager->IsTooltipActive())
+        if(!m_window_compositor->ValidateMouseInsideTooltipArea(nux_event.e_x, nux_event.e_y) && m_window_compositor->IsTooltipActive())
         {
             // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-            m_StackManager->CancelTooltip();
+            m_window_compositor->CancelTooltip();
             b |= true;
         }
 
@@ -1268,28 +1276,28 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
         {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
             RequestRedraw = true;
-            //m_StackManager->Draw(event, false);
+            //m_window_compositor->Draw(event, false);
             SwapGLBuffer = true;
         }
         else if(b || IsRedrawNeeded())
         {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
             RequestRedraw = true;
-            //m_StackManager->Draw(event, false);
+            //m_window_compositor->Draw(event, false);
             SwapGLBuffer = true;
         }
         else if(n)
         {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
             RequestRedraw = true;
-            //m_StackManager->Draw(event, false);
+            //m_window_compositor->Draw(event, false);
             SwapGLBuffer = true;
         }
-        else if(m_StackManager->GetWidgetDrawingOverlay() != 0)
+        else if(m_window_compositor->GetWidgetDrawingOverlay() != 0)
         {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
             RequestRedraw = true;
-            //m_StackManager->Draw(event, false);
+            //m_window_compositor->Draw(event, false);
             SwapGLBuffer = false;
         }
     }
@@ -1307,7 +1315,7 @@ void WindowThread::RenderInterfaceFromForeignCmd()
     if(GetWindow().IsPauseThreadGraphicsRendering() == false)
     {
 
-        m_StackManager->Draw(m_size_configuration_event, m_force_redraw);
+        m_window_compositor->Draw(m_size_configuration_event, m_force_redraw);
 
         // When rendering in embedded mode, nux does not attempt to mesure the frame rate...
 
@@ -1319,6 +1327,25 @@ void WindowThread::RenderInterfaceFromForeignCmd()
         m_size_configuration_event = false;
         m_force_redraw = false;
     }
+
+    // Restore default fbo
+    CHECKGL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ) );
+    CHECKGL( glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0) );
+    
+    // Restore Viewport and scissoring
+    //CHECKGL( glViewport(...) );
+    //CHECKGL( glScissor(...) );
+    
+    CHECKGL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
+
+    // Deactivate ARB shaders
+    CHECKGL( glDisable(GL_VERTEX_PROGRAM_ARB) );
+    CHECKGL( glBindProgramARB(GL_VERTEX_PROGRAM_ARB, 0) );
+    CHECKGL( glDisable(GL_FRAGMENT_PROGRAM_ARB) );
+    CHECKGL( glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, 0) );
+    // Deactivate GLSL shaders
+    CHECKGL( glUseProgramObjectARB(0) );
+
 }
 
 NAMESPACE_END_GUI

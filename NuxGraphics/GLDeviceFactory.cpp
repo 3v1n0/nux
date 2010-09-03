@@ -683,7 +683,10 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
     #endif
 
     if(GL_EXT_FRAMEBUFFER_OBJECT)
+    {
         _FrameBufferObject = CreateFrameBufferObject();
+        _FrameBufferObject->Deactivate();
+    }
 }
 
 GLDeviceFactory::~GLDeviceFactory()

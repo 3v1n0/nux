@@ -54,6 +54,8 @@ WindowCompositor::WindowCompositor()
     if(GetGraphicsThread()->GetWindow().HasFrameBufferSupport())
     {
         m_FrameBufferObject = GetThreadGLDeviceFactory()->CreateFrameBufferObject();
+        // Do not leave the Fbo binded. Deactivate it.
+        m_FrameBufferObject->Deactivate();
     }
 
     // At this stage, the size of the window may not be known yet.

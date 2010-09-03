@@ -299,6 +299,7 @@ void GraphicsContext::PushClippingRectangle(Rect A)
 {
     if(m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
     {
+        // There is an active framebuffer set. Push the clipping rectangles to that fbo clipping stack. 
         m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->PushClippingRegion(A);
         return;
     }

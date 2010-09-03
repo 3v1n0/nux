@@ -90,7 +90,6 @@ private:
 private:
     NString m_ThreadName;
 
-    friend class GfxServerImpl;
     friend class WindowThread;
 };
 

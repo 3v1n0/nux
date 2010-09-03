@@ -41,7 +41,6 @@ NAMESPACE_BEGIN_OGL
 
 struct IEvent;
 class MainFBO;
-class GfxServerImpl;
 class GLDeviceFactory;
 class GraphicsContext;
 class IOpenGLFrameBufferObject;

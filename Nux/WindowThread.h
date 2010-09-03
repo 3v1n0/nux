@@ -267,7 +267,7 @@ private:
 
 public:
 
-    WindowCompositor& GetStackManager() { return *m_StackManager; }
+    WindowCompositor& GetStackManager() { return *m_window_compositor; }
     // should be private
 
     float GetFrameRate() const;
@@ -304,7 +304,7 @@ private:
 
     GLWindowImpl* m_GLWindow;
     GraphicsContext* m_GraphicsContext;
-    WindowCompositor* m_StackManager;
+    WindowCompositor* m_window_compositor;
     std::list<NThread*> m_ThreadList;
     bool m_WidgetInitialized;
     WindowStyle m_WindowStyle;

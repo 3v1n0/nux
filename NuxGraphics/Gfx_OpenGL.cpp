@@ -653,6 +653,11 @@ bool GLWindowImpl::CreateOpenGLWindow(const TCHAR* WindowTitle,
 
 bool GLWindowImpl::CreateFromOpenGLWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
 {
+    // Do not make the opengl context current
+    // Do not swap the framebuffer
+    // Do not clear the depth or color buffer
+    // Do not enable/disable VSync
+
     m_hWnd = WindowHandle;
     m_hDC = WindowDCHandle;
     m_GLRC = OpenGLRenderingContext;
@@ -662,10 +667,7 @@ bool GLWindowImpl::CreateFromOpenGLWindow(HWND WindowHandle, HDC WindowDCHandle,
     m_WindowSize = Size(rect.right - rect.left, rect.bottom - rect.top);
     m_ViewportSize = Size(rect.right - rect.left, rect.bottom - rect.top);
 
-    MakeGLContextCurrent();
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    SwapBuffer();
+    // The opengl context should be made current by an external entity.
 
     m_GfxInterfaceCreated = true;
     m_DeviceFactory = new GLDeviceFactory(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
