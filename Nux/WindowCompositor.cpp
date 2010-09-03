@@ -1056,7 +1056,9 @@ void WindowCompositor::PresentBufferToScreen(TRefGL<IOpenGLTexture2D> HWTexture,
         {
             TexCoordXForm texxform0;
             texxform0.FlipVCoord(true);
+            GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             GetThreadGraphicsContext()->QRP_GLSL_1Tex(x, y, src_width, src_height, HWTexture, texxform0, Color::White);
+            GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false);
         }
         else
         {
