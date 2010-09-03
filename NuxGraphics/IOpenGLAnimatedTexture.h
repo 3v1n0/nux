@@ -58,6 +58,7 @@ public:
         pDesc->Depth    = _Depth;
         pDesc->PixelFormat   = _PixelFormat;
         pDesc->Type     = _ResourceType;
+        return OGL_OK;
     }
 
     void PresentFirstFrame();

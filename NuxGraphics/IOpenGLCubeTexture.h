@@ -75,7 +75,7 @@ public:
             pDesc->Type     = _ResourceType;
         }
 
-        return 1;
+        return OGL_OK;
     }
 private:
 

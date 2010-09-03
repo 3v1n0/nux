@@ -46,6 +46,7 @@ public:
         desc->Format = _Format;
         desc->Usage = _Usage;
         desc->Size = _Length;
+        return OGL_OK;
     }
 
     void BindIndexBuffer();

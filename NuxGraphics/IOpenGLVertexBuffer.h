@@ -43,6 +43,7 @@ public:
     {
         desc->Usage = _Usage;
         desc->Size = _Length;
+        return OGL_OK;
     }
 
     void BindVertexBuffer();

@@ -63,6 +63,7 @@ public:
         pDesc->Depth    = GetDepth();
         pDesc->PixelFormat   = GetPixelFormat();
         pDesc->Type     = _ResourceType;
+        return OGL_OK;
     }
 
 private:
