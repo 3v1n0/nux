@@ -29,7 +29,7 @@
 
 NAMESPACE_BEGIN
 
-bool TextureArchiveAdd_ver_0_0_1(NSerializer* FileStream,  NBitmapData* TextureData, const TCHAR* InputTextureFile, INL_OUT t_s64& Offset)
+bool TextureArchiveAdd_ver_0_0_1(NSerializer* FileStream,  NBitmapData* TextureData, const TCHAR* InputTextureFile, NUX_OUT t_s64& Offset)
 {   
     nuxAssert(FileStream);
     nuxAssert(InputTextureFile);
@@ -375,7 +375,7 @@ NBitmapData* TextureArchiveLoad_ver_0_0_1(NSerializer* FileStream, t_u32 Offset)
 
         nuxAssert(NumMip == 1);
         NAnimatedTextureData* AnimatedTextureData = new NAnimatedTextureData((BitmapFormat) Format, Width, Height, Depth);
-        BitmapData = INL_STATIC_CAST(NBitmapData*, AnimatedTextureData);
+        BitmapData = NUX_STATIC_CAST(NBitmapData*, AnimatedTextureData);
 
         for(t_u32 d = 0; d < Depth; d++)
         {

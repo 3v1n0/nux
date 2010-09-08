@@ -27,7 +27,7 @@ NAMESPACE_BEGIN
 
 class NUniqueIndex
 {
-    INL_DECLARE_GLOBAL_OBJECT(NUniqueIndex, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NUniqueIndex, NGlobalSingletonInitializer);
 public:
     t_u64 GetUniqueIndex();
 private:

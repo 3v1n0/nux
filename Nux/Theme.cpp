@@ -199,7 +199,7 @@ UXTheme::~UXTheme()
 void UXTheme::LoadPainterImages()
 {
     NString file_search = TEXT("Painter.xml");
-    NString painter_filename = INL_FIND_RESOURCE_LOCATION_NOFAIL(file_search.GetTCharPtr());
+    NString painter_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(file_search.GetTCharPtr());
     if(painter_filename == TEXT(""))
     {
         nuxDebugMsg(TEXT("[GraphicsContext::LoadPainterImages] Can't find Painter.xml file."));
@@ -208,7 +208,7 @@ void UXTheme::LoadPainterImages()
         exit(-1);*/
     }
 
-    NUITextureArchiver UITextureArchive(INL_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("../../Data/UITextures/UIArchive.iar")));
+    NUITextureArchiver UITextureArchive(NUX_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("../../Data/UITextures/UIArchive.iar")));
 
     TiXmlDocument doc(painter_filename.GetTCharPtr());
     doc.LoadFile();
@@ -262,7 +262,7 @@ void UXTheme::LoadPainterImages()
             else
             {
                 NString filename = image->Attribute(TCHARToUTF8(TEXT("Name")));
-                NString texture_filename = INL_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
+                NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
                 RectangleTexture = (NTexture2D*)Load2DTextureFile(texture_filename.GetTCharPtr());
             }
             pimage->texture = RectangleTexture;
@@ -270,7 +270,7 @@ void UXTheme::LoadPainterImages()
         else
         {
             NString filename = image->Attribute(TCHARToUTF8(TEXT("Name")));
-            NString texture_filename = INL_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
+            NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
             pimage->texture = Load2DTextureFile(texture_filename.GetTCharPtr());
         }
         m_PainterImageList.push_back(pimage);

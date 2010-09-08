@@ -53,8 +53,8 @@ SplineCurveDialog::SplineCurveDialog()
 
 SplineCurveDialog::~SplineCurveDialog()
 {
-    //INL_SAFE_DELETE(m_Vlayout);
-    //INL_SAFE_DELETE(m_SplineCurve);
+    //NUX_SAFE_DELETE(m_Vlayout);
+    //NUX_SAFE_DELETE(m_SplineCurve);
 }
 
 void SplineCurveDialog::StartSplineCurve(bool StartModal)

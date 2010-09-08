@@ -49,7 +49,7 @@ TableItem::TableItem(const TCHAR* name, NodeParameterType type)
 
 TableItem::~TableItem()
 {
-    INL_SAFE_DELETE(m_PropertyTextColor);
+    NUX_SAFE_DELETE(m_PropertyTextColor);
 }
 
 void TableItem::PushChildFront( NodeItem *child )
@@ -85,7 +85,7 @@ long TableItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long Pro
     //m_bIsMouseInside = false;
     long ret = TraverseInfo;
     Geometry geo = m_ItemGeometryVector[0];
-    if(ievent.e_event == INL_MOUSE_PRESSED && !(ret & eMouseEventSolved) && !(ProcessEventInfo & eDoNotProcess))
+    if(ievent.e_event == NUX_MOUSE_PRESSED && !(ret & eMouseEventSolved) && !(ProcessEventInfo & eDoNotProcess))
     {
         for(UINT i = 0; i < m_ItemGeometryVector.size(); i++)
         {

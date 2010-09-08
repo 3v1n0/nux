@@ -260,7 +260,7 @@ int IOpenGLSurface::UnlockRect()
             // Unmap the texture image buffer
             GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex(_AllocatedUnpackBuffer);
             CHECKGL( glUnmapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB) );
-            DataPtr = INL_BUFFER_OFFSET(0);
+            DataPtr = NUX_BUFFER_OFFSET(0);
         }
         else
         {

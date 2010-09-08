@@ -263,7 +263,7 @@ bool FontTexture::BMFontParseFNT( std::istream& Stream )
                 NBitmapData* BitmapData = LoadImageFile(font_texture_file.GetTCharPtr());
                 if(BitmapData)
                     Texture->Update(BitmapData);
-                INL_SAFE_DELETE(BitmapData);
+                NUX_SAFE_DELETE(BitmapData);
                 TextureArray.push_back(Texture);
             }
         }

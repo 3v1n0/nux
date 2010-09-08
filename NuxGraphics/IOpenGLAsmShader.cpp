@@ -62,7 +62,7 @@ IOpenGLAsmVertexShader::~IOpenGLAsmVertexShader()
 void IOpenGLAsmVertexShader::SetShaderCode(const TCHAR* ShaderCode)
 {
     nuxAssertMsg(ShaderCode, TEXT("[IOpenGLAsmVertexShader::SetShaderCode] Invalid shader code."));
-    INL_RETURN_IF_NULL(ShaderCode);
+    NUX_RETURN_IF_NULL(ShaderCode);
     m_CompiledAndReady = false;
     _ShaderCode = ShaderCode;
 }
@@ -91,7 +91,7 @@ bool IOpenGLAsmVertexShader::Compile()
         // Print implementation-dependent program
         // errors and warnings string.
         const unsigned char *ErrorString;
-        ErrorString = INL_STATIC_CAST(const unsigned char*, glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+        ErrorString = NUX_STATIC_CAST(const unsigned char*, glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
         nuxError(TEXT("[IOpenGLAsmVertexShader::Compile] Error in vertex shader at position: %d\n%s\n"), errPos, ErrorString );
         return m_CompiledAndReady;
     }
@@ -123,7 +123,7 @@ IOpenGLAsmPixelShader::~IOpenGLAsmPixelShader()
 void IOpenGLAsmPixelShader::SetShaderCode(const TCHAR* ShaderCode)
 {
     nuxAssertMsg(ShaderCode, TEXT("[IOpenGLAsmPixelShader::SetShaderCode] Invalid shader code."));
-    INL_RETURN_IF_NULL(ShaderCode);
+    NUX_RETURN_IF_NULL(ShaderCode);
     m_CompiledAndReady = false;
     _ShaderCode = ShaderCode;
 }
@@ -152,7 +152,7 @@ bool IOpenGLAsmPixelShader::Compile()
         // Print implementation-dependent program
         // errors and warnings string.
         const unsigned char *ErrorString;
-        ErrorString = INL_STATIC_CAST(const unsigned char*, glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+        ErrorString = NUX_STATIC_CAST(const unsigned char*, glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
         nuxError(TEXT("[IOpenGLAsmPixelShader::Compile] Error in fragment shader at position: %d\n%s\n"), errPos, ErrorString );
     }
     delete ShaderSource;
@@ -183,7 +183,7 @@ IOpenGLAsmShaderProgram::~IOpenGLAsmShaderProgram()
 void IOpenGLAsmShaderProgram::LoadIShaderFile(const TCHAR* ShaderFileName)
 {
     nuxAssertMsg(ShaderFileName, TEXT("[IOpenGLAsmShaderProgram::LoadIShaderFile] Invalid shader file name."));
-    INL_RETURN_IF_NULL(ShaderFileName);
+    NUX_RETURN_IF_NULL(ShaderFileName);
     NString SourceCode;
     LoadFileToString(SourceCode, ShaderFileName);
     LoadIShader(&SourceCode[0]);
@@ -192,7 +192,7 @@ void IOpenGLAsmShaderProgram::LoadIShaderFile(const TCHAR* ShaderFileName)
 void IOpenGLAsmShaderProgram::LoadIShader(const TCHAR* ShaderCode)
 {
     nuxAssertMsg(ShaderCode, TEXT("[IOpenGLAsmShaderProgram::LoadIShader] Invalid shader code."));
-    INL_RETURN_IF_NULL(ShaderCode);
+    NUX_RETURN_IF_NULL(ShaderCode);
     NString VertexShaderSource;
     ExtractShaderString3(TEXT("[Vertex Shader]"), ShaderCode, VertexShaderSource, NString(""));
     NString PixelShaderSource;
@@ -208,7 +208,7 @@ void IOpenGLAsmShaderProgram::LoadIShader(const TCHAR* ShaderCode)
 void IOpenGLAsmShaderProgram::LoadVertexShader(const TCHAR* glslshader)
 {
     nuxAssertMsg(glslshader, TEXT("[IOpenGLAsmShaderProgram::LoadVertexShader] Invalid shader code."));
-    INL_RETURN_IF_NULL(glslshader);
+    NUX_RETURN_IF_NULL(glslshader);
     m_AsmVertexProgram->SetShaderCode(glslshader);
     m_AsmVertexProgram->Compile();
 }
@@ -216,7 +216,7 @@ void IOpenGLAsmShaderProgram::LoadVertexShader(const TCHAR* glslshader)
 void IOpenGLAsmShaderProgram::LoadPixelShader(const TCHAR* glslshader)
 {
     nuxAssertMsg(glslshader, TEXT("[IOpenGLAsmShaderProgram::LoadPixelShader] Invalid shader code."));
-    INL_RETURN_IF_NULL(glslshader);
+    NUX_RETURN_IF_NULL(glslshader);
     m_AsmFragmentProgram->SetShaderCode(glslshader);
     m_AsmFragmentProgram->Compile();
 }

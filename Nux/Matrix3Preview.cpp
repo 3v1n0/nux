@@ -47,7 +47,7 @@ Matrix3Preview::~Matrix3Preview()
     if(m_ChangeTimerHandler)
         GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
 
-    INL_SAFE_DELETE(m_DialogThreadProxy);
+    NUX_SAFE_DELETE(m_DialogThreadProxy);
 }
 
 long Matrix3Preview::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

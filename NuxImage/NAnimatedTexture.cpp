@@ -124,8 +124,8 @@ bool SaveAnimatedTextureFile(NBitmapData* pAnimatedTexture, const TCHAR* Filenam
     fileStream->Seek(0, NSerializer::SeekStart);
     t_s64 Offset = 0;
 
-    unsigned int FileTag = INL_ANIMATED_TEXTURE_TAG;
-    unsigned int FileVersion = INL_ANIMATED_TEXTURE_VERSION;
+    unsigned int FileTag = NUX_ANIMATED_TEXTURE_TAG;
+    unsigned int FileVersion = NUX_ANIMATED_TEXTURE_VERSION;
 
     fileStream->Serialize((char*) &FileTag,     sizeof(FileTag));;
     fileStream->Serialize((char*) &FileVersion,     sizeof(FileVersion));
@@ -152,7 +152,7 @@ NBitmapData* LoadAnimatedTextureFile(const TCHAR* Filename)
     fileStream->Serialize((char*) &FileTag,     sizeof(FileTag));;
     fileStream->Serialize((char*) &FileVersion,     sizeof(FileVersion));
     
-    if(FileTag != INL_ANIMATED_TEXTURE_TAG)
+    if(FileTag != NUX_ANIMATED_TEXTURE_TAG)
     {
         //nuxAssertMsg(0, TEXT("[LoadAnimatedTextureFile] File: %s format is incorrect."), Filename);
         return 0;

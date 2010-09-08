@@ -23,9 +23,9 @@
 #ifndef NPLUGIN_H
 #define NPLUGIN_H
 
-#define INL_DECLARE_PLUGIN(x) extern "C"{__declspec(dllexport) NPluginInterface * MakePlugin(){ return new x;}}
-#define INL_SET_PLUGIN_TYPE(x) extern "C"{__declspec(dllexport) TCHAR * GetPluginType(){ return x;}}
-#define INL_SET_PLUGIN_NAME(x) extern "C"{__declspec(dllexport) TCHAR * GetPluginName(){ return x;}}
+#define NUX_DECLARE_PLUGIN(x) extern "C"{__declspec(dllexport) NPluginInterface * MakePlugin(){ return new x;}}
+#define NUX_SET_PLUGIN_TYPE(x) extern "C"{__declspec(dllexport) TCHAR * GetPluginType(){ return x;}}
+#define NUX_SET_PLUGIN_NAME(x) extern "C"{__declspec(dllexport) TCHAR * GetPluginName(){ return x;}}
 
 NAMESPACE_BEGIN
 

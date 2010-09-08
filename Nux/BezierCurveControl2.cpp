@@ -70,14 +70,14 @@ m_bZoomingEnabled(true)
 
 BezierCurveControl2::~BezierCurveControl2()
 {
-    INL_SAFE_DELETE(m_Background);
+    NUX_SAFE_DELETE(m_Background);
 }
 
 
 long BezierCurveControl2::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     long ret = TraverseInfo;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x, ievent.e_y))
         {
@@ -86,7 +86,7 @@ long BezierCurveControl2::ProcessEvent(IEvent &ievent, long TraverseInfo, long P
         }
     }
 
-    S_KEY = ievent.GetVirtualKeyState(INL_VK_S);
+    S_KEY = ievent.GetVirtualKeyState(NUX_VK_S);
     ret = PostProcessEvent2(ievent, ret, ProcessEventInfo);
     return ret;
 }

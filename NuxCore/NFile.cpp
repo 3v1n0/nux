@@ -71,7 +71,7 @@ bool LoadTextFileToAnsiArray( std::vector<ANSICHAR>& Result, const TCHAR* Filena
     bool Success = Reader->Close();
     delete Reader;
 
-    if( Size>=2 && !(Size&1) && Memcmp(&Result[0], &INL_UTF16_LE[1], INL_UTF16_LE[0])==0) // (BYTE)ByteArray[0]==0xff && (BYTE)ByteArray[1]==0xfe )
+    if( Size>=2 && !(Size&1) && Memcmp(&Result[0], &NUX_UTF16_LE[1], NUX_UTF16_LE[0])==0) // (BYTE)ByteArray[0]==0xff && (BYTE)ByteArray[1]==0xfe )
     {
         // UTF16 - Little Endian
         int numElement = Size/sizeof(UNICHAR) + 1; // +1 for null char
@@ -80,7 +80,7 @@ bool LoadTextFileToAnsiArray( std::vector<ANSICHAR>& Result, const TCHAR* Filena
             Result[i] = ConvertUnicodeCharToTCHAR( (WORD)(ANSIUCHAR)ByteArray[i*2+2] + (WORD)(ANSIUCHAR)ByteArray[i*2+3]*256 );
         Result[numElement] = 0;
     }
-    else if( Size>=2 && !(Size&1) && Memcmp(&Result[0], &INL_UTF16_LE[1], INL_UTF16_LE[0])==0)
+    else if( Size>=2 && !(Size&1) && Memcmp(&Result[0], &NUX_UTF16_LE[1], NUX_UTF16_LE[0])==0)
     {
         // UTF16 - Big Endian.
         int numElement = Size/sizeof(TCHAR) + 1; // +1 for null char
@@ -127,7 +127,7 @@ bool LoadTextFileToUnicodeArray( std::vector<UNICHAR>& Result, const TCHAR* File
     bool Success = Reader->Close();
     delete Reader;
 
-    if( Size>=2 && !(Size&1) && Memcmp(&Result[0], &INL_UTF16_LE[1], INL_UTF16_LE[0])==0) // (BYTE)ByteArray[0]==0xff && (BYTE)ByteArray[1]==0xfe )
+    if( Size>=2 && !(Size&1) && Memcmp(&Result[0], &NUX_UTF16_LE[1], NUX_UTF16_LE[0])==0) // (BYTE)ByteArray[0]==0xff && (BYTE)ByteArray[1]==0xfe )
     {
         // UTF16 - Little Endian
         int numElement = Size + 1; // +1 for null char
@@ -136,7 +136,7 @@ bool LoadTextFileToUnicodeArray( std::vector<UNICHAR>& Result, const TCHAR* File
             Result[i] = ( (WORD)(ANSIUCHAR)ByteArray[i*2+2] + (WORD)(ANSIUCHAR)ByteArray[i*2+3]*256 );
         Result[numElement] = 0;
     }
-    else if( Size>=2 && !(Size&1) && Memcmp(&Result[0], &INL_UTF16_LE[1], INL_UTF16_LE[0])==0)
+    else if( Size>=2 && !(Size&1) && Memcmp(&Result[0], &NUX_UTF16_LE[1], NUX_UTF16_LE[0])==0)
     {
         // UTF16 - Big Endian.
         int numElement = Size + 1; // +1 for null char
@@ -300,7 +300,7 @@ bool SaveStringToFile( const NString& String, const TCHAR* Filename, NFileManage
         if( (*String)[i] != (TCHAR)(ANSIUCHAR)ConvertTCHARToAnsiChar((*String)[i]))
         { 
             //The string need to be written in ASCII. We write the string as UTF16-BigEndian
-            Ar->Serialize(INL_CONST_CAST(BYTE*, &UTF16_BE[1]), UTF16_BE[0] /*size*/);
+            Ar->Serialize(NUX_CONST_CAST(BYTE*, &UTF16_BE[1]), UTF16_BE[0] /*size*/);
             SaveAsUnicode = true;
             break;
         }
@@ -309,7 +309,7 @@ bool SaveStringToFile( const NString& String, const TCHAR* Filename, NFileManage
     if( SaveAsUnicode || (sizeof(TCHAR) == 1) )
     {
         t_u32 s = (t_u32)String.Length()*sizeof(TCHAR);
-        Ar->Serialize( INL_CONST_CAST(TCHAR*, String.GetTCharPtr()), (t_u32)s);
+        Ar->Serialize( NUX_CONST_CAST(TCHAR*, String.GetTCharPtr()), (t_u32)s);
     }
     else
     {
@@ -320,7 +320,7 @@ bool SaveStringToFile( const NString& String, const TCHAR* Filename, NFileManage
             AnsiBuffer[i] = ConvertTCHARToAnsiChar((t_u32)String[i]);
         // serialize
         s = (t_u32)String.Length();
-        Ar->Serialize( INL_CONST_CAST(ANSICHAR*, &AnsiBuffer[0]), s);
+        Ar->Serialize( NUX_CONST_CAST(ANSICHAR*, &AnsiBuffer[0]), s);
     }
     delete Ar;
     if( !Success )

@@ -22,9 +22,9 @@
 
 #include "Nux.h"
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "NuxGraphics/Gfx_OpenGL.h"
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #include "NuxGraphics/GfxSetupX11.h"
 #endif
 
@@ -59,7 +59,7 @@ ClientArea::ClientArea()
 
 ClientArea::~ClientArea()
 {
-    INL_SAFE_DELETE(m_RealTimeCallback);
+    NUX_SAFE_DELETE(m_RealTimeCallback);
 }
 
 long ClientArea::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -70,7 +70,7 @@ long ClientArea::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEve
 //     Rect A = GetThreadGraphicsContext()->GetClippingRegion();
 //     Rect B = Rect(m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight());
 //     Rect C = A.intersect(B);
-//     if((ievent.e_event == INL_MOUSE_MOVE) && !HasMouseFocus())
+//     if((ievent.e_event == NUX_MOUSE_MOVE) && !HasMouseFocus())
 //     {
 //         if(!C.IsPointInside(ievent.e_x, ievent.e_y))
 //             return ret;

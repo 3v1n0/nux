@@ -60,7 +60,7 @@ static T* UpCastResource( U* Src )
 NTexture* CreateTextureFromFile(const TCHAR* TextureFilename)
 {
     NBitmapData* BitmapData = LoadImageFile(TextureFilename);
-    INL_RETURN_VALUE_IF_NULL(BitmapData, 0);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, 0);
 
     if(BitmapData->isTextureData())
     {
@@ -174,7 +174,7 @@ NTexture2D::~NTexture2D()
 bool NTexture2D::Update(const NBitmapData* BitmapData)
 {
     nuxAssertMsg(BitmapData, TEXT("[NTexture2D::Update] Argument BitmapData is NULL."));
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     if(!BitmapData->isTextureData())
     {
         nuxAssertMsg(0, TEXT("[NTexture2D::Update] Argument BitmapData is not a 2D texture"));
@@ -190,9 +190,9 @@ bool NTexture2D::Update(const TCHAR* filename)
 {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, TEXT("[NTexture2D::Update] Bitmap for file (%s) is NULL."), filename);
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     bool ret = Update(BitmapData);
-    INL_SAFE_DELETE(BitmapData);
+    NUX_SAFE_DELETE(BitmapData);
     return ret;
 }
 
@@ -329,7 +329,7 @@ NRectangleTexture::~NRectangleTexture()
 bool NRectangleTexture::Update(const NBitmapData* BitmapData)
 {
     nuxAssertMsg(BitmapData, TEXT("[NRectangleTexture::Update] Argument BitmapData is NULL."));
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     if(!BitmapData->isTextureData())
     {
         nuxAssertMsg(0, TEXT("[NRectangleTexture::Update] Argument BitmapData is not a 2D texture"));
@@ -346,9 +346,9 @@ bool NRectangleTexture::Update(const TCHAR* filename)
     bool b = false;
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, TEXT("[NRectangleTexture::Update] Bitmap for file (%s) is NULL."), filename);
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     b = Update(BitmapData);
-    INL_SAFE_DELETE(BitmapData);
+    NUX_SAFE_DELETE(BitmapData);
     return b;
 }
 
@@ -466,7 +466,7 @@ NTextureCube::~NTextureCube()
 bool NTextureCube::Update(const NBitmapData* BitmapData)
 {
     nuxAssertMsg(BitmapData, TEXT("[NTextureCube::Update] Argument BitmapData is NULL."));
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     if(!BitmapData->isCubemapTextureData())
     {
         nuxAssertMsg(0, TEXT("[NTextureCube::Update] Argument BitmapData is not a Cube texture"));
@@ -482,9 +482,9 @@ bool NTextureCube::Update(const TCHAR* filename)
 {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, TEXT("[NTextureCube::Update] Bitmap for file (%s) is NULL."), filename);
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     bool ret = Update(BitmapData);
-    INL_SAFE_DELETE(BitmapData);
+    NUX_SAFE_DELETE(BitmapData);
     return ret;
 }
 
@@ -602,7 +602,7 @@ NTextureVolume::~NTextureVolume()
 bool NTextureVolume::Update(const NBitmapData* BitmapData)
 {
     nuxAssertMsg(BitmapData, TEXT("[NTextureVolume::Update] Argument BitmapData is NULL."));
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     if(!BitmapData->isVolumeTextureData())
     {
         nuxAssertMsg(0, TEXT("[NTextureVolume::Update] Argument BitmapData is not a Volume texture"));
@@ -618,9 +618,9 @@ bool NTextureVolume::Update(const TCHAR* filename)
 {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, TEXT("[NTextureVolume::Update] Bitmap for file (%s) is NULL."), filename);
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     bool ret = Update(filename);
-    INL_SAFE_DELETE(BitmapData);
+    NUX_SAFE_DELETE(BitmapData);
     return ret;
 }
 
@@ -768,7 +768,7 @@ NAnimatedTexture::~NAnimatedTexture()
 bool NAnimatedTexture::Update(const NBitmapData* BitmapData)
 {
     nuxAssertMsg(BitmapData, TEXT("[NAnimatedTexture::Update] Argument BitmapData is NULL."));
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     if(!BitmapData->isAnimatedTextureData())
     {
         nuxAssertMsg(0, TEXT("[NAnimatedTexture::Update] Argument BitmapData is not a Animated texture"));
@@ -784,9 +784,9 @@ bool NAnimatedTexture::Update(const TCHAR* filename)
 {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, TEXT("[NAnimatedTexture::Update] Bitmap for file (%s) is NULL."), filename);
-    INL_RETURN_VALUE_IF_NULL(BitmapData, false);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
     bool ret = Update(BitmapData);
-    INL_SAFE_DELETE(BitmapData);
+    NUX_SAFE_DELETE(BitmapData);
     return ret;
 }
 

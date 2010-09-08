@@ -39,7 +39,7 @@ NGNUSerialFileReader::NGNUSerialFileReader(t_int InFileDescriptor, NOutputDevice
 }
 NGNUSerialFileReader::~NGNUSerialFileReader()
 {
-    INL_SAFE_DELETE_ARRAY(m_Buffer);
+    NUX_SAFE_DELETE_ARRAY(m_Buffer);
     if(m_FileDescriptor)
     {
         Close();
@@ -198,7 +198,7 @@ NGNUSerialFileWriter::NGNUSerialFileWriter(t_int InFileDescriptor, NOutputDevice
 
 NGNUSerialFileWriter::~NGNUSerialFileWriter()
 {
-    INL_SAFE_DELETE_ARRAY(m_Buffer);
+    NUX_SAFE_DELETE_ARRAY(m_Buffer);
     if(m_FileDescriptor)
         Close();
     m_FileDescriptor = 0;
@@ -287,7 +287,7 @@ void NGNUSerialFileWriter::SerializeFinal(void* V, t_u64 Length)
     nuxAssert(m_FileDescriptor);
     nuxAssert(V);
 
-    INL_RETURN_IF_NULL(m_FileDescriptor);
+    NUX_RETURN_IF_NULL(m_FileDescriptor);
 
     m_Pos += Length;
     t_int FreeSpace;
@@ -332,7 +332,7 @@ void NGNUSerialFileWriter::_Flush()
     m_BufferCount = 0;
 }
 //////////////////////////////////////////////////////////////////////////
-INL_IMPLEMENT_GLOBAL_OBJECT(NFileManagerGNU);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NFileManagerGNU);
 
 void NFileManagerGNU::Constructor()
 {
@@ -613,9 +613,9 @@ bool NFileManagerGNU::MakeDirectory(const TCHAR* Path, bool CreateCompletePath)
 //     if((errno != 0) && (errno != EEXIST))
 //     {
 //         nuxDebugMsg(TEXT("[NFileManagerGNU::MakeDirectory] Error creating directory '%s'."), Path);
-//         return INL_ERROR;
+//         return NUX_ERROR;
 //     }
-    return INL_OK;
+    return NUX_OK;
 }
 
 bool NFileManagerGNU::DeleteDirectory(const TCHAR* Path, bool DeleteContentFirst)

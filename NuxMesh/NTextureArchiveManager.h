@@ -66,8 +66,8 @@ bool CreateUITextureArchive(const TCHAR* XMLUIFile, const TCHAR* ArchiveName);
 //     ARCH_VOLUME=3,
 // };
 
-#define UITEXTUREARCHIVETAG INL_MAKEFOURCHARTAG('u','i','t','a')
-#define UITEXTUREARCHIVEVERSION INL_MAKEFOURCHARTAG('0','0','0','1')
+#define UITEXTUREARCHIVETAG NUX_MAKEFOURCHARTAG('u','i','t','a')
+#define UITEXTUREARCHIVEVERSION NUX_MAKEFOURCHARTAG('0','0','0','1')
 
 
 typedef struct  

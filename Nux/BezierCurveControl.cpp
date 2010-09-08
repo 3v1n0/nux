@@ -62,7 +62,7 @@ BezierCurveControl::~BezierCurveControl()
 long BezierCurveControl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     long ret = TraverseInfo;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x, ievent.e_y))
         {

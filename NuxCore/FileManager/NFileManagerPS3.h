@@ -83,7 +83,7 @@ protected:
 
 class NFileManagerPS3 : public NFileManagerGeneric
 {
-    INL_DECLARE_GLOBAL_OBJECT(NFileManagerPS3, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NFileManagerPS3, NGlobalSingletonInitializer);
 public:
     // Flags is a combination of
     //  NSerializer::OutputErrorIfFail

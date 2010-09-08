@@ -96,10 +96,10 @@ RGBAPropertyItem::RGBAPropertyItem(const TCHAR* name, float red /* = 1.0f*/, flo
 
 RGBAPropertyItem::~RGBAPropertyItem()
 {
-    INL_SAFE_DELETE(m_red);
-    INL_SAFE_DELETE(m_green);
-    INL_SAFE_DELETE(m_blue);
-    INL_SAFE_DELETE(m_alpha);
+    NUX_SAFE_DELETE(m_red);
+    NUX_SAFE_DELETE(m_green);
+    NUX_SAFE_DELETE(m_blue);
+    NUX_SAFE_DELETE(m_alpha);
 }
 
 long RGBAPropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

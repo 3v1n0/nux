@@ -103,7 +103,7 @@ BOOL ParseParam( const TCHAR* Stream, const TCHAR* Param )
 BOOL ParseFString( const TCHAR* Stream, const TCHAR* Match, NString& Value )
 {
 	TCHAR Temp[4096]=TEXT("");
-	if( ParseTCHAR( Stream, Match, Temp, INL_ARRAY_COUNT(Temp), INL_ARRAY_COUNT(Temp) ) )
+	if( ParseTCHAR( Stream, Match, Temp, NUX_ARRAY_COUNT(Temp), NUX_ARRAY_COUNT(Temp) ) )
 	{
 		Value = Temp;
 		return 1;
@@ -125,7 +125,7 @@ BOOL ParseQWORD( const TCHAR* Stream, const TCHAR* Match, QWORD& Value )
 BOOL ParseSQWORD( const TCHAR* Stream, const TCHAR* Match, SQWORD& Value )
 {
 	TCHAR Temp[4096]=TEXT(""), *Ptr=Temp;
-	if( ParseTCHAR( Stream, Match, Temp, INL_ARRAY_COUNT(Temp), INL_ARRAY_COUNT(Temp) ) )
+	if( ParseTCHAR( Stream, Match, Temp, NUX_ARRAY_COUNT(Temp), NUX_ARRAY_COUNT(Temp) ) )
 	{
 		Value = 0;
 		BOOL Negative = (*Ptr=='-');
@@ -213,7 +213,7 @@ BOOL ParseFLOAT( const TCHAR* Stream, const TCHAR* Match, float& Value )
 	const TCHAR* Temp = Strfind( Stream, Match );
 	if( Temp==NULL )
 		return 0;
-    Value = CharToFloat(Temp+StringLength(Match));
+    Value = CharToDouble(Temp+StringLength(Match));
 	return 1;
 }
 
@@ -235,7 +235,7 @@ BOOL ParseINT( const TCHAR* Stream, const TCHAR* Match, INT& Value )
 BOOL ParseUBOOL( const TCHAR* Stream, const TCHAR* Match, BOOL& OnOff )
 {
 	TCHAR TempStr[16];
-	if( ParseTCHAR( Stream, Match, TempStr, INL_ARRAY_COUNT(TempStr), INL_ARRAY_COUNT(TempStr)-1 ) )
+	if( ParseTCHAR( Stream, Match, TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr)-1 ) )
 	{
 		OnOff
 		=	!Stricmp(TempStr,TEXT("On"))
@@ -383,7 +383,7 @@ BOOL ParseToken( const TCHAR*& Str, NString& Arg, BOOL UseEscape )
 NString ParseToken( const TCHAR*& Str, BOOL UseEscape )
 {
 	TCHAR Buffer[1024];
-	if( ParseToken( Str, Buffer, INL_ARRAY_COUNT(Buffer), UseEscape ) )
+	if( ParseToken( Str, Buffer, NUX_ARRAY_COUNT(Buffer), UseEscape ) )
 		return Buffer;
 	else
 		return TEXT("");

@@ -38,7 +38,7 @@ NAMESPACE_BEGIN_GUI
 bool RegisterNuxThread(NThread* ThreadPtr);
 void UnregisterNuxThread(NThread* ThreadPtr);
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 
 static GMutex *gLibEventMutex = 0;
 static void
@@ -69,10 +69,10 @@ nux_event_prepare (GSource *source,
 
     gboolean retval;
     *timeout = -1;
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     MSG msg;
     retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     retval = GetThreadGLWindow()->HasXPendingEvent () ? TRUE : FALSE;
 #else
     #error Not implemented.
@@ -92,10 +92,10 @@ nux_event_check (GSource *source)
 
     if ((event_source->event_poll_fd.revents & G_IO_IN))
     {
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
         MSG msg;
         retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
         retval = GetThreadGLWindow()->HasXPendingEvent () ? TRUE : FALSE;
 #else
         #error Not implemented.
@@ -114,7 +114,7 @@ nux_event_dispatch (GSource     *source,
                     gpointer     user_data)
 {
     nux_glib_threads_lock();
-    WindowThread* window_thread = INL_STATIC_CAST(WindowThread*, user_data);
+    WindowThread* window_thread = NUX_STATIC_CAST(WindowThread*, user_data);
     t_u32 return_code = window_thread->ExecutionLoop(0);
 
     if(return_code == 0)
@@ -159,9 +159,9 @@ void WindowThread::InitGlibLoop()
 
     g_source_set_priority (source, G_PRIORITY_DEFAULT);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     event_source->event_poll_fd.fd = G_WIN32_MSG_HANDLE;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     event_source->event_poll_fd.fd = ConnectionNumber (GetThreadGLWindow()->GetX11Display());
 #else
     #error Not implemented.
@@ -187,7 +187,7 @@ typedef struct
 
 static gboolean nux_timeout_dispatch (gpointer user_data)
 {
-    TimeoutData* dd = INL_STATIC_CAST(TimeoutData*, user_data);
+    TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
 
     dd->window_thread->ExecutionLoop(dd->id);
 
@@ -274,7 +274,7 @@ WindowThread::WindowThread(const TCHAR* WindowTitle, unsigned int width, unsigne
     m_FramePeriodeCounter = 0;
     m_PeriodeTime = 0;
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     m_GLibLoop      = 0;
     m_GLibContext   = 0;
 #endif
@@ -500,7 +500,7 @@ void WindowThread::RunUserInterface()
     {
         if(GetThreadState() == THREADRUNNING)
         {
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
             InitGlibLoop();
 #else
             ExecutionLoop();
@@ -533,7 +533,7 @@ void WindowThread::RunUserInterface()
 
 extern EventToNameStruct EventToName[];
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 t_u32 WindowThread::ExecutionLoop(t_u32 timer_id)
 #else
 t_u32 WindowThread::ExecutionLoop()
@@ -550,7 +550,7 @@ t_u32 WindowThread::ExecutionLoop()
     }
     WindowThread* Application = GetGraphicsThread();
 
-#if (!defined(INL_OS_LINUX) && !defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) || defined(INL_DISABLE_GLIB_LOOP)
+#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
     while(KeepRunning)
 #endif
     {
@@ -566,7 +566,7 @@ t_u32 WindowThread::ExecutionLoop()
         memset(&event, 0, sizeof(IEvent));
         GetWindow().GetSystemEvent(&event);
 
-        if(event.e_event ==	INL_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
+        if(event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
         {
             KeepRunning = false;
             return 0; //break;
@@ -577,21 +577,21 @@ t_u32 WindowThread::ExecutionLoop()
         // Otherwise, w and h may not be correct for the current frame if a resizing happened.
         GetWindow().GetWindowSize(w, h);
 
-        if(event.e_event == INL_MOUSE_PRESSED ||
-            (event.e_event == INL_MOUSE_RELEASED) ||
-            (event.e_event == INL_MOUSE_MOVE) ||
-            (event.e_event == INL_SIZE_CONFIGURATION) ||
-            (event.e_event == INL_KEYDOWN) ||
-            (event.e_event == INL_KEYUP) ||
-            (event.e_event == INL_WINDOW_CONFIGURATION) ||
-            (event.e_event == INL_WINDOW_ENTER_FOCUS) ||
-            (event.e_event == INL_WINDOW_EXIT_FOCUS) ||
-            (event.e_event == INL_WINDOW_MOUSELEAVE) ||
-            (event.e_event == INL_MOUSEWHEEL))
+        if(event.e_event == NUX_MOUSE_PRESSED ||
+            (event.e_event == NUX_MOUSE_RELEASED) ||
+            (event.e_event == NUX_MOUSE_MOVE) ||
+            (event.e_event == NUX_SIZE_CONFIGURATION) ||
+            (event.e_event == NUX_KEYDOWN) ||
+            (event.e_event == NUX_KEYUP) ||
+            (event.e_event == NUX_WINDOW_CONFIGURATION) ||
+            (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
+            (event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
+            (event.e_event == NUX_WINDOW_MOUSELEAVE) ||
+            (event.e_event == NUX_MOUSEWHEEL))
         {
-            if((event.e_event == INL_SIZE_CONFIGURATION) ||
-                (event.e_event == INL_WINDOW_ENTER_FOCUS) ||
-                (event.e_event == INL_WINDOW_EXIT_FOCUS))
+            if((event.e_event == NUX_SIZE_CONFIGURATION) ||
+                (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
+                (event.e_event == NUX_WINDOW_EXIT_FOCUS))
             {
                 m_window_compositor->SetMouseFocusArea(smptr(BaseArea)(0));
                 m_window_compositor->SetMouseOverArea(smptr(BaseArea)(0));
@@ -606,7 +606,7 @@ t_u32 WindowThread::ExecutionLoop()
             m_window_compositor->EmptyEventRegion();
         }
 
-        if(event.e_event == INL_SIZE_CONFIGURATION)
+        if(event.e_event == NUX_SIZE_CONFIGURATION)
         {
             if(!GetWindow().isWindowMinimized())
             {
@@ -626,7 +626,7 @@ t_u32 WindowThread::ExecutionLoop()
             RefreshLayout();
         }
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
         GetThreadTimer().ExecTimerHandler(timer_id);
 #else
         GetThreadTimer().ExecTimerHandler();
@@ -643,16 +643,16 @@ t_u32 WindowThread::ExecutionLoop()
             }
             else
             {
-                bool b = (event.e_event == INL_MOUSE_PRESSED) ||
-                    (event.e_event == INL_MOUSE_RELEASED) ||
-                    //(event.e_event == INL_MOUSE_MOVE) ||
-                    (event.e_event == INL_SIZE_CONFIGURATION) ||
-                    (event.e_event == INL_KEYDOWN) ||
-                    (event.e_event == INL_KEYUP) ||
-                    (event.e_event == INL_WINDOW_CONFIGURATION) ||
-                    (event.e_event == INL_WINDOW_ENTER_FOCUS) ||
-                    (event.e_event == INL_WINDOW_EXIT_FOCUS) ||
-                    (event.e_event == INL_WINDOW_DIRTY);
+                bool b = (event.e_event == NUX_MOUSE_PRESSED) ||
+                    (event.e_event == NUX_MOUSE_RELEASED) ||
+                    //(event.e_event == NUX_MOUSE_MOVE) ||
+                    (event.e_event == NUX_SIZE_CONFIGURATION) ||
+                    (event.e_event == NUX_KEYDOWN) ||
+                    (event.e_event == NUX_KEYUP) ||
+                    (event.e_event == NUX_WINDOW_CONFIGURATION) ||
+                    (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
+                    (event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
+                    (event.e_event == NUX_WINDOW_DIRTY);
 
                 if(b && m_window_compositor->IsTooltipActive())
                 { 
@@ -704,7 +704,7 @@ t_u32 WindowThread::ExecutionLoop()
 
             float frame_time = GetWindow().GetFrameTime();
 
-#if (!defined(INL_OS_LINUX) && !defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) || defined(INL_DISABLE_GLIB_LOOP)
+#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
             // When we are not using the glib loop, we do sleep the thread ourselves if it took less that 16ms to render.
             if(16.6f - frame_time > 0)
             {
@@ -817,7 +817,7 @@ ThreadState WindowThread::StartChildThread(NThread* thread, bool Modal)
         {
             // While the child window is being created, the rendering is paused.
             // This is necessary to active OpenGL objects context sharing.
-            // Cancel the pause by sending the message INL_THREADMSG_START_RENDERING to this thread.
+            // Cancel the pause by sending the message NUX_THREADMSG_START_RENDERING to this thread.
             //GetWindow().PauseThreadGraphicsRendering();
 
             if(static_cast<WindowThread*>(thread)->m_bIsModal)
@@ -869,9 +869,9 @@ ThreadState WindowThread::SuspendChildGraphics(WindowThread* thread)
     }
 
     // WIN32
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     ::EnableWindow(m_GLWindow->GetWindowHandle(), TRUE);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 
 #endif
     return state;
@@ -882,15 +882,15 @@ void WindowThread::EnableMouseKeyboardInput()
     std::list<NThread*>::iterator it;
     for(it = m_ChildThread.begin(); it != m_ChildThread.end(); it++)
     {
-        if(INL_STATIC_CAST(WindowThread*, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
+        if(NUX_STATIC_CAST(WindowThread*, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
         {
-            INL_STATIC_CAST(WindowThread*, *it)->EnableMouseKeyboardInput();
+            NUX_STATIC_CAST(WindowThread*, *it)->EnableMouseKeyboardInput();
         }
     }
     // WIN32: Enable Mouse and Keyboard inputs for all windows child of this window
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     ::EnableWindow(m_GLWindow->GetWindowHandle(), TRUE);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 
 #endif
     m_bWaitForModalWindow = false;
@@ -901,15 +901,15 @@ void WindowThread::DisableMouseKeyboardInput()
     std::list<NThread*>::iterator it;
     for(it = m_ChildThread.begin(); it != m_ChildThread.end(); it++)
     {
-        if(INL_STATIC_CAST(WindowThread*, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
+        if(NUX_STATIC_CAST(WindowThread*, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
         {
-            INL_STATIC_CAST(WindowThread*, *it)->DisableMouseKeyboardInput();
+            NUX_STATIC_CAST(WindowThread*, *it)->DisableMouseKeyboardInput();
         }
     }
     // WIN32: Disable Mouse and Keyboard inputs for all windows child of this window
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     ::EnableWindow(m_GLWindow->GetWindowHandle(), FALSE);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 
 #endif
     m_bWaitForModalWindow = true;
@@ -923,9 +923,9 @@ void WindowThread::TerminateThread()
 bool WindowThread::ThreadCtor()
 {
     nuxAssertMsg (m_ThreadCtorCalled == false, TEXT("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once."));
-    INL_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
+    NUX_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
     
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     SetWin32ThreadName(GetThreadId(), m_WindowTitle.GetTCharPtr());
 #endif
 
@@ -956,7 +956,7 @@ bool WindowThread::ThreadCtor()
     if(m_Parent && m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
     {
         // Cancel the effect of PauseThreadGraphicsRendering on the parent window.
-        //PostThreadMessage(m_Parent->GetThreadId(), INL_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
+        //PostThreadMessage(m_Parent->GetThreadId(), NUX_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
     }
 
     m_Painter = new BasePainter();
@@ -970,13 +970,13 @@ bool WindowThread::ThreadCtor()
     return true;
 }
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
 bool WindowThread::ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
 {
     nuxAssertMsg (m_ThreadCtorCalled == false, TEXT("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once."));
-    INL_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
+    NUX_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     SetWin32ThreadName(GetThreadId(), m_WindowTitle.GetTCharPtr());
 #endif
 
@@ -1007,7 +1007,7 @@ bool WindowThread::ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenG
     if(m_Parent && m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
     {
         // Cancel the effect of PauseThreadGraphicsRendering on the parent window.
-        //PostThreadMessage(m_Parent->GetThreadId(), INL_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
+        //PostThreadMessage(m_Parent->GetThreadId(), NUX_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
     }
 
     m_Painter = new BasePainter();
@@ -1028,11 +1028,11 @@ bool WindowThread::ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenG
 
     return true;
 }
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, GLXContext OpenGLContext)
 {
     nuxAssertMsg (m_ThreadCtorCalled == false, TEXT("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once."));
-    INL_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
+    NUX_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
     
     if(RegisterNuxThread(this) == FALSE)
     {
@@ -1061,7 +1061,7 @@ bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, GLXContext 
     if(m_Parent && m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
     {
         // Cancel the effect of PauseThreadGraphicsRendering on the parent window.
-        //PostThreadMessage(m_Parent->GetThreadId(), INL_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
+        //PostThreadMessage(m_Parent->GetThreadId(), NUX_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
     }
 
     m_Painter = new BasePainter();
@@ -1086,7 +1086,7 @@ bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, GLXContext 
 
 bool WindowThread::ThreadDtor()
 {
-    INL_RETURN_VALUE_IF_TRUE (m_ThreadDtorCalled, true);
+    NUX_RETURN_VALUE_IF_TRUE (m_ThreadDtorCalled, true);
 
     // Cleanup
     EmptyClientAreaRedrawList();
@@ -1097,18 +1097,18 @@ bool WindowThread::ThreadDtor()
         m_AppLayout = smptr(Layout)(0);
     }
 
-    INL_SAFE_DELETE(m_window_compositor);
-    INL_SAFE_DELETE(m_TimerHandler);
-    INL_SAFE_DELETE(m_Painter);
-    INL_SAFE_DELETE(m_GLWindow);
-    INL_SAFE_DELETE(m_Theme);
+    NUX_SAFE_DELETE(m_window_compositor);
+    NUX_SAFE_DELETE(m_TimerHandler);
+    NUX_SAFE_DELETE(m_Painter);
+    NUX_SAFE_DELETE(m_GLWindow);
+    NUX_SAFE_DELETE(m_Theme);
 
-#if defined(INL_OS_WINDOWS)
-    PostThreadMessage(INL_GLOBAL_OBJECT_INSTANCE(NProcess).GetMainThreadID(),
-        INL_THREADMSG_THREAD_TERMINATED,
-        INL_GLOBAL_OBJECT_INSTANCE(NProcess).GetCurrentThreadID(),
+#if defined(NUX_OS_WINDOWS)
+    PostThreadMessage(NUX_GLOBAL_OBJECT_INSTANCE(NProcess).GetMainThreadID(),
+        NUX_THREADMSG_THREAD_TERMINATED,
+        NUX_GLOBAL_OBJECT_INSTANCE(NProcess).GetCurrentThreadID(),
         0);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 
 #else
 #error PostThreadMessage not implemented for this platform.
@@ -1152,9 +1152,9 @@ bool WindowThread::IsEmbeddedWindow()
     return m_embedded_window;
 }
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
 void WindowThread::ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data)
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
 #endif
 {
@@ -1165,18 +1165,18 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
 
     IEvent nux_event;
     memset(&nux_event, 0, sizeof(IEvent));
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     m_GLWindow->ProcessForeignWin32Event(hWnd, msg, wParam, lParam, &nux_event);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     m_GLWindow->ProcessForeignX11Event(xevent, &nux_event);
 #endif
 
-    if(nux_event.e_event ==	INL_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
+    if(nux_event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
     {
         return;
     }
 
-    if(nux_event.e_event ==	INL_SIZE_CONFIGURATION)
+    if(nux_event.e_event ==	NUX_SIZE_CONFIGURATION)
         m_size_configuration_event = true;
 
     int w, h;
@@ -1184,21 +1184,21 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
     // Otherwise, w and h may not be correct for the current frame if a resizing happened.
     GetWindow().GetWindowSize(w, h);
 
-    if(nux_event.e_event == INL_MOUSE_PRESSED ||
-        (nux_event.e_event == INL_MOUSE_RELEASED) ||
-        (nux_event.e_event == INL_MOUSE_MOVE) ||
-        (nux_event.e_event == INL_SIZE_CONFIGURATION) ||
-        (nux_event.e_event == INL_KEYDOWN) ||
-        (nux_event.e_event == INL_KEYUP) ||
-        (nux_event.e_event == INL_WINDOW_CONFIGURATION) ||
-        (nux_event.e_event == INL_WINDOW_ENTER_FOCUS) ||
-        (nux_event.e_event == INL_WINDOW_EXIT_FOCUS) ||
-        (nux_event.e_event == INL_WINDOW_MOUSELEAVE) ||
-        (nux_event.e_event == INL_MOUSEWHEEL))
+    if(nux_event.e_event == NUX_MOUSE_PRESSED ||
+        (nux_event.e_event == NUX_MOUSE_RELEASED) ||
+        (nux_event.e_event == NUX_MOUSE_MOVE) ||
+        (nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
+        (nux_event.e_event == NUX_KEYDOWN) ||
+        (nux_event.e_event == NUX_KEYUP) ||
+        (nux_event.e_event == NUX_WINDOW_CONFIGURATION) ||
+        (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
+        (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
+        (nux_event.e_event == NUX_WINDOW_MOUSELEAVE) ||
+        (nux_event.e_event == NUX_MOUSEWHEEL))
     {
-        if((nux_event.e_event == INL_SIZE_CONFIGURATION) ||
-            (nux_event.e_event == INL_WINDOW_ENTER_FOCUS) ||
-            (nux_event.e_event == INL_WINDOW_EXIT_FOCUS))
+        if((nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
+            (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
+            (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS))
         {
             m_window_compositor->SetMouseFocusArea(smptr(BaseArea)(0));
             m_window_compositor->SetMouseOverArea(smptr(BaseArea)(0));
@@ -1213,7 +1213,7 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
         m_window_compositor->EmptyEventRegion();
     }
 
-    if(nux_event.e_event == INL_SIZE_CONFIGURATION)
+    if(nux_event.e_event == NUX_SIZE_CONFIGURATION)
     {
         if(!GetWindow().isWindowMinimized())
         {
@@ -1245,16 +1245,16 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
     }
     else
     {
-        bool b = (nux_event.e_event == INL_MOUSE_PRESSED) ||
-            (nux_event.e_event == INL_MOUSE_RELEASED) ||
-            //(event.e_event == INL_MOUSE_MOVE) ||
-            (nux_event.e_event == INL_SIZE_CONFIGURATION) ||
-            (nux_event.e_event == INL_KEYDOWN) ||
-            (nux_event.e_event == INL_KEYUP) ||
-            (nux_event.e_event == INL_WINDOW_CONFIGURATION) ||
-            (nux_event.e_event == INL_WINDOW_ENTER_FOCUS) ||
-            (nux_event.e_event == INL_WINDOW_EXIT_FOCUS) ||
-            (nux_event.e_event == INL_WINDOW_DIRTY);
+        bool b = (nux_event.e_event == NUX_MOUSE_PRESSED) ||
+            (nux_event.e_event == NUX_MOUSE_RELEASED) ||
+            //(event.e_event == NUX_MOUSE_MOVE) ||
+            (nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
+            (nux_event.e_event == NUX_KEYDOWN) ||
+            (nux_event.e_event == NUX_KEYUP) ||
+            (nux_event.e_event == NUX_WINDOW_CONFIGURATION) ||
+            (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
+            (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
+            (nux_event.e_event == NUX_WINDOW_DIRTY);
 
         if(b && m_window_compositor->IsTooltipActive())
         { 

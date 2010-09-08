@@ -398,9 +398,9 @@ t_size ToCharString(char * buffer, t_size bufferlen, const char * format, T valu
     nuxAssert(bufferlen);
     nuxAssert(buffer);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     int res = _snprintf_s(buffer, bufferlen, bufferlen - 1, format, value);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     int res = snprintf(buffer, bufferlen - 1, format, value);
 #endif
 
@@ -415,9 +415,9 @@ t_s32 ToTCharString(TCHAR * buffer, t_size bufferlen, const TCHAR * format, T va
     nuxAssert(bufferlen);
     nuxAssert(buffer);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     int res = _snwprintf_s(buffer, bufferlen, bufferlen - 1, format, value);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     int res = snwprintf(buffer, bufferlen - 1, format, value);
 #endif
 
@@ -446,9 +446,9 @@ bool FromCharString(const char * buffer, t_size bufferlen, const char * format, 
     nuxAssert(buffer);
     nuxAssert(bufferlen);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     t_size res = _snscanf_s(buffer, bufferlen, format, &value);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     t_size res = sscanf(buffer, format, &value);
 #endif
 
@@ -462,9 +462,9 @@ bool FromTCharString(const TCHAR * buffer, t_size bufferlen, const TCHAR * forma
     nuxAssert(buffer);
     nuxAssert(bufferlen);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     t_size res = _snwscanf_s(buffer, bufferlen, format, &value);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     t_size res = swscanf(buffer, format, &value);
 #endif
 

@@ -29,10 +29,10 @@
 
 #define CHECKGLX(a) a
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     extern GLEWContext* glewGetContext();
     extern WGLEWContext* wglewGetContext();
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     extern GLEWContext* glewGetContext();
     extern GLXEWContext* glxewGetContext();
 #endif

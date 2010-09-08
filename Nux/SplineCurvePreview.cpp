@@ -195,10 +195,10 @@ SplineCurvePreview::SplineCurvePreview()
 
 SplineCurvePreview::~SplineCurvePreview()
 {
-    INL_SAFE_DELETE(m_BackgroundLayer);
-    INL_SAFE_DELETE(m_DrawFunctionShader);
-    INL_SAFE_DELETE(m_DialogThreadProxy);
-    INL_SAFE_DELETE(m_ChangeDetectionTimer);
+    NUX_SAFE_DELETE(m_BackgroundLayer);
+    NUX_SAFE_DELETE(m_DrawFunctionShader);
+    NUX_SAFE_DELETE(m_DialogThreadProxy);
+    NUX_SAFE_DELETE(m_ChangeDetectionTimer);
 }
 
 long SplineCurvePreview::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -345,7 +345,7 @@ void SplineCurvePreview::RecvTimer(void* v)
         m_control_knot = m_DialogThreadProxy->GetControlPoints();
         if(m_control_knot.GetNumKnot() == 0)
         {
-            INL_HARDWARE_BREAK;
+            NUX_HARDWARE_BREAK;
         }
         m_CubicSpline.Set(m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray());
         NeedRedraw();
@@ -363,7 +363,7 @@ void SplineCurvePreview::RecvTimer(void* v)
         m_control_knot = m_DialogThreadProxy->GetControlPoints();
         if(m_control_knot.GetNumKnot() == 0)
         {
-            INL_HARDWARE_BREAK;
+            NUX_HARDWARE_BREAK;
         }
         m_CubicSpline.Set(m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray());
 

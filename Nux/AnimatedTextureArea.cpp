@@ -45,7 +45,7 @@ AnimatedTextureArea::AnimatedTextureArea()
 
 AnimatedTextureArea::~AnimatedTextureArea()
 {
-    INL_SAFE_DELETE(m_DefaultTexture);
+    NUX_SAFE_DELETE(m_DefaultTexture);
 
     GetThreadTimer().RemoveTimerHandler(m_TimerHandler);
     m_TimerHandler = 0;

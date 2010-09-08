@@ -58,7 +58,7 @@ void NPluginManager::GetPluginList(TCHAR * dirPath, bool addToList)
 		{
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{					
-                NFileName FilePath = Path + INL_PATH_SEPARATOR_STRING + fd.cFileName;
+                NFileName FilePath = Path + NUX_PATH_SEPARATOR_STRING + fd.cFileName;
 				dllHandle = LoadLibrary(FilePath.GetTCharPtr());
 				if (dllHandle != NULL) 
 				{

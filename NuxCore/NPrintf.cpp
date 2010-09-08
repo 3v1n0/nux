@@ -28,7 +28,7 @@ NAMESPACE_BEGIN
 NString inlPrintf(const TCHAR *Format, ...)
 {
     TCHAR Result[4096];
-	GET_VARARGS(Result, 4096, INL_ARRAY_COUNT(Result) - 1, Format);
+	GET_VARARGS(Result, 4096, NUX_ARRAY_COUNT(Result) - 1, Format);
 	return NString(Result);
 }
 

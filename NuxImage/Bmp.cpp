@@ -29,7 +29,7 @@
 
 #include "Bmp.h"
 
-#if defined (INL_OS_LINUX)
+#if defined (NUX_OS_LINUX)
     #define BI_RGB        0L
     #define BI_RLE8       1L
     #define BI_RLE4       2L

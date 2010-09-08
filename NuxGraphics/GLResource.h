@@ -78,7 +78,7 @@ NAMESPACE_END_OGL
 
 #define NUX_ENABLE_CG_SHADERS 0
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "OpenGL/Glew/glew.h"
     #include "OpenGL/Glew/wglew.h"
 
@@ -92,7 +92,7 @@ NAMESPACE_END_OGL
         #pragma comment( lib, "cgGL.lib"  )
     #endif
 
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #define GLEW_MX
     #include "GL/glew.h"
     #include "GL/glxew.h"
@@ -111,7 +111,7 @@ NAMESPACE_END_OGL
 #define CG_FRAGMENT_PROFILE CG_PROFILE_FP30
 #define CG_VERTEX_PROFILE CG_PROFILE_VP30
 
-#define INL_BUFFER_OFFSET(i) ((BYTE *)NULL + (i))
+#define NUX_BUFFER_OFFSET(i) ((BYTE *)NULL + (i))
 
 
 NAMESPACE_BEGIN_OGL

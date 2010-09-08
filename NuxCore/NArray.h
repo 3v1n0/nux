@@ -124,9 +124,9 @@ protected:
 
 };
 
-template<class T, DWORD Alignment = INL_DEFAULT_ALIGNMENT> class NArray;
+template<class T, DWORD Alignment = NUX_DEFAULT_ALIGNMENT> class NArray;
 //
-// Templated dynamic array, with optional alignment (defaults to the INL_DEFAULT_ALIGNMENT #define)
+// Templated dynamic array, with optional alignment (defaults to the NUX_DEFAULT_ALIGNMENT #define)
 //
 template< class T, DWORD Alignment > class NArray : public NDataArray
 {
@@ -274,7 +274,7 @@ public:
         for(t_u32 Index = 0; Index < m_ArraySize; Index++)
             if((*this)(Index) == Item)
                 return Index;
-        return INL_INVALID_INDEX;
+        return NUX_INVALID_INDEX;
     }
 
     //! Search for an item.
@@ -599,7 +599,7 @@ public:
                 ++itData;
             }  
 
-            INL_SAFE_FREE(m_Data);
+            NUX_SAFE_FREE(m_Data);
 
             m_Data = (BYTE*)NewData;
             m_ReservedSize = NewReservedSize;
@@ -619,7 +619,7 @@ public:
 
         if(NewReservedSize == 0)
         {
-            INL_SAFE_FREE(m_Data);
+            NUX_SAFE_FREE(m_Data);
             m_ReservedSize = 0;
             m_ArraySize = 0;
         }
@@ -645,7 +645,7 @@ public:
                 ++itData;
             }  
 
-            INL_SAFE_FREE(m_Data);
+            NUX_SAFE_FREE(m_Data);
 
             m_Data = (BYTE*)NewData;
             m_ReservedSize = NewReservedSize;

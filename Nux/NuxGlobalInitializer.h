@@ -23,9 +23,9 @@
 #ifndef NUXGLOBALINITIALIZER_H
 #define NUXGLOBALINITIALIZER_H
 
-#define INL_NUX_GLOBAL_OBJECT_INIT_SEQUENCE()
+#define NUX_NUX_GLOBAL_OBJECT_INIT_SEQUENCE()
 //
-//    INL_GLOBAL_OBJECT_VARIABLE(RenderingStats);
+//    NUX_GLOBAL_OBJECT_VARIABLE(RenderingStats);
 
 
 
@@ -33,7 +33,7 @@ NAMESPACE_BEGIN
 
 class NuxGlobalSingletonInitializer
 {
-    INL_DISABLE_OBJECT_COPY(NuxGlobalSingletonInitializer);
+    NUX_DISABLE_OBJECT_COPY(NuxGlobalSingletonInitializer);
     NuxGlobalSingletonInitializer* operator & ();
     const NuxGlobalSingletonInitializer* operator & () const;
 
@@ -45,7 +45,7 @@ public:
 private:
     static bool m_NuxGlobalObjectsReady;
 
-    INL_NUX_GLOBAL_OBJECT_INIT_SEQUENCE();
+    NUX_NUX_GLOBAL_OBJECT_INIT_SEQUENCE();
 };
 
 

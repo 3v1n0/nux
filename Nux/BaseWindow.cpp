@@ -64,7 +64,7 @@ BaseWindow::~BaseWindow()
 {
     GetThreadWindowCompositor().UnRegisterWindow(smptr(BaseWindow)(this, false));
     m_InterfaceObject.clear();
-    INL_SAFE_DELETE(m_PaintLayer);
+    NUX_SAFE_DELETE(m_PaintLayer);
 }
 
 long BaseWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -77,7 +77,7 @@ long BaseWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEve
     window_event.e_x_root = base.x;
     window_event.e_y_root = base.y;
 
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {
@@ -99,7 +99,7 @@ long BaseWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEve
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
     Geometry viewGeometry = GetGeometry(); //Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
     bool traverse = true;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!viewGeometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {
@@ -453,7 +453,7 @@ void BaseWindow::NotifyConfigurationChange(int Width, int Height)
 
 void BaseWindow::SetBackgroundLayer(AbstractPaintLayer* layer)
 {
-    INL_SAFE_DELETE(m_PaintLayer);
+    NUX_SAFE_DELETE(m_PaintLayer);
     m_PaintLayer = layer->Clone();
 }
 

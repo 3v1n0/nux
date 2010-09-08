@@ -34,9 +34,9 @@ FolderTreeItem::FolderTreeItem(const TCHAR* name, const TCHAR* Path, bool Search
 {
     TableItem::SetAlwaysShowOpeningButton(true);
 
-    NString IconPath = INL_FINDRESOURCELOCATION(TEXT("Media/Icons/FolderOpen-16x16.png"));
+    NString IconPath = NUX_FINDRESOURCELOCATION(TEXT("Media/Icons/FolderOpen-16x16.png"));
     FolderOpenIcon.Update(IconPath.GetTCharPtr());
-    IconPath = INL_FINDRESOURCELOCATION(TEXT("Media/Icons/FolderClose-16x16.png"));
+    IconPath = NUX_FINDRESOURCELOCATION(TEXT("Media/Icons/FolderClose-16x16.png"));
     FolderClosedIcon.Update(IconPath.GetTCharPtr());
     //FolderOpenIcon.Update(TEXT("../Media/Icons/FolderOpenGrey-16x16.png"));
     //FolderClosedIcon.Update(TEXT("../Media/Icons/FolderClosedGrey-16x16.png"));

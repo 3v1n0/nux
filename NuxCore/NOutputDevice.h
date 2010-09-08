@@ -55,7 +55,7 @@ protected:
 */
 class NNullOutput : public NOutputDevice
 {
-    INL_DECLARE_GLOBAL_OBJECT(NNullOutput, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NNullOutput, NGlobalSingletonInitializer);
 public:
     void Serialize( const TCHAR* V, const TCHAR* LogPrefix)
     {}
@@ -66,7 +66,7 @@ public:
 */
 class NOutputLogFile : public NOutputDevice
 {
-    INL_DECLARE_GLOBAL_OBJECT(NOutputLogFile, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NOutputLogFile, NGlobalSingletonInitializer);
     //NOutputLogFile( const TCHAR* InFilename);
 
 public:
@@ -107,7 +107,7 @@ private:
 */
 class NOutputVisualDebugConsole : public NOutputDevice
 {
-    INL_DECLARE_GLOBAL_OBJECT(NOutputVisualDebugConsole, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NOutputVisualDebugConsole, NGlobalSingletonInitializer);
 public:
 
     //! Write data to visual studio output debug console.
@@ -131,7 +131,7 @@ public:
 
 class NOutputDeviceRedirector : public NOutputDeviceManager
 {
-    INL_DECLARE_GLOBAL_OBJECT(NOutputDeviceRedirector, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NOutputDeviceRedirector, NGlobalSingletonInitializer);
 public:
     virtual void AddOutputDevice(NOutputDevice* OutputDevice);
     virtual void RemoveOutputDevice(NOutputDevice* OutputDevice);

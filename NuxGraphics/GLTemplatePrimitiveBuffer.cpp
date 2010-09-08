@@ -199,13 +199,13 @@ void TemplateQuadBuffer::BindAttribute(INT AttributeLocation, UINT AttributeInde
         {
             VertexAttributeBuffer[AttributeIndex]->BindVertexBuffer();
             CHECKGL( glEnableVertexAttribArrayARB(AttributeLocation) );
-            CHECKGL( glVertexAttribPointerARB((GLuint)AttributeLocation, 4, GL_FLOAT, GL_FALSE, 0, INL_BUFFER_OFFSET(0)) );
+            CHECKGL( glVertexAttribPointerARB((GLuint)AttributeLocation, 4, GL_FLOAT, GL_FALSE, 0, NUX_BUFFER_OFFSET(0)) );
         }
         else
         {
             VertexAttributeBuffer[AttributeIndex]->BindVertexBuffer();
             CHECKGL( glEnableVertexAttribArrayARB(AttributeLocation) );
-            CHECKGL( glVertexAttribPointerARB((GLuint)AttributeLocation, 4, GL_FLOAT, GL_FALSE, 0, INL_BUFFER_OFFSET(0)) );
+            CHECKGL( glVertexAttribPointerARB((GLuint)AttributeLocation, 4, GL_FLOAT, GL_FALSE, 0, NUX_BUFFER_OFFSET(0)) );
         }
     }
     else
@@ -237,13 +237,13 @@ void TemplateQuadBuffer::BindCGAttribute(CGparameter AttributeLocation, UINT Att
         {
             VertexAttributeBuffer[AttributeIndex]->BindVertexBuffer();
             CHECKGL( cgGLEnableClientState((CGparameter)AttributeLocation) );
-            CHECKGL( cgGLSetParameterPointer((CGparameter)AttributeLocation, 4, GL_FLOAT, 0, INL_BUFFER_OFFSET(0)) );
+            CHECKGL( cgGLSetParameterPointer((CGparameter)AttributeLocation, 4, GL_FLOAT, 0, NUX_BUFFER_OFFSET(0)) );
         }
         else
         {
             VertexAttributeBuffer[AttributeIndex]->BindVertexBuffer();
             CHECKGL( cgGLEnableClientState((CGparameter)AttributeLocation) );
-            CHECKGL( cgGLSetParameterPointer((CGparameter)AttributeLocation, 4, GL_FLOAT, 0, INL_BUFFER_OFFSET(0)) );
+            CHECKGL( cgGLSetParameterPointer((CGparameter)AttributeLocation, 4, GL_FLOAT, 0, NUX_BUFFER_OFFSET(0)) );
         }
     }
     else
@@ -299,7 +299,7 @@ void TemplateQuadBuffer::Render(INT NumPrimitives)
         NumVertex = m_NumVertex;
     }
     m_IB->BindIndexBuffer();
-    CHECKGL( glDrawElements( GL_TRIANGLES, NumVertex, GL_UNSIGNED_SHORT,  INL_BUFFER_OFFSET(0)) );
+    CHECKGL( glDrawElements( GL_TRIANGLES, NumVertex, GL_UNSIGNED_SHORT,  NUX_BUFFER_OFFSET(0)) );
     m_pDeviceFactory->InvalidateIndexBuffer();
 }
 

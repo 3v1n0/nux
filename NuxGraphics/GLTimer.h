@@ -38,10 +38,10 @@ public:
 
 protected:
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     LARGE_INTEGER now;
     float res;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     timeval m_last_time;
 #endif
 

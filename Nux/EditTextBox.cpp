@@ -72,12 +72,12 @@ EditTextBox::EditTextBox(const TCHAR* Caption)
 
 EditTextBox::~EditTextBox()
 {
-    INL_SAFE_DELETE(m_Validator);
+    NUX_SAFE_DELETE(m_Validator);
 
     if(m_BlinkTimerHandler)
         GetThreadTimer().RemoveTimerHandler(m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
-    INL_SAFE_DELETE(m_BlinkTimerFunctor);
+    NUX_SAFE_DELETE(m_BlinkTimerFunctor);
 }
 
 void EditTextBox::ScrollTimerInterrupt(void* v)
@@ -131,7 +131,7 @@ void EditTextBox::StartBlinkCursor(bool BlinkState)
 void EditTextBox::SetValidator(const Validator* validator)
 {
     nuxAssert(validator != 0);
-    INL_SAFE_DELETE(m_Validator);
+    NUX_SAFE_DELETE(m_Validator);
     m_Validator = validator->Clone();
 }
 
@@ -328,7 +328,7 @@ void EditTextBox::RecvKeyEvent(
         StartBlinkCursor(false);
     }
 
-    if(keysym == INL_VK_ENTER || keysym == INL_KP_ENTER)
+    if(keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER)
     {
         NString str(m_KeyboardHandler.GetTextLine());
         str.RemoveSuffix(m_Suffix);

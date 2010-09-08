@@ -244,7 +244,7 @@ long MenuPage::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEvent
     long ret = TraverseInfo;
     if(m_IsActive)
     {
-        if(ievent.e_event == INL_MOUSE_RELEASED)
+        if(ievent.e_event == NUX_MOUSE_RELEASED)
         {
             Geometry geo = GetThreadGLWindow()->GetWindowGeometry();
             geo.SetX(0); geo.SetY(0);
@@ -258,7 +258,7 @@ long MenuPage::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEvent
                 EmitMouseUp(ievent.e_x - GetBaseX(), ievent.e_y - GetBaseY(), ievent.event_mouse_state(), ievent.event_key_state());
             }
         }
-        else if(ievent.e_event == INL_MOUSE_PRESSED)
+        else if(ievent.e_event == NUX_MOUSE_PRESSED)
         {
             Geometry geo = GetThreadGLWindow()->GetWindowGeometry();
             geo.SetX(0); geo.SetY(0);
@@ -272,17 +272,17 @@ long MenuPage::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEvent
                 ret = PostProcessEvent2(ievent, ret, ProcessEventInfo);
             }
         }
-        else if(ievent.e_event == INL_WINDOW_CONFIGURATION)
+        else if(ievent.e_event == NUX_WINDOW_CONFIGURATION)
         {
             NotifyTerminateMenuCascade();
         }
-        else if(ievent.e_event == INL_WINDOW_EXIT_FOCUS)
+        else if(ievent.e_event == NUX_WINDOW_EXIT_FOCUS)
         {
             NotifyTerminateMenuCascade();
         }
         else
         {
-            if(ievent.e_event == INL_MOUSE_MOVE)
+            if(ievent.e_event == NUX_MOUSE_MOVE)
                 NeedRedraw();
 
             ret = PostProcessEvent2(ievent, ret, ProcessEventInfo);

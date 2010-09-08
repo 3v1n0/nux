@@ -30,7 +30,7 @@ NAMESPACE_BEGIN_OGL
 // void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...)
 // {
 //     TCHAR	DefinitionText[1024];
-//     GET_VARARGS(DefinitionText, INL_ARRAY_COUNT(DefinitionText), INL_ARRAY_COUNT(DefinitionText)-1,Format);
+//     GET_VARARGS(DefinitionText, NUX_ARRAY_COUNT(DefinitionText), NUX_ARRAY_COUNT(DefinitionText)-1,Format);
 // 
 //     ShaderDefinition	Definition;
 //     Definition.Name = Name;

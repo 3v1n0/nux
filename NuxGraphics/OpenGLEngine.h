@@ -34,10 +34,10 @@
 #include "RenderingPipe.h"
 #include "GLShader.h"
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "Gfx_OpenGL.h"
     #include "GLWindowManager.h"
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #include "GfxSetupX11.h"
     #include "GLWindowManager.h"
 #endif

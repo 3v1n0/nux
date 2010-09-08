@@ -26,11 +26,11 @@
 
 NAMESPACE_BEGIN
 
-INL_DECLSPEC_DLL t_double* Bernstein(t_int n, t_double t)
+NUX_DECLSPEC_DLL t_double* Bernstein(t_int n, t_double t)
 {
     if(n < 0)
     {
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
     }
 
     t_double *bernstein;
@@ -45,11 +45,11 @@ INL_DECLSPEC_DLL t_double* Bernstein(t_int n, t_double t)
     return bernstein;
 }
 
-INL_DECLSPEC_DLL void Bezier_XY(t_int n, t_double t, t_double xcon[], t_double ycon[], t_double *xval, t_double *yval)
+NUX_DECLSPEC_DLL void Bezier_XY(t_int n, t_double t, t_double xcon[], t_double ycon[], t_double *xval, t_double *yval)
 {
     if(n < 0)
     {
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
     }
 
     double *bval;
@@ -68,10 +68,10 @@ INL_DECLSPEC_DLL void Bezier_XY(t_int n, t_double t, t_double xcon[], t_double y
     delete [] bval;
 }
 
-INL_DECLSPEC_DLL void Bezier_XYZ(t_int n, t_double t, t_double xcon[], t_double ycon[], t_double zcon[], t_double *xval, t_double *yval, t_double *zval)
+NUX_DECLSPEC_DLL void Bezier_XYZ(t_int n, t_double t, t_double xcon[], t_double ycon[], t_double zcon[], t_double *xval, t_double *yval, t_double *zval)
 {
     if(n < 0)
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
 
     double *bval;
     int i;

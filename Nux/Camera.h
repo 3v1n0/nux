@@ -23,7 +23,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include <xinput.h>
 #endif
 #include "VLayout.h"

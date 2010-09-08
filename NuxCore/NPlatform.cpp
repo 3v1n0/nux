@@ -22,13 +22,13 @@
 
 #include "NKernel.h"
 
-#if defined(INL_OS_LINUX)
+#if defined(NUX_OS_LINUX)
     #include <pwd.h>
 #endif
 
 NAMESPACE_BEGIN
 
-INL_IMPLEMENT_GLOBAL_OBJECT(NGlobalData);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NGlobalData);
 
 void NuxCoreInitialize(const TCHAR* CommandLine)
 {
@@ -38,7 +38,7 @@ void NuxCoreInitialize(const TCHAR* CommandLine)
         return;
     sInitialized = true;
 
-    INL_GLOBAL_OBJECT_INSTANCE(NGlobalData).Initialize(CommandLine);
+    NUX_GLOBAL_OBJECT_INSTANCE(NGlobalData).Initialize(CommandLine);
 
     NThreadLocalStorage::Initialize();
 }
@@ -59,11 +59,11 @@ void inlInitRandomGenerator()
 
 static NString _GetProgramDirectory()
 {
-#if defined(INL_OS_WINDOWS)
-    TCHAR RootDirectory[INL_MAX_FILEPATH_SIZE] = TEXT("");
+#if defined(NUX_OS_WINDOWS)
+    TCHAR RootDirectory[NUX_MAX_FILEPATH_SIZE] = TEXT("");
     if(!RootDirectory[0])
     {
-        DWORD Result = ::GetModuleFileName(NULL, RootDirectory, INL_MAX_FILEPATH_SIZE);
+        DWORD Result = ::GetModuleFileName(NULL, RootDirectory, NUX_MAX_FILEPATH_SIZE);
         nuxAssertMsg(Result, TEXT("[GetProgramDirectory] Can't get program's directory path."));
         if(Result == 0)
             NString(TEXT("Unknown Program Directory"));
@@ -72,19 +72,19 @@ static NString _GetProgramDirectory()
         // Skip the program name
         for(i = (t_u32)StringLength(RootDirectory) - 1; i > 0; i--)
         {
-            if((RootDirectory[i - 1] == INL_BACKSLASH_CHAR) || (RootDirectory[i-1] == TEXT('/')))
+            if((RootDirectory[i - 1] == NUX_BACKSLASH_CHAR) || (RootDirectory[i-1] == TEXT('/')))
                 break;
         }
         RootDirectory[i] = 0;
     }
     return NString(RootDirectory);
 
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 
-    TCHAR RootDirectory[INL_MAX_FILEPATH_SIZE] = TEXT("");
+    TCHAR RootDirectory[NUX_MAX_FILEPATH_SIZE] = TEXT("");
     if(!RootDirectory[0])
     {
-        char* Result = getcwd(RootDirectory, INL_MAX_FILEPATH_SIZE);
+        char* Result = getcwd(RootDirectory, NUX_MAX_FILEPATH_SIZE);
         nuxAssertMsg(Result, TEXT("[GetProgramDirectory] Can't get program's directory path."));
         if(Result == 0)
             NString(TEXT("Unknown Program Directory"));
@@ -100,11 +100,11 @@ static NString _GetProgramDirectory()
 
 static NString _GetComputerName()
 {
-#if defined(INL_OS_WINDOWS)
-    TCHAR ComputerName[INL_MAX_FILEPATH_SIZE] = TEXT("");
+#if defined(NUX_OS_WINDOWS)
+    TCHAR ComputerName[NUX_MAX_FILEPATH_SIZE] = TEXT("");
     if(!ComputerName[0])
     {
-        DWORD Size = INL_ARRAY_COUNT(ComputerName);
+        DWORD Size = NUX_ARRAY_COUNT(ComputerName);
         ::GetComputerName(ComputerName, &Size);
 
         TCHAR *c, *d;
@@ -117,9 +117,9 @@ static NString _GetComputerName()
     }
     return NString(ComputerName);
 
-#elif defined(INL_OS_LINUX)
-    char Buffer[INL_MAX_FILEPATH_SIZE];
-    size_t BufferSize = INL_ARRAY_COUNT(Buffer);
+#elif defined(NUX_OS_LINUX)
+    char Buffer[NUX_MAX_FILEPATH_SIZE];
+    size_t BufferSize = NUX_ARRAY_COUNT(Buffer);
 
     if (gethostname(Buffer, BufferSize) != -1)
     {
@@ -135,11 +135,11 @@ static NString _GetComputerName()
 // Get user name.  NOTE: Only one return value is valid at a time!
 static NString _GetUserName()
 {
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     TCHAR UserName[256] = TEXT("");
     if( !UserName[0] )
     {
-        DWORD Size = INL_ARRAY_COUNT(UserName);
+        DWORD Size = NUX_ARRAY_COUNT(UserName);
         ::GetUserName(UserName, &Size);
         TCHAR *c, *d;
         for(c = UserName, d = UserName; *c!=0; c++)
@@ -149,7 +149,7 @@ static NString _GetUserName()
     }
     return NString(UserName);
 
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     struct passwd *userinfo;
     userinfo = getpwuid(getuid() );
     if(userinfo == 0)
@@ -183,22 +183,22 @@ void NGlobalData::Destructor()
 
 NString GetComputerName()
 {
-    return INL_GLOBAL_OBJECT_INSTANCE(NGlobalData).m_ComputerName;
+    return NUX_GLOBAL_OBJECT_INSTANCE(NGlobalData).m_ComputerName;
 }
 
 NString GetProgramDirectory()
 {
-    return INL_GLOBAL_OBJECT_INSTANCE(NGlobalData).m_ProgramDirectory;
+    return NUX_GLOBAL_OBJECT_INSTANCE(NGlobalData).m_ProgramDirectory;
 }
 
 NString GetUserName()
 {
-    return INL_GLOBAL_OBJECT_INSTANCE(NGlobalData).m_UserName;
+    return NUX_GLOBAL_OBJECT_INSTANCE(NGlobalData).m_UserName;
 }
 
 NString GetCmdLine()
 {
-    return INL_GLOBAL_OBJECT_INSTANCE(NGlobalData).m_CommandLine;
+    return NUX_GLOBAL_OBJECT_INSTANCE(NGlobalData).m_CommandLine;
 }
 
 NString GetLogDirectory()

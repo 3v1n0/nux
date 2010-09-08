@@ -26,7 +26,7 @@
 #include "BitmapFormats.h"
 
 
-#ifdef INL_OPENEXR_SUPPORT
+#ifdef NUX_OPENEXR_SUPPORT
 #include "OpenEXR.h"
 //#include "OpenEXR/ctlToLut.h"
 //#include "OpenEXR/fileNameForFrame.h"
@@ -206,4 +206,4 @@ NBitmapData* Load_OpenEXR(const TCHAR *fileName)
 
 NAMESPACE_END
 
-#endif // INL_OPENEXR_SUPPORT
+#endif // NUX_OPENEXR_SUPPORT

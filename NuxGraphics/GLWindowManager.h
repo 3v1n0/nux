@@ -25,9 +25,9 @@
 
 #include "NuxCore/NKernel.h"
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "Gfx_OpenGL.h"
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #include "GfxSetupX11.h"
 #endif
 
@@ -45,14 +45,14 @@ class DisplayAccessController
 public:
     GLWindowImpl* CreateGLWindow(const TCHAR* WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style, GLWindowImpl* GLWindow, bool FullscreenFlag = FALSE);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     HINSTANCE GetInstance() {return hInstance;}
 #endif
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     //! Create a GLWindowImpl from a foreign window and display.
     GLWindowImpl* CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     //! Create a GLWindowImpl from a foreign window and display.
     GLWindowImpl* CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext);
 #endif
@@ -68,7 +68,7 @@ private:
     DisplayAccessController* operator &();
     ~DisplayAccessController();
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     HINSTANCE	hInstance;
     WNDCLASSEX	WinClass;
 #endif

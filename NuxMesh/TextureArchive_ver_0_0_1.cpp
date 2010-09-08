@@ -30,7 +30,7 @@
 // 
 // NAMESPACE_BEGIN
 // 
-// bool TextureArchiveAdd_ver_0_0_1(nux::NSerializer* FileStream, const TCHAR* SourceFolder, const TCHAR* InputTextureFile, INL_OUT nux::t_s64& Offset)
+// bool TextureArchiveAdd_ver_0_0_1(nux::NSerializer* FileStream, const TCHAR* SourceFolder, const TCHAR* InputTextureFile, NUX_OUT nux::t_s64& Offset)
 // {   
 //     nuxAssert(FileStream != 0);
 //     nuxAssert(InputTextureFile);

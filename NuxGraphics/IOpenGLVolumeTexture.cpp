@@ -75,7 +75,7 @@ IOpenGLVolumeTexture::~IOpenGLVolumeTexture()
         }
         _VolumeSurfaceArray[mip].clear();
     }
-    INL_SAFE_DELETE_ARRAY(_VolumeSurfaceArray);
+    NUX_SAFE_DELETE_ARRAY(_VolumeSurfaceArray);
 
 
     for (int mip = 0; mip < _NumMipLevel; mip++)

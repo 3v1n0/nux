@@ -84,7 +84,7 @@ protected:
 
 class NFileManagerGNU : public NFileManagerGeneric
 {
-    INL_DECLARE_GLOBAL_OBJECT(NFileManagerGNU, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NFileManagerGNU, NGlobalSingletonInitializer);
 public:
     // Flags is a combination of
     //  NSerializer::OutputErrorIfFail

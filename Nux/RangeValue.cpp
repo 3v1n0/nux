@@ -100,7 +100,7 @@ void RangeValue::DestroyLayout()
 
 long RangeValue::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) 
 {
-    m_CTRL_KEY = ievent.GetVirtualKeyState(INL_VK_CONTROL);
+    m_CTRL_KEY = ievent.GetVirtualKeyState(NUX_VK_CONTROL);
 
     long ret;
     ret = m_Percentage->OnEvent(ievent, TraverseInfo, ProcessEventInfo);
@@ -279,7 +279,7 @@ void RangeValue::OnLostKeyboardFocus()
 void RangeValue::OnValidateKeyboardEntry(const weaksmptr(EditTextBox) textbox, const NString& text)
 {
     float f;
-    CharToFloat(text.GetTCharPtr(), f);
+    f = CharToDouble(text.GetTCharPtr());
     SetValue(f);
     sigValueChanged.emit(smptr(RangeValue)(this, false));
     sigFloatChanged.emit(m_Value);

@@ -27,7 +27,7 @@ NAMESPACE_BEGIN_OGL
 
 class RenderingStats
 {
-    INL_DECLARE_GLOBAL_OBJECT(RenderingStats, NuxGraphicsGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(RenderingStats, NuxGraphicsGlobalSingletonInitializer);
 public:
     static t_u32 m_NumTex2D;
     static t_u32 m_GPUSizeTex2D;
@@ -66,6 +66,6 @@ public:
 
 NAMESPACE_END_OGL
 
-#define GRunTimeStats INL_GLOBAL_OBJECT_INSTANCE(nux::RenderingStats)
+#define GRunTimeStats NUX_GLOBAL_OBJECT_INSTANCE(nux::RenderingStats)
 
 #endif // RUNTIMESTATS_H

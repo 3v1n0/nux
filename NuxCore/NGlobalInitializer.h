@@ -24,39 +24,39 @@
 #define NGLOBALINITIALIZER_H
 
 #ifdef _WIN32
-    #define INL_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
-        INL_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
-        INL_GLOBAL_OBJECT_VARIABLE(NCPU);                       \
-        INL_GLOBAL_OBJECT_VARIABLE(NProcess);                   \
-        INL_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
-        INL_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
-        INL_GLOBAL_OBJECT_VARIABLE(NFileManagerWindows);        \
-        INL_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
-        INL_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
-        INL_GLOBAL_OBJECT_VARIABLE(NOutputDeviceRedirector);    \
-        INL_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);    \
-        INL_GLOBAL_OBJECT_VARIABLE(MemHook);
+    #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
+        NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
+        NUX_GLOBAL_OBJECT_VARIABLE(NCPU);                       \
+        NUX_GLOBAL_OBJECT_VARIABLE(NProcess);                   \
+        NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
+        NUX_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
+        NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerWindows);        \
+        NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
+        NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
+        NUX_GLOBAL_OBJECT_VARIABLE(NOutputDeviceRedirector);
+        //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
+        //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 
-#elif (defined INL_PS3)
-    #define INL_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
-        INL_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
-        INL_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
-        INL_GLOBAL_OBJECT_VARIABLE(NFileManagerPS3);            \
-        INL_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
-        INL_GLOBAL_OBJECT_VARIABLE(NOutputDeviceRedirector);    \
-        INL_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);    \
-        INL_GLOBAL_OBJECT_VARIABLE(MemHook);
-#elif (defined INL_OS_LINUX)
-    #define INL_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
-        INL_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
-        INL_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
-        INL_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
-        INL_GLOBAL_OBJECT_VARIABLE(NFileManagerGNU);            \
-        INL_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
-        INL_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
-        INL_GLOBAL_OBJECT_VARIABLE(NOutputDeviceRedirector);    \
-        INL_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);    \
-        INL_GLOBAL_OBJECT_VARIABLE(MemHook);
+#elif (defined NUX_PS3)
+    #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
+        NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
+        NUX_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
+        NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerPS3);            \
+        NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
+        NUX_GLOBAL_OBJECT_VARIABLE(NOutputDeviceRedirector);
+        //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
+        //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
+#elif (defined NUX_OS_LINUX)
+    #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
+        NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
+        NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
+        NUX_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
+        NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerGNU);            \
+        NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
+        NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
+        NUX_GLOBAL_OBJECT_VARIABLE(NOutputDeviceRedirector);
+        //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
+        //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #endif
 
 NAMESPACE_BEGIN
@@ -76,7 +76,7 @@ NAMESPACE_BEGIN
 
 class NGlobalSingletonInitializer
 {
-    INL_DISABLE_OBJECT_COPY(NGlobalSingletonInitializer);
+    NUX_DISABLE_OBJECT_COPY(NGlobalSingletonInitializer);
     NGlobalSingletonInitializer* operator & ();
     const NGlobalSingletonInitializer* operator & () const;
 
@@ -88,12 +88,12 @@ public:
 private:
     static bool m_bGlobalObjectsReady;
 
-    INL_GLOBAL_OBJECT_INIT_SEQUENCE();
+    NUX_GLOBAL_OBJECT_INIT_SEQUENCE();
 };
 
 // Hide these functions
-// extern INL_DLL_ENTRY void SystemStart();
-// extern INL_DLL_ENTRY void SystemShutdown();
+// extern NUX_DLL_ENTRY void SystemStart();
+// extern NUX_DLL_ENTRY void SystemShutdown();
 
 
 

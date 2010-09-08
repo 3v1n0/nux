@@ -53,7 +53,7 @@ t_int Factorial(t_int n)
 t_double BinomialCoefficient(t_int n, t_int k)
 {
     if(n < 0)
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
 
     if(k < 0 || k > n)
         return 0.0;

@@ -42,7 +42,7 @@ NSerializeFileReader::NSerializeFileReader(FILE* InFile, NOutputDevice* InError,
 
 NSerializeFileReader::~NSerializeFileReader()
 {
-    INL_SAFE_DELETE(m_PreCacheBuffer);
+    NUX_SAFE_DELETE(m_PreCacheBuffer);
     if(m_File)
         Close();
 }
@@ -156,7 +156,7 @@ NSerializeFileWriter::NSerializeFileWriter(FILE* InFile, NOutputDevice* InError)
 
 NSerializeFileWriter::~NSerializeFileWriter()
 {
-    INL_SAFE_DELETE_ARRAY(m_CacheBuffer);
+    NUX_SAFE_DELETE_ARRAY(m_CacheBuffer);
     if(m_File)
         Close();
     m_File = NULL;
@@ -183,7 +183,7 @@ t_s64 NSerializeFileWriter::Tell()
 t_s64 NSerializeFileWriter::GetFileSize()
 {
 
-#if defined(INL_VISUAL_STUDIO_2005) || defined(INL_VISUAL_STUDIO_2008)
+#if defined(NUX_VISUAL_STUDIO_2005) || defined(NUX_VISUAL_STUDIO_2008)
     t_s64 CurrentPosition = _ftelli64(m_File);
     _fseeki64(m_File, 0, SEEK_END);
     t_s64 FileSize = _ftelli64(m_File);
@@ -210,7 +210,7 @@ bool NSerializeFileWriter::Close()
 
 void NSerializeFileWriter::SerializeFinal(void* Src, t_u64 Length)
 {
-    BYTE* SrcBuffer = INL_STATIC_CAST(BYTE*, Src);
+    BYTE* SrcBuffer = NUX_STATIC_CAST(BYTE*, Src);
     m_FilePos += Length;
     t_int Copy;
 

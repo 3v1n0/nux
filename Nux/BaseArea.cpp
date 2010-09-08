@@ -92,7 +92,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 
     if(ProcessEventInfo & eDoNotProcess)
     {
-        if(ievent.e_event == INL_MOUSE_PRESSED)
+        if(ievent.e_event == NUX_MOUSE_PRESSED)
         {
             if(m_CaptureMouseDownAnyWhereElse)
                 OnCaptureMouseDownAnyWhereElse.emit(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.event_mouse_state(), ievent.event_key_state());
@@ -136,7 +136,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
             CurrentMouseOverArea = smptr(BaseArea)(this, false);
         }
 
-        if(ievent.e_event == INL_MOUSE_PRESSED)
+        if(ievent.e_event == NUX_MOUSE_PRESSED)
         {
             if(HasKeyboardFocus())
             {
@@ -145,7 +145,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
             }
         }
         
-        if(ievent.e_event == INL_MOUSE_PRESSED)
+        if(ievent.e_event == NUX_MOUSE_PRESSED)
         {
             if(m_CaptureMouseDownAnyWhereElse)
                 OnCaptureMouseDownAnyWhereElse.emit(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.event_mouse_state(), ievent.event_key_state());
@@ -223,7 +223,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
             PreviousMouseOverArea = CurrentMouseOverArea;
         }
 
-        if(ievent.e_event == INL_WINDOW_EXIT_FOCUS)
+        if(ievent.e_event == NUX_WINDOW_EXIT_FOCUS)
         {
             if(HasKeyboardFocus())
             {
@@ -232,7 +232,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
             }
         }
 
-        if(ievent.e_event == INL_MOUSEWHEEL)
+        if(ievent.e_event == NUX_MOUSEWHEEL)
         {
             if(HasKeyboardFocus())
             {
@@ -251,7 +251,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
             ret |=  eMouseEventSolved;
         }
 
-        if(ievent.e_event == INL_MOUSE_PRESSED)
+        if(ievent.e_event == NUX_MOUSE_PRESSED)
         {
             if(m_CaptureMouseDownAnyWhereElse)
             {
@@ -261,7 +261,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
             }
         }
 
-        if((mouse_signals == eSigMouseNone) && (ievent.e_event == INL_MOUSE_PRESSED))
+        if((mouse_signals == eSigMouseNone) && (ievent.e_event == NUX_MOUSE_PRESSED))
         {
             if(HasKeyboardFocus())
             {
@@ -269,11 +269,11 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
                 OnEndFocus.emit();
             }
         }
-        else if((mouse_signals & eSigMouseDown) /*&& (ievent.e_event == INL_MOUSE_PRESSED)*/)
+        else if((mouse_signals & eSigMouseDown) /*&& (ievent.e_event == NUX_MOUSE_PRESSED)*/)
         {
             OnStartMouseFocus.emit();
 
-            if(ievent.e_mouse_state & INL_EVENT_BUTTON1_DBLCLICK)
+            if(ievent.e_mouse_state & NUX_EVENT_BUTTON1_DBLCLICK)
             {
                 // Double click
                 OnMouseDoubleClick.emit(m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state());
@@ -330,7 +330,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
         }
     }
 
-    if(HasKeyboardFocus() && (ievent.e_event == INL_KEYDOWN || ievent.e_event == INL_KEYUP))
+    if(HasKeyboardFocus() && (ievent.e_event == NUX_KEYDOWN || ievent.e_event == NUX_KEYUP))
     {
         OnKeyEvent.emit(
             GetGraphicsThread()->GetGraphicsContext(),

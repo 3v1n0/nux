@@ -54,10 +54,10 @@ enum WindowStyle
     WINDOWSTYLE_NOBORDER,
 };
 
-#define INL_THREADMSG                           (WM_APP+0)
-#define INL_THREADMSG_START_RENDERING           (WM_APP+1)  // Connection established // start at WM_APP
-#define INL_THREADMSG_CHILD_WINDOW_TERMINATED   (WM_APP+2)  // General failure - Wait Connection failed
-#define INL_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
+#define NUX_THREADMSG                           (WM_APP+0)
+#define NUX_THREADMSG_START_RENDERING           (WM_APP+1)  // Connection established // start at WM_APP
+#define NUX_THREADMSG_CHILD_WINDOW_TERMINATED   (WM_APP+2)  // General failure - Wait Connection failed
+#define NUX_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
 
 // This will become GLWindow
 class GLWindowImpl : public GraphicSystem
@@ -222,7 +222,7 @@ public:
         This function also sets the current openGL context to 0 for this window.
         This is useful while a child window is being created and is sharing openGL objects with this context.
         For wglShareLists to work, both OpenGL context must be set to 0 in their respective thread.
-        Send INL_THREADMSG_START_RENDERING (PostThreadMessage) to this window to reactivate rendering.
+        Send NUX_THREADMSG_START_RENDERING (PostThreadMessage) to this window to reactivate rendering.
         
         Never call this function while doing rendering. Call it only when processing events.
     */

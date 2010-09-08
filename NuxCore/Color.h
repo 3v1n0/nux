@@ -27,9 +27,9 @@
 
 NAMESPACE_BEGIN      
 
-#define INL_COLOR_RGB(r, g, b)
+#define NUX_COLOR_RGB(r, g, b)
 
-#define INL_COLOR_ARGB(a,r,g,b)   ((Color)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+#define NUX_COLOR_ARGB(a,r,g,b)   ((Color)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
 enum eColorModel{CM_RGB, CM_HSV, CM_HLS, CM_YUV};
 enum eColorChannel{CC_RED, CC_GREEN, CC_BLUE, CC_HUE, CC_SATURATION, CC_LIGHT , CC_VALUE};

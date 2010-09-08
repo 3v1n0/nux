@@ -82,20 +82,20 @@ Vector3Valuator::~Vector3Valuator()
 
 void Vector3Valuator::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
 { 
-    if( (button_flags & INL_STATE_BUTTON1_DOWN) && (button_flags & INL_STATE_BUTTON3_DOWN) )
+    if( (button_flags & NUX_STATE_BUTTON1_DOWN) && (button_flags & NUX_STATE_BUTTON3_DOWN) )
         m_Mouse = 2;
-    else if(button_flags & INL_EVENT_BUTTON1)
+    else if(button_flags & NUX_EVENT_BUTTON1)
         m_Mouse = 1;
-    else if(button_flags & INL_EVENT_BUTTON3)
+    else if(button_flags & NUX_EVENT_BUTTON3)
         m_Mouse = 3;
     NeedRedraw();
 }
 
 void Vector3Valuator::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if((m_Mouse == 1) && (button_flags & INL_EVENT_BUTTON1) )
+    if((m_Mouse == 1) && (button_flags & NUX_EVENT_BUTTON1) )
         m_Mouse = 0;
-    else if((m_Mouse == 3) && (button_flags & INL_EVENT_BUTTON3) )
+    else if((m_Mouse == 3) && (button_flags & NUX_EVENT_BUTTON3) )
         m_Mouse = 0;
     NeedRedraw();
 }

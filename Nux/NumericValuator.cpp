@@ -162,7 +162,7 @@ void NumericValuator::ImplementDecrementBtn()
 void NumericValuator::ImplementValidateEntry()
 {
     double ret = 0;
-    if(CharToDouble(m_EditLine->GetCleanText().GetTCharPtr(), ret))
+    ret = CharToDouble(m_EditLine->GetCleanText().GetTCharPtr());
     {
         m_fValue = ret;
         if(m_fValue < m_DoubleValidator.GetMinimum())
@@ -176,10 +176,10 @@ void NumericValuator::ImplementValidateEntry()
             m_EditLine->SetText(inlPrintf("%f", m_fValue));
         }
     }
-    else
-    {
-        m_EditLine->SetText(inlPrintf("%f", m_fValue));
-    }
+//     else
+//     {
+//         m_EditLine->SetText(inlPrintf("%f", m_fValue));
+//     }
 }
 
 NAMESPACE_END_GUI

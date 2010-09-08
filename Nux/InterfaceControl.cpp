@@ -45,7 +45,7 @@ ActiveInterfaceObject::~ActiveInterfaceObject()
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
     GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, false));
 
-    INL_SAFE_DELETE(m_TextColor);
+    NUX_SAFE_DELETE(m_TextColor);
 }
 
 long ActiveInterfaceObject::ComputeChildLayout()
@@ -344,11 +344,11 @@ void ActiveInterfaceObject::SetTextColor(const Color* color)
 {
     if(color == 0)
     {
-        INL_SAFE_DELETE(m_TextColor);
+        NUX_SAFE_DELETE(m_TextColor);
     }
     else
     {
-        INL_SAFE_DELETE(m_TextColor);
+        NUX_SAFE_DELETE(m_TextColor);
         m_TextColor = color->Clone();
     }
 }

@@ -41,7 +41,7 @@ struct ShaderDefinition
 static void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...)
 {
     TCHAR	DefinitionText[1024];
-    GET_VARARGS(DefinitionText, INL_ARRAY_COUNT(DefinitionText), INL_ARRAY_COUNT(DefinitionText)-1,Format);
+    GET_VARARGS(DefinitionText, NUX_ARRAY_COUNT(DefinitionText), NUX_ARRAY_COUNT(DefinitionText)-1,Format);
 
     ShaderDefinition	Definition;
     Definition.Name = Name;
@@ -212,7 +212,7 @@ IOpenGLVertexShader::~IOpenGLVertexShader()
 void IOpenGLVertexShader::SetShaderCode(const TCHAR* ShaderCode, const TCHAR* VtxShaderPreprocessorDefines)
 {
     nuxAssertMsg(ShaderCode, TEXT("[IOpenGLVertexShader::SetShaderCode] Invalid shader code."));
-    INL_RETURN_IF_NULL(ShaderCode);
+    NUX_RETURN_IF_NULL(ShaderCode);
     NString ProcessedShaderSource;
     NString Defines(VtxShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(ShaderCode, ProcessedShaderSource, Defines);
@@ -287,7 +287,7 @@ IOpenGLPixelShader::~IOpenGLPixelShader()
 void IOpenGLPixelShader::SetShaderCode(const TCHAR* ShaderCode, const TCHAR* FrgShaderPreprocessorDefines)
 {
     nuxAssertMsg(ShaderCode, TEXT("[IOpenGLPixelShader::SetShaderCode] Invalid shader code."));
-    INL_RETURN_IF_NULL(ShaderCode);
+    NUX_RETURN_IF_NULL(ShaderCode);
     NString ProcessedShaderSource;
     NString Defines(FrgShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(ShaderCode, ProcessedShaderSource, Defines);
@@ -363,7 +363,7 @@ IOpenGLShaderProgram::~IOpenGLShaderProgram()
 void IOpenGLShaderProgram::LoadIShaderFile(const TCHAR* ShaderFileName, const TCHAR* VtxShaderPreprocessorDefines, const TCHAR* FrgShaderPreprocessorDefines)
 {
     nuxAssertMsg(ShaderFileName, TEXT("[IOpenGLShaderProgram::LoadIShaderFile] Invalid shader file name."));
-    INL_RETURN_IF_NULL(ShaderFileName);
+    NUX_RETURN_IF_NULL(ShaderFileName);
     NString SourceCode;
     LoadFileToString(SourceCode, ShaderFileName);
     LoadIShader(&SourceCode[0], VtxShaderPreprocessorDefines, FrgShaderPreprocessorDefines);
@@ -372,7 +372,7 @@ void IOpenGLShaderProgram::LoadIShaderFile(const TCHAR* ShaderFileName, const TC
 void IOpenGLShaderProgram::LoadIShader(const TCHAR* ShaderCode, const TCHAR* VtxShaderPreprocessorDefines, const TCHAR* FrgShaderPreprocessorDefines)
 {
     nuxAssertMsg(ShaderCode, TEXT("[IOpenGLShaderProgram::LoadIShader] Invalid shader code."));
-    INL_RETURN_IF_NULL(ShaderCode);
+    NUX_RETURN_IF_NULL(ShaderCode);
     NString VertexShaderSource;
     ExtractShaderString3(TEXT("[Vertex Shader]"), ShaderCode, VertexShaderSource, NString(VtxShaderPreprocessorDefines));
     NString PixelShaderSource;
@@ -395,7 +395,7 @@ void IOpenGLShaderProgram::LoadIShader(const TCHAR* ShaderCode, const TCHAR* Vtx
 void IOpenGLShaderProgram::LoadVertexShader(const TCHAR* glslshader, const TCHAR* VtxShaderPreprocessorDefines)
 {
     nuxAssertMsg(glslshader, TEXT("[IOpenGLShaderProgram::LoadVertexShader] Invalid shader code."));
-    INL_RETURN_IF_NULL(glslshader);
+    NUX_RETURN_IF_NULL(glslshader);
     TRefGL<IOpenGLVertexShader> vs = GetThreadGLDeviceFactory()->CreateVertexShader(); //new IOpenGLVertexShader;
 
     NString ProcessedShaderSource;
@@ -410,7 +410,7 @@ void IOpenGLShaderProgram::LoadVertexShader(const TCHAR* glslshader, const TCHAR
 void IOpenGLShaderProgram::LoadPixelShader(const TCHAR* glslshader, const TCHAR* FrgShaderPreprocessorDefines)
 {
     nuxAssertMsg(glslshader, TEXT("[IOpenGLShaderProgram::LoadPixelShader] Invalid shader code."));
-    INL_RETURN_IF_NULL(glslshader);
+    NUX_RETURN_IF_NULL(glslshader);
     TRefGL<IOpenGLPixelShader> ps = GetThreadGLDeviceFactory()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     NString ProcessedShaderSource;

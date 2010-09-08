@@ -34,8 +34,8 @@ static void SystemStart()
     // Placement new in our reserved buffer.
     GNuxGraphicsGlobalInitializer =  new(StaticBuffer) NuxGraphicsGlobalSingletonInitializer();
 
-    //GLogDevice.AddOutputDevice( &INL_GLOBAL_OBJECT_INSTANCE(NOutputLogFile) );
-    //GLogDevice.AddOutputDevice( &INL_GLOBAL_OBJECT_INSTANCE(NOutputVisualDebugConsole) );
+    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputLogFile) );
+    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputVisualDebugConsole) );
 }
 
 static void SystemShutdown()

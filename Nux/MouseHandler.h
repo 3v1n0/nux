@@ -23,9 +23,9 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "NuxGraphics/Gfx_Events.h"
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #include "NuxGraphics/GfxEventsX11.h"
 #endif
 #include "Utils.h"

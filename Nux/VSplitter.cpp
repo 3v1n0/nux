@@ -64,7 +64,7 @@ long VSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
 {
     long ret = TraverseInfo;
     long ProcEvInfo = ProcessEventInfo;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x, ievent.e_y))
         {

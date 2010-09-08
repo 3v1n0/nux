@@ -85,7 +85,7 @@ WindowThread* CreateGUIThread(const TCHAR* WindowTitle,
     return w;
 }
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
 WindowThread* CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
     ThreadUserInitFunc UserInitFunc,
     void* InitData
@@ -116,7 +116,7 @@ WindowThread* CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGL
     return w;
 }
 
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 WindowThread* CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext,
     ThreadUserInitFunc UserInitFunc,
     void* InitData)
@@ -206,7 +206,7 @@ SystemThread* CreateSimpleThread(AbstractThread *Parent, ThreadUserInitFunc User
 bool RegisterNuxThread(NThread* ThreadPtr)
 {
     nuxAssert(ThreadPtr);
-    INL_RETURN_VALUE_IF_NULL(ThreadPtr, false);
+    NUX_RETURN_VALUE_IF_NULL(ThreadPtr, false);
 
     NScopeLock Scope(&ThreadArrayLock);
     std::vector<NThread*>::iterator it = find(ThreadArray.begin(), ThreadArray.end(), ThreadPtr);
@@ -220,7 +220,7 @@ bool RegisterNuxThread(NThread* ThreadPtr)
 void UnregisterNuxThread(NThread* ThreadPtr)
 {
     nuxAssert(ThreadPtr);
-    INL_RETURN_IF_NULL(ThreadPtr);
+    NUX_RETURN_IF_NULL(ThreadPtr);
     
     NScopeLock Scope(&ThreadArrayLock);
     std::vector<NThread*>::iterator it = find(ThreadArray.begin(), ThreadArray.end(), ThreadPtr);
@@ -272,7 +272,7 @@ WindowCompositor& GetThreadWindowCompositor()
     {
         nuxAssertMsg(0, TEXT("[GetThreadWindowCompositor] You can't call GetThreadWindowCompositor on this type of thread: s"), thread->Type().GetName());
         inlOutputDebugString(TEXT("[GetThreadWindowCompositor] You can't call GetThreadWindowCompositor on this type of thread: s"), thread->Type().GetName());
-        INL_HARDWARE_BREAK;
+        NUX_HARDWARE_BREAK;
     }
     return (static_cast<WindowThread*> (thread))->GetStackManager();
 }
@@ -328,7 +328,7 @@ TimerHandler& GetThreadTimer()
     {
         nuxAssertMsg(0, TEXT("[GetThreadTimer] You can't call GetThreadTimer on this type of thread: s"), thread->Type().GetName());
         inlOutputDebugString(TEXT("[GetThreadTimer] You can't call GetThreadTimer on this type of thread: s"), thread->Type().GetName());
-        INL_HARDWARE_BREAK;
+        NUX_HARDWARE_BREAK;
     }
     return (static_cast<WindowThread*> (thread))->GetTimerHandler();
 }

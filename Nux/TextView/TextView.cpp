@@ -59,7 +59,7 @@ TextView::TextView(HWND hwnd)
     b_RenderToVertexBuffer = false;
 
     m_ShaderProg = GetThreadGLDeviceFactory()->CreateShaderProgram();
-    m_ShaderProg->LoadIShaderFile(INL_FINDRESOURCELOCATION(TEXT("Data/Shaders/TextViewShader.glsl")));
+    m_ShaderProg->LoadIShaderFile(NUX_FINDRESOURCELOCATION(TEXT("Data/Shaders/TextViewShader.glsl")));
     m_ShaderProg->Link();
 
     m_CgColor               = m_ShaderProg->GetAttributeLocation(TEXT("iColor"));
@@ -70,7 +70,7 @@ TextView::TextView(HWND hwnd)
     m_ViewProjectionMatrix0   = m_ShaderProg->GetUniformLocationARB(TEXT("ViewProjectionMatrix"));
 
     m_ColorQuadShaderProg = GetThreadGLDeviceFactory()->CreateShaderProgram();
-    m_ColorQuadShaderProg->LoadIShaderFile(INL_FINDRESOURCELOCATION(TEXT("Shaders//TextViewColorQuadShader.glsl")));
+    m_ColorQuadShaderProg->LoadIShaderFile(NUX_FINDRESOURCELOCATION(TEXT("Shaders//TextViewColorQuadShader.glsl")));
     m_ColorQuadShaderProg->Link();
 
     m_CgQuadPosition        = m_ColorQuadShaderProg->GetAttributeLocation(TEXT("iPosition"));
@@ -399,13 +399,13 @@ long TextView::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEvent
     // testing the event by itself.
     ret = PostProcessEvent2(ievent, ret, 0);
 
-    if(ievent.e_event == INL_WINDOW_ENTER_FOCUS)
+    if(ievent.e_event == NUX_WINDOW_ENTER_FOCUS)
     {
         m_HasFocus = true;
         StopBlinkCursor(false);
         StartBlinkCursor(false);
     }
-    if(ievent.e_event == INL_WINDOW_EXIT_FOCUS)
+    if(ievent.e_event == NUX_WINDOW_EXIT_FOCUS)
     {
         m_HasFocus = false;
         StopBlinkCursor(false);
@@ -766,8 +766,8 @@ void TextView::ScrollDown(float stepy, int mousedy)
 void TextView::RecvMouseWheel(int x, int y, int delta, t_u32 button_flags, t_u32 key_flags)
 {
     m_MouseWheelAcc += delta;
-    int scrollunit = m_MouseWheelAcc / INL_WIN32_MOUSEWHEEL_DELTA;
-    m_MouseWheelAcc = m_MouseWheelAcc % INL_WIN32_MOUSEWHEEL_DELTA;
+    int scrollunit = m_MouseWheelAcc / NUX_WIN32_MOUSEWHEEL_DELTA;
+    m_MouseWheelAcc = m_MouseWheelAcc % NUX_WIN32_MOUSEWHEEL_DELTA;
 
     if(scrollunit > 0)
     {
@@ -812,7 +812,7 @@ void TextView::RecvKeyEvent(
                             unsigned short   keyCount     /*key repeat count*/
                             )
 {
-    if(keyCount && ((keysym == INL_VK_PAGE_UP) || (keysym == INL_KP_PAGE_UP)))
+    if(keyCount && ((keysym == NUX_VK_PAGE_UP) || (keysym == NUX_KP_PAGE_UP)))
     {
         m_ContentOffsetY += m_nWindowLines* m_nLineHeight;
         if(m_ContentOffsetY > 0)
@@ -823,7 +823,7 @@ void TextView::RecvKeyEvent(
         RepositionCaret();
         NeedRedraw();
     }
-    if(keyCount && ((keysym == INL_VK_PAGE_DOWN) || (keysym == INL_KP_PAGE_DOWN)))
+    if(keyCount && ((keysym == NUX_VK_PAGE_DOWN) || (keysym == NUX_KP_PAGE_DOWN)))
     {
         m_ContentOffsetY -= m_nWindowLines* m_nLineHeight;
         if(m_ContentOffsetY < -m_nLineCount*m_nLineHeight)

@@ -103,7 +103,7 @@ void Matrix2x2<T>::Inverse()
     {
         // Determinant is null. Matrix cannot be inverted.
 #ifdef _DEBUG
-        INL_HARDWARE_BREAK;
+        NUX_HARDWARE_BREAK;
 #endif
         return;
     }

@@ -80,17 +80,17 @@ GraphicsContext::GraphicsContext(GLWindowImpl& GlWindow)
     //     m_FilePath.AddSearchPath("../../../Data");
     m_FilePath.AddSearchPath("./Data/UITextures");
 
-    NString font_file = INL_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("Tahoma_size_8.txt"));
+    NString font_file = NUX_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("Tahoma_size_8.txt"));
 
     if(!GFont)
     {
         //GFont.reset(new FontTexture(TEXT("Courier New_size_10.txt")));
-        GFont.reset(new FontTexture(INL_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("Tahoma_size_8.txt"))));
+        GFont.reset(new FontTexture(NUX_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("Tahoma_size_8.txt"))));
     }
 
     if(!GFontBold)
     {
-        GFontBold.reset(new FontTexture(INL_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("Tahoma_size_8_bold.txt"))));
+        GFontBold.reset(new FontTexture(NUX_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("Tahoma_size_8_bold.txt"))));
     }
 
     m_CurrrentContext.x = 0;
@@ -127,7 +127,7 @@ GraphicsContext::GraphicsContext(GLWindowImpl& GlWindow)
 GraphicsContext::~GraphicsContext()
 {
     ResourceCache.Flush();
-    INL_SAFE_DELETE(m_FontRenderer);
+    NUX_SAFE_DELETE(m_FontRenderer);
 }
 
 void GraphicsContext::InitOpenGLEngine()
@@ -261,7 +261,7 @@ void GraphicsContext::SetTexture(int TextureUnit, NTexture* Texture)
 
 void GraphicsContext::SetTexture(int TextureUnit, TRefGL< IOpenGLBaseTexture > DeviceTexture)
 {
-    INL_RETURN_IF_FALSE(DeviceTexture.IsValid());
+    NUX_RETURN_IF_FALSE(DeviceTexture.IsValid());
 
     CHECKGL( glActiveTextureARB(TextureUnit) );
     DeviceTexture->BindTextureToUnit(TextureUnit);

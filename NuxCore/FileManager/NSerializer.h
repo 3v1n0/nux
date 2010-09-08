@@ -94,7 +94,7 @@ public:
         Reset();
     }
 
-    INL_INLINE bool IsError() const {return m_ErrorCode;}
+    NUX_INLINE bool IsError() const {return m_ErrorCode;}
 
     virtual void Serialize(t_char&   data);
     virtual void Serialize(t_wchar&  data);
@@ -140,20 +140,20 @@ protected:
     bool m_ErrorCode;
 };
 
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_char&     v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_bool&      v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_s8&        v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_u8&        v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_u16&       v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_s16&       v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_uint32&    v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_int32&     v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_long&      v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_ulong&     v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_float&     v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_double&    v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_u64&       v){Sr.Serialize(v); return Sr;}
-INL_INLINE NSerializer& operator << (NSerializer& Sr, t_s64&       v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_char&     v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_bool&      v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_s8&        v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_u8&        v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_u16&       v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_s16&       v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_uint32&    v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_int32&     v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_long&      v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_ulong&     v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_float&     v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_double&    v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_u64&       v){Sr.Serialize(v); return Sr;}
+NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_s64&       v){Sr.Serialize(v); return Sr;}
 
 
 NAMESPACE_END

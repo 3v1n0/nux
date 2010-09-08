@@ -171,7 +171,7 @@ NBitmapData* read_png_rgba(const TCHAR* filename)
         return 0;
     }
 
-#if (defined INL_VISUAL_STUDIO_2005) || (defined INL_VISUAL_STUDIO_2008)
+#if (defined NUX_VISUAL_STUDIO_2005) || (defined NUX_VISUAL_STUDIO_2008)
     fopen_s(&fp, FileNameAnsi, "rb");
 #else
     fp = fopen(FileNameAnsi, "rb");
@@ -358,7 +358,7 @@ NBitmapData* read_png_rgb(const TCHAR* filename)
         return 0;
     }
 
-#if (defined INL_VISUAL_STUDIO_2005) || (defined INL_VISUAL_STUDIO_2008)
+#if (defined NUX_VISUAL_STUDIO_2005) || (defined NUX_VISUAL_STUDIO_2008)
     fopen_s(&fp, FileNameAnsi, "rb");
 #else
     fp = fopen(FileNameAnsi, "rb");

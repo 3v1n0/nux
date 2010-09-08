@@ -469,7 +469,7 @@ bool NTextureArchiveManager::CloseTextureArchiveFile()
 {
     if(m_FileStream)
         m_FileStream->Close();
-    INL_SAFE_DELETE(m_FileStream);
+    NUX_SAFE_DELETE(m_FileStream);
     m_CurrentTextureArchive = TEXT("");
     m_isLoaded = false;
     return true;

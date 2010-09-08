@@ -66,8 +66,8 @@ NBitmapData* CairoGraphics::GetBitmap()
         nuxDebugMsg(TEXT("[CairoGraphics::GetBitmap] Invalid surface."));
     }
 
-    INL_RETURN_VALUE_IF_NULL(m_width, 0);
-    INL_RETURN_VALUE_IF_NULL(m_height, 0);
+    NUX_RETURN_VALUE_IF_NULL(m_width, 0);
+    NUX_RETURN_VALUE_IF_NULL(m_height, 0);
 
     BitmapFormat bitmap_format = BITFMT_UNKNOWN;
     if(m_surface_format == CAIRO_FORMAT_ARGB32)

@@ -43,9 +43,9 @@ extern void cgErrorCallback(void);
 
 // ATI Radeon 4670 has problems loading textures from pixel buffer object. PBO should be deactivated if the 
 // graphics card is made by AMD/ATI
-#define INL_USE_PBO     1
+#define NUX_USE_PBO     1
 
-#define INL_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
+#define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
 
 // float Log2(float f)
 // {
@@ -506,11 +506,11 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
     Glew_Ok = glewContextInit(glewGetContext());
     nuxAssertMsg(Glew_Ok == GLEW_OK, TEXT("[GLDeviceFactory::GLDeviceFactory] GL Extensions failed to initialize."));
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     Glew_Ok = wglewContextInit(wglewGetContext());
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     Glew_Ok = glxewContextInit(glxewGetContext());
-#elif defined(INL_OS_MACOSX)
+#elif defined(NUX_OS_MACOSX)
     Glew_Ok = glxewContextInit(glxewGetContext());
 #endif
     nuxAssertMsg(Glew_Ok == GLEW_OK, TEXT("[GLDeviceFactory::GLDeviceFactory] WGL Extensions failed to initialize."));
@@ -522,13 +522,13 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
 
     //m_BoardVendorString = "aaaa";
     //std::string str = (const char*) glGetString(GL_VENDOR);
-    m_BoardVendorString = ANSI_TO_TCHAR(INL_REINTERPRET_CAST(const char*, glGetString(GL_VENDOR)));
+    m_BoardVendorString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_VENDOR)));
     CHECKGL_MSG(glGetString(GL_VENDOR));
-    m_BoardRendererString = ANSI_TO_TCHAR(INL_REINTERPRET_CAST(const char*, glGetString(GL_RENDERER)));
+    m_BoardRendererString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_RENDERER)));
     CHECKGL_MSG(glGetString(GL_RENDERER));
-    m_OpenGLVersionString = ANSI_TO_TCHAR(INL_REINTERPRET_CAST(const char*, glGetString(GL_VERSION)));
+    m_OpenGLVersionString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_VERSION)));
     CHECKGL_MSG(glGetString(GL_VERSION));
-    m_GLSLVersionString = ANSI_TO_TCHAR(INL_REINTERPRET_CAST(const char*, glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    m_GLSLVersionString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_SHADING_LANGUAGE_VERSION)));
     CHECKGL_MSG(glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     nuxDebugMsg(TEXT("Board Vendor: %s"), m_BoardVendorString.GetTCharPtr());
@@ -572,7 +572,7 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
         m_GraphicsBoardVendor = BOARD_INTEL;
     }
 
-    if(INL_USE_PBO)
+    if(NUX_USE_PBO)
     {
         if(isATIBoard())
             m_UsePixelBufferObject = false;
@@ -620,11 +620,11 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
 //         exit(-1);
     }
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     OGL_EXT_SWAP_CONTROL                = WGLEW_EXT_swap_control ? true : false;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
 #endif
 
@@ -694,7 +694,7 @@ GLDeviceFactory::~GLDeviceFactory()
     pDefaultRenderTargetSurface = 0;
     pDefaultRenderTargetTexture = 0;
     
-    INL_SAFE_DELETE(m_RenderStates);
+    NUX_SAFE_DELETE(m_RenderStates);
     
     _FrameBufferObject = 0;
     _CurrentFrameBufferObject = 0;

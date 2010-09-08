@@ -34,7 +34,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
 
 PBuffer::PBuffer(const char *strMode, bool managed) 
   : m_hDC(0), m_hGLRC(0), m_hPBuffer(0), m_hOldGLRC(0), m_hOldDC(0), 
@@ -626,7 +626,7 @@ void PBuffer::Deactivate()
     m_bIsActive = false;
 }
 
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 
 PBuffer::PBuffer(const char *strMode, bool managed) 
   : m_pDisplay(0), m_glxPbuffer(0), m_glxContext(0), m_pOldDisplay(0), m_glxOldDrawable(0), 
@@ -895,7 +895,7 @@ void PBuffer::Deactivate()
     m_glxOldContext = 0;
 }
 
-#elif defined(INL_OS_MACOSX)
+#elif defined(NUX_OS_MACOSX)
 
 PBuffer::PBuffer(const char *strMode) 
   : 

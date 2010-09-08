@@ -116,16 +116,16 @@ long ComboBoxComplex::ProcessEvent(IEvent &ievent, long TraverseInfo, long Proce
     ret = m_Button->OnEvent(ievent, ret, ProcessEventInfo);
     ret = m_ComboArea->OnEvent(ievent, ret, ProcessEventInfo);
 
-    if(ievent.e_event == INL_MOUSE_RELEASED)
+    if(ievent.e_event == NUX_MOUSE_RELEASED)
     {
         // Cancel m_IsOpeningMenu in case it hasn't been changed in m_Button->OnEvent or m_ComboArea->OnEvent.
-        // This can happen if the table area of the m_ListBox get the INL_MOUSE_RELEASED event first and sets
+        // This can happen if the table area of the m_ListBox get the NUX_MOUSE_RELEASED event first and sets
         // TraverseInfo to MouseEventSolved.
         if(m_IsOpeningMenu == true)
             m_IsOpeningMenu = false;
     }
 
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         // The mouse down can also happen the first time to initiate the opening of the menu. That is why we need
         // the flag m_IsOpeningMenu;

@@ -54,7 +54,7 @@ BaseMouseHandler::~BaseMouseHandler()
 unsigned int BaseMouseHandler::ProcessMouseInOut(IEvent& ievent, const Geometry & g)
 {
     m_events = eSigMouseNone;
-    if(ievent.e_event == INL_NO_EVENT)
+    if(ievent.e_event == NUX_NO_EVENT)
         return m_events;
 
     m_flag = ievent.event_key_state();
@@ -75,7 +75,7 @@ unsigned int BaseMouseHandler::ProcessMouseInOut(IEvent& ievent, const Geometry 
     if((ievent.e_x == -1) && (ievent.e_y == -1))
     {
         // e_x == -1 and e_y == -1 are associated with some specific window events that have the mouse outside of any widget.
-        // See WM_SETFOCUS, WM_KILLFOCUS, INL_WINDOW_MOUSELEAVE
+        // See WM_SETFOCUS, WM_KILLFOCUS, NUX_WINDOW_MOUSELEAVE
         m_CurrentMouseIn = false;
     }
     else
@@ -107,7 +107,7 @@ unsigned int BaseMouseHandler::ProcessMouseInOut(IEvent& ievent, const Geometry 
 unsigned int BaseMouseHandler::Process(IEvent& ievent, const Geometry & g)
 {
     m_events = eSigMouseNone;
-    if(ievent.e_event == INL_NO_EVENT)
+    if(ievent.e_event == NUX_NO_EVENT)
         return m_events;
 
     m_flag = ievent.event_key_state();
@@ -126,7 +126,7 @@ unsigned int BaseMouseHandler::Process(IEvent& ievent, const Geometry & g)
     if((ievent.e_x == -1) && (ievent.e_y == -1))
     {
         // e_x == -1 and e_y == -1 are associated with some specific window events that have the mouse outside of any widget.
-        // See WM_SETFOCUS, WM_KILLFOCUS, INL_WINDOW_MOUSELEAVE
+        // See WM_SETFOCUS, WM_KILLFOCUS, NUX_WINDOW_MOUSELEAVE
         m_CurrentMouseIn = false;
     }
     else
@@ -163,7 +163,7 @@ unsigned int BaseMouseHandler::Process(IEvent& ievent, const Geometry & g)
 
     switch(ievent.e_event)
     {
-    case INL_MOUSE_PRESSED:
+    case NUX_MOUSE_PRESSED:
         {
             /*me.MouseDown = true;
             me.m_HWMouseDown = true;
@@ -173,7 +173,7 @@ unsigned int BaseMouseHandler::Process(IEvent& ievent, const Geometry & g)
         }
         break;
 
-    case INL_MOUSE_RELEASED:
+    case NUX_MOUSE_RELEASED:
         {
             /*me.MouseUp = true;
             me.m_HWMouseUp = true;
@@ -186,7 +186,7 @@ unsigned int BaseMouseHandler::Process(IEvent& ievent, const Geometry & g)
         }
         break;
 
-    case INL_MOUSE_MOVE:
+    case NUX_MOUSE_MOVE:
         {
             m_events |= eSigMouseMove;
         }

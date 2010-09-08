@@ -92,14 +92,14 @@ bool Layout::IsEmpty() const
 void Layout::AddLayout(smptr(Layout) layout, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
 {
     nuxAssertMsg(layout != 0, TEXT("[Layout::AddActiveInterfaceObject] Invalid parameter."));
-    INL_RETURN_IF_TRUE(layout == 0);
+    NUX_RETURN_IF_TRUE(layout == 0);
     //  Should never happen
     nuxAssertMsg(layout != this, TEXT("[Layout::AddLayout] Error: Trying to add a layout to itself."));
-    INL_RETURN_IF_FALSE(layout != 0);
+    NUX_RETURN_IF_FALSE(layout != 0);
 
     smptr(BaseObject) parent = layout->GetParentObject();
     nuxAssertMsg(parent == 0, TEXT("[Layout::AddLayout] Trying to add an object that already has a parent."));
-    INL_RETURN_IF_TRUE(parent != 0);
+    NUX_RETURN_IF_TRUE(parent != 0);
 
     layout->SetStretchFactor(stretchFactor);
     layout->setPositioning(minor_position);
@@ -151,11 +151,11 @@ void Layout::AddLayout(smptr(Layout) layout, unsigned int stretchFactor, eMinorP
 void Layout::AddActiveInterfaceObject(smptr(BaseObject) bo, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
 {
     nuxAssertMsg(bo != 0, TEXT("[Layout::AddActiveInterfaceObject] Invalid parameter."));
-    INL_RETURN_IF_TRUE(bo == 0);
+    NUX_RETURN_IF_TRUE(bo == 0);
 
     smptr(BaseObject) parent = bo->GetParentObject();
     nuxAssertMsg(parent == 0, TEXT("[Layout::AddActiveInterfaceObject] Trying to add an object that already has a parent."));
-    INL_RETURN_IF_TRUE(parent != 0);
+    NUX_RETURN_IF_TRUE(parent != 0);
 
     bo->SetStretchFactor(stretchFactor);
     bo->setPositioning(minor_position);

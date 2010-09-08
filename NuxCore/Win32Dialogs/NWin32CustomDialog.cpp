@@ -32,9 +32,9 @@ static enum eFileDialogType {
 ColorDialogOption::ColorDialogOption()
 : m_ReturnColor(0, 0, 0, 0)
 {
-    for(t_u32 i = 0; i < INL_COLOR_DIALOG_CUSTOM_COLOR; i++)
+    for(t_u32 i = 0; i < NUX_COLOR_DIALOG_CUSTOM_COLOR; i++)
     {
-        m_CustomColors[i] = (COLORREF) INL_RGB(255, 255, 255);
+        m_CustomColors[i] = (COLORREF) NUX_RGB(255, 255, 255);
     }
 }
 
@@ -45,14 +45,14 @@ ColorDialogOption::~ColorDialogOption()
 
 void ColorDialogOption::SetCustomColor(t_u32 index, t_u32 RGBColor)
 {
-    nuxAssert(index < INL_COLOR_DIALOG_CUSTOM_COLOR);
+    nuxAssert(index < NUX_COLOR_DIALOG_CUSTOM_COLOR);
     m_CustomColors[index] = (COLORREF) RGBColor;
 }
 
 void ColorDialogOption::SetCustomColor(t_u32 index, BYTE R, BYTE G, BYTE B)
 {
-    nuxAssert(index < INL_COLOR_DIALOG_CUSTOM_COLOR);
-    m_CustomColors[index] = (COLORREF) INL_RGB(R, G, B);
+    nuxAssert(index < NUX_COLOR_DIALOG_CUSTOM_COLOR);
+    m_CustomColors[index] = (COLORREF) NUX_RGB(R, G, B);
 }
 
 

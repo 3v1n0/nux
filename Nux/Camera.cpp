@@ -131,7 +131,7 @@
 // 
 //     switch(ievent.e_event)
 //     {
-//     case INL_KEYDOWN:
+//     case NUX_KEYDOWN:
 //         {
 //             // Map this key to a D3DUtil_CameraKeys enum and update the
 //             // state of m_aKeys[] by adding the KEY_WAS_DOWN_MASK|KEY_IS_DOWN_MASK mask
@@ -148,7 +148,7 @@
 //             break;
 //         }
 // 
-//     case INL_KEYUP:
+//     case NUX_KEYUP:
 //         {
 //             // Map this key to a D3DUtil_CameraKeys enum and update the
 //             // state of m_aKeys[] by removing the KEY_IS_DOWN_MASK mask.
@@ -161,26 +161,26 @@
 //             break;
 //         }
 // 
-//     case INL_EVENT_BUTTON1_DOWN:
-//     case INL_EVENT_BUTTON2_DOWN:
-//     case INL_EVENT_BUTTON3_DOWN:
-//     case INL_EVENT_BUTTON1_DBLCLICK:
-//     case INL_EVENT_BUTTON2_DBLCLICK:
-//     case INL_EVENT_BUTTON3_DBLCLICK:
+//     case NUX_EVENT_BUTTON1_DOWN:
+//     case NUX_EVENT_BUTTON2_DOWN:
+//     case NUX_EVENT_BUTTON3_DOWN:
+//     case NUX_EVENT_BUTTON1_DBLCLICK:
+//     case NUX_EVENT_BUTTON2_DBLCLICK:
+//     case NUX_EVENT_BUTTON3_DBLCLICK:
 //         {
 //             // Compute the drag rectangle in screen coord.
 //             Point ptCursor((short)LOWORD(lParam), (short)HIWORD(lParam));
 // 
 //             // Update member var state
-//             if((uMsg == INL_EVENT_BUTTON1_DOWN || uMsg == INL_EVENT_BUTTON1_DBLCLICK) && m_rcDrag.IsPointInside(ptCursor.x, ptCursor.y))
+//             if((uMsg == NUX_EVENT_BUTTON1_DOWN || uMsg == NUX_EVENT_BUTTON1_DBLCLICK) && m_rcDrag.IsPointInside(ptCursor.x, ptCursor.y))
 //             {
 //                 m_bMouseLButtonDown = true; m_nCurrentButtonMask |= MOUSE_LEFT_BUTTON;
 //             }
-//             if((uMsg == INL_EVENT_BUTTON2_DOWN || uMsg == INL_EVENT_BUTTON2_DBLCLICK) && m_rcDrag.IsPointInside(ptCursor.x, ptCursor.y))
+//             if((uMsg == NUX_EVENT_BUTTON2_DOWN || uMsg == NUX_EVENT_BUTTON2_DBLCLICK) && m_rcDrag.IsPointInside(ptCursor.x, ptCursor.y))
 //             {
 //                 m_bMouseMButtonDown = true; m_nCurrentButtonMask |= MOUSE_MIDDLE_BUTTON;
 //             }
-//             if( ( uMsg == INL_EVENT_BUTTON3_DOWN || uMsg == INL_EVENT_BUTTON3_DBLCLICK ) && m_rcDrag.IsPointInside(ptCursor.x, ptCursor.y))
+//             if( ( uMsg == NUX_EVENT_BUTTON3_DOWN || uMsg == NUX_EVENT_BUTTON3_DBLCLICK ) && m_rcDrag.IsPointInside(ptCursor.x, ptCursor.y))
 //             {
 //                 m_bMouseRButtonDown = true; m_nCurrentButtonMask |= MOUSE_RIGHT_BUTTON;
 //             }
@@ -193,9 +193,9 @@
 //             return TRUE;
 //         }
 // 
-//     case INL_EVENT_BUTTON1_UP:
-//     case INL_EVENT_BUTTON2_UP:
-//     case INL_EVENT_BUTTON3_UP:
+//     case NUX_EVENT_BUTTON1_UP:
+//     case NUX_EVENT_BUTTON2_UP:
+//     case NUX_EVENT_BUTTON3_UP:
 //         {
 //             // Update member var state
 //             if( uMsg == WM_LBUTTONUP )
@@ -221,7 +221,7 @@
 //             break;
 //         }
 // 
-//     case INL_WINDOW_EXIT_FOCUS:
+//     case NUX_WINDOW_EXIT_FOCUS:
 //         {
 //             if( ( HWND )lParam != hWnd )
 //             {

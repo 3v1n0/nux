@@ -50,10 +50,10 @@ static void CreateBackupCopy(const TCHAR* Filename)
     }
 }
 
-INL_IMPLEMENT_GLOBAL_OBJECT(NNullOutput);
-INL_IMPLEMENT_GLOBAL_OBJECT(NOutputDeviceRedirector);
-INL_IMPLEMENT_GLOBAL_OBJECT(NOutputLogFile);
-INL_IMPLEMENT_GLOBAL_OBJECT(NOutputVisualDebugConsole)
+NUX_IMPLEMENT_GLOBAL_OBJECT(NNullOutput);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NOutputDeviceRedirector);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NOutputLogFile);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NOutputVisualDebugConsole)
 
 void NOutputDevice::Shutdown()
 {
@@ -70,21 +70,33 @@ VARARG_BODY( void /*FuncRet*/, NOutputDevice::LogFunction/*FuncName*/, const TCH
     if(m_ObjectDestroyed)
         return;
 
-    INT		BufferSize	= 1024;
-    TCHAR*	Buffer		= NULL;
-    INT		Result		= -1;
+    t_int   BufferSize	= 1024;
+    t_int   NewBufferSize	= 0;
+    TCHAR*  Buffer		= NULL;
+    t_int   Result		= -1;
 
     while(Result == -1)
     {
-        Buffer = (TCHAR*) inlSystemRealloc( Buffer, BufferSize * sizeof(TCHAR) );
+        if(NewBufferSize)
+        {
+            TCHAR* temp = new TCHAR[NewBufferSize];
+            Memcpy (temp, Buffer, BufferSize);
+            NUX_SAFE_DELETE_ARRAY(Buffer);
+            Buffer = temp;
+            BufferSize = NewBufferSize;
+        }
+        else
+        {
+            Buffer = new TCHAR[BufferSize];
+        }
         GET_VARARGS_RESULT(Buffer, BufferSize, BufferSize-1, Fmt, Result);
         if(Result == -1)
-            BufferSize *= 2;
+            NewBufferSize = 2 * BufferSize;
     };
     Buffer[Result] = 0;
-    Serialize( Buffer, TEXT("Log") );
+    Serialize(Buffer, TEXT("Log"));
 
-    inlSystemFree( Buffer );
+    NUX_SAFE_DELETE_ARRAY(Buffer);
 }
 
 void NOutputLogFile::Constructor()
@@ -96,14 +108,14 @@ void NOutputLogFile::Constructor()
 #if (defined DEBUG) || (defined _DEBUG) || (defined Debug)
     // The Editor requires a fully qualified directory to not end up putting the log in various directories.
     m_Filename = GetProgramDirectory();
-    if((m_Filename[m_Filename.Size()-1] != INL_SLASH_CHAR) || (m_Filename[m_Filename.Size()-1] != INL_BACKSLASH_CHAR))
-        m_Filename += (const TCHAR*)INL_PATH_SEPARATOR_STRING;
+    if((m_Filename[m_Filename.Size()-1] != NUX_SLASH_CHAR) || (m_Filename[m_Filename.Size()-1] != NUX_BACKSLASH_CHAR))
+        m_Filename += (const TCHAR*)NUX_PATH_SEPARATOR_STRING;
     m_Filename += GetLogDirectory();
 
     // Create the directory tree where the Logs file will be stored.
     GFileManager.MakeDirectory(m_Filename.GetTCharPtr(), 1);
 
-    m_Filename += (const TCHAR*)INL_PATH_SEPARATOR_STRING;
+    m_Filename += (const TCHAR*)NUX_PATH_SEPARATOR_STRING;
     m_Filename += TEXT("inalogic");
     m_Filename += TEXT(".log");
 
@@ -119,8 +131,8 @@ void NOutputLogFile::Constructor()
     if(m_LogSerializer)
     {
         m_Opened = true;
-#if UNICODE && !INL_LOG_FILE_ANSI
-        m_LogSerializer->Serialize( (void*)&INL_UTF16_BE[1], INL_UTF16_BE[0] /*size*/ );
+#if UNICODE && !NUX_LOG_FILE_ANSI
+        m_LogSerializer->Serialize( (void*)&NUX_UTF16_BE[1], NUX_UTF16_BE[0] /*size*/ );
 #endif
         LogFunction(TEXT("Log file open, %s"), GetFormattedLocalTime());
     }
@@ -174,13 +186,13 @@ void NOutputLogFile::Serialize( const TCHAR* Data, const TCHAR* LogPrefix )
 
     if(m_LogSerializer)
     {
-#if UNICODE && INL_LOG_FILE_ANSI
+#if UNICODE && NUX_LOG_FILE_ANSI
         ANSICHAR ACh[1024];
         INT DataOffset = 0;
         INT i;
         while(Data[DataOffset])
         {
-            for(i = 0;i < INL_ARRAY_COUNT(ACh) && Data[DataOffset];i++,DataOffset++)
+            for(i = 0;i < NUX_ARRAY_COUNT(ACh) && Data[DataOffset];i++,DataOffset++)
             {
                 ACh[i] = ConvertTCHARToAnsiChar(Data[DataOffset]);
             }
@@ -188,14 +200,14 @@ void NOutputLogFile::Serialize( const TCHAR* Data, const TCHAR* LogPrefix )
             m_LogSerializer->Serialize(ACh,i);
         };
 
-        for(i = 0; INL_LINE_TERMINATOR[i]; i++)
+        for(i = 0; NUX_LINE_TERMINATOR[i]; i++)
         {
-            ACh[i] = INL_LINE_TERMINATOR[i];
+            ACh[i] = NUX_LINE_TERMINATOR[i];
         }
 
         m_LogSerializer->Serialize(ACh, i);
 #else
-        NString Raw = NString(LogPrefix) + NString(TEXT(": ")) + NString(Data) + NString(INL_LINE_TERMINATOR);
+        NString Raw = NString(LogPrefix) + NString(TEXT(": ")) + NString(Data) + NString(NUX_LINE_TERMINATOR);
         SerializeRaw(Raw.GetTCharPtr());
 #endif
     }
@@ -204,7 +216,7 @@ void NOutputLogFile::Serialize( const TCHAR* Data, const TCHAR* LogPrefix )
 void NOutputLogFile::SerializeRaw(const TCHAR* Data)
 {
     t_u32 s = (t_u32)StringLength(Data)*sizeof(TCHAR);
-    m_LogSerializer->Serialize(INL_CONST_CAST(TCHAR*, Data), s);
+    m_LogSerializer->Serialize(NUX_CONST_CAST(TCHAR*, Data), s);
 }
 
 void NOutputDeviceRedirector::Constructor()
@@ -279,7 +291,7 @@ void NOutputVisualDebugConsole::Destructor(){}
 void NOutputVisualDebugConsole::Serialize( const TCHAR* Data, const TCHAR* LogPrefix )
 {
     TCHAR Temp[4096];
-    Snprintf(Temp, 4096, 4096 - 1, TEXT("%s: %s%s"), LogPrefix, Data, INL_LINE_TERMINATOR);
+    Snprintf(Temp, 4096, 4096 - 1, TEXT("%s: %s%s"), LogPrefix, Data, NUX_LINE_TERMINATOR);
 
 #if (defined _WIN32) && (defined _MSC_VER)
     OutputDebugString(Temp);

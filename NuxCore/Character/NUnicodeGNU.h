@@ -194,14 +194,14 @@ public:
 class AnsicharToUnicharConvertion
 {
 public:
-    INL_INLINE AnsicharToUnicharConvertion() {}
+    NUX_INLINE AnsicharToUnicharConvertion() {}
 
     /*!
     Convert from ANSICHAR to UNICHAR
     @param Source String to convert. Null terminated.
     @return Return a pointer to the new string. Null terminated.
     */
-    INL_INLINE UNICHAR* Convert(const ANSICHAR* Source)
+    NUX_INLINE UNICHAR* Convert(const ANSICHAR* Source)
     {
         std::string utf8string(Source);
         size_t utf8size = utf8string.length();
@@ -230,14 +230,14 @@ public:
 class TCharToAnsiConvertion
 {
 public:
-    INL_INLINE TCharToAnsiConvertion() {}
+    NUX_INLINE TCharToAnsiConvertion() {}
 
       /*!
       Convert from TCHAR to ANSICHAR
       @param Source String to convert. Null terminated.
       @return Return a pointer to the new string. Null terminated.
       */
-      INL_INLINE ANSICHAR* Convert(const TCHAR* Source)
+      NUX_INLINE ANSICHAR* Convert(const TCHAR* Source)
       {
           // Determine whether we need to allocate memory or not
 #ifdef UNICODE
@@ -258,14 +258,14 @@ public:
 class AnsiToTCharConversion
 {
 public:
-    INL_INLINE AnsiToTCharConversion() {}
+    NUX_INLINE AnsiToTCharConversion() {}
 
     /*!
     Convert from ANSICHAR to TCHAR
     @param Source String to convert. Null terminated.
     @return Return a pointer to the new string. Null terminated.
     */
-    INL_INLINE TCHAR* Convert(const ANSICHAR* Source)
+    NUX_INLINE TCHAR* Convert(const ANSICHAR* Source)
     {
 #ifdef UNICODE
         AnsicharToUnicharConvertion convert;

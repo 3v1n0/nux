@@ -247,7 +247,7 @@ void Matrix3Editor::RecvComponentInput(const weaksmptr(EditTextBox) textbox, con
     int j = componentIndex - 3*i;
 
     float f = 0;
-    CharToFloat(text.GetTCharPtr(), f);
+    f = CharToDouble(text.GetTCharPtr());
     m_MtxInput[i][j]->SetText(inlPrintf(TEXT("%.3f"), f));
     m_Matrix.m[i][j] = f;
 

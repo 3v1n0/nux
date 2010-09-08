@@ -37,14 +37,14 @@ typedef enum
     FORCE_OBJECTTYPE = 0x7fffffff
 } ObjectType;
 
-#define WORLDARCHIVE_TAG            INL_MAKEFOURCHARTAG('i','w','l','d')       // .iwl
-#define WORLDARCHIVE_VERSION        INL_MAKEFOURCHARTAG('0','0','0','1')   
-#define WORLDARCHIVE_END_TAG        INL_MAKEFOURCHARTAG(0,0,0,0)
+#define WORLDARCHIVE_TAG            NUX_MAKEFOURCHARTAG('i','w','l','d')       // .iwl
+#define WORLDARCHIVE_VERSION        NUX_MAKEFOURCHARTAG('0','0','0','1')   
+#define WORLDARCHIVE_END_TAG        NUX_MAKEFOURCHARTAG(0,0,0,0)
 
 
-#define STATICMESHARCHIVE_TAG       INL_MAKEFOURCHARTAG('i','m','s','h')       // .ims
-#define STATICMESHARCHIVE_VERSION   INL_MAKEFOURCHARTAG('0','0','0','1')   
-#define STATICMESHARCHIVE_END_TAG   INL_MAKEFOURCHARTAG(0,0,0,0)
+#define STATICMESHARCHIVE_TAG       NUX_MAKEFOURCHARTAG('i','m','s','h')       // .ims
+#define STATICMESHARCHIVE_VERSION   NUX_MAKEFOURCHARTAG('0','0','0','1')   
+#define STATICMESHARCHIVE_END_TAG   NUX_MAKEFOURCHARTAG(0,0,0,0)
 
 
 typedef struct  

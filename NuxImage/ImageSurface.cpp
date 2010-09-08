@@ -68,7 +68,7 @@ NBitmapData* LoadImageFile(const TCHAR* filename)
     BitmapData = LoadITXFile(filename);
     if(BitmapData) return BitmapData;
 
-#ifdef INL_OPENEXR_SUPPORT
+#ifdef NUX_OPENEXR_SUPPORT
     BitmapData = Load_OpenEXR(filename);
     if(BitmapData) return BitmapData;
 #endif
@@ -79,7 +79,7 @@ NBitmapData* LoadImageFile(const TCHAR* filename)
 
 bool HasOpenEXRSupport()
 {
-#ifdef INL_OPENEXR_SUPPORT
+#ifdef NUX_OPENEXR_SUPPORT
     return true;
 #else
     return false;
@@ -148,7 +148,7 @@ ImageSurface::ImageSurface()
 
 ImageSurface::~ImageSurface()
 {
-    INL_SAFE_DELETE(RawData_);
+    NUX_SAFE_DELETE(RawData_);
 }
 
 ImageSurface::ImageSurface(BitmapFormat format, t_u32 width, t_u32 height)
@@ -238,7 +238,7 @@ void ImageSurface::Allocate(BitmapFormat format, t_u32 width, t_u32 height)
         return;
     }
 
-    INL_SAFE_DELETE_ARRAY(RawData_);
+    NUX_SAFE_DELETE_ARRAY(RawData_);
     if((width == 0) || (height == 0))
     {
         width_ = 0;
@@ -1115,7 +1115,7 @@ void NVolumeData::ClearData()
         }
         m_MipSurfaceArray[mip].clear();
     }
-    INL_SAFE_DELETE_ARRAY(m_MipSurfaceArray);
+    NUX_SAFE_DELETE_ARRAY(m_MipSurfaceArray);
 }
 
 //! Copy constructor
@@ -1259,7 +1259,7 @@ void NAnimatedTextureData::ClearData()
         m_MipSurfaceArray[mip].clear();
     }
     m_FrameTimeArray.clear();
-    INL_SAFE_DELETE_ARRAY(m_MipSurfaceArray);
+    NUX_SAFE_DELETE_ARRAY(m_MipSurfaceArray);
 }
 
 //! Copy constructor

@@ -292,7 +292,7 @@ long BaseKeyboardHandler::ProcessKey(
     const Geometry& g)
 {
     //if(ievent.event_type != I_AsciiKey && ievent.event_type != I_KeyPress && ievent.event_type != I_KeyRelease)
-    if(eventType != INL_KEYDOWN)
+    if(eventType != NUX_KEYDOWN)
         return 0;
 
     m_need_redraw = true;
@@ -536,20 +536,20 @@ long BaseKeyboardHandler::ProcessKey(
     }
 
     // CTRL+C
-    if((virtual_code == INL_VK_C) && (state & INL_STATE_CTRL))
+    if((virtual_code == NUX_VK_C) && (state & NUX_STATE_CTRL))
     {
         NString s = GetSelectedText();
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
         inlCopyTextToClipboard(s.GetTCharPtr());
 #endif
     }
 
     // CTRL+V
-    if((virtual_code == INL_VK_V) && (state & INL_STATE_CTRL))
+    if((virtual_code == NUX_VK_V) && (state & NUX_STATE_CTRL))
     {
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
         NString s = inlReadTextToClipboard();
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
         NString s = "Paste not implemented yet";
 #endif
         t_u32 start = GetTextSelectionStart();
@@ -560,19 +560,19 @@ long BaseKeyboardHandler::ProcessKey(
         UnselectAllText();
     }
 
-    if((virtual_code == INL_VK_ESCAPE))
+    if((virtual_code == NUX_VK_ESCAPE))
     {
         // If Text is selected, Unselect
        UnselectAllText();
     }
 
-    if((virtual_code == INL_VK_ENTER) ||
-        (virtual_code == INL_KP_ENTER))
+    if((virtual_code == NUX_VK_ENTER) ||
+        (virtual_code == NUX_KP_ENTER))
     {
         SelectAllText();
     }
 
-    if(virtual_code == INL_VK_BACKSPACE)
+    if(virtual_code == NUX_VK_BACKSPACE)
     {
         if( m_Caret != m_nSelStart )
         {
@@ -590,7 +590,7 @@ long BaseKeyboardHandler::ProcessKey(
             }
         }
     }
-    else if(virtual_code == INL_VK_DELETE)
+    else if(virtual_code == NUX_VK_DELETE)
     {
         // Check if there is a text selection.
         if( m_Caret != m_nSelStart )
@@ -606,9 +606,9 @@ long BaseKeyboardHandler::ProcessKey(
             }
         }
     }
-    else if(virtual_code == INL_KP_LEFT || virtual_code == INL_VK_LEFT)
+    else if(virtual_code == NUX_KP_LEFT || virtual_code == NUX_VK_LEFT)
     {
-        if(IsTextSelected() && ((state & INL_STATE_SHIFT) == 0))
+        if(IsTextSelected() && ((state & NUX_STATE_SHIFT) == 0))
         {
             //m_Caret = Min(m_Caret, m_nSelStart);
             if(m_Caret)
@@ -617,7 +617,7 @@ long BaseKeyboardHandler::ProcessKey(
         }
         else
         {
-            if( state & INL_STATE_CTRL )
+            if( state & NUX_STATE_CTRL )
             {
                 // Control is down. Move the caret to a new item
                 // instead of a character.
@@ -627,7 +627,7 @@ long BaseKeyboardHandler::ProcessKey(
             else if( m_Caret > 0 )
                 PlaceCaret(m_Caret - 1 );
 
-            if((state & INL_STATE_SHIFT) == 0)
+            if((state & NUX_STATE_SHIFT) == 0)
             {
                 // Shift is not down. Update selection
                 // start along with the caret.
@@ -635,16 +635,16 @@ long BaseKeyboardHandler::ProcessKey(
             }
         }
     }
-    else if(virtual_code == INL_KP_RIGHT || virtual_code == INL_VK_RIGHT)
+    else if(virtual_code == NUX_KP_RIGHT || virtual_code == NUX_VK_RIGHT)
     {
-        if(IsTextSelected() && ((state & INL_STATE_SHIFT) == 0))
+        if(IsTextSelected() && ((state & NUX_STATE_SHIFT) == 0))
         {
             m_Caret = Max(m_Caret, m_nSelStart);
             UnselectAllText();
         }
         else
         {
-            if( state & INL_STATE_CTRL)
+            if( state & NUX_STATE_CTRL)
             {
                 // Control is down. Move the caret to a new item
                 // instead of a character.
@@ -654,7 +654,7 @@ long BaseKeyboardHandler::ProcessKey(
             else if( m_Caret < m_textline.Length() )
                 PlaceCaret(m_Caret + 1 );
 
-            if( (state & INL_STATE_SHIFT) == 0 )
+            if( (state & NUX_STATE_SHIFT) == 0 )
             {
                 // Shift is not down. Update selection
                 // start along with the caret.
@@ -662,9 +662,9 @@ long BaseKeyboardHandler::ProcessKey(
             }
         }
     }
-    else if(virtual_code == INL_KP_HOME || virtual_code == INL_VK_HOME)
+    else if(virtual_code == NUX_KP_HOME || virtual_code == NUX_VK_HOME)
     {
-        if((state & INL_STATE_SHIFT) == 0)
+        if((state & NUX_STATE_SHIFT) == 0)
         {
             PlaceCaret(0 );
             // Shift is not down. Update selection
@@ -676,9 +676,9 @@ long BaseKeyboardHandler::ProcessKey(
             PlaceCaret(0 );
         }
     }
-    else if(virtual_code == INL_KP_END || virtual_code == INL_VK_END)
+    else if(virtual_code == NUX_KP_END || virtual_code == NUX_VK_END)
     {
-        if((state & INL_STATE_SHIFT) == 0)
+        if((state & NUX_STATE_SHIFT) == 0)
         {
             PlaceCaret((t_u32)m_textline.Length() );
             // Shift is not down. Update selection
@@ -690,12 +690,12 @@ long BaseKeyboardHandler::ProcessKey(
             PlaceCaret((t_u32)m_textline.Length() );
         }
     }
-    else if(virtual_code == INL_VK_ESCAPE)
+    else if(virtual_code == NUX_VK_ESCAPE)
     {
         return virtual_code;
     }
-    else if(virtual_code == INL_VK_ENTER ||
-        virtual_code == INL_KP_ENTER)
+    else if(virtual_code == NUX_VK_ENTER ||
+        virtual_code == NUX_KP_ENTER)
     {
         return virtual_code;
     }
@@ -706,11 +706,11 @@ long BaseKeyboardHandler::ProcessKey(
 
 
     t_s32 offset= 0;
-    if(virtual_code == INL_KP_HOME)
+    if(virtual_code == NUX_KP_HOME)
     {
         m_text_positionx = 0;
     }
-    else if(virtual_code == INL_KP_END)
+    else if(virtual_code == NUX_KP_END)
     {
         t_u32 str_width = GetFont()->GetStringWidth(m_textline.GetTCharPtr());
         if(str_width + sCursorWidth > (t_u32)m_clip_region.GetWidth())

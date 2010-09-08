@@ -45,7 +45,7 @@ long ColorPreviewPropertyItem::ProcessPropertyEvent(IEvent &ievent, long Travers
     long ret = TraverseInfo;
 
     Geometry geo = m_ItemGeometryVector[1];
-    if((ievent.e_event == INL_MOUSE_PRESSED) && geo.IsPointInside(ievent.e_x, ievent.e_y) == false)
+    if((ievent.e_event == NUX_MOUSE_PRESSED) && geo.IsPointInside(ievent.e_x, ievent.e_y) == false)
     {
         ret = ProcessEvent(ievent, TraverseInfo, eDoNotProcess | ProcessEventInfo);
     }

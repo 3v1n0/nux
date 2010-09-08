@@ -84,7 +84,7 @@ long ComboBoxSimple::ProcessEvent(IEvent &ievent, long TraverseInfo, long Proces
     ret = m_Button->OnEvent(ievent, ret, ProcessEventInfo);
     ret = m_ComboArea->OnEvent(ievent, ret, ProcessEventInfo);
 
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         bool mouse_down_on_menu_item = false;
         if(m_MenuIsActive == true)

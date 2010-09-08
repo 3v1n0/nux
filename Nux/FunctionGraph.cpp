@@ -50,7 +50,7 @@ void FunctionGraph::InitializeWidgets()
     Texture = GetThreadGLDeviceFactory()->CreateTexture(256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
-    NString Path = INL_FINDRESOURCELOCATION(TEXT("Data/UITextures/FunctionGraphBackground.tga"));
+    NString Path = NUX_FINDRESOURCELOCATION(TEXT("Data/UITextures/FunctionGraphBackground.tga"));
     NTexture2D BackgroundTexture;
     BackgroundTexture.Update(Path.GetTCharPtr());
 
@@ -67,8 +67,8 @@ void FunctionGraph::InitializeLayout()
 
 void FunctionGraph::DestroyLayout()
 {
-    INL_SAFE_DELETE(m_DrawFunctionShader);
-    INL_SAFE_DELETE(m_BackgroundLayer);
+    NUX_SAFE_DELETE(m_DrawFunctionShader);
+    NUX_SAFE_DELETE(m_BackgroundLayer);
 }
 
 long FunctionGraph::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

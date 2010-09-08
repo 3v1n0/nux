@@ -25,74 +25,45 @@
 
 
 #include "NSystem.h"
-#include <iostream>
-#include <stdexcept>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-#include <iomanip>
-#include <map>
-#include <vector>
-#include <list>
-#include <algorithm>
-#include <new>
-#include <set>
-
-#include <cstddef>
-#include <cwchar>   // formerly C language <wchar.h>
-#include <cstdio>   // formerly C language <stdio.h>
-#include <cstdlib>  // formerly C language <stdlib.h>
-#include <cstring>  // formerly C language <string.h>
-#include <cmath>    // formerly C language <math.h>
-#include <cfloat>   // formerly C language <float.h>
-#include <ctime>    // formerly C language <time.h>
-#include <cctype>   // formerly C language <ctype.h>
-#include <cwctype>  // formerly C language <wctype.h>
-#include <climits>  // formerly C language <limits.h>
-#include <exception>
-#include <stdexcept>
-
 #include "NNamespace.h"
 #include "NSystemTypes.h"
 
 
 // WIN32_SECURE if define for the latest version of Visual Studio starting at VS 2005. We use it for security improvement.
-#if (defined INL_VISUAL_STUDIO_2005) || (defined INL_VISUAL_STUDIO_2008)
+#if (defined NUX_VISUAL_STUDIO_2005) || (defined NUX_VISUAL_STUDIO_2008)
 	#define WIN32_SECURE
 #endif
 
-#define INL_STATIC_CAST(a, b)       static_cast<a>(b)
-#define INL_REINTERPRET_CAST(a, b)  reinterpret_cast<a>(b)
-#define INL_CONST_CAST(a, b)        const_cast<a>(b)
-#define INL_DYNAMIC_CAST(a, b)      dynamic_cast<a>(b)
+#define NUX_STATIC_CAST(a, b)       static_cast<a>(b)
+#define NUX_REINTERPRET_CAST(a, b)  reinterpret_cast<a>(b)
+#define NUX_CONST_CAST(a, b)        const_cast<a>(b)
+#define NUX_DYNAMIC_CAST(a, b)      dynamic_cast<a>(b)
 
-#define INL_INVALID_INDEX           -1
-#define INL_INVALID_HANDLE          -1
+#define NUX_INVALID_INDEX           -1
+#define NUX_INVALID_HANDLE          -1
 
-#define INL_IN
-#define INL_OUT
+#define NUX_IN
+#define NUX_OUT
 
-#define INL_0       0
-#define INL_1       1
-#define INL_2       2
-#define INL_4       4
-#define INL_8       8
-#define INL_16      16
-#define INL_32      32
-#define INL_64      64
-#define INL_128     128
-#define INL_256     256
-#define INL_512     512
-#define INL_1024    1024
-#define INL_2048    2048
-#define INL_4096    4096
-#define INL_8192    8192
-#define INL_16384   16384
-#define INL_65536   65536
+#define NUX_0       0
+#define NUX_1       1
+#define NUX_2       2
+#define NUX_4       4
+#define NUX_8       8
+#define NUX_16      16
+#define NUX_32      32
+#define NUX_64      64
+#define NUX_128     128
+#define NUX_256     256
+#define NUX_512     512
+#define NUX_1024    1024
+#define NUX_2048    2048
+#define NUX_4096    4096
+#define NUX_8192    8192
+#define NUX_16384   16384
+#define NUX_65536   65536
 
-#define INL_MAKEFOURCHARTAG(ch0, ch1, ch2, ch3)  \
+#define NUX_MAKEFOURCHARTAG(ch0, ch1, ch2, ch3)  \
     ((DWORD)(BYTE)(ch0) |               \
     ((DWORD)(BYTE)(ch1) << 8) |         \
     ((DWORD)(BYTE)(ch2) << 16) |        \
@@ -103,44 +74,44 @@
 #define INLDELETE delete
 #define INLDELETEARRAY delete []
 
-#define INL_RUNTIME_ERROR(str, ...)             LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
-#define INL_ERROR_IF_NULL(test, str, ...)       if(test == 0)   LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
-#define INL_ERROR_IF_TRUE(test, str, ...)       if(test)        LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
-#define INL_ERROR_IF_FALSE(test, str, ...)      if(!(test))     LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_RUNTIME_ERROR(str, ...)             LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_ERROR_IF_NULL(test, str, ...)       if(test == 0)   LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_ERROR_IF_TRUE(test, str, ...)       if(test)        LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_ERROR_IF_FALSE(test, str, ...)      if(!(test))     LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
 
-#define INL_RETURN_IF_NULL(test)                if(test == 0)   return;
-#define INL_RETURN_IF_TRUE(test)                if(test)        return;
-#define INL_RETURN_IF_FALSE(test)               if(!(test))     return;
+#define NUX_RETURN_IF_NULL(test)                if(test == 0)   return;
+#define NUX_RETURN_IF_TRUE(test)                if(test)        return;
+#define NUX_RETURN_IF_FALSE(test)               if(!(test))     return;
 
-#define INL_RETURN_VALUE_IF_NULL(test, value)   if(test == 0)   return value;
-#define INL_RETURN_VALUE_IF_TRUE(test, value)   if(test)        return value;
-#define INL_RETURN_VALUE_IF_FALSE(test, value)  if(!(test))     return value;
+#define NUX_RETURN_VALUE_IF_NULL(test, value)   if(test == 0)   return value;
+#define NUX_RETURN_VALUE_IF_TRUE(test, value)   if(test)        return value;
+#define NUX_RETURN_VALUE_IF_FALSE(test, value)  if(!(test))     return value;
 
 
 // Structure Alignment
-#if defined(INL_MICROSOFT_COMPILER)
-    #define INL_DATA_ALIGN(declaration, alignment) __declspec(align(alignment)) declaration
-#elif defined(INL_PS3)
-    #define INL_DATA_ALIGN(declaration, alignment) declaration __attribute__ ((aligned (alignment)))
-#elif defined (INL_GNUCPP_COMPILER)
-    #define INL_DATA_ALIGN(declaration, alignment) declaration __attribute__ ((aligned (alignment)))
+#if defined(NUX_MICROSOFT_COMPILER)
+    #define NUX_DATA_ALIGN(declaration, alignment) __declspec(align(alignment)) declaration
+#elif defined(NUX_PS3)
+    #define NUX_DATA_ALIGN(declaration, alignment) declaration __attribute__ ((aligned (alignment)))
+#elif defined (NUX_GNUCPP_COMPILER)
+    #define NUX_DATA_ALIGN(declaration, alignment) declaration __attribute__ ((aligned (alignment)))
 #endif
 
 // Sizeof is a compile time function. So array must be totally defined if sizeof is used on it.
 // The number of elements in array must be a constant at compile time.
 // Example: int array[10] is valid.
-#define INL_ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
+#define NUX_ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
 
 // Compiler specific include.
 #ifdef XBOX360
     #error Unknown Compiler
-#elif defined (INL_OS_WINDOWS) && defined (INL_MICROSOFT_COMPILER)
+#elif defined (NUX_OS_WINDOWS) && defined (NUX_MICROSOFT_COMPILER)
     #include "NSystemWindows.h"
-#elif defined (INL_PS3)
+#elif defined (NUX_PS3)
     #include "NSystemPS3.h"
-#elif defined (INL_OS_LINUX) && defined (INL_GNUCPP_COMPILER)
+#elif defined (NUX_OS_LINUX) && defined (NUX_GNUCPP_COMPILER)
     #include "NSystemGNU.h"
-#elif defined (INL_OS_MACOSX) && defined (INL_GNUCPP_COMPILER)
+#elif defined (NUX_OS_MACOSX) && defined (NUX_GNUCPP_COMPILER)
     #error Unknown Compiler
 #else
     #error Unknown Compiler
@@ -179,14 +150,14 @@ t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHA
 //	Check macros for assertions.                                        //
 //////////////////////////////////////////////////////////////////////////
 
-#ifdef INL_ENABLE_ASSERT_MACROS
+#ifdef NUX_ENABLE_ASSERT_MACROS
     #define nuxAssert(expr)             { if(!(expr)) nuxFailAssert(TEXT(#expr)); }
-    // Expression is always evaluated no matter if INL_ENABLE_ASSERT_MACROS is enabled. nuxFailAssert is called if enabled.
+    // Expression is always evaluated no matter if NUX_ENABLE_ASSERT_MACROS is enabled. nuxFailAssert is called if enabled.
     #define nuxVerifyExpr(expr)         { if(!(expr)) nuxFailAssert(TEXT(#expr)); }
     
     #define DEBUGTRACE(str, ...)    nuxDebugMsg(str, ##__VA_ARGS__)
 
-    #ifdef INL_VARIADIC_MACROS_SUPPORT
+    #ifdef NUX_VARIADIC_MACROS_SUPPORT
         #define nuxFailAssert(str, ...)         { if(nuxIsDebuggerPresent()){nux::LogOutputAssertMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);} inlDebugBreak();}
         #define nuxError(str, ...)              { if(nuxIsDebuggerPresent()){nux::LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);} inlDebugBreak();}
         #define nuxDebugMsg(str, ...)           { if(nuxIsDebuggerPresent()) nux::LogOutputDebugMessage(str, ##__VA_ARGS__);}
@@ -230,23 +201,23 @@ t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHA
     // @param expr  Must be evaluated at compile time.
     #define nuxAssertAtCompileTime(expr)  typedef BYTE CompileTimeCheckType##__LINE__[(expr) ? 1 : -1]
 #else
-    #ifdef INL_MICROSOFT_COMPILER
-        #define nuxAssert(expr)                     INL_NOOP
+    #ifdef NUX_MICROSOFT_COMPILER
+        #define nuxAssert(expr)                     NUX_NOOP
         #define nuxVerifyExpr(expr)                 { if(!(expr)) {} }
-        #define nuxDebugMsg(a, ...)                 INL_NOOP
-        #ifdef INL_VARIADIC_MACROS_SUPPORT
-            #define nuxAssertMsg(expr, a, ...)      INL_NOOP
+        #define nuxDebugMsg(a, ...)                 NUX_NOOP
+        #ifdef NUX_VARIADIC_MACROS_SUPPORT
+            #define nuxAssertMsg(expr, a, ...)      NUX_NOOP
             #define nuxVerifyExprMsg(expr, a, ...)  { if(!(expr)) {} }
-            #define nuxError(a, ...)                INL_NOOP
+            #define nuxError(a, ...)                NUX_NOOP
         #else
-            #define nuxAssertMsg(expr,a,b,c,d,e,f,g,h,i,j,k,l)      INL_NOOP
+            #define nuxAssertMsg(expr,a,b,c,d,e,f,g,h,i,j,k,l)      NUX_NOOP
             #define nuxVerifyExprMsg(expr,a,b,c,d,e,f,g,h,i,j,k,l)  { if(!(expr)) {} }
-            #define nuxError(a,b,c,d,e,f,g,h,i,j,k,l)               INL_NOOP
+            #define nuxError(a,b,c,d,e,f,g,h,i,j,k,l)               NUX_NOOP
         #endif
-        #define nuxAssertNoEntry()              INL_NOOP
-        #define nuxAssertNoReentry()            INL_NOOP
-        #define nuxAssertNoRecursion()          INL_NOOP
-        #define nuxAssertAtCompileTime(expr)    INL_NOOP    
+        #define nuxAssertNoEntry()              NUX_NOOP
+        #define nuxAssertNoReentry()            NUX_NOOP
+        #define nuxAssertNoRecursion()          NUX_NOOP
+        #define nuxAssertAtCompileTime(expr)    NUX_NOOP    
     #else
         #define nuxDebugMsg(a, ...)
         #define nuxError(a, ...)                {}
@@ -300,38 +271,40 @@ t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHA
 
 #define ANSICHAR_TO_UNICHAR(str) (UNICHAR*)nux::NCharacterConversion<UNICHAR, ANSICHAR, nux::AnsicharToUnicharConvertion>((const ANSICHAR*)str)
 #define UNICHAR_TO_ANSICHAR(str) (ANSICHAR*)nux::NCharacterConversion<ANSICHAR, UNICHAR, nux::UnicharToAnsicharConvertion>((const UNICHAR*)str)
+#define ANSICHAR_TO_TCHAR(str) (UNICHAR*)nux::NCharacterConversion <TCHAR, ANSICHAR, nux::AnsiToTCharConversion>((const ANSICHAR*)str)
+#define TCHAR_TO_ANSICHAR(str) (ANSICHAR*)nux::NCharacterConversion <ANSICHAR, TCHAR, nux::TCharToAnsiConvertion>((const TCHAR*)str)
 
 
-#define INL_WIN32_LINE_TERMINATOR   TEXT("\r\n")
-#define INL_UNIX_LINE_TERMINATOR    TEXT("\n")
-#define INL_MACOSX_LINE_TERMINATOR  TEXT("\n")
+#define NUX_WIN32_LINE_TERMINATOR   TEXT("\r\n")
+#define NUX_UNIX_LINE_TERMINATOR    TEXT("\n")
+#define NUX_MACOSX_LINE_TERMINATOR  TEXT("\n")
 
-#if defined(INL_OS_WINDOWS)
-    #define INL_LINE_TERMINATOR INL_WIN32_LINE_TERMINATOR
-#elif defined(INL_OS_LINUX) || defined(INL_OS_MACOSX)
-    #define INL_LINE_TERMINATOR INL_UNIX_LINE_TERMINATOR
-#elif defined(INL_PS3)
-    #define INL_LINE_TERMINATOR INL_UNIX_LINE_TERMINATOR
+#if defined(NUX_OS_WINDOWS)
+    #define NUX_LINE_TERMINATOR NUX_WIN32_LINE_TERMINATOR
+#elif defined(NUX_OS_LINUX) || defined(NUX_OS_MACOSX)
+    #define NUX_LINE_TERMINATOR NUX_UNIX_LINE_TERMINATOR
+#elif defined(NUX_PS3)
+    #define NUX_LINE_TERMINATOR NUX_UNIX_LINE_TERMINATOR
 #endif
 
 
-#if defined(INL_OS_WINDOWS)
-    #define INL_PATH_SEPARATOR_STRING   INL_BACKSLASH_STRING
-    #define INL_PATH_SEPARATOR_CHAR     INL_BACKSLASH_CHAR
-#elif defined(INL_OS_LINUX) || defined(INL_OS_MACOSX)
-    #define INL_PATH_SEPARATOR_STRING   INL_SLASH_STRING
-    #define INL_PATH_SEPARATOR_CHAR     INL_SLASH_CHAR
-#elif defined(INL_PS3)
-    #define INL_PATH_SEPARATOR_STRING   INL_SLASH_STRING
-    #define INL_PATH_SEPARATOR_CHAR     INL_SLASH_CHAR
+#if defined(NUX_OS_WINDOWS)
+    #define NUX_PATH_SEPARATOR_STRING   NUX_BACKSLASH_STRING
+    #define NUX_PATH_SEPARATOR_CHAR     NUX_BACKSLASH_CHAR
+#elif defined(NUX_OS_LINUX) || defined(NUX_OS_MACOSX)
+    #define NUX_PATH_SEPARATOR_STRING   NUX_SLASH_STRING
+    #define NUX_PATH_SEPARATOR_CHAR     NUX_SLASH_CHAR
+#elif defined(NUX_PS3)
+    #define NUX_PATH_SEPARATOR_STRING   NUX_SLASH_STRING
+    #define NUX_PATH_SEPARATOR_CHAR     NUX_SLASH_CHAR
 #endif
 
-#define INL_BACKSLASH_CHAR      TEXT('\\')
-#define INL_BACKSLASH_STRING    TEXT("\\")
-#define INL_SLASH_CHAR          TEXT('/')
-#define INL_SLASH_STRING        TEXT("/")
+#define NUX_BACKSLASH_CHAR      TEXT('\\')
+#define NUX_BACKSLASH_STRING    TEXT("\\")
+#define NUX_SLASH_CHAR          TEXT('/')
+#define NUX_SLASH_STRING        TEXT("/")
 
-#define INL_MAX_FILEPATH_SIZE   1024
+#define NUX_MAX_FILEPATH_SIZE   1024
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -388,7 +361,7 @@ t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHA
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 extern const t_bool GNoDialog;         // Set to true to disable the popping of dialog box. The message will go to the log.
 
-#ifdef INL_VISUAL_STUDIO_2003
+#ifdef NUX_VISUAL_STUDIO_2003
     //Visual Studio C++ 2003 doesn't support it, but there is a workaround:
     #pragma warning(disable: 4002)		// Warning: too many actual parameters for macro 'ident'
     #pragma warning(disable: 4003)		// Warning: not enough actual parameters for macro 'ident'
@@ -421,11 +394,11 @@ extern const t_bool GNoDialog;         // Set to true to disable the popping of 
 // enum {UNICODE_UTF16_LE   = 0xFFFE };
 // enum {UNICODE_UTF8       = 0xEFBBBF };
 
-const BYTE INL_UTF32_BE[]   = {0x04 /*size*/, 0x00, 0x00, 0xFE, 0xFF };
-const BYTE INL_UTF32_LE[]   = {0x04 /*size*/, 0xFF, 0xFE, 0x00, 0x00 };
-const BYTE INL_UTF16_BE[]   = {0x02 /*size*/, 0xFE, 0xFF };
-const BYTE INL_UTF16_LE[]   = {0x02 /*size*/, 0xFF, 0xFE };
-const BYTE INL_UTF8[]       = {0x03 /*size*/, 0xEF, 0xBB, 0xBF };
+const BYTE NUX_UTF32_BE[]   = {0x04 /*size*/, 0x00, 0x00, 0xFE, 0xFF };
+const BYTE NUX_UTF32_LE[]   = {0x04 /*size*/, 0xFF, 0xFE, 0x00, 0x00 };
+const BYTE NUX_UTF16_BE[]   = {0x02 /*size*/, 0xFE, 0xFF };
+const BYTE NUX_UTF16_LE[]   = {0x02 /*size*/, 0xFF, 0xFE };
+const BYTE NUX_UTF8[]       = {0x03 /*size*/, 0xEF, 0xBB, 0xBF };
 
 // enum {UNICODE_BOM   = 0xfeff     };
 
@@ -435,32 +408,32 @@ class NOutputDevice;
 class NFileManager;
 
 
-#define GNullDevice         INL_GLOBAL_OBJECT_INSTANCE(nux::NNullOutput)
-#define GLogDevice          INL_GLOBAL_OBJECT_INSTANCE(nux::NOutputDeviceRedirector)
-#define GThrow              INL_GLOBAL_OBJECT_INSTANCE(nux::NThrowOutput)
+#define GNullDevice         NUX_GLOBAL_OBJECT_INSTANCE(nux::NNullOutput)
+#define GLogDevice          NUX_GLOBAL_OBJECT_INSTANCE(nux::NOutputDeviceRedirector)
+#define GThrow              NUX_GLOBAL_OBJECT_INSTANCE(nux::NThrowOutput)
 
-#if (defined INL_OS_WINDOWS)
-    #define GFileManager    INL_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerWindows)
-#elif (defined INL_OS_LINUX)
-    #define GFileManager    INL_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerGNU)
-#elif (defined INL_PS3)
-    #define GFileManager    INL_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerPS3)
+#if (defined NUX_OS_WINDOWS)
+    #define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerWindows)
+#elif (defined NUX_OS_LINUX)
+    #define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerGNU)
+#elif (defined NUX_PS3)
+    #define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerPS3)
 #endif
 
 
 //////////////////////////////////////////////////////////////////////////
 // Breaks into the debugger.  Forces a GPF in non-debug builds.         //
 //////////////////////////////////////////////////////////////////////////
-#if (defined _DEBUG) && (defined INL_MICROSOFT_COMPILER)
+#if (defined _DEBUG) && (defined NUX_MICROSOFT_COMPILER)
     #define nuxIsDebuggerPresent()  IsDebuggerPresent()
     #define inlDebugBreak()         ( IsDebuggerPresent() ? (DebugBreak(),1) : 1 )
 #elif (defined _WIN32)
     #define nuxIsDebuggerPresent()	IsDebuggerPresent()
     #define inlDebugBreak()			( IsDebuggerPresent() ? *((INT*)3)=13 : 1 )
-#elif (defined _DEBUG) && (defined INL_GNUCPP_COMPILER)
+#elif (defined _DEBUG) && (defined NUX_GNUCPP_COMPILER)
     #define nuxIsDebuggerPresent()  1
     #define inlDebugBreak()         asm("int3");
-#elif (defined _DEBUG) && (defined INL_PS3)
+#elif (defined _DEBUG) && (defined NUX_PS3)
     #define nuxIsDebuggerPresent()	1
     #define inlDebugBreak()			__asm__ volatile("tw 31, 1, 1");
 #else
@@ -468,25 +441,25 @@ class NFileManager;
     #define inlDebugBreak()			
 #endif
 
-#if defined(INL_MICROSOFT_COMPILER)
-    #define INL_HARDWARE_BREAK      {__debugbreak();}
-    #define INL_BREAK_ASM_INT3      {__debugbreak();}
-#elif defined(INL_GNUC_COMPILER)
-    #define INL_HARDWARE_BREAK      asm("int3");
-    #define INL_BREAK_ASM_INT3      asm("int3");
-#elif defined(INL_PS3)
-    #define INL_HARDWARE_BREAK      __asm__ volatile("tw 31, 1, 1");
-    #define INL_BREAK_ASM_INT3      __asm__ volatile("tw 31, 1, 1");
+#if defined(NUX_MICROSOFT_COMPILER)
+    #define NUX_HARDWARE_BREAK      {__debugbreak();}
+    #define NUX_BREAK_ASM_INT3      {__debugbreak();}
+#elif defined(NUX_GNUC_COMPILER)
+    #define NUX_HARDWARE_BREAK      asm("int3");
+    #define NUX_BREAK_ASM_INT3      asm("int3");
+#elif defined(NUX_PS3)
+    #define NUX_HARDWARE_BREAK      __asm__ volatile("tw 31, 1, 1");
+    #define NUX_BREAK_ASM_INT3      __asm__ volatile("tw 31, 1, 1");
 #else
-    #define INL_HARDWARE_BREAK
-    #define INL_BREAK_ASM_INT3
+    #define NUX_HARDWARE_BREAK
+    #define NUX_BREAK_ASM_INT3
 #endif
 
 // Simple version of the PURE_VIRTUAL. Use it before output macros nuxError is define.
-#if INL_CHECK_PUREVIRTUALS
-    #define INL_PURE_VIRTUAL =0;
+#if NUX_CHECK_PUREVIRTUALS
+    #define NUX_PURE_VIRTUAL = 0;
 #else
-    #define INL_PURE_VIRTUAL { inlDebugBreak(); }
+    #define NUX_PURE_VIRTUAL { inlDebugBreak(); }
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -622,13 +595,13 @@ enum ECopyResult
     COPY_Canceled				= 0x06,
 };
 
-enum INL_STATUS
+enum NUX_STATUS
 {
-    INL_OK,
-    INL_ERROR,
-    INL_FILENOTFOUND,
-    INL_COPYFILE_ERROR,
-    INL_DELETEFILE_ERROR,
+    NUX_OK,
+    NUX_ERROR,
+    NUX_FILENOTFOUND,
+    NUX_COPYFILE_ERROR,
+    NUX_DELETEFILE_ERROR,
 };
 
 NAMESPACE_END
@@ -638,33 +611,34 @@ NAMESPACE_END
 #include "NMemory.h"
 
 #include "Character/NUni.h"
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "Character/NUnicode.h"
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #include "Character/NUnicode.h"
-#elif INL_PS3
+#elif NUX_PS3
     #include "Character/NUnicodePS3.h"
 #endif
 
 #include "NTemplate.h"
+#include "NumberConversion.h"
 
 #include "NArray.h"
 
 #include "NString.h"
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "NThread.h"
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #include "NThreadGNU.h"
-#elif INL_PS3
+#elif NUX_PS3
     #include "NThreadPS3.h"
 #endif
 
-#include "Memory/NMemoryAllocatorInterface.h"
+/*#include "Memory/NMemoryAllocatorInterface.h"
 #include "Memory/NDefaultMemoryAllocator.h"
 #include "Memory/NMemoryHook.h"
 #include "Memory/NMemoryAllocator.h"
-
+*/
 
 #include "NUniqueIndex.h"
 #include "SmartPtr/NRefCount.h"
@@ -672,7 +646,7 @@ NAMESPACE_END
 
 //#include "NGlobalInitializer.h"
 
-#ifdef INL_OS_WINDOWS
+#ifdef NUX_OS_WINDOWS
     #include "Win32Dialogs/NWin32MessageBox.h"
 #endif
 
@@ -687,12 +661,12 @@ NAMESPACE_END
 #include "NOutputDevice.h"
 #include "FileManager/NFileManagerGeneric.h"
 
-#ifdef INL_OS_WINDOWS
+#ifdef NUX_OS_WINDOWS
     #include "FileManager/NFileManagerStandardAnsi.h"
     #include "FileManager/NFileManagerWindows.h"
-#elif defined INL_OS_LINUX
+#elif defined NUX_OS_LINUX
     #include "FileManager/NFileManagerGNU.h"
-#elif defined INL_PS3
+#elif defined NUX_PS3
     #include "FileManager/NFileManagerPS3.h"
 #endif
 
@@ -701,13 +675,13 @@ NAMESPACE_END
 #include "NFileName.h"
 #include "Color.h"
 
-#ifdef INL_OS_WINDOWS
+#ifdef NUX_OS_WINDOWS
     #include "Win32Dialogs/NWin32CustomDialog.h"
 #endif
 
 #include "NPrintf.h"
 
-#ifdef INL_OS_WINDOWS
+#ifdef NUX_OS_WINDOWS
     #include "Win32Dialogs/NWin32Clipboard.h"
 #endif
 //#include "NSocket.h"

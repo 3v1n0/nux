@@ -28,28 +28,28 @@
 NAMESPACE_BEGIN
 
 #ifdef _WIN64
-    #define INL_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement64
-    #define INL_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement64
-    #define INL_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange64
-    #define INL_ATOMOP_ITERLOCKED_VALUE
+    #define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement64
+    #define NUX_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement64
+    #define NUX_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange64
+    #define NUX_ATOMOP_ITERLOCKED_VALUE
 #elif _WIN32
-    #define INL_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement
-    #define INL_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement
-    #define INL_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange
-    #define INL_ATOMOP_ITERLOCKED_VALUE
+    #define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement
+    #define NUX_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement
+    #define NUX_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange
+    #define NUX_ATOMOP_ITERLOCKED_VALUE
 #endif
 
 t_integer NThreadSafeCounter::Increment()
 {
-    return INL_ATOMOP_ITERLOCKED_INCREMENT( &m_Counter );
+    return NUX_ATOMOP_ITERLOCKED_INCREMENT( &m_Counter );
 }
 t_integer NThreadSafeCounter::Decrement()
 {
-    return INL_ATOMOP_ITERLOCKED_DECREMENT( &m_Counter );
+    return NUX_ATOMOP_ITERLOCKED_DECREMENT( &m_Counter );
 }
 t_integer NThreadSafeCounter::Set(t_integer i)
 {
-    return INL_ATOMOP_ITERLOCKED_EXCHANGED( &m_Counter, i );
+    return NUX_ATOMOP_ITERLOCKED_EXCHANGED( &m_Counter, i );
 }
 
 t_integer NThreadSafeCounter::GetValue() const

@@ -27,7 +27,7 @@ NAMESPACE_BEGIN
 
 class NCPU
 {
-    INL_DECLARE_GLOBAL_OBJECT(NCPU, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NCPU, NGlobalSingletonInitializer);
 public:
 
     enum 

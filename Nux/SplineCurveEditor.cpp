@@ -72,8 +72,8 @@ SplineCurveEditor::SplineCurveEditor()
 SplineCurveEditor::~SplineCurveEditor()
 {
     DestroyLayout();
-    INL_SAFE_DELETE(m_DrawFunctionShader);
-    INL_SAFE_DELETE(m_Background);
+    NUX_SAFE_DELETE(m_DrawFunctionShader);
+    NUX_SAFE_DELETE(m_Background);
 }
 
 void SplineCurveEditor::InitializeWidgets()
@@ -144,7 +144,7 @@ double SplineCurveEditor::Eval(double t)
 long SplineCurveEditor::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     long ret = TraverseInfo;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x, ievent.e_y))
         {
@@ -152,7 +152,7 @@ long SplineCurveEditor::ProcessEvent(IEvent &ievent, long TraverseInfo, long Pro
         }
     }
 
-    CTRL_KEY = ievent.GetVirtualKeyState(INL_VK_CONTROL);
+    CTRL_KEY = ievent.GetVirtualKeyState(NUX_VK_CONTROL);
     ret = PostProcessEvent2(ievent, ret, ProcessEventInfo);
     return ret;
 }
@@ -580,7 +580,7 @@ void SplineCurveEditor::RecvKeyEvent(
         return;
     }
 
-    if((keysym == INL_VK_DELETE) || (keysym == INL_KP_DELETE) || (keysym == INL_VK_BACKSPACE))
+    if((keysym == NUX_VK_DELETE) || (keysym == NUX_KP_DELETE) || (keysym == NUX_VK_BACKSPACE))
     {
 
         int kn = m_control_knot.GetNumSelectedKnot();

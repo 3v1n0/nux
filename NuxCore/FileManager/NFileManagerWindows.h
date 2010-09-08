@@ -83,7 +83,7 @@ protected:
 
 class NFileManagerWindows : public NFileManagerGeneric
 {
-    INL_DECLARE_GLOBAL_OBJECT(NFileManagerWindows, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NFileManagerWindows, NGlobalSingletonInitializer);
 public:
 
     // Flags is a combination of

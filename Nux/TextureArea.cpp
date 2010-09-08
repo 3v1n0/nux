@@ -38,7 +38,7 @@ TextureArea::TextureArea()
 
 TextureArea::~TextureArea()
 {
-    INL_SAFE_DELETE(m_PaintLayer);
+    NUX_SAFE_DELETE(m_PaintLayer);
     // m_UserTexture is delete by the user
 }
 
@@ -69,8 +69,8 @@ void TextureArea::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 void TextureArea::SetTexture(NTexture* texture)
 {
-    INL_RETURN_IF_NULL(texture);
-    INL_SAFE_DELETE(m_PaintLayer);
+    NUX_RETURN_IF_NULL(texture);
+    NUX_SAFE_DELETE(m_PaintLayer);
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
@@ -82,7 +82,7 @@ void TextureArea::SetTexture(NTexture* texture)
 
 void TextureArea::SetPaintLayer(AbstractPaintLayer* layer)
 {
-    INL_SAFE_DELETE(m_PaintLayer);
+    NUX_SAFE_DELETE(m_PaintLayer);
     m_PaintLayer = layer->Clone();
 }
 

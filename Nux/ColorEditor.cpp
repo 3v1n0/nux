@@ -354,13 +354,13 @@ ColorEditor::ColorEditor()
 
 ColorEditor::~ColorEditor()
 {
-    INL_SAFE_DELETE(radiogroup);
-    INL_SAFE_DELETE(m_RedShader);
-    INL_SAFE_DELETE(m_GreenShader);
-    INL_SAFE_DELETE(m_BlueShader);
-    INL_SAFE_DELETE(m_HueShader);
-    INL_SAFE_DELETE(m_SaturationShader);
-    INL_SAFE_DELETE(m_ValueShader);
+    NUX_SAFE_DELETE(radiogroup);
+    NUX_SAFE_DELETE(m_RedShader);
+    NUX_SAFE_DELETE(m_GreenShader);
+    NUX_SAFE_DELETE(m_BlueShader);
+    NUX_SAFE_DELETE(m_HueShader);
+    NUX_SAFE_DELETE(m_SaturationShader);
+    NUX_SAFE_DELETE(m_ValueShader);
 }
 
 

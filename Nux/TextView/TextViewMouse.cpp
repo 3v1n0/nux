@@ -668,7 +668,7 @@ void TextView::UpdateCaretXY(int xpos, t_u32 lineno)
     // only show caret if it is visible within viewport
     if(lineno >= m_nVScrollPos && lineno <= m_nVScrollPos + m_nWindowLines)
     {
-        if(xpos >= LeftMarginWidth()/* && (GetThreadGLWindow()->GetCurrentEvent().e_event != INL_MOUSE_PRESSED)*/)
+        if(xpos >= LeftMarginWidth()/* && (GetThreadGLWindow()->GetCurrentEvent().e_event != NUX_MOUSE_PRESSED)*/)
             visible = true;
     }
 

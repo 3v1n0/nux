@@ -53,7 +53,7 @@ StaticTextBox::StaticTextBox(const TCHAR* Caption, const Color& textcolor, const
 
 StaticTextBox::~StaticTextBox()
 {
-    INL_SAFE_DELETE(m_Background);
+    NUX_SAFE_DELETE(m_Background);
 }
 
 long StaticTextBox::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) 
@@ -148,7 +148,7 @@ void StaticTextBox::SetFont(const NFontPtr& Font)
 
 void StaticTextBox::SetBackground(AbstractPaintLayer* layer)
 {
-    INL_SAFE_DELETE(m_Background);
+    NUX_SAFE_DELETE(m_Background);
     m_Background = layer->Clone();
 }
 

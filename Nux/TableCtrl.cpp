@@ -176,7 +176,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
     long ProcEvInfo = ProcessEventInfo;
     bool AllowCellSelection = (TraverseInfo & eMouseEventSolved)? false : true;
 
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         Geometry ViewGeometry = Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
         if(!ViewGeometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
@@ -246,7 +246,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
     if(m_horizontal_scrollbar_enable)
         ret = hscrollbar->ProcessEvent(ievent, ret, ProcEvInfo & (~eDoNotProcess));
 
-    if(IsPartOfCombobox() && ievent.e_event == INL_MOUSE_RELEASED)
+    if(IsPartOfCombobox() && ievent.e_event == NUX_MOUSE_RELEASED)
     {
         if(GetGeometry().IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) &&
             m_TableArea->GetGeometry().IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
@@ -261,7 +261,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
     }
     else
     {
-        if(ievent.e_event == INL_MOUSE_PRESSED && ItemSolvedEvent && !(EventAlreadySolved) /*&& GetThreadWindowCompositor().GetMouseFocusArea()*/)
+        if(ievent.e_event == NUX_MOUSE_PRESSED && ItemSolvedEvent && !(EventAlreadySolved) /*&& GetThreadWindowCompositor().GetMouseFocusArea()*/)
         {
             // The mouse down event has already been captured. This call is going to find out if a cell was hit.
             OnMouseDown(ievent.e_x - ievent.e_x_root - m_TableArea->GetBaseX(),
@@ -279,7 +279,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
     ret = PostProcessEvent2(ievent, ret, ProcEvInfo);
 
     // If it is a mouse down, check for the selected row and column
-    if((ievent.e_event == INL_MOUSE_PRESSED) && ((ProcEvInfo & eDoNotProcess) == 0) && AllowCellSelection)
+    if((ievent.e_event == NUX_MOUSE_PRESSED) && ((ProcEvInfo & eDoNotProcess) == 0) && AllowCellSelection)
     {
         bool in_column = false;
         bool in_row = false;
@@ -311,7 +311,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             }
         }
     }
-    else if((ievent.e_event == INL_MOUSE_PRESSED) && ((ProcEvInfo & eDoNotProcess) || EventAlreadySolved)) 
+    else if((ievent.e_event == NUX_MOUSE_PRESSED) && ((ProcEvInfo & eDoNotProcess) || EventAlreadySolved)) 
     {
         if((m_selectedColumn != -1) || (m_selectedRow != -1))
         {
@@ -1712,7 +1712,7 @@ void TableCtrl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned l
     if(m_selectedTableItem)
     {
         // Dirty the previously selected item. No need to call NeedRedraw because this is a mouse down and the 
-        // WindowThread will call Draw(event, false) on a INL_MOUSE_PRESSED event.
+        // WindowThread will call Draw(event, false) on a NUX_MOUSE_PRESSED event.
         // When this item redraws, it will draw without the selection background color.
         m_selectedTableItem->setDirtyItem(true);
     }
@@ -1739,7 +1739,7 @@ void TableCtrl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned l
         sigTableItemSelected.emit(*this, *m_selectedTableItem, m_selectedRow, m_selectedColumn);
 
         // Dirty the newly selected item. No need to call NeedRedraw because this is a mouse down and the 
-        // WindowThread will call Draw(event, false) on a INL_MOUSE_PRESSED event.
+        // WindowThread will call Draw(event, false) on a NUX_MOUSE_PRESSED event.
         // When this item redraws, it will draw with the selection background color.
         m_selectedTableItem->setDirtyItem(true);
     }

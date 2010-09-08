@@ -20,5 +20,3 @@
  */
 
 
-#include "../NKernel.h"
-

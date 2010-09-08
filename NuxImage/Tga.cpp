@@ -203,7 +203,7 @@ NBitmapData* read_tga_file(const TCHAR* file_name)
         fileStream.close();
         delete tga_buffer;
         //nuxAssertMsg(0, TEXT("[read_tga_file] Error while reading the TGA data: %s"), file_name);
-        INL_SAFE_DELETE(TextureObjectData);
+        NUX_SAFE_DELETE(TextureObjectData);
         return 0;
     }
 

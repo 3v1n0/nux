@@ -78,10 +78,10 @@ WindowCompositor::~WindowCompositor()
     m_WindowToTextureMap.clear();
     m_MenuList->clear();
 
-    INL_SAFE_DELETE(m_DrawList);
-    INL_SAFE_DELETE(m_EventRectList);
-    INL_SAFE_DELETE(m_MenuList);
-    INL_SAFE_DELETE(m_Background);
+    NUX_SAFE_DELETE(m_DrawList);
+    NUX_SAFE_DELETE(m_EventRectList);
+    NUX_SAFE_DELETE(m_MenuList);
+    NUX_SAFE_DELETE(m_Background);
 }
 
 bool WindowCompositor::MouseDown(Point pt)
@@ -205,7 +205,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
     long ret = 0;
     std::list<MenuPage*>::iterator menu_it;
 
-    if(ievent.e_event == INL_WINDOW_EXIT_FOCUS)
+    if(ievent.e_event == NUX_WINDOW_EXIT_FOCUS)
     {
         SetCurrentEvent(&ievent);
         if(GetMouseFocusArea().IsValid())
@@ -215,19 +215,19 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
         SetCurrentEvent(0);
     }
     
-    if(GetMouseFocusArea().IsValid() && ievent.e_event != INL_MOUSE_PRESSED)
+    if(GetMouseFocusArea().IsValid() && ievent.e_event != NUX_MOUSE_PRESSED)
     {
         SetCurrentEvent(&ievent);
         SetCurrentWindow(GetFocusAreaWindow());
         ProcessEventOnObject(ievent, GetMouseFocusArea(), 0, 0);
         
-        if(ievent.e_event == INL_MOUSE_RELEASED)
+        if(ievent.e_event == NUX_MOUSE_RELEASED)
         {
             SetMouseFocusArea(smptr(BaseArea)(0));
             // No need to set SetMouseOverArea to NULL.
             //SetMouseOverArea(0);
         }
-        if((ievent.e_event == INL_MOUSE_RELEASED))
+        if((ievent.e_event == NUX_MOUSE_RELEASED))
         {
             SetWidgetDrawingOverlay(smptr(BaseArea)(0), smptr(BaseWindow)(0));
         }
@@ -241,7 +241,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
         }
 
         // We cannot get in here.
-//         if((ievent.e_event == INL_MOUSE_PRESSED) && m_MenuList->size())
+//         if((ievent.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size())
 //         {
 //             bool inside = false;
 //             for(menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
@@ -282,7 +282,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
             ret = (*menu_it)->ProcessEvent(ievent, ret, 0);
         }
 
-        if((ievent.e_event == INL_MOUSE_PRESSED) && m_MenuList->size())
+        if((ievent.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size())
         {
             bool inside = false;
             for(menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
@@ -308,12 +308,12 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
             ievent.e_y_root = 0;
         }
 
-        if((ievent.e_event == INL_MOUSE_RELEASED))
+        if((ievent.e_event == NUX_MOUSE_RELEASED))
         {
             SetWidgetDrawingOverlay(smptr(BaseArea)(0), smptr(BaseWindow)(0));
         }
 
-        if((ievent.e_event == INL_SIZE_CONFIGURATION) && m_MenuList->size())
+        if((ievent.e_event == NUX_SIZE_CONFIGURATION) && m_MenuList->size())
         {
             (*m_MenuList->begin())->NotifyTerminateMenuCascade();
         }
@@ -336,7 +336,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
         else
         {
             bool ordered = true;
-            if(ievent.e_event == INL_MOUSE_PRESSED )
+            if(ievent.e_event == NUX_MOUSE_PRESSED )
             {
                 // There is a possibility we might have to reorder the stack of windows.
                 // Cancel the currently selected window.
@@ -1060,7 +1060,7 @@ void WindowCompositor::PresentBufferToScreen(TRefGL<IOpenGLTexture2D> HWTexture,
         {
             TexCoordXForm texxform0;
             texxform0.FlipVCoord(true);
-            GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            //GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             GetThreadGraphicsContext()->QRP_GLSL_1Tex(x, y, src_width, src_height, HWTexture, texxform0, Color::White);
             GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false);
         }
@@ -1274,8 +1274,8 @@ void WindowCompositor::CancelTooltip()
 
 bool WindowCompositor::ValidateMouseInsideTooltipArea(int x, int y)
 {
-    INL_RETURN_VALUE_IF_FALSE(m_TooltipArea.IsValid(), false);
-    INL_RETURN_VALUE_IF_FALSE(m_TooltipWindow.IsValid(), false);
+    NUX_RETURN_VALUE_IF_FALSE(m_TooltipArea.IsValid(), false);
+    NUX_RETURN_VALUE_IF_FALSE(m_TooltipWindow.IsValid(), false);
 
     Geometry geo = m_TooltipArea->GetGeometry();
     geo.OffsetPosition(m_TooltipWindow->GetBaseX(), m_TooltipWindow->GetBaseY());
@@ -1285,7 +1285,7 @@ bool WindowCompositor::ValidateMouseInsideTooltipArea(int x, int y)
 
 bool WindowCompositor::IsTooltipActive()
 {
-    INL_RETURN_VALUE_IF_FALSE(m_TooltipArea.IsValid(), false);
+    NUX_RETURN_VALUE_IF_FALSE(m_TooltipArea.IsValid(), false);
     return true;
 }
 
@@ -1334,7 +1334,7 @@ smptr(BaseArea) WindowCompositor::GetPreviousMouseOverArea()
 
 void WindowCompositor::SetBackgroundPaintLayer(AbstractPaintLayer* bkg)
 {
-    INL_SAFE_DELETE(m_Background);
+    NUX_SAFE_DELETE(m_Background);
     m_Background = bkg->Clone();
 }
 

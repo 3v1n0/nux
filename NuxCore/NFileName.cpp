@@ -28,7 +28,7 @@ NAMESPACE_BEGIN
 
 NString NFileName::GetDrive() const
 {
-    t_size Pos = FindFirstOccurence(INL_BACKSLASH_CHAR);
+    t_size Pos = FindFirstOccurence(NUX_BACKSLASH_CHAR);
     if (Pos == -1)
     {
         Pos = FindFirstOccurence("\\");
@@ -55,9 +55,9 @@ NString NFileName::GetExtension() const
 // Returns the base filename without the path
 NString NFileName::GetCleanFilename() const
 {
-    t_size Pos = FindLastOccurence(INL_BACKSLASH_CHAR);
-    Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("/"))); // in case we are using slash and the INL_BACKSLASH_CHAR is different.
-    Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("\\"))); // in case we are using backslash and the INL_BACKSLASH_CHAR is different.
+    t_size Pos = FindLastOccurence(NUX_BACKSLASH_CHAR);
+    Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("/"))); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
+    Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("\\"))); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
     if (Pos != -1)
     {
         return GetSubString(Pos + 1, Length() - Pos - 1);
@@ -92,9 +92,9 @@ NString NFileName::GetBaseFilename() const
 
 NString NFileName::GetDirectoryPath() const
 {
-    t_size Pos = FindLastOccurence(INL_BACKSLASH_CHAR);
-    Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("/"))); // in case we are using slash and the INL_BACKSLASH_CHAR is different.
-    Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("\\"))); // in case we are using backslash and the INL_BACKSLASH_CHAR is different.
+    t_size Pos = FindLastOccurence(NUX_BACKSLASH_CHAR);
+    Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("/"))); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
+    Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("\\"))); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
     if (Pos != -1)
     {
         return GetSubString(Pos);

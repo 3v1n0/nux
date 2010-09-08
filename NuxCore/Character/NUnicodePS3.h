@@ -47,7 +47,7 @@ const BYTE UTF8[]       = {0x03 /*size*/, 0xEF, 0xBB, 0xBF };
 
 enum {UNICODE_BOM   = 0xfeff     };
 
-#ifdef INL_UNICODE
+#ifdef NUX_UNICODE
     inline TCHAR    ConvertAnsiCharToTCHAR   ( ANSICHAR In )
     {
         TCHAR Out;
@@ -148,7 +148,7 @@ class ANSICHAR_To_UNICHAR_Convert
 {
 public:
     // Default to ANSI code page
-    INL_INLINE ANSICHAR_To_UNICHAR_Convert(DWORD CP = 0)
+    NUX_INLINE ANSICHAR_To_UNICHAR_Convert(DWORD CP = 0)
         :   CodePage(CP)
     {
     }
@@ -158,7 +158,7 @@ public:
     @param Source String to convert. Null terminated.
     @return Return a pointer to the new string. Null terminated.
     */
-    INL_INLINE UNICHAR* Convert(const ANSICHAR* Src)
+    NUX_INLINE UNICHAR* Convert(const ANSICHAR* Src)
     {
         UNICHAR* Dest;
         size_t AnsiCharLen = strlen(Src) + 1; // +1 for NULL character
@@ -178,7 +178,7 @@ class TCHARToANSI_Convert
 {
     DWORD CodePage;
 public:
-    INL_INLINE TCHARToANSI_Convert(DWORD CP = 0) :
+    NUX_INLINE TCHARToANSI_Convert(DWORD CP = 0) :
       CodePage(CP)
       {
       }
@@ -188,10 +188,10 @@ public:
       @param Source String to convert. Null terminated.
       @return Return a pointer to the new string. Null terminated.
       */
-      INL_INLINE ANSICHAR* Convert(const TCHAR* Src)
+      NUX_INLINE ANSICHAR* Convert(const TCHAR* Src)
       {
           // Determine whether we need to allocate memory or not
-#ifdef INL_UNICODE
+#ifdef NUX_UNICODE
           ANSICHAR* Dest;
           size_t UnicodeLen = wcslen(Src) + 1; // +1 for NULL character
           size_t AnsiCharLen = 0;
@@ -216,7 +216,7 @@ class ANSIToTCHAR_Convert
 {
     DWORD CodePage;
 public:
-    INL_INLINE ANSIToTCHAR_Convert(DWORD CP = 0)
+    NUX_INLINE ANSIToTCHAR_Convert(DWORD CP = 0)
         :   CodePage(CP)
     {
     }
@@ -226,9 +226,9 @@ public:
     @param Source String to convert. Null terminated.
     @return Return a pointer to the new string. Null terminated.
     */
-    INL_INLINE TCHAR* Convert(const ANSICHAR* Src)
+    NUX_INLINE TCHAR* Convert(const ANSICHAR* Src)
     {
-#ifdef INL_UNICODE
+#ifdef NUX_UNICODE
         UNICHAR* Dest;
         int d = sizeof(UNICHAR);
         size_t AnsiCharLen = strlen(Src) + 1; // +1 for NULL character

@@ -41,7 +41,7 @@
 // } TextureArchiveInfo_ver_0_0_1;
 // #pragma pack()
 // 
-// bool TextureArchiveAdd_ver_0_0_1(nux::NSerializer* FileStream, const TCHAR* SourceFolder, const TCHAR* InputTextureFile, INL_OUT nux::t_s64& Offset);
+// bool TextureArchiveAdd_ver_0_0_1(nux::NSerializer* FileStream, const TCHAR* SourceFolder, const TCHAR* InputTextureFile, NUX_OUT nux::t_s64& Offset);
 // nux::NBitmapData* TextureArchiveLoad_ver_0_0_1(nux::NSerializer* FileStream, unsigned int Offset);
 // void TextureArchiveGetInfo_ver_0_0_1(nux::NSerializer* FileStream, TextureArchiveInfo_ver_0_0_1& TextureArchiveInfo);
 // 
