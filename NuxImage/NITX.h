@@ -39,13 +39,13 @@ typedef struct
 {
     t_s64 FilePointer;
     NFileName Name;
-    unsigned int Type;
-    unsigned int Format;
-    unsigned int Width;
-    unsigned int Height;
-    unsigned int Depth;
-    unsigned int NumMipmap;
-    unsigned int Size;
+    t_s32 Type;
+    t_s32 Format;
+    t_s32 Width;
+    t_s32 Height;
+    t_s32 Depth;
+    t_s32 NumMipmap;
+    t_s32 Size;
 
 } TextureArchiveInfo_ver_0_0_1;
 #pragma pack()

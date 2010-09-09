@@ -67,7 +67,7 @@ double* CubicSpline::SolveTridiag ( int n, double a[], double b[] )
 
 CubicSpline::CubicSpline(int numpoint, std::vector<double> x_array, std::vector<double> y_array, int ibcbeg, double ybcbeg, int ibcend, double ybcend )
 {
-    if(x_array.size() != numpoint || y_array.size() != numpoint)
+    if(((int)x_array.size() != numpoint) || ((int)y_array.size() != numpoint))
     {
         NUX_BREAK_ASM_INT3;
     }
@@ -157,7 +157,7 @@ void CubicSpline::Set(int numpoint, std::vector<double> x_array, std::vector<dou
         return;
     }
 
-    if(x_array.size() != numpoint || y_array.size() != numpoint)
+    if(((int)x_array.size() != numpoint) || ((int)y_array.size() != numpoint))
     {
         NUX_BREAK_ASM_INT3;
     }

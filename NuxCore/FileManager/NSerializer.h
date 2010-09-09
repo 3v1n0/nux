@@ -48,7 +48,7 @@ public:
 
     // NSerializer interface.
     virtual ~NSerializer(){}
-    virtual void SerializeFinal(void* V, t_u64 Length) = 0;
+    virtual void SerializeFinal(void* V, t_s64 Length) = 0;
 //     template<typename T>
 //     void SerializeBuffer( T* buffer, t_u64 NumberOfElements, t_u64 ElementSize = sizeof(T))
 //     {

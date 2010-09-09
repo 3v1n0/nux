@@ -221,7 +221,6 @@ NMeshObject* LoadMeshObject_ver_0_0_1(nux::NSerializer* FileStream, unsigned int
     MeshPolygonType primtype = POLYGONTYPE_UNKNOWN;
     FileStream->Serialize((char*) &primtype,                sizeof(primtype));
 
-    int numprimitive = 0;
     FileStream->Serialize((char*) &mesh->m_NumPolygon,      sizeof(mesh->m_NumPolygon));
 
     //------------------------------------------------------------------------------------------------------------------------

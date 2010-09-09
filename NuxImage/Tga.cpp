@@ -208,7 +208,6 @@ NBitmapData* read_tga_file(const TCHAR* file_name)
     }
 
     tga_data_pointer = tga_buffer;
-    t_u32 position = 0;
 
     t_u32 image_width = TextureObjectData->GetSurface(0).GetWidth();
     t_u32 image_height = TextureObjectData->GetSurface(0).GetHeight();
@@ -236,7 +235,7 @@ NBitmapData* read_tga_file(const TCHAR* file_name)
 
                     TextureObjectData->GetSurface(0).Write32b(i, j, value);
                     tga_data_pointer += 4;
-                    break;	
+                    break;
 
                     // 24 bits RGB pixels
                 case BITFMT_R8G8B8:
@@ -248,7 +247,7 @@ NBitmapData* read_tga_file(const TCHAR* file_name)
 
                     TextureObjectData->GetSurface(0).Write24b(i, j, value);
                     tga_data_pointer += 3;
-                    break;	
+                    break;
 
                     // 16 bits RGB pixels
                 case BITFMT_R5G6B5:
@@ -268,7 +267,7 @@ NBitmapData* read_tga_file(const TCHAR* file_name)
 
                     TextureObjectData->GetSurface(0).Write16b(i, j, value);
                     tga_data_pointer += 2;
-                    break;	
+                    break;
 
                     // 8 bits black & white (grayscale)
                 case BITFMT_A8:	
@@ -276,7 +275,10 @@ NBitmapData* read_tga_file(const TCHAR* file_name)
                     value = *((BYTE*)tga_data_pointer+0);
                     TextureObjectData->GetSurface(0).Write8b(i, j, value);
                     tga_data_pointer += 1;
-                    break;			
+                    break;
+                    
+                default:
+                  break;
                 }
             }
         }
@@ -366,6 +368,9 @@ NBitmapData* read_tga_file(const TCHAR* file_name)
                     }
                     tga_data_pointer += 1;
                     break;
+                    
+                default:
+                  break;
                 }
             }
             else  // raw packet
@@ -426,6 +431,9 @@ NBitmapData* read_tga_file(const TCHAR* file_name)
                         position++;
                         tga_data_pointer += 1;
                         break;
+                        
+                    default:
+                      break;
                     }
                 }
             }
@@ -562,7 +570,7 @@ HReport write_tga_file(const TCHAR* file_name, NBitmapData *image)
     fileStream.write((char*) &header.bpp,                 sizeof(header.bpp));
     fileStream.write((char*) &header.descriptor,          sizeof(header.descriptor));
 
-    t_u32 i, j;
+    t_s32 i, j;
     for(j = 0; j < image->GetSurface(0).GetHeight(); j++)
     {
         for(i = 0; i < image->GetSurface(0).GetWidth(); i++)

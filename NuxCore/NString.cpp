@@ -659,7 +659,7 @@ bool NString::IsSuffix(const TCHAR& suffix)
     if(l < 0)
         return FALSE;
     t_size pos = FindLastOccurence(suffix);
-    if(pos == -1)
+    if(pos == tstring::npos)
         return FALSE;
     return (pos == l);
 }
@@ -673,7 +673,7 @@ bool NString::IsSuffix(const TCHAR* suffix)
     if(l < 0)
         return FALSE;
     t_size pos = FindLastOccurence(suffix);
-    if(pos == -1)
+    if(pos == tstring::npos)
         return FALSE;
     return (pos == l);
 }
@@ -688,7 +688,7 @@ bool NString::IsSuffix(const tstring& suffix)
     if(l < 0)
         return FALSE;
     t_size pos = FindLastOccurence(suffix);
-    if(pos == -1)
+    if(pos == tstring::npos)
         return FALSE;
     return (pos == l);
 }
@@ -703,7 +703,7 @@ bool NString::IsSuffix(const NString& suffix)
     if(l < 0)
         return FALSE;
     t_size pos = FindLastOccurence(suffix);
-    if(pos == -1)
+    if(pos == tstring::npos)
         return FALSE;
     return (pos == l);
 }
@@ -715,7 +715,7 @@ bool NString::IsPrefix(const TCHAR& prefix)
     if(l < 0)
         return FALSE;
     t_size pos = FindFirstOccurence(prefix);
-    if(pos == -1)
+    if(pos == tstring::npos)
         return FALSE;
     return (pos == 0);
 }
@@ -727,7 +727,7 @@ bool NString::IsPrefix(const TCHAR* prefix)
     if(sl == 0)
         return FALSE;
     t_size pos = FindFirstOccurence(prefix);
-    if(pos == -1)
+    if(pos == tstring::npos)
         return FALSE;
     return (pos == 0);
 }
@@ -739,7 +739,7 @@ bool NString::IsPrefix(const tstring& prefix)
     if(sl == 0)
         return FALSE;
     t_size pos = FindFirstOccurence(prefix);
-    if(pos == -1)
+    if(pos == tstring::npos)
         return FALSE;
     return (pos == 0);
 }
@@ -750,7 +750,7 @@ bool NString::IsPrefix(const NString& prefix)
     if(sl == 0)
         return FALSE;
     t_size pos = FindFirstOccurence(prefix);
-    if(pos == -1)
+    if(pos == tstring::npos)
         return FALSE;
     return (pos == 0);
 }
@@ -1021,7 +1021,7 @@ NString& NString::operator += (const NString sufix)
 void NString::SplitAtFirstOccurenceOf(const TCHAR* SplitString, NString& Left, NString& Right)
 {
     t_size start = FindFirstOccurence(SplitString);
-    if(start!=-1)
+    if(start != tstring::npos)
     {
         t_size size = StringLength(SplitString);
         Left = GetSubString(0, start);
@@ -1047,7 +1047,7 @@ void NString::SplitAtFirstOccurenceOf(const NString& SplitString, NString& Left,
 void NString::SplitAtLastOccurenceOf(const TCHAR* SplitString, NString& Left, NString& Right)
 {
     t_size start = FindLastOccurence(SplitString);
-    if(start!=-1)
+    if(start != tstring::npos)
     {
         t_size size = StringLength(SplitString);
         Left = GetSubString(0, start);
@@ -1167,9 +1167,9 @@ VARARG_BODY(NString, NString::Printf, const TCHAR*, VARARG_NONE)
 {
     t_u32  BufferSize  = 1024;
     TCHAR* Buffer      = NULL;
-    t_u32  Result      = -1;
+    t_size Result      = tstring::npos;
 
-    while(Result == -1)
+    while(Result == tstring::npos)
     {
         Buffer = (TCHAR*) Realloc(Buffer, BufferSize * sizeof(TCHAR));
         GET_VARARGS_RESULT(Buffer, BufferSize, BufferSize-1, Fmt, Result);

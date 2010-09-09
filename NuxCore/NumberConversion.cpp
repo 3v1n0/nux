@@ -33,38 +33,38 @@ NAMESPACE_BEGIN
 NString IntegerToChar(int value, int base)
 {
     char result[65];
-	// check that the base if valid
-	if (base < 2 || base > 36)
+    // check that the base if valid
+    if (base < 2 || base > 36)
     {
         //*result = '\0';
         NString str = TEXT('\0');
         return str;
     }
 
-	char* ptr = result, *ptr1 = result, tmp_char;
-	int tmp_value;
+    char* ptr = result, *ptr1 = result, tmp_char;
+    int tmp_value;
 
-	do {
-		tmp_value = value;
-		value /= base;
-		*ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
-	} while ( value );
+    do {
+        tmp_value = value;
+        value /= base;
+        *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
+    } while ( value );
 
-	// Apply negative sign
-	if (tmp_value < 0)
+    // Apply negative sign
+    if (tmp_value < 0)
         *ptr++ = '-';
 
-	*ptr-- = '\0';
+    *ptr-- = '\0';
 
-	while(ptr1 < ptr)
+    while(ptr1 < ptr)
     {
-		tmp_char = *ptr;
-		*ptr--= *ptr1;
-		*ptr1++ = tmp_char;
-	}
+        tmp_char = *ptr;
+        *ptr--= *ptr1;
+        *ptr1++ = tmp_char;
+    }
 
     NString str = result;
-	return str;
+    return str;
 }
 
 t_double CharToDouble(const TCHAR* digit)
@@ -93,10 +93,8 @@ NString DoubleToChar(double d)
 
 t_s32 CharToInteger(const TCHAR* digit)
 {
-    char *endptr = NULL;
     NString str = TCHAR_TO_ANSICHAR(digit);
     t_s64 ret = std::atoi(str.GetTCharPtr());
-    t_u32 error = errno;
     return ret;
 }
 

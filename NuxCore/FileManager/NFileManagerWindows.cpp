@@ -140,7 +140,7 @@ bool NWindowsSerialFileReader::Close()
     return !m_ErrorCode;
 }
 
-void NWindowsSerialFileReader::SerializeFinal(void* Dest, t_u64 Length)
+void NWindowsSerialFileReader::SerializeFinal(void* Dest, t_s64 Length)
 {
     nuxAssert(Dest);
     while(Length > 0)
@@ -269,7 +269,7 @@ t_s64 NWindowsSerialFileWriter::GetFileSize()
     return Size;
 }
 
-void NWindowsSerialFileWriter::SerializeFinal(void* V, t_u64 Length)
+void NWindowsSerialFileWriter::SerializeFinal(void* V, t_s64 Length)
 {
     // This method is not re-entrant by itself. It relies on m_Buffer and other variables
     // that belong to this object. Therefore, it is not thread safe. We add a critical section

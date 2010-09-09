@@ -126,8 +126,6 @@ bool LoadXMLUITextures(const char* XMLUIFile, std::vector<ArchiveTextureData*>& 
 
     for(image = data->FirstChildElement("Image"); image; image = image->NextSiblingElement("Image"))
     {        
-        bool isStroke = false;
-        bool isShape = false;
         ArchiveTextureData* pimage = new ArchiveTextureData;
         Memset(pimage, 0, sizeof(ArchiveTextureData));
 
@@ -350,8 +348,8 @@ bool LoadUIArchive(const TCHAR* ArchiveName, std::vector<ArchiveTextureData*>& A
 
 NTextureArchiveManager::NTextureArchiveManager()
 :   m_isLoaded(false)
-,   m_NumberOfTextures(0)
 ,   m_FileStream(0)
+,   m_NumberOfTextures(0)
 {
 
 }

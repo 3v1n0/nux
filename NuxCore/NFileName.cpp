@@ -29,10 +29,10 @@ NAMESPACE_BEGIN
 NString NFileName::GetDrive() const
 {
     t_size Pos = FindFirstOccurence(NUX_BACKSLASH_CHAR);
-    if (Pos == -1)
+    if (Pos == tstring::npos)
     {
         Pos = FindFirstOccurence("\\");
-        if (Pos != -1)
+        if (Pos != tstring::npos)
         {
             return GetSubString(Pos);
         }
@@ -44,9 +44,9 @@ NString NFileName::GetDrive() const
 NString NFileName::GetExtension() const
 {
     t_size Pos = FindLastOccurence(TEXT("."));
-    if (Pos != -1)
+    if (Pos != tstring::npos)
     {
-        return GetSubString(Pos+1, Length() - Pos - 1);
+        return GetSubString(Pos + 1, Length() - Pos - 1);
     }
 
     return TEXT("");
@@ -58,7 +58,7 @@ NString NFileName::GetCleanFilename() const
     t_size Pos = FindLastOccurence(NUX_BACKSLASH_CHAR);
     Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("/"))); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
     Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("\\"))); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
-    if (Pos != -1)
+    if (Pos != tstring::npos)
     {
         return GetSubString(Pos + 1, Length() - Pos - 1);
     }
@@ -68,7 +68,7 @@ NString NFileName::GetCleanFilename() const
 NString NFileName::GetFilenameNoExtension() const
 {
     t_size Pos = FindLastOccurence(TEXT("."));
-    if (Pos != -1)
+    if (Pos != tstring::npos)
     {
         return GetSubString(Pos);
     }
@@ -81,7 +81,7 @@ NString NFileName::GetBaseFilename() const
     NString Wk = GetCleanFilename();
 
     t_size Pos = Wk.FindLastOccurence(TEXT("."));
-    if (Pos != -1)
+    if (Pos != tstring::npos)
     {
         return Wk.GetSubString(Pos);
     }
@@ -95,7 +95,7 @@ NString NFileName::GetDirectoryPath() const
     t_size Pos = FindLastOccurence(NUX_BACKSLASH_CHAR);
     Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("/"))); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
     Pos = Max<t_size>(Pos, FindLastOccurence(TEXT("\\"))); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
-    if (Pos != -1)
+    if (Pos != tstring::npos)
     {
         return GetSubString(Pos);
     }
@@ -105,7 +105,7 @@ NString NFileName::GetDirectoryPath() const
 void NFileName::ChangeFileExtension(const TCHAR* ext)
 {
     t_size Pos = FindLastOccurence(TEXT("."));
-    if (Pos != -1)
+    if (Pos != tstring::npos)
     {
         (*this) = GetSubString(Pos) + NString(TEXT(".")) + NString(ext);
     }
@@ -118,7 +118,8 @@ void NFileName::ChangeFileExtension(const TCHAR* ext)
 void NFileName::ConvertSlashToBackslash()
 {
     t_size Pos = tstring::npos;
-    while((Pos = FindFirstOccurence(TEXT('/'))) != -1)
+    Pos = FindFirstOccurence(TEXT('/'));
+    while(Pos != tstring::npos)
     {
         Replace(Pos, 1, 1, TEXT('\\'));
     }
@@ -128,7 +129,8 @@ void NFileName::ConvertSlashToBackslash()
 void NFileName::ConvertBackslashToSlash()
 {
     t_size Pos = tstring::npos;
-    while((Pos = FindFirstOccurence(TEXT('\\'))) != -1)
+    Pos = FindFirstOccurence(TEXT('\\'));
+    while(Pos != tstring::npos)
     {
         Replace(Pos, 1, 1, TEXT('/'));
     }
@@ -187,7 +189,7 @@ void NFileName::ConvertToCleanSlash()
     {
         if((i < size-1) && (operator[](i) == TEXT('/')) && (operator[](i+1) == TEXT('/')))
         {
-            Erase(i+1, 1);
+            Erase(i + 1, 1);
             --size;
         }
         else
@@ -206,7 +208,7 @@ void NFileName::ConvertToCleanBackslash()
     {
         if((i < size-1) && (operator[](i) == TEXT('\\')) && (operator[](i+1) == TEXT('\\')))
         {
-            Erase(i+1, 1);
+            Erase(i + 1, 1);
         }
         else
         {

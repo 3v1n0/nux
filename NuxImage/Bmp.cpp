@@ -254,7 +254,6 @@ NBitmapData* read_bmp_file(const TCHAR* file_name)
 //        return HR_UNSUPPORTED_FORMAT;
 //    }
 
-    int PaletteSize = 0;
     if( (infoheader.biBitCount == 1) ||
         (infoheader.biBitCount == 4))
     {
@@ -458,9 +457,6 @@ NBitmapData* read_bmp_file(const TCHAR* file_name)
                                 TextureObjectData->GetSurface(0).Write8b(ix, iy, infoheader.colorpalette[valS]);
                                 ix++;
                             }
-                            if(skip)
-                                /* Align data stream */
-                                bmp_buffer[index++];
                             break;
                         }
                     }
@@ -603,7 +599,7 @@ HReport write_bmp_file(const TCHAR* file_name, NBitmapData *image)
 {
     std::fstream file;
 
-    int datasize;
+    int datasize = 0;
     bmp_fileheader fileheader;
     bmp_infoheader infoheader;
 
@@ -677,7 +673,7 @@ HReport write_bmp_file(const TCHAR* file_name, NBitmapData *image)
     }
 
 
-    t_u32 i, j;
+    t_s32 i, j;
     for(j = 0; j < image->GetSurface(0).GetHeight(); j++)
     {
         for(i = 0; i < image->GetSurface(0).GetWidth(); i++)

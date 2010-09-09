@@ -23,25 +23,6 @@
 #ifndef SYSTEMPS3_H
 #define SYSTEMPS3_H
 
-#include <cassert>  // (assert.h)
-#include <cctype>   // (ctype.h)
-#include <cerrno>   // (errno.h)
-#include <cfloat>   // (float.h)
-#include <ciso646>  // (iso646.h)
-#include <climits>  // (limits.h)
-#include <clocale>  // (locale.h)
-#include <cmath>    // (math.h)
-//#include <csetjmp>  // (setjmp.h) conflicts with libpng on linux.
-#include <csignal>  // (signal.h)
-#include <cstdarg>  // (stdarg.h)
-#include <cstddef>  // (stddef.h)
-#include <cstdio>   // (stdio.h)
-#include <cstdlib>  // (stdlib.h)
-#include <cstring>  // (string.h)
-#include <ctime>    // (time.h)
-#include <cwchar>   // (wchar.h)
-#include <cwctype>  // (wctype.h)
-
 #include <utime.h>
 #include <unistd.h>
 #include <sys/time.h>

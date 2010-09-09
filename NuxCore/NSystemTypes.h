@@ -67,7 +67,7 @@ typedef unsigned int            t_UTF32;
     #error t_UTF16 is undefined for this platform.
 #endif
 
-typedef size_t                  t_size;
+typedef std::size_t                  t_size;
 
 // // HARDWARE
 // #if defined _M_X64

@@ -28,28 +28,6 @@
 #endif
 #include <windows.h>
 
-#include <cassert>  // (assert.h)
-#include <cctype>   // (ctype.h)
-//#include <cerrno>   // (errno.h)
-#include <errno.h>
-#include <cfloat>   // (float.h)
-#include <ciso646>  // (iso646.h)
-#include <climits>  // (limits.h)
-#include <clocale>  // (locale.h)
-#include <cmath>    // (math.h)
-#include <csetjmp>  // (setjmp.h)
-//#include <csignal>  // (signal.h)
-#include <cstdarg>  // (stdarg.h)
-#include <cstddef>  // (stddef.h)
-#include <cstdio>   // (stdio.h)
-#include <cstdlib>  // (stdlib.h)
-#include <cstring>  // (string.h)
-#include <ctime>    // (time.h)
-#include <cwchar>   // (wchar.h)
-#include <cwctype>  // (wctype.h)
-#include <exception>
-#include <stdexcept>
-
 #include <tchar.h>
 #include <sys/utime.h>
 #include <sys/timeb.h>
@@ -62,18 +40,6 @@
 
 #include <io.h>
 #include <direct.h>
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <iomanip>
-#include <map>
-#include <vector>
-#include <list>
-#include <algorithm>
-#include <new>
-#include <set>
 
 // If NUX_LOG_FILE_ANSI is set to 1, log files will be written in ASCII characters even when in UNICODE.
 #define NUX_LOG_FILE_ANSI   1

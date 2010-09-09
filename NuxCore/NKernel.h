@@ -25,6 +25,44 @@
 
 
 #include "NSystem.h"
+
+#include <cassert>  // (assert.h)
+#include <cctype>   // (ctype.h)
+#include <cerrno>   // (errno.h)
+#include <cfloat>   // (float.h)
+#include <ciso646>  // (iso646.h)
+#include <climits>  // (limits.h)
+#include <clocale>  // (locale.h)
+#include <cmath>    // (math.h)
+//#include <csetjmp>  // (setjmp.h) conflict with libpng on GNU systems
+//#include <csignal>  // (signal.h)
+#include <cstdarg>  // (stdarg.h)
+#include <cstddef>  // (stddef.h)
+#include <cstdio>   // (stdio.h)
+#include <cstdlib>  // (stdlib.h)
+#include <cstring>  // (string.h)
+#include <ctime>    // (time.h)
+#include <cwchar>   // (wchar.h)
+#include <cwctype>  // (wctype.h)
+#include <exception>
+#include <stdexcept>
+
+#include <iostream>
+#include <stdexcept>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <iomanip>
+#include <map>
+#include <vector>
+#include <list>
+#include <algorithm>
+#include <new>
+#include <set>
+
+
 #include "NNamespace.h"
 #include "NSystemTypes.h"
 
@@ -331,7 +369,6 @@ t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHA
 
     #define SSCANF_S(buffer, format, ...)           _stscanf_s(buffer, format, ##__VA_ARGS__)
     #define SNSCANF_S(input, length, format, ...)   _sntscanf_s(input, length, format, ##__VA_ARGS__)
-
 #else
     #define WCSNCPY_S(strDest, numberOfElements, strSource, count)  wcsncpy (strDest, strSource, count)
     #define STRNCPY_S(strDest, numberOfElements, strSource, count)  _tcsncpy(strDest, strSource, count)
@@ -340,8 +377,8 @@ t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHA
 
     #define VSNPRINTF_S(strDest, numberOfElements, Count, format, VA_Arg_List)              vsnprintf(strDest, Count, format, VA_Arg_List)
     #define VSNTPRINTF_S(strDest, numberOfElements, Count, format, VA_Arg_List)             _vsntprintf(strDest, Count, format, VA_Arg_List)
-    #define SPRINTF_S(strDest, numberOfElements, format, a,b,c,d,e,f,g,h,i,j,k,l)           _stprintf(strDest, format, VARG(a),VARG(b),VARG(c),VARG(d),VARG(e),VARG(f),VARG(g),VARG(h),VARG(i),VARG(j),VARG(k),VARG(l))
-    #define SNPRINTF_S(strDest, numberOfElements, Count, format, a,b,c,d,e,f,g,h,i,j,k,l)   _sntprintf(strDest, Count, format, VARG(a),VARG(b),VARG(c),VARG(d),VARG(e),VARG(f),VARG(g),VARG(h),VARG(i),VARG(j),VARG(k),VARG(l))
+    #define SPRINTF_S(strDest, numberOfElements, format, ...)                               _stprintf(strDest, format, ##__VA_ARGS__)
+    #define SNPRINTF_S(strDest, numberOfElements, Count, format, ...)                       _sntprintf(strDest, Count, format, ##__VA_ARGS__)
 
     #define STRDATE_S(strDest, numberOfElements)        _tstrdate(strDest)
     #define STRTIME_S(strDest, numberOfElements)        _tstrtime(strDest)
@@ -355,7 +392,6 @@ t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHA
 
     #define SSCANF_S(buffer, format, ...)           _stscanf(buffer, format, ##__VA_ARGS__)
     #define SNSCANF_S(input, length, format, ...)   _sntscanf(input, length, format, ##__VA_ARGS__)
-
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -621,8 +657,6 @@ NAMESPACE_END
 
 #include "NTemplate.h"
 #include "NumberConversion.h"
-
-#include "NArray.h"
 
 #include "NString.h"
 

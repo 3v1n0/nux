@@ -74,7 +74,7 @@ NString FilePath::GetPathToFile(const TCHAR* filename) const
 NString FilePath::GetFile(const TCHAR* filename) const
 {
     NUX_RETURN_VALUE_IF_NULL(filename, NString(TEXT("")));
-    if(filename == TEXT(""))
+    if(NString(filename) == NString(TEXT("")))
         return NString(TEXT(""));
 
     NString FileName = filename;

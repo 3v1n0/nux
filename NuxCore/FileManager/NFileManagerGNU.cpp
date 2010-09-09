@@ -55,7 +55,7 @@ bool NGNUSerialFileReader::Precache(t_int PrecacheOffset, t_int PrecacheSize)
         // (sBufferSize - 1) contains only '1', i.e 1111111111. 
         // So (m_FilePos & (sBufferSize-1)) is equal to m_FilePos if m_FilePos <= (sBufferSize-1).
         m_BufferCount = Min<t_s64>(Min<t_s64>(PrecacheSize, (t_int)(sBufferSize - (m_FilePos & (sBufferSize-1)))), m_FileSize - m_FilePos);
-        t_u64 Count = 0;
+        t_s64 Count = 0;
         //GTotalBytesReadViaFileManager += m_BufferCount;
         Count = read(m_FileDescriptor, m_Buffer, m_BufferCount);
         if(Count == 0)
@@ -81,7 +81,7 @@ t_s64 NGNUSerialFileReader::Seek(t_s64 InPos, NSerializer::SeekPos seekpos)
     // Because we precache our reads, we must perform Seek accordingly.
 
     t_s64 pos = m_FilePos;
-    t_u64 filepos = 0;
+    t_s64 filepos = 0;
 
     // Set the file pointer to m_FilePos.
     filepos = lseek(m_FileDescriptor, pos, SEEK_SET);
@@ -138,7 +138,7 @@ bool NGNUSerialFileReader::Close()
     return !m_ErrorCode;
 }
 
-void NGNUSerialFileReader::SerializeFinal(void* Dest, t_u64 Length)
+void NGNUSerialFileReader::SerializeFinal(void* Dest, t_s64 Length)
 {
     nuxAssert(Dest);
     while(Length > 0)
@@ -148,7 +148,7 @@ void NGNUSerialFileReader::SerializeFinal(void* Dest, t_u64 Length)
         {
             if(Length >= sBufferSize)
             {
-                t_u64 Count=0;
+                t_s64 Count=0;
                 //GTotalBytesReadViaFileManager += Length;		
                 Count = read(m_FileDescriptor, Dest, Length);
                 if(Count == 0)
@@ -213,7 +213,7 @@ t_s64 NGNUSerialFileWriter::Seek(t_s64 InPos, NSerializer::SeekPos seekpos)
 
     _Flush();
     t_s64 pos = InPos;
-    t_u64 filepos = 0;
+    t_s64 filepos = 0;
     filepos = lseek(m_FileDescriptor, pos, (seekpos == SeekStart) ? SEEK_SET : (seekpos == SeekCurrent) ? SEEK_CUR : SEEK_END);
     if(filepos == -1)
     {
@@ -233,7 +233,7 @@ t_s64 NGNUSerialFileWriter::Tell()
 
     _Flush();
     t_s64 pos = 0;
-    t_u64 filepos = 0;
+    t_s64 filepos = 0;
     filepos = lseek(m_FileDescriptor, pos, SEEK_CUR);
     if(filepos == -1)
     {
@@ -277,7 +277,7 @@ t_s64 NGNUSerialFileWriter::GetFileSize()
     return sb.st_size;
 }
 
-void NGNUSerialFileWriter::SerializeFinal(void* V, t_u64 Length)
+void NGNUSerialFileWriter::SerializeFinal(void* V, t_s64 Length)
 {
     // This method is not re-entrant by itself. It relies on m_Buffer and other variables
     // that belong to this object. Therefore, it is not thread safe. We add a critical section
@@ -321,7 +321,7 @@ void NGNUSerialFileWriter::_Flush()
     //GTotalBytesWrittenViaFileManager += m_BufferCount;
     if(m_BufferCount)
     {
-        t_u64 Result = 0;
+        t_s64 Result = 0;
         Result = write(m_FileDescriptor, m_Buffer, m_BufferCount);
         if(Result == -1)
         {
@@ -410,7 +410,7 @@ NSerializer* NFileManagerGNU::CreateFileWriter(const TCHAR* Filename,
         return NULL;
     }
     
-    t_u64 Pos = 0;
+    t_s64 Pos = 0;
     if(Flags & NSerializer::Append)
     {
         Pos = lseek(FileDesc, Pos, SEEK_END);
@@ -604,7 +604,7 @@ bool NFileManagerGNU::MakeDirectory(const TCHAR* Path, bool CreateCompletePath)
         return NFileManagerGeneric::MakeDirectory(Path, CreateCompletePath);
     }
 
-    int error = mkdir(TCHAR_TO_ANSI(Path),
+    mkdir(TCHAR_TO_ANSI(Path),
         S_IRUSR|S_IWUSR|S_IXUSR|
         S_IRGRP|S_IWGRP|S_IXGRP|
         S_IROTH|S_IWOTH|S_IXOTH);

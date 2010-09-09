@@ -41,7 +41,7 @@ public:
     virtual t_s64 Tell();
     virtual t_s64 GetFileSize();
     virtual bool Close();
-    virtual void SerializeFinal(void* V, t_u64 Length);
+    virtual void SerializeFinal(void* V, t_s64 Length);
     virtual bool isReader() {return true;}
     virtual bool isWriter() {return false;}
 
@@ -65,7 +65,7 @@ public:
     virtual t_s64 Seek(t_s64 InPos, NSerializer::SeekPos seekpos);
     virtual t_s64 Tell();
     virtual bool Close();
-    virtual void SerializeFinal(void* V, t_u64 Length);
+    virtual void SerializeFinal(void* V, t_s64 Length);
     virtual void Flush();
     virtual t_s64 GetFileSize();
     virtual bool isReader() {return false;}
