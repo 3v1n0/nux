@@ -73,11 +73,6 @@ RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, floa
     InitializeLayout();
     switch(m_color_model)
     {
-    case CM_RGB:
-        {
-            SetColorModel(CM_RGB);
-            SetRGBA(x, y, z, alpha);
-        }
     case CM_HSV:
         {
             SetColorModel(CM_HSV);
@@ -90,6 +85,12 @@ RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, floa
             SetHLS(x, y, z);
             SetAlpha(alpha);
         }
+    default:
+    case CM_RGB:
+        {
+            SetColorModel(CM_RGB);
+            SetRGBA(x, y, z, alpha);
+        }        
     }
     SetColorFormat(m_color_format);
 
@@ -275,7 +276,7 @@ void RGBValuator::DestroyLayout()
 
 RGBValuator::~RGBValuator()
 {
-    INL_SAFE_DELETE(m_CheckboardLayer);
+    NUX_SAFE_DELETE(m_CheckboardLayer);
     DestroyLayout();
 }
 
@@ -840,7 +841,7 @@ void RGBValuator::OnReceiveMouseDown_Red(int x, int y, unsigned long button_flag
         else
             m_Red = (float)x / (float)m_RedValuator->GetBaseWidth();
 
-        if(key_flags & INL_STATE_CTRL)
+        if(key_flags & NUX_STATE_CTRL)
         {
            SetRGB(m_Red, m_Red, m_Red);
         }
@@ -858,7 +859,7 @@ void RGBValuator::OnReceiveMouseDown_Red(int x, int y, unsigned long button_flag
         else
             m_HSVHue = (float)x / (float)m_RedValuator->GetBaseWidth();
 
-        if(key_flags & INL_STATE_CTRL)
+        if(key_flags & NUX_STATE_CTRL)
         {
             SetHSV(m_HSVHue, m_HSVHue, m_HSVHue);
         }
@@ -876,7 +877,7 @@ void RGBValuator::OnReceiveMouseDown_Red(int x, int y, unsigned long button_flag
         else
             m_HLSHue = (float)x / (float)m_RedValuator->GetBaseWidth();
 
-        if(key_flags & INL_STATE_CTRL)
+        if(key_flags & NUX_STATE_CTRL)
         {
             SetHLS(m_HLSHue, m_HLSHue, m_HLSHue);
         }
@@ -899,7 +900,7 @@ void RGBValuator::OnReceiveMouseDown_Green(int x, int y, unsigned long button_fl
         else
             m_Green = (float)x / (float)m_GreenValuator->GetBaseWidth();
             
-        if(key_flags & INL_STATE_CTRL)
+        if(key_flags & NUX_STATE_CTRL)
         {
             SetRGB(m_Green, m_Green, m_Green);
         }
@@ -917,7 +918,7 @@ void RGBValuator::OnReceiveMouseDown_Green(int x, int y, unsigned long button_fl
         else
             m_HSVSaturation = (float)x / (float)m_GreenValuator->GetBaseWidth();
 
-        if(key_flags & INL_STATE_CTRL)
+        if(key_flags & NUX_STATE_CTRL)
         {
             SetHSV(m_HSVSaturation, m_HSVSaturation, m_HSVSaturation);
         }
@@ -935,7 +936,7 @@ void RGBValuator::OnReceiveMouseDown_Green(int x, int y, unsigned long button_fl
         else
             m_HLSLight = (float)x / (float)m_GreenValuator->GetBaseWidth();
 
-        if(key_flags & INL_STATE_CTRL)
+        if(key_flags & NUX_STATE_CTRL)
         {
             SetHLS(m_HLSLight, m_HLSLight, m_HLSLight);
         }
@@ -958,7 +959,7 @@ void RGBValuator::OnReceiveMouseDown_Blue(int x, int y, unsigned long button_fla
         else
             m_Blue = (float)x / (float)m_BlueValuator->GetBaseWidth();
 
-        if(key_flags & INL_STATE_CTRL)
+        if(key_flags & NUX_STATE_CTRL)
         {
             SetRGB(m_Blue, m_Blue, m_Blue);
         }
@@ -976,7 +977,7 @@ void RGBValuator::OnReceiveMouseDown_Blue(int x, int y, unsigned long button_fla
         else
             m_HSVValue = (float)x / (float)m_BlueValuator->GetBaseWidth();
 
-        if(key_flags & INL_STATE_CTRL)
+        if(key_flags & NUX_STATE_CTRL)
         {
             SetHSV(m_HSVValue, m_HSVValue, m_HSVValue);
         }
@@ -994,7 +995,7 @@ void RGBValuator::OnReceiveMouseDown_Blue(int x, int y, unsigned long button_fla
         else
             m_HLSSaturation = (float)x / (float)m_BlueValuator->GetBaseWidth();
 
-        if(key_flags & INL_STATE_CTRL)
+        if(key_flags & NUX_STATE_CTRL)
         {
             SetHLS(m_HLSSaturation, m_HLSSaturation, m_HLSSaturation);
         }
@@ -1315,7 +1316,7 @@ void RGBValuator::OnComponentInput(const weaksmptr(EditTextBox) textbox, const N
     if(componentIndex == 3)
     {
         float f = 0;
-        CharToFloat(s.GetTCharPtr(), f);
+        f = CharToDouble(s.GetTCharPtr());
         f = Clamp(f, 0.0f, 1.0f);
         //if(m_color_model == CM_RGB)
         {

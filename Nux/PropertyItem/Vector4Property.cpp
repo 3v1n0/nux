@@ -73,10 +73,10 @@ Vector4PropertyItem::Vector4PropertyItem(const TCHAR* name,
 
 Vector4PropertyItem::~Vector4PropertyItem()
 {
-    INL_SAFE_DELETE(m_X);
-    INL_SAFE_DELETE(m_Y);
-    INL_SAFE_DELETE(m_Z);
-    INL_SAFE_DELETE(m_W);
+    NUX_SAFE_DELETE(m_X);
+    NUX_SAFE_DELETE(m_Y);
+    NUX_SAFE_DELETE(m_Z);
+    NUX_SAFE_DELETE(m_W);
 }
 
 long Vector4PropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -123,37 +123,29 @@ void Vector4PropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, co
 double Vector4PropertyItem::GetX() const 
 {
     double ret;
-    if(CharToDouble(m_X->GetText(), ret))
-        return ret;
-    nuxAssertMsg(0, TEXT("[Vector4PropertyItem::GetX] Failed CharToDouble conversion: %s"), m_X->GetText());
-    return 0;
+    ret = CharToDouble(m_X->GetText());
+    return ret;
 }
 
 double Vector4PropertyItem::GetY() const 
 {
     double ret;
-    if(CharToDouble(m_Y->GetText(), ret))
-        return ret;
-    nuxAssertMsg(0, TEXT("[Vector4PropertyItem::GetY] Failed CharToDouble conversion: %s"), m_Y->GetText());
-    return 0;
+    ret = CharToDouble(m_Y->GetText());
+    return ret;
 }
 
 double Vector4PropertyItem::GetZ() const 
 {
     double ret;
-    if(CharToDouble(m_Z->GetText(), ret))
-        return ret;
-    nuxAssertMsg(0, TEXT("[Vector4PropertyItem::GetZ] Failed CharToDouble conversion: %s"), m_Z->GetText());
-    return 0;
+    ret = CharToDouble(m_Z->GetText());
+    return ret;
 }
 
 double Vector4PropertyItem::GetW() const 
 {
     double ret;
-    if(CharToDouble(m_W->GetText(), ret))
-        return ret;
-    nuxAssertMsg(0, TEXT("[Vector4PropertyItem::GetW] Failed CharToDouble conversion: %s"), m_W->GetText());
-    return 0;
+    ret = CharToDouble(m_W->GetText());
+    return ret;
 }
 
 Vector4PropertyItem* Vector4PropertyItem::CreateFromXML(const TiXmlElement* elementxml, NodeNetCom* parent, const char* Name, int id)

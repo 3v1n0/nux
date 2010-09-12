@@ -39,12 +39,12 @@ Color TabView::TAB_BACKGROUND_COLOR           = Color(0xFF191919);
 Color TabView::TAB_HEADER_COLOR               = Color(0xFF333333);
 Color TabView::TAB_HEADER_FOCUS_COLOR         = Color(0xFF5D5D5D);
 
-// todo InitWidget
 TabView::TabView()
-:   m_FocusTabIndex(0)
-,   m_TabPositionOffset(0)
-,   m_DrawBackgroundOnPreviousGeometry(false)
 {
+    m_FocusTabIndex = 0;
+    m_TabPositionOffset = 0;
+    m_DrawBackgroundOnPreviousGeometry = false;
+
     InitializeLayout();
     InitializeWidgets();
 

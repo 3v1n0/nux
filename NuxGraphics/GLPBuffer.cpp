@@ -24,17 +24,9 @@
 #include "GLResource.h"
 #include "GLPBuffer.h"
 
-#ifndef PB_FPF
-#if defined DEBUG || defined _DEBUG
-#define PB_FPF fprintf
-#else
-#define PB_FPF 
-#endif
-#endif
-
 NAMESPACE_BEGIN_OGL
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
 
 PBuffer::PBuffer(const char *strMode, bool managed) 
   : m_hDC(0), m_hGLRC(0), m_hPBuffer(0), m_hOldGLRC(0), m_hOldDC(0), 
@@ -50,7 +42,7 @@ PBuffer::PBuffer(const char *strMode, bool managed)
     m_pbAttribList.push_back(WGL_PBUFFER_LARGEST_ARB);
     m_pbAttribList.push_back(true);
 
-    PB_FPF(stdout, "Declare a Pbuffer with \"%s\" parameters\n", strMode);
+    nuxDebugMsg(TEXT("Declare a Pbuffer with \"%s\" parameters\n"), strMode);
     m_strMode = strMode;
     parseModeString(m_strMode, &m_pfAttribList, &m_pbAttribList);
 
@@ -86,7 +78,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
         format = GetPixelFormat(hdc);
         if (format == 0)
         {
-            PB_FPF(stderr, "pbuffer creation error:  GetPixelFormat() failed\n");
+            nuxDebugMsg(TEXT("pbuffer creation error:  GetPixelFormat() failed"));
             return false;
         }
     }
@@ -96,7 +88,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
         wglChoosePixelFormatARB(hdc, &m_pfAttribList[0], NULL, 1, &format, &nformats);
         if (nformats == 0)
         {
-            PB_FPF(stderr, "pbuffer creation error:  Couldn't find a suitable pixel format.\n");
+            nuxDebugMsg(TEXT("pbuffer creation error:  Couldn't find a suitable pixel format."));
             return false;
         }
     }
@@ -105,18 +97,18 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
     if (!m_hPBuffer)
     {
         DWORD err = GetLastError();
-        PB_FPF(stderr, "pbuffer creation error:  wglCreatePbufferARB() failed\n");
+        nuxDebugMsg(TEXT("pbuffer creation error:  wglCreatePbufferARB() failed"));
         if (err == ERROR_INVALID_PIXEL_FORMAT)
         {
-            PB_FPF(stderr, "error:  ERROR_INVALID_PIXEL_FORMAT\n");
+            nuxDebugMsg(TEXT("error:  ERROR_INVALID_PIXEL_FORMAT"));
         }
         else if (err == ERROR_NO_SYSTEM_RESOURCES)
         {
-            PB_FPF(stderr, "error:  ERROR_NO_SYSTEM_RESOURCES\n");
+            nuxDebugMsg(TEXT("error:  ERROR_NO_SYSTEM_RESOURCES"));
         }
         else if (err == ERROR_INVALID_DATA)
         {
-            PB_FPF(stderr, "error:  ERROR_INVALID_DATA\n");
+            nuxDebugMsg(TEXT("error:  ERROR_INVALID_DATA"));
         }
         
         return false;
@@ -126,7 +118,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
     m_hDC = wglGetPbufferDCARB(m_hPBuffer);
     if (!m_hDC)
     {
-        PB_FPF(stderr, "pbuffer creation error:  wglGetPbufferDCARB() failed\n");
+        nuxDebugMsg(TEXT("pbuffer creation error:  wglGetPbufferDCARB() failed"));
         return false;
     }
     
@@ -143,7 +135,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
         m_hGLRC = wglCreateContext(m_hDC);
         if (!m_hGLRC)
         {
-            PB_FPF(stderr, "pbuffer creation error:  wglCreateContext() failed\n");
+            nuxDebugMsg(TEXT("pbuffer creation error:  wglCreateContext() failed"));
             return false;
         }
         
@@ -151,7 +143,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
         {
             if(!wglShareLists(hglrc, m_hGLRC))
             {
-                PB_FPF(stderr, "pbuffer: wglShareLists() failed\n");
+                nuxDebugMsg(TEXT("pbuffer: wglShareLists() failed"));
                 return false;
             }
         }
@@ -167,7 +159,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
     wglQueryPbufferARB(m_hPBuffer, WGL_PBUFFER_WIDTH_ARB, &m_iWidth);
     wglQueryPbufferARB(m_hPBuffer, WGL_PBUFFER_HEIGHT_ARB, &m_iHeight);
     
-    PB_FPF(stdout, "Created a %d x %d pbuffer\n", m_iWidth, m_iHeight);
+    nuxDebugMsg("Created a %d x %d pbuffer\n", m_iWidth, m_iHeight);
 
 #ifdef _DEBUG
     // query pixel format
@@ -184,7 +176,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
     int ivalues[sizeof(iattributes) / sizeof(int)];
 
     if (wglGetPixelFormatAttribivARB(m_hDC, format, 0, sizeof(iattributes) / sizeof(int), iattributes, ivalues)) {
-      PB_FPF(stdout, "r:%d g:%d b:%d a:%d float:%d depth:%d samples:%d aux:%d\n",
+      nuxDebugMsg("r:%d g:%d b:%d a:%d float:%d depth:%d samples:%d aux:%d\n",
               ivalues[0], ivalues[1], ivalues[2], ivalues[3], ivalues[4], ivalues[5], ivalues[6], ivalues[7]);
     }
 #endif
@@ -269,7 +261,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 			m_iNComponents += 3;
             continue;
         }
-		else if (token == "rgb") PB_FPF(stderr, "warning : mistake in components definition (rgb + %d)\n", m_iNComponents);
+		else if (token == "rgb") nuxDebugMsg("warning : mistake in components definition (rgb + %d)\n", m_iNComponents);
 
         
         if (token == "rgba" && (m_iNComponents == 0))
@@ -285,7 +277,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 			m_iNComponents = 4;
             continue;
         }
-		else if (token == "rgba") PB_FPF(stderr, "warning : mistake in components definition (rgba + %d)\n", m_iNComponents);
+		else if (token == "rgba") nuxDebugMsg("warning : mistake in components definition (rgba + %d)\n", m_iNComponents);
         
         if (token == "alpha" && (m_iNComponents <= 3))
         {
@@ -294,7 +286,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 			m_iNComponents++;
             continue;
         }
-		else if (token == "alpha") PB_FPF(stderr, "warning : mistake in components definition (alpha + %d)\n", m_iNComponents);
+		else if (token == "alpha") nuxDebugMsg("warning : mistake in components definition (alpha + %d)\n", m_iNComponents);
 
 
         if (token == "r" && (m_iNComponents <= 1))// && bIsFloatBuffer)
@@ -304,7 +296,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 			m_iNComponents++;
             continue;
         }
-		else if (token == "r") PB_FPF(stderr, "warning : mistake in components definition (r + %d)\n", m_iNComponents);
+		else if (token == "r") nuxDebugMsg("warning : mistake in components definition (r + %d)\n", m_iNComponents);
 
         if (token == "rg" && (m_iNComponents <= 1))// && bIsFloatBuffer)
         {
@@ -315,7 +307,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 			m_iNComponents += 2;
             continue;
         }
-		else if (token == "r") PB_FPF(stderr, "warning : mistake in components definition (rg + %d)\n", m_iNComponents);
+		else if (token == "r") nuxDebugMsg("warning : mistake in components definition (rg + %d)\n", m_iNComponents);
 
         if (token.find("depth") == 0)
         {
@@ -396,7 +388,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
             {
 				if(m_iNComponents == 0)
 				{
-					PB_FPF(stderr, "components not specified. assuming rgba...\n");
+					nuxDebugMsg("components not specified. assuming rgba...\n");
 					pfAttribList->push_back(WGL_RED_BITS_ARB);
 					pfAttribList->push_back(m_iBitsPerComponent);
 					pfAttribList->push_back(WGL_GREEN_BITS_ARB);
@@ -441,7 +433,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 					pbAttribList->push_back(WGL_TEXTURE_FLOAT_RGBA_NV);
 					break;
 				default:
-			        PB_FPF(stderr, "Bad number of components (r=1,rg=2,rgb=3,rgba=4): %d\n", m_iNComponents);
+			        nuxDebugMsg("Bad number of components (r=1,rg=2,rgb=3,rgba=4): %d\n", m_iNComponents);
 					break;
 				}
             } 
@@ -464,7 +456,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 					pbAttribList->push_back(WGL_TEXTURE_RGBA_ARB);
 					break;
 				default:
-			        PB_FPF(stderr, "Bad number of components (r=1,rg=2,rgb=3,rgba=4): %d\n", m_iNComponents);
+			        nuxDebugMsg("Bad number of components (r=1,rg=2,rgb=3,rgba=4): %d\n", m_iNComponents);
 					break;
 				}
             }
@@ -490,7 +482,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
             continue;
         }
 
-        PB_FPF(stderr, "unknown pbuffer attribute: %s\n", token.c_str());
+        nuxDebugMsg("unknown pbuffer attribute: %s\n", token.c_str());
     }
 
     if (m_iNComponents > 0)
@@ -534,7 +526,7 @@ int PBuffer::Bind(int iBuffer)
 {
     if (!m_bIsTexture)
     {
-        PB_FPF(stderr, "PBuffer::Bind() failed - pbuffer format does not support render to texture!\n");
+        nuxDebugMsg("PBuffer::Bind() failed - pbuffer format does not support render to texture!\n");
         return 0;
     }
 
@@ -542,14 +534,14 @@ int PBuffer::Bind(int iBuffer)
     // SGG - with MRT it is legal to bind different buffers of a pbuffer simultaneously
     if (m_bIsBound)
     {
-        PB_FPF(stderr, "PBuffer::Bind() failed - pbuffer is already bound.\n");
+        nuxDebugMsg("PBuffer::Bind() failed - pbuffer is already bound.\n");
         return 0;
     }
 #endif
 
     int ret = wglBindTexImageARB(m_hPBuffer, iBuffer);
     if (!ret)
-        PB_FPF(stderr, "PBuffer::Bind() failed.\n");
+        nuxDebugMsg("PBuffer::Bind() failed.\n");
     
     m_bIsBound = true;
 
@@ -560,7 +552,7 @@ int PBuffer::Release(int iBuffer)
 {
     if (!m_bIsTexture)
     {
-        PB_FPF(stderr, "PBuffer::Release() failed - pbuffer format does not support render to texture!\n");
+        nuxDebugMsg("PBuffer::Release() failed - pbuffer format does not support render to texture!\n");
         return 0;
     }
 
@@ -568,14 +560,14 @@ int PBuffer::Release(int iBuffer)
     // SGG - with MRT it is legal to bind different buffers of a pbuffer simultaneously
     if (!m_bIsBound)
     {
-        PB_FPF(stderr, "PBuffer::Release() failed - pbuffer is not bound.\n");
+        nuxDebugMsg("PBuffer::Release() failed - pbuffer is not bound.\n");
         return 0;
     }
 #endif
 
     int ret = wglReleaseTexImageARB(m_hPBuffer, iBuffer);
     if (!ret)
-        PB_FPF(stderr, "PBuffer::Release() failed.\n");
+        nuxDebugMsg("PBuffer::Release() failed.\n");
     
     m_bIsBound = false;
     
@@ -608,7 +600,7 @@ void PBuffer::Activate(PBuffer *current /* = NULL */)
     }
 
     if (!wglMakeCurrent(m_hDC, m_hGLRC))
-        PB_FPF(stderr, "PBuffer::Activate() failed.\n");
+        nuxDebugMsg("PBuffer::Activate() failed.\n");
 
     m_bIsActive = true;
 }
@@ -619,14 +611,14 @@ void PBuffer::Deactivate()
         return;
     
     if (!wglMakeCurrent(m_hOldDC, m_hOldGLRC))
-        PB_FPF(stderr, "PBuffer::Deactivate() failed.\n");
+        nuxDebugMsg("PBuffer::Deactivate() failed.\n");
 
     m_hOldGLRC = 0;
     m_hOldDC = 0;
     m_bIsActive = false;
 }
 
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 
 PBuffer::PBuffer(const char *strMode, bool managed) 
   : m_pDisplay(0), m_glxPbuffer(0), m_glxContext(0), m_pOldDisplay(0), m_glxOldDrawable(0), 
@@ -676,7 +668,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
         glxConfig = glXGetFBConfigs(pDisplay, iScreen, &iConfigCount);
         if (!glxConfig)
         {
-            PB_FPF(stderr, "pbuffer creation error:  glXGetFBConfigs() failed\n");
+            nuxDebugMsg("pbuffer creation error:  glXGetFBConfigs() failed\n");
             return false;
         }
     }  
@@ -685,7 +677,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
         glxConfig = glXChooseFBConfigSGIX(pDisplay, iScreen, &m_pfAttribList[0], &iConfigCount);
         if (!glxConfig)
         {
-            PB_FPF(stderr, "pbuffer creation error:  glXChooseFBConfig() failed\n");
+            nuxDebugMsg("pbuffer creation error:  glXChooseFBConfig() failed\n");
             return false;
         }
     }
@@ -694,7 +686,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
     
     if (!m_glxPbuffer)
     {
-        PB_FPF(stderr, "pbuffer creation error:  glXCreatePbuffer() failed\n");
+        nuxDebugMsg("pbuffer creation error:  glXCreatePbuffer() failed\n");
         return false;
     }
     
@@ -711,7 +703,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
         
         if (!glxConfig)
         {
-            PB_FPF(stderr, "pbuffer creation error:  glXCreateNewContext() failed\n");
+            nuxDebugMsg("pbuffer creation error:  glXCreateNewContext() failed\n");
             return false;
         }
     }
@@ -726,7 +718,7 @@ bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bSha
     m_iWidth = w;
     m_iHeight = h;
     
-    PB_FPF(stdout, "Created a %d x %d pbuffer\n", m_iWidth, m_iHeight);
+    nuxDebugMsg("Created a %d x %d pbuffer\n", m_iWidth, m_iHeight);
     
     return true;
 }
@@ -785,7 +777,10 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 			m_iNComponents += 3;
             continue;
         }
-		else if (token == "rgb") PB_FPF(stderr, "warning : mistake in components definition (rgb + %d)\n", m_iNComponents);
+		else if (token == "rgb")
+        {
+          nuxDebugMsg("warning : mistake in components definition (rgb + %d)\n", m_iNComponents);
+        }
 
         if (token == "rgba" && (m_iNComponents == 0))
         {
@@ -800,7 +795,10 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 			m_iNComponents = 4;
             continue;
         }
-		else if (token == "rgba") PB_FPF(stderr, "warning : mistake in components definition (rgba + %d)\n", m_iNComponents);
+		else if (token == "rgba")
+        {
+          nuxDebugMsg("warning : mistake in components definition (rgba + %d)\n", m_iNComponents);
+        }
         
         if (token.find("alpha") != token.npos)
         {
@@ -809,7 +807,10 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
 			m_iNComponents++;
             continue;
         }
-		else if (token == "alpha") PB_FPF(stderr, "warning : mistake in components definition (alpha + %d)\n", m_iNComponents);
+		else if (token == "alpha")
+        {
+          nuxDebugMsg("warning : mistake in components definition (alpha + %d)\n", m_iNComponents);
+        }
 
         if (token.find("depth") != token.npos)
         {
@@ -854,7 +855,7 @@ void PBuffer::parseModeString(const char *modeString, std::vector<int> *pfAttrib
             continue;
         }        
 
-        PB_FPF(stderr, "unknown pbuffer attribute: %s\n", token.c_str());
+        nuxDebugMsg("unknown pbuffer attribute: %s\n", token.c_str());
     }
 }
 
@@ -882,49 +883,53 @@ void PBuffer::Activate(PBuffer *current /* = NULL */)
     }
 
     if (!glXMakeCurrent(m_pDisplay, m_glxPbuffer, m_glxContext))
-        PB_FPF(stderr, "PBuffer::Activate() failed.\n");
+    {
+      nuxDebugMsg("PBuffer::Activate() failed.\n");
+    }
 }
 
 void PBuffer::Deactivate()
 {
     if (!glXMakeCurrent(m_pOldDisplay, m_glxOldDrawable, m_glxOldContext))
-        PB_FPF(stderr, "PBuffer::Deactivate() failed.\n");
+    {
+      nuxDebugMsg("PBuffer::Deactivate() failed.\n");
+    }
 
     m_pOldDisplay = 0;
     m_glxOldDrawable = 0;
     m_glxOldContext = 0;
 }
 
-#elif defined(INL_OS_MACOSX)
+#elif defined(NUX_OS_MACOSX)
 
 PBuffer::PBuffer(const char *strMode) 
   : 
     m_iWidth(0), m_iHeight(0), m_strMode(strMode), 
     m_bSharedContext(false), m_bShareObjects(false)
 {
-    PB_FPF(stderr, "pbuffer not implemented under Mac OS X yet\n");
+    nuxDebugMsg("pbuffer not implemented under Mac OS X yet\n");
 }
 
 PBuffer::~PBuffer()
 {
-    PB_FPF(stderr, "pbuffer not implemented under Mac OS X yet\n");
+    nuxDebugMsg("pbuffer not implemented under Mac OS X yet\n");
 }
 
 bool PBuffer::Initialize(int iWidth, int iHeight, bool bShareContexts, bool bShareObjects)
 {
-    PB_FPF(stderr, "pbuffer not implemented under Mac OS X yet\n");
+    nuxDebugMsg("pbuffer not implemented under Mac OS X yet\n");
 
     return false;
 }
 
 void PBuffer::Activate()
 {
-    PB_FPF(stderr, "pbuffer not implemented under Mac OS X yet\n");
+    nuxDebugMsg("pbuffer not implemented under Mac OS X yet\n");
 }
 
 void PBuffer::Deactivate()
 {
-    PB_FPF(stderr, "pbuffer not implemented under Mac OS X yet\n");
+    nuxDebugMsg("pbuffer not implemented under Mac OS X yet\n");
 }
 
 #endif
@@ -972,8 +977,8 @@ if ever you want to read a smaller size : specify it through w,h. otherwise w=h=
  */ /*********************************************************************/
 unsigned int PBuffer::CopyToBuffer(void *ptr, int w, int h)
 {
-	GLenum format;
-	GLenum type;
+	GLenum format = 0;
+	GLenum type = 0;
 	switch(m_iNComponents)
 	{
 	case 1: // 
@@ -1003,7 +1008,7 @@ unsigned int PBuffer::CopyToBuffer(void *ptr, int w, int h)
 		break;
 #endif
 	default:
-		PB_FPF(stderr, "unknown m_iBitsPerComponent\n");
+		nuxDebugMsg("unknown m_iBitsPerComponent\n");
 #	if defined(WIN32)
 		__debugbreak();
 #	endif

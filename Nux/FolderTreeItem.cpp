@@ -28,15 +28,16 @@ NAMESPACE_BEGIN_GUI
 
 FolderTreeItem::FolderTreeItem(const TCHAR* name, const TCHAR* Path, bool Searchable, NodeParameterType type)
 :   TreeItem(name, type)
-,   m_Synchronize(false)
-,   m_Path(Path)
-,   m_Searchable(Searchable)
 {
+    m_Synchronize   = false;
+    m_Path          = Path;
+    m_Searchable    = Searchable;
+
     TableItem::SetAlwaysShowOpeningButton(true);
 
-    NString IconPath = INL_FINDRESOURCELOCATION(TEXT("Media/Icons/FolderOpen-16x16.png"));
+    NString IconPath = NUX_FINDRESOURCELOCATION(TEXT("Media/Icons/FolderOpen-16x16.png"));
     FolderOpenIcon.Update(IconPath.GetTCharPtr());
-    IconPath = INL_FINDRESOURCELOCATION(TEXT("Media/Icons/FolderClose-16x16.png"));
+    IconPath = NUX_FINDRESOURCELOCATION(TEXT("Media/Icons/FolderClose-16x16.png"));
     FolderClosedIcon.Update(IconPath.GetTCharPtr());
     //FolderOpenIcon.Update(TEXT("../Media/Icons/FolderOpenGrey-16x16.png"));
     //FolderClosedIcon.Update(TEXT("../Media/Icons/FolderClosedGrey-16x16.png"));
@@ -49,7 +50,6 @@ FolderTreeItem::~FolderTreeItem()
 
 void FolderTreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
-    bool isSelected = (this == table->GetSelectedItem());
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
     if(isDirtyItem())
     {

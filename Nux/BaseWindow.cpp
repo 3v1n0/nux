@@ -42,14 +42,14 @@ const int TitleBarHeight = 20;
 */
 
 BaseWindow::BaseWindow(const TCHAR* WindowName)
-:   m_bIsVisible(false)
-,   m_bSizeMatchLayout(false)
-,   m_bIsModal(false)
-,   m_Border(0)
+:   m_ConfigureNotifyCallback(0)
 ,   m_TopBorder(0)
-,   m_ConfigureNotifyCallback(0)
+,   m_Border(0)
 ,   m_BackgroundColor(Color(0xFF707070))
 ,   m_BluredBackground(false)
+,   m_bSizeMatchLayout(false)
+,   m_bIsVisible(false)
+,   m_bIsModal(false)
 {
     // Should be at the end of the constructor
     GetThreadWindowCompositor().RegisterWindow(smptr(BaseWindow)(this, false));
@@ -64,7 +64,7 @@ BaseWindow::~BaseWindow()
 {
     GetThreadWindowCompositor().UnRegisterWindow(smptr(BaseWindow)(this, false));
     m_InterfaceObject.clear();
-    INL_SAFE_DELETE(m_PaintLayer);
+    NUX_SAFE_DELETE(m_PaintLayer);
 }
 
 long BaseWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -77,7 +77,7 @@ long BaseWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEve
     window_event.e_x_root = base.x;
     window_event.e_y_root = base.y;
 
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {
@@ -99,7 +99,7 @@ long BaseWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEve
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
     Geometry viewGeometry = GetGeometry(); //Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
     bool traverse = true;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!viewGeometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {
@@ -135,9 +135,6 @@ void BaseWindow::Draw(GraphicsContext& GfxContext, bool force_draw)
     base.SetY(0);
     GfxContext.PushClippingRectangle(base);
     
-    int window_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
-    int window_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-
     if(UseBlurredBackground())
     {
         TexCoordXForm texxform;
@@ -164,9 +161,6 @@ void BaseWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     base.SetX(0);
     base.SetY(0);
     
-    int window_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
-    int window_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-
     if(UseBlurredBackground())
     {
         TexCoordXForm texxform;
@@ -453,7 +447,7 @@ void BaseWindow::NotifyConfigurationChange(int Width, int Height)
 
 void BaseWindow::SetBackgroundLayer(AbstractPaintLayer* layer)
 {
-    INL_SAFE_DELETE(m_PaintLayer);
+    NUX_SAFE_DELETE(m_PaintLayer);
     m_PaintLayer = layer->Clone();
 }
 

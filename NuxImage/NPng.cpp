@@ -20,8 +20,6 @@
  */
 
 
-#include <fstream>
-
 #include "NuxCore/NKernel.h"
 
 #include "png.h"
@@ -45,10 +43,10 @@ NAMESPACE_BEGIN
 
 #define PNG_FREERESOURCE if(hglobal) FreeResource(hglobal);
 #define PNG_DECLARE_RESVAR \
-    DWORD	ressz;\
-    HRSRC	HRes	= NULL;\
+    DWORD ressz;\
+    HRSRC HRes  = NULL;\
     HGLOBAL hglobal = NULL;\
-    void*	resptr;
+    void* resptr;
 #define PNG_SETREADFN \
     if(!fp) png_set_read_fn(png_ptr, (void *)resptr, png_read_resource_fn);	 else
 #define PNG_READHEADER \
@@ -171,7 +169,7 @@ NBitmapData* read_png_rgba(const TCHAR* filename)
         return 0;
     }
 
-#if (defined INL_VISUAL_STUDIO_2005) || (defined INL_VISUAL_STUDIO_2008)
+#if (defined NUX_VISUAL_STUDIO_2005) || (defined NUX_VISUAL_STUDIO_2008)
     fopen_s(&fp, FileNameAnsi, "rb");
 #else
     fp = fopen(FileNameAnsi, "rb");
@@ -198,7 +196,12 @@ NBitmapData* read_png_rgba(const TCHAR* filename)
 #endif
 
     // first check the eight byte PNG signature
-    PNG_READHEADER fread(sig, 1, 8, fp);
+    t_size r = fread(sig, 1, 8, fp);
+    if(r == 0)
+    {
+        nuxAssertMsg(0, TEXT("[read_png_rgba] Png read error."));
+    }
+      
     if (!png_check_sig(sig, 8))
     { 
         if(fp) fclose(fp); 
@@ -358,7 +361,7 @@ NBitmapData* read_png_rgb(const TCHAR* filename)
         return 0;
     }
 
-#if (defined INL_VISUAL_STUDIO_2005) || (defined INL_VISUAL_STUDIO_2008)
+#if (defined NUX_VISUAL_STUDIO_2005) || (defined NUX_VISUAL_STUDIO_2008)
     fopen_s(&fp, FileNameAnsi, "rb");
 #else
     fp = fopen(FileNameAnsi, "rb");
@@ -385,7 +388,12 @@ NBitmapData* read_png_rgb(const TCHAR* filename)
 #endif
 
     // first check the eight byte PNG signature
-    PNG_READHEADER fread(sig, 1, 8, fp);
+    t_size r = fread(sig, 1, 8, fp);
+    if(r == 0)
+    {
+        nuxAssertMsg(0, TEXT("[read_png_rgba] Png read error."));
+    }
+    
     if (!png_check_sig(sig, 8))
     { 
         if(fp) fclose(fp); 

@@ -32,7 +32,7 @@ NUTF8::NUTF8(const UNICHAR* Source)
 
 NUTF8::NUTF8(const std::wstring& Source)
 {
-    Convert(INL_REINTERPRET_CAST(UNICHAR*, INL_CONST_CAST(wchar_t*, Source.c_str())));
+    Convert(NUX_REINTERPRET_CAST(UNICHAR*, NUX_CONST_CAST(wchar_t*, Source.c_str())));
 }
 
 void NUTF8::Convert(const UNICHAR* Source)

@@ -36,13 +36,13 @@ NAMESPACE_BEGIN
 
 // NSerializer& operator << (NSerializer& Sr, NString& s)
 // {
-//     Sr.SerializeBuffer<TCHAR>(INL_CONST_CAST(TCHAR*, s.GetTCharPtr()), s.Size()+1, sizeof(TCHAR));
+//     Sr.SerializeBuffer<TCHAR>(NUX_CONST_CAST(TCHAR*, s.GetTCharPtr()), s.Size()+1, sizeof(TCHAR));
 //     return Sr;
 // }
 // 
 // NSerializer& operator << (NSerializer& Sr, std::string& s)
 // {
-//     Sr.SerializeBuffer<TCHAR>(INL_CONST_CAST(char*, s.c_str()), s.size()+1, sizeof(char));
+//     Sr.SerializeBuffer<TCHAR>(NUX_CONST_CAST(char*, s.c_str()), s.size()+1, sizeof(char));
 //     return Sr;
 // }
 

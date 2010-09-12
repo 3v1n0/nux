@@ -53,8 +53,8 @@ public:
 
     int GetDesc(ANIMATEDTEXTURE_DESC* pDesc)
     {
-        pDesc->Width    = Max<unsigned int>(1, _Width);
-        pDesc->Height   = Max<unsigned int>(1, _Height);
+        pDesc->Width    = Max<int>(1, _Width);
+        pDesc->Height   = Max<int>(1, _Height);
         pDesc->Depth    = _Depth;
         pDesc->PixelFormat   = _PixelFormat;
         pDesc->Type     = _ResourceType;
@@ -70,9 +70,9 @@ public:
 
 private:
     IOpenGLAnimatedTexture(
-        unsigned int Width
-        , unsigned int Height
-        , unsigned int Depth
+        int Width
+        , int Height
+        , int Depth
         , BitmapFormat PixelFormat);
 
     //    unsigned int        _Width;

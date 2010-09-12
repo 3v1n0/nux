@@ -56,8 +56,8 @@
 #define NAMESPACE_BEGIN_GUI  namespace nux {
 #define NAMESPACE_END_GUI    };
 
-#define INL_USE_GLIB_LOOP_ON_WINDOWS
-//#define INL_DISABLE_GLIB_LOOP
+#define NUX_USE_GLIB_LOOP_ON_WINDOWS
+//#define NUX_DISABLE_GLIB_LOOP
 
 #include "Utils.h"
 #include "WidgetMetrics.h"
@@ -91,12 +91,12 @@ WindowThread* CreateGUIThread(const TCHAR* WindowTitle,
     ThreadUserInitFunc UserInitFunc = NULL,
     void* InitData = NULL);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     //! Create a main graphics thread. This thread has a window and no parent window.
     WindowThread* CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
     ThreadUserInitFunc UserInitFunc,
     void* InitData);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     //! Create a main graphics thread. This thread has a window and no parent window.
     WindowThread* CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext,
     ThreadUserInitFunc UserInitFunc,

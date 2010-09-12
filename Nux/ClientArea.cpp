@@ -22,9 +22,9 @@
 
 #include "Nux.h"
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "NuxGraphics/Gfx_OpenGL.h"
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #include "NuxGraphics/GfxSetupX11.h"
 #endif
 
@@ -59,7 +59,7 @@ ClientArea::ClientArea()
 
 ClientArea::~ClientArea()
 {
-    INL_SAFE_DELETE(m_RealTimeCallback);
+    NUX_SAFE_DELETE(m_RealTimeCallback);
 }
 
 long ClientArea::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -70,7 +70,7 @@ long ClientArea::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEve
 //     Rect A = GetThreadGraphicsContext()->GetClippingRegion();
 //     Rect B = Rect(m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight());
 //     Rect C = A.intersect(B);
-//     if((ievent.e_event == INL_MOUSE_MOVE) && !HasMouseFocus())
+//     if((ievent.e_event == NUX_MOUSE_MOVE) && !HasMouseFocus())
 //     {
 //         if(!C.IsPointInside(ievent.e_x, ievent.e_y))
 //             return ret;
@@ -236,11 +236,6 @@ void ClientArea::SetClientViewport(GraphicsContext& GfxContext)
         int window_width, window_height;
         window_width = GfxContext.GetContextWidth();
         window_height =GfxContext.GetContextHeight();
-
-        int client_viewport_x = m_Geometry.x;
-        int client_viewport_y = m_Geometry.y; //window_height - getViewPosY() - getViewHeight();
-        int client_viewport_width = m_Geometry.GetWidth();
-        int client_viewport_height = m_Geometry.GetHeight();
 
         GfxContext.SetViewport(
             m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);

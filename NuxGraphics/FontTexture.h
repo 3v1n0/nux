@@ -107,11 +107,11 @@ struct CharDescriptor
         , Height( 0 )
         , XOffset( 0 )
         , YOffset( 0 )
+        , page( 0 )
         , XAdvance( 0 )
         , abcA( 0 )
         , abcB( 0 )
         , abcC( 0 )
-        , page( 0 )
     { }
 };
 

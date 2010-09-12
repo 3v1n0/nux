@@ -29,12 +29,12 @@ NAMESPACE_BEGIN_OGL
 IMPLEMENT_OBJECT_TYPE(IOpenGLVertexBuffer);
 
 IOpenGLVertexBuffer::IOpenGLVertexBuffer(t_u32 Length, VBO_USAGE Usage)
-:   _Length(Length)
+:   IOpenGLResource(RTVERTEXBUFFER)
+,   _Length(Length)
 ,   _Usage(Usage)
 ,   _MemMap(0)
 ,   _OffsetToLock(0)
 ,   _SizeToLock(0)
-,   IOpenGLResource(RTVERTEXBUFFER)
 {
     CHECKGL( glGenBuffersARB(1, &_OpenGLID) );
     CHECKGL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, _OpenGLID) );

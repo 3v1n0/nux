@@ -23,7 +23,6 @@
 #include "Nux.h"
 
 #include "EditTextBox.h"
-
 #include "Layout.h"
 #include "HLayout.h"
 #include "VLayout.h"
@@ -31,12 +30,12 @@
 
 NAMESPACE_BEGIN_GUI
 EditTextBox::EditTextBox(const TCHAR* Caption)
-:   m_Validator(0)
-,   BlinkCursor(false)
-,   m_ScrollTimerHandler(0)
-,   m_BlinkTimerFunctor(0)
-,   m_WriteAlpha(true)
 {
+    m_Validator             = 0;
+    BlinkCursor             = false;
+    m_ScrollTimerHandler    = 0;
+    m_BlinkTimerFunctor     = 0;
+    m_WriteAlpha            = true;
 
     setGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -72,12 +71,12 @@ EditTextBox::EditTextBox(const TCHAR* Caption)
 
 EditTextBox::~EditTextBox()
 {
-    INL_SAFE_DELETE(m_Validator);
+    NUX_SAFE_DELETE(m_Validator);
 
     if(m_BlinkTimerHandler)
         GetThreadTimer().RemoveTimerHandler(m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
-    INL_SAFE_DELETE(m_BlinkTimerFunctor);
+    NUX_SAFE_DELETE(m_BlinkTimerFunctor);
 }
 
 void EditTextBox::ScrollTimerInterrupt(void* v)
@@ -131,7 +130,7 @@ void EditTextBox::StartBlinkCursor(bool BlinkState)
 void EditTextBox::SetValidator(const Validator* validator)
 {
     nuxAssert(validator != 0);
-    INL_SAFE_DELETE(m_Validator);
+    NUX_SAFE_DELETE(m_Validator);
     m_Validator = validator->Clone();
 }
 
@@ -316,8 +315,6 @@ void EditTextBox::RecvKeyEvent(
                     bool             isRepeated , /*true if the key is repeated more than once*/
                     unsigned short   keyCount     /*key repeat count*/)
 {
-    long virtual_code = m_KeyboardHandler.ProcessKey(eventType, keysym, state, character, GetGeometry());
-
     if(character)
     {
         sigCharacter.emit(smptr(EditTextBox)(this, false), *character);
@@ -328,7 +325,7 @@ void EditTextBox::RecvKeyEvent(
         StartBlinkCursor(false);
     }
 
-    if(keysym == INL_VK_ENTER || keysym == INL_KP_ENTER)
+    if(keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER)
     {
         NString str(m_KeyboardHandler.GetTextLine());
         str.RemoveSuffix(m_Suffix);

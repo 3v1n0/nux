@@ -108,7 +108,7 @@ class PBuffer
 #endif
 
     protected:
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
         HDC         m_hDC;     ///< Handle to a device context.
         HGLRC       m_hGLRC;   ///< Handle to a GL context.
         HPBUFFERARB m_hPBuffer;///< Handle to a pbuffer.
@@ -120,7 +120,7 @@ class PBuffer
         std::vector<int> m_pbAttribList;
 
         bool m_bIsTexture;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
         Display    *m_pDisplay;
         GLXPbuffer  m_glxPbuffer;
         GLXContext  m_glxContext;
@@ -131,7 +131,7 @@ class PBuffer
         
         std::vector<int> m_pfAttribList;
         std::vector<int> m_pbAttribList;
-#elif defined(INL_OS_MACOSX)
+#elif defined(NUX_OS_MACOSX)
         AGLContext  m_context;
         WindowPtr   m_window;
         std::vector<int> m_pfAttribList;
@@ -149,7 +149,7 @@ class PBuffer
     private:
         std::string getStringValue(std::string token);
         int getIntegerValue(std::string token);
-#if defined(INL_OS_WINDOWS) || defined(INL_OS_LINUX)        
+#if defined(NUX_OS_WINDOWS) || defined(NUX_OS_LINUX)        
         void parseModeString(const char *modeString, std::vector<int> *pfAttribList, std::vector<int> *pbAttribList);
 
         bool m_bIsBound;

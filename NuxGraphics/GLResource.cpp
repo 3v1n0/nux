@@ -254,6 +254,9 @@ unsigned int GetGLElementCount(PRIMITIVE_TYPE InPrimitiveType,
     case PRIMITIVE_TYPE_TRIANGLELIST:    return InPrimitiveCount * 3;
     case PRIMITIVE_TYPE_TRIANGLESTRIP:   return InPrimitiveCount + 2;
     case PRIMITIVE_TYPE_TRIANGLEFAN:     return InPrimitiveCount;
+    case PRIMITIVE_TYPE_QUADLIST:        return InPrimitiveCount * 4;
+    case PRIMITIVE_TYPE_QUADSTRIP:       return InPrimitiveCount*2 + 2;
+    default:                             return 0;
     }
     nuxAssertMsg(0, TEXT("[GetGLElementCount] Invalid PRIMITIVE_TYPE"));
     return InPrimitiveCount;

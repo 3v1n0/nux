@@ -28,15 +28,16 @@
 NAMESPACE_BEGIN_GUI
 
 RangeValueInteger::RangeValueInteger(int Value, int MinValue, int MaxValue)
-:   m_min(MinValue)
-,   m_max(MaxValue)
-,   m_StartColor(0xff202020)
-,   m_EndColor(0xff202020)
-,   m_ProgressColor(0xff606060)
-,   m_EnableDrawProgress(true)
-,   m_CTRL_KEY(0)
-,   m_MarkerPosition(0)
 {
+    m_min                   = MinValue;
+    m_max                   = MaxValue;
+    m_StartColor            = Color(0xff202020);
+    m_EndColor              = Color(0xff202020);
+    m_ProgressColor         = Color(0xff606060);
+    m_EnableDrawProgress    = true;
+    m_CTRL_KEY              = 0;
+    m_MarkerPosition        = 0;
+
     InitializeLayout();
     InitializeWidgets();
 
@@ -100,7 +101,7 @@ void RangeValueInteger::DestroyLayout()
 
 long RangeValueInteger::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) 
 {
-    m_CTRL_KEY = ievent.GetVirtualKeyState(INL_VK_CONTROL);
+    m_CTRL_KEY = ievent.GetVirtualKeyState(NUX_VK_CONTROL);
 
     long ret;
     ret = m_Percentage->OnEvent(ievent, TraverseInfo, ProcessEventInfo);
@@ -299,7 +300,7 @@ void RangeValueInteger::OnLostKeyboardFocus()
 void RangeValueInteger::OnValidateKeyboardEntry(const weaksmptr(EditTextBox) textbox, const NString& text)
 {
     int i;
-    CharToInteger(text.GetTCharPtr(), i);
+    i = CharToInteger(text.GetTCharPtr());
     SetValue(i);
     sigValueChanged.emit(smptr(RangeValueInteger)(this, false));
     sigSetTypedValue.emit(i);

@@ -42,15 +42,16 @@ const int TitleBarHeight = 20;
 */
 
 FloatingWindow::FloatingWindow(const TCHAR* WindowName)
-:   m_WindowTitle(0)
-,   m_bIsVisible(false)
-,   m_bSizeMatchLayout(false)
-,   m_bIsModal(false)
-,   m_bIsVisibleSizeGrip(true)
-,   m_SizeGripDragPositionX(0)
-,   m_SizeGripDragPositionY(0)
-,   m_hasTitleBar(true)
 {
+    m_WindowTitle               = 0;
+    m_bIsVisible                = false;
+    m_bSizeMatchLayout          = false;
+    m_bIsModal                  = false;
+    m_bIsVisibleSizeGrip        = true;
+    m_SizeGripDragPositionX     = 0;
+    m_SizeGripDragPositionY     = 0;
+    m_hasTitleBar               = true;
+
     // Should be at the end of the constructor
     //GetThreadWindowCompositor().RegisterWindow(smptr(FloatingWindow)(this, false));
 
@@ -90,9 +91,9 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName)
     SetMinimumSize(32, 32);
     setGeometry(Geometry(100, 100, 320, 200));
 
-    NString Path = INL_FINDRESOURCELOCATION(TEXT("Media/UITextures/AddButton.png"));
+    NString Path = NUX_FINDRESOURCELOCATION(TEXT("Media/UITextures/AddButton.png"));
     MinimizeIcon.Update(Path.GetTCharPtr());
-    Path = INL_FINDRESOURCELOCATION(TEXT("Media/UITextures/CancelButton.png"));
+    Path = NUX_FINDRESOURCELOCATION(TEXT("Media/UITextures/CancelButton.png"));
     CloseIcon.Update(Path.GetTCharPtr());
 
     SetWindowTitle(WindowName);
@@ -102,7 +103,7 @@ FloatingWindow::~FloatingWindow()
 {
     GetThreadWindowCompositor().UnRegisterWindow(smptr(FloatingWindow)(this, false));
     m_InterfaceObject.clear();
-    INL_SAFE_DELETE_ARRAY(m_WindowTitle);
+    NUX_SAFE_DELETE_ARRAY(m_WindowTitle);
 }
 
 long FloatingWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -115,7 +116,7 @@ long FloatingWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long Proces
     window_event.e_x_root = base.x;
     window_event.e_y_root = base.y;
 
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {
@@ -140,7 +141,7 @@ long FloatingWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long Proces
         int XGrip = window_event.e_x - window_event.e_x_root - m_SizeGrip->GetBaseX();
         int YGrip = window_event.e_y - window_event.e_y_root - m_SizeGrip->GetBaseY();
 
-        if(ievent.e_event == INL_MOUSE_PRESSED)
+        if(ievent.e_event == NUX_MOUSE_PRESSED)
         {
             // We want to false on one half of the size grip square to register a mouse down. This is meant to leave more room
             // for the scrollbar buttons (if any) at the bottom right of the window.
@@ -154,7 +155,7 @@ long FloatingWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long Proces
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
     Geometry viewGeometry = GetGeometry(); //Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
     bool traverse = true;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!viewGeometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {
@@ -431,7 +432,7 @@ void FloatingWindow::LayoutWindowElements()
 void FloatingWindow::SetWindowTitle(const TCHAR *title)
 {
     if(m_WindowTitle != 0)
-        INL_SAFE_DELETE_ARRAY(m_WindowTitle);
+        NUX_SAFE_DELETE_ARRAY(m_WindowTitle);
 
     if(title == 0)
     {

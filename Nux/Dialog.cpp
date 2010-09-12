@@ -30,7 +30,7 @@
 
 NAMESPACE_BEGIN_GUI
 
-Dialog::Dialog(TCHAR* WindowName /*  = TEXT("") */)
+Dialog::Dialog(const TCHAR* WindowName /*  = TEXT("") */)
 :   FloatingWindow(WindowName)
 {
     ShowWindow(false);

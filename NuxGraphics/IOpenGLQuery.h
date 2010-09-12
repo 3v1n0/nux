@@ -33,10 +33,10 @@ class IOpenGLQuery: public IOpenGLResource
 public:
     int GetData(
         int *pData,
-        DWORD Size,
-        DWORD GetDataFlags
+        t_u32 Size,
+        t_u32 GetDataFlags
         );
-    DWORD GetDataSize();
+    t_u32 GetDataSize();
 
     void GetDevice(
         GLDeviceFactory **ppDevice
@@ -45,7 +45,7 @@ public:
     QUERY_TYPE GetType();
 
     void Issue(
-        DWORD IssueFlags
+        t_u32 IssueFlags
         );
 
     // Convenient functions
@@ -65,7 +65,7 @@ private:
     QUERY_TYPE _Type;
     bool _QueryStarted;
     friend class GLDeviceFactory;
-    static int _CurrentlyActiveQuery;
+    static t_u32 _CurrentlyActiveQuery;
 };
 
 NAMESPACE_END_OGL

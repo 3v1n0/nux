@@ -130,7 +130,7 @@ public:
     void RemoveTimerHandler(TimerHandle *handler);
     void DelayUntilNextTimerExpires(_Time *delay);
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     int ExecTimerHandler(t_u32 timer_id);
 #else
     int ExecTimerHandler();

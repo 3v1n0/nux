@@ -26,15 +26,15 @@
 NAMESPACE_BEGIN
 
 #ifdef _WIN32
-    #define INL_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement
-    #define INL_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement
-    #define INL_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange
-    #define INL_ATOMOP_ITERLOCKED_VALUE
+    #define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement
+    #define NUX_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement
+    #define NUX_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange
+    #define NUX_ATOMOP_ITERLOCKED_VALUE
 #elif _WIN64
-    #define INL_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement64
-    #define INL_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement64
-    #define INL_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange64
-    #define INL_ATOMOP_ITERLOCKED_VALUE
+    #define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement64
+    #define NUX_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement64
+    #define NUX_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange64
+    #define NUX_ATOMOP_ITERLOCKED_VALUE
 #endif
 
 t_int NThreadSafeCounter::Increment()

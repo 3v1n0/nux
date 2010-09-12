@@ -22,7 +22,7 @@
 
 #include "NKernel.h"
 
-#if defined INL_PS3
+#if defined NUX_PS3
     // RealTimeClock
     #include <cell/rtc.h>
     // System Utilities Common API
@@ -175,7 +175,7 @@ void GetLocalTime(unsigned int& Year,
                   unsigned int& Sec,
                   unsigned int& MicroSec)
 {
-#ifdef INL_OS_WINDOWS
+#ifdef NUX_OS_WINDOWS
     SYSTEMTIME st;
     ::GetLocalTime(&st);
 
@@ -187,7 +187,7 @@ void GetLocalTime(unsigned int& Year,
     Sec			= st.wSecond;
     MicroSec	= st.wMilliseconds*1000;
 
-#elif (defined INL_PS3)
+#elif (defined NUX_PS3)
     CellRtcDateTime st;
     cellRtcGetCurrentClockLocalTime(&st);
     Year		= st.year;
@@ -198,7 +198,7 @@ void GetLocalTime(unsigned int& Year,
     Sec			= st.second;
     MicroSec	= st.microsecond;
 
-#elif (defined INL_OS_LINUX) || (defined INL_OS_MACOSX)
+#elif (defined NUX_OS_LINUX) || (defined NUX_OS_MACOSX)
     time_t dt;
     struct tm dc;
     time(&dt);
@@ -236,7 +236,7 @@ void GetUTCTime(unsigned int& Year,
     Sec			= st.wSecond;
     MicroSec	= st.wMilliseconds*1000;
 
-#elif (defined INL_PS3)
+#elif (defined NUX_PS3)
     CellRtcDateTime st;
     cellRtcGetCurrentClock(&st, 0); // 0 for UTC time(at Greenwich)
     Year		= st.year;
@@ -247,7 +247,7 @@ void GetUTCTime(unsigned int& Year,
     Sec			= st.second;
     MicroSec	= st.microsecond;
 
-#elif (defined INL_OS_LINUX) || (defined INL_OS_MACOSX)
+#elif (defined NUX_OS_LINUX) || (defined NUX_OS_MACOSX)
     time_t dt;
     struct tm dc;
     time(&dt);
@@ -273,7 +273,7 @@ t_long GetTimeZone()
     t_long hour = seconds / 3600;
     return hour;
 
-#elif INL_PS3
+#elif NUX_PS3
     int minutetimezone = 0;
     cellSysutilGetSystemParamInt(CELL_SYSUTIL_SYSTEMPARAM_ID_TIMEZONE, &minutetimezone);
     t_long hour = minutetimezone / 60;
@@ -286,10 +286,10 @@ t_long GetTimeZone()
 
 void SleepForMilliseconds(unsigned int Milliseconds)
 {
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     Sleep(Milliseconds);
 
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     int ret = usleep(Milliseconds*1000);
     if(ret != 0)
     {

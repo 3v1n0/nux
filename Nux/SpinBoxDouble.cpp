@@ -234,7 +234,7 @@ void SpinBoxDouble::ImplementDecrementBtn()
 void SpinBoxDouble::ImplementValidateEntry()
 {
     double ret = 0;
-    if(CharToDouble(m_EditLine->GetCleanText().GetTCharPtr(), ret))
+    ret = CharToDouble(m_EditLine->GetCleanText().GetTCharPtr());
     {
         m_Value = m_DoubleValidator.Validate(ret);
         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
@@ -252,12 +252,12 @@ void SpinBoxDouble::ImplementValidateEntry()
 //            m_EditLine->SetText(inlPrintf("%.3f", m_Value));
 //        }
     }
-    else
-    {
-        m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-        sigValueChanged.emit(smptr(SpinBoxDouble)(this, false));
-        sigValue.emit(m_Value);
-    }
+//     else
+//     {
+//         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
+//         sigValueChanged.emit(smptr(SpinBoxDouble)(this, false));
+//         sigValue.emit(m_Value);
+//     }
 }
 
 NAMESPACE_END_GUI

@@ -26,9 +26,9 @@
 NAMESPACE_BEGIN_GUI
 
 ScrollBar::ScrollBar()
-:   m_visible(1)
-,   m_ScrollUnit(5)
 {
+    m_visible   = 1;
+    m_ScrollUnit = 5;
 }
 
 ScrollBar::~ScrollBar()

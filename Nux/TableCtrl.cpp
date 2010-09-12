@@ -63,26 +63,27 @@ Color TABLE_HEADER_TEXT_COLOR = Color(0xFFFFFFFF);
 //            Row Header
 
 TableCtrl::TableCtrl(bool floating_column)
-:   m_bEnableRowResizing(false)
-,   m_bEnableColumnResizing(true)
-,   m_bShowRowHeader(true)
-,   m_bShowColumnHeader(true)
-,   m_bShowVerticalSeparationLine(true)
-,   m_bShowHorizontalSeparationLine(false)
-,   m_bEnableItemBestHeight(true)
-,   m_FloatingColumn(floating_column)
-,   m_ClickSelect(CLICK_SELECT_CELL)
-,   m_RowColorOdd(0xFF343434)
-,   m_RowColorEven(0xFF3f3f3f)
-,   m_TableBottomColor(0xFF555555)
-,   m_SelectionColor(0xFF202020)
-,   m_MouseOverColor(0xFF666666)
-,   m_HorizontalSeparationLineColor(0xFF747474)
-,   m_VerticalSeparationLineColor(0xFF747474)
-,   m_IsEnableMouseOverColor(false)
-,   m_DrawBackgroundOnPreviousGeometry(false)
-,   m_TableItemHead(0)
 {
+    m_bEnableRowResizing     = false;
+    m_bEnableColumnResizing = true;
+    m_bShowRowHeader    = true;
+    m_bShowColumnHeader = true;
+    m_bShowVerticalSeparationLine = true;
+    m_bShowHorizontalSeparationLine = false;
+    m_bEnableItemBestHeight = true;
+    m_FloatingColumn = floating_column;
+    m_ClickSelect = CLICK_SELECT_CELL;
+    m_RowColorOdd   = Color(0xFF343434);
+    m_RowColorEven   = Color(0xFF3f3f3f);
+    m_TableBottomColor   = Color(0xFF555555);
+    m_SelectionColor   = Color(0xFF202020);
+    m_MouseOverColor   = Color(0xFF666666);
+    m_HorizontalSeparationLineColor   = Color(0xFF747474);
+    m_VerticalSeparationLineColor   = Color(0xFF747474);
+    m_IsEnableMouseOverColor = false;
+    m_DrawBackgroundOnPreviousGeometry = false;
+    m_TableItemHead = 0;
+
     m_TableItemHead = new TableItem(TEXT("TableRootNode"));
     m_TableItemHead->m_Table = this;
     m_TableItemHead->Open();
@@ -176,7 +177,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
     long ProcEvInfo = ProcessEventInfo;
     bool AllowCellSelection = (TraverseInfo & eMouseEventSolved)? false : true;
 
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         Geometry ViewGeometry = Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
         if(!ViewGeometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
@@ -217,7 +218,6 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
 
     
     // This bool checks if there is at least one item that is dirty.
-    bool DirtyItem = false;
     bool ItemSolvedEvent = false;
     {
         std::vector<RowHeader*>::iterator row_iterator;
@@ -246,7 +246,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
     if(m_horizontal_scrollbar_enable)
         ret = hscrollbar->ProcessEvent(ievent, ret, ProcEvInfo & (~eDoNotProcess));
 
-    if(IsPartOfCombobox() && ievent.e_event == INL_MOUSE_RELEASED)
+    if(IsPartOfCombobox() && ievent.e_event == NUX_MOUSE_RELEASED)
     {
         if(GetGeometry().IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) &&
             m_TableArea->GetGeometry().IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
@@ -261,7 +261,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
     }
     else
     {
-        if(ievent.e_event == INL_MOUSE_PRESSED && ItemSolvedEvent && !(EventAlreadySolved) /*&& GetThreadWindowCompositor().GetMouseFocusArea()*/)
+        if(ievent.e_event == NUX_MOUSE_PRESSED && ItemSolvedEvent && !(EventAlreadySolved) /*&& GetThreadWindowCompositor().GetMouseFocusArea()*/)
         {
             // The mouse down event has already been captured. This call is going to find out if a cell was hit.
             OnMouseDown(ievent.e_x - ievent.e_x_root - m_TableArea->GetBaseX(),
@@ -279,7 +279,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
     ret = PostProcessEvent2(ievent, ret, ProcEvInfo);
 
     // If it is a mouse down, check for the selected row and column
-    if((ievent.e_event == INL_MOUSE_PRESSED) && ((ProcEvInfo & eDoNotProcess) == 0) && AllowCellSelection)
+    if((ievent.e_event == NUX_MOUSE_PRESSED) && ((ProcEvInfo & eDoNotProcess) == 0) && AllowCellSelection)
     {
         bool in_column = false;
         bool in_row = false;
@@ -311,7 +311,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             }
         }
     }
-    else if((ievent.e_event == INL_MOUSE_PRESSED) && ((ProcEvInfo & eDoNotProcess) || EventAlreadySolved)) 
+    else if((ievent.e_event == NUX_MOUSE_PRESSED) && ((ProcEvInfo & eDoNotProcess) || EventAlreadySolved)) 
     {
         if((m_selectedColumn != -1) || (m_selectedRow != -1))
         {
@@ -592,7 +592,7 @@ UINT TableCtrl::PushItemBackground(GraphicsContext& GfxContext, TableItem* item,
         SelectionColor = GetMouseOverColor();
 
     int SelectedColumn = GetSelectedColumn();
-    for(t_u32 Column = 0; Column < GetNumColumn(); Column++)
+    for(t_s32 Column = 0; Column < GetNumColumn(); Column++)
     {
         if(isSelected && (SelectedColumn == Column))
         {
@@ -600,7 +600,7 @@ UINT TableCtrl::PushItemBackground(GraphicsContext& GfxContext, TableItem* item,
             {
                 if(m_bShowColumnHeader)
                 {
-                    t_u32 corners = 0L;
+                    t_s32 corners = 0L;
                     if(Column == 0 && !m_bShowRowHeader)
                         corners |= eCornerBottomLeft;
                     if(Column == GetNumColumn() - 1)
@@ -624,7 +624,7 @@ UINT TableCtrl::PushItemBackground(GraphicsContext& GfxContext, TableItem* item,
                 }
                 else
                 {
-                    t_u32 corners = 0L;
+                    t_s32 corners = 0L;
                     if(Column == 0 && !m_bShowRowHeader)
                         corners |= eCornerTopLeft;
                     if(Column == GetNumColumn() - 1)
@@ -700,7 +700,6 @@ void TableCtrl::PopItemBackground(GraphicsContext& GfxContext, UINT NumBackgroun
 
 void TableCtrl::DrawTable(GraphicsContext& GfxContext)
 {
-    int TextureIndex = ScrollView::GetTextureIndex();
     TRefGL<IOpenGLFrameBufferObject> CurrentFrameBuffer = GetThreadWindowCompositor().GetWindowFrameBufferObject();
     if(0 /*m_ReformatTexture*/)
     {
@@ -852,8 +851,6 @@ void TableCtrl::DrawHeader(GraphicsContext& GfxContext)
         if((*row_iterator)->item->IsParentOpen())
             row_height += (*row_iterator)->item->m_RowHeader.GetBaseHeight();
     }
-
-    int TotalHeight = ItemOffsetY;
 
     ////////////////////////////
     /// DRAW THE HEADER PART ///
@@ -1212,8 +1209,6 @@ void TableCtrl::addHeader(const TCHAR* name, bool fixed_width, int column_width)
     }
     else
     {
-        int max_width = 0;
-
         Geometry g = m_column_header[num_header-1].header.GetGeometry();
         header2 h2;
         h2.header.SetBaseString(name);
@@ -1238,7 +1233,6 @@ int TableCtrl::FormatHeader()
     int x = m_TableArea->GetBaseX();
     int y = m_TableArea->GetBaseY();
     int totalWidth = (m_bShowRowHeader? ROWHEADERWIDTH : 0);
-    int totalHeight = (m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0);
 
     std::vector<sizehandler2*>::iterator size_it;
     std::vector<header2>::iterator column_it;
@@ -1339,7 +1333,6 @@ void TableCtrl::FormatTable()
                     // geometry of the first column of the row (minus the open/close bitmap decoration geometry).
                     if(m_row_header[i]->item->FirstChildNode() != 0)
                     {
-                        int depth = m_row_header[i]->item->m_depth;
                         x_column = m_TableArea->GetBaseX() + m_column_header[j].header.GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/ +
                             ITEM_DEPTH_MARGIN * m_row_header[i]->item->m_depth + OPENCLOSE_BTN_WIDTH;
                         y_row    = m_TableArea->GetBaseY() + m_row_header[i]->item->m_RowHeader.GetBaseY();
@@ -1557,7 +1550,6 @@ void TableCtrl::ResetTable()
 
 void TableCtrl::DeleteRowSizeHandler()
 {
-    t_u32 si = (t_u32)m_row_header.size();
     std::vector<sizehandler2*>::iterator it;
     for(it = m_row_sizehandler.begin(); it != m_row_sizehandler.end(); it++)
     {
@@ -1568,7 +1560,6 @@ void TableCtrl::DeleteRowSizeHandler()
 
 void TableCtrl::DeleteRowHeader()
 {
-    t_u32 si = (t_u32)m_row_header.size();
     std::vector<RowHeader*>::iterator it;
     for(it = m_row_header.begin(); it != m_row_header.end(); it++)
     {
@@ -1706,13 +1697,10 @@ void TableCtrl::FindItemUnderPointer(int x, int y, TableItem** ppItem, int &row,
 
 void TableCtrl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    int previous_click_row = m_selectedRow;
-    int previous_click_column = m_selectedColumn;
-
     if(m_selectedTableItem)
     {
         // Dirty the previously selected item. No need to call NeedRedraw because this is a mouse down and the 
-        // WindowThread will call Draw(event, false) on a INL_MOUSE_PRESSED event.
+        // WindowThread will call Draw(event, false) on a NUX_MOUSE_PRESSED event.
         // When this item redraws, it will draw without the selection background color.
         m_selectedTableItem->setDirtyItem(true);
     }
@@ -1739,7 +1727,7 @@ void TableCtrl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned l
         sigTableItemSelected.emit(*this, *m_selectedTableItem, m_selectedRow, m_selectedColumn);
 
         // Dirty the newly selected item. No need to call NeedRedraw because this is a mouse down and the 
-        // WindowThread will call Draw(event, false) on a INL_MOUSE_PRESSED event.
+        // WindowThread will call Draw(event, false) on a NUX_MOUSE_PRESSED event.
         // When this item redraws, it will draw with the selection background color.
         m_selectedTableItem->setDirtyItem(true);
     }
@@ -1818,7 +1806,6 @@ void TableCtrl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, uns
     }
 
     int previous_click_row = m_selectedRow;
-    int previous_click_column = m_selectedColumn;
 
     m_selectedTableItem = 0;
     FindItemUnderPointer(x, y, &m_selectedTableItem, m_selectedRow, m_selectedColumn);
@@ -1900,9 +1887,6 @@ void TableCtrl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, uns
 void TableCtrl::OnMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
     return;
-    int previous_click_row = m_selectedRow;
-    int previous_click_column = m_selectedColumn;
-
     m_selectedTableItem = 0;
     FindItemUnderPointer(x, y, &m_selectedTableItem, m_selectedRow, m_selectedColumn);
 
@@ -1930,7 +1914,6 @@ void TableCtrl::OnMouseUp(int x, int y, unsigned long button_flags, unsigned lon
 void TableCtrl::OnMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
 {
     return;
-    TableItem* item = 0;
     if(m_selectedTableItem)
         m_selectedTableItem->setDirtyItem(true);
     m_selectedTableItem = 0;
@@ -1986,7 +1969,7 @@ void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned l
 
     bool recompute = false;
 
-    t_u32 num_header = (t_u32)m_column_header.size();
+    t_s32 num_header = (t_s32)m_column_header.size();
     if((isFloatingColumn() == false) && (header_pos >= m_column_header.size() - 1))
     {
         // The columns takes all available space. The last column size handler
@@ -2044,12 +2027,12 @@ void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned l
             if(found == false)
                 return;
         }
+        
         int header_width = m_column_header[header_pos].header.GetBaseWidth();
 
-
-        for(t_u32 i = header_pos + 1; ((i < num_header) && (deltax != 0)); i++)
+        for(t_s32 i = (t_s32)header_pos + 1; ((i < num_header) && (deltax != 0)); i++)
         {
-            t_u32 element_width =(t_u32) m_column_header[i].header.GetBaseWidth();
+            t_s32 element_width =(t_s32) m_column_header[i].header.GetBaseWidth();
             if((m_column_header[i].bFixWidth == false) /*&& (element_width > 10)*/)
             {
                 findElement = true;
@@ -2286,12 +2269,12 @@ bool TableCtrl::isFloatingColumn()
     return m_FloatingColumn;
 }
 
-t_u32 TableCtrl::GetNumColumn()
+t_s32 TableCtrl::GetNumColumn()
 {
     return (t_u32)m_column_header.size();
 }
 
-t_u32 TableCtrl::GetNumRow()
+t_s32 TableCtrl::GetNumRow()
 {
     return (t_u32)m_row_header.size();
 }

@@ -55,7 +55,7 @@ long Panel::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInf
 {
     long ret = TraverseInfo;
     long ProcEvInfo = 0;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {
@@ -72,7 +72,7 @@ long Panel::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInf
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
     Geometry viewGeometry = Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
     bool traverse = true;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!viewGeometry.IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {

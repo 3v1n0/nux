@@ -44,18 +44,18 @@ public:
 
 #ifdef _WIN32
     static DWORD CALLBACK CopyProgressRoutine(
-        INL_IN                 LARGE_INTEGER TotalFileSize,
-        INL_IN                 LARGE_INTEGER TotalBytesTransferred,
-        INL_IN                 LARGE_INTEGER StreamSize,
-        INL_IN                 LARGE_INTEGER StreamBytesTransferred,
-        INL_IN                 DWORD dwStreamNumber,
-        INL_IN                 DWORD dwCallbackReason,
-        INL_IN                 HANDLE hSourceFile,
-        INL_IN                 HANDLE hDestinationFile,
-        INL_IN                 LPVOID lpData
+        NUX_IN                 LARGE_INTEGER TotalFileSize,
+        NUX_IN                 LARGE_INTEGER TotalBytesTransferred,
+        NUX_IN                 LARGE_INTEGER StreamSize,
+        NUX_IN                 LARGE_INTEGER StreamBytesTransferred,
+        NUX_IN                 DWORD dwStreamNumber,
+        NUX_IN                 DWORD dwCallbackReason,
+        NUX_IN                 HANDLE hSourceFile,
+        NUX_IN                 HANDLE hDestinationFile,
+        NUX_IN                 LPVOID lpData
         )
     {
-        NFileTransferMonitor* filetransfer = INL_STATIC_CAST(NFileTransferMonitor*, lpData);
+        NFileTransferMonitor* filetransfer = NUX_STATIC_CAST(NFileTransferMonitor*, lpData);
         if(filetransfer)
         {
             if(filetransfer->Progress(100.0 * double(TotalBytesTransferred.QuadPart)/double(TotalFileSize.QuadPart)) == false)

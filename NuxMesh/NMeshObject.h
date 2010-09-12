@@ -28,10 +28,10 @@
 #include "NuxCore/Math/Vector3.h"
 #include "NuxCore/Math/Vector4.h"
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "OpenGL/Glew/glew.h"
     #include "OpenGL/Glew/wglew.h"
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #define GLEW_MX
     #include "GL/glew.h"
     #include "GL/glxew.h"
@@ -54,7 +54,7 @@ public:
     }
     ~Float3Set()
     {
-        INL_SAFE_DELETE(Pool);
+        NUX_SAFE_DELETE(Pool);
     }
     nux::Vec3<float>* Pool;
     int Num;
@@ -70,7 +70,7 @@ public:
     }
     ~Float4Set()
     {
-        INL_SAFE_DELETE(Pool);
+        NUX_SAFE_DELETE(Pool);
     }
     nux::Vec4<float>* Pool;
     int Num;
@@ -86,7 +86,7 @@ public:
     }
     ~Float2Set()
     {
-        INL_SAFE_DELETE(Pool);
+        NUX_SAFE_DELETE(Pool);
     }
     nux::Vec2<float>* Pool;
     int Num;
@@ -102,7 +102,7 @@ public:
     }
     ~AttributeIndexSet()
     {
-        INL_SAFE_DELETE(IndexPool);
+        NUX_SAFE_DELETE(IndexPool);
     }
     Index3* IndexPool;
     int Num;

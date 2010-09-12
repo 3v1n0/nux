@@ -54,10 +54,10 @@ enum WindowStyle
     WINDOWSTYLE_NOBORDER,
 };
 
-#define INL_THREADMSG                           (WM_APP+0)
-#define INL_THREADMSG_START_RENDERING           (WM_APP+1)  // Connection established // start at WM_APP
-#define INL_THREADMSG_CHILD_WINDOW_TERMINATED   (WM_APP+2)  // General failure - Wait Connection failed
-#define INL_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
+#define NUX_THREADMSG                           (WM_APP+0)
+#define NUX_THREADMSG_START_RENDERING           (WM_APP+1)  // Connection established // start at WM_APP
+#define NUX_THREADMSG_CHILD_WINDOW_TERMINATED   (WM_APP+2)  // General failure - Wait Connection failed
+#define NUX_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
 
 // This will become GLWindow
 class GLWindowImpl : public GraphicSystem
@@ -70,8 +70,8 @@ private:
     Window      m_X11Window;
     XVisualInfo *m_X11VisualInfo;
 
-    int        m_ParentWindow;
-    GLXContext m_GLCtx;
+    int         m_ParentWindow;
+    GLXContext  m_GLCtx;
     XSetWindowAttributes m_X11Attr;
 
     int m_NumVideoModes;
@@ -92,9 +92,8 @@ private:
     Bool m_X11RepeatKey;
 
     TCHAR m_WindowClassName[256];
-    GLuint		m_PixelFormat;			// Holds The Results After Searching For A Match
+    GLuint      m_PixelFormat;      // Holds The Results After Searching For A Match
     NString     m_WindowTitle;
-
 
     // size, position
     Size m_ViewportSize;
@@ -222,7 +221,7 @@ public:
         This function also sets the current openGL context to 0 for this window.
         This is useful while a child window is being created and is sharing openGL objects with this context.
         For wglShareLists to work, both OpenGL context must be set to 0 in their respective thread.
-        Send INL_THREADMSG_START_RENDERING (PostThreadMessage) to this window to reactivate rendering.
+        Send NUX_THREADMSG_START_RENDERING (PostThreadMessage) to this window to reactivate rendering.
         
         Never call this function while doing rendering. Call it only when processing events.
     */

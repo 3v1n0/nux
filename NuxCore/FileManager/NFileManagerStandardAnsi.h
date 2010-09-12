@@ -179,9 +179,9 @@ public:
         if((::_mkdir(TCHAR_TO_ANSI(Path)) != 0) && (errno != EEXIST))
         {
             nuxDebugMsg(TEXT("[NFileManagerAnsi::MakeDirectory] Error creating directory"));
-            return INL_ERROR;
+            return NUX_ERROR;
         }
-        return INL_OK;
+        return NUX_OK;
     }
 
     bool DeleteDirectory(const TCHAR* Path, bool DeleteContentFirst = false)
@@ -193,9 +193,9 @@ public:
         if((::_rmdir(TCHAR_TO_ANSI(Path)) != 0) && (errno != EEXIST))
         {
             nuxDebugMsg(TEXT("[NFileManagerAnsi::DeleteDirectory] Error deleting directory"));
-            return INL_ERROR;
+            return NUX_ERROR;
         }
-        return INL_OK;
+        return NUX_OK;
     }
 
     void FindFiles(std::vector<NString>& Result, const TCHAR* Filename, bool Files, bool Directories)
@@ -266,7 +266,7 @@ public:
     NString GetCurrentDirectory()
     {
         char Buffer[1024]= "";
-        ::_tgetcwd(Buffer, INL_ARRAY_COUNT(Buffer));
+        ::_tgetcwd(Buffer, NUX_ARRAY_COUNT(Buffer));
         return NString(Buffer);
     }
 
@@ -274,7 +274,7 @@ public:
     {
         Memzero(&Timestamp, sizeof(Timestamp));
 
-#if (defined INL_VISUAL_STUDIO_2005) || (defined INL_VISUAL_STUDIO_2008)
+#if (defined NUX_VISUAL_STUDIO_2005) || (defined NUX_VISUAL_STUDIO_2008)
         struct __stat64 FileInfo;
         if(_tstat64(Filename, &FileInfo) == 0)
         {

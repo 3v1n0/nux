@@ -70,11 +70,11 @@ public:
     {
         if(color == 0)
         {
-            INL_SAFE_DELETE(m_PropertyTextColor);
+            NUX_SAFE_DELETE(m_PropertyTextColor);
         }
         else
         {
-            INL_SAFE_DELETE(m_PropertyTextColor);
+            NUX_SAFE_DELETE(m_PropertyTextColor);
             m_PropertyTextColor = color->Clone();
         }
     }

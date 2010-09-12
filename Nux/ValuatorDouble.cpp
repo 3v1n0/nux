@@ -207,7 +207,7 @@ void ValuatorDouble::ImplementDecrementBtn()
 void ValuatorDouble::ImplementValidateEntry()
 {
     DOUBLE ret = 0;
-    if(CharToDouble(m_EditLine->GetCleanText().GetTCharPtr(), ret))
+    ret = CharToDouble(m_EditLine->GetCleanText().GetTCharPtr());
     {
         m_Value = m_DoubleValidator.Validate(ret);
         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
@@ -225,12 +225,12 @@ void ValuatorDouble::ImplementValidateEntry()
 //            m_EditLine->SetText(inlPrintf("%.3f", m_Value));
 //        }
     }
-    else
-    {
-        m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-        sigValueChanged.emit(smptr(ValuatorDouble)(this, false));
-        sigValue.emit(m_Value);
-    }
+//     else
+//     {
+//         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
+//         sigValueChanged.emit(smptr(ValuatorDouble)(this, false));
+//         sigValue.emit(m_Value);
+//     }
 }
 
 

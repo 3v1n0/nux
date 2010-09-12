@@ -24,61 +24,61 @@
 #define NSYSTEM_H
 
 #ifdef _WIN32
-    #define INL_OS_WINDOWS
+    #define NUX_OS_WINDOWS
 #elif __linux
-    #define INL_OS_LINUX
-#elif INL_PS3
-    #define INL_OS_CELL
+    #define NUX_OS_LINUX
+#elif NUX_PS3
+    #define NUX_OS_CELL
 #elif __APPLE__ 
-    #define INL_OS_MACOSX
+    #define NUX_OS_MACOSX
 #endif
 
 #if __GNUC__
-    #define INL_GNUC_COMPILER
+    #define NUX_GNUC_COMPILER
     #if __GNUG__
-        #define INL_GNUCPP_COMPILER
+        #define NUX_GNUCPP_COMPILER
     #else  
         #error Support only g++.
     #endif
 
     // Compiler string.
-    #define INL_COMPILER_STRING "GNU CPP Compiler"
+    #define NUX_COMPILER_STRING "GNU CPP Compiler"
 
     // Build string
     #ifdef _DEBUG
-        #define INL_BUILD_STRING "Debug build compiled with " INL_COMPILER_STRING
+        #define NUX_BUILD_STRING "Debug build compiled with " NUX_COMPILER_STRING
     #else
-        #define INL_BUILD_STRING "Compiled with " INL_COMPILER_STRING
+        #define NUX_BUILD_STRING "Compiled with " NUX_COMPILER_STRING
     #endif
 #endif
 
 #if __APPLE_CC__
-    #define INL_APPLE_COMPILER
+    #define NUX_APPLE_COMPILER
 #endif
 
 #if defined(_M_X64) || defined(__amd64__) || defined(__ia64__)
-    #define INL_ARCH_x64
+    #define NUX_ARCH_x64
 #elif defined(_M_IX86) || defined(__i386__)
-    #define INL_ARCH_i386
+    #define NUX_ARCH_i386
 #elif defined(__arm__)
-    #define INL_ARCH_arm
+    #define NUX_ARCH_arm
 #elif defined(__cell)
-    #define INL_ARCH_cell
+    #define NUX_ARCH_cell
 #endif
 
 #if _MSC_VER
-    #define INL_MICROSOFT_COMPILER
+    #define NUX_MICROSOFT_COMPILER
 #endif
 
 // Compiler Macros:
-// INL_GNUCPP_COMPILER
-// INL_MICROSOFT_COMPILER
+// NUX_GNUCPP_COMPILER
+// NUX_MICROSOFT_COMPILER
 
 // OS Macros:
-// INL_OS_WINDOWS
-// INL_OS_LINUX
-// INL_OS_CELL
-// INL_OS_MACOSX
+// NUX_OS_WINDOWS
+// NUX_OS_LINUX
+// NUX_OS_CELL
+// NUX_OS_MACOSX
 
 #ifdef _WIN32
 
@@ -108,27 +108,27 @@
     #define VISUAL_STUDIO_2003_COMPILER     1310
 
     #if _MSC_VER >= 1500
-        #define INL_VISUAL_STUDIO_2008
+        #define NUX_VISUAL_STUDIO_2008
     #elif _MSC_VER >= 1400
-        #define INL_VISUAL_STUDIO_2005
+        #define NUX_VISUAL_STUDIO_2005
     #elif _MSC_VER >= 1310
-        #define INL_VISUAL_STUDIO_2003
+        #define NUX_VISUAL_STUDIO_2003
     #endif
 
     // Compiler string.
     #if (_MSC_VER >= VISUAL_STUDIO_2008_COMPILER)
-        #define INL_COMPILER_STRING "Visual Studio 2008"
+        #define NUX_COMPILER_STRING "Visual Studio 2008"
     #elif (_MSC_VER >= VISUAL_STUDIO_2005_COMPILER)
-        #define INL_COMPILER_STRING "Visual Studio 2005"
+        #define NUX_COMPILER_STRING "Visual Studio 2005"
     #elif (_MSC_VER >= VISUAL_STUDIO_2003_COMPILER)
-        #define INL_COMPILER_STRING "Visual Studio 2003"
+        #define NUX_COMPILER_STRING "Visual Studio 2003"
     #endif
 
     // Build String
     #ifdef _DEBUG
-        #define INL_BUILD_STRING "Debug build compiled with " INL_COMPILER_STRING
+        #define NUX_BUILD_STRING "Debug build compiled with " NUX_COMPILER_STRING
     #else
-        #define INL_BUILD_STRING "Compiled with " INL_COMPILER_STRING
+        #define NUX_BUILD_STRING "Compiled with " NUX_COMPILER_STRING
     #endif
 
 
@@ -171,12 +171,12 @@
 
 
 // Logging
-#if defined(INL_OS_WINDOWS) && defined(_DEBUG)
-    #define INL_ENABLE_ASSERT_MACROS
-    #define INL_ENABLE_LOGGING
-#elif defined(INL_OS_LINUX) && defined(_DEBUG)
-    #define INL_ENABLE_ASSERT_MACROS
-    #define INL_ENABLE_LOGGING
+#if defined(NUX_OS_WINDOWS) && defined(_DEBUG)
+    #define NUX_ENABLE_ASSERT_MACROS
+    #define NUX_ENABLE_LOGGING
+#elif defined(NUX_OS_LINUX) && defined(_DEBUG)
+    #define NUX_ENABLE_ASSERT_MACROS
+    #define NUX_ENABLE_LOGGING
 #endif
 
 // NOP: no operation
@@ -184,78 +184,78 @@
 // be parsed but no code be generated for the arguments. It is intended for use in global
 // debug functions that take a variable number of arguments.
 
-#if defined(INL_MICROSOFT_COMPILER)
-    #define INL_COMPILER_SUPPORTS_NOOP
-    #define INL_NOOP __noop
-#elif defined(INL_GNUCPP_COMPILER)
-    #define INL_COMPILER_SUPPORTS_NOOP
-    #define INL_NOOP __asm__("nop")
-#elif defined(INL_PS3)
-    #define INL_COMPILER_SUPPORTS_NOOP
-    #define INL_NOOP __asm__("nop")
+#if defined(NUX_MICROSOFT_COMPILER)
+    #define NUX_COMPILER_SUPPORTS_NOOP
+    #define NUX_NOOP __noop
+#elif defined(NUX_GNUCPP_COMPILER)
+    #define NUX_COMPILER_SUPPORTS_NOOP
+    #define NUX_NOOP __asm__("nop")
+#elif defined(NUX_PS3)
+    #define NUX_COMPILER_SUPPORTS_NOOP
+    #define NUX_NOOP __asm__("nop")
 #endif
 
 // Pragma pack support
-#if defined(INL_MICROSOFT_COMPILER) || defined(INL_GNUCPP_COMPILER) || defined(INL_PS3)
-    #define INL_SUPPORTS_PRAGMA_PACK
+#if defined(NUX_MICROSOFT_COMPILER) || defined(NUX_GNUCPP_COMPILER) || defined(NUX_PS3)
+    #define NUX_SUPPORTS_PRAGMA_PACK
 #endif
 
 
 // Define variadic macro support
-#if defined(INL_MICROSOFT_COMPILER) && (defined(INL_VISUAL_STUDIO_2005) || defined(INL_VISUAL_STUDIO_2008))
-    #define INL_VARIADIC_MACROS_SUPPORT
-#elif defined(INL_GNUCPP_COMPILER)
-    #define INL_VARIADIC_MACROS_SUPPORT
-#elif defined(INL_PS3)
-    #define INL_VARIADIC_MACROS_SUPPORT
+#if defined(NUX_MICROSOFT_COMPILER) && (defined(NUX_VISUAL_STUDIO_2005) || defined(NUX_VISUAL_STUDIO_2008))
+    #define NUX_VARIADIC_MACROS_SUPPORT
+#elif defined(NUX_GNUCPP_COMPILER)
+    #define NUX_VARIADIC_MACROS_SUPPORT
+#elif defined(NUX_PS3)
+    #define NUX_VARIADIC_MACROS_SUPPORT
 #endif
 
 
 /// DLL declaration macros
-#if defined(INL_OS_WINDOWS)
-    #ifdef INL_DLL
+#if defined(NUX_OS_WINDOWS)
+    #ifdef NUX_DLL
         #if (!defined(_WIN32)) && (!defined(_WIN64))
-            #error("ERROR: Use INL_DLL is permitted only on win32 & win64 platforms")
+            #error("ERROR: Use NUX_DLL is permitted only on win32 & win64 platforms")
         #endif
 
-        #define INL_DECLSPEC_DLLIMPORT        __declspec(dllimport)
-        #define INL_DECLSPEC_DLLEXPORT        __declspec(dllexport)
+        #define NUX_DECLSPEC_DLLIMPORT        __declspec(dllimport)
+        #define NUX_DECLSPEC_DLLEXPORT        __declspec(dllexport)
     #else
-        #define INL_DECLSPEC_DLLIMPORT
-        #define INL_DECLSPEC_DLLEXPORT
+        #define NUX_DECLSPEC_DLLIMPORT
+        #define NUX_DECLSPEC_DLLEXPORT
     #endif
 
-    #ifdef INL_EXPORT_DLL
-        #define INL_DECLSPEC_DLL               INL_DECLSPEC_DLLEXPORT
+    #ifdef NUX_EXPORT_DLL
+        #define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLEXPORT
     #else
-        #define INL_DECLSPEC_DLL               INL_DECLSPEC_DLLIMPORT
+        #define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLIMPORT
     #endif
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #if __GNUC__ >= 4
-        #define INL_DECLSPEC_DLLIMPORT __attribute__ ((visibility("default")))
-        #define INL_DECLSPEC_DLLEXPORT __attribute__ ((visibility("default")))
+        #define NUX_DECLSPEC_DLLIMPORT __attribute__ ((visibility("default")))
+        #define NUX_DECLSPEC_DLLEXPORT __attribute__ ((visibility("default")))
     #else
-        #define INL_DECLSPEC_DLLIMPORT
-        #define INL_DECLSPEC_DLLEXPORT
+        #define NUX_DECLSPEC_DLLIMPORT
+        #define NUX_DECLSPEC_DLLEXPORT
     #endif
 
-    #ifdef INL_EXPORT_DLL
-        #define INL_DECLSPEC_DLL               INL_DECLSPEC_DLLEXPORT
+    #ifdef NUX_EXPORT_DLL
+        #define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLEXPORT
     #else
-        #define INL_DECLSPEC_DLL               INL_DECLSPEC_DLLIMPORT
+        #define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLIMPORT
     #endif
 #endif
 
-#define INL_CHECK_PUREVIRTUALS 1
+#define NUX_CHECK_PUREVIRTUALS 1
 
 // Throwing exceptions:
 
 // #ifdef _DEBUG
-//     // if we are in Debug disable exceptions. What we want is to break were and error happens: ie INL_BREAK_ASM_INT3
-//     #define INL_EXCEPTIONS_DISABLED 1
+//     // if we are in Debug disable exceptions. What we want is to break were and error happens: ie NUX_BREAK_ASM_INT3
+//     #define NUX_EXCEPTIONS_DISABLED 1
 // #endif
 
-#define INL_EXCEPTIONS_DISABLED 1
+#define NUX_EXCEPTIONS_DISABLED 1
 
 #define STL std
 

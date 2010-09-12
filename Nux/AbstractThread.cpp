@@ -28,9 +28,9 @@ NAMESPACE_BEGIN_GUI
 IMPLEMENT_OBJECT_TYPE(AbstractThread);
 
 AbstractThread::AbstractThread(AbstractThread* Parent)
-:   m_UserInitFunc(0)
+:   m_Parent(Parent)
+,   m_UserInitFunc(0)
 ,   m_UserExitFunc(0)
-,   m_Parent(Parent)
 {
 
 }

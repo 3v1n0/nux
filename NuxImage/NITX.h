@@ -39,27 +39,27 @@ typedef struct
 {
     t_s64 FilePointer;
     NFileName Name;
-    unsigned int Type;
-    unsigned int Format;
-    unsigned int Width;
-    unsigned int Height;
-    unsigned int Depth;
-    unsigned int NumMipmap;
-    unsigned int Size;
+    t_s32 Type;
+    t_s32 Format;
+    t_s32 Width;
+    t_s32 Height;
+    t_s32 Depth;
+    t_s32 NumMipmap;
+    t_s32 Size;
 
 } TextureArchiveInfo_ver_0_0_1;
 #pragma pack()
 
-bool TextureArchiveAdd_ver_0_0_1(NSerializer* FileStream, NBitmapData* BitmapData, const TCHAR* InputTextureFile, INL_OUT t_s64& Offset);
+bool TextureArchiveAdd_ver_0_0_1(NSerializer* FileStream, NBitmapData* BitmapData, const TCHAR* InputTextureFile, NUX_OUT t_s64& Offset);
 NBitmapData* TextureArchiveLoad_ver_0_0_1(NSerializer* FileStream, unsigned int Offset);
 void TextureArchiveGetInfo_ver_0_0_1(NSerializer* FileStream, TextureArchiveInfo_ver_0_0_1& TextureArchiveInfo);
 
 
-#define TEXTUREARCHIVETAG INL_MAKEFOURCHARTAG('i','t','x','t')
-#define TEXTUREARCHIVEVERSION INL_MAKEFOURCHARTAG('0','0','0','1')
+#define TEXTUREARCHIVETAG NUX_MAKEFOURCHARTAG('i','t','x','t')
+#define TEXTUREARCHIVEVERSION NUX_MAKEFOURCHARTAG('0','0','0','1')
 
-#define INL_ANIMATED_TEXTURE_TAG INL_MAKEFOURCHARTAG('i','a','t', 'x')
-#define INL_ANIMATED_TEXTURE_VERSION INL_MAKEFOURCHARTAG('0','0','0','1')
+#define NUX_ANIMATED_TEXTURE_TAG NUX_MAKEFOURCHARTAG('i','a','t', 'x')
+#define NUX_ANIMATED_TEXTURE_VERSION NUX_MAKEFOURCHARTAG('0','0','0','1')
 
 
 bool CreateITXFile(const TCHAR* InputTextureFile, const TCHAR* OutputTextureFile = 0);

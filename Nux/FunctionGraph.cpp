@@ -50,7 +50,7 @@ void FunctionGraph::InitializeWidgets()
     Texture = GetThreadGLDeviceFactory()->CreateTexture(256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
-    NString Path = INL_FINDRESOURCELOCATION(TEXT("Data/UITextures/FunctionGraphBackground.tga"));
+    NString Path = NUX_FINDRESOURCELOCATION(TEXT("Data/UITextures/FunctionGraphBackground.tga"));
     NTexture2D BackgroundTexture;
     BackgroundTexture.Update(Path.GetTCharPtr());
 
@@ -67,8 +67,8 @@ void FunctionGraph::InitializeLayout()
 
 void FunctionGraph::DestroyLayout()
 {
-    INL_SAFE_DELETE(m_DrawFunctionShader);
-    INL_SAFE_DELETE(m_BackgroundLayer);
+    NUX_SAFE_DELETE(m_DrawFunctionShader);
+    NUX_SAFE_DELETE(m_BackgroundLayer);
 }
 
 long FunctionGraph::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -89,7 +89,6 @@ void FunctionGraph::Draw(GraphicsContext& GfxContext, bool force_draw)
     int Y = GetBaseY() + 1;
 
     float dX = (m_maxX - m_minX) / W;
-    float dY = (m_maxY - m_minY) / H;
 
     float x0, y0;
     x0 = m_minX;
@@ -103,16 +102,15 @@ void FunctionGraph::Draw(GraphicsContext& GfxContext, bool force_draw)
     GfxContext.PushClippingRectangle(base);
 
     float tex_dx = (m_maxX - m_minX) / Texture->GetWidth();
-    float tex_dy = (m_maxY - m_minY) / Texture->GetWidth();
     SURFACE_LOCKED_RECT lockrect;
     Texture.Handle->LockRect(0, &lockrect, 0);
     BYTE *dest = (BYTE*)lockrect.pBits;
-    for(t_u32 i = 0; i < Texture->GetWidth(); i++)
+    for(t_s32 i = 0; i < Texture->GetWidth(); i++)
     {
         float y = EvalFunction(m_minX + i*tex_dx); 
         y = (y - m_minY) / (m_maxY - m_minY);
 
-        for(t_u32 j = 0; j < Texture->GetHeight(); j++)
+        for(t_s32 j = 0; j < Texture->GetHeight(); j++)
         {
             dest[4*i + 0 + j * lockrect.Pitch] = 255 * Clamp<float>(y, 0.0f, 1.0f);
             dest[4*i + 1 + j * lockrect.Pitch] = 255 * Clamp<float>(y, 0.0f, 1.0f);

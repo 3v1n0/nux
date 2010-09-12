@@ -33,11 +33,6 @@ source_cpp = \
   $(srcdir)/TinyXML/tinyxml.cpp \
   $(srcdir)/TinyXML/tinystr.cpp \
   $(srcdir)/TinyXML/tinyxmlerror.cpp \
-  $(srcdir)/Memory/NMemoryAllocator.cpp \
-  $(srcdir)/Memory/NMemoryHook.cpp \
-  $(srcdir)/Memory/NDefaultMemoryAllocator.cpp \
-  $(srcdir)/Memory/NMemoryDebugHook.cpp \
-  $(srcdir)/Memory/NMemoryAllocatorInterface.cpp \
   $(srcdir)/FileManager/NSerializer.cpp \
   $(srcdir)/FileManager/NFileManagerGeneric.cpp \
   $(srcdir)/FileManager/NFileManagerGNU.cpp \
@@ -63,12 +58,14 @@ source_cpp = \
   $(srcdir)/Point.cpp \
   $(srcdir)/NGlobalInitializer.cpp \
   $(srcdir)/NObjectType.cpp \
-  $(srcdir)/NArray.cpp \
   $(srcdir)/NPlatform.cpp \
   $(srcdir)/Rect.cpp \
   $(srcdir)/NPrintf.cpp \
   $(srcdir)/NFile.cpp \
   $(srcdir)/NProcess.cpp \
+  $(srcdir)/NumberConversion.cpp \
+  $(srcdir)/NuxCore.cpp \
+  $(srcdir)/NuxObject.cpp \
   $(srcdir)/Math/Point2D.cpp \
   $(srcdir)/Math/MathFunctions.cpp \
   $(srcdir)/Math/Line2D.cpp \
@@ -87,15 +84,7 @@ source_cpp = \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
   $(srcdir)/NCRC32.cpp \
-  $(srcdir)/BitmapFormats.cpp \
   $(srcdir)/Size.cpp
-
-source_memory_h = \
-  $(srcdir)/Memory/NMemoryHook.h \
-  $(srcdir)/Memory/NDefaultMemoryAllocator.h \
-  $(srcdir)/Memory/NMemoryDebugHook.h \
-  $(srcdir)/Memory/NMemoryAllocatorInterface.h \
-  $(srcdir)/Memory/NMemoryAllocator.h
 
 source_file_manager_h = \
   $(srcdir)/FileManager/NFileManagerGNU.h \
@@ -145,7 +134,6 @@ source_h = \
   $(srcdir)/NSystemTypes.h \
   $(srcdir)/Point.h \
   $(srcdir)/NCPU.h \
-  $(srcdir)/BitmapFormats.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/NSystem.h \
   $(srcdir)/NParsing.h \
@@ -156,7 +144,6 @@ source_h = \
   $(srcdir)/NPlatform.h \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
-  $(srcdir)/NArray.h \
   $(srcdir)/NStreamBuffer.h \
   $(srcdir)/NMemory.h \
   $(srcdir)/Error.h \
@@ -167,6 +154,9 @@ source_h = \
   $(srcdir)/NOutputDevice.h \
   $(srcdir)/NProcess.h \
   $(srcdir)/NObjectType.h \
+  $(srcdir)/NumberConversion.h \
+  $(srcdir)/NuxCore.h \
+  $(srcdir)/NuxObject.h \
   $(srcdir)/ColorFunctions.h \
   $(srcdir)/Size.h \
   $(srcdir)/Exception.h \

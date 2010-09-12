@@ -32,22 +32,23 @@ const int VSCROLLBAR_WIDTH = 10;
 const int VSCROLLBAR_HEIGHT = 10;
 
 VScrollBar::VScrollBar()
-:   m_contentWidth(0)
-,   m_contentHeight(0)
-,   m_containerWidth(0)
-,   m_containerHeight(0)
-,   m_TrackWidth(0)
-,   m_TrackHeight(0)
-,   m_SlideBarOffsetX(0)
-,   m_SlideBarOffsetY(0)
-,   m_contentOffsetX(0)
-,   m_contentOffsetY(0)
-,   b_MouseUpTimer(false)
-,   b_MouseDownTimer(false)
-,   m_color_factor(1)
-,   m_UpTimerHandler(0)
-,   m_DownTimerHandler(0)
 {
+    m_contentWidth      = 0;
+    m_contentHeight     = 0;
+    m_containerWidth    = 0;
+    m_containerHeight   = 0;
+    m_TrackWidth        = 0;
+    m_TrackHeight       = 0;
+    m_SlideBarOffsetX   = 0;
+    m_SlideBarOffsetY   = 0;
+    m_contentOffsetX    = 0;
+    m_contentOffsetY    = 0;
+    b_MouseUpTimer      = false;
+    b_MouseDownTimer    = false;
+    m_color_factor      = 1.0f;
+    m_UpTimerHandler    = 0;
+    m_DownTimerHandler  = 0;
+
     vlayout = smptr(VLayout)(new VLayout(TEXT("MyVSB")));
     m_TopThumb = smptr(CoreArea)(new CoreArea());
     m_Track = smptr(CoreArea)(new CoreArea());
@@ -223,7 +224,6 @@ void VScrollBar::RecvTrackMouseDown(int x, int y, unsigned long button_flags, un
     if(y < Y)
     {
         // move the slide bar up
-        float percentage = (float) m_SlideBar->GetBaseHeight() / (float) m_Track->GetBaseHeight();
         TrackUp(this);
     }
     else

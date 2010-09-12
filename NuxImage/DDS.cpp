@@ -83,17 +83,20 @@ NBitmapData* Load_DDS_File(const TCHAR *filename)
     /*	variables	*/
     DDS_header header;
     unsigned int buffer_index = 0;
-    unsigned int tex_ID = 0;
     /*	file reading variables	*/
     BitmapFormat DDSFormat = BITFMT_UNKNOWN;
     unsigned int DDS_main_size;
     unsigned int DDS_full_size;
     unsigned int width, height;
-    int mipmaps, uncompressed, block_size = 16;
+    int mipmaps = 0;
+    int uncompressed;
+    int block_size = 16;
     bool isCubemap = false;
     bool isVolume = false;
     unsigned int flag;
-    unsigned int cf_target, ogl_target_start, ogl_target_end;
+    unsigned int cf_target;
+    unsigned int ogl_target_start = 0;
+    unsigned int ogl_target_end = 0;
     int VolumeDepth = 0;
 
     NBitmapData* BitmapData = 0;
@@ -105,7 +108,7 @@ NBitmapData* Load_DDS_File(const TCHAR *filename)
         result_string_pointer = "NULL buffer";
         return 0;
     }
-    if( buffer_length < sizeof( DDS_header ) )
+    if(buffer_length < (int) sizeof(DDS_header))
     {
         /*	we can't do it!	*/
         result_string_pointer = "DDS file was too small to contain the DDS header";
@@ -297,14 +300,14 @@ NBitmapData* Load_DDS_File(const TCHAR *filename)
 
     if(isVolume)
     {
-        for(t_u32 mip = 0; mip < mipmaps; ++mip )
+        for(t_s32 mip = 0; mip < mipmaps; ++mip )
         {
-            t_u32 pitch = ImageSurface::GetLevelPitchNoMemAlignment(DDSFormat, width, height, mip);
-            t_u32 blockheight = ImageSurface::GetLevelBlockHeight(DDSFormat, height, mip);
+            t_s32 pitch = ImageSurface::GetLevelPitchNoMemAlignment(DDSFormat, width, height, mip);
+            t_s32 blockheight = ImageSurface::GetLevelBlockHeight(DDSFormat, height, mip);
 
-            for(t_u32 s = 0; s < ImageSurface::GetLevelDim(DDSFormat, VolumeDepth, mip); s++ )
+            for(t_s32 s = 0; s < ImageSurface::GetLevelDim(DDSFormat, VolumeDepth, mip); s++ )
             {
-                for(t_u32 b = 0; b < blockheight; b++)
+                for(t_s32 b = 0; b < blockheight; b++)
                 {
                     Memcpy( BitmapData->GetSurface(mip, s).GetPtrRawData() + b * pitch,
                         (const void*)(&buffer[buffer_index + b * pitch]),

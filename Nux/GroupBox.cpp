@@ -47,7 +47,7 @@ long GroupBox::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEvent
 {
     long ret = TraverseInfo;
     long ProcEvInfo = 0;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x, ievent.e_y))
         {

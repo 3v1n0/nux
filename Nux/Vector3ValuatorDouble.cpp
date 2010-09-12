@@ -36,11 +36,12 @@ const Color SPINBOX_BUTTON_MOUSEOVER_COLOR = Color(0xFF222222);
 
 Vector3DoubleValuator::Vector3DoubleValuator(double X, double Y, double Z, double Step, double MinValue, double MaxValue)
 :   m_DoubleValidator(MinValue, MaxValue)
-,   m_Step(Step)
-,   m_X(X)
-,   m_Y(Y)
-,   m_Z(Z)
 {
+    m_Step = Step;
+    m_X = X;
+    m_Y = Y;
+    m_Z = Z;
+
     m_hlayout = smptr(HLayout)(new HLayout());
     m_XEdit = smptr(EditTextBox)(new EditTextBox());
     m_YEdit = smptr(EditTextBox)(new EditTextBox());
@@ -392,55 +393,55 @@ void Vector3DoubleValuator::ImplementDecrementZ()
 void Vector3DoubleValuator::ImplementValidateEntryX()
 {
     double ret = 0;
-    if(CharToDouble(m_XEdit->GetCleanText().GetTCharPtr(), ret))
+    ret = CharToDouble(m_XEdit->GetCleanText().GetTCharPtr());
     {
         m_X = m_DoubleValidator.Validate(ret);
         m_XEdit->SetText(inlPrintf("%.3f", m_X));
         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
         sigValue.emit(m_X, m_Y, m_Z);
     }
-    else
-    {
-        m_XEdit->SetText(inlPrintf("%.3f", m_X));
-        sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
-        sigValue.emit(m_X, m_Y, m_Z);
-    }
+//     else
+//     {
+//         m_XEdit->SetText(inlPrintf("%.3f", m_X));
+//         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+//         sigValue.emit(m_X, m_Y, m_Z);
+//     }
 }
 
 void Vector3DoubleValuator::ImplementValidateEntryY()
 {
     double ret = 0;
-    if(CharToDouble(m_YEdit->GetCleanText().GetTCharPtr(), ret))
+    ret = CharToDouble(m_YEdit->GetCleanText().GetTCharPtr());
     {
         m_Y = m_DoubleValidator.Validate(ret);
         m_YEdit->SetText(inlPrintf("%.3f", m_Y));
         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
         sigValue.emit(m_X, m_Y, m_Z);
     }
-    else
-    {
-        m_YEdit->SetText(inlPrintf("%.3f", m_Y));
-        sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
-        sigValue.emit(m_X, m_Y, m_Z);
-    }
+//     else
+//     {
+//         m_YEdit->SetText(inlPrintf("%.3f", m_Y));
+//         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+//         sigValue.emit(m_X, m_Y, m_Z);
+//     }
 }
 
 void Vector3DoubleValuator::ImplementValidateEntryZ()
 {
     double ret = 0;
-    if(CharToDouble(m_ZEdit->GetCleanText().GetTCharPtr(), ret))
+    ret = CharToDouble(m_ZEdit->GetCleanText().GetTCharPtr());
     {
         m_Z = m_DoubleValidator.Validate(ret);
         m_ZEdit->SetText(inlPrintf("%.3f", m_Z));
         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
         sigValue.emit(m_X, m_Y, m_Z);
     }
-    else
-    {
-        m_ZEdit->SetText(inlPrintf("%.3f", m_Z));
-        sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
-        sigValue.emit(m_X, m_Y, m_Z);
-    }
+//     else
+//     {
+//         m_ZEdit->SetText(inlPrintf("%.3f", m_Z));
+//         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+//         sigValue.emit(m_X, m_Y, m_Z);
+//     }
 }
 
 

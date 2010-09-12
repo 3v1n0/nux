@@ -39,7 +39,7 @@ BOOL inlGetProcReturnCode( void* ProcessHandle, INT* ReturnCode );
 
 class NProcess
 {
-    INL_DECLARE_GLOBAL_OBJECT(NProcess, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NProcess, NGlobalSingletonInitializer);
 public:
     
     DWORD GetProcessID();

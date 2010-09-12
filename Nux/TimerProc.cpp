@@ -31,7 +31,7 @@ NAMESPACE_BEGIN_GUI
 static bool TimeIsGreater(_Time t1, _Time t2);
 static void TimeRightNow(_Time *tv);
 static void Addmillisecs(_Time *tv, unsigned int milliseconds);
-static t_u32 TimeDiff(_Time t1, _Time t2);
+//static t_u32 TimeDiff(_Time t1, _Time t2);
 
 TimerHandle::TimerHandle()
 {
@@ -51,10 +51,9 @@ TimerHandle::TimerHandle()
 }
 
 TimerHandler::TimerHandler()
-:   TimerHandleQueue(0)
-,   m_IsProceesingTimers(false)
 {
-
+    TimerHandleQueue = 0;
+    m_IsProceesingTimers = false;
 }
 
 TimerHandler::~TimerHandler()
@@ -110,8 +109,8 @@ TimerHandler::~TimerHandler()
 // 
 // void TimerHandler::RemoveTimerWithClientData(void *Data)
 // {
-//     INL_RETURN_IF_NULL(Data);
-//     INL_RETURN_IF_NULL(TimerHandleQueue);
+//     NUX_RETURN_IF_NULL(Data);
+//     NUX_RETURN_IF_NULL(TimerHandleQueue);
 // 
 //     TimerHandle *handler, *tmp;
 // 
@@ -139,8 +138,8 @@ TimerHandler::~TimerHandler()
 // 
 // void TimerHandler::RemoveTimerHandler(TimerHandle *handler)
 // {
-//     INL_RETURN_IF_NULL(handler);
-//     INL_RETURN_IF_NULL(TimerHandleQueue);
+//     NUX_RETURN_IF_NULL(handler);
+//     NUX_RETURN_IF_NULL(TimerHandleQueue);
 // 
 //     TimerHandle *tmp;
 // 
@@ -167,7 +166,7 @@ TimerHandler::~TimerHandler()
 // 
 // int TimerHandler::ExecTimerHandler()
 // {
-//     INL_RETURN_VALUE_IF_NULL(TimerHandleQueue, 0);
+//     NUX_RETURN_VALUE_IF_NULL(TimerHandleQueue, 0);
 // 
 //     TimerHandle *handler;
 //     _Time now;
@@ -224,7 +223,7 @@ TimerHandle* TimerHandler::AddTimerHandler(unsigned int Period, TimerFunctor* Ca
 
     AddHandle(handler);
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
         handler->glibid = GetGraphicsThread()->AddGLibTimeout(Period);
         if(handler->glibid == 0)
@@ -323,8 +322,8 @@ t_u32 TimerHandler::GetNumPendingHandler()
 
 void TimerHandler::RemoveTimerWithClientData(void *Data)
 {
-    INL_RETURN_IF_NULL(Data);
-    INL_RETURN_IF_NULL(TimerHandleQueue);
+    NUX_RETURN_IF_NULL(Data);
+    NUX_RETURN_IF_NULL(TimerHandleQueue);
 
     TimerHandle *handler, *tmp;
 
@@ -357,8 +356,8 @@ void TimerHandler::RemoveTimerWithClientData(void *Data)
 
 void TimerHandler::RemoveTimerHandler(TimerHandle *handler)
 {
-    INL_RETURN_IF_NULL(handler);
-    INL_RETURN_IF_NULL(TimerHandleQueue);
+    NUX_RETURN_IF_NULL(handler);
+    NUX_RETURN_IF_NULL(TimerHandleQueue);
 
     TimerHandle *tmp;
 
@@ -404,13 +403,13 @@ void TimerHandler::RemoveTimerHandler(TimerHandle *handler)
     }
 }
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 int TimerHandler::ExecTimerHandler(t_u32 timer_id)
 #else
 int TimerHandler::ExecTimerHandler()
 #endif
 {
-    INL_RETURN_VALUE_IF_NULL(TimerHandleQueue, 0);
+    NUX_RETURN_VALUE_IF_NULL(TimerHandleQueue, 0);
 
     TimerHandle *handler = TimerHandleQueue;
     _Time now;
@@ -422,7 +421,7 @@ int TimerHandler::ExecTimerHandler()
     m_IsProceesingTimers = true;
     while(handler != NULL)
     {
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
         if((TimeIsGreater(now, handler->when) || (handler->glibid == timer_id)) && (handler->MarkedForRemoval == false))
 #else
         if(TimeIsGreater(now, handler->when))
@@ -620,7 +619,7 @@ void TimerHandler::DelayUntilNextTimerExpires(_Time *delay)
     }
 }
 
-t_u32 TimeDiff( _Time t1, _Time t2)
+/*t_u32 TimeDiff( _Time t1, _Time t2)
 {
     t_s32 sec;
     t_s32 usec;
@@ -650,7 +649,7 @@ t_u32 TimeDiff( _Time t1, _Time t2)
             usec = -usec;
     }
     return sec*1000 + usec/1000; // time diff is millisecond
-}
+}*/
 
 bool TimeIsGreater( _Time t1, _Time t2)
 {
@@ -665,13 +664,13 @@ bool TimeIsGreater( _Time t1, _Time t2)
 
 void TimeRightNow(_Time *tv) 
 {
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     struct _timeb timebuffer;
     // Time in seconds since midnight (00:00:00), January 1, 1970, coordinated universal time (UTC).
     _ftime(&timebuffer); 
     tv->sec = timebuffer.time;
     tv->usec = timebuffer.millitm * 1000;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     timeval unix_timeval;
     gettimeofday(&unix_timeval, NULL);
     tv->sec = unix_timeval.tv_sec;

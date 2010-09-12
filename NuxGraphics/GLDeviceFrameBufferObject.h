@@ -156,7 +156,7 @@ public:
     /// END : Static methods global to all FBOs
 
 private:
-    GLuint m_fboId;
+    GLint m_fboId;
     GLint  m_savedFboId;
 
     void  _GuardedBind();

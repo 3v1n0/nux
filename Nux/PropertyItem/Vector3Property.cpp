@@ -65,9 +65,9 @@ Vector3PropertyItem::Vector3PropertyItem(const TCHAR* name,
 
 Vector3PropertyItem::~Vector3PropertyItem()
 {
-    INL_SAFE_DELETE(m_X);
-    INL_SAFE_DELETE(m_Y);
-    INL_SAFE_DELETE(m_Z);
+    NUX_SAFE_DELETE(m_X);
+    NUX_SAFE_DELETE(m_Y);
+    NUX_SAFE_DELETE(m_Z);
 }
 
 long Vector3PropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -116,28 +116,22 @@ void Vector3PropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, co
 double Vector3PropertyItem::GetX() const 
 {
     double ret;
-    if(CharToDouble(m_X->GetText(), ret))
-        return ret;
-    nuxAssertMsg(0, TEXT("[Vector3PropertyItem::GetX] Failed CharToDouble conversion: %s"), m_X->GetText());
-    return 0;
+    ret = CharToDouble(m_X->GetText());
+    return ret;
 }
 
 double Vector3PropertyItem::GetY() const 
 {
     double ret;
-    if(CharToDouble(m_Y->GetText(), ret))
-        return ret;
-    nuxAssertMsg(0, TEXT("[Vector3PropertyItem::GetY] Failed CharToDouble conversion: %s"), m_Y->GetText());
-    return 0;
+    ret = CharToDouble(m_Y->GetText());
+    return ret;
 }
 
 double Vector3PropertyItem::GetZ() const 
 {
     double ret;
-    if(CharToDouble(m_Z->GetText(), ret))
-        return ret;
-    nuxAssertMsg(0, TEXT("[Vector3PropertyItem::GetZ] Failed CharToDouble conversion: %s"), m_Z->GetText());
-    return 0;
+    ret = CharToDouble(m_Z->GetText());
+    return ret;
 }
 
 Vector3PropertyItem* Vector3PropertyItem::CreateFromXML(const TiXmlElement* elementxml, NodeNetCom* parent, const char* Name, int id)

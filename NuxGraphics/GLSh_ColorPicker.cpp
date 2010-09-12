@@ -372,7 +372,6 @@ void GLSh_ColorPicker::Render(int x, int y, int z, int width, int height, int Wi
         sprog->Begin();
 
         int VertexLocation = sprog->GetAttributeLocation("AVertex");
-        int VertexColorLocation = sprog->GetAttributeLocation("VertexColor");
 
         int VPMatrixLocation = sprog->GetUniformLocationARB("ViewProjectionMatrix");
         sprog->SetUniformLocMatrix4fv((GLint)VPMatrixLocation, 1, false, (GLfloat*)&(GetThreadGraphicsContext()->GetModelViewProjectionMatrix().m));

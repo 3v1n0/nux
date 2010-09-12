@@ -324,7 +324,7 @@ size_t utf16_to_ascii(t_UTF16 *utf16str, size_t utf16len, t_UTF8 *asciistr, size
 {
 	size_t len = Min(utf16len, *asciilen);
 	
-	WideCharToMultiByte(CP_ACP, 0, INL_REINTERPRET_CAST(LPCWSTR, utf16str), len, (LPSTR)asciistr, *asciilen, 0, 0);
+	WideCharToMultiByte(CP_ACP, 0, NUX_REINTERPRET_CAST(LPCWSTR, utf16str), len, (LPSTR)asciistr, *asciilen, 0, 0);
 	*asciilen = len;
 	return len;
 }

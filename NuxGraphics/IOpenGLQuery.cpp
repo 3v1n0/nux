@@ -30,11 +30,12 @@ NAMESPACE_BEGIN_OGL
 
 IMPLEMENT_OBJECT_TYPE(IOpenGLQuery);
 
-int IOpenGLQuery::_CurrentlyActiveQuery = 0;
+t_u32 IOpenGLQuery::_CurrentlyActiveQuery = 0;
+
 IOpenGLQuery::IOpenGLQuery(QUERY_TYPE Type)
-: _Type(Type)
+: IOpenGLResource(RTQUERY)
+, _Type(Type)
 , _QueryStarted(false)
-, IOpenGLResource(RTQUERY)
 {
     CHECKGL( glGenQueriesARB(1, &_OpenGLID)) ;
 }
@@ -44,8 +45,8 @@ IOpenGLQuery::IOpenGLQuery(QUERY_TYPE Type)
 // These are considered successful return values. 
 int IOpenGLQuery::GetData(
                           int* pData,
-                          DWORD Size,
-                          DWORD GetDataFlags
+                          t_u32 Size,
+                          t_u32 GetDataFlags
                           )
 {
     unsigned int ResultReady = 0;
@@ -64,7 +65,7 @@ int IOpenGLQuery::GetData(
     }
 }
 
-DWORD IOpenGLQuery::GetDataSize()
+t_u32 IOpenGLQuery::GetDataSize()
 {
     return 0;
 }
@@ -81,10 +82,10 @@ QUERY_TYPE IOpenGLQuery::GetType()
 }
 
 void IOpenGLQuery::Issue(
-                         DWORD IssueFlags
+                         t_u32 IssueFlags
                          )
 {
-    if(IssueFlags == ISSUE_BEGIN)
+    if(IssueFlags == (t_u32)ISSUE_BEGIN)
     {
         nuxAssert(_CurrentlyActiveQuery == 0);
         if(_QueryStarted == true)
@@ -98,7 +99,7 @@ void IOpenGLQuery::Issue(
             _CurrentlyActiveQuery = _OpenGLID;
         }
     }
-    else if(IssueFlags == ISSUE_END)
+    else if(IssueFlags == (t_u32)ISSUE_END)
     {
         nuxAssert(_CurrentlyActiveQuery == _OpenGLID);
         if(_QueryStarted == false)

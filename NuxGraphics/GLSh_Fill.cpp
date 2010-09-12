@@ -77,11 +77,11 @@ GLSh_Fill::GLSh_Fill()
 
 GLSh_Fill::~GLSh_Fill()
 {
-    INL_SAFE_DELETE(m_QuadBuffer);
-    INL_SAFE_DELETE(Color);
-    INL_SAFE_DELETE(ViewProjectionMatrix);
-    INL_SAFE_DELETE(Scale);
-    INL_SAFE_DELETE(Offset);
+    NUX_SAFE_DELETE(m_QuadBuffer);
+    NUX_SAFE_DELETE(Color);
+    NUX_SAFE_DELETE(ViewProjectionMatrix);
+    NUX_SAFE_DELETE(Scale);
+    NUX_SAFE_DELETE(Offset);
 }
 
 void GLSh_Fill::SetColor(FLOAT R, FLOAT G, FLOAT B, FLOAT A)

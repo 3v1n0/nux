@@ -39,11 +39,11 @@ IOpenGLBaseTexture::IOpenGLBaseTexture(OpenGLResourceType ResourceType,
                                        BitmapFormat PixelFormat)
                                        : IOpenGLResource(ResourceType)
                                        , _IsPOT(false)
+                                       , _NumMipLevel(NumMipLevel)
+                                       , _PixelFormat(PixelFormat)                                       
                                        , _Width(Width)
                                        , _Height(Height)
                                        , _Depth(Depth)
-                                       , _NumMipLevel(NumMipLevel)
-                                       , _PixelFormat(PixelFormat)
                                        , _RowMemoryAlignment(1)
 {
     //     if( (GPixelFormats[PixelFormat].BlockBytes == 1) ||
@@ -215,7 +215,7 @@ int IOpenGLBaseTexture::BindTextureToUnit(int TextureUnitIndex)
     return OGL_OK;
 }
 
-t_u32 GetTextureSize(IOpenGLBaseTexture *pTexture)
+t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture)
 {
     GLint unpack_alignment = GPixelFormats[pTexture->_PixelFormat].RowMemoryAlignment;
     t_u32 halfUnpack = Log2(unpack_alignment);

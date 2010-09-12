@@ -32,13 +32,13 @@ GLShaderParameter::GLShaderParameter(GLProgramObject* Shader,
                   eShaderParameterType ParamType,
                   UBOOL IsOptional,
                   UBOOL IsStatic)
-:   m_NextParameter(0)
-,   m_ShaderProgram(Shader)
-,   m_ShaderProgram2(0)
+:   m_ShaderParameterType(ParamType)
 ,   m_Name(ParamName)
-,   m_ShaderParameterType(ParamType)
 ,   m_bIsOptional(IsOptional)
 ,   m_bIsStatic(IsStatic)
+,   m_ShaderProgram(Shader)
+,   m_ShaderProgram2(0)
+,   m_NextParameter(0)
 {
 //    m_NextParameter = Shader->FirstParameter;
 //    Shader->FirstParameter = this;

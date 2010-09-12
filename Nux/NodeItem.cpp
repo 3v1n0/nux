@@ -20,7 +20,7 @@
  */
 
 
-#ifndef INL_STANDALONE
+#ifndef NUX_STANDALONE
     #include "Nux.h"
 #endif
 
@@ -39,7 +39,7 @@ NAMESPACE_BEGIN_GUI
 //
 //
 
-#ifndef INL_STANDALONE
+#ifndef NUX_STANDALONE
 IMPLEMENT_ROOT_OBJECT_TYPE(NodeItem);
 #endif
 
@@ -121,7 +121,7 @@ void NodeItem::PushChildFront( NodeItem *child )
     }
     else
     {
-#ifndef INL_STANDALONE
+#ifndef NUX_STANDALONE
         nuxAssertMsg(0, TEXT("NodeItem::add_child_first: This should not happen"));
 #endif
     }
@@ -154,7 +154,7 @@ void NodeItem::PushChildBack( NodeItem *child ) // Push_Child_Back
     }
     else
     {
-#ifndef INL_STANDALONE
+#ifndef NUX_STANDALONE
         nuxAssertMsg(0, TEXT("NodeItem::add_child_last: This should not happen"));
 #endif
     }

@@ -112,14 +112,14 @@ const t_u8* NVertexBuffer::GetPtrRawData() const
 {
     if(_Data.size() == 0)
         return 0;
-    return INL_STATIC_CAST(const t_u8*, &_Data[0]);
+    return NUX_STATIC_CAST(const t_u8*, &_Data[0]);
 }
 
 t_u8* NVertexBuffer::GetPtrRawData()
 {
     if(_Data.size() == 0)
         return 0;
-    return INL_CONST_CAST(t_u8*, ((INL_CONST_CAST(const NVertexBuffer*, this))->GetPtrRawData()));
+    return NUX_CONST_CAST(t_u8*, ((NUX_CONST_CAST(const NVertexBuffer*, this))->GetPtrRawData()));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -188,12 +188,12 @@ int NIndexBuffer::GetNumElement() const
 
 const t_u8* NIndexBuffer::GetPtrRawData() const
 {
-    return INL_STATIC_CAST(const t_u8*, &_Data[0]);
+    return NUX_STATIC_CAST(const t_u8*, &_Data[0]);
 }
 
 t_u8* NIndexBuffer::GetPtrRawData()
 {
-    return INL_CONST_CAST(t_u8*, ((INL_CONST_CAST(const NIndexBuffer*, this))->GetPtrRawData()));
+    return NUX_CONST_CAST(t_u8*, ((NUX_CONST_CAST(const NIndexBuffer*, this))->GetPtrRawData()));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -216,15 +216,15 @@ void NVertexDeclaration::AddVertexComponent(VERTEXELEMENT Component)
 
 NMeshComponent::NMeshComponent()
 :   _Type(ATTRIB_DECLTYPE_UNKNOWN)
-,   _Offset(0)
 ,   _StreamIndex(-1)
+,   _Offset(0)
 {
 }
 
 NMeshComponent::NMeshComponent(const NMeshComponent& Other)
 :   _Type(ATTRIB_DECLTYPE_UNKNOWN)
-,   _Offset(0)
 ,   _StreamIndex(-1)
+,   _Offset(0)
 {
     _Type = Other._Type;
     _Offset = Other._Offset;
@@ -294,7 +294,7 @@ bool NGLVertexBuffer::UpdateResource(NResource* Source)
     nuxAssert(Source->Type().IsDerivedFromType(NVertexBuffer::StaticObjectType));
     if(Source->Type().IsDerivedFromType(NVertexBuffer::StaticObjectType))
     {
-        SourceVtxBuffer = INL_STATIC_CAST(NVertexBuffer*, Source);
+        SourceVtxBuffer = NUX_STATIC_CAST(NVertexBuffer*, Source);
     }
     else
     {
@@ -368,7 +368,7 @@ bool NGLIndexBuffer::UpdateResource(NResource* Source)
     nuxAssert(Source->Type().IsDerivedFromType(NIndexBuffer::StaticObjectType));
     if(Source->Type().IsDerivedFromType(NIndexBuffer::StaticObjectType))
     {
-        SourceIdxBuffer = INL_STATIC_CAST(NIndexBuffer*, Source);
+        SourceIdxBuffer = NUX_STATIC_CAST(NIndexBuffer*, Source);
     }
     else
     {
@@ -437,7 +437,7 @@ bool NGLVertexDeclaration::UpdateResource(NResource* Source)
     nuxAssert(Source->Type().IsDerivedFromType(NVertexDeclaration::StaticObjectType));
     if(Source->Type().IsDerivedFromType(NVertexDeclaration::StaticObjectType))
     {
-        SourceVertexDeclaration = INL_STATIC_CAST(NVertexDeclaration*, Source);
+        SourceVertexDeclaration = NUX_STATIC_CAST(NVertexDeclaration*, Source);
     }
     else
     {
@@ -592,7 +592,7 @@ NStaticMesh::~NStaticMesh()
 {
     delete m_pVertexDeclaration;
     delete m_pIndex;
-    for(int i = 0; i < m_pVertexStreamArray.size(); i++)
+    for(int i = 0; i < (int)m_pVertexStreamArray.size(); i++)
     {
         delete m_pVertexStreamArray[i];
     }
@@ -600,7 +600,7 @@ NStaticMesh::~NStaticMesh()
 
 int NStaticMesh::GetNumStreams() const
 {
-    return m_pVertexStreamArray.size();
+    return (int)m_pVertexStreamArray.size();
 }
 
 NGLStaticMesh::NGLStaticMesh(NResourceSet* ResourceManager, NStaticMesh* StaticMesh)
@@ -640,7 +640,7 @@ bool NGLStaticMesh::UpdateResource(NResource* Source)
     nuxAssert(Source->Type().IsDerivedFromType(NStaticMesh::StaticObjectType));
     if(Source->Type().IsDerivedFromType(NStaticMesh::StaticObjectType))
     {
-        StaticMesh = INL_STATIC_CAST(NStaticMesh*, Source);
+        StaticMesh = NUX_STATIC_CAST(NStaticMesh*, Source);
     }
     else
     {

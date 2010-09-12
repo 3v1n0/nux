@@ -57,7 +57,7 @@ GLFramebufferObject::GLFramebufferObject()
 
 GLFramebufferObject::~GLFramebufferObject() 
 {
-    CHECKGL( glDeleteFramebuffersEXT(1, &m_fboId) );
+    CHECKGL( glDeleteFramebuffersEXT(1, (const GLuint*)&m_fboId) );
 }
 
 void GLFramebufferObject::Bind() 
@@ -82,7 +82,7 @@ GLFramebufferObject::AttachTexture( GLenum attachment, GLenum texType,
     }
     else
     {
-//        nuxError(TEXT("GLFramebufferObject::AttachTexture PERFORMANCE WARNING:\n    \
+//        nuxError(TEXT("GLFramebufferObject::AttachTexture PERFORMANCE WARNING:\n    
 //            \tRedundant bind of texture (id = %d).\n"), texId);        
     }
     _GuardedUnbind();
@@ -111,7 +111,7 @@ GLFramebufferObject::AttachRenderBuffer( GLenum attachment, GLuint buffId )
     }
     else
     {
-//        nuxError(TEXT("GLFramebufferObject::AttachRenderBuffer PERFORMANCE WARNING:\n    \
+//        nuxError(TEXT("GLFramebufferObject::AttachRenderBuffer PERFORMANCE WARNING:\n    
 //            \tRedundant bind of GLRenderbuffer (id = %d).\n"), buffId);    
     }
     _GuardedUnbind();
@@ -357,7 +357,7 @@ void GLRenderbuffer::Set(GLenum internalFormat, int width, int height)
     // Guarded bind
     GLint savedId = 0;
     CHECKGL( glGetIntegerv( GL_RENDERBUFFER_BINDING_EXT, &savedId ) );
-    if (savedId != m_bufId)
+    if (savedId != (GLint)m_bufId)
     {
         Bind();
     }
@@ -366,7 +366,7 @@ void GLRenderbuffer::Set(GLenum internalFormat, int width, int height)
     CHECKGL( glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, internalFormat, width, height ) );
 
     // Guarded unbind
-    if (savedId != m_bufId)
+    if (savedId != (GLint)m_bufId)
     {
         Unbind();
     }

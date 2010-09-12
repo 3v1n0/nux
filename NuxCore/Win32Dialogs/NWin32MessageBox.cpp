@@ -50,7 +50,7 @@ const TCHAR* inlGetSystemErrorMessage( unsigned int Error )
 void inlOKMessageBox( const TCHAR* Title, const TCHAR* Fmt, ... )
 {
     TCHAR TempStr[4096]=TEXT("");
-    GET_VARARGS( TempStr, INL_ARRAY_COUNT(TempStr), INL_ARRAY_COUNT(TempStr) - 1, Fmt );
+    GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr) - 1, Fmt );
     if(GNoDialog == TRUE)
     {
         nuxDebugMsg(TempStr);
@@ -64,7 +64,7 @@ void inlOKMessageBox( const TCHAR* Title, const TCHAR* Fmt, ... )
 void inlGetLastErrorMessageBox()
 {
     TCHAR TempStr[4096]=TEXT("");
-    Snprintf( TempStr, INL_ARRAY_COUNT(TempStr), INL_ARRAY_COUNT(TempStr)-1, TEXT("GetLastError : %d\n\n%s"), GetLastError(), inlGetSystemErrorMessage() );
+    Snprintf( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr)-1, TEXT("GetLastError : %d\n\n%s"), GetLastError(), inlGetSystemErrorMessage() );
     if( GNoDialog == TRUE )
     {
         nuxError(TempStr);
@@ -81,10 +81,10 @@ VARARG_BODY(unsigned int, inlWin32MessageBox, const TCHAR*, VARARG_EXTRA(HWND Ow
 //BOOL inlWin32MessageBox(HWND OwnerWindowHandle, const TCHAR* Caption, const TCHAR* Message, MessageBoxType Type, t_u32 Modal)
 {
     //    TCHAR TempStr[4096]=TEXT("");
-    //    GET_VARARGS( TempStr, INL_ARRAY_COUNT(TempStr), Fmt, Fmt );
+    //    GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), Fmt, Fmt );
 
     TCHAR TempStr[4096]=TEXT("");
-    GET_VARARGS( TempStr, INL_ARRAY_COUNT(TempStr), INL_ARRAY_COUNT(TempStr)-1, Fmt);
+    GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr)-1, Fmt);
 
     if(GNoDialog == TRUE)
     {

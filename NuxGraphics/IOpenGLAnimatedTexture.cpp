@@ -30,9 +30,9 @@ NAMESPACE_BEGIN_OGL
 IMPLEMENT_OBJECT_TYPE(IOpenGLAnimatedTexture);
 
 IOpenGLAnimatedTexture::IOpenGLAnimatedTexture(
-    unsigned int Width
-    , unsigned int Height
-    , unsigned int Depth
+    int Width
+    , int Height
+    , int Depth
     , BitmapFormat PixelFormat)
     :    IOpenGLBaseTexture(RTANIMATEDTEXTURE, Width, Height, Depth, 1, PixelFormat)
     ,    _CurrentFrame(0)
@@ -120,13 +120,13 @@ void IOpenGLAnimatedTexture::PresentLastFrame()
 
 void IOpenGLAnimatedTexture::SetFrameTime(int Frame, int time_ms)
 {
-    nuxAssert(_CurrentFrame < _FrameTimeArray.size());
+    nuxAssert(_CurrentFrame < (int)_FrameTimeArray.size());
     _FrameTimeArray[Frame] = time_ms;
 }
 
 int IOpenGLAnimatedTexture::GetFrameTime()
 {
-    nuxAssert(_CurrentFrame < _FrameTimeArray.size());
+    nuxAssert(_CurrentFrame < (int)_FrameTimeArray.size());
     return _FrameTimeArray[_CurrentFrame];
 }
 

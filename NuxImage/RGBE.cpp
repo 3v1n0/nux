@@ -227,7 +227,7 @@ int RGBEReadHeader(std::ifstream& fileStream, int &width, int &height, rgbe_head
     else //if (info)
     {
         info.valid |= RGBE_VALID_PROGRAMTYPE;
-        for(i = 0; i < sizeof(info.programtype) - 1; i++)
+        for(i = 0; i < (t_s32) sizeof(info.programtype) - 1; i++)
         {
             if ((buf[i+2] == 0) || isspace(buf[i+2]))
                 break;

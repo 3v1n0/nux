@@ -39,7 +39,7 @@ NPS3SerialFileReader::NPS3SerialFileReader(t_int InFileDescriptor, NOutputDevice
 }
 NPS3SerialFileReader::~NPS3SerialFileReader()
 {
-    INL_SAFE_DELETE_ARRAY(m_Buffer);
+    NUX_SAFE_DELETE_ARRAY(m_Buffer);
     if(m_FileDescriptor)
     {
         Close();
@@ -180,7 +180,7 @@ NPS3SerialFileWriter::NPS3SerialFileWriter(t_int InFileDescriptor, NOutputDevice
 
 NPS3SerialFileWriter::~NPS3SerialFileWriter()
 {
-    INL_SAFE_DELETE_ARRAY(m_Buffer);
+    NUX_SAFE_DELETE_ARRAY(m_Buffer);
     if(m_FileDescriptor)
         Close();
     m_FileDescriptor = 0;
@@ -269,7 +269,7 @@ void NPS3SerialFileWriter::Flush()
     m_BufferCount = 0;
 }
 //////////////////////////////////////////////////////////////////////////
-INL_IMPLEMENT_GLOBAL_OBJECT(NFileManagerPS3);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NFileManagerPS3);
 
 void NFileManagerPS3::Constructor()
 {
@@ -494,9 +494,9 @@ bool NFileManagerPS3::MakeDirectory(const TCHAR* Path, bool CreateCompletePath)
     if((error != CELL_FS_SUCCEEDED) && (error != CELL_FS_EEXIST))
     {
         nuxDebugMsg(TEXT("[NFileManagerPS3::MakeDirectory] Error creating directory '%s'."), Path);
-        return INL_ERROR;
+        return NUX_ERROR;
     }
-    return INL_OK;
+    return NUX_OK;
 }
 
 bool NFileManagerPS3::DeleteDirectory(const TCHAR* Path, bool DeleteContentFirst)

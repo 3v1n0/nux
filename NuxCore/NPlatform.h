@@ -77,7 +77,7 @@ NString GetLogDirectory();
 
 class NGlobalData
 {
-    INL_DECLARE_GLOBAL_OBJECT(NGlobalData, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NGlobalData, NGlobalSingletonInitializer);
 public:
 
     void Initialize(const TCHAR* CommandLine);

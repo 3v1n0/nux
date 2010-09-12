@@ -34,14 +34,15 @@ Color GPropertyItemTextColor1 = Color(0xFFE9E9E9);
 
 TableItem::TableItem(const TCHAR* name, NodeParameterType type)
 :   NodeNetCom(name, type)
-,   m_PropertyRedraw(false)
-,   m_bIsMouseInside(false)
-,   m_bIsFirstVisibleItem(false)
-,   m_bIsLastVisibleItem(false)
-,   m_Table(0)
-,   m_PropertyTextColor(0)
-,   m_AlwaysShowOpeningButton(false)
 {
+    m_PropertyRedraw = false;
+    m_bIsMouseInside = false;
+    m_bIsFirstVisibleItem = false;
+    m_bIsLastVisibleItem = false;
+    m_Table = 0;
+    m_PropertyTextColor = 0;
+    m_AlwaysShowOpeningButton = false;
+
     m_isOpen = false;
     m_bParentOpen = false;
     m_bDirty = true;
@@ -49,7 +50,7 @@ TableItem::TableItem(const TCHAR* name, NodeParameterType type)
 
 TableItem::~TableItem()
 {
-    INL_SAFE_DELETE(m_PropertyTextColor);
+    NUX_SAFE_DELETE(m_PropertyTextColor);
 }
 
 void TableItem::PushChildFront( NodeItem *child )
@@ -85,7 +86,7 @@ long TableItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long Pro
     //m_bIsMouseInside = false;
     long ret = TraverseInfo;
     Geometry geo = m_ItemGeometryVector[0];
-    if(ievent.e_event == INL_MOUSE_PRESSED && !(ret & eMouseEventSolved) && !(ProcessEventInfo & eDoNotProcess))
+    if(ievent.e_event == NUX_MOUSE_PRESSED && !(ret & eMouseEventSolved) && !(ProcessEventInfo & eDoNotProcess))
     {
         for(UINT i = 0; i < m_ItemGeometryVector.size(); i++)
         {
@@ -171,7 +172,6 @@ long TableItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long Pro
 void TableItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter,
                              RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
-    bool isSelected = (this == table->GetSelectedItem());
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
     if(isDirtyItem())
     {

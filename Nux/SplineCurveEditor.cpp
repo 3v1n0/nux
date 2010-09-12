@@ -39,13 +39,14 @@ static const int GRAPH_MARGIN = 2;
 unsigned long CTRL_KEY = 0;
 // todo InitWidget
 SplineCurveEditor::SplineCurveEditor()
-:   m_minX(0.0f)
-,   m_minY(0.0f)
-,   m_maxX(1.0f)
-,   m_maxY(1.0f)
-,   m_FunctionCallback(0)
-,   m_Background()
 {
+    m_minX              = 0.0f;
+    m_minY              = 0.0f;
+    m_maxX              = 1.0f;
+    m_maxY              = 1.0f;
+    m_FunctionCallback  = 0;
+    m_Background        = 0;
+
     InitializeLayout();
     InitializeWidgets();
 
@@ -72,8 +73,8 @@ SplineCurveEditor::SplineCurveEditor()
 SplineCurveEditor::~SplineCurveEditor()
 {
     DestroyLayout();
-    INL_SAFE_DELETE(m_DrawFunctionShader);
-    INL_SAFE_DELETE(m_Background);
+    NUX_SAFE_DELETE(m_DrawFunctionShader);
+    NUX_SAFE_DELETE(m_Background);
 }
 
 void SplineCurveEditor::InitializeWidgets()
@@ -144,7 +145,7 @@ double SplineCurveEditor::Eval(double t)
 long SplineCurveEditor::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     long ret = TraverseInfo;
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         if(!m_Geometry.IsPointInside(ievent.e_x, ievent.e_y))
         {
@@ -152,7 +153,7 @@ long SplineCurveEditor::ProcessEvent(IEvent &ievent, long TraverseInfo, long Pro
         }
     }
 
-    CTRL_KEY = ievent.GetVirtualKeyState(INL_VK_CONTROL);
+    CTRL_KEY = ievent.GetVirtualKeyState(NUX_VK_CONTROL);
     ret = PostProcessEvent2(ievent, ret, ProcessEventInfo);
     return ret;
 }
@@ -202,9 +203,6 @@ void SplineCurveEditor::Draw(GraphicsContext& GfxContext, bool force_draw)
         int X = GetBaseX() + GRAPH_MARGIN;
         int Y = GetBaseY() + GRAPH_MARGIN;
 
-        float dX = (m_maxX - m_minX) / W;
-        float dY = (m_maxY - m_minY) / H;
-
         double tval_prev, val_prev;
         double tval, val;
         tval_prev = 0.0;
@@ -225,16 +223,15 @@ void SplineCurveEditor::Draw(GraphicsContext& GfxContext, bool force_draw)
         else
         {
             float tex_dx = (m_maxX - m_minX) / m_Texture->GetWidth();
-            float tex_dy = (m_maxY - m_minY) / m_Texture->GetWidth();
             SURFACE_LOCKED_RECT lockrect;
             m_Texture.Handle->LockRect(0, &lockrect, 0);
             BYTE *dest = (BYTE*)lockrect.pBits;
-            for(t_u32 i = 0; i < m_Texture->GetWidth(); i++)
+            for(t_s32 i = 0; i < m_Texture->GetWidth(); i++)
             {
                 float y = m_CubicSpline.Eval(m_minX + i*tex_dx); 
                 y = (y - m_minY) / (m_maxY - m_minY);
 
-                for(t_u32 j = 0; j < m_Texture->GetHeight(); j++)
+                for(t_s32 j = 0; j < m_Texture->GetHeight(); j++)
                 {
                     dest[4*i + 0 + j * lockrect.Pitch] = 255 * Clamp<float>(y, 0.0f, 1.0f);
                     dest[4*i + 1 + j * lockrect.Pitch] = 255 * Clamp<float>(y, 0.0f, 1.0f);
@@ -541,8 +538,6 @@ void SplineCurveEditor::RecvMouseDrag(int x, int y, int dx, int dy, unsigned lon
             {
                 if(m_control_knot[i].GetX() < m_control_knot[i - 1].GetX() + 0.01)
                 {
-                    float f = m_control_knot[i].GetX();
-                    float f2 =  m_control_knot[i - 1].GetX();
                     m_control_knot[i].SetX(m_control_knot[i - 1].GetX() + 0.01);
                 }
             }
@@ -580,7 +575,7 @@ void SplineCurveEditor::RecvKeyEvent(
         return;
     }
 
-    if((keysym == INL_VK_DELETE) || (keysym == INL_KP_DELETE) || (keysym == INL_VK_BACKSPACE))
+    if((keysym == NUX_VK_DELETE) || (keysym == NUX_KP_DELETE) || (keysym == NUX_VK_BACKSPACE))
     {
 
         int kn = m_control_knot.GetNumSelectedKnot();

@@ -23,14 +23,14 @@
 #ifndef NUXGRAPHICSGLOBALINITIALIZER_H
 #define NUXGRAPHICSGLOBALINITIALIZER_H
 
-#define INL_GLOBAL_GRAPHICS_OBJECT_INIT_SEQUENCE()          \
-    INL_GLOBAL_OBJECT_VARIABLE(RenderingStats);
+#define NUX_GLOBAL_GRAPHICS_OBJECT_INIT_SEQUENCE()          \
+    NUX_GLOBAL_OBJECT_VARIABLE(RenderingStats);
 
 NAMESPACE_BEGIN_OGL
 
 class NuxGraphicsGlobalSingletonInitializer
 {
-    INL_DISABLE_OBJECT_COPY(NuxGraphicsGlobalSingletonInitializer);
+    NUX_DISABLE_OBJECT_COPY(NuxGraphicsGlobalSingletonInitializer);
     NuxGraphicsGlobalSingletonInitializer* operator & ();
     const NuxGraphicsGlobalSingletonInitializer* operator & () const;
 
@@ -42,7 +42,7 @@ public:
 private:
     static bool m_NuxGraphicsGlobalObjectsReady;
 
-    INL_GLOBAL_GRAPHICS_OBJECT_INIT_SEQUENCE();
+    NUX_GLOBAL_GRAPHICS_OBJECT_INIT_SEQUENCE();
 };
 
 

@@ -29,10 +29,10 @@
 
 #define CHECKGLX(a) a
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     extern GLEWContext* glewGetContext();
     extern WGLEWContext* wglewGetContext();
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     extern GLEWContext* glewGetContext();
     extern GLXEWContext* glxewGetContext();
 #endif
@@ -149,7 +149,7 @@ bool GLRenderableMesh::CreateGLArrayData(MeshData2* MeshData)
     int nbPrimitive = md->m_SubMeshCount;
 
     m_VertexArray = new nux::Vec4<float>* [nbPrimitive]; 
-    m_IndexArray = new unsigned int* [nbPrimitive];
+    m_IndexArray = new int* [nbPrimitive];
     m_SubMeshTriangleCount = new int [nbPrimitive];
     m_SubMeshCount = nbPrimitive;
     m_ArrayStats = new GLRenderableMesh::ArrayStats[nbPrimitive];
@@ -176,7 +176,7 @@ bool GLRenderableMesh::CreateGLArrayData(MeshData2* MeshData)
             m_VertexArray[Primitive][count++] = v2;
         }
         m_SubMeshTriangleCount[Primitive] = nbTriangle;
-        m_IndexArray[Primitive] = new unsigned int[nbTriangle*3];
+        m_IndexArray[Primitive] = new int[nbTriangle*3];
 
         // After that the VertexArray for primitive #Primitive is like:
         // [Triangle0<v0,v1,v2>, Triangle1<v0,v1,v2> .... TriangleN<v0,v1,v2>]
@@ -273,9 +273,6 @@ bool GLRenderableMesh::CreateGLArrayData(MeshData2* MeshData)
                 nux::Vec2<float> v0,v1,v2;
                 for(long k = 0; k < nbTriangle; k++)
                 {
-                    int a = md->UVIndexArray[Primitive][j][k].i;
-                    int b = md->UVIndexArray[Primitive][j][k].j;
-                    int c = md->UVIndexArray[Primitive][j][k].k;
                     v0 = md->UVPool[j][md->UVIndexArray[Primitive][j][k].i];
                     v1 = md->UVPool[j][md->UVIndexArray[Primitive][j][k].j];
                     v2 = md->UVPool[j][md->UVIndexArray[Primitive][j][k].k];
@@ -316,7 +313,7 @@ void GLRenderableMesh::CreateGLArrayData3(MeshData3* MeshData)
     int nbPrimitive = md->m_SubMeshCount;
 
     m_VertexArray = new nux::Vec4<float>* [nbPrimitive]; 
-    m_IndexArray = new unsigned int* [nbPrimitive];
+    m_IndexArray = new int* [nbPrimitive];
     m_SubMeshTriangleCount = new int [nbPrimitive];
     m_SubMeshCount = nbPrimitive;
 
@@ -338,7 +335,7 @@ void GLRenderableMesh::CreateGLArrayData3(MeshData3* MeshData)
             m_VertexArray[Primitive][count++] = v2;
         }
         m_SubMeshTriangleCount[Primitive] = nbTriangle;
-        m_IndexArray[Primitive] = new unsigned int[nbTriangle*3];
+        m_IndexArray[Primitive] = new int[nbTriangle*3];
 
         // After that the VertexArray for primitive #Primitive is like:
         // [Triangle0<v0,v1,v2>, Triangle1<v0,v1,v2> .... TriangleN<v0,v1,v2>]
@@ -463,32 +460,32 @@ void GLRenderableMesh::CreateGLArrayData3(MeshData3* MeshData)
     m_scaling = md->vScaling;
 }
 
-unsigned int GLRenderableMesh::GetVertexBufferSize(int submeshid)
+int GLRenderableMesh::GetVertexBufferSize(int submeshid)
 {
     return m_SubMeshTriangleCount[submeshid]*3*sizeof(float)*4; // each vertex is 4 floats (X, Y, Z, W)
 }
 
-unsigned int GLRenderableMesh::GetNormalBufferSize(int submeshid)
+int GLRenderableMesh::GetNormalBufferSize(int submeshid)
 {
     return m_SubMeshTriangleCount[submeshid]*3*sizeof(float)*3; // each vertex is 3 floats (X, Y, Z)
 }
 
-unsigned int GLRenderableMesh::GetColorBufferSize(int submeshid)
+int GLRenderableMesh::GetColorBufferSize(int submeshid)
 {
     return m_SubMeshTriangleCount[submeshid]*3*sizeof(float)*4;  // RGBA!
 }
 
-unsigned int GLRenderableMesh::GetTextureBufferSize(int submeshid)
+int GLRenderableMesh::GetTextureBufferSize(int submeshid)
 {
     return m_SubMeshTriangleCount[submeshid]*3*sizeof(float)*2; // each UV is 2 floats
 }
 
-unsigned int GLRenderableMesh::GetIndexBufferSize(int submeshid)
+int GLRenderableMesh::GetIndexBufferSize(int submeshid)
 {
     return m_SubMeshTriangleCount[submeshid]*3*sizeof(int);
 }
 
-unsigned int GLRenderableMesh::GetElementCount(int submeshid)
+int GLRenderableMesh::GetElementCount(int submeshid)
 {
     return m_SubMeshTriangleCount[submeshid]*3;
 }
@@ -501,7 +498,7 @@ void GLRenderableMesh::LoadVBO()
     nux::Vec3<float> *BinormalData;
     nux::Vec4<float> *ColorData;
     nux::Vec2<float> *TexCoord0;
-    unsigned int *indexdata;
+    int *indexdata;
     int size;
 
     if(m_SubMeshCount == 0)
@@ -759,7 +756,7 @@ void GLRenderableMesh::CalculateTangentArray(const nux::Vec4<float> *vertex,
                            const nux::Vec3<float> *normal,
                            const nux::Vec2<float> *texcoord,
                            long triangleCount,
-                           const unsigned int *triangleIndex,
+                           const int *triangleIndex,
                            nux::Vec3<float> *tangent,
                            nux::Vec3<float> *binormal)
 {
@@ -847,7 +844,6 @@ void GLRenderableMesh::RenderNormal()
     for(unsigned int Primitive = 0; Primitive < m_SubMeshCount; Primitive++)
     {
         int nbTriangle = m_SubMeshTriangleCount[Primitive];
-        int count = 0;
 
         for(long j = 0; j < nbTriangle; j++)
         {

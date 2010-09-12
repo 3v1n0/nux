@@ -25,7 +25,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     const TCHAR* WINDOW_CLASS_NAME = TEXT("InalogicWindowClass");
     HINSTANCE gInstance = 0;
 #endif
@@ -37,7 +37,7 @@ DisplayAccessController::DisplayAccessController()
     inlRegisterThreadLocalIndex(1, ThreadLocal_GLWindowImpl, NULL);
     inlRegisterThreadLocalIndex(2, ThreadLocal_GLDeviceFactory, NULL);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     // Register Windows Class
 
     // Get hInstance of current application.
@@ -80,7 +80,7 @@ DisplayAccessController::DisplayAccessController()
 
 DisplayAccessController::~DisplayAccessController()
 {
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     if (!UnregisterClass(WINDOW_CLASS_NAME, hInstance))			// Are We Able To Unregister Class
     {
         nuxDebugMsg(TEXT("[DisplayAccessController::~DisplayAccessController] Failed to unregister window class name: %s."), WINDOW_CLASS_NAME);
@@ -113,7 +113,7 @@ GLWindowImpl* DisplayAccessController::CreateGLWindow(const TCHAR* WindowTitle, 
     return glwindow;
 }
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
 GLWindowImpl* DisplayAccessController::CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
 {
     if(GetThreadGLWindow())
@@ -128,7 +128,7 @@ GLWindowImpl* DisplayAccessController::CreateFromForeignWindow(HWND WindowHandle
 
     return glwindow;
 }
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 GLWindowImpl* DisplayAccessController::CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext)
 {
     if(GetThreadGLWindow())
@@ -169,12 +169,12 @@ GLEWContext* glewGetContext()
     return nux::GetThreadGLWindow()->GetGLEWContext();
 }
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
 WGLEWContext* wglewGetContext()
 {
     return nux::GetThreadGLWindow()->GetWGLEWContext();
 }
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
 GLXEWContext* glxewGetContext()
 {
     return nux::GetThreadGLWindow()->GetGLXEWContext();

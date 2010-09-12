@@ -32,10 +32,10 @@ class IOpenGLFrameBufferObject: public IOpenGLResource
 public:
     virtual ~IOpenGLFrameBufferObject();
 
-    int FormatFrameBufferObject(unsigned int Width, unsigned int Height, BitmapFormat PixelFormat);
-    int SetRenderTarget(unsigned int ColorAttachmentIndex, TRefGL<IOpenGLSurface> pRenderTargetSurface);
+    int FormatFrameBufferObject(int Width, int Height, BitmapFormat PixelFormat);
+    int SetRenderTarget(int ColorAttachmentIndex, TRefGL<IOpenGLSurface> pRenderTargetSurface);
     int SetDepthSurface(TRefGL<IOpenGLSurface> pDepthSurface);
-    TRefGL<IOpenGLSurface> GetRenderTarget(unsigned int ColorAttachmentIndex);
+    TRefGL<IOpenGLSurface> GetRenderTarget(int ColorAttachmentIndex);
     TRefGL<IOpenGLSurface> GetDepthRenderTarget();
 
     int Clear(DWORD Flags, FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT Z, DWORD Stencil);
@@ -54,18 +54,18 @@ public:
     void PopClippingRegion();
     void EmptyClippingRegion();
     void ApplyClippingRegion();
-    void SetClippingRegion(int x, int y, unsigned int width, unsigned int height);
+    void SetClippingRegion(int x, int y, int width, int height);
     Rect GetClippingRegion();
     int GetWidth() const {return _Width;}
     int GetHeight() const {return _Height;}
 
 private:
-    IOpenGLFrameBufferObject(unsigned int Width = 4, unsigned int Height = 4, BitmapFormat PixelFormat = BITFMT_R8G8B8A8);
+    IOpenGLFrameBufferObject(int Width = 4, int Height = 4, BitmapFormat PixelFormat = BITFMT_R8G8B8A8);
 
-    unsigned int	            _Width;
-    unsigned int	            _Height;
+    int             _Width;
+    int             _Height;
     BitmapFormat    _PixelFormat;
-    bool             _IsActive;
+    bool            _IsActive;
 
     TRefGL<IOpenGLSurface>     _Depth_Attachment;
     TRefGL<IOpenGLSurface>     _Stencil_Attachment;

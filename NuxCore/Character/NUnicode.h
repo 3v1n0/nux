@@ -209,14 +209,14 @@ public:
 class TCharToAnsiConvertion
 {
 public:
-    INL_INLINE TCharToAnsiConvertion() {}
+    NUX_INLINE TCharToAnsiConvertion() {}
 
       /*!
       Convert from TCHAR to ANSICHAR
       @param Source String to convert. Null terminated.
       @return Return a pointer to the new string. Null terminated.
       */
-      INL_INLINE ANSICHAR* Convert(const TCHAR* Source)
+      NUX_INLINE ANSICHAR* Convert(const TCHAR* Source)
       {
           // Determine whether we need to allocate memory or not
 #ifdef UNICODE
@@ -237,14 +237,14 @@ public:
 class AnsiToTCharConversion
 {
 public:
-    INL_INLINE AnsiToTCharConversion() {}
+    NUX_INLINE AnsiToTCharConversion() {}
 
     /*!
     Convert from ANSICHAR to TCHAR
     @param Source String to convert. Null terminated.
     @return Return a pointer to the new string. Null terminated.
     */
-    INL_INLINE TCHAR* Convert(const ANSICHAR* Source)
+    NUX_INLINE TCHAR* Convert(const ANSICHAR* Source)
     {
 #ifdef UNICODE
         AnsicharToUnicharConvertion convert;
@@ -262,7 +262,7 @@ public:
 /*!
 Convert from one string format to another.
 */
-template<typename CONVERT_TO,typename CONVERT_FROM, typename BASE_CONVERTER, DWORD DefaultConversionSize = 128>
+template<typename CONVERT_TO, typename CONVERT_FROM, typename BASE_CONVERTER, DWORD DefaultConversionSize = 128>
 class NCharacterConversion:   public BASE_CONVERTER
 {
     CONVERT_TO* ConvertedString;

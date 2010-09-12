@@ -27,12 +27,12 @@
 NAMESPACE_BEGIN_OGL
 GLTimer::GLTimer()
 {
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
     QueryPerformanceCounter(&now);
     res = (float) (1.0f / (double) freq.QuadPart);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     gettimeofday(&m_last_time, NULL);
 #endif
 }
@@ -43,23 +43,23 @@ GLTimer::~GLTimer()
 
 void GLTimer::Reset(void)
 {
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     QueryPerformanceCounter(&now);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     gettimeofday(&m_last_time, NULL);
 #endif
 }
 
 float GLTimer::PassedMilliseconds(void)
 {
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     LARGE_INTEGER temp;
     QueryPerformanceCounter(&temp);
     double elapsedTime = (temp.QuadPart - now.QuadPart) * res * 1000.0f;
     //now.QuadPart = temp.QuadPart;
     return elapsedTime;
 
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     timeval current_time;
     float elapsedTime;
     

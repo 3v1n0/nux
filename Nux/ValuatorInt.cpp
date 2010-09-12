@@ -206,7 +206,7 @@ void ValuatorInt::ImplementDecrementBtn()
 void ValuatorInt::ImplementValidateEntry()
 {
     double ret = 0;
-    if(CharToDouble(m_EditLine->GetCleanText().GetTCharPtr(), ret))
+    ret = CharToDouble(m_EditLine->GetCleanText().GetTCharPtr());
     {
         m_iValue = m_IntValidator.Validate(ret);
         m_EditLine->SetText(inlPrintf("%d", m_iValue));
@@ -224,12 +224,12 @@ void ValuatorInt::ImplementValidateEntry()
 //            m_EditLine->SetText(inlPrintf("%d", m_iValue));
 //        }
     }
-    else
-    {
-        m_EditLine->SetText(inlPrintf("%d", m_iValue));
-        sigValueChanged.emit(smptr(ValuatorInt)(this, false));
-        sigValue.emit(m_iValue);
-    }
+//     else
+//     {
+//         m_EditLine->SetText(inlPrintf("%d", m_iValue));
+//         sigValueChanged.emit(smptr(ValuatorInt)(this, false));
+//         sigValue.emit(m_iValue);
+//     }
 }
 
 

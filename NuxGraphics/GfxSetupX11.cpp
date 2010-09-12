@@ -36,7 +36,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-unsigned int gVirtualKeycodeState[INL_MAX_VK];
+unsigned int gVirtualKeycodeState[NUX_MAX_VK];
 
 // Attributes for a single buffered visual in RGBA format
 static int g_DoubleBufferVisual[] = {
@@ -51,66 +51,67 @@ static int g_DoubleBufferVisual[] = {
     None};
 
 // Attributes for a single buffered visual in RGBA format
-static int g_SingleBufferVisual[] = {
-    GLX_RGBA, 
-    GLX_RED_SIZE,       8,
-    GLX_GREEN_SIZE,     8,
-    GLX_BLUE_SIZE,      8,
-    GLX_ALPHA_SIZE,     8,
-    GLX_DEPTH_SIZE,     24,
-    GLX_STENCIL_SIZE,   8,
-    None };
+// static int g_SingleBufferVisual[] = {
+//     GLX_RGBA, 
+//     GLX_RED_SIZE,       8,
+//     GLX_GREEN_SIZE,     8,
+//     GLX_BLUE_SIZE,      8,
+//     GLX_ALPHA_SIZE,     8,
+//     GLX_DEPTH_SIZE,     24,
+//     GLX_STENCIL_SIZE,   8,
+//     None };
 
 // Compute the frame rate every FRAME_RATE_PERIODE;
 #define FRAME_RATE_PERIODE    10
 
-#define INL_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
-#define INL_ERROR_EXIT_MESSAGE(message) inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, #message " The program will exit.")); exit(-1);
+#define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
+#define NUX_ERROR_EXIT_MESSAGE(message) inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, #message " The program will exit.")); exit(-1);
 
 EventToNameStruct EventToName[] = 
 {
-    {INL_NO_EVENT,               TEXT("INL_NO_EVENT")},
-    {INL_MOUSE_PRESSED,          TEXT("INL_MOUSE_PRESSED")},
-    {INL_MOUSE_RELEASED,         TEXT("INL_MOUSE_RELEASED")},
-    {INL_KEYDOWN,                TEXT("INL_KEYDOWN")},
-    {INL_KEYUP,                  TEXT("INL_KEYUP")},
-    {INL_MOUSE_MOVE,             TEXT("INL_MOUSE_MOVE")},
-    {INL_SIZE_CONFIGURATION,     TEXT("INL_SIZE_CONFIGURATION")},
-    {INL_WINDOW_CONFIGURATION,   TEXT("INL_WINDOW_CONFIGURATION")},
-    {INL_WINDOW_ENTER_FOCUS,     TEXT("INL_WINDOW_ENTER_FOCUS")},
-    {INL_WINDOW_EXIT_FOCUS,      TEXT("INL_WINDOW_EXIT_FOCUS")},
-    {INL_WINDOW_DIRTY,           TEXT("INL_WINDOW_DIRTY")},
-    {INL_WINDOW_MOUSELEAVE,      TEXT("INL_WINDOW_MOUSELEAVE")},
-    {INL_TERMINATE_APP,          TEXT("INL_TERMINATE_APP")}
+    {NUX_NO_EVENT,               TEXT("NUX_NO_EVENT")},
+    {NUX_MOUSE_PRESSED,          TEXT("NUX_MOUSE_PRESSED")},
+    {NUX_MOUSE_RELEASED,         TEXT("NUX_MOUSE_RELEASED")},
+    {NUX_KEYDOWN,                TEXT("NUX_KEYDOWN")},
+    {NUX_KEYUP,                  TEXT("NUX_KEYUP")},
+    {NUX_MOUSE_MOVE,             TEXT("NUX_MOUSE_MOVE")},
+    {NUX_SIZE_CONFIGURATION,     TEXT("NUX_SIZE_CONFIGURATION")},
+    {NUX_WINDOW_CONFIGURATION,   TEXT("NUX_WINDOW_CONFIGURATION")},
+    {NUX_WINDOW_ENTER_FOCUS,     TEXT("NUX_WINDOW_ENTER_FOCUS")},
+    {NUX_WINDOW_EXIT_FOCUS,      TEXT("NUX_WINDOW_EXIT_FOCUS")},
+    {NUX_WINDOW_DIRTY,           TEXT("NUX_WINDOW_DIRTY")},
+    {NUX_WINDOW_MOUSELEAVE,      TEXT("NUX_WINDOW_MOUSELEAVE")},
+    {NUX_TERMINATE_APP,          TEXT("NUX_TERMINATE_APP")}
 };
 
 //---------------------------------------------------------------------------------------------------------
 
 GLWindowImpl::GLWindowImpl()
-:   m_pEvent(NULL)
-,   m_GLCtx(0)
-,   m_GfxInterfaceCreated(false)
-,   m_Fullscreen(false)
-,   m_ScreenBitDepth(32)
-,   m_num_device_modes(0)
-,   m_BestMode(-1)
-,   m_BackupFrameBuffer(true)
-,   m_DeviceFactory(0)
-,   m_GraphicsContext(0)
-,   m_Style(WINDOWSTYLE_NORMAL)
-,   m_PauseGraphicsRendering(false)
-,   m_ParentWindow(0)
 {
+    m_ParentWindow                  = 0;
+    m_GLCtx                         = 0;
+    m_Fullscreen                    = false;
+    m_GfxInterfaceCreated           = false;
+    m_pEvent                        = NULL;
+    m_ScreenBitDepth                = 32;
+    m_BestMode                      = -1;
+    m_num_device_modes              = 0;
+    m_BackupFrameBuffer             = true;
+    m_DeviceFactory                 = 0;
+    m_GraphicsContext               = 0;
+    m_Style                         = WINDOWSTYLE_NORMAL;
+    m_PauseGraphicsRendering        = false;
+    
     inlSetThreadLocalStorage(ThreadLocal_GLWindowImpl, this);
     
     m_X11LastEvent.type = -1;
     m_X11RepeatKey = true;
 
-	m_GfxInterfaceCreated = false;
-	m_pEvent = new IEvent();
+    m_GfxInterfaceCreated = false;
+    m_pEvent = new IEvent();
 
     m_WindowSize.SetWidth(0);
-	m_WindowSize.SetHeight(0);
+    m_WindowSize.SetHeight(0);
 
     // A window never starts in a minimized state.
     m_is_window_minimized = false;
@@ -218,11 +219,11 @@ GLWindowImpl::GLWindowImpl()
 //---------------------------------------------------------------------------------------------------------
 GLWindowImpl::~GLWindowImpl()
 {
-    INL_SAFE_DELETE( m_GraphicsContext );
-    INL_SAFE_DELETE( m_DeviceFactory );
+    NUX_SAFE_DELETE( m_GraphicsContext );
+    NUX_SAFE_DELETE( m_DeviceFactory );
 
     DestroyOpenGLWindow();
-    INL_SAFE_DELETE( m_pEvent );
+    NUX_SAFE_DELETE( m_pEvent );
 
     inlSetThreadLocalStorage(ThreadLocal_GLWindowImpl, 0);
 }
@@ -512,6 +513,8 @@ bool GLWindowImpl::CreateFromOpenGLWindow(Display *X11Display, Window X11Window,
 
     m_DeviceFactory = new GLDeviceFactory(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
     m_GraphicsContext = new GraphicsContext(*this);
+    
+    return true;
 }
 
 // bool GLWindowImpl::CreateVisual(unsigned int WindowWidth, unsigned int WindowHeight, XVisualInfo& ChosenVisual, XVisualInfo& Template, unsigned long Mask)
@@ -890,38 +893,38 @@ void GLWindowImpl::DestroyOpenGLWindow()
 // //---------------------------------------------------------------------------------------------------------
 // // convert a MSWindows VK_x to an INL keysym or and extended INL keysym:
 // static const struct {unsigned short vk, fltk, extended;} vktab[] = {
-//     {INL_VK_BACK,	    INL_BackSpace},
-//     {INL_VK_TAB,	    INL_Tab},
-//     {INL_VK_CLEAR,	    INL_Clear,	    0xff0b/*XK_Clear*/},
-//     {INL_VK_ENTER,	    INL_Enter,	    INL_KP_ENTER},
-//     {INL_VK_SHIFT,	    INL_Shift_L,	INL_EXT_Shift_R},
-//     {INL_VK_CONTROL,	INL_Control_L,	INL_EXT_Control_R},
-//     {INL_VK_MENU,	    INL_Alt_L,	    INL_EXT_Alt_R},
-//     {INL_VK_PAUSE,	    INL_Pause},
-//     {INL_VK_CAPITAL,	INL_Caps_Lock},
-//     {INL_VK_ESCAPE,	    INL_Escape},
-//     {INL_VK_SPACE,	    ' '},
-//     {INL_VK_PAGE_UP,	INL_Page_Up     /*KP+'9'*/,	    INL_KP_PAGE_UP},
-//     {INL_VK_PAGE_DOWN,  INL_Page_Down   /*KP+'3'*/,	    INL_KP_PAGE_DOWN},
-//     {INL_VK_END,	    INL_End         /*KP+'1'*/,	    INL_KP_END},
-//     {INL_VK_HOME,	    INL_Home        /*KP+'7'*/,	    INL_KP_HOME},
-//     {INL_VK_LEFT,	    INL_Left        /*KP+'4'*/,	    INL_KP_LEFT},
-//     {INL_VK_UP,	        INL_Up          /*KP+'8'*/,	    INL_KP_UP},
-//     {INL_VK_RIGHT,	    INL_Right       /*KP+'6'*/,	    INL_KP_RIGHT},
-//     {INL_VK_DOWN,	    INL_Down        /*KP+'2'*/,	    INL_KP_DOWN},
-//     {INL_VK_SNAPSHOT,	INL_Print},	    // does not work on NT
-//     {INL_VK_INSERT,	    INL_Insert      /*KP+'0'*/,	    INL_KP_INSERT},
-//     {INL_VK_DELETE,	    INL_Delete      /*KP+'.'*/,	    INL_KP_DELETE},
-//     {INL_VK_LWIN,	    INL_LWin        /*Meta_L*/},
-//     {INL_VK_RWIN,	    INL_RWin        /*Meta_R*/},
-//     {INL_VK_APPS,	    INL_VK_APPS     /*Menu*/},
-//     {INL_VK_MULTIPLY,	INL_Multiply    /*KP+'*'*/},
-//     {INL_VK_ADD,	    INL_Add         /*KP+'+'*/},
-//     {INL_VK_SUBTRACT,	INL_Subtract    /*KP+'-'*/},
-//     {INL_VK_DECIMAL,	INL_Decimal     /*KP+'.'*/},
-//     {INL_VK_DIVIDE,	    INL_Divide      /*KP+'/'*/},
-//     {INL_VK_NUMLOCK,	INL_Numlock     /*Num_Lock*/},
-//     {INL_VK_SCROLL,	    INL_Scroll      /*Scroll_Lock*/},
+//     {NUX_VK_BACK,	    NUX_BackSpace},
+//     {NUX_VK_TAB,	    NUX_Tab},
+//     {NUX_VK_CLEAR,	    NUX_Clear,	    0xff0b/*XK_Clear*/},
+//     {NUX_VK_ENTER,	    NUX_Enter,	    NUX_KP_ENTER},
+//     {NUX_VK_SHIFT,	    NUX_Shift_L,	NUX_EXT_Shift_R},
+//     {NUX_VK_CONTROL,	NUX_Control_L,	NUX_EXT_Control_R},
+//     {NUX_VK_MENU,	    NUX_Alt_L,	    NUX_EXT_Alt_R},
+//     {NUX_VK_PAUSE,	    NUX_Pause},
+//     {NUX_VK_CAPITAL,	NUX_Caps_Lock},
+//     {NUX_VK_ESCAPE,	    NUX_Escape},
+//     {NUX_VK_SPACE,	    ' '},
+//     {NUX_VK_PAGE_UP,	NUX_Page_Up     /*KP+'9'*/,	    NUX_KP_PAGE_UP},
+//     {NUX_VK_PAGE_DOWN,  NUX_Page_Down   /*KP+'3'*/,	    NUX_KP_PAGE_DOWN},
+//     {NUX_VK_END,	    NUX_End         /*KP+'1'*/,	    NUX_KP_END},
+//     {NUX_VK_HOME,	    NUX_Home        /*KP+'7'*/,	    NUX_KP_HOME},
+//     {NUX_VK_LEFT,	    NUX_Left        /*KP+'4'*/,	    NUX_KP_LEFT},
+//     {NUX_VK_UP,	        NUX_Up          /*KP+'8'*/,	    NUX_KP_UP},
+//     {NUX_VK_RIGHT,	    NUX_Right       /*KP+'6'*/,	    NUX_KP_RIGHT},
+//     {NUX_VK_DOWN,	    NUX_Down        /*KP+'2'*/,	    NUX_KP_DOWN},
+//     {NUX_VK_SNAPSHOT,	NUX_Print},	    // does not work on NT
+//     {NUX_VK_INSERT,	    NUX_Insert      /*KP+'0'*/,	    NUX_KP_INSERT},
+//     {NUX_VK_DELETE,	    NUX_Delete      /*KP+'.'*/,	    NUX_KP_DELETE},
+//     {NUX_VK_LWIN,	    NUX_LWin        /*Meta_L*/},
+//     {NUX_VK_RWIN,	    NUX_RWin        /*Meta_R*/},
+//     {NUX_VK_APPS,	    NUX_VK_APPS     /*Menu*/},
+//     {NUX_VK_MULTIPLY,	NUX_Multiply    /*KP+'*'*/},
+//     {NUX_VK_ADD,	    NUX_Add         /*KP+'+'*/},
+//     {NUX_VK_SUBTRACT,	NUX_Subtract    /*KP+'-'*/},
+//     {NUX_VK_DECIMAL,	NUX_Decimal     /*KP+'.'*/},
+//     {NUX_VK_DIVIDE,	    NUX_Divide      /*KP+'/'*/},
+//     {NUX_VK_NUMLOCK,	NUX_Numlock     /*Num_Lock*/},
+//     {NUX_VK_SCROLL,	    NUX_Scroll      /*Scroll_Lock*/},
 //     {0xba,	';'},
 //     {0xbb,	'='},
 //     {0xbc,	','},
@@ -972,7 +975,6 @@ void GLWindowImpl::DestroyOpenGLWindow()
 //---------------------------------------------------------------------------------------------------------
 static int mouse_move(XEvent xevent, IEvent* m_pEvent)
 {
-    static int px, py, pmx, pmy;
     m_pEvent->e_x = xevent.xmotion.x;
     m_pEvent->e_y = xevent.xmotion.y;
     m_pEvent->e_x_root = 0;
@@ -981,18 +983,19 @@ static int mouse_move(XEvent xevent, IEvent* m_pEvent)
     // Erase mouse event and mouse doubleclick events. Keep the mouse states.
     t_uint32 _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
 
-    m_pEvent->e_event = INL_MOUSE_MOVE;
+    m_pEvent->e_event = NUX_MOUSE_MOVE;
 
-    _mouse_state |= (xevent.xmotion.state & Button1Mask) ? INL_STATE_BUTTON1_DOWN : 0;
-    _mouse_state |= (xevent.xmotion.state & Button2Mask) ? INL_STATE_BUTTON2_DOWN : 0;
-    _mouse_state |= (xevent.xmotion.state & Button3Mask) ? INL_STATE_BUTTON3_DOWN : 0;
+    _mouse_state |= (xevent.xmotion.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
+    _mouse_state |= (xevent.xmotion.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
+    _mouse_state |= (xevent.xmotion.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
 
     m_pEvent->e_mouse_state = _mouse_state;
+    
+    return 0;
 }
 
 static int mouse_press(XEvent xevent, IEvent* m_pEvent)
 {
-    static int px, py, pmx, pmy;
     m_pEvent->e_x = xevent.xbutton.x;
     m_pEvent->e_y = xevent.xbutton.y;
     m_pEvent->e_x_root = 0;
@@ -1001,37 +1004,38 @@ static int mouse_press(XEvent xevent, IEvent* m_pEvent)
     // Erase mouse event and mouse double-click events. Keep the mouse states.
     ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
 
-    m_pEvent->e_event = INL_MOUSE_PRESSED;
+    m_pEvent->e_event = NUX_MOUSE_PRESSED;
 
     // State of the button before the event
-    _mouse_state |= (xevent.xbutton.state & Button1Mask) ? INL_STATE_BUTTON1_DOWN : 0;
-    _mouse_state |= (xevent.xbutton.state & Button2Mask) ? INL_STATE_BUTTON2_DOWN : 0;
-    _mouse_state |= (xevent.xbutton.state & Button3Mask) ? INL_STATE_BUTTON3_DOWN : 0;
+    _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
+    _mouse_state |= (xevent.xbutton.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
+    _mouse_state |= (xevent.xbutton.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
 
     if(xevent.xbutton.type == ButtonPress)
     {
         if(xevent.xbutton.button == Button1)
         {
-            _mouse_state |= INL_EVENT_BUTTON1_DOWN;
-            _mouse_state |= INL_STATE_BUTTON1_DOWN;
+            _mouse_state |= NUX_EVENT_BUTTON1_DOWN;
+            _mouse_state |= NUX_STATE_BUTTON1_DOWN;
         }
         if(xevent.xbutton.button == Button2)
         {
-            _mouse_state |= INL_EVENT_BUTTON2_DOWN;
-            _mouse_state |= INL_STATE_BUTTON2_DOWN;
+            _mouse_state |= NUX_EVENT_BUTTON2_DOWN;
+            _mouse_state |= NUX_STATE_BUTTON2_DOWN;
         }
         if(xevent.xbutton.button == Button3)
         {
-            _mouse_state |= INL_EVENT_BUTTON3_DOWN;
-            _mouse_state |= INL_STATE_BUTTON3_DOWN;
+            _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
+            _mouse_state |= NUX_STATE_BUTTON3_DOWN;
         }
     }
     m_pEvent->e_mouse_state = _mouse_state;
+    
+    return 0;
 }
 
 static int mouse_release(XEvent xevent, IEvent* m_pEvent)
 {
-    static int px, py, pmx, pmy;
     m_pEvent->e_x = xevent.xbutton.x;
     m_pEvent->e_y = xevent.xbutton.y;
     m_pEvent->e_x_root = 0;
@@ -1040,32 +1044,34 @@ static int mouse_release(XEvent xevent, IEvent* m_pEvent)
     // Erase mouse event and mouse double-click events. Keep the mouse states.
     ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
 
-    m_pEvent->e_event = INL_MOUSE_RELEASED;
+    m_pEvent->e_event = NUX_MOUSE_RELEASED;
 
     // State of the button before the event
-    _mouse_state |= (xevent.xbutton.state & Button1Mask) ? INL_STATE_BUTTON1_DOWN : 0;
-    _mouse_state |= (xevent.xbutton.state & Button2Mask) ? INL_STATE_BUTTON2_DOWN : 0;
-    _mouse_state |= (xevent.xbutton.state & Button3Mask) ? INL_STATE_BUTTON3_DOWN : 0;
+    _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
+    _mouse_state |= (xevent.xbutton.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
+    _mouse_state |= (xevent.xbutton.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
 
     if(xevent.xbutton.type == ButtonPress)
     {
         if(xevent.xbutton.button == Button1)
         {
-            _mouse_state |= INL_EVENT_BUTTON1_DOWN;
-            _mouse_state &= ~INL_STATE_BUTTON1_DOWN;
+            _mouse_state |= NUX_EVENT_BUTTON1_DOWN;
+            _mouse_state &= ~NUX_STATE_BUTTON1_DOWN;
         }
         if(xevent.xbutton.button == Button2)
         {
-            _mouse_state |= INL_EVENT_BUTTON2_DOWN;
-            _mouse_state &= ~INL_STATE_BUTTON2_DOWN;
+            _mouse_state |= NUX_EVENT_BUTTON2_DOWN;
+            _mouse_state &= ~NUX_STATE_BUTTON2_DOWN;
         }
         if(xevent.xbutton.button == Button3)
         {
-            _mouse_state |= INL_EVENT_BUTTON3_DOWN;
-            _mouse_state &= ~INL_STATE_BUTTON3_DOWN;
+            _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
+            _mouse_state &= ~NUX_STATE_BUTTON3_DOWN;
         }
     }
     m_pEvent->e_mouse_state = _mouse_state;
+    
+    return 0;
 }
 
 unsigned int GetModifierKeyState(unsigned int modifier_key_state)
@@ -1075,24 +1081,24 @@ unsigned int GetModifierKeyState(unsigned int modifier_key_state)
     // For CapsLock, we don't want to know if the key is pressed Down or Up.
     // We really want to know the state of the the CapsLock: on (keyboard light is on) or off?
     if (modifier_key_state & LockMask)
-        state |= INL_STATE_CAPS_LOCK;
+        state |= NUX_STATE_CAPS_LOCK;
 
     // For NumLock, we don't want to know if the key is pressed Down or Up.
     // We really want to know the state of the the NumLock: on (keyboard light is on) or off?
     if (modifier_key_state & Mod5Mask)
-        state |= INL_STATE_NUMLOCK;
+        state |= NUX_STATE_NUMLOCK;
 
 //     if (modifier_key_state & 0x8000) 
-//         state |= INL_STATE_SCROLLLOCK;
+//         state |= NUX_STATE_SCROLLLOCK;
 
     if (modifier_key_state & ControlMask)
-        state |= INL_STATE_CTRL;
+        state |= NUX_STATE_CTRL;
 
     if (modifier_key_state & ShiftMask)
-        state |= INL_STATE_SHIFT;
+        state |= NUX_STATE_SHIFT;
 
     if (modifier_key_state & Mod1Mask)
-        state |= INL_STATE_ALT;
+        state |= NUX_STATE_ALT;
 
     return state;
 }
@@ -1100,15 +1106,11 @@ unsigned int GetModifierKeyState(unsigned int modifier_key_state)
 //---------------------------------------------------------------------------------------------------------
 Bool CheckEventWindow(Display* display, XEvent* xevent, XPointer arg)
 {
-    return xevent->xany.window == INL_REINTERPRET_CAST(Window, arg);
+    return xevent->xany.window == NUX_REINTERPRET_CAST(Window, arg);
 }
 
 void GLWindowImpl::GetSystemEvent(IEvent* evt)
 {
-    static bool previous_event_motion = false;
-    static int motion_x = 0;
-    static int motion_y = 0;
-
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
     m_pEvent->e_mouse_state &= 0x0F000000;
@@ -1116,7 +1118,7 @@ void GLWindowImpl::GetSystemEvent(IEvent* evt)
 
     // Process event matching this window
     XEvent xevent;
-    if(XCheckIfEvent(m_X11Display, &xevent, &CheckEventWindow, INL_REINTERPRET_CAST(XPointer, m_X11Window)))
+    if(XCheckIfEvent(m_X11Display, &xevent, &CheckEventWindow, NUX_REINTERPRET_CAST(XPointer, m_X11Window)))
     {
         // Detect auto repeat keys. X11 sends a combination of KeyRelease/KeyPress (at the same time) when a key auto repeats.
         // Here, we make sure we process only the keyRelease when the key is effectively released.
@@ -1202,17 +1204,13 @@ void GLWindowImpl::GetSystemEvent(IEvent* evt)
 
 void GLWindowImpl::ProcessForeignX11Event(XEvent* xevent, IEvent* nux_event)
 {
-    static bool previous_event_motion = false;
-    static int motion_x = 0;
-    static int motion_y = 0;
-
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
     m_pEvent->e_mouse_state &= 0x0F000000;
     bool bProcessEvent = true;
 
     // Process event matching this window
-    if((INL_REINTERPRET_CAST(XAnyEvent*, xevent))->window == m_X11Window)
+    if((NUX_REINTERPRET_CAST(XAnyEvent*, xevent))->window == m_X11Window)
     {
         // Detect auto repeat keys. X11 sends a combination of KeyRelease/KeyPress (at the same time) when a key auto repeats.
         // Here, we make sure we process only the keyRelease when the key is effectively released.
@@ -1278,19 +1276,18 @@ bool GLWindowImpl::HasXPendingEvent() const
 
 void GLWindowImpl::ProcessXEvent(XEvent xevent)
 {
-    KeySym key;
     switch (xevent.type)
     {
         case DestroyNotify:
             {
-                m_pEvent->e_event = INL_DESTROY_WINDOW;
+                m_pEvent->e_event = NUX_DESTROY_WINDOW;
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: DestroyNotify event."));
                 break;
             }
 
         case Expose:
             {
-                m_pEvent->e_event = INL_WINDOW_DIRTY;
+                m_pEvent->e_event = NUX_WINDOW_DIRTY;
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: Expose event."));
                 break;
             }
@@ -1298,7 +1295,7 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
         case ConfigureNotify:
             {
-                m_pEvent->e_event = INL_SIZE_CONFIGURATION;
+                m_pEvent->e_event = NUX_SIZE_CONFIGURATION;
                 m_pEvent->width =  xevent.xconfigure.width;
                 m_pEvent->height = xevent.xconfigure.height;
                 m_WindowSize.SetWidth(xevent.xconfigure.width);
@@ -1310,7 +1307,7 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
         case FocusIn:
             {
-                m_pEvent->e_event = INL_WINDOW_ENTER_FOCUS;
+                m_pEvent->e_event = NUX_WINDOW_ENTER_FOCUS;
                 m_pEvent->e_mouse_state = 0;
 
                 // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process().
@@ -1327,7 +1324,7 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
         case FocusOut:
             {
-                m_pEvent->e_event = INL_WINDOW_EXIT_FOCUS;
+                m_pEvent->e_event = NUX_WINDOW_EXIT_FOCUS;
                 m_pEvent->e_mouse_state = 0;
 
                 // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process()
@@ -1353,15 +1350,15 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
                 m_pEvent->e_key_repeat_count = 0;
                 m_pEvent->e_keysym = inlKeysym;
-                m_pEvent->e_event = INL_KEYDOWN;
+                m_pEvent->e_event = NUX_KEYDOWN;
 
                 static XComposeStatus ComposeStatus;
                 static char buffer[16];
-                m_pEvent->e_text = "";
+                m_pEvent->e_text = 0;
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: Keysym: %d - %x."), keysym, keysym);
                 if (XLookupString(&xevent.xkey, buffer, sizeof(buffer), NULL, &ComposeStatus))
                 {
-                    m_pEvent->e_text = buffer;
+                    m_pEvent->e_text = (char*)buffer;
                 }
                 break;
             }
@@ -1379,7 +1376,7 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
                 m_pEvent->e_key_repeat_count = 0;
                 m_pEvent->e_keysym = inlKeysym;
-                m_pEvent->e_event = INL_KEYUP;
+                m_pEvent->e_event = NUX_KEYUP;
                 break;
             }
 
@@ -1407,7 +1404,7 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
         // Note: there is no WM_MOUSEENTER. WM_MOUSEENTER is equivalent to WM_MOUSEMOVE after a WM_MOUSELEAVE.
         case LeaveNotify:
             {
-                m_pEvent->e_event = INL_WINDOW_MOUSELEAVE;
+                m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
                 m_pEvent->e_x = xevent.xcrossing.x;
                 m_pEvent->e_y = xevent.xcrossing.y;
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: LeaveNotify event."));
@@ -1416,7 +1413,7 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
         case EnterNotify:
             {
-                m_pEvent->e_event = INL_WINDOW_MOUSELEAVE;
+                m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
                 m_pEvent->e_x = xevent.xcrossing.x;
                 m_pEvent->e_y = xevent.xcrossing.y;
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: EnterNotify event."));
@@ -1427,7 +1424,7 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
             {
                 if((xevent.xclient.format == 32) && ((xevent.xclient.data.l[0]) == static_cast<long>(m_WMDeleteWindow)))
                 {
-                    m_pEvent->e_event = INL_TERMINATE_APP;
+                    m_pEvent->e_event = NUX_TERMINATE_APP;
                     //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: ClientMessage event: Close Application."));
                 }
                 break;
@@ -1435,7 +1432,7 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
         default:
             {
-                m_pEvent->e_event = INL_NO_EVENT;
+                m_pEvent->e_event = NUX_NO_EVENT;
                 break;
             }
     }
@@ -1445,115 +1442,115 @@ int GLWindowImpl::X11KeySymToINL(int Keysym)
 {
     switch(Keysym)
     {
-    case XK_Cancel:         return INL_VK_CANCEL;
-    case XK_BackSpace:      return INL_VK_BACKSPACE;
-    case XK_Tab:            return INL_VK_TAB;
-    case XK_Clear:          return INL_VK_CLEAR;
-    case XK_Return:         return INL_VK_ENTER;
-    case XK_Shift_L:        return INL_VK_SHIFT;
-    case XK_Control_L:      return INL_VK_CONTROL;
-    case XK_Alt_L:          return INL_VK_MENU;
-    case XK_Pause:          return INL_VK_PAUSE;
-    case XK_Caps_Lock:      return INL_VK_CAPITAL;
-    case XK_Escape:         return INL_VK_ESCAPE;
-    case XK_space:          return INL_VK_SPACE;
-    case XK_Page_Up:        return INL_VK_PAGE_UP;
-    case XK_Page_Down:      return INL_VK_PAGE_DOWN;
-    case XK_End:            return INL_VK_END;
-    case XK_Home:           return INL_VK_HOME;
-    case XK_Left:           return INL_VK_LEFT;
-    case XK_Up:             return INL_VK_UP;
-    case XK_Right:          return INL_VK_RIGHT;
-    case XK_Down:           return INL_VK_DOWN;
-    case XK_Select:         return INL_VK_SELECT;
-    case XK_Print:          return INL_VK_PRINT;
-    case XK_Execute:        return INL_VK_EXECUTE;
-    case XK_Insert:         return INL_VK_INSERT;
-    case XK_Delete:         return INL_VK_DELETE;
-    case XK_Help:           return INL_VK_HELP;
-    case XK_0:              return INL_VK_0;
-    case XK_1:              return INL_VK_1;
-    case XK_2:              return INL_VK_2;
-    case XK_3:              return INL_VK_3;
-    case XK_4:              return INL_VK_4;
-    case XK_5:              return INL_VK_5;
-    case XK_6:              return INL_VK_6;
-    case XK_7:              return INL_VK_7;
-    case XK_8:              return INL_VK_8;
-    case XK_9:              return INL_VK_9;
-    case XK_A:              return INL_VK_A;
-    case XK_B:              return INL_VK_B;
-    case XK_C:              return INL_VK_C;
-    case XK_D:              return INL_VK_D;
-    case XK_E:              return INL_VK_E;
-    case XK_F:              return INL_VK_F;
-    case XK_G:              return INL_VK_G;
-    case XK_H:              return INL_VK_H;
-    case XK_I:              return INL_VK_I;
-    case XK_J:              return INL_VK_J;
-    case XK_K:              return INL_VK_K;
-    case XK_L:              return INL_VK_L;
-    case XK_M:              return INL_VK_M;
-    case XK_N:              return INL_VK_N;
-    case XK_O:              return INL_VK_O;
-    case XK_P:              return INL_VK_P;
-    case XK_Q:              return INL_VK_Q;
-    case XK_R:              return INL_VK_R;
-    case XK_S:              return INL_VK_S;
-    case XK_T:              return INL_VK_T;
-    case XK_U:              return INL_VK_U;
-    case XK_V:              return INL_VK_V;
-    case XK_W:              return INL_VK_W;
-    case XK_X:              return INL_VK_X;
-    case XK_Y:              return INL_VK_Y;
-    case XK_Z:              return INL_VK_Z;
-    case XK_Super_L:        return INL_VK_LWIN;
-    case XK_Super_R:        return INL_VK_RWIN;
-    case XK_KP_0:           return INL_VK_NUMPAD0;
-    case XK_KP_1:           return INL_VK_NUMPAD1;
-    case XK_KP_2:           return INL_VK_NUMPAD2;
-    case XK_KP_3:           return INL_VK_NUMPAD3;
-    case XK_KP_4:           return INL_VK_NUMPAD4;
-    case XK_KP_5:           return INL_VK_NUMPAD5;
-    case XK_KP_6:           return INL_VK_NUMPAD6;
-    case XK_KP_7:           return INL_VK_NUMPAD7;
-    case XK_KP_8:           return INL_VK_NUMPAD8;
-    case XK_KP_9:           return INL_VK_NUMPAD9;
-    case XK_KP_Multiply:    return INL_VK_MULTIPLY;
-    case XK_KP_Add:         return INL_VK_ADD;
-    case XK_KP_Separator:   return INL_VK_SEPARATOR;
-    case XK_KP_Subtract:    return INL_VK_SUBTRACT;
-    case XK_KP_Decimal:     return INL_VK_DECIMAL;
-    case XK_KP_Divide:      return INL_VK_DIVIDE;
-    case XK_F1:             return INL_VK_F1;
-    case XK_F2:             return INL_VK_F2;
-    case XK_F3:             return INL_VK_F3;
-    case XK_F4:             return INL_VK_F4;
-    case XK_F5:             return INL_VK_F5;
-    case XK_F6:             return INL_VK_F6;
-    case XK_F7:             return INL_VK_F7;
-    case XK_F8:             return INL_VK_F8;
-    case XK_F9:             return INL_VK_F9;
-    case XK_F10:            return INL_VK_F10;
-    case XK_F11:            return INL_VK_F11;
-    case XK_F12:            return INL_VK_F12;
-    case XK_F13:            return INL_VK_F13;
-    case XK_F14:            return INL_VK_F14;
-    case XK_F15:            return INL_VK_F15;
-    case XK_F16:            return INL_VK_F16;
-    case XK_F17:            return INL_VK_F17;
-    case XK_F18:            return INL_VK_F18;
-    case XK_F19:            return INL_VK_F19;
-    case XK_F20:            return INL_VK_F20;
-    case XK_F21:            return INL_VK_F21;
-    case XK_F22:            return INL_VK_F22;
-    case XK_F23:            return INL_VK_F23;
-    case XK_F24:            return INL_VK_F24;
-    case XK_Num_Lock:       return INL_VK_NUMLOCK;
-    case XK_Scroll_Lock:    return INL_VK_SCROLL;
-    case XK_Shift_R:        return INL_VK_RSHIFT;
-    case XK_Control_R:      return INL_VK_RCONTROL;
-    case XK_Alt_R:          return INL_VK_RMENU;
+    case XK_Cancel:         return NUX_VK_CANCEL;
+    case XK_BackSpace:      return NUX_VK_BACKSPACE;
+    case XK_Tab:            return NUX_VK_TAB;
+    case XK_Clear:          return NUX_VK_CLEAR;
+    case XK_Return:         return NUX_VK_ENTER;
+    case XK_Shift_L:        return NUX_VK_SHIFT;
+    case XK_Control_L:      return NUX_VK_CONTROL;
+    case XK_Alt_L:          return NUX_VK_MENU;
+    case XK_Pause:          return NUX_VK_PAUSE;
+    case XK_Caps_Lock:      return NUX_VK_CAPITAL;
+    case XK_Escape:         return NUX_VK_ESCAPE;
+    case XK_space:          return NUX_VK_SPACE;
+    case XK_Page_Up:        return NUX_VK_PAGE_UP;
+    case XK_Page_Down:      return NUX_VK_PAGE_DOWN;
+    case XK_End:            return NUX_VK_END;
+    case XK_Home:           return NUX_VK_HOME;
+    case XK_Left:           return NUX_VK_LEFT;
+    case XK_Up:             return NUX_VK_UP;
+    case XK_Right:          return NUX_VK_RIGHT;
+    case XK_Down:           return NUX_VK_DOWN;
+    case XK_Select:         return NUX_VK_SELECT;
+    case XK_Print:          return NUX_VK_PRINT;
+    case XK_Execute:        return NUX_VK_EXECUTE;
+    case XK_Insert:         return NUX_VK_INSERT;
+    case XK_Delete:         return NUX_VK_DELETE;
+    case XK_Help:           return NUX_VK_HELP;
+    case XK_0:              return NUX_VK_0;
+    case XK_1:              return NUX_VK_1;
+    case XK_2:              return NUX_VK_2;
+    case XK_3:              return NUX_VK_3;
+    case XK_4:              return NUX_VK_4;
+    case XK_5:              return NUX_VK_5;
+    case XK_6:              return NUX_VK_6;
+    case XK_7:              return NUX_VK_7;
+    case XK_8:              return NUX_VK_8;
+    case XK_9:              return NUX_VK_9;
+    case XK_A:              return NUX_VK_A;
+    case XK_B:              return NUX_VK_B;
+    case XK_C:              return NUX_VK_C;
+    case XK_D:              return NUX_VK_D;
+    case XK_E:              return NUX_VK_E;
+    case XK_F:              return NUX_VK_F;
+    case XK_G:              return NUX_VK_G;
+    case XK_H:              return NUX_VK_H;
+    case XK_I:              return NUX_VK_I;
+    case XK_J:              return NUX_VK_J;
+    case XK_K:              return NUX_VK_K;
+    case XK_L:              return NUX_VK_L;
+    case XK_M:              return NUX_VK_M;
+    case XK_N:              return NUX_VK_N;
+    case XK_O:              return NUX_VK_O;
+    case XK_P:              return NUX_VK_P;
+    case XK_Q:              return NUX_VK_Q;
+    case XK_R:              return NUX_VK_R;
+    case XK_S:              return NUX_VK_S;
+    case XK_T:              return NUX_VK_T;
+    case XK_U:              return NUX_VK_U;
+    case XK_V:              return NUX_VK_V;
+    case XK_W:              return NUX_VK_W;
+    case XK_X:              return NUX_VK_X;
+    case XK_Y:              return NUX_VK_Y;
+    case XK_Z:              return NUX_VK_Z;
+    case XK_Super_L:        return NUX_VK_LWIN;
+    case XK_Super_R:        return NUX_VK_RWIN;
+    case XK_KP_0:           return NUX_VK_NUMPAD0;
+    case XK_KP_1:           return NUX_VK_NUMPAD1;
+    case XK_KP_2:           return NUX_VK_NUMPAD2;
+    case XK_KP_3:           return NUX_VK_NUMPAD3;
+    case XK_KP_4:           return NUX_VK_NUMPAD4;
+    case XK_KP_5:           return NUX_VK_NUMPAD5;
+    case XK_KP_6:           return NUX_VK_NUMPAD6;
+    case XK_KP_7:           return NUX_VK_NUMPAD7;
+    case XK_KP_8:           return NUX_VK_NUMPAD8;
+    case XK_KP_9:           return NUX_VK_NUMPAD9;
+    case XK_KP_Multiply:    return NUX_VK_MULTIPLY;
+    case XK_KP_Add:         return NUX_VK_ADD;
+    case XK_KP_Separator:   return NUX_VK_SEPARATOR;
+    case XK_KP_Subtract:    return NUX_VK_SUBTRACT;
+    case XK_KP_Decimal:     return NUX_VK_DECIMAL;
+    case XK_KP_Divide:      return NUX_VK_DIVIDE;
+    case XK_F1:             return NUX_VK_F1;
+    case XK_F2:             return NUX_VK_F2;
+    case XK_F3:             return NUX_VK_F3;
+    case XK_F4:             return NUX_VK_F4;
+    case XK_F5:             return NUX_VK_F5;
+    case XK_F6:             return NUX_VK_F6;
+    case XK_F7:             return NUX_VK_F7;
+    case XK_F8:             return NUX_VK_F8;
+    case XK_F9:             return NUX_VK_F9;
+    case XK_F10:            return NUX_VK_F10;
+    case XK_F11:            return NUX_VK_F11;
+    case XK_F12:            return NUX_VK_F12;
+    case XK_F13:            return NUX_VK_F13;
+    case XK_F14:            return NUX_VK_F14;
+    case XK_F15:            return NUX_VK_F15;
+    case XK_F16:            return NUX_VK_F16;
+    case XK_F17:            return NUX_VK_F17;
+    case XK_F18:            return NUX_VK_F18;
+    case XK_F19:            return NUX_VK_F19;
+    case XK_F20:            return NUX_VK_F20;
+    case XK_F21:            return NUX_VK_F21;
+    case XK_F22:            return NUX_VK_F22;
+    case XK_F23:            return NUX_VK_F23;
+    case XK_F24:            return NUX_VK_F24;
+    case XK_Num_Lock:       return NUX_VK_NUMLOCK;
+    case XK_Scroll_Lock:    return NUX_VK_SCROLL;
+    case XK_Shift_R:        return NUX_VK_RSHIFT;
+    case XK_Control_R:      return NUX_VK_RCONTROL;
+    case XK_Alt_R:          return NUX_VK_RMENU;
     default:                return 0x0;
         }
 };

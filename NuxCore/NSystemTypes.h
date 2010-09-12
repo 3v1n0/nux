@@ -67,7 +67,7 @@ typedef unsigned int            t_UTF32;
     #error t_UTF16 is undefined for this platform.
 #endif
 
-typedef size_t                  t_size;
+typedef std::size_t                  t_size;
 
 // // HARDWARE
 // #if defined _M_X64
@@ -94,7 +94,7 @@ typedef size_t                  t_size;
 //     typedef long long       t_integer;      // 64 bits
 //     typedef long long       *t_pointer;     // 64 bits
 //     const   long long       t_MaxInteger = 0xFFFFFFFFFFFFFFFF;
-// #elif defined INL_PS3
+// #elif defined NUX_PS3
 //     typedef long            t_integer;      // 32 bits
 //     typedef long            *t_pointer;     // 32 bits
 //     const   long            t_MaxInteger = 0xFFFFFFFF;
@@ -107,20 +107,20 @@ typedef size_t                  t_size;
 #if defined(__LP64__) || defined(_LP64) || defined(_WIN64)
     typedef long long           t_saddress;
     typedef unsigned long long  t_uaddress;
-    typedef t_u64               INL_POINTER;
+    typedef t_u64               NUX_POINTER;
     typedef long long           t_integer;
 #else
     typedef int                 t_saddress;
     typedef unsigned int        t_uaddress;
-    typedef t_uint32            INL_POINTER;
+    typedef t_uint32            NUX_POINTER;
     typedef long                t_integer;
 #endif
 
 typedef unsigned long            t_addressu32;
 typedef unsigned long long       t_addressu64;
 
-#define INL_ADDRESS_TO_PTR(addr) (void*)(addr)
-#define INL_PTR_TO_ADDRESS(ptr)  (t_uaddress)(ptr)
+#define NUX_ADDRESS_TO_PTR(addr) (void*)(addr)
+#define NUX_PTR_TO_ADDRESS(ptr)  (t_uaddress)(ptr)
 
 const t_s8  t_s8_min          =  -128;
 const t_s8  t_s8_max          =  127;
@@ -174,42 +174,42 @@ const t_f64 MaxDouble     	=  1.7976931348623158E+308;
 // Mac OS X      Intel 64     8 bytes  
 
 #ifdef _WIN32
-    #define INL_PTR_TO_INT(ptr) (long)((long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
 #elif  _WIN64
-    #define INL_PTR_TO_INT(ptr) (long long)((long long)(ptr))
-#elif INL_PS3
-    #define INL_PTR_TO_INT(ptr) (long)((long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
+#elif NUX_PS3
+    #define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
 #elif __linux
-    #define INL_PTR_TO_INT(ptr) (long)((long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
 #elif defined(__linux) && (defined(__ia64__) || defined(__amd64__))
-    #define INL_PTR_TO_INT(ptr) (long long)((long long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
 #elif __APPLE__
-    #define INL_PTR_TO_INT(ptr) (long long)((long long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
 #endif
 
-#define INL_BYTE_SIZE   1
-#define INL_WORD_SIZE   2
-#define INL_FLOAT_SIZE  4
-#define INL_INT_SIZE    4
-#define INL_DOUBLE_SIZE 8
+#define NUX_BYTE_SIZE   1
+#define NUX_WORD_SIZE   2
+#define NUX_FLOAT_SIZE  4
+#define NUX_INT_SIZE    4
+#define NUX_DOUBLE_SIZE 8
 
 // Polymorphic Types
 #if defined(_WIN32) || defined(_WIN64)
-    #define INL_PTRSIZE_INT     INT_PTR
-    #define INL_PTRSIZE_UINT    UINT_PTR
-    #define INL_PTRSIZE_DWORD   DWORD_PTR
-    #define INL_PTRSIZE_LONG    LONG_PTR
-    #define INL_PTRSIZE_ULONG   ULONG_PTR
-    #define INL_SIZE_T          SIZE_T
-    #define INL_SSIZE_T         SSIZE_T
+    #define NUX_PTRSIZE_INT     INT_PTR
+    #define NUX_PTRSIZE_UINT    UINT_PTR
+    #define NUX_PTRSIZE_DWORD   DWORD_PTR
+    #define NUX_PTRSIZE_LONG    LONG_PTR
+    #define NUX_PTRSIZE_ULONG   ULONG_PTR
+    #define NUX_SIZE_T          SIZE_T
+    #define NUX_SSIZE_T         SSIZE_T
 #else
-    #define INL_PTRSIZE_INT     int
-    #define INL_PTRSIZE_UINT    unsigned int
-    #define INL_PTRSIZE_DWORD   unsigned int
-    #define INL_PTRSIZE_LONG    long
-    #define INL_PTRSIZE_ULONG   unsigned long
-    #define INL_SIZE_T          size_t
-    #define INL_SSIZE_T         int
+    #define NUX_PTRSIZE_INT     int
+    #define NUX_PTRSIZE_UINT    unsigned int
+    #define NUX_PTRSIZE_DWORD   unsigned int
+    #define NUX_PTRSIZE_LONG    long
+    #define NUX_PTRSIZE_ULONG   unsigned long
+    #define NUX_SIZE_T          size_t
+    #define NUX_SSIZE_T         int
 #endif
 
 
@@ -250,12 +250,12 @@ const t_f64 MaxDouble     	=  1.7976931348623158E+308;
 // The t_float values must be in the range 0..1
 //
 
-#define INL_RGB(r, g, b)                                   \
+#define NUX_RGB(r, g, b)                                   \
                             ( (t_u32) (BYTE) (b) << 16) |   \
                             ( (t_u32) (BYTE) (g) << 8)  |   \
                             ( (t_u32) (BYTE) (r) )
 
-#define INL_RGBA(r, g, b, a)                                    \
+#define NUX_RGBA(r, g, b, a)                                    \
                             ( (t_u32) (BYTE) (a)) << 24) |   \
                             ( (t_u32) (BYTE) (b)) << 16) |   \
                             ( (t_u32) (BYTE) (g)  << 8)  |   \
@@ -297,14 +297,14 @@ const t_f64 MaxDouble     	=  1.7976931348623158E+308;
 
 
 // #ifdef _WIN32
-//     #define INL_HARDWARE_BREAK __asm {int 3}
-//     #define INL_BREAK_ASM_INT3 __asm {int 3}
-// #elif (defined INL_PS3)
-//     #define INL_HARDWARE_BREAK
-//     #define INL_BREAK_ASM_INT3
+//     #define NUX_HARDWARE_BREAK __asm {int 3}
+//     #define NUX_BREAK_ASM_INT3 __asm {int 3}
+// #elif (defined NUX_PS3)
+//     #define NUX_HARDWARE_BREAK
+//     #define NUX_BREAK_ASM_INT3
 // #else
-//     #define INL_HARDWARE_BREAK
-//     #define INL_BREAK_ASM_INT3
+//     #define NUX_HARDWARE_BREAK
+//     #define NUX_BREAK_ASM_INT3
 // #endif
 
 #define DEGTORAD(d) (d) * 3.1415927f / 180.0f

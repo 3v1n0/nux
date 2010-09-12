@@ -25,7 +25,7 @@
 
 NAMESPACE_BEGIN
 
-INL_IMPLEMENT_GLOBAL_OBJECT(NUniqueIndex);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NUniqueIndex);
 
 NCriticalSection NUniqueIndex::m_CriticalSection;
 

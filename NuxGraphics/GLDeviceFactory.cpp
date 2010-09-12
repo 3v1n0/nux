@@ -43,9 +43,9 @@ extern void cgErrorCallback(void);
 
 // ATI Radeon 4670 has problems loading textures from pixel buffer object. PBO should be deactivated if the 
 // graphics card is made by AMD/ATI
-#define INL_USE_PBO     1
+#define NUX_USE_PBO     1
 
-#define INL_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
+#define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
 
 // float Log2(float f)
 // {
@@ -402,7 +402,10 @@ TRefGL<ICgPixelShader> GLDeviceFactory::CreateCGPixelShader()
 void GLDeviceFactory::Initialize()
 {
     GLenum Glew_Ok = glewInit();
-    nuxAssert(Glew_Ok == GLEW_OK);
+    if(Glew_Ok != GLEW_OK)
+    {
+      nuxAssertMsg(0, TEXT("[GLDeviceFactory::Initialize] Failed glewInit."));
+    }
     InitializeExtension();
 }
 
@@ -472,7 +475,9 @@ STREAMSOURCE GLDeviceFactory::_StreamSource[MAX_NUM_STREAM];
 //
 
 GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat)
-:   _PixelStoreAlignment(4)
+:   _FrameBufferObject(0)
+,   _PixelStoreAlignment(4)
+,   _CachedPixelBufferObjectList(0)
 ,   _CachedVertexBufferList(0)
 ,   _CachedIndexBufferList(0)
 ,   _CachedTextureList(0)
@@ -480,17 +485,18 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
 ,   _CachedCubeTextureList(0)
 ,   _CachedVolumeTextureList(0)
 ,   _CachedAnimatedTextureList(0)
-,   _CachedVertexDeclarationList(0)
 ,   _CachedQueryList(0)
+,   _CachedVertexDeclarationList(0)
 ,   _CachedFrameBufferList(0)
 ,   _CachedVertexShaderList(0)
 ,   _CachedPixelShaderList(0)
 ,   _CachedShaderProgramList(0)
-,   _CachedPixelBufferObjectList(0)
-,   _FrameBufferObject(0)
+,   _CachedAsmVertexShaderList(0)
+,   _CachedAsmPixelShaderList(0)
+,   _CachedAsmShaderProgramList(0)
+,   m_isINTELBoard(false)
 ,   m_isATIBoard(false)
 ,   m_isNVIDIABoard(false)
-,   m_isINTELBoard(false)
 ,   m_UsePixelBufferObject(false)
 ,   m_GraphicsBoardVendor(BOARD_UNKNOWN)
 #if (NUX_ENABLE_CG_SHADERS)
@@ -506,11 +512,11 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
     Glew_Ok = glewContextInit(glewGetContext());
     nuxAssertMsg(Glew_Ok == GLEW_OK, TEXT("[GLDeviceFactory::GLDeviceFactory] GL Extensions failed to initialize."));
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     Glew_Ok = wglewContextInit(wglewGetContext());
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     Glew_Ok = glxewContextInit(glxewGetContext());
-#elif defined(INL_OS_MACOSX)
+#elif defined(NUX_OS_MACOSX)
     Glew_Ok = glxewContextInit(glxewGetContext());
 #endif
     nuxAssertMsg(Glew_Ok == GLEW_OK, TEXT("[GLDeviceFactory::GLDeviceFactory] WGL Extensions failed to initialize."));
@@ -522,13 +528,13 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
 
     //m_BoardVendorString = "aaaa";
     //std::string str = (const char*) glGetString(GL_VENDOR);
-    m_BoardVendorString = ANSI_TO_TCHAR(INL_REINTERPRET_CAST(const char*, glGetString(GL_VENDOR)));
+    m_BoardVendorString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_VENDOR)));
     CHECKGL_MSG(glGetString(GL_VENDOR));
-    m_BoardRendererString = ANSI_TO_TCHAR(INL_REINTERPRET_CAST(const char*, glGetString(GL_RENDERER)));
+    m_BoardRendererString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_RENDERER)));
     CHECKGL_MSG(glGetString(GL_RENDERER));
-    m_OpenGLVersionString = ANSI_TO_TCHAR(INL_REINTERPRET_CAST(const char*, glGetString(GL_VERSION)));
+    m_OpenGLVersionString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_VERSION)));
     CHECKGL_MSG(glGetString(GL_VERSION));
-    m_GLSLVersionString = ANSI_TO_TCHAR(INL_REINTERPRET_CAST(const char*, glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    m_GLSLVersionString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_SHADING_LANGUAGE_VERSION)));
     CHECKGL_MSG(glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     nuxDebugMsg(TEXT("Board Vendor: %s"), m_BoardVendorString.GetTCharPtr());
@@ -556,23 +562,23 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
     OPENGL_MAX_FB_ATTACHMENT = 4;
 
     NString TempStr = (const TCHAR*)TCharToUpperCase(m_BoardVendorString.GetTCharPtr());
-    if(TempStr.FindFirstOccurence(TEXT("NVIDIA")) != -1)
+    if(TempStr.FindFirstOccurence(TEXT("NVIDIA")) != tstring::npos)
     {
         m_isNVIDIABoard = true;
         m_GraphicsBoardVendor = BOARD_NVIDIA;
     }
-    else if(TempStr.FindFirstOccurence(TEXT("ATI")) != -1)
+    else if(TempStr.FindFirstOccurence(TEXT("ATI")) != tstring::npos)
     {
         m_isATIBoard = true;
         m_GraphicsBoardVendor = BOARD_ATI;
     }
-    else if(TempStr.FindFirstOccurence(TEXT("TUNGSTEN")) != -1)
+    else if(TempStr.FindFirstOccurence(TEXT("TUNGSTEN")) != tstring::npos)
     {
         m_isINTELBoard = true;
         m_GraphicsBoardVendor = BOARD_INTEL;
     }
 
-    if(INL_USE_PBO)
+    if(NUX_USE_PBO)
     {
         if(isATIBoard())
             m_UsePixelBufferObject = false;
@@ -620,11 +626,11 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
 //         exit(-1);
     }
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     OGL_EXT_SWAP_CONTROL                = WGLEW_EXT_swap_control ? true : false;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
 #endif
 
@@ -694,7 +700,7 @@ GLDeviceFactory::~GLDeviceFactory()
     pDefaultRenderTargetSurface = 0;
     pDefaultRenderTargetTexture = 0;
     
-    INL_SAFE_DELETE(m_RenderStates);
+    NUX_SAFE_DELETE(m_RenderStates);
     
     _FrameBufferObject = 0;
     _CurrentFrameBufferObject = 0;
@@ -1168,7 +1174,6 @@ int GLDeviceFactory::AllocateUnpackPixelBufferIndex(int* index)
     }
     // Not enough free pbo
     PixelBufferObject pbo;
-    GLuint OpenGLID = 0;
     pbo.PBO = CreatePixelBufferObject(4, (VBO_USAGE)GL_STATIC_DRAW);
     pbo.IsReserved = TRUE;
     _PixelBufferArray.push_back(pbo);
@@ -1178,7 +1183,7 @@ int GLDeviceFactory::AllocateUnpackPixelBufferIndex(int* index)
 
 int GLDeviceFactory::FreeUnpackPixelBufferIndex(const int index)
 {
-    t_u32 num = (t_u32)_PixelBufferArray.size();
+    t_s32 num = (t_s32)_PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), TEXT("[GLDeviceFactory::FreeUnpackPixelBufferIndex] Trying to Free a pixel buffer index that does not exist."));
     if((index < 0) || (index >= num))
     {
@@ -1231,7 +1236,7 @@ void GLDeviceFactory::UnlockPackPixelBufferIndex(const int index)
 
 int GLDeviceFactory::BindUnpackPixelBufferIndex(const int index)
 {
-    t_u32 num = (t_u32)_PixelBufferArray.size();
+    t_s32 num = (t_s32)_PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), TEXT("[GLDeviceFactory::BindUnpackPixelBufferIndex] Trying to bind an invalid pixel buffer index."));
     if((index < 0) || (index >= num))
     {
@@ -1249,7 +1254,7 @@ int GLDeviceFactory::BindUnpackPixelBufferIndex(const int index)
 
 int GLDeviceFactory::BindPackPixelBufferIndex(const int index)
 {
-    t_u32 num = (t_u32)_PixelBufferArray.size();
+    t_s32 num = (t_s32)_PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), TEXT("[GLDeviceFactory::BindPackPixelBufferIndex] Trying to bind an invalid pixel buffer index."));
     if((index < 0) || (index >= num))
     {

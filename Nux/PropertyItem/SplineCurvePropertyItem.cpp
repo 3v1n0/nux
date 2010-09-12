@@ -45,7 +45,7 @@ long SplineCurvePropertyItem::ProcessPropertyEvent(IEvent &ievent, long Traverse
     long ret = TraverseInfo;
 
     Geometry geo = m_ItemGeometryVector[1];
-    if((ievent.e_event == INL_MOUSE_PRESSED) && geo.IsPointInside(ievent.e_x, ievent.e_y) == false)
+    if((ievent.e_event == NUX_MOUSE_PRESSED) && geo.IsPointInside(ievent.e_x, ievent.e_y) == false)
     {
         ret = ProcessEvent(ievent, TraverseInfo, eDoNotProcess | ProcessEventInfo);
     }
@@ -59,7 +59,6 @@ long SplineCurvePropertyItem::ProcessPropertyEvent(IEvent &ievent, long Traverse
 void SplineCurvePropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
                                            RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
-    bool isSelected = (this == table->GetSelectedItem());
     if(isDirtyItem() || IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);

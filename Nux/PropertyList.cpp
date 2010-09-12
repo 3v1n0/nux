@@ -53,7 +53,6 @@ SectionProperty::~SectionProperty()
 void SectionProperty::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter,
                                    RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
-    bool isSelected = (this == table->GetSelectedItem());
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
     if(isDirtyItem())
     {

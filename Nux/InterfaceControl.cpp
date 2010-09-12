@@ -30,12 +30,13 @@ IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
 
 ActiveInterfaceObject::ActiveInterfaceObject()
 :   BaseArea()
-,   m_CompositionLayout(0)
-,   m_NeedRedraw(false)
-,   m_UseStyleDrawing(true)
-,   m_TextColor(0)
-,   m_IsEnabled(true)
 {
+    m_CompositionLayout = smptr(Layout)(0);
+    m_NeedRedraw        = false;
+    m_UseStyleDrawing   = true;
+    m_TextColor         = 0;
+    m_IsEnabled         = true;
+
     // Set widget default size;
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 }
@@ -45,7 +46,7 @@ ActiveInterfaceObject::~ActiveInterfaceObject()
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
     GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, false));
 
-    INL_SAFE_DELETE(m_TextColor);
+    NUX_SAFE_DELETE(m_TextColor);
 }
 
 long ActiveInterfaceObject::ComputeChildLayout()
@@ -344,11 +345,11 @@ void ActiveInterfaceObject::SetTextColor(const Color* color)
 {
     if(color == 0)
     {
-        INL_SAFE_DELETE(m_TextColor);
+        NUX_SAFE_DELETE(m_TextColor);
     }
     else
     {
-        INL_SAFE_DELETE(m_TextColor);
+        NUX_SAFE_DELETE(m_TextColor);
         m_TextColor = color->Clone();
     }
 }

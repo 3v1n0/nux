@@ -27,7 +27,7 @@
 
 NAMESPACE_BEGIN
 
-INL_IMPLEMENT_GLOBAL_OBJECT(NCPU);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NCPU);
 
 //============================================================================
 // Calculate and log the amount of RAM in the machine

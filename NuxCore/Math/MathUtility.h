@@ -64,7 +64,7 @@ NAMESPACE_BEGIN
 
     template< class T > inline T Align( const T Ptr, int Alignment )
     {
-        return (T)(((INL_POINTER)Ptr + Alignment - 1) & ~(Alignment-1));
+        return (T)(((NUX_POINTER)Ptr + Alignment - 1) & ~(Alignment-1));
     }
 
     //Bitwise rotation on the left. 
@@ -86,21 +86,21 @@ NAMESPACE_BEGIN
         Swap(a1,b1,a2,b2,a3,b3,a4,b4,a5,b5); Swap(a6,b6);
     }
 
-    //Return the absolute value of a. 
+    //! Return the absolute value of a. 
     template<typename T> inline const T Abs(const T& a) { return a>=0?a:-a; }
-    //Return the minimum between a and b. 
+    //! Return the minimum between a and b. 
     template<typename T> inline const T& Min(const T& a,const T& b) { return a<=b?a:b; }
-    //Return the minimum between a, b and c. 
+    //! Return the minimum between a, b and c. 
     template<typename T> inline const T& Min(const T& a,const T& b,const T& c) { return min(min(a,b),c); }
-    //Return the minimum between a, b, c and d.
+    //! Return the minimum between a, b, c and d.
     template<typename T> inline const T& Min(const T& a,const T& b,const T& c,const T& d) { return min(min(min(a,b),c),d); }
-    //Return the maximum between a and b. 
+    //! Return the maximum between a and b. 
     template<typename T> inline const T& Max(const T& a,const T& b) { return a>=b?a:b; }
-    //Return the maximum between a, b and c. 
+    //! Return the maximum between a, b and c. 
     template<typename T> inline const T& Max(const T& a,const T& b,const T& c) { return max(max(a,b),c); }
-    //Return the maximum between a,b,c and d. 
+    //! Return the maximum between a,b,c and d. 
     template<typename T> inline const T& Max(const T& a,const T& b,const T& c,const T& d) { return max(max(a,b,c),d); }
-    //Return the sign of x. 
+    //! Return the sign of x. 
     template<typename T> inline T Sign(const T& x) { return (x<0)?-1:(x==0?0:1); }
 
 
@@ -110,13 +110,22 @@ NAMESPACE_BEGIN
 
     template<typename T> inline T MinMod(const T& a,const T& b) { return a*b<=0?0:(a>0?(a<b?a:b):(a<b?b:a)); }
 
-    //Return a random variable between [0,1] (uniform distribution). 
+    //! Return a random variable between [0,1[ (uniform distribution). 
+    /*!
+        @return a random double value in the range [0, 1[
+    */
     inline double Random() { return (double)std::rand()/RAND_MAX; }
 
-    //Return a random variable between [-1,1] (uniform distribution). 
-    inline double CRandom() { return 1-2*std::rand(); }
+    //! Return a random variable between [-1,1[ (uniform distribution).
+    /*!
+        @return a random double value in the range [-1, 1[.
+    */
+    inline double CRandom() { return 1-2*(std::rand()/RAND_MAX); }
 
-    //Return a random variable using a gaussian distribution and a variance of 1. 
+    //! Return a random variable using a gaussian distribution and a variance of 1.
+    /*!
+        @return a random double value in the range [-1, 1[.
+    */
     inline double RandomGaussian() { return std::sqrt(-2*std::log((double)(1e-10 + (1-2e-10)*std::rand())))*std::cos((double)(2*3.14f/*Const::pi*/*std::rand())); }
 
     inline unsigned int RandomUInt() { return std::rand(); }

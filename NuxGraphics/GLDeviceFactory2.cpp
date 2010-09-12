@@ -313,7 +313,7 @@ int GLDeviceFactory::DrawPrimitive(TRefGL<IOpenGLVertexDeclaration> VertexDeclar
         switch (PrimitiveType)
         {
         case PRIMITIVE_TYPE_POINTLIST:
-            ElementCount; break;
+            ElementCount = PrimitiveCount; break;
 
         case PRIMITIVE_TYPE_LINELIST:
             ElementCount = PrimitiveCount * 2; break;
@@ -393,7 +393,7 @@ int GLDeviceFactory::DrawPrimitiveUP(TRefGL<IOpenGLVertexDeclaration> VertexDecl
         switch (PrimitiveType)
         {
         case PRIMITIVE_TYPE_POINTLIST:
-            ElementCount; break;
+            ElementCount = PrimitiveCount; break;
 
         case PRIMITIVE_TYPE_LINELIST:
             ElementCount = PrimitiveCount * 2; break;

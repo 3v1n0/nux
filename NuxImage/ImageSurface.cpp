@@ -68,7 +68,7 @@ NBitmapData* LoadImageFile(const TCHAR* filename)
     BitmapData = LoadITXFile(filename);
     if(BitmapData) return BitmapData;
 
-#ifdef INL_OPENEXR_SUPPORT
+#ifdef NUX_OPENEXR_SUPPORT
     BitmapData = Load_OpenEXR(filename);
     if(BitmapData) return BitmapData;
 #endif
@@ -79,7 +79,7 @@ NBitmapData* LoadImageFile(const TCHAR* filename)
 
 bool HasOpenEXRSupport()
 {
-#ifdef INL_OPENEXR_SUPPORT
+#ifdef NUX_OPENEXR_SUPPORT
     return true;
 #else
     return false;
@@ -137,28 +137,28 @@ NBitmapData::~NBitmapData()
 ImageSurface::ImageSurface()
 :   width_(0)
 ,   height_(0)
-,   bpe_(0)
+,   format_(BITFMT_UNKNOWN)
 ,   m_Pitch(0)
+,   bpe_(0)
 ,   Alignment_(4)
 ,   RawData_(0)
-,   format_(BITFMT_UNKNOWN)
 {
     Allocate(format_, width_, height_);
 }
 
 ImageSurface::~ImageSurface()
 {
-    INL_SAFE_DELETE(RawData_);
+    NUX_SAFE_DELETE(RawData_);
 }
 
 ImageSurface::ImageSurface(BitmapFormat format, t_u32 width, t_u32 height)
 :   width_(0)
 ,   height_(0)
-,   bpe_(0)
+,   format_(BITFMT_UNKNOWN)
 ,   m_Pitch(0)
+,   bpe_(0)
 ,   Alignment_(4)
 ,   RawData_(0)
-,   format_(BITFMT_UNKNOWN)
 {
     //MakeCheckBoardImage(*this, width, height, 0xFFBBBBBB, 0xFF444444, 4, 4);
     Allocate(format, width, height);
@@ -196,12 +196,12 @@ ImageSurface& ImageSurface::operator = (const ImageSurface& surface)
     return *this;
 }
 
-t_u32 ImageSurface::GetPitch() const
+t_s32 ImageSurface::GetPitch() const
 {
     return m_Pitch;
 }
 
-t_u32 ImageSurface::GetBlockHeight() const
+t_s32 ImageSurface::GetBlockHeight() const
 {
     t_u32 block = GPixelFormats[format_].BlockSizeY;
     t_u32 HeightInBlocks = Align(GetHeight(), block) / block;
@@ -213,12 +213,12 @@ BitmapFormat ImageSurface::GetFormat() const
     return format_;
 }
 
-t_u32 ImageSurface::GetAlignment() const
+t_s32 ImageSurface::GetAlignment() const
 {
     return Alignment_;
 }
 
-void ImageSurface::Allocate(BitmapFormat format, t_u32 width, t_u32 height)
+void ImageSurface::Allocate(BitmapFormat format, t_s32 width, t_s32 height)
 {
     nuxAssert(format < BITFMT_END_GFX_FORMATS);
     nuxAssert(width >= 0);
@@ -238,7 +238,7 @@ void ImageSurface::Allocate(BitmapFormat format, t_u32 width, t_u32 height)
         return;
     }
 
-    INL_SAFE_DELETE_ARRAY(RawData_);
+    NUX_SAFE_DELETE_ARRAY(RawData_);
     if((width == 0) || (height == 0))
     {
         width_ = 0;
@@ -258,7 +258,7 @@ void ImageSurface::Allocate(BitmapFormat format, t_u32 width, t_u32 height)
 
     bpe_ = GPixelFormats[format].BlockBytes;
     format_ = format;
-    t_u32 HalfAlignment = Log2(Alignment_);
+
     if((format_ == BITFMT_DXT1) ||
         (format_ == BITFMT_DXT2) ||
         (format_ == BITFMT_DXT3) ||
@@ -293,98 +293,96 @@ void ImageSurface::Allocate(BitmapFormat format, t_u32 width, t_u32 height)
 // a number of pixel multiple of 4.
 // See Avoiding 16 Common OpenGL Pitfalls http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall/
 // 7. Watch Your Pixel Store Alignment
-t_u32 ImageSurface::GetLevelPitch(BitmapFormat format, t_u32 width, t_u32 height, t_u32 miplevel)
+t_s32 ImageSurface::GetLevelPitch(BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel)
 {
-    t_u32 levelwidth = ImageSurface::GetLevelDim(format, width, miplevel);
+    t_s32 levelwidth = ImageSurface::GetLevelDim(format, width, miplevel);
 
-    t_u32 bpe = GPixelFormats[format].BlockBytes;
-    t_u32 memalignment = GPixelFormats[format].RowMemoryAlignment;
-    t_u32 block = GPixelFormats[format].BlockSizeX;
-    t_u32 shift = Log2(GPixelFormats[format].BlockSizeX);
-    t_u32 pitch = Align( (bpe * ((levelwidth + (block-1)) >> shift)), memalignment);
+    t_s32 bpe = GPixelFormats[format].BlockBytes;
+    t_s32 memalignment = GPixelFormats[format].RowMemoryAlignment;
+    t_s32 block = GPixelFormats[format].BlockSizeX;
+    t_s32 shift = Log2(GPixelFormats[format].BlockSizeX);
+    t_s32 pitch = Align( (bpe * ((levelwidth + (block-1)) >> shift)), memalignment);
 
     return pitch;
 }
 
-t_u32 ImageSurface::GetLevelPitchNoMemAlignment(BitmapFormat format, t_u32 width, t_u32 height, t_u32 miplevel)
+t_s32 ImageSurface::GetLevelPitchNoMemAlignment(BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel)
 {
-    t_u32 levelwidth = ImageSurface::GetLevelDim(format, width, miplevel);
+    t_s32 levelwidth = ImageSurface::GetLevelDim(format, width, miplevel);
 
-    t_u32 bpe = GPixelFormats[format].BlockBytes;
-    t_u32 block = GPixelFormats[format].BlockSizeX;
-    t_u32 shift = Log2(GPixelFormats[format].BlockSizeX);
-    t_u32 pitch = Align( (bpe * ((levelwidth + (block-1)) >> shift)), 1);
+    t_s32 bpe = GPixelFormats[format].BlockBytes;
+    t_s32 block = GPixelFormats[format].BlockSizeX;
+    t_s32 shift = Log2(GPixelFormats[format].BlockSizeX);
+    t_s32 pitch = Align( (bpe * ((levelwidth + (block-1)) >> shift)), 1);
 
     return pitch;
 }
 
-t_u32 ImageSurface::GetLevelSize(BitmapFormat format, t_u32 width, t_u32 height, t_u32 miplevel)
+t_s32 ImageSurface::GetLevelSize(BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel)
 {
-    t_u32 pitch = ImageSurface::GetLevelPitch(format, width, height, miplevel);
-    t_u32 levelheight = ImageSurface::GetLevelDim(format, height, miplevel);
+    t_s32 pitch = ImageSurface::GetLevelPitch(format, width, height, miplevel);
+    t_s32 levelheight = ImageSurface::GetLevelDim(format, height, miplevel);
 
-    t_u32 block = GPixelFormats[format].BlockSizeY;
-    t_u32 shift = Log2(GPixelFormats[format].BlockSizeY);
-    t_u32 HeightInBlocks = Align(levelheight, block) / block;
+    t_s32 block = GPixelFormats[format].BlockSizeY;
+    t_s32 HeightInBlocks = Align(levelheight, block) / block;
 
-    t_u32 size = pitch * HeightInBlocks;
+    t_s32 size = pitch * HeightInBlocks;
     return size;
 }
 
-t_u32 ImageSurface::GetLevelSize(BitmapFormat format, t_u32 width, t_u32 height, t_u32 depth, t_u32 miplevel)
+t_s32 ImageSurface::GetLevelSize(BitmapFormat format, t_s32 width, t_s32 height, t_s32 depth, t_s32 miplevel)
 {
-    t_u32 pitch = ImageSurface::GetLevelPitch(format, width, height, miplevel);
-    t_u32 levelheight = ImageSurface::GetLevelDim(format, height, miplevel);
-    t_u32 leveldepth = ImageSurface::GetLevelDim(format, depth, miplevel);
+    t_s32 pitch = ImageSurface::GetLevelPitch(format, width, height, miplevel);
+    t_s32 levelheight = ImageSurface::GetLevelDim(format, height, miplevel);
+    t_s32 leveldepth = ImageSurface::GetLevelDim(format, depth, miplevel);
 
-    t_u32 block = GPixelFormats[format].BlockSizeY;
-    t_u32 shift = Log2(GPixelFormats[format].BlockSizeY);
-    t_u32 HeightInBlocks = Align(levelheight, block) / block;
+    t_s32 block = GPixelFormats[format].BlockSizeY;
+    t_s32 HeightInBlocks = Align(levelheight, block) / block;
 
-    t_u32 size = pitch * HeightInBlocks;
+    t_s32 size = pitch * HeightInBlocks;
     return leveldepth * size;
 }
 
-t_u32 ImageSurface::GetLevelWidth(BitmapFormat format, t_u32 width, t_u32 miplevel)
+t_s32 ImageSurface::GetLevelWidth(BitmapFormat format, t_s32 width, t_s32 miplevel)
 {
     // return 1 if the mip level does not exist.
-    return Max<t_u32>(1, width >> miplevel);
+    return Max<t_s32>(1, width >> miplevel);
 }
 
-t_u32 ImageSurface::GetLevelHeight(BitmapFormat format, t_u32 height, t_u32 miplevel)
+t_s32 ImageSurface::GetLevelHeight(BitmapFormat format, t_s32 height, t_s32 miplevel)
 {
     // return 1 if the mip level does not exist.
-    return Max<t_u32>(1, height >> miplevel);
+    return Max<t_s32>(1, height >> miplevel);
 }
 
-t_u32 ImageSurface::GetLevelDim(BitmapFormat format, t_u32 length, t_u32 miplevel)
+t_s32 ImageSurface::GetLevelDim(BitmapFormat format, t_s32 length, t_s32 miplevel)
 {
     // return 1 if the mip level does not exist.
-    return Max<t_u32>(1, length >> miplevel);
+    return Max<t_s32>(1, length >> miplevel);
 }
 
-t_u32 ImageSurface::GetNumMipLevel(BitmapFormat format, t_u32 width, t_u32 height)
+t_s32 ImageSurface::GetNumMipLevel(BitmapFormat format, t_s32 width, t_s32 height)
 {
-    t_u32 NumTotalMipLevel    = 1 + floorf(Log2(Max(width, height)));
+    t_s32 NumTotalMipLevel    = 1 + floorf(Log2(Max(width, height)));
     return NumTotalMipLevel;
 }
 
-t_u32 ImageSurface::GetMemAlignment(BitmapFormat format)
+t_s32 ImageSurface::GetMemAlignment(BitmapFormat format)
 {
     return GPixelFormats[format].RowMemoryAlignment;
 }
 
-t_u32 ImageSurface::GetLevelBlockWidth(BitmapFormat format, t_u32 width, t_u32 miplevel)
+t_s32 ImageSurface::GetLevelBlockWidth(BitmapFormat format, t_s32 width, t_s32 miplevel)
 {
-    t_u32 block = GPixelFormats[format].BlockSizeX;
-    t_u32 WidthInBlocks = Align(GetLevelDim(format, width, miplevel), block) / block;
+    t_s32 block = GPixelFormats[format].BlockSizeX;
+    t_s32 WidthInBlocks = Align(GetLevelDim(format, width, miplevel), block) / block;
     return WidthInBlocks;
 }
 
-t_u32 ImageSurface::GetLevelBlockHeight(BitmapFormat format, t_u32 height, t_u32 miplevel)
+t_s32 ImageSurface::GetLevelBlockHeight(BitmapFormat format, t_s32 height, t_s32 miplevel)
 {
-    t_u32 block = GPixelFormats[format].BlockSizeY;
-    t_u32 HeightInBlocks = Align(GetLevelDim(format, height, miplevel), block) / block;
+    t_s32 block = GPixelFormats[format].BlockSizeY;
+    t_s32 HeightInBlocks = Align(GetLevelDim(format, height, miplevel), block) / block;
     return HeightInBlocks;
 }
 
@@ -395,7 +393,7 @@ bool ImageSurface::IsNull() const
     return false;
 }
 
-void ImageSurface::Write32b(t_u32 i, t_u32 j, t_u32 value)
+void ImageSurface::Write32b(t_s32 i, t_s32 j, t_u32 value)
 {
     nuxAssert(i < width_);
     nuxAssert(j < height_);
@@ -409,7 +407,7 @@ void ImageSurface::Write32b(t_u32 i, t_u32 j, t_u32 value)
     RawData_[j * m_Pitch + i * bpe_ + 3] = (t_u8) ((value & 0xff000000) >> 24);
 }
 
-void ImageSurface::Write24b(t_u32 i, t_u32 j, t_u32 value)
+void ImageSurface::Write24b(t_s32 i, t_s32 j, t_u32 value)
 {
     nuxAssert(i < width_);
     nuxAssert(j < height_);
@@ -422,7 +420,7 @@ void ImageSurface::Write24b(t_u32 i, t_u32 j, t_u32 value)
     RawData_[j * m_Pitch + i * bpe_ + 2] = (t_u8) ((value & 0xff0000) >> 16);
 }
 
-void ImageSurface::Write16b(t_u32 i, t_u32 j, t_u16 value)
+void ImageSurface::Write16b(t_s32 i, t_s32 j, t_u16 value)
 {
     nuxAssert(i < width_);
     nuxAssert(j < height_);
@@ -434,7 +432,7 @@ void ImageSurface::Write16b(t_u32 i, t_u32 j, t_u16 value)
     RawData_[j * m_Pitch + i * bpe_ + 1] = (t_u8) ((value & 0xff00) >> 8);
 }
 
-void ImageSurface::Write8b(t_u32 i, t_u32 j, t_u8 value)
+void ImageSurface::Write8b(t_s32 i, t_s32 j, t_u8 value)
 {
     nuxAssert(i < width_);
     nuxAssert(j < height_);
@@ -445,7 +443,7 @@ void ImageSurface::Write8b(t_u32 i, t_u32 j, t_u8 value)
     RawData_[j * m_Pitch + i * bpe_ + 0] = (t_u8) (value & 0xff);
 }
 
-void ImageSurface::Write(t_u32 i, t_u32 j, t_u8 r, t_u8 g, t_u8 b, t_u8 a)
+void ImageSurface::Write(t_s32 i, t_s32 j, t_u8 r, t_u8 g, t_u8 b, t_u8 a)
 {
     nuxAssert(i < width_);
     nuxAssert(j < height_);
@@ -468,7 +466,7 @@ void ImageSurface::Write(t_u32 i, t_u32 j, t_u8 r, t_u8 g, t_u8 b, t_u8 a)
     RawData_[j * m_Pitch + i * bpe_ + 3] = a;
 }
 
-t_u32 ImageSurface::Read(t_u32 i, t_u32 j)
+t_u32 ImageSurface::Read(t_s32 i, t_s32 j)
 {
     nuxAssert(i < width_);
     nuxAssert(j < height_);
@@ -508,7 +506,7 @@ t_u32 ImageSurface::Read(t_u32 i, t_u32 j)
 
 void ImageSurface::Clear()
 {
-    t_u32 i;
+    t_s32 i;
 
     if(RawData_ == 0)
         return;
@@ -526,7 +524,7 @@ void ImageSurface::FlipHorizontal()
 {
     if((format_ == BITFMT_DXT1) || (format_ == BITFMT_DXT2)  || (format_ == BITFMT_DXT3)  || (format_ == BITFMT_DXT4) || (format_ == BITFMT_DXT5))
         return;
-    t_u32 i, j, k;
+    t_s32 i, j, k;
     t_u8 *flip_data;
 
     if(RawData_ == 0)
@@ -555,7 +553,7 @@ void ImageSurface::FlipHorizontal()
 void ImageSurface::FlipVertical()
 {
 
-    t_u32 i, j, k;
+    t_s32 i, j, k;
     t_u8 *flip_data;
 
     if(RawData_ == 0)
@@ -596,10 +594,10 @@ void ImageSurface::FlipVertical()
 void ImageSurface::FlipDXTVertical()
 {
     //void (CDDSImage::*flipblocks)(DXTColBlock*, t_u32);
-    t_u32 xblocks = (width_+3) / 4;
-    t_u32 yblocks = (height_+3) / 4;
-    t_u32 blocksize;
-    t_u32 linesize;
+    t_s32 xblocks = (width_+3) / 4;
+    t_s32 yblocks = (height_+3) / 4;
+    t_s32 blocksize;
+    t_s32 linesize;
 
     switch (format_)
     {
@@ -632,7 +630,7 @@ void ImageSurface::FlipDXTVertical()
     DXTColBlock *top;
     DXTColBlock *bottom;
 
-    for (t_u32 j = 0; j < (yblocks >> 1); j++)
+    for (t_s32 j = 0; j < (yblocks >> 1); j++)
     {
         top = (DXTColBlock*)((unsigned char*)RawData_+ j * linesize);
         bottom = (DXTColBlock*)((unsigned char*)RawData_ + (((yblocks-j)-1) * linesize));
@@ -659,12 +657,15 @@ void ImageSurface::FlipDXTVertical()
             FlipBlocksDXT5(top, xblocks);
             FlipBlocksDXT5(bottom, xblocks);
             break;
+        default:
+          nuxAssert(TEXT("[ImageSurface::FlipDXTVertical] Invalid Switch option."))
+          break;
         }
         SwapBlocks(bottom, top, linesize);
     }
 }
 
-void ImageSurface::SwapBlocks(void *byte1, void *byte2, t_u32 size)
+void ImageSurface::SwapBlocks(void *byte1, void *byte2, t_s32 size)
 {
     unsigned char *tmp = new unsigned char[size];
 
@@ -675,11 +676,11 @@ void ImageSurface::SwapBlocks(void *byte1, void *byte2, t_u32 size)
     delete [] tmp;
 }
 
-void ImageSurface::FlipBlocksDXT1(DXTColBlock *line, t_u32 numBlocks)
+void ImageSurface::FlipBlocksDXT1(DXTColBlock *line, t_s32 numBlocks)
 {
     DXTColBlock *curblock = line;
 
-    for (t_u32 i = 0; i < numBlocks; i++)
+    for (t_s32 i = 0; i < numBlocks; i++)
     {
         SwapBlocks(&curblock->row[0], &curblock->row[3], sizeof(unsigned char));
         SwapBlocks(&curblock->row[1], &curblock->row[2], sizeof(unsigned char));
@@ -688,12 +689,12 @@ void ImageSurface::FlipBlocksDXT1(DXTColBlock *line, t_u32 numBlocks)
     }
 }
 
-void ImageSurface::FlipBlocksDXT3(DXTColBlock *line, t_u32 numBlocks)
+void ImageSurface::FlipBlocksDXT3(DXTColBlock *line, t_s32 numBlocks)
 {
     DXTColBlock *curblock = line;
     DXT3AlphaBlock *alphablock;
 
-    for (t_u32 i = 0; i < numBlocks; i++)
+    for (t_s32 i = 0; i < numBlocks; i++)
     {
         alphablock = (DXT3AlphaBlock*)curblock;
 
@@ -709,12 +710,12 @@ void ImageSurface::FlipBlocksDXT3(DXTColBlock *line, t_u32 numBlocks)
     }
 }
 
-void ImageSurface::FlipBlocksDXT5(DXTColBlock *line, t_u32 numBlocks)
+void ImageSurface::FlipBlocksDXT5(DXTColBlock *line, t_s32 numBlocks)
 {
     DXTColBlock *curblock = line;
     DXT5AlphaBlock *alphablock;
 
-    for (t_u32 i = 0; i < numBlocks; i++)
+    for (t_s32 i = 0; i < numBlocks; i++)
     {
         alphablock = (DXT5AlphaBlock*)curblock;
 
@@ -813,7 +814,7 @@ t_u8* ImageSurface::GetPtrRawData()
     return RawData_;
 }
 
-t_u32 ImageSurface::GetSize() const
+t_s32 ImageSurface::GetSize() const
 {
     if((format_ == BITFMT_DXT1) ||
         (format_ == BITFMT_DXT2) ||
@@ -855,7 +856,7 @@ Color ImageSurface::AverageColor()
 }
 
 ///////////////////////////////////////////////////////////////////
-NTextureData::NTextureData(BitmapFormat f, t_u32 width, t_u32 height, t_u32 NumMipmap)
+NTextureData::NTextureData(BitmapFormat f, t_s32 width, t_s32 height, t_s32 NumMipmap)
 :   m_NumMipmap(0)
 {
     Allocate(f, width, height, NumMipmap);
@@ -868,7 +869,7 @@ NTextureData::~NTextureData()
 
 void NTextureData::ClearData()
 {
-    for(t_u32 i = 0; i < m_MipSurfaceArray.size(); i++)
+    for(t_s32 i = 0; i < (t_s32)m_MipSurfaceArray.size(); i++)
         delete m_MipSurfaceArray[i];
     m_MipSurfaceArray.clear();
 }
@@ -876,7 +877,7 @@ void NTextureData::ClearData()
 //! Copy constructor
 NTextureData::NTextureData(const NTextureData& object)
 {
-    for(t_u32 i = 0; i < object.GetNumMipmap(); i++)
+    for(t_s32 i = 0; i < object.GetNumMipmap(); i++)
         m_MipSurfaceArray.push_back(new ImageSurface(object.GetSurface(i)));
 }
 
@@ -886,18 +887,18 @@ NTextureData& NTextureData::operator = (const NTextureData& copy)
     ClearData();
     m_NumMipmap = copy.m_NumMipmap;
     m_TotalMemorySize = copy.m_TotalMemorySize;
-    for(t_u32 i = 0; i < copy.GetNumMipmap(); i++)
+    for(t_s32 i = 0; i < copy.GetNumMipmap(); i++)
         m_MipSurfaceArray.push_back(new ImageSurface(copy.GetSurface(i)));
     return *this;
 }
 
-void NTextureData::Allocate(BitmapFormat format, t_u32 width, t_u32 height, t_u32 NumMipmapRequested)
+void NTextureData::Allocate(BitmapFormat format, t_s32 width, t_s32 height, t_s32 NumMipmapRequested)
 {
     nuxAssertMsg(width>=0, TEXT("[NTextureData::Allocate] Error: Negative texture width."));
     nuxAssertMsg(height>=0, TEXT("[NTextureData::Allocate] Error: Negative texture height."));
     nuxAssert(NumMipmapRequested >= 0);
 
-    t_u32 NumTotalMipLevel    = 1 + (t_u32)Floor(Log2(Max(width, height)));
+    t_s32 NumTotalMipLevel    = 1 + (t_s32)Floor(Log2(Max(width, height)));
     m_NumMipmap = NumMipmapRequested;
     if(NumMipmapRequested == 0)
         m_NumMipmap = NumTotalMipLevel ? NumTotalMipLevel : 1;
@@ -906,43 +907,43 @@ void NTextureData::Allocate(BitmapFormat format, t_u32 width, t_u32 height, t_u3
 
     m_TotalMemorySize = 0;
     ClearData();
-    for(t_u32 i = 0; i < m_NumMipmap; i++)
+    for(t_s32 i = 0; i < m_NumMipmap; i++)
     {
-        t_u32 w = width >> i;
-        t_u32 h = height >> i;
+        t_s32 w = width >> i;
+        t_s32 h = height >> i;
         m_MipSurfaceArray.push_back(new ImageSurface(format, w, h));
         m_TotalMemorySize += m_MipSurfaceArray[i]->GetSize();
     }
 }
 
-void NTextureData::AllocateCheckBoardTexture(t_u32 width, t_u32 height, t_u32 NumMipmap, Color color0, Color color1, t_u32 TileWidth, t_u32 TileHeight)
+void NTextureData::AllocateCheckBoardTexture(t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth, t_s32 TileHeight)
 {
     Allocate(BITFMT_R8G8B8A8, width, height, NumMipmap);
-    for(t_u32 i = 0; i < m_NumMipmap; i++)
+    for(t_s32 i = 0; i < m_NumMipmap; i++)
     {
-        t_u32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
-        t_u32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
+        t_s32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
+        t_s32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
         MakeCheckBoardImage(*m_MipSurfaceArray[i], w, h, color0, color1, TileWidth, TileHeight);
     }
 }
 
-void NTextureData::AllocateColorTexture(t_u32 width, t_u32 height, t_u32 NumMipmap, Color color0)
+void NTextureData::AllocateColorTexture(t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0)
 {
     Allocate(BITFMT_R8G8B8A8, width, height, NumMipmap);
-    for(t_u32 i = 0; i < m_NumMipmap; i++)
+    for(t_s32 i = 0; i < m_NumMipmap; i++)
     {
-        t_u32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
-        t_u32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
+        t_s32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
+        t_s32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
         MakeCheckBoardImage(*m_MipSurfaceArray[i], w, h, color0, color0);
     }
 }
 
-t_u32 NTextureData::GetNumMipmap() const
+t_s32 NTextureData::GetNumMipmap() const
 {
     return m_MipSurfaceArray.size();
 }
 
-bool NTextureData::SetSurface(t_u32 MipLevel, const ImageSurface& targetsurface)
+bool NTextureData::SetSurface(t_s32 MipLevel, const ImageSurface& targetsurface)
 {
     nuxAssert(MipLevel >= 0);
     nuxAssert(MipLevel < m_NumMipmap);
@@ -960,7 +961,7 @@ bool NTextureData::SetSurface(t_u32 MipLevel, const ImageSurface& targetsurface)
 }
 
 ///////////////////////////////////////////////////////////////////
-NCubemapData::NCubemapData(BitmapFormat format, t_u32 width, t_u32 height, t_u32 NumMipmap)
+NCubemapData::NCubemapData(BitmapFormat format, t_s32 width, t_s32 height, t_s32 NumMipmap)
 :   m_NumMipmap(0)
 {
     Allocate(format, width, height, NumMipmap);
@@ -973,8 +974,8 @@ NCubemapData::~NCubemapData()
 
 void NCubemapData::ClearData()
 {
-    t_u32 n = m_MipSurfaceArray[0].size();
-    for(t_u32 i = 0; i < n; i++)
+    t_s32 n = (t_s32)m_MipSurfaceArray[0].size();
+    for(t_s32 i = 0; i < n; i++)
     {
         delete m_MipSurfaceArray[0][i];
         delete m_MipSurfaceArray[1][i];
@@ -994,8 +995,8 @@ void NCubemapData::ClearData()
 //! Copy constructor
 NCubemapData::NCubemapData(const NCubemapData& object)
 {
-    for(t_u32 face = 0; face < 6; face++)
-        for(t_u32 i = 0; i < object.GetNumMipmap(); i++)
+    for(t_s32 face = 0; face < 6; face++)
+        for(t_s32 i = 0; i < object.GetNumMipmap(); i++)
             m_MipSurfaceArray[face].push_back(new ImageSurface(object.GetSurface(face, i)));
 }
 
@@ -1005,13 +1006,13 @@ NCubemapData& NCubemapData::operator = (const NCubemapData& copy)
     ClearData();
     m_NumMipmap = copy.m_NumMipmap;
     m_TotalMemorySize = copy.m_TotalMemorySize;
-    for(t_u32 face = 0; face < 6; face++)
-        for(t_u32 i = 0; i < copy.GetNumMipmap(); i++)
+    for(t_s32 face = 0; face < 6; face++)
+        for(t_s32 i = 0; i < copy.GetNumMipmap(); i++)
             m_MipSurfaceArray[face].push_back(new ImageSurface(copy.GetSurface(face, i)));
     return *this;
 }
 
-void NCubemapData::Allocate(BitmapFormat format, t_u32 width, t_u32 height, t_u32 NumMipmapRequested)
+void NCubemapData::Allocate(BitmapFormat format, t_s32 width, t_s32 height, t_s32 NumMipmapRequested)
 {
     nuxAssertMsg(width>=0, TEXT("[NCubemapData::Allocate] Error: Negative texture width."));
     nuxAssertMsg(height>=0, TEXT("[NCubemapData::Allocate] Error: Negative texture height."));
@@ -1019,7 +1020,7 @@ void NCubemapData::Allocate(BitmapFormat format, t_u32 width, t_u32 height, t_u3
 
     ClearData();
     
-    t_u32 NumTotalMipLevel    = 1 + (t_u32)Floor(Log2(Max(width, height)));
+    t_s32 NumTotalMipLevel    = 1 + (t_s32)Floor(Log2(Max(width, height)));
     m_NumMipmap = NumMipmapRequested;
     if(NumMipmapRequested == 0)
         m_NumMipmap = NumTotalMipLevel ? NumTotalMipLevel : 1;
@@ -1027,52 +1028,52 @@ void NCubemapData::Allocate(BitmapFormat format, t_u32 width, t_u32 height, t_u3
         m_NumMipmap = NumTotalMipLevel ? NumTotalMipLevel : 1;
 
     m_TotalMemorySize = 0;
-    for(t_u32 face = 0; face < 6; face++)
+    for(t_s32 face = 0; face < 6; face++)
     {
-        for(t_u32 i = 0; i < m_NumMipmap; i++)
+        for(t_s32 i = 0; i < m_NumMipmap; i++)
         {
-            t_u32 w = width >> i;
-            t_u32 h = height >> i;
+            t_s32 w = width >> i;
+            t_s32 h = height >> i;
             m_MipSurfaceArray[face].push_back(new ImageSurface(format, w, h));
             m_TotalMemorySize += m_MipSurfaceArray[face][i]->GetSize();
         }
     }
 }
 
-void NCubemapData::AllocateCheckBoardTexture(t_u32 width, t_u32 height, t_u32 NumMipmap, Color color0, Color color1, t_u32 TileWidth, t_u32 TileHeight)
+void NCubemapData::AllocateCheckBoardTexture(t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth, t_s32 TileHeight)
 {
     Allocate(BITFMT_R8G8B8A8, width, height, NumMipmap);
-    for(t_u32 face = 0; face < 6; face++)
+    for(t_s32 face = 0; face < 6; face++)
     {
-        for(t_u32 i = 0; i < m_NumMipmap; i++)
+        for(t_s32 i = 0; i < m_NumMipmap; i++)
         {
-            t_u32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
-            t_u32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
+            t_s32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
+            t_s32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
             MakeCheckBoardImage(*m_MipSurfaceArray[face][i], w, h, color0, color1, TileWidth, TileHeight);
         }
     }
 }
 
-void NCubemapData::AllocateColorTexture(t_u32 width, t_u32 height, t_u32 NumMipmap, Color color0)
+void NCubemapData::AllocateColorTexture(t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0)
 {
     Allocate(BITFMT_R8G8B8A8, width, height, NumMipmap);
-    for(t_u32 face = 0; face < 6; face++)
+    for(t_s32 face = 0; face < 6; face++)
     {
-        for(t_u32 i = 0; i < m_NumMipmap; i++)
+        for(t_s32 i = 0; i < m_NumMipmap; i++)
         {
-            t_u32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
-            t_u32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
+            t_s32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
+            t_s32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
             MakeCheckBoardImage(*m_MipSurfaceArray[face][i], w, h, color0, color0);
         }
     }
 }
 
-t_u32 NCubemapData::GetNumMipmap() const
+t_s32 NCubemapData::GetNumMipmap() const
 {
     return m_MipSurfaceArray[0].size();
 }
 
-bool NCubemapData::SetSurface(t_u32 face, t_u32 MipLevel, const ImageSurface& targetsurface)
+bool NCubemapData::SetSurface(t_s32 face, t_s32 MipLevel, const ImageSurface& targetsurface)
 {
     nuxAssert(face >= 0);
     nuxAssert(face < 6);
@@ -1092,9 +1093,9 @@ bool NCubemapData::SetSurface(t_u32 face, t_u32 MipLevel, const ImageSurface& ta
 }
 
 ///////////////////////////////////////////////////////////////////
-NVolumeData::NVolumeData(BitmapFormat format, t_u32 width, t_u32 height, t_u32 depth, t_u32 NumMipmap)
-:   m_Depth(0)
-,   m_NumMipmap(0)
+NVolumeData::NVolumeData(BitmapFormat format, t_s32 width, t_s32 height, t_s32 depth, t_s32 NumMipmap)
+:   m_NumMipmap(0)
+,   m_Depth(0)
 ,   m_MipSurfaceArray(0)
 {
     Allocate(format, width, height, depth, NumMipmap);
@@ -1107,23 +1108,23 @@ NVolumeData::~NVolumeData()
 
 void NVolumeData::ClearData()
 {
-    for(t_u32 mip = 0; mip < GetNumMipmap(); mip++)
+    for(t_s32 mip = 0; mip < GetNumMipmap(); mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(GetFormat(), GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(GetFormat(), GetDepth(), mip); s++)
         {
             delete m_MipSurfaceArray[mip][s];
         }
         m_MipSurfaceArray[mip].clear();
     }
-    INL_SAFE_DELETE_ARRAY(m_MipSurfaceArray);
+    NUX_SAFE_DELETE_ARRAY(m_MipSurfaceArray);
 }
 
 //! Copy constructor
 NVolumeData::NVolumeData(const NVolumeData& object)
 {
-    for(t_u32 mip = 0; mip < object.GetNumMipmap(); mip++)
+    for(t_s32 mip = 0; mip < object.GetNumMipmap(); mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(object.GetFormat(), object.GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(object.GetFormat(), object.GetDepth(), mip); s++)
         {
             m_MipSurfaceArray[mip].push_back(new ImageSurface(object.GetSurface(mip, s)));
         }
@@ -1139,9 +1140,9 @@ NVolumeData& NVolumeData::operator = (const NVolumeData& copy)
     m_TotalMemorySize = copy.m_TotalMemorySize;
 
     m_MipSurfaceArray = new std::vector<ImageSurface*>[m_NumMipmap];
-    for(t_u32 mip = 0; mip < copy.GetNumMipmap(); mip++)
+    for(t_s32 mip = 0; mip < copy.GetNumMipmap(); mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(copy.GetFormat(), copy.GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(copy.GetFormat(), copy.GetDepth(), mip); s++)
         {
             m_MipSurfaceArray[mip].push_back(new ImageSurface(copy.GetSurface(mip, s)));
         }
@@ -1149,7 +1150,7 @@ NVolumeData& NVolumeData::operator = (const NVolumeData& copy)
     return *this;
 }
 
-void NVolumeData::Allocate(BitmapFormat format, t_u32 width, t_u32 height, t_u32 depth, t_u32 NumMipmapRequested)
+void NVolumeData::Allocate(BitmapFormat format, t_s32 width, t_s32 height, t_s32 depth, t_s32 NumMipmapRequested)
 {
     nuxAssertMsg(depth>=0, TEXT("[NVolumeData::Allocate] Error: Negative number of slice."));
     nuxAssertMsg(width>=0, TEXT("[NVolumeData::Allocate] Error: Negative texture width."));
@@ -1158,7 +1159,7 @@ void NVolumeData::Allocate(BitmapFormat format, t_u32 width, t_u32 height, t_u32
 
     ClearData();
 
-    t_u32 NumTotalMipLevel    = 1 + (t_u32)Floor(Log2(Max(width, height)));
+    t_s32 NumTotalMipLevel    = 1 + (t_s32)Floor(Log2(Max(width, height)));
     m_NumMipmap = NumMipmapRequested;
     if(NumMipmapRequested == 0)
         m_NumMipmap = NumTotalMipLevel ? NumTotalMipLevel : 1;
@@ -1170,52 +1171,52 @@ void NVolumeData::Allocate(BitmapFormat format, t_u32 width, t_u32 height, t_u32
     m_MipSurfaceArray = new std::vector<ImageSurface*>[m_NumMipmap];
     m_TotalMemorySize = 0;
 
-    for(t_u32 mip = 0; mip < m_NumMipmap; mip++)
+    for(t_s32 mip = 0; mip < m_NumMipmap; mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(format, depth, mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(format, depth, mip); s++)
         {
-            t_u32 w = ImageSurface::GetLevelDim(format, width, mip);
-            t_u32 h = ImageSurface::GetLevelDim(format, height, mip);
+            t_s32 w = ImageSurface::GetLevelDim(format, width, mip);
+            t_s32 h = ImageSurface::GetLevelDim(format, height, mip);
             m_MipSurfaceArray[mip].push_back(new ImageSurface(format, w, h));
             m_TotalMemorySize += m_MipSurfaceArray[mip][s]->GetSize();
         }
     }
 }
 
-void NVolumeData::AllocateCheckBoardTexture(t_u32 width, t_u32 height, t_u32 slice, t_u32 NumMipmap, Color color0, Color color1, t_u32 TileWidth, t_u32 TileHeight)
+void NVolumeData::AllocateCheckBoardTexture(t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth, t_s32 TileHeight)
 {
     Allocate(BITFMT_R8G8B8A8, width, height, slice, NumMipmap);
-    for(t_u32 mip = 0; mip < m_NumMipmap; mip++)
+    for(t_s32 mip = 0; mip < m_NumMipmap; mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetDepth(), mip); s++)
         {
-            t_u32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), mip);
-            t_u32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), mip);
+            t_s32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), mip);
+            t_s32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), mip);
             MakeCheckBoardImage(*(m_MipSurfaceArray[mip][s]), w, h, color0, color1, TileWidth, TileHeight);
         }
     }
 }
 
-void NVolumeData::AllocateColorTexture(t_u32 width, t_u32 height, t_u32 slice, t_u32 NumMipmap, Color color0)
+void NVolumeData::AllocateColorTexture(t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0)
 {
     Allocate(BITFMT_R8G8B8A8, width, height, slice, NumMipmap);
-    for(t_u32 mip = 0; mip < m_NumMipmap; mip++)
+    for(t_s32 mip = 0; mip < m_NumMipmap; mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetDepth(), mip); s++)
         {
-            t_u32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), mip);
-            t_u32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), mip);
+            t_s32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), mip);
+            t_s32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), mip);
             MakeCheckBoardImage(*(m_MipSurfaceArray[mip][s]), w, h, color0, color0);
         }
     }
 }
 
-t_u32 NVolumeData::GetNumMipmap() const
+t_s32 NVolumeData::GetNumMipmap() const
 {
     return m_NumMipmap;
 }
 
-bool NVolumeData::SetSurface(t_u32 Slice, t_u32 MipLevel, const ImageSurface& targetsurface)
+bool NVolumeData::SetSurface(t_s32 Slice, t_s32 MipLevel, const ImageSurface& targetsurface)
 {
     nuxAssert(Slice >= 0);
     nuxAssert(Slice < m_Depth);
@@ -1235,9 +1236,9 @@ bool NVolumeData::SetSurface(t_u32 Slice, t_u32 MipLevel, const ImageSurface& ta
 }
 
 ///////////////////////////////////////////////////////////////////
-NAnimatedTextureData::NAnimatedTextureData(BitmapFormat format, t_u32 width, t_u32 height, t_u32 depth)
-:   m_Depth(0)
-,   m_NumMipmap(0)
+NAnimatedTextureData::NAnimatedTextureData(BitmapFormat format, t_s32 width, t_s32 height, t_s32 depth)
+:   m_NumMipmap(0)
+,   m_Depth(0)
 ,   m_MipSurfaceArray(0)
 {
     Allocate(format, width, height, depth, 1);
@@ -1250,30 +1251,30 @@ NAnimatedTextureData::~NAnimatedTextureData()
 
 void NAnimatedTextureData::ClearData()
 {
-    for(t_u32 mip = 0; mip < GetNumMipmap(); mip++)
+    for(t_s32 mip = 0; mip < GetNumMipmap(); mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(GetFormat(), GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(GetFormat(), GetDepth(), mip); s++)
         {
             delete m_MipSurfaceArray[mip][s];
         }
         m_MipSurfaceArray[mip].clear();
     }
     m_FrameTimeArray.clear();
-    INL_SAFE_DELETE_ARRAY(m_MipSurfaceArray);
+    NUX_SAFE_DELETE_ARRAY(m_MipSurfaceArray);
 }
 
 //! Copy constructor
 NAnimatedTextureData::NAnimatedTextureData(const NAnimatedTextureData& object)
 {
-    for(t_u32 mip = 0; mip < object.GetNumMipmap(); mip++)
+    for(t_s32 mip = 0; mip < object.GetNumMipmap(); mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(object.GetFormat(), object.GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(object.GetFormat(), object.GetDepth(), mip); s++)
         {
             m_MipSurfaceArray[mip].push_back(new ImageSurface(object.GetSurface(mip, s)));
         }
     }
 
-    for(t_u32 frame = 0; frame < object.GetDepth(); frame++)
+    for(t_s32 frame = 0; frame < object.GetDepth(); frame++)
     {
         m_FrameTimeArray.push_back(object.GetFrameTime(frame));
     }
@@ -1288,15 +1289,15 @@ NAnimatedTextureData& NAnimatedTextureData::operator = (const NAnimatedTextureDa
     m_TotalMemorySize = copy.m_TotalMemorySize;
 
     m_MipSurfaceArray = new std::vector<ImageSurface*>[m_NumMipmap];
-    for(t_u32 mip = 0; mip < copy.GetNumMipmap(); mip++)
+    for(t_s32 mip = 0; mip < copy.GetNumMipmap(); mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(copy.GetFormat(), copy.GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(copy.GetFormat(), copy.GetDepth(), mip); s++)
         {
             m_MipSurfaceArray[mip].push_back(new ImageSurface(copy.GetSurface(s)));
         }
     }
 
-    for(t_u32 frame = 0; frame < copy.GetDepth(); frame++)
+    for(t_s32 frame = 0; frame < copy.GetDepth(); frame++)
     {
         m_FrameTimeArray.push_back(copy.GetFrameTime(frame));
     }
@@ -1304,7 +1305,7 @@ NAnimatedTextureData& NAnimatedTextureData::operator = (const NAnimatedTextureDa
     return *this;
 }
 
-void NAnimatedTextureData::Allocate(BitmapFormat format, t_u32 width, t_u32 height, t_u32 depth, t_u32 NumMipmapRequested)
+void NAnimatedTextureData::Allocate(BitmapFormat format, t_s32 width, t_s32 height, t_s32 depth, t_s32 NumMipmapRequested)
 {
     nuxAssertMsg(depth>=0, TEXT("[NAnimatedTextureData::Allocate] Error: Negative number of slice."));
     nuxAssertMsg(width>=0, TEXT("[NAnimatedTextureData::Allocate] Error: Negative texture width."));
@@ -1313,7 +1314,7 @@ void NAnimatedTextureData::Allocate(BitmapFormat format, t_u32 width, t_u32 heig
 
     ClearData();
 
-    t_u32 NumTotalMipLevel    = 1 + (t_u32)Floor(Log2(Max(width, height)));
+    t_s32 NumTotalMipLevel    = 1 + (t_s32)Floor(Log2(Max(width, height)));
     m_NumMipmap = NumMipmapRequested;
     if(NumMipmapRequested == 0)
         m_NumMipmap = NumTotalMipLevel ? NumTotalMipLevel : 1;
@@ -1325,52 +1326,52 @@ void NAnimatedTextureData::Allocate(BitmapFormat format, t_u32 width, t_u32 heig
     m_MipSurfaceArray = new std::vector<ImageSurface*>[m_NumMipmap];
     m_TotalMemorySize = 0;
 
-    for(t_u32 mip = 0; mip < m_NumMipmap; mip++)
+    for(t_s32 mip = 0; mip < m_NumMipmap; mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(format, depth, mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(format, depth, mip); s++)
         {
-            t_u32 w = ImageSurface::GetLevelDim(format, width, mip);
-            t_u32 h = ImageSurface::GetLevelDim(format, height, mip);
+            t_s32 w = ImageSurface::GetLevelDim(format, width, mip);
+            t_s32 h = ImageSurface::GetLevelDim(format, height, mip);
             m_MipSurfaceArray[mip].push_back(new ImageSurface(format, w, h));
             m_TotalMemorySize += m_MipSurfaceArray[mip][s]->GetSize();
         }
     }
 }
 
-void NAnimatedTextureData::AllocateCheckBoardTexture(t_u32 width, t_u32 height, t_u32 slice, t_u32 NumMipmap, Color color0, Color color1, t_u32 TileWidth, t_u32 TileHeight)
+void NAnimatedTextureData::AllocateCheckBoardTexture(t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth, t_s32 TileHeight)
 {
     Allocate(BITFMT_R8G8B8A8, width, height, slice, NumMipmap);
-    for(t_u32 mip = 0; mip < m_NumMipmap; mip++)
+    for(t_s32 mip = 0; mip < m_NumMipmap; mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetDepth(), mip); s++)
         {
-            t_u32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), mip);
-            t_u32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), mip);
+            t_s32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), mip);
+            t_s32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), mip);
             MakeCheckBoardImage(*(m_MipSurfaceArray[mip][s]), w, h, color0, color1, TileWidth, TileHeight);
         }
     }
 }
 
-void NAnimatedTextureData::AllocateColorTexture(t_u32 width, t_u32 height, t_u32 slice, t_u32 NumMipmap, Color color0)
+void NAnimatedTextureData::AllocateColorTexture(t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0)
 {
     Allocate(BITFMT_R8G8B8A8, width, height, slice, NumMipmap);
-    for(t_u32 mip = 0; mip < m_NumMipmap; mip++)
+    for(t_s32 mip = 0; mip < m_NumMipmap; mip++)
     {
-        for(t_u32 s = 0; s < ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetDepth(), mip); s++)
+        for(t_s32 s = 0; s < ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetDepth(), mip); s++)
         {
-            t_u32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), mip);
-            t_u32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), mip);
+            t_s32 w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), mip);
+            t_s32 h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), mip);
             MakeCheckBoardImage(*(m_MipSurfaceArray[mip][s]), w, h, color0, color0);
         }
     }
 }
 
-t_u32 NAnimatedTextureData::GetNumMipmap() const
+t_s32 NAnimatedTextureData::GetNumMipmap() const
 {
     return m_NumMipmap;
 }
 
-bool NAnimatedTextureData::SetSurface(t_u32 Slice, t_u32 MipLevel, const ImageSurface& targetsurface)
+bool NAnimatedTextureData::SetSurface(t_s32 Slice, t_s32 MipLevel, const ImageSurface& targetsurface)
 {
     nuxAssert(Slice >= 0);
     nuxAssert(Slice < m_Depth);

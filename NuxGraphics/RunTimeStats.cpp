@@ -30,7 +30,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-INL_IMPLEMENT_GLOBAL_OBJECT(RenderingStats);
+NUX_IMPLEMENT_GLOBAL_OBJECT(RenderingStats);
 
 t_u32 RenderingStats::m_NumTex2D = 0;
 t_u32 RenderingStats::m_GPUSizeTex2D = 0;
@@ -93,43 +93,43 @@ void RenderingStats::Register(IOpenGLResource* GraphicsObject)
     case RTINDEXBUFFER:
         {
             m_NumIndexBuffer++;
-            m_GPUSizeIndexBuffer += INL_REINTERPRET_CAST(IOpenGLIndexBuffer*, GraphicsObject)->GetSize();
+            m_GPUSizeIndexBuffer += NUX_REINTERPRET_CAST(IOpenGLIndexBuffer*, GraphicsObject)->GetSize();
             m_TotalGPUSize += m_GPUSizeIndexBuffer;
             break;
         }
     case RTVERTEXBUFFER:
         {
             m_NumVertexBuffer++;
-            m_GPUSizeVertexBuffer += INL_REINTERPRET_CAST(IOpenGLVertexBuffer*, GraphicsObject)->GetSize();
+            m_GPUSizeVertexBuffer += NUX_REINTERPRET_CAST(IOpenGLVertexBuffer*, GraphicsObject)->GetSize();
             m_TotalGPUSize += m_GPUSizeVertexBuffer;
             break;
         }
     case RTTEXTURE:
         {
-            v.push_back(INL_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject)->GetOpenGLID());
+            v.push_back(NUX_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject)->GetOpenGLID());
             m_NumTex2D++;
-            m_GPUSizeTex2D += GetTextureSize(INL_REINTERPRET_CAST(IOpenGLBaseTexture*, GraphicsObject));
+            m_GPUSizeTex2D += GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture*, GraphicsObject));
             m_TotalGPUSize += m_GPUSizeTex2D;
             break;
         }
     case RTTEXTURERECTANGLE:
         {
             m_NumTexRectangle++;
-            m_GPUSizeTexRectangle += GetTextureSize(INL_REINTERPRET_CAST(IOpenGLBaseTexture*, GraphicsObject));
+            m_GPUSizeTexRectangle += GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture*, GraphicsObject));
             m_TotalGPUSize += m_GPUSizeTexRectangle;
             break;
         }
     case RTCUBETEXTURE:
         {
             m_NumTexCube++;
-            m_GPUSizeTexCube += GetTextureSize(INL_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject));
+            m_GPUSizeTexCube += GetTextureSize(NUX_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject));
             m_TotalGPUSize += m_GPUSizeTexCube;
             break;
         }
     case RTVOLUMETEXTURE:
         {
             m_NumTexVolume++;
-            m_GPUSizeTexVolume += GetTextureSize(INL_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject));
+            m_GPUSizeTexVolume += GetTextureSize(NUX_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject));
             m_TotalGPUSize += m_GPUSizeTexVolume;
             break;
         }
@@ -149,6 +149,7 @@ void RenderingStats::Register(IOpenGLResource* GraphicsObject)
             m_NumFrameBufferObject++;
             break;
         }
+    default: break;
     }
 }
 void RenderingStats::UnRegister(IOpenGLResource* GraphicsObject)
@@ -158,46 +159,46 @@ void RenderingStats::UnRegister(IOpenGLResource* GraphicsObject)
     case RTINDEXBUFFER:
         {
             m_NumIndexBuffer--;
-            m_GPUSizeIndexBuffer -= INL_REINTERPRET_CAST(IOpenGLIndexBuffer*, GraphicsObject)->GetSize();
+            m_GPUSizeIndexBuffer -= NUX_REINTERPRET_CAST(IOpenGLIndexBuffer*, GraphicsObject)->GetSize();
             m_TotalGPUSize -= m_GPUSizeIndexBuffer;
             break;
         }
     case RTVERTEXBUFFER:
         {
             m_NumVertexBuffer--;
-            m_GPUSizeVertexBuffer -= INL_REINTERPRET_CAST(IOpenGLVertexBuffer*, GraphicsObject)->GetSize();
+            m_GPUSizeVertexBuffer -= NUX_REINTERPRET_CAST(IOpenGLVertexBuffer*, GraphicsObject)->GetSize();
             m_TotalGPUSize -= m_GPUSizeVertexBuffer;
             break;
         }
     case RTTEXTURE:
         {
             std::vector<int>::iterator it;
-            it = std::find(v.begin(), v.end(), INL_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject)->GetOpenGLID());
+            it = std::find(v.begin(), v.end(), NUX_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject)->GetOpenGLID());
             if(it != v.end())
                 v.erase(it);
             m_NumTex2D--;
-            m_GPUSizeTex2D -= GetTextureSize(INL_REINTERPRET_CAST(IOpenGLBaseTexture*, GraphicsObject));
+            m_GPUSizeTex2D -= GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture*, GraphicsObject));
             m_TotalGPUSize -= m_GPUSizeTex2D;
             break;
         }
     case RTTEXTURERECTANGLE:
         {
             m_NumTexRectangle--;
-            m_GPUSizeTexRectangle -= GetTextureSize(INL_REINTERPRET_CAST(IOpenGLBaseTexture*, GraphicsObject));
+            m_GPUSizeTexRectangle -= GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture*, GraphicsObject));
             m_TotalGPUSize -= m_GPUSizeTexRectangle;
             break;
         }
     case RTCUBETEXTURE:
         {
             m_NumTexCube--;
-            m_GPUSizeTexCube -= GetTextureSize(INL_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject));
+            m_GPUSizeTexCube -= GetTextureSize(NUX_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject));
             m_TotalGPUSize -= m_GPUSizeTexCube;
             break;
         }
     case RTVOLUMETEXTURE:
         {
             m_NumTexVolume--;
-            m_GPUSizeTexVolume -= GetTextureSize(INL_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject));
+            m_GPUSizeTexVolume -= GetTextureSize(NUX_STATIC_CAST(IOpenGLBaseTexture*, GraphicsObject));
             m_TotalGPUSize -= m_GPUSizeTexVolume;
             break;
         }
@@ -217,6 +218,7 @@ void RenderingStats::UnRegister(IOpenGLResource* GraphicsObject)
             m_NumFrameBufferObject--;
             break;
         }
+    default: break;
     }
 }
 

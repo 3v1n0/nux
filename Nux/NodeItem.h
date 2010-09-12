@@ -27,7 +27,7 @@ NAMESPACE_BEGIN_GUI
 
 class NodeItem
 {
-#ifndef INL_STANDALONE
+#ifndef NUX_STANDALONE
     DECLARE_ROOT_OBJECT_TYPE(NodeItem);
 #endif
 public:

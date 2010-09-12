@@ -35,9 +35,9 @@ IMPLEMENT_ROOT_OBJECT_TYPE(NResource);
 IMPLEMENT_ROOT_OBJECT_TYPE(NGLResource);
 
 NResource::NResource()
-:   m_ResourceIndex(INL_INVALID_INDEX)
+:   m_ResourceIndex(NUX_INVALID_INDEX)
 {
-#define GET_UNIQUE_RESOURCE_INDEX INL_GLOBAL_OBJECT_INSTANCE(NUniqueIndex)
+#define GET_UNIQUE_RESOURCE_INDEX NUX_GLOBAL_OBJECT_INSTANCE(NUniqueIndex)
     m_ResourceIndex = GET_UNIQUE_RESOURCE_INDEX.GetUniqueIndex();
 #undef GET_UNIQUE_RESOURCE_INDEX
 }
@@ -99,38 +99,38 @@ NGLResource::~NGLResource()
 void NResourceCache::InitializeResourceFactories()
 {   
     // Define the factory pair NResource - NGLResource
-#define INL_DEFINE_RESOURCE_FACTORY_PAIR(SourceTypeName, ResourceTypeName) \
+#define NUX_DEFINE_RESOURCE_FACTORY_PAIR(SourceTypeName, ResourceTypeName) \
     static TGLResourceFactory<SourceTypeName, ResourceTypeName> Factory##SourceTypeName(&SourceTypeName::StaticObjectType); \
     GetResourceFactories().push_back(&Factory##SourceTypeName);
 
-    INL_DEFINE_RESOURCE_FACTORY_PAIR(NTexture2D, NGLTexture2D);
-    INL_DEFINE_RESOURCE_FACTORY_PAIR(NRectangleTexture, NGLRectangleTexture);
-    INL_DEFINE_RESOURCE_FACTORY_PAIR(NTextureCube, NGLTextureCube);
-    INL_DEFINE_RESOURCE_FACTORY_PAIR(NTextureVolume, NGLTextureVolume);
-    INL_DEFINE_RESOURCE_FACTORY_PAIR(NAnimatedTexture, NGLAnimatedTexture);
-    INL_DEFINE_RESOURCE_FACTORY_PAIR(NVertexBuffer, NGLVertexBuffer);
-    INL_DEFINE_RESOURCE_FACTORY_PAIR(NIndexBuffer, NGLIndexBuffer);
-    INL_DEFINE_RESOURCE_FACTORY_PAIR(NVertexDeclaration, NGLVertexDeclaration);
-    INL_DEFINE_RESOURCE_FACTORY_PAIR(NStaticMesh, NGLStaticMesh);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NTexture2D, NGLTexture2D);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NRectangleTexture, NGLRectangleTexture);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NTextureCube, NGLTextureCube);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NTextureVolume, NGLTextureVolume);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NAnimatedTexture, NGLAnimatedTexture);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NVertexBuffer, NGLVertexBuffer);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NIndexBuffer, NGLIndexBuffer);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NVertexDeclaration, NGLVertexDeclaration);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NStaticMesh, NGLStaticMesh);
 
-#undef INL_DEFINE_RESOURCE_FACTORY_PAIR
+#undef NUX_DEFINE_RESOURCE_FACTORY_PAIR
 
     // Define the factory updater for and NResource
-#define INL_DEFINE_RESOURCE_UPDATER(SourceTypeName) \
+#define NUX_DEFINE_RESOURCE_UPDATER(SourceTypeName) \
     static NResourceUpdater Updater##SourceTypeName(&SourceTypeName::StaticObjectType); \
     GetResourceUpdaters().push_back(&Updater##SourceTypeName);
 
-    INL_DEFINE_RESOURCE_UPDATER(NTexture2D);	
-    INL_DEFINE_RESOURCE_UPDATER(NRectangleTexture);	
-    INL_DEFINE_RESOURCE_UPDATER(NTextureCube);	
-    INL_DEFINE_RESOURCE_UPDATER(NTextureVolume);	
-    INL_DEFINE_RESOURCE_UPDATER(NAnimatedTexture);	
-    INL_DEFINE_RESOURCE_UPDATER(NVertexBuffer);	
-    INL_DEFINE_RESOURCE_UPDATER(NIndexBuffer);	
-    INL_DEFINE_RESOURCE_UPDATER(NVertexDeclaration);	
-    INL_DEFINE_RESOURCE_UPDATER(NStaticMesh);	
+    NUX_DEFINE_RESOURCE_UPDATER(NTexture2D);	
+    NUX_DEFINE_RESOURCE_UPDATER(NRectangleTexture);	
+    NUX_DEFINE_RESOURCE_UPDATER(NTextureCube);	
+    NUX_DEFINE_RESOURCE_UPDATER(NTextureVolume);	
+    NUX_DEFINE_RESOURCE_UPDATER(NAnimatedTexture);	
+    NUX_DEFINE_RESOURCE_UPDATER(NVertexBuffer);	
+    NUX_DEFINE_RESOURCE_UPDATER(NIndexBuffer);	
+    NUX_DEFINE_RESOURCE_UPDATER(NVertexDeclaration);	
+    NUX_DEFINE_RESOURCE_UPDATER(NStaticMesh);	
 
-#undef INL_DEFINE_RESOURCE_UPDATER
+#undef NUX_DEFINE_RESOURCE_UPDATER
 }
 
 TRefGL< NGLResource > NResourceCache::GetCachedResource(NResource* Source)

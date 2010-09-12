@@ -23,15 +23,12 @@
 #ifndef NTEMPLATE_H
 #define NTEMPLATE_H
 
-#include <cmath>
-#include <cwchar>
-#include <cstring>
-#include <algorithm>
-
 NAMESPACE_BEGIN
 
+class NString;
+
 // Number of elements in an array.
-#define INL_ARRAY_COUNT( array ) \
+#define NUX_ARRAY_COUNT( array ) \
     ( sizeof(array) / sizeof((array)[0]) )
 
 
@@ -163,40 +160,6 @@ struct RemovePointerFromType<const volatile T*>
     typedef T type; 
 };
 
-// Determining if an integer is a power of 2
-// http://graphics.stanford.edu/~seander/bithacks.html
-
-
-// From: http://www.jb.man.ac.uk/~slowe/cpp/itoa.html
-//    John Maloney has pointed out various problems with the previous implementation.
-//    One of the major issues was the amount of heap allocation going on.
-//    He suggested that a lot of this be removed to speed up the algorithm.
-//    Below are two versions based on his excellent suggestions. The char* version 
-//    is at least 10 times faster than the code above. The new std::string version
-//    is 3 times faster than before. Although the char* version is faster, you should
-//    check that you have allocated enough space to hold the output.
-
-// C++ version std::string style "itoa":
-tstring IntegerToChar(int value, int base);
-// C++ version char* style "itoa":
-TCHAR* IntegerToChar( int value, TCHAR* result, int base );
-
-// convert an hexadecimal TCHAR to t_u32 // i.e. "0x0000000f" to 15
-t_u32 HexCharToInteger(const TCHAR* s);
-// convert a TCHAR to INT
-BOOL CharToInteger(const TCHAR* digit, INT& ret);
-int CharToInteger(const TCHAR* digit);
-
-
-// convert a TCHAR to double
-BOOL CharToDouble(const TCHAR* digit, double& ret);
-double CharToDouble(const TCHAR* digit);
-
-// convert a TCHAR to float
-BOOL CharToFloat(const TCHAR* digit, float& ret);
-float CharToFloat(const TCHAR* digit);
-
-TCHAR* DoubleToChar(double d);
 
 NAMESPACE_END
 

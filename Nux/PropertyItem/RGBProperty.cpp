@@ -88,9 +88,9 @@ RGBPropertyItem::RGBPropertyItem(const TCHAR* name, float red /* = 1.0f*/, float
 
 RGBPropertyItem::~RGBPropertyItem()
 {
-    INL_SAFE_DELETE(m_red);
-    INL_SAFE_DELETE(m_green);
-    INL_SAFE_DELETE(m_blue);
+    NUX_SAFE_DELETE(m_red);
+    NUX_SAFE_DELETE(m_green);
+    NUX_SAFE_DELETE(m_blue);
 }
 
 long RGBPropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -175,7 +175,6 @@ void RGBPropertyItem::AlphaChange(const weaksmptr(ColorGradient) slider)
 void RGBPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
                                     RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
-    bool isSelected = (this == table->GetSelectedItem());
     if(isDirtyItem() ||
         m_red->IsRedrawNeeded() ||
         m_green->IsRedrawNeeded() ||

@@ -126,8 +126,6 @@ bool LoadXMLUITextures(const char* XMLUIFile, std::vector<ArchiveTextureData*>& 
 
     for(image = data->FirstChildElement("Image"); image; image = image->NextSiblingElement("Image"))
     {        
-        bool isStroke = false;
-        bool isShape = false;
         ArchiveTextureData* pimage = new ArchiveTextureData;
         Memset(pimage, 0, sizeof(ArchiveTextureData));
 
@@ -350,8 +348,8 @@ bool LoadUIArchive(const TCHAR* ArchiveName, std::vector<ArchiveTextureData*>& A
 
 NTextureArchiveManager::NTextureArchiveManager()
 :   m_isLoaded(false)
-,   m_NumberOfTextures(0)
 ,   m_FileStream(0)
+,   m_NumberOfTextures(0)
 {
 
 }
@@ -423,7 +421,7 @@ bool NTextureArchiveManager::AddTextureToArchive(const TCHAR* SourceFolder, cons
     }
 
     NFileName Filename;
-    if((SourceFolder != 0) && (SourceFolder != TEXT("")))
+    if((SourceFolder != 0) && (NString(SourceFolder) != NString(TEXT(""))))
     {
         Filename = SourceFolder;
         Filename.RemoveBackSlashAtEnd();
@@ -469,7 +467,7 @@ bool NTextureArchiveManager::CloseTextureArchiveFile()
 {
     if(m_FileStream)
         m_FileStream->Close();
-    INL_SAFE_DELETE(m_FileStream);
+    NUX_SAFE_DELETE(m_FileStream);
     m_CurrentTextureArchive = TEXT("");
     m_isLoaded = false;
     return true;

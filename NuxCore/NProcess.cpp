@@ -75,7 +75,7 @@ BOOL inlGetProcReturnCode( void* ProcHandle, INT* ReturnCode )
 }
 
 
-INL_IMPLEMENT_GLOBAL_OBJECT(NProcess);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NProcess);
 
 void NProcess::Constructor()
 {

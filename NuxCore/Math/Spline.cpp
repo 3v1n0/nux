@@ -67,9 +67,9 @@ double* CubicSpline::SolveTridiag ( int n, double a[], double b[] )
 
 CubicSpline::CubicSpline(int numpoint, std::vector<double> x_array, std::vector<double> y_array, int ibcbeg, double ybcbeg, int ibcend, double ybcend )
 {
-    if(x_array.size() != numpoint || y_array.size() != numpoint)
+    if(((int)x_array.size() != numpoint) || ((int)y_array.size() != numpoint))
     {
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
     }
 
     np = numpoint;
@@ -111,7 +111,7 @@ CubicSpline::CubicSpline()
 CubicSpline::CubicSpline(const CubicSpline& Other)
 {
     if(Other.np == 0)
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
 
     np = Other.np;
     t = new double[np];
@@ -131,7 +131,7 @@ CubicSpline::CubicSpline(const CubicSpline& Other)
 CubicSpline& CubicSpline::operator = (const CubicSpline& Other)
 {
     if(Other.np == 0)
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
 
     np = Other.np;
     t = new double[np];
@@ -157,9 +157,9 @@ void CubicSpline::Set(int numpoint, std::vector<double> x_array, std::vector<dou
         return;
     }
 
-    if(x_array.size() != numpoint || y_array.size() != numpoint)
+    if(((int)x_array.size() != numpoint) || ((int)y_array.size() != numpoint))
     {
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
     }
 
     np = numpoint;
@@ -197,7 +197,7 @@ double* CubicSpline::Compute(int ibcbeg, double ybcbeg, int ibcend, double ybcen
     if ( np <= 1 )
     {
         //"Fatal error: The number of data points N must be at least 2.\n";
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
         return 0;
     }
 
@@ -206,7 +206,7 @@ double* CubicSpline::Compute(int ibcbeg, double ybcbeg, int ibcend, double ybcen
         if ( t[i+1] <= t[i] )
         {
             //"Fatal error: The knots must be strictly increasing, but\n";
-            INL_BREAK_ASM_INT3;
+            NUX_BREAK_ASM_INT3;
             return NULL;
         }
     }
@@ -236,7 +236,7 @@ double* CubicSpline::Compute(int ibcbeg, double ybcbeg, int ibcend, double ybcen
     else
     {
         //"Fatal error: IBCBEG must be 0, 1 or 2.\n";
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
         delete [] a;
         delete [] b;
         return NULL;
@@ -278,7 +278,7 @@ double* CubicSpline::Compute(int ibcbeg, double ybcbeg, int ibcend, double ybcen
     else
     {
         //"Fatal error: IBCEND must be 0, 1 or 2.\n";
-        INL_BREAK_ASM_INT3;
+        NUX_BREAK_ASM_INT3;
         delete [] a;
         delete [] b;
         return NULL;
@@ -304,7 +304,7 @@ double* CubicSpline::Compute(int ibcbeg, double ybcbeg, int ibcend, double ybcen
         if ( !ddy )
         {
             //"Fatal error: The linear system could not be solved.\n";
-            INL_BREAK_ASM_INT3;
+            NUX_BREAK_ASM_INT3;
             delete [] a;
             delete [] b;
             return NULL;

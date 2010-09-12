@@ -78,8 +78,8 @@ public:
         }
         else
         {
-            pDesc->Width    = Max<unsigned int>(1, _Width >> Level);
-            pDesc->Height   = Max<unsigned int>(1, _Height >> Level);
+            pDesc->Width    = Max<int>(1, _Width >> Level);
+            pDesc->Height   = Max<int>(1, _Height >> Level);
             pDesc->Depth    = _Depth;
             pDesc->PixelFormat   = _PixelFormat;
             pDesc->Type     = _ResourceType;
@@ -90,10 +90,10 @@ public:
 private:
 
     IOpenGLVolumeTexture(
-        unsigned int Width
-        , unsigned int Height
-        , unsigned int Depth
-        , unsigned int Levels
+        int Width
+        , int Height
+        , int Depth
+        , int Levels
         , BitmapFormat PixelFormat);
 
     std::vector< TRefGL<IOpenGLSurface> > *_VolumeSurfaceArray;

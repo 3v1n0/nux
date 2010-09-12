@@ -40,7 +40,7 @@ NWindowsSerialFileReader::NWindowsSerialFileReader(HANDLE InHandle, NOutputDevic
 }
 NWindowsSerialFileReader::~NWindowsSerialFileReader()
 {
-    INL_SAFE_DELETE_ARRAY(m_Buffer);
+    NUX_SAFE_DELETE_ARRAY(m_Buffer);
     if(m_FileHandle)
     {
         Close();
@@ -58,7 +58,7 @@ bool NWindowsSerialFileReader::Precache(t_int PrecacheOffset, t_int PrecacheSize
         m_BufferCount = Min<t_s64>(Min<t_s64>(PrecacheSize, (t_int)(sBufferSize - (m_FilePos & (sBufferSize-1)))), m_FileSize - m_FilePos);
         t_u32 Count = 0;
         //GTotalBytesReadViaFileManager += m_BufferCount;
-        ::ReadFile(m_FileHandle, m_Buffer, m_BufferCount, INL_REINTERPRET_CAST(DWORD*, &Count), NULL);
+        ::ReadFile(m_FileHandle, m_Buffer, m_BufferCount, NUX_REINTERPRET_CAST(DWORD*, &Count), NULL);
         if(Count != m_BufferCount)
         {
             m_ErrorCode = 1;
@@ -122,7 +122,7 @@ t_s64 NWindowsSerialFileReader::GetFileSize()
         return -1;
 
     t_s64 Size = 0;
-    if(::GetFileSizeEx(m_FileHandle, INL_REINTERPRET_CAST(PLARGE_INTEGER, &Size)) == 0)
+    if(::GetFileSizeEx(m_FileHandle, NUX_REINTERPRET_CAST(PLARGE_INTEGER, &Size)) == 0)
     {
         Size = -1;
     }
@@ -140,7 +140,7 @@ bool NWindowsSerialFileReader::Close()
     return !m_ErrorCode;
 }
 
-void NWindowsSerialFileReader::SerializeFinal(void* Dest, t_u64 Length)
+void NWindowsSerialFileReader::SerializeFinal(void* Dest, t_s64 Length)
 {
     nuxAssert(Dest);
     while(Length > 0)
@@ -194,7 +194,7 @@ NWindowsSerialFileWriter::NWindowsSerialFileWriter(HANDLE InHandle, NOutputDevic
 
 NWindowsSerialFileWriter::~NWindowsSerialFileWriter()
 {
-    INL_SAFE_DELETE_ARRAY(m_Buffer);
+    NUX_SAFE_DELETE_ARRAY(m_Buffer);
     if(m_FileHandle)
         Close();
     m_FileHandle = NULL;
@@ -262,14 +262,14 @@ t_s64 NWindowsSerialFileWriter::GetFileSize()
         return -1;
 
     t_s64 Size = 0;
-    if(::GetFileSizeEx(m_FileHandle, INL_REINTERPRET_CAST(PLARGE_INTEGER, &Size)) == 0)
+    if(::GetFileSizeEx(m_FileHandle, NUX_REINTERPRET_CAST(PLARGE_INTEGER, &Size)) == 0)
     {
         Size = -1;
     }
     return Size;
 }
 
-void NWindowsSerialFileWriter::SerializeFinal(void* V, t_u64 Length)
+void NWindowsSerialFileWriter::SerializeFinal(void* V, t_s64 Length)
 {
     // This method is not re-entrant by itself. It relies on m_Buffer and other variables
     // that belong to this object. Therefore, it is not thread safe. We add a critical section
@@ -279,7 +279,7 @@ void NWindowsSerialFileWriter::SerializeFinal(void* V, t_u64 Length)
     nuxAssert(m_FileHandle);
     nuxAssert(V);
 
-    INL_RETURN_IF_NULL(m_FileHandle);
+    NUX_RETURN_IF_NULL(m_FileHandle);
 
     m_Pos += Length;
     t_int FreeSpace;
@@ -324,7 +324,7 @@ void NWindowsSerialFileWriter::_Flush()
 }
 
 //////////////////////////////////////////////////////////////////////////
-INL_IMPLEMENT_GLOBAL_OBJECT(NFileManagerWindows);
+NUX_IMPLEMENT_GLOBAL_OBJECT(NFileManagerWindows);
 
 void NFileManagerWindows::Constructor()
 {
@@ -429,7 +429,7 @@ t_s64 NFileManagerWindows::FileSize(const TCHAR* Filename)
         return -1;
     }
     t_s64 Size = 0;
-    if(::GetFileSizeEx(Handle, INL_REINTERPRET_CAST(PLARGE_INTEGER, &Size)) == 0)
+    if(::GetFileSizeEx(Handle, NUX_REINTERPRET_CAST(PLARGE_INTEGER, &Size)) == 0)
     {
         Size = -1;
     }
@@ -440,7 +440,7 @@ t_s64 NFileManagerWindows::FileSize(const TCHAR* Filename)
 bool NFileManagerWindows::FileExist(const TCHAR* Filename)
 {
     WIN32_FILE_ATTRIBUTE_DATA FileAttrData;
-    if(::GetFileAttributesEx(Filename, GetFileExInfoStandard, INL_STATIC_CAST(void*, &FileAttrData)))
+    if(::GetFileAttributesEx(Filename, GetFileExInfoStandard, NUX_STATIC_CAST(void*, &FileAttrData)))
     {
         return true;
     }
@@ -462,7 +462,7 @@ int NFileManagerWindows::Copy(const TCHAR* DestFile,
     BOOL* pCancel = NULL;
     if(Monitor)
         pCancel = &(Monitor->m_bCancel);
-    if(::CopyFileEx(SrcFile, DestFile, NFileTransferMonitor::CopyProgressRoutine, INL_REINTERPRET_CAST(void*, Monitor), pCancel, Flags) == 0)
+    if(::CopyFileEx(SrcFile, DestFile, NFileTransferMonitor::CopyProgressRoutine, NUX_REINTERPRET_CAST(void*, Monitor), pCancel, Flags) == 0)
     {
         LPVOID lpMsgBuf = 0;
         ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -508,7 +508,7 @@ bool NFileManagerWindows::Delete(const TCHAR* Filename, bool OverWriteReadOnly)
 bool NFileManagerWindows::IsReadOnly(const TCHAR* Filename)
 {
     WIN32_FILE_ATTRIBUTE_DATA FileAttrData;
-    if(::GetFileAttributesEx(Filename, GetFileExInfoStandard, INL_STATIC_CAST(void*, &FileAttrData)))
+    if(::GetFileAttributesEx(Filename, GetFileExInfoStandard, NUX_STATIC_CAST(void*, &FileAttrData)))
     {
         return((FileAttrData.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0);
     }
@@ -522,7 +522,7 @@ bool NFileManagerWindows::IsReadOnly(const TCHAR* Filename)
 bool NFileManagerWindows::IsDirectory(const TCHAR* DirectoryName)
 {
     WIN32_FILE_ATTRIBUTE_DATA FileAttrData;
-    if(::GetFileAttributesEx(DirectoryName, GetFileExInfoStandard, INL_STATIC_CAST(void*, &FileAttrData)))
+    if(::GetFileAttributesEx(DirectoryName, GetFileExInfoStandard, NUX_STATIC_CAST(void*, &FileAttrData)))
     {
         return ((FileAttrData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
     }
@@ -536,7 +536,7 @@ bool NFileManagerWindows::IsDirectory(const TCHAR* DirectoryName)
 bool NFileManagerWindows::IsHidden(const TCHAR* Filename)
 {
     WIN32_FILE_ATTRIBUTE_DATA FileAttrData;
-    if(::GetFileAttributesEx(Filename, GetFileExInfoStandard, INL_STATIC_CAST(void*, &FileAttrData)))
+    if(::GetFileAttributesEx(Filename, GetFileExInfoStandard, NUX_STATIC_CAST(void*, &FileAttrData)))
     {
         return ((FileAttrData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) != 0);
     }
@@ -584,7 +584,7 @@ bool NFileManagerWindows::Move(const TCHAR* Dest,
     BOOL* pCancel = NULL;
     if(Monitor)
         pCancel = &(Monitor->m_bCancel);
-    if(::MoveFileWithProgress(Src, Dest, NFileTransferMonitor::CopyProgressRoutine, INL_REINTERPRET_CAST(void*, Monitor), Flags) != 0)
+    if(::MoveFileWithProgress(Src, Dest, NFileTransferMonitor::CopyProgressRoutine, NUX_REINTERPRET_CAST(void*, Monitor), Flags) != 0)
     {
         nuxDebugMsg(TEXT("[NFileManagerWindows::Move] Error moving file '%s' to '%s' (GetLastError: %d)"), Src, Dest, ::GetLastError());
         return false;
@@ -601,9 +601,9 @@ bool NFileManagerWindows::MakeDirectory(const TCHAR* Path, bool CreateCompletePa
     if((::CreateDirectory(Path, NULL) == 0) && (::GetLastError() != ERROR_ALREADY_EXISTS))
     {
         nuxDebugMsg(TEXT("[NFileManagerWindows::MakeDirectory] Error creating directory '%s' (GetLastError: %d)"), Path, ::GetLastError());
-        return INL_ERROR;
+        return NUX_ERROR;
     }
-    return INL_OK;
+    return NUX_OK;
 }
 
 bool NFileManagerWindows::DeleteDirectory(const TCHAR* Path, bool DeleteContentFirst)
@@ -733,11 +733,11 @@ NString NFileManagerWindows::GetCurrentDirectory()
 {
 #if UNICODE
     TCHAR Buffer[1024]=TEXT("");
-    ::GetCurrentDirectoryW(INL_ARRAY_COUNT(Buffer),Buffer);
+    ::GetCurrentDirectoryW(NUX_ARRAY_COUNT(Buffer),Buffer);
     return NString(Buffer);
 #else
     ANSICHAR Buffer[1024]="";
-    ::GetCurrentDirectoryA(INL_ARRAY_COUNT(Buffer),Buffer);
+    ::GetCurrentDirectoryA(NUX_ARRAY_COUNT(Buffer),Buffer);
     return NString(Buffer);
 #endif
 }

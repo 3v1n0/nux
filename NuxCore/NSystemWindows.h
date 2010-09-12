@@ -28,25 +28,6 @@
 #endif
 #include <windows.h>
 
-#include <cassert>  // (assert.h)
-#include <cctype>   // (ctype.h)
-#include <cerrno>   // (errno.h)
-#include <cfloat>   // (float.h)
-#include <ciso646>  // (iso646.h)
-#include <climits>  // (limits.h)
-#include <clocale>  // (locale.h)
-#include <cmath>    // (math.h)
-#include <csetjmp>  // (setjmp.h)
-//#include <csignal>  // (signal.h)
-#include <cstdarg>  // (stdarg.h)
-#include <cstddef>  // (stddef.h)
-#include <cstdio>   // (stdio.h)
-#include <cstdlib>  // (stdlib.h)
-#include <cstring>  // (string.h)
-#include <ctime>    // (time.h)
-#include <cwchar>   // (wchar.h)
-#include <cwctype>  // (wctype.h)
-
 #include <tchar.h>
 #include <sys/utime.h>
 #include <sys/timeb.h>
@@ -60,8 +41,8 @@
 #include <io.h>
 #include <direct.h>
 
-// If INL_LOG_FILE_ANSI is set to 1, log files will be written in ASCII characters even when in UNICODE.
-#define INL_LOG_FILE_ANSI   1
+// If NUX_LOG_FILE_ANSI is set to 1, log files will be written in ASCII characters even when in UNICODE.
+#define NUX_LOG_FILE_ANSI   1
 
 // Undo any Windows defines.
 #undef BYTE
@@ -83,26 +64,26 @@
 
 
 
-#define INL_VARARGS     __cdecl					// Functions with variable arguments
+#define NUX_VARARGS     __cdecl					// Functions with variable arguments
 
 // Calling Convention
 // This is the default calling convention for C and C++ programs.
 // Because the stack is cleaned up by the caller, it can do vararg functions.
 // Argument-passing order: Right to left
-#define INL_CDECL	    __cdecl
+#define NUX_CDECL	    __cdecl
 // The __stdcall calling convention is used to call Win32 API functions.
 // The callee cleans the stack, so the compiler makes vararg functions __cdecl.
 // Argument-passing order: Right to left
-#define INL_STDCALL		__stdcall
+#define NUX_STDCALL		__stdcall
 // The __fastcall calling convention specifies that arguments to functions are to be passed in registers, when possible.
-#define INL_FASTCALL    __fastcall
+#define NUX_FASTCALL    __fastcall
 // This is the default calling convention used by C++ member functions that do not use variable arguments.
 // Under thiscall, the callee cleans the stack, which is impossible for vararg functions.
-#define INL_THISCALL    thiscall                //
+#define NUX_THISCALL    thiscall                //
 
-#define INL_INLINE          inline			        // Force inline code
-#define INL_FORCEINLINE     __forceinline			// Force inline code
-#define INL_FORCENOINLINE   __declspec(noinline)	// Force code to NOT be inline
+#define NUX_INLINE          inline			        // Force inline code
+#define NUX_FORCEINLINE     __forceinline			// Force inline code
+#define NUX_FORCENOINLINE   __declspec(noinline)	// Force code to NOT be inline
 
 
 // Unsigned base types.

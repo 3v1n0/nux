@@ -36,7 +36,7 @@
 //    STRING_HEADER,
 //};
 //
-//struct INL_HEADER_PACKET
+//struct NUX_HEADER_PACKET
 //{
 //    NSockAddrIn     address;
 //    unsigned long   Code;       // => 4 bytes (the header type or protocol)
@@ -46,13 +46,13 @@
 //};
 //
 //
-//struct INL_DATA_PACKET
+//struct NUX_DATA_PACKET
 //{
 //    //NSockAddrIn address;
 //    BYTE data[1024];
 //};
 //
-//struct INL_DATA_HEADER
+//struct NUX_DATA_HEADER
 //{
 //    BYTE data0[1024];
 //    BYTE data1[1024];

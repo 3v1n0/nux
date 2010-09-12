@@ -46,7 +46,6 @@ long TreeItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long Proc
 void TreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter,
                             RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
-    bool isSelected = (this == table->GetSelectedItem());
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
     if(isDirtyItem())
     {
@@ -92,7 +91,6 @@ TreeControl::~TreeControl()
 void TreeControl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
     int previous_click_row = m_selectedRow;
-    int previous_click_column = m_selectedColumn;
 
     m_selectedTableItem = 0;
     FindItemUnderPointer(x, y, &m_selectedTableItem, m_selectedRow, m_selectedColumn);
@@ -192,7 +190,6 @@ void TreeControl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, u
     }
 
     int previous_click_row = m_selectedRow;
-    int previous_click_column = m_selectedColumn;
 
     m_selectedTableItem = 0;
     FindItemUnderPointer(x, y, &m_selectedTableItem, m_selectedRow, m_selectedColumn);

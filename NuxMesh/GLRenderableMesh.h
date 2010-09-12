@@ -26,10 +26,10 @@
 #include "NuxCore/Math/Vector3.h"
 #include "NuxCore/Math/Matrix4.h"
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     #include "OpenGL/Glew/glew.h"
     #include "OpenGL/Glew/wglew.h"
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     #define GLEW_MX
     #include "GL/glew.h"
     #include "GL/glxew.h"
@@ -53,13 +53,13 @@ public:
     bool CreateGLArrayData(MeshData2* MeshData);
     void CreateGLArrayData3(MeshData3* MeshData);
 
-    unsigned int GetVertexBufferSize(int submeshid = 0);
-    unsigned int GetNormalBufferSize(int submeshid = 0);
-    unsigned int GetColorBufferSize(int submeshid = 0);
-    unsigned int GetTextureBufferSize(int submeshid = 0);
-    unsigned int GetIndexBufferSize(int submeshid = 0);
+    int GetVertexBufferSize(int submeshid = 0);
+    int GetNormalBufferSize(int submeshid = 0);
+    int GetColorBufferSize(int submeshid = 0);
+    int GetTextureBufferSize(int submeshid = 0);
+    int GetIndexBufferSize(int submeshid = 0);
     
-    unsigned int GetElementCount(int submeshid = 0);
+    int GetElementCount(int submeshid = 0);
 
     void LoadVBO();
     
@@ -81,7 +81,7 @@ public:
         const nux::Vec3<float> *normal,
         const nux::Vec2<float> *texcoord,
         long triangleCount,
-        const unsigned int *triangleIndex,
+        const int *triangleIndex,
         nux::Vec3<float> *tangent,
         nux::Vec3<float> *binormal);
 
@@ -91,12 +91,12 @@ public:
     nux::Vec3<float>** m_TangentArray;
     nux::Vec3<float>** m_BinormalArray;
     nux::Vec2<float>*** m_UVArray;
-    unsigned int** m_IndexArray;
+    int** m_IndexArray;
     typedef struct 
     {
-        unsigned int MinIndex;
-        unsigned int MaxIndex;
-        unsigned int nbTriangles;
+        int MinIndex;
+        int MaxIndex;
+        int nbTriangles;
     } ArrayStats;
 
     ArrayStats* m_ArrayStats;

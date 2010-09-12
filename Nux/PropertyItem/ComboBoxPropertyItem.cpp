@@ -51,7 +51,6 @@ void ComboBoxPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* 
                                               RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
     Geometry geo2 = m_FirstColumnUsableGeometry;
-    bool isSelected = (this == table->GetSelectedItem());
     if(isDirtyItem() || IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);

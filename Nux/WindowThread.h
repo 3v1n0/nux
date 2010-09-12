@@ -37,9 +37,9 @@ class UXTheme;
 class TimerHandler;
 struct ClientAreaDraw;
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
-    static gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
-    static gboolean nux_timeout_dispatch(gpointer user_data);
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+    gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
+    gboolean nux_timeout_dispatch(gpointer user_data);
 #endif
 
 class WindowThread: public AbstractThread
@@ -150,7 +150,7 @@ protected:
     */
     void DisableMouseKeyboardInput();
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     t_u32 ExecutionLoop(t_u32 timer_id);
 #else
     t_u32 ExecutionLoop();
@@ -193,7 +193,7 @@ public:
     */
     virtual bool ThreadCtor();
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     /*!
         Constructor-like function for the thread. 
         Will be called by EntryPoint before executing the thread body.
@@ -209,7 +209,7 @@ public:
         
     */
     virtual bool ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     /*!
         Constructor-like function for the thread. 
         Will be called by EntryPoint before executing the thread body.
@@ -276,9 +276,9 @@ public:
 
     bool IsEmbeddedWindow();
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     void ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     void ProcessForeignEvent(XEvent* event, void* data);
 #endif
 
@@ -317,7 +317,7 @@ private:
     bool m_embedded_window;		//!< Flag to run the interface in embedded mode.
 
     /*!
-        Record if there was a configuration nux_event (INL_SIZE_CONFIGURATION) that requires a full redraw.
+        Record if there was a configuration nux_event (NUX_SIZE_CONFIGURATION) that requires a full redraw.
         Used in the case where event processing and rendering are decoupled (with foreign windows).
     */
     bool m_size_configuration_event;
@@ -327,7 +327,7 @@ private:
     friend class BasePainter;
     friend class SystemThread;
 
-#if (defined(INL_OS_LINUX) || defined(INL_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(INL_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     GMainLoop *m_GLibLoop;
     GMainContext *m_GLibContext;
     friend gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
@@ -361,11 +361,11 @@ private:
         ThreadUserInitFunc UserInitFunc,
         void* InitData);
 
-#if defined(INL_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     friend WindowThread* CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
     ThreadUserInitFunc UserInitFunc,
     void* InitData);
-#elif defined(INL_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
     friend WindowThread* CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext,
     ThreadUserInitFunc UserInitFunc,
     void* InitData);

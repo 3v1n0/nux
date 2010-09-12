@@ -141,12 +141,12 @@ bool NFileManagerGeneric::MakeDirectory(const TCHAR* Path, bool CreateCompletePa
     t_u32 SlashCount=0, CreateCount=0;
     for(TCHAR Full[256] = TEXT(""), *Ptr = Full; ; *Ptr++ = *Path++)
     {
-        if((*Path == INL_BACKSLASH_CHAR) || (*Path == INL_SLASH_CHAR) || (*Path == 0))
+        if((*Path == NUX_BACKSLASH_CHAR) || (*Path == NUX_SLASH_CHAR) || (*Path == 0))
         {
             if((SlashCount++ > 0) && !IsDrive(Full))
             {
                 *Ptr = 0;
-                if(MakeDirectory(Full, 0) != INL_OK)
+                if(MakeDirectory(Full, 0) != NUX_OK)
                     return 0;
                 CreateCount++;
             }
@@ -167,22 +167,22 @@ bool NFileManagerGeneric::DeleteDirectory(const TCHAR* Path, bool DeleteContentF
        return false;
 
    NString WildcardPath = NString(Path);
-   if((WildcardPath[PathLength - 1] != INL_BACKSLASH_CHAR) && (WildcardPath[PathLength - 1] != INL_SLASH_CHAR))
-       WildcardPath += INL_BACKSLASH_CHAR;
+   if((WildcardPath[PathLength - 1] != NUX_BACKSLASH_CHAR) && (WildcardPath[PathLength - 1] != NUX_SLASH_CHAR))
+       WildcardPath += NUX_BACKSLASH_CHAR;
    WildcardPath += TEXT("*");
 
    std::vector<NString> List;
    FindFiles(List, *WildcardPath, 1, 0);
    for(t_u32 i = 0; i < List.size(); i++)
    {
-       if(!Delete(*(NString(Path) + INL_BACKSLASH_CHAR + List[i]), 1))
+       if(!Delete(*(NString(Path) + NUX_BACKSLASH_CHAR + List[i]), 1))
            return 0;
    }
    List.clear();
    FindFiles(List, *WildcardPath, 0, 1);
    for(t_u32 i = 0; i < List.size(); i++)
    {
-       if(!DeleteDirectory(*(NString(Path) + INL_BACKSLASH_CHAR + List[i]), true))
+       if(!DeleteDirectory(*(NString(Path) + NUX_BACKSLASH_CHAR + List[i]), true))
            return 0;
    }
    List.clear();

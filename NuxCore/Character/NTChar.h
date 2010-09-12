@@ -66,7 +66,7 @@ inline BOOL IsLinebreakChar( TCHAR c )
 /** Returns nonzero if character is a space character. */
 inline BOOL IsSpaceChar( TCHAR c )
 {
-#ifdef INL_UNICODE
+#ifdef NUX_UNICODE
     return( std::iswspace(c) != 0 );
 #else
     return( std::isspace(c) != 0 );

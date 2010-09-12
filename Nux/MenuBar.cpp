@@ -98,8 +98,6 @@ MenuBar::~MenuBar()
 long MenuBar::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     long ret = TraverseInfo;
-    long ProcEvInfo = 0;
-
     ret = TraverseInfo;  // <<---- never forget this
 
     std::list< smptr(MenuBarItem) >::iterator it;
@@ -110,7 +108,7 @@ long MenuBar::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventI
         ret = (*it)->area->OnEvent(ievent, ret, ProcessEventInfo);
     }
 
-    if(ievent.e_event == INL_MOUSE_PRESSED)
+    if(ievent.e_event == NUX_MOUSE_PRESSED)
     {
         bool mouse_down_on_menu_item = false;
         if(m_MenuIsActive == true)
@@ -242,8 +240,8 @@ void MenuBar::AddMenu(const TCHAR* MenuLabel, smptr(MenuPage) menu)
 
 void MenuBar::AddMenu(const TCHAR* MenuLabel, smptr(MenuPage) menu, NTexture *icon)
 {
-    // Need to add INL_RETURN_IF_TRUE, INL_RETURN_IF_FALSE
-    INL_RETURN_IF_TRUE(menu.IsNull());
+    // Need to add NUX_RETURN_IF_TRUE, NUX_RETURN_IF_FALSE
+    NUX_RETURN_IF_TRUE(menu.IsNull());
 
     smptr(MenuBarItem) menubar_item(new MenuBarItem());
 

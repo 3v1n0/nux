@@ -24,7 +24,7 @@
 #define NWIN32CUSTOMDIALOG_H
 
 
-#define INL_COLOR_DIALOG_CUSTOM_COLOR 16
+#define NUX_COLOR_DIALOG_CUSTOM_COLOR 16
 
 NAMESPACE_BEGIN
 
@@ -67,7 +67,7 @@ public:
 
 
 public:
-    COLORREF m_CustomColors[INL_COLOR_DIALOG_CUSTOM_COLOR];
+    COLORREF m_CustomColors[NUX_COLOR_DIALOG_CUSTOM_COLOR];
     Color m_ReturnColor;
 };
 

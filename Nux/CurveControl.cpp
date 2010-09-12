@@ -73,10 +73,6 @@ void CurveControl::Draw(GraphicsContext& GfxContext, bool force_draw)
     int X = GetBaseX() + 1;
     int Y = GetBaseY() + 1;
 
-
-    float dX = (m_maxX - m_minX) / W;
-    float dY = (m_maxY - m_minY) / H;
-
     double xprev, yprev;
     Bezier_XY(N, 0.0, xcon, ycon, &xprev, &yprev);
 

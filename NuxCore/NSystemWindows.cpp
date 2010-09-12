@@ -24,8 +24,8 @@
 
 #pragma pack(push,8)
 #include <string.h>
-#include <TlHelp32.h>				// For module info.
-#include <DbgHelp.h>				// For stack walker.
+#include <TlHelp32.h>
+#include <DbgHelp.h>
 #include <psapi.h>
 #pragma pack(pop)
 

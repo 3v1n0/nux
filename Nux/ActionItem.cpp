@@ -29,11 +29,11 @@ NAMESPACE_BEGIN_GUI
 IMPLEMENT_ROOT_OBJECT_TYPE(ActionItem);
 
 ActionItem::ActionItem(const TCHAR* label, int UserValue)
-:   m_IsActivated(true)
-,   m_Menu(0)
+:   m_UserValue(UserValue)
 ,   m_Label(TEXT(""))
+,   m_IsActivated(true)
+,   m_Menu(0)
 ,   m_Enable(true)
-,   m_UserValue(UserValue)
 {
     SetLabel(label);
 }

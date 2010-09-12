@@ -53,7 +53,6 @@ void Vector3ValuatorPropertyItem::DrawProperty(GraphicsContext& GfxContext, Tabl
                                                RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
     Geometry geo2 = m_FirstColumnUsableGeometry;
-    bool isSelected = (this == table->GetSelectedItem());
     if(isDirtyItem() || IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
@@ -129,7 +128,6 @@ TiXmlElement* Vector3ValuatorPropertyItem::ToXML() const
 
 bool Vector3ValuatorPropertyItem::FromXML(const TiXmlElement* elementxml)
 {
-    double value = 0;
     double minvalue = 0;
     double maxvalue = 100;
     double step = 1;

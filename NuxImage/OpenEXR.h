@@ -23,7 +23,7 @@
 #ifndef OPENEXR_H
 #define OPENEXR_H
 
-#ifdef INL_OPENEXR_SUPPORT
+#ifdef NUX_OPENEXR_SUPPORT
 
 #include "ImageSurface.h"
 

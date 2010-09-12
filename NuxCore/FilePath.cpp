@@ -73,8 +73,8 @@ NString FilePath::GetPathToFile(const TCHAR* filename) const
 
 NString FilePath::GetFile(const TCHAR* filename) const
 {
-    INL_RETURN_VALUE_IF_NULL(filename, NString(TEXT("")));
-    if(filename == TEXT(""))
+    NUX_RETURN_VALUE_IF_NULL(filename, NString(TEXT("")));
+    if(NString(filename) == NString(TEXT("")))
         return NString(TEXT(""));
 
     NString FileName = filename;
@@ -87,7 +87,7 @@ NString FilePath::GetFile(const TCHAR* filename) const
         if(m_SearchPath[i].Size() == 0)
             continue;
 
-        NString FilePath = m_SearchPath[i] + INL_PATH_SEPARATOR_STRING + filename;
+        NString FilePath = m_SearchPath[i] + NUX_PATH_SEPARATOR_STRING + filename;
         if(GFileManager.FileExist(FilePath.GetTCharPtr()))
             return FilePath;
     }
@@ -115,7 +115,7 @@ NString FilePath::GetFile(const TCHAR* filename) const
 			pos = FileName.FindFirstOccurenceOf(TEXT("\\/")) + 1;
 			
 			FileName = FileName.GetSubString(pos, FileName.Length()- pos);
-			PathName = m_SearchPath[i] + INL_PATH_SEPARATOR_STRING + FileName;
+			PathName = m_SearchPath[i] + NUX_PATH_SEPARATOR_STRING + FileName;
             if(GFileManager.FileExist(PathName.GetTCharPtr()))
                 return PathName;
 		}
