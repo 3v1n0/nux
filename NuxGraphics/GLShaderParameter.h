@@ -49,14 +49,14 @@ class GLShaderParameter
 {
 public:
     GLuint                      m_Index;                  // Register m_Index / Attribute m_Index
-	eShaderParameterType	    m_ShaderParameterType;
-    NString						m_Name;
-	UBOOL						m_bIsOptional;
-	UBOOL						m_bIsStatic;
-	UBOOL						bStaticSet;
+    eShaderParameterType        m_ShaderParameterType;
+    NString                     m_Name;
+    UBOOL                       m_bIsOptional;
+    UBOOL                       m_bIsStatic;
+    UBOOL                       bStaticSet;
     GLProgramObject*            m_ShaderProgram;
     IOpenGLShaderProgram*       m_ShaderProgram2;
-	GLShaderParameter*		    m_NextParameter;
+    GLShaderParameter*          m_NextParameter;
     UINT                        m_Size;
     UINT                        m_Type;
 
@@ -66,26 +66,26 @@ public:
         UBOOL InbIsOptional=FALSE,
         UBOOL InbIsStatic=FALSE);
 
-	inline void SetUniform1f( FLOAT FloatA )
-	{
-		CHECKGL( glUniform1fARB( m_Index, FloatA ) );
-	}
+    inline void SetUniform1f( FLOAT FloatA )
+    {
+        CHECKGL( glUniform1fARB( m_Index, FloatA ) );
+    }
     inline void SetUniform1i( INT i )
     {
         CHECKGL( glUniform1iARB( m_Index, i ) );
     }
     inline void SetUniform2f( FLOAT FloatA, FLOAT FloatB )
-	{
-		CHECKGL( glUniform2fARB( m_Index, FloatA, FloatB ) );
-	}
+    {
+        CHECKGL( glUniform2fARB( m_Index, FloatA, FloatB ) );
+    }
     inline void SetUniform3f( FLOAT FloatA, FLOAT FloatB, FLOAT FloatC )
     {
         CHECKGL( glUniform3fARB( m_Index, FloatA, FloatB, FloatC ) );
     }
     inline void SetUniform4f( FLOAT FloatA, FLOAT FloatB, FLOAT FloatC, FLOAT FloatD )
-	{
-		CHECKGL( glUniform4fARB( m_Index, FloatA, FloatB, FloatC, FloatD ) );
-	}
+    {
+        CHECKGL( glUniform4fARB( m_Index, FloatA, FloatB, FloatC, FloatD ) );
+    }
 
     inline void SetUniform1fv( GLsizei count, GLfloat *value )
     {

@@ -38,8 +38,8 @@ class TimerHandler;
 struct ClientAreaDraw;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-    static gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
-    static gboolean nux_timeout_dispatch(gpointer user_data);
+    gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
+    gboolean nux_timeout_dispatch(gpointer user_data);
 #endif
 
 class WindowThread: public AbstractThread

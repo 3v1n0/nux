@@ -134,7 +134,7 @@ int FontTexture::GetStringWidth(const NString& str) const
 
 int FontTexture::GetCharStringWidth(const TCHAR* str) const
 {
-    if((str == TEXT("")) || (str == 0))
+    if((str == 0) || (NString(str) == NString(TEXT(""))))
         return 0;
     unsigned int total = 0;
     for(int i = 0; ; ++i)
@@ -153,7 +153,7 @@ int FontTexture::GetStringWidth(const NString& str, int num_char_to_compute) con
 
 int FontTexture::GetCharStringWidth(const TCHAR* str, int num_char_to_compute) const
 {
-    if((str == TEXT("")) || (str == 0))
+    if((str == 0) || (NString(str) == NString(TEXT(""))))
         return 0;
 
     int num_chars = num_char_to_compute;
@@ -243,8 +243,6 @@ bool FontTexture::BMFontParseFNT( std::istream& Stream )
         }
         else if( ParseCommand(&Stream, TEXT("Texture")) )
         {
-
-            unsigned short CharID = 0;
             TCHAR texture[256];
             if(ParseLine(&Stream, texture, 256))
             {
@@ -530,7 +528,6 @@ int FontRenderer::RenderColorTextLineEdit(const NFontPtr& Font, const PageBBox& 
     // Render Cursor
     NString temp = Str.GetSubString(0, CursorPosition);
     int w = Font->GetStringWidth(temp.GetTCharPtr());
-    int h = Font->GetLineHeight();
 
     glDisable(GL_TEXTURE_2D);
 
@@ -584,7 +581,6 @@ int FontRenderer::RenderText(const NFontPtr& Font, int x, int y, const NString& 
     if(NumCharToDraw <= 0)
         return 0;
 
-    unsigned int CurrentPage = 0;
     CHECKGL( glDisable(GL_CULL_FACE) );
     int CurX = x;// + CURSOR_OFFSET;
     int CurY = y;
@@ -601,7 +597,6 @@ int FontRenderer::RenderText(const NFontPtr& Font, int x, int y, const NString& 
     float tex_width = (float)glTexture->m_Texture->GetWidth();
     float tex_height = (float)glTexture->m_Texture->GetHeight();
 
-    int I = 0;
     for(int i = 0; i < StrLength; ++i)
     {
         unsigned char c = static_cast<unsigned char>(str[i]);
@@ -609,12 +604,12 @@ int FontRenderer::RenderText(const NFontPtr& Font, int x, int y, const NString& 
         unsigned int CharY = Font->m_Charset.Chars[c /*Str[i]*/].y;
         unsigned int Width = Font->m_Charset.Chars[c /*Str[i]*/].Width;
         unsigned int Height = Font->m_Charset.Chars[c /*Str[i]*/].Height;
-        int OffsetX = Font->m_Charset.Chars[c /*Str[i]*/].XOffset;
-        int OffsetY = Font->m_Charset.Chars[c /*Str[i]*/].YOffset;
+        //int OffsetX = Font->m_Charset.Chars[c /*Str[i]*/].XOffset;
+        //int OffsetY = Font->m_Charset.Chars[c /*Str[i]*/].YOffset;
         int abcA = Font->m_Charset.Chars[c /*Str[i]*/].abcA;
         int abcB = Font->m_Charset.Chars[c /*Str[i]*/].abcB;
         int abcC = Font->m_Charset.Chars[c /*Str[i]*/].abcC;
-        int page = Font->m_Charset.Chars[c /*Str[i]*/].page;
+        //int page = Font->m_Charset.Chars[c /*Str[i]*/].page;
 
         if((i >= StartCharacter) && (i < StartCharacter + NumCharToDraw))
         {
@@ -817,8 +812,6 @@ int FontRenderer::RenderTextToBuffer(float* VertexBuffer, int VBSize,
     pageBox.x_margin = 0;
     pageBox.y_margin = 0;
 
-    unsigned int CurrentPage = 0;
-
     PositionString(Font, str, pageBox, stringBBox, alignment);
 
     int CurX = stringBBox.x;
@@ -833,12 +826,12 @@ int FontRenderer::RenderTextToBuffer(float* VertexBuffer, int VBSize,
         unsigned int CharY = Font->m_Charset.Chars[c /*Str[i]*/].y;
         unsigned int Width = Font->m_Charset.Chars[c /*Str[i]*/].Width;
         unsigned int Height = Font->m_Charset.Chars[c /*Str[i]*/].Height;
-        int OffsetX = Font->m_Charset.Chars[c /*Str[i]*/].XOffset;
-        int OffsetY = Font->m_Charset.Chars[c /*Str[i]*/].YOffset;
+        //int OffsetX = Font->m_Charset.Chars[c /*Str[i]*/].XOffset;
+        //int OffsetY = Font->m_Charset.Chars[c /*Str[i]*/].YOffset;
         int abcA = Font->m_Charset.Chars[c /*Str[i]*/].abcA;
         int abcB = Font->m_Charset.Chars[c /*Str[i]*/].abcB;
         int abcC = Font->m_Charset.Chars[c /*Str[i]*/].abcC;
-        int page = Font->m_Charset.Chars[c /*Str[i]*/].page;
+        //int page = Font->m_Charset.Chars[c /*Str[i]*/].page;
 
         // Position upper left
         //                            Scale       Offset

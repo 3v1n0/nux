@@ -25,19 +25,6 @@
 
 NAMESPACE_BEGIN_OGL
 
-// Vertex shader for a TemplateQuadBuffer:
-//     VSString =  TEXT("#version 110   \n\
-//                 uniform mat4 ViewProjectionMatrix;                             \n\
-//                 uniform vec4 Scale;                                                     \n\
-//                 uniform vec4 Offset;                                                    \n\
-//                 attribute vec4 AVertex;                                                  \n\
-//                 attribute vec4 VertexColor;                                             \n\
-//                 void main()                                                             \n\
-//                 {                                                                       \n\
-//                     gl_Position =  ViewProjectionMatrix * (AVertex*Scale + Offset );     \n\
-//                     gl_FrontColor = VertexColor;                                        \n\
-//                 }");
-
 TemplateQuadBuffer::TemplateQuadBuffer(GLDeviceFactory* pDeviceFactory, ShaderType Type, int NumQuads)
 :   m_ShaderType(Type)
 {
@@ -311,7 +298,6 @@ void TemplateQuadBuffer::SetPerQuadAttribute(UINT AttributeIndex, INT Num, Vecto
     // Destroy the vertex buffer by setting it to NULL;
     VertexAttributeBuffer[AttributeIndex] = 0;
 
-    int a = sizeof(Vector4);
     VertexAttributeBuffer[AttributeIndex] = m_pDeviceFactory->CreateVertexBuffer(m_NumQuad*4*sizeof(Vector4), VBO_USAGE_DYNAMIC);
     
     FLOAT* data;
@@ -354,7 +340,6 @@ void TemplateQuadBuffer::SetPerVertexAttribute(UINT AttributeIndex, INT Num, Vec
     // Destroy the vertex buffer by setting it to NULL;
     VertexAttributeBuffer[AttributeIndex] = 0;
 
-    int a = sizeof(Vector4);
     VertexAttributeBuffer[AttributeIndex] = m_pDeviceFactory->CreateVertexBuffer(m_NumQuad*4*sizeof(Vector4), VBO_USAGE_DYNAMIC);
 
     FLOAT* data;

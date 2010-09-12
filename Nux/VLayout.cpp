@@ -45,7 +45,7 @@ VLayout::VLayout()
 
 }
 
-VLayout::VLayout(std::string name)
+VLayout::VLayout(NString name)
 {
     m_name = name;
 #if DEBUG_LAYOUT
@@ -170,7 +170,6 @@ long VLayout::ComputeLayout2()
     }
 
     t_s32 original_width = GetBaseWidth();
-    t_s32 original_height = GetBaseHeight();
 
     if(GetStretchFactor() == 0)
     {
@@ -202,7 +201,6 @@ long VLayout::ComputeLayout2()
 
     bool unadjusted_layout = false;
 
-    t_s32 max_child_width = 0; 
     do
     {
         t_size num_element = m_LayoutElementList.size();
@@ -766,7 +764,6 @@ void VLayout::ComputePosition2(float offsetX, float offsetY)
 
             eMinorSize extend = (*it)->GetExtend();
             eMinorPosition positioning = (*it)->getPositioning();
-            float percentage = (*it)->GetPercentage();
 
             if((extend != eFull) || ((*it)->GetBaseWidth() < width))
             {

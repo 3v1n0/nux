@@ -76,7 +76,6 @@ void Histogram::Draw(GraphicsContext& GfxContext, bool force_draw)
     int Y = GetBaseY() + 1;
 
     float dX = float(m_maxX - m_minX) / W;
-    float dY = float(m_maxY - m_minY) / H;
 
     float x0, y0;
     x0 = m_minX;
@@ -87,17 +86,16 @@ void Histogram::Draw(GraphicsContext& GfxContext, bool force_draw)
 
     GfxContext.PushClippingRectangle(base);
 
-    if(Texture.IsNull() || Texture->GetWidth() != m_HistogramData.size())
+    if(Texture.IsNull() || (Texture->GetWidth() != (t_s32)m_HistogramData.size()))
         Texture = GetThreadGLDeviceFactory()->CreateTexture((t_s32)m_HistogramData.size(), 1, 0, BITFMT_A8);
 
     float tex_dx = (m_maxX - m_minX) / Texture->GetWidth();
-    float tex_dy = (m_maxY - m_minY) / Texture->GetWidth();
 
     SURFACE_LOCKED_RECT lockrect;
 
     Texture.Handle->LockRect(0, &lockrect, 0);
     BYTE *dest = (BYTE*)lockrect.pBits;
-    for(t_u32 i = 0; i < Texture->GetWidth(); i++)
+    for(t_s32 i = 0; i < Texture->GetWidth(); i++)
     {
         float y = 0;
         if(m_HistogramData.size() == 0)
@@ -107,7 +105,7 @@ void Histogram::Draw(GraphicsContext& GfxContext, bool force_draw)
 
         y = float(y - m_minY) / float(m_maxY - m_minY);
 
-        for(t_u32 j = 0; j < Texture->GetHeight(); j++)
+        for(t_s32 j = 0; j < Texture->GetHeight(); j++)
         {
             dest[1*i + 0 + j * lockrect.Pitch] = 255 * Clamp<float>(y, 0.0f, 1.0f);
 //            dest[4*i + 1 + j * lockrect.Pitch] = 255 * Clamp<float>(y, 0.0f, 1.0f);

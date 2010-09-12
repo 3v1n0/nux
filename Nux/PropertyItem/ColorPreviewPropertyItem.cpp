@@ -59,7 +59,6 @@ long ColorPreviewPropertyItem::ProcessPropertyEvent(IEvent &ievent, long Travers
 void ColorPreviewPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
                                             RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
-    bool isSelected = (this == table->GetSelectedItem());
     if(isDirtyItem() || IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);

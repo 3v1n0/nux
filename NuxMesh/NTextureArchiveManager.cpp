@@ -421,7 +421,7 @@ bool NTextureArchiveManager::AddTextureToArchive(const TCHAR* SourceFolder, cons
     }
 
     NFileName Filename;
-    if((SourceFolder != 0) && (SourceFolder != TEXT("")))
+    if((SourceFolder != 0) && (NString(SourceFolder) != NString(TEXT(""))))
     {
         Filename = SourceFolder;
         Filename.RemoveBackSlashAtEnd();

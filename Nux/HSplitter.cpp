@@ -37,12 +37,13 @@ static const t_s32 HSPLITTERHEIGHT = 5;
 static const t_s32 HSTICK_SIZE = 5;
 
 HSplitter::HSplitter()
-:m_layout(0)
-, new_addition(false)
-, m_initial_config(true)
-, m_focus_splitter_index(-1)
-, m_ResizeOnSplitterRelease(true)
 { 
+    m_layout                    = 0;
+    new_addition                = false;
+    m_initial_config            = true;
+    m_focus_splitter_index      = -1;
+    m_ResizeOnSplitterRelease   = true;
+
     mvt_dx = 0;
     mvt_dy = 0;
     m_current_x = 0;
@@ -326,9 +327,6 @@ long HSplitter::ComputeChildLayout()
         return eCompliantHeight | eCompliantWidth;
     }
 
-    t_s32 availableheight = (h - num_element * HSPLITTERHEIGHT);
-    float partition = float(availableheight) / float(num_element);
-
     std::vector<smptr(BaseObject)>::iterator it;
     std::vector<MySplitter*>::iterator it_splitter;
 
@@ -358,7 +356,6 @@ long HSplitter::ComputeChildLayout()
         for(t_u32 i = 0; i < num_element; i++)
         {
             Geometry splitter_geo = m_SplitterObject[i]->GetGeometry();
-            t_s32 part_current_width = m_SplitterObject[i]->GetBaseY() - previous_spliter_end;
             // compute percentage of space occupied by the element i;
             // width of element i = m_SplitterObject[i]->GetY() - previous_splliter_end
             t_s32 splitter_start = m_SplitterObject[i]->GetBaseY();
@@ -508,9 +505,9 @@ void HSplitter::OnSplitterMouseDrag(t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsign
 {
     bool recompute = false;
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
-    t_u32 num_element = (t_u32)m_SplitterObject.size();
+    t_s32 num_element = (t_s32)m_SplitterObject.size();
 
-    if(header_pos == num_element-1)
+    if(header_pos == num_element - 1)
     {
         // The last splitter cannot be moved
         return;
@@ -539,7 +536,7 @@ void HSplitter::OnSplitterMouseDrag(t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsign
 void HSplitter::ResizeSplitter(t_s32 header_pos)
 {
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
-    t_u32 num_element = (t_u32)m_SplitterObject.size();
+    t_s32 num_element = (t_s32)m_SplitterObject.size();
 
     if((header_pos == 0) && (m_SplitterObject[header_pos]->GetBaseY() < GetBaseY()))
     {

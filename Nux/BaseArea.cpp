@@ -125,7 +125,6 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
     long ret = TraverseInfo;
     if(TraverseInfo & eMouseEventSolved)
     {
-        bool hadMouseFocus = HasMouseFocus();
         m_MouseEventCurrent.MouseIn = false;
         m_EventHandler.SetMouseFocus(false);
         ret |=  eMouseEventSolved;

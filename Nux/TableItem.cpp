@@ -34,14 +34,15 @@ Color GPropertyItemTextColor1 = Color(0xFFE9E9E9);
 
 TableItem::TableItem(const TCHAR* name, NodeParameterType type)
 :   NodeNetCom(name, type)
-,   m_PropertyRedraw(false)
-,   m_bIsMouseInside(false)
-,   m_bIsFirstVisibleItem(false)
-,   m_bIsLastVisibleItem(false)
-,   m_Table(0)
-,   m_PropertyTextColor(0)
-,   m_AlwaysShowOpeningButton(false)
 {
+    m_PropertyRedraw = false;
+    m_bIsMouseInside = false;
+    m_bIsFirstVisibleItem = false;
+    m_bIsLastVisibleItem = false;
+    m_Table = 0;
+    m_PropertyTextColor = 0;
+    m_AlwaysShowOpeningButton = false;
+
     m_isOpen = false;
     m_bParentOpen = false;
     m_bDirty = true;
@@ -171,7 +172,6 @@ long TableItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long Pro
 void TableItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter,
                              RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
-    bool isSelected = (this == table->GetSelectedItem());
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
     if(isDirtyItem())
     {

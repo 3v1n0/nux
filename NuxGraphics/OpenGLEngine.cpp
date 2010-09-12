@@ -58,12 +58,12 @@ NFontPtr GFontBold;
 Color GTextColor = Color(0xFFE9E9E9);
 
 GraphicsContext::GraphicsContext(GLWindowImpl& GlWindow)
-:   m_FontRenderer(0)
-,   m_GLWindow(GlWindow)
+:   m_GLWindow(GlWindow)
 ,   m_ScissorX(0)
 ,   m_ScissorY(0)
 ,   m_ScissorXOffset(0)
 ,   m_ScissorYOffset(0)
+,   m_FontRenderer(0)
 {
     GlWindow.m_GraphicsContext = this;
     ResetStats();

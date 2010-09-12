@@ -202,12 +202,12 @@ bool CIniFile::Save(std::string FileName, std::vector<Record>& content)
 
 std::string CIniFile::Content(std::string FileName)
 {
-	std::string s="";															// Hold our return string
-	std::vector<Record> content;													// Holds the current record													// Holds the current record
+	std::string s="";                                 // Hold our return string
+	std::vector<Record> content;                      // Holds the current record // Holds the current record
 
-	if (Load(FileName, content))											// Make sure the file loads
+	if (Load(FileName, content))                      // Make sure the file loads
 	{
-		for (int i=0;i<(int)content.size();i++)								// Loop through the content
+		for (int i = 0; i < (int)content.size(); i++)   // Loop through the content
 		{
 			if(content[i].Comments != "") s += content[i].Comments;			// Add the comments
 			if(content[i].Commented != ' ') s += content[i].Commented;		// If this is commented, then add it
@@ -215,7 +215,7 @@ std::string CIniFile::Content(std::string FileName)
 				s += '[' + content[i].Section + ']';						// Add the section
 			else s += content[i].Key + '=' + content[i].Value;				// Or the Key value to the return srting
 
-			if (i != content.size()) s += '\n';								// If this is not the last line, add a CrLf
+			if (i != (int)content.size()) s += '\n';								// If this is not the last line, add a CrLf
 		}
 		return s;															// Return the contents
 	}

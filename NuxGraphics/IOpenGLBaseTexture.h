@@ -33,7 +33,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLResource;
 class IOpenGLBaseTexture;
 
-t_u32 GetTextureSize(IOpenGLBaseTexture *pTexture);
+t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture);
 
 // todo: It should not be possible to create an object of type IOpenGLBaseTexture directly.
 class IOpenGLBaseTexture: public IOpenGLResource
@@ -55,10 +55,10 @@ public:
     {
         return _PixelFormat;
     }
-    t_u32 GetNumMipLevel() const { return _NumMipLevel; }
+    t_s32 GetNumMipLevel() const { return _NumMipLevel; }
     bool IsPowerOfTwo() const { return _IsPOT; }
 
-    t_u32 GetWidth() const
+    t_s32 GetWidth() const
     {
         if(_ResourceType == RTTEXTURE)
             return _Width;
@@ -69,7 +69,7 @@ public:
         return 0;
     }
 
-    t_u32 GetHeight() const
+    t_s32 GetHeight() const
     {
         if(_ResourceType == RTTEXTURE)
             return _Height;
@@ -80,7 +80,7 @@ public:
         return 0;
     }
 
-    t_u32 GetDepth() const
+    t_s32 GetDepth() const
     {
         if(_ResourceType == RTTEXTURE)
             return 1;
@@ -110,15 +110,15 @@ public:
 
 protected:
     GLTextureStates _TextureStates;
-    bool _IsPOT; // is power of two?
-    t_s32 _NumMipLevel;
-    BitmapFormat   _PixelFormat;
+    bool            _IsPOT;             // is power of two?
+    t_s32           _NumMipLevel;
+    BitmapFormat    _PixelFormat;
 
     // These parameters are scalable across textures, cube textures and volume textures.
     // For texture and cube texture _Depth is equal to 1.
     // For cube texture, _Width = _Height
-    t_u32        _Width;
-    t_u32        _Height;
+    t_s32        _Width;
+    t_s32        _Height;
     int         _Depth;
     int         _RowMemoryAlignment;
 
@@ -129,7 +129,7 @@ protected:
         t_u32 Level,
         TEXTURE_DESC *pDesc
         );
-    friend t_u32 GetTextureSize(IOpenGLBaseTexture *pTexture);
+    friend t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture);
 };
 
 NAMESPACE_END_OGL

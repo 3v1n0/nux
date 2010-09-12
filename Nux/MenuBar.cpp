@@ -98,8 +98,6 @@ MenuBar::~MenuBar()
 long MenuBar::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     long ret = TraverseInfo;
-    long ProcEvInfo = 0;
-
     ret = TraverseInfo;  // <<---- never forget this
 
     std::list< smptr(MenuBarItem) >::iterator it;

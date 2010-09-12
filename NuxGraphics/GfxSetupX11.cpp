@@ -51,15 +51,15 @@ static int g_DoubleBufferVisual[] = {
     None};
 
 // Attributes for a single buffered visual in RGBA format
-static int g_SingleBufferVisual[] = {
-    GLX_RGBA, 
-    GLX_RED_SIZE,       8,
-    GLX_GREEN_SIZE,     8,
-    GLX_BLUE_SIZE,      8,
-    GLX_ALPHA_SIZE,     8,
-    GLX_DEPTH_SIZE,     24,
-    GLX_STENCIL_SIZE,   8,
-    None };
+// static int g_SingleBufferVisual[] = {
+//     GLX_RGBA, 
+//     GLX_RED_SIZE,       8,
+//     GLX_GREEN_SIZE,     8,
+//     GLX_BLUE_SIZE,      8,
+//     GLX_ALPHA_SIZE,     8,
+//     GLX_DEPTH_SIZE,     24,
+//     GLX_STENCIL_SIZE,   8,
+//     None };
 
 // Compute the frame rate every FRAME_RATE_PERIODE;
 #define FRAME_RATE_PERIODE    10
@@ -87,30 +87,31 @@ EventToNameStruct EventToName[] =
 //---------------------------------------------------------------------------------------------------------
 
 GLWindowImpl::GLWindowImpl()
-:   m_pEvent(NULL)
-,   m_GLCtx(0)
-,   m_GfxInterfaceCreated(false)
-,   m_Fullscreen(false)
-,   m_ScreenBitDepth(32)
-,   m_num_device_modes(0)
-,   m_BestMode(-1)
-,   m_BackupFrameBuffer(true)
-,   m_DeviceFactory(0)
-,   m_GraphicsContext(0)
-,   m_Style(WINDOWSTYLE_NORMAL)
-,   m_PauseGraphicsRendering(false)
-,   m_ParentWindow(0)
 {
+    m_ParentWindow                  = 0;
+    m_GLCtx                         = 0;
+    m_Fullscreen                    = false;
+    m_GfxInterfaceCreated           = false;
+    m_pEvent                        = NULL;
+    m_ScreenBitDepth                = 32;
+    m_BestMode                      = -1;
+    m_num_device_modes              = 0;
+    m_BackupFrameBuffer             = true;
+    m_DeviceFactory                 = 0;
+    m_GraphicsContext               = 0;
+    m_Style                         = WINDOWSTYLE_NORMAL;
+    m_PauseGraphicsRendering        = false;
+    
     inlSetThreadLocalStorage(ThreadLocal_GLWindowImpl, this);
     
     m_X11LastEvent.type = -1;
     m_X11RepeatKey = true;
 
-	m_GfxInterfaceCreated = false;
-	m_pEvent = new IEvent();
+    m_GfxInterfaceCreated = false;
+    m_pEvent = new IEvent();
 
     m_WindowSize.SetWidth(0);
-	m_WindowSize.SetHeight(0);
+    m_WindowSize.SetHeight(0);
 
     // A window never starts in a minimized state.
     m_is_window_minimized = false;
@@ -512,6 +513,8 @@ bool GLWindowImpl::CreateFromOpenGLWindow(Display *X11Display, Window X11Window,
 
     m_DeviceFactory = new GLDeviceFactory(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
     m_GraphicsContext = new GraphicsContext(*this);
+    
+    return true;
 }
 
 // bool GLWindowImpl::CreateVisual(unsigned int WindowWidth, unsigned int WindowHeight, XVisualInfo& ChosenVisual, XVisualInfo& Template, unsigned long Mask)
@@ -972,7 +975,6 @@ void GLWindowImpl::DestroyOpenGLWindow()
 //---------------------------------------------------------------------------------------------------------
 static int mouse_move(XEvent xevent, IEvent* m_pEvent)
 {
-    static int px, py, pmx, pmy;
     m_pEvent->e_x = xevent.xmotion.x;
     m_pEvent->e_y = xevent.xmotion.y;
     m_pEvent->e_x_root = 0;
@@ -988,11 +990,12 @@ static int mouse_move(XEvent xevent, IEvent* m_pEvent)
     _mouse_state |= (xevent.xmotion.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
 
     m_pEvent->e_mouse_state = _mouse_state;
+    
+    return 0;
 }
 
 static int mouse_press(XEvent xevent, IEvent* m_pEvent)
 {
-    static int px, py, pmx, pmy;
     m_pEvent->e_x = xevent.xbutton.x;
     m_pEvent->e_y = xevent.xbutton.y;
     m_pEvent->e_x_root = 0;
@@ -1027,11 +1030,12 @@ static int mouse_press(XEvent xevent, IEvent* m_pEvent)
         }
     }
     m_pEvent->e_mouse_state = _mouse_state;
+    
+    return 0;
 }
 
 static int mouse_release(XEvent xevent, IEvent* m_pEvent)
 {
-    static int px, py, pmx, pmy;
     m_pEvent->e_x = xevent.xbutton.x;
     m_pEvent->e_y = xevent.xbutton.y;
     m_pEvent->e_x_root = 0;
@@ -1066,6 +1070,8 @@ static int mouse_release(XEvent xevent, IEvent* m_pEvent)
         }
     }
     m_pEvent->e_mouse_state = _mouse_state;
+    
+    return 0;
 }
 
 unsigned int GetModifierKeyState(unsigned int modifier_key_state)
@@ -1105,10 +1111,6 @@ Bool CheckEventWindow(Display* display, XEvent* xevent, XPointer arg)
 
 void GLWindowImpl::GetSystemEvent(IEvent* evt)
 {
-    static bool previous_event_motion = false;
-    static int motion_x = 0;
-    static int motion_y = 0;
-
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
     m_pEvent->e_mouse_state &= 0x0F000000;
@@ -1202,10 +1204,6 @@ void GLWindowImpl::GetSystemEvent(IEvent* evt)
 
 void GLWindowImpl::ProcessForeignX11Event(XEvent* xevent, IEvent* nux_event)
 {
-    static bool previous_event_motion = false;
-    static int motion_x = 0;
-    static int motion_y = 0;
-
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
     m_pEvent->e_mouse_state &= 0x0F000000;
@@ -1278,7 +1276,6 @@ bool GLWindowImpl::HasXPendingEvent() const
 
 void GLWindowImpl::ProcessXEvent(XEvent xevent)
 {
-    KeySym key;
     switch (xevent.type)
     {
         case DestroyNotify:
@@ -1357,11 +1354,11 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
                 static XComposeStatus ComposeStatus;
                 static char buffer[16];
-                m_pEvent->e_text = "";
+                m_pEvent->e_text = 0;
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: Keysym: %d - %x."), keysym, keysym);
                 if (XLookupString(&xevent.xkey, buffer, sizeof(buffer), NULL, &ComposeStatus))
                 {
-                    m_pEvent->e_text = buffer;
+                    m_pEvent->e_text = (char*)buffer;
                 }
                 break;
             }

@@ -237,11 +237,6 @@ void ClientArea::SetClientViewport(GraphicsContext& GfxContext)
         window_width = GfxContext.GetContextWidth();
         window_height =GfxContext.GetContextHeight();
 
-        int client_viewport_x = m_Geometry.x;
-        int client_viewport_y = m_Geometry.y; //window_height - getViewPosY() - getViewHeight();
-        int client_viewport_width = m_Geometry.GetWidth();
-        int client_viewport_height = m_Geometry.GetHeight();
-
         GfxContext.SetViewport(
             m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);
 

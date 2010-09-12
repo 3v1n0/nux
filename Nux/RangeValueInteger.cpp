@@ -28,15 +28,16 @@
 NAMESPACE_BEGIN_GUI
 
 RangeValueInteger::RangeValueInteger(int Value, int MinValue, int MaxValue)
-:   m_min(MinValue)
-,   m_max(MaxValue)
-,   m_StartColor(0xff202020)
-,   m_EndColor(0xff202020)
-,   m_ProgressColor(0xff606060)
-,   m_EnableDrawProgress(true)
-,   m_CTRL_KEY(0)
-,   m_MarkerPosition(0)
 {
+    m_min                   = MinValue;
+    m_max                   = MaxValue;
+    m_StartColor            = Color(0xff202020);
+    m_EndColor              = Color(0xff202020);
+    m_ProgressColor         = Color(0xff606060);
+    m_EnableDrawProgress    = true;
+    m_CTRL_KEY              = 0;
+    m_MarkerPosition        = 0;
+
     InitializeLayout();
     InitializeWidgets();
 

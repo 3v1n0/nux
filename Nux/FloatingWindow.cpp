@@ -42,15 +42,16 @@ const int TitleBarHeight = 20;
 */
 
 FloatingWindow::FloatingWindow(const TCHAR* WindowName)
-:   m_WindowTitle(0)
-,   m_bIsVisible(false)
-,   m_bSizeMatchLayout(false)
-,   m_bIsModal(false)
-,   m_bIsVisibleSizeGrip(true)
-,   m_SizeGripDragPositionX(0)
-,   m_SizeGripDragPositionY(0)
-,   m_hasTitleBar(true)
 {
+    m_WindowTitle               = 0;
+    m_bIsVisible                = false;
+    m_bSizeMatchLayout          = false;
+    m_bIsModal                  = false;
+    m_bIsVisibleSizeGrip        = true;
+    m_SizeGripDragPositionX     = 0;
+    m_SizeGripDragPositionY     = 0;
+    m_hasTitleBar               = true;
+
     // Should be at the end of the constructor
     //GetThreadWindowCompositor().RegisterWindow(smptr(FloatingWindow)(this, false));
 

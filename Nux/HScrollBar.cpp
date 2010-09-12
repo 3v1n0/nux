@@ -32,22 +32,23 @@ const int HSCROLLBAR_WIDTH = 10;
 const int HSCROLLBAR_HEIGHT = 10;
 
 HScrollBar::HScrollBar()
-:   m_contentWidth(0)
-,   m_contentHeight(0)
-,   m_containerWidth(0)
-,   m_containerHeight(0)
-,   m_TrackWidth(0)
-,   m_TrackHeight(0)
-,   m_SlideBarOffsetX(0)
-,   m_SlideBarOffsetY(0)
-,   m_contentOffsetX(0)
-,   m_contentOffsetY(0)
-,   b_MouseUpTimer(false)
-,   b_MouseDownTimer(false)
-,   m_color_factor(1)
-,   m_LeftTimerHandler(0)
-,   m_RightTimerHandler(0)
 {
+    m_contentWidth      = 0;
+    m_contentHeight     = 0;
+    m_containerWidth    = 0;
+    m_containerHeight   = 0;
+    m_TrackWidth        = 0;
+    m_TrackHeight       = 0;
+    m_SlideBarOffsetX   = 0;
+    m_SlideBarOffsetY   = 0;
+    m_contentOffsetX    = 0;
+    m_contentOffsetY    = 0;
+    b_MouseUpTimer      = false;
+    b_MouseDownTimer    = false;
+    m_color_factor      = 1.0f;
+    m_LeftTimerHandler  = 0;
+    m_RightTimerHandler = 0;
+
     hlayout = smptr(HLayout)(new HLayout());
     m_LeftThumb = smptr(CoreArea)(new CoreArea());
     m_Track = smptr(CoreArea)(new CoreArea());
@@ -219,7 +220,6 @@ void HScrollBar::RecvTrackMouseDown(int x, int y, unsigned long button_flags, un
     if(x < X)
     {
         // move the slide bar up
-        float percentage = (float) m_SlideBar->GetBaseWidth() / (float) m_Track->GetBaseWidth();
         TrackLeft(this);
     }
     else

@@ -42,14 +42,14 @@ const int TitleBarHeight = 20;
 */
 
 BaseWindow::BaseWindow(const TCHAR* WindowName)
-:   m_bIsVisible(false)
-,   m_bSizeMatchLayout(false)
-,   m_bIsModal(false)
-,   m_Border(0)
+:   m_ConfigureNotifyCallback(0)
 ,   m_TopBorder(0)
-,   m_ConfigureNotifyCallback(0)
+,   m_Border(0)
 ,   m_BackgroundColor(Color(0xFF707070))
 ,   m_BluredBackground(false)
+,   m_bSizeMatchLayout(false)
+,   m_bIsVisible(false)
+,   m_bIsModal(false)
 {
     // Should be at the end of the constructor
     GetThreadWindowCompositor().RegisterWindow(smptr(BaseWindow)(this, false));
@@ -135,9 +135,6 @@ void BaseWindow::Draw(GraphicsContext& GfxContext, bool force_draw)
     base.SetY(0);
     GfxContext.PushClippingRectangle(base);
     
-    int window_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
-    int window_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-
     if(UseBlurredBackground())
     {
         TexCoordXForm texxform;
@@ -164,9 +161,6 @@ void BaseWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     base.SetX(0);
     base.SetY(0);
     
-    int window_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
-    int window_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-
     if(UseBlurredBackground())
     {
         TexCoordXForm texxform;

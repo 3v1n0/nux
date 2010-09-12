@@ -216,15 +216,15 @@ void NVertexDeclaration::AddVertexComponent(VERTEXELEMENT Component)
 
 NMeshComponent::NMeshComponent()
 :   _Type(ATTRIB_DECLTYPE_UNKNOWN)
-,   _Offset(0)
 ,   _StreamIndex(-1)
+,   _Offset(0)
 {
 }
 
 NMeshComponent::NMeshComponent(const NMeshComponent& Other)
 :   _Type(ATTRIB_DECLTYPE_UNKNOWN)
-,   _Offset(0)
 ,   _StreamIndex(-1)
+,   _Offset(0)
 {
     _Type = Other._Type;
     _Offset = Other._Offset;
@@ -592,7 +592,7 @@ NStaticMesh::~NStaticMesh()
 {
     delete m_pVertexDeclaration;
     delete m_pIndex;
-    for(int i = 0; i < m_pVertexStreamArray.size(); i++)
+    for(int i = 0; i < (int)m_pVertexStreamArray.size(); i++)
     {
         delete m_pVertexStreamArray[i];
     }
@@ -600,7 +600,7 @@ NStaticMesh::~NStaticMesh()
 
 int NStaticMesh::GetNumStreams() const
 {
-    return m_pVertexStreamArray.size();
+    return (int)m_pVertexStreamArray.size();
 }
 
 NGLStaticMesh::NGLStaticMesh(NResourceSet* ResourceManager, NStaticMesh* StaticMesh)

@@ -28,7 +28,7 @@ NAMESPACE_BEGIN
 /*!
     @param Filename The name of the file to check.
 */
-static void CreateBackupCopy(const TCHAR* Filename)
+/*static void CreateBackupCopy(const TCHAR* Filename)
 {
     if(GFileManager.FileSize(Filename) > 0)
     {
@@ -49,6 +49,7 @@ static void CreateBackupCopy(const TCHAR* Filename)
         GFileManager.Copy(BackupFilename.GetTCharPtr(), Filename, true, true, NULL);
     }
 }
+*/
 
 NUX_IMPLEMENT_GLOBAL_OBJECT(NNullOutput);
 NUX_IMPLEMENT_GLOBAL_OBJECT(NOutputDeviceRedirector);

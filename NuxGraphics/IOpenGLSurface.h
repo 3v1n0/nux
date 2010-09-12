@@ -43,24 +43,24 @@ public:
         return _BaseTexture->GetPixelFormat();
     }
 
-    unsigned int GetWidth() const
+    int GetWidth() const
     {
         if(_BaseTexture == 0) { nuxAssert(0); return 0; } // should not happen
         return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
     }
 
-    unsigned int GetHeight() const
+    int GetHeight() const
     {
         if(_BaseTexture == 0) { nuxAssert(0); return 0; } // should not happen
         return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
     }
 
-    unsigned int GetMipLevel() const
+    int GetMipLevel() const
     {
         return _SMipLevel;
     }
 
-    unsigned int GetSurfaceTarget() const
+    int GetSurfaceTarget() const
     {
         return _SSurfaceTarget;
     }
@@ -77,7 +77,7 @@ public:
 private:
     virtual ~IOpenGLSurface();
 
-    unsigned int InitializeLevel();
+    int InitializeLevel();
 
     // By Default, the surface refers to the face 0 of the texture and to the mip level 0 of that face.
     //    IOpenGLSurface(IOpenGLBaseTexture* BaseTexture, GLenum OpenGLID)
@@ -94,12 +94,12 @@ private:
     //        _OpenGLID = OpenGLID;
     //    }
     IOpenGLSurface(IOpenGLBaseTexture* BaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/)
-        : _STextureTarget(TextureTarget)
+        : IOpenGLResource(RTSURFACE)
+        , _STextureTarget(TextureTarget)
         , _SSurfaceTarget(SurfaceTarget)
         , _SMipLevel(MipLevel)
         , _SSlice(Slice)
         , _BaseTexture(BaseTexture)
-        , IOpenGLResource(RTSURFACE)
         , _AllocatedUnpackBuffer(0xFFFFFFFF)
     {
         // IOpenGLSurface surfaces are created inside a IOpenGLTexture2D, IOpenGLCubeTexture and IOpenGLVolumeTexture.
@@ -136,7 +136,7 @@ private:
 
     SURFACE_LOCKED_RECT  _LockedRect;
     SURFACE_RECT        _Rect;
-    unsigned int            _CompressedDataSize;
+    int            _CompressedDataSize;
 
     IOpenGLBaseTexture* _BaseTexture;
     bool            _Initialized;

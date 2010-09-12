@@ -277,11 +277,11 @@ int IOpenGLSurface::UnlockRect()
             texture->_PixelFormat == BITFMT_DXT5)
         {
             nuxAssert(_CompressedDataSize != 0);
-            unsigned int width = Max<unsigned int>(1, texture->_Width >> _SMipLevel);
-            unsigned int height = Max<unsigned int>(1, texture->_Height >>_SMipLevel);
+            int width = Max<int>(1, texture->_Width >> _SMipLevel);
+            int height = Max<int>(1, texture->_Height >>_SMipLevel);
 
-            unsigned int xoffset = _Rect.left;
-            unsigned int yoffset = _Rect.top;
+            int xoffset = _Rect.left;
+            int yoffset = _Rect.top;
             if(_STextureTarget != GL_TEXTURE_3D)
             {
                 glCompressedTexSubImage2DARB(_SSurfaceTarget, 
@@ -422,7 +422,7 @@ int IOpenGLSurface::UnlockRect()
     return OGL_OK;
 }
 
-unsigned int IOpenGLSurface::InitializeLevel()
+int IOpenGLSurface::InitializeLevel()
 {
     // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
     int texwidth = ImageSurface::GetLevelWidth(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);

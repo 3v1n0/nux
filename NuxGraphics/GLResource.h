@@ -369,12 +369,12 @@ typedef struct _SURFACE_RECT {
 /* Structures for LockBox */
 typedef struct _VOLUME_BOX
 {
-    unsigned int                Left;
-    unsigned int                Top;
-    unsigned int                Right;
-    unsigned int                Bottom;
-    unsigned int                Front;
-    unsigned int                Back;
+    int                Left;
+    int                Top;
+    int                Right;
+    int                Bottom;
+    int                Front;
+    int                Back;
 } VOLUME_BOX;
 
 typedef struct _VOLUME_LOCKED_BOX
@@ -449,7 +449,7 @@ typedef enum
     ATTRIB_USAGE_DECL_TEXCOORD7      = 15,
     ATTRIB_USAGE_DECL_TANGENT        = 14,
     ATTRIB_USAGE_DECL_BINORMAL       = 15,
-    ATTRIB_USAGE_DECL_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
+    ATTRIB_USAGE_DECL_FORCE_DWORD    = 0x7fffffff /* force 32-bit size enum */
 } ATTRIB_USAGE_DECL;
 
 typedef enum {

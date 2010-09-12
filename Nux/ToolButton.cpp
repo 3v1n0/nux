@@ -67,8 +67,6 @@ long ToolButton::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEve
 
 void ToolButton::Draw(GraphicsContext& GfxContext, bool force_draw)
 {
-    bool highlighted = false;
-
     Geometry base = GetGeometry();
     if(IsMouseInside() && !HasMouseFocus())
     {

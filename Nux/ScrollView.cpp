@@ -31,16 +31,15 @@
 NAMESPACE_BEGIN_GUI
 
 ScrollView::ScrollView()
-:   m_ContentOffsetX(0)
-,   m_ContentOffsetY(0)
-,   m_vertical_scrollbar_enable(true)
-,   m_horizontal_scrollbar_enable(true)
-,   m_bSizeMatchContent(false)
-,   m_TextureIndex(0)
-,   m_ReformatTexture(true)
-//m_containerWidth(0),
-//m_containerHeight(0)
 {
+    m_ContentOffsetX                = 0;
+    m_ContentOffsetY                = 0;
+    m_vertical_scrollbar_enable     = true;
+    m_horizontal_scrollbar_enable   = true;
+    m_bSizeMatchContent             = false;
+    m_TextureIndex                  = 0;
+    m_ReformatTexture               = true;
+
     //gPainter.CreateBackgroundTexture(m_BackgroundTexture);
     hscrollbar = smptr(HScrollBar)(new HScrollBar());
     vscrollbar = smptr(VScrollBar)(new VScrollBar());

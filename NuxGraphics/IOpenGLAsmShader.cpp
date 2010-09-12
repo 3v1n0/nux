@@ -46,8 +46,8 @@ IOpenGLAsmShader::~IOpenGLAsmShader()
 }
 
 IOpenGLAsmVertexShader::IOpenGLAsmVertexShader(NString ShaderName)
-:   m_CompiledAndReady(false)
-,   IOpenGLAsmShader(ShaderName, RT_GLSL_VERTEXSHADER)
+:   IOpenGLAsmShader(ShaderName, RT_GLSL_VERTEXSHADER)
+,   m_CompiledAndReady(false)
 {
     CHECKGL( glGenProgramsARB(1, &_OpenGLID) );
 }
@@ -107,8 +107,8 @@ bool IOpenGLAsmVertexShader::IsValid()
 }
 
 IOpenGLAsmPixelShader::IOpenGLAsmPixelShader(NString ShaderName)
-:   m_CompiledAndReady(false)
-,   IOpenGLAsmShader(ShaderName, RT_GLSL_PIXELSHADER)
+:   IOpenGLAsmShader(ShaderName, RT_GLSL_PIXELSHADER)
+,   m_CompiledAndReady(false)
 {
     CHECKGL( glGenProgramsARB(1, &_OpenGLID) );
 }

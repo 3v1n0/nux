@@ -133,9 +133,6 @@ void BezierCurveControl2::Draw(GraphicsContext& GfxContext, bool force_draw)
             ycon[i] = m_control_knot[i].m_Y;
         }
 
-        float dX = (m_maxX - m_minX) / W;
-        float dY = (m_maxY - m_minY) / H;
-
         double xprev, yprev;
         Bezier_XY(CURVE_DEGREE, 0.0, xcon, ycon, &xprev, &yprev);
 
@@ -732,7 +729,7 @@ void BezierCurveControl2::ManipulateBezier(int x, int y, int dx, int dy, unsigne
     int X = GetBaseX() + GRAPH_MARGIN;
     int Y = GetBaseY() + GRAPH_MARGIN;
 
-    t_u32 nbKnot = (t_u32)m_control_knot.size();
+    t_s32 nbKnot = (t_s32)m_control_knot.size();
 
     xp = /*m_minX +*/ dx * (m_maxX - m_minX) / W;
     yp = /*m_minY +*/ dy * (m_maxY - m_minY) / H;
@@ -740,7 +737,7 @@ void BezierCurveControl2::ManipulateBezier(int x, int y, int dx, int dy, unsigne
     nuxAssert(nbKnot >= CURVE_DEGREE);
     int x_border = 0;
     int y_border = 0;
-    for(t_u32 i = 0; i < nbKnot; i++)
+    for(t_s32 i = 0; i < nbKnot; i++)
     {
         if(m_control_knot[i].m_IsSelected)
         {
@@ -951,7 +948,7 @@ void BezierCurveControl2::ManipulateBezier(int x, int y, int dx, int dy, unsigne
                 m_control_knot[i].m_X += xp;
                 m_control_knot[i].m_Y -= yp;
 
-                t_u32 index = ClosestCubicBezierEndPoint(i);
+                t_s32 index = (t_s32)ClosestCubicBezierEndPoint(i);
                 if(index > i)
                 {
                     if(m_control_knot[i].m_X > m_control_knot[index].m_X)
@@ -977,8 +974,6 @@ void BezierCurveControl2::ManipulateBezier(int x, int y, int dx, int dy, unsigne
 void BezierCurveControl2::ProcessPanning(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
 {
     float xp, yp;
-    int X = GetBaseX()-GRAPH_MARGIN;
-    int Y = GetBaseY()-GRAPH_MARGIN;
     int W = GetBaseWidth()-2*GRAPH_MARGIN;
     int H = GetBaseHeight()-2*GRAPH_MARGIN;
 
@@ -1003,8 +998,6 @@ void BezierCurveControl2::ProcessPanning(int x, int y, int dx, int dy, unsigned 
 void BezierCurveControl2::ProcessZooming(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
 {
     float xp, yp;
-    int X = GetBaseX()-GRAPH_MARGIN;
-    int Y = GetBaseY()-GRAPH_MARGIN;
     int W = GetBaseWidth()-2*GRAPH_MARGIN;
     int H = GetBaseHeight()-2*GRAPH_MARGIN;
 

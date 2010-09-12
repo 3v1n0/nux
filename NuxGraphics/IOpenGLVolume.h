@@ -42,16 +42,16 @@ public:
     int UnlockBox();
 
     BitmapFormat GetPixelFormat() const;
-    unsigned int GetWidth() const;
-    unsigned int GetHeight() const;
-    unsigned int GetDepth() const;
+    int GetWidth() const;
+    int GetHeight() const;
+    int GetDepth() const;
 
-    unsigned int GetMipLevel() const
+    int GetMipLevel() const
     {
         return _SMipLevel;
     }
 
-    unsigned int GetSurfaceTarget() const
+    int GetSurfaceTarget() const
     {
         return _SSurfaceTarget;
     }
@@ -69,14 +69,14 @@ public:
 private:
     virtual ~IOpenGLVolume();
 
-    unsigned int InitializeLevel();
+    int InitializeLevel();
 
     IOpenGLVolume(IOpenGLVolumeTexture* VolumeTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, unsigned int MipLevel)
-        : _STextureTarget(TextureTarget)
+        : IOpenGLResource(RTVOLUME)
+        , _STextureTarget(TextureTarget)
         , _SSurfaceTarget(SurfaceTarget)
         , _SMipLevel(MipLevel)
         , _VolumeTexture(VolumeTexture)
-        , IOpenGLResource(RTVOLUME)
         , _AllocatedUnpackBuffer(0xFFFFFFFF)
     {
         // IOpenGLVolume surfaces are created inside a IOpenGLVolumeTexture.
@@ -96,11 +96,11 @@ private:
     // _SSurfaceTarget may be
     //      GL_TEXTURE_3D
     GLenum      _SSurfaceTarget;
-    unsigned int        _SMipLevel;
+    int         _SMipLevel;
 
-    VOLUME_LOCKED_BOX  _LockedBox;
+    VOLUME_LOCKED_BOX _LockedBox;
     VOLUME_BOX        _Box;
-    unsigned int           _CompressedDataSize;
+    int               _CompressedDataSize;
 
     IOpenGLVolumeTexture* _VolumeTexture;
     bool           _Initialized;

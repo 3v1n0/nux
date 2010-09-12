@@ -48,7 +48,6 @@ source_cpp = \
   $(srcdir)/PropertyItem/Vector3Property.cpp \
   $(srcdir)/PropertyItem/Vector3ValuatorPropertyItem.cpp \
   $(srcdir)/PropertyItem/Vector4Property.cpp \
-  $(srcdir)/AbstractBackground.cpp \
   $(srcdir)/AbstractButton.cpp \
   $(srcdir)/AbstractComboBox.cpp \
   $(srcdir)/AbstractSeparator.cpp \
@@ -62,7 +61,6 @@ source_cpp = \
   $(srcdir)/BezierCurveControl.cpp \
   $(srcdir)/BezierCurveControl2.cpp \
   $(srcdir)/Button.cpp \
-  $(srcdir)/Camera.cpp \
   $(srcdir)/CheckBox.cpp \
   $(srcdir)/ClientArea.cpp \
   $(srcdir)/ColorArea.cpp \
@@ -81,7 +79,6 @@ source_cpp = \
   $(srcdir)/FloatingWindow.cpp \
   $(srcdir)/FolderTreeItem.cpp \
   $(srcdir)/FunctionGraph.cpp \
-  $(srcdir)/GfxSimulation.cpp \
   $(srcdir)/GroupBox.cpp \
   $(srcdir)/GroupBox2.cpp \
   $(srcdir)/HexRegExpValidator.cpp \
@@ -134,7 +131,6 @@ source_cpp = \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/TimeGraph.cpp \
-  $(srcdir)/TimerManager.cpp \
   $(srcdir)/TimerProc.cpp \
   $(srcdir)/ToolButton.cpp \
   $(srcdir)/TreeControl.cpp \
@@ -179,7 +175,6 @@ source_property_item_h = \
   $(srcdir)/PropertyItem/Vector4Property.h
 
 source_h = \
-  $(srcdir)/AbstractBackground.h \
   $(srcdir)/AbstractButton.h \
   $(srcdir)/AbstractComboBox.h \
   $(srcdir)/AbstractPaintLayer.h \
@@ -194,7 +189,6 @@ source_h = \
   $(srcdir)/BezierCurveControl.h \
   $(srcdir)/BezierCurveControl2.h \
   $(srcdir)/Button.h \
-  $(srcdir)/Camera.h \
   $(srcdir)/CheckBox.h \
   $(srcdir)/ClientArea.h \
   $(srcdir)/ColorArea.h \
@@ -213,7 +207,6 @@ source_h = \
   $(srcdir)/FloatingWindow.h \
   $(srcdir)/FolderTreeItem.h \
   $(srcdir)/FunctionGraph.h \
-  $(srcdir)/GfxSimulation.h \
   $(srcdir)/GroupBox.h \
   $(srcdir)/GroupBox2.h \
   $(srcdir)/HexRegExpValidator.h \
@@ -267,7 +260,6 @@ source_h = \
   $(srcdir)/TabView.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/TimeGraph.h \
-  $(srcdir)/TimerManager.h \
   $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
   $(srcdir)/TreeControl.h \

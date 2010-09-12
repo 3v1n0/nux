@@ -36,11 +36,12 @@ const Color SPINBOX_BUTTON_MOUSEOVER_COLOR = Color(0xFF222222);
 
 Vector3DoubleValuator::Vector3DoubleValuator(double X, double Y, double Z, double Step, double MinValue, double MaxValue)
 :   m_DoubleValidator(MinValue, MaxValue)
-,   m_Step(Step)
-,   m_X(X)
-,   m_Y(Y)
-,   m_Z(Z)
 {
+    m_Step = Step;
+    m_X = X;
+    m_Y = Y;
+    m_Z = Z;
+
     m_hlayout = smptr(HLayout)(new HLayout());
     m_XEdit = smptr(EditTextBox)(new EditTextBox());
     m_YEdit = smptr(EditTextBox)(new EditTextBox());

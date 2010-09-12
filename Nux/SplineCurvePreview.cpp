@@ -225,7 +225,6 @@ void SplineCurvePreview::Draw(GraphicsContext& GfxContext, bool force_draw)
     int Y = base.y;
 
     float dX = (m_maxX - m_minX) / (W-1);
-    float dY = (m_maxY - m_minY) / H;
 
     float x0, y0;
     x0 = m_minX;
@@ -237,11 +236,10 @@ void SplineCurvePreview::Draw(GraphicsContext& GfxContext, bool force_draw)
     GfxContext.PushClippingRectangle(base);
 
     float tex_dx = (m_maxX - m_minX) / Texture->GetWidth();
-    float tex_dy = (m_maxY - m_minY) / Texture->GetWidth();
     SURFACE_LOCKED_RECT lockrect;
     Texture.Handle->LockRect(0, &lockrect, 0);
     BYTE *dest = (BYTE*)lockrect.pBits;
-    for(UINT i = 0; i < Texture->GetWidth(); i++)
+    for(t_s32 i = 0; i < Texture->GetWidth(); i++)
     {
         float y = 0.0;
         if(m_control_knot.GetNumKnot() <= 1)
@@ -250,7 +248,7 @@ void SplineCurvePreview::Draw(GraphicsContext& GfxContext, bool force_draw)
             y = m_CubicSpline.Eval(m_minX + i*tex_dx); 
         y = (y - m_minY) / (m_maxY - m_minY);
 
-        for(UINT j = 0; j < Texture->GetHeight(); j++)
+        for(t_s32 j = 0; j < Texture->GetHeight(); j++)
         {
             dest[4*i + 0 + j * lockrect.Pitch] = 255 * Clamp<float>(y, 0.0f, 1.0f);
             dest[4*i + 1 + j * lockrect.Pitch] = 255 * Clamp<float>(y, 0.0f, 1.0f);

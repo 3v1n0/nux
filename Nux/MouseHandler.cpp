@@ -41,11 +41,12 @@ BaseMouseHandler* gFocusMouseHandler = 0; // put this is the GfxServer class
 // }
 
 BaseMouseHandler::BaseMouseHandler()
-:m_first_time(true),
-m_hasMouseFocus(false),
-m_CurrentMouseIn(false)
 {
+    m_first_time        = true;
+    m_hasMouseFocus     = false;
+    m_CurrentMouseIn    = false;
 }
+
 BaseMouseHandler::~BaseMouseHandler()
 {
 

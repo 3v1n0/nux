@@ -28,12 +28,13 @@
 NAMESPACE_BEGIN_GUI
 
 ColorGradient::ColorGradient(float Value, float MinValue, float MaxValue)
-:   m_min(MinValue)
-,   m_max(MaxValue)
-,   m_BackgroundColor(0xff202020)
-,   m_CTRL_KEY(0)
-,   m_color_format(Color::COLORFORMAT_FLOAT)
 {
+    m_min               = MinValue;
+    m_max               = MaxValue;
+    m_BackgroundColor   = Color(0xff202020);
+    m_CTRL_KEY          = 0;
+    m_color_format      = Color::COLORFORMAT_FLOAT;
+
     InitializeLayout();
     InitializeWidgets();
     SetColorFormat(m_color_format);

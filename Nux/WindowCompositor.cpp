@@ -37,16 +37,17 @@ NAMESPACE_BEGIN_GUI
 // float gTimeAccum = 0;
 
 WindowCompositor::WindowCompositor()
-:   OverlayDrawingCommand(0)
-,   m_MouseFocusArea(0)
-,   m_MouseOverArea(0)
-,   m_PreviousMouseOverArea(0)
-,   m_CurrentEvent(0)
-,   m_CurrentWindow(0)
-,   m_FocusAreaWindow(0)
-,   m_MenuWindow(0)
-,   m_OverlayWindow(0)
 {
+    OverlayDrawingCommand       = smptr(BaseArea)(0);
+    m_MouseFocusArea            = smptr(BaseArea)(0);
+    m_MouseOverArea             = smptr(BaseArea)(0);
+    m_PreviousMouseOverArea     = smptr(BaseArea)(0);
+    m_CurrentEvent              = 0;
+    m_CurrentWindow             = smptr(BaseWindow)(0);
+    m_FocusAreaWindow           = smptr(BaseWindow)(0);
+    m_MenuWindow                = smptr(BaseWindow)(0);
+    m_OverlayWindow             = smptr(BaseWindow)(0);
+    
     m_SelectedWindow = smptr(BaseWindow)(0);
     m_DrawList        = new std::list<smptr(ActiveInterfaceObject)>;
     m_EventRectList   = new std::list<Rect>;
@@ -742,8 +743,8 @@ void WindowCompositor::DrawFloatingWindows(bool force_draw, const std::list<smpt
 
             if(rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
             {
-                UINT buffer_width = window->GetBaseWidth();
-                UINT buffer_height = window->GetBaseHeight();
+                t_s32 buffer_width = window->GetBaseWidth();
+                t_s32 buffer_height = window->GetBaseHeight();
                 if((rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height))
                 {
                     rt.color_rt = GetThreadGLDeviceFactory()->CreateTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
@@ -899,7 +900,7 @@ void WindowCompositor::PresentRendering()
 
 void WindowCompositor::RenderMainWindowComposition(bool force_draw, bool UseFBO)
 {
-    unsigned int buffer_width, buffer_height;
+    t_s32 buffer_width, buffer_height;
     if(UseFBO)
     {
         buffer_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
@@ -976,7 +977,7 @@ void WindowCompositor::RenderMainWindowComposition(bool force_draw, bool UseFBO)
 
 void WindowCompositor::SetCompositionRT()
 {
-    unsigned int buffer_width, buffer_height;
+    t_s32 buffer_width, buffer_height;
     buffer_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
     buffer_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
     if((!m_CompositionRT.IsValid()) || (m_CompositionRT->GetWidth() != buffer_width) || (m_CompositionRT->GetHeight() != buffer_height))
@@ -1019,7 +1020,7 @@ void WindowCompositor::PresentBufferToScreen(TRefGL<IOpenGLTexture2D> HWTexture,
     nuxAssert(HWTexture.IsValid());
     if(HWTexture.IsNull())
         return;
-    unsigned int window_width, window_height;
+    t_s32 window_width, window_height;
     window_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
     window_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
     

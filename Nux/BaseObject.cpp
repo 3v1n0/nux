@@ -32,15 +32,15 @@ NAMESPACE_BEGIN_GUI
 
 IMPLEMENT_ROOT_OBJECT_TYPE(BaseObject);
 BaseObject::BaseObject()
-:   m_SizePolicy(eSizeResizeable)
+:   m_IsSizeDirty(true)
+,   m_ParentObject(0)
+,   m_Application(0)
+,   m_SizePolicy(eSizeResizeable)
 ,   m_PositionPolicy(ePositionLeft)
 ,   m_Geometry(0,0,DEFAULT_WIDGET_WIDTH,DEFAULT_WIDGET_HEIGHT)
 ,   m_minSize(BASEOBJECT_MINWIDTH, BASEOBJECT_MINHEIGHT)
 ,   m_maxSize(BASEOBJECT_MAXWIDTH, BASEOBJECT_MAXHEIGHT)
-,   m_ParentObject(0)
 ,   m_stretchfactor(1)
-,   m_Application(0)
-,   m_IsSizeDirty(true)
 {
 }
 

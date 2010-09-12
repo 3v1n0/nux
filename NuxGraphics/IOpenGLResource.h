@@ -87,11 +87,12 @@ public:
     }
 
     IOpenGLResource(OpenGLResourceType ResourceType)
-        : _RefCount(0)
+        : _OpenGLID(0)
+        , _RefCount(0)
         , _ResourceType(ResourceType)
-        , _OpenGLID(0)
     {
     }
+    
     virtual ~IOpenGLResource()
     {
 

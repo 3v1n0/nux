@@ -234,9 +234,6 @@ NBitmapData* TextureArchiveLoad_ver_0_0_1(NSerializer* FileStream, t_u32 Offset)
     t_u32 TextureDataSize = 0;
     FileStream->Serialize((char*) &TextureDataSize,         sizeof(TextureDataSize));
 
-    t_u32 TextureDataPosition = FileStream->Tell();
-
-
     t_u32 TextureType;
     FileStream->Serialize((char*) &TextureType,     sizeof(TextureType));
 
@@ -416,7 +413,6 @@ NBitmapData* TextureArchiveLoad_ver_0_0_1(NSerializer* FileStream, t_u32 Offset)
         return 0;
     }
 
-    t_u32 TextureEndPosition = FileStream->Tell();
     nuxAssert(TextureEndPosition == TextureDataPosition + TextureDataSize);
 
     return BitmapData;

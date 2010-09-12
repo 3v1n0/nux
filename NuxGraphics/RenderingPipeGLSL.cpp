@@ -589,7 +589,6 @@ void GraphicsContext::QRP_GLSL_2Tex(int x, int y, int width, int height,
     return;
 #endif
 
-    bool bRectangleTexture = false;
     TRefGL<IOpenGLShaderProgram> ShaderProg;
 //     if(SrcTexture0->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
 //        SrcTexture1->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType))
@@ -685,7 +684,6 @@ void GraphicsContext::QRP_GLSL_4Tex(int x, int y, int width, int height,
     QRP_Compute_Texture_Coord(width, height, DeviceTexture2, texxform2);
     QRP_Compute_Texture_Coord(width, height, DeviceTexture3, texxform3);
 
-    bool bRectangleTexture = false;
     TRefGL<IOpenGLShaderProgram> ShaderProg;
 //     if(SrcTexture0->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
 //        SrcTexture1->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
@@ -747,8 +745,8 @@ void GraphicsContext::QRP_GLSL_4Tex(int x, int y, int width, int height,
 
     CHECKGL( glUniform4fARB(TextureCoef0Location, color0.R(), color0.G(), color0.B(), color0.A()) );
     CHECKGL( glUniform4fARB(TextureCoef1Location, color1.R(), color1.G(), color1.B(), color1.A()) );
-    CHECKGL( glUniform4fARB(TextureCoef0Location, color2.R(), color2.G(), color2.B(), color2.A()) );
-    CHECKGL( glUniform4fARB(TextureCoef1Location, color3.R(), color3.G(), color3.B(), color3.A()) );
+    CHECKGL( glUniform4fARB(TextureCoef2Location, color2.R(), color2.G(), color2.B(), color2.A()) );
+    CHECKGL( glUniform4fARB(TextureCoef3Location, color3.R(), color3.G(), color3.B(), color3.A()) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB("ViewProjectionMatrix");
     ShaderProg->SetUniformLocMatrix4fv((GLint)VPMatrixLocation, 1, false, (GLfloat*)&(GetModelViewProjectionMatrix().m));

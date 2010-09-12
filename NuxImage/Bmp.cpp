@@ -278,7 +278,9 @@ NBitmapData* read_bmp_file(const TCHAR* file_name)
         file.read((char*)(&infoheader.greenMask),    4);
         file.read((char*)(&infoheader.blueMask),    4);
         if(infoheader.biBitCount == 32)
-            nuxDebugMsg(TEXT("[read_bmp_file] Warning: 32 Bits BMP with BITFIELDS has not been implemented"));
+        {
+          nuxDebugMsg(TEXT("[read_bmp_file] Warning: 32 Bits BMP with BITFIELDS has not been implemented"));
+        }
     }
 
     bool FLIP_ROW_ORDER = true;

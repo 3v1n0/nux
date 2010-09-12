@@ -402,7 +402,10 @@ TRefGL<ICgPixelShader> GLDeviceFactory::CreateCGPixelShader()
 void GLDeviceFactory::Initialize()
 {
     GLenum Glew_Ok = glewInit();
-    nuxAssert(Glew_Ok == GLEW_OK);
+    if(Glew_Ok != GLEW_OK)
+    {
+      nuxAssertMsg(0, TEXT("[GLDeviceFactory::Initialize] Failed glewInit."));
+    }
     InitializeExtension();
 }
 
@@ -472,7 +475,9 @@ STREAMSOURCE GLDeviceFactory::_StreamSource[MAX_NUM_STREAM];
 //
 
 GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat)
-:   _PixelStoreAlignment(4)
+:   _FrameBufferObject(0)
+,   _PixelStoreAlignment(4)
+,   _CachedPixelBufferObjectList(0)
 ,   _CachedVertexBufferList(0)
 ,   _CachedIndexBufferList(0)
 ,   _CachedTextureList(0)
@@ -480,17 +485,18 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
 ,   _CachedCubeTextureList(0)
 ,   _CachedVolumeTextureList(0)
 ,   _CachedAnimatedTextureList(0)
-,   _CachedVertexDeclarationList(0)
 ,   _CachedQueryList(0)
+,   _CachedVertexDeclarationList(0)
 ,   _CachedFrameBufferList(0)
 ,   _CachedVertexShaderList(0)
 ,   _CachedPixelShaderList(0)
 ,   _CachedShaderProgramList(0)
-,   _CachedPixelBufferObjectList(0)
-,   _FrameBufferObject(0)
+,   _CachedAsmVertexShaderList(0)
+,   _CachedAsmPixelShaderList(0)
+,   _CachedAsmShaderProgramList(0)
+,   m_isINTELBoard(false)
 ,   m_isATIBoard(false)
 ,   m_isNVIDIABoard(false)
-,   m_isINTELBoard(false)
 ,   m_UsePixelBufferObject(false)
 ,   m_GraphicsBoardVendor(BOARD_UNKNOWN)
 #if (NUX_ENABLE_CG_SHADERS)
@@ -556,17 +562,17 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
     OPENGL_MAX_FB_ATTACHMENT = 4;
 
     NString TempStr = (const TCHAR*)TCharToUpperCase(m_BoardVendorString.GetTCharPtr());
-    if(TempStr.FindFirstOccurence(TEXT("NVIDIA")) != -1)
+    if(TempStr.FindFirstOccurence(TEXT("NVIDIA")) != tstring::npos)
     {
         m_isNVIDIABoard = true;
         m_GraphicsBoardVendor = BOARD_NVIDIA;
     }
-    else if(TempStr.FindFirstOccurence(TEXT("ATI")) != -1)
+    else if(TempStr.FindFirstOccurence(TEXT("ATI")) != tstring::npos)
     {
         m_isATIBoard = true;
         m_GraphicsBoardVendor = BOARD_ATI;
     }
-    else if(TempStr.FindFirstOccurence(TEXT("TUNGSTEN")) != -1)
+    else if(TempStr.FindFirstOccurence(TEXT("TUNGSTEN")) != tstring::npos)
     {
         m_isINTELBoard = true;
         m_GraphicsBoardVendor = BOARD_INTEL;
@@ -1168,7 +1174,6 @@ int GLDeviceFactory::AllocateUnpackPixelBufferIndex(int* index)
     }
     // Not enough free pbo
     PixelBufferObject pbo;
-    GLuint OpenGLID = 0;
     pbo.PBO = CreatePixelBufferObject(4, (VBO_USAGE)GL_STATIC_DRAW);
     pbo.IsReserved = TRUE;
     _PixelBufferArray.push_back(pbo);
@@ -1178,7 +1183,7 @@ int GLDeviceFactory::AllocateUnpackPixelBufferIndex(int* index)
 
 int GLDeviceFactory::FreeUnpackPixelBufferIndex(const int index)
 {
-    t_u32 num = (t_u32)_PixelBufferArray.size();
+    t_s32 num = (t_s32)_PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), TEXT("[GLDeviceFactory::FreeUnpackPixelBufferIndex] Trying to Free a pixel buffer index that does not exist."));
     if((index < 0) || (index >= num))
     {
@@ -1231,7 +1236,7 @@ void GLDeviceFactory::UnlockPackPixelBufferIndex(const int index)
 
 int GLDeviceFactory::BindUnpackPixelBufferIndex(const int index)
 {
-    t_u32 num = (t_u32)_PixelBufferArray.size();
+    t_s32 num = (t_s32)_PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), TEXT("[GLDeviceFactory::BindUnpackPixelBufferIndex] Trying to bind an invalid pixel buffer index."));
     if((index < 0) || (index >= num))
     {
@@ -1249,7 +1254,7 @@ int GLDeviceFactory::BindUnpackPixelBufferIndex(const int index)
 
 int GLDeviceFactory::BindPackPixelBufferIndex(const int index)
 {
-    t_u32 num = (t_u32)_PixelBufferArray.size();
+    t_s32 num = (t_s32)_PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), TEXT("[GLDeviceFactory::BindPackPixelBufferIndex] Trying to bind an invalid pixel buffer index."));
     if((index < 0) || (index >= num))
     {

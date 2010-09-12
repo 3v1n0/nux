@@ -175,7 +175,6 @@ void RGBPropertyItem::AlphaChange(const weaksmptr(ColorGradient) slider)
 void RGBPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
                                     RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
 {
-    bool isSelected = (this == table->GetSelectedItem());
     if(isDirtyItem() ||
         m_red->IsRedrawNeeded() ||
         m_green->IsRedrawNeeded() ||

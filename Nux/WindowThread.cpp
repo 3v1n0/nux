@@ -108,7 +108,7 @@ nux_event_check (GSource *source)
     return retval;
 }
 
-static gboolean
+gboolean
 nux_event_dispatch (GSource     *source,
                     GSourceFunc  callback,
                     gpointer     user_data)
@@ -185,7 +185,7 @@ typedef struct
     t_u32 id;
 } TimeoutData;
 
-static gboolean nux_timeout_dispatch (gpointer user_data)
+gboolean nux_timeout_dispatch (gpointer user_data)
 {
     TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
 

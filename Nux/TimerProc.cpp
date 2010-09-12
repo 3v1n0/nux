@@ -31,7 +31,7 @@ NAMESPACE_BEGIN_GUI
 static bool TimeIsGreater(_Time t1, _Time t2);
 static void TimeRightNow(_Time *tv);
 static void Addmillisecs(_Time *tv, unsigned int milliseconds);
-static t_u32 TimeDiff(_Time t1, _Time t2);
+//static t_u32 TimeDiff(_Time t1, _Time t2);
 
 TimerHandle::TimerHandle()
 {
@@ -51,10 +51,9 @@ TimerHandle::TimerHandle()
 }
 
 TimerHandler::TimerHandler()
-:   TimerHandleQueue(0)
-,   m_IsProceesingTimers(false)
 {
-
+    TimerHandleQueue = 0;
+    m_IsProceesingTimers = false;
 }
 
 TimerHandler::~TimerHandler()
@@ -620,7 +619,7 @@ void TimerHandler::DelayUntilNextTimerExpires(_Time *delay)
     }
 }
 
-t_u32 TimeDiff( _Time t1, _Time t2)
+/*t_u32 TimeDiff( _Time t1, _Time t2)
 {
     t_s32 sec;
     t_s32 usec;
@@ -650,7 +649,7 @@ t_u32 TimeDiff( _Time t1, _Time t2)
             usec = -usec;
     }
     return sec*1000 + usec/1000; // time diff is millisecond
-}
+}*/
 
 bool TimeIsGreater( _Time t1, _Time t2)
 {

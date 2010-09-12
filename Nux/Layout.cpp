@@ -32,15 +32,15 @@ NAMESPACE_BEGIN_GUI
 IMPLEMENT_OBJECT_TYPE(Layout);
 
 Layout::Layout()
-:   m_compositeIC(0)
-,   m_h_in_margin(0)
-,   m_h_out_margin(0)
-,   m_v_in_margin(0)
-,   m_v_out_margin(0)
-,   m_contentWidth(0)
-,   m_contentHeight(0)
-,   m_ContentStacking(eStackExpand)
 {
+    m_compositeIC       = smptr(BaseObject)(0);
+    m_h_in_margin       = 0;
+    m_h_out_margin      = 0;
+    m_v_in_margin       = 0;
+    m_v_out_margin      = 0;
+    m_contentWidth      = 0;
+    m_contentHeight     = 0;
+    m_ContentStacking   = eStackExpand;
 }
 
 Layout::~Layout()

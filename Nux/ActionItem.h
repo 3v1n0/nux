@@ -65,7 +65,6 @@ private:
     NTexture2D m_Icon;
     NString m_Label;
     bool m_IsActivated;
-    //CoreArea m_Area;
     MenuPage* m_Menu;
     bool m_Enable;
 

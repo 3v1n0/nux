@@ -32,7 +32,7 @@ class Button;
 class Dialog: public FloatingWindow
 {
 public:
-    Dialog(TCHAR* WindowName = TEXT(""));
+    Dialog(const TCHAR* WindowName = TEXT(""));
     virtual ~Dialog();
 
 protected:

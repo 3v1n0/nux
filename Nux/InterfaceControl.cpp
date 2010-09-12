@@ -30,12 +30,13 @@ IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
 
 ActiveInterfaceObject::ActiveInterfaceObject()
 :   BaseArea()
-,   m_CompositionLayout(0)
-,   m_NeedRedraw(false)
-,   m_UseStyleDrawing(true)
-,   m_TextColor(0)
-,   m_IsEnabled(true)
 {
+    m_CompositionLayout = smptr(Layout)(0);
+    m_NeedRedraw        = false;
+    m_UseStyleDrawing   = true;
+    m_TextColor         = 0;
+    m_IsEnabled         = true;
+
     // Set widget default size;
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 }

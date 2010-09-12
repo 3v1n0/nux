@@ -149,6 +149,7 @@ void RenderingStats::Register(IOpenGLResource* GraphicsObject)
             m_NumFrameBufferObject++;
             break;
         }
+    default: break;
     }
 }
 void RenderingStats::UnRegister(IOpenGLResource* GraphicsObject)
@@ -217,6 +218,7 @@ void RenderingStats::UnRegister(IOpenGLResource* GraphicsObject)
             m_NumFrameBufferObject--;
             break;
         }
+    default: break;
     }
 }
 

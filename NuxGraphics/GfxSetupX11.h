@@ -70,8 +70,8 @@ private:
     Window      m_X11Window;
     XVisualInfo *m_X11VisualInfo;
 
-    int        m_ParentWindow;
-    GLXContext m_GLCtx;
+    int         m_ParentWindow;
+    GLXContext  m_GLCtx;
     XSetWindowAttributes m_X11Attr;
 
     int m_NumVideoModes;
@@ -92,9 +92,8 @@ private:
     Bool m_X11RepeatKey;
 
     TCHAR m_WindowClassName[256];
-    GLuint		m_PixelFormat;			// Holds The Results After Searching For A Match
+    GLuint      m_PixelFormat;      // Holds The Results After Searching For A Match
     NString     m_WindowTitle;
-
 
     // size, position
     Size m_ViewportSize;

@@ -32,7 +32,7 @@ class HLayout: public Layout
     DECLARE_OBJECT_TYPE(HLayout, Layout);
 public: 
     HLayout();
-    HLayout(std::string name);
+    HLayout(NString name);
     ~HLayout();
 
     virtual long ComputeLayout2();

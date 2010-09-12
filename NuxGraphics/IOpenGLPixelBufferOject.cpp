@@ -28,12 +28,12 @@ NAMESPACE_BEGIN_OGL
 IMPLEMENT_OBJECT_TYPE(IOpenGLPixelBufferObject);
 
 IOpenGLPixelBufferObject::IOpenGLPixelBufferObject(unsigned int Size, VBO_USAGE Usage)
-:   _Length(Size)
+:   IOpenGLResource(RTVERTEXBUFFER)
+,   _Length(Size)
 ,   _Usage(Usage)
 ,   _MemMap(0)
 ,   _OffsetToLock(0)
 ,   _SizeToLock(0)
-,   IOpenGLResource(RTVERTEXBUFFER)
 {
     CHECKGL( glGenBuffersARB(1, &_OpenGLID) );
     CHECKGL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, _OpenGLID) );

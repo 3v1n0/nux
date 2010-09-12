@@ -30,14 +30,15 @@ NAMESPACE_BEGIN_OGL
 
 IMPLEMENT_OBJECT_TYPE(IOpenGLFrameBufferObject);
 
-IOpenGLFrameBufferObject::IOpenGLFrameBufferObject(unsigned int Width, unsigned int Height, BitmapFormat PixelFormat)
-:   _Width(Width)
+IOpenGLFrameBufferObject::IOpenGLFrameBufferObject(int Width, int Height, BitmapFormat PixelFormat)
+:   IOpenGLResource(RTFRAMEBUFFEROBJECT)
+,   _Width(Width)
 ,   _Height(Height)
 ,   _PixelFormat(PixelFormat)
 ,   _IsActive(false)
 ,   _Depth_Attachment(0)
 ,   _Stencil_Attachment(0)
-,   IOpenGLResource(RTFRAMEBUFFEROBJECT)
+
 {
     for (int i = 0; i < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment(); i++)
     {
@@ -56,7 +57,7 @@ IOpenGLFrameBufferObject::~IOpenGLFrameBufferObject()
     GRunTimeStats.UnRegister(this);
 }
 
-int IOpenGLFrameBufferObject::FormatFrameBufferObject(unsigned int Width, unsigned int Height, BitmapFormat PixelFormat)
+int IOpenGLFrameBufferObject::FormatFrameBufferObject(int Width, int Height, BitmapFormat PixelFormat)
 {
     Deactivate();
     for(int i=0; i< GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment(); i++)
@@ -79,7 +80,7 @@ int IOpenGLFrameBufferObject::FormatFrameBufferObject(unsigned int Width, unsign
     return 1;
 }
 
-int IOpenGLFrameBufferObject::SetRenderTarget(unsigned int ColorAttachmentIndex, TRefGL<IOpenGLSurface> pRenderTargetSurface)
+int IOpenGLFrameBufferObject::SetRenderTarget(int ColorAttachmentIndex, TRefGL<IOpenGLSurface> pRenderTargetSurface)
 {
     nuxAssert(ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment());
     if(pRenderTargetSurface.IsNull())
@@ -93,7 +94,6 @@ int IOpenGLFrameBufferObject::SetRenderTarget(unsigned int ColorAttachmentIndex,
         return 1;
     }
 
-    BitmapFormat PixelFormat = pRenderTargetSurface->GetPixelFormat();
     if(!(_Width == pRenderTargetSurface->GetWidth() && _Height == pRenderTargetSurface->GetHeight()))
     {
         nuxAssertMsg(0, TEXT("[IOpenGLFrameBufferObject::SetRenderTarget] Invalid surface size.") );
@@ -119,8 +119,6 @@ int IOpenGLFrameBufferObject::SetDepthSurface(TRefGL<IOpenGLSurface> pDepthSurfa
         return 1;
     }
 
-    BitmapFormat PixelFormat = pDepthSurface->GetPixelFormat();
-
     if(!(_Width == pDepthSurface->GetWidth() && _Height == pDepthSurface->GetHeight()))
     {
         nuxAssertMsg(0, TEXT("The depth surface size is not compatible with the frame buffer size.") );
@@ -143,7 +141,7 @@ int IOpenGLFrameBufferObject::SetDepthSurface(TRefGL<IOpenGLSurface> pDepthSurfa
     return 1;
 }
 
-TRefGL<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget(unsigned int ColorAttachmentIndex)
+TRefGL<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget(int ColorAttachmentIndex)
 {
     nuxAssert(ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment());
     return _Color_AttachmentArray[ColorAttachmentIndex];
@@ -299,7 +297,7 @@ void IOpenGLFrameBufferObject::ApplyClippingRegion()
     }
 }
 
-void IOpenGLFrameBufferObject::SetClippingRegion(int x, int y, unsigned int width, unsigned int height)
+void IOpenGLFrameBufferObject::SetClippingRegion(int x, int y, int width, int height)
 {
     if(GetThreadGraphicsContext())
         GetThreadGraphicsContext()->SetScissor(x, y, width, height);

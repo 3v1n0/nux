@@ -30,10 +30,12 @@ NAMESPACE_BEGIN_GUI
 
 #define INT_TO_ENUM_ELEMENT(a) {a, #a} // --->>> {a, "a"}
 
-struct {
+typedef struct {
     UXStyleImageRef value;
     const char* style;
-} UXStyleArray [] =
+} UXStyle;
+
+UXStyle UXStyleArray [] =
 {
     INT_TO_ENUM_ELEMENT(eIMAGE_STYLE_NONE),
     INT_TO_ENUM_ELEMENT(eSTROKE_CORNER_SQUARE),
@@ -120,7 +122,7 @@ struct {
 };
 
 
-static unsigned long axtoi(const char *s)
+/*static unsigned long axtoi(const char *s)
 {
     int n = 0;         // position in string
     int m = 0;         // position in digit[] to shift
@@ -160,9 +162,9 @@ static unsigned long axtoi(const char *s)
         n++;   // next digit to process
     }
     return (intValue);
-}
+}*/
 
-static unsigned int ReadXMLColorAttribute(TiXmlElement* element, const char* attribute_name)
+/*static unsigned int ReadXMLColorAttribute(TiXmlElement* element, const char* attribute_name)
 {
     unsigned int retvalue = 0;
     if(element)
@@ -170,7 +172,7 @@ static unsigned int ReadXMLColorAttribute(TiXmlElement* element, const char* att
         retvalue = axtoi(element->Attribute(attribute_name));
     }
     return retvalue;
-}
+}*/
 
 static UXStyleImageRef GetStyleImageRef(const TCHAR* style_name)
 {
@@ -218,8 +220,6 @@ void UXTheme::LoadPainterImages()
     TiXmlElement* image = 0;
     for(image = data->FirstChildElement(TCHARToUTF8(TEXT("Image"))); image; image = image->NextSiblingElement(TCHARToUTF8(TEXT("Image"))))
     {        
-        bool isStroke = false;
-        bool isShape = false;
         PainterImage* pimage = new PainterImage;
         Memset(pimage, 0, sizeof(PainterImage));
 

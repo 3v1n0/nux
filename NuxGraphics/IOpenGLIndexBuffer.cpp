@@ -29,13 +29,13 @@ NAMESPACE_BEGIN_OGL
 IMPLEMENT_OBJECT_TYPE(IOpenGLIndexBuffer);
 
 IOpenGLIndexBuffer::IOpenGLIndexBuffer(t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format)
-:   _Length(Length)
+:   IOpenGLResource(RTINDEXBUFFER)
+,   _Length(Length)
 ,   _Format(Format)
 ,   _Usage(Usage)
 ,   _MemMap(0)
 ,   _OffsetToLock(0)
 ,   _SizeToLock(0)
-,   IOpenGLResource(RTINDEXBUFFER)
 {
     CHECKGL( glGenBuffersARB(1, &_OpenGLID) );
     CHECKGL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID) );

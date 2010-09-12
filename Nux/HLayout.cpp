@@ -44,7 +44,7 @@ HLayout::HLayout()
     m_ContentStacking = eStackLeft;
 }
 
-HLayout::HLayout(std::string name)
+HLayout::HLayout(NString name)
 {
     m_name = name;
 #if DEBUG_LAYOUT
@@ -162,7 +162,6 @@ long HLayout::ComputeLayout2()
         (*it)->setOutofBound(false);
     }
 
-    t_s32 original_width = GetBaseWidth();
     t_s32 original_height = GetBaseHeight();
 
     if(GetStretchFactor() == 0)
@@ -476,7 +475,6 @@ long HLayout::ComputeLayout2()
 
 void HLayout::HLayoutManagement(t_s32 width, t_s32 height)
 {
-    t_s32 proposed_width = width;
     bool need_recompute = false;
     do
     {
@@ -766,7 +764,6 @@ void HLayout::ComputePosition2(float offsetX, float offsetY)
 
             eMinorSize extend = (*it)->GetExtend();
             eMinorPosition positioning = (*it)->getPositioning();
-            float percentage = (*it)->GetPercentage();
 
             if((extend != eFull) || ((*it)->GetBaseHeight() < height))
             {

@@ -82,13 +82,13 @@ static void ThreadColorEditorDialog(NThread* thread, void* InitData)
 }
 
 ColorDialogProxy::ColorDialogProxy(bool ModalWindow)
-:   m_bDialogChange(false)
-,   m_bDialogRunning(false)
-,   m_ModalWindow(ModalWindow)
-,   m_RGBColor(1.0f, 1.0f, 1.0f, 1.0f)
-,   m_ColorModel(CM_RGB)
-,   m_ColorChannel(CC_RED)
 {
+    m_bDialogChange     = false;
+    m_bDialogRunning    = false;
+    m_ModalWindow       = ModalWindow;
+    m_RGBColor          = Color(1.0f, 1.0f, 1.0f, 1.0f);
+    m_ColorModel        = CM_RGB;
+    m_ColorChannel      = CC_RED;
 }
 
 ColorDialogProxy::~ColorDialogProxy()
@@ -190,17 +190,18 @@ eColorChannel ColorDialogProxy::GetColorChannel()
 }
 
 ColorEditor::ColorEditor()
-:   m_ColorModel(CM_RGB)
-,   m_ColorChannel(CC_RED)
-,   m_Red(1.0f)
-,   m_Green(1.0f)
-,   m_Blue(0.0f)
-,   m_Hue(0.0f)
-,   m_Saturation(1.0f)
-,   m_Value(1.0f)
-,   m_MarkerPosition(0, 0)
-,   m_VertMarkerPosition(0, 0)
 {
+    m_ColorModel = CM_RGB;
+    m_ColorChannel = CC_RED;
+    m_Red = 1.0f;
+    m_Green = 1.0f;
+    m_Blue = 0.0f;
+    m_Hue = 0.0f;
+    m_Saturation = 1.0f;
+    m_Value = 1.0f;
+    m_MarkerPosition = Point(0, 0);
+    m_VertMarkerPosition = Point(0, 0);
+
     m_Validator.SetMinimum(0.0);
     m_Validator.SetMaximum(1.0);
     m_Validator.SetDecimals(2);
@@ -410,11 +411,6 @@ void ColorEditor::Draw(GraphicsContext& GfxContext, bool force_draw)
     gPainter.PaintBackground(GfxContext, base);
     //gPainter.Paint2DQuadWireframe(GfxContext, base, Color(COLOR_BACKGROUND_SECONDARY));
     
-    int W = GetBaseWidth()- 2;
-    int H = GetBaseHeight() - 2;
-    int X = GetBaseX() + 1;
-    int Y = GetBaseY() + 1;
-
     base.OffsetPosition(1, 1);
     base.OffsetSize(-2, -2);
 

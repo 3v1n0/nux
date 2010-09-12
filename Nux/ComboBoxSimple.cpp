@@ -30,9 +30,10 @@
 NAMESPACE_BEGIN_GUI
 
 ComboBoxSimple::ComboBoxSimple()
-:   m_SelectedAction(0)
-,   m_CurrentMenu(0)
 {
+    m_SelectedAction    = smptr(ActionItem)(0);
+    m_CurrentMenu       = smptr(MenuPage)(0);
+
     InitializeLayout();
     InitializeWidgets();
 }

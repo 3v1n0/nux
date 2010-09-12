@@ -60,13 +60,13 @@ int IOpenGLVolume::LockBox(
     }
     _Box.Front = _Box.Back = _Box.Bottom = _Box.Left = _Box.Right = _Box.Top = 0;
 
-    GLint unpack_alignment = GPixelFormats[_VolumeTexture->_PixelFormat].RowMemoryAlignment;
-    unsigned int halfUnpack = Log2(unpack_alignment);
+    //GLint unpack_alignment = GPixelFormats[_VolumeTexture->_PixelFormat].RowMemoryAlignment;
+
 
     CHECKGL( glBindTexture(_STextureTarget, _VolumeTexture->_OpenGLID) );
 
     unsigned int surface_size = 0;
-    unsigned int BytePerPixel = 0;
+
 
     IOpenGLVolumeTexture* texture = _VolumeTexture;
     OpenGLResourceType ResourceType = RTBASETEXTURE;
@@ -265,8 +265,6 @@ int IOpenGLVolume::UnlockBox()
 
     if(_STextureTarget == GL_TEXTURE_3D)
     {
-        int w = _Box.Right - _Box.Left;
-        int h = _Box.Bottom - _Box.Top;
         CHECKGL( glBindTexture(_STextureTarget, _VolumeTexture->_OpenGLID) );
 
         if(GetThreadGLDeviceFactory()->UsePixelBufferObjects())
@@ -370,7 +368,7 @@ int IOpenGLVolume::UnlockBox()
     return OGL_OK;
 }
 
-unsigned int IOpenGLVolume::InitializeLevel()
+int IOpenGLVolume::InitializeLevel()
 {
     // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
     int volwidth = ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Width, _SMipLevel);
@@ -466,7 +464,7 @@ BitmapFormat IOpenGLVolume::GetPixelFormat() const
         return _VolumeTexture->GetPixelFormat();
 }
 
-unsigned int IOpenGLVolume::GetWidth() const
+int IOpenGLVolume::GetWidth() const
 {
     if(_VolumeTexture->_ResourceType == RTVOLUMETEXTURE)
         return ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Width, _SMipLevel);
@@ -474,7 +472,7 @@ unsigned int IOpenGLVolume::GetWidth() const
     return 0;
 }
 
-unsigned int IOpenGLVolume::GetHeight() const
+int IOpenGLVolume::GetHeight() const
 {
     if(_VolumeTexture->_ResourceType == RTVOLUMETEXTURE)
         return ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Height, _SMipLevel);
@@ -482,7 +480,7 @@ unsigned int IOpenGLVolume::GetHeight() const
     return 0;
 }
 
-unsigned int IOpenGLVolume::GetDepth() const
+int IOpenGLVolume::GetDepth() const
 {
     if(_VolumeTexture->_ResourceType == RTVOLUMETEXTURE)
         return ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Depth, _SMipLevel);

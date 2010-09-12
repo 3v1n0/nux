@@ -34,10 +34,11 @@
 NAMESPACE_BEGIN_GUI
 
 ComboBoxComplex::ComboBoxComplex()
-:   m_ListBox(0)
-,   m_PopupWindow(0)
-,   m_Layout(0)
 {
+    m_ListBox       = smptr(ListControl)(0);
+    m_PopupWindow   = smptr(PopUpWindow)(0);
+    m_Layout        = smptr(HLayout)(0);
+
     InitializeLayout();
     InitializeWidgets();
 }

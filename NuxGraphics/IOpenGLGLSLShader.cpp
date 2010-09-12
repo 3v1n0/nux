@@ -37,17 +37,17 @@ struct ShaderDefinition
     NString     Value;
 };
 
-//----------------------------------------------------------------------------- 
-static void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...)
-{
-    TCHAR	DefinitionText[1024];
-    GET_VARARGS(DefinitionText, NUX_ARRAY_COUNT(DefinitionText), NUX_ARRAY_COUNT(DefinitionText)-1,Format);
-
-    ShaderDefinition	Definition;
-    Definition.Name = Name;
-    Definition.Value = DefinitionText;
-    Definitions.push_back(Definition);
-}
+// //----------------------------------------------------------------------------- 
+// static void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...)
+// {
+//     TCHAR	DefinitionText[1024];
+//     GET_VARARGS(DefinitionText, NUX_ARRAY_COUNT(DefinitionText), NUX_ARRAY_COUNT(DefinitionText)-1,Format);
+// 
+//     ShaderDefinition	Definition;
+//     Definition.Name = Name;
+//     Definition.Value = DefinitionText;
+//     Definitions.push_back(Definition);
+// }
 
 //----------------------------------------------------------------------------- 
 bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines)
@@ -157,10 +157,10 @@ static void InsertPreProcessorDefinitions(const NString &ShaderSource, NString &
 
     // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
     t_size Pos = RetSource.FindFirstOccurence(TEXT("#version"));
-    if(Pos != -1)
+    if(Pos != tstring::npos)
     {
         Pos = RetSource.FindNextOccurence(TEXT('\n'), Pos);
-        if(Pos == -1)
+        if(Pos == tstring::npos)
         {
             // this is most likely an incorrect shader
             Pos = RetSource.Size();
@@ -195,8 +195,8 @@ IOpenGLShader::~IOpenGLShader()
 }
 
 IOpenGLVertexShader::IOpenGLVertexShader(NString ShaderName)
-:   m_CompiledAndReady(false)
-,   IOpenGLShader(ShaderName, RT_GLSL_VERTEXSHADER)
+:   IOpenGLShader(ShaderName, RT_GLSL_VERTEXSHADER)
+,   m_CompiledAndReady(false)
 {
     _OpenGLID = glCreateShader(GL_VERTEX_SHADER_ARB);
     CHECKGL_MSG( glCreateShader(GL_VERTEX_SHADER_ARB) );
@@ -270,8 +270,9 @@ bool IOpenGLVertexShader::IsValid()
 }
 
 IOpenGLPixelShader::IOpenGLPixelShader(NString ShaderName)
-:   m_CompiledAndReady(false)
-,   IOpenGLShader(ShaderName, RT_GLSL_PIXELSHADER)
+:   IOpenGLShader(ShaderName, RT_GLSL_PIXELSHADER)
+,   m_CompiledAndReady(false)
+
 {
     _OpenGLID = glCreateShader(GL_FRAGMENT_SHADER_ARB);
     CHECKGL_MSG( glCreateShader(GL_FRAGMENT_SHADER_ARB) );
@@ -344,10 +345,10 @@ bool IOpenGLPixelShader::IsValid()
 }
 
 IOpenGLShaderProgram::IOpenGLShaderProgram(NString ShaderProgramName)
-:   m_CompiledAndReady(false)
-,   IOpenGLResource(RT_GLSL_SHADERPROGRAM)
-,   _ShaderProgramName(ShaderProgramName)
+:   IOpenGLResource(RT_GLSL_SHADERPROGRAM)
 ,   _FirstParameter(0)
+,   m_CompiledAndReady(false)
+,   _ShaderProgramName(ShaderProgramName)
 {
     _OpenGLID = glCreateProgram();
     CHECKGL_MSG( glCreateProgram() );
@@ -608,7 +609,7 @@ void IOpenGLShaderProgram::CheckAttributeLocation()
             &size,
             &type,
             active_attribute_name);
-        CHECKGL( glGetActiveAttribARB );
+        CHECKGL_MSG( glGetActiveAttribARB );
         m_ProgramAttributeDefinition[index].attribute_index = index;
         m_ProgramAttributeDefinition[index].attribute_name = active_attribute_name;
         m_ProgramAttributeDefinition[index].valid = true;

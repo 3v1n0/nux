@@ -92,14 +92,15 @@ void TimeGraph::Graph::Reset()
 t_u32 TimeGraph::sBufferSize = 2048;
 
 TimeGraph::TimeGraph(const TCHAR* Title)
-:   m_minY(0.0f)
-,   m_maxY(1.0f)
-,   m_FunctionCallback(0)
-,   m_DynValueCount(0)
-,   m_DynValueReceived(false)
-,   m_Option(SHOW_GRAPH)
-,   m_Title(Title)
 {
+    m_minY  = 0.0f;
+    m_maxY  = 1.0f;
+    m_FunctionCallback = 0;
+    m_DynValueCount = 0;
+    m_DynValueReceived = false;
+    m_Option = SHOW_GRAPH;
+    m_Title = Title;
+
     InitializeLayout();
     InitializeWidgets();
 
@@ -338,15 +339,13 @@ void TimeGraph::Draw(GraphicsContext& GfxContext, bool force_draw)
     if(m_Option == SHOW_GRAPH)
     {
         GfxContext.PushClippingRectangle(m_GraphArea->GetGeometry());
-        t_u32 numGraph = (t_u32)m_DynValueArray.size();
-        for(t_u32 index = 0; index < numGraph; index++)
+        t_s32 numGraph = (t_s32)m_DynValueArray.size();
+        for(t_s32 index = 0; index < numGraph; index++)
         {
             if(m_DynValueArray[index].m_ValueList.size() <= 1)
                 continue;
 
-            float dY = (m_maxY - m_minY) / H;
             std::list<float>::iterator it = m_DynValueArray[index].m_ValueList.begin();
-            float tex_dy = (m_maxY - m_minY) / Texture->GetWidth();
 
             if(Texture->GetWidth() != W)
             {
@@ -358,7 +357,7 @@ void TimeGraph::Draw(GraphicsContext& GfxContext, bool force_draw)
             Texture.Handle->LockRect(0, &lockrect, 0);
             BYTE *dest = (BYTE*)lockrect.pBits;
 
-            for(t_u32 i = 0; i < Texture->GetWidth(); i++)
+            for(t_s32 i = 0; i < Texture->GetWidth(); i++)
             {
                 float y;
                 if(it == m_DynValueArray[index].m_ValueList.end())
@@ -370,7 +369,7 @@ void TimeGraph::Draw(GraphicsContext& GfxContext, bool force_draw)
                 }
                 y = (y - m_minY) / (m_maxY - m_minY);
 
-                for(t_u32 j = 0; j < Texture->GetHeight(); j++)
+                for(t_s32 j = 0; j < Texture->GetHeight(); j++)
                 {
                     dest[j * lockrect.Pitch + 4*(W - 1 - i) + 0] = 255 * Clamp<float>(y, 0.0f, 1.0f);
                     dest[j * lockrect.Pitch + 4*(W - 1 - i) + 1] = 255 * Clamp<float>(y, 0.0f, 1.0f);
@@ -425,7 +424,8 @@ void TimeGraph::Draw(GraphicsContext& GfxContext, bool force_draw)
         t_u32 numGraph = (t_u32)m_DynValueArray.size();
         for(t_u32 index = 0; index < numGraph; index++)
         {
-            float x0, y0;
+            float x0 = 0.0f;
+            float y0 = 0.0f;
             int X0, Y0;
 
             //y0 = 0.0f;

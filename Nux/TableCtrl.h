@@ -355,14 +355,14 @@ public:
         Get the number of column in the table.
         @return the number of column.
     */
-    t_u32 GetNumColumn();
+    t_s32 GetNumColumn();
 
     //! Get the number of row in the table.
     /*!
         Get the number of row in the table.
         @return the number of row.
     */
-    t_u32 GetNumRow();
+    t_s32 GetNumRow();
 
     //! reset Items flags.
     /*!

@@ -765,8 +765,6 @@ void BasePainter::PaintBackground(GraphicsContext& GfxContext, const Geometry& g
 
     std::list<AbstractPaintLayer*>::const_reverse_iterator rev_it;
 
-    t_u32 s = (t_u32)m_BackgroundStack.size();
-
     bool first = true;
     for(rev_it = m_BackgroundStack.rbegin(); rev_it != m_BackgroundStack.rend(); rev_it++)
     {
@@ -907,7 +905,6 @@ void BasePainter::PopBackground(int level)
 
 void BasePainter::EmptyBackgroundStack()
 {
-    t_u32 i = (t_u32)m_BackgroundStack.size();
     m_BackgroundStack.clear();
 }
 

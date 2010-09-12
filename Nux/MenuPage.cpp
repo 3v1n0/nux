@@ -54,10 +54,9 @@ static const int MENU_ITEM_TEXT_TO_BORDER_MARGIN = 5;
 
 
 MenuItem::MenuItem(const TCHAR* label, int UserValue)
-:   m_ChildMenu(0)
-,   m_ActionItem(0)
 {
-    m_ActionItem = smptr(ActionItem)(new ActionItem(label, UserValue));
+    m_ChildMenu     = smptr(MenuPage)(0); 
+    m_ActionItem    = smptr(ActionItem)(new ActionItem(label, UserValue));
 }
 
 MenuItem::~MenuItem()
@@ -170,14 +169,15 @@ void MenuSeparator::Draw(GraphicsContext& GfxContext, bool force_draw)
 }
 
 MenuPage::MenuPage(const TCHAR* title)
-:   m_Parent(0)
-,   m_item_width(MENU_ITEM_MIN_WIDTH)
-,   m_item_height(MENU_ITEM_MIN_HEIGHT)
-,   m_show_item_icon(true)
-,   m_MenuWindow(0)
-,   m_Name(title)
-,   m_IsTopOfMenuChain(false)
 {
+    m_Parent = smptr(MenuPage)(0);
+    m_item_width = MENU_ITEM_MIN_WIDTH;
+    m_item_height = MENU_ITEM_MIN_HEIGHT;
+    m_show_item_icon = true;
+    m_MenuWindow = smptr(BaseWindow)(0);
+    m_Name = title;
+    m_IsTopOfMenuChain = false;
+
     // Set Original State
 
     // Set Signals
@@ -304,12 +304,6 @@ void MenuPage::Draw(GraphicsContext& GfxContext, bool force_draw)
         shadow = base;
         shadow.OffsetPosition(4, 4);
         //gPainter.PaintShape(GfxContext, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
-
-        int window_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
-        int window_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-
-        int ctxX = GetGraphicsThread()->GetGraphicsContext().GetContextX();
-        int ctxY = GetGraphicsThread()->GetGraphicsContext().GetContextY();
 
         TexCoordXForm texxform;
         texxform.uoffset = (float)base.x/(float)GetThreadWindowCompositor().GetScreenBlurTexture()->GetWidth();
@@ -699,8 +693,6 @@ void MenuPage::EmitMouseMove(int x, int y, int dx, int dy, unsigned long button_
     
     if(m_HighlightedItem >=0)
     {
-        int index = m_HighlightedItem;
-
         smptr(MenuItem) selected_action = m_MenuItemVector[m_HighlightedItem];
         if((selected_action->GetChildMenu() != 0) && selected_action->GetActionItem()->isEnabled())
         {

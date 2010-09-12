@@ -32,16 +32,17 @@ t_u32 BaseKeyboardHandler::sJumpOffsetAtBorders = 60;
 t_u32 BaseKeyboardHandler::sCursorWidth = 2;
 
 BaseKeyboardHandler::BaseKeyboardHandler()
-:   m_text_positionx(0)
-,   m_text_positiony(0)
-,   m_previous_cursor_position(0)
-,   m_clip_region(0, 0, 100, 20)
-,   m_KeyType(eAlphaNumeric)
-,   m_nFirstVisible(0)
-,   m_bMouseDrag(false)
-,   m_bMouseInsideTextArea(true)
-,   m_bEnteringFocus(false)
 {
+    m_text_positionx        = 0;
+    m_text_positiony        = 0;
+    m_previous_cursor_position  = 0;
+    m_clip_region           = Rect(0, 0, 100, 20);
+    m_KeyType               = eAlphaNumeric;
+    m_nFirstVisible         = 0;
+    m_bMouseDrag            = false;
+    m_bMouseInsideTextArea  = true;
+    m_bEnteringFocus        = false;
+
     m_Caret = m_nSelStart = 0;
     m_bInsertMode = true;
 }
@@ -144,7 +145,6 @@ t_u32 BaseKeyboardHandler::NextWordPosition(t_u32 cp)
 
 t_u32 BaseKeyboardHandler::PrevWordPosition(t_u32 cp)
 {
-    t_u32 num_char = (t_u32)m_textline.Length();
     if(cp == 0)
         return 0;
 
@@ -704,8 +704,6 @@ long BaseKeyboardHandler::ProcessKey(
         m_need_redraw = false;
     }
 
-
-    t_s32 offset= 0;
     if(virtual_code == NUX_KP_HOME)
     {
         m_text_positionx = 0;

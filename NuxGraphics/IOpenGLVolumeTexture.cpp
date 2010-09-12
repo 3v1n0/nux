@@ -28,10 +28,10 @@ NAMESPACE_BEGIN_OGL
 IMPLEMENT_OBJECT_TYPE(IOpenGLVolumeTexture);
 
 IOpenGLVolumeTexture::IOpenGLVolumeTexture(
-    unsigned int Width
-    , unsigned int Height
-    , unsigned int Depth
-    , unsigned int Levels
+    int Width
+    , int Height
+    , int Depth
+    , int Levels
     , BitmapFormat PixelFormat)
     : IOpenGLBaseTexture(RTVOLUMETEXTURE, Width, Height, Depth, Levels, PixelFormat)
 {
@@ -39,9 +39,9 @@ IOpenGLVolumeTexture::IOpenGLVolumeTexture(
     CHECKGL( glBindTexture(GL_TEXTURE_3D, _OpenGLID) );
 
     _VolumeSurfaceArray = new std::vector< TRefGL<IOpenGLSurface> >[_NumMipLevel];
-    for (t_u32 mip = 0; mip < _NumMipLevel; mip++)
+    for (t_s32 mip = 0; mip < _NumMipLevel; mip++)
     {
-        for (t_u32 slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)
+        for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)
         {
             //IOpenGLSurface* surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice);
             //surface->InitializeLevel();
@@ -66,9 +66,9 @@ IOpenGLVolumeTexture::IOpenGLVolumeTexture(
 IOpenGLVolumeTexture::~IOpenGLVolumeTexture()
 {
     
-    for (t_u32 mip = 0; mip < _NumMipLevel; mip++)
+    for (t_s32 mip = 0; mip < _NumMipLevel; mip++)
     {
-        for (t_u32 slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)    
+        for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)    
         {
             // destroying a surface
             _VolumeSurfaceArray[mip][slice] = 0;;

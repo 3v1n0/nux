@@ -73,11 +73,6 @@ RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, floa
     InitializeLayout();
     switch(m_color_model)
     {
-    case CM_RGB:
-        {
-            SetColorModel(CM_RGB);
-            SetRGBA(x, y, z, alpha);
-        }
     case CM_HSV:
         {
             SetColorModel(CM_HSV);
@@ -90,6 +85,12 @@ RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, floa
             SetHLS(x, y, z);
             SetAlpha(alpha);
         }
+    default:
+    case CM_RGB:
+        {
+            SetColorModel(CM_RGB);
+            SetRGBA(x, y, z, alpha);
+        }        
     }
     SetColorFormat(m_color_format);
 

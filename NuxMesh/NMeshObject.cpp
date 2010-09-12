@@ -140,9 +140,6 @@ void NMeshObject::CreateVertexBuffer(NMeshData* meshdata)
         nux::Vec4<float> v0,v1,v2;
         for(long j = 0; j < nbTriangle; j++)
         {
-            int i0 = md->VertexSetIndexArray[0]->IndexPool[j].i;
-            int i1 = md->VertexSetIndexArray[0]->IndexPool[j].j;
-            int i2 = md->VertexSetIndexArray[0]->IndexPool[j].k;
             v0 = md->VertexSetArray[0]->Pool[md->VertexSetIndexArray[0]->IndexPool[j].i];
             v1 = md->VertexSetArray[0]->Pool[md->VertexSetIndexArray[0]->IndexPool[j].j];
             v2 = md->VertexSetArray[0]->Pool[md->VertexSetIndexArray[0]->IndexPool[j].k];
@@ -613,7 +610,6 @@ void NMeshObject::RenderNormal()
 
     {
         int nbTriangle = m_NumPolygon;
-        int count = 0;
 
         for(long j = 0; j < nbTriangle; j++)
         {

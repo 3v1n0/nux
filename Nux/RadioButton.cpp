@@ -31,12 +31,13 @@ NAMESPACE_BEGIN_GUI
 Color RADIO_TEXT_COLOR = Color(0xFFB0B0B0);
 
 RadioButton::RadioButton(const TCHAR* Caption, bool state)
-:   m_Group(0)
-,   m_GroupId(-1)
-,   m_hlayout(0)
-,   m_CheckArea(0)
-,   m_TextArea(0)
 {
+    m_Group     = 0;
+    m_GroupId   = -1;
+    m_hlayout   = smptr(HLayout)(0);
+    m_CheckArea = smptr(CoreArea)(0);
+    m_TextArea  = smptr(CoreArea)(0);
+
     InitializeLayout();
     InitializeWidgets();
     SetState(state);
