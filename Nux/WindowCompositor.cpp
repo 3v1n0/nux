@@ -479,16 +479,15 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
                 // We fall here after something dramatic has happen to the window such as a resizing. In this case
                 // everything must be rendered This is very intensize and should happen rarely.
                 RenderMainWindowComposition(true, true);
-                //if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
-                if (true)
+                if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
                 {   
                     CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawFloatingWindows(true, m_WindowList, false, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
                     DrawFloatingWindows(true, m_ModalWindowList, true, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawMenu(true);
                     DrawTooltip(true);
@@ -506,16 +505,15 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
                 // A popup removed cause the whole window to be dirty (at least some part of it).
                 // So exchange DrawList with a real Draw.
                 RenderMainWindowComposition(false, true);
-//                 if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
-                if (true)
+                if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
                 {   
                     CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawFloatingWindows(false, m_WindowList, false, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
                     DrawFloatingWindows(false, m_ModalWindowList, true, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawMenu(true);
                     DrawTooltip(true);
@@ -531,16 +529,15 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
             else
             {
                 RenderMainWindowComposition(false, true);
-//                 if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
-                if (true)
+                if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
                 {
                     CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawFloatingWindows(false, m_WindowList, false, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
                     DrawFloatingWindows(false, m_ModalWindowList, true, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawMenu(true);
                     DrawTooltip(true);

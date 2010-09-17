@@ -146,6 +146,7 @@ void BaseWindow::Draw(GraphicsContext& GfxContext, bool force_draw)
     }
     else
     {
+        //nuxDebugMsg(TEXT("[BaseWindow::Draw]"));
         gPainter.PushDrawShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, m_BackgroundColor, eAllCorners, true);
     }
     gPainter.PopBackground();
@@ -154,6 +155,12 @@ void BaseWindow::Draw(GraphicsContext& GfxContext, bool force_draw)
 
 void BaseWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
 {
+//     static bool firsttime = false;
+//     
+//     if(firsttime == true)
+//       return;
+//     firsttime = true;
+    
     Geometry base = GetGeometry();
     int x = base.x;
     int y = base.y;
@@ -172,16 +179,18 @@ void BaseWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     }
     else
     {
-        gPainter.PushShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, m_BackgroundColor, eAllCorners, true);
+        //nuxDebugMsg(TEXT("[BaseWindow::DrawContent]"));      
+        //gPainter.PushDrawShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, m_BackgroundColor, eAllCorners, true);
+        GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f, 1.0f, 1.0f, 0.2f));
     }
 
     if(m_layout.IsValid())
     {
         GfxContext.PushClippingRectangle(base);
-        m_layout->ProcessDraw(GfxContext, force_draw);
+        //m_layout->ProcessDraw(GfxContext, force_draw);
         GfxContext.PopClippingRectangle();
     }
-    gPainter.PopBackground();
+    //gPainter.PopBackground();
 }
 
 void BaseWindow::PostDraw(GraphicsContext& GfxContext, bool force_draw)

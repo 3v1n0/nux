@@ -1337,6 +1337,7 @@ void WindowThread::RenderInterfaceFromForeignCmd()
     // Deactivate GLSL shaders
     CHECKGL( glUseProgramObjectARB(0) );
     
+    GetThreadGLDeviceFactory()->DeactivateFrameBuffer();
     /*GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
     GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
     GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);
