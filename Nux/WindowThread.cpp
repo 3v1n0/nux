@@ -1312,6 +1312,9 @@ void WindowThread::RenderInterfaceFromForeignCmd()
     if(!IsEmbeddedWindow())
         return;
 
+    GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion(0, 0, GetGraphicsThread()->GetGraphicsContext().GetWindowWidth(),
+                                                                    GetGraphicsThread()->GetGraphicsContext().GetWindowHeight());
+    
     if(GetWindow().IsPauseThreadGraphicsRendering() == false)
     {
         m_window_compositor->Draw(m_size_configuration_event, m_force_redraw);

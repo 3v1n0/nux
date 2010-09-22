@@ -806,14 +806,14 @@ void WindowCompositor::DrawFloatingWindows(bool force_draw, const std::list<smpt
 //                    }
                 }
 
-                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 CHECKGL( glDepthMask(GL_FALSE) );
                 {
                     CopyTextureToCompositionRT(rt.color_rt, window->GetBaseX(), window->GetBaseY());
                     //PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false);
                 }
                 CHECKGL( glDepthMask(GL_TRUE) );
-                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(FALSE);
+                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false);
             }
             else
             {

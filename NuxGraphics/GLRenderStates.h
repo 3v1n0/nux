@@ -330,13 +330,13 @@ inline void GLRenderStates::SetAlphaTest(
 {
     if(EnableAlphaTest_)
     {
-        if(!RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTENABLE]))
+//         if(!RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTENABLE]))
         {
             HW__EnableAlphaTest(TRUE);
         }
 
-        if((RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTFUNC]) != AlphaTestFunc_) ||
-            (RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTREF]) != AlphaTestRef_))
+//         if((RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTFUNC]) != AlphaTestFunc_) ||
+//             (RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTREF]) != AlphaTestRef_))
         {
             HW__SetAlphaTestFunc(AlphaTestFunc_, AlphaTestRef_);
         }
@@ -352,14 +352,14 @@ inline void GLRenderStates::SetBlend(UBOOL AlphaBlendEnable_)
 {
     if(AlphaBlendEnable_)
     {
-        if(!RS_VALUE(m_RenderStateChanges[GFXRS_ALPHABLENDENABLE]))
+//         if(!RS_VALUE(m_RenderStateChanges[GFXRS_ALPHABLENDENABLE]))
         {
             HW__EnableAlphaBlend(TRUE);
         }
     }
     else
     {
-        if(RS_VALUE(m_RenderStateChanges[GFXRS_ALPHABLENDENABLE]))
+//         if(RS_VALUE(m_RenderStateChanges[GFXRS_ALPHABLENDENABLE]))
         {
             HW__EnableAlphaBlend(GL_FALSE);
         }
@@ -371,8 +371,8 @@ inline void GLRenderStates::SetBlend(UBOOL AlphaBlendEnable_,
                                      DWORD DestBlendFactor_)
 {
     SetBlend(AlphaBlendEnable_);
-    if((RS_VALUE(m_RenderStateChanges[GFXRS_SRCBLEND])!= SrcBlendFactor_) ||
-        (RS_VALUE(m_RenderStateChanges[GFXRS_DESTBLEND]) != DestBlendFactor_))
+//     if((RS_VALUE(m_RenderStateChanges[GFXRS_SRCBLEND])!= SrcBlendFactor_) ||
+//         (RS_VALUE(m_RenderStateChanges[GFXRS_DESTBLEND]) != DestBlendFactor_))
     {
         HW__SetSeparateAlphaBlendFactors(
             SrcBlendFactor_,
@@ -397,10 +397,10 @@ inline void GLRenderStates::SetSeparateBlend(UBOOL EnableSeparateAlphaBlend,
 //             HW__EnableAlphaBlend(TRUE);
 //         }
 
-        if((RS_VALUE(m_RenderStateChanges[GFXRS_SRCBLEND])!= SrcBlendFactor_) ||
-            (RS_VALUE(m_RenderStateChanges[GFXRS_DESTBLEND]) != DestBlendFactor_) ||
-            (RS_VALUE(m_RenderStateChanges[GFXRS_SRCBLENDALPHA]) != SrcBlendFactorAlpha_) ||
-            (RS_VALUE(m_RenderStateChanges[GFXRS_DESTBLENDALPHA]) != DestBlendFactorAlpha_))
+//         if((RS_VALUE(m_RenderStateChanges[GFXRS_SRCBLEND])!= SrcBlendFactor_) ||
+//             (RS_VALUE(m_RenderStateChanges[GFXRS_DESTBLEND]) != DestBlendFactor_) ||
+//             (RS_VALUE(m_RenderStateChanges[GFXRS_SRCBLENDALPHA]) != SrcBlendFactorAlpha_) ||
+//             (RS_VALUE(m_RenderStateChanges[GFXRS_DESTBLENDALPHA]) != DestBlendFactorAlpha_))
         {
             HW__SetSeparateAlphaBlendFactors(
                 SrcBlendFactor_,
@@ -432,8 +432,8 @@ inline void GLRenderStates::SetSeparateBlendOp(
     DWORD BlendOpRGB_,
     DWORD BlendOpAlpha_)
 {
-    if((RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOP])!= BlendOpRGB_) ||
-        (RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOPALPHA])!= BlendOpAlpha_))
+//     if((RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOP])!= BlendOpRGB_) ||
+//         (RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOPALPHA])!= BlendOpAlpha_))
     {
         HW__SetAlphaBlendOp(BlendOpRGB_, BlendOpAlpha_);
     }
@@ -673,7 +673,7 @@ inline void GLRenderStates::SetDepthMask(UBOOL bDepth)
 
 inline void GLRenderStates::EnableScissor(UBOOL bScissor)
 {
-    if((RS_VALUE(m_RenderStateChanges[GFXRS_SCISSORTESTENABLE]) != bScissor))
+    //if((RS_VALUE(m_RenderStateChanges[GFXRS_SCISSORTESTENABLE]) != bScissor))
     {
         HW__EnableScissor(bScissor);
     }
