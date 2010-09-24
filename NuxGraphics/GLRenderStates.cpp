@@ -48,7 +48,7 @@ const struct StateLookUpTable
         UL_MAP(SCISSORTESTENABLE            ,           GL_FALSE        ,       1);
         UL_MAP(FOGENABLE                    ,           GL_FALSE        ,       1);
 
-        UL_MAP(ZTESTENABLE                  ,           GL_TRUE         ,       1);
+        UL_MAP(ZTESTENABLE                  ,           GL_FALSE        ,       1);
         UL_MAP(ZWRITEENABLE                 ,           GL_TRUE         ,       1);
         UL_MAP(ZFUNC                        ,           GL_LESS         ,       1);
         UL_MAP_FLOAT(ZNEAR                  ,           static_cast<UINT>(0.0f)            ,       1);
@@ -164,9 +164,7 @@ void GLRenderStates::ResetDefault()
 
     HW__EnableScissor( s_StateLUT.default_render_state[GFXRS_SCISSORTESTENABLE].iValue );
 
-    HW__EnableScissor( s_StateLUT.default_render_state[GFXRS_SCISSORTESTENABLE].iValue );
     HW__EnableFog( s_StateLUT.default_render_state[GFXRS_FOGENABLE].iValue );
-
 }
 
 void GLRenderStates::SubmitChangeStates()
@@ -214,9 +212,7 @@ void GLRenderStates::SubmitChangeStates()
 
     HW__EnableScissor( m_RenderStateChanges[GFXRS_SCISSORTESTENABLE].iValue );
 
-    HW__EnableScissor( m_RenderStateChanges[GFXRS_SCISSORTESTENABLE].iValue );
     HW__EnableFog( m_RenderStateChanges[GFXRS_FOGENABLE].iValue );
-
 }
 
 void GLRenderStates::ResetStateChangeToDefault()

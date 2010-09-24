@@ -1312,6 +1312,10 @@ void WindowThread::RenderInterfaceFromForeignCmd()
     if(!IsEmbeddedWindow())
         return;
 
+    // Set Nux opengl states. The other plugin in compiz have changed the GPU opengl states.
+    // Nux keep tracks of its own opengl states and restore them before doing any drawing.
+    GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SubmitChangeStates();
+     
     GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion(0, 0, GetGraphicsThread()->GetGraphicsContext().GetWindowWidth(),
                                                                     GetGraphicsThread()->GetGraphicsContext().GetWindowHeight());
     
