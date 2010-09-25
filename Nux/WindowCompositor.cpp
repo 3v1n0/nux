@@ -479,16 +479,15 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
                 // We fall here after something dramatic has happen to the window such as a resizing. In this case
                 // everything must be rendered This is very intensize and should happen rarely.
                 RenderMainWindowComposition(true, true);
-                //if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
-                if (true)
+                if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
                 {   
                     CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawFloatingWindows(true, m_WindowList, false, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
                     DrawFloatingWindows(true, m_ModalWindowList, true, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawMenu(true);
                     DrawTooltip(true);
@@ -506,16 +505,15 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
                 // A popup removed cause the whole window to be dirty (at least some part of it).
                 // So exchange DrawList with a real Draw.
                 RenderMainWindowComposition(false, true);
-//                 if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
-                if (true)
+                if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
                 {   
                     CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawFloatingWindows(false, m_WindowList, false, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
                     DrawFloatingWindows(false, m_ModalWindowList, true, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawMenu(true);
                     DrawTooltip(true);
@@ -531,16 +529,15 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
             else
             {
                 RenderMainWindowComposition(false, true);
-//                 if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
-                if (true)
+                if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
                 {
                     CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawFloatingWindows(false, m_WindowList, false, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
                     DrawFloatingWindows(false, m_ModalWindowList, true, true);
-                    UpdatePostProcessRT();
+                    //UpdatePostProcessRT();
 
                     DrawMenu(true);
                     DrawTooltip(true);
@@ -809,14 +806,14 @@ void WindowCompositor::DrawFloatingWindows(bool force_draw, const std::list<smpt
 //                    }
                 }
 
-                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 CHECKGL( glDepthMask(GL_FALSE) );
                 {
                     CopyTextureToCompositionRT(rt.color_rt, window->GetBaseX(), window->GetBaseY());
                     //PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false);
                 }
                 CHECKGL( glDepthMask(GL_TRUE) );
-                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(FALSE);
+                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false);
             }
             else
             {

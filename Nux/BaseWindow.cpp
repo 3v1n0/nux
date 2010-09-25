@@ -146,6 +146,7 @@ void BaseWindow::Draw(GraphicsContext& GfxContext, bool force_draw)
     }
     else
     {
+        //nuxDebugMsg(TEXT("[BaseWindow::Draw]"));
         gPainter.PushDrawShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, m_BackgroundColor, eAllCorners, true);
     }
     gPainter.PopBackground();
@@ -154,13 +155,14 @@ void BaseWindow::Draw(GraphicsContext& GfxContext, bool force_draw)
 
 void BaseWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
 {
+   
     Geometry base = GetGeometry();
     int x = base.x;
     int y = base.y;
     // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
     base.SetX(0);
     base.SetY(0);
-    
+
     if(UseBlurredBackground())
     {
         TexCoordXForm texxform;
@@ -172,7 +174,10 @@ void BaseWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     }
     else
     {
+        //nuxDebugMsg(TEXT("[BaseWindow::DrawContent]"));      
         gPainter.PushShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, m_BackgroundColor, eAllCorners, true);
+        //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f, 0.0f, 0.0f, 1.0f));
+        //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 0.5f));
     }
 
     if(m_layout.IsValid())
