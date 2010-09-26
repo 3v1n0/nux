@@ -189,7 +189,8 @@ eColorChannel ColorDialogProxy::GetColorChannel()
     return m_ColorChannel;
 }
 
-ColorEditor::ColorEditor()
+ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_ColorModel = CM_RGB;
     m_ColorChannel = CC_RED;
@@ -749,7 +750,7 @@ void ColorEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsign
     valuetext->SetText(m_Validator.ToString(100*m_Value));
     m_VertMarkerPosition = Point(Clamp<int>(x,0,m_BaseChannelArea->GetBaseWidth()-1), Clamp<int>(y,0,m_BaseChannelArea->GetBaseHeight()-1));
 
-    sigChange.emit(smptr(ColorEditor)(this, false));
+    sigChange.emit(smptr(ColorEditor)(this, true));
     NeedRedraw();
 }
 
@@ -891,7 +892,7 @@ void ColorEditor::RecvPickerMouseDown(int x, int y, unsigned long button_flags, 
     saturationtext->SetText(m_Validator.ToString(100*m_Saturation));
     valuetext->SetText(m_Validator.ToString(100*m_Value));
 
-    sigChange.emit(smptr(ColorEditor)(this, false));
+    sigChange.emit(smptr(ColorEditor)(this, true));
     NeedRedraw();
 }
 
@@ -1015,7 +1016,7 @@ void ColorEditor::SetRGB(double r, double g, double b)
     m_Blue =    Clamp<double>(b, 0.0, 1.0);
     RGBtoHSV(m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
     RecvCheckColorModel(true, m_ColorModel, m_ColorChannel);
-    sigChange.emit(smptr(ColorEditor)(this, false));
+    sigChange.emit(smptr(ColorEditor)(this, true));
 }
 
 void ColorEditor::SetHSV(double h, double s, double v)
@@ -1025,7 +1026,7 @@ void ColorEditor::SetHSV(double h, double s, double v)
     m_Value =       Clamp<double>(v, 0.0, 1.0);
     HSVtoRGB( m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
     RecvCheckColorModel(true, m_ColorModel, m_ColorChannel);
-    sigChange.emit(smptr(ColorEditor)(this, false));
+    sigChange.emit(smptr(ColorEditor)(this, true));
 }
 
 void ColorEditor::SetRed(double r)

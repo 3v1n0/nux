@@ -27,7 +27,8 @@
 
 NAMESPACE_BEGIN_GUI
 
-ColorGradient::ColorGradient(float Value, float MinValue, float MaxValue)
+ColorGradient::ColorGradient(float Value, float MinValue, float MaxValue, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_min               = MinValue;
     m_max               = MaxValue;
@@ -275,7 +276,7 @@ void ColorGradient::OnReceiveMouseDown(int x, int y, unsigned long button_flags,
 
     SetValue(m_Value);
     //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(ColorGradient)(this, false));
+    sigValueChanged.emit(smptr(ColorGradient)(this, true));
     sigFloatChanged.emit(m_Value);
     sigMouseDown.emit(m_Value);
 
@@ -294,7 +295,7 @@ void ColorGradient::OnReceiveMouseUp(int x, int y, unsigned long button_flags, u
 
     SetValue(m_Value);
     //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(ColorGradient)(this, false));
+    sigValueChanged.emit(smptr(ColorGradient)(this, true));
     sigFloatChanged.emit(m_Value);
     sigMouseUp.emit(m_Value);
 
@@ -312,7 +313,7 @@ void ColorGradient::OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned lo
 
     SetValue(m_Value);
     //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(ColorGradient)(this, false));
+    sigValueChanged.emit(smptr(ColorGradient)(this, true));
     sigFloatChanged.emit(m_Value);
     sigMouseDrag.emit(m_Value);
 
@@ -347,7 +348,7 @@ void ColorGradient::OnValidateKeyboardEntry(const weaksmptr(EditTextBox) textbox
 
     //inlCharToFloat(text.c_str(), f);
     SetValue(f);
-    sigValueChanged.emit(smptr(ColorGradient)(this, false));
+    sigValueChanged.emit(smptr(ColorGradient)(this, true));
     sigFloatChanged.emit(m_Value);
     sigSetTypedValue.emit(f);
     NeedRedraw();

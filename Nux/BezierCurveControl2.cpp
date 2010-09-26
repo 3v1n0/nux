@@ -35,8 +35,9 @@ static const int UNIT_REFERENCE = 15;
 
 unsigned long S_KEY = 0;
 
-BezierCurveControl2::BezierCurveControl2()
-:m_minX(-0.10f),
+BezierCurveControl2::BezierCurveControl2(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_minX(-0.10f),
 m_minY(-0.100f),
 m_maxX(1.100f),
 m_maxY(1.100f),

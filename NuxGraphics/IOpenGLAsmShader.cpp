@@ -26,10 +26,10 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShader);
-IMPLEMENT_OBJECT_TYPE(IOpenGLAsmVertexShader);
-IMPLEMENT_OBJECT_TYPE(IOpenGLAsmPixelShader);
-IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShaderProgram);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShader);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmVertexShader);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmPixelShader);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShaderProgram);
 
 bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines);
 

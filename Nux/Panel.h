@@ -32,7 +32,7 @@ class Layout;
 class Panel: public ScrollView
 {
 public:
-    Panel();
+    Panel(NUX_FILE_LINE_PROTO);
     ~Panel();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

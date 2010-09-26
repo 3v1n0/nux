@@ -21,7 +21,6 @@
 
 
 #include "Nux.h"
-#include "NuxCore/SmartPtr/NRefCount.h"
 #include "BaseObject.h"
 #include "NuxGraphics/OpenGLEngine.h"
 #include "Layout.h"
@@ -30,9 +29,11 @@
 
 NAMESPACE_BEGIN_GUI
 
-IMPLEMENT_ROOT_OBJECT_TYPE(BaseObject);
-BaseObject::BaseObject()
-:   m_IsSizeDirty(true)
+NUX_IMPLEMENT_OBJECT_TYPE(BaseObject);
+
+BaseObject::BaseObject(NUX_FILE_LINE_DECL)
+:   NuxObject(false, NUX_FILE_LINE_PARAM)
+,   m_IsSizeDirty(true)
 ,   m_ParentObject(0)
 ,   m_Application(0)
 ,   m_SizePolicy(eSizeResizeable)
@@ -253,7 +254,7 @@ void BaseObject::UnParentObject(smptr(BaseObject))
 {
     if(m_ParentObject.IsValid() && m_ParentObject->IsLayout())
     {
-        m_ParentObject->RemoveChildObject(smptr(BaseObject)(this, false));
+        m_ParentObject->RemoveChildObject(smptr(BaseObject)(this, true));
         m_ParentObject->RequestBottomUpLayoutComputation(smptr(BaseObject)(NULL));
         m_ParentObject = smptr(BaseObject)(0);
     }
@@ -358,7 +359,11 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
     if(this->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
     {
         // The object that is being resized is a ActiveInterfaceObject object
-        smptr(ActiveInterfaceObject) ic(this, false);
+        if(this->OwnsTheReference() == false)
+        {
+            this->Reference();
+        }
+        smptr(ActiveInterfaceObject) ic(this, true);
         if(ic->CanBreakLayout())
         {
 
@@ -375,7 +380,7 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
             }
         }
         else if(ic->m_ParentObject.IsValid())
-            ic->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, false));
+            ic->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, true));
         else
         {
             GetGraphicsThread()->AddObjectToRefreshList(ic);
@@ -383,7 +388,12 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
     }
     else if(this->Type().IsDerivedFromType(Layout::StaticObjectType))
     {
-        smptr(Layout) layout = smptr(Layout)(this, false);
+        if(this->OwnsTheReference() == false)
+        {
+            this->Reference();
+        }
+
+        smptr(Layout) layout = smptr(Layout)(this, true);
         if(layout->m_ParentObject.IsValid())
         {
             if(layout->m_ParentObject->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
@@ -396,7 +406,7 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
                     {
                         // If the parent of this element is a splitter, then we submit its child to the refresh list. We don't want to submit the 
                         // splitter because this will cause a redraw of all parts of the splitter (costly and unnecessary). 
-                        GetGraphicsThread()->AddObjectToRefreshList(smptr(BaseObject)(this, false));
+                        GetGraphicsThread()->AddObjectToRefreshList(smptr(BaseObject)(this, true));
                     }
                     else
                     {
@@ -406,12 +416,12 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
                 else
                 {
                     // The parent object of an object of type ActiveInterfaceObject is a Layout object type.
-                    layout->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, false));
+                    layout->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, true));
                 }
             }
             else
             {
-                layout->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, false));
+                layout->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, true));
             }
         }
         else
@@ -425,8 +435,13 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
         // The object that is being resized is a CoreArea object.
         if(this->m_ParentObject.IsValid())
         {
+            if(this->OwnsTheReference() == false)
+            {
+                this->Reference();
+            }
+
             // The parent object of an object of type CoreArea is a Layout object type.
-            this->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, false));
+            this->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, true));
         }
     }
 }

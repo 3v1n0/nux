@@ -235,7 +235,7 @@ t_u32 WindowThread::AddGLibTimeout(t_u32 duration)
 }
 #endif
 
-IMPLEMENT_OBJECT_TYPE(WindowThread);
+NUX_IMPLEMENT_OBJECT_TYPE(WindowThread);
 
 WindowThread::WindowThread(const TCHAR* WindowTitle, unsigned int width, unsigned int height, AbstractThread* Parent, bool Modal)
 :   AbstractThread(Parent)

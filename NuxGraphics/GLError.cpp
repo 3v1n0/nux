@@ -25,9 +25,9 @@
 #include "GLError.h"
 
 #ifdef _DEBUG
-    UBOOL bCheckGLErrors = TRUE;
-    UBOOL bBreakOnGLErrors = TRUE;
-    UBOOL bVerboseOGLMsg    = FALSE;
+    bool bCheckGLErrors = TRUE;
+    bool bBreakOnGLErrors = TRUE;
+    bool bVerboseOGLMsg    = FALSE;
 #endif
 
 // WARNING: never call glGetError between glBegin and glEnd.

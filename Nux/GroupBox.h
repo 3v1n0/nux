@@ -35,7 +35,7 @@ class Layout;
 class GroupBox : public ActiveInterfaceObject
 {
 public:
-    GroupBox(const TCHAR* Caption = TEXT(""));
+    GroupBox(const TCHAR* Caption = TEXT(""), NUX_FILE_LINE_PROTO);
     ~GroupBox();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

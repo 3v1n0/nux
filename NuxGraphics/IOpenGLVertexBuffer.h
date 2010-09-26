@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLResource;
 class IOpenGLVertexBuffer: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLVertexBuffer, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVertexBuffer, IOpenGLResource);
 
 public:
     virtual ~IOpenGLVertexBuffer();

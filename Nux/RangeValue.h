@@ -31,7 +31,7 @@ class EditTextBox;
 class RangeValue : public ActiveInterfaceObject //public ValuatorAbstraction
 {
 public:
-    RangeValue(float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f);
+    RangeValue(float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f, NUX_FILE_LINE_PROTO);
     virtual ~RangeValue();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

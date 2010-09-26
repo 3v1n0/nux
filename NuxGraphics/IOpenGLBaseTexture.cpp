@@ -29,7 +29,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLBaseTexture);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLBaseTexture);
 
 IOpenGLBaseTexture::IOpenGLBaseTexture(OpenGLResourceType ResourceType, 
                                        t_u32 Width, 

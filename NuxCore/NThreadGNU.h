@@ -254,7 +254,7 @@ typedef void* (*ThreadRoutineFunc)(void*);
 
 class NThread
 {
-    DECLARE_ROOT_OBJECT_TYPE(NThread);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(NThread);
 public:
     /*!
     	Info: Default Constructor

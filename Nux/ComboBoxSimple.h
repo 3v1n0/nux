@@ -35,7 +35,7 @@ class TableCtrl;
 class ComboBoxSimple : public AbstractComboBox
 {
 public:
-    ComboBoxSimple();
+    ComboBoxSimple(NUX_FILE_LINE_PROTO);
     ~ComboBoxSimple();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 

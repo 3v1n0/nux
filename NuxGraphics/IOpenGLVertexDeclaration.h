@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLResource;
 class IOpenGLVertexDeclaration: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLVertexDeclaration, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVertexDeclaration, IOpenGLResource);
 
 public:
     virtual ~IOpenGLVertexDeclaration();

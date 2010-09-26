@@ -30,7 +30,7 @@ class EditTextBox;
 class Valuator: public ActiveInterfaceObject
 {
 public:
-    Valuator();
+    Valuator(NUX_FILE_LINE_PROTO);
     ~Valuator();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;

@@ -21,17 +21,18 @@
 
 
 #include "Nux.h"
-
 #include "VToolBar.h"
-
 #include "VLayout.h"
 #include "ToolButton.h"
 #include "ActionItem.h"
 #include "AbstractSeparator.h"
 #include "HSeparator.h"
+
 NAMESPACE_BEGIN_GUI
-VToolBar::VToolBar()
-:   m_vlayout(0)
+
+VToolBar::VToolBar(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_vlayout(0)
 { 
     InitializeLayout();
     InitializeWidgets();
@@ -130,7 +131,7 @@ void VToolBar::AddAction(smptr(ActionItem) action)
 //        return;
 
     smptr(ToolButton) tool_button(new ToolButton);
-    tool_button->SetAction(*action);
+    tool_button->SetAction(action);
 
     m_vlayout->AddActiveInterfaceObject(tool_button, 0, eCenter, eFix);
     // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);

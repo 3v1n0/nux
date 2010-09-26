@@ -34,7 +34,6 @@
 #include "NuxCore/Point.h"
 #include "NuxCore/Size.h"
 
-#include "NuxCore/SmartPtr/NRefCount.h"
 #include "NuxCore/SmartPtr/NSmartPtr.h"
 
 #include "NuxCore/Math/Constants.h"

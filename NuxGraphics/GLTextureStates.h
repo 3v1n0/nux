@@ -50,7 +50,7 @@ enum
 
 struct TextureStateMap
 {
-    UBOOL           Checked;
+    bool           Checked;
     unsigned int    State;
     unsigned int    Dirty;
     unsigned int    iValue;

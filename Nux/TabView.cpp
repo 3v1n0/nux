@@ -39,7 +39,8 @@ Color TabView::TAB_BACKGROUND_COLOR           = Color(0xFF191919);
 Color TabView::TAB_HEADER_COLOR               = Color(0xFF333333);
 Color TabView::TAB_HEADER_FOCUS_COLOR         = Color(0xFF5D5D5D);
 
-TabView::TabView()
+TabView::TabView(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_FocusTabIndex = 0;
     m_TabPositionOffset = 0;
@@ -329,7 +330,7 @@ void TabView::AddTab(const char* tab_name, smptr(Layout) tab_layout)
         m_ClientLayout = Tab->tab_layout;
         //m_ClientLayout->setGeometry(m_CompositionLayout->GetGeometry());
         SetCompositionLayout(m_ClientLayout);
-        GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, false));
+        GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true));
     }
     Tab->tab_area = smptr(CoreArea)(new CoreArea());
     Tab->tab_area->SetBaseString(tab_name);
@@ -359,9 +360,9 @@ void TabView::SetActiveTad(int index)
     m_ClientLayout = m_TabVector[m_FocusTabIndex]->tab_layout;
     if(m_ClientLayout.IsValid())
         SetCompositionLayout(m_ClientLayout);
-    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, false));
+    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true));
 
-    sigTabChanged(smptr(TabView)(this, false));
+    sigTabChanged(smptr(TabView)(this, true));
     sigTabIndexChanged(m_FocusTabIndex);
 
     NeedRedraw();
@@ -429,7 +430,7 @@ void TabView::RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigne
     int PrevWidth = GetBaseWidth();
     int PrevHeight = GetBaseHeight();
 
-    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, false), true);
+    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true), true);
 
 
     int NewWidth = GetBaseWidth();
@@ -444,7 +445,7 @@ void TabView::RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigne
     }
     m_DrawBackgroundOnPreviousGeometry = true;
 
-    sigTabChanged(smptr(TabView)(this, false));
+    sigTabChanged(smptr(TabView)(this, true));
     sigTabIndexChanged(m_FocusTabIndex);
     NeedRedraw();
 }
@@ -476,9 +477,9 @@ void TabView::RecvTabLeftMouseDown(int x, int y, unsigned long button_flags, uns
 
 void TabView::RecvTabButtonMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if(m_TabRightTimerHandler)
+    if(m_TabRightTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_TabRightTimerHandler);
-    if(m_TabLeftTimerHandler)
+    if(m_TabLeftTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_TabLeftTimerHandler);
 
     m_TabRightTimerHandler = 0;

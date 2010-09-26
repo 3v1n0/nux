@@ -30,9 +30,9 @@ NAMESPACE_BEGIN_GUI
 
 class Layout: public BaseObject
 {
-    DECLARE_OBJECT_TYPE(Layout, BaseObject);
+    NUX_DECLARE_OBJECT_TYPE(Layout, BaseObject);
 public:
-    Layout();
+    Layout(NUX_FILE_LINE_PROTO);
     virtual ~Layout();
 
     virtual void AddLayout(smptr(Layout), unsigned int stretchFactor = 1, eMinorPosition = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);

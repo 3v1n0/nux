@@ -33,8 +33,7 @@ NAMESPACE_BEGIN_GUI
 class TabView : public ActiveInterfaceObject
 {
 public:
-
-    TabView();
+    TabView(NUX_FILE_LINE_PROTO);
     ~TabView();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -115,8 +114,8 @@ private:
 
     TimerFunctor* tabright_callback;
     TimerFunctor* tableft_callback;
-    TimerHandle* m_TabRightTimerHandler;
-    TimerHandle* m_TabLeftTimerHandler;
+    TimerHandle m_TabRightTimerHandler;
+    TimerHandle m_TabLeftTimerHandler;
 
     std::vector<TabElement*> m_TabVector;
 

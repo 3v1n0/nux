@@ -28,9 +28,10 @@
 NAMESPACE_BEGIN_GUI
 
 static const t_s32 VERROR = 0;
-IMPLEMENT_OBJECT_TYPE(VLayout);
+NUX_IMPLEMENT_OBJECT_TYPE(VLayout);
 
-VLayout::VLayout()
+VLayout::VLayout(NUX_FILE_LINE_DECL)
+:   Layout(NUX_FILE_LINE_PARAM)
 {
 #if DEBUG_LAYOUT
     m_h_in_margin = 10;
@@ -45,7 +46,8 @@ VLayout::VLayout()
 
 }
 
-VLayout::VLayout(NString name)
+VLayout::VLayout(NString name, NUX_FILE_LINE_DECL)
+:   Layout(NUX_FILE_LINE_PARAM)
 {
     m_name = name;
 #if DEBUG_LAYOUT

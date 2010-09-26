@@ -50,7 +50,7 @@ class IOpenGLResource;
 
 class IOpenGLAsmShader:  public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLAsmShader, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmShader, IOpenGLResource);
     IOpenGLAsmShader(NString ShaderName, OpenGLResourceType ResourceType);
     virtual ~IOpenGLAsmShader();
 public:
@@ -63,7 +63,7 @@ public:
 
 class IOpenGLAsmVertexShader:  public IOpenGLAsmShader
 {
-    DECLARE_OBJECT_TYPE(IOpenGLAsmVertexShader, IOpenGLAsmShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmVertexShader, IOpenGLAsmShader);
 public:
     virtual ~IOpenGLAsmVertexShader();
     virtual void SetShaderCode(const ANSICHAR* ShaderCode);
@@ -77,7 +77,7 @@ private:
 
 class IOpenGLAsmPixelShader:  public IOpenGLAsmShader
 {
-    DECLARE_OBJECT_TYPE(IOpenGLAsmPixelShader, IOpenGLAsmShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmPixelShader, IOpenGLAsmShader);
 public:
     virtual ~IOpenGLAsmPixelShader();
     virtual void SetShaderCode(const ANSICHAR* ShaderCode);
@@ -92,7 +92,7 @@ private:
 
 class IOpenGLAsmShaderProgram:  public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLAsmShaderProgram, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmShaderProgram, IOpenGLResource);
 public:
     virtual ~IOpenGLAsmShaderProgram();
 

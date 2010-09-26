@@ -28,10 +28,10 @@ NAMESPACE_BEGIN_GUI
 class HLayout;
 class EditTextBox;
 
-class RangeValueInteger : public ActiveInterfaceObject //public ValuatorAbstraction
+class RangeValueInteger : public ActiveInterfaceObject
 {
 public:
-    RangeValueInteger(int Value = 0, int MinValue = 0, int MaxValue = 100);
+    RangeValueInteger(int Value = 0, int MinValue = 0, int MaxValue = 100, NUX_FILE_LINE_PROTO);
     ~RangeValueInteger();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

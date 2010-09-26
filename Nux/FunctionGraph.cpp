@@ -26,8 +26,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-FunctionGraph::FunctionGraph()
-:   m_minX(0.0f)
+FunctionGraph::FunctionGraph(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_minX(0.0f)
 ,   m_minY(0.0f)
 ,   m_maxX(1.0f)
 ,   m_maxY(1.0f)

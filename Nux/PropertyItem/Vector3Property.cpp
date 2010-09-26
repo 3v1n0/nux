@@ -79,7 +79,7 @@ long Vector3PropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo
 }
 
 void Vector3PropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry ItemGeo, const BasePainter& Painter, 
-                                       RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                       RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     bool isSelected = (this == table->GetSelectedItem());
     if(isDirtyItem() ||
@@ -88,7 +88,7 @@ void Vector3PropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* t
         m_Z->IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {
@@ -109,7 +109,7 @@ void Vector3PropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* t
     }
 }
 
-void Vector3PropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void Vector3PropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
 }
 

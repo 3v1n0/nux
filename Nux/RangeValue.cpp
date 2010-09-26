@@ -27,7 +27,8 @@
 
 NAMESPACE_BEGIN_GUI
 
-RangeValue::RangeValue(float Value, float MinValue, float MaxValue)
+RangeValue::RangeValue(float Value, float MinValue, float MaxValue, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_min           = MinValue;
     m_max           = MaxValue;
@@ -223,7 +224,7 @@ void RangeValue::OnReceiveMouseDown(int x, int y, unsigned long button_flags, un
         m_Value = m_min + (m_max-m_min) * (float)x / (float)m_Percentage->GetBaseWidth();
 
     m_ValueString->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(RangeValue)(this, false));
+    sigValueChanged.emit(smptr(RangeValue)(this, true));
     sigFloatChanged.emit(m_Value);
     sigMouseDown.emit(m_Value);
 
@@ -241,7 +242,7 @@ void RangeValue::OnReceiveMouseUp(int x, int y, unsigned long button_flags, unsi
         m_Value = m_min + (m_max-m_min) * (float)x / (float)m_Percentage->GetBaseWidth();
 
     m_ValueString->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(RangeValue)(this, false));
+    sigValueChanged.emit(smptr(RangeValue)(this, true));
     sigFloatChanged.emit(m_Value);
     sigMouseUp.emit(m_Value);
 
@@ -258,7 +259,7 @@ void RangeValue::OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned long 
         m_Value = m_min + (m_max-m_min) * (float)x / (float)m_Percentage->GetBaseWidth();
 
     m_ValueString->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(RangeValue)(this, false));
+    sigValueChanged.emit(smptr(RangeValue)(this, true));
     sigFloatChanged.emit(m_Value);
     sigMouseDrag.emit(m_Value);
 
@@ -280,7 +281,7 @@ void RangeValue::OnValidateKeyboardEntry(const weaksmptr(EditTextBox) textbox, c
     float f;
     f = CharToDouble(text.GetTCharPtr());
     SetValue(f);
-    sigValueChanged.emit(smptr(RangeValue)(this, false));
+    sigValueChanged.emit(smptr(RangeValue)(this, true));
     sigFloatChanged.emit(m_Value);
     sigSetTypedValue.emit(f);
     NeedRedraw();

@@ -25,7 +25,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLCubeTexture);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLCubeTexture);
 
 IOpenGLCubeTexture::IOpenGLCubeTexture(
                                        unsigned int EdgeLength

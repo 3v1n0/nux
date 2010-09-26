@@ -31,8 +31,8 @@ NAMESPACE_BEGIN_OGL
 
 extern PixelFormatInfo GPixelFormats[];
 
-IMPLEMENT_ROOT_OBJECT_TYPE(NResource);
-IMPLEMENT_ROOT_OBJECT_TYPE(NGLResource);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NResource);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NGLResource);
 
 NResource::NResource()
 :   m_ResourceIndex(NUX_INVALID_INDEX)

@@ -106,8 +106,6 @@ typedef unsigned char           ANSIUCHAR;  // An ANSI character.
 typedef wchar_t                 UNICHAR;    // A unicode character. L"Hello" is of type wchar_t and should not be confuse with type unsigned short on windows.
 
 // Other base types.
-typedef int                     BOOL;       // Boolean 0 (false) or 1 (true).
-typedef long                    UBOOL;      // Boolean 0 (false) or 1 (true).
 typedef float                   FLOAT;      // 32-bit IEEE floating point.
 typedef double                  DOUBLE;     // 64-bit IEEE double.
 

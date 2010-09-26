@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_GUI
 class ScrollBar : public ActiveInterfaceObject //public ValuatorAbstraction
 {
 public:
-    ScrollBar();
+    ScrollBar(NUX_FILE_LINE_PROTO);
     ~ScrollBar();
 
 private:

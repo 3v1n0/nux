@@ -34,7 +34,7 @@ class NTexture2D;
 class ToolButton : public ActiveInterfaceObject
 {
 public:
-    ToolButton(const TCHAR* BitmapFilename = 0);
+    ToolButton(const TCHAR* BitmapFilename = 0, NUX_FILE_LINE_PROTO);
 
     ~ToolButton();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -43,7 +43,7 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void SetAction(const ActionItem& action);
+    void SetAction(smptr(ActionItem) action);
     void SetState(bool b);
     void SetBitmap(const NTexture2D& Bitmap);
     // emitters
@@ -60,7 +60,7 @@ public:
 private:
     smptr(HLayout) hlayout;
     smptr(CoreArea) m_IconArea;
-    ActionItem m_ActionItem;
+    smptr(ActionItem) m_ActionItem;
     NTexture2D m_Bitmap;
     
 };

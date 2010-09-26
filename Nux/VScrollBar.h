@@ -35,7 +35,7 @@ class Layout;
 class VScrollBar: public ScrollBar //public ValuatorAbstraction
 {
 public:
-    VScrollBar();
+    VScrollBar(NUX_FILE_LINE_PROTO);
     ~VScrollBar();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -98,8 +98,8 @@ protected:
     // When the Scrollbar is used standalone, it is necessary to call ComputeScrolling at the end of the layout.
     virtual long PostLayoutManagement(long LayoutResult);
 
-    UBOOL AtMinimum();
-    UBOOL AtMaximum();
+    bool AtMinimum();
+    bool AtMaximum();
 
     smptr(VLayout) vlayout;
     smptr(CoreArea) m_SlideBar;
@@ -132,10 +132,10 @@ protected:
     TimerFunctor *down_callback;
     TimerFunctor *trackup_callback;
     TimerFunctor *trackdown_callback;
-    TimerHandle* m_UpTimerHandler;
-    TimerHandle* m_DownTimerHandler;
-    TimerHandle* m_TrackUpTimerHandler;
-    TimerHandle* m_TrackDownTimerHandler;
+    TimerHandle m_UpTimerHandler;
+    TimerHandle m_DownTimerHandler;
+    TimerHandle m_TrackUpTimerHandler;
+    TimerHandle m_TrackDownTimerHandler;
 
     Point m_TrackMouseCoord;
     friend class HLayout;

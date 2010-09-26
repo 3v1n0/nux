@@ -27,8 +27,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-Vector3Valuator::Vector3Valuator()
-:   m_Mouse(0)
+Vector3Valuator::Vector3Valuator(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Mouse(0)
 {
     m_XEdit = smptr(EditTextBox)(new EditTextBox());
     m_YEdit = smptr(EditTextBox)(new EditTextBox());

@@ -56,7 +56,7 @@ typedef void (*ConfigureNotifyCallback)(int, int, Geometry&);
 class BaseWindow: public ActiveInterfaceObject
 {
 public:
-    BaseWindow(const TCHAR* WindowName = TEXT(""));
+    BaseWindow(const TCHAR* WindowName = TEXT(""), NUX_FILE_LINE_PROTO);
     ~BaseWindow();
 
 

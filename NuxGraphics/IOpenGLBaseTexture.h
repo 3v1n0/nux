@@ -38,7 +38,7 @@ t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture);
 // todo: It should not be possible to create an object of type IOpenGLBaseTexture directly.
 class IOpenGLBaseTexture: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLBaseTexture, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLBaseTexture, IOpenGLResource);
 
 public:
 

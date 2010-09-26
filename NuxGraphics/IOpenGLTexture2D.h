@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLBaseTexture;
 class IOpenGLTexture2D: public IOpenGLBaseTexture
 {
-    DECLARE_OBJECT_TYPE(IOpenGLTexture2D, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLTexture2D, IOpenGLBaseTexture);
 public:
     virtual ~IOpenGLTexture2D();
 

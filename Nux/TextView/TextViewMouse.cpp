@@ -166,7 +166,7 @@ void TextView::OnLButtonUp(int mx, int my, unsigned long button_flags, unsigned 
 	if(m_nSelectionMode)
 	{
 		// cancel the scroll-timer if it is still running
-		if(MouseAutoScrollHandle != 0)
+		if(MouseAutoScrollHandle.IsValid())
         {
             GetThreadTimer().RemoveTimerHandler(MouseAutoScrollHandle);
             MouseAutoScrollHandle = 0;
@@ -264,7 +264,7 @@ void TextView::RecvMouseMove(int mx, int my, int dx, int dy, unsigned long butto
 		// If mouse is within this area, we don't need to scroll
 		if(rect.IsPointInside(pt.x, pt.y))
 		{
-			if(MouseAutoScrollHandle != 0)
+			if(MouseAutoScrollHandle.IsValid())
 			{
                 GetThreadTimer().RemoveTimerHandler(MouseAutoScrollHandle);
                 MouseAutoScrollHandle = 0;

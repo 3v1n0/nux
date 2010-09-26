@@ -25,15 +25,96 @@
 
 NAMESPACE_BEGIN
 
+template <typename T>
+class NuxObjectSP;
+
+template <typename T>
+class NuxObjectWeakSP;
+
+#if defined(NUX_DEBUG)
+    #define NUX_FILE_LINE_PROTO     char* __Nux_FileName__=__FILE__, int __Nux_LineNumber__ = __LINE__
+    #define NUX_FILE_LINE_DECL      char* __Nux_FileName__, int __Nux_LineNumber__
+    #define NUX_FILE_LINE_PARAM     __Nux_FileName__, __Nux_LineNumber__
+    #define NUX_TRACKER_LOCATION    __FILE__, __LINE__
+#else
+    #define NUX_FILE_LINE_PROTO     int __Nux_Dummy__ = 0xD0DECADE
+    #define NUX_FILE_LINE_DECL      int __Nux_Dummy__
+    #define NUX_FILE_LINE_PARAM     __Nux_Dummy__
+    #define NUX_TRACKER_LOCATION    0xD0DECADE
+#endif
+
 //! Base class of heap allocated objects.
+/*!
+    NuxTrackable does not implement reference counting. It only defines the API. It is up
+    to the class that inherit from NuxTrackable to implement the reference counting.
+*/
 class NuxTrackable
 {
 public:
+    NUX_DECLARE_ROOT_OBJECT_TYPE(NuxTrackable);
+    //! Test if object reference is owned.
+    /*
+        @return True if the object reference is owned.
+    */
     bool OwnsTheReference();
+    
+    //! Test if object was allocated dynamically.
+    /*
+        @return True if the object was allocated dynamically.
+    */
     bool IsHeapAllocated() const;
+    
+    //! Test if object was allocated dynamically.
+    /*
+        @return True if the object was allocated dynamically.
+    */
     bool IsDynamic() const;
-    virtual void Ref();
-    virtual void Unref();
+    
+    //! Increase the reference count.
+    /*
+        Widget are typically created and added to containers. It is decided that when widgets are created, they should have a floating reference
+        and their reference count is set to 1. 
+        {
+            Button* button = new Button();  // button ref_cout = 1, floating = true;
+            container->AddButton(button);   // button has a floating reference; when container call button->ref() the ref count 
+                                            // of button remains at 1 but the floating reference is set to false. From now on,
+                                            // calling button->ref will always increase the ref count (since button no longer has a floating reference).
+        }
+            
+        It is best to pair calls to ref() with unref() when it comes to widgets. So if a widget was not added to a container and so it still has a
+        floating reference, then call Dispose(). Dispose does some sanity check; it verifies that:
+             ref_count == 1
+             floating == true
+        If these conditions are verified, dispose will cause the object to be destroyed.
+        Calling unref() on an object that has a floating reference will trigger a warning/error in order to invite the
+        developer. The developer can either ref the object first before calling unref or simply not create the widget since it 
+        does not appear to have been used.
+        
+        During development it often happen that one forget to dispose an object with a floating reference. 
+        Assuming that all functions that receive a reference counted object properly call ref on the object and that the compiler
+        can detect unused variables, then the developer should have a way to detect reference counted objects that are not owned.
+        It is up to the developer to properly handle these objects.
+    */
+    virtual void Reference();
+    
+    //! Decrease the reference count.
+    /*!
+        @return True if the object has been destroyed
+    */
+    virtual bool UnReference();
+
+    //! Mark the object as owned.
+    /*!
+        @return True if the object was not owned previously
+    */
+    virtual bool SinkReference();
+
+    //! Destroy and object that has a floating reference.
+    /*!
+        If this object is not owned, calling SinkReference() as the same effect as calling Reference().
+        @return True if the object has been destroyed
+    */
+    virtual bool Dispose();
 
     static std::new_handler set_new_handler(std::new_handler handler);
     static void* operator new(size_t size);
@@ -60,49 +141,88 @@ private:
         ~AllocationList();
     };
 
-    static AllocationList allocation_list_;
-    static std::new_handler current_handler_;
+    static AllocationList m_allocation_list;
+    static std::new_handler m_new_current_handler;
 
     bool m_owns_the_reference;
+    static int m_total_allocated_size;  //! Total allocated memory size in bytes.
+    static int m_number_of_objects;     //! Number of allocated objects;
+    int m_size_of_this_object;
 
-    template<typename T> friend class Pointer;
+    //template<typename T> friend class Pointer;
 };
 
 //! The base class of Nux objects.
 class NuxObject: public NuxTrackable
 {
 public:
+    NUX_DECLARE_OBJECT_TYPE(BaseObject, NuxTrackable);
+
     //! Constructor
-    NuxObject();
+    NuxObject(bool OwnTheReference = true, NUX_FILE_LINE_PROTO);
     //! Increase reference count.
-    void Ref();
+    void Reference();
     //! Decrease reference count.
-    void Unref();
-    //! Destroy the object.
-    void Destroy();
-    
+    /*!
+        @return True if the object reference count has reached 0 and the object has been destroyed.
+    */
+    bool UnReference();
+
+    //! Mark the object as owned.
+    /*!
+        @return True if the object was not owned previously
+    */
+    virtual bool SinkReference();
+
+    //! Destroy and object that has a floating reference.
+    /*!
+        If this object is not owned, calling SinkReference() as the same effect as calling Reference().
+        @return True is the object has been destroyed
+    */
+    virtual bool Dispose();
+
     //! Returns true if the object was allocated on the heap.
     /*!
         @return True if the object was allocated on the heap.
     */
     bool IsHeapAllocated();
 
+    NThreadSafeCounter* m_reference_count; //!< Reference count.
+    NThreadSafeCounter* m_weak_reference_count; //!< Weak reference count.
+
 protected:
     //! Private destructor.
     /*
-        Private destructor. Ensure that object inheriting from NuxObject can only be allocated on the heap.
+        Private destructor. Ensure that NuxObject cannot be created on the stack (only on the heap), but objects that inherits
+        from NuxObject can stil be created on the stack or on the heap.
         (MEC++ item27)
     */
     virtual ~NuxObject();
 
+    void IncrementWeakCounter();
+    void DecrementWeakCounter();
+
 private:
+    //! Destroy the object.
+    void Destroy();
+
     NuxObject(const NuxObject&);
     NuxObject& operator = (const NuxObject&);
 
-    NThreadSafeCounter m_reference_count; //!< Reference counter.
+
+#if defined(NUX_DEBUG)
+    NString m_allocation_file_name;
+    int     m_allocation_line_number;
+#endif
+
+    template <typename T>
+    friend class NuxObjectSP;
+
+    template <typename T>
+    friend class NuxObjectWeakSP;
 };
 
 NAMESPACE_END
 
-#endif // #ifndef NUXOBJECT_H
+#endif // NUXOBJECT_H
 

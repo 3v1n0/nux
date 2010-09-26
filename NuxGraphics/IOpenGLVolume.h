@@ -30,7 +30,7 @@ class IOpenGLVolumeTexture;
 
 class IOpenGLVolume: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLVolume, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVolume, IOpenGLResource);
 
 public:
     virtual int RefCount() const;

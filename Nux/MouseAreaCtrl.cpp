@@ -25,7 +25,8 @@
 
 NAMESPACE_BEGIN_GUI
 
-MouseAreaCtrl::MouseAreaCtrl()
+MouseAreaCtrl::MouseAreaCtrl(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     // Set Original State
     m_vlayout = smptr(VLayout)(new VLayout());

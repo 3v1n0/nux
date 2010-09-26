@@ -95,7 +95,7 @@ struct NObjectType
     }
 };
 
-#define DECLARE_OBJECT_TYPE(TypeName, SuperType)                            \
+#define NUX_DECLARE_OBJECT_TYPE(TypeName, SuperType)                            \
     public:                                                                 \
     typedef SuperType SuperObject;                                          \
     static NObjectType StaticObjectType;                                    \
@@ -104,13 +104,13 @@ struct NObjectType
     NObjectType& GetTypeInfo() const { return StaticObjectType; }
 
 
-#define IMPLEMENT_OBJECT_TYPE(TypeName)                                     \
+#define NUX_IMPLEMENT_OBJECT_TYPE(TypeName)                                     \
     NObjectType TypeName::StaticObjectType(TEXT(#TypeName), &TypeName::SuperObject::StaticObjectType);
 
-// #define DECLARE_ROOT_OBJECT_TYPE(TypeName)      DECLARE_OBJECT_TYPE(TypeName, TypeName)
-// #define IMPLEMENT_ROOT_OBJECT_TYPE(TypeName)    IMPLEMENT_OBJECT_TYPE(TypeName)
+// #define NUX_DECLARE_ROOT_OBJECT_TYPE(TypeName)      NUX_DECLARE_OBJECT_TYPE(TypeName, TypeName)
+// #define NUX_IMPLEMENT_ROOT_OBJECT_TYPE(TypeName)    NUX_IMPLEMENT_OBJECT_TYPE(TypeName)
 
-#define DECLARE_ROOT_OBJECT_TYPE(TypeName)                                  \
+#define NUX_DECLARE_ROOT_OBJECT_TYPE(TypeName)                                  \
     public:                                                                 \
     typedef NObjectType SuperObject;                                        \
     static NObjectType StaticObjectType;                                    \
@@ -118,7 +118,7 @@ struct NObjectType
     virtual NObjectType& Type() const { return StaticObjectType; }          \
     NObjectType& GetTypeInfo() const { return StaticObjectType; }
 
-#define IMPLEMENT_ROOT_OBJECT_TYPE(TypeName)                                \
+#define NUX_IMPLEMENT_ROOT_OBJECT_TYPE(TypeName)                                \
     NObjectType TypeName::StaticObjectType(TEXT(#TypeName), 0);
 
 #endif // NOBJECTTYPE_H

@@ -35,7 +35,7 @@ class NMeshObject;
 
 class NVertexBuffer: public NResource
 {
-    DECLARE_OBJECT_TYPE(NVertexBuffer, NResource);
+    NUX_DECLARE_OBJECT_TYPE(NVertexBuffer, NResource);
 
 public:
     NVertexBuffer();
@@ -60,7 +60,7 @@ public:
 
 class NIndexBuffer: public NResource
 {
-    DECLARE_OBJECT_TYPE(NIndexBuffer, NResource);
+    NUX_DECLARE_OBJECT_TYPE(NIndexBuffer, NResource);
 
     // NIndexBuffer is very similar to NVertexBuffer except that vertex indices
     // are not inter-mixed with other vertex data. So the Stride here should be 2 bytes or 4 bytes.
@@ -87,7 +87,7 @@ public:
 
 class NVertexDeclaration: public NResource
 {
-    DECLARE_OBJECT_TYPE(NVertexDeclaration, NResource);
+    NUX_DECLARE_OBJECT_TYPE(NVertexDeclaration, NResource);
 
 public:
     NVertexDeclaration();
@@ -98,7 +98,7 @@ public:
 
 class NGLVertexBuffer: public NGLResource
 {
-    DECLARE_OBJECT_TYPE(NGLVertexBuffer, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE(NGLVertexBuffer, NGLResource);
 
 public:
     NGLVertexBuffer(NResourceSet* ResourceManager, NVertexBuffer* VertexData);
@@ -115,7 +115,7 @@ private:
 
 class NGLIndexBuffer: public NGLResource
 {
-    DECLARE_OBJECT_TYPE(NGLIndexBuffer, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE(NGLIndexBuffer, NGLResource);
 public:
     NGLIndexBuffer(NResourceSet* ResourceManager, NIndexBuffer* Resource); 
     ~NGLIndexBuffer();
@@ -131,7 +131,7 @@ private:
 
 class NGLVertexDeclaration: public NGLResource
 {
-    DECLARE_OBJECT_TYPE(NGLVertexDeclaration, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE(NGLVertexDeclaration, NGLResource);
 public:
     NGLVertexDeclaration(NResourceSet* ResourceManager, NVertexDeclaration* Resource);
     ~NGLVertexDeclaration();
@@ -162,7 +162,7 @@ private:
 
 class NMesh: public NResource
 {
-    DECLARE_OBJECT_TYPE(NStaticMesh, NResource);
+    NUX_DECLARE_OBJECT_TYPE(NStaticMesh, NResource);
 
     NMesh();
     virtual ~NMesh();
@@ -170,7 +170,7 @@ class NMesh: public NResource
 
 class NStaticMesh: public NMesh
 {
-    DECLARE_OBJECT_TYPE(NStaticMesh, NMesh);
+    NUX_DECLARE_OBJECT_TYPE(NStaticMesh, NMesh);
 public:
     NStaticMesh(NMeshObject* Object);
     ~NStaticMesh();
@@ -184,7 +184,7 @@ public:
 
 class NGLStaticMesh: public NGLResource
 {
-    DECLARE_OBJECT_TYPE(NGLStaticMesh, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE(NGLStaticMesh, NGLResource);
 public:
     NGLStaticMesh(NResourceSet* ResourceManager, NStaticMesh*);
     ~NGLStaticMesh();

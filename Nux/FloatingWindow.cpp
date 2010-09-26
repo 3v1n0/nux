@@ -41,7 +41,8 @@ const int TitleBarHeight = 20;
     pass the top-left corner position of the window. When drawing, make a similar adjustment.
 */
 
-FloatingWindow::FloatingWindow(const TCHAR* WindowName)
+FloatingWindow::FloatingWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
+:   BaseWindow(WindowName, NUX_FILE_LINE_PARAM)
 {
     m_WindowTitle               = 0;
     m_bIsVisible                = false;
@@ -53,14 +54,14 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName)
     m_hasTitleBar               = true;
 
     // Should be at the end of the constructor
-    //GetThreadWindowCompositor().RegisterWindow(smptr(FloatingWindow)(this, false));
+    //GetThreadWindowCompositor().RegisterWindow(smptr(FloatingWindow)(this, true));
 
-    m_MinimizeButton = smptr(CoreArea)(new CoreArea());
-    m_CloseButton = smptr(CoreArea)(new CoreArea());
-    m_SizeGrip = smptr(CoreArea)(new CoreArea());
-    m_TitleBar = smptr(CoreArea)(new CoreArea());
+    m_MinimizeButton = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
+    m_CloseButton = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
+    m_SizeGrip = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
+    m_TitleBar = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
     m_WindowTitleBar = smptr(StaticTextBox)(new StaticTextBox());
-    m_TitleBarLayout = smptr(HLayout)(new HLayout());
+    m_TitleBarLayout = smptr(HLayout)(new HLayout(NUX_TRACKER_LOCATION));
 
     m_MinimizeButton->SetMinMaxSize(20, 20);
     m_MinimizeButton->setGeometry(0, 0, 20, 20);
@@ -101,7 +102,7 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName)
 
 FloatingWindow::~FloatingWindow()
 {
-    GetThreadWindowCompositor().UnRegisterWindow(smptr(FloatingWindow)(this, false));
+    GetThreadWindowCompositor().UnRegisterWindow(smptr(FloatingWindow)(this, true));
     m_InterfaceObject.clear();
     NUX_SAFE_DELETE_ARRAY(m_WindowTitle);
 }

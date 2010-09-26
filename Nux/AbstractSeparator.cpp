@@ -26,8 +26,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-AbstractSeparator::AbstractSeparator()
-:   m_Color(0xFF888888)
+AbstractSeparator::AbstractSeparator(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Color(0xFF888888)
 ,   m_Alpha0(0.0f)
 ,   m_Alpha1(0.592f)
 ,   m_BorderSize(10)
@@ -35,8 +36,9 @@ AbstractSeparator::AbstractSeparator()
 
 }
 
-AbstractSeparator::AbstractSeparator(const Color& color, float Alpha0, float Alpha1, int Border)
-:   m_Color(color)
+AbstractSeparator::AbstractSeparator(const Color& color, float Alpha0, float Alpha1, int Border, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Color(color)
 ,   m_Alpha0(Alpha0)
 ,   m_Alpha1(Alpha1)
 ,   m_BorderSize(Border)

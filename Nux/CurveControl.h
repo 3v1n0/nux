@@ -30,7 +30,7 @@ typedef float (*FunctionCallback)(float);
 class CurveControl : public ActiveInterfaceObject
 {
 public:
-    CurveControl();
+    CurveControl(NUX_FILE_LINE_PROTO);
     ~CurveControl();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);

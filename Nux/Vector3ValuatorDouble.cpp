@@ -245,7 +245,7 @@ void Vector3DoubleValuator::SetVectorX(double value)
 {
     m_X = m_DoubleValidator.Validate(value);
     m_XEdit->SetText(inlPrintf("%.3f", m_X));
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
     NeedRedraw();
 }
@@ -254,7 +254,7 @@ void Vector3DoubleValuator::SetVectorY(double value)
 {
     m_Y = m_DoubleValidator.Validate(value);
     m_YEdit->SetText(inlPrintf("%.3f", m_Y));
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
     NeedRedraw();
 }
@@ -263,7 +263,7 @@ void Vector3DoubleValuator::SetVectorZ(double value)
 {
     m_Z = m_DoubleValidator.Validate(value);
     m_ZEdit->SetText(inlPrintf("%.3f", m_Z));
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
     NeedRedraw();
 }
@@ -313,7 +313,7 @@ void Vector3DoubleValuator::SetRange(double MinValue, double Maxvalue)
     m_X = m_DoubleValidator.Validate(m_X);
     m_Y = m_DoubleValidator.Validate(m_Y);
     m_Z = m_DoubleValidator.Validate(m_Z);
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
     NeedRedraw();
 }
@@ -325,8 +325,8 @@ void Vector3DoubleValuator::ImplementIncrementX()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
-    sigIncrement.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
+    sigIncrement.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
 }
 
@@ -337,8 +337,8 @@ void Vector3DoubleValuator::ImplementDecrementX()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
-    sigDecrement.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
+    sigDecrement.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
 }
 
@@ -349,8 +349,8 @@ void Vector3DoubleValuator::ImplementIncrementY()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
-    sigIncrement.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
+    sigIncrement.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
 }
 
@@ -361,8 +361,8 @@ void Vector3DoubleValuator::ImplementDecrementY()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
-    sigDecrement.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
+    sigDecrement.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
 }
 
@@ -373,8 +373,8 @@ void Vector3DoubleValuator::ImplementIncrementZ()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
-    sigIncrement.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
+    sigIncrement.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
 }
 
@@ -385,8 +385,8 @@ void Vector3DoubleValuator::ImplementDecrementZ()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
-    sigDecrement.emit(smptr(Vector3DoubleValuator)(this, false));
+    sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
+    sigDecrement.emit(smptr(Vector3DoubleValuator)(this, true));
     sigValue.emit(m_X, m_Y, m_Z);
 }
 
@@ -397,13 +397,13 @@ void Vector3DoubleValuator::ImplementValidateEntryX()
     {
         m_X = m_DoubleValidator.Validate(ret);
         m_XEdit->SetText(inlPrintf("%.3f", m_X));
-        sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+        sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
         sigValue.emit(m_X, m_Y, m_Z);
     }
 //     else
 //     {
 //         m_XEdit->SetText(inlPrintf("%.3f", m_X));
-//         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+//         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
 //         sigValue.emit(m_X, m_Y, m_Z);
 //     }
 }
@@ -415,13 +415,13 @@ void Vector3DoubleValuator::ImplementValidateEntryY()
     {
         m_Y = m_DoubleValidator.Validate(ret);
         m_YEdit->SetText(inlPrintf("%.3f", m_Y));
-        sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+        sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
         sigValue.emit(m_X, m_Y, m_Z);
     }
 //     else
 //     {
 //         m_YEdit->SetText(inlPrintf("%.3f", m_Y));
-//         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+//         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
 //         sigValue.emit(m_X, m_Y, m_Z);
 //     }
 }
@@ -433,13 +433,13 @@ void Vector3DoubleValuator::ImplementValidateEntryZ()
     {
         m_Z = m_DoubleValidator.Validate(ret);
         m_ZEdit->SetText(inlPrintf("%.3f", m_Z));
-        sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+        sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
         sigValue.emit(m_X, m_Y, m_Z);
     }
 //     else
 //     {
 //         m_ZEdit->SetText(inlPrintf("%.3f", m_Z));
-//         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, false));
+//         sigValueChanged.emit(smptr(Vector3DoubleValuator)(this, true));
 //         sigValue.emit(m_X, m_Y, m_Z);
 //     }
 }

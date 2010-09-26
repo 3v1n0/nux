@@ -66,7 +66,7 @@ typedef float (*FunctionCallback)(float);
 class BezierCurveControl : public ActiveInterfaceObject
 {
 public:
-    BezierCurveControl();
+    BezierCurveControl(NUX_FILE_LINE_PROTO);
     ~BezierCurveControl();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);

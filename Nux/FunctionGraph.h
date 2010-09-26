@@ -34,7 +34,7 @@ typedef float (*FunctionCallback)(float);
 class FunctionGraph : public ActiveInterfaceObject
 {
 public:
-    FunctionGraph();
+    FunctionGraph(NUX_FILE_LINE_PROTO);
     ~FunctionGraph();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);

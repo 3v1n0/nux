@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLResource;
 class IOpenGLSurface: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLSurface, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLSurface, IOpenGLResource);
 public:
     virtual int RefCount() const;
 

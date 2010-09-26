@@ -69,12 +69,12 @@ long DoubleValuatorPropertyItem::ProcessPropertyEvent(IEvent &ievent, long Trave
 }
 
 void DoubleValuatorPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
-                                              RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                              RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     if(isDirtyItem() || IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {
@@ -82,7 +82,7 @@ void DoubleValuatorPropertyItem::DrawProperty(GraphicsContext& GfxContext, Table
             Geometry prop_geo;
             prop_geo.SetX(geo.x + geo.GetWidth());
             prop_geo.SetY(geo.y);
-            prop_geo.SetWidth(column_vector[1].header.GetBaseWidth());
+            prop_geo.SetWidth(column_vector[1].m_header_area->GetBaseWidth());
             prop_geo.SetHeight(geo.GetHeight());
 
             geo2.Expand(-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
@@ -96,7 +96,7 @@ void DoubleValuatorPropertyItem::DrawProperty(GraphicsContext& GfxContext, Table
     }
 }
 
-void DoubleValuatorPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void DoubleValuatorPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
     if(m_ItemGeometryVector.size() >= 2)
     {

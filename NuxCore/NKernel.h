@@ -460,16 +460,16 @@ class NFileManager;
 //////////////////////////////////////////////////////////////////////////
 // Breaks into the debugger.  Forces a GPF in non-debug builds.         //
 //////////////////////////////////////////////////////////////////////////
-#if (defined _DEBUG) && (defined NUX_MICROSOFT_COMPILER)
+#if (defined NUX_DEBUG) && (defined NUX_MICROSOFT_COMPILER)
     #define nuxIsDebuggerPresent()  IsDebuggerPresent()
     #define inlDebugBreak()         ( IsDebuggerPresent() ? (DebugBreak(),1) : 1 )
 #elif (defined _WIN32)
     #define nuxIsDebuggerPresent()	IsDebuggerPresent()
     #define inlDebugBreak()			( IsDebuggerPresent() ? *((INT*)3)=13 : 1 )
-#elif (defined _DEBUG) && (defined NUX_GNUCPP_COMPILER)
+#elif (defined NUX_DEBUG) && (defined NUX_GNUCPP_COMPILER)
     #define nuxIsDebuggerPresent()  1
     #define inlDebugBreak()         asm("int3");
-#elif (defined _DEBUG) && (defined NUX_PS3)
+#elif (defined NUX_DEBUG) && (defined NUX_PS3)
     #define nuxIsDebuggerPresent()	1
     #define inlDebugBreak()			__asm__ volatile("tw 31, 1, 1");
 #else
@@ -675,8 +675,7 @@ NAMESPACE_END
 */
 
 #include "NUniqueIndex.h"
-#include "SmartPtr/NRefCount.h"
-#include "SmartPtr/NSmartPtr.h"
+//#include "SmartPtr/NSmartPtr.h"
 
 //#include "NGlobalInitializer.h"
 

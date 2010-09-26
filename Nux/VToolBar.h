@@ -32,7 +32,7 @@ class VLayout;
 class VToolBar: public ActiveInterfaceObject
 {
 public:
-    VToolBar();
+    VToolBar(NUX_FILE_LINE_PROTO);
     ~VToolBar();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

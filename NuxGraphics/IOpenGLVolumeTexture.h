@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLBaseTexture;
 class IOpenGLVolumeTexture: public IOpenGLBaseTexture
 {
-    DECLARE_OBJECT_TYPE(IOpenGLVolumeTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVolumeTexture, IOpenGLBaseTexture);
 
 public:
     virtual ~IOpenGLVolumeTexture();

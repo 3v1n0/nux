@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLBaseTexture;
 class IOpenGLCubeTexture: public IOpenGLBaseTexture
 {
-    DECLARE_OBJECT_TYPE(IOpenGLCubeTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLCubeTexture, IOpenGLBaseTexture);
 
 public:
     virtual ~IOpenGLCubeTexture();

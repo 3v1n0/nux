@@ -32,6 +32,26 @@ const int ITEMDEFAULTHEIGHT = 20;
 Color GPropertyItemTextColor0 = Color(0xFFDEDEDE);
 Color GPropertyItemTextColor1 = Color(0xFFE9E9E9);
 
+ColumnHeader::ColumnHeader()
+{
+    m_header_area = smptr(BaseArea) (new BaseArea());
+}
+
+ColumnHeader::~ColumnHeader()
+{
+
+}
+
+RowHeader::RowHeader()
+{
+    m_item = 0;
+}
+
+RowHeader::~RowHeader()
+{
+    NUX_SAFE_DELETE(m_item);
+}
+
 TableItem::TableItem(const TCHAR* name, NodeParameterType type)
 :   NodeNetCom(name, type)
 {
@@ -46,10 +66,12 @@ TableItem::TableItem(const TCHAR* name, NodeParameterType type)
     m_isOpen = false;
     m_bParentOpen = false;
     m_bDirty = true;
+    m_row_header = smptr(CoreArea)(new CoreArea());
 }
 
 TableItem::~TableItem()
 {
+    m_row_header.Release();
     NUX_SAFE_DELETE(m_PropertyTextColor);
 }
 
@@ -170,7 +192,7 @@ long TableItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long Pro
 }
 
 void TableItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter,
-                             RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                             RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
     if(isDirtyItem())
@@ -185,7 +207,7 @@ void TableItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool
         {
             nBackground = table->PushItemBackground(GfxContext, this, false);
         }
-        Painter.PaintTextLineStatic(GfxContext, GFont, geo, row->item->GetName(), Color(0xFF000000) /*m_item[r].c_str()*/); 
+        Painter.PaintTextLineStatic(GfxContext, GFont, geo, row->m_item->GetName(), Color(0xFF000000) /*m_item[r].c_str()*/); 
         table->PopItemBackground(GfxContext, nBackground);
         setDirtyItem(false);
     }

@@ -34,7 +34,7 @@ NAMESPACE_BEGIN_GUI
 class MouseAreaCtrl: public ActiveInterfaceObject  
 {
 public:
-    MouseAreaCtrl();
+    MouseAreaCtrl(NUX_FILE_LINE_PROTO);
     ~MouseAreaCtrl();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

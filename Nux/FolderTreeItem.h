@@ -34,7 +34,7 @@ public:
     FolderTreeItem(const TCHAR* name, const TCHAR* Path, bool Searchable = true, NodeParameterType type = NODE_TYPE_STATICTEXT);
     virtual ~FolderTreeItem();
 
-    virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor = Color(0x0));
+    virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
 
     const TCHAR* GetPathName() {return m_Path.GetTCharPtr();}
     const TCHAR* GetCleanFilename() {return m_Path.GetCleanFilename().GetTCharPtr();}
@@ -58,8 +58,8 @@ private:
     bool m_Searchable; 
 
     //virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    //virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor = 0x0);
-    //virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector);
+    //virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = 0x0);
+    //virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
     //virtual int GetItemBestHeight();
 };
 

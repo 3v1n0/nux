@@ -33,38 +33,38 @@ inline TCHAR ToLowerCase( TCHAR c )
 {
     return (c<TEXT('A') || c>TEXT('Z')) ? (c) : (c+TEXT('a')-TEXT('A'));
 }
-inline BOOL IsUpperCase( TCHAR c )
+inline bool IsUpperCase( TCHAR c )
 {
     return (c>=TEXT('A') && c<=TEXT('Z'));
 }
-inline BOOL IsLowerCase( TCHAR c )
+inline bool IsLowerCase( TCHAR c )
 {
     return (c>=TEXT('a') && c<=TEXT('z'));
 }
-inline BOOL IsAlphaChar( TCHAR c )
+inline bool IsAlphaChar( TCHAR c )
 {
     return (c>=TEXT('a') && c<=TEXT('z')) || (c>=TEXT('A') && c<=TEXT('Z'));
 }
-inline BOOL IsDigitChar( TCHAR c )
+inline bool IsDigitChar( TCHAR c )
 {
     return c>=TEXT('0') && c<=TEXT('9');
 }
-inline BOOL IsAlphanumericChar( TCHAR c )
+inline bool IsAlphanumericChar( TCHAR c )
 {
     return (c>=TEXT('a') && c<=TEXT('z')) || (c>=TEXT('A') && c<=TEXT('Z')) || (c>=TEXT('0') && c<=TEXT('9'));
 }
-inline BOOL IsWhitespaceChar( TCHAR c )
+inline bool IsWhitespaceChar( TCHAR c )
 {
     return c == TEXT(' ') || c == TEXT('\t');
 }
-inline BOOL IsLinebreakChar( TCHAR c )
+inline bool IsLinebreakChar( TCHAR c )
 {
     //@todo - support for language-specific line break characters
     return c == TEXT('\n');
 }
 
 /** Returns nonzero if character is a space character. */
-inline BOOL IsSpaceChar( TCHAR c )
+inline bool IsSpaceChar( TCHAR c )
 {
 #ifdef NUX_UNICODE
     return( std::iswspace(c) != 0 );

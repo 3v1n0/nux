@@ -29,8 +29,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-Panel::Panel()
-:   m_layout(0)
+Panel::Panel(NUX_FILE_LINE_DECL)
+:   ScrollView(NUX_FILE_LINE_PARAM)
+,   m_layout(0)
 { 
     //vlayout = new VLayout();
     //vlayout->SetVerticalInternalMargin(4);

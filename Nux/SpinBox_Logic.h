@@ -31,7 +31,7 @@ NAMESPACE_BEGIN_GUI
 class SpinBox_Logic: public ActiveInterfaceObject
 {
 public:
-    SpinBox_Logic();
+    SpinBox_Logic(NUX_FILE_LINE_PROTO);
     virtual ~SpinBox_Logic();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
@@ -84,8 +84,8 @@ protected:
 
     TimerFunctor* m_UpTimerCallback;
     TimerFunctor* m_DownTimerCallback;
-    TimerHandle* m_UpTimerHandler;
-    TimerHandle* m_DownTimerHandler;
+    TimerHandle m_UpTimerHandler;
+    TimerHandle m_DownTimerHandler;
 };
 
 NAMESPACE_END_GUI

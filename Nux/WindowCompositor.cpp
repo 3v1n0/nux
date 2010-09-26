@@ -320,7 +320,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
         }
 
         long ProcessEventInfo = 0;
-        UBOOL MouseIsOverMenu = 0;
+        bool MouseIsOverMenu = 0;
         if(ret & eMouseEventSolved)
         {
             // If one menu processed the event, then stop all other element from processing it.

@@ -31,7 +31,8 @@ NAMESPACE_BEGIN_GUI
 const int HSCROLLBAR_WIDTH = 10;
 const int HSCROLLBAR_HEIGHT = 10;
 
-HScrollBar::HScrollBar()
+HScrollBar::HScrollBar(NUX_FILE_LINE_DECL)
+:   ScrollBar(NUX_FILE_LINE_PARAM)
 {
     m_contentWidth      = 0;
     m_contentHeight     = 0;
@@ -200,14 +201,14 @@ void HScrollBar::RecvStartScrollRight(int x, int y, unsigned long button_flags, 
 
 void HScrollBar::RecvEndScrollRight(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if(m_RightTimerHandler)
+    if(m_RightTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_RightTimerHandler);
     m_RightTimerHandler = 0;
 }
 
 void HScrollBar::RecvEndScrollLeft(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if(m_LeftTimerHandler)
+    if(m_LeftTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_LeftTimerHandler);
     m_LeftTimerHandler = 0;
 }
@@ -231,9 +232,9 @@ void HScrollBar::RecvTrackMouseDown(int x, int y, unsigned long button_flags, un
 
 void HScrollBar::RecvTrackMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if(m_TrackLeftTimerHandler)
+    if(m_TrackLeftTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_TrackLeftTimerHandler);
-    if(m_TrackRightTimerHandler)
+    if(m_TrackRightTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_TrackRightTimerHandler);
     m_TrackLeftTimerHandler = 0;
     m_TrackRightTimerHandler = 0;
@@ -396,14 +397,14 @@ void HScrollBar::OnSliderMouseDrag(int x, int y, int dx, int dy, unsigned long b
     }
 }
 
-UBOOL HScrollBar::AtMaximum()
+bool HScrollBar::AtMaximum()
 {
     if(m_SlideBar->GetBaseX() + m_SlideBar->GetBaseWidth() == m_Track->GetBaseX() + m_Track->GetBaseWidth())
         return TRUE;
     return FALSE;
 }
 
-UBOOL HScrollBar::AtMinimum()
+bool HScrollBar::AtMinimum()
 {
     if(m_SlideBar->GetBaseX() == m_Track->GetBaseX())
         return TRUE;

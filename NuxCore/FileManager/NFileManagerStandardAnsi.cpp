@@ -106,7 +106,7 @@ bool NSerializeFileReader::Close()
     return !m_ErrorCode;
 }
 
-void NSerializeFileReader::SerializeFinal(void* Dest, t_u64 Length)
+void NSerializeFileReader::SerializeFinal(void* Dest, t_s64 Length)
 {
     while(Length > 0)
     {
@@ -208,7 +208,7 @@ bool NSerializeFileWriter::Close()
     return !m_ErrorCode;
 }
 
-void NSerializeFileWriter::SerializeFinal(void* Src, t_u64 Length)
+void NSerializeFileWriter::SerializeFinal(void* Src, t_s64 Length)
 {
     BYTE* SrcBuffer = NUX_STATIC_CAST(BYTE*, Src);
     m_FilePos += Length;

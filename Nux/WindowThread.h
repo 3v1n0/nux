@@ -44,7 +44,7 @@ struct ClientAreaDraw;
 
 class WindowThread: public AbstractThread
 {
-    DECLARE_OBJECT_TYPE(WindowThread, AbstractThread);
+    NUX_DECLARE_OBJECT_TYPE(WindowThread, AbstractThread);
 public:
     WindowThread(const TCHAR* WindowTitle, unsigned int width, unsigned int height, AbstractThread* Parent, bool Modal);
     ~WindowThread();

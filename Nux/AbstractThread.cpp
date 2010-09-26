@@ -25,7 +25,7 @@
 
 NAMESPACE_BEGIN_GUI
 
-IMPLEMENT_OBJECT_TYPE(AbstractThread);
+NUX_IMPLEMENT_OBJECT_TYPE(AbstractThread);
 
 AbstractThread::AbstractThread(AbstractThread* Parent)
 :   m_Parent(Parent)

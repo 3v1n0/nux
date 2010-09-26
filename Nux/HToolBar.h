@@ -32,7 +32,7 @@ class HLayout;
 class HToolBar: public ActiveInterfaceObject
 {
 public:
-    HToolBar();
+    HToolBar(NUX_FILE_LINE_PROTO);
     ~HToolBar();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

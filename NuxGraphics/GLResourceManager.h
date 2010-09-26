@@ -64,9 +64,9 @@ NAMESPACE_BEGIN_OGL
 //
 
 //! Device independent base resource.
-class NResource: public NRefCount
+class NResource: public NThreadSafeCounter
 {
-    DECLARE_ROOT_OBJECT_TYPE(NResource);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(NResource);
 public:
     NResource();
     virtual NString GetResourceName() { return NString(TEXT("")); }
@@ -105,9 +105,9 @@ enum EResourceUpdateHint
     RUH_Dynamic				// The resource changes every frame.
 };
 
-class NGLResource: public NRefCount
+class NGLResource: public NThreadSafeCounter
 {
-    DECLARE_ROOT_OBJECT_TYPE(NGLResource);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(NGLResource);
 
 public:
     NGLResource(NResourceSet* InSet);

@@ -879,7 +879,7 @@ void Matrix4x4<T>::Inverse()
     if(det == T(0))
     {
         // Determinant is null. Matrix cannot be inverted.
-#ifdef _DEBUG
+#ifdef NUX_DEBUG
         NUX_HARDWARE_BREAK;
 #endif
         return;

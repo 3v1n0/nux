@@ -78,7 +78,7 @@ private:
 class Matrix3Editor : public ActiveInterfaceObject
 {
 public:
-    Matrix3Editor(Matrix3 matrix = Matrix3::IDENTITY());
+    Matrix3Editor(Matrix3 matrix = Matrix3::IDENTITY(), NUX_FILE_LINE_PROTO);
     ~Matrix3Editor();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);

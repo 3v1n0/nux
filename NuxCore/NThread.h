@@ -248,7 +248,7 @@ typedef enum
 // http://www.codeguru.com/cpp/misc/misc/threadsprocesses/article.php/c3793/
 class NThread
 {
-    DECLARE_ROOT_OBJECT_TYPE(NThread);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(NThread);
 public:
     /*!
     	Info: Default Constructor

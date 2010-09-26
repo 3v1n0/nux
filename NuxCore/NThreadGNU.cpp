@@ -130,7 +130,7 @@ void NThreadLocalStorage::ThreadShutdown()
     }
 }
 
-IMPLEMENT_ROOT_OBJECT_TYPE(NThread);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NThread);
 
 NThread::NThread()
 :   m_ThreadState(THREADINIT)

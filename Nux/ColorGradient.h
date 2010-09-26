@@ -286,7 +286,7 @@ public:
         COLORMODE_HUE
     };
 
-    ColorGradient(float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f);
+    ColorGradient(float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f, NUX_FILE_LINE_PROTO);
     virtual ~ColorGradient();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

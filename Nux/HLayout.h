@@ -29,10 +29,10 @@ NAMESPACE_BEGIN_GUI
 
 class HLayout: public Layout
 {
-    DECLARE_OBJECT_TYPE(HLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(HLayout, Layout);
 public: 
-    HLayout();
-    HLayout(NString name);
+    HLayout(NUX_FILE_LINE_PROTO);
+    HLayout(NString name, NUX_FILE_LINE_PROTO);
     ~HLayout();
 
     virtual long ComputeLayout2();

@@ -28,14 +28,16 @@
 #include <sigc++/functors/ptr_fun.h>
 #include <sigc++/functors/mem_fun.h>
 
+#include "NuxCore/NuxObject.h"
+
 #include "Utils.h"
 #include "WidgetMetrics.h"
 #include "WidgetSmartPointer.h"
 
 #define inlptr(T) T*
-#define smptr(T) nux::WSPtr<T>
-#define weaksmptr(T) nux::WeakWSPtr<T>
-#define smptrnull(T) nux::WSPtr<T> (0)
+#define smptr(T) nux::NuxObjectSP<T>
+#define weaksmptr(T) nux::NuxObjectWeakSP<T>
+#define smptrnull(T) nux::NuxObjectSP<T> (0)
 
 NAMESPACE_BEGIN_GUI
 
@@ -122,15 +124,15 @@ class ActiveInterfaceObject;
 class BaseObject;
 
 
-class BaseObject: public sigc::trackable
+class BaseObject: public NuxObject, public sigc::trackable
 {
 public:
-    DECLARE_ROOT_OBJECT_TYPE(BaseObject);
+    NUX_DECLARE_OBJECT_TYPE(BaseObject, NuxObject);
     //static NObjectType StaticObjectType;
     //virtual NObjectType* Type() { return &StaticObjectType; }
 
 public:
-    BaseObject();
+    BaseObject(NUX_FILE_LINE_DECL);
     virtual ~BaseObject();
 
     virtual int GetBaseX     () const {return m_Geometry.x;}
@@ -290,7 +292,7 @@ private:
     SizePolicy   m_SizePolicy;
     PositionPolicy m_PositionPolicy;
 
-    void InitiateResizeLayout(smptr(BaseObject) child = WSPtr<BaseObject>(0));
+    void InitiateResizeLayout(smptr(BaseObject) child = NuxObjectSP<BaseObject>(0));
     void CheckMinSize();
     void CheckMaxSize();
 

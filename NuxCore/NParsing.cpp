@@ -23,36 +23,52 @@
 #include "NKernel.h" 
 #include "NParsing.h"
 
-#define CHAR_TAB    9   // '"'
-#define CHAR_QUOTE  34  // '"'
+#define CHAR_TAB        TEXT('\t')
+#define CHAR_CR         TEXT('\r')
+#define CHAR_FF         TEXT('\f')
+#define CHAR_NEW_LINE   TEXT('\n')
+#define CHAR_QUOTE      TEXT('\"')
 
 NAMESPACE_BEGIN
 
-//
-// Get a string from a text string.
-//
-BOOL ParseTCHAR
-(
-	const TCHAR* Stream, 
-	const TCHAR* Match,
-	TCHAR*		 Value,
-    INT          Size,
-	INT			 MaxLen
-)
+bool ParseCommand(const TCHAR** Stream, const TCHAR*  Match)
+{
+    while((**Stream == TEXT(' ')) || (**Stream == CHAR_TAB))
+        (*Stream)++;
+
+    if(TCharStringNICompare(*Stream, Match, StringLength(Match))==0)
+    {
+        *Stream += StringLength(Match);
+        if(!IsAlphanumericChar(**Stream))
+        {
+            while ((**Stream == TEXT(' ')) || (**Stream == CHAR_TAB))
+                (*Stream)++;
+            return true; // Success.
+        }
+        else
+        {
+            *Stream -= StringLength(Match);
+            return false; // Only found partial match.
+        }
+    }
+    else return false; // No match.
+}
+
+bool Parse_tchar(const TCHAR* Stream, const TCHAR* Match, TCHAR* Value, t_int Size, t_int MaxLen)
 {
 	const TCHAR* Found = Strfind(Stream, Match);
 	const TCHAR* Start;
 
-	if( Found )
+	if(Found)
 	{
 		Start = Found + StringLength(Match);
-		if( *Start == '\x22' ) // Character '"'
+		if(*Start == '\x22') // Character '"'
 		{
 			// The value begins with the quotation mark character: ". We skip it.
-			Strncpy( Value, Size, Start+1, MaxLen );
-			Value[MaxLen-1]=0;
-			TCHAR* Temp = Strstr( Value, TEXT("\x22") );
-			if( Temp != NULL )
+			Strncpy(Value, Size, Start + 1, MaxLen);
+			Value[MaxLen - 1] = 0;
+			TCHAR* Temp = Strstr(Value, TEXT("\x22"));
+			if(Temp != NULL)
             {
                 // We read in the termination quotation mark. Set it t0 0 to null terminate the Value buffer.
                 *Temp=0;
@@ -61,329 +77,254 @@ BOOL ParseTCHAR
 		else
 		{
 			// Non-quoted string without spaces.
-			Strncpy( Value, Size, Start, MaxLen );
-			Value[MaxLen-1]=0;
+			Strncpy(Value, Size, Start, MaxLen);
+			Value[MaxLen - 1] = 0;
 			TCHAR* Temp;
-			Temp = Strstr( Value, TEXT(" ")  ); if( Temp ) *Temp=0;
-			Temp = Strstr( Value, TEXT("\r") ); if( Temp ) *Temp=0;
-			Temp = Strstr( Value, TEXT("\n") ); if( Temp ) *Temp=0;
-			Temp = Strstr( Value, TEXT("\t") ); if( Temp ) *Temp=0;
-			Temp = Strstr( Value, TEXT(",")  ); if( Temp ) *Temp=0;
+			Temp = Strstr(Value, TEXT(" ") ); if(Temp) *Temp=0;
+			Temp = Strstr(Value, TEXT("\r")); if(Temp) *Temp=0;
+			Temp = Strstr(Value, TEXT("\n")); if(Temp) *Temp=0;
+			Temp = Strstr(Value, TEXT("\t")); if(Temp) *Temp=0;
+			Temp = Strstr(Value, TEXT(",") ); if(Temp) *Temp=0;
 		}
-		return 1;
+		return true;
 	}
 	else
-        return 0;
+        return false;
 }
 
-//
-// Checks if a command-line parameter exists in the stream.
-//
-BOOL ParseParam( const TCHAR* Stream, const TCHAR* Param )
+bool ParseParam(const TCHAR* Stream, const TCHAR* Param)
 {
 	const TCHAR* Start = Stream;
-	if( *Stream )
+	if(*Stream)
 	{
-		while( (Start=Strfind(Start+1,Param)) != NULL )
+		while((Start = Strfind(Start + 1,Param)) != NULL)
 		{
-			if( Start>Stream && (Start[-1]=='-' || Start[-1]=='/') )
+			if(Start > Stream && ((Start[-1] == TEXT('-')) || (Start[-1] == TEXT('/'))))
 			{
 				const TCHAR* End = Start + StringLength(Param);
-				if ( End == NULL || *End == 0 || IsWhitespaceChar(*End) )
-                    return 1;
+				if (End == NULL || *End == 0 || IsWhitespaceChar(*End))
+                    return true;
 			}
 		}
 	}
-	return 0;
+	return false;
 }
 
-// 
-// Parse a string.
-//
-BOOL ParseFString( const TCHAR* Stream, const TCHAR* Match, NString& Value )
+bool Parse_string(const TCHAR* Stream, const TCHAR* Match, NString& Value)
 {
-	TCHAR Temp[4096]=TEXT("");
-	if( ParseTCHAR( Stream, Match, Temp, NUX_ARRAY_COUNT(Temp), NUX_ARRAY_COUNT(Temp) ) )
+	TCHAR Temp[4096] = TEXT("");
+	if(Parse_tchar(Stream, Match, Temp, NUX_ARRAY_COUNT(Temp), NUX_ARRAY_COUNT(Temp)))
 	{
 		Value = Temp;
-		return 1;
+		return true;
 	}
-	else return 0;
+	else return false;
 }
 
-//
-// Parse a quadword.
-//
-BOOL ParseQWORD( const TCHAR* Stream, const TCHAR* Match, QWORD& Value )
+bool Parse_u64(const TCHAR* Stream, const TCHAR* Match, QWORD& Value)
 {
-	return ParseSQWORD( Stream, Match, *(SQWORD*)&Value );
+	return Parse_s64(Stream, Match, *(SQWORD*)&Value);
 }
 
-//
-// Parse a signed quadword.
-//
-BOOL ParseSQWORD( const TCHAR* Stream, const TCHAR* Match, SQWORD& Value )
+bool Parse_s64(const TCHAR* Stream, const TCHAR* Match, SQWORD& Value)
 {
-	TCHAR Temp[4096]=TEXT(""), *Ptr=Temp;
-	if( ParseTCHAR( Stream, Match, Temp, NUX_ARRAY_COUNT(Temp), NUX_ARRAY_COUNT(Temp) ) )
+	TCHAR Temp[4096] = TEXT(""), *Ptr=Temp;
+	if(Parse_tchar(Stream, Match, Temp, NUX_ARRAY_COUNT(Temp), NUX_ARRAY_COUNT(Temp)))
 	{
 		Value = 0;
-		BOOL Negative = (*Ptr=='-');
+		bool Negative = (*Ptr == TEXT('-'));
 		Ptr += Negative;
-		while( *Ptr>='0' && *Ptr<='9' )
-			Value = Value*10 + *Ptr++ - '0';
-		if( Negative )
+		while((*Ptr >= TEXT('0')) && (*Ptr <= TEXT('9')))
+			Value = Value * 10 + *Ptr++ - TEXT('0');
+		if(Negative)
 			Value = -Value;
-		return 1;
+		return true;
 	}
-	else return 0;
+	else
+        return false;
 }
 
-//
-// Get a DWORD.
-//
-BOOL ParseDWORD( const TCHAR* Stream, const TCHAR* Match, DWORD& Value )
+bool Parse_u32(const TCHAR* Stream, const TCHAR* Match, DWORD& Value)
 {
 	const TCHAR* Temp = Strfind(Stream, Match);
 	TCHAR* End;
-	if( Temp==NULL )
-		return 0;
-	Value = Strtoi( Temp + StringLength(Match), &End, 10 );
+	if(Temp == NULL)
+        return false;
+	Value = Strtoi(Temp + StringLength(Match), &End, 10);
 
-	return 1;
+	return true;
 }
 
-//
-// Get a byte.
-//
-BOOL ParseBYTE( const TCHAR* Stream, const TCHAR* Match, BYTE& Value )
+bool Parse_u8(const TCHAR* Stream, const TCHAR* Match, BYTE& Value)
+{
+	const TCHAR* Temp = Strfind(Stream, Match);
+	if(Temp == NULL)
+		return false;
+	Temp += StringLength(Match);
+	Value = (BYTE)CharToInteger(Temp);
+	return (Value != 0) || IsDigitChar(Temp[0]);
+}
+
+bool Parse_s8(const TCHAR* Stream, const TCHAR* Match, SBYTE& Value)
 {
 	const TCHAR* Temp = Strfind(Stream,Match);
-	if( Temp==NULL )
-		return 0;
-	Temp += StringLength( Match );
-	Value = (BYTE)CharToInteger( Temp );
+	if(Temp == NULL)
+		return false;
+	Temp += StringLength(Match);
+    Value = CharToInteger(Temp);
 	return Value!=0 || IsDigitChar(Temp[0]);
 }
 
-//
-// Get a signed byte.
-//
-BOOL ParseSBYTE( const TCHAR* Stream, const TCHAR* Match, SBYTE& Value )
+bool Parse_u16(const TCHAR* Stream, const TCHAR* Match, WORD& Value)
 {
-	const TCHAR* Temp = Strfind(Stream,Match);
-	if( Temp==NULL )
-		return 0;
-	Temp += StringLength( Match );
-    Value = CharToInteger( Temp );
+	const TCHAR* Temp = Strfind(Stream, Match);
+	if(Temp == NULL)
+		return false;
+	Temp += StringLength(Match);
+	Value = (t_u16)CharToInteger(Temp);
 	return Value!=0 || IsDigitChar(Temp[0]);
 }
 
-//
-// Get a word.
-//
-BOOL ParseWORD( const TCHAR* Stream, const TCHAR* Match, WORD& Value )
+bool Parse_s16(const TCHAR* Stream, const TCHAR* Match, SWORD& Value)
 {
-	const TCHAR* Temp = Strfind( Stream, Match );
-	if( Temp==NULL )
-		return 0;
-	Temp += StringLength( Match );
-	Value = (WORD)CharToInteger( Temp );
+	const TCHAR* Temp = Strfind(Stream, Match);
+	if(Temp==NULL)
+		return false;
+	Temp += StringLength(Match);
+	Value = (t_s16)CharToInteger(Temp);
 	return Value!=0 || IsDigitChar(Temp[0]);
 }
 
-//
-// Get a signed word.
-//
-BOOL ParseSWORD( const TCHAR* Stream, const TCHAR* Match, SWORD& Value )
+bool Parse_float(const TCHAR* Stream, const TCHAR* Match, float& Value)
 {
-	const TCHAR* Temp = Strfind( Stream, Match );
-	if( Temp==NULL )
-		return 0;
-	Temp += StringLength( Match );
-	Value = (SWORD)CharToInteger( Temp );
-	return Value!=0 || IsDigitChar(Temp[0]);
+	const TCHAR* Temp = Strfind(Stream, Match);
+	if(Temp == NULL)
+		return false;
+    Value = CharToDouble(Temp + StringLength(Match));
+	return true;
 }
 
-//
-// Get a floating-point number.
-//
-BOOL ParseFLOAT( const TCHAR* Stream, const TCHAR* Match, float& Value )
+bool Parse_int(const TCHAR* Stream, const TCHAR* Match, t_int& Value)
 {
-	const TCHAR* Temp = Strfind( Stream, Match );
-	if( Temp==NULL )
-		return 0;
-    Value = CharToDouble(Temp+StringLength(Match));
-	return 1;
+	const TCHAR* Temp = Strfind(Stream, Match);
+	if(Temp == NULL)
+		return false;
+	Value = CharToInteger(Temp + StringLength(Match));
+	return true;
 }
 
-//
-// Get a signed double word.
-//
-BOOL ParseINT( const TCHAR* Stream, const TCHAR* Match, INT& Value )
-{
-	const TCHAR* Temp = Strfind( Stream, Match );
-	if( Temp==NULL )
-		return 0;
-	Value = CharToInteger( Temp + StringLength(Match) );
-	return 1;
-}
-
-//
-// Get a boolean value.
-//
-BOOL ParseUBOOL( const TCHAR* Stream, const TCHAR* Match, BOOL& OnOff )
+bool Parse_bool(const TCHAR* Stream, const TCHAR* Match, bool& OnOff)
 {
 	TCHAR TempStr[16];
-	if( ParseTCHAR( Stream, Match, TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr)-1 ) )
+	if(Parse_tchar(Stream, Match, TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr)-1))
 	{
-		OnOff
-		=	!Stricmp(TempStr,TEXT("On"))
-		||	!Stricmp(TempStr,TEXT("True"))
-		||	!Stricmp(TempStr,TEXT("1"));
-		return 1;
+		OnOff =	!Stricmp(TempStr, TEXT("On")) || !Stricmp(TempStr, TEXT("True")) || !Stricmp(TempStr, TEXT("1"));
+		return true;
 	}
 	else
-        return 0;
+        return false;
 }
 
-//
-// Sees if Stream starts with the named command.  If it does,
-// skips through the command and blanks past it.  Returns 1 of match,
-// 0 if not.
-//
-BOOL ParseCommand
-(
-	const TCHAR** Stream, 
-	const TCHAR*  Match
-)
-{
-	while( (**Stream==' ')||(**Stream==9) )
-		(*Stream)++;
-
-	if( TCharStringNICompare(*Stream,Match,StringLength(Match))==0 )
-	{
-		*Stream += StringLength(Match);
-		if( !IsAlphanumericChar(**Stream) )
-		{
-			while ((**Stream==' ')||(**Stream==9)) (*Stream)++;
-			return 1; // Success.
-		}
-		else
-		{
-			*Stream -= StringLength(Match);
-			return 0; // Only found partial match.
-		}
-	}
-	else return 0; // No match.
-}
-
-//
-// Get next command.  Skips past comments and cr's.
-//
-void ParseNext( const TCHAR** Stream )
+void ParseToNextLine(const TCHAR** Stream, TCHAR CommentChar)
 {
 	// Skip over spaces, tabs, cr's, and linefeeds.
-	SkipJunk:
-	while( **Stream==' ' || **Stream==9 || **Stream==13 || **Stream==10 )
-		++*Stream;
 
-	if( **Stream==';' )
-	{
-		// Skip past comments.
-		while( **Stream!=0 && **Stream!=10 && **Stream!=13 )
-			++*Stream;
-		goto SkipJunk;
-	}
+    while(1)
+    {
+        while((**Stream == TEXT(' ')) || (**Stream == CHAR_TAB) || (**Stream == CHAR_CR) || (**Stream == CHAR_NEW_LINE)  || (**Stream == CHAR_FF))
+        {
+            // Skip tabs, cr, new line, form feed
+            ++*Stream;
+        }
 
-	// Upon exit, *Stream either points to valid Stream or a nul.
+	    if(**Stream == CommentChar)
+	    {
+            // Start of a comment
+		    while((**Stream != 0) && (**Stream != CHAR_NEW_LINE) && (**Stream != CHAR_CR))
+            {
+                // Advance to a new line
+                ++*Stream;
+            }
+	    }
+        else
+        {
+            break;
+        }
+    }
 }
 
-//
-// Grab the next space-delimited string from the input stream.
-// If quoted, gets entire quoted string.
-//
-BOOL ParseToken( const TCHAR*& Str, TCHAR* Result, INT MaxLen, BOOL UseEscape )
+bool ParseToken(const TCHAR* Str, TCHAR* TokenBuffer, t_int BufferSize)
 {
-	INT Len=0;
+	t_int sz = 0;
+	
+	while((*Str == TEXT(' ')) || (*Str == CHAR_TAB))
+    {
+        // Skip spaces and tabs.
+        Str++;
+    }
 
-	// Skip spaces and tabs.
-	while( *Str==' ' || *Str==9 )
-		Str++;
-	if( *Str == 34 )
+	if(*Str == CHAR_QUOTE)
 	{
 		// Get quoted string.
 		Str++;
-		while( *Str && *Str!=34 && (Len+1)<MaxLen )
+		while(*Str && (*Str != CHAR_QUOTE) && (sz + 1 < BufferSize))
 		{
 			TCHAR c = *Str++;
-			if( c=='\\' && UseEscape )
-			{
-				// Get escape.
-				c = *Str++;
-				if( !c )
-					break;
-			}
-			if( (Len+1)<MaxLen )
-				Result[Len++] = c;
+			if(sz + 1 < BufferSize)
+				TokenBuffer[sz++] = c;
 		}
-		if( *Str==34 )
+		if(*Str == CHAR_QUOTE)
 			Str++;
 	}
 	else
 	{
 		// Get unquoted string.
-		for( ; *Str && *Str!=' ' && *Str!=9; Str++ )
-			if( (Len+1)<MaxLen )
-				Result[Len++] = *Str;
+		for(; *Str && (*Str != TEXT(' ')) && (*Str != CHAR_TAB); Str++)
+        {
+            if(sz + 1 < BufferSize)
+				TokenBuffer[sz++] = *Str;
+        }
 	}
-	Result[Len]=0;
-	return Len!=0;
+	TokenBuffer[sz] = 0;
+	return sz != 0;
 }
-BOOL ParseToken( const TCHAR*& Str, NString& Arg, BOOL UseEscape )
+
+bool ParseToken(const TCHAR* Str, NString& TokenString)
 {
-	Arg.Clear();
+	TokenString.Clear();
 
 	// Skip spaces and tabs.
-	while( IsWhitespaceChar(*Str) )
+	while(IsWhitespaceChar(*Str))
 		Str++;
 
-	if ( *Str == TEXT('"') )
+	if (*Str == CHAR_QUOTE)
 	{
 		// Get quoted string.
 		Str++;
-		while( *Str && *Str != TEXT('"') )
+		while(*Str && *Str != CHAR_QUOTE)
 		{
 			TCHAR c = *Str++;
-			if( c == TEXT('\\') && UseEscape )
-			{
-				// Get escape.
-				c = *Str++;
-				if( !c )
-					break;
-			}
-
-			Arg += c;
+			TokenString += c;
 		}
 
-		if ( *Str == TEXT('"') )
+		if (*Str == CHAR_QUOTE)
 			Str++;
 	}
 	else
 	{
 		// Get unquoted string.
-		for( ; *Str && !IsWhitespaceChar(*Str); Str++ )
+		for(; *Str && !IsWhitespaceChar(*Str); Str++)
 		{
-			Arg += *Str;
+			TokenString += *Str;
 		}
 	}
-
-	return Arg.Length() > 0;
+	return TokenString.Length() > 0;
 }
-NString ParseToken( const TCHAR*& Str, BOOL UseEscape )
+
+NString ParseToken(const TCHAR* Str, bool UseEscape)
 {
 	TCHAR Buffer[1024];
-	if( ParseToken( Str, Buffer, NUX_ARRAY_COUNT(Buffer), UseEscape ) )
+	if(ParseToken(Str, Buffer, NUX_ARRAY_COUNT(Buffer)))
 		return Buffer;
 	else
 		return TEXT("");
@@ -393,109 +334,30 @@ NString ParseToken( const TCHAR*& Str, BOOL UseEscape )
 // Get a line of Stream (everything up to, but not including, CR/LF.
 // Returns 0 if ok, nonzero if at end of stream and returned 0-length string.
 //
-BOOL ParseLine
-(
-	const TCHAR**	Stream,
-	TCHAR*			Result,
-	INT				MaxLen,
-	BOOL			Exact
-)
+bool ParseLine(const TCHAR** Stream, TCHAR* LineBuffer, t_int BufferSize)
 {
-	BOOL GotStream=0;
-	BOOL IsQuoted=0;
-	BOOL Ignore=0;
+	bool GotStream = 0;
+	bool IsQuoted = 0;
+	bool Ignore = 0;
 
-	*Result=0;
-	while( **Stream!=0 && **Stream!=10 && **Stream!=13 && --MaxLen>0 )
+	TCHAR* tmp = LineBuffer;
+    *tmp = 0;
+	while((**Stream != 0) && (**Stream != CHAR_NEW_LINE) && (**Stream != CHAR_CR) && (**Stream != CHAR_FF) && (--BufferSize > 0))
 	{
-		// Start of comments.
-		if( !IsQuoted && !Exact && (*Stream)[0]=='/' && (*Stream)[1]=='/' )
-			Ignore = 1;
-		
-		// Command chaining.
-		if( !IsQuoted && !Exact && **Stream=='|' )
-			break;
-
-		// Check quoting.
-		IsQuoted = IsQuoted ^ (**Stream==34);
-		GotStream=1;
-
-		// Got stuff.
-		if( !Ignore )
-			*(Result++) = *((*Stream)++);
-		else
-			(*Stream)++;
+        *(tmp++) = *((*Stream)++);
 	}
-	if( Exact )
-	{
-		// Eat up exactly one CR/LF.
-		if( **Stream == 13 )
-			(*Stream)++;
-		if( **Stream == 10 )
-			(*Stream)++;
-	}
-	else
-	{
-		// Eat up all CR/LF's.
-		while( **Stream==10 || **Stream==13 || **Stream=='|' )
-			(*Stream)++;
-	}
-	*Result=0;
-	return **Stream!=0 || GotStream;
+	*tmp = 0;
+    return LineBuffer[0] != 0;
 }
-BOOL ParseLine
-(
-	const TCHAR**	Stream,
-	NString&		Result,
-	BOOL			Exact
-)
+
+bool ParseLine(const TCHAR** Stream, NString& LineString)
 {
-	BOOL GotStream=0;
-	BOOL IsQuoted=0;
-	BOOL Ignore=0;
-
-	Result = TEXT("");
-
-	while( **Stream!=0 && **Stream!=10 && **Stream!=13 )
-	{
-		// Start of comments.
-		if( !IsQuoted && !Exact && (*Stream)[0]=='/' && (*Stream)[1]=='/' )
-			Ignore = 1;
-
-		// Command chaining.
-		if( !IsQuoted && !Exact && **Stream=='|' )
-			break;
-
-		// Check quoting.
-		IsQuoted = IsQuoted ^ (**Stream==34);
-		GotStream=1;
-
-		// Got stuff.
-		if( !Ignore )
-		{
-			Result += ( *((*Stream)++) );
-		}
-		else
-		{
-			(*Stream)++;
-		}
-	}
-	if( Exact )
-	{
-		// Eat up exactly one CR/LF.
-		if( **Stream == 13 )
-			(*Stream)++;
-		if( **Stream == 10 )
-			(*Stream)++;
-	}
-	else
-	{
-		// Eat up all CR/LF's.
-		while( **Stream==10 || **Stream==13 || **Stream=='|' )
-			(*Stream)++;
-	}
-
-	return **Stream!=0 || GotStream;
+    LineString.Clear();
+    while((**Stream != 0) && (**Stream != CHAR_NEW_LINE) && (**Stream != CHAR_CR) && (**Stream != CHAR_FF))
+    {
+        LineString += **Stream++;
+    }
+    return LineString.Size() > 0;
 }
 
 NAMESPACE_END

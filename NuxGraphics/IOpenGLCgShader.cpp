@@ -26,9 +26,9 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(ICgShader);
-IMPLEMENT_OBJECT_TYPE(ICgVertexShader);
-IMPLEMENT_OBJECT_TYPE(ICgPixelShader);
+NUX_IMPLEMENT_OBJECT_TYPE(ICgShader);
+NUX_IMPLEMENT_OBJECT_TYPE(ICgVertexShader);
+NUX_IMPLEMENT_OBJECT_TYPE(ICgPixelShader);
 
 ICgShader::ICgShader(NString ShaderName, OpenGLResourceType ResourceType)
 :   IOpenGLResource(ResourceType)

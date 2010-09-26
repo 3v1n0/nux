@@ -34,8 +34,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-ClientArea::ClientArea()
-:   m_IsRealTime(false)
+ClientArea::ClientArea(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_IsRealTime(false)
 {
     m_IsClientAreaEnabled = false;
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, 4*PRACTICAL_WIDGET_HEIGHT);

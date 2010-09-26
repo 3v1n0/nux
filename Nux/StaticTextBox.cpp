@@ -28,8 +28,9 @@
 #include "StaticTextBox.h"
 
 NAMESPACE_BEGIN_GUI
-StaticTextBox::StaticTextBox(const TCHAR* Caption, const Color& textcolor, const NFontPtr& Font)
-:   m_TextColor(textcolor)
+StaticTextBox::StaticTextBox(const TCHAR* Caption, const Color& textcolor, const NFontPtr& Font, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_TextColor(textcolor)
 ,   m_BackgroundColor(0xFF343434)
 ,   m_TextAlignment(eAlignTextLeft)
 ,   m_bMinimumWidthMatchText(true)

@@ -27,10 +27,10 @@ NAMESPACE_BEGIN_GUI
 
 class RadioButton;
 
-class RadioButtonGroup : public sigc::trackable
+class RadioButtonGroup: public NuxObject, public sigc::trackable
 {
 public:
-    RadioButtonGroup();
+    RadioButtonGroup(NUX_FILE_LINE_PROTO);
     ~RadioButtonGroup();
 
     //! Add a radio button to the group.

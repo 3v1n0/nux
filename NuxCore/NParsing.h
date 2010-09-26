@@ -25,188 +25,184 @@
 
 NAMESPACE_BEGIN
 
-//! Sequentially parse a stream of characters for token.
+//! Parse a stream of characters and look for a string of TCHAR at the start of the stream.
 /*!
-    Sequentially parse a stream of chracters for token.
-    If Stream starts with the named token, the pointer is advanced past the end of the token in the stream.
-    and the function return TRUE. If not, the function return FALSE. If there are SPACE or TAB characters  
-    at the start of the stream, they are simply ignored.
-
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
-
-    @return TRUE if the token is found at the start of the stream (excluding space and tab characters)
+    If the string is found, Stream points to the next character after the string.
+    Space and tab characters at the beginning of the stream are ignored.
+    @param  Stream  Character stream to search.
+    @param  Match   Token to match.
+    @return TRUE if the character string is found at the start of the stream (excluding space and tab characters).
 */
-BOOL ParseCommand( const TCHAR** Stream, const TCHAR* Match );
+bool ParseCommand(const TCHAR** Stream, const TCHAR* Match);
 
-//! Parse a DWORD after the named token.
+//! Parse a stream of characters and look for a t_32 value after the token string.
 /*!
-    Parse a DWORD after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
-    @return TRUE if the token is found inside the stream.
+    Parse a t_u32 after the named token.
+
+    @param  stream  Character stream to search.
+    @param  token   Token to match.
+    @return True if the character string is found at the start of the stream (excluding space and tab characters).
 */
-BOOL ParseDWORD( const TCHAR* Stream, const TCHAR* Match, DWORD& Value );
+bool Parse_u32(const TCHAR* stream, const TCHAR* Match, DWORD& value);
 
 //! Parses a string of N character from a character stream after a named token.
 /*!
     Parses a string from a character stream.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
-    @param  Value   [OUT]   Buffer containing the parsed value.
-    @param  Size    [IN]    The size of the Value buffer, in characters.
-    @param  MaxLen  [IN]    Max number of character to return.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
+    @param  Value      Buffer containing the parsed value.
+    @param  Size        The size of the Value buffer, in characters.
+    @param  MaxLen      Max number of character to return.
     @return TRUE    if the token is found inside the stream.
 */
-BOOL ParseTCHAR( const TCHAR* Stream, const TCHAR* Match, TCHAR* Value, INT Size, INT MaxLen );
+bool Parse_tchar(const TCHAR* stream, const TCHAR* Match, TCHAR* value, t_int size, t_int MaxLen);
 
 //! Parse a BYTE after the named token.
 /*!
     Parse a BYTE after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
-    @param  Value   [OUT]   Buffer containing the parsed value.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
+    @param  Value      Buffer containing the parsed value.
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseBYTE( const TCHAR* Stream, const TCHAR* Match, BYTE& Value );
+bool Parse_u8(const TCHAR* Stream, const TCHAR* Match, BYTE& Value);
 //! Parse a signed BYTE after the named token.
 /*!
     Parse a signed BYTE after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
     @param  Value parsed signed BYTE
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseSBYTE( const TCHAR* Stream, const TCHAR* Match, SBYTE& Value );
+bool Parse_s8(const TCHAR* Stream, const TCHAR* Match, SBYTE& Value);
 //! Parse a WORD after the named token.
 /*!
     Parse a WORD after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
     @param Value parsed WORD
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseWORD( const TCHAR* Stream, const TCHAR* Match, WORD& Value );
+bool Parse_u16(const TCHAR* Stream, const TCHAR* Match, WORD& Value);
 //! Parse a signed WORD after the named token.
 /*!
     Parse a signed WORD after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
     @param Value parsed signed WORD
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseSWORD( const TCHAR* Stream, const TCHAR* Match, SWORD& Value );
+bool Parse_s16(const TCHAR* Stream, const TCHAR* Match, SWORD& Value);
 //! Parse a floating point value after the named token.
 /*!
     Parse a floating point value after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
     @param Value parsed floating point value
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseFLOAT( const TCHAR* Stream, const TCHAR* Match, float& Value );
+bool Parse_float(const TCHAR* Stream, const TCHAR* Match, float& Value);
 //! Parse a double WORD after the named token.
 /*!
     Parse a double WORD after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
     @param Value parsed double WORD
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseINT( const TCHAR* Stream, const TCHAR* Match, INT& Value );
+bool Parse_int(const TCHAR* Stream, const TCHAR* Match, t_int& Value);
 //! Parse a NString after the named token.
 /*!
     Parse a NString after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
     @param Value parsed NString
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseFString( const TCHAR* Stream, const TCHAR* Match, NString& Value );
+bool Parse_string(const TCHAR* Stream, const TCHAR* Match, NString& Value);
 //! Parse a QUADWORD after the named token.
 /*!
     Parse a QUADWORD after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
     @param Value parsed QUADWORD
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseQWORD( const TCHAR* Stream, const TCHAR* Match, QWORD& Value );
+bool Parse_u64(const TCHAR* Stream, const TCHAR* Match, QWORD& Value);
 //! Parse a SIGNED QUADWORD after the named token.
 /*!
     Parse a SIGNED QUADWORD after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
     @param Value parsed SIGNED QUADWORD
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseSQWORD( const TCHAR* Stream, const TCHAR* Match, SQWORD& Value );
+bool Parse_s64(const TCHAR* Stream, const TCHAR* Match, SQWORD& Value);
 //! Parse a BOOLEAN after the named token.
 /*!
     Parse a BOOLEAN after the named token.
-    @param  Stream  [IN]    Character stream to search.
-    @param  Match   [IN]    Token to match.
+    @param  Stream      Character stream to search.
+    @param  Match       Token to match.
     @param Value parsed BOOLEAN value
     @return TRUE if the token is found inside the stream.
 */
-BOOL ParseUBOOL( const TCHAR* Stream, const TCHAR* Match, BOOL& OnOff );
+bool Parse_bool(const TCHAR* Stream, const TCHAR* Match, bool& OnOff);
 
-//! Parse a line of N characters and advance the pointer.
+//! Extract a line of Stream (everything up to, but not including, CR/LF).
 /*!
-    Parse a line of MaxLen characters or up to but not including CR/LF.
-    @param  Stream  [IN]    Character stream to search.
-    @param Result parsed characters
-    @param MaxLen maximum number of characters to parse
-    @param Exact    If true, advanced the pointer after the first CR/LF character at the end of the string.
-                    If FALSE advanced the pointer past all the CR/LF character at the end of the string.
-    @return 0 if Ok, nonzero if at the end of stream and returning a 0-length string
+    @param Stream Character stream to search.
+    @param LineBuffer The first line in Stream.
+    @param BufferSize Size of LineBuffer.
+    @param GoToNextLine If true, advanced the pointer after the first CR/LF character at the end of the string.
+                        If FALSE advanced the pointer past all the CR/LF character at the end of the string.
+    @return True i a line was copied to LineString;
 */
+bool ParseLine(const TCHAR** Stream, TCHAR* LineBuffer, t_int BufferSize);
 
-BOOL ParseLine( const TCHAR** Stream, TCHAR* Result, INT MaxLen, BOOL Exact=0 );
-//! Parse a NString and advance the pointer.
+//! Extract a line of Stream (everything up to, but not including, CR/LF).
 /*!
-    Parse a NString.
-    @param  Stream  [IN]    Character stream to search.
-    @param Result parsed NString
-    @param Exact    If true, advanced the pointer after the first CR/LF character at the end of the string.
-                    If FALSE advanced the pointer past all the CR/LF character at the end of the string.
-    @return 0 if Ok, nonzero if at the end of stream and returning a 0-length string
+    @param Stream Character stream to search.
+    @param LineString The first line in Stream.
+    @param GoToNextLine If true, advanced the pointer after the first CR/LF character at the end of the string.
+                        If FALSE advanced the pointer past all the CR/LF character at the end of the string.
+    @return True i a line was copied to LineString;
 */
-BOOL ParseLine( const TCHAR** Stream, NString& Resultd, BOOL Exact=0 );
-//! Parse the next space-delimited string from the input stream. If quoted, gets entire quoted string.
-/*!
-    Parse the next space-delimited string from the input stream.
-    @param Str stream of characters to search
-    @param Result parsed stream of characters
-    @param MaxLen maximum number of characters to parse
-    @param UseEscape
-    @return 0 if Ok, nonzero otherwise
-*/
-BOOL ParseToken( const TCHAR*& Str, TCHAR* Result, INT MaxLen, BOOL UseEscape );
-//! Parse the next space-delimited string from the input stream. If quoted, gets entire quoted string.
-/*!
-    Parse the next space-delimited string from the input stream.
-    @param Str stream of characters to search
-    @param NString parsed stream of characters
-    @param UseEscape 
-    @return 0 if Ok, nonzero otherwise
-*/
-BOOL ParseToken( const TCHAR*& Str, NString& Arg, BOOL UseEscape );
-//! Parse the next space-delimited string from the input stream. If quoted, gets entire quoted string.
-/*!
-    Parse the next space-delimited string from the input stream.
-    @param Str stream of characters to search
-    @param UseEscape 
-    @return 0 if Ok, nonzero otherwise
-*/
-NString ParseToken( const TCHAR*& Str, BOOL UseEscape );
+bool ParseLine(const TCHAR** Stream, NString& LineString);
 
-//! Get to next token, skipping comments and CR.
+//! Parse the next space-delimited string from the input stream. If the next token starts with a quote, gets entire quoted string.
 /*!
-    Get to next token, skipping comments and CR.
+    @param Str stream of characters to search.
+    @param TokenBuffer The parsed token string.
+    @param BufferSize Size of the TokenBuffer.
+    @return True if a token was found.
+*/
+bool ParseToken(const TCHAR* Str, TCHAR* TokenBuffer, t_int BufferSize);
+
+//! Parse the next space-delimited string from the input stream. If the next token starts with a quote, gets entire quoted string.
+/*!
+    @param Str stream of characters to search.
+    @param TokenBuffer The parsed token string.
+    @return True if a token was found.
+*/
+bool ParseToken(const TCHAR* Str, NString& TokenString);
+
+//! Parse the next space-delimited string from the input stream. If the next token starts with a quote, gets entire quoted string.
+/*!
+    @param Str stream of characters to parse.
+    @return The next token in a NString.
+*/
+NString ParseToken(const TCHAR* Str);
+
+//! Go to the next token in the stream.
+/*!
+    Skip tabs, and space at the beginning of each line.
+    Skip everything on a line that follows the given comment char token
+    If there is a valid token in the input, Stream will point to it.
+
     @param Stream stream of characters
+    @param CommentChar Character representing the beginning of a comment on a line. ie ';' '#".
 */
-void ParseNext( const TCHAR** Stream );
+void ParseToNextLine(const TCHAR** Stream, TCHAR CommentChar);
 
 //! Checks if a Token command-line parameter exists in the stream.
 /*!
@@ -215,7 +211,7 @@ void ParseNext( const TCHAR** Stream );
     @param token to match
     @return True if found.
 */
-BOOL ParseParam( const TCHAR* Stream, const TCHAR* Param );
+bool ParseParam(const TCHAR* Stream, const TCHAR* Param);
 
 
 NAMESPACE_END

@@ -27,7 +27,7 @@ NAMESPACE_BEGIN_OGL
 
 class IOpenGLPixelBufferObject: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLPixelBufferObject, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLPixelBufferObject, IOpenGLResource);
 
 public:
     virtual ~IOpenGLPixelBufferObject();

@@ -83,7 +83,7 @@ private:
 class ColorEditor : public ActiveInterfaceObject
 {
 public:
-    ColorEditor();
+    ColorEditor(NUX_FILE_LINE_PROTO);
     ~ColorEditor();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);

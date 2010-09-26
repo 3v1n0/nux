@@ -25,7 +25,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLRectangleTexture);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLRectangleTexture);
 
 IOpenGLRectangleTexture::IOpenGLRectangleTexture(
     unsigned int Width

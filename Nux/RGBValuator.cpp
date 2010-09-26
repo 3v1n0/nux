@@ -33,8 +33,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-RGBValuator::RGBValuator()
-:   m_color_model(CM_RGB)
+RGBValuator::RGBValuator(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_color_model(CM_RGB)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
     InitializeLayout();
@@ -44,8 +45,9 @@ RGBValuator::RGBValuator()
     InitializeWidgets();
 }
 
-RGBValuator::RGBValuator(float red, float green, float blue, float alpha)
-:   m_color_model(CM_RGB)
+RGBValuator::RGBValuator(float red, float green, float blue, float alpha, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_color_model(CM_RGB)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
     InitializeLayout();
@@ -55,8 +57,9 @@ RGBValuator::RGBValuator(float red, float green, float blue, float alpha)
     InitializeWidgets();
 }
 
-RGBValuator::RGBValuator(Color color)
-:   m_color_model(CM_RGB)
+RGBValuator::RGBValuator(Color color, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_color_model(CM_RGB)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
     InitializeLayout();
@@ -66,8 +69,9 @@ RGBValuator::RGBValuator(Color color)
     InitializeWidgets();
 }
 
-RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, float alpha)
-:   m_color_model(colorModel)
+RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, float alpha,    NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_color_model(colorModel)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
     InitializeLayout();

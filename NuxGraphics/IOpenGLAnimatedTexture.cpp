@@ -27,7 +27,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLAnimatedTexture);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAnimatedTexture);
 
 IOpenGLAnimatedTexture::IOpenGLAnimatedTexture(
     int Width

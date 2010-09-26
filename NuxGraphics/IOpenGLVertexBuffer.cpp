@@ -26,7 +26,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLVertexBuffer);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVertexBuffer);
 
 IOpenGLVertexBuffer::IOpenGLVertexBuffer(t_u32 Length, VBO_USAGE Usage)
 :   IOpenGLResource(RTVERTEXBUFFER)

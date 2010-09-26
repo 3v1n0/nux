@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLResource;
 class IOpenGLFrameBufferObject: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLFrameBufferObject, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLFrameBufferObject, IOpenGLResource);
 public:
     virtual ~IOpenGLFrameBufferObject();
 

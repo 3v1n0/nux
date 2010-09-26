@@ -31,7 +31,7 @@ typedef void (*ThreadMainFunc)(NThread*, void* MainData);
 
 class AbstractThread: public NThread, public sigc::trackable
 {
-    DECLARE_OBJECT_TYPE(AbstractThread, NThread);
+    NUX_DECLARE_OBJECT_TYPE(AbstractThread, NThread);
 
 public:
     AbstractThread(AbstractThread* Parent);

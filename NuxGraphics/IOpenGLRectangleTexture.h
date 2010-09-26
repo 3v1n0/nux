@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLBaseTexture;
 class IOpenGLRectangleTexture: public IOpenGLBaseTexture
 {
-    DECLARE_OBJECT_TYPE(IOpenGLRectangleTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLRectangleTexture, IOpenGLBaseTexture);
 
 public:
     virtual ~IOpenGLRectangleTexture();

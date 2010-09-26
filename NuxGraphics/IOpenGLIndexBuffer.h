@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLResource;
 class IOpenGLIndexBuffer: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLIndexBuffer, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLIndexBuffer, IOpenGLResource);
 
 public:
     virtual ~IOpenGLIndexBuffer();

@@ -65,15 +65,14 @@ struct ShaderAttributeDefinition
 
 
 //////////////////////////////////////////////////////////////////////////
-class IOpenGLResource: public NRefCount // formely IOpenGLObject
+class IOpenGLResource: public NThreadSafeCounter
 {
-    DECLARE_ROOT_OBJECT_TYPE(IOpenGLResource);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(IOpenGLResource);
 
 public:
     virtual int RefCount() const
     {
-        return GetRefCount();
-        //return _RefCount;
+        return GetValue();
     }
 
     OpenGLResourceType GetResourceType() const

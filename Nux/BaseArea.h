@@ -50,9 +50,9 @@ typedef BaseArea CoreArea;
 class BaseArea : public BaseObject //public sigc::trackable
 {
 public:
-    DECLARE_OBJECT_TYPE(BaseArea, BaseObject);
+    NUX_DECLARE_OBJECT_TYPE(BaseArea, BaseObject);
 public:
-    BaseArea();
+    BaseArea(NUX_FILE_LINE_PROTO);
     virtual ~BaseArea();
 
     void Deselect()

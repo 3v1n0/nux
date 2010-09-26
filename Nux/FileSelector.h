@@ -31,7 +31,7 @@ class EditTextBox;
 class FileSelector: public ActiveInterfaceObject
 {
 public:
-    FileSelector();
+    FileSelector(NUX_FILE_LINE_PROTO);
     ~FileSelector();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

@@ -25,7 +25,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLPixelBufferObject);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLPixelBufferObject);
 
 IOpenGLPixelBufferObject::IOpenGLPixelBufferObject(unsigned int Size, VBO_USAGE Usage)
 :   IOpenGLResource(RTVERTEXBUFFER)

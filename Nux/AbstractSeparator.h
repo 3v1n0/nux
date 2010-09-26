@@ -28,8 +28,8 @@ NAMESPACE_BEGIN_GUI
 class AbstractSeparator: public ActiveInterfaceObject
 {
 public:
-    AbstractSeparator();
-    AbstractSeparator(const Color& color, float Alpha0, float Alpha1, int Border);
+    AbstractSeparator(NUX_FILE_LINE_PROTO);
+    AbstractSeparator(const Color& color, float Alpha0, float Alpha1, int Border, NUX_FILE_LINE_PROTO);
     ~AbstractSeparator();
     void SetColor(const Color& color);
     void SetAlpha(float Alpha0, float Alpha1);

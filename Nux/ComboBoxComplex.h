@@ -38,7 +38,7 @@ class HLayout;
 class ComboBoxComplex : public AbstractComboBox
 {
 public:
-    ComboBoxComplex();
+    ComboBoxComplex(NUX_FILE_LINE_PROTO);
     ~ComboBoxComplex();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 

@@ -124,8 +124,8 @@ struct KerningPair
 
 struct Charset
 {
-    BOOL italic;
-    BOOL bold;
+    bool italic;
+    bool bold;
     unsigned short LineHeight;
     unsigned short Base;
     unsigned short Width, Height;

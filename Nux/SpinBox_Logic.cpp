@@ -26,8 +26,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-SpinBox_Logic::SpinBox_Logic()
-:   m_UpTimerHandler(0)
+SpinBox_Logic::SpinBox_Logic(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_UpTimerHandler(0)
 ,   m_DownTimerHandler(0)
 {
     InitializeLayout();
@@ -92,12 +93,12 @@ void SpinBox_Logic::RecvIncrement(int x, int y, unsigned long button_flags, unsi
 
 void SpinBox_Logic::RecvSpinnerMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if(m_UpTimerHandler)
+    if(m_UpTimerHandler.IsValid())
     {
         GetThreadTimer().RemoveTimerHandler(m_UpTimerHandler);
         m_UpTimerHandler = 0;
     }
-    if(m_DownTimerHandler)
+    if(m_DownTimerHandler.IsValid())
     {
         GetThreadTimer().RemoveTimerHandler(m_DownTimerHandler);
         m_DownTimerHandler = 0;

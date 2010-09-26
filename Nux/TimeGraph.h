@@ -41,7 +41,7 @@ class BaseArea;
 class TimeGraph : public ActiveInterfaceObject
 {
 public:
-    TimeGraph(const TCHAR* Title);
+    TimeGraph(const TCHAR* Title, NUX_FILE_LINE_PROTO);
     ~TimeGraph();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -114,7 +114,7 @@ private:
     
     void GraphTimerInterrupt(void* v);
     TimerFunctor* m_ScrollTimerFunctor;
-    TimerHandle* m_ScrollTimerHandler;
+    TimerHandle m_ScrollTimerHandler;
 
     float m_minY, m_maxY;
     FunctionCallback m_FunctionCallback;

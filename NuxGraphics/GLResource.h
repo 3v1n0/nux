@@ -79,8 +79,8 @@ NAMESPACE_END_OGL
 #define NUX_ENABLE_CG_SHADERS 0
 
 #if defined(NUX_OS_WINDOWS)
-    #include "OpenGL/Glew/glew.h"
-    #include "OpenGL/Glew/wglew.h"
+    #include "GL/glew.h"
+    #include "GL/wglew.h"
 
     GLEWContext* glewGetContext();
     WGLEWContext* wglewGetContext();
@@ -551,7 +551,7 @@ private:
     {
         if(Handle)
         {
-            if(Handle->GetRefCount() == 0)
+            if(Handle->GetValue() == 0)
             {
                 delete Handle;
                 //GetThreadGLDeviceFactory()->DestroyDeviceResource<T>(Handle);

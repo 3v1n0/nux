@@ -104,7 +104,7 @@ long RGBPropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, lo
     return ret;
 }
 
-void RGBPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void RGBPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
     if(m_ItemGeometryVector.size() >= 2)
     {
@@ -173,7 +173,7 @@ void RGBPropertyItem::AlphaChange(const weaksmptr(ColorGradient) slider)
 }
 
 void RGBPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
-                                    RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                    RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     if(isDirtyItem() ||
         m_red->IsRedrawNeeded() ||
@@ -181,7 +181,7 @@ void RGBPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table
         m_blue->IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {

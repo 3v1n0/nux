@@ -39,7 +39,7 @@ public:
     virtual t_s64 Tell();
     virtual t_s64 GetFileSize();
     virtual bool Close();
-    virtual void SerializeFinal(void* Dest, t_u64 Length);
+    virtual void SerializeFinal(void* Dest, t_s64 Length);
     virtual bool isReader() {return true;}
     virtual bool isWriter() {return false;}
 
@@ -64,7 +64,7 @@ public:
     virtual t_s64 Tell();
     virtual t_s64 GetFileSize();
     virtual bool Close();
-    virtual void SerializeFinal(void* Src, t_u64 Length);
+    virtual void SerializeFinal(void* Src, t_s64 Length);
     virtual void Flush();
     virtual bool isReader() {return false;}
     virtual bool isWriter() {return true;}

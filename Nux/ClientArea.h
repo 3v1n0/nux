@@ -26,6 +26,7 @@
 #include "BaseArea.h"
 #include "Painter.h"
 #include "InterfaceControl.h"
+#include "TimerProc.h"
 
 NAMESPACE_BEGIN_GUI
 
@@ -42,7 +43,7 @@ struct ClientAreaDraw
 class ClientArea: public ActiveInterfaceObject
 {
 public:
-    ClientArea();
+    ClientArea(NUX_FILE_LINE_PROTO);
     ~ClientArea();
 
     virtual void BeginDraw(GraphicsContext& GfxContext, bool force_draw);
@@ -92,7 +93,7 @@ private:
     TRefGL<IOpenGLTexture2D> m_MainDepthRT;
 
     TimerFunctor* m_RealTimeCallback;
-    TimerHandle* m_RealTimeHandler;
+    TimerHandle m_RealTimeHandler;
 
     DrawAreaContext m_ctx;
     bool m_IsClientAreaEnabled;

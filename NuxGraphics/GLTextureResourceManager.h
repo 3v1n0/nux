@@ -37,7 +37,7 @@ NTexture* CreateTextureFromBitmapData(const NBitmapData* BitmapData);
 
 class NTexture: public NResource
 {
-    DECLARE_OBJECT_TYPE(NTexture, NResource);
+    NUX_DECLARE_OBJECT_TYPE(NTexture, NResource);
 
     NTexture();
     virtual ~NTexture();
@@ -59,7 +59,7 @@ class NTexture: public NResource
 
 class NTexture2D: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NTexture2D, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NTexture2D, NTexture);
 
 public:
     NTexture2D();
@@ -88,7 +88,7 @@ private:
 
 class NRectangleTexture: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NRectangleTexture, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NRectangleTexture, NTexture);
 
 public:
     NRectangleTexture();
@@ -117,7 +117,7 @@ private:
 
 class NTextureCube: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NTextureCube, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NTextureCube, NTexture);
 
 public:
     NTextureCube();
@@ -145,7 +145,7 @@ private:
 
 class NTextureVolume: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NTextureVolume, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NTextureVolume, NTexture);
 
 public:
     NTextureVolume();
@@ -175,7 +175,7 @@ private:
 
 class NAnimatedTexture: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NAnimatedTexture, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NAnimatedTexture, NTexture);
 
 public:
     NAnimatedTexture();
@@ -205,7 +205,7 @@ private:
 
 class NGLTexture: public NGLResource
 {
-    DECLARE_OBJECT_TYPE(NGLTexture, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE(NGLTexture, NGLResource);
 public: 
     TRefGL<IOpenGLBaseTexture>	m_Texture;
 
@@ -243,7 +243,7 @@ public:
 
 class NGLTexture2D: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLTexture2D, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLTexture2D, NGLTexture);
 public: 
     NGLTexture2D(NResourceSet* ResourceManager, NTexture2D* SourceTexture);
     ~NGLTexture2D();
@@ -254,7 +254,7 @@ public:
 
 class NGLRectangleTexture: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLRectangleTexture, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLRectangleTexture, NGLTexture);
 public: 
     NGLRectangleTexture(NResourceSet* ResourceManager, NRectangleTexture* SourceTexture);
     ~NGLRectangleTexture();
@@ -265,7 +265,7 @@ public:
 
 class NGLTextureCube: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLTextureCube, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLTextureCube, NGLTexture);
 public: 
     NGLTextureCube(NResourceSet* ResourceManager, NTextureCube* SourceTexture);
     ~NGLTextureCube();
@@ -276,7 +276,7 @@ public:
 
 class NGLTextureVolume: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLTextureVolume, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLTextureVolume, NGLTexture);
 public: 
     NGLTextureVolume(NResourceSet* ResourceManager, NTextureVolume* SourceTexture);
     ~NGLTextureVolume();
@@ -287,7 +287,7 @@ public:
 
 class NGLAnimatedTexture: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLAnimatedTexture, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLAnimatedTexture, NGLTexture);
 public: 
     NGLAnimatedTexture(NResourceSet* ResourceManager, NAnimatedTexture* SourceTexture);
     ~NGLAnimatedTexture();

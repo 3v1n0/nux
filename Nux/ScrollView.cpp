@@ -30,7 +30,8 @@
 
 NAMESPACE_BEGIN_GUI
 
-ScrollView::ScrollView()
+ScrollView::ScrollView(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_ContentOffsetX                = 0;
     m_ContentOffsetY                = 0;

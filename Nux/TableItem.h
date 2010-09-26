@@ -37,17 +37,28 @@ extern const int ITEMDEFAULTHEIGHT;
 extern Color GPropertyItemTextColor0;
 extern Color GPropertyItemTextColor1;
 
-typedef struct
+class ColumnHeader
 {
-    CoreArea header;
+public:
+    ColumnHeader();
+    ~ColumnHeader();
+
+    smptr(BaseArea) m_header_area;
     bool bFixWidth;
     int FixWidthValue;
-} header2;
+};
 
-typedef struct
+class RowHeader
 {
-    TableItem* item;
-} RowHeader;
+public:
+    RowHeader();
+    ~RowHeader();
+
+    //void SetItem(TableItem* item);
+    //TableItem* GetItem();
+
+    TableItem* m_item;
+};
 
 class TableItem: public NodeNetCom
 {
@@ -56,8 +67,8 @@ public:
     virtual ~TableItem();
 
     virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor = Color(0x0));
-    virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector){};
+    virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
+    virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector){};
     virtual int GetItemBestHeight();
     virtual void SetPropertyItemWidth();
 
@@ -163,7 +174,7 @@ protected:
     bool  m_AlwaysShowOpeningButton;
 
     //! Geometry of the header of the row. Located at the left of the row.
-    CoreArea m_RowHeader;
+    smptr(CoreArea) m_row_header;
     //! Array of geometries of the column inside the row.
     std::vector<Geometry> m_ItemGeometryVector;
     //Geometry m_FirstColumnInRowGeometry;

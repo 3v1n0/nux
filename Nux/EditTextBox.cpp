@@ -29,7 +29,8 @@
 #include "Validator.h"
 
 NAMESPACE_BEGIN_GUI
-EditTextBox::EditTextBox(const TCHAR* Caption)
+EditTextBox::EditTextBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_Validator             = 0;
     BlinkCursor             = false;
@@ -73,10 +74,9 @@ EditTextBox::~EditTextBox()
 {
     NUX_SAFE_DELETE(m_Validator);
 
-    if(m_BlinkTimerHandler)
+    if(m_BlinkTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
-    NUX_SAFE_DELETE(m_BlinkTimerFunctor);
 }
 
 void EditTextBox::ScrollTimerInterrupt(void* v)
@@ -216,7 +216,7 @@ void EditTextBox::SetText(const NString& Caption)
         m_Text = (m_Prefix + s) + m_Suffix;
         m_KeyboardHandler.SetText(m_Text.GetTStringRef());
         m_temporary_caption = m_Text;
-        sigSetText.emit(smptr(EditTextBox)(this, false));
+        sigSetText.emit(smptr(EditTextBox)(this, true));
     }
     NeedRedraw();
 }
@@ -246,7 +246,7 @@ void EditTextBox::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned
 {
     m_KeyboardHandler.MouseUp(x, y);
 
-    if(m_ScrollTimerHandler)
+    if(m_ScrollTimerHandler.IsValid())
     {
         GetThreadTimer().RemoveTimerHandler(m_ScrollTimerHandler);
         m_ScrollTimerHandler = 0;
@@ -281,7 +281,7 @@ void EditTextBox::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long butt
     Geometry base = GetGeometry();
 
     int X = x + base.x;
-    if((m_ScrollTimerHandler == 0) && ((X < base.x) || (X > base.x + base.GetWidth())))
+    if((!m_ScrollTimerHandler.IsValid()) && ((X < base.x) || (X > base.x + base.GetWidth())))
     {
         m_ScrollTimerHandler = GetThreadTimer().AddTimerHandler(25, m_ScrollTimerFunctor, this);
     }
@@ -317,8 +317,8 @@ void EditTextBox::RecvKeyEvent(
 {
     if(character)
     {
-        sigCharacter.emit(smptr(EditTextBox)(this, false), *character);
-        sigEditChange.emit(smptr(EditTextBox)(this, false));
+        sigCharacter.emit(smptr(EditTextBox)(this, true), *character);
+        sigEditChange.emit(smptr(EditTextBox)(this, true));
 
         // When a writable character is entered, no blinking of cursor
         StopBlinkCursor(false);
@@ -333,8 +333,8 @@ void EditTextBox::RecvKeyEvent(
         {
             m_Text = m_KeyboardHandler.GetTextLine();
             m_temporary_caption = m_Text;
-            sigValidateKeyboardEntry.emit(smptr(EditTextBox)(this, false), m_Text);
-            sigValidateEntry.emit(smptr(EditTextBox)(this, false));
+            sigValidateKeyboardEntry.emit(smptr(EditTextBox)(this, true), m_Text);
+            sigValidateEntry.emit(smptr(EditTextBox)(this, true));
             m_KeyboardHandler.SelectAllText();
         }
         else
@@ -347,7 +347,7 @@ void EditTextBox::RecvKeyEvent(
     NeedRedraw();
 }
 
-UBOOL EditTextBox::ValidateKeyboardEntry(const TCHAR* text) const
+bool EditTextBox::ValidateKeyboardEntry(const TCHAR* text) const
 {
     if(m_Validator)
     {
@@ -368,7 +368,7 @@ void EditTextBox::EscapeKeyboardFocus()
     SetKeyboardFocus(false);
     // Revert back the caption text
     m_Text = m_temporary_caption;
-    sigEscapeKeyboardFocus.emit(smptr(EditTextBox)(this, false));
+    sigEscapeKeyboardFocus.emit(smptr(EditTextBox)(this, true));
     NeedRedraw();
 }
 
@@ -379,7 +379,7 @@ void EditTextBox::EnteringKeyboardFocus()
     // Preserve the current caption text. If ESC is pressed while we have keyboard focus then
     // the previous caption text is restored
     m_temporary_caption = m_Text;
-    sigStartKeyboardFocus.emit(smptr(EditTextBox)(this, false));
+    sigStartKeyboardFocus.emit(smptr(EditTextBox)(this, true));
     NeedRedraw();
 }
 
@@ -396,8 +396,8 @@ void EditTextBox::QuitingKeyboardFocus()
         m_Text = CleanText.m_string; //m_KeyboardHandler.GetTextLine();
         m_KeyboardHandler.SetText(CleanText.m_string);
         m_temporary_caption = m_Text;
-        sigValidateKeyboardEntry.emit(smptr(EditTextBox)(this, false), m_Text.GetTStringRef());
-        sigValidateEntry.emit(smptr(EditTextBox)(this, false));
+        sigValidateKeyboardEntry.emit(smptr(EditTextBox)(this, true), m_Text.GetTStringRef());
+        sigValidateEntry.emit(smptr(EditTextBox)(this, true));
     }
     else
     {

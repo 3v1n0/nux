@@ -32,8 +32,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-TextViewWidget::TextViewWidget()
-:   m_ContentOffsetX(0)
+TextViewWidget::TextViewWidget(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_ContentOffsetX(0)
 ,   m_ContentOffsetY(0)
 ,   m_vertical_scrollbar_enable(true)
 ,   m_horizontal_scrollbar_enable(true)

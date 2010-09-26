@@ -28,7 +28,8 @@ NAMESPACE_BEGIN_GUI
 
 static const int GRAPH_MARGIN = 1;
 
-Matrix4Preview::Matrix4Preview(Matrix4 matrix)
+Matrix4Preview::Matrix4Preview(Matrix4 matrix, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_DialogThreadProxy = new Matrix4DialogProxy(true);
 
@@ -43,9 +44,8 @@ Matrix4Preview::Matrix4Preview(Matrix4 matrix)
 
 Matrix4Preview::~Matrix4Preview()
 {
-    if(m_ChangeTimerHandler)
+    if(m_ChangeTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
-
     NUX_SAFE_DELETE(m_DialogThreadProxy);
 }
 
@@ -99,7 +99,7 @@ void Matrix4Preview::RecvTimer(void* v)
     }
     else
     {
-        if(m_ChangeTimerHandler)
+        if(m_ChangeTimerHandler.IsValid())
             GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
         m_ChangeTimerHandler = 0;
 

@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_GUI
 class ColorArea : public ActiveInterfaceObject
 {
 public:
-    ColorArea(Color color = Color(0xFFFFFFFF));
+    ColorArea(Color color = Color(0xFFFFFFFF), NUX_FILE_LINE_PROTO);
     ~ColorArea();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);

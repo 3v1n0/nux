@@ -31,7 +31,7 @@ class VScrollBar;
 class ScrollView: public ActiveInterfaceObject
 {
 public:
-    ScrollView();
+    ScrollView(NUX_FILE_LINE_PROTO);
     virtual ~ScrollView();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

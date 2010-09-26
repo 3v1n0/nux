@@ -28,7 +28,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLQuery);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLQuery);
 
 t_u32 IOpenGLQuery::_CurrentlyActiveQuery = 0;
 

@@ -44,7 +44,7 @@ long TreeItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long Proc
 }
 
 void TreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter,
-                            RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                            RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
     if(isDirtyItem())
@@ -58,12 +58,12 @@ void TreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool 
         {
             nBackground = table->PushItemBackground(GfxContext, this, false);
         }
-        Painter.PaintTextLineStatic(GfxContext, GFont, geo, row->item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/); 
+        Painter.PaintTextLineStatic(GfxContext, GFont, geo, row->m_item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/); 
         table->PopItemBackground(GfxContext, nBackground);
     }
 }
 
-void TreeItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void TreeItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
 
 }
@@ -104,10 +104,10 @@ void TreeControl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned
     {
         // selected item geometry
         int sx, sy, sw, sh;
-        sx = m_column_header[m_selectedColumn].header.GetBaseX();
-        sw = m_column_header[m_selectedColumn].header.GetBaseWidth();
-        sy = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseY();
-        sh = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseHeight();
+        sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
+        sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
+        sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
+        sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
 
         m_selectedGeometry = Geometry(sx, sy, sw, sh);
         //        sigItemSelected.emit(m_selectedRow, m_selectedColumn);
@@ -121,25 +121,25 @@ void TreeControl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned
             return;
 
 
-        if(!m_row_header[m_selectedRow]->item->isOpen() && (m_row_header[m_selectedRow]->item->FirstChildNode() || m_row_header[m_selectedRow]->item->AlwaysShowOpeningButton()))
+        if(!m_row_header[m_selectedRow]->m_item->isOpen() && (m_row_header[m_selectedRow]->m_item->FirstChildNode() || m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton()))
         {
             // If it is not open, then open it.
-            OpOpenItem(m_row_header[m_selectedRow]->item);
+            OpOpenItem(m_row_header[m_selectedRow]->m_item);
             //if(m_selectedTableItem /*(m_selectedRow != -1) && (m_selectedColumn != -1)*/)
         }
         else
         {
-            if(m_row_header[m_selectedRow]->item->FirstChildNode() /*|| m_row_header[m_selectedRow]->item->AlwaysShowOpeningButton()*/)
+            if(m_row_header[m_selectedRow]->m_item->FirstChildNode() /*|| m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton()*/)
             {
-                Geometry geo = m_row_header[m_selectedRow]->item->m_ItemGeometryVector[0];
-                geo.SetX((m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->item->m_depth);
-                geo.SetY(m_row_header[m_selectedRow]->item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY());
+                Geometry geo = m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0];
+                geo.SetX((m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->m_item->m_depth);
+                geo.SetY(m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY());
                 geo.SetWidth(OPENCLOSE_BTN_WIDTH);
                 if(geo.IsPointInside(x, y))
                 {
-                    if(m_row_header[m_selectedRow]->item->isOpen())
+                    if(m_row_header[m_selectedRow]->m_item->isOpen())
                     {
-                        OpCloseItem(m_row_header[m_selectedRow]->item);
+                        OpCloseItem(m_row_header[m_selectedRow]->m_item);
                         if(IsSizeMatchContent())
                         {
                             // when closing and item, the Table gets shorter and might leave a dirty area filled with part of the Table content.
@@ -153,7 +153,7 @@ void TreeControl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned
                     }
                     else
                     {
-                        OpOpenItem(m_row_header[m_selectedRow]->item);
+                        OpOpenItem(m_row_header[m_selectedRow]->m_item);
                     }
                 }
                 else
@@ -167,10 +167,10 @@ void TreeControl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned
         ComputeChildLayout();
     }
 
-    if((previous_click_row >= 0) && (previous_click_row != m_selectedRow) && (m_row_header[previous_click_row]->item->FirstChildNode() == 0))
-        OpCloseItem(m_row_header[previous_click_row]->item);
-    //else if((previous_click_row >= 0) && (m_row_header[previous_click_row]->item->FirstChildNode() == 0))
-    //  OpCloseItem(m_row_header[previous_click_row]->item);
+    if((previous_click_row >= 0) && (previous_click_row != m_selectedRow) && (m_row_header[previous_click_row]->m_item->FirstChildNode() == 0))
+        OpCloseItem(m_row_header[previous_click_row]->m_item);
+    //else if((previous_click_row >= 0) && (m_row_header[previous_click_row]->m_item->FirstChildNode() == 0))
+    //  OpCloseItem(m_row_header[previous_click_row]->m_item);
 
 
     {
@@ -213,22 +213,22 @@ void TreeControl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, u
     {
         // selected item geometry
         int sx, sy, sw, sh;
-        sx = m_column_header[m_selectedColumn].header.GetBaseX();
-        sw = m_column_header[m_selectedColumn].header.GetBaseWidth();
-        sy = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseY();
-        sh = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseHeight();
+        sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
+        sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
+        sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
+        sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
 
         m_selectedGeometry = Geometry(sx, sy, sw, sh);
         // we couldsend a signal meaning a double click has happened on an item.
-        //sigItemDoubleClick.emit(m_row_header[m_selectedRow]->item);
+        //sigItemDoubleClick.emit(m_row_header[m_selectedRow]->m_item);
     }
 
     // Check if item as a child node. If not, there is no point in opening/closing it.
-    if(m_row_header[m_selectedRow]->item->FirstChildNode() /*|| m_row_header[m_selectedRow]->item->AlwaysShowOpeningButton()*/)
+    if(m_row_header[m_selectedRow]->m_item->FirstChildNode() /*|| m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton()*/)
     {
-        Geometry geo = m_row_header[m_selectedRow]->item->m_ItemGeometryVector[0];
-        geo.SetX((m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->item->m_depth);
-        geo.SetY(m_row_header[m_selectedRow]->item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY());
+        Geometry geo = m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0];
+        geo.SetX((m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->m_item->m_depth);
+        geo.SetY(m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY());
         geo.SetWidth(OPENCLOSE_BTN_WIDTH);
         if(geo.IsPointInside(x, y))
         {
@@ -236,9 +236,9 @@ void TreeControl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, u
         }
         else
         {
-            //            if(m_row_header[m_selectedRow]->item->isOpen())
+            //            if(m_row_header[m_selectedRow]->m_item->isOpen())
             //            {
-            //                OpCloseItem(m_row_header[m_selectedRow]->item);
+            //                OpCloseItem(m_row_header[m_selectedRow]->m_item);
             //                if(IsSizeMatchContent())
             //                {
             //                    // when closing and item, the Table gets shorter and might leave a dirty area filled with part of the Table content.
@@ -252,7 +252,7 @@ void TreeControl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, u
             //            }
             //            else
             //            {
-            //                OpOpenItem(m_row_header[m_selectedRow]->item);
+            //                OpOpenItem(m_row_header[m_selectedRow]->m_item);
             //            }
         }
     }

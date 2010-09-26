@@ -31,8 +31,9 @@ NAMESPACE_BEGIN_GUI
 
 static const int GRAPH_MARGIN = 1;
 
-ColorPreview::ColorPreview(float red, float green, float blue, eColorModel colormodel)
-:   m_Color(1.0f, 1.0f, 1.0f, 1.0f)
+ColorPreview::ColorPreview(float red, float green, float blue, eColorModel colormodel, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Color(1.0f, 1.0f, 1.0f, 1.0f)
 {
     //setSize(200, 100);
     m_hlayout = smptr(HLayout)(new HLayout);
@@ -78,7 +79,7 @@ ColorPreview::ColorPreview(float red, float green, float blue, eColorModel color
 
 ColorPreview::~ColorPreview()
 {
-    if(m_ChangeTimerHandler)
+    if(m_ChangeTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
 
     NUX_SAFE_DELETE(m_DialogThreadProxy);
@@ -135,7 +136,7 @@ void ColorPreview::RecvTimer(void* v)
     }
     else
     {
-        if(m_ChangeTimerHandler)
+        if(m_ChangeTimerHandler.IsValid())
             GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
         m_ChangeTimerHandler = 0;
         m_Color = m_DialogThreadProxy->GetColor();

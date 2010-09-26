@@ -135,8 +135,9 @@ void Matrix4DialogProxy::StopThreadMonitoring()
     m_Thread = 0;
 }
 
-Matrix4Editor::Matrix4Editor(Matrix4 matrix)
-:   m_Matrix(matrix)
+Matrix4Editor::Matrix4Editor(Matrix4 matrix, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Matrix(matrix)
 {
     m_vlayout = smptr(VLayout)(new VLayout());
     mtx_layout = smptr(VLayout)(new VLayout());
@@ -250,7 +251,7 @@ void Matrix4Editor::RecvComponentInput(const weaksmptr(EditTextBox) textbox, con
     m_MtxInput[i][j]->SetText(inlPrintf(TEXT("%.3f"), f));
     m_Matrix.m[i][j] = f;
 
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
 }
 
 void Matrix4Editor::WriteMatrix()
@@ -365,7 +366,7 @@ void Matrix4Editor::RecvIdentityMatrixCmd()
 {
     m_Matrix.Identity();
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
 
     NeedRedraw();
 }
@@ -374,7 +375,7 @@ void Matrix4Editor::RecvZeroMatrixCmd()
 {
     m_Matrix.Zero();
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
 
     NeedRedraw();
 }
@@ -383,7 +384,7 @@ void Matrix4Editor::RecvInverseMatrixCmd()
 {
     m_Matrix.Zero();
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
 
     NeedRedraw();
 }
@@ -392,7 +393,7 @@ void Matrix4Editor::RecvNegateMatrixCmd()
 {
     m_Matrix = -m_Matrix;
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
 
     NeedRedraw();
 }

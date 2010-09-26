@@ -51,7 +51,7 @@ SectionProperty::~SectionProperty()
 //}
 
 void SectionProperty::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter,
-                                   RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                   RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
     if(isDirtyItem())
@@ -65,7 +65,7 @@ void SectionProperty::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table
         {
             nBackground = table->PushItemBackground(GfxContext, this, false);
         }
-        Painter.PaintTextLineStatic(GfxContext, GFont, geo, row->item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/); 
+        Painter.PaintTextLineStatic(GfxContext, GFont, geo, row->m_item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/); 
         if(m_ItemGeometryVector.size() >= 2)
         {
             Geometry prop_geo = m_ItemGeometryVector[1];
@@ -78,7 +78,7 @@ void SectionProperty::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table
     }
 }
 
-void SectionProperty::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void SectionProperty::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
 
 }

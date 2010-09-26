@@ -28,7 +28,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLFrameBufferObject);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLFrameBufferObject);
 
 IOpenGLFrameBufferObject::IOpenGLFrameBufferObject(int Width, int Height, BitmapFormat PixelFormat)
 :   IOpenGLResource(RTFRAMEBUFFEROBJECT)

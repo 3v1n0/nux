@@ -31,11 +31,12 @@ class MenuBar;
 class MenuPage;
 class NTexture2D;
 
-class ActionItem
+class ActionItem: public NuxObject
 {
-    DECLARE_ROOT_OBJECT_TYPE(ActionItem);
 public:
-    ActionItem(const TCHAR* label = 0, int UserValue = 0);
+    NUX_DECLARE_OBJECT_TYPE(ActionItem, NuxObject);
+
+    ActionItem(const TCHAR* label = 0, int UserValue = 0, NUX_FILE_LINE_PROTO);
     ~ActionItem();
 
     void Activate(bool b);

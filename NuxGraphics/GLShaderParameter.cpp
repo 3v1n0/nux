@@ -30,8 +30,8 @@ NAMESPACE_BEGIN_OGL
 GLShaderParameter::GLShaderParameter(GLProgramObject* Shader,
                   const TCHAR* ParamName,
                   eShaderParameterType ParamType,
-                  UBOOL IsOptional,
-                  UBOOL IsStatic)
+                  bool IsOptional,
+                  bool IsStatic)
 :   m_ShaderParameterType(ParamType)
 ,   m_Name(ParamName)
 ,   m_bIsOptional(IsOptional)

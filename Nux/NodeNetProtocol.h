@@ -103,7 +103,7 @@ enum NodeParameterType
 
 class NodeNetCom: public NodeItem
 {
-    DECLARE_OBJECT_TYPE(NodeNetCom, NodeItem);
+    NUX_DECLARE_OBJECT_TYPE(NodeNetCom, NodeItem);
 public:
     //! Search the ID in the whole tree below this node. Search also this node.
     NodeNetCom* FindNodeID(int id);

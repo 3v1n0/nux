@@ -29,9 +29,10 @@ NAMESPACE_BEGIN_GUI
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Layout
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-IMPLEMENT_OBJECT_TYPE(Layout);
+NUX_IMPLEMENT_OBJECT_TYPE(Layout);
 
-Layout::Layout()
+Layout::Layout(NUX_FILE_LINE_DECL)
+:   BaseObject(NUX_FILE_LINE_PARAM)
 {
     m_compositeIC       = smptr(BaseObject)(0);
     m_h_in_margin       = 0;
@@ -46,7 +47,7 @@ Layout::Layout()
 Layout::~Layout()
 {
     // It is possible that this layout object is in the refresh list. Remove it here before it is deleted.
-    GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, false));
+    GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, true));
 
     std::list<smptr(BaseObject)>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
@@ -118,7 +119,7 @@ void Layout::AddLayout(smptr(Layout) layout, unsigned int stretchFactor, eMinorP
         layout->SetPercentage(percentage);
     }
 
-    layout->SetParentObject(smptr(BaseObject)(this, false));
+    layout->SetParentObject(smptr(BaseObject)(this, true));
     m_LayoutElementList.push_back(layout);
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
@@ -174,7 +175,7 @@ void Layout::AddActiveInterfaceObject(smptr(BaseObject) bo, unsigned int stretch
         bo->SetPercentage(percentage);
     }
 
-    bo->SetParentObject(smptr(BaseObject)(this, false));
+    bo->SetParentObject(smptr(BaseObject)(this, true));
 
     bo->SetApplication(GetApplication());
     m_LayoutElementList.push_back(bo);

@@ -136,7 +136,7 @@ void ValuatorInt::SetValue(int value)
 {
     m_iValue = m_IntValidator.Validate(value);
     m_EditLine->SetText(inlPrintf("%d", m_iValue));
-    sigValueChanged.emit(smptr(ValuatorInt)(this, false));
+    sigValueChanged.emit(smptr(ValuatorInt)(this, true));
     sigValue.emit(m_iValue);
     NeedRedraw();
 }
@@ -174,7 +174,7 @@ void ValuatorInt::SetRange(int MinValue, int Maxvalue)
     m_IntValidator.SetMinimum(MinValue);
     m_IntValidator.SetMaximum(Maxvalue);
     m_iValue = m_IntValidator.Validate(m_iValue);
-    sigValueChanged.emit(smptr(ValuatorInt)(this, false));
+    sigValueChanged.emit(smptr(ValuatorInt)(this, true));
     sigValue.emit(m_iValue);
     NeedRedraw();
 }
@@ -186,8 +186,8 @@ void ValuatorInt::ImplementIncrementBtn()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(ValuatorInt)(this, false));
-    sigIncrement.emit(smptr(ValuatorInt)(this, false));
+    sigValueChanged.emit(smptr(ValuatorInt)(this, true));
+    sigIncrement.emit(smptr(ValuatorInt)(this, true));
     sigValue.emit(m_iValue);
 }
 
@@ -198,8 +198,8 @@ void ValuatorInt::ImplementDecrementBtn()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(ValuatorInt)(this, false));
-    sigDecrement.emit(smptr(ValuatorInt)(this, false));
+    sigValueChanged.emit(smptr(ValuatorInt)(this, true));
+    sigDecrement.emit(smptr(ValuatorInt)(this, true));
     sigValue.emit(m_iValue);
 }
 
@@ -210,7 +210,7 @@ void ValuatorInt::ImplementValidateEntry()
     {
         m_iValue = m_IntValidator.Validate(ret);
         m_EditLine->SetText(inlPrintf("%d", m_iValue));
-        sigValueChanged.emit(smptr(ValuatorInt)(this, false));
+        sigValueChanged.emit(smptr(ValuatorInt)(this, true));
         sigValue.emit(m_iValue);
 //
 //        if(m_iValue < m_IntValidator.GetMinimum())
@@ -227,7 +227,7 @@ void ValuatorInt::ImplementValidateEntry()
 //     else
 //     {
 //         m_EditLine->SetText(inlPrintf("%d", m_iValue));
-//         sigValueChanged.emit(smptr(ValuatorInt)(this, false));
+//         sigValueChanged.emit(smptr(ValuatorInt)(this, true));
 //         sigValue.emit(m_iValue);
 //     }
 }

@@ -26,7 +26,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLVertexDeclaration);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVertexDeclaration);
 
 IOpenGLVertexDeclaration::IOpenGLVertexDeclaration(const VERTEXELEMENT* pVertexElements)
 :IOpenGLResource(RTVERTEXDECLARATION)

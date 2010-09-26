@@ -91,7 +91,8 @@ void TimeGraph::Graph::Reset()
 
 t_u32 TimeGraph::sBufferSize = 2048;
 
-TimeGraph::TimeGraph(const TCHAR* Title)
+TimeGraph::TimeGraph(const TCHAR* Title, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_minY  = 0.0f;
     m_maxY  = 1.0f;

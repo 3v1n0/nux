@@ -26,10 +26,10 @@
 
 NAMESPACE_BEGIN_GUI
 
-IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
+NUX_IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
 
-ActiveInterfaceObject::ActiveInterfaceObject()
-:   BaseArea()
+ActiveInterfaceObject::ActiveInterfaceObject(NUX_FILE_LINE_DECL)
+:   BaseArea(NUX_FILE_LINE_PARAM)
 {
     m_CompositionLayout = smptr(Layout)(0);
     m_NeedRedraw        = false;
@@ -44,7 +44,7 @@ ActiveInterfaceObject::ActiveInterfaceObject()
 ActiveInterfaceObject::~ActiveInterfaceObject()
 {
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
-    GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, false));
+    GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, true));
 
     NUX_SAFE_DELETE(m_TextColor);
 }
@@ -289,9 +289,9 @@ void ActiveInterfaceObject::SetCompositionLayout(smptr(Layout) layout)
         {
             parent->RemoveChildObject(layout);
         }
-        layout->SetParentObject(smptr(BaseObject)(this, false));
+        layout->SetParentObject(smptr(BaseObject)(this, true));
     }
-    layout->SetParentObject(smptr(BaseObject)(this, false));
+    layout->SetParentObject(smptr(BaseObject)(this, true));
     m_CompositionLayout = layout;
 }
 

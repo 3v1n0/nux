@@ -32,7 +32,7 @@ class IOpenGLRectangleTexture;
 // The number of mipmap levels is always 1;
 class IOpenGLAnimatedTexture: public IOpenGLBaseTexture
 {
-    DECLARE_OBJECT_TYPE(IOpenGLAnimatedTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAnimatedTexture, IOpenGLBaseTexture);
 
 public:
     virtual ~IOpenGLAnimatedTexture();

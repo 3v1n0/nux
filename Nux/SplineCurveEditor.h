@@ -279,7 +279,7 @@ typedef float (*SplineFunctionCallback)(float);
 class SplineCurveEditor : public ActiveInterfaceObject
 {
 public:
-    SplineCurveEditor();
+    SplineCurveEditor(NUX_FILE_LINE_PROTO);
     ~SplineCurveEditor();
     void SetControlPoints(const SplineKnot& splineKnot);
     const SplineKnot& GetControlPoints() const;

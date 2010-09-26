@@ -27,8 +27,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-Valuator::Valuator()
-:   m_Mouse(0)
+Valuator::Valuator(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Mouse(0)
 {
     m_MouseControlledButton = smptr(CoreArea)(new CoreArea());
     m_EditLine = smptr(EditTextBox)(new EditTextBox());

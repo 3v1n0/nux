@@ -26,10 +26,11 @@
 
 NAMESPACE_BEGIN_GUI
 
-IMPLEMENT_ROOT_OBJECT_TYPE(ActionItem);
+NUX_IMPLEMENT_OBJECT_TYPE(ActionItem);
 
-ActionItem::ActionItem(const TCHAR* label, int UserValue)
-:   m_UserValue(UserValue)
+ActionItem::ActionItem(const TCHAR* label, int UserValue, NUX_FILE_LINE_DECL)
+:   NuxObject(true, NUX_FILE_LINE_PARAM)
+,   m_UserValue(UserValue)
 ,   m_Label(TEXT(""))
 ,   m_IsActivated(true)
 ,   m_Menu(0)

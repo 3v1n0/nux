@@ -30,7 +30,7 @@ NAMESPACE_BEGIN_GUI
 class TextureArea : public ActiveInterfaceObject
 {
 public:
-    TextureArea();
+    TextureArea(NUX_FILE_LINE_PROTO);
     ~TextureArea();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);

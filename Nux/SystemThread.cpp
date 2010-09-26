@@ -38,7 +38,7 @@
 
 NAMESPACE_BEGIN_GUI
 
-IMPLEMENT_OBJECT_TYPE(SystemThread);
+NUX_IMPLEMENT_OBJECT_TYPE(SystemThread);
 
 
 SystemThread::SystemThread(AbstractThread* Parent/* = 0*/)

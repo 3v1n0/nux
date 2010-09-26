@@ -25,15 +25,50 @@
 
 NAMESPACE_BEGIN_GUI
 
+typedef struct 
+{
+    long    sec;         // seconds 
+    long    usec;        // and microseconds 
+} TimeStruct;
+
 /**
     Return true if t1 is a time reference that will happen after time t2 has expired.
 */
-static bool TimeIsGreater(_Time t1, _Time t2);
-static void TimeRightNow(_Time *tv);
-static void Addmillisecs(_Time *tv, unsigned int milliseconds);
-//static t_u32 TimeDiff(_Time t1, _Time t2);
+static bool TimeIsGreater(TimeStruct t1, TimeStruct t2);
+static void TimeRightNow(TimeStruct *tv);
+static void Addmillisecs(TimeStruct *tv, unsigned int milliseconds);
+//static t_u32 TimeDiff(TimeStruct t1, TimeStruct t2);
 
-TimerHandle::TimerHandle()
+static NThreadSafeCounter TimerUID = 0x01234567;
+
+class TimerObject
+{
+public:
+    TimerObject();
+
+    bool operator == (const TimerObject& timer_object);
+
+    //! Delay before the callback expires
+    TimeStruct           when;
+    void 		    *CallbackData;
+    TimerFunctor    *TimerCallback;
+
+    //! time progression factor between [0.0, 1.0]
+    float           Param;
+    int             Type;
+    int             Iteration;
+    int             IterationCount;
+    int             Period;         // milliseconds
+    int             Duration;      // milliseconds
+    int             ElapsedTime;    // milliseconds
+    bool            MarkedForRemoval;
+    TimerObject     *next;
+    TimerObject     *prev;
+    t_u32           glibid;
+    t_u32           uid;
+};
+
+TimerObject::TimerObject()
 {
     Type            = 0;
     CallbackData    = 0;
@@ -48,11 +83,44 @@ TimerHandle::TimerHandle()
     next            = 0;
     prev            = 0;
     glibid          = 0;
+    uid             = 0;
 }
 
+TimerHandle::TimerHandle()
+{
+    m_d = 0;
+}
+
+TimerHandle::TimerHandle(TimerObject* timer_object)
+{
+    m_d = timer_object;
+}
+
+TimerHandle::~TimerHandle()
+{
+    m_d = 0;
+}
+
+TimerHandle::TimerHandle(const TimerHandle& timer_handle)
+{
+    m_d = timer_handle.m_d;
+}
+
+TimerHandle& TimerHandle::operator = (const TimerHandle& timer_handle)
+{
+    m_d = timer_handle.m_d;
+    return *this;
+}
+
+bool TimerHandle::IsValid() const
+{
+    return m_d != 0;
+}
+
+////////////////////////////////////////////////////
 TimerHandler::TimerHandler()
 {
-    TimerHandleQueue = 0;
+    m_timer_object_queue = 0;
     m_IsProceesingTimers = false;
 }
 
@@ -61,257 +129,119 @@ TimerHandler::~TimerHandler()
 
 }
 
-// TimerHandle* TimerHandler::AddTimerHandler(unsigned int Milliseconds, TimerFunctor* Callback, void *Data)
-// {
-//     TimerHandle *handler, *tmp;
-// 
-//     handler = new TimerHandle();
-// 
-//     TimeRightNow(&handler->when);
-//     Addmillisecs(&handler->when, Milliseconds);
-//     handler->CallbackData = Data;
-//     handler->TimerCallback = Callback;
-// 
-//     handler->Duration = Milliseconds;
-//     //handler->Frequency = Milliseconds;
-//     handler->ElapsedTime = 0;
-// 
-//     // If the queue is empty or the new timer will expire sooner than the first timer in the queue
-//     // then add the new timer at the start of the queue.
-//     if((TimerHandleQueue == NULL) || TimeIsGreater(TimerHandleQueue->when, handler->when))
-//     {
-//         // first in the queue 
-//         handler->next = TimerHandleQueue;
-//         TimerHandleQueue = handler;
-//         return handler;
-//     } 
-// 
-//     tmp = TimerHandleQueue;
-//     while(tmp->next != NULL)
-//     {
-//         if(TimeIsGreater(handler->when, tmp->next->when)) 
-//         {
-//             tmp = tmp->next;
-//         }
-//         else
-//         {
-//             handler->next = tmp->next;
-//             tmp->next = handler;
-//             return handler;
-//         }
-//     }
-// 
-//     handler->next = NULL;
-//     tmp->next = handler;
-// 
-//     return handler;
-// }
-// 
-// void TimerHandler::RemoveTimerWithClientData(void *Data)
-// {
-//     NUX_RETURN_IF_NULL(Data);
-//     NUX_RETURN_IF_NULL(TimerHandleQueue);
-// 
-//     TimerHandle *handler, *tmp;
-// 
-//     handler = TimerHandleQueue;
-//     if(handler->CallbackData == Data) 
-//     {
-//         TimerHandleQueue = handler->next;
-//         delete handler;
-//     } 
-//     else 
-//     { 
-//         while(handler->next != NULL) 
-//         {
-//             if(handler->next->CallbackData == Data) 
-//             {
-//                 tmp = handler->next;
-//                 handler->next = handler->next->next;
-//                 delete tmp;
-//                 break;
-//             }
-//             handler = handler->next;
-//         }
-//     }
-// }
-// 
-// void TimerHandler::RemoveTimerHandler(TimerHandle *handler)
-// {
-//     NUX_RETURN_IF_NULL(handler);
-//     NUX_RETURN_IF_NULL(TimerHandleQueue);
-// 
-//     TimerHandle *tmp;
-// 
-//     tmp = TimerHandleQueue;
-//     if(tmp == handler)
-//     {
-//         TimerHandleQueue = handler->next;
-//         delete handler;
-//     } 
-//     else 
-//     {
-//         while(tmp->next)
-//         {
-//             if(tmp->next == handler)
-//             {
-//                 tmp->next = handler->next;
-//                 delete handler;
-//                 break;
-//             }
-//             tmp = tmp->next;
-//         }
-//     }
-// }
-// 
-// int TimerHandler::ExecTimerHandler()
-// {
-//     NUX_RETURN_VALUE_IF_NULL(TimerHandleQueue, 0);
-// 
-//     TimerHandle *handler;
-//     _Time now;
-// 
-//     int timer_executed = 0;
-// 
-//     TimeRightNow(&now);
-// 
-//     while(TimerHandleQueue != NULL)
-//     {
-//         if(TimeIsGreater(now, TimerHandleQueue->when)) 
-//         { 
-//             long elaps = now.sec - TimerHandleQueue->when.sec;
-//             long uelaps = now.usec - TimerHandleQueue->when.usec;
-//             if(uelaps < 0)
-//             {
-//                 uelaps += 1000000;
-//                 nuxAssert(elaps > 0);
-//                 elaps -= 1;
-//             }
-// 
-//             handler = TimerHandleQueue;
-//             TimerHandleQueue = TimerHandleQueue->next;
-// 
-//             handler->ElapsedTime += elaps*1000 + uelaps / 1000;
-//             handler->Param = float(handler->ElapsedTime) / float(handler->Duration);
-//             if(handler->Param > 1.0f)
-//                 handler->Param = 1.0f;
-// 
-//             if(handler->TimerCallback != 0)
-//             {
-//                 handler->TimerCallback->OnTimerExpired.emit(handler->CallbackData);
-//             }
-//             delete handler;
-//             timer_executed++;
-//         }
-//         else
-//             return timer_executed;
-//     }
-//     return timer_executed;
-// }
-////
-
-TimerHandle* TimerHandler::AddTimerHandler(unsigned int Period, TimerFunctor* Callback, void *Data)
+TimerHandle TimerHandler::AddTimerHandler(unsigned int Period, TimerFunctor* Callback, void *Data)
 {
-    TimerHandle *handler = new TimerHandle();
-    TimeRightNow(&handler->when);
-    Addmillisecs(&handler->when, Period);
-    handler->CallbackData = Data;
-    handler->TimerCallback = Callback;
+    TimerObject *timer_object = new TimerObject();
+    TimeRightNow(&timer_object->when);
+    Addmillisecs(&timer_object->when, Period);
+    timer_object->CallbackData = Data;
+    timer_object->TimerCallback = Callback;
 
-    handler->Period = Period;
-    handler->Type = TIMERTYPE_PERIODIC;
+    timer_object->Period = Period;
+    timer_object->Type = TIMERTYPE_PERIODIC;
 
-    AddHandle(handler);
+    AddHandle(timer_object);
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
-        handler->glibid = GetGraphicsThread()->AddGLibTimeout(Period);
-        if(handler->glibid == 0)
+        timer_object->glibid = GetGraphicsThread()->AddGLibTimeout(Period);
+        if(timer_object->glibid == 0)
         {
             // Probably trying to set a timeout before Glib main context and loop have been created.
             // Sometimes later, this timer will be examined when ExecTimerHandler is called.
             // This happens when trying to set a callback before the mainloop has been initialized.
         }
-        //nuxDebugMsg(TEXT("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d"), handler->glibid);
+        //nuxDebugMsg(TEXT("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d"), timer_object->glibid);
     }
 #endif
 
-    return handler;
+    TimerHandle handle(timer_object);
+    return handle;
 }
 
-TimerHandle* TimerHandler::AddPeriodicTimerHandler(unsigned int Period, int Duration, TimerFunctor* Callback, void *Data)
+TimerHandle TimerHandler::AddPeriodicTimerHandler(unsigned int Period, int Duration, TimerFunctor* Callback, void *Data)
 {
-    TimerHandle *handler = new TimerHandle();
-    TimeRightNow(&handler->when);
-    Addmillisecs(&handler->when, Period);
-    handler->CallbackData = Data;
-    handler->TimerCallback = Callback;
+    TimerObject *timer_object = new TimerObject();
+    TimeRightNow(&timer_object->when);
+    Addmillisecs(&timer_object->when, Period);
+    timer_object->CallbackData = Data;
+    timer_object->TimerCallback = Callback;
 
-    handler->Period = Period;
-    handler->Duration = (Duration < 0) ? -1 : Duration;
-    handler->Type = TIMERTYPE_DURATION;
-    return AddHandle(handler);
+    timer_object->Period = Period;
+    timer_object->Duration = (Duration < 0) ? -1 : Duration;
+    timer_object->Type = TIMERTYPE_DURATION;
+    AddHandle(timer_object);
+
+    TimerHandle handle(timer_object);
+    return handle;
 }
 
-TimerHandle* TimerHandler::AddCountIterationTimerHandler(unsigned int Period, int NumberOfIterations, TimerFunctor* Callback, void *Data)
+TimerHandle TimerHandler::AddCountIterationTimerHandler(unsigned int Period, int NumberOfIterations, TimerFunctor* Callback, void *Data)
 {
-    TimerHandle *handler = new TimerHandle();
-    TimeRightNow(&handler->when);
-    Addmillisecs(&handler->when, Period);
-    handler->CallbackData = Data;
-    handler->TimerCallback = Callback;
+    TimerObject *timer_object = new TimerObject();
+    TimeRightNow(&timer_object->when);
+    Addmillisecs(&timer_object->when, Period);
+    timer_object->CallbackData = Data;
+    timer_object->TimerCallback = Callback;
 
-    handler->Period = Period;
-    handler->Iteration  = (NumberOfIterations < 0) ? -1 : NumberOfIterations;
-    handler->Type = TIMERTYPE_ITERATION;
-    return AddHandle(handler);
+    timer_object->Period = Period;
+    timer_object->Iteration  = (NumberOfIterations < 0) ? -1 : NumberOfIterations;
+    timer_object->Type = TIMERTYPE_ITERATION;
+    AddHandle(timer_object);
+
+    TimerHandle handle(timer_object);
+    return handle;
 }
 
 // Sort timers and add them to the queue
-TimerHandle* TimerHandler::AddHandle(TimerHandle *handle)
+TimerObject* TimerHandler::AddHandle(TimerObject *timer_object)
 {
     // If the queue is empty or the new timer will expire sooner than the first timer in the queue
     // then add the new timer at the start of the queue.
-    if((TimerHandleQueue == NULL) || TimeIsGreater(TimerHandleQueue->when, handle->when))
+    if((m_timer_object_queue == NULL) || TimeIsGreater(m_timer_object_queue->when, timer_object->when))
     {
-        // Add the timer handle at the head of the queue
-        handle->next = TimerHandleQueue;
-        if(TimerHandleQueue)
-            TimerHandleQueue->prev = handle;
-        handle->prev = 0;
-        TimerHandleQueue = handle;
-        return handle;
+        // Add the timer timer_object at the head of the queue
+        timer_object->next = m_timer_object_queue;
+        if(m_timer_object_queue)
+            m_timer_object_queue->prev = timer_object;
+        timer_object->prev = 0;
+        m_timer_object_queue = timer_object;
+        return timer_object;
     } 
 
-    TimerHandle* tmp = TimerHandleQueue;
+    // Give the Timer a unique ID;
+    timer_object->uid = TimerUID.GetValue();
+    TimerUID.Increment();
+
+    TimerObject* tmp = m_timer_object_queue;
     while(tmp->next != NULL)
     {
-        // Is the time to wait for tmp->next to expire smaller than for handle
-        if(TimeIsGreater(handle->when, tmp->next->when)) 
+        // Is the time to wait for tmp->next to expire smaller than for timer_object
+        if(TimeIsGreater(timer_object->when, tmp->next->when)) 
         {
             // keep searching
             tmp = tmp->next;
         }
         else
         {
-            handle->next = tmp->next;
-            tmp->next->prev = handle;
-            tmp->next = handle;
-            handle->prev = tmp;
-            return handle;
+            timer_object->next = tmp->next;
+            tmp->next->prev = timer_object;
+            tmp->next = timer_object;
+            timer_object->prev = tmp;
+            return timer_object;
         }
     }
 
-    tmp->next = handle;
-    handle->next = NULL;
-    handle->prev = tmp;
-    return handle;
+    tmp->next = timer_object;
+    timer_object->next = NULL;
+    timer_object->prev = tmp;
+    return timer_object;
 }
 
 t_u32 TimerHandler::GetNumPendingHandler()
 {
     t_u32 count = 0;
-    TimerHandle* head = TimerHandleQueue;
+    TimerObject* head = m_timer_object_queue;
     while(head)
     {
         count++;
@@ -320,87 +250,37 @@ t_u32 TimerHandler::GetNumPendingHandler()
     return count;
 }
 
-void TimerHandler::RemoveTimerWithClientData(void *Data)
+bool TimerHandler::RemoveTimerHandler(TimerHandle& timer_object)
 {
-    NUX_RETURN_IF_NULL(Data);
-    NUX_RETURN_IF_NULL(TimerHandleQueue);
+    NUX_RETURN_VALUE_IF_NULL(timer_object.m_d, false);
+    NUX_RETURN_VALUE_IF_NULL(m_timer_object_queue, false);
 
-    TimerHandle *handler, *tmp;
+    TimerObject *tmp;
 
-    handler = TimerHandleQueue;
-    if(handler->CallbackData == Data)
+    tmp = m_timer_object_queue;
+    while(tmp)
     {
-        TimerHandleQueue = handler->next;
-        if(TimerHandleQueue)
-            TimerHandleQueue->prev = 0;
-        delete handler;
-    }
-    else
-    {
-        while(handler) 
+        if((tmp == timer_object.m_d) && (tmp->uid == timer_object.m_d->uid))
         {
-            if(handler->CallbackData == Data) 
+            if(!m_IsProceesingTimers)
             {
-                tmp = handler;
-                if(handler->next)
-                    handler->next->prev = handler->prev;
-                if(handler->prev)
-                    handler->prev->next = handler->next;
-                delete tmp;
-                break;
+                if(tmp->next)
+                    tmp->next->prev = tmp->prev;
+                if(tmp->prev)
+                    tmp->prev->next = tmp->next;
+                if((timer_object.m_d == m_timer_object_queue) && (timer_object.m_d->uid == m_timer_object_queue->uid))
+                    m_timer_object_queue = timer_object.m_d->next;
+                NUX_SAFE_DELETE(timer_object.m_d);
             }
-            handler = handler->next;
-        }
-    }
-}
-
-void TimerHandler::RemoveTimerHandler(TimerHandle *handler)
-{
-    NUX_RETURN_IF_NULL(handler);
-    NUX_RETURN_IF_NULL(TimerHandleQueue);
-
-    TimerHandle *tmp;
-
-    tmp = TimerHandleQueue;
-//     if(tmp == handler)
-//     {
-//         if(!m_IsProceesingTimers)
-//         {
-//             TimerHandleQueue = handler->next;
-//             if(TimerHandleQueue)
-//                 TimerHandleQueue->prev = 0;
-//             delete handler;
-//         }
-//         else
-//         {
-//             handler->MarkedForRemoval = true;
-//         }
-//     } 
-//     else 
-    {
-        while(tmp)
-        {
-            if(tmp == handler)
+            else
             {
-                if(!m_IsProceesingTimers)
-                {
-                    if(tmp->next)
-                        tmp->next->prev = tmp->prev;
-                    if(tmp->prev)
-                        tmp->prev->next = tmp->next;
-                    if(handler == TimerHandleQueue)
-                        TimerHandleQueue = handler->next;
-                    delete handler;
-                }
-                else
-                {
-                    handler->MarkedForRemoval = true;
-                }
-                break;
+                timer_object.m_d->MarkedForRemoval = true;
             }
-            tmp = tmp->next;
+            return true;
         }
+        tmp = tmp->next;
     }
+    return false;
 }
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -409,26 +289,26 @@ int TimerHandler::ExecTimerHandler(t_u32 timer_id)
 int TimerHandler::ExecTimerHandler()
 #endif
 {
-    NUX_RETURN_VALUE_IF_NULL(TimerHandleQueue, 0);
+    NUX_RETURN_VALUE_IF_NULL(m_timer_object_queue, 0);
 
-    TimerHandle *handler = TimerHandleQueue;
-    _Time now;
+    TimerObject *timer_object = m_timer_object_queue;
+    TimeStruct now;
 
     int timer_executed = 0;
 
     TimeRightNow(&now);
 
     m_IsProceesingTimers = true;
-    while(handler != NULL)
+    while(timer_object != NULL)
     {
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-        if((TimeIsGreater(now, handler->when) || (handler->glibid == timer_id)) && (handler->MarkedForRemoval == false))
+        if((TimeIsGreater(now, timer_object->when) || (timer_object->glibid == timer_id)) && (timer_object->MarkedForRemoval == false))
 #else
-        if(TimeIsGreater(now, handler->when))
+        if(TimeIsGreater(now, timer_object->when))
 #endif
         { 
-            long elaps = now.sec - handler->when.sec;
-            long uelaps = now.usec - handler->when.usec;
+            long elaps = now.sec - timer_object->when.sec;
+            long uelaps = now.usec - timer_object->when.usec;
             if(uelaps < 0)
             {
                 uelaps += 1000000;
@@ -436,57 +316,57 @@ int TimerHandler::ExecTimerHandler()
                 elaps -= 1;
             }
 
-            handler->ElapsedTime += elaps*1000 + uelaps / 1000; // milliseconds
+            timer_object->ElapsedTime += elaps*1000 + uelaps / 1000; // milliseconds
 
-            if(handler->Type == TIMERTYPE_PERIODIC)
+            if(timer_object->Type == TIMERTYPE_PERIODIC)
             {
-                handler->Param = float(handler->ElapsedTime) / float(handler->Period);
+                timer_object->Param = float(timer_object->ElapsedTime) / float(timer_object->Period);
             }
-            else if(handler->Type == TIMERTYPE_DURATION)
+            else if(timer_object->Type == TIMERTYPE_DURATION)
             {
-                handler->Param = float(handler->ElapsedTime) / float(handler->Duration);
+                timer_object->Param = float(timer_object->ElapsedTime) / float(timer_object->Duration);
             }
-            else if(handler->Type == TIMERTYPE_ITERATION)
+            else if(timer_object->Type == TIMERTYPE_ITERATION)
             {
-                handler->IterationCount += 1;
-                int duration = handler->Period * handler->Iteration;
-                handler->Param = float(handler->ElapsedTime) / float(duration);
+                timer_object->IterationCount += 1;
+                int duration = timer_object->Period * timer_object->Iteration;
+                timer_object->Param = float(timer_object->ElapsedTime) / float(duration);
             }
             else
             {
                 nuxAssertMsg(0, TEXT("[TimerHandler::ExecTimerHandler] Unknown timer type."));
             }
 
-            if(handler->Param > 1.0f)
-                handler->Param = 1.0f;
+            if(timer_object->Param > 1.0f)
+                timer_object->Param = 1.0f;
 
-            handler->MarkedForRemoval = false;
-            if(handler->TimerCallback != 0)
+            timer_object->MarkedForRemoval = false;
+            if(timer_object->TimerCallback != 0)
             {
-                handler->TimerCallback->OnTimerExpired.emit(handler->CallbackData);
+                timer_object->TimerCallback->OnTimerExpired.emit(timer_object->CallbackData);
                 // Reset glibid to 0. glibid is not null, if this element ever happened to be at the head of the queue 
                 // and we set a timer for it.
-                //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Executed Timeout ID: %d"), handler->glibid);
-                handler->glibid = 0;
+                //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Executed Timeout ID: %d"), timer_object->glibid);
+                timer_object->glibid = 0;
             }
 
-            TimerHandle *expired_handler = 0;
-            if(handler->MarkedForRemoval)
+            TimerObject *expired_handler = 0;
+            if(timer_object->MarkedForRemoval)
             {
                 // RemoveTimerHandler was called during the callback execution
-                expired_handler = handler;
+                expired_handler = timer_object;
             }
-            else if(handler->Type == TIMERTYPE_PERIODIC)
+            else if(timer_object->Type == TIMERTYPE_PERIODIC)
             {
-                expired_handler = handler;
+                expired_handler = timer_object;
             }
-            else if((handler->Type == TIMERTYPE_PERIODIC) && (handler->Param >= 1.0f))
+            else if((timer_object->Type == TIMERTYPE_PERIODIC) && (timer_object->Param >= 1.0f))
             {
-                expired_handler = handler;
+                expired_handler = timer_object;
             }
-            else if((handler->Type == TIMERTYPE_ITERATION) && (handler->IterationCount >= handler->Iteration))
+            else if((timer_object->Type == TIMERTYPE_ITERATION) && (timer_object->IterationCount >= timer_object->Iteration))
             {
-                expired_handler = handler;
+                expired_handler = timer_object;
             }
             else
             {
@@ -495,74 +375,74 @@ int TimerHandler::ExecTimerHandler()
 
             if(expired_handler)
             {
-                if(handler->next)
-                    handler->next->prev = handler->prev;
-                if(handler->prev)
-                    handler->prev->next = handler->next;
+                if(timer_object->next)
+                    timer_object->next->prev = timer_object->prev;
+                if(timer_object->prev)
+                    timer_object->prev->next = timer_object->next;
                 
-                if(handler == TimerHandleQueue)
+                if((timer_object == m_timer_object_queue) && (timer_object->uid == m_timer_object_queue->uid))
                 {
-                    // handler is the first element of the queue.
-                    TimerHandleQueue = handler->next;
-                    if(TimerHandleQueue)
+                    // timer_object is the first element of the queue.
+                    m_timer_object_queue = timer_object->next;
+                    if(m_timer_object_queue)
                     {
-                        TimerHandleQueue->prev = 0;
+                        m_timer_object_queue->prev = 0;
                     }
                 }
 
-                handler = handler->next;
+                timer_object = timer_object->next;
 
                 delete expired_handler;
             }
             else
             {
-                handler = handler->next;
+                timer_object = timer_object->next;
             }
             timer_executed++;
         }
         else
         {
-            handler = handler->next;
+            timer_object = timer_object->next;
         }
     }
 
 //     // Look at the head of the queue and set a glib timeout for the first element, if one wasn't set already.
-//     if(TimerHandleQueue && (TimerHandleQueue->glibid == 0))
+//     if(m_timer_object_queue && (m_timer_object_queue->glibid == 0))
 //     {
 //         // How long (in milliseconds) between now and the moment the timeout expires?
-//         t_u32 time_difference = TimeDiff(now, TimerHandleQueue->when);
+//         t_u32 time_difference = TimeDiff(now, m_timer_object_queue->when);
 //         
-//         TimerHandleQueue->glibid = GetGraphicsThread()->AddGLibTimeout(time_difference);
-//         //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Adding Timeout ID: %d"), TimerHandleQueue->glibid);
+//         m_timer_object_queue->glibid = GetGraphicsThread()->AddGLibTimeout(time_difference);
+//         //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Adding Timeout ID: %d"), m_timer_object_queue->glibid);
 //     }
 
     // Purge handles that have been marked for removal
-    handler = TimerHandleQueue;
-    while(handler)
+    timer_object = m_timer_object_queue;
+    while(timer_object)
     {
-        if(handler->MarkedForRemoval)
+        if(timer_object->MarkedForRemoval)
         {
-            TimerHandle *expired_handler = handler;
-            if(handler->next)
-                handler->next->prev = handler->prev;
-            if(handler->prev)
-                handler->prev->next = handler->next;
+            TimerObject *expired_handler = timer_object;
+            if(timer_object->next)
+                timer_object->next->prev = timer_object->prev;
+            if(timer_object->prev)
+                timer_object->prev->next = timer_object->next;
             else
             {
-                // handler is the first element of the queue.
-                TimerHandleQueue = handler->next;
-                if(TimerHandleQueue)
+                // timer_object is the first element of the queue.
+                m_timer_object_queue = timer_object->next;
+                if(m_timer_object_queue)
                 {
-                    TimerHandleQueue->prev = 0;
+                    m_timer_object_queue->prev = 0;
                 }
             }
 
-            handler = handler->next;
+            timer_object = timer_object->next;
             delete expired_handler;
         }
         else
         {
-            handler = handler->next;
+            timer_object = timer_object->next;
         }
     } 
 
@@ -570,13 +450,13 @@ int TimerHandler::ExecTimerHandler()
     return timer_executed;
 }
 
-bool TimerHandler::FindTimerHandle(TimerHandle* handle)
+bool TimerHandler::FindTimerHandle(TimerHandle& timer_object)
 {
-    TimerHandle *tmp = TimerHandleQueue;
+    TimerObject *tmp = m_timer_object_queue;
 
     while(tmp)
     {
-        if(tmp == handle)
+        if(tmp == timer_object.m_d && (tmp->uid == timer_object.m_d->uid))
         {
             return true;
         }
@@ -586,40 +466,40 @@ bool TimerHandler::FindTimerHandle(TimerHandle* handle)
 }
 
 //----------------------------------------------------------------------------
-void TimerHandler::DelayUntilNextTimerExpires(_Time *delay)
+int TimerHandler::DelayUntilNextTimerExpires()
 {
-    _Time now;
+    TimeStruct now;
+    TimeStruct delay;
 
-    if(TimerHandleQueue == NULL) 
+    if(m_timer_object_queue == NULL) 
     {
         // The return value of this function is only valid if there _are_ timers active. 
-        delay->sec = 0;
-        delay->usec = 0;
+        return 0;
     }
     else
     {
         TimeRightNow(&now);
-        if(TimeIsGreater(now, TimerHandleQueue->when)) 
+        if(TimeIsGreater(now, m_timer_object_queue->when)) 
         {
-            delay->sec = 0;
-            delay->usec = 0;
+            return 0;
         } 
         else
         {
-            delay->sec = TimerHandleQueue->when.sec - now.sec;
-            delay->usec = TimerHandleQueue->when.usec - now.usec;
+            delay.sec = m_timer_object_queue->when.sec - now.sec;
+            delay.usec = m_timer_object_queue->when.usec - now.usec;
 
             // make sure that usec cannot be less than -1000000 before applying this code
-            if(delay->usec < 0) 
+            if(delay.usec < 0) 
             {
-                delay->usec += 1000000;
-                delay->sec--;
+                delay.usec += 1000000;
+                delay.sec--;
             }
+            return  (delay.sec*1000000 + delay.usec)/1000; // return delay in milliseconds
         }
     }
 }
 
-/*t_u32 TimeDiff( _Time t1, _Time t2)
+/*t_u32 TimeDiff( TimeStruct t1, TimeStruct t2)
 {
     t_s32 sec;
     t_s32 usec;
@@ -651,7 +531,7 @@ void TimerHandler::DelayUntilNextTimerExpires(_Time *delay)
     return sec*1000 + usec/1000; // time diff is millisecond
 }*/
 
-bool TimeIsGreater( _Time t1, _Time t2)
+bool TimeIsGreater( TimeStruct t1, TimeStruct t2)
 {
     if((t1.sec > t2.sec) || ((t1.sec == t2.sec) && (t1.usec > t2.usec)))
         return true;
@@ -662,7 +542,7 @@ bool TimeIsGreater( _Time t1, _Time t2)
     return false;
 }
 
-void TimeRightNow(_Time *tv) 
+void TimeRightNow(TimeStruct *tv) 
 {
 #if defined(NUX_OS_WINDOWS)
     struct _timeb timebuffer;
@@ -680,7 +560,7 @@ void TimeRightNow(_Time *tv)
 #endif
 }
 
-void Addmillisecs(_Time *tv, unsigned int milliseconds)
+void Addmillisecs(TimeStruct *tv, unsigned int milliseconds)
 {
     tv->usec += milliseconds * 1000;
     tv->sec += tv->usec / 1000000;

@@ -26,7 +26,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLIndexBuffer);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLIndexBuffer);
 
 IOpenGLIndexBuffer::IOpenGLIndexBuffer(t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format)
 :   IOpenGLResource(RTINDEXBUFFER)

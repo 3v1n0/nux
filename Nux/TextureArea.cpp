@@ -26,7 +26,8 @@
 
 NAMESPACE_BEGIN_GUI
 
-TextureArea::TextureArea()
+TextureArea::TextureArea(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     //SetMinMaxSize(50, 50);
 

@@ -30,8 +30,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-ToolButton::ToolButton(const TCHAR* BitmapFilename)
-:   m_ActionItem(0)
+ToolButton::ToolButton(const TCHAR* BitmapFilename, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_ActionItem(0)
 ,   m_Bitmap()
 {
     if(BitmapFilename)
@@ -111,7 +112,7 @@ void ToolButton::SetBitmap(const NTexture2D& Bitmap)
 void ToolButton::EmitClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
     sigClick.emit();
-    m_ActionItem.Trigger();
+    m_ActionItem->Trigger();
 }
 
 void ToolButton::RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -139,7 +140,7 @@ void ToolButton::RecvMouseLeave(int x, int y, unsigned long button_flags, unsign
     NeedRedraw();
 }
 
-void ToolButton::SetAction(const ActionItem& action)
+void ToolButton::SetAction(smptr(ActionItem) action)
 {
     m_ActionItem = action;
 }

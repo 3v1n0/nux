@@ -27,8 +27,8 @@
 #include "NuxCore/Math/Matrix4.h"
 
 #if defined(NUX_OS_WINDOWS)
-    #include "OpenGL/Glew/glew.h"
-    #include "OpenGL/Glew/wglew.h"
+    #include "GL/glew.h"
+    #include "GL/wglew.h"
 #elif defined(NUX_OS_LINUX)
     #define GLEW_MX
     #include "GL/glew.h"

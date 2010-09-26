@@ -34,7 +34,7 @@ class VScrollBar;
 class TextViewWidget: public ActiveInterfaceObject
 {
 public:
-    TextViewWidget();
+    TextViewWidget(NUX_FILE_LINE_PROTO);
     virtual ~TextViewWidget();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

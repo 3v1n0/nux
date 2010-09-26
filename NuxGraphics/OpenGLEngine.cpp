@@ -764,8 +764,8 @@ void GraphicsContext::ClearAreaColorDepthStencil(int x, int y, int width, int he
 
 
 
-    CHECKGL( glEnable(GL_DEPTH_TEST) );
-    CHECKGL( glDepthFunc(GL_ALWAYS) );
+    //CHECKGL( glEnable(GL_DEPTH_TEST) );
+    //CHECKGL( glDepthFunc(GL_ALWAYS) );
 
     glBegin(GL_QUADS);
     {
@@ -777,8 +777,8 @@ void GraphicsContext::ClearAreaColorDepthStencil(int x, int y, int width, int he
     }
     glEnd();
 
-    CHECKGL( glDepthFunc(GL_LESS) );
-    CHECKGL( glDisable(GL_DEPTH_TEST) );
+    //CHECKGL( glDepthFunc(GL_LESS) );
+    //CHECKGL( glDisable(GL_DEPTH_TEST) );
     CHECKGL( glDisable(GL_STENCIL_TEST) );
 }
 
@@ -822,8 +822,8 @@ void GraphicsContext::ClearAreaDepthStencil(int x, int y, int width, int height,
     CHECKGL( glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE) );
 
     CHECKGL( glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE) );
-    CHECKGL( glEnable(GL_DEPTH_TEST) );
-    CHECKGL( glDepthFunc(GL_ALWAYS) );
+    //CHECKGL( glEnable(GL_DEPTH_TEST) );
+    //CHECKGL( glDepthFunc(GL_ALWAYS) );
 
     glBegin(GL_QUADS);
     {
@@ -834,8 +834,8 @@ void GraphicsContext::ClearAreaDepthStencil(int x, int y, int width, int height,
     }
     glEnd();
 
-    CHECKGL( glDepthFunc(GL_LESS) );
-    CHECKGL( glDisable(GL_DEPTH_TEST) );
+    //CHECKGL( glDepthFunc(GL_LESS) );
+    //CHECKGL( glDisable(GL_DEPTH_TEST) );
     CHECKGL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
     CHECKGL( glDisable(GL_STENCIL_TEST) );
 
@@ -859,7 +859,7 @@ TRefGL< NGLResource > GraphicsContext::CacheResource(NResource* Resource)
 void GraphicsContext::UpdateResource(NResource* Resource)
 {
     TRefGL< NGLResource > GLResource = ResourceCache.FindCachedResourceById(Resource->GetResourceIndex()); //(NGLResource*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
-    UBOOL bUpdated = FALSE;
+    bool bUpdated = FALSE;
 
     if(GLResource.IsValid())
     {

@@ -77,7 +77,7 @@ private:
 class Matrix4Editor : public ActiveInterfaceObject
 {
 public:
-    Matrix4Editor(Matrix4 matrix = Matrix4::IDENTITY());
+    Matrix4Editor(Matrix4 matrix = Matrix4::IDENTITY(), NUX_FILE_LINE_PROTO);
     ~Matrix4Editor();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);

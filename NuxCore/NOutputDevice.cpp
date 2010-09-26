@@ -24,11 +24,13 @@
 #include "NParsing.h"
 
 NAMESPACE_BEGIN
+
+#if (defined DEBUG) || (defined _DEBUG) || (defined Debug)
 //! Create a backup copy of a file if it exist. The copy feature a timestamp in the filename.
 /*!
     @param Filename The name of the file to check.
 */
-/*static void CreateBackupCopy(const TCHAR* Filename)
+static void CreateBackupCopy(const TCHAR* Filename)
 {
     if(GFileManager.FileSize(Filename) > 0)
     {
@@ -49,7 +51,7 @@ NAMESPACE_BEGIN
         GFileManager.Copy(BackupFilename.GetTCharPtr(), Filename, true, true, NULL);
     }
 }
-*/
+#endif
 
 NUX_IMPLEMENT_GLOBAL_OBJECT(NNullOutput);
 NUX_IMPLEMENT_GLOBAL_OBJECT(NOutputDeviceRedirector);

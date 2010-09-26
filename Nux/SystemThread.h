@@ -30,7 +30,7 @@ class WindowThread;
 
 class SystemThread: public AbstractThread
 {
-    DECLARE_OBJECT_TYPE(SystemThread, AbstractThread);
+    NUX_DECLARE_OBJECT_TYPE(SystemThread, AbstractThread);
 public:
     SystemThread(AbstractThread* Parent = 0);
     ~SystemThread();

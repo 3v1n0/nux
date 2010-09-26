@@ -191,19 +191,19 @@ bool FontTexture::BMFontParseFNT( std::istream& Stream )
         tc[line_size] = 0;
         if( ParseCommand(&Stream, TEXT("common")) /*Read == "common"*/)
         {
-            ParseUBOOL(tc, TEXT("Bold="),        m_Charset.bold);
-            ParseUBOOL(tc, TEXT("Italic="),      m_Charset.italic);
-            ParseWORD(tc, TEXT("base="),        m_Charset.Base);
-            ParseWORD(tc, TEXT("scaleW="),      m_Charset.Width);
-            ParseWORD(tc, TEXT("scaleH="),      m_Charset.Height);
-            ParseWORD(tc, TEXT("NumPages="),    m_Charset.Pages);
-            ParseWORD(tc, TEXT("FontHeight="),  m_Charset.FontHeight);
-            ParseWORD(tc, TEXT("Ascent="),      m_Charset.Ascent);
-            ParseWORD(tc, TEXT("Descent="),     m_Charset.Descent);
-            ParseINT(tc, TEXT("AvgCharWidth="),     m_Charset.AvgCharWidth);
-            ParseINT(tc, TEXT("MaxCharWidth="),     m_Charset.MaxCharWidth);
-            ParseINT(tc, TEXT("InternalLeading="),     m_Charset.InternalLeading);
-            ParseINT(tc, TEXT("ExternalLeading="),     m_Charset.ExternalLeading);
+            Parse_bool(tc, TEXT("Bold="),        m_Charset.bold);
+            Parse_bool(tc, TEXT("Italic="),      m_Charset.italic);
+            Parse_u16(tc, TEXT("base="),        m_Charset.Base);
+            Parse_u16(tc, TEXT("scaleW="),      m_Charset.Width);
+            Parse_u16(tc, TEXT("scaleH="),      m_Charset.Height);
+            Parse_u16(tc, TEXT("NumPages="),    m_Charset.Pages);
+            Parse_u16(tc, TEXT("FontHeight="),  m_Charset.FontHeight);
+            Parse_u16(tc, TEXT("Ascent="),      m_Charset.Ascent);
+            Parse_u16(tc, TEXT("Descent="),     m_Charset.Descent);
+            Parse_int(tc, TEXT("AvgCharWidth="),     m_Charset.AvgCharWidth);
+            Parse_int(tc, TEXT("MaxCharWidth="),     m_Charset.MaxCharWidth);
+            Parse_int(tc, TEXT("InternalLeading="),     m_Charset.InternalLeading);
+            Parse_int(tc, TEXT("ExternalLeading="),     m_Charset.ExternalLeading);
             // Constant for now... Should be read from the font file
             m_Charset.NumChar = 256;
         }
@@ -212,22 +212,22 @@ bool FontTexture::BMFontParseFNT( std::istream& Stream )
 
             unsigned short CharID = 0;
 
-            ParseWORD(tc, TEXT("id="), CharID);
-            ParseWORD(tc, TEXT("x="), m_Charset.Chars[CharID].x);
-            ParseWORD(tc, TEXT("y="), m_Charset.Chars[CharID].y);
-            ParseWORD(tc, TEXT("width="), m_Charset.Chars[CharID].Width);
-            ParseWORD(tc, TEXT("height="), m_Charset.Chars[CharID].Height);
-            ParseSWORD(tc, TEXT("xoffset="), m_Charset.Chars[CharID].XOffset);
-            ParseSWORD(tc, TEXT("yoffset="), m_Charset.Chars[CharID].YOffset);
-            ParseSWORD(tc, TEXT("xadvance="), m_Charset.Chars[CharID].XAdvance);
-            ParseSWORD(tc, TEXT("abcA="), m_Charset.Chars[CharID].abcA);
-            ParseSWORD(tc, TEXT("abcB="), m_Charset.Chars[CharID].abcB);
-            ParseSWORD(tc, TEXT("abcC="), m_Charset.Chars[CharID].abcC);
-            ParseWORD(tc, TEXT("page="), m_Charset.Chars[CharID].page);
+            Parse_u16(tc, TEXT("id="), CharID);
+            Parse_u16(tc, TEXT("x="), m_Charset.Chars[CharID].x);
+            Parse_u16(tc, TEXT("y="), m_Charset.Chars[CharID].y);
+            Parse_u16(tc, TEXT("width="), m_Charset.Chars[CharID].Width);
+            Parse_u16(tc, TEXT("height="), m_Charset.Chars[CharID].Height);
+            Parse_s16(tc, TEXT("xoffset="), m_Charset.Chars[CharID].XOffset);
+            Parse_s16(tc, TEXT("yoffset="), m_Charset.Chars[CharID].YOffset);
+            Parse_s16(tc, TEXT("xadvance="), m_Charset.Chars[CharID].XAdvance);
+            Parse_s16(tc, TEXT("abcA="), m_Charset.Chars[CharID].abcA);
+            Parse_s16(tc, TEXT("abcB="), m_Charset.Chars[CharID].abcB);
+            Parse_s16(tc, TEXT("abcC="), m_Charset.Chars[CharID].abcC);
+            Parse_u16(tc, TEXT("page="), m_Charset.Chars[CharID].page);
         }
         else if( ParseCommand(&Stream, TEXT("Kerning")) )
         {
-            ParseWORD(tc, "count=", m_Charset.NumKerningPairs);
+            Parse_u16(tc, "count=", m_Charset.NumKerningPairs);
             if(m_Charset.NumKerningPairs > 0)
                 m_Charset.Kerning = new KerningPair[m_Charset.NumKerningPairs];
         }
@@ -235,9 +235,9 @@ bool FontTexture::BMFontParseFNT( std::istream& Stream )
         {
             if(KerningIndex < m_Charset.NumKerningPairs)
             {
-                ParseWORD(tc, "first=", m_Charset.Kerning[KerningIndex].first);
-                ParseWORD(tc, "second=", m_Charset.Kerning[KerningIndex].second);
-                ParseSWORD(tc, "amount=", m_Charset.Kerning[KerningIndex].amount);
+                Parse_u16(tc, "first=", m_Charset.Kerning[KerningIndex].first);
+                Parse_u16(tc, "second=", m_Charset.Kerning[KerningIndex].second);
+                Parse_s16(tc, "amount=", m_Charset.Kerning[KerningIndex].amount);
                 KerningIndex++;
             }
         }

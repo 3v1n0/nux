@@ -49,7 +49,7 @@ class NTexture2D;
 class FloatingWindow: public BaseWindow
 {
 public:
-    FloatingWindow(const TCHAR* WindowName = TEXT(""));
+    FloatingWindow(const TCHAR* WindowName = TEXT(""), NUX_FILE_LINE_PROTO);
     ~FloatingWindow();
 
 

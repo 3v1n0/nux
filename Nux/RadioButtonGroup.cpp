@@ -26,8 +26,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-RadioButtonGroup::RadioButtonGroup()
-:   m_ActiveRadioButtonIndex(0)
+RadioButtonGroup::RadioButtonGroup(NUX_FILE_LINE_DECL)
+:   NuxObject(true, NUX_FILE_LINE_PARAM)
+,   m_ActiveRadioButtonIndex(0)
 {
 
 }

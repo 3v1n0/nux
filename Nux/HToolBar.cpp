@@ -30,9 +30,12 @@
 #include "VSeparator.h"
 #include "EditTextBox.h"
 #include "StaticTextBox.h"
+
 NAMESPACE_BEGIN_GUI
-HToolBar::HToolBar()
-:   m_hlayout(0)
+
+HToolBar::HToolBar(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_hlayout(0)
 { 
     InitializeLayout();
     InitializeWidgets();
@@ -123,7 +126,7 @@ void HToolBar::AddAction(smptr(ActionItem) action)
 //        return;
 
     smptr(ToolButton) tool_button(new ToolButton);
-    tool_button->SetAction(*action);
+    tool_button->SetAction(action);
 
     m_hlayout->AddActiveInterfaceObject(tool_button, 0, eCenter, eFix);
     // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);

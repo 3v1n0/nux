@@ -25,7 +25,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLTexture2D);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLTexture2D);
 IOpenGLTexture2D::IOpenGLTexture2D(unsigned int Width
                                    , unsigned int Height
                                    , unsigned int Levels

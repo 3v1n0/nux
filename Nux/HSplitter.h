@@ -30,9 +30,9 @@ class Layout;
 
 class HSplitter: public ActiveInterfaceObject
 {
-    DECLARE_OBJECT_TYPE(HSplitter, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(HSplitter, ActiveInterfaceObject);
 public:
-    HSplitter();
+    HSplitter(NUX_FILE_LINE_PROTO);
     ~HSplitter();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

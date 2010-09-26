@@ -36,11 +36,12 @@ class MenuBar;
 class HLayout;
 
 
-class MenuBarItem
+class MenuBarItem: public NuxObject
 {
-    DECLARE_ROOT_OBJECT_TYPE(MenuBarItem);
 public:
-    MenuBarItem();
+    NUX_DECLARE_OBJECT_TYPE(MenuBarItem, NuxObject);
+
+    MenuBarItem(NUX_FILE_LINE_PROTO);
     ~MenuBarItem();
 private:
     smptr(CoreArea) area;
@@ -52,10 +53,10 @@ private:
 
 class MenuBar: public ActiveInterfaceObject
 {
-    DECLARE_OBJECT_TYPE(MenuBar, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuBar, ActiveInterfaceObject);
 
 public:
-    MenuBar();
+    MenuBar(NUX_FILE_LINE_PROTO);
     ~MenuBar();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

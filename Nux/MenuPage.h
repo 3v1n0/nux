@@ -34,9 +34,9 @@ class MenuBar;
 
 class MenuItem: public ActiveInterfaceObject
 {
-    DECLARE_OBJECT_TYPE(MenuItem, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuItem, ActiveInterfaceObject);
 public:
-    MenuItem(const TCHAR* label, int UserValue);
+    MenuItem(const TCHAR* label, int UserValue, NUX_FILE_LINE_PROTO);
     ~MenuItem();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -62,9 +62,9 @@ private:
 
 class MenuSeparator: public ActiveInterfaceObject
 {
-    DECLARE_OBJECT_TYPE(MenuSeparator, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuSeparator, ActiveInterfaceObject);
 public:
-    MenuSeparator();
+    MenuSeparator(NUX_FILE_LINE_PROTO);
     ~MenuSeparator();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -78,9 +78,9 @@ private:
 
 class MenuPage: public ActiveInterfaceObject
 {
-    DECLARE_OBJECT_TYPE(MenuPage, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuPage, ActiveInterfaceObject);
 public:
-    MenuPage(const TCHAR* title = TEXT(""));
+    MenuPage(const TCHAR* title = TEXT(""), NUX_FILE_LINE_PROTO);
     ~MenuPage();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) ;
 
@@ -216,7 +216,7 @@ private:
     smptr(MenuPage) m_Parent;
     
     // Set to TRUE if one of the MenuItem processed the mouse event.
-    UBOOL m_MouseEventProcessed;
+    bool m_MouseEventProcessed;
 
     int m_item_width;
     int m_item_height;

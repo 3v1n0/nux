@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_GUI
 class AbstractButton : public ActiveInterfaceObject
 {
 public:
-    AbstractButton(const TCHAR* Caption = TEXT(""));
+    AbstractButton(const TCHAR* Caption = TEXT(""), NUX_FILE_LINE_PROTO);
     ~AbstractButton();
 
     virtual bool IsCheckable() const = 0;

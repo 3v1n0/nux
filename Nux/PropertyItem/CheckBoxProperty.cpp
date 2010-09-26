@@ -51,21 +51,21 @@ long CheckBoxPropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInf
 }
 
 void CheckBoxPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry ItemGeo, const BasePainter& Painter, 
-                                        RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                        RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     Geometry geo2 = m_FirstColumnUsableGeometry;
 
     if(isDirtyItem() || IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
         if(m_ItemGeometryVector.size() >= 2)
         {
             Geometry geo2 = m_ItemGeometryVector[1];
             Geometry prop_geo;
             prop_geo.SetX(ItemGeo.x + ItemGeo.GetWidth());
             prop_geo.SetY(ItemGeo.y);
-            prop_geo.SetWidth(column_vector[1].header.GetBaseWidth());
+            prop_geo.SetWidth(column_vector[1].m_header_area->GetBaseWidth());
             prop_geo.SetHeight(ItemGeo.GetHeight());
 
             geo2.Expand(-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
@@ -81,7 +81,7 @@ void CheckBoxPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* 
     }
 }
 
-void CheckBoxPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void CheckBoxPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
     if(m_ItemGeometryVector.size() >= 2)
     {

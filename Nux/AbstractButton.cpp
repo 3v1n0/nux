@@ -27,8 +27,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-AbstractButton::AbstractButton(const TCHAR* Caption)
-:   m_State(false)
+AbstractButton::AbstractButton(const TCHAR* Caption, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_State(false)
 {
 
 }

@@ -35,7 +35,7 @@ NAMESPACE_BEGIN_OGL
 
 extern PixelFormatInfo GPixelFormats[];
 //NObjectType IOpenGLResource::StaticObjectType(TEXT("IOpenGLResource"), 0);
-IMPLEMENT_ROOT_OBJECT_TYPE(IOpenGLResource);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(IOpenGLResource);
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -32,7 +32,7 @@ NAMESPACE_BEGIN_GUI
 class Histogram : public ActiveInterfaceObject
 {
 public:
-    Histogram();
+    Histogram(NUX_FILE_LINE_PROTO);
     ~Histogram();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);

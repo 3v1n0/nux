@@ -33,7 +33,8 @@
 
 NAMESPACE_BEGIN_GUI
 
-ComboBoxComplex::ComboBoxComplex()
+ComboBoxComplex::ComboBoxComplex(NUX_FILE_LINE_DECL)
+:   AbstractComboBox(NUX_FILE_LINE_PARAM)
 {
     m_ListBox       = smptr(ListControl)(0);
     m_PopupWindow   = smptr(PopUpWindow)(0);

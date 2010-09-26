@@ -335,7 +335,7 @@ private:
     int m_ViewProjectionMatrix1;
 
     TimerFunctor* MouseAutoScrollTimer;
-    TimerHandle* MouseAutoScrollHandle;
+    TimerHandle MouseAutoScrollHandle;
     void MouseAutoScrollHandler(void* v);
 
     // Caret blinking
@@ -344,7 +344,7 @@ private:
     void StopBlinkCursor(bool BlinkState = false);
     void StartBlinkCursor(bool BlinkState = false);
     TimerFunctor* m_BlinkTimerFunctor;
-    TimerHandle* m_BlinkTimerHandler;
+    TimerHandle m_BlinkTimerHandler;
 
 	TextDocument *m_pTextDoc;
 

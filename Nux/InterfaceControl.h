@@ -39,9 +39,9 @@ enum eControlType
 
 class ActiveInterfaceObject: public BaseArea //BaseObject //public sigc::trackable
 {
-    DECLARE_OBJECT_TYPE(ActiveInterfaceObject, BaseArea);
+    NUX_DECLARE_OBJECT_TYPE(ActiveInterfaceObject, BaseArea);
 public:
-    ActiveInterfaceObject();
+    ActiveInterfaceObject(NUX_FILE_LINE_DECL);
     virtual ~ActiveInterfaceObject();
     //virtual RemoveInterfaceControl(ActiveInterfaceObject *ic);
 

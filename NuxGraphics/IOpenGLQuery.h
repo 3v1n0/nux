@@ -28,7 +28,7 @@ NAMESPACE_BEGIN_OGL
 class IOpenGLResource;
 class IOpenGLQuery: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLQuery, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLQuery, IOpenGLResource);
 
 public:
     int GetData(

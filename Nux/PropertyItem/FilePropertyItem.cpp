@@ -56,14 +56,14 @@ long FilePropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, l
 }
 
 void FilePropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
-                                    RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                    RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     if(isDirtyItem() ||
         m_OpenButton->IsRedrawNeeded() ||
         m_TextEntry->IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GFont, m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GFont, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {
@@ -81,7 +81,7 @@ void FilePropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* tabl
     }
 }
 
-void FilePropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void FilePropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
     if(m_ItemGeometryVector.size() >= 2)
     {

@@ -120,9 +120,9 @@ typedef enum
 
 struct RenderStateMap
 {
-    UBOOL   Checked;
-    UINT    State;
-    UINT    iValue;
+    t_u32   Checked;
+    t_u32    State;
+    t_u32    iValue;
     FLOAT   fValue;
 };
 
@@ -142,39 +142,39 @@ public:
     void CheckRenderStatesConformity();
 
 
-    void SetRenderStates(UINT rs, UINT value);
+    void SetRenderStates(t_u32 rs, t_u32 value);
 
     // Render states
     inline void SetAlphaTest(
-        UBOOL EnableAlphaTest_,
-        DWORD AlphaTestFunc_    = GL_ALWAYS,
+        bool EnableAlphaTest_,
+        t_u32 AlphaTestFunc_    = GL_ALWAYS,
         BYTE  AlphaTestRef_     = 0);
 
-    inline void SetBlend(UBOOL AlphaBlendEnable_);
-    inline void SetBlend(UBOOL AlphaBlendEnable_,
-        DWORD SrcBlendFactor_   /*= GL_ONE*/,
-        DWORD DestBlendFactor_  /*= GL_ZERO*/);
+    inline void SetBlend(bool AlphaBlendEnable_);
+    inline void SetBlend(bool AlphaBlendEnable_,
+        t_u32 SrcBlendFactor_   /*= GL_ONE*/,
+        t_u32 DestBlendFactor_  /*= GL_ZERO*/);
 
-    inline void SetSeparateBlend(UBOOL _bEnable,
-        DWORD SrcBlendFactor_   /*= GL_ONE*/,
-        DWORD DestBlendFactor_  /*= GL_ZERO*/,
-        DWORD SrcFactorAlpha_   /*= GL_ONE*/,
-        DWORD DestFactorAlpha_  /*= GL_ZERO*/);
+    inline void SetSeparateBlend(bool _bEnable,
+        t_u32 SrcBlendFactor_   /*= GL_ONE*/,
+        t_u32 DestBlendFactor_  /*= GL_ZERO*/,
+        t_u32 SrcFactorAlpha_   /*= GL_ONE*/,
+        t_u32 DestFactorAlpha_  /*= GL_ZERO*/);
 
     inline void SetBlendOp(
-        DWORD BlendOp       = GL_FUNC_ADD);
+        t_u32 BlendOp       = GL_FUNC_ADD);
 
     inline void SetSeparateBlendOp(
-        DWORD BlendOpRGB_       = GL_FUNC_ADD,
-        DWORD BlendOpAlpha_     = GL_FUNC_ADD);
+        t_u32 BlendOpRGB_       = GL_FUNC_ADD,
+        t_u32 BlendOpAlpha_     = GL_FUNC_ADD);
 
-    inline void SetCullMode(UBOOL EnableCullFace,
-        DWORD FrontFace_        = GL_CCW,
-        DWORD Cullface_         = GL_BACK);
+    inline void SetCullMode(bool EnableCullFace,
+        t_u32 FrontFace_        = GL_CCW,
+        t_u32 Cullface_         = GL_BACK);
 
-    inline void SetDepthTest(UBOOL EnableDepthTest,
-        UBOOL WriteEnable_      = GL_TRUE,
-        DWORD DepthFunc_        = GL_LEQUAL);
+    inline void SetDepthTest(bool EnableDepthTest,
+        t_u32 WriteEnable_      = GL_TRUE,
+        t_u32 DepthFunc_        = GL_LEQUAL);
 
     inline void SetDepthRange(
         FLOAT zNear = 0.0f,
@@ -182,128 +182,128 @@ public:
 
     // If two sided stencil is not activated, the setting is also used for the back face.
     inline void SetStencilFrontFace(
-        UBOOL EnableStencil_,                            // GL_TRUE enable stencil test
-        DWORD Func_             = GL_ALWAYS,
-        DWORD FailOp_           = GL_KEEP,
-        DWORD ZFailOp_          = GL_KEEP,
-        DWORD ZPassOp_          = GL_KEEP, 
-        DWORD Ref_              = 0,
-        DWORD Mask_             = 0xffffffff);
+        bool EnableStencil_,                            // GL_TRUE enable stencil test
+        t_u32 Func_             = GL_ALWAYS,
+        t_u32 FailOp_           = GL_KEEP,
+        t_u32 ZFailOp_          = GL_KEEP,
+        t_u32 ZPassOp_          = GL_KEEP, 
+        t_u32 Ref_              = 0,
+        t_u32 Mask_             = 0xffffffff);
 
     // Set stencil test for the back face.
     inline void SetStencilBackFace(
-        UBOOL EnableTwoSideStencil_,                     // GL_TRUE enable Two Sided Stencil test
-        DWORD Func_             = GL_ALWAYS,
-        DWORD FailOp_           = GL_KEEP,
-        DWORD ZFailOp_          = GL_KEEP,
-        DWORD ZPassOp_          = GL_KEEP, 
-        DWORD Ref_              = 0,
-        DWORD Mask_             = 0xffffffff);
+        bool EnableTwoSideStencil_,                     // GL_TRUE enable Two Sided Stencil test
+        t_u32 Func_             = GL_ALWAYS,
+        t_u32 FailOp_           = GL_KEEP,
+        t_u32 ZFailOp_          = GL_KEEP,
+        t_u32 ZPassOp_          = GL_KEEP, 
+        t_u32 Ref_              = 0,
+        t_u32 Mask_             = 0xffffffff);
         
     inline void SetFrontFaceStencilWriteMask(
-        DWORD WriteMask_        = 0xffffffff);
+        t_u32 WriteMask_        = 0xffffffff);
 
     inline void SetBackFaceStencilWriteMask(
-        DWORD WriteMask_        = 0xffffffff);
+        t_u32 WriteMask_        = 0xffffffff);
 
 
     inline void EnableLineSmooth(
-        UBOOL EnableLineSmooth = TRUE,
-        UINT  LineWidth = 1,
-        UINT HINT = GL_FASTEST);
+        bool EnableLineSmooth = TRUE,
+        t_u32  LineWidth = 1,
+        t_u32 HINT = GL_FASTEST);
 
     inline void EnablePointSmooth(
-        UBOOL EnablePointSmooth = TRUE,
-        UINT  PointSize = 1,
-        UINT HINT = GL_FASTEST);
+        bool EnablePointSmooth = TRUE,
+        t_u32  PointSize = 1,
+        t_u32 HINT = GL_FASTEST);
 
     inline void SetColorMask(
-        UBOOL bRed      = TRUE,
-        UBOOL bGreen    = TRUE,
-        UBOOL bBlue     = TRUE,
-        UBOOL bAlpha    = TRUE);
+        t_u32 bRed      = TRUE,
+        t_u32 bGreen    = TRUE,
+        t_u32 bBlue     = TRUE,
+        t_u32 bAlpha    = TRUE);
 
-    inline void SetDepthMask(UBOOL bDepth = TRUE);
+    inline void SetDepthMask(t_u32 bDepth = TRUE);
 
-    inline void EnableScissor(UBOOL bScissor = FALSE);
-    inline void EnableFog(UBOOL bFog = FALSE);
-    inline void SetPolygonMode(UINT FrontMode = GL_FILL, UINT BackMode = GL_FILL);
+    inline void EnableScissor(t_u32 bScissor = FALSE);
+    inline void EnableFog(t_u32 bFog = FALSE);
+    inline void SetPolygonMode(t_u32 FrontMode = GL_FILL, t_u32 BackMode = GL_FILL);
 
-    inline void SetPolygonOffset(UBOOL bEnable,
+    inline void SetPolygonOffset(t_u32 bEnable,
         FLOAT Factor = 0.0f, FLOAT Units = 0.0f);
 
 private:
 
     eGraphicsBoardVendor m_BoardVendor;
 
-        inline void HW__EnableAlphaTest(UBOOL b);
+        inline void HW__EnableAlphaTest(t_u32 b);
         
         inline void HW__SetAlphaTestFunc(
-            DWORD AlphaTestFunc_,
+            t_u32 AlphaTestFunc_,
             BYTE  AlphaTestRef_);
 
-        inline void HW__EnableAlphaBlend(UBOOL b);
+        inline void HW__EnableAlphaBlend(t_u32 b);
         
-        inline void HW__SetSeparateAlphaBlend_Enable(UBOOL b);
+        inline void HW__SetSeparateAlphaBlend_Enable(t_u32 b);
 
         inline void HW__SetSeparateAlphaBlendFactors(
-            DWORD SrcBlendFactor_,
-            DWORD DestBlendFactor_,
-            DWORD SrcFactorAlpha_,
-            DWORD DestFactorAlpha_);
+            t_u32 SrcBlendFactor_,
+            t_u32 DestBlendFactor_,
+            t_u32 SrcFactorAlpha_,
+            t_u32 DestFactorAlpha_);
 
-        inline void HW__SetAlphaBlendOp(DWORD BlendOpRGB_,
-            DWORD BlendOpAlpha_);
+        inline void HW__SetAlphaBlendOp(t_u32 BlendOpRGB_,
+            t_u32 BlendOpAlpha_);
 
-        inline void HW__EnableCulling(UBOOL b);
+        inline void HW__EnableCulling(t_u32 b);
 
-        inline void HW__SetFrontFace(DWORD FrontFace_);
+        inline void HW__SetFrontFace(t_u32 FrontFace_);
 
-        inline void HW__SetCullFace(DWORD CullFace_);
+        inline void HW__SetCullFace(t_u32 CullFace_);
 
-        inline void HW__SetEnableDepthTest(UBOOL b);
-        inline void HW__SetDepthFunc(DWORD Func);
+        inline void HW__SetEnableDepthTest(t_u32 b);
+        inline void HW__SetDepthFunc(t_u32 Func);
         inline void HW__SetDepthRange(FLOAT zNear, FLOAT zFar);
 
 
-        inline void HW__EnableStencil(UBOOL b);
-        inline void HW__EnableTwoSidedStencil(UBOOL b);
-        inline void HW__SetStencilFrontFaceWriteMask(DWORD WriteMask_);
-        inline void HW__SetStencilBackFaceWriteMask(DWORD WriteMask_);
+        inline void HW__EnableStencil(t_u32 b);
+        inline void HW__EnableTwoSidedStencil(t_u32 b);
+        inline void HW__SetStencilFrontFaceWriteMask(t_u32 WriteMask_);
+        inline void HW__SetStencilBackFaceWriteMask(t_u32 WriteMask_);
         
-        inline void HW__SetFrontFaceStencilFunc(DWORD Func_,
-            DWORD Ref_,
-            DWORD Mask_);
+        inline void HW__SetFrontFaceStencilFunc(t_u32 Func_,
+            t_u32 Ref_,
+            t_u32 Mask_);
 
         inline void HW__SetBackFaceStencilFunc(
-            DWORD Func_,
-            DWORD Ref_,
-            DWORD Mask_);
+            t_u32 Func_,
+            t_u32 Ref_,
+            t_u32 Mask_);
 
         inline void HW__SetFrontFaceStencilOp(
-            DWORD FailOp_,
-            DWORD ZFailOp_,
-            DWORD ZPassOp_);
+            t_u32 FailOp_,
+            t_u32 ZFailOp_,
+            t_u32 ZPassOp_);
 
         inline void HW__SetBackFaceStencilOp(
-            DWORD FailOp_,
-            DWORD ZFailOp_,
-            DWORD ZPassOp_);
+            t_u32 FailOp_,
+            t_u32 ZFailOp_,
+            t_u32 ZPassOp_);
 
-        inline void HW__EnableLineSmooth(UBOOL EnableLineSmooth);
-        inline void HW__SetLineWidth(UINT width, UINT HINT);
+        inline void HW__EnableLineSmooth(t_u32 EnableLineSmooth);
+        inline void HW__SetLineWidth(t_u32 width, t_u32 HINT);
 
-        inline void HW__EnablePointSmooth(UBOOL EnablePointSmooth);
-        inline void HW__SetPointSize(UINT size, UINT HINT);
+        inline void HW__EnablePointSmooth(t_u32 EnablePointSmooth);
+        inline void HW__SetPointSize(t_u32 size, t_u32 HINT);
 
-        inline void HW__SetColorMask(UBOOL bRed, UBOOL bGreen, UBOOL bBlue, UBOOL bAlpha);
-        inline void HW__SetDepthMask(UBOOL bDepth);
+        inline void HW__SetColorMask(t_u32 bRed, t_u32 bGreen, t_u32 bBlue, t_u32 bAlpha);
+        inline void HW__SetDepthMask(t_u32 bDepth);
 
-        inline void HW__EnableScissor(UBOOL bScissor);
-        inline void HW__EnableFog(UBOOL bFog);
+        inline void HW__EnableScissor(t_u32 bScissor);
+        inline void HW__EnableFog(t_u32 bFog);
     
-        inline void HW__SetPolygonMode(UINT FrontMode, UINT BackMode);
-        inline void HW__EnablePolygonOffset(UBOOL EnablePolygonOffset);
+        inline void HW__SetPolygonMode(t_u32 FrontMode, t_u32 BackMode);
+        inline void HW__EnablePolygonOffset(t_u32 EnablePolygonOffset);
         inline void HW__SetPolygonOffset(FLOAT Factor, FLOAT Units);
 
 private:
@@ -324,8 +324,8 @@ private:
 
 
 inline void GLRenderStates::SetAlphaTest(
-    UBOOL EnableAlphaTest_,
-    DWORD AlphaTestFunc_,
+    bool EnableAlphaTest_,
+    t_u32 AlphaTestFunc_,
     BYTE AlphaTestRef_)
 {
     if(EnableAlphaTest_)
@@ -348,7 +348,7 @@ inline void GLRenderStates::SetAlphaTest(
     }
 }
 
-inline void GLRenderStates::SetBlend(UBOOL AlphaBlendEnable_)
+inline void GLRenderStates::SetBlend(bool AlphaBlendEnable_)
 {
     if(AlphaBlendEnable_)
     {
@@ -366,9 +366,9 @@ inline void GLRenderStates::SetBlend(UBOOL AlphaBlendEnable_)
     }
 }
 
-inline void GLRenderStates::SetBlend(UBOOL AlphaBlendEnable_,
-                                     DWORD SrcBlendFactor_,
-                                     DWORD DestBlendFactor_)
+inline void GLRenderStates::SetBlend(bool AlphaBlendEnable_,
+                                     t_u32 SrcBlendFactor_,
+                                     t_u32 DestBlendFactor_)
 {
     SetBlend(AlphaBlendEnable_);
     if((RS_VALUE(m_RenderStateChanges[GFXRS_SRCBLEND])!= SrcBlendFactor_) ||
@@ -382,11 +382,11 @@ inline void GLRenderStates::SetBlend(UBOOL AlphaBlendEnable_,
     }
 }
 
-inline void GLRenderStates::SetSeparateBlend(UBOOL EnableSeparateAlphaBlend,
-                                             DWORD SrcBlendFactor_,
-                                             DWORD DestBlendFactor_,
-                                             DWORD SrcBlendFactorAlpha_,
-                                             DWORD DestBlendFactorAlpha_)
+inline void GLRenderStates::SetSeparateBlend(bool EnableSeparateAlphaBlend,
+                                             t_u32 SrcBlendFactor_,
+                                             t_u32 DestBlendFactor_,
+                                             t_u32 SrcBlendFactorAlpha_,
+                                             t_u32 DestBlendFactorAlpha_)
 {
     SetBlend(EnableSeparateAlphaBlend);
 
@@ -420,7 +420,7 @@ inline void GLRenderStates::SetSeparateBlend(UBOOL EnableSeparateAlphaBlend,
 //     }
 }
 
-inline void GLRenderStates::SetBlendOp(DWORD BlendOp)
+inline void GLRenderStates::SetBlendOp(t_u32 BlendOp)
 {
     if((RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOP])!= BlendOp))
     {
@@ -429,8 +429,8 @@ inline void GLRenderStates::SetBlendOp(DWORD BlendOp)
 }
 
 inline void GLRenderStates::SetSeparateBlendOp(
-    DWORD BlendOpRGB_,
-    DWORD BlendOpAlpha_)
+    t_u32 BlendOpRGB_,
+    t_u32 BlendOpAlpha_)
 {
     if((RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOP])!= BlendOpRGB_) ||
         (RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOPALPHA])!= BlendOpAlpha_))
@@ -439,9 +439,9 @@ inline void GLRenderStates::SetSeparateBlendOp(
     }
 }
 
-inline void GLRenderStates::SetCullMode(UBOOL EnableCullFace,
-                                        DWORD FrontFace_,
-                                        DWORD Cullface_)
+inline void GLRenderStates::SetCullMode(bool EnableCullFace,
+                                        t_u32 FrontFace_,
+                                        t_u32 Cullface_)
 {
     if(EnableCullFace)
     {
@@ -468,9 +468,9 @@ inline void GLRenderStates::SetCullMode(UBOOL EnableCullFace,
     }
 }
 
-inline void GLRenderStates::SetDepthTest(UBOOL EnableDepthTest,
-                                         UBOOL WriteEnable_,
-                                         DWORD DepthFunc_)
+inline void GLRenderStates::SetDepthTest(bool EnableDepthTest,
+                                         t_u32 WriteEnable_,
+                                         t_u32 DepthFunc_)
 {
     if(EnableDepthTest)
     {
@@ -499,21 +499,21 @@ inline void GLRenderStates::SetDepthTest(UBOOL EnableDepthTest,
 
 inline void GLRenderStates::SetDepthRange(FLOAT zNear, FLOAT zFar)
 {
-    if((RS_VALUE(m_RenderStateChanges[GFXRS_ZNEAR]) != static_cast<UINT>(zNear)) ||
-        (RS_VALUE(m_RenderStateChanges[GFXRS_ZFAR]) != static_cast<UINT>(zFar)))
+    if((RS_VALUE(m_RenderStateChanges[GFXRS_ZNEAR]) != static_cast<t_u32>(zNear)) ||
+        (RS_VALUE(m_RenderStateChanges[GFXRS_ZFAR]) != static_cast<t_u32>(zFar)))
     {
         HW__SetDepthRange(zNear, zFar);
     }
 }
 
 inline void GLRenderStates::SetStencilFrontFace(
-    UBOOL EnableStencil_,                            // GL_TRUE enable stencil test
-    DWORD Func_,
-    DWORD FailOp_,
-    DWORD ZFailOp_,
-    DWORD ZPassOp_,
-    DWORD Ref_,
-    DWORD Mask_)
+    bool EnableStencil_,                            // GL_TRUE enable stencil test
+    t_u32 Func_,
+    t_u32 FailOp_,
+    t_u32 ZFailOp_,
+    t_u32 ZPassOp_,
+    t_u32 Ref_,
+    t_u32 Mask_)
 {
     if(EnableStencil_)
     {
@@ -544,13 +544,13 @@ inline void GLRenderStates::SetStencilFrontFace(
 }
 
 inline void GLRenderStates::SetStencilBackFace(
-    UBOOL EnableTwoSideStencil_,                     // GL_TRUE enable Two Sided Stencil test
-    DWORD Func_,
-    DWORD FailOp_,
-    DWORD ZFailOp_,
-    DWORD ZPassOp_,
-    DWORD Ref_,
-    DWORD Mask_)
+    bool EnableTwoSideStencil_,                     // GL_TRUE enable Two Sided Stencil test
+    t_u32 Func_,
+    t_u32 FailOp_,
+    t_u32 ZFailOp_,
+    t_u32 ZPassOp_,
+    t_u32 Ref_,
+    t_u32 Mask_)
 {
     if(EnableTwoSideStencil_)
     {
@@ -586,21 +586,21 @@ inline void GLRenderStates::SetStencilBackFace(
 }
 
 inline void GLRenderStates::SetFrontFaceStencilWriteMask(
-    DWORD WriteMask_)
+    t_u32 WriteMask_)
 {
     HW__SetStencilFrontFaceWriteMask(WriteMask_);
 }
 
 inline void GLRenderStates::SetBackFaceStencilWriteMask(
-    DWORD WriteMask_)
+    t_u32 WriteMask_)
 {
     HW__SetStencilBackFaceWriteMask(WriteMask_);
 }
 
 inline void GLRenderStates::EnableLineSmooth(
-    UBOOL EnableLineSmooth,
-    UINT  LineWidth,
-    UINT Hint)
+    bool EnableLineSmooth,
+    t_u32  LineWidth,
+    t_u32 Hint)
 {
     if(EnableLineSmooth)
     {
@@ -623,9 +623,9 @@ inline void GLRenderStates::EnableLineSmooth(
 }
 
 inline void GLRenderStates::EnablePointSmooth(
-    UBOOL EnablePointSmooth,
-    UINT  PointSize,
-    UINT Hint)
+    bool EnablePointSmooth,
+    t_u32  PointSize,
+    t_u32 Hint)
 {
     if(EnablePointSmooth)
     {
@@ -648,10 +648,10 @@ inline void GLRenderStates::EnablePointSmooth(
 }
 
 inline void GLRenderStates::SetColorMask(
-                         UBOOL bRed,
-                         UBOOL bGreen,
-                         UBOOL bBlue,
-                         UBOOL bAlpha)
+                         t_u32 bRed,
+                         t_u32 bGreen,
+                         t_u32 bBlue,
+                         t_u32 bAlpha)
 {
     if((RS_VALUE(m_RenderStateChanges[GFXRS_COLORWRITEENABLE_R]) != bRed) ||
         (RS_VALUE(m_RenderStateChanges[GFXRS_COLORWRITEENABLE_G]) != bGreen) ||
@@ -663,7 +663,7 @@ inline void GLRenderStates::SetColorMask(
 
 }
 
-inline void GLRenderStates::SetDepthMask(UBOOL bDepth)
+inline void GLRenderStates::SetDepthMask(t_u32 bDepth)
 {
     if((RS_VALUE(m_RenderStateChanges[GFXRS_ZWRITEENABLE]) != bDepth))
     {
@@ -671,7 +671,7 @@ inline void GLRenderStates::SetDepthMask(UBOOL bDepth)
     }
 }
 
-inline void GLRenderStates::EnableScissor(UBOOL bScissor)
+inline void GLRenderStates::EnableScissor(t_u32 bScissor)
 {
     if((RS_VALUE(m_RenderStateChanges[GFXRS_SCISSORTESTENABLE]) != bScissor))
     {
@@ -679,7 +679,7 @@ inline void GLRenderStates::EnableScissor(UBOOL bScissor)
     }
 }
 
-inline void GLRenderStates::EnableFog(UBOOL bFog)
+inline void GLRenderStates::EnableFog(t_u32 bFog)
 {
     if((RS_VALUE(m_RenderStateChanges[GFXRS_FOGENABLE]) != bFog))
     {
@@ -687,7 +687,7 @@ inline void GLRenderStates::EnableFog(UBOOL bFog)
     }
 }
 
-inline void GLRenderStates::SetPolygonMode(UINT FrontMode, UINT BackMode)
+inline void GLRenderStates::SetPolygonMode(t_u32 FrontMode, t_u32 BackMode)
 {
     if((RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_POLYGONMODE]) != FrontMode) ||
         (RS_VALUE(m_RenderStateChanges[GFXRS_BACK_POLYGONMODE]) != BackMode))
@@ -696,7 +696,7 @@ inline void GLRenderStates::SetPolygonMode(UINT FrontMode, UINT BackMode)
     }
 }
 
-inline void GLRenderStates::SetPolygonOffset(UBOOL bEnable,
+inline void GLRenderStates::SetPolygonOffset(t_u32 bEnable,
                              FLOAT Factor, FLOAT Units)
 {
     if(bEnable)
@@ -706,8 +706,8 @@ inline void GLRenderStates::SetPolygonOffset(UBOOL bEnable,
             HW__EnablePolygonOffset(GL_TRUE);
         }
 
-        if((RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETFACTOR]) != static_cast<UINT>(Factor)) ||
-            (RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETUNITS]) != static_cast<UINT>(Units)))
+        if((RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETFACTOR]) != static_cast<t_u32>(Factor)) ||
+            (RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETUNITS]) != static_cast<t_u32>(Units)))
         {
             HW__SetPolygonOffset(Factor, Units);
         }
@@ -720,7 +720,7 @@ inline void GLRenderStates::SetPolygonOffset(UBOOL bEnable,
 
 
 //////////////////////////////////////
-inline void GLRenderStates::HW__EnableAlphaTest(UBOOL b)
+inline void GLRenderStates::HW__EnableAlphaTest(t_u32 b)
 {
     if(b)
     {
@@ -733,7 +733,7 @@ inline void GLRenderStates::HW__EnableAlphaTest(UBOOL b)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTENABLE], b ? GL_TRUE : GL_FALSE);
 }
 
-inline void GLRenderStates::HW__SetAlphaTestFunc(DWORD AlphaTestFunc_,
+inline void GLRenderStates::HW__SetAlphaTestFunc(t_u32 AlphaTestFunc_,
                                                  BYTE  AlphaTestRef_)
 {
     nuxAssertMsg(
@@ -752,7 +752,7 @@ inline void GLRenderStates::HW__SetAlphaTestFunc(DWORD AlphaTestFunc_,
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTREF], AlphaTestRef_);
 }
 
-inline void GLRenderStates::HW__EnableAlphaBlend(UBOOL b)
+inline void GLRenderStates::HW__EnableAlphaBlend(t_u32 b)
 {
     if(b)
     {
@@ -766,10 +766,10 @@ inline void GLRenderStates::HW__EnableAlphaBlend(UBOOL b)
 }
 
 inline void GLRenderStates::HW__SetSeparateAlphaBlendFactors(
-    DWORD SrcBlendFactor_,
-    DWORD DestBlendFactor_,
-    DWORD SrcFactorAlpha_,
-    DWORD DestFactorAlpha_)
+    t_u32 SrcBlendFactor_,
+    t_u32 DestBlendFactor_,
+    t_u32 SrcFactorAlpha_,
+    t_u32 DestFactorAlpha_)
 {
     nuxAssertMsg((SrcBlendFactor_ == GL_ZERO) || (SrcBlendFactor_ == GL_ONE) || (SrcBlendFactor_ == GL_SRC_COLOR) || (SrcBlendFactor_ == GL_ONE_MINUS_SRC_COLOR) ||(SrcBlendFactor_ == GL_DST_COLOR) ||(SrcBlendFactor_ == GL_ONE_MINUS_DST_COLOR) || (SrcBlendFactor_ == GL_SRC_ALPHA) ||(SrcBlendFactor_ == GL_ONE_MINUS_SRC_ALPHA) ||(SrcBlendFactor_ == GL_DST_ALPHA) ||(SrcBlendFactor_ == GL_ONE_MINUS_DST_ALPHA) ||(SrcBlendFactor_ == GL_CONSTANT_COLOR) ||(SrcBlendFactor_ == GL_ONE_MINUS_CONSTANT_COLOR) ||(SrcBlendFactor_ == GL_CONSTANT_ALPHA) ||(SrcBlendFactor_ == GL_ONE_MINUS_CONSTANT_ALPHA) ||(SrcBlendFactor_ == GL_SRC_ALPHA_SATURATE),
         TEXT("Error(HW__SetSeparateAlphaBlendFactors): Invalid Blend RenderState"));
@@ -793,8 +793,8 @@ inline void GLRenderStates::HW__SetSeparateAlphaBlendFactors(
 }
 
 inline void GLRenderStates::HW__SetAlphaBlendOp(
-    DWORD BlendOpRGB_,
-    DWORD BlendOpAlpha_)
+    t_u32 BlendOpRGB_,
+    t_u32 BlendOpAlpha_)
 {
     nuxAssertMsg(
         (BlendOpRGB_ == GL_FUNC_ADD) ||
@@ -817,7 +817,7 @@ inline void GLRenderStates::HW__SetAlphaBlendOp(
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOPALPHA], BlendOpAlpha_);
 }
 
-inline void GLRenderStates::HW__EnableCulling(UBOOL b)
+inline void GLRenderStates::HW__EnableCulling(t_u32 b)
 {
     if(b)
     {
@@ -831,7 +831,7 @@ inline void GLRenderStates::HW__EnableCulling(UBOOL b)
 }
 
 
-inline void GLRenderStates::HW__SetFrontFace(DWORD FrontFace_)
+inline void GLRenderStates::HW__SetFrontFace(t_u32 FrontFace_)
 {
     nuxAssertMsg(
         (FrontFace_ == GL_CW) ||
@@ -842,7 +842,7 @@ inline void GLRenderStates::HW__SetFrontFace(DWORD FrontFace_)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_FRONTFACE], FrontFace_);
 }
 
-inline void GLRenderStates::HW__SetCullFace(DWORD CullFace_)
+inline void GLRenderStates::HW__SetCullFace(t_u32 CullFace_)
 {
     nuxAssertMsg(
         (CullFace_ == GL_FRONT) ||
@@ -854,7 +854,7 @@ inline void GLRenderStates::HW__SetCullFace(DWORD CullFace_)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_CULLFACE], CullFace_);
 }
 
-inline void GLRenderStates::HW__SetEnableDepthTest(UBOOL b)
+inline void GLRenderStates::HW__SetEnableDepthTest(t_u32 b)
 {
     if(b)
     {
@@ -870,11 +870,11 @@ inline void GLRenderStates::HW__SetEnableDepthTest(UBOOL b)
 inline void GLRenderStates::HW__SetDepthRange(FLOAT zNear, FLOAT zFar)
 {
     CHECKGL(glDepthRange(zNear, zFar));
-    SET_RS_VALUE(m_RenderStateChanges[GFXRS_ZNEAR], static_cast<UINT>(Clamp(zNear, 0.0f, 1.0f)));
-    SET_RS_VALUE(m_RenderStateChanges[GFXRS_ZFAR], static_cast<UINT>(Clamp(zFar, 0.0f, 1.0f)));
+    SET_RS_VALUE(m_RenderStateChanges[GFXRS_ZNEAR], static_cast<t_u32>(Clamp(zNear, 0.0f, 1.0f)));
+    SET_RS_VALUE(m_RenderStateChanges[GFXRS_ZFAR], static_cast<t_u32>(Clamp(zFar, 0.0f, 1.0f)));
 }
 
-inline void GLRenderStates::HW__SetDepthFunc(DWORD Func)
+inline void GLRenderStates::HW__SetDepthFunc(t_u32 Func)
 {
     nuxAssertMsg(
         (Func == GL_NEVER) ||
@@ -891,7 +891,7 @@ inline void GLRenderStates::HW__SetDepthFunc(DWORD Func)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_ZFUNC], Func);
 }
 
-inline void GLRenderStates::HW__EnableStencil(UBOOL b)
+inline void GLRenderStates::HW__EnableStencil(t_u32 b)
 {
     if(b)
     {
@@ -905,7 +905,7 @@ inline void GLRenderStates::HW__EnableStencil(UBOOL b)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_STENCILENABLE], b ? GL_TRUE : GL_FALSE);
 }
 
-inline void GLRenderStates::HW__EnableTwoSidedStencil(UBOOL b)
+inline void GLRenderStates::HW__EnableTwoSidedStencil(t_u32 b)
 {
     if(b)
     {
@@ -933,14 +933,14 @@ inline void GLRenderStates::HW__EnableTwoSidedStencil(UBOOL b)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_TWOSIDEDSTENCILENABLE], b ? GL_TRUE : GL_FALSE);
 }
 
-inline void GLRenderStates::HW__SetStencilFrontFaceWriteMask(DWORD WriteMask_)
+inline void GLRenderStates::HW__SetStencilFrontFaceWriteMask(t_u32 WriteMask_)
 {
     CHECKGL(glActiveStencilFaceEXT(GL_FRONT));
     CHECKGL(glStencilMask(WriteMask_));
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_STENCILWRITEMASK], WriteMask_);
 }
 
-inline void GLRenderStates::HW__SetStencilBackFaceWriteMask(DWORD WriteMask_)
+inline void GLRenderStates::HW__SetStencilBackFaceWriteMask(t_u32 WriteMask_)
 {
     CHECKGL(glActiveStencilFaceEXT(GL_BACK));
     CHECKGL(glStencilMask(WriteMask_));
@@ -948,9 +948,9 @@ inline void GLRenderStates::HW__SetStencilBackFaceWriteMask(DWORD WriteMask_)
 }
 
 
-inline void GLRenderStates::HW__SetFrontFaceStencilFunc(DWORD Func_,
-                                                        DWORD Ref_,
-                                                        DWORD Mask_)
+inline void GLRenderStates::HW__SetFrontFaceStencilFunc(t_u32 Func_,
+                                                        t_u32 Ref_,
+                                                        t_u32 Mask_)
 {
     nuxAssertMsg(
         (Func_ == GL_NEVER) ||
@@ -972,9 +972,9 @@ inline void GLRenderStates::HW__SetFrontFaceStencilFunc(DWORD Func_,
 }
 
 inline void GLRenderStates::HW__SetBackFaceStencilFunc(
-    DWORD Func_,
-    DWORD Ref_,
-    DWORD Mask_)
+    t_u32 Func_,
+    t_u32 Ref_,
+    t_u32 Mask_)
 {
     nuxAssertMsg(
         (Func_ == GL_NEVER) ||
@@ -1003,9 +1003,9 @@ inline void GLRenderStates::HW__SetBackFaceStencilFunc(
 }
 
 inline void GLRenderStates::HW__SetFrontFaceStencilOp(
-    DWORD FailOp_,
-    DWORD ZFailOp_,
-    DWORD ZPassOp_)
+    t_u32 FailOp_,
+    t_u32 ZFailOp_,
+    t_u32 ZPassOp_)
 {
     nuxAssertMsg(
         (FailOp_ == GL_KEEP) ||
@@ -1056,9 +1056,9 @@ inline void GLRenderStates::HW__SetFrontFaceStencilOp(
 }
 
 inline void GLRenderStates::HW__SetBackFaceStencilOp(
-    DWORD FailOp_,
-    DWORD ZFailOp_,
-    DWORD ZPassOp_)
+    t_u32 FailOp_,
+    t_u32 ZFailOp_,
+    t_u32 ZPassOp_)
 {
     nuxAssertMsg(
         (FailOp_ == GL_KEEP) ||
@@ -1108,7 +1108,7 @@ inline void GLRenderStates::HW__SetBackFaceStencilOp(
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_BACK_STENCILZPASS], ZPassOp_);
 }
 
-inline void GLRenderStates::HW__EnableLineSmooth(UBOOL EnableLineSmooth)
+inline void GLRenderStates::HW__EnableLineSmooth(t_u32 EnableLineSmooth)
 {
     if(EnableLineSmooth)
     {
@@ -1121,7 +1121,7 @@ inline void GLRenderStates::HW__EnableLineSmooth(UBOOL EnableLineSmooth)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_LINESMOOTHENABLE], EnableLineSmooth ? GL_TRUE : GL_FALSE);
 }
 
-inline void GLRenderStates::HW__SetLineWidth(UINT width,  UINT Hint)
+inline void GLRenderStates::HW__SetLineWidth(t_u32 width,  t_u32 Hint)
 {
     nuxAssertMsg(
         (Hint == GL_NICEST) ||
@@ -1135,7 +1135,7 @@ inline void GLRenderStates::HW__SetLineWidth(UINT width,  UINT Hint)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_LINEHINT], Hint);
 }
 
-inline void GLRenderStates::HW__EnablePointSmooth(UBOOL EnablePointSmooth)
+inline void GLRenderStates::HW__EnablePointSmooth(t_u32 EnablePointSmooth)
 {
     if(EnablePointSmooth)
     {
@@ -1148,7 +1148,7 @@ inline void GLRenderStates::HW__EnablePointSmooth(UBOOL EnablePointSmooth)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_POINTSMOOTHENABLE], EnablePointSmooth ? GL_TRUE : GL_FALSE);
 }
 
-inline void GLRenderStates::HW__SetPointSize(UINT size,  UINT Hint)
+inline void GLRenderStates::HW__SetPointSize(t_u32 size,  t_u32 Hint)
 {
     nuxAssertMsg(
         (Hint == GL_NICEST) ||
@@ -1163,10 +1163,10 @@ inline void GLRenderStates::HW__SetPointSize(UINT size,  UINT Hint)
 }
 
 inline void GLRenderStates::HW__SetColorMask(
-    UBOOL bRed,
-    UBOOL bGreen,
-    UBOOL bBlue,
-    UBOOL bAlpha)
+    t_u32 bRed,
+    t_u32 bGreen,
+    t_u32 bBlue,
+    t_u32 bAlpha)
 {
     CHECKGL(glColorMask(bRed, bGreen, bBlue, bAlpha));
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_COLORWRITEENABLE_R], bRed);
@@ -1175,13 +1175,13 @@ inline void GLRenderStates::HW__SetColorMask(
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_COLORWRITEENABLE_A], bAlpha);
 }
 
-inline void GLRenderStates::HW__SetDepthMask(UBOOL bDepth)
+inline void GLRenderStates::HW__SetDepthMask(t_u32 bDepth)
 {
     CHECKGL(glDepthMask(bDepth));
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_ZWRITEENABLE], bDepth);
 }
 
-inline void GLRenderStates::HW__EnableScissor(UBOOL bScissor)
+inline void GLRenderStates::HW__EnableScissor(t_u32 bScissor)
 {
     if(bScissor)
     {
@@ -1195,7 +1195,7 @@ inline void GLRenderStates::HW__EnableScissor(UBOOL bScissor)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_SCISSORTESTENABLE], bScissor ? GL_TRUE : GL_FALSE);
 }
 
-inline void GLRenderStates::HW__EnableFog(UBOOL bFog)
+inline void GLRenderStates::HW__EnableFog(t_u32 bFog)
 {
     if(bFog)
     {
@@ -1209,7 +1209,7 @@ inline void GLRenderStates::HW__EnableFog(UBOOL bFog)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_FOGENABLE], bFog ? GL_TRUE : GL_FALSE);
 }
 
-inline void GLRenderStates::HW__SetPolygonMode(UINT FrontMode, UINT BackMode)
+inline void GLRenderStates::HW__SetPolygonMode(t_u32 FrontMode, t_u32 BackMode)
 {
     nuxAssertMsg(
         (FrontMode == GL_FILL) ||
@@ -1230,7 +1230,7 @@ inline void GLRenderStates::HW__SetPolygonMode(UINT FrontMode, UINT BackMode)
     SET_RS_VALUE(m_RenderStateChanges[GFXRS_BACK_POLYGONMODE], BackMode);
 }
 
-inline void GLRenderStates::HW__EnablePolygonOffset(UBOOL EnablePolygonOffset)
+inline void GLRenderStates::HW__EnablePolygonOffset(t_u32 EnablePolygonOffset)
 {
     if(EnablePolygonOffset)
     {
@@ -1248,8 +1248,8 @@ inline void GLRenderStates::HW__SetPolygonOffset(FLOAT Factor, FLOAT Units)
 {
     CHECKGL(glPolygonOffset(Factor, Units));
 
-    SET_RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETFACTOR], static_cast<UINT>(Factor));
-    SET_RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETUNITS], static_cast<UINT>(Units));
+    SET_RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETFACTOR], static_cast<t_u32>(Factor));
+    SET_RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETUNITS], static_cast<t_u32>(Units));
 }
 
 #undef SET_RS_VALUE

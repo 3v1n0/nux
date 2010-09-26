@@ -29,9 +29,9 @@
 
 NAMESPACE_BEGIN_GUI
 
-IMPLEMENT_OBJECT_TYPE(MenuItem);
-IMPLEMENT_OBJECT_TYPE(MenuSeparator);
-IMPLEMENT_OBJECT_TYPE(MenuPage);
+NUX_IMPLEMENT_OBJECT_TYPE(MenuItem);
+NUX_IMPLEMENT_OBJECT_TYPE(MenuSeparator);
+NUX_IMPLEMENT_OBJECT_TYPE(MenuPage);
 
 static const int MENU_ICONE_WIDTH = 18;
 static const int MENU_ICON_HEIGHT = 18;
@@ -53,7 +53,8 @@ static const int MENU_ITEM_TEXT_TO_BORDER_MARGIN = 5;
 //
 
 
-MenuItem::MenuItem(const TCHAR* label, int UserValue)
+MenuItem::MenuItem(const TCHAR* label, int UserValue, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_ChildMenu     = smptr(MenuPage)(0); 
     m_ActionItem    = smptr(ActionItem)(new ActionItem(label, UserValue));
@@ -145,7 +146,8 @@ void MenuItem::DrawAsMenuItem(GraphicsContext& GfxContext, const Color& textcolo
         gPainter.PaintTextLineStatic(GfxContext, GetFont(), text_geo, std::string(label), textcolor, eAlignTextLeft);
 }
 
-MenuSeparator::MenuSeparator()
+MenuSeparator::MenuSeparator(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
 
 }
@@ -168,7 +170,8 @@ void MenuSeparator::Draw(GraphicsContext& GfxContext, bool force_draw)
     gPainter.Draw2DLine(GfxContext, base.x, y0+1, base.x + base.GetWidth(), y0+1, Color(0xFFAAAAAA));
 }
 
-MenuPage::MenuPage(const TCHAR* title)
+MenuPage::MenuPage(const TCHAR* title, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_Parent = smptr(MenuPage)(0);
     m_item_width = MENU_ITEM_MIN_WIDTH;
@@ -407,7 +410,7 @@ smptr(ActionItem) MenuPage::AddAction(const TCHAR* label, int UserValue)
 
     if(pMenuItem->GetChildMenu() != 0)
     {
-        pMenuItem->GetChildMenu()->SetParentMenu(smptr(MenuPage)(this, false));
+        pMenuItem->GetChildMenu()->SetParentMenu(smptr(MenuPage)(this, true));
     }
 
     m_numItem = (int)m_MenuItemVector.size();
@@ -549,7 +552,7 @@ smptr(MenuPage) MenuPage::AddMenu(const TCHAR* label)
 
     if(pMenuItem->GetChildMenu() != 0)
     {
-        pMenuItem->GetChildMenu()->SetParentMenu(smptr(MenuPage)(this, false));
+        pMenuItem->GetChildMenu()->SetParentMenu(smptr(MenuPage)(this, true));
     }
 
     m_numItem = (int)m_MenuItemVector.size();
@@ -619,7 +622,7 @@ smptr(ActionItem) MenuPage::AddSubMenu(const TCHAR* label, smptr(MenuPage) menu)
 
     if(pMenuItem->GetChildMenu() != 0)
     {
-        pMenuItem->GetChildMenu()->SetParentMenu(smptr(MenuPage)(this, false));
+        pMenuItem->GetChildMenu()->SetParentMenu(smptr(MenuPage)(this, true));
     }
 
     m_numItem = (int)m_MenuItemVector.size();
@@ -762,7 +765,7 @@ void MenuPage::EmitMouseUp(int x, int y, unsigned long button_flags, unsigned lo
                     m_Action_Triggered = true;
                     // Fire the Action Here
                     ExecuteActionItem(m_MenuItemVector[m_HighlightedItem]);
-                    NotifyActionTriggeredToParent(smptr(MenuPage)(this, false), m_MenuItemVector[m_HighlightedItem]);
+                    NotifyActionTriggeredToParent(smptr(MenuPage)(this, true), m_MenuItemVector[m_HighlightedItem]);
                 }
             }
         }
@@ -809,7 +812,7 @@ bool MenuPage::TestMouseUp(int x, int y, unsigned long button_flags, unsigned lo
                     m_Action_Triggered = true;
                     // Fire the Action Here
                     ExecuteActionItem(m_MenuItemVector[m_HighlightedItem]);
-                    NotifyActionTriggeredToParent(smptr(MenuPage)(this, false), m_MenuItemVector[m_HighlightedItem]);
+                    NotifyActionTriggeredToParent(smptr(MenuPage)(this, true), m_MenuItemVector[m_HighlightedItem]);
                     // But Do not emit the Stop
                     //sigPopupStop.emit();
                 }
@@ -984,7 +987,7 @@ void MenuPage::NotifyMouseDownOutsideMenuCascade(int x, int y)
         // This is the top MenuPage in a menu chain.
         // If this MenuPage has been registered with a MenuBar, then the MenuBar will intercept this signal
         // and terminate the menu chain.
-        sigMouseDownOutsideMenuCascade.emit(smptr(MenuPage)(this, false), x, y);
+        sigMouseDownOutsideMenuCascade.emit(smptr(MenuPage)(this, true), x, y);
         // It is also possible that this MenuPage is not associated to a MenuBar (called directly for a contextual menu)
         if(m_IsTopOfMenuChain == false)
         {

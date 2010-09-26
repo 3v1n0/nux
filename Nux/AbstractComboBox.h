@@ -30,7 +30,7 @@ class HLayout;
 class AbstractComboBox: public ActiveInterfaceObject
 {
 public:
-    AbstractComboBox();
+    AbstractComboBox(NUX_FILE_LINE_PROTO);
     virtual ~AbstractComboBox();
     
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;

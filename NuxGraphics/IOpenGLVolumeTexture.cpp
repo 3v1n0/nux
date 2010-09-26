@@ -25,7 +25,7 @@
 
 NAMESPACE_BEGIN_OGL
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLVolumeTexture);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVolumeTexture);
 
 IOpenGLVolumeTexture::IOpenGLVolumeTexture(
     int Width
