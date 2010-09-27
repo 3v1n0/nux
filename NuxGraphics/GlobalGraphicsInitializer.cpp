@@ -24,7 +24,7 @@
 #include "RunTimeStats.h"
 #include "GlobalGraphicsInitializer.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static NuxGraphicsGlobalSingletonInitializer* GNuxGraphicsGlobalInitializer   = 0;
 
@@ -80,4 +80,4 @@ NuxGraphicsGlobalInitializer::~NuxGraphicsGlobalInitializer()
     }
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

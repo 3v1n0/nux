@@ -25,7 +25,7 @@
 #include "NThread.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #ifdef _WIN64
     #define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement64
@@ -376,5 +376,5 @@ const NString& NThread::GetThreadName() const
     return m_ThreadName;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

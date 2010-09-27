@@ -25,7 +25,7 @@
 
 #include "Vector2.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template<typename T>
 class Line2D
@@ -148,6 +148,6 @@ const Vec2<T> Line2D<T>::GetEndPoint() const
 }
 
 
-NAMESPACE_END;
+} //NUX_NAMESPACE_END;
 
 #endif // LINE2D_H

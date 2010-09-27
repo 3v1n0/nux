@@ -23,7 +23,7 @@
 #include "GLResource.h"
 #include "GLTextureStates.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const struct TextureStateLookUpTable
 {
@@ -340,4 +340,4 @@ void GLTextureStates::SetBorderColor(
 #undef SET_TS_VALUE_FLOAT
 #undef TS_VALUE_FLOAT
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

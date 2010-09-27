@@ -26,7 +26,7 @@
 #include "IntegerValidator.h"
 #include "SpinBox_Logic.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class SpinBox: public SpinBox_Logic
 {
@@ -70,6 +70,6 @@ private:
     int m_Step;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SPINBOX_H

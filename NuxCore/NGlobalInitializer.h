@@ -59,7 +59,7 @@
         //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #endif
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // This class initialize all inalogic singleton (global objects) in order. It also initialize memory allocators.
 // Therefore, do not call new NGlobalSingletonInitializer as it will try to call inalogic memory allocator and fail.
@@ -116,7 +116,7 @@ private:
 static NGlobalInitializer sGlobalInitializer;
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NGLOBALINITIALIZER_H
 

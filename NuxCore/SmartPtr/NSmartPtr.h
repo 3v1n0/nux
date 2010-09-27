@@ -23,7 +23,7 @@
 #ifndef NSMARTPTR_H
 #define NSMARTPTR_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // forward definitions
 
@@ -1365,7 +1365,7 @@ NuxObjectWeakSP<T> checkedCast (const NuxObjectWeakSP<F>& from)
 // }
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NSMARTPTR_H
 

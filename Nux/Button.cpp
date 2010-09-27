@@ -24,7 +24,7 @@
 #include "Button.h"
 #include "HLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Button::Button(const TCHAR* Caption, bool Checkable, bool State)
 :   m_hlayout(0)
@@ -224,4 +224,4 @@ void Button::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned l
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

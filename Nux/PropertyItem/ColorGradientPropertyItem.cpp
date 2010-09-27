@@ -25,7 +25,7 @@
 
 #include "ColorGradientPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ColorGradientPropertyItem::ColorGradientPropertyItem(const TCHAR* name, float Value, float MinValue, float MaxValue)
 :   SectionProperty(name, NODE_TYPE_RANGE)
@@ -115,4 +115,4 @@ int ColorGradientPropertyItem::GetItemBestHeight()
     return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

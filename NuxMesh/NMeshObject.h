@@ -42,7 +42,7 @@
 #include "NWorldObject.h"
 #include "SceneData.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Float3Set
 {
@@ -224,6 +224,6 @@ public:
     nux::Matrix4 m_WorldMatrix;
 
 };
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NMESHOBJECT_H

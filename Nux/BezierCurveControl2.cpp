@@ -25,7 +25,7 @@
 #include "BezierCurveControl2.h"
 #include "NuxCore/Math/Bezier.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const int KNOT_SIZE = 2;
 static const int KNOT_HIT_TEST = 4;
@@ -1023,9 +1023,4 @@ void BezierCurveControl2::ProcessZooming(int x, int y, int dx, int dy, unsigned 
         }
     }
 }
-
-
-
-
-
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

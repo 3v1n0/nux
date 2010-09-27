@@ -25,7 +25,7 @@
 
 #include "FloatingWindow.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Layout;
 
@@ -44,7 +44,7 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // POPUPWINDOW_H
 

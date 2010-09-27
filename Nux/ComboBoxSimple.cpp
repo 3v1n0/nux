@@ -27,7 +27,7 @@
 #include "TableItem.h"
 #include "TableCtrl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ComboBoxSimple::ComboBoxSimple(NUX_FILE_LINE_DECL)
 :   AbstractComboBox(NUX_FILE_LINE_PARAM)
@@ -280,4 +280,4 @@ void ComboBoxSimple::SetSelectionIndex(int index)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

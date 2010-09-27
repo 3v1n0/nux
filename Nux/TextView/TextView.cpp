@@ -33,7 +33,7 @@
 #include "Button.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //
 //	Constructor for TextView class
@@ -888,4 +888,4 @@ void TextView::StartBlinkCursor(bool BlinkState)
     NeedRedraw();
 }
 
- NAMESPACE_END_GUI
+ } //NUX_NAMESPACE_END

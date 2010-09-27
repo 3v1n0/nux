@@ -28,7 +28,7 @@
 /*-----------------------------------------------------------------------------
 File Manager.
 -----------------------------------------------------------------------------*/
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 // File manager.
 class NGNUSerialFileReader : public NSerializer
 {
@@ -124,6 +124,6 @@ public:
 };
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NFILEMANAGERGNU_H

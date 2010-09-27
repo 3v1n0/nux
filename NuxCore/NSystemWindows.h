@@ -234,7 +234,7 @@ typedef double                  DOUBLE;     // 64-bit IEEE double.
 #pragma warning(disable : 4714) // __forceinline function not expanded									
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 void* GetDllHandle( const TCHAR* DllName );
 
@@ -243,7 +243,7 @@ void FreeDllHandle( void* DllHandle );
 void* GetDllExport( void* DllHandle, const TCHAR* ExportName );
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // SYSTEMWIN32_H
 

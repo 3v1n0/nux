@@ -29,7 +29,7 @@
 #include "HLayout.h"
 #include "VLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(VSplitter);
 static const t_s32 VSPLITTERWIDTH = 5;
@@ -618,4 +618,4 @@ void VSplitter::DoneRedraw()
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

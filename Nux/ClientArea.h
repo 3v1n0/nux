@@ -28,7 +28,7 @@
 #include "InterfaceControl.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class ClientArea;
 class TimerFunctor;
@@ -101,6 +101,6 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // CLIENTAREA_H

@@ -29,7 +29,7 @@
 
 #include "GLResource.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 // struct ShaderDefinition
 // {
 //     NString	    Name;
@@ -39,6 +39,6 @@ NAMESPACE_BEGIN_OGL
 // void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...);
 // 
 // void InsertPreProcessorDefinitions(const NString &ShaderSource, NString &RetSource, NString& ShaderPreprocessorDefines = NString(TEXT("")));
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif //GLSHADER_H

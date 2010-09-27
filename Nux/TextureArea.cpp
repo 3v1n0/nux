@@ -24,7 +24,7 @@
 #include "TextureArea.h"
 #include "NuxImage/ImageSurface.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 TextureArea::TextureArea(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
@@ -104,4 +104,4 @@ void TextureArea::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long butt
     sigMouseDrag.emit(x, y);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

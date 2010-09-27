@@ -25,7 +25,7 @@
 #include "HLayout.h"
 #include "ColorGradient.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ColorGradient::ColorGradient(float Value, float MinValue, float MaxValue, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
@@ -411,4 +411,4 @@ void ColorGradient::SetColorFormat(Color::Format cf)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

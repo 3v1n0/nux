@@ -31,7 +31,7 @@
 #include "Painter.h"
 
 #include "NuxGraphics/FontTexture.h"
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // extern TimeCounter gTimeCounter;
 // float gTimeAccum = 0;
@@ -1534,5 +1534,5 @@ TRefGL< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
     return m_BlurTexture;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 

@@ -61,7 +61,7 @@
 //                float if pbuffer is floating point
 //      
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class PBuffer
 {
@@ -157,6 +157,6 @@ class PBuffer
         bool m_bManaged;
 #endif
 };
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // __PBUFFERS_H__

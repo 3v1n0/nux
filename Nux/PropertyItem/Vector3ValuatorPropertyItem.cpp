@@ -26,7 +26,7 @@
 #include "Vector3ValuatorDouble.h"
 #include "Vector3ValuatorPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Vector3ValuatorPropertyItem::Vector3ValuatorPropertyItem(const TCHAR* name, double X, double Y, double Z,
                                                          double Step, double MinValue, double MaxValue)
@@ -143,4 +143,4 @@ bool Vector3ValuatorPropertyItem::FromXML(const TiXmlElement* elementxml)
     SetValue(X, Y, Z);
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

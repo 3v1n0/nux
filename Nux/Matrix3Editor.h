@@ -31,7 +31,7 @@
 #include "Button.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Matrix3Editor;
 class Matrix3Preview;
@@ -164,6 +164,6 @@ private:
     Matrix3x3<float> m_Matrix;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // MATRIX3EDITOR_H

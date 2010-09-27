@@ -32,7 +32,7 @@
 
 #include "Constants.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
     template< class T > inline T Max3( const T A, const T B, const T C )
     {
         return Max ( Max( A, B ), C );
@@ -388,6 +388,6 @@ NAMESPACE_BEGIN
         return c;
     }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // MATHUTILITY_H

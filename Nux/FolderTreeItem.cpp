@@ -24,7 +24,7 @@
 
 #include "FolderTreeItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 FolderTreeItem::FolderTreeItem(const TCHAR* name, const TCHAR* Path, bool Searchable, NodeParameterType type)
 :   TreeItem(name, type)
@@ -90,4 +90,4 @@ void FolderTreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table,
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

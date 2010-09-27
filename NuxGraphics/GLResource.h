@@ -49,10 +49,8 @@
 #include "NuxImage/Bmp.h"
 #include "NuxImage/NPng.h"
 
-#define NAMESPACE_BEGIN_OGL  namespace nux {
-#define NAMESPACE_END_OGL    }
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 class IOpenGLResource;
 
 class NTexture;
@@ -71,7 +69,7 @@ class NGLTextureCube;
 class NGLTextureVolume;
 class NGLAnimatedTexture;
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #include "RunTimeStats.h"
 #include "GlobalGraphicsInitializer.h"
@@ -114,7 +112,7 @@ NAMESPACE_END_OGL
 #define NUX_BUFFER_OFFSET(i) ((BYTE *)NULL + (i))
 
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 enum
 {
@@ -834,7 +832,7 @@ public:
     }
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLRESOURCE_H
 

@@ -22,7 +22,7 @@
 
 #include "NKernel.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #ifdef _WIN32
 //
@@ -125,5 +125,5 @@ DWORD NProcess::GetCurrentThreadID()
 
 #endif
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

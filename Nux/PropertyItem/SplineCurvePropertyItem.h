@@ -23,7 +23,7 @@
 #ifndef SPLINECURVEPROPERTYITEM_H
 #define SPLINECURVEPROPERTYITEM_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class SplineCurvePreview;
 
@@ -42,6 +42,6 @@ public:
     virtual int GetItemBestHeight();
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SPLINECURVEPROPERTYITEM_H

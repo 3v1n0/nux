@@ -25,7 +25,7 @@
 
 #include "NuxCore/NKernel.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 enum
 {
@@ -212,7 +212,7 @@ private:
 // #undef SET_TS_VALUE_FLOAT
 // #undef TS_VALUE_FLOAT
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLTEXTURESTATES_H
 

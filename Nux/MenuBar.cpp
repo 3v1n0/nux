@@ -25,7 +25,7 @@
 #include "HLayout.h"
 #include "MenuBar.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const UINT MENU_MINIMUM_WIDTH = 10;
 static const UINT MENU_MINIMUM_HEIGHT = 16;
@@ -453,4 +453,4 @@ void MenuBar::RecvSigMouseDownOutsideMenuCascade(smptr(MenuPage) menu, int x, in
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

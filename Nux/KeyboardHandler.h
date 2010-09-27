@@ -33,7 +33,7 @@
 #endif
 #include "NuxCore/Color.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class GraphicsContext;
 
@@ -176,6 +176,6 @@ protected:
     static t_u32 sCursorWidth;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // KEYBOARDHANDLER_H

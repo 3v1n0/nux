@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "Math/MathUtility.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
 const t_int NSerializeFileReader::sBufferSize = 1024;
@@ -244,5 +244,5 @@ void NSerializeFileWriter::Flush()
     m_CachePos = 0;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

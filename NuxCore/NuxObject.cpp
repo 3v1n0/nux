@@ -24,7 +24,7 @@
 #include "NuxObject.h"
 #include "SmartPtr/NSmartPtr.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NuxTrackable);
 NUX_IMPLEMENT_OBJECT_TYPE(NuxObject);
@@ -260,5 +260,5 @@ void NuxObject::DecrementWeakCounter()
     m_weak_reference_count->Decrement();
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

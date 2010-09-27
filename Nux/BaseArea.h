@@ -38,7 +38,7 @@
 
 #define FOCUSNONE -1
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ////////////////////////////////////////////////////////////////////////////
 // Base Area
@@ -181,6 +181,6 @@ public:
     sigc::signal<void, int, int, unsigned long, unsigned long> OnCaptureMouseDownAnyWhereElse;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // BASEAREA_H

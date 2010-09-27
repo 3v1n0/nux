@@ -28,11 +28,11 @@
 // When writing to a matrix at row r and colum c use m[r][c].
 // When reading from a matrix (that is the result of matrix op) at row r and colum c use m[c][r].
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 
 #if 0
 
 #endif
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

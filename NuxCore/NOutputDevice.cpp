@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "NParsing.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #if (defined DEBUG) || (defined _DEBUG) || (defined Debug)
 //! Create a backup copy of a file if it exist. The copy feature a timestamp in the filename.
@@ -308,4 +308,4 @@ void NNullOutput::Constructor(){}
 void NNullOutput::Destructor(){}
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

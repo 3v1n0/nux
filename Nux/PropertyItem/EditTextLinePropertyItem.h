@@ -23,7 +23,7 @@
 #ifndef EDITTEXTLINEPROPERTYITEM_H
 #define EDITTEXTLINEPROPERTYITEM_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class EditTextLinePropertyItem: public SectionProperty, public EditTextBox
 {
@@ -44,6 +44,6 @@ private:
     //RangeValue m_range_value;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // EDITTEXTLINEPROPERTYITEM_H

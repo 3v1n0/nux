@@ -27,7 +27,7 @@
 #include "ActionItem.h"
 #include "VLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(MenuItem);
 NUX_IMPLEMENT_OBJECT_TYPE(MenuSeparator);
@@ -1057,4 +1057,4 @@ int MenuPage::GetActionItemIndex(const smptr(ActionItem) action) const
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

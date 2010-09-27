@@ -30,7 +30,7 @@
 template <class T> static const T& Min (const T& a, const T& b){ return (a<b) ? a : b;}
 template <class T> static const T& Max (const T& a, const T& b){ return (a>b) ? a : b;}
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 
 //----------------------------------------------------------------------------
@@ -171,5 +171,5 @@ Rect Rect::GetExpand(t_int32 dx, t_int32 dy) const
     return r;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

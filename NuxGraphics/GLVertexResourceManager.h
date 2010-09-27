@@ -29,7 +29,7 @@
 #include "IOpenGLVertexDeclaration.h"
 #include "NuxMesh/NMeshObject.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NMeshObject;
 
@@ -195,6 +195,6 @@ public:
     TRefGL< NGLVertexDeclaration > m_VertexDeclaration;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLVERTEXRESOURCEMANAGER_H

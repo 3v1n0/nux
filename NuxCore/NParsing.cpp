@@ -29,7 +29,7 @@
 #define CHAR_NEW_LINE   TEXT('\n')
 #define CHAR_QUOTE      TEXT('\"')
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 bool ParseCommand(const TCHAR** Stream, const TCHAR*  Match)
 {
@@ -360,4 +360,4 @@ bool ParseLine(const TCHAR** Stream, NString& LineString)
     return LineString.Size() > 0;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

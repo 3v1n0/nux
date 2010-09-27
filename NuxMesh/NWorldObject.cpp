@@ -24,7 +24,7 @@
 #include "NWorldObject.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NWorldObject::NWorldObject()
 {
@@ -35,4 +35,4 @@ NWorldObject::~NWorldObject()
 {
 
 }
-NAMESPACE_END
+} //NUX_NAMESPACE_END

@@ -26,7 +26,7 @@
 #include "TimerProc.h"
 #include "ScrollBar.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class VLayout;
@@ -144,7 +144,7 @@ protected:
     friend class Layout;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // HSCROLLBAR_H
 

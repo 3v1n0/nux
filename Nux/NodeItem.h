@@ -23,7 +23,7 @@
 #ifndef NODEITEM_H
 #define NODEITEM_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NodeItem
 {
@@ -95,6 +95,6 @@ protected:
     NodeItem *prev_sibling;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // NODEITEM_H

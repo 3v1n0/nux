@@ -25,7 +25,7 @@
 #include "EditTextBox.h"
 #include "Valuator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Valuator::Valuator(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
@@ -174,4 +174,4 @@ void Valuator::RecvValidateEntry(const weaksmptr(EditTextBox) textbox)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

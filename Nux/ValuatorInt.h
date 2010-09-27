@@ -29,7 +29,7 @@
 #include "IntegerValidator.h"
 #include "Valuator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class ValuatorInt: public Valuator
 {
@@ -66,7 +66,7 @@ private:
     int m_Step;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // VALUATORINT_H
 

@@ -25,7 +25,7 @@
 
 #include "ScrollView.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Layout;
 
@@ -69,5 +69,5 @@ private:
     smptr(Layout) m_layout;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // PANEL_H

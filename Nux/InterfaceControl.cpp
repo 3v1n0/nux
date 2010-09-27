@@ -24,7 +24,7 @@
 #include "Layout.h"
 #include "InterfaceControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
 
@@ -378,4 +378,4 @@ bool ActiveInterfaceObject::IsWidgetEnabled()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

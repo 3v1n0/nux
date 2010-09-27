@@ -27,7 +27,7 @@
 #include "IntegerValidator.h"
 #include "DoubleValidator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class EditTextBox;
@@ -363,6 +363,6 @@ protected:
     DoubleValidator m_DoubleRegExp;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COLORGRADIENT_H

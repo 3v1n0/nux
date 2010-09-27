@@ -27,7 +27,7 @@
 #include "NuxCore/NNamespace.h"
 #include "NuxCore/Math/Matrix4.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 class NMeshData;
 class NMeshObject;
 
@@ -54,7 +54,7 @@ private:
     std::vector<NMeshObject*> m_MeshObjectArray;
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // N3DWORLD_H
 

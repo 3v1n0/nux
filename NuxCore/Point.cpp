@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "Point.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Point::Point()
 : x(0), y(0)
@@ -117,4 +117,4 @@ Point& Point::operator -= (const Point& p)
 //----------------------------------------------------------------------------
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

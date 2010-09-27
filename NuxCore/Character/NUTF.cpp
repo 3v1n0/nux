@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "NUTF.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUTF8::NUTF8(const UNICHAR* Source)
 {
@@ -313,4 +313,4 @@ NUTF16::operator const UNICHAR* ()
     return unicode;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

@@ -23,7 +23,7 @@
 #ifndef WINDOWTHREAD_H
 #define WINDOWTHREAD_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class WindowThread;
 class Layout;
@@ -375,6 +375,6 @@ private:
 
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // WINDOWTHREAD_H

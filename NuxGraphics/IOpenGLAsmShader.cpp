@@ -24,7 +24,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLAsmShader.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShader);
 NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmVertexShader);
@@ -330,4 +330,4 @@ void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4fvARB(t_uint32 index, co
     CHECKGL( glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, index, params) );
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

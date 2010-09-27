@@ -27,7 +27,7 @@
 #include "Validator.h"
 #include "StaticTextBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 StaticTextBox::StaticTextBox(const TCHAR* Caption, const Color& textcolor, const NFontPtr& Font, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 ,   m_TextColor(textcolor)
@@ -153,4 +153,4 @@ void StaticTextBox::SetBackground(AbstractPaintLayer* layer)
     m_Background = layer->Clone();
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

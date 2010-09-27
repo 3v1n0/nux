@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "Matrix3Editor.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class StaticTextBox;
@@ -59,7 +59,7 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // MATRIX3PREVIEW_H
 

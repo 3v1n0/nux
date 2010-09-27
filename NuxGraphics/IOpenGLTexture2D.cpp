@@ -23,7 +23,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLTexture2D.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLTexture2D);
 IOpenGLTexture2D::IOpenGLTexture2D(unsigned int Width
@@ -132,4 +132,4 @@ unsigned int IOpenGLTexture2D::EnableGammaCorrection(bool b)
     return OGL_OK;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

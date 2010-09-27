@@ -27,7 +27,7 @@
 //#include "NTextureArchiveManager.h"
 #include "NITX.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 bool TextureArchiveAdd_ver_0_0_1(NSerializer* FileStream,  NBitmapData* TextureData, const TCHAR* InputTextureFile, NUX_OUT t_s64& Offset)
 {   
@@ -610,4 +610,4 @@ NBitmapData* LoadITXFile(const TCHAR* ITXFilename)
     return data;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

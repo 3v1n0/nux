@@ -23,7 +23,7 @@
 #ifndef COLORAREA_H
 #define COLORAREA_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class ColorArea : public ActiveInterfaceObject
 {
@@ -40,6 +40,6 @@ private:
     Color m_Color;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COLORAREA_H

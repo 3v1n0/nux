@@ -24,7 +24,7 @@
 #include "Trigonometry.h"
 #include "Constants.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Assume the spherical coordinate system relatively to a right handed xyz, 
 // with Z pointing up.
@@ -88,5 +88,5 @@ Vector3 CartesianToSphericalZBaseDeg(float x, float y, float z)
     return Vector3(r, theta, phi);
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

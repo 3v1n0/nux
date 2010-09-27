@@ -33,7 +33,7 @@
 #include "Button.h"
 #include "StaticTextBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 TimeGraph::Graph::Graph(Color PrimaryColor, Color SecondaryColor)
 :   m_HasBeenUpdated(false)
@@ -536,4 +536,4 @@ void TimeGraph::ShowNumberStyle()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -25,7 +25,7 @@
 
 #include "ActionItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class ActionItem;
@@ -65,6 +65,6 @@ private:
     
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TOOLBUTTON_H

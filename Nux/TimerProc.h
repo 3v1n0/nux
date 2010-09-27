@@ -23,7 +23,7 @@
 #ifndef TIMERPROC_H
 #define TIMERPROC_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class TimerHandler;
 
@@ -139,7 +139,7 @@ private:
     TimerObject *m_timer_object_queue;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TIMERPROC_H
 

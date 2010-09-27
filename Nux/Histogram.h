@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Histogram : public ActiveInterfaceObject
 {
@@ -53,6 +53,6 @@ private:
     GLSh_DrawFunction *m_DrawFunctionShader;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // HISTOGRAM_H

@@ -26,7 +26,7 @@
 #include "Validator.h"
 //#include <boost/regex.hpp>
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HexRegExpValidator : public Validator
 {
@@ -55,7 +55,7 @@ private:
     int m_Maximum;
   //  boost::regex m_RegExp;
 };
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // HEXREGEXPVALIDATOR_H
 

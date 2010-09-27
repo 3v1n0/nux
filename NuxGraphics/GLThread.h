@@ -23,7 +23,7 @@
 #ifndef GLTHREAD_H
 #define GLTHREAD_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class GLWindowImpl;
 class GLDeviceFactory;
@@ -36,6 +36,6 @@ GraphicsContext* GetThreadGraphicsContext();
 #define NUX_FINDRESOURCELOCATION(a) nux::GetThreadGLWindow()->FindResourceLocation(a, false)()
 #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) nux::GetThreadGLWindow()->FindResourceLocation(a, true)()
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLTHREAD_H

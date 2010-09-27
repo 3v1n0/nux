@@ -39,7 +39,7 @@
 #define weaksmptr(T) nux::NuxObjectWeakSP<T>
 #define smptrnull(T) nux::NuxObjectSP<T> (0)
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class WindowThread;
 class GraphicsContext;
@@ -337,6 +337,6 @@ public:
     friend class VSplitter;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // BASEOBJECT_H
 

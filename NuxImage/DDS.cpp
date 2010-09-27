@@ -36,7 +36,7 @@ static const unsigned long FOURCC_DXT3 = 0x33545844l; //(MAKEFOURCC('D','X','T',
 static const unsigned long FOURCC_DXT5 = 0x35545844l; //(MAKEFOURCC('D','X','T','5'))
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NBitmapData* Load_DDS_File(const TCHAR *filename)
 {
@@ -347,4 +347,4 @@ quick_exit:
     return BitmapData;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

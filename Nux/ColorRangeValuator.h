@@ -23,7 +23,7 @@
 #ifndef COLORRANGEVALUATOR_H
 #define COLORRANGEVALUATOR_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class ColorRangeValuator : public RangeValue
 {
@@ -49,7 +49,7 @@ private:
     Color m_EndColor;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COLORRANGEVALUATOR_H
 

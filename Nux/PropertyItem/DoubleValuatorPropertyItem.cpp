@@ -26,7 +26,7 @@
 #include "ValuatorDouble.h"
 #include "DoubleValuatorPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 DoubleValuatorPropertyItem::DoubleValuatorPropertyItem(const TCHAR* name, float Value, float Step, float MinValue, float MaxValue)
 :   SectionProperty(name, NODE_TYPE_DOUBLEVALUATOR)
@@ -157,4 +157,4 @@ bool DoubleValuatorPropertyItem::FromXML(const TiXmlElement* elementxml)
     SetStep(step);
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

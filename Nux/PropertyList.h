@@ -48,7 +48,7 @@
 #include "RangeValueInteger.h"
 #include "ColorGradient.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern Color GPropertyItemTextColor0;
 extern Color GPropertyItemTextColor1;
@@ -234,6 +234,6 @@ private:
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif //PROPERTYLIST_H

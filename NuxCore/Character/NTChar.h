@@ -23,7 +23,7 @@
 #ifndef NTCHAR_H
 #define NTCHAR_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 inline TCHAR ToUpperCase( TCHAR c )
 {
@@ -73,6 +73,6 @@ inline bool IsSpaceChar( TCHAR c )
 #endif
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NTCHAR_H

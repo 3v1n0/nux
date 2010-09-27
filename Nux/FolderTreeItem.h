@@ -25,7 +25,7 @@
 
 #include "TreeControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class FolderTreeItem: public TreeItem
 {
@@ -63,6 +63,6 @@ private:
     //virtual int GetItemBestHeight();
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // FOLDERTREEITEM_H

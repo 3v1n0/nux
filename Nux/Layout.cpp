@@ -24,7 +24,7 @@
 #include "Layout.h"
 #include "InterfaceControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Layout
@@ -394,4 +394,4 @@ void Layout::Translate(int x, int y)
     m_Matrix.Translate(x, y, 0);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

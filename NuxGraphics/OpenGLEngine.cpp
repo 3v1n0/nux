@@ -38,7 +38,7 @@
 
 #include "OpenGLEngine.h"
  
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ROPConfig ROPConfig::Default;
 ROPConfig::ROPConfig()
@@ -884,4 +884,4 @@ bool GraphicsContext::IsResourceCached(NResource* Resource)
     return ResourceCache.IsCachedResource(Resource);
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

@@ -23,7 +23,7 @@
 #ifndef POINT3D_H
 #define POINT3D_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template<typename T>
 class Point3D
@@ -97,6 +97,6 @@ bool Point3D<T>::operator != (const Point3D<T>& Pt) const
     return !((*this) == Pt);
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // POINT3D_H

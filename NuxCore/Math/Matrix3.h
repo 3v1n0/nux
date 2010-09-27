@@ -26,7 +26,7 @@
 
 #include "Vector3.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template<typename T>
 class Matrix3x3
@@ -659,7 +659,7 @@ Matrix3x3<T> operator * (const T& lhs, const Matrix3x3<T>& rhs)
 
 typedef Matrix3x3<float> Matrix3;
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 
 #endif // MATRIX3_H

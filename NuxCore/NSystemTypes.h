@@ -25,7 +25,7 @@
 
 #include "NNamespace.h" 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 // Note: do not use long: long is 64 bits in LP64 while it remains 32 bits on LLP64
 
 typedef unsigned char           t_u8, t_byte, t_uchar;              // 0 to 255
@@ -311,7 +311,7 @@ const t_f64 MaxDouble     	=  1.7976931348623158E+308;
 #define RADTODEG(d) (d) * 180.0f / 3.1415927f 
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 #endif // SYSTEMTYPES_H
 
 /*

@@ -25,7 +25,7 @@
 
 #include "NObjectType.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NThreadSafeCounter
 {   
@@ -462,7 +462,7 @@ protected:
 //        }
 //    }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NTHREAD_H
 

@@ -28,7 +28,7 @@
 #include "TimerProc.h"
 #include "HLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class TabView : public ActiveInterfaceObject
 {
@@ -135,6 +135,6 @@ private:
     Geometry m_PreviousGeometry;
     bool m_DrawBackgroundOnPreviousGeometry;
 };
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TABVIEW_H

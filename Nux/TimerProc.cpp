@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 typedef struct 
 {
@@ -568,4 +568,4 @@ void Addmillisecs(TimeStruct *tv, unsigned int milliseconds)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

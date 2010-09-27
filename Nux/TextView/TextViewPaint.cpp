@@ -26,7 +26,7 @@
 
 extern "C" COLORREF MixRGB(COLORREF, COLORREF);
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //
 //	Perform a full redraw of the entire window
@@ -805,4 +805,4 @@ void TextView::RenderColorQuadToBuffer(float* VertexBuffer, int VBSize, Rect geo
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

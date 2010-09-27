@@ -25,7 +25,7 @@
 #ifdef _WIN32
 #include <intrin.h>
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_GLOBAL_OBJECT(NCPU);
 
@@ -368,7 +368,7 @@ bool NCPU::IsLittleEndian()
     return m_IsLittleEndian;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // _WIN32
 

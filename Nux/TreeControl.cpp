@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "TreeControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 TreeItem::TreeItem(const TCHAR* name, NodeParameterType type)
 :   TableItem(name, type)
@@ -261,4 +261,4 @@ void TreeControl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, u
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

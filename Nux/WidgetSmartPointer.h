@@ -23,7 +23,7 @@
 #ifndef WIDGETSMARTPOINTER_H
 #define WIDGETSMARTPOINTER_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 // // AtomicInt
 // typedef long AtomicInt;
 // 
@@ -1346,6 +1346,6 @@ inline void swap (WeakWSPtr<T>& t1, WeakWSPtr<T>& t2)
     t1.swap (t2);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // WIDGETSMARTPOINTER_H

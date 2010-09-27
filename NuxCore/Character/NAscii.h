@@ -23,11 +23,11 @@
 #ifndef NTASCII_H
 #define NTASCII_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern t_uchar GAscii[];
 extern t_uchar GAsciiCP437[];
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NTASCII_H

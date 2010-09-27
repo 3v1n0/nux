@@ -26,7 +26,7 @@
 #include "NuxGraphics/OpenGLEngine.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class AnimatedTextureArea : public ActiveInterfaceObject
 {
@@ -58,5 +58,5 @@ private:
     NAnimatedTexture* m_UserTexture;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // ANIMATEDTEXTUREAREA_H

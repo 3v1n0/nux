@@ -24,7 +24,7 @@
 #include "NFileName.h"
 #include "Math/MathUtility.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NString NFileName::GetDrive() const
 {
@@ -217,4 +217,4 @@ void NFileName::ConvertToCleanBackslash()
     }
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

@@ -32,7 +32,7 @@
     #include <windows.h>
 #endif
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #define FAILMSGANDRETURN \
 {\
@@ -696,4 +696,4 @@ void png_read_resource_fn(png_structp png_ptr, png_bytep data, png_size_t leng)
     png_ptr->io_ptr = (void*)src;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

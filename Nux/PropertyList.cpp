@@ -27,7 +27,7 @@
 #include "DoubleValidator.h"
 #include "PropertyList.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const int PROPERTY_BORDER_X = 2;
 const int PROPERTY_BORDER_Y = 2;
@@ -89,4 +89,4 @@ int SectionProperty::GetItemBestHeight()
 }   
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -26,7 +26,7 @@
 #include "RadioButtonGroup.h"
 #include "HLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Color RADIO_TEXT_COLOR = Color(0xFFB0B0B0);
 
@@ -263,4 +263,4 @@ void RadioButton::EmitStateChangedSignal()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -26,7 +26,7 @@
 #include "ComboBoxSimple.h"
 #include "ComboBoxPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ComboBoxPropertyItem::ComboBoxPropertyItem(const TCHAR* name)
 :   SectionProperty(name, NODE_TYPE_COMBOSIMPLE)
@@ -173,4 +173,4 @@ bool ComboBoxPropertyItem::FromXML(const TiXmlElement* elementxml)
 
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

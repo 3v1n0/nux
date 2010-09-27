@@ -30,7 +30,7 @@
 #include "NuxGraphics/OpenGLEngine.h"
 #include "WindowCompositor.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 long g_FocusHandle = -1;
 
@@ -428,4 +428,4 @@ void BaseArea::SetAreaMousePosition(int x, int y)
     m_EventHandler.m_mouse_positiony = y;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

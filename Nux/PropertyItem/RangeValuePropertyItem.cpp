@@ -25,7 +25,7 @@
 
 #include "RangeValuePropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 RangeValuePropertyItem::RangeValuePropertyItem(const TCHAR* name, float Value, float MinValue, float MaxValue)
 :   SectionProperty(name, NODE_TYPE_RANGE)
@@ -160,4 +160,4 @@ bool RangeValuePropertyItem::FromXML(const TiXmlElement* elementxml)
     SetValue(value);
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

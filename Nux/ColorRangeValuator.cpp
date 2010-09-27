@@ -26,7 +26,7 @@
 #include "RangeValue.h"
 #include "ColorRangeValuator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ColorRangeValuator::ColorRangeValuator(float value, Color StartColor, Color EndColor)
 :   RangeValue(value, 0.0f, 1.0f)
@@ -79,4 +79,4 @@ void ColorRangeValuator::Draw(GraphicsContext& GfxContext, bool force_draw)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

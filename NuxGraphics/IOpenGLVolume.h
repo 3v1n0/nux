@@ -23,7 +23,7 @@
 #ifndef IOPENGLVOLUME_H
 #define IOPENGLVOLUME_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLResource;
 class IOpenGLVolumeTexture;
@@ -111,6 +111,6 @@ private:
     friend class TRefGL<IOpenGLVolume>;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // IOPENGLVOLUME_H

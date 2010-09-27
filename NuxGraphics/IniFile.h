@@ -23,7 +23,7 @@
 #ifndef INIFILE_H
 #define INIFILE_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class CIniFile
 {
@@ -73,6 +73,6 @@ private:
 	static bool Save(std::string FileName, std::vector<Record>& content);
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // INIFILE_H

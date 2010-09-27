@@ -23,7 +23,7 @@
 #ifndef COMBOBOXLISTPROPERTYITEM_H
 #define COMBOBOXLISTPROPERTYITEM_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class ComboBoxComplex;
 
@@ -42,6 +42,6 @@ public:
 private:
     //RangeValue m_range_value;
 };
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COMBOBOXLISTPROPERTYITEM_H

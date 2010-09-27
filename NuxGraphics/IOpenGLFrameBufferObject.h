@@ -23,7 +23,7 @@
 #ifndef IOPENGLFRAMEBUFFEROBJECT_H
 #define IOPENGLFRAMEBUFFEROBJECT_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLResource;
 class IOpenGLFrameBufferObject: public IOpenGLResource
@@ -77,6 +77,6 @@ private:
     friend class GLDeviceFactory;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // IOPENGLFRAMEBUFFEROBJECT_H

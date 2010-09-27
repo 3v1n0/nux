@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "Size.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Size::Size(t_int32 w, t_int32 h)
 { 
@@ -115,4 +115,4 @@ void Size::SetHeight(t_int32 h)
 
 //----------------------------------------------------------------------------
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

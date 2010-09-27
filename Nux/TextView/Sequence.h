@@ -23,7 +23,7 @@
 #ifndef SEQUENCE_H
 #define SEQUENCE_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //
 //	Define the underlying string/character type of the sequence.
@@ -438,6 +438,6 @@ public:
 
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SEQUENCE_H

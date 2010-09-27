@@ -35,7 +35,7 @@
 #include "NITX.h"
 #include "NAnimatedTexture.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern PixelFormatInfo GPixelFormats[];
 
@@ -1390,5 +1390,5 @@ bool NAnimatedTextureData::SetSurface(t_s32 Slice, t_s32 MipLevel, const ImageSu
     return true;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

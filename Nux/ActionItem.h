@@ -25,7 +25,7 @@
 
 #include "NuxGraphics/OpenGLEngine.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class MenuBar;
 class MenuPage;
@@ -75,6 +75,6 @@ private:
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // ACTIONITEM_H

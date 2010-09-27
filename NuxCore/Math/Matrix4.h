@@ -27,7 +27,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //  Our matrices are Row major just like C/C++:
 //      m[2][3] represent the element at row 2 and column 3.
@@ -1219,7 +1219,7 @@ Matrix4x4<T> operator * (const T& lhs, const Matrix4x4<T>& rhs)
 
 typedef Matrix4x4<float> Matrix4;
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 
 #endif // MATRIX4_H

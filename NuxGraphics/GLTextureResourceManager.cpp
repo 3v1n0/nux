@@ -26,7 +26,7 @@
 #include "OpenGLEngine.h"
 #include "GLTextureResourceManager.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(NTexture);
 NUX_IMPLEMENT_OBJECT_TYPE(NTexture2D);
@@ -885,4 +885,4 @@ void NGLAnimatedTexture::LoadMipLevel(NTexture* SourceTexture, int MipLevel)
     }
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

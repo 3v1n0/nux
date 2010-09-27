@@ -25,7 +25,7 @@
 
 #include "NString.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NFileName : public NString
 {
@@ -91,6 +91,6 @@ public:
     void ChangeFileExtension(const TCHAR* ext);
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NFILENAME_H

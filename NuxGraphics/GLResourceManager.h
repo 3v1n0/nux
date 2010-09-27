@@ -23,7 +23,7 @@
 #ifndef GLRESOURCEMANAGER_H
 #define GLRESOURCEMANAGER_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // class NTexture;
 // class NTexture2D;
@@ -351,7 +351,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLRESOURCEMANAGER_H
 

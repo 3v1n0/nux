@@ -23,7 +23,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLVolumeTexture.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVolumeTexture);
 
@@ -167,4 +167,4 @@ int IOpenGLVolumeTexture::UnlockBox(int Level)
     return _VolumeArray[Level]->UnlockBox();
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

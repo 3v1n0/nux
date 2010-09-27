@@ -24,7 +24,7 @@
 #include "TableCtrl.h"
 #include "TableItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const int ITEMDEFAULTWIDTH = 140;
 const int ITEMDEFAULTHEIGHT = 20;
@@ -223,4 +223,4 @@ void TableItem::SetPropertyItemWidth()
 
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

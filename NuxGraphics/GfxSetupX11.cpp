@@ -34,7 +34,7 @@
 
 #include "GfxSetupX11.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 unsigned int gVirtualKeycodeState[NUX_MAX_VK];
 
@@ -1677,4 +1677,4 @@ bool GLWindowImpl::IsPauseThreadGraphicsRendering() const
     return m_PauseGraphicsRendering;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

@@ -28,7 +28,7 @@
 #include "Color.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //Red colors
 const Color Color::IndianRed           (0xCD/255.0f, 0x5C/255.0f, 0x5C/255.0f);// 	205     92      92
@@ -1089,4 +1089,4 @@ void RGBtoHLSi(int r, int g, int b, int &h, int &l, int &s)
     s = (int) (satur * 255);
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

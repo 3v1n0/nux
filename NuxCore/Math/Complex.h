@@ -23,7 +23,7 @@
 #ifndef COMPLEX_H
 #define COMPLEX_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Complex
 {
@@ -68,6 +68,6 @@ const Complex operator-(const Complex& lhs, const Complex& rhs);
 const Complex operator*(const Complex& lhs, const Complex& rhs);
 const Complex operator/(const Complex& lhs, const Complex& rhs);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // COMPLEX_H

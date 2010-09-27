@@ -27,7 +27,7 @@
 #include "VSplitter.h"
 #include "HSplitter.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(BaseObject);
 
@@ -455,4 +455,4 @@ void BaseObject::RequestBottomUpLayoutComputation(smptr(BaseObject) bo_initiator
 
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

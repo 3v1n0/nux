@@ -31,7 +31,7 @@
 
 #include "NAnimatedTexture.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // XMLUIFile format:
 //
@@ -241,4 +241,4 @@ NBitmapData* LoadAnimatedTextureFile(const TCHAR* Filename)
 //     return true;
 // }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

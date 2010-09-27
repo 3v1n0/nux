@@ -23,7 +23,7 @@
 #ifndef ABSTRACTBUTTON_H
 #define ABSTRACTBUTTON_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class AbstractButton : public ActiveInterfaceObject
 {
@@ -45,6 +45,6 @@ protected:
 
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // ABSTRACTBUTTON_H

@@ -118,7 +118,7 @@
 //typedef unsigned char   Boolean; /* 0 or 1 */
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 /* Some fundamental constants */
 #define UNI_REPLACEMENT_CHAR (t_UTF32)0x0000FFFD
@@ -169,6 +169,6 @@ bool isLegalUTF8Sequence(const t_UTF8 *source, const t_UTF8 *sourceEnd);
 /* intended to work the same as g_utf8_validate */
 bool tr_utf8_validate( const char * str, int max_len, const char ** end );
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif /* NUNI_H */

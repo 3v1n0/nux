@@ -27,7 +27,7 @@
 #ifndef TEXTVIEW_INCLUDED
 #define TEXTVIEW_INCLUDED
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //
 //	TextView API declared here
@@ -156,6 +156,6 @@ COLORREF RealizeColour(COLORREF col);
 
 #define REALIZE_SYSCOL(col) (RealizeColour(col))
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TEXTVIEW_INCLUDED

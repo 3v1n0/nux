@@ -26,7 +26,7 @@
 #include "HLayout.h"
 #include "VLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 int TabView::TAB_BUTTON_WIDTH   = 12;
 int TabView::TAB_BUTTON_HEIGHT  = 20;
@@ -498,4 +498,4 @@ void TabView::RecvTabLeftTimerExpired(void* v)
     m_TabLeftTimerHandler = GetThreadTimer().AddTimerHandler(10, tableft_callback, this);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

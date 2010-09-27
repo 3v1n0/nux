@@ -28,12 +28,11 @@
 #define LINENO_PAD	 8
 
 #include <commctrl.h>
-#include "NuxCore/NArray.h"
 #include "../TimerProc.h"
 #include "TextViewWidget.h"
 #include "TextDocument.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //
 //	ATTR - text character attribute
@@ -380,7 +379,7 @@ private:
         );
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif
 

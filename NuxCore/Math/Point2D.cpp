@@ -25,6 +25,6 @@
 #include "Point2D.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

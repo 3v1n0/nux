@@ -26,7 +26,7 @@
 #include "ColorPreview.h"
 #include "ColorPreviewPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ColorPreviewPropertyItem::ColorPreviewPropertyItem(const TCHAR* name, float red, float green, float blue, eColorModel colormodel)
 :   SectionProperty(name, NODE_TYPE_COLORPREVIEW)
@@ -171,4 +171,4 @@ bool ColorPreviewPropertyItem::FromXML(const TiXmlElement* elementxml)
     return NodeNetCom::FromXML(elementxml);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

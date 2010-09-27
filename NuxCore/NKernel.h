@@ -156,7 +156,7 @@
 #endif
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Variable arguments.
 t_u32 GetVariableArgs(TCHAR* Dest, t_u32 Size, t_u32 Count, const TCHAR*& Fmt, va_list ArgPtr);
@@ -640,7 +640,7 @@ enum NUX_STATUS
     NUX_DELETEFILE_ERROR,
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 
 #include "NMacros.h"

@@ -26,7 +26,7 @@
 #include "Matrix3Preview.h"
 #include "Matrix3PreviewPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Matrix3PreviewPropertyItem::Matrix3PreviewPropertyItem(const TCHAR* name, Matrix3 matrix)
 :   SectionProperty(name, NODE_TYPE_MATRIX3PREVIEW)
@@ -167,4 +167,4 @@ bool Matrix3PreviewPropertyItem::FromXML(const TiXmlElement* elementxml)
     SetMatrix(matrix);
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

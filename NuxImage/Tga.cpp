@@ -30,7 +30,7 @@
 #include "Tga.h"
 #include "BitmapFormats.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 /* Load up a TGA file 
 * 
 *Only recognizes the following types of Targas: 
@@ -599,6 +599,6 @@ HReport write_tga_file(const TCHAR* file_name, NBitmapData *image)
 }
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 

@@ -28,7 +28,7 @@
 // When writing to a matrix at row r and column c use m[r][c].
 // When reading from a matrix at row r and column c use m[c][r].
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Quaternion::Quaternion()
 {
@@ -530,4 +530,4 @@ Quaternion Slerp(const t_float t, const Quaternion& lhs, const Quaternion& rhs)
     return qt;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

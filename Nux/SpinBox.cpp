@@ -27,7 +27,7 @@
 #include "IntegerValidator.h"
 #include "SpinBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const Color SPINBOX_BUTTON_COLOR = Color(0xFF4D4D4D);
 const Color SPINBOX_BUTTON_MOUSEOVER_COLOR = Color(0xFF222222);
@@ -255,4 +255,4 @@ void SpinBox::ImplementValidateEntry()
 //     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "NAscii.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Windows-1252 code page
 t_uchar GAscii[] = {
@@ -46,4 +46,4 @@ t_uchar GAscii[] = {
 };
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

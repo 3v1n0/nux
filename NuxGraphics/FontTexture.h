@@ -26,7 +26,7 @@
 #include "GLDeviceObjects.h"
 #include <boost/shared_ptr.hpp>
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class GraphicsContext;
 class NRectangleTexture;
@@ -282,6 +282,6 @@ private:
     TRefGL<IOpenGLAsmShaderProgram> m_AsmShaderProg;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif //FONT_H

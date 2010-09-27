@@ -25,7 +25,7 @@
 #include "VLayout.h"
 #include "HLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const t_s32 VERROR = 0;
 NUX_IMPLEMENT_OBJECT_TYPE(VLayout);
@@ -817,4 +817,4 @@ void VLayout::ComputePosition2(float offsetX, float offsetY)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

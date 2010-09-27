@@ -25,7 +25,7 @@
 
 #include "../InterfaceControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HScrollBar;
 class VScrollBar;
@@ -189,6 +189,6 @@ public:
     ///////////////////////////////////////////////////////
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TEXTVIEWWIDGET_H

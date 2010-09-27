@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "NuxGlobalInitializer.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static NuxGlobalSingletonInitializer* GNuxGlobalInitializer   = 0;
 
@@ -79,4 +79,4 @@ NuxGlobalInitializer::~NuxGlobalInitializer()
     }
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

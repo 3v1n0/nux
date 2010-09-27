@@ -23,7 +23,7 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #define DEBUG_LAYOUT 0
 #define DEBUG_LAYOUT_COMPUTATION 0
@@ -309,6 +309,6 @@ protected:
     smptr(BaseObject) Find(long handle);
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // LAYOUT_H

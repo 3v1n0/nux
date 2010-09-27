@@ -26,7 +26,7 @@
 #include "IOpenGLRectangleTexture.h"
 #include "RenderingPipe.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 struct TexWrapMapping
 {
@@ -264,4 +264,4 @@ void QRP_Compute_Texture_Coord(t_int32 quad_width, t_int32 quad_height, TRefGL<I
     tex->SetFiltering(TexFilterGLMapping(texxform.min_filter), TexFilterGLMapping(texxform.mag_filter));
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

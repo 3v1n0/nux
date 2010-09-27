@@ -28,7 +28,7 @@
 #include "MenuPage.h"
 #include "Painter.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class PopupBox;
 class BaseWindow;
@@ -107,6 +107,6 @@ private:
     smptr(BaseWindow) m_MenuBarWindow;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // MENUBAR_H

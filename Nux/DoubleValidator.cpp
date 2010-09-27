@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "DoubleValidator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 DoubleValidator::DoubleValidator(double Minimum, double Maximum)
 :   m_Minimum(Minimum)
@@ -144,4 +144,4 @@ double DoubleValidator::ToDouble(const TCHAR* str)
         return 0.0;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

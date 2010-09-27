@@ -28,7 +28,7 @@
 #include "WindowCompositor.h"
 #include "Dialog.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Dialog::Dialog(const TCHAR* WindowName /*  = TEXT("") */)
 :   FloatingWindow(WindowName)
@@ -65,4 +65,4 @@ void Dialog::Start(bool StartModal)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

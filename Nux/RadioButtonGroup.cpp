@@ -24,7 +24,7 @@
 #include "RadioButton.h"
 #include "RadioButtonGroup.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 RadioButtonGroup::RadioButtonGroup(NUX_FILE_LINE_DECL)
 :   NuxObject(true, NUX_FILE_LINE_PARAM)
@@ -162,4 +162,4 @@ void RadioButtonGroup::SetActiveButton(smptr(RadioButton) radio, bool EmitSignal
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -25,7 +25,7 @@
 
 #include "Constants.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 t_int Factorial(t_int n);
 t_double BinomialCoefficient(t_int n, t_int k);
@@ -59,7 +59,7 @@ t_double Log2(t_double d);
 t_double Floor(t_double d);
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // MATHFUNCTIONS_H
 

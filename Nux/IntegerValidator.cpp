@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "IntegerValidator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 IntegerValidator::IntegerValidator(int Minimum, int Maximum)
 :   m_Minimum(Minimum)
@@ -139,4 +139,4 @@ int IntegerValidator::ToInteger(const TCHAR* str)
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

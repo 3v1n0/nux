@@ -22,7 +22,7 @@
 
 #include "NKernel.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
 const t_int  NGNUSerialFileReader::sBufferSize = 1024;
@@ -632,5 +632,5 @@ bool NFileManagerGNU::DeleteDirectory(const TCHAR* Path, bool DeleteContentFirst
     return true;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

@@ -25,7 +25,7 @@
 #include "AbstractButton.h"
 #include "HLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 AbstractButton::AbstractButton(const TCHAR* Caption, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
@@ -40,4 +40,4 @@ AbstractButton::~AbstractButton()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

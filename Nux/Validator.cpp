@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "Validator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Validator::Validator()
 {
@@ -36,4 +36,4 @@ Validator::~Validator()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

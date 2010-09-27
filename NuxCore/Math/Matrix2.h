@@ -26,7 +26,7 @@
 
 #include "Vector2.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template <typename T>
 class Matrix2x2
@@ -536,7 +536,7 @@ Matrix2x2<T> operator * (const T& lhs, const Matrix2x2<T>& rhs)
     return oM;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 
 #endif // MATRIX2_H

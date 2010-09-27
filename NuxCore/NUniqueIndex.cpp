@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "NUniqueIndex.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_GLOBAL_OBJECT(NUniqueIndex);
 
@@ -44,5 +44,5 @@ t_u64 NUniqueIndex::GetUniqueIndex()
     return m_UniqueIndex.GetValue();
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

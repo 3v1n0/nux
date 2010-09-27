@@ -26,7 +26,7 @@
 /*-----------------------------------------------------------------------------
 File Manager.
 -----------------------------------------------------------------------------*/
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 // File manager.
 class NSerializeFileReader : public NSerializer
 {
@@ -314,6 +314,6 @@ public:
     }
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NFILEMANAGERSTANDARDANSI_H

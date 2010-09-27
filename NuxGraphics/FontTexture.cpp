@@ -31,7 +31,7 @@
 
 #include "FontTexture.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern bool USE_ARB_SHADERS;
 
@@ -909,4 +909,4 @@ int FontRenderer::RenderTextToBuffer(float* VertexBuffer, int VBSize,
     return NumCharToDraw;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

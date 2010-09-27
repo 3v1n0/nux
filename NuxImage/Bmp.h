@@ -26,7 +26,7 @@
 #include "NuxCore/Error.h"
 #include "ImageSurface.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const unsigned int BITMAPFILEHEADER_SIZE      = 14;
 const unsigned int BITMAPINFOHEADER_SIZE      = 40;
@@ -71,7 +71,7 @@ HReport write_bmp_file(const TCHAR* file_name, NBitmapData *image);
 
 ImageInfo get_bmp_info(const std::string& file_name);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // BMP_H
 

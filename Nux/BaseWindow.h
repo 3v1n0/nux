@@ -36,7 +36,7 @@
 #include "StaticTextBox.h"
 #include "PaintLayer.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class PopUpWindow;
@@ -155,6 +155,6 @@ private:
     friend class WindowCompositor;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // BASEWINDOW_H

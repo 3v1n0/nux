@@ -26,7 +26,7 @@
 #include "CheckBox.h"
 #include "CheckBoxProperty.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 CheckBoxPropertyItem::CheckBoxPropertyItem(const TCHAR* name, int On)
 :   SectionProperty(name, NODE_TYPE_CHECKBOX)
@@ -126,4 +126,4 @@ bool CheckBoxPropertyItem::FromXML(const TiXmlElement* elementxml)
     return false;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

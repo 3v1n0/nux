@@ -23,7 +23,7 @@
 #ifndef NSERIALIZER_H
 #define NSERIALIZER_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NSerializer
 {
@@ -156,7 +156,7 @@ NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_u64&       v){Sr.Seriali
 NUX_INLINE NSerializer& operator << (NSerializer& Sr, t_s64&       v){Sr.Serialize(v); return Sr;}
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NSERIALIZER_H
 

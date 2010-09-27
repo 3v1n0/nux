@@ -26,7 +26,7 @@
 #include "EditTextLinePropertyItem.h"
 #include "Vector4Property.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Vector4PropertyItem::Vector4PropertyItem(const TCHAR* name, 
                                          double X,
@@ -228,4 +228,4 @@ bool Vector4PropertyItem::FromXML(const TiXmlElement* elementxml)
 
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

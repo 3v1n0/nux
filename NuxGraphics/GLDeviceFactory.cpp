@@ -31,7 +31,7 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "OpenGLEngine.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #define MANAGEDEVICERESOURCE    0
 
@@ -1377,4 +1377,4 @@ TRefGL<IOpenGLFrameBufferObject> GLDeviceFactory::GetCurrentFrameBufferObject()
     return _CurrentFrameBufferObject;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

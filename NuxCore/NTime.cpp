@@ -30,7 +30,7 @@
     #include <sysutil/sysutil_sysparam.h>
 #endif
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NTimeStamp::NTimeStamp()
 {
@@ -300,4 +300,4 @@ void SleepForMilliseconds(unsigned int Milliseconds)
 #endif
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

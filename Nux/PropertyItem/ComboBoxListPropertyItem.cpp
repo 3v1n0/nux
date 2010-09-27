@@ -26,7 +26,7 @@
 #include "ComboBoxComplex.h"
 #include "ComboBoxListPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ComboBoxListPropertyItem::ComboBoxListPropertyItem(const TCHAR* name)
 :   SectionProperty(name, NODE_TYPE_COMBOCOMPLEX)
@@ -96,4 +96,4 @@ int ComboBoxListPropertyItem::GetItemBestHeight()
     Size sz = GetMinimumSize();
     return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

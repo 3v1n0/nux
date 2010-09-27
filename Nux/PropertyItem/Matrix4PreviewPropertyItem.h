@@ -23,7 +23,7 @@
 #ifndef MATRIX4PREVIEWPROPERTYITEM_H
 #define MATRIX4PREVIEWPROPERTYITEM_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Matrix4Preview;
 
@@ -42,6 +42,6 @@ public:
     virtual int GetItemBestHeight();
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // MATRIX4PREVIEWPROPERTYITEM_H

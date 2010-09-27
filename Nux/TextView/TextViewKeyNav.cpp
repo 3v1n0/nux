@@ -24,7 +24,7 @@
 #include "TextView.h"
 #include "TextViewInternal.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //
 //	Move caret up specified number of lines
@@ -71,5 +71,5 @@ void TextView::MoveLineUp(int numLines)
 // }
 
 
- NAMESPACE_END_GUI
+ } //NUX_NAMESPACE_END
 

@@ -24,7 +24,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLGLSLShader.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLShader);
 NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVertexShader);
@@ -1282,4 +1282,4 @@ BOOL IOpenGLShaderProgram::SetSampler(char* name, int texture_unit)
     return true;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

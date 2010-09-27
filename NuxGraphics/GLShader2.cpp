@@ -25,7 +25,7 @@
 #include "GLShader.h"
 #include "GLDeviceObjects.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 // //----------------------------------------------------------------------------- 
 // bool IOpenGLShaderProgram::SetUniform1f(char* varname, GLfloat v0)
 // {
@@ -576,4 +576,4 @@ NAMESPACE_BEGIN_OGL
 //     return true;
 // }
 // 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

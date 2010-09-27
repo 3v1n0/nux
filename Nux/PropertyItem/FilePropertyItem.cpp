@@ -25,7 +25,7 @@
 
 #include "FilePropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 FilePropertyItem::FilePropertyItem(const TCHAR* name)
 :   SectionProperty(name)
@@ -99,4 +99,4 @@ int FilePropertyItem::GetItemBestHeight()
     return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "NWin32MessageBox.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 //
 // Get system error.
 //
@@ -152,5 +152,5 @@ VARARG_BODY(unsigned int, inlWin32MessageBox, const TCHAR*, VARARG_EXTRA(HWND Ow
     return 0;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

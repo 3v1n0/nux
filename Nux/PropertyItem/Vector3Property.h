@@ -23,7 +23,7 @@
 #ifndef VECTOR3PROPERTY_H
 #define VECTOR3PROPERTY_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class EditTextLinePropertyItem;
 
@@ -62,6 +62,6 @@ private:
     EditTextLinePropertyItem* m_Z;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // VECTOR3PROPERTY_H

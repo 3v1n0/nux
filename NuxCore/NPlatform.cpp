@@ -26,7 +26,7 @@
     #include <pwd.h>
 #endif
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_GLOBAL_OBJECT(NGlobalData);
 
@@ -206,4 +206,4 @@ NString GetLogDirectory()
     return TEXT("Logs");
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

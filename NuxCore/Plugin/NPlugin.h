@@ -27,7 +27,7 @@
 #define NUX_SET_PLUGIN_TYPE(x) extern "C"{__declspec(dllexport) TCHAR * GetPluginType(){ return x;}}
 #define NUX_SET_PLUGIN_NAME(x) extern "C"{__declspec(dllexport) TCHAR * GetPluginName(){ return x;}}
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NPluginInterface;
 
@@ -65,6 +65,6 @@ private:
     PLUGIN_FACTORYFUNC funcHandle;		
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NPLUGIN_H

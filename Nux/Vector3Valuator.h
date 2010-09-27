@@ -23,7 +23,7 @@
 #ifndef VECTOR3VALUATOR_H
 #define VECTOR3VALUATOR_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class EditTextBox;
 
@@ -88,7 +88,7 @@ protected:
 
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // VECTOR3VALUATOR_H
 

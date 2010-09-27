@@ -40,7 +40,7 @@
 #include "Validator.h"
 #include "StaticTextBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class PopUpWindow;
@@ -140,5 +140,5 @@ private:
     friend class WindowCompositor;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // FLOATINGWINDOW_H

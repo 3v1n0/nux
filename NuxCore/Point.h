@@ -23,7 +23,7 @@
 #ifndef POINT_H
 #define POINT_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Point
 {
@@ -48,7 +48,7 @@ public:
     t_int32 y;
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 #endif // POINT_H
 
 

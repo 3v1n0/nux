@@ -23,7 +23,7 @@
 #ifndef NUXOBJECT_H
 #define NUXOBJECT_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template <typename T>
 class NuxObjectSP;
@@ -222,7 +222,7 @@ private:
     friend class NuxObjectWeakSP;
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NUXOBJECT_H
 

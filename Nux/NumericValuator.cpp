@@ -26,7 +26,7 @@
 #include "DoubleValidator.h"
 #include "NumericValuator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const int BTN_WIDTH = 14;
 const int BTN_HEIGHT = 14;
@@ -182,4 +182,4 @@ void NumericValuator::ImplementValidateEntry()
 //     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

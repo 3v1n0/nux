@@ -34,7 +34,7 @@
 
 #include "Gfx_OpenGL.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Compute the frame rate every FRAME_RATE_PERIODE;
 #define FRAME_RATE_PERIODE    10
@@ -1923,4 +1923,4 @@ bool GLWindowImpl::IsPauseThreadGraphicsRendering() const
     return m_PauseGraphicsRendering;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

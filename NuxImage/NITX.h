@@ -23,7 +23,7 @@
 #ifndef NITX_H
 #define NITX_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 enum
 {
@@ -65,6 +65,6 @@ void TextureArchiveGetInfo_ver_0_0_1(NSerializer* FileStream, TextureArchiveInfo
 bool CreateITXFile(const TCHAR* InputTextureFile, const TCHAR* OutputTextureFile = 0);
 NBitmapData* LoadITXFile(const TCHAR* ITXFilename);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NITX_H

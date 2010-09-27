@@ -26,7 +26,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 /***************************************************************************************\
 Class:       Quaternion
@@ -97,6 +97,6 @@ private:
     void FromEulerZXY(t_float euler_x, t_float euler_y, t_float euler_z);
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // QUATERNION_H

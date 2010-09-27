@@ -28,7 +28,7 @@
 #include "RunTimeStats.h"
 
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_GLOBAL_OBJECT(RenderingStats);
 
@@ -222,4 +222,4 @@ void RenderingStats::UnRegister(IOpenGLResource* GraphicsObject)
     }
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

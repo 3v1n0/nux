@@ -23,7 +23,7 @@
 #ifndef NCPU_H
 #define NCPU_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NCPU
 {
@@ -112,6 +112,6 @@ protected:
 
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NCPU_H

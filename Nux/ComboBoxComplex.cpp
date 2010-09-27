@@ -31,7 +31,7 @@
 #include "PropertyList.h"
 #include "WindowCompositor.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ComboBoxComplex::ComboBoxComplex(NUX_FILE_LINE_DECL)
 :   AbstractComboBox(NUX_FILE_LINE_PARAM)
@@ -333,4 +333,4 @@ long ComboBoxComplex::PostLayoutManagement(long LayoutResult)
     return LayoutResult;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

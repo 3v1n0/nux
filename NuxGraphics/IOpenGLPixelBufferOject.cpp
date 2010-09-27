@@ -23,7 +23,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLPixelBufferOject.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLPixelBufferObject);
 
@@ -122,4 +122,4 @@ t_u32 IOpenGLPixelBufferObject::GetSize()
     return _Length;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

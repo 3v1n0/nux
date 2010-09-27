@@ -23,7 +23,7 @@
 #ifndef RGBPROPERTY_H
 #define RGBPROPERTY_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Button;
 class ColorGradientPropertyItem;
@@ -78,7 +78,7 @@ private:
     Color::Format m_color_format;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // RGBPROPERTY_H
 

@@ -26,7 +26,7 @@
 #include "IOpenGLFrameBufferObject.h"
 #include "OpenGLEngine.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLFrameBufferObject);
 
@@ -316,4 +316,4 @@ Rect IOpenGLFrameBufferObject::GetClippingRegion()
         return r;
     }
 }
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

@@ -28,7 +28,7 @@
 #include "NuxCore/Math/Matrix4.h"
 #include "GLDeviceObjects.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class TemplateQuadBuffer;
 
@@ -63,6 +63,6 @@ private:
     Matrix4 m_TransformMatrix;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLSH_COLORPICKER_H

@@ -28,7 +28,7 @@
 #include "VLayout.h"
 #include "Validator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 EditTextBox::EditTextBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
@@ -453,4 +453,4 @@ bool EditTextBox::IsEmpty()
     return false;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

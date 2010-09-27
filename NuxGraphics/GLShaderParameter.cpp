@@ -25,7 +25,7 @@
 #include "GLDeviceObjects.h"
 #include "GLShaderParameter.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 GLShaderParameter::GLShaderParameter(GLProgramObject* Shader,
                   const TCHAR* ParamName,
@@ -44,4 +44,4 @@ GLShaderParameter::GLShaderParameter(GLProgramObject* Shader,
 //    Shader->FirstParameter = this;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

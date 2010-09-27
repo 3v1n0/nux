@@ -26,7 +26,7 @@
 #include "RangeValue.h"
 #include "HueRangeValuator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 HueRangeValuator::HueRangeValuator(float value, float vmin, float vmax)
 :   RangeValue(value, vmin, vmax)
@@ -131,4 +131,4 @@ void HueRangeValuator::Draw(GraphicsContext& GfxContext, bool force_draw)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

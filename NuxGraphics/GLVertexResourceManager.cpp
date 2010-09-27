@@ -29,7 +29,7 @@
 #include "NuxMesh/NMeshObject.h"
 #include "OpenGLEngine.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(NVertexBuffer);
 NUX_IMPLEMENT_OBJECT_TYPE(NIndexBuffer);
@@ -807,5 +807,5 @@ bool NGLStaticMesh::UpdateResource(NResource* Source)
 //     return decl;
 // }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 

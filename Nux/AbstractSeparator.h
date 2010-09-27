@@ -23,7 +23,7 @@
 #ifndef ABSTRACTSEPARATOR_H
 #define ABSTRACTSEPARATOR_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class AbstractSeparator: public ActiveInterfaceObject
 {
@@ -42,6 +42,6 @@ protected:
     int m_BorderSize;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // ABSTRACTSEPARATOR_H

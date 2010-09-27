@@ -33,7 +33,7 @@
 
 #include "GLThread.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 class GLWindowImpl;
 class GLDeviceFactory;
 class GraphicsContext;
@@ -79,6 +79,6 @@ private:
 inlDeclareThreadLocalStorage(GLWindowImpl*, 1, ThreadLocal_GLWindowImpl);
 inlDeclareThreadLocalStorage(GLDeviceFactory*, 2, ThreadLocal_GLDeviceFactory);
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // DISPLAYACCESSCONTROLLER_H

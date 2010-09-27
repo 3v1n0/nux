@@ -24,7 +24,7 @@
 #include "AbstractComboBox.h"
 #include "HLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Color AbstractComboBox::m_sCOMBO_COLOR = Color(0xFF9F9F9F);
 Color AbstractComboBox::m_sCOMBO_BUTTON_COLOR = Color(0xFF4D4D4D);
@@ -120,4 +120,4 @@ void AbstractComboBox::RecvMouseLeave(int x, int y, unsigned long button_flags, 
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

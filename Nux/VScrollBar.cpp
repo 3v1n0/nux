@@ -26,7 +26,7 @@
 #include "VLayout.h"
 #include "VScrollBar.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const int VSCROLLBAR_WIDTH = 10;
 const int VSCROLLBAR_HEIGHT = 10;
@@ -444,4 +444,4 @@ long VScrollBar::PostLayoutManagement(long LayoutResult)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

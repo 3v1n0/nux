@@ -23,7 +23,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLRectangleTexture.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLRectangleTexture);
 
@@ -134,4 +134,4 @@ unsigned int IOpenGLRectangleTexture::EnableGammaCorrection(bool b)
     return OGL_OK;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

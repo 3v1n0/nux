@@ -26,7 +26,7 @@
 #include "TableItem.h"
 #include "TableCtrl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class TreeItem: public TableItem
 {
@@ -54,6 +54,6 @@ public:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TREECONTROL_H

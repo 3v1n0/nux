@@ -24,7 +24,7 @@
 #define TWEENING_H
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Back
 double BackEaseIn (double t, double b, double c, double d, double s = 1.70158);
@@ -72,7 +72,7 @@ double SineEaseIn (double t, double b, double c, double d);
 double SineEaseOut (double t, double b, double c, double d);
 double SineEaseInOut (double t, double b, double c, double d);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // TWEENING_H
 

@@ -29,7 +29,7 @@
 #include "DoubleValidator.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class GLSh_ColorPicker;
 class HLayout;
@@ -183,7 +183,7 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COLOREDITOR_H
 

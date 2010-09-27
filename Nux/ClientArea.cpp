@@ -32,7 +32,7 @@
 #include "TimerProc.h"
 #include "ClientArea.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ClientArea::ClientArea(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
@@ -331,4 +331,4 @@ void ClientArea::RealTimeHandler(void* v)
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

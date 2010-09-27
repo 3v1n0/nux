@@ -23,7 +23,7 @@
 #ifndef IOPENGLRECTANGLETEXTURE_H
 #define IOPENGLRECTANGLETEXTURE_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLBaseTexture;
 class IOpenGLRectangleTexture: public IOpenGLBaseTexture
@@ -90,6 +90,6 @@ private:
     friend class IOpenGLSurface;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // IOPENGLRECTANGLETEXTURE_H

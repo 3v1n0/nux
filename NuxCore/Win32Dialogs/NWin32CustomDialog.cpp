@@ -22,7 +22,7 @@
 
 #include "NKernel.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static enum eFileDialogType {
     FILE_OPEN_DIALOG,
@@ -220,5 +220,5 @@ bool Win32OpenFileDialog(HWND hWnd, FileDialogOption& fdo)
     return (bool)_Win32FileDialog(hWnd, FILE_OPEN_DIALOG, fdo);
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

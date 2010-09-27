@@ -23,7 +23,7 @@
 #ifndef NMESHARCHIVER_VER_0_0_1_H
 #define NMESHARCHIVER_VER_0_0_1_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 class NMeshObject;
 
 typedef enum
@@ -111,6 +111,6 @@ bool SaveMeshObject_ver_0_0_1(nux::NSerializer* FileStream, NMeshObject*);
 NMeshObject* LoadMeshObject_ver_0_0_1(nux::NSerializer* FileStream, unsigned int Offset);
 void MeshDataGetInfo_ver_0_0_1(nux::NSerializer* FileStream, MeshDataInfo_ver_0_0_1& TextureArchiveInfo);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NMESHARCHIVER_VER_0_0_1_H

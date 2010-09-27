@@ -24,7 +24,7 @@
 #include "BitmapFormats.h"
 #include "CairoGraphics.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 CairoGraphics::CairoGraphics(cairo_format_t format, int width, int height)
 :   m_width(0)
@@ -129,4 +129,4 @@ NBitmapData* CairoGraphics::GetBitmap()
     return bitmap_data;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

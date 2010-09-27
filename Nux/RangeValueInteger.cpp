@@ -25,7 +25,7 @@
 #include "HLayout.h"
 #include "RangeValueInteger.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 RangeValueInteger::RangeValueInteger(int Value, int MinValue, int MaxValue, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
@@ -308,4 +308,4 @@ void RangeValueInteger::OnValidateKeyboardEntry(const weaksmptr(EditTextBox) tex
     NeedRedraw();
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

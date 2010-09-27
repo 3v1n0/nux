@@ -26,7 +26,7 @@
 #include "EditTextLinePropertyItem.h"
 #include "Vector3Property.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Vector3PropertyItem::Vector3PropertyItem(const TCHAR* name,
                                          double X,
@@ -200,4 +200,4 @@ bool Vector3PropertyItem::FromXML(const TiXmlElement* elementxml)
 
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

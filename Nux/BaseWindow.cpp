@@ -29,7 +29,7 @@
 #include "WindowCompositor.h"
 #include "BaseWindow.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const int SizeGripWidth = 20;
 const int SizeGripHeight = 20;
@@ -457,4 +457,4 @@ void BaseWindow::SetBackgroundColor(const Color& color)
     m_BackgroundColor = color;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

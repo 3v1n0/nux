@@ -26,7 +26,7 @@
 #include "GLError.h"
 #include "GLResource.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //! Type of shader in a shader
 enum eShaderParameterType
@@ -134,7 +134,7 @@ public:
 private:
 
 };
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLSHADERPARAMETER_H
 

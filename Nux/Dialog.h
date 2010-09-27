@@ -25,7 +25,7 @@
 
 #include "FloatingWindow.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Button;
 
@@ -46,6 +46,6 @@ protected:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // DIALOG_H

@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "WidgetMetrics.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const Color COLOR_BLACK = Color(0xFF000000);
 const Color COLOR_RED =   Color(0xFFFF0000);
@@ -76,4 +76,4 @@ const float DEFAULT_REPEAT_DELAY    = 150; //milliseconds
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

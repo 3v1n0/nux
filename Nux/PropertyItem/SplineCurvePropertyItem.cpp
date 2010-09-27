@@ -26,7 +26,7 @@
 #include "SplineCurvePreview.h"
 #include "SplineCurvePropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 SplineCurvePropertyItem::SplineCurvePropertyItem(const TCHAR* name)
 :   SectionProperty(name, NODE_TYPE_SPLINE)
@@ -157,4 +157,4 @@ bool SplineCurvePropertyItem::FromXML(const TiXmlElement* elementxml)
     }
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

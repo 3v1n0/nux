@@ -25,7 +25,7 @@
 #include "ColorGradientPropertyItem.h"
 #include "RGBAProperty.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 RGBAPropertyItem::RGBAPropertyItem(const TCHAR* name, float red /* = 1.0f*/, float green /* = 1.0f*/, float blue /* = 1.0f*/, float alpha /* = 1.0f*/)
 :   SectionProperty(name, NODE_TYPE_RGBA)
@@ -516,4 +516,4 @@ bool RGBAPropertyItem::FromXML(const TiXmlElement* elementxml)
     return NodeNetCom::FromXML(elementxml);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

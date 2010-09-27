@@ -26,7 +26,7 @@
 #include "Theme.h"
 
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #define INT_TO_ENUM_ELEMENT(a) {a, #a} // --->>> {a, "a"}
 
@@ -332,5 +332,5 @@ NTexture* UXTheme::Load2DTextureFileGenerateAlpha(const char* filename, int red,
     return 0;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 

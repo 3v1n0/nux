@@ -28,7 +28,7 @@
 #include "Vector4.h"
 #include "Vector3.h"
 
-NAMESPACE_BEGIN  
+namespace nux { //NUX_NAMESPACE_BEGIN  
 class Matrix2;
 template<typename T> class Vec2;
 
@@ -298,6 +298,6 @@ Vec2<U> operator*(const U& f, const Vec2<U>& v)
 
 typedef Vec2<float> Vector2;
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // VECTOR2_H

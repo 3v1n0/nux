@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "Histogram.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Histogram::Histogram(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
@@ -193,4 +193,4 @@ void Histogram::SetHistogram(std::vector<int>& HistogramData)
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

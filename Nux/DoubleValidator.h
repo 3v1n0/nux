@@ -26,7 +26,7 @@
 #include "Validator.h"
 
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class DoubleValidator : public Validator
 {
@@ -59,6 +59,6 @@ private:
     int m_Decimals;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // INTEGERVALIDATOR_H

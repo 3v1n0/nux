@@ -25,7 +25,7 @@
 #include "ColorGradientPropertyItem.h"
 #include "RGBProperty.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 RGBPropertyItem::RGBPropertyItem(const TCHAR* name, float red /* = 1.0f*/, float green /* = 1.0f*/, float blue /* = 1.0f*/)
 :   SectionProperty(name, NODE_TYPE_RGB)
@@ -470,4 +470,4 @@ bool RGBPropertyItem::FromXML(const TiXmlElement* elementxml)
     return NodeNetCom::FromXML(elementxml);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

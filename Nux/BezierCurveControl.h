@@ -23,7 +23,7 @@
 #ifndef BEZIERCURVECONTROL_H
 #define BEZIERCURVECONTROL_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Knot
 {
@@ -91,6 +91,6 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // BEZIERCURVECONTROL_H

@@ -26,7 +26,7 @@
 #include "TableItem.h"
 #include "ScrollView.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern const int ROWHEADERWIDTH;
 extern const int OPENCLOSE_BTN_WIDTH;
@@ -516,6 +516,6 @@ protected:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TABLECTRL_H

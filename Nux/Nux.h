@@ -52,9 +52,6 @@
 
 #include <glib.h>
 
-#define NAMESPACE_BEGIN_GUI  namespace nux {
-#define NAMESPACE_END_GUI    };
-
 #define NUX_USE_GLIB_LOOP_ON_WINDOWS
 //#define NUX_DISABLE_GLIB_LOOP
 
@@ -71,7 +68,7 @@
 
 
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class WindowThread;
 class SystemThread;
@@ -142,6 +139,6 @@ TimerHandler& GetThreadTimer();
 
 inlDeclareThreadLocalStorage(NThread*, 0, ThreadLocal_InalogicAppImpl);
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // NUX_H

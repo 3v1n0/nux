@@ -23,7 +23,7 @@
 #ifndef STATICTEXTBOX_H
 #define STATICTEXTBOX_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Validator;
 
@@ -94,6 +94,6 @@ public:
     }
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // STATICTEXTBOX_H

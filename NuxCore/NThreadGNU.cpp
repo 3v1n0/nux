@@ -23,7 +23,7 @@
 #include "NKernel.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #ifdef _WIN32
     #define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement
@@ -244,4 +244,4 @@ void NThread::SetThreadState(ThreadState state)
     m_ThreadState = state;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

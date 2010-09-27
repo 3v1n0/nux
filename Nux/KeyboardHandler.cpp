@@ -26,7 +26,7 @@
 #include "NuxGraphics/OpenGLEngine.h"
 #include "NuxCore/Win32Dialogs/NWin32Clipboard.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 t_u32 BaseKeyboardHandler::sJumpOffsetAtBorders = 60;
 t_u32 BaseKeyboardHandler::sCursorWidth = 2;
@@ -977,4 +977,4 @@ const NFontPtr& BaseKeyboardHandler::GetFont() const
     else
         return GFont;
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

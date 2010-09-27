@@ -28,7 +28,7 @@
 #include "GLDeviceObjects.h"
 #include "GLRenderStates.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 struct IEvent;
 class MainFBO;
@@ -256,7 +256,7 @@ LRESULT CALLBACK WndProcManager(HWND    hWnd,           // Handle For This Windo
                                 WPARAM  wParam,         // Additional Message Information
                                 LPARAM  lParam);        // Additional Message Information
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif //OPENGL_GFX_H
 

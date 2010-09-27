@@ -27,7 +27,7 @@
 #include "TimerProc.h"
 #include "StaticTextBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const int GRAPH_MARGIN = 1;
 
@@ -179,4 +179,4 @@ void ColorPreview::SetColor(Color color)
     m_Color = color;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

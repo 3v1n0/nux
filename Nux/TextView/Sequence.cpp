@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "sequence.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #ifdef DEBUG_SEQUENCE
 
@@ -1129,4 +1129,4 @@ void sequence::breakopt()
 {
 	lastaction = action_invalid;
 }
- NAMESPACE_END_GUI
+ } //NUX_NAMESPACE_END

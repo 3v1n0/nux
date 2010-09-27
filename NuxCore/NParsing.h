@@ -23,7 +23,7 @@
 #ifndef NPARSING_H
 #define NPARSING_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //! Parse a stream of characters and look for a string of TCHAR at the start of the stream.
 /*!
@@ -214,7 +214,7 @@ void ParseToNextLine(const TCHAR** Stream, TCHAR CommentChar);
 bool ParseParam(const TCHAR* Stream, const TCHAR* Param);
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NPARSING_H
 

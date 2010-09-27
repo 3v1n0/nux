@@ -26,7 +26,7 @@
 #include "EditTextBox.h"
 #include "InterfaceControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class SpinBox_Logic: public ActiveInterfaceObject
 {
@@ -88,6 +88,6 @@ protected:
     TimerHandle m_DownTimerHandler;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SPINBOX_LOGIC_H

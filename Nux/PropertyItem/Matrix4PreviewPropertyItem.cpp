@@ -26,7 +26,7 @@
 #include "Matrix4Preview.h"
 #include "Matrix4PreviewPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Matrix4PreviewPropertyItem::Matrix4PreviewPropertyItem(const TCHAR* name, Matrix4 matrix)
 :   SectionProperty(name, NODE_TYPE_MATRIX4PREVIEW)
@@ -168,4 +168,4 @@ bool Matrix4PreviewPropertyItem::FromXML(const TiXmlElement* elementxml)
     return NodeNetCom::FromXML(elementxml);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

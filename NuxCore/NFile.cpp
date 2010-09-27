@@ -23,7 +23,7 @@
 #include "NKernel.h" 
 #include "NFile.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 //
 // Load a binary file to a dynamic array.
 //
@@ -328,4 +328,4 @@ bool SaveStringToFile( const NString& String, const TCHAR* Filename, NFileManage
     return Success;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

@@ -27,7 +27,7 @@
 #include "NWorldArchiveManager.h"
 #include "NMeshObject.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 bool SaveMeshObject_ver_0_0_1(nux::NSerializer* FileStream, NMeshObject* mesh)
 {
@@ -419,5 +419,5 @@ NMeshObject* LoadMeshObject_ver_0_0_1(nux::NSerializer* FileStream, unsigned int
     return mesh;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

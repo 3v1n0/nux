@@ -25,7 +25,7 @@
 
 #include "NuxCore/NKernel.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 enum
 {
@@ -1258,7 +1258,7 @@ inline void GLRenderStates::HW__SetPolygonOffset(FLOAT Factor, FLOAT Units)
 //#undef SET_RS_VALUE_FLOAT
 //#undef RS_VALUE_FLOAT
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLRENDERSTATES_H
 

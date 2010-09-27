@@ -23,7 +23,7 @@
 #include "../NKernel.h"
 #include "NPlugin.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NPlugin::~NPlugin()
 {
@@ -72,4 +72,4 @@ NPluginInterface * NPlugin::MakeNewInstance()
     return NULL;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

@@ -25,7 +25,7 @@
 #include "EditTextBox.h"
 #include "CheckBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 CheckBox::CheckBox(const TCHAR* Caption, bool state)
 :   m_hlayout(0)
@@ -228,4 +228,4 @@ void CheckBox::EmitStateSignal()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

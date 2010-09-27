@@ -25,7 +25,7 @@
 
 #include "RangeValueIntegerPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 RangeValueIntegerPropertyItem::RangeValueIntegerPropertyItem(const TCHAR* name, int Value, int MinValue, int MaxValue)
 :   SectionProperty(name, NODE_TYPE_RANGE)
@@ -160,4 +160,4 @@ bool RangeValueIntegerPropertyItem::FromXML(const TiXmlElement* elementxml)
     SetValue(value);
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

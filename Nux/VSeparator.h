@@ -23,7 +23,7 @@
 #ifndef VSEPARATOR_H
 #define VSEPARATOR_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class VSeparator: public AbstractSeparator
 {
@@ -53,6 +53,6 @@ private:
     virtual void SetMaximumHeight(int h) { BaseObject::SetMaximumHeight(h); }
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // VSEPARATOR_H

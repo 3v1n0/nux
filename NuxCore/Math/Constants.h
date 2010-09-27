@@ -43,7 +43,7 @@ PI with 500 decimals (from http://www.ex.ac.uk/cimt/general/pi10000.htm)
 
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Const
 {
@@ -68,7 +68,7 @@ private:
     Const& operator = (const Const&);
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // CONSTANTS_H
 

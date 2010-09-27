@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 #include "MouseHandler.h"
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 //extern bool gMouseOwned;
 BaseMouseHandler* gFocusMouseHandler = 0; // put this is the GfxServer class
 
@@ -274,4 +274,4 @@ void BaseMouseHandler::StopMouseFocus(int x, int y, const Geometry & g)
 
     m_hasMouseFocus = false;
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

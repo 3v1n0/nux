@@ -23,7 +23,7 @@
 #ifndef SCROLLBAR_H
 #define SCROLLBAR_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class ScrollBar : public ActiveInterfaceObject //public ValuatorAbstraction
 {
@@ -57,7 +57,7 @@ protected:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SCROLLBAR_H
 

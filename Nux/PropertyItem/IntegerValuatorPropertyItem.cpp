@@ -26,7 +26,7 @@
 #include "ValuatorInt.h"
 #include "IntegerValuatorPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 IntValuatorPropertyItem::IntValuatorPropertyItem(const TCHAR* name, int Value, int Step, int MinValue, int MaxValue)
 :   SectionProperty(name, NODE_TYPE_INTVALUATOR)
@@ -155,4 +155,4 @@ bool IntValuatorPropertyItem::FromXML(const TiXmlElement* elementxml)
     SetStep(step);
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

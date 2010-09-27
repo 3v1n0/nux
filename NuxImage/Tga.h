@@ -26,7 +26,7 @@
 #include "NuxCore/Error.h"
 #include "ImageSurface.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #define TGA_SIGNATURE "TRUEVISION-XFILE" 
 #define TGA_COLORMAP        1
@@ -74,6 +74,6 @@ typedef struct
 NBitmapData* read_tga_file(const TCHAR* file_name);
 HReport write_tga_file(const TCHAR* file_name, NBitmapData *image);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // TGA_H

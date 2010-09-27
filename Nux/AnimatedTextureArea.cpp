@@ -24,7 +24,7 @@
 #include "NuxImage/ImageSurface.h"
 #include "AnimatedTextureArea.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 AnimatedTextureArea::AnimatedTextureArea(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
@@ -141,4 +141,4 @@ void AnimatedTextureArea::TimerNextFrame(void* v)
     NeedRedraw();
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
