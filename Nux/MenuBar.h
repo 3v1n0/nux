@@ -28,7 +28,7 @@
 #include "MenuPage.h"
 #include "Painter.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class PopupBox;
 class BaseWindow;
@@ -36,11 +36,12 @@ class MenuBar;
 class HLayout;
 
 
-class MenuBarItem
+class MenuBarItem: public NuxCoreObject
 {
-    DECLARE_ROOT_OBJECT_TYPE(MenuBarItem);
 public:
-    MenuBarItem();
+    NUX_DECLARE_OBJECT_TYPE(MenuBarItem, NuxCoreObject);
+
+    MenuBarItem(NUX_FILE_LINE_PROTO);
     ~MenuBarItem();
 private:
     smptr(CoreArea) area;
@@ -52,10 +53,10 @@ private:
 
 class MenuBar: public ActiveInterfaceObject
 {
-    DECLARE_OBJECT_TYPE(MenuBar, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuBar, ActiveInterfaceObject);
 
 public:
-    MenuBar();
+    MenuBar(NUX_FILE_LINE_PROTO);
     ~MenuBar();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -106,6 +107,6 @@ private:
     smptr(BaseWindow) m_MenuBarWindow;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // MENUBAR_H

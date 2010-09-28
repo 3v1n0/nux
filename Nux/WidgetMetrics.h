@@ -23,7 +23,7 @@
 #ifndef WIDGETMETRICS_H
 #define WIDGETMETRICS_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern const Color COLOR_BLACK ;
 extern const Color COLOR_RED;
@@ -76,6 +76,6 @@ extern const float DEFAULT_REPEAT_DELAY;
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // WIDGETMETRICS_H

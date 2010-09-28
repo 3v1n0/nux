@@ -36,9 +36,9 @@
 #include "WindowThread.h"
 #include "SystemThread.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(SystemThread);
+NUX_IMPLEMENT_OBJECT_TYPE(SystemThread);
 
 
 SystemThread::SystemThread(AbstractThread* Parent/* = 0*/)
@@ -150,4 +150,4 @@ bool SystemThread::ThreadDtor()
     return true;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

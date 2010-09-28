@@ -22,7 +22,7 @@
 
 #include "NKernel.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 t_u32 Memcmp( const void* Buf1, const void* Buf2, t_u32 Count )
 {
@@ -89,4 +89,4 @@ void* Realloc(void* Original, t_size Count, t_u32 Alignment)
     return mem;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

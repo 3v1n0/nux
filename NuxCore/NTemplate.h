@@ -23,7 +23,7 @@
 #ifndef NTEMPLATE_H
 #define NTEMPLATE_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NString;
 
@@ -161,7 +161,7 @@ struct RemovePointerFromType<const volatile T*>
 };
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NTEMPLATE_H
 

@@ -26,7 +26,7 @@
 #include "ColorPreview.h"
 #include "ColorPreviewPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ColorPreviewPropertyItem::ColorPreviewPropertyItem(const TCHAR* name, float red, float green, float blue, eColorModel colormodel)
 :   SectionProperty(name, NODE_TYPE_COLORPREVIEW)
@@ -57,12 +57,12 @@ long ColorPreviewPropertyItem::ProcessPropertyEvent(IEvent &ievent, long Travers
 }
 
 void ColorPreviewPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
-                                            RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                            RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     if(isDirtyItem() || IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {
@@ -70,7 +70,7 @@ void ColorPreviewPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCt
             Geometry prop_geo;
             prop_geo.SetX(geo.x + geo.GetWidth());
             prop_geo.SetY(geo.y);
-            prop_geo.SetWidth(column_vector[1].header.GetBaseWidth());
+            prop_geo.SetWidth(column_vector[1].m_header_area->GetBaseWidth());
             prop_geo.SetHeight(geo.GetHeight());
 
             geo2.Expand(-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
@@ -84,7 +84,7 @@ void ColorPreviewPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCt
     }
 }
 
-void ColorPreviewPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void ColorPreviewPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
     if(m_ItemGeometryVector.size() >= 2)
     {
@@ -171,4 +171,4 @@ bool ColorPreviewPropertyItem::FromXML(const TiXmlElement* elementxml)
     return NodeNetCom::FromXML(elementxml);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

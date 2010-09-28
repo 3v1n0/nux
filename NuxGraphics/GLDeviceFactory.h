@@ -30,7 +30,7 @@
 #include "GLTextureStates.h"
 #include "GLTemplatePrimitiveBuffer.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ///* 
 //    We create a set of classes that wraps OpenGL objects ID.
@@ -661,7 +661,7 @@ public:
     friend class GraphicsContext;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLDEVICEFACTORY_H
 

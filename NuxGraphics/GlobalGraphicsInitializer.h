@@ -24,9 +24,10 @@
 #define NUXGRAPHICSGLOBALINITIALIZER_H
 
 #define NUX_GLOBAL_GRAPHICS_OBJECT_INIT_SEQUENCE()          \
-    NUX_GLOBAL_OBJECT_VARIABLE(RenderingStats);
+    NUX_GLOBAL_OBJECT_VARIABLE(RenderingStats);             \
+    NUX_GLOBAL_OBJECT_VARIABLE(NuxGraphicsResources);
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NuxGraphicsGlobalSingletonInitializer
 {
@@ -65,6 +66,6 @@ private:
 static NuxGraphicsGlobalInitializer sNuxGraphicsGlobalInitializer;
 
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // NUXGRAPHICSGLOBALINITIALIZER_H

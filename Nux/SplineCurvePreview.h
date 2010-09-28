@@ -25,7 +25,7 @@
 
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class SplineCurveDialog;
 class SplineCurveEditor;
@@ -67,7 +67,7 @@ private:
 class SplineCurvePreview : public ActiveInterfaceObject
 {
 public:
-    SplineCurvePreview();
+    SplineCurvePreview(NUX_FILE_LINE_PROTO);
     ~SplineCurvePreview();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -101,7 +101,7 @@ private:
     float m_minX, m_minY, m_maxX, m_maxY;
 
     TimerFunctor* m_ChangeDetectionTimer;
-    TimerHandle* m_ChangeTimerHandler;
+    TimerHandle m_ChangeTimerHandler;
 
     TextureLayer* m_BackgroundLayer;
     TRefGL<IOpenGLTexture2D> Texture;
@@ -115,6 +115,6 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SPLINECURVEPICKER_H

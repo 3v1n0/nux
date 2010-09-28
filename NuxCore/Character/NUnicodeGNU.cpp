@@ -23,6 +23,6 @@
 #include "NKernel.h"
 #include "NUnicodeGNU.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

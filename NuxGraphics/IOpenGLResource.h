@@ -23,7 +23,7 @@
 #ifndef IOPENGLRESOURCE_H
 #define IOPENGLRESOURCE_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class GLDeviceFactory;
 class IOpenGLBaseTexture;
@@ -34,6 +34,10 @@ class IOpenGLSurface;
 class IOpenGLVolumeTexture;
 class IOpenGLVolume;
 class IOpenGLQuery;
+class IOpenGLShader;
+class IOpenGLVertexShader;
+class IOpenGLPixelShader;
+
 template<typename T> class TRefGL;
 
 #define NUM_VERTEX_SHADER_INPUT_ATTRIBUTE      16
@@ -65,15 +69,14 @@ struct ShaderAttributeDefinition
 
 
 //////////////////////////////////////////////////////////////////////////
-class IOpenGLResource: public NRefCount // formely IOpenGLObject
+class IOpenGLResource: public NThreadSafeCounter
 {
-    DECLARE_ROOT_OBJECT_TYPE(IOpenGLResource);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(IOpenGLResource);
 
 public:
     virtual int RefCount() const
     {
-        return GetRefCount();
-        //return _RefCount;
+        return GetValue();
     }
 
     OpenGLResourceType GetResourceType() const
@@ -120,6 +123,7 @@ private:
     friend class IOpenGLIndexBuffer;
     friend class IOpenGLVertexBuffer;
     friend class IOpenGLVertexDeclaration;
+    friend class IOpenGLShader;
     friend class IOpenGLVertexShader;
     friend class IOpenGLPixelShader;
     friend class IOpenGLShaderProgram;
@@ -129,6 +133,6 @@ private:
     friend class IOpenGLPixelBufferObject;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // IOPENGLRESOURCE_H

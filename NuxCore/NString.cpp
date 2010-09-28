@@ -22,7 +22,7 @@
 
 #include "NKernel.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 //
 // Copy a string with length checking.
 //warning: Behavior differs from strncpy; last character is zeroed.
@@ -1183,4 +1183,4 @@ VARARG_BODY(NString, NString::Printf, const TCHAR*, VARARG_NONE)
     return ResultString;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

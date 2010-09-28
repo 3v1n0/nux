@@ -24,7 +24,7 @@
 #include "WindowCompositor.h"
 #include "PopUpWindow.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 PopUpWindow::PopUpWindow()
 {
@@ -54,4 +54,4 @@ void PopUpWindow::Hide()
     ShowWindow(false);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

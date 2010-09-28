@@ -27,10 +27,11 @@
 #include "HScrollBar.h"
 #include "Panel.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-Panel::Panel()
-:   m_layout(0)
+Panel::Panel(NUX_FILE_LINE_DECL)
+:   ScrollView(NUX_FILE_LINE_PARAM)
+,   m_layout(0)
 { 
     //vlayout = new VLayout();
     //vlayout->SetVerticalInternalMargin(4);
@@ -277,4 +278,4 @@ void Panel::ScrollDown(float stepy, int mousedy)
     NeedRedraw();
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

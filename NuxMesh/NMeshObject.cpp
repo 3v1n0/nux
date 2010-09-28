@@ -34,7 +34,7 @@
     extern GLXEWContext* glxewGetContext();
 #endif
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NMeshData::NMeshData(int NumTriangles)
 :   m_NumTriangles(NumTriangles)
@@ -692,4 +692,4 @@ const nux::Matrix4& NMeshObject::GetMatrix() const
     return m_WorldMatrix;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

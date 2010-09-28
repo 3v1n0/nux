@@ -28,7 +28,7 @@
 #include "NMeshObject.h"
 #include "N3DWorld.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NWorldArchiveManager::NWorldArchiveManager()
 {
@@ -297,5 +297,5 @@ NMeshObject* NWorldArchiveManager::LoadStaticMeshFile(const TCHAR* MeshFilename)
 
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

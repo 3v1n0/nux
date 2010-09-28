@@ -25,19 +25,19 @@
 
 // WARNING: Never call glGetError between glBegin and glEnd.
 // WARNING: Never use CHECKGL between glBegin() and glEnd().
-#ifdef _DEBUG
+#ifdef NUX_DEBUG
 
     #define CHECKGL( GLcall )                       \
         {                                           \
             GLcall;                                 \
             if(1)                                   \
-            CheckGLError( ANSI_TO_TCHAR(#GLcall), __FILE__, __LINE__ );   \
+            nux::CheckGLError( ANSI_TO_TCHAR(#GLcall), __FILE__, __LINE__ );   \
         }
 
     #define CHECKGL_MSG( msg )                      \
         {                                           \
             if(1)                                   \
-            CheckGLError( ANSI_TO_TCHAR(#msg), __FILE__, __LINE__  );      \
+            nux::CheckGLError( ANSI_TO_TCHAR(#msg), __FILE__, __LINE__  );      \
         }
 
 #else
@@ -53,7 +53,11 @@
 
 #endif
 
-int CheckGLError(const TCHAR* GLcall, const TCHAR *file, int line);
+namespace nux {
+
+    int CheckGLError(const TCHAR* GLcall, const TCHAR *file, int line);
+
+}
 
 #endif // GLERROR_H
 

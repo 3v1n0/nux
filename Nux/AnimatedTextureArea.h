@@ -26,12 +26,12 @@
 #include "NuxGraphics/OpenGLEngine.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class AnimatedTextureArea : public ActiveInterfaceObject
 {
 public:
-    AnimatedTextureArea();
+    AnimatedTextureArea(NUX_FILE_LINE_PROTO);
     ~AnimatedTextureArea();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -52,11 +52,11 @@ public:
 private:
     void TimerNextFrame(void* v);
     TimerFunctor* m_TimerFunctor;
-    TimerHandle* m_TimerHandler;
+    TimerHandle m_TimerHandler;
 
     NAnimatedTexture* m_DefaultTexture;
     NAnimatedTexture* m_UserTexture;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // ANIMATEDTEXTUREAREA_H

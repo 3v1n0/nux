@@ -30,16 +30,16 @@
 #include "NuxGraphics/OpenGLEngine.h"
 #include "WindowCompositor.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 long g_FocusHandle = -1;
 
 long gNumArea = 0;
 
-IMPLEMENT_OBJECT_TYPE(BaseArea);
+NUX_IMPLEMENT_OBJECT_TYPE(BaseArea);
 
-BaseArea::BaseArea()
-:   BaseObject()
+BaseArea::BaseArea(NUX_FILE_LINE_DECL)
+:   BaseObject(NUX_FILE_LINE_PARAM)
 ,   m_AreaColor(Color::Green)
 {
     //m_Handle = ++s_Handle;
@@ -132,7 +132,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 
         if((CurrentMouseOverArea == 0) && (GetGeometry().IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root)))
         {
-            CurrentMouseOverArea = smptr(BaseArea)(this, false);
+            CurrentMouseOverArea = smptr(BaseArea)(this, true);
         }
 
         if(ievent.e_event == NUX_MOUSE_PRESSED)
@@ -173,7 +173,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 
         if(HasMouseFocus() && (GetThreadWindowCompositor().GetMouseFocusArea() == 0)) // never evince and object that has the mouse focus.
         {
-            GetThreadWindowCompositor().SetMouseFocusArea(smptr(BaseArea)(this, false));
+            GetThreadWindowCompositor().SetMouseFocusArea(smptr(BaseArea)(this, true));
             GetThreadWindowCompositor().SetAreaEventRoot(ievent.e_x_root, ievent.e_y_root);
         }
         if(IsMouseInside())
@@ -186,7 +186,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 //                 else
 //                     nuxDebugMsg(TEXT("BaseArea: Mouse is inside; Setting PreviousMouseOverArea to 0."));
             }
-            CurrentMouseOverArea = smptr(BaseArea)(this, false);
+            CurrentMouseOverArea = smptr(BaseArea)(this, true);
         }
         else
         {
@@ -428,4 +428,4 @@ void BaseArea::SetAreaMousePosition(int x, int y)
     m_EventHandler.m_mouse_positiony = y;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

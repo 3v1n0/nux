@@ -23,7 +23,7 @@
 #ifndef FILE_SELECTOR_H
 #define FILE_SELECTOR_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Button;
 class EditTextBox;
@@ -31,7 +31,7 @@ class EditTextBox;
 class FileSelector: public ActiveInterfaceObject
 {
 public:
-    FileSelector();
+    FileSelector(NUX_FILE_LINE_PROTO);
     ~FileSelector();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -55,6 +55,6 @@ private:
     NTexture2D m_Texture;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // FILE_SELECTOR_H

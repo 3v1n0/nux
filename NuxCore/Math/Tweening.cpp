@@ -25,7 +25,7 @@
 
 #include "Tweening.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Back
 double BackEaseIn (double t, double b, double c, double d, double s)
@@ -342,4 +342,4 @@ double SineEaseInOut (double t, double b, double c, double d)
     return -c/2 * (std::cos(nux::Const::pi*t/d) - 1) + b;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

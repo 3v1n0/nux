@@ -24,9 +24,9 @@
 #include "IOpenGLVolume.h"
 #include "GLDeviceFactory.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLVolume);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVolume);
 
 IOpenGLVolume::~IOpenGLVolume()
 {
@@ -488,4 +488,4 @@ int IOpenGLVolume::GetDepth() const
     return 0;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

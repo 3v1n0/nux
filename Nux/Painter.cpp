@@ -26,7 +26,7 @@
 
 #include "NuxGraphics/GLTextureResourceManager.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const unsigned int  STENCIL_TEST_REF = 0xFF;
 const unsigned int  STENCIL_TEST_MASK = 0xFFFFFFFF;
@@ -188,7 +188,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsContext& GfxContext, const Geome
     page.ymax = g.y + g.GetHeight();
     page.x_margin = DEFAULT_TEXT_X_MARGIN;
     page.y_margin = DEFAULT_TEXT_Y_MARGIN;
-    return GfxContext.RenderColorTextLineEdit(GFont, page, Str,
+    return GfxContext.RenderColorTextLineEdit(GetThreadFont(), page, Str,
         TextColor,
         WriteAlphaChannel,
         SelectedTextColor,
@@ -199,7 +199,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsContext& GfxContext, const Geome
 }
 
 int BasePainter::PaintTextLineStatic(GraphicsContext& GfxContext,
-                                     const NFontPtr& Font,
+                                     IntrusiveSP<FontTexture> Font,
                                      const Geometry &g,
                                      const NString& Str,
                                      const Color& color,
@@ -908,4 +908,4 @@ void BasePainter::EmptyBackgroundStack()
     m_BackgroundStack.clear();
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -23,7 +23,7 @@
 #include "NuxCore/NKernel.h"
 #include "GLWindowManager.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #if defined(NUX_OS_WINDOWS)
     const TCHAR* WINDOW_CLASS_NAME = TEXT("InalogicWindowClass");
@@ -162,7 +162,7 @@ GraphicsContext* GetThreadGraphicsContext()
 }
 
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 GLEWContext* glewGetContext()
 {

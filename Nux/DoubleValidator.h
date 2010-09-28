@@ -26,7 +26,7 @@
 #include "Validator.h"
 
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class DoubleValidator : public Validator
 {
@@ -55,10 +55,10 @@ public:
 private:
     double m_Minimum;
     double m_Maximum;
-    //boost::regex m_RegExp;
+    GRegex* m_reg_exp;
     int m_Decimals;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // INTEGERVALIDATOR_H

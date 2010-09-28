@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "Unicode.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //
 //	utf8_to_utf32
@@ -580,4 +580,4 @@ size_t utf16be_to_utf32(t_UTF16 *utf16str, size_t utf16len, t_UTF32 *utf32str, s
 	return utf16str - utf16start;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

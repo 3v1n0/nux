@@ -26,12 +26,13 @@
 #include "VLayout.h"
 #include "VScrollBar.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const int VSCROLLBAR_WIDTH = 10;
 const int VSCROLLBAR_HEIGHT = 10;
 
-VScrollBar::VScrollBar()
+VScrollBar::VScrollBar(NUX_FILE_LINE_DECL)
+:   ScrollBar(NUX_FILE_LINE_PARAM)
 {
     m_contentWidth      = 0;
     m_contentHeight     = 0;
@@ -198,9 +199,11 @@ void VScrollBar::RecvStartScrollUp(int x, int y, unsigned long button_flags, uns
 
 void VScrollBar::RecvEndScrollUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if(m_UpTimerHandler)
+    if(m_UpTimerHandler.IsValid())
+    {
         GetThreadTimer().RemoveTimerHandler(m_UpTimerHandler);
-    m_UpTimerHandler = 0;
+        m_UpTimerHandler = 0;
+    }
 }
 
 void VScrollBar::RecvStartScrollDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -211,9 +214,11 @@ void VScrollBar::RecvStartScrollDown(int x, int y, unsigned long button_flags, u
 
 void VScrollBar::RecvEndScrollDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if(m_DownTimerHandler)
+    if(m_DownTimerHandler.IsValid())
+    {
         GetThreadTimer().RemoveTimerHandler(m_DownTimerHandler);
-    m_DownTimerHandler = 0;
+        m_DownTimerHandler = 0;
+    }
 }
 
 void VScrollBar::RecvTrackMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -235,9 +240,9 @@ void VScrollBar::RecvTrackMouseDown(int x, int y, unsigned long button_flags, un
 
 void VScrollBar::RecvTrackMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if(m_TrackUpTimerHandler)
+    if(m_TrackUpTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_TrackUpTimerHandler);
-    if(m_TrackDownTimerHandler)
+    if(m_TrackDownTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_TrackDownTimerHandler);
     m_TrackUpTimerHandler = 0;
     m_TrackDownTimerHandler = 0;
@@ -406,14 +411,14 @@ void VScrollBar::OnSliderMouseDrag(int x, int y, int dx, int dy, unsigned long b
     NeedRedraw();
 }
 
-UBOOL VScrollBar::AtMaximum()
+bool VScrollBar::AtMaximum()
 {
     if(m_SlideBar->GetBaseY() + m_SlideBar->GetBaseHeight() == m_Track->GetBaseY() + m_Track->GetBaseHeight())
         return TRUE;
     return FALSE;
 }
 
-UBOOL VScrollBar::AtMinimum()
+bool VScrollBar::AtMinimum()
 {
     if(m_SlideBar->GetBaseY() == m_Track->GetBaseY())
         return TRUE;
@@ -439,4 +444,4 @@ long VScrollBar::PostLayoutManagement(long LayoutResult)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

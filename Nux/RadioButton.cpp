@@ -26,7 +26,7 @@
 #include "RadioButtonGroup.h"
 #include "HLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Color RADIO_TEXT_COLOR = Color(0xFFB0B0B0);
 
@@ -55,7 +55,7 @@ RadioButton::~RadioButton()
 {
     if(m_Group)
     {
-        m_Group->DisconnectButton(smptr(RadioButton)(this, false));
+        m_Group->DisconnectButton(smptr(RadioButton)(this, true));
     }
 }
 
@@ -182,7 +182,7 @@ void RadioButton::SetState(bool State, bool EmitSignal)
 {
     if(m_Group && State)
     {
-        m_Group->SetActiveButton(smptr(RadioButton)(this, false), EmitSignal);
+        m_Group->SetActiveButton(smptr(RadioButton)(this, true), EmitSignal);
         return;
     }
     else if(m_Group && !State)
@@ -219,13 +219,13 @@ void RadioButton::RecvClick(int x, int y, unsigned long button_flags, unsigned l
 {
     if(m_Group)
     {
-        m_Group->NotifyClick(smptr(RadioButton)(this, false));
+        m_Group->NotifyClick(smptr(RadioButton)(this, true));
     }
     else
     {
         m_State = !m_State;
         sigToggled.emit();
-        sigStateToggled.emit(smptr(RadioButton)(this, false));
+        sigStateToggled.emit(smptr(RadioButton)(this, true));
         sigStateChanged.emit(m_State);
     }
 
@@ -263,4 +263,4 @@ void RadioButton::EmitStateChangedSignal()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

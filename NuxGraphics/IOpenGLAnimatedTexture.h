@@ -23,7 +23,7 @@
 #ifndef IOPENGLANIMATEDTEXTURE_H
 #define IOPENGLANIMATEDTEXTURE_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLBaseTexture;
 class IOpenGLRectangleTexture;
@@ -32,7 +32,7 @@ class IOpenGLRectangleTexture;
 // The number of mipmap levels is always 1;
 class IOpenGLAnimatedTexture: public IOpenGLBaseTexture
 {
-    DECLARE_OBJECT_TYPE(IOpenGLAnimatedTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAnimatedTexture, IOpenGLBaseTexture);
 
 public:
     virtual ~IOpenGLAnimatedTexture();
@@ -88,6 +88,6 @@ private:
     friend class GLDeviceFactory;
     friend class IOpenGLSurface;
 };
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // IOPENGLANIMATEDTEXTURE_H

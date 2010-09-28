@@ -25,11 +25,12 @@
 #include "Matrix3Preview.h"
 #include "StaticTextBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const int GRAPH_MARGIN = 1;
 
-Matrix3Preview::Matrix3Preview(Matrix3 matrix)
+Matrix3Preview::Matrix3Preview(Matrix3 matrix, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_DialogThreadProxy = new Matrix3DialogProxy(true);
 
@@ -44,9 +45,8 @@ Matrix3Preview::Matrix3Preview(Matrix3 matrix)
 
 Matrix3Preview::~Matrix3Preview()
 {
-    if(m_ChangeTimerHandler)
+    if(m_ChangeTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
-
     NUX_SAFE_DELETE(m_DialogThreadProxy);
 }
 
@@ -101,7 +101,7 @@ void Matrix3Preview::RecvTimer(void* v)
     }
     else
     {
-        if(m_ChangeTimerHandler)
+        if(m_ChangeTimerHandler.IsValid())
             GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
         m_ChangeTimerHandler = 0;
 
@@ -123,6 +123,4 @@ Matrix3 Matrix3Preview::GetMatrix() const
     return m_Matrix;
 }
 
-
-
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

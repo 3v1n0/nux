@@ -27,9 +27,9 @@
 #include "GLTextureStates.h"
 #include "IOpenGLBaseTexture.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLBaseTexture);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLBaseTexture);
 
 IOpenGLBaseTexture::IOpenGLBaseTexture(OpenGLResourceType ResourceType, 
                                        t_u32 Width, 
@@ -347,4 +347,4 @@ void GetTextureDesc(IOpenGLBaseTexture *pTexture,
     }
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

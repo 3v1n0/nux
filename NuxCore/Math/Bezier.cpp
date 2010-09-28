@@ -24,7 +24,7 @@
 #include "MathFunctions.h"
 #include "Bezier.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_DECLSPEC_DLL t_double* Bernstein(t_int n, t_double t)
 {
@@ -93,5 +93,5 @@ NUX_DECLSPEC_DLL void Bezier_XYZ(t_int n, t_double t, t_double xcon[], t_double 
     delete [] bval;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

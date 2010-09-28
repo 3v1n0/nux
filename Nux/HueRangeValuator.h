@@ -33,7 +33,7 @@
 #include "StaticTextBox.h"
 #include "HLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
  
 class HueRangeValuator : public RangeValue
 {
@@ -64,7 +64,7 @@ private:
     eColorModel m_Model;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // HUERANGEVALUATOR_H
 

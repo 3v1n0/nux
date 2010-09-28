@@ -25,7 +25,7 @@
 
 #include "AbstractButton.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class BaseArea;
@@ -85,6 +85,6 @@ private:
     bool m_State;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // CHECKBOX_H

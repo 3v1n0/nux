@@ -25,7 +25,7 @@
 #include "GLShader.h"
 #include "GLShaderParameter.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 // //----------------------------------------------------------------------------- 
 // void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...)
 // {
@@ -170,4 +170,4 @@ NAMESPACE_BEGIN_OGL
 //     if(ShaderPreprocessorDefines.Length())
 //         RetSource.Insert(Pos, ShaderPreprocessorDefines + NString(TEXT('\n')));
 // }
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

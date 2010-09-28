@@ -23,12 +23,12 @@
 #ifndef NODEITEM_H
 #define NODEITEM_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NodeItem
 {
 #ifndef NUX_STANDALONE
-    DECLARE_ROOT_OBJECT_TYPE(NodeItem);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(NodeItem);
 #endif
 public:
     NodeItem();
@@ -95,6 +95,6 @@ protected:
     NodeItem *prev_sibling;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // NODEITEM_H

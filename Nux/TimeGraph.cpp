@@ -33,7 +33,7 @@
 #include "Button.h"
 #include "StaticTextBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 TimeGraph::Graph::Graph(Color PrimaryColor, Color SecondaryColor)
 :   m_HasBeenUpdated(false)
@@ -91,7 +91,8 @@ void TimeGraph::Graph::Reset()
 
 t_u32 TimeGraph::sBufferSize = 2048;
 
-TimeGraph::TimeGraph(const TCHAR* Title)
+TimeGraph::TimeGraph(const TCHAR* Title, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_minY  = 0.0f;
     m_maxY  = 1.0f;
@@ -162,7 +163,7 @@ void TimeGraph::InitializeWidgets()
     m_GraphIcon->OnMouseClick.connect(sigc::mem_fun(this, &TimeGraph::RecvShowCurveGraphics));
     m_ValueIcon->OnMouseClick.connect(sigc::mem_fun(this, &TimeGraph::RecvShowValue));
 
-    m_GraphTitle->SetFont(GFontBold);
+    m_GraphTitle->SetFont(GetThreadBoldFont());
     m_hlayout->AddActiveInterfaceObject(smptr(SpaceLayout)(new SpaceLayout(40, 40, 0, BASEOBJECT_MAXHEIGHT)), 1);
     m_hlayout->AddActiveInterfaceObject(m_GraphTitle, 1);
     m_hlayout->AddActiveInterfaceObject(m_ValueIcon, 0);
@@ -310,10 +311,10 @@ void TimeGraph::Draw(GraphicsContext& GfxContext, bool force_draw)
     {
         NString ValueString;
         ValueString = NString::Printf(TEXT("%.2f"), m_maxY);
-        gPainter.PaintTextLineStatic(GfxContext, GFont, Geometry(base.x, Y, 40, 12), ValueString, Color(0xFFFFFFFF));
+        gPainter.PaintTextLineStatic(GfxContext, GetThreadFont(), Geometry(base.x, Y, 40, 12), ValueString, Color(0xFFFFFFFF));
 
         ValueString = NString::Printf(TEXT("%.2f"), m_minY);
-        gPainter.PaintTextLineStatic(GfxContext, GFont, Geometry(base.x, Y + H - 12, 40, 12), ValueString, Color(0xFFFFFFFF));
+        gPainter.PaintTextLineStatic(GfxContext, GetThreadFont(), Geometry(base.x, Y + H - 12, 40, 12), ValueString, Color(0xFFFFFFFF));
 
     }
 
@@ -331,7 +332,7 @@ void TimeGraph::Draw(GraphicsContext& GfxContext, bool force_draw)
             ValueString = NString::Printf(TEXT("%.2f"), TEXT("0.00"));
         else
             ValueString = NString::Printf(TEXT("%.2f"), (*m_DynValueArray[index].m_ValueList.begin()));
-        gPainter.PaintTextLineStatic(GfxContext, GFont, Geometry(X + W + 2 +6, PosY, 40, 8), ValueString, Color(0xFFFFFFFF), true, eAlignTextCenter);
+        gPainter.PaintTextLineStatic(GfxContext, GetThreadFont(), Geometry(X + W + 2 +6, PosY, 40, 8), ValueString, Color(0xFFFFFFFF), true, eAlignTextCenter);
 
         PosY += 12;
     }
@@ -460,7 +461,7 @@ void TimeGraph::Draw(GraphicsContext& GfxContext, bool force_draw)
 //             ValueString = NString::Printf(TEXT("%.2f"), TEXT("0.00"));
 //         else
 //             ValueString = NString::Printf(TEXT("%.2f"), (*m_DynValueArray[index].m_ValueList.begin()));
-//         gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_GraphArea->GetGeometry(), ValueString, 0xFFFFFFFF, eAlignTextCenter);
+//         gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_GraphArea->GetGeometry(), ValueString, 0xFFFFFFFF, eAlignTextCenter);
 //     }
 }
 
@@ -535,4 +536,4 @@ void TimeGraph::ShowNumberStyle()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -23,7 +23,7 @@
 #ifndef GROUPBOX2_H
 #define GROUPBOX2_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Layout;
 
@@ -35,7 +35,7 @@ class Layout;
 class GroupBox2 : public ActiveInterfaceObject
 {
 public:
-    GroupBox2(const TCHAR* Caption = TEXT(""));
+    GroupBox2(const TCHAR* Caption = TEXT(""), NUX_FILE_LINE_PROTO);
     ~GroupBox2();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -63,6 +63,6 @@ private:
     static Color GROUPBOX2_HEADER_TEXT_COLOR;
     static int TOP_HEADER_HEIGHT;
 };
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // GroupBox2_H

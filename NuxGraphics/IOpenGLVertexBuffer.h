@@ -23,12 +23,12 @@
 #ifndef IOPENGLVERTEXBUFFER_H
 #define IOPENGLVERTEXBUFFER_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLResource;
 class IOpenGLVertexBuffer: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLVertexBuffer, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVertexBuffer, IOpenGLResource);
 
 public:
     virtual ~IOpenGLVertexBuffer();
@@ -61,6 +61,6 @@ private:
     friend class GLDeviceFactory;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // IOPENGLVERTEXBUFFER_H

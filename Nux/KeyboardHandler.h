@@ -33,7 +33,7 @@
 #endif
 #include "NuxCore/Color.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class GraphicsContext;
 
@@ -143,11 +143,11 @@ public:
     void MouseDrag(t_s32 x, t_s32 y);
     //bool IsMouseDrag();
 
-    void SetFont(const NFontPtr& Font);
-    const NFontPtr& GetFont() const;
+    void SetFont(IntrusiveSP<FontTexture> Font);
+    IntrusiveSP<FontTexture> GetFont() const;
 
 protected:
-    NFontPtr m_Font;
+    IntrusiveSP<FontTexture> m_Font;
     NString m_textline;
     t_s32 m_previous_cursor_position;
     bool m_need_redraw;
@@ -176,6 +176,6 @@ protected:
     static t_u32 sCursorWidth;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // KEYBOARDHANDLER_H

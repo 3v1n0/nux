@@ -23,14 +23,14 @@
 #ifndef CURVECONTROL_H
 #define CURVECONTROL_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 typedef float (*FunctionCallback)(float);  
 
 class CurveControl : public ActiveInterfaceObject
 {
 public:
-    CurveControl();
+    CurveControl(NUX_FILE_LINE_PROTO);
     ~CurveControl();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -51,6 +51,6 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // CURVECONTROL_H

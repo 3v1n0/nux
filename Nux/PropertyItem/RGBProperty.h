@@ -23,7 +23,7 @@
 #ifndef RGBPROPERTY_H
 #define RGBPROPERTY_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Button;
 class ColorGradientPropertyItem;
@@ -39,8 +39,8 @@ public:
     virtual ~RGBPropertyItem();
 
     virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor = Color(0x0));
-    virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector);
+    virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
+    virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
     virtual int GetItemBestHeight();
 
     void SetRed(double red)     {m_red->SetValue(red); UpdateStartToEndColors();}
@@ -78,7 +78,7 @@ private:
     Color::Format m_color_format;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // RGBPROPERTY_H
 

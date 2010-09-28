@@ -22,7 +22,7 @@
 
 #include "NKernel.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //  MessageBox resolves to:
 //      MessageBoxA, if UNICODE is not defined
@@ -99,4 +99,4 @@ bool inlOutputRedirectorReady()
     return NOutputDeviceRedirector::Ready();
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

@@ -25,14 +25,15 @@
 #include "EditTextBox.h"
 #include "Vector3Valuator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-Vector3Valuator::Vector3Valuator()
-:   m_Mouse(0)
+Vector3Valuator::Vector3Valuator(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Mouse(0)
 {
-    m_XEdit = smptr(EditTextBox)(new EditTextBox());
-    m_YEdit = smptr(EditTextBox)(new EditTextBox());
-    m_ZEdit = smptr(EditTextBox)(new EditTextBox());
+    m_XEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_YEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_ZEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
     m_MouseControlledButton = smptr(CoreArea)(new CoreArea());
     // Set Original State
     m_XEdit->SetSuffix(TEXT(""));
@@ -191,4 +192,4 @@ void Vector3Valuator::RecvValidateEntryZ(const weaksmptr(EditTextBox) textbox)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

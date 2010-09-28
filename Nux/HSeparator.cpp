@@ -25,7 +25,7 @@
 #include "AbstractSeparator.h"
 #include "HSeparator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 HSeparator::HSeparator()
 //:   AbstractSeparator(0xFF999999, 0.0f, 151.0f, 10)
@@ -95,4 +95,4 @@ void HSeparator::Draw(GraphicsContext& GfxContext, bool force_draw)
     }
     GetThreadGraphicsContext()->GetRenderStates().SetBlend(FALSE);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

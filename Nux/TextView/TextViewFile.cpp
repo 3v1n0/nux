@@ -24,7 +24,7 @@
 #include "TextView.h"
 #include "TextViewInternal.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 LONG TextView::OpenFile(TCHAR *szFileName)
 {
@@ -66,4 +66,4 @@ LONG TextView::ClearFile()
 	return TRUE;
 }
 
- NAMESPACE_END_GUI
+ } //NUX_NAMESPACE_END

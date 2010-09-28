@@ -24,12 +24,13 @@
 #include "NuxGraphics/GLTextureResourceManager.h"
 #include "ActionItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_ROOT_OBJECT_TYPE(ActionItem);
+NUX_IMPLEMENT_OBJECT_TYPE(ActionItem);
 
-ActionItem::ActionItem(const TCHAR* label, int UserValue)
-:   m_UserValue(UserValue)
+ActionItem::ActionItem(const TCHAR* label, int UserValue, NUX_FILE_LINE_DECL)
+:   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
+,   m_UserValue(UserValue)
 ,   m_Label(TEXT(""))
 ,   m_IsActivated(true)
 ,   m_Menu(0)
@@ -64,7 +65,7 @@ void ActionItem::DrawAsMenuItem(GraphicsContext& GfxContext, CoreArea& area, boo
 
     gPainter.Draw2DTextureAligned(GfxContext, &m_Icon, icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
 
-    gPainter.PaintTextLineStatic(GfxContext, GFont, text_geo, std::string(label), Color(0xFF000000), eAlignTextLeft);
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadFont(), text_geo, std::string(label), Color(0xFF000000), eAlignTextLeft);
 }
 
 void ActionItem::DrawAsToolButton(GraphicsContext& GfxContext, CoreArea& area)
@@ -150,4 +151,4 @@ NTexture2D& ActionItem::GetIcon()
 //}
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

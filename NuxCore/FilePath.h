@@ -38,7 +38,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class FilePath
 {
@@ -56,6 +56,6 @@ private:
     std::vector<NString>          m_SearchPath;
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // FILEPATH_H

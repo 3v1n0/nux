@@ -24,10 +24,11 @@
 #include "NuxImage/ImageSurface.h"
 #include "ColorArea.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-ColorArea::ColorArea(Color color)
-:   m_Color(color)
+ColorArea::ColorArea(Color color, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Color(color)
 {
     SetMinMaxSize(50, 50);
 }
@@ -63,4 +64,4 @@ void ColorArea::SetColor(Color color)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

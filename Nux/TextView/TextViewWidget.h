@@ -25,7 +25,7 @@
 
 #include "../InterfaceControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HScrollBar;
 class VScrollBar;
@@ -34,7 +34,7 @@ class VScrollBar;
 class TextViewWidget: public ActiveInterfaceObject
 {
 public:
-    TextViewWidget();
+    TextViewWidget(NUX_FILE_LINE_PROTO);
     virtual ~TextViewWidget();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -182,13 +182,13 @@ protected:
     virtual long PostLayoutManagement2(long LayoutResult);
 
 public:
-    NFontPtr m_TextFont;
+    IntrusiveSP<FontTexture> m_TextFont;
 
     ///////////////////////////////////////////////////////
     // AbstractInterfaceObject
     ///////////////////////////////////////////////////////
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TEXTVIEWWIDGET_H

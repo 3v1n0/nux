@@ -33,7 +33,7 @@
 #include "Layout.h"
 #include "ColorEditor.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static void ThreadColorEditorDialog(NThread* thread, void* InitData)
 {
@@ -189,7 +189,8 @@ eColorChannel ColorDialogProxy::GetColorChannel()
     return m_ColorChannel;
 }
 
-ColorEditor::ColorEditor()
+ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_ColorModel = CM_RGB;
     m_ColorChannel = CC_RED;
@@ -237,7 +238,7 @@ ColorEditor::ColorEditor()
         {
             redcheck = smptr(RadioButton)(new RadioButton(TEXT("R:")));
             redcheck->SetMinimumWidth(30);
-            redtext = smptr(EditTextBox)(new EditTextBox());
+            redtext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             redtext->SetMinimumWidth(36);
             redlayout->AddActiveInterfaceObject(redcheck, 0);
             redlayout->AddActiveInterfaceObject(redtext, 0);
@@ -247,7 +248,7 @@ ColorEditor::ColorEditor()
         {
             greencheck = smptr(RadioButton)(new RadioButton(TEXT("G:")));
             greencheck->SetMinimumWidth(30);
-            greentext = smptr(EditTextBox)(new EditTextBox());
+            greentext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             greentext->SetMinimumWidth(36);
             greenlayout->AddActiveInterfaceObject(greencheck, 0);
             greenlayout->AddActiveInterfaceObject(greentext, 0);
@@ -258,7 +259,7 @@ ColorEditor::ColorEditor()
         {
             bluecheck = smptr(RadioButton)(new RadioButton(TEXT("B:")));
             bluecheck->SetMinimumWidth(30);
-            bluetext = smptr(EditTextBox)(new EditTextBox());
+            bluetext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             bluetext->SetMinimumWidth(36);
             bluelayout->AddActiveInterfaceObject(bluecheck, 0);
             bluelayout->AddActiveInterfaceObject(bluetext, 0);
@@ -273,7 +274,7 @@ ColorEditor::ColorEditor()
         {
             huecheck = smptr(RadioButton)(new RadioButton(TEXT("H:")));
             huecheck->SetMinimumWidth(30);
-            huetext = smptr(EditTextBox)(new EditTextBox());
+            huetext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             huetext->SetMinimumWidth(36);
             huelayout->AddActiveInterfaceObject(huecheck, 0);
             huelayout->AddActiveInterfaceObject(huetext, 0);
@@ -283,7 +284,7 @@ ColorEditor::ColorEditor()
         {
             saturationcheck = smptr(RadioButton)(new RadioButton(TEXT("S:")));
             saturationcheck->SetMinimumWidth(30);
-            saturationtext = smptr(EditTextBox)(new EditTextBox());
+            saturationtext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             saturationtext->SetMinimumWidth(36);
             saturationlayout->AddActiveInterfaceObject(saturationcheck, 0);
             saturationlayout->AddActiveInterfaceObject(saturationtext, 0);
@@ -293,7 +294,7 @@ ColorEditor::ColorEditor()
         {
             valuecheck = smptr(RadioButton)(new RadioButton(TEXT("V:")));
             valuecheck->SetMinimumWidth(30);
-            valuetext = smptr(EditTextBox)(new EditTextBox());
+            valuetext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             valuetext->SetMinimumWidth(36);
             valuelayout->AddActiveInterfaceObject(valuecheck, 0);
             valuelayout->AddActiveInterfaceObject(valuetext, 0);
@@ -749,7 +750,7 @@ void ColorEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsign
     valuetext->SetText(m_Validator.ToString(100*m_Value));
     m_VertMarkerPosition = Point(Clamp<int>(x,0,m_BaseChannelArea->GetBaseWidth()-1), Clamp<int>(y,0,m_BaseChannelArea->GetBaseHeight()-1));
 
-    sigChange.emit(smptr(ColorEditor)(this, false));
+    sigChange.emit(smptr(ColorEditor)(this, true));
     NeedRedraw();
 }
 
@@ -891,7 +892,7 @@ void ColorEditor::RecvPickerMouseDown(int x, int y, unsigned long button_flags, 
     saturationtext->SetText(m_Validator.ToString(100*m_Saturation));
     valuetext->SetText(m_Validator.ToString(100*m_Value));
 
-    sigChange.emit(smptr(ColorEditor)(this, false));
+    sigChange.emit(smptr(ColorEditor)(this, true));
     NeedRedraw();
 }
 
@@ -1015,7 +1016,7 @@ void ColorEditor::SetRGB(double r, double g, double b)
     m_Blue =    Clamp<double>(b, 0.0, 1.0);
     RGBtoHSV(m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
     RecvCheckColorModel(true, m_ColorModel, m_ColorChannel);
-    sigChange.emit(smptr(ColorEditor)(this, false));
+    sigChange.emit(smptr(ColorEditor)(this, true));
 }
 
 void ColorEditor::SetHSV(double h, double s, double v)
@@ -1025,7 +1026,7 @@ void ColorEditor::SetHSV(double h, double s, double v)
     m_Value =       Clamp<double>(v, 0.0, 1.0);
     HSVtoRGB( m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
     RecvCheckColorModel(true, m_ColorModel, m_ColorChannel);
-    sigChange.emit(smptr(ColorEditor)(this, false));
+    sigChange.emit(smptr(ColorEditor)(this, true));
 }
 
 void ColorEditor::SetRed(double r)
@@ -1115,4 +1116,4 @@ eColorChannel ColorEditor::GetColorChannel() const
     return m_ColorChannel;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

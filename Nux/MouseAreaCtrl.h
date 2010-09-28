@@ -28,13 +28,13 @@
 #include "HLayout.h"
 #include "VLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //replace MouseAreaCtrl with GfxViewCtrl
 class MouseAreaCtrl: public ActiveInterfaceObject  
 {
 public:
-    MouseAreaCtrl();
+    MouseAreaCtrl(NUX_FILE_LINE_PROTO);
     ~MouseAreaCtrl();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -76,6 +76,6 @@ public:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // MOUSEAREACTRL_H

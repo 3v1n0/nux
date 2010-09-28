@@ -25,7 +25,7 @@
 #include "IniFile.h"
 #include "UIColorTheme.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 UIColorThemeImpl* UIColorThemeImpl::m_pInstance = 0;
 
@@ -181,4 +181,4 @@ void UIColorThemeImpl::Initialize()
     ReadColorFromINI("UIColors", "ForegroundColor1", mUI_ForegroundColor1);
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

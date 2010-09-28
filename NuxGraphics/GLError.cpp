@@ -19,15 +19,15 @@
  *
  */
 
-
-#include "NuxCore/NKernel.h"
 #include "GLResource.h"
+#include "FontTexture.h"
 #include "GLError.h"
 
-#ifdef _DEBUG
-    UBOOL bCheckGLErrors = TRUE;
-    UBOOL bBreakOnGLErrors = TRUE;
-    UBOOL bVerboseOGLMsg    = FALSE;
+namespace nux {
+#ifdef NUX_DEBUG
+    bool bCheckGLErrors = TRUE;
+    bool bBreakOnGLErrors = TRUE;
+    bool bVerboseOGLMsg    = FALSE;
 #endif
 
 // WARNING: never call glGetError between glBegin and glEnd.
@@ -36,7 +36,7 @@ int CheckGLError(const TCHAR* GLcall, const TCHAR *file, int line)
     GLenum glErr;
     int    retCode = 0;
 
-    while ( (glErr=glGetError()) != GL_NO_ERROR)
+    while ( (glErr = glGetError()) != GL_NO_ERROR)
     {
 
         switch(glErr)
@@ -72,4 +72,6 @@ int CheckGLError(const TCHAR* GLcall, const TCHAR *file, int line)
             inlDebugBreak();
     }
     return retCode;
+}
+
 }

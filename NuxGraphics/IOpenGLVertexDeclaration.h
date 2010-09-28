@@ -23,12 +23,12 @@
 #ifndef IOPENGLVERTEXDECLARATION_H
 #define IOPENGLVERTEXDECLARATION_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLResource;
 class IOpenGLVertexDeclaration: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLVertexDeclaration, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVertexDeclaration, IOpenGLResource);
 
 public:
     virtual ~IOpenGLVertexDeclaration();
@@ -49,6 +49,6 @@ private:
     friend class GLDeviceFactory;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // IOPENGLVERTEXDECLARATION_H

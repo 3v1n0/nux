@@ -27,7 +27,7 @@
 #include "IntegerValidator.h"
 #include "DoubleValidator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class EditTextBox;
@@ -286,7 +286,7 @@ public:
         COLORMODE_HUE
     };
 
-    ColorGradient(float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f);
+    ColorGradient(float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f, NUX_FILE_LINE_PROTO);
     virtual ~ColorGradient();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -363,6 +363,6 @@ protected:
     DoubleValidator m_DoubleRegExp;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COLORGRADIENT_H

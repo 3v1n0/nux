@@ -25,13 +25,13 @@
 #include "GLDeviceObjects.h"
 #include "GLShaderParameter.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 GLShaderParameter::GLShaderParameter(GLProgramObject* Shader,
                   const TCHAR* ParamName,
                   eShaderParameterType ParamType,
-                  UBOOL IsOptional,
-                  UBOOL IsStatic)
+                  bool IsOptional,
+                  bool IsStatic)
 :   m_ShaderParameterType(ParamType)
 ,   m_Name(ParamName)
 ,   m_bIsOptional(IsOptional)
@@ -44,4 +44,4 @@ GLShaderParameter::GLShaderParameter(GLProgramObject* Shader,
 //    Shader->FirstParameter = this;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

@@ -25,7 +25,7 @@
 
 #include "Math/MathUtility.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NString;
 
@@ -792,7 +792,7 @@ public:
     tstring m_string;
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NSTRING_H
 

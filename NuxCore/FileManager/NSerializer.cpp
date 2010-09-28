@@ -22,7 +22,7 @@
 
 #include "NKernel.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // template<typename T>
 // void NSerializer::SerializeBuffer(T* buffer, t_u64 Length, t_u64 ElementSize)
@@ -78,4 +78,4 @@ void NSerializer::Serialize(t_double* buffer, t_u32 len, t_u32 stride) {Serializ
 void NSerializer::Serialize(t_u64*    buffer, t_u32 len, t_u32 stride) {SerializeFinal(buffer, len*stride);}
 void NSerializer::Serialize(t_s64*    buffer, t_u32 len, t_u32 stride) {SerializeFinal(buffer, len*stride);}
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

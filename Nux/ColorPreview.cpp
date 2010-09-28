@@ -27,17 +27,18 @@
 #include "TimerProc.h"
 #include "StaticTextBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const int GRAPH_MARGIN = 1;
 
-ColorPreview::ColorPreview(float red, float green, float blue, eColorModel colormodel)
-:   m_Color(1.0f, 1.0f, 1.0f, 1.0f)
+ColorPreview::ColorPreview(float red, float green, float blue, eColorModel colormodel, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Color(1.0f, 1.0f, 1.0f, 1.0f)
 {
     //setSize(200, 100);
     m_hlayout = smptr(HLayout)(new HLayout);
     m_ColorArea = smptr(CoreArea)(new CoreArea());
-    m_ColorValue = smptr(StaticTextBox)(new StaticTextBox);
+    m_ColorValue = smptr(StaticTextBox)(new StaticTextBox(TEXT(""), NUX_TRACKER_LOCATION));
     m_DialogThreadProxy = new ColorDialogProxy(true);
 
     SetMaximumHeight(18);
@@ -45,7 +46,7 @@ ColorPreview::ColorPreview(float red, float green, float blue, eColorModel color
     m_ColorArea->SetMinimumWidth(32);
     m_ColorArea->SetMaximumWidth(32);
     m_ColorValue->SetTextColor(Color(0xFFFFFFFF));
-    m_ColorValue->SetFont(GFontBold);
+    m_ColorValue->SetFont(GetThreadBoldFont());
     m_ColorValue->SetMinimumWidth(128);
     if(colormodel == CM_HSV)
     {
@@ -78,7 +79,7 @@ ColorPreview::ColorPreview(float red, float green, float blue, eColorModel color
 
 ColorPreview::~ColorPreview()
 {
-    if(m_ChangeTimerHandler)
+    if(m_ChangeTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
 
     NUX_SAFE_DELETE(m_DialogThreadProxy);
@@ -135,7 +136,7 @@ void ColorPreview::RecvTimer(void* v)
     }
     else
     {
-        if(m_ChangeTimerHandler)
+        if(m_ChangeTimerHandler.IsValid())
             GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
         m_ChangeTimerHandler = 0;
         m_Color = m_DialogThreadProxy->GetColor();
@@ -178,4 +179,4 @@ void ColorPreview::SetColor(Color color)
     m_Color = color;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -25,14 +25,14 @@
 
 #include "Layout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class VLayout: public Layout
 {
-    DECLARE_OBJECT_TYPE(VLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(VLayout, Layout);
 public: 
-    VLayout();
-    VLayout(NString name);
+    VLayout(NUX_FILE_LINE_PROTO);
+    VLayout(NString name, NUX_FILE_LINE_PROTO);
     ~VLayout();
 
     virtual long ComputeLayout2();
@@ -76,6 +76,6 @@ public:
     void ComputeStacking(t_s32 length, t_s32 &offset_space, t_s32 &element_margin);
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // VLAYOUT_H

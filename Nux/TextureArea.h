@@ -25,12 +25,12 @@
 
 #include "NuxGraphics/OpenGLEngine.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class TextureArea : public ActiveInterfaceObject
 {
 public:
-    TextureArea();
+    TextureArea(NUX_FILE_LINE_PROTO);
     ~TextureArea();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -49,6 +49,6 @@ public:
 private:
     AbstractPaintLayer* m_PaintLayer;
 };
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TEXTUREAREA_H

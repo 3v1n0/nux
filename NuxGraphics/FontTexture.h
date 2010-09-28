@@ -20,18 +20,12 @@
  */
 
 
-#ifndef FONT_H
-#define FONT_H
+#ifndef FONTTEXTURE_H
+#define FONTTEXTURE_H
 
-#include "GLDeviceObjects.h"
-#include <boost/shared_ptr.hpp>
+class IOpenGLPixelShader;
 
-NAMESPACE_BEGIN_OGL
-
-class GraphicsContext;
-class NRectangleTexture;
-class ICgPixelShader;
-class ICgVertexShader;
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 typedef enum _TextAlignment
 {
@@ -124,8 +118,8 @@ struct KerningPair
 
 struct Charset
 {
-    BOOL italic;
-    BOOL bold;
+    bool italic;
+    bool bold;
     unsigned short LineHeight;
     unsigned short Base;
     unsigned short Width, Height;
@@ -153,7 +147,6 @@ struct Glyph
 };
 
 class FontRenderer;
-class TemplateQuadBuffer;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,10 +154,12 @@ class TemplateQuadBuffer;
 // This font system loads in a custom file containing a gray scale
 // texture (used as alpha texture) with all the letters on it, and
 // information about what glyph is where.
-class FontTexture
+class FontTexture: public NuxCoreObject
 {
 public:
-    FontTexture(const TCHAR* FontFile);
+    NUX_DECLARE_OBJECT_TYPE(FontTexture, NuxCoreObject);
+
+    FontTexture(const TCHAR* FontFile, NUX_FILE_LINE_PROTO);
     FontTexture(INT width, INT height, BYTE *Texture);
     ~FontTexture();
 
@@ -238,50 +233,6 @@ private:
     friend class FontRenderer;
 };
 
+} //NUX_NAMESPACE_END
 
-
-typedef boost::shared_ptr<FontTexture>  NFontPtr;
-
-class FontRenderer
-{
-public:
-    FontRenderer(GraphicsContext& OpenGLEngine);
-    ~FontRenderer();
-
-    GraphicsContext& m_OpenGLEngine;
-
-    int DrawColorString(const NFontPtr& Font, int x, int y, const NString& str, const Color& color, bool WriteAlphaChannel, int NumCharacter = 0, int SkipFirstNCharacters = 0);
-    
-    void PositionString(const NFontPtr& Font, const NString& str, const PageBBox&, StringBBox&, TextAlignment align = eAlignTextCenter, int NumCharacter = 0);
-    int RenderColorText(const NFontPtr& Font, int x, int y, const NString& Str, const Color& color, bool WriteAlphaChannel, int NumCharacter);
-    int RenderColorTextLineStatic(const NFontPtr& Font, const PageBBox& pageSize, const NString& Str, const Color& color,
-        bool WriteAlphaChannel, TextAlignment alignment);
-    int RenderColorTextLineEdit(const NFontPtr& Font, const PageBBox& pageSize, const NString& Str,
-        const Color& TextColor,
-        bool WriteAlphaChannel,
-        const Color& SelectedTextColor,
-        const Color& SelectedTextBackgroundColor,
-        const Color& TextBlinkColor,
-        const Color& CursorColor,
-        bool ShowCursor, unsigned int CursorPosition,
-        int offset = 0, int selection_start = 0, int selection_end = 0);
-
-    int RenderText(const NFontPtr& Font, int x, int y, const NString& str, const Color& color, bool WriteAlphaChannel, int StartCharacter = 0, int NumCharacters = 0);
-    int RenderTextToBuffer(
-        float* VertexBuffer, int VBSize,
-        const NFontPtr& Font, Rect geo, const NString& str, const Color& color, TextAlignment alignment = eAlignTextCenter, int NumCharacter = 0);
-
-private:
-    TemplateQuadBuffer* m_QuadBuffer;
-    TRefGL<IOpenGLPixelShader> m_PixelShaderProg;
-    TRefGL<IOpenGLVertexShader> m_VertexShaderProg;
-    TRefGL<IOpenGLShaderProgram> m_ShaderProg;
-
-    TRefGL<IOpenGLAsmPixelShader> m_AsmPixelShaderProg;
-    TRefGL<IOpenGLAsmVertexShader> m_AsmVertexShaderProg;
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmShaderProg;
-};
-
-NAMESPACE_END_OGL
-
-#endif //FONT_H
+#endif //FONTTEXTURE_H

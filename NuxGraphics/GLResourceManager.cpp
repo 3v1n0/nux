@@ -27,12 +27,12 @@
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern PixelFormatInfo GPixelFormats[];
 
-IMPLEMENT_ROOT_OBJECT_TYPE(NResource);
-IMPLEMENT_ROOT_OBJECT_TYPE(NGLResource);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NResource);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NGLResource);
 
 NResource::NResource()
 :   m_ResourceIndex(NUX_INVALID_INDEX)
@@ -175,9 +175,4 @@ bool NResourceCache::IsCachedResource(NResource* Source)
     return (CachedResource.IsValid());
 }
 
-void UpdateResource(NResource* Source)
-{
-
-}
-
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

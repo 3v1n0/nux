@@ -26,7 +26,7 @@
 #include "KeyboardHandler.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 class HLayout;
 class VLayout;
 class Layout;
@@ -38,7 +38,7 @@ class TimerFunctor;
 class EditTextBox : public ActiveInterfaceObject
 {
 public:
-    EditTextBox(const TCHAR* Caption = 0);
+    EditTextBox(const TCHAR* Caption, NUX_FILE_LINE_PROTO);
     ~EditTextBox();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -120,7 +120,7 @@ public:
     bool IsEmpty();
 
 private:
-    UBOOL ValidateKeyboardEntry(const TCHAR* text) const;
+    bool ValidateKeyboardEntry(const TCHAR* text) const;
     void EscapeKeyboardFocus();
     void EnteringKeyboardFocus();
     void QuitingKeyboardFocus();
@@ -149,11 +149,11 @@ private:
     void StopBlinkCursor(bool BlinkState = false);
     void StartBlinkCursor(bool BlinkState = false);
     TimerFunctor* m_BlinkTimerFunctor;
-    TimerHandle* m_BlinkTimerHandler;
+    TimerHandle m_BlinkTimerHandler;
 
     void ScrollTimerInterrupt(void* v);
     TimerFunctor* m_ScrollTimerFunctor;
-    TimerHandle* m_ScrollTimerHandler;
+    TimerHandle m_ScrollTimerHandler;
 
     //! If true, blend the characters alpha value with the destination and write the result to the destination buffer.
     bool m_WriteAlpha;
@@ -161,7 +161,7 @@ private:
     friend class RGBValuator;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // EDITTEXTBOX_H
 

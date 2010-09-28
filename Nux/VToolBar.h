@@ -22,7 +22,7 @@
 
 #ifndef VTOOLBAR_H
 #define VTOOLBAR_H
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 class ActionItem;
 class ToolButton;
 class VLayout;
@@ -32,7 +32,7 @@ class VLayout;
 class VToolBar: public ActiveInterfaceObject
 {
 public:
-    VToolBar();
+    VToolBar(NUX_FILE_LINE_PROTO);
     ~VToolBar();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -66,5 +66,5 @@ private:
     smptr(VLayout) m_vlayout;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // VTOOLBAR_H

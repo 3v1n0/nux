@@ -26,7 +26,7 @@
 #include "Dialog.h"
 #include "ColorEditor.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class VLayout;
@@ -49,6 +49,6 @@ private:
     Color& m_Color;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COLORPICKERDIALOG_H

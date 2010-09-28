@@ -26,7 +26,7 @@
 #include "codepages.h"
 #include "sequence.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class TextIterator;
 
@@ -237,6 +237,6 @@ struct _BOM_LOOKUP
 	int    type;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TEXTDOCUMENT_H

@@ -29,8 +29,8 @@
 #include "NuxCore/Math/Vector4.h"
 
 #if defined(NUX_OS_WINDOWS)
-    #include "OpenGL/Glew/glew.h"
-    #include "OpenGL/Glew/wglew.h"
+    #include "GL/glew.h"
+    #include "GL/wglew.h"
 #elif defined(NUX_OS_LINUX)
     #define GLEW_MX
     #include "GL/glew.h"
@@ -42,7 +42,7 @@
 #include "NWorldObject.h"
 #include "SceneData.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Float3Set
 {
@@ -224,6 +224,6 @@ public:
     nux::Matrix4 m_WorldMatrix;
 
 };
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NMESHOBJECT_H

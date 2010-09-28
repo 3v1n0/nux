@@ -25,7 +25,7 @@
 
 #include "ImageSurface.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 ///	A bunch of DirectDraw Surface structures and flags
 typedef struct {
     unsigned int    dwMagic;
@@ -96,7 +96,7 @@ typedef struct {
 
 NBitmapData* Load_DDS_File(const TCHAR *filename);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 #endif // DDS_H
 
 

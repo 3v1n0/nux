@@ -30,10 +30,11 @@
 #include "VLayout.h"
 #include "Button.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-TextViewWidget::TextViewWidget()
-:   m_ContentOffsetX(0)
+TextViewWidget::TextViewWidget(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_ContentOffsetX(0)
 ,   m_ContentOffsetY(0)
 ,   m_vertical_scrollbar_enable(true)
 ,   m_horizontal_scrollbar_enable(true)
@@ -76,7 +77,7 @@ TextViewWidget::TextViewWidget()
     //layout->AddActiveInterfaceObject(new Button(TEXT("Hello")));
     SetCompositionLayout(layout);
 
-    m_TextFont.reset(new FontTexture(TEXT("Courier_size_10.txt")));
+    m_TextFont = IntrusiveSP<FontTexture>(new FontTexture(TEXT("Courier_size_10.txt")));
 }
 
 TextViewWidget::~TextViewWidget()
@@ -780,4 +781,4 @@ void TextViewWidget::ResetScrollToDown()
     NeedRedraw();
 }
 
- NAMESPACE_END_GUI
+ } //NUX_NAMESPACE_END

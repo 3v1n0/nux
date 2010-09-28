@@ -23,7 +23,7 @@
 #ifndef ABSTRACTTHREAD_H
 #define ABSTRACTTHREAD_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 typedef void (*ThreadUserInitFunc)(NThread*, void* InitData);
 typedef void (*ThreadUserExitFunc)(NThread*, void* ExitData);
@@ -31,7 +31,7 @@ typedef void (*ThreadMainFunc)(NThread*, void* MainData);
 
 class AbstractThread: public NThread, public sigc::trackable
 {
-    DECLARE_OBJECT_TYPE(AbstractThread, NThread);
+    NUX_DECLARE_OBJECT_TYPE(AbstractThread, NThread);
 
 public:
     AbstractThread(AbstractThread* Parent);
@@ -67,6 +67,6 @@ private:
     AbstractThread* operator &();
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // ABSTRACTTHREAD_H
 

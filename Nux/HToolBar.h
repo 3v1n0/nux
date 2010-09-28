@@ -22,7 +22,7 @@
 
 #ifndef HTOOLBAR_H
 #define HTOOLBAR_H
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 class ActionItem;
 class ToolButton;
 class EditTextBox;
@@ -32,7 +32,7 @@ class HLayout;
 class HToolBar: public ActiveInterfaceObject
 {
 public:
-    HToolBar();
+    HToolBar(NUX_FILE_LINE_PROTO);
     ~HToolBar();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -68,5 +68,5 @@ private:
     smptr(HLayout) m_hlayout;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // HTOOLBAR_H

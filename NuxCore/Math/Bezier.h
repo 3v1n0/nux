@@ -25,7 +25,7 @@
 
 #include "Constants.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //! Evaluate the Bernstein polynomial of degree n, at parameter t.
 /*!
@@ -68,7 +68,7 @@ NUX_DECLSPEC_DLL void Bezier_XYZ(t_int n, t_double t, t_double xcon[], t_double 
 
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // BEZIER_H
 

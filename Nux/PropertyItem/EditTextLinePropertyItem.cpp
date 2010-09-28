@@ -26,10 +26,11 @@
 #include "EditTextBox.h"
 #include "EditTextLinePropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 EditTextLinePropertyItem::EditTextLinePropertyItem(const TCHAR* name, const TCHAR* text)
 :   SectionProperty(name, NODE_TYPE_EDITTEXT)
+,   EditTextBox(text, NUX_TRACKER_LOCATION)
 {
     SetText(text);
     SetTextColor(GPropertyItemTextColor1);
@@ -50,12 +51,12 @@ long EditTextLinePropertyItem::ProcessPropertyEvent(IEvent &ievent, long Travers
 }
 
 void EditTextLinePropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
-                                            RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                            RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     if(isDirtyItem() || IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {
@@ -69,7 +70,7 @@ void EditTextLinePropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCt
     }
 }
 
-void EditTextLinePropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void EditTextLinePropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
     if(m_ItemGeometryVector.size() >= 2)
     {
@@ -119,4 +120,4 @@ bool EditTextLinePropertyItem::FromXML(const TiXmlElement* elementxml)
     }
     return false;
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

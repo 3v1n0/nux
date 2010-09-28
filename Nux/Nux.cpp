@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static NCriticalSection ThreadArrayLock;
 std::vector<NThread*> ThreadArray;
@@ -30,6 +30,7 @@ std::vector<NThread*> ThreadArray;
 void NuxInitialize(const TCHAR* CommandLine)
 {
     nux::NuxCoreInitialize(0);
+    nux::NuxGraphicsInitialize();
 
     // Register a thread local store for the WindowThreads. Each window thread will be able to access its own WindowThread pointer.
     inlRegisterThreadLocalIndex(0, ThreadLocal_InalogicAppImpl, NULL);
@@ -265,6 +266,16 @@ GraphicsContext& GetGraphicsContext()
     return (static_cast<WindowThread*> (thread))->GetGraphicsContext();
 }
 
+IntrusiveSP<FontTexture> GetThreadFont()
+{
+    return GNuxGraphicsResources.GetFont();
+}
+
+IntrusiveSP<FontTexture> GetThreadBoldFont()
+{
+    return GNuxGraphicsResources.GetBoldFont();
+}
+
 WindowCompositor& GetThreadWindowCompositor()
 {
     NThread* thread = GetThreadApplication();
@@ -333,4 +344,4 @@ TimerHandler& GetThreadTimer()
     return (static_cast<WindowThread*> (thread))->GetTimerHandler();
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

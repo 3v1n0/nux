@@ -30,7 +30,7 @@
 #define DEBUG_WARNING(a) 
 #define DEBUG_EXIT(a) 
 
-NAMESPACE_BEGIN     
+namespace nux { //NUX_NAMESPACE_BEGIN     
 
 class RawData
 {
@@ -407,6 +407,6 @@ bool HasOpenEXRSupport();
 
 NBitmapData* LoadImageFile(const TCHAR* Filename);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // IMAGE_H

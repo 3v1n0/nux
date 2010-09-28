@@ -28,7 +28,7 @@
 #include "GLDeviceObjects.h"
 #include "GLRenderStates.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 struct IEvent;
 class MainFBO;
@@ -223,23 +223,7 @@ public:
     GLEWContext* GetGLEWContext() { return &m_GLEWContext; }
     WGLEWContext* GetWGLEWContext() { return &m_WGLEWContext; }
 
-    NString FindResourceLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-    NString FindUITextureLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-    NString FindShaderLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-    NString FindFontLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-
-    const std::vector<NString>& GetFontSearchPath() const {return m_FontSearchPath;}
-    const std::vector<NString>& GetShaderSearchPath() const {return m_ShaderSearchPath;}
-    const std::vector<NString>& GetUITextureSearchPath() const {return m_UITextureSearchPath;}
-
 private:
-    std::vector<NString> m_FontSearchPath;
-    std::vector<NString> m_ShaderSearchPath;
-    std::vector<NString> m_UITextureSearchPath;
-    FilePath m_ResourcePathLocation;
-
-
-
     GLWindowImpl();
     GLWindowImpl(const GLWindowImpl&);
     // Does not make sense for a singleton. This is a self assignment.
@@ -256,7 +240,7 @@ LRESULT CALLBACK WndProcManager(HWND    hWnd,           // Handle For This Windo
                                 WPARAM  wParam,         // Additional Message Information
                                 LPARAM  lParam);        // Additional Message Information
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif //OPENGL_GFX_H
 

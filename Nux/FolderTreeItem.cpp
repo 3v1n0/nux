@@ -24,7 +24,7 @@
 
 #include "FolderTreeItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 FolderTreeItem::FolderTreeItem(const TCHAR* name, const TCHAR* Path, bool Searchable, NodeParameterType type)
 :   TreeItem(name, type)
@@ -48,7 +48,7 @@ FolderTreeItem::~FolderTreeItem()
 
 }
 
-void FolderTreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+void FolderTreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
     if(isDirtyItem())
@@ -82,7 +82,7 @@ void FolderTreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table,
                 GetThreadGraphicsContext()->GetRenderStates().SetColorMask(TRUE, TRUE, TRUE, TRUE);
                 GetThreadGraphicsContext()->GetRenderStates().SetBlend(FALSE);
             }
-            Painter.PaintTextLineStatic(GfxContext, GFont, TextGeometry, row->item->GetName(), GetItemTextColor());
+            Painter.PaintTextLineStatic(GfxContext, GetThreadFont(), TextGeometry, row->m_item->GetName(), GetItemTextColor());
         }
         GfxContext.PopClippingRectangle();
         table->PopItemBackground(GfxContext, nBackground);
@@ -90,4 +90,4 @@ void FolderTreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table,
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

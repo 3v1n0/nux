@@ -32,10 +32,11 @@
 #include "TimerProc.h"
 #include "ClientArea.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-ClientArea::ClientArea()
-:   m_IsRealTime(false)
+ClientArea::ClientArea(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_IsRealTime(false)
 {
     m_IsClientAreaEnabled = false;
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, 4*PRACTICAL_WIDGET_HEIGHT);
@@ -330,4 +331,4 @@ void ClientArea::RealTimeHandler(void* v)
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

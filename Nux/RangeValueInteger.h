@@ -23,15 +23,15 @@
 #ifndef RANGEVALUEINTEGER_H
 #define RANGEVALUEINTEGER_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class EditTextBox;
 
-class RangeValueInteger : public ActiveInterfaceObject //public ValuatorAbstraction
+class RangeValueInteger : public ActiveInterfaceObject
 {
 public:
-    RangeValueInteger(int Value = 0, int MinValue = 0, int MaxValue = 100);
+    RangeValueInteger(int Value = 0, int MinValue = 0, int MaxValue = 100, NUX_FILE_LINE_PROTO);
     ~RangeValueInteger();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -105,7 +105,7 @@ protected:
 
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // RANGEVALUEINTEGER_H
 

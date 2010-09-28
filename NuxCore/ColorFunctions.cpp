@@ -25,7 +25,7 @@
 #include "ColorFunctions.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 // Converts from Gamma2.2 space to Gamma1.0 space
 t_float Undo_Gamma_Correction(t_float c)
 {
@@ -51,4 +51,4 @@ t_float Do_Gamma_Correction(t_float c)
     }                                            
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

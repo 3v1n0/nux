@@ -37,7 +37,7 @@
 
 #include <X11/extensions/xf86vmode.h>
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 struct IEvent;
 class MainFBO;
@@ -269,6 +269,6 @@ private:
     friend class DisplayAccessController;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif //GFXSETUPX11_H

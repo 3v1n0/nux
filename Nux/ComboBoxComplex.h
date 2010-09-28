@@ -25,7 +25,7 @@
 
 #include "AbstractComboBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Menu;
 class ActionItem;
@@ -38,7 +38,7 @@ class HLayout;
 class ComboBoxComplex : public AbstractComboBox
 {
 public:
-    ComboBoxComplex();
+    ComboBoxComplex(NUX_FILE_LINE_PROTO);
     ~ComboBoxComplex();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
@@ -91,6 +91,6 @@ protected:
     smptr(HLayout) m_Layout;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COMBOBOX_COMPLEX_H

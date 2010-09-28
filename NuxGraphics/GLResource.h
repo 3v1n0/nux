@@ -34,6 +34,9 @@
 #include "NuxCore/Size.h"
 #include "NuxImage/BitmapFormats.h"
 #include "NuxCore/NParsing.h"
+#include "NuxCore/NuxCoreObject.h"
+#include "NuxCore/SmartPtr/GenericSmartPointer.h"
+#include "NuxCore/SmartPtr/IntrusiveSP.h"
 
 #include "NuxCore/Math/MathUtility.h"
 #include "NuxCore/Math/Constants.h"
@@ -49,10 +52,8 @@
 #include "NuxImage/Bmp.h"
 #include "NuxImage/NPng.h"
 
-#define NAMESPACE_BEGIN_OGL  namespace nux {
-#define NAMESPACE_END_OGL    }
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 class IOpenGLResource;
 
 class NTexture;
@@ -70,17 +71,15 @@ class NGLRectangleTexture;
 class NGLTextureCube;
 class NGLTextureVolume;
 class NGLAnimatedTexture;
+class FontTexture;
 
-NAMESPACE_END_OGL
-
-#include "RunTimeStats.h"
-#include "GlobalGraphicsInitializer.h"
+} //NUX_NAMESPACE_END
 
 #define NUX_ENABLE_CG_SHADERS 0
 
 #if defined(NUX_OS_WINDOWS)
-    #include "OpenGL/Glew/glew.h"
-    #include "OpenGL/Glew/wglew.h"
+    #include "GL/glew.h"
+    #include "GL/wglew.h"
 
     GLEWContext* glewGetContext();
     WGLEWContext* wglewGetContext();
@@ -106,6 +105,11 @@ NAMESPACE_END_OGL
     #endif
 #endif
 
+#include "RunTimeStats.h"
+#include "NuxGraphics.h"
+#include "FontTexture.h"
+#include "GlobalGraphicsInitializer.h"
+
 #include "GLError.h"
 
 #define CG_FRAGMENT_PROFILE CG_PROFILE_FP30
@@ -114,7 +118,7 @@ NAMESPACE_END_OGL
 #define NUX_BUFFER_OFFSET(i) ((BYTE *)NULL + (i))
 
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 enum
 {
@@ -551,7 +555,7 @@ private:
     {
         if(Handle)
         {
-            if(Handle->GetRefCount() == 0)
+            if(Handle->GetValue() == 0)
             {
                 delete Handle;
                 //GetThreadGLDeviceFactory()->DestroyDeviceResource<T>(Handle);
@@ -834,7 +838,7 @@ public:
     }
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLRESOURCE_H
 

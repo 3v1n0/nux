@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "NWin32Clipboard.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 void inlCopyTextToClipboard(const TCHAR* text)
 {
@@ -145,5 +145,5 @@ NString inlReadTextToClipboard()
     return ResultString;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

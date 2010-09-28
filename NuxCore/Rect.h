@@ -26,7 +26,7 @@
 #include "Point.h"
 #include "Size.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Rect
 {
@@ -92,7 +92,7 @@ public:
     t_int32 width, height;
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // RECT_H
 

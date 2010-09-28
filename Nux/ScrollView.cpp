@@ -28,9 +28,10 @@
 #include "VLayout.h"
 #include "ScrollView.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-ScrollView::ScrollView()
+ScrollView::ScrollView(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_ContentOffsetX                = 0;
     m_ContentOffsetY                = 0;
@@ -775,4 +776,4 @@ void ScrollView::ResetScrollToDown()
     NeedRedraw();
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

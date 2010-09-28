@@ -24,7 +24,7 @@
 #include "GLResource.h"
 #include "GLTimer.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 GLTimer::GLTimer()
 {
 #if defined(NUX_OS_WINDOWS)
@@ -77,4 +77,4 @@ float GLTimer::PassedMilliseconds(void)
 //     QueryPerformanceCounter(&temp);
 //     return (temp.QuadPart - now.QuadPart) * res;
 // }
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

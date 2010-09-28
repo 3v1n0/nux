@@ -25,7 +25,7 @@
 
 #include "PaintLayer.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Knot2
 {
@@ -61,7 +61,7 @@ typedef float (*FunctionCallback)(float);
 class BezierCurveControl2 : public ActiveInterfaceObject
 {
 public:
-    BezierCurveControl2();
+    BezierCurveControl2(NUX_FILE_LINE_PROTO);
     ~BezierCurveControl2();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -121,6 +121,6 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // BEZIERCURVECONTROL2_H

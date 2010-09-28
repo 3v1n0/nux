@@ -24,12 +24,12 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLAsmShader.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShader);
-IMPLEMENT_OBJECT_TYPE(IOpenGLAsmVertexShader);
-IMPLEMENT_OBJECT_TYPE(IOpenGLAsmPixelShader);
-IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShaderProgram);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShader);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmVertexShader);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmPixelShader);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShaderProgram);
 
 bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines);
 
@@ -330,4 +330,4 @@ void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4fvARB(t_uint32 index, co
     CHECKGL( glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, index, params) );
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

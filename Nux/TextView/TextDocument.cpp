@@ -25,7 +25,7 @@
 #include "TextView.h"
 #include "Unicode.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 struct _BOM_LOOKUP BOMLOOK[] = 
 {
@@ -1033,4 +1033,4 @@ bool TextDocument::Redo(t_u32 *offset_start, t_u32 *offset_end)
 	return true;
 }
 
- NAMESPACE_END_GUI
+ } //NUX_NAMESPACE_END

@@ -30,7 +30,7 @@
 #include "SplineCurveEditor.h"
 #include "SplineCurveDialog.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 SplineCurveDialog::SplineCurveDialog()
 {
@@ -97,4 +97,4 @@ double SplineCurveDialog::Eval(double t)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

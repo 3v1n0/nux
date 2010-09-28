@@ -24,15 +24,15 @@
 #define HSPLITTER_H
 
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Layout;
 
 class HSplitter: public ActiveInterfaceObject
 {
-    DECLARE_OBJECT_TYPE(HSplitter, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(HSplitter, ActiveInterfaceObject);
 public:
-    HSplitter();
+    HSplitter(NUX_FILE_LINE_PROTO);
     ~HSplitter();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -93,7 +93,7 @@ private:
     t_s32 m_focus_splitter_index;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // HSPLITTER_H
 

@@ -38,7 +38,7 @@
 
 #define FOCUSNONE -1
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ////////////////////////////////////////////////////////////////////////////
 // Base Area
@@ -50,9 +50,9 @@ typedef BaseArea CoreArea;
 class BaseArea : public BaseObject //public sigc::trackable
 {
 public:
-    DECLARE_OBJECT_TYPE(BaseArea, BaseObject);
+    NUX_DECLARE_OBJECT_TYPE(BaseArea, BaseObject);
 public:
-    BaseArea();
+    BaseArea(NUX_FILE_LINE_PROTO);
     virtual ~BaseArea();
 
     void Deselect()
@@ -181,6 +181,6 @@ public:
     sigc::signal<void, int, int, unsigned long, unsigned long> OnCaptureMouseDownAnyWhereElse;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // BASEAREA_H

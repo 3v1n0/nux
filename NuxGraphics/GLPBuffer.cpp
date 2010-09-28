@@ -24,7 +24,7 @@
 #include "GLResource.h"
 #include "GLPBuffer.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #if defined(NUX_OS_WINDOWS)
 
@@ -1023,4 +1023,4 @@ unsigned int PBuffer::CopyToBuffer(void *ptr, int w, int h)
 	return w * h * (m_iNComponents/8);
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

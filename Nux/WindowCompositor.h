@@ -25,7 +25,7 @@
 
 #include "BaseWindow.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class MenuPage;
 class PBuffer;
@@ -259,5 +259,5 @@ public:
     friend class WindowThread;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // STACKMANAGER_H

@@ -28,12 +28,11 @@
 #define LINENO_PAD	 8
 
 #include <commctrl.h>
-#include "NuxCore/NArray.h"
 #include "../TimerProc.h"
 #include "TextViewWidget.h"
 #include "TextDocument.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //
 //	ATTR - text character attribute
@@ -335,7 +334,7 @@ private:
     int m_ViewProjectionMatrix1;
 
     TimerFunctor* MouseAutoScrollTimer;
-    TimerHandle* MouseAutoScrollHandle;
+    TimerHandle MouseAutoScrollHandle;
     void MouseAutoScrollHandler(void* v);
 
     // Caret blinking
@@ -344,7 +343,7 @@ private:
     void StopBlinkCursor(bool BlinkState = false);
     void StartBlinkCursor(bool BlinkState = false);
     TimerFunctor* m_BlinkTimerFunctor;
-    TimerHandle* m_BlinkTimerHandler;
+    TimerHandle m_BlinkTimerHandler;
 
 	TextDocument *m_pTextDoc;
 
@@ -380,7 +379,7 @@ private:
         );
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif
 

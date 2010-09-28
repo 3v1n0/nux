@@ -24,7 +24,7 @@
 #include "MathFunctions.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const float Const::pi       = 3.1415926535f;
 const float Const::Pi       = 3.1415926535f;
@@ -77,4 +77,4 @@ t_double Floor(t_double d)
     return std::floor(d);
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

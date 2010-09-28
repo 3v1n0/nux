@@ -25,7 +25,7 @@
 #include "ColorGradientPropertyItem.h"
 #include "RGBAProperty.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 RGBAPropertyItem::RGBAPropertyItem(const TCHAR* name, float red /* = 1.0f*/, float green /* = 1.0f*/, float blue /* = 1.0f*/, float alpha /* = 1.0f*/)
 :   SectionProperty(name, NODE_TYPE_RGBA)
@@ -39,10 +39,10 @@ RGBAPropertyItem::RGBAPropertyItem(const TCHAR* name, float red /* = 1.0f*/, flo
 
     m_ColorModel = smptr(Button)(new Button(TEXT("RGB")));
     m_ColorModel->SetMinMaxSize(32, 14);
-    m_ColorModel->SetFont(GFontBold);
+    m_ColorModel->SetFont(GetThreadBoldFont());
     m_ColorFormat = smptr(Button)(new Button(TEXT("float")));
     m_ColorFormat->SetMinMaxSize(32, 14);
-    m_ColorFormat->SetFont(GFontBold);
+    m_ColorFormat->SetFont(GetThreadBoldFont());
 
 
     PushChildBack(m_red);
@@ -113,7 +113,7 @@ long RGBAPropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, l
     return ret;
 }
 
-void RGBAPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void RGBAPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
     if(m_ItemGeometryVector.size() >= 2)
     {
@@ -186,7 +186,7 @@ void RGBAPropertyItem::AlphaChange(const weaksmptr(ColorGradient) slider)
 }
 
 void RGBAPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
-                                    RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                    RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     if(isDirtyItem() ||
         m_red->IsRedrawNeeded() ||
@@ -195,7 +195,7 @@ void RGBAPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* tabl
         m_alpha->IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetThreadBoldFont() /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {
@@ -516,4 +516,4 @@ bool RGBAPropertyItem::FromXML(const TiXmlElement* elementxml)
     return NodeNetCom::FromXML(elementxml);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

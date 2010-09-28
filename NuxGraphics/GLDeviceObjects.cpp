@@ -31,11 +31,11 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "OpenGLEngine.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern PixelFormatInfo GPixelFormats[];
 //NObjectType IOpenGLResource::StaticObjectType(TEXT("IOpenGLResource"), 0);
-IMPLEMENT_ROOT_OBJECT_TYPE(IOpenGLResource);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(IOpenGLResource);
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,4 +148,4 @@ Binding Semantics for Varying Input/Output Data
     		CLP0-CL5                                    Output Clip distances
 */
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

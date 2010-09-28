@@ -29,7 +29,7 @@
 #include "SpinBox_Logic.h"
 
 #include "SpinBoxDouble.h"
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 const Color SPINBOX_DOUBLE_BUTTON_COLOR = Color(0xFF4D4D4D);
 const Color SPINBOX_DOUBLE_BUTTON_MOUSEOVER_COLOR = Color(0xFF222222);
 
@@ -156,7 +156,7 @@ void SpinBoxDouble::SetValue(double value)
 //    if(m_Value > m_DoubleValidator.GetMaximum())
 //        m_Value = m_DoubleValidator.GetMaximum();
     m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(SpinBoxDouble)(this, false));
+    sigValueChanged.emit(smptr(SpinBoxDouble)(this, true));
     sigValue.emit(m_Value);
     NeedRedraw();
 }
@@ -194,7 +194,7 @@ void SpinBoxDouble::SetRange(double MinValue, double Maxvalue)
     m_DoubleValidator.SetMinimum(MinValue);
     m_DoubleValidator.SetMaximum(Maxvalue);
     m_Value = m_DoubleValidator.Validate(m_Value);
-    sigValueChanged.emit(smptr(SpinBoxDouble)(this, false));
+    sigValueChanged.emit(smptr(SpinBoxDouble)(this, true));
     sigValue.emit(m_Value);
     NeedRedraw();
 }
@@ -204,14 +204,14 @@ void SpinBoxDouble::ImplementIncrementBtn()
     SetValue(m_Value + m_Step);
     if(m_Value < m_DoubleValidator.GetMaximum())
     {
-        if(m_UpTimerHandler)
+        if(m_UpTimerHandler.IsValid())
             m_UpTimerHandler = GetThreadTimer().AddTimerHandler(100, m_UpTimerCallback, 0);
         else
             m_UpTimerHandler = GetThreadTimer().AddTimerHandler(800, m_UpTimerCallback, 0);
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(SpinBoxDouble)(this, false));
-    sigIncrement.emit(smptr(SpinBoxDouble)(this, false));
+    sigValueChanged.emit(smptr(SpinBoxDouble)(this, true));
+    sigIncrement.emit(smptr(SpinBoxDouble)(this, true));
     sigValue.emit(m_Value);
 }
 
@@ -220,14 +220,14 @@ void SpinBoxDouble::ImplementDecrementBtn()
     SetValue(m_Value - m_Step);
     if(m_Value > m_DoubleValidator.GetMinimum())
     {
-        if(m_DownTimerHandler)
+        if(m_DownTimerHandler.IsValid())
             m_DownTimerHandler = GetThreadTimer().AddTimerHandler(100, m_DownTimerCallback, 0);
         else
             m_DownTimerHandler = GetThreadTimer().AddTimerHandler(800, m_DownTimerCallback, 0);
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(SpinBoxDouble)(this, false));
-    sigDecrement.emit(smptr(SpinBoxDouble)(this, false));
+    sigValueChanged.emit(smptr(SpinBoxDouble)(this, true));
+    sigDecrement.emit(smptr(SpinBoxDouble)(this, true));
     sigValue.emit(m_Value);
 }
 
@@ -238,7 +238,7 @@ void SpinBoxDouble::ImplementValidateEntry()
     {
         m_Value = m_DoubleValidator.Validate(ret);
         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-        sigValueChanged.emit(smptr(SpinBoxDouble)(this, false));
+        sigValueChanged.emit(smptr(SpinBoxDouble)(this, true));
         sigValue.emit(m_Value);
 //
 //        if(m_Value < m_DoubleValidator.GetMinimum())
@@ -255,9 +255,9 @@ void SpinBoxDouble::ImplementValidateEntry()
 //     else
 //     {
 //         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-//         sigValueChanged.emit(smptr(SpinBoxDouble)(this, false));
+//         sigValueChanged.emit(smptr(SpinBoxDouble)(this, true));
 //         sigValue.emit(m_Value);
 //     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

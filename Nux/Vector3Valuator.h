@@ -23,14 +23,14 @@
 #ifndef VECTOR3VALUATOR_H
 #define VECTOR3VALUATOR_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class EditTextBox;
 
 class Vector3Valuator: public ActiveInterfaceObject
 {
 public:
-    Vector3Valuator();
+    Vector3Valuator(NUX_FILE_LINE_PROTO);
     ~Vector3Valuator();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
@@ -88,7 +88,7 @@ protected:
 
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // VECTOR3VALUATOR_H
 

@@ -25,7 +25,7 @@
 #include "TextViewInternal.h"
 #include "NuxGraphics/FontTexture.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const TCHAR *CtrlStr(DWORD ch)
 {
@@ -255,4 +255,4 @@ int TextView::TabWidth()
 {
 	return m_nTabWidthChars * m_nFontWidth;
 }
- NAMESPACE_END_GUI
+ } //NUX_NAMESPACE_END

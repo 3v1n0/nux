@@ -23,12 +23,12 @@
 #ifndef IOPENGLCUBETEXTURE_H
 #define IOPENGLCUBETEXTURE_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLBaseTexture;
 class IOpenGLCubeTexture: public IOpenGLBaseTexture
 {
-    DECLARE_OBJECT_TYPE(IOpenGLCubeTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLCubeTexture, IOpenGLBaseTexture);
 
 public:
     virtual ~IOpenGLCubeTexture();
@@ -92,5 +92,5 @@ private:
     friend class IOpenGLSurface;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 #endif // IOPENGLCUBETEXTURE_H

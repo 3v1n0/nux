@@ -27,16 +27,17 @@
 #include "HLayout.h"
 #include "Button.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Color FILESELECTOR_BUTTON_COLOR = Color(0xFF4D4D4D);
 Color FILESELECTOR_BUTTON_MOUSEOVER_COLOR = Color(0xFF222222);
 
-FileSelector::FileSelector()
+FileSelector::FileSelector(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_hlayout = smptr(HLayout)(new HLayout());
     m_OpenButton = smptr(Button)(new Button());
-    m_FileEditTextBox = smptr(EditTextBox)(new EditTextBox());
+    m_FileEditTextBox = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
 
     m_hlayout->AddActiveInterfaceObject(m_FileEditTextBox, 1, eCenter);
     m_hlayout->AddActiveInterfaceObject(m_OpenButton, 0, eCenter);
@@ -132,4 +133,4 @@ void FileSelector::RecvOpenButtonClick(int x, int y, unsigned long button_flags,
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -34,7 +34,7 @@
 
 #include "GLSh_ColorPicker.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern bool USE_ARB_SHADERS;
 
@@ -426,4 +426,4 @@ void GLSh_ColorPicker::Render(int x, int y, int z, int width, int height, int Wi
     }
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

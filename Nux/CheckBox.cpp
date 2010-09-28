@@ -25,7 +25,7 @@
 #include "EditTextBox.h"
 #include "CheckBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 CheckBox::CheckBox(const TCHAR* Caption, bool state)
 :   m_hlayout(0)
@@ -192,7 +192,7 @@ bool CheckBox::GetState() const
 void CheckBox::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
     m_State = !m_State;
-    sigStateToggled.emit(smptr(CheckBox)(this, false));
+    sigStateToggled.emit(smptr(CheckBox)(this, true));
     sigStateChanged.emit(m_State);
     NeedRedraw();
 }
@@ -228,4 +228,4 @@ void CheckBox::EmitStateSignal()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

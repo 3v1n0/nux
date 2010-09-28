@@ -23,7 +23,7 @@
 #ifndef IOPENGLSHADER_H
 #define IOPENGLSHADER_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLResource;
 
@@ -31,7 +31,7 @@ bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSourc
 
 class IOpenGLShader:  public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLShader, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLShader, IOpenGLResource);
     IOpenGLShader(NString ShaderName, OpenGLResourceType ResourceType);
     virtual ~IOpenGLShader();
 public:
@@ -44,7 +44,7 @@ public:
 
 class IOpenGLVertexShader:  public IOpenGLShader
 {
-    DECLARE_OBJECT_TYPE(IOpenGLVertexShader, IOpenGLShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVertexShader, IOpenGLShader);
 public:
     virtual ~IOpenGLVertexShader();
     virtual void SetShaderCode(const ANSICHAR* ShaderCode, const TCHAR* VtxShaderPreprocessorDefines = TEXT(""));
@@ -58,7 +58,7 @@ private:
 
 class IOpenGLPixelShader:  public IOpenGLShader
 {
-    DECLARE_OBJECT_TYPE(IOpenGLPixelShader, IOpenGLShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLPixelShader, IOpenGLShader);
 public:
     virtual ~IOpenGLPixelShader();
     virtual void SetShaderCode(const ANSICHAR* ShaderCode, const TCHAR* FrgShaderPreprocessorDefines = TEXT(""));
@@ -73,7 +73,7 @@ private:
 
 class IOpenGLShaderProgram:  public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLShaderProgram, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLShaderProgram, IOpenGLResource);
 public:
     virtual ~IOpenGLShaderProgram();
 
@@ -192,6 +192,6 @@ private:
     friend class GLDeviceFactory;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // IOPENGLSHADER_H

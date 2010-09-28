@@ -26,7 +26,7 @@
 #include "TableItem.h"
 #include "ScrollView.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern const int ROWHEADERWIDTH;
 extern const int OPENCLOSE_BTN_WIDTH;
@@ -482,8 +482,8 @@ protected:
 
     std::vector<RowHeader*> m_row_header;
     //std::vector<Geometry> m_column;
-    std::vector<header2> m_column_header;
-    std::vector<header2> m_column_header_preview;
+    std::vector<ColumnHeader> m_column_header;
+    std::vector<ColumnHeader> m_column_header_preview;
     std::vector<sizehandler2*> m_column_sizehandler;
     std::vector<sizehandler2*> m_row_sizehandler;
     //std::vector<std::string> m_item;
@@ -516,6 +516,6 @@ protected:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TABLECTRL_H

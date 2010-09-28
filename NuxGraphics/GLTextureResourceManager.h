@@ -26,7 +26,7 @@
 #include "GLResourceManager.h"
 #include "IOpenGLBaseTexture.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NTextureData;
 class NTexture;
@@ -37,13 +37,13 @@ NTexture* CreateTextureFromBitmapData(const NBitmapData* BitmapData);
 
 class NTexture: public NResource
 {
-    DECLARE_OBJECT_TYPE(NTexture, NResource);
+    NUX_DECLARE_OBJECT_TYPE(NTexture, NResource);
 
     NTexture();
     virtual ~NTexture();
 
-    virtual bool Update(const NBitmapData* BitmapData) = 0;
-    virtual bool Update(const TCHAR* filename) = 0;
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true) = 0;
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true) = 0;
 
     virtual void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0) = 0;
     virtual int GetWidth() const = 0;
@@ -59,7 +59,7 @@ class NTexture: public NResource
 
 class NTexture2D: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NTexture2D, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NTexture2D, NTexture);
 
 public:
     NTexture2D();
@@ -68,8 +68,25 @@ public:
     NTexture2D& operator = (const NTexture2D& texture);
     ~NTexture2D();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    /*!
+        Update the hardware resources associated to this with the provided texture data.
+        @param BitmapData The texture data to update into the hardware resource.
+        @param UpdateAndCacheResource if True, then the texture data is loaded into this object, and the caching into
+        hardware data is done right away. If false, the caching is done latter by calling 
+        GetThreadGraphicsContext()->CacheResource(this);
+        @return True is there was not error. 
+    */
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+
+    /*!
+        Update the hardware resources associated to this object with the data associated to the file name.
+        @param Filename File name of texture data to update into the hardware resource.
+        @param UpdateAndCacheResource if True, then the texture data is loaded into this object, and the caching into
+        hardware data is done right away. If false, the caching is done latter by calling 
+        GetThreadGraphicsContext()->CacheResource(this);
+        @return True is there was not error. 
+    */
+    virtual bool Update(const TCHAR* Filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
@@ -88,7 +105,7 @@ private:
 
 class NRectangleTexture: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NRectangleTexture, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NRectangleTexture, NTexture);
 
 public:
     NRectangleTexture();
@@ -97,8 +114,8 @@ public:
     NRectangleTexture& operator = (const NRectangleTexture& texture);
     ~NRectangleTexture();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
@@ -117,7 +134,7 @@ private:
 
 class NTextureCube: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NTextureCube, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NTextureCube, NTexture);
 
 public:
     NTextureCube();
@@ -126,8 +143,8 @@ public:
     NTextureCube& operator = (const NTextureCube& texture);
     ~NTextureCube();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
@@ -145,7 +162,7 @@ private:
 
 class NTextureVolume: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NTextureVolume, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NTextureVolume, NTexture);
 
 public:
     NTextureVolume();
@@ -154,8 +171,8 @@ public:
     NTextureVolume& operator = (const NTextureVolume& texture);
     ~NTextureVolume();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int slice = 0);
@@ -175,7 +192,7 @@ private:
 
 class NAnimatedTexture: public NTexture
 {
-    DECLARE_OBJECT_TYPE(NAnimatedTexture, NTexture);
+    NUX_DECLARE_OBJECT_TYPE(NAnimatedTexture, NTexture);
 
 public:
     NAnimatedTexture();
@@ -183,8 +200,8 @@ public:
     NAnimatedTexture& operator = (const NAnimatedTexture& texture);
     ~NAnimatedTexture();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int slice = 0);
@@ -205,7 +222,7 @@ private:
 
 class NGLTexture: public NGLResource
 {
-    DECLARE_OBJECT_TYPE(NGLTexture, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE(NGLTexture, NGLResource);
 public: 
     TRefGL<IOpenGLBaseTexture>	m_Texture;
 
@@ -243,7 +260,7 @@ public:
 
 class NGLTexture2D: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLTexture2D, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLTexture2D, NGLTexture);
 public: 
     NGLTexture2D(NResourceSet* ResourceManager, NTexture2D* SourceTexture);
     ~NGLTexture2D();
@@ -254,7 +271,7 @@ public:
 
 class NGLRectangleTexture: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLRectangleTexture, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLRectangleTexture, NGLTexture);
 public: 
     NGLRectangleTexture(NResourceSet* ResourceManager, NRectangleTexture* SourceTexture);
     ~NGLRectangleTexture();
@@ -265,7 +282,7 @@ public:
 
 class NGLTextureCube: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLTextureCube, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLTextureCube, NGLTexture);
 public: 
     NGLTextureCube(NResourceSet* ResourceManager, NTextureCube* SourceTexture);
     ~NGLTextureCube();
@@ -276,7 +293,7 @@ public:
 
 class NGLTextureVolume: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLTextureVolume, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLTextureVolume, NGLTexture);
 public: 
     NGLTextureVolume(NResourceSet* ResourceManager, NTextureVolume* SourceTexture);
     ~NGLTextureVolume();
@@ -287,7 +304,7 @@ public:
 
 class NGLAnimatedTexture: public NGLTexture
 {
-    DECLARE_OBJECT_TYPE(NGLAnimatedTexture, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE(NGLAnimatedTexture, NGLTexture);
 public: 
     NGLAnimatedTexture(NResourceSet* ResourceManager, NAnimatedTexture* SourceTexture);
     ~NGLAnimatedTexture();
@@ -296,6 +313,6 @@ public:
     virtual void LoadMipLevel(NTexture* SourceTexture, int MipLevel);
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLTEXTURERESOURCEMANAGER_H

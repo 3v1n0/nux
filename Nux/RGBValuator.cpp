@@ -31,10 +31,11 @@
 #include "DoubleValidator.h"
 #include "RGBValuator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-RGBValuator::RGBValuator()
-:   m_color_model(CM_RGB)
+RGBValuator::RGBValuator(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_color_model(CM_RGB)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
     InitializeLayout();
@@ -44,8 +45,9 @@ RGBValuator::RGBValuator()
     InitializeWidgets();
 }
 
-RGBValuator::RGBValuator(float red, float green, float blue, float alpha)
-:   m_color_model(CM_RGB)
+RGBValuator::RGBValuator(float red, float green, float blue, float alpha, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_color_model(CM_RGB)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
     InitializeLayout();
@@ -55,8 +57,9 @@ RGBValuator::RGBValuator(float red, float green, float blue, float alpha)
     InitializeWidgets();
 }
 
-RGBValuator::RGBValuator(Color color)
-:   m_color_model(CM_RGB)
+RGBValuator::RGBValuator(Color color, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_color_model(CM_RGB)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
     InitializeLayout();
@@ -66,8 +69,9 @@ RGBValuator::RGBValuator(Color color)
     InitializeWidgets();
 }
 
-RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, float alpha)
-:   m_color_model(colorModel)
+RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, float alpha,    NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_color_model(colorModel)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
     InitializeLayout();
@@ -110,10 +114,10 @@ void RGBValuator::InitializeLayout()
     m_ColorModel    = smptr(Button)(new Button());
     m_ColorFormat   = smptr(Button)(new Button());
 
-    m_RedCaption    = smptr(EditTextBox)(new EditTextBox);
-    m_GreenCaption  = smptr(EditTextBox)(new EditTextBox);
-    m_BlueCaption   = smptr(EditTextBox)(new EditTextBox);
-    m_AlphaCaption  = smptr(EditTextBox)(new EditTextBox);
+    m_RedCaption    = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_GreenCaption  = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_BlueCaption   = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_AlphaCaption  = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
 
     m_RedValuator   = smptr(CoreArea)(new CoreArea());
     m_GreenValuator = smptr(CoreArea)(new CoreArea());
@@ -151,8 +155,8 @@ void RGBValuator::InitializeWidgets()
 //    m_ColorModel->OnMouseUp.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->OnMouseEnter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 
-    m_ColorModel->SetFont(GFontBold);
-    m_ColorFormat->SetFont(GFontBold);
+    m_ColorModel->SetFont(GetThreadBoldFont());
+    m_ColorFormat->SetFont(GetThreadBoldFont());
     
     m_RedValuator->OnMouseUp.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseUp_Red));
     m_GreenValuator->OnMouseUp.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseUp_Green));
@@ -423,10 +427,10 @@ void RGBValuator::Draw(GraphicsContext& GfxContext, bool force_draw)
         DrawHLS(GfxContext);
     }
 
-    gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
 
     DrawRedMarker(GfxContext);
     DrawGreenMarker(GfxContext);
@@ -1469,4 +1473,4 @@ void RGBValuator::EmitColorChangedSignal()
     sigColorChanged.emit(m_Red, m_Green, m_Blue, m_Alpha);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

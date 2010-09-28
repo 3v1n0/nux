@@ -24,10 +24,11 @@
 #include "NuxCore/Math/Bezier.h"
 #include "CurveControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-CurveControl::CurveControl()
-:m_minX(0.0f),
+CurveControl::CurveControl(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_minX(0.0f),
 m_minY(0.0f),
 m_maxX(1.0f),
 m_maxY(1.0f),
@@ -167,4 +168,4 @@ void CurveControl::UpdateGraph()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

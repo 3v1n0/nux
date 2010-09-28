@@ -38,7 +38,7 @@
     #define BI_PNG        5L
 #endif
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ImageInfo get_bmp_info(const std::string& file_name)
 {
@@ -695,5 +695,5 @@ HReport write_bmp_file(const TCHAR* file_name, NBitmapData *image)
     return HR_SUCCESS;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

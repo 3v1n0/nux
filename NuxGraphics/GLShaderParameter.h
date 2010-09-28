@@ -26,7 +26,7 @@
 #include "GLError.h"
 #include "GLResource.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //! Type of shader in a shader
 enum eShaderParameterType
@@ -51,9 +51,9 @@ public:
     GLuint                      m_Index;                  // Register m_Index / Attribute m_Index
     eShaderParameterType        m_ShaderParameterType;
     NString                     m_Name;
-    UBOOL                       m_bIsOptional;
-    UBOOL                       m_bIsStatic;
-    UBOOL                       bStaticSet;
+    bool                       m_bIsOptional;
+    bool                       m_bIsStatic;
+    bool                       bStaticSet;
     GLProgramObject*            m_ShaderProgram;
     IOpenGLShaderProgram*       m_ShaderProgram2;
     GLShaderParameter*          m_NextParameter;
@@ -63,8 +63,8 @@ public:
     GLShaderParameter(GLProgramObject* Shader,
         const TCHAR* ParamName,
         eShaderParameterType InType,
-        UBOOL InbIsOptional=FALSE,
-        UBOOL InbIsStatic=FALSE);
+        bool InbIsOptional=FALSE,
+        bool InbIsStatic=FALSE);
 
     inline void SetUniform1f( FLOAT FloatA )
     {
@@ -134,7 +134,7 @@ public:
 private:
 
 };
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // GLSHADERPARAMETER_H
 

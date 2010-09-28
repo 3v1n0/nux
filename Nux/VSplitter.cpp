@@ -29,13 +29,14 @@
 #include "HLayout.h"
 #include "VLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(VSplitter);
+NUX_IMPLEMENT_OBJECT_TYPE(VSplitter);
 static const t_s32 VSPLITTERWIDTH = 5;
 static const t_s32 VSTICK_SIZE = 5;
 
-VSplitter::VSplitter()
+VSplitter::VSplitter(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 { 
     m_layout = 0;
     new_addition = false;
@@ -301,12 +302,13 @@ void VSplitter::AddWidget(smptr(BaseObject) ic, float stretchfactor)
     if(ic.IsValid())
     {
         MySplitter *splitter = new MySplitter;
+        splitter->SinkReference();
         t_u32 no = (t_u32)m_InterfaceObject.size();
         splitter->OnMouseDown.connect(sigc::bind( sigc::mem_fun(this, &VSplitter::OnSplitterMouseDown), no));
         splitter->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &VSplitter::OnSplitterMouseUp), no));
         splitter->OnMouseDrag.connect(sigc::bind( sigc::mem_fun(this, &VSplitter::OnSplitterMouseDrag), no));
 
-        ic->SetParentObject(smptr(BaseObject)(this, false));
+        ic->SetParentObject(smptr(BaseObject)(this, true));
         m_InterfaceObject.push_back(ic);
         m_SplitterObject.push_back(splitter);
         m_SplitConfig.push_back(stretchfactor);
@@ -484,7 +486,7 @@ void VSplitter::OnSplitterMouseDown(t_s32 x, t_s32 y, unsigned long button_flags
     m_point.Set(x, y);
 
     m_focus_splitter_index = header_pos;
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(this, false), GetThreadWindowCompositor().GetCurrentWindow());
+    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(this, true), GetThreadWindowCompositor().GetCurrentWindow());
 
     // Hint for the window to initiate a redraw
     GetGraphicsThread()->RequestRedraw();
@@ -616,4 +618,4 @@ void VSplitter::DoneRedraw()
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

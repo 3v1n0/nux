@@ -30,7 +30,7 @@
 #pragma pack(pop)
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 void* GetDllHandle( const TCHAR* Filename )
 {
@@ -57,5 +57,5 @@ void* GetDllExport( void* DllHandle, const TCHAR* ProcName )
     return (void*)GetProcAddress( (HMODULE)DllHandle, TCHAR_TO_ANSI(ProcName) );
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

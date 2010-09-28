@@ -24,7 +24,7 @@
 #include "NUnicode.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 ANSICHAR* UnicharToAnsicharConvertion::Convert(const UNICHAR* Source)
 {
@@ -72,4 +72,4 @@ UNICHAR* AnsicharToUnicharConvertion::Convert(const ANSICHAR* Source)
     return utf16string;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

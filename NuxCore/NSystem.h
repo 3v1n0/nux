@@ -23,6 +23,10 @@
 #ifndef NSYSTEM_H
 #define NSYSTEM_H
 
+#ifdef _DEBUG
+    #define NUX_DEBUG
+#endif
+
 #ifdef _WIN32
     #define NUX_OS_WINDOWS
 #elif __linux
@@ -45,7 +49,7 @@
     #define NUX_COMPILER_STRING "GNU CPP Compiler"
 
     // Build string
-    #ifdef _DEBUG
+    #ifdef NUX_DEBUG
         #define NUX_BUILD_STRING "Debug build compiled with " NUX_COMPILER_STRING
     #else
         #define NUX_BUILD_STRING "Compiled with " NUX_COMPILER_STRING
@@ -125,7 +129,7 @@
     #endif
 
     // Build String
-    #ifdef _DEBUG
+    #ifdef NUX_DEBUG
         #define NUX_BUILD_STRING "Debug build compiled with " NUX_COMPILER_STRING
     #else
         #define NUX_BUILD_STRING "Compiled with " NUX_COMPILER_STRING
@@ -171,10 +175,10 @@
 
 
 // Logging
-#if defined(NUX_OS_WINDOWS) && defined(_DEBUG)
+#if defined(NUX_OS_WINDOWS) && defined(NUX_DEBUG)
     #define NUX_ENABLE_ASSERT_MACROS
     #define NUX_ENABLE_LOGGING
-#elif defined(NUX_OS_LINUX) && defined(_DEBUG)
+#elif defined(NUX_OS_LINUX) && defined(NUX_DEBUG)
     #define NUX_ENABLE_ASSERT_MACROS
     #define NUX_ENABLE_LOGGING
 #endif
@@ -250,7 +254,7 @@
 
 // Throwing exceptions:
 
-// #ifdef _DEBUG
+// #ifdef NUX_DEBUG
 //     // if we are in Debug disable exceptions. What we want is to break were and error happens: ie NUX_BREAK_ASM_INT3
 //     #define NUX_EXCEPTIONS_DISABLED 1
 // #endif

@@ -26,9 +26,9 @@
 // When writing to a matrix at row r and colum c use m[r][c].
 // When reading from a matrix at row r and colum c use m[c][r].
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

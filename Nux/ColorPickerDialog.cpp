@@ -24,7 +24,7 @@
 #include "Button.h"
 #include "ColorPickerDialog.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static Color DummyColor;
 
@@ -69,4 +69,4 @@ void ColorPickerDialog::RecvCancel()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

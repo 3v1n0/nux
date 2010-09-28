@@ -24,7 +24,7 @@
 #include "GLResource.h"
 #include "IniFile.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 struct RecordSectionIs : std::unary_function<CIniFile::Record, bool>
 {
@@ -815,4 +815,4 @@ int Usage()
 
     return 0;
 }
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

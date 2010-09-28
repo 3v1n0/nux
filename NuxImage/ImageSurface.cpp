@@ -35,7 +35,7 @@
 #include "NITX.h"
 #include "NAnimatedTexture.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 extern PixelFormatInfo GPixelFormats[];
 
@@ -86,11 +86,11 @@ bool HasOpenEXRSupport()
 #endif
 }
 
-void MakeCheckBoardImage(ImageSurface& Image, t_u32 w, t_u32 h,
+void MakeCheckBoardImage(ImageSurface& Image, t_s32 w, t_s32 h,
                          Color color0,
                          Color color1,
-                         t_u32 TileWidth,
-                         t_u32 TileHeight)
+                         t_s32 TileWidth,
+                         t_s32 TileHeight)
 {
     Image.Allocate(BITFMT_R8G8B8A8, w, h);
     if(TileWidth <= 0)
@@ -99,7 +99,7 @@ void MakeCheckBoardImage(ImageSurface& Image, t_u32 w, t_u32 h,
     if(TileHeight <= 0)
         TileHeight = 4;
 
-    t_u32 i, j, c;
+    t_s32 i, j, c;
     for(j = 0; j < h; j++)
     {
         for(i = 0; i < w; i++)
@@ -110,10 +110,10 @@ void MakeCheckBoardImage(ImageSurface& Image, t_u32 w, t_u32 h,
             t_u32 a = ( (( i / TileWidth )%2) == 0 );
             t_u32 b = ( (( j / TileHeight )%2) == 0 );
             c = a ^ b;
-            t_u8 R = c ? color0.R()*255     : color1.R()*255;
-            t_u8 G = c ? color0.G()*255     : color1.G()*255;
-            t_u8 B = c ? color0.B()*255     : color1.B()*255;
-            t_u8 A = c ? color0.A()*255     : color1.A()*255;
+            t_u8 R = c ? color0.R()*255 : color1.R()*255;
+            t_u8 G = c ? color0.G()*255 : color1.G()*255;
+            t_u8 B = c ? color0.B()*255 : color1.B()*255;
+            t_u8 A = c ? color0.A()*255 : color1.A()*255;
             Image.Write(i, j, R, G, B, A);
         }
     }
@@ -658,7 +658,7 @@ void ImageSurface::FlipDXTVertical()
             FlipBlocksDXT5(bottom, xblocks);
             break;
         default:
-          nuxAssert(TEXT("[ImageSurface::FlipDXTVertical] Invalid Switch option."))
+          nuxAssert(TEXT("[ImageSurface::FlipDXTVertical] Invalid Switch option."));
           break;
         }
         SwapBlocks(bottom, top, linesize);
@@ -1390,5 +1390,5 @@ bool NAnimatedTextureData::SetSurface(t_s32 Slice, t_s32 MipLevel, const ImageSu
     return true;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

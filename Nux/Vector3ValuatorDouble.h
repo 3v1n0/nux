@@ -26,7 +26,7 @@
 #include "DoubleValidator.h"
 #include "Vector3Valuator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class EditTextBox;
 class StaticTextBox;
@@ -84,7 +84,7 @@ private:
     smptr(StaticTextBox) m_ZLabel;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // VECTOR3DOUBLEVALUATOR_H
 

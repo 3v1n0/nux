@@ -25,12 +25,13 @@
 #include "HLayout.h"
 #include "VLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const t_s32 HERROR = 0;
-IMPLEMENT_OBJECT_TYPE(HLayout);
+NUX_IMPLEMENT_OBJECT_TYPE(HLayout);
 
-HLayout::HLayout()
+HLayout::HLayout(NUX_FILE_LINE_DECL)
+:   Layout(NUX_FILE_LINE_PARAM)
 {
 #if DEBUG_LAYOUT
     m_h_in_margin = 10;
@@ -44,7 +45,8 @@ HLayout::HLayout()
     m_ContentStacking = eStackLeft;
 }
 
-HLayout::HLayout(NString name)
+HLayout::HLayout(NString name, NUX_FILE_LINE_DECL)
+:   Layout(NUX_FILE_LINE_PARAM)
 {
     m_name = name;
 #if DEBUG_LAYOUT
@@ -814,4 +816,4 @@ void HLayout::ComputePosition2(float offsetX, float offsetY)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

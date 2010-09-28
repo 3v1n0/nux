@@ -23,14 +23,14 @@
 #ifndef RADIOBUTTONLOGIC_H
 #define RADIOBUTTONLOGIC_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class RadioButton;
 
-class RadioButtonGroup : public sigc::trackable
+class RadioButtonGroup: public NuxCoreObject, public sigc::trackable
 {
 public:
-    RadioButtonGroup();
+    RadioButtonGroup(NUX_FILE_LINE_PROTO);
     ~RadioButtonGroup();
 
     //! Add a radio button to the group.
@@ -59,6 +59,6 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // RADIOBUTTONLOGIC_H

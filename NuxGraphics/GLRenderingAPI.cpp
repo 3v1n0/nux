@@ -22,7 +22,7 @@
 
 #include "OpenGLEngine.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

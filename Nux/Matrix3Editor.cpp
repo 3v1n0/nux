@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "Matrix3Editor.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static void ThreadMatrix3EditorDialog(NThread* thread, void* InitData)
 {
@@ -137,8 +137,9 @@ void Matrix3DialogProxy::StopThreadMonitoring()
     m_Thread = 0;
 }
 
-Matrix3Editor::Matrix3Editor(Matrix3 matrix)
-:   m_Matrix(matrix)
+Matrix3Editor::Matrix3Editor(Matrix3 matrix, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Matrix(matrix)
 {
     m_vlayout = smptr(VLayout)(new VLayout());
     mtx_layout = smptr(VLayout)(new VLayout());
@@ -162,7 +163,7 @@ Matrix3Editor::Matrix3Editor(Matrix3 matrix)
     {
         for(int j = 0; j < 3; j++)
         {
-            m_MtxInput[i][j] = smptr(EditTextBox)(new EditTextBox());
+            m_MtxInput[i][j] = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             m_MtxInput[i][j]->SetMinimumSize(DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT);
             m_MtxInput[i][j]->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
             m_MtxInput[i][j]->sigValidateKeyboardEntry.connect(
@@ -251,7 +252,7 @@ void Matrix3Editor::RecvComponentInput(const weaksmptr(EditTextBox) textbox, con
     m_MtxInput[i][j]->SetText(inlPrintf(TEXT("%.3f"), f));
     m_Matrix.m[i][j] = f;
 
-    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, true));
 }
 
 void Matrix3Editor::WriteMatrix()
@@ -364,7 +365,7 @@ void Matrix3Editor::RecvIdentityMatrixCmd()
 {
     m_Matrix.Identity();
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, true));
 
     NeedRedraw();
 }
@@ -373,7 +374,7 @@ void Matrix3Editor::RecvZeroMatrixCmd()
 {
     m_Matrix.Zero();
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, true));
 
     NeedRedraw();
 }
@@ -382,7 +383,7 @@ void Matrix3Editor::RecvInverseMatrixCmd()
 {
     m_Matrix.Zero();
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, true));
 
     NeedRedraw();
 }
@@ -391,10 +392,10 @@ void Matrix3Editor::RecvNegateMatrixCmd()
 {
     m_Matrix = -m_Matrix;
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, false));
+    sigMatrixChanged.emit(smptr(Matrix3Editor)(this, true));
 
     NeedRedraw();
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

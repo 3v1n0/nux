@@ -31,7 +31,7 @@
 #include "SplineCurveEditor.h"
 #include "SplineCurvePreview.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const int GRAPH_MARGIN = 1;
 
@@ -159,8 +159,9 @@ void SplineCurveDialogProxy::SetControlPoints(const SplineKnot& splineknot)
     m_ControlPoints = splineknot;
 }
 
-SplineCurvePreview::SplineCurvePreview()
-:   m_minX(0.0f)
+SplineCurvePreview::SplineCurvePreview(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_minX(0.0f)
 ,   m_minY(0.0f)
 ,   m_maxX(1.0f)
 ,   m_maxY(1.0f)
@@ -354,7 +355,7 @@ void SplineCurvePreview::RecvTimer(void* v)
     }
     else
     {
-        if(m_ChangeTimerHandler)
+        if(m_ChangeTimerHandler.IsValid())
             GetThreadTimer().RemoveTimerHandler(m_ChangeTimerHandler);
         m_ChangeTimerHandler = 0;
 
@@ -430,4 +431,4 @@ void SplineCurvePreview::AddKnot(double x, double y, bool bSelected)
     m_CubicSpline.Set(m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray());
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -29,7 +29,7 @@
     #include "NuxGraphics/GfxEventsX11.h"
 #endif
 #include "Utils.h"
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 typedef enum
 {
     eSigMouseNone   = 0L,
@@ -154,6 +154,6 @@ public:
     ~DecButtonEventHandler(){};
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // EVENTHANDLER_H

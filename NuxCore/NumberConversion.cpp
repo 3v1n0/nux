@@ -22,7 +22,7 @@
 #include "NKernel.h"
 #include "NumberConversion.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 /**
  * From: http://www.strudel.org.uk/itoa/
@@ -141,4 +141,4 @@ t_u32 HexCharToInteger(const TCHAR* s)
     return (intValue);
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

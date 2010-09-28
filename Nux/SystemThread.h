@@ -23,14 +23,14 @@
 #ifndef SYSTEMTHREAD_H
 #define SYSTEMTHREAD_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class WindowCompositor;
 class WindowThread;
 
 class SystemThread: public AbstractThread
 {
-    DECLARE_OBJECT_TYPE(SystemThread, AbstractThread);
+    NUX_DECLARE_OBJECT_TYPE(SystemThread, AbstractThread);
 public:
     SystemThread(AbstractThread* Parent = 0);
     ~SystemThread();
@@ -93,6 +93,6 @@ private:
     friend class WindowThread;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SYSTEMTHREAD_H

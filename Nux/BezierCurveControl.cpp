@@ -26,13 +26,14 @@
 #include "NuxCore/Math/Bezier.h"
 #include "BezierCurveControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const int KNOT_SIZE = 2;
 const int KNOT_HIT_TEST = 4;
 
-BezierCurveControl::BezierCurveControl()
-:m_minX(0.0f),
+BezierCurveControl::BezierCurveControl(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_minX(0.0f),
 m_minY(0.0f),
 m_maxX(1.0f),
 m_maxY(1.0f),
@@ -330,4 +331,4 @@ void BezierCurveControl::RecvMouseDrag(int x, int y, int dx, int dy, unsigned lo
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

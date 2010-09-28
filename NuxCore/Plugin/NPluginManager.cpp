@@ -25,7 +25,7 @@
 #include "NPluginManager.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 void NPluginManager::GetPluginList(TCHAR * dirPath, bool addToList)
 {		
@@ -89,4 +89,4 @@ void NPluginManager::GetPluginList(TCHAR * dirPath, bool addToList)
 	FindClose(hFind); 
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

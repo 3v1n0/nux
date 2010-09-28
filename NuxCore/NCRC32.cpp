@@ -24,7 +24,7 @@
 #include "NCRC32.h"
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 // The constants here are for the CRC-32 generator 
 // polynomial, as defined in the Microsoft 
 // Systems Journal, March 1995, pp. 107-108
@@ -313,4 +313,4 @@ void NCRC32::PartialCRC(t_u32 *ulInCRC, const char *sData, t_u32 ulLength)
 * the same way on decoding, it doesn't make a difference.
 */
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

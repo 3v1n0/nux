@@ -24,10 +24,11 @@
 #include "RadioButton.h"
 #include "RadioButtonGroup.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-RadioButtonGroup::RadioButtonGroup()
-:   m_ActiveRadioButtonIndex(0)
+RadioButtonGroup::RadioButtonGroup(NUX_FILE_LINE_DECL)
+:   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
+,   m_ActiveRadioButtonIndex(0)
 {
 
 }
@@ -161,4 +162,4 @@ void RadioButtonGroup::SetActiveButton(smptr(RadioButton) radio, bool EmitSignal
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

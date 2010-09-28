@@ -28,13 +28,12 @@
 #include "TimerProc.h"
 #include "HLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class TabView : public ActiveInterfaceObject
 {
 public:
-
-    TabView();
+    TabView(NUX_FILE_LINE_PROTO);
     ~TabView();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -115,8 +114,8 @@ private:
 
     TimerFunctor* tabright_callback;
     TimerFunctor* tableft_callback;
-    TimerHandle* m_TabRightTimerHandler;
-    TimerHandle* m_TabLeftTimerHandler;
+    TimerHandle m_TabRightTimerHandler;
+    TimerHandle m_TabLeftTimerHandler;
 
     std::vector<TabElement*> m_TabVector;
 
@@ -136,6 +135,6 @@ private:
     Geometry m_PreviousGeometry;
     bool m_DrawBackgroundOnPreviousGeometry;
 };
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TABVIEW_H

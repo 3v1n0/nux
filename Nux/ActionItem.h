@@ -25,17 +25,18 @@
 
 #include "NuxGraphics/OpenGLEngine.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class MenuBar;
 class MenuPage;
 class NTexture2D;
 
-class ActionItem
+class ActionItem: public NuxCoreObject
 {
-    DECLARE_ROOT_OBJECT_TYPE(ActionItem);
 public:
-    ActionItem(const TCHAR* label = 0, int UserValue = 0);
+    NUX_DECLARE_OBJECT_TYPE(ActionItem, NuxCoreObject);
+
+    ActionItem(const TCHAR* label = 0, int UserValue = 0, NUX_FILE_LINE_PROTO);
     ~ActionItem();
 
     void Activate(bool b);
@@ -53,7 +54,7 @@ public:
 //    void SetMenu(MenuPage* menu);
 //    MenuPage* GetMenu() const;
 
-    void SetFont(const FontTexture& font);
+    void SetFont(IntrusiveSP<FontTexture> font);
     void SetIcon(const NTexture2D& icon);
     NTexture2D& GetIcon();
     
@@ -74,6 +75,6 @@ private:
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // ACTIONITEM_H

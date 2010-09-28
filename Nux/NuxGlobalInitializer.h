@@ -29,7 +29,7 @@
 
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NuxGlobalSingletonInitializer
 {
@@ -68,6 +68,6 @@ private:
 static NuxGlobalInitializer sNuxGlobalInitializer;
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NUXGLOBALINITIALIZER_H

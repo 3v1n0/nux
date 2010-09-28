@@ -23,7 +23,7 @@
 #ifndef VECTOR4_H
 #define VECTOR4_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template <typename T>  
 class Vec4
@@ -279,7 +279,7 @@ Vec4<U> operator* (const U& f, const Vec4<U>& v)
 
 typedef Vec4<float> Vector4;
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // VECTOR4_H
 

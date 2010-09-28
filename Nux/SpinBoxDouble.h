@@ -25,7 +25,7 @@
 
 #include "EditTextBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class SpinBoxDouble: public SpinBox_Logic
 {
@@ -69,6 +69,6 @@ private:
     double m_Step;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SPINBOXDOUBLE_H

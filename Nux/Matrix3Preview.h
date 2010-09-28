@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "Matrix3Editor.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class StaticTextBox;
@@ -35,7 +35,7 @@ class StaticTextBox;
 class Matrix3Preview : public ActiveInterfaceObject
 {
 public:
-    Matrix3Preview(Matrix3 matrix = Matrix3::IDENTITY());
+    Matrix3Preview(Matrix3 matrix = Matrix3::IDENTITY(), NUX_FILE_LINE_PROTO);
     ~Matrix3Preview();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -52,14 +52,14 @@ private:
     void RecvTimer(void* v);
     void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
     TimerFunctor* m_ChangeDetectionTimer;
-    TimerHandle* m_ChangeTimerHandler;
+    TimerHandle m_ChangeTimerHandler;
     
     Matrix3 m_Matrix;
     Matrix3DialogProxy* m_DialogThreadProxy;
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // MATRIX3PREVIEW_H
 

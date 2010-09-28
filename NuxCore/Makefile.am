@@ -38,8 +38,6 @@ source_cpp = \
   $(srcdir)/FileManager/NFileManagerGNU.cpp \
   $(srcdir)/NKernel.cpp \
   $(srcdir)/NSystemGNU.cpp \
-  $(srcdir)/SmartPtr/NRefCount.cpp \
-  $(srcdir)/SmartPtr/NSmartPtr.cpp \
   $(srcdir)/NOutputDevice.cpp \
   $(srcdir)/Exception.cpp \
   $(srcdir)/NMemory.cpp \
@@ -65,6 +63,7 @@ source_cpp = \
   $(srcdir)/NProcess.cpp \
   $(srcdir)/NumberConversion.cpp \
   $(srcdir)/NuxCore.cpp \
+  $(srcdir)/NuxCoreObject.cpp \
   $(srcdir)/Math/Point2D.cpp \
   $(srcdir)/Math/MathFunctions.cpp \
   $(srcdir)/Math/Line2D.cpp \
@@ -123,8 +122,8 @@ source_tiny_xml_h = \
   $(srcdir)/TinyXML/tinyxml.h
 
 source_smart_ptr_h = \
-  $(srcdir)/SmartPtr/NRefCount.h \
-  $(srcdir)/SmartPtr/NSmartPtr.h
+  $(srcdir)/SmartPtr/GenericSmartPointer.h \
+  $(srcdir)/SmartPtr/IntrusiveSP.h
 
 source_datastruct_h = \
   $(srcdir)/DataStruct/NList.h
@@ -155,10 +154,10 @@ source_h = \
   $(srcdir)/NObjectType.h \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/NuxCore.h \
+  $(srcdir)/NuxCoreObject.h \
   $(srcdir)/ColorFunctions.h \
   $(srcdir)/Size.h \
   $(srcdir)/Exception.h \
-  $(srcdir)/NSystemPS3.h \
   $(srcdir)/NTime.h \
   $(srcdir)/NCRC32.h \
   $(srcdir)/NMacros.h \

@@ -26,9 +26,9 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLQuery.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLQuery);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLQuery);
 
 t_u32 IOpenGLQuery::_CurrentlyActiveQuery = 0;
 
@@ -136,4 +136,4 @@ unsigned int IOpenGLQuery::GetResult()
     return SamplesPassed;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

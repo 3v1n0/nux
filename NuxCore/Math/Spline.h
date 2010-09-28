@@ -25,7 +25,7 @@
 
 #include <vector>
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 double *d3_np_fs ( int n, double a[], double b[] );
 double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg, double ybcbeg, int ibcend, double ybcend );
@@ -253,6 +253,6 @@ public:
     int np;  // number of points
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // SPLINE_H

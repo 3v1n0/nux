@@ -23,9 +23,9 @@
 #include "Nux.h"
 #include "AbstractThread.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(AbstractThread);
+NUX_IMPLEMENT_OBJECT_TYPE(AbstractThread);
 
 AbstractThread::AbstractThread(AbstractThread* Parent)
 :   m_Parent(Parent)
@@ -40,4 +40,4 @@ AbstractThread::~AbstractThread()
 
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

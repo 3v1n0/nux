@@ -23,7 +23,7 @@
 #include "../NKernel.h"
 #include "Complex.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Complex::Complex(t_float re, t_float im)
 {
@@ -358,4 +358,4 @@ fcomplex Cinv( fcomplex z)
    return c;
    }
    */
-NAMESPACE_END
+} //NUX_NAMESPACE_END

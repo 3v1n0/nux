@@ -24,12 +24,12 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLGLSLShader.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLShader);
-IMPLEMENT_OBJECT_TYPE(IOpenGLVertexShader);
-IMPLEMENT_OBJECT_TYPE(IOpenGLPixelShader);
-IMPLEMENT_OBJECT_TYPE(IOpenGLShaderProgram);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLShader);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVertexShader);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLPixelShader);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLShaderProgram);
 
 struct ShaderDefinition
 {
@@ -1282,4 +1282,4 @@ BOOL IOpenGLShaderProgram::SetSampler(char* name, int texture_unit)
     return true;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

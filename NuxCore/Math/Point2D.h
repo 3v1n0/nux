@@ -23,7 +23,7 @@
 #ifndef POINT2D_H
 #define POINT2D_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template<typename T>
 class Point2D
@@ -94,6 +94,6 @@ bool Point2D<T>::operator != (const Point2D& Pt) const
     return !((*this) == Pt);
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // POINT2D_H

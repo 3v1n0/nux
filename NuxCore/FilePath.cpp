@@ -24,7 +24,7 @@
 
 #include "FilePath.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 FilePath::FilePath()
 {
@@ -125,4 +125,4 @@ NString FilePath::GetFile(const TCHAR* filename) const
     return NString(TEXT(""));
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

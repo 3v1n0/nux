@@ -24,9 +24,9 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLVertexBuffer.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLVertexBuffer);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVertexBuffer);
 
 IOpenGLVertexBuffer::IOpenGLVertexBuffer(t_u32 Length, VBO_USAGE Usage)
 :   IOpenGLResource(RTVERTEXBUFFER)
@@ -116,4 +116,4 @@ t_u32 IOpenGLVertexBuffer::GetSize()
     return _Length;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

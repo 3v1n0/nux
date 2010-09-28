@@ -25,7 +25,7 @@
 #include "WindowCompositor.h"
 #include "ValuatorDouble.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const Color SPINBOX_BUTTON_COLOR = Color(0xFF4D4D4D);
 const Color SPINBOX_BUTTON_MOUSEOVER_COLOR = Color(0xFF222222);
@@ -137,7 +137,7 @@ void ValuatorDouble::SetValue(double value)
 {
     m_Value = m_DoubleValidator.Validate(value);
     m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(ValuatorDouble)(this, false));
+    sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
     sigValue.emit(m_Value);
     NeedRedraw();
 }
@@ -175,7 +175,7 @@ void ValuatorDouble::SetRange(double MinValue, double Maxvalue)
     m_DoubleValidator.SetMinimum(MinValue);
     m_DoubleValidator.SetMaximum(Maxvalue);
     m_Value = m_DoubleValidator.Validate(m_Value);
-    sigValueChanged.emit(smptr(ValuatorDouble)(this, false));
+    sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
     sigValue.emit(m_Value);
     NeedRedraw();
 }
@@ -187,8 +187,8 @@ void ValuatorDouble::ImplementIncrementBtn()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(ValuatorDouble)(this, false));
-    sigIncrement.emit(smptr(ValuatorDouble)(this, false));
+    sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
+    sigIncrement.emit(smptr(ValuatorDouble)(this, true));
     sigValue.emit(m_Value);
 }
 
@@ -199,8 +199,8 @@ void ValuatorDouble::ImplementDecrementBtn()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(ValuatorDouble)(this, false));
-    sigDecrement.emit(smptr(ValuatorDouble)(this, false));
+    sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
+    sigDecrement.emit(smptr(ValuatorDouble)(this, true));
     sigValue.emit(m_Value);
 }
 
@@ -211,7 +211,7 @@ void ValuatorDouble::ImplementValidateEntry()
     {
         m_Value = m_DoubleValidator.Validate(ret);
         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-        sigValueChanged.emit(smptr(ValuatorDouble)(this, false));
+        sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
         sigValue.emit(m_Value);
 //
 //        if(m_Value < m_DoubleValidator.GetMinimum())
@@ -228,11 +228,11 @@ void ValuatorDouble::ImplementValidateEntry()
 //     else
 //     {
 //         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-//         sigValueChanged.emit(smptr(ValuatorDouble)(this, false));
+//         sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
 //         sigValue.emit(m_Value);
 //     }
 }
 
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

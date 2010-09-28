@@ -26,7 +26,7 @@
 
 #include "NodeItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //                            Node0
 //                              |
@@ -40,7 +40,7 @@ NAMESPACE_BEGIN_GUI
 //
 
 #ifndef NUX_STANDALONE
-IMPLEMENT_ROOT_OBJECT_TYPE(NodeItem);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NodeItem);
 #endif
 
 
@@ -494,4 +494,4 @@ void NodeItem::DeleteTree()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

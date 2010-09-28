@@ -31,7 +31,7 @@
 #include <sys/timer.h>
 #include <sys/process.h>*/
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 class NThreadSafeCounter
 {   
 public:
@@ -254,7 +254,7 @@ typedef void* (*ThreadRoutineFunc)(void*);
 
 class NThread
 {
-    DECLARE_ROOT_OBJECT_TYPE(NThread);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(NThread);
 public:
     /*!
     	Info: Default Constructor
@@ -421,7 +421,7 @@ protected:
     ThreadRoutineFunc   	m_pThreadFunc;	//	The Worker Thread Function Pointer
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NTHREADGNU_H
 

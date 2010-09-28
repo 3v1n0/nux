@@ -28,7 +28,7 @@
 #include "NuxGraphics/GLSh_DrawFunction.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 typedef float (*FunctionCallback)(float);  
 
@@ -41,7 +41,7 @@ class BaseArea;
 class TimeGraph : public ActiveInterfaceObject
 {
 public:
-    TimeGraph(const TCHAR* Title);
+    TimeGraph(const TCHAR* Title, NUX_FILE_LINE_PROTO);
     ~TimeGraph();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -114,7 +114,7 @@ private:
     
     void GraphTimerInterrupt(void* v);
     TimerFunctor* m_ScrollTimerFunctor;
-    TimerHandle* m_ScrollTimerHandler;
+    TimerHandle m_ScrollTimerHandler;
 
     float m_minY, m_maxY;
     FunctionCallback m_FunctionCallback;
@@ -126,6 +126,6 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TIMEGRAPH_H

@@ -24,18 +24,19 @@
 #include "Layout.h"
 #include "InterfaceControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
+NUX_IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
 
-ActiveInterfaceObject::ActiveInterfaceObject()
-:   BaseArea()
+ActiveInterfaceObject::ActiveInterfaceObject(NUX_FILE_LINE_DECL)
+:   BaseArea(NUX_FILE_LINE_PARAM)
 {
     m_CompositionLayout = smptr(Layout)(0);
     m_NeedRedraw        = false;
     m_UseStyleDrawing   = true;
-    m_TextColor         = 0;
+    m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
     m_IsEnabled         = true;
+    m_font              = GetThreadFont();
 
     // Set widget default size;
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -44,9 +45,7 @@ ActiveInterfaceObject::ActiveInterfaceObject()
 ActiveInterfaceObject::~ActiveInterfaceObject()
 {
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
-    GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, false));
-
-    NUX_SAFE_DELETE(m_TextColor);
+    GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, true));
 }
 
 long ActiveInterfaceObject::ComputeChildLayout()
@@ -289,9 +288,9 @@ void ActiveInterfaceObject::SetCompositionLayout(smptr(Layout) layout)
         {
             parent->RemoveChildObject(layout);
         }
-        layout->SetParentObject(smptr(BaseObject)(this, false));
+        layout->SetParentObject(smptr(BaseObject)(this, true));
     }
-    layout->SetParentObject(smptr(BaseObject)(this, false));
+    layout->SetParentObject(smptr(BaseObject)(this, true));
     m_CompositionLayout = layout;
 }
 
@@ -323,43 +322,24 @@ void ActiveInterfaceObject::setGeometry(const Geometry& geo)
     PostResizeGeometry();
 }
 
-void ActiveInterfaceObject::SetFont(const NFontPtr& Font)
+void ActiveInterfaceObject::SetFont(IntrusiveSP<FontTexture> Font)
 {
-    m_Font = Font;
+    m_font = Font;
 }
 
-const NFontPtr& ActiveInterfaceObject::GetFont()
+IntrusiveSP<FontTexture> ActiveInterfaceObject::GetFont()
 {
-    if(m_Font)
-        return m_Font;
-    else
-        return GFont;
+    return m_font;
 }
 
 void ActiveInterfaceObject::SetTextColor(const Color& color)
 {
-    m_TextColor = color.Clone();
+    m_TextColor = color;
 }
 
-void ActiveInterfaceObject::SetTextColor(const Color* color)
+Color ActiveInterfaceObject::GetTextColor()
 {
-    if(color == 0)
-    {
-        NUX_SAFE_DELETE(m_TextColor);
-    }
-    else
-    {
-        NUX_SAFE_DELETE(m_TextColor);
-        m_TextColor = color->Clone();
-    }
-}
-
-const Color& ActiveInterfaceObject::GetTextColor()
-{
-    if(m_TextColor)
-        return *m_TextColor;
-    else
-        return GTextColor;
+    return m_TextColor;
 }
 
 void ActiveInterfaceObject::DisableWidget()
@@ -378,4 +358,4 @@ bool ActiveInterfaceObject::IsWidgetEnabled()
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

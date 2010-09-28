@@ -23,7 +23,7 @@
 #include "GLResource.h"
 #include "GLRenderStates.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const struct StateLookUpTable
 {
@@ -51,8 +51,8 @@ const struct StateLookUpTable
         UL_MAP(ZTESTENABLE                  ,           GL_FALSE        ,       1);
         UL_MAP(ZWRITEENABLE                 ,           GL_TRUE         ,       1);
         UL_MAP(ZFUNC                        ,           GL_LESS         ,       1);
-        UL_MAP_FLOAT(ZNEAR                  ,           static_cast<UINT>(0.0f)            ,       1);
-        UL_MAP_FLOAT(ZFAR                   ,           static_cast<UINT>(1.0f)            ,       1);
+        UL_MAP_FLOAT(ZNEAR                  ,           static_cast<t_u32>(0.0f)            ,       1);
+        UL_MAP_FLOAT(ZFAR                   ,           static_cast<t_u32>(1.0f)            ,       1);
 
         UL_MAP(ALPHABLENDENABLE             ,           GL_FALSE        ,       1);
         UL_MAP(BLENDOP                      ,           GL_FUNC_ADD     ,       1);
@@ -213,11 +213,12 @@ void GLRenderStates::SubmitChangeStates()
     HW__EnableScissor( m_RenderStateChanges[GFXRS_SCISSORTESTENABLE].iValue );
 
     HW__EnableFog( m_RenderStateChanges[GFXRS_FOGENABLE].iValue );
+
 }
 
 void GLRenderStates::ResetStateChangeToDefault()
 {
-    for(UINT i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
+    for(t_u32 i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
     {
         if(m_RenderStateChanges[i].Checked &&
             ((m_RenderStateChanges[i].iValue != s_StateLUT.default_render_state[i].iValue) ||
@@ -231,7 +232,7 @@ void GLRenderStates::ResetStateChangeToDefault()
 
 void GLRenderStates::CheckStateChange()
 {
-    for(UINT i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
+    for(t_u32 i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
     {
         if(m_RenderStateChanges[i].Checked &&
             ((m_RenderStateChanges[i].iValue != s_StateLUT.default_render_state[i].iValue) ||
@@ -244,13 +245,13 @@ void GLRenderStates::CheckStateChange()
     }
 }
 
-void GLRenderStates::SetRenderStates(UINT rs, UINT value)
+void GLRenderStates::SetRenderStates(t_u32 rs, t_u32 value)
 {
     #define RS_VALUE(a)      (a).iValue
 
     if (value != m_RenderStateChanges[rs].iValue)
     {
-        m_RenderStateChanges[rs].iValue = static_cast<UINT>(value);
+        m_RenderStateChanges[rs].iValue = static_cast<t_u32>(value);
 
         if(rs == GFXRS_ALPHATESTENABLE ||
             rs == GFXRS_ALPHATESTREF ||
@@ -383,4 +384,5 @@ void GLRenderStates::SetRenderStates(UINT rs, UINT value)
 #undef RS_VALUE
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
+

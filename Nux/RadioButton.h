@@ -25,7 +25,7 @@
 
 #include "AbstractButton.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class RadioButton;
 class RadioButtonGroup;
@@ -98,6 +98,6 @@ public:
     friend class RadioButtonGroup;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // RADIOBUTTON_H

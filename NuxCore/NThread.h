@@ -25,7 +25,7 @@
 
 #include "NObjectType.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NThreadSafeCounter
 {   
@@ -248,7 +248,7 @@ typedef enum
 // http://www.codeguru.com/cpp/misc/misc/threadsprocesses/article.php/c3793/
 class NThread
 {
-    DECLARE_ROOT_OBJECT_TYPE(NThread);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(NThread);
 public:
     /*!
     	Info: Default Constructor
@@ -462,7 +462,7 @@ protected:
 //        }
 //    }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NTHREAD_H
 

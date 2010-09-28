@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "Math/MathUtility.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
 const t_int  NWindowsSerialFileReader::sBufferSize = 1024;
@@ -783,5 +783,5 @@ bool NFileManagerWindows::GetTimeStamp(const TCHAR* Filename, FileTimeStamp& Tim
     return FALSE;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

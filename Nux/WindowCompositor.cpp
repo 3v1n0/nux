@@ -31,7 +31,7 @@
 #include "Painter.h"
 
 #include "NuxGraphics/FontTexture.h"
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // extern TimeCounter gTimeCounter;
 // float gTimeAccum = 0;
@@ -320,7 +320,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
         }
 
         long ProcessEventInfo = 0;
-        UBOOL MouseIsOverMenu = 0;
+        bool MouseIsOverMenu = 0;
         if(ret & eMouseEventSolved)
         {
             // If one menu processed the event, then stop all other element from processing it.
@@ -690,8 +690,8 @@ void WindowCompositor::DrawTooltip(bool force_draw)
     {
         SetCurrentWindow(m_TooltipWindow);
         
-        int w = GFontBold->GetCharStringWidth(m_TooltipText.GetTCharPtr());
-        int h = GFontBold->GetFontHeight();
+        int w = GetThreadBoldFont()->GetCharStringWidth(m_TooltipText.GetTCharPtr());
+        int h = GetThreadBoldFont()->GetFontHeight();
         Geometry geo = Geometry(m_TooltipX + 10, m_TooltipY - h/2 - 2, w, h + 4);
         Geometry bkg_geo = geo;
         
@@ -700,7 +700,7 @@ void WindowCompositor::DrawTooltip(bool force_draw)
         bkg_geo.OffsetPosition(-10, -4);
 
         gPainter.PaintShape(GetGraphicsThread()->GetGraphicsContext(), bkg_geo, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
-        gPainter.PaintTextLineStatic(GetGraphicsThread()->GetGraphicsContext(), GFontBold, geo, m_TooltipText, Color(0xFFFFFFFF));
+        gPainter.PaintTextLineStatic(GetGraphicsThread()->GetGraphicsContext(), GetThreadBoldFont(), geo, m_TooltipText, Color(0xFFFFFFFF));
         SetCurrentWindow(smptr(BaseWindow)(0));
     }
 
@@ -857,7 +857,7 @@ void WindowCompositor::PresentRendering()
 
     NString FPS = NString::Printf(TEXT("FPS: %3.2f"), GetGraphicsThread()->GetFrameRate());
 
-    GetGraphicsThread()->GetGraphicsContext().RenderColorTextLineStatic(GFontBold, page, FPS, Color(0xffff0000), true, eAlignTextLeft);     
+    GetGraphicsThread()->GetGraphicsContext().RenderColorTextLineStatic(GetThreadBoldFont(), page, FPS, Color(0xffff0000), true, eAlignTextLeft);     
 
     GetGraphicsThread()->GetGraphicsContext().Pop2DWindow();
 //     GetGraphicsThread()->GetGraphicsContext().ResetStats();
@@ -1531,5 +1531,5 @@ TRefGL< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
     return m_BlurTexture;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 

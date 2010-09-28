@@ -30,7 +30,7 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "NuxCore/Math/Matrix4.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 GLSh_Fill::GLSh_Fill()
 {
@@ -131,4 +131,4 @@ void GLSh_Fill::CacheShader()
 {
 
 }
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

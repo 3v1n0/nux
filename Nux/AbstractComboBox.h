@@ -23,14 +23,14 @@
 #ifndef ABSTRACTCOMBOBOX_H
 #define ABSTRACTCOMBOBOX_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 
 class AbstractComboBox: public ActiveInterfaceObject
 {
 public:
-    AbstractComboBox();
+    AbstractComboBox(NUX_FILE_LINE_PROTO);
     virtual ~AbstractComboBox();
     
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
@@ -60,6 +60,6 @@ protected:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // ABSTRACTCOMBOBOX_H

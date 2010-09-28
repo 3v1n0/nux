@@ -23,7 +23,7 @@
 #ifndef NCRC32_H
 #define NCRC32_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 // http://www.networkdls.com/Software.Asp?Review=22
 
 // This is the official polynomial used by CRC-32 in PKZip, WinZip and Ethernet.
@@ -53,5 +53,5 @@ private:
     t_u32 CRCTable[256]; // CRC lookup table array.
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 #endif // NCRC32_H

@@ -106,8 +106,6 @@ typedef unsigned char           ANSIUCHAR;  // An ANSI character.
 typedef wchar_t                 UNICHAR;    // A unicode character. L"Hello" is of type wchar_t and should not be confuse with type unsigned short on windows.
 
 // Other base types.
-typedef int                     BOOL;       // Boolean 0 (false) or 1 (true).
-typedef long                    UBOOL;      // Boolean 0 (false) or 1 (true).
 typedef float                   FLOAT;      // 32-bit IEEE floating point.
 typedef double                  DOUBLE;     // 64-bit IEEE double.
 
@@ -236,7 +234,7 @@ typedef double                  DOUBLE;     // 64-bit IEEE double.
 #pragma warning(disable : 4714) // __forceinline function not expanded									
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 void* GetDllHandle( const TCHAR* DllName );
 
@@ -245,7 +243,7 @@ void FreeDllHandle( void* DllHandle );
 void* GetDllExport( void* DllHandle, const TCHAR* ExportName );
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // SYSTEMWIN32_H
 

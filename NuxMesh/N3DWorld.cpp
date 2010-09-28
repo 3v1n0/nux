@@ -24,7 +24,7 @@
 #include "N3DWorld.h"
 #include "NMeshObject.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 N3DWorld::N3DWorld()
 {
@@ -78,6 +78,6 @@ void N3DWorld::Flush()
     m_MeshObjectArray.clear();
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 

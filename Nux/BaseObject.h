@@ -28,16 +28,18 @@
 #include <sigc++/functors/ptr_fun.h>
 #include <sigc++/functors/mem_fun.h>
 
+#include "NuxCore/NuxCoreObject.h"
+
 #include "Utils.h"
 #include "WidgetMetrics.h"
 #include "WidgetSmartPointer.h"
 
 #define inlptr(T) T*
-#define smptr(T) nux::WSPtr<T>
-#define weaksmptr(T) nux::WeakWSPtr<T>
-#define smptrnull(T) nux::WSPtr<T> (0)
+#define smptr(T) nux::IntrusiveSP<T>
+#define weaksmptr(T) nux::IntrusiveWeakSP<T>
+#define smptrnull(T) nux::IntrusiveSP<T> (0)
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class WindowThread;
 class GraphicsContext;
@@ -122,15 +124,15 @@ class ActiveInterfaceObject;
 class BaseObject;
 
 
-class BaseObject: public sigc::trackable
+class BaseObject: public NuxCoreObject, public sigc::trackable
 {
 public:
-    DECLARE_ROOT_OBJECT_TYPE(BaseObject);
+    NUX_DECLARE_OBJECT_TYPE(BaseObject, NuxCoreObject);
     //static NObjectType StaticObjectType;
     //virtual NObjectType* Type() { return &StaticObjectType; }
 
 public:
-    BaseObject();
+    BaseObject(NUX_FILE_LINE_DECL);
     virtual ~BaseObject();
 
     virtual int GetBaseX     () const {return m_Geometry.x;}
@@ -290,7 +292,7 @@ private:
     SizePolicy   m_SizePolicy;
     PositionPolicy m_PositionPolicy;
 
-    void InitiateResizeLayout(smptr(BaseObject) child = WSPtr<BaseObject>(0));
+    void InitiateResizeLayout(smptr(BaseObject) child = IntrusiveSP<BaseObject>(0));
     void CheckMinSize();
     void CheckMaxSize();
 
@@ -335,6 +337,6 @@ public:
     friend class VSplitter;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // BASEOBJECT_H
 

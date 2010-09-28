@@ -23,7 +23,7 @@
 #ifndef NFILEMANAGERGENERIC_H
 #define NFILEMANAGERGENERIC_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NString;
 class NFileManagerWindows;
@@ -174,7 +174,7 @@ public:
     bool IsDrive(const TCHAR* Path);
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NFILEMANAGERGENERIC_H
 

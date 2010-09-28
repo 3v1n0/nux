@@ -25,9 +25,10 @@
 #include "HLayout.h"
 #include "RangeValueInteger.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-RangeValueInteger::RangeValueInteger(int Value, int MinValue, int MaxValue)
+RangeValueInteger::RangeValueInteger(int Value, int MinValue, int MaxValue, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_min                   = MinValue;
     m_max                   = MaxValue;
@@ -91,7 +92,7 @@ void RangeValueInteger::InitializeLayout()
 {
     hlayout = smptr(HLayout)(new HLayout());
     m_Percentage = smptr(CoreArea)(new CoreArea());
-    m_ValueString = smptr(EditTextBox)(new EditTextBox());
+    m_ValueString = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
 }
 
 void RangeValueInteger::DestroyLayout()
@@ -233,7 +234,7 @@ void RangeValueInteger::OnReceiveMouseDown(int x, int y, unsigned long button_fl
     }
 
     m_ValueString->SetText(inlPrintf("%d", m_Value));
-    sigValueChanged.emit(smptr(RangeValueInteger)(this, false));
+    sigValueChanged.emit(smptr(RangeValueInteger)(this, true));
     sigMouseDown.emit(m_Value);
 
     NeedRedraw();
@@ -254,7 +255,7 @@ void RangeValueInteger::OnReceiveMouseUp(int x, int y, unsigned long button_flag
 
     m_MarkerPosition = m_Value;
     m_ValueString->SetText(inlPrintf("%d", m_Value));
-    sigValueChanged.emit(smptr(RangeValueInteger)(this, false));
+    sigValueChanged.emit(smptr(RangeValueInteger)(this, true));
     sigMouseUp.emit(m_Value);
 
     NeedRedraw();
@@ -281,7 +282,7 @@ void RangeValueInteger::OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigne
     }
 
     m_ValueString->SetText(inlPrintf("%d", m_Value));
-    sigValueChanged.emit(smptr(RangeValueInteger)(this, false));
+    sigValueChanged.emit(smptr(RangeValueInteger)(this, true));
     sigMouseDrag.emit(m_Value);
 
     NeedRedraw();
@@ -302,9 +303,9 @@ void RangeValueInteger::OnValidateKeyboardEntry(const weaksmptr(EditTextBox) tex
     int i;
     i = CharToInteger(text.GetTCharPtr());
     SetValue(i);
-    sigValueChanged.emit(smptr(RangeValueInteger)(this, false));
+    sigValueChanged.emit(smptr(RangeValueInteger)(this, true));
     sigSetTypedValue.emit(i);
     NeedRedraw();
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

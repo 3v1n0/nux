@@ -23,7 +23,7 @@
 #ifndef NUMBERCONVERSION_H
 #define NUMBERCONVERSION_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NString;
 
@@ -71,7 +71,7 @@ t_int IntegerToChar(const TCHAR* digit);
 t_u32 HexCharToInteger(const TCHAR* s);
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NUMBERCONVERSION_H
 

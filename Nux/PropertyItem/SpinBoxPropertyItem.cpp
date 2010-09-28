@@ -26,7 +26,7 @@
 #include "SpinBox.h"
 #include "SpinBoxPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 SpinBoxPropertyItem::SpinBoxPropertyItem(const TCHAR* name, int Value, int Step, int MinValue, int MaxValue)
 :   SectionProperty(name, NODE_TYPE_SPINBOX)
@@ -49,13 +49,13 @@ long SpinBoxPropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo
 }
 
 void SpinBoxPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, 
-                                       RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                       RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     Geometry geo2 = m_FirstColumnUsableGeometry;
     if(isDirtyItem() || IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {
@@ -63,7 +63,7 @@ void SpinBoxPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* t
             Geometry prop_geo;
             prop_geo.SetX(geo.x + geo.GetWidth());
             prop_geo.SetY(geo.y);
-            prop_geo.SetWidth(column_vector[1].header.GetBaseWidth());
+            prop_geo.SetWidth(column_vector[1].m_header_area->GetBaseWidth());
             prop_geo.SetHeight(geo.GetHeight());
 
             geo2.Expand(-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
@@ -77,7 +77,7 @@ void SpinBoxPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* t
     }
 }
 
-void SpinBoxPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void SpinBoxPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
     if(m_ItemGeometryVector.size() >= 2)
     {
@@ -135,4 +135,4 @@ bool SpinBoxPropertyItem::FromXML(const TiXmlElement* elementxml)
     SetValue(value);
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

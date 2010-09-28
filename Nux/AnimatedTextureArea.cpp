@@ -24,10 +24,11 @@
 #include "NuxImage/ImageSurface.h"
 #include "AnimatedTextureArea.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-AnimatedTextureArea::AnimatedTextureArea()
-:   m_UserTexture(0)
+AnimatedTextureArea::AnimatedTextureArea(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_UserTexture(0)
 {
     SetMinMaxSize(32, 32);
 
@@ -108,7 +109,7 @@ void AnimatedTextureArea::RecvMouseDrag(int x, int y, int dx, int dy, unsigned l
 
 void AnimatedTextureArea::StartAnimation()
 {
-    if(m_TimerHandler != 0)
+    if(m_TimerHandler.IsValid())
     {
         GetThreadTimer().RemoveTimerHandler(m_TimerHandler);
         m_TimerHandler = 0;
@@ -119,7 +120,7 @@ void AnimatedTextureArea::StartAnimation()
 
 void AnimatedTextureArea::StopAnimation()
 {
-    if(m_TimerHandler != 0)
+    if(m_TimerHandler.IsValid())
     {
         GetThreadTimer().RemoveTimerHandler(m_TimerHandler);
         m_TimerHandler = 0;
@@ -140,4 +141,4 @@ void AnimatedTextureArea::TimerNextFrame(void* v)
     NeedRedraw();
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

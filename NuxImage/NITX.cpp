@@ -27,7 +27,7 @@
 //#include "NTextureArchiveManager.h"
 #include "NITX.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 bool TextureArchiveAdd_ver_0_0_1(NSerializer* FileStream,  NBitmapData* TextureData, const TCHAR* InputTextureFile, NUX_OUT t_s64& Offset)
 {   
@@ -417,7 +417,7 @@ NBitmapData* TextureArchiveLoad_ver_0_0_1(NSerializer* FileStream, t_u32 Offset)
     t_u32 TextureEndPosition = FileStream->Tell();
     if(TextureEndPosition != TextureDataPosition + TextureDataSize)
     {
-      nuxAssertMsg(0, TEXT("[TextureArchiveLoad_ver_0_0_1] Loading error."));
+        nuxAssertMsg(0, TEXT("[TextureArchiveLoad_ver_0_0_1] Loading error."));
     }
 
     return BitmapData;
@@ -610,4 +610,5 @@ NBitmapData* LoadITXFile(const TCHAR* ITXFilename)
     return data;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
+

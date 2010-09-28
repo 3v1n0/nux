@@ -26,12 +26,12 @@
 #include "EditTextBox.h"
 #include "InterfaceControl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class SpinBox_Logic: public ActiveInterfaceObject
 {
 public:
-    SpinBox_Logic();
+    SpinBox_Logic(NUX_FILE_LINE_PROTO);
     virtual ~SpinBox_Logic();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
@@ -84,10 +84,10 @@ protected:
 
     TimerFunctor* m_UpTimerCallback;
     TimerFunctor* m_DownTimerCallback;
-    TimerHandle* m_UpTimerHandler;
-    TimerHandle* m_DownTimerHandler;
+    TimerHandle m_UpTimerHandler;
+    TimerHandle m_DownTimerHandler;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SPINBOX_LOGIC_H

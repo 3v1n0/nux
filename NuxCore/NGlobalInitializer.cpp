@@ -22,7 +22,7 @@
 
 #include "NKernel.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static NGlobalSingletonInitializer*      GGlobalInitializer   = 0;
 
@@ -78,4 +78,4 @@ NGlobalInitializer::~NGlobalInitializer()
     }
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

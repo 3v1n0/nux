@@ -45,9 +45,9 @@
 #include "PropertyItem/SpinBoxDoublePropertyItem.h"
 #include "PropertyItem/Vector3ValuatorPropertyItem.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(NodeNetCom);
+NUX_IMPLEMENT_OBJECT_TYPE(NodeNetCom);
 
 struct TypeString
 {
@@ -541,4 +541,4 @@ bool SectionProperty::FromXML(const TiXmlElement* elementxml)
 #endif
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

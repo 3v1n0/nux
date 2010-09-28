@@ -25,14 +25,14 @@
 
 #include "ScrollView.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Layout;
 
 class Panel: public ScrollView
 {
 public:
-    Panel();
+    Panel(NUX_FILE_LINE_PROTO);
     ~Panel();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -69,5 +69,5 @@ private:
     smptr(Layout) m_layout;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 #endif // PANEL_H

@@ -28,7 +28,7 @@
 #include "WindowCompositor.h"
 #include "TableCtrl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const int HANDLERSIZE = 6;
 extern const int ITEMDEFAULTWIDTH;
@@ -146,7 +146,7 @@ TableCtrl::TableCtrl(bool floating_column)
 
 TableCtrl::~TableCtrl()
 {
-    std::vector<header2>::iterator it1;
+    std::vector<ColumnHeader>::iterator it1;
     std::vector<RowHeader*>::iterator it2;
     std::vector<sizehandler2*>::iterator it3;
 
@@ -160,11 +160,13 @@ TableCtrl::~TableCtrl()
     }
     for(it3 = m_column_sizehandler.begin(); it3 != m_column_sizehandler.end(); it3++)
     {
+        (*it3)->UnReference();
         delete (*it3);
     }
 
     for(it3 = m_row_sizehandler.begin(); it3 != m_row_sizehandler.end(); it3++)
     {
+        (*it3)->UnReference();
         delete (*it3);
     }
 
@@ -209,7 +211,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
         std::vector<RowHeader*>::iterator row_iterator;
         for(row_iterator = m_row_header.begin(), it = m_row_sizehandler.begin(); it != m_row_sizehandler.end(); it++, row_iterator++)
         {
-            if((*row_iterator)->item->IsParentOpen() == true)
+            if((*row_iterator)->m_item->IsParentOpen() == true)
             {
                 ret = (*it)->OnEvent(ievent, ret, ProcEvInfo);
             }
@@ -223,16 +225,16 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
         std::vector<RowHeader*>::iterator row_iterator;
         for(row_iterator = m_row_header.begin(), it = m_row_sizehandler.begin(); it != m_row_sizehandler.end(); it++, row_iterator++)
         {
-            if((*row_iterator)->item->IsParentOpen() == true)
+            if((*row_iterator)->m_item->IsParentOpen() == true)
             {
-                ret = (*row_iterator)->item->ProcessPropertyEvent(ievent, ret, ProcEvInfo);
+                ret = (*row_iterator)->m_item->ProcessPropertyEvent(ievent, ret, ProcEvInfo);
                 if(ret & eMouseEventSolved)
                     ItemSolvedEvent = true;
 
                 // Pure TableItem elements do not inherit from ActiveInterfaceObject. Therefore, they cannot call NeedRedraw() on themselves.
                 // The TableCtrl that holds them must know that they need to be redrawn. Since Pure TableItem do not trap events, the event
                 // will go to TableCtrl (like OnMouseDown) who will found out the cell where the event happened and set the dirty flag of the TableItem.
-                //if((*row_iterator)->item->isDirtyItem())
+                //if((*row_iterator)->m_item->isDirtyItem())
                 //    DirtyItem = true;
             }
         }
@@ -413,27 +415,27 @@ void TableCtrl::DrawContent(GraphicsContext& GfxContext, bool force_draw)
         int odd_or_even = 0;
         for(int r = 0; r < num_row; r++)
         {
-            if(m_row_header[r]->item->IsParentOpen())
+            if(m_row_header[r]->m_item->IsParentOpen())
             {
-                Geometry geo = m_row_header[r]->item->m_RowHeader.GetGeometry();
-                if(m_row_header[r]->item->FirstChildNode() != 0)
+                Geometry geo = m_row_header[r]->m_item->m_row_header->GetGeometry();
+                if(m_row_header[r]->m_item->FirstChildNode() != 0)
                 {
-                    geo.SetX(m_TableArea->GetBaseX() + (m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[r]->item->m_depth + OPENCLOSE_BTN_WIDTH);
+                    geo.SetX(m_TableArea->GetBaseX() + (m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[r]->m_item->m_depth + OPENCLOSE_BTN_WIDTH);
                     geo.SetY(m_TableArea->GetBaseY() + ItemOffsetY);
-                    geo.SetWidth(m_column_header[0].header.GetBaseWidth() - ITEM_DEPTH_MARGIN * m_row_header[r]->item->m_depth - OPENCLOSE_BTN_WIDTH);
+                    geo.SetWidth(m_column_header[0].m_header_area->GetBaseWidth() - ITEM_DEPTH_MARGIN * m_row_header[r]->m_item->m_depth - OPENCLOSE_BTN_WIDTH);
                 }
                 else
                 {
-                    geo.SetX(m_TableArea->GetBaseX() + (m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[r]->item->m_depth);
+                    geo.SetX(m_TableArea->GetBaseX() + (m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[r]->m_item->m_depth);
                     geo.SetY(m_TableArea->GetBaseY() + ItemOffsetY);
-                    geo.SetWidth(m_column_header[0].header.GetBaseWidth() - ITEM_DEPTH_MARGIN * m_row_header[r]->item->m_depth);
+                    geo.SetWidth(m_column_header[0].m_header_area->GetBaseWidth() - ITEM_DEPTH_MARGIN * m_row_header[r]->m_item->m_depth);
                 }
 
                 // Draw content of a row
                 {
-                    m_row_header[r]->item->DrawProperty(GfxContext, this, force_draw, geo, gPainter, m_row_header[r], m_column_header, odd_or_even ? GetRowColorEven(): GetRowColorOdd());
+                    m_row_header[r]->m_item->DrawProperty(GfxContext, this, force_draw, geo, gPainter, m_row_header[r], m_column_header, odd_or_even ? GetRowColorEven(): GetRowColorOdd());
                 }
-                ItemOffsetY += m_row_header[r]->item->m_RowHeader.GetBaseHeight();
+                ItemOffsetY += m_row_header[r]->m_item->m_row_header->GetBaseHeight();
             }
             odd_or_even = !odd_or_even;
         }
@@ -464,10 +466,10 @@ void TableCtrl::PostDraw(GraphicsContext& GfxContext, bool force_draw)
         std::vector<RowHeader*>::iterator row_iterator;
         for(row_iterator = m_row_header.begin(); row_iterator != m_row_header.end(); row_iterator++)
         {
-            if((*row_iterator)->item->IsParentOpen() == true)
+            if((*row_iterator)->m_item->IsParentOpen() == true)
             {
                 // Mark all visible items as not dirty
-                (*row_iterator)->item->setDirtyItem(false);
+                (*row_iterator)->m_item->setDirtyItem(false);
             }
         }
     }
@@ -484,13 +486,13 @@ void TableCtrl::PaintDecoration(GraphicsContext& GfxContext, TableItem* item)
     {
         geo.SetX(m_TableArea->GetBaseX() + (m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * item->m_depth + OPENCLOSE_BTN_WIDTH);
         //geo.SetY(m_TableArea->GetY() + ItemOffsetY);
-        geo.SetWidth(m_column_header[0].header.GetBaseWidth() - ITEM_DEPTH_MARGIN * item->m_depth - OPENCLOSE_BTN_WIDTH);
+        geo.SetWidth(m_column_header[0].m_header_area->GetBaseWidth() - ITEM_DEPTH_MARGIN * item->m_depth - OPENCLOSE_BTN_WIDTH);
     }
     else
     {
         geo.SetX(m_TableArea->GetBaseX() + (m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * item->m_depth);
         //geo.SetY(m_TableArea->GetY() + ItemOffsetY);
-        geo.SetWidth(m_column_header[0].header.GetBaseWidth() - ITEM_DEPTH_MARGIN * item->m_depth);
+        geo.SetWidth(m_column_header[0].m_header_area->GetBaseWidth() - ITEM_DEPTH_MARGIN * item->m_depth);
     }
 
     if((item->FirstChildNode() != 0)/* || item->AlwaysShowOpeningButton()*/)
@@ -741,10 +743,10 @@ void TableCtrl::DrawTable(GraphicsContext& GfxContext)
     //--->gPainter.Paint2DQuadColor(tableGeometry, Color(HEADER_BACKGROUND_COLOR));
 
     int colum_width = (m_bShowRowHeader? ROWHEADERWIDTH : 0);
-    std::vector<header2>::iterator column_iterator;
+    std::vector<ColumnHeader>::iterator column_iterator;
     for(column_iterator = m_column_header.begin(); column_iterator != m_column_header.end(); column_iterator++)
     {
-        colum_width += (*column_iterator).header.GetGeometry().GetWidth();
+        colum_width += (*column_iterator).m_header_area->GetGeometry().GetWidth();
     }
 
     std::vector<RowHeader*>::iterator row_iterator;
@@ -757,12 +759,12 @@ void TableCtrl::DrawTable(GraphicsContext& GfxContext)
         int every_two = 0;
         for(row_iterator = m_row_header.begin(); row_iterator != m_row_header.end(); row_iterator++)
         {
-            if((*row_iterator)->item->IsParentOpen() == true)
+            if((*row_iterator)->m_item->IsParentOpen() == true)
             {
-                Geometry row_geometry = (*row_iterator)->item->m_TotalGeometry;
+                Geometry row_geometry = (*row_iterator)->m_item->m_TotalGeometry;
 
                 // Mark all visible items as dirty
-                (*row_iterator)->item->setDirtyItem(true);
+                (*row_iterator)->m_item->setDirtyItem(true);
             }
             every_two++;
         }
@@ -779,17 +781,17 @@ void TableCtrl::DrawTable(GraphicsContext& GfxContext)
             row_iterator != m_row_header.end(); 
             row_iterator++, row_sizehandler_iterator++)
         {
-            if((*row_iterator)->item->IsParentOpen() == true)
+            if((*row_iterator)->m_item->IsParentOpen() == true)
             {
                 // elements in m_column_header are relative to m_TableArea-> Get their absolute position in geo.
-                Geometry geo = (*row_iterator)->item->m_RowHeader.GetGeometry();
+                Geometry geo = (*row_iterator)->m_item->m_row_header->GetGeometry();
                 geo.OffsetPosition(m_TableArea->GetBaseX(), m_TableArea->GetBaseY()/* - ItemOffsetY*/);
 
                 // Paint the number of the row
                 //gPainter.PaintTextLineStatic(geo, (*row_iterator)->header.GetBaseString());
 
                 // Paint row horizontal separation line. 
-                yl += (*row_iterator)->item->m_RowHeader.GetGeometry().GetHeight();
+                yl += (*row_iterator)->m_item->m_row_header->GetGeometry().GetHeight();
                 gPainter.Draw2DLine(GfxContext, xl, yl, xl + m_ContentGeometry.GetWidth(), yl, GetHorizontalSeparationLineColor());
 
                 // Draw the row size handler on the separation line.
@@ -797,7 +799,7 @@ void TableCtrl::DrawTable(GraphicsContext& GfxContext)
             }
             else
             {
-                ItemOffsetY += (*row_iterator)->item->m_RowHeader.GetBaseHeight();
+                ItemOffsetY += (*row_iterator)->m_item->m_row_header->GetBaseHeight();
             }
         }
     }
@@ -828,7 +830,7 @@ void TableCtrl::DrawHeader(GraphicsContext& GfxContext)
         m_ViewWidth, m_ViewHeight /*- (!m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0)*/));
 
 
-    std::vector<header2>::iterator column_iterator;
+    std::vector<ColumnHeader>::iterator column_iterator;
     std::vector<RowHeader*>::iterator row_iterator;
 
     int ItemOffsetY = 0;
@@ -839,17 +841,17 @@ void TableCtrl::DrawHeader(GraphicsContext& GfxContext)
     ItemOffsetY = (m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0);
     for(t_u32 r = 0; r < num_row; r++)
     {
-        if(m_row_header[r]->item->IsParentOpen())
+        if(m_row_header[r]->m_item->IsParentOpen())
         {
-            ItemOffsetY += m_row_header[r]->item->m_RowHeader.GetBaseHeight();
+            ItemOffsetY += m_row_header[r]->m_item->m_row_header->GetBaseHeight();
         }
     }
 
     int row_height = 0;
     for(row_iterator = m_row_header.begin(); row_iterator != m_row_header.end(); row_iterator++)
     {
-        if((*row_iterator)->item->IsParentOpen())
-            row_height += (*row_iterator)->item->m_RowHeader.GetBaseHeight();
+        if((*row_iterator)->m_item->IsParentOpen())
+            row_height += (*row_iterator)->m_item->m_row_header->GetBaseHeight();
     }
 
     ////////////////////////////
@@ -899,7 +901,7 @@ void TableCtrl::DrawHeader(GraphicsContext& GfxContext)
             //        }
 
             // elements in m_column_header are relative to m_TableArea-> Get their absolute position in geo.
-            Geometry geo = (*column_iterator).header.GetGeometry();
+            Geometry geo = (*column_iterator).m_header_area->GetGeometry();
             Geometry header_title_geo = geo;
             geo.OffsetPosition(m_TableArea->GetBaseX(), m_ViewY);
             header_title_geo = geo;
@@ -927,7 +929,7 @@ void TableCtrl::DrawHeader(GraphicsContext& GfxContext)
                 geo.OffsetSize(-8, 0);
             }
 
-            gPainter.PaintTextLineStatic(GfxContext, GFontBold, geo, (*column_iterator).header.GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
+            gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
 
             if(!isFloatingColumn() && (column_iterator + 1 == m_column_header.end()))
             {
@@ -937,7 +939,7 @@ void TableCtrl::DrawHeader(GraphicsContext& GfxContext)
             else
             {
                 // Paint column vertical separation.
-                xl += (*column_iterator).header.GetGeometry().GetWidth();
+                xl += (*column_iterator).m_header_area->GetGeometry().GetWidth();
                 //gPainter.Draw2DLine(GfxContext, xl, yl, xl, yl + row_height, GetVerticalSeparationLineColor());
             }
             ////////////////////////////////////
@@ -950,10 +952,10 @@ void TableCtrl::DrawHeader(GraphicsContext& GfxContext)
         {
             column_iterator = m_column_header.end() - 1;
             // Draw the Top-Left corner of the header
-            int width = m_ViewWidth - ((*column_iterator).header.GetBaseX() + (*column_iterator).header.GetBaseWidth());
+            int width = m_ViewWidth - ((*column_iterator).m_header_area->GetBaseX() + (*column_iterator).m_header_area->GetBaseWidth());
             if(width > 5)
             {
-                Geometry geo = Geometry((*column_iterator).header.GetBaseX() + (*column_iterator).header.GetBaseWidth(),
+                Geometry geo = Geometry((*column_iterator).m_header_area->GetBaseX() + (*column_iterator).m_header_area->GetBaseWidth(),
                     GetBaseY(), width, COLUMNHEADERHEIGHT);
                 geo.OffsetSize(-2, 0);
                 geo.OffsetPosition(4, 0);
@@ -967,17 +969,17 @@ void TableCtrl::DrawHeader(GraphicsContext& GfxContext)
 void TableCtrl::DrawHeaderPreview(GraphicsContext& GfxContext)
 {
     GfxContext.PushClippingRectangle(Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
-    std::vector<header2>::iterator column_iterator;
+    std::vector<ColumnHeader>::iterator column_iterator;
     std::vector<RowHeader*>::iterator row_iterator;
 
     int row_height = 0;
     int TotalHeight = (m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0);
     for(row_iterator = m_row_header.begin(); row_iterator != m_row_header.end(); row_iterator++)
     {
-        if((*row_iterator)->item->IsParentOpen())
+        if((*row_iterator)->m_item->IsParentOpen())
         {
-            row_height += (*row_iterator)->item->m_RowHeader.GetBaseHeight();
-            TotalHeight += (*row_iterator)->item->m_RowHeader.GetBaseHeight();
+            row_height += (*row_iterator)->m_item->m_row_header->GetBaseHeight();
+            TotalHeight += (*row_iterator)->m_item->m_row_header->GetBaseHeight();
         }
     }
 
@@ -1000,7 +1002,7 @@ void TableCtrl::DrawHeaderPreview(GraphicsContext& GfxContext)
         for(column_iterator = m_column_header.begin(); column_iterator != m_column_header.end(); column_iterator++)
         {
             // elements in m_column_header are relative to m_TableArea-> Get their absolute position in geo.
-            Geometry geo = (*column_iterator).header.GetGeometry();
+            Geometry geo = (*column_iterator).m_header_area->GetGeometry();
             Geometry header_title_geo = geo;
             geo.OffsetPosition(m_TableArea->GetBaseX(), m_ViewY);
             header_title_geo = geo;
@@ -1027,17 +1029,17 @@ void TableCtrl::DrawHeaderPreview(GraphicsContext& GfxContext)
                 geo.OffsetPosition(4, 0);
                 geo.OffsetSize(-8, 0);
             }
-            gPainter.PaintTextLineStatic(GfxContext, GFontBold, geo, (*column_iterator).header.GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
+            gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
         }
 
         if(isFloatingColumn() && (m_column_header.size()>0) )
         {
             column_iterator = m_column_header.end() - 1;
             // Draw the Top-Left corner of the header
-            int width = m_ViewWidth - ((*column_iterator).header.GetBaseX() + (*column_iterator).header.GetBaseWidth());
+            int width = m_ViewWidth - ((*column_iterator).m_header_area->GetBaseX() + (*column_iterator).m_header_area->GetBaseWidth());
             if(width > 5)
             {
-                Geometry geo = Geometry((*column_iterator).header.GetBaseX() + (*column_iterator).header.GetBaseWidth(),
+                Geometry geo = Geometry((*column_iterator).m_header_area->GetBaseX() + (*column_iterator).m_header_area->GetBaseWidth(),
                     GetBaseY(), width, COLUMNHEADERHEIGHT);
                 geo.OffsetSize(-2, 0);
                 geo.OffsetPosition(4, 0);
@@ -1074,8 +1076,8 @@ void TableCtrl::AdjustNonFloatingColumn()
 
     int space_to_share = new_width;
     int total_non_fix_width = 0;
-    std::vector<header2>::iterator it;
-    header2* LastNonFixHeader = 0;
+    std::vector<ColumnHeader>::iterator it;
+    ColumnHeader* LastNonFixHeader = 0;
     for(it = m_column_header.begin(); it != m_column_header.end(); it++)
     {
         if((*it).bFixWidth)
@@ -1090,8 +1092,8 @@ void TableCtrl::AdjustNonFloatingColumn()
         else
         {
             LastNonFixHeader = &(*it);
-            total_non_fix_width += (*it).header.GetBaseWidth();
-            space_to_share -= (*it).header.GetBaseWidth();
+            total_non_fix_width += (*it).m_header_area->GetBaseWidth();
+            space_to_share -= (*it).m_header_area->GetBaseWidth();
         }
     }
     int RemainingSpace = new_width;
@@ -1106,7 +1108,7 @@ void TableCtrl::AdjustNonFloatingColumn()
     {
         if(!(*it).bFixWidth)
         {
-            int w = (*it).header.GetBaseWidth();
+            int w = (*it).m_header_area->GetBaseWidth();
             int nw = w + space_to_share*(float(w)/float(total_non_fix_width));
             if(nw < MIN_COLUMN_WIDTH)
                 nw = MIN_COLUMN_WIDTH;
@@ -1117,14 +1119,14 @@ void TableCtrl::AdjustNonFloatingColumn()
                 // error(in the division and multiply calculus) that might leave some space unoccupied.
                 // Set the RemainingSpace only if it is bigger than nw.
                 if(RemainingSpace > nw)
-                    (*it).header.SetBaseWidth(RemainingSpace);
+                    (*it).m_header_area->SetBaseWidth(RemainingSpace);
                 else
-                    (*it).header.SetBaseWidth(nw);
+                    (*it).m_header_area->SetBaseWidth(nw);
             }
             else
             {
                 RemainingSpace -= nw;
-                (*it).header.SetBaseWidth(nw);
+                (*it).m_header_area->SetBaseWidth(nw);
             }
         }
     }
@@ -1137,7 +1139,7 @@ void TableCtrl::ComputeNonFloatingColumn()
 
     total_non_fix_column_width -= (m_bShowRowHeader? ROWHEADERWIDTH : 0);
 
-    std::vector<header2>::iterator it;
+    std::vector<ColumnHeader>::iterator it;
     for(it = m_column_header.begin(); it != m_column_header.end(); it++)
     {
         if((*it).bFixWidth)
@@ -1168,21 +1170,22 @@ void TableCtrl::ComputeNonFloatingColumn()
     {
         if((*it).bFixWidth)
         {
-            (*it).header.SetBaseWidth((*it).FixWidthValue);
+            (*it).m_header_area->SetBaseWidth((*it).FixWidthValue);
         }
         else
         {
             if(initial_column_width < MIN_COLUMN_WIDTH)
-                (*it).header.SetBaseWidth(MIN_COLUMN_WIDTH);
+                (*it).m_header_area->SetBaseWidth(MIN_COLUMN_WIDTH);
             else
-                (*it).header.SetBaseWidth(initial_column_width);
+                (*it).m_header_area->SetBaseWidth(initial_column_width);
         }
     }
 }
 
 void TableCtrl::addHeader(const TCHAR* name, bool fixed_width, int column_width)
 {
-    sizehandler2 *column_sizehandler = new sizehandler2;
+    sizehandler2 *column_sizehandler = new sizehandler2(NUX_TRACKER_LOCATION);
+    column_sizehandler->Reference();
     column_sizehandler->SetBaseWidth(HANDLERSIZE);
     column_sizehandler->SetBaseHeight((m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0));
 
@@ -1197,25 +1200,25 @@ void TableCtrl::addHeader(const TCHAR* name, bool fixed_width, int column_width)
     t_u32 num_header = (t_u32)m_column_header.size();
     if(num_header == 0)
     {
-        header2 h2;
-        h2.header.SetBaseString(name);
-        h2.header.SetBaseX((m_bShowRowHeader? ROWHEADERWIDTH : 0)); // if has row header, this should be ROWHEADERWIDTH
-        h2.header.SetBaseY(0);
-        h2.header.SetBaseWidth(ITEMDEFAULTWIDTH);
-        h2.header.SetBaseHeight((m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0));
+        ColumnHeader h2;
+        h2.m_header_area->SetBaseString(name);
+        h2.m_header_area->SetBaseX((m_bShowRowHeader? ROWHEADERWIDTH : 0)); // if has row header, this should be ROWHEADERWIDTH
+        h2.m_header_area->SetBaseY(0);
+        h2.m_header_area->SetBaseWidth(ITEMDEFAULTWIDTH);
+        h2.m_header_area->SetBaseHeight((m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0));
         h2.bFixWidth = fixed_width;
         h2.FixWidthValue = column_width;
         m_column_header.push_back(h2);
     }
     else
     {
-        Geometry g = m_column_header[num_header-1].header.GetGeometry();
-        header2 h2;
-        h2.header.SetBaseString(name);
-        h2.header.SetBaseX(g.x + g.GetWidth());
-        h2.header.SetBaseY(0);
-        h2.header.SetBaseWidth(ITEMDEFAULTWIDTH);
-        h2.header.SetBaseHeight((m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0));
+        Geometry g = m_column_header[num_header-1].m_header_area->GetGeometry();
+        ColumnHeader h2;
+        h2.m_header_area->SetBaseString(name);
+        h2.m_header_area->SetBaseX(g.x + g.GetWidth());
+        h2.m_header_area->SetBaseY(0);
+        h2.m_header_area->SetBaseWidth(ITEMDEFAULTWIDTH);
+        h2.m_header_area->SetBaseHeight((m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0));
         h2.bFixWidth = fixed_width;
         h2.FixWidthValue = column_width;
         m_column_header.push_back(h2);
@@ -1235,15 +1238,15 @@ int TableCtrl::FormatHeader()
     int totalWidth = (m_bShowRowHeader? ROWHEADERWIDTH : 0);
 
     std::vector<sizehandler2*>::iterator size_it;
-    std::vector<header2>::iterator column_it;
+    std::vector<ColumnHeader>::iterator column_it;
 
     for(column_it = m_column_header.begin(), size_it = m_column_sizehandler.begin();
         (column_it != m_column_header.end()) && (size_it != m_column_sizehandler.end());
         column_it++, size_it++)
     {
-        (*column_it).header.SetBaseX(x - m_TableArea->GetBaseX() + (m_bShowRowHeader? ROWHEADERWIDTH : 0));
-        (*column_it).header.SetBaseY(y - m_TableArea->GetBaseY());
-        int w = (*column_it).header.GetBaseWidth();
+        (*column_it).m_header_area->SetBaseX(x - m_TableArea->GetBaseX() + (m_bShowRowHeader? ROWHEADERWIDTH : 0));
+        (*column_it).m_header_area->SetBaseY(y - m_TableArea->GetBaseY());
+        int w = (*column_it).m_header_area->GetBaseWidth();
 
         if((column_it + 1) == m_column_header.end())
         {
@@ -1275,44 +1278,44 @@ void TableCtrl::FormatTable()
 
     int i = 0;
     std::vector<sizehandler2*>::iterator it2;
-    std::vector<header2>::iterator it3;
+    std::vector<ColumnHeader>::iterator it3;
     std::vector<RowHeader*>::iterator it4;
-    // position the visible parts of m_row_header and m_row_sizehandler only according to m_row_header[i]->item->IsParentOpen()
+    // position the visible parts of m_row_header and m_row_sizehandler only according to m_row_header[i]->m_item->IsParentOpen()
     for(it4 = m_row_header.begin(), it2 = m_row_sizehandler.begin(), i = 0; it4 != m_row_header.end(); it4++, it2++, i++)
     {
-        if(m_row_header[i]->item->IsParentOpen() == true)
+        if(m_row_header[i]->m_item->IsParentOpen() == true)
         {
             //--->
             int ItemBestHeight = ITEMDEFAULTHEIGHT;
             if((m_bEnableRowResizing == false) && (m_bEnableItemBestHeight == true))
-                ItemBestHeight = m_row_header[i]->item->GetItemBestHeight();
+                ItemBestHeight = m_row_header[i]->m_item->GetItemBestHeight();
             //<---
 
             // This mean we found the first visible item in the tree
             if(FirstVisibleItem)
             {
                 FirstVisibleItem = false;
-                m_row_header[i]->item->m_bIsFirstVisibleItem = true;
+                m_row_header[i]->m_item->m_bIsFirstVisibleItem = true;
             }
-            LastVisibleItem = m_row_header[i]->item;
-            m_row_header[i]->item->m_bIsLastVisibleItem = false;
+            LastVisibleItem = m_row_header[i]->m_item;
+            m_row_header[i]->m_item->m_bIsLastVisibleItem = false;
 
-            m_row_header[i]->item->m_RowHeader.SetBaseX(x - m_TableArea->GetBaseX());
-            m_row_header[i]->item->m_RowHeader.SetBaseY(y - m_TableArea->GetBaseY() + (m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0));
-            m_row_header[i]->item->m_RowHeader.SetBaseWidth((m_bShowRowHeader? ROWHEADERWIDTH : 0));
-            m_row_header[i]->item->m_RowHeader.SetBaseHeight(ItemBestHeight);
+            m_row_header[i]->m_item->m_row_header->SetBaseX(x - m_TableArea->GetBaseX());
+            m_row_header[i]->m_item->m_row_header->SetBaseY(y - m_TableArea->GetBaseY() + (m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0));
+            m_row_header[i]->m_item->m_row_header->SetBaseWidth((m_bShowRowHeader? ROWHEADERWIDTH : 0));
+            m_row_header[i]->m_item->m_row_header->SetBaseHeight(ItemBestHeight);
 
             if(m_bShowRowHeader)
             {
-                m_row_header[i]->item->m_RowHeaderGeometry = Geometry(x, y + (m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0),
-                    ROWHEADERWIDTH, m_row_header[i]->item->m_RowHeader.GetBaseHeight());
+                m_row_header[i]->m_item->m_RowHeaderGeometry = Geometry(x, y + (m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0),
+                    ROWHEADERWIDTH, m_row_header[i]->m_item->m_row_header->GetBaseHeight());
             }
             else
             {
-                m_row_header[i]->item->m_RowHeaderGeometry = Geometry(0, 0, 0, 0);
+                m_row_header[i]->m_item->m_RowHeaderGeometry = Geometry(0, 0, 0, 0);
             }
 
-            int h = (*it4)->item->m_RowHeader.GetBaseHeight();
+            int h = (*it4)->m_item->m_row_header->GetBaseHeight();
 
             y += h;
             totalHeight += h;
@@ -1320,7 +1323,7 @@ void TableCtrl::FormatTable()
             (*it2)->SetBaseXY(x, y + (m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0) - HANDLERSIZE/2);
 
 
-            m_row_header[i]->item->m_ItemGeometryVector.clear();
+            m_row_header[i]->m_item->m_ItemGeometryVector.clear();
             for(t_u32 j = 0; j < (t_u32)m_column_header.size(); j++)
             {
                 int x_column,
@@ -1331,50 +1334,50 @@ void TableCtrl::FormatTable()
                 if(j == 0)
                 {
                     // geometry of the first column of the row (minus the open/close bitmap decoration geometry).
-                    if(m_row_header[i]->item->FirstChildNode() != 0)
+                    if(m_row_header[i]->m_item->FirstChildNode() != 0)
                     {
-                        x_column = m_TableArea->GetBaseX() + m_column_header[j].header.GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/ +
-                            ITEM_DEPTH_MARGIN * m_row_header[i]->item->m_depth + OPENCLOSE_BTN_WIDTH;
-                        y_row    = m_TableArea->GetBaseY() + m_row_header[i]->item->m_RowHeader.GetBaseY();
-                        column_width = m_column_header[j].header.GetBaseWidth() - 
-                            (ITEM_DEPTH_MARGIN * m_row_header[i]->item->m_depth + OPENCLOSE_BTN_WIDTH);
-                        row_height = m_row_header[i]->item->m_RowHeader.GetBaseHeight();
+                        x_column = m_TableArea->GetBaseX() + m_column_header[j].m_header_area->GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/ +
+                            ITEM_DEPTH_MARGIN * m_row_header[i]->m_item->m_depth + OPENCLOSE_BTN_WIDTH;
+                        y_row    = m_TableArea->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseY();
+                        column_width = m_column_header[j].m_header_area->GetBaseWidth() - 
+                            (ITEM_DEPTH_MARGIN * m_row_header[i]->m_item->m_depth + OPENCLOSE_BTN_WIDTH);
+                        row_height = m_row_header[i]->m_item->m_row_header->GetBaseHeight();
 
-                        m_row_header[i]->item->m_FirstColumnUsableGeometry = Geometry(x_column, y_row, column_width, row_height);
+                        m_row_header[i]->m_item->m_FirstColumnUsableGeometry = Geometry(x_column, y_row, column_width, row_height);
                     }
                     else
                     {
-                        x_column = m_TableArea->GetBaseX() + m_column_header[j].header.GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/ +
-                            ITEM_DEPTH_MARGIN * m_row_header[i]->item->m_depth;
-                        y_row    = m_TableArea->GetBaseY() + m_row_header[i]->item->m_RowHeader.GetBaseY();
-                        column_width = m_column_header[j].header.GetBaseWidth() - 
-                            (ITEM_DEPTH_MARGIN * m_row_header[i]->item->m_depth);
-                        row_height = m_row_header[i]->item->m_RowHeader.GetBaseHeight();
+                        x_column = m_TableArea->GetBaseX() + m_column_header[j].m_header_area->GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/ +
+                            ITEM_DEPTH_MARGIN * m_row_header[i]->m_item->m_depth;
+                        y_row    = m_TableArea->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseY();
+                        column_width = m_column_header[j].m_header_area->GetBaseWidth() - 
+                            (ITEM_DEPTH_MARGIN * m_row_header[i]->m_item->m_depth);
+                        row_height = m_row_header[i]->m_item->m_row_header->GetBaseHeight();
 
-                        m_row_header[i]->item->m_FirstColumnUsableGeometry = Geometry(x_column, y_row, column_width, row_height);
+                        m_row_header[i]->m_item->m_FirstColumnUsableGeometry = Geometry(x_column, y_row, column_width, row_height);
                     }
                 }
 
                 // geometry of the column of the row.
-                x_column = m_TableArea->GetBaseX() + m_column_header[j].header.GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/;
-                y_row    = m_TableArea->GetBaseY() + m_row_header[i]->item->m_RowHeader.GetBaseY();
-                column_width = m_column_header[j].header.GetBaseWidth();
-                row_height = m_row_header[i]->item->m_RowHeader.GetBaseHeight();
+                x_column = m_TableArea->GetBaseX() + m_column_header[j].m_header_area->GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/;
+                y_row    = m_TableArea->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseY();
+                column_width = m_column_header[j].m_header_area->GetBaseWidth();
+                row_height = m_row_header[i]->m_item->m_row_header->GetBaseHeight();
 
                 Geometry geo(x_column, y_row, column_width, row_height);
 
-                m_row_header[i]->item->m_ItemGeometryVector.push_back(geo);
+                m_row_header[i]->m_item->m_ItemGeometryVector.push_back(geo);
             }
 
-            m_row_header[i]->item->ComputePropertyLayout(m_TableArea->GetBaseX(),
+            m_row_header[i]->m_item->ComputePropertyLayout(m_TableArea->GetBaseX(),
                 m_TableArea->GetBaseY(),
                 m_row_header[i], m_column_header);
         }
 
-        m_row_header[i]->item->m_TotalGeometry = Geometry(m_TableArea->GetBaseX()/* + m_column_header[0].header.x*/,
-            m_TableArea->GetBaseY() + m_row_header[i]->item->m_RowHeader.GetBaseY(),
-            m_TableArea->GetBaseWidth()/* - m_column_header[0].header.x*/,
-            m_row_header[i]->item->m_RowHeader.GetBaseHeight());
+        m_row_header[i]->m_item->m_TotalGeometry = Geometry(m_TableArea->GetBaseX()/* + m_column_header[0].m_header_area->x*/,
+            m_TableArea->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseY(),
+            m_TableArea->GetBaseWidth()/* - m_column_header[0].m_header_area->x*/,
+            m_row_header[i]->m_item->m_row_header->GetBaseHeight());
     }
     if(LastVisibleItem)
     {
@@ -1383,8 +1386,8 @@ void TableCtrl::FormatTable()
 
     if((m_selectedRow != -1) && (m_selectedColumn != -1))
     {
-        m_selectedGeometry = Geometry(m_column_header[m_selectedColumn].header.GetBaseX(), m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseY(),
-            m_column_header[m_selectedColumn].header.GetBaseWidth(), m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseHeight());
+        m_selectedGeometry = Geometry(m_column_header[m_selectedColumn].m_header_area->GetBaseX(), m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY(),
+            m_column_header[m_selectedColumn].m_header_area->GetBaseWidth(), m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight());
     }
 
     // Setting the minimum size of m_TableArea forces the composition layout fit match the size of the m_TableArea (+/- margins). If the layout is too large, then
@@ -1431,7 +1434,8 @@ void TableCtrl::AddItem(TableItem* item /*const TCHAR* item_name*/)
     TableItem* element = item;
     while(element)
     {
-        sizehandler2 *row_sizehandler = new sizehandler2;
+        sizehandler2 *row_sizehandler = new sizehandler2(NUX_TRACKER_LOCATION);
+        row_sizehandler->Reference();
         row_sizehandler->SetBaseWidth((m_bShowRowHeader? ROWHEADERWIDTH : 0));
         row_sizehandler->SetBaseHeight(HANDLERSIZE);
 
@@ -1450,27 +1454,27 @@ void TableCtrl::AddItem(TableItem* item /*const TCHAR* item_name*/)
             RowHeader* h2 = new RowHeader;
             Color ItemBackgroundColor = ((num_row-1) & 0x1)? GetRowColorOdd(): GetRowColorEven();
             element->SetBackgroundColor(ItemBackgroundColor);
-            h2->item = element;
+            h2->m_item = element;
             //h2->header.setCaption(num_row);
-            h2->item->m_RowHeader.SetBaseX(0);
-            h2->item->m_RowHeader.SetBaseY(ITEMDEFAULTHEIGHT);
-            h2->item->m_RowHeader.SetBaseWidth((m_bShowRowHeader? ROWHEADERWIDTH : 0));
-            h2->item->m_RowHeader.SetBaseHeight(ITEMDEFAULTHEIGHT);
+            h2->m_item->m_row_header->SetBaseX(0);
+            h2->m_item->m_row_header->SetBaseY(ITEMDEFAULTHEIGHT);
+            h2->m_item->m_row_header->SetBaseWidth((m_bShowRowHeader? ROWHEADERWIDTH : 0));
+            h2->m_item->m_row_header->SetBaseHeight(ITEMDEFAULTHEIGHT);
             m_row_header.push_back(h2);
         }
         else
         {
-            Geometry g = m_row_header[num_row-1]->item->m_RowHeader.GetGeometry();
+            Geometry g = m_row_header[num_row-1]->m_item->m_row_header->GetGeometry();
             RowHeader* h2 = new RowHeader;
 
             Color ItemBackgroundColor = ((num_row-1) & 0x1)? GetRowColorOdd(): GetRowColorEven();
             element->SetBackgroundColor(ItemBackgroundColor);
-            h2->item = element;
+            h2->m_item = element;
             //h2->header.setCaption(num_row);
-            h2->item->m_RowHeader.SetBaseX(0);
-            h2->item->m_RowHeader.SetBaseY(g.y + g.GetHeight());
-            h2->item->m_RowHeader.SetBaseWidth((m_bShowRowHeader? ROWHEADERWIDTH : 0));
-            h2->item->m_RowHeader.SetBaseHeight(ITEMDEFAULTHEIGHT);
+            h2->m_item->m_row_header->SetBaseX(0);
+            h2->m_item->m_row_header->SetBaseY(g.y + g.GetHeight());
+            h2->m_item->m_row_header->SetBaseWidth((m_bShowRowHeader? ROWHEADERWIDTH : 0));
+            h2->m_item->m_row_header->SetBaseHeight(ITEMDEFAULTHEIGHT);
             m_row_header.push_back(h2);
         }
 
@@ -1484,11 +1488,11 @@ void TableCtrl::AddItem(TableItem* item /*const TCHAR* item_name*/)
 void TableCtrl::ResetItems()
 {
     std::vector<RowHeader*>::iterator it;
-    // position the visible parts of m_row_header and m_row_sizehandler only according to m_row_header[i]->item->IsParentOpen()
+    // position the visible parts of m_row_header and m_row_sizehandler only according to m_row_header[i]->m_item->IsParentOpen()
     for(it = m_row_header.begin(); it != m_row_header.end(); it++)
     {
-        (*it)->item->setDirtyItem(false);
-        (*it)->item->m_bIsMouseInside = false;
+        (*it)->m_item->setDirtyItem(false);
+        (*it)->m_item->m_bIsMouseInside = false;
 
     }
 
@@ -1660,17 +1664,17 @@ void TableCtrl::FindItemUnderPointer(int x, int y, TableItem** ppItem, int &row,
     row = -1;
     t_u32 num_row = (t_u32)m_row_header.size();
 
-    // test the visible parts of m_row_header only according to m_row_header[i]->item->IsParentOpen()
+    // test the visible parts of m_row_header only according to m_row_header[i]->m_item->IsParentOpen()
     for(t_u32 i = 0; i < num_row; i++)
     {
-        if(m_row_header[i]->item->IsParentOpen())
+        if(m_row_header[i]->m_item->IsParentOpen())
         {
-            if((m_row_header[i]->item->m_RowHeader.GetBaseY()  <= y) &&
-                (m_row_header[i]->item->m_RowHeader.GetBaseY() + m_row_header[i]->item->m_RowHeader.GetBaseHeight() > y))
+            if((m_row_header[i]->m_item->m_row_header->GetBaseY()  <= y) &&
+                (m_row_header[i]->m_item->m_row_header->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseHeight() > y))
             {
                 row = i;
-                sy = m_row_header[i]->item->m_RowHeader.GetBaseY();
-                sh = m_row_header[i]->item->m_RowHeader.GetBaseHeight();
+                sy = m_row_header[i]->m_item->m_row_header->GetBaseY();
+                sh = m_row_header[i]->m_item->m_row_header->GetBaseHeight();
                 break;
             }
         }
@@ -1679,11 +1683,11 @@ void TableCtrl::FindItemUnderPointer(int x, int y, TableItem** ppItem, int &row,
     t_u32 num_col = (t_u32)m_column_header.size();
     for(t_u32 i = 0; i < num_col; i++)
     {
-        if((m_column_header[i].header.GetBaseX() <= x) && (m_column_header[i].header.GetBaseX() + m_column_header[i].header.GetBaseWidth() > x))
+        if((m_column_header[i].m_header_area->GetBaseX() <= x) && (m_column_header[i].m_header_area->GetBaseX() + m_column_header[i].m_header_area->GetBaseWidth() > x))
         {
             column = i;
-            sx = m_column_header[i].header.GetBaseX();
-            sw = m_column_header[i].header.GetBaseWidth();
+            sx = m_column_header[i].m_header_area->GetBaseX();
+            sw = m_column_header[i].m_header_area->GetBaseWidth();
             break;
         }
     }
@@ -1691,7 +1695,7 @@ void TableCtrl::FindItemUnderPointer(int x, int y, TableItem** ppItem, int &row,
     *ppItem = 0;
     if((row != -1) && (column != -1))
     {
-        *ppItem = m_row_header[row]->item;
+        *ppItem = m_row_header[row]->m_item;
     }
 }
 
@@ -1717,10 +1721,10 @@ void TableCtrl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned l
     {
         // selected item geometry
         int sx, sy, sw, sh;
-        sx = m_column_header[m_selectedColumn].header.GetBaseX();
-        sw = m_column_header[m_selectedColumn].header.GetBaseWidth();
-        sy = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseY();
-        sh = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseHeight();
+        sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
+        sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
+        sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
+        sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
 
         m_selectedGeometry = Geometry(sx, sy, sw, sh);
         sigItemSelected.emit(m_selectedRow, m_selectedColumn);
@@ -1736,18 +1740,18 @@ void TableCtrl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned l
         return;
 
     bool Reorganize = false;
-    if(m_row_header[m_selectedRow]->item->FirstChildNode() || m_row_header[m_selectedRow]->item->AlwaysShowOpeningButton())
+    if(m_row_header[m_selectedRow]->m_item->FirstChildNode() || m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton())
     {
-        Geometry geo = m_row_header[m_selectedRow]->item->m_ItemGeometryVector[0];
-        geo.SetX((m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->item->m_depth);
-        geo.SetY(m_row_header[m_selectedRow]->item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY());
+        Geometry geo = m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0];
+        geo.SetX((m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->m_item->m_depth);
+        geo.SetY(m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY());
         geo.SetWidth(OPENCLOSE_BTN_WIDTH);
         if(geo.IsPointInside(x, y))
         {
-            if(m_row_header[m_selectedRow]->item->isOpen())
+            if(m_row_header[m_selectedRow]->m_item->isOpen())
             {
                 Reorganize = true;
-                OpCloseItem(m_row_header[m_selectedRow]->item);
+                OpCloseItem(m_row_header[m_selectedRow]->m_item);
                 if(IsSizeMatchContent())
                 {
                     // when closing and item, the Table gets shorter and might leave a dirty area filled with part of the Table content.
@@ -1762,7 +1766,7 @@ void TableCtrl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned l
             else
             {
                 Reorganize = true;
-                OpOpenItem(m_row_header[m_selectedRow]->item);
+                OpOpenItem(m_row_header[m_selectedRow]->m_item);
             }
         }
         else
@@ -1829,23 +1833,23 @@ void TableCtrl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, uns
     {
         // selected item geometry
         int sx, sy, sw, sh;
-        sx = m_column_header[m_selectedColumn].header.GetBaseX();
-        sw = m_column_header[m_selectedColumn].header.GetBaseWidth();
-        sy = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseY();
-        sh = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseHeight();
+        sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
+        sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
+        sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
+        sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
 
         m_selectedGeometry = Geometry(sx, sy, sw, sh);
         // we couldsend a signal meaning a double click has happened on an item.
-        //sigItemDoubleClick.emit(m_row_header[m_selectedRow]->item);
+        //sigItemDoubleClick.emit(m_row_header[m_selectedRow]->m_item);
     }
 
     bool Reorganize = false;
     // Check if item as a child node. If not, there is no point in opening/closing it.
-    if(m_row_header[m_selectedRow]->item->FirstChildNode() || m_row_header[m_selectedRow]->item->AlwaysShowOpeningButton())
+    if(m_row_header[m_selectedRow]->m_item->FirstChildNode() || m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton())
     {
-        Geometry geo = m_row_header[m_selectedRow]->item->m_ItemGeometryVector[0];
-        geo.SetX((m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->item->m_depth);
-        geo.SetY(m_row_header[m_selectedRow]->item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY());
+        Geometry geo = m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0];
+        geo.SetX((m_bShowRowHeader? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->m_item->m_depth);
+        geo.SetY(m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY());
         geo.SetWidth(OPENCLOSE_BTN_WIDTH);
         if(geo.IsPointInside(x, y))
         {
@@ -1854,10 +1858,10 @@ void TableCtrl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, uns
         }
         else
         {
-            if(m_row_header[m_selectedRow]->item->isOpen())
+            if(m_row_header[m_selectedRow]->m_item->isOpen())
             {
                 Reorganize = true;
-                OpCloseItem(m_row_header[m_selectedRow]->item);
+                OpCloseItem(m_row_header[m_selectedRow]->m_item);
                 if(IsSizeMatchContent())
                 {
                     // when closing and item, the Table gets shorter and might leave a dirty area filled with part of the Table content.
@@ -1872,7 +1876,7 @@ void TableCtrl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, uns
             else
             {
                 Reorganize = true;
-                OpOpenItem(m_row_header[m_selectedRow]->item);
+                OpOpenItem(m_row_header[m_selectedRow]->m_item);
             }
         }
     }
@@ -1899,10 +1903,10 @@ void TableCtrl::OnMouseUp(int x, int y, unsigned long button_flags, unsigned lon
     {
         // selected item geometry
         int sx, sy, sw, sh;
-        sx = m_column_header[m_selectedColumn].header.GetBaseX();
-        sw = m_column_header[m_selectedColumn].header.GetBaseWidth();
-        sy = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseY();
-        sh = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseHeight();
+        sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
+        sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
+        sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
+        sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
 
         m_selectedGeometry = Geometry(sx, sy, sw, sh);
         // These signals are called at the mouse down on an item. Do not call them here.
@@ -1923,10 +1927,10 @@ void TableCtrl::OnMouseDrag(int x, int y, int dx, int dy, unsigned long button_f
     {
         // selected item geometry
         int sx, sy, sw, sh;
-        sx = m_column_header[m_selectedColumn].header.GetBaseX();
-        sw = m_column_header[m_selectedColumn].header.GetBaseWidth();
-        sy = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseY();
-        sh = m_row_header[m_selectedRow]->item->m_RowHeader.GetBaseHeight();
+        sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
+        sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
+        sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
+        sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
 
         m_selectedTableItem->setDirtyItem(true);
     }
@@ -1965,7 +1969,7 @@ void TableCtrl::OnResizeHeaderMouseUp(int x, int y, unsigned long button_flags, 
 
 void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
 {
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(this, false), GetThreadWindowCompositor().GetCurrentWindow());
+    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(this, true), GetThreadWindowCompositor().GetCurrentWindow());
 
     bool recompute = false;
 
@@ -1977,7 +1981,7 @@ void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned l
             return;
     }
 
-    Geometry geo = m_column_header[header_pos].header.GetGeometry();
+    Geometry geo = m_column_header[header_pos].m_header_area->GetGeometry();
     
     int deltax = 0;
     if(isFloatingColumn() == true)
@@ -1996,11 +2000,11 @@ void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned l
         }
 
         deltax = x - m_point0.x;
-        int w = m_column_header[header_pos].header.GetBaseWidth() + deltax;
-        m_column_header[header_pos].header.SetBaseWidth(w);
-        if(m_column_header[header_pos].header.GetBaseWidth() < MIN_COLUMN_WIDTH)
+        int w = m_column_header[header_pos].m_header_area->GetBaseWidth() + deltax;
+        m_column_header[header_pos].m_header_area->SetBaseWidth(w);
+        if(m_column_header[header_pos].m_header_area->GetBaseWidth() < MIN_COLUMN_WIDTH)
         {
-            m_column_header[header_pos].header.SetBaseWidth(MIN_COLUMN_WIDTH);
+            m_column_header[header_pos].m_header_area->SetBaseWidth(MIN_COLUMN_WIDTH);
         }
 
     }
@@ -2028,11 +2032,11 @@ void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned l
                 return;
         }
         
-        int header_width = m_column_header[header_pos].header.GetBaseWidth();
+        int header_width = m_column_header[header_pos].m_header_area->GetBaseWidth();
 
         for(t_s32 i = (t_s32)header_pos + 1; ((i < num_header) && (deltax != 0)); i++)
         {
-            t_s32 element_width =(t_s32) m_column_header[i].header.GetBaseWidth();
+            t_s32 element_width =(t_s32) m_column_header[i].m_header_area->GetBaseWidth();
             if((m_column_header[i].bFixWidth == false) /*&& (element_width > 10)*/)
             {
                 findElement = true;
@@ -2053,18 +2057,18 @@ void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned l
                         absorbed_width = deltax;
                     }
 
-                    int w = m_column_header[header_pos].header.GetBaseWidth() + absorbed_width;
-                    m_column_header[header_pos].header.SetBaseWidth(w);
+                    int w = m_column_header[header_pos].m_header_area->GetBaseWidth() + absorbed_width;
+                    m_column_header[header_pos].m_header_area->SetBaseWidth(w);
 
-                    int x = m_column_header[element_pos].header.GetBaseX() +  absorbed_width;
-                    m_column_header[element_pos].header.SetBaseX(x);
-                    w = m_column_header[element_pos].header.GetBaseWidth() -  absorbed_width;
-                    m_column_header[element_pos].header.SetBaseWidth(w);
+                    int x = m_column_header[element_pos].m_header_area->GetBaseX() +  absorbed_width;
+                    m_column_header[element_pos].m_header_area->SetBaseX(x);
+                    w = m_column_header[element_pos].m_header_area->GetBaseWidth() -  absorbed_width;
+                    m_column_header[element_pos].m_header_area->SetBaseWidth(w);
 
                     for(int j = header_pos + 1; j < element_pos; j++)
                     {
-                        int x = m_column_header[j].header.GetBaseX() +  absorbed_width;
-                        m_column_header[j].header.SetBaseX(x);
+                        int x = m_column_header[j].m_header_area->GetBaseX() +  absorbed_width;
+                        m_column_header[j].m_header_area->SetBaseX(x);
                     }
 
                     recompute = true;
@@ -2076,7 +2080,7 @@ void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned l
                     // Decreasing the width of the header; delta is < 0.
 
                     int absorbed_width = 0;
-                    header_width = m_column_header[header_pos].header.GetBaseWidth();
+                    header_width = m_column_header[header_pos].m_header_area->GetBaseWidth();
                     if(header_width + deltax < MIN_COLUMN_WIDTH)
                     {
                         absorbed_width = header_width - MIN_COLUMN_WIDTH;
@@ -2087,18 +2091,18 @@ void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned l
                         absorbed_width = -deltax;
                     }
 
-                    int w = m_column_header[header_pos].header.GetBaseWidth() - absorbed_width;
-                    m_column_header[header_pos].header.SetBaseWidth(w);
+                    int w = m_column_header[header_pos].m_header_area->GetBaseWidth() - absorbed_width;
+                    m_column_header[header_pos].m_header_area->SetBaseWidth(w);
 
-                    int x = m_column_header[element_pos].header.GetBaseX() -  absorbed_width;
-                    m_column_header[element_pos].header.SetBaseX(x);
-                    w = m_column_header[element_pos].header.GetBaseWidth() +  absorbed_width;
-                    m_column_header[element_pos].header.SetBaseWidth(w);
+                    int x = m_column_header[element_pos].m_header_area->GetBaseX() -  absorbed_width;
+                    m_column_header[element_pos].m_header_area->SetBaseX(x);
+                    w = m_column_header[element_pos].m_header_area->GetBaseWidth() +  absorbed_width;
+                    m_column_header[element_pos].m_header_area->SetBaseWidth(w);
 
                     for(int j = header_pos + 1; j < element_pos; j++)
                     {
-                        int x = m_column_header[j].header.GetBaseX() -  absorbed_width;
-                        m_column_header[j].header.SetBaseX(x);
+                        int x = m_column_header[j].m_header_area->GetBaseX() -  absorbed_width;
+                        m_column_header[j].m_header_area->SetBaseX(x);
                     }
 
                     recompute = true;
@@ -2128,7 +2132,7 @@ void TableCtrl::OnResizeRowMouseDown(int x, int y, unsigned long button_flags, u
 void TableCtrl::OnResizeRowMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
 {
     bool recompute = false;
-    Geometry geo = m_row_header[header_pos]->item->m_RowHeader.GetGeometry();
+    Geometry geo = m_row_header[header_pos]->m_item->m_row_header->GetGeometry();
 
     if((dy > 0) && (y > m_point1.y))
     {
@@ -2140,10 +2144,10 @@ void TableCtrl::OnResizeRowMouseDrag(int x, int y, int dx, int dy, unsigned long
         geo.OffsetSize(0, y - m_point1.y);
         recompute = true;
     }
-    m_row_header[header_pos]->item->m_RowHeader.setGeometry(geo);
-    if(m_row_header[header_pos]->item->m_RowHeader.GetBaseHeight() < MIN_COLUMN_WIDTH)
+    m_row_header[header_pos]->m_item->m_row_header->setGeometry(geo);
+    if(m_row_header[header_pos]->m_item->m_row_header->GetBaseHeight() < MIN_COLUMN_WIDTH)
     {
-        m_row_header[header_pos]->item->m_RowHeader.SetBaseHeight(MIN_COLUMN_WIDTH);
+        m_row_header[header_pos]->m_item->m_row_header->SetBaseHeight(MIN_COLUMN_WIDTH);
     }
 
     if(recompute == true)
@@ -2309,4 +2313,4 @@ void TableCtrl::HighlightItem(int row, int column)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

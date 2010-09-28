@@ -31,7 +31,7 @@
 #include "Button.h"
 #include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Matrix4Editor;
 class Matrix4Preview;
@@ -77,7 +77,7 @@ private:
 class Matrix4Editor : public ActiveInterfaceObject
 {
 public:
-    Matrix4Editor(Matrix4 matrix = Matrix4::IDENTITY());
+    Matrix4Editor(Matrix4 matrix = Matrix4::IDENTITY(), NUX_FILE_LINE_PROTO);
     ~Matrix4Editor();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -178,6 +178,6 @@ private:
     Matrix4 m_Matrix;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // MATRIX4EDITOR_H

@@ -29,10 +29,10 @@
 // Gamma correction
 //
 ///////////////////////////////////////////////////////////////////////////
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 t_float Undo_Gamma_Correction(t_float c);
 t_float Do_Gamma_Correction(t_float c);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 #endif // COLORFUNCTIONS_H

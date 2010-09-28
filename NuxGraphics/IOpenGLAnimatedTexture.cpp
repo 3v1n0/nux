@@ -25,9 +25,9 @@
 #include "IOpenGLAnimatedTexture.h"
 #include "IOpenGLRectangleTexture.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(IOpenGLAnimatedTexture);
+NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAnimatedTexture);
 
 IOpenGLAnimatedTexture::IOpenGLAnimatedTexture(
     int Width
@@ -135,4 +135,4 @@ t_u32 IOpenGLAnimatedTexture::GetNumFrame()
     return _Depth;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

@@ -26,7 +26,7 @@
 #include "HScrollBar.h"
 #include "VScrollBar.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //
 //	Set scrollbar positions and range
@@ -396,4 +396,4 @@ LONG TextView::OnMouseWheelFunc(int nDelta)
 	return 0;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

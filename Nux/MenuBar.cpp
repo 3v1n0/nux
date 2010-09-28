@@ -25,7 +25,7 @@
 #include "HLayout.h"
 #include "MenuBar.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 static const UINT MENU_MINIMUM_WIDTH = 10;
 static const UINT MENU_MINIMUM_HEIGHT = 16;
@@ -33,10 +33,11 @@ static const UINT MENU_MINIMUM_HEIGHT = 16;
 static const UINT MENUBAR_ICON_WIDTH = 24;
 static const UINT MENUBAR_ICON_HEIGHT = 24;
 
-IMPLEMENT_ROOT_OBJECT_TYPE(MenuBarItem);
-IMPLEMENT_OBJECT_TYPE(MenuBar);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(MenuBarItem);
+NUX_IMPLEMENT_OBJECT_TYPE(MenuBar);
 
-MenuBarItem::MenuBarItem()
+MenuBarItem::MenuBarItem(NUX_FILE_LINE_DECL)
+:   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
 {
     area = smptr(CoreArea)(new CoreArea());
     icon = 0;
@@ -44,12 +45,13 @@ MenuBarItem::MenuBarItem()
 
 MenuBarItem::~MenuBarItem()
 {
-    menu = smptr(MenuPage)(0);
-    area = smptr(CoreArea)(0);
+    menu.Release();
+    area.Release();
 }
 
-MenuBar::MenuBar()
-:   m_MenuIsActive(false)
+MenuBar::MenuBar(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_MenuIsActive(false)
 //,   m_CurrentMenu(0)
 ,   m_IsOpeningMenu(false)
 ,   m_MenuBarWindow(0)
@@ -433,7 +435,7 @@ void MenuBar::RecvSigMouseDownOutsideMenuCascade(smptr(MenuPage) menu, int x, in
 {
     Geometry geometry;
     std::list< smptr(MenuBarItem) >::iterator it;
-    UBOOL TerminateMenuCascade = 1;
+    bool TerminateMenuCascade = 1;
     for(it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
         smptr(CoreArea) area = (*it)->area;
@@ -451,4 +453,4 @@ void MenuBar::RecvSigMouseDownOutsideMenuCascade(smptr(MenuPage) menu, int x, in
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

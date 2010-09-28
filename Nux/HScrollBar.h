@@ -26,7 +26,7 @@
 #include "TimerProc.h"
 #include "ScrollBar.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class VLayout;
@@ -35,7 +35,7 @@ class Layout;
 class HScrollBar : public ScrollBar //public ValuatorAbstraction
 {
 public:
-    HScrollBar();
+    HScrollBar(NUX_FILE_LINE_PROTO);
     ~HScrollBar();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -99,8 +99,8 @@ protected:
     // When the Scrollbar is used standalone, it is necessary to call ComputeScrolling at the end of the layout.
     virtual long PostLayoutManagement(long LayoutResult);
 
-    UBOOL AtMinimum();
-    UBOOL AtMaximum();
+    bool AtMinimum();
+    bool AtMaximum();
 
     smptr(HLayout) hlayout;
     smptr(CoreArea) m_SlideBar;
@@ -133,10 +133,10 @@ protected:
     TimerFunctor *right_callback;
     TimerFunctor *trackleft_callback;
     TimerFunctor *trackright_callback;
-    TimerHandle* m_LeftTimerHandler;
-    TimerHandle* m_RightTimerHandler;
-    TimerHandle* m_TrackLeftTimerHandler;
-    TimerHandle* m_TrackRightTimerHandler;
+    TimerHandle m_LeftTimerHandler;
+    TimerHandle m_RightTimerHandler;
+    TimerHandle m_TrackLeftTimerHandler;
+    TimerHandle m_TrackRightTimerHandler;
 
     Point m_TrackMouseCoord;
     friend class HLayout;
@@ -144,7 +144,7 @@ protected:
     friend class Layout;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // HSCROLLBAR_H
 

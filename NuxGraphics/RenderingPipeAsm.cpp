@@ -26,7 +26,7 @@
 //#include "RenderingPipeAsm.h"
 #include "OpenGLEngine.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Conventional Attribute Binding      Generic Attribute Binding
 // ------------------------------      -------------------------
@@ -827,4 +827,4 @@ void GraphicsContext::QRP_QuadWireframe(int x0, int y0, int width, int height,
     m_line_stats++;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

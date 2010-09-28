@@ -27,7 +27,7 @@
 #include "IntegerValidator.h"
 #include "DoubleValidator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NTexture2D;
 class Button;
@@ -46,8 +46,8 @@ public:
         COLORFORMAT_INT,
     };
 
-    RGBValuator();
-    RGBValuator(Color color);
+    RGBValuator(NUX_FILE_LINE_PROTO);
+    RGBValuator(Color color, NUX_FILE_LINE_PROTO);
     /*!
         Create an initialize the widget with the CM_RGB color model and value.
 
@@ -56,7 +56,7 @@ public:
         @param blue
         @param alpha 
     */
-    RGBValuator(float red, float green, float blue, float alpha);
+    RGBValuator(float red, float green, float blue, float alpha, NUX_FILE_LINE_PROTO);
     /*!
         Create an initialize the widget with the appropriate color model and value.
 
@@ -66,7 +66,7 @@ public:
         @param z Blue if CM_RGB, Value if CM_HSV, Saturation if CM_HLS
         @param alpha 
     */
-    RGBValuator(eColorModel colorModel, float x, float y, float z, float alpha);
+    RGBValuator(eColorModel colorModel, float x, float y, float z, float alpha, NUX_FILE_LINE_PROTO);
 
     ~RGBValuator();
 
@@ -191,7 +191,7 @@ private:
     virtual long ComputeChildLayout();
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // RGBGEVALUATOR_H
 

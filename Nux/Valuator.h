@@ -23,14 +23,14 @@
 #ifndef VALUATOR_H
 #define VALUATOR_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class EditTextBox;
 
 class Valuator: public ActiveInterfaceObject
 {
 public:
-    Valuator();
+    Valuator(NUX_FILE_LINE_PROTO);
     ~Valuator();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
@@ -78,7 +78,7 @@ protected:
 
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // VALUATOR_H
 

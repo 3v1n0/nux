@@ -29,7 +29,7 @@
 #include "WindowCompositor.h"
 #include "BaseWindow.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const int SizeGripWidth = 20;
 const int SizeGripHeight = 20;
@@ -41,8 +41,9 @@ const int TitleBarHeight = 20;
     pass the top-left corner position of the window. When drawing, make a similar adjustment.
 */
 
-BaseWindow::BaseWindow(const TCHAR* WindowName)
-:   m_ConfigureNotifyCallback(0)
+BaseWindow::BaseWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_ConfigureNotifyCallback(0)
 ,   m_TopBorder(0)
 ,   m_Border(0)
 ,   m_BackgroundColor(Color(0xFF707070))
@@ -52,7 +53,7 @@ BaseWindow::BaseWindow(const TCHAR* WindowName)
 ,   m_bIsModal(false)
 {
     // Should be at the end of the constructor
-    GetThreadWindowCompositor().RegisterWindow(smptr(BaseWindow)(this, false));
+    GetThreadWindowCompositor().RegisterWindow(smptr(BaseWindow)(this, true));
 
     SetMinimumSize(1, 1);
     setGeometry(Geometry(100, 100, 320, 200));
@@ -62,7 +63,7 @@ BaseWindow::BaseWindow(const TCHAR* WindowName)
 
 BaseWindow::~BaseWindow()
 {
-    GetThreadWindowCompositor().UnRegisterWindow(smptr(BaseWindow)(this, false));
+    GetThreadWindowCompositor().UnRegisterWindow(smptr(BaseWindow)(this, true));
     m_InterfaceObject.clear();
     NUX_SAFE_DELETE(m_PaintLayer);
 }
@@ -405,7 +406,7 @@ void BaseWindow::ShowWindow(bool b, bool StartModal /*  = false */)
     }
 
     if(m_bIsModal)
-        GetThreadWindowCompositor().StartModalWindow(smptr(BaseWindow)(this, false));
+        GetThreadWindowCompositor().StartModalWindow(smptr(BaseWindow)(this, true));
 }
 
 bool BaseWindow::IsVisible() const
@@ -418,7 +419,7 @@ void BaseWindow::StopModal()
     m_bIsVisible = false;
     m_bIsModal = false;
     //ShowWindow(false);
-    GetThreadWindowCompositor().StopModalWindow(smptr(BaseWindow)(this, false));
+    GetThreadWindowCompositor().StopModalWindow(smptr(BaseWindow)(this, true));
 }
 
 bool BaseWindow::IsModal() const
@@ -461,4 +462,4 @@ void BaseWindow::SetBackgroundColor(const Color& color)
     m_BackgroundColor = color;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

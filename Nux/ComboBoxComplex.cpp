@@ -31,9 +31,10 @@
 #include "PropertyList.h"
 #include "WindowCompositor.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-ComboBoxComplex::ComboBoxComplex()
+ComboBoxComplex::ComboBoxComplex(NUX_FILE_LINE_DECL)
+:   AbstractComboBox(NUX_FILE_LINE_PARAM)
 {
     m_ListBox       = smptr(ListControl)(0);
     m_PopupWindow   = smptr(PopUpWindow)(0);
@@ -332,4 +333,4 @@ long ComboBoxComplex::PostLayoutManagement(long LayoutResult)
     return LayoutResult;
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

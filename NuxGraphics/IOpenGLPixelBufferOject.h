@@ -23,11 +23,11 @@
 #ifndef IOPENGLPIXELBUFFEROBJECT_H
 #define IOPENGLPIXELBUFFEROBJECT_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLPixelBufferObject: public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(IOpenGLPixelBufferObject, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLPixelBufferObject, IOpenGLResource);
 
 public:
     virtual ~IOpenGLPixelBufferObject();
@@ -62,6 +62,6 @@ private:
     friend class GLDeviceFactory;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // IOPENGLPIXELBUFFEROJECT_H

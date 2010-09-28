@@ -23,7 +23,7 @@
 #ifndef HSEPARATOR_H
 #define HSEPARATOR_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HSeparator: public AbstractSeparator
 {
@@ -55,6 +55,6 @@ private:
 
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // HSEPARATOR_H

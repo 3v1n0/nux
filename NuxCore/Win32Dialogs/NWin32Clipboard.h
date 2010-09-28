@@ -23,11 +23,11 @@
 #ifndef NWIN32CLIPBOARD_H
 #define NWIN32CLIPBOARD_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 void inlCopyTextToClipboard(const TCHAR* text);
 NString inlReadTextToClipboard();
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NWIN32CLIPBOARD_H

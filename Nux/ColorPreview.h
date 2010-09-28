@@ -25,8 +25,9 @@
 
 #include "NuxGraphics/GLDeviceFactory.h"
 #include "NuxGraphics/GLDeviceObjects.h"
+#include "TimerProc.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 class StaticTextBox;
@@ -38,7 +39,7 @@ class ColorDialogProxy;
 class ColorPreview : public ActiveInterfaceObject
 {
 public:
-    ColorPreview(float red = 0.0f, float green = 0.0f, float blue = 0.0f,  eColorModel colormodel = CM_RGB);
+    ColorPreview(float red = 0.0f, float green = 0.0f, float blue = 0.0f,  eColorModel colormodel = CM_RGB, NUX_FILE_LINE_PROTO);
     ~ColorPreview();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -61,7 +62,7 @@ private:
     void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     TimerFunctor* m_ChangeDetectionTimer;
-    TimerHandle* m_ChangeTimerHandler;
+    TimerHandle m_ChangeTimerHandler;
 
     Color m_Color;
     smptr(HLayout) m_hlayout;
@@ -71,6 +72,6 @@ private:
 };
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COLORPREVIEW_H

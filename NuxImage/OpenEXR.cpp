@@ -52,7 +52,7 @@
 #include <iomanip>
 #include <cmath>
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NBitmapData* Load_OpenEXR(const TCHAR *fileName)
 {
@@ -204,6 +204,6 @@ NBitmapData* Load_OpenEXR(const TCHAR *fileName)
     return BitmapData;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NUX_OPENEXR_SUPPORT

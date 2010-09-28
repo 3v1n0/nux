@@ -65,7 +65,7 @@
     #define NUX_SYS_MEMORY_PTR_SIZE(ptr)                    0
 #endif
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 t_u32 Memcmp( const void* Buf1, const void* Buf2, t_u32 Count );
 
@@ -87,7 +87,7 @@ bool IsMemoryAligned(void* data, t_u32 alignment);
 void* Malloc(t_size Count, t_u32 Alignment = NUX_DEFAULT_ALIGNMENT);
 void* Realloc(void* Original, t_size Count, t_u32 Alignment = NUX_DEFAULT_ALIGNMENT);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
     inline void inlFree( void* Original )
     {

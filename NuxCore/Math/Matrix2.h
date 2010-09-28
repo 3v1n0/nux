@@ -26,7 +26,7 @@
 
 #include "Vector2.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template <typename T>
 class Matrix2x2
@@ -102,7 +102,7 @@ void Matrix2x2<T>::Inverse()
     if(det == T(0))
     {
         // Determinant is null. Matrix cannot be inverted.
-#ifdef _DEBUG
+#ifdef NUX_DEBUG
         NUX_HARDWARE_BREAK;
 #endif
         return;
@@ -536,7 +536,7 @@ Matrix2x2<T> operator * (const T& lhs, const Matrix2x2<T>& rhs)
     return oM;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 
 #endif // MATRIX2_H

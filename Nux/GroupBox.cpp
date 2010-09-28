@@ -24,10 +24,11 @@
 #include "Layout.h"
 #include "GroupBox.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-GroupBox::GroupBox(const TCHAR* Caption)
-:   bCaptionAvailable(false)
+GroupBox::GroupBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   bCaptionAvailable(false)
 ,   m_layout(0)
 {
     m_CaptionArea.SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -85,7 +86,7 @@ void GroupBox::Draw(GraphicsContext& GfxContext, bool force_draw)
     {
         //gPainter.Paint2DQuadColor(m_CaptionArea.GetGeometry(), COLOR_BACKGROUND_PRIMARY);
         //gPainter.PaintTextLineStatic(m_CaptionArea.GetGeometry(), m_CaptionArea.GetCaptionString(), eAlignTextCenter);
-        gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
+        gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
             true, eAlignTextCenter);
     }
     if(m_layout != 0)
@@ -225,9 +226,9 @@ void GroupBox::setCaption(const char* name)
     {
         //bCaptionAvailable = true;
         m_CaptionArea.SetBaseString(name);
-        m_CaptionArea.SetMinimumSize(4 + GFontBold->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
-        m_CaptionArea.SetBaseSize(4 + GFontBold->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
+        m_CaptionArea.SetMinimumSize(4 + GetThreadBoldFont()->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
+        m_CaptionArea.SetBaseSize(4 + GetThreadBoldFont()->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

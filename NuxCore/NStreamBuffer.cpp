@@ -26,7 +26,7 @@
 #include <cassert>
 #include <cstring>
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 NStreamBuffer::NStreamBuffer(const BYTE *begin, const BYTE *end) :
 begin_(begin),
@@ -78,4 +78,4 @@ std::streamsize NStreamBuffer::showmanyc()
     return end_ - current_;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

@@ -23,7 +23,7 @@
 #ifndef NUNIQUEINDEX_H
 #define NUNIQUEINDEX_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NUniqueIndex
 {
@@ -35,6 +35,6 @@ private:
     static NCriticalSection m_CriticalSection;
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NUNIQUEINDEX_H

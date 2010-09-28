@@ -27,9 +27,10 @@
 #include "TableItem.h"
 #include "TableCtrl.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-ComboBoxSimple::ComboBoxSimple()
+ComboBoxSimple::ComboBoxSimple(NUX_FILE_LINE_DECL)
+:   AbstractComboBox(NUX_FILE_LINE_PARAM)
 {
     m_SelectedAction    = smptr(ActionItem)(0);
     m_CurrentMenu       = smptr(MenuPage)(0);
@@ -202,7 +203,7 @@ void ComboBoxSimple::RecvSigActionTriggered(smptr(MenuPage) menu, const smptr(Ac
     m_ComboArea->SetBaseString(m_SelectedAction->GetLabel());
     m_IsOpeningMenu = false;
     
-    sigTriggered.emit(smptr(ComboBoxSimple)(this, false));
+    sigTriggered.emit(smptr(ComboBoxSimple)(this, true));
     sigActionTriggered.emit(*m_SelectedAction);
 
     NeedRedraw();
@@ -279,4 +280,4 @@ void ComboBoxSimple::SetSelectionIndex(int index)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

@@ -25,7 +25,7 @@
 
 #include "PaintLayer.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class CubicSpline;
 class SplineKnot;
@@ -279,7 +279,7 @@ typedef float (*SplineFunctionCallback)(float);
 class SplineCurveEditor : public ActiveInterfaceObject
 {
 public:
-    SplineCurveEditor();
+    SplineCurveEditor(NUX_FILE_LINE_PROTO);
     ~SplineCurveEditor();
     void SetControlPoints(const SplineKnot& splineKnot);
     const SplineKnot& GetControlPoints() const;
@@ -342,6 +342,6 @@ private:
     CubicSpline m_CubicSpline;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // SPLINECURVEEDITOR_H

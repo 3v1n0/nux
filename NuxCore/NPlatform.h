@@ -23,7 +23,7 @@
 #ifndef NPLATFORM_H
 #define NPLATFORM_H
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 void NuxCoreInitialize(const TCHAR* CommandLine);
 void inlPreInitializePlatform();
@@ -90,6 +90,6 @@ public:
     NString m_CommandLine;
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // NPLATFORM_H

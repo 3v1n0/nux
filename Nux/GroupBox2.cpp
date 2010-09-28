@@ -24,7 +24,7 @@
 #include "Layout.h"
 #include "GroupBox2.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 int GroupBox2::CAPTION_X_MARGIN = 6;
 int GroupBox2::X_MARGIN = 4;
@@ -33,8 +33,9 @@ Color GroupBox2::GROUPBOX2_HEADER_BASE_COLOR = Color(0xFF191919);
 Color GroupBox2::GROUPBOX2_HEADER_TEXT_COLOR = Color(0xFFFFFFFF);
 int GroupBox2::TOP_HEADER_HEIGHT = 24;
 
-GroupBox2::GroupBox2(const TCHAR* Caption)
-:   bCaptionAvailable(false)
+GroupBox2::GroupBox2(const TCHAR* Caption, NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   bCaptionAvailable(false)
 ,   m_layout(0)
 {
     m_CaptionArea = smptr(CoreArea)(new CoreArea);
@@ -75,7 +76,7 @@ void GroupBox2::Draw(GraphicsContext& GfxContext, bool force_draw)
 
     //if(bCaptionAvailable)
     {
-        gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
+        gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
     }
 
     if(m_layout != 0)
@@ -223,8 +224,8 @@ void GroupBox2::setCaption(const TCHAR* Caption)
     {
         //bCaptionAvailable = true;
         m_CaptionArea->SetBaseString(Caption);
-        m_CaptionArea->SetMinimumSize(4 + GFontBold->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);
-        m_CaptionArea->SetBaseSize(4 + GFontBold->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);
+        m_CaptionArea->SetMinimumSize(4 + GetThreadBoldFont()->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);
+        m_CaptionArea->SetBaseSize(4 + GetThreadBoldFont()->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);
 
         Size s = GetMinimumSize();
         if(s.GetWidth() < 2*CAPTION_X_MARGIN + m_CaptionArea->GetBaseWidth())
@@ -235,4 +236,4 @@ void GroupBox2::setCaption(const TCHAR* Caption)
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

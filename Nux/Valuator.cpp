@@ -25,13 +25,14 @@
 #include "EditTextBox.h"
 #include "Valuator.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-Valuator::Valuator()
-:   m_Mouse(0)
+Valuator::Valuator(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+,   m_Mouse(0)
 {
     m_MouseControlledButton = smptr(CoreArea)(new CoreArea());
-    m_EditLine = smptr(EditTextBox)(new EditTextBox());
+    m_EditLine = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
     // Set Original State
     m_EditLine->SetSuffix(TEXT(""));
     m_EditLine->SetPrefix(TEXT(""));
@@ -173,4 +174,4 @@ void Valuator::RecvValidateEntry(const weaksmptr(EditTextBox) textbox)
 }
 
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

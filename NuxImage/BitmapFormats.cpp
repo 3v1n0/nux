@@ -23,7 +23,7 @@
 #include "NuxCore/NKernel.h"
 #include "BitmapFormats.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 PixelFormatInfo	GPixelFormats[] =
 {
@@ -87,4 +87,4 @@ ReadBackPixelFormatInfo	GReadBackPixelFormats[] =
     { TEXT("BITFMT_END_GFX_FORMATS"),   0,          0,				0,	        0,         0,		    false       },  //  BITFMT_END_GFX_FORMATS
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

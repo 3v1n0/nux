@@ -27,6 +27,7 @@ libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
 
 source_h = \
   $(srcdir)/FontTexture.h \
+  $(srcdir)/FontRenderer.h \
   $(srcdir)/GfxEventsX11.h \
   $(srcdir)/GfxSetupX11.h \
   $(srcdir)/Gfx_Events.h \
@@ -77,7 +78,9 @@ source_h = \
   $(srcdir)/RunTimeStats.h \
   $(srcdir)/RenderingPipe.h \
   $(srcdir)/RenderingPipeAsm.h \
-  $(srcdir)/RenderingPipeGLSL.h
+  $(srcdir)/RenderingPipeGLSL.h \
+  $(srcdir)/NuxGraphics.h \
+  $(srcdir)/NuxGraphicsObject.h
 
 source_cpp = \
   $(srcdir)/UIColorTheme.cpp \
@@ -101,6 +104,7 @@ source_cpp = \
   $(srcdir)/RenderingPipe.cpp \
   $(srcdir)/IniFile.cpp \
   $(srcdir)/FontTexture.cpp \
+  $(srcdir)/FontRenderer.cpp \
   $(srcdir)/GLTextureResourceManager.cpp \
   $(srcdir)/GLTextureStates.cpp \
   $(srcdir)/IOpenGLVolume.cpp \
@@ -127,7 +131,9 @@ source_cpp = \
   $(srcdir)/GLShader.cpp \
   $(srcdir)/IOpenGLGLSLShader.cpp \
   $(srcdir)/GLTimer.cpp \
-  $(srcdir)/IOpenGLPixelBufferOject.cpp
+  $(srcdir)/IOpenGLPixelBufferOject.cpp \
+  $(srcdir)/NuxGraphics.cpp \
+  $(srcdir)/NuxGraphicsObject.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \

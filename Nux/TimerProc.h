@@ -23,13 +23,9 @@
 #ifndef TIMERPROC_H
 #define TIMERPROC_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-typedef struct 
-{
-    long    sec;         // seconds 
-    long    usec;        // and microseconds 
-} _Time;
+class TimerHandler;
 
 class TimerFunctor : public sigc::trackable
 {
@@ -37,33 +33,22 @@ public:
     sigc::signal<void, void*> OnTimerExpired;
 };
 
-typedef void (*TimerHandleProc)(void *);
-typedef void (*IdleHandleProc) (void *);
-
-typedef t_integer TIMERHANDLE;
+class TimerObject;
 
 class TimerHandle
 {
 public:
     TimerHandle();
-    //! Delay before the callback expires
-    _Time           when;
-    void 		    *CallbackData;
-    TimerFunctor    *TimerCallback;
+    TimerHandle(TimerObject* timer_object);
+    ~TimerHandle();
+    TimerHandle(const TimerHandle&);
+    
+    TimerHandle& operator = (const TimerHandle&);
+    bool IsValid() const;
+private:
+    TimerObject* m_d;
 
-    //! time progression factor between [0.0, 1.0]
-    float           Param;
-    int             Type;
-    int             Iteration;
-    int             IterationCount;
-    int             Period;         // milliseconds
-    int             Duration;      // milliseconds
-    int             ElapsedTime;    // milliseconds
-    bool            MarkedForRemoval;
-    TimerHandle     *next;
-    TimerHandle     *prev;
-
-    t_u32           glibid;
+    friend class TimerHandler;
 };
 
 class TimerHandler
@@ -83,14 +68,14 @@ public:
     //! Add a timer callback.
     /*!
       Add a timer callback to the timer manager. When the timer expires, the callback function is executed.
-      The returned TimerHandle should not be deleted by the caller.
+      The returned TimerObject should not be deleted by the caller.
 
       @param Milliseconds   Period delay before the callback is executed.
       @param Callback       The callback to execute when the timer expires.
       @param Data           The callback data
       @return               A handle to the timer.
     */
-    TimerHandle* AddTimerHandler(unsigned int Period, TimerFunctor* Callback, void *Data);
+    TimerHandle AddTimerHandler(unsigned int Period, TimerFunctor* Callback, void *Data);
     //! Add a periodic timer callback.
     /*!
       Add a timer callback to the timer manager. Every time the timer expires, the callback function is executed.
@@ -102,7 +87,7 @@ public:
       @param Data           The callback data
       @return               A handle to the timer.
     */
-    TimerHandle* AddPeriodicTimerHandler(unsigned int Period, int Duration, TimerFunctor* Callback, void *Data);
+    TimerHandle AddPeriodicTimerHandler(unsigned int Period, int Duration, TimerFunctor* Callback, void *Data);
     //! Add a timer callback to be called a finite number of time.
     /*!
       Add a timer callback to the timer manager. The timer callback will be call N times exactly.
@@ -115,7 +100,7 @@ public:
       @param Data               The callback data
       @return                   A handle to the timer.
     */
-    TimerHandle* AddCountIterationTimerHandler(unsigned int Period, int NumberOfIteration, TimerFunctor* Callback, void *Data);
+    TimerHandle AddCountIterationTimerHandler(unsigned int Period, int NumberOfIteration, TimerFunctor* Callback, void *Data);
 
     //! Search for a timer handle.
     /*!
@@ -124,11 +109,20 @@ public:
       @param handle             Timer handle to search.
       @return                   Return true if the timer is found; false otherwise.
     */
-    bool FindTimerHandle(TimerHandle* handle);
+    bool FindTimerHandle(TimerHandle& handle);
 
-    void RemoveTimerWithClientData(void *Data);
-    void RemoveTimerHandler(TimerHandle *handler);
-    void DelayUntilNextTimerExpires(_Time *delay);
+    //! Remove a timer;
+    /*!
+      @param handle Timer handle to search.
+      @return Return True if the timer is found.
+    */
+    bool RemoveTimerHandler(TimerHandle& handle);
+
+    //! Return the delay until the next timer expires.
+    /*!
+      @return Delay to next timer expiration in milliseconds.
+    */
+    int DelayUntilNextTimerExpires();
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     int ExecTimerHandler(t_u32 timer_id);
@@ -138,14 +132,14 @@ public:
 
 private:
     bool m_IsProceesingTimers;
-    TimerHandle* AddHandle(TimerHandle *handle);
+    TimerObject* AddHandle(TimerObject *handle);
     t_u32 GetNumPendingHandler();
 
     //! Single linked list of timer delays.
-    TimerHandle *TimerHandleQueue;
+    TimerObject *m_timer_object_queue;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // TIMERPROC_H
 

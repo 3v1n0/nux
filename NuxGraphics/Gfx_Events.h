@@ -111,7 +111,7 @@
 //    end_of_key_codes
 //};
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const long I_ExposureMask               = (1L<<15); 
 const long I_StructureNotifyMask        = (1L<<17); 
@@ -385,6 +385,6 @@ typedef struct IEvent
     //void* Application;
 } IEvent;
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // EVENTS_H

@@ -26,7 +26,7 @@
 #include "EditTextLinePropertyItem.h"
 #include "Vector3Property.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 Vector3PropertyItem::Vector3PropertyItem(const TCHAR* name,
                                          double X,
@@ -79,7 +79,7 @@ long Vector3PropertyItem::ProcessPropertyEvent(IEvent &ievent, long TraverseInfo
 }
 
 void Vector3PropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry ItemGeo, const BasePainter& Painter, 
-                                       RowHeader* row, const std::vector<header2>& column_vector, Color ItemBackgroundColor)
+                                       RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
 {
     bool isSelected = (this == table->GetSelectedItem());
     if(isDirtyItem() ||
@@ -88,7 +88,7 @@ void Vector3PropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* t
         m_Z->IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, m_FirstColumnUsableGeometry, row->item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetThreadBoldFont() /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {
@@ -103,13 +103,13 @@ void Vector3PropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* t
                 Painter.Paint2DQuadColor(GfxContext, prop_geo, table->GetSelectionColor());
             else
                 Painter.Paint2DQuadColor(GfxContext, prop_geo, ItemBackgroundColor);
-            Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, prop_geo, buffer, GetItemTextColor()); 
+            Painter.PaintTextLineStatic(GfxContext, GetThreadBoldFont() /*GetFont()*/, prop_geo, buffer, GetItemTextColor()); 
         }
         table->PopItemBackground(GfxContext, nBackground);
     }
 }
 
-void Vector3PropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<header2>& column_vector)
+void Vector3PropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector)
 {
 }
 
@@ -200,4 +200,4 @@ bool Vector3PropertyItem::FromXML(const TiXmlElement* elementxml)
 
     return NodeNetCom::FromXML(elementxml);
 }
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

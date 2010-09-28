@@ -22,7 +22,7 @@
 
 #include "GLResource.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 const TCHAR* OGLDeviceErrorMessages[] =
 {
@@ -262,4 +262,4 @@ unsigned int GetGLElementCount(PRIMITIVE_TYPE InPrimitiveType,
     return InPrimitiveCount;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END

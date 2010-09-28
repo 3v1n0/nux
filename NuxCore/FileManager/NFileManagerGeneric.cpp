@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "Math/MathUtility.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 #define COPYBLOCKSIZE	32768
 
@@ -229,5 +229,5 @@ int NFileManagerGeneric::CreateUniqueFileName(const TCHAR* Filename, const TCHAR
     return -1;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

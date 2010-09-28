@@ -156,7 +156,7 @@
 #endif
 
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Variable arguments.
 t_u32 GetVariableArgs(TCHAR* Dest, t_u32 Size, t_u32 Count, const TCHAR*& Fmt, va_list ArgPtr);
@@ -460,16 +460,16 @@ class NFileManager;
 //////////////////////////////////////////////////////////////////////////
 // Breaks into the debugger.  Forces a GPF in non-debug builds.         //
 //////////////////////////////////////////////////////////////////////////
-#if (defined _DEBUG) && (defined NUX_MICROSOFT_COMPILER)
+#if (defined NUX_DEBUG) && (defined NUX_MICROSOFT_COMPILER)
     #define nuxIsDebuggerPresent()  IsDebuggerPresent()
     #define inlDebugBreak()         ( IsDebuggerPresent() ? (DebugBreak(),1) : 1 )
 #elif (defined _WIN32)
     #define nuxIsDebuggerPresent()	IsDebuggerPresent()
     #define inlDebugBreak()			( IsDebuggerPresent() ? *((INT*)3)=13 : 1 )
-#elif (defined _DEBUG) && (defined NUX_GNUCPP_COMPILER)
+#elif (defined NUX_DEBUG) && (defined NUX_GNUCPP_COMPILER)
     #define nuxIsDebuggerPresent()  1
     #define inlDebugBreak()         asm("int3");
-#elif (defined _DEBUG) && (defined NUX_PS3)
+#elif (defined NUX_DEBUG) && (defined NUX_PS3)
     #define nuxIsDebuggerPresent()	1
     #define inlDebugBreak()			__asm__ volatile("tw 31, 1, 1");
 #else
@@ -640,7 +640,7 @@ enum NUX_STATUS
     NUX_DELETEFILE_ERROR,
 };
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 
 #include "NMacros.h"
@@ -675,8 +675,7 @@ NAMESPACE_END
 */
 
 #include "NUniqueIndex.h"
-#include "SmartPtr/NRefCount.h"
-#include "SmartPtr/NSmartPtr.h"
+//#include "SmartPtr/IntrusiveSP.h"
 
 //#include "NGlobalInitializer.h"
 

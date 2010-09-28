@@ -36,7 +36,7 @@
 #include "OpenGLEngine.h"
 
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
 // other attributes. Otherwise you get a bug on NVidia! Why is that???
@@ -984,5 +984,5 @@ void GraphicsContext::QRP_GLSL_QuadWireframe(int x0, int y0, int width, int heig
     m_line_stats++;
 }
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 

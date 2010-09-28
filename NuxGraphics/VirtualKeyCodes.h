@@ -23,7 +23,7 @@
 #ifndef VIRTUALKEYCODES_H
 #define VIRTUALKEYCODES_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Virtual key codes
 // The following table shows the symbolic constant names, hexadecimal values, and mouse or keyboard equivalents for the virtual-key codes used by the system. The codes are listed in numeric order.
@@ -282,7 +282,7 @@ NAMESPACE_BEGIN_OGL
 
 #define     NUX_MAX_VK      256
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // VIRTUALKEYCODES_H
 

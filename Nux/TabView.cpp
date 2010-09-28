@@ -26,7 +26,7 @@
 #include "HLayout.h"
 #include "VLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 int TabView::TAB_BUTTON_WIDTH   = 12;
 int TabView::TAB_BUTTON_HEIGHT  = 20;
@@ -39,7 +39,8 @@ Color TabView::TAB_BACKGROUND_COLOR           = Color(0xFF191919);
 Color TabView::TAB_HEADER_COLOR               = Color(0xFF333333);
 Color TabView::TAB_HEADER_FOCUS_COLOR         = Color(0xFF5D5D5D);
 
-TabView::TabView()
+TabView::TabView(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     m_FocusTabIndex = 0;
     m_TabPositionOffset = 0;
@@ -192,13 +193,13 @@ void TabView::Draw(GraphicsContext& GfxContext, bool force_draw)
         {
             tab_geo.OffsetSize(-2, 0);
             gPainter.PaintShapeCorner(GfxContext, tab_geo, TAB_HEADER_FOCUS_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft|eCornerTopRight, false);
-            gPainter.PaintTextLineStatic(GfxContext, GFontBold, tab_geo, tab_text, Color(0xFFFFFFFF), true, eAlignTextCenter);
+            gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), tab_geo, tab_text, Color(0xFFFFFFFF), true, eAlignTextCenter);
         }
         else
         {
             tab_geo.OffsetSize(-2, 0);
             gPainter.PaintShapeCorner(GfxContext, tab_geo, TAB_HEADER_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft|eCornerTopRight, false);
-            gPainter.PaintTextLineStatic(GfxContext, GFontBold, tab_geo, tab_text, Color(0xFF000000), true, eAlignTextCenter);
+            gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), tab_geo, tab_text, Color(0xFF000000), true, eAlignTextCenter);
         }
     }
 
@@ -329,12 +330,12 @@ void TabView::AddTab(const char* tab_name, smptr(Layout) tab_layout)
         m_ClientLayout = Tab->tab_layout;
         //m_ClientLayout->setGeometry(m_CompositionLayout->GetGeometry());
         SetCompositionLayout(m_ClientLayout);
-        GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, false));
+        GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true));
     }
     Tab->tab_area = smptr(CoreArea)(new CoreArea());
     Tab->tab_area->SetBaseString(tab_name);
-    Tab->tab_area->SetMinimumSize(6 + GFontBold->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
-    Tab->tab_area->SetMaximumSize(6 + GFontBold->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
+    Tab->tab_area->SetMinimumSize(6 + GetThreadBoldFont()->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
+    Tab->tab_area->SetMaximumSize(6 + GetThreadBoldFont()->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
 
     Tab->tab_area->OnMouseDown.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseDown), Tab));
     Tab->tab_area->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseUp), Tab));
@@ -359,9 +360,9 @@ void TabView::SetActiveTad(int index)
     m_ClientLayout = m_TabVector[m_FocusTabIndex]->tab_layout;
     if(m_ClientLayout.IsValid())
         SetCompositionLayout(m_ClientLayout);
-    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, false));
+    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true));
 
-    sigTabChanged(smptr(TabView)(this, false));
+    sigTabChanged(smptr(TabView)(this, true));
     sigTabIndexChanged(m_FocusTabIndex);
 
     NeedRedraw();
@@ -429,7 +430,7 @@ void TabView::RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigne
     int PrevWidth = GetBaseWidth();
     int PrevHeight = GetBaseHeight();
 
-    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, false), true);
+    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true), true);
 
 
     int NewWidth = GetBaseWidth();
@@ -444,7 +445,7 @@ void TabView::RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigne
     }
     m_DrawBackgroundOnPreviousGeometry = true;
 
-    sigTabChanged(smptr(TabView)(this, false));
+    sigTabChanged(smptr(TabView)(this, true));
     sigTabIndexChanged(m_FocusTabIndex);
     NeedRedraw();
 }
@@ -476,9 +477,9 @@ void TabView::RecvTabLeftMouseDown(int x, int y, unsigned long button_flags, uns
 
 void TabView::RecvTabButtonMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
-    if(m_TabRightTimerHandler)
+    if(m_TabRightTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_TabRightTimerHandler);
-    if(m_TabLeftTimerHandler)
+    if(m_TabLeftTimerHandler.IsValid())
         GetThreadTimer().RemoveTimerHandler(m_TabLeftTimerHandler);
 
     m_TabRightTimerHandler = 0;
@@ -497,4 +498,4 @@ void TabView::RecvTabLeftTimerExpired(void* v)
     m_TabLeftTimerHandler = GetThreadTimer().AddTimerHandler(10, tableft_callback, this);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

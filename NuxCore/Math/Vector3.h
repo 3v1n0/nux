@@ -27,7 +27,7 @@
 
 #include "Vector4.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template <typename T>
 class Vec3
@@ -326,6 +326,6 @@ inline Vec3<U> operator * (const U& f, const Vec3<U>& v)
 
 typedef Vec3<float> Vector3;
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // VECTOR3_H

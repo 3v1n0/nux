@@ -25,7 +25,7 @@
 
 #include "Vector3.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 template<typename T>
 class Line3D
@@ -160,6 +160,6 @@ const Vec3<T> Line3D<T>::GetEndPoint() const
     return p;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 
 #endif // LINE3D_H

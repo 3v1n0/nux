@@ -23,7 +23,7 @@
 #ifndef WIDGETSMARTPOINTER_H
 #define WIDGETSMARTPOINTER_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 // // AtomicInt
 // typedef long AtomicInt;
 // 
@@ -69,13 +69,12 @@ class WeakWSPtr;
 template <typename T>
 class WSPtr;
 
-///////////////////////////////////////////////////////
-// WSPtr
-
+//! A smart pointer class. Implemented as an intrusive smart pointer.
 template <typename T>
 class WSPtr
 {
 public:
+    //! Constructor
     WSPtr()
         :   ptr_ (0)
         , refCounts_ (0)
@@ -83,6 +82,7 @@ public:
     {
     }
 
+    //! Copy constructor
     WSPtr (const WSPtr<T>& other)
         :   ptr_ (0)
         , refCounts_ (0)
@@ -99,6 +99,10 @@ public:
         }
     }
 
+    //! Copy constructor
+    /*!
+        @param other Parameter with a type derived from T.
+    */
     template <typename O>
     WSPtr (const WSPtr<O>& other)
         :   ptr_ (0)
@@ -119,10 +123,15 @@ public:
         }
     }
 
+    //! Construction with a base pointer of type T.
+    /*!
+        @param ptr Start maintaining a reference count of the passed pointer.
+        @param deletewhenrefcounthitzero if True, the pointer is deleted when the ref count reach 0 (to be deprecated).
+    */
     explicit WSPtr(T* ptr, bool deletewhenrefcounthitzero = true)
         :   ptr_ (0)
-        , refCounts_ (0)
-        , deletewhenrefcounthitzero_(true)
+        ,   refCounts_ (0)
+        ,   deletewhenrefcounthitzero_(true)
     {
         if(ptr != 0)
         {
@@ -132,6 +141,11 @@ public:
         }
     }
 
+    //! Construction with a base pointer of type O that inherits from type T.
+    /*!
+        @param ptr Start maintaining a reference count of the passed pointer.
+        @param deletewhenrefcounthitzero if True, the pointer is deleted when the ref count reach 0 (to be deprecated).
+    */
     template <typename O>
     explicit WSPtr(O* ptr, bool deletewhenrefcounthitzero = true)
         :   ptr_ (0)
@@ -150,18 +164,22 @@ public:
             {
                 // This is possible but check why!
                 // It can happen when doing something like this:
-                //      smptr(Layout) layout = smptr(Layout)(this, false);
+                //      smptr(Layout) layout = smptr(Layout)(this, true);
                 // where this is a Baseobject.
                 nuxAssert(0);
             }
         }
     }
 
+    //! Assignment of a smart pointer of type T.
+    /*!
+        @param other Smart pointer of type T.
+    */
     WSPtr& operator = (const WSPtr<T>& other)
     {
         if (ptr_ != other.ptr_)
         {
-            releaseRef ();
+            ReleaseReference ();
 
             ptr_ = other.ptr_;
             refCounts_ = other.refCounts_;
@@ -177,6 +195,10 @@ public:
         return *this;
     }
 
+    //! Assignment of a smart pointer of type O that inherits from type T.
+    /*!
+        @param other Smart pointer of type O.
+    */
     template <typename O>
     WSPtr& operator = (const WSPtr<O>& other)
     {
@@ -184,7 +206,7 @@ public:
         {
             if (ptr_ != other.ptr_)
             {
-                releaseRef ();
+                ReleaseReference ();
 
                 ptr_ = other.ptr_;
                 refCounts_ = other.refCounts_;
@@ -199,21 +221,14 @@ public:
         }
         else
         {
-            releaseRef ();
+            ReleaseReference ();
         }
         return *this;
     }
 
-    //     WSPtr& operator = (Null)
-    //     {
-    //         releaseRef ();
-    // 
-    //         return *this;
-    //     }
-
     ~WSPtr ()
     {
-        releaseRef ();
+        ReleaseReference ();
     }
 
     T& operator * () const
@@ -228,17 +243,29 @@ public:
         return ptr_;
     }
 
-    bool operator () () const
-    {
-        return ptr_ != 0;
-    }
-
-    void swap (WSPtr<T>& other)
+    //! Swap the content of 2 smart pointers.
+    /*!
+        @param other Smart pointer to swap with.
+    */
+    void Swap (WSPtr<T>& other)
     {
         std::swap (ptr_, other.ptr_);
         std::swap (refCounts_, other.refCounts_);
     }
 
+    //! Test validity of the smart pointer.
+    /*!
+        Return True if the internal pointer is not null.
+    */
+    bool operator () () const
+    {
+        return ptr_ != 0;
+    }
+
+    //! Test validity of the smart pointer.
+    /*!
+        Return True if the internal pointer is null.
+    */
     bool IsNull() const
     {
         if(ptr_ == 0)
@@ -246,6 +273,10 @@ public:
         return false;
     }
 
+    //! Test validity of the smart pointer.
+    /*!
+        Return True if the internal pointer is not null.
+    */
     bool IsValid() const
     {
         if(ptr_ != 0)
@@ -333,7 +364,7 @@ public:
 
     void Release()
     {
-        releaseRef();
+        ReleaseReference();
     }
 
 private:
@@ -341,7 +372,7 @@ private:
     {
     }
 
-    void releaseRef ()
+    void ReleaseReference()
     {
         if (ptr_ == 0)
         {
@@ -454,17 +485,26 @@ private:
     friend WSPtr<U> queryCast (const WSPtr<F>& from);
 };
 
-///////////////////////////////////////////////////////
-// WeakWSPtr
 
+//! A weak smart pointer class. Implemented as an intrusive smart pointer.
+/*!
+    A weak smart pointer is built from a smart pointer or another weak smart pointer. It increments and decrements
+    the total reference count of an pointer. Even is the original pointer is destroyed, weak smart pointers still point
+    to the RefCounts pointers of the original pointer and can use it to check if the pointer is still valid or not.
+*/  
 template <typename T>
 class WeakWSPtr
 {
 public:
+    //! Constructor
     WeakWSPtr () : ptr_ (0), refCounts_ (0)
     {
     }
 
+    //! Copy constructor
+    /*!
+        @param other Parameter with type T.
+    */
     WeakWSPtr (const WeakWSPtr<T>& other)
     {
         ptr_ = other.ptr_;
@@ -476,6 +516,10 @@ public:
         }
     }
 
+    //! Copy constructor
+    /*!
+        @param other Parameter with a type derived from T.
+    */
     template <typename O>
     WeakWSPtr (const WeakWSPtr<O>& other)
         :   ptr_(0)
@@ -493,6 +537,30 @@ public:
         }
     }
 
+//     //! Construction from a smart pointer of type T.
+//     /*!
+//         @param other Maintains a weak smart pointer reference to this parameter.
+//     */
+//     WeakWSPtr (const WSPtr<T>& other)
+//         :   ptr_(0)
+//         ,   refCounts_(0)
+//     {
+//         if(other.ptr_)
+//         {
+//             ptr_ = other.ptr_;
+//             refCounts_ = other.refCounts_;
+// 
+//             if (ptr_ != 0)
+//             {
+//                 refCounts_->totalRefs_.Increment();
+//             }
+//         }
+//     }
+
+    //! Construction from a smart pointer of type O that inherits from type T.
+    /*!
+        @param other Maintains a weak smart pointer reference to this parameter.
+    */
     template <typename O>
     WeakWSPtr (const WSPtr<O>& other)
         :   ptr_(0)
@@ -510,11 +578,15 @@ public:
         }
     }
 
+    //! Assignment of a weak smart pointer of type T.
+    /*!
+        @param other Weak smart pointer of type T.
+    */
     WeakWSPtr& operator = (const WeakWSPtr<T>& other)
     {
         if (get () != other.get ())
         {
-            releaseRef ();
+            ReleaseReference ();
 
             ptr_ = other.ptr_;
             refCounts_ = other.refCounts_;
@@ -528,13 +600,10 @@ public:
         return *this;
     }
 
-    //     WeakWSPtr& operator = (Null)
-    //     {
-    //         releaseRef ();
-    // 
-    //         return *this;
-    //     }
-
+    //! Assignment of a weak smart pointer of Type O that inherits from type T.
+    /*!
+        @param other Weak smart pointer of type O.
+    */
     template <typename O>
     WeakWSPtr& operator = (const WeakWSPtr<O>& other)
     {
@@ -542,7 +611,7 @@ public:
         {
             if (get () != other.get ())
             {
-                releaseRef ();
+                ReleaseReference ();
 
                 ptr_ = other.ptr_;
                 refCounts_ = other.refCounts_;
@@ -555,11 +624,15 @@ public:
         }
         else
         {
-            releaseRef();
+            ReleaseReference();
         }
         return *this;
     }
 
+    //! Assignment of a smart pointer of Type O that inherits from type T.
+    /*!
+        @param other Maintains a weak smart pointer reference to this parameter.
+    */
     template <typename O>
     WeakWSPtr& operator = (const WSPtr<O>& other)
     {
@@ -567,7 +640,7 @@ public:
         {
             if (get () != other.ptr_)
             {
-                releaseRef ();
+                ReleaseReference ();
 
                 ptr_ = other.ptr_;
                 refCounts_ = other.refCounts_;
@@ -580,14 +653,14 @@ public:
         }
         else
         {
-            releaseRef();
+            ReleaseReference();
         }
         return *this;
     }
 
     ~WeakWSPtr ()
     {
-        releaseRef ();
+        ReleaseReference ();
     }
 
     T& operator * () const
@@ -604,7 +677,7 @@ public:
         return get ();
     }
 
-    void swap (WeakWSPtr<T>& other)
+    void Swap (WeakWSPtr<T>& other)
     {
         std::swap (ptr_, other.ptr_);
         std::swap (refCounts_, other.refCounts_);
@@ -700,7 +773,7 @@ public:
 
     void Release()
     {
-        releaseRef();
+        ReleaseReference();
     }
 
 private:
@@ -723,7 +796,7 @@ private:
 //         return get () == 0;
 //     }
 
-    void releaseRef ()
+    void ReleaseReference ()
     {
         if (ptr_ == 0)
         {
@@ -1273,6 +1346,6 @@ inline void swap (WeakWSPtr<T>& t1, WeakWSPtr<T>& t2)
     t1.swap (t2);
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // WIDGETSMARTPOINTER_H

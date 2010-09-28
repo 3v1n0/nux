@@ -23,7 +23,7 @@
 #ifndef UNICODE_H
 #define UNICODE_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Define the basic types for storing Unicode 
 // typedef unsigned long	t_UTF32;	
@@ -77,6 +77,6 @@ size_t	copy_utf8(t_UTF8 *src, size_t srclen, t_UTF8 *dest, size_t *destlen);
 size_t	copy_utf16(t_UTF16 *src, size_t srclen, t_UTF16 *dest, size_t *destlen);
 size_t	swap_utf16(t_UTF16 *src, size_t srclen, t_UTF16 *dest, size_t *destlen);
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // UNICODE_H

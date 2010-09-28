@@ -30,13 +30,14 @@
 #include "HLayout.h"
 #include "VLayout.h"
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
-IMPLEMENT_OBJECT_TYPE(HSplitter);
+NUX_IMPLEMENT_OBJECT_TYPE(HSplitter);
 static const t_s32 HSPLITTERHEIGHT = 5;
 static const t_s32 HSTICK_SIZE = 5;
 
-HSplitter::HSplitter()
+HSplitter::HSplitter(NUX_FILE_LINE_DECL)
+:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 { 
     m_layout                    = 0;
     new_addition                = false;
@@ -89,6 +90,8 @@ long HSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             it != m_InterfaceObject.end();
             it++, it_splitter++)
         {
+            smptr(BaseObject) object = (*it);
+
             Geometry clip_geo;
             clip_geo.SetX(((*it)->GetGeometry().x));
             clip_geo.SetY(((*it)->GetGeometry().y));
@@ -282,12 +285,13 @@ void HSplitter::AddWidget(smptr(BaseObject) ic, float stretchfactor)
     if(ic.IsValid())
     {
         MySplitter *splitter = new MySplitter;
+        splitter->SinkReference();
         t_u32 no = (t_u32)m_InterfaceObject.size();
         splitter->OnMouseDown.connect(sigc::bind( sigc::mem_fun(this, &HSplitter::OnSplitterMouseDown), no));
         splitter->OnMouseDrag.connect(sigc::bind( sigc::mem_fun(this, &HSplitter::OnSplitterMouseDrag), no));
         splitter->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &HSplitter::OnSplitterMouseUp), no));
 
-        ic->SetParentObject(smptr(BaseObject)(this, false));
+        ic->SetParentObject(smptr(BaseObject)(this, true));
         m_InterfaceObject.push_back(ic);
         m_SplitterObject.push_back(splitter);
         m_SplitConfig.push_back(stretchfactor);
@@ -466,7 +470,7 @@ void HSplitter::OnSplitterMouseDown(t_s32 x, t_s32 y, unsigned long button_flags
     m_point.Set(x, y);
 
     m_focus_splitter_index = header_pos;
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(this, false), GetThreadWindowCompositor().GetCurrentWindow());
+    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(this, true), GetThreadWindowCompositor().GetCurrentWindow());
 
 
     // Hint for the window to initiate a redraw
@@ -597,4 +601,4 @@ void HSplitter::DoneRedraw()
     }
 }
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END

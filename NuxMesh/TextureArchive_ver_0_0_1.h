@@ -23,7 +23,7 @@
 // #ifndef TEXTUREARCHIVE_VER_0_0_1_H
 // #define TEXTUREARCHIVE_VER_0_0_1_H
 // 
-// NAMESPACE_BEGIN
+// namespace nux { //NUX_NAMESPACE_BEGIN
 // 
 // #pragma pack(1)
 // typedef struct  
@@ -45,6 +45,6 @@
 // nux::NBitmapData* TextureArchiveLoad_ver_0_0_1(nux::NSerializer* FileStream, unsigned int Offset);
 // void TextureArchiveGetInfo_ver_0_0_1(nux::NSerializer* FileStream, TextureArchiveInfo_ver_0_0_1& TextureArchiveInfo);
 // 
-// NAMESPACE_END
+// } //NUX_NAMESPACE_END
 // 
 // #endif // TEXTUREARCHIVE_VER_0_0_1_H

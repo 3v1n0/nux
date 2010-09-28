@@ -25,7 +25,7 @@
 
 #include "GLResource.h"
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 //! Graphics wraping modes
 typedef enum
@@ -121,6 +121,6 @@ public:
 */
 void QRP_Compute_Texture_Coord(t_int32 quad_width, t_int32 quad_height, TRefGL<IOpenGLBaseTexture> tex, TexCoordXForm& texxform);
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // RENDERINGPIPE_H

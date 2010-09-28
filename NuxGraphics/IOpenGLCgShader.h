@@ -23,13 +23,13 @@
 #ifndef ICGSHADER_H
 #define ICGSHADER_H
 
-NAMESPACE_BEGIN_OGL
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class IOpenGLResource;
 
 class ICgShader:  public IOpenGLResource
 {
-    DECLARE_OBJECT_TYPE(ICgShader, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(ICgShader, IOpenGLResource);
 
 public:
     ICgShader(NString ShaderName, OpenGLResourceType ResourceType);
@@ -52,7 +52,7 @@ public:
 
 class ICgVertexShader:  public ICgShader
 {
-    DECLARE_OBJECT_TYPE(ICgVertexShader, ICgShader);
+    NUX_DECLARE_OBJECT_TYPE(ICgVertexShader, ICgShader);
 public:
     virtual ~ICgVertexShader();
     virtual void CreateProgram(const ANSICHAR* ShaderCode, const ANSICHAR* EntryPoint);
@@ -68,7 +68,7 @@ private:
 
 class ICgPixelShader:  public ICgShader
 {
-    DECLARE_OBJECT_TYPE(ICgPixelShader, ICgShader);
+    NUX_DECLARE_OBJECT_TYPE(ICgPixelShader, ICgShader);
 public:
     virtual ~ICgPixelShader();
     virtual void CreateProgram(const ANSICHAR* ShaderCode, const ANSICHAR* EntryPoint);
@@ -82,6 +82,6 @@ private:
     friend class GLDeviceFactory;
 };
 
-NAMESPACE_END_OGL
+} //NUX_NAMESPACE_END
 
 #endif // ICGSHADER_H

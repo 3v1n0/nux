@@ -30,7 +30,7 @@
 
 #include "NuxCore/TinyXML/tinyxml.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 bool IsUITextureArchive(const TCHAR* ArchiveFileName)
 {
@@ -593,4 +593,4 @@ NBitmapData* NTextureArchiveManager::LoadBitmapArchive(const TCHAR* TextureArchi
 }
 
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END

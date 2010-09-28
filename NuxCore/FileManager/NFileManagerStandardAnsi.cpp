@@ -23,7 +23,7 @@
 #include "NKernel.h"
 #include "Math/MathUtility.h"
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
 const t_int NSerializeFileReader::sBufferSize = 1024;
@@ -106,7 +106,7 @@ bool NSerializeFileReader::Close()
     return !m_ErrorCode;
 }
 
-void NSerializeFileReader::SerializeFinal(void* Dest, t_u64 Length)
+void NSerializeFileReader::SerializeFinal(void* Dest, t_s64 Length)
 {
     while(Length > 0)
     {
@@ -208,7 +208,7 @@ bool NSerializeFileWriter::Close()
     return !m_ErrorCode;
 }
 
-void NSerializeFileWriter::SerializeFinal(void* Src, t_u64 Length)
+void NSerializeFileWriter::SerializeFinal(void* Src, t_s64 Length)
 {
     BYTE* SrcBuffer = NUX_STATIC_CAST(BYTE*, Src);
     m_FilePos += Length;
@@ -244,5 +244,5 @@ void NSerializeFileWriter::Flush()
     m_CachePos = 0;
 }
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 

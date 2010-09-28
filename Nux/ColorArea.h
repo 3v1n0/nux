@@ -23,12 +23,12 @@
 #ifndef COLORAREA_H
 #define COLORAREA_H
 
-NAMESPACE_BEGIN_GUI
+namespace nux { //NUX_NAMESPACE_BEGIN
 
 class ColorArea : public ActiveInterfaceObject
 {
 public:
-    ColorArea(Color color = Color(0xFFFFFFFF));
+    ColorArea(Color color = Color(0xFFFFFFFF), NUX_FILE_LINE_PROTO);
     ~ColorArea();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -40,6 +40,6 @@ private:
     Color m_Color;
 };
 
-NAMESPACE_END_GUI
+} //NUX_NAMESPACE_END
 
 #endif // COLORAREA_H

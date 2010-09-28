@@ -38,7 +38,7 @@ See rgbe.txt file for more details.
 #include <fstream>
 #include <stdio.h>
 
-NAMESPACE_BEGIN
+namespace nux { //NUX_NAMESPACE_BEGIN
 typedef struct {
     int valid;            /* indicate which fields are valid */
     char programtype[16]; /* listed at beginning of file to identify it 
@@ -76,6 +76,6 @@ int RGBEWritePixels_RLE(FILE *fp, float *data, int scanline_width,
                          int num_scanlines);
 NBitmapData* LoadRGBE(const TCHAR* filename);
 
-NAMESPACE_END
+} //NUX_NAMESPACE_END
 #endif // RGBE_H
 
