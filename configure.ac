@@ -205,6 +205,7 @@ AC_CONFIG_FILES([
   NuxGraphics/nux-graphics.pc
   Nux/Makefile
   Nux/nux.pc
+  examples/Makefile
   tests/Makefile
 ])
 
