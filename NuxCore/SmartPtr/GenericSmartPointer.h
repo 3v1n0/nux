@@ -645,14 +645,14 @@ public:
 
     T& operator * () const
     {
-        nuxAssert((refCounts_->strongRefs_ != 0) && (ptr_ != 0));
+        nuxAssert((refCounts_->strongRefs_.GetValue() != 0) && (ptr_ != 0));
 
         return *get ();
     }
 
     T* operator -> () const
     {
-        nuxAssert((refCounts_->strongRefs_ != 0) && (ptr_ != 0));
+        nuxAssert((refCounts_->strongRefs_.GetValue() != 0) && (ptr_ != 0));
 
         return get ();
     }
