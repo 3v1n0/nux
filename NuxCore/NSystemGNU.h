@@ -64,6 +64,7 @@
 
 
 // Unsigned base types.
+typedef unsigned char           BOOL;       // 8-bit  unsigned.
 typedef unsigned char           BYTE;       // 8-bit  unsigned.
 typedef unsigned short          WORD;       // 16-bit unsigned.
 typedef unsigned int            UINT;       // 32-bit unsigned.

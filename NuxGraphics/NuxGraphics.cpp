@@ -40,9 +40,9 @@ namespace nux
         if (FileName == TEXT(""))
         {
             nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Can't find inalogic.ini file."));
-            inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
-                TEXT("Can't find .ini file.\nThe program will exit."));
-            exit(-1);
+//             inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
+//                 TEXT("Can't find .ini file.\nThe program will exit."));
+//             exit(-1);
         }
 
         if(FileName != TEXT(""))
@@ -78,9 +78,9 @@ namespace nux
             else
             {
                 nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Failed to read font search path from .ini file."));
-                inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
-                    TEXT("Failed to read font search path from .ini file.\nThe program will exit."));
-                exit(-1);
+//                 inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
+//                     TEXT("Failed to read font search path from .ini file.\nThe program will exit."));
+//                 exit(-1);
 
             }
 
@@ -93,9 +93,9 @@ namespace nux
             else
             {
                 nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Failed to read texture search path from .ini file."));
-                inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
-                    TEXT("Failed to read texture search path from .ini file.\nThe program will exit."));
-                exit(-1);
+//                 inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
+//                     TEXT("Failed to read texture search path from .ini file.\nThe program will exit."));
+//                 exit(-1);
             }
 
             key_name = TEXT("ShaderPath");
@@ -107,9 +107,9 @@ namespace nux
             else
             {
                 nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Failed to read shader search path from .ini file."));
-                inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
-                    TEXT("Failed to read shader search path from .ini file.\nThe program will exit."));
-                exit(-1);
+//                 inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
+//                     TEXT("Failed to read shader search path from .ini file.\nThe program will exit."));
+//                 exit(-1);
             }
         }
 

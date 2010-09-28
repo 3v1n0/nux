@@ -30,7 +30,7 @@ DoubleValidator::DoubleValidator(double Minimum, double Maximum)
 ,   m_Maximum(Maximum)
 ,   m_Decimals(3)
 {
-    m_reg_exp = g_regex_new("[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?", G_REGEX_CASELESS, G_REGEX_MATCH_ANCHORED, NULL);
+    m_reg_exp = g_regex_new("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?", G_REGEX_CASELESS, G_REGEX_MATCH_ANCHORED, NULL);
     if(m_Minimum > m_Maximum)
     {
         double temp = m_Minimum;

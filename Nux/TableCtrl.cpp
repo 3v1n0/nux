@@ -781,7 +781,6 @@ void TableCtrl::DrawTable(GraphicsContext& GfxContext)
             row_iterator != m_row_header.end(); 
             row_iterator++, row_sizehandler_iterator++)
         {
-            RowHeader* row = *row_iterator;
             if((*row_iterator)->m_item->IsParentOpen() == true)
             {
                 // elements in m_column_header are relative to m_TableArea-> Get their absolute position in geo.

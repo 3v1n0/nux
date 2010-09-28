@@ -91,7 +91,6 @@ long HSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             it++, it_splitter++)
         {
             smptr(BaseObject) object = (*it);
-            MySplitter *splitter = (*it_splitter);
 
             Geometry clip_geo;
             clip_geo.SetX(((*it)->GetGeometry().x));

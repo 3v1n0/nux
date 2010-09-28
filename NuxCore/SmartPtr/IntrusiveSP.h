@@ -972,382 +972,382 @@ inline bool operator != (T* ptr, const IntrusiveWeakSP<T>& a)
     return a.ptr_ != ptr;
 }
 
-///////////////////////////////////////////////////////
-// creation functions
-
-template <typename T>
-IntrusiveSP<T> Create ()
-{
-    RefCounts* rc = new RefCounts;
-
-    try
-    {
-        T* t = new T;
-        return IntrusiveSP<T> (t, rc);
-    }
-    catch (...)
-    {
-        delete rc;
-        throw;
-    }
-}
-
-template <typename T, typename P1>
-IntrusiveSP<T> Create (P1 p1)
-{
-    RefCounts* rc = new RefCounts;
-
-    try
-    {
-        T* t = new T (p1);
-        return IntrusiveSP<T> (t, rc);
-    }
-    catch (...)
-    {
-        delete rc;
-        throw;
-    }
-}
-
-template <typename T, typename P1, typename P2>
-IntrusiveSP<T> Create (P1 p1, P2 p2)
-{
-    RefCounts* rc = new RefCounts;
-
-    try
-    {
-        T* t = new T (p1, p2);
-        return IntrusiveSP<T> (t, rc);
-    }
-    catch (...)
-    {
-        delete rc;
-        throw;
-    }
-}
-
-template <typename T, typename P1, typename P2, typename P3>
-IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3)
-{
-    RefCounts* rc = new RefCounts;
-
-    try
-    {
-        T* t = new T (p1, p2, p3);
-        return IntrusiveSP<T> (t, rc);
-    }
-    catch (...)
-    {
-        delete rc;
-        throw;
-    }
-}
-
-template <typename T, typename P1, typename P2, typename P3, typename P4>
-IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4)
-{
-    RefCounts* rc = new RefCounts;
-
-    try
-    {
-        T* t = new T (p1, p2, p3, p4);
-        return IntrusiveSP<T> (t, rc);
-    }
-    catch (...)
-    {
-        delete rc;
-        throw;
-    }
-}
-
-template <typename T, typename P1, typename P2, typename P3, typename P4, typename P5>
-IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
-{
-    RefCounts* rc = new RefCounts;
-
-    try
-    {
-        T* t = new T (p1, p2, p3, p4, p5);
-        return IntrusiveSP<T> (t, rc);
-    }
-    catch (...)
-    {
-        delete rc;
-        throw;
-    }
-}
-
-template <typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
-IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
-{
-    RefCounts* rc = new RefCounts;
-
-    try
-    {
-        T* t = new T (p1, p2, p3, p4, p5, p6);
-        return IntrusiveSP<T> (t, rc);
-    }
-    catch (...)
-    {
-        delete rc;
-        throw;
-    }
-}
-
-template <typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
-IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)
-{
-    RefCounts* rc = new RefCounts;
-
-    try
-    {
-        T* t = new T (p1, p2, p3, p4, p5, p6, p7);
-        return IntrusiveSP<T> (t, rc);
-    }
-    catch (...)
-    {
-        delete rc;
-        throw;
-    }
-}
-
-template <typename T>
-IntrusiveSP<T> WrapWSPtr (T* t)
-{
-    if (t == 0)
-    {
-        return IntrusiveSP<T> ();
-    }
-
-    try
-    {
-        RefCounts* rc = new RefCounts;
-
-        return IntrusiveSP<T> (t, rc);
-    }
-    catch (...)
-    {
-        delete t;
-        throw;
-    }
-}
-
-///////////////////////////////////////////////////////
-// casts
-
-template <typename U, typename F>
-IntrusiveSP<U> staticCast (const IntrusiveSP<F>& from)
-{
-    if (from.ptr_ == 0)
-    {
-        return IntrusiveSP<U>();
-    }
-
-    U* ptr = static_cast <U*> (from.ptr_);
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0)
-    {
-        //refCounts->strongRefs_.Increment();
-        //refCounts->totalRefs_.Increment();
-        from.m_reference_count->Increment();
-        from.m_weak_reference_count->Increment();
-    }
-
-    return IntrusiveSP<U> (ptr, refCounts);
-}
-
-template <typename T, typename F>
-IntrusiveSP<T> constCast (const IntrusiveSP<F>& from)
-{
-    if (from.ptr_ == 0)
-    {
-        return IntrusiveSP<T>();
-    }
-
-    T* ptr = const_cast <T*> (from.ptr_);
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0) {
-        //refCounts->strongRefs_.Increment();
-        //refCounts->totalRefs_.Increment();
-        from.m_reference_count->Increment();
-        from.m_weak_reference_count->Increment();
-    }
-
-    return IntrusiveSP<T> (ptr, refCounts);
-}
-
-template <typename T, typename F>
-IntrusiveSP<T> dynamicCast (const IntrusiveSP<F>& from)
-{
-    if (from.ptr_ == 0)
-    {
-        return IntrusiveSP<T>();
-    }
-
-    T* ptr = &dynamic_cast <T&> (*from.ptr_);
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0)
-    {
-        //refCounts->strongRefs_.Increment();
-        //refCounts->totalRefs_.Increment();
-        from.m_reference_count->Increment();
-        from.m_weak_reference_count->Increment();
-    }
-
-    return IntrusiveSP<T> (ptr, refCounts);
-}
-
-template <typename T, typename F>
-IntrusiveSP<T> queryCast (const IntrusiveSP<F>& from)
-{
-    T* ptr = dynamic_cast <T*> (from.ptr_);
-
-    if (ptr == 0)
-    {
-        return IntrusiveSP<T>();
-    }
-
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0)
-    {
-        //refCounts->strongRefs_.Increment();
-        //refCounts->totalRefs_.Increment();
-        from.m_reference_count->Increment();
-        from.m_weak_reference_count->Increment();
-    }
-
-    return IntrusiveSP<T> (ptr, refCounts);
-}
-
-template <typename T, typename F>
-IntrusiveSP<T> checkedCast (const IntrusiveSP<F>& from)
-{
-    if (from.ptr_ == 0)
-    {
-        return IntrusiveSP<T>();
-    }
-
-    nuxAssert(dynamic_cast<T*> (from.ptr_) != 0);
-
-    T* ptr = static_cast <T*> (from.ptr_);
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0)
-    {
-        //refCounts->strongRefs_.Increment();
-        //refCounts->totalRefs_.Increment();
-        from.m_reference_count->Increment();
-        from.m_weak_reference_count->Increment();
-    }
-
-    return IntrusiveSP<T> (ptr, refCounts);
-}
-
-template <typename U, typename F>
-IntrusiveWeakSP<U> staticCast (const IntrusiveWeakSP<F>& from)
-{
-    if (from.get () == 0)
-    {
-        return IntrusiveWeakSP<U>();
-    }
-
-    U* ptr = static_cast <U*> (from.ptr_);
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0)
-    {
-        refCounts->totalRefs_.Increment();
-    }
-
-    return IntrusiveWeakSP<U> (ptr, refCounts);
-}
-
-template <typename T, typename F>
-IntrusiveWeakSP<T> constCast (const IntrusiveWeakSP<F>& from)
-{
-    if (from.get () == 0)
-    {
-        return IntrusiveWeakSP<T>();
-    }
-
-    T* ptr = const_cast <T*> (from.ptr_);
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0)
-    {
-        //refCounts->totalRefs_.Increment();
-        from.m_weak_reference_count->Increment();
-    }
-
-    return IntrusiveWeakSP<T> (ptr, refCounts);
-}
-
-template <typename T, typename F>
-IntrusiveWeakSP<T> dynamicCast (const IntrusiveWeakSP<F>& from)
-{
-    if (from.get () == 0)
-    {
-        return IntrusiveWeakSP<T>();
-    }
-
-    T* ptr = &dynamic_cast <T&> (*from.ptr_);
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0)
-    {
-        //refCounts->totalRefs_.Increment();
-        from.m_weak_reference_count->Increment();
-    }
-
-    return IntrusiveWeakSP<T> (ptr, refCounts);
-}
-
-template <typename T, typename F>
-IntrusiveWeakSP<T> queryCast (const IntrusiveWeakSP<F>& from)
-{
-    T* ptr = dynamic_cast <T*> (from.get ());
-
-    if (ptr == 0)
-    {
-        return IntrusiveWeakSP<T>();
-    }
-
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0)
-    {
-        //refCounts->totalRefs_.Increment();
-        from.m_weak_reference_count->Increment();
-    }
-
-    return IntrusiveWeakSP<T> (ptr, refCounts);
-}
-
-template <typename T, typename F>
-IntrusiveWeakSP<T> checkedCast (const IntrusiveWeakSP<F>& from)
-{
-    if (from.get () == 0)
-    {
-        return IntrusiveWeakSP<T>();
-    }
-
-    nuxAssert(dynamic_cast<T*> (from.ptr_) != 0);
-
-    T* ptr = static_cast <T*> (from.ptr_);
-    RefCounts* refCounts = from.refCounts_;
-
-    if (ptr != 0)
-    {
-        //refCounts->totalRefs_.Increment();
-        from.m_weak_reference_count->Increment();
-    }
-
-    return IntrusiveWeakSP<T> (ptr, refCounts);
-}
+// ///////////////////////////////////////////////////////
+// // creation functions
+// 
+// template <typename T>
+// IntrusiveSP<T> Create ()
+// {
+//     RefCounts* rc = new RefCounts;
+// 
+//     try
+//     {
+//         T* t = new T;
+//         return IntrusiveSP<T> (t, rc);
+//     }
+//     catch (...)
+//     {
+//         delete rc;
+//         throw;
+//     }
+// }
+// 
+// template <typename T, typename P1>
+// IntrusiveSP<T> Create (P1 p1)
+// {
+//     RefCounts* rc = new RefCounts;
+// 
+//     try
+//     {
+//         T* t = new T (p1);
+//         return IntrusiveSP<T> (t, rc);
+//     }
+//     catch (...)
+//     {
+//         delete rc;
+//         throw;
+//     }
+// }
+// 
+// template <typename T, typename P1, typename P2>
+// IntrusiveSP<T> Create (P1 p1, P2 p2)
+// {
+//     RefCounts* rc = new RefCounts;
+// 
+//     try
+//     {
+//         T* t = new T (p1, p2);
+//         return IntrusiveSP<T> (t, rc);
+//     }
+//     catch (...)
+//     {
+//         delete rc;
+//         throw;
+//     }
+// }
+// 
+// template <typename T, typename P1, typename P2, typename P3>
+// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3)
+// {
+//     RefCounts* rc = new RefCounts;
+// 
+//     try
+//     {
+//         T* t = new T (p1, p2, p3);
+//         return IntrusiveSP<T> (t, rc);
+//     }
+//     catch (...)
+//     {
+//         delete rc;
+//         throw;
+//     }
+// }
+// 
+// template <typename T, typename P1, typename P2, typename P3, typename P4>
+// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4)
+// {
+//     RefCounts* rc = new RefCounts;
+// 
+//     try
+//     {
+//         T* t = new T (p1, p2, p3, p4);
+//         return IntrusiveSP<T> (t, rc);
+//     }
+//     catch (...)
+//     {
+//         delete rc;
+//         throw;
+//     }
+// }
+// 
+// template <typename T, typename P1, typename P2, typename P3, typename P4, typename P5>
+// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+// {
+//     RefCounts* rc = new RefCounts;
+// 
+//     try
+//     {
+//         T* t = new T (p1, p2, p3, p4, p5);
+//         return IntrusiveSP<T> (t, rc);
+//     }
+//     catch (...)
+//     {
+//         delete rc;
+//         throw;
+//     }
+// }
+// 
+// template <typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
+// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
+// {
+//     RefCounts* rc = new RefCounts;
+// 
+//     try
+//     {
+//         T* t = new T (p1, p2, p3, p4, p5, p6);
+//         return IntrusiveSP<T> (t, rc);
+//     }
+//     catch (...)
+//     {
+//         delete rc;
+//         throw;
+//     }
+// }
+// 
+// template <typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
+// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)
+// {
+//     RefCounts* rc = new RefCounts;
+// 
+//     try
+//     {
+//         T* t = new T (p1, p2, p3, p4, p5, p6, p7);
+//         return IntrusiveSP<T> (t, rc);
+//     }
+//     catch (...)
+//     {
+//         delete rc;
+//         throw;
+//     }
+// }
+// 
+// template <typename T>
+// IntrusiveSP<T> WrapWSPtr (T* t)
+// {
+//     if (t == 0)
+//     {
+//         return IntrusiveSP<T> ();
+//     }
+// 
+//     try
+//     {
+//         RefCounts* rc = new RefCounts;
+// 
+//         return IntrusiveSP<T> (t, rc);
+//     }
+//     catch (...)
+//     {
+//         delete t;
+//         throw;
+//     }
+// }
+// 
+// ///////////////////////////////////////////////////////
+// // casts
+// 
+// template <typename U, typename F>
+// IntrusiveSP<U> staticCast (const IntrusiveSP<F>& from)
+// {
+//     if (from.ptr_ == 0)
+//     {
+//         return IntrusiveSP<U>();
+//     }
+// 
+//     U* ptr = static_cast <U*> (from.ptr_);
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0)
+//     {
+//         //refCounts->strongRefs_.Increment();
+//         //refCounts->totalRefs_.Increment();
+//         from.m_reference_count->Increment();
+//         from.m_weak_reference_count->Increment();
+//     }
+// 
+//     return IntrusiveSP<U> (ptr, refCounts);
+// }
+// 
+// template <typename T, typename F>
+// IntrusiveSP<T> constCast (const IntrusiveSP<F>& from)
+// {
+//     if (from.ptr_ == 0)
+//     {
+//         return IntrusiveSP<T>();
+//     }
+// 
+//     T* ptr = const_cast <T*> (from.ptr_);
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0) {
+//         //refCounts->strongRefs_.Increment();
+//         //refCounts->totalRefs_.Increment();
+//         from.m_reference_count->Increment();
+//         from.m_weak_reference_count->Increment();
+//     }
+// 
+//     return IntrusiveSP<T> (ptr, refCounts);
+// }
+// 
+// template <typename T, typename F>
+// IntrusiveSP<T> dynamicCast (const IntrusiveSP<F>& from)
+// {
+//     if (from.ptr_ == 0)
+//     {
+//         return IntrusiveSP<T>();
+//     }
+// 
+//     T* ptr = &dynamic_cast <T&> (*from.ptr_);
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0)
+//     {
+//         //refCounts->strongRefs_.Increment();
+//         //refCounts->totalRefs_.Increment();
+//         from.m_reference_count->Increment();
+//         from.m_weak_reference_count->Increment();
+//     }
+// 
+//     return IntrusiveSP<T> (ptr, refCounts);
+// }
+// 
+// template <typename T, typename F>
+// IntrusiveSP<T> queryCast (const IntrusiveSP<F>& from)
+// {
+//     T* ptr = dynamic_cast <T*> (from.ptr_);
+// 
+//     if (ptr == 0)
+//     {
+//         return IntrusiveSP<T>();
+//     }
+// 
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0)
+//     {
+//         //refCounts->strongRefs_.Increment();
+//         //refCounts->totalRefs_.Increment();
+//         from.m_reference_count->Increment();
+//         from.m_weak_reference_count->Increment();
+//     }
+// 
+//     return IntrusiveSP<T> (ptr, refCounts);
+// }
+// 
+// template <typename T, typename F>
+// IntrusiveSP<T> checkedCast (const IntrusiveSP<F>& from)
+// {
+//     if (from.ptr_ == 0)
+//     {
+//         return IntrusiveSP<T>();
+//     }
+// 
+//     nuxAssert(dynamic_cast<T*> (from.ptr_) != 0);
+// 
+//     T* ptr = static_cast <T*> (from.ptr_);
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0)
+//     {
+//         //refCounts->strongRefs_.Increment();
+//         //refCounts->totalRefs_.Increment();
+//         from.m_reference_count->Increment();
+//         from.m_weak_reference_count->Increment();
+//     }
+// 
+//     return IntrusiveSP<T> (ptr, refCounts);
+// }
+// 
+// template <typename U, typename F>
+// IntrusiveWeakSP<U> staticCast (const IntrusiveWeakSP<F>& from)
+// {
+//     if (from.get () == 0)
+//     {
+//         return IntrusiveWeakSP<U>();
+//     }
+// 
+//     U* ptr = static_cast <U*> (from.ptr_);
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0)
+//     {
+//         refCounts->totalRefs_.Increment();
+//     }
+// 
+//     return IntrusiveWeakSP<U> (ptr, refCounts);
+// }
+// 
+// template <typename T, typename F>
+// IntrusiveWeakSP<T> constCast (const IntrusiveWeakSP<F>& from)
+// {
+//     if (from.get () == 0)
+//     {
+//         return IntrusiveWeakSP<T>();
+//     }
+// 
+//     T* ptr = const_cast <T*> (from.ptr_);
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0)
+//     {
+//         //refCounts->totalRefs_.Increment();
+//         from.m_weak_reference_count->Increment();
+//     }
+// 
+//     return IntrusiveWeakSP<T> (ptr, refCounts);
+// }
+// 
+// template <typename T, typename F>
+// IntrusiveWeakSP<T> dynamicCast (const IntrusiveWeakSP<F>& from)
+// {
+//     if (from.get () == 0)
+//     {
+//         return IntrusiveWeakSP<T>();
+//     }
+// 
+//     T* ptr = &dynamic_cast <T&> (*from.ptr_);
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0)
+//     {
+//         //refCounts->totalRefs_.Increment();
+//         from.m_weak_reference_count->Increment();
+//     }
+// 
+//     return IntrusiveWeakSP<T> (ptr, refCounts);
+// }
+// 
+// template <typename T, typename F>
+// IntrusiveWeakSP<T> queryCast (const IntrusiveWeakSP<F>& from)
+// {
+//     T* ptr = dynamic_cast <T*> (from.get ());
+// 
+//     if (ptr == 0)
+//     {
+//         return IntrusiveWeakSP<T>();
+//     }
+// 
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0)
+//     {
+//         //refCounts->totalRefs_.Increment();
+//         from.m_weak_reference_count->Increment();
+//     }
+// 
+//     return IntrusiveWeakSP<T> (ptr, refCounts);
+// }
+// 
+// template <typename T, typename F>
+// IntrusiveWeakSP<T> checkedCast (const IntrusiveWeakSP<F>& from)
+// {
+//     if (from.get () == 0)
+//     {
+//         return IntrusiveWeakSP<T>();
+//     }
+// 
+//     nuxAssert(dynamic_cast<T*> (from.ptr_) != 0);
+// 
+//     T* ptr = static_cast <T*> (from.ptr_);
+//     RefCounts* refCounts = from.refCounts_;
+// 
+//     if (ptr != 0)
+//     {
+//         //refCounts->totalRefs_.Increment();
+//         from.m_weak_reference_count->Increment();
+//     }
+// 
+//     return IntrusiveWeakSP<T> (ptr, refCounts);
+// }
 
 // ///////////////////////////////////////////////////////
 // // std specializations

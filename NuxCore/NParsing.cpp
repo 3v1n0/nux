@@ -323,11 +323,11 @@ bool ParseToken(const TCHAR* Str, NString& TokenString)
 
 NString ParseToken(const TCHAR* Str, bool UseEscape)
 {
-	TCHAR Buffer[1024];
-	if(ParseToken(Str, Buffer, NUX_ARRAY_COUNT(Buffer)))
-		return Buffer;
-	else
-		return TEXT("");
+    TCHAR Buffer[1024];
+    if(ParseToken(Str, Buffer, NUX_ARRAY_COUNT(Buffer)))
+        return Buffer;
+    else
+        return TEXT("");
 }
 
 //
@@ -336,18 +336,14 @@ NString ParseToken(const TCHAR* Str, bool UseEscape)
 //
 bool ParseLine(const TCHAR** Stream, TCHAR* LineBuffer, t_int BufferSize)
 {
-	bool GotStream = 0;
-	bool IsQuoted = 0;
-	bool Ignore = 0;
-
-	TCHAR* tmp = LineBuffer;
+    TCHAR* tmp = LineBuffer;
     *tmp = 0;
-	while((**Stream != 0) && (**Stream != CHAR_NEW_LINE) && (**Stream != CHAR_CR) && (**Stream != CHAR_FF) && (--BufferSize > 0))
-	{
-        *(tmp++) = *((*Stream)++);
-	}
-	*tmp = 0;
-    return LineBuffer[0] != 0;
+    while((**Stream != 0) && (**Stream != CHAR_NEW_LINE) && (**Stream != CHAR_CR) && (**Stream != CHAR_FF) && (--BufferSize > 0))
+    {
+          *(tmp++) = *((*Stream)++);
+    }
+    *tmp = 0;
+      return LineBuffer[0] != 0;
 }
 
 bool ParseLine(const TCHAR** Stream, NString& LineString)
