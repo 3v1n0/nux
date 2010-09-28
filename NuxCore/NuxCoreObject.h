@@ -32,8 +32,8 @@ template <typename T>
 class IntrusiveWeakSP;
 
 #if defined(NUX_DEBUG)
-    #define NUX_FILE_LINE_PROTO     char* __Nux_FileName__=__FILE__, int __Nux_LineNumber__ = __LINE__
-    #define NUX_FILE_LINE_DECL      char* __Nux_FileName__, int __Nux_LineNumber__
+    #define NUX_FILE_LINE_PROTO     const char* __Nux_FileName__=__FILE__, int __Nux_LineNumber__ = __LINE__
+    #define NUX_FILE_LINE_DECL      const char* __Nux_FileName__, int __Nux_LineNumber__
     #define NUX_FILE_LINE_PARAM     __Nux_FileName__, __Nux_LineNumber__
     #define NUX_TRACKER_LOCATION    __FILE__, __LINE__
 #else
