@@ -34,8 +34,9 @@ ActiveInterfaceObject::ActiveInterfaceObject(NUX_FILE_LINE_DECL)
     m_CompositionLayout = smptr(Layout)(0);
     m_NeedRedraw        = false;
     m_UseStyleDrawing   = true;
-    m_TextColor         = 0;
+    m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
     m_IsEnabled         = true;
+    m_font              = GetThreadFont();
 
     // Set widget default size;
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -45,8 +46,6 @@ ActiveInterfaceObject::~ActiveInterfaceObject()
 {
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
     GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, true));
-
-    NUX_SAFE_DELETE(m_TextColor);
 }
 
 long ActiveInterfaceObject::ComputeChildLayout()
@@ -323,43 +322,24 @@ void ActiveInterfaceObject::setGeometry(const Geometry& geo)
     PostResizeGeometry();
 }
 
-void ActiveInterfaceObject::SetFont(const NFontPtr& Font)
+void ActiveInterfaceObject::SetFont(IntrusiveSP<FontTexture> Font)
 {
-    m_Font = Font;
+    m_font = Font;
 }
 
-const NFontPtr& ActiveInterfaceObject::GetFont()
+IntrusiveSP<FontTexture> ActiveInterfaceObject::GetFont()
 {
-    if(m_Font)
-        return m_Font;
-    else
-        return GFont;
+    return m_font;
 }
 
 void ActiveInterfaceObject::SetTextColor(const Color& color)
 {
-    m_TextColor = color.Clone();
+    m_TextColor = color;
 }
 
-void ActiveInterfaceObject::SetTextColor(const Color* color)
+Color ActiveInterfaceObject::GetTextColor()
 {
-    if(color == 0)
-    {
-        NUX_SAFE_DELETE(m_TextColor);
-    }
-    else
-    {
-        NUX_SAFE_DELETE(m_TextColor);
-        m_TextColor = color->Clone();
-    }
-}
-
-const Color& ActiveInterfaceObject::GetTextColor()
-{
-    if(m_TextColor)
-        return *m_TextColor;
-    else
-        return GTextColor;
+    return m_TextColor;
 }
 
 void ActiveInterfaceObject::DisableWidget()

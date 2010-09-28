@@ -207,7 +207,7 @@ void TableItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool
         {
             nBackground = table->PushItemBackground(GfxContext, this, false);
         }
-        Painter.PaintTextLineStatic(GfxContext, GFont, geo, row->m_item->GetName(), Color(0xFF000000) /*m_item[r].c_str()*/); 
+        Painter.PaintTextLineStatic(GfxContext, GetThreadFont(), geo, row->m_item->GetName(), Color(0xFF000000) /*m_item[r].c_str()*/); 
         table->PopItemBackground(GfxContext, nBackground);
         setDirtyItem(false);
     }

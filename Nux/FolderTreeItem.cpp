@@ -82,7 +82,7 @@ void FolderTreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table,
                 GetThreadGraphicsContext()->GetRenderStates().SetColorMask(TRUE, TRUE, TRUE, TRUE);
                 GetThreadGraphicsContext()->GetRenderStates().SetBlend(FALSE);
             }
-            Painter.PaintTextLineStatic(GfxContext, GFont, TextGeometry, row->m_item->GetName(), GetItemTextColor());
+            Painter.PaintTextLineStatic(GfxContext, GetThreadFont(), TextGeometry, row->m_item->GetName(), GetItemTextColor());
         }
         GfxContext.PopClippingRectangle();
         table->PopItemBackground(GfxContext, nBackground);

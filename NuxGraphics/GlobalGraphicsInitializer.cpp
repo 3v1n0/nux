@@ -22,6 +22,8 @@
 
 #include "GLResource.h"
 #include "RunTimeStats.h"
+#include "NuxGraphics.h"
+#include "FontTexture.h"
 #include "GlobalGraphicsInitializer.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN

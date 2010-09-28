@@ -675,7 +675,7 @@ enum NUX_STATUS
 */
 
 #include "NUniqueIndex.h"
-//#include "SmartPtr/NSmartPtr.h"
+//#include "SmartPtr/IntrusiveSP.h"
 
 //#include "NGlobalInitializer.h"
 

@@ -33,8 +33,8 @@ GLWindowImpl* GetThreadGLWindow();
 GLDeviceFactory* GetThreadGLDeviceFactory();
 GraphicsContext* GetThreadGraphicsContext();
 
-#define NUX_FINDRESOURCELOCATION(a) nux::GetThreadGLWindow()->FindResourceLocation(a, false)()
-#define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) nux::GetThreadGLWindow()->FindResourceLocation(a, true)()
+#define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
+#define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
 
 } //NUX_NAMESPACE_END
 

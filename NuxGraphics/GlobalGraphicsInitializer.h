@@ -24,7 +24,8 @@
 #define NUXGRAPHICSGLOBALINITIALIZER_H
 
 #define NUX_GLOBAL_GRAPHICS_OBJECT_INIT_SEQUENCE()          \
-    NUX_GLOBAL_OBJECT_VARIABLE(RenderingStats);
+    NUX_GLOBAL_OBJECT_VARIABLE(RenderingStats);             \
+    NUX_GLOBAL_OBJECT_VARIABLE(NuxGraphicsResources);
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 

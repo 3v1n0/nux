@@ -37,7 +37,7 @@ FileSelector::FileSelector(NUX_FILE_LINE_DECL)
 {
     m_hlayout = smptr(HLayout)(new HLayout());
     m_OpenButton = smptr(Button)(new Button());
-    m_FileEditTextBox = smptr(EditTextBox)(new EditTextBox());
+    m_FileEditTextBox = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
 
     m_hlayout->AddActiveInterfaceObject(m_FileEditTextBox, 1, eCenter);
     m_hlayout->AddActiveInterfaceObject(m_OpenButton, 0, eCenter);

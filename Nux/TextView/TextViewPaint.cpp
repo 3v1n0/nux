@@ -23,6 +23,7 @@
 #include "Nux.h"
 #include "TextView.h"
 #include "TextViewInternal.h"
+#include "NuxGraphics/FontRenderer.h"
 
 extern "C" COLORREF MixRGB(COLORREF, COLORREF);
 

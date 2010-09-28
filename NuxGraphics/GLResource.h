@@ -34,6 +34,9 @@
 #include "NuxCore/Size.h"
 #include "NuxImage/BitmapFormats.h"
 #include "NuxCore/NParsing.h"
+#include "NuxCore/NuxCoreObject.h"
+#include "NuxCore/SmartPtr/GenericSmartPointer.h"
+#include "NuxCore/SmartPtr/IntrusiveSP.h"
 
 #include "NuxCore/Math/MathUtility.h"
 #include "NuxCore/Math/Constants.h"
@@ -68,11 +71,9 @@ class NGLRectangleTexture;
 class NGLTextureCube;
 class NGLTextureVolume;
 class NGLAnimatedTexture;
+class FontTexture;
 
 } //NUX_NAMESPACE_END
-
-#include "RunTimeStats.h"
-#include "GlobalGraphicsInitializer.h"
 
 #define NUX_ENABLE_CG_SHADERS 0
 
@@ -103,6 +104,11 @@ class NGLAnimatedTexture;
         #include "Cg/cgGL.h"
     #endif
 #endif
+
+#include "RunTimeStats.h"
+#include "NuxGraphics.h"
+#include "FontTexture.h"
+#include "GlobalGraphicsInitializer.h"
 
 #include "GLError.h"
 

@@ -21,6 +21,7 @@
 
 
 #include "Nux.h"
+#include "NuxGraphics/FontRenderer.h"
 #include "TextView.h"
 #include "TextViewInternal.h"
 #include "racursor.h"

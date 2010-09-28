@@ -79,7 +79,7 @@ void SpinBox_Logic::InitializeLayout()
 {
     m_SpinnerUpBtn = smptr(CoreArea)(new CoreArea());
     m_SpinnerDownBtn = smptr(CoreArea)(new CoreArea());
-    m_EditLine = smptr(EditTextBox)(new EditTextBox());
+    m_EditLine = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
 }
 
 void SpinBox_Logic::DestroyLayout()

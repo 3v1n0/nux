@@ -238,7 +238,7 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
         {
             redcheck = smptr(RadioButton)(new RadioButton(TEXT("R:")));
             redcheck->SetMinimumWidth(30);
-            redtext = smptr(EditTextBox)(new EditTextBox());
+            redtext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             redtext->SetMinimumWidth(36);
             redlayout->AddActiveInterfaceObject(redcheck, 0);
             redlayout->AddActiveInterfaceObject(redtext, 0);
@@ -248,7 +248,7 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
         {
             greencheck = smptr(RadioButton)(new RadioButton(TEXT("G:")));
             greencheck->SetMinimumWidth(30);
-            greentext = smptr(EditTextBox)(new EditTextBox());
+            greentext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             greentext->SetMinimumWidth(36);
             greenlayout->AddActiveInterfaceObject(greencheck, 0);
             greenlayout->AddActiveInterfaceObject(greentext, 0);
@@ -259,7 +259,7 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
         {
             bluecheck = smptr(RadioButton)(new RadioButton(TEXT("B:")));
             bluecheck->SetMinimumWidth(30);
-            bluetext = smptr(EditTextBox)(new EditTextBox());
+            bluetext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             bluetext->SetMinimumWidth(36);
             bluelayout->AddActiveInterfaceObject(bluecheck, 0);
             bluelayout->AddActiveInterfaceObject(bluetext, 0);
@@ -274,7 +274,7 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
         {
             huecheck = smptr(RadioButton)(new RadioButton(TEXT("H:")));
             huecheck->SetMinimumWidth(30);
-            huetext = smptr(EditTextBox)(new EditTextBox());
+            huetext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             huetext->SetMinimumWidth(36);
             huelayout->AddActiveInterfaceObject(huecheck, 0);
             huelayout->AddActiveInterfaceObject(huetext, 0);
@@ -284,7 +284,7 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
         {
             saturationcheck = smptr(RadioButton)(new RadioButton(TEXT("S:")));
             saturationcheck->SetMinimumWidth(30);
-            saturationtext = smptr(EditTextBox)(new EditTextBox());
+            saturationtext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             saturationtext->SetMinimumWidth(36);
             saturationlayout->AddActiveInterfaceObject(saturationcheck, 0);
             saturationlayout->AddActiveInterfaceObject(saturationtext, 0);
@@ -294,7 +294,7 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
         {
             valuecheck = smptr(RadioButton)(new RadioButton(TEXT("V:")));
             valuecheck->SetMinimumWidth(30);
-            valuetext = smptr(EditTextBox)(new EditTextBox());
+            valuetext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             valuetext->SetMinimumWidth(36);
             valuelayout->AddActiveInterfaceObject(valuecheck, 0);
             valuelayout->AddActiveInterfaceObject(valuetext, 0);

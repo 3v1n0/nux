@@ -88,7 +88,7 @@ void Vector3PropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* t
         m_Z->IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetThreadBoldFont() /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {
@@ -103,7 +103,7 @@ void Vector3PropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* t
                 Painter.Paint2DQuadColor(GfxContext, prop_geo, table->GetSelectionColor());
             else
                 Painter.Paint2DQuadColor(GfxContext, prop_geo, ItemBackgroundColor);
-            Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, prop_geo, buffer, GetItemTextColor()); 
+            Painter.PaintTextLineStatic(GfxContext, GetThreadBoldFont() /*GetFont()*/, prop_geo, buffer, GetItemTextColor()); 
         }
         table->PopItemBackground(GfxContext, nBackground);
     }

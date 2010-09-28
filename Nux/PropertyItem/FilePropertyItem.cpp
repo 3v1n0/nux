@@ -31,7 +31,7 @@ FilePropertyItem::FilePropertyItem(const TCHAR* name)
 :   SectionProperty(name)
 {
     m_hlayout = smptr(HLayout)(new HLayout());
-    m_TextEntry = smptr(EditTextBox)(new EditTextBox());
+    m_TextEntry = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
     m_OpenButton = smptr(Button)(new Button());
     m_hlayout->AddActiveInterfaceObject(m_TextEntry, 1, eCenter);
     m_hlayout->AddActiveInterfaceObject(m_OpenButton, 0, eCenter);
@@ -63,7 +63,7 @@ void FilePropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* tabl
         m_TextEntry->IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GFont, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetThreadFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {

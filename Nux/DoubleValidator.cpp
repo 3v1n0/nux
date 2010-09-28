@@ -30,7 +30,7 @@ DoubleValidator::DoubleValidator(double Minimum, double Maximum)
 ,   m_Maximum(Maximum)
 ,   m_Decimals(3)
 {
-    //m_RegExp = TEXT("[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
+    m_reg_exp = g_regex_new("[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?", G_REGEX_CASELESS, G_REGEX_MATCH_ANCHORED, NULL);
     if(m_Minimum > m_Maximum)
     {
         double temp = m_Minimum;
@@ -43,7 +43,8 @@ DoubleValidator::DoubleValidator(const DoubleValidator& copy)
 {
     m_Minimum   = copy.m_Minimum;
     m_Minimum   = copy.m_Maximum;
-    //m_RegExp    = copy.m_RegExp; // boost::regex has an assignment constructor defined.
+    m_reg_exp    = copy.m_reg_exp;
+    g_regex_ref(m_reg_exp);
 }
 
 DoubleValidator& DoubleValidator::operator=(const DoubleValidator& rhs)
@@ -52,14 +53,15 @@ DoubleValidator& DoubleValidator::operator=(const DoubleValidator& rhs)
     {
         m_Minimum   = rhs.m_Minimum;
         m_Minimum   = rhs.m_Maximum;
-    //    m_RegExp    = rhs.m_RegExp; // boost::regex has an assignment constructor defined.
+        m_reg_exp    = rhs.m_reg_exp;
+        g_regex_ref(m_reg_exp);
     }
     return *this;
 }
 
 DoubleValidator::~DoubleValidator()
 {
-
+    g_regex_unref(m_reg_exp);
 }
 
 Validator* DoubleValidator::Clone()  const
@@ -111,12 +113,11 @@ double DoubleValidator::Validate(double d) const
 
 Validator::State DoubleValidator::Validate(const TCHAR* str) const
 {
-  /*
-    if (!::boost::regex_match(str, m_RegExp))
+    GMatchInfo *match_info;
+    if(!g_regex_match(m_reg_exp, str, G_REGEX_MATCH_ANCHORED, &match_info))
     {
         return Validator::Invalid;
     }
-*/
     return Validator::Acceptable;
 }
 

@@ -86,7 +86,7 @@ void GroupBox::Draw(GraphicsContext& GfxContext, bool force_draw)
     {
         //gPainter.Paint2DQuadColor(m_CaptionArea.GetGeometry(), COLOR_BACKGROUND_PRIMARY);
         //gPainter.PaintTextLineStatic(m_CaptionArea.GetGeometry(), m_CaptionArea.GetCaptionString(), eAlignTextCenter);
-        gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
+        gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
             true, eAlignTextCenter);
     }
     if(m_layout != 0)
@@ -226,8 +226,8 @@ void GroupBox::setCaption(const char* name)
     {
         //bCaptionAvailable = true;
         m_CaptionArea.SetBaseString(name);
-        m_CaptionArea.SetMinimumSize(4 + GFontBold->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
-        m_CaptionArea.SetBaseSize(4 + GFontBold->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
+        m_CaptionArea.SetMinimumSize(4 + GetThreadBoldFont()->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
+        m_CaptionArea.SetBaseSize(4 + GetThreadBoldFont()->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
     }
 }
 

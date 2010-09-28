@@ -129,26 +129,23 @@ public:
     //! Set the font to be used by the widget. If Font is null then use the default system font.
     /*!
         Set the font to be used by the widget. If Font is null then use the default system font.
-
-        @param Font The font to use when rendering text. If Font is a boost smart pointer.
+        @param Font The font to use when rendering text.
     */
-    virtual void SetFont(const NFontPtr& Font);
+    virtual void SetFont(IntrusiveSP<FontTexture> Font);
 
     //! Get the font used for rendering text.
     /*!
         Get the font used for rendering text.
-
         @return The font to use when rendering text.
     */
-    const NFontPtr& GetFont();
+    IntrusiveSP<FontTexture> GetFont();
 
-    virtual void SetTextColor(const Color* color);
     virtual void SetTextColor(const Color& color);
-    virtual const Color& GetTextColor();
+    virtual Color GetTextColor();
 
 protected:
-    NFontPtr m_Font;
-    Color* m_TextColor;
+    IntrusiveSP<FontTexture> m_font;
+    Color m_TextColor;
     virtual smptr(Layout) GetCompositionLayout() const;
     virtual void SetCompositionLayout(smptr(Layout) lyt);
     void RemoveCompositionLayout();

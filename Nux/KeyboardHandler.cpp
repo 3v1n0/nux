@@ -42,6 +42,7 @@ BaseKeyboardHandler::BaseKeyboardHandler()
     m_bMouseDrag            = false;
     m_bMouseInsideTextArea  = true;
     m_bEnteringFocus        = false;
+    m_Font                  = GetThreadFont();
 
     m_Caret = m_nSelStart = 0;
     m_bInsertMode = true;
@@ -965,16 +966,14 @@ bool BaseKeyboardHandler::IsTextSelected()
     return false;
 }
 
-void BaseKeyboardHandler::SetFont(const NFontPtr& Font)
+void BaseKeyboardHandler::SetFont(IntrusiveSP<FontTexture> Font)
 {
     m_Font = Font;
 }
 
-const NFontPtr& BaseKeyboardHandler::GetFont() const 
+IntrusiveSP<FontTexture> BaseKeyboardHandler::GetFont() const 
 {
-    if(m_Font)
-        return m_Font;
-    else
-        return GFont;
+    return m_Font;
 }
+
 } //NUX_NAMESPACE_END

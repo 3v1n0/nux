@@ -30,6 +30,7 @@ std::vector<NThread*> ThreadArray;
 void NuxInitialize(const TCHAR* CommandLine)
 {
     nux::NuxCoreInitialize(0);
+    nux::NuxGraphicsInitialize();
 
     // Register a thread local store for the WindowThreads. Each window thread will be able to access its own WindowThread pointer.
     inlRegisterThreadLocalIndex(0, ThreadLocal_InalogicAppImpl, NULL);
@@ -263,6 +264,16 @@ GraphicsContext& GetGraphicsContext()
         nuxAssertMsg(0, TEXT("[GetGraphicsContext] You can't call GetGraphicsContext on this type of thread: s"), thread->Type().GetName());
     }
     return (static_cast<WindowThread*> (thread))->GetGraphicsContext();
+}
+
+IntrusiveSP<FontTexture> GetThreadFont()
+{
+    return GNuxGraphicsResources.GetFont();
+}
+
+IntrusiveSP<FontTexture> GetThreadBoldFont()
+{
+    return GNuxGraphicsResources.GetBoldFont();
 }
 
 WindowCompositor& GetThreadWindowCompositor()

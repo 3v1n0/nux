@@ -42,8 +42,8 @@ class NTexture: public NResource
     NTexture();
     virtual ~NTexture();
 
-    virtual bool Update(const NBitmapData* BitmapData) = 0;
-    virtual bool Update(const TCHAR* filename) = 0;
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true) = 0;
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true) = 0;
 
     virtual void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0) = 0;
     virtual int GetWidth() const = 0;
@@ -68,8 +68,25 @@ public:
     NTexture2D& operator = (const NTexture2D& texture);
     ~NTexture2D();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    /*!
+        Update the hardware resources associated to this with the provided texture data.
+        @param BitmapData The texture data to update into the hardware resource.
+        @param UpdateAndCacheResource if True, then the texture data is loaded into this object, and the caching into
+        hardware data is done right away. If false, the caching is done latter by calling 
+        GetThreadGraphicsContext()->CacheResource(this);
+        @return True is there was not error. 
+    */
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+
+    /*!
+        Update the hardware resources associated to this object with the data associated to the file name.
+        @param Filename File name of texture data to update into the hardware resource.
+        @param UpdateAndCacheResource if True, then the texture data is loaded into this object, and the caching into
+        hardware data is done right away. If false, the caching is done latter by calling 
+        GetThreadGraphicsContext()->CacheResource(this);
+        @return True is there was not error. 
+    */
+    virtual bool Update(const TCHAR* Filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
@@ -97,8 +114,8 @@ public:
     NRectangleTexture& operator = (const NRectangleTexture& texture);
     ~NRectangleTexture();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
@@ -126,8 +143,8 @@ public:
     NTextureCube& operator = (const NTextureCube& texture);
     ~NTextureCube();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
@@ -154,8 +171,8 @@ public:
     NTextureVolume& operator = (const NTextureVolume& texture);
     ~NTextureVolume();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int slice = 0);
@@ -183,8 +200,8 @@ public:
     NAnimatedTexture& operator = (const NAnimatedTexture& texture);
     ~NAnimatedTexture();
 
-    virtual bool Update(const NBitmapData* BitmapData);
-    virtual bool Update(const TCHAR* filename);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const TCHAR* filename, bool UpdateAndCacheResource = true);
 
     virtual bool IsNull() const {return m_Image.IsNull();}
     void GetData(void* Buffer, int MipIndex, int StrideY, int slice = 0);

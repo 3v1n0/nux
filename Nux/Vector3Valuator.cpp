@@ -31,9 +31,9 @@ Vector3Valuator::Vector3Valuator(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 ,   m_Mouse(0)
 {
-    m_XEdit = smptr(EditTextBox)(new EditTextBox());
-    m_YEdit = smptr(EditTextBox)(new EditTextBox());
-    m_ZEdit = smptr(EditTextBox)(new EditTextBox());
+    m_XEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_YEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_ZEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
     m_MouseControlledButton = smptr(CoreArea)(new CoreArea());
     // Set Original State
     m_XEdit->SetSuffix(TEXT(""));

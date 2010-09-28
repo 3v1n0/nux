@@ -72,10 +72,6 @@ typedef struct
 
 } OpenGLContext;
 
-extern NFontPtr GFont;
-extern NFontPtr GFontBold;
-extern Color GTextColor;
-
 class GraphicsContext
 {
 public:
@@ -95,8 +91,6 @@ public:
     int GetWindowHeight() const;
 
     OpenGLContext m_CurrrentContext;
-
-    void InitOpenGLEngine();
 
     // Load Textures
     NTexture* Load2DTextureFile(const char* filename);
@@ -164,7 +158,6 @@ public:
     void QRP_GLSL_Line(int x0, int y0, int x1, int y1, Color c0, Color c1);
     void QRP_GLSL_QuadWireframe(int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
 
-public:
     //////////////////////
     // DRAW CLIPPING    //
     //////////////////////
@@ -178,12 +171,10 @@ public:
     Rect GetClippingRegion() const;
     int GetNumberOfClippingRegions() const;
 
-public:
     void ClearAreaColorDepthStencil(int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil);
     void ClearAreaColor(int x, int y, int width, int height, Color clearcolor);
     void ClearAreaDepthStencil(int x, int y, int width, int height, float cleardepth, int clearstencil);
 
-public:
     void Set3DView(int w, int h);
     void Push2DWindow(int w, int h);
     void Pop2DWindow();
@@ -220,18 +211,17 @@ public:
 //     Rect GetImageGeometry(UXStyleImageRef style);
 //     std::list<PainterImage*> m_PainterImageList;
 
-    void LoadFonts();
-    int RenderColorText(const NFontPtr& Font, int x, int y, const NString& Str, 
+    int RenderColorText(IntrusiveSP<FontTexture> Font, int x, int y, const NString& Str, 
         const Color& TextColor,
         bool WriteAlphaChannel,
         int NumCharacter);
 
-    int RenderColorTextLineStatic(const NFontPtr& Font, const PageBBox& pageSize, const NString& Str,
+    int RenderColorTextLineStatic(IntrusiveSP<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
         const Color& TextColor,
         bool WriteAlphaChannel,
         TextAlignment alignment);
 
-    int RenderColorTextLineEdit(const NFontPtr& Font, const PageBBox& pageSize, const NString& Str,
+    int RenderColorTextLineEdit(IntrusiveSP<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
         const Color& TextColor,
         bool WriteAlphaChannel,
         const Color& SelectedTextColor,
@@ -244,9 +234,18 @@ public:
     //Statistics
     void ResetStats();
 
-public:
-
+    /*!
+        Cache a resource if it has previously been cached. If the resource does not contain valid data
+        then the returned value is not valid. Check that the returned hardware resource is valid by calling TRefGL<NGLResource>.IsValid().
+        @param Resource The resource to cache.
+        @return A hardware resource.
+    */
     TRefGL<NGLResource> CacheResource(NResource* Resource);
+    
+    /*!
+        Update a resource if it has previously been cached.
+        @param Resource The resource to cache.
+    */
     void UpdateResource(NResource* Resource);
     bool IsResourceCached(NResource* Resource);
     NResourceCache ResourceCache;
@@ -342,7 +341,7 @@ private:
     int m_ScissorX, m_ScissorY;
     int m_ScissorXOffset, m_ScissorYOffset;
 
-    FontRenderer* m_FontRenderer;
+    FontRenderer* m_font_renderer;
 
     //static long ID;
 
@@ -356,7 +355,6 @@ private:
     mutable long m_triangle_tex_stats;
     mutable long m_line_stats;
 
-private:
     GraphicsContext(const GraphicsContext&);
     // Does not make sense for a singleton. This is a self assignment.
     GraphicsContext& operator=(const GraphicsContext&);

@@ -161,7 +161,7 @@ public:
         int offset = 0,
         int selection_start = 0, int selection_end = 0) const;
 
-    virtual int PaintTextLineStatic(GraphicsContext& GfxContext, const NFontPtr& Font, const Geometry &g,
+    virtual int PaintTextLineStatic(GraphicsContext& GfxContext, IntrusiveSP<FontTexture> Font, const Geometry &g,
         const NString& Str,
         const Color& color = Color(0.0f, 0.0f, 0.0f, 1.0f),
         bool WriteAlphaChannel = true,

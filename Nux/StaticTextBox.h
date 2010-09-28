@@ -30,7 +30,7 @@ class Validator;
 class StaticTextBox : public ActiveInterfaceObject //public CoreArea
 {
 public:
-    StaticTextBox(const TCHAR* Caption = TEXT(""), const Color& TextColor = Color(1.0f, 1.0f, 1.0f, 1.0f), const NFontPtr& Font = GFont, NUX_FILE_LINE_PROTO);
+    StaticTextBox(const TCHAR* Caption, NUX_FILE_LINE_PROTO);
     ~StaticTextBox();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
@@ -70,7 +70,7 @@ public:
     //  SIGNALS    //
     /////////////////
     
-    virtual void SetFont(const NFontPtr& Font);
+    virtual void SetFont(IntrusiveSP<FontTexture> Font);
 protected:
     void AdjustMinWidthToMatchText();
 

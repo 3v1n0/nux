@@ -171,7 +171,7 @@ NTexture2D::~NTexture2D()
 
 }
 
-bool NTexture2D::Update(const NBitmapData* BitmapData)
+bool NTexture2D::Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource)
 {
     nuxAssertMsg(BitmapData, TEXT("[NTexture2D::Update] Argument BitmapData is NULL."));
     NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
@@ -181,17 +181,21 @@ bool NTexture2D::Update(const NBitmapData* BitmapData)
         return false;
     }
     m_Image = *static_cast<const NTextureData*>(BitmapData);
-    // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
-    GetThreadGraphicsContext()->UpdateResource(this);
+
+    if(UpdateAndCacheResource)
+    {
+        // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+        GetThreadGraphicsContext()->UpdateResource(this);
+    }
     return true;
 }
 
-bool NTexture2D::Update(const TCHAR* filename)
+bool NTexture2D::Update(const TCHAR* filename, bool UpdateAndCacheResource)
 {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, TEXT("[NTexture2D::Update] Bitmap for file (%s) is NULL."), filename);
     NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
-    bool ret = Update(BitmapData);
+    bool ret = Update(BitmapData, UpdateAndCacheResource);
     NUX_SAFE_DELETE(BitmapData);
     return ret;
 }
@@ -325,7 +329,7 @@ NRectangleTexture::~NRectangleTexture()
 
 }
 
-bool NRectangleTexture::Update(const NBitmapData* BitmapData)
+bool NRectangleTexture::Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource)
 {
     nuxAssertMsg(BitmapData, TEXT("[NRectangleTexture::Update] Argument BitmapData is NULL."));
     NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
@@ -340,7 +344,7 @@ bool NRectangleTexture::Update(const NBitmapData* BitmapData)
     return true;
 }
 
-bool NRectangleTexture::Update(const TCHAR* filename)
+bool NRectangleTexture::Update(const TCHAR* filename, bool UpdateAndCacheResource)
 {
     bool b = false;
     NBitmapData* BitmapData = LoadImageFile(filename);
@@ -461,7 +465,7 @@ NTextureCube::~NTextureCube()
 
 }
 
-bool NTextureCube::Update(const NBitmapData* BitmapData)
+bool NTextureCube::Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource)
 {
     nuxAssertMsg(BitmapData, TEXT("[NTextureCube::Update] Argument BitmapData is NULL."));
     NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
@@ -476,7 +480,7 @@ bool NTextureCube::Update(const NBitmapData* BitmapData)
     return true;
 }
 
-bool NTextureCube::Update(const TCHAR* filename)
+bool NTextureCube::Update(const TCHAR* filename, bool UpdateAndCacheResource)
 {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, TEXT("[NTextureCube::Update] Bitmap for file (%s) is NULL."), filename);
@@ -596,7 +600,7 @@ NTextureVolume::~NTextureVolume()
 
 }
 
-bool NTextureVolume::Update(const NBitmapData* BitmapData)
+bool NTextureVolume::Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource)
 {
     nuxAssertMsg(BitmapData, TEXT("[NTextureVolume::Update] Argument BitmapData is NULL."));
     NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
@@ -611,7 +615,7 @@ bool NTextureVolume::Update(const NBitmapData* BitmapData)
     return true;
 }
 
-bool NTextureVolume::Update(const TCHAR* filename)
+bool NTextureVolume::Update(const TCHAR* filename, bool UpdateAndCacheResource)
 {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, TEXT("[NTextureVolume::Update] Bitmap for file (%s) is NULL."), filename);
@@ -761,7 +765,7 @@ NAnimatedTexture::~NAnimatedTexture()
 
 }
 
-bool NAnimatedTexture::Update(const NBitmapData* BitmapData)
+bool NAnimatedTexture::Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource)
 {
     nuxAssertMsg(BitmapData, TEXT("[NAnimatedTexture::Update] Argument BitmapData is NULL."));
     NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
@@ -776,7 +780,7 @@ bool NAnimatedTexture::Update(const NBitmapData* BitmapData)
     return true;
 }
 
-bool NAnimatedTexture::Update(const TCHAR* filename)
+bool NAnimatedTexture::Update(const TCHAR* filename, bool UpdateAndCacheResource)
 {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, TEXT("[NAnimatedTexture::Update] Bitmap for file (%s) is NULL."), filename);

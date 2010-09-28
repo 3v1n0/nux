@@ -55,7 +55,7 @@ public:
 private:
     double m_Minimum;
     double m_Maximum;
-    //boost::regex m_RegExp;
+    GRegex* m_reg_exp;
     int m_Decimals;
 };
 

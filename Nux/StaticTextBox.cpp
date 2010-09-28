@@ -28,20 +28,18 @@
 #include "StaticTextBox.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
-StaticTextBox::StaticTextBox(const TCHAR* Caption, const Color& textcolor, const NFontPtr& Font, NUX_FILE_LINE_DECL)
+StaticTextBox::StaticTextBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
-,   m_TextColor(textcolor)
-,   m_BackgroundColor(0xFF343434)
 ,   m_TextAlignment(eAlignTextLeft)
 ,   m_bMinimumWidthMatchText(true)
 ,   m_bDrawBackground(false)
 ,   m_WriteAlpha(true)
 {
+    m_BackgroundColor = Color(0xFF343434);
+    m_TextColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
     // First, set the default minimum size.
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    // Set the font as it is used to compute the text width.
-    SetFont(Font);
     // The width size of the text is computed in SetText and set as the minimum for the widget.
     // If the text is null or empty, then the default minimum widtth set above remains.
     SetText(Caption);
@@ -140,7 +138,7 @@ void StaticTextBox::AdjustMinWidthToMatchText()
     SetMinimumWidth(/*4 + */GetFont()->GetStringWidth(m_Text.GetTStringRef()));
 }
 
-void StaticTextBox::SetFont(const NFontPtr& Font)
+void StaticTextBox::SetFont(IntrusiveSP<FontTexture> Font)
 {
     ActiveInterfaceObject::SetFont(Font);
     if(GetMinWidthMatchText())

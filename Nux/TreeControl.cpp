@@ -58,7 +58,7 @@ void TreeItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool 
         {
             nBackground = table->PushItemBackground(GfxContext, this, false);
         }
-        Painter.PaintTextLineStatic(GfxContext, GFont, geo, row->m_item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/); 
+        Painter.PaintTextLineStatic(GfxContext, GetThreadFont(), geo, row->m_item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/); 
         table->PopItemBackground(GfxContext, nBackground);
     }
 }

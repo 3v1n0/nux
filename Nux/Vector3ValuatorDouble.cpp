@@ -43,9 +43,9 @@ Vector3DoubleValuator::Vector3DoubleValuator(double X, double Y, double Z, doubl
     m_Z = Z;
 
     m_hlayout = smptr(HLayout)(new HLayout());
-    m_XEdit = smptr(EditTextBox)(new EditTextBox());
-    m_YEdit = smptr(EditTextBox)(new EditTextBox());
-    m_ZEdit = smptr(EditTextBox)(new EditTextBox());
+    m_XEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_YEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_ZEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
 
     m_DoubleValidator.SetDecimals(3);
     m_XEdit->SetValidator(&m_DoubleValidator);
@@ -77,9 +77,9 @@ Vector3DoubleValuator::Vector3DoubleValuator(double X, double Y, double Z, doubl
     // This is use by TextLineEditPropertyItem::GetItemBestHeight
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    m_XLabel = smptr(StaticTextBox)(new StaticTextBox());
-    m_YLabel = smptr(StaticTextBox)(new StaticTextBox());
-    m_ZLabel = smptr(StaticTextBox)(new StaticTextBox());
+    m_XLabel = smptr(StaticTextBox)(new StaticTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_YLabel = smptr(StaticTextBox)(new StaticTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_ZLabel = smptr(StaticTextBox)(new StaticTextBox(TEXT(""), NUX_TRACKER_LOCATION));
 
     m_XLabel->SetText(TEXT("X"));
     m_YLabel->SetText(TEXT("Y"));
@@ -91,9 +91,9 @@ Vector3DoubleValuator::Vector3DoubleValuator(double X, double Y, double Z, doubl
     m_YLabel->SetTextColor(Color(0xFFCCCCCC));
     m_ZLabel->SetTextColor(Color(0xFFCCCCCC));
 
-    m_XLabel->SetFont(GFontBold);
-    m_YLabel->SetFont(GFontBold);
-    m_ZLabel->SetFont(GFontBold);
+    m_XLabel->SetFont(GetThreadBoldFont());
+    m_YLabel->SetFont(GetThreadBoldFont());
+    m_ZLabel->SetFont(GetThreadBoldFont());
 
 
     //SpaceLayout* spacex = new SpaceLayout;

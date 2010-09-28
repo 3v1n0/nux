@@ -27,7 +27,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 class RadioButton;
 
-class RadioButtonGroup: public NuxObject, public sigc::trackable
+class RadioButtonGroup: public NuxCoreObject, public sigc::trackable
 {
 public:
     RadioButtonGroup(NUX_FILE_LINE_PROTO);

@@ -60,7 +60,7 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
     m_CloseButton = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
     m_SizeGrip = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
     m_TitleBar = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
-    m_WindowTitleBar = smptr(StaticTextBox)(new StaticTextBox());
+    m_WindowTitleBar = smptr(StaticTextBox)(new StaticTextBox(TEXT(""), NUX_TRACKER_LOCATION));
     m_TitleBarLayout = smptr(HLayout)(new HLayout(NUX_TRACKER_LOCATION));
 
     m_MinimizeButton->SetMinMaxSize(20, 20);
@@ -197,7 +197,7 @@ void FloatingWindow::Draw(GraphicsContext& GfxContext, bool force_draw)
             m_TitleBar->GetBaseWidth(), m_TitleBar->GetBaseHeight()), Color(0xFF2f2f2f),
             eSHAPE_CORNER_ROUND10, eCornerTopLeft|eCornerTopRight);
 
-        gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_WindowTitleBar->GetGeometry(), m_WindowTitle, Color(0xFFFFFFFF), true, eAlignTextCenter);
+        gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_WindowTitleBar->GetGeometry(), m_WindowTitle, Color(0xFFFFFFFF), true, eAlignTextCenter);
         gPainter.Draw2DTextureAligned(GfxContext, &CloseIcon, m_CloseButton->GetGeometry(), TextureAlignmentStyle(eTACenter, eTACenter));
     }
 

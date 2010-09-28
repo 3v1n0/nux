@@ -193,13 +193,13 @@ void TabView::Draw(GraphicsContext& GfxContext, bool force_draw)
         {
             tab_geo.OffsetSize(-2, 0);
             gPainter.PaintShapeCorner(GfxContext, tab_geo, TAB_HEADER_FOCUS_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft|eCornerTopRight, false);
-            gPainter.PaintTextLineStatic(GfxContext, GFontBold, tab_geo, tab_text, Color(0xFFFFFFFF), true, eAlignTextCenter);
+            gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), tab_geo, tab_text, Color(0xFFFFFFFF), true, eAlignTextCenter);
         }
         else
         {
             tab_geo.OffsetSize(-2, 0);
             gPainter.PaintShapeCorner(GfxContext, tab_geo, TAB_HEADER_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft|eCornerTopRight, false);
-            gPainter.PaintTextLineStatic(GfxContext, GFontBold, tab_geo, tab_text, Color(0xFF000000), true, eAlignTextCenter);
+            gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), tab_geo, tab_text, Color(0xFF000000), true, eAlignTextCenter);
         }
     }
 
@@ -334,8 +334,8 @@ void TabView::AddTab(const char* tab_name, smptr(Layout) tab_layout)
     }
     Tab->tab_area = smptr(CoreArea)(new CoreArea());
     Tab->tab_area->SetBaseString(tab_name);
-    Tab->tab_area->SetMinimumSize(6 + GFontBold->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
-    Tab->tab_area->SetMaximumSize(6 + GFontBold->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
+    Tab->tab_area->SetMinimumSize(6 + GetThreadBoldFont()->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
+    Tab->tab_area->SetMaximumSize(6 + GetThreadBoldFont()->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
 
     Tab->tab_area->OnMouseDown.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseDown), Tab));
     Tab->tab_area->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseUp), Tab));

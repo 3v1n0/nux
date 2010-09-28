@@ -930,7 +930,7 @@ void TableCtrl::DrawHeader(GraphicsContext& GfxContext)
                 geo.OffsetSize(-8, 0);
             }
 
-            gPainter.PaintTextLineStatic(GfxContext, GFontBold, geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
+            gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
 
             if(!isFloatingColumn() && (column_iterator + 1 == m_column_header.end()))
             {
@@ -1030,7 +1030,7 @@ void TableCtrl::DrawHeaderPreview(GraphicsContext& GfxContext)
                 geo.OffsetPosition(4, 0);
                 geo.OffsetSize(-8, 0);
             }
-            gPainter.PaintTextLineStatic(GfxContext, GFontBold, geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
+            gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
         }
 
         if(isFloatingColumn() && (m_column_header.size()>0) )

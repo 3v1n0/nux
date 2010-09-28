@@ -31,10 +31,10 @@ class MenuBar;
 class MenuPage;
 class NTexture2D;
 
-class ActionItem: public NuxObject
+class ActionItem: public NuxCoreObject
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(ActionItem, NuxObject);
+    NUX_DECLARE_OBJECT_TYPE(ActionItem, NuxCoreObject);
 
     ActionItem(const TCHAR* label = 0, int UserValue = 0, NUX_FILE_LINE_PROTO);
     ~ActionItem();
@@ -54,7 +54,7 @@ public:
 //    void SetMenu(MenuPage* menu);
 //    MenuPage* GetMenu() const;
 
-    void SetFont(const FontTexture& font);
+    void SetFont(IntrusiveSP<FontTexture> font);
     void SetIcon(const NTexture2D& icon);
     NTexture2D& GetIcon();
     

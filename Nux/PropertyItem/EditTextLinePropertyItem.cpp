@@ -30,6 +30,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 EditTextLinePropertyItem::EditTextLinePropertyItem(const TCHAR* name, const TCHAR* text)
 :   SectionProperty(name, NODE_TYPE_EDITTEXT)
+,   EditTextBox(text, NUX_TRACKER_LOCATION)
 {
     SetText(text);
     SetTextColor(GPropertyItemTextColor1);

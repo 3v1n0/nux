@@ -76,7 +76,7 @@ void GroupBox2::Draw(GraphicsContext& GfxContext, bool force_draw)
 
     //if(bCaptionAvailable)
     {
-        gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
+        gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
     }
 
     if(m_layout != 0)
@@ -224,8 +224,8 @@ void GroupBox2::setCaption(const TCHAR* Caption)
     {
         //bCaptionAvailable = true;
         m_CaptionArea->SetBaseString(Caption);
-        m_CaptionArea->SetMinimumSize(4 + GFontBold->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);
-        m_CaptionArea->SetBaseSize(4 + GFontBold->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);
+        m_CaptionArea->SetMinimumSize(4 + GetThreadBoldFont()->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);
+        m_CaptionArea->SetBaseSize(4 + GetThreadBoldFont()->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);
 
         Size s = GetMinimumSize();
         if(s.GetWidth() < 2*CAPTION_X_MARGIN + m_CaptionArea->GetBaseWidth())

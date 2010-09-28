@@ -34,6 +34,7 @@
 #include "GLVertexResourceManager.h"
 
 #include "FontTexture.h"
+#include "FontRenderer.h"
 #include "UIColorTheme.h"
 
 #include "OpenGLEngine.h"
@@ -52,46 +53,24 @@ ROPConfig::~ROPConfig()
 }
 
 
-
-NFontPtr GFont;
-NFontPtr GFontBold;
-Color GTextColor = Color(0xFFE9E9E9);
-
 GraphicsContext::GraphicsContext(GLWindowImpl& GlWindow)
 :   m_GLWindow(GlWindow)
-,   m_ScissorX(0)
-,   m_ScissorY(0)
-,   m_ScissorXOffset(0)
-,   m_ScissorYOffset(0)
-,   m_FontRenderer(0)
 {
+    m_ScissorX = 0;
+    m_ScissorY = 0;
+    m_ScissorXOffset = 0;
+    m_ScissorYOffset = 0;
+    m_font_renderer = 0;
+
     GlWindow.m_GraphicsContext = this;
     ResetStats();
 
-    //Initialize the matrices
     m_ProjectionMatrix.Identity();
     m_ModelViewMatrix.Identity();
 
     ResourceCache.InitializeResourceFactories();
 
-    //     m_FilePath.AddSearchPath("./Data");
-    //     m_FilePath.AddSearchPath("../Data");
-    //     m_FilePath.AddSearchPath("../../Data");
-    //     m_FilePath.AddSearchPath("../../../Data");
-    m_FilePath.AddSearchPath("./Data/UITextures");
-
-    NString font_file = NUX_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("Tahoma_size_8.txt"));
-
-    if(!GFont)
-    {
-        //GFont.reset(new FontTexture(TEXT("Courier New_size_10.txt")));
-        GFont.reset(new FontTexture(NUX_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("Tahoma_size_8.txt"))));
-    }
-
-    if(!GFontBold)
-    {
-        GFontBold.reset(new FontTexture(NUX_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("Tahoma_size_8_bold.txt"))));
-    }
+    GNuxGraphicsResources.CacheFontTextures(ResourceCache);
 
     m_CurrrentContext.x = 0;
     m_CurrrentContext.y = 0;
@@ -102,12 +81,6 @@ GraphicsContext::GraphicsContext(GLWindowImpl& GlWindow)
     SetScissor(0, 0, m_GLWindow.GetWindowWidth(), m_GLWindow.GetWindowHeight());
     SetScissorOffset(0, 0);
     EnableScissoring(true);
-
-    //gUIColorTheme.Initialize();
-
-    //InitShaders();
-    //InitTextureBlendModeShader();
-
 
     InitAsmColorShader();
     InitAsmTextureShader();
@@ -121,19 +94,13 @@ GraphicsContext::GraphicsContext(GLWindowImpl& GlWindow)
 //     InitSl4TextureAdd();
 //     InitSlColorModTexMaskAlpha();
 
-    InitOpenGLEngine();
+    m_font_renderer = new FontRenderer(*this);
 }
 
 GraphicsContext::~GraphicsContext()
 {
     ResourceCache.Flush();
-    NUX_SAFE_DELETE(m_FontRenderer);
-}
-
-void GraphicsContext::InitOpenGLEngine()
-{
-    //LoadPainterImages();
-    LoadFonts();
+    NUX_SAFE_DELETE(m_font_renderer);
 }
 
 void GraphicsContext::SetContext(int x, int y, int width, int height)
@@ -203,32 +170,27 @@ int GraphicsContext::GetWindowHeight() const
     return m_GLWindow.GetWindowHeight();
 }
 
-void GraphicsContext::LoadFonts()
-{
-    m_FontRenderer = new FontRenderer(*this);
-}
-
-int GraphicsContext::RenderColorText(const NFontPtr& Font, int x, int y, const NString& Str,
+int GraphicsContext::RenderColorText(IntrusiveSP<FontTexture> Font, int x, int y, const NString& Str,
                                      const Color& TextColor,
                                      bool WriteAlphaChannel,
                                      int NumCharacter)
 {
-    if(m_FontRenderer)
-        return m_FontRenderer->RenderColorText(Font, x, y, Str, TextColor, WriteAlphaChannel, NumCharacter);
+    if(m_font_renderer)
+        return m_font_renderer->RenderColorText(Font, x, y, Str, TextColor, WriteAlphaChannel, NumCharacter);
     return 0;
 }
 
-int GraphicsContext::RenderColorTextLineStatic(const NFontPtr& Font, const PageBBox& pageSize, const NString& Str,
+int GraphicsContext::RenderColorTextLineStatic(IntrusiveSP<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
                                                const Color& TextColor,
                                                bool WriteAlphaChannel,
                                                TextAlignment alignment)
 {
-    if(m_FontRenderer)
-        return m_FontRenderer->RenderColorTextLineStatic(Font, pageSize, Str, TextColor, WriteAlphaChannel, alignment);
+    if(m_font_renderer)
+        return m_font_renderer->RenderColorTextLineStatic(Font, pageSize, Str, TextColor, WriteAlphaChannel, alignment);
     return 0;
 }
 
-int GraphicsContext::RenderColorTextLineEdit(const NFontPtr& Font, const PageBBox& pageSize, const NString& Str,
+int GraphicsContext::RenderColorTextLineEdit(IntrusiveSP<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
                                              const Color& TextColor,
                                              bool WriteAlphaChannel,
                                              const Color& SelectedTextColor,
@@ -237,8 +199,8 @@ int GraphicsContext::RenderColorTextLineEdit(const NFontPtr& Font, const PageBBo
                                              const Color& CursorColor,
                                              bool ShowCursor, unsigned int CursorPosition, int offset, int selection_start, int selection_end)
 {
-    if(m_FontRenderer)
-        return m_FontRenderer->RenderColorTextLineEdit(Font, pageSize, Str,
+    if(m_font_renderer)
+        return m_font_renderer->RenderColorTextLineEdit(Font, pageSize, Str,
         TextColor,
         WriteAlphaChannel,
         SelectedTextColor,

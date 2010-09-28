@@ -182,7 +182,7 @@ protected:
     virtual long PostLayoutManagement2(long LayoutResult);
 
 public:
-    NFontPtr m_TextFont;
+    IntrusiveSP<FontTexture> m_TextFont;
 
     ///////////////////////////////////////////////////////
     // AbstractInterfaceObject

@@ -114,10 +114,10 @@ void RGBValuator::InitializeLayout()
     m_ColorModel    = smptr(Button)(new Button());
     m_ColorFormat   = smptr(Button)(new Button());
 
-    m_RedCaption    = smptr(EditTextBox)(new EditTextBox);
-    m_GreenCaption  = smptr(EditTextBox)(new EditTextBox);
-    m_BlueCaption   = smptr(EditTextBox)(new EditTextBox);
-    m_AlphaCaption  = smptr(EditTextBox)(new EditTextBox);
+    m_RedCaption    = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_GreenCaption  = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_BlueCaption   = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_AlphaCaption  = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
 
     m_RedValuator   = smptr(CoreArea)(new CoreArea());
     m_GreenValuator = smptr(CoreArea)(new CoreArea());
@@ -155,8 +155,8 @@ void RGBValuator::InitializeWidgets()
 //    m_ColorModel->OnMouseUp.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->OnMouseEnter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 
-    m_ColorModel->SetFont(GFontBold);
-    m_ColorFormat->SetFont(GFontBold);
+    m_ColorModel->SetFont(GetThreadBoldFont());
+    m_ColorFormat->SetFont(GetThreadBoldFont());
     
     m_RedValuator->OnMouseUp.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseUp_Red));
     m_GreenValuator->OnMouseUp.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseUp_Green));
@@ -427,10 +427,10 @@ void RGBValuator::Draw(GraphicsContext& GfxContext, bool force_draw)
         DrawHLS(GfxContext);
     }
 
-    gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    gPainter.PaintTextLineStatic(GfxContext, GFontBold, m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
 
     DrawRedMarker(GfxContext);
     DrawGreenMarker(GfxContext);

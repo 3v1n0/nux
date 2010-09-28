@@ -29,7 +29,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 NUX_IMPLEMENT_OBJECT_TYPE(ActionItem);
 
 ActionItem::ActionItem(const TCHAR* label, int UserValue, NUX_FILE_LINE_DECL)
-:   NuxObject(true, NUX_FILE_LINE_PARAM)
+:   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
 ,   m_UserValue(UserValue)
 ,   m_Label(TEXT(""))
 ,   m_IsActivated(true)
@@ -65,7 +65,7 @@ void ActionItem::DrawAsMenuItem(GraphicsContext& GfxContext, CoreArea& area, boo
 
     gPainter.Draw2DTextureAligned(GfxContext, &m_Icon, icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
 
-    gPainter.PaintTextLineStatic(GfxContext, GFont, text_geo, std::string(label), Color(0xFF000000), eAlignTextLeft);
+    gPainter.PaintTextLineStatic(GfxContext, GetThreadFont(), text_geo, std::string(label), Color(0xFF000000), eAlignTextLeft);
 }
 
 void ActionItem::DrawAsToolButton(GraphicsContext& GfxContext, CoreArea& area)

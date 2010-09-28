@@ -38,10 +38,10 @@ RGBPropertyItem::RGBPropertyItem(const TCHAR* name, float red /* = 1.0f*/, float
 
     m_ColorModel = smptr(Button)(new Button(TEXT("RGB")));
     m_ColorModel->SetMinMaxSize(32, 14);
-    m_ColorModel->SetFont(GFontBold);
+    m_ColorModel->SetFont(GetThreadBoldFont());
     m_ColorFormat = smptr(Button)(new Button(TEXT("float")));
     m_ColorFormat->SetMinMaxSize(32, 14);
-    m_ColorFormat->SetFont(GFontBold);
+    m_ColorFormat->SetFont(GetThreadBoldFont());
 
 
     PushChildBack(m_red);
@@ -181,7 +181,7 @@ void RGBPropertyItem::DrawProperty(GraphicsContext& GfxContext, TableCtrl* table
         m_blue->IsRedrawNeeded())
     {
         UINT nBackground = table->PushItemBackground(GfxContext, this);
-        Painter.PaintTextLineStatic(GfxContext, GFontBold /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
+        Painter.PaintTextLineStatic(GfxContext, GetThreadBoldFont() /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor()); 
 
         if(m_ItemGeometryVector.size() >= 2)
         {

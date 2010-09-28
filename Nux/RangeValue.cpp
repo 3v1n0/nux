@@ -90,7 +90,7 @@ void RangeValue::InitializeLayout()
 {
     hlayout = smptr(HLayout)(new HLayout());
     m_Percentage = smptr(CoreArea)(new CoreArea());
-    m_ValueString = smptr(EditTextBox)(new EditTextBox());
+    m_ValueString = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
 }
 
 void RangeValue::DestroyLayout()

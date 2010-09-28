@@ -175,9 +175,4 @@ bool NResourceCache::IsCachedResource(NResource* Source)
     return (CachedResource.IsValid());
 }
 
-void UpdateResource(NResource* Source)
-{
-
-}
-
 } //NUX_NAMESPACE_END

@@ -135,46 +135,22 @@ public:
 
     virtual ThreadState Start( void* arg = NULL );
 
+    WindowCompositor& GetStackManager() { return *m_window_compositor; }
+    // should be private
 
-protected:
-    
-    //void SetModalWindow(bool b) {m_bIsModal = b;}
+    float GetFrameRate() const;
+    t_u32 GetFrameCounter() const;
+    t_u32 GetFramePeriodeCounter() const;
 
-    /*!
-        Suspend Win32 Mouse and Keyboard inputs for this window thread and its child thread that are also window (not SystemThread). 
-    */
-    void EnableMouseKeyboardInput();
+    bool IsEmbeddedWindow();
 
-    /*!
-        Enable Win32 Mouse and Keyboard inputs for this window thread and its child thread that are also window (not SystemThread). 
-    */
-    void DisableMouseKeyboardInput();
-
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-    t_u32 ExecutionLoop(t_u32 timer_id);
-#else
-    t_u32 ExecutionLoop();
+#if defined(NUX_OS_WINDOWS)
+    void ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data);
+#elif defined(NUX_OS_LINUX)
+    void ProcessForeignEvent(XEvent* event, void* data);
 #endif
 
-    virtual ThreadState StartChildThread(NThread* thread, bool Modal);
-    virtual void AddChildThread(NThread*);
-    virtual void RemoveChildThread(NThread*);
-    virtual void ChildHasFinished(NThread* app);
-    virtual void TerminateAllChildThread();
-    virtual ThreadState SuspendChildGraphics(WindowThread* app);
-
-    bool m_bWaitForModalWindow;
-    WindowThread* m_ModalWindowThread;
-
-    //typedef Loki::Functor< void, LOKI_TYPELIST_1(void*)   > ChildThreadExitCallback;
-
-    typedef struct {
-        NThread* thread;
-        std::list< sigc::signal<void, void*> > ChildThreadExitCallback;
-    } ThreadInfo;
-
-    //std::list<NThread*> m_ChildThread;
-    std::list< ThreadInfo* > m_ChildThreadInfo;
+    void RenderInterfaceFromForeignCmd();
 
 public:
     virtual unsigned int Run(void*);
@@ -241,6 +217,47 @@ public:
     */
     void* m_InitData;
     void* m_ExitData;
+
+protected:
+    
+    //void SetModalWindow(bool b) {m_bIsModal = b;}
+
+    /*!
+        Suspend Win32 Mouse and Keyboard inputs for this window thread and its child thread that are also window (not SystemThread). 
+    */
+    void EnableMouseKeyboardInput();
+
+    /*!
+        Enable Win32 Mouse and Keyboard inputs for this window thread and its child thread that are also window (not SystemThread). 
+    */
+    void DisableMouseKeyboardInput();
+
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+    t_u32 ExecutionLoop(t_u32 timer_id);
+#else
+    t_u32 ExecutionLoop();
+#endif
+
+    virtual ThreadState StartChildThread(NThread* thread, bool Modal);
+    virtual void AddChildThread(NThread*);
+    virtual void RemoveChildThread(NThread*);
+    virtual void ChildHasFinished(NThread* app);
+    virtual void TerminateAllChildThread();
+    virtual ThreadState SuspendChildGraphics(WindowThread* app);
+
+    bool m_bWaitForModalWindow;
+    WindowThread* m_ModalWindowThread;
+
+    //typedef Loki::Functor< void, LOKI_TYPELIST_1(void*)   > ChildThreadExitCallback;
+
+    typedef struct {
+        NThread* thread;
+        std::list< sigc::signal<void, void*> > ChildThreadExitCallback;
+    } ThreadInfo;
+
+    //std::list<NThread*> m_ChildThread;
+    std::list< ThreadInfo* > m_ChildThreadInfo;
+
 private:
 
     WindowThread(const WindowThread&);
@@ -264,25 +281,6 @@ private:
         This list contains the client areas that need to be redraw.
     */
     std::list<ClientArea*> m_ClientAreaList;
-
-public:
-
-    WindowCompositor& GetStackManager() { return *m_window_compositor; }
-    // should be private
-
-    float GetFrameRate() const;
-    t_u32 GetFrameCounter() const;
-    t_u32 GetFramePeriodeCounter() const;
-
-    bool IsEmbeddedWindow();
-
-#if defined(NUX_OS_WINDOWS)
-    void ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data);
-#elif defined(NUX_OS_LINUX)
-    void ProcessForeignEvent(XEvent* event, void* data);
-#endif
-
-    void RenderInterfaceFromForeignCmd();
 
 private:
     float m_FrameRate;

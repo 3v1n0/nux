@@ -34,6 +34,10 @@ class IOpenGLSurface;
 class IOpenGLVolumeTexture;
 class IOpenGLVolume;
 class IOpenGLQuery;
+class IOpenGLShader;
+class IOpenGLVertexShader;
+class IOpenGLPixelShader;
+
 template<typename T> class TRefGL;
 
 #define NUM_VERTEX_SHADER_INPUT_ATTRIBUTE      16
@@ -119,6 +123,7 @@ private:
     friend class IOpenGLIndexBuffer;
     friend class IOpenGLVertexBuffer;
     friend class IOpenGLVertexDeclaration;
+    friend class IOpenGLShader;
     friend class IOpenGLVertexShader;
     friend class IOpenGLPixelShader;
     friend class IOpenGLShaderProgram;

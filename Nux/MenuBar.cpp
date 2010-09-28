@@ -37,7 +37,7 @@ NUX_IMPLEMENT_ROOT_OBJECT_TYPE(MenuBarItem);
 NUX_IMPLEMENT_OBJECT_TYPE(MenuBar);
 
 MenuBarItem::MenuBarItem(NUX_FILE_LINE_DECL)
-:   NuxObject(true, NUX_FILE_LINE_PARAM)
+:   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
 {
     area = smptr(CoreArea)(new CoreArea());
     icon = 0;

@@ -28,16 +28,16 @@
 #include <sigc++/functors/ptr_fun.h>
 #include <sigc++/functors/mem_fun.h>
 
-#include "NuxCore/NuxObject.h"
+#include "NuxCore/NuxCoreObject.h"
 
 #include "Utils.h"
 #include "WidgetMetrics.h"
 #include "WidgetSmartPointer.h"
 
 #define inlptr(T) T*
-#define smptr(T) nux::NuxObjectSP<T>
-#define weaksmptr(T) nux::NuxObjectWeakSP<T>
-#define smptrnull(T) nux::NuxObjectSP<T> (0)
+#define smptr(T) nux::IntrusiveSP<T>
+#define weaksmptr(T) nux::IntrusiveWeakSP<T>
+#define smptrnull(T) nux::IntrusiveSP<T> (0)
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
@@ -124,10 +124,10 @@ class ActiveInterfaceObject;
 class BaseObject;
 
 
-class BaseObject: public NuxObject, public sigc::trackable
+class BaseObject: public NuxCoreObject, public sigc::trackable
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(BaseObject, NuxObject);
+    NUX_DECLARE_OBJECT_TYPE(BaseObject, NuxCoreObject);
     //static NObjectType StaticObjectType;
     //virtual NObjectType* Type() { return &StaticObjectType; }
 
@@ -292,7 +292,7 @@ private:
     SizePolicy   m_SizePolicy;
     PositionPolicy m_PositionPolicy;
 
-    void InitiateResizeLayout(smptr(BaseObject) child = NuxObjectSP<BaseObject>(0));
+    void InitiateResizeLayout(smptr(BaseObject) child = IntrusiveSP<BaseObject>(0));
     void CheckMinSize();
     void CheckMaxSize();
 

@@ -223,23 +223,7 @@ public:
     GLEWContext* GetGLEWContext() { return &m_GLEWContext; }
     WGLEWContext* GetWGLEWContext() { return &m_WGLEWContext; }
 
-    NString FindResourceLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-    NString FindUITextureLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-    NString FindShaderLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-    NString FindFontLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-
-    const std::vector<NString>& GetFontSearchPath() const {return m_FontSearchPath;}
-    const std::vector<NString>& GetShaderSearchPath() const {return m_ShaderSearchPath;}
-    const std::vector<NString>& GetUITextureSearchPath() const {return m_UITextureSearchPath;}
-
 private:
-    std::vector<NString> m_FontSearchPath;
-    std::vector<NString> m_ShaderSearchPath;
-    std::vector<NString> m_UITextureSearchPath;
-    FilePath m_ResourcePathLocation;
-
-
-
     GLWindowImpl();
     GLWindowImpl(const GLWindowImpl&);
     // Does not make sense for a singleton. This is a self assignment.

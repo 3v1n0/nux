@@ -19,12 +19,10 @@
  *
  */
 
-
 #ifndef INTEGERVALIDATOR_H
 #define INTEGERVALIDATOR_H
 
 #include "Validator.h"
-//#include <boost/regex.hpp>
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
@@ -53,9 +51,8 @@ public:
 private:
     int m_Minimum;
     int m_Maximum;
-//    boost::regex m_RegExp;
+    GRegex* m_reg_exp;
 };
 } //NUX_NAMESPACE_END
 
 #endif // INTEGERVALIDATOR_H
-

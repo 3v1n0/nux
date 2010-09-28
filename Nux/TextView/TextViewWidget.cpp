@@ -77,7 +77,7 @@ TextViewWidget::TextViewWidget(NUX_FILE_LINE_DECL)
     //layout->AddActiveInterfaceObject(new Button(TEXT("Hello")));
     SetCompositionLayout(layout);
 
-    m_TextFont.reset(new FontTexture(TEXT("Courier_size_10.txt")));
+    m_TextFont = IntrusiveSP<FontTexture>(new FontTexture(TEXT("Courier_size_10.txt")));
 }
 
 TextViewWidget::~TextViewWidget()

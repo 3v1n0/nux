@@ -38,7 +38,7 @@ class TimerFunctor;
 class EditTextBox : public ActiveInterfaceObject
 {
 public:
-    EditTextBox(const TCHAR* Caption = 0, NUX_FILE_LINE_PROTO);
+    EditTextBox(const TCHAR* Caption, NUX_FILE_LINE_PROTO);
     ~EditTextBox();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
