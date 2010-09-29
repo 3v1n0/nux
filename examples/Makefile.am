@@ -2,6 +2,8 @@ CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST =
 
+if BUILD_EXAMPLES
+
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
 noinst_PROGRAMS = combobox
@@ -32,3 +34,5 @@ ALL_LIBS = \
 # you need a $exe_SOURCES and $exe_LDADD so it builds
 combobox_SOURCES = combobox.cpp
 combobox_LDADD = $(ALL_LIBS)
+
+endif

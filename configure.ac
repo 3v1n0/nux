@@ -190,6 +190,16 @@ AS_IF([test "x$enable_debug" = "xyes"],
 
 AC_SUBST(MAINTAINER_CFLAGS)
 
+
+# this enables lots of useful debugging output in Nux
+AC_ARG_ENABLE([examples],
+              [AC_HELP_STRING([--enable-examples=@<:@no/yes@:>@],
+              [Enable building of examples @<:@default=yes@:>@])],
+              [],
+              [enable_examples=yes])
+
+AM_CONDITIONAL(BUILD_EXAMPLES, [test "x$enable_examples" = "xyes"])
+
 dnl ===========================================================================
 
 AC_CONFIG_FILES([
@@ -227,6 +237,10 @@ echo -e "${RESET}"
 echo -e "${GREEN} • Compiler Options:${RESET}"
 echo -e "        Maintainer CFlags : ${BOLD_WHITE}${MAINTAINER_CFLAGS}${RESET}"
 echo -e "        Nux Debug         : ${BOLD_WHITE}${enable_debug}${RESET}"
+
+echo -e "${RESET}"
+echo -e "${GREEN} • Misc Options:${RESET}"
+echo -e "        Build Examples    : ${BOLD_WHITE}${enable_examples}${RESET}"
 echo ""
 
 echo -e "${RESET}"
