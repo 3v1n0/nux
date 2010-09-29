@@ -158,11 +158,11 @@ void NMeshObject::CreateVertexBuffer(NMeshData* meshdata)
         // [Triangle0<v0,v1,v2>, Triangle1<v0,v1,v2> .... TriangleN<v0,v1,v2>]
         // The index array is:
         // [Triangle0<0,1,2>, Triangle1<3,4,5>, ..... TriangleN<3N,3N+1,3N+2>] 
-        long nbIndex = nbTriangle * 3;
+        int nbIndex = nbTriangle * 3;
 
         m_MaxIndex = 0;
         m_MinIndex = 0xFFFFFFFF;
-        for(unsigned int index = 0; index < nbIndex; index++)
+        for(int index = 0; index < nbIndex; index++)
         {
             m_IndexArray[index] = index;
             if(m_MaxIndex < index)
@@ -471,6 +471,7 @@ void NMeshObject::CreateGLObjects()
     if(HasTangent())
     {
         m_TangentIndex = Index++;
+
         size = GetNormalBufferSize();
         CHECKGLX( glGenBuffersARB(1, &m_OpenGLID[m_TangentIndex]) );
         CHECKGLX( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_OpenGLID[m_TangentIndex]) );

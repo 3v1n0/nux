@@ -199,8 +199,8 @@ public:
     GLuint m_GLVBOTangentCustom;
 
     // Stats
-    unsigned int m_MinIndex;
-    unsigned int m_MaxIndex;
+    int m_MinIndex;
+    int m_MaxIndex;
 
 public:
     NMeshData* m_MeshData;
