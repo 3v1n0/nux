@@ -324,7 +324,7 @@ void FloatingWindow::PreLayoutManagement()
     Geometry geo = GetGeometry();
     if(m_ConfigureNotifyCallback)
     {
-        (*m_ConfigureNotifyCallback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo);
+        (*m_ConfigureNotifyCallback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
         if(geo.IsNull())
         {
             nuxDebugMsg(TEXT("[FloatingWindow::PreLayoutManagement] Received an invalid Geometry."));

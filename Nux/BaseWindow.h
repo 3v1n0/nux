@@ -51,7 +51,7 @@ class NTexture2D;
     @param int          The height of the window.
     @param Geometry&    The the tentative size of the window.
 */
-typedef void (*ConfigureNotifyCallback)(int, int, Geometry&);
+typedef void (*ConfigureNotifyCallback)(int, int, Geometry&, void*);
 
 class BaseWindow: public ActiveInterfaceObject
 {
@@ -98,7 +98,7 @@ public:
     bool IsVisible() const;
 
     virtual void setGeometry(const Geometry& geo);
-    void SetConfigureNotifyCallback(ConfigureNotifyCallback Callback) {m_ConfigureNotifyCallback = Callback;}
+    void SetConfigureNotifyCallback(ConfigureNotifyCallback Callback, void* Data) {m_ConfigureNotifyCallback = Callback; m_configure_notify_callback_data = Data;}
 
     void SetBackgroundLayer(AbstractPaintLayer* layer);
     void SetBackgroundColor(const Color& color);
@@ -108,6 +108,7 @@ public:
 
 protected:
     ConfigureNotifyCallback m_ConfigureNotifyCallback;
+    void* m_configure_notify_callback_data;
 
     sigc::signal< bool, unsigned int, unsigned int, Geometry& > sigRequestConfigure;
 
