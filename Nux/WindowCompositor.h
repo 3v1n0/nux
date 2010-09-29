@@ -69,6 +69,18 @@ public:
     void PresentRendering();
 
     /*!
+        Set the main color render target as the texture to draw into.
+    */
+    void SetMainColorRT();
+    
+    /*!
+        Draw a Texture into the main color render target.
+        @param x    Destination coordinates.
+        @param y    Destination coordinates.
+    */
+    void CopyTextureToMainColorRT(TRefGL<IOpenGLTexture2D> HWTexture, int x, int y);
+    
+    /*!
         Set the composition render target as the texture to draw into.
     */
     void SetCompositionRT();

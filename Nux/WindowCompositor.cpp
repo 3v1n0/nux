@@ -479,25 +479,14 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
                 // We fall here after something dramatic has happen to the window such as a resizing. In this case
                 // everything must be rendered This is very intensize and should happen rarely.
                 RenderMainWindowComposition(true, true);
-                if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
+                if(1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
                 {   
-                    CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
-                    //UpdatePostProcessRT();
-
                     DrawFloatingWindows(true, m_WindowList, false, true);
-                    //UpdatePostProcessRT();
                     DrawFloatingWindows(true, m_ModalWindowList, true, true);
-                    //UpdatePostProcessRT();
 
                     DrawMenu(true);
                     DrawTooltip(true);
                     DrawOverlay(true);
-
-                    PresentBufferToScreen(m_CompositionRT, 0, 0, false, false);
-                }
-                else
-                {
-                     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
                 }
             }
             else if(m_PopupRemoved || m_MenuRemoved)
@@ -505,50 +494,28 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
                 // A popup removed cause the whole window to be dirty (at least some part of it).
                 // So exchange DrawList with a real Draw.
                 RenderMainWindowComposition(false, true);
-                if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
+                if(1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
                 {   
-                    CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
-                    //UpdatePostProcessRT();
-
                     DrawFloatingWindows(false, m_WindowList, false, true);
-                    //UpdatePostProcessRT();
                     DrawFloatingWindows(false, m_ModalWindowList, true, true);
-                    //UpdatePostProcessRT();
 
                     DrawMenu(true);
                     DrawTooltip(true);
                     DrawOverlay(true);
-
-                    PresentBufferToScreen(m_CompositionRT, 0, 0, false, false);
                 }
-                 else
-                 {
-                     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
-                 }
             }
             else
             {
                 RenderMainWindowComposition(false, true);
-                if(GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL)
+                if(1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
                 {
-                    CopyTextureToCompositionRT(m_MainColorRT, 0, 0);
-                    //UpdatePostProcessRT();
-
                     DrawFloatingWindows(false, m_WindowList, false, true);
-                    //UpdatePostProcessRT();
                     DrawFloatingWindows(false, m_ModalWindowList, true, true);
-                    //UpdatePostProcessRT();
 
                     DrawMenu(true);
                     DrawTooltip(true);
                     DrawOverlay(true);
-
-                    PresentBufferToScreen(m_CompositionRT, 0, 0, false, false);
                 }
-                 else
-                 {
-                     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
-                 }
             }
         }
         else
@@ -806,11 +773,20 @@ void WindowCompositor::DrawFloatingWindows(bool force_draw, const std::list<smpt
 //                    }
                 }
 
-                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                if(GetGraphicsThread()->IsEmbeddedWindow())
+                {
+                    // In embedded mode, floating windows are composited over Nux main window which is probably empty. At least that
+                    // is how things are at the moment. Compiste the floating windows onto the main texture without blending.
+                    GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                }
+                else
+                {
+                    GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                }
                 CHECKGL( glDepthMask(GL_FALSE) );
                 {
-                    CopyTextureToCompositionRT(rt.color_rt, window->GetBaseX(), window->GetBaseY());
-                    //PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false);
+                    //CopyTextureToCompositionRT(rt.color_rt, window->GetBaseX(), window->GetBaseY());
+                    PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false);
                 }
                 CHECKGL( glDepthMask(GL_TRUE) );
                 GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false);
@@ -966,10 +942,50 @@ void WindowCompositor::RenderMainWindowComposition(bool force_draw, bool UseFBO)
     GetGraphicsThread()->GetGraphicsContext().Push2DWindow(window_width, window_height);
 
     // Render the Buffer on the screen
-//     if(UseFBO)
-//     {
-//         PresentBufferToScreen(m_MainColorRT, 0, 0, false);
-//     }
+    if(UseFBO)
+    {
+        PresentBufferToScreen(m_MainColorRT, 0, 0, false);
+    }
+}
+
+void WindowCompositor::SetMainColorRT()
+{
+    t_s32 buffer_width, buffer_height;
+    buffer_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
+    buffer_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
+    if((!m_MainColorRT.IsValid()) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height))
+    {
+        m_MainColorRT = GetThreadGLDeviceFactory()->CreateTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+    }
+
+    // Setup the Composition Render Target
+    m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
+    m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
+    m_FrameBufferObject->SetDepthSurface(0);
+    m_FrameBufferObject->Activate();
+    GetGraphicsThread()->GetGraphicsContext().SetContext(0, 0, buffer_width, buffer_height);
+    GetGraphicsThread()->GetGraphicsContext().Push2DWindow(buffer_width, buffer_height);
+    GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion();
+    GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion(0, 0, buffer_width, buffer_height);
+}
+
+void WindowCompositor::CopyTextureToMainColorRT(TRefGL<IOpenGLTexture2D> HWTexture, int x, int y)
+{
+    SetMainColorRT();
+    HWTexture->SetFiltering(GL_NEAREST, GL_NEAREST);
+    HWTexture->BindTextureToUnit(GL_TEXTURE0);
+    GetGraphicsThread()->GetGraphicsContext().DisableAllTextureMode(GL_TEXTURE1);
+
+    int TexWidth = HWTexture->GetWidth();
+    int TexHeight = HWTexture->GetHeight();
+
+    TexCoordXForm texxform;
+    texxform.FlipVCoord(true);
+    texxform.uscale = 1.0f;
+    texxform.vscale = 1.0f;
+    texxform.uwrap = TEXWRAP_REPEAT;
+    texxform.vwrap = TEXWRAP_REPEAT;
+    GetGraphicsThread()->GetGraphicsContext().QRP_GLSL_1Tex(x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
 }
 
 void WindowCompositor::SetCompositionRT()
@@ -1058,7 +1074,11 @@ void WindowCompositor::PresentBufferToScreen(TRefGL<IOpenGLTexture2D> HWTexture,
         {
             TexCoordXForm texxform0;
             texxform0.FlipVCoord(true);
-            GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            if(GetGraphicsThread()->IsEmbeddedWindow())
+            {
+                // Compose Nux's main texture onto another surface (a texture or the back buffer) with blending.
+                GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
             GetThreadGraphicsContext()->QRP_GLSL_1Tex(x, y, src_width, src_height, HWTexture, texxform0, Color::White);
             GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SetBlend(false);
         }

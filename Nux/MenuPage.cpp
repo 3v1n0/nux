@@ -308,13 +308,6 @@ void MenuPage::Draw(GraphicsContext& GfxContext, bool force_draw)
         shadow.OffsetPosition(4, 4);
         //gPainter.PaintShape(GfxContext, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
 
-        TexCoordXForm texxform;
-        texxform.uoffset = (float)base.x/(float)GetThreadWindowCompositor().GetScreenBlurTexture()->GetWidth();
-        texxform.voffset = (float)base.y/(float)GetThreadWindowCompositor().GetScreenBlurTexture()->GetHeight();
-        texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
-
-        gPainter.PushDrawTextureLayer(GfxContext, base, GetThreadWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
-
         GfxContext.GetRenderStates().SetBlend(GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         gPainter.Paint2DQuadColor(GfxContext, base, Color(0xA0404040));
         GfxContext.GetRenderStates().SetBlend(GL_FALSE);
