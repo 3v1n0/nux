@@ -31,17 +31,17 @@ class IntrusiveSP;
 template <typename T>
 class IntrusiveWeakSP;
 
-#if defined(NUX_DEBUG)
+// #if defined(NUX_DEBUG)
     #define NUX_FILE_LINE_PROTO     const char* __Nux_FileName__=__FILE__, int __Nux_LineNumber__ = __LINE__
     #define NUX_FILE_LINE_DECL      const char* __Nux_FileName__, int __Nux_LineNumber__
     #define NUX_FILE_LINE_PARAM     __Nux_FileName__, __Nux_LineNumber__
     #define NUX_TRACKER_LOCATION    __FILE__, __LINE__
-#else
-    #define NUX_FILE_LINE_PROTO     int __Nux_Dummy__ = 0xD0DECADE
-    #define NUX_FILE_LINE_DECL      int __Nux_Dummy__
-    #define NUX_FILE_LINE_PARAM     __Nux_Dummy__
-    #define NUX_TRACKER_LOCATION    0xD0DECADE
-#endif
+// #else
+//     #define NUX_FILE_LINE_PROTO     int __Nux_Dummy__ = 0xD0DECADE
+//     #define NUX_FILE_LINE_DECL      int __Nux_Dummy__
+//     #define NUX_FILE_LINE_PARAM     __Nux_Dummy__
+//     #define NUX_TRACKER_LOCATION    0xD0DECADE
+// #endif
 
 //! Base class of heap allocated objects.
 /*!
@@ -210,10 +210,10 @@ private:
     NuxCoreObject& operator = (const NuxCoreObject&);
 
 
-#if defined(NUX_DEBUG)
+//#if defined(NUX_DEBUG)
     NString m_allocation_file_name;
     int     m_allocation_line_number;
-#endif
+//#endif
 
     template <typename T>
     friend class IntrusiveSP;

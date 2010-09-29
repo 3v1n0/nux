@@ -168,10 +168,10 @@ bool NuxTrackable::IsDynamic() const
 
 NuxCoreObject::NuxCoreObject(bool OwnTheReference, NUX_FILE_LINE_DECL)
 {
-#if defined(NUX_DEBUG)
+// #if defined(NUX_DEBUG)
     m_allocation_file_name      = __Nux_FileName__;
     m_allocation_line_number    = __Nux_LineNumber__;
-#endif
+// #endif
 
     m_reference_count = new NThreadSafeCounter();
     m_weak_reference_count = new NThreadSafeCounter();
