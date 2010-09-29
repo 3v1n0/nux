@@ -17,9 +17,9 @@ namespace nux {
         NString FindShaderLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
         NString FindFontLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
 
-        const std::vector<NString>& GetFontSearchPath() const {return m_FontSearchPath;}
-        const std::vector<NString>& GetShaderSearchPath() const {return m_ShaderSearchPath;}
-        const std::vector<NString>& GetUITextureSearchPath() const {return m_UITextureSearchPath;}
+//         const std::vector<NString>& GetFontSearchPath() const {return m_FontSearchPath;}
+//         const std::vector<NString>& GetShaderSearchPath() const {return m_ShaderSearchPath;}
+//         const std::vector<NString>& GetUITextureSearchPath() const {return m_UITextureSearchPath;}
     
         IntrusiveSP<FontTexture> GetFont();
         IntrusiveSP<FontTexture> GetBoldFont();

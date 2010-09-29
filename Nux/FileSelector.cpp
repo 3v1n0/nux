@@ -52,7 +52,7 @@ FileSelector::FileSelector(NUX_FILE_LINE_DECL)
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetCompositionLayout(m_hlayout);
 
-    NString Path = NUX_FINDRESOURCELOCATION(TEXT("Media/Icons/Folder-16x16.png"));
+    NString Path = NUX_FINDRESOURCELOCATION(TEXT("Icons/Folder-16x16.png"));
     m_Texture.Update(Path.GetTCharPtr());
 }
 

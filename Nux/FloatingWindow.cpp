@@ -92,9 +92,9 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
     SetMinimumSize(32, 32);
     setGeometry(Geometry(100, 100, 320, 200));
 
-    NString Path = NUX_FINDRESOURCELOCATION(TEXT("Media/UITextures/AddButton.png"));
+    NString Path = NUX_FINDRESOURCELOCATION(TEXT("UITextures/AddButton.png"));
     MinimizeIcon.Update(Path.GetTCharPtr());
-    Path = NUX_FINDRESOURCELOCATION(TEXT("Media/UITextures/CancelButton.png"));
+    Path = NUX_FINDRESOURCELOCATION(TEXT("UITextures/CancelButton.png"));
     CloseIcon.Update(Path.GetTCharPtr());
 
     SetWindowTitle(WindowName);

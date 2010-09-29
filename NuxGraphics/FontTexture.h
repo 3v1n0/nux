@@ -229,7 +229,6 @@ private:
     std::vector<t_u32> m_gl_texture_id;
     Charset m_Charset;
     
-    FilePath m_FontSearchPath;
     friend class FontRenderer;
 };
 

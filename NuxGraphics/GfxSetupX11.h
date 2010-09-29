@@ -174,11 +174,6 @@ public:
     void EnterMaximizeWindow();
     void ExitMaximizeWindow();
 
-    bool m_BackupFrameBuffer;
-    void EnableBackupFrameBuffer();
-    void DisableBackupFrameBuffer();
-    void BackupFrameBufferBind();
-
     Window GetWindowHandle() const {return m_X11Window;}
     bool IsChildWindow() const {return m_ParentWindow != 0;}
 

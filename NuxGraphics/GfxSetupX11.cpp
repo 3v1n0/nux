@@ -96,7 +96,6 @@ GLWindowImpl::GLWindowImpl()
     m_ScreenBitDepth                = 32;
     m_BestMode                      = -1;
     m_num_device_modes              = 0;
-    m_BackupFrameBuffer             = true;
     m_DeviceFactory                 = 0;
     m_GraphicsContext               = 0;
     m_Style                         = WINDOWSTYLE_NORMAL;
@@ -115,105 +114,6 @@ GLWindowImpl::GLWindowImpl()
 
     // A window never starts in a minimized state.
     m_is_window_minimized = false;
-
-
-    FilePath m_FilePath;
-    m_FilePath.AddSearchPath(TEXT("")); // for case where fully qualified path is given
-    m_FilePath.AddSearchPath(TEXT("./ini"));
-    m_FilePath.AddSearchPath(TEXT("../ini"));
-    m_FilePath.AddSearchPath(TEXT("../../ini"));
-    m_FilePath.AddSearchPath(TEXT("../../../ini"));
-
-
-    NString file_search = TEXT("inalogic.ini");
-    NString FileName = m_FilePath.GetFile(file_search.GetTCharPtr());
-    if (FileName == TEXT(""))
-    {
-        nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Can't find inalogic.ini file."));
-        /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
-            TEXT("Can't find .ini file.\nThe program will exit."));*/
-        exit(-1);
-    }
-
-    if(FileName != TEXT(""))
-    {
-        NString key_name = TEXT("UseBackupFBO");
-        NString section_name = TEXT("OpenGLSystem");
-
-        if(CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()) == false)
-        {
-            nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Key [%s] does not exit in .ini file."));
-        }
-        else
-        {
-            NString value = CIniFile::GetValue(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr());
-            if((value == TEXT("1")) || (value == TEXT("true")))
-            {
-                m_BackupFrameBuffer = true;
-            }
-            else
-            {
-                m_BackupFrameBuffer = false;
-            }
-        }
-
-        section_name = TEXT("SearchPath");
-        key_name = TEXT("FontPath");
-        if(CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()))
-        {
-            NString FontPath = CIniFile::GetValue(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr());
-            FontPath.ParseToArray(m_FontSearchPath, TEXT(";"));
-        }
-        else
-        {
-            nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Failed to read font search path from .ini file."));
-            /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
-                TEXT("Failed to read font search path from .ini file.\nThe program will exit."));*/
-            exit(-1);
-
-        }
-
-        key_name = TEXT("UITexturePath");
-        if(CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()))
-        {
-            NString UITexturePath = CIniFile::GetValue(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr());
-            UITexturePath.ParseToArray(m_UITextureSearchPath, TEXT(";"));
-        }
-        else
-        {
-            nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Failed to read texture search path from .ini file."));
-            /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
-                TEXT("Failed to read texture search path from .ini file.\nThe program will exit."));*/
-            exit(-1);
-        }
-
-        key_name = TEXT("ShaderPath");
-        if(CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()))
-        {
-            NString ShaderPath = CIniFile::GetValue(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr());
-            ShaderPath.ParseToArray(m_ShaderSearchPath, TEXT(";"));
-        }
-        else
-        {
-            nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Failed to read shader search path from .ini file."));
-            /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
-                TEXT("Failed to read shader search path from .ini file.\nThe program will exit."));*/
-            exit(-1);
-        }
-    }
-
-    m_ResourcePathLocation.AddSearchPath(TEXT(""));
-    m_ResourcePathLocation.AddSearchPath(TEXT("./"));
-    m_ResourcePathLocation.AddSearchPath(TEXT("../"));
-    m_ResourcePathLocation.AddSearchPath(TEXT("../../"));
-    m_ResourcePathLocation.AddSearchPath(TEXT("./Data"));
-    m_ResourcePathLocation.AddSearchPath(TEXT("../Data"));
-    m_ResourcePathLocation.AddSearchPath(TEXT("../../Data"));
-    m_ResourcePathLocation.AddSearchPath(TEXT("../../../Data"));
-
-    m_ResourcePathLocation.AddSearchPath(m_FontSearchPath);
-    m_ResourcePathLocation.AddSearchPath(m_ShaderSearchPath);
-    m_ResourcePathLocation.AddSearchPath(m_UITextureSearchPath);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -622,7 +522,7 @@ bool GLWindowImpl::CreateFromOpenGLWindow(Display *X11Display, Window X11Window,
 //---------------------------------------------------------------------------------------------------------
 bool GLWindowImpl::HasFrameBufferSupport()
 {
-    return m_DeviceFactory->SUPPORT_GL_EXT_FRAMEBUFFER_OBJECT() && m_BackupFrameBuffer;
+    return m_DeviceFactory->SUPPORT_GL_EXT_FRAMEBUFFER_OBJECT();
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -779,31 +679,6 @@ Rect GLWindowImpl::GetNCWindowGeometry()
     return Rect(attrib.x, attrib.y, attrib.width, attrib.height);
 }
 
-//---------------------------------------------------------------------------------------------------------
-//void GLWindowImpl::EnableBackupFrameBuffer()
-//{
-//    if(m_BackupFrameBuffer)
-//    {
-//        m_MainFBO->Enable();
-//    }
-//}
-//
-//void GLWindowImpl::DisableBackupFrameBuffer()
-//{
-//    if(m_BackupFrameBuffer)
-//    {
-//        m_MainFBO->Disable();
-//    }
-//}
-//
-//void GLWindowImpl::BackupFrameBufferBind()
-//{
-//    if(m_BackupFrameBuffer)
-//    {
-//        m_MainFBO->BindToTexUnit0();
-//    }
-//}
-//---------------------------------------------------------------------------------------------------------
 void GLWindowImpl::MakeGLContextCurrent()
 {
     if(!glXMakeCurrent(m_X11Display, m_X11Window, m_GLCtx))
@@ -811,7 +686,7 @@ void GLWindowImpl::MakeGLContextCurrent()
         DestroyOpenGLWindow();
     }
 }
-//---------------------------------------------------------------------------------------------------------
+
 void GLWindowImpl::SwapBuffer(bool glswap)
 {
     // There are a lot of mouse motion events coming from X11. The system processes one event at a time and sleeps

@@ -113,7 +113,6 @@ GLWindowImpl::GLWindowImpl()
 ,   m_ScreenBitDepth(32)
 ,   m_num_device_modes(0)
 ,   m_index_of_current_mode(-1)
-,   m_BackupFrameBuffer(true)
 ,   m_DeviceFactory(0)
 ,   m_GraphicsContext(0)
 // ,   m_GLEWContext(0)
@@ -516,7 +515,7 @@ bool GLWindowImpl::CreateFromOpenGLWindow(HWND WindowHandle, HDC WindowDCHandle,
 //---------------------------------------------------------------------------------------------------------
 bool GLWindowImpl::HasFrameBufferSupport()
 {
-    return m_DeviceFactory->SUPPORT_GL_EXT_FRAMEBUFFER_OBJECT() && m_BackupFrameBuffer;
+    return m_DeviceFactory->SUPPORT_GL_EXT_FRAMEBUFFER_OBJECT();
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -613,31 +612,6 @@ Rect GLWindowImpl::GetNCWindowGeometry()
     return geo;
 }
 
-//---------------------------------------------------------------------------------------------------------
-//void GLWindowImpl::EnableBackupFrameBuffer()
-//{
-//    if(m_BackupFrameBuffer)
-//    {
-//        m_MainFBO->Enable();
-//    }
-//}
-//
-//void GLWindowImpl::DisableBackupFrameBuffer()
-//{
-//    if(m_BackupFrameBuffer)
-//    {
-//        m_MainFBO->Disable();
-//    }
-//}
-//
-//void GLWindowImpl::BackupFrameBufferBind()
-//{
-//    if(m_BackupFrameBuffer)
-//    {
-//        m_MainFBO->BindToTexUnit0();
-//    }
-//}
-//---------------------------------------------------------------------------------------------------------
 void GLWindowImpl::MakeGLContextCurrent(bool b)
 {
     HGLRC glrc = m_GLRC;
@@ -653,7 +627,7 @@ void GLWindowImpl::MakeGLContextCurrent(bool b)
         MessageBox(NULL, TEXT("Can't Activate The GL Rendering Context."), TEXT("ERROR"), MB_OK|MB_ICONERROR);
     }
 }
-//---------------------------------------------------------------------------------------------------------
+
 void GLWindowImpl::SwapBuffer(bool glswap)
 {
     if(IsPauseThreadGraphicsRendering())

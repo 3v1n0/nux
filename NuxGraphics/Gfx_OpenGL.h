@@ -153,11 +153,6 @@ public:
     void EnterMaximizeWindow();
     void ExitMaximizeWindow();
 
-    bool m_BackupFrameBuffer;
-    void EnableBackupFrameBuffer();
-    void DisableBackupFrameBuffer();
-    void BackupFrameBufferBind();
-
     HWND GetWindowHandle() const {return m_hWnd;}
     HWND GetParentWindowHandle() const {return m_ParentWindow;}
     HDC GetWindowHDC() const { return m_hDC; }

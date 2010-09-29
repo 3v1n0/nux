@@ -35,8 +35,7 @@ const int CURSOR_OFFSET = 0;
 FontTexture::FontTexture(const TCHAR* FontFile, NUX_FILE_LINE_DECL)
 :   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
 {
-    m_FontSearchPath.AddSearchPath(GNuxGraphicsResources.GetFontSearchPath());
-    NString FontPath = m_FontSearchPath.GetFile(FontFile);
+    NString FontPath = GNuxGraphicsResources.FindResourceLocation(FontFile);
     
     std::filebuf fb;
     fb.open (FontPath.GetTCharPtr(), std::ios::in);
@@ -196,9 +195,9 @@ bool FontTexture::BMFontParseFNT( std::istream& Stream )
 //                 FontPath.AddSearchPath("../Fonts");
 
 #ifdef UNICODE
-                NString font_texture_file = m_FontSearchPath.GetFile(texture);
+                NString font_texture_file = GNuxGraphicsResources.FindResourceLocation(texture);
 #else
-                NString font_texture_file = m_FontSearchPath.GetFile(texture);
+                NString font_texture_file = GNuxGraphicsResources.FindResourceLocation(texture);
 #endif
 
                 NTexture2D* Texture = new NTexture2D;
