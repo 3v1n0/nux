@@ -113,6 +113,13 @@ namespace nux
 //             }
 //         }
 
+#ifdef NUX_OS_LINUX
+        printf ("WHAT THE FUCK");
+        m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR));
+        m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR"/Fonts"));
+        m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR"/Meshes"));
+        m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR"/UITextures"));
+#else
         m_ResourcePathLocation.AddSearchPath(TEXT(""));
         m_ResourcePathLocation.AddSearchPath(TEXT("./"));
         m_ResourcePathLocation.AddSearchPath(TEXT("../"));
@@ -129,6 +136,7 @@ namespace nux
         m_ResourcePathLocation.AddSearchPath(TEXT("../Data/UITextures"));
         m_ResourcePathLocation.AddSearchPath(TEXT("../../Data/UITextures"));
         m_ResourcePathLocation.AddSearchPath(TEXT("../../../Data/UITextures"));
+#endif
 
         m_ResourcePathLocation.AddSearchPath(m_FontSearchPath);
         m_ResourcePathLocation.AddSearchPath(m_ShaderSearchPath);
