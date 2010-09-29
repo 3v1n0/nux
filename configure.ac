@@ -1,5 +1,5 @@
 #
-# Stolen unashamedly from Clutter. Here's how this goes down:
+# Based on Clutter's autofoo. Here's how this goes down:
 #
 # api_version = The soname version "libnux-1.0.so"
 # version = The package version "1.2.2"
@@ -172,8 +172,19 @@ AC_ARG_ENABLE([maintainer-flags],
 MAINTAINER_CFLAGS=""
 AS_IF([test "x$enable_maintainer_flags" = "xyes" && test "x$GCC" = "xyes"],
       [
-         MAINTAINER_CFLAGS="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
-#         MAINTAINER_CFLAGS="-D_DEBUG"
+         MAINTAINER_CFLAGS+="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
+      ]
+)
+
+# this enables lots of useful debugging output in Nux
+AC_ARG_ENABLE([debug],
+              [AC_HELP_STRING([--enable-debug=@<:@no/yes@:>@],
+              [Enable Nux debugging @<:@default=no@:>@])],
+              [],
+              [enable_debug=no])
+AS_IF([test "x$enable_debug" = "xyes"],
+      [
+         MAINTAINER_CFLAGS+=" -D_DEBUG"
       ]
 )
 
@@ -194,17 +205,29 @@ AC_CONFIG_FILES([
   NuxGraphics/nux-graphics.pc
   Nux/Makefile
   Nux/nux.pc
+  examples/Makefile
   tests/Makefile
 ])
 
 AC_OUTPUT
 
+BOLD_GREEN="\033@<:@1;32m"
+GREEN="\033@<:@0;32m"
+BOLD_WHITE="\033@<:@1;37m"
+RESET="\033@<:@0m"
+
 echo ""
-echo " Nux $VERSION"
-echo " =========="
+echo -e "${BOLD_GREEN} Nux - $VERSION"
+echo -e "${RESET}"
+
+echo -e "${GREEN} • Global Options:${RESET}"
+echo -e "        Prefix            : ${BOLD_WHITE}${prefix}"
+
+echo -e "${RESET}"
+echo -e "${GREEN} • Compiler Options:${RESET}"
+echo -e "        Maintainer CFlags : ${BOLD_WHITE}${MAINTAINER_CFLAGS}${RESET}"
+echo -e "        Nux Debug         : ${BOLD_WHITE}${enable_debug}${RESET}"
 echo ""
-echo " Prefix                   : ${prefix}"
-echo ""
-echo " Maintainer CFlags        : ${MAINTAINER_CFLAGS}"
-echo ""
+
+echo -e "${RESET}"
 
