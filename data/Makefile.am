@@ -1,3 +1,5 @@
+# Please keep these in alphabetical order
+
 fontdir = $(pkgdatadir)/Fonts
 dist_font_DATA = \
   Fonts/Tahoma_size_8_bold_page_0.bmp \

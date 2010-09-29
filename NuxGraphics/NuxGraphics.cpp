@@ -118,6 +118,15 @@ namespace nux
         m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR"/Fonts"));
         m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR"/Meshes"));
         m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR"/UITextures"));
+
+#ifdef NUX_DEBUG
+        /* For examples */
+        m_ResourcePathLocation.AddSearchPath(TEXT("../data"));
+        m_ResourcePathLocation.AddSearchPath(TEXT("../data/Fonts"));
+        m_ResourcePathLocation.AddSearchPath(TEXT("../data/Meshes"));
+        m_ResourcePathLocation.AddSearchPath(TEXT("../data/UITextures"));
+#endif
+
 #else
         m_ResourcePathLocation.AddSearchPath(TEXT(""));
         m_ResourcePathLocation.AddSearchPath(TEXT("./"));
