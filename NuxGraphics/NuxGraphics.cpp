@@ -114,7 +114,6 @@ namespace nux
 //         }
 
 #ifdef NUX_OS_LINUX
-        printf ("WHAT THE FUCK");
         m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR));
         m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR"/Fonts"));
         m_ResourcePathLocation.AddSearchPath(TEXT(PKGDATADIR"/Meshes"));

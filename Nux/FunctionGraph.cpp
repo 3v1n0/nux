@@ -51,7 +51,7 @@ void FunctionGraph::InitializeWidgets()
     Texture = GetThreadGLDeviceFactory()->CreateTexture(256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
-    NString Path = NUX_FINDRESOURCELOCATION(TEXT("Data/UITextures/FunctionGraphBackground.tga"));
+    NString Path = NUX_FINDRESOURCELOCATION(TEXT("UITextures/FunctionGraphBackground.tga"));
     NTexture2D BackgroundTexture;
     BackgroundTexture.Update(Path.GetTCharPtr());
 

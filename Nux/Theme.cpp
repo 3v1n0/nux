@@ -210,7 +210,7 @@ void UXTheme::LoadPainterImages()
         exit(-1);*/
     }
 
-    NUITextureArchiver UITextureArchive(NUX_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("../../Data/UITextures/UIArchive.iar")));
+    NUITextureArchiver UITextureArchive(NUX_FIND_RESOURCE_LOCATION_NOFAIL(TEXT("UITextures/UIArchive.iar")));
 
     TiXmlDocument doc(painter_filename.GetTCharPtr());
     doc.LoadFile();

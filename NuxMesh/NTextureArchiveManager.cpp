@@ -106,10 +106,14 @@ bool LoadXMLUITextures(const char* XMLUIFile, std::vector<ArchiveTextureData*>& 
     FilePath m_FilePath;
     m_FilePath.AddSearchPath(TEXT("")); // for case where fully qualified path is given
     m_FilePath.AddSearchPath(TEXT("."));
+
+#ifdef NUX_OS_LINUX
+    m_FilePath.AddSearchPath(TEXT(PKGDATADIR"/UITextures"));
+#else
     m_FilePath.AddSearchPath(TEXT("./Data/UITextures"));
     m_FilePath.AddSearchPath(TEXT("../Data/UITextures"));
     m_FilePath.AddSearchPath(TEXT("../../Data/UITextures"));
-
+#endif
     std::string file_search = XMLUIFile;
     NString painter_filename = m_FilePath.GetFile(file_search.c_str());
     if (painter_filename == "")
@@ -226,7 +230,11 @@ bool CreateUITextureArchive(const TCHAR* XMLUIFile, const TCHAR* ArchiveName)
     unsigned int NumArchived = 0;
     for(int i = 0; i < numtexture; i++)
     {
+#ifdef NUX_OS_LINUX
+        NFileName Filename(TEXT(PKGDATADIR"/UITextures"));
+#else
         NFileName Filename(TEXT("../../Data/UITextures/"));
+#endif
         Filename += ArchTexArray[i]->SourceFile.GetTCharPtr();
         NBitmapData *TextureData = LoadImageFile(Filename.GetTCharPtr());
 

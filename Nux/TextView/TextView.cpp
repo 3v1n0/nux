@@ -60,7 +60,7 @@ TextView::TextView(HWND hwnd)
     b_RenderToVertexBuffer = false;
 
     m_ShaderProg = GetThreadGLDeviceFactory()->CreateShaderProgram();
-    m_ShaderProg->LoadIShaderFile(NUX_FINDRESOURCELOCATION(TEXT("Data/Shaders/TextViewShader.glsl")));
+    m_ShaderProg->LoadIShaderFile(NUX_FINDRESOURCELOCATION(TEXT("Shaders/TextViewShader.glsl")));
     m_ShaderProg->Link();
 
     m_CgColor               = m_ShaderProg->GetAttributeLocation(TEXT("iColor"));

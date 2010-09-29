@@ -11,6 +11,7 @@ libnux_mesh_@NUX_API_VERSION@_la_CPPFLAGS= \
   -DPREFIX=\""$(prefix)"\" \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
+  -DPKGDATADIR=\""$(pkgdatadir)"\" \
   -DG_LOG_DOMAIN=\"NuxMesh\" \
   $(GCC_FLAGS) \
   $(NUX_MESH_CFLAGS) \
