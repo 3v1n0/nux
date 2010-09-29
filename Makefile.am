@@ -1,8 +1,9 @@
 SUBDIRS = data NuxCore NuxImage NuxMesh NuxGraphics Nux examples tests
 
+include aminclude.am
 
-CLEANFILES =
+CLEANFILES = $(DX_CLEANFILES)
 DISTCLEANFILES =
-EXTRA_DIST = 
+EXTRA_DIST = $(DX_CONFIG)
 
 DISTCHECK_CONFIGURE_FLAGS = 

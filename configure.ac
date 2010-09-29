@@ -156,6 +156,21 @@ AC_SUBST(NUX_LIBS)
 
 dnl ===========================================================================
 
+# sets up doxygen
+DX_HTML_FEATURE(ON)
+DX_CHM_FEATURE(OFF)
+DX_CHI_FEATURE(OFF)
+DX_MAN_FEATURE(OFF)
+DX_RTF_FEATURE(OFF)
+DX_XML_FEATURE(OFF)
+DX_PDF_FEATURE(ON)
+DX_PS_FEATURE(OFF)
+DX_INIT_DOXYGEN(nux, doxygen.cfg, doc)
+
+AM_INIT_AUTOMAKE(nux, nux_api_version)
+
+dnl ===========================================================================
+
 if test "x$GCC" = "xyes"; then
   GCC_FLAGS="-g -Wall"
 fi
