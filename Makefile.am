@@ -1,6 +1,6 @@
 SUBDIRS = data NuxCore NuxImage NuxMesh NuxGraphics Nux examples tests
 
-include aminclude.am
+include doxygen-include.am
 
 CLEANFILES = $(DX_CLEANFILES)
 DISTCLEANFILES =

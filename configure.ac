@@ -82,6 +82,8 @@ NUX_LT_LDFLAGS="-version-info $NUX_LT_VERSION"
 AC_SUBST(NUX_LT_VERSION)
 AC_SUBST(NUX_LT_LDFLAGS)
 
+AC_CONFIG_MACRO_DIR([m4])
+
 dnl ===========================================================================
 
 # Checks for programs
