@@ -139,11 +139,6 @@ PKG_CHECK_MODULES(NUX_GRAPHICS,
 AC_SUBST(NUX_GRAPHICS_CFLAGS)
 AC_SUBST(NUX_GRAPHICS_LIBS)
 
-# Boost for NUXGraphics
-#AC_CHECK_HEADER([boost/shared_ptr.hpp],
-#                 [],
-#                 [AC_MSG_ERROR([Unable to locate required libboost headers])])
-
 PKG_CHECK_MODULES(NUX,
                   glib-2.0 >= 2.25.14
                   gthread-2.0
@@ -159,19 +154,28 @@ AC_SUBST(NUX_LIBS)
 dnl ===========================================================================
 
 # sets up doxygen
+DX_DOXYGEN_FEATURE(ON)
 DX_HTML_FEATURE(ON)
 DX_CHM_FEATURE(OFF)
 DX_CHI_FEATURE(OFF)
 DX_MAN_FEATURE(OFF)
 DX_RTF_FEATURE(OFF)
 DX_XML_FEATURE(OFF)
-DX_PDF_FEATURE(ON)
+DX_PDF_FEATURE(OFF)
 DX_PS_FEATURE(OFF)
 DX_INIT_DOXYGEN(nux, doxygen.cfg, doc)
 
-AM_INIT_AUTOMAKE(nux, nux_api_version)
+AC_ARG_ENABLE([documentation],
+              [AC_HELP_STRING([--enable-documentation=@<:@no/yes@:>@],
+              [Enable building of documentation @<:@default=no@:>@])],
+              [],
+              [enable_documentation=no])
+
+AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 
 dnl ===========================================================================
+
+AM_INIT_AUTOMAKE(nux, nux_api_version)
 
 if test "x$GCC" = "xyes"; then
   GCC_FLAGS="-g -Wall"
@@ -247,13 +251,17 @@ echo ""
 echo -e "${BOLD_GREEN} Nux - $VERSION"
 echo -e "${RESET}"
 
-echo -e "${GREEN} • Global Options:${RESET}"
+echo -e "${GREEN} • Global:${RESET}"
 echo -e "        Prefix            : ${BOLD_WHITE}${prefix}"
 
 echo -e "${RESET}"
 echo -e "${GREEN} • Compiler Options:${RESET}"
 echo -e "        Maintainer CFlags : ${BOLD_WHITE}${MAINTAINER_CFLAGS}${RESET}"
-echo -e "        Nux Debug         : ${BOLD_WHITE}${enable_debug}${RESET}"
+echo -e "        Debug Mode        : ${BOLD_WHITE}${enable_debug}${RESET}"
+
+echo -e "${RESET}"
+echo -e "${GREEN} • Documentation:${RESET}"
+echo -e "        Build Documenation: ${BOLD_WHITE}${enable_documentation}${RESET}"
 
 echo -e "${RESET}"
 echo -e "${GREEN} • Misc Options:${RESET}"
