@@ -850,10 +850,10 @@ void GLWindowImpl::DestroyOpenGLWindow()
 //---------------------------------------------------------------------------------------------------------
 static int mouse_move(XEvent xevent, IEvent* m_pEvent)
 {
-    m_pEvent->e_x = xevent.xmotion.x;
-    m_pEvent->e_y = xevent.xmotion.y;
-    m_pEvent->e_x_root = 0;
-    m_pEvent->e_y_root = 0;
+//     m_pEvent->e_x = xevent.xmotion.x;
+//     m_pEvent->e_y = xevent.xmotion.y;
+//     m_pEvent->e_x_root = 0;
+//     m_pEvent->e_y_root = 0;
 
     // Erase mouse event and mouse doubleclick events. Keep the mouse states.
     t_uint32 _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
@@ -871,10 +871,10 @@ static int mouse_move(XEvent xevent, IEvent* m_pEvent)
 
 static int mouse_press(XEvent xevent, IEvent* m_pEvent)
 {
-    m_pEvent->e_x = xevent.xbutton.x;
-    m_pEvent->e_y = xevent.xbutton.y;
-    m_pEvent->e_x_root = 0;
-    m_pEvent->e_y_root = 0;
+//     m_pEvent->e_x = xevent.xbutton.x;
+//     m_pEvent->e_y = xevent.xbutton.y;
+//     m_pEvent->e_x_root = 0;
+//     m_pEvent->e_y_root = 0;
 
     // Erase mouse event and mouse double-click events. Keep the mouse states.
     ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
@@ -911,10 +911,10 @@ static int mouse_press(XEvent xevent, IEvent* m_pEvent)
 
 static int mouse_release(XEvent xevent, IEvent* m_pEvent)
 {
-    m_pEvent->e_x = xevent.xbutton.x;
-    m_pEvent->e_y = xevent.xbutton.y;
-    m_pEvent->e_x_root = 0;
-    m_pEvent->e_y_root = 0;
+//     m_pEvent->e_x = xevent.xbutton.x;
+//     m_pEvent->e_y = xevent.xbutton.y;
+//     m_pEvent->e_x_root = 0;
+//     m_pEvent->e_y_root = 0;
 
     // Erase mouse event and mouse double-click events. Keep the mouse states.
     ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
@@ -1085,7 +1085,7 @@ void GLWindowImpl::ProcessForeignX11Event(XEvent* xevent, IEvent* nux_event)
     bool bProcessEvent = true;
 
     // Process event matching this window
-    if((NUX_REINTERPRET_CAST(XAnyEvent*, xevent))->window == m_X11Window)
+    if(true /*(NUX_REINTERPRET_CAST(XAnyEvent*, xevent))->window == m_X11Window*/)
     {
         // Detect auto repeat keys. X11 sends a combination of KeyRelease/KeyPress (at the same time) when a key auto repeats.
         // Here, we make sure we process only the keyRelease when the key is effectively released.
@@ -1149,8 +1149,39 @@ bool GLWindowImpl::HasXPendingEvent() const
     return XPending(m_X11Display) ? true : false;
 }
 
+void GLWindowImpl::ComputeWindowPositionOffset(Window TheMainWindow, Window InputEventWindow, int& x_offset, int& y_offset)
+{
+  if(TheMainWindow == InputEventWindow)
+  {
+      x_offset = y_offset = 0;
+      return;
+  }
+  
+  XWindowAttributes window_attributes_return;
+  int input_window_x;
+  int input_window_y;
+  int main_window_x;
+  int main_window_y;
+  
+  XGetWindowAttributes(m_X11Display, InputEventWindow, &window_attributes_return);
+  input_window_x = window_attributes_return.x;
+  input_window_y = window_attributes_return.y;
+  
+  XGetWindowAttributes(m_X11Display, TheMainWindow, &window_attributes_return);
+  main_window_x = window_attributes_return.x;
+  main_window_y = window_attributes_return.y;
+
+  x_offset = input_window_x - main_window_x;
+  y_offset = input_window_y - main_window_y;
+}
+
 void GLWindowImpl::ProcessXEvent(XEvent xevent)
 {
+    int x_offset = 0;
+    int y_offset = 0;
+
+    ComputeWindowPositionOffset(m_X11Window, xevent.xany.window, x_offset, y_offset);
+    
     switch (xevent.type)
     {
         case DestroyNotify:
@@ -1257,6 +1288,10 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
         case ButtonPress:
             {
+                m_pEvent->e_x = xevent.xbutton.x + x_offset;
+                m_pEvent->e_y = xevent.xbutton.y + y_offset;
+                m_pEvent->e_x_root = 0;
+                m_pEvent->e_y_root = 0;
                 mouse_press(xevent, m_pEvent);
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: ButtonPress event."));
                 break;
@@ -1264,6 +1299,10 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
         case ButtonRelease:
             {
+                m_pEvent->e_x = xevent.xbutton.x + x_offset;
+                m_pEvent->e_y = xevent.xbutton.y + y_offset;
+                m_pEvent->e_x_root = 0;
+                m_pEvent->e_y_root = 0;
                 mouse_release(xevent, m_pEvent);
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: ButtonRelease event."));
                 break;
@@ -1271,6 +1310,10 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
 
         case MotionNotify:
             {
+                m_pEvent->e_x = xevent.xbutton.x + x_offset;
+                m_pEvent->e_y = xevent.xbutton.y + y_offset;
+                m_pEvent->e_x_root = 0;
+                m_pEvent->e_y_root = 0;
                 mouse_move(xevent, m_pEvent);
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: MotionNotify event."));
                 break;
@@ -1280,8 +1323,8 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
         case LeaveNotify:
             {
                 m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
-                m_pEvent->e_x = xevent.xcrossing.x;
-                m_pEvent->e_y = xevent.xcrossing.y;
+                m_pEvent->e_x = xevent.xcrossing.x + x_offset;
+                m_pEvent->e_y = xevent.xcrossing.y + y_offset;
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: LeaveNotify event."));
                 break;
             }
@@ -1289,8 +1332,8 @@ void GLWindowImpl::ProcessXEvent(XEvent xevent)
         case EnterNotify:
             {
                 m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
-                m_pEvent->e_x = xevent.xcrossing.x;
-                m_pEvent->e_y = xevent.xcrossing.y;
+                m_pEvent->e_x = xevent.xcrossing.x + x_offset;
+                m_pEvent->e_y = xevent.xcrossing.y + y_offset;
                 //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: EnterNotify event."));
                 break;
             }

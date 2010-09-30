@@ -225,7 +225,8 @@ public:
 
     void ProcessForeignX11Event(XEvent* xevent, IEvent* nux_event);
     void ProcessXEvent(XEvent xevent);
-
+    void ComputeWindowPositionOffset(Window TheMainWindow, Window InputEventWindow, int& x, int& y);
+    
 private:
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
