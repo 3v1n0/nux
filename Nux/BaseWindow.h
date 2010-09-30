@@ -49,9 +49,9 @@ class NTexture2D;
 
     @param int          The width of the window.
     @param int          The height of the window.
-    @param Geometry&    The the tentative size of the window.
+    @param Geometry&    The tentative size of the window.
 */
-typedef void (*ConfigureNotifyCallback)(int, int, Geometry&);
+typedef void (*ConfigureNotifyCallback)(int, int, Geometry&, void*);
 
 class BaseWindow: public ActiveInterfaceObject
 {
@@ -97,17 +97,24 @@ public:
     bool IsModal() const;
     bool IsVisible() const;
 
-    virtual void setGeometry(const Geometry& geo);
-    void SetConfigureNotifyCallback(ConfigureNotifyCallback Callback) {m_ConfigureNotifyCallback = Callback;}
+    virtual void SetGeometry(const Geometry& geo);
+
+    /*!
+        Call this function to set a callback function that is called when this object is need to be resized or re-positioned.
+        @param Callback Function to be called to set the this object size and position.
+        @param Data     The callback data.
+    */
+    void SetConfigureNotifyCallback(ConfigureNotifyCallback Callback, void* Data);
 
     void SetBackgroundLayer(AbstractPaintLayer* layer);
     void SetBackgroundColor(const Color& color);
     
-    void SetBlurredBackground(bool b) {m_BluredBackground = b;}
-    bool UseBlurredBackground() {return m_BluredBackground;}
+    void SetBlurredBackground(bool b) {m_blured_background = b;}
+    bool UseBlurredBackground() {return m_blured_background;}
 
 protected:
-    ConfigureNotifyCallback m_ConfigureNotifyCallback;
+    ConfigureNotifyCallback m_configure_notify_callback;    //!< Callback function to set the window position and size.
+    void* m_configure_notify_callback_data;     //!< Callback data for ConfigureNotifyCallback.
 
     sigc::signal< bool, unsigned int, unsigned int, Geometry& > sigRequestConfigure;
 
@@ -139,10 +146,10 @@ protected:
     void SetTopBorder(int border);
     int m_TopBorder;
     int m_Border;
-    Color m_BackgroundColor;
+    Color m_background_color;   //!< Background color of the floating area.
     AbstractPaintLayer* m_PaintLayer;
 
-    bool m_BluredBackground;
+    bool m_blured_background;
 private:
     bool m_bSizeMatchLayout;
     bool m_bIsVisible;

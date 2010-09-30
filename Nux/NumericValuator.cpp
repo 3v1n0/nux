@@ -50,12 +50,12 @@ void NumericValuator::InitializeWidgets()
     m_EditLine->SetText(inlPrintf(TEXT("%d"), m_DoubleValidator.GetMinimum()));
 
     m_EditLine->SetMinimumSize(2*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    m_EditLine->setGeometry(Geometry(0, 0, 2*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
+    m_EditLine->SetGeometry(Geometry(0, 0, 2*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
     m_SpinnerDownBtn->SetMinimumSize(BTN_WIDTH, BTN_HEIGHT);
-    m_SpinnerDownBtn->setGeometry(Geometry(0, 0, BTN_WIDTH, BTN_HEIGHT));
+    m_SpinnerDownBtn->SetGeometry(Geometry(0, 0, BTN_WIDTH, BTN_HEIGHT));
     m_SpinnerUpBtn->SetMinimumSize(BTN_WIDTH, BTN_HEIGHT);
-    m_SpinnerUpBtn->setGeometry(Geometry(0, 0, BTN_WIDTH, BTN_HEIGHT));
+    m_SpinnerUpBtn->SetGeometry(Geometry(0, 0, BTN_WIDTH, BTN_HEIGHT));
     
     hlayout->AddActiveInterfaceObject(m_SpinnerDownBtn, 0);
     hlayout->AddActiveInterfaceObject(m_EditLine, 1);

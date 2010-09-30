@@ -35,7 +35,7 @@ public:
     static const bool Unchecked = false;
 
 public:
-    Button(const TCHAR* Caption = TEXT(""), bool Checkable = false, bool m_State = Unchecked);
+    Button(const TCHAR* Caption = TEXT(""), bool Checkable = false, bool m_State = Unchecked, NUX_FILE_LINE_PROTO);
     ~Button();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

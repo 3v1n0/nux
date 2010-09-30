@@ -38,9 +38,9 @@ EditTextBox::EditTextBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
     m_BlinkTimerFunctor     = 0;
     m_WriteAlpha            = true;
 
-    setGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    SetGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    setGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    SetGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
     OnMouseDown.connect(sigc::mem_fun(this, &EditTextBox::RecvMouseDown));
     OnMouseDrag.connect(sigc::mem_fun(this, &EditTextBox::RecvMouseDrag));
     OnMouseUp.connect(sigc::mem_fun(this, &EditTextBox::RecvMouseUp));

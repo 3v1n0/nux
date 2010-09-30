@@ -87,7 +87,7 @@ bool Layout::IsEmpty() const
     return (m_LayoutElementList.size() == 0);
 }
 
-// If(stretchfactor == 0): the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+// If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
 // and the children will take their natural size by expending WidgetLayout.
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 void Layout::AddLayout(smptr(Layout) layout, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)

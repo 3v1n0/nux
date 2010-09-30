@@ -26,10 +26,12 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-Button::Button(const TCHAR* Caption, bool Checkable, bool State)
-:   m_hlayout(0)
-,   m_Checkable(false)
+Button::Button(const TCHAR* Caption, bool Checkable, bool State, NUX_FILE_LINE_DECL)
+:   AbstractButton(Caption, NUX_FILE_LINE_PARAM)
 {
+    m_hlayout = smptr(HLayout)(0);
+    m_Checkable = false;
+
     InitializeLayout();
     InitializeWidgets();
     SetCheckable(Checkable, State, false);

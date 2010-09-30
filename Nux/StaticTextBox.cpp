@@ -44,7 +44,7 @@ StaticTextBox::StaticTextBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
     // If the text is null or empty, then the default minimum widtth set above remains.
     SetText(Caption);
 
-    setGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    SetGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     // This widget does not use a layout!
     m_Background = 0;

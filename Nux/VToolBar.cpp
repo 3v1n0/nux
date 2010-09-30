@@ -51,7 +51,7 @@ void VToolBar::InitializeWidgets()
     m_vlayout->SetContentStacking(eStackTop);
     SetMinimumSize(32, 32);
     SetMaximumWidth(32);
-    setGeometry(Geometry(0, 0, 20, 200));
+    SetGeometry(Geometry(0, 0, 20, 200));
     SetCompositionLayout(m_vlayout);
 }
 
@@ -118,7 +118,7 @@ void VToolBar::AddToolButton(smptr(ToolButton) toolbutton)
         return;
 
     m_vlayout->AddActiveInterfaceObject(toolbutton, 0, eCenter, eFix);
-    // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+    // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
     ComputeChildLayout();
@@ -134,7 +134,7 @@ void VToolBar::AddAction(smptr(ActionItem) action)
     tool_button->SetAction(action);
 
     m_vlayout->AddActiveInterfaceObject(tool_button, 0, eCenter, eFix);
-    // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+    // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
     ComputeChildLayout();

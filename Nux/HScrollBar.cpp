@@ -76,10 +76,10 @@ HScrollBar::HScrollBar(NUX_FILE_LINE_DECL)
     // Set Geometry
     m_RightThumb->SetMinimumSize(HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
     m_RightThumb->SetMaximumSize(HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
-    m_RightThumb->setGeometry(Geometry(0, 0, HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT));
+    m_RightThumb->SetGeometry(Geometry(0, 0, HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT));
     m_LeftThumb->SetMinimumSize(HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
     m_LeftThumb->SetMaximumSize(HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
-    m_LeftThumb->setGeometry(Geometry(0, 0, HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT));
+    m_LeftThumb->SetGeometry(Geometry(0, 0, HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT));
 
 
     hlayout->AddActiveInterfaceObject(m_LeftThumb, 0, eCenter, eFix);

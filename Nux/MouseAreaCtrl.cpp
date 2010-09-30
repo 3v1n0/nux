@@ -39,7 +39,7 @@ MouseAreaCtrl::MouseAreaCtrl(NUX_FILE_LINE_DECL)
 
     // Set Geometry
     m_Area->SetMinimumSize(100, 100);
-    m_Area->setGeometry(Geometry(0, 0, 200, 400));
+    m_Area->SetGeometry(Geometry(0, 0, 200, 400));
 
     m_vlayout->AddActiveInterfaceObject(m_Area, 1);
     m_vlayout->SetVerticalExternalMargin(6);

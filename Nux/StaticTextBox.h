@@ -87,9 +87,9 @@ protected:
     bool m_WriteAlpha;
 
 public:
-    virtual void setGeometry(const Geometry& geo)
+    virtual void SetGeometry(const Geometry& geo)
     {
-        BaseObject::setGeometry(geo);
+        BaseObject::SetGeometry(geo);
         ComputeChildLayout();
     }
 };

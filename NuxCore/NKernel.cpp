@@ -75,7 +75,7 @@ void LogOutputAssertMessage( const ANSICHAR* File, int Line, const TCHAR* Format
     GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr) - 1, Format );
     // Logged to a file... Put "\r\n" at the end of each line.
     if(NOutputDeviceRedirector::Ready())
-        GLogDevice.LogFunction( TEXT("Assertion failed: %s\r\n    [File:%s]\r\n    [Line: %i]\r\n"), (const TCHAR*)TempStr, ANSI_TO_TCHAR(File), Line);
+        GLogDevice.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("Assertion failed: %s\r\n    [File:%s]\r\n    [Line: %i]\r\n"), (const TCHAR*)TempStr, ANSI_TO_TCHAR(File), Line);
 }
 
 void LogOutputErrorMessage( const ANSICHAR* File, int Line, const TCHAR* Format/*=TEXT("")*/, ... )
@@ -83,7 +83,7 @@ void LogOutputErrorMessage( const ANSICHAR* File, int Line, const TCHAR* Format/
     TCHAR TempStr[4096];
     GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr) - 1, Format );
     if(NOutputDeviceRedirector::Ready())
-        GLogDevice.LogFunction( TEXT("Error: %s\r\n    [File:%s]\r\n    [Line: %d]\r\n"), (const TCHAR*)TempStr, ANSI_TO_TCHAR(File), Line);
+        GLogDevice.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("Error: %s\r\n    [File:%s]\r\n    [Line: %d]\r\n"), (const TCHAR*)TempStr, ANSI_TO_TCHAR(File), Line);
 }
 
 void LogOutputDebugMessage(const TCHAR* Format/*=TEXT("")*/, ... )
@@ -91,7 +91,7 @@ void LogOutputDebugMessage(const TCHAR* Format/*=TEXT("")*/, ... )
     TCHAR TempStr[4096];
     GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr) - 1, Format );
     if(NOutputDeviceRedirector::Ready())
-        GLogDevice.LogFunction(TempStr);
+        GLogDevice.LogFunction(NUX_MSG_SEVERITY_NONE, TempStr);
 }
 
 bool inlOutputRedirectorReady()

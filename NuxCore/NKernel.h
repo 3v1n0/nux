@@ -187,6 +187,15 @@ t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHA
 //////////////////////////////////////////////////////////////////////////
 //	Check macros for assertions.                                        //
 //////////////////////////////////////////////////////////////////////////
+typedef enum
+{
+    NUX_MSG_SEVERITY_CRITICAL   = 0,
+    NUX_MSG_SEVERITY_ALERT      = 1,
+    NUX_MSG_SEVERITY_WARNING    = 2,
+    NUX_MSG_SEVERITY_INFO       = 3,
+    NUX_MSG_SEVERITY_NONE       = 4,
+
+} MessageSeverity;
 
 #ifdef NUX_ENABLE_ASSERT_MACROS
     #define nuxAssert(expr)             { if(!(expr)) nuxFailAssert(TEXT(#expr)); }

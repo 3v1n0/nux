@@ -36,8 +36,6 @@ BaseObject::BaseObject(NUX_FILE_LINE_DECL)
 ,   m_IsSizeDirty(true)
 ,   m_ParentObject(0)
 ,   m_Application(0)
-,   m_SizePolicy(eSizeResizeable)
-,   m_PositionPolicy(ePositionLeft)
 ,   m_Geometry(0,0,DEFAULT_WIDGET_WIDTH,DEFAULT_WIDGET_HEIGHT)
 ,   m_minSize(BASEOBJECT_MINWIDTH, BASEOBJECT_MINHEIGHT)
 ,   m_maxSize(BASEOBJECT_MAXWIDTH, BASEOBJECT_MAXHEIGHT)
@@ -275,7 +273,7 @@ smptr(BaseObject) BaseObject::GetParentObject()
     return m_ParentObject;
 }
 
-void BaseObject::setGeometry(int x, int y, int w, int h) 
+void BaseObject::SetGeometry(int x, int y, int w, int h) 
 {
     m_Geometry.SetX(x);
     m_Geometry.SetY(y);
@@ -285,7 +283,7 @@ void BaseObject::setGeometry(int x, int y, int w, int h)
     InitiateResizeLayout();
 }
 
-void BaseObject::setGeometry(const Geometry& geo) 
+void BaseObject::SetGeometry(const Geometry& geo) 
 {
     SetBaseX(geo.x);
     SetBaseY(geo.y);

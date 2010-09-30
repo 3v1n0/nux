@@ -147,8 +147,8 @@ void TreeControl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned
                             m_DrawBackgroundOnPreviousGeometry = true;
                             m_PreviousGeometry = GetGeometry();
                             // Initiate layout re computation from the top. This should be done with InitiateResizeLayout();
-                            // but it is a private member of BaseObject. We can do it with a call to setGeometry(GetGeometry());
-                            setGeometry(GetGeometry());
+                            // but it is a private member of BaseObject. We can do it with a call to SetGeometry(GetGeometry());
+                            SetGeometry(GetGeometry());
                         }
                     }
                     else
@@ -246,8 +246,8 @@ void TreeControl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, u
             //                    m_DrawBackgroundOnPreviousGeometry = true;
             //                    m_PreviousGeometry = GetGeometry();
             //                    // Initiate layout re computation from the top. This should be done with InitiateResizeLayout();
-            //                    // but it is a private member of BaseObject. We can do it with a call to setGeometry(GetGeometry());
-            //                    setGeometry(GetGeometry());
+            //                    // but it is a private member of BaseObject. We can do it with a call to SetGeometry(GetGeometry());
+            //                    SetGeometry(GetGeometry());
             //                }
             //            }
             //            else

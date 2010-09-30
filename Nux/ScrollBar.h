@@ -42,7 +42,7 @@ public:
     void set_visible() {m_visible = 1;}
     void resize(int x, int y, int w, int h)
     {
-        setGeometry(Geometry(x, y, w, h));
+        SetGeometry(Geometry(x, y, w, h));
     }
 
     virtual int GetBaseWidth() = 0;

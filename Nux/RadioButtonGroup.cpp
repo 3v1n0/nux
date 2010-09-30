@@ -28,9 +28,8 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 RadioButtonGroup::RadioButtonGroup(NUX_FILE_LINE_DECL)
 :   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
-,   m_ActiveRadioButtonIndex(0)
 {
-
+    m_ActiveRadioButtonIndex = 0;
 }
 
 RadioButtonGroup::~RadioButtonGroup()

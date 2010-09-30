@@ -259,7 +259,7 @@ void TabView::PreLayoutManagement()
         Geometry layout_geo = GetGeometry();
         layout_geo.OffsetPosition(TAB_X_BORDER, TAB_HEIGHT);
         layout_geo.OffsetSize(-2*TAB_X_BORDER, -(TAB_HEIGHT) - TAB_Y_BORDER);
-        m_CompositionLayout->setGeometry(layout_geo);
+        m_CompositionLayout->SetGeometry(layout_geo);
     }
 }
 
@@ -273,7 +273,7 @@ long TabView::PostLayoutManagement(long LayoutResult)
         Geometry base = m_CompositionLayout->GetGeometry();
         base.OffsetPosition(-TAB_X_BORDER, -TAB_HEIGHT);
         base.OffsetSize(2*TAB_X_BORDER, TAB_HEIGHT + TAB_Y_BORDER);
-        BaseObject::setGeometry(base);
+        BaseObject::SetGeometry(base);
     }
     Geometry base = GetGeometry();
 
@@ -295,7 +295,7 @@ long TabView::PostLayoutManagement(long LayoutResult)
 
     if(m_ClientLayout.IsValid())
     {
-//        m_ClientLayout->setGeometry(m_CompositionLayout->GetGeometry());
+//        m_ClientLayout->SetGeometry(m_CompositionLayout->GetGeometry());
 //        GetGraphicsThread()->ComputeElementLayout(m_ClientLayout);
         m_ClientLayout->NeedRedraw();
     }
@@ -328,7 +328,7 @@ void TabView::AddTab(const char* tab_name, smptr(Layout) tab_layout)
     {
         m_FocusTabIndex = 0;
         m_ClientLayout = Tab->tab_layout;
-        //m_ClientLayout->setGeometry(m_CompositionLayout->GetGeometry());
+        //m_ClientLayout->SetGeometry(m_CompositionLayout->GetGeometry());
         SetCompositionLayout(m_ClientLayout);
         GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true));
     }
@@ -423,7 +423,7 @@ void TabView::RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigne
     {
         SetCompositionLayout(m_ClientLayout);
     }
-    //m_ClientLayout->setGeometry(m_CompositionLayout->GetGeometry());
+    //m_ClientLayout->SetGeometry(m_CompositionLayout->GetGeometry());
 
     m_PreviousGeometry = GetGeometry();
 

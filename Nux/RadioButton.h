@@ -34,7 +34,7 @@ class HLayout;
 class RadioButton: public AbstractButton
 {
 public:
-    RadioButton(const TCHAR* Caption = 0, bool state = false);
+    RadioButton(const TCHAR* Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
 
     ~RadioButton();
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

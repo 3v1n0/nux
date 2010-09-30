@@ -62,7 +62,7 @@ MenuBar::MenuBar(NUX_FILE_LINE_DECL)
 
     SetMinimumSize(24, 24);
     SetMaximumSize(BASEOBJECT_MAXWIDTH, 24);
-    setGeometry(Geometry(0, 0, 200, 20));
+    SetGeometry(Geometry(0, 0, 200, 20));
 
     m_hlayout->SetHorizontalInternalMargin(4);
     m_hlayout->SetVerticalExternalMargin(0);

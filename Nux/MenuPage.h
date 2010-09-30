@@ -234,7 +234,7 @@ public:
     ///////////////////////////////////////////////////////
 
     virtual long ComputeChildLayout();
-    virtual void setGeometry(const Geometry& geo);
+    virtual void SetGeometry(const Geometry& geo);
 
     friend class MenuBar;
 };

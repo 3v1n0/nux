@@ -79,10 +79,10 @@ VScrollBar::VScrollBar(NUX_FILE_LINE_DECL)
     // Set Geometry
     m_BottomThumb->SetMinimumSize(VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
     m_BottomThumb->SetMaximumSize(VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
-    m_BottomThumb->setGeometry(Geometry(0, 0, VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT));
+    m_BottomThumb->SetGeometry(Geometry(0, 0, VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT));
     m_TopThumb->SetMinimumSize(VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
     m_TopThumb->SetMaximumSize(VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
-    m_TopThumb->setGeometry(Geometry(0, 0, VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT));
+    m_TopThumb->SetGeometry(Geometry(0, 0, VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT));
 
     vlayout->AddActiveInterfaceObject(m_TopThumb, 0, eCenter, eFix);
     vlayout->AddActiveInterfaceObject(m_Track, 1, eCenter, eFull);

@@ -27,10 +27,12 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-CheckBox::CheckBox(const TCHAR* Caption, bool state)
-:   m_hlayout(0)
-,   m_TextArea(0)
+CheckBox::CheckBox(const TCHAR* Caption, bool state, NUX_FILE_LINE_DECL)
+:   AbstractButton(Caption, NUX_FILE_LINE_PARAM)
 {
+    m_hlayout = smptr(HLayout)(0);
+    m_TextArea = smptr(CoreArea)(0);
+
     InitializeLayout();
     InitializeWidgets();
     SetState(state);
@@ -72,8 +74,7 @@ void CheckBox::InitializeWidgets()
 
     // Set Geometry
     m_CheckArea->SetMinimumSize(14, 14);
-    m_CheckArea->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
-    m_CheckArea->SetSizePolicy(eSizeFixed);
+    m_CheckArea->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     m_TextArea->SetMinimumSize(14, 14);
 

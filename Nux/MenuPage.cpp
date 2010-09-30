@@ -192,7 +192,7 @@ MenuPage::MenuPage(const TCHAR* title, NUX_FILE_LINE_DECL)
     OnCaptureMouseDownAnyWhereElse.connect(sigc::mem_fun(this, &MenuPage::Terminate));
 
     // Set Geometry
-    setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     // Set layout
 
@@ -890,7 +890,7 @@ void MenuPage::StartMenu(int MenuXPosition, int MenuYPosition, int x, int y, boo
         base.OffsetPosition(0, -MenuTop);
     }
 
-    setGeometry(base);
+    SetGeometry(base);
 
     SetActive(true);
 
@@ -1008,7 +1008,7 @@ long MenuPage::ComputeChildLayout()
     return ActiveInterfaceObject::ComputeChildLayout();
 }
 
-void MenuPage::setGeometry(const Geometry& geo)
+void MenuPage::SetGeometry(const Geometry& geo)
 {
     // The MenuPage widget cannot be resized by the client. The menu widget controls its own size.
     

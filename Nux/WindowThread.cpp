@@ -296,7 +296,7 @@ void WindowThread::SetLayout(smptr(Layout) layout)
     if(m_AppLayout.IsValid())
     {
         SetComputingLayout(true);
-        m_AppLayout->setGeometry(0, 0, w, h);
+        m_AppLayout->SetGeometry(0, 0, w, h);
         m_AppLayout->ComputeLayout2();
         m_AppLayout->ComputePosition2(0, 0);
         SetComputingLayout(false);
@@ -313,7 +313,7 @@ void WindowThread::ReconfigureLayout()
     if(m_AppLayout.IsValid())
     {
         SetComputingLayout(true);
-        m_AppLayout->setGeometry(0, 0, w, h);
+        m_AppLayout->SetGeometry(0, 0, w, h);
         m_AppLayout->ComputeLayout2();
         m_AppLayout->ComputePosition2(0, 0);
         SetComputingLayout(false);

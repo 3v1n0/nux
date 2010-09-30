@@ -79,7 +79,7 @@ private:
 
 public:
     // Inherited from BaseObject
-    virtual void setGeometry(const Geometry& geo);
+    virtual void SetGeometry(const Geometry& geo);
 
     /////////////////
     //  EMITERS    //

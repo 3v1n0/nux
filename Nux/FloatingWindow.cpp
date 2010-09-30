@@ -64,11 +64,11 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
     m_TitleBarLayout = smptr(HLayout)(new HLayout(NUX_TRACKER_LOCATION));
 
     m_MinimizeButton->SetMinMaxSize(20, 20);
-    m_MinimizeButton->setGeometry(0, 0, 20, 20);
+    m_MinimizeButton->SetGeometry(0, 0, 20, 20);
     m_CloseButton->SetMinimumSize(20, 20);
-    m_CloseButton->setGeometry(0, 0, 20, 20);
+    m_CloseButton->SetGeometry(0, 0, 20, 20);
     m_SizeGrip->SetMinimumSize(SizeGripWidth, SizeGripHeight);
-    m_SizeGrip->setGeometry(Geometry(0, 0, SizeGripWidth, SizeGripHeight));
+    m_SizeGrip->SetGeometry(Geometry(0, 0, SizeGripWidth, SizeGripHeight));
 
     m_TitleBar->OnMouseDown.connect( sigc::mem_fun(this, &FloatingWindow::RecvTitleBarMouseDown));
     m_TitleBar->OnMouseDrag.connect( sigc::mem_fun(this, &FloatingWindow::RecvTitleBarMouseDrag));
@@ -90,7 +90,7 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
     SetBorder(2);
 
     SetMinimumSize(32, 32);
-    setGeometry(Geometry(100, 100, 320, 200));
+    SetGeometry(Geometry(100, 100, 320, 200));
 
     NString Path = NUX_FINDRESOURCELOCATION(TEXT("UITextures/AddButton.png"));
     MinimizeIcon.Update(Path.GetTCharPtr());
@@ -190,7 +190,7 @@ void FloatingWindow::Draw(GraphicsContext& GfxContext, bool force_draw)
     base.SetY(0);
     GfxContext.PushClippingRectangle(base);
     
-    gPainter.PushDrawShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, Color(m_BackgroundColor), eCornerTopLeft|eCornerTopRight, true);
+    gPainter.PushDrawShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, Color(m_background_color), eCornerTopLeft|eCornerTopRight, true);
     if(HasTitleBar())
     {
         gPainter.PaintShapeCorner(GfxContext, Geometry(m_TitleBar->GetBaseX(), m_TitleBar->GetBaseY(),
@@ -212,7 +212,7 @@ void FloatingWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     base.SetX(0);
     base.SetY(0);
     
-    gPainter.PushShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, Color(m_BackgroundColor), eCornerTopLeft|eCornerTopRight, true);
+    gPainter.PushShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, Color(m_background_color), eCornerTopLeft|eCornerTopRight, true);
     if(m_layout.IsValid())
     {
         GfxContext.PushClippingRectangle(base);
@@ -286,7 +286,7 @@ void FloatingWindow::OnSizeGrigMouseDrag(int x, int y, int dx, int dy, unsigned 
 
     geo.OffsetSize(ddx, ddy);
 
-    setGeometry(geo);
+    SetGeometry(geo);
 
     NeedRedraw();
 }
@@ -303,11 +303,11 @@ void FloatingWindow::RecvTitleBarMouseDrag(int x, int y, int dx, int dy, unsigne
     geo.OffsetPosition(dx, dy);
 
     // Set the Window Size and Position
-    BaseObject::setGeometry(geo);
+    BaseObject::SetGeometry(geo);
     // No need to compute the window layout elements [LayoutWindowElements()]. They haven't changed.
     // No need to compute the layout [ComputeChildLayout()]. It hasn't changed.
 
-    m_TitleBar->setGeometry(0, 0, geo.GetWidth(), TitleBarHeight);
+    m_TitleBar->SetGeometry(0, 0, geo.GetWidth(), TitleBarHeight);
 
     NeedRedraw();
 }
@@ -322,9 +322,9 @@ void FloatingWindow::RecvCloseButtonClick(int x, int y, unsigned long button_fla
 void FloatingWindow::PreLayoutManagement()
 {
     Geometry geo = GetGeometry();
-    if(m_ConfigureNotifyCallback)
+    if(m_configure_notify_callback)
     {
-        (*m_ConfigureNotifyCallback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo);
+        (*m_configure_notify_callback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
         if(geo.IsNull())
         {
             nuxDebugMsg(TEXT("[FloatingWindow::PreLayoutManagement] Received an invalid Geometry."));
@@ -332,7 +332,7 @@ void FloatingWindow::PreLayoutManagement()
         }
         else
         {
-            BaseObject::setGeometry(geo);
+            BaseObject::SetGeometry(geo);
             // Get the geometry adjusted with respect to min and max dimension of this area.
             geo = GetGeometry();
         }
@@ -341,18 +341,18 @@ void FloatingWindow::PreLayoutManagement()
     // Drag Bar Geometry
     if(HasTitleBar())
     {
-        m_TitleBar->setGeometry(0, 0, geo.GetWidth(), TitleBarHeight);
+        m_TitleBar->SetGeometry(0, 0, geo.GetWidth(), TitleBarHeight);
     }
     // Size grip Geometry
     Geometry SizeGripGeometry(geo.GetWidth() - SizeGripWidth, geo.GetHeight() - SizeGripHeight,
         SizeGripWidth, SizeGripHeight);
-    m_SizeGrip->setGeometry(SizeGripGeometry);
+    m_SizeGrip->SetGeometry(SizeGripGeometry);
 
     if(m_layout.IsValid())
     {
         Geometry layout_geo = Geometry(m_Border, m_TopBorder,
             geo.GetWidth() - 2*m_Border, geo.GetHeight() - m_Border - m_TopBorder);
-        m_layout->setGeometry(layout_geo);
+        m_layout->SetGeometry(layout_geo);
     }
 }
 
@@ -369,21 +369,21 @@ long FloatingWindow::PostLayoutManagement(long LayoutResult)
             layout_geometry.GetWidth() + 2*m_Border,
             layout_geometry.GetHeight() + m_Border + m_TopBorder);
 
-        BaseObject::setGeometry(WindowGeometry);
+        BaseObject::SetGeometry(WindowGeometry);
     }
     Geometry geo = GetGeometry();
     // Drag Bar Geometry
     if(HasTitleBar())
     {
-        m_TitleBar->setGeometry(0, 0, geo.GetWidth(), TitleBarHeight);
+        m_TitleBar->SetGeometry(0, 0, geo.GetWidth(), TitleBarHeight);
     }
     // Size grip Geometry
     Geometry temp(geo.GetWidth() - SizeGripWidth, geo.GetHeight() - SizeGripHeight,
         SizeGripWidth, SizeGripHeight);
-    m_SizeGrip->setGeometry(temp);
+    m_SizeGrip->SetGeometry(temp);
     
     // Title Bar
-    m_TitleBarLayout->setGeometry(m_TitleBar->GetGeometry());
+    m_TitleBarLayout->SetGeometry(m_TitleBar->GetGeometry());
     GetGraphicsThread()->ComputeElementLayout(m_TitleBarLayout);
 
     // A FloatingWindow must kill the result of the management and pass it to the parent Layout.
@@ -401,15 +401,15 @@ void FloatingWindow::PositionChildLayout(float offsetX, float offsetY)
     // Drag Bar Geometry
     if(HasTitleBar())
     {
-        m_TitleBar->setGeometry(0, 0, geo.GetWidth(), TitleBarHeight);
+        m_TitleBar->SetGeometry(0, 0, geo.GetWidth(), TitleBarHeight);
     }
     // Size grip Geometry
     Geometry temp(geo.GetWidth() - SizeGripWidth, geo.GetHeight() - SizeGripHeight,
         SizeGripWidth, SizeGripHeight);
-    m_SizeGrip->setGeometry(temp);
+    m_SizeGrip->SetGeometry(temp);
     
     // Title Bar
-    m_TitleBarLayout->setGeometry(m_TitleBar->GetGeometry());
+    m_TitleBarLayout->SetGeometry(m_TitleBar->GetGeometry());
     GetGraphicsThread()->ComputeElementLayout(m_TitleBarLayout);
 
 }
@@ -417,17 +417,17 @@ void FloatingWindow::PositionChildLayout(float offsetX, float offsetY)
 void FloatingWindow::LayoutWindowElements()
 {
     // Define the geometry of some of the component of the window. Otherwise, if the composition layout is not set,
-    // then the component won't be correctly placed after a setGeometry. This can be redundant if the composition layout is set.
+    // then the component won't be correctly placed after a SetGeometry. This can be redundant if the composition layout is set.
     Geometry base = GetGeometry();
-    m_TitleBar->setGeometry(0, 0, base.GetWidth(), TitleBarHeight);
+    m_TitleBar->SetGeometry(0, 0, base.GetWidth(), TitleBarHeight);
 
-    m_TitleBarLayout->setGeometry(m_TitleBar->GetGeometry());
+    m_TitleBarLayout->SetGeometry(m_TitleBar->GetGeometry());
     GetGraphicsThread()->ComputeElementLayout(m_TitleBarLayout);
     
     // Size grip Geometry
     Geometry temp(base.GetWidth() - SizeGripWidth, base.GetHeight() - SizeGripHeight,
         SizeGripWidth, SizeGripHeight);
-    m_SizeGrip->setGeometry(temp);
+    m_SizeGrip->SetGeometry(temp);
 }
 
 void FloatingWindow::SetWindowTitle(const TCHAR *title)

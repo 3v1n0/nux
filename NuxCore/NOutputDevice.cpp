@@ -68,7 +68,7 @@ void NOutputDevice::Flush()
 
 }
 
-VARARG_BODY( void /*FuncRet*/, NOutputDevice::LogFunction/*FuncName*/, const TCHAR* /*FmtType*/, VARARG_NONE/*ExtraDecl*/)
+VARARG_BODY( void /*FuncRet*/, NOutputDevice::LogFunction/*FuncName*/, const TCHAR* /*FmtType*/, VARARG_EXTRA(int Severity)/*ExtraDecl*/)
 {
     if(m_ObjectDestroyed)
         return;
@@ -97,7 +97,7 @@ VARARG_BODY( void /*FuncRet*/, NOutputDevice::LogFunction/*FuncName*/, const TCH
             NewBufferSize = 2 * BufferSize;
     };
     Buffer[Result] = 0;
-    Serialize(Buffer, TEXT("Log"));
+    Serialize(Buffer, TEXT("Log"), 0);
 
     NUX_SAFE_DELETE_ARRAY(Buffer);
 }
@@ -137,7 +137,7 @@ void NOutputLogFile::Constructor()
 #if UNICODE && !NUX_LOG_FILE_ANSI
         m_LogSerializer->Serialize( (void*)&NUX_UTF16_BE[1], NUX_UTF16_BE[0] /*size*/ );
 #endif
-        LogFunction(TEXT("Log file open, %s"), GetFormattedLocalTime());
+        LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("Log file open, %s"), GetFormattedLocalTime());
     }
     else
     {
@@ -160,7 +160,7 @@ void NOutputLogFile::Shutdown()
 {
     if(m_LogSerializer)
     {
-        LogFunction(TEXT("Log file closed, %s"), GetFormattedLocalTime());
+        LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("Log file closed, %s"), GetFormattedLocalTime());
         Flush();
         delete m_LogSerializer;
         m_LogSerializer = NULL;
@@ -182,7 +182,7 @@ void NOutputLogFile::Flush()
     @param  Data        Text to log.
     @param  LogPrefix	Prefix for the text
 */
-void NOutputLogFile::Serialize( const TCHAR* Data, const TCHAR* LogPrefix )
+void NOutputLogFile::Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity)
 {
     if(m_ObjectDestroyed)
         return;
@@ -255,11 +255,11 @@ bool NOutputDeviceRedirector::IsRedirectingTo(NOutputDevice* OutputDevice)
     return false;
 }
 
-void NOutputDeviceRedirector::Serialize(const TCHAR* Data, const TCHAR* LogPrefix)
+void NOutputDeviceRedirector::Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity)
 {
     for(t_u32 OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
     {
-        OutputDevices[OutputDeviceIndex]->Serialize( Data, LogPrefix );
+        OutputDevices[OutputDeviceIndex]->Serialize(Data, LogPrefix, Severity);
     }
 }
 
@@ -276,7 +276,7 @@ void NOutputDeviceRedirector::Shutdown()
     for(t_u32 OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
     {
         OutputDevices[OutputDeviceIndex]->Shutdown();
-        // do not delete the output device. This is the responsability of the owwners.
+        // do not delete the output device. This is the responsibility of the owwners.
     }
     OutputDevices.clear();
 }
@@ -291,13 +291,59 @@ void NOutputVisualDebugConsole::Destructor(){}
     @param  Data        Text to log.
     @param  LogPrefix	Prefix for the text
 */
-void NOutputVisualDebugConsole::Serialize( const TCHAR* Data, const TCHAR* LogPrefix )
+void NOutputVisualDebugConsole::Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity)
 {
     TCHAR Temp[4096];
     Snprintf(Temp, 4096, 4096 - 1, TEXT("%s: %s%s"), LogPrefix, Data, NUX_LINE_TERMINATOR);
 
-#if (defined _WIN32) && (defined _MSC_VER)
+#if defined (NUX_OS_WINDOWS)
     OutputDebugString(Temp);
+#elif defined (NUX_OS_LINUX)
+//     {attr} is one of following
+// 
+//     0	Reset All Attributes (return to normal mode)
+//     1	Bright (Usually turns on BOLD)
+//     2 	Dim
+//     3	Underline
+//     5	Blink
+//     7 	Reverse
+//     8	Hidden
+// 
+//     {fg} is one of the following
+// 
+//     30   Black
+//     31   Red
+//     32   Green
+//     33   Yellow
+//     34   Blue
+//     35   Magenta
+//     36   Cyan
+//     37   White (greyish)
+//     38   White
+// 
+//     {bg} is one of the following
+// 
+//     40   Black
+//     41   Red
+//     42   Green
+//     43   Yellow
+//     44   Blue
+//     45   Magenta
+//     46   Cyan
+//     47   White (greyish)
+//     48   White
+
+    int Foreground = 0;
+    if(Severity == NUX_MSG_SEVERITY_CRITICAL)
+        Foreground = 31;
+    else if(Severity == NUX_MSG_SEVERITY_ALERT)
+        Foreground = 31;
+    else if(Severity == NUX_MSG_SEVERITY_WARNING)
+        Foreground = 33;
+    else if(Severity == NUX_MSG_SEVERITY_WARNING)
+        Foreground = 32;
+
+    printf("%c[%d;%d;%dm%s", 0x1B, 0, Foreground, 48, &Temp[0]);
 #else
     printf("%s", &Temp[0]);
 #endif

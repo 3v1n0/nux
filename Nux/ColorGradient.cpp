@@ -62,10 +62,10 @@ void ColorGradient::InitializeWidgets()
     // Set Geometry //
     //////////////////
     m_ValueString->SetMinimumSize(DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
-    m_ValueString->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
+    m_ValueString->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
     m_Percentage->SetMinimumSize(2*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
-    m_Percentage->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
+    m_Percentage->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
     // Set the minimum size of this widget.
     // This is use by RangeValuePropertyItem::GetItemBestHeight
@@ -73,8 +73,6 @@ void ColorGradient::InitializeWidgets()
 
     //SetMaximumHeight(20);
     // Set layout
-    m_ValueString->SetSizePolicy(eSizeResizeable);
-    m_Percentage->SetSizePolicy(eSizeResizeable);
 
     hlayout->AddActiveInterfaceObject(m_ValueString, 0, eCenter, eFull);
     hlayout->AddActiveInterfaceObject(m_Percentage, 4, eCenter, eFull);

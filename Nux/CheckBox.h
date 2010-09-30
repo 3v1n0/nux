@@ -33,7 +33,7 @@ class BaseArea;
 class CheckBox: public AbstractButton
 {
 public:
-    CheckBox(const TCHAR* Caption = 0, bool state = false);
+    CheckBox(const TCHAR* Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
     ~CheckBox();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

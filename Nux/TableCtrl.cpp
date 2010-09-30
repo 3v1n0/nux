@@ -115,7 +115,7 @@ TableCtrl::TableCtrl(bool floating_column)
     m_VLayout = smptr(VLayout)(new VLayout("TABLELAYOUT"));
     m_VLayout->SetVerticalInternalMargin(4);
 
-    m_TableArea->setGeometry(0, 0, 300, 40);
+    m_TableArea->SetGeometry(0, 0, 300, 40);
     // Setting the minimum of size m_TableArea forces the composition layout fit match the size of the Table area (+/- margins). if the layout is too large, then
     // the scrollbar will reflect that. 
     // It is not enough to do something like:
@@ -127,7 +127,7 @@ TableCtrl::TableCtrl(bool floating_column)
     m_VLayout->SetContentStacking(eStackTop);
     m_VLayout->SetStretchFactor(1);
     SetMinimumSize(50, 50);
-    setGeometry(Geometry(0, 0, 50, 50)); 
+    SetGeometry(Geometry(0, 0, 50, 50)); 
 
     setTopBorder(0);
     setBorder(0);
@@ -1059,9 +1059,9 @@ void TableCtrl::OverlayDrawing(GraphicsContext& GfxContext)
 // API //
 /////////
 
-void TableCtrl::setGeometry(const Geometry& geo)
+void TableCtrl::SetGeometry(const Geometry& geo)
 {
-    ScrollView::setGeometry(geo);
+    ScrollView::SetGeometry(geo);
 }
 
 void TableCtrl::AdjustNonFloatingColumn()
@@ -1759,8 +1759,8 @@ void TableCtrl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned l
                     m_DrawBackgroundOnPreviousGeometry = true;
                     m_PreviousGeometry = GetGeometry();
                     // Initiate layout re computation from the top. This should be done with InitiateResizeLayout();
-                    // but it is a private member of BaseObject. We can do it with a call to setGeometry(GetGeometry());
-                    setGeometry(GetGeometry());
+                    // but it is a private member of BaseObject. We can do it with a call to SetGeometry(GetGeometry());
+                    SetGeometry(GetGeometry());
                 }
             }
             else
@@ -1869,8 +1869,8 @@ void TableCtrl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, uns
                     m_DrawBackgroundOnPreviousGeometry = true;
                     m_PreviousGeometry = GetGeometry();
                     // Initiate layout re computation from the top. This should be done with InitiateResizeLayout();
-                    // but it is a private member of BaseObject. We can do it with a call to setGeometry(GetGeometry());
-                    setGeometry(GetGeometry());
+                    // but it is a private member of BaseObject. We can do it with a call to SetGeometry(GetGeometry());
+                    SetGeometry(GetGeometry());
                 }
             }
             else
@@ -2144,7 +2144,7 @@ void TableCtrl::OnResizeRowMouseDrag(int x, int y, int dx, int dy, unsigned long
         geo.OffsetSize(0, y - m_point1.y);
         recompute = true;
     }
-    m_row_header[header_pos]->m_item->m_row_header->setGeometry(geo);
+    m_row_header[header_pos]->m_item->m_row_header->SetGeometry(geo);
     if(m_row_header[header_pos]->m_item->m_row_header->GetBaseHeight() < MIN_COLUMN_WIDTH)
     {
         m_row_header[header_pos]->m_item->m_row_header->SetBaseHeight(MIN_COLUMN_WIDTH);

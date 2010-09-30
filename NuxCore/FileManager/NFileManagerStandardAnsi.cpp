@@ -61,11 +61,11 @@ bool NSerializeFileReader::Precache(t_int PrecacheOffset, t_int PrecacheSize)
             m_ErrorCode = 1;
             if(feof(m_File))
             {
-                m_Error->LogFunction(TEXT("[NSerializeFileReader::Precache] Error: fread reached end of file"));
+                m_Error->LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NSerializeFileReader::Precache] Error: fread reached end of file"));
             }
             else
             {
-                m_Error->LogFunction(TEXT("[NSerializeFileReader::Precache] Error: fread failed: (ferror = %i)"), ferror(m_File));
+                m_Error->LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NSerializeFileReader::Precache] Error: fread failed: (ferror = %i)"), ferror(m_File));
             }
         }
     }
@@ -119,7 +119,7 @@ void NSerializeFileReader::SerializeFinal(void* Dest, t_s64 Length)
                 if(::fread(Dest, Length, 1, m_File) != Length)
                 {
                     m_ErrorCode = 1;
-                    m_Error->LogFunction(TEXT("[NSerializeFileReader::Serialize] Error: fread failed: (ferror = %i)"), ferror(m_File));
+                    m_Error->LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NSerializeFileReader::Serialize] Error: fread failed: (ferror = %i)"), ferror(m_File));
                 }
                 m_FilePos   += Length;
                 BufferBase  += Length;
@@ -130,7 +130,7 @@ void NSerializeFileReader::SerializeFinal(void* Dest, t_s64 Length)
             if(Copy <= 0)
             {
                 m_ErrorCode = 1;
-                m_Error->LogFunction(TEXT("[NSerializeFileReader::Serialize] Error: fread reached end of file: (ferror = %i)"), ferror(m_File));
+                m_Error->LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NSerializeFileReader::Serialize] Error: fread reached end of file: (ferror = %i)"), ferror(m_File));
             }
             if(m_ErrorCode)
                 return;
@@ -168,7 +168,7 @@ t_s64 NSerializeFileWriter::Seek(t_s64 InPos, NSerializer::SeekPos seekpos)
     if(::fseek(m_File,InPos,SEEK_SET))
     {
         m_ErrorCode = 1;
-        m_Error->LogFunction(TEXT("[NSerializeFileWriter::Seek] Seek Failed."));
+        m_Error->LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NSerializeFileWriter::Seek] Seek Failed."));
     }
     m_FilePos = InPos;
 
@@ -203,7 +203,7 @@ bool NSerializeFileWriter::Close()
     if(m_File && ::fclose(m_File))
     {
         m_ErrorCode = 1;
-        m_Error->LogFunction(TEXT("[NSerializeFileWriter::Close] Write Failed."));
+        m_Error->LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NSerializeFileWriter::Close] Write Failed."));
     }
     return !m_ErrorCode;
 }
@@ -239,7 +239,7 @@ void NSerializeFileWriter::Flush()
     if(m_CachePos && ::fwrite(m_CacheBuffer, m_CachePos, 1, m_File) != 1)
     {
         m_ErrorCode = 1;
-        m_Error->LogFunction(TEXT("[NSerializeFileWriter::Flush] Write Failed."));
+        m_Error->LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NSerializeFileWriter::Flush] Write Failed."));
     }
     m_CachePos = 0;
 }
