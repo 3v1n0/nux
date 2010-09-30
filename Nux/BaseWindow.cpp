@@ -52,6 +52,8 @@ BaseWindow::BaseWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
 ,   m_bIsVisible(false)
 ,   m_bIsModal(false)
 {
+    m_configure_notify_callback_data = 0;
+    
     // Should be at the end of the constructor
     GetThreadWindowCompositor().RegisterWindow(smptr(BaseWindow)(this, true));
 
@@ -293,7 +295,7 @@ void BaseWindow::PreLayoutManagement()
     Geometry geo = GetGeometry();
     if(m_ConfigureNotifyCallback)
     {
-        (*m_ConfigureNotifyCallback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo);
+        (*m_ConfigureNotifyCallback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
         if(geo.IsNull())
         {
             nuxDebugMsg(TEXT("[BaseWindow::PreLayoutManagement] Received an invalid Geometry."));
@@ -432,7 +434,7 @@ void BaseWindow::NotifyConfigurationChange(int Width, int Height)
     Geometry geo = GetGeometry();
     if(m_ConfigureNotifyCallback)
     {
-        (*m_ConfigureNotifyCallback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo);
+        (*m_ConfigureNotifyCallback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
         if(geo.IsNull())
         {
             nuxDebugMsg(TEXT("[BaseWindow::NotifyConfigurationChange] Received an invalid Geometry."));
