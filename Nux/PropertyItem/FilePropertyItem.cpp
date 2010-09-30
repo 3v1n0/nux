@@ -88,7 +88,7 @@ void FilePropertyItem::ComputePropertyLayout(int x, int y, RowHeader* row, const
         Geometry geo;
         geo = m_ItemGeometryVector[1];
         geo = geo.GetExpand(-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
-        m_hlayout->setGeometry(geo);
+        m_hlayout->SetGeometry(geo);
         GetGraphicsThread()->ComputeElementLayout(m_hlayout);
     }
 }

@@ -103,7 +103,7 @@ long ActiveInterfaceObject::ComputeChildLayout()
                 size_compliance |= eCompliantHeight;
             }
 
-            //BaseObject::setGeometry(m_CompositionLayout->GetGeometry());
+            //BaseObject::SetGeometry(m_CompositionLayout->GetGeometry());
             return size_compliance;
         }
     }
@@ -124,7 +124,7 @@ void ActiveInterfaceObject::PositionChildLayout(float offsetX, float offsetY)
         //1
         if(m_CompositionLayout->GetStretchFactor() != 0)
         {
-            m_CompositionLayout->setGeometry(GetGeometry());
+            m_CompositionLayout->SetGeometry(GetGeometry());
         }
         else //2
         {
@@ -140,7 +140,7 @@ void ActiveInterfaceObject::PreLayoutManagement()
 {
     // Give the managed layout the same size and position as the Control.
     if(m_CompositionLayout.IsValid())
-        m_CompositionLayout->setGeometry(GetGeometry());
+        m_CompositionLayout->SetGeometry(GetGeometry());
 }
 
 long ActiveInterfaceObject::PostLayoutManagement(long LayoutResult)
@@ -152,7 +152,7 @@ long ActiveInterfaceObject::PostLayoutManagement(long LayoutResult)
     {
         // If The layout is empty, do not change the size of the parent element.
         if(!m_CompositionLayout->IsEmpty())
-            BaseObject::setGeometry(m_CompositionLayout->GetGeometry());
+            BaseObject::SetGeometry(m_CompositionLayout->GetGeometry());
     }
     return LayoutResult;
 }
@@ -315,9 +315,9 @@ bool ActiveInterfaceObject::SearchInFirstSubNodes(smptr(BaseObject) bo)
     return false;
 }
 
-void ActiveInterfaceObject::setGeometry(const Geometry& geo)
+void ActiveInterfaceObject::SetGeometry(const Geometry& geo)
 {
-    BaseObject::setGeometry(geo);
+    BaseObject::SetGeometry(geo);
     ComputeChildLayout();
     PostResizeGeometry();
 }

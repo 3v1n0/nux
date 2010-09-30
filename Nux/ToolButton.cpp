@@ -50,8 +50,7 @@ ToolButton::ToolButton(const TCHAR* BitmapFilename, NUX_FILE_LINE_DECL)
     OnMouseLeave.connect(sigc::mem_fun(this, &ToolButton::RecvMouseLeave));
 
     SetMinimumSize(28, 28);
-    setGeometry(Geometry(0, 0, 24, 24));
-    SetSizePolicy(eSizeFixed);
+    SetGeometry(Geometry(0, 0, 24, 24));
 }
 
 ToolButton::~ToolButton()

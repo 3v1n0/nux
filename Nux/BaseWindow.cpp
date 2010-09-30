@@ -43,22 +43,22 @@ const int TitleBarHeight = 20;
 
 BaseWindow::BaseWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
-,   m_ConfigureNotifyCallback(0)
 ,   m_TopBorder(0)
 ,   m_Border(0)
-,   m_BackgroundColor(Color(0xFF707070))
-,   m_BluredBackground(false)
 ,   m_bSizeMatchLayout(false)
 ,   m_bIsVisible(false)
 ,   m_bIsModal(false)
 {
-    m_configure_notify_callback_data = 0;
-    
+    m_configure_notify_callback = NULL;
+    m_configure_notify_callback_data = NULL;
+    m_blured_background = false;
+    m_background_color = Color(0xFF707070);
+
     // Should be at the end of the constructor
     GetThreadWindowCompositor().RegisterWindow(smptr(BaseWindow)(this, true));
 
     SetMinimumSize(1, 1);
-    setGeometry(Geometry(100, 100, 320, 200));
+    SetGeometry(Geometry(100, 100, 320, 200));
 
     m_PaintLayer = new ColorLayer(Color(0xFFFF7070));
 }
@@ -150,7 +150,7 @@ void BaseWindow::Draw(GraphicsContext& GfxContext, bool force_draw)
     else
     {
         //nuxDebugMsg(TEXT("[BaseWindow::Draw]"));
-        gPainter.PushDrawShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, m_BackgroundColor, eAllCorners, true);
+        gPainter.PushDrawShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
     }
     gPainter.PopBackground();
     GfxContext.PopClippingRectangle();
@@ -178,7 +178,7 @@ void BaseWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     else
     {
         //nuxDebugMsg(TEXT("[BaseWindow::DrawContent]"));      
-        gPainter.PushShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, m_BackgroundColor, eAllCorners, true);
+        gPainter.PushShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
         //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f, 0.0f, 0.0f, 1.0f));
         //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 0.5f));
     }
@@ -197,13 +197,19 @@ void BaseWindow::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 }
 
+void BaseWindow::SetConfigureNotifyCallback(ConfigureNotifyCallback Callback, void* Data)
+{
+    m_configure_notify_callback = Callback;
+    m_configure_notify_callback_data = Data;
+}
+
 void BaseWindow::AddWidget(int id)
 {
 //    smptr(ActiveInterfaceObject) ic = InterfaceControlFactory::Instance().CreateObject(id);
 //    if(ic.IsValid() && m_layout.IsValid())
 //    {
 //        m_layout->AddActiveInterfaceObject(ic, 0);
-//        // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+//        // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
 //        // and the children will take their natural size by expending WidgetLayout.
 //        // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 //
@@ -219,7 +225,7 @@ void BaseWindow::AddWidget(smptr(ActiveInterfaceObject) ic)
     if(ic.IsValid() && m_layout.IsValid())
     {
         m_layout->AddActiveInterfaceObject(ic, 0);
-        // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+        // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
         // and the children will take their natural size by expending WidgetLayout.
         // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 
@@ -235,7 +241,7 @@ void BaseWindow::AddWidget(smptr(ActiveInterfaceObject) ic, int stretchfactor)
     if(ic.IsValid() && m_layout.IsValid())
     {
         m_layout->AddActiveInterfaceObject(ic, stretchfactor);
-        // if(stretchfactor ==0): the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+        // if(stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
         // and the children will take their natural size by expending WidgetLayout.
         // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 
@@ -283,7 +289,7 @@ void BaseWindow::setLayout(smptr(Layout) layout)
     Geometry geo = GetGeometry();
     Geometry layout_geo = Geometry(geo.x + m_Border, geo.y + m_TopBorder,
         geo.GetWidth() - 2*m_Border, geo.GetHeight() - m_Border - m_TopBorder);
-    m_layout->setGeometry(layout_geo);
+    m_layout->SetGeometry(layout_geo);
     ComputeChildLayout();
     delete InterfaceControlList;
 }
@@ -293,9 +299,9 @@ void BaseWindow::setLayout(smptr(Layout) layout)
 void BaseWindow::PreLayoutManagement()
 {
     Geometry geo = GetGeometry();
-    if(m_ConfigureNotifyCallback)
+    if(m_configure_notify_callback)
     {
-        (*m_ConfigureNotifyCallback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
+        (*m_configure_notify_callback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
         if(geo.IsNull())
         {
             nuxDebugMsg(TEXT("[BaseWindow::PreLayoutManagement] Received an invalid Geometry."));
@@ -303,7 +309,7 @@ void BaseWindow::PreLayoutManagement()
         }
         else
         {
-            BaseObject::setGeometry(geo);
+            BaseObject::SetGeometry(geo);
             // Get the geometry adjusted with respect to min and max dimension of this area.
             geo = GetGeometry();
         }
@@ -313,7 +319,7 @@ void BaseWindow::PreLayoutManagement()
     {
         Geometry layout_geo = Geometry(m_Border, m_TopBorder,
             geo.GetWidth() - 2*m_Border, geo.GetHeight() - m_Border - m_TopBorder);
-        m_layout->setGeometry(layout_geo);
+        m_layout->SetGeometry(layout_geo);
     }
 }
 
@@ -330,7 +336,7 @@ long BaseWindow::PostLayoutManagement(long LayoutResult)
             layout_geometry.GetWidth() + 2*m_Border,
             layout_geometry.GetHeight() + m_Border + m_TopBorder);
 
-        BaseObject::setGeometry(WindowGeometry);
+        BaseObject::SetGeometry(WindowGeometry);
     }
 
     // A BaseWindow must kill the result of the management and pass it to the parent Layout.
@@ -345,9 +351,9 @@ void BaseWindow::PositionChildLayout(float offsetX, float offsetY)
 
 }
 
-void BaseWindow::setGeometry(const Geometry& geo)
+void BaseWindow::SetGeometry(const Geometry& geo)
 {
-    BaseObject::setGeometry(geo);
+    BaseObject::SetGeometry(geo);
 
     //LayoutWindowElements();
     //ComputeChildLayout();
@@ -356,7 +362,7 @@ void BaseWindow::setGeometry(const Geometry& geo)
 void BaseWindow::LayoutWindowElements()
 {
     // Define the geometry of some of the component of the window. Otherwise, if the composition layout is not set,
-    // then the component won't be correctly placed after a setGeometry. This can be redondant if the composition layout is set.
+    // then the component won't be correctly placed after a SetGeometry. This can be redondant if the composition layout is set.
     Geometry base = GetGeometry();
     //GetGraphicsThread()->ComputeElementLayout(m_TitleBarLayout);
 }
@@ -394,7 +400,7 @@ void BaseWindow::ShowWindow(bool b, bool StartModal /*  = false */)
 
     if(m_layout.IsValid())
     {
-        m_layout->setGeometry(GetGeometry());
+        m_layout->SetGeometry(GetGeometry());
     }
 
     m_bIsVisible = b;
@@ -432,9 +438,9 @@ bool BaseWindow::IsModal() const
 void BaseWindow::NotifyConfigurationChange(int Width, int Height)
 {
     Geometry geo = GetGeometry();
-    if(m_ConfigureNotifyCallback)
+    if(m_configure_notify_callback)
     {
-        (*m_ConfigureNotifyCallback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
+        (*m_configure_notify_callback)(GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
         if(geo.IsNull())
         {
             nuxDebugMsg(TEXT("[BaseWindow::NotifyConfigurationChange] Received an invalid Geometry."));
@@ -442,7 +448,7 @@ void BaseWindow::NotifyConfigurationChange(int Width, int Height)
         }
         else
         {
-            BaseObject::setGeometry(geo);
+            BaseObject::SetGeometry(geo);
             // Get the geometry adjusted with respect to min and max dimension of this area.
             geo = GetGeometry();
         }
@@ -461,7 +467,7 @@ void BaseWindow::SetBackgroundLayer(AbstractPaintLayer* layer)
 
 void BaseWindow::SetBackgroundColor(const Color& color)
 {
-    m_BackgroundColor = color;
+    m_background_color = color;
 }
 
 } //NUX_NAMESPACE_END

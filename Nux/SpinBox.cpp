@@ -54,12 +54,12 @@ void SpinBox::InitializeWidgets()
     m_EditLine->SetText(inlPrintf(TEXT("%d"), m_IntValidator.GetMinimum()));
 
     m_EditLine->SetMinimumSize(1.5*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
-    m_EditLine->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_EditLine->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     m_SpinnerUpBtn->SetMinimumSize(15, 10);
-    m_SpinnerUpBtn->setGeometry(Geometry(0, 0, 15, 10));
+    m_SpinnerUpBtn->SetGeometry(Geometry(0, 0, 15, 10));
     m_SpinnerDownBtn->SetMinimumSize(15, 10);
-    m_SpinnerDownBtn->setGeometry(Geometry(0, 0, 15, 10));
+    m_SpinnerDownBtn->SetGeometry(Geometry(0, 0, 15, 10));
 
     m_UpTimerCallback = new TimerFunctor;
     m_UpTimerCallback->OnTimerExpired.connect(sigc::mem_fun(this, &SpinBox_Logic::TimerSpinUpBtn));

@@ -40,10 +40,10 @@ ValuatorDouble::ValuatorDouble(double Value, double Step, double MinValue, doubl
     m_EditLine->SetText(inlPrintf(TEXT("%.3f"), m_DoubleValidator.GetMinimum()));
 
     m_EditLine->SetMinimumSize(1.5*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
-    m_EditLine->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_EditLine->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     m_MouseControlledButton->SetMinimumSize(16+9, 10);
-    m_MouseControlledButton->setGeometry(Geometry(0, 0, 15, 10));
+    m_MouseControlledButton->SetGeometry(Geometry(0, 0, 15, 10));
 
     // Set the minimum size of this widget.
     // This is use by TextLineEditPropertyItem::GetItemBestHeight

@@ -55,13 +55,12 @@ void ComboBoxSimple::InitializeWidgets()
     //m_Popup.sigPopupStop.connect(sigc::mem_fun(this, &ComboBox::OnPopupStop));
 
     // Set Geometry
-    m_Button->setGeometry(Geometry(0, 0, 20, DEFAULT_WIDGET_HEIGHT));
+    m_Button->SetGeometry(Geometry(0, 0, 20, DEFAULT_WIDGET_HEIGHT));
     //m_Button->SetMaximumSize(20, DEFAULT_WIDGET_HEIGHT);
     m_Button->SetMinimumSize(20, DEFAULT_WIDGET_HEIGHT);
-    m_Button->SetSizePolicy(eSizeFixed);
 
     m_ComboArea->SetMinimumSize(2*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    m_ComboArea->setGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
+    m_ComboArea->SetGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
     //m_CurrentMenu = new MenuPage;
     m_CurrentMenu->SetParentMenu(smptr(MenuPage)(0));
@@ -146,7 +145,7 @@ void ComboBoxSimple::RecvMouseDown(int x, int y, unsigned long button_flags, uns
         geo.SetX(m_ComboArea->GetBaseX());
         geo.SetY(m_ComboArea->GetBaseY() + m_ComboArea->GetBaseHeight());
         geo.SetWidth(m_ComboArea->GetBaseWidth());
-        m_CurrentMenu->setGeometry(geo);
+        m_CurrentMenu->SetGeometry(geo);
         m_CurrentMenu->StartMenu(m_ComboArea->GetBaseX(), 
             m_ComboArea->GetBaseY() + m_ComboArea->GetBaseHeight(),
             0, 0);

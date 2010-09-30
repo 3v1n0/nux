@@ -61,12 +61,12 @@ bool NGNUSerialFileReader::Precache(t_int PrecacheOffset, t_int PrecacheSize)
         if(Count == 0)
         {
             m_ErrorCode = 1;
-            m_Error.LogFunction(TEXT("[NGNUSerialFileReader::Precache] Reached end of file while attempting to read %i bytes"), m_BufferCount);
+            m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileReader::Precache] Reached end of file while attempting to read %i bytes"), m_BufferCount);
         }
         if(Count == -1)
         {
             m_ErrorCode = 1;
-            m_Error.LogFunction(TEXT("[NGNUSerialFileReader::Precache]  Read error while attempting to read file: ???"));
+            m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileReader::Precache]  Read error while attempting to read file: ???"));
         }
     }
     return TRUE;
@@ -88,7 +88,7 @@ t_s64 NGNUSerialFileReader::Seek(t_s64 InPos, NSerializer::SeekPos seekpos)
     if(filepos == -1)
     {
         m_ErrorCode = 1;
-        m_Error.LogFunction(TEXT("[NGNUSerialFileReader::Seek] Seek to %i has failed."), InPos);
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileReader::Seek] Seek to %i has failed."), InPos);
     }
 
     // Now the file pointer is current with what we have read so far.
@@ -97,7 +97,7 @@ t_s64 NGNUSerialFileReader::Seek(t_s64 InPos, NSerializer::SeekPos seekpos)
     if( filepos == -1)
     {
         m_ErrorCode = 1;
-        m_Error.LogFunction(TEXT("[NGNUSerialFileReader::Seek] Seek to %i has failed."), InPos);
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileReader::Seek] Seek to %i has failed."), InPos);
     }
     m_FilePos       = filepos;
     m_BufferBase    = 0;
@@ -131,7 +131,7 @@ bool NGNUSerialFileReader::Close()
         if(ret == -1)
         {
             m_ErrorCode = 1;
-            m_Error.LogFunction(TEXT("[NGNUSerialFileReader::Close] Error while closing file"));
+            m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileReader::Close] Error while closing file"));
         }
     }
     m_FileDescriptor = 0;
@@ -154,12 +154,12 @@ void NGNUSerialFileReader::SerializeFinal(void* Dest, t_s64 Length)
                 if(Count == 0)
                 {
                     m_ErrorCode = 1;
-                    m_Error.LogFunction(TEXT("[NGNUSerialFileReader::Serialize] Reached end of file while attempting to read %i bytes"), Length);
+                    m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileReader::Serialize] Reached end of file while attempting to read %i bytes"), Length);
                 }
                 if(Count == -1)
                 {
                     m_ErrorCode = 1;
-                    m_Error.LogFunction(TEXT("[NGNUSerialFileReader::Serialize]  Read error while attempting to read file: ???"));
+                    m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileReader::Serialize]  Read error while attempting to read file: ???"));
                 }
 
                 m_FilePos += Length;
@@ -171,7 +171,7 @@ void NGNUSerialFileReader::SerializeFinal(void* Dest, t_s64 Length)
             if(DataSize <= 0)
             {
                 m_ErrorCode = 1;
-                m_Error.LogFunction(TEXT("ReadFile beyond EOF %i+%i/%i"), m_FilePos, Length, m_FileSize);
+                m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("ReadFile beyond EOF %i+%i/%i"), m_FilePos, Length, m_FileSize);
             }
             if(m_ErrorCode)
                 return;
@@ -218,7 +218,7 @@ t_s64 NGNUSerialFileWriter::Seek(t_s64 InPos, NSerializer::SeekPos seekpos)
     if(filepos == -1)
     {
         m_ErrorCode = 1;
-        m_Error.LogFunction(TEXT("[NGNUSerialFileWriter::Seek] Seek to %i has failed."), InPos);
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileWriter::Seek] Seek to %i has failed."), InPos);
     }
     m_Pos = filepos;
     return filepos;
@@ -238,7 +238,7 @@ t_s64 NGNUSerialFileWriter::Tell()
     if(filepos == -1)
     {
         m_ErrorCode = 1;
-        m_Error.LogFunction(TEXT("[NGNUSerialFileWriter::Tell] Seek to %i has failed."), pos);
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileWriter::Tell] Seek to %i has failed."), pos);
     }
     return filepos;
 }
@@ -255,7 +255,7 @@ bool NGNUSerialFileWriter::Close()
     if(ret == -1)
     {
         m_ErrorCode = 1;
-        m_Error.LogFunction(TEXT("[NGNUSerialFileWriter::Close] Error while closing file"));
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileWriter::Close] Error while closing file"));
     }
     m_FileDescriptor = 0;
     return !m_ErrorCode;
@@ -271,7 +271,7 @@ t_s64 NGNUSerialFileWriter::GetFileSize()
     struct stat sb;
     if(fstat(m_FileDescriptor, &sb) != 0)
     {
-        m_Error.LogFunction(TEXT("[NGNUSerialFileWriter::GetFileSize] Can't get file size."));
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileWriter::GetFileSize] Can't get file size."));
         return -1;
     }
     return sb.st_size;
@@ -326,7 +326,7 @@ void NGNUSerialFileWriter::_Flush()
         if(Result == -1)
         {
             m_ErrorCode = 1;
-            m_Error.LogFunction(TEXT("[NGNUSerialFileWriter::Flush] Write error."));
+            m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileWriter::Flush] Write error."));
         }
     }
     m_BufferCount = 0;
@@ -361,10 +361,10 @@ NSerializer* NFileManagerGNU::CreateFileReader(const TCHAR* Filename, DWORD Flag
         int ret = close(FileDesc);
         if(ret == -1)
         {
-            Error.LogFunction(TEXT("[NFileManagerGNU::CreateFileReader] Error while closing file descriptor: %s"), Filename);
+            Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NFileManagerGNU::CreateFileReader] Error while closing file descriptor: %s"), Filename);
         }
         nuxDebugMsg(TEXT("[NFileManagerGNU::CreateFileReader] Can't get file descriptor: %s"), Filename);
-        Error.LogFunction(TEXT("[NFileManagerGNU::CreateFileReader] Can't get file descriptor: %s"), Filename);
+        Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NFileManagerGNU::CreateFileReader] Can't get file descriptor: %s"), Filename);
         return NULL;
     }
     return new NGNUSerialFileReader(FileDesc, Error, sb.st_size);
@@ -379,7 +379,7 @@ NSerializer* NFileManagerGNU::CreateFileWriter(const TCHAR* Filename,
         int ret = chmod(TCHAR_TO_ANSI(Filename), S_IRUSR|S_IWUSR);
         if(ret == -1)
         {
-            Error.LogFunction(TEXT("[NFileManagerGNU::CreateFileWriter] Can't change file mode"));
+            Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NFileManagerGNU::CreateFileWriter] Can't change file mode"));
         }
     }
 
@@ -416,7 +416,7 @@ NSerializer* NFileManagerGNU::CreateFileWriter(const TCHAR* Filename,
         Pos = lseek(FileDesc, Pos, SEEK_END);
         if(Pos == -1)
         {
-            Error.LogFunction(TEXT("[NGNUSerialFileReader::Seek] Seek to %i has failed."), Pos);
+            Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NGNUSerialFileReader::Seek] Seek to %i has failed."), Pos);
         }
     }
 
@@ -426,9 +426,9 @@ NSerializer* NFileManagerGNU::CreateFileWriter(const TCHAR* Filename,
         int ret = close(FileDesc);
         if(ret == -1)
         {
-            Error.LogFunction(TEXT("[NFileManagerGNU::CreateFileWriter] Error while closing file"));
+            Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NFileManagerGNU::CreateFileWriter] Error while closing file"));
         }
-        Error.LogFunction(TEXT("[NFileManagerGNU::CreateFileWriter] Can't create file reader."));
+        Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NFileManagerGNU::CreateFileWriter] Can't create file reader."));
         return NULL;
     }
     return new NGNUSerialFileWriter(FileDesc, Error, sb.st_size);

@@ -46,7 +46,7 @@ ScrollView::ScrollView(NUX_FILE_LINE_DECL)
     vscrollbar = smptr(VScrollBar)(new VScrollBar());
 
     SetMinimumSize(30, 30);
-    setGeometry(Geometry(0, 0, 400, 200));
+    SetGeometry(Geometry(0, 0, 400, 200));
 
     hscrollbar->OnScrollLeft.connect( sigc::mem_fun(this, &ScrollView::ScrollLeft));
     hscrollbar->OnScrollRight.connect( sigc::mem_fun(this, &ScrollView::ScrollRight));
@@ -147,9 +147,9 @@ int ScrollView::getTopBorder() const
     return m_top_border;
 }
 
-void ScrollView::setGeometry(const Geometry& geo)
+void ScrollView::SetGeometry(const Geometry& geo)
 {
-    BaseObject::setGeometry(geo);
+    BaseObject::SetGeometry(geo);
     //ComputeChildLayout();
 }
 
@@ -213,7 +213,7 @@ void ScrollView::PreLayoutManagement()
     if(m_CompositionLayout.IsValid() && m_CompositionLayout->GetStretchFactor() != 0)
     {
         // Set the composition layout to the size of the view area and offset it by (m_ContentOffsetX, m_ContentOffsetX)
-        m_CompositionLayout->setGeometry(
+        m_CompositionLayout->SetGeometry(
             m_ViewX + m_ContentOffsetX,
             m_ViewY + m_ContentOffsetY,
             m_ViewWidth,

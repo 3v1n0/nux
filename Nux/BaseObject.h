@@ -181,6 +181,11 @@ public:
     Size GetMinimumSize() const;
     Size GetMaximumSize() const;
 
+    //! Get the geometry of the object.
+    /*!
+        @return The Geometry of the object.
+        @sa GetBaseWidth(), GetBaseHeight(), GetBaseX(), GetBaseY().
+    */
     virtual Geometry GetGeometry() const {return m_Geometry;}
 
     //! Set the geometry of the object.
@@ -191,17 +196,18 @@ public:
         \param w Width.
         \param h Height.
 
-        \sa SetWidth(), SetHeight(), SetX(), SetY().
+        \sa SetBaseWidth(), SetBaseHeight(), SetBaseX(), SetBaseY().
     */
-    virtual void setGeometry(int x, int y, int w, int h);
+    virtual void SetGeometry(int x, int y, int w, int h);
+
     //! Set the geometry of the object.
     /*!
         This is an overloaded member function, provided for convenience.
-        It behaves essentially like setGeometry(int x, int y, int w, int h).
+        It behaves essentially like SetGeometry(int x, int y, int w, int h).
         \param geo Geometry object.
         \sa SetWidth(), SetHeight(), SetX(), SetY().
     */
-    virtual void setGeometry(const Geometry& geo);
+    virtual void SetGeometry(const Geometry& geo);
 
     void IncreaseSize(int x, int y)
     {
@@ -213,16 +219,6 @@ public:
 
     void SetBaseString(const TCHAR* Caption);
     const NString& GetBaseString() const;
-
-    SizePolicy GetSizePolicy()
-    {
-        return m_SizePolicy;
-    }
-
-    void SetSizePolicy(SizePolicy sp)
-    {
-        m_SizePolicy = sp;
-    }
 
     virtual long ComputeChildLayout() {return 0;}
     virtual void PositionChildLayout(float offsetX, float offsetY){}
@@ -256,7 +252,7 @@ protected:
 private:
     //! Flags that set an object as dirty with regard to is size.
     /*
-        Every time an object is resized (through setGeometry, SetHeight or SetWidth), it become dirty. 
+        Every time an object is resized (through SetGeometry, SetHeight or SetWidth), it become dirty. 
         This flag is set to true in InitiateResizeLayout when the object request a parent layout to recompute itself.
         When a layout is computed, it resets the flag to false.
     */
@@ -289,8 +285,6 @@ private:
     WindowThread* m_Application;
 
 private:
-    SizePolicy   m_SizePolicy;
-    PositionPolicy m_PositionPolicy;
 
     void InitiateResizeLayout(smptr(BaseObject) child = IntrusiveSP<BaseObject>(0));
     void CheckMinSize();

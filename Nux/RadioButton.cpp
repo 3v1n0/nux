@@ -30,7 +30,8 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 Color RADIO_TEXT_COLOR = Color(0xFFB0B0B0);
 
-RadioButton::RadioButton(const TCHAR* Caption, bool state)
+RadioButton::RadioButton(const TCHAR* Caption, bool state, NUX_FILE_LINE_DECL)
+:   AbstractButton(Caption, NUX_FILE_LINE_PARAM)
 {
     m_Group     = 0;
     m_GroupId   = -1;
@@ -82,7 +83,7 @@ void RadioButton::InitializeWidgets()
 
     // Set Geometry
     m_CheckArea->SetMinimumSize(14, 14);
-    m_CheckArea->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_CheckArea->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     m_TextArea->SetMinimumSize(14, 14);
 

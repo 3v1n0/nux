@@ -64,14 +64,14 @@ Vector3DoubleValuator::Vector3DoubleValuator(double X, double Y, double Z, doubl
     m_ZEdit->SetText(m_DoubleValidator.ToString(m_Z));
 
     m_XEdit->SetMinimumSize(DEFAULT_WIDGET_WIDTH-10, DEFAULT_WIDGET_HEIGHT);
-    m_XEdit->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_XEdit->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
     m_YEdit->SetMinimumSize(DEFAULT_WIDGET_WIDTH-10, DEFAULT_WIDGET_HEIGHT);
-    m_YEdit->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_YEdit->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
     m_ZEdit->SetMinimumSize(DEFAULT_WIDGET_WIDTH-10, DEFAULT_WIDGET_HEIGHT);
-    m_ZEdit->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_ZEdit->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     m_MouseControlledButton->SetMinimumSize(16+9, 10);
-    m_MouseControlledButton->setGeometry(Geometry(0, 0, 15, 10));
+    m_MouseControlledButton->SetGeometry(Geometry(0, 0, 15, 10));
 
     // Set the minimum size of this widget.
     // This is use by TextLineEditPropertyItem::GetItemBestHeight

@@ -425,7 +425,7 @@ protected:
     // for debugging purpose to find out who called NeedReedraw for the TableCtrl.
     void NeedRedraw();
 
-    virtual void setGeometry(const Geometry& geo);
+    virtual void SetGeometry(const Geometry& geo);
     friend class ComboBoxComplex;
     friend class ComboBoxSimple;
 

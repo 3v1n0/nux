@@ -49,7 +49,7 @@ TextViewWidget::TextViewWidget(NUX_FILE_LINE_DECL)
     vscrollbar = new VScrollBar;
 
     SetMinimumSize(30, 30);
-    setGeometry(Geometry(0, 0, 400, 200));
+    SetGeometry(Geometry(0, 0, 400, 200));
 
 //     hscrollbar->OnScrollLeft.connect( sigc::mem_fun(this, &TextViewWidget::ScrollLeft));
 //     hscrollbar->OnScrollRight.connect( sigc::mem_fun(this, &TextViewWidget::ScrollRight));
@@ -165,9 +165,9 @@ int TextViewWidget::getTopBorder() const
     return m_top_border;
 }
 
-void TextViewWidget::setGeometry(const Geometry& geo)
+void TextViewWidget::SetGeometry(const Geometry& geo)
 {
-    BaseObject::setGeometry(geo);
+    BaseObject::SetGeometry(geo);
     //ComputeChildLayout();
 }
 
@@ -224,7 +224,7 @@ void TextViewWidget::PreLayoutManagement()
     }
     if(m_CompositionLayout.IsValid() && (m_CompositionLayout->GetStretchFactor() != 0))
     {
-        m_CompositionLayout->setGeometry(
+        m_CompositionLayout->SetGeometry(
             m_ViewX + m_ContentOffsetX,
             m_ViewY + m_ContentOffsetY,
             m_ViewWidth,

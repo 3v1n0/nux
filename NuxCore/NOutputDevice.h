@@ -40,11 +40,11 @@ public:
     }
 
     BOOL m_terminated;
-    virtual void Serialize( const TCHAR* V, const TCHAR* LogPrefix) = 0;
+    virtual void Serialize(const TCHAR* V, const TCHAR* LogPrefix, int Severity) = 0;
     virtual void Flush();
     virtual void Shutdown();
 
-    VARARG_DECL( void/*FuncRet*/, void/*StaticFuncRet*/, {}/*Return*/, LogFunction/*FuncName*/, VARARG_NONE/*Pure*/, const TCHAR*/*FmtType*/, VARARG_NONE/*ExtraDecl*/, VARARG_NONE/*ExtraParam*/ );
+    VARARG_DECL( void/*FuncRet*/, void/*StaticFuncRet*/, {}/*Return*/, LogFunction/*FuncName*/, VARARG_NONE/*Pure*/, const TCHAR*/*FmtType*/, VARARG_EXTRA(int Severity)/*ExtraDecl*/, VARARG_EXTRA(Severity)/*ExtraParam*/ );
 
 protected:
     BOOL m_ObjectDestroyed;
@@ -57,7 +57,7 @@ class NNullOutput : public NOutputDevice
 {
     NUX_DECLARE_GLOBAL_OBJECT(NNullOutput, NGlobalSingletonInitializer);
 public:
-    void Serialize( const TCHAR* V, const TCHAR* LogPrefix)
+    void Serialize( const TCHAR* V, const TCHAR* LogPrefix, int Severity)
     {}
 };
 
@@ -86,7 +86,7 @@ public:
         @param Data         Stream characters to write.
         @param LogPrefix    A string to write before the input stream of characters.
     */
-    void Serialize(const TCHAR* Data, const TCHAR* LogPrefix);
+    void Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity);
 
 private:
     NSerializer*    m_LogSerializer;
@@ -115,7 +115,7 @@ public:
         @param  Data        Text to log.
         @param  LogPrefix	Prefix for the text
     */
-    void Serialize(const TCHAR* Data, const TCHAR* LogPrefix);
+    void Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity);
 };
 
 class NOutputDeviceManager : public NOutputDevice
@@ -136,7 +136,7 @@ public:
     virtual void AddOutputDevice(NOutputDevice* OutputDevice);
     virtual void RemoveOutputDevice(NOutputDevice* OutputDevice);
     virtual bool IsRedirectingTo(NOutputDevice* OutputDevice);
-    void Serialize(const TCHAR* Data, const TCHAR* LogPrefix);
+    void Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity);
     void Flush();
 
     void Shutdown();

@@ -165,7 +165,7 @@ Matrix3Editor::Matrix3Editor(Matrix3 matrix, NUX_FILE_LINE_DECL)
         {
             m_MtxInput[i][j] = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
             m_MtxInput[i][j]->SetMinimumSize(DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT);
-            m_MtxInput[i][j]->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+            m_MtxInput[i][j]->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
             m_MtxInput[i][j]->sigValidateKeyboardEntry.connect(
                 sigc::bind(sigc::mem_fun(this, &Matrix3Editor::RecvComponentInput), i*3+j));
 

@@ -62,7 +62,7 @@ bool NWindowsSerialFileReader::Precache(t_int PrecacheOffset, t_int PrecacheSize
         if(Count != m_BufferCount)
         {
             m_ErrorCode = 1;
-            m_Error.LogFunction(TEXT("ReadFile failed: Count=%i BufferCount=%i Error=%s"), Count, m_BufferCount, inlGetSystemErrorMessage());
+            m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("ReadFile failed: Count=%i BufferCount=%i Error=%s"), Count, m_BufferCount, inlGetSystemErrorMessage());
         }
     }
     return TRUE;
@@ -85,7 +85,7 @@ t_s64 NWindowsSerialFileReader::Seek(t_s64 InPos, NSerializer::SeekPos seekpos)
     if(::SetFilePointerEx(m_FileHandle, pos, &filepos, FILE_BEGIN) == 0)
     {
         m_ErrorCode = 1;
-        m_Error.LogFunction(TEXT("SetFilePointer Failed %i/%i: %i %s"), InPos, m_FileSize, m_FilePos, inlGetSystemErrorMessage());
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("SetFilePointer Failed %i/%i: %i %s"), InPos, m_FileSize, m_FilePos, inlGetSystemErrorMessage());
     }
 
     // Now the file pointer is current with what we have read so far.
@@ -94,7 +94,7 @@ t_s64 NWindowsSerialFileReader::Seek(t_s64 InPos, NSerializer::SeekPos seekpos)
     if(::SetFilePointerEx(m_FileHandle, pos, &filepos, (seekpos == SeekStart) ? FILE_BEGIN : (seekpos == SeekCurrent) ? FILE_CURRENT : FILE_END) == 0)
     {
         m_ErrorCode = 1;
-        m_Error.LogFunction(TEXT("SetFilePointer Failed %i/%i: %i %s"), InPos, m_FileSize, m_FilePos, inlGetSystemErrorMessage());
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("SetFilePointer Failed %i/%i: %i %s"), InPos, m_FileSize, m_FilePos, inlGetSystemErrorMessage());
     }
     m_FilePos   = filepos.QuadPart;
     m_BufferBase  = 0;
@@ -156,7 +156,7 @@ void NWindowsSerialFileReader::SerializeFinal(void* Dest, t_s64 Length)
                 if(Count!=Length)
                 {
                     m_ErrorCode = 1;
-                    m_Error.LogFunction(TEXT("ReadFile failed: Count=%i Length=%i Error=%s"), Count, Length, inlGetSystemErrorMessage());
+                    m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("ReadFile failed: Count=%i Length=%i Error=%s"), Count, Length, inlGetSystemErrorMessage());
                 }
                 m_FilePos += Length;
                 m_BufferBase += Length;
@@ -167,7 +167,7 @@ void NWindowsSerialFileReader::SerializeFinal(void* Dest, t_s64 Length)
             if(DataSize <= 0)
             {
                 m_ErrorCode = 1;
-                m_Error.LogFunction(TEXT("ReadFile beyond EOF %i+%i/%i"), m_FilePos, Length, m_FileSize);
+                m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("ReadFile beyond EOF %i+%i/%i"), m_FilePos, Length, m_FileSize);
             }
             if(m_ErrorCode)
                 return;
@@ -215,7 +215,7 @@ t_s64 NWindowsSerialFileWriter::Seek(t_s64 InPos, NSerializer::SeekPos seekpos)
     if(::SetFilePointerEx(m_FileHandle, pos, &filepos, (seekpos == SeekStart) ? FILE_BEGIN : (seekpos == SeekCurrent) ? FILE_CURRENT : FILE_END) == 0)
     {
         m_ErrorCode = 1;
-        m_Error.LogFunction(TEXT("SeekFailed"));
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("SeekFailed"));
     }
     m_Pos = filepos.QuadPart;
         
@@ -249,7 +249,7 @@ bool NWindowsSerialFileWriter::Close()
     if(m_FileHandle && !CloseHandle(m_FileHandle))
     {
         m_ErrorCode = 1;
-        m_Error.LogFunction(TEXT("WriteFailed"));
+        m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("WriteFailed"));
     }
     m_FileHandle = NULL;
     return !m_ErrorCode;
@@ -317,7 +317,7 @@ void NWindowsSerialFileWriter::_Flush()
         if(!WriteFile(m_FileHandle, m_Buffer, m_BufferCount, (DWORD*)&Result, NULL))
         {
             m_ErrorCode = 1;
-            m_Error.LogFunction(TEXT("[NWindowsSerialFileWriter::_Flush] Write failed"));
+            m_Error.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("[NWindowsSerialFileWriter::_Flush] Write failed"));
         }
     }
     m_BufferCount = 0;

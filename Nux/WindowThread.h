@@ -145,9 +145,9 @@ public:
     bool IsEmbeddedWindow();
 
 #if defined(NUX_OS_WINDOWS)
-    void ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data);
+    bool ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data);
 #elif defined(NUX_OS_LINUX)
-    void ProcessForeignEvent(XEvent* event, void* data);
+    bool ProcessForeignEvent(XEvent* event, void* data);
 #endif
 
     void RenderInterfaceFromForeignCmd();

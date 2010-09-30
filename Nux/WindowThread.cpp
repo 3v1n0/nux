@@ -296,7 +296,7 @@ void WindowThread::SetLayout(smptr(Layout) layout)
     if(m_AppLayout.IsValid())
     {
         SetComputingLayout(true);
-        m_AppLayout->setGeometry(0, 0, w, h);
+        m_AppLayout->SetGeometry(0, 0, w, h);
         m_AppLayout->ComputeLayout2();
         m_AppLayout->ComputePosition2(0, 0);
         SetComputingLayout(false);
@@ -313,7 +313,7 @@ void WindowThread::ReconfigureLayout()
     if(m_AppLayout.IsValid())
     {
         SetComputingLayout(true);
-        m_AppLayout->setGeometry(0, 0, w, h);
+        m_AppLayout->SetGeometry(0, 0, w, h);
         m_AppLayout->ComputeLayout2();
         m_AppLayout->ComputePosition2(0, 0);
         SetComputingLayout(false);
@@ -1153,14 +1153,14 @@ bool WindowThread::IsEmbeddedWindow()
 }
 
 #if defined(NUX_OS_WINDOWS)
-void WindowThread::ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data)
+bool WindowThread::ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void* data)
 #elif defined(NUX_OS_LINUX)
-void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
+bool WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
 #endif
 {
     if(GetWindow().IsPauseThreadGraphicsRendering())
     {
-        return;
+        return false;
     }
 
     IEvent nux_event;
@@ -1173,7 +1173,7 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
 
     if(nux_event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
     {
-        return;
+        return false;
     }
 
     if(nux_event.e_event ==	NUX_SIZE_CONFIGURATION)
@@ -1303,7 +1303,7 @@ void WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
     }
 
     // ?
-    // return RequestRedraw;
+    return RequestRedraw;
 }
 
 void WindowThread::RenderInterfaceFromForeignCmd()

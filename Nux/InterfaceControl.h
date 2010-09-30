@@ -117,7 +117,7 @@ public:
         For others, they have to overwrite the function and do the appropriate computations
         for their component.   
     */
-    virtual void setGeometry(const Geometry& geo);
+    virtual void SetGeometry(const Geometry& geo);
 
     //! Return true if this object can break the layout.
     /*

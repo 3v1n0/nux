@@ -52,7 +52,7 @@ VSplitter::VSplitter(NUX_FILE_LINE_DECL)
     m_current_height = 100;
 
     //SetMinimumSize(m_current_width, m_current_height);
-    setGeometry(Geometry(m_current_x, m_current_y, m_current_width, m_current_height));
+    SetGeometry(Geometry(m_current_x, m_current_y, m_current_width, m_current_height));
 }
 
 VSplitter::~VSplitter()
@@ -365,7 +365,7 @@ long VSplitter::ComputeChildLayout()
             splitter_geo.SetHeight(h);
             splitter_geo.SetY(y);
 
-            m_SplitterObject[i]->setGeometry(splitter_geo);
+            m_SplitterObject[i]->SetGeometry(splitter_geo);
         }
     }
 
@@ -387,7 +387,7 @@ long VSplitter::ComputeChildLayout()
             splitter_geo.SetX(new_spliter_end + size_to_distribute * percent);
             previous_spliter_end = splitter_start + VSPLITTERWIDTH;
             new_spliter_end = new_spliter_end + size_to_distribute * percent + VSPLITTERWIDTH;
-            m_SplitterObject[i]->setGeometry(splitter_geo);
+            m_SplitterObject[i]->SetGeometry(splitter_geo);
         }
         if(m_SplitterObject[0]->GetBaseX() < x)
         {
@@ -402,12 +402,12 @@ long VSplitter::ComputeChildLayout()
     {
         Geometry splitter_geo = m_SplitterObject[i]->GetGeometry();
     
-        //m_InterfaceObject[i]->setGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
+        //m_InterfaceObject[i]->SetGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
 
         if(m_InterfaceObject[i]->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
         {
             smptr(ActiveInterfaceObject) ic = (m_InterfaceObject[i]);
-            ic->setGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
+            ic->SetGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
             // if we are already computing the layout from the main window down, we need to call 
             // ComputeElementLayout to force the computing of this element layout.
             GetGraphicsThread()->ComputeElementLayout(ic);
@@ -415,12 +415,12 @@ long VSplitter::ComputeChildLayout()
         else if(m_InterfaceObject[i]->Type().IsObjectType(BaseArea::StaticObjectType))
         {
             smptr(BaseArea) base_area(m_InterfaceObject[i]);
-            base_area->setGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
+            base_area->SetGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
         }
         else if(m_InterfaceObject[i]->Type().IsDerivedFromType(Layout::StaticObjectType))
         {
             smptr(Layout) layout =  (m_InterfaceObject[i]);
-            layout->setGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
+            layout->SetGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
             // if we are already computing the layout from the main window down, we need to call 
             // ComputeElementLayout to force the computing of this element layout.
             GetGraphicsThread()->ComputeElementLayout(layout);
@@ -474,7 +474,7 @@ void VSplitter::ResetSplitConfig()
         stretchfactor = m_SplitConfig[i];
         x += stretchfactor * max_size / max_stretch;
         Geometry geo(x, y, VSPLITTERWIDTH, h);
-        m_SplitterObject[i]->setGeometry(geo);
+        m_SplitterObject[i]->SetGeometry(geo);
     }
     m_SplitterObject[num_element-1]->SetBaseX(x + w - VSPLITTERWIDTH);
 
@@ -506,7 +506,7 @@ void VSplitter::OnSplitterMouseUp(t_s32 x, t_s32 y, unsigned long button_flags, 
             if(m_SplitterObject[header_pos + 1]->GetGeometry().x - geo.x - VSPLITTERWIDTH < VSTICK_SIZE)
                 geo.SetX( m_SplitterObject[header_pos + 1]->GetGeometry().x - VSPLITTERWIDTH );
         }
-        m_SplitterObject[header_pos]->setGeometry(geo);
+        m_SplitterObject[header_pos]->SetGeometry(geo);
         ResizeSplitter(header_pos);
     }
 
@@ -541,7 +541,7 @@ void VSplitter::OnSplitterMouseDrag(t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsign
         // Continuously redraw resize and redraw the 2 parts of the widget.
         // This is slow.
         geo.OffsetPosition(mvt_dx, mvt_dy);
-        m_SplitterObject[header_pos]->setGeometry(geo);
+        m_SplitterObject[header_pos]->SetGeometry(geo);
         ResizeSplitter(header_pos);
 
         mvt_dx = 0;

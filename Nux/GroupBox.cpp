@@ -127,7 +127,7 @@ void GroupBox::setLayout(smptr(Layout) layout)
 //    Geometry geo = GetGeometry();
 //    Geometry layout_geo = Geometry(geo.x + m_border, geo.y + m_top_border,
 //        geo.GetWidth() - 2*m_border, geo.GetHeight() - m_border - m_top_border);
-//    m_layout->setGeometry(layout_geo);
+//    m_layout->SetGeometry(layout_geo);
 }
 
 void GroupBox::PreLayoutManagement()
@@ -146,7 +146,7 @@ void GroupBox::PreLayoutManagement()
 //            layout_geo.OffsetPosition(2, 2);
 //            layout_geo.OffsetSize(-4, -4);
 //        }
-        m_CompositionLayout->setGeometry(layout_geo);
+        m_CompositionLayout->SetGeometry(layout_geo);
     }
 }
 
@@ -171,7 +171,7 @@ long GroupBox::PostLayoutManagement(long LayoutResult)
 //            base.OffsetPosition(-2, -2);
 //            base.OffsetSize(4, 4);
 //        }
-        BaseObject::setGeometry(base);
+        BaseObject::SetGeometry(base);
     }
     Geometry base = GetGeometry();
     m_CaptionArea.SetBaseXY(base.x+6, base.y);

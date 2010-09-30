@@ -54,7 +54,7 @@ void HToolBar::InitializeWidgets()
     m_hlayout->SetContentStacking(eStackLeft);
     SetMinimumSize(200, 32);
     SetMaximumHeight(32);
-    setGeometry(Geometry(0, 0, 200, 20));
+    SetGeometry(Geometry(0, 0, 200, 20));
     SetCompositionLayout(m_hlayout);
 }
 
@@ -113,7 +113,7 @@ void HToolBar::AddToolButton(smptr(ToolButton) toolbutton)
         return;
 
     m_hlayout->AddActiveInterfaceObject(toolbutton, 0, eCenter, eFix);
-    // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+    // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
     ComputeChildLayout();
@@ -129,7 +129,7 @@ void HToolBar::AddAction(smptr(ActionItem) action)
     tool_button->SetAction(action);
 
     m_hlayout->AddActiveInterfaceObject(tool_button, 0, eCenter, eFix);
-    // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+    // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
     ComputeChildLayout();
@@ -158,7 +158,7 @@ void HToolBar::AddEditTextLine(smptr(EditTextBox) edittextline)
         return;
 
     m_hlayout->AddActiveInterfaceObject(edittextline, 0, eCenter, eFix);
-    // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+    // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
     ComputeChildLayout();
@@ -171,7 +171,7 @@ void HToolBar::AddStaticTextLine(smptr(StaticTextBox) statictextline)
         return;
 
     m_hlayout->AddActiveInterfaceObject(statictextline, 0, eCenter, eFix);
-    // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+    // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
     ComputeChildLayout();

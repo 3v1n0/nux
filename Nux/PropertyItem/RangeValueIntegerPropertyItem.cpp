@@ -34,11 +34,11 @@ RangeValueIntegerPropertyItem::RangeValueIntegerPropertyItem(const TCHAR* name, 
     SetValue(Value);
     m_ValueString->SetMinimumSize(DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     //m_ValueString->SetMaximumHeight(14 /*PRACTICAL_WIDGET_HEIGHT*/);
-    //m_ValueString->setGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, 16 /*PRACTICAL_WIDGET_HEIGHT*/));
+    //m_ValueString->SetGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, 16 /*PRACTICAL_WIDGET_HEIGHT*/));
 
     m_Percentage->SetMinimumSize(2*DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     //m_Percentage->SetMaximumHeight(14 /*PRACTICAL_WIDGET_HEIGHT*/);
-    //m_Percentage->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, 16 /*PRACTICAL_WIDGET_HEIGHT*/));
+    //m_Percentage->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, 16 /*PRACTICAL_WIDGET_HEIGHT*/));
     SetMaximumHeight(14);
 
     NODE_SIG_CONNECT(sigValueChanged, RangeValueIntegerPropertyItem, RecvPropertyChange);
@@ -110,7 +110,7 @@ void RangeValueIntegerPropertyItem::ComputePropertyLayout(int x, int y, RowHeade
         Geometry geo;
         geo = m_ItemGeometryVector[1];
         geo = geo.GetExpand(-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
-        setGeometry(geo);
+        SetGeometry(geo);
     }
 }
 

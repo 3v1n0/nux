@@ -91,7 +91,7 @@ void Matrix4PreviewPropertyItem::ComputePropertyLayout(int x, int y, RowHeader* 
         Geometry geo;
         geo = m_ItemGeometryVector[1];
         geo = geo.GetExpand(-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
-        setGeometry(geo);
+        SetGeometry(geo);
     }
 }
 

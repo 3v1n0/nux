@@ -156,7 +156,7 @@ void Panel::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 //     if(ic && m_layout)
 //     {
 //         m_layout->AddActiveInterfaceObject(ic, 1);
-//         // 0: the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+//         // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
 //         // and the children will take their natural size by expending WidgetLayout.
 //         // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 // 
@@ -172,7 +172,7 @@ void Panel::AddWidget(smptr(ActiveInterfaceObject) ic, int stretchfactor)
    if(ic.IsValid() && m_layout.IsValid())
    {
        m_layout->AddActiveInterfaceObject(ic, stretchfactor);
-       // if(stretchfactor ==0): the WidgetLayout geometry will be set to setGeometry(0,0,1,1);
+       // if(stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
        // and the children will take their natural size by expending WidgetLayout.
        // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 

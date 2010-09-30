@@ -61,12 +61,11 @@ void ComboBoxComplex::InitializeWidgets()
     m_ComboArea->OnMouseDrag.connect(sigc::mem_fun(this, &ComboBoxComplex::RecvMouseDrag));
 
     // Set Geometry
-    m_Button->setGeometry(Geometry(0, 0, 20, DEFAULT_WIDGET_HEIGHT));
+    m_Button->SetGeometry(Geometry(0, 0, 20, DEFAULT_WIDGET_HEIGHT));
     m_Button->SetMinimumSize(20, DEFAULT_WIDGET_HEIGHT);
-    m_Button->SetSizePolicy(eSizeFixed);
 
     m_ComboArea->SetMinimumSize(2*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    m_ComboArea->setGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
+    m_ComboArea->SetGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
     m_ListBox = smptr(ListControl)(new ListControl(false));
     m_ListBox->UsedForComboBox(true);
@@ -88,7 +87,7 @@ void ComboBoxComplex::InitializeWidgets()
     m_ListBox->SetMaximumHeight(200);
 
     m_ListBox->sigTableItemSelected.connect(sigc::mem_fun(this, &ComboBoxComplex::RecvSigActionTriggered));
-    m_ListBox->setGeometry(Geometry(0, 0, 100, 400));
+    m_ListBox->SetGeometry(Geometry(0, 0, 100, 400));
     m_Layout->AddActiveInterfaceObject(m_ListBox, 1, eAbove, eFull);
     // Setting the layout stretch factor to 0 forces the list TableCtrl to have always use its minimum width.
     // This is how the PopupWindow width is controlled. SetPopupWidth define the minimum width of the TableCtrl.

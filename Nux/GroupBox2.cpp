@@ -143,7 +143,7 @@ void GroupBox2::PreLayoutManagement()
 //            layout_geo.OffsetPosition(X_MARGIN, 2);
 //            layout_geo.OffsetSize(-2*X_MARGIN, -2*Y_MARGIN);
 //        }
-        GetCompositionLayout()->setGeometry(layout_geo);
+        GetCompositionLayout()->SetGeometry(layout_geo);
     }
 }
 
@@ -168,7 +168,7 @@ long GroupBox2::PostLayoutManagement(long LayoutResult)
 //            base.OffsetPosition(-X_MARGIN, -2);
 //            base.OffsetSize(2*X_MARGIN, 2*Y_MARGIN);
 //        }
-        BaseObject::setGeometry(base);
+        BaseObject::SetGeometry(base);
     }
     Geometry base = GetGeometry();
     m_CaptionArea->SetBaseXY(base.x + CAPTION_X_MARGIN, base.y + (TOP_HEADER_HEIGHT - m_CaptionArea->GetBaseHeight()) / 2);

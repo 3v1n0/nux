@@ -169,52 +169,52 @@ void RGBValuator::InitializeWidgets()
 
     // Set Geometry
    
-    m_RedCaption->setGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
+    m_RedCaption->SetGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
     m_RedCaption->SetMaximumHeight(15);
 
-    m_GreenCaption->setGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
+    m_GreenCaption->SetGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
     m_GreenCaption->SetMaximumHeight(15);
 
-    m_BlueCaption->setGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
+    m_BlueCaption->SetGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
     m_BlueCaption->SetMaximumHeight(15);
 
-    m_AlphaCaption->setGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
+    m_AlphaCaption->SetGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
     m_AlphaCaption->SetMaximumHeight(15);
 
     m_ComponentLabel0->SetMinimumSize(10, DEFAULT_WIDGET_HEIGHT);
     m_ComponentLabel0->SetMaximumHeight(15);
-    //m_ComponentLabel0->setGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
+    //m_ComponentLabel0->SetGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
     
     m_ComponentLabel1->SetMinimumSize(10, DEFAULT_WIDGET_HEIGHT);
     m_ComponentLabel1->SetMaximumHeight(15);
-    //m_ComponentLabel1->setGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
+    //m_ComponentLabel1->SetGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
     
     m_ComponentLabel2->SetMinimumSize(10, DEFAULT_WIDGET_HEIGHT);
     m_ComponentLabel2->SetMaximumHeight(15);
-    //m_ComponentLabel2->setGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
+    //m_ComponentLabel2->SetGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
 
     m_ComponentAlpha->SetMinimumSize(10, DEFAULT_WIDGET_HEIGHT);
     m_ComponentAlpha->SetMaximumHeight(15);
-    //m_ComponentAlpha->setGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
+    //m_ComponentAlpha->SetGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
 
     m_RedValuator->SetMinimumSize(3*DEFAULT_WIDGET_WIDTH, 15);
     m_RedValuator->SetMaximumHeight(15);
-    m_RedValuator->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_RedValuator->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
     
     m_GreenValuator->SetMinimumSize(3*DEFAULT_WIDGET_WIDTH, 15);
     m_GreenValuator->SetMaximumHeight(15);
-    m_GreenValuator->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_GreenValuator->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
     
     m_BlueValuator->SetMinimumSize(3*DEFAULT_WIDGET_WIDTH, 15);
     m_BlueValuator->SetMaximumHeight(15);
-    m_BlueValuator->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_BlueValuator->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
     
     m_AlphaValuator->SetMinimumSize(3*DEFAULT_WIDGET_WIDTH, 15);
     m_AlphaValuator->SetMaximumHeight(15);
-    m_AlphaValuator->setGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    m_AlphaValuator->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     m_ColorSquare->SetMinimumSize(40, 40);
-    m_ColorSquare->setGeometry(Geometry(0, 0, 40, 40));
+    m_ColorSquare->SetGeometry(Geometry(0, 0, 40, 40));
     m_ColorModel->SetMinimumSize(20, 16 /*PRACTICAL_WIDGET_HEIGHT*/);
     m_ColorFormat->SetMinimumSize(20, 16 /*PRACTICAL_WIDGET_HEIGHT*/);
 
