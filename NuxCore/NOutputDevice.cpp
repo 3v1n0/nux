@@ -97,7 +97,7 @@ VARARG_BODY( void /*FuncRet*/, NOutputDevice::LogFunction/*FuncName*/, const TCH
             NewBufferSize = 2 * BufferSize;
     };
     Buffer[Result] = 0;
-    Serialize(Buffer, TEXT("Log"), 0);
+    Serialize(Buffer, TEXT("Log"), Severity);
 
     NUX_SAFE_DELETE_ARRAY(Buffer);
 }
@@ -294,9 +294,10 @@ void NOutputVisualDebugConsole::Destructor(){}
 void NOutputVisualDebugConsole::Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity)
 {
     TCHAR Temp[4096];
-    Snprintf(Temp, 4096, 4096 - 1, TEXT("%s: %s%s"), LogPrefix, Data, NUX_LINE_TERMINATOR);
+    
 
 #if defined (NUX_OS_WINDOWS)
+    Snprintf(Temp, 4096, 4096 - 1, TEXT("%s: %s%s"), LogPrefix, Data, NUX_LINE_TERMINATOR);
     OutputDebugString(Temp);
 #elif defined (NUX_OS_LINUX)
 //     {attr} is one of following
@@ -333,18 +334,43 @@ void NOutputVisualDebugConsole::Serialize(const TCHAR* Data, const TCHAR* LogPre
 //     47   White (greyish)
 //     48   White
 
-    int Foreground = 0;
-    if(Severity == NUX_MSG_SEVERITY_CRITICAL)
-        Foreground = 31;
-    else if(Severity == NUX_MSG_SEVERITY_ALERT)
-        Foreground = 31;
-    else if(Severity == NUX_MSG_SEVERITY_WARNING)
-        Foreground = 33;
-    else if(Severity == NUX_MSG_SEVERITY_WARNING)
-        Foreground = 32;
+    int Foreground = 38;
+    int Background = 48;
+    int Bold = 0;
 
-    printf("%c[%d;%d;%dm%s", 0x1B, 0, Foreground, 48, &Temp[0]);
+    if(Severity == NUX_MSG_SEVERITY_CRITICAL)
+    {
+      Foreground = 31;
+      Background = 44;
+      Bold = 1;
+    }
+    else if(Severity == NUX_MSG_SEVERITY_ALERT)
+    {
+      Foreground = 31;
+      Bold = 1;
+    }
+    else if(Severity == NUX_MSG_SEVERITY_WARNING)
+    {
+      Foreground = 33;
+      Bold = 1;
+    }
+    else if(Severity == NUX_MSG_SEVERITY_INFO)
+    {
+      Foreground = 32;
+      Bold = 1;
+    }
+    else if(Severity == NUX_MSG_SEVERITY_NONE)
+    {
+      Foreground = 38;
+      Bold = 0;
+    }
+
+
+    Snprintf(Temp, 4096, 4096 - 1, TEXT("%c[%d;%d;%dm%s: %s%c[%d;%d;%dm%s"), 0x1B, Bold, Foreground, Background, LogPrefix, Data, 0x1B, 0, 38, 48, NUX_LINE_TERMINATOR);
+    printf("%s", &Temp[0]);
+
 #else
+    Snprintf(Temp, 4096, 4096 - 1, TEXT("%s: %s%s"), LogPrefix, Data, NUX_LINE_TERMINATOR);
     printf("%s", &Temp[0]);
 #endif
 }

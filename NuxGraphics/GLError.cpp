@@ -25,9 +25,7 @@
 
 namespace nux {
 #ifdef NUX_DEBUG
-    bool bCheckGLErrors = TRUE;
-    bool bBreakOnGLErrors = TRUE;
-    bool bVerboseOGLMsg    = FALSE;
+    static bool bBreakOnGLErrors = FALSE;
 #endif
 
 // WARNING: never call glGetError between glBegin and glEnd.
@@ -42,27 +40,27 @@ int CheckGLError(const TCHAR* GLcall, const TCHAR *file, int line)
         switch(glErr)
         {
         case GL_INVALID_ENUM:
-            nuxDebugMsg(TEXT("[CheckGLError] GL_INVALID_ENUM error in File %s at line: %d"), file, line);
+            nuxWarningMsg(TEXT("[CheckGLError] GL_INVALID_ENUM error in File %s at line: %d"), file, line);
             break;
         case GL_INVALID_VALUE:
-            nuxDebugMsg(TEXT("[CheckGLError] GL_INVALID_VALUE error in File %s at line: %d"), file, line);
+            nuxWarningMsg(TEXT("[CheckGLError] GL_INVALID_VALUE error in File %s at line: %d"), file, line);
             break;
         case GL_INVALID_OPERATION:
-            nuxDebugMsg(TEXT("[CheckGLError] GL_INVALID_OPERATION error in File %s at line: %d"), file, line);
+            nuxWarningMsg(TEXT("[CheckGLError] GL_INVALID_OPERATION error in File %s at line: %d"), file, line);
             break;
         case GL_STACK_OVERFLOW:
-            nuxDebugMsg(TEXT("[CheckGLError] GL_STACK_OVERFLOW error in File %s at line: %d"), file, line);
+            nuxWarningMsg(TEXT("[CheckGLError] GL_STACK_OVERFLOW error in File %s at line: %d"), file, line);
             break;
         case GL_STACK_UNDERFLOW:
-            nuxDebugMsg(TEXT("[CheckGLError] GL_STACK_UNDERFLOW error in File %s at line: %d"), file, line);
+            nuxWarningMsg(TEXT("[CheckGLError] GL_STACK_UNDERFLOW error in File %s at line: %d"), file, line);
             break;
         case GL_OUT_OF_MEMORY:
-            nuxDebugMsg(TEXT("[CheckGLError] GL_OUT_OF_MEMORY error in File %s at line: %d"), file, line);
+            nuxWarningMsg(TEXT("[CheckGLError] GL_OUT_OF_MEMORY error in File %s at line: %d"), file, line);
             break;
         default:
-            nuxDebugMsg(TEXT("[CheckGLError] UNKNOWN ERROR in File %s at line: %d"), file, line);
+            nuxWarningMsg(TEXT("[CheckGLError] UNKNOWN ERROR in File %s at line: %d"), file, line);
         }
-        nuxDebugMsg(TEXT("[CheckGLError] OpenGL Error %d ( %s )  in File %s at line: %d \n"), glErr, ANSI_TO_TCHAR(gluErrorString(glErr)), ANSI_TO_TCHAR(file), line);
+        nuxWarningMsg(TEXT("[CheckGLError] OpenGL Error %d ( %s )  in File %s at line: %d \n"), glErr, ANSI_TO_TCHAR(gluErrorString(glErr)), ANSI_TO_TCHAR(file), line);
         retCode = 1;
 
 #ifdef _DEBUG

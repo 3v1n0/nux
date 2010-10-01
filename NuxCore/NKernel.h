@@ -197,6 +197,10 @@ typedef enum
 
 } MessageSeverity;
 
+#define nuxWarningMsg(str, ...)   { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_WARNING, str, ##__VA_ARGS__);}
+#define nuxAlertMsg(str, ...)     { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_ALERT, str, ##__VA_ARGS__);}
+#define nuxCriticalMsg(str, ...)  { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_CRITICAL, str, ##__VA_ARGS__);}
+
 #ifdef NUX_ENABLE_ASSERT_MACROS
     #define nuxAssert(expr)             { if(!(expr)) nuxFailAssert(TEXT(#expr)); }
     // Expression is always evaluated no matter if NUX_ENABLE_ASSERT_MACROS is enabled. nuxFailAssert is called if enabled.
@@ -601,13 +605,17 @@ class NFileManager;
 #endif // _MSC_VER
 
 
-/** Sends the formatted message to the debugging output. */
+//! Log an outpout message.
 void inlOutputDebugString( const TCHAR *Format, ... );
 
-/** Failed assertion handler.  Warning: May be called at library startup time. */
+//! Log an assertion failure.
 void LogOutputAssertMessage( const ANSICHAR* File, int Line, const TCHAR* Format = TEXT(""), ... );
 
+//! Log an error message.
 void LogOutputErrorMessage( const ANSICHAR* File, int Line, const TCHAR* Format = TEXT(""), ... );
+
+//! Log and output message with a severity factor. Print colored output in XTerm.
+void LogOutputSeverityMessage(int Severity, const TCHAR* Format/*=TEXT("")*/, ... );
 
 // Returns true is the output redirector is ready
 bool inlOutputRedirectorReady();

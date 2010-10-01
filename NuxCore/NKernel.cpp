@@ -57,7 +57,7 @@ t_u32 GetVariableArgsAnsi( ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICH
 
 // Formats the text for inlOutputDebugString.
 // This function can be used to print anything before the other output are initialized.
-void inlOutputDebugString( const TCHAR *Format, ... )
+void inlOutputDebugString(const TCHAR *Format, ... )
 {
     TCHAR TempStr[4096];
     GET_VARARGS( TempStr, 4096, NUX_ARRAY_COUNT(TempStr) - 1, Format );
@@ -69,7 +69,7 @@ void inlOutputDebugString( const TCHAR *Format, ... )
 #endif
 }
 
-void LogOutputAssertMessage( const ANSICHAR* File, int Line, const TCHAR* Format/*=TEXT("")*/, ... )
+void LogOutputAssertMessage(const ANSICHAR* File, int Line, const TCHAR* Format/*=TEXT("")*/, ... )
 {
     TCHAR TempStr[4096];
     GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr) - 1, Format );
@@ -78,7 +78,7 @@ void LogOutputAssertMessage( const ANSICHAR* File, int Line, const TCHAR* Format
         GLogDevice.LogFunction(NUX_MSG_SEVERITY_NONE, TEXT("Assertion failed: %s\r\n    [File:%s]\r\n    [Line: %i]\r\n"), (const TCHAR*)TempStr, ANSI_TO_TCHAR(File), Line);
 }
 
-void LogOutputErrorMessage( const ANSICHAR* File, int Line, const TCHAR* Format/*=TEXT("")*/, ... )
+void LogOutputErrorMessage(const ANSICHAR* File, int Line, const TCHAR* Format/*=TEXT("")*/, ... )
 {
     TCHAR TempStr[4096];
     GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr) - 1, Format );
@@ -92,6 +92,14 @@ void LogOutputDebugMessage(const TCHAR* Format/*=TEXT("")*/, ... )
     GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr) - 1, Format );
     if(NOutputDeviceRedirector::Ready())
         GLogDevice.LogFunction(NUX_MSG_SEVERITY_NONE, TempStr);
+}
+
+void LogOutputSeverityMessage(int Severity, const TCHAR* Format/*=TEXT("")*/, ... )
+{
+    TCHAR TempStr[4096];
+    GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), NUX_ARRAY_COUNT(TempStr) - 1, Format );
+    if(NOutputDeviceRedirector::Ready())
+        GLogDevice.LogFunction(Severity, TempStr);
 }
 
 bool inlOutputRedirectorReady()
