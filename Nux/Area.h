@@ -28,7 +28,7 @@
 #include <sigc++/functors/ptr_fun.h>
 #include <sigc++/functors/mem_fun.h>
 
-#include "NuxCore/Object.h"
+#include "NuxCore/InitiallyUnownedObject.h"
 
 #include "Utils.h"
 #include "WidgetMetrics.h"
@@ -124,10 +124,10 @@ class View;
 class Area;
 
 
-class Area: public Object, public sigc::trackable
+class Area: public InitiallyUnownedObject, public sigc::trackable
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(Area, Object);
+    NUX_DECLARE_OBJECT_TYPE(Area, InitiallyUnownedObject);
     //static NObjectType StaticObjectType;
     //virtual NObjectType* Type() { return &StaticObjectType; }
 

@@ -82,7 +82,8 @@ source_cpp = \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
   $(srcdir)/NCRC32.cpp \
-  $(srcdir)/Size.cpp
+  $(srcdir)/Size.cpp \
+  $(srcdir)/InitiallyUnownedObject.cpp
 
 source_file_manager_h = \
   $(srcdir)/FileManager/NFileManagerGNU.h \
@@ -165,7 +166,8 @@ source_h = \
   $(srcdir)/NString.h \
   $(srcdir)/NTemplate.h \
   $(srcdir)/NUniqueIndex.h \
-  $(srcdir)/NFile.h
+  $(srcdir)/NFile.h \
+  $(srcdir)/InitiallyUnownedObject.h
 
 libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
