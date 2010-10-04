@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -23,60 +23,88 @@
 #ifndef RGBPROPERTY_H
 #define RGBPROPERTY_H
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-class Button;
-class ColorGradientPropertyItem;
-
-class RGBPropertyItem: public SectionProperty
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-    NODE_XML_CLASS_MEMBER(RGBPropertyItem);
-    NODE_SKIP_CHILD(true);
-    NODE_SIG_RECEIVER(RecvPropertyChange, ColorGradient*);
 
-public:
-    RGBPropertyItem(const TCHAR* name, float red = 0.0f, float green = 0.0f, float blue = 0.0f);
+  class Button;
+  class ColorGradientPropertyItem;
+
+  class RGBPropertyItem: public SectionProperty
+  {
+    NODE_XML_CLASS_MEMBER (RGBPropertyItem);
+    NODE_SKIP_CHILD (true);
+    NODE_SIG_RECEIVER (RecvPropertyChange, ColorGradient *);
+
+  public:
+    RGBPropertyItem (const TCHAR *name, float red = 0.0f, float green = 0.0f, float blue = 0.0f);
     virtual ~RGBPropertyItem();
 
-    virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
-    virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
+    virtual long ProcessPropertyEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual void DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter, RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color (0x0) );
+    virtual void ComputePropertyLayout (int x, int y, RowHeader *row, const std::vector<ColumnHeader>& column_vector);
     virtual int GetItemBestHeight();
 
-    void SetRed(double red)     {m_red->SetValue(red); UpdateStartToEndColors();}
-    void SetGreen(double green) {m_green->SetValue(green); UpdateStartToEndColors();}
-    void SetBlue(double blue)   {m_blue->SetValue(blue); UpdateStartToEndColors();}
+    void SetRed (double red)
+    {
+      m_red->SetValue (red);
+      UpdateStartToEndColors();
+    }
+    void SetGreen (double green)
+    {
+      m_green->SetValue (green);
+      UpdateStartToEndColors();
+    }
+    void SetBlue (double blue)
+    {
+      m_blue->SetValue (blue);
+      UpdateStartToEndColors();
+    }
 
-    double GetRed()     const   {return m_Red;}
-    double GetGreen()   const   {return m_Green;}
-    double GetBlue()    const   {return m_Blue;}
+    double GetRed()     const
+    {
+      return m_Red;
+    }
+    double GetGreen()   const
+    {
+      return m_Green;
+    }
+    double GetBlue()    const
+    {
+      return m_Blue;
+    }
 
-    void SetColor(double red, double green, double blue) {m_red->SetValue(red); m_green->SetValue(green); m_blue->SetValue(blue); UpdateStartToEndColors();}
+    void SetColor (double red, double green, double blue)
+    {
+      m_red->SetValue (red);
+      m_green->SetValue (green);
+      m_blue->SetValue (blue);
+      UpdateStartToEndColors();
+    }
 
     void OnChangeColorModel();
     void OnChangeColorFormat();
 
-    void SetColorModel(eColorModel cm);
-    void SetColorFormat(Color::Format cf);
+    void SetColorModel (eColorModel cm);
+    void SetColorFormat (Color::Format cf);
 
-private:
+  private:
     void UpdateStartToEndColors();
 
-    void RedChange(ColorGradient* slider);
-    void GreenChange(ColorGradient* slider);
-    void BlueChange(ColorGradient* slider);
-    void AlphaChange(ColorGradient* slider);
+    void RedChange (ColorGradient *slider);
+    void GreenChange (ColorGradient *slider);
+    void BlueChange (ColorGradient *slider);
+    void AlphaChange (ColorGradient *slider);
 
-    ColorGradientPropertyItem* m_red;
-    ColorGradientPropertyItem* m_green;
-    ColorGradientPropertyItem* m_blue;
+    ColorGradientPropertyItem *m_red;
+    ColorGradientPropertyItem *m_green;
+    ColorGradientPropertyItem *m_blue;
 
     float m_Red, m_Green, m_Blue;
-    Button* m_ColorModel;
-    Button* m_ColorFormat;
+    Button *m_ColorModel;
+    Button *m_ColorFormat;
     enum eColorModel m_color_model;
     Color::Format m_color_format;
-};
+  };
 
 } //NUX_NAMESPACE_END
 

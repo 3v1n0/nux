@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -37,7 +37,7 @@ extern "C" {
 //	TextView API declared here
 //
 
-t_color RealizeColour(t_color col);
+  t_color RealizeColour (t_color col);
 
 
 //
@@ -90,43 +90,43 @@ t_color RealizeColour(t_color col);
 //
 //	TextView Message Macros defined here
 //
-/*
-#define TextView_OpenFile(hwndTV, szFile)	\
-	SendMessage((hwndTV), TXM_OPENFILE, 0, (LPARAM)(szFile))
+  /*
+  #define TextView_OpenFile(hwndTV, szFile)	\
+  	SendMessage((hwndTV), TXM_OPENFILE, 0, (LPARAM)(szFile))
 
-#define TextView_Clear(hwndTV)	\
-	SendMessage((hwndTV), TXM_CLEAR, 0, 0)
+  #define TextView_Clear(hwndTV)	\
+  	SendMessage((hwndTV), TXM_CLEAR, 0, 0)
 
-#define TextView_SetLineSpacing(hwndTV, nAbove, nBelow) \
-	SendMessage((hwndTV), TXM_SETLINESPACING, (int)(nAbove), (int)(nBelow))
+  #define TextView_SetLineSpacing(hwndTV, nAbove, nBelow) \
+  	SendMessage((hwndTV), TXM_SETLINESPACING, (int)(nAbove), (int)(nBelow))
 
-#define TextView_AddFont(hwndTV, hFont) \
-	SendMessage((hwndTV), TXM_ADDFONT, (WPARAM)(HFONT)(hFont), 0)
+  #define TextView_AddFont(hwndTV, hFont) \
+  	SendMessage((hwndTV), TXM_ADDFONT, (WPARAM)(HFONT)(hFont), 0)
 
-#define TextView_SetColor(hwndTV, nIdx, rgbColor) \
-	SendMessage((hwndTV), TXM_SETCOLOR, (WPARAM)(nIdx), (LPARAM)(rgbColor))
+  #define TextView_SetColor(hwndTV, nIdx, rgbColor) \
+  	SendMessage((hwndTV), TXM_SETCOLOR, (WPARAM)(nIdx), (LPARAM)(rgbColor))
 
-#define TextView_SetStyle(hwndTV, uMask, uStyles) \
-	SendMessage((hwndTV), TXM_SETSTYLE, (WPARAM)(uMask), (LPARAM)(uStyles))
+  #define TextView_SetStyle(hwndTV, uMask, uStyles) \
+  	SendMessage((hwndTV), TXM_SETSTYLE, (WPARAM)(uMask), (LPARAM)(uStyles))
 
-#define TextView_SetStyleBool(hwndTV, uStyle, fBoolean) \
-	SendMessage((hwndTV), TXM_SETSTYLE, (WPARAM)(uStyle), (LPARAM)(fBoolean ? uStyle : 0))
-	
-#define TextView_SetCaretWidth(hwndTV, nWidth) \
-	SendMessage((hwndTV), TXM_SETCARETWIDTH, (WPARAM)(nWidth), 0)
+  #define TextView_SetStyleBool(hwndTV, uStyle, fBoolean) \
+  	SendMessage((hwndTV), TXM_SETSTYLE, (WPARAM)(uStyle), (LPARAM)(fBoolean ? uStyle : 0))
 
-#define TextView_SetImageList(hwndTV, hImgList) \
-	SendMessage((hwndTV), TXM_SETIMAGELIST, (WPARAM)(HIMAGELIST)(hImgList), 0)
+  #define TextView_SetCaretWidth(hwndTV, nWidth) \
+  	SendMessage((hwndTV), TXM_SETCARETWIDTH, (WPARAM)(nWidth), 0)
 
-#define TextView_SetLongLine(hwndTV, nLength) \
-	SendMessage((hwndTV), TXM_SETLONGLINE, (WPARAM)(0), (LPARAM)(nLength))
+  #define TextView_SetImageList(hwndTV, hImgList) \
+  	SendMessage((hwndTV), TXM_SETIMAGELIST, (WPARAM)(HIMAGELIST)(hImgList), 0)
 
-#define TextView_SetLineImage(hwndTV, nLineNo, nImageIdx) \
-	SendMessage((hwndTV), TXM_SETLINEIMAGE, (WPARAM)(ULONG)(nLineNo), (LPARAM)(ULONG)nImageIdx)
+  #define TextView_SetLongLine(hwndTV, nLength) \
+  	SendMessage((hwndTV), TXM_SETLONGLINE, (WPARAM)(0), (LPARAM)(nLength))
 
-#define TextView_GetFormat(hwndTV) \
-	SendMessage((hwndTV), TXM_GETFORMAT, 0, 0)
-*/
+  #define TextView_SetLineImage(hwndTV, nLineNo, nImageIdx) \
+  	SendMessage((hwndTV), TXM_SETLINEIMAGE, (WPARAM)(ULONG)(nLineNo), (LPARAM)(ULONG)nImageIdx)
+
+  #define TextView_GetFormat(hwndTV) \
+  	SendMessage((hwndTV), TXM_GETFORMAT, 0, 0)
+  */
 
 //
 //	TextView Macros defined here

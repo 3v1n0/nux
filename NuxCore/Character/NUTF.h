@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -33,12 +33,12 @@
 // code points from U+0000 through U+10FFFF, except for the surrogate code points U+D800–U+DFFF
 // (which are not characters), are uniquely mapped by UTF-16 regardless of the code point's current or
 // future character assignment or use.
-// 
+//
 // As many uses in computing require units of bytes (octets) there are three related encoding schemes
 // which map to octet sequences instead of words: namely UTF-16, UTF-16BE, and UTF-16LE. They
 // differ only in the byte order chosen to represent each 16-bit unit and whether they make use of a
 // Byte Order Mark. All of the schemes will result in either a 2 or 4-byte sequence for any given character.
-// 
+//
 // UTF-16 is officially defined in Annex Q of the international standard ISO/IEC 10646-1. It is also
 // described in The Unicode Standard version 3.0 and higher, as well as in the IETF's RFC 2781.
 //
@@ -48,46 +48,47 @@
 // U+FFFF. As a consequence it is a fixed-length encoding that always encodes characters into a
 // single 16-bit value. As with UTF-16, there are three related encoding schemes (UCS-2, UCS-2BE, UCS-2LE)
 // that map characters to a specific byte sequence.
-// 
+//
 // Because of the technical similarities and upwards compatibility from UCS-2 to UTF-16, the two
 // encodings are often erroneously conflated and used as if interchangeable, so that strings encoded
 // in UTF-16 are sometimes misidentified as being encoded in UCS-2.
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
 //! Convert UTF-16 to UTF-8
-class NUTF8
-{
+  class NUTF8
+  {
     // UTF-8 encoded characters may theoretically be up to six bytes long, however 16-bit BMP characters are only up to three bytes long.
-public:
-    explicit NUTF8(const UNICHAR* Source);
-    explicit NUTF8(const std::wstring& Source);
+  public:
+    explicit NUTF8 (const UNICHAR *Source);
+    explicit NUTF8 (const std::wstring &Source);
     ~NUTF8();
 
     operator const char* ();
 
-private:
-    void Convert(const UNICHAR*);
+  private:
+    void Convert (const UNICHAR *);
     //void Convert(const t_UTF32*);
-    char* utf8;
+    char *utf8;
 
-};
+  };
 
 //! Convert UTF-8 to UTF-16
-class NUTF16
-{
-public:
-    explicit NUTF16(const char* Source);
-    explicit NUTF16(const std::string& Source);
+  class NUTF16
+  {
+  public:
+    explicit NUTF16 (const char *Source);
+    explicit NUTF16 (const std::string &Source);
     ~NUTF16();
 
     operator const UNICHAR* ();
 
-private:
-    void Convert(const char*);
-    UNICHAR* unicode;
+  private:
+    void Convert (const char *);
+    UNICHAR *unicode;
 
-};
+  };
 
 } //NUX_NAMESPACE_END
 

@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -25,25 +25,26 @@
 
 #include <vector>
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-double *d3_np_fs ( int n, double a[], double b[] );
-double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg, double ybcbeg, int ibcend, double ybcend );
-double spline_cubic_val ( int n, double t[], double tval, double y[], double ypp[], double *ypval, double *yppval );
-
-
-class CubicSpline
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-public:
-    CubicSpline();
-    CubicSpline(const CubicSpline& Other);
-    CubicSpline& operator = (const CubicSpline& Other);
 
-    CubicSpline(int numpoint, std::vector<double> x_array, std::vector<double> y_array, int ibcbeg = 0, double ybcbeg = 0, int ibcend = 0, double ybcend = 0);
-    void Set(int numpoint, std::vector<double> x_array, std::vector<double> y_array, int ibcbeg = 0, double ybcbeg = 0, int ibcend = 0, double ybcend = 0);
+  double *d3_np_fs ( int n, double a[], double b[] );
+  double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg, double ybcbeg, int ibcend, double ybcend );
+  double spline_cubic_val ( int n, double t[], double tval, double y[], double ypp[], double *ypval, double *yppval );
+
+
+  class CubicSpline
+  {
+  public:
+    CubicSpline();
+    CubicSpline (const CubicSpline &Other);
+    CubicSpline &operator = (const CubicSpline &Other);
+
+    CubicSpline (int numpoint, std::vector<double> x_array, std::vector<double> y_array, int ibcbeg = 0, double ybcbeg = 0, int ibcend = 0, double ybcend = 0);
+    void Set (int numpoint, std::vector<double> x_array, std::vector<double> y_array, int ibcbeg = 0, double ybcbeg = 0, int ibcend = 0, double ybcend = 0);
 
     ~CubicSpline();
-    
+
     //**********************************************************************
     //  double* CubicSpline::Compute ( int n, double t[], double y[], int ibcbeg, double ybcbeg, int ibcend, double ybcend )
     //  Purpose:
@@ -105,7 +106,7 @@ public:
     //      DDY(IVAL-1) * H(IVAL-1) + 2 * DDY(IVAL) * ( H(IVAL-1) + H(IVAL) ) + DDY(IVAL) * H(IVAL)
     //      = 6 * ( Y(IVAL+1) - Y(IVAL) ) / H(IVAL) - 6 * ( Y(IVAL) - Y(IVAL-1) ) / H(IVAL-1)
     //
-    //    Boundary conditions must be applied at the first and last knots.  
+    //    Boundary conditions must be applied at the first and last knots.
     //    The resulting tridiagonal system can be solved for the DDY values.
     //
     //
@@ -138,7 +139,7 @@ public:
     //
     //    Output, double SPLINE_CUBIC_SET[N], the second derivatives of the cubic spline.
     //
-    double* Compute(int ibcbeg, double ybcbeg, int ibcend, double ybcend);
+    double *Compute (int ibcbeg, double ybcbeg, int ibcend, double ybcend);
 
     //**********************************************************************
     //  double Eval ( int n, double t[], double tval, double y[], double ddy[], double *dyval, double *ddyval )
@@ -238,12 +239,12 @@ public:
     //    This is NULL if there was an error because one of the diagonal
     //    entries was zero.
     //
-    double* SolveTridiag ( int n, double a[], double b[] );
+    double *SolveTridiag ( int n, double a[], double b[] );
 
-public:
-    double* t;
-    double* y;
-    double* ddy;
+  public:
+    double *t;
+    double *y;
+    double *ddy;
 
     int ibcbeg_;
     double ybcbeg_;
@@ -251,7 +252,7 @@ public:
     double ybcend_;
 
     int np;  // number of points
-};
+  };
 
 } //NUX_NAMESPACE_END
 
