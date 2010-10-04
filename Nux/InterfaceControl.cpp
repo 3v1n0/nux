@@ -45,7 +45,7 @@ ActiveInterfaceObject::ActiveInterfaceObject(NUX_FILE_LINE_DECL)
 ActiveInterfaceObject::~ActiveInterfaceObject()
 {
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
-    //GetGraphicsThread()->RemoveObjectFromRefreshList(this);
+    GetGraphicsThread()->RemoveObjectFromRefreshList(this);
     if(m_CompositionLayout)
         m_CompositionLayout->UnParentObject();
 }

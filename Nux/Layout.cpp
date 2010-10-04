@@ -46,7 +46,7 @@ Layout::Layout(NUX_FILE_LINE_DECL)
 Layout::~Layout()
 {
     // It is possible that this layout object is in the refresh list. Remove it here before it is deleted.
-    //GetGraphicsThread()->RemoveObjectFromRefreshList(this, true);
+    GetGraphicsThread()->RemoveObjectFromRefreshList(this);
 
     std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
