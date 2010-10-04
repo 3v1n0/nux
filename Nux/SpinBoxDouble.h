@@ -50,9 +50,9 @@ public:
     double GetMaxValue() const;
     void SetRange(double MinValue, double Maxvalue);
 
-    sigc::signal<void, const weaksmptr(SpinBoxDouble) > sigIncrement;
-    sigc::signal<void, const weaksmptr(SpinBoxDouble) > sigDecrement;
-    sigc::signal<void, const weaksmptr(SpinBoxDouble) > sigValueChanged;
+    sigc::signal<void, SpinBoxDouble* > sigIncrement;
+    sigc::signal<void, SpinBoxDouble* > sigDecrement;
+    sigc::signal<void, SpinBoxDouble* > sigValueChanged;
     sigc::signal<void, double> sigValue;
 
 protected:
@@ -61,8 +61,8 @@ protected:
     void DestroyLayout();
 
 private:
-    smptr(HLayout) m_hlayout;
-    smptr(VLayout) m_vlayout;
+    HLayout*    m_hlayout;
+    VLayout*    m_vlayout;
 
     DoubleValidator m_DoubleValidator;
     double m_Value;

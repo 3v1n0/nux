@@ -56,27 +56,27 @@ static const int MENU_ITEM_TEXT_TO_BORDER_MARGIN = 5;
 MenuItem::MenuItem(const TCHAR* label, int UserValue, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
-    m_ChildMenu     = smptr(MenuPage)(0); 
-    m_ActionItem    = smptr(ActionItem)(new ActionItem(label, UserValue));
+    m_ChildMenu     = 0; 
+    m_ActionItem    = new ActionItem(label, UserValue);
 }
 
 MenuItem::~MenuItem()
 {
 }
 
-void MenuItem::SetChildMenu(smptr(MenuPage) menu)
+void MenuItem::SetChildMenu(MenuPage* menu)
 {
     //nuxAssert(menu)
     m_ChildMenu = menu;
 }
 
-smptr(MenuPage) MenuItem::GetChildMenu() const
+MenuPage* MenuItem::GetChildMenu() const
 {
     //return m_ActionItem.GetMenu();
     return m_ChildMenu;
 }
 
-void MenuItem::SetActionItem(smptr(ActionItem) action)
+void MenuItem::SetActionItem(ActionItem* action)
 {
     nuxAssertMsg(action != 0, TEXT("[MenuItem::SetActionItem] Parameter is Null."));
     if(action == 0)
@@ -84,12 +84,12 @@ void MenuItem::SetActionItem(smptr(ActionItem) action)
     m_ActionItem = action;
 }
 
-const smptr(ActionItem) MenuItem::GetActionItem() const
+ActionItem* MenuItem::GetActionItem() const
 {
     return m_ActionItem;
 }
 
-//smptr(ActionItem) MenuItem::GetActionItem()
+//ActionItem* MenuItem::GetActionItem()
 //{
 //    return &m_ActionItem;
 //}
@@ -173,11 +173,11 @@ void MenuSeparator::Draw(GraphicsContext& GfxContext, bool force_draw)
 MenuPage::MenuPage(const TCHAR* title, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
-    m_Parent = smptr(MenuPage)(0);
+    m_Parent = 0;
     m_item_width = MENU_ITEM_MIN_WIDTH;
     m_item_height = MENU_ITEM_MIN_HEIGHT;
     m_show_item_icon = true;
-    m_MenuWindow = smptr(BaseWindow)(0);
+    m_MenuWindow = 0;
     m_Name = title;
     m_IsTopOfMenuChain = false;
 
@@ -200,9 +200,9 @@ MenuPage::MenuPage(const TCHAR* title, NUX_FILE_LINE_DECL)
     m_HighlightedItem = -1;
     m_IsActive = false;
     m_NextMouseUpMeanStop = false;
-    m_SubMenuAction = smptr(MenuItem)(0);
+    m_SubMenuAction = 0;
 
-    vlayout = smptr(VLayout)(new VLayout());
+    vlayout = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
     // No Need to set a composition layout.
     // The MenuPage is floating above everything else.
     SetCompositionLayout(vlayout);
@@ -212,14 +212,14 @@ MenuPage::MenuPage(const TCHAR* title, NUX_FILE_LINE_DECL)
 
 MenuPage::~MenuPage()
 {
-    std::vector< smptr(MenuItem) >::iterator it;
+    std::vector<MenuItem*>::iterator it;
     for(it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
     {
         //delete (*it);
     }
     m_MenuItemVector.clear();
 
-    std::vector< smptr(MenuSeparator) >::iterator it2;
+    std::vector< MenuSeparator* >::iterator it2;
     for(it2 = m_MenuSeparatorVector.begin(); it2 != m_MenuSeparatorVector.end(); it2++)
     {
         //delete (*it2);
@@ -319,7 +319,7 @@ void MenuPage::Draw(GraphicsContext& GfxContext, bool force_draw)
         text_area.SetHeight(PRACTICAL_WIDGET_HEIGHT);
 
         int i;
-        std::vector< smptr(MenuItem) >::iterator it;
+        std::vector<MenuItem*>::iterator it;
         int numItem = (int)m_MenuItemVector.size();
         for(it = m_MenuItemVector.begin(), i = 0; it != m_MenuItemVector.end(); it++, i++)
         {
@@ -327,7 +327,7 @@ void MenuPage::Draw(GraphicsContext& GfxContext, bool force_draw)
             (*it)->DrawAsMenuItem(GfxContext, Color(0xFFFFFFFF)/*GetTextColor()*/, is_highlighted, i==0, i==(numItem-1), true);
         }
 
-        std::vector< smptr(MenuSeparator) >::iterator separator_iterator;
+        std::vector< MenuSeparator* >::iterator separator_iterator;
         for(separator_iterator = m_MenuSeparatorVector.begin(); separator_iterator != m_MenuSeparatorVector.end(); separator_iterator++)
         {
             (*separator_iterator)->Draw(GfxContext, force_draw);
@@ -345,9 +345,9 @@ void MenuPage::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 }
 
-smptr(ActionItem) MenuPage::AddAction(const TCHAR* label, int UserValue)
+ActionItem* MenuPage::AddAction(const TCHAR* label, int UserValue)
 {
-    smptr(MenuItem) pMenuItem(new MenuItem(label, UserValue));
+    MenuItem* pMenuItem(new MenuItem(label, UserValue));
 
     m_MenuItemVector.push_back(pMenuItem);
     pMenuItem->SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -387,7 +387,7 @@ smptr(ActionItem) MenuPage::AddAction(const TCHAR* label, int UserValue)
                 + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
         }
 
-        std::vector< smptr(MenuItem) >::iterator it;
+        std::vector<MenuItem*>::iterator it;
         for(it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
         {
             (*it)->SetBaseSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
@@ -403,7 +403,7 @@ smptr(ActionItem) MenuPage::AddAction(const TCHAR* label, int UserValue)
 
     if(pMenuItem->GetChildMenu() != 0)
     {
-        pMenuItem->GetChildMenu()->SetParentMenu(smptr(MenuPage)(this, true));
+        pMenuItem->GetChildMenu()->SetParentMenu(this);
     }
 
     m_numItem = (int)m_MenuItemVector.size();
@@ -413,13 +413,13 @@ smptr(ActionItem) MenuPage::AddAction(const TCHAR* label, int UserValue)
     return pMenuItem->GetActionItem();
 }
 
-//void MenuPage::AddActionItem(smptr(ActionItem) actionItem)
+//void MenuPage::AddActionItem(ActionItem* actionItem)
 //{
 //    nuxAssertMsg(actionItem != 0, TEXT("[MenuPage::AddActionItem] Parameter is Null."));
 //    if(actionItem == 0)
 //        return;
 //
-//     smptr(MenuItem)  pMenuItem = new MenuItem(actionItem->GetLabel(), actionItem->GetUserValue());
+//     MenuItem* pMenuItem = new MenuItem(actionItem->GetLabel(), actionItem->GetUserValue());
 //    pMenuItem->SetActionItem(actionItem);
 //
 //    m_MenuItemVector.push_back(pMenuItem);
@@ -460,7 +460,7 @@ smptr(ActionItem) MenuPage::AddAction(const TCHAR* label, int UserValue)
 //                + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
 //        }
 //
-//        std::vector< smptr(MenuItem) >::iterator it;
+//        std::vector<MenuItem*>::iterator it;
 //        for(it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
 //        {
 //            (*it)->setSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
@@ -484,11 +484,11 @@ smptr(ActionItem) MenuPage::AddAction(const TCHAR* label, int UserValue)
 //    ComputeChildLayout();
 //}
 
-smptr(MenuPage) MenuPage::AddMenu(const TCHAR* label)
+MenuPage* MenuPage::AddMenu(const TCHAR* label)
 {
-    smptr(MenuItem) pMenuItem(new MenuItem(label, 0));
+    MenuItem* pMenuItem(new MenuItem(label, 0));
 
-    pMenuItem->SetChildMenu(smptr(MenuPage)(new MenuPage(label)));
+    pMenuItem->SetChildMenu(new MenuPage(label));
     //pMenuItem->SetActionItem(new ActionItem());
     //pMenuItem->GetActionItem()->SetLabel(label);
     m_MenuItemVector.push_back(pMenuItem);
@@ -529,7 +529,7 @@ smptr(MenuPage) MenuPage::AddMenu(const TCHAR* label)
                 + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
         }
 
-        std::vector< smptr(MenuItem) >::iterator it;
+        std::vector< MenuItem* >::iterator it;
         for(it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
         {
             (*it)->SetBaseSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
@@ -545,7 +545,7 @@ smptr(MenuPage) MenuPage::AddMenu(const TCHAR* label)
 
     if(pMenuItem->GetChildMenu() != 0)
     {
-        pMenuItem->GetChildMenu()->SetParentMenu(smptr(MenuPage)(this, true));
+        pMenuItem->GetChildMenu()->SetParentMenu(this);
     }
 
     m_numItem = (int)m_MenuItemVector.size();
@@ -555,10 +555,10 @@ smptr(MenuPage) MenuPage::AddMenu(const TCHAR* label)
     return pMenuItem->GetChildMenu();
 }
 
-smptr(ActionItem) MenuPage::AddSubMenu(const TCHAR* label, smptr(MenuPage) menu)
+ActionItem* MenuPage::AddSubMenu(const TCHAR* label, MenuPage* menu)
 {
     menu->m_IsTopOfMenuChain = false;
-    smptr(MenuItem) pMenuItem(new MenuItem(menu->GetName(), 0));
+    MenuItem* pMenuItem(new MenuItem(menu->GetName(), 0));
 
     pMenuItem->SetChildMenu(menu);
     m_MenuItemVector.push_back(pMenuItem);
@@ -599,7 +599,7 @@ smptr(ActionItem) MenuPage::AddSubMenu(const TCHAR* label, smptr(MenuPage) menu)
                 + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
         }
 
-        std::vector< smptr(MenuItem) >::iterator it;
+        std::vector< MenuItem* >::iterator it;
         for(it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
         {
             (*it)->SetBaseSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
@@ -615,7 +615,7 @@ smptr(ActionItem) MenuPage::AddSubMenu(const TCHAR* label, smptr(MenuPage) menu)
 
     if(pMenuItem->GetChildMenu() != 0)
     {
-        pMenuItem->GetChildMenu()->SetParentMenu(smptr(MenuPage)(this, true));
+        pMenuItem->GetChildMenu()->SetParentMenu(this);
     }
 
     m_numItem = (int)m_MenuItemVector.size();
@@ -627,7 +627,7 @@ smptr(ActionItem) MenuPage::AddSubMenu(const TCHAR* label, smptr(MenuPage) menu)
 
 void MenuPage::AddSeparator()
 {
-    smptr(MenuSeparator) pMenuSeparator(new MenuSeparator());
+    MenuSeparator* pMenuSeparator(new MenuSeparator());
     m_MenuSeparatorVector.push_back(pMenuSeparator);
 
     if(ShowItemIcon())
@@ -649,7 +649,7 @@ void MenuPage::AddSeparator()
     ComputeChildLayout();
 }
 
-void MenuPage::RemoveItem(smptr(ActionItem) item)
+void MenuPage::RemoveItem(ActionItem* item)
 {
 }
 
@@ -667,7 +667,7 @@ void MenuPage::EmitMouseMove(int x, int y, int dx, int dy, unsigned long button_
     {
         m_NextMouseUpMeanStop = true;
         // Find on which item the mouse is
-        std::vector< smptr(MenuItem) >::iterator item_iterator;
+        std::vector< MenuItem* >::iterator item_iterator;
         UINT i = 0;
         m_HighlightedItem = -1;
         for(item_iterator = m_MenuItemVector.begin(), i = 0; item_iterator != m_MenuItemVector.end(); item_iterator++, i++)
@@ -689,7 +689,7 @@ void MenuPage::EmitMouseMove(int x, int y, int dx, int dy, unsigned long button_
     
     if(m_HighlightedItem >=0)
     {
-        smptr(MenuItem) selected_action = m_MenuItemVector[m_HighlightedItem];
+        MenuItem* selected_action = m_MenuItemVector[m_HighlightedItem];
         if((selected_action->GetChildMenu() != 0) && selected_action->GetActionItem()->isEnabled())
         {
             // This MenuItem has a sub-MenuPage. Start it.
@@ -733,7 +733,7 @@ void MenuPage::EmitMouseUp(int x, int y, unsigned long button_flags, unsigned lo
 
     bool hit_inside_a_menu = false;
 
-    if(m_SubMenuAction.IsValid())
+    if(m_SubMenuAction)
     {
         m_Action_Triggered = m_SubMenuAction->GetChildMenu()->TestMouseUp(x, y, button_flags, key_flags, hit_inside_a_menu);
     }
@@ -742,7 +742,7 @@ void MenuPage::EmitMouseUp(int x, int y, unsigned long button_flags, unsigned lo
     {
         if(IsMouseInside())
         {
-            if(m_SubMenuAction.IsValid())
+            if(m_SubMenuAction)
             {
                 m_Action_Triggered = false;
             }
@@ -758,7 +758,7 @@ void MenuPage::EmitMouseUp(int x, int y, unsigned long button_flags, unsigned lo
                     m_Action_Triggered = true;
                     // Fire the Action Here
                     ExecuteActionItem(m_MenuItemVector[m_HighlightedItem]);
-                    NotifyActionTriggeredToParent(smptr(MenuPage)(this, true), m_MenuItemVector[m_HighlightedItem]);
+                    NotifyActionTriggeredToParent(this, m_MenuItemVector[m_HighlightedItem]);
                 }
             }
         }
@@ -777,7 +777,7 @@ void MenuPage::EmitMouseUp(int x, int y, unsigned long button_flags, unsigned lo
 bool MenuPage::TestMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, bool &hit_inside_a_menu)
 {
     m_Action_Triggered = false;
-    if(m_SubMenuAction.IsValid())
+    if(m_SubMenuAction)
     {
         m_Action_Triggered = m_SubMenuAction->GetChildMenu()->TestMouseUp(x, y, button_flags, key_flags, hit_inside_a_menu);
     }
@@ -788,7 +788,7 @@ bool MenuPage::TestMouseUp(int x, int y, unsigned long button_flags, unsigned lo
         {
             hit_inside_a_menu = true;
 
-            if(m_SubMenuAction.IsValid())
+            if(m_SubMenuAction)
             {
                 m_Action_Triggered = false;
                 // Do nothing. We don't want to close the menu when we are above an action that has a submenu.
@@ -805,7 +805,7 @@ bool MenuPage::TestMouseUp(int x, int y, unsigned long button_flags, unsigned lo
                     m_Action_Triggered = true;
                     // Fire the Action Here
                     ExecuteActionItem(m_MenuItemVector[m_HighlightedItem]);
-                    NotifyActionTriggeredToParent(smptr(MenuPage)(this, true), m_MenuItemVector[m_HighlightedItem]);
+                    NotifyActionTriggeredToParent(this, m_MenuItemVector[m_HighlightedItem]);
                     // But Do not emit the Stop
                     //sigPopupStop.emit();
                 }
@@ -820,7 +820,7 @@ bool MenuPage::TestMouseUp(int x, int y, unsigned long button_flags, unsigned lo
 bool MenuPage::TestMouseDown()
 {
     bool b = false;
-    if(m_SubMenuAction.IsValid())
+    if(m_SubMenuAction)
     {
         b = m_SubMenuAction->GetChildMenu()->TestMouseDown();
     }
@@ -845,8 +845,8 @@ void MenuPage::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned
     // Cancel selected item when the mouse is out.
     if(m_HighlightedItem != -1)
     {
-        smptr(MenuItem) item = m_MenuItemVector[m_HighlightedItem];
-        if(item->GetChildMenu().IsValid())
+        MenuItem* item = m_MenuItemVector[m_HighlightedItem];
+        if(item->GetChildMenu())
         {
             if(!item->GetChildMenu()->IsActive())
                 m_HighlightedItem = -1;
@@ -924,24 +924,24 @@ void MenuPage::Terminate(int x, int y, unsigned long button_flags, unsigned long
 
 void MenuPage::StopActionSubMenu()
 {
-    if(m_SubMenuAction.IsValid())
+    if(m_SubMenuAction)
     {
-        if(m_SubMenuAction->GetChildMenu().IsValid())
+        if(m_SubMenuAction->GetChildMenu())
         {
             m_SubMenuAction->GetChildMenu()->StopMenu(0, 0);
         }
     }
-    m_SubMenuAction = smptr(MenuItem)(0);
+    m_SubMenuAction = 0;
 }
 
-void MenuPage::ExecuteActionItem(smptr(MenuItem) menuItem)
+void MenuPage::ExecuteActionItem(MenuItem* menuItem)
 {
     menuItem->GetActionItem()->Trigger();
 }
 
-void MenuPage::NotifyActionTriggeredToParent(smptr(MenuPage) menu, smptr(MenuItem) menuItem)
+void MenuPage::NotifyActionTriggeredToParent(MenuPage* menu, MenuItem* menuItem)
 {
-    if(m_Parent.IsValid())
+    if(m_Parent)
     {
         m_Parent->NotifyActionTriggeredToParent(menu, menuItem);
     }
@@ -954,7 +954,7 @@ void MenuPage::NotifyActionTriggeredToParent(smptr(MenuPage) menu, smptr(MenuIte
 
 void MenuPage::NotifyTerminateMenuCascade()
 {
-    if(m_Parent.IsValid())
+    if(m_Parent)
     {
         m_Parent->NotifyTerminateMenuCascade();
     }
@@ -971,7 +971,7 @@ void MenuPage::NotifyTerminateMenuCascade()
 
 void MenuPage::NotifyMouseDownOutsideMenuCascade(int x, int y)
 {
-    if(m_Parent.IsValid())
+    if(m_Parent)
     {
         m_Parent->NotifyMouseDownOutsideMenuCascade(x, y);
     }
@@ -980,7 +980,7 @@ void MenuPage::NotifyMouseDownOutsideMenuCascade(int x, int y)
         // This is the top MenuPage in a menu chain.
         // If this MenuPage has been registered with a MenuBar, then the MenuBar will intercept this signal
         // and terminate the menu chain.
-        sigMouseDownOutsideMenuCascade.emit(smptr(MenuPage)(this, true), x, y);
+        sigMouseDownOutsideMenuCascade.emit(this, x, y);
         // It is also possible that this MenuPage is not associated to a MenuBar (called directly for a contextual menu)
         if(m_IsTopOfMenuChain == false)
         {
@@ -993,12 +993,12 @@ void MenuPage::NotifyMouseDownOutsideMenuCascade(int x, int y)
     }
 }
 
-void MenuPage::SetParentMenu(smptr(MenuPage) parent)
+void MenuPage::SetParentMenu(MenuPage* parent)
 {
     m_Parent = parent;
 }
 
-smptr(MenuPage) MenuPage::GetParentMenu()
+MenuPage* MenuPage::GetParentMenu()
 {
     return m_Parent;
 }
@@ -1025,16 +1025,16 @@ void MenuPage::SetGeometry(const Geometry& geo)
     PositionChildLayout(0, 0);
 }
 
-smptr(ActionItem) MenuPage::GetActionItem(int index) const
+ActionItem* MenuPage::GetActionItem(int index) const
 {
     nuxAssert(index >= 0);
     if(index >= (int)m_MenuItemVector.size())
-        return smptr(ActionItem)(0);
+        return 0;
 
     return m_MenuItemVector[index]->GetActionItem();
 }
 
-int MenuPage::GetActionItemIndex(const smptr(ActionItem) action) const
+int MenuPage::GetActionItemIndex(ActionItem* action) const
 {
     if(action == 0)
         return -1;

@@ -36,15 +36,15 @@ SplineCurveDialog::SplineCurveDialog()
 {
     SetWindowTitle(TEXT("Spline Curve Editor"));
     SetWindowSizeMatchLayout(true);
-    m_Vlayout = smptr(VLayout)(new VLayout(TEXT("Spline Curve Editor")));
-    m_SplineCurve = smptr(SplineCurveEditor)(new SplineCurveEditor());
+    m_Vlayout = new VLayout(TEXT("Spline Curve Editor"), NUX_TRACKER_LOCATION);
+    m_SplineCurve = new SplineCurveEditor(NUX_TRACKER_LOCATION);
 
     m_Vlayout->AddActiveInterfaceObject(m_SplineCurve);
     m_Vlayout->AddLayout(m_ButtonLayout);
 
     m_Vlayout->SetStretchFactor(0);
     // Set layout for the window
-    setLayout(m_Vlayout);
+    SetLayout(m_Vlayout);
 
     m_SplineCurve->sigCurveChange.connect(sigc::mem_fun(this, &SplineCurveDialog::RecvCurveChange));
 
@@ -77,7 +77,7 @@ void SplineCurveDialog::RecvCancel()
     sigCancel.emit(m_SplineCurve);
 }
 
-void SplineCurveDialog::RecvCurveChange(const smptr(SplineCurveEditor) splinecurve)
+void SplineCurveDialog::RecvCurveChange(SplineCurveEditor* splinecurve)
 {
     sigChange.emit(splinecurve);
 }

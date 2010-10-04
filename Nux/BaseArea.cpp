@@ -85,8 +85,8 @@ void BaseArea::ForceStopFocus(int x, int y)
 
 long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 { 
-    smptr(BaseArea) PreviousMouseOverArea = (GetThreadWindowCompositor().m_PreviousMouseOverArea);
-    smptr(BaseArea) CurrentMouseOverArea = (GetThreadWindowCompositor().m_MouseOverArea);
+    BaseArea* PreviousMouseOverArea = (GetThreadWindowCompositor().m_PreviousMouseOverArea);
+    BaseArea* CurrentMouseOverArea = (GetThreadWindowCompositor().m_MouseOverArea);
 
     gNumArea++;
 
@@ -132,7 +132,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 
         if((CurrentMouseOverArea == 0) && (GetGeometry().IsPointInside(ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root)))
         {
-            CurrentMouseOverArea = smptr(BaseArea)(this, true);
+            CurrentMouseOverArea = this;
         }
 
         if(ievent.e_event == NUX_MOUSE_PRESSED)
@@ -173,7 +173,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 
         if(HasMouseFocus() && (GetThreadWindowCompositor().GetMouseFocusArea() == 0)) // never evince and object that has the mouse focus.
         {
-            GetThreadWindowCompositor().SetMouseFocusArea(smptr(BaseArea)(this, true));
+            GetThreadWindowCompositor().SetMouseFocusArea(this);
             GetThreadWindowCompositor().SetAreaEventRoot(ievent.e_x_root, ievent.e_y_root);
         }
         if(IsMouseInside())
@@ -186,7 +186,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 //                 else
 //                     nuxDebugMsg(TEXT("BaseArea: Mouse is inside; Setting PreviousMouseOverArea to 0."));
             }
-            CurrentMouseOverArea = smptr(BaseArea)(this, true);
+            CurrentMouseOverArea = this;
         }
         else
         {
@@ -194,19 +194,19 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
             if(PreviousMouseOverArea == this)
             {
                 // We should also have CurrentMouseOverArea == this.
-                if(CurrentMouseOverArea.IsValid()) 
+                if(CurrentMouseOverArea) 
                 {
                     (CurrentMouseOverArea)->OnMouseLeave.emit(m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state());
                     //nuxDebugMsg(TEXT("BaseArea: Current MouseOver Leave"));
                 }
-                CurrentMouseOverArea = smptr(BaseArea)(0);
-                PreviousMouseOverArea = smptr(BaseArea)(0);
+                CurrentMouseOverArea = NULL;
+                PreviousMouseOverArea = NULL;
             }
         }
 
         if(PreviousMouseOverArea != CurrentMouseOverArea)
         {
-            if(PreviousMouseOverArea.IsValid())
+            if(PreviousMouseOverArea)
             {
                 (PreviousMouseOverArea)->OnMouseLeave.emit(m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state());
                 // When calling OnMouseLeave.emit on a widget, we have to set the following states to false 
@@ -214,7 +214,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
                 (PreviousMouseOverArea)->m_EventHandler.m_PreviousMouseIn = false;
                 //nuxDebugMsg(TEXT("BaseArea: Previous MouseOver Leave"));
             }
-            if(CurrentMouseOverArea.IsValid())
+            if(CurrentMouseOverArea)
             {
                 (CurrentMouseOverArea)->OnMouseEnter.emit(m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state());
                 //nuxDebugMsg(TEXT("BaseArea: Current MouseOver Enter"));

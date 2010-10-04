@@ -38,18 +38,37 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 WindowCompositor::WindowCompositor()
 {
-    OverlayDrawingCommand       = smptr(BaseArea)(0);
-    m_MouseFocusArea            = smptr(BaseArea)(0);
-    m_MouseOverArea             = smptr(BaseArea)(0);
-    m_PreviousMouseOverArea     = smptr(BaseArea)(0);
-    m_CurrentEvent              = 0;
-    m_CurrentWindow             = smptr(BaseWindow)(0);
-    m_FocusAreaWindow           = smptr(BaseWindow)(0);
-    m_MenuWindow                = smptr(BaseWindow)(0);
-    m_OverlayWindow             = smptr(BaseWindow)(0);
-    
-    m_SelectedWindow = smptr(BaseWindow)(0);
-    m_DrawList        = new std::list<smptr(ActiveInterfaceObject)>;
+    OverlayDrawingCommand       = NULL;
+    m_MouseFocusArea            = NULL;
+    m_MouseOverArea             = NULL;
+    m_PreviousMouseOverArea     = NULL;
+    m_CurrentEvent              = NULL;
+    m_CurrentWindow             = NULL;
+    m_FocusAreaWindow           = NULL;
+    m_MenuWindow                = NULL;
+    m_OverlayWindow             = NULL;
+    m_TooltipWindow             = NULL;
+    m_TooltipArea               = NULL;
+    m_ModalWindow               = NULL;
+    m_SelectedWindow            = NULL;
+    m_MenuList                  = NULL;
+    m_EventRectList             = NULL;
+    m_DrawList                  = NULL;
+    m_Background                = NULL;
+    m_TooltipWindow             = NULL;
+    m_OverlayWindow             = NULL;
+    OverlayDrawingCommand       = NULL;
+    m_CurrentWindow             = NULL;
+    m_FocusAreaWindow           = NULL;
+    m_MenuWindow                = NULL;
+    m_CurrentEvent              = NULL;
+    m_MouseFocusArea            = NULL;
+    m_MouseOverArea             = NULL;
+    m_PreviousMouseOverArea     = NULL;
+
+
+    m_SelectedWindow = NULL;
+    m_DrawList        = new std::list<ActiveInterfaceObject*>;
     m_EventRectList   = new std::list<Rect>;
 
     if(GetGraphicsThread()->GetWindow().HasFrameBufferSupport())
@@ -67,7 +86,7 @@ WindowCompositor::WindowCompositor()
     m_MenuList = new std::list<MenuPage*>;
     m_PopupRemoved = false;
     m_MenuRemoved = false;
-    m_ModalWindow = smptr(BaseWindow)(0);
+    m_ModalWindow = NULL;
     m_Background = new ColorLayer(Color(0xFF4D4D4D)); 
 }
 
@@ -100,16 +119,16 @@ bool WindowCompositor::MouseUp(Point pt)
     return true;
 }
 
-smptr(BaseWindow) WindowCompositor::GetSelectedWindow()
+BaseWindow* WindowCompositor::GetSelectedWindow()
 {
     return m_SelectedWindow;
 }
 
-WindowCompositor::RenderTargetTextures& WindowCompositor::GetWindowBuffer(smptr(BaseWindow) window)
+WindowCompositor::RenderTargetTextures& WindowCompositor::GetWindowBuffer(BaseWindow* window)
 {
     RenderTargetTextures invalid;
     RenderTargetTextures& ret = invalid;
-    std::map< smptr(BaseWindow), RenderTargetTextures >::iterator it = m_WindowToTextureMap.find(window);
+    std::map< BaseWindow*, RenderTargetTextures >::iterator it = m_WindowToTextureMap.find(window);
     if(it != m_WindowToTextureMap.end())
     {
         return (*it).second;
@@ -117,12 +136,12 @@ WindowCompositor::RenderTargetTextures& WindowCompositor::GetWindowBuffer(smptr(
     return ret;
 }
 
-void WindowCompositor::RegisterWindow(smptr(BaseWindow) window)
+void WindowCompositor::RegisterWindow(BaseWindow* window)
 {
     if(window == 0)
         return;
 
-    std::list<smptr(BaseWindow)>::iterator it = find(m_WindowList.begin(), m_WindowList.end(), window);
+    std::list<BaseWindow*>::iterator it = find(m_WindowList.begin(), m_WindowList.end(), window);
     if(it == m_WindowList.end())
     {
         m_WindowList.push_front(window);
@@ -135,16 +154,16 @@ void WindowCompositor::RegisterWindow(smptr(BaseWindow) window)
             rt.color_rt = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
             rt.depth_rt = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_D24S8);
         }
-        m_WindowToTextureMap.insert( std::map< smptr(BaseWindow), RenderTargetTextures >::value_type( window, rt) );
+        m_WindowToTextureMap.insert( std::map< BaseWindow*, RenderTargetTextures >::value_type( window, rt) );
     }
 }
 
-void WindowCompositor::UnRegisterWindow(smptr(BaseWindow) window)
+void WindowCompositor::UnRegisterWindow(BaseWindow* window)
 {
     if(window == 0)
         return;
 
-    std::list<smptr(BaseWindow)>::iterator it = find(m_WindowList.begin(), m_WindowList.end(), window);
+    std::list<BaseWindow*>::iterator it = find(m_WindowList.begin(), m_WindowList.end(), window);
     if(it != m_WindowList.end())
     {
         m_WindowList.erase(it); // @see STL for note about list.erase(it++). It is valid for lists.
@@ -152,7 +171,7 @@ void WindowCompositor::UnRegisterWindow(smptr(BaseWindow) window)
         if(m_WindowList.size())
             m_SelectedWindow = (*m_WindowList.begin());
 
-        std::map<smptr(BaseWindow), RenderTargetTextures >::iterator it2 = m_WindowToTextureMap.find(window);
+        std::map<BaseWindow*, RenderTargetTextures >::iterator it2 = m_WindowToTextureMap.find(window);
         if(it2 != m_WindowToTextureMap.end())
         {
             (*it2).second.color_rt = 0;
@@ -162,7 +181,7 @@ void WindowCompositor::UnRegisterWindow(smptr(BaseWindow) window)
     }
 }
 
-long WindowCompositor::ProcessEventOnObject(IEvent &ievent, smptr(BaseObject) object, long TraverseInfo, long ProcessEventInfo)
+long WindowCompositor::ProcessEventOnObject(IEvent &ievent, BaseObject* object, long TraverseInfo, long ProcessEventInfo)
 {
     if(object == 0)
         return 0;
@@ -181,17 +200,17 @@ long WindowCompositor::ProcessEventOnObject(IEvent &ievent, smptr(BaseObject) ob
 
     if(object->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
     {
-        smptr(ActiveInterfaceObject) ic(object);
+        ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, object);
         ret = ic->ProcessEvent(ievent, TraverseInfo, ProcessEventInfo);
     }
     else if(object->Type().IsObjectType(BaseArea::StaticObjectType))
     {
-        smptr(BaseArea) base_area(object);
+        BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, object);
         ret = base_area->OnEvent(ievent, TraverseInfo, ProcessEventInfo);
     }
     else if(object->Type().IsDerivedFromType(Layout::StaticObjectType))
     {
-        smptr(Layout) layout(object);
+        Layout* layout = NUX_STATIC_CAST(Layout*, object);
         ret = layout->ProcessEvent(ievent, TraverseInfo, ProcessEventInfo);
     }
     else
@@ -209,14 +228,14 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
     if(ievent.e_event == NUX_WINDOW_EXIT_FOCUS)
     {
         SetCurrentEvent(&ievent);
-        if(GetMouseFocusArea().IsValid())
+        if(GetMouseFocusArea())
             ProcessEventOnObject(ievent, GetMouseFocusArea(), 0, 0);
-        SetMouseFocusArea(smptr(BaseArea)(0));
-        SetMouseOverArea(smptr(BaseArea)(0));
+        SetMouseFocusArea(0);
+        SetMouseOverArea(0);
         SetCurrentEvent(0);
     }
     
-    if(GetMouseFocusArea().IsValid() && ievent.e_event != NUX_MOUSE_PRESSED)
+    if(GetMouseFocusArea() && ievent.e_event != NUX_MOUSE_PRESSED)
     {
         SetCurrentEvent(&ievent);
         SetCurrentWindow(GetFocusAreaWindow());
@@ -224,13 +243,13 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
         
         if(ievent.e_event == NUX_MOUSE_RELEASED)
         {
-            SetMouseFocusArea(smptr(BaseArea)(0));
+            SetMouseFocusArea(0);
             // No need to set SetMouseOverArea to NULL.
             //SetMouseOverArea(0);
         }
         if((ievent.e_event == NUX_MOUSE_RELEASED))
         {
-            SetWidgetDrawingOverlay(smptr(BaseArea)(0), smptr(BaseWindow)(0));
+            SetWidgetDrawingOverlay(NULL, NULL);
         }
 
         
@@ -260,8 +279,8 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
 //                 (*m_MenuList->begin())->NotifyMouseDownOutsideMenuCascade(ievent.e_x-ievent.e_x_root, ievent.e_y-ievent.e_y_root);
 //             }
 //         }
-        SetCurrentEvent(0);
-        SetCurrentWindow(smptr(BaseWindow)(0));
+        SetCurrentEvent(NULL);
+        SetCurrentWindow(NULL);
     }
     else
     {
@@ -270,7 +289,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
         //SetMouseFocusArea(0);
         //SetMouseOverArea(0);
 
-        if(m_MenuWindow.IsValid())
+        if(m_MenuWindow)
         {
             ievent.e_x_root = m_MenuWindow->GetBaseX();
             ievent.e_y_root = m_MenuWindow->GetBaseY();
@@ -303,7 +322,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
             }
         }
 
-        if(m_MenuWindow.IsValid())
+        if(m_MenuWindow)
         {
             ievent.e_x_root = 0;
             ievent.e_y_root = 0;
@@ -311,7 +330,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
 
         if((ievent.e_event == NUX_MOUSE_RELEASED))
         {
-            SetWidgetDrawingOverlay(smptr(BaseArea)(0), smptr(BaseWindow)(0));
+            SetWidgetDrawingOverlay(NULL, NULL);
         }
 
         if((ievent.e_event == NUX_SIZE_CONFIGURATION) && m_MenuList->size())
@@ -327,12 +346,12 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
             ProcessEventInfo = eDoNotProcess;
             MouseIsOverMenu = TRUE;
         }
-        std::list<smptr(BaseWindow)>::iterator it;
+        std::list<BaseWindow*>::iterator it;
         if(m_ModalWindowList.size() > 0)
         {
             SetCurrentWindow(*m_ModalWindowList.begin());
             ret = (*m_ModalWindowList.begin())->ProcessEvent(ievent, ret, ProcessEventInfo);
-            SetCurrentWindow(smptr(BaseWindow)(0));
+            SetCurrentWindow(NULL);
         }
         else
         {
@@ -341,19 +360,18 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
             {
                 // There is a possibility we might have to reorder the stack of windows.
                 // Cancel the currently selected window.
-                m_SelectedWindow = smptr(BaseWindow)(0);
+                m_SelectedWindow = NULL;
                 ordered = false;
             }
 
             for(it = m_WindowList.begin(); it != m_WindowList.end(); it++)
             {
-                smptr(BaseWindow) window = *it;
                 if((*it)->IsVisible())
                 {
                     // Traverse the window from the top of the visibility stack to the bottom.
                     SetCurrentWindow(*it);
                     ret = (*it)->ProcessEvent(ievent, ret, ProcessEventInfo);
-                    SetCurrentWindow(smptr(BaseWindow)(0));
+                    SetCurrentWindow(NULL);
                     if((ret & eMouseEventSolved) && (m_SelectedWindow == 0))
                     {
                         // The mouse event was solved in the window pointed by the iterator. 
@@ -396,19 +414,19 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
 //    }
 }
 
-void WindowCompositor::StartModalWindow(smptr(BaseWindow) window)
+void WindowCompositor::StartModalWindow(BaseWindow* window)
 {
     if(window == 0)
         return;
 
-    std::list<smptr(BaseWindow)>::iterator it = find(m_ModalWindowList.begin(), m_ModalWindowList.end(), window);
+    std::list<BaseWindow*>::iterator it = find(m_ModalWindowList.begin(), m_ModalWindowList.end(), window);
     if(it == m_ModalWindowList.end())
     {
         m_ModalWindowList.push_front(window);
     }
 }
 
-void WindowCompositor::StopModalWindow(smptr(BaseWindow) window)
+void WindowCompositor::StopModalWindow(BaseWindow* window)
 {
     if(m_ModalWindowList.size() > 0)
     {
@@ -417,12 +435,12 @@ void WindowCompositor::StopModalWindow(smptr(BaseWindow) window)
     }
 }
 
-void WindowCompositor::MoveWindowToFront(smptr(BaseWindow) window)
+void WindowCompositor::MoveWindowToFront(BaseWindow* window)
 {
     if(window == 0)
         return;
 
-    std::list<smptr(BaseWindow)>::iterator it = find(m_WindowList.begin(), m_WindowList.end(), window);
+    std::list<BaseWindow*>::iterator it = find(m_WindowList.begin(), m_WindowList.end(), window);
     if(it != m_WindowList.end())
     {
         m_WindowList.erase(it);
@@ -430,12 +448,12 @@ void WindowCompositor::MoveWindowToFront(smptr(BaseWindow) window)
     }
 }
 
-void WindowCompositor::MoveWindowToBack(smptr(BaseWindow) window)
+void WindowCompositor::MoveWindowToBack(BaseWindow* window)
 {
     if(window == 0)
         return;
 
-    std::list<smptr(BaseWindow)>::iterator it = find(m_WindowList.begin(), m_WindowList.end(), window);
+    std::list<BaseWindow*>::iterator it = find(m_WindowList.begin(), m_WindowList.end(), window);
     if(it != m_WindowList.end())
     {
         m_WindowList.erase(it);
@@ -578,10 +596,10 @@ void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
 
 void WindowCompositor::DrawMenu(bool force_draw)
 {
-    smptr(BaseWindow) window = m_MenuWindow;
+    BaseWindow* window = m_MenuWindow;
     int buffer_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
     int buffer_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-    if(window.IsValid())
+    if(window)
     {
         int x = window->GetBaseX();
         int y = window->GetBaseY();
@@ -603,7 +621,7 @@ void WindowCompositor::DrawMenu(bool force_draw)
     {
         SetCurrentWindow(m_MenuWindow);
         (*rev_it_menu)->ProcessDraw(GetGraphicsThread()->GetGraphicsContext(), force_draw);
-        SetCurrentWindow(smptr(BaseWindow)(0));
+        SetCurrentWindow(NULL);
     }
 
     GetThreadGraphicsContext()->SetContext(0, 0, 
@@ -613,10 +631,10 @@ void WindowCompositor::DrawMenu(bool force_draw)
 
 void WindowCompositor::DrawOverlay(bool force_draw)
 {
-    smptr(BaseWindow) window = m_OverlayWindow;
+    BaseWindow* window = m_OverlayWindow;
     int buffer_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
     int buffer_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-    if(window.IsValid())
+    if(window)
     {
         int x = window->GetBaseX();
         int y = window->GetBaseY();
@@ -627,11 +645,11 @@ void WindowCompositor::DrawOverlay(bool force_draw)
     else
         GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion(0, 0, buffer_width, buffer_height);
 
-    if(OverlayDrawingCommand.IsValid())
+    if(OverlayDrawingCommand)
     {
         SetCurrentWindow(m_OverlayWindow);
         OverlayDrawingCommand->OverlayDrawing(GetGraphicsThread()->GetGraphicsContext());
-        SetCurrentWindow(smptr(BaseWindow)(0));
+        SetCurrentWindow(NULL);
     }
 
     GetThreadGraphicsContext()->SetContext(0, 0, buffer_width, buffer_height);
@@ -639,10 +657,10 @@ void WindowCompositor::DrawOverlay(bool force_draw)
 
 void WindowCompositor::DrawTooltip(bool force_draw)
 {
-    smptr(BaseWindow) window = m_TooltipWindow;
+    BaseWindow* window = m_TooltipWindow;
     int buffer_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
     int buffer_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-    if(window.IsValid())
+    if(window)
     {
         int x = window->GetBaseX();
         int y = window->GetBaseY();
@@ -668,13 +686,13 @@ void WindowCompositor::DrawTooltip(bool force_draw)
 
         gPainter.PaintShape(GetGraphicsThread()->GetGraphicsContext(), bkg_geo, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
         gPainter.PaintTextLineStatic(GetGraphicsThread()->GetGraphicsContext(), GetThreadBoldFont(), geo, m_TooltipText, Color(0xFFFFFFFF));
-        SetCurrentWindow(smptr(BaseWindow)(0));
+        SetCurrentWindow(NULL);
     }
 
     GetThreadGraphicsContext()->SetContext(0, 0, buffer_width, buffer_height);
 }
 
-void WindowCompositor::RenderWindowComposition(smptr(BaseWindow) window, bool force_draw)
+void WindowCompositor::RenderWindowComposition(BaseWindow* window, bool force_draw)
 {
     unsigned int window_width, window_height;
     window_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
@@ -683,16 +701,16 @@ void WindowCompositor::RenderWindowComposition(smptr(BaseWindow) window, bool fo
     gPainter.EmptyBackgroundStack();
     SetCurrentWindow(window);
     window->ProcessDraw(GetGraphicsThread()->GetGraphicsContext(), force_draw || window->IsRedrawNeeded());
-    SetCurrentWindow(smptr(BaseWindow)(0));
+    SetCurrentWindow(NULL);
     gPainter.EmptyBackgroundStack();
 }
 
 //void WindowCompositor::DrawFloatingWindows(bool force_draw, bool UseFBO)
-void WindowCompositor::DrawFloatingWindows(bool force_draw, const std::list<smptr(BaseWindow)>& WindowList, bool drawModal, bool UseFBO)
+void WindowCompositor::DrawFloatingWindows(bool force_draw, const std::list<BaseWindow*>& WindowList, bool drawModal, bool UseFBO)
 {
     GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion();
     // Raw the windows from back to front;
-    std::list<smptr(BaseWindow)>::const_reverse_iterator rev_it;
+    std::list<BaseWindow*>::const_reverse_iterator rev_it;
     for(rev_it = WindowList.rbegin(); rev_it != WindowList.rend(); rev_it++)
     {
         if((drawModal == false) && (*rev_it)->IsModal())
@@ -702,7 +720,7 @@ void WindowCompositor::DrawFloatingWindows(bool force_draw, const std::list<smpt
         if((*rev_it)->IsVisible())
         {
             RenderTargetTextures& rt = GetWindowBuffer(*rev_it);
-            smptr(BaseWindow) window = *rev_it;
+            BaseWindow* window = *rev_it;
             WindowNeedRedraw = window->IsRedrawNeeded();
 
             if(rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
@@ -839,8 +857,8 @@ void WindowCompositor::PresentRendering()
 //     GetGraphicsThread()->GetGraphicsContext().ResetStats();
 //     GetGraphicsThread()->GetWindow().SwapBuffer();
 
-//    const std::list<smptr(BaseWindow)>& W = m_WindowList;
-//    std::list<smptr(BaseWindow)>::const_reverse_iterator rev_it;
+//    const std::list<BaseWindow*>& W = m_WindowList;
+//    std::list<BaseWindow*>::const_reverse_iterator rev_it;
 //    for(rev_it = W.rbegin();
 //        rev_it != W.rend();
 //        rev_it++)
@@ -853,7 +871,7 @@ void WindowCompositor::PresentRendering()
 //        {
 //
 //            RenderTargetTextures& rt = GetWindowBuffer(*rev_it);
-//            smptr(BaseWindow) window = *rev_it;
+//            BaseWindow* window = *rev_it;
 //            WindowNeedRedraw = window->IsRedrawNeeded();
 //
 //            if(rt.color_rt.IsValid())
@@ -1109,7 +1127,7 @@ void WindowCompositor::PresentBufferToScreen(TRefGL<IOpenGLTexture2D> HWTexture,
     }
 }
 
-void WindowCompositor::AddToDrawList(smptr(ActiveInterfaceObject) ic)
+void WindowCompositor::AddToDrawList(ActiveInterfaceObject* ic)
 {
     m_DrawList->push_back(ic);
     m_EventRectList->push_back(getEventRect());
@@ -1194,7 +1212,7 @@ Rect WindowCompositor::getEventRect()
     return Rect(0, 0, 0, 0);
 }
 
-void WindowCompositor::AddMenu(MenuPage* menu, smptr(BaseWindow) window, bool OverrideCurrentMenuChain)
+void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
 {
     std::list<MenuPage*>::iterator it = find(m_MenuList->begin(), m_MenuList->end(), menu);
     if(it == m_MenuList->end())
@@ -1239,7 +1257,7 @@ void WindowCompositor::RemoveMenu(MenuPage* menu)
     m_MenuList->erase(it);
     m_MenuRemoved = true;
     if(m_MenuList->size() == 0)
-        m_MenuWindow = smptr(BaseWindow)(0);
+        m_MenuWindow = NULL;
 }
 
 void WindowCompositor::CleanMenu()
@@ -1260,21 +1278,21 @@ void WindowCompositor::CleanMenu()
             menu_it++;
     }
     if(m_MenuList->size() == 0)
-        m_MenuWindow = smptr(BaseWindow)(0);
+        m_MenuWindow = NULL;
 }
 
-void WindowCompositor::SetWidgetDrawingOverlay(smptr(BaseArea) ic, smptr(BaseWindow) OverlayWindow)
+void WindowCompositor::SetWidgetDrawingOverlay(BaseArea* ic, BaseWindow* OverlayWindow)
 {
     OverlayDrawingCommand = ic;
     m_OverlayWindow = OverlayWindow;
 }
 
-smptr(BaseArea) WindowCompositor::GetWidgetDrawingOverlay()
+BaseArea* WindowCompositor::GetWidgetDrawingOverlay()
 {
     return OverlayDrawingCommand;
 }
 
-void WindowCompositor::SetTooltip(smptr(BaseArea) TooltipArea, const TCHAR *TooltipText, int x, int y)
+void WindowCompositor::SetTooltip(BaseArea* TooltipArea, const TCHAR *TooltipText, int x, int y)
 {
     m_TooltipWindow = GetCurrentWindow();
     m_TooltipArea = TooltipArea;
@@ -1285,15 +1303,15 @@ void WindowCompositor::SetTooltip(smptr(BaseArea) TooltipArea, const TCHAR *Tool
 
 void WindowCompositor::CancelTooltip()
 {
-    m_TooltipWindow = smptr(BaseWindow) (0);
-    m_TooltipArea = smptr(BaseArea) (0);
+    m_TooltipWindow = NULL;
+    m_TooltipArea = NULL;
     m_TooltipText = TEXT("");
 }
 
 bool WindowCompositor::ValidateMouseInsideTooltipArea(int x, int y)
 {
-    NUX_RETURN_VALUE_IF_FALSE(m_TooltipArea.IsValid(), false);
-    NUX_RETURN_VALUE_IF_FALSE(m_TooltipWindow.IsValid(), false);
+    NUX_RETURN_VALUE_IF_FALSE(m_TooltipArea, false);
+    NUX_RETURN_VALUE_IF_FALSE(m_TooltipWindow, false);
 
     Geometry geo = m_TooltipArea->GetGeometry();
     geo.OffsetPosition(m_TooltipWindow->GetBaseX(), m_TooltipWindow->GetBaseY());
@@ -1303,11 +1321,11 @@ bool WindowCompositor::ValidateMouseInsideTooltipArea(int x, int y)
 
 bool WindowCompositor::IsTooltipActive()
 {
-    NUX_RETURN_VALUE_IF_FALSE(m_TooltipArea.IsValid(), false);
+    NUX_RETURN_VALUE_IF_FALSE(m_TooltipArea, false);
     return true;
 }
 
-void WindowCompositor::SetMouseFocusArea(smptr(BaseArea) area)
+void WindowCompositor::SetMouseFocusArea(BaseArea* area)
 {
     m_MouseFocusArea = area;
     if(area == 0)
@@ -1317,12 +1335,12 @@ void WindowCompositor::SetMouseFocusArea(smptr(BaseArea) area)
     SetFocusAreaWindow(GetCurrentWindow());
 }
 
-smptr(BaseArea) WindowCompositor::GetMouseFocusArea()
+BaseArea* WindowCompositor::GetMouseFocusArea()
 {
     return m_MouseFocusArea;
 }
 
-void WindowCompositor::SetMouseOverArea(smptr(BaseArea) area)
+void WindowCompositor::SetMouseOverArea(BaseArea* area)
 {
     m_MouseOverArea = area;
 //     if(m_MouseOverArea)
@@ -1331,12 +1349,12 @@ void WindowCompositor::SetMouseOverArea(smptr(BaseArea) area)
 //         nuxDebugMsg(TEXT("StackManager: Set MouseOver Area to 0"));
 }
 
-smptr(BaseArea) WindowCompositor::GetMouseOverArea()
+BaseArea* WindowCompositor::GetMouseOverArea()
 {
     return m_MouseOverArea;
 }
 
-void WindowCompositor::SetPreviousMouseOverArea(smptr(BaseArea) area)
+void WindowCompositor::SetPreviousMouseOverArea(BaseArea* area)
 {
     m_PreviousMouseOverArea = area;
 //     if(area)
@@ -1345,7 +1363,7 @@ void WindowCompositor::SetPreviousMouseOverArea(smptr(BaseArea) area)
 //         nuxDebugMsg(TEXT("StackManager: Set Previous MouseOver Area to 0"));
 }
 
-smptr(BaseArea) WindowCompositor::GetPreviousMouseOverArea()
+BaseArea* WindowCompositor::GetPreviousMouseOverArea()
 {
     return m_PreviousMouseOverArea;
 }
@@ -1358,7 +1376,7 @@ void WindowCompositor::SetBackgroundPaintLayer(AbstractPaintLayer* bkg)
 
 void WindowCompositor::FloatingAreaConfigureNotify(int Width, int Height)
 {
-    std::list<smptr(BaseWindow)>::iterator it;
+    std::list<BaseWindow*>::iterator it;
     for(it = m_WindowList.begin(); it != m_WindowList.end(); it++)
     {
         if((*it)->IsVisible())

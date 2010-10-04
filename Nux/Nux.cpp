@@ -282,7 +282,7 @@ WindowCompositor& GetThreadWindowCompositor()
     if(!thread->Type().IsObjectType(WindowThread::StaticObjectType))
     {
         nuxAssertMsg(0, TEXT("[GetThreadWindowCompositor] You can't call GetThreadWindowCompositor on this type of thread: s"), thread->Type().GetName());
-        inlOutputDebugString(TEXT("[GetThreadWindowCompositor] You can't call GetThreadWindowCompositor on this type of thread: s"), thread->Type().GetName());
+        PrintOutputDebugString(TEXT("[GetThreadWindowCompositor] You can't call GetThreadWindowCompositor on this type of thread: s"), thread->Type().GetName());
         NUX_HARDWARE_BREAK;
     }
     return (static_cast<WindowThread*> (thread))->GetStackManager();
@@ -338,7 +338,7 @@ TimerHandler& GetThreadTimer()
     if(!thread->Type().IsObjectType(WindowThread::StaticObjectType))
     {
         nuxAssertMsg(0, TEXT("[GetThreadTimer] You can't call GetThreadTimer on this type of thread: s"), thread->Type().GetName());
-        inlOutputDebugString(TEXT("[GetThreadTimer] You can't call GetThreadTimer on this type of thread: s"), thread->Type().GetName());
+        PrintOutputDebugString(TEXT("[GetThreadTimer] You can't call GetThreadTimer on this type of thread: s"), thread->Type().GetName());
         NUX_HARDWARE_BREAK;
     }
     return (static_cast<WindowThread*> (thread))->GetTimerHandler();

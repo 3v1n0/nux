@@ -163,25 +163,25 @@ t_u32 GetVariableArgs(TCHAR* Dest, t_u32 Size, t_u32 Count, const TCHAR*& Fmt, v
 t_u32 GetVariableArgsAnsi(ANSICHAR* Dest, t_u32 Size, t_u32 Count, const ANSICHAR*& Fmt, va_list ArgPtr);
 
 
-#define GET_VARARGS(msg, size, len, fmt)       \
-{                                           \
-    va_list arg_list;                       \
-    va_start(arg_list,fmt);            \
+#define GET_VARARGS(msg, size, len, fmt)            \
+{                                                   \
+    va_list arg_list;                               \
+    va_start(arg_list,fmt);                         \
     VSNTPRINTF_S( msg, size, len, fmt, arg_list );  \
-    va_end( arg_list );                     \
+    va_end( arg_list );                             \
 }
-#define GET_VARARGS_ANSI(msg, size, len, fmt)      \
-{                                               \
-    va_list arg_list;                           \
-    va_start(arg_list,fmt);                \
-    VSNPRINTF_S( msg, size, len, fmt, arg_list );  \
-    va_end( arg_list );                         \
+#define GET_VARARGS_ANSI(msg, size, len, fmt)       \
+{                                                   \
+    va_list arg_list;                               \
+    va_start(arg_list,fmt);                         \
+    VSNPRINTF_S( msg, size, len, fmt, arg_list );   \
+    va_end( arg_list );                             \
 }
-#define GET_VARARGS_RESULT(msg, size, len, fmt, result)     \
-{                                                       \
-    va_list arg_list;                                   \
-    va_start(arg_list, fmt);                       \
-    result = GetVariableArgs(msg, size, len, fmt, arg_list);     \
+#define GET_VARARGS_RESULT(msg, size, len, fmt, result)         \
+{                                                               \
+    va_list arg_list;                                           \
+    va_start(arg_list, fmt);                                    \
+    result = GetVariableArgs(msg, size, len, fmt, arg_list);    \
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ typedef enum
         #define nuxError(a,b,c,d,e,f,g,h,i,j,k,l)               { if(nuxIsDebuggerPresent()) {nux::LogOutputErrorMessage(__FILE__,__LINE__,VARG(a),VARG(b),VARG(c),VARG(d),VARG(e),VARG(f),VARG(g),VARG(h),VARG(i),VARG(j),VARG(k),VARG(l));} inlDebugBreak();}
         #define nuxAssertMsg(expr,a,b,c,d,e,f,g,h,i,j,k,l)      { if(!(expr)) { nuxFailAssert( TEXT(#expr) TEXT(" : ") a,b,c,d,e,f,g,h,i,j,k,l); } }
         #define nuxVerifyExprMsg(expr,a,b,c,d,e,f,g,h,i,j,k,l)  { if(!(expr)) { nuxFailAssert( TEXT(#expr) TEXT(" : ") a,b,c,d,e,f,g,h,i,j,k,l); } }    // Expression is always evaluated. nuxFailAssert is called if enabled.
-        #define nuxDebugMsg(a,b,c,d,e,f,g,h,i,j,k,l)            { if(nuxIsDebuggerPresent() && NOutputDeviceRedirector::Ready()) GLogDevice.LogFunction(a,b,c,d,e,f,g,h,i,j,k,l); }
+        #define nuxDebugMsg(a,b,c,d,e,f,g,h,i,j,k,l)            { if(nuxIsDebuggerPresent() && LogOutputRedirector::Ready()) GLogDevice.LogFunction(a,b,c,d,e,f,g,h,i,j,k,l); }
     #endif
 
     // Break if codepaths should never be reached.
@@ -452,13 +452,12 @@ const BYTE NUX_UTF8[]       = {0x03 /*size*/, 0xEF, 0xBB, 0xBF };
 // enum {UNICODE_BOM   = 0xfeff     };
 
 
-class NOutputDeviceManager;
-class NOutputDevice;
+class LogOutputDevice;
 class NFileManager;
 
 
 #define GNullDevice         NUX_GLOBAL_OBJECT_INSTANCE(nux::NNullOutput)
-#define GLogDevice          NUX_GLOBAL_OBJECT_INSTANCE(nux::NOutputDeviceRedirector)
+#define GLogDevice          NUX_GLOBAL_OBJECT_INSTANCE(nux::LogOutputRedirector)
 #define GThrow              NUX_GLOBAL_OBJECT_INSTANCE(nux::NThrowOutput)
 
 #if (defined NUX_OS_WINDOWS)
@@ -605,22 +604,24 @@ class NFileManager;
 #endif // _MSC_VER
 
 
-//! Log an outpout message.
-void inlOutputDebugString( const TCHAR *Format, ... );
+//! Log an outpout message to console or visual studio output. To be used while the log redirector is not initialized.
+void PrintOutputDebugString(const TCHAR *Format, ...);
 
-//! Log an assertion failure.
-void LogOutputAssertMessage( const ANSICHAR* File, int Line, const TCHAR* Format = TEXT(""), ... );
+//! Log an assertion failure to registered output.
+void LogOutputAssertMessage(const ANSICHAR* File, int Line, const TCHAR* Format = TEXT(""), ...);
 
-//! Log an error message.
-void LogOutputErrorMessage( const ANSICHAR* File, int Line, const TCHAR* Format = TEXT(""), ... );
+//! Log an error message to registered output.
+void LogOutputErrorMessage(const ANSICHAR* File, int Line, const TCHAR* Format = TEXT(""), ...);
 
-//! Log and output message with a severity factor. Print colored output in XTerm.
-void LogOutputSeverityMessage(int Severity, const TCHAR* Format/*=TEXT("")*/, ... );
+//! Log and output message with a severity factor to registered output. Print colored output in XTerm.
+void LogOutputDebugMessage(const TCHAR* Format, ...);
+
+//! Log and output message with a severity factor to registered output. Print colored output in XTerm.
+void LogOutputSeverityMessage(int Severity, const TCHAR* Format/*=TEXT("")*/, ...);
 
 // Returns true is the output redirector is ready
-bool inlOutputRedirectorReady();
+bool OutputRedirectorReady();
 
-void LogOutputDebugMessage(const TCHAR* Format, ... );
 
 
 #if CHECK_PUREVIRTUALS
@@ -631,21 +632,21 @@ void LogOutputDebugMessage(const TCHAR* Format, ... );
 
 enum EFileWrite
 {
-    FILEWRITE_NoFail            = 0x01,
-    FILEWRITE_NoReplaceExisting = 0x02,
-    FILEWRITE_EvenIfReadOnly    = 0x04,
-    FILEWRITE_Unbuffered        = 0x08,
-    FILEWRITE_Append			= 0x10,
-    FILEWRITE_AllowRead         = 0x20,
+    FILEWRITE_NOFAIL            = 0x01,
+    FILEWRITE_NOREPLACEEXISTING = 0x02,
+    FILEWRITE_EVENIFREADONLY    = 0x04,
+    FILEWRITE_UNBUFFERED        = 0x08,
+    FILEWRITE_APPEND            = 0x10,
+    FILEWRITE_ALLOWREAD         = 0x20,
 };
 
 enum ECopyResult
 {
-    COPY_OK						= 0x00,
-    COPY_MiscFail				= 0x01,
-    COPY_ReadFail				= 0x02,
-    COPY_WriteFail				= 0x03,
-    COPY_Canceled				= 0x06,
+    COPY_OK                     = 0x00,
+    COPY_MISCFAIL               = 0x01,
+    COPY_READFAIL               = 0x02,
+    COPY_WRITEFAIL              = 0x03,
+    COPY_CANCELED               = 0x06,
 };
 
 enum NUX_STATUS

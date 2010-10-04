@@ -30,9 +30,9 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 FilePropertyItem::FilePropertyItem(const TCHAR* name)
 :   SectionProperty(name)
 {
-    m_hlayout = smptr(HLayout)(new HLayout());
-    m_TextEntry = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
-    m_OpenButton = smptr(Button)(new Button());
+    m_hlayout = new HLayout();
+    m_TextEntry = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
+    m_OpenButton = new Button(TEXT(""), NUX_TRACKER_LOCATION);
     m_hlayout->AddActiveInterfaceObject(m_TextEntry, 1, eCenter);
     m_hlayout->AddActiveInterfaceObject(m_OpenButton, 0, eCenter);
     m_hlayout->SetHorizontalInternalMargin(2);

@@ -35,9 +35,9 @@ RadioButton::RadioButton(const TCHAR* Caption, bool state, NUX_FILE_LINE_DECL)
 {
     m_Group     = 0;
     m_GroupId   = -1;
-    m_hlayout   = smptr(HLayout)(0);
-    m_CheckArea = smptr(CoreArea)(0);
-    m_TextArea  = smptr(CoreArea)(0);
+    m_hlayout   = 0;
+    m_CheckArea = 0;
+    m_TextArea  = 0;
 
     InitializeLayout();
     InitializeWidgets();
@@ -56,7 +56,8 @@ RadioButton::~RadioButton()
 {
     if(m_Group)
     {
-        m_Group->DisconnectButton(smptr(RadioButton)(this, true));
+        m_Group->DisconnectButton(this);
+        m_Group->UnReference();
     }
 }
 
@@ -108,9 +109,9 @@ void RadioButton::InitializeWidgets()
 
 void RadioButton::InitializeLayout()
 {
-    m_hlayout = smptr(HLayout)(new HLayout("RadioButton"));
-    m_CheckArea = smptr(CoreArea)(new CoreArea());
-    m_TextArea = smptr(CoreArea)(new CoreArea());
+    m_hlayout   = new HLayout("RadioButton");
+    m_CheckArea = new CoreArea();
+    m_TextArea  = new CoreArea();
 }
 
 void RadioButton::DestroyLayout()
@@ -183,7 +184,7 @@ void RadioButton::SetState(bool State, bool EmitSignal)
 {
     if(m_Group && State)
     {
-        m_Group->SetActiveButton(smptr(RadioButton)(this, true), EmitSignal);
+        m_Group->SetActiveButton(this, EmitSignal);
         return;
     }
     else if(m_Group && !State)
@@ -192,6 +193,20 @@ void RadioButton::SetState(bool State, bool EmitSignal)
         return;
     }
     SetStatePrivate(State, EmitSignal);
+}
+
+void RadioButton::SetRadioGroupSelector(RadioButtonGroup* RadioSelector)
+{
+    if(m_Group)
+    {
+        m_Group->UnReference();
+        m_Group = 0;
+    }
+    if(RadioSelector)
+    {
+        m_Group = RadioSelector;
+        m_Group->Reference();
+    }
 }
 
 void RadioButton::SetStatePrivate(bool State)
@@ -220,13 +235,13 @@ void RadioButton::RecvClick(int x, int y, unsigned long button_flags, unsigned l
 {
     if(m_Group)
     {
-        m_Group->NotifyClick(smptr(RadioButton)(this, true));
+        m_Group->NotifyClick(this);
     }
     else
     {
         m_State = !m_State;
         sigToggled.emit();
-        sigStateToggled.emit(smptr(RadioButton)(this, true));
+        sigStateToggled.emit(this);
         sigStateChanged.emit(m_State);
     }
 

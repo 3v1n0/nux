@@ -36,9 +36,9 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 ComboBoxComplex::ComboBoxComplex(NUX_FILE_LINE_DECL)
 :   AbstractComboBox(NUX_FILE_LINE_PARAM)
 {
-    m_ListBox       = smptr(ListControl)(0);
-    m_PopupWindow   = smptr(PopUpWindow)(0);
-    m_Layout        = smptr(HLayout)(0);
+    m_ListBox       = 0;
+    m_PopupWindow   = 0;
+    m_Layout        = 0;
 
     InitializeLayout();
     InitializeWidgets();
@@ -67,9 +67,9 @@ void ComboBoxComplex::InitializeWidgets()
     m_ComboArea->SetMinimumSize(2*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     m_ComboArea->SetGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
-    m_ListBox = smptr(ListControl)(new ListControl(false));
+    m_ListBox = new ListControl(false);
     m_ListBox->UsedForComboBox(true);
-    m_Layout  = smptr(HLayout)(new HLayout());
+    m_Layout  = new HLayout();
 
     // Remove horizontal scrollbar
     m_ListBox->EnableHorizontalScrollBar(false);
@@ -93,7 +93,7 @@ void ComboBoxComplex::InitializeWidgets()
     // This is how the PopupWindow width is controlled. SetPopupWidth define the minimum width of the TableCtrl.
     // Because m_Layout(a HLayout) has a stretch factor of 0, it will force the m_ListBox to its minimum width. 
     m_Layout->SetStretchFactor(0);
-    m_PopupWindow->setLayout(m_Layout);
+    m_PopupWindow->SetLayout(m_Layout);
 
     // Call PopupWindow::SetWindowSizeMatchLayout with TRUE as argument and the popupWindow will preserve the size of its layout.
     m_PopupWindow->SetWindowSizeMatchLayout(true);
@@ -101,9 +101,9 @@ void ComboBoxComplex::InitializeWidgets()
 
 void ComboBoxComplex::InitializeLayout()
 {
-    m_Layout = smptr(HLayout)(new HLayout());
-    m_ListBox = smptr(ListControl)(new ListControl());
-    m_PopupWindow = smptr(PopUpWindow)(new PopUpWindow());
+    m_Layout        = new HLayout();
+    m_ListBox       = new ListControl();
+    m_PopupWindow   = new PopUpWindow();
 }
 
 void ComboBoxComplex::DestroyLayout()
@@ -171,14 +171,14 @@ void ComboBoxComplex::AddItem(TableItem* item)
     if(item == 0)
         return;
 
-    if(m_ListBox.IsValid() && (m_ListBox->GetNumRootChild()==0))
+    if(m_ListBox && (m_ListBox->GetNumRootChild()==0))
     {
         // The first element added is the element featured on the combobox when it is closed.
         m_ListBox->setTableItems(item);
         m_SelectedTreeNode = item;
         m_ComboArea->SetBaseString(m_SelectedTreeNode->GetName());
     }
-    else if(m_ListBox.IsValid())
+    else if(m_ListBox)
     {
         m_ListBox->setTableItems(item);
     }
@@ -204,7 +204,7 @@ void ComboBoxComplex::RecvMouseDown(int x, int y, unsigned long button_flags, un
 
         m_PopupWindow->SetBaseXY(m_ComboArea->GetBaseX(), m_ComboArea->GetBaseY() + m_ComboArea->GetBaseHeight());
         m_PopupWindow->Show();
-        if(m_ListBox.IsValid())
+        if(m_ListBox)
         {
             m_ListBox->ResetItems();
         }

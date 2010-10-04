@@ -60,7 +60,7 @@ protected:
     void DestroyLayout();
 
 private:
-    smptr(HLayout) hlayout;
+    HLayout* hlayout;
 
     DoubleValidator m_DoubleValidator;
     float m_fValue;

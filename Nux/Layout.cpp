@@ -34,7 +34,6 @@ NUX_IMPLEMENT_OBJECT_TYPE(Layout);
 Layout::Layout(NUX_FILE_LINE_DECL)
 :   BaseObject(NUX_FILE_LINE_PARAM)
 {
-    m_compositeIC       = smptr(BaseObject)(0);
     m_h_in_margin       = 0;
     m_h_out_margin      = 0;
     m_v_in_margin       = 0;
@@ -47,31 +46,31 @@ Layout::Layout(NUX_FILE_LINE_DECL)
 Layout::~Layout()
 {
     // It is possible that this layout object is in the refresh list. Remove it here before it is deleted.
-    //GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, true));
+    GetGraphicsThread()->RemoveObjectFromRefreshList(this);
 
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
-        (*it)->SetParentObject(smptr(BaseObject)(0));
+        (*it)->UnParentObject();
     }
     m_LayoutElementList.clear();
 }
 
 
-void Layout::RemoveChildObject(smptr(BaseObject) bo)
+void Layout::RemoveChildObject(BaseObject* bo)
 {
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     it = std::find(m_LayoutElementList.begin(), m_LayoutElementList.end(), bo);
     if(it != m_LayoutElementList.end())
     {
-        bo->SetParentObject(smptr(BaseObject)(0));
+        bo->UnParentObject();
         m_LayoutElementList.erase(it);
     }
 }
 
-bool Layout::FindWidget(smptr(BaseObject) WidgetObject) const
+bool Layout::FindWidget(BaseObject* WidgetObject) const
 {
-    std::list<smptr(BaseObject)>::const_iterator it;
+    std::list<BaseObject*>::const_iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it) == WidgetObject)
@@ -90,7 +89,7 @@ bool Layout::IsEmpty() const
 // If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
 // and the children will take their natural size by expending WidgetLayout.
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-void Layout::AddLayout(smptr(Layout) layout, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
+void Layout::AddLayout(Layout* layout, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
 {
     nuxAssertMsg(layout != 0, TEXT("[Layout::AddActiveInterfaceObject] Invalid parameter."));
     NUX_RETURN_IF_TRUE(layout == 0);
@@ -98,7 +97,7 @@ void Layout::AddLayout(smptr(Layout) layout, unsigned int stretchFactor, eMinorP
     nuxAssertMsg(layout != this, TEXT("[Layout::AddLayout] Error: Trying to add a layout to itself."));
     NUX_RETURN_IF_FALSE(layout != 0);
 
-    smptr(BaseObject) parent = layout->GetParentObject();
+    BaseObject* parent = layout->GetParentObject();
     nuxAssertMsg(parent == 0, TEXT("[Layout::AddLayout] Trying to add an object that already has a parent."));
     NUX_RETURN_IF_TRUE(parent != 0);
 
@@ -119,7 +118,7 @@ void Layout::AddLayout(smptr(Layout) layout, unsigned int stretchFactor, eMinorP
         layout->SetPercentage(percentage);
     }
 
-    layout->SetParentObject(smptr(BaseObject)(this, true));
+    layout->SetParentObject(this);
     m_LayoutElementList.push_back(layout);
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
@@ -149,12 +148,12 @@ void Layout::AddLayout(smptr(Layout) layout, unsigned int stretchFactor, eMinorP
     /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
 */
 
-void Layout::AddActiveInterfaceObject(smptr(BaseObject) bo, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
+void Layout::AddActiveInterfaceObject(BaseObject* bo, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
 {
     nuxAssertMsg(bo != 0, TEXT("[Layout::AddActiveInterfaceObject] Invalid parameter."));
     NUX_RETURN_IF_TRUE(bo == 0);
 
-    smptr(BaseObject) parent = bo->GetParentObject();
+    BaseObject* parent = bo->GetParentObject();
     nuxAssertMsg(parent == 0, TEXT("[Layout::AddActiveInterfaceObject] Trying to add an object that already has a parent."));
     NUX_RETURN_IF_TRUE(parent != 0);
 
@@ -175,7 +174,7 @@ void Layout::AddActiveInterfaceObject(smptr(BaseObject) bo, unsigned int stretch
         bo->SetPercentage(percentage);
     }
 
-    bo->SetParentObject(smptr(BaseObject)(this, true));
+    bo->SetParentObject(this);
 
     bo->SetApplication(GetApplication());
     m_LayoutElementList.push_back(bo);
@@ -185,22 +184,22 @@ void Layout::AddActiveInterfaceObject(smptr(BaseObject) bo, unsigned int stretch
 
 void Layout::AddSpace(unsigned int width, unsigned int stretchFactor)
 {
-    AddLayout(smptr(SpaceLayout)(new SpaceLayout()), stretchFactor);
+    AddLayout(new SpaceLayout(), stretchFactor);
 }
 
 void Layout::Clear()
 {
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
-        (*it)->SetParentObject(smptr(BaseObject)(0));
+        (*it)->UnParentObject();
     }
     m_LayoutElementList.clear();
 }
 
-bool Layout::SearchInAllSubNodes(smptr(BaseObject) bo)
+bool Layout::SearchInAllSubNodes(BaseObject* bo)
 {
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it) == bo)
@@ -209,16 +208,19 @@ bool Layout::SearchInAllSubNodes(smptr(BaseObject) bo)
         }
         else if((*it)->IsLayout())
         {
-            smptr(Layout) layout(*it);
-            return layout->SearchInAllSubNodes(bo);
+            Layout* layout = NUX_STATIC_CAST(Layout*, (*it));
+            if(layout->SearchInAllSubNodes(bo))
+            {
+                return true;
+            }
         }
     }
     return false;
 }
 
-bool Layout::SearchInFirstSubNodes(smptr(BaseObject) bo)
+bool Layout::SearchInFirstSubNodes(BaseObject* bo)
 {
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it) == bo)
@@ -233,7 +235,7 @@ unsigned int Layout::GetMaxStretchFactor()
 {
     unsigned int value = 0;
     unsigned int sf;
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         sf = (*it)->GetStretchFactor(); 
@@ -249,7 +251,7 @@ unsigned int Layout::GetMinStretchFactor()
 {
     unsigned int value = 0xFFFFFFFF;
     unsigned int sf;
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         sf = (*it)->GetStretchFactor();
@@ -264,7 +266,7 @@ unsigned int Layout::GetMinStretchFactor()
 unsigned int Layout::GetNumStretchFactor(unsigned int sf)
 {
     unsigned int count = 0;
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->GetStretchFactor() == sf)
@@ -277,12 +279,12 @@ unsigned int Layout::GetNumStretchFactor(unsigned int sf)
 
 void Layout::DoneRedraw()
 {
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsInterfaceControl())
         {
-            smptr(ActiveInterfaceObject) ic = (*it);
+            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
             ic->DoneRedraw();
         }
     }
@@ -291,22 +293,22 @@ void Layout::DoneRedraw()
 long Layout::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     long ret = TraverseInfo;
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsArea())
         {
-            smptr(CoreArea) area(*it);
+            CoreArea* area = NUX_STATIC_CAST(CoreArea*, (*it));
             ret = area->OnEvent(ievent, ret, ProcessEventInfo);
         }
         else if((*it)->IsInterfaceControl())
         {
-            smptr(ActiveInterfaceObject) ic = (*it);
+            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
             ret = ic->ProcessEvent(ievent, ret, ProcessEventInfo);
         }
         else if((*it)->IsLayout())
         {
-            smptr(Layout) layout =  (*it);
+            Layout* layout = NUX_STATIC_CAST(Layout*, (*it));
             ret = layout->ProcessEvent(ievent, ret, ProcessEventInfo);
         }
     }
@@ -316,33 +318,32 @@ long Layout::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventIn
 void Layout::ProcessDraw(GraphicsContext& GfxContext, bool force_draw)
 {
     //GfxContext.Push2DModelViewMatrix(m_Matrix);
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsArea())
         {
-            smptr(CoreArea) area(*it);
+            CoreArea* area = NUX_STATIC_CAST(CoreArea*, (*it));
             area->OnDraw(GfxContext, force_draw);
         }
         else if((*it)->IsInterfaceControl())
         {
-            smptr(ActiveInterfaceObject) ic = (*it);
+            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
             ic->ProcessDraw(GfxContext, force_draw);
         }
         else if((*it)->IsLayout())
         {
-            smptr(Layout) layout =  (*it);
+            Layout* layout = NUX_STATIC_CAST(Layout*, (*it));
             layout->ProcessDraw(GfxContext, force_draw);
         }
     }
 
     SetDrawDirty(false);
-    //GfxContext.Pop2DModelViewMatrix();
 }
 
 void Layout::NeedRedraw()
 {
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsArea())
@@ -351,28 +352,28 @@ void Layout::NeedRedraw()
         }
         else if((*it)->IsInterfaceControl())
         {
-            smptr(ActiveInterfaceObject) ic = (*it);
+            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
             ic->NeedRedraw();
         }
         else if((*it)->IsLayout())
         {
-            smptr(Layout) layout =  (*it);
+            Layout* layout = NUX_STATIC_CAST(Layout*, (*it));
             layout->NeedRedraw();
         }
     }
 }
 
-void Layout::SetContentStacking(eStacking stacking)
+void Layout::SetContentDistribution(LayoutContentDistribution stacking)
 {
     m_ContentStacking = stacking;
 }
 
-eStacking Layout::GetContentStacking()
+LayoutContentDistribution Layout::GetContentDistribution()
 {
     return m_ContentStacking;
 }
 
-void Layout::RequestBottomUpLayoutComputation(smptr(BaseObject) bo_initiator)
+void Layout::RequestBottomUpLayoutComputation(BaseObject* bo_initiator)
 {
 
 }
@@ -381,7 +382,7 @@ void Layout::SetApplication(WindowThread* Application)
 {
     BaseObject::SetApplication(Application);
 
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         (*it)->SetApplication(Application);

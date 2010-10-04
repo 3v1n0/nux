@@ -31,7 +31,7 @@ class SplineCurvePropertyItem: public SectionProperty, public SplineCurvePreview
 {
     NODE_XML_CLASS_MEMBER(SplineCurvePropertyItem);
     NODE_SKIP_CHILD(true);
-    NODE_SIG_RECEIVER2(RecvPropertyChange, const weaksmptr(SplineCurveEditor));
+    NODE_SIG_RECEIVER2(RecvPropertyChange, SplineCurveEditor*);
 public:
     SplineCurvePropertyItem(const TCHAR* name);
     virtual ~SplineCurvePropertyItem();

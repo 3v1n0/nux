@@ -112,7 +112,7 @@ void SplineCurveEditor::AddKnot(double x, double y, bool selected)
 {
     m_control_knot.AddKnot(x, y, selected);
     m_CubicSpline.Set(m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray());
-    sigCurveChange.emit(smptr(SplineCurveEditor)(this, true));
+    sigCurveChange.emit(this);
     NeedRedraw();
 }
 
@@ -372,7 +372,7 @@ void SplineCurveEditor::RecvMouseUp(int x, int y, unsigned long button_flags, un
 {
     NeedRedraw();
     if(m_control_knot.GetNumSelectedKnot() > 0)
-        sigCurveChange.emit(smptr(SplineCurveEditor)(this, true));
+        sigCurveChange.emit(this);
 }
 
 void SplineCurveEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -429,7 +429,7 @@ void SplineCurveEditor::RecvMouseDown(int x, int y, unsigned long button_flags, 
     {   
         m_control_knot.AddKnot(new_x, new_y, TRUE);
         m_CubicSpline.Set(m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray());
-        sigCurveChange.emit(smptr(SplineCurveEditor)(this, true));
+        sigCurveChange.emit(this);
         NeedRedraw();
     }
 }
@@ -585,7 +585,7 @@ void SplineCurveEditor::RecvKeyEvent(
         m_CubicSpline.Set(m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray());
 
         if(kn > 0)
-            sigCurveChange.emit(smptr(SplineCurveEditor)(this, true));
+            sigCurveChange.emit(this);
         NeedRedraw();
     }
 }

@@ -30,7 +30,7 @@ class Vector3DoubleValuator;
 class Vector3ValuatorPropertyItem: public SectionProperty, public Vector3DoubleValuator
 {
     NODE_XML_CLASS_MEMBER(Vector3ValuatorPropertyItem);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(Vector3DoubleValuator));
+    NODE_SIG_RECEIVER(RecvPropertyChange, Vector3DoubleValuator*);
 public:
     Vector3ValuatorPropertyItem(const TCHAR* name, double X = 0, double Y = 0, double Z = 0,
         double Step = 1.0, double MinValue = -1.7E308, double MaxValue = 1.7E308);

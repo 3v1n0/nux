@@ -36,9 +36,9 @@ ColorPreview::ColorPreview(float red, float green, float blue, eColorModel color
 ,   m_Color(1.0f, 1.0f, 1.0f, 1.0f)
 {
     //setSize(200, 100);
-    m_hlayout = smptr(HLayout)(new HLayout);
-    m_ColorArea = smptr(CoreArea)(new CoreArea());
-    m_ColorValue = smptr(StaticTextBox)(new StaticTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_hlayout           = new HLayout();
+    m_ColorArea         = new CoreArea();
+    m_ColorValue        = new StaticTextBox(TEXT(""), NUX_TRACKER_LOCATION);
     m_DialogThreadProxy = new ColorDialogProxy(true);
 
     SetMaximumHeight(18);

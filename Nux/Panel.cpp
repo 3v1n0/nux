@@ -49,7 +49,7 @@ Panel::~Panel()
 {
     // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters
     //delete vlayout;
-    m_layout = smptr(Layout)(0);
+    m_layout = NULL;
 }
 
 long Panel::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -82,7 +82,7 @@ long Panel::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInf
         }
     }
     GetThreadWindowCompositor().PushEventRectangle(viewGeometry);
-    if(m_layout.IsValid())
+    if(m_layout)
         ret = m_layout->ProcessEvent(ievent, ret, ProcEvInfo);
     GetThreadWindowCompositor().PopEventRectangle();
 
@@ -96,7 +96,7 @@ void Panel::Draw(GraphicsContext& GfxContext, bool force_draw)
 
     Geometry base = GetGeometry();
 
-    if(m_layout.IsValid())
+    if(m_layout)
         m_layout->NeedRedraw();
 
     gPainter.PaintBackground(GfxContext, base);
@@ -118,13 +118,8 @@ void Panel::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     GfxContext.PushClippingRectangle(GetGeometry());
 
     GfxContext.PushClippingRectangle(Rect(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
-//    std::list<smptr(ActiveInterfaceObject)>::reverse_iterator it = m_InterfaceObject.rbegin();
-//    while (it != m_InterfaceObject.rend())
-//    {
-//        (*it)->ProcessDraw(force_draw);
-//        ++it;
-//    }
-    if(m_layout.IsValid())
+
+    if(m_layout)
     {
         GfxContext.PushClippingRectangle(m_layout->GetGeometry());
         m_layout->ProcessDraw(GfxContext, force_draw);
@@ -150,45 +145,22 @@ void Panel::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 }
 
-// 
-// void Panel::AddWidget(smptr(ActiveInterfaceObject) ic)
-// {
-//     if(ic && m_layout)
-//     {
-//         m_layout->AddActiveInterfaceObject(ic, 1);
-//         // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
-//         // and the children will take their natural size by expending WidgetLayout.
-//         // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-// 
-//         m_InterfaceObject.push_back(ic);
-// 
-//         //FormatContent();
-//         ComputeChildLayout();
-//     }
-// }
-
-void Panel::AddWidget(smptr(ActiveInterfaceObject) ic, int stretchfactor)
+void Panel::AddWidget(ActiveInterfaceObject* ic, int stretchfactor)
 {
-   if(ic.IsValid() && m_layout.IsValid())
+   if(ic && m_layout)
    {
        m_layout->AddActiveInterfaceObject(ic, stretchfactor);
        // if(stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
        // and the children will take their natural size by expending WidgetLayout.
        // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 
-       m_InterfaceObject.push_back(ic);
-
-       //FormatContent();
        ComputeChildLayout();
    }
 }
 
-void Panel::AddWidget(std::list<smptr(ActiveInterfaceObject)> *InterfaceControlList)
+void Panel::AddWidget(std::list<ActiveInterfaceObject*> *InterfaceControlList)
 {
-    //m_compositionLayout->Clear();
-    //m_InterfaceObject.clear();
-
-    std::list<smptr(ActiveInterfaceObject)>::iterator it;
+    std::list<ActiveInterfaceObject*>::iterator it;
     
     for(it = InterfaceControlList->begin(); it != InterfaceControlList->end(); it++)
     {
@@ -196,27 +168,17 @@ void Panel::AddWidget(std::list<smptr(ActiveInterfaceObject)> *InterfaceControlL
     }
 }
 
-void Panel::SetLayout(smptr(Layout) layout)
+void Panel::SetLayout(Layout* layout)
 {
     if(layout == 0)
         return;
 
-    m_InterfaceObject.clear();
-    std::list<smptr(BaseObject)> *InterfaceControlList = new std::list<smptr(BaseObject)>;
+    std::list<BaseObject*> *InterfaceControlList = new std::list<BaseObject*>;
 
     m_layout = layout;
 
     SetCompositionLayout(m_layout);
 
-    // Get the list of ActiveInterfaceObject that is in the m_layout and its lower hierarchy of layout.
-    // Go down to the WidgetLayout to get every ActiveInterfaceObject Object.
-    m_layout->GetCompositeList(InterfaceControlList);
-
-    std::list<smptr(BaseObject)>::iterator it;
-    for(it = InterfaceControlList->begin(); it != InterfaceControlList->end(); it++)
-    {
-        m_InterfaceObject.push_back((*it));
-    }
     FormatContent();
 
     delete InterfaceControlList;
@@ -225,7 +187,6 @@ void Panel::SetLayout(smptr(Layout) layout)
 void Panel::clearContent()
 {
     m_layout->Clear();
-    m_InterfaceObject.clear();
 }
 
 // Get a change to do any work on an element.

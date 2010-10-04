@@ -230,7 +230,7 @@ bool NuxCoreObject::SinkReference()
 
 bool NuxCoreObject::Dispose()
 {
-    if(OwnsTheReference() && (m_reference_count->GetValue() == 1))
+    if(!OwnsTheReference() && (m_reference_count->GetValue() == 1))
     {
         Destroy();
         return true;
@@ -246,6 +246,8 @@ void NuxCoreObject::Destroy()
     {
         delete m_reference_count;
         delete m_weak_reference_count;
+        m_reference_count = 0;
+        m_weak_reference_count = 0;
     }
     delete this;
 }

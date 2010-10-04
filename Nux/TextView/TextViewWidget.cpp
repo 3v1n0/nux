@@ -73,7 +73,7 @@ TextViewWidget::TextViewWidget(NUX_FILE_LINE_DECL)
     m_FrameBufferObject->SetRenderTarget( 0, m_TextureBuffer[0]->GetSurfaceLevel(0) );
     m_FrameBufferObject->SetDepthSurface( 0 );
 
-    smptr(VLayout) layout = smptr(VLayout)(new VLayout);
+    VLayout* layout = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
     //layout->AddActiveInterfaceObject(new Button(TEXT("Hello")));
     SetCompositionLayout(layout);
 
@@ -222,7 +222,7 @@ void TextViewWidget::PreLayoutManagement()
         // Compute m_ContentOffsetY so the end of the content match exactly the view right border position
         //m_ContentOffsetY = -(m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
     }
-    if(m_CompositionLayout.IsValid() && (m_CompositionLayout->GetStretchFactor() != 0))
+    if(m_CompositionLayout && (m_CompositionLayout->GetStretchFactor() != 0))
     {
         m_CompositionLayout->SetGeometry(
             m_ViewX + m_ContentOffsetX,
@@ -283,7 +283,7 @@ long TextViewWidget::PostLayoutManagement(long LayoutResult)
     if(IsSizeMatchContent())
         return PostLayoutManagement2(LayoutResult);
 
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ViewContentX = m_CompositionLayout->GetBaseX();
         m_ViewContentY = m_CompositionLayout->GetBaseY();
@@ -304,7 +304,7 @@ long TextViewWidget::PostLayoutManagement(long LayoutResult)
 //             GetBaseY() + m_top_border + m_ViewContentTopMargin,
 //             GetBaseWidth() - ver_scrollbar_width - 2*m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
 //             GetBaseHeight() - hor_scrollbar_height - m_top_border - m_border - m_ViewContentBottomMargin -m_ViewContentTopMargin);
-//         if(m_CompositionLayout.IsValid())
+//         if(m_CompositionLayout)
 //         {
 //             hscrollbar->SetContentSize(m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
 //                 m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight());
@@ -333,7 +333,7 @@ long TextViewWidget::PostLayoutManagement(long LayoutResult)
 //             GetBaseY() + m_top_border + m_ViewContentTopMargin,
 //             GetBaseWidth() - ver_scrollbar_width - 2*m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
 //             GetBaseHeight() - hor_scrollbar_height - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-//         if(m_CompositionLayout.IsValid())
+//         if(m_CompositionLayout)
 //         {
 //             vscrollbar->SetContentSize(m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
 //                 m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight());
@@ -356,7 +356,7 @@ long TextViewWidget::PostLayoutManagement(long LayoutResult)
 //         vscrollbar->SetContentOffset(0, 0);
 //     }
 
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
         m_CompositionLayout->ComputePosition2(0, 0);
     //return LayoutResult;
     // A TextViewWidget must kill the result of the management and pass it to the parent Layout.
@@ -381,7 +381,7 @@ long TextViewWidget::PostLayoutManagement2(long LayoutResult)
     //      m_ViewContentHeight
     // So we make the composition layout the same size as the content
 
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_CompositionLayout->SetBaseX(m_ViewContentX);
         m_CompositionLayout->SetBaseY(m_ViewContentY);
@@ -426,7 +426,7 @@ long TextViewWidget::PostLayoutManagement2(long LayoutResult)
             GetBaseY() + m_top_border + m_ViewContentTopMargin,
             GetBaseWidth() - ScrollbarWidth - 2*m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
             GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin -m_ViewContentTopMargin);
-        if(m_CompositionLayout.IsValid())
+        if(m_CompositionLayout)
         {
             hscrollbar->SetContentSize(m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
                 m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight());
@@ -473,7 +473,7 @@ long TextViewWidget::PostLayoutManagement2(long LayoutResult)
             GetBaseY() + m_top_border + m_ViewContentTopMargin,
             GetBaseWidth() - ScrollbarWidth - 2*m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
             GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-        if(m_CompositionLayout.IsValid())
+        if(m_CompositionLayout)
         {
             vscrollbar->SetContentSize(m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
                 m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight());
@@ -502,7 +502,7 @@ long TextViewWidget::PostLayoutManagement2(long LayoutResult)
         vscrollbar->SetContentOffset(0, 0);
     }
 
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
         m_CompositionLayout->ComputePosition2(0, 0);
     return (eCompliantHeight | eCompliantWidth);
 }
@@ -557,7 +557,7 @@ void TextViewWidget::PositionChildLayout(float offsetX, float offsetY)
 //     {
 //         m_ContentOffsetY = -(m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
 //     }
-//     if(m_CompositionLayout.IsValid())
+//     if(m_CompositionLayout)
 //     {
 //         m_CompositionLayout->SetBaseX(m_ViewX + m_ContentOffsetX);
 //         m_CompositionLayout->SetBaseY(m_ViewY + m_ContentOffsetY);
@@ -588,7 +588,7 @@ void TextViewWidget::PositionChildLayout(float offsetX, float offsetY)
     }
 
     //////////////////////////////////////////////////////////////////////////
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ViewContentX = m_CompositionLayout->GetBaseX();
         m_ViewContentY = m_CompositionLayout->GetBaseY();
@@ -608,20 +608,20 @@ void TextViewWidget::PositionChildLayout(float offsetX, float offsetY)
 
     //    hscrollbar->SetContainerSize(GetX() + m_border, GetY() + m_top_border,
     //        GetWidth() - ver_scrollbar_width - 2*m_border, GetBaseHeight() - hor_scrollbar_height - m_top_border - m_border);
-    //    if(m_CompositionLayout.IsValid())
+    //    if(m_CompositionLayout)
     //        hscrollbar->SetContentSize(m_CompositionLayout->GetX(), m_CompositionLayout->GetY(),
     //        m_CompositionLayout->GetWidth(), m_CompositionLayout->GetBaseHeight());
 
     //    vscrollbar->SetContainerSize(GetX() + m_border, GetY() + m_top_border,
     //        GetWidth() - ver_scrollbar_width - 2*m_border, GetBaseHeight() - hor_scrollbar_height - m_top_border - m_border);
-    //    if(m_CompositionLayout.IsValid())
+    //    if(m_CompositionLayout)
     //        vscrollbar->SetContentSize(m_CompositionLayout->GetX(), m_CompositionLayout->GetY(),
     //        m_CompositionLayout->GetWidth(), m_CompositionLayout->GetBaseHeight());
 
     vscrollbar->SetContentOffset(m_ContentOffsetX, m_ContentOffsetY);
     hscrollbar->SetContentOffset(m_ContentOffsetX, m_ContentOffsetY);
 
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_CompositionLayout->ComputePosition2(0, 0);
     }
@@ -630,7 +630,7 @@ void TextViewWidget::PositionChildLayout(float offsetX, float offsetY)
 
 // void TextViewWidget::ScrollLeft(float stepx, int mousedx)
 // {
-//     if(m_CompositionLayout.IsValid())
+//     if(m_CompositionLayout)
 //     {
 //         m_ContentOffsetX += (float)stepx * (float)mousedx;;
 //         if(m_ContentOffsetX > 0)
@@ -651,7 +651,7 @@ void TextViewWidget::PositionChildLayout(float offsetX, float offsetY)
 // 
 // void TextViewWidget::ScrollRight(float stepx, int mousedx)
 // {
-//     if(m_CompositionLayout.IsValid())
+//     if(m_CompositionLayout)
 //     {
 //         m_ContentOffsetX -= (float)stepx * (float)mousedx;
 //         if(m_ViewX + m_ContentOffsetX +  m_ViewContentWidth < m_ViewX + m_ViewWidth)
@@ -672,7 +672,7 @@ void TextViewWidget::PositionChildLayout(float offsetX, float offsetY)
 // 
 // void TextViewWidget::ScrollUp(float stepy, int mousedy)
 // {
-//     if(m_CompositionLayout.IsValid())
+//     if(m_CompositionLayout)
 //     {
 //         m_ContentOffsetY += (float)stepy * (float)mousedy;
 //         if(m_ContentOffsetY > 0)
@@ -696,7 +696,7 @@ void TextViewWidget::PositionChildLayout(float offsetX, float offsetY)
 // 
 // void TextViewWidget::ScrollDown(float stepy, int mousedy)
 // {
-//     if(m_CompositionLayout.IsValid())
+//     if(m_CompositionLayout)
 //     {
 //         m_ContentOffsetY -= (float)stepy * (float)mousedy;
 //         if(m_ViewY + m_ContentOffsetY + m_ViewContentHeight < m_ViewY + m_ViewHeight)
@@ -720,7 +720,7 @@ void TextViewWidget::PositionChildLayout(float offsetX, float offsetY)
 void TextViewWidget::SetSizeMatchContent(bool b)
 {
     m_bSizeMatchContent = b;
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
         m_CompositionLayout->ComputeLayout2();
 }
 
@@ -731,7 +731,7 @@ bool TextViewWidget::IsSizeMatchContent() const
 
 void TextViewWidget::ResetScrollToLeft()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetX = 0;
         m_CompositionLayout->SetBaseX(m_ViewX + m_ContentOffsetX);
@@ -744,7 +744,7 @@ void TextViewWidget::ResetScrollToLeft()
 
 void TextViewWidget::ResetScrollToRight()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetX = -(m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
         m_CompositionLayout->SetBaseX(m_ViewX + m_ContentOffsetX);
@@ -757,7 +757,7 @@ void TextViewWidget::ResetScrollToRight()
 
 void TextViewWidget::ResetScrollToUp()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetY = 0;
         m_CompositionLayout->SetBaseY(m_ViewY);
@@ -770,7 +770,7 @@ void TextViewWidget::ResetScrollToUp()
 
 void TextViewWidget::ResetScrollToDown()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetY = -(m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
         m_CompositionLayout->SetBaseY(m_ViewY + m_ContentOffsetY);

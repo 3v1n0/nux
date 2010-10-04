@@ -28,7 +28,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
 const t_int  NWindowsSerialFileReader::sBufferSize = 1024;
 
-NWindowsSerialFileReader::NWindowsSerialFileReader(HANDLE InHandle, NOutputDevice& InError)
+NWindowsSerialFileReader::NWindowsSerialFileReader(HANDLE InHandle, LogOutputDevice& InError)
 :   m_FileHandle    (InHandle)
 ,   m_Error         (InError)
 ,   m_FilePos       (0)
@@ -183,7 +183,7 @@ void NWindowsSerialFileReader::SerializeFinal(void* Dest, t_s64 Length)
 const t_int  NWindowsSerialFileWriter::sBufferSize = 32;
 //NCriticalSection NWindowsSerialFileWriter::m_CriticalSection;
 
-NWindowsSerialFileWriter::NWindowsSerialFileWriter(HANDLE InHandle, NOutputDevice& InError)
+NWindowsSerialFileWriter::NWindowsSerialFileWriter(HANDLE InHandle, LogOutputDevice& InError)
 :   m_FileHandle  (InHandle)
 ,   m_Error       (InError)
 ,   m_BufferCount (0)
@@ -352,7 +352,7 @@ HANDLE NFileManagerWindows::CreateReadFileHandle(const TCHAR* Filename, DWORD Fl
     return Handle;
 }
 
-NSerializer* NFileManagerWindows::CreateFileReader(const TCHAR* Filename, DWORD Flags, NOutputDevice& Error)
+NSerializer* NFileManagerWindows::CreateFileReader(const TCHAR* Filename, DWORD Flags, LogOutputDevice& Error)
 {
     HANDLE Handle = CreateReadFileHandle(Filename, Flags);
     if(Handle == INVALID_HANDLE_VALUE)
@@ -396,7 +396,7 @@ HANDLE NFileManagerWindows::CreateWriteFileHandle(const TCHAR* Filename, DWORD F
 
 NSerializer* NFileManagerWindows::CreateFileWriter(const TCHAR* Filename,
                                                    DWORD Flags,
-                                                   NOutputDevice& Error)
+                                                   LogOutputDevice& Error)
 {
     HANDLE Handle = CreateWriteFileHandle(Filename, Flags);
     if(Handle == INVALID_HANDLE_VALUE)

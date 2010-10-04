@@ -23,7 +23,8 @@
 #include "Nux.h"
 #include "Utils.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux
+{
 
 // bool gMouseOwned = false;
 // 

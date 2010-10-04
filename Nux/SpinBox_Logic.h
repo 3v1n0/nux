@@ -54,11 +54,11 @@ public:
         This receiver is going to initiate the redraw of the whole SpinBox_Logic.
     */
     void RecvSpinnerMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvStartKeyboardFocus(const weaksmptr(EditTextBox) textbox);
-    void RecvEndKeyboardFocus(const weaksmptr(EditTextBox) textbox);
-    void RecvEscapeKeyboardFocus(const weaksmptr(EditTextBox) textbox);
-    void RecvEditChange(const weaksmptr(EditTextBox) textbox);
-    void RecvValidateEntry(const weaksmptr(EditTextBox) textbox);
+    void RecvStartKeyboardFocus(EditTextBox* textbox);
+    void RecvEndKeyboardFocus(EditTextBox* textbox);
+    void RecvEscapeKeyboardFocus(EditTextBox* textbox);
+    void RecvEditChange(EditTextBox* textbox);
+    void RecvValidateEntry(EditTextBox* textbox);
 
     virtual void ImplementIncrementBtn() = 0;
     virtual void ImplementDecrementBtn() = 0;
@@ -78,9 +78,9 @@ protected:
     void DestroyLayout();
 
 protected:
-    smptr(EditTextBox) m_EditLine;
-    smptr(CoreArea) m_SpinnerUpBtn;
-    smptr(CoreArea) m_SpinnerDownBtn;
+    EditTextBox*    m_EditLine;
+    CoreArea*       m_SpinnerUpBtn;
+    CoreArea*       m_SpinnerDownBtn;
 
     TimerFunctor* m_UpTimerCallback;
     TimerFunctor* m_DownTimerCallback;

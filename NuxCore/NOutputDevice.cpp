@@ -54,21 +54,21 @@ static void CreateBackupCopy(const TCHAR* Filename)
 #endif
 
 NUX_IMPLEMENT_GLOBAL_OBJECT(NNullOutput);
-NUX_IMPLEMENT_GLOBAL_OBJECT(NOutputDeviceRedirector);
+NUX_IMPLEMENT_GLOBAL_OBJECT(LogOutputRedirector);
 NUX_IMPLEMENT_GLOBAL_OBJECT(NOutputLogFile);
 NUX_IMPLEMENT_GLOBAL_OBJECT(NOutputVisualDebugConsole)
 
-void NOutputDevice::Shutdown()
+void LogOutputDevice::Shutdown()
 {
     m_ObjectDestroyed = TRUE;
 }
 
-void NOutputDevice::Flush()
+void LogOutputDevice::Flush()
 {
 
 }
 
-VARARG_BODY( void /*FuncRet*/, NOutputDevice::LogFunction/*FuncName*/, const TCHAR* /*FmtType*/, VARARG_EXTRA(int Severity)/*ExtraDecl*/)
+VARARG_BODY( void /*FuncRet*/, LogOutputDevice::LogFunction/*FuncName*/, const TCHAR* /*FmtType*/, VARARG_EXTRA(int Severity)/*ExtraDecl*/)
 {
     if(m_ObjectDestroyed)
         return;
@@ -222,17 +222,17 @@ void NOutputLogFile::SerializeRaw(const TCHAR* Data)
     m_LogSerializer->Serialize(NUX_CONST_CAST(TCHAR*, Data), s);
 }
 
-void NOutputDeviceRedirector::Constructor()
+void LogOutputRedirector::Constructor()
 {
 
 }
 
-void NOutputDeviceRedirector::Destructor()
+void LogOutputRedirector::Destructor()
 {
     Shutdown();
 }
 
-void NOutputDeviceRedirector::AddOutputDevice( NOutputDevice* OutputDevice )
+void LogOutputRedirector::AddOutputDevice(LogOutputDevice* OutputDevice)
 {
     if( OutputDevice )
     {
@@ -242,20 +242,20 @@ void NOutputDeviceRedirector::AddOutputDevice( NOutputDevice* OutputDevice )
     }
 }
 
-void NOutputDeviceRedirector::RemoveOutputDevice( NOutputDevice* OutputDevice )
+void LogOutputRedirector::RemoveOutputDevice(LogOutputDevice* OutputDevice)
 {
-    std::vector<NOutputDevice*>::iterator it = std::find(OutputDevices.begin(), OutputDevices.end(), OutputDevice);
+    std::vector<LogOutputDevice*>::iterator it = std::find(OutputDevices.begin(), OutputDevices.end(), OutputDevice);
     OutputDevices.erase(it);
 }
 
-bool NOutputDeviceRedirector::IsRedirectingTo(NOutputDevice* OutputDevice)
+bool LogOutputRedirector::IsRedirectingTo(LogOutputDevice* OutputDevice)
 {
     if(std::find(OutputDevices.begin(), OutputDevices.end(), OutputDevice) != OutputDevices.end())
         return true;
     return false;
 }
 
-void NOutputDeviceRedirector::Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity)
+void LogOutputRedirector::Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity)
 {
     for(t_u32 OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
     {
@@ -263,7 +263,7 @@ void NOutputDeviceRedirector::Serialize(const TCHAR* Data, const TCHAR* LogPrefi
     }
 }
 
-void NOutputDeviceRedirector::Flush()
+void LogOutputRedirector::Flush()
 {
     for(t_u32 OutputDeviceIndex=0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
     {
@@ -271,7 +271,7 @@ void NOutputDeviceRedirector::Flush()
     }
 }
 
-void NOutputDeviceRedirector::Shutdown()
+void LogOutputRedirector::Shutdown()
 {
     for(t_u32 OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
     {

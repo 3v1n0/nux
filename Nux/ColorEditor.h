@@ -49,9 +49,9 @@ public:
     ColorDialogProxy(bool ModalWindow);
     ~ColorDialogProxy();
 
-    void RecvDialogOk(const weaksmptr(ColorEditor) coloreditor);
-    void RecvDialogCancel(const weaksmptr(ColorEditor) coloreditor);
-    void RecvDialogChange(const weaksmptr(ColorEditor) coloreditor);
+    void RecvDialogOk(ColorEditor* coloreditor);
+    void RecvDialogCancel(ColorEditor* coloreditor);
+    void RecvDialogChange(ColorEditor* coloreditor);
 
     void Start();
     bool IsActive();
@@ -119,19 +119,19 @@ public:
 
     void RecvCheckColorModel(bool, eColorModel, eColorChannel);
 
-    sigc::signal< void, const weaksmptr(ColorEditor) > sigChange;
+    sigc::signal< void, ColorEditor* > sigChange;
 private:
     void DrawBaseChannelMarker(GraphicsContext& GfxContext);
     void DrawRGB(GraphicsContext& GfxContext, bool force_draw);
     void DrawHSV(GraphicsContext& GfxContext, bool force_draw);
 
-    eColorChannel m_ColorChannel;
-    eColorModel m_ColorModel;
-    smptr(CoreArea) m_PickerArea;
-    smptr(CoreArea) m_BaseChannelArea;
-    smptr(CoreArea) m_ColorSquare;
-    smptr(HLayout) m_hlayout;
-    smptr(VLayout) ctrllayout;
+    eColorChannel   m_ColorChannel;
+    eColorModel     m_ColorModel;
+    CoreArea*       m_PickerArea;
+    CoreArea*       m_BaseChannelArea;
+    CoreArea*       m_ColorSquare;
+    HLayout*        m_hlayout;
+    VLayout*        ctrllayout;
 
     GLSh_ColorPicker *m_RedShader;
     GLSh_ColorPicker *m_GreenShader;
@@ -152,30 +152,30 @@ private:
     float m_Value;
 
 
-    smptr(HLayout) redlayout;
-    smptr(HLayout) greenlayout;
-    smptr(HLayout) bluelayout;
+    HLayout* redlayout;
+    HLayout* greenlayout;
+    HLayout* bluelayout;
 
-    smptr(RadioButton) redcheck;
-    smptr(EditTextBox) redtext;
-    smptr(RadioButton) greencheck;
-    smptr(EditTextBox) greentext;
-    smptr(RadioButton) bluecheck;
-    smptr(EditTextBox) bluetext;
+    RadioButton* redcheck;
+    EditTextBox* redtext;
+    RadioButton* greencheck;
+    EditTextBox* greentext;
+    RadioButton* bluecheck;
+    EditTextBox* bluetext;
 
-    smptr(HLayout) huelayout;
-    smptr(HLayout) saturationlayout;
-    smptr(HLayout) valuelayout;
+    HLayout* huelayout;
+    HLayout* saturationlayout;
+    HLayout* valuelayout;
 
-    smptr(RadioButton) huecheck;
-    smptr(EditTextBox) huetext;
-    smptr(RadioButton) saturationcheck;
-    smptr(EditTextBox) saturationtext;
-    smptr(RadioButton) valuecheck;
-    smptr(EditTextBox) valuetext;
+    RadioButton* huecheck;
+    EditTextBox* huetext;
+    RadioButton* saturationcheck;
+    EditTextBox* saturationtext;
+    RadioButton* valuecheck;
+    EditTextBox* valuetext;
 
-    smptr(Button) OkButton;
-    smptr(Button) CancelButton;
+    Button* OkButton;
+    Button* CancelButton;
     RadioButtonGroup* radiogroup;
 
     DoubleValidator m_Validator;

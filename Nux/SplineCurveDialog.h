@@ -39,9 +39,9 @@ public:
     virtual void RecvOk();
     virtual void RecvCancel();
 
-    sigc::signal<void, const smptr(SplineCurveEditor) > sigOk;
-    sigc::signal<void, const smptr(SplineCurveEditor) > sigCancel;    
-    sigc::signal<void, const smptr(SplineCurveEditor) > sigChange;    
+    sigc::signal<void, SplineCurveEditor* > sigOk;
+    sigc::signal<void, SplineCurveEditor* > sigCancel;    
+    sigc::signal<void, SplineCurveEditor* > sigChange;    
 
     //void SetOkCallback(const sigc::internal::slot_type& slot_);
     //void SetCancelCallback(const sigc::slot_type& slot_);
@@ -51,10 +51,10 @@ public:
     SplineCurveEditor& GetSplineCurve() {return *m_SplineCurve;}
 
 private:
-    void RecvCurveChange(const smptr(SplineCurveEditor) splinecurve);
+    void RecvCurveChange(SplineCurveEditor* splinecurve);
 
-    smptr(VLayout) m_Vlayout;
-    smptr(SplineCurveEditor) m_SplineCurve;
+    VLayout* m_Vlayout;
+    SplineCurveEditor* m_SplineCurve;
     //nux::Color& m_Color;
 };
 

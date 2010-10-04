@@ -63,19 +63,19 @@ HLayout::~HLayout()
 {
 }
 
-void HLayout::GetCompositeList(std::list<smptr(BaseObject)> *InterfaceControlList)
+void HLayout::GetCompositeList(std::list<BaseObject*> *InterfaceControlList)
 {
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsInterfaceControl())
         {
-            smptr(ActiveInterfaceObject) ic(*it);
+            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
             InterfaceControlList->push_back(ic);
         }
         else if((*it)->IsLayout())
         {
-            smptr(Layout)layout(*it);
+            Layout* layout = NUX_STATIC_CAST(Layout*, (*it));
             layout->GetCompositeList(InterfaceControlList);
         }
     }
@@ -86,7 +86,7 @@ void HLayout::ComputeStacking(t_s32 remaining_width, t_s32 &offset_space, t_s32 
     t_s32 per_element_space = 0;
     t_s32 total_used_space = 0;
 
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         // gather all the space used by elements
@@ -111,7 +111,7 @@ void HLayout::ComputeStacking(t_s32 remaining_width, t_s32 &offset_space, t_s32 
         margin = 0;
     }
 
-    eStacking stacking = GetContentStacking();
+    LayoutContentDistribution stacking = GetContentDistribution();
     switch(stacking)
     {
     case eStackTop:
@@ -158,7 +158,7 @@ long HLayout::ComputeLayout2()
         return eCompliantHeight|eCompliantWidth;
     }
 
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         (*it)->setOutofBound(false);
@@ -171,12 +171,12 @@ long HLayout::ComputeLayout2()
         // The size must exactly fit the children. The parent cannot be larger or smaller 
         // than the total width of its children (+ margins).
         // So set the parent size to Geometry(0,0,1,1) and let the children force it to extend.
-        if(GetParentObject().IsValid() && GetParentObject()->Type().IsObjectType(HLayout::StaticObjectType))
+        if(GetParentObject() && GetParentObject()->Type().IsObjectType(HLayout::StaticObjectType))
         {
             // The parent if a HLayout(same type). Then a Stretch factor of 0 means this layout has its width set to 1.
             BaseObject::SetBaseWidth(1);
         }
-        else if(GetParentObject().IsValid() && GetParentObject()->Type().IsObjectType(VLayout::StaticObjectType))
+        else if(GetParentObject() && GetParentObject()->Type().IsObjectType(VLayout::StaticObjectType))
         {
             // The parent if a VLayout. Then a Stretch factor of 0 means this layout has its height set to 1.
             BaseObject::SetBaseHeight(1);
@@ -330,7 +330,7 @@ long HLayout::ComputeLayout2()
             {
                 if((*it)->IsLayout())
                 {
-                    smptr(Layout) layout = (*it);
+                    Layout* layout = NUX_STATIC_CAST(Layout*, (*it));
                     layout->SetDirty(true);
                 }
 
@@ -483,7 +483,7 @@ void HLayout::HLayoutManagement(t_s32 width, t_s32 height)
         need_recompute = false;
         t_s32 available_width = width;
         t_u32 max_stretchfactor = getMaxStretchFactor();
-        std::list<smptr(BaseObject)>::iterator it;
+        std::list<BaseObject*>::iterator it;
 
         for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
         {
@@ -536,7 +536,7 @@ void HLayout::HLayoutManagement(t_s32 width, t_s32 height)
         }
 
         float cumul = 0;
-        smptr(BaseObject) LastElementThatCanBeResized(0);
+        BaseObject* LastElementThatCanBeResized = 0;
         t_s32 total_distributed_size = 0;
         for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
         {
@@ -544,7 +544,7 @@ void HLayout::HLayoutManagement(t_s32 width, t_s32 height)
             {
                 float sf = (float) (*it)->GetStretchFactor();
                 cumul += sf / max_stretchfactor;
-                LastElementThatCanBeResized = (smptr(BaseObject))(*it);
+                LastElementThatCanBeResized = (*it);
             }
             else
             {
@@ -649,7 +649,7 @@ t_u32 HLayout::getMaxStretchFactor()
 {
     t_u32 value = 0;
     t_u32 sf;
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         // In the recursive process, make sure we get always the highest stretch factor
@@ -669,23 +669,23 @@ t_u32 HLayout::getMaxStretchFactor()
 void HLayout::Draw()
 {
     // Draw Child Layout
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         // Test Space Layout first because it is also a Layout and it will answer true to IsLayout().
         if((*it)->IsSpaceLayout())
         {
-            smptr(SpaceLayout) spacelyt(*it);
+            SpaceLayout* spacelyt = NUX_STATIC_CAST(SpaceLayout*, (*it));
             spacelyt->Draw();
         }
         else if((*it)->IsLayout())
         {   
-            smptr(Layout) lyt(*it);
+            Layout* lyt = NUX_STATIC_CAST(Layout*, (*it));
             lyt->Draw();
         }
         else if((*it)->IsInterfaceControl())
         {
-            smptr(ActiveInterfaceObject) ic(*it);
+            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
             ic->DrawLayout();
         }
         else
@@ -738,7 +738,7 @@ void HLayout::Draw()
 
 void HLayout::ComputePosition2(float offsetX, float offsetY)
 {
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     {
         t_u32 num_element = (t_u32)m_LayoutElementList.size();
         // Get layout Width and Height

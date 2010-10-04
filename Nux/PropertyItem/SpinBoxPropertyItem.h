@@ -30,7 +30,7 @@ class SpinBox;
 class SpinBoxPropertyItem: public SectionProperty, public SpinBox
 {
     NODE_XML_CLASS_MEMBER(SpinBoxPropertyItem);
-    NODE_SIG_RECEIVER2(RecvPropertyChange, const weaksmptr(SpinBox));
+    NODE_SIG_RECEIVER2(RecvPropertyChange, SpinBox*);
 public:
     SpinBoxPropertyItem(const TCHAR* name, int Value = 0, int Step = 1, int MinValue = 0, int MaxValue = 100);
     virtual ~SpinBoxPropertyItem();

@@ -303,7 +303,7 @@ public:
         unsigned short   keyCount     /*key repeat count*/
         );
 
-    sigc::signal< void, const smptr(SplineCurveEditor) > sigCurveChange;
+    sigc::signal< void, SplineCurveEditor* > sigCurveChange;
 
     /*!
         Erase all knots.

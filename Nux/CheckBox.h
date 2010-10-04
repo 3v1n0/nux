@@ -25,66 +25,66 @@
 
 #include "AbstractButton.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-class HLayout;
-class BaseArea;
-
-class CheckBox: public AbstractButton
+namespace nux
 {
-public:
-    CheckBox(const TCHAR* Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
-    ~CheckBox();
 
-    virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
-    virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
-    virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
+    class HLayout;
+    class BaseArea;
 
-    void RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if a click happen. The state change and the check box need to redraw itself.
-    */
-    void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if the mouse is released. Whether a click happened or not, 
-        the check box need to redraw itself.
-    */
-    void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    class CheckBox: public AbstractButton
+    {
+    public:
+        CheckBox(const TCHAR* Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
+        ~CheckBox();
 
-    sigc::signal<void, const weaksmptr(CheckBox)> sigStateToggled;
-    sigc::signal<void> sigToggled;
-    sigc::signal<void, bool> sigStateChanged;
+        virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+        virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
+        virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
+        virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void EmitStateSignal();
+        void RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+        void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
+        void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
+        /*
+            Signal emitted if a click happen. The state change and the check box need to redraw itself.
+        */
+        void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
+        /*
+            Signal emitted if the mouse is released. Whether a click happened or not, 
+            the check box need to redraw itself.
+        */
+        void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+        void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+
+        sigc::signal<void, CheckBox*> sigStateToggled;
+        sigc::signal<void> sigToggled;
+        sigc::signal<void, bool> sigStateChanged;
+
+        void EmitStateSignal();
 
 
-    //+++ Inherited from AbstractButton
-    virtual bool IsCheckable() const {return true;}
+        //+++ Inherited from AbstractButton
+        virtual bool IsCheckable() const {return true;}
 
-    virtual void SetCaption(const TCHAR* Caption);
-    virtual const NString& GetCaption() const;
+        virtual void SetCaption(const TCHAR* Caption);
+        virtual const NString& GetCaption() const;
 
-    virtual void SetState(bool State);
-    virtual void SetState(bool State, bool EmitSignal);
-    virtual bool GetState() const;
-    //---
+        virtual void SetState(bool State);
+        virtual void SetState(bool State, bool EmitSignal);
+        virtual bool GetState() const;
+        //---
 
-protected:
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
+    protected:
+        void InitializeWidgets();
+        void InitializeLayout();
+        void DestroyLayout();
 
-private:
-    smptr(HLayout) m_hlayout;
-    smptr(CoreArea) m_TextArea;
-    smptr(CoreArea) m_CheckArea;
-    bool m_State;
-};
-
-} //NUX_NAMESPACE_END
+    private:
+        HLayout*    m_hlayout;
+        CoreArea*   m_TextArea;
+        CoreArea*   m_CheckArea;
+        bool        m_State;
+    };
+}
 
 #endif // CHECKBOX_H

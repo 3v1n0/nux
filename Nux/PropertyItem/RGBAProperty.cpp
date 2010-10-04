@@ -37,10 +37,10 @@ RGBAPropertyItem::RGBAPropertyItem(const TCHAR* name, float red /* = 1.0f*/, flo
     m_blue = new ColorGradientPropertyItem(TEXT("Blue"));
     m_alpha = new ColorGradientPropertyItem(TEXT("Alpha"));
 
-    m_ColorModel = smptr(Button)(new Button(TEXT("RGB")));
+    m_ColorModel = new Button(TEXT("RGB"), NUX_TRACKER_LOCATION);
     m_ColorModel->SetMinMaxSize(32, 14);
     m_ColorModel->SetFont(GetThreadBoldFont());
-    m_ColorFormat = smptr(Button)(new Button(TEXT("float")));
+    m_ColorFormat = new Button(TEXT("float"), NUX_TRACKER_LOCATION);
     m_ColorFormat->SetMinMaxSize(32, 14);
     m_ColorFormat->SetFont(GetThreadBoldFont());
 
@@ -136,7 +136,7 @@ int RGBAPropertyItem::GetItemBestHeight()
     return sz + 2 * PROPERTY_BORDER_Y;
 }
 
-void RGBAPropertyItem::RedChange(const weaksmptr(ColorGradient) slider)
+void RGBAPropertyItem::RedChange(ColorGradient* slider)
 {
     if(slider->IsCtrlKeyPressed())
     {
@@ -149,7 +149,7 @@ void RGBAPropertyItem::RedChange(const weaksmptr(ColorGradient) slider)
     m_alpha->NeedRedraw();
 }
 
-void RGBAPropertyItem::GreenChange(const weaksmptr(ColorGradient) slider)
+void RGBAPropertyItem::GreenChange(ColorGradient* slider)
 {
     if(slider->IsCtrlKeyPressed())
     {
@@ -162,7 +162,7 @@ void RGBAPropertyItem::GreenChange(const weaksmptr(ColorGradient) slider)
     m_alpha->NeedRedraw();
 }
 
-void RGBAPropertyItem::BlueChange(const weaksmptr(ColorGradient) slider)
+void RGBAPropertyItem::BlueChange(ColorGradient* slider)
 {
     if(slider->IsCtrlKeyPressed())
     {
@@ -175,7 +175,7 @@ void RGBAPropertyItem::BlueChange(const weaksmptr(ColorGradient) slider)
     m_alpha->NeedRedraw();
 }
 
-void RGBAPropertyItem::AlphaChange(const weaksmptr(ColorGradient) slider)
+void RGBAPropertyItem::AlphaChange(ColorGradient* slider)
 {
     UpdateStartToEndColors();
 

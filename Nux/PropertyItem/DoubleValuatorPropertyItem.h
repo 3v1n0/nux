@@ -31,7 +31,7 @@ class DoubleValuatorPropertyItem: public SectionProperty, public ValuatorDouble
 {
     NODE_XML_CLASS_MEMBER(DoubleValuatorPropertyItem);
     NODE_SKIP_CHILD(false);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(ValuatorDouble));
+    NODE_SIG_RECEIVER(RecvPropertyChange, ValuatorDouble*);
 
 public:
     DoubleValuatorPropertyItem(const char* name, float Value = 0.0f, float Step = 0.1f, float MinValue = 0.0f, float MaxValue = 100.0f);

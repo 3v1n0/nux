@@ -103,32 +103,32 @@ RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, floa
 }
 void RGBValuator::InitializeLayout()
 {
-    hlayout             = smptr(HLayout)(new HLayout(TEXT("RGBValuatorLayout")));
-    redlayout           = smptr(HLayout)(new HLayout(TEXT("RedLayout")));
-    greenlayout         = smptr(HLayout)(new HLayout());
-    bluelayout          = smptr(HLayout)(new HLayout());
-    alphalayout         = smptr(HLayout)(new HLayout());
-    vlayout             = smptr(VLayout)(new VLayout(TEXT("RGBVLayout")));
-    colormodel_layout   = smptr(VLayout)(new VLayout(TEXT("ColorModel")));
+    hlayout             = new HLayout(TEXT("RGBValuatorLayout"), NUX_TRACKER_LOCATION);
+    redlayout           = new HLayout(TEXT("RedLayout"), NUX_TRACKER_LOCATION);
+    greenlayout         = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    bluelayout          = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    alphalayout         = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    vlayout             = new VLayout(TEXT("RGBVLayout"), NUX_TRACKER_LOCATION);
+    colormodel_layout   = new VLayout(TEXT("ColorModel"), NUX_TRACKER_LOCATION);
 
-    m_ColorModel    = smptr(Button)(new Button());
-    m_ColorFormat   = smptr(Button)(new Button());
+    m_ColorModel        = new Button();
+    m_ColorFormat       = new Button();
 
-    m_RedCaption    = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
-    m_GreenCaption  = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
-    m_BlueCaption   = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
-    m_AlphaCaption  = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_RedCaption        = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
+    m_GreenCaption      = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
+    m_BlueCaption       = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
+    m_AlphaCaption      = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
 
-    m_RedValuator   = smptr(CoreArea)(new CoreArea());
-    m_GreenValuator = smptr(CoreArea)(new CoreArea());
-    m_BlueValuator  = smptr(CoreArea)(new CoreArea());
-    m_AlphaValuator = smptr(CoreArea)(new CoreArea());
-    m_ColorSquare   = smptr(CoreArea)(new CoreArea());
+    m_RedValuator       = new CoreArea(NUX_TRACKER_LOCATION);
+    m_GreenValuator     = new CoreArea(NUX_TRACKER_LOCATION);
+    m_BlueValuator      = new CoreArea(NUX_TRACKER_LOCATION);
+    m_AlphaValuator     = new CoreArea(NUX_TRACKER_LOCATION);
+    m_ColorSquare       = new CoreArea(NUX_TRACKER_LOCATION);
 
-    m_ComponentLabel0   = smptr(CoreArea)(new CoreArea());
-    m_ComponentLabel1   = smptr(CoreArea)(new CoreArea());
-    m_ComponentLabel2   = smptr(CoreArea)(new CoreArea());
-    m_ComponentAlpha    = smptr(CoreArea)(new CoreArea());
+    m_ComponentLabel0   = new CoreArea(NUX_TRACKER_LOCATION);
+    m_ComponentLabel1   = new CoreArea(NUX_TRACKER_LOCATION);
+    m_ComponentLabel2   = new CoreArea(NUX_TRACKER_LOCATION);
+    m_ComponentAlpha    = new CoreArea(NUX_TRACKER_LOCATION);
 }
 
 void RGBValuator::InitializeWidgets()
@@ -1236,7 +1236,7 @@ void RGBValuator::OnChangeColorFormat()
 
 }
 
-void RGBValuator::OnComponentInput(const weaksmptr(EditTextBox) textbox, const NString& s, int componentIndex)
+void RGBValuator::OnComponentInput(EditTextBox* textbox, const NString& s, int componentIndex)
 {
     float f = 0;
     if((m_color_format == COLORFORMAT_HEX) && (m_HexRegExp.Validate(s.GetTCharPtr()) == Validator::Acceptable))

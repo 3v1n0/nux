@@ -42,8 +42,8 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    sigc::signal<void, const weaksmptr(Matrix3Editor) > sigMatrixChanged;
-    void RecvDialogChange(const weaksmptr(Matrix3Editor) matrixeditor);
+    sigc::signal<void, Matrix3Editor* > sigMatrixChanged;
+    void RecvDialogChange(Matrix3Editor* matrixeditor);
 
     void SetMatrix(Matrix3 matrix);
     Matrix3 GetMatrix() const;

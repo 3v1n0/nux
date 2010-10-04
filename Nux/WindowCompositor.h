@@ -50,10 +50,10 @@ public:
     void DrawMenu(bool force_draw);
     void DrawOverlay(bool force_draw);
     void DrawTooltip(bool force_draw);
-    void DrawFloatingWindows(bool force_draw, const std::list<smptr(BaseWindow)>& WindowList, bool drawModal, bool UseFBO);
+    void DrawFloatingWindows(bool force_draw, const std::list<BaseWindow*>& WindowList, bool drawModal, bool UseFBO);
 
     void RenderMainWindowComposition(bool force_draw, bool UseFBO);
-    void RenderWindowComposition(smptr(BaseWindow) window, bool force_draw);
+    void RenderWindowComposition(BaseWindow* window, bool force_draw);
 
 
     /*!
@@ -92,7 +92,7 @@ public:
     */
     void CopyTextureToCompositionRT(TRefGL<IOpenGLTexture2D> HWTexture, int x, int y);
 
-    void AddToDrawList(smptr(ActiveInterfaceObject) ic);
+    void AddToDrawList(ActiveInterfaceObject* ic);
     void ClearDrawList();
 
 
@@ -100,14 +100,14 @@ public:
 
     bool MouseMove(Point pt);
     bool MouseUp(Point pt);
-    smptr(BaseWindow) GetSelectedWindow();
+    BaseWindow* GetSelectedWindow();
 
     void ProcessEvent(IEvent &ievent);
 
-    void RegisterWindow(smptr(BaseWindow));
-    void UnRegisterWindow(smptr(BaseWindow));
-    void MoveWindowToFront(smptr(BaseWindow));
-    void MoveWindowToBack(smptr(BaseWindow));
+    void RegisterWindow(BaseWindow*);
+    void UnRegisterWindow(BaseWindow*);
+    void MoveWindowToFront(BaseWindow*);
+    void MoveWindowToBack(BaseWindow*);
 
     TRefGL<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject(){ return m_FrameBufferObject;}
     TRefGL<IOpenGLFrameBufferObject> m_FrameBufferObject;
@@ -125,10 +125,10 @@ public:
     TRefGL<IOpenGLTexture2D> m_MainDepthRT;
     TRefGL<IOpenGLTexture2D> m_CompositionRT;
 
-    RenderTargetTextures& GetWindowBuffer(smptr(BaseWindow) window);
+    RenderTargetTextures& GetWindowBuffer(BaseWindow* window);
 
-    void StartModalWindow(smptr(BaseWindow) );
-    void StopModalWindow(smptr(BaseWindow) );
+    void StartModalWindow(BaseWindow* );
+    void StopModalWindow(BaseWindow* );
 
     std::vector<Rect> EventRect;
     void PushEventRectangle(Rect rect);
@@ -136,11 +136,11 @@ public:
     void EmptyEventRegion();
     Rect getEventRect();
 
-    void AddMenu(MenuPage* menu, smptr(BaseWindow) window, bool OverrideCurrentMenuChain = true);
+    void AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain = true);
     void RemoveMenu(MenuPage* menu);
     void CleanMenu();
 
-    void PushModalWindow(smptr(BaseWindow) window);
+    void PushModalWindow(BaseWindow* window);
 
 //    typedef void(*AuxDrawCallback)();
 //    AuxDrawCallback m_fAuxDrawCallback;
@@ -149,10 +149,10 @@ public:
 
 
 
-    void SetWidgetDrawingOverlay(smptr(BaseArea) ic, smptr(BaseWindow) OverlayWindow);
-    smptr(BaseArea) GetWidgetDrawingOverlay();
+    void SetWidgetDrawingOverlay(BaseArea* ic, BaseWindow* OverlayWindow);
+    BaseArea* GetWidgetDrawingOverlay();
 
-    void SetTooltip(smptr(BaseArea) TooltipArea, const TCHAR *TooltipText, int x, int y);
+    void SetTooltip(BaseArea* TooltipArea, const TCHAR *TooltipText, int x, int y);
     /*!
         Return true if the mouse is still inside the area that initiated the tooltip;
 
@@ -174,24 +174,24 @@ public:
         m_EventRoot.Set(x, y);
     }
 
-    void SetMouseFocusArea(smptr(BaseArea) area);
-    smptr(BaseArea) GetMouseFocusArea();
-    void SetMouseOverArea(smptr(BaseArea) area);
-    smptr(BaseArea) GetMouseOverArea();
-    void SetPreviousMouseOverArea(smptr(BaseArea) area);
-    smptr(BaseArea) GetPreviousMouseOverArea();
+    void SetMouseFocusArea(BaseArea* area);
+    BaseArea* GetMouseFocusArea();
+    void SetMouseOverArea(BaseArea* area);
+    BaseArea* GetMouseOverArea();
+    void SetPreviousMouseOverArea(BaseArea* area);
+    BaseArea* GetPreviousMouseOverArea();
 
     const IEvent* GetCurrentEvent() const {return m_CurrentEvent;}
-    long ProcessEventOnObject(IEvent &ievent, smptr(BaseObject) object, long TraverseInfo, long ProcessEventInfo);
+    long ProcessEventOnObject(IEvent &ievent, BaseObject* object, long TraverseInfo, long ProcessEventInfo);
     
-    smptr(BaseWindow) GetCurrentWindow() {return m_CurrentWindow;}
-    smptr(BaseWindow) GetFocusAreaWindow() {return m_FocusAreaWindow;}
+    BaseWindow* GetCurrentWindow() {return m_CurrentWindow;}
+    BaseWindow* GetFocusAreaWindow() {return m_FocusAreaWindow;}
 
     void SetBackgroundPaintLayer(AbstractPaintLayer* bkg);
 
 private:
-    void SetCurrentWindow(smptr(BaseWindow) window) {m_CurrentWindow = window;}
-    void SetFocusAreaWindow(smptr(BaseWindow) window) {m_FocusAreaWindow = window;}
+    void SetCurrentWindow(BaseWindow* window) {m_CurrentWindow = window;}
+    void SetFocusAreaWindow(BaseWindow* window) {m_FocusAreaWindow = window;}
     void SetCurrentEvent(IEvent* event) {m_CurrentEvent = event;}
 
     void FormatRenderTargets(int width, int height);
@@ -206,34 +206,34 @@ private:
     */
     void FloatingAreaConfigureNotify(int Width, int Height);
 
-    smptr(BaseWindow) m_CurrentWindow;
-    smptr(BaseWindow) m_FocusAreaWindow;
-    smptr(BaseWindow) m_MenuWindow; // the window that owns the menu being displayed;
+    BaseWindow* m_CurrentWindow;
+    BaseWindow* m_FocusAreaWindow;
+    BaseWindow* m_MenuWindow; // the window that owns the menu being displayed;
     IEvent* m_CurrentEvent; 
 
-    smptr(BaseArea) m_MouseFocusArea;      // the base ares that has the mouse down.
-    smptr(BaseArea) m_MouseOverArea;  // the base area that has the mouse directly over itself.
-    smptr(BaseArea) m_PreviousMouseOverArea;
+    BaseArea* m_MouseFocusArea;      // the base ares that has the mouse down.
+    BaseArea* m_MouseOverArea;  // the base area that has the mouse directly over itself.
+    BaseArea* m_PreviousMouseOverArea;
 
-    smptr(BaseArea) OverlayDrawingCommand;
-    smptr(BaseWindow) m_OverlayWindow; // the window that owns the overlay;
-    smptr(BaseWindow) m_TooltipWindow; // the window that owns the tooltip;
+    BaseArea* OverlayDrawingCommand;
+    BaseWindow* m_OverlayWindow; // the window that owns the overlay;
+    BaseWindow* m_TooltipWindow; // the window that owns the tooltip;
     Point m_EventRoot;
 
     AbstractPaintLayer* m_Background;
 
-    std::list<smptr(BaseWindow)> m_WindowList;
-    std::list<smptr(BaseWindow)> m_ModalWindowList;
-    std::list<smptr(ActiveInterfaceObject)> *m_DrawList;
+    std::list<BaseWindow*> m_WindowList;
+    std::list<BaseWindow*> m_ModalWindowList;
+    std::list<ActiveInterfaceObject*> *m_DrawList;
     std::list<Rect> *m_EventRectList;
 
     std::list<MenuPage*> *m_MenuList;
 
-    smptr(BaseWindow) m_SelectedWindow;
+    BaseWindow* m_SelectedWindow;
 
-    std::map< smptr(BaseWindow), struct RenderTargetTextures > m_WindowToTextureMap;
+    std::map< BaseWindow*, struct RenderTargetTextures > m_WindowToTextureMap;
 
-    smptr(BaseWindow) m_ModalWindow;
+    BaseWindow* m_ModalWindow;
     Point m_MouseLastPos;
     Point m_MouseCurrentPos;
 
@@ -247,7 +247,7 @@ private:
     int m_Height;
 
     NString m_TooltipText;
-    smptr(BaseArea) m_TooltipArea;
+    BaseArea* m_TooltipArea;
     int m_TooltipX;
     int m_TooltipY;
 

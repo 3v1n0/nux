@@ -36,7 +36,7 @@ GroupBox::GroupBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
 
     SetMinimumSize(DEFAULT_WIDGET_WIDTH+5, PRACTICAL_WIDGET_HEIGHT+5);
     SetBaseSize(DEFAULT_WIDGET_WIDTH+5, 2*PRACTICAL_WIDGET_HEIGHT);
-    setCaption("");
+    SetCaption(TEXT(""));
 }
 
 GroupBox::~GroupBox()
@@ -101,7 +101,7 @@ void GroupBox::DrawContent(GraphicsContext& GfxContext, bool force_draw)
 {
     GfxContext.PushClippingRectangle(GetGeometry());
 
-    if(m_layout.IsValid())
+    if(m_layout)
     {
         GfxContext.PushClippingRectangle(m_layout->GetGeometry());
         m_layout->ProcessDraw(GfxContext, force_draw);
@@ -116,7 +116,7 @@ void GroupBox::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 }
 
-void GroupBox::setLayout(smptr(Layout) layout)
+void GroupBox::SetLayout(Layout* layout)
 {
     if(layout == 0)
         return;
@@ -133,7 +133,7 @@ void GroupBox::setLayout(smptr(Layout) layout)
 void GroupBox::PreLayoutManagement()
 {
     // Give the managed layout appropriate size and position..
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         Geometry layout_geo = GetGeometry();
         //if(bCaptionAvailable)
@@ -158,7 +158,7 @@ long GroupBox::PostLayoutManagement(long LayoutResult)
 
     long ret = 0;
     Geometry old_geo = BaseObject::GetGeometry();
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         Geometry base = m_CompositionLayout->GetGeometry();
         //if(bCaptionAvailable)
@@ -195,7 +195,7 @@ long GroupBox::PostLayoutManagement(long LayoutResult)
 
 void GroupBox::PositionChildLayout(float offsetX, float offsetY)
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         //if(bCaptionAvailable)
         {
@@ -213,7 +213,7 @@ void GroupBox::PositionChildLayout(float offsetX, float offsetY)
     m_CaptionArea.SetBaseXY(base.x+6, base.y);
 }
 
-void GroupBox::setCaption(const char* name)
+void GroupBox::SetCaption(const char* name)
 {
     if((name == 0) || strlen(name) == 0)
     {

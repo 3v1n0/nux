@@ -25,9 +25,9 @@
 
 void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 {
-    smptr(nux::VLayout) MainVLayout = smptr(nux::VLayout)(new nux::VLayout(TEXT(""), NUX_TRACKER_LOCATION));
+    nux::VLayout* MainVLayout = new nux::VLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
-    smptr(nux::ComboBoxComplex) combobox(new nux::ComboBoxComplex(NUX_TRACKER_LOCATION));
+    nux::ComboBoxComplex* combobox = new nux::ComboBoxComplex(NUX_TRACKER_LOCATION);
     combobox->AddItem((new nux::TableItem(TEXT("TRUETRUETRUE"))));
     combobox->AddItem((new nux::TableItem(TEXT("FALSE"))));
     combobox->AddItem((new nux::TableItem(TEXT("Maybe"))));
@@ -45,7 +45,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     combobox->SetMaximumWidth(150);
 
     
-//     smptr(nux::ComboBoxSimple) combobox_ui(new nux::ComboBoxSimple(NUX_TRACKER_LOCATION));
+//     nux::ComboBoxSimple* combobox_ui(new nux::ComboBoxSimple(NUX_TRACKER_LOCATION));
 //     combobox_ui->AddItem(TEXT("A"));
 //     combobox_ui->AddItem(TEXT("B"));
 //     combobox_ui->AddItem(TEXT("C"));

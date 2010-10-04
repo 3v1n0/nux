@@ -29,12 +29,13 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 Vector3Valuator::Vector3Valuator(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
-,   m_Mouse(0)
 {
-    m_XEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
-    m_YEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
-    m_ZEdit = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
-    m_MouseControlledButton = smptr(CoreArea)(new CoreArea());
+    m_Mouse = 0;
+    m_XEdit = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
+    m_YEdit = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
+    m_ZEdit = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
+    m_MouseControlledButton = new CoreArea(NUX_TRACKER_LOCATION);
+
     // Set Original State
     m_XEdit->SetSuffix(TEXT(""));
     m_XEdit->SetPrefix(TEXT(""));
@@ -74,11 +75,11 @@ Vector3Valuator::Vector3Valuator(NUX_FILE_LINE_DECL)
     m_ZEdit->sigEditChange.connect( sigc::mem_fun(this, &Vector3Valuator::RecvEditChange));
     m_ZEdit->OnMouseEnter.connect(sigc::mem_fun(this, &Vector3Valuator::RecvMouseEnter));
     m_ZEdit->OnMouseLeave.connect(sigc::mem_fun(this, &Vector3Valuator::RecvMouseLeave));
-
 }
 
 Vector3Valuator::~Vector3Valuator()
 {
+
 }
 
 void Vector3Valuator::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -114,17 +115,17 @@ void Vector3Valuator::TimerSpinDownBtn(void* v)
 {
 }
 
-void Vector3Valuator::RecvStartKeyboardFocus(const weaksmptr(EditTextBox) textbox)
+void Vector3Valuator::RecvStartKeyboardFocus(EditTextBox* textbox)
 {
     NeedRedraw();
 }
 
-void Vector3Valuator::RecvEndKeyboardFocus(const weaksmptr(EditTextBox) textbox)
+void Vector3Valuator::RecvEndKeyboardFocus(EditTextBox* textbox)
 {
     NeedRedraw();
 }
 
-void Vector3Valuator::RecvEscapeKeyboardFocus(const weaksmptr(EditTextBox) textbox)
+void Vector3Valuator::RecvEscapeKeyboardFocus(EditTextBox* textbox)
 {
     NeedRedraw();
 }
@@ -171,22 +172,22 @@ void Vector3Valuator::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long 
     NeedRedraw();
 }
 
-void Vector3Valuator::RecvEditChange(const weaksmptr(EditTextBox) textbox)
+void Vector3Valuator::RecvEditChange(EditTextBox* textbox)
 {
     NeedRedraw();
 }
 
-void Vector3Valuator::RecvValidateEntryX(const weaksmptr(EditTextBox) textbox)
+void Vector3Valuator::RecvValidateEntryX(EditTextBox* textbox)
 {
     ImplementValidateEntryX();
 }
 
-void Vector3Valuator::RecvValidateEntryY(const weaksmptr(EditTextBox) textbox)
+void Vector3Valuator::RecvValidateEntryY(EditTextBox* textbox)
 {
     ImplementValidateEntryY();
 }
 
-void Vector3Valuator::RecvValidateEntryZ(const weaksmptr(EditTextBox) textbox)
+void Vector3Valuator::RecvValidateEntryZ(EditTextBox* textbox)
 {
     ImplementValidateEntryZ();
 }

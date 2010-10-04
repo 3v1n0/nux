@@ -86,9 +86,9 @@ protected:
     const TableItem* m_SelectedTreeNode;
 //     bool m_IsOpeningMenu;
 
-    smptr(PopUpWindow) m_PopupWindow;
-    smptr(ListControl) m_ListBox;
-    smptr(HLayout) m_Layout;
+    PopUpWindow*    m_PopupWindow;
+    ListControl*    m_ListBox;
+    HLayout*        m_Layout;
 };
 
 } //NUX_NAMESPACE_END

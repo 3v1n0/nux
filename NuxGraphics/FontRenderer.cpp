@@ -36,8 +36,9 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 extern bool USE_ARB_SHADERS;
 
 const int CURSOR_OFFSET = 0;
+static int CURSOR_SIZE = 2;
 
-NString gFontVtxShader = TEXT("#version 110                                       \n\
+NString gFontVtxShader = TEXT("#version 110                                     \n\
                              attribute vec4 iOffset;                            \n\
                              attribute vec4 iPosition;                          \n\
                              attribute vec4 iScale;                             \n\
@@ -63,18 +64,18 @@ NString gFontFragShader = TEXT("#version 110                                    
                               }");
 
 NString FontAsmVtx = TEXT(
-                        "!!ARBvp1.0                                 \n\
-                        ATTRIB iScale       = vertex.attrib[9];   \n\
-                        ATTRIB iOffset      = vertex.attrib[10];   \n\
-                        OUTPUT oPos         = result.position;      \n\
-                        OUTPUT oTexCoord0   = result.texcoord[0];   \n\
-                        # Transform the vertex to clip coordinates. \n\
-                        TEMP temp;                                  \n\
-                        MAD   temp, vertex.position, iScale, iOffset;     \n\
-                        DP4   oPos.x, state.matrix.mvp.row[0], temp;      \n\
-                        DP4   oPos.y, state.matrix.mvp.row[1], temp;      \n\
-                        DP4   oPos.z, state.matrix.mvp.row[2], temp;      \n\
-                        DP4   oPos.w, state.matrix.mvp.row[3], temp;      \n\
+                        "!!ARBvp1.0                                     \n\
+                        ATTRIB iScale       = vertex.attrib[9];         \n\
+                        ATTRIB iOffset      = vertex.attrib[10];        \n\
+                        OUTPUT oPos         = result.position;          \n\
+                        OUTPUT oTexCoord0   = result.texcoord[0];       \n\
+                        # Transform the vertex to clip coordinates.     \n\
+                        TEMP temp;                                      \n\
+                        MAD   temp, vertex.position, iScale, iOffset;   \n\
+                        DP4   oPos.x, state.matrix.mvp.row[0], temp;    \n\
+                        DP4   oPos.y, state.matrix.mvp.row[1], temp;    \n\
+                        DP4   oPos.z, state.matrix.mvp.row[2], temp;    \n\
+                        DP4   oPos.w, state.matrix.mvp.row[3], temp;    \n\
                         MOV   oTexCoord0, vertex.attrib[8];             \n\
                         END");
 
@@ -249,14 +250,14 @@ int FontRenderer::RenderColorTextLineEdit(IntrusiveSP<FontTexture> Font, const P
 
         int x = pageSize.xmin + w + offset + CURSOR_OFFSET;
         x = (x >= pageSize.xmax) ? pageSize.xmax - 1 : x;
-        m_OpenGLEngine.PushClippingRectangle(Rect(x, pageSize.ymin, 2, pageSize.ymax - pageSize.ymin));
+        m_OpenGLEngine.PushClippingRectangle(Rect(x, pageSize.ymin, CURSOR_SIZE, pageSize.ymax - pageSize.ymin));
         glBegin(GL_QUADS);
         {
             // make sure the isn't drawn outside of the area.
             glVertex3i(x, pageSize.ymin, 1);
             glVertex3i(x, pageSize.ymax, 1);
-            glVertex3i(x+2, pageSize.ymax, 1);
-            glVertex3i(x+2, pageSize.ymin, 1);
+            glVertex3i(x + CURSOR_SIZE, pageSize.ymax, 1);
+            glVertex3i(x + CURSOR_SIZE, pageSize.ymin, 1);
         }
         glEnd();
         DrawColorString(Font, stringBBox.x + offset, stringBBox.y, Str, TextBlinkColor, WriteAlphaChannel, CursorPosition, 1);
@@ -286,7 +287,7 @@ int FontRenderer::RenderText(IntrusiveSP<FontTexture> Font, int x, int y, const 
         return 0;
 
     CHECKGL( glDisable(GL_CULL_FACE) );
-    int CurX = x;// + CURSOR_OFFSET;
+    int CurX = x;
     int CurY = y;
     GetThreadGraphicsContext()->GetRenderStates().SetBlend(TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     GetThreadGraphicsContext()->GetRenderStates().SetColorMask(TRUE, TRUE, TRUE, WriteAlphaChannel); // Do not write the alpha of characters

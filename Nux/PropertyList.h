@@ -71,7 +71,7 @@ extern const int PROPERTY_BORDER_Y;
 #endif
 
 #define NODE_SIG_RECEIVER(MemFunc, Cls)                     \
-    void MemFunc(Cls&)                                      \
+    void MemFunc(Cls)                                       \
     {                                                       \
         TableItem* parent = (TableItem*)Parent();           \
         bool ParentCanHandleChild = false;                  \
@@ -163,7 +163,7 @@ private:
 // {
 //     NODE_XML_CLASS_MEMBER(ComboBoxSimplePropertyItem);
 //     NODE_SKIP_CHILD(true);
-//     NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(ComboBoxSimple));
+//     NODE_SIG_RECEIVER(RecvPropertyChange, ComboBoxSimple*);
 // public:
 //     ComboBoxSimplePropertyItem(const TCHAR* name);
 //     virtual ~ComboBoxSimplePropertyItem();
@@ -179,7 +179,7 @@ private:
 // class SpinBoxPropertyItem: public SectionProperty, public SpinBox
 // {
 //     NODE_XML_CLASS_MEMBER(SpinBoxPropertyItem);
-//     NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(SpinBox));
+//     NODE_SIG_RECEIVER(RecvPropertyChange, SpinBox*);
 // public:
 //     SpinBoxPropertyItem(const TCHAR* name, int Value = 0, int Step = 1, int MinValue = 0, int MaxValue = 100);
 //     virtual ~SpinBoxPropertyItem();
@@ -196,7 +196,7 @@ private:
 // class SpinBoxDoublePropertyItem: public SectionProperty, public SpinBoxDouble
 // {
 //     NODE_XML_CLASS_MEMBER(DoubleSpinBoxPropertyItem);
-//     NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(SpinBoxDouble));
+//     NODE_SIG_RECEIVER(RecvPropertyChange, SpinBoxDouble*);
 // public:
 //     DoubleSpinBoxPropertyItem(const TCHAR* name, double Value = 0.0, double Step = 1.0, double MinValue = 0.0, double MaxValue = 100.0);
 //     virtual ~DoubleSpinBoxPropertyItem();
@@ -213,7 +213,7 @@ private:
 // class Vector3ValuatorPropertyItem: public SectionProperty, public Vector3DoubleValuator
 // {
 //     NODE_XML_CLASS_MEMBER(Vector3ValuatorPropertyItem);
-//     NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(Vector3DoubleValuator));
+//     NODE_SIG_RECEIVER(RecvPropertyChange, Vector3DoubleValuator*);
 // public:
 //     Vector3ValuatorPropertyItem(const TCHAR* name, double X = 0, double Y = 0, double Z = 0,
 //         double Step = 1.0, double MinValue = -1.7E308, double MaxValue = 1.7E308);

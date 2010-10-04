@@ -32,8 +32,8 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 ComboBoxSimple::ComboBoxSimple(NUX_FILE_LINE_DECL)
 :   AbstractComboBox(NUX_FILE_LINE_PARAM)
 {
-    m_SelectedAction    = smptr(ActionItem)(0);
-    m_CurrentMenu       = smptr(MenuPage)(0);
+    m_SelectedAction    = 0;
+    m_CurrentMenu       = 0;
 
     InitializeLayout();
     InitializeWidgets();
@@ -63,14 +63,14 @@ void ComboBoxSimple::InitializeWidgets()
     m_ComboArea->SetGeometry(Geometry(0, 0, 3*DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
     //m_CurrentMenu = new MenuPage;
-    m_CurrentMenu->SetParentMenu(smptr(MenuPage)(0));
+    m_CurrentMenu->SetParentMenu(0);
     m_CurrentMenu->sigActionTriggered.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvSigActionTriggered));
     m_CurrentMenu->sigTerminateMenuCascade.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvSigTerminateMenuCascade));
 }
 
 void ComboBoxSimple::InitializeLayout()
 {
-    m_CurrentMenu = smptr(MenuPage)(new MenuPage());
+    m_CurrentMenu = new MenuPage(TEXT(""), NUX_TRACKER_LOCATION);
 }
 
 void ComboBoxSimple::DestroyLayout()
@@ -108,7 +108,7 @@ long ComboBoxSimple::ProcessEvent(IEvent &ievent, long TraverseInfo, long Proces
     return ret;
 }
 
-smptr(ActionItem) ComboBoxSimple::AddItem(const TCHAR* label, int Uservalue)
+ActionItem* ComboBoxSimple::AddItem(const TCHAR* label, int Uservalue)
 {
     if(m_CurrentMenu->GetNumItem() == 0)
     {
@@ -123,7 +123,7 @@ smptr(ActionItem) ComboBoxSimple::AddItem(const TCHAR* label, int Uservalue)
     }
 }
 
-void ComboBoxSimple::RemoveItem(smptr(ActionItem) item)
+void ComboBoxSimple::RemoveItem(ActionItem* item)
 {
 
 }
@@ -193,23 +193,23 @@ void ComboBoxSimple::RecvMouseUp(int x, int y, unsigned long button_flags, unsig
     NeedRedraw();
 }
 
-void ComboBoxSimple::RecvSigActionTriggered(smptr(MenuPage) menu, const smptr(ActionItem) action)
+void ComboBoxSimple::RecvSigActionTriggered(MenuPage* menu, ActionItem* action)
 {
     m_MenuIsActive = false;
     m_CurrentMenu->StopMenu();
 
-    m_SelectedAction = smptr(ActionItem)(action);
+    m_SelectedAction = action;
     m_ComboArea->SetBaseString(m_SelectedAction->GetLabel());
     m_IsOpeningMenu = false;
     
-    sigTriggered.emit(smptr(ComboBoxSimple)(this, true));
-    sigActionTriggered.emit(*m_SelectedAction);
+    sigTriggered.emit(this);
+    sigActionTriggered.emit(m_SelectedAction);
 
     NeedRedraw();
     // You can do something if you want with the menu* and the action*
 }
 
-void ComboBoxSimple::RecvSigActionTriggered2(smptr(TableCtrl) table, TableItem* item, unsigned int row, unsigned int column)
+void ComboBoxSimple::RecvSigActionTriggered2(TableCtrl* table, TableItem* item, unsigned int row, unsigned int column)
 {
     m_MenuIsActive = false;
     m_CurrentMenu->StopMenu();
@@ -228,14 +228,14 @@ void ComboBoxSimple::RecvSigTerminateMenuCascade()
 
 const TCHAR* ComboBoxSimple::GetSelectionLabel() const
 {
-    if(m_SelectedAction.IsValid())
+    if(m_SelectedAction)
         return m_SelectedAction->GetLabel();
     return 0;
 }
 
 int ComboBoxSimple::GetSelectionUserValue() const
 {
-    if(m_SelectedAction.IsValid())
+    if(m_SelectedAction)
         return m_SelectedAction->GetUserValue();
     return 0;
 }
@@ -245,14 +245,14 @@ int ComboBoxSimple::GetNumItem() const
     return m_CurrentMenu->GetNumItem();
 }
 
-const smptr(ActionItem) ComboBoxSimple::GetItem(int index) const
+ActionItem* ComboBoxSimple::GetItem(int index) const
 {
     return m_CurrentMenu->GetActionItem(index);
 }
 
 int ComboBoxSimple::GetSelectionIndex() const
 {
-    if(m_SelectedAction.IsValid())
+    if(m_SelectedAction)
         return m_CurrentMenu->GetActionItemIndex(m_SelectedAction);
     return -1;
 }
@@ -274,7 +274,7 @@ void ComboBoxSimple::SetSelectionIndex(int index)
     }
     else
     {
-        m_SelectedAction = smptr(ActionItem)(0);
+        m_SelectedAction = 0;
     }
 }
 

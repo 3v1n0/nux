@@ -37,9 +37,9 @@ public:
     virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
     virtual int GetItemBestHeight();
 private:
-    smptr(HLayout) m_hlayout;
-    smptr(EditTextBox) m_TextEntry;
-    smptr(Button) m_OpenButton;
+    HLayout* m_hlayout;
+    EditTextBox* m_TextEntry;
+    Button* m_OpenButton;
 };
 
 } //NUX_NAMESPACE_END

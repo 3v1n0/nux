@@ -77,9 +77,9 @@ void SpinBox_Logic::InitializeWidgets()
 
 void SpinBox_Logic::InitializeLayout()
 {
-    m_SpinnerUpBtn = smptr(CoreArea)(new CoreArea());
-    m_SpinnerDownBtn = smptr(CoreArea)(new CoreArea());
-    m_EditLine = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_SpinnerUpBtn      = new CoreArea(NUX_TRACKER_LOCATION);
+    m_SpinnerDownBtn    = new CoreArea(NUX_TRACKER_LOCATION);
+    m_EditLine          = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
 }
 
 void SpinBox_Logic::DestroyLayout()
@@ -121,17 +121,17 @@ void SpinBox_Logic::TimerSpinDownBtn(void* v)
     ImplementDecrementBtn();
 }
 
-void SpinBox_Logic::RecvStartKeyboardFocus(const weaksmptr(EditTextBox) textbox)
+void SpinBox_Logic::RecvStartKeyboardFocus(EditTextBox* textbox)
 {
     NeedRedraw();
 }
 
-void SpinBox_Logic::RecvEndKeyboardFocus(const weaksmptr(EditTextBox) textbox)
+void SpinBox_Logic::RecvEndKeyboardFocus(EditTextBox* textbox)
 {
     NeedRedraw();
 }
 
-void SpinBox_Logic::RecvEscapeKeyboardFocus(const weaksmptr(EditTextBox) textbox)
+void SpinBox_Logic::RecvEscapeKeyboardFocus(EditTextBox* textbox)
 {
     NeedRedraw();
 }
@@ -156,12 +156,12 @@ void SpinBox_Logic::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long bu
     NeedRedraw();
 }
 
-void SpinBox_Logic::RecvEditChange(const weaksmptr(EditTextBox) textbox)
+void SpinBox_Logic::RecvEditChange(EditTextBox* textbox)
 {
     NeedRedraw();
 }
 
-void SpinBox_Logic::RecvValidateEntry(const weaksmptr(EditTextBox) textbox)
+void SpinBox_Logic::RecvValidateEntry(EditTextBox* textbox)
 {
     ImplementValidateEntry();
 

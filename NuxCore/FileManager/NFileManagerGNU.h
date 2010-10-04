@@ -33,7 +33,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class NGNUSerialFileReader : public NSerializer
 {
 public:
-    NGNUSerialFileReader(t_int InFileDescriptor, NOutputDevice& InError, t_int InSize);
+    NGNUSerialFileReader(t_int InFileDescriptor, LogOutputDevice& InError, t_int InSize);
     ~NGNUSerialFileReader();
 
     virtual bool Precache(t_int PrecacheOffset, t_int PrecacheSize);
@@ -47,7 +47,7 @@ public:
 
 protected:
     t_int               m_FileDescriptor;
-    NOutputDevice& m_Error;
+    LogOutputDevice& m_Error;
     t_s64               m_FileSize;
     t_s64               m_FilePos;
     t_s64               m_BufferBase;
@@ -59,7 +59,7 @@ protected:
 class NGNUSerialFileWriter : public NSerializer
 {
 public:
-    NGNUSerialFileWriter(t_int InFileDescriptor, NOutputDevice& InError, t_int InPos);
+    NGNUSerialFileWriter(t_int InFileDescriptor, LogOutputDevice& InError, t_int InPos);
     ~NGNUSerialFileWriter();
 
     virtual t_s64 Seek(t_s64 InPos, NSerializer::SeekPos seekpos);
@@ -74,7 +74,7 @@ public:
 protected:
     void _Flush();
     t_int               m_FileDescriptor;
-    NOutputDevice& m_Error;
+    LogOutputDevice& m_Error;
     t_s64               m_Pos;
     t_int               m_BufferCount;
     BYTE*               m_Buffer;
@@ -93,8 +93,8 @@ public:
     //  NSerializer::Unbuffered
     //  NSerializer::Append
     //  NSerializer::Read
-    virtual NSerializer* CreateFileReader(const TCHAR* Filename, DWORD Flags, NOutputDevice& Error = GNullDevice);
-    virtual NSerializer* CreateFileWriter(const TCHAR* Filename, DWORD Flags, NOutputDevice& Error = GNullDevice);
+    virtual NSerializer* CreateFileReader(const TCHAR* Filename, DWORD Flags, LogOutputDevice& Error = GNullDevice);
+    virtual NSerializer* CreateFileWriter(const TCHAR* Filename, DWORD Flags, LogOutputDevice& Error = GNullDevice);
     /*!
     @return Size of the File. Return -1 if an error occurs.
     */

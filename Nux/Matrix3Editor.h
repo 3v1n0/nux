@@ -42,9 +42,9 @@ public:
     Matrix3DialogProxy(bool ModalWindow);
     ~Matrix3DialogProxy();
 
-    void RecvDialogOk(const weaksmptr(Matrix3Editor) matrixeditor);
-    void RecvDialogCancel(const weaksmptr(Matrix3Editor) matrixeditor);
-    void RecvDialogChange(const weaksmptr(Matrix3Editor) matrixeditor);
+    void RecvDialogOk(Matrix3Editor* matrixeditor);
+    void RecvDialogCancel(Matrix3Editor* matrixeditor);
+    void RecvDialogChange(Matrix3Editor* matrixeditor);
 
     void Start();
     bool IsActive();
@@ -85,10 +85,6 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-//    virtual void setCaption(const char* s)
-//    {
-//        m_ParameterName.setCaption(s);
-//    }
     void SetParameterName(const char* parameter_name);
 
     void EmitButtonPress() {};
@@ -132,7 +128,7 @@ public:
 //    sigc::signal<void, int> sigDecrementComponent;
     sigc::signal<void, int, char*> sigValidateKeyboarEntry;
 
-    sigc::signal<void, const weaksmptr(Matrix3Editor) > sigMatrixChanged;
+    sigc::signal<void, Matrix3Editor* > sigMatrixChanged;
 
 private:
 
@@ -144,22 +140,20 @@ private:
 
     void WriteMatrix();
 
-    void RecvComponentInput(const weaksmptr(EditTextBox) textbox, const NString& text, int componentIndex);
+    void RecvComponentInput(EditTextBox* textbox, const NString& text, int componentIndex);
 
 private:
-    smptr(VLayout) m_vlayout;
-    smptr(VLayout) mtx_layout;
-    smptr(HLayout) mtx_row_layout[3];
+    VLayout*    m_vlayout;
+    VLayout*    mtx_layout;
+    HLayout*    mtx_row_layout[3];
 
-    //smptr(StaticTextBox) m_ParameterName;
+    EditTextBox* m_MtxInput[3][3];
 
-    smptr(EditTextBox) m_MtxInput[3][3];
-
-    smptr(Button) m_IdentityMtxBtn;
-    smptr(Button) m_ZeroMtxBtn;
-    smptr(Button) m_InverseMtxBtn;
-    smptr(Button) m_NegateMtxBtn;
-    smptr(HLayout) m_MtxFunctionLayout;
+    Button*     m_IdentityMtxBtn;
+    Button*     m_ZeroMtxBtn;
+    Button*     m_InverseMtxBtn;
+    Button*     m_NegateMtxBtn;
+    HLayout*    m_MtxFunctionLayout;
 
     Matrix3x3<float> m_Matrix;
 };

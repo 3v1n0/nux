@@ -31,7 +31,7 @@ class Matrix3PreviewPropertyItem: public SectionProperty, public Matrix3Preview
 {
     NODE_XML_CLASS_MEMBER(Matrix3PreviewPropertyItem);
     NODE_SKIP_CHILD(true);
-    NODE_SIG_RECEIVER2(RecvPropertyChange, const weaksmptr(Matrix3Editor));
+    NODE_SIG_RECEIVER2(RecvPropertyChange, Matrix3Editor*);
 public:
     Matrix3PreviewPropertyItem(const TCHAR* name, Matrix3 matrix = Matrix3::IDENTITY());
     virtual ~Matrix3PreviewPropertyItem();

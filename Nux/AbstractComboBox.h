@@ -47,12 +47,11 @@ protected:
     void DestroyLayout();
 
 protected:
-    smptr(HLayout) m_hlayout;
-
-    smptr(CoreArea) m_ComboArea;
-    smptr(CoreArea) m_Button;
-    bool m_MenuIsActive;
-    bool m_IsOpeningMenu;
+    HLayout*    m_hlayout;
+    CoreArea*   m_ComboArea;
+    CoreArea*   m_Button;
+    bool        m_MenuIsActive;
+    bool        m_IsOpeningMenu;
 
     static Color m_sCOMBO_COLOR;
     static Color m_sCOMBO_BUTTON_COLOR;

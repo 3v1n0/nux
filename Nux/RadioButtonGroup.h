@@ -27,6 +27,10 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 class RadioButton;
 
+//! RadioButtonGroup select one of many radio button in a group.
+/*!
+    RadioButtonGroup does not hold reference on radio buttons.
+*/
 class RadioButtonGroup: public NuxCoreObject, public sigc::trackable
 {
 public:
@@ -38,21 +42,21 @@ public:
         The first radio button added to the group gets its check state set to true.
         When a radio button is added to a group that is not empty, its check state is set to false.
     */
-    void ConnectButton(smptr(RadioButton) radio);
+    void ConnectButton(RadioButton* radio);
 
-    void ActivateButton(smptr(RadioButton) radio);
+    void ActivateButton(RadioButton* radio);
 
     //! Remove a radio button from the group.
     /*
         When a radio button is removed, the previous button in the group gets its check state set to true;
     */
-    void DisconnectButton(smptr(RadioButton) radio);
+    void DisconnectButton(RadioButton* radio);
 
-    void SetActiveButton(smptr(RadioButton) radio, bool EmitSignal);
+    void SetActiveButton(RadioButton* radio, bool EmitSignal);
 
 private:
-    void NotifyClick(smptr(RadioButton) radio);
-    std::vector<smptr(RadioButton)> m_RadioButtonArray;
+    void NotifyClick(RadioButton* radio);
+    std::vector<RadioButton*> m_RadioButtonArray;
     int m_ActiveRadioButtonIndex;
 
     friend class RadioButton;

@@ -254,7 +254,7 @@ WindowThread::WindowThread(const TCHAR* WindowTitle, unsigned int width, unsigne
     m_Painter       = 0;
     m_TimerHandler  = 0;
     m_Theme         = 0;
-
+    m_AppLayout     = 0;
     // Protection for ThreadCtor and ThreadDtor;
     m_ThreadCtorCalled = false;
     m_ThreadDtorCalled = false;
@@ -285,7 +285,7 @@ WindowThread::~WindowThread()
     ThreadDtor();
 }
 
-void WindowThread::SetLayout(smptr(Layout) layout)
+void WindowThread::SetLayout(Layout* layout)
 {
     m_AppLayout = layout;
     m_AppLayout->SetStretchFactor(1);
@@ -293,7 +293,7 @@ void WindowThread::SetLayout(smptr(Layout) layout)
     int w = m_GLWindow->GetGraphicsContext()->GetContextWidth();
     int h = m_GLWindow->GetGraphicsContext()->GetContextHeight();
 
-    if(m_AppLayout.IsValid())
+    if(m_AppLayout)
     {
         SetComputingLayout(true);
         m_AppLayout->SetGeometry(0, 0, w, h);
@@ -310,7 +310,7 @@ void WindowThread::ReconfigureLayout()
     int w = m_GLWindow->GetGraphicsContext()->GetWindowWidth();
     int h = m_GLWindow->GetGraphicsContext()->GetWindowHeight();
 
-    if(m_AppLayout.IsValid())
+    if(m_AppLayout)
     {
         SetComputingLayout(true);
         m_AppLayout->SetGeometry(0, 0, w, h);
@@ -328,14 +328,14 @@ long WindowThread::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessE
         return TraverseInfo;
 
     long ret = TraverseInfo;
-    if(m_AppLayout.IsValid())
+    if(m_AppLayout)
         ret = m_AppLayout->ProcessEvent(ievent, ret, ProcessEventInfo);
     return ret;
 }
 
 void WindowThread::ProcessDraw(GraphicsContext& GfxContext, bool force_draw)
 {
-    if(m_AppLayout.IsValid())
+    if(m_AppLayout)
     {
         bool dirty = m_AppLayout->IsDrawDirty();
         if(dirty)
@@ -350,13 +350,13 @@ void WindowThread::ProcessDraw(GraphicsContext& GfxContext, bool force_draw)
     }
 }
 
-void WindowThread::AddObjectToRefreshList(smptr(BaseObject) bo)
+void WindowThread::AddObjectToRefreshList(BaseObject* bo)
 {
     nuxAssert(bo != 0);
     if(bo == 0)
         return;
 
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     it = find(m_LayoutRefreshList.begin(), m_LayoutRefreshList.end(), bo);
     if(it == m_LayoutRefreshList.end())
     {
@@ -364,9 +364,9 @@ void WindowThread::AddObjectToRefreshList(smptr(BaseObject) bo)
     }
 }
 
-void WindowThread::RemoveObjectFromRefreshList(smptr(BaseObject) bo)
+void WindowThread::RemoveObjectFromRefreshList(BaseObject* bo)
 {
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     it = find(m_LayoutRefreshList.begin(), m_LayoutRefreshList.end(), bo);
     if(it != m_LayoutRefreshList.end())
     {
@@ -410,7 +410,7 @@ void WindowThread::EmptyClientAreaRedrawList()
 
 bool WindowThread::IsMainLayoutDrawDirty() const
 {
-    if(m_AppLayout.IsValid() && m_AppLayout->IsDrawDirty())
+    if(m_AppLayout && m_AppLayout->IsDrawDirty())
     {
         return true;
     }
@@ -420,20 +420,20 @@ bool WindowThread::IsMainLayoutDrawDirty() const
 void WindowThread::RefreshLayout()
 {
     SetComputingLayout(true);
-    std::list<smptr(BaseObject)>::iterator it;
+    std::list<BaseObject*>::iterator it;
     for(it = m_LayoutRefreshList.begin(); it != m_LayoutRefreshList.end(); it++)
     {
-        smptr(BaseObject) bo = *it;
+        BaseObject* bo = *it;
 
         if(bo->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
         {
-            smptr(ActiveInterfaceObject) ic  = bo;
+            ActiveInterfaceObject* ic  = NUX_STATIC_CAST(ActiveInterfaceObject*, bo);
             if(!ic->CanBreakLayout())
                 ic->NeedRedraw();
         }
         else if(bo->Type().IsDerivedFromType(Layout::StaticObjectType))
         {
-            smptr(Layout) layout = bo;
+            Layout* layout = NUX_STATIC_CAST(Layout*, bo);
             layout->SetDrawDirty(true);
             layout->SetDirty(true);
         }
@@ -445,7 +445,7 @@ void WindowThread::RefreshLayout()
     EmptyLayoutRefreshList();
 }
 
-void WindowThread::ComputeElementLayout(smptr(BaseObject) bo, bool RecurseToTopLevelLayout)
+void WindowThread::ComputeElementLayout(BaseObject* bo, bool RecurseToTopLevelLayout)
 {
     nuxAssert(bo != 0);
     if(bo == 0)
@@ -457,12 +457,12 @@ void WindowThread::ComputeElementLayout(smptr(BaseObject) bo, bool RecurseToTopL
         SetComputingLayout(true);
     if(bo->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
     {
-        smptr(ActiveInterfaceObject) ic  = bo;
+        ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, bo);
         ic->NeedRedraw();
     }
     else if(bo->Type().IsDerivedFromType(Layout::StaticObjectType))
     {
-        smptr(Layout) layout = bo;
+        Layout* layout = NUX_STATIC_CAST(Layout*, bo);
         layout->SetDrawDirty(true);
         layout->SetDirty(true);
     }
@@ -593,9 +593,9 @@ t_u32 WindowThread::ExecutionLoop()
                 (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
                 (event.e_event == NUX_WINDOW_EXIT_FOCUS))
             {
-                m_window_compositor->SetMouseFocusArea(smptr(BaseArea)(0));
-                m_window_compositor->SetMouseOverArea(smptr(BaseArea)(0));
-                m_window_compositor->SetPreviousMouseOverArea(smptr(BaseArea)(0));
+                m_window_compositor->SetMouseFocusArea(NULL);
+                m_window_compositor->SetMouseOverArea(NULL);
+                m_window_compositor->SetPreviousMouseOverArea(NULL);
             }
 
             //DISPATCH EVENT HERE
@@ -1092,9 +1092,9 @@ bool WindowThread::ThreadDtor()
     EmptyClientAreaRedrawList();
     EmptyLayoutRefreshList();
 
-    if(m_AppLayout.IsValid())
+    if(m_AppLayout)
     {
-        m_AppLayout = smptr(Layout)(0);
+        m_AppLayout = NULL;
     }
 
     NUX_SAFE_DELETE(m_window_compositor);
@@ -1200,9 +1200,9 @@ bool WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
             (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
             (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS))
         {
-            m_window_compositor->SetMouseFocusArea(smptr(BaseArea)(0));
-            m_window_compositor->SetMouseOverArea(smptr(BaseArea)(0));
-            m_window_compositor->SetPreviousMouseOverArea(smptr(BaseArea)(0));
+            m_window_compositor->SetMouseFocusArea(NULL);
+            m_window_compositor->SetMouseOverArea(NULL);
+            m_window_compositor->SetPreviousMouseOverArea(NULL);
         }
 
         //DISPATCH EVENT HERE

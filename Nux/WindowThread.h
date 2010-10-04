@@ -53,7 +53,7 @@ public:
     /*!
         @param layout The layout of the user interface.
     */
-    void SetLayout(smptr(Layout) layout);
+    void SetLayout(Layout* layout);
 
     //! Compute the layout of this window.
     /*!
@@ -100,8 +100,8 @@ public:
     /*!
         This list contains the layout that need to be recomputed following the resizing of one of the sub element.
     */
-    void AddObjectToRefreshList(smptr(BaseObject) bo);
-    void RemoveObjectFromRefreshList(smptr(BaseObject) bo);
+    void AddObjectToRefreshList(BaseObject* bo);
+    void RemoveObjectFromRefreshList(BaseObject* bo);
 
     //! Empty the list that contains the layout that need to be recomputed following the resizing of one of the sub element.
     /*!
@@ -125,7 +125,7 @@ public:
     bool IsMainLayoutDrawDirty() const;
 
     //! Compute the layout of a specific element
-    void ComputeElementLayout(smptr(BaseObject) bo, bool RecurseToTopLevelLayout = false);
+    void ComputeElementLayout(BaseObject* bo, bool RecurseToTopLevelLayout = false);
 
     bool IsWaitingforModalWindow() {return m_bWaitForModalWindow;}
     bool IsModalWindow() {return m_bWaitForModalWindow;}
@@ -271,7 +271,7 @@ private:
     /*!
         This list contains the layout that need to be recomputed following the resizing of one of the sub element.
     */
-    std::list<smptr(BaseObject)> m_LayoutRefreshList;
+    std::list<BaseObject*> m_LayoutRefreshList;
 
     //! This variable is true while we are computing the layout the starting from the outmost layout (the Main Layout);
     bool m_IsComputingMainLayout;
@@ -294,7 +294,7 @@ private:
     NString m_WindowTitle;
 
     bool m_RedrawRequested;
-    smptr(Layout) m_AppLayout;
+    Layout* m_AppLayout;
 
     UXTheme         *m_Theme;
     BasePainter     *m_Painter;

@@ -44,9 +44,9 @@ public:
     MenuBarItem(NUX_FILE_LINE_PROTO);
     ~MenuBarItem();
 private:
-    smptr(CoreArea) area;
-    smptr(MenuPage) menu;
-    NTexture *icon; // should be 24x24
+    CoreArea*   area;
+    MenuPage*   menu;
+    NTexture*   icon; // should be 24x24
 
     friend class MenuBar;
 };
@@ -66,8 +66,8 @@ public:
     
     //void AddActionItem(ActionItem* actionItem);
 
-    void AddMenu(const TCHAR* MenuLabel, smptr(MenuPage) popup);
-    void AddMenu(const TCHAR* MenuLabel, smptr(MenuPage) menu, NTexture *icon);
+    void AddMenu(const TCHAR* MenuLabel, MenuPage* popup);
+    void AddMenu(const TCHAR* MenuLabel, MenuPage* menu, NTexture *icon);
 
 
     /////////////////
@@ -75,12 +75,12 @@ public:
     /////////////////
 
 private:
-    void EmitItemMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item);
-    void EmitItemMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item);
-    void EmitItemMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item);
-    void EmitItemMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item);
-    void RecvItemMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item);
-    void RecvSigActionTriggered(smptr(MenuPage), const smptr(ActionItem));
+    void EmitItemMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item);
+    void EmitItemMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item);
+    void EmitItemMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item);
+    void EmitItemMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item);
+    void RecvItemMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item);
+    void RecvSigActionTriggered(MenuPage*, ActionItem*);
     void RecvSigTerminateMenuCascade();
 
     //! Process a mouse down event outside of the menu cascade.
@@ -92,19 +92,19 @@ private:
         \param x    coordinate of the mouse down event
         \param y    coordinate of the mouse down event
     */
-    void RecvSigMouseDownOutsideMenuCascade(smptr(MenuPage) menu, int x, int y);
+    void RecvSigMouseDownOutsideMenuCascade(MenuPage* menu, int x, int y);
 
 protected:
 
 
 private:
-    std::list< smptr(MenuBarItem) > m_MenuBarItemList;
+    std::list< MenuBarItem* > m_MenuBarItemList;
 
-    smptr(HLayout) m_hlayout;
+    HLayout* m_hlayout;
     bool m_MenuIsActive;
-    weaksmptr(MenuBarItem) m_CurrentMenu;
+    MenuBarItem* m_CurrentMenu;
     bool m_IsOpeningMenu;
-    smptr(BaseWindow) m_MenuBarWindow;
+    BaseWindow* m_MenuBarWindow;
 };
 
 } //NUX_NAMESPACE_END

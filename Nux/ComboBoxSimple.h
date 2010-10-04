@@ -24,6 +24,7 @@
 #define COMBOBOX_LOGIC_H
 
 #include "AbstractComboBox.h"
+#include "ActionItem.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
@@ -45,8 +46,8 @@ public:
 //    virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
 public:
-    smptr(ActionItem) AddItem(const TCHAR* label, int Uservalue = 0);
-    void RemoveItem(smptr(ActionItem) item);
+    ActionItem* AddItem(const TCHAR* label, int Uservalue = 0);
+    void RemoveItem(ActionItem* item);
     void RemoveAllItem();
 
     // emitters
@@ -57,19 +58,19 @@ public:
     // signals
     void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvSigActionTriggered(smptr(MenuPage), const smptr(ActionItem));
-    void RecvSigActionTriggered2(smptr(TableCtrl) table, TableItem* item, unsigned int row, unsigned int column);
+    void RecvSigActionTriggered(MenuPage*, ActionItem*);
+    void RecvSigActionTriggered2(TableCtrl* table, TableItem* item, unsigned int row, unsigned int column);
     void RecvSigTerminateMenuCascade();
     
     const TCHAR* GetSelectionLabel() const;
     int GetSelectionUserValue() const;
     int GetNumItem() const;
-    const smptr(ActionItem) GetItem(int index) const;
+    ActionItem* GetItem(int index) const;
     int GetSelectionIndex() const;
     void SetSelectionIndex(int index);
 
-    sigc::signal<void, const weaksmptr(ComboBoxSimple)> sigTriggered;
-    sigc::signal<void, const ActionItem&> sigActionTriggered;
+    sigc::signal<void, ComboBoxSimple*> sigTriggered;
+    sigc::signal<void, ActionItem*> sigActionTriggered;
 
 protected:
     void InitializeWidgets();
@@ -77,8 +78,8 @@ protected:
     void DestroyLayout();
 
 protected:
-    smptr(MenuPage) m_CurrentMenu;
-    smptr(ActionItem) m_SelectedAction;
+    MenuPage*   m_CurrentMenu;
+    ActionItem* m_SelectedAction;
 
 };
 

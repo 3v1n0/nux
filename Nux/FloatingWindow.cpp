@@ -54,14 +54,14 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
     m_hasTitleBar               = true;
 
     // Should be at the end of the constructor
-    //GetThreadWindowCompositor().RegisterWindow(smptr(FloatingWindow)(this, true));
+    //GetThreadWindowCompositor().RegisterWindow(this);
 
-    m_MinimizeButton = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
-    m_CloseButton = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
-    m_SizeGrip = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
-    m_TitleBar = smptr(CoreArea)(new CoreArea(NUX_TRACKER_LOCATION));
-    m_WindowTitleBar = smptr(StaticTextBox)(new StaticTextBox(TEXT(""), NUX_TRACKER_LOCATION));
-    m_TitleBarLayout = smptr(HLayout)(new HLayout(NUX_TRACKER_LOCATION));
+    m_MinimizeButton    = new CoreArea(NUX_TRACKER_LOCATION);
+    m_CloseButton       = new CoreArea(NUX_TRACKER_LOCATION);
+    m_SizeGrip          = new CoreArea(NUX_TRACKER_LOCATION);
+    m_TitleBar          = new CoreArea(NUX_TRACKER_LOCATION);
+    m_WindowTitleBar    = new StaticTextBox(TEXT(""), NUX_TRACKER_LOCATION);
+    m_TitleBarLayout    = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
     m_MinimizeButton->SetMinMaxSize(20, 20);
     m_MinimizeButton->SetGeometry(0, 0, 20, 20);
@@ -102,7 +102,7 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
 
 FloatingWindow::~FloatingWindow()
 {
-    GetThreadWindowCompositor().UnRegisterWindow(smptr(FloatingWindow)(this, true));
+    GetThreadWindowCompositor().UnRegisterWindow(this);
     m_InterfaceObject.clear();
     NUX_SAFE_DELETE_ARRAY(m_WindowTitle);
 }
@@ -165,13 +165,13 @@ long FloatingWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long Proces
         }
     }
 
-//    {   std::list<smptr(ActiveInterfaceObject)>::iterator it;
+//    {   std::list<ActiveInterfaceObject*>::iterator it;
 //        for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
 //        {
 //            ret = (*it)->ProcessEvent(ievent, ret, ProcEvInfo);
 //        }
 //    }
-    if(m_layout.IsValid())
+    if(m_layout)
         ret = m_layout->ProcessEvent(window_event, ret, ProcEvInfo);
 
     // PostProcessEvent2 must always have its last parameter set to 0
@@ -213,7 +213,7 @@ void FloatingWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     base.SetY(0);
     
     gPainter.PushShapeLayer(GfxContext, base, eSHAPE_CORNER_ROUND10, Color(m_background_color), eCornerTopLeft|eCornerTopRight, true);
-    if(m_layout.IsValid())
+    if(m_layout)
     {
         GfxContext.PushClippingRectangle(base);
         
@@ -348,7 +348,7 @@ void FloatingWindow::PreLayoutManagement()
         SizeGripWidth, SizeGripHeight);
     m_SizeGrip->SetGeometry(SizeGripGeometry);
 
-    if(m_layout.IsValid())
+    if(m_layout)
     {
         Geometry layout_geo = Geometry(m_Border, m_TopBorder,
             geo.GetWidth() - 2*m_Border, geo.GetHeight() - m_Border - m_TopBorder);
@@ -360,7 +360,7 @@ void FloatingWindow::PreLayoutManagement()
 // Here we need to position the header by hand because it is not under the control of vlayout.
 long FloatingWindow::PostLayoutManagement(long LayoutResult)
 {
-    if(IsSizeMatchContent() && m_layout.IsValid())
+    if(IsSizeMatchContent() && m_layout)
     {
         Geometry layout_geometry = m_layout->GetGeometry();
 

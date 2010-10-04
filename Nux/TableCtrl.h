@@ -458,8 +458,8 @@ protected:
 
 
 protected:
-    smptr(CoreArea) m_TableArea;
-    smptr(VLayout) m_VLayout;
+    CoreArea*   m_TableArea;
+    VLayout*    m_VLayout;
 
     int m_tableNumRow;
     int m_tableNumColumn;

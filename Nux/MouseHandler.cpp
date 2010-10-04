@@ -19,10 +19,11 @@
  *
  */
 
-
 #include "Nux.h"
 #include "MouseHandler.h"
-namespace nux { //NUX_NAMESPACE_BEGIN
+
+namespace nux
+{
 //extern bool gMouseOwned;
 BaseMouseHandler* gFocusMouseHandler = 0; // put this is the GfxServer class
 

@@ -53,13 +53,13 @@ public:
         This receiver is going to initiate the redraw of the whole Vector3Valuator.
     */
     void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvStartKeyboardFocus(const weaksmptr(EditTextBox) textbox);
-    void RecvEndKeyboardFocus(const weaksmptr(EditTextBox) textbox);
-    void RecvEscapeKeyboardFocus(const weaksmptr(EditTextBox) textbox);
-    void RecvEditChange(const weaksmptr(EditTextBox) textbox);
-    void RecvValidateEntryX(const weaksmptr(EditTextBox) textbox);
-    void RecvValidateEntryY(const weaksmptr(EditTextBox) textbox);
-    void RecvValidateEntryZ(const weaksmptr(EditTextBox) textbox);
+    void RecvStartKeyboardFocus(EditTextBox* textbox);
+    void RecvEndKeyboardFocus(EditTextBox* textbox);
+    void RecvEscapeKeyboardFocus(EditTextBox* textbox);
+    void RecvEditChange(EditTextBox* textbox);
+    void RecvValidateEntryX(EditTextBox* textbox);
+    void RecvValidateEntryY(EditTextBox* textbox);
+    void RecvValidateEntryZ(EditTextBox* textbox);
 
     virtual void ImplementIncrementX() = 0;
     virtual void ImplementDecrementX() = 0;
@@ -80,10 +80,10 @@ public:
     sigc::signal<void, int> sigIntValueChanged;
 
 protected:
-    smptr(EditTextBox) m_XEdit;
-    smptr(EditTextBox) m_YEdit;
-    smptr(EditTextBox) m_ZEdit;
-    smptr(CoreArea) m_MouseControlledButton;
+    EditTextBox*    m_XEdit;
+    EditTextBox*    m_YEdit;
+    EditTextBox*    m_ZEdit;
+    CoreArea*       m_MouseControlledButton;
     int m_Mouse;
 
 };

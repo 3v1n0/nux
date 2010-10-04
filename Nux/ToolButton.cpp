@@ -139,7 +139,7 @@ void ToolButton::RecvMouseLeave(int x, int y, unsigned long button_flags, unsign
     NeedRedraw();
 }
 
-void ToolButton::SetAction(smptr(ActionItem) action)
+void ToolButton::SetAction(ActionItem* action)
 {
     m_ActionItem = action;
 }

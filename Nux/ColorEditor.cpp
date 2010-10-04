@@ -37,8 +37,8 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 static void ThreadColorEditorDialog(NThread* thread, void* InitData)
 {
-    smptr(VLayout) MainLayout(new VLayout());
-    smptr(ColorEditor) coloreditor(new ColorEditor());
+    VLayout* MainLayout(new VLayout(TEXT(""), NUX_TRACKER_LOCATION));
+    ColorEditor* coloreditor(new ColorEditor());
     coloreditor->ComputeChildLayout(); // necessary so all element of the widget get their rightful size.
     ColorDialogProxy* coloreditorproxy = static_cast<ColorDialogProxy*>(InitData);
     if(coloreditorproxy)
@@ -48,19 +48,19 @@ static void ThreadColorEditorDialog(NThread* thread, void* InitData)
         coloreditor->sigChange.connect(sigc::mem_fun(coloreditorproxy, &ColorDialogProxy::RecvDialogChange));
     }
 
-    smptr(HLayout) ButtonLayout(new HLayout(TEXT("Dialog Buttons")));
+    HLayout* ButtonLayout(new HLayout(TEXT("Dialog Buttons"), NUX_TRACKER_LOCATION));
 
-    smptr(Button) OkButton(new Button(TEXT("OK")));
+    Button* OkButton(new Button(TEXT("OK"), NUX_TRACKER_LOCATION));
     OkButton->SetMinimumWidth(60);
     OkButton->SetMinimumHeight(20);
 
-    smptr(Button) CancelButton(new Button(TEXT("Cancel")));
+    Button* CancelButton(new Button(TEXT("Cancel"), NUX_TRACKER_LOCATION));
     CancelButton->SetMinimumWidth(60);
     CancelButton->SetMinimumHeight(20);
 
     OkButton->sigClick.connect(sigc::mem_fun(static_cast<WindowThread*>(thread), &WindowThread::TerminateThread));
-    OkButton->sigClick.connect(sigc::bind(sigc::mem_fun(coloreditorproxy, &ColorDialogProxy::RecvDialogOk), smptr(ColorEditor)(coloreditor)));
-    CancelButton->sigClick.connect(sigc::bind(sigc::mem_fun(coloreditorproxy, &ColorDialogProxy::RecvDialogCancel), smptr(ColorEditor)(coloreditor)));
+    OkButton->sigClick.connect(sigc::bind(sigc::mem_fun(coloreditorproxy, &ColorDialogProxy::RecvDialogOk), coloreditor));
+    CancelButton->sigClick.connect(sigc::bind(sigc::mem_fun(coloreditorproxy, &ColorDialogProxy::RecvDialogCancel), coloreditor));
     CancelButton->sigClick.connect(sigc::mem_fun(static_cast<WindowThread*>(thread), &WindowThread::TerminateThread));
 
     ButtonLayout->SetHorizontalInternalMargin(6);
@@ -119,7 +119,7 @@ bool ColorDialogProxy::IsActive()
     return (m_Thread && (m_Thread->GetThreadState() != THREADSTOP) && m_bDialogRunning);
 }
 
-void ColorDialogProxy::RecvDialogOk(const weaksmptr(ColorEditor) coloreditor)
+void ColorDialogProxy::RecvDialogOk(ColorEditor* coloreditor)
 {
     m_RGBColor = coloreditor->GetRGBColor();
     m_PreviousRGBColor = m_RGBColor;
@@ -127,14 +127,14 @@ void ColorDialogProxy::RecvDialogOk(const weaksmptr(ColorEditor) coloreditor)
     m_bDialogRunning = false;
 }
 
-void ColorDialogProxy::RecvDialogCancel(const weaksmptr(ColorEditor) coloreditor)
+void ColorDialogProxy::RecvDialogCancel(ColorEditor* coloreditor)
 {
     m_RGBColor = m_PreviousRGBColor;
     m_bDialogChange = true;
     m_bDialogRunning = false;
 }
 
-void ColorDialogProxy::RecvDialogChange(const weaksmptr(ColorEditor) coloreditor)
+void ColorDialogProxy::RecvDialogChange(ColorEditor* coloreditor)
 {
     m_RGBColor = coloreditor->GetRGBColor();
     m_bDialogChange = true;
@@ -207,10 +207,10 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
     m_Validator.SetMaximum(1.0);
     m_Validator.SetDecimals(2);
 
-    m_PickerArea = smptr(CoreArea)(new CoreArea());
-    m_BaseChannelArea = smptr(CoreArea)(new CoreArea());
-    m_ColorSquare = smptr(CoreArea)(new CoreArea());
-    m_hlayout = smptr(HLayout)(new HLayout());
+    m_PickerArea        = new CoreArea(NUX_TRACKER_LOCATION);
+    m_BaseChannelArea   = new CoreArea(NUX_TRACKER_LOCATION);
+    m_ColorSquare       = new CoreArea(NUX_TRACKER_LOCATION);
+    m_hlayout           = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
     m_BaseChannelArea->OnMouseDown.connect(sigc::mem_fun(this, &ColorEditor::RecvMouseDown));
     m_BaseChannelArea->OnMouseUp.connect(sigc::mem_fun(this, &ColorEditor::RecvMouseUp));
@@ -228,38 +228,38 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
     m_BaseChannelArea->SetMaximumWidth(20);
 
     m_hlayout->AddActiveInterfaceObject(m_PickerArea, 1);
-    m_hlayout->AddLayout(smptr(SpaceLayout)(new SpaceLayout(5, 5, 20, 20)), 0);
+    m_hlayout->AddLayout(new SpaceLayout(5, 5, 20, 20), 0);
     m_hlayout->AddActiveInterfaceObject(m_BaseChannelArea, 0, eAbove, eFull);
     SetCompositionLayout(m_hlayout);
 
     // RGB
     {
-        redlayout = smptr(HLayout)(new HLayout());
+        redlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
         {
-            redcheck = smptr(RadioButton)(new RadioButton(TEXT("R:")));
+            redcheck = new RadioButton(TEXT("R:"));
             redcheck->SetMinimumWidth(30);
-            redtext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+            redtext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             redtext->SetMinimumWidth(36);
             redlayout->AddActiveInterfaceObject(redcheck, 0);
             redlayout->AddActiveInterfaceObject(redtext, 0);
             redcheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_RED), CM_RGB ));
         }
-        greenlayout = smptr(HLayout)(new HLayout());
+        greenlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
         {
-            greencheck = smptr(RadioButton)(new RadioButton(TEXT("G:")));
+            greencheck = new RadioButton(TEXT("G:"));
             greencheck->SetMinimumWidth(30);
-            greentext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+            greentext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             greentext->SetMinimumWidth(36);
             greenlayout->AddActiveInterfaceObject(greencheck, 0);
             greenlayout->AddActiveInterfaceObject(greentext, 0);
             greencheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_GREEN), CM_RGB ));
 
         }
-        bluelayout = smptr(HLayout)(new HLayout());
+        bluelayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
         {
-            bluecheck = smptr(RadioButton)(new RadioButton(TEXT("B:")));
+            bluecheck = new RadioButton(TEXT("B:"));
             bluecheck->SetMinimumWidth(30);
-            bluetext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+            bluetext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             bluetext->SetMinimumWidth(36);
             bluelayout->AddActiveInterfaceObject(bluecheck, 0);
             bluelayout->AddActiveInterfaceObject(bluetext, 0);
@@ -270,31 +270,31 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
 
     // HSV
     {
-        huelayout = smptr(HLayout)(new HLayout());;
+        huelayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
         {
-            huecheck = smptr(RadioButton)(new RadioButton(TEXT("H:")));
+            huecheck = new RadioButton(TEXT("H:"));
             huecheck->SetMinimumWidth(30);
-            huetext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+            huetext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             huetext->SetMinimumWidth(36);
             huelayout->AddActiveInterfaceObject(huecheck, 0);
             huelayout->AddActiveInterfaceObject(huetext, 0);
             huecheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_HUE), CM_HSV ));
         }
-        saturationlayout = smptr(HLayout)(new HLayout());;
+        saturationlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
         {
-            saturationcheck = smptr(RadioButton)(new RadioButton(TEXT("S:")));
+            saturationcheck = new RadioButton(TEXT("S:"));
             saturationcheck->SetMinimumWidth(30);
-            saturationtext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+            saturationtext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             saturationtext->SetMinimumWidth(36);
             saturationlayout->AddActiveInterfaceObject(saturationcheck, 0);
             saturationlayout->AddActiveInterfaceObject(saturationtext, 0);
             saturationcheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_SATURATION), CM_HSV ));
         }
-        valuelayout = smptr(HLayout)(new HLayout());;
+        valuelayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
         {
-            valuecheck = smptr(RadioButton)(new RadioButton(TEXT("V:")));
+            valuecheck = new RadioButton(TEXT("V:"));
             valuecheck->SetMinimumWidth(30);
-            valuetext = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+            valuetext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             valuetext->SetMinimumWidth(36);
             valuelayout->AddActiveInterfaceObject(valuecheck, 0);
             valuelayout->AddActiveInterfaceObject(valuetext, 0);
@@ -302,13 +302,13 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
         }
     }
 
-    ctrllayout = smptr(VLayout)(new VLayout());
+    ctrllayout = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
     ctrllayout->AddActiveInterfaceObject(m_ColorSquare);
-    ctrllayout->AddActiveInterfaceObject(smptr(SpaceLayout)(new SpaceLayout(20,20,10,10)), 1);
+    ctrllayout->AddActiveInterfaceObject(new SpaceLayout(20,20,10,10), 1);
     ctrllayout->AddLayout(redlayout, 0);
     ctrllayout->AddLayout(greenlayout, 0);
     ctrllayout->AddLayout(bluelayout, 0);
-    ctrllayout->AddLayout(smptr(SpaceLayout)(new SpaceLayout(10,10,10,10)));
+    ctrllayout->AddLayout(new SpaceLayout(10,10,10,10));
     ctrllayout->AddLayout(huelayout, 0);
     ctrllayout->AddLayout(saturationlayout, 0);
     ctrllayout->AddLayout(valuelayout, 0);
@@ -316,11 +316,11 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
     ctrllayout->SetVerticalInternalMargin(2);
 
     //ctrllayout->AddActiveInterfaceObject(new SpaceLayout(20,20,20,40), 1);
-    OkButton = smptr(Button)(new Button(TEXT("OK")));
+    OkButton = new Button(TEXT("OK"), NUX_TRACKER_LOCATION);
     OkButton->SetMinimumWidth(60);
     OkButton->SetMinimumHeight(20);
 
-    CancelButton = smptr(Button)(new Button(TEXT("Cancel")));
+    CancelButton = new Button(TEXT("Cancel"), NUX_TRACKER_LOCATION);
     CancelButton->SetMinimumWidth(60);
     CancelButton->SetMinimumHeight(20);
 
@@ -329,7 +329,7 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
 
     m_hlayout->AddLayout(ctrllayout, 0);
 
-    radiogroup = new RadioButtonGroup();
+    radiogroup = new RadioButtonGroup(NUX_TRACKER_LOCATION);
     radiogroup->ConnectButton(redcheck);
     radiogroup->ConnectButton(greencheck);
     radiogroup->ConnectButton(bluecheck);
@@ -750,7 +750,7 @@ void ColorEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsign
     valuetext->SetText(m_Validator.ToString(100*m_Value));
     m_VertMarkerPosition = Point(Clamp<int>(x,0,m_BaseChannelArea->GetBaseWidth()-1), Clamp<int>(y,0,m_BaseChannelArea->GetBaseHeight()-1));
 
-    sigChange.emit(smptr(ColorEditor)(this, true));
+    sigChange.emit(this);
     NeedRedraw();
 }
 
@@ -892,7 +892,7 @@ void ColorEditor::RecvPickerMouseDown(int x, int y, unsigned long button_flags, 
     saturationtext->SetText(m_Validator.ToString(100*m_Saturation));
     valuetext->SetText(m_Validator.ToString(100*m_Value));
 
-    sigChange.emit(smptr(ColorEditor)(this, true));
+    sigChange.emit(this);
     NeedRedraw();
 }
 
@@ -1016,7 +1016,7 @@ void ColorEditor::SetRGB(double r, double g, double b)
     m_Blue =    Clamp<double>(b, 0.0, 1.0);
     RGBtoHSV(m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
     RecvCheckColorModel(true, m_ColorModel, m_ColorChannel);
-    sigChange.emit(smptr(ColorEditor)(this, true));
+    sigChange.emit(this);
 }
 
 void ColorEditor::SetHSV(double h, double s, double v)
@@ -1026,7 +1026,7 @@ void ColorEditor::SetHSV(double h, double s, double v)
     m_Value =       Clamp<double>(v, 0.0, 1.0);
     HSVtoRGB( m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
     RecvCheckColorModel(true, m_ColorModel, m_ColorChannel);
-    sigChange.emit(smptr(ColorEditor)(this, true));
+    sigChange.emit(this);
 }
 
 void ColorEditor::SetRed(double r)

@@ -164,16 +164,16 @@ void TimeGraph::InitializeWidgets()
     m_ValueIcon->OnMouseClick.connect(sigc::mem_fun(this, &TimeGraph::RecvShowValue));
 
     m_GraphTitle->SetFont(GetThreadBoldFont());
-    m_hlayout->AddActiveInterfaceObject(smptr(SpaceLayout)(new SpaceLayout(40, 40, 0, BASEOBJECT_MAXHEIGHT)), 1);
+    m_hlayout->AddActiveInterfaceObject(new SpaceLayout(40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
     m_hlayout->AddActiveInterfaceObject(m_GraphTitle, 1);
     m_hlayout->AddActiveInterfaceObject(m_ValueIcon, 0);
     m_hlayout->AddActiveInterfaceObject(m_GraphBarIcon, 0);
     m_hlayout->AddActiveInterfaceObject(m_GraphIcon, 0);
     m_hlayout->SetHorizontalInternalMargin(4);
 
-    m_hlayout2->AddLayout(smptr(SpaceLayout)(new SpaceLayout(40, 40, 0, BASEOBJECT_MAXHEIGHT)), 1);
+    m_hlayout2->AddLayout(new SpaceLayout(40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
     m_hlayout2->AddActiveInterfaceObject(m_GraphArea, 1);
-    m_hlayout2->AddLayout(smptr(SpaceLayout)(new SpaceLayout(50, 40, 0, BASEOBJECT_MAXHEIGHT)), 1);
+    m_hlayout2->AddLayout(new SpaceLayout(50, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
 
     m_vlayout->AddLayout(m_hlayout, 0);
     m_vlayout->AddLayout(m_hlayout2, 1);
@@ -185,15 +185,15 @@ void TimeGraph::InitializeWidgets()
 
 void TimeGraph::InitializeLayout()
 {
-    m_vlayout = smptr(VLayout)(new VLayout());
-    m_hlayout = smptr(HLayout)(new HLayout());
-    m_hlayout2 = smptr(HLayout)(new HLayout(TEXT("QWERTY")));
-    m_button = smptr(Button)(new Button(TEXT("Value"), false));
-    m_GraphTitle = smptr(StaticTextBox)(new StaticTextBox(TEXT("Time Graph")));
-    m_GraphArea = smptr(CoreArea)(new CoreArea());
-    m_GraphBarIcon = smptr(CoreArea)(new CoreArea());
-    m_GraphIcon = smptr(CoreArea)(new CoreArea());
-    m_ValueIcon = smptr(CoreArea)(new CoreArea());
+    m_vlayout       = new VLayout(NUX_TRACKER_LOCATION);
+    m_hlayout       = new HLayout(NUX_TRACKER_LOCATION);
+    m_hlayout2      = new HLayout(TEXT("QWERTY"), NUX_TRACKER_LOCATION);
+    m_button        = new Button(TEXT("Value"), NUX_TRACKER_LOCATION);
+    m_GraphTitle    = new StaticTextBox(TEXT("Time Graph"), NUX_TRACKER_LOCATION);
+    m_GraphArea     = new CoreArea(NUX_TRACKER_LOCATION);
+    m_GraphBarIcon  = new CoreArea(NUX_TRACKER_LOCATION);
+    m_GraphIcon     = new CoreArea(NUX_TRACKER_LOCATION);
+    m_ValueIcon     = new CoreArea(NUX_TRACKER_LOCATION);
 }
 
 void TimeGraph::DestroyLayout()

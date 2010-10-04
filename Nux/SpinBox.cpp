@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "Nux.h"
 #include "TimerProc.h"
 #include "HLayout.h"
@@ -81,8 +80,8 @@ void SpinBox::InitializeWidgets()
 
 void SpinBox::InitializeLayout()
 {
-    hlayout = smptr(HLayout)(new HLayout());
-    vlayout = smptr(VLayout)(new VLayout());
+    hlayout = new HLayout(NUX_TRACKER_LOCATION);
+    vlayout = new VLayout(NUX_TRACKER_LOCATION);
 }
 
 void SpinBox::DestroyLayout()
@@ -151,7 +150,7 @@ void SpinBox::SetValue(int value)
 {
     m_iValue = m_IntValidator.Validate(value);
     m_EditLine->SetText(inlPrintf("%d", m_iValue));
-    sigValueChanged.emit(smptr(SpinBox)(this, true));
+    sigValueChanged.emit(this);
     sigValue.emit(m_iValue);
     NeedRedraw();
 }
@@ -189,7 +188,7 @@ void SpinBox::SetRange(int MinValue, int Maxvalue)
     m_IntValidator.SetMinimum(MinValue);
     m_IntValidator.SetMaximum(Maxvalue);
     m_iValue = m_IntValidator.Validate(m_iValue);
-    sigValueChanged.emit(smptr(SpinBox)(this, true));
+    sigValueChanged.emit(this);
     sigValue.emit(m_iValue);
     NeedRedraw();
 }
@@ -205,8 +204,8 @@ void SpinBox::ImplementIncrementBtn()
             m_UpTimerHandler = GetThreadTimer().AddTimerHandler(800, m_UpTimerCallback, 0);
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(SpinBox)(this, true));
-    sigIncrement.emit(smptr(SpinBox)(this, true));
+    sigValueChanged.emit(this);
+    sigIncrement.emit(this);
     sigValue.emit(m_iValue);
 }
 
@@ -221,8 +220,8 @@ void SpinBox::ImplementDecrementBtn()
             m_DownTimerHandler = GetThreadTimer().AddTimerHandler(800, m_DownTimerCallback, 0);
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(SpinBox)(this, true));
-    sigDecrement.emit(smptr(SpinBox)(this, true));
+    sigValueChanged.emit(this);
+    sigDecrement.emit(this);
     sigValue.emit(m_iValue);
 }
 
@@ -233,7 +232,7 @@ void SpinBox::ImplementValidateEntry()
     {
         m_iValue = m_IntValidator.Validate(ret);
         m_EditLine->SetText(inlPrintf("%d", m_iValue));
-        sigValueChanged.emit(smptr(SpinBox)(this, true));
+        sigValueChanged.emit(this);
         sigValue.emit(m_iValue);
 //
 //        if(m_iValue < m_IntValidator.GetMinimum())
@@ -250,7 +249,7 @@ void SpinBox::ImplementValidateEntry()
 //     else
 //     {
 //         m_EditLine->SetText(inlPrintf("%d", m_iValue));
-//         sigValueChanged.emit(smptr(SpinBox)(this, true));
+//         sigValueChanged.emit(this);
 //         sigValue.emit(m_iValue);
 //     }
 }

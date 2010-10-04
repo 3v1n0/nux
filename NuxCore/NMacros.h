@@ -93,7 +93,7 @@
         {                                                                       \
             if(pInstance == 0)                                                      \
             {                                                                       \
-                inlOutputDebugString(ANSI_TO_TCHAR(__FILE__), __LINE__,                      \
+                PrintOutputDebugString(ANSI_TO_TCHAR(__FILE__), __LINE__,                      \
                     TEXT("Global object %s has not been initialized"), ANSI_TO_TCHAR(TEXT(#Class)));      \
                 inlDebugBreak();                                                    \
             }                                                                       \

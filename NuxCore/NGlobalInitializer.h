@@ -33,7 +33,7 @@
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerWindows);        \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
-        NUX_GLOBAL_OBJECT_VARIABLE(NOutputDeviceRedirector);
+        NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);
         //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
         //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 
@@ -43,7 +43,7 @@
         NUX_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerPS3);            \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
-        NUX_GLOBAL_OBJECT_VARIABLE(NOutputDeviceRedirector);
+        NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);
         //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
         //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #elif (defined NUX_OS_LINUX)
@@ -54,7 +54,7 @@
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerGNU);            \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
-        NUX_GLOBAL_OBJECT_VARIABLE(NOutputDeviceRedirector);
+        NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);
         //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
         //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #endif

@@ -32,7 +32,7 @@ class RGBPropertyItem: public SectionProperty
 {
     NODE_XML_CLASS_MEMBER(RGBPropertyItem);
     NODE_SKIP_CHILD(true);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(ColorGradient));
+    NODE_SIG_RECEIVER(RecvPropertyChange, ColorGradient*);
 
 public:
     RGBPropertyItem(const TCHAR* name, float red = 0.0f, float green = 0.0f, float blue = 0.0f);
@@ -62,18 +62,18 @@ public:
 private:
     void UpdateStartToEndColors();
 
-    void RedChange(const weaksmptr(ColorGradient) slider);
-    void GreenChange(const weaksmptr(ColorGradient) slider);
-    void BlueChange(const weaksmptr(ColorGradient) slider);
-    void AlphaChange(const weaksmptr(ColorGradient) slider);
+    void RedChange(ColorGradient* slider);
+    void GreenChange(ColorGradient* slider);
+    void BlueChange(ColorGradient* slider);
+    void AlphaChange(ColorGradient* slider);
 
     ColorGradientPropertyItem* m_red;
     ColorGradientPropertyItem* m_green;
     ColorGradientPropertyItem* m_blue;
 
     float m_Red, m_Green, m_Blue;
-    smptr(Button) m_ColorModel;
-    smptr(Button) m_ColorFormat;
+    Button* m_ColorModel;
+    Button* m_ColorFormat;
     enum eColorModel m_color_model;
     Color::Format m_color_format;
 };

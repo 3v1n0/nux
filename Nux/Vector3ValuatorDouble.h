@@ -66,12 +66,12 @@ public:
     double GetMaxValue() const;
     void SetRange(double MinValue, double Maxvalue);
 
-    sigc::signal<void, const weaksmptr(Vector3DoubleValuator)> sigIncrement;
-    sigc::signal<void, const weaksmptr(Vector3DoubleValuator)> sigDecrement;
-    sigc::signal<void, const weaksmptr(Vector3DoubleValuator)> sigValueChanged;
+    sigc::signal<void, Vector3DoubleValuator*> sigIncrement;
+    sigc::signal<void, Vector3DoubleValuator*> sigDecrement;
+    sigc::signal<void, Vector3DoubleValuator*> sigValueChanged;
     sigc::signal<void, double, double, double> sigValue;
 private:
-    smptr(HLayout) m_hlayout;
+    HLayout* m_hlayout;
 
     DoubleValidator m_DoubleValidator;
     double m_X;
@@ -79,9 +79,9 @@ private:
     double m_Z;
     double m_Step;
 
-    smptr(StaticTextBox) m_XLabel;
-    smptr(StaticTextBox) m_YLabel;
-    smptr(StaticTextBox) m_ZLabel;
+    StaticTextBox* m_XLabel;
+    StaticTextBox* m_YLabel;
+    StaticTextBox* m_ZLabel;
 };
 
 } //NUX_NAMESPACE_END

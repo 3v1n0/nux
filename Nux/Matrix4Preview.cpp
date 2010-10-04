@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "Nux.h"
 #include "Matrix4Preview.h"
 #include "StaticTextBox.h"
@@ -107,7 +106,7 @@ void Matrix4Preview::RecvTimer(void* v)
     }
 }
 
-void Matrix4Preview::RecvDialogChange(const weaksmptr(Matrix4Editor) matrixeditor)
+void Matrix4Preview::RecvDialogChange(Matrix4Editor* matrixeditor)
 {
 }
 

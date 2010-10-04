@@ -110,7 +110,7 @@ public:
     void OnReceiveMouseUp_Green     (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void OnReceiveMouseUp_Blue      (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-    void OnComponentInput           (const weaksmptr(EditTextBox) textbox, const NString& s, int componentIndex);
+    void OnComponentInput           (EditTextBox* textbox, const NString& s, int componentIndex);
     void OnChannelKeyboardFocus();
     void OnChannelLostKeyboardFocus();
     void OnChannelValidateKeyboardEntry();
@@ -142,28 +142,28 @@ private:
     void DrawHSV(GraphicsContext& GfxContext);
     void DrawHLS(GraphicsContext& GfxContext);
 
-    smptr(HLayout) hlayout;
-    smptr(HLayout) redlayout;
-    smptr(HLayout) greenlayout;
-    smptr(HLayout) bluelayout;
-    smptr(HLayout) alphalayout;
-    smptr(VLayout) vlayout;
-    smptr(VLayout) colormodel_layout;
+    HLayout* hlayout;
+    HLayout* redlayout;
+    HLayout* greenlayout;
+    HLayout* bluelayout;
+    HLayout* alphalayout;
+    VLayout* vlayout;
+    VLayout* colormodel_layout;
 
-    smptr(EditTextBox) m_RedCaption;
-    smptr(EditTextBox) m_GreenCaption;
-    smptr(EditTextBox) m_BlueCaption;
-    smptr(EditTextBox) m_AlphaCaption;
-    smptr(CoreArea) m_RedValuator;
-    smptr(CoreArea) m_GreenValuator;
-    smptr(CoreArea) m_BlueValuator;
-    smptr(CoreArea) m_AlphaValuator;
-    smptr(CoreArea) m_ColorSquare;
+    EditTextBox* m_RedCaption;
+    EditTextBox* m_GreenCaption;
+    EditTextBox* m_BlueCaption;
+    EditTextBox* m_AlphaCaption;
+    CoreArea* m_RedValuator;
+    CoreArea* m_GreenValuator;
+    CoreArea* m_BlueValuator;
+    CoreArea* m_AlphaValuator;
+    CoreArea* m_ColorSquare;
 
-    smptr(CoreArea) m_ComponentLabel0;
-    smptr(CoreArea) m_ComponentLabel1;
-    smptr(CoreArea) m_ComponentLabel2;
-    smptr(CoreArea) m_ComponentAlpha;
+    CoreArea* m_ComponentLabel0;
+    CoreArea* m_ComponentLabel1;
+    CoreArea* m_ComponentLabel2;
+    CoreArea* m_ComponentAlpha;
 
     TextureLayer* m_CheckboardLayer;
     float m_Red; 
@@ -179,8 +179,8 @@ private:
     float m_HLSLight;
     float m_HLSSaturation;
 
-    smptr(Button) m_ColorModel;
-    smptr(Button) m_ColorFormat;
+    Button* m_ColorModel;
+    Button* m_ColorFormat;
 
     enum eColorModel m_color_model;
     enum ColorFormat m_color_format;

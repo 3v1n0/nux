@@ -46,7 +46,7 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    sigc::signal< void, const weaksmptr(ColorEditor) > sigColorChanged;
+    sigc::signal< void, ColorEditor* > sigColorChanged;
 
     void SetRed(double r);
     void SetGreen(double g);
@@ -61,14 +61,14 @@ private:
     void RecvTimer(void* v);
     void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-    TimerFunctor* m_ChangeDetectionTimer;
-    TimerHandle m_ChangeTimerHandler;
+    TimerFunctor*       m_ChangeDetectionTimer;
+    TimerHandle         m_ChangeTimerHandler;
 
-    Color m_Color;
-    smptr(HLayout) m_hlayout;
-    smptr(CoreArea) m_ColorArea;
-    smptr(StaticTextBox) m_ColorValue;
-    ColorDialogProxy* m_DialogThreadProxy;
+    Color               m_Color;
+    HLayout*            m_hlayout;
+    CoreArea*           m_ColorArea;
+    StaticTextBox*      m_ColorValue;
+    ColorDialogProxy*   m_DialogThreadProxy;
 };
 
 

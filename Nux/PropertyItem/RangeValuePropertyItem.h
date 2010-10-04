@@ -32,7 +32,7 @@ class RangeValuePropertyItem: public SectionProperty, public RangeValue
 {
     NODE_XML_CLASS_MEMBER(RangeValuePropertyItem);
     NODE_SKIP_CHILD(false);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(RangeValue));
+    NODE_SIG_RECEIVER(RecvPropertyChange, RangeValue*);
 
 public:
     RangeValuePropertyItem(const char* name, float Value = 0.0f, float MinValue = 0.0f, float MaxValue = 1.0f);

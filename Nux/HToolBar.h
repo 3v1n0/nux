@@ -40,12 +40,12 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void AddToolButton(smptr(ToolButton));
-    void AddAction(smptr(ActionItem) action);
+    void AddToolButton(ToolButton*);
+    void AddAction(ActionItem* action);
     void AddSpace(int size);
     void AddSeparator();
-    void AddEditTextLine(smptr(EditTextBox) edittextline);
-    void AddStaticTextLine(smptr(StaticTextBox) statictextline);
+    void AddEditTextLine(EditTextBox* edittextline);
+    void AddStaticTextLine(StaticTextBox* statictextline);
 
     void ClearWidget();
     /////////////////
@@ -65,7 +65,7 @@ protected:
     void DestroyLayout();
 
 private:
-    smptr(HLayout) m_hlayout;
+    HLayout* m_hlayout;
 };
 
 } //NUX_NAMESPACE_END

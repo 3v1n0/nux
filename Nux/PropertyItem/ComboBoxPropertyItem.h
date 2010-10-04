@@ -31,7 +31,7 @@ class ComboBoxPropertyItem: public SectionProperty, public ComboBoxSimple
 {
     NODE_XML_CLASS_MEMBER(ComboBoxPropertyItem);
     NODE_SKIP_CHILD(true);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(ComboBoxSimple));
+    NODE_SIG_RECEIVER(RecvPropertyChange, ComboBoxSimple*);
 public:
     ComboBoxPropertyItem(const TCHAR* name);
     virtual ~ComboBoxPropertyItem();

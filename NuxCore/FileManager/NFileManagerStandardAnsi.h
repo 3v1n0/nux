@@ -31,7 +31,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class NSerializeFileReader : public NSerializer
 {
 public:
-    NSerializeFileReader(FILE* InFile, NOutputDevice* InError, t_int InSize);
+    NSerializeFileReader(FILE* InFile, LogOutputDevice* InError, t_int InSize);
     ~NSerializeFileReader();
 
     virtual bool Precache(t_int PrecacheOffset, t_int PrecacheSize);
@@ -45,7 +45,7 @@ public:
 
 protected:
     FILE*			m_File;
-    NOutputDevice*	m_Error;
+    LogOutputDevice*	m_Error;
     t_int				m_FileSize;
     t_int				m_FilePos;
     t_int				BufferBase;
@@ -57,7 +57,7 @@ protected:
 class NSerializeFileWriter : public NSerializer
 {
 public:
-    NSerializeFileWriter(FILE* InFile, NOutputDevice* InError);
+    NSerializeFileWriter(FILE* InFile, LogOutputDevice* InError);
     ~NSerializeFileWriter();
 
     virtual t_s64 Seek(t_s64 InPos, NSerializer::SeekPos seekpos);
@@ -71,7 +71,7 @@ public:
 
 protected:
     FILE*               m_File;
-    NOutputDevice*	m_Error;
+    LogOutputDevice*	m_Error;
     t_int               m_FilePos;
     t_int               m_CachePos;
     BYTE*               m_CacheBuffer;
@@ -81,7 +81,7 @@ protected:
 class NFileManagerAnsi : public NFileManagerGeneric
 {
 public:
-    NSerializer* CreateFileReader(const TCHAR* Filename, DWORD Flags, NOutputDevice* Error)
+    NSerializer* CreateFileReader(const TCHAR* Filename, DWORD Flags, LogOutputDevice* Error)
     {
         FILE* File;
         #ifdef WIN32_SECURE
@@ -101,7 +101,7 @@ public:
         return new NSerializeFileReader(File, Error, ftell(File));
     }
 
-    NSerializer* CreateFileWriter(const TCHAR* Filename, DWORD Flags, NOutputDevice* Error)
+    NSerializer* CreateFileWriter(const TCHAR* Filename, DWORD Flags, LogOutputDevice* Error)
     {
         if(!FileExist(Filename))
             return NULL;

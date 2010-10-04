@@ -29,8 +29,8 @@ MouseAreaCtrl::MouseAreaCtrl(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
     // Set Original State
-    m_vlayout = smptr(VLayout)(new VLayout());
-    m_Area = smptr(CoreArea)(new CoreArea());
+    m_vlayout   = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_Area      = new CoreArea(NUX_TRACKER_LOCATION);
 
     // Set Signals
     m_Area->OnMouseDown.connect(sigc::mem_fun(this, &MouseAreaCtrl::MouseDown));

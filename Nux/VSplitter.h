@@ -40,7 +40,7 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void AddWidget(smptr(BaseObject) ic, float stretchfactor);
+    void AddWidget(BaseObject* ic, float stretchfactor);
     void ResetSplitConfig();
 
     void clearContent();
@@ -73,7 +73,7 @@ protected:
 private:
 
     typedef CoreArea MySplitter;
-    std::vector<smptr(BaseObject)> m_InterfaceObject;
+    std::vector<BaseObject*> m_InterfaceObject;
     std::vector<MySplitter*> m_SplitterObject;
     std::vector<float> m_SplitConfig;
 

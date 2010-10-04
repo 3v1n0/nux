@@ -43,7 +43,7 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void SetAction(smptr(ActionItem) action);
+    void SetAction(ActionItem* action);
     void SetState(bool b);
     void SetBitmap(const NTexture2D& Bitmap);
     // emitters
@@ -58,10 +58,10 @@ public:
     sigc::signal<void> sigClick;
 
 private:
-    smptr(HLayout) hlayout;
-    smptr(CoreArea) m_IconArea;
-    smptr(ActionItem) m_ActionItem;
-    NTexture2D m_Bitmap;
+    HLayout*    hlayout;
+    CoreArea*   m_IconArea;
+    ActionItem* m_ActionItem;
+    NTexture2D  m_Bitmap;
     
 };
 

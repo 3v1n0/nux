@@ -44,8 +44,8 @@ public:
 
 private:
 
-    smptr(VLayout) m_Vlayout;
-    smptr(ColorEditor) m_ColorEditor;
+    VLayout*        m_Vlayout;
+    ColorEditor*    m_ColorEditor;
     Color& m_Color;
 };
 

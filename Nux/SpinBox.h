@@ -19,7 +19,6 @@
  *
  */
 
-
 #ifndef SPINBOX_H
 #define SPINBOX_H
 
@@ -51,9 +50,9 @@ public:
     int GetMaxValue() const;
     void SetRange(int MinValue, int Maxvalue);
 
-    sigc::signal<void, const weaksmptr(SpinBox) > sigIncrement;
-    sigc::signal<void, const weaksmptr(SpinBox) > sigDecrement;
-    sigc::signal<void, const weaksmptr(SpinBox) > sigValueChanged;
+    sigc::signal<void, SpinBox* > sigIncrement;
+    sigc::signal<void, SpinBox* > sigDecrement;
+    sigc::signal<void, SpinBox* > sigValueChanged;
     sigc::signal<void, int> sigValue;
 
 protected:
@@ -62,8 +61,8 @@ protected:
     void DestroyLayout();
 
 private:
-    smptr(HLayout) hlayout;
-    smptr(VLayout) vlayout;
+    HLayout* hlayout;
+    VLayout* vlayout;
 
     IntegerValidator m_IntValidator;
     int m_iValue;
