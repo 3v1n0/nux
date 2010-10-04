@@ -43,7 +43,7 @@ public:
     ColumnHeader();
     ~ColumnHeader();
 
-    BaseArea* m_header_area;
+    InputArea* m_header_area;
     bool bFixWidth;
     int FixWidthValue;
 };

@@ -106,9 +106,9 @@ long HSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
                 ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
                 ret = ic->ProcessEvent(ievent, ret, ProcEvInfo | DoNotProcess);
             }
-            else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
+            else if((*it)->Type().IsObjectType(InputArea::StaticObjectType))
             {
-                BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
+                InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
                 ret = base_area->OnEvent(ievent, ret, ProcEvInfo | DoNotProcess);
             }
             else if((*it)->Type().IsDerivedFromType(Layout::StaticObjectType))
@@ -185,9 +185,9 @@ void HSplitter::DrawContent(GraphicsContext& GfxContext, bool force_draw)
                 ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
                 ic->ProcessDraw(GfxContext, true);
             }
-            else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
+            else if((*it)->Type().IsObjectType(InputArea::StaticObjectType))
             {
-                BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
+                InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
                 base_area->OnDraw(GfxContext, true);
             }
             else if((*it)->Type().IsObjectType(HLayout::StaticObjectType))
@@ -208,9 +208,9 @@ void HSplitter::DrawContent(GraphicsContext& GfxContext, bool force_draw)
                 ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
                 ic->ProcessDraw(GfxContext, false);
             }
-            else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
+            else if((*it)->Type().IsObjectType(InputArea::StaticObjectType))
             {
-                BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
+                InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
                 base_area->OnDraw(GfxContext, false);
             }
             else if((*it)->Type().IsObjectType(HLayout::StaticObjectType))
@@ -393,9 +393,9 @@ long HSplitter::ComputeChildLayout()
             // ComputeElementLayout to force the computing of this element layout.
             GetGraphicsThread()->ComputeElementLayout(ic);
         }
-        else if(m_InterfaceObject[i]->Type().IsObjectType(BaseArea::StaticObjectType))
+        else if(m_InterfaceObject[i]->Type().IsObjectType(InputArea::StaticObjectType))
         {
-            BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, m_InterfaceObject[i]);
+            InputArea* base_area = NUX_STATIC_CAST(InputArea*, m_InterfaceObject[i]);
             base_area->SetGeometry(Geometry(x, accheight, w, splitter_geo.y - accheight));
         }
         else if(m_InterfaceObject[i]->Type().IsDerivedFromType(Layout::StaticObjectType))
@@ -592,9 +592,9 @@ void HSplitter::DoneRedraw()
             ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
             ic->DoneRedraw();
         }
-        else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
+        else if((*it)->Type().IsObjectType(InputArea::StaticObjectType))
         {
-            //BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
+            //InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
         }
     }
 }

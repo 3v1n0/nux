@@ -513,7 +513,7 @@ void VLayout::VLayoutManagement(t_s32 width, t_s32 height)
             {
                 if(((*it)->GetStretchFactor() != 0) && (*it)->IsArea())
                 {
-                    // If it is not an object of type eBaseArea, do not set outofbound to true,
+                    // If it is not an object of type eInputArea, do not set outofbound to true,
                     // so, the layout management function will later be called on the object.
                     (*it)->ApplyMinHeight();
                     (*it)->setOutofBound(true);

@@ -37,9 +37,9 @@ enum eControlType
     ePopupBox
 };
 
-class ActiveInterfaceObject: public BaseArea //Area //public sigc::trackable
+class ActiveInterfaceObject: public InputArea //Area //public sigc::trackable
 {
-    NUX_DECLARE_OBJECT_TYPE(ActiveInterfaceObject, BaseArea);
+    NUX_DECLARE_OBJECT_TYPE(ActiveInterfaceObject, InputArea);
 public:
     ActiveInterfaceObject(NUX_FILE_LINE_DECL);
     virtual ~ActiveInterfaceObject();

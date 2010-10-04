@@ -29,7 +29,7 @@ namespace nux
 {
 
     class HLayout;
-    class BaseArea;
+    class InputArea;
 
     class CheckBox: public AbstractButton
     {

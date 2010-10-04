@@ -55,7 +55,7 @@ source_cpp = \
   $(srcdir)/ActionItem.cpp \
   $(srcdir)/AnimatedTextureArea.cpp \
   $(srcdir)/PaintLayer.cpp \
-  $(srcdir)/BaseArea.cpp \
+  $(srcdir)/InputArea.cpp \
   $(srcdir)/Area.cpp \
   $(srcdir)/BaseWindow.cpp \
   $(srcdir)/BezierCurveControl.cpp \
@@ -183,7 +183,7 @@ source_h = \
   $(srcdir)/ActionItem.h \
   $(srcdir)/AnimatedTextureArea.h \
   $(srcdir)/PaintLayer.h \
-  $(srcdir)/BaseArea.h \
+  $(srcdir)/InputArea.h \
   $(srcdir)/Area.h \
   $(srcdir)/BaseWindow.h \
   $(srcdir)/BezierCurveControl.h \

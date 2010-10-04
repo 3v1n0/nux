@@ -89,7 +89,7 @@ public:
 //    ButtonEventHandler(){};
 //    ~ButtonEventHandler(){};
 //
-//    void EventHandler(BaseArea& area, IEvent& ievent, bool HasFocus = false)
+//    void EventHandler(InputArea& area, IEvent& ievent, bool HasFocus = false)
 //    {
 //        int x, y, lo_x, hi_x, lo_y, hi_y;
 //        x = ievent.x;

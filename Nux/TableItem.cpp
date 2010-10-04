@@ -34,7 +34,7 @@ Color GPropertyItemTextColor1 = Color(0xFFE9E9E9);
 
 ColumnHeader::ColumnHeader()
 {
-    m_header_area = new BaseArea(NUX_TRACKER_LOCATION);
+    m_header_area = new InputArea(NUX_TRACKER_LOCATION);
 }
 
 ColumnHeader::~ColumnHeader()

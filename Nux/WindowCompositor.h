@@ -31,7 +31,7 @@ class MenuPage;
 class PBuffer;
 class WindowThread;
 class ActiveInterfaceObject;
-class BaseArea;
+class InputArea;
 class Area;
 class BaseWindow;
 class PaintLayer;
@@ -149,10 +149,10 @@ public:
 
 
 
-    void SetWidgetDrawingOverlay(BaseArea* ic, BaseWindow* OverlayWindow);
-    BaseArea* GetWidgetDrawingOverlay();
+    void SetWidgetDrawingOverlay(InputArea* ic, BaseWindow* OverlayWindow);
+    InputArea* GetWidgetDrawingOverlay();
 
-    void SetTooltip(BaseArea* TooltipArea, const TCHAR *TooltipText, int x, int y);
+    void SetTooltip(InputArea* TooltipArea, const TCHAR *TooltipText, int x, int y);
     /*!
         Return true if the mouse is still inside the area that initiated the tooltip;
 
@@ -174,12 +174,12 @@ public:
         m_EventRoot.Set(x, y);
     }
 
-    void SetMouseFocusArea(BaseArea* area);
-    BaseArea* GetMouseFocusArea();
-    void SetMouseOverArea(BaseArea* area);
-    BaseArea* GetMouseOverArea();
-    void SetPreviousMouseOverArea(BaseArea* area);
-    BaseArea* GetPreviousMouseOverArea();
+    void SetMouseFocusArea(InputArea* area);
+    InputArea* GetMouseFocusArea();
+    void SetMouseOverArea(InputArea* area);
+    InputArea* GetMouseOverArea();
+    void SetPreviousMouseOverArea(InputArea* area);
+    InputArea* GetPreviousMouseOverArea();
 
     const IEvent* GetCurrentEvent() const {return m_CurrentEvent;}
     long ProcessEventOnObject(IEvent &ievent, Area* object, long TraverseInfo, long ProcessEventInfo);
@@ -211,11 +211,11 @@ private:
     BaseWindow* m_MenuWindow; // the window that owns the menu being displayed;
     IEvent* m_CurrentEvent; 
 
-    BaseArea* m_MouseFocusArea;      // the base ares that has the mouse down.
-    BaseArea* m_MouseOverArea;  // the base area that has the mouse directly over itself.
-    BaseArea* m_PreviousMouseOverArea;
+    InputArea* m_MouseFocusArea;      // the base ares that has the mouse down.
+    InputArea* m_MouseOverArea;  // the base area that has the mouse directly over itself.
+    InputArea* m_PreviousMouseOverArea;
 
-    BaseArea* OverlayDrawingCommand;
+    InputArea* OverlayDrawingCommand;
     BaseWindow* m_OverlayWindow; // the window that owns the overlay;
     BaseWindow* m_TooltipWindow; // the window that owns the tooltip;
     Point m_EventRoot;
@@ -247,7 +247,7 @@ private:
     int m_Height;
 
     NString m_TooltipText;
-    BaseArea* m_TooltipArea;
+    InputArea* m_TooltipArea;
     int m_TooltipX;
     int m_TooltipY;
 
@@ -267,7 +267,7 @@ public:
     WindowCompositor* operator &();
     ~WindowCompositor();
 
-    friend class BaseArea;
+    friend class InputArea;
     friend class WindowThread;
 };
 

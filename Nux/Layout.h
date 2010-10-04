@@ -165,7 +165,7 @@ public:
     //! Mark all element in the layout as dirty.
     /*!
         Mark all element in the layout as dirty. This will also mark all sub elements as dirty.
-        BaseArea element are not marked as dirty (they don't have the flags).
+        InputArea element are not marked as dirty (they don't have the flags).
     */
     virtual void NeedRedraw();
 

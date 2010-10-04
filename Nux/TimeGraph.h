@@ -36,7 +36,7 @@ class VLayout;
 class HLayout;
 class Button;
 class StaticTextBox;
-class BaseArea;
+class InputArea;
 
 class TimeGraph : public ActiveInterfaceObject
 {

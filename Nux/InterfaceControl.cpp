@@ -29,7 +29,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 NUX_IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
 
 ActiveInterfaceObject::ActiveInterfaceObject(NUX_FILE_LINE_DECL)
-:   BaseArea(NUX_FILE_LINE_PARAM)
+:   InputArea(NUX_FILE_LINE_PARAM)
 {
     m_CompositionLayout = 0;
     m_NeedRedraw        = false;

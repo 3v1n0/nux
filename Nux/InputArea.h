@@ -44,16 +44,16 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 // Base Area
 ////////////////////////////////////////////////////////////////////////////
 
-class BaseArea;
-typedef BaseArea CoreArea;
+class InputArea;
+typedef InputArea CoreArea;
 
-class BaseArea : public Area //public sigc::trackable
+class InputArea : public Area //public sigc::trackable
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(BaseArea, Area);
+    NUX_DECLARE_OBJECT_TYPE(InputArea, Area);
 public:
-    BaseArea(NUX_FILE_LINE_PROTO);
-    virtual ~BaseArea();
+    InputArea(NUX_FILE_LINE_PROTO);
+    virtual ~InputArea();
 
     void Deselect()
     {

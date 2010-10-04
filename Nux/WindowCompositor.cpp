@@ -203,9 +203,9 @@ long WindowCompositor::ProcessEventOnObject(IEvent &ievent, Area* object, long T
         ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, object);
         ret = ic->ProcessEvent(ievent, TraverseInfo, ProcessEventInfo);
     }
-    else if(object->Type().IsObjectType(BaseArea::StaticObjectType))
+    else if(object->Type().IsObjectType(InputArea::StaticObjectType))
     {
-        BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, object);
+        InputArea* base_area = NUX_STATIC_CAST(InputArea*, object);
         ret = base_area->OnEvent(ievent, TraverseInfo, ProcessEventInfo);
     }
     else if(object->Type().IsDerivedFromType(Layout::StaticObjectType))
@@ -1281,18 +1281,18 @@ void WindowCompositor::CleanMenu()
         m_MenuWindow = NULL;
 }
 
-void WindowCompositor::SetWidgetDrawingOverlay(BaseArea* ic, BaseWindow* OverlayWindow)
+void WindowCompositor::SetWidgetDrawingOverlay(InputArea* ic, BaseWindow* OverlayWindow)
 {
     OverlayDrawingCommand = ic;
     m_OverlayWindow = OverlayWindow;
 }
 
-BaseArea* WindowCompositor::GetWidgetDrawingOverlay()
+InputArea* WindowCompositor::GetWidgetDrawingOverlay()
 {
     return OverlayDrawingCommand;
 }
 
-void WindowCompositor::SetTooltip(BaseArea* TooltipArea, const TCHAR *TooltipText, int x, int y)
+void WindowCompositor::SetTooltip(InputArea* TooltipArea, const TCHAR *TooltipText, int x, int y)
 {
     m_TooltipWindow = GetCurrentWindow();
     m_TooltipArea = TooltipArea;
@@ -1325,7 +1325,7 @@ bool WindowCompositor::IsTooltipActive()
     return true;
 }
 
-void WindowCompositor::SetMouseFocusArea(BaseArea* area)
+void WindowCompositor::SetMouseFocusArea(InputArea* area)
 {
     m_MouseFocusArea = area;
     if(area == 0)
@@ -1335,12 +1335,12 @@ void WindowCompositor::SetMouseFocusArea(BaseArea* area)
     SetFocusAreaWindow(GetCurrentWindow());
 }
 
-BaseArea* WindowCompositor::GetMouseFocusArea()
+InputArea* WindowCompositor::GetMouseFocusArea()
 {
     return m_MouseFocusArea;
 }
 
-void WindowCompositor::SetMouseOverArea(BaseArea* area)
+void WindowCompositor::SetMouseOverArea(InputArea* area)
 {
     m_MouseOverArea = area;
 //     if(m_MouseOverArea)
@@ -1349,12 +1349,12 @@ void WindowCompositor::SetMouseOverArea(BaseArea* area)
 //         nuxDebugMsg(TEXT("StackManager: Set MouseOver Area to 0"));
 }
 
-BaseArea* WindowCompositor::GetMouseOverArea()
+InputArea* WindowCompositor::GetMouseOverArea()
 {
     return m_MouseOverArea;
 }
 
-void WindowCompositor::SetPreviousMouseOverArea(BaseArea* area)
+void WindowCompositor::SetPreviousMouseOverArea(InputArea* area)
 {
     m_PreviousMouseOverArea = area;
 //     if(area)
@@ -1363,7 +1363,7 @@ void WindowCompositor::SetPreviousMouseOverArea(BaseArea* area)
 //         nuxDebugMsg(TEXT("StackManager: Set Previous MouseOver Area to 0"));
 }
 
-BaseArea* WindowCompositor::GetPreviousMouseOverArea()
+InputArea* WindowCompositor::GetPreviousMouseOverArea()
 {
     return m_PreviousMouseOverArea;
 }

@@ -21,7 +21,7 @@
 
 
 #include "Nux.h"
-#include "BaseArea.h"
+#include "InputArea.h"
 #include "Painter.h"
 
 #include "NuxGraphics/GLTextureResourceManager.h"

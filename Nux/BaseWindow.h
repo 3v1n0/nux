@@ -31,7 +31,7 @@
     #include "NuxGraphics/GfxEventsX11.h"
 #endif
 
-#include "BaseArea.h"
+#include "InputArea.h"
 #include "MouseHandler.h"
 #include "StaticTextBox.h"
 #include "PaintLayer.h"

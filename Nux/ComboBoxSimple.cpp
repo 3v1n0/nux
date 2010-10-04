@@ -81,7 +81,7 @@ long ComboBoxSimple::ProcessEvent(IEvent &ievent, long TraverseInfo, long Proces
 {
     long ret = TraverseInfo;
 
-    //ret = m_Popup.ProcessEvent(ievent, ret, ProcessEventInfo); // implement isVisible on BaseArea. If invisible, no event processed.
+    //ret = m_Popup.ProcessEvent(ievent, ret, ProcessEventInfo); // implement isVisible on InputArea. If invisible, no event processed.
     ret = m_Button->OnEvent(ievent, ret, ProcessEventInfo);
     ret = m_ComboArea->OnEvent(ievent, ret, ProcessEventInfo);
 

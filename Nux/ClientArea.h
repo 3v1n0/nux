@@ -23,7 +23,7 @@
 #ifndef CLIENTAREA_H
 #define CLIENTAREA_H
 
-#include "BaseArea.h"
+#include "InputArea.h"
 #include "Painter.h"
 #include "InterfaceControl.h"
 #include "TimerProc.h"

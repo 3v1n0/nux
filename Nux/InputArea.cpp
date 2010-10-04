@@ -26,7 +26,7 @@
 #include <sigc++/functors/mem_fun.h>
 
 #include "Nux.h"
-#include "BaseArea.h"
+#include "InputArea.h"
 #include "NuxGraphics/OpenGLEngine.h"
 #include "WindowCompositor.h"
 
@@ -36,9 +36,9 @@ long g_FocusHandle = -1;
 
 long gNumArea = 0;
 
-NUX_IMPLEMENT_OBJECT_TYPE(BaseArea);
+NUX_IMPLEMENT_OBJECT_TYPE(InputArea);
 
-BaseArea::BaseArea(NUX_FILE_LINE_DECL)
+InputArea::InputArea(NUX_FILE_LINE_DECL)
 :   Area(NUX_FILE_LINE_PARAM)
 ,   m_AreaColor(Color::Green)
 {
@@ -55,11 +55,11 @@ BaseArea::BaseArea(NUX_FILE_LINE_DECL)
     m_EnableUserKeyboardProcessing = false;
 }
 
-BaseArea::~BaseArea()
+InputArea::~InputArea()
 {
 }
 
-unsigned short BaseArea::getKeyState(int nVirtKey)
+unsigned short InputArea::getKeyState(int nVirtKey)
 {
 #ifdef WIN32
     if(HasKeyboardFocus())
@@ -71,22 +71,22 @@ unsigned short BaseArea::getKeyState(int nVirtKey)
 #endif 
 }
 
-void BaseArea::ForceStartFocus(int x, int y)
+void InputArea::ForceStartFocus(int x, int y)
 {
     OnStartFocus.emit();
     m_EventHandler.ForceMouseFocus(x, y, m_Geometry);
 }
 
-void BaseArea::ForceStopFocus(int x, int y)
+void InputArea::ForceStopFocus(int x, int y)
 {
     OnEndFocus.emit();
     m_EventHandler.StopMouseFocus(x, y, m_Geometry);
 }
 
-long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+long InputArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 { 
-    BaseArea* PreviousMouseOverArea = (GetThreadWindowCompositor().m_PreviousMouseOverArea);
-    BaseArea* CurrentMouseOverArea = (GetThreadWindowCompositor().m_MouseOverArea);
+    InputArea* PreviousMouseOverArea = (GetThreadWindowCompositor().m_PreviousMouseOverArea);
+    InputArea* CurrentMouseOverArea = (GetThreadWindowCompositor().m_MouseOverArea);
 
     gNumArea++;
 
@@ -182,9 +182,9 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
             {
                 PreviousMouseOverArea = CurrentMouseOverArea;
 //                 if(*CurrentMouseOverArea)
-//                     nuxDebugMsg(TEXT("BaseArea: Mouse is inside; Setting PreviousMouseOverArea."));
+//                     nuxDebugMsg(TEXT("InputArea: Mouse is inside; Setting PreviousMouseOverArea."));
 //                 else
-//                     nuxDebugMsg(TEXT("BaseArea: Mouse is inside; Setting PreviousMouseOverArea to 0."));
+//                     nuxDebugMsg(TEXT("InputArea: Mouse is inside; Setting PreviousMouseOverArea to 0."));
             }
             CurrentMouseOverArea = this;
         }
@@ -197,7 +197,7 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
                 if(CurrentMouseOverArea) 
                 {
                     (CurrentMouseOverArea)->OnMouseLeave.emit(m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state());
-                    //nuxDebugMsg(TEXT("BaseArea: Current MouseOver Leave"));
+                    //nuxDebugMsg(TEXT("InputArea: Current MouseOver Leave"));
                 }
                 CurrentMouseOverArea = NULL;
                 PreviousMouseOverArea = NULL;
@@ -212,12 +212,12 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
                 // When calling OnMouseLeave.emit on a widget, we have to set the following states to false 
                 (PreviousMouseOverArea)->m_EventHandler.m_CurrentMouseIn = false;
                 (PreviousMouseOverArea)->m_EventHandler.m_PreviousMouseIn = false;
-                //nuxDebugMsg(TEXT("BaseArea: Previous MouseOver Leave"));
+                //nuxDebugMsg(TEXT("InputArea: Previous MouseOver Leave"));
             }
             if(CurrentMouseOverArea)
             {
                 (CurrentMouseOverArea)->OnMouseEnter.emit(m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state());
-                //nuxDebugMsg(TEXT("BaseArea: Current MouseOver Enter"));
+                //nuxDebugMsg(TEXT("InputArea: Current MouseOver Enter"));
             }
             PreviousMouseOverArea = CurrentMouseOverArea;
         }
@@ -347,82 +347,82 @@ long BaseArea::OnEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
     return ret;
 }
 
-void BaseArea::OnDraw(GraphicsContext& GfxContext, bool force_draw)
+void InputArea::OnDraw(GraphicsContext& GfxContext, bool force_draw)
 {
     GfxContext.QRP_GLSL_Color(m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight(), m_AreaColor);
 }
 
-void BaseArea::SetBaseString(const TCHAR* Caption)
+void InputArea::SetBaseString(const TCHAR* Caption)
 {
     Area::SetBaseString(Caption);
 }
 
-bool BaseArea::HasKeyboardFocus()
+bool InputArea::HasKeyboardFocus()
 {
     return m_hasKeyboardFocus;
 }
 
-void BaseArea::SetKeyboardFocus(bool b)
+void InputArea::SetKeyboardFocus(bool b)
 {
     m_hasKeyboardFocus = b;
 }
 
-int BaseArea::GetMouseX()
+int InputArea::GetMouseX()
 {
     return m_EventHandler.m_mouse_positionx - m_Geometry.x;
 }
 
-int BaseArea::GetMouseY()
+int InputArea::GetMouseY()
 {
     return m_EventHandler.m_mouse_positiony - m_Geometry.y;
 }
 
-bool BaseArea::IsMouseInside()
+bool InputArea::IsMouseInside()
 {
     return m_EventHandler.MouseIn();
 }
 
-bool BaseArea::HasMouseFocus()
+bool InputArea::HasMouseFocus()
 {
     return m_EventHandler.HasMouseFocus();
 }
 
-bool BaseArea::MouseFocusOnOtherArea()
+bool InputArea::MouseFocusOnOtherArea()
 {
     return (GetThreadWindowCompositor().GetMouseFocusArea() == 0);
 }
 
-void BaseArea::CaptureMouseDownAnyWhereElse(bool b)
+void InputArea::CaptureMouseDownAnyWhereElse(bool b)
 {
     m_CaptureMouseDownAnyWhereElse = b;
 }
 
-bool BaseArea::IsCaptureMouseDownAnyWhereElse() const
+bool InputArea::IsCaptureMouseDownAnyWhereElse() const
 {
     return m_CaptureMouseDownAnyWhereElse;
 }
 
-void BaseArea::EnableDoubleClick(bool b)
+void InputArea::EnableDoubleClick(bool b)
 {
     m_EnableDoubleClick = b;
 }
 
-bool BaseArea::IsDoubleClickEnabled()
+bool InputArea::IsDoubleClickEnabled()
 {
     return m_EnableDoubleClick;
 }
 
-void BaseArea::EnableUserKeyboardProcessing(bool b)
+void InputArea::EnableUserKeyboardProcessing(bool b)
 {
     m_EnableUserKeyboardProcessing = b;
 }
 
-bool BaseArea::IsUserKeyboardProcessingEnabled()
+bool InputArea::IsUserKeyboardProcessingEnabled()
 {
     return m_EnableUserKeyboardProcessing;
 }
 
-void BaseArea::SetAreaMousePosition(int x, int y)
+void InputArea::SetAreaMousePosition(int x, int y)
 {
     m_EventHandler.m_mouse_positionx = x;
     m_EventHandler.m_mouse_positiony = y;
