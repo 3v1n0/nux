@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -23,27 +23,28 @@
 #ifndef NMESHARCHIVER_VER_0_0_1_H
 #define NMESHARCHIVER_VER_0_0_1_H
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-class NMeshObject;
-
-typedef enum
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
+  class NMeshObject;
+
+  typedef enum
+  {
     MESHINDEX_UNKNOWN = 0,
     MESHINDEX_SHORT,
     MESHINDEX_INT,
     FORCE_MESHINDEXTYPE = 0x7fffffff
-}  MeshIndexType;
+  }  MeshIndexType;
 
-typedef enum
-{
+  typedef enum
+  {
     MESHBUFFER_UNKNOWN = 0,
     MESHBUFFER_INDEXBUFFER,
     MESHBUFFER_VERTEXBUFFER,
     FORCE_MESHBUFFER = 0x7fffffff
-}  MeshBufferType;
+  }  MeshBufferType;
 
-typedef enum
-{
+  typedef enum
+  {
     POLYGONTYPE_UNKNOWN = 0,
     POLYGONTYPE_TRIANGLE,
     POLYGONTYPE_TRIANGLESTRIP,
@@ -55,10 +56,10 @@ typedef enum
     POLYGONTYPE_LINESTRIP,
     POLYGONTYPE_POINT,
     FORCE_POLYGONTYPE = 0x7fffffff
-}  MeshPolygonType;
+  }  MeshPolygonType;
 
-typedef enum
-{
+  typedef enum
+  {
     VERTEXATTRIB_UNKNOWN = 0,
     VERTEXATTRIB_FLOAT,
     VERTEXATTRIB_INT,
@@ -71,10 +72,10 @@ typedef enum
     VERTEXATTRIB_SHORT_N,    // the short component should be divided by 32767.0 to get the normalized value in the range [-1.0, 1.0].
     VERTEXATTRIB_USHORT_N,   // the short component should be divided by 65535.0 to get the normalized value in the range [0.0, 1.0].
     FORCE_VERTEXATTRIB = 0x7fffffff
-}  VertexAttribType;
+  }  VertexAttribType;
 
-typedef enum
-{
+  typedef enum
+  {
     VBSEMANTIC_UNKNOWN = 0,
     VBSEMANTIC_POSITION,
     VBSEMANTIC_NORMAL,
@@ -91,10 +92,10 @@ typedef enum
     VBSEMANTIC_TEXCOORD6,
     VBSEMANTIC_TEXCOORD7,
     FORCE_VBSEMANTIC = 0x7fffffff
-}  VertexBufferSemantic;
+  }  VertexBufferSemantic;
 
-typedef struct
-{
+  typedef struct
+  {
     nux::t_s64 FilePointer;
     NFileName Name;
     unsigned int Type;
@@ -105,11 +106,11 @@ typedef struct
     unsigned int NumMipmap;
     unsigned int Size;
 
-} MeshDataInfo_ver_0_0_1;
+  } MeshDataInfo_ver_0_0_1;
 
-bool SaveMeshObject_ver_0_0_1(nux::NSerializer* FileStream, NMeshObject*);
-NMeshObject* LoadMeshObject_ver_0_0_1(nux::NSerializer* FileStream, unsigned int Offset);
-void MeshDataGetInfo_ver_0_0_1(nux::NSerializer* FileStream, MeshDataInfo_ver_0_0_1& TextureArchiveInfo);
+  bool SaveMeshObject_ver_0_0_1 (nux::NSerializer *FileStream, NMeshObject *);
+  NMeshObject *LoadMeshObject_ver_0_0_1 (nux::NSerializer *FileStream, unsigned int Offset);
+  void MeshDataGetInfo_ver_0_0_1 (nux::NSerializer *FileStream, MeshDataInfo_ver_0_0_1 &TextureArchiveInfo);
 
 } //NUX_NAMESPACE_END
 

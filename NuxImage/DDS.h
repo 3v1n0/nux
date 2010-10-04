@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -25,9 +25,11 @@
 
 #include "ImageSurface.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 ///	A bunch of DirectDraw Surface structures and flags
-typedef struct {
+  typedef struct
+  {
     unsigned int    dwMagic;
     unsigned int    dwSize;
     unsigned int    dwFlags;
@@ -39,25 +41,27 @@ typedef struct {
     unsigned int    dwReserved1[ 11 ];
 
     //  DDPIXELFORMAT
-    struct {
-        unsigned int    dwSize;
-        unsigned int    dwFlags;
-        unsigned int    dwFourCC;
-        unsigned int    dwRGBBitCount;
-        unsigned int    dwRBitMask;
-        unsigned int    dwGBitMask;
-        unsigned int    dwBBitMask;
-        unsigned int    dwRGBAlphaBitMask;
+    struct
+    {
+      unsigned int    dwSize;
+      unsigned int    dwFlags;
+      unsigned int    dwFourCC;
+      unsigned int    dwRGBBitCount;
+      unsigned int    dwRBitMask;
+      unsigned int    dwGBitMask;
+      unsigned int    dwBBitMask;
+      unsigned int    dwRGBAlphaBitMask;
     }               sPixelFormat;
 
     //  DDCAPS2
-    struct {
-        unsigned int    dwCaps1;
-        unsigned int    dwCaps2;
-        unsigned int    dwReserved[2];
+    struct
+    {
+      unsigned int    dwCaps1;
+      unsigned int    dwCaps2;
+      unsigned int    dwReserved[2];
     }               sCaps;
     unsigned int    dwReserved2;
-} DDS_header ;
+  } DDS_header ;
 
 //	the following constants were copied directly off the MSDN website
 
@@ -94,7 +98,7 @@ typedef struct {
 #define DDSCAPS2_CUBEMAP_NEGATIVEZ	0x00008000
 #define DDSCAPS2_VOLUME	0x00200000
 
-NBitmapData* Load_DDS_File(const TCHAR *filename);
+  NBitmapData *Load_DDS_File (const TCHAR *filename);
 
 } //NUX_NAMESPACE_END
 #endif // DDS_H

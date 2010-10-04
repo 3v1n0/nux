@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -92,36 +92,36 @@ typedef unsigned long           SIZE_T;     // Corresponds to C SIZE_T.
 // UNICODE                                   //
 ///////////////////////////////////////////////
 #ifdef NUX_UNICODE
-    typedef UNICHAR  TCHAR;
-    #undef TEXT
-    #define TEXT(s) L##s
+typedef UNICHAR  TCHAR;
+#undef TEXT
+#define TEXT(s) L##s
 #else
-    typedef ANSICHAR  TCHAR;
-    #undef TEXT
-    #define TEXT(s) s
+typedef ANSICHAR  TCHAR;
+#undef TEXT
+#define TEXT(s) s
 #endif
 
 
 #ifdef NUX_UNICODE
-    #define WINE_tchar_true(a) (1)
-    #define WINE_tchar_false(a) (0)
-    #define WINE_tchar_tclen(a) (1)
-    #define WINE_tchar_tccpy(a,b) do { *(a)=*(b); } while (0)
+#define WINE_tchar_true(a) (1)
+#define WINE_tchar_false(a) (0)
+#define WINE_tchar_tclen(a) (1)
+#define WINE_tchar_tccpy(a,b) do { *(a)=*(b); } while (0)
 #else
-    #define WINE_tchar_true(a) (1)
-    #define WINE_tchar_false(a) (0)
-    #define WINE_tchar_tclen(a) (1)
-    #define WINE_tchar_tccpy(a,b) do { *(a)=*(b); } while (0)
+#define WINE_tchar_true(a) (1)
+#define WINE_tchar_false(a) (0)
+#define WINE_tchar_tclen(a) (1)
+#define WINE_tchar_tccpy(a,b) do { *(a)=*(b); } while (0)
 #endif
 
 #ifndef NUX_UNICODE
-    #ifndef NUX_MBCS
-        #define NUX_TCHAR_ROUTINE(ansi, mbcs, unicode) ansi
-    #else
-        #define NUX_TCHAR_ROUTINE(ansi, mbcs, unicode) mbcs
-    #endif
+#ifndef NUX_MBCS
+#define NUX_TCHAR_ROUTINE(ansi, mbcs, unicode) ansi
 #else
-    #define NUX_TCHAR_ROUTINE(ansi, mbcs, unicode) unicode
+#define NUX_TCHAR_ROUTINE(ansi, mbcs, unicode) mbcs
+#endif
+#else
+#define NUX_TCHAR_ROUTINE(ansi, mbcs, unicode) unicode
 #endif
 
 

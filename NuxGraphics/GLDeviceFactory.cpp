@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -31,17 +31,18 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "OpenGLEngine.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
 #define MANAGEDEVICERESOURCE    0
 
-extern void cgErrorCallback(void);
+  extern void cgErrorCallback (void);
 
 // Pixel buffer object seems to corrupt textures. This can be seen when the window is moved
-// to the second screen in a multi-display configuration... 
+// to the second screen in a multi-display configuration...
 // Happens on geforce 6600. Does not happens on geforce 6800.
 
-// ATI Radeon 4670 has problems loading textures from pixel buffer object. PBO should be deactivated if the 
+// ATI Radeon 4670 has problems loading textures from pixel buffer object. PBO should be deactivated if the
 // graphics card is made by AMD/ATI
 #define NUX_USE_PBO     1
 
@@ -52,20 +53,20 @@ extern void cgErrorCallback(void);
 //     return logf(f) / logf(2);
 // }
 
-extern PixelFormatInfo GPixelFormats[];
+  extern PixelFormatInfo GPixelFormats[];
 
-struct ReqExtension
-{
-    const char* extension0;
-    const char* extension1;
-    const char* extension2;
+  struct ReqExtension
+  {
+    const char *extension0;
+    const char *extension1;
+    const char *extension2;
     int supported0;
     int supported1;
     int supported2;
-};
+  };
 
-struct ReqExtension ReqNVidiaExtension[] = 
-{
+  struct ReqExtension ReqNVidiaExtension[] =
+  {
     {"GL_VERSION_1_5",              "",                         "",                         0,  0,  0},
     {"GL_ARB_texture_rectangle",    "GL_NV_texture_rectangle",  "GL_EXT_texture_rectangle", 0,  0,  0},
     {"GL_ARB_vertex_program",       "",                         "",                         0,  0,  0},
@@ -77,44 +78,46 @@ struct ReqExtension ReqNVidiaExtension[] =
     {"GL_EXT_framebuffer_object",   "",                         "",                         0,  0,  0},
     {"GL_EXT_draw_range_elements",  "",                         "",                         0,  0,  0},
     {"GL_EXT_stencil_two_side",     "",                         "",                         0,  0,  0},
-};
+  };
 
-struct ReqExtension ReqNVidiaWGLExtension[] = 
-{
+  struct ReqExtension ReqNVidiaWGLExtension[] =
+  {
     {"WGL_ARB_pbuffer",             "",                         "",                         0,  0,  0},
     {"WGL_ARB_pixel_format",        "",                         "",                         0,  0,  0},
     {"WGL_ARB_render_texture",      "",                         "",                         0,  0,  0},
     {"WGL_ARB_render_texture",      "",                         "",                         0,  0,  0},
-};
+  };
 
-static void InitializeExtension()
-{
+  static void InitializeExtension()
+  {
 
-    int NumReqExtension = sizeof(ReqNVidiaExtension) / sizeof(ReqNVidiaExtension[0]);
+    int NumReqExtension = sizeof (ReqNVidiaExtension) / sizeof (ReqNVidiaExtension[0]);
 
-    for(int index = 0; index < NumReqExtension; index++)
+    for (int index = 0; index < NumReqExtension; index++)
     {
-        ReqNVidiaExtension[index].supported0 = 0;
-        ReqNVidiaExtension[index].supported1 = 0;
-        ReqNVidiaExtension[index].supported2 = 0;
+      ReqNVidiaExtension[index].supported0 = 0;
+      ReqNVidiaExtension[index].supported1 = 0;
+      ReqNVidiaExtension[index].supported2 = 0;
 
-        if(ReqNVidiaExtension[index].extension0)
-        {
-            ReqNVidiaExtension[index].supported0 = glewIsSupported(ReqNVidiaExtension[index].extension0);
-        }
-        if(ReqNVidiaExtension[index].extension1)
-        {
-            ReqNVidiaExtension[index].supported1 = glewIsSupported(ReqNVidiaExtension[index].extension1);
-        }
-        if(ReqNVidiaExtension[index].extension2)
-        {
-            ReqNVidiaExtension[index].supported2 = glewIsSupported(ReqNVidiaExtension[index].extension2);
-        }
+      if (ReqNVidiaExtension[index].extension0)
+      {
+        ReqNVidiaExtension[index].supported0 = glewIsSupported (ReqNVidiaExtension[index].extension0);
+      }
 
-        if((!ReqNVidiaExtension[index].supported0) &&
-            (!ReqNVidiaExtension[index].supported1) &&
-            (!ReqNVidiaExtension[index].supported2))
-        {
+      if (ReqNVidiaExtension[index].extension1)
+      {
+        ReqNVidiaExtension[index].supported1 = glewIsSupported (ReqNVidiaExtension[index].extension1);
+      }
+
+      if (ReqNVidiaExtension[index].extension2)
+      {
+        ReqNVidiaExtension[index].supported2 = glewIsSupported (ReqNVidiaExtension[index].extension2);
+      }
+
+      if ( (!ReqNVidiaExtension[index].supported0) &&
+           (!ReqNVidiaExtension[index].supported1) &&
+           (!ReqNVidiaExtension[index].supported2) )
+      {
 //            char error[512];
 //            sprintf(error, "Error - required extensions were not supported: \n %s \n %s \n %s \n"
 //                ,ReqNVidiaExtension[index].extension0
@@ -122,7 +125,8 @@ static void InitializeExtension()
 //                ,ReqNVidiaExtension[index].extension2);
 //            MessageBox(NULL,error,"ERROR",MB_OK|MB_ICONERROR);
 //            exit(-1);
-        }
+      }
+
 //        else
 //        {
 //            if(ReqNVidiaExtension[index].supported0)
@@ -133,7 +137,8 @@ static void InitializeExtension()
 //                glh_init_extensions(ReqNVidiaExtension[index].extension2);
 //        }
     }
-// 
+
+//
 //     if (!glewIsSupported("GL_ARB_multitexture "
 //         "GL_ARB_vertex_program "
 //         "GL_ARB_fragment_program "
@@ -147,7 +152,7 @@ static void InitializeExtension()
 //         "GL_EXT_framebuffer_object "
 //         "GL_ARB_texture_rectangle "
 //         "GL_EXT_pixel_buffer_object"
-//         )) 
+//         ))
 //     {
 // //        char error[512];
 // //        sprintf(error, "Error - required extensions were not supported: %s", "XXXX");
@@ -155,12 +160,12 @@ static void InitializeExtension()
 // //        //fprintf(stderr, "Error - required extensions were not supported: %s", glh_get_unsupported_extensions());
 // //        exit(-1);
 //     }
-// 
+//
 //     if (!wglewIsSupported(
 //         "WGL_ARB_pbuffer "
 //         "WGL_ARB_pixel_format "
 //         "WGL_ARB_render_texture "
-//         )) 
+//         ))
 //     {
 // //        char error[512];
 // //        sprintf(error, "Error - required extensions were not supported: %s", "XXXX");
@@ -169,17 +174,17 @@ static void InitializeExtension()
 // //        exit(-1);
 //     }
 
-}
+  }
 
-static void InitTextureFormats()
-{
+  static void InitTextureFormats()
+  {
     GPixelFormats[ BITFMT_UNKNOWN		].PlatformFormat	= GL_NONE;							// Not supported for rendering.
-    
+
     // Data in PC system memory: R(LSB) G B A(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
     GPixelFormats[ BITFMT_R8G8B8A8     ].PlatformFormat	= GL_RGBA8;
     GPixelFormats[ BITFMT_R8G8B8A8     ].Format	        = GL_RGBA;
     GPixelFormats[ BITFMT_R8G8B8A8     ].type	            = GL_UNSIGNED_INT_8_8_8_8_REV;
-    
+
     // Data in PC system memory: A(LSB) B G R(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8
     GPixelFormats[ BITFMT_A8B8G8R8     ].PlatformFormat	= GL_RGBA8;
     GPixelFormats[ BITFMT_A8B8G8R8     ].Format	        = GL_RGBA;
@@ -207,7 +212,7 @@ static void InitTextureFormats()
     GPixelFormats[ BITFMT_R5G6B5       ].PlatformFormat	= GL_RGB5;
     GPixelFormats[ BITFMT_R5G6B5       ].Format	        = GL_RGB;
     GPixelFormats[ BITFMT_R5G6B5       ].type	            = GL_UNSIGNED_SHORT_5_6_5;
-    
+
     GPixelFormats[ BITFMT_RGBA16F		].PlatformFormat	= GL_RGBA16F_ARB;
     GPixelFormats[ BITFMT_RGBA16F		].Format	        = GL_RGBA;
     GPixelFormats[ BITFMT_RGBA16F		].type	            = GL_HALF_FLOAT_ARB;
@@ -250,166 +255,168 @@ static void InitTextureFormats()
     GPixelFormats[ BITFMT_A8           ].PlatformFormat	= GL_RGBA8;
     GPixelFormats[ BITFMT_A8           ].Format	        = GL_LUMINANCE;
     GPixelFormats[ BITFMT_A8           ].type	            = GL_UNSIGNED_BYTE;
-}
+  }
 
-TRefGL<IOpenGLTexture2D>   GLDeviceFactory::pDefaultRenderTargetTexture = 0;
-TRefGL<IOpenGLSurface>     GLDeviceFactory::pDefaultRenderTargetSurface = 0;
+  TRefGL<IOpenGLTexture2D>   GLDeviceFactory::pDefaultRenderTargetTexture = 0;
+  TRefGL<IOpenGLSurface>     GLDeviceFactory::pDefaultRenderTargetSurface = 0;
 
 
-TRefGL<IOpenGLTexture2D> GLDeviceFactory::CreateTexture(
+  TRefGL<IOpenGLTexture2D> GLDeviceFactory::CreateTexture (
     int Width
     , int Height
     , int Levels
     , BitmapFormat PixelFormat)
-{
-    IOpenGLTexture2D* ptr;
-    CreateTexture(Width, Height, Levels, PixelFormat, (IOpenGLTexture2D**)&ptr);
+  {
+    IOpenGLTexture2D *ptr;
+    CreateTexture (Width, Height, Levels, PixelFormat, (IOpenGLTexture2D **) &ptr);
     TRefGL<IOpenGLTexture2D> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLRectangleTexture> GLDeviceFactory::CreateRectangleTexture(
+  TRefGL<IOpenGLRectangleTexture> GLDeviceFactory::CreateRectangleTexture (
     int Width
     , int Height
     , int Levels
     , BitmapFormat PixelFormat)
-{
-    IOpenGLRectangleTexture* ptr;
-    CreateRectangleTexture(Width, Height, Levels, PixelFormat, (IOpenGLRectangleTexture**)&ptr);
+  {
+    IOpenGLRectangleTexture *ptr;
+    CreateRectangleTexture (Width, Height, Levels, PixelFormat, (IOpenGLRectangleTexture **) &ptr);
     TRefGL<IOpenGLRectangleTexture> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLCubeTexture> GLDeviceFactory::CreateCubeTexture(
+  TRefGL<IOpenGLCubeTexture> GLDeviceFactory::CreateCubeTexture (
     int EdgeLength
     , int Levels
     , BitmapFormat PixelFormat)
-{
-    IOpenGLCubeTexture* ptr;
-    CreateCubeTexture(EdgeLength, Levels, PixelFormat, (IOpenGLCubeTexture**)&ptr);
+  {
+    IOpenGLCubeTexture *ptr;
+    CreateCubeTexture (EdgeLength, Levels, PixelFormat, (IOpenGLCubeTexture **) &ptr);
     TRefGL<IOpenGLCubeTexture> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLVolumeTexture> GLDeviceFactory::CreateVolumeTexture(
+  TRefGL<IOpenGLVolumeTexture> GLDeviceFactory::CreateVolumeTexture (
     int Width
     , int Height
     , int Depth
     , int Levels
     , BitmapFormat PixelFormat)
-{
-    IOpenGLVolumeTexture* ptr;
-    CreateVolumeTexture(Width, Height, Depth, Levels, PixelFormat, (IOpenGLVolumeTexture**)&ptr);
+  {
+    IOpenGLVolumeTexture *ptr;
+    CreateVolumeTexture (Width, Height, Depth, Levels, PixelFormat, (IOpenGLVolumeTexture **) &ptr);
     TRefGL<IOpenGLVolumeTexture> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLAnimatedTexture> GLDeviceFactory::CreateAnimatedTexture(
+  TRefGL<IOpenGLAnimatedTexture> GLDeviceFactory::CreateAnimatedTexture (
     int Width
     , int Height
     , int Depth
     , BitmapFormat PixelFormat)
-{
-    IOpenGLAnimatedTexture* prt;
-    CreateAnimatedTexture(Width, Height, Depth, PixelFormat, (IOpenGLAnimatedTexture**)&prt);
+  {
+    IOpenGLAnimatedTexture *prt;
+    CreateAnimatedTexture (Width, Height, Depth, PixelFormat, (IOpenGLAnimatedTexture **) &prt);
     TRefGL<IOpenGLAnimatedTexture> h = prt;
     return h;
-}
+  }
 
 
-TRefGL<IOpenGLQuery> GLDeviceFactory::CreateQuery(QUERY_TYPE Type)
-{
-    IOpenGLQuery* prt;
-    CreateQuery(Type, (IOpenGLQuery**)&prt);
+  TRefGL<IOpenGLQuery> GLDeviceFactory::CreateQuery (QUERY_TYPE Type)
+  {
+    IOpenGLQuery *prt;
+    CreateQuery (Type, (IOpenGLQuery **) &prt);
     TRefGL<IOpenGLQuery> h = prt;
     return h;
-}
+  }
 
-TRefGL<IOpenGLFrameBufferObject> GLDeviceFactory::CreateFrameBufferObject()
-{
-    IOpenGLFrameBufferObject* ptr;
-    CreateFrameBufferObject((IOpenGLFrameBufferObject**)&ptr);
+  TRefGL<IOpenGLFrameBufferObject> GLDeviceFactory::CreateFrameBufferObject()
+  {
+    IOpenGLFrameBufferObject *ptr;
+    CreateFrameBufferObject ( (IOpenGLFrameBufferObject **) &ptr);
     TRefGL<IOpenGLFrameBufferObject> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLShaderProgram> GLDeviceFactory::CreateShaderProgram()
-{
-    IOpenGLShaderProgram* ptr;
-    CreateShaderProgram((IOpenGLShaderProgram**)&ptr);
+  TRefGL<IOpenGLShaderProgram> GLDeviceFactory::CreateShaderProgram()
+  {
+    IOpenGLShaderProgram *ptr;
+    CreateShaderProgram ( (IOpenGLShaderProgram **) &ptr);
     TRefGL<IOpenGLShaderProgram> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLVertexShader> GLDeviceFactory::CreateVertexShader()
-{
-    IOpenGLVertexShader* ptr;
-    CreateVertexShader((IOpenGLVertexShader**)&ptr);
+  TRefGL<IOpenGLVertexShader> GLDeviceFactory::CreateVertexShader()
+  {
+    IOpenGLVertexShader *ptr;
+    CreateVertexShader ( (IOpenGLVertexShader **) &ptr);
     TRefGL<IOpenGLVertexShader> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLPixelShader> GLDeviceFactory::CreatePixelShader()
-{
-    IOpenGLPixelShader* ptr;
-    CreatePixelShader((IOpenGLPixelShader**)&ptr);
+  TRefGL<IOpenGLPixelShader> GLDeviceFactory::CreatePixelShader()
+  {
+    IOpenGLPixelShader *ptr;
+    CreatePixelShader ( (IOpenGLPixelShader **) &ptr);
     TRefGL<IOpenGLPixelShader> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLAsmShaderProgram> GLDeviceFactory::CreateAsmShaderProgram()
-{
-    IOpenGLAsmShaderProgram* ptr;
-    CreateAsmShaderProgram((IOpenGLAsmShaderProgram**)&ptr);
+  TRefGL<IOpenGLAsmShaderProgram> GLDeviceFactory::CreateAsmShaderProgram()
+  {
+    IOpenGLAsmShaderProgram *ptr;
+    CreateAsmShaderProgram ( (IOpenGLAsmShaderProgram **) &ptr);
     TRefGL<IOpenGLAsmShaderProgram> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLAsmVertexShader> GLDeviceFactory::CreateAsmVertexShader()
-{
-    IOpenGLAsmVertexShader* ptr;
-    CreateAsmVertexShader((IOpenGLAsmVertexShader**)&ptr);
+  TRefGL<IOpenGLAsmVertexShader> GLDeviceFactory::CreateAsmVertexShader()
+  {
+    IOpenGLAsmVertexShader *ptr;
+    CreateAsmVertexShader ( (IOpenGLAsmVertexShader **) &ptr);
     TRefGL<IOpenGLAsmVertexShader> h = ptr;
     return h;
-}
+  }
 
-TRefGL<IOpenGLAsmPixelShader> GLDeviceFactory::CreateAsmPixelShader()
-{
-    IOpenGLAsmPixelShader* ptr;
-    CreateAsmPixelShader((IOpenGLAsmPixelShader**)&ptr);
+  TRefGL<IOpenGLAsmPixelShader> GLDeviceFactory::CreateAsmPixelShader()
+  {
+    IOpenGLAsmPixelShader *ptr;
+    CreateAsmPixelShader ( (IOpenGLAsmPixelShader **) &ptr);
     TRefGL<IOpenGLAsmPixelShader> h = ptr;
     return h;
-}
+  }
 
 #if (NUX_ENABLE_CG_SHADERS)
-TRefGL<ICgVertexShader> GLDeviceFactory::CreateCGVertexShader()
-{
-    ICgVertexShader* ptr;
-    CreateCGVertexShader((ICgVertexShader**)&ptr);
+  TRefGL<ICgVertexShader> GLDeviceFactory::CreateCGVertexShader()
+  {
+    ICgVertexShader *ptr;
+    CreateCGVertexShader ( (ICgVertexShader **) &ptr);
     TRefGL<ICgVertexShader> h = ptr;
     return h;
-}
+  }
 
-TRefGL<ICgPixelShader> GLDeviceFactory::CreateCGPixelShader()
-{
-    ICgPixelShader* ptr;
-    CreateCGPixelShader((ICgPixelShader**)&ptr);
+  TRefGL<ICgPixelShader> GLDeviceFactory::CreateCGPixelShader()
+  {
+    ICgPixelShader *ptr;
+    CreateCGPixelShader ( (ICgPixelShader **) &ptr);
     TRefGL<ICgPixelShader> h = ptr;
     return h;
-}
-#endif 
+  }
+#endif
 
-void GLDeviceFactory::Initialize()
-{
+  void GLDeviceFactory::Initialize()
+  {
     GLenum Glew_Ok = glewInit();
-    if(Glew_Ok != GLEW_OK)
-    {
-      nuxAssertMsg(0, TEXT("[GLDeviceFactory::Initialize] Failed glewInit."));
-    }
-    InitializeExtension();
-}
 
-STREAMSOURCE GLDeviceFactory::_StreamSource[MAX_NUM_STREAM];
+    if (Glew_Ok != GLEW_OK)
+    {
+      nuxAssertMsg (0, TEXT ("[GLDeviceFactory::Initialize] Failed glewInit.") );
+    }
+
+    InitializeExtension();
+  }
+
+  STREAMSOURCE GLDeviceFactory::_StreamSource[MAX_NUM_STREAM];
 // TRefGL<IOpenGLIndexBuffer> GLDeviceFactory::_CurrentIndexBuffer = 0;
 // TRefGL<IOpenGLVertexBuffer> GLDeviceFactory::_CurrentVertexBuffer = 0;
 // TRefGL<IOpenGLVertexDeclaration> GLDeviceFactory::_CurrentVertexDeclaration = 0;
@@ -445,7 +452,7 @@ STREAMSOURCE GLDeviceFactory::_StreamSource[MAX_NUM_STREAM];
 //
 //    // BEWARE glGetProgramiv != glGetProgramivARB (ARB fragment vertex program)
 //
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_LENGTH_ARB,                          &OPENGL_PROGRAM_LENGTH_ARB) );                      
+//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_LENGTH_ARB,                          &OPENGL_PROGRAM_LENGTH_ARB) );
 //    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ARB,                          &OPENGL_PROGRAM_FORMAT_ARB) );
 //    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_BINDING_ARB,                         &OPENGL_PROGRAM_BINDING_ARB) );
 //    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_INSTRUCTIONS_ARB,                    &OPENGL_PROGRAM_INSTRUCTIONS_ARB) );
@@ -474,52 +481,52 @@ STREAMSOURCE GLDeviceFactory::_StreamSource[MAX_NUM_STREAM];
 //}
 //
 
-GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat)
-:   _FrameBufferObject(0)
-,   _PixelStoreAlignment(4)
-,   _CachedPixelBufferObjectList(0)
-,   _CachedVertexBufferList(0)
-,   _CachedIndexBufferList(0)
-,   _CachedTextureList(0)
-,   _CachedTextureRectangleList(0)
-,   _CachedCubeTextureList(0)
-,   _CachedVolumeTextureList(0)
-,   _CachedAnimatedTextureList(0)
-,   _CachedQueryList(0)
-,   _CachedVertexDeclarationList(0)
-,   _CachedFrameBufferList(0)
-,   _CachedVertexShaderList(0)
-,   _CachedPixelShaderList(0)
-,   _CachedShaderProgramList(0)
-,   _CachedAsmVertexShaderList(0)
-,   _CachedAsmPixelShaderList(0)
-,   _CachedAsmShaderProgramList(0)
-,   m_isINTELBoard(false)
-,   m_isATIBoard(false)
-,   m_isNVIDIABoard(false)
-,   m_UsePixelBufferObject(false)
-,   m_GraphicsBoardVendor(BOARD_UNKNOWN)
+  GLDeviceFactory::GLDeviceFactory (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat)
+    :   _FrameBufferObject (0)
+    ,   _PixelStoreAlignment (4)
+    ,   _CachedPixelBufferObjectList (0)
+    ,   _CachedVertexBufferList (0)
+    ,   _CachedIndexBufferList (0)
+    ,   _CachedTextureList (0)
+    ,   _CachedTextureRectangleList (0)
+    ,   _CachedCubeTextureList (0)
+    ,   _CachedVolumeTextureList (0)
+    ,   _CachedAnimatedTextureList (0)
+    ,   _CachedQueryList (0)
+    ,   _CachedVertexDeclarationList (0)
+    ,   _CachedFrameBufferList (0)
+    ,   _CachedVertexShaderList (0)
+    ,   _CachedPixelShaderList (0)
+    ,   _CachedShaderProgramList (0)
+    ,   _CachedAsmVertexShaderList (0)
+    ,   _CachedAsmPixelShaderList (0)
+    ,   _CachedAsmShaderProgramList (0)
+    ,   m_isINTELBoard (false)
+    ,   m_isATIBoard (false)
+    ,   m_isNVIDIABoard (false)
+    ,   m_UsePixelBufferObject (false)
+    ,   m_GraphicsBoardVendor (BOARD_UNKNOWN)
 #if (NUX_ENABLE_CG_SHADERS)
-,   _CachedCGVertexShaderList(0)
-,   _CachedCGPixelShaderList(0)
-,   m_Cgcontext(0)
+    ,   _CachedCGVertexShaderList (0)
+    ,   _CachedCGPixelShaderList (0)
+    ,   m_Cgcontext (0)
 #endif
-{
-    inlSetThreadLocalStorage(ThreadLocal_GLDeviceFactory, this);
+  {
+    inlSetThreadLocalStorage (ThreadLocal_GLDeviceFactory, this);
 
     GLenum Glew_Ok = 0;
 #ifdef GLEW_MX
-    Glew_Ok = glewContextInit(glewGetContext());
-    nuxAssertMsg(Glew_Ok == GLEW_OK, TEXT("[GLDeviceFactory::GLDeviceFactory] GL Extensions failed to initialize."));
+    Glew_Ok = glewContextInit (glewGetContext() );
+    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GLDeviceFactory::GLDeviceFactory] GL Extensions failed to initialize.") );
 
 #if defined(NUX_OS_WINDOWS)
-    Glew_Ok = wglewContextInit(wglewGetContext());
+    Glew_Ok = wglewContextInit (wglewGetContext() );
 #elif defined(NUX_OS_LINUX)
-    Glew_Ok = glxewContextInit(glxewGetContext());
+    Glew_Ok = glxewContextInit (glxewGetContext() );
 #elif defined(NUX_OS_MACOSX)
-    Glew_Ok = glxewContextInit(glxewGetContext());
+    Glew_Ok = glxewContextInit (glxewGetContext() );
 #endif
-    nuxAssertMsg(Glew_Ok == GLEW_OK, TEXT("[GLDeviceFactory::GLDeviceFactory] WGL Extensions failed to initialize."));
+    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GLDeviceFactory::GLDeviceFactory] WGL Extensions failed to initialize.") );
 #else
     Glew_Ok = glewInit();
 #endif
@@ -528,32 +535,32 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
 
     //m_BoardVendorString = "aaaa";
     //std::string str = (const char*) glGetString(GL_VENDOR);
-    m_BoardVendorString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_VENDOR)));
-    CHECKGL_MSG(glGetString(GL_VENDOR));
-    m_BoardRendererString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_RENDERER)));
-    CHECKGL_MSG(glGetString(GL_RENDERER));
-    m_OpenGLVersionString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_VERSION)));
-    CHECKGL_MSG(glGetString(GL_VERSION));
-    m_GLSLVersionString = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char*, glGetString(GL_SHADING_LANGUAGE_VERSION)));
-    CHECKGL_MSG(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    m_BoardVendorString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VENDOR) ) );
+    CHECKGL_MSG (glGetString (GL_VENDOR) );
+    m_BoardRendererString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER) ) );
+    CHECKGL_MSG (glGetString (GL_RENDERER) );
+    m_OpenGLVersionString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VERSION) ) );
+    CHECKGL_MSG (glGetString (GL_VERSION) );
+    m_GLSLVersionString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_SHADING_LANGUAGE_VERSION) ) );
+    CHECKGL_MSG (glGetString (GL_SHADING_LANGUAGE_VERSION) );
 
-    nuxDebugMsg(TEXT("Board Vendor: %s"), m_BoardVendorString.GetTCharPtr());
-    nuxDebugMsg(TEXT("Board Renderer: %s"), m_BoardRendererString.GetTCharPtr());
-    nuxDebugMsg(TEXT("Board OpenGL Version: %s"), m_OpenGLVersionString.GetTCharPtr());
-    nuxDebugMsg(TEXT("Board GLSL Version: %s"), m_GLSLVersionString.GetTCharPtr());
+    nuxDebugMsg (TEXT ("Board Vendor: %s"), m_BoardVendorString.GetTCharPtr() );
+    nuxDebugMsg (TEXT ("Board Renderer: %s"), m_BoardRendererString.GetTCharPtr() );
+    nuxDebugMsg (TEXT ("Board OpenGL Version: %s"), m_OpenGLVersionString.GetTCharPtr() );
+    nuxDebugMsg (TEXT ("Board GLSL Version: %s"), m_GLSLVersionString.GetTCharPtr() );
 
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &OPENGL_MAX_TEXTURE_UNITS);
-    glGetIntegerv(GL_MAX_TEXTURE_COORDS, &OPENGL_MAX_TEXTURE_COORDS);
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &OPENGL_MAX_TEXTURE_IMAGE_UNITS);
+    glGetIntegerv (GL_MAX_TEXTURE_UNITS, &OPENGL_MAX_TEXTURE_UNITS);
+    glGetIntegerv (GL_MAX_TEXTURE_COORDS, &OPENGL_MAX_TEXTURE_COORDS);
+    glGetIntegerv (GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &OPENGL_MAX_TEXTURE_IMAGE_UNITS);
 
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &OPENGL_MAX_VERTEX_ATTRIBUTES);
+    glGetIntegerv (GL_MAX_VERTEX_ATTRIBS, &OPENGL_MAX_VERTEX_ATTRIBUTES);
 
 //     // ARB shaders
 //     int OPENGL_MAX_VERTEX_ATTRIBS_ARB;
 //     int OPENGL_MAX_PROGRAM_MATRIX_STACK_DEPTH;
-// 
+//
 //     CHECKGL(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS_ARB, &OPENGL_MAX_VERTEX_ATTRIBS_ARB));
 //     CHECKGL(glGetIntegerv(GL_MAX_PROGRAM_MATRIX_STACK_DEPTH_ARB, &OPENGL_MAX_PROGRAM_MATRIX_STACK_DEPTH));
 
@@ -561,36 +568,37 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
 
     OPENGL_MAX_FB_ATTACHMENT = 4;
 
-    NString TempStr = (const TCHAR*)TCharToUpperCase(m_BoardVendorString.GetTCharPtr());
-    if(TempStr.FindFirstOccurence(TEXT("NVIDIA")) != tstring::npos)
+    NString TempStr = (const TCHAR *) TCharToUpperCase (m_BoardVendorString.GetTCharPtr() );
+
+    if (TempStr.FindFirstOccurence (TEXT ("NVIDIA") ) != tstring::npos)
     {
-        m_isNVIDIABoard = true;
-        m_GraphicsBoardVendor = BOARD_NVIDIA;
+      m_isNVIDIABoard = true;
+      m_GraphicsBoardVendor = BOARD_NVIDIA;
     }
-    else if(TempStr.FindFirstOccurence(TEXT("ATI")) != tstring::npos)
+    else if (TempStr.FindFirstOccurence (TEXT ("ATI") ) != tstring::npos)
     {
-        m_isATIBoard = true;
-        m_GraphicsBoardVendor = BOARD_ATI;
+      m_isATIBoard = true;
+      m_GraphicsBoardVendor = BOARD_ATI;
     }
-    else if(TempStr.FindFirstOccurence(TEXT("TUNGSTEN")) != tstring::npos)
+    else if (TempStr.FindFirstOccurence (TEXT ("TUNGSTEN") ) != tstring::npos)
     {
-        m_isINTELBoard = true;
-        m_GraphicsBoardVendor = BOARD_INTEL;
+      m_isINTELBoard = true;
+      m_GraphicsBoardVendor = BOARD_INTEL;
     }
 
-    if(NUX_USE_PBO)
+    if (NUX_USE_PBO)
     {
-        if(isATIBoard())
-            m_UsePixelBufferObject = false;
-        else
-            m_UsePixelBufferObject = true;
+      if (isATIBoard() )
+        m_UsePixelBufferObject = false;
+      else
+        m_UsePixelBufferObject = true;
     }
     else
     {
-        m_UsePixelBufferObject = false;
+      m_UsePixelBufferObject = false;
     }
 
-    m_RenderStates = new GLRenderStates(m_GraphicsBoardVendor);
+    m_RenderStates = new GLRenderStates (m_GraphicsBoardVendor);
 
     OPENGL_VERSION_1_1 = GLEW_VERSION_1_1 ? true : false;
     OPENGL_VERSION_1_2 = GLEW_VERSION_1_2 ? true : false;
@@ -602,26 +610,26 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
     GLSL_VERSION_1_0 = 1;
     GLSL_VERSION_1_1 = 1;
 
-    if(OPENGL_VERSION_2_1 == false)
+    if (OPENGL_VERSION_2_1 == false)
     {
-        //nuxDebugMsg(TEXT("[GLDeviceFactory::GLDeviceFactory] No support for OpenGL 2.1"));
-//         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
+      //nuxDebugMsg(TEXT("[GLDeviceFactory::GLDeviceFactory] No support for OpenGL 2.1"));
+//         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 //             TEXT("No Support for OpenGL 2.1.\nThe program will exit."));
 //         exit(-1);
     }
 
-    if(GLEW_EXT_framebuffer_object == false)
+    if (GLEW_EXT_framebuffer_object == false)
     {
-        nuxDebugMsg(TEXT("[GLDeviceFactory::GLDeviceFactory] No support for Framebuffer Objects."));
-//         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::GLDeviceFactory] No support for Framebuffer Objects.") );
+//         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 //             TEXT("No support for Framebuffer Objects.\nThe program will exit."));
 //         exit(-1);
     }
 
-    if((GLEW_ARB_texture_rectangle == false) && (GLEW_EXT_texture_rectangle == false))
+    if ( (GLEW_ARB_texture_rectangle == false) && (GLEW_EXT_texture_rectangle == false) )
     {
-        nuxDebugMsg(TEXT("[GLDeviceFactory::GLDeviceFactory] No support for rectangle textures."));
-//         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, 
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::GLDeviceFactory] No support for rectangle textures.") );
+//         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 //             TEXT("No support for rectangle textures.\nThe program will exit."));
 //         exit(-1);
     }
@@ -647,7 +655,7 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
     GL_EXT_STENCIL_TWO_SIDE             = GLEW_EXT_stencil_two_side ? true : false;
     GL_EXT_TEXTURE_RECTANGLE            = GLEW_EXT_texture_rectangle ? true : false;
     GL_NV_TEXTURE_RECTANGLE             = GLEW_NV_texture_rectangle ? true : false;
-    
+
     InitTextureFormats();
 
     // See Avoiding 16 Common OpenGL Pitfalls
@@ -655,12 +663,12 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
     // http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall/
     // We use a pack /unpack alignment to 1 so we don't have any padding at the end of row.
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, _PixelStoreAlignment);
-    glPixelStorei(GL_PACK_ALIGNMENT, _PixelStoreAlignment);
+    glPixelStorei (GL_UNPACK_ALIGNMENT, _PixelStoreAlignment);
+    glPixelStorei (GL_PACK_ALIGNMENT, _PixelStoreAlignment);
 
     // Create dummy texture and surface for the default render target.
-    pDefaultRenderTargetTexture = new IOpenGLTexture2D(DeviceWidth, DeviceHeight, 1, DeviceFormat, TRUE);
-    pDefaultRenderTargetSurface = pDefaultRenderTargetTexture->GetSurfaceLevel(0);
+    pDefaultRenderTargetTexture = new IOpenGLTexture2D (DeviceWidth, DeviceHeight, 1, DeviceFormat, TRUE);
+    pDefaultRenderTargetSurface = pDefaultRenderTargetTexture->GetSurfaceLevel (0);
 
     _DeviceWidth = DeviceWidth;
     _DeviceHeight = DeviceHeight;
@@ -670,83 +678,84 @@ GLDeviceFactory::GLDeviceFactory(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFo
     _ViewportWidth = DeviceWidth;
     _ViewportHeight = DeviceHeight;
 
-    for(int i = 0; i < MAX_NUM_STREAM; i++)
+    for (int i = 0; i < MAX_NUM_STREAM; i++)
     {
-        _StreamSource[i].ResetStreamSource();
+      _StreamSource[i].ResetStreamSource();
     }
 
     // Configure NVidia CG
-    #if (NUX_ENABLE_CG_SHADERS)
+#if (NUX_ENABLE_CG_SHADERS)
     {
-        // Create Cg context and set profile.
-        CHECKGL( cgSetErrorCallback( cgErrorCallback ) );
-        m_Cgcontext = cgCreateContext();
-        nuxAssert(m_Cgcontext);
-        //CHECKGL( cgGLEnableProfile( CG_PROFILE_VP40 ) );
-        //CHECKGL( cgGLEnableProfile( CG_PROFILE_FP40 ) );
-        CHECKGL( cgGLSetManageTextureParameters( m_Cgcontext, CG_FALSE ) );
+      // Create Cg context and set profile.
+      CHECKGL ( cgSetErrorCallback ( cgErrorCallback ) );
+      m_Cgcontext = cgCreateContext();
+      nuxAssert (m_Cgcontext);
+      //CHECKGL( cgGLEnableProfile( CG_PROFILE_VP40 ) );
+      //CHECKGL( cgGLEnableProfile( CG_PROFILE_FP40 ) );
+      CHECKGL ( cgGLSetManageTextureParameters ( m_Cgcontext, CG_FALSE ) );
     }
-    #endif
+#endif
 
-    if(GL_EXT_FRAMEBUFFER_OBJECT)
+    if (GL_EXT_FRAMEBUFFER_OBJECT)
     {
-        _FrameBufferObject = CreateFrameBufferObject();
-        _FrameBufferObject->Deactivate();
+      _FrameBufferObject = CreateFrameBufferObject();
+      _FrameBufferObject->Deactivate();
     }
-}
+  }
 
-GLDeviceFactory::~GLDeviceFactory()
-{
+  GLDeviceFactory::~GLDeviceFactory()
+  {
     pDefaultRenderTargetSurface = 0;
     pDefaultRenderTargetTexture = 0;
-    
-    NUX_SAFE_DELETE(m_RenderStates);
-    
+
+    NUX_SAFE_DELETE (m_RenderStates);
+
     _FrameBufferObject = 0;
     _CurrentFrameBufferObject = 0;
     CollectDeviceResource();
 
     // NVidia CG
-    #if (NUX_ENABLE_CG_SHADERS)
-    cgDestroyContext(m_Cgcontext);
-    inlSetThreadLocalStorage(ThreadLocal_GLDeviceFactory, 0);
-    #endif
-}
+#if (NUX_ENABLE_CG_SHADERS)
+    cgDestroyContext (m_Cgcontext);
+    inlSetThreadLocalStorage (ThreadLocal_GLDeviceFactory, 0);
+#endif
+  }
 
-int GLDeviceFactory::CreateTexture(
+  int GLDeviceFactory::CreateTexture (
     t_u32 Width
     , t_u32 Height
     , t_u32 Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
     //, D3DPOOL Pool       // no use
-    , IOpenGLTexture2D** ppTexture
+    , IOpenGLTexture2D **ppTexture
     //, HANDLE* pSharedHandle       // no use
-    )
-{
+  )
+  {
 // From : http://oss.sgi.com/projects/ogl-sample/registry/ARB/texture_non_power_of_two.txt
 //    The "floor" convention has a relatively straightforward way to
 //        evaluate (with integer math) means to determine how many mipmap
 //        levels are required for a complete pyramid:
 //    numLevels = 1 + floor(log2(max(w, h, d)))
-    t_u32 NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
+    t_u32 NumTotalMipLevel    = 1 + floorf (Log2 (Max (Width, Height) ) );
 
 //    Levels
-//        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels 
-//        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the 
-//        number of levels generated. 
+//        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
+//        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
+//        number of levels generated.
     t_u32 NumMipLevel = 0;
-    if(Levels == 0)
+
+    if (Levels == 0)
     {
-        NumMipLevel = NumTotalMipLevel;
+      NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > NumTotalMipLevel)
+    else if (Levels > NumTotalMipLevel)
     {
-        NumMipLevel = NumTotalMipLevel;
+      NumMipLevel = NumTotalMipLevel;
     }
     else
     {
-        NumMipLevel = Levels;
+      NumMipLevel = Levels;
     }
 
 
@@ -759,47 +768,49 @@ int GLDeviceFactory::CreateTexture(
 //        is the dimension of level N+1.  The recursion stops when level
 //        numLevels-1 is reached.
 
-    *ppTexture = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat);
+    *ppTexture = new IOpenGLTexture2D (Width, Height, NumMipLevel, PixelFormat);
 
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLTexture2D> >(*ppTexture, &_CachedTextureList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLTexture2D> > (*ppTexture, &_CachedTextureList);
+
     return 1;
-}
+  }
 
-int GLDeviceFactory::CreateRectangleTexture(
-                                   t_u32 Width
-                                   , t_u32 Height
-                                   , t_u32 Levels
-                                   //, DWORD Usage    // no use
-                                   , BitmapFormat PixelFormat
-                                   //, D3DPOOL Pool       // no use
-                                   , IOpenGLRectangleTexture** ppTexture
-                                   //, HANDLE* pSharedHandle       // no use
-                                   )
-{
+  int GLDeviceFactory::CreateRectangleTexture (
+    t_u32 Width
+    , t_u32 Height
+    , t_u32 Levels
+    //, DWORD Usage    // no use
+    , BitmapFormat PixelFormat
+    //, D3DPOOL Pool       // no use
+    , IOpenGLRectangleTexture **ppTexture
+    //, HANDLE* pSharedHandle       // no use
+  )
+  {
 
     // From : http://oss.sgi.com/projects/ogl-sample/registry/ARB/texture_non_power_of_two.txt
     //    The "floor" convention has a relatively straightforward way to
     //        evaluate (with integer math) means to determine how many mipmap
     //        levels are required for a complete pyramid:
     //    numLevels = 1 + floor(log2(max(w, h, d)))
-    t_u32 NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
+    t_u32 NumTotalMipLevel    = 1 + floorf (Log2 (Max (Width, Height) ) );
 
     //    Levels
-    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels 
-    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the 
-    //        number of levels generated. 
+    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
+    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
+    //        number of levels generated.
     t_u32 NumMipLevel = 0;
-    if(Levels == 0)
+
+    if (Levels == 0)
     {
-        NumMipLevel = NumTotalMipLevel;
+      NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > NumTotalMipLevel)
+    else if (Levels > NumTotalMipLevel)
     {
-        NumMipLevel = NumTotalMipLevel;
+      NumMipLevel = NumTotalMipLevel;
     }
     else
     {
-        NumMipLevel = Levels;
+      NumMipLevel = Levels;
     }
 
 
@@ -812,49 +823,52 @@ int GLDeviceFactory::CreateRectangleTexture(
     //        is the dimension of level N+1.  The recursion stops when level
     //        numLevels-1 is reached.
 
-    *ppTexture = new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat);
+    *ppTexture = new IOpenGLRectangleTexture (Width, Height, NumMipLevel, PixelFormat);
 
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLRectangleTexture> >(*ppTexture, &_CachedTextureRectangleList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLRectangleTexture> > (*ppTexture, &_CachedTextureRectangleList);
+
     return 1;
-}
+  }
 
 
-int GLDeviceFactory::CreateCubeTexture(
+  int GLDeviceFactory::CreateCubeTexture (
     t_u32 EdgeLength
     , t_u32 Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
     //, D3DPOOL Pool    // no use
-    , IOpenGLCubeTexture ** ppCubeTexture
+    , IOpenGLCubeTexture **ppCubeTexture
     //, HANDLE* pSharedHandle    // no use
-    )
-{
-    t_u32 NumTotalMipLevel    = 1 + floorf(Log2(EdgeLength));
+  )
+  {
+    t_u32 NumTotalMipLevel    = 1 + floorf (Log2 (EdgeLength) );
     //    Levels
-    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels 
-    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the 
-    //        number of levels generated. 
+    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
+    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
+    //        number of levels generated.
     t_u32 NumMipLevel = 0;
-    if(Levels == 0)
+
+    if (Levels == 0)
     {
-        NumMipLevel = NumTotalMipLevel;
+      NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > NumTotalMipLevel)
+    else if (Levels > NumTotalMipLevel)
     {
-        NumMipLevel = NumTotalMipLevel;
+      NumMipLevel = NumTotalMipLevel;
     }
     else
     {
-        NumMipLevel = Levels;
+      NumMipLevel = Levels;
     }
 
-    *ppCubeTexture = new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat);
+    *ppCubeTexture = new IOpenGLCubeTexture (EdgeLength, NumMipLevel, PixelFormat);
 
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLCubeTexture> >(*ppCubeTexture, &_CachedCubeTextureList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLCubeTexture> > (*ppCubeTexture, &_CachedCubeTextureList);
+
     return 1;
-}
+  }
 
-int GLDeviceFactory::CreateVolumeTexture(
+  int GLDeviceFactory::CreateVolumeTexture (
     t_u32 Width
     , t_u32 Height
     , t_u32 Depth
@@ -862,290 +876,327 @@ int GLDeviceFactory::CreateVolumeTexture(
     //, DWORD Usage        // no use
     , BitmapFormat PixelFormat
     //, D3DPOOL Pool       // no use
-    , IOpenGLVolumeTexture** ppVolumeTexture
+    , IOpenGLVolumeTexture **ppVolumeTexture
     //, HANDLE* pSharedHandle       // no use
-    )
-{
-    t_u32 NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
+  )
+  {
+    t_u32 NumTotalMipLevel = 1 + floorf (Log2 (Max (Max (Width, Height), Depth) ) );
     //    Levels
-    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels 
-    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the 
-    //        number of levels generated. 
+    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
+    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
+    //        number of levels generated.
     t_u32 NumMipLevel = 0;
-    if(Levels == 0)
+
+    if (Levels == 0)
     {
-        NumMipLevel = NumTotalMipLevel;
+      NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > NumTotalMipLevel)
+    else if (Levels > NumTotalMipLevel)
     {
-        NumMipLevel = NumTotalMipLevel;
+      NumMipLevel = NumTotalMipLevel;
     }
     else
     {
-        NumMipLevel = Levels;
+      NumMipLevel = Levels;
     }
 
-    *ppVolumeTexture = new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat);
+    *ppVolumeTexture = new IOpenGLVolumeTexture (Width, Height, Depth, NumMipLevel, PixelFormat);
 
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLVolumeTexture> >(*ppVolumeTexture, &_CachedVolumeTextureList);
-    return OGL_OK;
-}
-
-int GLDeviceFactory::CreateAnimatedTexture(t_u32 Width,
-                                           t_u32 Height,
-                                           t_u32 Depth,
-                                           BitmapFormat PixelFormat,
-                                           IOpenGLAnimatedTexture** ppAnimatedTexture)
-{
-    *ppAnimatedTexture = new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat);
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAnimatedTexture> >(*ppAnimatedTexture, &_CachedAnimatedTextureList);
-    return OGL_OK;
-}
-
-int GLDeviceFactory::CreateQuery(QUERY_TYPE Type, IOpenGLQuery** ppQuery)
-{
-    *ppQuery = new IOpenGLQuery(Type);
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLQuery> >(*ppQuery, &_CachedQueryList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLVolumeTexture> > (*ppVolumeTexture, &_CachedVolumeTextureList);
 
     return OGL_OK;
-}
+  }
 
-int GLDeviceFactory::CreateFrameBufferObject(IOpenGLFrameBufferObject** ppFrameBufferObject)
-{
+  int GLDeviceFactory::CreateAnimatedTexture (t_u32 Width,
+      t_u32 Height,
+      t_u32 Depth,
+      BitmapFormat PixelFormat,
+      IOpenGLAnimatedTexture **ppAnimatedTexture)
+  {
+    *ppAnimatedTexture = new IOpenGLAnimatedTexture (Width, Height, Depth, PixelFormat);
+
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAnimatedTexture> > (*ppAnimatedTexture, &_CachedAnimatedTextureList);
+
+    return OGL_OK;
+  }
+
+  int GLDeviceFactory::CreateQuery (QUERY_TYPE Type, IOpenGLQuery **ppQuery)
+  {
+    *ppQuery = new IOpenGLQuery (Type);
+
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLQuery> > (*ppQuery, &_CachedQueryList);
+
+    return OGL_OK;
+  }
+
+  int GLDeviceFactory::CreateFrameBufferObject (IOpenGLFrameBufferObject **ppFrameBufferObject)
+  {
     *ppFrameBufferObject = new IOpenGLFrameBufferObject();
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLFrameBufferObject> >(*ppFrameBufferObject, &_CachedFrameBufferList);
-    return OGL_OK;
-}
 
-int GLDeviceFactory::CreateShaderProgram(IOpenGLShaderProgram** ppShaderProgram)
-{
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLFrameBufferObject> > (*ppFrameBufferObject, &_CachedFrameBufferList);
+
+    return OGL_OK;
+  }
+
+  int GLDeviceFactory::CreateShaderProgram (IOpenGLShaderProgram **ppShaderProgram)
+  {
     *ppShaderProgram = new IOpenGLShaderProgram();
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLShaderProgram> >(*ppShaderProgram, &_CachedShaderProgramList);
-    return OGL_OK;
-}
 
-int GLDeviceFactory::CreateVertexShader(IOpenGLVertexShader** ppVertexShader)
-{
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLShaderProgram> > (*ppShaderProgram, &_CachedShaderProgramList);
+
+    return OGL_OK;
+  }
+
+  int GLDeviceFactory::CreateVertexShader (IOpenGLVertexShader **ppVertexShader)
+  {
     *ppVertexShader = new IOpenGLVertexShader();
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLVertexShader> >(*ppVertexShader, &_CachedVertexShaderList);
-    return OGL_OK;
-}
 
-int GLDeviceFactory::CreatePixelShader(IOpenGLPixelShader** ppPixelShader)
-{
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLVertexShader> > (*ppVertexShader, &_CachedVertexShaderList);
+
+    return OGL_OK;
+  }
+
+  int GLDeviceFactory::CreatePixelShader (IOpenGLPixelShader **ppPixelShader)
+  {
     *ppPixelShader = new IOpenGLPixelShader();
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLPixelShader> >(*ppPixelShader, &_CachedPixelShaderList);
-    return OGL_OK;
-}
 
-int GLDeviceFactory::CreateAsmShaderProgram(IOpenGLAsmShaderProgram** ppAsmShaderProgram)
-{
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLPixelShader> > (*ppPixelShader, &_CachedPixelShaderList);
+
+    return OGL_OK;
+  }
+
+  int GLDeviceFactory::CreateAsmShaderProgram (IOpenGLAsmShaderProgram **ppAsmShaderProgram)
+  {
     *ppAsmShaderProgram = new IOpenGLAsmShaderProgram();
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAsmShaderProgram> >(*ppAsmShaderProgram, &_CachedAsmShaderProgramList);
-    return OGL_OK;
-}
 
-int GLDeviceFactory::CreateAsmVertexShader(IOpenGLAsmVertexShader** ppAsmVertexShader)
-{
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAsmShaderProgram> > (*ppAsmShaderProgram, &_CachedAsmShaderProgramList);
+
+    return OGL_OK;
+  }
+
+  int GLDeviceFactory::CreateAsmVertexShader (IOpenGLAsmVertexShader **ppAsmVertexShader)
+  {
     *ppAsmVertexShader = new IOpenGLAsmVertexShader();
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAsmVertexShader> >(*ppAsmVertexShader, &_CachedAsmVertexShaderList);
-    return OGL_OK;
-}
 
-int GLDeviceFactory::CreateAsmPixelShader(IOpenGLAsmPixelShader** ppAsmPixelShader)
-{
-    *ppAsmPixelShader = new IOpenGLAsmPixelShader();
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAsmPixelShader> >(*ppAsmPixelShader, &_CachedAsmPixelShaderList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAsmVertexShader> > (*ppAsmVertexShader, &_CachedAsmVertexShaderList);
+
     return OGL_OK;
-}
+  }
+
+  int GLDeviceFactory::CreateAsmPixelShader (IOpenGLAsmPixelShader **ppAsmPixelShader)
+  {
+    *ppAsmPixelShader = new IOpenGLAsmPixelShader();
+
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAsmPixelShader> > (*ppAsmPixelShader, &_CachedAsmPixelShaderList);
+
+    return OGL_OK;
+  }
 
 #if (NUX_ENABLE_CG_SHADERS)
-int GLDeviceFactory::CreateCGVertexShader(ICgVertexShader** ppCgVertexShader)
-{
+  int GLDeviceFactory::CreateCGVertexShader (ICgVertexShader **ppCgVertexShader)
+  {
     *ppCgVertexShader = new ICgVertexShader();
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<ICgVertexShader> >(*ppCgVertexShader, &_CachedCGVertexShaderList);
-    return OGL_OK;
-}
 
-int GLDeviceFactory::CreateCGPixelShader(ICgPixelShader** ppCgPixelShader)
-{
-    *ppCgPixelShader = new ICgPixelShader();
-    if(MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<ICgPixelShader> >(*ppCgPixelShader, &_CachedCGPixelShaderList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<ICgVertexShader> > (*ppCgVertexShader, &_CachedCGVertexShaderList);
+
     return OGL_OK;
-}
+  }
+
+  int GLDeviceFactory::CreateCGPixelShader (ICgPixelShader **ppCgPixelShader)
+  {
+    *ppCgPixelShader = new ICgPixelShader();
+
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<ICgPixelShader> > (*ppCgPixelShader, &_CachedCGPixelShaderList);
+
+    return OGL_OK;
+  }
 #endif
 
-void GLDeviceFactory::CollectDeviceResource()
-{
+  void GLDeviceFactory::CollectDeviceResource()
+  {
     TDeviceResourceList< TRefGL<IOpenGLVertexBuffer> >* pTempVertexBuffer = _CachedVertexBufferList;
-    while(pTempVertexBuffer)
+
+    while (pTempVertexBuffer)
     {
-        if(pTempVertexBuffer->_DeviceResource->RefCount() == 1)
-        {
-            pTempVertexBuffer->_DeviceResource = 0;
-            pTempVertexBuffer = pTempVertexBuffer->_next;
-        }
-        else
-            pTempVertexBuffer = pTempVertexBuffer->_next;
+      if (pTempVertexBuffer->_DeviceResource->RefCount() == 1)
+      {
+        pTempVertexBuffer->_DeviceResource = 0;
+        pTempVertexBuffer = pTempVertexBuffer->_next;
+      }
+      else
+        pTempVertexBuffer = pTempVertexBuffer->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLIndexBuffer> >* pTempIndexBuffer = _CachedIndexBufferList;
-    while(pTempIndexBuffer)
+
+    while (pTempIndexBuffer)
     {
-        if(pTempIndexBuffer->_DeviceResource->RefCount() == 1)
-        {
-            pTempIndexBuffer->_DeviceResource = 0;
-            pTempIndexBuffer = pTempIndexBuffer->_next;
-        }
-        else
-            pTempIndexBuffer = pTempIndexBuffer->_next;
+      if (pTempIndexBuffer->_DeviceResource->RefCount() == 1)
+      {
+        pTempIndexBuffer->_DeviceResource = 0;
+        pTempIndexBuffer = pTempIndexBuffer->_next;
+      }
+      else
+        pTempIndexBuffer = pTempIndexBuffer->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLVertexDeclaration> >* pTempVertexDeclaration = _CachedVertexDeclarationList;
-    while(pTempVertexDeclaration)
+
+    while (pTempVertexDeclaration)
     {
-        if(pTempVertexDeclaration->_DeviceResource->RefCount() == 1)
-        {
-            pTempVertexDeclaration->_DeviceResource = 0;
-            pTempVertexDeclaration = pTempVertexDeclaration->_next;
-        }
-        else
-            pTempVertexDeclaration = pTempVertexDeclaration->_next;
+      if (pTempVertexDeclaration->_DeviceResource->RefCount() == 1)
+      {
+        pTempVertexDeclaration->_DeviceResource = 0;
+        pTempVertexDeclaration = pTempVertexDeclaration->_next;
+      }
+      else
+        pTempVertexDeclaration = pTempVertexDeclaration->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLTexture2D> >* pTempTexture2D = _CachedTextureList;
-    while(pTempTexture2D)
+
+    while (pTempTexture2D)
     {
-        if(pTempTexture2D->_DeviceResource->RefCount() == 1)
-        {
-            pTempTexture2D->_DeviceResource = 0;
-            pTempTexture2D = pTempTexture2D->_next;
-        }
-        else
-            pTempTexture2D = pTempTexture2D->_next;
+      if (pTempTexture2D->_DeviceResource->RefCount() == 1)
+      {
+        pTempTexture2D->_DeviceResource = 0;
+        pTempTexture2D = pTempTexture2D->_next;
+      }
+      else
+        pTempTexture2D = pTempTexture2D->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLCubeTexture> >* pTempCubeTexture = _CachedCubeTextureList;
-    while(pTempCubeTexture)
+
+    while (pTempCubeTexture)
     {
-        if(pTempCubeTexture->_DeviceResource->RefCount() == 1)
-        {
-            pTempCubeTexture->_DeviceResource = 0;
-            pTempCubeTexture = pTempCubeTexture->_next;
-        }
-        else
-            pTempCubeTexture = pTempCubeTexture->_next;
+      if (pTempCubeTexture->_DeviceResource->RefCount() == 1)
+      {
+        pTempCubeTexture->_DeviceResource = 0;
+        pTempCubeTexture = pTempCubeTexture->_next;
+      }
+      else
+        pTempCubeTexture = pTempCubeTexture->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLVolumeTexture> >* pTempVolumeTexture = _CachedVolumeTextureList;
-    while(pTempVolumeTexture)
+
+    while (pTempVolumeTexture)
     {
-        if(pTempVolumeTexture->_DeviceResource->RefCount() == 1)
-        {
-            pTempVolumeTexture->_DeviceResource = 0;
-            pTempVolumeTexture = pTempVolumeTexture->_next;
-        }
-        else
-            pTempVolumeTexture = pTempVolumeTexture->_next;
+      if (pTempVolumeTexture->_DeviceResource->RefCount() == 1)
+      {
+        pTempVolumeTexture->_DeviceResource = 0;
+        pTempVolumeTexture = pTempVolumeTexture->_next;
+      }
+      else
+        pTempVolumeTexture = pTempVolumeTexture->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLAnimatedTexture> >* pTempAnimatedTexture = _CachedAnimatedTextureList;
-    while(pTempAnimatedTexture)
+
+    while (pTempAnimatedTexture)
     {
-        if(pTempAnimatedTexture->_DeviceResource->RefCount() == 1)
-        {
-            pTempAnimatedTexture->_DeviceResource = 0;
-            pTempAnimatedTexture = pTempAnimatedTexture->_next;
-        }
-        else
-            pTempAnimatedTexture = pTempAnimatedTexture->_next;
+      if (pTempAnimatedTexture->_DeviceResource->RefCount() == 1)
+      {
+        pTempAnimatedTexture->_DeviceResource = 0;
+        pTempAnimatedTexture = pTempAnimatedTexture->_next;
+      }
+      else
+        pTempAnimatedTexture = pTempAnimatedTexture->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLFrameBufferObject> >* pTempFrameBufferObject = _CachedFrameBufferList;
-    while(pTempFrameBufferObject)
+
+    while (pTempFrameBufferObject)
     {
-        if(pTempFrameBufferObject->_DeviceResource->RefCount() == 1)
-        {
-            pTempFrameBufferObject->_DeviceResource = 0;
-            pTempFrameBufferObject = pTempFrameBufferObject->_next;
-        }
-        else
-            pTempFrameBufferObject = pTempFrameBufferObject->_next;
+      if (pTempFrameBufferObject->_DeviceResource->RefCount() == 1)
+      {
+        pTempFrameBufferObject->_DeviceResource = 0;
+        pTempFrameBufferObject = pTempFrameBufferObject->_next;
+      }
+      else
+        pTempFrameBufferObject = pTempFrameBufferObject->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLQuery> >* pTempQuery = _CachedQueryList;
-    while(pTempQuery)
+
+    while (pTempQuery)
     {
-        if(pTempQuery->_DeviceResource->RefCount() == 1)
-        {
-            pTempQuery->_DeviceResource = 0;
-            pTempQuery = pTempQuery->_next;
-        }
-        else
-            pTempQuery = pTempQuery->_next;
+      if (pTempQuery->_DeviceResource->RefCount() == 1)
+      {
+        pTempQuery->_DeviceResource = 0;
+        pTempQuery = pTempQuery->_next;
+      }
+      else
+        pTempQuery = pTempQuery->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLVertexShader> >* pTempVertexShader = _CachedVertexShaderList;
-    while(pTempVertexShader)
+
+    while (pTempVertexShader)
     {
-        if(pTempVertexShader->_DeviceResource->RefCount() == 1)
-        {
-            pTempVertexShader->_DeviceResource = 0;
-            pTempVertexShader = pTempVertexShader->_next;
-        }
-        else
-            pTempVertexShader = pTempVertexShader->_next;
+      if (pTempVertexShader->_DeviceResource->RefCount() == 1)
+      {
+        pTempVertexShader->_DeviceResource = 0;
+        pTempVertexShader = pTempVertexShader->_next;
+      }
+      else
+        pTempVertexShader = pTempVertexShader->_next;
     }
 
     TDeviceResourceList< TRefGL<IOpenGLPixelShader> >* pTempPixelShader = _CachedPixelShaderList;
-    while(pTempPixelShader)
+
+    while (pTempPixelShader)
     {
-        if(pTempPixelShader->_DeviceResource->RefCount() == 1)
-        {
-            pTempPixelShader->_DeviceResource = 0;
-            pTempPixelShader = pTempPixelShader->_next;
-        }
-        else
-            pTempPixelShader = pTempPixelShader->_next;
+      if (pTempPixelShader->_DeviceResource->RefCount() == 1)
+      {
+        pTempPixelShader->_DeviceResource = 0;
+        pTempPixelShader = pTempPixelShader->_next;
+      }
+      else
+        pTempPixelShader = pTempPixelShader->_next;
     }
 
-    #if (NUX_ENABLE_CG_SHADERS)
+#if (NUX_ENABLE_CG_SHADERS)
     TDeviceResourceList< TRefGL<ICgVertexShader> >* pTempCgVertexShader = _CachedCGVertexShaderList;
-    while(pTempCgVertexShader)
+
+    while (pTempCgVertexShader)
     {
-        if(pTempCgVertexShader->_DeviceResource->RefCount() == 1)
-        {
-            pTempCgVertexShader->_DeviceResource = 0;
-            pTempCgVertexShader = pTempCgVertexShader->_next;
-        }
-        else
-            pTempCgVertexShader = pTempCgVertexShader->_next;
+      if (pTempCgVertexShader->_DeviceResource->RefCount() == 1)
+      {
+        pTempCgVertexShader->_DeviceResource = 0;
+        pTempCgVertexShader = pTempCgVertexShader->_next;
+      }
+      else
+        pTempCgVertexShader = pTempCgVertexShader->_next;
     }
 
     TDeviceResourceList< TRefGL<ICgPixelShader> >* pTempCgPixelShader = _CachedCGPixelShaderList;
-    while(pTempCgPixelShader)
-    {
-        if(pTempCgPixelShader->_DeviceResource->RefCount() == 1)
-        {
-            pTempCgPixelShader->_DeviceResource = 0;
-            pTempCgPixelShader = pTempCgPixelShader->_next;
-        }
-        else
-            pTempCgPixelShader = pTempCgPixelShader->_next;
-    }
-    #endif
-}
 
-void GLDeviceFactory::InvalidateTextureUnit(int TextureUnitIndex)
-{
-    CHECKGL(glActiveTextureARB(TextureUnitIndex) );
-    
-    CHECKGL(glBindTexture(GL_TEXTURE_1D, 0));
-    CHECKGL(glBindTexture(GL_TEXTURE_2D, 0));
-    CHECKGL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
-    CHECKGL(glBindTexture(GL_TEXTURE_3D, 0));
-    CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0));
-    
+    while (pTempCgPixelShader)
+    {
+      if (pTempCgPixelShader->_DeviceResource->RefCount() == 1)
+      {
+        pTempCgPixelShader->_DeviceResource = 0;
+        pTempCgPixelShader = pTempCgPixelShader->_next;
+      }
+      else
+        pTempCgPixelShader = pTempCgPixelShader->_next;
+    }
+
+#endif
+  }
+
+  void GLDeviceFactory::InvalidateTextureUnit (int TextureUnitIndex)
+  {
+    CHECKGL (glActiveTextureARB (TextureUnitIndex) );
+
+    CHECKGL (glBindTexture (GL_TEXTURE_1D, 0) );
+    CHECKGL (glBindTexture (GL_TEXTURE_2D, 0) );
+    CHECKGL (glBindTexture (GL_TEXTURE_CUBE_MAP, 0) );
+    CHECKGL (glBindTexture (GL_TEXTURE_3D, 0) );
+    CHECKGL (glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0) );
+
     // From lowest priority to highest priority:
     //      GL_TEXTURE_1D,
     //      GL_TEXTURE_2D,
@@ -1153,42 +1204,46 @@ void GLDeviceFactory::InvalidateTextureUnit(int TextureUnitIndex)
     //      GL_TEXTURE_3D,
     //      GL_TEXTURE_CUBE_MAP.
 
-    CHECKGL(glDisable(GL_TEXTURE_1D) );
-    CHECKGL(glDisable(GL_TEXTURE_2D) );
-    CHECKGL(glDisable(GL_TEXTURE_RECTANGLE_ARB) );
-    CHECKGL(glDisable(GL_TEXTURE_3D) );
-    CHECKGL(glDisable(GL_TEXTURE_CUBE_MAP) );
-}
+    CHECKGL (glDisable (GL_TEXTURE_1D) );
+    CHECKGL (glDisable (GL_TEXTURE_2D) );
+    CHECKGL (glDisable (GL_TEXTURE_RECTANGLE_ARB) );
+    CHECKGL (glDisable (GL_TEXTURE_3D) );
+    CHECKGL (glDisable (GL_TEXTURE_CUBE_MAP) );
+  }
 
-int GLDeviceFactory::AllocateUnpackPixelBufferIndex(int* index)
-{
-    t_u32 num = (t_u32)_PixelBufferArray.size();
-    for(t_u32 i = 0; i< num; i++)
+  int GLDeviceFactory::AllocateUnpackPixelBufferIndex (int *index)
+  {
+    t_u32 num = (t_u32) _PixelBufferArray.size();
+
+    for (t_u32 i = 0; i < num; i++)
     {
-        if(_PixelBufferArray[i].IsReserved == FALSE)
-        {
-            _PixelBufferArray[i].IsReserved = TRUE;
-            *index = i;
-            return OGL_OK;
-        }
+      if (_PixelBufferArray[i].IsReserved == FALSE)
+      {
+        _PixelBufferArray[i].IsReserved = TRUE;
+        *index = i;
+        return OGL_OK;
+      }
     }
+
     // Not enough free pbo
     PixelBufferObject pbo;
-    pbo.PBO = CreatePixelBufferObject(4, (VBO_USAGE)GL_STATIC_DRAW);
+    pbo.PBO = CreatePixelBufferObject (4, (VBO_USAGE) GL_STATIC_DRAW);
     pbo.IsReserved = TRUE;
-    _PixelBufferArray.push_back(pbo);
-    *index = (int)_PixelBufferArray.size() - 1;
+    _PixelBufferArray.push_back (pbo);
+    *index = (int) _PixelBufferArray.size() - 1;
     return OGL_OK;
-}
+  }
 
-int GLDeviceFactory::FreeUnpackPixelBufferIndex(const int index)
-{
-    t_s32 num = (t_s32)_PixelBufferArray.size();
-    nuxAssertMsg((index >= 0) && (index < num), TEXT("[GLDeviceFactory::FreeUnpackPixelBufferIndex] Trying to Free a pixel buffer index that does not exist."));
-    if((index < 0) || (index >= num))
+  int GLDeviceFactory::FreeUnpackPixelBufferIndex (const int index)
+  {
+    t_s32 num = (t_s32) _PixelBufferArray.size();
+    nuxAssertMsg ( (index >= 0) && (index < num), TEXT ("[GLDeviceFactory::FreeUnpackPixelBufferIndex] Trying to Free a pixel buffer index that does not exist.") );
+
+    if ( (index < 0) || (index >= num) )
     {
-        return OGL_ERROR;
+      return OGL_ERROR;
     }
+
     _PixelBufferArray[index].IsReserved = false;
 
 // //     if(0)
@@ -1198,183 +1253,219 @@ int GLDeviceFactory::FreeUnpackPixelBufferIndex(const int index)
 // //         CHECKGL( glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, 4*4, NULL, GL_STREAM_DRAW_ARB) );
 // //     }
     return OGL_OK;
-}
+  }
 
-void* GLDeviceFactory::LockUnpackPixelBufferIndex(const int index, int Size)
-{
-    GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex(index);
-    CHECKGL( glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
-    void* pBits = glMapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
-    CHECKGL_MSG(glMapBufferARB );
-    CHECKGL( glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
+  void *GLDeviceFactory::LockUnpackPixelBufferIndex (const int index, int Size)
+  {
+    GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex (index);
+    CHECKGL ( glBufferDataARB (GL_PIXEL_UNPACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
+    void *pBits = glMapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
+    CHECKGL_MSG (glMapBufferARB );
+    CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
     return pBits;
-}
+  }
 
-void* GLDeviceFactory::LockPackPixelBufferIndex(const int index, int Size)
-{
-    GetThreadGLDeviceFactory()->BindPackPixelBufferIndex(index);
-    CHECKGL( glBufferDataARB(GL_PIXEL_PACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
-    void* pBits = glMapBufferARB(GL_PIXEL_PACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
-    CHECKGL_MSG(glMapBufferARB );
-    CHECKGL( glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, 0) );
+  void *GLDeviceFactory::LockPackPixelBufferIndex (const int index, int Size)
+  {
+    GetThreadGLDeviceFactory()->BindPackPixelBufferIndex (index);
+    CHECKGL ( glBufferDataARB (GL_PIXEL_PACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
+    void *pBits = glMapBufferARB (GL_PIXEL_PACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
+    CHECKGL_MSG (glMapBufferARB );
+    CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
     return pBits;
-}
+  }
 
-void GLDeviceFactory::UnlockUnpackPixelBufferIndex(const int index)
-{
-    GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex(index);
-    CHECKGL( glUnmapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB) );
-    CHECKGL( glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, 0) );
-}
+  void GLDeviceFactory::UnlockUnpackPixelBufferIndex (const int index)
+  {
+    GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex (index);
+    CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
+    CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
+  }
 
-void GLDeviceFactory::UnlockPackPixelBufferIndex(const int index)
-{
-    GetThreadGLDeviceFactory()->BindPackPixelBufferIndex(index);
-    CHECKGL( glUnmapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB) );
-    CHECKGL( glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, 0) );
-}
+  void GLDeviceFactory::UnlockPackPixelBufferIndex (const int index)
+  {
+    GetThreadGLDeviceFactory()->BindPackPixelBufferIndex (index);
+    CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
+    CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
+  }
 
-int GLDeviceFactory::BindUnpackPixelBufferIndex(const int index)
-{
-    t_s32 num = (t_s32)_PixelBufferArray.size();
-    nuxAssertMsg((index >= 0) && (index < num), TEXT("[GLDeviceFactory::BindUnpackPixelBufferIndex] Trying to bind an invalid pixel buffer index."));
-    if((index < 0) || (index >= num))
+  int GLDeviceFactory::BindUnpackPixelBufferIndex (const int index)
+  {
+    t_s32 num = (t_s32) _PixelBufferArray.size();
+    nuxAssertMsg ( (index >= 0) && (index < num), TEXT ("[GLDeviceFactory::BindUnpackPixelBufferIndex] Trying to bind an invalid pixel buffer index.") );
+
+    if ( (index < 0) || (index >= num) )
     {
-        return OGL_ERROR;
+      return OGL_ERROR;
     }
 
-    nuxAssertMsg(_PixelBufferArray[index].IsReserved == true, TEXT("[GLDeviceFactory::BindUnpackPixelBufferIndex] Trying to reserved pixel buffer index."));
-    if(_PixelBufferArray[index].IsReserved == false)
+    nuxAssertMsg (_PixelBufferArray[index].IsReserved == true, TEXT ("[GLDeviceFactory::BindUnpackPixelBufferIndex] Trying to reserved pixel buffer index.") );
+
+    if (_PixelBufferArray[index].IsReserved == false)
     {
-        return OGL_ERROR;
+      return OGL_ERROR;
     }
+
     _PixelBufferArray[index].PBO->BindUnpackPixelBufferObject();
     return OGL_OK;
-}
+  }
 
-int GLDeviceFactory::BindPackPixelBufferIndex(const int index)
-{
-    t_s32 num = (t_s32)_PixelBufferArray.size();
-    nuxAssertMsg((index >= 0) && (index < num), TEXT("[GLDeviceFactory::BindPackPixelBufferIndex] Trying to bind an invalid pixel buffer index."));
-    if((index < 0) || (index >= num))
+  int GLDeviceFactory::BindPackPixelBufferIndex (const int index)
+  {
+    t_s32 num = (t_s32) _PixelBufferArray.size();
+    nuxAssertMsg ( (index >= 0) && (index < num), TEXT ("[GLDeviceFactory::BindPackPixelBufferIndex] Trying to bind an invalid pixel buffer index.") );
+
+    if ( (index < 0) || (index >= num) )
     {
-        return OGL_ERROR;
+      return OGL_ERROR;
     }
 
-    nuxAssertMsg(_PixelBufferArray[index].IsReserved == true, TEXT("[GLDeviceFactory::BindPackPixelBufferIndex] Trying to reserved pixel buffer index."));
-    if(_PixelBufferArray[index].IsReserved == false)
+    nuxAssertMsg (_PixelBufferArray[index].IsReserved == true, TEXT ("[GLDeviceFactory::BindPackPixelBufferIndex] Trying to reserved pixel buffer index.") );
+
+    if (_PixelBufferArray[index].IsReserved == false)
     {
-        return OGL_ERROR;
+      return OGL_ERROR;
     }
+
     _PixelBufferArray[index].PBO->BindPackPixelBufferObject();
     return OGL_OK;
-}
+  }
 
-int GLDeviceFactory::FormatFrameBufferObject(t_u32 Width, t_u32 Height, BitmapFormat PixelFormat)
-{
-    if(!GL_EXT_FRAMEBUFFER_OBJECT)
-    {nuxDebugMsg(TEXT("[GLDeviceFactory::FormatFrameBufferObject] No support for OpenGL framebuffer extension.")); return 0;}
-    return _FrameBufferObject->FormatFrameBufferObject(Width, Height, PixelFormat);
-}
+  int GLDeviceFactory::FormatFrameBufferObject (t_u32 Width, t_u32 Height, BitmapFormat PixelFormat)
+  {
+    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    {
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::FormatFrameBufferObject] No support for OpenGL framebuffer extension.") );
+      return 0;
+    }
 
-int GLDeviceFactory::SetColorRenderTargetSurface(t_u32 ColorAttachmentIndex, TRefGL<IOpenGLSurface> pRenderTargetSurface)
-{
-    if(!GL_EXT_FRAMEBUFFER_OBJECT)
-    {nuxDebugMsg(TEXT("[GLDeviceFactory::SetColorRenderTargetSurface] No support for OpenGL framebuffer extension.")); return 0;}
-    return _FrameBufferObject->SetRenderTarget(ColorAttachmentIndex, pRenderTargetSurface);
-}
+    return _FrameBufferObject->FormatFrameBufferObject (Width, Height, PixelFormat);
+  }
 
-int GLDeviceFactory::SetDepthRenderTargetSurface(TRefGL<IOpenGLSurface> pDepthSurface)
-{
-    if(!GL_EXT_FRAMEBUFFER_OBJECT)
-    {nuxDebugMsg(TEXT("[GLDeviceFactory::SetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.")); return 0;}
-    return _FrameBufferObject->SetDepthSurface(pDepthSurface);
-}
+  int GLDeviceFactory::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, TRefGL<IOpenGLSurface> pRenderTargetSurface)
+  {
+    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    {
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::SetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      return 0;
+    }
 
-TRefGL<IOpenGLSurface> GLDeviceFactory::GetColorRenderTargetSurface(t_u32 ColorAttachmentIndex)
-{
-    if(!GL_EXT_FRAMEBUFFER_OBJECT)
-    {nuxDebugMsg(TEXT("[GLDeviceFactory::GetColorRenderTargetSurface] No support for OpenGL framebuffer extension.")); return 0;}
-    return _FrameBufferObject->GetRenderTarget(ColorAttachmentIndex);
-}
+    return _FrameBufferObject->SetRenderTarget (ColorAttachmentIndex, pRenderTargetSurface);
+  }
 
-TRefGL<IOpenGLSurface> GLDeviceFactory::GetDepthRenderTargetSurface()
-{
-    if(!GL_EXT_FRAMEBUFFER_OBJECT)
-    {nuxDebugMsg(TEXT("[GLDeviceFactory::GetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.")); return 0;}
+  int GLDeviceFactory::SetDepthRenderTargetSurface (TRefGL<IOpenGLSurface> pDepthSurface)
+  {
+    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    {
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::SetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      return 0;
+    }
+
+    return _FrameBufferObject->SetDepthSurface (pDepthSurface);
+  }
+
+  TRefGL<IOpenGLSurface> GLDeviceFactory::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
+  {
+    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    {
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::GetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      return 0;
+    }
+
+    return _FrameBufferObject->GetRenderTarget (ColorAttachmentIndex);
+  }
+
+  TRefGL<IOpenGLSurface> GLDeviceFactory::GetDepthRenderTargetSurface()
+  {
+    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    {
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::GetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      return 0;
+    }
+
     return _FrameBufferObject->GetDepthRenderTarget();
-}
+  }
 
-void GLDeviceFactory::ActivateFrameBuffer()
-{
-    if(!GL_EXT_FRAMEBUFFER_OBJECT)
-    {nuxDebugMsg(TEXT("[GLDeviceFactory::ActivateFrameBuffer] No support for OpenGL framebuffer extension.")); return;}
+  void GLDeviceFactory::ActivateFrameBuffer()
+  {
+    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    {
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::ActivateFrameBuffer] No support for OpenGL framebuffer extension.") );
+      return;
+    }
+
     _FrameBufferObject->Activate();
-}
+  }
 
-void GLDeviceFactory::DeactivateFrameBuffer()
-{
-    if(!GL_EXT_FRAMEBUFFER_OBJECT)
-    {nuxDebugMsg(TEXT("[GLDeviceFactory::DeactivateFrameBuffer] No support for OpenGL framebuffer extension.")); return;}
-    CHECKGL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ) );
-    CHECKGL( glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0) );
-}
+  void GLDeviceFactory::DeactivateFrameBuffer()
+  {
+    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    {
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::DeactivateFrameBuffer] No support for OpenGL framebuffer extension.") );
+      return;
+    }
 
-void GLDeviceFactory::Clear(FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil)
-{
-    CHECKGL( glClearColor(red, green, blue, alpha) );
-    CHECKGL( glClearDepth(depth) );
-    CHECKGL( glClearStencil(stencil) );
-    CHECKGL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
-}
+    CHECKGL ( glBindFramebufferEXT ( GL_FRAMEBUFFER_EXT, 0 ) );
+    CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
+  }
 
-void GLDeviceFactory::ClearColorRT(FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha)
-{
-    CHECKGL( glClearColor(red, green, blue, alpha) );
-    CHECKGL( glClear(GL_COLOR_BUFFER_BIT) );
-}
+  void GLDeviceFactory::Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil)
+  {
+    CHECKGL ( glClearColor (red, green, blue, alpha) );
+    CHECKGL ( glClearDepth (depth) );
+    CHECKGL ( glClearStencil (stencil) );
+    CHECKGL ( glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
+  }
 
-void GLDeviceFactory::ClearDepthRT(FLOAT depth)
-{
-    CHECKGL( glClearDepth(depth) );
-    CHECKGL( glClear(GL_DEPTH_BUFFER_BIT) );
-}
-void GLDeviceFactory::ClearStencilRT(int stencil)
-{
-    CHECKGL( glClearStencil(stencil) );
-    CHECKGL( glClear(GL_STENCIL_BUFFER_BIT) );
-}
+  void GLDeviceFactory::ClearColorRT (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha)
+  {
+    CHECKGL ( glClearColor (red, green, blue, alpha) );
+    CHECKGL ( glClear (GL_COLOR_BUFFER_BIT) );
+  }
 
-void GLDeviceFactory::ClearFloatingPointColorRT(int x, int y, int width, int height,
-                                                FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha) // use a Quad.
-{
-    DrawQuad_FixPipe(x, y, width, height, red, green, blue, alpha);
-}
+  void GLDeviceFactory::ClearDepthRT (FLOAT depth)
+  {
+    CHECKGL ( glClearDepth (depth) );
+    CHECKGL ( glClear (GL_DEPTH_BUFFER_BIT) );
+  }
+  void GLDeviceFactory::ClearStencilRT (int stencil)
+  {
+    CHECKGL ( glClearStencil (stencil) );
+    CHECKGL ( glClear (GL_STENCIL_BUFFER_BIT) );
+  }
 
-void GLDeviceFactory::ClearSurfaceWithColor(TRefGL<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
-{
-    if(!GL_EXT_FRAMEBUFFER_OBJECT)
-    {nuxDebugMsg(TEXT("[GLDeviceFactory::ClearSurfaceWithColor] No support for OpenGL framebuffer extension."));}
+  void GLDeviceFactory::ClearFloatingPointColorRT (int x, int y, int width, int height,
+      FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha) // use a Quad.
+  {
+    DrawQuad_FixPipe (x, y, width, height, red, green, blue, alpha);
+  }
 
-    FormatFrameBufferObject(s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat());
-    SetColorRenderTargetSurface(0, s_);
-    SetDepthRenderTargetSurface(0);
+  void GLDeviceFactory::ClearSurfaceWithColor (TRefGL<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
+  {
+    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    {
+      nuxDebugMsg (TEXT ("[GLDeviceFactory::ClearSurfaceWithColor] No support for OpenGL framebuffer extension.") );
+    }
+
+    FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
+    SetColorRenderTargetSurface (0, s_);
+    SetDepthRenderTargetSurface (0);
     ActivateFrameBuffer();
-    ClearFloatingPointColorRT(rect_->left,
-        rect_->top,
-        rect_->right - rect_->left,
-        rect_->bottom - rect_->top,
-        r, g, b, a);
-}
+    ClearFloatingPointColorRT (rect_->left,
+                               rect_->top,
+                               rect_->right - rect_->left,
+                               rect_->bottom - rect_->top,
+                               r, g, b, a);
+  }
 
-void GLDeviceFactory::SetCurrentFrameBufferObject(TRefGL<IOpenGLFrameBufferObject> fbo)
-{
+  void GLDeviceFactory::SetCurrentFrameBufferObject (TRefGL<IOpenGLFrameBufferObject> fbo)
+  {
     _CurrentFrameBufferObject = fbo;
-}
+  }
 
-TRefGL<IOpenGLFrameBufferObject> GLDeviceFactory::GetCurrentFrameBufferObject()
-{
+  TRefGL<IOpenGLFrameBufferObject> GLDeviceFactory::GetCurrentFrameBufferObject()
+  {
     return _CurrentFrameBufferObject;
-}
+  }
 
 } //NUX_NAMESPACE_END

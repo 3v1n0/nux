@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -27,91 +27,92 @@
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-extern PixelFormatInfo GPixelFormats[];
-
-NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NResource);
-NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NGLResource);
-
-NResource::NResource()
-:   m_ResourceIndex(NUX_INVALID_INDEX)
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
+
+  extern PixelFormatInfo GPixelFormats[];
+
+  NUX_IMPLEMENT_ROOT_OBJECT_TYPE (NResource);
+  NUX_IMPLEMENT_ROOT_OBJECT_TYPE (NGLResource);
+
+  NResource::NResource()
+    :   m_ResourceIndex (NUX_INVALID_INDEX)
+  {
 #define GET_UNIQUE_RESOURCE_INDEX NUX_GLOBAL_OBJECT_INSTANCE(NUniqueIndex)
     m_ResourceIndex = GET_UNIQUE_RESOURCE_INDEX.GetUniqueIndex();
 #undef GET_UNIQUE_RESOURCE_INDEX
-}
+  }
 
-unsigned int NResource::GetResourceIndex() const
-{
+  unsigned int NResource::GetResourceIndex() const
+  {
     return m_ResourceIndex;
-}
+  }
 
-NResourceSet::NResourceSet()
-: FirstResource( NULL )
-{
+  NResourceSet::NResourceSet()
+    : FirstResource ( NULL )
+  {
     if ( 1 )
     {
 
     }
-}
+  }
 
-NGLResource::NGLResource(NResourceSet* ResourceManager)
-:   Set(ResourceManager)
-,   Cached(0)
-,   NumRefs(0)
-,   ResourceType(NULL)
-,   Size(0)
-,   UpdateHint(RUH_Static)
-{
+  NGLResource::NGLResource (NResourceSet *ResourceManager)
+    :   Set (ResourceManager)
+    ,   Cached (0)
+    ,   NumRefs (0)
+    ,   ResourceType (NULL)
+    ,   Size (0)
+    ,   UpdateHint (RUH_Static)
+  {
     PrevResource = NULL;
     NextResource = Set->FirstResource;
     Set->FirstResource = this;
 
-    if(NextResource)
+    if (NextResource)
     {
-        NextResource->PrevResource = this;
+      NextResource->PrevResource = this;
     }
-}
+  }
 
-NGLResource::~NGLResource()
-{
-    if(PrevResource)
+  NGLResource::~NGLResource()
+  {
+    if (PrevResource)
     {
-        PrevResource->NextResource = NextResource;
+      PrevResource->NextResource = NextResource;
     }
     else
     {
-        Set->FirstResource = NextResource;
+      Set->FirstResource = NextResource;
     }
 
-    if(NextResource)
+    if (NextResource)
     {
-        NextResource->PrevResource = PrevResource;
+      NextResource->PrevResource = PrevResource;
     }
 
-    if(Cached)
+    if (Cached)
     {
-        Set->FlushResource(this);
+      Set->FlushResource (this);
     }
-}
+  }
 
-void NResourceCache::InitializeResourceFactories()
-{   
+  void NResourceCache::InitializeResourceFactories()
+  {
     // Define the factory pair NResource - NGLResource
 #define NUX_DEFINE_RESOURCE_FACTORY_PAIR(SourceTypeName, ResourceTypeName) \
     static TGLResourceFactory<SourceTypeName, ResourceTypeName> Factory##SourceTypeName(&SourceTypeName::StaticObjectType); \
     GetResourceFactories().push_back(&Factory##SourceTypeName);
 
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NTexture2D, NGLTexture2D);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NRectangleTexture, NGLRectangleTexture);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NTextureCube, NGLTextureCube);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NTextureVolume, NGLTextureVolume);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NAnimatedTexture, NGLAnimatedTexture);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NVertexBuffer, NGLVertexBuffer);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NIndexBuffer, NGLIndexBuffer);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NVertexDeclaration, NGLVertexDeclaration);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR(NStaticMesh, NGLStaticMesh);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NTexture2D, NGLTexture2D);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NRectangleTexture, NGLRectangleTexture);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NTextureCube, NGLTextureCube);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NTextureVolume, NGLTextureVolume);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NAnimatedTexture, NGLAnimatedTexture);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NVertexBuffer, NGLVertexBuffer);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NIndexBuffer, NGLIndexBuffer);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NVertexDeclaration, NGLVertexDeclaration);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NStaticMesh, NGLStaticMesh);
 
 #undef NUX_DEFINE_RESOURCE_FACTORY_PAIR
 
@@ -120,59 +121,63 @@ void NResourceCache::InitializeResourceFactories()
     static NResourceUpdater Updater##SourceTypeName(&SourceTypeName::StaticObjectType); \
     GetResourceUpdaters().push_back(&Updater##SourceTypeName);
 
-    NUX_DEFINE_RESOURCE_UPDATER(NTexture2D);	
-    NUX_DEFINE_RESOURCE_UPDATER(NRectangleTexture);	
-    NUX_DEFINE_RESOURCE_UPDATER(NTextureCube);	
-    NUX_DEFINE_RESOURCE_UPDATER(NTextureVolume);	
-    NUX_DEFINE_RESOURCE_UPDATER(NAnimatedTexture);	
-    NUX_DEFINE_RESOURCE_UPDATER(NVertexBuffer);	
-    NUX_DEFINE_RESOURCE_UPDATER(NIndexBuffer);	
-    NUX_DEFINE_RESOURCE_UPDATER(NVertexDeclaration);	
-    NUX_DEFINE_RESOURCE_UPDATER(NStaticMesh);	
+    NUX_DEFINE_RESOURCE_UPDATER (NTexture2D);
+    NUX_DEFINE_RESOURCE_UPDATER (NRectangleTexture);
+    NUX_DEFINE_RESOURCE_UPDATER (NTextureCube);
+    NUX_DEFINE_RESOURCE_UPDATER (NTextureVolume);
+    NUX_DEFINE_RESOURCE_UPDATER (NAnimatedTexture);
+    NUX_DEFINE_RESOURCE_UPDATER (NVertexBuffer);
+    NUX_DEFINE_RESOURCE_UPDATER (NIndexBuffer);
+    NUX_DEFINE_RESOURCE_UPDATER (NVertexDeclaration);
+    NUX_DEFINE_RESOURCE_UPDATER (NStaticMesh);
 
 #undef NUX_DEFINE_RESOURCE_UPDATER
-}
+  }
 
-TRefGL< NGLResource > NResourceCache::GetCachedResource(NResource* Source)
-{
+  TRefGL< NGLResource > NResourceCache::GetCachedResource (NResource *Source)
+  {
     // check to see if it already exists
-    TRefGL< NGLResource >	CachedResource = TResourceCache<int,NGLResource>::FindCachedResourceById(Source->GetResourceIndex());
-    if(CachedResource.IsNull())
-    {
-        // iterate over the list of factory types
-        for (t_u32 i = 0; i < GetResourceFactories().size(); ++i)
-        {
-            NResourceFactory* ResourceFactory = GetResourceFactories()[i];
-            // check if the factory is valid for the source resource type
-            if (ResourceFactory->BuildsThisResource(Source))
-            {
-                // cache the device resource
-                CachedResource = ResourceFactory->BuildResource(this, Source);
-                break;
-            }
-        }
-        // make sure the result is valid
-        if (CachedResource.IsNull())
-        {
-            nuxError(TEXT("Cannot cache resource type %s"), Source->Type().GetName());
-        }
-        else
-        {
-            // Get resource textual description
-            CachedResource->Description		= Source->GetResourceName();
-            // Get resource type
-            CachedResource->ResourceType	= &(Source->Type());
-            // add it to the pool of cached resources
-            AddCachedResource(Source->GetResourceIndex(), CachedResource);
-        }		
-    }
-    return CachedResource;
-}
+    TRefGL< NGLResource >	CachedResource = TResourceCache<int, NGLResource>::FindCachedResourceById (Source->GetResourceIndex() );
 
-bool NResourceCache::IsCachedResource(NResource* Source)
-{
-    TRefGL< NGLResource > CachedResource = TResourceCache< int, NGLResource >::FindCachedResourceById(Source->GetResourceIndex());
-    return (CachedResource.IsValid());
-}
+    if (CachedResource.IsNull() )
+    {
+      // iterate over the list of factory types
+      for (t_u32 i = 0; i < GetResourceFactories().size(); ++i)
+      {
+        NResourceFactory *ResourceFactory = GetResourceFactories() [i];
+
+        // check if the factory is valid for the source resource type
+        if (ResourceFactory->BuildsThisResource (Source) )
+        {
+          // cache the device resource
+          CachedResource = ResourceFactory->BuildResource (this, Source);
+          break;
+        }
+      }
+
+      // make sure the result is valid
+      if (CachedResource.IsNull() )
+      {
+        nuxError (TEXT ("Cannot cache resource type %s"), Source->Type().GetName() );
+      }
+      else
+      {
+        // Get resource textual description
+        CachedResource->Description		= Source->GetResourceName();
+        // Get resource type
+        CachedResource->ResourceType	= & (Source->Type() );
+        // add it to the pool of cached resources
+        AddCachedResource (Source->GetResourceIndex(), CachedResource);
+      }
+    }
+
+    return CachedResource;
+  }
+
+  bool NResourceCache::IsCachedResource (NResource *Source)
+  {
+    TRefGL< NGLResource > CachedResource = TResourceCache< int, NGLResource >::FindCachedResourceById (Source->GetResourceIndex() );
+    return (CachedResource.IsValid() );
+  }
 
 } //NUX_NAMESPACE_END

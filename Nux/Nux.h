@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -68,78 +68,79 @@
 
 
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
-class WindowThread;
-class SystemThread;
+  class WindowThread;
+  class SystemThread;
 //class BasePainter;
-class WindowCompositor;
-class TimerHandler;
+  class WindowCompositor;
+  class TimerHandler;
 //class Theme;
 
-void NuxInitialize(const TCHAR* CommandLine);
+  void NuxInitialize (const TCHAR *CommandLine);
 
 //! Create a main graphics thread. This thread has a window and no parent window (The Parent parameter should always be null).
-WindowThread* CreateGUIThread(const TCHAR* WindowTitle,
-    UINT width,
-    UINT height,
-    WindowThread *Parent = NULL,
-    ThreadUserInitFunc UserInitFunc = NULL,
-    void* InitData = NULL);
+  WindowThread *CreateGUIThread (const TCHAR *WindowTitle,
+                                 UINT width,
+                                 UINT height,
+                                 WindowThread *Parent = NULL,
+                                 ThreadUserInitFunc UserInitFunc = NULL,
+                                 void *InitData = NULL);
 
 #if defined(NUX_OS_WINDOWS)
-    //! Create a main graphics thread. This thread has a window and no parent window.
-    WindowThread* CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
-    ThreadUserInitFunc UserInitFunc,
-    void* InitData);
+  //! Create a main graphics thread. This thread has a window and no parent window.
+  WindowThread *CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
+                                         ThreadUserInitFunc UserInitFunc,
+                                         void *InitData);
 #elif defined(NUX_OS_LINUX)
-    //! Create a main graphics thread. This thread has a window and no parent window.
-    WindowThread* CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext,
-    ThreadUserInitFunc UserInitFunc,
-    void* InitData);
+  //! Create a main graphics thread. This thread has a window and no parent window.
+  WindowThread *CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext,
+                                         ThreadUserInitFunc UserInitFunc,
+                                         void *InitData);
 #endif
 
 // Create a window thread that is a child of the Parent. This thread has a window.
-WindowThread* CreateWindowThread(WindowStyle WndStyle,
-    const TCHAR* WindowTitle,
-    UINT width,
-    UINT height,
-    WindowThread *Parent,
-    ThreadUserInitFunc UserInitFunc = NULL,
-    void* InitData = NULL);
+  WindowThread *CreateWindowThread (WindowStyle WndStyle,
+                                    const TCHAR *WindowTitle,
+                                    UINT width,
+                                    UINT height,
+                                    WindowThread *Parent,
+                                    ThreadUserInitFunc UserInitFunc = NULL,
+                                    void *InitData = NULL);
 
 // Create a Modal window thread that is a child of the Parent. This thread has a window.
-WindowThread* CreateModalWindowThread(WindowStyle WndStyle,
-    const TCHAR* WindowTitle,
-    UINT width,
-    UINT height,
-    WindowThread *Parent,
-    ThreadUserInitFunc UserInitFunc = NULL,
-    void* InitData = NULL);
+  WindowThread *CreateModalWindowThread (WindowStyle WndStyle,
+                                         const TCHAR *WindowTitle,
+                                         UINT width,
+                                         UINT height,
+                                         WindowThread *Parent,
+                                         ThreadUserInitFunc UserInitFunc = NULL,
+                                         void *InitData = NULL);
 
 // Create a simple thread
-SystemThread* CreateSimpleThread(AbstractThread *Parent = NULL,
-    ThreadUserInitFunc UserInitFunc = NULL, void* InitData = NULL);
+  SystemThread *CreateSimpleThread (AbstractThread *Parent = NULL,
+                                    ThreadUserInitFunc UserInitFunc = NULL, void *InitData = NULL);
 
-ThreadState GetThreadState(unsigned int ThreadID);
+  ThreadState GetThreadState (unsigned int ThreadID);
 
 
-GLWindowImpl& GetWindow();
-GraphicsContext& GetGraphicsContext();
-IntrusiveSP<FontTexture> GetThreadFont();
-IntrusiveSP<FontTexture> GetThreadBoldFont();
+  GLWindowImpl &GetWindow();
+  GraphicsContext &GetGraphicsContext();
+  IntrusiveSP<FontTexture> GetThreadFont();
+  IntrusiveSP<FontTexture> GetThreadBoldFont();
 
-NThread* GetThreadApplication();
-WindowThread* GetGraphicsThread();
-WindowCompositor& GetThreadWindowCompositor();
-BasePainter& GetThreadPainter();
+  NThread *GetThreadApplication();
+  WindowThread *GetGraphicsThread();
+  WindowCompositor &GetThreadWindowCompositor();
+  BasePainter &GetThreadPainter();
 #define  gPainter nux::GetThreadPainter()
-UXTheme& GetThreadTheme();
+  UXTheme &GetThreadTheme();
 #define  gTheme nux::GetThreadTheme()
 
-TimerHandler& GetThreadTimer();
+  TimerHandler &GetThreadTimer();
 
-inlDeclareThreadLocalStorage(NThread*, 0, ThreadLocal_InalogicAppImpl);
+  inlDeclareThreadLocalStorage (NThread *, 0, ThreadLocal_InalogicAppImpl);
 
 } //NUX_NAMESPACE_END
 

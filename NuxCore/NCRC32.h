@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -23,7 +23,8 @@
 #ifndef NCRC32_H
 #define NCRC32_H
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 // http://www.networkdls.com/Software.Asp?Review=22
 
 // This is the official polynomial used by CRC-32 in PKZip, WinZip and Ethernet.
@@ -39,19 +40,19 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 // CRC_xx_BITS must be a power of 2 between 1 and 8. We use CRC_8_BITS.
 #define CRC32BUFSZ 1024 // 4 << 8 = 1024
 
-class NCRC32
-{
-public:
+  class NCRC32
+  {
+  public:
     NCRC32();
-    t_u32 FileCRC(const char *sFileName);
-    t_u32 FullCRC(const char *sData, t_u32 ulLength);
-    void PartialCRC(t_u32 *ulInCRC, const char *sData, t_u32 ulLength);
+    t_u32 FileCRC (const char *sFileName);
+    t_u32 FullCRC (const char *sData, t_u32 ulLength);
+    void PartialCRC (t_u32 *ulInCRC, const char *sData, t_u32 ulLength);
 
-private:
-    void Initialize(void);
-    t_u32 Reflect(t_u32 ulReflect, char cChar);
+  private:
+    void Initialize (void);
+    t_u32 Reflect (t_u32 ulReflect, char cChar);
     t_u32 CRCTable[256]; // CRC lookup table array.
-};
+  };
 
 } //NUX_NAMESPACE_END
 #endif // NCRC32_H

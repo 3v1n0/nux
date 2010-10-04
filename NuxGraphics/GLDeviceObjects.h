@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -36,18 +36,18 @@
 //     #pragma comment( lib, "cgGL.lib" )
 // #endif
 
-/* 
+/*
 We create a set of classes that wraps OpenGL objects ID.
-The equivalent of OpenGL object ID on D3D are 
+The equivalent of OpenGL object ID on D3D are
 IDirect3DResource9
-IDirect3DSurface9, 
+IDirect3DSurface9,
 IDirect3DIndexBuffer9,
 IDirect3DVertexBuffer9,
-IDirect3DVolume9 
+IDirect3DVolume9
 - IDirect3DBaseTexture9
 IDirect3DCubeTexture9
 IDirect3DTexture9
-IDirect3DVolumeTexture9 
+IDirect3DVolumeTexture9
 
 All the D3D object support Release() and AddRef() and are managed by the DirectX Api.
 On OpenGL, we must create an object interface that support Release() and AddRef() and we define a class
@@ -91,7 +91,7 @@ Note that all these opengl object may not have have an equivalent in OpenGL ES.
 #include "IOpenGLFrameBufferObject.h"
 
 #if (NUX_ENABLE_CG_SHADERS)
-    #include "IOpenGLCgShader.h"
+#include "IOpenGLCgShader.h"
 #endif
 
 #endif // GLDEVICEOBJECT_H

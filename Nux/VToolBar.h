@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -23,27 +23,28 @@
 #ifndef VTOOLBAR_H
 #define VTOOLBAR_H
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-class ActionItem;
-class ToolButton;
-class VLayout;
-
-
-
-class VToolBar: public View
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-public:
-    VToolBar(NUX_FILE_LINE_PROTO);
+  class ActionItem;
+  class ToolButton;
+  class VLayout;
+
+
+
+  class VToolBar: public View
+  {
+  public:
+    VToolBar (NUX_FILE_LINE_PROTO);
     ~VToolBar();
 
-    virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
-    virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
-    virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
 
-    void AddToolButton(ToolButton*);
-    void AddAction(ActionItem* action);
-    void AddSpace(int size);
+    void AddToolButton (ToolButton *);
+    void AddAction (ActionItem *action);
+    void AddSpace (int size);
     void AddSeparator();
 
     void ClearWidget();
@@ -51,21 +52,21 @@ public:
     //  EMITERS    //
     /////////////////
 
-    void RecvMouseDownOnIcon(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseUpOnIcon(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseMoveOnIcon(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnterIcon(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeaveIcon(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDragOnIcon(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDownOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseUpOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseMoveOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseEnterIcon (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseLeaveIcon (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDragOnIcon (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-protected:
+  protected:
     void InitializeWidgets();
     void InitializeLayout();
     void DestroyLayout();
 
-private:
-    VLayout* m_vlayout;
-};
+  private:
+    VLayout *m_vlayout;
+  };
 
 } //NUX_NAMESPACE_END
 #endif // VTOOLBAR_H

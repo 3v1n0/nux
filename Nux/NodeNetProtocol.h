@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -41,7 +41,7 @@
 //    NSockAddrIn     address;
 //    unsigned long   Code;       // => 4 bytes (the header type or protocol)
 //    unsigned long   Type;       // => 4 bytes (the service requested/packet type)
-//    unsigned long   Handle;     // => 4 bytes (the client/connection handle) 
+//    unsigned long   Handle;     // => 4 bytes (the client/connection handle)
 //    unsigned long   Len;        // => 4 bytes (the data len)
 //};
 //
@@ -62,10 +62,11 @@
 
 #define NODE_XML_NET_PROTOCOL 1
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-enum NodeParameterType
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
+
+  enum NodeParameterType
+  {
     NODE_TYPE_UNDEFINED = 1,
     NODE_TYPE_FOLDER,
     NODE_TYPE_BOOL,
@@ -91,63 +92,96 @@ enum NodeParameterType
     NODE_TYPE_MATRIX3PREVIEW,
 
     NODE_TYPE_FORCE_DWORD = 0x7fffffff,
-};
+  };
 
 #if NODE_XML_NET_PROTOCOL
-    bool QueryNodeXMLIntAttribute(const TiXmlElement* elementxml, const TCHAR* attribute, int* Value, int searchid);
-    bool QueryNodeXMLDoubleAttribute(const TiXmlElement* elementxml, const TCHAR* attribute, double* Value, int searchid);
-    bool QueryNodeXMLAttribute(const TiXmlElement* elementxml, const TCHAR* attribute, std::string& Value, int searchid);
-    bool QueryNodeXMLAttribute(const TiXmlElement* elementxml, const TCHAR* attribute, std::string& Value, int searchid);
-    bool QueryNodeXMLStringAttribute(const TiXmlElement* elementxml, const TCHAR* attribute, tstring& Value, int searchid);
+  bool QueryNodeXMLIntAttribute (const TiXmlElement *elementxml, const TCHAR *attribute, int *Value, int searchid);
+  bool QueryNodeXMLDoubleAttribute (const TiXmlElement *elementxml, const TCHAR *attribute, double *Value, int searchid);
+  bool QueryNodeXMLAttribute (const TiXmlElement *elementxml, const TCHAR *attribute, std::string &Value, int searchid);
+  bool QueryNodeXMLAttribute (const TiXmlElement *elementxml, const TCHAR *attribute, std::string &Value, int searchid);
+  bool QueryNodeXMLStringAttribute (const TiXmlElement *elementxml, const TCHAR *attribute, tstring &Value, int searchid);
 #endif
 
-class NodeNetCom: public NodeItem
-{
-    NUX_DECLARE_OBJECT_TYPE(NodeNetCom, NodeItem);
-public:
+  class NodeNetCom: public NodeItem
+  {
+    NUX_DECLARE_OBJECT_TYPE (NodeNetCom, NodeItem);
+  public:
     //! Search the ID in the whole tree below this node. Search also this node.
-    NodeNetCom* FindNodeID(int id);
+    NodeNetCom *FindNodeID (int id);
     //! Search the ID in the immediate children of this node.
-    NodeNetCom* FindChildNodeID(int id);
+    NodeNetCom *FindChildNodeID (int id);
 
 #if NODE_XML_NET_PROTOCOL
-    virtual TiXmlElement* ToXML() const;
-    virtual bool FromXML(const TiXmlElement* elementxml);
+    virtual TiXmlElement *ToXML() const;
+    virtual bool FromXML (const TiXmlElement *elementxml);
     //! Used by client to create node from XML after initialization.
-    virtual bool CreateFromXML(const TiXmlElement* elementxml);
+    virtual bool CreateFromXML (const TiXmlElement *elementxml);
 
     //! By default, when generating xml (ToXML) or creating from xml (FromXML), it may be necessary to skip the child of some elements because they
     // automatically take care of parsing in and out their own children. For instance, Vector3PropertyItem.
-    virtual bool SkipChild() const {return false;}
+    virtual bool SkipChild() const
+    {
+      return false;
+    }
 
 //    virtual bool QueryNodeXMLIntAttribute(const TiXmlElement* elementxml, const char* attribute, int* Value, int id);
 //    virtual bool QueryNodeXMLDoubleAttribute(const TiXmlElement* elementxml, const char* attribute, double* Value, int id);
 //    virtual bool QueryNodeXMLAttribute(const TiXmlElement* elementxml, const char* attribute, std::string& Value, int id);
-protected:
-    void SetNodeXMLAttributes(TiXmlElement* elementxml) const;
-    void GetNodeXMLAttributes(const TiXmlElement* elementxml);
+  protected:
+    void SetNodeXMLAttributes (TiXmlElement *elementxml) const;
+    void GetNodeXMLAttributes (const TiXmlElement *elementxml);
 
 #endif
 
-public:
+  public:
     void DeleteChildren();
 
-    const TCHAR* GetName() const {return m_Name.GetTCharPtr();}
-    void SetName(const TCHAR* str) {m_Name = str;}
+    const TCHAR *GetName() const
+    {
+      return m_Name.GetTCharPtr();
+    }
+    void SetName (const TCHAR *str)
+    {
+      m_Name = str;
+    }
 
-protected:
-    NodeNetCom(const TCHAR* Name, NodeParameterType type = NODE_TYPE_UNDEFINED);
-    virtual ~NodeNetCom(){};
+  protected:
+    NodeNetCom (const TCHAR *Name, NodeParameterType type = NODE_TYPE_UNDEFINED);
+    virtual ~NodeNetCom() {};
 
-    void SetParameterType(NodeParameterType t) {m_Type = t;}
-    NodeParameterType GetParameterType() const {return m_Type;}
-    int GetID() const {return m_ID;}
-    void SetID(int id) {m_ID = id;}
-    void SetEnable(bool b) {m_Enable = b? 1 : 0;}
-    int IsEnable() const {return m_Enable;}
-    void SetVisible(bool b) {m_Visible = b? 1 : 0;}
-    int IsVisible() const {return m_Visible;}
-private:
+    void SetParameterType (NodeParameterType t)
+    {
+      m_Type = t;
+    }
+    NodeParameterType GetParameterType() const
+    {
+      return m_Type;
+    }
+    int GetID() const
+    {
+      return m_ID;
+    }
+    void SetID (int id)
+    {
+      m_ID = id;
+    }
+    void SetEnable (bool b)
+    {
+      m_Enable = b ? 1 : 0;
+    }
+    int IsEnable() const
+    {
+      return m_Enable;
+    }
+    void SetVisible (bool b)
+    {
+      m_Visible = b ? 1 : 0;
+    }
+    int IsVisible() const
+    {
+      return m_Visible;
+    }
+  private:
 
     static int m_IDGenerator;
     NString m_Name;
@@ -157,7 +191,7 @@ private:
     int m_ID;       // ID for network communications
 
     friend class ParameterManagerImpl;
-};
+  };
 
 
 } //NUX_NAMESPACE_END

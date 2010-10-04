@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -23,58 +23,74 @@
 #ifndef IOPENGLSURFACE_H
 #define IOPENGLSURFACE_H
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-class IOpenGLResource;
-class IOpenGLSurface: public IOpenGLResource
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-    NUX_DECLARE_OBJECT_TYPE(IOpenGLSurface, IOpenGLResource);
-public:
+
+  class IOpenGLResource;
+  class IOpenGLSurface: public IOpenGLResource
+  {
+    NUX_DECLARE_OBJECT_TYPE (IOpenGLSurface, IOpenGLResource);
+  public:
     virtual int RefCount() const;
 
-    int LockRect(
-        SURFACE_LOCKED_RECT * pLockedRect,
-        const SURFACE_RECT * pRect);
+    int LockRect (
+      SURFACE_LOCKED_RECT *pLockedRect,
+      const SURFACE_RECT *pRect);
     int UnlockRect();
 
-    BitmapFormat GetPixelFormat() const 
+    BitmapFormat GetPixelFormat() const
     {
-        if(_BaseTexture == 0) { nuxAssert(0); return BITFMT_UNKNOWN; } // should not happen
-        return _BaseTexture->GetPixelFormat();
+      if (_BaseTexture == 0)
+      {
+        nuxAssert (0);  // should not happen
+        return BITFMT_UNKNOWN;
+      }
+
+      return _BaseTexture->GetPixelFormat();
     }
 
     int GetWidth() const
     {
-        if(_BaseTexture == 0) { nuxAssert(0); return 0; } // should not happen
-        return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
+      if (_BaseTexture == 0)
+      {
+        nuxAssert (0);  // should not happen
+        return 0;
+      }
+
+      return ImageSurface::GetLevelDim (_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
     }
 
     int GetHeight() const
     {
-        if(_BaseTexture == 0) { nuxAssert(0); return 0; } // should not happen
-        return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
+      if (_BaseTexture == 0)
+      {
+        nuxAssert (0);  // should not happen
+        return 0;
+      }
+
+      return ImageSurface::GetLevelDim (_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
     }
 
     int GetMipLevel() const
     {
-        return _SMipLevel;
+      return _SMipLevel;
     }
 
     int GetSurfaceTarget() const
     {
-        return _SSurfaceTarget;
+      return _SSurfaceTarget;
     }
 
-    int GetDesc(SURFACE_DESC * pDesc)
+    int GetDesc (SURFACE_DESC *pDesc)
     {
-        pDesc->Width    = GetWidth();
-        pDesc->Height   = GetHeight();
-        pDesc->PixelFormat   = GetPixelFormat();
-        pDesc->Type     = _ResourceType;
-        return OGL_OK;
+      pDesc->Width    = GetWidth();
+      pDesc->Height   = GetHeight();
+      pDesc->PixelFormat   = GetPixelFormat();
+      pDesc->Type     = _ResourceType;
+      return OGL_OK;
     }
 
-private:
+  private:
     virtual ~IOpenGLSurface();
 
     int InitializeLevel();
@@ -93,24 +109,24 @@ private:
     //        _RefCount = 0;
     //        _OpenGLID = OpenGLID;
     //    }
-    IOpenGLSurface(IOpenGLBaseTexture* BaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/)
-        : IOpenGLResource(RTSURFACE)
-        , _STextureTarget(TextureTarget)
-        , _SSurfaceTarget(SurfaceTarget)
-        , _SMipLevel(MipLevel)
-        , _SSlice(Slice)
-        , _BaseTexture(BaseTexture)
-        , _AllocatedUnpackBuffer(0xFFFFFFFF)
+    IOpenGLSurface (IOpenGLBaseTexture *BaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/)
+      : IOpenGLResource (RTSURFACE)
+      , _STextureTarget (TextureTarget)
+      , _SSurfaceTarget (SurfaceTarget)
+      , _SMipLevel (MipLevel)
+      , _SSlice (Slice)
+      , _BaseTexture (BaseTexture)
+      , _AllocatedUnpackBuffer (0xFFFFFFFF)
     {
-        // IOpenGLSurface surfaces are created inside a IOpenGLTexture2D, IOpenGLCubeTexture and IOpenGLVolumeTexture.
-        // They reside within those classes. The reference counting starts once a call to GetSurfaceLevel,
-        // GetCubeMapSurface or GetVolumeLevel is made to the container object.
-        _RefCount = 0;
-        _OpenGLID = OpenGLID;
-        _LockedRect.pBits = 0;
-        _LockedRect.Pitch = 0;
-        _CompressedDataSize = 0;
-        _Initialized = 0;
+      // IOpenGLSurface surfaces are created inside a IOpenGLTexture2D, IOpenGLCubeTexture and IOpenGLVolumeTexture.
+      // They reside within those classes. The reference counting starts once a call to GetSurfaceLevel,
+      // GetCubeMapSurface or GetVolumeLevel is made to the container object.
+      _RefCount = 0;
+      _OpenGLID = OpenGLID;
+      _LockedRect.pBits = 0;
+      _LockedRect.Pitch = 0;
+      _CompressedDataSize = 0;
+      _Initialized = 0;
     }
 
     // _STextureTarget may be
@@ -138,7 +154,7 @@ private:
     SURFACE_RECT        _Rect;
     int            _CompressedDataSize;
 
-    IOpenGLBaseTexture* _BaseTexture;
+    IOpenGLBaseTexture *_BaseTexture;
     bool            _Initialized;
 
     int _AllocatedUnpackBuffer;
@@ -148,7 +164,7 @@ private:
     friend class IOpenGLVolumeTexture;
     friend class IOpenGLAnimatedTexture;
     friend class TRefGL<IOpenGLSurface>;
-};
+  };
 
 } //NUX_NAMESPACE_END
 

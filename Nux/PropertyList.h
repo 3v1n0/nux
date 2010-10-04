@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -48,26 +48,27 @@
 #include "RangeValueInteger.h"
 #include "ColorGradient.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
-extern Color GPropertyItemTextColor0;
-extern Color GPropertyItemTextColor1;
+  extern Color GPropertyItemTextColor0;
+  extern Color GPropertyItemTextColor1;
 
-extern const int PROPERTY_BORDER_X;
-extern const int PROPERTY_BORDER_Y;
+  extern const int PROPERTY_BORDER_X;
+  extern const int PROPERTY_BORDER_Y;
 
 #if NODE_XML_NET_PROTOCOL
-    #define NODE_XML_CLASS_MEMBER(cls)   public:                                                                    \
+#define NODE_XML_CLASS_MEMBER(cls)   public:                                                                    \
         static cls* CreateFromXML(const TiXmlElement* elementxml, NodeNetCom* parent, const TCHAR* Name, int id); \
         virtual TiXmlElement* ToXML() const;                                                                        \
         virtual bool FromXML(const TiXmlElement* elementxml);
-    
+
 #define NODE_SKIP_CHILD(b)  public:         \
         virtual bool SkipChild() const {return b;}
 #else
-    #define NODE_XML_CLASS_MEMBER(cls)
+#define NODE_XML_CLASS_MEMBER(cls)
 
-    #define NODE_SKIP_CHILD(b)
+#define NODE_SKIP_CHILD(b)
 #endif
 
 #define NODE_SIG_RECEIVER(MemFunc, Cls)                     \
@@ -124,24 +125,30 @@ extern const int PROPERTY_BORDER_Y;
 
 #define NODE_SIG_CONNECT(signal, Cls, MemFun) signal.connect(sigc::mem_fun(this, &Cls::MemFun));
 
-class SectionProperty : public TableItem//, public View
-{
-    NODE_XML_CLASS_MEMBER(SectionProperty);
-public:
-    SectionProperty(const char* name, NodeParameterType type = NODE_TYPE_STATICTEXT);
+  class SectionProperty : public TableItem//, public View
+  {
+    NODE_XML_CLASS_MEMBER (SectionProperty);
+  public:
+    SectionProperty (const char *name, NodeParameterType type = NODE_TYPE_STATICTEXT);
     virtual ~SectionProperty();
 
 //    virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
-    virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
+    virtual void DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter, RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color (0x0) );
+    virtual void ComputePropertyLayout (int x, int y, RowHeader *row, const std::vector<ColumnHeader>& column_vector);
     virtual int GetItemBestHeight();
 
-    void SetString(NString str) {m_String = str;}
-    NString GetString(NString str) const {return m_String;}
+    void SetString (NString str)
+    {
+      m_String = str;
+    }
+    NString GetString (NString str) const
+    {
+      return m_String;
+    }
 
-private:
+  private:
     NString m_String;
-};
+  };
 
 // class ComboBoxPropertyItem: public SectionProperty, public ComboBoxComplex
 // {
@@ -150,7 +157,7 @@ private:
 // public:
 //     ComboBoxPropertyItem(const TCHAR* name);
 //     virtual ~ComboBoxPropertyItem();
-// 
+//
 //     virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 //     virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
 //     virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
@@ -167,7 +174,7 @@ private:
 // public:
 //     ComboBoxSimplePropertyItem(const TCHAR* name);
 //     virtual ~ComboBoxSimplePropertyItem();
-// 
+//
 //     virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 //     virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
 //     virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
@@ -183,12 +190,12 @@ private:
 // public:
 //     SpinBoxPropertyItem(const TCHAR* name, int Value = 0, int Step = 1, int MinValue = 0, int MaxValue = 100);
 //     virtual ~SpinBoxPropertyItem();
-// 
+//
 //     virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 //     virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
 //     virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
 //     virtual int GetItemBestHeight();
-// 
+//
 // private:
 //     //RangeValue m_range_value;
 // };
@@ -200,12 +207,12 @@ private:
 // public:
 //     DoubleSpinBoxPropertyItem(const TCHAR* name, double Value = 0.0, double Step = 1.0, double MinValue = 0.0, double MaxValue = 100.0);
 //     virtual ~DoubleSpinBoxPropertyItem();
-// 
+//
 //     virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 //     virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
 //     virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
 //     virtual int GetItemBestHeight();
-// 
+//
 // private:
 //     //RangeValue m_range_value;
 // };
@@ -218,12 +225,12 @@ private:
 //     Vector3ValuatorPropertyItem(const TCHAR* name, double X = 0, double Y = 0, double Z = 0,
 //         double Step = 1.0, double MinValue = -1.7E308, double MaxValue = 1.7E308);
 //     virtual ~Vector3ValuatorPropertyItem();
-// 
+//
 //     virtual long ProcessPropertyEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 //     virtual void DrawProperty(GraphicsContext& GfxContext, TableCtrl* table, bool force_draw, Geometry geo, const BasePainter& Painter, RowHeader* row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color(0x0));
 //     virtual void ComputePropertyLayout(int x, int y, RowHeader* row, const std::vector<ColumnHeader>& column_vector);
 //     virtual int GetItemBestHeight();
-// 
+//
 // private:
 //     //RangeValue m_range_value;
 // };

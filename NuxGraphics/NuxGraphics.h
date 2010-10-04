@@ -1,46 +1,47 @@
 #ifndef NUXGRAPHICS_H
 #define NUXGRAPHICS_H
 
-namespace nux {
+namespace nux
+{
 
-    class FontTexture;
-    class NResourceCache;
+  class FontTexture;
+  class NResourceCache;
 
-    class NuxGraphicsResources
-    {
-        NUX_DECLARE_GLOBAL_OBJECT(NuxGraphicsResources, NuxGraphicsGlobalSingletonInitializer);
-    public:
+  class NuxGraphicsResources
+  {
+    NUX_DECLARE_GLOBAL_OBJECT (NuxGraphicsResources, NuxGraphicsGlobalSingletonInitializer);
+  public:
 
-        void InitializeResources();
-        NString FindResourceLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-        NString FindUITextureLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-        NString FindShaderLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
-        NString FindFontLocation(const TCHAR* ResourceFileName, bool ErrorOnFail = false);
+    void InitializeResources();
+    NString FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
+    NString FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
+    NString FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
+    NString FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
 
 //         const std::vector<NString>& GetFontSearchPath() const {return m_FontSearchPath;}
 //         const std::vector<NString>& GetShaderSearchPath() const {return m_ShaderSearchPath;}
 //         const std::vector<NString>& GetUITextureSearchPath() const {return m_UITextureSearchPath;}
-    
-        IntrusiveSP<FontTexture> GetFont();
-        IntrusiveSP<FontTexture> GetBoldFont();
 
-        /*!
-            Cache font textures into the provided resource cache.
+    IntrusiveSP<FontTexture> GetFont();
+    IntrusiveSP<FontTexture> GetBoldFont();
 
-        */
-        void CacheFontTextures(NResourceCache& RsrcCache);
+    /*!
+        Cache font textures into the provided resource cache.
 
-    private:
-        IntrusiveSP<FontTexture> m_normal_font;    //!< The normal font renderer
-        IntrusiveSP<FontTexture> m_bold_font;      //!< The bold font renderer
+    */
+    void CacheFontTextures (NResourceCache &RsrcCache);
 
-        std::vector<NString> m_FontSearchPath;
-        std::vector<NString> m_ShaderSearchPath;
-        std::vector<NString> m_UITextureSearchPath;
-        FilePath m_ResourcePathLocation;
-    };
+  private:
+    IntrusiveSP<FontTexture> m_normal_font;    //!< The normal font renderer
+    IntrusiveSP<FontTexture> m_bold_font;      //!< The bold font renderer
 
-    void NuxGraphicsInitialize();
+    std::vector<NString> m_FontSearchPath;
+    std::vector<NString> m_ShaderSearchPath;
+    std::vector<NString> m_UITextureSearchPath;
+    FilePath m_ResourcePathLocation;
+  };
+
+  void NuxGraphicsInitialize();
 
 
 } //NUX_NAMESPACE_END

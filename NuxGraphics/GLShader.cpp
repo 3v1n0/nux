@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -25,20 +25,21 @@
 #include "GLShader.h"
 #include "GLShaderParameter.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-// //----------------------------------------------------------------------------- 
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
+// //-----------------------------------------------------------------------------
 // void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...)
 // {
 //     TCHAR	DefinitionText[1024];
 //     GET_VARARGS(DefinitionText, NUX_ARRAY_COUNT(DefinitionText), NUX_ARRAY_COUNT(DefinitionText)-1,Format);
-// 
+//
 //     ShaderDefinition	Definition;
 //     Definition.Name = Name;
 //     Definition.Value = DefinitionText;
 //     Definitions.push_back(Definition);
 // }
-// 
-// //----------------------------------------------------------------------------- 
+//
+// //-----------------------------------------------------------------------------
 // bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString& ShaderPreprocessorDefines)
 // {
 //     unsigned int lineStart = 0;
@@ -46,8 +47,8 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 //     bool startTokenFound = false;
 //     int shaderStringStart =0;
 //     int shaderStartLine   =1;
-// 
-// 
+//
+//
 //     //Loop for all characters in the string
 //     if(ShaderToken != TEXT(""))
 //     {
@@ -62,11 +63,11 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 //                 {
 //                     //Test for the start token
 //                     if(ShaderSource.FindFirstOccurence(ShaderToken) == i)
-//                     {   
+//                     {
 //                         // Found the shader token
 //                         shaderStringStart = i + ShaderToken.Length();
 //                         startTokenFound = true;
-// 
+//
 //                         //Set what line the shader was found on
 //                         shaderStartLine = lineCount;
 //                     }
@@ -77,30 +78,30 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 //                     break;
 //                 }
 //             }
-// 
+//
 //             //If the character is equal to the new line character,
 //             // The next character must be on the new line
 //             if((TCharStringNCompare(&ShaderSource[i], TEXT("\r"), 1) == 0) || (TCharStringNCompare(&ShaderSource[i], TEXT("\n"), 1) == 0))
 //             {
 //                 lineStart = i+1;
 //             }
-// 
+//
 //             //Count the new lines
 //             if(TCharStringNCompare(&ShaderSource[i], TEXT("\n"), 1) == 0)
 //             {
 //                 lineCount++;
 //             }
 //         }
-// 
+//
 //         //If the string was not found, return false
 //         if(!startTokenFound || shaderStringStart >= i)
 //         {
 //             return false;
 //         }
-// 
+//
 //         //Assign the return string
 //         RetSource = ShaderSource.GetSubString(shaderStringStart, i - shaderStringStart);
-// 
+//
 //         //Add the line directive to the shader source. See the documentation for GLSL #line directive.
 //         // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
 //         int Pos = RetSource.FindFirstOccurence(TEXT("#version"));
@@ -112,7 +113,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 //         }
 //         if(RetSource[Pos] != 0)
 //             ++Pos;
-// 
+//
 //         int EndOfLinePosition = 0;
 //         unsigned int LinePosition = 0;
 //         while((EndOfLinePosition = RetSource.FindNextOccurence(TEXT('\n'), EndOfLinePosition)) < Pos-1)
@@ -120,13 +121,13 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 //             ++EndOfLinePosition;
 //             ++LinePosition;
 //         }
-// 
+//
 //         RetSource.Insert(Pos, NString::Printf(TEXT("#line %u\n"), LinePosition + shaderStartLine));
-//         
+//
 //         // Insert the preprocessor definitions before the #line directive
 //         if(ShaderPreprocessorDefines.Length())
 //             RetSource.Insert(Pos, ShaderPreprocessorDefines + NString(TEXT('\n')));
-// 
+//
 //         return true;
 //     }
 //     else
@@ -136,14 +137,14 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 //         return true;
 //     }
 // }
-// 
+//
 // void InsertPreProcessorDefinitions(const NString &ShaderSource, NString &RetSource, NString& ShaderPreprocessorDefines)
 // {
 //     RetSource = ShaderSource;
-// 
+//
 //     if(ShaderPreprocessorDefines.Length() == 0)
 //         return;
-// 
+//
 //     // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
 //     int Pos = RetSource.FindFirstOccurence(TEXT("#version"));
 //     if(Pos != -1)
@@ -166,7 +167,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 //     {
 //         Pos = 0;
 //     }
-// 
+//
 //     if(ShaderPreprocessorDefines.Length())
 //         RetSource.Insert(Pos, ShaderPreprocessorDefines + NString(TEXT('\n')));
 // }
