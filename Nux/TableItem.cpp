@@ -34,7 +34,7 @@ Color GPropertyItemTextColor1 = Color(0xFFE9E9E9);
 
 ColumnHeader::ColumnHeader()
 {
-    m_header_area = smptr(BaseArea) (new BaseArea());
+    m_header_area = new BaseArea(NUX_TRACKER_LOCATION);
 }
 
 ColumnHeader::~ColumnHeader()
@@ -66,12 +66,13 @@ TableItem::TableItem(const TCHAR* name, NodeParameterType type)
     m_isOpen = false;
     m_bParentOpen = false;
     m_bDirty = true;
-    m_row_header = smptr(CoreArea)(new CoreArea());
+    m_row_header = new CoreArea(NUX_TRACKER_LOCATION);
+    m_row_header->Reference();
 }
 
 TableItem::~TableItem()
 {
-    m_row_header.Release();
+    m_row_header->UnReference();
     NUX_SAFE_DELETE(m_PropertyTextColor);
 }
 

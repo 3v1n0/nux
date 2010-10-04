@@ -32,7 +32,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class NWindowsSerialFileReader: public NSerializer
 {
 public:
-    NWindowsSerialFileReader(HANDLE InHandle, NOutputDevice& InError);
+    NWindowsSerialFileReader(HANDLE InHandle, LogOutputDevice& InError);
     ~NWindowsSerialFileReader();
 
     virtual bool Precache(t_int PrecacheOffset, t_int PrecacheSize);
@@ -46,7 +46,7 @@ public:
 
 protected:
     HANDLE              m_FileHandle;
-    NOutputDevice& m_Error;
+    LogOutputDevice& m_Error;
     t_s64               m_FileSize;
     t_s64               m_FilePos;
     t_s64               m_BufferBase;
@@ -58,7 +58,7 @@ protected:
 class NWindowsSerialFileWriter : public NSerializer
 {
 public:
-    NWindowsSerialFileWriter(HANDLE InHandle, NOutputDevice& InError);
+    NWindowsSerialFileWriter(HANDLE InHandle, LogOutputDevice& InError);
     ~NWindowsSerialFileWriter();
 
     virtual t_s64 Seek(t_s64 InPos, NSerializer::SeekPos seekpos);
@@ -73,7 +73,7 @@ public:
 protected:
     void _Flush();
     HANDLE              m_FileHandle;
-    NOutputDevice& m_Error;
+    LogOutputDevice& m_Error;
     t_s64               m_Pos;
     t_int               m_BufferCount;
     BYTE*               m_Buffer;
@@ -93,8 +93,8 @@ public:
     //  NSerializer::Unbuffered
     //  NSerializer::Append
     //  NSerializer::Read
-    virtual NSerializer* CreateFileReader(const TCHAR* Filename, DWORD Flags, NOutputDevice& Error = GNullDevice);
-    virtual NSerializer* CreateFileWriter(const TCHAR* Filename, DWORD Flags, NOutputDevice& Error = GNullDevice);
+    virtual NSerializer* CreateFileReader(const TCHAR* Filename, DWORD Flags, LogOutputDevice& Error = GNullDevice);
+    virtual NSerializer* CreateFileWriter(const TCHAR* Filename, DWORD Flags, LogOutputDevice& Error = GNullDevice);
     HANDLE CreateReadFileHandle(const TCHAR* Filename, DWORD Flags);
     HANDLE CreateWriteFileHandle(const TCHAR* Filename, DWORD Flags);
 

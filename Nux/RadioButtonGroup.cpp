@@ -27,28 +27,31 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 RadioButtonGroup::RadioButtonGroup(NUX_FILE_LINE_DECL)
-:   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
+:   NuxCoreObject(false, NUX_FILE_LINE_PARAM)   // RadioButtonGroup is created as unowned
 {
     m_ActiveRadioButtonIndex = 0;
 }
 
 RadioButtonGroup::~RadioButtonGroup()
 {
-    std::vector<smptr(RadioButton)>::iterator it;
+    std::vector<RadioButton*>::iterator it;
     for(it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
     {
-        (*it)->m_Group = 0;
-        (*it)->m_GroupId = -1;
+        if((*it))
+        {
+            (*it)->m_Group = 0;
+            (*it)->m_GroupId = -1;
+        }
     }
 }
 
 
-void RadioButtonGroup::ConnectButton(smptr(RadioButton) radio)
+void RadioButtonGroup::ConnectButton(RadioButton* radio)
 {
-    std::vector<smptr(RadioButton)>::iterator it;
+    std::vector<RadioButton*>::iterator it;
     for(it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
     {
-        if((*it) == radio)
+        if((*it) && ((*it) == radio))
         {
             // already in
             return;
@@ -58,12 +61,13 @@ void RadioButtonGroup::ConnectButton(smptr(RadioButton) radio)
     t_u32 index = (t_u32)m_RadioButtonArray.size();
     if(index == 0)
     {
-        // Inserting the firs radio button
+        // Inserting the first radio button
         if(radio->m_Group)
         {
+            // Disconnect from the other selector
             radio->m_Group->DisconnectButton(radio);
         }
-        radio->m_Group = this;
+        radio->SetRadioGroupSelector(this);
         radio->m_GroupId = 0;
         radio->SetStatePrivate(true);
         m_RadioButtonArray.push_back(radio);
@@ -73,9 +77,10 @@ void RadioButtonGroup::ConnectButton(smptr(RadioButton) radio)
     {
         if(radio->m_Group)
         {
+            // Disconnect from the other selector
             radio->m_Group->DisconnectButton(radio);
         }
-        radio->m_Group = this;
+        radio->SetRadioGroupSelector(this);
         radio->m_GroupId = index;
         // When a radio button is added to a group that is not empty, its check state is set to false.
         radio->SetStatePrivate(false);
@@ -83,15 +88,15 @@ void RadioButtonGroup::ConnectButton(smptr(RadioButton) radio)
     }
 }
 
-void RadioButtonGroup::ActivateButton(smptr(RadioButton) radio)
+void RadioButtonGroup::ActivateButton(RadioButton* radio)
 {
-    std::vector<smptr(RadioButton)>::iterator it = find(m_RadioButtonArray.begin(), m_RadioButtonArray.end(), radio);
+    std::vector<RadioButton*>::iterator it = find(m_RadioButtonArray.begin(), m_RadioButtonArray.end(), radio);
     if(it == m_RadioButtonArray.end())
         return;
 
     for(it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
     {
-        if((*it) != radio)
+        if((*it) && ((*it) != radio))
         {
             (*it)->SetStatePrivate(false, true);
         }
@@ -99,11 +104,11 @@ void RadioButtonGroup::ActivateButton(smptr(RadioButton) radio)
     radio->SetStatePrivate(true, true);
 }
 
-void RadioButtonGroup::DisconnectButton(smptr(RadioButton) radio)
+void RadioButtonGroup::DisconnectButton(RadioButton* radio)
 {
     bool found = false;
     t_u32 array_size = (t_u32) m_RadioButtonArray.size();
-    std::vector<smptr(RadioButton)>::iterator it;
+    std::vector<RadioButton*>::iterator it;
     it = m_RadioButtonArray.begin();
     t_s32 i;
     for(i = 0; i < (t_s32)array_size; i++, it++)
@@ -126,25 +131,31 @@ void RadioButtonGroup::DisconnectButton(smptr(RadioButton) radio)
     }
 }
 
-void RadioButtonGroup::NotifyClick(smptr(RadioButton) radio)
+void RadioButtonGroup::NotifyClick(RadioButton* radio)
 {
-    std::vector<smptr(RadioButton)>::iterator it;
+    std::vector<RadioButton*>::iterator it;
     for(it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
     {
         if((*it) != radio)
         {
-            (*it)->SetStatePrivate(false, true);
+            if((*it))
+            {
+                (*it)->SetStatePrivate(false, true);
+            }
         }
         else
         {
-            (*it)->SetStatePrivate(true,  true);
+            if((*it))
+            {
+                (*it)->SetStatePrivate(true,  true);
+            }
         }
     }
 }
 
-void RadioButtonGroup::SetActiveButton(smptr(RadioButton) radio, bool EmitSignal)
+void RadioButtonGroup::SetActiveButton(RadioButton* radio, bool EmitSignal)
 {
-    std::vector<smptr(RadioButton)>::iterator it = find(m_RadioButtonArray.begin(), m_RadioButtonArray.end(), radio);
+    std::vector<RadioButton*>::iterator it = find(m_RadioButtonArray.begin(), m_RadioButtonArray.end(), radio);
     if(it == m_RadioButtonArray.end())
         return;
 
@@ -152,11 +163,17 @@ void RadioButtonGroup::SetActiveButton(smptr(RadioButton) radio, bool EmitSignal
     {
         if((*it) != radio)
         {
-            (*it)->SetStatePrivate(false, EmitSignal);
+            if((*it))
+            {
+                (*it)->SetStatePrivate(false, EmitSignal);
+            }
         }
         else
         {
-            (*it)->SetStatePrivate(true,  EmitSignal);
+            if((*it))
+            {
+                (*it)->SetStatePrivate(true,  EmitSignal);
+            }
         }
     }
 }

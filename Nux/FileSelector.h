@@ -49,10 +49,10 @@ public:
     sigc::signal<void> sigClick;
 
 private:
-    smptr(EditTextBox) m_FileEditTextBox;
-    smptr(CoreArea) m_OpenButton;
-    smptr(HLayout) m_hlayout;
-    NTexture2D m_Texture;
+    EditTextBox*    m_FileEditTextBox;
+    CoreArea*       m_OpenButton;
+    HLayout*        m_hlayout;
+    NTexture2D      m_Texture;
 };
 
 } //NUX_NAMESPACE_END

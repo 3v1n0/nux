@@ -248,27 +248,33 @@ void BaseObject::SetStretchFactor(unsigned int sf)
     //ComputeLayout2(); // This will make the layout fit exactly its children if any.
 }
 
-void BaseObject::UnParentObject(smptr(BaseObject))
+void BaseObject::SetParentObject(BaseObject* bo)
 {
-    if(m_ParentObject.IsValid() && m_ParentObject->IsLayout())
+    if(bo == 0)
     {
-        m_ParentObject->RemoveChildObject(smptr(BaseObject)(this, true));
-        m_ParentObject->RequestBottomUpLayoutComputation(smptr(BaseObject)(NULL));
-        m_ParentObject = smptr(BaseObject)(0);
+        nuxAssertMsg(0, TEXT("[BaseObject::SetParentObject] Invalid parent obejct."));
+        return;
+    }
+
+    if(m_ParentObject)
+    {
+        nuxAssertMsg(0, TEXT("[BaseObject::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again."));
+        return;
+    }
+    m_ParentObject = bo;
+    Reference();
+}
+
+void BaseObject::UnParentObject()
+{
+    if(m_ParentObject)
+    {
+        m_ParentObject = 0;
+        UnReference();
     }
 }
 
-void BaseObject::RemoveChildObject(smptr(BaseObject))
-{
-
-}
-
-void BaseObject::SetParentObject(smptr(BaseObject) bo)
-{
-    m_ParentObject = bo;
-}
-
-smptr(BaseObject) BaseObject::GetParentObject()
+BaseObject* BaseObject::GetParentObject()
 {
     return m_ParentObject;
 }
@@ -345,7 +351,7 @@ void BaseObject::_SetBaseHeight(int h)
     }
 }
 
-void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
+void BaseObject::InitiateResizeLayout(BaseObject* child)
 {
     if(GetGraphicsThread()->IsComputingLayout())
     {
@@ -361,7 +367,7 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
         {
             this->Reference();
         }
-        smptr(ActiveInterfaceObject) ic(this, true);
+        ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, this);
         if(ic->CanBreakLayout())
         {
 
@@ -377,8 +383,8 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
                 GetGraphicsThread()->AddObjectToRefreshList(ic);
             }
         }
-        else if(ic->m_ParentObject.IsValid())
-            ic->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, true));
+        else if(ic->m_ParentObject)
+            ic->m_ParentObject->InitiateResizeLayout(this);
         else
         {
             GetGraphicsThread()->AddObjectToRefreshList(ic);
@@ -391,12 +397,12 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
             this->Reference();
         }
 
-        smptr(Layout) layout = smptr(Layout)(this, true);
-        if(layout->m_ParentObject.IsValid())
+        Layout* layout = NUX_STATIC_CAST(Layout*, this);
+        if(layout->m_ParentObject)
         {
             if(layout->m_ParentObject->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
             {
-                smptr(ActiveInterfaceObject) ic = smptr(ActiveInterfaceObject)(layout->m_ParentObject);
+                ActiveInterfaceObject* ic = (ActiveInterfaceObject*)(layout->m_ParentObject);
                 if(ic->CanBreakLayout())
                 {
                     if((child != 0) && 
@@ -404,7 +410,7 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
                     {
                         // If the parent of this element is a splitter, then we submit its child to the refresh list. We don't want to submit the 
                         // splitter because this will cause a redraw of all parts of the splitter (costly and unnecessary). 
-                        GetGraphicsThread()->AddObjectToRefreshList(smptr(BaseObject)(this, true));
+                        GetGraphicsThread()->AddObjectToRefreshList(this);
                     }
                     else
                     {
@@ -414,12 +420,12 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
                 else
                 {
                     // The parent object of an object of type ActiveInterfaceObject is a Layout object type.
-                    layout->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, true));
+                    layout->m_ParentObject->InitiateResizeLayout(this);
                 }
             }
             else
             {
-                layout->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, true));
+                layout->m_ParentObject->InitiateResizeLayout(this);
             }
         }
         else
@@ -431,7 +437,7 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
     else
     {
         // The object that is being resized is a CoreArea object.
-        if(this->m_ParentObject.IsValid())
+        if(this->m_ParentObject)
         {
             if(this->OwnsTheReference() == false)
             {
@@ -439,14 +445,14 @@ void BaseObject::InitiateResizeLayout(smptr(BaseObject) child)
             }
 
             // The parent object of an object of type CoreArea is a Layout object type.
-            this->m_ParentObject->InitiateResizeLayout(smptr(BaseObject)(this, true));
+            this->m_ParentObject->InitiateResizeLayout(this);
         }
     }
 }
 
-void BaseObject::RequestBottomUpLayoutComputation(smptr(BaseObject) bo_initiator)
+void BaseObject::RequestBottomUpLayoutComputation(BaseObject* bo_initiator)
 {
-    if(m_ParentObject.IsValid() && m_ParentObject->IsLayout())
+    if(m_ParentObject && m_ParentObject->IsLayout())
     {
         m_ParentObject->RequestBottomUpLayoutComputation(bo_initiator);
     }

@@ -107,8 +107,8 @@ public:
     
     //Layout Bridge
 
-    bool SearchInAllSubNodes(smptr(BaseObject) bo);
-    bool SearchInFirstSubNodes(smptr(BaseObject) bo);
+    bool SearchInAllSubNodes(BaseObject* bo);
+    bool SearchInFirstSubNodes(BaseObject* bo);
 
     //! Set Geometry
     /*
@@ -146,13 +146,13 @@ public:
 protected:
     IntrusiveSP<FontTexture> m_font;
     Color m_TextColor;
-    virtual smptr(Layout) GetCompositionLayout() const;
-    virtual void SetCompositionLayout(smptr(Layout) lyt);
+    virtual Layout* GetCompositionLayout() const;
+    virtual void SetCompositionLayout(Layout* lyt);
     void RemoveCompositionLayout();
     bool IsFullRedraw() const {return m_IsFullRedraw;}
 
 protected:
-    smptr(Layout) m_CompositionLayout;
+    Layout* m_CompositionLayout;
 
     bool m_NeedRedraw;
     

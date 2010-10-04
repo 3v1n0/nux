@@ -30,8 +30,8 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 CheckBox::CheckBox(const TCHAR* Caption, bool state, NUX_FILE_LINE_DECL)
 :   AbstractButton(Caption, NUX_FILE_LINE_PARAM)
 {
-    m_hlayout = smptr(HLayout)(0);
-    m_TextArea = smptr(CoreArea)(0);
+    m_hlayout = 0;
+    m_TextArea = 0;
 
     InitializeLayout();
     InitializeWidgets();
@@ -100,9 +100,9 @@ void CheckBox::InitializeWidgets()
 
 void CheckBox::InitializeLayout()
 {
-    m_hlayout = smptr(HLayout)(new HLayout("CheckBox"));
-    m_CheckArea = smptr(CoreArea)(new CoreArea());
-    m_TextArea = smptr(CoreArea)(new CoreArea());
+    m_hlayout   = new HLayout("CheckBox");
+    m_CheckArea = new CoreArea();
+    m_TextArea  = new CoreArea();
 }
 
 void CheckBox::DestroyLayout()
@@ -193,7 +193,7 @@ bool CheckBox::GetState() const
 void CheckBox::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
 {
     m_State = !m_State;
-    sigStateToggled.emit(smptr(CheckBox)(this, true));
+    sigStateToggled.emit(this);
     sigStateChanged.emit(m_State);
     NeedRedraw();
 }

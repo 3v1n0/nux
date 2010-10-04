@@ -32,7 +32,7 @@ class RangeValueIntegerPropertyItem: public SectionProperty, public RangeValueIn
 {
     NODE_XML_CLASS_MEMBER(RangeValueIntegerPropertyItem);
     NODE_SKIP_CHILD(false);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(RangeValueInteger));
+    NODE_SIG_RECEIVER(RecvPropertyChange, RangeValueInteger*);
 
 public:
     RangeValueIntegerPropertyItem(const char* name, int Value = 0, int MinValue = 0, int MaxValue = 100);

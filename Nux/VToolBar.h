@@ -22,6 +22,7 @@
 
 #ifndef VTOOLBAR_H
 #define VTOOLBAR_H
+
 namespace nux { //NUX_NAMESPACE_BEGIN
 class ActionItem;
 class ToolButton;
@@ -40,8 +41,8 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void AddToolButton(smptr(ToolButton));
-    void AddAction(smptr(ActionItem) action);
+    void AddToolButton(ToolButton*);
+    void AddAction(ActionItem* action);
     void AddSpace(int size);
     void AddSeparator();
 
@@ -63,7 +64,7 @@ protected:
     void DestroyLayout();
 
 private:
-    smptr(VLayout) m_vlayout;
+    VLayout* m_vlayout;
 };
 
 } //NUX_NAMESPACE_END

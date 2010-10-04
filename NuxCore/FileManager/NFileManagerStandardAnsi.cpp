@@ -28,7 +28,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
 const t_int NSerializeFileReader::sBufferSize = 1024;
 
-NSerializeFileReader::NSerializeFileReader(FILE* InFile, NOutputDevice* InError, t_int InSize)
+NSerializeFileReader::NSerializeFileReader(FILE* InFile, LogOutputDevice* InError, t_int InSize)
 : m_File(InFile)
 , m_Error(InError)
 , m_FileSize(InSize)
@@ -145,7 +145,7 @@ void NSerializeFileReader::SerializeFinal(void* Dest, t_s64 Length)
 //////////////////////////////////////////////////////////////////////////
 const t_int NSerializeFileWriter::sBufferSize = 4096;
 
-NSerializeFileWriter::NSerializeFileWriter(FILE* InFile, NOutputDevice* InError)
+NSerializeFileWriter::NSerializeFileWriter(FILE* InFile, LogOutputDevice* InError)
 : m_File(InFile)
 , m_Error(InError)
 , m_FilePos(0)

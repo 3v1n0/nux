@@ -27,7 +27,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
 const t_int  NGNUSerialFileReader::sBufferSize = 1024;
 
-NGNUSerialFileReader::NGNUSerialFileReader(t_int InFileDescriptor, NOutputDevice& InError, t_int InSize)
+NGNUSerialFileReader::NGNUSerialFileReader(t_int InFileDescriptor, LogOutputDevice& InError, t_int InSize)
 :   m_FileDescriptor    (InFileDescriptor)
 ,   m_Error             (InError)
 ,   m_FileSize          (InSize)
@@ -186,7 +186,7 @@ void NGNUSerialFileReader::SerializeFinal(void* Dest, t_s64 Length)
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
 const t_int  NGNUSerialFileWriter::sBufferSize = 32;
 
-NGNUSerialFileWriter::NGNUSerialFileWriter(t_int InFileDescriptor, NOutputDevice& InError, t_int InPos)
+NGNUSerialFileWriter::NGNUSerialFileWriter(t_int InFileDescriptor, LogOutputDevice& InError, t_int InPos)
 :   m_FileDescriptor(InFileDescriptor)
 ,   m_Error         (InError)
 ,   m_Pos           (InPos)
@@ -342,7 +342,7 @@ void NFileManagerGNU::Destructor()
 {
 }
 
-NSerializer* NFileManagerGNU::CreateFileReader(const TCHAR* Filename, DWORD Flags, NOutputDevice& Error)
+NSerializer* NFileManagerGNU::CreateFileReader(const TCHAR* Filename, DWORD Flags, LogOutputDevice& Error)
 {
     t_int FileDesc = open(TCHAR_TO_ANSI(Filename), O_RDONLY);
     if(FileDesc == -1)
@@ -372,7 +372,7 @@ NSerializer* NFileManagerGNU::CreateFileReader(const TCHAR* Filename, DWORD Flag
 
 NSerializer* NFileManagerGNU::CreateFileWriter(const TCHAR* Filename,
                                                DWORD Flags,
-                                               NOutputDevice& Error)
+                                               LogOutputDevice& Error)
 {
     if(FileExist(Filename) && (Flags & NSerializer::OverWriteReadOnly))
     {

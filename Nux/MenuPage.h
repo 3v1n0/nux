@@ -47,16 +47,16 @@ public:
     void DrawAsMenuItem(GraphicsContext& GfxContext, const Color& textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone);
 
     //const ActionItem& GetItem() const {return m_ActionItem;}
-    const smptr(ActionItem) GetActionItem() const;
-    //smptr(ActionItem) GetActionItem();
+    ActionItem* GetActionItem() const;
+    //ActionItem* GetActionItem();
 
 private:
-    void SetChildMenu(smptr(MenuPage) menu);
-    smptr(MenuPage) GetChildMenu() const;
-    void SetActionItem(smptr(ActionItem) menu);
+    void SetChildMenu(MenuPage* menu);
+    MenuPage* GetChildMenu() const;
+    void SetActionItem(ActionItem* menu);
 
-    smptr(MenuPage) m_ChildMenu;
-    smptr(ActionItem) m_ActionItem;
+    MenuPage* m_ChildMenu;
+    ActionItem* m_ActionItem;
     friend class MenuPage;
 };
 
@@ -92,13 +92,13 @@ public:
 //    void SetName(const TCHAR* name);
     const TCHAR* GetName() const;
 
-    smptr(ActionItem) AddAction(const TCHAR* label = 0, int UserValue = 0);
-    //void AddActionItem(smptr(ActionItem) actionItem);
+    ActionItem* AddAction(const TCHAR* label = 0, int UserValue = 0);
+    //void AddActionItem(ActionItem* actionItem);
     void AddSeparator();
-    smptr(MenuPage) AddMenu(const TCHAR* label);
-    smptr(ActionItem) AddSubMenu(const TCHAR* label, smptr(MenuPage) menu);
+    MenuPage* AddMenu(const TCHAR* label);
+    ActionItem* AddSubMenu(const TCHAR* label, MenuPage* menu);
 
-    void RemoveItem(smptr(ActionItem) item);
+    void RemoveItem(ActionItem* item);
     void RemoveAllItem();
 
     bool CanClose() const;
@@ -134,14 +134,14 @@ public:
 
 public:
     void StopActionSubMenu();
-    void ExecuteActionItem(smptr(MenuItem) menuItem);
+    void ExecuteActionItem(MenuItem* menuItem);
 
-    void NotifyActionTriggeredToParent(smptr(MenuPage), smptr(MenuItem) menuItem);
+    void NotifyActionTriggeredToParent(MenuPage*, MenuItem* menuItem);
     void NotifyTerminateMenuCascade();
     void NotifyMouseDownOutsideMenuCascade(int x, int y);
 
-    void SetParentMenu(smptr(MenuPage));
-    smptr(MenuPage) GetParentMenu();
+    void SetParentMenu(MenuPage*);
+    MenuPage* GetParentMenu();
 
     void setShowItemIcon(bool b) { m_show_item_icon = b; }
     bool ShowItemIcon() { return m_show_item_icon; }
@@ -159,7 +159,7 @@ public:
         \param MenuPage the menu object sending the signal.
         \param ActionItem the action object that was triggered in the menu.
     */
-    sigc::signal<void, smptr(MenuPage), const smptr(ActionItem) > sigActionTriggered;
+    sigc::signal<void, MenuPage*, ActionItem* > sigActionTriggered;
 
     //! Terminate the menu and its sub menu cascade.
     /*
@@ -176,7 +176,7 @@ public:
         if no, it will initiate the closure of the menu cascade.
         Any object that controls a menu should intercept sigTerminateMenuCascade and sigMouseDownOutsideMenuCascade.
     */
-    sigc::signal<void, smptr(MenuPage), int, int> sigMouseDownOutsideMenuCascade;
+    sigc::signal<void, MenuPage*, int, int> sigMouseDownOutsideMenuCascade;
 
     void SetActive(bool b)
     {
@@ -196,24 +196,24 @@ public:
         Return the number of items in the menu.
     */
     int GetNumItem() const {return m_numItem;}
-    smptr(ActionItem) GetActionItem(int i) const;
+    ActionItem* GetActionItem(int i) const;
 
     /*!
         Get the index of and item in the menu.
         @return the index of the ActionItem in the menu. -1 if the Action Item is not found.
     */
-    int GetActionItemIndex(const smptr(ActionItem) action) const;
+    int GetActionItemIndex(ActionItem* action) const;
 private:
     int m_numItem;
     int m_HighlightedItem;
     bool m_IsActive;
-    smptr(VLayout) vlayout;
+    VLayout* vlayout;
     bool m_NextMouseUpMeanStop;
-    smptr(MenuItem) m_SubMenuAction;
+    MenuItem* m_SubMenuAction;
     NString m_Name;
 
     bool m_Action_Triggered;
-    smptr(MenuPage) m_Parent;
+    MenuPage* m_Parent;
     
     // Set to TRUE if one of the MenuItem processed the mouse event.
     bool m_MouseEventProcessed;
@@ -221,9 +221,9 @@ private:
     int m_item_width;
     int m_item_height;
     bool m_show_item_icon;
-    std::vector< smptr(MenuItem) > m_MenuItemVector;
-    std::vector< smptr(MenuSeparator) > m_MenuSeparatorVector;
-    smptr(BaseWindow) m_MenuWindow;
+    std::vector<MenuItem*> m_MenuItemVector;
+    std::vector< MenuSeparator* > m_MenuSeparatorVector;
+    BaseWindow* m_MenuWindow;
 
     //! This parameter is True if this MenuPage is at the top of a menu chain attached to a MenuBar.
     bool m_IsTopOfMenuChain;

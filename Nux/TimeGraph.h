@@ -66,15 +66,15 @@ protected:
 
 private:
     static unsigned int sBufferSize;
-    smptr(VLayout) m_vlayout;
-    smptr(HLayout) m_hlayout;
-    smptr(HLayout) m_hlayout2;
-    smptr(Button) m_button;
-    smptr(StaticTextBox) m_GraphTitle;
-    smptr(CoreArea) m_GraphArea;
-    smptr(CoreArea) m_GraphIcon;
-    smptr(CoreArea) m_GraphBarIcon;
-    smptr(CoreArea) m_ValueIcon;
+    VLayout*        m_vlayout;
+    HLayout*        m_hlayout;
+    HLayout*        m_hlayout2;
+    Button*         m_button;
+    StaticTextBox*  m_GraphTitle;
+    CoreArea*       m_GraphArea;
+    CoreArea*       m_GraphIcon;
+    CoreArea*       m_GraphBarIcon;
+    CoreArea*       m_ValueIcon;
     NString m_Title;
 
     float m_arg0;

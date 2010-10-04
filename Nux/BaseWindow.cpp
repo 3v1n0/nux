@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "Nux.h"
 
 #include "NuxGraphics/GLTextureResourceManager.h"
@@ -49,13 +48,14 @@ BaseWindow::BaseWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
 ,   m_bIsVisible(false)
 ,   m_bIsModal(false)
 {
+    m_layout = 0;
     m_configure_notify_callback = NULL;
     m_configure_notify_callback_data = NULL;
     m_blured_background = false;
     m_background_color = Color(0xFF707070);
 
     // Should be at the end of the constructor
-    GetThreadWindowCompositor().RegisterWindow(smptr(BaseWindow)(this, true));
+    GetThreadWindowCompositor().RegisterWindow(this);
 
     SetMinimumSize(1, 1);
     SetGeometry(Geometry(100, 100, 320, 200));
@@ -65,8 +65,7 @@ BaseWindow::BaseWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
 
 BaseWindow::~BaseWindow()
 {
-    GetThreadWindowCompositor().UnRegisterWindow(smptr(BaseWindow)(this, true));
-    m_InterfaceObject.clear();
+    GetThreadWindowCompositor().UnRegisterWindow(this);
     NUX_SAFE_DELETE(m_PaintLayer);
 }
 
@@ -111,13 +110,7 @@ long BaseWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEve
         }
     }
 
-//    {   std::list<smptr(ActiveInterfaceObject)>::iterator it;
-//        for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
-//        {
-//            ret = (*it)->ProcessEvent(ievent, ret, ProcEvInfo);
-//        }
-//    }
-    if(m_layout.IsValid())
+    if(m_layout)
         ret = m_layout->ProcessEvent(window_event, ret, ProcEvInfo);
 
     // PostProcessEvent2 must always have its last parameter set to 0
@@ -183,7 +176,7 @@ void BaseWindow::DrawContent(GraphicsContext& GfxContext, bool force_draw)
         //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 0.5f));
     }
 
-    if(m_layout.IsValid())
+    if(m_layout)
     {
         GfxContext.PushClippingRectangle(base);
         m_layout->ProcessDraw(GfxContext, force_draw);
@@ -203,61 +196,37 @@ void BaseWindow::SetConfigureNotifyCallback(ConfigureNotifyCallback Callback, vo
     m_configure_notify_callback_data = Data;
 }
 
-void BaseWindow::AddWidget(int id)
+void BaseWindow::AddWidget(ActiveInterfaceObject* ic)
 {
-//    smptr(ActiveInterfaceObject) ic = InterfaceControlFactory::Instance().CreateObject(id);
-//    if(ic.IsValid() && m_layout.IsValid())
-//    {
-//        m_layout->AddActiveInterfaceObject(ic, 0);
-//        // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
-//        // and the children will take their natural size by expending WidgetLayout.
-//        // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-//
-//        m_InterfaceObject.push_back(ic);
-//
-//        //FormatContent();
-//        ComputeChildLayout();
-//    }
-}
-
-void BaseWindow::AddWidget(smptr(ActiveInterfaceObject) ic)
-{
-    if(ic.IsValid() && m_layout.IsValid())
+    if(ic && m_layout)
     {
         m_layout->AddActiveInterfaceObject(ic, 0);
         // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
         // and the children will take their natural size by expending WidgetLayout.
         // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 
-        m_InterfaceObject.push_back(ic);
-
-        //FormatContent();
         ComputeChildLayout();
     }
 }
 
-void BaseWindow::AddWidget(smptr(ActiveInterfaceObject) ic, int stretchfactor)
+void BaseWindow::AddWidget(ActiveInterfaceObject* ic, int stretchfactor)
 {
-    if(ic.IsValid() && m_layout.IsValid())
+    if(ic && m_layout)
     {
         m_layout->AddActiveInterfaceObject(ic, stretchfactor);
         // if(stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
         // and the children will take their natural size by expending WidgetLayout.
         // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 
-        m_InterfaceObject.push_back(ic);
-
-        //FormatContent();
         ComputeChildLayout();
     }
 }
 
-void BaseWindow::AddWidget(std::list<smptr(ActiveInterfaceObject)> *InterfaceControlList)
+void BaseWindow::AddWidget(std::list<ActiveInterfaceObject*> *InterfaceControlList)
 {
     m_CompositionLayout->Clear();
-    m_InterfaceObject.clear();
 
-    std::list<smptr(ActiveInterfaceObject)>::iterator it;
+    std::list<ActiveInterfaceObject*>::iterator it;
     
     for(it = InterfaceControlList->begin(); it != InterfaceControlList->end(); it++)
     {
@@ -265,33 +234,19 @@ void BaseWindow::AddWidget(std::list<smptr(ActiveInterfaceObject)> *InterfaceCon
     }
 }
 
-void BaseWindow::setLayout(smptr(Layout) layout)
+void BaseWindow::SetLayout(Layout* layout)
 {
     if(layout == 0)
         return;
 
-    m_InterfaceObject.clear();
-    std::list<smptr(BaseObject)> *InterfaceControlList = new std::list<smptr(BaseObject)>;
-
     m_layout = layout;
     SetCompositionLayout(m_layout);
-
-    // Get the list of ActiveInterfaceObject that is in the m_layout and its lower hierarchy of layout.
-    // Go down to the WidgetLayout to get every ActiveInterfaceObject Obbject.
-    m_layout->GetCompositeList(InterfaceControlList);
-
-    std::list<smptr(BaseObject)>::iterator it;
-    for(it = InterfaceControlList->begin(); it != InterfaceControlList->end(); it++)
-    {
-        m_InterfaceObject.push_back((*it));
-    }
 
     Geometry geo = GetGeometry();
     Geometry layout_geo = Geometry(geo.x + m_Border, geo.y + m_TopBorder,
         geo.GetWidth() - 2*m_Border, geo.GetHeight() - m_Border - m_TopBorder);
     m_layout->SetGeometry(layout_geo);
     ComputeChildLayout();
-    delete InterfaceControlList;
 }
 
 // Get a change to do any work on an element.
@@ -315,7 +270,7 @@ void BaseWindow::PreLayoutManagement()
         }
     }
 
-    if(m_layout.IsValid())
+    if(m_layout)
     {
         Geometry layout_geo = Geometry(m_Border, m_TopBorder,
             geo.GetWidth() - 2*m_Border, geo.GetHeight() - m_Border - m_TopBorder);
@@ -327,7 +282,7 @@ void BaseWindow::PreLayoutManagement()
 // Here we need to position the header by hand because it is not under the control of vlayout.
 long BaseWindow::PostLayoutManagement(long LayoutResult)
 {
-    if(IsSizeMatchContent() && m_layout.IsValid())
+    if(IsSizeMatchContent() && m_layout)
     {
         Geometry layout_geometry = m_layout->GetGeometry();
 
@@ -398,7 +353,7 @@ void BaseWindow::ShowWindow(bool b, bool StartModal /*  = false */)
 //    if(m_bIsModal)
 //        return;
 
-    if(m_layout.IsValid())
+    if(m_layout)
     {
         m_layout->SetGeometry(GetGeometry());
     }
@@ -414,7 +369,7 @@ void BaseWindow::ShowWindow(bool b, bool StartModal /*  = false */)
     }
 
     if(m_bIsModal)
-        GetThreadWindowCompositor().StartModalWindow(smptr(BaseWindow)(this, true));
+        GetThreadWindowCompositor().StartModalWindow(this);
 }
 
 bool BaseWindow::IsVisible() const
@@ -427,7 +382,7 @@ void BaseWindow::StopModal()
     m_bIsVisible = false;
     m_bIsModal = false;
     //ShowWindow(false);
-    GetThreadWindowCompositor().StopModalWindow(smptr(BaseWindow)(this, true));
+    GetThreadWindowCompositor().StopModalWindow(this);
 }
 
 bool BaseWindow::IsModal() const

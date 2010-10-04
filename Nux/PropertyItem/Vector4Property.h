@@ -31,7 +31,7 @@ class Vector4PropertyItem: public SectionProperty
 {
     NODE_XML_CLASS_MEMBER(Vector4PropertyItem);
     NODE_SKIP_CHILD(true);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(EditTextBox));
+    NODE_SIG_RECEIVER(RecvPropertyChange, EditTextBox*);
 public:
     Vector4PropertyItem(const TCHAR* name,
         double X = 0.0,

@@ -43,7 +43,7 @@ public:
     ColumnHeader();
     ~ColumnHeader();
 
-    smptr(BaseArea) m_header_area;
+    BaseArea* m_header_area;
     bool bFixWidth;
     int FixWidthValue;
 };
@@ -174,7 +174,7 @@ protected:
     bool  m_AlwaysShowOpeningButton;
 
     //! Geometry of the header of the row. Located at the left of the row.
-    smptr(CoreArea) m_row_header;
+    CoreArea* m_row_header;
     //! Array of geometries of the column inside the row.
     std::vector<Geometry> m_ItemGeometryVector;
     //Geometry m_FirstColumnInRowGeometry;

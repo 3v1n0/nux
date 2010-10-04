@@ -39,14 +39,14 @@ NUX_IMPLEMENT_OBJECT_TYPE(MenuBar);
 MenuBarItem::MenuBarItem(NUX_FILE_LINE_DECL)
 :   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
 {
-    area = smptr(CoreArea)(new CoreArea());
+    area = new CoreArea(NUX_TRACKER_LOCATION);
     icon = 0;
 }
 
 MenuBarItem::~MenuBarItem()
 {
-    menu.Release();
-    area.Release();
+    //menu.UnReference(); ?
+    //area.UnReference(); ?
 }
 
 MenuBar::MenuBar(NUX_FILE_LINE_DECL)
@@ -54,9 +54,10 @@ MenuBar::MenuBar(NUX_FILE_LINE_DECL)
 ,   m_MenuIsActive(false)
 //,   m_CurrentMenu(0)
 ,   m_IsOpeningMenu(false)
-,   m_MenuBarWindow(0)
 { 
-    m_hlayout = smptr(HLayout)(new HLayout());
+    m_CurrentMenu = NULL;
+    m_MenuBarWindow = NULL;
+    m_hlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
     m_hlayout->SetHorizontalInternalMargin(4);
     m_hlayout->SetHorizontalExternalMargin(2);
 
@@ -66,13 +67,13 @@ MenuBar::MenuBar(NUX_FILE_LINE_DECL)
 
     m_hlayout->SetHorizontalInternalMargin(4);
     m_hlayout->SetVerticalExternalMargin(0);
-    m_hlayout->SetContentStacking(eStackLeft);
+    m_hlayout->SetContentDistribution(eStackLeft);
     SetCompositionLayout(m_hlayout);
 }
 
 MenuBar::~MenuBar()
 {
-    if(m_CurrentMenu.IsValid())
+    if(m_CurrentMenu)
     {
 //         m_CurrentMenu->area->OnMouseEnter.clear();
 //         m_CurrentMenu->area->OnMouseEnter.clear();
@@ -82,7 +83,7 @@ MenuBar::~MenuBar()
 //         m_CurrentMenu->area->OnMouseUp.clear();
     }
 
-    std::list< smptr(MenuBarItem) >::iterator it;
+    std::list< MenuBarItem* >::iterator it;
     for(it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
 //         (*it)->area->OnMouseEnter.clear();
@@ -92,7 +93,7 @@ MenuBar::~MenuBar()
 //         (*it)->area->OnMouseDrag.clear();
 //         (*it)->area->OnMouseUp.clear();
 
-        (*it) = smptr(MenuBarItem)(0);
+        (*it) = 0;
     }
     m_MenuBarItemList.clear();
 }
@@ -102,7 +103,7 @@ long MenuBar::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventI
     long ret = TraverseInfo;
     ret = TraverseInfo;  // <<---- never forget this
 
-    std::list< smptr(MenuBarItem) >::iterator it;
+    std::list< MenuBarItem* >::iterator it;
     
     for(it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
@@ -148,10 +149,10 @@ void MenuBar::Draw(GraphicsContext& GfxContext, bool force_draw)
     GfxContext.PushClippingRectangle(base);
 
     Geometry item_geometry;
-    std::list< smptr(MenuBarItem) >::iterator it;
+    std::list< MenuBarItem* >::iterator it;
     for(it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
-        smptr(CoreArea) area = (*it)->area;
+        CoreArea* area = (*it)->area;
         item_geometry = area->GetGeometry();
         if(area->IsMouseInside())
         {
@@ -202,7 +203,7 @@ void MenuBar::Draw(GraphicsContext& GfxContext, bool force_draw)
     }
     if(m_MenuIsActive)
     {
-        smptr(CoreArea) area(m_CurrentMenu->area);
+        CoreArea* area = m_CurrentMenu->area;
         item_geometry = area->GetGeometry();
         gPainter.PaintBackground(GfxContext, item_geometry);
         gPainter.Paint2DQuadColor(GfxContext, item_geometry, Color(0xFF000000));
@@ -235,17 +236,17 @@ void MenuBar::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 }
 
-void MenuBar::AddMenu(const TCHAR* MenuLabel, smptr(MenuPage) menu)
+void MenuBar::AddMenu(const TCHAR* MenuLabel, MenuPage* menu)
 {
     AddMenu(MenuLabel, menu, 0);
 }
 
-void MenuBar::AddMenu(const TCHAR* MenuLabel, smptr(MenuPage) menu, NTexture *icon)
+void MenuBar::AddMenu(const TCHAR* MenuLabel, MenuPage* menu, NTexture *icon)
 {
     // Need to add NUX_RETURN_IF_TRUE, NUX_RETURN_IF_FALSE
-    NUX_RETURN_IF_TRUE(menu.IsNull());
+    NUX_RETURN_IF_NULL(menu);
 
-    smptr(MenuBarItem) menubar_item(new MenuBarItem());
+    MenuBarItem* menubar_item(new MenuBarItem());
 
     menu->m_IsTopOfMenuChain = true;
     menubar_item->area->SetBaseString(MenuLabel);
@@ -263,13 +264,13 @@ void MenuBar::AddMenu(const TCHAR* MenuLabel, smptr(MenuPage) menu, NTexture *ic
         menubar_item->area->SetMinMaxSize(MENUBAR_ICON_WIDTH, MENUBAR_ICON_HEIGHT);
     }
 
-    menubar_item->area->OnMouseEnter.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::EmitItemMouseEnter), weaksmptr(MenuBarItem)(menubar_item)));
-    menubar_item->area->OnMouseLeave.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::EmitItemMouseLeave), weaksmptr(MenuBarItem)(menubar_item)));
-    menubar_item->area->OnMouseDown.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::EmitItemMouseDown), weaksmptr(MenuBarItem)(menubar_item)));
-    menubar_item->area->OnMouseDrag.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::RecvItemMouseDrag), weaksmptr(MenuBarItem)(menubar_item)));
-    menubar_item->area->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::EmitItemMouseUp), weaksmptr(MenuBarItem)(menubar_item)));
+    menubar_item->area->OnMouseEnter.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::EmitItemMouseEnter), menubar_item));
+    menubar_item->area->OnMouseLeave.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::EmitItemMouseLeave), menubar_item));
+    menubar_item->area->OnMouseDown.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::EmitItemMouseDown), menubar_item));
+    menubar_item->area->OnMouseDrag.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::RecvItemMouseDrag), menubar_item));
+    menubar_item->area->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &MenuBar::EmitItemMouseUp), menubar_item));
 
-    menubar_item->menu->SetParentMenu(smptr(MenuPage)(0));
+    menubar_item->menu->SetParentMenu(0);
     menubar_item->menu->sigActionTriggered.connect(sigc::mem_fun(this, &MenuBar::RecvSigActionTriggered));
     menubar_item->menu->sigTerminateMenuCascade.connect(sigc::mem_fun(this, &MenuBar::RecvSigTerminateMenuCascade));
     menubar_item->menu->sigMouseDownOutsideMenuCascade.connect(sigc::mem_fun(this, &MenuBar::RecvSigMouseDownOutsideMenuCascade));
@@ -278,11 +279,11 @@ void MenuBar::AddMenu(const TCHAR* MenuLabel, smptr(MenuPage) menu, NTexture *ic
     GetGraphicsThread()->ComputeElementLayout(m_hlayout);
 }
 
-void MenuBar::EmitItemMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item)
+void MenuBar::EmitItemMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item)
 {
     if(m_MenuIsActive)
     {
-        if(m_CurrentMenu.IsValid() && (m_CurrentMenu->menu != menubar_item->menu))
+        if(m_CurrentMenu && (m_CurrentMenu->menu != menubar_item->menu))
             m_CurrentMenu->menu->StopMenu(0, 0);
 
         Geometry geo = menubar_item->menu->GetGeometry();
@@ -297,17 +298,17 @@ void MenuBar::EmitItemMouseEnter(int x, int y, unsigned long button_flags, unsig
     NeedRedraw();
 }
 
-void MenuBar::EmitItemMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item)
+void MenuBar::EmitItemMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item)
 {
     NeedRedraw();
 }
-void MenuBar::EmitItemMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item)
+void MenuBar::EmitItemMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item)
 {
     m_MenuBarWindow = GetThreadWindowCompositor().GetCurrentWindow();
     if(m_MenuIsActive == false)
     {
         // Open the corresponding MenuPage
-        if(m_CurrentMenu.IsValid())
+        if(m_CurrentMenu)
         {
             // This should never happen
             nuxAssert(0);
@@ -331,7 +332,7 @@ void MenuBar::EmitItemMouseDown(int x, int y, unsigned long button_flags, unsign
     NeedRedraw();
 }
 
-void MenuBar::EmitItemMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item)
+void MenuBar::EmitItemMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item)
 {
     if(m_MenuIsActive)
     {
@@ -340,10 +341,10 @@ void MenuBar::EmitItemMouseUp(int x, int y, unsigned long button_flags, unsigned
             if(m_IsOpeningMenu == false)
             {
                 // close the MenuPage that is Open
-                if(m_CurrentMenu.IsValid())
+                if(m_CurrentMenu)
                     m_CurrentMenu->menu->StopMenu(0, 0);
                 m_MenuIsActive = false;
-                m_CurrentMenu = smptr(MenuBarItem)(0);
+                m_CurrentMenu = 0;
             }
             else
             {
@@ -365,7 +366,7 @@ void MenuBar::EmitItemMouseUp(int x, int y, unsigned long button_flags, unsigned
     NeedRedraw();
 }
 
-void MenuBar::RecvItemMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, weaksmptr(MenuBarItem) menubar_item)
+void MenuBar::RecvItemMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, MenuBarItem* menubar_item)
 {
     // Transition between one menu bar item to another
     if(GetThreadWindowCompositor().GetMouseFocusArea() == menubar_item->area)
@@ -373,13 +374,13 @@ void MenuBar::RecvItemMouseDrag(int x, int y, int dx, int dy, unsigned long butt
         if(!menubar_item->area->IsMouseInside())  // can also test GetThreadWindowCompositor().GetMouseOverArea() != &menubar_item->area
         {
             &menubar_item->area;
-            std::list< smptr(MenuBarItem) >::iterator it;
+            std::list< MenuBarItem* >::iterator it;
             // compute window coordinates x and y;
             int winx = menubar_item->area->GetBaseX() + x; 
             int winy = menubar_item->area->GetBaseY() + y;
             for(it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
             {
-                smptr(CoreArea) area = (*it)->area;
+                CoreArea* area = (*it)->area;
                 Geometry geometry = area->GetGeometry();
                 if(geometry.IsPointInside(winx, winy))
                 {
@@ -403,15 +404,15 @@ void MenuBar::RecvItemMouseDrag(int x, int y, int dx, int dy, unsigned long butt
     }
 }
 
-void MenuBar::RecvSigActionTriggered(smptr(MenuPage) menu, const smptr(ActionItem) action)
+void MenuBar::RecvSigActionTriggered(MenuPage* menu, ActionItem* action)
 {
     m_MenuIsActive = false;
-    if(m_CurrentMenu.IsValid())
+    if(m_CurrentMenu)
     {
         m_CurrentMenu->menu->StopMenu();
         NeedRedraw();
     }
-    m_CurrentMenu = smptr(MenuBarItem)(0);
+    m_CurrentMenu = 0;
     m_IsOpeningMenu = false;
 
     // You can do something if you want with the menu* and the action*
@@ -421,24 +422,24 @@ void MenuBar::RecvSigActionTriggered(smptr(MenuPage) menu, const smptr(ActionIte
 void MenuBar::RecvSigTerminateMenuCascade()
 {
     m_MenuIsActive = false;
-    if(m_CurrentMenu.IsValid())
+    if(m_CurrentMenu)
     {
         m_CurrentMenu->menu->StopMenu();
     }
-    m_CurrentMenu = smptr(MenuBarItem)(0);
+    m_CurrentMenu = 0;
     m_IsOpeningMenu = false;
 
     NeedRedraw();
 }
 
-void MenuBar::RecvSigMouseDownOutsideMenuCascade(smptr(MenuPage) menu, int x, int y)
+void MenuBar::RecvSigMouseDownOutsideMenuCascade(MenuPage* menu, int x, int y)
 {
     Geometry geometry;
-    std::list< smptr(MenuBarItem) >::iterator it;
+    std::list< MenuBarItem* >::iterator it;
     bool TerminateMenuCascade = 1;
     for(it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
-        smptr(CoreArea) area = (*it)->area;
+        CoreArea* area = (*it)->area;
         geometry = area->GetGeometry();
         if(geometry.IsPointInside(x, y))
         {

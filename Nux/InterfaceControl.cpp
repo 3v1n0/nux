@@ -31,7 +31,7 @@ NUX_IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
 ActiveInterfaceObject::ActiveInterfaceObject(NUX_FILE_LINE_DECL)
 :   BaseArea(NUX_FILE_LINE_PARAM)
 {
-    m_CompositionLayout = smptr(Layout)(0);
+    m_CompositionLayout = 0;
     m_NeedRedraw        = false;
     m_UseStyleDrawing   = true;
     m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -45,12 +45,14 @@ ActiveInterfaceObject::ActiveInterfaceObject(NUX_FILE_LINE_DECL)
 ActiveInterfaceObject::~ActiveInterfaceObject()
 {
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
-    GetGraphicsThread()->RemoveObjectFromRefreshList(smptr(BaseObject)(this, true));
+    //GetGraphicsThread()->RemoveObjectFromRefreshList(this);
+    if(m_CompositionLayout)
+        m_CompositionLayout->UnParentObject();
 }
 
 long ActiveInterfaceObject::ComputeChildLayout()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_CompositionLayout->SetDirty(true);
 //        if(m_CompositionLayout->GetStretchFactor() != 0)
@@ -118,7 +120,7 @@ long ActiveInterfaceObject::ComputeChildLayout()
 
 void ActiveInterfaceObject::PositionChildLayout(float offsetX, float offsetY)
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         // This section from //1 to //2 is not needed. here we should not do any size management. Only position..
         //1
@@ -139,7 +141,7 @@ void ActiveInterfaceObject::PositionChildLayout(float offsetX, float offsetY)
 void ActiveInterfaceObject::PreLayoutManagement()
 {
     // Give the managed layout the same size and position as the Control.
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
         m_CompositionLayout->SetGeometry(GetGeometry());
 }
 
@@ -148,7 +150,7 @@ long ActiveInterfaceObject::PostLayoutManagement(long LayoutResult)
     // Set the geometry of the control to be the same as the managed layout.
     // Only the size is changed. The position of the composition layout hasn't
     // been changed by ComputeLayout2.
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         // If The layout is empty, do not change the size of the parent element.
         if(!m_CompositionLayout->IsEmpty())
@@ -237,7 +239,7 @@ bool ActiveInterfaceObject::IsRedrawNeeded()
 void ActiveInterfaceObject::DoneRedraw()
 {
     m_NeedRedraw = false;
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_CompositionLayout->DoneRedraw();
     }
@@ -245,7 +247,7 @@ void ActiveInterfaceObject::DoneRedraw()
 
 void ActiveInterfaceObject::DrawLayout()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_CompositionLayout->Draw();
     }
@@ -271,46 +273,56 @@ void ActiveInterfaceObject::DrawLayout()
     }
 }
 
-smptr(Layout) ActiveInterfaceObject::GetCompositionLayout() const
+Layout* ActiveInterfaceObject::GetCompositionLayout() const
 {
     return m_CompositionLayout;
 }
 
-void ActiveInterfaceObject::SetCompositionLayout(smptr(Layout) layout)
+void ActiveInterfaceObject::SetCompositionLayout(Layout* layout)
 {
     if(layout == 0)
-        return;
-
-    // Unparent layout if it has a Parent.
     {
-        smptr(BaseObject) parent = layout->GetParentObject();
-        if(parent != 0)
-        {
-            parent->RemoveChildObject(layout);
-        }
-        layout->SetParentObject(smptr(BaseObject)(this, true));
+        nuxAssertMsg(0, TEXT("[ActiveInterfaceObject::SetCompositionLayout] Invalid parent obejct."));
+        return;
     }
-    layout->SetParentObject(smptr(BaseObject)(this, true));
+
+    BaseObject* parent = layout->GetParentObject();
+
+    if(parent == this)
+    {
+        nuxAssert(m_CompositionLayout == layout);
+        return;
+    }
+    else if(parent != 0)
+    {
+        nuxAssertMsg(0, TEXT("[ActiveInterfaceObject::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again."));
+        return;
+    }
+
+    if(m_CompositionLayout)
+        m_CompositionLayout->UnParentObject();
+
+    layout->SetParentObject(this);
     m_CompositionLayout = layout;
 }
 
 void ActiveInterfaceObject::RemoveCompositionLayout()
 {
-    if(m_CompositionLayout.IsValid())
-        m_CompositionLayout->SetParentObject(smptr(BaseObject)(0));
-    m_CompositionLayout = smptr(Layout)(0);
+    if(m_CompositionLayout)
+        m_CompositionLayout->UnParentObject();
+    m_CompositionLayout = 0;
 }
 
-bool ActiveInterfaceObject::SearchInAllSubNodes(smptr(BaseObject) bo)
+bool ActiveInterfaceObject::SearchInAllSubNodes(BaseObject* bo)
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
         return m_CompositionLayout->SearchInAllSubNodes(bo);
     return false;
 }
 
-bool ActiveInterfaceObject::SearchInFirstSubNodes(smptr(BaseObject) bo)
+bool ActiveInterfaceObject::SearchInFirstSubNodes(BaseObject* bo)
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
         return m_CompositionLayout->SearchInFirstSubNodes(bo);
     return false;
 }

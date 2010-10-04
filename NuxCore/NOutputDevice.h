@@ -27,14 +27,14 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 class NSerializer;
 
-class NOutputDevice
+class LogOutputDevice
 {
 public:
-    NOutputDevice()
+    LogOutputDevice()
     : m_ObjectDestroyed(FALSE)
     { }
 
-    virtual ~NOutputDevice()
+    virtual ~LogOutputDevice()
     {
         m_ObjectDestroyed = TRUE;
     }
@@ -50,21 +50,16 @@ protected:
     BOOL m_ObjectDestroyed;
 };
 
-/*!
-    Output to null device.
-*/
-class NNullOutput : public NOutputDevice
+//! Output to null device.
+class NNullOutput : public LogOutputDevice
 {
     NUX_DECLARE_GLOBAL_OBJECT(NNullOutput, NGlobalSingletonInitializer);
 public:
-    void Serialize( const TCHAR* V, const TCHAR* LogPrefix, int Severity)
-    {}
+    void Serialize( const TCHAR* V, const TCHAR* LogPrefix, int Severity){}
 };
 
-/*!
-    Output to log file.
-*/
-class NOutputLogFile : public NOutputDevice
+//! Output to log file.
+class NOutputLogFile : public LogOutputDevice
 {
     NUX_DECLARE_GLOBAL_OBJECT(NOutputLogFile, NGlobalSingletonInitializer);
     //NOutputLogFile( const TCHAR* InFilename);
@@ -102,10 +97,8 @@ private:
     void SerializeRaw(const TCHAR* Data);
 };
 
-/*!
-    Output to microsoft visual console.
-*/
-class NOutputVisualDebugConsole : public NOutputDevice
+//! Output to microsoft visual console.
+class NOutputVisualDebugConsole : public LogOutputDevice
 {
     NUX_DECLARE_GLOBAL_OBJECT(NOutputVisualDebugConsole, NGlobalSingletonInitializer);
 public:
@@ -118,31 +111,20 @@ public:
     void Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity);
 };
 
-class NOutputDeviceManager : public NOutputDevice
+class LogOutputRedirector : public LogOutputDevice
 {
+    NUX_DECLARE_GLOBAL_OBJECT(LogOutputRedirector, NGlobalSingletonInitializer);
 public:
-    NOutputDeviceManager(){}
-    ~NOutputDeviceManager(){}
-
-    virtual void AddOutputDevice(NOutputDevice* OutputDevice) = 0;
-    virtual void RemoveOutputDevice(NOutputDevice* OutputDevice) = 0;
-    virtual bool IsRedirectingTo(NOutputDevice* OutputDevice) = 0;
-};
-
-class NOutputDeviceRedirector : public NOutputDeviceManager
-{
-    NUX_DECLARE_GLOBAL_OBJECT(NOutputDeviceRedirector, NGlobalSingletonInitializer);
-public:
-    virtual void AddOutputDevice(NOutputDevice* OutputDevice);
-    virtual void RemoveOutputDevice(NOutputDevice* OutputDevice);
-    virtual bool IsRedirectingTo(NOutputDevice* OutputDevice);
+    virtual void AddOutputDevice(LogOutputDevice* OutputDevice);
+    virtual void RemoveOutputDevice(LogOutputDevice* OutputDevice);
+    virtual bool IsRedirectingTo(LogOutputDevice* OutputDevice);
     void Serialize(const TCHAR* Data, const TCHAR* LogPrefix, int Severity);
     void Flush();
 
     void Shutdown();
 
 private:
-    std::vector<NOutputDevice*> OutputDevices;
+    std::vector<LogOutputDevice*> OutputDevices;
 };
 
 } //NUX_NAMESPACE_END

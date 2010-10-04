@@ -38,13 +38,13 @@ public:
     GroupBox(const TCHAR* Caption = TEXT(""), NUX_FILE_LINE_PROTO);
     ~GroupBox();
 
-    virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long ProcessEvent(IEvent& ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void setLayout(smptr(Layout) layout);
-    void setCaption(const TCHAR* Caption);
+    void SetLayout(Layout* layout);
+    void SetCaption(const TCHAR* Caption);
 
 private:
     virtual void PreLayoutManagement();
@@ -53,7 +53,7 @@ private:
 
     bool bCaptionAvailable;
     CoreArea m_CaptionArea;
-    smptr(Layout) m_layout;
+    Layout* m_layout;
 };
 } //NUX_NAMESPACE_END
 

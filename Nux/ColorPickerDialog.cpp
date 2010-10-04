@@ -33,20 +33,20 @@ ColorPickerDialog::ColorPickerDialog()
 {
     SetWindowTitle(TEXT("Color Picker"));
     SetWindowSizeMatchLayout(true);
-    m_Vlayout = smptr(VLayout)(new VLayout(TEXT("Color Picker")));
-    m_ColorEditor = smptr(ColorEditor)(new ColorEditor());
+    m_Vlayout = new VLayout(TEXT("Color Picker"));
+    m_ColorEditor = new ColorEditor();
 
     m_Vlayout->AddActiveInterfaceObject(m_ColorEditor);
     m_Vlayout->AddLayout(m_ButtonLayout);
 
     m_Vlayout->SetStretchFactor(0);
     // Set layout for the window
-    setLayout(m_Vlayout);
+    SetLayout(m_Vlayout);
 }
-
 
 ColorPickerDialog::~ColorPickerDialog()
 {
+
 }
 
 void ColorPickerDialog::StartDialog(Color& color, eColorModel ColorModel /*  = RGB */, bool StartModal /* = false */)

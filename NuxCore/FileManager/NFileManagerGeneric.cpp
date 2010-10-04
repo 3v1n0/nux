@@ -33,7 +33,7 @@ int NFileManagerGeneric::Copy(const TCHAR* InDestFile, const TCHAR* InSrcFile, b
     // Direct file copier.
     if(Monitor && !Monitor->Progress(0.0))
     {
-        return COPY_Canceled;
+        return COPY_CANCELED;
     }
     int	    Result		= COPY_OK;
     NString SrcFile		= InSrcFile;
@@ -42,15 +42,15 @@ int NFileManagerGeneric::Copy(const TCHAR* InDestFile, const TCHAR* InSrcFile, b
     NSerializer* Src = CreateFileReader(SrcFile.GetTCharPtr());
     if(!Src)
     {
-        Result = COPY_ReadFail;
+        Result = COPY_READFAIL;
     }
     else
     {
         t_u32 Size = Src->GetFileSize();
-        NSerializer* Dest = CreateFileWriter(DestFile.GetTCharPtr(), (OverWriteExisting?0:FILEWRITE_NoReplaceExisting) | (OverWriteReadOnly?FILEWRITE_EvenIfReadOnly:0));
+        NSerializer* Dest = CreateFileWriter(DestFile.GetTCharPtr(), (OverWriteExisting?0:FILEWRITE_NOREPLACEEXISTING) | (OverWriteReadOnly ? FILEWRITE_EVENIFREADONLY : 0));
         if(!Dest)
         {
-            Result = COPY_WriteFail;
+            Result = COPY_WRITEFAIL;
         }
         else
         {
@@ -62,19 +62,19 @@ int NFileManagerGeneric::Copy(const TCHAR* InDestFile, const TCHAR* InSrcFile, b
                 Src->Serialize(Buffer, Count);
                 if(Src->IsError())
                 {
-                    Result = COPY_ReadFail;
+                    Result = COPY_READFAIL;
                     break;
                 }
                 Dest->Serialize(Buffer, Count);
                 if(Dest->IsError())
                 {
-                    Result = COPY_WriteFail;
+                    Result = COPY_WRITEFAIL;
                     break;
                 }
                 NewPercent = Total * 100 / Size;
                 if(Monitor && Percent != NewPercent && !Monitor->Progress((float)NewPercent / 100.f))
                 {
-                    Result = COPY_Canceled;
+                    Result = COPY_CANCELED;
                     break;
                 }
                 Percent = NewPercent;
@@ -83,7 +83,7 @@ int NFileManagerGeneric::Copy(const TCHAR* InDestFile, const TCHAR* InSrcFile, b
             {
                 if(!Dest->Close())
                 {
-                    Result = COPY_WriteFail;
+                    Result = COPY_WRITEFAIL;
                 }
             }
             delete Dest;
@@ -96,14 +96,14 @@ int NFileManagerGeneric::Copy(const TCHAR* InDestFile, const TCHAR* InSrcFile, b
         {
             if(!Src->Close())
             {
-                Result = COPY_ReadFail;
+                Result = COPY_READFAIL;
             }
         }
         delete Src;
     }
     if(Monitor && Result==COPY_OK && !Monitor->Progress(1.0))
     {
-        Result = COPY_Canceled;
+        Result = COPY_CANCELED;
     }
     return Result;
 }

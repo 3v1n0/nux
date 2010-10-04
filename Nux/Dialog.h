@@ -40,9 +40,9 @@ protected:
     virtual void RecvCancel() = 0;
     virtual void Start(bool StartModal);
 
-    smptr(Button) m_OkButton;
-    smptr(Button) m_CancelButton;
-    smptr(HLayout) m_ButtonLayout;
+    Button*     m_OkButton;
+    Button*     m_CancelButton;
+    HLayout*    m_ButtonLayout;
 };
 
 

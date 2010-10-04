@@ -86,9 +86,9 @@ void RangeValueInteger::InitializeWidgets()
 
 void RangeValueInteger::InitializeLayout()
 {
-    hlayout = smptr(HLayout)(new HLayout());
-    m_Percentage = smptr(CoreArea)(new CoreArea());
-    m_ValueString = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    hlayout         = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_Percentage    = new CoreArea(NUX_TRACKER_LOCATION);
+    m_ValueString   = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
 }
 
 void RangeValueInteger::DestroyLayout()
@@ -230,7 +230,7 @@ void RangeValueInteger::OnReceiveMouseDown(int x, int y, unsigned long button_fl
     }
 
     m_ValueString->SetText(inlPrintf("%d", m_Value));
-    sigValueChanged.emit(smptr(RangeValueInteger)(this, true));
+    sigValueChanged.emit(this);
     sigMouseDown.emit(m_Value);
 
     NeedRedraw();
@@ -251,7 +251,7 @@ void RangeValueInteger::OnReceiveMouseUp(int x, int y, unsigned long button_flag
 
     m_MarkerPosition = m_Value;
     m_ValueString->SetText(inlPrintf("%d", m_Value));
-    sigValueChanged.emit(smptr(RangeValueInteger)(this, true));
+    sigValueChanged.emit(this);
     sigMouseUp.emit(m_Value);
 
     NeedRedraw();
@@ -278,7 +278,7 @@ void RangeValueInteger::OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigne
     }
 
     m_ValueString->SetText(inlPrintf("%d", m_Value));
-    sigValueChanged.emit(smptr(RangeValueInteger)(this, true));
+    sigValueChanged.emit(this);
     sigMouseDrag.emit(m_Value);
 
     NeedRedraw();
@@ -294,12 +294,12 @@ void RangeValueInteger::OnLostKeyboardFocus()
 
 }
 
-void RangeValueInteger::OnValidateKeyboardEntry(const weaksmptr(EditTextBox) textbox, const NString& text)
+void RangeValueInteger::OnValidateKeyboardEntry(EditTextBox* textbox, const NString& text)
 {
     int i;
     i = CharToInteger(text.GetTCharPtr());
     SetValue(i);
-    sigValueChanged.emit(smptr(RangeValueInteger)(this, true));
+    sigValueChanged.emit(this);
     sigSetTypedValue.emit(i);
     NeedRedraw();
 }

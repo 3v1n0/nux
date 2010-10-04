@@ -43,17 +43,17 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void setLayout(smptr(Layout) layout);
-    void setCaption(const TCHAR* Caption);
+    void SetLayout(Layout* layout);
+    void SetCaption(const TCHAR* Caption);
 
 private:
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement(long LayoutResult);
     virtual void PositionChildLayout(float offsetX, float offsetY);
 
-    bool bCaptionAvailable;
-    smptr(CoreArea) m_CaptionArea;
-    smptr(Layout) m_layout;
+    bool        bCaptionAvailable;
+    CoreArea*   m_CaptionArea;
+    Layout*     m_layout;
 
     static int CAPTION_X_MARGIN;
     static int X_MARGIN;

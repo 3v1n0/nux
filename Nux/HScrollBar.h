@@ -102,11 +102,11 @@ protected:
     bool AtMinimum();
     bool AtMaximum();
 
-    smptr(HLayout) hlayout;
-    smptr(CoreArea) m_SlideBar;
-    smptr(CoreArea) m_LeftThumb;
-    smptr(CoreArea) m_RightThumb;
-    smptr(CoreArea) m_Track;
+    HLayout* hlayout;
+    CoreArea* m_SlideBar;
+    CoreArea* m_LeftThumb;
+    CoreArea* m_RightThumb;
+    CoreArea* m_Track;
 
     int m_contentWidth;
     int m_contentHeight;

@@ -147,8 +147,8 @@ protected:
 
 
     // ScrollBars
-    smptr(HScrollBar) hscrollbar;
-    smptr(VScrollBar) vscrollbar;
+    HScrollBar*     hscrollbar;
+    VScrollBar*     vscrollbar;
     bool m_horizontal_scrollbar_enable;
     bool m_vertical_scrollbar_enable;
 

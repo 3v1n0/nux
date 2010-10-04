@@ -63,8 +63,8 @@ public:
     sigc::signal<void, bool> sigDraw;
 
 private:
-    smptr(VLayout) m_vlayout;
-    smptr(CoreArea) m_Area;
+    VLayout*    m_vlayout;
+    CoreArea*   m_Area;
 
 public:
     virtual void SetGeometry(const Geometry& geo)

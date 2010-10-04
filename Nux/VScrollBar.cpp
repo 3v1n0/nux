@@ -50,11 +50,11 @@ VScrollBar::VScrollBar(NUX_FILE_LINE_DECL)
     m_UpTimerHandler    = 0;
     m_DownTimerHandler  = 0;
 
-    vlayout = smptr(VLayout)(new VLayout(TEXT("MyVSB")));
-    m_TopThumb = smptr(CoreArea)(new CoreArea());
-    m_Track = smptr(CoreArea)(new CoreArea());
-    m_BottomThumb = smptr(CoreArea)(new CoreArea());
-    m_SlideBar = smptr(CoreArea)(new CoreArea());
+    vlayout         = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_TopThumb      = new CoreArea(NUX_TRACKER_LOCATION);
+    m_Track         = new CoreArea(NUX_TRACKER_LOCATION);
+    m_BottomThumb   = new CoreArea(NUX_TRACKER_LOCATION);
+    m_SlideBar      = new CoreArea(NUX_TRACKER_LOCATION);
 
     // Set Original State
     SetMinimumSize(VSCROLLBAR_WIDTH, BASEOBJECT_MINHEIGHT);

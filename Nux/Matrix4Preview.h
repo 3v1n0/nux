@@ -19,7 +19,6 @@
  *
  */
 
-
 #ifndef MATRIX4PREVIEW_H
 #define MATRIX4PREVIEW_H
 
@@ -42,8 +41,8 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    sigc::signal<void, const weaksmptr(Matrix4Editor) > sigMatrixChanged;
-    void RecvDialogChange(const weaksmptr(Matrix4Editor) matrixeditor);
+    sigc::signal<void, Matrix4Editor* > sigMatrixChanged;
+    void RecvDialogChange(Matrix4Editor* matrixeditor);
 
     void SetMatrix(Matrix4 matrix);
     Matrix4 GetMatrix() const;

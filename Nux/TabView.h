@@ -41,7 +41,7 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void AddTab(const char* tab_name, smptr(Layout) tab_layout);
+    void AddTab(const char* tab_name, Layout* tab_layout);
     void SetActiveTad(int index);
     //! Return true if this object can break the layout.
     /*
@@ -51,7 +51,7 @@ public:
     */
     virtual bool CanBreakLayout() { return false; }
 
-    sigc::signal< void, const weaksmptr(TabView) > sigTabChanged;
+    sigc::signal< void, TabView* > sigTabChanged;
     sigc::signal< void, int > sigTabIndexChanged;
 
 
@@ -59,19 +59,19 @@ private:
     class TabElement
     {
     public:
-        TabElement()
-        {
-            index = 0;
-        }
-        ~TabElement()
-        {
-            index = 0;
-            tab_layout = smptrnull(Layout);
-        }
-        std::string tab_name;
-        smptr(Layout) tab_layout;
-        smptr(CoreArea) tab_area;
-        int index;
+        TabElement(NString TabName, Layout* TabLayout);
+        ~TabElement();
+
+        void SetIndex(int index);
+        int GetIndex() const;
+        void SetGeometry(const Geometry& geo);
+        Geometry GetGeometry() const;
+        const NString& GetName() const;
+
+        NString     _tab_name;
+        Layout*     _tab_layout;
+        CoreArea*   _tab_area;
+        int         _index;
     };
 
 public:
@@ -102,20 +102,20 @@ private:
     void TranslateRight(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void TranslateTabLayout(int offset);
 
-    smptr(CoreArea) m_IncrTab;
-    smptr(CoreArea) m_DecrTab;
+    CoreArea*   m_IncrTab;
+    CoreArea*   m_DecrTab;
 
-    smptr(Layout) m_ClientLayout;
-    smptr(HLayout) m_TabLayout;
-    smptr(HLayout) m_TabControlLayout;
+    Layout*     m_ClientLayout;
+    HLayout*    m_TabLayout;
+    HLayout*    m_TabControlLayout;
 
     int m_TabPositionOffset;
     int m_FocusTabIndex;
 
-    TimerFunctor* tabright_callback;
-    TimerFunctor* tableft_callback;
-    TimerHandle m_TabRightTimerHandler;
-    TimerHandle m_TabLeftTimerHandler;
+    TimerFunctor*   tabright_callback;
+    TimerFunctor*   tableft_callback;
+    TimerHandle     m_TabRightTimerHandler;
+    TimerHandle     m_TabLeftTimerHandler;
 
     std::vector<TabElement*> m_TabVector;
 

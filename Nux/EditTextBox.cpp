@@ -32,7 +32,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 EditTextBox::EditTextBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
-    m_Validator             = 0;
+    m_Validator             = NULL;
     BlinkCursor             = false;
     m_ScrollTimerHandler    = 0;
     m_BlinkTimerFunctor     = 0;
@@ -60,7 +60,7 @@ EditTextBox::EditTextBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
     m_CursorColor = Color(0xFFDDDDDD);
 
 
-    hlayout = smptr(HLayout)(new HLayout());
+    hlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
     SetCompositionLayout(hlayout);
     
     m_BlinkTimerFunctor = new TimerFunctor();
@@ -216,7 +216,7 @@ void EditTextBox::SetText(const NString& Caption)
         m_Text = (m_Prefix + s) + m_Suffix;
         m_KeyboardHandler.SetText(m_Text.GetTStringRef());
         m_temporary_caption = m_Text;
-        sigSetText.emit(smptr(EditTextBox)(this, true));
+        sigSetText.emit(this);
     }
     NeedRedraw();
 }
@@ -315,10 +315,12 @@ void EditTextBox::RecvKeyEvent(
                     bool             isRepeated , /*true if the key is repeated more than once*/
                     unsigned short   keyCount     /*key repeat count*/)
 {
+    long virtual_code = m_KeyboardHandler.ProcessKey(eventType, keysym, state, character, GetGeometry());
+
     if(character)
     {
-        sigCharacter.emit(smptr(EditTextBox)(this, true), *character);
-        sigEditChange.emit(smptr(EditTextBox)(this, true));
+        sigCharacter.emit(this, *character);
+        sigEditChange.emit(this);
 
         // When a writable character is entered, no blinking of cursor
         StopBlinkCursor(false);
@@ -333,8 +335,8 @@ void EditTextBox::RecvKeyEvent(
         {
             m_Text = m_KeyboardHandler.GetTextLine();
             m_temporary_caption = m_Text;
-            sigValidateKeyboardEntry.emit(smptr(EditTextBox)(this, true), m_Text);
-            sigValidateEntry.emit(smptr(EditTextBox)(this, true));
+            sigValidateKeyboardEntry.emit(this, m_Text);
+            sigValidateEntry.emit(this);
             m_KeyboardHandler.SelectAllText();
         }
         else
@@ -368,7 +370,7 @@ void EditTextBox::EscapeKeyboardFocus()
     SetKeyboardFocus(false);
     // Revert back the caption text
     m_Text = m_temporary_caption;
-    sigEscapeKeyboardFocus.emit(smptr(EditTextBox)(this, true));
+    sigEscapeKeyboardFocus.emit(this);
     NeedRedraw();
 }
 
@@ -379,7 +381,7 @@ void EditTextBox::EnteringKeyboardFocus()
     // Preserve the current caption text. If ESC is pressed while we have keyboard focus then
     // the previous caption text is restored
     m_temporary_caption = m_Text;
-    sigStartKeyboardFocus.emit(smptr(EditTextBox)(this, true));
+    sigStartKeyboardFocus.emit(this);
     NeedRedraw();
 }
 
@@ -396,8 +398,8 @@ void EditTextBox::QuitingKeyboardFocus()
         m_Text = CleanText.m_string; //m_KeyboardHandler.GetTextLine();
         m_KeyboardHandler.SetText(CleanText.m_string);
         m_temporary_caption = m_Text;
-        sigValidateKeyboardEntry.emit(smptr(EditTextBox)(this, true), m_Text.GetTStringRef());
-        sigValidateEntry.emit(smptr(EditTextBox)(this, true));
+        sigValidateKeyboardEntry.emit(this, m_Text.GetTStringRef());
+        sigValidateEntry.emit(this);
     }
     else
     {
@@ -423,12 +425,12 @@ void EditTextBox::RecvEndKeyFocus()
     BlinkCursor = false;
 }
 
-void EditTextBox::setDoubleValue(double d)
+void EditTextBox::SetDoubleValue(double d)
 {
     SetText(inlPrintf("%f", d));
 }
 
-void EditTextBox::setIntegerValue(int i)
+void EditTextBox::SetIntegerValue(int i)
 {
     SetText(inlPrintf("%d", i));
 }

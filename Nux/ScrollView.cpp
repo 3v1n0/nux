@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "Nux.h"
 #include "HScrollBar.h"
 #include "VScrollBar.h"
@@ -42,8 +41,8 @@ ScrollView::ScrollView(NUX_FILE_LINE_DECL)
     m_ReformatTexture               = true;
 
     //gPainter.CreateBackgroundTexture(m_BackgroundTexture);
-    hscrollbar = smptr(HScrollBar)(new HScrollBar());
-    vscrollbar = smptr(VScrollBar)(new VScrollBar());
+    hscrollbar = new HScrollBar(NUX_TRACKER_LOCATION);
+    vscrollbar = new VScrollBar(NUX_TRACKER_LOCATION);
 
     SetMinimumSize(30, 30);
     SetGeometry(Geometry(0, 0, 400, 200));
@@ -210,7 +209,7 @@ void ScrollView::PreLayoutManagement()
         nuxAssert(m_ContentOffsetY <= 0);
     }
 
-    if(m_CompositionLayout.IsValid() && m_CompositionLayout->GetStretchFactor() != 0)
+    if(m_CompositionLayout && m_CompositionLayout->GetStretchFactor() != 0)
     {
         // Set the composition layout to the size of the view area and offset it by (m_ContentOffsetX, m_ContentOffsetX)
         m_CompositionLayout->SetGeometry(
@@ -283,7 +282,7 @@ long ScrollView::PostLayoutManagement(long LayoutResult)
     int ScrollBarWidth = 0;
     int ScrollBarHeight = 0;
 
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ViewContentX = m_CompositionLayout->GetBaseX();
         m_ViewContentY = m_CompositionLayout->GetBaseY();
@@ -303,7 +302,7 @@ long ScrollView::PostLayoutManagement(long LayoutResult)
 
     if(m_horizontal_scrollbar_enable)
     {
-        if(m_CompositionLayout.IsValid())
+        if(m_CompositionLayout)
         {
             hscrollbar->SetContentSize(m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
             m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight());
@@ -329,7 +328,7 @@ long ScrollView::PostLayoutManagement(long LayoutResult)
 
     if(m_vertical_scrollbar_enable)
     {
-        if(m_CompositionLayout.IsValid())
+        if(m_CompositionLayout)
         {
             vscrollbar->SetContentSize(m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
             m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight());
@@ -350,7 +349,7 @@ long ScrollView::PostLayoutManagement(long LayoutResult)
 
     // I may not be necessary to call this function here since ComputePosition2 was called on ComputePosition2
     // during the layout process.
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
         m_CompositionLayout->ComputePosition2(0, 0);
 
     // The ScrollView always returns complient width and height to its parent layout.
@@ -376,7 +375,7 @@ long ScrollView::PostLayoutManagement2(long LayoutResult)
     // So we make the composition layout the same size as the content
     // Note that classes that inherits from ScrollView are responsible for setting the dimension of the ViewContent
     
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_CompositionLayout->SetBaseX(m_ViewContentX);
         m_CompositionLayout->SetBaseY(m_ViewContentY);
@@ -421,7 +420,7 @@ long ScrollView::PostLayoutManagement2(long LayoutResult)
             GetBaseY() + m_top_border + m_ViewContentTopMargin,
             GetBaseWidth() - ScrollbarWidth - 2*m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
             GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin -m_ViewContentTopMargin);
-        if(m_CompositionLayout.IsValid())
+        if(m_CompositionLayout)
         {
             hscrollbar->SetContentSize(m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
                 m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight());
@@ -468,7 +467,7 @@ long ScrollView::PostLayoutManagement2(long LayoutResult)
             GetBaseY() + m_top_border + m_ViewContentTopMargin,
             GetBaseWidth() - ScrollbarWidth - 2*m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
             GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-        if(m_CompositionLayout.IsValid())
+        if(m_CompositionLayout)
         {
             vscrollbar->SetContentSize(m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
                 m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight());
@@ -497,7 +496,7 @@ long ScrollView::PostLayoutManagement2(long LayoutResult)
         vscrollbar->SetContentOffset(0, 0);
     }
 
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
         m_CompositionLayout->ComputePosition2(0, 0);
 
     return (eCompliantHeight | eCompliantWidth);
@@ -553,7 +552,7 @@ void ScrollView::PositionChildLayout(float offsetX, float offsetY)
     {
         m_ContentOffsetY = -(m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
     }
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_CompositionLayout->SetBaseX(m_ViewX + m_ContentOffsetX);
         m_CompositionLayout->SetBaseY(m_ViewY + m_ContentOffsetY);
@@ -583,7 +582,7 @@ void ScrollView::PositionChildLayout(float offsetX, float offsetY)
         vscrollbar->ComputeChildLayout();
     }
 
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ViewContentX = m_CompositionLayout->GetBaseX();
         m_ViewContentY = m_CompositionLayout->GetBaseY();
@@ -603,20 +602,20 @@ void ScrollView::PositionChildLayout(float offsetX, float offsetY)
 
 //    hscrollbar->SetContainerSize(GetX() + m_border, GetY() + m_top_border,
 //        GetWidth() - ver_scrollbar_width - 2*m_border, GetBaseHeight() - hor_scrollbar_height - m_top_border - m_border);
-//    if(m_CompositionLayout.IsValid())
+//    if(m_CompositionLayout)
 //        hscrollbar->SetContentSize(m_CompositionLayout->GetX(), m_CompositionLayout->GetY(),
 //        m_CompositionLayout->GetWidth(), m_CompositionLayout->GetBaseHeight());
 
 //    vscrollbar->SetContainerSize(GetX() + m_border, GetY() + m_top_border,
 //        GetWidth() - ver_scrollbar_width - 2*m_border, GetBaseHeight() - hor_scrollbar_height - m_top_border - m_border);
-//    if(m_CompositionLayout.IsValid())
+//    if(m_CompositionLayout)
 //        vscrollbar->SetContentSize(m_CompositionLayout->GetX(), m_CompositionLayout->GetY(),
 //        m_CompositionLayout->GetWidth(), m_CompositionLayout->GetBaseHeight());
 
     vscrollbar->SetContentOffset(m_ContentOffsetX, m_ContentOffsetY);
     hscrollbar->SetContentOffset(m_ContentOffsetX, m_ContentOffsetY);
 
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_CompositionLayout->ComputePosition2(0, 0);
     }
@@ -625,7 +624,7 @@ void ScrollView::PositionChildLayout(float offsetX, float offsetY)
 
 void ScrollView::ScrollLeft(float stepx, int mousedx)
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetX += (float)stepx * (float)mousedx;;
         if(m_ContentOffsetX > 0)
@@ -646,7 +645,7 @@ void ScrollView::ScrollLeft(float stepx, int mousedx)
 
 void ScrollView::ScrollRight(float stepx, int mousedx)
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetX -= (float)stepx * (float)mousedx;
         if(m_ViewX + m_ContentOffsetX +  m_ViewContentWidth < m_ViewX + m_ViewWidth)
@@ -667,7 +666,7 @@ void ScrollView::ScrollRight(float stepx, int mousedx)
 
 void ScrollView::ScrollUp(float stepy, int mousedy)
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetY += (float)stepy * (float)mousedy;
         if(m_ContentOffsetY > 0)
@@ -691,7 +690,7 @@ void ScrollView::ScrollUp(float stepy, int mousedy)
 
 void ScrollView::ScrollDown(float stepy, int mousedy)
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetY -= (float)stepy * (float)mousedy;
         if(m_ViewY + m_ContentOffsetY + m_ViewContentHeight < m_ViewY + m_ViewHeight)
@@ -715,7 +714,7 @@ void ScrollView::ScrollDown(float stepy, int mousedy)
 void ScrollView::SetSizeMatchContent(bool b)
 {
     m_bSizeMatchContent = b;
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
         m_CompositionLayout->ComputeLayout2();
 }
 
@@ -726,7 +725,7 @@ bool ScrollView::IsSizeMatchContent() const
 
 void ScrollView::ResetScrollToLeft()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetX = 0;
         m_CompositionLayout->SetBaseX(m_ViewX + m_ContentOffsetX);
@@ -739,7 +738,7 @@ void ScrollView::ResetScrollToLeft()
 
 void ScrollView::ResetScrollToRight()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetX = -(m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
         m_CompositionLayout->SetBaseX(m_ViewX + m_ContentOffsetX);
@@ -752,7 +751,7 @@ void ScrollView::ResetScrollToRight()
 
 void ScrollView::ResetScrollToUp()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetY = 0;
         m_CompositionLayout->SetBaseY(m_ViewY);
@@ -765,7 +764,7 @@ void ScrollView::ResetScrollToUp()
 
 void ScrollView::ResetScrollToDown()
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_ContentOffsetY = -(m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
         m_CompositionLayout->SetBaseY(m_ViewY + m_ContentOffsetY);

@@ -111,13 +111,13 @@ protected:
     int m_SizeGripDragPositionY;
 
 private:
-    smptr(CoreArea) m_SizeGrip;
-    smptr(CoreArea) m_TitleBar;
+    CoreArea* m_SizeGrip;
+    CoreArea* m_TitleBar;
     Point m_TitleBarMouseDown;
 
-    smptr(CoreArea) m_MinimizeButton;
-    smptr(CoreArea) m_CloseButton;
-    smptr(StaticTextBox) m_WindowTitleBar;
+    CoreArea* m_MinimizeButton;
+    CoreArea* m_CloseButton;
+    StaticTextBox* m_WindowTitleBar;
     bool m_hasTitleBar;
 
     bool m_bIsVisible;
@@ -130,8 +130,8 @@ private:
     NTexture2D CloseIcon;
     NTexture2D MinimizeIcon;
 
-    std::list<smptr(ActiveInterfaceObject)> m_InterfaceObject;
-    smptr(HLayout) m_TitleBarLayout;
+    std::list<ActiveInterfaceObject*> m_InterfaceObject;
+    HLayout* m_TitleBarLayout;
 
     TCHAR* m_WindowTitle;
 

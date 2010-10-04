@@ -89,7 +89,7 @@ TableCtrl::TableCtrl(bool floating_column)
     m_TableItemHead->Open();
     m_TableItemHead->Show();
 
-    m_TableArea = smptr(CoreArea)(new CoreArea());
+    m_TableArea = new CoreArea(NUX_TRACKER_LOCATION);
     m_TableArea->OnMouseDown.connect(sigc::mem_fun(this, &TableCtrl::OnMouseDown));
     m_TableArea->OnMouseDoubleClick.connect(sigc::mem_fun(this, &TableCtrl::OnMouseDoubleClick));
     m_TableArea->OnMouseUp.connect(sigc::mem_fun(this, &TableCtrl::OnMouseUp));
@@ -112,7 +112,7 @@ TableCtrl::TableCtrl(bool floating_column)
     EnableVerticalScrollBar(true); 
     EnableHorizontalScrollBar(true);
 
-    m_VLayout = smptr(VLayout)(new VLayout("TABLELAYOUT"));
+    m_VLayout = new VLayout(TEXT("TABLELAYOUT"), NUX_TRACKER_LOCATION);
     m_VLayout->SetVerticalInternalMargin(4);
 
     m_TableArea->SetGeometry(0, 0, 300, 40);
@@ -124,7 +124,7 @@ TableCtrl::TableCtrl(bool floating_column)
     // will match the similar dimension of TableArea. So only one scrollbar (Horizontal or Vertical) will be adjusted.
     // See FormatTable.
     m_VLayout->AddActiveInterfaceObject(m_TableArea, 1, eLeft, eFull);
-    m_VLayout->SetContentStacking(eStackTop);
+    m_VLayout->SetContentDistribution(eStackTop);
     m_VLayout->SetStretchFactor(1);
     SetMinimumSize(50, 50);
     SetGeometry(Geometry(0, 0, 50, 50)); 
@@ -1957,7 +1957,7 @@ void TableCtrl::OnResizeHeaderMouseUp(int x, int y, unsigned long button_flags, 
 {
     //m_column_header = m_column_header_preview;
     //m_column_header_preview.clear();
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(0), GetThreadWindowCompositor().GetCurrentWindow());
+    GetThreadWindowCompositor().SetWidgetDrawingOverlay(NULL, GetThreadWindowCompositor().GetCurrentWindow());
     if(true)
     {   
         FormatTable();
@@ -1969,7 +1969,7 @@ void TableCtrl::OnResizeHeaderMouseUp(int x, int y, unsigned long button_flags, 
 
 void TableCtrl::OnResizeHeaderMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
 {
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(this, true), GetThreadWindowCompositor().GetCurrentWindow());
+    GetThreadWindowCompositor().SetWidgetDrawingOverlay(this, GetThreadWindowCompositor().GetCurrentWindow());
 
     bool recompute = false;
 

@@ -85,9 +85,9 @@ void ColorGradient::InitializeWidgets()
 
 void ColorGradient::InitializeLayout()
 {
-    hlayout = smptr(HLayout)(new HLayout());
-    m_Percentage = smptr(CoreArea)(new CoreArea());
-    m_ValueString = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    hlayout         = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_Percentage    = new CoreArea(NUX_TRACKER_LOCATION);
+    m_ValueString   = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
 }
 
 void ColorGradient::DestroyLayout()
@@ -274,7 +274,7 @@ void ColorGradient::OnReceiveMouseDown(int x, int y, unsigned long button_flags,
 
     SetValue(m_Value);
     //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(ColorGradient)(this, true));
+    sigValueChanged.emit(this);
     sigFloatChanged.emit(m_Value);
     sigMouseDown.emit(m_Value);
 
@@ -293,7 +293,7 @@ void ColorGradient::OnReceiveMouseUp(int x, int y, unsigned long button_flags, u
 
     SetValue(m_Value);
     //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(ColorGradient)(this, true));
+    sigValueChanged.emit(this);
     sigFloatChanged.emit(m_Value);
     sigMouseUp.emit(m_Value);
 
@@ -311,7 +311,7 @@ void ColorGradient::OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned lo
 
     SetValue(m_Value);
     //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(ColorGradient)(this, true));
+    sigValueChanged.emit(this);
     sigFloatChanged.emit(m_Value);
     sigMouseDrag.emit(m_Value);
 
@@ -328,7 +328,7 @@ void ColorGradient::OnLostKeyboardFocus()
 
 }
 
-void ColorGradient::OnValidateKeyboardEntry(const weaksmptr(EditTextBox) textbox, const NString& text)
+void ColorGradient::OnValidateKeyboardEntry(EditTextBox* textbox, const NString& text)
 {
     float f = 0;
     if((m_color_format == Color::COLORFORMAT_HEX) && (m_HexRegExp.Validate(text.GetTCharPtr()) == Validator::Acceptable))
@@ -346,7 +346,7 @@ void ColorGradient::OnValidateKeyboardEntry(const weaksmptr(EditTextBox) textbox
 
     //inlCharToFloat(text.c_str(), f);
     SetValue(f);
-    sigValueChanged.emit(smptr(ColorGradient)(this, true));
+    sigValueChanged.emit(this);
     sigFloatChanged.emit(m_Value);
     sigSetTypedValue.emit(f);
     NeedRedraw();

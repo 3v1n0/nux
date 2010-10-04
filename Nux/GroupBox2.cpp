@@ -38,10 +38,10 @@ GroupBox2::GroupBox2(const TCHAR* Caption, NUX_FILE_LINE_DECL)
 ,   bCaptionAvailable(false)
 ,   m_layout(0)
 {
-    m_CaptionArea = smptr(CoreArea)(new CoreArea);
+    m_CaptionArea = new CoreArea(NUX_TRACKER_LOCATION);
     SetMinimumSize(DEFAULT_WIDGET_WIDTH+5, PRACTICAL_WIDGET_HEIGHT+5);
     SetBaseSize(DEFAULT_WIDGET_WIDTH+5, PRACTICAL_WIDGET_HEIGHT+5);
-    setCaption(Caption);
+    SetCaption(Caption);
 }
 
 GroupBox2::~GroupBox2()
@@ -102,7 +102,7 @@ void GroupBox2::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     else
         gPainter.PushShapeLayer(GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eAllCorners);
 
-    if(m_layout.IsValid())
+    if(m_layout)
     {
         GfxContext.PushClippingRectangle(m_layout->GetGeometry());
         m_layout->ProcessDraw(GfxContext, force_draw);
@@ -118,7 +118,7 @@ void GroupBox2::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 }
 
-void GroupBox2::setLayout(smptr(Layout) layout)
+void GroupBox2::SetLayout(Layout* layout)
 {
     if(layout == 0)
         return;
@@ -130,13 +130,13 @@ void GroupBox2::setLayout(smptr(Layout) layout)
 void GroupBox2::PreLayoutManagement()
 {
     // Give the managed layout appropriate size and position..
-    if(GetCompositionLayout().IsValid())
+    if(GetCompositionLayout())
     {
         Geometry layout_geo = GetGeometry();
         //if(bCaptionAvailable)
         {
             layout_geo.OffsetPosition(X_MARGIN, TOP_HEADER_HEIGHT + Y_MARGIN);
-            layout_geo.OffsetSize(-2*X_MARGIN, -TOP_HEADER_HEIGHT-2*Y_MARGIN);
+            layout_geo.OffsetSize(-2 * X_MARGIN, -TOP_HEADER_HEIGHT - 2 * Y_MARGIN);
         }
 //        else
 //        {
@@ -155,13 +155,13 @@ long GroupBox2::PostLayoutManagement(long LayoutResult)
 
     long ret = 0;
     Geometry old_geo = BaseObject::GetGeometry();
-    if(GetCompositionLayout().IsValid())
+    if(GetCompositionLayout())
     {
         Geometry base = GetCompositionLayout()->GetGeometry();
         //if(bCaptionAvailable)
         {
             base.OffsetPosition(-X_MARGIN, -TOP_HEADER_HEIGHT - Y_MARGIN);
-            base.OffsetSize(2*X_MARGIN, TOP_HEADER_HEIGHT+2*Y_MARGIN);
+            base.OffsetSize(2 * X_MARGIN, TOP_HEADER_HEIGHT + 2 * Y_MARGIN);
         }
 //        else
 //        {
@@ -193,7 +193,7 @@ long GroupBox2::PostLayoutManagement(long LayoutResult)
 
 void GroupBox2::PositionChildLayout(float offsetX, float offsetY)
 {
-    if(GetCompositionLayout().IsValid())
+    if(GetCompositionLayout())
     {
         //if(bCaptionAvailable)
         {
@@ -211,7 +211,7 @@ void GroupBox2::PositionChildLayout(float offsetX, float offsetY)
     m_CaptionArea->SetBaseXY(base.x + CAPTION_X_MARGIN, base.y + (TOP_HEADER_HEIGHT - m_CaptionArea->GetBaseHeight()) / 2);
 }
 
-void GroupBox2::setCaption(const TCHAR* Caption)
+void GroupBox2::SetCaption(const TCHAR* Caption)
 {
     if((Caption == 0) || (StringLength(Caption) == 0))
     {

@@ -25,79 +25,78 @@
 
 #include "AbstractButton.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-class RadioButton;
-class RadioButtonGroup;
-class HLayout;
-
-class RadioButton: public AbstractButton
+namespace nux
 {
-public:
-    RadioButton(const TCHAR* Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
+    class RadioButton;
+    class RadioButtonGroup;
+    class HLayout;
 
-    ~RadioButton();
-    virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    class RadioButton: public AbstractButton
+    {
+    public:
+        RadioButton(const TCHAR* Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
 
-    virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
-    virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
-    virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
+        ~RadioButton();
+        virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
-    void RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if a click happen. The state change and the check box need to redraw itself.
-    */
-    void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if the mouse is released. Whether a click happened or not, 
-        the check box need to redraw itself.
-    */
-    void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+        virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
+        virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
+        virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    sigc::signal<void, const weaksmptr(RadioButton)> sigStateToggled;
-    sigc::signal<void> sigToggled;
-    sigc::signal<void, bool> sigStateChanged;
+        void RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+        void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
+        void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
+        /*
+            Signal emitted if a click happen. The state change and the check box need to redraw itself.
+        */
+        void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
+        /*
+            Signal emitted if the mouse is released. Whether a click happened or not, 
+            the check box need to redraw itself.
+        */
+        void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+        void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-    void EmitStateChangedSignal();
+        sigc::signal<void, RadioButton*> sigStateToggled;
+        sigc::signal<void> sigToggled;
+        sigc::signal<void, bool> sigStateChanged;
 
-    //+++ Inherited from AbstractButton
-    virtual bool IsCheckable() const {return true;}
+        void EmitStateChangedSignal();
 
-    virtual void SetCaption(const TCHAR* Caption);
-    virtual const NString& GetCaption() const;
+        //+++ Inherited from AbstractButton
+        virtual bool IsCheckable() const {return true;}
 
-    virtual void SetState(bool State);
-    virtual void SetState(bool State, bool EmitSignal);
-    virtual bool GetState() const;
-    //---
+        virtual void SetCaption(const TCHAR* Caption);
+        virtual const NString& GetCaption() const;
 
-protected:
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
+        virtual void SetState(bool State);
+        virtual void SetState(bool State, bool EmitSignal);
+        virtual bool GetState() const;
+        //---
 
-private:
-    //! Intended for RadioButtonGroup only.
-    void SetStatePrivate(bool State);
-    //! Intended for RadioButtonGroup only.
-    void SetStatePrivate(bool State, bool EmitSignal);
+    protected:
+        void InitializeWidgets();
+        void InitializeLayout();
+        void DestroyLayout();
+
+    private:
+        void SetRadioGroupSelector(RadioButtonGroup* RadioSelector);
+        //! Intended for RadioButtonGroup only.
+        void SetStatePrivate(bool State);
+        //! Intended for RadioButtonGroup only.
+        void SetStatePrivate(bool State, bool EmitSignal);
 
 
-    smptr(HLayout) m_hlayout;
-    smptr(CoreArea) m_TextArea;
-    smptr(CoreArea) m_CheckArea;
-    bool m_State;
+        HLayout*    m_hlayout;
+        CoreArea*   m_TextArea;
+        CoreArea*   m_CheckArea;
+        bool        m_State;
 
-    RadioButtonGroup* m_Group;
-    int m_GroupId;
+        RadioButtonGroup* m_Group;
+        int m_GroupId;
 
-public:
-    friend class RadioButtonGroup;
-};
-
-} //NUX_NAMESPACE_END
+        friend class RadioButtonGroup;
+    };
+}
 
 #endif // RADIOBUTTON_H

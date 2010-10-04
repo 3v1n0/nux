@@ -19,9 +19,10 @@
  *
  */
 
-
 #ifndef COLORPREVIEWPROPERTYITEM_H
 #define COLORPREVIEWPROPERTYITEM_H
+
+#include "../ColorEditor.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
@@ -31,7 +32,7 @@ class ColorPreviewPropertyItem: public SectionProperty, public ColorPreview
 {
     NODE_XML_CLASS_MEMBER(ColorPreviewPropertyItem);
     NODE_SKIP_CHILD(true);
-    NODE_SIG_RECEIVER2(RecvPropertyChange, const weaksmptr(ColorEditor));
+    NODE_SIG_RECEIVER2(RecvPropertyChange, ColorEditor*);
 public:
     ColorPreviewPropertyItem(const TCHAR* name, float red = 0.0f, float green = 0.0f, float blue = 0.0f,  eColorModel colormodel = CM_RGB);
     virtual ~ColorPreviewPropertyItem();

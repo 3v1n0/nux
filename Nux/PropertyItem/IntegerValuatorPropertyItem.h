@@ -31,7 +31,7 @@ class IntValuatorPropertyItem: public SectionProperty, public ValuatorInt
 {
     NODE_XML_CLASS_MEMBER(IntValuatorPropertyItem);
     NODE_SKIP_CHILD(false);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(ValuatorInt));
+    NODE_SIG_RECEIVER(RecvPropertyChange, ValuatorInt*);
 public:
     IntValuatorPropertyItem(const char* name, int Value = 0, int Step = 1,  int MinValue = 0, int MaxValue = 100);
     virtual ~IntValuatorPropertyItem();

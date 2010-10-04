@@ -31,7 +31,7 @@ class ColorGradientPropertyItem: public SectionProperty, public ColorGradient
 {
     //NODE_XML_CLASS_MEMBER(ColorGradientPropertyItem);
     NODE_SKIP_CHILD(false);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(ColorGradient));
+    NODE_SIG_RECEIVER(RecvPropertyChange, ColorGradient*);
 
 public:
     ColorGradientPropertyItem(const char* name, float Value = 0.0f, float MinValue = 0.0f, float MaxValue = 1.0f);

@@ -27,8 +27,8 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 static void ThreadMatrix4EditorDialog(NThread* thread, void* InitData)
 {
-    smptr(VLayout) MainLayout(new VLayout());
-    smptr(Matrix4Editor) matrixeditor(new Matrix4Editor());
+    VLayout* MainLayout(new VLayout(TEXT(""), NUX_TRACKER_LOCATION));
+    Matrix4Editor* matrixeditor(new Matrix4Editor(Matrix4::IDENTITY(), NUX_TRACKER_LOCATION));
     matrixeditor->ComputeChildLayout(); // necessary so all element of the widget get their rightful size.
     Matrix4DialogProxy* matrixeditorproxy = static_cast<Matrix4DialogProxy*>(InitData);
     if(matrixeditorproxy)
@@ -37,19 +37,19 @@ static void ThreadMatrix4EditorDialog(NThread* thread, void* InitData)
         matrixeditor->sigMatrixChanged.connect(sigc::mem_fun(matrixeditorproxy, &Matrix4DialogProxy::RecvDialogChange));
     }
 
-    smptr(HLayout) ButtonLayout(new HLayout(TEXT("Dialog Buttons")));
+    HLayout* ButtonLayout(new HLayout(TEXT("Dialog Buttons")));
 
-    smptr(Button) OkButton(new Button(TEXT("OK")));
+    Button* OkButton(new Button(TEXT("OK")));
     OkButton->SetMinimumWidth(60);
     OkButton->SetMinimumHeight(20);
 
-    smptr(Button) CancelButton(new Button(TEXT("Cancel")));
+    Button* CancelButton(new Button(TEXT("Cancel")));
     CancelButton->SetMinimumWidth(60);
     CancelButton->SetMinimumHeight(20);
 
     OkButton->sigClick.connect(sigc::mem_fun(static_cast<WindowThread*>(thread), &WindowThread::TerminateThread));
-    OkButton->sigClick.connect(sigc::bind(sigc::mem_fun(matrixeditorproxy, &Matrix4DialogProxy::RecvDialogOk), weaksmptr(Matrix4Editor)(matrixeditor)));
-    CancelButton->sigClick.connect(sigc::bind(sigc::mem_fun(matrixeditorproxy, &Matrix4DialogProxy::RecvDialogCancel), weaksmptr(Matrix4Editor)(matrixeditor)));
+    OkButton->sigClick.connect(sigc::bind(sigc::mem_fun(matrixeditorproxy, &Matrix4DialogProxy::RecvDialogOk), matrixeditor));
+    CancelButton->sigClick.connect(sigc::bind(sigc::mem_fun(matrixeditorproxy, &Matrix4DialogProxy::RecvDialogCancel), matrixeditor));
     CancelButton->sigClick.connect(sigc::mem_fun(static_cast<WindowThread*>(thread), &WindowThread::TerminateThread));
 
     ButtonLayout->SetHorizontalInternalMargin(6);
@@ -106,21 +106,21 @@ bool Matrix4DialogProxy::IsActive()
     return (m_Thread && (m_Thread->GetThreadState() != THREADSTOP) && m_bDialogRunning);
 }
 
-void Matrix4DialogProxy::RecvDialogOk(const weaksmptr(Matrix4Editor) matrixeditor)
+void Matrix4DialogProxy::RecvDialogOk(Matrix4Editor* matrixeditor)
 {
     m_Matrix = matrixeditor->GetMatrix();
     m_bDialogChange = true;
     m_bDialogRunning = false;
 }
 
-void Matrix4DialogProxy::RecvDialogCancel(const weaksmptr(Matrix4Editor) matrixeditor)
+void Matrix4DialogProxy::RecvDialogCancel(Matrix4Editor* matrixeditor)
 {
     m_Matrix = m_PreviousMatrix;
     m_bDialogChange = true;
     m_bDialogRunning = false;
 }
 
-void Matrix4DialogProxy::RecvDialogChange(const weaksmptr(Matrix4Editor) matrixeditor)
+void Matrix4DialogProxy::RecvDialogChange(Matrix4Editor* matrixeditor)
 {
     m_Matrix = matrixeditor->GetMatrix();
     m_bDialogChange = true;
@@ -139,19 +139,19 @@ Matrix4Editor::Matrix4Editor(Matrix4 matrix, NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 ,   m_Matrix(matrix)
 {
-    m_vlayout = smptr(VLayout)(new VLayout());
-    mtx_layout = smptr(VLayout)(new VLayout());
-    m_MtxFunctionLayout = smptr(HLayout)(new HLayout());
+    m_vlayout           = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    mtx_layout          = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_MtxFunctionLayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
-    mtx_row_layout[0] = smptr(HLayout)(new HLayout());
-    mtx_row_layout[1] = smptr(HLayout)(new HLayout());
-    mtx_row_layout[2] = smptr(HLayout)(new HLayout());
-    mtx_row_layout[3] = smptr(HLayout)(new HLayout());
+    mtx_row_layout[0]   = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    mtx_row_layout[1]   = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    mtx_row_layout[2]   = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    mtx_row_layout[3]   = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
-    m_IdentityMtxBtn = smptr(Button)(new Button());
-    m_ZeroMtxBtn = smptr(Button)(new Button());
-    m_InverseMtxBtn = smptr(Button)(new Button());
-    m_NegateMtxBtn = smptr(Button)(new Button());
+    m_IdentityMtxBtn    = new Button(TEXT(""), NUX_TRACKER_LOCATION);
+    m_ZeroMtxBtn        = new Button(TEXT(""), NUX_TRACKER_LOCATION);
+    m_InverseMtxBtn     = new Button(TEXT(""), NUX_TRACKER_LOCATION);
+    m_NegateMtxBtn      = new Button(TEXT(""), NUX_TRACKER_LOCATION);
 
     m_IdentityMtxBtn->sigClick.connect(sigc::mem_fun(this, &Matrix4Editor::RecvIdentityMatrixCmd));
     m_ZeroMtxBtn->sigClick.connect(sigc::mem_fun(this, &Matrix4Editor::RecvZeroMatrixCmd));
@@ -162,7 +162,7 @@ Matrix4Editor::Matrix4Editor(Matrix4 matrix, NUX_FILE_LINE_DECL)
     {
         for(int j = 0; j < 4; j++)
         {
-            m_MtxInput[i][j] = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+            m_MtxInput[i][j] = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             m_MtxInput[i][j]->SetMinimumSize(DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT);
             m_MtxInput[i][j]->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
             m_MtxInput[i][j]->sigValidateKeyboardEntry.connect(
@@ -176,7 +176,7 @@ Matrix4Editor::Matrix4Editor(Matrix4 matrix, NUX_FILE_LINE_DECL)
         mtx_row_layout[i]->SetHorizontalInternalMargin(4);
         //mtx_row_layout[i]->SetHorizontalExternalMargin(4);
         //mtx_row_layout[i]->SetVerticalExternalMargin(2);
-        mtx_row_layout[i]->SetContentStacking(eStackLeft);
+        mtx_row_layout[i]->SetContentDistribution(eStackLeft);
     }
 
     for(int i = 0; i < 4; i++)
@@ -191,7 +191,7 @@ Matrix4Editor::Matrix4Editor(Matrix4 matrix, NUX_FILE_LINE_DECL)
     {
         mtx_layout->AddLayout(mtx_row_layout[i], 0, eCenter);
     }
-    mtx_layout->SetContentStacking(eStackExpand);
+    mtx_layout->SetContentDistribution(eStackExpand);
 
     m_IdentityMtxBtn->SetCaption(TEXT("Id"));
     m_ZeroMtxBtn->SetCaption(TEXT("Zero"));
@@ -205,16 +205,16 @@ Matrix4Editor::Matrix4Editor(Matrix4 matrix, NUX_FILE_LINE_DECL)
     m_MtxFunctionLayout->SetVerticalExternalMargin(4);
     m_MtxFunctionLayout->SetHorizontalExternalMargin(0);
     m_MtxFunctionLayout->SetHorizontalInternalMargin(2);
-    m_MtxFunctionLayout->SetContentStacking(eStackLeft);
+    m_MtxFunctionLayout->SetContentDistribution(eStackLeft);
     //mtx_layout->AddLayout(&m_MtxFunctionLayout, 1,  eCenter, eMatchContent);
-    mtx_layout->SetContentStacking(eStackCenter);
+    mtx_layout->SetContentDistribution(eStackCenter);
     mtx_layout->SetHorizontalExternalMargin(4);
     mtx_layout->SetVerticalExternalMargin(4);
     mtx_layout->SetVerticalInternalMargin(4);
 
     m_vlayout->AddLayout(mtx_layout, 0, eCenter, eMatchContent);
     m_vlayout->AddLayout(m_MtxFunctionLayout, 0,  eCenter, eMatchContent);
-    m_vlayout->SetContentStacking(eStackCenter);
+    m_vlayout->SetContentDistribution(eStackCenter);
 
     SetCompositionLayout(m_vlayout);
     WriteMatrix();
@@ -241,7 +241,7 @@ Matrix4 Matrix4Editor::GetMatrix() const
     return m_Matrix;
 }
 
-void Matrix4Editor::RecvComponentInput(const weaksmptr(EditTextBox) textbox, const NString& text, int componentIndex)
+void Matrix4Editor::RecvComponentInput(EditTextBox* textbox, const NString& text, int componentIndex)
 {
     int i = componentIndex / 4;
     int j = componentIndex - 4*i;
@@ -251,7 +251,7 @@ void Matrix4Editor::RecvComponentInput(const weaksmptr(EditTextBox) textbox, con
     m_MtxInput[i][j]->SetText(inlPrintf(TEXT("%.3f"), f));
     m_Matrix.m[i][j] = f;
 
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
+    sigMatrixChanged.emit(this);
 }
 
 void Matrix4Editor::WriteMatrix()
@@ -366,7 +366,7 @@ void Matrix4Editor::RecvIdentityMatrixCmd()
 {
     m_Matrix.Identity();
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
+    sigMatrixChanged.emit(this);
 
     NeedRedraw();
 }
@@ -375,7 +375,7 @@ void Matrix4Editor::RecvZeroMatrixCmd()
 {
     m_Matrix.Zero();
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
+    sigMatrixChanged.emit(this);
 
     NeedRedraw();
 }
@@ -384,7 +384,7 @@ void Matrix4Editor::RecvInverseMatrixCmd()
 {
     m_Matrix.Zero();
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
+    sigMatrixChanged.emit(this);
 
     NeedRedraw();
 }
@@ -393,7 +393,7 @@ void Matrix4Editor::RecvNegateMatrixCmd()
 {
     m_Matrix = -m_Matrix;
     WriteMatrix();
-    sigMatrixChanged.emit(smptr(Matrix4Editor)(this, true));
+    sigMatrixChanged.emit(this);
 
     NeedRedraw();
 }

@@ -109,7 +109,7 @@ void Matrix3Preview::RecvTimer(void* v)
     }
 }
 
-void Matrix3Preview::RecvDialogChange(const weaksmptr(Matrix3Editor) matrixeditor)
+void Matrix3Preview::RecvDialogChange(Matrix3Editor* matrixeditor)
 {
 }
 

@@ -65,11 +65,10 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void AddWidget(int id);
-    void AddWidget(smptr(ActiveInterfaceObject) ic);
-    void AddWidget(smptr(ActiveInterfaceObject) ic, int stretchfactor);
-    void AddWidget(std::list<smptr(ActiveInterfaceObject)> *InterfaceControlList);
-    void setLayout(smptr(Layout) layout);
+    void AddWidget(ActiveInterfaceObject* ic);
+    void AddWidget(ActiveInterfaceObject* ic, int stretchfactor);
+    void AddWidget(std::list<ActiveInterfaceObject*> *InterfaceControlList);
+    void SetLayout(Layout* layout);
 
     //! Set the window size to respect the layout container.
     /*!
@@ -118,7 +117,7 @@ protected:
 
     sigc::signal< bool, unsigned int, unsigned int, Geometry& > sigRequestConfigure;
 
-    smptr(Layout) m_layout;
+    Layout* m_layout;
 
     friend class ComboBox_Logic_WindowView;
 
@@ -155,8 +154,8 @@ private:
     bool m_bIsVisible;
     bool m_bIsModal;
 
-    std::list<smptr(ActiveInterfaceObject)> m_InterfaceObject;
-    smptr(HLayout) m_TitleBarLayout;
+    std::list<ActiveInterfaceObject*> m_InterfaceObject;
+    HLayout* m_TitleBarLayout;
 
     friend class PopUpWindow;
     friend class WindowCompositor;

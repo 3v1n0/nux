@@ -28,7 +28,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class EditTextLinePropertyItem: public SectionProperty, public EditTextBox
 {
     NODE_XML_CLASS_MEMBER(EditTextLinePropertyItem);
-    NODE_SIG_RECEIVER2(RecvPropertyChange, const weaksmptr(EditTextBox));
+    NODE_SIG_RECEIVER2(RecvPropertyChange, EditTextBox*);
 
 public:
     EditTextLinePropertyItem(const TCHAR* name, const TCHAR* text = TEXT(""));

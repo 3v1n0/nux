@@ -31,11 +31,7 @@ class HLayout;
 class Button: public AbstractButton
 {
 public:
-    static const bool Checked = true;
-    static const bool Unchecked = false;
-
-public:
-    Button(const TCHAR* Caption = TEXT(""), bool Checkable = false, bool m_State = Unchecked, NUX_FILE_LINE_PROTO);
+    Button(const TCHAR* Caption = TEXT(""), NUX_FILE_LINE_PROTO);
     ~Button();
 
     virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -76,7 +72,7 @@ protected:
     void DestroyLayout();
 
 private:
-    smptr(HLayout) m_hlayout;
+    HLayout* m_hlayout;
     bool m_Checkable;
 
 };

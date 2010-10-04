@@ -35,7 +35,7 @@ public:
     Layout(NUX_FILE_LINE_PROTO);
     virtual ~Layout();
 
-    virtual void AddLayout(smptr(Layout), unsigned int stretchFactor = 1, eMinorPosition = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
+    virtual void AddLayout(Layout*, unsigned int stretchFactor = 1, eMinorPosition = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
 
     //! Add an object to the layout.
     /*! Add an object to the layout.
@@ -60,7 +60,7 @@ public:
         /param extend Controls the object minor dimension size.
         /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
     */
-    virtual void AddActiveInterfaceObject(smptr(BaseObject) baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
+    virtual void AddActiveInterfaceObject(BaseObject* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
     virtual void AddSpace(unsigned int width, unsigned int stretchFactor = 0);
 
     virtual void Clear();
@@ -129,7 +129,7 @@ public:
     virtual bool IsLayout() const {return true;}
     virtual bool IsSpaceLayout() const {return false;}
     
-    virtual void GetCompositeList(std::list<smptr(BaseObject)> *InterfaceControlList)
+    virtual void GetCompositeList(std::list<BaseObject*> *InterfaceControlList)
     {
 
     }
@@ -138,8 +138,8 @@ public:
     void removeParentLayout();
     void DoneRedraw();
 
-    bool SearchInAllSubNodes(smptr(BaseObject) bo);
-    bool SearchInFirstSubNodes(smptr(BaseObject) bo);
+    bool SearchInAllSubNodes(BaseObject* bo);
+    bool SearchInFirstSubNodes(BaseObject* bo);
 
     //! Process Event
     /*!
@@ -177,23 +177,23 @@ public:
         inside the layout.
         @param stacking_order 
     */
-    virtual void SetContentStacking(eStacking stacking_order);
-    virtual eStacking GetContentStacking();
+    virtual void SetContentDistribution(LayoutContentDistribution stacking_order);
+    virtual LayoutContentDistribution GetContentDistribution();
 
-    virtual bool FindWidget(smptr(BaseObject) WidgetObject) const;
+    virtual bool FindWidget(BaseObject* WidgetObject) const;
     virtual bool IsEmpty() const;
     /* 
         This function is reimplemented in Layout and ActiveInterfaceObject classes  they need to perform some special operations.
         It does nothing for BaseObject classes (this class cannot have children).
     */
-    virtual void RemoveChildObject(smptr(BaseObject));
+    virtual void RemoveChildObject(BaseObject*);
 
     //! Request a Layout recompute after a change of size
     /*
         When an object size changes, it is necessary for its parent structure to initiate a layout
         re computation in order preserve the layout structure defined by the user through the API.
     */
-    virtual void RequestBottomUpLayoutComputation(smptr(BaseObject) bo_initiator);
+    virtual void RequestBottomUpLayoutComputation(BaseObject* bo_initiator);
 
     virtual void SetApplication(WindowThread* Application);
 
@@ -224,18 +224,16 @@ protected:
     int m_fittingWidth;
     int m_fittingHeight;
 
-    smptr(BaseObject) m_compositeIC;
-
     int m_h_in_margin;
     int m_h_out_margin;
     int m_v_in_margin;
     int m_v_out_margin;
 
-    std::list<smptr(BaseObject)> m_LayoutElementList;
+    std::list<BaseObject*> m_LayoutElementList;
 
     NString m_name;
 
-    eStacking m_ContentStacking;
+    LayoutContentDistribution m_ContentStacking;
 };
 
 
@@ -257,16 +255,16 @@ public:
     {
     };
 
-    virtual bool FindWidget(smptr(BaseObject) WidgetObject) const {return false;}
+    virtual bool FindWidget(BaseObject* WidgetObject) const {return false;}
     virtual bool IsEmpty() const {return true;}
     virtual bool IsSpaceLayout() const {return true;}
 
-    virtual void AddLayout(smptr(Layout), unsigned int stretchFactor = 1, eMinorPosition minor_position = eAbove, eMinorSize minor_size = eFull, float percentage = 100.0f)
+    virtual void AddLayout(Layout*, unsigned int stretchFactor = 1, eMinorPosition minor_position = eAbove, eMinorSize minor_size = eFull, float percentage = 100.0f)
     {
         // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
 
-    virtual void AddActiveInterfaceObject(smptr(BaseObject) baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f)
+    virtual void AddActiveInterfaceObject(BaseObject* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f)
     {
         // the baseObject is provided via the constructor.
     };
@@ -306,7 +304,7 @@ public:
     // End: Abstract virtual function member (inherited from class Layout) that must be implemented
 
 protected:
-    smptr(BaseObject) Find(long handle);
+    BaseObject* Find(long handle);
 };
 
 } //NUX_NAMESPACE_END

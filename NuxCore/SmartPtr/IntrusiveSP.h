@@ -186,6 +186,13 @@ public:
         return *this;
     }
 
+    // WARNING: THIS FUNCTION IS MADE PUBLIC TEMPORARILY TO FACILITATE TRANSITION TO A PURE POINTER BASE USAGE IN NUX.
+    // THIS FUNCTION WILL BE REMOVED!
+    T* GetSPPointer() const
+    {
+        return ptr_;
+    }
+
     ~IntrusiveSP ()
     {
         ReleaseReference ();
@@ -477,6 +484,62 @@ public:
         m_weak_reference_count = 0;
     }
 
+    //! Construction with a base pointer of type T.
+    /*!
+        @param ptr Start maintaining a reference count of the passed pointer.
+        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned 
+        and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
+        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+    */
+    explicit IntrusiveWeakSP(T* ptr, bool WarnMissuse = false)
+        :   ptr_ (0)
+    {
+        m_reference_count = 0;
+        m_weak_reference_count = 0;
+
+        if(ptr != 0)
+        {
+            if(WarnMissuse && (ptr->OwnsTheReference() == false))
+            {
+                nuxDebugMsg(TEXT("[IntrusiveWeakSP::IntrusiveWeakSP] Warning: Constructing a weak smart pointer from an object with a floating reference."));
+            }
+            ptr_ = ptr;
+            m_reference_count = ptr->m_reference_count;
+            m_weak_reference_count = ptr->m_weak_reference_count;
+            ptr_->IncrementWeakCounter();
+        }
+    }
+
+    //! Construction with a base pointer of type O that inherits from type T.
+    /*!
+        @param ptr Start maintaining a reference count of the passed pointer.
+        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned 
+        and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
+        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+    */
+    template <typename O>
+    explicit IntrusiveWeakSP(O* ptr, bool WarnMissuse = false)
+        :   ptr_ (0)
+    {
+        m_reference_count = 0;
+        m_weak_reference_count = 0;
+
+        if(ptr != 0)
+        {
+            if(ptr->Type().IsDerivedFromType(T::StaticObjectType))
+            {
+                if(WarnMissuse && (ptr->OwnsTheReference() == false))
+                {
+                    nuxDebugMsg(TEXT("[IntrusiveWeakSP::IntrusiveWeakSP] Warning: Constructing a weak smart pointer from an object with a floating reference."));
+                }
+                ptr_ = (T*)ptr;
+                m_reference_count = ptr->m_reference_count;
+                m_weak_reference_count = ptr->m_weak_reference_count;
+                ptr_->IncrementWeakCounter();
+            }
+        }
+    }
+
     //! Copy constructor
     /*!
         @param other Parameter with type T.
@@ -489,7 +552,7 @@ public:
 
         if (ptr_ != 0)
         {
-            m_weak_reference_count->Increment();
+            ptr_->IncrementWeakCounter();
         }
     }
 
@@ -567,7 +630,7 @@ public:
     */
     IntrusiveWeakSP& operator = (const IntrusiveWeakSP<T>& other)
     {
-        if (get () != other.get ()) // Avoid self assignment.
+        if (GetPointer () != other.GetPointer ()) // Avoid self assignment.
         {
             ReleaseReference ();
 
@@ -595,7 +658,7 @@ public:
     {
         if(other.ptr_ && other.ptr_->Type().IsDerivedFromType(T::StaticObjectType))
         {
-            if (get () != other.get ()) // Avoid self assignment.
+            if (GetPointer () != other.GetPointer ()) // Avoid self assignment.
             {
                 ReleaseReference ();
 
@@ -627,7 +690,7 @@ public:
     {
         if(other.ptr_ && other.ptr_->Type().IsDerivedFromType(T::StaticObjectType))
         {
-            if(get () != other.ptr_) // Avoid self assignment.
+            if(GetPointer () != other.ptr_) // Avoid self assignment.
             {
                 ReleaseReference ();
 
@@ -650,6 +713,98 @@ public:
         return *this;
     }
 
+    //! Construction with a base pointer of type T.
+    /*!
+        @param ptr Start maintaining a reference count of the passed pointer.
+        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned 
+        and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
+        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+    */
+    IntrusiveWeakSP& operator = (T* ptr)
+    {
+        if(ptr_ && m_reference_count && (m_reference_count->GetValue() != 0))
+        {
+            ptr_->DecrementWeakCounter()
+        }
+        else if(m_reference_count && m_weak_reference_count)
+        {
+            m_weak_reference_count->Decrement();
+        }
+        else
+        {
+            nuxAssertMsg(0, TEXT("Could there be something wrong her?"));
+        }
+
+        if(m_reference_count && m_weak_reference_count && (m_reference_count->GetValue() == 0) && (m_weak_reference_count->GetValue() == 0))
+        {
+            delete m_reference_count;
+            delete m_weak_reference_count;
+        }
+
+        m_reference_count = 0;
+        m_weak_reference_count = 0;
+
+        if(ptr != 0)
+        {
+            if(ptr->OwnsTheReference() == false)
+            {
+                nuxDebugMsg(TEXT("[IntrusiveWeakSP::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference."));
+            }
+            ptr_ = ptr;
+            m_reference_count = ptr->m_reference_count;
+            m_weak_reference_count = ptr->m_weak_reference_count;
+            ptr_->IncrementWeakCounter();
+        }
+    }
+
+    //! Construction with a base pointer of type O that inherits from type T.
+    /*!
+        @param ptr Start maintaining a reference count of the passed pointer.
+        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned 
+        and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
+        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+    */
+    template <typename O>
+    IntrusiveWeakSP& operator = (O* ptr)
+    {
+        if(ptr_ && m_reference_count && (m_reference_count->GetValue() != 0))
+        {
+            ptr_->DecrementWeakCounter()
+        }
+        else if(m_reference_count && m_weak_reference_count)
+        {
+            m_weak_reference_count->Decrement();
+        }
+        else
+        {
+            nuxAssertMsg(0, TEXT("Could there be something wrong her?"));
+        }
+
+        if(m_reference_count && m_weak_reference_count && (m_reference_count->GetValue() == 0) && (m_weak_reference_count->GetValue() == 0))
+        {
+            delete m_reference_count;
+            delete m_weak_reference_count;
+        }
+
+        m_reference_count = 0;
+        m_weak_reference_count = 0;
+
+        if(ptr != 0)
+        {
+            if(ptr->Type().IsDerivedFromType(T::StaticObjectType))
+            {
+                if(ptr->OwnsTheReference() == false)
+                {
+                    nuxDebugMsg(TEXT("[IntrusiveWeakSP::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference."));
+                }
+                ptr_ = (T*)ptr;
+                m_reference_count = ptr->m_reference_count;
+                m_weak_reference_count = ptr->m_weak_reference_count;
+                ptr_->IncrementWeakCounter();
+            }
+        }
+    }
+
     ~IntrusiveWeakSP ()
     {
         ReleaseReference ();
@@ -659,14 +814,14 @@ public:
     {
         nuxAssert(m_reference_count && (m_reference_count->GetValue() != 0) && (ptr_ != 0));
 
-        return *get ();
+        return *GetPointer ();
     }
 
     T* operator -> () const
     {
         nuxAssert(m_reference_count && (m_reference_count->GetValue() != 0) && (ptr_ != 0));
 
-        return get ();
+        return GetPointer ();
     }
 
 //     void Swap (IntrusiveWeakSP<T>& other)
@@ -759,17 +914,17 @@ public:
     */
     bool operator () () const
     {
-        return get() != 0;
+        return GetPointer() != 0;
     }
 
     bool IsNull() const
     {
-        return get() == 0;
+        return GetPointer() == 0;
     }
 
     bool IsValid() const
     {
-        return get() != 0;
+        return GetPointer() != 0;
     }
 
     void Release()
@@ -778,13 +933,7 @@ public:
     }
 
 private:
-    IntrusiveWeakSP (T* ptr/*, RefCounts* refCounts*/)
-        :   ptr_ (ptr)
-        //,   refCounts_ (refCounts)
-    {
-    }
-
-    T* get() const
+    T* GetPointer() const
     {
         if((m_weak_reference_count == 0) || (m_weak_reference_count->GetValue() == 0))
         {
@@ -885,19 +1034,19 @@ private:
 // template<typename T, typename U>
 // inline bool operator == (const IntrusiveWeakSP<T>& a, const IntrusiveWeakSP<U>& b)
 // {
-//     return a.get () == b.get ();
+//     return a.GetPointer () == b.GetPointer ();
 // }
 // 
 // template<typename T, typename U>
 // inline bool operator == (const IntrusiveSP<T>& a, const IntrusiveWeakSP<U>& b)
 // {
-//     return a.ptr_ == b.get ();
+//     return a.ptr_ == b.GetPointer ();
 // }
 // 
 // template<typename T, typename U>
 // inline bool operator == (const IntrusiveWeakSP<T>& a, const IntrusiveSP<U>& b)
 // {
-//     return a.get () == b.ptr_;
+//     return a.GetPointer () == b.ptr_;
 // }
 // 
 // template<typename T, typename U>
@@ -909,19 +1058,19 @@ private:
 // template<typename T, typename U>
 // inline bool operator != (const IntrusiveWeakSP<T>& a, const IntrusiveWeakSP<U>& b)
 // {
-//     return a.get () != b.get ();
+//     return a.GetPointer () != b.GetPointer ();
 // }
 // 
 // template<typename T, typename U>
 // inline bool operator != (const IntrusiveSP<T>& a, const IntrusiveWeakSP<U>& b)
 // {
-//     return a.ptr_ != b.get ();
+//     return a.ptr_ != b.GetPointer ();
 // }
 // 
 // template<typename T, typename U>
 // inline bool operator != (const IntrusiveWeakSP<T>& a, const IntrusiveSP<U>& b)
 // {
-//     return a.get () != b.ptr_;
+//     return a.GetPointer () != b.ptr_;
 // }
 
 // template<typename T>
@@ -1250,7 +1399,7 @@ inline bool operator != (T* ptr, const IntrusiveWeakSP<T>& a)
 // template <typename U, typename F>
 // IntrusiveWeakSP<U> staticCast (const IntrusiveWeakSP<F>& from)
 // {
-//     if (from.get () == 0)
+//     if (from.GetPointer () == 0)
 //     {
 //         return IntrusiveWeakSP<U>();
 //     }
@@ -1269,7 +1418,7 @@ inline bool operator != (T* ptr, const IntrusiveWeakSP<T>& a)
 // template <typename T, typename F>
 // IntrusiveWeakSP<T> constCast (const IntrusiveWeakSP<F>& from)
 // {
-//     if (from.get () == 0)
+//     if (from.GetPointer () == 0)
 //     {
 //         return IntrusiveWeakSP<T>();
 //     }
@@ -1289,7 +1438,7 @@ inline bool operator != (T* ptr, const IntrusiveWeakSP<T>& a)
 // template <typename T, typename F>
 // IntrusiveWeakSP<T> dynamicCast (const IntrusiveWeakSP<F>& from)
 // {
-//     if (from.get () == 0)
+//     if (from.GetPointer () == 0)
 //     {
 //         return IntrusiveWeakSP<T>();
 //     }
@@ -1309,7 +1458,7 @@ inline bool operator != (T* ptr, const IntrusiveWeakSP<T>& a)
 // template <typename T, typename F>
 // IntrusiveWeakSP<T> queryCast (const IntrusiveWeakSP<F>& from)
 // {
-//     T* ptr = dynamic_cast <T*> (from.get ());
+//     T* ptr = dynamic_cast <T*> (from.GetPointer ());
 // 
 //     if (ptr == 0)
 //     {
@@ -1330,7 +1479,7 @@ inline bool operator != (T* ptr, const IntrusiveWeakSP<T>& a)
 // template <typename T, typename F>
 // IntrusiveWeakSP<T> checkedCast (const IntrusiveWeakSP<F>& from)
 // {
-//     if (from.get () == 0)
+//     if (from.GetPointer () == 0)
 //     {
 //         return IntrusiveWeakSP<T>();
 //     }

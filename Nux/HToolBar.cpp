@@ -51,7 +51,7 @@ void HToolBar::InitializeWidgets()
     m_hlayout->SetHorizontalInternalMargin(2);
     m_hlayout->SetHorizontalExternalMargin(0);
     m_hlayout->SetVerticalExternalMargin(0);
-    m_hlayout->SetContentStacking(eStackLeft);
+    m_hlayout->SetContentDistribution(eStackLeft);
     SetMinimumSize(200, 32);
     SetMaximumHeight(32);
     SetGeometry(Geometry(0, 0, 200, 20));
@@ -60,7 +60,7 @@ void HToolBar::InitializeWidgets()
 
 void HToolBar::InitializeLayout()
 {
-    m_hlayout = smptr(HLayout)(new HLayout());
+    m_hlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
 }
 
 void HToolBar::DestroyLayout()
@@ -106,9 +106,9 @@ void HToolBar::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 }
 
-void HToolBar::AddToolButton(smptr(ToolButton) toolbutton)
+void HToolBar::AddToolButton(ToolButton* toolbutton)
 {
-    nuxAssert(toolbutton.IsValid());
+    nuxAssert(toolbutton);
     if(toolbutton == 0)
         return;
 
@@ -119,13 +119,13 @@ void HToolBar::AddToolButton(smptr(ToolButton) toolbutton)
     ComputeChildLayout();
 }
 
-void HToolBar::AddAction(smptr(ActionItem) action)
+void HToolBar::AddAction(ActionItem* action)
 {
 //    nuxAssert(action);
 //    if(action == 0)
 //        return;
 
-    smptr(ToolButton) tool_button(new ToolButton);
+    ToolButton* tool_button(new ToolButton);
     tool_button->SetAction(action);
 
     m_hlayout->AddActiveInterfaceObject(tool_button, 0, eCenter, eFix);
@@ -137,7 +137,7 @@ void HToolBar::AddAction(smptr(ActionItem) action)
 
 void HToolBar::AddSpace(int size)
 {
-    smptr(SpaceLayout) layout(new SpaceLayout());
+    SpaceLayout* layout(new SpaceLayout());
     layout->SetMaximumWidth(size);
     layout->SetMinimumWidth(size);
     m_hlayout->AddLayout(layout);
@@ -146,14 +146,14 @@ void HToolBar::AddSpace(int size)
 
 void HToolBar::AddSeparator()
 {
-    smptr(VSeparator) separator(new VSeparator());
+    VSeparator* separator(new VSeparator());
     m_hlayout->AddActiveInterfaceObject(separator, 0);
     ComputeChildLayout();
 }
 
-void HToolBar::AddEditTextLine(smptr(EditTextBox) edittextline)
+void HToolBar::AddEditTextLine(EditTextBox* edittextline)
 {
-    nuxAssert(edittextline.IsValid());
+    nuxAssert(edittextline);
     if(edittextline == 0)
         return;
 
@@ -164,9 +164,9 @@ void HToolBar::AddEditTextLine(smptr(EditTextBox) edittextline)
     ComputeChildLayout();
 }
 
-void HToolBar::AddStaticTextLine(smptr(StaticTextBox) statictextline)
+void HToolBar::AddStaticTextLine(StaticTextBox* statictextline)
 {
-    nuxAssert(statictextline.IsValid());
+    nuxAssert(statictextline);
     if(statictextline == 0)
         return;
 

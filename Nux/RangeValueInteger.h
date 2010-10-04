@@ -70,12 +70,12 @@ public:
     void OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnKeyboardFocus();
     void OnLostKeyboardFocus();
-    void OnValidateKeyboardEntry(const weaksmptr(EditTextBox) textbox, const NString& text);
+    void OnValidateKeyboardEntry(EditTextBox* textbox, const NString& text);
 
     bool IsCtrlKeyPressed() const {return (m_CTRL_KEY? true: false);}
 
     // signals
-    sigc::signal<void, const weaksmptr(RangeValueInteger)> sigValueChanged;
+    sigc::signal<void, RangeValueInteger*> sigValueChanged;
     sigc::signal<void, int> sigMouseDown;
     sigc::signal<void, int> sigMouseUp;
     sigc::signal<void, int> sigMouseDrag;
@@ -88,9 +88,9 @@ protected:
     void DestroyLayout();
 
 protected:
-    smptr(HLayout) hlayout;
-    smptr(EditTextBox) m_ValueString;
-    smptr(CoreArea) m_Percentage;
+    HLayout*        hlayout;
+    EditTextBox*    m_ValueString;
+    CoreArea*       m_Percentage;
     Color m_StartColor;
     Color m_EndColor;
     Color m_ProgressColor;

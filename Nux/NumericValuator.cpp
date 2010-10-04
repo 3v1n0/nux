@@ -60,14 +60,14 @@ void NumericValuator::InitializeWidgets()
     hlayout->AddActiveInterfaceObject(m_SpinnerDownBtn, 0);
     hlayout->AddActiveInterfaceObject(m_EditLine, 1);
     hlayout->AddActiveInterfaceObject(m_SpinnerUpBtn, 0);
-    hlayout->SetContentStacking(eStackLeft);
+    hlayout->SetContentDistribution(eStackLeft);
 
     SetCompositionLayout(hlayout);
 }
 
 void NumericValuator::InitializeLayout()
 {
-    hlayout = smptr(HLayout)(new HLayout());
+    hlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
 }
 
 void NumericValuator::DestroyLayout()

@@ -37,8 +37,8 @@ static const int GRAPH_MARGIN = 1;
 
 static void ThreadWidgetInitDialog(NThread* thread, void* InitData)
 {
-    smptr(VLayout) MainLayout(new VLayout());
-    smptr(SplineCurveEditor) SplineControl(new SplineCurveEditor());
+    VLayout* MainLayout(new VLayout(TEXT(""), NUX_TRACKER_LOCATION));
+    SplineCurveEditor* SplineControl(new SplineCurveEditor(NUX_TRACKER_LOCATION));
     SplineCurveDialogProxy* splinecurveproxy = static_cast<SplineCurveDialogProxy*>(InitData);
     if(splinecurveproxy)
     {
@@ -52,19 +52,19 @@ static void ThreadWidgetInitDialog(NThread* thread, void* InitData)
         SplineControl->AddKnot(1.0, 1.0);
     }
 
-    smptr(HLayout) ButtonLayout = smptr(HLayout)(new HLayout(TEXT("Dialog Buttons")));
+    HLayout* ButtonLayout = new HLayout(TEXT("Dialog Buttons"), NUX_TRACKER_LOCATION);
 
-    smptr(Button) OkButton = smptr(Button)(new Button(TEXT("OK")));
+    Button* OkButton = new Button(TEXT("OK"), NUX_TRACKER_LOCATION);
     OkButton->SetMinimumWidth(60);
     OkButton->SetMinimumHeight(20);
 
-    smptr(Button) CancelButton = smptr(Button)(new Button(TEXT("Cancel")));
+    Button* CancelButton = new Button(TEXT("Cancel"), NUX_TRACKER_LOCATION);
     CancelButton->SetMinimumWidth(60);
     CancelButton->SetMinimumHeight(20);
 
     OkButton->sigClick.connect(sigc::mem_fun(static_cast<WindowThread*>(thread), &WindowThread::TerminateThread));
-    OkButton->sigClick.connect(sigc::bind(sigc::mem_fun(splinecurveproxy, &SplineCurveDialogProxy::RecvDialogOk), weaksmptr(SplineCurveEditor)(SplineControl)));
-    CancelButton->sigClick.connect(sigc::bind(sigc::mem_fun(splinecurveproxy, &SplineCurveDialogProxy::RecvDialogCancel), weaksmptr(SplineCurveEditor)(SplineControl)));
+    OkButton->sigClick.connect(sigc::bind(sigc::mem_fun(splinecurveproxy, &SplineCurveDialogProxy::RecvDialogOk), SplineControl));
+    CancelButton->sigClick.connect(sigc::bind(sigc::mem_fun(splinecurveproxy, &SplineCurveDialogProxy::RecvDialogCancel), SplineControl));
     CancelButton->sigClick.connect(sigc::mem_fun(static_cast<WindowThread*>(thread), &WindowThread::TerminateThread));
 
     ButtonLayout->SetHorizontalInternalMargin(6);
@@ -119,7 +119,7 @@ bool SplineCurveDialogProxy::IsActive()
     return (m_Thread && (m_Thread->GetThreadState() != THREADSTOP) && m_bDialogRunning);
 }
 
-void SplineCurveDialogProxy::RecvDialogOk(const weaksmptr(SplineCurveEditor) splinecurve)
+void SplineCurveDialogProxy::RecvDialogOk(SplineCurveEditor* splinecurve)
 {
     m_ControlPoints = splinecurve->GetControlPoints();
     m_PreviousControlPoints = m_ControlPoints;
@@ -127,14 +127,14 @@ void SplineCurveDialogProxy::RecvDialogOk(const weaksmptr(SplineCurveEditor) spl
     m_bDialogRunning = false;
 }
 
-void SplineCurveDialogProxy::RecvDialogCancel(const weaksmptr(SplineCurveEditor) splinecurve)
+void SplineCurveDialogProxy::RecvDialogCancel(SplineCurveEditor* splinecurve)
 {
     m_ControlPoints = m_PreviousControlPoints;
     m_bDialogChange = true;
     m_bDialogRunning = false;
 }
 
-void SplineCurveDialogProxy::RecvDialogChange(const weaksmptr(SplineCurveEditor) splinecurve)
+void SplineCurveDialogProxy::RecvDialogChange(SplineCurveEditor* splinecurve)
 {
     m_ControlPoints = splinecurve->GetControlPoints();
     m_bDialogChange = true;
@@ -370,7 +370,7 @@ void SplineCurvePreview::RecvTimer(void* v)
     }
 }
 
-void SplineCurvePreview::RecvDialogChange(const weaksmptr(SplineCurveEditor) splinecurve)
+void SplineCurvePreview::RecvDialogChange(SplineCurveEditor* splinecurve)
 {
     //sigSplineChanged.emit(m_control_knot);
     NeedRedraw();

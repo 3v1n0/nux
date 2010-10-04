@@ -49,7 +49,7 @@ ValuatorDouble::ValuatorDouble(double Value, double Step, double MinValue, doubl
     // This is use by TextLineEditPropertyItem::GetItemBestHeight
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    m_hlayout = smptr(HLayout)(new HLayout());
+    m_hlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
     m_hlayout->AddActiveInterfaceObject(m_MouseControlledButton, 0);
     m_hlayout->AddActiveInterfaceObject(m_EditLine, 1);
@@ -137,7 +137,7 @@ void ValuatorDouble::SetValue(double value)
 {
     m_Value = m_DoubleValidator.Validate(value);
     m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-    sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
+    sigValueChanged.emit(this);
     sigValue.emit(m_Value);
     NeedRedraw();
 }
@@ -175,7 +175,7 @@ void ValuatorDouble::SetRange(double MinValue, double Maxvalue)
     m_DoubleValidator.SetMinimum(MinValue);
     m_DoubleValidator.SetMaximum(Maxvalue);
     m_Value = m_DoubleValidator.Validate(m_Value);
-    sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
+    sigValueChanged.emit(this);
     sigValue.emit(m_Value);
     NeedRedraw();
 }
@@ -187,8 +187,8 @@ void ValuatorDouble::ImplementIncrementBtn()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
-    sigIncrement.emit(smptr(ValuatorDouble)(this, true));
+    sigValueChanged.emit(this);
+    sigIncrement.emit(this);
     sigValue.emit(m_Value);
 }
 
@@ -199,8 +199,8 @@ void ValuatorDouble::ImplementDecrementBtn()
     {
         NeedRedraw();
     }
-    sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
-    sigDecrement.emit(smptr(ValuatorDouble)(this, true));
+    sigValueChanged.emit(this);
+    sigDecrement.emit(this);
     sigValue.emit(m_Value);
 }
 
@@ -211,7 +211,7 @@ void ValuatorDouble::ImplementValidateEntry()
     {
         m_Value = m_DoubleValidator.Validate(ret);
         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-        sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
+        sigValueChanged.emit(this);
         sigValue.emit(m_Value);
 //
 //        if(m_Value < m_DoubleValidator.GetMinimum())
@@ -228,7 +228,7 @@ void ValuatorDouble::ImplementValidateEntry()
 //     else
 //     {
 //         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
-//         sigValueChanged.emit(smptr(ValuatorDouble)(this, true));
+//         sigValueChanged.emit(this);
 //         sigValue.emit(m_Value);
 //     }
 }

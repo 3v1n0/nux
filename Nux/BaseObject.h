@@ -98,7 +98,7 @@ enum eMinorPosition
 };
 
 //! Stacking order inside a layout.
-enum eStacking
+typedef enum
 {
     eStackTop,      //!< Stack elements at the top (VLayout)
     eStackBottom,   //!< Stack elements at the bottom (VLayout)
@@ -106,7 +106,7 @@ enum eStacking
     eStackRight,    //!< Stack elements at the right (HLayout)
     eStackCenter,   //!< Stack elements in the center of the layout (HLayout and VLayout)
     eStackExpand,   //!< Spread elements evenly inside the layout (HLayout and VLayout)
-};
+}  LayoutContentDistribution;
 
 enum eSizeCompliance
 {
@@ -232,22 +232,33 @@ public:
     virtual bool IsInterfaceControl() const {return false;}
 
 protected:
-    virtual void UnParentObject(smptr(BaseObject));
 
     /* 
         This function is reimplemented in Layout as it need to perform some special operations.
         It does nothing for BaseObject and ActiveInterfaceObject classes.
     */
-    virtual void RemoveChildObject(smptr(BaseObject));
-    virtual void SetParentObject(smptr(BaseObject));
-    smptr(BaseObject) GetParentObject();
+    //virtual void RemoveChildObject(smptr(BaseObject));
+
+    /*
+        SetParentObject/UnParentObject are protected API. it is not meant to be used directly by users.
+        Users add widgets to layouts and layout have to be attached to a composition for objects to be rendered.
+        Setting a parent to and child widget does not mean that when the parent is rendered, the child is also rendered.
+        For instance, setting a button the be the child of a checkbox means absolutely nothing is terms of rendering.
+        A widget with a parent cannot be added to a added to a layout for rendering. The widget has to be unparented first.
+        A layout with a parent cannot be added to a widget or another layout for rendering. The layout has to be unparented first.
+        In essence only ActiveInterfaceObject and Layouts should be calling SetParentObject/UnParentObject.
+    */
+    virtual void SetParentObject(BaseObject*);
+    virtual void UnParentObject();
+
+    BaseObject* GetParentObject();
 
     //! Request a Layout recompute after a change of size
     /*
         When an object size changes, it is necessary for its parent structure to initiate a layout
         re computation in order preserve the layout structure defined by the user through the API.
     */
-    virtual void RequestBottomUpLayoutComputation(smptr(BaseObject) bo_initiator);
+    virtual void RequestBottomUpLayoutComputation(BaseObject* bo_initiator);
 
 private:
     //! Flags that set an object as dirty with regard to is size.
@@ -265,7 +276,7 @@ private:
         An object of the class Layout may have a parent of the class Layout or ActiveInterfaceObject as parent.
         A BaseObject cannot have children (that may change later).
     */
-    smptr(BaseObject) m_ParentObject;
+    BaseObject* m_ParentObject;
     
     void _SetBaseWidth(int w);
     void _SetBaseHeight(int h);
@@ -286,7 +297,7 @@ private:
 
 private:
 
-    void InitiateResizeLayout(smptr(BaseObject) child = IntrusiveSP<BaseObject>(0));
+    void InitiateResizeLayout(BaseObject* child = 0);
     void CheckMinSize();
     void CheckMaxSize();
 

@@ -50,11 +50,11 @@ HScrollBar::HScrollBar(NUX_FILE_LINE_DECL)
     m_LeftTimerHandler  = 0;
     m_RightTimerHandler = 0;
 
-    hlayout = smptr(HLayout)(new HLayout());
-    m_LeftThumb = smptr(CoreArea)(new CoreArea());
-    m_Track = smptr(CoreArea)(new CoreArea());
-    m_RightThumb = smptr(CoreArea)(new CoreArea());
-    m_SlideBar = smptr(CoreArea)(new CoreArea());
+    hlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_LeftThumb = new CoreArea(NUX_TRACKER_LOCATION);
+    m_Track = new CoreArea(NUX_TRACKER_LOCATION);
+    m_RightThumb = new CoreArea(NUX_TRACKER_LOCATION);
+    m_SlideBar = new CoreArea(NUX_TRACKER_LOCATION);
 
     // Set Original State
     SetMinimumSize(BASEOBJECT_MINWIDTH, HSCROLLBAR_HEIGHT);

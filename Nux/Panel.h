@@ -41,10 +41,10 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    //void AddWidget(smptr(ActiveInterfaceObject) ic);
-    void AddWidget(smptr(ActiveInterfaceObject) ic, int stretchfactor = 1);
-    void AddWidget(std::list<smptr(ActiveInterfaceObject)> *InterfaceControlList);
-    void SetLayout(smptr(Layout) layout);
+    //void AddWidget(ActiveInterfaceObject* ic);
+    void AddWidget(ActiveInterfaceObject* ic, int stretchfactor = 1);
+    void AddWidget(std::list<ActiveInterfaceObject*> *InterfaceControlList);
+    void SetLayout(Layout* layout);
     void clearContent();
 
     // Get a change to do any work on an element.
@@ -58,15 +58,13 @@ public:
     virtual void PositionChildLayout(float offsetX, float offsetY);
 
 protected:
-
     virtual void ScrollLeft(float stepx, int mousedx);
     virtual void ScrollRight(float stepx, int mousedx);
     virtual void ScrollUp(float stepy, int mousedy);
     virtual void ScrollDown(float stepy, int mousedy);
-private:
 
-    std::list<smptr(ActiveInterfaceObject)> m_InterfaceObject;
-    smptr(Layout) m_layout;
+private:
+    Layout* m_layout;
 };
 
 } //NUX_NAMESPACE_END

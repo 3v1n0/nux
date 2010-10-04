@@ -48,7 +48,7 @@ void VToolBar::InitializeWidgets()
     m_vlayout->SetVerticalInternalMargin(2);
     m_vlayout->SetVerticalExternalMargin(0);
     m_vlayout->SetHorizontalExternalMargin(0);
-    m_vlayout->SetContentStacking(eStackTop);
+    m_vlayout->SetContentDistribution(eStackTop);
     SetMinimumSize(32, 32);
     SetMaximumWidth(32);
     SetGeometry(Geometry(0, 0, 20, 200));
@@ -57,7 +57,7 @@ void VToolBar::InitializeWidgets()
 
 void VToolBar::InitializeLayout()
 {
-    m_vlayout = smptr(VLayout)(new VLayout());
+    m_vlayout = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
 }
 
 void VToolBar::DestroyLayout()
@@ -111,9 +111,9 @@ void VToolBar::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 }
 
-void VToolBar::AddToolButton(smptr(ToolButton) toolbutton)
+void VToolBar::AddToolButton(ToolButton* toolbutton)
 {
-    nuxAssert(toolbutton.IsValid());
+    nuxAssert(toolbutton);
     if(toolbutton == 0)
         return;
 
@@ -124,13 +124,13 @@ void VToolBar::AddToolButton(smptr(ToolButton) toolbutton)
     ComputeChildLayout();
 }
 
-void VToolBar::AddAction(smptr(ActionItem) action)
+void VToolBar::AddAction(ActionItem* action)
 {
 //    nuxAssert(action);
 //    if(action == 0)
 //        return;
 
-    smptr(ToolButton) tool_button(new ToolButton);
+    ToolButton* tool_button(new ToolButton);
     tool_button->SetAction(action);
 
     m_vlayout->AddActiveInterfaceObject(tool_button, 0, eCenter, eFix);
@@ -142,7 +142,7 @@ void VToolBar::AddAction(smptr(ActionItem) action)
 
 void VToolBar::AddSpace(int size)
 {
-    smptr(SpaceLayout) layout(new SpaceLayout());
+    SpaceLayout* layout(new SpaceLayout());
     layout->SetMaximumHeight(size);
     layout->SetMinimumHeight(size);
     m_vlayout->AddLayout(layout);
@@ -151,7 +151,7 @@ void VToolBar::AddSpace(int size)
 
 void VToolBar::AddSeparator()
 {
-    smptr(HSeparator) separator(new HSeparator());
+    HSeparator* separator(new HSeparator());
     m_vlayout->AddActiveInterfaceObject(separator, 0);
     ComputeChildLayout();
 }

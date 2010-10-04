@@ -97,7 +97,7 @@ long VSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             ret = (*it_splitter)->OnEvent(ievent, ret, ProcEvInfo);
         }
 
-        std::vector<smptr(BaseObject)>::iterator it;
+        std::vector<BaseObject*>::iterator it;
         for(it = m_InterfaceObject.begin(),
             it_splitter = m_SplitterObject.begin();
             it != m_InterfaceObject.end();
@@ -116,17 +116,17 @@ long VSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             }
             if((*it)->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
             {
-                smptr(ActiveInterfaceObject) ic = (*it);
+                ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
                 ret = ic->ProcessEvent(ievent, ret, ProcEvInfo | DoNotProcess);
             }
             else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
             {
-                smptr(BaseArea) base_area(*it);
+                BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
                 ret = base_area->OnEvent(ievent, ret, ProcEvInfo | DoNotProcess);
             }
             else if((*it)->Type().IsDerivedFromType(Layout::StaticObjectType))
             {
-                smptr(Layout) layout =  (*it);
+                Layout* layout = NUX_STATIC_CAST(Layout*, (*it));
                 ret = layout->ProcessEvent(ievent, ret, ProcEvInfo | DoNotProcess);
             }
         }
@@ -140,7 +140,7 @@ void VSplitter::Draw(GraphicsContext& GfxContext, bool force_draw)
 {
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle(base);
-    std::vector<smptr(BaseObject)>::iterator it;
+    std::vector<BaseObject*>::iterator it;
     
     gPainter.PaintBackground(GfxContext, base);
     std::vector<MySplitter*>::iterator it_splitter;
@@ -177,7 +177,7 @@ void VSplitter::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     bool need_redraw = IsRedrawNeeded();
 
     std::vector<MySplitter*>::iterator it_splitter;
-    std::vector<smptr(BaseObject)>::iterator it;
+    std::vector<BaseObject*>::iterator it;
     for(it = m_InterfaceObject.begin(), it_splitter = m_SplitterObject.begin();
         it != m_InterfaceObject.end();
         it++, it_splitter++)
@@ -191,27 +191,22 @@ void VSplitter::DrawContent(GraphicsContext& GfxContext, bool force_draw)
         {
             if((*it)->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
             {
-                smptr(ActiveInterfaceObject) ic = (*it);
+                ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
                 ic->ProcessDraw(GfxContext, true);
             }
             else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
             {
-                smptr(BaseArea) base_area(*it);
+                BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
                 base_area->OnDraw(GfxContext, true);
-            }
-            else if((*it)->Type().IsObjectType(Layout::StaticObjectType))
-            {
-                smptr(Layout) layout =  (*it);
-                layout->ProcessDraw(GfxContext, true);
             }
             else if((*it)->Type().IsObjectType(HLayout::StaticObjectType))
             {
-                smptr(HLayout) layout(*it);
+                HLayout* layout = NUX_STATIC_CAST(HLayout*, (*it));
                 layout->ProcessDraw(GfxContext, true);
             }
             else if((*it)->Type().IsObjectType(VLayout::StaticObjectType))
             {
-                smptr(VLayout) layout(*it);
+                VLayout* layout = NUX_STATIC_CAST(VLayout*, (*it));
                 layout->ProcessDraw(GfxContext, true);
             }
         }
@@ -219,27 +214,22 @@ void VSplitter::DrawContent(GraphicsContext& GfxContext, bool force_draw)
         {
             if((*it)->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
             {
-                smptr(ActiveInterfaceObject) ic(*it);
+                ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
                 ic->ProcessDraw(GfxContext, false);
             }
             else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
             {
-                smptr(BaseArea) base_area(*it);
+                BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
                 base_area->OnDraw(GfxContext, false);
-            }
-            else if((*it)->Type().IsObjectType(Layout::StaticObjectType))
-            {
-                smptr(Layout) layout(*it);
-                layout->ProcessDraw(GfxContext, false);
             }
             else if((*it)->Type().IsObjectType(HLayout::StaticObjectType))
             {
-                smptr(HLayout) layout(*it);
+                HLayout* layout = NUX_STATIC_CAST(HLayout*, (*it));
                 layout->ProcessDraw(GfxContext, false);
             }
             else if((*it)->Type().IsObjectType(VLayout::StaticObjectType))
             {
-                smptr(VLayout) layout(*it);
+                VLayout* layout = NUX_STATIC_CAST(VLayout*, (*it));
                 layout->ProcessDraw(GfxContext, false);
             }
         }
@@ -297,9 +287,9 @@ void VSplitter::OverlayDrawing(GraphicsContext& GfxContext)
     }
 }
 
-void VSplitter::AddWidget(smptr(BaseObject) ic, float stretchfactor)
+void VSplitter::AddWidget(BaseObject* ic, float stretchfactor)
 {
-    if(ic.IsValid())
+    if(ic)
     {
         MySplitter *splitter = new MySplitter;
         splitter->SinkReference();
@@ -308,7 +298,7 @@ void VSplitter::AddWidget(smptr(BaseObject) ic, float stretchfactor)
         splitter->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &VSplitter::OnSplitterMouseUp), no));
         splitter->OnMouseDrag.connect(sigc::bind( sigc::mem_fun(this, &VSplitter::OnSplitterMouseDrag), no));
 
-        ic->SetParentObject(smptr(BaseObject)(this, true));
+        ic->SetParentObject(this);
         m_InterfaceObject.push_back(ic);
         m_SplitterObject.push_back(splitter);
         m_SplitConfig.push_back(stretchfactor);
@@ -348,7 +338,7 @@ long VSplitter::ComputeChildLayout()
         return eCompliantHeight | eCompliantWidth;
     }
 
-    std::vector<smptr(BaseObject)>::iterator it;
+    std::vector<BaseObject*>::iterator it;
     std::vector<MySplitter*>::iterator it_splitter;
 
     if(new_addition)
@@ -406,7 +396,7 @@ long VSplitter::ComputeChildLayout()
 
         if(m_InterfaceObject[i]->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
         {
-            smptr(ActiveInterfaceObject) ic = (m_InterfaceObject[i]);
+            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, m_InterfaceObject[i]);
             ic->SetGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
             // if we are already computing the layout from the main window down, we need to call 
             // ComputeElementLayout to force the computing of this element layout.
@@ -414,12 +404,12 @@ long VSplitter::ComputeChildLayout()
         }
         else if(m_InterfaceObject[i]->Type().IsObjectType(BaseArea::StaticObjectType))
         {
-            smptr(BaseArea) base_area(m_InterfaceObject[i]);
+            BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, m_InterfaceObject[i]);
             base_area->SetGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
         }
         else if(m_InterfaceObject[i]->Type().IsDerivedFromType(Layout::StaticObjectType))
         {
-            smptr(Layout) layout =  (m_InterfaceObject[i]);
+            Layout* layout = NUX_STATIC_CAST(Layout*, m_InterfaceObject[i]);
             layout->SetGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
             // if we are already computing the layout from the main window down, we need to call 
             // ComputeElementLayout to force the computing of this element layout.
@@ -486,7 +476,7 @@ void VSplitter::OnSplitterMouseDown(t_s32 x, t_s32 y, unsigned long button_flags
     m_point.Set(x, y);
 
     m_focus_splitter_index = header_pos;
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(this, true), GetThreadWindowCompositor().GetCurrentWindow());
+    GetThreadWindowCompositor().SetWidgetDrawingOverlay(this, GetThreadWindowCompositor().GetCurrentWindow());
 
     // Hint for the window to initiate a redraw
     GetGraphicsThread()->RequestRedraw();
@@ -515,7 +505,7 @@ void VSplitter::OnSplitterMouseUp(t_s32 x, t_s32 y, unsigned long button_flags, 
     mvt_dy = 0;
 
     // End overlay drawing;
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay(smptr(BaseArea)(0), GetThreadWindowCompositor().GetCurrentWindow());
+    GetThreadWindowCompositor().SetWidgetDrawingOverlay(0, GetThreadWindowCompositor().GetCurrentWindow());
     // Hint for the window to initiate a redraw
     GetGraphicsThread()->RequestRedraw();
 }
@@ -602,18 +592,18 @@ void VSplitter::ResizeSplitter(t_s32 header_pos)
 // have a m_compositionlayout where its child are located;
 void VSplitter::DoneRedraw()
 {
-    std::vector<smptr(BaseObject)>::iterator it;
+    std::vector<BaseObject*>::iterator it;
     for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
     {
         //(*it)->DoneRedraw();
         if((*it)->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
         {
-            smptr(ActiveInterfaceObject) ic = (*it);
+            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
             ic->DoneRedraw();
         }
         else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
         {
-            smptr(BaseArea) base_area(*it);
+            BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
         }
     }
 }

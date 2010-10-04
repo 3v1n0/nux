@@ -52,8 +52,8 @@ public:
     const TCHAR* GetText() const;
     t_u32 GetTextSize() const {return (t_u32)m_Text.Length();}
 
-    void setDoubleValue(double d);
-    void setIntegerValue(int i);
+    void SetDoubleValue(double d);
+    void SetIntegerValue(int i);
 
     //! Return a caption string striping out the prefix and the suffix 
     virtual NString GetCleanText() const;
@@ -106,15 +106,15 @@ public:
 
     void SetValidator(const Validator* validator);
     
-    sigc::signal< void, const weaksmptr(EditTextBox), unsigned int > sigCharacter; // Emitted every time a character typed
-    sigc::signal< void, const weaksmptr(EditTextBox) > sigEditChange; // Emitted every time a character typed
+    sigc::signal< void, EditTextBox*, unsigned int > sigCharacter; // Emitted every time a character typed
+    sigc::signal< void, EditTextBox* > sigEditChange; // Emitted every time a character typed
     
-    sigc::signal< void, const weaksmptr(EditTextBox), const NString&> sigValidateKeyboardEntry;
-    sigc::signal< void, const weaksmptr(EditTextBox) > sigValidateEntry;    // Emitted when the text is validated
-    sigc::signal< void, const weaksmptr(EditTextBox) > sigSetText;      // Emitted when text is set with setCaption
-    sigc::signal< void, const weaksmptr(EditTextBox) > sigEscapeKeyboardFocus;
-    sigc::signal< void, const weaksmptr(EditTextBox) > sigStartKeyboardFocus;
-    sigc::signal< void, const weaksmptr(EditTextBox) > sigEndKeyboardFocus;
+    sigc::signal< void, EditTextBox*, const NString&> sigValidateKeyboardEntry;
+    sigc::signal< void, EditTextBox* > sigValidateEntry;    // Emitted when the text is validated
+    sigc::signal< void, EditTextBox* > sigSetText;      // Emitted when text is set with setCaption
+    sigc::signal< void, EditTextBox* > sigEscapeKeyboardFocus;
+    sigc::signal< void, EditTextBox* > sigStartKeyboardFocus;
+    sigc::signal< void, EditTextBox* > sigEndKeyboardFocus;
 
     bool IsTextSelected() {return m_KeyboardHandler.IsTextSelected();}
     bool IsEmpty();
@@ -128,7 +128,7 @@ private:
     virtual long PostLayoutManagement(long LayoutResult);
 
     NString m_Text;
-    smptr(HLayout) hlayout;
+    HLayout* hlayout;
 
     Color m_BackgroundColor;
     Color m_SelectedTextColor;

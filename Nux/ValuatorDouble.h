@@ -54,12 +54,12 @@ public:
     double GetMaxValue() const;
     void SetRange(double MinValue, double Maxvalue);
 
-    sigc::signal<void, const weaksmptr(ValuatorDouble)> sigIncrement;
-    sigc::signal<void, const weaksmptr(ValuatorDouble)> sigDecrement;
-    sigc::signal<void, const weaksmptr(ValuatorDouble)> sigValueChanged;
+    sigc::signal<void, ValuatorDouble*> sigIncrement;
+    sigc::signal<void, ValuatorDouble*> sigDecrement;
+    sigc::signal<void, ValuatorDouble*> sigValueChanged;
     sigc::signal<void, double> sigValue;
 private:
-    smptr(HLayout) m_hlayout;
+    HLayout* m_hlayout;
 
     DoubleValidator m_DoubleValidator;
     double m_Value;

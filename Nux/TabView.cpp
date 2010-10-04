@@ -39,21 +39,70 @@ Color TabView::TAB_BACKGROUND_COLOR           = Color(0xFF191919);
 Color TabView::TAB_HEADER_COLOR               = Color(0xFF333333);
 Color TabView::TAB_HEADER_FOCUS_COLOR         = Color(0xFF5D5D5D);
 
+TabView::TabElement::TabElement(NString TabName, Layout* TabLayout)
+{
+    _index = 0;
+    _tab_name = TabName;
+    _tab_layout = TabLayout;
+    _tab_area = new CoreArea(NUX_TRACKER_LOCATION);
+
+    _tab_layout->Reference();
+    _tab_area->Reference();
+}
+
+TabView::TabElement::~TabElement()
+{
+    _index = 0;
+    _tab_layout->UnReference();
+    _tab_area->UnReference();  
+}
+
+void TabView::TabElement::SetIndex(int index)
+{
+    _index = index;
+}
+
+int TabView::TabElement::GetIndex() const
+{
+    return _index;
+}
+
+void TabView::TabElement::SetGeometry(const Geometry& geo)
+{
+    _tab_area->SetGeometry(geo);
+}
+
+Geometry TabView::TabElement::GetGeometry() const
+{
+    return _tab_area->GetGeometry();
+}
+
+const NString& TabView::TabElement::GetName() const
+{
+    return _tab_name;
+}
+
 TabView::TabView(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 {
-    m_FocusTabIndex = 0;
+    m_IncrTab           = NULL;
+    m_DecrTab           = NULL;
+    m_ClientLayout      = NULL;
+    m_TabLayout         = NULL;
+    m_TabControlLayout  = NULL;
+
+    m_FocusTabIndex     = 0;
     m_TabPositionOffset = 0;
     m_DrawBackgroundOnPreviousGeometry = false;
 
     InitializeLayout();
     InitializeWidgets();
 
-//     m_TabLayout = smptr(HLayout)(new HLayout);
-//     m_TabControlLayout = smptr(HLayout)(new HLayout);
+//     m_TabLayout = new HLayout();
+//     m_TabControlLayout = new HLayout();
 // 
-//     m_IncrTab = smptr(CoreArea)(new CoreArea());
-//     m_DecrTab = smptr(CoreArea)(new CoreArea());
+//     m_IncrTab = new CoreArea();
+//     m_DecrTab = new CoreArea();
 // 
 //     m_IncrTab->SetMinimumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
 //     m_DecrTab->SetMinimumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
@@ -81,18 +130,17 @@ TabView::TabView(NUX_FILE_LINE_DECL)
 
 TabView::~TabView()
 {
-    delete (tabright_callback);
-    delete (tableft_callback);
+    delete(tabright_callback);
+    delete(tableft_callback);
     DestroyLayout();
 }
 
 void TabView::InitializeWidgets()
 {
-    m_TabLayout = smptr(HLayout)(new HLayout);
-    m_TabControlLayout = smptr(HLayout)(new HLayout);
-
-    m_IncrTab = smptr(CoreArea)(new CoreArea());
-    m_DecrTab = smptr(CoreArea)(new CoreArea());
+    m_TabLayout         = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_TabControlLayout  = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_IncrTab           = new CoreArea(NUX_TRACKER_LOCATION);
+    m_DecrTab           = new CoreArea(NUX_TRACKER_LOCATION);
 
     m_IncrTab->SetMinimumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
     m_DecrTab->SetMinimumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
@@ -116,10 +164,10 @@ void TabView::InitializeWidgets()
 
 void TabView::InitializeLayout()
 {
-    m_TabLayout = smptr(HLayout)(new HLayout);
-    m_TabControlLayout = smptr(HLayout)(new HLayout);
-    m_IncrTab = smptr(CoreArea)(new CoreArea());
-    m_DecrTab = smptr(CoreArea)(new CoreArea());
+    m_TabLayout         = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_TabControlLayout  = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
+    m_IncrTab           = new CoreArea(NUX_TRACKER_LOCATION);
+    m_DecrTab           = new CoreArea(NUX_TRACKER_LOCATION);
 }
 
 void TabView::DestroyLayout()
@@ -147,10 +195,10 @@ long TabView::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventI
     t_u32 vector_size = (t_u32)m_TabVector.size();
     for(t_u32 i = 0; i < vector_size; i++)
     {
-        ret = m_TabVector[i]->tab_area->OnEvent(ievent, ret, ProcessEventInfo);
+        ret = m_TabVector[i]->_tab_area->OnEvent(ievent, ret, ProcessEventInfo);
     }
 
-    if(m_ClientLayout.IsValid())
+    if(m_ClientLayout)
         ret = m_ClientLayout->ProcessEvent(ievent, ret, ProcessEventInfo);
     ret = PostProcessEvent2(ievent, ret, 0);
     return ret;
@@ -170,7 +218,7 @@ void TabView::Draw(GraphicsContext& GfxContext, bool force_draw)
 
     gPainter.PushDrawShapeLayer(GfxContext, Geometry(base.x, base.y, base.GetWidth(), TAB_HEIGHT), eSHAPE_CORNER_ROUND4, TAB_HEADER_BACKGROUND_COLOR, eCornerTopLeft|eCornerTopRight);
 
-    if(m_ClientLayout.IsValid())
+    if(m_ClientLayout)
         m_ClientLayout->NeedRedraw();
 
     t_u32 vector_size = (t_u32)m_TabVector.size();
@@ -186,10 +234,10 @@ void TabView::Draw(GraphicsContext& GfxContext, bool force_draw)
 
     for(t_u32 i = 0; i < vector_size; i++)
     {
-        Geometry tab_geo = m_TabVector[i]->tab_area->GetGeometry();
-        const char* tab_text = m_TabVector[i]->tab_area->GetBaseString().GetTCharPtr();
+        Geometry tab_geo = m_TabVector[i]->_tab_area->GetGeometry();
+        const char* tab_text = m_TabVector[i]->GetName().GetTCharPtr();
 
-        if(m_TabVector[i]->index == m_FocusTabIndex)
+        if(m_TabVector[i]->_index == m_FocusTabIndex)
         {
             tab_geo.OffsetSize(-2, 0);
             gPainter.PaintShapeCorner(GfxContext, tab_geo, TAB_HEADER_FOCUS_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft|eCornerTopRight, false);
@@ -236,7 +284,7 @@ void TabView::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     gPainter.PushShapeLayer(GfxContext, Geometry(base.x, base.y+TAB_HEIGHT, base.GetWidth(), base.GetHeight() - TAB_HEIGHT),
         eSHAPE_CORNER_ROUND4, TAB_BACKGROUND_COLOR, eCornerBottomLeft|eCornerBottomRight);
 
-    if(m_ClientLayout.IsValid())
+    if(m_ClientLayout)
     {
         GfxContext.PushClippingRectangle(m_ClientLayout->GetGeometry());
         m_ClientLayout->ProcessDraw(GfxContext, force_draw);
@@ -254,7 +302,7 @@ void TabView::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 void TabView::PreLayoutManagement()
 {
     // Give the managed layout appropriate size and position..
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         Geometry layout_geo = GetGeometry();
         layout_geo.OffsetPosition(TAB_X_BORDER, TAB_HEIGHT);
@@ -268,7 +316,7 @@ long TabView::PostLayoutManagement(long LayoutResult)
     // Set the geometry of the control to be the same as the managed layout.
     // Only the size is changed. The position of the composition layout hasn't
     // been changed by ComputeLayout2.
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         Geometry base = m_CompositionLayout->GetGeometry();
         base.OffsetPosition(-TAB_X_BORDER, -TAB_HEIGHT);
@@ -293,7 +341,7 @@ long TabView::PostLayoutManagement(long LayoutResult)
     m_TabControlLayout->SetBaseSize(2 * TAB_BUTTON_WIDTH, TAB_HEIGHT);
     GetGraphicsThread()->ComputeElementLayout(m_TabControlLayout);
 
-    if(m_ClientLayout.IsValid())
+    if(m_ClientLayout)
     {
 //        m_ClientLayout->SetGeometry(m_CompositionLayout->GetGeometry());
 //        GetGraphicsThread()->ComputeElementLayout(m_ClientLayout);
@@ -305,7 +353,7 @@ long TabView::PostLayoutManagement(long LayoutResult)
 
 void TabView::PositionChildLayout(float offsetX, float offsetY)
 {
-    if(m_CompositionLayout.IsValid())
+    if(m_CompositionLayout)
     {
         m_CompositionLayout->SetBaseX(GetBaseX() + TAB_X_BORDER);
         m_CompositionLayout->SetBaseY(GetBaseY() + TAB_HEIGHT);
@@ -314,33 +362,29 @@ void TabView::PositionChildLayout(float offsetX, float offsetY)
 }
 
 
-void TabView::AddTab(const char* tab_name, smptr(Layout) tab_layout)
+void TabView::AddTab(const char* tab_name, Layout* tab_layout)
 {
     if(tab_layout == 0)
         return;
 
-    TabElement* Tab = new TabElement;
-    Tab->tab_name = tab_name;
-    Tab->tab_layout = tab_layout;
-    //Tab->tab_layout->setStretchFactor(1);
-    Tab->index = (t_u32)m_TabVector.size();
-    if(Tab->index == 0)
+    TabElement* Tab = new TabElement(tab_name, tab_layout);
+    Tab->SetIndex(m_TabVector.size());
+    if(Tab->GetIndex() == 0)
     {
         m_FocusTabIndex = 0;
-        m_ClientLayout = Tab->tab_layout;
+        m_ClientLayout = Tab->_tab_layout;
         //m_ClientLayout->SetGeometry(m_CompositionLayout->GetGeometry());
         SetCompositionLayout(m_ClientLayout);
-        GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true));
+        GetGraphicsThread()->ComputeElementLayout(this);
     }
-    Tab->tab_area = smptr(CoreArea)(new CoreArea());
-    Tab->tab_area->SetBaseString(tab_name);
-    Tab->tab_area->SetMinimumSize(6 + GetThreadBoldFont()->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
-    Tab->tab_area->SetMaximumSize(6 + GetThreadBoldFont()->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
 
-    Tab->tab_area->OnMouseDown.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseDown), Tab));
-    Tab->tab_area->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseUp), Tab));
+    Tab->_tab_area->SetMinimumSize(6 + GetThreadBoldFont()->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
+    Tab->_tab_area->SetMaximumSize(6 + GetThreadBoldFont()->GetStringWidth(tab_name), PRACTICAL_WIDGET_HEIGHT);
+
+    Tab->_tab_area->OnMouseDown.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseDown), Tab));
+    Tab->_tab_area->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseUp), Tab));
     
-    m_TabLayout->AddActiveInterfaceObject(Tab->tab_area, 1, eCenter);
+    m_TabLayout->AddActiveInterfaceObject(Tab->_tab_area, 1, eCenter);
     GetGraphicsThread()->ComputeElementLayout(m_TabLayout);
 
     m_TabVector.push_back(Tab);
@@ -357,12 +401,12 @@ void TabView::SetActiveTad(int index)
         m_FocusTabIndex = index;
     }
 
-    m_ClientLayout = m_TabVector[m_FocusTabIndex]->tab_layout;
-    if(m_ClientLayout.IsValid())
+    m_ClientLayout = m_TabVector[m_FocusTabIndex]->_tab_layout;
+    if(m_ClientLayout)
         SetCompositionLayout(m_ClientLayout);
-    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true));
+    GetGraphicsThread()->ComputeElementLayout(this);
 
-    sigTabChanged(smptr(TabView)(this, true));
+    sigTabChanged(this);
     sigTabIndexChanged(m_FocusTabIndex);
 
     NeedRedraw();
@@ -417,9 +461,9 @@ void TabView::TranslateTabLayout(int offset)
 
 void TabView::RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, TabElement* tab)
 {
-    m_FocusTabIndex = tab->index;
-    m_ClientLayout = tab->tab_layout;
-    if(m_ClientLayout.IsValid())
+    m_FocusTabIndex = tab->_index;
+    m_ClientLayout = tab->_tab_layout;
+    if(m_ClientLayout)
     {
         SetCompositionLayout(m_ClientLayout);
     }
@@ -430,7 +474,7 @@ void TabView::RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigne
     int PrevWidth = GetBaseWidth();
     int PrevHeight = GetBaseHeight();
 
-    GetGraphicsThread()->ComputeElementLayout(smptr(BaseObject)(this, true), true);
+    GetGraphicsThread()->ComputeElementLayout(this, true);
 
 
     int NewWidth = GetBaseWidth();
@@ -445,7 +489,7 @@ void TabView::RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigne
     }
     m_DrawBackgroundOnPreviousGeometry = true;
 
-    sigTabChanged(smptr(TabView)(this, true));
+    sigTabChanged(this);
     sigTabIndexChanged(m_FocusTabIndex);
     NeedRedraw();
 }

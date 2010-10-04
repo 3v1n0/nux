@@ -30,7 +30,7 @@ class EditTextLinePropertyItem;
 class CheckBoxPropertyItem: public SectionProperty, public CheckBox
 {
     NODE_XML_CLASS_MEMBER(CheckBoxPropertyItem);
-    NODE_SIG_RECEIVER(RecvPropertyChange, const weaksmptr(CheckBox));
+    NODE_SIG_RECEIVER(RecvPropertyChange, CheckBox*);
 public:
     CheckBoxPropertyItem(const TCHAR* name, int On = 0);
     virtual ~CheckBoxPropertyItem();

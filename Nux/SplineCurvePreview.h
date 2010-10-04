@@ -39,9 +39,9 @@ public:
     SplineCurveDialogProxy(bool ModalWindow);
     ~SplineCurveDialogProxy();
 
-    void RecvDialogOk(const weaksmptr(SplineCurveEditor) splinecurve);
-    void RecvDialogCancel(const weaksmptr(SplineCurveEditor) splinecurve);
-    void RecvDialogChange(const weaksmptr(SplineCurveEditor) splinecurve);
+    void RecvDialogOk(SplineCurveEditor* splinecurve);
+    void RecvDialogCancel(SplineCurveEditor* splinecurve);
+    void RecvDialogChange(SplineCurveEditor* splinecurve);
     
     void Start();
     bool IsActive();
@@ -54,7 +54,7 @@ private:
     SplineKnot m_PreviousControlPoints;
     SplineKnot m_ControlPoints;
 
-    smptr(SplineCurveEditor) m_Curve;
+    SplineCurveEditor* m_Curve;
     bool m_bDialogChange;
     bool m_bDialogRunning;
     unsigned int m_DialogThreadID;
@@ -81,8 +81,8 @@ public:
     int GetNumKnot() const;
     SplineKnot::Knot GetKnot(int i) const;
 
-    sigc::signal<void, const weaksmptr(SplineCurveEditor) > sigSplineChanged;
-    void RecvDialogChange(const weaksmptr(SplineCurveEditor) splinecurve);
+    sigc::signal<void, SplineCurveEditor* > sigSplineChanged;
+    void RecvDialogChange(SplineCurveEditor* splinecurve);
 
     const SplineKnot& GetControlPoints() const;
     void Reset();

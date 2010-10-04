@@ -31,8 +31,8 @@ Valuator::Valuator(NUX_FILE_LINE_DECL)
 :   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
 ,   m_Mouse(0)
 {
-    m_MouseControlledButton = smptr(CoreArea)(new CoreArea());
-    m_EditLine = smptr(EditTextBox)(new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION));
+    m_MouseControlledButton = new CoreArea(NUX_TRACKER_LOCATION);
+    m_EditLine              = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
     // Set Original State
     m_EditLine->SetSuffix(TEXT(""));
     m_EditLine->SetPrefix(TEXT(""));
@@ -92,17 +92,17 @@ void Valuator::TimerSpinDownBtn(void* v)
     ImplementDecrementBtn();
 }
 
-void Valuator::RecvStartKeyboardFocus(const weaksmptr(EditTextBox) textbox)
+void Valuator::RecvStartKeyboardFocus(EditTextBox* textbox)
 {
     NeedRedraw();
 }
 
-void Valuator::RecvEndKeyboardFocus(const weaksmptr(EditTextBox) textbox)
+void Valuator::RecvEndKeyboardFocus(EditTextBox* textbox)
 {
     NeedRedraw();
 }
 
-void Valuator::RecvEscapeKeyboardFocus(const weaksmptr(EditTextBox) textbox)
+void Valuator::RecvEscapeKeyboardFocus(EditTextBox* textbox)
 {
     NeedRedraw();
 }
@@ -143,12 +143,12 @@ void Valuator::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_
     NeedRedraw();
 }
 
-void Valuator::RecvEditChange(const weaksmptr(EditTextBox) textbox)
+void Valuator::RecvEditChange(EditTextBox* textbox)
 {
     NeedRedraw();
 }
 
-void Valuator::RecvValidateEntry(const weaksmptr(EditTextBox) textbox)
+void Valuator::RecvValidateEntry(EditTextBox* textbox)
 {
     ImplementValidateEntry();
 

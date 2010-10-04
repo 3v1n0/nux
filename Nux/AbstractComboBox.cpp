@@ -62,9 +62,9 @@ void AbstractComboBox::InitializeWidgets()
 
 void AbstractComboBox::InitializeLayout()
 {
-    m_hlayout = smptr(HLayout)(new HLayout());
-    m_ComboArea = smptr(CoreArea)(new CoreArea());
-    m_Button = smptr(CoreArea)(new CoreArea());
+    m_hlayout   = new HLayout();
+    m_ComboArea = new CoreArea();
+    m_Button    = new CoreArea();
 }
 
 void AbstractComboBox::DestroyLayout()

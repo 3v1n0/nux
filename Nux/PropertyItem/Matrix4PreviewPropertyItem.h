@@ -31,7 +31,7 @@ class Matrix4PreviewPropertyItem: public SectionProperty, public Matrix4Preview
 {
     NODE_XML_CLASS_MEMBER(Matrix4PreviewPropertyItem);
     NODE_SKIP_CHILD(true);
-    NODE_SIG_RECEIVER2(RecvPropertyChange, const weaksmptr(Matrix4Editor));
+    NODE_SIG_RECEIVER2(RecvPropertyChange, Matrix4Editor*);
 public:
     Matrix4PreviewPropertyItem(const TCHAR* name, Matrix4 matrix = Matrix4::IDENTITY());
     virtual ~Matrix4PreviewPropertyItem();
