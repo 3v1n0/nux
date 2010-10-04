@@ -7,7 +7,7 @@
 #include "Nux/MenuBar.h"
 #include "Nux/HSplitter.h"
 #include "Nux/VSplitter.h"
-#include "Nux/BaseArea.h"
+#include "Nux/Area.h"
 #include "NuxGraphics/OpenGLEngine.h"
 #include "Nux/RGBValuator.h"
 #include "Nux/ComboBoxSimple.h"
@@ -51,7 +51,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 //     combobox_ui->AddItem(TEXT("C"));
 //     combobox_ui->SetMaximumWidth(150);
     
-    MainVLayout->AddActiveInterfaceObject(combobox, 0);
+    MainVLayout->AddView(combobox, 0);
 
     nux::GetGraphicsThread()->SetLayout(MainVLayout);
     nux::ColorLayer background(nux::Color(0xFF4D4D4D));
