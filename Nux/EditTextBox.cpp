@@ -315,7 +315,7 @@ void EditTextBox::RecvKeyEvent(
                     bool             isRepeated , /*true if the key is repeated more than once*/
                     unsigned short   keyCount     /*key repeat count*/)
 {
-    long virtual_code = m_KeyboardHandler.ProcessKey(eventType, keysym, state, character, GetGeometry());
+    m_KeyboardHandler.ProcessKey(eventType, keysym, state, character, GetGeometry());
 
     if(character)
     {

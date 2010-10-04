@@ -366,7 +366,6 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
 
             for(it = m_WindowList.begin(); it != m_WindowList.end(); it++)
             {
-                BaseWindow* window = *it;
                 if((*it)->IsVisible())
                 {
                     // Traverse the window from the top of the visibility stack to the bottom.

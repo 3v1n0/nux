@@ -724,7 +724,7 @@ public:
     {
         if(ptr_ && m_reference_count && (m_reference_count->GetValue() != 0))
         {
-            ptr_->DecrementWeakCounter()
+            ptr_->DecrementWeakCounter();
         }
         else if(m_reference_count && m_weak_reference_count)
         {
@@ -769,7 +769,7 @@ public:
     {
         if(ptr_ && m_reference_count && (m_reference_count->GetValue() != 0))
         {
-            ptr_->DecrementWeakCounter()
+            ptr_->DecrementWeakCounter();
         }
         else if(m_reference_count && m_weak_reference_count)
         {

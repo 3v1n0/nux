@@ -194,7 +194,7 @@ void BaseKeyboardHandler::CaretAutoScroll(t_s32 x, t_s32 y, Geometry geo)
 
     if(m_textline.Length() == 0)
         return;
-    t_u32 StrLength = (t_u32)m_textline.Length();
+    t_s32 StrLength = (t_s32)m_textline.Length();
 
     //nuxDebugMsg(TEXT("[BaseKeyboardHandler::ResolveCaretPosition]"));
     if(x < geo.x)
@@ -289,7 +289,7 @@ long BaseKeyboardHandler::ProcessKey(
                             // If we are in overwrite mode and there is already
                             // a char at the caret's position, simply replace it.
                             // Otherwise, we insert the char as normal.
-                            if( !m_insert_mode && m_caret < (t_u32)m_textline.Length() )
+                            if( !m_insert_mode && m_caret < (t_s32)m_textline.Length() )
                             {
                                 m_textline[m_caret] = key;
                                 PlaceCaret(m_caret + 1 );
@@ -298,7 +298,7 @@ long BaseKeyboardHandler::ProcessKey(
                             else
                             {
                                 // Insert the char
-                                if( m_caret <= m_textline.Length() )
+                                if( m_caret <= (t_s32)m_textline.Length() )
                                 {
                                     m_textline.Insert(m_caret, 1, key);
                                     PlaceCaret(m_caret + 1 );
@@ -312,7 +312,7 @@ long BaseKeyboardHandler::ProcessKey(
                         // If we are in overwrite mode and there is already
                         // a char at the caret's position, simply replace it.
                         // Otherwise, we insert the char as normal.
-                        if( !m_insert_mode && m_caret < m_textline.Length() )
+                        if( !m_insert_mode && m_caret < (t_s32)m_textline.Length() )
                         {
                             m_textline[m_caret] = key;
                             PlaceCaret(m_caret + 1 );
@@ -321,7 +321,7 @@ long BaseKeyboardHandler::ProcessKey(
                         else
                         {
                             // Insert the char
-                            if( m_caret <= m_textline.Length() )
+                            if( m_caret <= (t_s32)m_textline.Length() )
                             {
                                 m_textline.Insert(m_caret, 1, key);
                                 PlaceCaret(m_caret + 1 );
@@ -348,7 +348,7 @@ long BaseKeyboardHandler::ProcessKey(
                         // If we are in overwrite mode and there is already
                         // a char at the caret's position, simply replace it.
                         // Otherwise, we insert the char as normal.
-                        if( !m_insert_mode && m_caret < m_textline.Length() )
+                        if(!m_insert_mode && (m_caret < (t_s32)m_textline.Length()))
                         {
                             m_textline[m_caret] = key;
                             PlaceCaret(m_caret + 1 );
@@ -357,7 +357,7 @@ long BaseKeyboardHandler::ProcessKey(
                         else
                         {
                             // Insert the char
-                            if( m_caret <= m_textline.Length() )
+                            if( m_caret <= (t_s32)m_textline.Length() )
                             {
                                 m_textline.Insert(m_caret, 1, key);
                                 PlaceCaret(m_caret + 1 );
@@ -370,7 +370,7 @@ long BaseKeyboardHandler::ProcessKey(
                         // If we are in overwrite mode and there is already
                         // a char at the caret's position, simply replace it.
                         // Otherwise, we insert the char as normal.
-                        if( !m_insert_mode && m_caret < m_textline.Length() )
+                        if(!m_insert_mode && (m_caret < (t_s32)m_textline.Length()))
                         {
                             m_textline[m_caret] = key;
                             PlaceCaret(m_caret + 1 );
@@ -379,7 +379,7 @@ long BaseKeyboardHandler::ProcessKey(
                         else
                         {
                             // Insert the char
-                            if( m_caret <= m_textline.Length() )
+                            if(m_caret <= (t_s32)m_textline.Length())
                             {
                                 m_textline.Insert(m_caret, 1, key);
                                 PlaceCaret(m_caret + 1 );
@@ -396,7 +396,7 @@ long BaseKeyboardHandler::ProcessKey(
                 if((key >= TCHAR('0') && key <= TCHAR('9')) || (key >= TCHAR('a') && key <= TCHAR('f')) || (key >= TCHAR('A') && key <= TCHAR('F')) || (key == TCHAR('-')) || (key == TCHAR('+')))
                 //if(strchr("0123456789abcdefABCDEF", key))
                 {
-                    if( m_caret != m_selection_start )
+                    if(m_caret != m_selection_start)
                     {
                         DeleteSelectionText();
                     }
@@ -404,7 +404,7 @@ long BaseKeyboardHandler::ProcessKey(
                     // If we are in overwrite mode and there is already
                     // a char at the caret's position, simply replace it.
                     // Otherwise, we insert the char as normal.
-                    if( !m_insert_mode && m_caret < m_textline.Length() )
+                    if(!m_insert_mode && (m_caret < (t_s32)m_textline.Length()))
                     {
                         m_textline[m_caret] = key;
                         PlaceCaret(m_caret + 1 );
@@ -413,7 +413,7 @@ long BaseKeyboardHandler::ProcessKey(
                     else
                     {
                         // Insert the char
-                        if( m_caret <= m_textline.Length() )
+                        if(m_caret <= (t_s32)m_textline.Length())
                         {
                             m_textline.Insert(m_caret, 1, key);
                             PlaceCaret(m_caret + 1 );
@@ -438,7 +438,7 @@ long BaseKeyboardHandler::ProcessKey(
                     // If we are in overwrite mode and there is already
                     // a char at the caret's position, simply replace it.
                     // Otherwise, we insert the char as normal.
-                    if( !m_insert_mode && m_caret < m_textline.Length() )
+                    if(!m_insert_mode && (m_caret < (t_s32)m_textline.Length()))
                     {
                         m_textline[m_caret] = key;
                         PlaceCaret(m_caret + 1 );
@@ -447,7 +447,7 @@ long BaseKeyboardHandler::ProcessKey(
                     else
                     {
                         // Insert the char
-                        if( m_caret <= m_textline.Length() )
+                        if(m_caret <= (t_s32)m_textline.Length())
                         {
                             m_textline.Insert(m_caret, 1, key);
                             PlaceCaret(m_caret + 1 );
@@ -463,7 +463,7 @@ long BaseKeyboardHandler::ProcessKey(
             {
                 if(key > 0x1F && key < 0x7f)
                 {
-                    if( m_caret != m_selection_start )
+                    if(m_caret != m_selection_start)
                     {
                         DeleteSelectionText();
                     }
@@ -471,7 +471,7 @@ long BaseKeyboardHandler::ProcessKey(
                     // If we are in overwrite mode and there is already
                     // a char at the caret's position, simply replace it.
                     // Otherwise, we insert the char as normal.
-                    if( !m_insert_mode && m_caret < m_textline.Length() )
+                    if(!m_insert_mode && (m_caret < (t_s32)m_textline.Length()))
                     {
                         m_textline[m_caret] = key;
                         PlaceCaret(m_caret + 1 );
@@ -480,7 +480,7 @@ long BaseKeyboardHandler::ProcessKey(
                     else
                     {
                         // Insert the char
-                        if( m_caret <= m_textline.Length() )
+                        if(m_caret <= (t_s32)m_textline.Length())
                         {
                             m_textline.Insert(m_caret, 1, key);
                             PlaceCaret(m_caret + 1 );
@@ -559,7 +559,7 @@ long BaseKeyboardHandler::ProcessKey(
         else
         {
             // Deleting one character
-            if( m_caret < m_textline.Length() )
+            if(m_caret < (t_s32)m_textline.Length())
             {
                 m_textline.Erase(m_caret, 1);
             }
@@ -610,10 +610,10 @@ long BaseKeyboardHandler::ProcessKey(
                 m_caret = NextWordPosition( m_caret);
                 PlaceCaret(m_caret );
             }
-            else if( m_caret < m_textline.Length() )
+            else if(m_caret < (t_s32)m_textline.Length())
                 PlaceCaret(m_caret + 1 );
 
-            if( (state & NUX_STATE_SHIFT) == 0 )
+            if((state & NUX_STATE_SHIFT) == 0)
             {
                 // Shift is not down. Update selection
                 // start along with the caret.
@@ -717,7 +717,7 @@ void BaseKeyboardHandler::AdjustCursorAndTextPosition()
     if((m_text_positionx + str_width1 + s_cursor_width) > m_clip_region.GetWidth())
     {
         // Hitting the end of the text box
-        if(m_caret == m_textline.Length())
+        if(m_caret == (t_s32)m_textline.Length())
         {
             m_text_positionx = -(str_width + (t_s32)s_cursor_width - m_clip_region.GetWidth());
         }
@@ -733,7 +733,7 @@ void BaseKeyboardHandler::AdjustCursorAndTextPosition()
                 Offset = PreviousCharWidth;
 
             m_text_positionx -= Offset;
-            if(m_text_positionx + str_width + s_cursor_width < (t_u32)m_clip_region.GetWidth())
+            if(m_text_positionx + str_width + s_cursor_width < (t_s32)m_clip_region.GetWidth())
             {
                 m_text_positionx = -(str_width + (t_s32)s_cursor_width - m_clip_region.GetWidth());
             }

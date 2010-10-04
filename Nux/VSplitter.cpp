@@ -603,7 +603,7 @@ void VSplitter::DoneRedraw()
         }
         else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
         {
-            BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
+            //BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
         }
     }
 }

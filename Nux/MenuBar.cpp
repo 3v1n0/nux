@@ -373,7 +373,6 @@ void MenuBar::RecvItemMouseDrag(int x, int y, int dx, int dy, unsigned long butt
     {
         if(!menubar_item->area->IsMouseInside())  // can also test GetThreadWindowCompositor().GetMouseOverArea() != &menubar_item->area
         {
-            &menubar_item->area;
             std::list< MenuBarItem* >::iterator it;
             // compute window coordinates x and y;
             int winx = menubar_item->area->GetBaseX() + x; 

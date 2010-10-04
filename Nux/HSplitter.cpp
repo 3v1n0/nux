@@ -90,8 +90,6 @@ long HSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             it != m_InterfaceObject.end();
             it++, it_splitter++)
         {
-            BaseObject* object = (*it);
-
             Geometry clip_geo;
             clip_geo.SetX(((*it)->GetGeometry().x));
             clip_geo.SetY(((*it)->GetGeometry().y));
@@ -596,7 +594,7 @@ void HSplitter::DoneRedraw()
         }
         else if((*it)->Type().IsObjectType(BaseArea::StaticObjectType))
         {
-            BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
+            //BaseArea* base_area = NUX_STATIC_CAST(BaseArea*, (*it));
         }
     }
 }
