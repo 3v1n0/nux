@@ -33,7 +33,7 @@ CheckBoxPropertyItem::CheckBoxPropertyItem(const TCHAR* name, int On)
 ,   CheckBox(TEXT(""), On)
 {
     SetState(On? true : false);
-    setUsingStyleDrawing(false);
+    SetUsingStyleDrawing(false);
     NODE_SIG_CONNECT(sigStateToggled, CheckBoxPropertyItem, RecvPropertyChange);
 }
 

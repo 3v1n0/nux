@@ -68,7 +68,7 @@ public:
     virtual bool IsArea() const {return false;}
     virtual bool IsView() const {return true;}
 
-    void setUsingStyleDrawing(bool b)
+    void SetUsingStyleDrawing(bool b)
     {
         m_UseStyleDrawing = b;
     };
