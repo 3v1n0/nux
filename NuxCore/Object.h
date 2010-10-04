@@ -45,13 +45,13 @@ class IntrusiveWeakSP;
 
 //! Base class of heap allocated objects.
 /*!
-    NuxTrackable does not implement reference counting. It only defines the API. It is up
-    to the class that inherit from NuxTrackable to implement the reference counting.
+    Trackable does not implement reference counting. It only defines the API. It is up
+    to the class that inherit from Trackable to implement the reference counting.
 */
-class NuxTrackable
+class Trackable
 {
 public:
-    NUX_DECLARE_ROOT_OBJECT_TYPE(NuxTrackable);
+    NUX_DECLARE_ROOT_OBJECT_TYPE(Trackable);
     //! Test if object reference is owned.
     /*
         @return True if the object reference is owned.
@@ -126,13 +126,13 @@ public:
     static void operator delete(void *ptr);
 
 protected:
-    NuxTrackable();
-    virtual ~NuxTrackable() = 0;
+    Trackable();
+    virtual ~Trackable() = 0;
     void SetOwnedReference(bool b);
 
 private:
-    NuxTrackable(const NuxTrackable&);
-    NuxTrackable& operator=(const NuxTrackable&);
+    Trackable(const Trackable&);
+    Trackable& operator=(const Trackable&);
 
     class AllocationList : public std::list<void*>
     {
@@ -153,10 +153,10 @@ private:
 };
 
 //! The base class of Nux objects.
-class Object: public NuxTrackable
+class Object: public Trackable
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(BaseObject, NuxTrackable);
+    NUX_DECLARE_OBJECT_TYPE(BaseObject, Trackable);
 
     //! Constructor
     Object(bool OwnTheReference = true, NUX_FILE_LINE_PROTO);

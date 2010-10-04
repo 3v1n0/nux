@@ -26,74 +26,74 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NuxTrackable);
+NUX_IMPLEMENT_ROOT_OBJECT_TYPE(Trackable);
 NUX_IMPLEMENT_OBJECT_TYPE(Object);
 
-std::new_handler NuxTrackable::m_new_current_handler = 0;
-NuxTrackable::AllocationList NuxTrackable::m_allocation_list;
+std::new_handler Trackable::m_new_current_handler = 0;
+Trackable::AllocationList Trackable::m_allocation_list;
 
-NuxTrackable::AllocationList::AllocationList()
+Trackable::AllocationList::AllocationList()
 {
 
 }
 
-NuxTrackable::AllocationList::~AllocationList()
+Trackable::AllocationList::~AllocationList()
 {
 
 }
 
-int NuxTrackable::m_total_allocated_size = 0;
-int NuxTrackable::m_number_of_objects = 0;
+int Trackable::m_total_allocated_size = 0;
+int Trackable::m_number_of_objects = 0;
 
-NuxTrackable::NuxTrackable()
+Trackable::Trackable()
 {
     m_owns_the_reference = false;
     m_total_allocated_size = 0;
     m_number_of_objects = 0;
 }
 
-NuxTrackable::~NuxTrackable()
+Trackable::~Trackable()
 {
 
 }
 
-void NuxTrackable::Reference()
+void Trackable::Reference()
 {
 
 }
 
-bool NuxTrackable::UnReference()
-{
-    return false;
-}
-
-bool NuxTrackable::SinkReference()
+bool Trackable::UnReference()
 {
     return false;
 }
 
-bool NuxTrackable::Dispose()
+bool Trackable::SinkReference()
 {
     return false;
 }
 
-bool NuxTrackable::OwnsTheReference()
+bool Trackable::Dispose()
+{
+    return false;
+}
+
+bool Trackable::OwnsTheReference()
 {
     return m_owns_the_reference;
 }
 
-void NuxTrackable::SetOwnedReference(bool b)
+void Trackable::SetOwnedReference(bool b)
 {
     if(m_owns_the_reference == true)
     {
-        nuxDebugMsg(TEXT("[NuxTrackable::SetOwnedReference] Do not change the ownership if is already set to true!"));
+        nuxDebugMsg(TEXT("[Trackable::SetOwnedReference] Do not change the ownership if is already set to true!"));
         return;
     }
     m_owns_the_reference = b;
 }
 
 std::new_handler
-NuxTrackable::set_new_handler(std::new_handler handler)
+Trackable::set_new_handler(std::new_handler handler)
 {
     std::new_handler old_handler = m_new_current_handler;
     m_new_current_handler = handler;
@@ -101,7 +101,7 @@ NuxTrackable::set_new_handler(std::new_handler handler)
 }
 
 void*
-NuxTrackable::operator new(size_t size)
+Trackable::operator new(size_t size)
 {
     // Set the new_handler for this call
     std::new_handler global_handler  = std::set_new_handler(m_new_current_handler);
@@ -113,7 +113,7 @@ NuxTrackable::operator new(size_t size)
     {
         ptr = ::operator new(size);
         m_allocation_list.push_front(ptr);
-        NUX_STATIC_CAST(NuxTrackable*, ptr)->m_size_of_this_object = size;
+        NUX_STATIC_CAST(Trackable*, ptr)->m_size_of_this_object = size;
         m_total_allocated_size += size;
         ++m_number_of_objects;
     }
@@ -130,31 +130,31 @@ NuxTrackable::operator new(size_t size)
 
 #if (__GNUC__ < 4 && __GNUC_MINOR__ < 4)
 
-void* NuxTrackable::operator new(size_t size, void *ptr)
+void* Trackable::operator new(size_t size, void *ptr)
 {
     return ::operator new(size, ptr);
 }
 
 #endif
 
-void NuxTrackable::operator delete(void *ptr)
+void Trackable::operator delete(void *ptr)
 {
     AllocationList::iterator i = std::find(m_allocation_list.begin(), m_allocation_list.end(), ptr);
     if (i != m_allocation_list.end())
     {
-        m_total_allocated_size -= NUX_STATIC_CAST(NuxTrackable*, ptr)->m_size_of_this_object;
+        m_total_allocated_size -= NUX_STATIC_CAST(Trackable*, ptr)->m_size_of_this_object;
         --m_number_of_objects;
         m_allocation_list.erase(i);
         ::operator delete(ptr);
     }
 }
 
-bool NuxTrackable::IsHeapAllocated() const
+bool Trackable::IsHeapAllocated() const
 {
     return IsDynamic();
 }
 
-bool NuxTrackable::IsDynamic() const
+bool Trackable::IsDynamic() const
 {
     // Get pointer to beginning of the memory occupied by this.
     const void* ptr = dynamic_cast<const void*>(this);
