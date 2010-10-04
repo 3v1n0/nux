@@ -173,7 +173,7 @@ void Panel::SetLayout(Layout* layout)
     if(layout == 0)
         return;
 
-    std::list<BaseObject*> *InterfaceControlList = new std::list<BaseObject*>;
+    std::list<Area*> *InterfaceControlList = new std::list<Area*>;
 
     m_layout = layout;
 

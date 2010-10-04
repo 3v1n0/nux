@@ -167,7 +167,7 @@ int TextViewWidget::getTopBorder() const
 
 void TextViewWidget::SetGeometry(const Geometry& geo)
 {
-    BaseObject::SetGeometry(geo);
+    Area::SetGeometry(geo);
     //ComputeChildLayout();
 }
 
@@ -405,8 +405,8 @@ long TextViewWidget::PostLayoutManagement2(long LayoutResult)
         base.SetWidth(m_border + m_ViewContentLeftMargin + m_ViewContentWidth + m_ViewContentRightMargin + m_border);
 
     // Set the size so that is is equal to the visible content.
-    BaseObject::SetBaseWidth(base.GetWidth());
-    BaseObject::SetBaseHeight(base.GetHeight());
+    Area::SetBaseWidth(base.GetWidth());
+    Area::SetBaseHeight(base.GetHeight());
     Geometry geo = GetGeometry();
 
     // Horizontal scrollbar Geometry

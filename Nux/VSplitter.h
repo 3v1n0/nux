@@ -40,7 +40,7 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void AddWidget(BaseObject* ic, float stretchfactor);
+    void AddWidget(Area* ic, float stretchfactor);
     void ResetSplitConfig();
 
     void clearContent();
@@ -55,7 +55,7 @@ public:
     /*
     Return true if this object can break the layout, meaning, the layout can be done on the composition layout only without 
     recomputing the whole window layout.
-    Inherited from BaseObject
+    Inherited from Area
     */
     virtual bool CanBreakLayout()
     {
@@ -73,7 +73,7 @@ protected:
 private:
 
     typedef CoreArea MySplitter;
-    std::vector<BaseObject*> m_InterfaceObject;
+    std::vector<Area*> m_InterfaceObject;
     std::vector<MySplitter*> m_SplitterObject;
     std::vector<float> m_SplitConfig;
 

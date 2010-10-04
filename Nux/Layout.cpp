@@ -32,7 +32,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 NUX_IMPLEMENT_OBJECT_TYPE(Layout);
 
 Layout::Layout(NUX_FILE_LINE_DECL)
-:   BaseObject(NUX_FILE_LINE_PARAM)
+:   Area(NUX_FILE_LINE_PARAM)
 {
     m_h_in_margin       = 0;
     m_h_out_margin      = 0;
@@ -48,7 +48,7 @@ Layout::~Layout()
     // It is possible that this layout object is in the refresh list. Remove it here before it is deleted.
     GetGraphicsThread()->RemoveObjectFromRefreshList(this);
 
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         (*it)->UnParentObject();
@@ -57,9 +57,9 @@ Layout::~Layout()
 }
 
 
-void Layout::RemoveChildObject(BaseObject* bo)
+void Layout::RemoveChildObject(Area* bo)
 {
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     it = std::find(m_LayoutElementList.begin(), m_LayoutElementList.end(), bo);
     if(it != m_LayoutElementList.end())
     {
@@ -68,9 +68,9 @@ void Layout::RemoveChildObject(BaseObject* bo)
     }
 }
 
-bool Layout::FindWidget(BaseObject* WidgetObject) const
+bool Layout::FindWidget(Area* WidgetObject) const
 {
-    std::list<BaseObject*>::const_iterator it;
+    std::list<Area*>::const_iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it) == WidgetObject)
@@ -97,7 +97,7 @@ void Layout::AddLayout(Layout* layout, unsigned int stretchFactor, eMinorPositio
     nuxAssertMsg(layout != this, TEXT("[Layout::AddLayout] Error: Trying to add a layout to itself."));
     NUX_RETURN_IF_FALSE(layout != 0);
 
-    BaseObject* parent = layout->GetParentObject();
+    Area* parent = layout->GetParentObject();
     nuxAssertMsg(parent == 0, TEXT("[Layout::AddLayout] Trying to add an object that already has a parent."));
     NUX_RETURN_IF_TRUE(parent != 0);
 
@@ -148,12 +148,12 @@ void Layout::AddLayout(Layout* layout, unsigned int stretchFactor, eMinorPositio
     /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
 */
 
-void Layout::AddActiveInterfaceObject(BaseObject* bo, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
+void Layout::AddActiveInterfaceObject(Area* bo, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
 {
     nuxAssertMsg(bo != 0, TEXT("[Layout::AddActiveInterfaceObject] Invalid parameter."));
     NUX_RETURN_IF_TRUE(bo == 0);
 
-    BaseObject* parent = bo->GetParentObject();
+    Area* parent = bo->GetParentObject();
     nuxAssertMsg(parent == 0, TEXT("[Layout::AddActiveInterfaceObject] Trying to add an object that already has a parent."));
     NUX_RETURN_IF_TRUE(parent != 0);
 
@@ -189,7 +189,7 @@ void Layout::AddSpace(unsigned int width, unsigned int stretchFactor)
 
 void Layout::Clear()
 {
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         (*it)->UnParentObject();
@@ -197,9 +197,9 @@ void Layout::Clear()
     m_LayoutElementList.clear();
 }
 
-bool Layout::SearchInAllSubNodes(BaseObject* bo)
+bool Layout::SearchInAllSubNodes(Area* bo)
 {
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it) == bo)
@@ -218,9 +218,9 @@ bool Layout::SearchInAllSubNodes(BaseObject* bo)
     return false;
 }
 
-bool Layout::SearchInFirstSubNodes(BaseObject* bo)
+bool Layout::SearchInFirstSubNodes(Area* bo)
 {
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it) == bo)
@@ -235,7 +235,7 @@ unsigned int Layout::GetMaxStretchFactor()
 {
     unsigned int value = 0;
     unsigned int sf;
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         sf = (*it)->GetStretchFactor(); 
@@ -251,7 +251,7 @@ unsigned int Layout::GetMinStretchFactor()
 {
     unsigned int value = 0xFFFFFFFF;
     unsigned int sf;
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         sf = (*it)->GetStretchFactor();
@@ -266,7 +266,7 @@ unsigned int Layout::GetMinStretchFactor()
 unsigned int Layout::GetNumStretchFactor(unsigned int sf)
 {
     unsigned int count = 0;
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->GetStretchFactor() == sf)
@@ -279,7 +279,7 @@ unsigned int Layout::GetNumStretchFactor(unsigned int sf)
 
 void Layout::DoneRedraw()
 {
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsInterfaceControl())
@@ -293,7 +293,7 @@ void Layout::DoneRedraw()
 long Layout::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     long ret = TraverseInfo;
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsArea())
@@ -318,7 +318,7 @@ long Layout::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventIn
 void Layout::ProcessDraw(GraphicsContext& GfxContext, bool force_draw)
 {
     //GfxContext.Push2DModelViewMatrix(m_Matrix);
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsArea())
@@ -343,7 +343,7 @@ void Layout::ProcessDraw(GraphicsContext& GfxContext, bool force_draw)
 
 void Layout::NeedRedraw()
 {
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsArea())
@@ -373,16 +373,16 @@ LayoutContentDistribution Layout::GetContentDistribution()
     return m_ContentStacking;
 }
 
-void Layout::RequestBottomUpLayoutComputation(BaseObject* bo_initiator)
+void Layout::RequestBottomUpLayoutComputation(Area* bo_initiator)
 {
 
 }
 
 void Layout::SetApplication(WindowThread* Application)
 {
-    BaseObject::SetApplication(Application);
+    Area::SetApplication(Application);
 
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         (*it)->SetApplication(Application);

@@ -43,29 +43,29 @@ public:
     virtual void Draw();
 
 
-    virtual t_s32 GetBaseWidth() const {return BaseObject::GetBaseWidth();}
-    virtual void SetBaseWidth(t_s32 w) {BaseObject::SetBaseWidth(w);}
+    virtual t_s32 GetBaseWidth() const {return Area::GetBaseWidth();}
+    virtual void SetBaseWidth(t_s32 w) {Area::SetBaseWidth(w);}
 
-    virtual t_s32 GetBaseHeight() const {return BaseObject::GetBaseHeight();}
-    virtual void SetBaseHeight(t_s32 h) {BaseObject::SetBaseHeight(h);}
+    virtual t_s32 GetBaseHeight() const {return Area::GetBaseHeight();}
+    virtual void SetBaseHeight(t_s32 h) {Area::SetBaseHeight(h);}
 
-    virtual t_s32 GetBaseX() const {return BaseObject::GetBaseX();}
-    virtual void SetBaseX(t_s32 x) {BaseObject::SetBaseX(x);}
-    virtual t_s32 GetBaseY() const {return BaseObject::GetBaseY();}
-    virtual void SetBaseY(t_s32 y) {BaseObject::SetBaseY(y);}
+    virtual t_s32 GetBaseX() const {return Area::GetBaseX();}
+    virtual void SetBaseX(t_s32 x) {Area::SetBaseX(x);}
+    virtual t_s32 GetBaseY() const {return Area::GetBaseY();}
+    virtual void SetBaseY(t_s32 y) {Area::SetBaseY(y);}
 
-    virtual Size GetMaximumSize() {return BaseObject::GetMaximumSize();}
-    virtual Size GetMinimumSize() {return BaseObject::GetMinimumSize();}
+    virtual Size GetMaximumSize() {return Area::GetMaximumSize();}
+    virtual Size GetMinimumSize() {return Area::GetMinimumSize();}
 
-    virtual void ApplyMinWidth() {BaseObject::ApplyMinWidth();}
-    virtual void ApplyMinHeight() {BaseObject::ApplyMinHeight();}
-    virtual void ApplyMaxWidth() {BaseObject::ApplyMaxWidth();}
-    virtual void ApplyMaxHeight() {BaseObject::ApplyMaxHeight();}
+    virtual void ApplyMinWidth() {Area::ApplyMinWidth();}
+    virtual void ApplyMinHeight() {Area::ApplyMinHeight();}
+    virtual void ApplyMaxWidth() {Area::ApplyMaxWidth();}
+    virtual void ApplyMaxHeight() {Area::ApplyMaxHeight();}
 
     //virtual long ComputeLayout2(){return m_layout->ComputeLayout2();}
     //virtual void ComputePosition2() {m_layout->ComputePosition2();}
 
-    virtual void GetCompositeList(std::list<BaseObject*> *InterfaceControlList);
+    virtual void GetCompositeList(std::list<Area*> *InterfaceControlList);
 
     //! Compute the how elements are spread inside the layout
     /*!

@@ -84,7 +84,7 @@ long HSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             ret = (*it_splitter)->OnEvent(ievent, ret, ProcEvInfo);
         }
 
-        std::vector<BaseObject*>::iterator it;
+        std::vector<Area*>::iterator it;
         for(it = m_InterfaceObject.begin(),
             it_splitter = m_SplitterObject.begin();
             it != m_InterfaceObject.end();
@@ -167,7 +167,7 @@ void HSplitter::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     bool need_redraw = IsRedrawNeeded();
 
     std::vector<MySplitter*>::iterator it_splitter;
-    std::vector<BaseObject*>::iterator it;
+    std::vector<Area*>::iterator it;
     //for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
     for(it = m_InterfaceObject.begin(), it_splitter = m_SplitterObject.begin();
         it != m_InterfaceObject.end();
@@ -278,7 +278,7 @@ void HSplitter::OverlayDrawing(GraphicsContext& GfxContext)
     }
 }
 
-void HSplitter::AddWidget(BaseObject* ic, float stretchfactor)
+void HSplitter::AddWidget(Area* ic, float stretchfactor)
 {
     if(ic)
     {
@@ -329,7 +329,7 @@ long HSplitter::ComputeChildLayout()
         return eCompliantHeight | eCompliantWidth;
     }
 
-    std::vector<BaseObject*>::iterator it;
+    std::vector<Area*>::iterator it;
     std::vector<MySplitter*>::iterator it_splitter;
 
     if(new_addition)
@@ -583,7 +583,7 @@ void HSplitter::ResizeSplitter(t_s32 header_pos)
 // have a m_compositionlayout where its child are located;
 void HSplitter::DoneRedraw()
 {
-    std::vector<BaseObject*>::iterator it;
+    std::vector<Area*>::iterator it;
     for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
     {
         //(*it)->DoneRedraw();

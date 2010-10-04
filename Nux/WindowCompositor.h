@@ -32,7 +32,7 @@ class PBuffer;
 class WindowThread;
 class ActiveInterfaceObject;
 class BaseArea;
-class BaseObject;
+class Area;
 class BaseWindow;
 class PaintLayer;
 
@@ -182,7 +182,7 @@ public:
     BaseArea* GetPreviousMouseOverArea();
 
     const IEvent* GetCurrentEvent() const {return m_CurrentEvent;}
-    long ProcessEventOnObject(IEvent &ievent, BaseObject* object, long TraverseInfo, long ProcessEventInfo);
+    long ProcessEventOnObject(IEvent &ievent, Area* object, long TraverseInfo, long ProcessEventInfo);
     
     BaseWindow* GetCurrentWindow() {return m_CurrentWindow;}
     BaseWindow* GetFocusAreaWindow() {return m_FocusAreaWindow;}

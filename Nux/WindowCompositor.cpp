@@ -181,7 +181,7 @@ void WindowCompositor::UnRegisterWindow(BaseWindow* window)
     }
 }
 
-long WindowCompositor::ProcessEventOnObject(IEvent &ievent, BaseObject* object, long TraverseInfo, long ProcessEventInfo)
+long WindowCompositor::ProcessEventOnObject(IEvent &ievent, Area* object, long TraverseInfo, long ProcessEventInfo)
 {
     if(object == 0)
         return 0;

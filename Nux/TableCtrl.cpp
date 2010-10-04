@@ -1759,7 +1759,7 @@ void TableCtrl::OnMouseDown(int x, int y, unsigned long button_flags, unsigned l
                     m_DrawBackgroundOnPreviousGeometry = true;
                     m_PreviousGeometry = GetGeometry();
                     // Initiate layout re computation from the top. This should be done with InitiateResizeLayout();
-                    // but it is a private member of BaseObject. We can do it with a call to SetGeometry(GetGeometry());
+                    // but it is a private member of Area. We can do it with a call to SetGeometry(GetGeometry());
                     SetGeometry(GetGeometry());
                 }
             }
@@ -1869,7 +1869,7 @@ void TableCtrl::OnMouseDoubleClick(int x, int y, unsigned long button_flags, uns
                     m_DrawBackgroundOnPreviousGeometry = true;
                     m_PreviousGeometry = GetGeometry();
                     // Initiate layout re computation from the top. This should be done with InitiateResizeLayout();
-                    // but it is a private member of BaseObject. We can do it with a call to SetGeometry(GetGeometry());
+                    // but it is a private member of Area. We can do it with a call to SetGeometry(GetGeometry());
                     SetGeometry(GetGeometry());
                 }
             }

@@ -350,13 +350,13 @@ void WindowThread::ProcessDraw(GraphicsContext& GfxContext, bool force_draw)
     }
 }
 
-void WindowThread::AddObjectToRefreshList(BaseObject* bo)
+void WindowThread::AddObjectToRefreshList(Area* bo)
 {
     nuxAssert(bo != 0);
     if(bo == 0)
         return;
 
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     it = find(m_LayoutRefreshList.begin(), m_LayoutRefreshList.end(), bo);
     if(it == m_LayoutRefreshList.end())
     {
@@ -364,9 +364,9 @@ void WindowThread::AddObjectToRefreshList(BaseObject* bo)
     }
 }
 
-void WindowThread::RemoveObjectFromRefreshList(BaseObject* bo)
+void WindowThread::RemoveObjectFromRefreshList(Area* bo)
 {
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     it = find(m_LayoutRefreshList.begin(), m_LayoutRefreshList.end(), bo);
     if(it != m_LayoutRefreshList.end())
     {
@@ -420,10 +420,10 @@ bool WindowThread::IsMainLayoutDrawDirty() const
 void WindowThread::RefreshLayout()
 {
     SetComputingLayout(true);
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutRefreshList.begin(); it != m_LayoutRefreshList.end(); it++)
     {
-        BaseObject* bo = *it;
+        Area* bo = *it;
 
         if(bo->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
         {
@@ -445,7 +445,7 @@ void WindowThread::RefreshLayout()
     EmptyLayoutRefreshList();
 }
 
-void WindowThread::ComputeElementLayout(BaseObject* bo, bool RecurseToTopLevelLayout)
+void WindowThread::ComputeElementLayout(Area* bo, bool RecurseToTopLevelLayout)
 {
     nuxAssert(bo != 0);
     if(bo == 0)

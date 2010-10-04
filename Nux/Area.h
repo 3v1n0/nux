@@ -48,13 +48,13 @@ class GraphicsContext;
 // #if 0
 //     #define usingwsptr
 //     #define smartptr(T, a)      WSPtr<T>(a)
-//     #define smartptrobj(a)      smptr(BaseObject)(a)
+//     #define smartptrobj(a)      smptr(Area)(a)
 //     #define smartptrtype(T)     WSPtr<T>
 //     #define smartptrwrap(T)     WrapWSPtr<T>
 //     #define smartptrweak(T)     WeakWSPtr<T>
 // #else
 //     #define smartptr(T, a) T* a
-//     #define smartptrobj(a) smptr(BaseObject) a
+//     #define smartptrobj(a) smptr(Area) a
 //     #define smartptrtype(T) (T*)
 //     #define smartptrwrap(T) (T*)
 //     #define smartptrweak(T) T*
@@ -121,19 +121,19 @@ enum eSizeCompliance
 
 class Layout;
 class ActiveInterfaceObject;
-class BaseObject;
+class Area;
 
 
-class BaseObject: public Object, public sigc::trackable
+class Area: public Object, public sigc::trackable
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(BaseObject, Object);
+    NUX_DECLARE_OBJECT_TYPE(Area, Object);
     //static NObjectType StaticObjectType;
     //virtual NObjectType* Type() { return &StaticObjectType; }
 
 public:
-    BaseObject(NUX_FILE_LINE_DECL);
-    virtual ~BaseObject();
+    Area(NUX_FILE_LINE_DECL);
+    virtual ~Area();
 
     virtual int GetBaseX     () const {return m_Geometry.x;}
     virtual int GetBaseY     () const {return m_Geometry.y;}
@@ -235,9 +235,9 @@ protected:
 
     /* 
         This function is reimplemented in Layout as it need to perform some special operations.
-        It does nothing for BaseObject and ActiveInterfaceObject classes.
+        It does nothing for Area and ActiveInterfaceObject classes.
     */
-    //virtual void RemoveChildObject(smptr(BaseObject));
+    //virtual void RemoveChildObject(smptr(Area));
 
     /*
         SetParentObject/UnParentObject are protected API. it is not meant to be used directly by users.
@@ -248,17 +248,17 @@ protected:
         A layout with a parent cannot be added to a widget or another layout for rendering. The layout has to be unparented first.
         In essence only ActiveInterfaceObject and Layouts should be calling SetParentObject/UnParentObject.
     */
-    virtual void SetParentObject(BaseObject*);
+    virtual void SetParentObject(Area*);
     virtual void UnParentObject();
 
-    BaseObject* GetParentObject();
+    Area* GetParentObject();
 
     //! Request a Layout recompute after a change of size
     /*
         When an object size changes, it is necessary for its parent structure to initiate a layout
         re computation in order preserve the layout structure defined by the user through the API.
     */
-    virtual void RequestBottomUpLayoutComputation(BaseObject* bo_initiator);
+    virtual void RequestBottomUpLayoutComputation(Area* bo_initiator);
 
 private:
     //! Flags that set an object as dirty with regard to is size.
@@ -271,12 +271,12 @@ private:
 
     //! Define a parent child structure
     /*
-        An object of the class BaseObject may have another of the class Layout as Parent.
+        An object of the class Area may have another of the class Layout as Parent.
         An object of the class ActiveInterfaceObject may have an object of the class Layout as parent.
         An object of the class Layout may have a parent of the class Layout or ActiveInterfaceObject as parent.
-        A BaseObject cannot have children (that may change later).
+        A Area cannot have children (that may change later).
     */
-    BaseObject* m_ParentObject;
+    Area* m_ParentObject;
     
     void _SetBaseWidth(int w);
     void _SetBaseHeight(int h);
@@ -297,7 +297,7 @@ private:
 
 private:
 
-    void InitiateResizeLayout(BaseObject* child = 0);
+    void InitiateResizeLayout(Area* child = 0);
     void CheckMinSize();
     void CheckMaxSize();
 

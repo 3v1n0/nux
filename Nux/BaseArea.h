@@ -23,7 +23,7 @@
 #ifndef BASEAREA_H
 #define BASEAREA_H
 
-#include "BaseObject.h"
+#include "Area.h"
 #include "MouseHandler.h"
 
 #if defined(NUX_OS_WINDOWS)
@@ -47,10 +47,10 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class BaseArea;
 typedef BaseArea CoreArea;
 
-class BaseArea : public BaseObject //public sigc::trackable
+class BaseArea : public Area //public sigc::trackable
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(BaseArea, BaseObject);
+    NUX_DECLARE_OBJECT_TYPE(BaseArea, Area);
 public:
     BaseArea(NUX_FILE_LINE_PROTO);
     virtual ~BaseArea();

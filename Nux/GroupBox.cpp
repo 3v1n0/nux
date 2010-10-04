@@ -157,7 +157,7 @@ long GroupBox::PostLayoutManagement(long LayoutResult)
     // Only the size is change is important here of the GroupBox is important here.
 
     long ret = 0;
-    Geometry old_geo = BaseObject::GetGeometry();
+    Geometry old_geo = Area::GetGeometry();
     if(m_CompositionLayout)
     {
         Geometry base = m_CompositionLayout->GetGeometry();
@@ -171,7 +171,7 @@ long GroupBox::PostLayoutManagement(long LayoutResult)
 //            base.OffsetPosition(-2, -2);
 //            base.OffsetSize(4, 4);
 //        }
-        BaseObject::SetGeometry(base);
+        Area::SetGeometry(base);
     }
     Geometry base = GetGeometry();
     m_CaptionArea.SetBaseXY(base.x+6, base.y);

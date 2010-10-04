@@ -57,7 +57,7 @@
 
 #include "Utils.h"
 #include "WidgetMetrics.h"
-#include "BaseObject.h"
+#include "Area.h"
 #include "BaseArea.h"
 #include "Theme.h"
 #include "Painter.h"

@@ -303,7 +303,7 @@ void FloatingWindow::RecvTitleBarMouseDrag(int x, int y, int dx, int dy, unsigne
     geo.OffsetPosition(dx, dy);
 
     // Set the Window Size and Position
-    BaseObject::SetGeometry(geo);
+    Area::SetGeometry(geo);
     // No need to compute the window layout elements [LayoutWindowElements()]. They haven't changed.
     // No need to compute the layout [ComputeChildLayout()]. It hasn't changed.
 
@@ -332,7 +332,7 @@ void FloatingWindow::PreLayoutManagement()
         }
         else
         {
-            BaseObject::SetGeometry(geo);
+            Area::SetGeometry(geo);
             // Get the geometry adjusted with respect to min and max dimension of this area.
             geo = GetGeometry();
         }
@@ -369,7 +369,7 @@ long FloatingWindow::PostLayoutManagement(long LayoutResult)
             layout_geometry.GetWidth() + 2*m_Border,
             layout_geometry.GetHeight() + m_Border + m_TopBorder);
 
-        BaseObject::SetGeometry(WindowGeometry);
+        Area::SetGeometry(WindowGeometry);
     }
     Geometry geo = GetGeometry();
     // Drag Bar Geometry

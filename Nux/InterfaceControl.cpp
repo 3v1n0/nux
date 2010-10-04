@@ -105,7 +105,7 @@ long ActiveInterfaceObject::ComputeChildLayout()
                 size_compliance |= eCompliantHeight;
             }
 
-            //BaseObject::SetGeometry(m_CompositionLayout->GetGeometry());
+            //Area::SetGeometry(m_CompositionLayout->GetGeometry());
             return size_compliance;
         }
     }
@@ -154,7 +154,7 @@ long ActiveInterfaceObject::PostLayoutManagement(long LayoutResult)
     {
         // If The layout is empty, do not change the size of the parent element.
         if(!m_CompositionLayout->IsEmpty())
-            BaseObject::SetGeometry(m_CompositionLayout->GetGeometry());
+            Area::SetGeometry(m_CompositionLayout->GetGeometry());
     }
     return LayoutResult;
 }
@@ -286,7 +286,7 @@ void ActiveInterfaceObject::SetCompositionLayout(Layout* layout)
         return;
     }
 
-    BaseObject* parent = layout->GetParentObject();
+    Area* parent = layout->GetParentObject();
 
     if(parent == this)
     {
@@ -313,14 +313,14 @@ void ActiveInterfaceObject::RemoveCompositionLayout()
     m_CompositionLayout = 0;
 }
 
-bool ActiveInterfaceObject::SearchInAllSubNodes(BaseObject* bo)
+bool ActiveInterfaceObject::SearchInAllSubNodes(Area* bo)
 {
     if(m_CompositionLayout)
         return m_CompositionLayout->SearchInAllSubNodes(bo);
     return false;
 }
 
-bool ActiveInterfaceObject::SearchInFirstSubNodes(BaseObject* bo)
+bool ActiveInterfaceObject::SearchInFirstSubNodes(Area* bo)
 {
     if(m_CompositionLayout)
         return m_CompositionLayout->SearchInFirstSubNodes(bo);
@@ -329,7 +329,7 @@ bool ActiveInterfaceObject::SearchInFirstSubNodes(BaseObject* bo)
 
 void ActiveInterfaceObject::SetGeometry(const Geometry& geo)
 {
-    BaseObject::SetGeometry(geo);
+    Area::SetGeometry(geo);
     ComputeChildLayout();
     PostResizeGeometry();
 }

@@ -433,7 +433,7 @@ int VScrollBar::GetBaseWidth()
 
 int VScrollBar::GetBaseHeight()
 {
-    return BaseObject::GetBaseHeight();
+    return Area::GetBaseHeight();
 }
 
 long VScrollBar::PostLayoutManagement(long LayoutResult)

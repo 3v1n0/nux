@@ -21,7 +21,7 @@
 
 
 #include "Nux.h"
-#include "BaseObject.h"
+#include "Area.h"
 #include "NuxGraphics/OpenGLEngine.h"
 #include "Layout.h"
 #include "VSplitter.h"
@@ -29,9 +29,9 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-NUX_IMPLEMENT_OBJECT_TYPE(BaseObject);
+NUX_IMPLEMENT_OBJECT_TYPE(Area);
 
-BaseObject::BaseObject(NUX_FILE_LINE_DECL)
+Area::Area(NUX_FILE_LINE_DECL)
 :   Object(false, NUX_FILE_LINE_PARAM)
 ,   m_IsSizeDirty(true)
 ,   m_ParentObject(0)
@@ -44,22 +44,22 @@ BaseObject::BaseObject(NUX_FILE_LINE_DECL)
 }
 
 
-BaseObject::~BaseObject()
+Area::~Area()
 {
 
 }
 
-const NString& BaseObject::GetBaseString() const
+const NString& Area::GetBaseString() const
 {
     return m_BaseString;
 }
 
-void BaseObject::SetBaseString(const TCHAR* Caption)
+void Area::SetBaseString(const TCHAR* Caption)
 {
     m_BaseString = Caption;
 }
 
-void BaseObject::CheckMinSize()
+void Area::CheckMinSize()
 {
     if(m_minSize.GetWidth() > m_maxSize.GetWidth())
     {
@@ -85,7 +85,7 @@ void BaseObject::CheckMinSize()
     }
 }
 
-void BaseObject::CheckMaxSize()
+void Area::CheckMaxSize()
 {
     if(m_minSize.GetWidth() > m_maxSize.GetWidth())
     {
@@ -111,7 +111,7 @@ void BaseObject::CheckMaxSize()
     }
 }
 
-void BaseObject::SetMinimumSize(int w, int h)
+void Area::SetMinimumSize(int w, int h)
 {
     nuxAssert(w >= 0);
     nuxAssert(h >= 0);
@@ -123,7 +123,7 @@ void BaseObject::SetMinimumSize(int w, int h)
     InitiateResizeLayout();
 }
 
-void BaseObject::SetMaximumSize(int w, int h)
+void Area::SetMaximumSize(int w, int h)
 {
     nuxAssert(w >= 0);
     nuxAssert(h >= 0);
@@ -135,7 +135,7 @@ void BaseObject::SetMaximumSize(int w, int h)
     InitiateResizeLayout();
 }
 
-void BaseObject::SetMinMaxSize(int w, int h)
+void Area::SetMinMaxSize(int w, int h)
 {
     nuxAssert(w >= 0);
     nuxAssert(h >= 0);
@@ -145,45 +145,45 @@ void BaseObject::SetMinMaxSize(int w, int h)
     //InitiateResizeLayout();
 }
 
-void BaseObject::ApplyMinWidth()
+void Area::ApplyMinWidth()
 {
     m_Geometry.SetWidth(m_minSize.GetWidth());
 
     InitiateResizeLayout();
 }
 
-void BaseObject::ApplyMinHeight()
+void Area::ApplyMinHeight()
 {
     m_Geometry.SetHeight(m_minSize.GetHeight());
 
     InitiateResizeLayout();
 }
 
-void BaseObject::ApplyMaxWidth()
+void Area::ApplyMaxWidth()
 {
     m_Geometry.SetWidth(m_maxSize.GetWidth());
 
     InitiateResizeLayout();
 }
 
-void BaseObject::ApplyMaxHeight()
+void Area::ApplyMaxHeight()
 {
     m_Geometry.SetHeight(m_maxSize.GetHeight());
 
     InitiateResizeLayout();
 }
 
-Size BaseObject::GetMinimumSize() const
+Size Area::GetMinimumSize() const
 {
     return m_minSize;
 }
 
-Size BaseObject::GetMaximumSize() const
+Size Area::GetMaximumSize() const
 {
     return m_maxSize;
 }
 
-void BaseObject::SetMinimumWidth(int w)
+void Area::SetMinimumWidth(int w)
 {
     nuxAssert(w >= 0);
     m_minSize.SetWidth(w);
@@ -191,7 +191,7 @@ void BaseObject::SetMinimumWidth(int w)
     InitiateResizeLayout();
 }
 
-void BaseObject::SetMaximumWidth(int w)
+void Area::SetMaximumWidth(int w)
 {
     nuxAssert(w >= 0);
     m_maxSize.SetWidth(w);
@@ -199,7 +199,7 @@ void BaseObject::SetMaximumWidth(int w)
     InitiateResizeLayout();
 }
 
-void BaseObject::SetMinimumHeight(int h)
+void Area::SetMinimumHeight(int h)
 {
     nuxAssert(h >= 0);
     m_minSize.SetHeight(h);
@@ -207,7 +207,7 @@ void BaseObject::SetMinimumHeight(int h)
     InitiateResizeLayout();
 }
 
-void BaseObject::SetMaximumHeight(int h)
+void Area::SetMaximumHeight(int h)
 {
     nuxAssert(h >= 0);
     m_maxSize.SetHeight(h);
@@ -215,32 +215,32 @@ void BaseObject::SetMaximumHeight(int h)
     InitiateResizeLayout();
 }
 
-int BaseObject::GetMinimumWidth() const
+int Area::GetMinimumWidth() const
 {
     return m_minSize.GetWidth();
 }
 
-int BaseObject::GetMaximumWidth() const
+int Area::GetMaximumWidth() const
 {
     return m_maxSize.GetWidth();
 }
 
-int BaseObject::GetMinimumHeight() const
+int Area::GetMinimumHeight() const
 {
     return m_minSize.GetHeight();
 }
 
-int BaseObject::GetMaximumHeight() const
+int Area::GetMaximumHeight() const
 {
     return m_maxSize.GetHeight();
 }
 
-unsigned int BaseObject::GetStretchFactor()
+unsigned int Area::GetStretchFactor()
 {
     return m_stretchfactor;
 }
 
-void BaseObject::SetStretchFactor(unsigned int sf) 
+void Area::SetStretchFactor(unsigned int sf) 
 {
     // re implemented by Layout
     m_stretchfactor = sf;
@@ -248,24 +248,24 @@ void BaseObject::SetStretchFactor(unsigned int sf)
     //ComputeLayout2(); // This will make the layout fit exactly its children if any.
 }
 
-void BaseObject::SetParentObject(BaseObject* bo)
+void Area::SetParentObject(Area* bo)
 {
     if(bo == 0)
     {
-        nuxAssertMsg(0, TEXT("[BaseObject::SetParentObject] Invalid parent obejct."));
+        nuxAssertMsg(0, TEXT("[Area::SetParentObject] Invalid parent obejct."));
         return;
     }
 
     if(m_ParentObject)
     {
-        nuxAssertMsg(0, TEXT("[BaseObject::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again."));
+        nuxAssertMsg(0, TEXT("[Area::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again."));
         return;
     }
     m_ParentObject = bo;
     Reference();
 }
 
-void BaseObject::UnParentObject()
+void Area::UnParentObject()
 {
     if(m_ParentObject)
     {
@@ -274,12 +274,12 @@ void BaseObject::UnParentObject()
     }
 }
 
-BaseObject* BaseObject::GetParentObject()
+Area* Area::GetParentObject()
 {
     return m_ParentObject;
 }
 
-void BaseObject::SetGeometry(int x, int y, int w, int h) 
+void Area::SetGeometry(int x, int y, int w, int h) 
 {
     m_Geometry.SetX(x);
     m_Geometry.SetY(y);
@@ -289,7 +289,7 @@ void BaseObject::SetGeometry(int x, int y, int w, int h)
     InitiateResizeLayout();
 }
 
-void BaseObject::SetGeometry(const Geometry& geo) 
+void Area::SetGeometry(const Geometry& geo) 
 {
     SetBaseX(geo.x);
     SetBaseY(geo.y);
@@ -299,7 +299,7 @@ void BaseObject::SetGeometry(const Geometry& geo)
     InitiateResizeLayout();
 }
 
-void BaseObject::SetBaseSize(int w, int h)
+void Area::SetBaseSize(int w, int h)
 {
     _SetBaseWidth(w);
     _SetBaseHeight(h);
@@ -307,19 +307,19 @@ void BaseObject::SetBaseSize(int w, int h)
     InitiateResizeLayout();
 }
 
-void BaseObject::SetBaseWidth(int w) 
+void Area::SetBaseWidth(int w) 
 {
     _SetBaseWidth(w);
     InitiateResizeLayout();
 }
 
-void BaseObject::SetBaseHeight(int h) 
+void Area::SetBaseHeight(int h) 
 {
     _SetBaseHeight(h);
     InitiateResizeLayout();
 }
 
-void BaseObject::_SetBaseWidth(int w) 
+void Area::_SetBaseWidth(int w) 
 {
     if(w < m_minSize.GetWidth())
     {
@@ -335,7 +335,7 @@ void BaseObject::_SetBaseWidth(int w)
     }
 }
 
-void BaseObject::_SetBaseHeight(int h) 
+void Area::_SetBaseHeight(int h) 
 {
     if(h < m_minSize.GetHeight())
     {
@@ -351,7 +351,7 @@ void BaseObject::_SetBaseHeight(int h)
     }
 }
 
-void BaseObject::InitiateResizeLayout(BaseObject* child)
+void Area::InitiateResizeLayout(Area* child)
 {
     if(GetGraphicsThread()->IsComputingLayout())
     {
@@ -450,7 +450,7 @@ void BaseObject::InitiateResizeLayout(BaseObject* child)
     }
 }
 
-void BaseObject::RequestBottomUpLayoutComputation(BaseObject* bo_initiator)
+void Area::RequestBottomUpLayoutComputation(Area* bo_initiator)
 {
     if(m_ParentObject && m_ParentObject->IsLayout())
     {

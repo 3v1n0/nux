@@ -71,7 +71,7 @@ TextViewWidget::TextViewWidget()
     m_FrameBufferObject->SetDepthSurface( 0 );
 
     smptr(VLayout) layout = smptr(VLayout)(new VLayout);
-    //layout->addBaseObject2(new Button(TEXT("Hello")));
+    //layout->addArea2(new Button(TEXT("Hello")));
     SetCompositionLayout(layout);
 
     m_TextFont.reset(new FontTexture(TEXT("Courier_size_10.txt")));
@@ -164,7 +164,7 @@ int TextViewWidget::getTopBorder() const
 
 void TextViewWidget::setGeometry(const Geometry& geo)
 {
-    BaseObject::setGeometry(geo);
+    Area::setGeometry(geo);
     //ComputeChildLayout();
 }
 
@@ -402,8 +402,8 @@ long TextViewWidget::PostLayoutManagement2(long LayoutResult)
         base.SetWidth(m_border + m_ViewContentLeftMargin + m_ViewContentWidth + m_ViewContentRightMargin + m_border);
 
     // Set the size so that is is equal to the visible content.
-    BaseObject::SetBaseWidth(base.GetWidth());
-    BaseObject::SetBaseHeight(base.GetHeight());
+    Area::SetBaseWidth(base.GetWidth());
+    Area::SetBaseHeight(base.GetHeight());
     Geometry geo = getGeometry();
 
     // Horizontal scrollbar Geometry

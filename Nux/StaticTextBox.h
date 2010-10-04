@@ -89,7 +89,7 @@ protected:
 public:
     virtual void SetGeometry(const Geometry& geo)
     {
-        BaseObject::SetGeometry(geo);
+        Area::SetGeometry(geo);
         ComputeChildLayout();
     }
 };

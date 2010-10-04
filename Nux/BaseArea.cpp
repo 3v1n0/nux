@@ -39,7 +39,7 @@ long gNumArea = 0;
 NUX_IMPLEMENT_OBJECT_TYPE(BaseArea);
 
 BaseArea::BaseArea(NUX_FILE_LINE_DECL)
-:   BaseObject(NUX_FILE_LINE_PARAM)
+:   Area(NUX_FILE_LINE_PARAM)
 ,   m_AreaColor(Color::Green)
 {
     //m_Handle = ++s_Handle;
@@ -354,7 +354,7 @@ void BaseArea::OnDraw(GraphicsContext& GfxContext, bool force_draw)
 
 void BaseArea::SetBaseString(const TCHAR* Caption)
 {
-    BaseObject::SetBaseString(Caption);
+    Area::SetBaseString(Caption);
 }
 
 bool BaseArea::HasKeyboardFocus()

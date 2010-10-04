@@ -264,7 +264,7 @@ void BaseWindow::PreLayoutManagement()
         }
         else
         {
-            BaseObject::SetGeometry(geo);
+            Area::SetGeometry(geo);
             // Get the geometry adjusted with respect to min and max dimension of this area.
             geo = GetGeometry();
         }
@@ -291,7 +291,7 @@ long BaseWindow::PostLayoutManagement(long LayoutResult)
             layout_geometry.GetWidth() + 2*m_Border,
             layout_geometry.GetHeight() + m_Border + m_TopBorder);
 
-        BaseObject::SetGeometry(WindowGeometry);
+        Area::SetGeometry(WindowGeometry);
     }
 
     // A BaseWindow must kill the result of the management and pass it to the parent Layout.
@@ -308,7 +308,7 @@ void BaseWindow::PositionChildLayout(float offsetX, float offsetY)
 
 void BaseWindow::SetGeometry(const Geometry& geo)
 {
-    BaseObject::SetGeometry(geo);
+    Area::SetGeometry(geo);
 
     //LayoutWindowElements();
     //ComputeChildLayout();
@@ -403,7 +403,7 @@ void BaseWindow::NotifyConfigurationChange(int Width, int Height)
         }
         else
         {
-            BaseObject::SetGeometry(geo);
+            Area::SetGeometry(geo);
             // Get the geometry adjusted with respect to min and max dimension of this area.
             geo = GetGeometry();
         }

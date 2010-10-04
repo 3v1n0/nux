@@ -37,7 +37,7 @@ enum eControlType
     ePopupBox
 };
 
-class ActiveInterfaceObject: public BaseArea //BaseObject //public sigc::trackable
+class ActiveInterfaceObject: public BaseArea //Area //public sigc::trackable
 {
     NUX_DECLARE_OBJECT_TYPE(ActiveInterfaceObject, BaseArea);
 public:
@@ -107,8 +107,8 @@ public:
     
     //Layout Bridge
 
-    bool SearchInAllSubNodes(BaseObject* bo);
-    bool SearchInFirstSubNodes(BaseObject* bo);
+    bool SearchInAllSubNodes(Area* bo);
+    bool SearchInFirstSubNodes(Area* bo);
 
     //! Set Geometry
     /*
@@ -162,7 +162,7 @@ public:
 
 
     friend class Layout;
-    friend class BaseObject;
+    friend class Area;
 
 };
 

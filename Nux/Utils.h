@@ -37,7 +37,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 //enum ObjectType
 //{
-//    eBaseObject = (1L),
+//    eArea = (1L),
 //    eBaseArea   = (1L) << 1,
 //    eComposite  = (1L) << 2,
 //    eLayout     = (1L) << 3,

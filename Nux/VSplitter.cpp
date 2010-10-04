@@ -97,7 +97,7 @@ long VSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             ret = (*it_splitter)->OnEvent(ievent, ret, ProcEvInfo);
         }
 
-        std::vector<BaseObject*>::iterator it;
+        std::vector<Area*>::iterator it;
         for(it = m_InterfaceObject.begin(),
             it_splitter = m_SplitterObject.begin();
             it != m_InterfaceObject.end();
@@ -140,7 +140,7 @@ void VSplitter::Draw(GraphicsContext& GfxContext, bool force_draw)
 {
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle(base);
-    std::vector<BaseObject*>::iterator it;
+    std::vector<Area*>::iterator it;
     
     gPainter.PaintBackground(GfxContext, base);
     std::vector<MySplitter*>::iterator it_splitter;
@@ -177,7 +177,7 @@ void VSplitter::DrawContent(GraphicsContext& GfxContext, bool force_draw)
     bool need_redraw = IsRedrawNeeded();
 
     std::vector<MySplitter*>::iterator it_splitter;
-    std::vector<BaseObject*>::iterator it;
+    std::vector<Area*>::iterator it;
     for(it = m_InterfaceObject.begin(), it_splitter = m_SplitterObject.begin();
         it != m_InterfaceObject.end();
         it++, it_splitter++)
@@ -287,7 +287,7 @@ void VSplitter::OverlayDrawing(GraphicsContext& GfxContext)
     }
 }
 
-void VSplitter::AddWidget(BaseObject* ic, float stretchfactor)
+void VSplitter::AddWidget(Area* ic, float stretchfactor)
 {
     if(ic)
     {
@@ -338,7 +338,7 @@ long VSplitter::ComputeChildLayout()
         return eCompliantHeight | eCompliantWidth;
     }
 
-    std::vector<BaseObject*>::iterator it;
+    std::vector<Area*>::iterator it;
     std::vector<MySplitter*>::iterator it_splitter;
 
     if(new_addition)
@@ -592,7 +592,7 @@ void VSplitter::ResizeSplitter(t_s32 header_pos)
 // have a m_compositionlayout where its child are located;
 void VSplitter::DoneRedraw()
 {
-    std::vector<BaseObject*>::iterator it;
+    std::vector<Area*>::iterator it;
     for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
     {
         //(*it)->DoneRedraw();

@@ -28,9 +28,9 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 #define DEBUG_LAYOUT 0
 #define DEBUG_LAYOUT_COMPUTATION 0
 
-class Layout: public BaseObject
+class Layout: public Area
 {
-    NUX_DECLARE_OBJECT_TYPE(Layout, BaseObject);
+    NUX_DECLARE_OBJECT_TYPE(Layout, Area);
 public:
     Layout(NUX_FILE_LINE_PROTO);
     virtual ~Layout();
@@ -60,7 +60,7 @@ public:
         /param extend Controls the object minor dimension size.
         /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
     */
-    virtual void AddActiveInterfaceObject(BaseObject* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
+    virtual void AddActiveInterfaceObject(Area* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
     virtual void AddSpace(unsigned int width, unsigned int stretchFactor = 0);
 
     virtual void Clear();
@@ -129,7 +129,7 @@ public:
     virtual bool IsLayout() const {return true;}
     virtual bool IsSpaceLayout() const {return false;}
     
-    virtual void GetCompositeList(std::list<BaseObject*> *InterfaceControlList)
+    virtual void GetCompositeList(std::list<Area*> *InterfaceControlList)
     {
 
     }
@@ -138,8 +138,8 @@ public:
     void removeParentLayout();
     void DoneRedraw();
 
-    bool SearchInAllSubNodes(BaseObject* bo);
-    bool SearchInFirstSubNodes(BaseObject* bo);
+    bool SearchInAllSubNodes(Area* bo);
+    bool SearchInFirstSubNodes(Area* bo);
 
     //! Process Event
     /*!
@@ -180,20 +180,20 @@ public:
     virtual void SetContentDistribution(LayoutContentDistribution stacking_order);
     virtual LayoutContentDistribution GetContentDistribution();
 
-    virtual bool FindWidget(BaseObject* WidgetObject) const;
+    virtual bool FindWidget(Area* WidgetObject) const;
     virtual bool IsEmpty() const;
     /* 
         This function is reimplemented in Layout and ActiveInterfaceObject classes  they need to perform some special operations.
-        It does nothing for BaseObject classes (this class cannot have children).
+        It does nothing for Area classes (this class cannot have children).
     */
-    virtual void RemoveChildObject(BaseObject*);
+    virtual void RemoveChildObject(Area*);
 
     //! Request a Layout recompute after a change of size
     /*
         When an object size changes, it is necessary for its parent structure to initiate a layout
         re computation in order preserve the layout structure defined by the user through the API.
     */
-    virtual void RequestBottomUpLayoutComputation(BaseObject* bo_initiator);
+    virtual void RequestBottomUpLayoutComputation(Area* bo_initiator);
 
     virtual void SetApplication(WindowThread* Application);
 
@@ -229,7 +229,7 @@ protected:
     int m_v_in_margin;
     int m_v_out_margin;
 
-    std::list<BaseObject*> m_LayoutElementList;
+    std::list<Area*> m_LayoutElementList;
 
     NString m_name;
 
@@ -255,7 +255,7 @@ public:
     {
     };
 
-    virtual bool FindWidget(BaseObject* WidgetObject) const {return false;}
+    virtual bool FindWidget(Area* WidgetObject) const {return false;}
     virtual bool IsEmpty() const {return true;}
     virtual bool IsSpaceLayout() const {return true;}
 
@@ -264,7 +264,7 @@ public:
         // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
 
-    virtual void AddActiveInterfaceObject(BaseObject* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f)
+    virtual void AddActiveInterfaceObject(Area* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f)
     {
         // the baseObject is provided via the constructor.
     };
@@ -283,28 +283,28 @@ public:
     {
     }
 
-    virtual int GetBaseWidth() const {return BaseObject::GetBaseWidth();}
-    virtual void SetBaseWidth(int w) {BaseObject::SetBaseWidth(w);}
+    virtual int GetBaseWidth() const {return Area::GetBaseWidth();}
+    virtual void SetBaseWidth(int w) {Area::SetBaseWidth(w);}
 
-    virtual int GetBaseHeight() const {return BaseObject::GetBaseHeight();}
-    virtual void SetBaseHeight(int h) {BaseObject::SetBaseHeight(h);}
+    virtual int GetBaseHeight() const {return Area::GetBaseHeight();}
+    virtual void SetBaseHeight(int h) {Area::SetBaseHeight(h);}
 
-    virtual int GetBaseX() const {return BaseObject::GetBaseX();}
-    virtual void SetBaseX(int x) {BaseObject::SetBaseX(x);}
-    virtual int GetBaseY() const {return BaseObject::GetBaseY();}
-    virtual void SetBaseY(int y) {BaseObject::SetBaseY(y);}
+    virtual int GetBaseX() const {return Area::GetBaseX();}
+    virtual void SetBaseX(int x) {Area::SetBaseX(x);}
+    virtual int GetBaseY() const {return Area::GetBaseY();}
+    virtual void SetBaseY(int y) {Area::SetBaseY(y);}
 
-    virtual Size GetMaximumSize() {return BaseObject::GetMaximumSize();}
-    virtual Size GetMinimumSize() {return BaseObject::GetMinimumSize();}
+    virtual Size GetMaximumSize() {return Area::GetMaximumSize();}
+    virtual Size GetMinimumSize() {return Area::GetMinimumSize();}
 
-    virtual void ApplyMinWidth() {BaseObject::ApplyMinWidth();}
-    virtual void ApplyMinHeight() {BaseObject::ApplyMinHeight();}
-    virtual void ApplyMaxWidth() {BaseObject::ApplyMaxWidth();}
-    virtual void ApplyMaxHeight() {BaseObject::ApplyMaxHeight();}
+    virtual void ApplyMinWidth() {Area::ApplyMinWidth();}
+    virtual void ApplyMinHeight() {Area::ApplyMinHeight();}
+    virtual void ApplyMaxWidth() {Area::ApplyMaxWidth();}
+    virtual void ApplyMaxHeight() {Area::ApplyMaxHeight();}
     // End: Abstract virtual function member (inherited from class Layout) that must be implemented
 
 protected:
-    BaseObject* Find(long handle);
+    Area* Find(long handle);
 };
 
 } //NUX_NAMESPACE_END

@@ -44,14 +44,14 @@ protected:
     void DestroyLayout();
 
 private:
-    // Inherited from BaseObject. Declared as private so they can't be accessed by client.
-    virtual void SetMinimumSize(int w, int h) { BaseObject::SetMinimumSize(w, h); }
-    virtual void SetMaximumSize(int w, int h) { BaseObject::SetMaximumSize(w, h); }
-    virtual void SetMinMaxSize(int w, int h) { BaseObject::SetMinMaxSize(w, h); }
-    virtual void SetMinimumWidth(int w) { BaseObject::SetMinimumWidth(w); }
-    virtual void SetMaximumWidth(int w) { BaseObject::SetMaximumWidth(w); }
-    virtual void SetMinimumHeight(int h) { BaseObject::SetMinimumHeight(h); }
-    virtual void SetMaximumHeight(int h) { BaseObject::SetMaximumHeight(h); }
+    // Inherited from Area. Declared as private so they can't be accessed by client.
+    virtual void SetMinimumSize(int w, int h) { Area::SetMinimumSize(w, h); }
+    virtual void SetMaximumSize(int w, int h) { Area::SetMaximumSize(w, h); }
+    virtual void SetMinMaxSize(int w, int h) { Area::SetMinMaxSize(w, h); }
+    virtual void SetMinimumWidth(int w) { Area::SetMinimumWidth(w); }
+    virtual void SetMaximumWidth(int w) { Area::SetMaximumWidth(w); }
+    virtual void SetMinimumHeight(int h) { Area::SetMinimumHeight(h); }
+    virtual void SetMaximumHeight(int h) { Area::SetMaximumHeight(h); }
 
 };
 

@@ -321,7 +321,7 @@ long TabView::PostLayoutManagement(long LayoutResult)
         Geometry base = m_CompositionLayout->GetGeometry();
         base.OffsetPosition(-TAB_X_BORDER, -TAB_HEIGHT);
         base.OffsetSize(2*TAB_X_BORDER, TAB_HEIGHT + TAB_Y_BORDER);
-        BaseObject::SetGeometry(base);
+        Area::SetGeometry(base);
     }
     Geometry base = GetGeometry();
 

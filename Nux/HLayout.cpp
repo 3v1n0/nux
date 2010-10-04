@@ -63,9 +63,9 @@ HLayout::~HLayout()
 {
 }
 
-void HLayout::GetCompositeList(std::list<BaseObject*> *InterfaceControlList)
+void HLayout::GetCompositeList(std::list<Area*> *InterfaceControlList)
 {
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         if((*it)->IsInterfaceControl())
@@ -86,7 +86,7 @@ void HLayout::ComputeStacking(t_s32 remaining_width, t_s32 &offset_space, t_s32 
     t_s32 per_element_space = 0;
     t_s32 total_used_space = 0;
 
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         // gather all the space used by elements
@@ -158,7 +158,7 @@ long HLayout::ComputeLayout2()
         return eCompliantHeight|eCompliantWidth;
     }
 
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         (*it)->setOutofBound(false);
@@ -174,18 +174,18 @@ long HLayout::ComputeLayout2()
         if(GetParentObject() && GetParentObject()->Type().IsObjectType(HLayout::StaticObjectType))
         {
             // The parent if a HLayout(same type). Then a Stretch factor of 0 means this layout has its width set to 1.
-            BaseObject::SetBaseWidth(1);
+            Area::SetBaseWidth(1);
         }
         else if(GetParentObject() && GetParentObject()->Type().IsObjectType(VLayout::StaticObjectType))
         {
             // The parent if a VLayout. Then a Stretch factor of 0 means this layout has its height set to 1.
-            BaseObject::SetBaseHeight(1);
+            Area::SetBaseHeight(1);
         }
         else
         {
             // This is for when a layout is set as a composition layout of an ActiveInterfaceObject and its stretch factor is explicitly set to 0.
-            BaseObject::SetBaseWidth(1);
-            BaseObject::SetBaseHeight(1);
+            Area::SetBaseWidth(1);
+            Area::SetBaseHeight(1);
         }
 
         //The children will all assume their minimum size.
@@ -483,7 +483,7 @@ void HLayout::HLayoutManagement(t_s32 width, t_s32 height)
         need_recompute = false;
         t_s32 available_width = width;
         t_u32 max_stretchfactor = getMaxStretchFactor();
-        std::list<BaseObject*>::iterator it;
+        std::list<Area*>::iterator it;
 
         for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
         {
@@ -536,7 +536,7 @@ void HLayout::HLayoutManagement(t_s32 width, t_s32 height)
         }
 
         float cumul = 0;
-        BaseObject* LastElementThatCanBeResized = 0;
+        Area* LastElementThatCanBeResized = 0;
         t_s32 total_distributed_size = 0;
         for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
         {
@@ -649,7 +649,7 @@ t_u32 HLayout::getMaxStretchFactor()
 {
     t_u32 value = 0;
     t_u32 sf;
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         // In the recursive process, make sure we get always the highest stretch factor
@@ -669,7 +669,7 @@ t_u32 HLayout::getMaxStretchFactor()
 void HLayout::Draw()
 {
     // Draw Child Layout
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
         // Test Space Layout first because it is also a Layout and it will answer true to IsLayout().
@@ -738,7 +738,7 @@ void HLayout::Draw()
 
 void HLayout::ComputePosition2(float offsetX, float offsetY)
 {
-    std::list<BaseObject*>::iterator it;
+    std::list<Area*>::iterator it;
     {
         t_u32 num_element = (t_u32)m_LayoutElementList.size();
         // Get layout Width and Height

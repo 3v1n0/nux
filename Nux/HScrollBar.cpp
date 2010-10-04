@@ -413,7 +413,7 @@ bool HScrollBar::AtMinimum()
 
 int HScrollBar::GetBaseWidth()
 {
-    return BaseObject::GetBaseWidth();
+    return Area::GetBaseWidth();
 }
 
 int HScrollBar::GetBaseHeight()

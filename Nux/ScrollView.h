@@ -75,7 +75,7 @@ private:
     bool m_bSizeMatchContent;
 
 public:
-    //! Inherited from BaseObject
+    //! Inherited from Area
     virtual void SetGeometry(const Geometry& geo);
 
     /////////////////
