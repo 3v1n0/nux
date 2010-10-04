@@ -276,7 +276,7 @@ private:
 
 typedef float (*SplineFunctionCallback)(float);  
 
-class SplineCurveEditor : public ActiveInterfaceObject
+class SplineCurveEditor : public View
 {
 public:
     SplineCurveEditor(NUX_FILE_LINE_PROTO);

@@ -27,7 +27,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 typedef float (*FunctionCallback)(float);  
 
-class CurveControl : public ActiveInterfaceObject
+class CurveControl : public View
 {
 public:
     CurveControl(NUX_FILE_LINE_PROTO);

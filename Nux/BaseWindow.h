@@ -53,7 +53,7 @@ class NTexture2D;
 */
 typedef void (*ConfigureNotifyCallback)(int, int, Geometry&, void*);
 
-class BaseWindow: public ActiveInterfaceObject
+class BaseWindow: public View
 {
 public:
     BaseWindow(const TCHAR* WindowName = TEXT(""), NUX_FILE_LINE_PROTO);
@@ -65,9 +65,9 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    void AddWidget(ActiveInterfaceObject* ic);
-    void AddWidget(ActiveInterfaceObject* ic, int stretchfactor);
-    void AddWidget(std::list<ActiveInterfaceObject*> *InterfaceControlList);
+    void AddWidget(View* ic);
+    void AddWidget(View* ic, int stretchfactor);
+    void AddWidget(std::list<View*> *ViewList);
     void SetLayout(Layout* layout);
 
     //! Set the window size to respect the layout container.
@@ -154,7 +154,7 @@ private:
     bool m_bIsVisible;
     bool m_bIsModal;
 
-    std::list<ActiveInterfaceObject*> m_InterfaceObject;
+    std::list<View*> m_InterfaceObject;
     HLayout* m_TitleBarLayout;
 
     friend class PopUpWindow;

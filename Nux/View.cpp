@@ -22,13 +22,13 @@
 
 #include "Nux.h"
 #include "Layout.h"
-#include "InterfaceControl.h"
+#include "View.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-NUX_IMPLEMENT_OBJECT_TYPE(ActiveInterfaceObject);
+NUX_IMPLEMENT_OBJECT_TYPE(View);
 
-ActiveInterfaceObject::ActiveInterfaceObject(NUX_FILE_LINE_DECL)
+View::View(NUX_FILE_LINE_DECL)
 :   InputArea(NUX_FILE_LINE_PARAM)
 {
     m_CompositionLayout = 0;
@@ -42,7 +42,7 @@ ActiveInterfaceObject::ActiveInterfaceObject(NUX_FILE_LINE_DECL)
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 }
 
-ActiveInterfaceObject::~ActiveInterfaceObject()
+View::~View()
 {
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
     GetGraphicsThread()->RemoveObjectFromRefreshList(this);
@@ -50,7 +50,7 @@ ActiveInterfaceObject::~ActiveInterfaceObject()
         m_CompositionLayout->UnParentObject();
 }
 
-long ActiveInterfaceObject::ComputeChildLayout()
+long View::ComputeChildLayout()
 {
     if(m_CompositionLayout)
     {
@@ -118,7 +118,7 @@ long ActiveInterfaceObject::ComputeChildLayout()
     return 0;
 }
 
-void ActiveInterfaceObject::PositionChildLayout(float offsetX, float offsetY)
+void View::PositionChildLayout(float offsetX, float offsetY)
 {
     if(m_CompositionLayout)
     {
@@ -138,14 +138,14 @@ void ActiveInterfaceObject::PositionChildLayout(float offsetX, float offsetY)
     }
 }
 
-void ActiveInterfaceObject::PreLayoutManagement()
+void View::PreLayoutManagement()
 {
     // Give the managed layout the same size and position as the Control.
     if(m_CompositionLayout)
         m_CompositionLayout->SetGeometry(GetGeometry());
 }
 
-long ActiveInterfaceObject::PostLayoutManagement(long LayoutResult)
+long View::PostLayoutManagement(long LayoutResult)
 {
     // Set the geometry of the control to be the same as the managed layout.
     // Only the size is changed. The position of the composition layout hasn't
@@ -159,21 +159,21 @@ long ActiveInterfaceObject::PostLayoutManagement(long LayoutResult)
     return LayoutResult;
 }
 
-void ActiveInterfaceObject::PreResizeGeometry()
+void View::PreResizeGeometry()
 {
 
 }
 
-void ActiveInterfaceObject::PostResizeGeometry()
+void View::PostResizeGeometry()
 {
 }
 
-long ActiveInterfaceObject::PostProcessEvent2(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+long View::PostProcessEvent2(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     return OnEvent(ievent, TraverseInfo, ProcessEventInfo);
 }
 
-void ActiveInterfaceObject::ProcessDraw(GraphicsContext& GfxContext, bool force_draw)
+void View::ProcessDraw(GraphicsContext& GfxContext, bool force_draw)
 {
     m_IsFullRedraw = false;
     if(force_draw)
@@ -203,17 +203,17 @@ void ActiveInterfaceObject::ProcessDraw(GraphicsContext& GfxContext, bool force_
     m_IsFullRedraw = false;
 }
 
-void ActiveInterfaceObject::DrawContent(GraphicsContext& GfxContext, bool force_draw)
+void View::DrawContent(GraphicsContext& GfxContext, bool force_draw)
 {
 
 }
 
-void ActiveInterfaceObject::PostDraw(GraphicsContext& GfxContext, bool force_draw)
+void View::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 {
 
 }
 
-void ActiveInterfaceObject::NeedRedraw()
+void View::NeedRedraw()
 {
     //GetThreadWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetGraphicsThread();
@@ -222,7 +222,7 @@ void ActiveInterfaceObject::NeedRedraw()
     m_NeedRedraw = true;
 }
 
-void ActiveInterfaceObject::NeedSoftRedraw()
+void View::NeedSoftRedraw()
 {
     //GetThreadWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetGraphicsThread();
@@ -231,12 +231,12 @@ void ActiveInterfaceObject::NeedSoftRedraw()
     //m_NeedRedraw = false;
 }
 
-bool ActiveInterfaceObject::IsRedrawNeeded()
+bool View::IsRedrawNeeded()
 {
     return m_NeedRedraw;
 }
 
-void ActiveInterfaceObject::DoneRedraw()
+void View::DoneRedraw()
 {
     m_NeedRedraw = false;
     if(m_CompositionLayout)
@@ -245,7 +245,7 @@ void ActiveInterfaceObject::DoneRedraw()
     }
 }
 
-void ActiveInterfaceObject::DrawLayout()
+void View::DrawLayout()
 {
     if(m_CompositionLayout)
     {
@@ -273,16 +273,16 @@ void ActiveInterfaceObject::DrawLayout()
     }
 }
 
-Layout* ActiveInterfaceObject::GetCompositionLayout() const
+Layout* View::GetCompositionLayout() const
 {
     return m_CompositionLayout;
 }
 
-void ActiveInterfaceObject::SetCompositionLayout(Layout* layout)
+void View::SetCompositionLayout(Layout* layout)
 {
     if(layout == 0)
     {
-        nuxAssertMsg(0, TEXT("[ActiveInterfaceObject::SetCompositionLayout] Invalid parent obejct."));
+        nuxAssertMsg(0, TEXT("[View::SetCompositionLayout] Invalid parent obejct."));
         return;
     }
 
@@ -295,7 +295,7 @@ void ActiveInterfaceObject::SetCompositionLayout(Layout* layout)
     }
     else if(parent != 0)
     {
-        nuxAssertMsg(0, TEXT("[ActiveInterfaceObject::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again."));
+        nuxAssertMsg(0, TEXT("[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again."));
         return;
     }
 
@@ -306,65 +306,65 @@ void ActiveInterfaceObject::SetCompositionLayout(Layout* layout)
     m_CompositionLayout = layout;
 }
 
-void ActiveInterfaceObject::RemoveCompositionLayout()
+void View::RemoveCompositionLayout()
 {
     if(m_CompositionLayout)
         m_CompositionLayout->UnParentObject();
     m_CompositionLayout = 0;
 }
 
-bool ActiveInterfaceObject::SearchInAllSubNodes(Area* bo)
+bool View::SearchInAllSubNodes(Area* bo)
 {
     if(m_CompositionLayout)
         return m_CompositionLayout->SearchInAllSubNodes(bo);
     return false;
 }
 
-bool ActiveInterfaceObject::SearchInFirstSubNodes(Area* bo)
+bool View::SearchInFirstSubNodes(Area* bo)
 {
     if(m_CompositionLayout)
         return m_CompositionLayout->SearchInFirstSubNodes(bo);
     return false;
 }
 
-void ActiveInterfaceObject::SetGeometry(const Geometry& geo)
+void View::SetGeometry(const Geometry& geo)
 {
     Area::SetGeometry(geo);
     ComputeChildLayout();
     PostResizeGeometry();
 }
 
-void ActiveInterfaceObject::SetFont(IntrusiveSP<FontTexture> Font)
+void View::SetFont(IntrusiveSP<FontTexture> Font)
 {
     m_font = Font;
 }
 
-IntrusiveSP<FontTexture> ActiveInterfaceObject::GetFont()
+IntrusiveSP<FontTexture> View::GetFont()
 {
     return m_font;
 }
 
-void ActiveInterfaceObject::SetTextColor(const Color& color)
+void View::SetTextColor(const Color& color)
 {
     m_TextColor = color;
 }
 
-Color ActiveInterfaceObject::GetTextColor()
+Color View::GetTextColor()
 {
     return m_TextColor;
 }
 
-void ActiveInterfaceObject::DisableWidget()
+void View::DisableWidget()
 {
     m_IsEnabled = false;
 }
 
-void ActiveInterfaceObject::EnableWidget()
+void View::EnableWidget()
 {
     m_IsEnabled = true;
 }
 
-bool ActiveInterfaceObject::IsWidgetEnabled()
+bool View::IsWidgetEnabled()
 {
     return m_IsEnabled;
 }

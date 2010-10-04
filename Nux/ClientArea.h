@@ -25,7 +25,7 @@
 
 #include "InputArea.h"
 #include "Painter.h"
-#include "InterfaceControl.h"
+#include "View.h"
 #include "TimerProc.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
@@ -40,7 +40,7 @@ struct ClientAreaDraw
     Geometry clipgeometry;
 };
 
-class ClientArea: public ActiveInterfaceObject
+class ClientArea: public View
 {
 public:
     ClientArea(NUX_FILE_LINE_PROTO);

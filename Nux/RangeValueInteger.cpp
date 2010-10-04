@@ -28,7 +28,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 RangeValueInteger::RangeValueInteger(int Value, int MinValue, int MaxValue, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_min                   = MinValue;
     m_max                   = MaxValue;
@@ -75,8 +75,8 @@ void RangeValueInteger::InitializeWidgets()
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
 
-    hlayout->AddActiveInterfaceObject(m_ValueString, 0, eCenter, eFull);
-    hlayout->AddActiveInterfaceObject(m_Percentage, 4, eCenter, eFull);
+    hlayout->AddView(m_ValueString, 0, eCenter, eFull);
+    hlayout->AddView(m_Percentage, 4, eCenter, eFull);
     //hlayout->AddLayout(&vlayout, 4);
     hlayout->SetHorizontalExternalMargin(0);
     hlayout->SetHorizontalInternalMargin(2);

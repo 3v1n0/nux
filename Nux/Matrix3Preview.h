@@ -32,7 +32,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class HLayout;
 class StaticTextBox;
 
-class Matrix3Preview : public ActiveInterfaceObject
+class Matrix3Preview : public View
 {
 public:
     Matrix3Preview(Matrix3 matrix = Matrix3::IDENTITY(), NUX_FILE_LINE_PROTO);

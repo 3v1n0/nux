@@ -28,7 +28,7 @@ class HScrollBar;
 class VScrollBar;
 
 // Rename it to ScrollArea or ScrollWindow
-class ScrollView: public ActiveInterfaceObject
+class ScrollView: public View
 {
 public:
     ScrollView(NUX_FILE_LINE_PROTO);

@@ -277,7 +277,7 @@ private:
 };
 
 
-class ColorGradient : public ActiveInterfaceObject //public ValuatorAbstraction
+class ColorGradient : public View //public ValuatorAbstraction
 {
 public:
     enum ColorMode

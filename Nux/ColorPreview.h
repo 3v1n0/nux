@@ -36,7 +36,7 @@ class TimerFunctor;
 class TimerHandle;
 class ColorDialogProxy;
 
-class ColorPreview : public ActiveInterfaceObject
+class ColorPreview : public View
 {
 public:
     ColorPreview(float red = 0.0f, float green = 0.0f, float blue = 0.0f,  eColorModel colormodel = CM_RGB, NUX_FILE_LINE_PROTO);

@@ -27,7 +27,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 ColorArea::ColorArea(Color color, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_Color(color)
 {
     SetMinMaxSize(50, 50);

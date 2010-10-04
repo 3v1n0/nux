@@ -80,7 +80,7 @@ private:
     friend class ColorPreview;
 };
 
-class ColorEditor : public ActiveInterfaceObject
+class ColorEditor : public View
 {
 public:
     ColorEditor(NUX_FILE_LINE_PROTO);

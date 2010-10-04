@@ -64,7 +64,7 @@ private:
     friend class SplineCurvePreview;
 };
 
-class SplineCurvePreview : public ActiveInterfaceObject
+class SplineCurvePreview : public View
 {
 public:
     SplineCurvePreview(NUX_FILE_LINE_PROTO);

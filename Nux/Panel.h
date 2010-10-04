@@ -41,9 +41,9 @@ public:
     virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw);
     virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw);
 
-    //void AddWidget(ActiveInterfaceObject* ic);
-    void AddWidget(ActiveInterfaceObject* ic, int stretchfactor = 1);
-    void AddWidget(std::list<ActiveInterfaceObject*> *InterfaceControlList);
+    //void AddWidget(View* ic);
+    void AddWidget(View* ic, int stretchfactor = 1);
+    void AddWidget(std::list<View*> *ViewList);
     void SetLayout(Layout* layout);
     void clearContent();
 

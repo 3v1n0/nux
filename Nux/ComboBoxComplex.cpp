@@ -88,7 +88,7 @@ void ComboBoxComplex::InitializeWidgets()
 
     m_ListBox->sigTableItemSelected.connect(sigc::mem_fun(this, &ComboBoxComplex::RecvSigActionTriggered));
     m_ListBox->SetGeometry(Geometry(0, 0, 100, 400));
-    m_Layout->AddActiveInterfaceObject(m_ListBox, 1, eAbove, eFull);
+    m_Layout->AddView(m_ListBox, 1, eAbove, eFull);
     // Setting the layout stretch factor to 0 forces the list TableCtrl to have always use its minimum width.
     // This is how the PopupWindow width is controlled. SetPopupWidth define the minimum width of the TableCtrl.
     // Because m_Layout(a HLayout) has a stretch factor of 0, it will force the m_ListBox to its minimum width. 
@@ -320,7 +320,7 @@ void ComboBoxComplex::SetPopupWidth(unsigned int width)
 
 long ComboBoxComplex::PostLayoutManagement(long LayoutResult)
 {
-    ActiveInterfaceObject::PostLayoutManagement(LayoutResult);
+    View::PostLayoutManagement(LayoutResult);
     Geometry geo = GetGeometry();
     
     // If we call m_ListBox->SetSizeMatchContent(false) in the constructor, then the m_ListBox will use its minimum height because 

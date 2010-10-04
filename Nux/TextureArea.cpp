@@ -27,7 +27,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 TextureArea::TextureArea(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     //SetMinMaxSize(50, 50);
 

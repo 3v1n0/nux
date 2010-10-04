@@ -38,7 +38,7 @@ class Button;
 class StaticTextBox;
 class InputArea;
 
-class TimeGraph : public ActiveInterfaceObject
+class TimeGraph : public View
 {
 public:
     TimeGraph(const TCHAR* Title, NUX_FILE_LINE_PROTO);

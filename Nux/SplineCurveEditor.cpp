@@ -39,7 +39,7 @@ static const int GRAPH_MARGIN = 2;
 unsigned long CTRL_KEY = 0;
 // todo InitWidget
 SplineCurveEditor::SplineCurveEditor(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_minX              = 0.0f;
     m_minY              = 0.0f;

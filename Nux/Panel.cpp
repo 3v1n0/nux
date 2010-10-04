@@ -145,11 +145,11 @@ void Panel::PostDraw(GraphicsContext& GfxContext, bool force_draw)
 
 }
 
-void Panel::AddWidget(ActiveInterfaceObject* ic, int stretchfactor)
+void Panel::AddWidget(View* ic, int stretchfactor)
 {
    if(ic && m_layout)
    {
-       m_layout->AddActiveInterfaceObject(ic, stretchfactor);
+       m_layout->AddView(ic, stretchfactor);
        // if(stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
        // and the children will take their natural size by expending WidgetLayout.
        // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
@@ -158,11 +158,11 @@ void Panel::AddWidget(ActiveInterfaceObject* ic, int stretchfactor)
    }
 }
 
-void Panel::AddWidget(std::list<ActiveInterfaceObject*> *InterfaceControlList)
+void Panel::AddWidget(std::list<View*> *ViewList)
 {
-    std::list<ActiveInterfaceObject*>::iterator it;
+    std::list<View*>::iterator it;
     
-    for(it = InterfaceControlList->begin(); it != InterfaceControlList->end(); it++)
+    for(it = ViewList->begin(); it != ViewList->end(); it++)
     {
         AddWidget((*it));
     }
@@ -173,7 +173,7 @@ void Panel::SetLayout(Layout* layout)
     if(layout == 0)
         return;
 
-    std::list<Area*> *InterfaceControlList = new std::list<Area*>;
+    std::list<Area*> *ViewList = new std::list<Area*>;
 
     m_layout = layout;
 
@@ -181,7 +181,7 @@ void Panel::SetLayout(Layout* layout)
 
     FormatContent();
 
-    delete InterfaceControlList;
+    delete ViewList;
 }
 
 void Panel::clearContent()

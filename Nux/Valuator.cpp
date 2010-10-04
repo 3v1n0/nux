@@ -28,7 +28,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 Valuator::Valuator(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_Mouse(0)
 {
     m_MouseControlledButton = new CoreArea(NUX_TRACKER_LOCATION);

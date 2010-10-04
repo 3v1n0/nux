@@ -50,7 +50,7 @@ MenuBarItem::~MenuBarItem()
 }
 
 MenuBar::MenuBar(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_MenuIsActive(false)
 //,   m_CurrentMenu(0)
 ,   m_IsOpeningMenu(false)
@@ -275,7 +275,7 @@ void MenuBar::AddMenu(const TCHAR* MenuLabel, MenuPage* menu, NTexture *icon)
     menubar_item->menu->sigTerminateMenuCascade.connect(sigc::mem_fun(this, &MenuBar::RecvSigTerminateMenuCascade));
     menubar_item->menu->sigMouseDownOutsideMenuCascade.connect(sigc::mem_fun(this, &MenuBar::RecvSigMouseDownOutsideMenuCascade));
 
-    m_hlayout->AddActiveInterfaceObject(menubar_item->area, 0, eCenter);
+    m_hlayout->AddView(menubar_item->area, 0, eCenter);
     GetGraphicsThread()->ComputeElementLayout(m_hlayout);
 }
 

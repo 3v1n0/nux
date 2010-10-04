@@ -28,7 +28,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 AbstractButton::AbstractButton(const TCHAR* Caption, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_State(false)
 {
 

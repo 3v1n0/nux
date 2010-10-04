@@ -32,9 +32,9 @@ class MenuPage;
 class VLayout;
 class MenuBar;
 
-class MenuItem: public ActiveInterfaceObject
+class MenuItem: public View
 {
-    NUX_DECLARE_OBJECT_TYPE(MenuItem, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuItem, View);
 public:
     MenuItem(const TCHAR* label, int UserValue, NUX_FILE_LINE_PROTO);
     ~MenuItem();
@@ -60,9 +60,9 @@ private:
     friend class MenuPage;
 };
 
-class MenuSeparator: public ActiveInterfaceObject
+class MenuSeparator: public View
 {
-    NUX_DECLARE_OBJECT_TYPE(MenuSeparator, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuSeparator, View);
 public:
     MenuSeparator(NUX_FILE_LINE_PROTO);
     ~MenuSeparator();
@@ -76,9 +76,9 @@ private:
     friend class MenuPage;
 };
 
-class MenuPage: public ActiveInterfaceObject
+class MenuPage: public View
 {
-    NUX_DECLARE_OBJECT_TYPE(MenuPage, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuPage, View);
 public:
     MenuPage(const TCHAR* title = TEXT(""), NUX_FILE_LINE_PROTO);
     ~MenuPage();

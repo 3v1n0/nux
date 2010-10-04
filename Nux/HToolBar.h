@@ -29,7 +29,7 @@ class EditTextBox;
 class StaticTextBox;
 class HLayout;
 
-class HToolBar: public ActiveInterfaceObject
+class HToolBar: public View
 {
 public:
     HToolBar(NUX_FILE_LINE_PROTO);

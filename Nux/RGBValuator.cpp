@@ -34,7 +34,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 RGBValuator::RGBValuator(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_color_model(CM_RGB)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
@@ -46,7 +46,7 @@ RGBValuator::RGBValuator(NUX_FILE_LINE_DECL)
 }
 
 RGBValuator::RGBValuator(float red, float green, float blue, float alpha, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_color_model(CM_RGB)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
@@ -58,7 +58,7 @@ RGBValuator::RGBValuator(float red, float green, float blue, float alpha, NUX_FI
 }
 
 RGBValuator::RGBValuator(Color color, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_color_model(CM_RGB)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
@@ -70,7 +70,7 @@ RGBValuator::RGBValuator(Color color, NUX_FILE_LINE_DECL)
 }
 
 RGBValuator::RGBValuator(eColorModel colorModel, float x, float y, float z, float alpha,    NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_color_model(colorModel)
 ,   m_color_format(COLORFORMAT_FLOAT)
 {
@@ -218,33 +218,33 @@ void RGBValuator::InitializeWidgets()
     m_ColorModel->SetMinimumSize(20, 16 /*PRACTICAL_WIDGET_HEIGHT*/);
     m_ColorFormat->SetMinimumSize(20, 16 /*PRACTICAL_WIDGET_HEIGHT*/);
 
-    redlayout->AddActiveInterfaceObject(m_ComponentLabel0, 0);
-    redlayout->AddActiveInterfaceObject(m_RedCaption, 0);
-    redlayout->AddActiveInterfaceObject(m_RedValuator, 1);
+    redlayout->AddView(m_ComponentLabel0, 0);
+    redlayout->AddView(m_RedCaption, 0);
+    redlayout->AddView(m_RedValuator, 1);
     redlayout->SetHorizontalInternalMargin(4);
 
-    greenlayout->AddActiveInterfaceObject(m_ComponentLabel1, 0);
-    greenlayout->AddActiveInterfaceObject(m_GreenCaption, 0);
-    greenlayout->AddActiveInterfaceObject(m_GreenValuator, 1);
+    greenlayout->AddView(m_ComponentLabel1, 0);
+    greenlayout->AddView(m_GreenCaption, 0);
+    greenlayout->AddView(m_GreenValuator, 1);
     greenlayout->SetHorizontalInternalMargin(4);
 
-    bluelayout->AddActiveInterfaceObject(m_ComponentLabel2, 0);
-    bluelayout->AddActiveInterfaceObject(m_BlueCaption, 0);
-    bluelayout->AddActiveInterfaceObject(m_BlueValuator, 1);
+    bluelayout->AddView(m_ComponentLabel2, 0);
+    bluelayout->AddView(m_BlueCaption, 0);
+    bluelayout->AddView(m_BlueValuator, 1);
     bluelayout->SetHorizontalInternalMargin(4);
 
-    alphalayout->AddActiveInterfaceObject(m_ComponentAlpha, 0);
-    alphalayout->AddActiveInterfaceObject(m_AlphaCaption, 0);
-    alphalayout->AddActiveInterfaceObject(m_AlphaValuator, 1);
+    alphalayout->AddView(m_ComponentAlpha, 0);
+    alphalayout->AddView(m_AlphaCaption, 0);
+    alphalayout->AddView(m_AlphaValuator, 1);
     alphalayout->SetHorizontalInternalMargin(4);
 
     // Set layout
-    colormodel_layout->AddActiveInterfaceObject(m_ColorSquare, 0, eCenter, eFix);
-    colormodel_layout->AddActiveInterfaceObject(m_ColorModel, 0, eCenter, eFull);
-    colormodel_layout->AddActiveInterfaceObject(m_ColorFormat, 0, eCenter, eFull);
+    colormodel_layout->AddView(m_ColorSquare, 0, eCenter, eFix);
+    colormodel_layout->AddView(m_ColorModel, 0, eCenter, eFull);
+    colormodel_layout->AddView(m_ColorFormat, 0, eCenter, eFull);
     colormodel_layout->SetVerticalInternalMargin(2);
 
-    hlayout->AddActiveInterfaceObject(colormodel_layout, 0, eCenter , eFull);
+    hlayout->AddView(colormodel_layout, 0, eCenter , eFull);
 
     vlayout->AddLayout(redlayout, 1);
     vlayout->AddLayout(greenlayout, 1);
@@ -1440,7 +1440,7 @@ void RGBValuator::SetColorFormat(ColorFormat cf)
 
 long RGBValuator::ComputeChildLayout()
 {
-    return ActiveInterfaceObject::ComputeChildLayout();
+    return View::ComputeChildLayout();
 }
 
 Color RGBValuator::GetColor()

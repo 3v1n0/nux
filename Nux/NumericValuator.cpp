@@ -57,9 +57,9 @@ void NumericValuator::InitializeWidgets()
     m_SpinnerUpBtn->SetMinimumSize(BTN_WIDTH, BTN_HEIGHT);
     m_SpinnerUpBtn->SetGeometry(Geometry(0, 0, BTN_WIDTH, BTN_HEIGHT));
     
-    hlayout->AddActiveInterfaceObject(m_SpinnerDownBtn, 0);
-    hlayout->AddActiveInterfaceObject(m_EditLine, 1);
-    hlayout->AddActiveInterfaceObject(m_SpinnerUpBtn, 0);
+    hlayout->AddView(m_SpinnerDownBtn, 0);
+    hlayout->AddView(m_EditLine, 1);
+    hlayout->AddView(m_SpinnerUpBtn, 0);
     hlayout->SetContentDistribution(eStackLeft);
 
     SetCompositionLayout(hlayout);

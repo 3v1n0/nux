@@ -23,7 +23,7 @@
 #ifndef PROPERTYLIST_H
 #define PROPERTYLIST_H
 
-#include "InterfaceControl.h"
+#include "View.h"
 #include "ActionItem.h"
 #include "RangeValue.h"
 #include "Button.h"
@@ -124,7 +124,7 @@ extern const int PROPERTY_BORDER_Y;
 
 #define NODE_SIG_CONNECT(signal, Cls, MemFun) signal.connect(sigc::mem_fun(this, &Cls::MemFun));
 
-class SectionProperty : public TableItem//, public ActiveInterfaceObject
+class SectionProperty : public TableItem//, public View
 {
     NODE_XML_CLASS_MEMBER(SectionProperty);
 public:

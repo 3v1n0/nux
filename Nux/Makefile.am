@@ -90,7 +90,7 @@ source_cpp = \
   $(srcdir)/HToolBar.cpp \
   $(srcdir)/HueRangeValuator.cpp \
   $(srcdir)/IntegerValidator.cpp \
-  $(srcdir)/InterfaceControl.cpp \
+  $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
   $(srcdir)/Layout.cpp \
   $(srcdir)/ListControl.cpp \
@@ -218,7 +218,7 @@ source_h = \
   $(srcdir)/HToolBar.h \
   $(srcdir)/HueRangeValuator.h \
   $(srcdir)/IntegerValidator.h \
-  $(srcdir)/InterfaceControl.h \
+  $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
   $(srcdir)/Layout.h \
   $(srcdir)/ListControl.h \

@@ -41,7 +41,7 @@ const int TitleBarHeight = 20;
 */
 
 BaseWindow::BaseWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_TopBorder(0)
 ,   m_Border(0)
 ,   m_bSizeMatchLayout(false)
@@ -196,11 +196,11 @@ void BaseWindow::SetConfigureNotifyCallback(ConfigureNotifyCallback Callback, vo
     m_configure_notify_callback_data = Data;
 }
 
-void BaseWindow::AddWidget(ActiveInterfaceObject* ic)
+void BaseWindow::AddWidget(View* ic)
 {
     if(ic && m_layout)
     {
-        m_layout->AddActiveInterfaceObject(ic, 0);
+        m_layout->AddView(ic, 0);
         // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
         // and the children will take their natural size by expending WidgetLayout.
         // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
@@ -209,11 +209,11 @@ void BaseWindow::AddWidget(ActiveInterfaceObject* ic)
     }
 }
 
-void BaseWindow::AddWidget(ActiveInterfaceObject* ic, int stretchfactor)
+void BaseWindow::AddWidget(View* ic, int stretchfactor)
 {
     if(ic && m_layout)
     {
-        m_layout->AddActiveInterfaceObject(ic, stretchfactor);
+        m_layout->AddView(ic, stretchfactor);
         // if(stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
         // and the children will take their natural size by expending WidgetLayout.
         // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
@@ -222,13 +222,13 @@ void BaseWindow::AddWidget(ActiveInterfaceObject* ic, int stretchfactor)
     }
 }
 
-void BaseWindow::AddWidget(std::list<ActiveInterfaceObject*> *InterfaceControlList)
+void BaseWindow::AddWidget(std::list<View*> *ViewList)
 {
     m_CompositionLayout->Clear();
 
-    std::list<ActiveInterfaceObject*>::iterator it;
+    std::list<View*>::iterator it;
     
-    for(it = InterfaceControlList->begin(); it != InterfaceControlList->end(); it++)
+    for(it = ViewList->begin(); it != ViewList->end(); it++)
     {
         AddWidget((*it));
     }

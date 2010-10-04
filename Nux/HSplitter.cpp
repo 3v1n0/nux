@@ -37,7 +37,7 @@ static const t_s32 HSPLITTERHEIGHT = 5;
 static const t_s32 HSTICK_SIZE = 5;
 
 HSplitter::HSplitter(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 { 
     m_layout                    = 0;
     new_addition                = false;
@@ -101,9 +101,9 @@ long HSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             {
                 DoNotProcess |= eDoNotProcess;
             }
-            if((*it)->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+            if((*it)->Type().IsDerivedFromType(View::StaticObjectType))
             {
-                ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
+                View* ic = NUX_STATIC_CAST(View*, (*it));
                 ret = ic->ProcessEvent(ievent, ret, ProcEvInfo | DoNotProcess);
             }
             else if((*it)->Type().IsObjectType(InputArea::StaticObjectType))
@@ -126,7 +126,7 @@ void HSplitter::Draw(GraphicsContext& GfxContext, bool force_draw)
 {
     GfxContext.PushClippingRectangle(GetGeometry());
     Geometry base = GetGeometry();
-//    std::vector<smptr(ActiveInterfaceObject)>::iterator it;
+//    std::vector<smptr(View)>::iterator it;
 //    for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
 //    {
 //        (*it)->ProcessDraw(force_draw);
@@ -180,9 +180,9 @@ void HSplitter::DrawContent(GraphicsContext& GfxContext, bool force_draw)
         base.SetY(sgeo.y + sgeo.GetHeight());
         if(force_draw || need_redraw)
         {
-            if((*it)->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+            if((*it)->Type().IsDerivedFromType(View::StaticObjectType))
             {
-                ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
+                View* ic = NUX_STATIC_CAST(View*, (*it));
                 ic->ProcessDraw(GfxContext, true);
             }
             else if((*it)->Type().IsObjectType(InputArea::StaticObjectType))
@@ -203,9 +203,9 @@ void HSplitter::DrawContent(GraphicsContext& GfxContext, bool force_draw)
         }
         else
         {
-            if((*it)->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+            if((*it)->Type().IsDerivedFromType(View::StaticObjectType))
             {
-                ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
+                View* ic = NUX_STATIC_CAST(View*, (*it));
                 ic->ProcessDraw(GfxContext, false);
             }
             else if((*it)->Type().IsObjectType(InputArea::StaticObjectType))
@@ -385,9 +385,9 @@ long HSplitter::ComputeChildLayout()
 
         //m_InterfaceObject[i]->SetGeometry(Geometry(x, accheight, w, splitter_geo.y - accheight));
 
-        if(m_InterfaceObject[i]->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+        if(m_InterfaceObject[i]->Type().IsDerivedFromType(View::StaticObjectType))
         {
-            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, m_InterfaceObject[i]);
+            View* ic = NUX_STATIC_CAST(View*, m_InterfaceObject[i]);
             ic->SetGeometry(Geometry(x, accheight, w, splitter_geo.y - accheight));
             // if we are already computing the layout from the main window down, we need to call 
             // ComputeElementLayout to force the computing of this element layout.
@@ -587,9 +587,9 @@ void HSplitter::DoneRedraw()
     for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
     {
         //(*it)->DoneRedraw();
-        if((*it)->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+        if((*it)->Type().IsDerivedFromType(View::StaticObjectType))
         {
-            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
+            View* ic = NUX_STATIC_CAST(View*, (*it));
             ic->DoneRedraw();
         }
         else if((*it)->Type().IsObjectType(InputArea::StaticObjectType))

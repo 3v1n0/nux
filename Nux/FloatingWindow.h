@@ -88,7 +88,7 @@ public:
     /*
         Return true if this object can break the layout, meaning, the layout can be done on the composition layout only without 
         recomputing the whole window layout.
-        Inherited from ActiveInterfaceObject
+        Inherited from View
     */
     virtual bool CanBreakLayout()
     {
@@ -130,7 +130,7 @@ private:
     NTexture2D CloseIcon;
     NTexture2D MinimizeIcon;
 
-    std::list<ActiveInterfaceObject*> m_InterfaceObject;
+    std::list<View*> m_InterfaceObject;
     HLayout* m_TitleBarLayout;
 
     TCHAR* m_WindowTitle;

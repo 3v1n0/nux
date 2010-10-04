@@ -104,15 +104,15 @@ Vector3DoubleValuator::Vector3DoubleValuator(double X, double Y, double Z, doubl
     SpaceLayout* spacez = new SpaceLayout();
 
     spacez->SetMinimumWidth(4);
-    m_hlayout->AddActiveInterfaceObject(m_MouseControlledButton, 0);
-    m_hlayout->AddActiveInterfaceObject(m_XLabel, 0);
+    m_hlayout->AddView(m_MouseControlledButton, 0);
+    m_hlayout->AddView(m_XLabel, 0);
     //m_hlayout->AddLayout(spacex, 0);
-    m_hlayout->AddActiveInterfaceObject(m_XEdit, 1);
-    m_hlayout->AddActiveInterfaceObject(m_YLabel, 0);
+    m_hlayout->AddView(m_XEdit, 1);
+    m_hlayout->AddView(m_YLabel, 0);
     //m_hlayout->AddLayout(spacey, 0);
-    m_hlayout->AddActiveInterfaceObject(m_YEdit, 1);
-    m_hlayout->AddActiveInterfaceObject(m_ZLabel, 0);
-    m_hlayout->AddActiveInterfaceObject(m_ZEdit, 1);
+    m_hlayout->AddView(m_YEdit, 1);
+    m_hlayout->AddView(m_ZLabel, 0);
+    m_hlayout->AddView(m_ZEdit, 1);
     m_hlayout->AddLayout(spacez, 0);
     m_hlayout->SetHorizontalInternalMargin(4);
     SetCompositionLayout(m_hlayout);

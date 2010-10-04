@@ -68,7 +68,7 @@ WindowCompositor::WindowCompositor()
 
 
     m_SelectedWindow = NULL;
-    m_DrawList        = new std::list<ActiveInterfaceObject*>;
+    m_DrawList        = new std::list<View*>;
     m_EventRectList   = new std::list<Rect>;
 
     if(GetGraphicsThread()->GetWindow().HasFrameBufferSupport())
@@ -198,9 +198,9 @@ long WindowCompositor::ProcessEventOnObject(IEvent &ievent, Area* object, long T
         ievent.e_y_root = m_EventRoot.y; //GetFocusAreaWindow()->GetBaseY();
     }
 
-    if(object->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+    if(object->Type().IsDerivedFromType(View::StaticObjectType))
     {
-        ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, object);
+        View* ic = NUX_STATIC_CAST(View*, object);
         ret = ic->ProcessEvent(ievent, TraverseInfo, ProcessEventInfo);
     }
     else if(object->Type().IsObjectType(InputArea::StaticObjectType))
@@ -1127,7 +1127,7 @@ void WindowCompositor::PresentBufferToScreen(TRefGL<IOpenGLTexture2D> HWTexture,
     }
 }
 
-void WindowCompositor::AddToDrawList(ActiveInterfaceObject* ic)
+void WindowCompositor::AddToDrawList(View* ic)
 {
     m_DrawList->push_back(ic);
     m_EventRectList->push_back(getEventRect());

@@ -33,14 +33,14 @@ Color FILESELECTOR_BUTTON_COLOR = Color(0xFF4D4D4D);
 Color FILESELECTOR_BUTTON_MOUSEOVER_COLOR = Color(0xFF222222);
 
 FileSelector::FileSelector(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_hlayout           = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
     m_OpenButton        = new Button(TEXT(""), NUX_TRACKER_LOCATION);
     m_FileEditTextBox   = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
 
-    m_hlayout->AddActiveInterfaceObject(m_FileEditTextBox, 1, eCenter);
-    m_hlayout->AddActiveInterfaceObject(m_OpenButton, 0, eCenter);
+    m_hlayout->AddView(m_FileEditTextBox, 1, eCenter);
+    m_hlayout->AddView(m_OpenButton, 0, eCenter);
 
     //m_OpenButton->setCaption(TEXT("..."));
     m_OpenButton->SetMinimumWidth(20);

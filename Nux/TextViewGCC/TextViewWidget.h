@@ -23,13 +23,13 @@
 #ifndef TEXTVIEWWIDGET_H
 #define TEXTVIEWWIDGET_H
 
-#include "../InterfaceControl.h"
+#include "../View.h"
 
 class HScrollBar;
 class VScrollBar;
 
 // Rename it to ScrollArea or ScrollWindow
-class TextViewWidget: public InterfaceControl
+class TextViewWidget: public View
 {
 public:
     TextViewWidget();

@@ -61,7 +61,7 @@
 #include "InputArea.h"
 #include "Theme.h"
 #include "Painter.h"
-#include "InterfaceControl.h"
+#include "View.h"
 #include "AbstractThread.h"
 #include "WindowThread.h"
 #include "SystemThread.h"

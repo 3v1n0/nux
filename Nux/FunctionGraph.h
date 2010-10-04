@@ -31,7 +31,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 typedef float (*FunctionCallback)(float);  
 
-class FunctionGraph : public ActiveInterfaceObject
+class FunctionGraph : public View
 {
 public:
     FunctionGraph(NUX_FILE_LINE_PROTO);

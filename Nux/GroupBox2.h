@@ -32,7 +32,7 @@ class Layout;
     to the size of its composition layout. This unlike the Panel widget for instance who does not force itself to 
     adjust to the size of its composition layout.
 */
-class GroupBox2 : public ActiveInterfaceObject
+class GroupBox2 : public View
 {
 public:
     GroupBox2(const TCHAR* Caption = TEXT(""), NUX_FILE_LINE_PROTO);

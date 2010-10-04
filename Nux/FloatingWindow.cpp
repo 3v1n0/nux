@@ -79,9 +79,9 @@ FloatingWindow::FloatingWindow(const TCHAR* WindowName, NUX_FILE_LINE_DECL)
 
     m_WindowTitle = Strdup(TEXT(""));
     m_WindowTitleBar->SetBaseString(TEXT("Window Title"));
-    m_TitleBarLayout->AddActiveInterfaceObject((m_WindowTitleBar), 1, eCenter, eFix);
-    //m_TitleBarLayout->AddActiveInterfaceObject((&m_MinimizeButton), 0, eCenter, eFix);
-    m_TitleBarLayout->AddActiveInterfaceObject((m_CloseButton), 0, eCenter, eFix);
+    m_TitleBarLayout->AddView((m_WindowTitleBar), 1, eCenter, eFix);
+    //m_TitleBarLayout->AddView((&m_MinimizeButton), 0, eCenter, eFix);
+    m_TitleBarLayout->AddView((m_CloseButton), 0, eCenter, eFix);
 
     if(HasTitleBar())
         SetTopBorder(24);
@@ -165,7 +165,7 @@ long FloatingWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long Proces
         }
     }
 
-//    {   std::list<ActiveInterfaceObject*>::iterator it;
+//    {   std::list<View*>::iterator it;
 //        for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
 //        {
 //            ret = (*it)->ProcessEvent(ievent, ret, ProcEvInfo);

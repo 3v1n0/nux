@@ -81,8 +81,8 @@ void CheckBox::InitializeWidgets()
     // Do not configure m_TextArea-> This is done in setCaption according to the size of the caption text.
 
     m_hlayout->SetHorizontalInternalMargin(4);
-    m_hlayout->AddActiveInterfaceObject(m_CheckArea, 0);
-    m_hlayout->AddActiveInterfaceObject(m_TextArea, 0);
+    m_hlayout->AddView(m_CheckArea, 0);
+    m_hlayout->AddView(m_TextArea, 0);
 
     // This is convenient to make the layout and the CheckBox fit the check area and the caption area.
     // Since the check area is bigger than 4x4, it will force the layout and the CheckBox to grow.

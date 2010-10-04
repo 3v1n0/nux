@@ -28,9 +28,9 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Layout;
 
-class HSplitter: public ActiveInterfaceObject
+class HSplitter: public View
 {
-    NUX_DECLARE_OBJECT_TYPE(HSplitter, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(HSplitter, View);
 public:
     HSplitter(NUX_FILE_LINE_PROTO);
     ~HSplitter();

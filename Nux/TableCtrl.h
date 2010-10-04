@@ -276,7 +276,7 @@ public:
     /*
         Return true if this object can break the layout, meaning, the layout can be done on the composition layout only without 
         recomputing the whole window layout.
-        Inherited from ActiveInterfaceObject
+        Inherited from View
     */
     virtual bool CanBreakLayout()
     {

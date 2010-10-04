@@ -28,7 +28,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 ColorGradient::ColorGradient(float Value, float MinValue, float MaxValue, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_min               = MinValue;
     m_max               = MaxValue;
@@ -74,8 +74,8 @@ void ColorGradient::InitializeWidgets()
     //SetMaximumHeight(20);
     // Set layout
 
-    hlayout->AddActiveInterfaceObject(m_ValueString, 0, eCenter, eFull);
-    hlayout->AddActiveInterfaceObject(m_Percentage, 4, eCenter, eFull);
+    hlayout->AddView(m_ValueString, 0, eCenter, eFull);
+    hlayout->AddView(m_Percentage, 4, eCenter, eFull);
     //hlayout->AddLayout(&vlayout, 4);
     hlayout->SetHorizontalExternalMargin(0);
     hlayout->SetHorizontalInternalMargin(2);

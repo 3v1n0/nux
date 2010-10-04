@@ -33,7 +33,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 TextViewWidget::TextViewWidget(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_ContentOffsetX(0)
 ,   m_ContentOffsetY(0)
 ,   m_vertical_scrollbar_enable(true)
@@ -74,7 +74,7 @@ TextViewWidget::TextViewWidget(NUX_FILE_LINE_DECL)
     m_FrameBufferObject->SetDepthSurface( 0 );
 
     VLayout* layout = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
-    //layout->AddActiveInterfaceObject(new Button(TEXT("Hello")));
+    //layout->AddView(new Button(TEXT("Hello")));
     SetCompositionLayout(layout);
 
     m_TextFont = IntrusiveSP<FontTexture>(new FontTexture(TEXT("Courier_size_10.txt")));
@@ -507,7 +507,7 @@ long TextViewWidget::PostLayoutManagement2(long LayoutResult)
     return (eCompliantHeight | eCompliantWidth);
 }
 
-// When the TextViewWidget is in a Layout object, and that layout call ActiveInterfaceObject::PositionChildLayout
+// When the TextViewWidget is in a Layout object, and that layout call View::PositionChildLayout
 // the TextViewWidget must call its own PositionChildLayout so it can properly do the positioning of the inner object.
 // Otherwise, m_CompositionLayout->ComputePosition2 is called but it doesn't know that it may not contain all the 
 // object of the TextViewWidget. Which result in incorrect positioning.

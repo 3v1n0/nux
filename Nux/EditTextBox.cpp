@@ -30,7 +30,7 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 EditTextBox::EditTextBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_Validator             = NULL;
     BlinkCursor             = false;
@@ -299,7 +299,7 @@ void EditTextBox::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long butt
 
 long EditTextBox::PostLayoutManagement(long LayoutResult)
 {
-    long ret = ActiveInterfaceObject::PostLayoutManagement(LayoutResult);
+    long ret = View::PostLayoutManagement(LayoutResult);
 
     m_KeyboardHandler.SetClipRegion(GetGeometry());
     return ret;

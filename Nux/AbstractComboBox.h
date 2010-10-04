@@ -27,7 +27,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 class HLayout;
 
-class AbstractComboBox: public ActiveInterfaceObject
+class AbstractComboBox: public View
 {
 public:
     AbstractComboBox(NUX_FILE_LINE_PROTO);

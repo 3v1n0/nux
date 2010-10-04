@@ -31,7 +31,7 @@ Color AbstractComboBox::m_sCOMBO_BUTTON_COLOR = Color(0xFF4D4D4D);
 Color AbstractComboBox::m_sCOMBO_MOUSEOVER_COLOR = Color(0xFF222222);
 
 AbstractComboBox::AbstractComboBox(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_MenuIsActive(false)
 {
     InitializeLayout();
@@ -45,8 +45,8 @@ AbstractComboBox::~AbstractComboBox()
 
 void AbstractComboBox::InitializeWidgets()
 {
-    m_hlayout->AddActiveInterfaceObject(m_ComboArea, 1);
-    m_hlayout->AddActiveInterfaceObject(m_Button, 0);
+    m_hlayout->AddView(m_ComboArea, 1);
+    m_hlayout->AddView(m_Button, 0);
     m_hlayout->SetHorizontalExternalMargin(0);
     m_hlayout->SetVerticalExternalMargin(0);
     SetCompositionLayout(m_hlayout);

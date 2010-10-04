@@ -25,7 +25,7 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-class ScrollBar : public ActiveInterfaceObject //public ValuatorAbstraction
+class ScrollBar : public View //public ValuatorAbstraction
 {
 public:
     ScrollBar(NUX_FILE_LINE_PROTO);

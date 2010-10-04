@@ -65,7 +65,7 @@ public:
     //virtual long ComputeLayout2(){return m_layout->ComputeLayout2();}
     //virtual void ComputePosition2() {m_layout->ComputePosition2();}
 
-    virtual void GetCompositeList(std::list<Area*> *InterfaceControlList);
+    virtual void GetCompositeList(std::list<Area*> *ViewList);
     
     //! Compute the how elements are spread inside the layout
     /*!

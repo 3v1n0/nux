@@ -25,7 +25,7 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-class AbstractButton : public ActiveInterfaceObject
+class AbstractButton : public View
 {
 public:
     AbstractButton(const TCHAR* Caption = TEXT(""), NUX_FILE_LINE_PROTO);

@@ -35,7 +35,7 @@ class VLayout;
 class HLayout;
 class EditTextBox;
 
-class RGBValuator : public ActiveInterfaceObject //public ValuatorAbstraction
+class RGBValuator : public View //public ValuatorAbstraction
 {
 public:
     

@@ -120,7 +120,7 @@ enum eSizeCompliance
 };
 
 class Layout;
-class ActiveInterfaceObject;
+class View;
 class Area;
 
 
@@ -229,13 +229,13 @@ public:
     virtual bool IsLayout() const {return false;}
     virtual bool IsSpaceLayout() const {return false;}
     virtual bool IsArea() const {return false;}
-    virtual bool IsInterfaceControl() const {return false;}
+    virtual bool IsView() const {return false;}
 
 protected:
 
     /* 
         This function is reimplemented in Layout as it need to perform some special operations.
-        It does nothing for Area and ActiveInterfaceObject classes.
+        It does nothing for Area and View classes.
     */
     //virtual void RemoveChildObject(smptr(Area));
 
@@ -246,7 +246,7 @@ protected:
         For instance, setting a button the be the child of a checkbox means absolutely nothing is terms of rendering.
         A widget with a parent cannot be added to a added to a layout for rendering. The widget has to be unparented first.
         A layout with a parent cannot be added to a widget or another layout for rendering. The layout has to be unparented first.
-        In essence only ActiveInterfaceObject and Layouts should be calling SetParentObject/UnParentObject.
+        In essence only View and Layouts should be calling SetParentObject/UnParentObject.
     */
     virtual void SetParentObject(Area*);
     virtual void UnParentObject();
@@ -272,8 +272,8 @@ private:
     //! Define a parent child structure
     /*
         An object of the class Area may have another of the class Layout as Parent.
-        An object of the class ActiveInterfaceObject may have an object of the class Layout as parent.
-        An object of the class Layout may have a parent of the class Layout or ActiveInterfaceObject as parent.
+        An object of the class View may have an object of the class Layout as parent.
+        An object of the class Layout may have a parent of the class Layout or View as parent.
         A Area cannot have children (that may change later).
     */
     Area* m_ParentObject;
@@ -336,7 +336,7 @@ public:
     sigc::signal<void, int, int, int, int> OnResize;
 
     friend class Layout;
-    friend class ActiveInterfaceObject;
+    friend class View;
     friend class WindowThread;
     friend class HSplitter;
     friend class VSplitter;

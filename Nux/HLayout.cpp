@@ -21,7 +21,7 @@
 
 
 #include "Nux.h"
-#include "InterfaceControl.h"
+#include "View.h"
 #include "HLayout.h"
 #include "VLayout.h"
 
@@ -63,20 +63,20 @@ HLayout::~HLayout()
 {
 }
 
-void HLayout::GetCompositeList(std::list<Area*> *InterfaceControlList)
+void HLayout::GetCompositeList(std::list<Area*> *ViewList)
 {
     std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
-        if((*it)->IsInterfaceControl())
+        if((*it)->IsView())
         {
-            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
-            InterfaceControlList->push_back(ic);
+            View* ic = NUX_STATIC_CAST(View*, (*it));
+            ViewList->push_back(ic);
         }
         else if((*it)->IsLayout())
         {
             Layout* layout = NUX_STATIC_CAST(Layout*, (*it));
-            layout->GetCompositeList(InterfaceControlList);
+            layout->GetCompositeList(ViewList);
         }
     }
 }
@@ -183,7 +183,7 @@ long HLayout::ComputeLayout2()
         }
         else
         {
-            // This is for when a layout is set as a composition layout of an ActiveInterfaceObject and its stretch factor is explicitly set to 0.
+            // This is for when a layout is set as a composition layout of an View and its stretch factor is explicitly set to 0.
             Area::SetBaseWidth(1);
             Area::SetBaseHeight(1);
         }
@@ -326,7 +326,7 @@ long HLayout::ComputeLayout2()
             bool largerWidth = false;
             bool smallerWidth = false;
             t_s32 ret = 0;
-            if(((*it)->IsLayout()  || (*it)->IsInterfaceControl()) /*&& ((*it)->isOutofBound() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
+            if(((*it)->IsLayout()  || (*it)->IsView()) /*&& ((*it)->isOutofBound() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
             {
                 if((*it)->IsLayout())
                 {
@@ -683,9 +683,9 @@ void HLayout::Draw()
             Layout* lyt = NUX_STATIC_CAST(Layout*, (*it));
             lyt->Draw();
         }
-        else if((*it)->IsInterfaceControl())
+        else if((*it)->IsView())
         {
-            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
+            View* ic = NUX_STATIC_CAST(View*, (*it));
             ic->DrawLayout();
         }
         else
@@ -808,7 +808,7 @@ void HLayout::ComputePosition2(float offsetX, float offsetY)
         {
             (*it)->ComputePosition2(offsetX, offsetY);
         }
-        else if((*it)->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+        else if((*it)->Type().IsDerivedFromType(View::StaticObjectType))
         {
             (*it)->PositionChildLayout(offsetX, offsetY);
         }

@@ -84,9 +84,9 @@ VScrollBar::VScrollBar(NUX_FILE_LINE_DECL)
     m_TopThumb->SetMaximumSize(VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
     m_TopThumb->SetGeometry(Geometry(0, 0, VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT));
 
-    vlayout->AddActiveInterfaceObject(m_TopThumb, 0, eCenter, eFix);
-    vlayout->AddActiveInterfaceObject(m_Track, 1, eCenter, eFull);
-    vlayout->AddActiveInterfaceObject(m_BottomThumb, 0, eCenter, eFix);
+    vlayout->AddView(m_TopThumb, 0, eCenter, eFix);
+    vlayout->AddView(m_Track, 1, eCenter, eFull);
+    vlayout->AddView(m_BottomThumb, 0, eCenter, eFix);
 
     callback = new TimerFunctor;
     callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::VScrollBarHandler));

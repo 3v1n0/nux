@@ -27,7 +27,7 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-class TextureArea : public ActiveInterfaceObject
+class TextureArea : public View
 {
 public:
     TextureArea(NUX_FILE_LINE_PROTO);

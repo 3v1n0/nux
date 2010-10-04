@@ -50,8 +50,8 @@ ValuatorInt::ValuatorInt(int Value, int Step, int MinValue, int MaxValue)
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
     m_hlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
-    m_hlayout->AddActiveInterfaceObject(m_MouseControlledButton, 0);
-    m_hlayout->AddActiveInterfaceObject(m_EditLine, 1);
+    m_hlayout->AddView(m_MouseControlledButton, 0);
+    m_hlayout->AddView(m_EditLine, 1);
     m_hlayout->SetHorizontalInternalMargin(4);
     SetCompositionLayout(m_hlayout);
 

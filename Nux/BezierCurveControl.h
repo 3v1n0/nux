@@ -63,7 +63,7 @@ public :
 
 typedef float (*FunctionCallback)(float);  
 
-class BezierCurveControl : public ActiveInterfaceObject
+class BezierCurveControl : public View
 {
 public:
     BezierCurveControl(NUX_FILE_LINE_PROTO);

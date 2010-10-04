@@ -29,7 +29,7 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 StaticTextBox::StaticTextBox(const TCHAR* Caption, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_TextAlignment(eAlignTextLeft)
 ,   m_bMinimumWidthMatchText(true)
 ,   m_bDrawBackground(false)
@@ -140,7 +140,7 @@ void StaticTextBox::AdjustMinWidthToMatchText()
 
 void StaticTextBox::SetFont(IntrusiveSP<FontTexture> Font)
 {
-    ActiveInterfaceObject::SetFont(Font);
+    View::SetFont(Font);
     if(GetMinWidthMatchText())
         AdjustMinWidthToMatchText();
 }

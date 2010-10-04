@@ -33,8 +33,8 @@ FilePropertyItem::FilePropertyItem(const TCHAR* name)
     m_hlayout = new HLayout();
     m_TextEntry = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
     m_OpenButton = new Button(TEXT(""), NUX_TRACKER_LOCATION);
-    m_hlayout->AddActiveInterfaceObject(m_TextEntry, 1, eCenter);
-    m_hlayout->AddActiveInterfaceObject(m_OpenButton, 0, eCenter);
+    m_hlayout->AddView(m_TextEntry, 1, eCenter);
+    m_hlayout->AddView(m_OpenButton, 0, eCenter);
     m_hlayout->SetHorizontalInternalMargin(2);
     GetGraphicsThread()->ComputeElementLayout(m_hlayout);
 

@@ -23,7 +23,7 @@
 #ifndef TEXTVIEWWIDGET_H
 #define TEXTVIEWWIDGET_H
 
-#include "../InterfaceControl.h"
+#include "../View.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
@@ -31,7 +31,7 @@ class HScrollBar;
 class VScrollBar;
 
 // Rename it to ScrollArea or ScrollWindow
-class TextViewWidget: public ActiveInterfaceObject
+class TextViewWidget: public View
 {
 public:
     TextViewWidget(NUX_FILE_LINE_PROTO);

@@ -24,13 +24,13 @@
 #define TABVIEW_H
 
 #include "Nux.h"
-#include "InterfaceControl.h"
+#include "View.h"
 #include "TimerProc.h"
 #include "HLayout.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-class TabView : public ActiveInterfaceObject
+class TabView : public View
 {
 public:
     TabView(NUX_FILE_LINE_PROTO);
@@ -47,7 +47,7 @@ public:
     /*
         Return true if this object can break the layout, meaning, the layout can be done on the composition layout only without 
         recomputing the whole window layout.
-        Inherited from ActiveInterfaceObject
+        Inherited from View
     */
     virtual bool CanBreakLayout() { return false; }
 

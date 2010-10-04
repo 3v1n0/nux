@@ -28,7 +28,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class Button;
 class EditTextBox;
 
-class FileSelector: public ActiveInterfaceObject
+class FileSelector: public View
 {
 public:
     FileSelector(NUX_FILE_LINE_PROTO);

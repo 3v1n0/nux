@@ -75,7 +75,7 @@ private:
     All elements of the matrix are writeable through the UI. The Matrix3Editor API provides access to the embeded matrix 
     through the member functions getMatrix() and setMatrix().
 */
-class Matrix3Editor : public ActiveInterfaceObject
+class Matrix3Editor : public View
 {
 public:
     Matrix3Editor(Matrix3 matrix = Matrix3::IDENTITY(), NUX_FILE_LINE_PROTO);

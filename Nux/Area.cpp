@@ -360,14 +360,14 @@ void Area::InitiateResizeLayout(Area* child)
         return;
     }
 
-    if(this->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+    if(this->Type().IsDerivedFromType(View::StaticObjectType))
     {
-        // The object that is being resized is a ActiveInterfaceObject object
+        // The object that is being resized is a View object
         if(this->OwnsTheReference() == false)
         {
             this->Reference();
         }
-        ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, this);
+        View* ic = NUX_STATIC_CAST(View*, this);
         if(ic->CanBreakLayout())
         {
 
@@ -400,9 +400,9 @@ void Area::InitiateResizeLayout(Area* child)
         Layout* layout = NUX_STATIC_CAST(Layout*, this);
         if(layout->m_ParentObject)
         {
-            if(layout->m_ParentObject->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+            if(layout->m_ParentObject->Type().IsDerivedFromType(View::StaticObjectType))
             {
-                ActiveInterfaceObject* ic = (ActiveInterfaceObject*)(layout->m_ParentObject);
+                View* ic = (View*)(layout->m_ParentObject);
                 if(ic->CanBreakLayout())
                 {
                     if((child != 0) && 
@@ -419,7 +419,7 @@ void Area::InitiateResizeLayout(Area* child)
                 }
                 else
                 {
-                    // The parent object of an object of type ActiveInterfaceObject is a Layout object type.
+                    // The parent object of an object of type View is a Layout object type.
                     layout->m_ParentObject->InitiateResizeLayout(this);
                 }
             }

@@ -29,7 +29,7 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-class Histogram : public ActiveInterfaceObject
+class Histogram : public View
 {
 public:
     Histogram(NUX_FILE_LINE_PROTO);

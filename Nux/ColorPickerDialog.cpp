@@ -36,7 +36,7 @@ ColorPickerDialog::ColorPickerDialog()
     m_Vlayout = new VLayout(TEXT("Color Picker"));
     m_ColorEditor = new ColorEditor();
 
-    m_Vlayout->AddActiveInterfaceObject(m_ColorEditor);
+    m_Vlayout->AddView(m_ColorEditor);
     m_Vlayout->AddLayout(m_ButtonLayout);
 
     m_Vlayout->SetStretchFactor(0);

@@ -30,7 +30,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class MenuPage;
 class PBuffer;
 class WindowThread;
-class ActiveInterfaceObject;
+class View;
 class InputArea;
 class Area;
 class BaseWindow;
@@ -92,7 +92,7 @@ public:
     */
     void CopyTextureToCompositionRT(TRefGL<IOpenGLTexture2D> HWTexture, int x, int y);
 
-    void AddToDrawList(ActiveInterfaceObject* ic);
+    void AddToDrawList(View* ic);
     void ClearDrawList();
 
 
@@ -224,7 +224,7 @@ private:
 
     std::list<BaseWindow*> m_WindowList;
     std::list<BaseWindow*> m_ModalWindowList;
-    std::list<ActiveInterfaceObject*> *m_DrawList;
+    std::list<View*> *m_DrawList;
     std::list<Rect> *m_EventRectList;
 
     std::list<MenuPage*> *m_MenuList;

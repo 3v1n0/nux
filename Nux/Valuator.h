@@ -27,7 +27,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 class EditTextBox;
 
-class Valuator: public ActiveInterfaceObject
+class Valuator: public View
 {
 public:
     Valuator(NUX_FILE_LINE_PROTO);

@@ -69,10 +69,10 @@ static void ThreadWidgetInitDialog(NThread* thread, void* InitData)
 
     ButtonLayout->SetHorizontalInternalMargin(6);
     ButtonLayout->SetVerticalExternalMargin(2);
-    ButtonLayout->AddActiveInterfaceObject(OkButton, 0);
-    ButtonLayout->AddActiveInterfaceObject(CancelButton, 0);
+    ButtonLayout->AddView(OkButton, 0);
+    ButtonLayout->AddView(CancelButton, 0);
 
-    MainLayout->AddActiveInterfaceObject(SplineControl);
+    MainLayout->AddView(SplineControl);
     MainLayout->AddLayout(ButtonLayout, 0);
     static_cast<WindowThread*>(thread)->SetLayout(MainLayout);
 
@@ -160,7 +160,7 @@ void SplineCurveDialogProxy::SetControlPoints(const SplineKnot& splineknot)
 }
 
 SplineCurvePreview::SplineCurvePreview(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_minX(0.0f)
 ,   m_minY(0.0f)
 ,   m_maxX(1.0f)

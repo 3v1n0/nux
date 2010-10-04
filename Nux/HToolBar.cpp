@@ -34,7 +34,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 HToolBar::HToolBar(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_hlayout(0)
 { 
     InitializeLayout();
@@ -112,7 +112,7 @@ void HToolBar::AddToolButton(ToolButton* toolbutton)
     if(toolbutton == 0)
         return;
 
-    m_hlayout->AddActiveInterfaceObject(toolbutton, 0, eCenter, eFix);
+    m_hlayout->AddView(toolbutton, 0, eCenter, eFix);
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
@@ -128,7 +128,7 @@ void HToolBar::AddAction(ActionItem* action)
     ToolButton* tool_button(new ToolButton);
     tool_button->SetAction(action);
 
-    m_hlayout->AddActiveInterfaceObject(tool_button, 0, eCenter, eFix);
+    m_hlayout->AddView(tool_button, 0, eCenter, eFix);
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
@@ -147,7 +147,7 @@ void HToolBar::AddSpace(int size)
 void HToolBar::AddSeparator()
 {
     VSeparator* separator(new VSeparator());
-    m_hlayout->AddActiveInterfaceObject(separator, 0);
+    m_hlayout->AddView(separator, 0);
     ComputeChildLayout();
 }
 
@@ -157,7 +157,7 @@ void HToolBar::AddEditTextLine(EditTextBox* edittextline)
     if(edittextline == 0)
         return;
 
-    m_hlayout->AddActiveInterfaceObject(edittextline, 0, eCenter, eFix);
+    m_hlayout->AddView(edittextline, 0, eCenter, eFix);
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
@@ -170,7 +170,7 @@ void HToolBar::AddStaticTextLine(StaticTextBox* statictextline)
     if(statictextline == 0)
         return;
 
-    m_hlayout->AddActiveInterfaceObject(statictextline, 0, eCenter, eFix);
+    m_hlayout->AddView(statictextline, 0, eCenter, eFix);
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.

@@ -27,7 +27,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 SpinBox_Logic::SpinBox_Logic(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_UpTimerHandler(0)
 ,   m_DownTimerHandler(0)
 {

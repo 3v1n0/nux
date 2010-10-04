@@ -31,7 +31,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 //replace MouseAreaCtrl with GfxViewCtrl
-class MouseAreaCtrl: public ActiveInterfaceObject  
+class MouseAreaCtrl: public View  
 {
 public:
     MouseAreaCtrl(NUX_FILE_LINE_PROTO);

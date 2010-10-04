@@ -54,10 +54,10 @@ static void ThreadMatrix4EditorDialog(NThread* thread, void* InitData)
 
     ButtonLayout->SetHorizontalInternalMargin(6);
     ButtonLayout->SetVerticalExternalMargin(2);
-    ButtonLayout->AddActiveInterfaceObject(OkButton, 0);
-    ButtonLayout->AddActiveInterfaceObject(CancelButton, 0);
+    ButtonLayout->AddView(OkButton, 0);
+    ButtonLayout->AddView(CancelButton, 0);
 
-    MainLayout->AddActiveInterfaceObject(matrixeditor);
+    MainLayout->AddView(matrixeditor);
     MainLayout->AddLayout(ButtonLayout, 0);
     static_cast<WindowThread*>(thread)->SetLayout(MainLayout);
 
@@ -136,7 +136,7 @@ void Matrix4DialogProxy::StopThreadMonitoring()
 }
 
 Matrix4Editor::Matrix4Editor(Matrix4 matrix, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_Matrix(matrix)
 {
     m_vlayout           = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
@@ -183,7 +183,7 @@ Matrix4Editor::Matrix4Editor(Matrix4 matrix, NUX_FILE_LINE_DECL)
     {
         for(int j = 0; j < 4; j++)
         {
-            mtx_row_layout[i]->AddActiveInterfaceObject(m_MtxInput[i][j], 0, eCenter, eFull);
+            mtx_row_layout[i]->AddView(m_MtxInput[i][j], 0, eCenter, eFull);
         }
     }
 
@@ -198,10 +198,10 @@ Matrix4Editor::Matrix4Editor(Matrix4 matrix, NUX_FILE_LINE_DECL)
     m_InverseMtxBtn->SetCaption(TEXT("Inv"));
     m_NegateMtxBtn->SetCaption(TEXT("+/-"));
 
-    m_MtxFunctionLayout->AddActiveInterfaceObject(m_IdentityMtxBtn, 0);
-    m_MtxFunctionLayout->AddActiveInterfaceObject(m_ZeroMtxBtn, 0);
-    m_MtxFunctionLayout->AddActiveInterfaceObject(m_InverseMtxBtn, 0);
-    m_MtxFunctionLayout->AddActiveInterfaceObject(m_NegateMtxBtn, 0);
+    m_MtxFunctionLayout->AddView(m_IdentityMtxBtn, 0);
+    m_MtxFunctionLayout->AddView(m_ZeroMtxBtn, 0);
+    m_MtxFunctionLayout->AddView(m_InverseMtxBtn, 0);
+    m_MtxFunctionLayout->AddView(m_NegateMtxBtn, 0);
     m_MtxFunctionLayout->SetVerticalExternalMargin(4);
     m_MtxFunctionLayout->SetHorizontalExternalMargin(0);
     m_MtxFunctionLayout->SetHorizontalInternalMargin(2);

@@ -123,7 +123,7 @@ TableCtrl::TableCtrl(bool floating_column)
     // with a stretch factor equal to 0. Because m_VLayout is either a HLayout or a VLayout (here it is a VLayout), only one dimension of the composition layout
     // will match the similar dimension of TableArea. So only one scrollbar (Horizontal or Vertical) will be adjusted.
     // See FormatTable.
-    m_VLayout->AddActiveInterfaceObject(m_TableArea, 1, eLeft, eFull);
+    m_VLayout->AddView(m_TableArea, 1, eLeft, eFull);
     m_VLayout->SetContentDistribution(eStackTop);
     m_VLayout->SetStretchFactor(1);
     SetMinimumSize(50, 50);
@@ -231,7 +231,7 @@ long TableCtrl::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
                 if(ret & eMouseEventSolved)
                     ItemSolvedEvent = true;
 
-                // Pure TableItem elements do not inherit from ActiveInterfaceObject. Therefore, they cannot call NeedRedraw() on themselves.
+                // Pure TableItem elements do not inherit from View. Therefore, they cannot call NeedRedraw() on themselves.
                 // The TableCtrl that holds them must know that they need to be redrawn. Since Pure TableItem do not trap events, the event
                 // will go to TableCtrl (like OnMouseDown) who will found out the cell where the event happened and set the dirty flag of the TableItem.
                 //if((*row_iterator)->m_item->isDirtyItem())
@@ -2302,7 +2302,7 @@ void TableCtrl::EmptyTable()
 void TableCtrl::NeedRedraw()
 {
     nuxAssertNoRecursion();
-    ActiveInterfaceObject::NeedRedraw();
+    View::NeedRedraw();
 }
 
 void TableCtrl::HighlightItem(int row, int column)

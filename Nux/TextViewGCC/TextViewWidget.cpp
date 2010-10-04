@@ -504,7 +504,7 @@ long TextViewWidget::PostLayoutManagement2(long LayoutResult)
     return (eCompliantHeight | eCompliantWidth);
 }
 
-// When the TextViewWidget is in a Layout object, and that layout call InterfaceControl::PositionChildLayout
+// When the TextViewWidget is in a Layout object, and that layout call View::PositionChildLayout
 // the TextViewWidget must call its own PositionChildLayout so it can properly do the positioning of the inner object.
 // Otherwise, m_CompositionLayout->ComputePosition2 is called but it doesn't know that it may not contain all the 
 // object of the TextViewWidget. Which result in incorrect positioning.

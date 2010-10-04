@@ -37,13 +37,13 @@ enum eControlType
     ePopupBox
 };
 
-class ActiveInterfaceObject: public InputArea //Area //public sigc::trackable
+class View: public InputArea //Area //public sigc::trackable
 {
-    NUX_DECLARE_OBJECT_TYPE(ActiveInterfaceObject, InputArea);
+    NUX_DECLARE_OBJECT_TYPE(View, InputArea);
 public:
-    ActiveInterfaceObject(NUX_FILE_LINE_DECL);
-    virtual ~ActiveInterfaceObject();
-    //virtual RemoveInterfaceControl(ActiveInterfaceObject *ic);
+    View(NUX_FILE_LINE_DECL);
+    virtual ~View();
+    //virtual RemoveView(View *ic);
 
 public:
 
@@ -66,7 +66,7 @@ public:
     virtual bool IsLayout() const {return false;}
     virtual bool IsSpaceLayout() const {return false;}
     virtual bool IsArea() const {return false;}
-    virtual bool IsInterfaceControl() const {return true;}
+    virtual bool IsView() const {return true;}
 
     void setUsingStyleDrawing(bool b)
     {
@@ -112,7 +112,7 @@ public:
 
     //! Set Geometry
     /*
-        Set the Geometry of the ActiveInterfaceObject and the geometry of the Default Background Area.
+        Set the Geometry of the View and the geometry of the Default Background Area.
         For simple interface control UI classes (RGBValuator...), this is enough.
         For others, they have to overwrite the function and do the appropriate computations
         for their component.   

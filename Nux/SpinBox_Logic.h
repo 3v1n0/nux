@@ -24,11 +24,11 @@
 #define SPINBOX_LOGIC_H
 
 #include "EditTextBox.h"
-#include "InterfaceControl.h"
+#include "View.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-class SpinBox_Logic: public ActiveInterfaceObject
+class SpinBox_Logic: public View
 {
 public:
     SpinBox_Logic(NUX_FILE_LINE_PROTO);

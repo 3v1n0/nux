@@ -54,7 +54,7 @@ static const int MENU_ITEM_TEXT_TO_BORDER_MARGIN = 5;
 
 
 MenuItem::MenuItem(const TCHAR* label, int UserValue, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_ChildMenu     = 0; 
     m_ActionItem    = new ActionItem(label, UserValue);
@@ -147,7 +147,7 @@ void MenuItem::DrawAsMenuItem(GraphicsContext& GfxContext, const Color& textcolo
 }
 
 MenuSeparator::MenuSeparator(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
 
 }
@@ -171,7 +171,7 @@ void MenuSeparator::Draw(GraphicsContext& GfxContext, bool force_draw)
 }
 
 MenuPage::MenuPage(const TCHAR* title, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_Parent = 0;
     m_item_width = MENU_ITEM_MIN_WIDTH;
@@ -407,7 +407,7 @@ ActionItem* MenuPage::AddAction(const TCHAR* label, int UserValue)
     }
 
     m_numItem = (int)m_MenuItemVector.size();
-    vlayout->AddActiveInterfaceObject(pMenuItem, 0, eCenter, eFix);
+    vlayout->AddView(pMenuItem, 0, eCenter, eFix);
     ComputeChildLayout();
 
     return pMenuItem->GetActionItem();
@@ -480,7 +480,7 @@ ActionItem* MenuPage::AddAction(const TCHAR* label, int UserValue)
 //    }
 //
 //    m_numItem = (int)m_MenuItemVector.size();
-//    vlayout->AddActiveInterfaceObject(pMenuItem, 0, eCenter, eFix);
+//    vlayout->AddView(pMenuItem, 0, eCenter, eFix);
 //    ComputeChildLayout();
 //}
 
@@ -549,7 +549,7 @@ MenuPage* MenuPage::AddMenu(const TCHAR* label)
     }
 
     m_numItem = (int)m_MenuItemVector.size();
-    vlayout->AddActiveInterfaceObject(pMenuItem, 0, eCenter, eFix);
+    vlayout->AddView(pMenuItem, 0, eCenter, eFix);
     ComputeChildLayout();
 
     return pMenuItem->GetChildMenu();
@@ -619,7 +619,7 @@ ActionItem* MenuPage::AddSubMenu(const TCHAR* label, MenuPage* menu)
     }
 
     m_numItem = (int)m_MenuItemVector.size();
-    vlayout->AddActiveInterfaceObject(pMenuItem, 0, eCenter, eFix);
+    vlayout->AddView(pMenuItem, 0, eCenter, eFix);
     ComputeChildLayout();
 
     return pMenuItem->GetActionItem();
@@ -645,7 +645,7 @@ void MenuPage::AddSeparator()
             + MENU_ITEM_TEXT_TO_BORDER_MARGIN, 4);
     }
 
-    vlayout->AddActiveInterfaceObject(pMenuSeparator, 0, eCenter, eFix);
+    vlayout->AddView(pMenuSeparator, 0, eCenter, eFix);
     ComputeChildLayout();
 }
 
@@ -1005,7 +1005,7 @@ MenuPage* MenuPage::GetParentMenu()
 
 long MenuPage::ComputeChildLayout()
 {
-    return ActiveInterfaceObject::ComputeChildLayout();
+    return View::ComputeChildLayout();
 }
 
 void MenuPage::SetGeometry(const Geometry& geo)

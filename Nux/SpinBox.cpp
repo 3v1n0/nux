@@ -69,10 +69,10 @@ void SpinBox::InitializeWidgets()
     // This is use by TextLineEditPropertyItem::GetItemBestHeight
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    hlayout->AddActiveInterfaceObject(m_EditLine, 1);
+    hlayout->AddView(m_EditLine, 1);
 
-    vlayout->AddActiveInterfaceObject(m_SpinnerUpBtn, 1);
-    vlayout->AddActiveInterfaceObject(m_SpinnerDownBtn, 1);
+    vlayout->AddView(m_SpinnerUpBtn, 1);
+    vlayout->AddView(m_SpinnerDownBtn, 1);
     hlayout->AddLayout(vlayout, 0);
 
     SetCompositionLayout(hlayout);

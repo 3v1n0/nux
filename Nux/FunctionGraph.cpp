@@ -27,7 +27,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 FunctionGraph::FunctionGraph(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_minX(0.0f)
 ,   m_minY(0.0f)
 ,   m_maxX(1.0f)

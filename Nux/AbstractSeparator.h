@@ -25,7 +25,7 @@
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
-class AbstractSeparator: public ActiveInterfaceObject
+class AbstractSeparator: public View
 {
 public:
     AbstractSeparator(NUX_FILE_LINE_PROTO);

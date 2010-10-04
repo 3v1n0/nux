@@ -27,7 +27,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 AbstractSeparator::AbstractSeparator(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_Color(0xFF888888)
 ,   m_Alpha0(0.0f)
 ,   m_Alpha1(0.592f)
@@ -37,7 +37,7 @@ AbstractSeparator::AbstractSeparator(NUX_FILE_LINE_DECL)
 }
 
 AbstractSeparator::AbstractSeparator(const Color& color, float Alpha0, float Alpha1, int Border, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_Color(color)
 ,   m_Alpha0(Alpha0)
 ,   m_Alpha1(Alpha1)

@@ -425,9 +425,9 @@ void WindowThread::RefreshLayout()
     {
         Area* bo = *it;
 
-        if(bo->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+        if(bo->Type().IsDerivedFromType(View::StaticObjectType))
         {
-            ActiveInterfaceObject* ic  = NUX_STATIC_CAST(ActiveInterfaceObject*, bo);
+            View* ic  = NUX_STATIC_CAST(View*, bo);
             if(!ic->CanBreakLayout())
                 ic->NeedRedraw();
         }
@@ -455,9 +455,9 @@ void WindowThread::ComputeElementLayout(Area* bo, bool RecurseToTopLevelLayout)
 
     if((!alreadyComputingLayout) && (!RecurseToTopLevelLayout))
         SetComputingLayout(true);
-    if(bo->Type().IsDerivedFromType(ActiveInterfaceObject::StaticObjectType))
+    if(bo->Type().IsDerivedFromType(View::StaticObjectType))
     {
-        ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, bo);
+        View* ic = NUX_STATIC_CAST(View*, bo);
         ic->NeedRedraw();
     }
     else if(bo->Type().IsDerivedFromType(Layout::StaticObjectType))

@@ -27,9 +27,9 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 class layout;
 
-class VSplitter: public ActiveInterfaceObject
+class VSplitter: public View
 {
-    NUX_DECLARE_OBJECT_TYPE(VSplitter, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(VSplitter, View);
 public:
     VSplitter(NUX_FILE_LINE_PROTO);
     ~VSplitter();

@@ -34,7 +34,7 @@ Color GroupBox2::GROUPBOX2_HEADER_TEXT_COLOR = Color(0xFFFFFFFF);
 int GroupBox2::TOP_HEADER_HEIGHT = 24;
 
 GroupBox2::GroupBox2(const TCHAR* Caption, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   bCaptionAvailable(false)
 ,   m_layout(0)
 {

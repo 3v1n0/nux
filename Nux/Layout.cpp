@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 #include "Layout.h"
-#include "InterfaceControl.h"
+#include "View.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
@@ -91,7 +91,7 @@ bool Layout::IsEmpty() const
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 void Layout::AddLayout(Layout* layout, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
 {
-    nuxAssertMsg(layout != 0, TEXT("[Layout::AddActiveInterfaceObject] Invalid parameter."));
+    nuxAssertMsg(layout != 0, TEXT("[Layout::AddView] Invalid parameter."));
     NUX_RETURN_IF_TRUE(layout == 0);
     //  Should never happen
     nuxAssertMsg(layout != this, TEXT("[Layout::AddLayout] Error: Trying to add a layout to itself."));
@@ -148,13 +148,13 @@ void Layout::AddLayout(Layout* layout, unsigned int stretchFactor, eMinorPositio
     /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
 */
 
-void Layout::AddActiveInterfaceObject(Area* bo, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
+void Layout::AddView(Area* bo, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
 {
-    nuxAssertMsg(bo != 0, TEXT("[Layout::AddActiveInterfaceObject] Invalid parameter."));
+    nuxAssertMsg(bo != 0, TEXT("[Layout::AddView] Invalid parameter."));
     NUX_RETURN_IF_TRUE(bo == 0);
 
     Area* parent = bo->GetParentObject();
-    nuxAssertMsg(parent == 0, TEXT("[Layout::AddActiveInterfaceObject] Trying to add an object that already has a parent."));
+    nuxAssertMsg(parent == 0, TEXT("[Layout::AddView] Trying to add an object that already has a parent."));
     NUX_RETURN_IF_TRUE(parent != 0);
 
     bo->SetStretchFactor(stretchFactor);
@@ -282,9 +282,9 @@ void Layout::DoneRedraw()
     std::list<Area*>::iterator it;
     for(it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
     {
-        if((*it)->IsInterfaceControl())
+        if((*it)->IsView())
         {
-            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
+            View* ic = NUX_STATIC_CAST(View*, (*it));
             ic->DoneRedraw();
         }
     }
@@ -301,9 +301,9 @@ long Layout::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventIn
             CoreArea* area = NUX_STATIC_CAST(CoreArea*, (*it));
             ret = area->OnEvent(ievent, ret, ProcessEventInfo);
         }
-        else if((*it)->IsInterfaceControl())
+        else if((*it)->IsView())
         {
-            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
+            View* ic = NUX_STATIC_CAST(View*, (*it));
             ret = ic->ProcessEvent(ievent, ret, ProcessEventInfo);
         }
         else if((*it)->IsLayout())
@@ -326,9 +326,9 @@ void Layout::ProcessDraw(GraphicsContext& GfxContext, bool force_draw)
             CoreArea* area = NUX_STATIC_CAST(CoreArea*, (*it));
             area->OnDraw(GfxContext, force_draw);
         }
-        else if((*it)->IsInterfaceControl())
+        else if((*it)->IsView())
         {
-            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
+            View* ic = NUX_STATIC_CAST(View*, (*it));
             ic->ProcessDraw(GfxContext, force_draw);
         }
         else if((*it)->IsLayout())
@@ -350,9 +350,9 @@ void Layout::NeedRedraw()
         {
             // Does not have the flag for need redraw.
         }
-        else if((*it)->IsInterfaceControl())
+        else if((*it)->IsView())
         {
-            ActiveInterfaceObject* ic = NUX_STATIC_CAST(ActiveInterfaceObject*, (*it));
+            View* ic = NUX_STATIC_CAST(View*, (*it));
             ic->NeedRedraw();
         }
         else if((*it)->IsLayout())

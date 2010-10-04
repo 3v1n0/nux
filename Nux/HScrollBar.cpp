@@ -82,9 +82,9 @@ HScrollBar::HScrollBar(NUX_FILE_LINE_DECL)
     m_LeftThumb->SetGeometry(Geometry(0, 0, HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT));
 
 
-    hlayout->AddActiveInterfaceObject(m_LeftThumb, 0, eCenter, eFix);
-    hlayout->AddActiveInterfaceObject(m_Track, 1, eCenter, eFull);
-    hlayout->AddActiveInterfaceObject(m_RightThumb, 0, eCenter, eFix);
+    hlayout->AddView(m_LeftThumb, 0, eCenter, eFix);
+    hlayout->AddView(m_Track, 1, eCenter, eFull);
+    hlayout->AddView(m_RightThumb, 0, eCenter, eFix);
     
     callback = new TimerFunctor;
     callback->OnTimerExpired.connect(sigc::mem_fun(this, &HScrollBar::HScrollBarHandler));

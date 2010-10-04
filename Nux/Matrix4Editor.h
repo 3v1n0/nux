@@ -74,7 +74,7 @@ private:
     All elements of the matrix are writeable through the UI. The Matrix4Editor API provides access to the embeded matrix 
     through the member functions getMatrix() and setMatrix().
 */
-class Matrix4Editor : public ActiveInterfaceObject
+class Matrix4Editor : public View
 {
 public:
     Matrix4Editor(Matrix4 matrix = Matrix4::IDENTITY(), NUX_FILE_LINE_PROTO);

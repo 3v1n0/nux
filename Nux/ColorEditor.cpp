@@ -65,10 +65,10 @@ static void ThreadColorEditorDialog(NThread* thread, void* InitData)
 
     ButtonLayout->SetHorizontalInternalMargin(6);
     ButtonLayout->SetVerticalExternalMargin(2);
-    ButtonLayout->AddActiveInterfaceObject(OkButton, 0);
-    ButtonLayout->AddActiveInterfaceObject(CancelButton, 0);
+    ButtonLayout->AddView(OkButton, 0);
+    ButtonLayout->AddView(CancelButton, 0);
 
-    MainLayout->AddActiveInterfaceObject(coloreditor);
+    MainLayout->AddView(coloreditor);
     MainLayout->AddLayout(ButtonLayout, 0);
     static_cast<WindowThread*>(thread)->SetLayout(MainLayout);
 
@@ -190,7 +190,7 @@ eColorChannel ColorDialogProxy::GetColorChannel()
 }
 
 ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_ColorModel = CM_RGB;
     m_ColorChannel = CC_RED;
@@ -227,9 +227,9 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
     m_BaseChannelArea->SetMinimumWidth(20);
     m_BaseChannelArea->SetMaximumWidth(20);
 
-    m_hlayout->AddActiveInterfaceObject(m_PickerArea, 1);
+    m_hlayout->AddView(m_PickerArea, 1);
     m_hlayout->AddLayout(new SpaceLayout(5, 5, 20, 20), 0);
-    m_hlayout->AddActiveInterfaceObject(m_BaseChannelArea, 0, eAbove, eFull);
+    m_hlayout->AddView(m_BaseChannelArea, 0, eAbove, eFull);
     SetCompositionLayout(m_hlayout);
 
     // RGB
@@ -240,8 +240,8 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
             redcheck->SetMinimumWidth(30);
             redtext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             redtext->SetMinimumWidth(36);
-            redlayout->AddActiveInterfaceObject(redcheck, 0);
-            redlayout->AddActiveInterfaceObject(redtext, 0);
+            redlayout->AddView(redcheck, 0);
+            redlayout->AddView(redtext, 0);
             redcheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_RED), CM_RGB ));
         }
         greenlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
@@ -250,8 +250,8 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
             greencheck->SetMinimumWidth(30);
             greentext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             greentext->SetMinimumWidth(36);
-            greenlayout->AddActiveInterfaceObject(greencheck, 0);
-            greenlayout->AddActiveInterfaceObject(greentext, 0);
+            greenlayout->AddView(greencheck, 0);
+            greenlayout->AddView(greentext, 0);
             greencheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_GREEN), CM_RGB ));
 
         }
@@ -261,8 +261,8 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
             bluecheck->SetMinimumWidth(30);
             bluetext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             bluetext->SetMinimumWidth(36);
-            bluelayout->AddActiveInterfaceObject(bluecheck, 0);
-            bluelayout->AddActiveInterfaceObject(bluetext, 0);
+            bluelayout->AddView(bluecheck, 0);
+            bluelayout->AddView(bluetext, 0);
             bluecheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_BLUE), CM_RGB ));
 
         }
@@ -276,8 +276,8 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
             huecheck->SetMinimumWidth(30);
             huetext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             huetext->SetMinimumWidth(36);
-            huelayout->AddActiveInterfaceObject(huecheck, 0);
-            huelayout->AddActiveInterfaceObject(huetext, 0);
+            huelayout->AddView(huecheck, 0);
+            huelayout->AddView(huetext, 0);
             huecheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_HUE), CM_HSV ));
         }
         saturationlayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
@@ -286,8 +286,8 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
             saturationcheck->SetMinimumWidth(30);
             saturationtext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             saturationtext->SetMinimumWidth(36);
-            saturationlayout->AddActiveInterfaceObject(saturationcheck, 0);
-            saturationlayout->AddActiveInterfaceObject(saturationtext, 0);
+            saturationlayout->AddView(saturationcheck, 0);
+            saturationlayout->AddView(saturationtext, 0);
             saturationcheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_SATURATION), CM_HSV ));
         }
         valuelayout = new HLayout(TEXT(""), NUX_TRACKER_LOCATION);
@@ -296,15 +296,15 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
             valuecheck->SetMinimumWidth(30);
             valuetext = new EditTextBox(TEXT(""), NUX_TRACKER_LOCATION);
             valuetext->SetMinimumWidth(36);
-            valuelayout->AddActiveInterfaceObject(valuecheck, 0);
-            valuelayout->AddActiveInterfaceObject(valuetext, 0);
+            valuelayout->AddView(valuecheck, 0);
+            valuelayout->AddView(valuetext, 0);
             valuecheck->sigStateChanged.connect(sigc::bind( sigc::bind( sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel), CC_VALUE), CM_HSV ));
         }
     }
 
     ctrllayout = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
-    ctrllayout->AddActiveInterfaceObject(m_ColorSquare);
-    ctrllayout->AddActiveInterfaceObject(new SpaceLayout(20,20,10,10), 1);
+    ctrllayout->AddView(m_ColorSquare);
+    ctrllayout->AddView(new SpaceLayout(20,20,10,10), 1);
     ctrllayout->AddLayout(redlayout, 0);
     ctrllayout->AddLayout(greenlayout, 0);
     ctrllayout->AddLayout(bluelayout, 0);
@@ -315,7 +315,7 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
     ctrllayout->SetHorizontalExternalMargin(2);
     ctrllayout->SetVerticalInternalMargin(2);
 
-    //ctrllayout->AddActiveInterfaceObject(new SpaceLayout(20,20,20,40), 1);
+    //ctrllayout->AddView(new SpaceLayout(20,20,20,40), 1);
     OkButton = new Button(TEXT("OK"), NUX_TRACKER_LOCATION);
     OkButton->SetMinimumWidth(60);
     OkButton->SetMinimumHeight(20);
@@ -324,8 +324,8 @@ ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
     CancelButton->SetMinimumWidth(60);
     CancelButton->SetMinimumHeight(20);
 
-//    ctrllayout->AddActiveInterfaceObject(OkButton, 1);
-//    ctrllayout->AddActiveInterfaceObject(CancelButton, 1);
+//    ctrllayout->AddView(OkButton, 1);
+//    ctrllayout->AddView(CancelButton, 1);
 
     m_hlayout->AddLayout(ctrllayout, 0);
 

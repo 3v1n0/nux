@@ -28,7 +28,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class HLayout;
 class EditTextBox;
 
-class RangeValueInteger : public ActiveInterfaceObject
+class RangeValueInteger : public View
 {
 public:
     RangeValueInteger(int Value = 0, int MinValue = 0, int MaxValue = 100, NUX_FILE_LINE_PROTO);

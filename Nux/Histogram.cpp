@@ -26,7 +26,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 Histogram::Histogram(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_minX(0)
 ,   m_minY(0)
 ,   m_maxX(100)

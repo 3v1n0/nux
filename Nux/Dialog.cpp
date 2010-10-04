@@ -50,8 +50,8 @@ Dialog::Dialog(const TCHAR* WindowName /*  = TEXT("") */)
 
     m_ButtonLayout->SetHorizontalInternalMargin(6);
     m_ButtonLayout->SetVerticalExternalMargin(2);
-    m_ButtonLayout->AddActiveInterfaceObject(m_OkButton, 0);
-    m_ButtonLayout->AddActiveInterfaceObject(m_CancelButton, 0);
+    m_ButtonLayout->AddView(m_OkButton, 0);
+    m_ButtonLayout->AddView(m_CancelButton, 0);
 
     // NuxNote: m_ButtonLayout should be moved to the places where it is used... For instance ColorPickerDialog.
 }

@@ -32,7 +32,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 static const int GRAPH_MARGIN = 1;
 
 ColorPreview::ColorPreview(float red, float green, float blue, eColorModel colormodel, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_Color(1.0f, 1.0f, 1.0f, 1.0f)
 {
     //setSize(200, 100);
@@ -67,8 +67,8 @@ ColorPreview::ColorPreview(float red, float green, float blue, eColorModel color
     //m_ColorValue->OnMouseClick.connect(sigc::mem_fun(this, &ColorPreview::RecvClick));
     //OnMouseClick.connect(sigc::mem_fun(this, &ColorPreview::RecvClick));
 
-    m_hlayout->AddActiveInterfaceObject(m_ColorArea, 0);
-    m_hlayout->AddActiveInterfaceObject(m_ColorValue, 1);
+    m_hlayout->AddView(m_ColorArea, 0);
+    m_hlayout->AddView(m_ColorValue, 1);
     m_hlayout->SetHorizontalInternalMargin(4);
     SetCompositionLayout(m_hlayout);
 

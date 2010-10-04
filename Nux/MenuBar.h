@@ -51,9 +51,9 @@ private:
     friend class MenuBar;
 };
 
-class MenuBar: public ActiveInterfaceObject
+class MenuBar: public View
 {
-    NUX_DECLARE_OBJECT_TYPE(MenuBar, ActiveInterfaceObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuBar, View);
 
 public:
     MenuBar(NUX_FILE_LINE_PROTO);

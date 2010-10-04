@@ -83,7 +83,7 @@ const NString& TabView::TabElement::GetName() const
 }
 
 TabView::TabView(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_IncrTab           = NULL;
     m_DecrTab           = NULL;
@@ -119,8 +119,8 @@ TabView::TabView(NUX_FILE_LINE_DECL)
 //     m_IncrTab->OnMouseUp.connect(sigc::mem_fun(this, &TabView::RecvTabButtonMouseUp));
 //     m_DecrTab->OnMouseUp.connect(sigc::mem_fun(this, &TabView::RecvTabButtonMouseUp));
 // 
-//     m_TabControlLayout->AddActiveInterfaceObject(m_DecrTab, 1, eCenter);
-//     m_TabControlLayout->AddActiveInterfaceObject(m_IncrTab, 1, eCenter);
+//     m_TabControlLayout->AddView(m_DecrTab, 1, eCenter);
+//     m_TabControlLayout->AddView(m_IncrTab, 1, eCenter);
 
     tabright_callback = new TimerFunctor;
     tabright_callback->OnTimerExpired.connect(sigc::mem_fun(this, &TabView::RecvTabRightTimerExpired));
@@ -157,8 +157,8 @@ void TabView::InitializeWidgets()
     m_IncrTab->OnMouseUp.connect(sigc::mem_fun(this, &TabView::RecvTabButtonMouseUp));
     m_DecrTab->OnMouseUp.connect(sigc::mem_fun(this, &TabView::RecvTabButtonMouseUp));
 
-    m_TabControlLayout->AddActiveInterfaceObject(m_DecrTab, 1, eCenter);
-    m_TabControlLayout->AddActiveInterfaceObject(m_IncrTab, 1, eCenter);
+    m_TabControlLayout->AddView(m_DecrTab, 1, eCenter);
+    m_TabControlLayout->AddView(m_IncrTab, 1, eCenter);
 
 }
 
@@ -384,7 +384,7 @@ void TabView::AddTab(const char* tab_name, Layout* tab_layout)
     Tab->_tab_area->OnMouseDown.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseDown), Tab));
     Tab->_tab_area->OnMouseUp.connect(sigc::bind( sigc::mem_fun(this, &TabView::RecvTabMouseUp), Tab));
     
-    m_TabLayout->AddActiveInterfaceObject(Tab->_tab_area, 1, eCenter);
+    m_TabLayout->AddView(Tab->_tab_area, 1, eCenter);
     GetGraphicsThread()->ComputeElementLayout(m_TabLayout);
 
     m_TabVector.push_back(Tab);

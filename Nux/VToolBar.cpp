@@ -31,7 +31,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 VToolBar::VToolBar(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 ,   m_vlayout(0)
 { 
     InitializeLayout();
@@ -117,7 +117,7 @@ void VToolBar::AddToolButton(ToolButton* toolbutton)
     if(toolbutton == 0)
         return;
 
-    m_vlayout->AddActiveInterfaceObject(toolbutton, 0, eCenter, eFix);
+    m_vlayout->AddView(toolbutton, 0, eCenter, eFix);
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
@@ -133,7 +133,7 @@ void VToolBar::AddAction(ActionItem* action)
     ToolButton* tool_button(new ToolButton);
     tool_button->SetAction(action);
 
-    m_vlayout->AddActiveInterfaceObject(tool_button, 0, eCenter, eFix);
+    m_vlayout->AddView(tool_button, 0, eCenter, eFix);
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
@@ -152,7 +152,7 @@ void VToolBar::AddSpace(int size)
 void VToolBar::AddSeparator()
 {
     HSeparator* separator(new HSeparator());
-    m_vlayout->AddActiveInterfaceObject(separator, 0);
+    m_vlayout->AddView(separator, 0);
     ComputeChildLayout();
 }
 

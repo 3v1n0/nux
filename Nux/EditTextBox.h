@@ -35,7 +35,7 @@ class TextLine;
 class Validator;
 class TimerFunctor;
 
-class EditTextBox : public ActiveInterfaceObject
+class EditTextBox : public View
 {
 public:
     EditTextBox(const TCHAR* Caption, NUX_FILE_LINE_PROTO);

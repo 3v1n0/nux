@@ -60,7 +60,7 @@ public:
         /param extend Controls the object minor dimension size.
         /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
     */
-    virtual void AddActiveInterfaceObject(Area* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
+    virtual void AddView(Area* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
     virtual void AddSpace(unsigned int width, unsigned int stretchFactor = 0);
 
     virtual void Clear();
@@ -129,7 +129,7 @@ public:
     virtual bool IsLayout() const {return true;}
     virtual bool IsSpaceLayout() const {return false;}
     
-    virtual void GetCompositeList(std::list<Area*> *InterfaceControlList)
+    virtual void GetCompositeList(std::list<Area*> *ViewList)
     {
 
     }
@@ -183,7 +183,7 @@ public:
     virtual bool FindWidget(Area* WidgetObject) const;
     virtual bool IsEmpty() const;
     /* 
-        This function is reimplemented in Layout and ActiveInterfaceObject classes  they need to perform some special operations.
+        This function is reimplemented in Layout and View classes  they need to perform some special operations.
         It does nothing for Area classes (this class cannot have children).
     */
     virtual void RemoveChildObject(Area*);
@@ -264,7 +264,7 @@ public:
         // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
 
-    virtual void AddActiveInterfaceObject(Area* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f)
+    virtual void AddView(Area* baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f)
     {
         // the baseObject is provided via the constructor.
     };

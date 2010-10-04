@@ -39,7 +39,7 @@ SplineCurveDialog::SplineCurveDialog()
     m_Vlayout = new VLayout(TEXT("Spline Curve Editor"), NUX_TRACKER_LOCATION);
     m_SplineCurve = new SplineCurveEditor(NUX_TRACKER_LOCATION);
 
-    m_Vlayout->AddActiveInterfaceObject(m_SplineCurve);
+    m_Vlayout->AddView(m_SplineCurve);
     m_Vlayout->AddLayout(m_ButtonLayout);
 
     m_Vlayout->SetStretchFactor(0);

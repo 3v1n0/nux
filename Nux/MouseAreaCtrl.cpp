@@ -26,7 +26,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 MouseAreaCtrl::MouseAreaCtrl(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     // Set Original State
     m_vlayout   = new VLayout(TEXT(""), NUX_TRACKER_LOCATION);
@@ -41,7 +41,7 @@ MouseAreaCtrl::MouseAreaCtrl(NUX_FILE_LINE_DECL)
     m_Area->SetMinimumSize(100, 100);
     m_Area->SetGeometry(Geometry(0, 0, 200, 400));
 
-    m_vlayout->AddActiveInterfaceObject(m_Area, 1);
+    m_vlayout->AddView(m_Area, 1);
     m_vlayout->SetVerticalExternalMargin(6);
     m_vlayout->SetHorizontalExternalMargin(6);
     SetCompositionLayout(m_vlayout);

@@ -92,7 +92,7 @@ void TimeGraph::Graph::Reset()
 t_u32 TimeGraph::sBufferSize = 2048;
 
 TimeGraph::TimeGraph(const TCHAR* Title, NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_minY  = 0.0f;
     m_maxY  = 1.0f;
@@ -164,15 +164,15 @@ void TimeGraph::InitializeWidgets()
     m_ValueIcon->OnMouseClick.connect(sigc::mem_fun(this, &TimeGraph::RecvShowValue));
 
     m_GraphTitle->SetFont(GetThreadBoldFont());
-    m_hlayout->AddActiveInterfaceObject(new SpaceLayout(40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
-    m_hlayout->AddActiveInterfaceObject(m_GraphTitle, 1);
-    m_hlayout->AddActiveInterfaceObject(m_ValueIcon, 0);
-    m_hlayout->AddActiveInterfaceObject(m_GraphBarIcon, 0);
-    m_hlayout->AddActiveInterfaceObject(m_GraphIcon, 0);
+    m_hlayout->AddView(new SpaceLayout(40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
+    m_hlayout->AddView(m_GraphTitle, 1);
+    m_hlayout->AddView(m_ValueIcon, 0);
+    m_hlayout->AddView(m_GraphBarIcon, 0);
+    m_hlayout->AddView(m_GraphIcon, 0);
     m_hlayout->SetHorizontalInternalMargin(4);
 
     m_hlayout2->AddLayout(new SpaceLayout(40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
-    m_hlayout2->AddActiveInterfaceObject(m_GraphArea, 1);
+    m_hlayout2->AddView(m_GraphArea, 1);
     m_hlayout2->AddLayout(new SpaceLayout(50, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
 
     m_vlayout->AddLayout(m_hlayout, 0);

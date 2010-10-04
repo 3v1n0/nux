@@ -27,7 +27,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 
 class Validator;
 
-class StaticTextBox : public ActiveInterfaceObject //public CoreArea
+class StaticTextBox : public View //public CoreArea
 {
 public:
     StaticTextBox(const TCHAR* Caption, NUX_FILE_LINE_PROTO);

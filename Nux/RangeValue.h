@@ -28,7 +28,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 class HLayout;
 class EditTextBox;
 
-class RangeValue : public ActiveInterfaceObject //public ValuatorAbstraction
+class RangeValue : public View //public ValuatorAbstraction
 {
 public:
     RangeValue(float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f, NUX_FILE_LINE_PROTO);

@@ -26,7 +26,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 ScrollBar::ScrollBar(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_visible   = 1;
     m_ScrollUnit = 5;

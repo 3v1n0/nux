@@ -30,7 +30,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 ScrollView::ScrollView(NUX_FILE_LINE_DECL)
-:   ActiveInterfaceObject(NUX_FILE_LINE_PARAM)
+:   View(NUX_FILE_LINE_PARAM)
 {
     m_ContentOffsetX                = 0;
     m_ContentOffsetY                = 0;
@@ -502,7 +502,7 @@ long ScrollView::PostLayoutManagement2(long LayoutResult)
     return (eCompliantHeight | eCompliantWidth);
 }
 
-// When the ScrollView is in a Layout object, and that layout call ActiveInterfaceObject::PositionChildLayout
+// When the ScrollView is in a Layout object, and that layout call View::PositionChildLayout
 // the ScrollView must call its own PositionChildLayout so it can properly do the positioning of the inner object.
 // Otherwise, m_CompositionLayout->ComputePosition2 is called but it doesn't know that it may not contain all the 
 // object of the ScrollView. Which result in incorrect positioning.

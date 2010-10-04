@@ -30,7 +30,7 @@ class VLayout;
 
 
 
-class VToolBar: public ActiveInterfaceObject
+class VToolBar: public View
 {
 public:
     VToolBar(NUX_FILE_LINE_PROTO);
