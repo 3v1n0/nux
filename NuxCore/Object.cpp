@@ -21,13 +21,13 @@
 
 
 #include "NKernel.h"
-#include "NuxCoreObject.h"
+#include "Object.h"
 #include "SmartPtr/IntrusiveSP.h"
 
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 NUX_IMPLEMENT_ROOT_OBJECT_TYPE(NuxTrackable);
-NUX_IMPLEMENT_OBJECT_TYPE(NuxCoreObject);
+NUX_IMPLEMENT_OBJECT_TYPE(Object);
 
 std::new_handler NuxTrackable::m_new_current_handler = 0;
 NuxTrackable::AllocationList NuxTrackable::m_allocation_list;
@@ -166,7 +166,7 @@ bool NuxTrackable::IsDynamic() const
 
 //////////////////////////////////////////////////////////////////////
 
-NuxCoreObject::NuxCoreObject(bool OwnTheReference, NUX_FILE_LINE_DECL)
+Object::Object(bool OwnTheReference, NUX_FILE_LINE_DECL)
 {
 // #if defined(NUX_DEBUG)
     m_allocation_file_name      = __Nux_FileName__;
@@ -182,12 +182,12 @@ NuxCoreObject::NuxCoreObject(bool OwnTheReference, NUX_FILE_LINE_DECL)
     SetOwnedReference(OwnTheReference);
 }
 
-NuxCoreObject::~NuxCoreObject()
+Object::~Object()
 {
-    //nuxAssertMsg(m_reference_count.GetValue() == 0, TEXT("[NuxCoreObject::~NuxCoreObject] Invalid object destruction."));
+    //nuxAssertMsg(m_reference_count.GetValue() == 0, TEXT("[Object::~Object] Invalid object destruction."));
 }
 
-void NuxCoreObject::Reference()
+void Object::Reference()
 {
     if(!OwnsTheReference())
     {
@@ -199,11 +199,11 @@ void NuxCoreObject::Reference()
     m_weak_reference_count->Increment();
 }
 
-bool NuxCoreObject::UnReference()
+bool Object::UnReference()
 {
     if(!OwnsTheReference())
     {
-        nuxAssertMsg(0, TEXT("[NuxCoreObject::Unref] Never call Unref on an object with a floating reference. Call Dispose() instead."));
+        nuxAssertMsg(0, TEXT("[Object::Unref] Never call Unref on an object with a floating reference. Call Dispose() instead."));
         return false;
     }
 
@@ -217,7 +217,7 @@ bool NuxCoreObject::UnReference()
     return false;
 }
 
-bool NuxCoreObject::SinkReference()
+bool Object::SinkReference()
 {
     if(!OwnsTheReference())
     {
@@ -228,18 +228,18 @@ bool NuxCoreObject::SinkReference()
     return false;
 }
 
-bool NuxCoreObject::Dispose()
+bool Object::Dispose()
 {
     if(!OwnsTheReference() && (m_reference_count->GetValue() == 1))
     {
         Destroy();
         return true;
     }
-    nuxAssertMsg(0, TEXT("[NuxCoreObject::Dispose] Trying to destroy and object taht is still referenced"));
+    nuxAssertMsg(0, TEXT("[Object::Dispose] Trying to destroy and object taht is still referenced"));
     return false;
 }
 
-void NuxCoreObject::Destroy()
+void Object::Destroy()
 {
     nuxAssert(m_reference_count->GetValue() == 0);
     if((m_reference_count->GetValue() == 0) && (m_weak_reference_count->GetValue() == 0))
@@ -252,12 +252,12 @@ void NuxCoreObject::Destroy()
     delete this;
 }
 
-void NuxCoreObject::IncrementWeakCounter()
+void Object::IncrementWeakCounter()
 {
     m_weak_reference_count->Increment();
 }
 
-void NuxCoreObject::DecrementWeakCounter()
+void Object::DecrementWeakCounter()
 {
     m_weak_reference_count->Decrement();
 }

@@ -31,7 +31,7 @@ class RadioButton;
 /*!
     RadioButtonGroup does not hold reference on radio buttons.
 */
-class RadioButtonGroup: public NuxCoreObject, public sigc::trackable
+class RadioButtonGroup: public Object, public sigc::trackable
 {
 public:
     RadioButtonGroup(NUX_FILE_LINE_PROTO);

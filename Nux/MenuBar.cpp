@@ -37,7 +37,7 @@ NUX_IMPLEMENT_ROOT_OBJECT_TYPE(MenuBarItem);
 NUX_IMPLEMENT_OBJECT_TYPE(MenuBar);
 
 MenuBarItem::MenuBarItem(NUX_FILE_LINE_DECL)
-:   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
+:   Object(true, NUX_FILE_LINE_PARAM)
 {
     area = new CoreArea(NUX_TRACKER_LOCATION);
     icon = 0;

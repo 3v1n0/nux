@@ -32,7 +32,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 NUX_IMPLEMENT_OBJECT_TYPE(BaseObject);
 
 BaseObject::BaseObject(NUX_FILE_LINE_DECL)
-:   NuxCoreObject(false, NUX_FILE_LINE_PARAM)
+:   Object(false, NUX_FILE_LINE_PARAM)
 ,   m_IsSizeDirty(true)
 ,   m_ParentObject(0)
 ,   m_Application(0)

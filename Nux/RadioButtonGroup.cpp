@@ -27,7 +27,7 @@
 namespace nux { //NUX_NAMESPACE_BEGIN
 
 RadioButtonGroup::RadioButtonGroup(NUX_FILE_LINE_DECL)
-:   NuxCoreObject(false, NUX_FILE_LINE_PARAM)   // RadioButtonGroup is created as unowned
+:   Object(false, NUX_FILE_LINE_PARAM)   // RadioButtonGroup is created as unowned
 {
     m_ActiveRadioButtonIndex = 0;
 }

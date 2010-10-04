@@ -29,7 +29,7 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 NUX_IMPLEMENT_OBJECT_TYPE(ActionItem);
 
 ActionItem::ActionItem(const TCHAR* label, int UserValue, NUX_FILE_LINE_DECL)
-:   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
+:   Object(true, NUX_FILE_LINE_PARAM)
 ,   m_UserValue(UserValue)
 ,   m_Label(TEXT(""))
 ,   m_IsActivated(true)

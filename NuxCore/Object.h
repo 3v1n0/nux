@@ -153,13 +153,13 @@ private:
 };
 
 //! The base class of Nux objects.
-class NuxCoreObject: public NuxTrackable
+class Object: public NuxTrackable
 {
 public:
     NUX_DECLARE_OBJECT_TYPE(BaseObject, NuxTrackable);
 
     //! Constructor
-    NuxCoreObject(bool OwnTheReference = true, NUX_FILE_LINE_PROTO);
+    Object(bool OwnTheReference = true, NUX_FILE_LINE_PROTO);
     //! Increase reference count.
     void Reference();
     //! Decrease reference count.
@@ -193,11 +193,11 @@ public:
 protected:
     //! Private destructor.
     /*
-        Private destructor. Ensure that NuxCoreObject cannot be created on the stack (only on the heap), but objects that inherits
-        from NuxCoreObject can stil be created on the stack or on the heap.
+        Private destructor. Ensure that Object cannot be created on the stack (only on the heap), but objects that inherits
+        from Object can stil be created on the stack or on the heap.
         (MEC++ item27)
     */
-    virtual ~NuxCoreObject();
+    virtual ~Object();
 
     void IncrementWeakCounter();
     void DecrementWeakCounter();
@@ -206,8 +206,8 @@ private:
     //! Destroy the object.
     void Destroy();
 
-    NuxCoreObject(const NuxCoreObject&);
-    NuxCoreObject& operator = (const NuxCoreObject&);
+    Object(const Object&);
+    Object& operator = (const Object&);
 
 
 //#if defined(NUX_DEBUG)

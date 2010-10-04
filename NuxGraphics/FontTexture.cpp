@@ -33,7 +33,7 @@ NUX_IMPLEMENT_OBJECT_TYPE(FontTexture);
 const int CURSOR_OFFSET = 0;
 
 FontTexture::FontTexture(const TCHAR* FontFile, NUX_FILE_LINE_DECL)
-:   NuxCoreObject(true, NUX_FILE_LINE_PARAM)
+:   Object(true, NUX_FILE_LINE_PARAM)
 {
     NString FontPath = GNuxGraphicsResources.FindResourceLocation(FontFile);
     

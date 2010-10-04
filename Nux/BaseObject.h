@@ -28,7 +28,7 @@
 #include <sigc++/functors/ptr_fun.h>
 #include <sigc++/functors/mem_fun.h>
 
-#include "NuxCore/NuxCoreObject.h"
+#include "NuxCore/Object.h"
 
 #include "Utils.h"
 #include "WidgetMetrics.h"
@@ -124,10 +124,10 @@ class ActiveInterfaceObject;
 class BaseObject;
 
 
-class BaseObject: public NuxCoreObject, public sigc::trackable
+class BaseObject: public Object, public sigc::trackable
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(BaseObject, NuxCoreObject);
+    NUX_DECLARE_OBJECT_TYPE(BaseObject, Object);
     //static NObjectType StaticObjectType;
     //virtual NObjectType* Type() { return &StaticObjectType; }
 

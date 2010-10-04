@@ -154,10 +154,10 @@ class FontRenderer;
 // This font system loads in a custom file containing a gray scale
 // texture (used as alpha texture) with all the letters on it, and
 // information about what glyph is where.
-class FontTexture: public NuxCoreObject
+class FontTexture: public Object
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(FontTexture, NuxCoreObject);
+    NUX_DECLARE_OBJECT_TYPE(FontTexture, Object);
 
     FontTexture(const TCHAR* FontFile, NUX_FILE_LINE_PROTO);
     FontTexture(INT width, INT height, BYTE *Texture);

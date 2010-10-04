@@ -34,7 +34,7 @@
 #include "NuxCore/Size.h"
 #include "NuxImage/BitmapFormats.h"
 #include "NuxCore/NParsing.h"
-#include "NuxCore/NuxCoreObject.h"
+#include "NuxCore/Object.h"
 #include "NuxCore/SmartPtr/GenericSmartPointer.h"
 #include "NuxCore/SmartPtr/IntrusiveSP.h"
 

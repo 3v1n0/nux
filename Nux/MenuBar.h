@@ -36,10 +36,10 @@ class MenuBar;
 class HLayout;
 
 
-class MenuBarItem: public NuxCoreObject
+class MenuBarItem: public Object
 {
 public:
-    NUX_DECLARE_OBJECT_TYPE(MenuBarItem, NuxCoreObject);
+    NUX_DECLARE_OBJECT_TYPE(MenuBarItem, Object);
 
     MenuBarItem(NUX_FILE_LINE_PROTO);
     ~MenuBarItem();

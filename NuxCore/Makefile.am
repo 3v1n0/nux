@@ -63,7 +63,7 @@ source_cpp = \
   $(srcdir)/NProcess.cpp \
   $(srcdir)/NumberConversion.cpp \
   $(srcdir)/NuxCore.cpp \
-  $(srcdir)/NuxCoreObject.cpp \
+  $(srcdir)/Object.cpp \
   $(srcdir)/Math/Point2D.cpp \
   $(srcdir)/Math/MathFunctions.cpp \
   $(srcdir)/Math/Line2D.cpp \
@@ -154,7 +154,7 @@ source_h = \
   $(srcdir)/NObjectType.h \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/NuxCore.h \
-  $(srcdir)/NuxCoreObject.h \
+  $(srcdir)/Object.h \
   $(srcdir)/ColorFunctions.h \
   $(srcdir)/Size.h \
   $(srcdir)/Exception.h \
