@@ -165,7 +165,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
         {
           // This is possible but check why!
           // It can happen when doing something like this:
-          //      smptr(Layout) layout = smptr(Layout)(this, true);
+          //      Layout* layout = this;
           // where this is a Baseobject.
           nuxAssert (0);
         }

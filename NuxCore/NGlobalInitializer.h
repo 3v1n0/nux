@@ -37,15 +37,6 @@
 //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
 //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 
-#elif (defined NUX_PS3)
-#define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
-        NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
-        NUX_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
-        NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerPS3);            \
-        NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
-        NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);
-//NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
-//NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #elif (defined NUX_OS_LINUX)
 #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
         NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \

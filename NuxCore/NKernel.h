@@ -129,8 +129,6 @@
 // Structure Alignment
 #if defined(NUX_MICROSOFT_COMPILER)
 #define NUX_DATA_ALIGN(declaration, alignment) __declspec(align(alignment)) declaration
-#elif defined(NUX_PS3)
-#define NUX_DATA_ALIGN(declaration, alignment) declaration __attribute__ ((aligned (alignment)))
 #elif defined (NUX_GNUCPP_COMPILER)
 #define NUX_DATA_ALIGN(declaration, alignment) declaration __attribute__ ((aligned (alignment)))
 #endif
@@ -141,18 +139,14 @@
 #define NUX_ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
 
 // Compiler specific include.
-#ifdef XBOX360
-#error Unknown Compiler
-#elif defined (NUX_OS_WINDOWS) && defined (NUX_MICROSOFT_COMPILER)
-#include "NSystemWindows.h"
-#elif defined (NUX_PS3)
-#include "NSystemPS3.h"
+#if defined(NUX_OS_WINDOWS) && defined (NUX_MICROSOFT_COMPILER)
+    #include "NSystemWindows.h"
 #elif defined (NUX_OS_LINUX) && defined (NUX_GNUCPP_COMPILER)
-#include "NSystemGNU.h"
+    #include "NSystemGNU.h"
 #elif defined (NUX_OS_MACOSX) && defined (NUX_GNUCPP_COMPILER)
-#error Unknown Compiler
+    #error Unknown Compiler
 #else
-#error Unknown Compiler
+    #error Unknown Compiler
 #endif
 
 
@@ -338,23 +332,18 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #define NUX_MACOSX_LINE_TERMINATOR  TEXT("\n")
 
 #if defined(NUX_OS_WINDOWS)
-#define NUX_LINE_TERMINATOR NUX_WIN32_LINE_TERMINATOR
+    #define NUX_LINE_TERMINATOR NUX_WIN32_LINE_TERMINATOR
 #elif defined(NUX_OS_LINUX) || defined(NUX_OS_MACOSX)
-#define NUX_LINE_TERMINATOR NUX_UNIX_LINE_TERMINATOR
-#elif defined(NUX_PS3)
-#define NUX_LINE_TERMINATOR NUX_UNIX_LINE_TERMINATOR
+    #define NUX_LINE_TERMINATOR NUX_UNIX_LINE_TERMINATOR
 #endif
 
 
 #if defined(NUX_OS_WINDOWS)
-#define NUX_PATH_SEPARATOR_STRING   NUX_BACKSLASH_STRING
-#define NUX_PATH_SEPARATOR_CHAR     NUX_BACKSLASH_CHAR
+    #define NUX_PATH_SEPARATOR_STRING   NUX_BACKSLASH_STRING
+    #define NUX_PATH_SEPARATOR_CHAR     NUX_BACKSLASH_CHAR
 #elif defined(NUX_OS_LINUX) || defined(NUX_OS_MACOSX)
-#define NUX_PATH_SEPARATOR_STRING   NUX_SLASH_STRING
-#define NUX_PATH_SEPARATOR_CHAR     NUX_SLASH_CHAR
-#elif defined(NUX_PS3)
-#define NUX_PATH_SEPARATOR_STRING   NUX_SLASH_STRING
-#define NUX_PATH_SEPARATOR_CHAR     NUX_SLASH_CHAR
+    #define NUX_PATH_SEPARATOR_STRING   NUX_SLASH_STRING
+    #define NUX_PATH_SEPARATOR_CHAR     NUX_SLASH_CHAR
 #endif
 
 #define NUX_BACKSLASH_CHAR      TEXT('\\')
@@ -474,11 +463,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #define GThrow              NUX_GLOBAL_OBJECT_INSTANCE(nux::NThrowOutput)
 
 #if (defined NUX_OS_WINDOWS)
-#define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerWindows)
+    #define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerWindows)
 #elif (defined NUX_OS_LINUX)
-#define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerGNU)
-#elif (defined NUX_PS3)
-#define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerPS3)
+    #define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerGNU)
 #endif
 
 
@@ -486,34 +473,28 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 // Breaks into the debugger.  Forces a GPF in non-debug builds.         //
 //////////////////////////////////////////////////////////////////////////
 #if (defined NUX_DEBUG) && (defined NUX_MICROSOFT_COMPILER)
-#define nuxIsDebuggerPresent()  IsDebuggerPresent()
-#define inlDebugBreak()         ( IsDebuggerPresent() ? (DebugBreak(),1) : 1 )
+    #define nuxIsDebuggerPresent()  IsDebuggerPresent()
+    #define inlDebugBreak()         ( IsDebuggerPresent() ? (DebugBreak(),1) : 1 )
 #elif (defined _WIN32)
-#define nuxIsDebuggerPresent()	IsDebuggerPresent()
-#define inlDebugBreak()			( IsDebuggerPresent() ? *((INT*)3)=13 : 1 )
+    #define nuxIsDebuggerPresent()	IsDebuggerPresent()
+    #define inlDebugBreak()			( IsDebuggerPresent() ? *((INT*)3)=13 : 1 )
 #elif (defined NUX_DEBUG) && (defined NUX_GNUCPP_COMPILER)
-#define nuxIsDebuggerPresent()  1
-#define inlDebugBreak()         asm("int3");
-#elif (defined NUX_DEBUG) && (defined NUX_PS3)
-#define nuxIsDebuggerPresent()	1
-#define inlDebugBreak()			__asm__ volatile("tw 31, 1, 1");
+    #define nuxIsDebuggerPresent()  1
+    #define inlDebugBreak()         asm("int3");
 #else
-#define nuxIsDebuggerPresent()	0
-#define inlDebugBreak()
+    #define nuxIsDebuggerPresent()	0
+    #define inlDebugBreak()
 #endif
 
 #if defined(NUX_MICROSOFT_COMPILER)
-#define NUX_HARDWARE_BREAK      {__debugbreak();}
-#define NUX_BREAK_ASM_INT3      {__debugbreak();}
+    #define NUX_HARDWARE_BREAK      {__debugbreak();}
+    #define NUX_BREAK_ASM_INT3      {__debugbreak();}
 #elif defined(NUX_GNUC_COMPILER)
-#define NUX_HARDWARE_BREAK      asm("int3");
-#define NUX_BREAK_ASM_INT3      asm("int3");
-#elif defined(NUX_PS3)
-#define NUX_HARDWARE_BREAK      __asm__ volatile("tw 31, 1, 1");
-#define NUX_BREAK_ASM_INT3      __asm__ volatile("tw 31, 1, 1");
+    #define NUX_HARDWARE_BREAK      asm("int3");
+    #define NUX_BREAK_ASM_INT3      asm("int3");
 #else
-#define NUX_HARDWARE_BREAK
-#define NUX_BREAK_ASM_INT3
+    #define NUX_HARDWARE_BREAK
+    #define NUX_BREAK_ASM_INT3
 #endif
 
 // Simple version of the PURE_VIRTUAL. Use it before output macros nuxError is define.
@@ -714,12 +695,11 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #include "NMemory.h"
 
 #include "Character/NUni.h"
+
 #if defined(NUX_OS_WINDOWS)
-#include "Character/NUnicode.h"
+    #include "Character/NUnicode.h"
 #elif defined(NUX_OS_LINUX)
-#include "Character/NUnicode.h"
-#elif NUX_PS3
-#include "Character/NUnicodePS3.h"
+    #include "Character/NUnicode.h"
 #endif
 
 #include "NTemplate.h"
@@ -728,11 +708,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #include "NString.h"
 
 #if defined(NUX_OS_WINDOWS)
-#include "NThread.h"
+    #include "NThread.h"
 #elif defined(NUX_OS_LINUX)
-#include "NThreadGNU.h"
-#elif NUX_PS3
-#include "NThreadPS3.h"
+    #include "NThreadGNU.h"
 #endif
 
 /*#include "Memory/NMemoryAllocatorInterface.h"
@@ -762,12 +740,10 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #include "FileManager/NFileManagerGeneric.h"
 
 #ifdef NUX_OS_WINDOWS
-#include "FileManager/NFileManagerStandardAnsi.h"
-#include "FileManager/NFileManagerWindows.h"
+    #include "FileManager/NFileManagerStandardAnsi.h"
+    #include "FileManager/NFileManagerWindows.h"
 #elif defined NUX_OS_LINUX
-#include "FileManager/NFileManagerGNU.h"
-#elif defined NUX_PS3
-#include "FileManager/NFileManagerPS3.h"
+    #include "FileManager/NFileManagerGNU.h"
 #endif
 
 #include "NFile.h"
