@@ -135,7 +135,7 @@ public:
 
     virtual ThreadState Start( void* arg = NULL );
 
-    WindowCompositor& GetStackManager() { return *m_window_compositor; }
+    WindowCompositor& GetWindowCompositor() { return *m_window_compositor; }
     // should be private
 
     float GetFrameRate() const;

@@ -285,7 +285,7 @@ WindowCompositor& GetThreadWindowCompositor()
         PrintOutputDebugString(TEXT("[GetThreadWindowCompositor] You can't call GetThreadWindowCompositor on this type of thread: s"), thread->Type().GetName());
         NUX_HARDWARE_BREAK;
     }
-    return (static_cast<WindowThread*> (thread))->GetStackManager();
+    return (static_cast<WindowThread*> (thread))->GetWindowCompositor();
 }
 
 NThread* GetThreadApplication()
