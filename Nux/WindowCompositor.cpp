@@ -47,15 +47,13 @@ WindowCompositor::WindowCompositor()
     m_FocusAreaWindow           = NULL;
     m_MenuWindow                = NULL;
     m_OverlayWindow             = NULL;
-    m_TooltipWindow             = NULL;
+    _tooltip_window             = NULL;
     m_TooltipArea               = NULL;
     m_ModalWindow               = NULL;
     m_SelectedWindow            = NULL;
     m_MenuList                  = NULL;
-    m_EventRectList             = NULL;
-    m_DrawList                  = NULL;
     m_Background                = NULL;
-    m_TooltipWindow             = NULL;
+    _tooltip_window             = NULL;
     m_OverlayWindow             = NULL;
     OverlayDrawingCommand       = NULL;
     m_CurrentWindow             = NULL;
@@ -68,8 +66,6 @@ WindowCompositor::WindowCompositor()
 
 
     m_SelectedWindow = NULL;
-    m_DrawList        = new std::list<ActiveInterfaceObject*>;
-    m_EventRectList   = new std::list<Rect>;
 
     if(GetGraphicsThread()->GetWindow().HasFrameBufferSupport())
     {
@@ -93,13 +89,9 @@ WindowCompositor::WindowCompositor()
 WindowCompositor::~WindowCompositor()
 {
     m_WindowList.clear();
-    m_DrawList->clear();
-    m_EventRectList->clear();
     m_WindowToTextureMap.clear();
     m_MenuList->clear();
 
-    NUX_SAFE_DELETE(m_DrawList);
-    NUX_SAFE_DELETE(m_EventRectList);
     NUX_SAFE_DELETE(m_MenuList);
     NUX_SAFE_DELETE(m_Background);
 }
@@ -342,7 +334,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
         bool MouseIsOverMenu = 0;
         if(ret & eMouseEventSolved)
         {
-            // If one menu processed the event, then stop all other element from processing it.
+            // If one menu processed the event, then stop all other elements from processing it.
             ProcessEventInfo = eDoNotProcess;
             MouseIsOverMenu = TRUE;
         }
@@ -350,6 +342,7 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
         if(m_ModalWindowList.size() > 0)
         {
             SetCurrentWindow(*m_ModalWindowList.begin());
+            (*it)->ClearDirtyAreas();
             ret = (*m_ModalWindowList.begin())->ProcessEvent(ievent, ret, ProcessEventInfo);
             SetCurrentWindow(NULL);
         }
@@ -370,8 +363,10 @@ void WindowCompositor::ProcessEvent(IEvent &ievent)
                 {
                     // Traverse the window from the top of the visibility stack to the bottom.
                     SetCurrentWindow(*it);
+                    (*it)->ClearDirtyAreas();
                     ret = (*it)->ProcessEvent(ievent, ret, ProcessEventInfo);
                     SetCurrentWindow(NULL);
+
                     if((ret & eMouseEventSolved) && (m_SelectedWindow == 0))
                     {
                         // The mouse event was solved in the window pointed by the iterator. 
@@ -657,7 +652,7 @@ void WindowCompositor::DrawOverlay(bool force_draw)
 
 void WindowCompositor::DrawTooltip(bool force_draw)
 {
-    BaseWindow* window = m_TooltipWindow;
+    BaseWindow* window = _tooltip_window;
     int buffer_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
     int buffer_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
     if(window)
@@ -673,20 +668,10 @@ void WindowCompositor::DrawTooltip(bool force_draw)
 
     if(m_TooltipText.Size())
     {
-        SetCurrentWindow(m_TooltipWindow);
-        
-        int w = GetThreadBoldFont()->GetCharStringWidth(m_TooltipText.GetTCharPtr());
-        int h = GetThreadBoldFont()->GetFontHeight();
-        Geometry geo = Geometry(m_TooltipX + 10, m_TooltipY - h/2 - 2, w, h + 4);
-        Geometry bkg_geo = geo;
-        
-
-        bkg_geo.OffsetSize(20, 8);
-        bkg_geo.OffsetPosition(-10, -4);
-
-        gPainter.PaintShape(GetGraphicsThread()->GetGraphicsContext(), bkg_geo, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
-        gPainter.PaintTextLineStatic(GetGraphicsThread()->GetGraphicsContext(), GetThreadBoldFont(), geo, m_TooltipText, Color(0xFFFFFFFF));
-        SetCurrentWindow(NULL);
+        //SetCurrentWindow(_tooltip_window);
+        gPainter.PaintShape(GetGraphicsThread()->GetGraphicsContext(), _tooltip_geometry, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
+        gPainter.PaintTextLineStatic(GetGraphicsThread()->GetGraphicsContext(), GetThreadBoldFont(), _tooltip_text_geometry, m_TooltipText, Color(0xFFFFFFFF));
+        //SetCurrentWindow(NULL);
     }
 
     GetThreadGraphicsContext()->SetContext(0, 0, buffer_width, buffer_height);
@@ -723,44 +708,50 @@ void WindowCompositor::DrawFloatingWindows(bool force_draw, const std::list<Base
             BaseWindow* window = *rev_it;
             WindowNeedRedraw = window->IsRedrawNeeded();
 
-            if(rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
+            // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
+            if(force_draw || window->IsRedrawNeeded() || (window->m_dirty_areas.size() > 0))
             {
-                t_s32 buffer_width = window->GetBaseWidth();
-                t_s32 buffer_height = window->GetBaseHeight();
-                if((rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height))
+                if(rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
                 {
-                    rt.color_rt = GetThreadGLDeviceFactory()->CreateTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-                    rt.depth_rt = GetThreadGLDeviceFactory()->CreateTexture(buffer_width, buffer_height, 1, BITFMT_D24S8);
+                    t_s32 buffer_width = window->GetBaseWidth();
+                    t_s32 buffer_height = window->GetBaseHeight();
+                    if((rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height))
+                    {
+                        rt.color_rt = GetThreadGLDeviceFactory()->CreateTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+                        rt.depth_rt = GetThreadGLDeviceFactory()->CreateTexture(buffer_width, buffer_height, 1, BITFMT_D24S8);
+                    }
+                    m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
+                    m_FrameBufferObject->SetRenderTarget( 0, rt.color_rt->GetSurfaceLevel(0) );
+                    m_FrameBufferObject->SetDepthSurface( rt.depth_rt->GetSurfaceLevel(0) );
+                    m_FrameBufferObject->Activate();
+                    GetGraphicsThread()->GetGraphicsContext().SetContext(0, 0, buffer_width, buffer_height);
+                    GetGraphicsThread()->GetGraphicsContext().SetViewport(0, 0, buffer_width, buffer_height);
+                    GetGraphicsThread()->GetGraphicsContext().Push2DWindow(buffer_width, buffer_height);
+                    GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion();
+                    GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion(0, 0, buffer_width, buffer_height);
+
+                    CHECKGL( glClearColor(0, 0, 0, 0) );
+                    GLuint clear_color_buffer_bit = (force_draw || window->IsRedrawNeeded()) ? GL_COLOR_BUFFER_BIT : 0;
+                    CHECKGL( glClear(clear_color_buffer_bit | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
                 }
-                m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-                m_FrameBufferObject->SetRenderTarget( 0, rt.color_rt->GetSurfaceLevel(0) );
-                m_FrameBufferObject->SetDepthSurface( rt.depth_rt->GetSurfaceLevel(0) );
-                m_FrameBufferObject->Activate();
-                GetGraphicsThread()->GetGraphicsContext().SetContext(0, 0, buffer_width, buffer_height);
-                GetGraphicsThread()->GetGraphicsContext().SetViewport(0, 0, buffer_width, buffer_height);
-                GetGraphicsThread()->GetGraphicsContext().Push2DWindow(buffer_width, buffer_height);
-                GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion();
-                GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion(0, 0, buffer_width, buffer_height);
+                else
+                {
+                    int x = window->GetBaseX();
+                    int y = window->GetBaseY();
+                    Matrix4 mat;
+                    mat.Translate(x, y, 0);
+                    //GetGraphicsThread()->GetGraphicsContext().SetContext(x, y, 0, 0);
+                    GetGraphicsThread()->GetGraphicsContext().Push2DWindow(GetGraphicsThread()->GetGraphicsContext().GetWindowWidth(),
+                        GetGraphicsThread()->GetGraphicsContext().GetWindowHeight());
 
-                CHECKGL( glClearColor(0, 0, 0, 0) );
-                GLuint clear_color_buffer_bit = (force_draw || window->IsRedrawNeeded()) ? GL_COLOR_BUFFER_BIT : 0;
-                CHECKGL( glClear(clear_color_buffer_bit | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
-            }
-            else
-            {
-                int x = window->GetBaseX();
-                int y = window->GetBaseY();
-                Matrix4 mat;
-                mat.Translate(x, y, 0);
-                //GetGraphicsThread()->GetGraphicsContext().SetContext(x, y, 0, 0);
-                GetGraphicsThread()->GetGraphicsContext().Push2DWindow(GetGraphicsThread()->GetGraphicsContext().GetWindowWidth(),
-                    GetGraphicsThread()->GetGraphicsContext().GetWindowHeight());
+                    //GetGraphicsThread()->GetGraphicsContext().Push2DModelViewMatrix(mat);
+                }
 
-                //GetGraphicsThread()->GetGraphicsContext().Push2DModelViewMatrix(mat);
+                RenderWindowComposition(/*fbo,*/ window, force_draw);
+
+                window->ClearDirtyAreas();
             }
 
-            RenderWindowComposition(/*fbo,*/ window, force_draw);
-            
             if(rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
             {
 //                GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion();
@@ -1129,87 +1120,17 @@ void WindowCompositor::PresentBufferToScreen(TRefGL<IOpenGLTexture2D> HWTexture,
 
 void WindowCompositor::AddToDrawList(ActiveInterfaceObject* ic)
 {
-    m_DrawList->push_back(ic);
-    m_EventRectList->push_back(getEventRect());
+    NUX_RETURN_IF_NULL(ic);
+
+    if(m_CurrentWindow)
+    {
+        Geometry geo = ic->GetGeometry();
+        m_CurrentWindow->m_dirty_areas.push_back(geo);
+    }
 }
 
 void WindowCompositor::ClearDrawList()
 {
-    m_DrawList->clear();
-    m_EventRectList->clear();
-}
-
-void WindowCompositor::PushEventRectangle(Rect A)
-{
-    Rect B;
-    t_u32 stacksize = (t_u32)EventRect.size();
-    int x0, y0, x1, y1;
-
-    int window_width, window_height;
-    GetGraphicsThread()->GetGraphicsContext().GetContextSize(window_width, window_height);
-
-    if(stacksize == 0)
-    {
-        B = Rect(0, 0, window_width, window_height);
-    }
-    else
-    {
-        B = EventRect[stacksize-1];
-    }
-
-    //    http://www.codecomments.com/archive263-2004-12-350347.html
-    //    If your rectangles are given in 2D as Top,Left,Bottom,Right coordinates, as typical for GUI programming, then it's simply:
-    //        intersect.Left = max(a.Left, b.Left);
-    //        intersect.Top = max(a.Top, b.Top);
-    //        intersect.Right = min(a.Right, b.Right );
-    //        intersect.Bottom = min(a.Bottom, b.Bottom);
-    //    And the intersection is empty unless intersect.Right > intersect.Left && intersect.Bottom > intersect.Top
-
-    x0 = Max(A.x, B.x);
-    y0 = Max(A.y, B.y);
-    x1 = Min(A.x + A.width, B.x + B.width);
-    y1 = Min(A.y + A.height, B.y + B.height);
-
-    if((x1 > x0) && (y1 > y0))
-    {
-        EventRect.push_back(Rect(x0, y0, x1 - x0, y1 - y0));
-    }
-    else
-    {
-        EventRect.push_back(Rect(0, 0, 0, 0));
-    }
-}
-void WindowCompositor::PopEventRectangle()
-{
-    int window_width, window_height;
-    GetGraphicsThread()->GetGraphicsContext().GetContextSize(window_width, window_height);
-    EventRect.pop_back();
-    t_u32 stacksize = (t_u32)EventRect.size();
-    if(stacksize == 0)
-    {
-
-    }
-    else
-    {
-        Rect B = EventRect[stacksize-1];
-    }
-}
-
-void WindowCompositor::EmptyEventRegion()
-{
-    int window_width, window_height;
-    GetGraphicsThread()->GetGraphicsContext().GetContextSize(window_width, window_height);
-    EventRect.clear();
-}
-
-Rect WindowCompositor::getEventRect()
-{
-    t_u32 stacksize = (t_u32)EventRect.size();
-    if(stacksize != 0)
-    {
-        return EventRect[stacksize-1];
-    }
-    return Rect(0, 0, 0, 0);
 }
 
 void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
@@ -1294,16 +1215,53 @@ BaseArea* WindowCompositor::GetWidgetDrawingOverlay()
 
 void WindowCompositor::SetTooltip(BaseArea* TooltipArea, const TCHAR *TooltipText, int x, int y)
 {
-    m_TooltipWindow = GetCurrentWindow();
+    _tooltip_window = GetCurrentWindow();
     m_TooltipArea = TooltipArea;
     m_TooltipText = TooltipText;
     m_TooltipX = x;
     m_TooltipY = y;
+
+    if(m_TooltipText.Size())
+    {
+        int w = GetThreadBoldFont()->GetCharStringWidth(m_TooltipText.GetTCharPtr());
+        int h = GetThreadBoldFont()->GetFontHeight();
+
+        _tooltip_text_geometry = Geometry(
+            m_TooltipX + 10,
+            m_TooltipY - h/2 - 2,
+            w,
+            h + 4);
+
+        _tooltip_geometry = _tooltip_text_geometry;
+        _tooltip_geometry.OffsetSize(20, 8);
+        _tooltip_geometry.OffsetPosition(-10, -4);
+
+        _tooltip_mainwindow_geometry = _tooltip_geometry;
+
+        if(_tooltip_window)
+        {
+            _tooltip_mainwindow_geometry.OffsetPosition(_tooltip_window->GetBaseX(), _tooltip_window->GetBaseX());
+        }
+    }
+    else
+    {
+        _tooltip_mainwindow_geometry = _tooltip_geometry = _tooltip_text_geometry = Geometry(0, 0, 0, 0);
+    }
+}
+
+Geometry WindowCompositor::GetTooltipGeometry() const
+{
+    return _tooltip_geometry;
+}
+
+Geometry WindowCompositor::GetTooltipMainWindowGeometry() const
+{
+    return _tooltip_mainwindow_geometry;
 }
 
 void WindowCompositor::CancelTooltip()
 {
-    m_TooltipWindow = NULL;
+    _tooltip_window = NULL;
     m_TooltipArea = NULL;
     m_TooltipText = TEXT("");
 }
@@ -1311,10 +1269,10 @@ void WindowCompositor::CancelTooltip()
 bool WindowCompositor::ValidateMouseInsideTooltipArea(int x, int y)
 {
     NUX_RETURN_VALUE_IF_FALSE(m_TooltipArea, false);
-    NUX_RETURN_VALUE_IF_FALSE(m_TooltipWindow, false);
+    NUX_RETURN_VALUE_IF_FALSE(_tooltip_window, false);
 
     Geometry geo = m_TooltipArea->GetGeometry();
-    geo.OffsetPosition(m_TooltipWindow->GetBaseX(), m_TooltipWindow->GetBaseY());
+    geo.OffsetPosition(_tooltip_window->GetBaseX(), _tooltip_window->GetBaseY());
 
     return geo.IsPointInside(x, y);    
 }

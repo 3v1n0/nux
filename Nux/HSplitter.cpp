@@ -118,6 +118,7 @@ long HSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             }
         }
     }
+
     ret = PostProcessEvent2(ievent, ret, ProcEvInfo);
     return ret;
 }

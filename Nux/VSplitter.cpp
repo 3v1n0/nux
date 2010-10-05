@@ -88,7 +88,6 @@ long VSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
 //        }
 //    }
 
-    GetThreadWindowCompositor().PushEventRectangle(m_Geometry);
     //if(traverse)
     {   
         std::vector<MySplitter*>::iterator it_splitter;
@@ -131,7 +130,7 @@ long VSplitter::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEven
             }
         }
     }
-    GetThreadWindowCompositor().PopEventRectangle();
+
     ret = PostProcessEvent2(ievent, ret, ProcEvInfo);
     return ret;
 }

@@ -95,6 +95,11 @@ public:
     void AddToDrawList(ActiveInterfaceObject* ic);
     void ClearDrawList();
 
+    //! Get the Geometry of the tooltip based on the BaseWindow that initiated it.
+    Geometry GetTooltipGeometry() const;
+
+    //! Get the Geometry of the tooltip based on the MainWindow.
+    Geometry GetTooltipMainWindowGeometry() const;
 
     bool MouseDown(Point pt);
 
@@ -129,12 +134,6 @@ public:
 
     void StartModalWindow(BaseWindow* );
     void StopModalWindow(BaseWindow* );
-
-    std::vector<Rect> EventRect;
-    void PushEventRectangle(Rect rect);
-    void PopEventRectangle();
-    void EmptyEventRegion();
-    Rect getEventRect();
 
     void AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain = true);
     void RemoveMenu(MenuPage* menu);
@@ -206,26 +205,27 @@ private:
     */
     void FloatingAreaConfigureNotify(int Width, int Height);
 
-    BaseWindow* m_CurrentWindow;
-    BaseWindow* m_FocusAreaWindow;
-    BaseWindow* m_MenuWindow; // the window that owns the menu being displayed;
+    BaseWindow* m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
+    BaseWindow* m_FocusAreaWindow;  //!< The BaseWindow that contains the m_MouseFocusArea.
+    BaseWindow* m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
     IEvent* m_CurrentEvent; 
 
-    BaseArea* m_MouseFocusArea;      // the base ares that has the mouse down.
-    BaseArea* m_MouseOverArea;  // the base area that has the mouse directly over itself.
+    BaseArea* m_MouseFocusArea;     //!< The base area that has the mouse focus.
+    BaseArea* m_MouseOverArea;      //!< The base area that has the mouse directly over itself.
     BaseArea* m_PreviousMouseOverArea;
 
     BaseArea* OverlayDrawingCommand;
-    BaseWindow* m_OverlayWindow; // the window that owns the overlay;
-    BaseWindow* m_TooltipWindow; // the window that owns the tooltip;
+    BaseWindow* m_OverlayWindow;            //!< The window that owns the overlay;
+    BaseWindow* _tooltip_window;            //!< The window that owns the tooltip;
+    Geometry    _tooltip_geometry;          //!< The geometry of the entire tooltip It includes the decoration surrounding the text such as round corners.
+    Geometry    _tooltip_mainwindow_geometry;   //!< Same as _tooltip_geometry but based on the entire physical window of the application.
+    Geometry    _tooltip_text_geometry;     //!< The geometry of the text area of the tooltip.
     Point m_EventRoot;
 
     AbstractPaintLayer* m_Background;
 
     std::list<BaseWindow*> m_WindowList;
     std::list<BaseWindow*> m_ModalWindowList;
-    std::list<ActiveInterfaceObject*> *m_DrawList;
-    std::list<Rect> *m_EventRectList;
 
     std::list<MenuPage*> *m_MenuList;
 
@@ -269,6 +269,7 @@ public:
 
     friend class BaseArea;
     friend class WindowThread;
+    friend class TimerHandler;
 };
 
 } //NUX_NAMESPACE_END
