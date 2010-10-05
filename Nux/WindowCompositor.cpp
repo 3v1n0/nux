@@ -1290,7 +1290,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       if(_tooltip_window)
       {
-        _tooltip_mainwindow_geometry.OffsetPosition(_tooltip_window->GetBaseX(), _tooltip_window->GetBaseX());
+        _tooltip_mainwindow_geometry.OffsetPosition(_tooltip_window->GetBaseX(), _tooltip_window->GetBaseY());
       }
     }
     else
