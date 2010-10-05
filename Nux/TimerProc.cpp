@@ -22,8 +22,12 @@
 
 #include "Nux.h"
 #include "TimerProc.h"
+#include "WindowCompositor.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux
+{
+
+    class BaseWindow;
 
 typedef struct 
 {
@@ -62,6 +66,7 @@ public:
     int             Duration;      // milliseconds
     int             ElapsedTime;    // milliseconds
     bool            MarkedForRemoval;
+    BaseWindow*     Window;         //!< BaseWindow from where the timer was created.
     TimerObject     *next;
     TimerObject     *prev;
     t_u32           glibid;
@@ -80,6 +85,7 @@ TimerObject::TimerObject()
     Iteration       = 0;
     IterationCount  = 0;
     MarkedForRemoval= 0;
+    Window          = 0;
     next            = 0;
     prev            = 0;
     glibid          = 0;
@@ -134,11 +140,12 @@ TimerHandle TimerHandler::AddTimerHandler(unsigned int Period, TimerFunctor* Cal
     TimerObject *timer_object = new TimerObject();
     TimeRightNow(&timer_object->when);
     Addmillisecs(&timer_object->when, Period);
-    timer_object->CallbackData = Data;
-    timer_object->TimerCallback = Callback;
 
-    timer_object->Period = Period;
-    timer_object->Type = TIMERTYPE_PERIODIC;
+    timer_object->CallbackData  = Data;
+    timer_object->TimerCallback = Callback;
+    timer_object->Period        = Period;
+    timer_object->Type          = TIMERTYPE_PERIODIC;
+    timer_object->Window        = GetThreadWindowCompositor().GetCurrentWindow();
 
     AddHandle(timer_object);
 
@@ -343,7 +350,10 @@ int TimerHandler::ExecTimerHandler()
             timer_object->MarkedForRemoval = false;
             if(timer_object->TimerCallback != 0)
             {
+                GetThreadWindowCompositor().SetCurrentWindow(timer_object->Window);
                 timer_object->TimerCallback->OnTimerExpired.emit(timer_object->CallbackData);
+                GetThreadWindowCompositor().SetCurrentWindow(NULL);
+
                 // Reset glibid to 0. glibid is not null, if this element ever happened to be at the head of the queue 
                 // and we set a timer for it.
                 //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Executed Timeout ID: %d"), timer_object->glibid);

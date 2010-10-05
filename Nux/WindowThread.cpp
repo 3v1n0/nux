@@ -199,39 +199,49 @@ gboolean nux_timeout_dispatch (gpointer user_data)
 
 t_u32 WindowThread::AddGLibTimeout(t_u32 duration)
 {
-    if((m_GLibContext == 0) || (m_GLibLoop == 0))
+    if(IsEmbeddedWindow())
     {
-        nuxDebugMsg(TEXT("[WindowThread::AddGLibTimeout] WARNING: Trying to set a timeout before GLib Context is created."));
-        return 0;
-//         //create a context
-//         m_GLibContext = g_main_context_new();
-//         //create a main loop with context
-//         m_GLibLoop = g_main_loop_new(m_GLibContext, FALSE);
+        GSource *timeout_source;
+
+        //create a new time-out source
+        timeout_source = g_timeout_source_new(duration);
+
+        TimeoutData* dd = new TimeoutData;
+        dd->window_thread = this;
+        dd->id = 0;
+
+        // Set the callback for this source
+        g_source_set_callback(timeout_source, nux_timeout_dispatch, dd, NULL);
+
+        // Attach source to the default context
+        dd->id = g_source_attach(timeout_source, NULL); 
+
+        return dd->id;
     }
+    else
+    {
+        if((m_GLibContext == 0) || (m_GLibLoop == 0))
+        {
+            nuxDebugMsg(TEXT("[WindowThread::AddGLibTimeout] WARNING: Trying to set a timeout before GLib Context is created."));
+            return 0;
+        }
 
-    GSource *timeout_source;
-    t_u32 id;
+        GSource *timeout_source;
 
-    //create a new time-out source
-    timeout_source = g_timeout_source_new(duration);
-    //attach source to context
-    id = g_source_attach(timeout_source, m_GLibContext);
+        //create a new time-out source
+        timeout_source = g_timeout_source_new(duration);
 
-    TimeoutData* dd = new TimeoutData;
-    dd->window_thread = this;
-    dd->id = id;
+        TimeoutData* dd = new TimeoutData;
+        dd->window_thread = this;
+        dd->id = 0;
+        //set the callback for this source
+        g_source_set_callback(timeout_source, nux_timeout_dispatch, dd, NULL);
 
-    //set the callback for this source
-    g_source_set_callback(timeout_source, nux_timeout_dispatch, dd, NULL);
+        //attach source to context
+        dd->id = g_source_attach(timeout_source, m_GLibContext);
 
-    return id;
-
-    /////////////
-//     TimeoutData* dd = new TimeoutData;
-//     dd->window_thread = this;
-//     dd->id = g_timeout_add (duration, nux_timeout_dispatch, dd);
-// 
-//     return dd->id;
+        return dd->id;
+    }
 }
 #endif
 
@@ -599,11 +609,8 @@ t_u32 WindowThread::ExecutionLoop()
             }
 
             //DISPATCH EVENT HERE
-            m_window_compositor->ClearDrawList();
-            m_window_compositor->PushEventRectangle(Rect(0, 0, w, h));
             //event.Application = Application;
             m_window_compositor->ProcessEvent(event);
-            m_window_compositor->EmptyEventRegion();
         }
 
         if(event.e_event == NUX_SIZE_CONFIGURATION)
@@ -1206,11 +1213,8 @@ bool WindowThread::ProcessForeignEvent(XEvent* xevent, void* data)
         }
 
         //DISPATCH EVENT HERE
-        m_window_compositor->ClearDrawList();
-        m_window_compositor->PushEventRectangle(Rect(0, 0, w, h));
         //nux_event.Application = Application;
         m_window_compositor->ProcessEvent(nux_event);
-        m_window_compositor->EmptyEventRegion();
     }
 
     if(nux_event.e_event == NUX_SIZE_CONFIGURATION)

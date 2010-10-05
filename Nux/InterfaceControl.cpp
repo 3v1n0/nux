@@ -21,6 +21,7 @@
 
 
 #include "Nux.h"
+#include "WindowCompositor.h"
 #include "Layout.h"
 #include "InterfaceControl.h"
 
@@ -218,7 +219,10 @@ void ActiveInterfaceObject::NeedRedraw()
     //GetThreadWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetGraphicsThread();
     if(application)
+    {
         application->RequestRedraw();
+        GetThreadWindowCompositor().AddToDrawList(this);
+    }
     m_NeedRedraw = true;
 }
 
@@ -227,7 +231,10 @@ void ActiveInterfaceObject::NeedSoftRedraw()
     //GetThreadWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetGraphicsThread();
     if(application)
+    {
         application->RequestRedraw();
+        GetThreadWindowCompositor().AddToDrawList(this);
+    }
     //m_NeedRedraw = false;
 }
 

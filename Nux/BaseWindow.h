@@ -111,6 +111,8 @@ public:
     void SetBlurredBackground(bool b) {m_blured_background = b;}
     bool UseBlurredBackground() {return m_blured_background;}
 
+    std::vector<Geometry> m_dirty_areas;    //!< Geometry of areas inside the BaseWindow that requested a redraw.
+
 protected:
     ConfigureNotifyCallback m_configure_notify_callback;    //!< Callback function to set the window position and size.
     void* m_configure_notify_callback_data;     //!< Callback data for ConfigureNotifyCallback.
@@ -138,6 +140,8 @@ protected:
         @param Height   New height of the window.
     */
     virtual void NotifyConfigurationChange(int Width, int Height);
+
+    void ClearDirtyAreas();
 
     int GetBorder() const;
     int GetTopBorder() const;

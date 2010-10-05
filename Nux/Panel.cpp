@@ -81,10 +81,9 @@ long Panel::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInf
             traverse = false;
         }
     }
-    GetThreadWindowCompositor().PushEventRectangle(viewGeometry);
+
     if(m_layout)
         ret = m_layout->ProcessEvent(ievent, ret, ProcEvInfo);
-    GetThreadWindowCompositor().PopEventRectangle();
 
     ret = PostProcessEvent2(ievent, ret, 0);
     return ret;

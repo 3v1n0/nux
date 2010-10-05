@@ -69,6 +69,11 @@ BaseWindow::~BaseWindow()
     NUX_SAFE_DELETE(m_PaintLayer);
 }
 
+void BaseWindow::ClearDirtyAreas()
+{
+    m_dirty_areas.clear();
+}
+
 long BaseWindow::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
 {
     long ret = TraverseInfo;
