@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -25,46 +25,51 @@
 
 #include "NPlugin.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-class NPluginManager
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-	public:
-		NPluginManager(){}
-		~NPluginManager() { ClearPluginList(); }
+
+  class NPluginManager
+  {
+  public:
+    NPluginManager() {}
+    ~NPluginManager()
+    {
+      ClearPluginList();
+    }
 
 
-		void GetPluginList(TCHAR * dirPath, bool addToList=false);
+    void GetPluginList (TCHAR *dirPath, bool addToList = false);
 
-		NPluginInterface * MakeNewPluginInstance(int index)
-		{
-			return pluginRegister.at(index)->MakeNewInstance();
-		}
-		int GetNumPlugins()
-		{
-			return int(pluginRegister.size());
-		}
-		
-		TCHAR * GetPluginName(int index)
-		{
-			return pluginRegister.at(index)->GetName();
-		}
-		TCHAR * KetPluginType(int index)
-		{
-			return pluginRegister.at(index)->GetType();
-		}
+    NPluginInterface *MakeNewPluginInstance (int index)
+    {
+      return pluginRegister.at (index)->MakeNewInstance();
+    }
+    int GetNumPlugins()
+    {
+      return int (pluginRegister.size() );
+    }
 
-	private:
-		void ClearPluginList()
-		{
-			for (unsigned int i = 0; i < pluginRegister.size(); i++)
-			{
-				delete pluginRegister.at(i);		
-			}	
-			pluginRegister.clear();
-		}
-        std::vector<NPlugin*> pluginRegister;
-};
+    TCHAR *GetPluginName (int index)
+    {
+      return pluginRegister.at (index)->GetName();
+    }
+    TCHAR *KetPluginType (int index)
+    {
+      return pluginRegister.at (index)->GetType();
+    }
+
+  private:
+    void ClearPluginList()
+    {
+      for (unsigned int i = 0; i < pluginRegister.size(); i++)
+      {
+        delete pluginRegister.at (i);
+      }
+
+      pluginRegister.clear();
+    }
+    std::vector<NPlugin *> pluginRegister;
+  };
 
 } //NUX_NAMESPACE_END
 #endif // NPLUGINMANAGER_H

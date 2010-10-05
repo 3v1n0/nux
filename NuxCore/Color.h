@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -25,39 +25,40 @@
 
 #include "NSystemTypes.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN      
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
 #define NUX_COLOR_RGB(r, g, b)
 
 #define NUX_COLOR_ARGB(a,r,g,b)   ((Color)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
-enum eColorModel{CM_RGB, CM_HSV, CM_HLS, CM_YUV};
-enum eColorChannel{CC_RED, CC_GREEN, CC_BLUE, CC_HUE, CC_SATURATION, CC_LIGHT , CC_VALUE};
+  enum eColorModel {CM_RGB, CM_HSV, CM_HLS, CM_YUV};
+  enum eColorChannel {CC_RED, CC_GREEN, CC_BLUE, CC_HUE, CC_SATURATION, CC_LIGHT , CC_VALUE};
 
-class Color
-{
-public:
+  class Color
+  {
+  public:
     enum Format
     {
-        COLORFORMAT_FLOAT = 0,
-        COLORFORMAT_HEX,
-        COLORFORMAT_INT,
+      COLORFORMAT_FLOAT = 0,
+      COLORFORMAT_HEX,
+      COLORFORMAT_INT,
     };
 
     Color();
     ~Color();
-    Color(const Color&);
-    explicit Color(unsigned int c);
-    Color(t_float r, t_float g, t_float b);
-    Color(t_float r, t_float g, t_float b, t_float a);
-    Color* Clone() const;
+    Color (const Color &);
+    explicit Color (unsigned int c);
+    Color (t_float r, t_float g, t_float b);
+    Color (t_float r, t_float g, t_float b, t_float a);
+    Color *Clone() const;
 
-    Color& operator=(const Color&);
-    bool operator==(const Color&) const;
-    bool operator!=(const Color&) const;
+    Color &operator= (const Color &);
+    bool operator== (const Color &) const;
+    bool operator!= (const Color &) const;
 
-    void SetRGB(t_float r, t_float g, t_float b);
-    void SetRGBA(t_float r, t_float g, t_float b, t_float a);
+    void SetRGB (t_float r, t_float g, t_float b);
+    void SetRGBA (t_float r, t_float g, t_float b, t_float a);
 
     void ClampVal();
     void Saturate();
@@ -65,20 +66,56 @@ public:
     Color Luminance();
     Color OneMinusLuminance();
 
-    t_float GetRed() const {return red_;};
-    t_float GetGreen() const {return green_;};
-    t_float GetBlue() const {return blue_;};
-    t_float GetAlpha() const {return alpha_;};
-    
-    t_float R() const {return red_;};
-    t_float G() const {return green_;};
-    t_float B() const {return blue_;};
-    t_float A() const {return alpha_;};
+    t_float GetRed() const
+    {
+      return red_;
+    };
+    t_float GetGreen() const
+    {
+      return green_;
+    };
+    t_float GetBlue() const
+    {
+      return blue_;
+    };
+    t_float GetAlpha() const
+    {
+      return alpha_;
+    };
 
-    void SetRed(t_float r) {red_ = r;};
-    void SetGreen(t_float g) {green_ = g;};
-    void SetBlue(t_float b) {blue_ = b;};
-    void SetAlpha(t_float a) {alpha_ = a;};
+    t_float R() const
+    {
+      return red_;
+    };
+    t_float G() const
+    {
+      return green_;
+    };
+    t_float B() const
+    {
+      return blue_;
+    };
+    t_float A() const
+    {
+      return alpha_;
+    };
+
+    void SetRed (t_float r)
+    {
+      red_ = r;
+    };
+    void SetGreen (t_float g)
+    {
+      green_ = g;
+    };
+    void SetBlue (t_float b)
+    {
+      blue_ = b;
+    };
+    void SetAlpha (t_float a)
+    {
+      alpha_ = a;
+    };
 
     static Color RandomColor();
     static unsigned int RandomColorINT();
@@ -93,15 +130,15 @@ public:
     friend Color operator * (Color color, float);
 
 
- private:
+  private:
     t_float red_;
     t_float green_;
     t_float blue_;
     t_float alpha_;
 
-public:
+  public:
 //X11 color names from:http://en.wikipedia.org/wiki/Web_colors
-    
+
     //Red colors
     static const Color      IndianRed           ;//     CD 5C 5C 	205 92 92
     static const Color      LightCoral          ;//        F0 80 80 	240 128 128
@@ -264,27 +301,27 @@ public:
     static const Color      Black               ;//        00 00 00 	0 0 0
 
     static Color    Dummy;
-};
+  };
 
-void RGBtoHSV( float r, float g, float b, float &h, float &s, float &v );
-void HSVtoRGB( float &r, float &g, float &b, float h, float s, float v );
-void HLStoRGB(float &r, float &g, float &b, float hue, float light, float satur);
-void RGBtoHLS(float rr, float gg, float bb, float &hue, float &light, float &satur);
+  void RGBtoHSV ( float r, float g, float b, float &h, float &s, float &v );
+  void HSVtoRGB ( float &r, float &g, float &b, float h, float s, float v );
+  void HLStoRGB (float &r, float &g, float &b, float hue, float light, float satur);
+  void RGBtoHLS (float rr, float gg, float bb, float &hue, float &light, float &satur);
 
 } //NUX_NAMESPACE_END
 
 #endif // COLOR_H
 
 /*
-  http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnopen/html/msdn_gl5.asp 
+  http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnopen/html/msdn_gl5.asp
 
   OpenGL V: Translating Windows DIBs
   February 8, 1995
-  
+
   Abstract
-  
+
   OpenGL (TM) is a portable language for rendering three-dimensional (3-D) graphics. OpenGL does not understand Microsoft? Windows? device-independent bitmaps (DIBs); instead, it has its own format for representing images. This article explains how to translate a Windows DIB into a format usable with OpenGL. Some knowledge of the Windows DIB format and the Microsoft Foundation Class Library (MFC) is expected. The EasyDIB sample application and GLlib dynamic-link library (DLL) demonstrate the ideas presented in this article.
-  
+
 */
 
 

@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -23,12 +23,13 @@
 #ifndef RUNTIMESTATS_H
 #define RUNTIMESTATS_H
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-class RenderingStats
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-    NUX_DECLARE_GLOBAL_OBJECT(RenderingStats, NuxGraphicsGlobalSingletonInitializer);
-public:
+
+  class RenderingStats
+  {
+    NUX_DECLARE_GLOBAL_OBJECT (RenderingStats, NuxGraphicsGlobalSingletonInitializer);
+  public:
     static t_u32 m_NumTex2D;
     static t_u32 m_GPUSizeTex2D;
     static t_u32 m_NumTexRectangle;
@@ -58,11 +59,11 @@ public:
     static t_u32 m_NumShaderProgram;
 
     static t_u32 m_TotalGPUSize;
-    void Register(IOpenGLResource* GraphicsObject);
-    void UnRegister(IOpenGLResource* GraphicsObject);
+    void Register (IOpenGLResource *GraphicsObject);
+    void UnRegister (IOpenGLResource *GraphicsObject);
 
     std::vector<int> v;
-};
+  };
 
 } //NUX_NAMESPACE_END
 

@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -23,20 +23,21 @@
 #ifndef NITX_H
 #define NITX_H
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-enum
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
+
+  enum
+  {
     ARCH_UNKNOWN            = 0,
     ARCH_TEXTURE2D          = 1,
     ARCH_CUBEMAP            = 2,
     ARCH_VOLUME             = 3,
     ARCH_ANIMATEDTEXTURE    = 4,
-};
+  };
 
 #pragma pack(1)
-typedef struct  
-{
+  typedef struct
+  {
     t_s64 FilePointer;
     NFileName Name;
     t_s32 Type;
@@ -47,12 +48,12 @@ typedef struct
     t_s32 NumMipmap;
     t_s32 Size;
 
-} TextureArchiveInfo_ver_0_0_1;
+  } TextureArchiveInfo_ver_0_0_1;
 #pragma pack()
 
-bool TextureArchiveAdd_ver_0_0_1(NSerializer* FileStream, NBitmapData* BitmapData, const TCHAR* InputTextureFile, NUX_OUT t_s64& Offset);
-NBitmapData* TextureArchiveLoad_ver_0_0_1(NSerializer* FileStream, unsigned int Offset);
-void TextureArchiveGetInfo_ver_0_0_1(NSerializer* FileStream, TextureArchiveInfo_ver_0_0_1& TextureArchiveInfo);
+  bool TextureArchiveAdd_ver_0_0_1 (NSerializer *FileStream, NBitmapData *BitmapData, const TCHAR *InputTextureFile, NUX_OUT t_s64 &Offset);
+  NBitmapData *TextureArchiveLoad_ver_0_0_1 (NSerializer *FileStream, unsigned int Offset);
+  void TextureArchiveGetInfo_ver_0_0_1 (NSerializer *FileStream, TextureArchiveInfo_ver_0_0_1 &TextureArchiveInfo);
 
 
 #define TEXTUREARCHIVETAG NUX_MAKEFOURCHARTAG('i','t','x','t')
@@ -62,8 +63,8 @@ void TextureArchiveGetInfo_ver_0_0_1(NSerializer* FileStream, TextureArchiveInfo
 #define NUX_ANIMATED_TEXTURE_VERSION NUX_MAKEFOURCHARTAG('0','0','0','1')
 
 
-bool CreateITXFile(const TCHAR* InputTextureFile, const TCHAR* OutputTextureFile = 0);
-NBitmapData* LoadITXFile(const TCHAR* ITXFilename);
+  bool CreateITXFile (const TCHAR *InputTextureFile, const TCHAR *OutputTextureFile = 0);
+  NBitmapData *LoadITXFile (const TCHAR *ITXFilename);
 
 } //NUX_NAMESPACE_END
 

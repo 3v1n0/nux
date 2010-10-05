@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -28,7 +28,7 @@
 #include <sigc++/functors/ptr_fun.h>
 #include <sigc++/functors/mem_fun.h>
 
-#include "NuxCore/NuxCoreObject.h"
+#include "NuxCore/InitiallyUnownedObject.h"
 
 #include "Utils.h"
 #include "WidgetMetrics.h"
@@ -39,22 +39,23 @@
 #define weaksmptr(T) nux::IntrusiveWeakSP<T>
 #define smptrnull(T) nux::IntrusiveSP<T> (0)
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
-class WindowThread;
-class GraphicsContext;
+  class WindowThread;
+  class GraphicsContext;
 
 
 // #if 0
 //     #define usingwsptr
 //     #define smartptr(T, a)      WSPtr<T>(a)
-//     #define smartptrobj(a)      smptr(BaseObject)(a)
+//     #define smartptrobj(a)      smptr(Area)(a)
 //     #define smartptrtype(T)     WSPtr<T>
 //     #define smartptrwrap(T)     WrapWSPtr<T>
 //     #define smartptrweak(T)     WeakWSPtr<T>
 // #else
 //     #define smartptr(T, a) T* a
-//     #define smartptrobj(a) smptr(BaseObject) a
+//     #define smartptrobj(a) smptr(Area) a
 //     #define smartptrtype(T) (T*)
 //     #define smartptrwrap(T) (T*)
 //     #define smartptrweak(T) T*
@@ -79,37 +80,37 @@ class GraphicsContext;
 //
 
 
-enum eMinorSize
-{
+  enum eMinorSize
+  {
     eFull,
     ePercentage,
     eFix,
     eMatchContent,
-};
+  };
 
 //! Policy for and element position in the minor dimension of a layout.
-enum eMinorPosition
-{
+  enum eMinorPosition
+  {
     eAbove,         //!< Place the element on the top side of the layout (Hlayout)
     eBelow,         //!< Place the element on the bottom side of the layout (Hlayout)
     eLeft,          //!< Place the element on the left side of the layout (Vlayout)
     eRight,         //!< Place the element on the right side of the layout (Hlayout)
     eCenter,        //!< Place the element at the center of the layout (Hlayout and VLayout)
-};
+  };
 
 //! Stacking order inside a layout.
-typedef enum
-{
+  typedef enum
+  {
     eStackTop,      //!< Stack elements at the top (VLayout)
     eStackBottom,   //!< Stack elements at the bottom (VLayout)
     eStackLeft,     //!< Stack elements at the left (HLayout)
     eStackRight,    //!< Stack elements at the right (HLayout)
     eStackCenter,   //!< Stack elements in the center of the layout (HLayout and VLayout)
     eStackExpand,   //!< Spread elements evenly inside the layout (HLayout and VLayout)
-}  LayoutContentDistribution;
+  }  LayoutContentDistribution;
 
-enum eSizeCompliance
-{
+  enum eSizeCompliance
+  {
     eCompliantWidth     = (1L),
     eCompliantHeight    = (1L) << 1,
     eSmallerWidth       = (1L) << 2,
@@ -117,39 +118,57 @@ enum eSizeCompliance
     eLargerWidth        = (1L) << 4,
     eLargerHeight       = (1L) << 5,
     eForceComply        = (1L) << 6,
-};
+  };
 
-class Layout;
-class ActiveInterfaceObject;
-class BaseObject;
+  class Layout;
+  class View;
+  class Area;
 
 
-class BaseObject: public NuxCoreObject, public sigc::trackable
-{
-public:
-    NUX_DECLARE_OBJECT_TYPE(BaseObject, NuxCoreObject);
+  class Area: public InitiallyUnownedObject, public sigc::trackable
+  {
+  public:
+    NUX_DECLARE_OBJECT_TYPE (Area, InitiallyUnownedObject);
     //static NObjectType StaticObjectType;
     //virtual NObjectType* Type() { return &StaticObjectType; }
 
-public:
-    BaseObject(NUX_FILE_LINE_DECL);
-    virtual ~BaseObject();
+  public:
+    Area (NUX_FILE_LINE_DECL);
+    virtual ~Area();
 
-    virtual int GetBaseX     () const {return m_Geometry.x;}
-    virtual int GetBaseY     () const {return m_Geometry.y;}
-    virtual int GetBaseWidth    () const {return m_Geometry.GetWidth();}
-    virtual int GetBaseHeight   () const {return m_Geometry.GetHeight();}
-    
-    virtual void SetBaseX    (int x) {m_Geometry.SetX(x);}
-    virtual void SetBaseY    (int y) {m_Geometry.SetY(y);}
-    virtual void SetBaseXY    (int x, int y) 
+    virtual int GetBaseX     () const
     {
-        m_Geometry.SetX(x); 
-        m_Geometry.SetY(y);
+      return m_Geometry.x;
     }
-    virtual void SetBaseWidth(int w);
+    virtual int GetBaseY     () const
+    {
+      return m_Geometry.y;
+    }
+    virtual int GetBaseWidth    () const
+    {
+      return m_Geometry.GetWidth();
+    }
+    virtual int GetBaseHeight   () const
+    {
+      return m_Geometry.GetHeight();
+    }
 
-    virtual void SetBaseHeight(int h);
+    virtual void SetBaseX    (int x)
+    {
+      m_Geometry.SetX (x);
+    }
+    virtual void SetBaseY    (int y)
+    {
+      m_Geometry.SetY (y);
+    }
+    virtual void SetBaseXY    (int x, int y)
+    {
+      m_Geometry.SetX (x);
+      m_Geometry.SetY (y);
+    }
+    virtual void SetBaseWidth (int w);
+
+    virtual void SetBaseHeight (int h);
 
     //! Set the size of the object.
     /*
@@ -157,16 +176,16 @@ public:
         The size is adjusted to respect the min and max size policy
         \sa SetWidth(), SetHeight(), SetMinimumSize(), SetMaximumSize().
     */
-    virtual void SetBaseSize(int w, int h);
+    virtual void SetBaseSize (int w, int h);
 
-    virtual void SetMinimumSize(int w, int h);
-    virtual void SetMaximumSize(int w, int h);
-    virtual void SetMinMaxSize(int w, int h);
+    virtual void SetMinimumSize (int w, int h);
+    virtual void SetMaximumSize (int w, int h);
+    virtual void SetMinMaxSize (int w, int h);
 
-    virtual void SetMinimumWidth(int w);
-    virtual void SetMaximumWidth(int w);
-    virtual void SetMinimumHeight(int h);
-    virtual void SetMaximumHeight(int h);
+    virtual void SetMinimumWidth (int w);
+    virtual void SetMaximumWidth (int w);
+    virtual void SetMinimumHeight (int h);
+    virtual void SetMaximumHeight (int h);
 
     int GetMinimumWidth() const;
     int GetMaximumWidth() const;
@@ -186,7 +205,10 @@ public:
         @return The Geometry of the object.
         @sa GetBaseWidth(), GetBaseHeight(), GetBaseX(), GetBaseY().
     */
-    virtual Geometry GetGeometry() const {return m_Geometry;}
+    virtual Geometry GetGeometry() const
+    {
+      return m_Geometry;
+    }
 
     //! Set the geometry of the object.
     /*!
@@ -198,7 +220,7 @@ public:
 
         \sa SetBaseWidth(), SetBaseHeight(), SetBaseX(), SetBaseY().
     */
-    virtual void SetGeometry(int x, int y, int w, int h);
+    virtual void SetGeometry (int x, int y, int w, int h);
 
     //! Set the geometry of the object.
     /*!
@@ -207,37 +229,55 @@ public:
         \param geo Geometry object.
         \sa SetWidth(), SetHeight(), SetX(), SetY().
     */
-    virtual void SetGeometry(const Geometry& geo);
+    virtual void SetGeometry (const Geometry &geo);
 
-    void IncreaseSize(int x, int y)
+    void IncreaseSize (int x, int y)
     {
-        //m_Geometry.Width     += x;
-        //m_Geometry.Height    += y;
-        m_Geometry.OffsetPosition(x, y);
-        OnResize.emit(m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight());
+      //m_Geometry.Width     += x;
+      //m_Geometry.Height    += y;
+      m_Geometry.OffsetPosition (x, y);
+      OnResize.emit (m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight() );
     }
 
-    void SetBaseString(const TCHAR* Caption);
-    const NString& GetBaseString() const;
+    void SetBaseString (const TCHAR *Caption);
+    const NString &GetBaseString() const;
 
-    virtual long ComputeChildLayout() {return 0;}
-    virtual void PositionChildLayout(float offsetX, float offsetY){}
-    virtual void DrawLayout(){};
+    virtual long ComputeChildLayout()
+    {
+      return 0;
+    }
+    virtual void PositionChildLayout (float offsetX, float offsetY) {}
+    virtual void DrawLayout() {};
 
-    virtual long ComputeLayout2(){return (eCompliantWidth | eCompliantHeight);};
-    virtual void ComputePosition2(float offsetX, float offsetY){};
-    virtual bool IsLayout() const {return false;}
-    virtual bool IsSpaceLayout() const {return false;}
-    virtual bool IsArea() const {return false;}
-    virtual bool IsInterfaceControl() const {return false;}
+    virtual long ComputeLayout2()
+    {
+      return (eCompliantWidth | eCompliantHeight);
+    };
+    virtual void ComputePosition2 (float offsetX, float offsetY) {};
+    virtual bool IsLayout() const
+    {
+      return false;
+    }
+    virtual bool IsSpaceLayout() const
+    {
+      return false;
+    }
+    virtual bool IsArea() const
+    {
+      return false;
+    }
+    virtual bool IsView() const
+    {
+      return false;
+    }
 
-protected:
+  protected:
 
-    /* 
+    /*
         This function is reimplemented in Layout as it need to perform some special operations.
-        It does nothing for BaseObject and ActiveInterfaceObject classes.
+        It does nothing for Area and View classes.
     */
-    //virtual void RemoveChildObject(smptr(BaseObject));
+    //virtual void RemoveChildObject(smptr(Area));
 
     /*
         SetParentObject/UnParentObject are protected API. it is not meant to be used directly by users.
@@ -246,24 +286,24 @@ protected:
         For instance, setting a button the be the child of a checkbox means absolutely nothing is terms of rendering.
         A widget with a parent cannot be added to a added to a layout for rendering. The widget has to be unparented first.
         A layout with a parent cannot be added to a widget or another layout for rendering. The layout has to be unparented first.
-        In essence only ActiveInterfaceObject and Layouts should be calling SetParentObject/UnParentObject.
+        In essence only View and Layouts should be calling SetParentObject/UnParentObject.
     */
-    virtual void SetParentObject(BaseObject*);
+    virtual void SetParentObject (Area *);
     virtual void UnParentObject();
 
-    BaseObject* GetParentObject();
+    Area *GetParentObject();
 
     //! Request a Layout recompute after a change of size
     /*
         When an object size changes, it is necessary for its parent structure to initiate a layout
         re computation in order preserve the layout structure defined by the user through the API.
     */
-    virtual void RequestBottomUpLayoutComputation(BaseObject* bo_initiator);
+    virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
 
-private:
+  private:
     //! Flags that set an object as dirty with regard to is size.
     /*
-        Every time an object is resized (through SetGeometry, SetHeight or SetWidth), it become dirty. 
+        Every time an object is resized (through SetGeometry, SetHeight or SetWidth), it become dirty.
         This flag is set to true in InitiateResizeLayout when the object request a parent layout to recompute itself.
         When a layout is computed, it resets the flag to false.
     */
@@ -271,37 +311,37 @@ private:
 
     //! Define a parent child structure
     /*
-        An object of the class BaseObject may have another of the class Layout as Parent.
-        An object of the class ActiveInterfaceObject may have an object of the class Layout as parent.
-        An object of the class Layout may have a parent of the class Layout or ActiveInterfaceObject as parent.
-        A BaseObject cannot have children (that may change later).
+        An object of the class Area may have another of the class Layout as Parent.
+        An object of the class View may have an object of the class Layout as parent.
+        An object of the class Layout may have a parent of the class Layout or View as parent.
+        A Area cannot have children (that may change later).
     */
-    BaseObject* m_ParentObject;
-    
-    void _SetBaseWidth(int w);
-    void _SetBaseHeight(int h);
+    Area *m_ParentObject;
 
-public:
-    WindowThread* GetApplication() const
+    void _SetBaseWidth (int w);
+    void _SetBaseHeight (int h);
+
+  public:
+    WindowThread *GetApplication() const
     {
-        return m_Application;
+      return m_Application;
     }
 
-    virtual void SetApplication(WindowThread* Application)
+    virtual void SetApplication (WindowThread *Application)
     {
-        m_Application = Application;
+      m_Application = Application;
     }
 
-private:
-    WindowThread* m_Application;
+  private:
+    WindowThread *m_Application;
 
-private:
+  private:
 
-    void InitiateResizeLayout(BaseObject* child = 0);
+    void InitiateResizeLayout (Area *child = 0);
     void CheckMinSize();
     void CheckMaxSize();
 
-protected:
+  protected:
     Geometry m_Geometry;
     NString m_BaseString;
 
@@ -309,22 +349,46 @@ protected:
     Size m_maxSize;
     //unsigned int m_StretchFactor;
 
-public:
+  public:
 
     virtual unsigned int GetStretchFactor();
-    virtual void SetStretchFactor(unsigned int sf);
+    virtual void SetStretchFactor (unsigned int sf);
 
-    virtual eMinorPosition getPositioning() {return positioning;}
-    virtual void setPositioning(eMinorPosition p) {positioning = p;}
+    virtual eMinorPosition getPositioning()
+    {
+      return positioning;
+    }
+    virtual void setPositioning (eMinorPosition p)
+    {
+      positioning = p;
+    }
 
-    virtual eMinorSize GetExtend() {return extend;}
-    virtual void SetExtend(eMinorSize ext) {extend = ext;}
+    virtual eMinorSize GetExtend()
+    {
+      return extend;
+    }
+    virtual void SetExtend (eMinorSize ext)
+    {
+      extend = ext;
+    }
 
-    virtual float GetPercentage() {return percentage;}
-    virtual void SetPercentage(float f) {percentage = f;}
+    virtual float GetPercentage()
+    {
+      return percentage;
+    }
+    virtual void SetPercentage (float f)
+    {
+      percentage = f;
+    }
 
-    virtual bool isOutofBound() {return outofbound;}
-    virtual void setOutofBound(bool b) {outofbound = b;}
+    virtual bool isOutofBound()
+    {
+      return outofbound;
+    }
+    virtual void setOutofBound (bool b)
+    {
+      outofbound = b;
+    }
 
 
     unsigned int    m_stretchfactor;
@@ -332,15 +396,15 @@ public:
     eMinorSize         extend;
     float           percentage;
     bool            outofbound;
-public:
+  public:
     sigc::signal<void, int, int, int, int> OnResize;
 
     friend class Layout;
-    friend class ActiveInterfaceObject;
+    friend class View;
     friend class WindowThread;
     friend class HSplitter;
     friend class VSplitter;
-};
+  };
 
 } //NUX_NAMESPACE_END
 #endif // BASEOBJECT_H

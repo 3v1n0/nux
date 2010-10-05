@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -24,7 +24,7 @@
 #define SYSTEMWIN32_H
 
 #ifndef WIN32_LEAN_AND_MEAN
-    #define WIN32_LEAN_AND_MEAN 1
+#define WIN32_LEAN_AND_MEAN 1
 #endif
 #include <windows.h>
 
@@ -113,22 +113,22 @@ typedef double                  DOUBLE;     // 64-bit IEEE double.
 // UNICODE                                   //
 ///////////////////////////////////////////////
 #ifdef _UNICODE
-    #ifndef _TCHAR_DEFINED
-        typedef wchar_t  TCHAR;
-    #endif
+#ifndef _TCHAR_DEFINED
+typedef wchar_t  TCHAR;
+#endif
 
-    #ifndef _TEXT_DEFINED
-        #undef TEXT
-        #define TEXT(s) L##s
-    #endif
+#ifndef _TEXT_DEFINED
+#undef TEXT
+#define TEXT(s) L##s
+#endif
 
 #else
-    #ifndef _TCHAR_DEFINED
-        typedef ANSICHAR  TCHAR;
-    #endif
+#ifndef _TCHAR_DEFINED
+typedef ANSICHAR  TCHAR;
+#endif
 
-    #undef TEXT
-    #define TEXT(s) s
+#undef TEXT
+#define TEXT(s) s
 #endif
 
 // #ifdef WIN32_SECURE
@@ -136,68 +136,68 @@ typedef double                  DOUBLE;     // 64-bit IEEE double.
 //     #define WCSNCPY_S(strDest, numberOfElements, strSource, count) wcsncpy_s(strDest, numberOfElements, strSource, count)
 //     #define MBSNCPY_S(strDest, numberOfElements, strSource, count) _mbsncpy_s(strDest, numberOfElements, strSource, count)
 //     #define _TCSNCPY_S(strDest, numberOfElements, strSource, count) _tcsncpy_s(strDest, numberOfElements, strSource, count)
-// 
+//
 //     #define STRCPY_S(strDest, numberOfElements, strSource) strcpy_s(strDest, numberOfElements, strSource)
 //     #define WCSCPY_S(strDest, numberOfElements, strSource) wcscpy_s(strDest, numberOfElements, strSource)
 //     #define MBSCPY_S(strDest, numberOfElements, strSource) _mbscpy_s(strDest, numberOfElements, strSource)
 //     #define _TCSCPY_S(strDest, numberOfElements, strSource) _tcscpy_s(strDest, numberOfElements, strSource)
-// 
+//
 //     #define STRCAT_S(strDest, numberOfElements, strSource) strcat_s(strDest, numberOfElements, strSource)
 //     #define WCSCAT_S(strDest, numberOfElements, strSource) wcscat_s(strDest, numberOfElements, strSource)
 //     #define MBSCAT_S(strDest, numberOfElements, strSource) _mbscat_s(strDest, numberOfElements, strSource)
-// 
+//
 //     #define _VSNPRINTF_S(strDest, numberOfElements, Count, Format, VA_Arg_List) _vsnprintf_s(strDest, numberOfElements, Count, Format, VA_Arg_List)
 //     #define _VSNTPRINTF_S(strDest, numberOfElements, Count, Format, VA_Arg_List) _vsntprintf_s(strDest, numberOfElements, Count, Format, VA_Arg_List)
 //     #define SPRINTF_S(strDest, numberOfElements, Format, ...) sprintf_s(strDest, numberOfElements, Format, ##__VA_ARGS__)
 //     #define _SNPRINTF_S(strDest, numberOfElements, Count, Format, ...) _snprintf_s(strDest, numberOfElements, Count, Format, ##__VA_ARGS__)
-// 
+//
 //     #define STRDATE_S(strDest, numberOfElements) _strdate_s(strDest, numberOfElements)
 //     #define _TSTRDATE_S(strDest, numberOfElements) _tstrdate_s(strDest, numberOfElements)
 //     #define _STRTIME_S(strDest, numberOfElements) _strtime_s(strDest, numberOfElements)
 //     #define _TSTRTIME_S(strDest, numberOfElements) _tstrtime_s(strDest, numberOfElements)
-//     
+//
 //     #define FOPEN_S(file, filename, mode)   fopen_s(file, filename, mode)
-// 
+//
 //     #define _TCSNLEN(str, numberOfElements) _tcsnlen(str)
-// 
+//
 //     #define _TSPLITPATH(path, Drive, DriveNumElements, Dir, DirNumElements, Filename, FileNumElements, Extension, ExtNumElements) _tsplitpath_s(path, Drive, DriveNumElements, Dir, DirNumElements, Filename, FileNumElements, Extension, ExtNumElements)
 //     #define _TMAKEPATH_S(path, numberOfElements, Drive, Dir, Filename, Extension) _tmakepath_s(path, numberOfElements, Drive, Dir, Filename, Extension)
-// 
+//
 //     #define SSCANF_S(buffer, Format, ...) sscanf_s(buffer, Format, ##__VA_ARGS__)
 //     #define SWSCANF_S(buffer, Format, ...) swscanf_s(buffer, Format, ##__VA_ARGS__)
-// 
+//
 // #else
 //     #define STRNCPY_S(strDest, numberOfElements, strSource, count) strncpy(strDest, strSource, count)
 //     #define WCSNCPY_S(strDest, numberOfElements, strSource, count) wcsncpy(strDest, strSource, count)
 //     #define MBSNCPY_S(strDest, numberOfElements, strSource, count) _mbsncpy(strDest, strSource, count)
 //     #define _TCSNCPY_S(strDest, numberOfElements, strSource, count) _tcsncpy(strDest, strSource, count)
-// 
+//
 //     #define STRCPY_S(strDest, numberOfElements, strSource) strcpy(strDest, strSource)
 //     #define WCSCPY_S(strDest, numberOfElements, strSource) wcscpy(strDest, strSource)
 //     #define MBSCPY_S(strDest, numberOfElements, strSource) _mbscpy(strDest, strSource)
 //     #define _TCSCPY_S(strDest, numberOfElements, strSource) _tcscpy(strDest, strSource)
-// 
+//
 //     #define STRCAT_S(strDest, numberOfElements, strSource) strcat(strDest, strSource)
 //     #define WCSCAT_S(strDest, numberOfElements, strSource) wcscat(strDest, strSource)
 //     #define MBSCAT_S(strDest, numberOfElements, strSource) _mbscat(strDest, strSource)
-// 
+//
 //     #define _VSNPRINTF_S(strDest, numberOfElements, Count, Format, VA_Arg_List) _vsnprintf(strDest, Count, Format, VA_Arg_List)
 //     #define _VSNTPRINTF_S(strDest, numberOfElements, Count, Format, VA_Arg_List) _vsntprintf(strDest, Count, Format, VA_Arg_List)
 //     #define SPRINTF_S(strDest, numberOfElements, Format, a,b,c,d,e,f,g,h,i,j,k,l) sprintf(strDest, Format, VARG(a),VARG(b),VARG(c),VARG(d),VARG(e),VARG(f),VARG(g),VARG(h),VARG(i),VARG(j),VARG(k),VARG(l))
 //     #define _SNPRINTF_S(strDest, numberOfElements, Count, Format, a,b,c,d,e,f,g,h,i,j,k,l) _snprintf(strDest, Count, Format, VARG(a),VARG(b),VARG(c),VARG(d),VARG(e),VARG(f),VARG(g),VARG(h),VARG(i),VARG(j),VARG(k),VARG(l))
-// 
+//
 //     #define STRDATE_S(strDest, numberOfElements) _strdate(strDest)
 //     #define _TSTRDATE_S(strDest, numberOfElements) _tstrdate(strDest)
 //     #define _STRTIME_S(strDest, numberOfElements) _strtime(strDest)
 //     #define _TSTRTIME_S(strDest, numberOfElements) _tstrtime(strDest)
-// 
+//
 //     #define FOPEN_S(file, filename, mode)   (file=fopen(filename, mode))
-// 
+//
 //     #define _TCSNLEN(str, numberOfElements)     _tcsclen(str)
-// 
+//
 //     #define _TSPLITPATH(path, Drive, DriveNumElements, Dir, DirNumElements, Filename, FileNumElements, Extension, ExtNumElements) _tsplitpath(path, Drive, Dir, Filename, Extension)
 //     #define _TMAKEPATH_S(path, numberOfElements, Drive, Dir, Filename, Extension) _makepath(path, Drive, Dir, Filename, Extension)
-// 
+//
 //     #define SSCANF_S(buffer, Format, VA_Arg_List) sscanf(buffer, Format, VA_Arg_List)
 //     #define SWSCANF_S(buffer, Format, VA_Arg_List) swscanf(buffer, Format, VA_Arg_List)
 // #endif
@@ -209,7 +209,7 @@ typedef double                  DOUBLE;     // 64-bit IEEE double.
 //@note: Currently xutility breaks with this enabled 2005 fixes it
 #pragma warning(disable : 4619) // #pragma warning : there is no warning number 'number'   
 //#pragma warning(disable : 4267) // #pragma warning : conversion from 'size_t' to 'int', possible loss of data
-  
+
 
 // Unwanted VC++ level 4 warnings to disable.
 #pragma warning(disable : 4100) // unreferenced formal parameter										
@@ -234,13 +234,14 @@ typedef double                  DOUBLE;     // 64-bit IEEE double.
 #pragma warning(disable : 4714) // __forceinline function not expanded									
 
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
-void* GetDllHandle( const TCHAR* DllName );
+  void *GetDllHandle ( const TCHAR *DllName );
 
-void FreeDllHandle( void* DllHandle );
+  void FreeDllHandle ( void *DllHandle );
 
-void* GetDllExport( void* DllHandle, const TCHAR* ExportName );
+  void *GetDllExport ( void *DllHandle, const TCHAR *ExportName );
 
 
 } //NUX_NAMESPACE_END

@@ -35,7 +35,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     texture_area->SetTexture(texture2D);
 
     texture_area->SetMinMaxSize(64, 64);
-    MainVLayout->AddActiveInterfaceObject(texture_area, 1, nux::eCenter, nux::eFix);
+    MainVLayout->AddView(texture_area, 1, nux::eCenter, nux::eFix);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
 
     nux::GetGraphicsThread()->SetLayout(MainVLayout);

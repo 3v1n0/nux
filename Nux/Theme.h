@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -24,10 +24,11 @@
 #define UXTHEME_H
 
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-enum UXStyleImageRef
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
+
+  enum UXStyleImageRef
+  {
     eIMAGE_STYLE_NONE = 0,
     eSTROKE_CORNER_SQUARE,
     eSTROKE_CORNER_ROUND1,
@@ -112,11 +113,11 @@ enum UXStyleImageRef
     eGraphBarIcon,
 
     eWindowCloseButton,
-};
+  };
 
-struct PainterImage
-{
-    NTexture* texture;
+  struct PainterImage
+  {
+    NTexture *texture;
     UXStyleImageRef style;
 
     int border_left;
@@ -124,27 +125,27 @@ struct PainterImage
     int border_top;
     int border_bottom;
     bool draw_borders_only;
-};
+  };
 
-class UXTheme
-{
-public:
+  class UXTheme
+  {
+  public:
     UXTheme();
     ~UXTheme();
 
-    const PainterImage* GetImage(UXStyleImageRef style);
-    Rect GetImageGeometry(UXStyleImageRef style);
+    const PainterImage *GetImage (UXStyleImageRef style);
+    Rect GetImageGeometry (UXStyleImageRef style);
 
-    
-private:
+
+  private:
     void LoadPainterImages();
-    NTexture* Load2DTextureFile(const char* filename);
-    NTexture* Load2DRectangleTextureFile(const char* filename);
-    NTexture* Load2DTextureFileGenerateAlpha(const char* filename, int red, int green, int blue);
+    NTexture *Load2DTextureFile (const char *filename);
+    NTexture *Load2DRectangleTextureFile (const char *filename);
+    NTexture *Load2DTextureFileGenerateAlpha (const char *filename, int red, int green, int blue);
 
-    std::list<PainterImage*> m_PainterImageList;
+    std::list<PainterImage *> m_PainterImageList;
 
-};
+  };
 
 
 } //NUX_NAMESPACE_END

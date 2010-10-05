@@ -55,8 +55,8 @@ source_cpp = \
   $(srcdir)/ActionItem.cpp \
   $(srcdir)/AnimatedTextureArea.cpp \
   $(srcdir)/PaintLayer.cpp \
-  $(srcdir)/BaseArea.cpp \
-  $(srcdir)/BaseObject.cpp \
+  $(srcdir)/InputArea.cpp \
+  $(srcdir)/Area.cpp \
   $(srcdir)/BaseWindow.cpp \
   $(srcdir)/BezierCurveControl.cpp \
   $(srcdir)/BezierCurveControl2.cpp \
@@ -90,7 +90,7 @@ source_cpp = \
   $(srcdir)/HToolBar.cpp \
   $(srcdir)/HueRangeValuator.cpp \
   $(srcdir)/IntegerValidator.cpp \
-  $(srcdir)/InterfaceControl.cpp \
+  $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
   $(srcdir)/Layout.cpp \
   $(srcdir)/ListControl.cpp \
@@ -183,8 +183,8 @@ source_h = \
   $(srcdir)/ActionItem.h \
   $(srcdir)/AnimatedTextureArea.h \
   $(srcdir)/PaintLayer.h \
-  $(srcdir)/BaseArea.h \
-  $(srcdir)/BaseObject.h \
+  $(srcdir)/InputArea.h \
+  $(srcdir)/Area.h \
   $(srcdir)/BaseWindow.h \
   $(srcdir)/BezierCurveControl.h \
   $(srcdir)/BezierCurveControl2.h \
@@ -218,7 +218,7 @@ source_h = \
   $(srcdir)/HToolBar.h \
   $(srcdir)/HueRangeValuator.h \
   $(srcdir)/IntegerValidator.h \
-  $(srcdir)/InterfaceControl.h \
+  $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
   $(srcdir)/Layout.h \
   $(srcdir)/ListControl.h \

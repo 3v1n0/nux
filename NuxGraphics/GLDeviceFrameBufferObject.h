@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -37,7 +37,7 @@ share depth buffers between multiple sets of color buffers/textures and
 are a complete replacement for pbuffers.
 
 Performance Notes:
-1) It is more efficient (but not required) to call Bind() 
+1) It is more efficient (but not required) to call Bind()
 on an FBO before making multiple method calls. For example:
 
 FramebufferObject fbo;
@@ -63,7 +63,7 @@ left out an "Unbind()" method because it is largely unnecessary
 and encourages rendundant Bind/Unbind coding. Binding an FBO is
 usually much faster than enabling/disabling a pbuffer, but is
 still a costly operation. When switching between multiple FBOs
-and a visible OpenGL framebuffer, the following usage pattern 
+and a visible OpenGL framebuffer, the following usage pattern
 is recommended:
 
 FramebufferObject fbo1, fbo2;
@@ -79,11 +79,12 @@ fbo2.Bind();
 FramebufferObject::Disable();
 */
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-class GLFramebufferObject
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-public:
+
+  class GLFramebufferObject
+  {
+  public:
     /// Ctor/Dtor
     GLFramebufferObject();
     virtual ~GLFramebufferObject();
@@ -92,24 +93,24 @@ public:
     void Bind();
 
     /// Bind a texture to the "attachment" point of this FBO
-    virtual void AttachTexture( GLenum attachment, GLenum texType, GLuint texId,
-        int mipLevel = 0, int zSlice = 0);
+    virtual void AttachTexture ( GLenum attachment, GLenum texType, GLuint texId,
+                                 int mipLevel = 0, int zSlice = 0);
 
     /// Bind an array of textures to multiple "attachment" points of this FBO
     ///  - By default, the first 'numTextures' attachments are used,
     ///    starting with GL_COLOR_ATTACHMENT0_EXT
-    virtual void AttachTextures( int numTextures, 
-        GLenum texTarget[], 
-        GLuint texId[],
-        GLenum attachment[] = NULL,
-        int mipLevel[]      = NULL,
-        int zSlice[]        = NULL );
+    virtual void AttachTextures ( int numTextures,
+                                  GLenum texTarget[],
+                                  GLuint texId[],
+                                  GLenum attachment[] = NULL,
+                                  int mipLevel[]      = NULL,
+                                  int zSlice[]        = NULL );
 
     /// Bind a render buffer to the "attachment" point of this FBO
-    virtual void AttachRenderBuffer( GLenum attachment, GLuint buffId );
+    virtual void AttachRenderBuffer ( GLenum attachment, GLuint buffId );
 
     /// Free any resource bound to the "attachment" point of this FBO
-    void Unattach( GLenum attachment );
+    void Unattach ( GLenum attachment );
 
     /// Is this FBO currently a valid render target?
     ///  - Sends output to std::cerr by default but can
@@ -123,20 +124,20 @@ public:
 
     /// BEGIN : Accessors
     /// Is attached type GL_RENDERBUFFER_EXT or GL_TEXTURE?
-    GLenum GetAttachedType( GLenum attachment );
+    GLenum GetAttachedType ( GLenum attachment );
 
-    /// What is the Id of Renderbuffer/texture currently 
+    /// What is the Id of Renderbuffer/texture currently
     /// attached to "attachement?"
-    GLuint GetAttachedId( GLenum attachment );
+    GLuint GetAttachedId ( GLenum attachment );
 
     /// Which mipmap level is currently attached to "attachement?"
-    GLint  GetAttachedMipLevel( GLenum attachment );
+    GLint  GetAttachedMipLevel ( GLenum attachment );
 
     /// Which cube face is currently attached to "attachment?"
-    GLint  GetAttachedCubeFace( GLenum attachment );
+    GLint  GetAttachedCubeFace ( GLenum attachment );
 
     /// Which z-slice is currently attached to "attachment?"
-    GLint  GetAttachedZSlice( GLenum attachment );
+    GLint  GetAttachedZSlice ( GLenum attachment );
     /// END : Accessors
 
 
@@ -155,67 +156,67 @@ public:
     static void Disable();
     /// END : Static methods global to all FBOs
 
-private:
+  private:
     GLint m_fboId;
     GLint  m_savedFboId;
 
     void  _GuardedBind();
     void  _GuardedUnbind();
-    void  _FramebufferTextureND( GLenum attachment, GLenum texType, 
-        GLuint texId, int mipLevel, int zSlice );
+    void  _FramebufferTextureND ( GLenum attachment, GLenum texType,
+                                  GLuint texId, int mipLevel, int zSlice );
     static GLuint _GenerateFboId();
-};
+  };
 
-/*!
-Renderbuffer Class. This class encapsulates the Renderbuffer OpenGL
-object described in the FramebufferObject (FBO) OpenGL spec. 
-See the official spec at:
-http://oss.sgi.com/projects/ogl-sample/registry/EXT/framebuffer_object.txt
-for complete details.
+  /*!
+  Renderbuffer Class. This class encapsulates the Renderbuffer OpenGL
+  object described in the FramebufferObject (FBO) OpenGL spec.
+  See the official spec at:
+  http://oss.sgi.com/projects/ogl-sample/registry/EXT/framebuffer_object.txt
+  for complete details.
 
-A "Renderbuffer" is a chunk of GPU memory used by FramebufferObjects to
-represent "traditional" framebuffer memory (depth, stencil, and color buffers).
-By "traditional," we mean that the memory cannot be bound as a texture. 
-With respect to GPU shaders, Renderbuffer memory is "write-only." Framebuffer
-operations such as alpha blending, depth test, alpha test, stencil test, etc.
-read from this memory in post-fragement-shader (ROP) operations.
+  A "Renderbuffer" is a chunk of GPU memory used by FramebufferObjects to
+  represent "traditional" framebuffer memory (depth, stencil, and color buffers).
+  By "traditional," we mean that the memory cannot be bound as a texture.
+  With respect to GPU shaders, Renderbuffer memory is "write-only." Framebuffer
+  operations such as alpha blending, depth test, alpha test, stencil test, etc.
+  read from this memory in post-fragement-shader (ROP) operations.
 
-The most common use of Renderbuffers is to create depth and stencil buffers.
-Note that as of 7/1/05, NVIDIA drivers to do not support stencil Renderbuffers.
+  The most common use of Renderbuffers is to create depth and stencil buffers.
+  Note that as of 7/1/05, NVIDIA drivers to do not support stencil Renderbuffers.
 
-Usage Notes:
-1) "internalFormat" can be any of the following:
-Valid OpenGL internal formats beginning with:
-RGB, RGBA, DEPTH_COMPONENT
+  Usage Notes:
+  1) "internalFormat" can be any of the following:
+  Valid OpenGL internal formats beginning with:
+  RGB, RGBA, DEPTH_COMPONENT
 
-or a stencil buffer format (not currently supported 
-in NVIDIA drivers as of 7/1/05).
-STENCIL_INDEX1_EXT 
-STENCIL_INDEX4_EXT     
-STENCIL_INDEX8_EXT     
-STENCIL_INDEX16_EXT
+  or a stencil buffer format (not currently supported
+  in NVIDIA drivers as of 7/1/05).
+  STENCIL_INDEX1_EXT
+  STENCIL_INDEX4_EXT
+  STENCIL_INDEX8_EXT
+  STENCIL_INDEX16_EXT
 
-*/
-class GLRenderbuffer
-{
-public:
+  */
+  class GLRenderbuffer
+  {
+  public:
     /// Ctors/Dtors
     GLRenderbuffer();
-    GLRenderbuffer(GLenum internalFormat, int width, int height);
+    GLRenderbuffer (GLenum internalFormat, int width, int height);
     ~GLRenderbuffer();
 
     void   Bind();
     void   Unbind();
-    void   Set(GLenum internalFormat, int width, int height);
+    void   Set (GLenum internalFormat, int width, int height);
     GLuint GetId() const;
 
     static GLint GetMaxSize();
 
-private:
+  private:
     GLuint m_bufId;
 
     static GLuint _CreateBufferId();
-};
+  };
 
 } //NUX_NAMESPACE_END
 

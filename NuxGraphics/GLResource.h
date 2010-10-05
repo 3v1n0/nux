@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -34,7 +34,7 @@
 #include "NuxCore/Size.h"
 #include "NuxImage/BitmapFormats.h"
 #include "NuxCore/NParsing.h"
-#include "NuxCore/NuxCoreObject.h"
+#include "NuxCore/Object.h"
 #include "NuxCore/SmartPtr/GenericSmartPointer.h"
 #include "NuxCore/SmartPtr/IntrusiveSP.h"
 
@@ -53,56 +53,57 @@
 #include "NuxImage/NPng.h"
 
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-class IOpenGLResource;
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
+  class IOpenGLResource;
 
-class NTexture;
-class NTexture2D;
-class NRectangleTexture;
-class NTextureCube;
-class NTextureVolume;
-class NAnimatedTexture;
+  class NTexture;
+  class NTexture2D;
+  class NRectangleTexture;
+  class NTextureCube;
+  class NTextureVolume;
+  class NAnimatedTexture;
 
-class NVertexBuffer;
-class NIndexBuffer;
+  class NVertexBuffer;
+  class NIndexBuffer;
 
-class NGLTexture2D;
-class NGLRectangleTexture;
-class NGLTextureCube;
-class NGLTextureVolume;
-class NGLAnimatedTexture;
-class FontTexture;
+  class NGLTexture2D;
+  class NGLRectangleTexture;
+  class NGLTextureCube;
+  class NGLTextureVolume;
+  class NGLAnimatedTexture;
+  class FontTexture;
 
 } //NUX_NAMESPACE_END
 
 #define NUX_ENABLE_CG_SHADERS 0
 
 #if defined(NUX_OS_WINDOWS)
-    #include "GL/glew.h"
-    #include "GL/wglew.h"
+#include "GL/glew.h"
+#include "GL/wglew.h"
 
-    GLEWContext* glewGetContext();
-    WGLEWContext* wglewGetContext();
+GLEWContext *glewGetContext();
+WGLEWContext *wglewGetContext();
 
-    #if (NUX_ENABLE_CG_SHADERS)
-        #include "CG/cg.h"
-        #include "CG/cgGL.h"
-        #pragma comment( lib, "cg.lib" )
-        #pragma comment( lib, "cgGL.lib"  )
-    #endif
+#if (NUX_ENABLE_CG_SHADERS)
+#include "CG/cg.h"
+#include "CG/cgGL.h"
+#pragma comment( lib, "cg.lib" )
+#pragma comment( lib, "cgGL.lib"  )
+#endif
 
 #elif defined(NUX_OS_LINUX)
-    #define GLEW_MX
-    #include "GL/glew.h"
-    #include "GL/glxew.h"
-    
-    GLEWContext* glewGetContext();
-    GLXEWContext* glxewGetContext();
+#define GLEW_MX
+#include "GL/glew.h"
+#include "GL/glxew.h"
 
-    #if (NUX_ENABLE_CG_SHADERS)
-        #include "Cg/cg.h"
-        #include "Cg/cgGL.h"
-    #endif
+GLEWContext *glewGetContext();
+GLXEWContext *glxewGetContext();
+
+#if (NUX_ENABLE_CG_SHADERS)
+#include "Cg/cg.h"
+#include "Cg/cgGL.h"
+#endif
 #endif
 
 #include "RunTimeStats.h"
@@ -118,10 +119,11 @@ class FontTexture;
 #define NUX_BUFFER_OFFSET(i) ((BYTE *)NULL + (i))
 
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-enum
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
+
+  enum
+  {
     OGL_OK = 0,
     OGL_ERROR,
     OGL_ERROR_UNKNOWN,
@@ -131,9 +133,9 @@ enum
     OGL_INVALID_UNLOCK,
     OGL_INVALID_TEXTURE,
     OGL_FORCE_DWORD            = 0x7fffffff /* force 32-bit size enum */
-};
+  };
 
-extern const TCHAR* OGLDeviceErrorMessages[];
+  extern const TCHAR *OGLDeviceErrorMessages[];
 
 #define OGL_OK 0
 #define OGL_CALL(call)              \
@@ -145,8 +147,8 @@ extern const TCHAR* OGLDeviceErrorMessages[];
 
 //if(Result!=OGL_OK) {nuxError(TEXT("OGL Object Error: Error # %d - %s"), Result, OGLDeviceErrorMessages[Result]);}
 
-enum TEXTURE_FORMAT
-{
+  enum TEXTURE_FORMAT
+  {
     TEXTURE_FMT_UNKNOWN              = 0,
     TEXTURE_FMT_ALPHA                = GL_ALPHA,
     TEXTURE_FMT_ALPHA8               = GL_ALPHA8,
@@ -184,20 +186,20 @@ enum TEXTURE_FORMAT
     TEXTURE_FMT_COMPRESSED_RGBA_S3TC_DXT3_EXT  = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
     TEXTURE_FMT_COMPRESSED_RGBA_S3TC_DXT5_EXT  = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,
     TEXTURE_FMT_FORCE_DWORD                    = 0x7fffffff /* force 32-bit size enum */
-};
+  };
 
-struct PixelFormatReadInfo
-{
-    const TCHAR*	Name;
+  struct PixelFormatReadInfo
+  {
+    const TCHAR	*Name;
     GLenum          Format;     // format use for glReadPixels
     GLenum          type;       // type use for glReadPixels
     // Format specific internal flags, e.g. whether SRGB is supported with this format
     DWORD			Flags;
     bool			Supported;
-};
+  };
 
-enum eCUBEMAP_FACES
-{
+  enum eCUBEMAP_FACES
+  {
     CUBEMAP_FACE_POSITIVE_X     = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
     CUBEMAP_FACE_NEGATIVE_X     = GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
     CUBEMAP_FACE_POSITIVE_Y     = GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
@@ -206,27 +208,28 @@ enum eCUBEMAP_FACES
     CUBEMAP_FACE_NEGATIVE_Z     = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
 
     CUBEMAP_FACE_FORCE_DWORD    = 0x7fffffff
-};
+  };
 
-enum VBO_USAGE
-{
+  enum VBO_USAGE
+  {
     VBO_USAGE_UNKNOWN   = 0,
     VBO_USAGE_STATIC    = GL_STATIC_DRAW,
     VBO_USAGE_DYNAMIC   = GL_DYNAMIC_DRAW,
     VBO_USAGE_STREAM    = GL_STREAM_DRAW,
     VBO_USAGE_FORCE_DWORD    = 0x7fffffff /* force 32-bit size enum */
-};
+  };
 
-enum INDEX_FORMAT
-{
+  enum INDEX_FORMAT
+  {
     INDEX_FORMAT_UNKNOWN   = 0,
     INDEX_FORMAT_USHORT    = GL_UNSIGNED_SHORT,
     INDEX_FORMAT_UINT      = GL_UNSIGNED_INT,
     INDEX_FORMAT_FORCE_DWORD    = 0x7fffffff /* force 32-bit size enum */
-};
+  };
 
 // Primitives supported by draw-primitive API
-typedef enum {
+  typedef enum
+  {
     PRIMITIVE_TYPE_POINTLIST             = GL_POINTS,
     PRIMITIVE_TYPE_LINELIST              = GL_LINES,
     PRIMITIVE_TYPE_LINESTRIP             = GL_LINE_STRIP,
@@ -236,10 +239,10 @@ typedef enum {
     PRIMITIVE_TYPE_QUADLIST              = GL_QUADS,
     PRIMITIVE_TYPE_QUADSTRIP             = GL_QUAD_STRIP,
     PRIMITIVE_TYPE_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
-} PRIMITIVE_TYPE;
+  } PRIMITIVE_TYPE;
 
-enum OpenGLResourceType
-{
+  enum OpenGLResourceType
+  {
     RTINDEXBUFFER,
     RTVERTEXBUFFER,
     RTSURFACE,
@@ -259,11 +262,11 @@ enum OpenGLResourceType
     RT_CG_VERTEXSHADER,
     RT_CG_PIXELSHADER,
     RT_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
-};
+  };
 
-/* Multi-Sample buffer types */
-typedef enum
-{
+  /* Multi-Sample buffer types */
+  typedef enum
+  {
     MULTISAMPLE_TYPE_NONE            =  0,
     MULTISAMPLE_TYPE_NONMASKABLE     =  1,
     MULTISAMPLE_TYPE_2_SAMPLES       =  2,
@@ -282,19 +285,20 @@ typedef enum
     MULTISAMPLE_TYPE_15_SAMPLES      = 15,
     MULTISAMPLE_TYPE_16_SAMPLES      = 16,
     MULTISAMPLE_TYPE_FORCE_DWORD     = 0x7fffffff /* force 32-bit size enum */
-} MULTISAMPLE_TYPE;
+  } MULTISAMPLE_TYPE;
 
-typedef enum
-{
+  typedef enum
+  {
     MEM_POOL_DEFAULT = 0,
     MEM_POOL_MANAGED = 1,
     MEM_POOL_SYSTEMMEM = 2,
     MEM_POOL_SCRATCH = 3,
     MEM_POOL_FORCE_DWORD = 0x7fffffff /* force 32-bit size enum */
-} MEM_POOL;
+  } MEM_POOL;
 
 
-typedef struct {
+  typedef struct
+  {
     OpenGLResourceType ResourceType;
     unsigned int Width;
     unsigned int Height;
@@ -310,10 +314,10 @@ typedef struct {
     int ExpBias;
     DWORD Flags;
     MULTISAMPLE_TYPE MultiSampleType;
-} TEXTURE_DESC;
+  } TEXTURE_DESC;
 
-typedef struct _SURFACE_DESC
-{
+  typedef struct _SURFACE_DESC
+  {
     BitmapFormat    PixelFormat;
     OpenGLResourceType     Type;
     DWORD               Usage;
@@ -323,9 +327,10 @@ typedef struct _SURFACE_DESC
     DWORD               MultiSampleQuality;
     unsigned int                Width;
     unsigned int                Height;
-} SURFACE_DESC;
+  } SURFACE_DESC;
 
-typedef struct _VOLUME_DESC {
+  typedef struct _VOLUME_DESC
+  {
     BitmapFormat PixelFormat;
     OpenGLResourceType Type;
     DWORD Usage;
@@ -333,9 +338,10 @@ typedef struct _VOLUME_DESC {
     unsigned int Width;
     unsigned int Height;
     unsigned int Depth;
-} VOLUME_DESC;
+  } VOLUME_DESC;
 
-typedef struct _ANIMATEDTEXTURE_DESC {
+  typedef struct _ANIMATEDTEXTURE_DESC
+  {
     BitmapFormat PixelFormat;
     OpenGLResourceType Type;
     DWORD Usage;
@@ -343,53 +349,56 @@ typedef struct _ANIMATEDTEXTURE_DESC {
     unsigned int Width;
     unsigned int Height;
     unsigned int Depth;
-} ANIMATEDTEXTURE_DESC;
+  } ANIMATEDTEXTURE_DESC;
 
-typedef struct _VERTEXBUFFER_DESC {
+  typedef struct _VERTEXBUFFER_DESC
+  {
     VBO_USAGE Usage;
     unsigned int Size;
-} VERTEXBUFFER_DESC;
+  } VERTEXBUFFER_DESC;
 
-typedef struct _INDEXBUFFER_DESC {
+  typedef struct _INDEXBUFFER_DESC
+  {
     INDEX_FORMAT Format;
     VBO_USAGE Usage;
     unsigned int Size;
-} INDEXBUFFER_DESC;
+  } INDEXBUFFER_DESC;
 
-typedef struct _LOCKED_RECT
-{
+  typedef struct _LOCKED_RECT
+  {
     int Pitch;
-    void * pBits;
-} SURFACE_LOCKED_RECT;
+    void *pBits;
+  } SURFACE_LOCKED_RECT;
 
-typedef struct _SURFACE_RECT { 
-    long left;      //Specifies the x-coordinate of the lower-left corner of the rectangle. 
+  typedef struct _SURFACE_RECT
+  {
+    long left;      //Specifies the x-coordinate of the lower-left corner of the rectangle.
     long top;       //Specifies the y-coordinate of the lower-left corner of the rectangle.
-    long right;     //Specifies the x-coordinate of the upper-right corner of the rectangle. 
-    long bottom;    //Specifies the y-coordinate of the upper-right corner of the rectangle. 
-} SURFACE_RECT;
+    long right;     //Specifies the x-coordinate of the upper-right corner of the rectangle.
+    long bottom;    //Specifies the y-coordinate of the upper-right corner of the rectangle.
+  } SURFACE_RECT;
 
 
-/* Structures for LockBox */
-typedef struct _VOLUME_BOX
-{
+  /* Structures for LockBox */
+  typedef struct _VOLUME_BOX
+  {
     int                Left;
     int                Top;
     int                Right;
     int                Bottom;
     int                Front;
     int                Back;
-} VOLUME_BOX;
+  } VOLUME_BOX;
 
-typedef struct _VOLUME_LOCKED_BOX
-{
+  typedef struct _VOLUME_LOCKED_BOX
+  {
     int                 RowPitch;
     int                 SlicePitch;
-    void*               pBits;
-} VOLUME_LOCKED_BOX;
+    void               *pBits;
+  } VOLUME_LOCKED_BOX;
 
-typedef enum _ATTRIB_DECL_TYPE
-{
+  typedef enum _ATTRIB_DECL_TYPE
+  {
     ATTRIB_DECLTYPE_UNKNOWN = 0,
     ATTRIB_DECLTYPE_FLOAT1,
     ATTRIB_DECLTYPE_FLOAT2,
@@ -410,10 +419,10 @@ typedef enum _ATTRIB_DECL_TYPE
     ATTRIB_DECLTYPE_FLOAT16_4,
     ATTRIB_DECLTYPE_UNUSED,
     ATTRIB_DECLTYPE_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
-} ATTRIB_DECL_TYPE;
+  } ATTRIB_DECL_TYPE;
 
-typedef enum _ATTRIB_COMPONENT_TYPE
-{
+  typedef enum _ATTRIB_COMPONENT_TYPE
+  {
     ATTRIB_CT_UNKNOWN           =   0,
     ATTRIB_CT_BYTE              =   GL_BYTE,
     ATTRIB_CT_UNSIGNED_BYTE     =   GL_UNSIGNED_BYTE,
@@ -429,11 +438,11 @@ typedef enum _ATTRIB_COMPONENT_TYPE
     ATTRIB_CT_DOUBLE            =   GL_DOUBLE,
 // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE
     ATTRIB_CT_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
-} ATTRIB_COMPONENT_TYPE;
+  } ATTRIB_COMPONENT_TYPE;
 
 // Binding Semantics
-typedef enum
-{
+  typedef enum
+  {
     ATTRIB_USAGE_DECL_POSITION       = 0,
     ATTRIB_USAGE_DECL_BLENDWEIGHT    = 1,
     ATTRIB_USAGE_DECL_NORMAL         = 2,
@@ -454,9 +463,10 @@ typedef enum
     ATTRIB_USAGE_DECL_TANGENT        = 14,
     ATTRIB_USAGE_DECL_BINORMAL       = 15,
     ATTRIB_USAGE_DECL_FORCE_DWORD    = 0x7fffffff /* force 32-bit size enum */
-} ATTRIB_USAGE_DECL;
+  } ATTRIB_USAGE_DECL;
 
-typedef enum {
+  typedef enum
+  {
     QUERY_TYPE_VCACHE                 = 4,
     QUERY_TYPE_RESOURCEMANAGER        = 5,
     QUERY_TYPE_VERTEXSTATS            = 6,
@@ -464,49 +474,49 @@ typedef enum {
     QUERY_TYPE_OCCLUSION              = 9,
     QUERY_TYPE_SCREENEXTENT           = 10,
     QUERY_TYPE_FORCE_DWORD            = 0x7fffffff /* force 32-bit size enum */
-} QUERY_TYPE;
- 
+  } QUERY_TYPE;
+
 // Flags field for Issue
 #define ISSUE_END (1 << 0) // Tells the runtime to issue the end of a query, changing it's state to "non-signaled".
 #define ISSUE_BEGIN (1 << 1) // Tells the runtime to issue the begining of a query.
- 
-struct VERTEXELEMENT
-{
+
+  struct VERTEXELEMENT
+  {
     VERTEXELEMENT()
     {
-        Stream = 0;
-        Offset = 0;
-        Type = ATTRIB_CT_UNKNOWN;
-        NumComponent = 0;
-        Usage = ATTRIB_USAGE_DECL_POSITION;
-        UsageIndex = 0;
-        Method = 0;
+      Stream = 0;
+      Offset = 0;
+      Type = ATTRIB_CT_UNKNOWN;
+      NumComponent = 0;
+      Usage = ATTRIB_USAGE_DECL_POSITION;
+      UsageIndex = 0;
+      Method = 0;
     }
 
-    VERTEXELEMENT(WORD stream, WORD offset, ATTRIB_COMPONENT_TYPE type, BYTE numcomponents, ATTRIB_USAGE_DECL usage, BYTE usageindex, BYTE method = 0)
+    VERTEXELEMENT (WORD stream, WORD offset, ATTRIB_COMPONENT_TYPE type, BYTE numcomponents, ATTRIB_USAGE_DECL usage, BYTE usageindex, BYTE method = 0)
     {
-        Stream = stream;
-        Offset = offset;
-        Type = type;
-        NumComponent = numcomponents;
-        Usage = usage;
-        UsageIndex = usageindex;
-        Method = method;
+      Stream = stream;
+      Offset = offset;
+      Type = type;
+      NumComponent = numcomponents;
+      Usage = usage;
+      UsageIndex = usageindex;
+      Method = method;
     }
 
     WORD Stream;
     WORD Offset;
-    
+
     // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE ...
     ATTRIB_COMPONENT_TYPE Type;
     //DWORD Stride;
-    
+
     // This can be 1, 2, 3 or 4; For a position (xyzw), it will be 4. For a texture coordinate (uv) it will be 2.
     BYTE NumComponent;
 
     ATTRIB_USAGE_DECL Usage;
 
-    // Use this index in association with TEXCOORD or COLOR to identify the texture 
+    // Use this index in association with TEXCOORD or COLOR to identify the texture
     // coordinate set or the color set.
     BYTE UsageIndex;
 
@@ -522,18 +532,18 @@ struct VERTEXELEMENT
 //    {
 //        cgParameter = parameter;
 //    }
-};
+  };
 
 #define DECL_END VERTEXELEMENT(0xFF/*Stream*/,0/*Offset*/,ATTRIB_CT_UNKNOWN/*Type*/,0/*NumComponent*/,ATTRIB_USAGE_DECL_POSITION/*Usage*/,0/*UsageIndex*/, 0 /*CgParameter*/)
 
-unsigned int GetVertexElementSize(VERTEXELEMENT vtxelement);
+  unsigned int GetVertexElementSize (VERTEXELEMENT vtxelement);
 
 #define MAXDECLLENGTH    64
 #define MAX_NUM_STREAM  8
 
-void DecomposeTypeDeclaraction(ATTRIB_DECL_TYPE Type, BYTE &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType);
+  void DecomposeTypeDeclaraction (ATTRIB_DECL_TYPE Type, BYTE &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType);
 
-void AddVertexElement(std::vector<VERTEXELEMENT>& Elements,
+  void AddVertexElement (std::vector<VERTEXELEMENT>& Elements,
                          WORD Stream,
                          WORD Offset,
                          //ubiS16 Stride,
@@ -541,244 +551,261 @@ void AddVertexElement(std::vector<VERTEXELEMENT>& Elements,
                          ATTRIB_USAGE_DECL Usage,
                          BYTE UsageIndex);
 
-GLenum GetGLPrimitiveType(PRIMITIVE_TYPE InPrimitiveType);
-unsigned int   GetGLElementCount(PRIMITIVE_TYPE InPrimitiveType,
+  GLenum GetGLPrimitiveType (PRIMITIVE_TYPE InPrimitiveType);
+  unsigned int   GetGLElementCount (PRIMITIVE_TYPE InPrimitiveType,
                                     unsigned int        InPrimitiveCount);
 
-template<typename T> class TRefGL
-{
-public:
-    T*	Handle;
+  template<typename T> class TRefGL
+  {
+  public:
+    T	*Handle;
 
-private:
+  private:
     void CheckReferenceObject()
     {
-        if(Handle)
+      if (Handle)
+      {
+        if (Handle->GetValue() == 0)
         {
-            if(Handle->GetValue() == 0)
-            {
-                delete Handle;
-                //GetThreadGLDeviceFactory()->DestroyDeviceResource<T>(Handle);
-            }
+          delete Handle;
+          //GetThreadGLDeviceFactory()->DestroyDeviceResource<T>(Handle);
         }
-        Handle = 0;
+      }
+
+      Handle = 0;
     }
 
-    //     // Do not allow access to the managed pointer. This also avoid compiler confusion between 
+    //     // Do not allow access to the managed pointer. This also avoid compiler confusion between
     //     //  int BindTexture(IOpenGLBaseTexture* texture);
     //     // and
     //     //  int BindTexture(TRefGL<IOpenGLBaseTexture> texture);
-    // 
+    //
     //     // Access operators.
     //     typedef	T*	PtrT;
-    //     operator T*() 
+    //     operator T*()
     //     {
     //         return Handle;
     //     }
 
-public:
-    T* operator -> ()
+  public:
+    T *operator -> ()
     {
-        nuxAssert(Handle);
-        return Handle;
+      nuxAssert (Handle);
+      return Handle;
     }
 
-    const T* operator -> () const
+    const T *operator -> () const
     {
-        nuxAssert(Handle);
-        return Handle;
+      nuxAssert (Handle);
+      return Handle;
     }
 
-    T& operator*()
+    T &operator*()
     {
-        nuxAssert(Handle);
-        return *Handle;
+      nuxAssert (Handle);
+      return *Handle;
     }
 
-    const T& operator *() const
+    const T &operator *() const
     {
-        nuxAssert(Handle);
-        return *Handle;
+      nuxAssert (Handle);
+      return *Handle;
     }
 
     // Constructor/destructor.
-    TRefGL(T* InHandle = 0)
-        :   Handle(InHandle)
+    TRefGL (T *InHandle = 0)
+      :   Handle (InHandle)
     {
-        if(Handle)
-            Handle->Increment();
+      if (Handle)
+        Handle->Increment();
     }
 
     template <typename U>
-    TRefGL(U* InHandle)
-        :   Handle(0)
+    TRefGL (U *InHandle)
+      :   Handle (0)
     {
-        if(InHandle == 0)
-            return;
+      if (InHandle == 0)
+        return;
 
-        if(InHandle->Type().IsDerivedFromType(T::StaticObjectType))
-        {
-            Handle = (T*)InHandle;
-        }
-        if(Handle)
-            Handle->Increment();
+      if (InHandle->Type().IsDerivedFromType (T::StaticObjectType) )
+      {
+        Handle = (T *) InHandle;
+      }
+
+      if (Handle)
+        Handle->Increment();
     }
 
-    TRefGL(const TRefGL<T>& Copy)
-        :   Handle(0)
+    TRefGL (const TRefGL<T>& Copy)
+      :   Handle (0)
     {
-        Handle = Copy.Handle;
-        if(Handle)
-            Handle->Increment();
+      Handle = Copy.Handle;
+
+      if (Handle)
+        Handle->Increment();
     }
 
     template <typename U>
-    TRefGL(const TRefGL<U>& Copy)
-        :   Handle(0)
+    TRefGL (const TRefGL<U>& Copy)
+      :   Handle (0)
     {
-        // Check if type U is derived from type T
-        // Type() is virtual. Even if we have a TRefGL<IOpenGLBaseTexture> but its internal pointer is a IOpenGLCubeTexture,
-        // Type() returns the static object type inside IOpenGLCubeTexture.
-        // This make this possible
-        //
-        //      TRefGL<IOpenGLBaseTexture> basetex;            // IOpenGLBaseTexture is an abstract base class for IOpenGLTexture2D
-        //      basetex = gGLDeviceFactory->CreateTexture(.....);
-        //      TRefGL<IOpenGLVertexBuffer> vtx(basetex);   // vtx Handle will be null
-        //      TRefGL<IOpenGLTexture2D> tex(basetex);      // tex Handle will be the same as basetex
-        //
+      // Check if type U is derived from type T
+      // Type() is virtual. Even if we have a TRefGL<IOpenGLBaseTexture> but its internal pointer is a IOpenGLCubeTexture,
+      // Type() returns the static object type inside IOpenGLCubeTexture.
+      // This make this possible
+      //
+      //      TRefGL<IOpenGLBaseTexture> basetex;            // IOpenGLBaseTexture is an abstract base class for IOpenGLTexture2D
+      //      basetex = gGLDeviceFactory->CreateTexture(.....);
+      //      TRefGL<IOpenGLVertexBuffer> vtx(basetex);   // vtx Handle will be null
+      //      TRefGL<IOpenGLTexture2D> tex(basetex);      // tex Handle will be the same as basetex
+      //
 
-        if(Copy.Handle->Type().IsDerivedFromType(T::StaticObjectType))
-        {
-            Handle = (T*)Copy.Handle;
-        }
-        if(Handle)
-            Handle->Increment();
+      if (Copy.Handle->Type().IsDerivedFromType (T::StaticObjectType) )
+      {
+        Handle = (T *) Copy.Handle;
+      }
+
+      if (Handle)
+        Handle->Increment();
     }
 
     ~TRefGL()
     {
-        if(Handle)
-        {
-            Handle->Decrement();
-            CheckReferenceObject();
-        }
+      if (Handle)
+      {
+        Handle->Decrement();
+        CheckReferenceObject();
+      }
     }
 
     // Assignment operator.
 
-    TRefGL<T>& operator = (T* InHandle)
+    TRefGL<T>& operator = (T *InHandle)
     {
-        if(Handle != InHandle)
+      if (Handle != InHandle)
+      {
+        if (Handle)
         {
-            if(Handle)
-            {
-                Handle->Decrement();
-                CheckReferenceObject();
-            }
-
-            Handle = InHandle;
-
-            if(Handle)
-                Handle->Increment();
+          Handle->Decrement();
+          CheckReferenceObject();
         }
-        return *this;
+
+        Handle = InHandle;
+
+        if (Handle)
+          Handle->Increment();
+      }
+
+      return *this;
     }
 
     TRefGL<T>& operator = (const TRefGL<T>& Other)
     {
-        // Avoid self assignment
-        if(Handle == Other.Handle)
-        {
-            return *this;
-        }
-        if(Handle)
-        {
-            Handle->Decrement();
-            CheckReferenceObject();
-        }
-        Handle = Other.Handle;
-        if(Handle)
-            Handle->Increment();
+      // Avoid self assignment
+      if (Handle == Other.Handle)
+      {
         return *this;
+      }
+
+      if (Handle)
+      {
+        Handle->Decrement();
+        CheckReferenceObject();
+      }
+
+      Handle = Other.Handle;
+
+      if (Handle)
+        Handle->Increment();
+
+      return *this;
     }
 
     bool operator == (const TRefGL<T>& Other) const
     {
-        if(Handle == Other.Handle)
-        {
-            return true;
-        }
-        return false;
+      if (Handle == Other.Handle)
+      {
+        return true;
+      }
+
+      return false;
     }
 
-    bool operator == (const T* Ptr) const
+    bool operator == (const T *Ptr) const
     {
-        if(Handle == Ptr)
-        {
-            return true;
-        }
-        return false;
+      if (Handle == Ptr)
+      {
+        return true;
+      }
+
+      return false;
     }
 
     template <typename U>
-    bool operator == (const U* Ptr) const
+    bool operator == (const U *Ptr) const
     {
-        if(Handle == Ptr)
-        {
-            return true;
-        }
-        return false;
+      if (Handle == Ptr)
+      {
+        return true;
+      }
+
+      return false;
     }
 
     template <typename U>
     bool operator == (TRefGL<U>& Other) const
     {
-        if(Handle == Other.Handle)
-        {
-            return true;
-        }
-        return false;
+      if (Handle == Other.Handle)
+      {
+        return true;
+      }
+
+      return false;
     }
 
     bool operator != (const TRefGL<T>& Other) const
     {
-        if(Handle != Other.Handle)
-        {
-            return true;
-        }
-        return false;
+      if (Handle != Other.Handle)
+      {
+        return true;
+      }
+
+      return false;
     }
 
-    bool operator != (const T* Ptr) const
+    bool operator != (const T *Ptr) const
     {
-        if(Handle != Ptr)
-        {
-            return true;
-        }
-        return false;
+      if (Handle != Ptr)
+      {
+        return true;
+      }
+
+      return false;
     }
 
     template <typename U>
-    bool operator != (const U* Ptr) const
+    bool operator != (const U *Ptr) const
     {
-        if(Handle != Ptr)
-        {
-            return true;
-        }
-        return false;
+      if (Handle != Ptr)
+      {
+        return true;
+      }
+
+      return false;
     }
 
     template <typename U>
     bool operator != (TRefGL<U>& Other) const
     {
-        if(Handle != Other.Handle)
-        {
-            return true;
-        }
-        return false;
+      if (Handle != Other.Handle)
+      {
+        return true;
+      }
+
+      return false;
     }
 
-    //    // This isn't safe. An assignment like the following is wrong, but it will no flag an error at compile time. 
+    //    // This isn't safe. An assignment like the following is wrong, but it will no flag an error at compile time.
     //    // TRefGL<IOpenGLVertexBuffer> vtx;
     //    // TRefGL<IOpenGLTexture2D> tex;
     //    // vtx = tex;         // WRONG
@@ -794,49 +821,54 @@ public:
     template<typename U>
     TRefGL<U> CastRef()
     {
-        TRefGL<U> t;
-        // Check if type U is derived from type T
-        if(U::StaticObjectType.IsDerivedFromType(T::StaticObjectType))
-        {
-            t = (U*)Handle;
-        }
-        return t;
+      TRefGL<U> t;
+
+      // Check if type U is derived from type T
+      if (U::StaticObjectType.IsDerivedFromType (T::StaticObjectType) )
+      {
+        t = (U *) Handle;
+      }
+
+      return t;
     }
 
     void Release()
     {
-        if(Handle)
-        {
-            Handle->Decrement();
-            CheckReferenceObject();
-        }
-        Handle = 0;
+      if (Handle)
+      {
+        Handle->Decrement();
+        CheckReferenceObject();
+      }
+
+      Handle = 0;
     }
-private:
-    T& GetHandle()
+  private:
+    T &GetHandle()
     {
-        return *Handle;
+      return *Handle;
     }
 
-public:
+  public:
     bool IsValid()
     {
-        if(Handle)
-        {
-            return true;
-        }
-        return false;
+      if (Handle)
+      {
+        return true;
+      }
+
+      return false;
     }
 
     bool IsNull()
     {
-        if(Handle)
-        {
-            return false;
-        }
-        return true;
+      if (Handle)
+      {
+        return false;
+      }
+
+      return true;
     }
-};
+  };
 
 } //NUX_NAMESPACE_END
 

@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -25,25 +25,25 @@
 #include "TextViewInternal.h"
 #include "OpenGLEngine/FontTexture.h"
 
-static const TCHAR *CtrlStr(DWORD ch)
+static const TCHAR *CtrlStr (DWORD ch)
 {
-	static const TCHAR *reps[] = 
-	{
-		TEXT("NUL"), TEXT("SOH"), TEXT("STX"), TEXT("ETX"), TEXT("EOT"), TEXT("ENQ"), TEXT("ACK"), TEXT("BEL"),
-		TEXT("BS"),  TEXT("HT"),  TEXT("LF"),  TEXT("VT"),  TEXT("FF"),  TEXT("CR"),  TEXT("SO"),  TEXT("SI"),
-		TEXT("DLE"), TEXT("DC1"), TEXT("DC2"), TEXT("DC3"), TEXT("DC4"), TEXT("NAK"), TEXT("SYN"), TEXT("ETB"),
-		TEXT("CAN"), TEXT("EM"),  TEXT("SUB"), TEXT("ESC"), TEXT("FS"),  TEXT("GS"),  TEXT("RS"),  TEXT("US")
-	};
+  static const TCHAR *reps[] =
+  {
+    TEXT ("NUL"), TEXT ("SOH"), TEXT ("STX"), TEXT ("ETX"), TEXT ("EOT"), TEXT ("ENQ"), TEXT ("ACK"), TEXT ("BEL"),
+    TEXT ("BS"),  TEXT ("HT"),  TEXT ("LF"),  TEXT ("VT"),  TEXT ("FF"),  TEXT ("CR"),  TEXT ("SO"),  TEXT ("SI"),
+    TEXT ("DLE"), TEXT ("DC1"), TEXT ("DC2"), TEXT ("DC3"), TEXT ("DC4"), TEXT ("NAK"), TEXT ("SYN"), TEXT ("ETB"),
+    TEXT ("CAN"), TEXT ("EM"),  TEXT ("SUB"), TEXT ("ESC"), TEXT ("FS"),  TEXT ("GS"),  TEXT ("RS"),  TEXT ("US")
+  };
 
-	return ch < TEXT(' ') ? reps[ch] : TEXT("???");
+  return ch < TEXT (' ') ? reps[ch] : TEXT ("???");
 }
 
 // void PaintRect(HDC hdc, RECT *rect, t_color fill)
 // {
 // 	fill = SetBkColor(hdc, fill);
-// 	
+//
 // 	ExtTextOut(hdc, 0, 0, ETO_OPAQUE, rect, 0, 0, 0);
-// 	
+//
 // 	SetBkColor(hdc, fill);
 // }
 
@@ -74,19 +74,19 @@ static const TCHAR *CtrlStr(DWORD ch)
 // {
 // 	SIZE	sz;
 // 	int		width = 0;
-// 
+//
 // 	const int TABWIDTHPIXELS = TabWidth();
-// 
+//
 // 	if(len == -1)
 // 		len = lstrlen(buf);
-// 
+//
 // 	for(int i = 0, lasti = 0; i <= len; i++)
 // 	{
 // 		if(i == len || buf[i] == '\t' || (TBYTE)buf[i] < 32)
 // 		{
 // 			sz.cx = m_TextFont->GetCharStringWidth(buf + lasti, i - lasti);
 // 			width += sz.cx;
-// 
+//
 // 			if(i < len && buf[i] == '\t')
 // 			{
 //                 int t = (width - nTabOrigin) % TABWIDTHPIXELS;
@@ -100,7 +100,7 @@ static const TCHAR *CtrlStr(DWORD ch)
 // 			}
 // 		}
 // 	}
-// 
+//
 // 	return width;
 // }
 
@@ -117,25 +117,25 @@ void TextView::InitCtrlCharFontAttr()
 // 	HBITMAP hbmTemp = CreateBitmap(font->tm.tmAveCharWidth, font->tm.tmHeight, 1, 1, 0);
 // 	HANDLE  hbmOld  = SelectObject(hdcTemp, hbmTemp);
 // 	HANDLE  hfnOld	= SelectObject(hdcTemp, font->hFont);
-// 
+//
 // 	// black-on-white text
 // 	SetTextColor(RGB(0,0,0));
 // 	SetBkColor(RGB(255,255,255));
 // 	SetBkMode(hdcTemp,		OPAQUE);
-// 
+//
 // 	TextOut(hdcTemp, 0, 0, TEXT("E"), 1);
-// 
+//
 // 	// give default values just in case the scan fails
 // 	font->nInternalLeading	= font->tm.tmInternalLeading;
 // 	font->nDescent			= font->tm.tmDescent;
-// 
+//
 // 	// scan downwards looking for the top of the letter 'E'
 // 	for(int y = 0; y < font->tm.tmHeight; y++)
 // 	{
 // 		for(int x = 0; x < font->tm.tmAveCharWidth; x++)
 // 		{
 // 			t_color col;
-// 
+//
 // 			if((col = GetPixel(hdcTemp, x, y)) == RGB(0,0,0))
 // 			{
 // 				font->nInternalLeading = y;
@@ -144,14 +144,14 @@ void TextView::InitCtrlCharFontAttr()
 // 			}
 // 		}
 // 	}
-// 
+//
 // 	// scan upwards looking for the bottom of the letter 'E'
 // 	for(int y = font->tm.tmHeight - 1; y >= 0; y--)
 // 	{
 // 		for(int x = 0; x < font->tm.tmAveCharWidth; x++)
 // 		{
 // 			t_color col;
-// 
+//
 // 			if((col = GetPixel(hdcTemp, x, y)) == RGB(0,0,0))
 // 			{
 // 				font->nDescent = font->tm.tmHeight - y - 1;
@@ -160,7 +160,7 @@ void TextView::InitCtrlCharFontAttr()
 // 			}
 // 		}
 // 	}
-// 
+//
 // 	// give larger fonts a thicker border
 // 	if(font->nInternalLeading > 1 && font->nDescent > 1 && font->tm.tmHeight > 18)
 // 	{
@@ -179,25 +179,25 @@ void TextView::InitCtrlCharFontAttr()
 //	Display an ASCII control character in inverted colours
 //  to what is currently set in the DC
 //
-int TextView::PaintCtrlChar(GraphicsContext& GfxContext, int xpos, int ypos, inl::t_u32 chValue)
+int TextView::PaintCtrlChar (GraphicsContext &GfxContext, int xpos, int ypos, inl::t_u32 chValue)
 {
-    inl::Size  sz;
+  inl::Size  sz;
 
-	Geometry  rect;
-	const TCHAR *str = CtrlStr(chValue % 32);
+  Geometry  rect;
+  const TCHAR *str = CtrlStr (chValue % 32);
 
-    inl::Color fg = GetTextColor();
-	inl::Color bg = GetTextBkColor(); 
+  inl::Color fg = GetTextColor();
+  inl::Color bg = GetTextBkColor();
 
-	// find out how big the text will be
-	sz.SetWidth(m_TextFont->GetCharStringWidth(str));
-    sz.SetHeight(0);
+  // find out how big the text will be
+  sz.SetWidth (m_TextFont->GetCharStringWidth (str) );
+  sz.SetHeight (0);
 
-	rect = Geometry(xpos, ypos, sz.GetWidth() + 4, m_TextFont->GetFontInfo().FontHeight);
+  rect = Geometry (xpos, ypos, sz.GetWidth() + 4, m_TextFont->GetFontInfo().FontHeight);
 
-    gPainter.Paint2DQuadColor(GfxContext, rect, fg);
-    gPainter.PaintTextLineStatic(GfxContext, m_TextFont, rect, str, bg);
-	return sz.GetHeight() + 4;
+  gPainter.Paint2DQuadColor (GfxContext, rect, fg);
+  gPainter.PaintTextLineStatic (GfxContext, m_TextFont, rect, str, bg);
+  return sz.GetHeight() + 4;
 }
 
 //
@@ -205,20 +205,20 @@ int TextView::PaintCtrlChar(GraphicsContext& GfxContext, int xpos, int ypos, inl
 //
 void TextView::RecalcLineHeight()
 {
-	m_nLineHeight	= 0;
-	m_nMaxAscent	= 0;
+  m_nLineHeight	= 0;
+  m_nMaxAscent	= 0;
 
-	// find the tallest font in the TextView
-	for(int i = 0; i < m_nNumFonts; i++)
-	{
-		// always include a font's external-leading
-        int fontheight = m_TextFont->GetFontInfo().FontHeight + m_TextFont->GetFontInfo().ExternalLeading;
-		m_nLineHeight = std::max(m_nLineHeight, fontheight);
-		m_nMaxAscent  = std::max<long>(m_nMaxAscent, m_TextFont->GetFontInfo().Ascent);
-	}
+  // find the tallest font in the TextView
+  for (int i = 0; i < m_nNumFonts; i++)
+  {
+    // always include a font's external-leading
+    int fontheight = m_TextFont->GetFontInfo().FontHeight + m_TextFont->GetFontInfo().ExternalLeading;
+    m_nLineHeight = std::max (m_nLineHeight, fontheight);
+    m_nMaxAscent  = std::max<long> (m_nMaxAscent, m_TextFont->GetFontInfo().Ascent);
+  }
 
-	// add on the above+below spacings
-	m_nLineHeight += m_nHeightAbove + m_nHeightBelow;
+  // add on the above+below spacings
+  m_nLineHeight += m_nHeightAbove + m_nHeightBelow;
 }
 
 //
@@ -226,31 +226,31 @@ void TextView::RecalcLineHeight()
 //
 void TextView::SetFont()
 {
-	m_nFontWidth = m_TextFont->GetFontInfo().AvgCharWidth;
+  m_nFontWidth = m_TextFont->GetFontInfo().AvgCharWidth;
 
-	// pre-calc the control-characters for this font
-	InitCtrlCharFontAttr();
-	
-	RecalcLineHeight();
-	UpdateMarginWidth();
+  // pre-calc the control-characters for this font
+  InitCtrlCharFontAttr();
+
+  RecalcLineHeight();
+  UpdateMarginWidth();
 }
 
 //
-//	Set spacing (in pixels) above and below each line - 
+//	Set spacing (in pixels) above and below each line -
 //  this is in addition to the external-leading of a font
 //
-long TextView::SetLineSpacing(int nAbove, int nBelow)
+long TextView::SetLineSpacing (int nAbove, int nBelow)
 {
-	m_nHeightAbove = nAbove;
-	m_nHeightBelow = nBelow;
-	RecalcLineHeight();
-	return TRUE;
+  m_nHeightAbove = nAbove;
+  m_nHeightBelow = nBelow;
+  RecalcLineHeight();
+  return TRUE;
 }
 
 //
-//	
+//
 //
 int TextView::TabWidth()
 {
-	return m_nTabWidthChars * m_nFontWidth;
+  return m_nTabWidthChars * m_nFontWidth;
 }

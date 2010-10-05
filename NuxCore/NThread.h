@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -25,38 +25,51 @@
 
 #include "NObjectType.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
-class NThreadSafeCounter
-{   
-public:
-    NThreadSafeCounter() {m_Counter = 0;}
-    NThreadSafeCounter(t_integer i) {m_Counter = i;}
+  class NThreadSafeCounter
+  {
+  public:
+    NThreadSafeCounter()
+    {
+      m_Counter = 0;
+    }
+    NThreadSafeCounter (t_integer i)
+    {
+      m_Counter = i;
+    }
     t_integer Increment();
     t_integer Decrement();
-    t_integer Set(t_integer i);
+    t_integer Set (t_integer i);
     t_integer GetValue() const;
     t_integer operator ++ ();
     t_integer operator -- ();
     t_bool operator == (t_integer i);
-private:
+  private:
     t_integer m_Counter;
-};
+  };
 
-class NCriticalSection
-{
-public:
+  class NCriticalSection
+  {
+  public:
     //! Initialize critical section.
     /*!
         Initialize critical section.
     */
-    NCriticalSection() { InitializeCriticalSection(&m_lock); }
+    NCriticalSection()
+    {
+      InitializeCriticalSection (&m_lock);
+    }
 
     //! Destroy critical section.
     /*!
         Destroy critical section.
     */
-    ~NCriticalSection() { DeleteCriticalSection(&m_lock); }
+    ~NCriticalSection()
+    {
+      DeleteCriticalSection (&m_lock);
+    }
 
     //! Enter critical section.
     /*!
@@ -65,7 +78,7 @@ public:
     */
     void Lock() const
     {
-        EnterCriticalSection(&m_lock);
+      EnterCriticalSection (&m_lock);
     }
 
     //! Leave critical section.
@@ -75,138 +88,142 @@ public:
     */
     void Unlock() const
     {
-        LeaveCriticalSection(&m_lock);
+      LeaveCriticalSection (&m_lock);
     }
 
-private:
+  private:
     //! Prohibit copy constructor.
     /*!
         Prohibit copy constructor.
     */
-    NCriticalSection(const NCriticalSection&);
+    NCriticalSection (const NCriticalSection &);
     //! Prohibit assignment operator.
     /*!
         Prohibit assignment operator.
     */
-    NCriticalSection& operator=(const NCriticalSection&);
+    NCriticalSection &operator= (const NCriticalSection &);
 
     mutable CRITICAL_SECTION m_lock;
-};
+  };
 
 //! Scope Lock class
-/*!
-    Takes a critical section object as parameter of the constructor.
-    The constructor locks the critical section.
-    The destructor unlocks the critical section.
-*/
-class NScopeLock
-{
-public:
+  /*!
+      Takes a critical section object as parameter of the constructor.
+      The constructor locks the critical section.
+      The destructor unlocks the critical section.
+  */
+  class NScopeLock
+  {
+  public:
     //! The constructor locks the critical section object.
     /*!
         The constructor locks the critical section object.
         @param  LockObject      Critical section object.
     */
-    NScopeLock(NCriticalSection* CriticalSectionObject)
-        : m_CriticalSectionObject(CriticalSectionObject)
+    NScopeLock (NCriticalSection *CriticalSectionObject)
+      : m_CriticalSectionObject (CriticalSectionObject)
     {
-        nuxAssert(m_CriticalSectionObject);
-        m_CriticalSectionObject->Lock();
+      nuxAssert (m_CriticalSectionObject);
+      m_CriticalSectionObject->Lock();
     }
 
     //! The destructor unlocks the critical section object.
     /*!
         The destructor unlocks the critical section object.
     */
-    ~NScopeLock(void)
+    ~NScopeLock (void)
     {
-        nuxAssert(m_CriticalSectionObject);
-        m_CriticalSectionObject->Unlock();
+      nuxAssert (m_CriticalSectionObject);
+      m_CriticalSectionObject->Unlock();
     }
 
-private:
+  private:
     //! Prohibit default constructor.
     /*!
         Prohibit default constructor.
     */
-    NScopeLock(void);
+    NScopeLock (void);
 
     //! Prohibit copy constructor.
     /*!
         Prohibit copy constructor.
     */
-    NScopeLock(const NScopeLock& ScopeLockObject);
+    NScopeLock (const NScopeLock &ScopeLockObject);
 
     //! Prohibit assignment operator.
     /*!
         Prohibit assignment operator.
     */
-    NScopeLock& operator=(const NScopeLock& ScopeLockObject) { return *this; }
+    NScopeLock &operator= (const NScopeLock &ScopeLockObject)
+    {
+      return *this;
+    }
 
     //! Critical section Object.
     /*!
         Critical section Object.
     */
-    NCriticalSection* m_CriticalSectionObject;
-};
+    NCriticalSection *m_CriticalSectionObject;
+  };
 
-class NThreadLocalStorage
-{
-public:
+  class NThreadLocalStorage
+  {
+  public:
     enum
     {
-        NbTLS = 128,
-        InvalidTLS = 0xFFFFFFFF
+      NbTLS = 128,
+      InvalidTLS = 0xFFFFFFFF
     };
 
-    typedef void (*TLS_ShutdownCallback)();
-    
+    typedef void (*TLS_ShutdownCallback) ();
+
     static BOOL                     m_TLSUsed[NbTLS];
     static t_u32                     m_TLSIndex[NbTLS];
     static TLS_ShutdownCallback     m_TLSCallbacks[NbTLS];
-    
+
     static void Initialize();
     static void Shutdown();
-    static BOOL RegisterTLS(t_u32 index, TLS_ShutdownCallback shutdownCallback);
+    static BOOL RegisterTLS (t_u32 index, TLS_ShutdownCallback shutdownCallback);
     static void ThreadInit();
     static void ThreadShutdown();
 
-public:
+  public:
 
-    template<class T> static inline T GetData(t_u32 index)
+    template<class T> static inline T GetData (t_u32 index)
     {
-        nuxAssert(sizeof(T) <= sizeof(size_t));				
-        nuxAssert(index < NbTLS);
-        nuxAssert(m_TLSUsed[index]);
+      nuxAssert (sizeof (T) <= sizeof (size_t) );
+      nuxAssert (index < NbTLS);
+      nuxAssert (m_TLSUsed[index]);
 
-        // T and (unsigned long) can be of different sizes
-        // but this limits the use of GetData to classes without copy constructors
-        union
-        {
-            T               t;
-            void*           v;
-        } temp;
-        temp.v = TlsGetValue(m_TLSIndex[index]);
-        return temp.t;
+      // T and (unsigned long) can be of different sizes
+      // but this limits the use of GetData to classes without copy constructors
+      union
+      {
+        T               t;
+        void           *v;
+      } temp;
+      temp.v = TlsGetValue (m_TLSIndex[index]);
+      return temp.t;
     }
 
-    template<class T> static inline void SetData(t_u32 index, T value)
+    template<class T> static inline void SetData (t_u32 index, T value)
     {
-        nuxAssert(sizeof(T) <= sizeof(size_t));				
-        nuxAssert(index < NbTLS);
-        nuxAssert(m_TLSUsed[index]);
+      nuxAssert (sizeof (T) <= sizeof (size_t) );
+      nuxAssert (index < NbTLS);
+      nuxAssert (m_TLSUsed[index]);
 
-        // T and (unsigned long) can be of different sizes
-        // but this limits the use of GetData to classes without copy constructors
-        union{
-            T               t;
-            void*           v;
-        } temp;
-        temp.t = value;
-        BOOL b = TlsSetValue(m_TLSIndex[index], temp.v);
-        nuxAssertMsg(b, TEXT("[NThreadLocalStorage::SetData] TlsSetValue returned FALSE."));
+      // T and (unsigned long) can be of different sizes
+      // but this limits the use of GetData to classes without copy constructors
+      union
+      {
+        T               t;
+        void           *v;
+      } temp;
+      temp.t = value;
+      BOOL b = TlsSetValue (m_TLSIndex[index], temp.v);
+      nuxAssertMsg (b, TEXT ("[NThreadLocalStorage::SetData] TlsSetValue returned FALSE.") );
     }
-};
+  };
 
 #define inlDeclareThreadLocalStorage(type, index, name)	\
 struct		ThreadLocalStorageDef##name { enum Const { Index = index}; };\
@@ -215,7 +232,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
 
 #define inlRegisterThreadLocalIndex(index, name, shutdownCallback) \
     nuxVerifyExpr(index == ThreadLocalStorageDef##name::Index); \
-    nuxVerifyExpr(nux::NThreadLocalStorage::RegisterTLS(index, shutdownCallback)) 
+    nuxVerifyExpr(nux::NThreadLocalStorage::RegisterTLS(index, shutdownCallback))
 
 #define inlGetThreadLocalStorage(name)			GetTLS_##name()
 #define inlSetThreadLocalStorage(name, value)  SetTLS_##name(value)
@@ -230,11 +247,11 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
 #define nuxAssertNotInsideThread(threadtype) ((void) 0)
 #endif
 
-void SetWin32ThreadName(DWORD dwThreadID, LPCSTR szThreadName);
+  void SetWin32ThreadName (DWORD dwThreadID, LPCSTR szThreadName);
 
 
-typedef enum
-{
+  typedef enum
+  {
     THREADINIT,
     THREADRUNNING,
     THREADSUSPENDED,
@@ -243,13 +260,13 @@ typedef enum
     THREAD_STOP_ERROR,
     THREAD_SUSPEND_ERROR,
     THREAD_RESUME_ERROR,
-} ThreadState;
+  } ThreadState;
 
 // http://www.codeguru.com/cpp/misc/misc/threadsprocesses/article.php/c3793/
-class NThread
-{
-    NUX_DECLARE_ROOT_OBJECT_TYPE(NThread);
-public:
+  class NThread
+  {
+    NUX_DECLARE_ROOT_OBJECT_TYPE (NThread);
+  public:
     /*!
     	Info: Default Constructor
     */
@@ -261,7 +278,7 @@ public:
         Use this to migrate/port existing worker threads to objects immediately
         Although you lose the benefits of ThreadCTOR and ThreadDTOR.
     */
-    NThread(LPTHREAD_START_ROUTINE lpExternalRoutine);
+    NThread (LPTHREAD_START_ROUTINE lpExternalRoutine);
 
     /*!
         Info: Default Destructor
@@ -276,12 +293,12 @@ public:
 
         This function starts the thread pointed by m_pThreadFunc with default attributes
     */
-    virtual ThreadState Start( void* arg = NULL );
+    virtual ThreadState Start ( void *arg = NULL );
 
     /*!
         Info: Stops the thread.
 
-        This function stops the current thread. 
+        This function stops the current thread.
         We can force kill a thread which results in a TerminateThread.
     */
     virtual ThreadState Stop ( bool bForceKill = false );
@@ -303,8 +320,9 @@ public:
 
         Used primarily for porting but can serve in developing generic thread objects
     */
-    void Attach( LPTHREAD_START_ROUTINE lpThreadFunc ){
-        m_pThreadFunc = lpThreadFunc;
+    void Attach ( LPTHREAD_START_ROUTINE lpThreadFunc )
+    {
+      m_pThreadFunc = lpThreadFunc;
     }
 
     /*!
@@ -313,9 +331,9 @@ public:
         Detaches the Attached Thread Function, If any.
         by resetting the thread function pointer to EntryPoint1
     */
-    void  Detach( void )
+    void  Detach ( void )
     {
-        m_pThreadFunc = NThread::EntryPoint; 
+      m_pThreadFunc = NThread::EntryPoint;
     }
 
     HANDLE GetThreadHandle();
@@ -323,30 +341,30 @@ public:
 
 
     ThreadState GetThreadState() const;
-    void SetThreadState(ThreadState state);
+    void SetThreadState (ThreadState state);
 
-    void SetThreadName(const TCHAR* ThreadName);
-    const NString& GetThreadName() const;
+    void SetThreadName (const TCHAR *ThreadName);
+    const NString &GetThreadName() const;
 
-protected:
+  protected:
     NString m_ThreadName;
 
     volatile ThreadState m_ThreadState;
 
     /*!
         Info: DONT override this method.
-        
-        This function is like a standard template. 
+
+        This function is like a standard template.
         Override if you are sure of what you are doing.
-        
-        In C++ the entry function of a thread cannot be a normal member function of a class. 
+
+        In C++ the entry function of a thread cannot be a normal member function of a class.
         However, it can be a static member function of a class. This is what we will use as the entry point.
         There is a gotcha here though. Static member functions do not have access to the this pointer of a C++ object.
         They can only access static data. Fortunately, there is way to do it. Thread entry point functions take a void * as
         a parameter so that the caller can typecast any data and pass in to the thread. We will use this to pass this to
         the static function. The static function will then typecast the void * and use it to call a non static member function
     */
-    static DWORD WINAPI EntryPoint(void* pArg);
+    static DWORD WINAPI EntryPoint (void *pArg);
 
     /*!
         Info: Override this method.
@@ -355,11 +373,13 @@ protected:
         Notice the signature is similar to that of any worker thread function
         except for the calling convention.
     */
-    virtual t_u32 Run(void* /* arg */ )
-    { return m_ThreadCtx.m_dwExitCode; }
+    virtual t_u32 Run (void* /* arg */ )
+    {
+      return m_ThreadCtx.m_dwExitCode;
+    }
 
     /*!
-        Info: Constructor-like function. 
+        Info: Constructor-like function.
 
         Will be called by EntryPoint before executing the thread body.
         Override this function to provide your extra initialization.
@@ -367,10 +387,13 @@ protected:
         NOTE: do not confuse it with the classes constructor
         @return TRUE if the thread can continue running the program. If FALSE is returned, the thread won't execute the main body Run() and will exit without calling ThreadDtor.
     */
-    virtual bool ThreadCtor(){return true;}
+    virtual bool ThreadCtor()
+    {
+      return true;
+    }
 
     /*!
-        Info: Destructor-like function. 
+        Info: Destructor-like function.
 
         Will be called by EntryPoint after executing the thread body.
         Override this function to provide your extra destruction.
@@ -378,9 +401,12 @@ protected:
         NOTE: do not confuse it with the classes constructor
         @return TRUE if this function executed without problems.
     */
-    virtual bool ThreadDtor(){return true;}
+    virtual bool ThreadDtor()
+    {
+      return true;
+    }
 
-private:
+  private:
     /*!
         Info: Thread Context Inner Class
 
@@ -395,31 +421,32 @@ private:
     class NThreadContext
     {
     public:
-        NThreadContext(){
-            memset(this, 0, sizeof(this));
-        }
+      NThreadContext()
+      {
+        memset (this, 0, sizeof (this) );
+      }
 
-        /*
-        *	Attributes Section
-        */
+      /*
+      *	Attributes Section
+      */
     public:
-        HANDLE m_hThread;					//	The Thread Handle
-        volatile t_u32  m_dwTID;						//	The Thread ID
-        void* m_pUserData;						//	The user data pointer
-        void* m_pParent;					//	The this pointer of the parent NThread object
-        t_u32  m_dwExitCode;				//	The Exit Code of the thread
+      HANDLE m_hThread;					//	The Thread Handle
+      volatile t_u32  m_dwTID;						//	The Thread ID
+      void *m_pUserData;						//	The user data pointer
+      void *m_pParent;					//	The this pointer of the parent NThread object
+      t_u32  m_dwExitCode;				//	The Exit Code of the thread
     };
 
     /*!
         Attributes Section
     */
-protected:
+  protected:
     /*!
         Info: Members of NThread
     */
     NThreadContext			m_ThreadCtx;	//	The Thread Context member
     LPTHREAD_START_ROUTINE	m_pThreadFunc;	//	The Worker Thread Function Pointer
-};
+  };
 
 //  USAGE:
 //    DWORD WINAPI Threaded(void* lpData);
@@ -427,7 +454,7 @@ protected:
 //    class CDemoThread : public CThread
 //    {
 //        virtual t_u32 Run( void* /* arg */ )
-//        { 
+//        {
 //            for(;;)
 //            {
 //                printf("Threaded Object Code \n");

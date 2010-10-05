@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -54,7 +54,7 @@ distribution.
 #include "tinystr.h"
 
 // Error value for find primitive
-const TiXmlString::size_type TiXmlString::npos = static_cast< TiXmlString::size_type >(-1);
+const TiXmlString::size_type TiXmlString::npos = static_cast< TiXmlString::size_type > (-1);
 
 
 // Null rep.
@@ -63,75 +63,79 @@ TiXmlString::Rep TiXmlString::nullrep_ = { 0, 0, { '\0' } };
 
 void TiXmlString::reserve (size_type cap)
 {
-	if (cap > capacity())
-	{
-		TiXmlString tmp;
-		tmp.init(length(), cap);
-		memcpy(tmp.start(), data(), length());
-		swap(tmp);
-	}
+  if (cap > capacity() )
+  {
+    TiXmlString tmp;
+    tmp.init (length(), cap);
+    memcpy (tmp.start(), data(), length() );
+    swap (tmp);
+  }
 }
 
 
-TiXmlString& TiXmlString::assign(const char* str, size_type len)
+TiXmlString &TiXmlString::assign (const char *str, size_type len)
 {
-	size_type cap = capacity();
-	if (len > cap || cap > 3*(len + 8))
-	{
-		TiXmlString tmp;
-		tmp.init(len);
-		memcpy(tmp.start(), str, len);
-		swap(tmp);
-	}
-	else
-	{
-		memmove(start(), str, len);
-		set_size(len);
-	}
-	return *this;
+  size_type cap = capacity();
+
+  if (len > cap || cap > 3 * (len + 8) )
+  {
+    TiXmlString tmp;
+    tmp.init (len);
+    memcpy (tmp.start(), str, len);
+    swap (tmp);
+  }
+  else
+  {
+    memmove (start(), str, len);
+    set_size (len);
+  }
+
+  return *this;
 }
 
 
-TiXmlString& TiXmlString::append(const char* str, size_type len)
+TiXmlString &TiXmlString::append (const char *str, size_type len)
 {
-	size_type newsize = length() + len;
-	if (newsize > capacity())
-	{
-		reserve (newsize + capacity());
-	}
-	memmove(finish(), str, len);
-	set_size(newsize);
-	return *this;
+  size_type newsize = length() + len;
+
+  if (newsize > capacity() )
+  {
+    reserve (newsize + capacity() );
+  }
+
+  memmove (finish(), str, len);
+  set_size (newsize);
+  return *this;
 }
 
 
-TiXmlString operator + (const TiXmlString & a, const TiXmlString & b)
+TiXmlString operator + (const TiXmlString &a, const TiXmlString &b)
 {
-	TiXmlString tmp;
-	tmp.reserve(a.length() + b.length());
-	tmp += a;
-	tmp += b;
-	return tmp;
+  TiXmlString tmp;
+  tmp.reserve (a.length() + b.length() );
+  tmp += a;
+  tmp += b;
+  return tmp;
 }
 
-TiXmlString operator + (const TiXmlString & a, const char* b)
+TiXmlString operator + (const TiXmlString &a, const char *b)
 {
-	TiXmlString tmp;
-	TiXmlString::size_type b_len = static_cast<TiXmlString::size_type>( strlen(b) );
-	tmp.reserve(a.length() + b_len);
-	tmp += a;
-	tmp.append(b, b_len);
-	return tmp;
+  TiXmlString tmp;
+  TiXmlString::size_type b_len = static_cast<TiXmlString::size_type> ( strlen (b) );
+  tmp.reserve (a.length() + b_len);
+  tmp += a;
+  tmp.append (b, b_len);
+  return tmp;
 }
 
-TiXmlString operator + (const char* a, const TiXmlString & b)
+TiXmlString operator + (const char *a, const TiXmlString &b)
 {
-	TiXmlString tmp;
-	TiXmlString::size_type a_len = static_cast<TiXmlString::size_type>( strlen(a) );
-	tmp.reserve(a_len + b.length());
-	tmp.append(a, a_len);
-	tmp += b;
-	return tmp;
+  TiXmlString tmp;
+  TiXmlString::size_type a_len = static_cast<TiXmlString::size_type> ( strlen (a) );
+  tmp.reserve (a_len + b.length() );
+  tmp.append (a, a_len);
+  tmp += b;
+  return tmp;
 }
 
 

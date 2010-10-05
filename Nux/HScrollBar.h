@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -26,37 +26,38 @@
 #include "TimerProc.h"
 #include "ScrollBar.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-class HLayout;
-class VLayout;
-class Layout;
-
-class HScrollBar : public ScrollBar //public ValuatorAbstraction
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-public:
-    HScrollBar(NUX_FILE_LINE_PROTO);
+
+  class HLayout;
+  class VLayout;
+  class Layout;
+
+  class HScrollBar : public ScrollBar //public ValuatorAbstraction
+  {
+  public:
+    HScrollBar (NUX_FILE_LINE_PROTO);
     ~HScrollBar();
 
-    virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    void DrawLeftTriangle(GraphicsContext& GfxContext, int width, int height, const Geometry& geo, BasePainter& painter);
-    void DrawRightTriangle(GraphicsContext& GfxContext, int width, int height, const Geometry& geo, BasePainter& painter);
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    void DrawLeftTriangle (GraphicsContext &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawRightTriangle (GraphicsContext &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
 
-    virtual void Draw(GraphicsContext& GfxContext, bool force_draw);
-private:
-    virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw) {};
-    virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw) {};
+    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
+  private:
+    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw) {};
+    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw) {};
 
-    void HScrollBarHandler(void* v);
-    void ScrollRight(void* v);
-    void ScrollLeft(void* v);
-    void TrackLeft(void* v);
-    void TrackRight(void* v);
+    void HScrollBarHandler (void *v);
+    void ScrollRight (void *v);
+    void ScrollLeft (void *v);
+    void TrackLeft (void *v);
+    void TrackRight (void *v);
 
-public:
-    void SetContainerSize(int x, int y, int w, int h);
-    void SetContentSize(int x, int y, int w, int h);
-    void SetContentOffset(float dx, float dy);
+  public:
+    void SetContainerSize (int x, int y, int w, int h);
+    void SetContentSize (int x, int y, int w, int h);
+    void SetContentOffset (float dx, float dy);
     void ComputeScrolling();
 
     virtual int GetBaseWidth();
@@ -65,23 +66,23 @@ public:
     /////////////////
     //  RECEIVERS  //
     /////////////////
-    void SetValue(float value);
-    void SetParameterName(const char* parameter_name);
+    void SetValue (float value);
+    void SetParameterName (const char *parameter_name);
     ////////////////
     //  EMITTERS  //
     ////////////////
-    void RecvStartScrollRight(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvStartScrollLeft(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvEndScrollRight(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvEndScrollLeft(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvStartScrollRight (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvStartScrollLeft (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvEndScrollRight (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvEndScrollLeft (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-    void RecvTrackMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvTrackMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvTrackMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvTrackMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvTrackMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvTrackMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-    void OnSliderMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnSliderMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnSliderMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void OnSliderMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnSliderMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnSliderMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
     ///////////////
     //  SIGNALS  //
@@ -95,18 +96,18 @@ public:
     bool b_MouseUpTimer;
     float m_color_factor;
 
-protected:
+  protected:
     // When the Scrollbar is used standalone, it is necessary to call ComputeScrolling at the end of the layout.
-    virtual long PostLayoutManagement(long LayoutResult);
+    virtual long PostLayoutManagement (long LayoutResult);
 
     bool AtMinimum();
     bool AtMaximum();
 
-    HLayout* hlayout;
-    CoreArea* m_SlideBar;
-    CoreArea* m_LeftThumb;
-    CoreArea* m_RightThumb;
-    CoreArea* m_Track;
+    HLayout *hlayout;
+    CoreArea *m_SlideBar;
+    CoreArea *m_LeftThumb;
+    CoreArea *m_RightThumb;
+    CoreArea *m_Track;
 
     int m_contentWidth;
     int m_contentHeight;
@@ -142,7 +143,7 @@ protected:
     friend class HLayout;
     friend class VLayout;
     friend class Layout;
-};
+  };
 
 } //NUX_NAMESPACE_END
 

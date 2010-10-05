@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -24,54 +24,54 @@
 #define NSYSTEM_H
 
 #ifdef _DEBUG
-    #define NUX_DEBUG
+#define NUX_DEBUG
 #endif
 
 #ifdef _WIN32
-    #define NUX_OS_WINDOWS
+#define NUX_OS_WINDOWS
 #elif __linux
-    #define NUX_OS_LINUX
+#define NUX_OS_LINUX
 #elif NUX_PS3
-    #define NUX_OS_CELL
-#elif __APPLE__ 
-    #define NUX_OS_MACOSX
+#define NUX_OS_CELL
+#elif __APPLE__
+#define NUX_OS_MACOSX
 #endif
 
 #if __GNUC__
-    #define NUX_GNUC_COMPILER
-    #if __GNUG__
-        #define NUX_GNUCPP_COMPILER
-    #else  
-        #error Support only g++.
-    #endif
+#define NUX_GNUC_COMPILER
+#if __GNUG__
+#define NUX_GNUCPP_COMPILER
+#else
+#error Support only g++.
+#endif
 
-    // Compiler string.
-    #define NUX_COMPILER_STRING "GNU CPP Compiler"
+// Compiler string.
+#define NUX_COMPILER_STRING "GNU CPP Compiler"
 
-    // Build string
-    #ifdef NUX_DEBUG
-        #define NUX_BUILD_STRING "Debug build compiled with " NUX_COMPILER_STRING
-    #else
-        #define NUX_BUILD_STRING "Compiled with " NUX_COMPILER_STRING
-    #endif
+// Build string
+#ifdef NUX_DEBUG
+#define NUX_BUILD_STRING "Debug build compiled with " NUX_COMPILER_STRING
+#else
+#define NUX_BUILD_STRING "Compiled with " NUX_COMPILER_STRING
+#endif
 #endif
 
 #if __APPLE_CC__
-    #define NUX_APPLE_COMPILER
+#define NUX_APPLE_COMPILER
 #endif
 
 #if defined(_M_X64) || defined(__amd64__) || defined(__ia64__)
-    #define NUX_ARCH_x64
+#define NUX_ARCH_x64
 #elif defined(_M_IX86) || defined(__i386__)
-    #define NUX_ARCH_i386
+#define NUX_ARCH_i386
 #elif defined(__arm__)
-    #define NUX_ARCH_arm
+#define NUX_ARCH_arm
 #elif defined(__cell)
-    #define NUX_ARCH_cell
+#define NUX_ARCH_cell
 #endif
 
 #if _MSC_VER
-    #define NUX_MICROSOFT_COMPILER
+#define NUX_MICROSOFT_COMPILER
 #endif
 
 // Compiler Macros:
@@ -97,43 +97,43 @@
 //    SymSetOptions
 //    SymGetOptions
 //    SymLoadModule64
-    #pragma comment(lib, "DbgHelp")
+#pragma comment(lib, "DbgHelp")
 
-    // _MSC_VER: Defines the major and minor versions of the compiler. For example, 1300 for Microsoft Visual C++ .NET. 1300 represents version 13
-    // and no point release. This represents the fact that there have been a total of 13 releases of the compiler. 
-    // If you type cl /? at the command line, you will see the full version for the compiler you are using.
-    
-    #ifndef _MSC_VER
-        #error Support only Visual Studio Compiler.
-    #endif
+// _MSC_VER: Defines the major and minor versions of the compiler. For example, 1300 for Microsoft Visual C++ .NET. 1300 represents version 13
+// and no point release. This represents the fact that there have been a total of 13 releases of the compiler.
+// If you type cl /? at the command line, you will see the full version for the compiler you are using.
 
-    #define VISUAL_STUDIO_2008_COMPILER     1500
-    #define VISUAL_STUDIO_2005_COMPILER     1400
-    #define VISUAL_STUDIO_2003_COMPILER     1310
+#ifndef _MSC_VER
+#error Support only Visual Studio Compiler.
+#endif
 
-    #if _MSC_VER >= 1500
-        #define NUX_VISUAL_STUDIO_2008
-    #elif _MSC_VER >= 1400
-        #define NUX_VISUAL_STUDIO_2005
-    #elif _MSC_VER >= 1310
-        #define NUX_VISUAL_STUDIO_2003
-    #endif
+#define VISUAL_STUDIO_2008_COMPILER     1500
+#define VISUAL_STUDIO_2005_COMPILER     1400
+#define VISUAL_STUDIO_2003_COMPILER     1310
 
-    // Compiler string.
-    #if (_MSC_VER >= VISUAL_STUDIO_2008_COMPILER)
-        #define NUX_COMPILER_STRING "Visual Studio 2008"
-    #elif (_MSC_VER >= VISUAL_STUDIO_2005_COMPILER)
-        #define NUX_COMPILER_STRING "Visual Studio 2005"
-    #elif (_MSC_VER >= VISUAL_STUDIO_2003_COMPILER)
-        #define NUX_COMPILER_STRING "Visual Studio 2003"
-    #endif
+#if _MSC_VER >= 1500
+#define NUX_VISUAL_STUDIO_2008
+#elif _MSC_VER >= 1400
+#define NUX_VISUAL_STUDIO_2005
+#elif _MSC_VER >= 1310
+#define NUX_VISUAL_STUDIO_2003
+#endif
 
-    // Build String
-    #ifdef NUX_DEBUG
-        #define NUX_BUILD_STRING "Debug build compiled with " NUX_COMPILER_STRING
-    #else
-        #define NUX_BUILD_STRING "Compiled with " NUX_COMPILER_STRING
-    #endif
+// Compiler string.
+#if (_MSC_VER >= VISUAL_STUDIO_2008_COMPILER)
+#define NUX_COMPILER_STRING "Visual Studio 2008"
+#elif (_MSC_VER >= VISUAL_STUDIO_2005_COMPILER)
+#define NUX_COMPILER_STRING "Visual Studio 2005"
+#elif (_MSC_VER >= VISUAL_STUDIO_2003_COMPILER)
+#define NUX_COMPILER_STRING "Visual Studio 2003"
+#endif
+
+// Build String
+#ifdef NUX_DEBUG
+#define NUX_BUILD_STRING "Debug build compiled with " NUX_COMPILER_STRING
+#else
+#define NUX_BUILD_STRING "Compiled with " NUX_COMPILER_STRING
+#endif
 
 
 // Define the proper values for _WIN32_WINNT and WINVER in the compiler response file "compiler_options.h"
@@ -168,7 +168,7 @@
 //    Windows 2000 SP1 	NTDDI_VERSION >=NTDDI_WIN2KSP1
 //    Windows 2000 	NTDDI_VERSION >=NTDDI_WIN2K
 
-    #define WIN32_LEAN_AND_MEAN 1
+#define WIN32_LEAN_AND_MEAN 1
 #endif  // _WIN32
 
 
@@ -176,78 +176,78 @@
 
 // Logging
 #if defined(NUX_OS_WINDOWS) && defined(NUX_DEBUG)
-    #define NUX_ENABLE_ASSERT_MACROS
-    #define NUX_ENABLE_LOGGING
+#define NUX_ENABLE_ASSERT_MACROS
+#define NUX_ENABLE_LOGGING
 #elif defined(NUX_OS_LINUX) && defined(NUX_DEBUG)
-    #define NUX_ENABLE_ASSERT_MACROS
-    #define NUX_ENABLE_LOGGING
+#define NUX_ENABLE_ASSERT_MACROS
+#define NUX_ENABLE_LOGGING
 #endif
 
 // NOP: no operation
-// Specifies that a function should be ignored and the argument list 
+// Specifies that a function should be ignored and the argument list
 // be parsed but no code be generated for the arguments. It is intended for use in global
 // debug functions that take a variable number of arguments.
 
 #if defined(NUX_MICROSOFT_COMPILER)
-    #define NUX_COMPILER_SUPPORTS_NOOP
-    #define NUX_NOOP __noop
+#define NUX_COMPILER_SUPPORTS_NOOP
+#define NUX_NOOP __noop
 #elif defined(NUX_GNUCPP_COMPILER)
-    #define NUX_COMPILER_SUPPORTS_NOOP
-    #define NUX_NOOP __asm__("nop")
+#define NUX_COMPILER_SUPPORTS_NOOP
+#define NUX_NOOP __asm__("nop")
 #elif defined(NUX_PS3)
-    #define NUX_COMPILER_SUPPORTS_NOOP
-    #define NUX_NOOP __asm__("nop")
+#define NUX_COMPILER_SUPPORTS_NOOP
+#define NUX_NOOP __asm__("nop")
 #endif
 
 // Pragma pack support
 #if defined(NUX_MICROSOFT_COMPILER) || defined(NUX_GNUCPP_COMPILER) || defined(NUX_PS3)
-    #define NUX_SUPPORTS_PRAGMA_PACK
+#define NUX_SUPPORTS_PRAGMA_PACK
 #endif
 
 
 // Define variadic macro support
 #if defined(NUX_MICROSOFT_COMPILER) && (defined(NUX_VISUAL_STUDIO_2005) || defined(NUX_VISUAL_STUDIO_2008))
-    #define NUX_VARIADIC_MACROS_SUPPORT
+#define NUX_VARIADIC_MACROS_SUPPORT
 #elif defined(NUX_GNUCPP_COMPILER)
-    #define NUX_VARIADIC_MACROS_SUPPORT
+#define NUX_VARIADIC_MACROS_SUPPORT
 #elif defined(NUX_PS3)
-    #define NUX_VARIADIC_MACROS_SUPPORT
+#define NUX_VARIADIC_MACROS_SUPPORT
 #endif
 
 
 /// DLL declaration macros
 #if defined(NUX_OS_WINDOWS)
-    #ifdef NUX_DLL
-        #if (!defined(_WIN32)) && (!defined(_WIN64))
-            #error("ERROR: Use NUX_DLL is permitted only on win32 & win64 platforms")
-        #endif
+#ifdef NUX_DLL
+#if (!defined(_WIN32)) && (!defined(_WIN64))
+#error("ERROR: Use NUX_DLL is permitted only on win32 & win64 platforms")
+#endif
 
-        #define NUX_DECLSPEC_DLLIMPORT        __declspec(dllimport)
-        #define NUX_DECLSPEC_DLLEXPORT        __declspec(dllexport)
-    #else
-        #define NUX_DECLSPEC_DLLIMPORT
-        #define NUX_DECLSPEC_DLLEXPORT
-    #endif
+#define NUX_DECLSPEC_DLLIMPORT        __declspec(dllimport)
+#define NUX_DECLSPEC_DLLEXPORT        __declspec(dllexport)
+#else
+#define NUX_DECLSPEC_DLLIMPORT
+#define NUX_DECLSPEC_DLLEXPORT
+#endif
 
-    #ifdef NUX_EXPORT_DLL
-        #define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLEXPORT
-    #else
-        #define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLIMPORT
-    #endif
+#ifdef NUX_EXPORT_DLL
+#define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLEXPORT
+#else
+#define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLIMPORT
+#endif
 #elif defined(NUX_OS_LINUX)
-    #if __GNUC__ >= 4
-        #define NUX_DECLSPEC_DLLIMPORT __attribute__ ((visibility("default")))
-        #define NUX_DECLSPEC_DLLEXPORT __attribute__ ((visibility("default")))
-    #else
-        #define NUX_DECLSPEC_DLLIMPORT
-        #define NUX_DECLSPEC_DLLEXPORT
-    #endif
+#if __GNUC__ >= 4
+#define NUX_DECLSPEC_DLLIMPORT __attribute__ ((visibility("default")))
+#define NUX_DECLSPEC_DLLEXPORT __attribute__ ((visibility("default")))
+#else
+#define NUX_DECLSPEC_DLLIMPORT
+#define NUX_DECLSPEC_DLLEXPORT
+#endif
 
-    #ifdef NUX_EXPORT_DLL
-        #define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLEXPORT
-    #else
-        #define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLIMPORT
-    #endif
+#ifdef NUX_EXPORT_DLL
+#define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLEXPORT
+#else
+#define NUX_DECLSPEC_DLL               NUX_DECLSPEC_DLLIMPORT
+#endif
 #endif
 
 #define NUX_CHECK_PUREVIRTUALS 1

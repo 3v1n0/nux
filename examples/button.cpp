@@ -15,7 +15,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     button->SetMaximumHeight(60);
 
     
-    MainVLayout->AddActiveInterfaceObject(button, 1, nux::eCenter, nux::eFull);
+    MainVLayout->AddView(button, 1, nux::eCenter, nux::eFull);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
     
     nux::GetGraphicsThread()->SetLayout(MainVLayout);

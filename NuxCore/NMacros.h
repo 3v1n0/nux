@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -44,11 +44,11 @@
 //     * Destructor (C::~C())
 //     * Assignment operator (C& C::operator= (const C& rhs))
 //     * Address-of operator (C* C::operator&())
-//     * Address-of operator (const C* C::operator&() const;) 
+//     * Address-of operator (const C* C::operator&() const;)
 
 /*! A Global Object with a behavior similar to a singleton. Only one instance of this object can exist.
     The unique instance is created by a friend class: NGlobalInitializer. Only NGlobalInitializer can create this instance.
-    example: 
+    example:
         class GlobalObject
         {
             NUX_DECLARE_GLOBAL_OBJECT(GlobalObject, , NGlobalSingletonInitializer)
@@ -99,7 +99,7 @@
             }                                                                       \
             return *pInstance;                                                  \
         }                                                                       \
-
+ 
 
 /// Loki Singleton ////////////////////////////////////////////////////////////////////////////////////
 

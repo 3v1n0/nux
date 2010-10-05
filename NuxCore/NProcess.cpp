@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -22,7 +22,8 @@
 
 #include "NKernel.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
 #ifdef _WIN32
 //
@@ -30,98 +31,101 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 // This is expected to return immediately as the URL is launched by another
 // task.
 //
-void inlLaunchURL( const TCHAR* URL, const TCHAR* Parms, NString* Error )
-{
-    nuxDebugMsg( TEXT("LaunchURL %s %s"), URL, Parms?Parms:TEXT("") );
-    HINSTANCE Code = CALL_OS_TCHAR_FUNCTION(ShellExecuteW(NULL,TEXT("open"),URL,Parms?Parms:TEXT(""),TEXT(""),SW_SHOWNORMAL),ShellExecuteA(NULL,"open",TCHAR_TO_ANSI(URL),Parms?TCHAR_TO_ANSI(Parms):"","",SW_SHOWNORMAL));
-    if(Error)
-        *Error = (int)Code <= 32 ? TEXT("UrlFailed") : TEXT("");
-}
+  void inlLaunchURL ( const TCHAR *URL, const TCHAR *Parms, NString *Error )
+  {
+    nuxDebugMsg ( TEXT ("LaunchURL %s %s"), URL, Parms ? Parms : TEXT ("") );
+    HINSTANCE Code = CALL_OS_TCHAR_FUNCTION (ShellExecuteW (NULL, TEXT ("open"), URL, Parms ? Parms : TEXT (""), TEXT (""), SW_SHOWNORMAL), ShellExecuteA (NULL, "open", TCHAR_TO_ANSI (URL), Parms ? TCHAR_TO_ANSI (Parms) : "", "", SW_SHOWNORMAL) );
+
+    if (Error)
+      *Error = (int) Code <= 32 ? TEXT ("UrlFailed") : TEXT ("");
+  }
 
 //
 // Creates a new process and its primary thread. The new process runs the
 // specified executable file in the security context of the calling process.
 //
-void *inlCreateProc( const TCHAR* URL, const TCHAR* Parms )
-{
-    nuxDebugMsg(  TEXT("CreateProc %s %s"), URL, Parms );
+  void *inlCreateProc ( const TCHAR *URL, const TCHAR *Parms )
+  {
+    nuxDebugMsg (  TEXT ("CreateProc %s %s"), URL, Parms );
 
     TCHAR CommandLine[1024];
-    Snprintf( CommandLine, 1024, 1024-1, TEXT("%s %s"), URL, Parms );
+    Snprintf ( CommandLine, 1024, 1024 - 1, TEXT ("%s %s"), URL, Parms );
 
     PROCESS_INFORMATION ProcInfo;
     SECURITY_ATTRIBUTES Attr;
-    Attr.nLength = sizeof(SECURITY_ATTRIBUTES);
+    Attr.nLength = sizeof (SECURITY_ATTRIBUTES);
     Attr.lpSecurityDescriptor = NULL;
     Attr.bInheritHandle = TRUE;
 
-    STARTUPINFO StartupInfo = { sizeof(STARTUPINFO), NULL, NULL, NULL,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-        NULL, NULL, NULL, NULL, SW_HIDE, NULL, NULL,
-        NULL, NULL, NULL };
-    if( !CreateProcess( NULL, CommandLine, &Attr, &Attr, TRUE, DETACHED_PROCESS | REALTIME_PRIORITY_CLASS,
-        NULL, NULL, &StartupInfo, &ProcInfo ) )
-        return NULL;
+    STARTUPINFO StartupInfo = { sizeof (STARTUPINFO), NULL, NULL, NULL,
+                                CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+                                NULL, NULL, NULL, NULL, SW_HIDE, NULL, NULL,
+                                NULL, NULL, NULL
+                              };
 
-    return (void*)ProcInfo.hProcess;
-}
+    if ( !CreateProcess ( NULL, CommandLine, &Attr, &Attr, TRUE, DETACHED_PROCESS | REALTIME_PRIORITY_CLASS,
+                          NULL, NULL, &StartupInfo, &ProcInfo ) )
+      return NULL;
+
+    return (void *) ProcInfo.hProcess;
+  }
 
 //
 // Retrieves the termination status of the specified process.
 //
-BOOL inlGetProcReturnCode( void* ProcHandle, INT* ReturnCode )
-{
-    return GetExitCodeProcess( (HANDLE)ProcHandle, (DWORD*)ReturnCode ) && *((DWORD*)ReturnCode) != STILL_ACTIVE;
-}
+  BOOL inlGetProcReturnCode ( void *ProcHandle, INT *ReturnCode )
+  {
+    return GetExitCodeProcess ( (HANDLE) ProcHandle, (DWORD *) ReturnCode ) && * ( (DWORD *) ReturnCode) != STILL_ACTIVE;
+  }
 
 
-NUX_IMPLEMENT_GLOBAL_OBJECT(NProcess);
+  NUX_IMPLEMENT_GLOBAL_OBJECT (NProcess);
 
-void NProcess::Constructor()
-{
+  void NProcess::Constructor()
+  {
     m_ProcessID = GetCurrentProcessId();
-    m_ProcessHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, m_ProcessID);
+    m_ProcessHandle = OpenProcess (PROCESS_ALL_ACCESS, FALSE, m_ProcessID);
 
     m_MainThreadID = GetCurrentThreadId();
-    m_MainThreadHandle = OpenThread(THREAD_ALL_ACCESS, FALSE, m_MainThreadID);
-}
+    m_MainThreadHandle = OpenThread (THREAD_ALL_ACCESS, FALSE, m_MainThreadID);
+  }
 
-void NProcess::Destructor()
-{
-    CloseHandle(m_MainThreadHandle);
-    CloseHandle(m_ProcessHandle);
-}
+  void NProcess::Destructor()
+  {
+    CloseHandle (m_MainThreadHandle);
+    CloseHandle (m_ProcessHandle);
+  }
 
-HANDLE NProcess::GetProcessHandle()
-{
+  HANDLE NProcess::GetProcessHandle()
+  {
     return m_ProcessHandle;
-}
+  }
 
-DWORD NProcess::GetProcessID()
-{
+  DWORD NProcess::GetProcessID()
+  {
     return m_ProcessID;
-}
+  }
 
-HANDLE NProcess::GetMainThreadHandle()
-{
+  HANDLE NProcess::GetMainThreadHandle()
+  {
     return m_MainThreadHandle;
-}
+  }
 
-DWORD NProcess::GetMainThreadID()
-{
+  DWORD NProcess::GetMainThreadID()
+  {
     return m_MainThreadID;
-}
+  }
 
-HANDLE NProcess::GetCurrentThreadHandle()
-{
+  HANDLE NProcess::GetCurrentThreadHandle()
+  {
     DWORD ThreadID = GetCurrentThreadId();
-    return OpenThread(THREAD_ALL_ACCESS, FALSE, ThreadID);
-}
+    return OpenThread (THREAD_ALL_ACCESS, FALSE, ThreadID);
+  }
 
-DWORD NProcess::GetCurrentThreadID()
-{
+  DWORD NProcess::GetCurrentThreadID()
+  {
     return GetCurrentThreadId();
-}
+  }
 
 #endif
 

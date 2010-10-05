@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -24,7 +24,7 @@
 #define NGLOBALINITIALIZER_H
 
 #ifdef _WIN32
-    #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
+#define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
         NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NCPU);                       \
         NUX_GLOBAL_OBJECT_VARIABLE(NProcess);                   \
@@ -34,20 +34,20 @@
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
         NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);
-        //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
-        //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
+//NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
+//NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 
 #elif (defined NUX_PS3)
-    #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
+#define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
         NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerPS3);            \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
         NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);
-        //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
-        //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
+//NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
+//NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #elif (defined NUX_OS_LINUX)
-    #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
+#define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
         NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
@@ -55,17 +55,18 @@
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
         NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);
-        //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
-        //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
+//NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
+//NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #endif
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
 // This class initialize all inalogic singleton (global objects) in order. It also initialize memory allocators.
 // Therefore, do not call new NGlobalSingletonInitializer as it will try to call inalogic memory allocator and fail.
-// You may use the global placement new operator(it is not overwritten by inalogic) to create NGlobalSingletonInitializer 
+// You may use the global placement new operator(it is not overwritten by inalogic) to create NGlobalSingletonInitializer
 // inside the application data space by calling SystemInitializer(). At shutdown, call SystemShutdown()
-//       
+//
 // You may also create NGlobalSingletonInitializer in this way:
 //      main()
 //      {
@@ -74,22 +75,22 @@ namespace nux { //NUX_NAMESPACE_BEGIN
 //
 //
 
-class NGlobalSingletonInitializer
-{
-    NUX_DISABLE_OBJECT_COPY(NGlobalSingletonInitializer);
-    NGlobalSingletonInitializer* operator & ();
-    const NGlobalSingletonInitializer* operator & () const;
+  class NGlobalSingletonInitializer
+  {
+    NUX_DISABLE_OBJECT_COPY (NGlobalSingletonInitializer);
+    NGlobalSingletonInitializer *operator & ();
+    const NGlobalSingletonInitializer *operator & () const;
 
-public:
+  public:
     NGlobalSingletonInitializer();
     ~NGlobalSingletonInitializer();
 
     static bool Ready();
-private:
+  private:
     static bool m_bGlobalObjectsReady;
 
     NUX_GLOBAL_OBJECT_INIT_SEQUENCE();
-};
+  };
 
 // Hide these functions
 // extern NUX_DLL_ENTRY void SystemStart();
@@ -98,14 +99,14 @@ private:
 
 
 // Nifty Counter idiom. See http://www-d0.fnal.gov/KAI/doc/tutorials/static_initialization.html
-class NGlobalInitializer
-{
-public:
+  class NGlobalInitializer
+  {
+  public:
     NGlobalInitializer();
     ~NGlobalInitializer();
-private:
+  private:
     static int m_Count;
-};
+  };
 
 // Every compilation unit that includes this file will have its own instance of sGlobalInitializer. sGlobalInitializer is initialized
 // before the main function of the program is called. The first time sGlobalInitializer is initialized, it calls SystemStart() to create
@@ -113,7 +114,7 @@ private:
 // When the program exits, every instance of sGlobalInitializer will be destroyed. The last instance destroyed will call SystemShutdown().
 // In SystemShutdown() we can destroy our global objects in any order we like.
 
-static NGlobalInitializer sGlobalInitializer;
+  static NGlobalInitializer sGlobalInitializer;
 
 
 } //NUX_NAMESPACE_END

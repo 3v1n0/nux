@@ -20,7 +20,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     combobox->SetMaximumWidth(150);
 
     
-    MainVLayout->AddActiveInterfaceObject(combobox, 0, nux::eCenter, nux::eFull);
+    MainVLayout->AddView(combobox, 0, nux::eCenter, nux::eFull);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
     
     nux::GetGraphicsThread()->SetLayout(MainVLayout);

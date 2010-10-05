@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -26,16 +26,17 @@
 
 #include "Vector2.h"
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-template <typename T>
-class Matrix2x2
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-public:
-	Matrix2x2<T>();
+
+  template <typename T>
+  class Matrix2x2
+  {
+  public:
+    Matrix2x2<T>();
     ~Matrix2x2<T>();
 
-    Matrix2x2<T>(const Matrix2x2<T>&);
+    Matrix2x2<T> (const Matrix2x2<T>&);
     Matrix2x2<T>&   operator = (const Matrix2x2<T>&);
     t_bool          operator == (const Matrix2x2<T>&);
     Matrix2x2<T>    operator * (const Matrix2x2<T>&) const;
@@ -45,17 +46,17 @@ public:
     Matrix2x2<T>&   operator += (const Matrix2x2<T>&) const;
     Matrix2x2<T>&   operator -= (const Matrix2x2<T>&) const;
 
-    Matrix2x2<T>    operator * (const T&) const;
-    Matrix2x2<T>    operator / (const T&) const;
-    Matrix2x2<T>&   operator *= (const T&) const;
-    Matrix2x2<T>&   operator /= (const T&) const;
+    Matrix2x2<T>    operator * (const T &) const;
+    Matrix2x2<T>    operator / (const T &) const;
+    Matrix2x2<T>&   operator *= (const T &) const;
+    Matrix2x2<T>&   operator /= (const T &) const;
 
-    Vec2<T>         operator * (const Vec2<T>&) const;	
-	Matrix2x2<T>    operator - ();
+    Vec2<T>         operator * (const Vec2<T>&) const;
+    Matrix2x2<T>    operator - ();
 
     // Get the (i, j) element of the current matrix.
-    T& operator()(unsigned int i, unsigned int j);
-    T operator ()(unsigned int i, unsigned int j) const;
+    T &operator() (unsigned int i, unsigned int j);
+    T operator () (unsigned int i, unsigned int j) const;
 
     void Zero();
     void Identity();
@@ -66,46 +67,47 @@ public:
     static Matrix2x2<T> IDENTITY();
     static Matrix2x2<T> ZERO();
 
-	T m[2][2];
-};
+    T m[2][2];
+  };
 
 
-/***************************************************************************************\
-Function:       Matrix2::Matrix2
+  /***************************************************************************************\
+  Function:       Matrix2::Matrix2
 
-Description:    Constructor. Initialize the matrix to identity.
+  Description:    Constructor. Initialize the matrix to identity.
 
-Parameters:     None.
+  Parameters:     None.
 
-Return Value:   None.
+  Return Value:   None.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T>::Matrix2x2()
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T>::Matrix2x2()
+  {
     Identity();
-}
+  }
 
-template <typename T>
-T Matrix2x2<T>::Determinant() const
-{
+  template <typename T>
+  T Matrix2x2<T>::Determinant() const
+  {
     T det;
-    det = m[0][0]*m[1][1] - m[0][1]*m[1][0]; 
+    det = m[0][0] * m[1][1] - m[0][1] * m[1][0];
     return det;
-}
+  }
 
-template <typename T>
-void Matrix2x2<T>::Inverse()
-{
+  template <typename T>
+  void Matrix2x2<T>::Inverse()
+  {
     T det = Determinant();
-    if(det == T(0))
+
+    if (det == T (0) )
     {
-        // Determinant is null. Matrix cannot be inverted.
+      // Determinant is null. Matrix cannot be inverted.
 #ifdef NUX_DEBUG
-        NUX_HARDWARE_BREAK;
+      NUX_HARDWARE_BREAK;
 #endif
-        return;
+      return;
     }
 
     Matrix2x2<T> Temp;
@@ -114,98 +116,103 @@ void Matrix2x2<T>::Inverse()
     Temp.m[1][0] = -m[1][0];
     Temp.m[1][1] = m[0][0];
 
-    *this = (T(1) / det) * Temp; 
-}
+    *this = (T (1) / det) * Temp;
+  }
 
-template <typename T>
-Matrix2x2<T> Matrix2x2<T>::GetInverse() const
-{
+  template <typename T>
+  Matrix2x2<T> Matrix2x2<T>::GetInverse() const
+  {
     Matrix2x2<T> Temp = *this;
     Temp.Inverse();
     return Temp;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::~Matrix2
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::~Matrix2
 
-Description:    Destructor.
+  Description:    Destructor.
 
-Parameters:     None.
+  Parameters:     None.
 
-Return Value:   None.
+  Return Value:   None.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T>::~Matrix2x2()
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T>::~Matrix2x2()
+  {
 
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::Matrix2
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::Matrix2
 
-Description:    Copy constructor.
+  Description:    Copy constructor.
 
-Parameters:     - M
+  Parameters:     - M
 
-Return Value:   None.
+  Return Value:   None.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T>::Matrix2x2(const Matrix2x2<T>& M) 
-{
-    m[0][0] = M.m[0][0]; m[0][1] = M.m[0][1];
-    m[1][0] = M.m[1][0]; m[1][1] = M.m[1][1];
-}
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T>::Matrix2x2 (const Matrix2x2<T>& M)
+  {
+    m[0][0] = M.m[0][0];
+    m[0][1] = M.m[0][1];
+    m[1][0] = M.m[1][0];
+    m[1][1] = M.m[1][1];
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator =
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator =
 
-Description:    Assignment operator.
+  Description:    Assignment operator.
 
-Parameters:     - M
+  Parameters:     - M
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T>& Matrix2x2<T>::operator = (const Matrix2x2<T>& M) 
-{
-    m[0][0] = M.m[0][0]; m[0][1] = M.m[0][1];
-    m[1][0] = M.m[1][0]; m[1][1] = M.m[1][1];
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T>& Matrix2x2<T>::operator = (const Matrix2x2<T>& M)
+  {
+    m[0][0] = M.m[0][0];
+    m[0][1] = M.m[0][1];
+    m[1][0] = M.m[1][0];
+    m[1][1] = M.m[1][1];
 
     return (*this);
-}
+  }
 
-template <typename T>
-t_bool Matrix2x2<T>::operator == (const Matrix2x2<T>& M) 
-{
-    for(int i = 0; i < 2; i++)
-        for(int j = 0; j < 2; j++)
-        {
-            if(m[i][j] != M.m[i][j])
-                return false;
-        }
-        return true;
-}
+  template <typename T>
+  t_bool Matrix2x2<T>::operator == (const Matrix2x2<T>& M)
+  {
+    for (int i = 0; i < 2; i++)
+      for (int j = 0; j < 2; j++)
+      {
+        if (m[i][j] != M.m[i][j])
+          return false;
+      }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator *
+    return true;
+  }
 
-Description:    Multiply by matrix iM.
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator *
 
-Parameters:     - iM.
+  Description:    Multiply by matrix iM.
 
-Return Value:   Matrix2x2<T>.
+  Parameters:     - iM.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T> Matrix2x2<T>::operator * (const Matrix2x2<T>& iM) const 
-{
+  Return Value:   Matrix2x2<T>.
+
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T> Matrix2x2<T>::operator * (const Matrix2x2<T>& iM) const
+  {
     Matrix2x2<T> oM;
 
     oM.m[0][0] = m[0][0] * iM.m[0][0] + m[0][1] * iM.m[1][0];
@@ -215,66 +222,70 @@ Matrix2x2<T> Matrix2x2<T>::operator * (const Matrix2x2<T>& iM) const
     oM.m[1][1] = m[1][0] * iM.m[0][1] + m[1][1] * iM.m[1][1];
 
     return oM;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator +
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator +
 
-Description:    Add matrix iM.
+  Description:    Add matrix iM.
 
-Parameters:     - iM
+  Parameters:     - iM
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T> Matrix2x2<T>::operator + (const Matrix2x2<T>& iM) const 
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T> Matrix2x2<T>::operator + (const Matrix2x2<T>& iM) const
+  {
     Matrix2x2<T> oM;
 
-    oM.m[0][0] = m[0][0]+iM.m[0][0]; oM.m[0][1] = m[0][1]+iM.m[0][1]; 
-    oM.m[1][0] = m[1][0]+iM.m[1][0]; oM.m[1][1] = m[1][1]+iM.m[1][1]; 
+    oM.m[0][0] = m[0][0] + iM.m[0][0];
+    oM.m[0][1] = m[0][1] + iM.m[0][1];
+    oM.m[1][0] = m[1][0] + iM.m[1][0];
+    oM.m[1][1] = m[1][1] + iM.m[1][1];
 
     return oM;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator -
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator -
 
-Description:    Substract matrix iM.
+  Description:    Substract matrix iM.
 
-Parameters:      -iM
+  Parameters:      -iM
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T> Matrix2x2<T>::operator - (const Matrix2x2<T>& iM) const 
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T> Matrix2x2<T>::operator - (const Matrix2x2<T>& iM) const
+  {
     Matrix2x2<T> oM;
 
-    oM.m[0][0] = m[0][0]-iM.m[0][0]; oM.m[0][1] = m[0][1]-iM.m[0][1]; 
-    oM.m[1][0] = m[1][0]-iM.m[1][0]; oM.m[1][1] = m[1][1]-iM.m[1][1]; 
+    oM.m[0][0] = m[0][0] - iM.m[0][0];
+    oM.m[0][1] = m[0][1] - iM.m[0][1];
+    oM.m[1][0] = m[1][0] - iM.m[1][0];
+    oM.m[1][1] = m[1][1] - iM.m[1][1];
 
     return oM;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator *=
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator *=
 
-Description:    Multiply by matrix iM.
+  Description:    Multiply by matrix iM.
 
-Parameters:     - iM.
+  Parameters:     - iM.
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T>& Matrix2x2<T>::operator *= (const Matrix2x2<T>& iM) const 
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T>& Matrix2x2<T>::operator *= (const Matrix2x2<T>& iM) const
+  {
     Matrix2x2<T> oM;
 
     oM.m[0][0] = m[0][0] * iM.m[0][0] + m[0][1] * iM.m[1][0];
@@ -285,158 +296,168 @@ Matrix2x2<T>& Matrix2x2<T>::operator *= (const Matrix2x2<T>& iM) const
 
     *this = oM;
     return *this;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator +=
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator +=
 
-Description:    Add matrix iM.
+  Description:    Add matrix iM.
 
-Parameters:     - iM
+  Parameters:     - iM
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T>& Matrix2x2<T>::operator += (const Matrix2x2<T>& iM) const 
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T>& Matrix2x2<T>::operator += (const Matrix2x2<T>& iM) const
+  {
     Matrix2x2<T> oM;
 
-    oM.m[0][0] = m[0][0]+iM.m[0][0]; oM.m[0][1] = m[0][1]+iM.m[0][1]; 
-    oM.m[1][0] = m[1][0]+iM.m[1][0]; oM.m[1][1] = m[1][1]+iM.m[1][1]; 
+    oM.m[0][0] = m[0][0] + iM.m[0][0];
+    oM.m[0][1] = m[0][1] + iM.m[0][1];
+    oM.m[1][0] = m[1][0] + iM.m[1][0];
+    oM.m[1][1] = m[1][1] + iM.m[1][1];
 
     *this = oM;
     return *this;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator -=
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator -=
 
-Description:    Substract matrix iM.
+  Description:    Substract matrix iM.
 
-Parameters:      -iM
+  Parameters:      -iM
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T>& Matrix2x2<T>::operator -= (const Matrix2x2<T>& iM) const 
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T>& Matrix2x2<T>::operator -= (const Matrix2x2<T>& iM) const
+  {
     Matrix2x2<T> oM;
 
-    oM.m[0][0] = m[0][0]-iM.m[0][0]; oM.m[0][1] = m[0][1]-iM.m[0][1]; 
-    oM.m[1][0] = m[1][0]-iM.m[1][0]; oM.m[1][1] = m[1][1]-iM.m[1][1]; 
+    oM.m[0][0] = m[0][0] - iM.m[0][0];
+    oM.m[0][1] = m[0][1] - iM.m[0][1];
+    oM.m[1][0] = m[1][0] - iM.m[1][0];
+    oM.m[1][1] = m[1][1] - iM.m[1][1];
 
     *this = oM;
     return *this;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator *=
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator *=
 
-Description:    Multiply all elements by f.
+  Description:    Multiply all elements by f.
 
-Parameters:     - f.
+  Parameters:     - f.
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T>& Matrix2x2<T>::operator *= (const T& f) const 
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T>& Matrix2x2<T>::operator *= (const T &f) const
+  {
     Matrix2x2<T> oM;
 
-    oM.m[0][0] = m[0][0]*f; oM.m[0][1] = m[0][1]*f; 
-    oM.m[1][0] = m[1][0]*f; oM.m[1][1] = m[1][1]*f; 
+    oM.m[0][0] = m[0][0] * f;
+    oM.m[0][1] = m[0][1] * f;
+    oM.m[1][0] = m[1][0] * f;
+    oM.m[1][1] = m[1][1] * f;
 
     *this = oM;
     return *this;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator /
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator /
 
-Description:    Divide all elements by f.
+  Description:    Divide all elements by f.
 
-Parameters:     - f
+  Parameters:     - f
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T> Matrix2x2<T>::operator / (const T& f) const 
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T> Matrix2x2<T>::operator / (const T &f) const
+  {
     Matrix2x2<T> oM;
 
-    oM.m[0][0] = m[0][0]/f; oM.m[0][1] = m[0][1]/f;
-    oM.m[1][0] = m[1][0]/f; oM.m[1][1] = m[1][1]/f;
+    oM.m[0][0] = m[0][0] / f;
+    oM.m[0][1] = m[0][1] / f;
+    oM.m[1][0] = m[1][0] / f;
+    oM.m[1][1] = m[1][1] / f;
 
     return oM;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator /=
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator /=
 
-Description:    Divide all elements by f.
+  Description:    Divide all elements by f.
 
-Parameters:     - f
+  Parameters:     - f
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T>& Matrix2x2<T>::operator /= (const T& f) const 
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T>& Matrix2x2<T>::operator /= (const T &f) const
+  {
     Matrix2x2<T> oM;
 
-    oM.m[0][0] = m[0][0]/f; oM.m[0][1] = m[0][1]/f;
-    oM.m[1][0] = m[1][0]/f; oM.m[1][1] = m[1][1]/f;
+    oM.m[0][0] = m[0][0] / f;
+    oM.m[0][1] = m[0][1] / f;
+    oM.m[1][0] = m[1][0] / f;
+    oM.m[1][1] = m[1][1] / f;
 
     *this = oM;
     return *this;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator *
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator *
 
-Description:    Multiply a matrix by a vector.
+  Description:    Multiply a matrix by a vector.
 
-Parameters:     - V
+  Parameters:     - V
 
-Return Value:   Vector2.
+  Return Value:   Vector2.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Vec2<T> Matrix2x2<T>::operator * (const Vec2<T>& V) const 
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Vec2<T> Matrix2x2<T>::operator * (const Vec2<T>& V) const
+  {
     Vec2<T> oV;
 
-    oV.x = V.x*m[0][0] + V.y*m[0][1];
-    oV.y = V.x*m[1][0] + V.y*m[1][1];
+    oV.x = V.x * m[0][0] + V.y * m[0][1];
+    oV.y = V.x * m[1][0] + V.y * m[1][1];
 
     return oV;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator -
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator -
 
-Description:    Negate all elements of the matrix.
+  Description:    Negate all elements of the matrix.
 
-Parameters:     None.
+  Parameters:     None.
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T> Matrix2x2<T>::operator - ()
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T> Matrix2x2<T>::operator - ()
+  {
     Matrix2x2<T> oM;
 
     oM.m[0][0] = -m[0][0];
@@ -445,96 +466,102 @@ Matrix2x2<T> Matrix2x2<T>::operator - ()
     oM.m[1][1] = -m[1][1];
 
     return oM;
-}
+  }
 
-template <typename T>
-T& Matrix2x2<T>::operator ()(unsigned int i, unsigned int j)
-{
+  template <typename T>
+  T &Matrix2x2<T>::operator () (unsigned int i, unsigned int j)
+  {
     return m[i][j];
-}
+  }
 
-template <typename T>
-T Matrix2x2<T>::operator ()(unsigned int i, unsigned int j) const
-{
+  template <typename T>
+  T Matrix2x2<T>::operator () (unsigned int i, unsigned int j) const
+  {
     return m[i][j];
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::zero
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::zero
 
-Description:    Set the matrix to zero.
+  Description:    Set the matrix to zero.
 
-Parameters:     None.
+  Parameters:     None.
 
-Return Value:   None.
+  Return Value:   None.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-void Matrix2x2<T>::Zero()
-{
-    m[0][0] = 0.0; m[0][1] = 0.0;
-    m[1][0] = 0.0; m[1][1] = 0.0;
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  void Matrix2x2<T>::Zero()
+  {
+    m[0][0] = 0.0;
+    m[0][1] = 0.0;
+    m[1][0] = 0.0;
+    m[1][1] = 0.0;
 
     //memset(m, 0, sizeof(m));
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::identity
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::identity
 
-Description:    Set the matrix to identity.
+  Description:    Set the matrix to identity.
 
-Parameters:     None.
+  Parameters:     None.
 
-Return Value:   None.
+  Return Value:   None.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-void Matrix2x2<T>::Identity()
-{
-    m[0][0] = 1.0; m[0][1] = 0.0;
-    m[1][0] = 0.0; m[1][1] = 1.0;
-}
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  void Matrix2x2<T>::Identity()
+  {
+    m[0][0] = 1.0;
+    m[0][1] = 0.0;
+    m[1][0] = 0.0;
+    m[1][1] = 1.0;
+  }
 
-template <typename T>
-Matrix2x2<T> Matrix2x2<T>::IDENTITY()
-{
+  template <typename T>
+  Matrix2x2<T> Matrix2x2<T>::IDENTITY()
+  {
     Matrix2x2<T> matrix;
     matrix.Identity();
     return matrix;
-}
+  }
 
-template <typename T>
-Matrix2x2<T> Matrix2x2<T>::ZERO()
-{
+  template <typename T>
+  Matrix2x2<T> Matrix2x2<T>::ZERO()
+  {
     Matrix2x2<T> matrix;
     matrix.Zero();
     return matrix;
-}
+  }
 
-/***************************************************************************************\
-Function:       Matrix2x2<T>::operator *
+  /***************************************************************************************\
+  Function:       Matrix2x2<T>::operator *
 
-Description:    Multiply matrix rhs by constant lhs.
-Allow "f * matrix" operation.
+  Description:    Multiply matrix rhs by constant lhs.
+  Allow "f * matrix" operation.
 
-Parameters:     None.
+  Parameters:     None.
 
-Return Value:   Matrix2x2<T>.
+  Return Value:   Matrix2x2<T>.
 
-Comments:       None.
-\***************************************************************************************/
-template <typename T>
-Matrix2x2<T> operator * (const T& lhs, const Matrix2x2<T>& rhs)
-{
+  Comments:       None.
+  \***************************************************************************************/
+  template <typename T>
+  Matrix2x2<T> operator * (const T &lhs, const Matrix2x2<T>& rhs)
+  {
     Matrix2x2<T> oM;
 
-    oM.m[0][0] = rhs.m[0][0]/lhs; oM.m[0][1] = rhs.m[0][1]/lhs;
-    oM.m[1][0] = rhs.m[1][0]/lhs; oM.m[1][1] = rhs.m[1][1]/lhs;
+    oM.m[0][0] = rhs.m[0][0] / lhs;
+    oM.m[0][1] = rhs.m[0][1] / lhs;
+    oM.m[1][0] = rhs.m[1][0] / lhs;
+    oM.m[1][1] = rhs.m[1][1] / lhs;
 
     return oM;
-}
+  }
 
 } //NUX_NAMESPACE_END
 

@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -23,43 +23,44 @@
 #ifndef TIMERPROC_H
 #define TIMERPROC_H
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-
-class TimerHandler;
-
-class TimerFunctor : public sigc::trackable
+namespace nux   //NUX_NAMESPACE_BEGIN
 {
-public:
-    sigc::signal<void, void*> OnTimerExpired;
-};
 
-class TimerObject;
+  class TimerHandler;
 
-class TimerHandle
-{
-public:
+  class TimerFunctor : public sigc::trackable
+  {
+  public:
+    sigc::signal<void, void *> OnTimerExpired;
+  };
+
+  class TimerObject;
+
+  class TimerHandle
+  {
+  public:
     TimerHandle();
-    TimerHandle(TimerObject* timer_object);
+    TimerHandle (TimerObject *timer_object);
     ~TimerHandle();
-    TimerHandle(const TimerHandle&);
-    
-    TimerHandle& operator = (const TimerHandle&);
+    TimerHandle (const TimerHandle &);
+
+    TimerHandle &operator = (const TimerHandle &);
     bool IsValid() const;
-private:
-    TimerObject* m_d;
+  private:
+    TimerObject *m_d;
 
     friend class TimerHandler;
-};
+  };
 
-class TimerHandler
-{
-public:
+  class TimerHandler
+  {
+  public:
     enum
     {
-        TIMERTYPE_UNKNONW   = 0L,
-        TIMERTYPE_PERIODIC,
-        TIMERTYPE_DURATION,
-        TIMERTYPE_ITERATION,
+      TIMERTYPE_UNKNONW   = 0L,
+      TIMERTYPE_PERIODIC,
+      TIMERTYPE_DURATION,
+      TIMERTYPE_ITERATION,
     };
 
     TimerHandler();
@@ -75,7 +76,7 @@ public:
       @param Data           The callback data
       @return               A handle to the timer.
     */
-    TimerHandle AddTimerHandler(unsigned int Period, TimerFunctor* Callback, void *Data);
+    TimerHandle AddTimerHandler (unsigned int Period, TimerFunctor *Callback, void *Data);
     //! Add a periodic timer callback.
     /*!
       Add a timer callback to the timer manager. Every time the timer expires, the callback function is executed.
@@ -87,7 +88,7 @@ public:
       @param Data           The callback data
       @return               A handle to the timer.
     */
-    TimerHandle AddPeriodicTimerHandler(unsigned int Period, int Duration, TimerFunctor* Callback, void *Data);
+    TimerHandle AddPeriodicTimerHandler (unsigned int Period, int Duration, TimerFunctor *Callback, void *Data);
     //! Add a timer callback to be called a finite number of time.
     /*!
       Add a timer callback to the timer manager. The timer callback will be call N times exactly.
@@ -100,7 +101,7 @@ public:
       @param Data               The callback data
       @return                   A handle to the timer.
     */
-    TimerHandle AddCountIterationTimerHandler(unsigned int Period, int NumberOfIteration, TimerFunctor* Callback, void *Data);
+    TimerHandle AddCountIterationTimerHandler (unsigned int Period, int NumberOfIteration, TimerFunctor *Callback, void *Data);
 
     //! Search for a timer handle.
     /*!
@@ -109,14 +110,14 @@ public:
       @param handle             Timer handle to search.
       @return                   Return true if the timer is found; false otherwise.
     */
-    bool FindTimerHandle(TimerHandle& handle);
+    bool FindTimerHandle (TimerHandle &handle);
 
     //! Remove a timer;
     /*!
       @param handle Timer handle to search.
       @return Return True if the timer is found.
     */
-    bool RemoveTimerHandler(TimerHandle& handle);
+    bool RemoveTimerHandler (TimerHandle &handle);
 
     //! Return the delay until the next timer expires.
     /*!
@@ -125,19 +126,19 @@ public:
     int DelayUntilNextTimerExpires();
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-    int ExecTimerHandler(t_u32 timer_id);
+    int ExecTimerHandler (t_u32 timer_id);
 #else
     int ExecTimerHandler();
 #endif
 
-private:
+  private:
     bool m_IsProceesingTimers;
-    TimerObject* AddHandle(TimerObject *handle);
+    TimerObject *AddHandle (TimerObject *handle);
     t_u32 GetNumPendingHandler();
 
     //! Single linked list of timer delays.
     TimerObject *m_timer_object_queue;
-};
+  };
 
 } //NUX_NAMESPACE_END
 

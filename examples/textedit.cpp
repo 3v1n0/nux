@@ -13,7 +13,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     text_box_edit->SetMaximumWidth(300);
 
     
-    MainVLayout->AddActiveInterfaceObject(text_box_edit, 0, nux::eCenter, nux::eFull);
+    MainVLayout->AddView(text_box_edit, 0, nux::eCenter, nux::eFull);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
     
     nux::GetGraphicsThread()->SetLayout(MainVLayout);

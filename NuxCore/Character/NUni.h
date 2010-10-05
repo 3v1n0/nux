@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -96,7 +96,7 @@
         sequence is malformed.  When "sourceIllegal" is returned, the source
         value will point to the illegal value that caused the problem. E.g.,
         in UTF-8 when a sequence is malformed, it points to the start of the
-        malformed sequence. 
+        malformed sequence.
 
     Author: Mark E. Davis, 1994.
     Rev History: Rick McGowan, fixes & updates May 2001.
@@ -118,56 +118,59 @@
 //typedef unsigned char   Boolean; /* 0 or 1 */
 
 
-namespace nux { //NUX_NAMESPACE_BEGIN
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
 
-/* Some fundamental constants */
+  /* Some fundamental constants */
 #define UNI_REPLACEMENT_CHAR (t_UTF32)0x0000FFFD
 #define UNI_MAX_BMP (t_UTF32)0x0000FFFF
 #define UNI_MAX_UTF16 (t_UTF32)0x0010FFFF
 #define UNI_MAX_UTF32 (t_UTF32)0x7FFFFFFF
 #define UNI_MAX_LEGAL_UTF32 (t_UTF32)0x0010FFFF
 
-typedef enum {
+  typedef enum
+  {
     conversionOK = 0,           /* conversion successful */
     sourceExhausted,        /* partial character in source, but hit end */
     targetExhausted,        /* insuff. room in target for conversion */
     sourceIllegal           /* source sequence is illegal/malformed */
-} ConversionResult;
+  } ConversionResult;
 
-typedef enum {
+  typedef enum
+  {
     strictConversion = 0,
     lenientConversion
-} ConversionFlags;
+  } ConversionFlags;
 
-ConversionResult ConvertUTF8toUTF16 (
-                const t_UTF8** sourceStart, const t_UTF8* sourceEnd,
-                t_UTF16** targetStart, t_UTF16* targetEnd, ConversionFlags flags);
+  ConversionResult ConvertUTF8toUTF16 (
+    const t_UTF8 **sourceStart, const t_UTF8 *sourceEnd,
+    t_UTF16 **targetStart, t_UTF16 *targetEnd, ConversionFlags flags);
 
-ConversionResult ConvertUTF16toUTF8 (
-                const t_UTF16** sourceStart, const t_UTF16* sourceEnd,
-                t_UTF8** targetStart, t_UTF8* targetEnd, ConversionFlags flags);
-               
-ConversionResult ConvertUTF8toUTF32 (
-                const t_UTF8** sourceStart, const t_UTF8* sourceEnd,
-                t_UTF32** targetStart, t_UTF32* targetEnd, ConversionFlags flags);
+  ConversionResult ConvertUTF16toUTF8 (
+    const t_UTF16 **sourceStart, const t_UTF16 *sourceEnd,
+    t_UTF8 **targetStart, t_UTF8 *targetEnd, ConversionFlags flags);
 
-ConversionResult ConvertUTF32toUTF8 (
-                const t_UTF32** sourceStart, const t_UTF32* sourceEnd,
-                t_UTF8** targetStart, t_UTF8* targetEnd, ConversionFlags flags);
-               
-ConversionResult ConvertUTF16toUTF32 (
-                const t_UTF16** sourceStart, const t_UTF16* sourceEnd,
-                t_UTF32** targetStart, t_UTF32* targetEnd, ConversionFlags flags);
+  ConversionResult ConvertUTF8toUTF32 (
+    const t_UTF8 **sourceStart, const t_UTF8 *sourceEnd,
+    t_UTF32 **targetStart, t_UTF32 *targetEnd, ConversionFlags flags);
 
-ConversionResult ConvertUTF32toUTF16 (
-                const t_UTF32** sourceStart, const t_UTF32* sourceEnd,
-                t_UTF16** targetStart, t_UTF16* targetEnd, ConversionFlags flags);
+  ConversionResult ConvertUTF32toUTF8 (
+    const t_UTF32 **sourceStart, const t_UTF32 *sourceEnd,
+    t_UTF8 **targetStart, t_UTF8 *targetEnd, ConversionFlags flags);
 
-bool isLegalUTF8Sequence(const t_UTF8 *source, const t_UTF8 *sourceEnd);
+  ConversionResult ConvertUTF16toUTF32 (
+    const t_UTF16 **sourceStart, const t_UTF16 *sourceEnd,
+    t_UTF32 **targetStart, t_UTF32 *targetEnd, ConversionFlags flags);
+
+  ConversionResult ConvertUTF32toUTF16 (
+    const t_UTF32 **sourceStart, const t_UTF32 *sourceEnd,
+    t_UTF16 **targetStart, t_UTF16 *targetEnd, ConversionFlags flags);
+
+  bool isLegalUTF8Sequence (const t_UTF8 *source, const t_UTF8 *sourceEnd);
 
 
-/* intended to work the same as g_utf8_validate */
-bool tr_utf8_validate( const char * str, int max_len, const char ** end );
+  /* intended to work the same as g_utf8_validate */
+  bool tr_utf8_validate ( const char *str, int max_len, const char **end );
 
 } //NUX_NAMESPACE_END
 

@@ -1,18 +1,18 @@
 /*
  * Copyright 2010 Inalogic Inc.
  *
- * This program is free software: you can redistribute it and/or modify it 
+ * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version 3, as
  * published by the  Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranties of 
- * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the applicable version of the GNU Lesser General Public 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
  * License for more details.
- * 
- * You should have received a copy of both the GNU Lesser General Public 
- * License version 3 along with this program.  If not, see 
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
@@ -24,13 +24,14 @@
 #include "NCRC32.h"
 
 
-namespace nux { //NUX_NAMESPACE_BEGIN
-// The constants here are for the CRC-32 generator 
-// polynomial, as defined in the Microsoft 
+namespace nux   //NUX_NAMESPACE_BEGIN
+{
+// The constants here are for the CRC-32 generator
+// polynomial, as defined in the Microsoft
 // Systems Journal, March 1995, pp. 107-108
 
-const unsigned int CRCTable [256] =
-{
+  const unsigned int CRCTable [256] =
+  {
     0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
     0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
     0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988,
@@ -98,48 +99,52 @@ const unsigned int CRCTable [256] =
     0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF,
     0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94,
     0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
-};
+  };
 
-NCRC32::NCRC32()
-{
+  NCRC32::NCRC32()
+  {
     Initialize();
-}
+  }
 
-void NCRC32::Initialize(void)
-{
-    Memset(&CRCTable, 0, sizeof(CRCTable));
+  void NCRC32::Initialize (void)
+  {
+    Memset (&CRCTable, 0, sizeof (CRCTable) );
+
     // 256 values representing ASCII character codes.
-    for(int iCodes = 0; iCodes <= 0xFF; iCodes++)
+    for (int iCodes = 0; iCodes <= 0xFF; iCodes++)
     {
-        CRCTable[iCodes] = Reflect(iCodes, 8) << 24;
-        for(int iPos = 0; iPos < 8; iPos++)
-        {
-            CRCTable[iCodes] = (CRCTable[iCodes] << 1) ^ (CRCTable[iCodes] & (1 << 31) ? CRC32_POLYNOMIAL : 0);
-        }
-        CRCTable[iCodes] = Reflect(CRCTable[iCodes], 32);
+      CRCTable[iCodes] = Reflect (iCodes, 8) << 24;
+
+      for (int iPos = 0; iPos < 8; iPos++)
+      {
+        CRCTable[iCodes] = (CRCTable[iCodes] << 1) ^ (CRCTable[iCodes] & (1 << 31) ? CRC32_POLYNOMIAL : 0);
+      }
+
+      CRCTable[iCodes] = Reflect (CRCTable[iCodes], 32);
     }
-}
+  }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Reflection is a requirement for the official CRC-32 standard.
 //	You can create CRCs without it, but they won't conform to the standard.
-t_u32 NCRC32::Reflect(t_u32 ulReflect, char cChar)
-{
+  t_u32 NCRC32::Reflect (t_u32 ulReflect, char cChar)
+  {
     t_u32 ulValue = 0;
 
     // Swap bit 0 for bit 7 bit 1 For bit 6, etc....
-    for(int iPos = 1; iPos < (cChar + 1); iPos++)
+    for (int iPos = 1; iPos < (cChar + 1); iPos++)
     {
-        if(ulReflect & 1)
-            ulValue |= 1 << (cChar - iPos);
-        ulReflect >>= 1;
+      if (ulReflect & 1)
+        ulValue |= 1 << (cChar - iPos);
+
+      ulReflect >>= 1;
     }
 
     return ulValue;
-}
+  }
 
-t_u32 NCRC32::FileCRC(const char *sFileName)
-{
+  t_u32 NCRC32::FileCRC (const char *sFileName)
+  {
     t_u32 ulCRC = 0xffffffff;
 
     FILE *fSource = NULL;
@@ -147,170 +152,172 @@ t_u32 NCRC32::FileCRC(const char *sFileName)
     t_u32 iBytesRead = 0;
 
 #ifdef WIN32_SECURE
-    if(FOPEN_S(&fSource, sFileName, "rb") != 0)
+
+    if (FOPEN_S (&fSource, sFileName, "rb") != 0)
 #else
-    if(FOPEN_S(fSource, sFileName, "rb") != 0)
+    if (FOPEN_S (fSource, sFileName, "rb") != 0)
 #endif
     {
-        return 0xffffffff;
+      return 0xffffffff;
     }
 
     do
     {
-        iBytesRead = (t_u32)fread(sBuf, sizeof(char), CRC32BUFSZ, fSource);
-        PartialCRC(&ulCRC, sBuf, iBytesRead);
-    }while(iBytesRead == CRC32BUFSZ);
+      iBytesRead = (t_u32) fread (sBuf, sizeof (char), CRC32BUFSZ, fSource);
+      PartialCRC (&ulCRC, sBuf, iBytesRead);
+    }
+    while (iBytesRead == CRC32BUFSZ);
 
-    fclose(fSource);
+    fclose (fSource);
 
-    return(ulCRC ^ 0xffffffff);
-}
+    return (ulCRC ^ 0xffffffff);
+  }
 
 // This function uses the CRCTable lookup table to generate a CRC for sData
-t_u32 NCRC32::FullCRC(const char *sData, t_u32 ulLength)
-{
+  t_u32 NCRC32::FullCRC (const char *sData, t_u32 ulLength)
+  {
     t_u32 ulCRC = 0xffffffff;
-    PartialCRC(&ulCRC, sData, ulLength);
+    PartialCRC (&ulCRC, sData, ulLength);
     return ulCRC ^ 0xffffffff;
-}
+  }
 
 // Perform the algorithm on each character
 // in the string, using the lookup table values.
-void NCRC32::PartialCRC(t_u32 *ulInCRC, const char *sData, t_u32 ulLength)
-{
-    while(ulLength--)
+  void NCRC32::PartialCRC (t_u32 *ulInCRC, const char *sData, t_u32 ulLength)
+  {
+    while (ulLength--)
     {
-        *ulInCRC = (*ulInCRC >> 8) ^ CRCTable[(*ulInCRC & 0xFF) ^ *sData++];
+      *ulInCRC = (*ulInCRC >> 8) ^ CRCTable[ (*ulInCRC & 0xFF) ^ *sData++];
     }
-}
+  }
 
 
 
-/*
-* A brief CRC tutorial.
-*
-* A CRC is a long-division remainder.  You add the CRC to the message,
-* and the whole thing (message+CRC) is a multiple of the given
-* CRC polynomial.  To check the CRC, you can either check that the
-* CRC matches the recomputed value, *or* you can check that the
-* remainder computed on the message+CRC is 0.  This latter approach
-* is used by a lot of hardware implementations, and is why so many
-* protocols put the end-of-frame flag after the CRC.
-*
-* It's actually the same long division you learned in school, except that
-* - We're working in binary, so the digits are only 0 and 1, and
-* - When dividing polynomials, there are no carries.  Rather than add and
-*   subtract, we just xor.  Thus, we tend to get a bit sloppy about
-*   the difference between adding and subtracting.
-*
-* A 32-bit CRC polynomial is actually 33 bits long.  But since it's
-* 33 bits long, bit 32 is always going to be set, so usually the CRC
-* is written in hex with the most significant bit omitted.  (If you're
-* familiar with the IEEE 754 floating-point format, it's the same idea.)
-*
-* Note that a CRC is computed over a string of *bits*, so you have
-* to decide on the endianness of the bits within each byte.  To get
-* the best error-detecting properties, this should correspond to the
-* order they're actually sent.  For example, standard RS-232 serial is
-* little-endian; the most significant bit (sometimes used for parity)
-* is sent last.  And when appending a CRC word to a message, you should
-* do it in the right order, matching the endianness.
-*
-* Just like with ordinary division, the remainder is always smaller than
-* the divisor (the CRC polynomial) you're dividing by.  Each step of the
-* division, you take one more digit (bit) of the dividend and append it
-* to the current remainder.  Then you figure out the appropriate multiple
-* of the divisor to subtract to being the remainder back into range.
-* In binary, it's easy - it has to be either 0 or 1, and to make the
-* XOR cancel, it's just a copy of bit 32 of the remainder.
-*
-* When computing a CRC, we don't care about the quotient, so we can
-* throw the quotient bit away, but subtract the appropriate multiple of
-* the polynomial from the remainder and we're back to where we started,
-* ready to process the next bit.
-*
-* A big-endian CRC written this way would be coded like:
-* for (i = 0; i < input_bits; i++) {
-* 	multiple = remainder & 0x80000000 ? CRCPOLY : 0;
-* 	remainder = (remainder << 1 | next_input_bit()) ^ multiple;
-* }
-* Notice how, to get at bit 32 of the shifted remainder, we look
-* at bit 31 of the remainder *before* shifting it.
-*
-* But also notice how the next_input_bit() bits we're shifting into
-* the remainder don't actually affect any decision-making until
-* 32 bits later.  Thus, the first 32 cycles of this are pretty boring.
-* Also, to add the CRC to a message, we need a 32-bit-long hole for it at
-* the end, so we have to add 32 extra cycles shifting in zeros at the
-* end of every message,
-*
-* So the standard trick is to rearrage merging in the next_input_bit()
-* until the moment it's needed.  Then the first 32 cycles can be precomputed,
-* and merging in the final 32 zero bits to make room for the CRC can be
-* skipped entirely.
-* This changes the code to:
-* for (i = 0; i < input_bits; i++) {
-*      remainder ^= next_input_bit() << 31;
-* 	multiple = (remainder & 0x80000000) ? CRCPOLY : 0;
-* 	remainder = (remainder << 1) ^ multiple;
-* }
-* With this optimization, the little-endian code is simpler:
-* for (i = 0; i < input_bits; i++) {
-*      remainder ^= next_input_bit();
-* 	multiple = (remainder & 1) ? CRCPOLY : 0;
-* 	remainder = (remainder >> 1) ^ multiple;
-* }
-*
-* Note that the other details of endianness have been hidden in CRCPOLY
-* (which must be bit-reversed) and next_input_bit().
-*
-* However, as long as next_input_bit is returning the bits in a sensible
-* order, we can actually do the merging 8 or more bits at a time rather
-* than one bit at a time:
-* for (i = 0; i < input_bytes; i++) {
-* 	remainder ^= next_input_byte() << 24;
-* 	for (j = 0; j < 8; j++) {
-* 		multiple = (remainder & 0x80000000) ? CRCPOLY : 0;
-* 		remainder = (remainder << 1) ^ multiple;
-* 	}
-* }
-* Or in little-endian:
-* for (i = 0; i < input_bytes; i++) {
-* 	remainder ^= next_input_byte();
-* 	for (j = 0; j < 8; j++) {
-* 		multiple = (remainder & 1) ? CRCPOLY : 0;
-* 		remainder = (remainder << 1) ^ multiple;
-* 	}
-* }
-* If the input is a multiple of 32 bits, you can even XOR in a 32-bit
-* word at a time and increase the inner loop count to 32.
-*
-* You can also mix and match the two loop styles, for example doing the
-* bulk of a message byte-at-a-time and adding bit-at-a-time processing
-* for any fractional bytes at the end.
-*
-* The only remaining optimization is to the byte-at-a-time table method.
-* Here, rather than just shifting one bit of the remainder to decide
-* in the correct multiple to subtract, we can shift a byte at a time.
-* This produces a 40-bit (rather than a 33-bit) intermediate remainder,
-* but again the multiple of the polynomial to subtract depends only on
-* the high bits, the high 8 bits in this case.  
-*
-* The multile we need in that case is the low 32 bits of a 40-bit
-* value whose high 8 bits are given, and which is a multiple of the
-* generator polynomial.  This is simply the CRC-32 of the given
-* one-byte message.
-*
-* Two more details: normally, appending zero bits to a message which
-* is already a multiple of a polynomial produces a larger multiple of that
-* polynomial.  To enable a CRC to detect this condition, it's common to
-* invert the CRC before appending it.  This makes the remainder of the
-* message+crc come out not as zero, but some fixed non-zero value.
-*
-* The same problem applies to zero bits prepended to the message, and
-* a similar solution is used.  Instead of starting with a remainder of
-* 0, an initial remainder of all ones is used.  As long as you start
-* the same way on decoding, it doesn't make a difference.
-*/
+  /*
+  * A brief CRC tutorial.
+  *
+  * A CRC is a long-division remainder.  You add the CRC to the message,
+  * and the whole thing (message+CRC) is a multiple of the given
+  * CRC polynomial.  To check the CRC, you can either check that the
+  * CRC matches the recomputed value, *or* you can check that the
+  * remainder computed on the message+CRC is 0.  This latter approach
+  * is used by a lot of hardware implementations, and is why so many
+  * protocols put the end-of-frame flag after the CRC.
+  *
+  * It's actually the same long division you learned in school, except that
+  * - We're working in binary, so the digits are only 0 and 1, and
+  * - When dividing polynomials, there are no carries.  Rather than add and
+  *   subtract, we just xor.  Thus, we tend to get a bit sloppy about
+  *   the difference between adding and subtracting.
+  *
+  * A 32-bit CRC polynomial is actually 33 bits long.  But since it's
+  * 33 bits long, bit 32 is always going to be set, so usually the CRC
+  * is written in hex with the most significant bit omitted.  (If you're
+  * familiar with the IEEE 754 floating-point format, it's the same idea.)
+  *
+  * Note that a CRC is computed over a string of *bits*, so you have
+  * to decide on the endianness of the bits within each byte.  To get
+  * the best error-detecting properties, this should correspond to the
+  * order they're actually sent.  For example, standard RS-232 serial is
+  * little-endian; the most significant bit (sometimes used for parity)
+  * is sent last.  And when appending a CRC word to a message, you should
+  * do it in the right order, matching the endianness.
+  *
+  * Just like with ordinary division, the remainder is always smaller than
+  * the divisor (the CRC polynomial) you're dividing by.  Each step of the
+  * division, you take one more digit (bit) of the dividend and append it
+  * to the current remainder.  Then you figure out the appropriate multiple
+  * of the divisor to subtract to being the remainder back into range.
+  * In binary, it's easy - it has to be either 0 or 1, and to make the
+  * XOR cancel, it's just a copy of bit 32 of the remainder.
+  *
+  * When computing a CRC, we don't care about the quotient, so we can
+  * throw the quotient bit away, but subtract the appropriate multiple of
+  * the polynomial from the remainder and we're back to where we started,
+  * ready to process the next bit.
+  *
+  * A big-endian CRC written this way would be coded like:
+  * for (i = 0; i < input_bits; i++) {
+  * 	multiple = remainder & 0x80000000 ? CRCPOLY : 0;
+  * 	remainder = (remainder << 1 | next_input_bit()) ^ multiple;
+  * }
+  * Notice how, to get at bit 32 of the shifted remainder, we look
+  * at bit 31 of the remainder *before* shifting it.
+  *
+  * But also notice how the next_input_bit() bits we're shifting into
+  * the remainder don't actually affect any decision-making until
+  * 32 bits later.  Thus, the first 32 cycles of this are pretty boring.
+  * Also, to add the CRC to a message, we need a 32-bit-long hole for it at
+  * the end, so we have to add 32 extra cycles shifting in zeros at the
+  * end of every message,
+  *
+  * So the standard trick is to rearrage merging in the next_input_bit()
+  * until the moment it's needed.  Then the first 32 cycles can be precomputed,
+  * and merging in the final 32 zero bits to make room for the CRC can be
+  * skipped entirely.
+  * This changes the code to:
+  * for (i = 0; i < input_bits; i++) {
+  *      remainder ^= next_input_bit() << 31;
+  * 	multiple = (remainder & 0x80000000) ? CRCPOLY : 0;
+  * 	remainder = (remainder << 1) ^ multiple;
+  * }
+  * With this optimization, the little-endian code is simpler:
+  * for (i = 0; i < input_bits; i++) {
+  *      remainder ^= next_input_bit();
+  * 	multiple = (remainder & 1) ? CRCPOLY : 0;
+  * 	remainder = (remainder >> 1) ^ multiple;
+  * }
+  *
+  * Note that the other details of endianness have been hidden in CRCPOLY
+  * (which must be bit-reversed) and next_input_bit().
+  *
+  * However, as long as next_input_bit is returning the bits in a sensible
+  * order, we can actually do the merging 8 or more bits at a time rather
+  * than one bit at a time:
+  * for (i = 0; i < input_bytes; i++) {
+  * 	remainder ^= next_input_byte() << 24;
+  * 	for (j = 0; j < 8; j++) {
+  * 		multiple = (remainder & 0x80000000) ? CRCPOLY : 0;
+  * 		remainder = (remainder << 1) ^ multiple;
+  * 	}
+  * }
+  * Or in little-endian:
+  * for (i = 0; i < input_bytes; i++) {
+  * 	remainder ^= next_input_byte();
+  * 	for (j = 0; j < 8; j++) {
+  * 		multiple = (remainder & 1) ? CRCPOLY : 0;
+  * 		remainder = (remainder << 1) ^ multiple;
+  * 	}
+  * }
+  * If the input is a multiple of 32 bits, you can even XOR in a 32-bit
+  * word at a time and increase the inner loop count to 32.
+  *
+  * You can also mix and match the two loop styles, for example doing the
+  * bulk of a message byte-at-a-time and adding bit-at-a-time processing
+  * for any fractional bytes at the end.
+  *
+  * The only remaining optimization is to the byte-at-a-time table method.
+  * Here, rather than just shifting one bit of the remainder to decide
+  * in the correct multiple to subtract, we can shift a byte at a time.
+  * This produces a 40-bit (rather than a 33-bit) intermediate remainder,
+  * but again the multiple of the polynomial to subtract depends only on
+  * the high bits, the high 8 bits in this case.
+  *
+  * The multile we need in that case is the low 32 bits of a 40-bit
+  * value whose high 8 bits are given, and which is a multiple of the
+  * generator polynomial.  This is simply the CRC-32 of the given
+  * one-byte message.
+  *
+  * Two more details: normally, appending zero bits to a message which
+  * is already a multiple of a polynomial produces a larger multiple of that
+  * polynomial.  To enable a CRC to detect this condition, it's common to
+  * invert the CRC before appending it.  This makes the remainder of the
+  * message+crc come out not as zero, but some fixed non-zero value.
+  *
+  * The same problem applies to zero bits prepended to the message, and
+  * a similar solution is used.  Instead of starting with a remainder of
+  * 0, an initial remainder of all ones is used.  As long as you start
+  * the same way on decoding, it doesn't make a difference.
+  */
 
 } //NUX_NAMESPACE_END
