@@ -6,7 +6,7 @@ if BUILD_EXAMPLES
 
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
-noinst_PROGRAMS = combobox
+noinst_PROGRAMS = combobox cairo textedit button checkbox
 
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile
@@ -34,5 +34,13 @@ ALL_LIBS = \
 # you need a $exe_SOURCES and $exe_LDADD so it builds
 combobox_SOURCES = combobox.cpp
 combobox_LDADD = $(ALL_LIBS)
+cairo_SOURCES = cairo.cpp
+cairo_LDADD = $(ALL_LIBS)
+textedit_SOURCES = textedit.cpp
+textedit_LDADD = $(ALL_LIBS)
+button_SOURCES = button.cpp
+button_LDADD = $(ALL_LIBS)
+checkbox_SOURCES = checkbox.cpp
+checkbox_LDADD = $(ALL_LIBS)
 
 endif

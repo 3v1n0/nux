@@ -23,7 +23,7 @@
 #ifndef CAIROGRAPHICS_H
 #define CAIROGRAPHICS_H
 
-#include "cairo.h"
+#include "cairo/cairo.h"
 #include "BitmapFormats.h"
 #include "ImageSurface.h"
 
