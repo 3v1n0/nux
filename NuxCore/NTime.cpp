@@ -22,14 +22,6 @@
 
 #include "NKernel.h"
 
-#if defined NUX_PS3
-// RealTimeClock
-#include <cell/rtc.h>
-// System Utilities Common API
-#include <sysutil/sysutil_common.h>
-#include <sysutil/sysutil_sysparam.h>
-#endif
-
 namespace nux   //NUX_NAMESPACE_BEGIN
 {
 
@@ -197,17 +189,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Sec			= st.wSecond;
     MicroSec	= st.wMilliseconds * 1000;
 
-#elif (defined NUX_PS3)
-    CellRtcDateTime st;
-    cellRtcGetCurrentClockLocalTime (&st);
-    Year		= st.year;
-    Month		= st.month;
-    Day			= st.day;
-    Hour		= st.hour;
-    Min			= st.minute;
-    Sec			= st.second;
-    MicroSec	= st.microsecond;
-
 #elif (defined NUX_OS_LINUX) || (defined NUX_OS_MACOSX)
     time_t dt;
     struct tm dc;
@@ -246,17 +227,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Sec			= st.wSecond;
     MicroSec	= st.wMilliseconds * 1000;
 
-#elif (defined NUX_PS3)
-    CellRtcDateTime st;
-    cellRtcGetCurrentClock (&st, 0); // 0 for UTC time(at Greenwich)
-    Year		= st.year;
-    Month		= st.month;
-    Day			= st.day;
-    Hour		= st.hour;
-    Min			= st.minute;
-    Sec			= st.second;
-    MicroSec	= st.microsecond;
-
 #elif (defined NUX_OS_LINUX) || (defined NUX_OS_MACOSX)
     time_t dt;
     struct tm dc;
@@ -282,13 +252,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     _get_timezone (&seconds);
     t_long hour = seconds / 3600;
     return hour;
-
-#elif NUX_PS3
-    int minutetimezone = 0;
-    cellSysutilGetSystemParamInt (CELL_SYSUTIL_SYSTEMPARAM_ID_TIMEZONE, &minutetimezone);
-    t_long hour = minutetimezone / 60;
-    return hour;
-
 #else
     return 0;
 #endif

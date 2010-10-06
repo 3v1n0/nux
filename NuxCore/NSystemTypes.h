@@ -95,10 +95,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //     typedef long long       t_integer;      // 64 bits
 //     typedef long long       *t_pointer;     // 64 bits
 //     const   long long       t_MaxInteger = 0xFFFFFFFFFFFFFFFF;
-// #elif defined NUX_PS3
-//     typedef long            t_integer;      // 32 bits
-//     typedef long            *t_pointer;     // 32 bits
-//     const   long            t_MaxInteger = 0xFFFFFFFF;
 // #endif
 
 
@@ -175,17 +171,15 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 // Mac OS X      Intel 64     8 bytes
 
 #ifdef _WIN32
-#define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
 #elif  _WIN64
-#define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
-#elif NUX_PS3
-#define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
 #elif __linux
-#define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
 #elif defined(__linux) && (defined(__ia64__) || defined(__amd64__))
-#define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
 #elif __APPLE__
-#define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
+    #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
 #endif
 
 #define NUX_BYTE_SIZE   1
@@ -196,21 +190,21 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 // Polymorphic Types
 #if defined(_WIN32) || defined(_WIN64)
-#define NUX_PTRSIZE_INT     INT_PTR
-#define NUX_PTRSIZE_UINT    UINT_PTR
-#define NUX_PTRSIZE_DWORD   DWORD_PTR
-#define NUX_PTRSIZE_LONG    LONG_PTR
-#define NUX_PTRSIZE_ULONG   ULONG_PTR
-#define NUX_SIZE_T          SIZE_T
-#define NUX_SSIZE_T         SSIZE_T
+    #define NUX_PTRSIZE_INT     INT_PTR
+    #define NUX_PTRSIZE_UINT    UINT_PTR
+    #define NUX_PTRSIZE_DWORD   DWORD_PTR
+    #define NUX_PTRSIZE_LONG    LONG_PTR
+    #define NUX_PTRSIZE_ULONG   ULONG_PTR
+    #define NUX_SIZE_T          SIZE_T
+    #define NUX_SSIZE_T         SSIZE_T
 #else
-#define NUX_PTRSIZE_INT     int
-#define NUX_PTRSIZE_UINT    unsigned int
-#define NUX_PTRSIZE_DWORD   unsigned int
-#define NUX_PTRSIZE_LONG    long
-#define NUX_PTRSIZE_ULONG   unsigned long
-#define NUX_SIZE_T          size_t
-#define NUX_SSIZE_T         int
+    #define NUX_PTRSIZE_INT     int
+    #define NUX_PTRSIZE_UINT    unsigned int
+    #define NUX_PTRSIZE_DWORD   unsigned int
+    #define NUX_PTRSIZE_LONG    long
+    #define NUX_PTRSIZE_ULONG   unsigned long
+    #define NUX_SIZE_T          size_t
+    #define NUX_SSIZE_T         int
 #endif
 
 
@@ -300,9 +294,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 // #ifdef _WIN32
 //     #define NUX_HARDWARE_BREAK __asm {int 3}
 //     #define NUX_BREAK_ASM_INT3 __asm {int 3}
-// #elif (defined NUX_PS3)
-//     #define NUX_HARDWARE_BREAK
-//     #define NUX_BREAK_ASM_INT3
 // #else
 //     #define NUX_HARDWARE_BREAK
 //     #define NUX_BREAK_ASM_INT3

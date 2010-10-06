@@ -134,7 +134,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
     Geometry base = GetGeometry();
-//    std::vector<smptr(View)>::iterator it;
+//    std::vector<View*>::iterator it;
 //    for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
 //    {
 //        (*it)->ProcessDraw(force_draw);

@@ -20,8 +20,8 @@
  */
 
 
-#ifndef SYSTEMPS3_H
-#define SYSTEMPS3_H
+#ifndef SYSTEMGNU_H
+#define SYSTEMGNU_H
 
 #include <utime.h>
 #include <unistd.h>
@@ -282,6 +282,6 @@ typedef ANSICHAR  TCHAR;
 
 
 
-#endif // SYSTEMPS3_H
+#endif // SYSTEMGNU_H
 
 

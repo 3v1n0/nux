@@ -19,7 +19,7 @@
  *
  */
 
-#include "NuxCore/Object.h"
+#include "Object.h"
 
 #ifndef NUXINITIALLYUNOWNEDOBJECT_H
 #define NUXINITIALLYUNOWNEDOBJECT_H
