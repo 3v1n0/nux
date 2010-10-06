@@ -1184,33 +1184,61 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     XWindowAttributes window_attributes_return;
     int main_window_x;
     int main_window_y;
+    bool same = (TheMainWindow == xevent.xany.window);
 
-    XGetWindowAttributes (m_X11Display, TheMainWindow, &window_attributes_return);
-    main_window_x = window_attributes_return.x;
-    main_window_y = window_attributes_return.y;
-
+    if (!same)
+    {
+      XGetWindowAttributes (m_X11Display, TheMainWindow, &window_attributes_return);
+      main_window_x = window_attributes_return.x;
+      main_window_y = window_attributes_return.y;
+    }
+    
     switch (xevent.type)
     {
       case ButtonPress:
       case ButtonRelease:
       {
-        x_recalc = xevent.xbutton.x_root - main_window_x;
-        y_recalc = xevent.xbutton.y_root - main_window_y;
+        if (same)
+        {
+          x_recalc = xevent.xbutton.x;
+          y_recalc = xevent.xbutton.y;
+        }
+        else
+        {
+          x_recalc = xevent.xbutton.x_root - main_window_x;
+          y_recalc = xevent.xbutton.y_root - main_window_y;
+        }
         break;
       }
 
       case MotionNotify:
       {
-        x_recalc = xevent.xbutton.x_root - main_window_x;
-        y_recalc = xevent.xbutton.y_root - main_window_y;
+        if (same)
+        {
+          x_recalc = xevent.xmotion.x;
+          y_recalc = xevent.xmotion.y;
+        }
+        else
+        {
+          x_recalc = xevent.xmotion.x_root - main_window_x;
+          y_recalc = xevent.xmotion.y_root - main_window_y;
+        }
         break;
       }
 
       case LeaveNotify:
       case EnterNotify:
       {
-        x_recalc = xevent.xcrossing.x_root - main_window_x;
-        y_recalc = xevent.xcrossing.y_root - main_window_y;
+        if (same)
+        {
+          x_recalc = xevent.xcrossing.x;
+          y_recalc = xevent.xcrossing.y;
+        }
+        else
+        {
+          x_recalc = xevent.xcrossing.x_root - main_window_x;
+          y_recalc = xevent.xcrossing.y_root - main_window_y;
+        }
         break;
       }
       
