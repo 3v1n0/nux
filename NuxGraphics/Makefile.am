@@ -81,7 +81,8 @@ source_h = \
   $(srcdir)/RenderingPipeAsm.h \
   $(srcdir)/RenderingPipeGLSL.h \
   $(srcdir)/NuxGraphics.h \
-  $(srcdir)/NuxGraphicsObject.h
+  $(srcdir)/NuxGraphicsObject.h \
+  $(srcdir)/XInputWindow.h
 
 source_cpp = \
   $(srcdir)/UIColorTheme.cpp \
@@ -134,7 +135,8 @@ source_cpp = \
   $(srcdir)/GLTimer.cpp \
   $(srcdir)/IOpenGLPixelBufferOject.cpp \
   $(srcdir)/NuxGraphics.cpp \
-  $(srcdir)/NuxGraphicsObject.cpp
+  $(srcdir)/NuxGraphicsObject.cpp \
+  $(srcdir)/XInputWindow.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
