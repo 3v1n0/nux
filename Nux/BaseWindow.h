@@ -29,6 +29,7 @@
 #include "NuxGraphics/Gfx_Events.h"
 #elif defined(NUX_OS_LINUX)
 #include "NuxGraphics/GfxEventsX11.h"
+#include "NuxGraphics/XInputWindow.h"
 #endif
 
 #include "InputArea.h"
@@ -119,6 +120,11 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     {
       return m_blured_background;
     }
+    
+    #if defined(NUX_OS_LINUX)
+    void EnableInputWindow (bool b);
+    bool InputWindowEnabled ();
+    #endif
 
     std::vector<Geometry> m_dirty_areas;    //!< Geometry of areas inside the BaseWindow that requested a redraw.
     
@@ -163,6 +169,11 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     bool m_blured_background;
   private:
+    #if defined(NUX_OS_LINUX)
+    bool m_input_window_enabled;
+    XInputWindow *m_input_window;
+    #endif
+    
     bool m_bSizeMatchLayout;
     bool m_bIsVisible;
     bool m_bIsModal;

@@ -1095,7 +1095,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       }*/
 
       if (bProcessEvent)
-        ProcessXEvent (xevent);
+        ProcessXEvent (xevent, false);
 
       memcpy (evt, m_pEvent, sizeof (IEvent) );
 
@@ -1159,7 +1159,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       }
 
       if (bProcessEvent)
-        ProcessXEvent (*xevent);
+        ProcessXEvent (*xevent, true);
 
       memcpy (nux_event, m_pEvent, sizeof (IEvent) );
     }
@@ -1205,17 +1205,22 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     y_offset = input_window_y - main_window_y;
   }
 
-  void GLWindowImpl::ProcessXEvent (XEvent xevent)
+  void GLWindowImpl::ProcessXEvent (XEvent xevent, bool foreign)
   {
     int x_offset = 0;
     int y_offset = 0;
-
+    
     ComputeWindowPositionOffset (m_X11Window, xevent.xany.window, x_offset, y_offset);
+
+    m_pEvent->e_event = NUX_NO_EVENT;
 
     switch (xevent.type)
     {
       case DestroyNotify:
       {
+        if (foreign)
+          break;
+          
         m_pEvent->e_event = NUX_DESTROY_WINDOW;
         //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: DestroyNotify event."));
         break;
@@ -1223,6 +1228,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       case Expose:
       {
+        if (foreign)
+          break;
+        
         m_pEvent->e_event = NUX_WINDOW_DIRTY;
         //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: Expose event."));
         break;
@@ -1231,6 +1239,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       case ConfigureNotify:
       {
+        if (foreign)
+          break;
+        
         m_pEvent->e_event = NUX_SIZE_CONFIGURATION;
         m_pEvent->width =  xevent.xconfigure.width;
         m_pEvent->height = xevent.xconfigure.height;
@@ -1243,6 +1254,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       case FocusIn:
       {
+        if (foreign)
+          break;
+        
         m_pEvent->e_event = NUX_WINDOW_ENTER_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
@@ -1260,6 +1274,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       case FocusOut:
       {
+        if (foreign)
+          break;
+        
         m_pEvent->e_event = NUX_WINDOW_EXIT_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
@@ -1372,6 +1389,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       case ClientMessage :
       {
+        if (foreign)
+          break;
+        
         if ( (xevent.xclient.format == 32) && ( (xevent.xclient.data.l[0]) == static_cast<long> (m_WMDeleteWindow) ) )
         {
           m_pEvent->e_event = NUX_TERMINATE_APP;
@@ -1383,7 +1403,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       default:
       {
-        m_pEvent->e_event = NUX_NO_EVENT;
         break;
       }
     }

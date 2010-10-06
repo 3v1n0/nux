@@ -43,6 +43,8 @@ namespace nux
     XInputWindow();
     ~XInputWindow();
     
+    void EnsureInputs();
+    
     //! Set the position and size of the window
     void SetGeometry(const Rect& geo);
 
@@ -55,7 +57,9 @@ namespace nux
     
   private:
   
-    Window _xwindow;
+    static bool EnsureInputOnTimeout (void* data);
+  
+    Window _window;
     int _x;
     int _y;
     int _width;

@@ -316,11 +316,38 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
 
   }
+  
+  #if defined(NUX_OS_LINUX)
+  void BaseWindow::EnableInputWindow (bool b)
+  {
+    if (b)
+    {
+      m_input_window_enabled = true;
+      m_input_window = new XInputWindow ();
+    
+      m_input_window->SetGeometry (GetGeometry());
+    }
+    else
+    {
+      m_input_window_enabled = false;
+      delete (m_input_window);
+    }
+  }
+  
+  bool BaseWindow::InputWindowEnabled ()
+  {
+    return m_input_window_enabled;
+  }
+  #endif
 
   void BaseWindow::SetGeometry (const Geometry &geo)
   {
     Area::SetGeometry (geo);
-
+    
+    #if defined(NUX_OS_LINUX)
+    if (m_input_window_enabled)
+      m_input_window->SetGeometry (geo);
+    #endif
     //LayoutWindowElements();
     //ComputeChildLayout();
   }
