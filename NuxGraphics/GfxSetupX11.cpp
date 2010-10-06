@@ -1179,38 +1179,54 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return XPending (m_X11Display) ? true : false;
   }
 
-  void GLWindowImpl::ComputeWindowPositionOffset (Window TheMainWindow, Window InputEventWindow, int &x_offset, int &y_offset)
+  void GLWindowImpl::RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x_recalc, int &y_recalc)
   {
-    if (TheMainWindow == InputEventWindow)
-    {
-      x_offset = y_offset = 0;
-      return;
-    }
-
     XWindowAttributes window_attributes_return;
-    int input_window_x;
-    int input_window_y;
     int main_window_x;
     int main_window_y;
-
-    XGetWindowAttributes (m_X11Display, InputEventWindow, &window_attributes_return);
-    input_window_x = window_attributes_return.x;
-    input_window_y = window_attributes_return.y;
 
     XGetWindowAttributes (m_X11Display, TheMainWindow, &window_attributes_return);
     main_window_x = window_attributes_return.x;
     main_window_y = window_attributes_return.y;
 
-    x_offset = input_window_x - main_window_x;
-    y_offset = input_window_y - main_window_y;
+    switch (xevent.type)
+    {
+      case ButtonPress:
+      case ButtonRelease:
+      {
+        x_recalc = xevent.xbutton.x_root - main_window_x;
+        y_recalc = xevent.xbutton.y_root - main_window_y;
+        break;
+      }
+
+      case MotionNotify:
+      {
+        x_recalc = xevent.xbutton.x_root - main_window_x;
+        y_recalc = xevent.xbutton.y_root - main_window_y;
+        break;
+      }
+
+      case LeaveNotify:
+      case EnterNotify:
+      {
+        x_recalc = xevent.xcrossing.x_root - main_window_x;
+        y_recalc = xevent.xcrossing.y_root - main_window_y;
+        break;
+      }
+      
+      default:
+      {
+        x_recalc = y_recalc = 0;
+      }
+    }
   }
 
   void GLWindowImpl::ProcessXEvent (XEvent xevent, bool foreign)
   {
-    int x_offset = 0;
-    int y_offset = 0;
+    int x_recalc = 0;
+    int y_recalc = 0;
     
-    ComputeWindowPositionOffset (m_X11Window, xevent.xany.window, x_offset, y_offset);
+    RecalcXYPosition (m_X11Window, xevent, x_recalc, y_recalc);
 
     m_pEvent->e_event = NUX_NO_EVENT;
 
@@ -1337,8 +1353,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       case ButtonPress:
       {
-        m_pEvent->e_x = xevent.xbutton.x + x_offset;
-        m_pEvent->e_y = xevent.xbutton.y + y_offset;
+        m_pEvent->e_x = x_recalc;
+        m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         mouse_press (xevent, m_pEvent);
@@ -1348,8 +1364,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       case ButtonRelease:
       {
-        m_pEvent->e_x = xevent.xbutton.x + x_offset;
-        m_pEvent->e_y = xevent.xbutton.y + y_offset;
+        m_pEvent->e_x = x_recalc;
+        m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         mouse_release (xevent, m_pEvent);
@@ -1359,8 +1375,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       case MotionNotify:
       {
-        m_pEvent->e_x = xevent.xbutton.x + x_offset;
-        m_pEvent->e_y = xevent.xbutton.y + y_offset;
+        m_pEvent->e_x = x_recalc;
+        m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         mouse_move (xevent, m_pEvent);
@@ -1372,8 +1388,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       case LeaveNotify:
       {
         m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
-        m_pEvent->e_x = xevent.xcrossing.x + x_offset;
-        m_pEvent->e_y = xevent.xcrossing.y + y_offset;
+        m_pEvent->e_x = x_recalc;
+        m_pEvent->e_y = y_recalc;
         //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: LeaveNotify event."));
         break;
       }
@@ -1381,13 +1397,13 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       case EnterNotify:
       {
         m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
-        m_pEvent->e_x = xevent.xcrossing.x + x_offset;
-        m_pEvent->e_y = xevent.xcrossing.y + y_offset;
+        m_pEvent->e_x = x_recalc;
+        m_pEvent->e_y = y_recalc;
         //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: EnterNotify event."));
         break;
       }
 
-      case ClientMessage :
+      case ClientMessage:
       {
         if (foreign)
           break;
@@ -1398,11 +1414,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
           //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: ClientMessage event: Close Application."));
         }
 
-        break;
-      }
-
-      default:
-      {
         break;
       }
     }

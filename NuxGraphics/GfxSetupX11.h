@@ -238,7 +238,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     void ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event);
     void ProcessXEvent (XEvent xevent, bool foreign);
-    void ComputeWindowPositionOffset (Window TheMainWindow, Window InputEventWindow, int &x, int &y);
+    void RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x, int &y);
 
   private:
     bool m_PauseGraphicsRendering;
