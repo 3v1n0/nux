@@ -201,11 +201,12 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     void SetBackgroundPaintLayer (AbstractPaintLayer *bkg);
 
-  private:
+//  private: NUXTODO // make this private
     void SetCurrentWindow (BaseWindow *window)
     {
       m_CurrentWindow = window;
     }
+private:    
     void SetFocusAreaWindow (BaseWindow *window)
     {
       m_FocusAreaWindow = window;
