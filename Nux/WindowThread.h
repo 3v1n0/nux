@@ -103,6 +103,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     void RequestRedraw()
     {
       m_RedrawRequested = true;
+      RedrawRequested.emit();
     }
     void ClearRedrawFlag()
     {
@@ -259,6 +260,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     */
     void *m_InitData;
     void *m_ExitData;
+
+    sigc::signal<void> RedrawRequested;
 
   protected:
 
