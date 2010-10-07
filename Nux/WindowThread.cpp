@@ -1293,13 +1293,13 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       RefreshLayout();
     }
 
-    bool RequestRedraw = false;
+    bool RequestRequired = false;
 
     bool SwapGLBuffer = false;
 
     if (this->m_bFirstDrawPass)
     {
-      RequestRedraw = true;
+      RequestRequired = true;
       m_force_redraw = true;
       //m_window_compositor->Draw(m_size_configuration_event, true);
       this->m_bFirstDrawPass = false;
@@ -1336,35 +1336,37 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       if ( n & (b || IsRedrawNeeded() ) )
       {
         //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRedraw = true;
+        RequestRequired = true;
         //m_window_compositor->Draw(event, false);
         SwapGLBuffer = true;
       }
       else if (b || IsRedrawNeeded() )
       {
         //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRedraw = true;
+        RequestRequired = true;
         //m_window_compositor->Draw(event, false);
         SwapGLBuffer = true;
       }
       else if (n)
       {
         //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRedraw = true;
+        RequestRequired = true;
         //m_window_compositor->Draw(event, false);
         SwapGLBuffer = true;
       }
       else if (m_window_compositor->GetWidgetDrawingOverlay() != 0)
       {
         //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRedraw = true;
+        RequestRequired = true;
         //m_window_compositor->Draw(event, false);
         SwapGLBuffer = false;
       }
     }
 
+    if (!m_RedrawRequested && RequestRequired)
+      RequestRedraw ();
     // ?
-    return RequestRedraw;
+    return RequestRequired;
   }
 
   void WindowThread::RenderInterfaceFromForeignCmd()
