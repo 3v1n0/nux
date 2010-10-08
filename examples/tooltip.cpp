@@ -11,6 +11,13 @@
 #include "Nux/TextureArea.h"
 #include "NuxImage/CairoGraphics.h"
 
+#define ANCHOR_WIDTH   10.0f
+#define ANCHOR_HEIGHT  18.0f
+#define RADIUS         5.0f
+#define BLUR_INTENSITY 8
+#define LINE_WIDTH     1.0f
+#define PADDING_SIZE   0
+
 namespace nux
 {
   void 
@@ -40,8 +47,6 @@ namespace nux
 
       void DrawContent (GraphicsContext& gfxContext,
                         bool             forceDraw);
-      
-      void SetGeometry (const Geometry& geo);
 
     protected:
       void PreLayoutManagement ();
@@ -60,13 +65,6 @@ namespace nux
       nux::NTexture2D     *_texture2D;
 
     private:
-      void SetupCairo (cairo_surface_t** surf,
-                       cairo_t**         cr,
-                       gboolean          outline,
-                       gint              width,
-                       gint              height,
-                       gboolean          negative);
-
       void ComputeFullMaskPath (cairo_t* cr,
                                 gfloat   anchor_width,
                                 gfloat   anchor_height,
@@ -90,53 +88,48 @@ namespace nux
                           gboolean  negative,
                           gboolean  stroke);
 
-      cairo_surface_t* DrawTintDotHighlight (gint    width,
-                                             gint    height,
-                                             gfloat  hl_x,
-                                             gfloat  hl_y,
-                                             gfloat  hl_size,
-                                             gfloat* rgba_tint,
-                                             gfloat* rgba_hl);
+      void DrawTintDotHighlight (cairo_t* cr,
+                                 gint     width,
+                                 gint     height,
+                                 gfloat   hl_x,
+                                 gfloat   hl_y,
+                                 gfloat   hl_size,
+                                 gfloat*  rgba_tint,
+                                 gfloat*  rgba_hl);
 
-      cairo_surface_t* DrawOutlineShadow ();
+      void DrawOutlineShadow (cairo_t* cr,
+                              gint     width,
+                              gint     height,
+                              gfloat   anchor_width,
+                              gfloat   anchor_height,
+                              gint     upper_size,
+                              gfloat   corner_radius,
+                              guint    blur_coeff,
+                              gfloat*  rgba_shadow,
+                              gfloat   line_width,
+                              gint     padding_size,
+                              gfloat*  rgba_line);
 
-      cairo_surface_t* DrawMask ();
+      void ComputeOutline (cairo_t* cr,
+                           gfloat   line_width,
+                           gfloat*  rgba_line);
+
+      void DrawMask (cairo_t* cr,
+                     gint     width,
+                     gint     height,
+                     gfloat   radius,
+                     guint    shadow_radius,
+                     gfloat   anchor_width,
+                     gfloat   anchor_height,
+                     gint     upper_size,
+                     gboolean negative,
+                     gboolean outline,
+                     gfloat   line_width,
+                     gint     padding_size,
+                     gfloat*  rgba);
 
       cairo_surface_t* DrawLabel ();
   };
-
-  void
-  SetupCairo (cairo_surface_t** surf,
-              cairo_t**         cr,
-              gboolean          outline,
-              gint              width,
-              gint              height,
-              gboolean          negative)
-  {
-    // create context
-    if (outline)
-      *surf = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
-    else
-      *surf = cairo_image_surface_create (CAIRO_FORMAT_A8, width, height);
-    *cr = cairo_create (*surf);
-
-    // clear context
-    cairo_scale (*cr, 1.0f, 1.0f);
-    if (outline)
-      {
-        cairo_set_source_rgba (*cr, 0.0f, 0.0f, 0.0f, 0.0f);
-        cairo_set_operator (*cr, CAIRO_OPERATOR_CLEAR);
-      }  
-    else
-      {
-        cairo_set_operator (*cr, CAIRO_OPERATOR_OVER);
-        if (negative)
-          cairo_set_source_rgba (*cr, 0.0f, 0.0f, 0.0f, 0.0f);
-        else
-          cairo_set_source_rgba (*cr, 1.0f, 1.0f, 1.0f, 1.0f);
-      }
-    cairo_paint (*cr);
-  }
 
   void
   DrawCairo (cairo_t* cr,
@@ -206,14 +199,14 @@ namespace nux
   }
 
   void
-  ComputeFullMaskPath (cairo_t* cr,
-                       gfloat   anchor_width,
-                       gfloat   anchor_height,
-                       gint     width,
-                       gint     height,
-                       gint     upper_size,
-                       gfloat   radius,
-                       guint    pad)
+  Tooltip::ComputeFullMaskPath (cairo_t* cr,
+                                gfloat   anchor_width,
+                                gfloat   anchor_height,
+                                gint     width,
+                                gint     height,
+                                gint     upper_size,
+                                gfloat   radius,
+                                guint    pad)
   {
     //     0  1        2  3
     //     +--+--------+--+
@@ -329,9 +322,9 @@ namespace nux
   }
 
   void
-  ComputeOutline (cairo_t* cr,
-                  gfloat   line_width,
-                  gfloat*  rgba_line)
+  Tooltip::ComputeOutline (cairo_t* cr,
+                           gfloat   line_width,
+                           gfloat*  rgba_line)
   {
     cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
     cairo_set_source_rgba (cr,
@@ -343,25 +336,20 @@ namespace nux
     cairo_stroke (cr);
   }
 
-  cairo_surface_t*
-  DrawTintDotHighlight (gint    width,
-                        gint    height,
-                        gfloat  hl_x,
-                        gfloat  hl_y,
-                        gfloat  hl_size,
-                        gfloat* rgba_tint,
-                        gfloat* rgba_hl)
+  void
+  Tooltip::DrawTintDotHighlight (cairo_t* cr,
+                                 gint     width,
+                                 gint     height,
+                                 gfloat   hl_x,
+                                 gfloat   hl_y,
+                                 gfloat   hl_size,
+                                 gfloat*  rgba_tint,
+                                 gfloat*  rgba_hl)
   {
-    cairo_surface_t* surf         = NULL;
-    cairo_t*         cr           = NULL;
     cairo_surface_t* dots_surf    = NULL;
     cairo_t*         dots_cr      = NULL;
     cairo_pattern_t* dots_pattern = NULL;
     cairo_pattern_t* hl_pattern   = NULL;
-
-    // create normal context
-    surf = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
-    cr = cairo_create (surf);
 
     // create context for dot-pattern
     dots_surf = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 4, 4);
@@ -377,7 +365,15 @@ namespace nux
     cairo_set_operator (cr, CAIRO_OPERATOR_OVER);
 
     // create path in normal context
-    cairo_rectangle (cr, 0.0f, 0.0f, (gdouble) width, (gdouble) height);  
+    ComputeFullMaskPath (cr,
+                         ANCHOR_WIDTH,
+                         ANCHOR_HEIGHT,
+                         width,
+                         height,
+                         -1,
+                         RADIUS,
+                         PADDING_SIZE);
+    //cairo_rectangle (cr, 0.0f, 0.0f, (gdouble) width, (gdouble) height);  
 
     // fill path of normal context with tint
     cairo_set_source_rgba (cr,
@@ -435,30 +431,23 @@ namespace nux
     cairo_set_source (cr, hl_pattern);
     cairo_fill (cr);
     cairo_pattern_destroy (hl_pattern);
-
-    cairo_destroy (cr);
-
-    return surf;
   }
 
-  cairo_surface_t*
-  DrawMask (gint     width,
-            gint     height,
-            gfloat   radius,
-            guint    shadow_radius,
-            gfloat   anchor_width,
-            gfloat   anchor_height,
-            gint     upper_size,
-            gboolean negative,
-            gboolean outline,
-            gfloat   line_width,
-            gint     padding_size,
-            gfloat*  rgba)
+  void
+  Tooltip::DrawMask (cairo_t* cr,
+                     gint     width,
+                     gint     height,
+                     gfloat   radius,
+                     guint    shadow_radius,
+                     gfloat   anchor_width,
+                     gfloat   anchor_height,
+                     gint     upper_size,
+                     gboolean negative,
+                     gboolean outline,
+                     gfloat   line_width,
+                     gint     padding_size,
+                     gfloat*  rgba)
   {
-    cairo_surface_t* surf = NULL;
-    cairo_t*         cr   = NULL;
-
-    SetupCairo (&surf, &cr, outline, width, height, negative);
     ComputeFullMaskPath (cr,
                          anchor_width,
                          anchor_height,
@@ -467,9 +456,6 @@ namespace nux
                          upper_size,
                          radius,
                          padding_size);
-    FinalizeCairo (&cr, outline, line_width, rgba, negative, outline);
-
-    return surf;
   }
 
   cairo_surface_t*
@@ -480,23 +466,20 @@ namespace nux
     return surf;
   }
 
-  cairo_surface_t*
-  outlineShadow (gint    width,
-                 gint    height,
-                 gfloat  anchor_width,
-                 gfloat  anchor_height,
-                 gint    upper_size,
-                 gfloat  corner_radius,
-                 guint   blur_coeff,
-                 gfloat* rgba_shadow,
-                 gfloat  line_width,
-                 gint    padding_size,
-                 gfloat* rgba_line)
+  void
+  Tooltip::DrawOutlineShadow (cairo_t* cr,
+                              gint     width,
+                              gint     height,
+                              gfloat   anchor_width,
+                              gfloat   anchor_height,
+                              gint     upper_size,
+                              gfloat   corner_radius,
+                              guint    blur_coeff,
+                              gfloat*  rgba_shadow,
+                              gfloat   line_width,
+                              gint     padding_size,
+                              gfloat*  rgba_line)
   {
-    cairo_surface_t* surf = NULL;
-    cairo_t*         cr   = NULL;
-
-    SetupCairo (&surf, &cr, TRUE, width, height, FALSE);
     ComputeFullMaskPath (cr,
                          anchor_width,
                          anchor_height,
@@ -505,49 +488,14 @@ namespace nux
                          upper_size,
                          corner_radius,
                          padding_size);
-    DrawCairo (cr, TRUE, line_width, rgba_shadow, FALSE, FALSE);
+    //DrawCairo (cr, TRUE, line_width, rgba_shadow, FALSE, FALSE);
     //ctk_surface_blur (surf, blur_coeff);
-    ComputeMask (cr);
+    //ComputeMask (cr);
     ComputeOutline (cr, line_width, rgba_line);
-
-    cairo_destroy (cr);
-
-    return surf;
   }
 
   Tooltip::Tooltip ()
   {
-    _cairo_graphics = new CairoGraphics(CAIRO_FORMAT_ARGB32, 64, 64);
-    cairo_t *cr = _cairo_graphics->GetContext();
-    // tint
-    // drop-shadow
-    // dotted pattern
-    // highlight
-    // outline
-    // text/label
-
-    //DrawTintDotHighlight ();
-    //DrawOutlineShadow ();
-    //DrawMask ();
-    //DrawLabel ();
-
-    cairo_set_line_width (cr, 1);
-    cairo_set_source_rgba (cr, 0.0f, 1.0f, 0.5f, 1.0f);
-    cairo_rectangle (cr, 0, 0, 32, 32);
-    cairo_fill (cr);
-    cairo_set_source_rgba (cr, 1.0f, 0.0f, 0.5f, 1.0f);
-    cairo_rectangle (cr, 32, 32, 32, 32);
-    cairo_fill (cr);
-    cairo_destroy (cr);
-    
-    nux::NBitmapData* bitmap =  _cairo_graphics->GetBitmap();
-
-    // NTexture2D is the high level representation of an image that is backed by
-    // an actual opengl texture.
-    _texture2D = new nux::NTexture2D();
-    _texture2D->Update(bitmap);
-    
-    delete _cairo_graphics;
   }
 
   Tooltip::~Tooltip ()
@@ -588,7 +536,9 @@ namespace nux
                               base.y,
                               base.width,
                               base.height,
-                              _texture2D->GetDeviceTexture(), texxform, Color(1.0f, 1.0f, 1.0f, 1.0f));
+                              _texture2D->GetDeviceTexture(),
+                              texxform,
+                              Color(1.0f, 1.0f, 1.0f, 1.0f));
 
     gPainter.PopBackground ();
     gfxContext.PopClippingRectangle ();
@@ -630,10 +580,10 @@ namespace nux
     gPainter.PopBackground();*/
   }
 
-  void
+  /*void
   Tooltip::SetGeometry (const Geometry& geo)
   {
-  }
+  }*/
 
   void Tooltip::PreLayoutManagement ()
   {
@@ -642,7 +592,53 @@ namespace nux
   long
   Tooltip::PostLayoutManagement (long LayoutResult)
   {
-    return 0;
+    long result = BaseWindow::PostLayoutManagement (LayoutResult);
+
+    Geometry          base               = GetGeometry ();
+    float             rgbaTint[4]        = {0.0f, 0.0f, 0.0f, 0.7f};
+    float             rgbaHighlight[4]   = {1.0f, 1.0f, 1.0f, 0.15f};
+    float             rgbaLine[4]        = {1.0f, 1.0f, 1.0f, 0.75f};
+    float             rgbaShadow[4]      = {0.0f, 0.0f, 0.0f, 0.48f};
+
+    _cairo_graphics = new CairoGraphics (CAIRO_FORMAT_ARGB32,
+                                         base.GetWidth (),
+                                         base.GetHeight ());
+    cairo_t *cr = _cairo_graphics->GetContext ();
+
+    DrawTintDotHighlight (cr,
+                          base.GetWidth (),
+                          base.GetHeight (),
+                          base.GetWidth () / 2.0f,
+                          15.0f,
+                          base.GetWidth () / 2.0f,
+                          rgbaTint,
+                          rgbaHighlight);
+
+    DrawOutlineShadow (cr,
+                       base.GetWidth (),
+                       base.GetHeight (),
+                       ANCHOR_WIDTH,
+                       ANCHOR_HEIGHT,
+                       -1,
+                       RADIUS,
+                       BLUR_INTENSITY,
+                       rgbaShadow,
+                       LINE_WIDTH,
+                       PADDING_SIZE,
+                       rgbaLine);
+
+    //DrawLabel ();
+
+    nux::NBitmapData* bitmap =  _cairo_graphics->GetBitmap();
+
+    // NTexture2D is the high level representation of an image that is backed by
+    // an actual opengl texture.
+    _texture2D = new nux::NTexture2D();
+    _texture2D->Update(bitmap);
+    
+    delete _cairo_graphics;
+
+    return result;
   }
 
   void
@@ -668,12 +664,19 @@ initGUIThread (nux::NThread* thread,
                void*         data)
 {
   nux::VLayout* layout  = new nux::VLayout (TEXT(""), NUX_TRACKER_LOCATION);
-  nux::Tooltip* tooltip = new nux::Tooltip ();
+  nux::Tooltip* tooltip1 = new nux::Tooltip ();
+  nux::Tooltip* tooltip2 = new nux::Tooltip ();
+  nux::Tooltip* tooltip3 = new nux::Tooltip ();
 
-  tooltip->SetGeometry(nux::Geometry (10, 10, 80, 100));
-  tooltip->SetConfigureNotifyCallback (nux::BaseWindowConfigureCallback, 0);
-  tooltip->SetBackgroundColor(nux::Color(0xFF8914f7));
-  tooltip->ShowWindow(true);
+  tooltip1->SetGeometry (nux::Geometry (5, 40, 150, 36));
+  tooltip2->SetGeometry (nux::Geometry (5, 100, 175, 36));
+  tooltip3->SetGeometry (nux::Geometry (5, 160, 190, 36));
+  tooltip1->SetBackgroundColor(nux::Color(0xFF8914f7));
+  tooltip2->SetBackgroundColor(nux::Color(0xFF8914f7));
+  tooltip3->SetBackgroundColor(nux::Color(0xFF8914f7));
+  tooltip1->ShowWindow(true);
+  tooltip2->ShowWindow(true);
+  tooltip3->ShowWindow(true);
 
   nux::ColorLayer background(nux::Color(0xFF4D4D4D));
   static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
@@ -688,9 +691,9 @@ int main (int          argc,
 
   nux::NuxInitialize (0);
 
-  thread = nux::CreateGUIThread (TEXT ("Tooltips"),
+  thread = nux::CreateGUIThread (TEXT ("NUX/Unity Tooltips"),
+                                 600,
                                  400,
-                                 300,
                                  0,
                                  &initGUIThread,
                                  0);
