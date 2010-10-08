@@ -116,9 +116,10 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
     nux_glib_threads_lock();
     WindowThread *window_thread = NUX_STATIC_CAST (WindowThread *, user_data);
+    
     t_u32 return_code = window_thread->ExecutionLoop (0);
 
-    if (return_code == 0)
+    if (return_code == 0 && !window_thread->IsEmbeddedWindow ())
     {
       //g_source_destroy (source);
       //g_source_unref (source);
@@ -126,7 +127,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
 
     nux_glib_threads_unlock();
-    return (return_code != 0) ? TRUE : FALSE;
+    return return_code || window_thread->IsEmbeddedWindow ();
   }
 
   static GSourceFuncs event_funcs =
@@ -139,19 +140,22 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   void WindowThread::InitGlibLoop()
   {
-    static bool gthread_initialized = false;
-
-    if (!gthread_initialized)
-      g_thread_init (NULL);
-
-    gthread_initialized = true;
-
-    if ( (m_GLibContext == 0) || (m_GLibLoop == 0) )
+    if (!IsEmbeddedWindow ())
     {
-      //create a context
-      m_GLibContext = g_main_context_new();
-      //create a main loop with context
-      m_GLibLoop = g_main_loop_new (m_GLibContext, TRUE);
+      static bool gthread_initialized = false;
+
+      if (!gthread_initialized)
+        g_thread_init (NULL);
+
+      gthread_initialized = true;
+
+      if ( (m_GLibContext == 0) || (m_GLibLoop == 0) )
+      {
+        //create a context
+        m_GLibContext = g_main_context_new();
+        //create a main loop with context
+        m_GLibLoop = g_main_loop_new (m_GLibContext, TRUE);
+      }
     }
 
     gLibEventMutex = 0; //g_mutex_new();
@@ -176,11 +180,17 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     g_source_add_poll (source, &event_source->event_poll_fd);
     g_source_set_can_recurse (source, TRUE);
     g_source_set_callback (source, 0, this, 0);
-    g_source_attach (source, m_GLibContext);
+    
+    if (IsEmbeddedWindow ())
+      g_source_attach (source, NULL);
+    else
+      g_source_attach (source, m_GLibContext);
 
-    g_main_loop_run (m_GLibLoop);
-    g_main_loop_unref (m_GLibLoop);
-
+    if (!IsEmbeddedWindow ())
+    {
+      g_main_loop_run (m_GLibLoop);
+      g_main_loop_unref (m_GLibLoop);
+    }
   }
 
   typedef struct
@@ -193,14 +203,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
     TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
 
-    if(dd->window_thread->IsEmbeddedWindow())
-    {
-        //GetThreadTimer().ExecTimerHandler(dd->id);
-    }
-    else
-    {
-        dd->window_thread->ExecutionLoop(dd->id);
-    }
+    dd->window_thread->ExecutionLoop(dd->id);
     //nuxDebugMsg(TEXT("[nux_timeout_dispatch] Timeout ID: %d"), dd->id);
     delete dd;
 
@@ -516,19 +519,19 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       m_WidgetInitialized = true;
     }
 
-    // If this window is embedded, do not go into RunUserInterface.
-    // Instead, this window will rely on the container (wm such as Compiz) to provide the X events and request the interface to draw.
-    if (!IsEmbeddedWindow() )
-    {
-      RunUserInterface();
-    }
+    RunUserInterface();
 
     return 0;
   }
 
   void WindowThread::RunUserInterface()
   {
-    m_GLWindow->ShowWindow();
+    if (IsEmbeddedWindow ())
+    {
+      m_window_compositor->FormatRenderTargets (m_GLWindow->GetWindowWidth(), m_GLWindow->GetWindowHeight() );
+      InitGlibLoop ();
+      return;
+    }
     // Called the first time so we can initialize the size of the render targets
     // At this stage, the size of the window is known.
     m_window_compositor->FormatRenderTargets (m_GLWindow->GetWindowWidth(), m_GLWindow->GetWindowHeight() );
@@ -542,30 +545,30 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #else
         ExecutionLoop();
 #endif
+          if (m_Parent)
+          {
+            if (m_Parent->Type().IsObjectType (SystemThread::StaticObjectType) )
+              static_cast<SystemThread *> (m_Parent)->ChildHasFinished (this);
 
-        if (m_Parent)
-        {
-          if (m_Parent->Type().IsObjectType (SystemThread::StaticObjectType) )
-            static_cast<SystemThread *> (m_Parent)->ChildHasFinished (this);
+            if (m_Parent->Type().IsObjectType (WindowThread::StaticObjectType) )
+              static_cast<WindowThread *> (m_Parent)->ChildHasFinished (this);
 
-          if (m_Parent->Type().IsObjectType (WindowThread::StaticObjectType) )
-            static_cast<WindowThread *> (m_Parent)->ChildHasFinished (this);
-
+            {
+              SetThreadState (THREADSTOP);
+              TerminateAllChildThread();
+            }
+          }
+          else
           {
             SetThreadState (THREADSTOP);
             TerminateAllChildThread();
           }
-        }
-        else
-        {
-          SetThreadState (THREADSTOP);
-          TerminateAllChildThread();
-        }
       }
       else
       {
         // Do not sleep. Just return and let the GLWindowImpl::SwapBuffer do the sleep if necessary.
       }
+      
     }
 
     return;
@@ -583,12 +586,12 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     float ms;
     bool KeepRunning = true;
 
-    if (GetWindow().IsPauseThreadGraphicsRendering() )
+    if (!IsEmbeddedWindow() && GetWindow().IsPauseThreadGraphicsRendering() )
     {
       // Do not sleep. Just return and let the GLWindowImpl::SwapBuffer do the sleep if necessary.
       return 0;
     }
-
+    
     WindowThread *Application = GetGraphicsThread();
 
 #if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
@@ -608,11 +611,14 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       memset(&event, 0, sizeof(IEvent));
       GetWindow().GetSystemEvent(&event);
 
-      if(event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
+      if(event.e_event == NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
       {
           KeepRunning = false;
           return 0; //break;
       }
+      
+      if (IsEmbeddedWindow () && event.e_event ==	NUX_SIZE_CONFIGURATION)
+        m_size_configuration_event = true;
 
       int w, h;
       // Call gGfx_OpenGL.getWindowSize after the gGfx_OpenGL.get_event.
@@ -672,13 +678,23 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #endif
 
 
-      if (GetWindow().IsPauseThreadGraphicsRendering() == false)
+      if (!GetWindow().IsPauseThreadGraphicsRendering() || IsEmbeddedWindow ())
       {
         bool SwapGLBuffer = false;
+        
+        bool RequestRequired = false;
 
         if (Application->m_bFirstDrawPass)
         {
-          m_window_compositor->Draw (m_size_configuration_event, true);
+          if (IsEmbeddedWindow ())
+          {
+            RequestRequired = true;
+            m_force_redraw = true;
+          }
+          else
+          {
+            m_window_compositor->Draw (m_size_configuration_event, true);
+          }
           Application->m_bFirstDrawPass = false;
         }
         else
@@ -713,70 +729,102 @@ namespace nux   //NUX_NAMESPACE_BEGIN
           if ( n & (b || IsRedrawNeeded() ) )
           {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-            m_window_compositor->Draw (m_size_configuration_event, false);
+            if (IsEmbeddedWindow ())
+            {
+              RequestRequired = true;
+            }
+            else
+            {
+              m_window_compositor->Draw (m_size_configuration_event, false);
+            }
             SwapGLBuffer = true;
           }
           else if (b || IsRedrawNeeded() )
           {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-            m_window_compositor->Draw (m_size_configuration_event, false);
+            if (IsEmbeddedWindow ())
+            {
+              RequestRequired = true;
+            }
+            else
+            {
+              m_window_compositor->Draw (m_size_configuration_event, false);
+            }
             SwapGLBuffer = true;
           }
           else if (n)
           {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-            m_window_compositor->Draw (m_size_configuration_event, false);
+            if (IsEmbeddedWindow ())
+            {
+              RequestRequired = true;
+            }
+            else
+            {
+              m_window_compositor->Draw (m_size_configuration_event, false);
+            }
             SwapGLBuffer = true;
           }
           else if (m_window_compositor->GetWidgetDrawingOverlay() != 0)
           {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-            m_window_compositor->Draw (m_size_configuration_event, false);
+            if (IsEmbeddedWindow ())
+            {
+              RequestRequired = true;
+            }
+            else
+            {
+              m_window_compositor->Draw (m_size_configuration_event, false);
+            }
             SwapGLBuffer = false;
           }
         }
 
-        if (SwapGLBuffer)
+        if (!IsEmbeddedWindow ())
         {
-          // Something was rendered! Swap the rendering buffer!
-          GetWindow().SwapBuffer (true);
-        }
+          if (SwapGLBuffer)
+          {
+            // Something was rendered! Swap the rendering buffer!
+            GetWindow().SwapBuffer (true);
+          }
 
-        float frame_time = GetWindow().GetFrameTime();
+          float frame_time = GetWindow().GetFrameTime();
 
 #if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
 
-        // When we are not using the glib loop, we do sleep the thread ourselves if it took less that 16ms to render.
-        if (16.6f - frame_time > 0)
-        {
-          SleepForMilliseconds (16.6f - frame_time);
-        }
+          // When we are not using the glib loop, we do sleep the thread ourselves if it took less that 16ms to render.
+          if (16.6f - frame_time > 0)
+          {
+            SleepForMilliseconds (16.6f - frame_time);
+          }
 
 #endif
-        // The frame rate calculation below is only reliable when we are constantly rendering.
-        // Otherwise the frame rate drops, which does not mean that we are the performance is bad.
-        // What is happening is that rendering occurs only when there is something to render.
-        // If nothing is happening, the application sleeps.
-        GetWindow().ResetFrameTime();
-        m_PeriodeTime += frame_time;
+          // The frame rate calculation below is only reliable when we are constantly rendering.
+          // Otherwise the frame rate drops, which does not mean that we are the performance is bad.
+          // What is happening is that rendering occurs only when there is something to render.
+          // If nothing is happening, the application sleeps.
+          GetWindow().ResetFrameTime();
+          m_PeriodeTime += frame_time;
 
-        m_FrameCounter++;
-        m_FramePeriodeCounter++;
+          m_FrameCounter++;
+          m_FramePeriodeCounter++;
 
-        if (m_FramePeriodeCounter >= 10)
-        {
-          m_FrameRate = m_FramePeriodeCounter * 1000.0f / m_PeriodeTime;
-          m_PeriodeTime = 0.0f;
-          m_FramePeriodeCounter = 0;
+          if (m_FramePeriodeCounter >= 10)
+          {
+            m_FrameRate = m_FramePeriodeCounter * 1000.0f / m_PeriodeTime;
+            m_PeriodeTime = 0.0f;
+            m_FramePeriodeCounter = 0;
+          }
+
+          GetGraphicsThread()->GetGraphicsContext().ResetStats();
+          m_ClientAreaList.clear();
+          ClearRedrawFlag();
+          m_size_configuration_event = false;
         }
-
-        GetGraphicsThread()->GetGraphicsContext().ResetStats();
-        m_ClientAreaList.clear();
-        ClearRedrawFlag();
-        m_size_configuration_event = false;
+        if (IsEmbeddedWindow () && !m_RedrawRequested && RequestRequired)
+          RequestRedraw ();
       }
     }
-
     return 1;
   }
 
