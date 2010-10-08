@@ -20,22 +20,12 @@
 
 namespace nux
 {
-  void 
-  BaseWindowConfigureCallback (int            WindowWidth,
-                               int            WindowHeight,
-                               nux::Geometry& geo,
-                               void*          data)
-  {
-    int OurWindowWidth = WindowWidth - 2* 60;
-    int OurWindowHeight = WindowHeight - 2 * 60;
-        
-    geo = nux::Geometry (60, 60, OurWindowWidth, OurWindowHeight);
-  }
-
   class Tooltip : public BaseWindow
   {
     public:
-      Tooltip ();
+      Tooltip (int     x,
+               int     y,
+               NString text);
       ~Tooltip ();
 
       long ProcessEvent (IEvent& iEvent,
@@ -61,8 +51,11 @@ namespace nux
       void NotifyConfigurationChange (int width,
                                       int height);
                                       
-      nux::CairoGraphics  *_cairo_graphics;
-      nux::NTexture2D     *_texture2D;
+      nux::CairoGraphics* _cairo_graphics;
+      nux::NTexture2D*    _texture2D;
+      int                 _anchorX;
+      int                 _anchorY;
+      nux::NString        _labelText;
 
     private:
       void ComputeFullMaskPath (cairo_t* cr,
@@ -80,13 +73,6 @@ namespace nux
                      gfloat*  rgba,
                      gboolean negative,
                      gboolean stroke);
-
-      void FinalizeCairo (cairo_t** cr,
-                          gboolean  outline,
-                          gfloat    line_width,
-                          gfloat*   rgba,
-                          gboolean  negative,
-                          gboolean  stroke);
 
       void DrawTintDotHighlight (cairo_t* cr,
                                  gint     width,
@@ -128,7 +114,10 @@ namespace nux
                      gint     padding_size,
                      gfloat*  rgba);
 
-      cairo_surface_t* DrawLabel ();
+      void DrawLabel (cairo_t* cr,
+                      gint     width,
+                      gint     height,
+                      gfloat*  rgba);
   };
 
   void
@@ -161,41 +150,6 @@ namespace nux
       cairo_stroke_preserve (cr);
     else
       cairo_fill_preserve (cr);
-  }
-
-  void
-  FinalizeCairo (cairo_t** cr,
-                 gboolean  outline,
-                 gfloat    line_width,
-                 gfloat*   rgba,
-                 gboolean  negative,
-                 gboolean  stroke)
-  {
-    // prepare drawing
-    cairo_set_operator (*cr, CAIRO_OPERATOR_SOURCE);
-
-    // actually draw the mask
-    if (outline)
-      {
-        cairo_set_line_width (*cr, line_width);
-        cairo_set_source_rgba (*cr, rgba[0], rgba[1], rgba[2], rgba[3]);
-      }
-    else
-      {
-        if (negative)
-          cairo_set_source_rgba (*cr, 1.0f, 1.0f, 1.0f, 1.0f);
-        else
-          cairo_set_source_rgba (*cr, 0.0f, 0.0f, 0.0f, 0.0f);
-      }
-
-    // stroke or fill?
-    if (stroke)
-      cairo_stroke (*cr);
-    else
-      cairo_fill (*cr);
- 
-    // clean up
-    cairo_destroy (*cr);
   }
 
   void
@@ -458,12 +412,16 @@ namespace nux
                          padding_size);
   }
 
-  cairo_surface_t*
-  DrawLabel ()
+  void
+  Tooltip::DrawLabel (cairo_t* cr,
+                      gint     width,
+                      gint     height,
+                      gfloat*  rgba)
   {
-    cairo_surface_t* surf = NULL;
-
-    return surf;
+    cairo_move_to (cr, 10.0f, height - 5.0f);
+    cairo_show_text (cr, _labelText.GetTCharPtr());
+    cairo_set_source_rgba (cr, rgba[0], rgba[1], rgba[2], rgba[3]);
+    cairo_fill (cr);
   }
 
   void
@@ -494,8 +452,13 @@ namespace nux
     ComputeOutline (cr, line_width, rgba_line);
   }
 
-  Tooltip::Tooltip ()
+  Tooltip::Tooltip (int     x,
+                    int     y,
+                    NString text)
   {
+    _anchorX   = x;
+    _anchorY   = y;
+    _labelText = text;
   }
 
   Tooltip::~Tooltip ()
@@ -580,11 +543,6 @@ namespace nux
     gPainter.PopBackground();*/
   }
 
-  /*void
-  Tooltip::SetGeometry (const Geometry& geo)
-  {
-  }*/
-
   void Tooltip::PreLayoutManagement ()
   {
   }
@@ -599,6 +557,7 @@ namespace nux
     float             rgbaHighlight[4]   = {1.0f, 1.0f, 1.0f, 0.15f};
     float             rgbaLine[4]        = {1.0f, 1.0f, 1.0f, 0.75f};
     float             rgbaShadow[4]      = {0.0f, 0.0f, 0.0f, 0.48f};
+    float             rgbaText[4]        = {1.0f, 1.0f, 1.0f, 1.0f};
 
     _cairo_graphics = new CairoGraphics (CAIRO_FORMAT_ARGB32,
                                          base.GetWidth (),
@@ -627,7 +586,10 @@ namespace nux
                        PADDING_SIZE,
                        rgbaLine);
 
-    //DrawLabel ();
+    DrawLabel (cr,
+               base.GetWidth (),
+               base.GetHeight (),
+               rgbaText);
 
     nux::NBitmapData* bitmap =  _cairo_graphics->GetBitmap();
 
@@ -664,9 +626,9 @@ initGUIThread (nux::NThread* thread,
                void*         data)
 {
   nux::VLayout* layout  = new nux::VLayout (TEXT(""), NUX_TRACKER_LOCATION);
-  nux::Tooltip* tooltip1 = new nux::Tooltip ();
-  nux::Tooltip* tooltip2 = new nux::Tooltip ();
-  nux::Tooltip* tooltip3 = new nux::Tooltip ();
+  nux::Tooltip* tooltip1 = new nux::Tooltip (5, 40, TEXT("Network"));
+  nux::Tooltip* tooltip2 = new nux::Tooltip (5, 100, TEXT("Tools"));
+  nux::Tooltip* tooltip3 = new nux::Tooltip (5, 160, TEXT("Games"));
 
   tooltip1->SetGeometry (nux::Geometry (5, 40, 150, 36));
   tooltip2->SetGeometry (nux::Geometry (5, 100, 175, 36));
