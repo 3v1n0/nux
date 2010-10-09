@@ -54,11 +54,13 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     virtual long ComputeChildLayout();
     virtual void PositionChildLayout (float offsetX, float offsetY);
 
-
+    // NUXTODO: Find better name
     virtual long ComputeLayout2()
     {
       return ComputeChildLayout();
     };
+
+    // NUXTODO: Find better name
     virtual void ComputePosition2 (float offsetX, float offsetY)
     {
       PositionChildLayout (offsetX, offsetY);
@@ -68,6 +70,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     virtual long PostLayoutManagement (long LayoutResult);
     virtual void PreResizeGeometry();
     virtual void PostResizeGeometry();
+
+    // NUXTODO: Find better name
     virtual long PostProcessEvent2 (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual bool IsLayout() const

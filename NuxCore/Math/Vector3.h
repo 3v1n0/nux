@@ -330,6 +330,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
   typedef Vec3<float> Vector3;
+  typedef Vec3<float> Vertex3;
 
 } //NUX_NAMESPACE_END
 

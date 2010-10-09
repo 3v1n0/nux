@@ -95,6 +95,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return ! ( (*this) == Pt);
   }
 
+  typedef Point2D<float> Point2;
+
 } //NUX_NAMESPACE_END
 
 #endif // POINT2D_H

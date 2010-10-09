@@ -430,10 +430,10 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       m_AsmShaderProg->Begin();
       CHECKGL ( glMatrixMode (GL_MODELVIEW) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetModelViewMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (float *) GetThreadGraphicsContext()->GetModelViewMatrix().m) );
       CHECKGL ( glMatrixMode (GL_PROJECTION) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetProjectionMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (float *) GetThreadGraphicsContext()->GetProjectionMatrix().m) );
 
       iPosition   = VTXATTRIB_POSITION;
       iTexUV      = VTXATTRIB_TEXCOORD0;

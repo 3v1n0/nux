@@ -62,6 +62,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     static const double EpsilonPico;
     static const double EpsilonFemto;
 
+    static const float flt_epsilon;
+    static const float dbl_epsilon;
+
   private:
     Const();
     ~Const();

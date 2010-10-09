@@ -99,6 +99,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return ! ( (*this) == Pt);
   }
 
+  typedef Point3D<float> Point3;
+
 } //NUX_NAMESPACE_END
 
 #endif // POINT3D_H

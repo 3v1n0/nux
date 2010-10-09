@@ -19,52 +19,27 @@
  *
  */
 
+#ifndef ALGO_H
+#define ALGO_H
 
-#include "../NKernel.h"
-#include "MathFunctions.h"
+#include "Constants.h"
+#include "Constants.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
+  //http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
+  //! Determine if a point lies inside a polygon.
+  /*!
+      If the point is on an edge or a point of the polygon, return the parameter "OnEdge"
+      @polygon The polygon to test.
+      @n Number of points in the polygon
+      @n pt The point to test.
+      @onedge Value to return if the point lies on an edge or a vertex of the polygon
+      @return 1 if the point is inside, 0 if it is outside, onedge if it is on the edges of the polygon.
+  */
+  int PointInside2DPolygon(Point2* polygon, int n, Point2 pt, const int onedge);
 
-  t_int Factorial (t_int n)
-  {
-    t_int i = 1;
+}
 
-    while (0 < n)
-    {
-      i *= n;
-      n--;
-    }
-
-    return i;
-  }
-
-  t_double BinomialCoefficient (t_int n, t_int k)
-  {
-    if (n < 0)
-      NUX_BREAK_ASM_INT3;
-
-    if (k < 0 || k > n)
-      return 0.0;
-
-    t_double d = (t_double) Factorial (n) / (t_double) (Factorial (n - k) * Factorial (k) );
-    return d;
-  }
-
-  t_double Power (t_double x, t_double y)
-  {
-    return std::pow (x, y);
-  }
-
-  t_double Log2 (t_double d)
-  {
-    return std::log (d) / std::log (2.0);
-  }
-
-  t_double Floor (t_double d)
-  {
-    return std::floor (d);
-  }
-
-} //NUX_NAMESPACE_END
+#endif // ALGO_H
