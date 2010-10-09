@@ -64,6 +64,8 @@ source_cpp = \
   $(srcdir)/NumberConversion.cpp \
   $(srcdir)/NuxCore.cpp \
   $(srcdir)/Object.cpp \
+  $(srcdir)/Math/Algo.cpp \
+  $(srcdir)/Math/Constants.cpp \
   $(srcdir)/Math/Point2D.cpp \
   $(srcdir)/Math/MathFunctions.cpp \
   $(srcdir)/Math/Line2D.cpp \
@@ -97,8 +99,9 @@ source_character_h = \
   $(srcdir)/Character/NTChar.h
 
 source_math_h = \
-  $(srcdir)/Math/Constants.h \
+  $(srcdir)/Math/Algo.h \
   $(srcdir)/Math/Bezier.h \
+  $(srcdir)/Math/Constants.h \
   $(srcdir)/Math/Point3D.h \
   $(srcdir)/Math/Vector4.h \
   $(srcdir)/Math/Matrix2.h \
