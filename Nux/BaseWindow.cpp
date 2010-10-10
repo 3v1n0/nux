@@ -43,13 +43,15 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   BaseWindow::BaseWindow (const TCHAR *WindowName, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
-    ,   m_TopBorder (0)
-    ,   m_Border (0)
-    ,   m_input_window_enabled (false)
-    ,   m_bSizeMatchLayout (false)
-    ,   m_bIsVisible (false)
-    ,   m_bIsModal (false)
   {
+    m_TopBorder = 0;
+    m_Border = 0;
+    m_bSizeMatchLayout = false;
+    m_bIsVisible = false;
+    m_bIsModal = false;
+#if defined(NUX_OS_LINUX)
+    m_input_window_enabled = false;
+#endif
     m_layout = 0;
     m_configure_notify_callback = NULL;
     m_configure_notify_callback_data = NULL;

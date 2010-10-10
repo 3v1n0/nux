@@ -26,23 +26,23 @@
 namespace nux   //NUX_NAMESPACE_BEGIN
 {
 
-  Complex::Complex (t_float re, t_float im)
+  ComplexNumber::ComplexNumber (t_float re, t_float im)
   {
     real_ = re;
     imaginary_ = im;
   }
 
-  Complex::Complex (const Complex &complex)
+  ComplexNumber::ComplexNumber (const ComplexNumber &complex)
   {
     real_ = complex.real_;
     imaginary_ = complex.imaginary_;
   }
 
-  Complex::~Complex()
+  ComplexNumber::~ComplexNumber()
   {
   }
 
-  Complex &Complex::operator= (const Complex &complex)
+  ComplexNumber &ComplexNumber::operator= (const ComplexNumber &complex)
   {
     real_ = complex.real_;
     imaginary_ = complex.imaginary_;
@@ -50,9 +50,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return *this;
   }
 
-  /*const Complex Complex::operator + (const Complex& complex) const
+  /*const ComplexNumber ComplexNumber::operator + (const ComplexNumber& complex) const
   {
-      Complex result;
+      ComplexNumber result;
 
       result.real_ = real_ + complex.real_;
       result.imaginary_ = imaginary_ + complex.imaginary_;
@@ -60,9 +60,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       return result;
   }
 
-  const Complex Complex::operator - (const Complex& complex) const
+  const ComplexNumber ComplexNumber::operator - (const ComplexNumber& complex) const
   {
-      Complex result;
+      ComplexNumber result;
 
       result.real_ = real_ - complex.real_;
       result.imaginary_ = imaginary_ - complex.imaginary_;
@@ -70,9 +70,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       return result;
   }
 
-  const Complex Complex::operator*(const Complex& complex) const
+  const ComplexNumber ComplexNumber::operator*(const ComplexNumber& complex) const
   {
-  	Complex result;
+  	ComplexNumber result;
   	t_float a, b, c, d;
 
   	a = real_; b = imaginary_;
@@ -84,9 +84,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       return result;
   }
 
-  const Complex Complex::operator / (const Complex& complex) const
+  const ComplexNumber ComplexNumber::operator / (const ComplexNumber& complex) const
   {
-      Complex result;
+      ComplexNumber result;
       t_float a, b, c, d;
       t_float inv_denominator;
 
@@ -100,9 +100,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       return result;
   }
   */
-  /*const Complex Complex::operator * (const t_float& f) const
+  /*const ComplexNumber ComplexNumber::operator * (const t_float& f) const
   {
-      Complex result;
+      ComplexNumber result;
 
       result.real_ = real_ * f;
       result.imaginary_ = imaginary_ * f;
@@ -110,9 +110,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       return result;
   }*/
 
-  /*const Complex Complex::operator / (const t_float& f) const
+  /*const ComplexNumber ComplexNumber::operator / (const t_float& f) const
   {
-      Complex result;
+      ComplexNumber result;
 
       //if(f == 0.0f)
       //    trow(Exception);
@@ -123,21 +123,21 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       return result;
   }*/
 
-  void Complex::operator+= (const Complex &complex)
+  void ComplexNumber::operator+= (const ComplexNumber &complex)
   {
     real_ += complex.real_;
     imaginary_ += complex.imaginary_;
   }
 
-  void Complex::operator-= (const Complex &complex)
+  void ComplexNumber::operator-= (const ComplexNumber &complex)
   {
     real_ -= complex.real_;
     imaginary_ -= complex.imaginary_;
   }
 
-  void Complex::operator*= (const Complex &complex)
+  void ComplexNumber::operator*= (const ComplexNumber &complex)
   {
-    Complex result;
+    ComplexNumber result;
     t_float a, b, c, d;
 
     a = real_;
@@ -149,9 +149,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     imaginary_ = (a * d + b * c);
   }
 
-  void Complex::operator /= (const Complex &complex)
+  void ComplexNumber::operator /= (const ComplexNumber &complex)
   {
-    Complex result;
+    ComplexNumber result;
     t_float a, b, c, d;
     t_float inv_denominator;
 
@@ -168,13 +168,13 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     imaginary_ = (b * c - a * d) * inv_denominator;
   }
 
-  /*void Complex::operator *= (const t_float& f)
+  /*void ComplexNumber::operator *= (const t_float& f)
   {
       real_ *= f;
       imaginary_ *= f;
   }*/
 
-  /*void Complex::operator/=(const t_float& f)
+  /*void ComplexNumber::operator/=(const t_float& f)
   {
       //if(f == 0.0f)
       //    trow(Exception);
@@ -183,12 +183,12 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       imaginary_ *= (t_float)1.0 / f;
   }*/
 
-  void Complex::conjugue()
+  void ComplexNumber::conjugue()
   {
     imaginary_ = -imaginary_;
   }
 
-  t_float Complex::absolute()
+  t_float ComplexNumber::absolute()
   {
     t_float x, y, result, temp;
 
@@ -219,7 +219,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return result;
   }
 
-  t_bool Complex::IsNull()
+  t_bool ComplexNumber::IsNull()
   {
     if ( (real_ == 0) && (imaginary_ == 0) )
     {
@@ -229,39 +229,39 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return false;
   }
 
-  t_float Complex::real() const
+  t_float ComplexNumber::real() const
   {
     return real_;
   }
 
-  t_float Complex::imaginary() const
+  t_float ComplexNumber::imaginary() const
   {
     return imaginary_;
   }
 
-  void Complex::real (t_float r)
+  void ComplexNumber::real (t_float r)
   {
     real_ = r;
   }
 
-  void Complex::imaginary (t_float i)
+  void ComplexNumber::imaginary (t_float i)
   {
     imaginary_ = i;
   }
 
-  const Complex operator + (const Complex &lhs, const Complex &rhs)
+  const ComplexNumber operator + (const ComplexNumber &lhs, const ComplexNumber &rhs)
   {
-    return Complex (lhs.real() + rhs.real(), lhs.imaginary() + rhs.imaginary() );
+    return ComplexNumber (lhs.real() + rhs.real(), lhs.imaginary() + rhs.imaginary() );
   }
 
-  const Complex operator - (const Complex &lhs, const Complex &rhs)
+  const ComplexNumber operator - (const ComplexNumber &lhs, const ComplexNumber &rhs)
   {
-    return Complex (lhs.real() - rhs.real(), lhs.imaginary() - rhs.imaginary() );
+    return ComplexNumber (lhs.real() - rhs.real(), lhs.imaginary() - rhs.imaginary() );
   }
 
-  const Complex operator* (const Complex &lhs, const Complex &rhs)
+  const ComplexNumber operator* (const ComplexNumber &lhs, const ComplexNumber &rhs)
   {
-    Complex result;
+    ComplexNumber result;
     t_float a, b, c, d;
 
     a = lhs.real();
@@ -275,9 +275,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return result;
   }
 
-  const Complex operator/ (const Complex &lhs, const Complex &rhs)
+  const ComplexNumber operator/ (const ComplexNumber &lhs, const ComplexNumber &rhs)
   {
-    Complex result;
+    ComplexNumber result;
     t_float a, b, c, d;
     t_float inv_denominator;
 

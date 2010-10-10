@@ -23,29 +23,29 @@
 #ifndef COMPLEX_H
 #define COMPLEX_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
-  class Complex
+  class ComplexNumber
   {
   public:
-    ~Complex();
-    Complex (t_float re = 0.0f, t_float im = 0.0f);
-    Complex (const Complex &);
+    ~ComplexNumber();
+    ComplexNumber (t_float re = 0.0f, t_float im = 0.0f);
+    ComplexNumber (const ComplexNumber &);
 
 
-    Complex &operator = (const Complex &);
-    //const Complex operator + (const Complex&) const;
-    //const Complex operator - (const Complex&) const;
-    //const Complex operator * (const Complex&) const;
-    //const Complex operator / (const Complex&) const;
-    //const Complex operator * (const t_float& f) const;
-    //const Complex operator / (const t_float& f) const;
+    ComplexNumber &operator = (const ComplexNumber &);
+    //const ComplexNumber operator + (const ComplexNumber&) const;
+    //const ComplexNumber operator - (const ComplexNumber&) const;
+    //const ComplexNumber operator * (const ComplexNumber&) const;
+    //const ComplexNumber operator / (const ComplexNumber&) const;
+    //const ComplexNumber operator * (const t_float& f) const;
+    //const ComplexNumber operator / (const t_float& f) const;
 
-    void operator += (const Complex &);
-    void operator -= (const Complex &);
-    void operator *= (const Complex &);
-    void operator /= (const Complex &);
+    void operator += (const ComplexNumber &);
+    void operator -= (const ComplexNumber &);
+    void operator *= (const ComplexNumber &);
+    void operator /= (const ComplexNumber &);
     //void operator *= (const t_float& f);
     //void operator /= (const t_float& f);
 
@@ -64,10 +64,10 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 // does that conflict with the operators above???
-  const Complex operator+ (const Complex &lhs, const Complex &rhs);
-  const Complex operator- (const Complex &lhs, const Complex &rhs);
-  const Complex operator* (const Complex &lhs, const Complex &rhs);
-  const Complex operator/ (const Complex &lhs, const Complex &rhs);
+  const ComplexNumber operator+ (const ComplexNumber &lhs, const ComplexNumber &rhs);
+  const ComplexNumber operator- (const ComplexNumber &lhs, const ComplexNumber &rhs);
+  const ComplexNumber operator* (const ComplexNumber &lhs, const ComplexNumber &rhs);
+  const ComplexNumber operator/ (const ComplexNumber &lhs, const ComplexNumber &rhs);
 
 } //NUX_NAMESPACE_END
 

@@ -115,6 +115,11 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     static Matrix4x4<T> IDENTITY();
     static Matrix4x4<T> ZERO();
+    static Matrix4x4<T> ROTATEX(T angle);
+    static Matrix4x4<T> ROTATEY(T angle);
+    static Matrix4x4<T> ROTATEZ(T angle);
+    static Matrix4x4<T> TRANSLATE(T x, T y, T z);
+    static Matrix4x4<T> SCALE(T x, T y, T z);
     T m[4][4];
   };
 
@@ -1429,6 +1434,47 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     matrix.Zero();
     return matrix;
   }
+
+  template <typename T>
+  Matrix4x4<T> Matrix4x4<T>::ROTATEX(T angle)
+  {
+    Matrix4x4<T> matrix;
+    matrix.Rotate_x(angle);
+    return matrix;
+  }
+
+  template <typename T>
+  Matrix4x4<T> Matrix4x4<T>::ROTATEY(T angle)
+  {
+    Matrix4x4<T> matrix;
+    matrix.Rotate_y(angle);
+    return matrix;
+  }
+
+  template <typename T>
+  Matrix4x4<T> Matrix4x4<T>::ROTATEZ(T angle)
+  {
+    Matrix4x4<T> matrix;
+    matrix.Rotate_z(angle);
+    return matrix;
+  }
+
+  template <typename T>
+  Matrix4x4<T> Matrix4x4<T>::TRANSLATE(T x, T y, T z)
+  {
+    Matrix4x4<T> matrix;
+    matrix.Translate(x, y, z);
+    return matrix;
+  }
+
+  template <typename T>
+  Matrix4x4<T> Matrix4x4<T>::SCALE(T x, T y, T z)
+  {
+    Matrix4x4<T> matrix;
+    matrix.Scale(x, y, z);
+    return matrix;
+  }
+
   /***************************************************************************************\
   Function:       operator *
 

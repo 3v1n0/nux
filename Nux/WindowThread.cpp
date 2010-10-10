@@ -195,13 +195,12 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     if(dd->window_thread->IsEmbeddedWindow())
     {
-        //GetThreadTimer().ExecTimerHandler(dd->id);
+        GetThreadTimer().ExecTimerHandler(dd->id);
     }
     else
     {
         dd->window_thread->ExecutionLoop(dd->id);
     }
-    //nuxDebugMsg(TEXT("[nux_timeout_dispatch] Timeout ID: %d"), dd->id);
     delete dd;
 
     return FALSE;

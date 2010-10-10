@@ -27,6 +27,7 @@
 #include "../NSystemTypes.h"
 
 #include "Constants.h"
+#include "MathUtility.h"
 #include "Complex.h"
 #include "Line2D.h"
 #include "Line3D.h"
@@ -37,7 +38,10 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
-#include "MathUtility.h"
+#include "Point2D.h"
+#include "Point3D.h"
+#include "Algo.h"
+
 
 #endif // MATHINC_H
 

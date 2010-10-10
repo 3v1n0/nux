@@ -308,6 +308,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return (static_cast<WindowThread *> (thread) )->GetWindowCompositor();
   }
 
+  // NUXTODO: return a reference
   NThread *GetThreadApplication()
   {
     NThread *thread = static_cast<NThread *> (inlGetThreadLocalStorage (ThreadLocal_InalogicAppImpl) );
@@ -319,6 +320,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return thread;
   }
 
+  // NUXTODO: return a reference
   WindowThread *GetGraphicsThread()
   {
     NThread *thread = GetThreadApplication();

@@ -206,7 +206,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     {
       m_CurrentWindow = window;
     }
-private:    
+
+  private:
     void SetFocusAreaWindow (BaseWindow *window)
     {
       m_FocusAreaWindow = window;
