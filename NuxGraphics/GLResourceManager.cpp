@@ -27,7 +27,7 @@
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern PixelFormatInfo GPixelFormats[];
@@ -38,7 +38,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   NResource::NResource()
     :   m_ResourceIndex (NUX_INVALID_INDEX)
   {
-#define GET_UNIQUE_RESOURCE_INDEX NUX_GLOBAL_OBJECT_INSTANCE(NUniqueIndex)
+#define GET_UNIQUE_RESOURCE_INDEX NUX_GLOBAL_OBJECT_INSTANCE(UniqueIndex)
     m_ResourceIndex = GET_UNIQUE_RESOURCE_INDEX.GetUniqueIndex();
 #undef GET_UNIQUE_RESOURCE_INDEX
   }
@@ -180,4 +180,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return (CachedResource.IsValid() );
   }
 
-} //NUX_NAMESPACE_END
+}

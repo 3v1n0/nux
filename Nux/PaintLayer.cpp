@@ -26,7 +26,7 @@
 #include "Utils.h"
 #include "PaintLayer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ColorLayer::ColorLayer (const Color &color, bool write_alpha, const ROPConfig &ROP)
@@ -116,4 +116,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

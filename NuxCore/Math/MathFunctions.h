@@ -25,7 +25,7 @@
 
 #include "Constants.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   t_int Factorial (t_int n);
@@ -63,7 +63,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   t_double Floor (t_double d);
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // MATHFUNCTIONS_H
 

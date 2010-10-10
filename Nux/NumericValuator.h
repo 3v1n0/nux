@@ -25,7 +25,7 @@
 
 #include "SpinBox_Logic.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HLayout;
@@ -68,6 +68,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     float m_Step;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NUMERICVALUATOR_H

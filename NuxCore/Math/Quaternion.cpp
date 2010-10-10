@@ -20,7 +20,7 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "Matrix4.h"
 #include "Vector3.h"
 #include "Quaternion.h"
@@ -28,7 +28,7 @@
 // When writing to a matrix at row r and column c use m[r][c].
 // When reading from a matrix at row r and column c use m[c][r].
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Quaternion::Quaternion()
@@ -532,4 +532,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return qt;
   }
 
-} //NUX_NAMESPACE_END
+}

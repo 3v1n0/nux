@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "Unicode.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //
@@ -581,4 +581,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return utf16str - utf16start;
   }
 
-} //NUX_NAMESPACE_END
+}

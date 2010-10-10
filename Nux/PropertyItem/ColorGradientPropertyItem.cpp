@@ -25,7 +25,7 @@
 
 #include "ColorGradientPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ColorGradientPropertyItem::ColorGradientPropertyItem (const TCHAR *name, float Value, float MinValue, float MaxValue)
@@ -119,4 +119,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
   }
 
-} //NUX_NAMESPACE_END
+}

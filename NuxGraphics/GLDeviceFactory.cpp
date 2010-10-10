@@ -31,7 +31,7 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #define MANAGEDEVICERESOURCE    0
@@ -1468,4 +1468,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return _CurrentFrameBufferObject;
   }
 
-} //NUX_NAMESPACE_END
+}

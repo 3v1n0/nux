@@ -25,7 +25,7 @@
 
 #include "Vector3.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   template<typename T>
@@ -161,6 +161,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return p;
   }
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // LINE3D_H

@@ -26,7 +26,7 @@
 #include "GLResourceManager.h"
 #include "IOpenGLBaseTexture.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NTextureData;
@@ -434,6 +434,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     virtual void LoadMipLevel (NTexture *SourceTexture, int MipLevel);
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLTEXTURERESOURCEMANAGER_H

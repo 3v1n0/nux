@@ -23,7 +23,7 @@
 #ifndef ABSTRACTOBJECTBASE_H
 #define ABSTRACTOBJECTBASE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Layout;
@@ -195,6 +195,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // ABSTRACTOBJECTBASE_H

@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "TimerProc.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HLayout;
@@ -73,6 +73,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COLORPREVIEW_H

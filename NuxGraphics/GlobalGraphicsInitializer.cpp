@@ -26,7 +26,7 @@
 #include "FontTexture.h"
 #include "GlobalGraphicsInitializer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static NuxGraphicsGlobalSingletonInitializer *GNuxGraphicsGlobalInitializer   = 0;
@@ -84,4 +84,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -24,7 +24,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLVertexBuffer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexBuffer);
@@ -117,4 +117,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return _Length;
   }
 
-} //NUX_NAMESPACE_END
+}

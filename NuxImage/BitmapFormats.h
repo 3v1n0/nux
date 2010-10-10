@@ -25,7 +25,7 @@
 
 #include "NuxCore/NSystemTypes.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef struct
@@ -115,6 +115,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   extern PixelFormatInfo GPixelFormats[];
   extern ReadBackPixelFormatInfo	GReadBackPixelFormats[];
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // BITMAPFORMATS_H

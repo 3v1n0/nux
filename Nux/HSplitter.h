@@ -24,7 +24,7 @@
 #define HSPLITTER_H
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Layout;
@@ -100,7 +100,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     t_s32 m_focus_splitter_index;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // HSPLITTER_H
 

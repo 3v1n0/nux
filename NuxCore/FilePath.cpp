@@ -20,11 +20,11 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
 #include "FilePath.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   FilePath::FilePath()
@@ -135,4 +135,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return NString (TEXT ("") );
   }
 
-} //NUX_NAMESPACE_END
+}

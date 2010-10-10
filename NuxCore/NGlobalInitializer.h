@@ -29,7 +29,7 @@
         NUX_GLOBAL_OBJECT_VARIABLE(NCPU);                       \
         NUX_GLOBAL_OBJECT_VARIABLE(NProcess);                   \
         NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
-        NUX_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
+        NUX_GLOBAL_OBJECT_VARIABLE(UniqueIndex);               \
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerWindows);        \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
@@ -41,7 +41,7 @@
 #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
         NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
-        NUX_GLOBAL_OBJECT_VARIABLE(NUniqueIndex);               \
+        NUX_GLOBAL_OBJECT_VARIABLE(UniqueIndex);               \
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerGNU);            \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
@@ -50,7 +50,7 @@
 //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #endif
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // This class initialize all inalogic singleton (global objects) in order. It also initialize memory allocators.
@@ -108,7 +108,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   static NGlobalInitializer sGlobalInitializer;
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NGLOBALINITIALIZER_H
 

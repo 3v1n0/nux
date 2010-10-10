@@ -25,7 +25,7 @@
 
 #include "SplineCurveEditor.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class SplineCurveDialog : public Dialog
@@ -68,6 +68,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     //nux::Color& m_Color;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SPLINCURVEDIALOG_H

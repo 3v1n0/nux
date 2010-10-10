@@ -45,7 +45,7 @@
 #include "PropertyItem/SpinBoxDoublePropertyItem.h"
 #include "PropertyItem/Vector3ValuatorPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (NodeNetCom);
@@ -584,4 +584,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #endif
 
 
-} //NUX_NAMESPACE_END
+}

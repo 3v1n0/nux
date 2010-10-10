@@ -28,7 +28,7 @@
 #include "ActionItem.h"
 #include "ToolButton.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ToolButton::ToolButton (const TCHAR *BitmapFilename, NUX_FILE_LINE_DECL)
@@ -146,4 +146,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_ActionItem = action;
   }
 
-} //NUX_NAMESPACE_END
+}

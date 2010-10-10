@@ -31,7 +31,7 @@
 
 #include "FontRenderer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern bool USE_ARB_SHADERS;
@@ -626,4 +626,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return NumCharToDraw;
   }
 
-} //NUX_NAMESPACE_END
+}

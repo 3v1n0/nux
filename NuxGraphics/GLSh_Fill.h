@@ -27,7 +27,7 @@
 #include "GLShaderParameter.h"
 #include "GLDeviceObjects.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class TemplateQuadBuffer;
@@ -58,6 +58,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Matrix4 m_TransformMatrix;
     TemplateQuadBuffer *m_QuadBuffer;
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLSH_FILL_H

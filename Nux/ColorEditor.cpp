@@ -33,7 +33,7 @@
 #include "Layout.h"
 #include "ColorEditor.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static void ThreadColorEditorDialog (NThread *thread, void *InitData)
@@ -1133,4 +1133,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_ColorChannel;
   }
 
-} //NUX_NAMESPACE_END
+}

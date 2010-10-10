@@ -26,7 +26,7 @@
 #include "RangeValue.h"
 #include "HueRangeValuator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   HueRangeValuator::HueRangeValuator (float value, float vmin, float vmax)
@@ -133,4 +133,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

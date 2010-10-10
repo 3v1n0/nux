@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Histogram : public View
@@ -54,6 +54,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     GLSh_DrawFunction *m_DrawFunctionShader;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // HISTOGRAM_H

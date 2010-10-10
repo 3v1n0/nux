@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #ifdef _WIN32
@@ -250,4 +250,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_ThreadState = state;
   }
 
-} //NUX_NAMESPACE_END
+}

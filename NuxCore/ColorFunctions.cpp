@@ -20,12 +20,12 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NSystemTypes.h"
 #include "ColorFunctions.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 // Converts from Gamma2.2 space to Gamma1.0 space
   t_float Undo_Gamma_Correction (t_float c)
@@ -52,4 +52,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

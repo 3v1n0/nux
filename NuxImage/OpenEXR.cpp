@@ -20,9 +20,9 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "BitmapFormats.h"
 
 
@@ -52,7 +52,7 @@
 #include <iomanip>
 #include <cmath>
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NBitmapData *Load_OpenEXR (const TCHAR *fileName)
@@ -205,6 +205,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return BitmapData;
   }
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NUX_OPENEXR_SUPPORT

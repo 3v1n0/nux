@@ -20,14 +20,14 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLResource.h"
 #include "IOpenGLResource.h"
 #include "GLShaderParameter.h"
 #include "GLTextureStates.h"
 #include "IOpenGLBaseTexture.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLBaseTexture);
@@ -356,4 +356,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

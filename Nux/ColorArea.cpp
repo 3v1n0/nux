@@ -24,7 +24,7 @@
 #include "NuxImage/ImageSurface.h"
 #include "ColorArea.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ColorArea::ColorArea (Color color, NUX_FILE_LINE_DECL)
@@ -65,4 +65,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

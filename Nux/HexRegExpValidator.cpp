@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "HexRegExpValidator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   HexRegExpValidator::HexRegExpValidator (int Minimum, int Maximum)
@@ -149,4 +149,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}

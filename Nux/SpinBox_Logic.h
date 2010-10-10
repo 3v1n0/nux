@@ -26,7 +26,7 @@
 #include "EditTextBox.h"
 #include "View.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class SpinBox_Logic: public View
@@ -89,6 +89,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     TimerHandle m_DownTimerHandler;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SPINBOX_LOGIC_H

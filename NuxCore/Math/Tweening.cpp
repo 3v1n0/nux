@@ -20,12 +20,12 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "MathInc.h"
 
 #include "Tweening.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // Back
@@ -363,4 +363,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return -c / 2 * (std::cos (nux::Const::pi * t / d) - 1) + b;
   }
 
-} //NUX_NAMESPACE_END
+}

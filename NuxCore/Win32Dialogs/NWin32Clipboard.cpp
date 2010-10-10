@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NWin32Clipboard.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   void inlCopyTextToClipboard (const TCHAR *text)
@@ -157,5 +157,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return ResultString;
   }
 
-} //NUX_NAMESPACE_END
+}
 

@@ -26,7 +26,7 @@
 #include "EditTextBox.h"
 #include "EditTextLinePropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   EditTextLinePropertyItem::EditTextLinePropertyItem (const TCHAR *name, const TCHAR *text)
@@ -124,4 +124,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     return false;
   }
-} //NUX_NAMESPACE_END
+}

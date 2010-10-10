@@ -23,7 +23,7 @@
 #ifndef IOPENGLSURFACE_H
 #define IOPENGLSURFACE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLResource;
@@ -166,6 +166,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class TRefGL<IOpenGLSurface>;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLSURFACE_H

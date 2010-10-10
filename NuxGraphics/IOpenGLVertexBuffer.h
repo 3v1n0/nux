@@ -23,7 +23,7 @@
 #ifndef IOPENGLVERTEXBUFFER_H
 #define IOPENGLVERTEXBUFFER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLResource;
@@ -62,6 +62,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class GLDeviceFactory;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLVERTEXBUFFER_H

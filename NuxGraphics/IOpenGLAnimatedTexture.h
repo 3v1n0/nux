@@ -23,7 +23,7 @@
 #ifndef IOPENGLANIMATEDTEXTURE_H
 #define IOPENGLANIMATEDTEXTURE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLBaseTexture;
@@ -92,6 +92,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class GLDeviceFactory;
     friend class IOpenGLSurface;
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLANIMATEDTEXTURE_H

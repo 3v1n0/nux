@@ -24,7 +24,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLAsmShader.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLAsmShader);
@@ -336,4 +336,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     CHECKGL ( glProgramEnvParameter4fvARB (GL_FRAGMENT_PROGRAM_ARB, index, params) );
   }
 
-} //NUX_NAMESPACE_END
+}

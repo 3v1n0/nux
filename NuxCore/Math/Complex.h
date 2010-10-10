@@ -69,6 +69,6 @@ namespace nux
   const ComplexNumber operator* (const ComplexNumber &lhs, const ComplexNumber &rhs);
   const ComplexNumber operator/ (const ComplexNumber &lhs, const ComplexNumber &rhs);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COMPLEX_H

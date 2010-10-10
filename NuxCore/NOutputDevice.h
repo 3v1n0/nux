@@ -23,7 +23,7 @@
 #ifndef NOUTPUTDEVICE_H
 #define NOUTPUTDEVICE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NSerializer;
@@ -128,6 +128,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     std::vector<LogOutputDevice *> OutputDevices;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NOUTPUTDEVICE_H

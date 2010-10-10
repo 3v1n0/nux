@@ -23,7 +23,7 @@
 #ifndef ABSTRACTTHREAD_H
 #define ABSTRACTTHREAD_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef void (*ThreadUserInitFunc) (NThread *, void *InitData);
@@ -68,6 +68,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     AbstractThread *operator &();
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // ABSTRACTTHREAD_H
 

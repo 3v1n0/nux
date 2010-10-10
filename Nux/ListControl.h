@@ -26,7 +26,7 @@
 #include "TableItem.h"
 #include "TableCtrl.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ListControl: public TableCtrl
@@ -70,6 +70,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // LISTCONTROL_H

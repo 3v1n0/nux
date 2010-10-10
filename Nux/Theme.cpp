@@ -26,7 +26,7 @@
 #include "Theme.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #define INT_TO_ENUM_ELEMENT(a) {a, #a} // --->>> {a, "a"}
@@ -349,5 +349,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return 0;
   }
 
-} //NUX_NAMESPACE_END
+}
 

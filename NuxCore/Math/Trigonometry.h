@@ -25,7 +25,7 @@
 
 #include "Vector3.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 // Assume the spherical coordinate system relatively to a right handed xyz,
 // with Z pointing up.
@@ -45,7 +45,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   Vector3 CartesianToSphericalZBaseDeg (float x, float y, float z);
 
 
-} //NUX_NAMESPACE_END
+}
 
 
 

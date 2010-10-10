@@ -28,7 +28,7 @@ File Manager.
 -----------------------------------------------------------------------------*/
 
 // File manager.
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class NWindowsSerialFileReader: public NSerializer
   {
@@ -140,7 +140,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     bool GetTimeStamp (const TCHAR *Filename, FileTimeStamp &Timestamp);
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NFILEMANAGERWINDOWS_H
 

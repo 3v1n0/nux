@@ -23,7 +23,7 @@
 #ifndef NTIME_H
 #define NTIME_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 // Store time from [Midnight(00:00:00), January 1, 1970 UTC] up to [23:59:59, December 31, 3000 UTC]  or [03:14:07 January 19, 2038 UTC]
   class NTimeStamp
@@ -140,6 +140,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   */
   void SleepForMilliseconds (unsigned int Milliseconds);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NTIME_H

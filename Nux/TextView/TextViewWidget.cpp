@@ -30,7 +30,7 @@
 #include "VLayout.h"
 #include "Button.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   TextViewWidget::TextViewWidget (NUX_FILE_LINE_DECL)
@@ -804,4 +804,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NeedRedraw();
   }
 
-} //NUX_NAMESPACE_END
+}

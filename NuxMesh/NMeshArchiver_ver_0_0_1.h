@@ -23,7 +23,7 @@
 #ifndef NMESHARCHIVER_VER_0_0_1_H
 #define NMESHARCHIVER_VER_0_0_1_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class NMeshObject;
 
@@ -112,6 +112,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   NMeshObject *LoadMeshObject_ver_0_0_1 (nux::NSerializer *FileStream, unsigned int Offset);
   void MeshDataGetInfo_ver_0_0_1 (nux::NSerializer *FileStream, MeshDataInfo_ver_0_0_1 &TextureArchiveInfo);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NMESHARCHIVER_VER_0_0_1_H

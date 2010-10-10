@@ -61,10 +61,10 @@
 
 ------------------------------------------------------------------------ */
 
-#include "NKernel.h"
+#include "NuxCore.h"
 //#include "NUni.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static const int halfShift  = 10; /* used for shifting by 10 bits */
@@ -881,4 +881,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   --------------------------------------------------------------------- */
 
-} //NUX_NAMESPACE_END
+}

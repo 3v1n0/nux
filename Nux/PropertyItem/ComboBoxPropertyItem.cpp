@@ -26,7 +26,7 @@
 #include "ComboBoxSimple.h"
 #include "ComboBoxPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ComboBoxPropertyItem::ComboBoxPropertyItem (const TCHAR *name)
@@ -185,4 +185,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     return NodeNetCom::FromXML (elementxml);
   }
-} //NUX_NAMESPACE_END
+}

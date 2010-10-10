@@ -23,7 +23,7 @@
 #ifndef GLTIMER_H
 #define GLTIMER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class GLTimer
@@ -48,7 +48,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLTIMER_H
 

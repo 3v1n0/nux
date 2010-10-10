@@ -34,7 +34,7 @@
 
 #include "GfxSetupX11.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   unsigned int gVirtualKeycodeState[NUX_MAX_VK];
@@ -1800,4 +1800,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_PauseGraphicsRendering;
   }
 
-} //NUX_NAMESPACE_END
+}

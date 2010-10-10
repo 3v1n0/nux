@@ -32,7 +32,7 @@
 #include "TimerProc.h"
 #include "ClientArea.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ClientArea::ClientArea (NUX_FILE_LINE_DECL)
@@ -334,4 +334,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

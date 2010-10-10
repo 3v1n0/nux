@@ -25,7 +25,7 @@
 #include "Layout.h"
 #include "View.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (View);
@@ -389,4 +389,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

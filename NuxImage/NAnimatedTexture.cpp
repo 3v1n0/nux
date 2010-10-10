@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/FilePath.h"
 
 #include "ImageSurface.h"
@@ -31,7 +31,7 @@
 
 #include "NAnimatedTexture.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // XMLUIFile format:
@@ -247,4 +247,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //     return true;
 // }
 
-} //NUX_NAMESPACE_END
+}

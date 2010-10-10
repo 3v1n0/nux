@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "DoubleValidator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   DoubleValidator::DoubleValidator (double Minimum, double Maximum)
@@ -154,4 +154,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       return 0.0;
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -20,9 +20,9 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   t_u32 Memcmp ( const void *Buf1, const void *Buf2, t_u32 Count )
@@ -95,4 +95,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return mem;
   }
 
-} //NUX_NAMESPACE_END
+}

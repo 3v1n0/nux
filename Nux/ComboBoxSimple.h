@@ -26,7 +26,7 @@
 #include "AbstractComboBox.h"
 #include "ActionItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class MenuPage;
@@ -84,6 +84,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COMBOBOX_LOGIC_H

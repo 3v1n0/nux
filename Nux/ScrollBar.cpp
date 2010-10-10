@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "ScrollBar.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ScrollBar::ScrollBar (NUX_FILE_LINE_DECL)
@@ -52,4 +52,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

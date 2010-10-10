@@ -24,7 +24,7 @@
 #include "NuxGraphics/GLSh_DrawFunction.h"
 #include "FunctionGraph.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   FunctionGraph::FunctionGraph (NUX_FILE_LINE_DECL)
@@ -202,4 +202,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NeedRedraw();
   }
 
-} //NUX_NAMESPACE_END
+}

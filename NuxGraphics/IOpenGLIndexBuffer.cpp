@@ -24,7 +24,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLIndexBuffer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLIndexBuffer);
@@ -133,4 +133,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return _Length;
   }
 
-} //NUX_NAMESPACE_END
+}

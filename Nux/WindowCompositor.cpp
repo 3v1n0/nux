@@ -31,7 +31,7 @@
 #include "Painter.h"
 
 #include "NuxGraphics/FontTexture.h"
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // extern TimeCounter gTimeCounter;
@@ -1580,5 +1580,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_BlurTexture;
   }
 
-} //NUX_NAMESPACE_END
+}
 

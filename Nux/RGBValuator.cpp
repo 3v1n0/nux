@@ -31,7 +31,7 @@
 #include "DoubleValidator.h"
 #include "RGBValuator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   RGBValuator::RGBValuator (NUX_FILE_LINE_DECL)
@@ -1513,4 +1513,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     sigColorChanged.emit (m_Red, m_Green, m_Blue, m_Alpha);
   }
 
-} //NUX_NAMESPACE_END
+}

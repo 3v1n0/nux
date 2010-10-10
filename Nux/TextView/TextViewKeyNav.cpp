@@ -24,7 +24,7 @@
 #include "TextView.h"
 #include "TextViewInternal.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //
@@ -72,5 +72,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 // }
 
 
-} //NUX_NAMESPACE_END
+}
 

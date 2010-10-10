@@ -25,7 +25,7 @@
 
 #include <vector>
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   double *d3_np_fs ( int n, double a[], double b[] );
@@ -254,6 +254,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     int np;  // number of points
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SPLINE_H

@@ -23,7 +23,7 @@
 #ifndef IOPENGLPIXELBUFFEROBJECT_H
 #define IOPENGLPIXELBUFFEROBJECT_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLPixelBufferObject: public IOpenGLResource
@@ -63,6 +63,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class GLDeviceFactory;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLPIXELBUFFEROJECT_H

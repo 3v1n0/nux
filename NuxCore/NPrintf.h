@@ -23,11 +23,11 @@
 #ifndef NPRINTF_H
 #define NPRINTF_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NString inlPrintf (const TCHAR *Format, ...);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NPRINTF_H

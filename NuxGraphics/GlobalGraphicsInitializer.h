@@ -27,7 +27,7 @@
     NUX_GLOBAL_OBJECT_VARIABLE(RenderingStats);             \
     NUX_GLOBAL_OBJECT_VARIABLE(NuxGraphicsResources);
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NuxGraphicsGlobalSingletonInitializer
@@ -67,6 +67,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   static NuxGraphicsGlobalInitializer sNuxGraphicsGlobalInitializer;
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NUXGRAPHICSGLOBALINITIALIZER_H

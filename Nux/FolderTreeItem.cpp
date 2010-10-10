@@ -24,7 +24,7 @@
 
 #include "FolderTreeItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   FolderTreeItem::FolderTreeItem (const TCHAR *name, const TCHAR *Path, bool Searchable, NodeParameterType type)
@@ -96,4 +96,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

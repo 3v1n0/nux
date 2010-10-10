@@ -24,7 +24,7 @@
 #include "Layout.h"
 #include "View.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -422,4 +422,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_Matrix.Translate (x, y, 0);
   }
 
-} //NUX_NAMESPACE_END
+}

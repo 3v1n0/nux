@@ -25,7 +25,7 @@
 
 #include "PaintLayer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class CubicSpline;
@@ -383,6 +383,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     CubicSpline m_CubicSpline;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SPLINECURVEEDITOR_H

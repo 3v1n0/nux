@@ -29,7 +29,7 @@
 #include "WindowCompositor.h"
 #include "FloatingWindow.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const int SizeGripWidth = 20;
@@ -468,4 +468,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_WindowTitle;
   }
 
-} //NUX_NAMESPACE_END
+}

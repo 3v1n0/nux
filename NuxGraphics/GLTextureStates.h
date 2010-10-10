@@ -23,9 +23,9 @@
 #ifndef GLTEXTURESTATES_H
 #define GLTEXTURESTATES_H
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   enum
@@ -213,7 +213,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 // #undef SET_TS_VALUE_FLOAT
 // #undef TS_VALUE_FLOAT
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLTEXTURESTATES_H
 

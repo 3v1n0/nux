@@ -22,7 +22,7 @@
 
 #include "GLResource.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const TCHAR *OGLDeviceErrorMessages[] =
@@ -274,4 +274,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return InPrimitiveCount;
   }
 
-} //NUX_NAMESPACE_END
+}

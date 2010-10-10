@@ -23,7 +23,7 @@
 #ifndef NUXOBJECT_H
 #define NUXOBJECT_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   template <typename T>
@@ -223,7 +223,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class IntrusiveWeakSP;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NUXOBJECT_H
 

@@ -24,7 +24,7 @@
 
 #include "AbstractSeparator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   AbstractSeparator::AbstractSeparator (NUX_FILE_LINE_DECL)
@@ -67,4 +67,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
     m_BorderSize = Border;
   }
-} //NUX_NAMESPACE_END
+}

@@ -31,7 +31,7 @@
 #error Undefined GfxEvents for this platform
 #endif
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef struct _DeviceModes
@@ -50,6 +50,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     std::vector<DeviceModes> m_gfx_device_modes;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif //GRAPHICINTERFACE_H

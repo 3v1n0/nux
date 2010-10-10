@@ -25,7 +25,7 @@
 
 class IOpenGLPixelShader;
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef enum _TextAlignment
@@ -238,6 +238,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class FontRenderer;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif //FONTTEXTURE_H

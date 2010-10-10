@@ -25,7 +25,7 @@
 
 #include "TimerProc.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class SplineCurveDialog;
@@ -116,6 +116,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SPLINECURVEPICKER_H

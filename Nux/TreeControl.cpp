@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "TreeControl.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   TreeItem::TreeItem (const TCHAR *name, NodeParameterType type)
@@ -271,4 +271,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

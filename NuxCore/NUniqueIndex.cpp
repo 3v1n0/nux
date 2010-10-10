@@ -20,30 +20,30 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NUniqueIndex.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
-  NUX_IMPLEMENT_GLOBAL_OBJECT (NUniqueIndex);
+  NUX_IMPLEMENT_GLOBAL_OBJECT (UniqueIndex);
 
-  NCriticalSection NUniqueIndex::m_CriticalSection;
+  NCriticalSection UniqueIndex::m_CriticalSection;
 
-  void NUniqueIndex::Constructor()
+  void UniqueIndex::Constructor()
   {
   }
 
-  void NUniqueIndex::Destructor()
+  void UniqueIndex::Destructor()
   {
   }
 
-  t_u64 NUniqueIndex::GetUniqueIndex()
+  t_u64 UniqueIndex::GetUniqueIndex()
   {
     NScopeLock Scope (&m_CriticalSection);
     m_UniqueIndex.Increment();
     return m_UniqueIndex.GetValue();
   }
 
-} //NUX_NAMESPACE_END
+}
 

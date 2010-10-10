@@ -26,7 +26,7 @@
 #include "NuxCore/Error.h"
 #include "ImageSurface.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #ifdef WIN32
@@ -37,7 +37,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   NBitmapData *read_png_rgb (const TCHAR *filename);
   NBitmapData *read_png_rgba (const TCHAR *filename);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NPNG_H
 

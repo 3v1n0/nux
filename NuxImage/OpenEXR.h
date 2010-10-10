@@ -33,12 +33,12 @@
 #pragma comment(lib, "Half.lib")
 #pragma comment(lib, "IlmThread.lib")
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NBitmapData *Load_OpenEXR (const TCHAR *fileName);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif
 

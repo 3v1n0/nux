@@ -25,7 +25,7 @@
 #include "AbstractSeparator.h"
 #include "VSeparator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   VSeparator::VSeparator()
@@ -95,4 +95,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
   }
-} //NUX_NAMESPACE_END
+}

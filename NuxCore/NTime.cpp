@@ -20,9 +20,9 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NTimeStamp::NTimeStamp()
@@ -275,4 +275,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #endif
   }
 
-} //NUX_NAMESPACE_END
+}

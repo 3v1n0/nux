@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "Math/MathUtility.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
@@ -867,5 +867,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return FALSE;
   }
 
-} //NUX_NAMESPACE_END
+}
 

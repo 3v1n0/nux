@@ -23,7 +23,7 @@
 #ifndef RANGEVALUEINTEGER_H
 #define RANGEVALUEINTEGER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HLayout;
@@ -133,7 +133,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // RANGEVALUEINTEGER_H
 

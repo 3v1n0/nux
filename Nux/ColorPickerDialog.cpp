@@ -24,7 +24,7 @@
 #include "Button.h"
 #include "ColorPickerDialog.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static Color DummyColor;
@@ -70,4 +70,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

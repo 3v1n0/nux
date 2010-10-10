@@ -25,7 +25,7 @@
 #include "IOpenGLAnimatedTexture.h"
 #include "IOpenGLRectangleTexture.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLAnimatedTexture);
@@ -140,4 +140,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return _Depth;
   }
 
-} //NUX_NAMESPACE_END
+}

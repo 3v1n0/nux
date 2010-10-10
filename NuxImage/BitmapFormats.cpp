@@ -20,10 +20,10 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "BitmapFormats.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   PixelFormatInfo	GPixelFormats[] =
@@ -88,4 +88,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     { TEXT ("BITFMT_END_GFX_FORMATS"),   0,          0,				0,	        0,         0,		    false       }, //  BITFMT_END_GFX_FORMATS
   };
 
-} //NUX_NAMESPACE_END
+}

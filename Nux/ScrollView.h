@@ -23,7 +23,7 @@
 #ifndef SCROLLVIEW_H
 #define SCROLLVIEW_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class HScrollBar;
   class VScrollBar;
@@ -228,6 +228,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     // AbstractInterfaceObject
     ///////////////////////////////////////////////////////
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // SCROLLVIEW_H

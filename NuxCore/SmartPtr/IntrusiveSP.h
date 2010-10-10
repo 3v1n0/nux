@@ -23,7 +23,7 @@
 #ifndef INTRUSIVESP_H
 #define INTRUSIVESP_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // forward definitions
@@ -1542,7 +1542,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 // }
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // INTRUSIVESP_H
 

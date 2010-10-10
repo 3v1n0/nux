@@ -23,7 +23,7 @@
 #ifndef NWIN32MESSAGEBOX_H
 #define NWIN32MESSAGEBOX_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // Returns the last system error code in string form.  NOTE: Only one return value is valid at a time!
@@ -85,7 +85,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
                VARARG_EXTRA (HWND OwnerWindowHandle) VARARG_EXTRA (const TCHAR *Caption) VARARG_EXTRA (MessageBoxType Type) VARARG_EXTRA (MessageBoxIcon Icon) VARARG_EXTRA (MessageBoxModal Modal),
                VARARG_EXTRA (OwnerWindowHandle) VARARG_EXTRA (Caption) VARARG_EXTRA (Type) VARARG_EXTRA (Icon) VARARG_EXTRA (Modal) );
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NWIN32MESSAGEBOX_H
 

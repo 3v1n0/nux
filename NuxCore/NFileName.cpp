@@ -20,11 +20,11 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NFileName.h"
 #include "Math/MathUtility.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NString NFileName::GetDrive() const
@@ -234,4 +234,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

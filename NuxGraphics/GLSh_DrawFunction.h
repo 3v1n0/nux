@@ -28,7 +28,7 @@
 #include "NuxCore/Math/Matrix4.h"
 #include "GLDeviceObjects.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class TemplateQuadBuffer;
@@ -66,6 +66,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   private:
     TemplateQuadBuffer *m_QuadBuffer;
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLSH_DRAWFUNCTION_H

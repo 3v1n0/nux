@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "Size.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Size::Size (t_int32 w, t_int32 h)
@@ -118,4 +118,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 //----------------------------------------------------------------------------
 
-} //NUX_NAMESPACE_END
+}

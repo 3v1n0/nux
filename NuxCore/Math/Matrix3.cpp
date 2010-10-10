@@ -20,13 +20,13 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "Matrix3.h"
 
 // When writing to a matrix at row r and colum c use m[r][c].
 // When reading from a matrix at row r and colum c use m[c][r].
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
-} //NUX_NAMESPACE_END
+}

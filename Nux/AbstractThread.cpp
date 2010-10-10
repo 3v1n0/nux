@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "AbstractThread.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (AbstractThread);
@@ -41,4 +41,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   }
 
-} //NUX_NAMESPACE_END
+}

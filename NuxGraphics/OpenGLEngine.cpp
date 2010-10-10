@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
 #include "NuxImage/Tga.h"
 #include "NuxImage/ImageSurface.h"
@@ -39,7 +39,7 @@
 
 #include "OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ROPConfig ROPConfig::Default;
@@ -867,4 +867,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return ResourceCache.IsCachedResource (Resource);
   }
 
-} //NUX_NAMESPACE_END
+}

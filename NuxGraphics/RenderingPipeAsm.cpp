@@ -26,7 +26,7 @@
 //#include "RenderingPipeAsm.h"
 #include "OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // Conventional Attribute Binding      Generic Attribute Binding
@@ -846,4 +846,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_line_stats++;
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -68,7 +68,7 @@ enum rgbe_error_codes
   rgbe_memory_error,
 };
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   /* default error routine.  change this to change error handling */
   static int rgbe_error (int rgbe_error_code, const TCHAR *msg)
@@ -765,4 +765,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return BitmapData;
   }
 
-} //NUX_NAMESPACE_END
+}

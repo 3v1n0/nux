@@ -20,11 +20,11 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "MathFunctions.h"
 #include "Bezier.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_DECLSPEC_DLL t_double *Bernstein (t_int n, t_double t)
@@ -100,5 +100,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     delete [] bval;
   }
 
-} //NUX_NAMESPACE_END
+}
 

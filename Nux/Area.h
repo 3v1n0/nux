@@ -39,7 +39,7 @@
 #define weaksmptr(T) nux::IntrusiveWeakSP<T>
 #define smptrnull(T) nux::IntrusiveSP<T> (0)
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class WindowThread;
@@ -406,6 +406,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class VSplitter;
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // BASEOBJECT_H
 

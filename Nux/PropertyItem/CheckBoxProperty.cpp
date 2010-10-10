@@ -26,7 +26,7 @@
 #include "CheckBox.h"
 #include "CheckBoxProperty.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   CheckBoxPropertyItem::CheckBoxPropertyItem (const TCHAR *name, int On)
@@ -130,4 +130,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return false;
   }
 
-} //NUX_NAMESPACE_END
+}

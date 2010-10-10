@@ -20,11 +20,11 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "BitmapFormats.h"
 #include "CairoGraphics.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   CairoGraphics::CairoGraphics (cairo_format_t format, int width, int height)
@@ -140,4 +140,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return bitmap_data;
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -33,7 +33,7 @@
 #include "Button.h"
 #include "StaticTextBox.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   TimeGraph::Graph::Graph (Color PrimaryColor, Color SecondaryColor)
@@ -563,4 +563,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

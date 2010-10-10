@@ -23,7 +23,7 @@
 #include "GLDeviceFactory.h"
 #include "GLTemplatePrimitiveBuffer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   TemplateQuadBuffer::TemplateQuadBuffer (GLDeviceFactory *pDeviceFactory, ShaderType Type, int NumQuads)
@@ -387,4 +387,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
 
   }
-} //NUX_NAMESPACE_END
+}

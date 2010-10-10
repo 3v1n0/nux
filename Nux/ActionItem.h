@@ -25,7 +25,7 @@
 
 #include "NuxGraphics/OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class MenuBar;
@@ -79,6 +79,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // ACTIONITEM_H

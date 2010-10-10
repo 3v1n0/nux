@@ -20,7 +20,7 @@
  */
 
 
-// #include "NuxCore/NKernel.h"
+// #include "NuxCore/NuxCore.h"
 // #include "NuxCore/FilePath.h"
 // #include "NuxImage/Tga.h"
 // #include "NuxImage/ImageSurface.h"
@@ -426,4 +426,4 @@
 //     }
 // }
 //
-// } //NUX_NAMESPACE_END
+// }

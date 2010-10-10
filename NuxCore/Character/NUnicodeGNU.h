@@ -24,7 +24,7 @@
 #define NUNICODEGNU_H
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // UTF-16 is the primary encoding mechanism used by Microsoft Windows 2000, Windows 2000 Server, Windows XP and Windows 2003 Server.
@@ -361,6 +361,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   typedef NCharacterConversion<ANSICHAR, UNICHAR, UnicharToAnsicharConvertion>   UNICHAR_To_ANSICHAR_Conversion;
   typedef NCharacterConversion<UNICHAR, ANSICHAR, AnsicharToUnicharConvertion>   ANSICHAR_To_UNICHAR_Conversion;
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NUNICODEGNU_H

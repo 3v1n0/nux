@@ -27,7 +27,7 @@
 
 class IOpenGLPixelShader;
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class GraphicsContext;
@@ -77,6 +77,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     TRefGL<IOpenGLAsmShaderProgram> m_AsmShaderProg;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif //FONTRENDERER_H

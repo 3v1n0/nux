@@ -26,7 +26,7 @@
 #include "Matrix3Preview.h"
 #include "Matrix3PreviewPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Matrix3PreviewPropertyItem::Matrix3PreviewPropertyItem (const TCHAR *name, Matrix3 matrix)
@@ -183,4 +183,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     SetMatrix (matrix);
     return NodeNetCom::FromXML (elementxml);
   }
-} //NUX_NAMESPACE_END
+}

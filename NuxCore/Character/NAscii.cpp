@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NAscii.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // Windows-1252 code page
@@ -48,4 +48,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}

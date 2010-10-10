@@ -23,7 +23,7 @@
 #ifndef FILE_SELECTOR_H
 #define FILE_SELECTOR_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Button;
@@ -56,6 +56,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NTexture2D      m_Texture;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // FILE_SELECTOR_H

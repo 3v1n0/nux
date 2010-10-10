@@ -31,7 +31,7 @@
 #include "NuxGraphics/OpenGLEngine.h"
 #include "PaintLayer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class TextLineRenderer;
@@ -392,6 +392,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // PAINTER_H

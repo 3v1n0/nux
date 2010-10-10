@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "Point.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Point::Point()
@@ -121,4 +121,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //----------------------------------------------------------------------------
 
 
-} //NUX_NAMESPACE_END
+}

@@ -20,11 +20,11 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLResource.h"
 #include "GLPBuffer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #if defined(NUX_OS_WINDOWS)
@@ -1063,4 +1063,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return w * h * (m_iNComponents / 8);
   }
 
-} //NUX_NAMESPACE_END
+}

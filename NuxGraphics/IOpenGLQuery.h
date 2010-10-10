@@ -23,7 +23,7 @@
 #ifndef IOPENGLQUERY_H
 #define IOPENGLQUERY_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLResource;
@@ -69,6 +69,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     static t_u32 _CurrentlyActiveQuery;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLQUERY_H

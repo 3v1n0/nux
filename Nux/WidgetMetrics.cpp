@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "WidgetMetrics.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const Color COLOR_BLACK = Color (0xFF000000);
@@ -77,4 +77,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}

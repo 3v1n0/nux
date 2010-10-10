@@ -26,7 +26,7 @@
 
 #include "NuxCore/FileManager/NSerializer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   struct ArchiveTextureData
@@ -130,6 +130,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NString m_CurrentTextureArchive;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NTEXTUREARCHIVEMANAGER_H

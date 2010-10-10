@@ -23,7 +23,7 @@
 #ifndef CURVECONTROL_H
 #define CURVECONTROL_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef float (*FunctionCallback) (float);
@@ -52,6 +52,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // CURVECONTROL_H

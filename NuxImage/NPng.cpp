@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
 #include "png.h"
 #include "NPng.h"
@@ -32,7 +32,7 @@
 #include <windows.h>
 #endif
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #define FAILMSGANDRETURN \
@@ -738,4 +738,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     png_ptr->io_ptr = (void *) src;
   }
 
-} //NUX_NAMESPACE_END
+}

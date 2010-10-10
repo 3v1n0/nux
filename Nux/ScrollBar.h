@@ -23,7 +23,7 @@
 #ifndef SCROLLBAR_H
 #define SCROLLBAR_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ScrollBar : public View //public ValuatorAbstraction
@@ -67,7 +67,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SCROLLBAR_H
 

@@ -20,7 +20,7 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
 #pragma pack(push,8)
 #include <string.h>
@@ -30,7 +30,7 @@
 #pragma pack(pop)
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   void *GetDllHandle ( const TCHAR *Filename )
@@ -58,5 +58,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return (void *) GetProcAddress ( (HMODULE) DllHandle, TCHAR_TO_ANSI (ProcName) );
   }
 
-} //NUX_NAMESPACE_END
+}
 

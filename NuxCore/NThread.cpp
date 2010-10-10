@@ -20,12 +20,12 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NString.h"
 #include "NThread.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #ifdef _WIN64
@@ -399,5 +399,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_ThreadName;
   }
 
-} //NUX_NAMESPACE_END
+}
 

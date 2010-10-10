@@ -23,7 +23,7 @@
 #ifndef ABSTRACTBUTTON_H
 #define ABSTRACTBUTTON_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class AbstractButton : public View
@@ -46,6 +46,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // ABSTRACTBUTTON_H

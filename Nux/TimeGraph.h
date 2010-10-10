@@ -28,7 +28,7 @@
 #include "NuxGraphics/GLSh_DrawFunction.h"
 #include "TimerProc.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef float (*FunctionCallback) (float);
@@ -127,6 +127,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // TIMEGRAPH_H

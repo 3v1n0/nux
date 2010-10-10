@@ -23,7 +23,7 @@
 #ifndef RADIOBUTTONLOGIC_H
 #define RADIOBUTTONLOGIC_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class RadioButton;
@@ -64,6 +64,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // RADIOBUTTONLOGIC_H

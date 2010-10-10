@@ -24,7 +24,7 @@
 #include "AbstractComboBox.h"
 #include "HLayout.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Color AbstractComboBox::m_sCOMBO_COLOR = Color (0xFF9F9F9F);
@@ -122,4 +122,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}

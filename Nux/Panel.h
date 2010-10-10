@@ -25,7 +25,7 @@
 
 #include "ScrollView.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Layout;
@@ -68,5 +68,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Layout *m_layout;
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // PANEL_H

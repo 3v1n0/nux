@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "sequence.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #ifdef DEBUG_SEQUENCE
@@ -1131,4 +1131,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
     lastaction = action_invalid;
   }
-} //NUX_NAMESPACE_END
+}

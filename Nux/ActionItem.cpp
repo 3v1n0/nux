@@ -24,7 +24,7 @@
 #include "NuxGraphics/GLTextureResourceManager.h"
 #include "ActionItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (ActionItem);
@@ -153,4 +153,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //}
 
 
-} //NUX_NAMESPACE_END
+}

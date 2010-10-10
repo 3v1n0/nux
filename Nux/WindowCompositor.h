@@ -25,7 +25,7 @@
 
 #include "BaseWindow.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class MenuPage;
@@ -297,6 +297,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class TimerHandler;
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // STACKMANAGER_H
 

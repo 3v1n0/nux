@@ -24,7 +24,7 @@
 #include "IOpenGLVolume.h"
 #include "GLDeviceFactory.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVolume);
@@ -504,4 +504,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return 0;
   }
 
-} //NUX_NAMESPACE_END
+}

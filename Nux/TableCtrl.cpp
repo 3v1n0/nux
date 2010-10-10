@@ -28,7 +28,7 @@
 #include "WindowCompositor.h"
 #include "TableCtrl.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const int HANDLERSIZE = 6;
@@ -2426,4 +2426,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

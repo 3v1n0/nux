@@ -23,7 +23,7 @@
 #ifndef NPROCESS_H
 #define NPROCESS_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #ifdef _WIN32
@@ -61,6 +61,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NPROCESS_H

@@ -26,7 +26,7 @@
 #include "OpenGLEngine.h"
 #include "FontTexture.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (FontTexture);
@@ -350,4 +350,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_Charset;
   }
 
-} //NUX_NAMESPACE_END
+}

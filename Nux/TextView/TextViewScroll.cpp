@@ -26,7 +26,7 @@
 #include "HScrollBar.h"
 #include "VScrollBar.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //
@@ -398,4 +398,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return 0;
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -23,7 +23,7 @@
 #ifndef NTEMPLATE_H
 #define NTEMPLATE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NString;
@@ -164,7 +164,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NTEMPLATE_H
 

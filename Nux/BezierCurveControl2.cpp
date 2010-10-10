@@ -25,7 +25,7 @@
 #include "BezierCurveControl2.h"
 #include "NuxCore/Math/Bezier.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static const int KNOT_SIZE = 2;
@@ -1046,4 +1046,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       }
     }
   }
-} //NUX_NAMESPACE_END
+}

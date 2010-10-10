@@ -23,7 +23,7 @@
 #ifndef ABSTRACTSEPARATOR_H
 #define ABSTRACTSEPARATOR_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class AbstractSeparator: public View
@@ -43,6 +43,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     int m_BorderSize;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // ABSTRACTSEPARATOR_H

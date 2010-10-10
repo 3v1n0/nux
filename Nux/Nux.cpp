@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static NCriticalSection ThreadArrayLock;
@@ -376,4 +376,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return (static_cast<WindowThread *> (thread) )->GetTimerHandler();
   }
 
-} //NUX_NAMESPACE_END
+}

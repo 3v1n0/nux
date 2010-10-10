@@ -25,7 +25,7 @@
 
 #include "PaintLayer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Knot2
@@ -142,6 +142,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // BEZIERCURVECONTROL2_H

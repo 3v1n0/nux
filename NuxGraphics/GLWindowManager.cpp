@@ -20,10 +20,10 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLWindowManager.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #if defined(NUX_OS_WINDOWS)
@@ -167,7 +167,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}
 
 GLEWContext *glewGetContext()
 {

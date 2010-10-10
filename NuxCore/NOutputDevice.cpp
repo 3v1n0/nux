@@ -20,13 +20,13 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NParsing.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
-#if (defined DEBUG) || (defined _DEBUG) || (defined Debug)
+#if defined(NUX_DEBUG)
 //! Create a backup copy of a file if it exist. The copy feature a timestamp in the filename.
   /*!
       @param Filename The name of the file to check.
@@ -115,7 +115,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_Opened = false;
     m_Closed = false;
 
-#if (defined DEBUG) || (defined _DEBUG) || (defined Debug)
+#if defined(NUX_DEBUG)
     // The Editor requires a fully qualified directory to not end up putting the log in various directories.
     m_Filename = GetProgramDirectory();
 
@@ -396,5 +396,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   void NNullOutput::Destructor() {}
 
 
-} //NUX_NAMESPACE_END
+}
 

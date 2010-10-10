@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "MouseAreaCtrl.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   MouseAreaCtrl::MouseAreaCtrl (NUX_FILE_LINE_DECL)
@@ -115,4 +115,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}

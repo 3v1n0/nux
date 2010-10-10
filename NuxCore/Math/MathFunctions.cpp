@@ -20,11 +20,11 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "MathFunctions.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   t_int Factorial (t_int n)
@@ -67,4 +67,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return std::floor (d);
   }
 
-} //NUX_NAMESPACE_END
+}

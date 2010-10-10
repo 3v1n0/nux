@@ -25,7 +25,7 @@
 
 #include <string>
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // *****************
@@ -103,6 +103,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // EXCEPTION_H

@@ -28,7 +28,7 @@
 #include "GLShaderParameter.h"
 #include "GLTextureStates.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLResource;
@@ -153,6 +153,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend t_s32 GetTextureSize (IOpenGLBaseTexture *pTexture);
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLBASETEXTURE_H

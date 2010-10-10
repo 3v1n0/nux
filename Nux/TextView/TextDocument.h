@@ -26,7 +26,7 @@
 #include "codepages.h"
 #include "sequence.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class TextIterator;
@@ -238,6 +238,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     int    type;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // TEXTDOCUMENT_H

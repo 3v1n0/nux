@@ -23,7 +23,7 @@
 #ifndef GLRESOURCE_H
 #define GLRESOURCE_H
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/NNamespace.h"
 #include "NuxCore/NSystemTypes.h"
 #include "NuxCore/Error.h"
@@ -53,7 +53,7 @@
 #include "NuxImage/NPng.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class IOpenGLResource;
 
@@ -74,7 +74,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   class NGLAnimatedTexture;
   class FontTexture;
 
-} //NUX_NAMESPACE_END
+}
 
 #define NUX_ENABLE_CG_SHADERS 0
 
@@ -119,7 +119,7 @@ GLXEWContext *glxewGetContext();
 #define NUX_BUFFER_OFFSET(i) ((BYTE *)NULL + (i))
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   enum
@@ -870,7 +870,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLRESOURCE_H
 

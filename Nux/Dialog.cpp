@@ -28,7 +28,7 @@
 #include "WindowCompositor.h"
 #include "Dialog.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Dialog::Dialog (const TCHAR *WindowName /*  = TEXT("") */)
@@ -68,4 +68,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

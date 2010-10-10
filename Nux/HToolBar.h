@@ -22,7 +22,7 @@
 
 #ifndef HTOOLBAR_H
 #define HTOOLBAR_H
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class ActionItem;
   class ToolButton;
@@ -69,5 +69,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     HLayout *m_hlayout;
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // HTOOLBAR_H

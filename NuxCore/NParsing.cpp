@@ -20,7 +20,7 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NParsing.h"
 
 #define CHAR_TAB        TEXT('\t')
@@ -29,7 +29,7 @@
 #define CHAR_NEW_LINE   TEXT('\n')
 #define CHAR_QUOTE      TEXT('\"')
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   bool ParseCommand (const TCHAR **Stream, const TCHAR  *Match)
@@ -410,4 +410,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return LineString.Size() > 0;
   }
 
-} //NUX_NAMESPACE_END
+}

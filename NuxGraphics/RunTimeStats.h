@@ -23,7 +23,7 @@
 #ifndef RUNTIMESTATS_H
 #define RUNTIMESTATS_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class RenderingStats
@@ -65,7 +65,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     std::vector<int> v;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #define GRunTimeStats NUX_GLOBAL_OBJECT_INSTANCE(nux::RenderingStats)
 

@@ -20,9 +20,9 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static NGlobalSingletonInitializer      *GGlobalInitializer   = 0;
@@ -80,4 +80,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -26,7 +26,7 @@
 #include "NuxGraphics/OpenGLEngine.h"
 #include "NuxCore/Win32Dialogs/NWin32Clipboard.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   t_s32 BaseKeyboardHandler::s_jump_offset_at_borders = 60;
@@ -915,4 +915,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_Font;
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -25,7 +25,7 @@
 
 #include "../View.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HScrollBar;
@@ -223,6 +223,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     ///////////////////////////////////////////////////////
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // TEXTVIEWWIDGET_H

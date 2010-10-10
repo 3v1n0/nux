@@ -31,7 +31,7 @@
 #include "SplineCurveEditor.h"
 #include "SplineCurvePreview.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static const int GRAPH_MARGIN = 1;
@@ -447,4 +447,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
   }
 
-} //NUX_NAMESPACE_END
+}

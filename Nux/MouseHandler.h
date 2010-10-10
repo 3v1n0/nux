@@ -29,7 +29,7 @@
 #include "NuxGraphics/GfxEventsX11.h"
 #endif
 #include "Utils.h"
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   typedef enum
   {
@@ -155,6 +155,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     ~DecButtonEventHandler() {};
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // EVENTHANDLER_H

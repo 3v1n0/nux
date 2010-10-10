@@ -28,7 +28,7 @@
 #include "View.h"
 #include "TimerProc.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ClientArea;
@@ -111,6 +111,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // CLIENTAREA_H

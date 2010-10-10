@@ -26,7 +26,7 @@
 
 #include "NuxGraphics/GLTextureResourceManager.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const unsigned int  STENCIL_TEST_REF = 0xFF;
@@ -922,4 +922,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_BackgroundStack.clear();
   }
 
-} //NUX_NAMESPACE_END
+}

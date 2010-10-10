@@ -23,7 +23,7 @@
 #ifndef GROUPBOX2_H
 #define GROUPBOX2_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Layout;
@@ -64,6 +64,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     static Color GROUPBOX2_HEADER_TEXT_COLOR;
     static int TOP_HEADER_HEIGHT;
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // GroupBox2_H

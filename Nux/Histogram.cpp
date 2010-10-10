@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "Histogram.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Histogram::Histogram (NUX_FILE_LINE_DECL)
@@ -199,4 +199,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}

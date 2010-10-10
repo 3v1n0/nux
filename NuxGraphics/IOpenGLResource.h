@@ -23,7 +23,7 @@
 #ifndef IOPENGLRESOURCE_H
 #define IOPENGLRESOURCE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class GLDeviceFactory;
@@ -134,6 +134,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class IOpenGLPixelBufferObject;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLRESOURCE_H

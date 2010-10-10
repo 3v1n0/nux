@@ -26,7 +26,7 @@
 #include "OpenGLEngine.h"
 #include "GLTextureResourceManager.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (NTexture);
@@ -919,4 +919,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

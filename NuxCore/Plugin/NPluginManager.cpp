@@ -20,12 +20,12 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "NPluginInterface.h"
 #include "NPluginManager.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   void NPluginManager::GetPluginList (TCHAR *dirPath, bool addToList)
@@ -98,4 +98,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     FindClose (hFind);
   }
 
-} //NUX_NAMESPACE_END
+}

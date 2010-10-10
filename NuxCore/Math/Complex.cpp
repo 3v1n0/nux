@@ -20,10 +20,10 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "Complex.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ComplexNumber::ComplexNumber (t_float re, t_float im)
@@ -369,4 +369,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
      return c;
      }
      */
-} //NUX_NAMESPACE_END
+}

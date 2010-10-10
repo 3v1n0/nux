@@ -26,7 +26,7 @@
 #include "HScrollBar.h"
 #include "VScrollBar.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   int ScrollDir (int counter, int dir);
@@ -820,4 +820,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}

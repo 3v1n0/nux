@@ -29,7 +29,7 @@
 
 #include "GLSh_DrawFunction.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern bool USE_ARB_SHADERS;
@@ -236,4 +236,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     _ScreenOffsetY = y;
   }
 
-} //NUX_NAMESPACE_END
+}

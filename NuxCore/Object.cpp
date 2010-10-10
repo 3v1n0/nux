@@ -20,11 +20,11 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "Object.h"
 #include "SmartPtr/IntrusiveSP.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_ROOT_OBJECT_TYPE (Trackable);
@@ -272,5 +272,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_weak_reference_count->Decrement();
   }
 
-} //NUX_NAMESPACE_END
+}
 

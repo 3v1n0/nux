@@ -27,7 +27,7 @@
 #include "VLayout.h"
 #include "ScrollView.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ScrollView::ScrollView (NUX_FILE_LINE_DECL)
@@ -808,4 +808,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NeedRedraw();
   }
 
-} //NUX_NAMESPACE_END
+}

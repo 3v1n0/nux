@@ -20,17 +20,17 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "../Exception.h"
 #include "Vector4.h"
 
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 
-} //NUX_NAMESPACE_END
+}
 
 
 

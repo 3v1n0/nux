@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef float (*FunctionCallback) (float);
@@ -64,6 +64,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // FUNCTIONGRAPH_H

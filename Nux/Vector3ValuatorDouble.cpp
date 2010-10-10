@@ -29,7 +29,7 @@
 #include "HLayout.h"
 #include "Vector3ValuatorDouble.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const Color SPINBOX_BUTTON_COLOR = Color (0xFF4D4D4D);
@@ -462,4 +462,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

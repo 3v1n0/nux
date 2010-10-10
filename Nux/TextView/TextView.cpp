@@ -34,7 +34,7 @@
 #include "Button.h"
 #include "TimerProc.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //
@@ -928,4 +928,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NeedRedraw();
   }
 
-} //NUX_NAMESPACE_END
+}

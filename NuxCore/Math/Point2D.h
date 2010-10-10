@@ -23,7 +23,7 @@
 #ifndef POINT2D_H
 #define POINT2D_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   template<typename T>
@@ -97,6 +97,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   typedef Point2D<float> Point2;
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // POINT2D_H

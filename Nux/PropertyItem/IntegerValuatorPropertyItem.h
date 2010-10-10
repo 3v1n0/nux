@@ -23,7 +23,7 @@
 #ifndef INTEGERVALUATORPROPERTYITEM_H
 #define INTEGERVALUATORPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ValuatorInt;
@@ -44,6 +44,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   private:
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // INTEGERVALUATORPROPERTYITEM_H

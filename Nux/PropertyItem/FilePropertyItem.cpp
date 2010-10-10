@@ -25,7 +25,7 @@
 
 #include "FilePropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   FilePropertyItem::FilePropertyItem (const TCHAR *name)
@@ -101,4 +101,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
   }
 
-} //NUX_NAMESPACE_END
+}

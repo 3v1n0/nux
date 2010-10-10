@@ -25,7 +25,7 @@
 #include "Matrix3Preview.h"
 #include "StaticTextBox.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static const int GRAPH_MARGIN = 1;
@@ -127,4 +127,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_Matrix;
   }
 
-} //NUX_NAMESPACE_END
+}

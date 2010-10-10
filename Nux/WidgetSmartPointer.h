@@ -23,7 +23,7 @@
 #ifndef WIDGETSMARTPOINTER_H
 #define WIDGETSMARTPOINTER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 // // AtomicInt
 // typedef long AtomicInt;
@@ -1368,6 +1368,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     t1.swap (t2);
   }
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // WIDGETSMARTPOINTER_H

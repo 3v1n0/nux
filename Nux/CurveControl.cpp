@@ -24,7 +24,7 @@
 #include "NuxCore/Math/Bezier.h"
 #include "CurveControl.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   CurveControl::CurveControl (NUX_FILE_LINE_DECL)
@@ -169,4 +169,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

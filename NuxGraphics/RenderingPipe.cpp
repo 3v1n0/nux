@@ -26,7 +26,7 @@
 #include "IOpenGLRectangleTexture.h"
 #include "RenderingPipe.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   struct TexWrapMapping
@@ -274,4 +274,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     tex->SetFiltering (TexFilterGLMapping (texxform.min_filter), TexFilterGLMapping (texxform.mag_filter) );
   }
 
-} //NUX_NAMESPACE_END
+}

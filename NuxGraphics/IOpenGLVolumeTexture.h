@@ -23,7 +23,7 @@
 #ifndef IOPENGLVOLUMETEXTURE_H
 #define IOPENGLVOLUMETEXTURE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLBaseTexture;
@@ -108,6 +108,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class IOpenGLSurface;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLVOLUMETEXTURE_H

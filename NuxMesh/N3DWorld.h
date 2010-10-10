@@ -23,11 +23,11 @@
 #ifndef N3DWORLD_H
 #define N3DWORLD_H
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/NNamespace.h"
 #include "NuxCore/Math/Matrix4.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class NMeshData;
   class NMeshObject;
@@ -67,7 +67,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     std::vector<NMeshObject *> m_MeshObjectArray;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // N3DWORLD_H
 

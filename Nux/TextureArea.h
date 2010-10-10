@@ -25,7 +25,7 @@
 
 #include "NuxGraphics/OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class TextureArea : public View
@@ -50,6 +50,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   private:
     AbstractPaintLayer *m_PaintLayer;
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // TEXTUREAREA_H

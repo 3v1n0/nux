@@ -20,12 +20,12 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "Vector2.h"
 #include "Point2D.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
-} //NUX_NAMESPACE_END
+}

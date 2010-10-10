@@ -23,9 +23,9 @@
 #ifndef GLRENDERSTATES_H
 #define GLRENDERSTATES_H
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   enum
@@ -1267,7 +1267,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //#undef SET_RS_VALUE_FLOAT
 //#undef RS_VALUE_FLOAT
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLRENDERSTATES_H
 

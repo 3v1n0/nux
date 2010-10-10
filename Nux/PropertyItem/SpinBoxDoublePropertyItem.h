@@ -23,7 +23,7 @@
 #ifndef SPINBOXDOUBLEPROPERTYITEM_H
 #define SPINBOXDOUBLEPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class SpinBoxDouble;
@@ -45,6 +45,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     //RangeValue m_range_value;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SPINBOXDOUBLEPROPERTYITEM_H

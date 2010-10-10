@@ -30,7 +30,7 @@
 #include "GLTextureStates.h"
 #include "GLTemplatePrimitiveBuffer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 ///*
@@ -783,7 +783,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class GraphicsContext;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLDEVICEFACTORY_H
 

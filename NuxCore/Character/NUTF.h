@@ -53,7 +53,7 @@
 // encodings are often erroneously conflated and used as if interchangeable, so that strings encoded
 // in UTF-16 are sometimes misidentified as being encoded in UCS-2.
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //! Convert UTF-16 to UTF-8
@@ -90,6 +90,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NUTF_H

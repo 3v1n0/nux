@@ -20,11 +20,11 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "Spline.h"
 #include "MathFunctions.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   double *CubicSpline::SolveTridiag ( int n, double a[], double b[] )
@@ -398,4 +398,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return yval;
   }
 
-} //NUX_NAMESPACE_END
+}

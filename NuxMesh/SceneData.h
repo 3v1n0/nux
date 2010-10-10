@@ -23,7 +23,7 @@
 #ifndef SCENEDATA_H
 #define SCENEDATA_H
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/Math/Matrix4.h"
 #include "NuxCore/Math/Vector2.h"
 #include "NuxCore/Math/Vector3.h"

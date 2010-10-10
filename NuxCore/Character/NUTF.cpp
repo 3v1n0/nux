@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NUTF.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUTF8::NUTF8 (const UNICHAR *Source)
@@ -315,4 +315,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return unicode;
   }
 
-} //NUX_NAMESPACE_END
+}

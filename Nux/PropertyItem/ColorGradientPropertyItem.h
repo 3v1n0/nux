@@ -23,7 +23,7 @@
 #ifndef COLORGRADIENTPROPERTYITEM_H
 #define COLORGRADIENTPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ColorGradient;
@@ -46,6 +46,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COLORGRADIENTPROPERTYITEM_H

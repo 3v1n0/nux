@@ -23,7 +23,7 @@
 #ifndef GLTHREAD_H
 #define GLTHREAD_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class GLWindowImpl;
@@ -37,6 +37,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
 #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLTHREAD_H

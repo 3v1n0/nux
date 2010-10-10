@@ -26,7 +26,7 @@
 #include "IOpenGLFrameBufferObject.h"
 #include "OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLFrameBufferObject);
@@ -331,4 +331,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       return r;
     }
   }
-} //NUX_NAMESPACE_END
+}

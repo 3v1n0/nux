@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "Matrix4Editor.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static void ThreadMatrix4EditorDialog (NThread *thread, void *InitData)
@@ -406,4 +406,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

@@ -23,7 +23,7 @@
 #ifndef DOUBLEVALUATORPROPERTYITEM_H
 #define DOUBLEVALUATORPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ValuatorDouble;
@@ -45,6 +45,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   private:
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // DOUBLEVALUATORPROPERTYITEM_H

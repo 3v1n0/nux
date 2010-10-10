@@ -24,7 +24,7 @@
 #include "NuxImage/ImageSurface.h"
 #include "AnimatedTextureArea.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   AnimatedTextureArea::AnimatedTextureArea (NUX_FILE_LINE_DECL)
@@ -146,4 +146,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NeedRedraw();
   }
 
-} //NUX_NAMESPACE_END
+}

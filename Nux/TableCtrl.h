@@ -26,7 +26,7 @@
 #include "TableItem.h"
 #include "ScrollView.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern const int ROWHEADERWIDTH;
@@ -548,6 +548,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // TABLECTRL_H

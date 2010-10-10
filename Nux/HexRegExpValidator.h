@@ -25,7 +25,7 @@
 
 #include "Validator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HexRegExpValidator : public Validator
@@ -55,7 +55,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     int m_Maximum;
     GRegex *m_reg_exp;
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // HEXREGEXPVALIDATOR_H
 

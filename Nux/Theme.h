@@ -24,7 +24,7 @@
 #define UXTHEME_H
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   enum UXStyleImageRef
@@ -148,6 +148,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // UXTHEME_H

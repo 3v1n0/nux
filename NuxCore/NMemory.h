@@ -58,7 +58,7 @@
     #define NUX_SYS_MEMORY_PTR_SIZE(ptr)                    0
 #endif
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   t_u32 Memcmp ( const void *Buf1, const void *Buf2, t_u32 Count );
@@ -81,7 +81,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   void *Malloc (t_size Count, t_u32 Alignment = NUX_DEFAULT_ALIGNMENT);
   void *Realloc (void *Original, t_size Count, t_u32 Alignment = NUX_DEFAULT_ALIGNMENT);
 
-} //NUX_NAMESPACE_END
+}
 
 inline void inlFree ( void *Original )
 {

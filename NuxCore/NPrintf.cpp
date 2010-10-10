@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NPrintf.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NString inlPrintf (const TCHAR *Format, ...)
@@ -33,7 +33,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return NString (Result);
   }
 
-} //NUX_NAMESPACE_END
+}
 
 // see also: http://cvs.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/cmd/csh/printf.c
 

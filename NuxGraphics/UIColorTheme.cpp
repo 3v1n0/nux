@@ -20,12 +20,12 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLResource.h"
 #include "IniFile.h"
 #include "UIColorTheme.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   UIColorThemeImpl *UIColorThemeImpl::m_pInstance = 0;
@@ -194,4 +194,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     ReadColorFromINI ("UIColors", "ForegroundColor1", mUI_ForegroundColor1);
   }
 
-} //NUX_NAMESPACE_END
+}

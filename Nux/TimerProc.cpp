@@ -26,7 +26,7 @@
 
 class BaseWindow;
     
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef struct
@@ -608,4 +608,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

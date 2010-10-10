@@ -20,9 +20,9 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // template<typename T>
@@ -169,4 +169,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     SerializeFinal (buffer, len * stride);
   }
 
-} //NUX_NAMESPACE_END
+}

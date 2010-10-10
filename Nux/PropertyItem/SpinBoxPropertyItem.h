@@ -23,7 +23,7 @@
 #ifndef SPINBOXPROPERTYITEM_H
 #define SPINBOXPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class SpinBox;
@@ -46,6 +46,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SPINBOXPROPERTYITEM_H

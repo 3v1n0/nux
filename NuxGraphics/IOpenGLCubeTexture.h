@@ -23,7 +23,7 @@
 #ifndef IOPENGLCUBETEXTURE_H
 #define IOPENGLCUBETEXTURE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLBaseTexture;
@@ -93,5 +93,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class IOpenGLSurface;
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // IOPENGLCUBETEXTURE_H

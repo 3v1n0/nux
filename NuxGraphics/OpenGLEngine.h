@@ -42,7 +42,7 @@
 #include "GLWindowManager.h"
 #endif
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class FontTexture;
@@ -372,7 +372,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     GraphicsContext *operator &();
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // OPENGLENGINE_H
 

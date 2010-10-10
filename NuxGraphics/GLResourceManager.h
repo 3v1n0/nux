@@ -23,7 +23,7 @@
 #ifndef GLRESOURCEMANAGER_H
 #define GLRESOURCEMANAGER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // class NTexture;
@@ -381,7 +381,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLRESOURCEMANAGER_H
 

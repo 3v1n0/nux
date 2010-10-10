@@ -31,7 +31,7 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern PixelFormatInfo GPixelFormats[];
@@ -149,4 +149,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       		CLP0-CL5                                    Output Clip distances
   */
 
-} //NUX_NAMESPACE_END
+}
