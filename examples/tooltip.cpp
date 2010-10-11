@@ -11,12 +11,20 @@
 #include "Nux/TextureArea.h"
 #include "NuxImage/CairoGraphics.h"
 
+#include <pango/pango.h>
+#include <pango/pangocairo.h>
+
+#if defined(NUX_OS_LINUX)
+#include <X11/Xlib.h>
+#endif
+
 #define ANCHOR_WIDTH   10.0f
 #define ANCHOR_HEIGHT  18.0f
 #define RADIUS         5.0f
 #define BLUR_INTENSITY 8
 #define LINE_WIDTH     1.0f
 #define PADDING_SIZE   0
+#define MARGIN         5
 
 namespace nux
 {
@@ -51,11 +59,14 @@ namespace nux
       void NotifyConfigurationChange (int width,
                                       int height);
                                       
-      nux::CairoGraphics* _cairo_graphics;
-      nux::NTexture2D*    _texture2D;
-      int                 _anchorX;
-      int                 _anchorY;
-      nux::NString        _labelText;
+      nux::CairoGraphics*   _cairo_graphics;
+      nux::NTexture2D*      _texture2D;
+      int                   _anchorX;
+      int                   _anchorY;
+      nux::NString          _labelText;
+      int                   _dpiX;
+      int                   _dpiY;
+      cairo_font_options_t* _fontOpts;
 
     private:
       void ComputeFullMaskPath (cairo_t* cr,
@@ -113,6 +124,12 @@ namespace nux
                      gfloat   line_width,
                      gint     padding_size,
                      gfloat*  rgba);
+
+      void GetDPI ();
+
+      void GetTextExtents (char* font,
+                           int*  width,
+                           int*  height);
 
       void DrawLabel (cairo_t* cr,
                       gint     width,
@@ -413,15 +430,119 @@ namespace nux
   }
 
   void
+  Tooltip::GetDPI ()
+  {
+#if defined(NUX_OS_LINUX)
+    Display* display     = NULL;
+    int      screen      = 0;
+    double   dpyWidth    = 0.0;
+    double   dpyHeight   = 0.0;
+    double   dpyWidthMM  = 0.0;
+    double   dpyHeightMM = 0.0;
+    double   dpiX        = 0.0;
+    double   dpiY        = 0.0;
+
+    display = XOpenDisplay (NULL);
+    screen = DefaultScreen (display);
+
+    dpyWidth    = (double) DisplayWidth (display, screen);
+    dpyHeight   = (double) DisplayHeight (display, screen);
+    dpyWidthMM  = (double) DisplayWidthMM (display, screen);
+    dpyHeightMM = (double) DisplayHeightMM (display, screen);
+
+    dpiX = dpyWidth * 25.4 / dpyWidthMM;
+    dpiY = dpyHeight * 25.4 / dpyHeightMM;
+
+    _dpiX = (int) (dpiX + 0.5);
+    _dpiY = (int) (dpiY + 0.5);
+
+    XCloseDisplay (display);
+#elif defined(NUX_OS_WINDOWS)
+    _dpiX = 72;
+    _dpiY = 72;
+#endif
+  }
+
+  void
+  Tooltip::GetTextExtents (char* font,
+                           int*  width,
+                           int*  height)
+  {
+    cairo_surface_t*      surface  = NULL;
+    cairo_t*              cr       = NULL;
+    PangoLayout*          layout   = NULL;
+    PangoFontDescription* desc     = NULL;
+    PangoContext*         pangoCtx = NULL;
+    PangoRectangle        logRect  = {0, 0, 0, 0};
+
+    // sanity check
+    if (!font || !width || !height)
+      return;
+
+    surface = cairo_image_surface_create (CAIRO_FORMAT_A1, 1, 1);
+    cr = cairo_create (surface);
+    layout = pango_cairo_create_layout (cr);
+    desc = pango_font_description_from_string (font);
+    pango_font_description_set_weight (desc, PANGO_WEIGHT_NORMAL);
+    pango_layout_set_font_description (layout, desc);
+    pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
+    pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
+    pango_layout_set_text (layout, _labelText.GetTCharPtr(), -1);
+    pangoCtx = pango_layout_get_context (layout); // is not ref'ed
+    pango_cairo_context_set_font_options (pangoCtx, _fontOpts);
+    pango_cairo_context_set_resolution (pangoCtx, _dpiX);
+    pango_layout_context_changed (layout);
+    pango_layout_get_extents (layout, NULL, &logRect);
+
+    *width  = logRect.width / PANGO_SCALE;
+    *height = logRect.height / PANGO_SCALE;
+
+    // clean up
+    pango_font_description_free (desc);
+    g_object_unref (layout);
+    cairo_destroy (cr);
+    cairo_surface_destroy (surface);
+  }
+
+  void
   Tooltip::DrawLabel (cairo_t* cr,
                       gint     width,
                       gint     height,
                       gfloat*  rgba)
   {
-    cairo_move_to (cr, 10.0f, height - 5.0f);
-    cairo_show_text (cr, _labelText.GetTCharPtr());
+    int                   textWidth  = 0;
+    int                   textHeight = 0;
+    PangoLayout*          layout     = NULL;
+    PangoFontDescription* desc       = NULL;
+    PangoContext*         pangoCtx   = NULL;
+
+    GetTextExtents ((char*) "Ubuntu 20",
+                    &textWidth,
+                    &textHeight);
+
+    cairo_set_font_options (cr, _fontOpts);
+    layout = pango_cairo_create_layout (cr);
+    desc = pango_font_description_from_string ((char*) "Ubuntu 20");
+    pango_font_description_set_weight (desc, PANGO_WEIGHT_NORMAL);
+    pango_layout_set_font_description (layout, desc);
+    pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
+    pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
+    pango_layout_set_text (layout, _labelText.GetTCharPtr(), -1);
+    pangoCtx = pango_layout_get_context (layout); // is not ref'ed
+    pango_cairo_context_set_font_options (pangoCtx, _fontOpts);
+    pango_cairo_context_set_resolution (pangoCtx, (double) _dpiX);
+    pango_layout_context_changed (layout);
+
+    cairo_move_to (cr,
+                   ANCHOR_WIDTH + (float) ((width - ANCHOR_WIDTH) - textWidth) / 2.0f,
+                   (float) (height - textHeight) / 2.0f);
+    pango_cairo_show_layout (cr, layout);
     cairo_set_source_rgba (cr, rgba[0], rgba[1], rgba[2], rgba[3]);
     cairo_fill (cr);
+
+    // clean up
+    pango_font_description_free (desc);
+    g_object_unref (layout);
   }
 
   void
@@ -459,10 +580,22 @@ namespace nux
     _anchorX   = x;
     _anchorY   = y;
     _labelText = text;
+    _fontOpts  = cairo_font_options_create ();
+
+    // FIXME: hard-coding these for the moment, as we don't have
+    // gsettings-support in place right now
+    cairo_font_options_set_antialias (_fontOpts, CAIRO_ANTIALIAS_SUBPIXEL);
+    cairo_font_options_set_hint_metrics (_fontOpts, CAIRO_HINT_METRICS_ON);
+    cairo_font_options_set_hint_style (_fontOpts, CAIRO_HINT_STYLE_SLIGHT);
+    cairo_font_options_set_subpixel_order (_fontOpts, CAIRO_SUBPIXEL_ORDER_RGB);
+
+    // make sure _dpiX and _dpiY are initialized correctly
+    GetDPI ();
   }
 
   Tooltip::~Tooltip ()
   {
+    cairo_font_options_destroy (_fontOpts);
     delete(_cairo_graphics);
     delete(_texture2D);
   }
@@ -550,14 +683,25 @@ namespace nux
   long
   Tooltip::PostLayoutManagement (long LayoutResult)
   {
-    long result = BaseWindow::PostLayoutManagement (LayoutResult);
+    long     result           = BaseWindow::PostLayoutManagement (LayoutResult);
+    int      textWidth        = 0;
+    int      textHeight       = 0;
+    Geometry base;
+    float    rgbaTint[4]      = {0.0f, 0.0f, 0.0f, 0.7f};
+    float    rgbaHighlight[4] = {1.0f, 1.0f, 1.0f, 0.15f};
+    float    rgbaLine[4]      = {1.0f, 1.0f, 1.0f, 0.75f};
+    float    rgbaShadow[4]    = {0.0f, 0.0f, 0.0f, 0.48f};
+    float    rgbaText[4]      = {1.0f, 1.0f, 1.0f, 1.0f};
 
-    Geometry          base               = GetGeometry ();
-    float             rgbaTint[4]        = {0.0f, 0.0f, 0.0f, 0.7f};
-    float             rgbaHighlight[4]   = {1.0f, 1.0f, 1.0f, 0.15f};
-    float             rgbaLine[4]        = {1.0f, 1.0f, 1.0f, 0.75f};
-    float             rgbaShadow[4]      = {0.0f, 0.0f, 0.0f, 0.48f};
-    float             rgbaText[4]        = {1.0f, 1.0f, 1.0f, 1.0f};
+    GetTextExtents ((char*) "Ubuntu 20",
+                    &textWidth,
+                    &textHeight);
+
+    base.x = _anchorX;
+    base.y = _anchorY;
+    base.width = textWidth + 2 * MARGIN + ANCHOR_WIDTH;
+    base.height = textHeight + 2 * MARGIN;
+    SetGeometry (base);
 
     _cairo_graphics = new CairoGraphics (CAIRO_FORMAT_ARGB32,
                                          base.GetWidth (),
@@ -630,9 +774,6 @@ initGUIThread (nux::NThread* thread,
   nux::Tooltip* tooltip2 = new nux::Tooltip (5, 100, TEXT("Tools"));
   nux::Tooltip* tooltip3 = new nux::Tooltip (5, 160, TEXT("Games"));
 
-  tooltip1->SetGeometry (nux::Geometry (5, 40, 150, 36));
-  tooltip2->SetGeometry (nux::Geometry (5, 100, 175, 36));
-  tooltip3->SetGeometry (nux::Geometry (5, 160, 190, 36));
   tooltip1->SetBackgroundColor(nux::Color(0xFF8914f7));
   tooltip2->SetBackgroundColor(nux::Color(0xFF8914f7));
   tooltip3->SetBackgroundColor(nux::Color(0xFF8914f7));

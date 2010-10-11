@@ -146,6 +146,8 @@ PKG_CHECK_MODULES(NUX,
                   glew
                   glewmx
                   sigc++-2.0
+                  pango
+                  pangocairo
                   )
 AC_SUBST(NUX_CFLAGS)
 AC_SUBST(NUX_LIBS)
