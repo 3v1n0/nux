@@ -222,6 +222,12 @@ namespace nux
     }
   }
 
+  NTexture* NTexture2D::Clone () const
+  {
+    NTexture2D* texture = new NTexture2D(*this);
+    return texture;
+  }
+
   bool NGLTexture::RecreateTexture (NTexture *Source)
   {
     int CurrentWidth   = m_Texture->GetWidth();
@@ -323,6 +329,11 @@ namespace nux
     m_Image = texture.m_Image;
   }
 
+  NRectangleTexture::NRectangleTexture (const NTextureData &TextureData)
+  {
+    m_Image = TextureData;
+  }
+
   NRectangleTexture &NRectangleTexture::operator = (const NRectangleTexture &texture)
   {
     if (this == &texture)
@@ -349,8 +360,12 @@ namespace nux
     }
 
     m_Image = *static_cast<const NTextureData *> (BitmapData);
-    // call the texture manager and recreate the texture (NGLRectangleTexture) associated with this object if any.
-    GetThreadGraphicsContext()->UpdateResource (this);
+
+    if (UpdateAndCacheResource)
+    {
+      // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+      GetThreadGraphicsContext()->UpdateResource (this);
+    }
     return true;
   }
 
@@ -378,6 +393,12 @@ namespace nux
       // they contain the same amount of valid data since they have the same width, height and format.
       Memcpy (Dest + Y * StrideY, &Src[Y * RowByteSize], Min (RowByteSize, StrideY) );
     }
+  }
+
+  NTexture* NRectangleTexture::Clone () const
+  {
+    NRectangleTexture* texture = new NRectangleTexture(*this);
+    return texture;
   }
 
   NGLRectangleTexture::NGLRectangleTexture (NResourceSet *ResourceManager, NRectangleTexture *SourceTexture)
@@ -489,8 +510,13 @@ namespace nux
     }
 
     m_Image = *static_cast<const NCubemapData *> (BitmapData);
-    // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
-    GetThreadGraphicsContext()->UpdateResource (this);
+
+    if (UpdateAndCacheResource)
+    {
+      // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+      GetThreadGraphicsContext()->UpdateResource (this);
+    }
+
     return true;
   }
 
@@ -517,6 +543,12 @@ namespace nux
       // they contain the same amount of valid data since they have the same width, height and format.
       Memcpy (Dest + Y * StrideY, &Src[Y * RowByteSize], Min (RowByteSize, StrideY) );
     }
+  }
+
+  NTexture* NTextureCube::Clone () const
+  {
+    NTextureCube* texture = new NTextureCube(*this);
+    return texture;
   }
 
   NGLTextureCube::NGLTextureCube (NResourceSet *ResourceManager, NTextureCube *SourceTexture)
@@ -629,8 +661,13 @@ namespace nux
     }
 
     m_Image = *static_cast<const NVolumeData *> (BitmapData);
-    // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
-    GetThreadGraphicsContext()->UpdateResource (this);
+
+    if (UpdateAndCacheResource)
+    {
+      // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+      GetThreadGraphicsContext()->UpdateResource (this);
+    }
+
     return true;
   }
 
@@ -678,6 +715,12 @@ namespace nux
 //         // they contain the same amount of valid data since they have the same width, height and format.
 //         Memcpy(Dest + Y * StrideY,&Src[Y * RowByteSize], Min(RowByteSize, StrideY));
 //     }
+  }
+
+  NTexture* NTextureVolume::Clone () const
+  {
+    NTextureVolume* texture = new NTextureVolume(*this);
+    return texture;
   }
 
   NGLTextureVolume::NGLTextureVolume (NResourceSet *ResourceManager, NTextureVolume *SourceTexture)
@@ -801,8 +844,13 @@ namespace nux
     }
 
     m_Image = *static_cast<const NAnimatedTextureData *> (BitmapData);
-    // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
-    GetThreadGraphicsContext()->UpdateResource (this);
+
+    if (UpdateAndCacheResource)
+    {
+      // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+      GetThreadGraphicsContext()->UpdateResource (this);
+    }
+
     return true;
   }
 
@@ -839,6 +887,12 @@ namespace nux
   int NAnimatedTexture::GetFrameTime (int Frame)
   {
     return m_Image.GetFrameTime (Frame);
+  }
+
+  NTexture* NAnimatedTexture::Clone () const
+  {
+    NAnimatedTexture* texture = new NAnimatedTexture(*this);
+    return texture;
   }
 
   NGLAnimatedTexture::NGLAnimatedTexture (NResourceSet *ResourceManager, NAnimatedTexture *SourceTexture)

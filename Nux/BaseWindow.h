@@ -42,7 +42,6 @@ namespace nux
 
   class HLayout;
   class PopUpWindow;
-  class NTexture2D;
 
   /*!
       A user provided callback to assert the size and position of a floating area.

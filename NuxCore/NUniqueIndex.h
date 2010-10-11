@@ -28,7 +28,7 @@ namespace nux
 
   class UniqueIndex
   {
-    NUX_DECLARE_GLOBAL_OBJECT (UniqueIndex, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (UniqueIndex, GlobalSingletonInitializer);
   public:
     t_u64 GetUniqueIndex();
   private:

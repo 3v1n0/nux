@@ -23,7 +23,7 @@
 #include "GLDeviceFactory.h"
 #include "GLDeviceObjects.h"
 #include "IOpenGLAnimatedTexture.h"
-#include "IOpenGLRectangleTexture.h"
+
 
 namespace nux
 {
@@ -40,7 +40,7 @@ namespace nux
   {
     for (int i = 0; i < Depth; i++)
     {
-      TRefGL<IOpenGLRectangleTexture> Texture = GetThreadGLDeviceFactory()->CreateRectangleTexture (Width, Height, 1, PixelFormat);
+      TRefGL<IOpenGLBaseTexture> Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Width, Height, 1, PixelFormat);
       _FrameTextureArray.push_back (Texture);
       _FrameTimeArray.push_back (41); // 41 ms = 24 frames/second
     }

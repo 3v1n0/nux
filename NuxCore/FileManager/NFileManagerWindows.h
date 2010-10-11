@@ -96,7 +96,7 @@ namespace nux
 
   class NFileManagerWindows : public NFileManagerGeneric
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NFileManagerWindows, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NFileManagerWindows, GlobalSingletonInitializer);
   public:
 
     // Flags is a combination of

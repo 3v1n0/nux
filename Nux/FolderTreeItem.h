@@ -55,13 +55,13 @@ namespace nux
       return m_Synchronize;
     }
 
-    void SetOpenIcon (const NTexture2D &texture)
+    void SetOpenIcon (const NTexture* Texture)
     {
-      FolderOpenIcon = texture;
+      FolderOpenIcon = Texture->Clone ();
     }
-    void SetCloseIcon (const NTexture2D &texture)
+    void SetCloseIcon (const NTexture* Texture)
     {
-      FolderClosedIcon = texture;
+      FolderClosedIcon = Texture->Clone ();
     }
 
     bool IsSearchable()
@@ -69,8 +69,8 @@ namespace nux
       return m_Searchable;
     }
   private:
-    NTexture2D FolderOpenIcon;
-    NTexture2D FolderClosedIcon;
+    NTexture* FolderOpenIcon;
+    NTexture* FolderClosedIcon;
 
     NFileName m_Path;
     NString m_FolderName;

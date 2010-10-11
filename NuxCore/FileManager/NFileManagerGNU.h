@@ -97,7 +97,7 @@ namespace nux
 
   class NFileManagerGNU : public NFileManagerGeneric
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NFileManagerGNU, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NFileManagerGNU, GlobalSingletonInitializer);
   public:
     // Flags is a combination of
     //  NSerializer::OutputErrorIfFail

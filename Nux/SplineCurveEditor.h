@@ -361,8 +361,7 @@ namespace nux
     void DestroyLayout();
 
   private:
-    NTexture2D *m_CheckboardPattern;
-    TRefGL<IOpenGLTexture2D> m_Texture;
+    TRefGL<IOpenGLBaseTexture> m_Texture;
     GLSh_DrawFunction *m_DrawFunctionShader;
     AbstractPaintLayer *m_Background;
 

@@ -132,10 +132,10 @@ namespace nux
     if (!m_Title.IsEmpty() )
       m_GraphTitle->SetText (m_Title);
 
-    Texture = GetThreadGLDeviceFactory()->CreateTexture (256, 4, 0, BITFMT_R8G8B8A8);
+    Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 //     NString Path = NUX_FINDRESOURCELOCATION(TEXT("UITextures/FunctionGraphBackground.tga"));
-//     NTexture2D BackgroundTexture;
+//     NRectangleTexture BackgroundTexture;
 //     BackgroundTexture.Update(Path.GetTCharPtr());
 //
 //     TexCoordXForm texxform;
@@ -149,13 +149,15 @@ namespace nux
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
-    NTexture2D CheckboardPattern;
-    CheckboardPattern.Update (&image);
+    NTexture* CheckboardPattern = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    CheckboardPattern->Update (&image);
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (CheckboardPattern.GetDeviceTexture(), texxform, Color::White);
+    m_BackgroundLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
+
+    delete CheckboardPattern;
 
     m_ValueIcon->SetMinMaxSize (40, 16);
     m_GraphIcon->SetMinMaxSize (16, 16);
@@ -243,7 +245,7 @@ namespace nux
     }
 
     m_DynValueReceived = false;
-    //m_ScrollTimerHandler = GetThreadTimer().AddTimerHandler(100, m_ScrollTimerFunctor, this);
+    m_ScrollTimerHandler = GetThreadTimer().AddTimerHandler(100, m_ScrollTimerFunctor, this);
     NeedRedraw();
   }
 
@@ -363,7 +365,7 @@ namespace nux
 
         if (Texture->GetWidth() != W)
         {
-          Texture = GetThreadGLDeviceFactory()->CreateTexture (W, 4, 1, BITFMT_R8G8B8A8);
+          Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (W, 4, 1, BITFMT_R8G8B8A8);
         }
 
         it = m_DynValueArray[index].m_ValueList.begin();

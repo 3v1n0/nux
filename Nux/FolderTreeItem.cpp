@@ -37,16 +37,19 @@ namespace nux
     TableItem::SetAlwaysShowOpeningButton (true);
 
     NString IconPath = NUX_FINDRESOURCELOCATION (TEXT ("Icons/FolderOpen-16x16.png") );
-    FolderOpenIcon.Update (IconPath.GetTCharPtr() );
+    FolderOpenIcon = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    FolderOpenIcon->Update (IconPath.GetTCharPtr() );
     IconPath = NUX_FINDRESOURCELOCATION (TEXT ("Icons/FolderClose-16x16.png") );
-    FolderClosedIcon.Update (IconPath.GetTCharPtr() );
+    FolderClosedIcon = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    FolderClosedIcon->Update (IconPath.GetTCharPtr() );
     //FolderOpenIcon.Update(TEXT("../Media/Icons/FolderOpenGrey-16x16.png"));
     //FolderClosedIcon.Update(TEXT("../Media/Icons/FolderClosedGrey-16x16.png"));
   }
 
   FolderTreeItem::~FolderTreeItem()
   {
-
+    NUX_SAFE_DELETE (FolderOpenIcon);
+    NUX_SAFE_DELETE (FolderClosedIcon);
   }
 
   void FolderTreeItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter, RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
@@ -78,11 +81,11 @@ namespace nux
 
           if (isOpen() )
           {
-            GfxContext.QRP_GLSL_1Tex (IconGeometry.x, IconGeometry.y, IconGeometry.width, IconGeometry.height, (&FolderOpenIcon)->GetDeviceTexture(), texxform, nux::Color::White);
+            GfxContext.QRP_GLSL_1Tex (IconGeometry.x, IconGeometry.y, IconGeometry.width, IconGeometry.height, FolderOpenIcon->GetDeviceTexture(), texxform, nux::Color::White);
           }
           else
           {
-            GfxContext.QRP_GLSL_1Tex (IconGeometry.x, IconGeometry.y, IconGeometry.width, IconGeometry.height, (&FolderClosedIcon)->GetDeviceTexture(), texxform, nux::Color::White);
+            GfxContext.QRP_GLSL_1Tex (IconGeometry.x, IconGeometry.y, IconGeometry.width, IconGeometry.height, FolderClosedIcon->GetDeviceTexture(), texxform, nux::Color::White);
           }
 
           GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);

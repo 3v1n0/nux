@@ -63,7 +63,7 @@
 #include <set>
 
 
-#include "NNamespace.h"
+#include "Namespace.h"
 #include "NSystemTypes.h"
 
 
@@ -691,8 +691,8 @@ namespace nux
 }
 
 
-#include "NMacros.h"
-#include "NMemory.h"
+#include "Macros.h"
+#include "Memory.h"
 
 #include "Character/NUni.h"
 
@@ -722,7 +722,7 @@ namespace nux
 #include "NUniqueIndex.h"
 //#include "SmartPtr/IntrusiveSP.h"
 
-//#include "NGlobalInitializer.h"
+//#include "GlobalInitializer.h"
 
 #ifdef NUX_OS_WINDOWS
 #include "Win32Dialogs/NWin32MessageBox.h"
@@ -746,9 +746,9 @@ namespace nux
     #include "FileManager/NFileManagerGNU.h"
 #endif
 
-#include "File.h"
-#include "NObjectType.h"
-#include "NFileName.h"
+#include "FileIO.h"
+#include "ObjectType.h"
+#include "FileName.h"
 #include "Color.h"
 
 #ifdef NUX_OS_WINDOWS
@@ -762,6 +762,6 @@ namespace nux
 #endif
 //#include "NSocket.h"
 
-#include "NGlobalInitializer.h"
+#include "GlobalInitializer.h"
 
 #endif // KERNEL_H

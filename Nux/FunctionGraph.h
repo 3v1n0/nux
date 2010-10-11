@@ -57,8 +57,7 @@ namespace nux
     float m_minX, m_minY, m_maxX, m_maxY;
     FunctionCallback m_FunctionCallback;
 
-    TRefGL<IOpenGLTexture2D> Texture;
-    NTexture2D BackgroundTexture;
+    TRefGL<IOpenGLBaseTexture> Texture;
     TextureLayer *m_BackgroundLayer;
     GLSh_DrawFunction *m_DrawFunctionShader;
   };

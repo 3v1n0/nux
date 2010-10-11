@@ -24,7 +24,7 @@
 #define GLRESOURCE_H
 
 #include "NuxCore/NuxCore.h"
-#include "NuxCore/NNamespace.h"
+#include "NuxCore/Namespace.h"
 #include "NuxCore/NSystemTypes.h"
 #include "NuxCore/Error.h"
 #include "NuxCore/FilePath.h"
@@ -241,7 +241,7 @@ namespace nux
     PRIMITIVE_TYPE_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
   } PRIMITIVE_TYPE;
 
-  enum OpenGLResourceType
+  typedef enum
   {
     RTINDEXBUFFER,
     RTVERTEXBUFFER,
@@ -262,7 +262,7 @@ namespace nux
     RT_CG_VERTEXSHADER,
     RT_CG_PIXELSHADER,
     RT_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
-  };
+  } OpenGLResourceType;
 
   /* Multi-Sample buffer types */
   typedef enum

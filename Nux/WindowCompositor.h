@@ -66,7 +66,7 @@ namespace nux
         @param RenderToMainTexture  If true, render to the main window texture. If false, render to the default back buffer.
         @param BluredBackground     If true, the texture is blended with the blurred version of the main window texture.
     */
-    void PresentBufferToScreen (TRefGL<IOpenGLTexture2D> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false);
+    void PresentBufferToScreen (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false);
     void PresentRendering();
 
     /*!
@@ -79,7 +79,7 @@ namespace nux
         @param x    Destination coordinates.
         @param y    Destination coordinates.
     */
-    void CopyTextureToMainColorRT (TRefGL<IOpenGLTexture2D> HWTexture, int x, int y);
+    void CopyTextureToMainColorRT (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y);
 
     /*!
         Set the composition render target as the texture to draw into.
@@ -91,7 +91,7 @@ namespace nux
         @param x    Destination coordinates.
         @param y    Destination coordinates.
     */
-    void CopyTextureToCompositionRT (TRefGL<IOpenGLTexture2D> HWTexture, int x, int y);
+    void CopyTextureToCompositionRT (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y);
 
     void AddToDrawList (View *ic);
     void ClearDrawList();
@@ -127,12 +127,12 @@ namespace nux
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
     struct RenderTargetTextures
     {
-      TRefGL<IOpenGLTexture2D> color_rt;
-      TRefGL<IOpenGLTexture2D> depth_rt;
+      TRefGL<IOpenGLBaseTexture> color_rt;
+      TRefGL<IOpenGLBaseTexture> depth_rt;
     };
-    TRefGL<IOpenGLTexture2D> m_MainColorRT;
-    TRefGL<IOpenGLTexture2D> m_MainDepthRT;
-    TRefGL<IOpenGLTexture2D> m_CompositionRT;
+    TRefGL<IOpenGLBaseTexture> m_MainColorRT;
+    TRefGL<IOpenGLBaseTexture> m_MainDepthRT;
+    TRefGL<IOpenGLBaseTexture> m_CompositionRT;
 
     RenderTargetTextures &GetWindowBuffer (BaseWindow *window);
 
@@ -277,10 +277,10 @@ namespace nux
     int m_TooltipY;
 
     bool m_FullSceneBlurUpdated;
-    TRefGL<IOpenGLTexture2D> m_BlurTexture;
-    TRefGL<IOpenGLTexture2D> m_FullSceneMip0;
-    TRefGL<IOpenGLTexture2D> m_FullSceneMip1;
-    TRefGL<IOpenGLTexture2D> m_FullSceneMip2;
+    TRefGL<IOpenGLBaseTexture> m_BlurTexture;
+    TRefGL<IOpenGLBaseTexture> m_FullSceneMip0;
+    TRefGL<IOpenGLBaseTexture> m_FullSceneMip1;
+    TRefGL<IOpenGLBaseTexture> m_FullSceneMip2;
 
     //PBuffer *m_pbuffer;
   public:

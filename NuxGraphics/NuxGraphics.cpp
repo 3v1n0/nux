@@ -21,8 +21,8 @@ namespace nux
 
   void NuxGraphicsResources::Destructor()
   {
-    //m_normal_font.Release();
-    //m_bold_font.Release();
+    m_normal_font.Release();
+    m_bold_font.Release();
   }
 
   void NuxGraphicsResources::InitializeResources()
@@ -169,7 +169,7 @@ namespace nux
 
   void NuxGraphicsResources::CacheFontTextures (NResourceCache &RsrcCache)
   {
-    std::vector<NTexture2D *>::iterator it;
+    std::vector<NTexture*>::iterator it;
 
     for (it = m_normal_font->TextureArray.begin(); it != m_normal_font->TextureArray.end(); it++)
     {

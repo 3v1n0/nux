@@ -30,7 +30,6 @@ namespace nux
 
   class HLayout;
   class ActionItem;
-  class NTexture2D;
 
   class ToolButton : public View
   {
@@ -46,7 +45,7 @@ namespace nux
 
     void SetAction (ActionItem *action);
     void SetState (bool b);
-    void SetBitmap (const NTexture2D &Bitmap);
+    void SetBitmap (const NTexture* Texture);
     // emitters
     void EmitClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
@@ -62,7 +61,7 @@ namespace nux
     HLayout    *hlayout;
     CoreArea   *m_IconArea;
     ActionItem *m_ActionItem;
-    NTexture2D  m_Bitmap;
+    NTexture   *m_Texture;
 
   };
 

@@ -52,6 +52,12 @@ namespace nux
 
   FontTexture::~FontTexture()
   {
+    std::vector<NTexture*>::iterator it;
+    for(it = TextureArray.begin(); it != TextureArray.end(); it++)
+    {
+      delete (*it);
+    }
+    TextureArray.clear();
   }
 
   int FontTexture::GetCharWidth (const TCHAR &c) const
@@ -215,8 +221,8 @@ namespace nux
           NString font_texture_file = GNuxGraphicsResources.FindResourceLocation (texture);
 #endif
 
-          NTexture2D *Texture = new NTexture2D;
-          NBitmapData *BitmapData = LoadImageFile (font_texture_file.GetTCharPtr() );
+          NRectangleTexture *Texture = new NRectangleTexture ();
+          NBitmapData *BitmapData = LoadImageFile (font_texture_file.GetTCharPtr ());
 
           if (BitmapData)
             Texture->Update (BitmapData, false);

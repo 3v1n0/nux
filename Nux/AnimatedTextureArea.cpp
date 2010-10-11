@@ -35,7 +35,7 @@ namespace nux
 
 //     NAnimatedTextureData texData;
 //     texData.AllocateCheckBoardTexture(16, 16, 1, 0xFF222222, 0xFF666666);
-//     m_DefaultTexture = new NTexture2D();
+//     m_DefaultTexture = new NRectangleTexture();
 //     m_DefaultTexture->Update(&texData);
 
     OnMouseDown.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDown) );
@@ -91,7 +91,7 @@ namespace nux
     {
       TRefGL< NGLAnimatedTexture > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
       TRefGL<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
-      TRefGL<IOpenGLTexture2D> Texture2D = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      TRefGL<IOpenGLBaseTexture> Texture2D = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
       AnimatedTexture->SetFiltering (GL_LINEAR, GL_LINEAR);
       AnimatedTexture->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -137,7 +137,7 @@ namespace nux
     {
       TRefGL< NGLAnimatedTexture > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
       TRefGL<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
-      TRefGL<IOpenGLTexture2D> Texture2D = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      TRefGL<IOpenGLBaseTexture> Texture2D = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
       AnimatedTexture->PresentNextFrame();
       m_TimerHandler = GetThreadTimer().AddTimerHandler (41, m_TimerFunctor, 0);

@@ -27,7 +27,6 @@ namespace nux
 {
 
   class IOpenGLBaseTexture;
-  class IOpenGLRectangleTexture;
 
 // Note that for Animated texture, the Depth value is the number of frames.
 // The number of mipmap levels is always 1;
@@ -85,7 +84,7 @@ namespace nux
     //std::vector<IOpenGLSurface*> _VolumeArray;
 
     int _CurrentFrame;
-    std::vector< TRefGL<IOpenGLRectangleTexture> > _FrameTextureArray;
+    std::vector< TRefGL<IOpenGLBaseTexture> > _FrameTextureArray;
 
     std::vector< int >  _FrameTimeArray;
 

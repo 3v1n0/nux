@@ -78,7 +78,7 @@ namespace nux
 
   class NGlobalData
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NGlobalData, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NGlobalData, GlobalSingletonInitializer);
   public:
 
     void Initialize (const TCHAR *CommandLine);

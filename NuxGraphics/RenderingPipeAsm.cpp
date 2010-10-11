@@ -103,7 +103,7 @@ namespace nux
   void GraphicsContext::InitAsmColorShader()
   {
     NString AsmVtx = TEXT (
-                       "!!ARBvp1.0                                 \n\
+        "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         ATTRIB iColor       = vertex.attrib[3];     \n\
         PARAM  mvp[4]       = {state.matrix.mvp};   \n\
@@ -118,7 +118,7 @@ namespace nux
         END");
 
     NString AsmFrg = TEXT (
-                       "!!ARBfp1.0                                     \n\
+        "!!ARBfp1.0                                     \n\
         MOV result.color, fragment.color;               \n\
         END");
 
@@ -131,7 +131,7 @@ namespace nux
   void GraphicsContext::InitAsmTextureShader()
   {
     NString AsmVtx = TEXT (
-                       "!!ARBvp1.0                                 \n\
+        "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         ATTRIB iColor       = vertex.attrib[3];     \n\
         PARAM  mvp[4]       = {state.matrix.mvp};   \n\
@@ -148,22 +148,34 @@ namespace nux
         END");
 
     NString AsmFrg = TEXT (
-                       "!!ARBfp1.0                                     \n\
-        TEMP tex0;                                      \n\
-        TEX tex0, fragment.texcoord[0], texture[0], 2D; \n\
-        MUL result.color, fragment.color, tex0;         \n\
+        "!!ARBfp1.0                                       \n\
+        TEMP tex0;                                        \n\
+        TEX tex0, fragment.texcoord[0], texture[0], 2D;   \n\
+        MUL result.color, fragment.color, tex0;           \n\
         END");
+
+    NString AsmFrgRect = TEXT (
+      "!!ARBfp1.0                                       \n\
+      TEMP tex0;                                        \n\
+      TEX tex0, fragment.texcoord[0], texture[0], RECT; \n\
+      MUL result.color, fragment.color, tex0;           \n\
+      END");
 
     m_AsmTextureModColor = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
     m_AsmTextureModColor->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmTextureModColor->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_AsmTextureModColor->Link();
+
+    m_AsmTextureRectModColor = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+    m_AsmTextureRectModColor->LoadVertexShader (AsmVtx.GetTCharPtr() );
+    m_AsmTextureRectModColor->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
+    m_AsmTextureRectModColor->Link();
   }
 
   void GraphicsContext::InitAsmColorModTexMaskAlpha()
   {
     NString AsmVtx = TEXT (
-                       "!!ARBvp1.0                                 \n\
+        "!!ARBvp1.0                                 \n\
         OUTPUT oPos         = result.position;      \n\
         OUTPUT oColor       = result.color;         \n\
         OUTPUT oTexCoord0   = result.texcoord[0];   \n\
@@ -177,25 +189,40 @@ namespace nux
         END");
 
     NString AsmFrg = TEXT (
-                       "!!ARBfp1.0                                         \n\
-        TEMP tex0;                                          \n\
-        TEMP temp;                                          \n\
-        TEX tex0, fragment.texcoord[0], texture[0], 2D;     \n\
-        MOV temp, fragment.color;                           \n\
-        MUL temp.w, fragment.color, tex0.wwww;              \n\
-        MOV result.color, temp;                             \n\
-        END");
+      "!!ARBfp1.0                                         \n\
+      TEMP tex0;                                          \n\
+      TEMP temp;                                          \n\
+      TEX tex0, fragment.texcoord[0], texture[0], 2D;     \n\
+      MOV temp, fragment.color;                           \n\
+      MUL temp.w, fragment.color, tex0.wwww;              \n\
+      MOV result.color, temp;                             \n\
+      END");
+
+    NString AsmFrgRect = TEXT (
+      "!!ARBfp1.0                                         \n\
+      TEMP tex0;                                          \n\
+      TEMP temp;                                          \n\
+      TEX tex0, fragment.texcoord[0], texture[0], RECT;   \n\
+      MOV temp, fragment.color;                           \n\
+      MUL temp.w, fragment.color, tex0.wwww;              \n\
+      MOV result.color, temp;                             \n\
+      END");
 
     m_AsmColorModTexMaskAlpha = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
     m_AsmColorModTexMaskAlpha->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmColorModTexMaskAlpha->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_AsmColorModTexMaskAlpha->Link();
+
+    m_AsmColorModTexRectMaskAlpha = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+    m_AsmColorModTexRectMaskAlpha->LoadVertexShader (AsmVtx.GetTCharPtr() );
+    m_AsmColorModTexRectMaskAlpha->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
+    m_AsmColorModTexRectMaskAlpha->Link();
   }
 
   void GraphicsContext::InitAsm2TextureAdd()
   {
     NString AsmVtx = TEXT (
-                       "!!ARBvp1.0                                 \n\
+        "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         OUTPUT oPos         = result.position;      \n\
         OUTPUT oTexCoord0   = result.texcoord[0];   \n\
@@ -210,7 +237,7 @@ namespace nux
         END");
 
     NString AsmFrg = TEXT (
-                       "!!ARBfp1.0                                         \n\
+        "!!ARBfp1.0                                         \n\
         PARAM color0 = program.local[0];                    \n\
         PARAM color1 = program.local[1];                    \n\
         TEMP tex0;                                          \n\
@@ -223,16 +250,35 @@ namespace nux
         MOV result.color, temp;                             \n\
         END");
 
+    NString AsmFrgRect = TEXT (
+      "!!ARBfp1.0                                         \n\
+      PARAM color0 = program.local[0];                    \n\
+      PARAM color1 = program.local[1];                    \n\
+      TEMP tex0;                                          \n\
+      TEMP tex1;                                          \n\
+      TEMP temp;                                          \n\
+      TEX tex0, fragment.texcoord[0], texture[0], RECT;   \n\
+      MUL temp, color0, tex0;                             \n\
+      TEX tex1, fragment.texcoord[1], texture[1], RECT;   \n\
+      MAD temp, color1, tex1, temp;                       \n\
+      MOV result.color, temp;                             \n\
+      END");
+
     m_Asm2TextureAdd = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
     m_Asm2TextureAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_Asm2TextureAdd->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_Asm2TextureAdd->Link();
+
+    m_Asm2TextureRectAdd = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+    m_Asm2TextureRectAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
+    m_Asm2TextureRectAdd->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
+    m_Asm2TextureRectAdd->Link();
   }
 
   void GraphicsContext::InitAsm4TextureAdd()
   {
     NString AsmVtx = TEXT (
-                       "!!ARBvp1.0                                 \n\
+        "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         OUTPUT oPos         = result.position;      \n\
         OUTPUT oTexCoord0   = result.texcoord[0];   \n\
@@ -251,7 +297,7 @@ namespace nux
         END");
 
     NString AsmFrg = TEXT (
-                       "!!ARBfp1.0                                         \n\
+        "!!ARBfp1.0                                         \n\
         PARAM color0 = program.local[0];                    \n\
         PARAM color1 = program.local[1];                    \n\
         PARAM color2 = program.local[2];                    \n\
@@ -272,10 +318,37 @@ namespace nux
         MOV result.color, temp;                             \n\
         END");
 
+    NString AsmFrgRect = TEXT (
+      "!!ARBfp1.0                                         \n\
+      PARAM color0 = program.local[0];                    \n\
+      PARAM color1 = program.local[1];                    \n\
+      PARAM color2 = program.local[2];                    \n\
+      PARAM color3 = program.local[3];                    \n\
+      TEMP tex0;                                          \n\
+      TEMP tex1;                                          \n\
+      TEMP tex2;                                          \n\
+      TEMP tex3;                                          \n\
+      TEMP temp;                                          \n\
+      TEX tex0, fragment.texcoord[0], texture[0], RECT;   \n\
+      MUL temp, color0, tex0;                             \n\
+      TEX tex1, fragment.texcoord[1], texture[1], RECT;   \n\
+      MAD temp, color1, tex1, temp;                       \n\
+      TEX tex2, fragment.texcoord[2], texture[2], RECT;   \n\
+      MAD temp, color2, tex2, temp;                       \n\
+      TEX tex3, fragment.texcoord[3], texture[3], RECT;   \n\
+      MAD temp, color3, tex3, temp;                       \n\
+      MOV result.color, temp;                             \n\
+      END");
+
     m_Asm4TextureAdd = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
     m_Asm4TextureAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_Asm4TextureAdd->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_Asm4TextureAdd->Link();
+
+    m_Asm4TextureRectAdd = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+    m_Asm4TextureRectAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
+    m_Asm4TextureRectAdd->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
+    m_Asm4TextureRectAdd->Link();
   }
 
   void GraphicsContext::InitAsmBlendModes()
@@ -380,7 +453,10 @@ namespace nux
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
-    m_AsmColor->Begin();
+
+    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_AsmColor;
+
+    shader_program->Begin();
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
@@ -409,7 +485,7 @@ namespace nux
     if (VertexColorLocation != -1)
       CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
 
-    m_AsmColor->End();
+    shader_program->End();
   }
 
   void GraphicsContext::QRP_1Tex (int x, int y, int width, int height, TRefGL<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, Color color)
@@ -425,7 +501,13 @@ namespace nux
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
-    m_AsmTextureModColor->Begin();
+    
+    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_AsmTextureModColor;
+    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    {
+      shader_program = m_AsmTextureRectModColor;
+    }
+    shader_program->Begin();
 
     SetTexture (GL_TEXTURE0, device_texture);
 
@@ -466,7 +548,7 @@ namespace nux
     if (VertexColorLocation != -1)
       CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
 
-    m_AsmTextureModColor->End();
+    shader_program->End();
   }
 
   void GraphicsContext::QRP_ColorModTexAlpha (int x, int y, int width, int height,
@@ -485,7 +567,12 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    m_AsmColorModTexMaskAlpha->Begin();
+    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_AsmColorModTexMaskAlpha;
+    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    {
+      shader_program = m_AsmColorModTexRectMaskAlpha;
+    }
+    shader_program->Begin();
 
     SetTexture (GL_TEXTURE0, device_texture);
 
@@ -526,7 +613,7 @@ namespace nux
     if (VertexColorLocation != -1)
       CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
 
-    m_AsmColorModTexMaskAlpha->End();
+    shader_program->End();
   }
 
   void GraphicsContext::QRP_2Tex (int x, int y, int width, int height,
@@ -547,7 +634,12 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    m_Asm2TextureAdd->Begin();
+    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_Asm2TextureAdd;
+    if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    {
+      shader_program = m_Asm2TextureRectAdd;
+    }
+    shader_program->Begin();
 
     SetTexture (GL_TEXTURE0, device_texture0);
     SetTexture (GL_TEXTURE0, device_texture1);
@@ -591,7 +683,7 @@ namespace nux
     if (TextureCoord1Location != -1)
       CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord1Location) );
 
-    m_Asm2TextureAdd->End();
+    shader_program->End();
   }
 
   void GraphicsContext::QRP_4Tex (int x, int y, int width, int height,
@@ -615,7 +707,13 @@ namespace nux
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
-    m_Asm4TextureAdd->Begin();
+
+    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_Asm4TextureAdd;
+    if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    {
+      shader_program = m_Asm4TextureRectAdd;
+    }
+    shader_program->Begin();
 
     SetTexture (GL_TEXTURE0, device_texture0);
     SetTexture (GL_TEXTURE0, device_texture1);
@@ -681,7 +779,7 @@ namespace nux
     if (TextureCoord3Location != -1)
       CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord3Location) );
 
-    m_Asm4TextureAdd->End();
+    shader_program->End();
   }
 
 ////////////////////////////////////////////////////////////////////////////////////

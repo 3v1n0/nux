@@ -28,7 +28,7 @@ namespace nux
 
   class NCPU
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NCPU, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NCPU, GlobalSingletonInitializer);
   public:
 
     enum

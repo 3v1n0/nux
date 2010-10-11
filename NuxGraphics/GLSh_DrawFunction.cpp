@@ -225,7 +225,7 @@ namespace nux
 //    GLProgramObject::LoadCombinedShaderFile(TEXT("..//Shaders//DrawFunction.glsl"), TEXT("main"), TEXT("main"), Definitions);
   }
 
-  void GLSh_DrawFunction::SetTextureFunction (TRefGL<IOpenGLTexture2D> device_texture)
+  void GLSh_DrawFunction::SetTextureFunction (TRefGL<IOpenGLBaseTexture> device_texture)
   {
     m_device_texture = device_texture;
   }

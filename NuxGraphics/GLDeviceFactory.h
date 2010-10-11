@@ -426,11 +426,6 @@ namespace nux
     TRefGL<ICgPixelShader> CreateCGPixelShader();
 #endif
 
-
-
-    static TRefGL<IOpenGLTexture2D>    pDefaultRenderTargetTexture;
-    static TRefGL<IOpenGLSurface>      pDefaultRenderTargetSurface;
-
     // This is for the fixed pipeline
     // When using shaders see how a shader sampler parameter links to a texture with a call to setTexture.
     int SetTexture (unsigned int TextureUnit, IOpenGLBaseTexture *texture);
@@ -729,6 +724,26 @@ namespace nux
       m_RenderStates->CheckStateChange();
     }
 
+    //! Create a texture that the system supports. Rectangle texture or 2D texture.
+    /*!
+      @Width        Texture width.
+      @Height       Texture height.
+      @Levels       Texture number of mipmaps. If 0, all the mipmaps levels are created
+      @PixelFormat  Texture format.
+      @return       A device texture. Depending on the system capabilities returns a TRefGL<IOpenGLTexture2D> or TRefGL<IOpenGLRectangleTexture>.
+    */
+    TRefGL<IOpenGLBaseTexture> CreateSystemCapableDeviceTexture (
+      int Width
+      , int Height
+      , int Levels
+      , BitmapFormat PixelFormat);
+
+    //! Created a cached texture
+    /*!
+      @return A cached texture. Depending on the system capabilities, returns a NTexture2D or NRectangleTexture.
+    */
+    NTexture* CreateSystemCapableTexture ();
+
   private:
     NString m_BoardVendorString;
     NString m_BoardRendererString;
@@ -759,7 +774,6 @@ namespace nux
     bool GLSL_VERSION_1_1;
 
     bool OGL_EXT_SWAP_CONTROL;
-    bool GL_ARB_TEXTURE_RECTANGLE ;
     bool GL_ARB_VERTEX_PROGRAM;
     bool GL_ARB_FRAGMENT_PROGRAM;
     bool GL_ARB_SHADER_OBJECTS;
@@ -771,6 +785,7 @@ namespace nux
     bool GL_EXT_DRAW_RANGE_ELEMENTS;
     bool GL_EXT_STENCIL_TWO_SIDE;
     bool GL_EXT_TEXTURE_RECTANGLE;
+    bool GL_ARB_TEXTURE_RECTANGLE; //!< Promoted from GL_EXT_TEXTURE_RECTANGLE to ARB.
     bool GL_NV_TEXTURE_RECTANGLE;
 
     GLRenderStates *m_RenderStates;

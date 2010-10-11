@@ -174,7 +174,7 @@ namespace nux
     m_control_knot.Reset();
     m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
 
-    Texture = GetThreadGLDeviceFactory()->CreateTexture (256, 4, 0, BITFMT_R8G8B8A8);
+    Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     m_DialogThreadProxy = new SplineCurveDialogProxy (true);
@@ -183,17 +183,19 @@ namespace nux
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 4, 4);
-    NTexture2D BackgroundTexture;
-    BackgroundTexture.Update (&image);
+    NTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BackgroundTexture->Update (&image);
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (BackgroundTexture.GetDeviceTexture(), texxform, Color::White);
+    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Color::White);
 
     m_ChangeDetectionTimer = new TimerFunctor();
     m_ChangeDetectionTimer->OnTimerExpired.connect (sigc::mem_fun (this, &SplineCurvePreview::RecvTimer) );
     m_ChangeTimerHandler = 0;
+
+    delete BackgroundTexture;
   }
 
   SplineCurvePreview::~SplineCurvePreview()

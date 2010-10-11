@@ -30,7 +30,6 @@
 namespace nux
 {
 
-  class NTexture2D;
   class Button;
   class VLayout;
   class HLayout;

@@ -62,12 +62,15 @@ namespace nux
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
-    NTexture2D *m_CheckboardPattern = new NTexture2D (image);
+    NTexture* m_CheckboardPattern = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    m_CheckboardPattern->Update (&image);
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_Background = new TextureLayer (m_CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
+
+    delete m_CheckboardPattern;
   }
 
   BezierCurveControl2::~BezierCurveControl2()

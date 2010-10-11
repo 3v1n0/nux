@@ -23,7 +23,7 @@
 #ifndef NTHREADGNU_H
 #define NTHREADGNU_H
 
-#include "NObjectType.h"
+#include "ObjectType.h"
 
 /*#include <sys/ppu_thread.h>
 #include <sys/synchronization.h>

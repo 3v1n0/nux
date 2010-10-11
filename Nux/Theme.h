@@ -140,7 +140,7 @@ namespace nux
   private:
     void LoadPainterImages();
     NTexture *Load2DTextureFile (const char *filename);
-    NTexture *Load2DRectangleTextureFile (const char *filename);
+    //NTexture *Load2DRectangleTextureFile (const char *filename);
     NTexture *Load2DTextureFileGenerateAlpha (const char *filename, int red, int green, int blue);
 
     std::list<PainterImage *> m_PainterImageList;

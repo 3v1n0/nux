@@ -54,6 +54,7 @@ namespace nux
     virtual BitmapFormat GetFormat() const = 0;
     virtual int GetNumMipLevel() const = 0;
     virtual bool IsNull() const = 0;
+    virtual NTexture* Clone() const = 0;
     TRefGL<IOpenGLBaseTexture> GetDeviceTexture();
     TRefGL<NGLTexture> GetCachedTexture();
   };
@@ -124,6 +125,7 @@ namespace nux
       return NString (TEXT ("NTexture2D") );
     }
 
+    virtual NTexture* Clone() const;
   private:
     NTextureData m_Image;
   };
@@ -133,23 +135,23 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (NRectangleTexture, NTexture);
 
   public:
-    NRectangleTexture();
-    //NRectangleTexture(const NTextureData& Image);
+    NRectangleTexture ();
     NRectangleTexture (const NRectangleTexture &texture);
+    NRectangleTexture (const NTextureData& Image);
     NRectangleTexture &operator = (const NRectangleTexture &texture);
-    ~NRectangleTexture();
+    ~NRectangleTexture ();
 
     virtual bool Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
     virtual bool Update (const TCHAR *filename, bool UpdateAndCacheResource = true);
 
-    virtual bool IsNull() const
+    virtual bool IsNull () const
     {
-      return m_Image.IsNull();
+      return m_Image.IsNull ();
     }
     void GetData (void *Buffer, int MipIndex, int StrideY, int face = 0);
-    int GetNumMipLevel() const
+    int GetNumMipLevel () const
     {
-      return m_Image.GetNumMipmap();
+      return m_Image.GetNumMipmap ();
     }
     int GetWidth() const
     {
@@ -176,6 +178,8 @@ namespace nux
     {
       return NString (TEXT ("NRectangleTexture") );
     }
+
+    virtual NTexture* Clone() const;
 
   private:
     NTextureData m_Image;
@@ -229,6 +233,9 @@ namespace nux
     {
       return NString (TEXT ("NTextureCube") );
     }
+
+    virtual NTexture* Clone() const;
+
   private:
     NCubemapData m_Image;
   };
@@ -277,14 +284,15 @@ namespace nux
       return IsPowerOf2 (m_Image.GetWidth() ) && IsPowerOf2 (m_Image.GetHeight() );
     }
 
-    NVolumeData m_Image;
-
     virtual NString GetResourceName()
     {
       return NString (TEXT ("NTextureVolume") );
     }
+
+    virtual NTexture* Clone() const;
+
   private:
-    //NVolumeData m_Image;
+    NVolumeData m_Image;
   };
 
   class NAnimatedTexture: public NTexture
@@ -331,14 +339,15 @@ namespace nux
       return IsPowerOf2 (m_Image.GetWidth() ) && IsPowerOf2 (m_Image.GetHeight() );
     }
 
-    NAnimatedTextureData m_Image;
-
     virtual NString GetResourceName()
     {
       return NString (TEXT ("NAnimatedTexture") );
     }
+
+    virtual NTexture* Clone() const;
+
   private:
-    //NVolumeData m_Image;
+    NAnimatedTextureData m_Image;
   };
 
   class NGLTexture: public NGLResource

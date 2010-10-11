@@ -99,8 +99,8 @@ namespace nux
   private:
     // We use Rectangle texture to attach to the framebuffer because some GPU like the Geforce FX 5600 do not
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
-    TRefGL<IOpenGLTexture2D> m_MainColorRT;
-    TRefGL<IOpenGLTexture2D> m_MainDepthRT;
+    TRefGL<IOpenGLBaseTexture> m_MainColorRT;
+    TRefGL<IOpenGLBaseTexture> m_MainDepthRT;
 
     TimerFunctor *m_RealTimeCallback;
     TimerHandle m_RealTimeHandler;

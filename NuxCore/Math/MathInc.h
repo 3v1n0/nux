@@ -23,7 +23,7 @@
 #ifndef MATHINC_H
 #define MATHINC_H
 
-#include "../NNamespace.h"
+#include "../Namespace.h"
 #include "../NSystemTypes.h"
 
 #include "Constants.h"

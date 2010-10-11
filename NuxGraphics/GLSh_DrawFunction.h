@@ -42,7 +42,7 @@ namespace nux
     void CacheShader();
     void SetBackgroundColor (float R, float G, float B, float A);
     void SetBackgroundColor (Color color);
-    void SetTextureFunction (TRefGL<IOpenGLTexture2D> device_texture);
+    void SetTextureFunction (TRefGL<IOpenGLBaseTexture> device_texture);
     void SetTransformMatrix (const Matrix4 &TransformMatrix)
     {
       m_TransformMatrix = TransformMatrix;
@@ -61,7 +61,7 @@ namespace nux
     UINT ViewPortWidth;
     UINT ViewPortHeight;
     Matrix4 m_TransformMatrix;
-    TRefGL<IOpenGLTexture2D> m_device_texture;
+    TRefGL<IOpenGLBaseTexture> m_device_texture;
 
   private:
     TemplateQuadBuffer *m_QuadBuffer;

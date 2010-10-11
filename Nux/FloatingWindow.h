@@ -45,7 +45,6 @@ namespace nux
 
   class HLayout;
   class PopUpWindow;
-  class NTexture2D;
 
   class FloatingWindow: public BaseWindow
   {
@@ -129,8 +128,8 @@ namespace nux
     bool m_bSizeMatchLayout;
 
 
-    NTexture2D CloseIcon;
-    NTexture2D MinimizeIcon;
+    NTexture* CloseIcon;
+    NTexture* MinimizeIcon;
 
     std::list<View *> m_InterfaceObject;
     HLayout *m_TitleBarLayout;

@@ -26,6 +26,7 @@
 #include "GLShaderParameter.h"
 #include "GLTextureStates.h"
 #include "IOpenGLBaseTexture.h"
+#include "IOpenGLSurface.h"
 
 namespace nux
 {
@@ -219,6 +220,26 @@ namespace nux
 
     _TextureStates.SetRenderStates();
     return OGL_OK;
+  }
+
+  void IOpenGLBaseTexture::GetSurfaceLevel (int Level, TRefGL<IOpenGLSurface>& surface)
+  {
+
+  }
+
+  TRefGL<IOpenGLSurface> IOpenGLBaseTexture::GetSurfaceLevel (int Level)
+  {
+    return TRefGL<IOpenGLSurface> (0);
+  }
+
+  int IOpenGLBaseTexture::LockRect (int Level, SURFACE_LOCKED_RECT *pLockedRect, const SURFACE_RECT *pRect)
+  {
+    return 0;
+  }
+
+  int IOpenGLBaseTexture::UnlockRect (int Level)
+  {
+    return 0;
   }
 
   t_s32 GetTextureSize (IOpenGLBaseTexture *pTexture)

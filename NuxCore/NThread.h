@@ -23,7 +23,7 @@
 #ifndef NTHREAD_H
 #define NTHREAD_H
 
-#include "NObjectType.h"
+#include "ObjectType.h"
 
 namespace nux
 {

@@ -95,9 +95,11 @@ namespace nux
     SetGeometry (Geometry (100, 100, 320, 200) );
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/AddButton.png") );
-    MinimizeIcon.Update (Path.GetTCharPtr() );
+    MinimizeIcon = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    MinimizeIcon->Update (Path.GetTCharPtr() );
     Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/CancelButton.png") );
-    CloseIcon.Update (Path.GetTCharPtr() );
+    CloseIcon = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    CloseIcon->Update (Path.GetTCharPtr() );
 
     SetWindowTitle (WindowName);
   }
@@ -107,6 +109,9 @@ namespace nux
     GetThreadWindowCompositor().UnRegisterWindow (this);
     m_InterfaceObject.clear();
     NUX_SAFE_DELETE_ARRAY (m_WindowTitle);
+
+    delete CloseIcon;
+    delete MinimizeIcon;
   }
 
   long FloatingWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -202,7 +207,7 @@ namespace nux
                                  eSHAPE_CORNER_ROUND10, eCornerTopLeft | eCornerTopRight);
 
       gPainter.PaintTextLineStatic (GfxContext, GetThreadBoldFont(), m_WindowTitleBar->GetGeometry(), m_WindowTitle, Color (0xFFFFFFFF), true, eAlignTextCenter);
-      gPainter.Draw2DTextureAligned (GfxContext, &CloseIcon, m_CloseButton->GetGeometry(), TextureAlignmentStyle (eTACenter, eTACenter) );
+      gPainter.Draw2DTextureAligned (GfxContext, CloseIcon, m_CloseButton->GetGeometry(), TextureAlignmentStyle (eTACenter, eTACenter) );
     }
 
     gPainter.PopBackground();

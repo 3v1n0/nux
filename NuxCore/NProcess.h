@@ -40,7 +40,7 @@ namespace nux
 
   class NProcess
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NProcess, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NProcess, GlobalSingletonInitializer);
   public:
 
     DWORD GetProcessID();

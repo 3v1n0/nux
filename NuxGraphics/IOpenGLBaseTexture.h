@@ -129,6 +129,17 @@ namespace nux
     int BindTexture();
     int BindTextureToUnit (int TextureUnitIndex);
 
+    virtual void GetSurfaceLevel (int Level, TRefGL<IOpenGLSurface>& surface);
+    virtual TRefGL<IOpenGLSurface> GetSurfaceLevel (int Level);
+    virtual int LockRect (
+      int Level,
+      SURFACE_LOCKED_RECT *pLockedRect,
+      const SURFACE_RECT *pRect);
+
+    virtual int UnlockRect (
+      int Level
+      );
+
   protected:
     GLTextureStates _TextureStates;
     bool            _IsPOT;             // is power of two?

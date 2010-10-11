@@ -287,19 +287,24 @@ namespace nux
     void InitAsmTextureShader();
     //! Render polygons with a texture modulated by a color.
     TRefGL<IOpenGLAsmShaderProgram> m_AsmTextureModColor;
+    //! Same as m_AsmTextureModColor for rectangle textures.
+    TRefGL<IOpenGLAsmShaderProgram> m_AsmTextureRectModColor;
 
     void InitAsmColorModTexMaskAlpha();
     //! Render polygons with a color masked by the alpha provided sampling a texture.
     //! Requires: Enable GPU Alpha Blending
     TRefGL<IOpenGLAsmShaderProgram> m_AsmColorModTexMaskAlpha;
+    TRefGL<IOpenGLAsmShaderProgram> m_AsmColorModTexRectMaskAlpha;
 
     void InitAsm2TextureAdd();
     //! Render polygons with 2 textures, each modulated by a color, and added together.
     TRefGL<IOpenGLAsmShaderProgram> m_Asm2TextureAdd;
+    TRefGL<IOpenGLAsmShaderProgram> m_Asm2TextureRectAdd;
 
     void InitAsm4TextureAdd();
     //! Render polygons with 4 textures, each modulated by a color, and added together.
     TRefGL<IOpenGLAsmShaderProgram> m_Asm4TextureAdd;
+    TRefGL<IOpenGLAsmShaderProgram> m_Asm4TextureRectAdd;
 
     void InitAsmBlendModes();
 

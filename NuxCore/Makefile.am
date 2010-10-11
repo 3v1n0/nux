@@ -36,30 +36,30 @@ source_cpp = \
   $(srcdir)/FileManager/NSerializer.cpp \
   $(srcdir)/FileManager/NFileManagerGeneric.cpp \
   $(srcdir)/FileManager/NFileManagerGNU.cpp \
-  $(srcdir)/NKernel.cpp \
+  $(srcdir)/NuxCore.cpp \
   $(srcdir)/NSystemGNU.cpp \
   $(srcdir)/NOutputDevice.cpp \
   $(srcdir)/Exception.cpp \
-  $(srcdir)/NMemory.cpp \
+  $(srcdir)/Memory.cpp \
   $(srcdir)/NStreamBuffer.cpp \
   $(srcdir)/Character/NUTF.cpp \
   $(srcdir)/Character/NUni.cpp \
   $(srcdir)/Character/NUnicode.cpp \
   $(srcdir)/Color.cpp \
-  $(srcdir)/NFileName.cpp \
+  $(srcdir)/FileName.cpp \
   $(srcdir)/NThreadGNU.cpp \
   $(srcdir)/NParsing.cpp \
-  $(srcdir)/NCPU.cpp \
+  $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
   $(srcdir)/ColorFunctions.cpp \
-  $(srcdir)/NUniqueIndex.cpp \
+  $(srcdir)/UniqueIndex.cpp \
   $(srcdir)/Point.cpp \
-  $(srcdir)/NGlobalInitializer.cpp \
-  $(srcdir)/NObjectType.cpp \
+  $(srcdir)/GlobalInitializer.cpp \
+  $(srcdir)/ObjectType.cpp \
   $(srcdir)/NPlatform.cpp \
   $(srcdir)/Rect.cpp \
   $(srcdir)/NPrintf.cpp \
-  $(srcdir)/NFile.cpp \
+  $(srcdir)/FileIO.cpp \
   $(srcdir)/NProcess.cpp \
   $(srcdir)/NumberConversion.cpp \
   $(srcdir)/NuxCore.cpp \
@@ -83,7 +83,7 @@ source_cpp = \
   $(srcdir)/Math/Vector3.cpp \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
-  $(srcdir)/NCRC32.cpp \
+  $(srcdir)/CRC32.cpp \
   $(srcdir)/Size.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
@@ -135,27 +135,27 @@ source_datastruct_h = \
 source_h = \
   $(srcdir)/NSystemTypes.h \
   $(srcdir)/Point.h \
-  $(srcdir)/NCPU.h \
+  $(srcdir)/CPU.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/NSystem.h \
   $(srcdir)/NParsing.h \
   $(srcdir)/NStringConversion.h \
-  $(srcdir)/NGlobalInitializer.h \
+  $(srcdir)/GlobalInitializer.h \
   $(srcdir)/NPrintf.h \
   $(srcdir)/Rect.h \
   $(srcdir)/NPlatform.h \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
   $(srcdir)/NStreamBuffer.h \
-  $(srcdir)/NMemory.h \
+  $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
-  $(srcdir)/NNamespace.h \
+  $(srcdir)/Namespace.h \
   $(srcdir)/NSystemGNU.h \
-  $(srcdir)/NKernel.h \
-  $(srcdir)/NFileName.h \
+  $(srcdir)/NuxCore.h \
+  $(srcdir)/FileName.h \
   $(srcdir)/NOutputDevice.h \
   $(srcdir)/NProcess.h \
-  $(srcdir)/NObjectType.h \
+  $(srcdir)/ObjectType.h \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/NuxCore.h \
   $(srcdir)/Object.h \
@@ -163,13 +163,13 @@ source_h = \
   $(srcdir)/Size.h \
   $(srcdir)/Exception.h \
   $(srcdir)/NTime.h \
-  $(srcdir)/NCRC32.h \
+  $(srcdir)/CRC32.h \
   $(srcdir)/NMacros.h \
   $(srcdir)/NThreadGNU.h \
   $(srcdir)/NString.h \
   $(srcdir)/NTemplate.h \
-  $(srcdir)/NUniqueIndex.h \
-  $(srcdir)/NFile.h \
+  $(srcdir)/UniqueIndex.h \
+  $(srcdir)/FileIO.h \
   $(srcdir)/InitiallyUnownedObject.h
 
 libnux_core_@NUX_API_VERSION@_la_SOURCES = \
