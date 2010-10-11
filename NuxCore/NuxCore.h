@@ -20,8 +20,8 @@
  */
 
 
-#ifndef KERNEL_H
-#define KERNEL_H
+#ifndef NUXCORE_H
+#define NUXCORE_H
 
 
 #include "NSystem.h"
@@ -764,4 +764,4 @@ namespace nux
 
 #include "GlobalInitializer.h"
 
-#endif // KERNEL_H
+#endif // NUXCORE_H

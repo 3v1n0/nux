@@ -36,7 +36,6 @@ source_cpp = \
   $(srcdir)/FileManager/NSerializer.cpp \
   $(srcdir)/FileManager/NFileManagerGeneric.cpp \
   $(srcdir)/FileManager/NFileManagerGNU.cpp \
-  $(srcdir)/NuxCore.cpp \
   $(srcdir)/NSystemGNU.cpp \
   $(srcdir)/NOutputDevice.cpp \
   $(srcdir)/Exception.cpp \
@@ -52,7 +51,7 @@ source_cpp = \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
   $(srcdir)/ColorFunctions.cpp \
-  $(srcdir)/UniqueIndex.cpp \
+  $(srcdir)/NUniqueIndex.cpp \
   $(srcdir)/Point.cpp \
   $(srcdir)/GlobalInitializer.cpp \
   $(srcdir)/ObjectType.cpp \
@@ -157,18 +156,17 @@ source_h = \
   $(srcdir)/NProcess.h \
   $(srcdir)/ObjectType.h \
   $(srcdir)/NumberConversion.h \
-  $(srcdir)/NuxCore.h \
   $(srcdir)/Object.h \
   $(srcdir)/ColorFunctions.h \
   $(srcdir)/Size.h \
   $(srcdir)/Exception.h \
   $(srcdir)/NTime.h \
   $(srcdir)/CRC32.h \
-  $(srcdir)/NMacros.h \
+  $(srcdir)/Macros.h \
   $(srcdir)/NThreadGNU.h \
   $(srcdir)/NString.h \
   $(srcdir)/NTemplate.h \
-  $(srcdir)/UniqueIndex.h \
+  $(srcdir)/NUniqueIndex.h \
   $(srcdir)/FileIO.h \
   $(srcdir)/InitiallyUnownedObject.h
 
