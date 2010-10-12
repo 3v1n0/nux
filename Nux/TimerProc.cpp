@@ -59,14 +59,15 @@ namespace nux
 
     //! time progression factor between [0.0, 1.0]
     float           Param;
+    float           ProgressDelta;
     int             Type;
-    int             Iteration;
-    int             IterationCount;
-    int             Period;         // milliseconds
-    int             Duration;      // milliseconds
-    int             ElapsedTime;    // milliseconds
+    int             ScheduledIteration;     //!< The number of scheduled iterations.
+    int             ProgressIterationCount; //!< Number of times the timer has been executed.
+    int             Period;                 //!< The periode of the timer interuption (in milliseconds).
+    int             Duration;               //!< How long the timer will be running from start to finish (in milliseconds);
+    int             ElapsedTime;            //!< Elapsed time during execution (in milliseconds).
     bool            MarkedForRemoval;
-    BaseWindow*     Window;         //!< BaseWindow from where the timer was created.
+    BaseWindow*     Window;                 //!< BaseWindow from where the timer was created.
     TimerObject     *next;
     TimerObject     *prev;
     t_u32           glibid;
@@ -82,8 +83,8 @@ namespace nux
     Period          = 0;
     Duration        = 0;
     ElapsedTime     = 0;
-    Iteration       = 0;
-    IterationCount  = 0;
+    ScheduledIteration       = 0;
+    ProgressIterationCount  = 0;
     MarkedForRemoval = 0;
     Window          = 0;
     next            = 0;
@@ -123,6 +124,41 @@ namespace nux
     return m_d != 0;
   }
 
+  float TimerHandle::GetProgress() const
+  {
+    if (m_d)
+      return m_d->Param;
+    return 0.0f;
+  }
+
+  float TimerHandle::GetProgressDelta() const
+  {
+    if (m_d)
+      return m_d->ProgressDelta;
+    return 0;
+  }
+
+  int TimerHandle::GetScheduledIterationCount() const
+  {
+    if (m_d)
+      return m_d->ScheduledIteration;
+    return 0;
+  }
+
+  int TimerHandle::GetProgressIterationCount() const
+  {
+    if (m_d)
+      return m_d->ProgressIterationCount;
+    return 0;
+  }
+
+  int TimerHandle::GetElapsedTimed() const
+  {
+    if (m_d)
+      return m_d->ElapsedTime;
+    return 0;
+  }
+
 ////////////////////////////////////////////////////
   TimerHandler::TimerHandler()
   {
@@ -133,6 +169,23 @@ namespace nux
   TimerHandler::~TimerHandler()
   {
 
+  }
+
+  void TimerHandler::StartEarlyTimerObjects()
+  {
+    std::list<TimerObject*>::iterator it;
+    for (it = _early_timer_objects.begin(); it != _early_timer_objects.end(); it++)
+    {
+      TimerObject *timer_object = *it;
+      TimeRightNow(&timer_object->when);
+      Addmillisecs(&timer_object->when, timer_object->Period);
+
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+        timer_object->glibid = GetGraphicsThread()->AddGLibTimeout (timer_object->Period);
+#endif
+    }
+
+    _early_timer_objects.clear();
   }
 
   TimerHandle TimerHandler::AddTimerHandler (unsigned int Period, TimerFunctor *Callback, void *Data)
@@ -156,6 +209,7 @@ namespace nux
 
       if (timer_object->glibid == 0)
       {
+        _early_timer_objects.push_back(timer_object);
         // Probably trying to set a timeout before Glib main context and loop have been created.
         // Sometimes later, this timer will be examined when ExecTimerHandler is called.
         // This happens when trying to set a callback before the mainloop has been initialized.
@@ -182,6 +236,22 @@ namespace nux
     timer_object->Type = TIMERTYPE_DURATION;
     AddHandle (timer_object);
 
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+    {
+      timer_object->glibid = GetGraphicsThread()->AddGLibTimeout (Period);
+
+      if (timer_object->glibid == 0)
+      {
+        _early_timer_objects.push_back(timer_object);
+        // Probably trying to set a timeout before Glib main context and loop have been created.
+        // Sometimes later, this timer will be examined when ExecTimerHandler is called.
+        // This happens when trying to set a callback before the mainloop has been initialized.
+      }
+
+      //nuxDebugMsg(TEXT("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d"), timer_object->glibid);
+    }
+#endif
+
     TimerHandle handle (timer_object);
     return handle;
   }
@@ -195,10 +265,25 @@ namespace nux
     timer_object->TimerCallback = Callback;
 
     timer_object->Period = Period;
-    timer_object->Iteration  = (NumberOfIterations < 0) ? -1 : NumberOfIterations;
+    timer_object->ScheduledIteration  = (NumberOfIterations < 0) ? -1 : NumberOfIterations;
     timer_object->Type = TIMERTYPE_ITERATION;
     AddHandle (timer_object);
 
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+    {
+      timer_object->glibid = GetGraphicsThread()->AddGLibTimeout (Period);
+
+      if (timer_object->glibid == 0)
+      {
+        _early_timer_objects.push_back(timer_object);
+        // Probably trying to set a timeout before Glib main context and loop have been created.
+        // Sometimes later, this timer will be examined when ExecTimerHandler is called.
+        // This happens when trying to set a callback before the mainloop has been initialized.
+      }
+
+      //nuxDebugMsg(TEXT("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d"), timer_object->glibid);
+    }
+#endif
     TimerHandle handle (timer_object);
     return handle;
   }
@@ -313,6 +398,7 @@ namespace nux
   {
     NUX_RETURN_VALUE_IF_NULL (m_timer_object_queue, 0);
 
+    bool repeat = false;
     TimerObject *timer_object = m_timer_object_queue;
     TimeStruct now;
 
@@ -326,7 +412,7 @@ namespace nux
     {
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 
-      if ( (TimeIsGreater (now, timer_object->when) || (timer_object->glibid == timer_id) ) && (timer_object->MarkedForRemoval == false) )
+      if ( (/*TimeIsGreater (now, timer_object->when) ||*/ (timer_object->glibid == timer_id) ) && (timer_object->MarkedForRemoval == false) )
 #else
       if (TimeIsGreater (now, timer_object->when) )
 #endif
@@ -341,20 +427,39 @@ namespace nux
           elaps -= 1;
         }
 
-        timer_object->ElapsedTime += elaps * 1000 + uelaps / 1000; // milliseconds
+        timer_object->ElapsedTime += timer_object->Period; //elaps * 1000 + uelaps / 1000; // milliseconds
 
         if (timer_object->Type == TIMERTYPE_PERIODIC)
         {
+          timer_object->ProgressDelta = float (timer_object->ElapsedTime) / float (timer_object->Period) - timer_object->Param;
+          // Clamp progress delta so (timer_object->Param + timer_object->ProgressDelta) <= 1.0f
+          if (timer_object->Param + timer_object->ProgressDelta > 1.0f)
+            timer_object->ProgressDelta = 1.0f - timer_object->Param;
+
           timer_object->Param = float (timer_object->ElapsedTime) / float (timer_object->Period);
         }
         else if (timer_object->Type == TIMERTYPE_DURATION)
         {
+          timer_object->ProgressDelta = float (timer_object->ElapsedTime) / float (timer_object->Duration) - timer_object->Param;
+          // Clamp progress delta so (timer_object->Param + timer_object->ProgressDelta) <= 1.0f
+          if (timer_object->Param + timer_object->ProgressDelta > 1.0f)
+            timer_object->ProgressDelta = 1.0f - timer_object->Param;
+
+          if(timer_object->ProgressDelta < 0.0f)
+            timer_object->ProgressDelta = 0.0f;
+
           timer_object->Param = float (timer_object->ElapsedTime) / float (timer_object->Duration);
         }
         else if (timer_object->Type == TIMERTYPE_ITERATION)
         {
-          timer_object->IterationCount += 1;
-          int duration = timer_object->Period * timer_object->Iteration;
+          timer_object->ProgressIterationCount += 1;
+          int duration = timer_object->Period * timer_object->ScheduledIteration;
+
+          timer_object->ProgressDelta = float (timer_object->ElapsedTime) / float (duration) - timer_object->Param;
+          // Clamp progress delta so (timer_object->Param + timer_object->ProgressDelta) <= 1.0f
+          if (timer_object->Param + timer_object->ProgressDelta > 1.0f)
+            timer_object->ProgressDelta = 1.0f - timer_object->Param;
+
           timer_object->Param = float (timer_object->ElapsedTime) / float (duration);
         }
         else
@@ -375,7 +480,7 @@ namespace nux
           // Reset glibid to 0. glibid is not null, if this element ever happened to be at the head of the queue
           // and we set a timer for it.
           //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Executed Timeout ID: %d"), timer_object->glibid);
-          timer_object->glibid = 0;
+          //timer_object->glibid = 0;
         }
 
         TimerObject *expired_handler = 0;
@@ -389,17 +494,13 @@ namespace nux
         {
           expired_handler = timer_object;
         }
-        else if ( (timer_object->Type == TIMERTYPE_PERIODIC) && (timer_object->Param >= 1.0f) )
+        else if ( (timer_object->Type == TIMERTYPE_DURATION) && (timer_object->Param >= 1.0f) )
         {
           expired_handler = timer_object;
         }
-        else if ( (timer_object->Type == TIMERTYPE_ITERATION) && (timer_object->IterationCount >= timer_object->Iteration) )
+        else if ( (timer_object->Type == TIMERTYPE_ITERATION) && (timer_object->ProgressIterationCount >= timer_object->ScheduledIteration) )
         {
           expired_handler = timer_object;
-        }
-        else
-        {
-          nuxAssertMsg (0, TEXT ("[TimerHandler::ExecTimerHandler] Unknown timer type.") );
         }
 
         if (expired_handler)
@@ -427,10 +528,12 @@ namespace nux
         }
         else
         {
-          timer_object = timer_object->next;
+          repeat = true;
+          //timer_object = timer_object->next;
         }
 
         timer_executed++;
+        break;
       }
       else
       {
@@ -483,7 +586,8 @@ namespace nux
     }
 
     m_IsProceesingTimers = false;
-    return timer_executed;
+    //return timer_executed;
+    return repeat;
   }
 
   bool TimerHandler::FindTimerHandle (TimerHandle &timer_object)

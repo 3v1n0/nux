@@ -46,6 +46,15 @@ namespace nux
 
     TimerHandle &operator = (const TimerHandle &);
     bool IsValid() const;
+
+    //! return a factor between 0.0f and 1.0f representing the progress of the timer.
+    float GetProgress() const;
+    float GetProgressDelta() const;
+
+    int GetScheduledIterationCount() const;
+    int GetProgressIterationCount() const;
+    int GetElapsedTimed() const;
+
   private:
     TimerObject *m_d;
 
@@ -131,6 +140,9 @@ namespace nux
     int ExecTimerHandler();
 #endif
 
+    //! Start the timers that were sett before the system was fully initialized.
+    void StartEarlyTimerObjects();
+
   private:
     bool m_IsProceesingTimers;
     TimerObject *AddHandle (TimerObject *handle);
@@ -138,6 +150,7 @@ namespace nux
 
     //! Single linked list of timer delays.
     TimerObject *m_timer_object_queue;
+    std::list<TimerObject*> _early_timer_objects;  //!< timer objects that couldn't be started because the main loop is not runing yet.
   };
 
 }

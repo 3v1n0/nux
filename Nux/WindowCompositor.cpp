@@ -514,15 +514,15 @@ namespace nux
           // everything must be rendered This is very intensize and should happen rarely.
           RenderMainWindowComposition (true, true);
 
-//           if (1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
-//           {
-//             DrawFloatingWindows (true, m_WindowList, false, true);
-//             DrawFloatingWindows (true, m_ModalWindowList, true, true);
-// 
-//             DrawMenu (true);
-//             DrawTooltip (true);
-//             DrawOverlay (true);
-//           }
+          if (1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
+          {
+            DrawFloatingWindows (true, m_WindowList, false, true);
+            DrawFloatingWindows (true, m_ModalWindowList, true, true);
+
+            DrawMenu (true);
+            DrawTooltip (true);
+            DrawOverlay (true);
+          }
         }
         else if (m_PopupRemoved || m_MenuRemoved)
         {
@@ -739,7 +739,7 @@ namespace nux
         WindowNeedRedraw = window->IsRedrawNeeded();
 
         // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
-        if(force_draw || window->IsRedrawNeeded() || (window->m_dirty_areas.size() > 0))
+        //if(force_draw || window->IsRedrawNeeded() || (window->m_dirty_areas.size() > 0))
         {
           if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
           {
