@@ -20,11 +20,11 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLResource.h"
 #include "GLTimer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   GLTimer::GLTimer()
   {
@@ -78,4 +78,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //     QueryPerformanceCounter(&temp);
 //     return (temp.QuadPart - now.QuadPart) * res;
 // }
-} //NUX_NAMESPACE_END
+}

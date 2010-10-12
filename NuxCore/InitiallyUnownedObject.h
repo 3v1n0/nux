@@ -24,7 +24,7 @@
 #ifndef NUXINITIALLYUNOWNEDOBJECT_H
 #define NUXINITIALLYUNOWNEDOBJECT_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //! The base class of Nux initially unowned objects.
@@ -42,7 +42,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     int     m_allocation_line_number;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NUXINITIALLYUNOWNEDOBJECT_H
 

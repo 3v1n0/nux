@@ -20,12 +20,12 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLResource.h"
 #include "GLShader.h"
 #include "GLDeviceObjects.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 // //-----------------------------------------------------------------------------
 // bool IOpenGLShaderProgram::SetUniform1f(char* varname, GLfloat v0)
@@ -577,4 +577,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //     return true;
 // }
 //
-} //NUX_NAMESPACE_END
+}

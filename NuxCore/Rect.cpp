@@ -20,7 +20,7 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "Point.h"
 #include "Size.h"
 #include "Rect.h"

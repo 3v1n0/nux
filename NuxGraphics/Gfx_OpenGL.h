@@ -28,7 +28,7 @@
 #include "GLDeviceObjects.h"
 #include "GLRenderStates.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   struct IEvent;
@@ -257,7 +257,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
                                    WPARAM  wParam,         // Additional Message Information
                                    LPARAM  lParam);        // Additional Message Information
 
-} //NUX_NAMESPACE_END
+}
 
 #endif //OPENGL_GFX_H
 

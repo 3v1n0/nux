@@ -23,7 +23,7 @@
 #include "GLResource.h"
 #include "GLRenderStates.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const struct StateLookUpTable
@@ -385,5 +385,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #undef RS_VALUE
   }
 
-} //NUX_NAMESPACE_END
+}
 

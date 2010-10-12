@@ -23,7 +23,7 @@
 #ifndef VALUATOR_H
 #define VALUATOR_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class EditTextBox;
@@ -79,7 +79,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // VALUATOR_H
 

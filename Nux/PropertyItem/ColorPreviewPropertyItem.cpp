@@ -26,7 +26,7 @@
 #include "ColorPreview.h"
 #include "ColorPreviewPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ColorPreviewPropertyItem::ColorPreviewPropertyItem (const TCHAR *name, float red, float green, float blue, eColorModel colormodel)
@@ -175,4 +175,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return NodeNetCom::FromXML (elementxml);
   }
 
-} //NUX_NAMESPACE_END
+}

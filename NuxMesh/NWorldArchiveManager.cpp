@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
 #include "NuxCore/FilePath.h"
 #include "NWorldArchiveManager.h"
@@ -28,7 +28,7 @@
 #include "NMeshObject.h"
 #include "N3DWorld.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NWorldArchiveManager::NWorldArchiveManager()
@@ -369,5 +369,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}
 

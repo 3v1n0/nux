@@ -24,7 +24,7 @@
 #include "WindowCompositor.h"
 #include "PopUpWindow.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   PopUpWindow::PopUpWindow()
@@ -55,4 +55,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     ShowWindow (false);
   }
 
-} //NUX_NAMESPACE_END
+}

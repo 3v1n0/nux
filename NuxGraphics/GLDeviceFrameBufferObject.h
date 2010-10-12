@@ -79,7 +79,7 @@ fbo2.Bind();
 FramebufferObject::Disable();
 */
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class GLFramebufferObject
@@ -218,7 +218,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     static GLuint _CreateBufferId();
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLDEVICEFRAMEBUFFEROBJECT_H
 

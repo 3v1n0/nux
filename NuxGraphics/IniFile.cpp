@@ -20,11 +20,11 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLResource.h"
 #include "IniFile.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   struct RecordSectionIs : std::unary_function<CIniFile::Record, bool>
@@ -889,4 +889,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     return 0;
   }
-} //NUX_NAMESPACE_END
+}

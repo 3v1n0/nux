@@ -26,7 +26,7 @@
 #include "SpinBox.h"
 #include "SpinBoxPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   SpinBoxPropertyItem::SpinBoxPropertyItem (const TCHAR *name, int Value, int Step, int MinValue, int MaxValue)
@@ -138,4 +138,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     SetValue (value);
     return NodeNetCom::FromXML (elementxml);
   }
-} //NUX_NAMESPACE_END
+}

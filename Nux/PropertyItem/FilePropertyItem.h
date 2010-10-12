@@ -23,7 +23,7 @@
 #ifndef FILEPROPERTYITEM_H
 #define FILEPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class FilePropertyItem: public SectionProperty
@@ -43,6 +43,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Button *m_OpenButton;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // FILEPROPERTYITEM_H

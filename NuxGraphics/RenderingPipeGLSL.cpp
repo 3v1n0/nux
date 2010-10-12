@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
 #include "NuxImage/Tga.h"
 #include "NuxImage/ImageSurface.h"
@@ -36,7 +36,7 @@
 #include "OpenGLEngine.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
@@ -1010,5 +1010,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_line_stats++;
   }
 
-} //NUX_NAMESPACE_END
+}
 

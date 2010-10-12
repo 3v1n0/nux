@@ -26,7 +26,7 @@
 
 #include "Vector2.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   template <typename T>
@@ -563,7 +563,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return oM;
   }
 
-} //NUX_NAMESPACE_END
+}
 
 
 #endif // MATRIX2_H

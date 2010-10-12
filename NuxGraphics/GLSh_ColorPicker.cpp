@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/Math/Matrix4.h"
 #include "GLResource.h"
 #include "GLDeviceFactory.h"
@@ -34,7 +34,7 @@
 
 #include "GLSh_ColorPicker.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern bool USE_ARB_SHADERS;
@@ -430,4 +430,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

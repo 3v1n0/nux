@@ -24,7 +24,7 @@
 #include "TextView.h"
 #include "TextViewInternal.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   void TextView::UspSnapXToOffset (
@@ -152,4 +152,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}

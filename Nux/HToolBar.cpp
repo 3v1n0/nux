@@ -31,7 +31,7 @@
 #include "EditTextBox.h"
 #include "StaticTextBox.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   HToolBar::HToolBar (NUX_FILE_LINE_DECL)
@@ -215,4 +215,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
     NeedRedraw();
   }
-} //NUX_NAMESPACE_END
+}

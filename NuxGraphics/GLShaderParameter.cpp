@@ -20,12 +20,12 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLShader.h"
 #include "GLDeviceObjects.h"
 #include "GLShaderParameter.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   GLShaderParameter::GLShaderParameter (GLProgramObject *Shader,
@@ -45,4 +45,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //    Shader->FirstParameter = this;
   }
 
-} //NUX_NAMESPACE_END
+}

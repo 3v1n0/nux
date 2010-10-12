@@ -23,7 +23,7 @@
 #ifndef NTCHAR_H
 #define NTCHAR_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   inline TCHAR ToUpperCase ( TCHAR c )
@@ -74,6 +74,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #endif
   }
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NTCHAR_H

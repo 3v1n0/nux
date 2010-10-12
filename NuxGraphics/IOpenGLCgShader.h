@@ -23,7 +23,7 @@
 #ifndef ICGSHADER_H
 #define ICGSHADER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLResource;
@@ -83,6 +83,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class GLDeviceFactory;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // ICGSHADER_H

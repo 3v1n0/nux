@@ -25,7 +25,7 @@
 #include "HLayout.h"
 #include "RangeValueInteger.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   RangeValueInteger::RangeValueInteger (int Value, int MinValue, int MaxValue, NUX_FILE_LINE_DECL)
@@ -309,4 +309,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NeedRedraw();
   }
 
-} //NUX_NAMESPACE_END
+}

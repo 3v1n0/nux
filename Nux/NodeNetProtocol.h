@@ -62,7 +62,7 @@
 
 #define NODE_XML_NET_PROTOCOL 1
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   enum NodeParameterType
@@ -194,7 +194,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NODENETPROTOCOL_H
 

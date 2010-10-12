@@ -25,7 +25,7 @@
 #include "HLayout.h"
 #include "MenuBar.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static const UINT MENU_MINIMUM_WIDTH = 10;
@@ -479,4 +479,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

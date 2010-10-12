@@ -26,7 +26,7 @@
 #include "VLayout.h"
 #include "VScrollBar.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const int VSCROLLBAR_WIDTH = 10;
@@ -459,4 +459,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

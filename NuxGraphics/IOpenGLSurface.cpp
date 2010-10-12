@@ -25,7 +25,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLSurface.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLSurface);
@@ -547,4 +547,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return OGL_OK;
   }
 
-} //NUX_NAMESPACE_END
+}

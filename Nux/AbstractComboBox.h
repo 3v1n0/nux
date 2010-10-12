@@ -23,7 +23,7 @@
 #ifndef ABSTRACTCOMBOBOX_H
 #define ABSTRACTCOMBOBOX_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HLayout;
@@ -60,6 +60,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // ABSTRACTCOMBOBOX_H

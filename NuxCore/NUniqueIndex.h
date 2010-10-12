@@ -20,15 +20,15 @@
  */
 
 
-#ifndef NUNIQUEINDEX_H
-#define NUNIQUEINDEX_H
+#ifndef UNIQUEINDEX_H
+#define UNIQUEINDEX_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
-  class NUniqueIndex
+  class UniqueIndex
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NUniqueIndex, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (UniqueIndex, GlobalSingletonInitializer);
   public:
     t_u64 GetUniqueIndex();
   private:
@@ -36,6 +36,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     static NCriticalSection m_CriticalSection;
   };
 
-} //NUX_NAMESPACE_END
+}
 
-#endif // NUNIQUEINDEX_H
+#endif // UNIQUEINDEX_H

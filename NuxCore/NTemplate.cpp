@@ -19,11 +19,11 @@
  *
  */
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NTemplate.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 
-} //NUX_NAMESPACE_END
+}

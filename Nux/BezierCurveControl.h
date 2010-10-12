@@ -23,7 +23,7 @@
 #ifndef BEZIERCURVECONTROL_H
 #define BEZIERCURVECONTROL_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Knot
@@ -100,6 +100,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // BEZIERCURVECONTROL_H

@@ -26,7 +26,7 @@
 #include "IOpenGLRectangleTexture.h"
 #include "RenderingPipe.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   struct TexWrapMapping
@@ -205,8 +205,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       {
         texxform.u0 = texxform.uoffset;
         texxform.v0 = texxform.voffset;
-        texxform.u1 = texxform.u0 + 1.0f / texxform.uscale;
-        texxform.v1 = texxform.v0 + 1.0f / texxform.vscale;
+        texxform.u1 = texxform.u0 + texxform.uscale;
+        texxform.v1 = texxform.v0 + texxform.vscale;
       }
       else if (texxform.m_tex_coord_type == TexCoordXForm::OFFSET_COORD)
       {
@@ -233,8 +233,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       {
         texxform.u0 = t_int32 (texxform.uoffset * tex_width);
         texxform.v0 = t_int32 (texxform.voffset * tex_height);
-        texxform.u1 = texxform.u0 + tex_width * 1.0f / texxform.uscale;
-        texxform.v1 = texxform.v0 + tex_height * 1.0f / texxform.vscale;
+        texxform.u1 = texxform.u0 + tex_width * texxform.uscale;
+        texxform.v1 = texxform.v0 + tex_height * texxform.vscale;
       }
       else if (texxform.m_tex_coord_type == TexCoordXForm::OFFSET_COORD)
       {
@@ -270,8 +270,23 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       texxform.v1 = temp;
     }
 
+    if (tex->Type().IsDerivedFromType (IOpenGLRectangleTexture::StaticObjectType) )
+    {
+      // A chance to avoid some potential errors! Rectangle textures support only GL_CLAMP, GL_CLAMP_TO_EDGE, and GL_CLAMP_TO_BORDER.
+      // See http://www.opengl.org/registry/specs/ARB/texture_rectangle.txt
+      if(texxform.uwrap != TEXWRAP_CLAMP ||
+        texxform.uwrap != TEXWRAP_CLAMP_TO_EDGE ||
+        texxform.uwrap != TEXWRAP_CLAMP_TO_BORDER ||
+        texxform.vwrap != TEXWRAP_CLAMP ||
+        texxform.vwrap != TEXWRAP_CLAMP_TO_EDGE ||
+        texxform.vwrap != TEXWRAP_CLAMP_TO_BORDER)
+      {
+        texxform.uwrap = TEXWRAP_CLAMP;
+        texxform.vwrap = TEXWRAP_CLAMP;
+      }
+    }
     tex->SetWrap (TexWrapGLMapping (texxform.uwrap), TexWrapGLMapping (texxform.vwrap), GL_CLAMP);
     tex->SetFiltering (TexFilterGLMapping (texxform.min_filter), TexFilterGLMapping (texxform.mag_filter) );
   }
 
-} //NUX_NAMESPACE_END
+}

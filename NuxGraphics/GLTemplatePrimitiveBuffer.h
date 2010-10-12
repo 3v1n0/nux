@@ -23,7 +23,7 @@
 #ifndef TEMPLATEPRIMITIVEBUFFER_H
 #define TEMPLATEPRIMITIVEBUFFER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLVertexBuffer;
@@ -85,7 +85,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     INT m_NumQuad;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif //TEMPLATEPRIMITIVEBUFFER_H
 

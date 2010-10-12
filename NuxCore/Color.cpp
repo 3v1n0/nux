@@ -20,7 +20,7 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "Math/MathUtility.h"
 #include <cmath>
 #include "NSystemTypes.h"
@@ -28,7 +28,7 @@
 #include "Color.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //Red colors
@@ -1135,4 +1135,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     s = (int) (satur * 255);
   }
 
-} //NUX_NAMESPACE_END
+}

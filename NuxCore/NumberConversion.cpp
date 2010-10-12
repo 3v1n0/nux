@@ -19,10 +19,10 @@
  *
  */
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NumberConversion.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   /**
@@ -153,4 +153,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return (intValue);
   }
 
-} //NUX_NAMESPACE_END
+}

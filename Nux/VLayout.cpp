@@ -25,7 +25,7 @@
 #include "VLayout.h"
 #include "HLayout.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static const t_s32 VERROR = 0;
@@ -860,4 +860,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

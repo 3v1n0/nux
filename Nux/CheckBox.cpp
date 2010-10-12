@@ -25,7 +25,7 @@
 #include "EditTextBox.h"
 #include "CheckBox.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   CheckBox::CheckBox (const TCHAR *Caption, bool state, NUX_FILE_LINE_DECL)
@@ -240,4 +240,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

@@ -28,7 +28,7 @@
 #include "VLayout.h"
 #include "Validator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   EditTextBox::EditTextBox (const TCHAR *Caption, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
@@ -467,4 +467,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return false;
   }
 
-} //NUX_NAMESPACE_END
+}

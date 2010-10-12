@@ -40,12 +40,11 @@
 #include "Validator.h"
 #include "StaticTextBox.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HLayout;
   class PopUpWindow;
-  class NTexture2D;
 
   class FloatingWindow: public BaseWindow
   {
@@ -129,8 +128,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     bool m_bSizeMatchLayout;
 
 
-    NTexture2D CloseIcon;
-    NTexture2D MinimizeIcon;
+    NTexture* CloseIcon;
+    NTexture* MinimizeIcon;
 
     std::list<View *> m_InterfaceObject;
     HLayout *m_TitleBarLayout;
@@ -142,5 +141,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class WindowCompositor;
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // FLOATINGWINDOW_H

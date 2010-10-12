@@ -25,7 +25,7 @@
 #include "HLayout.h"
 #include "RangeValue.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   RangeValue::RangeValue (float Value, float MinValue, float MaxValue, NUX_FILE_LINE_DECL)
@@ -300,4 +300,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_ValueString->GetTextBackgroundColor();
   }
 
-} //NUX_NAMESPACE_END
+}

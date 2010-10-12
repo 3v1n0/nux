@@ -23,7 +23,7 @@
 #ifndef CHECKBOXPROPERTY_H
 #define CHECKBOXPROPERTY_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class EditTextLinePropertyItem;
@@ -45,7 +45,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     //RangeValue m_range_value;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // CHECKBOXPROPERTY_H
 

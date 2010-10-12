@@ -34,7 +34,7 @@
 
 #include "Gfx_OpenGL.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // Compute the frame rate every FRAME_RATE_PERIODE;
@@ -1948,4 +1948,4 @@ J1:
     return m_PauseGraphicsRendering;
   }
 
-} //NUX_NAMESPACE_END
+}

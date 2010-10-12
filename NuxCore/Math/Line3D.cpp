@@ -20,14 +20,14 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "Vector3.h"
 #include "Line3D.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 
 
-} //NUX_NAMESPACE_END
+}

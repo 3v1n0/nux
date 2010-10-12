@@ -25,7 +25,7 @@
 
 #include "RangeValueIntegerPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   RangeValueIntegerPropertyItem::RangeValueIntegerPropertyItem (const TCHAR *name, int Value, int MinValue, int MaxValue)
@@ -164,4 +164,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     SetValue (value);
     return NodeNetCom::FromXML (elementxml);
   }
-} //NUX_NAMESPACE_END
+}

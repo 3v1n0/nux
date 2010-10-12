@@ -19,7 +19,7 @@
  *
  */
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "MathInc.h"
 
 

@@ -19,7 +19,7 @@
  *
  */
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "Point.h"
 #include "Size.h"
 #include "Box.h"

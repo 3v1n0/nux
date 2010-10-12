@@ -25,7 +25,7 @@
 #include "TextView.h"
 #include "Unicode.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   struct _BOM_LOOKUP BOMLOOK[] =
@@ -1044,4 +1044,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return true;
   }
 
-} //NUX_NAMESPACE_END
+}

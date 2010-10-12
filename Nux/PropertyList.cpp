@@ -27,7 +27,7 @@
 #include "DoubleValidator.h"
 #include "PropertyList.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const int PROPERTY_BORDER_X = 2;
@@ -95,4 +95,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

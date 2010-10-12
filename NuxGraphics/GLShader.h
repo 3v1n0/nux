@@ -23,13 +23,13 @@
 #ifndef GLSHADER_H
 #define GLSHADER_H
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/Error.h"
 #include "NuxCore/NOutputDevice.h"
 
 #include "GLResource.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 // struct ShaderDefinition
 // {
@@ -40,6 +40,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 // void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...);
 //
 // void InsertPreProcessorDefinitions(const NString &ShaderSource, NString &RetSource, NString& ShaderPreprocessorDefines = NString(TEXT("")));
-} //NUX_NAMESPACE_END
+}
 
 #endif //GLSHADER_H

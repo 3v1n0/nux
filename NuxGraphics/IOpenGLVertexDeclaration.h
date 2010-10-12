@@ -23,7 +23,7 @@
 #ifndef IOPENGLVERTEXDECLARATION_H
 #define IOPENGLVERTEXDECLARATION_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLResource;
@@ -50,6 +50,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class GLDeviceFactory;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLVERTEXDECLARATION_H

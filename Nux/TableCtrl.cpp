@@ -28,7 +28,7 @@
 #include "WindowCompositor.h"
 #include "TableCtrl.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const int HANDLERSIZE = 6;
@@ -339,7 +339,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return ret;
   }
 
-  void PresentBufferToScreen (TRefGL<IOpenGLTexture2D> texture, int x, int y)
+  void PresentBufferToScreen (TRefGL<IOpenGLBaseTexture> texture, int x, int y)
   {
     nuxAssert (texture.IsValid() );
 
@@ -736,8 +736,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     {
       SetTextureIndex (0);
       m_FrameBufferObject->FormatFrameBufferObject (m_ViewWidth, m_ViewHeight, BITFMT_R8G8B8A8);
-      m_TextureBuffer[0] = GetThreadGLDeviceFactory()->CreateTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_R8G8B8A8);
-      m_TextureBuffer[1] = GetThreadGLDeviceFactory()->CreateTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_D24S8);
+      m_TextureBuffer[0] = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_R8G8B8A8);
+      m_TextureBuffer[1] = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_D24S8);
       m_FrameBufferObject->SetRenderTarget ( 0, m_TextureBuffer[0]->GetSurfaceLevel (0) );
       m_FrameBufferObject->SetDepthSurface ( 0 );
       m_FrameBufferObject->Activate();
@@ -2426,4 +2426,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

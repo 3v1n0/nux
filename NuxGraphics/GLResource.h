@@ -23,8 +23,8 @@
 #ifndef GLRESOURCE_H
 #define GLRESOURCE_H
 
-#include "NuxCore/NKernel.h"
-#include "NuxCore/NNamespace.h"
+#include "NuxCore/NuxCore.h"
+#include "NuxCore/Namespace.h"
 #include "NuxCore/NSystemTypes.h"
 #include "NuxCore/Error.h"
 #include "NuxCore/FilePath.h"
@@ -53,7 +53,7 @@
 #include "NuxImage/NPng.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class IOpenGLResource;
 
@@ -74,7 +74,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   class NGLAnimatedTexture;
   class FontTexture;
 
-} //NUX_NAMESPACE_END
+}
 
 #define NUX_ENABLE_CG_SHADERS 0
 
@@ -119,7 +119,7 @@ GLXEWContext *glxewGetContext();
 #define NUX_BUFFER_OFFSET(i) ((BYTE *)NULL + (i))
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   enum
@@ -241,7 +241,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     PRIMITIVE_TYPE_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
   } PRIMITIVE_TYPE;
 
-  enum OpenGLResourceType
+  typedef enum
   {
     RTINDEXBUFFER,
     RTVERTEXBUFFER,
@@ -262,7 +262,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     RT_CG_VERTEXSHADER,
     RT_CG_PIXELSHADER,
     RT_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
-  };
+  } OpenGLResourceType;
 
   /* Multi-Sample buffer types */
   typedef enum
@@ -870,7 +870,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLRESOURCE_H
 

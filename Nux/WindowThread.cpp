@@ -32,7 +32,7 @@
 
 #include "WindowThread.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // Thread registration call. Hidden from the users. Implemented in Nux.cpp
@@ -1415,4 +1415,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   }
 
-} //NUX_NAMESPACE_END
+}

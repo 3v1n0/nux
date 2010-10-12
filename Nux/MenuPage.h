@@ -26,7 +26,7 @@
 #include "ActionItem.h"
 #include "FloatingWindow.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class MenuPage;
@@ -250,6 +250,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class MenuBar;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // MENUPAGE_H

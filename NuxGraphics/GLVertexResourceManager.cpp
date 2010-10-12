@@ -29,7 +29,7 @@
 #include "NuxMesh/NMeshObject.h"
 #include "OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (NVertexBuffer);
@@ -840,5 +840,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //     return decl;
 // }
 
-} //NUX_NAMESPACE_END
+}
 

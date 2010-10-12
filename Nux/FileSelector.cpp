@@ -27,7 +27,7 @@
 #include "HLayout.h"
 #include "Button.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Color FILESELECTOR_BUTTON_COLOR = Color (0xFF4D4D4D);
@@ -54,12 +54,13 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     SetCompositionLayout (m_hlayout);
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Icons/Folder-16x16.png") );
-    m_Texture.Update (Path.GetTCharPtr() );
+    m_Texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    m_Texture->Update (Path.GetTCharPtr() );
   }
 
   FileSelector::~FileSelector()
   {
-
+    delete m_Texture;
   }
 
   long FileSelector::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -90,14 +91,14 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
 
     GeometryPositioning gp (eHACenter, eVACenter);
-    Geometry TextureGeo = Geometry (0, 0, m_Texture.GetWidth(), m_Texture.GetHeight() );
+    Geometry TextureGeo = Geometry (0, 0, m_Texture->GetWidth(), m_Texture->GetHeight() );
     Geometry GeoPo = ComputeGeometryPositioning (m_OpenButton->GetGeometry(), TextureGeo, gp);
 
     GetThreadGraphicsContext()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE);
 
     nux::TexCoordXForm texxform;
-    GfxContext.QRP_GLSL_1Tex (GeoPo.x, GeoPo.y, GeoPo.width, GeoPo.height, (&m_Texture)->GetDeviceTexture(), texxform, nux::Color::White);
+    GfxContext.QRP_GLSL_1Tex (GeoPo.x, GeoPo.y, GeoPo.width, GeoPo.height, m_Texture->GetDeviceTexture(), texxform, nux::Color::White);
 
     GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
     GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
@@ -135,4 +136,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

@@ -23,7 +23,7 @@
 #ifndef SEQUENCE_H
 #define SEQUENCE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //
@@ -445,6 +445,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SEQUENCE_H

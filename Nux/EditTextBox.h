@@ -26,7 +26,7 @@
 #include "KeyboardHandler.h"
 #include "TimerProc.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class HLayout;
   class VLayout;
@@ -228,7 +228,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class RGBValuator;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // EDITTEXTBOX_H
 

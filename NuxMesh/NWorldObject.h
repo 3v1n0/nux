@@ -23,7 +23,7 @@
 #ifndef NWORLDOBJECT_H
 #define NWORLDOBJECT_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NWorldObject
@@ -34,7 +34,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NWORLDOBJECT
 

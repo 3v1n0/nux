@@ -26,7 +26,7 @@
 #include "Dialog.h"
 #include "ColorEditor.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HLayout;
@@ -50,6 +50,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Color &m_Color;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COLORPICKERDIALOG_H

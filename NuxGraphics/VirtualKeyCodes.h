@@ -23,7 +23,7 @@
 #ifndef VIRTUALKEYCODES_H
 #define VIRTUALKEYCODES_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // Virtual key codes
@@ -283,7 +283,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 #define     NUX_MAX_VK      256
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // VIRTUALKEYCODES_H
 

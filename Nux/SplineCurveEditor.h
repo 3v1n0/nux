@@ -25,7 +25,7 @@
 
 #include "PaintLayer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class CubicSpline;
@@ -361,8 +361,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     void DestroyLayout();
 
   private:
-    NTexture2D *m_CheckboardPattern;
-    TRefGL<IOpenGLTexture2D> m_Texture;
+    TRefGL<IOpenGLBaseTexture> m_Texture;
     GLSh_DrawFunction *m_DrawFunctionShader;
     AbstractPaintLayer *m_Background;
 
@@ -383,6 +382,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     CubicSpline m_CubicSpline;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SPLINECURVEEDITOR_H

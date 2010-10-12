@@ -32,7 +32,7 @@
 #include "TimerProc.h"
 #include "ClientArea.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ClientArea::ClientArea (NUX_FILE_LINE_DECL)
@@ -54,8 +54,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
     {
       m_FrameBufferObject = GetThreadGLDeviceFactory()->CreateFrameBufferObject();
-      m_MainColorRT = GetThreadGLDeviceFactory()->CreateTexture (2, 2, 1, BITFMT_R8G8B8A8);
-      m_MainDepthRT = GetThreadGLDeviceFactory()->CreateTexture (2, 2, 1, BITFMT_D24S8);
+      m_MainColorRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
+      m_MainDepthRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
     }
   }
 
@@ -114,8 +114,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       if ( (m_FrameBufferObject->GetWidth() != buffer_width) || (m_FrameBufferObject->GetHeight() != buffer_height) )
       {
         m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-        m_MainColorRT = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        m_MainDepthRT = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+        m_MainColorRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+        m_MainDepthRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
       }
 
       m_FrameBufferObject->SetRenderTarget (0, m_MainColorRT->GetSurfaceLevel (0) );
@@ -334,4 +334,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -33,7 +33,7 @@
 #define PT_IN_BOX( x, y, lo_x, hi_x, lo_y, hi_y ) ( IN_BOUNDS(x,lo_x,hi_x) && IN_BOUNDS(y,lo_y,hi_y) )
 #endif
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //enum ObjectType
@@ -168,6 +168,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   bool IsMouseOwned();
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // UTILS_H

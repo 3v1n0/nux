@@ -28,7 +28,7 @@
 #include "AbstractSeparator.h"
 #include "HSeparator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   VToolBar::VToolBar (NUX_FILE_LINE_DECL)
@@ -193,4 +193,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
     NeedRedraw();
   }
-} //NUX_NAMESPACE_END
+}

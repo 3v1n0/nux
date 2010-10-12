@@ -234,7 +234,7 @@ typedef ANSICHAR  TCHAR;
 #pragma warning(disable : 4714) // __forceinline function not expanded									
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   void *GetDllHandle ( const TCHAR *DllName );
@@ -244,7 +244,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   void *GetDllExport ( void *DllHandle, const TCHAR *ExportName );
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SYSTEMWIN32_H
 

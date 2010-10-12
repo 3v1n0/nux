@@ -27,7 +27,7 @@
 #ifndef TEXTVIEW_INCLUDED
 #define TEXTVIEW_INCLUDED
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //
@@ -157,6 +157,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 #define REALIZE_SYSCOL(col) (RealizeColour(col))
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // TEXTVIEW_INCLUDED

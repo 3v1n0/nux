@@ -23,7 +23,7 @@
 #include "GLResource.h"
 #include "GLTextureStates.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const struct TextureStateLookUpTable
@@ -343,4 +343,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 #undef SET_TS_VALUE_FLOAT
 #undef TS_VALUE_FLOAT
 
-} //NUX_NAMESPACE_END
+}

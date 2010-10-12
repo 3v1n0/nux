@@ -20,12 +20,12 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLResource.h"
 #include "GLShader.h"
 #include "GLShaderParameter.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 // //-----------------------------------------------------------------------------
 // void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...)
@@ -171,4 +171,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //     if(ShaderPreprocessorDefines.Length())
 //         RetSource.Insert(Pos, ShaderPreprocessorDefines + NString(TEXT('\n')));
 // }
-} //NUX_NAMESPACE_END
+}

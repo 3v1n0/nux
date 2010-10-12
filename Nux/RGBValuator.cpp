@@ -31,7 +31,7 @@
 #include "DoubleValidator.h"
 #include "RGBValuator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   RGBValuator::RGBValuator (NUX_FILE_LINE_DECL)
@@ -267,14 +267,15 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff000000), Color (0xff323232), 4, 4);
-    NTexture2D CheckboardPattern;
-    CheckboardPattern.Update (&image);
+    NTexture* CheckboardPattern = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    CheckboardPattern->Update (&image);
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_CheckboardLayer = new TextureLayer (CheckboardPattern.GetDeviceTexture(), texxform, Color::White);
+    m_CheckboardLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
 
+    delete CheckboardPattern;
   }
 
   void RGBValuator::DestroyLayout()
@@ -1513,4 +1514,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     sigColorChanged.emit (m_Red, m_Green, m_Blue, m_Alpha);
   }
 
-} //NUX_NAMESPACE_END
+}

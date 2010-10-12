@@ -23,13 +23,13 @@
 #ifndef NANIMATEDTEXTURE_H
 #define NANIMATEDTEXTURE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NBitmapData *LoadAnimatedTextureFromXML (const char *XMLFile);
   bool SaveAnimatedTextureFile (NBitmapData *pAnimatedTexture, const TCHAR *Filename);
   NBitmapData *LoadAnimatedTextureFile (const TCHAR *Filename);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NANIMATEDTEXTURE_H

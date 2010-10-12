@@ -28,7 +28,7 @@
 #include "GLShaderParameter.h"
 #include "GLTextureStates.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class IOpenGLResource;
@@ -129,6 +129,17 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     int BindTexture();
     int BindTextureToUnit (int TextureUnitIndex);
 
+    virtual void GetSurfaceLevel (int Level, TRefGL<IOpenGLSurface>& surface);
+    virtual TRefGL<IOpenGLSurface> GetSurfaceLevel (int Level);
+    virtual int LockRect (
+      int Level,
+      SURFACE_LOCKED_RECT *pLockedRect,
+      const SURFACE_RECT *pRect);
+
+    virtual int UnlockRect (
+      int Level
+      );
+
   protected:
     GLTextureStates _TextureStates;
     bool            _IsPOT;             // is power of two?
@@ -153,6 +164,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend t_s32 GetTextureSize (IOpenGLBaseTexture *pTexture);
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLBASETEXTURE_H

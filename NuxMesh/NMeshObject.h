@@ -23,7 +23,7 @@
 #ifndef NMESHOBJECT_H
 #define NMESHOBJECT_H
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/Math/Vector2.h"
 #include "NuxCore/Math/Vector3.h"
 #include "NuxCore/Math/Vector4.h"
@@ -42,7 +42,7 @@
 #include "NWorldObject.h"
 #include "SceneData.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Float3Set
@@ -267,6 +267,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     nux::Matrix4 m_WorldMatrix;
 
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // NMESHOBJECT_H

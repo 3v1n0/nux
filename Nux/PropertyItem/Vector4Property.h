@@ -23,7 +23,7 @@
 #ifndef VECTOR4PROPERTY_H
 #define VECTOR4PROPERTY_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class EditTextLinePropertyItem;
@@ -93,7 +93,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     EditTextLinePropertyItem *m_W;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // VECTOR4PROPERTY_H
 

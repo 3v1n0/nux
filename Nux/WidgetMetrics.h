@@ -23,7 +23,7 @@
 #ifndef WIDGETMETRICS_H
 #define WIDGETMETRICS_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern const Color COLOR_BLACK ;
@@ -77,6 +77,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // WIDGETMETRICS_H

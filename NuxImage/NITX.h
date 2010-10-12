@@ -23,7 +23,7 @@
 #ifndef NITX_H
 #define NITX_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   enum
@@ -66,6 +66,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   bool CreateITXFile (const TCHAR *InputTextureFile, const TCHAR *OutputTextureFile = 0);
   NBitmapData *LoadITXFile (const TCHAR *ITXFilename);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NITX_H

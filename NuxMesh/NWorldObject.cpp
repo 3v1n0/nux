@@ -20,11 +20,11 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NWorldObject.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NWorldObject::NWorldObject()
@@ -36,4 +36,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
 
   }
-} //NUX_NAMESPACE_END
+}

@@ -44,7 +44,7 @@ namespace nux
   void NuxGraphicsInitialize();
 
 
-} //NUX_NAMESPACE_END
+}
 
 #define GNuxGraphicsResources NUX_GLOBAL_OBJECT_INSTANCE(nux::NuxGraphicsResources)
 

@@ -24,7 +24,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLVertexDeclaration.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexDeclaration);
@@ -101,4 +101,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return false;
   }
 
-} //NUX_NAMESPACE_END
+}

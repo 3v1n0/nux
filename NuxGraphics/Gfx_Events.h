@@ -111,7 +111,7 @@
 //    end_of_key_codes
 //};
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const long I_ExposureMask               = (1L << 15);
@@ -422,6 +422,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     //void* Application;
   } IEvent;
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // EVENTS_H

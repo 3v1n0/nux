@@ -24,7 +24,7 @@
 #include "TimerProc.h"
 #include "SpinBox_Logic.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   SpinBox_Logic::SpinBox_Logic (NUX_FILE_LINE_DECL)
@@ -189,4 +189,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //    }
   }
 
-} //NUX_NAMESPACE_END
+}

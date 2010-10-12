@@ -23,9 +23,9 @@
 #ifndef RENDERINGPIPEASM_H
 #define RENDERINGPIPEASM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // RENDERINGPIPEASM_H

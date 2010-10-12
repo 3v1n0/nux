@@ -23,7 +23,7 @@
 #ifndef DISPLAYACCESSCONTROLLER_H
 #define DISPLAYACCESSCONTROLLER_H
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
 #if defined(NUX_OS_WINDOWS)
 #include "Gfx_OpenGL.h"
@@ -33,7 +33,7 @@
 
 #include "GLThread.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class GLWindowImpl;
   class GLDeviceFactory;
@@ -83,6 +83,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   inlDeclareThreadLocalStorage (GLWindowImpl *, 1, ThreadLocal_GLWindowImpl);
   inlDeclareThreadLocalStorage (GLDeviceFactory *, 2, ThreadLocal_GLDeviceFactory);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // DISPLAYACCESSCONTROLLER_H

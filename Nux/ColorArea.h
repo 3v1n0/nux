@@ -23,7 +23,7 @@
 #ifndef COLORAREA_H
 #define COLORAREA_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ColorArea : public View
@@ -41,6 +41,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Color m_Color;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COLORAREA_H

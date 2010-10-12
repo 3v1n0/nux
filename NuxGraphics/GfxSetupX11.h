@@ -37,7 +37,7 @@
 
 #include <X11/extensions/xf86vmode.h>
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   struct IEvent;
@@ -293,6 +293,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class DisplayAccessController;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif //GFXSETUPX11_H

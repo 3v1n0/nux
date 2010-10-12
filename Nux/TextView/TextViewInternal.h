@@ -32,7 +32,7 @@
 #include "TextViewWidget.h"
 #include "TextDocument.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //
@@ -380,7 +380,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     );
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif
 

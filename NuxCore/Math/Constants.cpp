@@ -20,10 +20,10 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "Constants.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   const float Const::pi       = 3.1415926535f;
   const float Const::Pi       = 3.1415926535f;
@@ -51,4 +51,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   #error Undefined OS.
 #endif
 
-} //NUX_NAMESPACE_END
+}

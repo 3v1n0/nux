@@ -24,13 +24,13 @@
 #include <iostream>
 #include <fstream>
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/NStreamBuffer.h"
 
 #include "Tga.h"
 #include "BitmapFormats.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   /* Load up a TGA file
   *
@@ -680,6 +680,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}
 
 

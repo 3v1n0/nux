@@ -26,7 +26,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLQuery.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLQuery);
@@ -139,4 +139,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return SamplesPassed;
   }
 
-} //NUX_NAMESPACE_END
+}

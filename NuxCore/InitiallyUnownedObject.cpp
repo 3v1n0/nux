@@ -20,11 +20,11 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "InitiallyUnownedObject.h"
 #include "SmartPtr/IntrusiveSP.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (InitiallyUnownedObject);
@@ -40,4 +40,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
   }
 
-} //NUX_NAMESPACE_END
+}

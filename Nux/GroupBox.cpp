@@ -24,7 +24,7 @@
 #include "Layout.h"
 #include "GroupBox.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   GroupBox::GroupBox (const TCHAR *Caption, NUX_FILE_LINE_DECL)
@@ -238,4 +238,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

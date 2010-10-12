@@ -23,7 +23,7 @@
 #ifndef VTOOLBAR_H
 #define VTOOLBAR_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class ActionItem;
   class ToolButton;
@@ -68,5 +68,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     VLayout *m_vlayout;
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // VTOOLBAR_H

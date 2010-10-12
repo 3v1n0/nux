@@ -20,10 +20,10 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "NPlugin.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NPlugin::~NPlugin()
@@ -76,4 +76,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return NULL;
   }
 
-} //NUX_NAMESPACE_END
+}

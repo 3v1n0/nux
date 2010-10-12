@@ -31,7 +31,7 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   GLenum AttachmentBuffer[] =
@@ -401,4 +401,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return id;
   }
 
-} //NUX_NAMESPACE_END
+}

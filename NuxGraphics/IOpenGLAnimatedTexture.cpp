@@ -23,9 +23,9 @@
 #include "GLDeviceFactory.h"
 #include "GLDeviceObjects.h"
 #include "IOpenGLAnimatedTexture.h"
-#include "IOpenGLRectangleTexture.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLAnimatedTexture);
@@ -40,7 +40,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
     for (int i = 0; i < Depth; i++)
     {
-      TRefGL<IOpenGLRectangleTexture> Texture = GetThreadGLDeviceFactory()->CreateRectangleTexture (Width, Height, 1, PixelFormat);
+      TRefGL<IOpenGLBaseTexture> Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Width, Height, 1, PixelFormat);
       _FrameTextureArray.push_back (Texture);
       _FrameTimeArray.push_back (41); // 41 ms = 24 frames/second
     }
@@ -140,4 +140,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return _Depth;
   }
 
-} //NUX_NAMESPACE_END
+}

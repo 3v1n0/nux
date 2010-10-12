@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef float (*FunctionCallback) (float);
@@ -57,13 +57,12 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     float m_minX, m_minY, m_maxX, m_maxY;
     FunctionCallback m_FunctionCallback;
 
-    TRefGL<IOpenGLTexture2D> Texture;
-    NTexture2D BackgroundTexture;
+    TRefGL<IOpenGLBaseTexture> Texture;
     TextureLayer *m_BackgroundLayer;
     GLSh_DrawFunction *m_DrawFunctionShader;
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // FUNCTIONGRAPH_H

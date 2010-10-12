@@ -24,7 +24,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "BitmapFormats.h"
 #include "DDS.h"
 
@@ -36,7 +36,7 @@ static const unsigned long FOURCC_DXT3 = 0x33545844l; //(MAKEFOURCC('D','X','T',
 static const unsigned long FOURCC_DXT5 = 0x35545844l; //(MAKEFOURCC('D','X','T','5'))
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NBitmapData *Load_DDS_File (const TCHAR *filename)
@@ -384,4 +384,4 @@ quick_exit:
     return BitmapData;
   }
 
-} //NUX_NAMESPACE_END
+}

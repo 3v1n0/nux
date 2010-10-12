@@ -118,7 +118,7 @@
 //typedef unsigned char   Boolean; /* 0 or 1 */
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   /* Some fundamental constants */
@@ -172,6 +172,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   /* intended to work the same as g_utf8_validate */
   bool tr_utf8_validate ( const char *str, int max_len, const char **end );
 
-} //NUX_NAMESPACE_END
+}
 
 #endif /* NUNI_H */

@@ -26,7 +26,7 @@
 #include "NodeItem.h"
 #include "NodeNetProtocol.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class TableItem;
@@ -231,7 +231,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class ListControl;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // TABLEITEM_H
 

@@ -24,7 +24,7 @@
 
 #include "../ColorEditor.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ColorPreview;
@@ -44,6 +44,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     virtual int GetItemBestHeight();
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COLORPREVIEWPROPERTYITEM_H

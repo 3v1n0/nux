@@ -23,7 +23,7 @@
 #ifndef GROUPBOX_H
 #define GROUPBOX_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Layout;
@@ -56,6 +56,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     CoreArea m_CaptionArea;
     Layout *m_layout;
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // GROUPBOX_H

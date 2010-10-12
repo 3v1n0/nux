@@ -20,9 +20,9 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 //
 // Copy a string with length checking.
@@ -1362,4 +1362,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return ResultString;
   }
 
-} //NUX_NAMESPACE_END
+}

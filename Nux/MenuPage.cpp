@@ -27,7 +27,7 @@
 #include "ActionItem.h"
 #include "VLayout.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (MenuItem);
@@ -1093,4 +1093,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

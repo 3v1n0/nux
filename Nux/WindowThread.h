@@ -23,7 +23,7 @@
 #ifndef WINDOWTHREAD_H
 #define WINDOWTHREAD_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class WindowThread;
@@ -419,6 +419,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // WINDOWTHREAD_H

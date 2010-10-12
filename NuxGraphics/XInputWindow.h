@@ -31,7 +31,7 @@
 
 #include <X11/extensions/xf86vmode.h>
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/Rect.h"
 
 namespace nux

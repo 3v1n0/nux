@@ -23,7 +23,7 @@
 #ifndef IOPENGLASMSHADER_H
 #define IOPENGLASMSHADER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   typedef enum
@@ -137,6 +137,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class GLDeviceFactory;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IOPENGLASMSHADER_H

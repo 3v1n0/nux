@@ -23,7 +23,7 @@
 #ifndef NPROCESS_H
 #define NPROCESS_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #ifdef _WIN32
@@ -40,7 +40,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   class NProcess
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NProcess, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NProcess, GlobalSingletonInitializer);
   public:
 
     DWORD GetProcessID();
@@ -61,6 +61,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NPROCESS_H

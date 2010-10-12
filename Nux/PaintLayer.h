@@ -26,7 +26,7 @@
 #include "AbstractPaintLayer.h"
 #include "NuxGraphics/OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NTexture;
@@ -92,6 +92,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     TexCoordXForm m_texxform;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // PAINTLAYER_H

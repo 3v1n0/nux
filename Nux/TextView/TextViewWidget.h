@@ -25,7 +25,7 @@
 
 #include "../View.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HScrollBar;
@@ -131,7 +131,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     // Backup texture to speed up scrolling
     TRefGL<IOpenGLFrameBufferObject> m_FrameBufferObject;
-    TRefGL<IOpenGLTexture2D> m_TextureBuffer[2];
+    TRefGL<IOpenGLBaseTexture> m_TextureBuffer[2];
     void SwapTextureIndex()
     {
       m_TextureIndex = (m_TextureIndex == 0) ? 1 : 0;
@@ -223,6 +223,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     ///////////////////////////////////////////////////////
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // TEXTVIEWWIDGET_H

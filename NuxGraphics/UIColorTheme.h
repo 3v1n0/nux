@@ -25,7 +25,7 @@
 
 #include "NuxCore/Color.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class UIColorThemeImpl
@@ -63,6 +63,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 #define gUIColorTheme UIColorThemeImpl::Instance()
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // UICOLORTHEME_H

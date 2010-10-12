@@ -26,7 +26,7 @@
 #include "ValuatorDouble.h"
 #include "DoubleValuatorPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   DoubleValuatorPropertyItem::DoubleValuatorPropertyItem (const TCHAR *name, float Value, float Step, float MinValue, float MaxValue)
@@ -161,4 +161,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     SetStep (step);
     return NodeNetCom::FromXML (elementxml);
   }
-} //NUX_NAMESPACE_END
+}

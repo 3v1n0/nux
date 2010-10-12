@@ -23,7 +23,7 @@
 #ifndef VSEPARATOR_H
 #define VSEPARATOR_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class VSeparator: public AbstractSeparator
@@ -75,6 +75,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // VSEPARATOR_H

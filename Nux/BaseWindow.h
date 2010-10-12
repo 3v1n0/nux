@@ -37,12 +37,11 @@
 #include "StaticTextBox.h"
 #include "PaintLayer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HLayout;
   class PopUpWindow;
-  class NTexture2D;
 
   /*!
       A user provided callback to assert the size and position of a floating area.
@@ -185,6 +184,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class WindowCompositor;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // BASEWINDOW_H

@@ -29,7 +29,7 @@
 
 #include "GLSh_DrawFunction.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern bool USE_ARB_SHADERS;
@@ -225,7 +225,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //    GLProgramObject::LoadCombinedShaderFile(TEXT("..//Shaders//DrawFunction.glsl"), TEXT("main"), TEXT("main"), Definitions);
   }
 
-  void GLSh_DrawFunction::SetTextureFunction (TRefGL<IOpenGLTexture2D> device_texture)
+  void GLSh_DrawFunction::SetTextureFunction (TRefGL<IOpenGLBaseTexture> device_texture)
   {
     m_device_texture = device_texture;
   }
@@ -236,4 +236,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     _ScreenOffsetY = y;
   }
 
-} //NUX_NAMESPACE_END
+}

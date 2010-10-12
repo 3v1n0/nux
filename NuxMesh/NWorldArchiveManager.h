@@ -25,7 +25,7 @@
 
 #include "NuxCore/FileManager/NSerializer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class NMeshObject;
   class N3DWorld;
@@ -83,5 +83,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NString m_CurrentWorldArchive;
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // NWORLDARCHIVEMANAGER_H

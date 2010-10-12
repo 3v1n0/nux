@@ -61,7 +61,7 @@
 //                float if pbuffer is floating point
 //
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class PBuffer
@@ -170,6 +170,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     bool m_bManaged;
 #endif
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // __PBUFFERS_H__

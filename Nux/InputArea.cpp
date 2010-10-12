@@ -30,7 +30,7 @@
 #include "NuxGraphics/OpenGLEngine.h"
 #include "WindowCompositor.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   long g_FocusHandle = -1;
@@ -444,4 +444,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_EventHandler.m_mouse_positiony = y;
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -23,7 +23,7 @@
 #ifndef RGBPROPERTY_H
 #define RGBPROPERTY_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Button;
@@ -106,7 +106,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Color::Format m_color_format;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // RGBPROPERTY_H
 

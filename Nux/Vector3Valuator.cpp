@@ -25,7 +25,7 @@
 #include "EditTextBox.h"
 #include "Vector3Valuator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Vector3Valuator::Vector3Valuator (NUX_FILE_LINE_DECL)
@@ -199,4 +199,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

@@ -20,14 +20,15 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLResource.h"
 #include "IOpenGLResource.h"
 #include "GLShaderParameter.h"
 #include "GLTextureStates.h"
 #include "IOpenGLBaseTexture.h"
+#include "IOpenGLSurface.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLBaseTexture);
@@ -221,6 +222,26 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return OGL_OK;
   }
 
+  void IOpenGLBaseTexture::GetSurfaceLevel (int Level, TRefGL<IOpenGLSurface>& surface)
+  {
+
+  }
+
+  TRefGL<IOpenGLSurface> IOpenGLBaseTexture::GetSurfaceLevel (int Level)
+  {
+    return TRefGL<IOpenGLSurface> (0);
+  }
+
+  int IOpenGLBaseTexture::LockRect (int Level, SURFACE_LOCKED_RECT *pLockedRect, const SURFACE_RECT *pRect)
+  {
+    return 0;
+  }
+
+  int IOpenGLBaseTexture::UnlockRect (int Level)
+  {
+    return 0;
+  }
+
   t_s32 GetTextureSize (IOpenGLBaseTexture *pTexture)
   {
     GLint unpack_alignment = GPixelFormats[pTexture->_PixelFormat].RowMemoryAlignment;
@@ -356,4 +377,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

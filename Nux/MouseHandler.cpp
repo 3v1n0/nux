@@ -284,4 +284,4 @@ namespace nux
 
     m_hasMouseFocus = false;
   }
-} //NUX_NAMESPACE_END
+}

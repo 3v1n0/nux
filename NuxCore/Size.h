@@ -23,7 +23,7 @@
 #ifndef SIZE_H
 #define SIZE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Size
@@ -50,7 +50,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     t_int32 height_;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SIZE_H
 

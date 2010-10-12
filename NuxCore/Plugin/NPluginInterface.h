@@ -25,7 +25,7 @@
 
 #include "NPlugin.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NPluginInterface
@@ -40,7 +40,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NPLUGININTERFACE_H
 

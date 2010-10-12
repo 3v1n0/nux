@@ -25,12 +25,11 @@
 
 #include "NuxGraphics/OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class MenuBar;
   class MenuPage;
-  class NTexture2D;
 
   class ActionItem: public Object
   {
@@ -59,15 +58,15 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //    MenuPage* GetMenu() const;
 
     void SetFont (IntrusiveSP<FontTexture> font);
-    void SetIcon (const NTexture2D &icon);
-    NTexture2D &GetIcon();
+    void SetIcon (const NTexture* icon);
+    const NTexture* GetIcon();
 
     sigc::signal<void> sigAction;
 
   private:
     //! A value defined by the user at construction time.
     int m_UserValue;
-    NTexture2D m_Icon;
+    NTexture* m_Icon;
     NString m_Label;
     bool m_IsActivated;
     MenuPage *m_Menu;
@@ -79,6 +78,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // ACTIONITEM_H

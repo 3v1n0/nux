@@ -20,11 +20,11 @@
  */
 
 
-#include "../NKernel.h"
+#include "../NuxCore.h"
 #include "Trigonometry.h"
 #include "Constants.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // Assume the spherical coordinate system relatively to a right handed xyz,
@@ -89,5 +89,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return Vector3 (r, theta, phi);
   }
 
-} //NUX_NAMESPACE_END
+}
 

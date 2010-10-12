@@ -25,7 +25,7 @@
 #include "EditTextBox.h"
 #include "Valuator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Valuator::Valuator (NUX_FILE_LINE_DECL)
@@ -179,4 +179,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

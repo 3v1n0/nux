@@ -25,7 +25,7 @@
 
 #include "Layout.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class VLayout: public Layout
@@ -119,6 +119,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     void ComputeStacking (t_s32 length, t_s32 &offset_space, t_s32 &element_margin);
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // VLAYOUT_H

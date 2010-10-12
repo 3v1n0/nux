@@ -23,7 +23,7 @@
 #ifndef VECTOR4_H
 #define VECTOR4_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   template <typename T>
@@ -284,7 +284,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   typedef Vec4<float> Vector4;
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // VECTOR4_H
 

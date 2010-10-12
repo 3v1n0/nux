@@ -28,7 +28,7 @@
 #include "Vector4.h"
 #include "Vector3.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class Matrix2;
   template<typename T> class Vec2;
@@ -302,6 +302,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   typedef Vec2<float> Vector2;
   typedef Vec2<float> Vertex2;
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // VECTOR2_H

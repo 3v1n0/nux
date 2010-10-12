@@ -31,7 +31,7 @@
 
 #include "FontRenderer.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern bool USE_ARB_SHADERS;
@@ -91,6 +91,17 @@ namespace nux   //NUX_NAMESPACE_BEGIN
                         MOV result.color, temp;                           \n\
                         END");
 
+  NString FontAsmFrgRect = TEXT (
+    "!!ARBfp1.0                                       \n\
+    PARAM color = program.local[0];                   \n\
+    TEMP temp;                                        \n\
+    TEMP tex0;                                        \n\
+    TEX tex0, fragment.texcoord[0], texture[0], RECT; \n\
+    MOV temp, color;                                  \n\
+    MUL temp.w, color, tex0;                          \n\
+    MOV result.color, temp;                           \n\
+    END");
+
 
   FontRenderer::FontRenderer (GraphicsContext &OpenGLEngine)
     :   m_OpenGLEngine (OpenGLEngine)
@@ -112,13 +123,18 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
     else
     {
-      m_AsmVertexShaderProg  = GetThreadGLDeviceFactory()->CreateAsmVertexShader();
-      m_AsmPixelShaderProg   = GetThreadGLDeviceFactory()->CreateAsmPixelShader();
+      //m_AsmVertexShaderProg  = GetThreadGLDeviceFactory()->CreateAsmVertexShader();
+      //m_AsmPixelShaderProg   = GetThreadGLDeviceFactory()->CreateAsmPixelShader();
       m_AsmShaderProg        = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
 
       m_AsmShaderProg->LoadVertexShader (TCHAR_TO_ANSI (*FontAsmVtx) );
       m_AsmShaderProg->LoadPixelShader (TCHAR_TO_ANSI (*FontAsmFrg) );
       m_AsmShaderProg->Link();
+
+      _asm_font_texture_rect_prog = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+      _asm_font_texture_rect_prog->LoadVertexShader (TCHAR_TO_ANSI (*FontAsmVtx) );
+      _asm_font_texture_rect_prog->LoadPixelShader (TCHAR_TO_ANSI (*FontAsmFrgRect) );
+      _asm_font_texture_rect_prog->Link();
     }
   }
 
@@ -306,7 +322,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Vector4 *Offset = new Vector4[StrLength*4];
     Vector4 *Scale = new Vector4[StrLength*4];
 
-    TRefGL<NGLTexture2D> glTexture = m_OpenGLEngine.ResourceCache.GetCachedResource (Font->TextureArray[0]);
+    TRefGL<NGLTexture> glTexture = m_OpenGLEngine.ResourceCache.GetCachedResource (Font->TextureArray[0]);
 
     float tex_width = (float) glTexture->m_Texture->GetWidth();
     float tex_height = (float) glTexture->m_Texture->GetHeight();
@@ -361,29 +377,58 @@ namespace nux   //NUX_NAMESPACE_BEGIN
           Scale[II*4 + j].w = 1.0f;
         }
 
-        //upper left
-        UV[II*4 + 0].x = CharX / tex_width;
-        UV[II*4 + 0].y = CharY / tex_height;
-        UV[II*4 + 0].z = 0.0f;
-        UV[II*4 + 0].w = 0.0f;
+        if(glTexture->m_Texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+        {
+          //upper left
+          UV[II*4 + 0].x = CharX;
+          UV[II*4 + 0].y = CharY;
+          UV[II*4 + 0].z = 0.0f;
+          UV[II*4 + 0].w = 0.0f;
 
-        //upper right
-        UV[II*4 + 1].x = (CharX + Width) / tex_width;
-        UV[II*4 + 1].y = CharY / tex_height;
-        UV[II*4 + 1].z = 0.0f;
-        UV[II*4 + 1].w = 0.0f;
+          //upper right
+          UV[II*4 + 1].x = (CharX + Width);
+          UV[II*4 + 1].y = CharY;
+          UV[II*4 + 1].z = 0.0f;
+          UV[II*4 + 1].w = 0.0f;
 
-        //lower right
-        UV[II*4 + 2].x = (CharX + Width) / tex_width;
-        UV[II*4 + 2].y = (CharY + Height) / tex_height;
-        UV[II*4 + 2].z = 0.0f;
-        UV[II*4 + 2].w = 0.0f;
+          //lower right
+          UV[II*4 + 2].x = (CharX + Width);
+          UV[II*4 + 2].y = (CharY + Height);
+          UV[II*4 + 2].z = 0.0f;
+          UV[II*4 + 2].w = 0.0f;
 
-        //lower left
-        UV[II*4 + 3].x = CharX / tex_width;
-        UV[II*4 + 3].y = (CharY + Height) / tex_height;
-        UV[II*4 + 3].z = 0.0f;
-        UV[II*4 + 3].w = 0.0f;
+          //lower left
+          UV[II*4 + 3].x = CharX;
+          UV[II*4 + 3].y = (CharY + Height);
+          UV[II*4 + 3].z = 0.0f;
+          UV[II*4 + 3].w = 0.0f;
+        }
+        else
+        {
+          //upper left
+          UV[II*4 + 0].x = CharX / tex_width;
+          UV[II*4 + 0].y = CharY / tex_height;
+          UV[II*4 + 0].z = 0.0f;
+          UV[II*4 + 0].w = 0.0f;
+
+          //upper right
+          UV[II*4 + 1].x = (CharX + Width) / tex_width;
+          UV[II*4 + 1].y = CharY / tex_height;
+          UV[II*4 + 1].z = 0.0f;
+          UV[II*4 + 1].w = 0.0f;
+
+          //lower right
+          UV[II*4 + 2].x = (CharX + Width) / tex_width;
+          UV[II*4 + 2].y = (CharY + Height) / tex_height;
+          UV[II*4 + 2].z = 0.0f;
+          UV[II*4 + 2].w = 0.0f;
+
+          //lower left
+          UV[II*4 + 3].x = CharX / tex_width;
+          UV[II*4 + 3].y = (CharY + Height) / tex_height;
+          UV[II*4 + 3].z = 0.0f;
+          UV[II*4 + 3].w = 0.0f;
+        }
       }
 
       CurX += abcA + abcB + abcC;
@@ -397,6 +442,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     int iScale = 0;
     int iOffset = 0;
 
+    TRefGL<IOpenGLAsmShaderProgram> shader_program;
     if (!USE_ARB_SHADERS)
     {
       m_ShaderProg->Begin();
@@ -427,7 +473,13 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
     else
     {
-      m_AsmShaderProg->Begin();
+      shader_program = m_AsmShaderProg;
+      if(glTexture->m_Texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+      {
+        shader_program = _asm_font_texture_rect_prog;
+      }
+      shader_program->Begin();
+
       CHECKGL ( glMatrixMode (GL_MODELVIEW) );
       CHECKGL ( glLoadIdentity() );
       CHECKGL ( glLoadMatrixf ( (float *) GetThreadGraphicsContext()->GetModelViewMatrix().m) );
@@ -490,13 +542,11 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
     else
     {
-      m_AsmShaderProg->End();
+      shader_program->End();
     }
 
     GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
     GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
-
-    CHECKGL ( glDisable (GL_TEXTURE_RECTANGLE_ARB) );
 
     CurX -= x + CURSOR_OFFSET;
 
@@ -626,4 +676,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return NumCharToDraw;
   }
 
-} //NUX_NAMESPACE_END
+}

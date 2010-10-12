@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "Math/MathUtility.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #define COPYBLOCKSIZE	32768
@@ -260,5 +260,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return -1;
   }
 
-} //NUX_NAMESPACE_END
+}
 

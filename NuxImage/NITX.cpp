@@ -20,14 +20,14 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/FilePath.h"
 #include "ImageSurface.h"
 
 //#include "NTextureArchiveManager.h"
 #include "NITX.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   bool TextureArchiveAdd_ver_0_0_1 (NSerializer *FileStream,  NBitmapData *TextureData, const TCHAR *InputTextureFile, NUX_OUT t_s64 &Offset)
@@ -618,5 +618,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return data;
   }
 
-} //NUX_NAMESPACE_END
+}
 

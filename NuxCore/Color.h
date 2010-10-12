@@ -25,7 +25,7 @@
 
 #include "NSystemTypes.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #define NUX_COLOR_RGB(r, g, b)
@@ -308,7 +308,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   void HLStoRGB (float &r, float &g, float &b, float hue, float light, float satur);
   void RGBtoHLS (float rr, float gg, float bb, float &hue, float &light, float &satur);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COLOR_H
 

@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Histogram : public View
@@ -49,11 +49,11 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     int m_minX, m_minY, m_maxX, m_maxY;
 
     std::vector<int> m_HistogramData;
-    TRefGL<IOpenGLTexture2D> Texture;
+    TRefGL<IOpenGLBaseTexture> Texture;
     TextureLayer *m_BackgroundLayer;
     GLSh_DrawFunction *m_DrawFunctionShader;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // HISTOGRAM_H

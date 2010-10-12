@@ -24,7 +24,7 @@
 #include "NuxGraphics/GLTextureResourceManager.h"
 #include "ActionItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (ActionItem);
@@ -37,12 +37,13 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     ,   m_Menu (0)
     ,   m_Enable (true)
   {
+    m_Icon = 0;
     SetLabel (label);
   }
 
   ActionItem::~ActionItem()
   {
-
+    NUX_SAFE_DELETE (m_Icon);
   }
 
   void ActionItem::DrawAsMenuItem (GraphicsContext &GfxContext, CoreArea &area, bool is_highlighted, bool draw_icone)
@@ -64,7 +65,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       gPainter.Paint2DQuadColor (GfxContext, geo, Color (COLOR_FOREGROUND_SECONDARY) );
     }
 
-    gPainter.Draw2DTextureAligned (GfxContext, &m_Icon, icon_geo, TextureAlignmentStyle (eTACenter, eTACenter) );
+    if(m_Icon)
+      gPainter.Draw2DTextureAligned (GfxContext, m_Icon, icon_geo, TextureAlignmentStyle (eTACenter, eTACenter) );
 
     gPainter.PaintTextLineStatic (GfxContext, GetThreadFont(), text_geo, std::string (label), Color (0xFF000000), eAlignTextLeft);
   }
@@ -100,7 +102,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       }
     }
 
-    gPainter.Draw2DTextureAligned (GfxContext, &m_Icon, base, TextureAlignmentStyle (eTACenter, eTACenter) );
+    gPainter.Draw2DTextureAligned (GfxContext, m_Icon, base, TextureAlignmentStyle (eTACenter, eTACenter) );
   }
 
   void ActionItem::Activate (bool b)
@@ -133,12 +135,15 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_Label.GetTCharPtr();
   }
 
-  void ActionItem::SetIcon (const NTexture2D &icon)
+  void ActionItem::SetIcon (const NTexture* icon)
   {
-    m_Icon = icon;
+    if(m_Icon)
+      NUX_SAFE_DELETE (m_Icon);
+    m_Icon = icon->Clone();
   }
 
-  NTexture2D &ActionItem::GetIcon()
+  // NUXTODO: should return the bitmap data instead or a const pointer?.
+  const NTexture* ActionItem::GetIcon()
   {
     return m_Icon;
   }
@@ -153,4 +158,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //}
 
 
-} //NUX_NAMESPACE_END
+}

@@ -23,7 +23,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLTexture2D.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLTexture2D);
@@ -140,4 +140,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return OGL_OK;
   }
 
-} //NUX_NAMESPACE_END
+}

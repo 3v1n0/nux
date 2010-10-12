@@ -20,11 +20,11 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "N3DWorld.h"
 #include "NMeshObject.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   N3DWorld::N3DWorld()
@@ -84,6 +84,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_MeshObjectArray.clear();
   }
 
-} //NUX_NAMESPACE_END
+}
 
 

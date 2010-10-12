@@ -23,7 +23,7 @@
 #ifndef RANGEVALUEINTEGERPROPERTYITEM_H
 #define RANGEVALUEINTEGERPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //#include "RangeValueInteger.h"
@@ -47,6 +47,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // RANGEVALUEINTEGERPROPERTYITEM_H

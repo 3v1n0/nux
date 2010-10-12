@@ -23,7 +23,7 @@
 #ifndef NSERIALIZER_H
 #define NSERIALIZER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NSerializer
@@ -224,7 +224,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NSERIALIZER_H
 

@@ -27,7 +27,7 @@
 #include "BitmapFormats.h"
 #include "ImageSurface.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //! A cairo graphics container
@@ -61,7 +61,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     int m_height; //!< Surface height.
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // CAIROGRAPHICS_H
 

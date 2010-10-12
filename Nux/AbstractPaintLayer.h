@@ -23,7 +23,7 @@
 #ifndef ABSTRACTPAINTLAYER_H
 #define ABSTRACTPAINTLAYER_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class AbstractPaintLayer
@@ -58,7 +58,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Geometry m_geometry;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // ABSTRACTPAINTLAYER_H
 

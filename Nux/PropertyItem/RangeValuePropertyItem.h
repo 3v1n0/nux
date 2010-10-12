@@ -23,7 +23,7 @@
 #ifndef RANGEVALUEPROPERTYITEM_H
 #define RANGEVALUEPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //#include "RangeValue.h"
@@ -46,6 +46,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   private:
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // RANGEVALUEPROPERTYITEM_H

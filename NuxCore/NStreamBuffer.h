@@ -25,7 +25,7 @@
 
 #include <streambuf>
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class NStreamBuffer : public std::streambuf
   {
@@ -52,6 +52,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     const BYTE *current_;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NSTREAMBUFFER_H

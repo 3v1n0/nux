@@ -24,7 +24,7 @@
 
 #include "ListControl.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ListControl::ListControl (bool floating_column)
@@ -44,4 +44,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   }
 
-} //NUX_NAMESPACE_END
+}

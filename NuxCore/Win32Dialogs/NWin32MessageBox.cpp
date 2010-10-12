@@ -20,10 +20,10 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NWin32MessageBox.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 //
 // Get system error.
@@ -190,5 +190,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return 0;
   }
 
-} //NUX_NAMESPACE_END
+}
 

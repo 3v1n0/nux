@@ -25,7 +25,7 @@
 
 #include "AbstractComboBox.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Menu;
@@ -95,6 +95,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     HLayout        *m_Layout;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COMBOBOX_COMPLEX_H

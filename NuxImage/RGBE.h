@@ -31,14 +31,14 @@
 See rgbe.txt file for more details.
 */
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "ImageSurface.h"
 
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   typedef struct
   {
@@ -78,6 +78,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
                            int num_scanlines);
   NBitmapData *LoadRGBE (const TCHAR *filename);
 
-} //NUX_NAMESPACE_END
+}
 #endif // RGBE_H
 

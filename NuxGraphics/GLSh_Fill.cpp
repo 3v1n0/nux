@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "GLResource.h"
 #include "GLDeviceFactory.h"
 #include "GLDeviceObjects.h"
@@ -30,7 +30,7 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "NuxCore/Math/Matrix4.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   GLSh_Fill::GLSh_Fill()
@@ -132,4 +132,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   {
 
   }
-} //NUX_NAMESPACE_END
+}

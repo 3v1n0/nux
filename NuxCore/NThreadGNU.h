@@ -23,7 +23,7 @@
 #ifndef NTHREADGNU_H
 #define NTHREADGNU_H
 
-#include "NObjectType.h"
+#include "ObjectType.h"
 
 /*#include <sys/ppu_thread.h>
 #include <sys/synchronization.h>
@@ -31,7 +31,7 @@
 #include <sys/timer.h>
 #include <sys/process.h>*/
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class NThreadSafeCounter
   {
@@ -447,7 +447,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
     ThreadRoutineFunc   	m_pThreadFunc;	//	The Worker Thread Function Pointer
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NTHREADGNU_H
 

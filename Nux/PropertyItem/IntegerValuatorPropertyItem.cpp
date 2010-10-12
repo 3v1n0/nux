@@ -26,7 +26,7 @@
 #include "ValuatorInt.h"
 #include "IntegerValuatorPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   IntValuatorPropertyItem::IntValuatorPropertyItem (const TCHAR *name, int Value, int Step, int MinValue, int MaxValue)
@@ -159,4 +159,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     SetStep (step);
     return NodeNetCom::FromXML (elementxml);
   }
-} //NUX_NAMESPACE_END
+}

@@ -23,9 +23,9 @@
 #ifndef NTHREAD_H
 #define NTHREAD_H
 
-#include "NObjectType.h"
+#include "ObjectType.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NThreadSafeCounter
@@ -489,7 +489,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
 //        }
 //    }
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NTHREAD_H
 

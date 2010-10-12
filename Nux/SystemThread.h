@@ -23,7 +23,7 @@
 #ifndef SYSTEMTHREAD_H
 #define SYSTEMTHREAD_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class WindowCompositor;
@@ -94,6 +94,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     friend class WindowThread;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // SYSTEMTHREAD_H

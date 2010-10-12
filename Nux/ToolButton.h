@@ -25,12 +25,11 @@
 
 #include "ActionItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HLayout;
   class ActionItem;
-  class NTexture2D;
 
   class ToolButton : public View
   {
@@ -46,7 +45,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     void SetAction (ActionItem *action);
     void SetState (bool b);
-    void SetBitmap (const NTexture2D &Bitmap);
+    void SetBitmap (const NTexture* Texture);
     // emitters
     void EmitClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
@@ -62,10 +61,10 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     HLayout    *hlayout;
     CoreArea   *m_IconArea;
     ActionItem *m_ActionItem;
-    NTexture2D  m_Bitmap;
+    NTexture   *m_Texture;
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // TOOLBUTTON_H

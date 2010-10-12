@@ -26,7 +26,7 @@
 #include "GLError.h"
 #include "GLResource.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //! Type of shader in a shader
@@ -135,7 +135,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   private:
 
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // GLSHADERPARAMETER_H
 

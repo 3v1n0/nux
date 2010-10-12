@@ -23,7 +23,7 @@
 #ifndef VALIDATOR_H
 #define VALIDATOR_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Validator
@@ -45,6 +45,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     virtual void Alternative (const TCHAR *str) {}
 
   };
-} //NUX_NAMESPACE_END
+}
 
 #endif // VALIDATOR_H

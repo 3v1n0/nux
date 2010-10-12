@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/Color.h"
 #include "ImageSurface.h"
 #include "BitmapFormats.h"
@@ -35,7 +35,7 @@
 #include "NITX.h"
 #include "NAnimatedTexture.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   extern PixelFormatInfo GPixelFormats[];
@@ -1469,5 +1469,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return true;
   }
 
-} //NUX_NAMESPACE_END
+}
 

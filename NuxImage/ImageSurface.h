@@ -30,7 +30,7 @@
 #define DEBUG_WARNING(a)
 #define DEBUG_EXIT(a)
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class RawData
@@ -522,6 +522,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   NBitmapData *LoadImageFile (const TCHAR *Filename);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // IMAGE_H

@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
 #include "NuxCore/FilePath.h"
 #include "NuxImage/Tga.h"
@@ -30,7 +30,7 @@
 
 #include "NuxCore/TinyXML/tinyxml.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   bool IsUITextureArchive (const TCHAR *ArchiveFileName)
@@ -664,4 +664,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

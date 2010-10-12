@@ -23,7 +23,7 @@
 #ifndef VECTOR3VALUATORPROPERTYITEM_H
 #define VECTOR3VALUATORPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Vector3DoubleValuator;
@@ -46,6 +46,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     //RangeValue m_range_value;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // VECTOR3VALUATORPROPERTYITEM_H

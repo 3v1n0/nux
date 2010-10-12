@@ -24,7 +24,7 @@
 #include "TextureArea.h"
 #include "NuxImage/ImageSurface.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   TextureArea::TextureArea (NUX_FILE_LINE_DECL)
@@ -106,4 +106,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     sigMouseDrag.emit (x, y);
   }
 
-} //NUX_NAMESPACE_END
+}

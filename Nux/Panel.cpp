@@ -27,7 +27,7 @@
 #include "HScrollBar.h"
 #include "Panel.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Panel::Panel (NUX_FILE_LINE_DECL)
@@ -244,4 +244,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NeedRedraw();
   }
 
-} //NUX_NAMESPACE_END
+}

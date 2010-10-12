@@ -26,7 +26,7 @@
 #include "OpenGLEngine.h"
 #include "FontTexture.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (FontTexture);
@@ -52,6 +52,12 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   FontTexture::~FontTexture()
   {
+    std::vector<NTexture*>::iterator it;
+    for(it = TextureArray.begin(); it != TextureArray.end(); it++)
+    {
+      delete (*it);
+    }
+    TextureArray.clear();
   }
 
   int FontTexture::GetCharWidth (const TCHAR &c) const
@@ -215,8 +221,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
           NString font_texture_file = GNuxGraphicsResources.FindResourceLocation (texture);
 #endif
 
-          NTexture2D *Texture = new NTexture2D;
-          NBitmapData *BitmapData = LoadImageFile (font_texture_file.GetTCharPtr() );
+          NRectangleTexture *Texture = new NRectangleTexture ();
+          NBitmapData *BitmapData = LoadImageFile (font_texture_file.GetTCharPtr ());
 
           if (BitmapData)
             Texture->Update (BitmapData, false);
@@ -350,4 +356,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_Charset;
   }
 
-} //NUX_NAMESPACE_END
+}

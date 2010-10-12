@@ -23,7 +23,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLCubeTexture.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLCubeTexture);
@@ -155,4 +155,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     nuxAssert (_OpenGLID);
     return OGL_OK;
   }
-} //NUX_NAMESPACE_END
+}

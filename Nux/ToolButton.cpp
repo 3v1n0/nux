@@ -28,16 +28,17 @@
 #include "ActionItem.h"
 #include "ToolButton.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ToolButton::ToolButton (const TCHAR *BitmapFilename, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
     ,   m_ActionItem (0)
-    ,   m_Bitmap()
   {
+    m_Texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+
     if (BitmapFilename)
-      m_Bitmap.Update (BitmapFilename);
+      m_Texture->Update (BitmapFilename);
 
     // Set Original State
     SetBaseString (TEXT ("ToolButton") );
@@ -56,6 +57,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   ToolButton::~ToolButton()
   {
+    NUX_SAFE_DELETE (m_Texture);
   }
 
   long ToolButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -86,8 +88,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       gPainter.PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
     }
 
-    if (!m_Bitmap.IsNull() )
-      gPainter.Draw2DTextureAligned (GfxContext, &m_Bitmap, base, TextureAlignmentStyle (eTACenter, eTACenter) );
+    if (m_Texture)
+      gPainter.Draw2DTextureAligned (GfxContext, m_Texture, base, TextureAlignmentStyle (eTACenter, eTACenter) );
   }
 
   void ToolButton::DrawContent (GraphicsContext &GfxContext, bool force_draw)
@@ -105,9 +107,11 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   }
 
-  void ToolButton::SetBitmap (const NTexture2D &Bitmap)
+  void ToolButton::SetBitmap (const NTexture* Texture)
   {
-    m_Bitmap = Bitmap;
+    if(m_Texture)
+      NUX_SAFE_DELETE (m_Texture);
+    m_Texture = Texture->Clone();
   }
 
   void ToolButton::EmitClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -146,4 +150,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_ActionItem = action;
   }
 
-} //NUX_NAMESPACE_END
+}

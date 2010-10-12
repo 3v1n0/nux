@@ -24,7 +24,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "BitmapFormats.h"
 
 #include "Bmp.h"
@@ -38,7 +38,7 @@
 #define BI_PNG        5L
 #endif
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ImageInfo get_bmp_info (const std::string &file_name)
@@ -732,5 +732,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return HR_SUCCESS;
   }
 
-} //NUX_NAMESPACE_END
+}
 

@@ -26,7 +26,7 @@
 #include "Vector3ValuatorDouble.h"
 #include "Vector3ValuatorPropertyItem.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Vector3ValuatorPropertyItem::Vector3ValuatorPropertyItem (const TCHAR *name, double X, double Y, double Z,
@@ -146,4 +146,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     SetValue (X, Y, Z);
     return NodeNetCom::FromXML (elementxml);
   }
-} //NUX_NAMESPACE_END
+}

@@ -26,7 +26,7 @@
 
 #include "Vector3.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   template<typename T>
@@ -746,7 +746,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   typedef Matrix3x3<float> Matrix3;
 
-} //NUX_NAMESPACE_END
+}
 
 
 #endif // MATRIX3_H

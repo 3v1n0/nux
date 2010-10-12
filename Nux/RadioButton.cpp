@@ -26,7 +26,7 @@
 #include "RadioButtonGroup.h"
 #include "HLayout.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Color RADIO_TEXT_COLOR = Color (0xFFB0B0B0);
@@ -292,4 +292,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

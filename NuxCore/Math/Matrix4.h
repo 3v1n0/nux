@@ -27,7 +27,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //  Our matrices are Row major just like C/C++:
@@ -1514,7 +1514,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   typedef Matrix4x4<float> Matrix4;
 
-} //NUX_NAMESPACE_END
+}
 
 
 #endif // MATRIX4_H

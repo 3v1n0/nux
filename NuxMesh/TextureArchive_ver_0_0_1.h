@@ -45,6 +45,6 @@
 // nux::NBitmapData* TextureArchiveLoad_ver_0_0_1(nux::NSerializer* FileStream, unsigned int Offset);
 // void TextureArchiveGetInfo_ver_0_0_1(nux::NSerializer* FileStream, TextureArchiveInfo_ver_0_0_1& TextureArchiveInfo);
 //
-// } //NUX_NAMESPACE_END
+// }
 //
 // #endif // TEXTUREARCHIVE_VER_0_0_1_H

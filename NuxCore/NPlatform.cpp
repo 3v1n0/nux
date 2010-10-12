@@ -20,13 +20,13 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
 #if defined(NUX_OS_LINUX)
 #include <pwd.h>
 #endif
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_GLOBAL_OBJECT (NGlobalData);
@@ -228,4 +228,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return TEXT ("Logs");
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -20,9 +20,9 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #ifdef _WIN32
@@ -129,5 +129,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 #endif
 
-} //NUX_NAMESPACE_END
+}
 

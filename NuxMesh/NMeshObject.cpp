@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NMeshObject.h"
 
 
@@ -34,7 +34,7 @@ extern GLEWContext *glewGetContext();
 extern GLXEWContext *glxewGetContext();
 #endif
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NMeshData::NMeshData (int NumTriangles)
@@ -717,4 +717,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_WorldMatrix;
   }
 
-} //NUX_NAMESPACE_END
+}

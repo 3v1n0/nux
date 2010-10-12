@@ -20,11 +20,11 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NUnicode.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   ANSICHAR *UnicharToAnsicharConvertion::Convert (const UNICHAR *Source)
@@ -77,4 +77,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return utf16string;
   }
 
-} //NUX_NAMESPACE_END
+}

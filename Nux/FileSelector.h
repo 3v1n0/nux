@@ -23,7 +23,7 @@
 #ifndef FILE_SELECTOR_H
 #define FILE_SELECTOR_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class Button;
@@ -53,9 +53,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     EditTextBox    *m_FileEditTextBox;
     CoreArea       *m_OpenButton;
     HLayout        *m_hlayout;
-    NTexture2D      m_Texture;
+    NTexture       *m_Texture;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // FILE_SELECTOR_H

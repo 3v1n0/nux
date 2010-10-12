@@ -26,7 +26,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   /***************************************************************************************\
@@ -98,6 +98,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     void FromEulerZXY (t_float euler_x, t_float euler_y, t_float euler_z);
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // QUATERNION_H

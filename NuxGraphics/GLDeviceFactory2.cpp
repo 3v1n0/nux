@@ -33,7 +33,7 @@
 
 #define MANAGEDEVICERESOURCE    0
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
@@ -636,4 +636,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return OGL_OK;
   }
 
-} //NUX_NAMESPACE_END
+}

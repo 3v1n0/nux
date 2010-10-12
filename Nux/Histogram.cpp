@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "Histogram.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Histogram::Histogram (NUX_FILE_LINE_DECL)
@@ -44,14 +44,15 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Data/UITextures/FunctionGraphBackground.tga") );
-    NTexture2D BackgroundTexture;
-    BackgroundTexture.Update (Path.GetTCharPtr() );
+    NTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BackgroundTexture->Update (Path.GetTCharPtr() );
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (BackgroundTexture.GetDeviceTexture(), texxform, Color::White);
+    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Color::White);
 
+    delete BackgroundTexture;
   }
 
   Histogram::~Histogram()
@@ -89,7 +90,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     GfxContext.PushClippingRectangle (base);
 
     if (Texture.IsNull() || (Texture->GetWidth() != (t_s32) m_HistogramData.size() ) )
-      Texture = GetThreadGLDeviceFactory()->CreateTexture ( (t_s32) m_HistogramData.size(), 1, 0, BITFMT_A8);
+      Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture ( (t_s32) m_HistogramData.size(), 1, 0, BITFMT_A8);
 
     float tex_dx = (m_maxX - m_minX) / Texture->GetWidth();
 
@@ -175,7 +176,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     //m_minX = minX;
     //m_maxX = maxX;
 
-    //Texture = GetThreadGLDeviceFactory()->CreateTexture(m_maxX - m_minX, 4, 0, BITFMT_R8G8B8A8);
+    //Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture(m_maxX - m_minX, 4, 0, BITFMT_R8G8B8A8);
     NeedRedraw();
   }
 
@@ -199,4 +200,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}

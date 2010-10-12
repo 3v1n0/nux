@@ -25,7 +25,7 @@
 
 #include "NPlugin.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NPluginManager
@@ -71,5 +71,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     std::vector<NPlugin *> pluginRegister;
   };
 
-} //NUX_NAMESPACE_END
+}
 #endif // NPLUGINMANAGER_H

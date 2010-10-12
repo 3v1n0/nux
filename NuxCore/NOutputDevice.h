@@ -23,7 +23,7 @@
 #ifndef NOUTPUTDEVICE_H
 #define NOUTPUTDEVICE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class NSerializer;
@@ -54,7 +54,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //! Output to null device.
   class NNullOutput : public LogOutputDevice
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NNullOutput, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NNullOutput, GlobalSingletonInitializer);
   public:
     void Serialize ( const TCHAR *V, const TCHAR *LogPrefix, int Severity) {}
   };
@@ -62,7 +62,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //! Output to log file.
   class NOutputLogFile : public LogOutputDevice
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NOutputLogFile, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NOutputLogFile, GlobalSingletonInitializer);
     //NOutputLogFile( const TCHAR* InFilename);
 
   public:
@@ -101,7 +101,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //! Output to microsoft visual console.
   class NOutputVisualDebugConsole : public LogOutputDevice
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NOutputVisualDebugConsole, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NOutputVisualDebugConsole, GlobalSingletonInitializer);
   public:
 
     //! Write data to visual studio output debug console.
@@ -114,7 +114,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   class LogOutputRedirector : public LogOutputDevice
   {
-    NUX_DECLARE_GLOBAL_OBJECT (LogOutputRedirector, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (LogOutputRedirector, GlobalSingletonInitializer);
   public:
     virtual void AddOutputDevice (LogOutputDevice *OutputDevice);
     virtual void RemoveOutputDevice (LogOutputDevice *OutputDevice);
@@ -128,6 +128,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     std::vector<LogOutputDevice *> OutputDevices;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NOUTPUTDEVICE_H

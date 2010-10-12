@@ -28,7 +28,7 @@
 #include "RunTimeStats.h"
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_GLOBAL_OBJECT (RenderingStats);
@@ -228,4 +228,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

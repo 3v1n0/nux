@@ -24,7 +24,7 @@
 #include "NuxGraphics/GLSh_DrawFunction.h"
 #include "FunctionGraph.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   FunctionGraph::FunctionGraph (NUX_FILE_LINE_DECL)
@@ -49,17 +49,19 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     SetMinimumSize (200, 100);
     SetBaseSize (200, 100);
 
-    Texture = GetThreadGLDeviceFactory()->CreateTexture (256, 4, 0, BITFMT_R8G8B8A8);
+    Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/FunctionGraphBackground.tga") );
-    NTexture2D BackgroundTexture;
-    BackgroundTexture.Update (Path.GetTCharPtr() );
+    NTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BackgroundTexture->Update (Path.GetTCharPtr() );
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (BackgroundTexture.GetDeviceTexture(), texxform, Color::White);
+    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Color::White);
+
+    delete BackgroundTexture;
   }
 
   void FunctionGraph::InitializeLayout()
@@ -202,4 +204,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     NeedRedraw();
   }
 
-} //NUX_NAMESPACE_END
+}

@@ -23,7 +23,7 @@
 #ifndef INIFILE_H
 #define INIFILE_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class CIniFile
@@ -74,6 +74,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     static bool Save (std::string FileName, std::vector<Record>& content);
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // INIFILE_H

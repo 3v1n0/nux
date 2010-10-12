@@ -24,7 +24,7 @@
 #define BUTTON_H
 #include "AbstractButton.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class HLayout;
@@ -81,6 +81,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // BUTTON_H

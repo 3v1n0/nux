@@ -20,13 +20,13 @@
  */
 
 
-#include "NKernel.h"
+#include "NuxCore.h"
 #include "NStreamBuffer.h"
 #include <functional>
 #include <cassert>
 #include <cstring>
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NStreamBuffer::NStreamBuffer (const BYTE *begin, const BYTE *end) :
@@ -79,4 +79,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return end_ - current_;
   }
 
-} //NUX_NAMESPACE_END
+}

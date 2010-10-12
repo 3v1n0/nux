@@ -26,7 +26,7 @@
 #include "DoubleValidator.h"
 #include "NumericValuator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   const int BTN_WIDTH = 14;
@@ -189,4 +189,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 //     }
   }
 
-} //NUX_NAMESPACE_END
+}

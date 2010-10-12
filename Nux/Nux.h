@@ -23,9 +23,9 @@
 #ifndef NUX_H
 #define NUX_H
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 
-#include "NuxCore/NNamespace.h"
+#include "NuxCore/Namespace.h"
 #include "NuxCore/NSystemTypes.h"
 #include "NuxCore/Error.h"
 #include "NuxCore/FilePath.h"
@@ -68,7 +68,7 @@
 
 
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class WindowThread;
@@ -142,6 +142,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   inlDeclareThreadLocalStorage (NThread *, 0, ThreadLocal_InalogicAppImpl);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NUX_H

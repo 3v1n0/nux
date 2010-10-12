@@ -28,7 +28,7 @@
 /*-----------------------------------------------------------------------------
 File Manager.
 -----------------------------------------------------------------------------*/
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 // File manager.
   class NGNUSerialFileReader : public NSerializer
@@ -97,7 +97,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   class NFileManagerGNU : public NFileManagerGeneric
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NFileManagerGNU, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NFileManagerGNU, GlobalSingletonInitializer);
   public:
     // Flags is a combination of
     //  NSerializer::OutputErrorIfFail
@@ -152,6 +152,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NFILEMANAGERGNU_H

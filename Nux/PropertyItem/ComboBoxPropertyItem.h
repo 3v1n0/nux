@@ -23,7 +23,7 @@
 #ifndef COMBOBOXPROPERTYITEM_H
 #define COMBOBOXPROPERTYITEM_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ComboBoxSimple;
@@ -46,6 +46,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   };
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // COMBOBOXPROPERTYITEM_H

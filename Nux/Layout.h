@@ -23,7 +23,7 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #define DEBUG_LAYOUT 0
@@ -395,6 +395,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     Area *Find (long handle);
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // LAYOUT_H

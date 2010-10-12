@@ -29,7 +29,7 @@
 #include "DoubleValidator.h"
 #include "Valuator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class ValuatorDouble: public Valuator
@@ -67,7 +67,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     double m_Step;
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // VALUATORDOUBLE_H
 

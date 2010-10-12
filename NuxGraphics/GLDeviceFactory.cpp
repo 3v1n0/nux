@@ -31,7 +31,7 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "OpenGLEngine.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 #define MANAGEDEVICERESOURCE    0
@@ -256,10 +256,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     GPixelFormats[ BITFMT_A8           ].Format	        = GL_LUMINANCE;
     GPixelFormats[ BITFMT_A8           ].type	            = GL_UNSIGNED_BYTE;
   }
-
-  TRefGL<IOpenGLTexture2D>   GLDeviceFactory::pDefaultRenderTargetTexture = 0;
-  TRefGL<IOpenGLSurface>     GLDeviceFactory::pDefaultRenderTargetSurface = 0;
-
 
   TRefGL<IOpenGLTexture2D> GLDeviceFactory::CreateTexture (
     int Width
@@ -642,7 +638,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
 #endif
 
-    GL_ARB_TEXTURE_RECTANGLE            = GLEW_ARB_texture_rectangle ? true : false;
+    
     GL_ARB_VERTEX_PROGRAM               = GLEW_ARB_vertex_program ? true : false;
     GL_ARB_FRAGMENT_PROGRAM             = GLEW_ARB_fragment_program ? true : false;
     GL_ARB_SHADER_OBJECTS               = GLEW_ARB_shader_objects ? true : false;
@@ -654,6 +650,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     GL_EXT_DRAW_RANGE_ELEMENTS          = GLEW_EXT_draw_range_elements ? true : false;
     GL_EXT_STENCIL_TWO_SIDE             = GLEW_EXT_stencil_two_side ? true : false;
     GL_EXT_TEXTURE_RECTANGLE            = GLEW_EXT_texture_rectangle ? true : false;
+    GL_ARB_TEXTURE_RECTANGLE            = GLEW_ARB_texture_rectangle ? true : false;
     GL_NV_TEXTURE_RECTANGLE             = GLEW_NV_texture_rectangle ? true : false;
 
     InitTextureFormats();
@@ -665,10 +662,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     glPixelStorei (GL_UNPACK_ALIGNMENT, _PixelStoreAlignment);
     glPixelStorei (GL_PACK_ALIGNMENT, _PixelStoreAlignment);
-
-    // Create dummy texture and surface for the default render target.
-    pDefaultRenderTargetTexture = new IOpenGLTexture2D (DeviceWidth, DeviceHeight, 1, DeviceFormat, TRUE);
-    pDefaultRenderTargetSurface = pDefaultRenderTargetTexture->GetSurfaceLevel (0);
 
     _DeviceWidth = DeviceWidth;
     _DeviceHeight = DeviceHeight;
@@ -705,9 +698,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   GLDeviceFactory::~GLDeviceFactory()
   {
-    pDefaultRenderTargetSurface = 0;
-    pDefaultRenderTargetTexture = 0;
-
     NUX_SAFE_DELETE (m_RenderStates);
 
     _FrameBufferObject = 0;
@@ -740,8 +730,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     t_u32 NumTotalMipLevel    = 1 + floorf (Log2 (Max (Width, Height) ) );
 
 //    Levels
-//        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
-//        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
+//        [in] Number of levels in the texture. If this is zero, generate all texture sublevels
+//        down to 1 by 1 pixels for hardware that supports mip-maps textures. Call GetNumMipLevel to see the
 //        number of levels generated.
     t_u32 NumMipLevel = 0;
 
@@ -795,22 +785,23 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     t_u32 NumTotalMipLevel    = 1 + floorf (Log2 (Max (Width, Height) ) );
 
     //    Levels
-    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
-    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
+    //        [in] Number of levels in the texture. If this is zero, generate all texture sublevels
+    //        down to 1 by 1 pixels for hardware that supports mip-maps textures. Call GetNumMipLevel to see the
     //        number of levels generated.
     t_u32 NumMipLevel = 0;
 
     if (Levels == 0)
     {
-      NumMipLevel = NumTotalMipLevel;
+      //Rectangle texture texture don't support mipmaps
+      NumMipLevel = 1;
     }
     else if (Levels > NumTotalMipLevel)
     {
-      NumMipLevel = NumTotalMipLevel;
+      NumMipLevel = 1;
     }
     else
     {
-      NumMipLevel = Levels;
+      NumMipLevel = 1;
     }
 
 
@@ -1468,4 +1459,41 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return _CurrentFrameBufferObject;
   }
 
-} //NUX_NAMESPACE_END
+  TRefGL<IOpenGLBaseTexture> GLDeviceFactory::CreateSystemCapableDeviceTexture (
+    int Width
+    , int Height
+    , int Levels
+    , BitmapFormat PixelFormat)
+  {
+    if(GetThreadGLDeviceFactory()->SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO ())
+    {
+      return GetThreadGLDeviceFactory ()->CreateTexture (Width, Height, Levels, PixelFormat);
+    }
+
+    if(SUPPORT_GL_EXT_TEXTURE_RECTANGLE () || SUPPORT_GL_ARB_TEXTURE_RECTANGLE ())
+    {
+      return GetThreadGLDeviceFactory ()->CreateRectangleTexture (Width, Height, Levels, PixelFormat);
+    }
+
+    nuxAssertMsg(0, TEXT("[NuxGraphicsResources::CreateSystemCapableDeviceTexture] No support for non power of two textures or rectangle textures"));
+
+    return TRefGL<IOpenGLBaseTexture>();
+  }
+
+  NTexture* GLDeviceFactory::CreateSystemCapableTexture ()
+  {
+    if(SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO ())
+    {
+      return new NTexture2D ();
+    }
+
+    if(SUPPORT_GL_EXT_TEXTURE_RECTANGLE () || SUPPORT_GL_ARB_TEXTURE_RECTANGLE ())
+    {
+      return new NRectangleTexture ();
+    }
+
+    nuxAssertMsg(0, TEXT("[NuxGraphicsResources::CreateSystemCapableTexture] No support for non power of two textures or rectangle textures"));
+
+    return 0;
+  }
+}

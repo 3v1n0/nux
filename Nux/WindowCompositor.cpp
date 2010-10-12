@@ -31,7 +31,7 @@
 #include "Painter.h"
 
 #include "NuxGraphics/FontTexture.h"
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 // extern TimeCounter gTimeCounter;
@@ -77,8 +77,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     // At this stage, the size of the window may not be known yet.
     // FormatRenderTargets will be called the first time runtime gets into WindowThread::ExecutionLoop
-    m_MainColorRT = GetThreadGLDeviceFactory()->CreateTexture (2, 2, 1, BITFMT_R8G8B8A8);
-    m_MainDepthRT = GetThreadGLDeviceFactory()->CreateTexture (2, 2, 1, BITFMT_D24S8);
+    m_MainColorRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
+    m_MainDepthRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
 
     m_MenuList = new std::list<MenuPage *>;
     m_PopupRemoved = false;
@@ -148,8 +148,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       // Don't size the texture to the dimension of the window yet. this will be done later.
       if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
       {
-        rt.color_rt = GetThreadGLDeviceFactory()->CreateTexture (2, 2, 1, BITFMT_R8G8B8A8);
-        rt.depth_rt = GetThreadGLDeviceFactory()->CreateTexture (2, 2, 1, BITFMT_D24S8);
+        rt.color_rt = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
+        rt.depth_rt = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
       }
 
       m_WindowToTextureMap.insert ( std::map< BaseWindow *, RenderTargetTextures >::value_type ( window, rt) );
@@ -748,8 +748,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
             if ( (rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height) )
             {
-              rt.color_rt = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-              rt.depth_rt = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+              rt.color_rt = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+              rt.depth_rt = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
             }
 
             m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -924,8 +924,8 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
       if ( (!m_MainColorRT.IsValid() ) || (!m_MainDepthRT.IsValid() ) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height) )
       {
-        m_MainColorRT = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        m_MainDepthRT = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+        m_MainColorRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+        m_MainDepthRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
       }
 
       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -1003,7 +1003,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     if ( (!m_MainColorRT.IsValid() ) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height) )
     {
-      m_MainColorRT = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+      m_MainColorRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
     }
 
     // Setup the Composition Render Target
@@ -1017,7 +1017,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::CopyTextureToMainColorRT (TRefGL<IOpenGLTexture2D> HWTexture, int x, int y)
+  void WindowCompositor::CopyTextureToMainColorRT (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y)
   {
     SetMainColorRT();
     HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
@@ -1044,7 +1044,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
     if ( (!m_CompositionRT.IsValid() ) || (m_CompositionRT->GetWidth() != buffer_width) || (m_CompositionRT->GetHeight() != buffer_height) )
     {
-      m_CompositionRT = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+      m_CompositionRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
     }
 
     // Setup the Composition Render Target
@@ -1058,7 +1058,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::CopyTextureToCompositionRT (TRefGL<IOpenGLTexture2D> HWTexture, int x, int y)
+  void WindowCompositor::CopyTextureToCompositionRT (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y)
   {
     SetCompositionRT();
     HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
@@ -1077,7 +1077,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     GetGraphicsThread()->GetGraphicsContext().QRP_GLSL_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
   }
 
-  void WindowCompositor::PresentBufferToScreen (TRefGL<IOpenGLTexture2D> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground)
+  void WindowCompositor::PresentBufferToScreen (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground)
   {
     nuxAssert (HWTexture.IsValid() );
 
@@ -1405,9 +1405,9 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     nuxAssert (buffer_width >= 1);
     nuxAssert (buffer_height >= 1);
 
-    m_MainColorRT = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-    m_CompositionRT = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-    m_MainDepthRT = GetThreadGLDeviceFactory()->CreateTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+    m_MainColorRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+    m_CompositionRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+    m_MainDepthRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
 
     // Clear the buffer the first time...
     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -1425,10 +1425,10 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     CHECKGL ( glClearStencil (0) );
     CHECKGL ( glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
 
-    m_BlurTexture   = GetThreadGLDeviceFactory()->CreateTexture (Max (buffer_width, 1), Max (buffer_height, 1), 1, BITFMT_R8G8B8A8);
-    m_FullSceneMip0 = GetThreadGLDeviceFactory()->CreateTexture (Max (buffer_width / 2, 1), Max (buffer_height / 2, 1), 1, BITFMT_R8G8B8A8);
-    m_FullSceneMip1 = GetThreadGLDeviceFactory()->CreateTexture (Max (buffer_width / 4, 1), Max (buffer_height / 4, 1), 1, BITFMT_R8G8B8A8);
-    m_FullSceneMip2 = GetThreadGLDeviceFactory()->CreateTexture (Max (buffer_width / 8, 1), Max (buffer_height / 8, 1), 1, BITFMT_R8G8B8A8);
+    m_BlurTexture   = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width, 1), Max (buffer_height, 1), 1, BITFMT_R8G8B8A8);
+    m_FullSceneMip0 = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width / 2, 1), Max (buffer_height / 2, 1), 1, BITFMT_R8G8B8A8);
+    m_FullSceneMip1 = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width / 4, 1), Max (buffer_height / 4, 1), 1, BITFMT_R8G8B8A8);
+    m_FullSceneMip2 = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width / 8, 1), Max (buffer_height / 8, 1), 1, BITFMT_R8G8B8A8);
   }
 
   void WindowCompositor::UpdatePostProcessRT()
@@ -1580,5 +1580,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return m_BlurTexture;
   }
 
-} //NUX_NAMESPACE_END
+}
 

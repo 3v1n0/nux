@@ -30,7 +30,7 @@
 
 #include "SplineCurveEditor.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   static const int KNOT_SIZE = 2;
@@ -56,18 +56,20 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
 
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateTexture (256, 4, 0, BITFMT_R8G8B8A8);
+    m_Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
-    NTexture2D *m_CheckboardPattern = new NTexture2D (image);
+    NTexture* CheckboardPattern = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    CheckboardPattern->Update(&image);
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_Background = new TextureLayer (m_CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
+    m_Background = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
 
+    delete CheckboardPattern;
 //     m_Background = PaintLayer(m_CheckboardPattern);
 //     m_Background.SetTileTexture(true);
   }
@@ -609,4 +611,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   }
 
 
-} //NUX_NAMESPACE_END
+}

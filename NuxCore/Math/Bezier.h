@@ -25,7 +25,7 @@
 
 #include "Constants.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
 //! Evaluate the Bernstein polynomial of degree n, at parameter t.
@@ -69,7 +69,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // BEZIER_H
 

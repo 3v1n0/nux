@@ -25,7 +25,7 @@
 #include "ColorGradientPropertyItem.h"
 #include "RGBAProperty.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   RGBAPropertyItem::RGBAPropertyItem (const TCHAR *name, float red /* = 1.0f*/, float green /* = 1.0f*/, float blue /* = 1.0f*/, float alpha /* = 1.0f*/)
@@ -533,4 +533,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return NodeNetCom::FromXML (elementxml);
   }
 
-} //NUX_NAMESPACE_END
+}

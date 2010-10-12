@@ -24,7 +24,7 @@
 #include "Layout.h"
 #include "GroupBox2.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   int GroupBox2::CAPTION_X_MARGIN = 6;
@@ -244,4 +244,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

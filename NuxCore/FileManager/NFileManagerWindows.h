@@ -28,7 +28,7 @@ File Manager.
 -----------------------------------------------------------------------------*/
 
 // File manager.
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   class NWindowsSerialFileReader: public NSerializer
   {
@@ -96,7 +96,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
   class NFileManagerWindows : public NFileManagerGeneric
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NFileManagerWindows, NGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NFileManagerWindows, GlobalSingletonInitializer);
   public:
 
     // Flags is a combination of
@@ -140,7 +140,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     bool GetTimeStamp (const TCHAR *Filename, FileTimeStamp &Timestamp);
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NFILEMANAGERWINDOWS_H
 

@@ -26,7 +26,7 @@
 
 #define NUX_COLOR_DIALOG_CUSTOM_COLOR 16
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   class FileDialogOption
@@ -93,6 +93,6 @@ namespace nux   //NUX_NAMESPACE_BEGIN
   bool Win32SaveFileDialog (HWND hWnd, FileDialogOption &fdo);
   bool Win32OpenFileDialog (HWND hWnd, FileDialogOption &fdo);
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // NWIN32CUSTOMDIALOG_H

@@ -24,7 +24,7 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLCgShader.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE (ICgShader);
@@ -190,4 +190,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
       nuxAssertMsg (0, TEXT ("[cgErrorCallback]: Cg Error.") );
     }
   }
-} //NUX_NAMESPACE_END
+}

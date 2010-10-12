@@ -20,7 +20,7 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/Math/Constants.h"
 #include "NuxCore/Math/Vector3.h"
 #include "NuxCore/Math/Matrix4.h"

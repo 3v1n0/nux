@@ -27,10 +27,9 @@
 #include "IntegerValidator.h"
 #include "DoubleValidator.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
-  class NTexture2D;
   class Button;
   class VLayout;
   class HLayout;
@@ -192,7 +191,7 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     virtual long ComputeChildLayout();
   };
 
-} //NUX_NAMESPACE_END
+}
 
 #endif // RGBGEVALUATOR_H
 

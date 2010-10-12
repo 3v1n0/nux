@@ -27,7 +27,7 @@
 #include "Validator.h"
 #include "StaticTextBox.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
   StaticTextBox::StaticTextBox (const TCHAR *Caption, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
@@ -159,4 +159,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     m_Background = layer->Clone();
   }
 
-} //NUX_NAMESPACE_END
+}

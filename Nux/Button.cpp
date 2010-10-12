@@ -24,7 +24,7 @@
 #include "Button.h"
 #include "HLayout.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   Button::Button (const TCHAR *Caption, NUX_FILE_LINE_DECL)
@@ -234,4 +234,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
 
 
 
-} //NUX_NAMESPACE_END
+}

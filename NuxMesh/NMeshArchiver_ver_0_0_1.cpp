@@ -20,14 +20,14 @@
  */
 
 
-#include "NuxCore/NKernel.h"
+#include "NuxCore/NuxCore.h"
 #include "NuxCore/FilePath.h"
 
 #include "NMeshArchiver_ver_0_0_1.h"
 #include "NWorldArchiveManager.h"
 #include "NMeshObject.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   bool SaveMeshObject_ver_0_0_1 (nux::NSerializer *FileStream, NMeshObject *mesh)
@@ -426,5 +426,5 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     return mesh;
   }
 
-} //NUX_NAMESPACE_END
+}
 

@@ -24,7 +24,7 @@
 #include "RadioButton.h"
 #include "RadioButtonGroup.h"
 
-namespace nux   //NUX_NAMESPACE_BEGIN
+namespace nux
 {
 
   RadioButtonGroup::RadioButtonGroup (NUX_FILE_LINE_DECL)
@@ -189,4 +189,4 @@ namespace nux   //NUX_NAMESPACE_BEGIN
     }
   }
 
-} //NUX_NAMESPACE_END
+}

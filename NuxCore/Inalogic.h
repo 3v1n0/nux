@@ -23,7 +23,7 @@
 #ifndef INALOGIC_H
 #define INALOGIC_H
 
-#include "NNamespace.h"
+#include "Namespace.h"
 #include "NSystemTypes.h"
 
 
