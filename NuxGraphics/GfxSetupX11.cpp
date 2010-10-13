@@ -1005,12 +1005,6 @@ namespace nux
     return state;
   }
 
-//---------------------------------------------------------------------------------------------------------
-  Bool CheckEventWindow (Display *display, XEvent *xevent, XPointer arg)
-  {
-    return xevent->xany.window == NUX_REINTERPRET_CAST (Window, arg);
-  }
-
   void GLWindowImpl::GetSystemEvent (IEvent *evt)
   {
     m_pEvent->Reset();
@@ -1021,8 +1015,9 @@ namespace nux
     // Process event matching this window
     XEvent xevent;
 
-    if (XCheckIfEvent (m_X11Display, &xevent, &CheckEventWindow, NUX_REINTERPRET_CAST (XPointer, m_X11Window) ) )
+    if (XPending (m_X11Display))
     {
+      XNextEvent (m_X11Display, &xevent);
       // Detect auto repeat keys. X11 sends a combination of KeyRelease/KeyPress (at the same time) when a key auto repeats.
       // Here, we make sure we process only the keyRelease when the key is effectively released.
       if ( (xevent.type == KeyPress) || (xevent.type == KeyRelease) )
@@ -1255,6 +1250,8 @@ namespace nux
     int y_recalc = 0;
     
     RecalcXYPosition (m_X11Window, xevent, x_recalc, y_recalc);
+    
+    foreign = foreign || xevent.xany.window != m_X11Window;
 
     m_pEvent->e_event = NUX_NO_EVENT;
 

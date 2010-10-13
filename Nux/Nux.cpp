@@ -123,7 +123,7 @@ namespace nux
   }
 
 #elif defined(NUX_OS_LINUX)
-  WindowThread *CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext,
+  WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
                                          ThreadUserInitFunc UserInitFunc,
                                          void *InitData)
   {
@@ -150,7 +150,7 @@ namespace nux
     w->m_ExitData = 0;
     w->SetWindowStyle (WINDOWSTYLE_NORMAL);
     w->m_embedded_window = true;
-    w->ThreadCtor (X11Display, X11Window, OpenGLContext);
+    w->ThreadCtor (XOpenDisplay (NULL), X11Window, OpenGLContext);
     return w;
   }
 #endif

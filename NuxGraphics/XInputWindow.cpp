@@ -31,14 +31,14 @@ namespace nux
     Display* d = GetThreadGLWindow()->GetX11Display();
     XSetWindowAttributes attrib;
     
-    _x = -100;
-    _y = -100;
+    _x = 0;
+    _y = 0;
     _width = 1;
     _height = 1;
     
     attrib.override_redirect = 1;
     _window = XCreateWindow (d, XDefaultRootWindow (d), _x, _y, _width, _height, 0,
-                             CopyFromParent, InputOnly, CopyFromParent,
+                             CopyFromParent, InputOutput, CopyFromParent,
                              CWOverrideRedirect, &attrib);
                                      
     XMapRaised (d, _window);
@@ -55,9 +55,6 @@ namespace nux
                  (unsigned char *) data, i);
                  
     EnsureInputs ();
-
-    /* terrible hack */
-    g_timeout_add (5000, (GSourceFunc) &XInputWindow::EnsureInputOnTimeout, this);   
   }
   
   XInputWindow::~XInputWindow()
@@ -66,23 +63,14 @@ namespace nux
     XDestroyWindow (d, _window);
   }
   
-  bool
-  XInputWindow::EnsureInputOnTimeout (void *data)
-  {
-    XInputWindow *input_window = (XInputWindow*) data;
-    input_window->EnsureInputs();
-    
-    return false;
-  }
-
   void XInputWindow::EnsureInputs()
   {
     Display* d = GetThreadGLWindow()->GetX11Display();
     
     XSelectInput (d, _window,
-                  KeyPressMask       | 
-                  KeyReleaseMask     | 
-                  ButtonPressMask    | 
+                  KeyPressMask       |
+                  KeyReleaseMask     |
+                  ButtonPressMask    |
                   ButtonReleaseMask  |
                   EnterWindowMask    |
                   LeaveWindowMask    |

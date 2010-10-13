@@ -57,8 +57,6 @@ namespace nux
     
   private:
   
-    static bool EnsureInputOnTimeout (void* data);
-  
     Window _window;
     int _x;
     int _y;
