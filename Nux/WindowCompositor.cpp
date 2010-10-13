@@ -739,7 +739,7 @@ namespace nux
         WindowNeedRedraw = window->IsRedrawNeeded();
 
         // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
-        //if(force_draw || window->IsRedrawNeeded() || (window->m_dirty_areas.size() > 0))
+        if(force_draw || window->IsRedrawNeeded() || (window->m_dirty_areas.size() > 0))
         {
           if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
           {
@@ -1163,14 +1163,24 @@ namespace nux
     }
   }
 
-  void WindowCompositor::AddToDrawList(View* ic)
+  void WindowCompositor::AddToDrawList(View* view)
   {
-      NUX_RETURN_IF_NULL(ic);
+      NUX_RETURN_IF_NULL(view);
 
-      if(m_CurrentWindow)
+      Area* parent = GetTopRenderingParent (view);
+
+      // Try as best as possible to identify the correct BaseWindow where the view is located.
+      if (parent && parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
       {
-          Geometry geo = ic->GetGeometry();
-          m_CurrentWindow->m_dirty_areas.push_back(geo);
+        BaseWindow* fview = NUX_STATIC_CAST (BaseWindow*, parent);
+
+        Geometry geo = view->GetGeometry();
+        fview->m_dirty_areas.push_back(geo);
+      }
+      else if (m_CurrentWindow)
+      {
+        Geometry geo = view->GetGeometry();
+        m_CurrentWindow->m_dirty_areas.push_back(geo);
       }
   }
 
@@ -1578,6 +1588,61 @@ namespace nux
   TRefGL< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
   {
     return m_BlurTexture;
+  }
+
+  Area* WindowCompositor::GetTopRenderingParent(Area* area)
+  {
+    NUX_RETURN_VALUE_IF_NULL(area, NULL);
+
+    Area* parent = area->GetParentObject();
+    if (parent)
+    {
+      if (parent == GetGraphicsThread ()->GetMainLayout ())
+      {
+        return parent;
+      }
+      else if (parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
+      {
+        return parent;
+      }
+      else 
+      {
+        return GetTopRenderingParent (parent);
+      }
+    }
+    else
+    {
+      return 0;
+    }
+  }
+
+  Area* WindowCompositor::GetTopParent(Area* area)
+  {
+    NUX_RETURN_VALUE_IF_NULL(area, NULL);
+
+    Area* parent = area->GetParentObject();
+    if (parent)
+    {
+      if (parent == GetGraphicsThread ()->GetMainLayout ())
+      {
+        return parent;
+      }
+      else if (parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
+      {
+        return parent;
+      }
+      else 
+      {
+        Area* grand_parent = GetTopParent (parent);
+        if (grand_parent == 0)
+          return parent;
+        return grand_parent;
+      }
+    }
+    else
+    {
+      return 0;
+    }
   }
 
 }

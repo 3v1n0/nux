@@ -31,6 +31,8 @@
 namespace nux
 {
 
+  NUX_IMPLEMENT_OBJECT_TYPE (BaseWindow);
+
   const int SizeGripWidth = 20;
   const int SizeGripHeight = 20;
   const int TitleBarHeight = 20;

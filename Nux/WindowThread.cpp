@@ -453,6 +453,11 @@ namespace nux
     return false;
   }
 
+  Layout* WindowThread::GetMainLayout()
+  {
+    return m_AppLayout;
+  }
+
   void WindowThread::RefreshLayout()
   {
     SetComputingLayout (true);

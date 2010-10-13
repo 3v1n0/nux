@@ -207,6 +207,28 @@ namespace nux
       m_CurrentWindow = window;
     }
 
+    //! Get the top most rendering parent of an area.
+    /*!
+      The top rendering parent of an area is either the main application layout or a BaseWindow.
+      If it is none of these 2, then NULL is returned. An area with a top rendering parent is one that can be 
+      directly reach during rendering of event processing. If the top rendering parent is NULL, then the area
+      as to rely on another widget to direct event processing and rendering to it.
+
+      @param area The area for which we are searching the top rendering parent.
+      @return The main application layout or a BaseWindow if the area is accessible by the system for rendering and event processing. NULL otherwise.
+
+    */
+    Area* GetTopRenderingParent(Area* area);
+
+    //! Get the top most parent of an area.
+    /*!
+      The top parent of the top most area in the rendering and event processing chain that is a parent of the passed argument.
+      @param area The area for which we are searching the top most parent.
+      @return The topmost parent of the passed argument. 
+
+    */
+    Area* GetTopParent(Area* area);
+
   private:
     void SetFocusAreaWindow (BaseWindow *window)
     {
