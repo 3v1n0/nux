@@ -255,6 +255,12 @@ namespace nux
     */
     virtual bool ThreadDtor();
 
+    //! Get the main layout of this thread.
+    /*!
+      @return The main layout of this thread.
+    */
+    Layout* GetMainLayout();
+
     /*!
         This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
     */

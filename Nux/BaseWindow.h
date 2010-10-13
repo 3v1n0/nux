@@ -56,6 +56,7 @@ namespace nux
 
   class BaseWindow: public View
   {
+    NUX_DECLARE_OBJECT_TYPE (BaseWindow, View);
   public:
     BaseWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
     ~BaseWindow();

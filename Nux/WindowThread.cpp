@@ -192,18 +192,25 @@ namespace nux
   gboolean nux_timeout_dispatch (gpointer user_data)
   {
     TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
-
+    bool repeat = false;
     if(dd->window_thread->IsEmbeddedWindow())
     {
-        GetThreadTimer().ExecTimerHandler(dd->id);
+        repeat = GetThreadTimer().ExecTimerHandler(dd->id);
+        dd->window_thread->RedrawRequested.emit();
     }
     else
     {
-        dd->window_thread->ExecutionLoop(dd->id);
+        repeat = GetThreadTimer().ExecTimerHandler(dd->id);
+        dd->window_thread->ExecutionLoop(0);
     }
-    delete dd;
+    
+    if(repeat == false)
+    {
+      delete dd;
+      return FALSE;
+    }
 
-    return FALSE;
+    return TRUE;
   }
 
   t_u32 WindowThread::AddGLibTimeout(t_u32 duration)
@@ -284,7 +291,7 @@ namespace nux
     m_bIsModal              = Modal;
 
     m_IsComputingMainLayout = 0;
-    m_RedrawRequested       = 0;
+    m_RedrawRequested       = false;
     m_bFirstDrawPass        = true;
 
     // The layout of the window is null.
@@ -447,6 +454,11 @@ namespace nux
     return false;
   }
 
+  Layout* WindowThread::GetMainLayout()
+  {
+    return m_AppLayout;
+  }
+
   void WindowThread::RefreshLayout()
   {
     SetComputingLayout (true);
@@ -597,7 +609,8 @@ namespace nux
     {
       if(Application->m_bFirstDrawPass)
       {
-          ms = 0.0f;
+        ms = 0.0f;
+        GetThreadTimer().StartEarlyTimerObjects ();
       }
       else
       {
@@ -664,11 +677,11 @@ namespace nux
           RefreshLayout();
       }
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-      GetThreadTimer().ExecTimerHandler (timer_id);
-#else
-      GetThreadTimer().ExecTimerHandler();
-#endif
+// #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+//       GetThreadTimer().ExecTimerHandler (timer_id);
+// #else
+//       GetThreadTimer().ExecTimerHandler();
+// #endif
 
 
       if (GetWindow().IsPauseThreadGraphicsRendering() == false)
@@ -733,6 +746,7 @@ namespace nux
             m_window_compositor->Draw (m_size_configuration_event, false);
             SwapGLBuffer = false;
           }
+
         }
 
         if (SwapGLBuffer)

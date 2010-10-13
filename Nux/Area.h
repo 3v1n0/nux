@@ -404,6 +404,7 @@ namespace nux
     friend class WindowThread;
     friend class HSplitter;
     friend class VSplitter;
+    friend class WindowCompositor;
   };
 
 }
