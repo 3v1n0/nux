@@ -562,7 +562,7 @@ namespace nux
 
     //TestARBShaders();
 
-    OPENGL_MAX_FB_ATTACHMENT = 4;
+    glGetIntegerv (GL_MAX_COLOR_ATTACHMENTS_EXT, &OPENGL_MAX_FB_ATTACHMENT);
 
     NString TempStr = (const TCHAR *) TCharToUpperCase (m_BoardVendorString.GetTCharPtr() );
 
