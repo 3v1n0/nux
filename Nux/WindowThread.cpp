@@ -200,46 +200,29 @@ namespace nux
 
   gboolean nux_timeout_dispatch (gpointer user_data)
   {
-    TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
     bool repeat = false;
-    if(dd->window_thread->IsEmbeddedWindow())
-    {
-        repeat = GetThreadTimer().ExecTimerHandler(dd->id);
-        dd->window_thread->RedrawRequested.emit();
-    }
-    else
-    {
-        repeat = GetThreadTimer().ExecTimerHandler(dd->id);
-        dd->window_thread->ExecutionLoop(0);
-    }
-    
-    if(repeat == false)
-    {
-      delete dd;
-      return FALSE;
-    }
+    TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
 
-    return TRUE;
+    repeat = GetThreadTimer().ExecTimerHandler(dd->id);
+
+    if(dd->window_thread->IsEmbeddedWindow())
+        dd->window_thread->RedrawRequested.emit();
+    else
+        dd->window_thread->ExecutionLoop(0);
+    
+    if(!repeat)
+      delete dd;
+
+    return repeat;
   }
 
   t_u32 WindowThread::AddGLibTimeout(t_u32 duration)
   {
     if(IsEmbeddedWindow())
     {
-      GSource *timeout_source;
-
-      //create a new time-out source
-      timeout_source = g_timeout_source_new(duration);
-
       TimeoutData* dd = new TimeoutData;
       dd->window_thread = this;
-      dd->id = 0;
-
-      // Set the callback for this source
-      g_source_set_callback(timeout_source, nux_timeout_dispatch, dd, NULL);
-
-      // Attach source to the default context
-      dd->id = g_source_attach(timeout_source, NULL); 
+      dd->id = g_timeout_add (duration, nux_timeout_dispatch, dd);
 
       return dd->id;
     }
