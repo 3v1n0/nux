@@ -23,8 +23,10 @@
 #define RADIUS         5.0f
 #define BLUR_INTENSITY 8
 #define LINE_WIDTH     1.0f
-#define PADDING_SIZE   0
-#define MARGIN         5
+#define PADDING_SIZE   1
+#define H_MARGIN       30
+#define V_MARGIN       4
+#define FONT_FACE      "Ubuntu 13"
 
 namespace nux
 {
@@ -109,7 +111,11 @@ namespace nux
 
       void ComputeOutline (cairo_t* cr,
                            gfloat   line_width,
-                           gfloat*  rgba_line);
+                           gfloat*  rgba_line,
+                           gint     width,
+                           gfloat   anchor_width,
+                           gfloat   corner_radius,
+                           gint     padding_size);
 
       void DrawMask (cairo_t* cr,
                      gint     width,
@@ -202,7 +208,7 @@ namespace nux
     //     9  8        7
 
     gfloat padding    = pad;
-    int    ZEROPOINT5 = 0.0f;
+    float  ZEROPOINT5 = 0.5f;
   
     gfloat HeightToAnchor = 0.0f;
     HeightToAnchor = ((gfloat) height - 2.0f * radius - anchor_height -2*padding) / 2.0f;
@@ -274,7 +280,8 @@ namespace nux
                    padding + anchor_width + ZEROPOINT5,
                    (gdouble) height - padding - radius - HeightToAnchor - anchor_height + ZEROPOINT5);  // Point 13
   
-    cairo_line_to (cr, padding + anchor_width + ZEROPOINT5, padding + radius  + ZEROPOINT5);  // Point 14
+    cairo_line_to (cr, padding + anchor_width + ZEROPOINT5, 
+                   padding + radius  + ZEROPOINT5);  // Point 14
     cairo_arc (cr,
                padding + anchor_width + radius + ZEROPOINT5,
                padding + radius + ZEROPOINT5,
@@ -295,16 +302,56 @@ namespace nux
   void
   Tooltip::ComputeOutline (cairo_t* cr,
                            gfloat   line_width,
-                           gfloat*  rgba_line)
+                           gfloat*  rgba_line,
+                           gint     width,
+                           gfloat   anchor_width,
+                           gfloat   corner_radius,
+                           gint     padding_size)
   {
+    cairo_pattern_t* pattern = NULL;
+    double           offset  = 0.0;
+
+    if (width == 0)
+    {
+      g_warning ("%s(): passed in width is 0!", G_STRFUNC);
+      return;
+    }
+
+    offset = ((double) padding_size + anchor_width + corner_radius) /
+             (double) width;
+
     cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_rgba (cr,
-                         rgba_line[0],
-                         rgba_line[1],
-                         rgba_line[2],
-                         rgba_line[3]);
     cairo_set_line_width (cr, line_width);
+
+    pattern = cairo_pattern_create_linear (0.0, 0.0, (double) width, 0.0);
+    cairo_pattern_add_color_stop_rgba (pattern,
+                                       0.0,
+                                       rgba_line[0],
+                                       rgba_line[1],
+                                       rgba_line[2],
+                                       0.7);
+    cairo_pattern_add_color_stop_rgba (pattern,
+                                       offset,
+                                       rgba_line[0],
+                                       rgba_line[1],
+                                       rgba_line[2],
+                                       0.7);
+    cairo_pattern_add_color_stop_rgba (pattern,
+                                       offset + 0.0125,
+                                       rgba_line[0],
+                                       rgba_line[1],
+                                       rgba_line[2],
+                                       0.4);
+    cairo_pattern_add_color_stop_rgba (pattern,
+                                       1.0,
+                                       rgba_line[0],
+                                       rgba_line[1],
+                                       rgba_line[2],
+                                       0.4);
+
+    cairo_set_source (cr, pattern);
     cairo_stroke (cr);
+    cairo_pattern_destroy (pattern);
   }
 
   void
@@ -368,9 +415,14 @@ namespace nux
     cairo_fill (dots_cr);
     cairo_rectangle (dots_cr, 2.0f, 2.0f, 1.0f, 1.0f);
     cairo_fill (dots_cr);
+
     dots_pattern = cairo_pattern_create_for_surface (dots_surf);
 
     // fill path of normal context with dot-pattern
+    // FIXME: using the path from ComputeFullMaskPath() and not a plain rect.
+    // path triggers a bug in cairo (yet to be filed), so repeating of the dot-
+    // pattern produces wrong pattern in the end, a viable work-around still
+    // needs to be thought up
     cairo_set_operator (cr, CAIRO_OPERATOR_OVER);
     cairo_set_source (cr, dots_pattern);
     cairo_pattern_set_extend (dots_pattern, CAIRO_EXTEND_REPEAT);
@@ -516,13 +568,15 @@ namespace nux
     PangoFontDescription* desc       = NULL;
     PangoContext*         pangoCtx   = NULL;
 
-    GetTextExtents ((char*) "Ubuntu 20",
+    GetTextExtents ((char*) FONT_FACE,
                     &textWidth,
                     &textHeight);
 
+    cairo_set_source_rgba (cr, rgba[0], rgba[1], rgba[2], rgba[3]);
+
     cairo_set_font_options (cr, _fontOpts);
     layout = pango_cairo_create_layout (cr);
-    desc = pango_font_description_from_string ((char*) "Ubuntu 20");
+    desc = pango_font_description_from_string ((char*) FONT_FACE);
     pango_font_description_set_weight (desc, PANGO_WEIGHT_NORMAL);
     pango_layout_set_font_description (layout, desc);
     pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
@@ -537,7 +591,6 @@ namespace nux
                    ANCHOR_WIDTH + (float) ((width - ANCHOR_WIDTH) - textWidth) / 2.0f,
                    (float) (height - textHeight) / 2.0f);
     pango_cairo_show_layout (cr, layout);
-    cairo_set_source_rgba (cr, rgba[0], rgba[1], rgba[2], rgba[3]);
     cairo_fill (cr);
 
     // clean up
@@ -570,7 +623,13 @@ namespace nux
     //DrawCairo (cr, TRUE, line_width, rgba_shadow, FALSE, FALSE);
     //ctk_surface_blur (surf, blur_coeff);
     //ComputeMask (cr);
-    ComputeOutline (cr, line_width, rgba_line);
+    ComputeOutline (cr,
+                    line_width,
+                    rgba_line,
+                    width,
+                    anchor_width,
+                    corner_radius,
+                    padding_size);
   }
 
   Tooltip::Tooltip (int     x,
@@ -693,14 +752,14 @@ namespace nux
     float    rgbaShadow[4]    = {0.0f, 0.0f, 0.0f, 0.48f};
     float    rgbaText[4]      = {1.0f, 1.0f, 1.0f, 1.0f};
 
-    GetTextExtents ((char*) "Ubuntu 20",
+    GetTextExtents ((char*) FONT_FACE,
                     &textWidth,
                     &textHeight);
 
     base.x = _anchorX;
     base.y = _anchorY;
-    base.width = textWidth + 2 * MARGIN + ANCHOR_WIDTH;
-    base.height = textHeight + 2 * MARGIN;
+    base.width = textWidth + 2 * H_MARGIN + ANCHOR_WIDTH + 2 * PADDING_SIZE;
+    base.height = textHeight + 2 * V_MARGIN + 2 * PADDING_SIZE;
     SetGeometry (base);
 
     _cairo_graphics = new CairoGraphics (CAIRO_FORMAT_ARGB32,
@@ -770,13 +829,10 @@ initGUIThread (nux::NThread* thread,
                void*         data)
 {
   nux::VLayout* layout  = new nux::VLayout (TEXT(""), NUX_TRACKER_LOCATION);
-  nux::Tooltip* tooltip1 = new nux::Tooltip (5, 40, TEXT("Network"));
-  nux::Tooltip* tooltip2 = new nux::Tooltip (5, 100, TEXT("Tools"));
-  nux::Tooltip* tooltip3 = new nux::Tooltip (5, 160, TEXT("Games"));
+  nux::Tooltip* tooltip1 = new nux::Tooltip (64, 64, TEXT("GEdit"));
+  nux::Tooltip* tooltip2 = new nux::Tooltip (64, 128, TEXT("Firefox"));
+  nux::Tooltip* tooltip3 = new nux::Tooltip (64, 192, TEXT("Chromium"));
 
-  tooltip1->SetBackgroundColor(nux::Color(0xFF8914f7));
-  tooltip2->SetBackgroundColor(nux::Color(0xFF8914f7));
-  tooltip3->SetBackgroundColor(nux::Color(0xFF8914f7));
   tooltip1->ShowWindow(true);
   tooltip2->ShowWindow(true);
   tooltip3->ShowWindow(true);
