@@ -537,8 +537,11 @@ namespace nux
     CHECKGL_MSG (glGetString (GL_RENDERER) );
     m_OpenGLVersionString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VERSION) ) );
     CHECKGL_MSG (glGetString (GL_VERSION) );
-    m_GLSLVersionString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_SHADING_LANGUAGE_VERSION) ) );
-    CHECKGL_MSG (glGetString (GL_SHADING_LANGUAGE_VERSION) );
+    if (GLEW_VERSION_2_0)
+    {
+      m_GLSLVersionString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_SHADING_LANGUAGE_VERSION) ) );
+      CHECKGL_MSG (glGetString (GL_SHADING_LANGUAGE_VERSION) );
+    }
 
     nuxDebugMsg (TEXT ("Board Vendor: %s"), m_BoardVendorString.GetTCharPtr() );
     nuxDebugMsg (TEXT ("Board Renderer: %s"), m_BoardRendererString.GetTCharPtr() );
