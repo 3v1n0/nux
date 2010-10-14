@@ -111,7 +111,11 @@ namespace nux
 
       void ComputeOutline (cairo_t* cr,
                            gfloat   line_width,
-                           gfloat*  rgba_line);
+                           gfloat*  rgba_line,
+                           gint     width,
+                           gfloat   anchor_width,
+                           gfloat   corner_radius,
+                           gint     padding_size);
 
       void DrawMask (cairo_t* cr,
                      gint     width,
@@ -298,16 +302,56 @@ namespace nux
   void
   Tooltip::ComputeOutline (cairo_t* cr,
                            gfloat   line_width,
-                           gfloat*  rgba_line)
+                           gfloat*  rgba_line,
+                           gint     width,
+                           gfloat   anchor_width,
+                           gfloat   corner_radius,
+                           gint     padding_size)
   {
+    cairo_pattern_t* pattern = NULL;
+    double           offset  = 0.0;
+
+    if (width == 0)
+    {
+      g_warning ("%s(): passed in width is 0!", G_STRFUNC);
+      return;
+    }
+
+    offset = ((double) padding_size + anchor_width + corner_radius) /
+             (double) width;
+
     cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_rgba (cr,
-                         rgba_line[0],
-                         rgba_line[1],
-                         rgba_line[2],
-                         rgba_line[3]);
     cairo_set_line_width (cr, line_width);
+
+    pattern = cairo_pattern_create_linear (0.0, 0.0, (double) width, 0.0);
+    cairo_pattern_add_color_stop_rgba (pattern,
+                                       0.0,
+                                       rgba_line[0],
+                                       rgba_line[1],
+                                       rgba_line[2],
+                                       0.7);
+    cairo_pattern_add_color_stop_rgba (pattern,
+                                       offset,
+                                       rgba_line[0],
+                                       rgba_line[1],
+                                       rgba_line[2],
+                                       0.7);
+    cairo_pattern_add_color_stop_rgba (pattern,
+                                       offset + 0.0125,
+                                       rgba_line[0],
+                                       rgba_line[1],
+                                       rgba_line[2],
+                                       0.4);
+    cairo_pattern_add_color_stop_rgba (pattern,
+                                       1.0,
+                                       rgba_line[0],
+                                       rgba_line[1],
+                                       rgba_line[2],
+                                       0.4);
+
+    cairo_set_source (cr, pattern);
     cairo_stroke (cr);
+    cairo_pattern_destroy (pattern);
   }
 
   void
@@ -575,7 +619,13 @@ namespace nux
     //DrawCairo (cr, TRUE, line_width, rgba_shadow, FALSE, FALSE);
     //ctk_surface_blur (surf, blur_coeff);
     //ComputeMask (cr);
-    ComputeOutline (cr, line_width, rgba_line);
+    ComputeOutline (cr,
+                    line_width,
+                    rgba_line,
+                    width,
+                    anchor_width,
+                    corner_radius,
+                    padding_size);
   }
 
   Tooltip::Tooltip (int     x,
