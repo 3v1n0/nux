@@ -115,6 +115,7 @@ AC_SUBST(NUX_CORE_LIBS)
 
 PKG_CHECK_MODULES(NUX_IMAGE,
                   glib-2.0 >= 2.25.14
+		  gdk-pixbuf-2.0
                   cairo >= 1.9.14
                   libpng >= 1.2.44
                   )
@@ -123,6 +124,7 @@ AC_SUBST(NUX_IMAGE_LIBS)
 
 PKG_CHECK_MODULES(NUX_MESH,
                   glib-2.0 >= 2.25.14
+                  gdk-pixbuf-2.0
                   glew
                   glewmx
                   )
@@ -131,6 +133,7 @@ AC_SUBST(NUX_MESH_LIBS)
 
 PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
+                  gdk-pixbuf-2.0
                   gl
                   glew
                   glewmx
@@ -141,6 +144,7 @@ AC_SUBST(NUX_GRAPHICS_LIBS)
 
 PKG_CHECK_MODULES(NUX,
                   glib-2.0 >= 2.25.14
+                  gdk-pixbuf-2.0
                   gthread-2.0
                   gl
                   glew

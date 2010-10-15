@@ -26,6 +26,8 @@
 #include "BitmapFormats.h"
 #include "NuxCore/Math/MathUtility.h"
 
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
 #define DEBUG_ENTER(a)
 #define DEBUG_WARNING(a)
 #define DEBUG_EXIT(a)
@@ -520,6 +522,7 @@ namespace nux
 
   bool HasOpenEXRSupport();
 
+  NBitmapData *LoadGdkPixbuf (GdkPixbuf *pixbuf);
   NBitmapData *LoadImageFile (const TCHAR *Filename);
 
 }

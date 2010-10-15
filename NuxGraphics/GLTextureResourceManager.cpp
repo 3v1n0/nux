@@ -57,6 +57,21 @@ namespace nux
 
     return (T *) Src;
   }
+  
+  NTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf)
+  {
+    NBitmapData *BitmapData = LoadGdkPixbuf (pixbuf);
+    NUX_RETURN_VALUE_IF_NULL (BitmapData, 0);
+
+    if (BitmapData->isTextureData() )
+    {
+      NTexture2D *texture = new NTexture2D();
+      texture->Update (BitmapData);
+      return texture;
+    }
+    
+    return 0;
+  }
 
 
   NTexture *CreateTextureFromFile (const TCHAR *TextureFilename)

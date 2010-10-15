@@ -39,6 +39,32 @@ namespace nux
 {
 
   extern PixelFormatInfo GPixelFormats[];
+  
+  NBitmapData *LoadGdkPixbuf (GdkPixbuf *pixbuf)
+  {
+    unsigned int width = gdk_pixbuf_get_width (pixbuf);
+    unsigned int height = gdk_pixbuf_get_height (pixbuf);
+    unsigned int row_bytes = gdk_pixbuf_get_rowstride (pixbuf);
+    
+    NTextureData *Texture = new NTextureData (BITFMT_R8G8B8A8, width, height, 1);
+    
+    guchar *img = gdk_pixbuf_get_pixels (pixbuf);
+    
+    for (unsigned int i = 0; i < width; i++)
+      for (unsigned int j = 0; j < height; j++)
+      {
+        guchar *pixels = img + ( j * row_bytes + i * 4);
+        UINT value =
+          (* (pixels + 3) << 24) |  // a
+          (* (pixels + 2) << 16) |  // b
+          (* (pixels + 1) << 8)  |  // g
+          * (pixels + 0);           // r
+
+        Texture->GetSurface (0).Write32b (i, j, value); // = vec4ub(img + ((h-j-1)*row_bytes + i * 4));
+      }
+    
+    return Texture;
+  }
 
   NBitmapData *LoadImageFile (const TCHAR *filename)
   {
