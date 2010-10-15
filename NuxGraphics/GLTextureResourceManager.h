@@ -26,6 +26,8 @@
 #include "GLResourceManager.h"
 #include "IOpenGLBaseTexture.h"
 
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
 namespace nux
 {
 
@@ -33,6 +35,7 @@ namespace nux
   class NTexture;
   class NGLTexture;
 
+  NTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf);
   NTexture *CreateTextureFromFile (const TCHAR *TextureFilename);
   NTexture *CreateTextureFromBitmapData (const NBitmapData *BitmapData);
 
