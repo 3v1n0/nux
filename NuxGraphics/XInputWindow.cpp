@@ -80,14 +80,14 @@ namespace nux
         /* top */
         data[2] = _y + _height;
         data[8] = _x;
-        data[9] = _x + _width;
+        data[9] = _x + _width - 1;
       }
       else
       {
         /* bottom */
-        data[3] = screenHeight - _y;
+        data[3] = (screenHeight - 1) - _y;
         data[10] = _x;
-        data[11] = _x + _width;
+        data[11] = _x + _width - 1;
       }
     }
     else
@@ -97,14 +97,14 @@ namespace nux
         /* left */
         data[0] = _x + _width;
         data[4] = _y;
-        data[5] = _y + _height;
+        data[5] = _y + _height - 1;
       }
       else
       {
         /* right */
-        data[1] = screenWidth - _y;
+        data[1] = (screenWidth - 1) - _y;
         data[6] = _y;
-        data[7] = _y + _height;
+        data[7] = _y + _height - 1;
       }
     }
     
