@@ -21,6 +21,7 @@
 
 
 #include "Nux.h"
+#include "NuxGraphics/NuxGraphics.h"
 
 namespace nux
 {

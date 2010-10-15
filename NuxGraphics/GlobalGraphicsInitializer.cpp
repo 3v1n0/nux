@@ -22,7 +22,7 @@
 
 #include "GLResource.h"
 #include "RunTimeStats.h"
-#include "NuxGraphics.h"
+#include "NuxGraphicsResources.h"
 #include "FontTexture.h"
 #include "GlobalGraphicsInitializer.h"
 

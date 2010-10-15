@@ -21,6 +21,7 @@
 
 
 #include "GLResource.h"
+#include "NuxGraphics.h"
 #include "GLDeviceFactory.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"

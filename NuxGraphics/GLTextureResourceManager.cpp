@@ -64,25 +64,25 @@ namespace nux
     NBitmapData *BitmapData = LoadImageFile (TextureFilename);
     NUX_RETURN_VALUE_IF_NULL (BitmapData, 0);
 
-    if (BitmapData->isTextureData() )
+    if (BitmapData->IsTextureData() )
     {
-      NTexture2D *texture = new NTexture2D();
+      NTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
-    else if (BitmapData->isCubemapTextureData() )
+    else if (BitmapData->IsCubemapTextureData() )
     {
       NTextureCube *texture = new NTextureCube();
       texture->Update (BitmapData);
       return texture;
     }
-    else if (BitmapData->isVolumeTextureData() )
+    else if (BitmapData->IsVolumeTextureData() )
     {
       NTextureVolume *texture = new NTextureVolume();
       texture->Update (BitmapData);
       return texture;
     }
-    else if (BitmapData->isAnimatedTextureData() )
+    else if (BitmapData->IsAnimatedTextureData() )
     {
       NAnimatedTexture *texture = new NAnimatedTexture();
       texture->Update (BitmapData);
@@ -98,25 +98,25 @@ namespace nux
     if (BitmapData == 0)
       return 0;
 
-    if (BitmapData->isTextureData() )
+    if (BitmapData->IsTextureData() )
     {
       NTexture2D *texture = new NTexture2D();
       texture->Update (BitmapData);
       return texture;
     }
-    else if (BitmapData->isCubemapTextureData() )
+    else if (BitmapData->IsCubemapTextureData() )
     {
       NTextureCube *texture = new NTextureCube();
       texture->Update (BitmapData);
       return texture;
     }
-    else if (BitmapData->isVolumeTextureData() )
+    else if (BitmapData->IsVolumeTextureData() )
     {
       NTextureVolume *texture = new NTextureVolume();
       texture->Update (BitmapData);
       return texture;
     }
-    else if (BitmapData->isAnimatedTextureData() )
+    else if (BitmapData->IsAnimatedTextureData() )
     {
       NAnimatedTexture *texture = new NAnimatedTexture();
       texture->Update (BitmapData);
@@ -180,7 +180,7 @@ namespace nux
     nuxAssertMsg (BitmapData, TEXT ("[NTexture2D::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
-    if (!BitmapData->isTextureData() )
+    if (!BitmapData->IsTextureData() )
     {
       nuxAssertMsg (0, TEXT ("[NTexture2D::Update] Argument BitmapData is not a 2D texture") );
       return false;
@@ -353,7 +353,7 @@ namespace nux
     nuxAssertMsg (BitmapData, TEXT ("[NRectangleTexture::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
-    if (!BitmapData->isTextureData() )
+    if (!BitmapData->IsTextureData() )
     {
       nuxAssertMsg (0, TEXT ("[NRectangleTexture::Update] Argument BitmapData is not a 2D texture") );
       return false;
@@ -503,7 +503,7 @@ namespace nux
     nuxAssertMsg (BitmapData, TEXT ("[NTextureCube::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
-    if (!BitmapData->isCubemapTextureData() )
+    if (!BitmapData->IsCubemapTextureData() )
     {
       nuxAssertMsg (0, TEXT ("[NTextureCube::Update] Argument BitmapData is not a Cube texture") );
       return false;
@@ -654,7 +654,7 @@ namespace nux
     nuxAssertMsg (BitmapData, TEXT ("[NTextureVolume::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
-    if (!BitmapData->isVolumeTextureData() )
+    if (!BitmapData->IsVolumeTextureData() )
     {
       nuxAssertMsg (0, TEXT ("[NTextureVolume::Update] Argument BitmapData is not a Volume texture") );
       return false;
@@ -837,7 +837,7 @@ namespace nux
     nuxAssertMsg (BitmapData, TEXT ("[NAnimatedTexture::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
-    if (!BitmapData->isAnimatedTextureData() )
+    if (!BitmapData->IsAnimatedTextureData() )
     {
       nuxAssertMsg (0, TEXT ("[NAnimatedTexture::Update] Argument BitmapData is not a Animated texture") );
       return false;

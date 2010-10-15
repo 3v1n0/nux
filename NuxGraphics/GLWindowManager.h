@@ -80,9 +80,6 @@ namespace nux
 
 #define gGLWindowManager nux::DisplayAccessController::Instance()
 
-  inlDeclareThreadLocalStorage (GLWindowImpl *, 1, ThreadLocal_GLWindowImpl);
-  inlDeclareThreadLocalStorage (GLDeviceFactory *, 2, ThreadLocal_GLDeviceFactory);
-
 }
 
 #endif // DISPLAYACCESSCONTROLLER_H
