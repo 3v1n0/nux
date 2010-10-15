@@ -43,6 +43,9 @@ namespace nux
     XInputWindow();
     ~XInputWindow();
     
+    void EnableStruts(bool enable);
+    bool StrutsEnabled();
+    
     void EnsureInputs();
     
     //! Set the position and size of the window
@@ -57,6 +60,10 @@ namespace nux
     
   private:
   
+    void SetStruts ();
+    void UnsetStruts ();
+  
+    bool _strutsEnabled;
     Window _window;
     int _x;
     int _y;

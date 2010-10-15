@@ -124,6 +124,8 @@ namespace nux
     #if defined(NUX_OS_LINUX)
     void EnableInputWindow (bool b);
     bool InputWindowEnabled ();
+    void InputWindowEnableStruts (bool enable);
+    bool InputWindowStrutsEnabled ();
     #endif
 
     std::vector<Geometry> m_dirty_areas;    //!< Geometry of areas inside the BaseWindow that requested a redraw.

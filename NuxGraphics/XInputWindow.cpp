@@ -35,6 +35,7 @@ namespace nux
     _y = 0;
     _width = 1;
     _height = 1;
+    _strutsEnabled = false;
     
     attrib.override_redirect = 1;
     _window = XCreateWindow (d, XDefaultRootWindow (d), _x, _y, _width, _height, 0,
@@ -61,6 +62,87 @@ namespace nux
   {
     Display* d = GetThreadGLWindow()->GetX11Display();
     XDestroyWindow (d, _window);
+  }
+  
+  void XInputWindow::SetStruts()
+  {
+    int screenHeight, screenWidth;
+    long int data[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    Display* d = GetThreadGLWindow()->GetX11Display();
+    
+    screenHeight = XDisplayHeight (d, 0);
+    screenWidth = XDisplayWidth (d, 0);    
+    
+    if (_width > _height)
+    {
+      if (_y < screenHeight / 2)
+      {
+        /* top */
+        data[2] = _y + _height;
+        data[8] = _x;
+        data[9] = _x + _width;
+      }
+      else
+      {
+        /* bottom */
+        data[3] = screenHeight - _y;
+        data[10] = _x;
+        data[11] = _x + _width;
+      }
+    }
+    else
+    {
+      if (_x < screenWidth / 2)
+      {
+        /* left */
+        data[0] = _x + _width;
+        data[4] = _y;
+        data[5] = _y + _height;
+      }
+      else
+      {
+        /* right */
+        data[1] = screenWidth - _y;
+        data[6] = _y;
+        data[7] = _y + _height;
+      }
+    }
+    
+    XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_STRUT_PARTIAL", 0),
+                     XA_CARDINAL, 32, PropModeReplace,
+                     (unsigned char *) data, 12);
+  }
+  
+  void XInputWindow::UnsetStruts()
+  {
+    int i;
+    Display* d = GetThreadGLWindow()->GetX11Display();
+    
+    int data[12];
+    
+    for (i = 0; i < 12; i++)
+      data[i] = 0;
+    
+    XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_STRUT_PARTIAL", 0),
+                     XA_CARDINAL, 32, PropModeReplace,
+                     (unsigned char *) data, 12);
+  }
+  
+  void XInputWindow::EnableStruts(bool enable)
+  {
+    if (_strutsEnabled == enable)
+      return;
+    
+    _strutsEnabled = enable;
+    if (enable)
+      SetStruts();
+    else
+      UnsetStruts();
+  }
+  
+  bool XInputWindow::StrutsEnabled()
+  {
+    return _strutsEnabled;
   }
   
   void XInputWindow::EnsureInputs()
@@ -99,6 +181,9 @@ namespace nux
     
     XMoveResizeWindow (d, _window, x, y, width, height);
     EnsureInputs ();
+    
+    if (_strutsEnabled)
+      SetStruts ();
   }
 
   //! Get the window geometry.

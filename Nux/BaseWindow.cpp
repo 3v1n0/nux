@@ -343,6 +343,19 @@ namespace nux
   {
     return m_input_window_enabled;
   }
+  
+  void BaseWindow::InputWindowEnableStruts (bool enable)
+  {
+    if (!m_input_window_enabled)
+      return;
+    
+    m_input_window->EnableStruts (enable);
+  }
+  
+  bool BaseWindow::InputWindowStrutsEnabled ()
+  {
+    return m_input_window_enabled && m_input_window->StrutsEnabled ();
+  }
   #endif
 
   void BaseWindow::SetGeometry (const Geometry &geo)
