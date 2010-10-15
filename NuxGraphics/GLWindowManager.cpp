@@ -35,9 +35,6 @@ namespace nux
 
   DisplayAccessController::DisplayAccessController()
   {
-    inlRegisterThreadLocalIndex (1, ThreadLocal_GLWindowImpl, NULL);
-    inlRegisterThreadLocalIndex (2, ThreadLocal_GLDeviceFactory, NULL);
-
 #if defined(NUX_OS_WINDOWS)
     // Register Windows Class
 
@@ -149,24 +146,6 @@ namespace nux
     return glwindow;
   }
 #endif
-
-  GLWindowImpl *GetThreadGLWindow()
-  {
-    return (GLWindowImpl *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
-  }
-
-  GLDeviceFactory *GetThreadGLDeviceFactory()
-  {
-    return (GLDeviceFactory *) inlGetThreadLocalStorage (ThreadLocal_GLDeviceFactory);
-  }
-
-  GraphicsContext *GetThreadGraphicsContext()
-  {
-    GLWindowImpl *glwindow = (GLWindowImpl *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
-    return glwindow->GetGraphicsContext();
-  }
-
-
 }
 
 GLEWContext *glewGetContext()

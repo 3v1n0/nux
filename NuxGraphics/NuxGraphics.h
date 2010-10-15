@@ -1,51 +1,45 @@
+/*
+ * Copyright 2010 Inalogic Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License version 3, as
+ * published by the  Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ *
+ */
+
 #ifndef NUXGRAPHICS_H
 #define NUXGRAPHICS_H
 
 namespace nux
 {
+  class GLWindowImpl;
+  class GLDeviceFactory;
+  class GraphicsContext;
 
-  class FontTexture;
-  class NResourceCache;
+  GLWindowImpl *GetThreadGLWindow();
+  GLDeviceFactory *GetThreadGLDeviceFactory();
+  GraphicsContext *GetThreadGraphicsContext();
 
-  class NuxGraphicsResources
-  {
-    NUX_DECLARE_GLOBAL_OBJECT (NuxGraphicsResources, NuxGraphicsGlobalSingletonInitializer);
-  public:
+  #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
+  #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
 
-    void InitializeResources();
-    NString FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-    NString FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-    NString FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-    NString FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-
-//         const std::vector<NString>& GetFontSearchPath() const {return m_FontSearchPath;}
-//         const std::vector<NString>& GetShaderSearchPath() const {return m_ShaderSearchPath;}
-//         const std::vector<NString>& GetUITextureSearchPath() const {return m_UITextureSearchPath;}
-
-    IntrusiveSP<FontTexture> GetFont();
-    IntrusiveSP<FontTexture> GetBoldFont();
-
-    /*!
-        Cache font textures into the provided resource cache.
-
-    */
-    void CacheFontTextures (NResourceCache &RsrcCache);
-
-  private:
-    IntrusiveSP<FontTexture> m_normal_font;    //!< The normal font renderer
-    IntrusiveSP<FontTexture> m_bold_font;      //!< The bold font renderer
-
-    std::vector<NString> m_FontSearchPath;
-    std::vector<NString> m_ShaderSearchPath;
-    std::vector<NString> m_UITextureSearchPath;
-    FilePath m_ResourcePathLocation;
-  };
+  inlDeclareThreadLocalStorage (GLWindowImpl *, 1, ThreadLocal_GLWindowImpl);
+  inlDeclareThreadLocalStorage (GLDeviceFactory *, 2, ThreadLocal_GLDeviceFactory);
 
   void NuxGraphicsInitialize();
-
-
 }
 
-#define GNuxGraphicsResources NUX_GLOBAL_OBJECT_INSTANCE(nux::NuxGraphicsResources)
 
 #endif // NUXGRAPHICS_H

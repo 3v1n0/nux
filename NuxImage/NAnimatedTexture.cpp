@@ -118,7 +118,7 @@ namespace nux
 
   bool SaveAnimatedTextureFile (NBitmapData *pAnimatedTexture, const TCHAR *Filename)
   {
-    if (pAnimatedTexture == 0 || !pAnimatedTexture->isAnimatedTextureData() )
+    if (pAnimatedTexture == 0 || !pAnimatedTexture->IsAnimatedTextureData() )
       return false;
 
     NSerializer *fileStream = GFileManager.CreateFileWriter (Filename, NSerializer::Read | NSerializer::Write);

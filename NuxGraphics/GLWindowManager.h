@@ -26,12 +26,10 @@
 #include "NuxCore/NuxCore.h"
 
 #if defined(NUX_OS_WINDOWS)
-#include "Gfx_OpenGL.h"
+  #include "Gfx_OpenGL.h"
 #elif defined(NUX_OS_LINUX)
-#include "GfxSetupX11.h"
+  #include "GfxSetupX11.h"
 #endif
-
-#include "GLThread.h"
 
 namespace nux
 {
@@ -79,9 +77,6 @@ namespace nux
   };
 
 #define gGLWindowManager nux::DisplayAccessController::Instance()
-
-  inlDeclareThreadLocalStorage (GLWindowImpl *, 1, ThreadLocal_GLWindowImpl);
-  inlDeclareThreadLocalStorage (GLDeviceFactory *, 2, ThreadLocal_GLDeviceFactory);
 
 }
 

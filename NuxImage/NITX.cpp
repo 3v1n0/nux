@@ -78,7 +78,7 @@ namespace nux
     FileStream->Serialize ( (char *) &TextureDataSize,         sizeof (TextureDataSize) );
     t_u32 TextureStartPosition = FileStream->Tell();
 
-    if (TextureData->isTextureData() )
+    if (TextureData->IsTextureData() )
     {
       NTextureData *Texture2DData = static_cast<NTextureData *> (TextureData);
       t_s32 type = ARCH_TEXTURE2D;
@@ -102,7 +102,7 @@ namespace nux
         FileStream->Serialize ( (char *) Texture2DData->GetSurface (mip).GetPtrRawData(),     Size);
       }
     }
-    else if (TextureData->isCubemapTextureData() )
+    else if (TextureData->IsCubemapTextureData() )
     {
       NCubemapData *CubemapData = static_cast<NCubemapData *> (TextureData);
       t_s32 type = ARCH_CUBEMAP;
@@ -129,7 +129,7 @@ namespace nux
         }
       }
     }
-    else if (TextureData->isVolumeTextureData() )
+    else if (TextureData->IsVolumeTextureData() )
     {
       NVolumeData *VolumeData = static_cast<NVolumeData *> (TextureData);
       t_u32 type = ARCH_VOLUME;
@@ -158,7 +158,7 @@ namespace nux
         }
       }
     }
-    else if (TextureData->isAnimatedTextureData() )
+    else if (TextureData->IsAnimatedTextureData() )
     {
       NAnimatedTextureData *AnimatedTextureData = static_cast<NAnimatedTextureData *> (TextureData);
       t_u32 type = ARCH_ANIMATEDTEXTURE;
