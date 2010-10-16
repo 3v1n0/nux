@@ -532,6 +532,10 @@ namespace nux
       InitGlibLoop ();
       return;
     }
+    else
+    {
+      m_GLWindow->ShowWindow();
+    }
     // Called the first time so we can initialize the size of the render targets
     // At this stage, the size of the window is known.
     m_window_compositor->FormatRenderTargets (m_GLWindow->GetWindowWidth(), m_GLWindow->GetWindowHeight() );
@@ -820,6 +824,11 @@ namespace nux
         }
         if (IsEmbeddedWindow () && !m_RedrawRequested && RequestRequired)
           RequestRedraw ();
+
+        GetGraphicsThread()->GetGraphicsContext().ResetStats();
+        m_ClientAreaList.clear();
+        ClearRedrawFlag();
+        m_size_configuration_event = false;
       }
     }
 

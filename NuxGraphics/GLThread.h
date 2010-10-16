@@ -23,20 +23,20 @@
 #ifndef GLTHREAD_H
 #define GLTHREAD_H
 
-namespace nux
-{
-
-  class GLWindowImpl;
-  class GLDeviceFactory;
-  class GraphicsContext;
-
-  GLWindowImpl *GetThreadGLWindow();
-  GLDeviceFactory *GetThreadGLDeviceFactory();
-  GraphicsContext *GetThreadGraphicsContext();
-
-#define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
-#define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
-
-}
+// namespace nux
+// {
+// 
+//   class GLWindowImpl;
+//   class GLDeviceFactory;
+//   class GraphicsContext;
+// 
+//   GLWindowImpl *GetThreadGLWindow();
+//   GLDeviceFactory *GetThreadGLDeviceFactory();
+//   GraphicsContext *GetThreadGraphicsContext();
+// 
+// #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
+// #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
+// 
+// }
 
 #endif // GLTHREAD_H
