@@ -128,8 +128,6 @@ namespace nux
     bool InputWindowStrutsEnabled ();
     #endif
 
-    std::vector<Geometry> m_dirty_areas;    //!< Geometry of areas inside the BaseWindow that requested a redraw.
-    
   protected:
     ConfigureNotifyCallback m_configure_notify_callback;    //!< Callback function to set the window position and size.
     void *m_configure_notify_callback_data;     //!< Callback data for ConfigureNotifyCallback.
@@ -157,8 +155,6 @@ namespace nux
         @param Height   New height of the window.
     */
     virtual void NotifyConfigurationChange (int Width, int Height);
-
-    void ClearDirtyAreas();
 
     int GetBorder() const;
     int GetTopBorder() const;

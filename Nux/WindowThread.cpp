@@ -1240,6 +1240,61 @@ namespace nux
     if (m_window_compositor)
       m_window_compositor->SetBackgroundPaintLayer (bkg);
   }
+  
+  Area* WindowThread::GetTopRenderingParent(Area* area)
+  {
+    NUX_RETURN_VALUE_IF_NULL(area, NULL);
+
+    Area* parent = area->GetParentObject();
+    if (parent)
+    {
+      if (parent == GetGraphicsThread ()->GetMainLayout ())
+      {
+        return parent;
+      }
+      else if (parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
+      {
+        return parent;
+      }
+      else 
+      {
+        return GetTopRenderingParent (parent);
+      }
+    }
+    else
+    {
+      return 0;
+    }
+  }
+  
+  void WindowThread::AddToDrawList (View *view)
+  {
+    Area *parent;
+    Geometry geo, pgeo;
+    
+    geo = view->GetGeometry();
+    
+    parent = GetTopRenderingParent (view);
+    
+    if (parent)
+    {
+      pgeo = parent->GetGeometry();
+      geo.x += pgeo.x;
+      geo.y += pgeo.y;
+    }
+    
+    m_dirty_areas.push_back(geo);
+  }
+  
+  void WindowThread::ClearDrawList ()
+  {
+    m_dirty_areas.clear ();
+  }
+  
+  std::vector<Geometry> WindowThread::GetDrawList ()
+  {
+    return m_dirty_areas;
+  }
 
   float WindowThread::GetFrameRate() const
   {

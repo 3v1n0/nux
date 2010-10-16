@@ -359,7 +359,6 @@ namespace nux
       if (m_ModalWindowList.size() > 0)
       {
         SetCurrentWindow (*m_ModalWindowList.begin() );
-        (*it)->ClearDirtyAreas();        
         ret = (*m_ModalWindowList.begin() )->ProcessEvent (ievent, ret, ProcessEventInfo);
         SetCurrentWindow (NULL);
       }
@@ -381,7 +380,6 @@ namespace nux
           {
             // Traverse the window from the top of the visibility stack to the bottom.
             SetCurrentWindow (*it);
-            (*it)->ClearDirtyAreas();
             ret = (*it)->ProcessEvent (ievent, ret, ProcessEventInfo);
             SetCurrentWindow (NULL);
 
@@ -739,7 +737,7 @@ namespace nux
         WindowNeedRedraw = window->IsRedrawNeeded();
 
         // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
-        if(force_draw || window->IsRedrawNeeded() || (window->m_dirty_areas.size() > 0))
+        if(force_draw || GetGraphicsThread()->IsRedrawNeeded ())
         {
           if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
           {
@@ -780,8 +778,6 @@ namespace nux
           }
 
           RenderWindowComposition (/*fbo,*/ window, force_draw);
-
-          window->ClearDirtyAreas();
         }
         
         if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
@@ -1161,31 +1157,6 @@ namespace nux
       //GetGraphicsThread()->GetGraphicsContext().DisableAllTextureMode(GL_TEXTURE1);
       //GetGraphicsThread()->GetGraphicsContext().SetEnvModeSelectColor(GL_TEXTURE0);
     }
-  }
-
-  void WindowCompositor::AddToDrawList(View* view)
-  {
-      NUX_RETURN_IF_NULL(view);
-
-      Area* parent = GetTopRenderingParent (view);
-
-      // Try as best as possible to identify the correct BaseWindow where the view is located.
-      if (parent && parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
-      {
-        BaseWindow* fview = NUX_STATIC_CAST (BaseWindow*, parent);
-
-        Geometry geo = view->GetGeometry();
-        fview->m_dirty_areas.push_back(geo);
-      }
-      else if (m_CurrentWindow)
-      {
-        Geometry geo = view->GetGeometry();
-        m_CurrentWindow->m_dirty_areas.push_back(geo);
-      }
-  }
-
-  void WindowCompositor::ClearDrawList()
-  {
   }
 
   void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
@@ -1589,61 +1560,5 @@ namespace nux
   {
     return m_BlurTexture;
   }
-
-  Area* WindowCompositor::GetTopRenderingParent(Area* area)
-  {
-    NUX_RETURN_VALUE_IF_NULL(area, NULL);
-
-    Area* parent = area->GetParentObject();
-    if (parent)
-    {
-      if (parent == GetGraphicsThread ()->GetMainLayout ())
-      {
-        return parent;
-      }
-      else if (parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
-      {
-        return parent;
-      }
-      else 
-      {
-        return GetTopRenderingParent (parent);
-      }
-    }
-    else
-    {
-      return 0;
-    }
-  }
-
-  Area* WindowCompositor::GetTopParent(Area* area)
-  {
-    NUX_RETURN_VALUE_IF_NULL(area, NULL);
-
-    Area* parent = area->GetParentObject();
-    if (parent)
-    {
-      if (parent == GetGraphicsThread ()->GetMainLayout ())
-      {
-        return parent;
-      }
-      else if (parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
-      {
-        return parent;
-      }
-      else 
-      {
-        Area* grand_parent = GetTopParent (parent);
-        if (grand_parent == 0)
-          return parent;
-        return grand_parent;
-      }
-    }
-    else
-    {
-      return 0;
-    }
-  }
-
 }
 

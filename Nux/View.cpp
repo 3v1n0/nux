@@ -228,8 +228,9 @@ namespace nux
     WindowThread* application = GetGraphicsThread();
     if(application)
     {
+        application->AddToDrawList(this);
         application->RequestRedraw();
-        GetThreadWindowCompositor().AddToDrawList(this);
+        //GetThreadWindowCompositor().AddToDrawList(this);
     }
     m_NeedRedraw = true;
   }
@@ -240,8 +241,8 @@ namespace nux
     WindowThread* application = GetGraphicsThread();
     if(application)
     {
+        application->AddToDrawList(this);
         application->RequestRedraw();
-        GetThreadWindowCompositor().AddToDrawList(this);
     }
     //m_NeedRedraw = false;
   }
