@@ -114,6 +114,14 @@ namespace nux
       return m_RedrawRequested;
     }
 
+    Area* GetTopRenderingParent(Area* area);
+
+    void AddToDrawList (View *view);
+    
+    void ClearDrawList ();
+  
+    std::vector<Geometry> GetDrawList ();
+
     // Layout
 
     //! This list contains the layout that need to be recomputed following the resizing of one of the sub element.
@@ -324,6 +332,7 @@ namespace nux
         This list contains the layout that need to be recomputed following the resizing of one of the sub element.
     */
     std::list<Area *> m_LayoutRefreshList;
+    std::vector<Geometry> m_dirty_areas;
 
     //! This variable is true while we are computing the layout the starting from the outmost layout (the Main Layout);
     bool m_IsComputingMainLayout;
