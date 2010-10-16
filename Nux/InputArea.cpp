@@ -246,7 +246,8 @@ namespace nux
 
       if (ievent.e_event == NUX_MOUSEWHEEL)
       {
-        if (HasKeyboardFocus() )
+        // Mouse wheel should not be conditioned to keyboard focus.
+        //if (HasKeyboardFocus() )
         {
           OnMouseWheel.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root,
                              ievent.e_wheeldelta,

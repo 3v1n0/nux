@@ -24,7 +24,7 @@
 #define GLDEVICEOBJECT_H
 
 #include "GLResource.h"
-#include "GLThread.h"
+#include "NuxGraphics.h"
 #include "GLDeviceFrameBufferObject.h"
 #include "GLShaderParameter.h"
 #include "GLTextureStates.h"

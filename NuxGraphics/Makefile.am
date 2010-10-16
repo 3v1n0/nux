@@ -82,6 +82,7 @@ source_h = \
   $(srcdir)/RenderingPipeGLSL.h \
   $(srcdir)/NuxGraphics.h \
   $(srcdir)/NuxGraphicsObject.h \
+  $(srcdir)/NuxGraphicsResources.h \
   $(srcdir)/XInputWindow.h
 
 source_cpp = \
@@ -136,6 +137,7 @@ source_cpp = \
   $(srcdir)/IOpenGLPixelBufferOject.cpp \
   $(srcdir)/NuxGraphics.cpp \
   $(srcdir)/NuxGraphicsObject.cpp \
+  $(srcdir)/NuxGraphicsResources.cpp \
   $(srcdir)/XInputWindow.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la_SOURCES = \

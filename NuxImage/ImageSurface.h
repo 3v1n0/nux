@@ -181,19 +181,19 @@ namespace nux
     virtual const ImageSurface &GetSurface (t_s32 face, t_s32 MipLevel) const = 0;
     virtual ImageSurface &GetSurface (t_s32 face, t_s32 MipLevel) = 0;
 
-    virtual bool isTextureData() const
+    virtual bool IsTextureData() const
     {
       return false;
     };
-    virtual bool isCubemapTextureData() const
+    virtual bool IsCubemapTextureData() const
     {
       return false;
     }
-    virtual bool isVolumeTextureData() const
+    virtual bool IsVolumeTextureData() const
     {
       return false;
     }
-    virtual bool isAnimatedTextureData() const
+    virtual bool IsAnimatedTextureData() const
     {
       return false;
     }
@@ -255,7 +255,7 @@ namespace nux
 
     bool SetSurface (t_s32 MipLevel, const ImageSurface &object);
 
-    virtual bool isTextureData() const
+    virtual bool IsTextureData() const
     {
       return true;
     }
@@ -324,7 +324,7 @@ namespace nux
     }
     bool SetSurface (t_s32 face, t_s32 MipLevel, const ImageSurface &object);
 
-    virtual bool isCubemapTextureData() const
+    virtual bool IsCubemapTextureData() const
     {
       return true;
     }
@@ -387,7 +387,7 @@ namespace nux
     }
     bool SetSurface (t_s32 face, t_s32 MipLevel, const ImageSurface &object);
 
-    virtual bool isVolumeTextureData() const
+    virtual bool IsVolumeTextureData() const
     {
       return true;
     }
@@ -460,7 +460,7 @@ namespace nux
 
     bool SetSurface (t_s32 face, t_s32 MipLevel, const ImageSurface &object);
 
-    virtual bool isAnimatedTextureData() const
+    virtual bool IsAnimatedTextureData() const
     {
       return true;
     }
