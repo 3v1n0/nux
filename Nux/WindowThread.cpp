@@ -1494,6 +1494,7 @@ namespace nux
 
     if (GetWindow().IsPauseThreadGraphicsRendering() == false)
     {
+      RefreshLayout ();
       m_window_compositor->Draw (m_size_configuration_event, m_force_redraw);
 
       // When rendering in embedded mode, nux does not attempt to mesure the frame rate...
