@@ -53,6 +53,7 @@ namespace nux
     m_bIsModal = false;
 #if defined(NUX_OS_LINUX)
     m_input_window_enabled = false;
+    m_input_window = 0;
 #endif
     m_layout = 0;
     m_configure_notify_callback = NULL;
@@ -330,7 +331,8 @@ namespace nux
     else
     {
       m_input_window_enabled = false;
-      delete (m_input_window);
+      if (m_input_window)
+        delete (m_input_window);
     }
   }
   
