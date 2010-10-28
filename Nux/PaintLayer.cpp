@@ -106,8 +106,29 @@ namespace nux
 
   void TextureLayer::Renderlayer (GraphicsContext &GfxContext)
   {
+    bool  current_alpha_blend;
+    t_u32 current_src_blend_factor;
+    t_u32 current_dest_blend_factor;
+    t_u32 current_red_mask;
+    t_u32 current_green_mask;
+    t_u32 current_blue_mask;
+    t_u32 current_alpha_mask;
+    
+    // Get the current color mask and blend states. They will be restored later.
+    GfxContext.GetRenderStates ().GetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
+    GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+
+    
+    GfxContext.GetRenderStates ().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, m_write_alpha ? GL_TRUE : GL_FALSE);
+    GfxContext.GetRenderStates ().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
+    
     GfxContext.QRP_GLSL_1Tex (m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_device_texture,
                               m_texxform, m_color);
+    
+    // Restore Color mask and blend states.
+    GfxContext.GetRenderStates ().SetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
+    GfxContext.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    
   }
 
   AbstractPaintLayer *TextureLayer::Clone() const

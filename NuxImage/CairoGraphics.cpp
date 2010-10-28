@@ -31,8 +31,8 @@ namespace nux
     :   m_width (0)
     ,   m_height (0)
   {
-    nuxAssert (width > 0);
-    nuxAssert (height > 0);
+    nuxAssert (width >= 0);
+    nuxAssert (height >= 0);
 
     m_width = width;
     m_height = height;

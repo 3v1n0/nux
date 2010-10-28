@@ -26,7 +26,7 @@
 namespace nux
 {
 #ifdef NUX_DEBUG
-  static bool bBreakOnGLErrors = FALSE;
+  //static bool bBreakOnGLErrors = FALSE;
 #endif
 
 // WARNING: never call glGetError between glBegin and glEnd.

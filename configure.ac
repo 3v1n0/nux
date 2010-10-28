@@ -211,7 +211,7 @@ AC_ARG_ENABLE([debug],
               [enable_debug=no])
 AS_IF([test "x$enable_debug" = "xyes"],
       [
-         MAINTAINER_CFLAGS+=" -D_DEBUG"
+         MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
       ]
 )
 

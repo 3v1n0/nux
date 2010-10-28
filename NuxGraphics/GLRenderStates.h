@@ -156,6 +156,10 @@ namespace nux
                           t_u32 SrcBlendFactor_   /*= GL_ONE*/,
                           t_u32 DestBlendFactor_  /*= GL_ZERO*/);
 
+    inline void GetBlend (bool& AlphaBlendEnable_,
+                      t_u32& SrcBlendFactor_,
+                      t_u32& DestBlendFactor_);
+    
     inline void SetSeparateBlend (bool _bEnable,
                                   t_u32 SrcBlendFactor_   /*= GL_ONE*/,
                                   t_u32 DestBlendFactor_  /*= GL_ZERO*/,
@@ -224,6 +228,12 @@ namespace nux
       t_u32 bBlue     = TRUE,
       t_u32 bAlpha    = TRUE);
 
+    inline void GetColorMask (
+      t_u32& bRed,
+      t_u32& bGreen,
+      t_u32& bBlue,
+      t_u32& bAlpha);
+    
     inline void SetDepthMask (t_u32 bDepth = TRUE);
 
     inline void EnableScissor (t_u32 bScissor = FALSE);
@@ -384,6 +394,15 @@ namespace nux
     }
   }
 
+  inline void GLRenderStates::GetBlend (bool& AlphaBlendEnable_,
+                    t_u32& SrcBlendFactor_,
+                    t_u32& DestBlendFactor_)
+  {
+    AlphaBlendEnable_ = RS_VALUE (m_RenderStateChanges[GFXRS_ALPHABLENDENABLE]);
+    SrcBlendFactor_   = RS_VALUE (m_RenderStateChanges[GFXRS_SRCBLEND]);
+    DestBlendFactor_  = RS_VALUE (m_RenderStateChanges[GFXRS_DESTBLEND]);
+  }
+    
   inline void GLRenderStates::SetSeparateBlend (bool EnableSeparateAlphaBlend,
       t_u32 SrcBlendFactor_,
       t_u32 DestBlendFactor_,
@@ -666,6 +685,18 @@ namespace nux
 
   }
 
+  inline void GLRenderStates::GetColorMask (
+    t_u32& bRed,
+    t_u32& bGreen,
+    t_u32& bBlue,
+    t_u32& bAlpha)
+  {
+    bRed    = RS_VALUE (m_RenderStateChanges[GFXRS_COLORWRITEENABLE_R]);
+    bGreen  = RS_VALUE (m_RenderStateChanges[GFXRS_COLORWRITEENABLE_G]);
+    bBlue   = RS_VALUE (m_RenderStateChanges[GFXRS_COLORWRITEENABLE_B]);
+    bAlpha  = RS_VALUE (m_RenderStateChanges[GFXRS_COLORWRITEENABLE_A]);
+  }
+  
   inline void GLRenderStates::SetDepthMask (t_u32 bDepth)
   {
     if ( (RS_VALUE (m_RenderStateChanges[GFXRS_ZWRITEENABLE]) != bDepth) )

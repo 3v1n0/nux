@@ -64,7 +64,7 @@ namespace nux
     */
     NCriticalSection()
     {
-      pthread_mutex_init (&m_lock, &mut_attr);
+      //pthread_mutex_init (&m_lock, &mut_attr);
     }
 
     //! Destroy critical section.
@@ -73,7 +73,7 @@ namespace nux
     */
     ~NCriticalSection()
     {
-      pthread_mutex_destroy (&m_lock);
+      //pthread_mutex_destroy (&m_lock);
     }
 
     //! Enter critical section.
@@ -83,7 +83,10 @@ namespace nux
     */
     void Lock() const
     {
+      // NUXTODO: There are issues with locking on Linux when starting nux in embedded mode.,.
+#ifndef NUX_OS_LINUX
       pthread_mutex_lock (&m_lock);
+#endif
     }
 
     //! Leave critical section.
@@ -93,7 +96,10 @@ namespace nux
     */
     void Unlock() const
     {
+      // NUXTODO: There are issues with locking on Linux when starting nux in embedded mode.,.
+#ifndef NUX_OS_LINUX
       pthread_mutex_unlock (&m_lock);
+#endif
     }
 
   private:
