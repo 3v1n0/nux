@@ -1510,6 +1510,8 @@ namespace nux
 
     CHECKGL ( glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
+#if 0
+    // NUXTODO: NOT supported by system without GLSL support
     // Deactivate ARB shaders
     CHECKGL ( glDisable (GL_VERTEX_PROGRAM_ARB) );
     CHECKGL ( glBindProgramARB (GL_VERTEX_PROGRAM_ARB, 0) );
@@ -1517,6 +1519,7 @@ namespace nux
     CHECKGL ( glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, 0) );
     // Deactivate GLSL shaders
     CHECKGL ( glUseProgramObjectARB (0) );
+#endif
 
     GetThreadGLDeviceFactory()->DeactivateFrameBuffer();
     /*GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);

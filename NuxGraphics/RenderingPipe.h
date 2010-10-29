@@ -28,7 +28,12 @@
 namespace nux
 {
 
-//! Graphics wraping modes
+  //! Graphics wraping modes
+  /*!
+      Defines the wraping modes of TexCoordXForm.
+      The values are matched to OpenGL wraping modes.
+      @sa TexCoordXForm.
+  */
   typedef enum
   {
     TEXWRAP_UNKNOWN = 0,
@@ -42,7 +47,12 @@ namespace nux
     TEXWRAP_MIRROR_CLAMP_TO_BORDER_EXT,
   } TexWrap;
 
-//! Graphics filtering modes
+  //! Graphics filtering modes
+  /*!
+      Defines the filtering modes of TexCoordXForm.
+      The values are matched to openGL filtering modes.
+      @sa TexCoordXForm.
+  */
   typedef enum
   {
     TEXFILTER_UNKNOWN = 0,
@@ -54,7 +64,11 @@ namespace nux
     TEXFILTER_LINEAR_MIPMAP_LINEAR,
   } TexFilter;
 
-//! Graphics blend modes
+  //! Graphics blend modes
+  /*!
+      Defines the blending modes.
+      The values are matched to openGL blending modes.
+  */
   typedef enum
   {
     ROPBLEND_UNKNOWN = 0,
@@ -75,7 +89,10 @@ namespace nux
     ROPBLEND_SRC_ALPHA_SATURATE,
   } RopBlend;
 
-//! Texture parameters and coordinates computation class
+  //! Texture parameter and coordinate computation class.
+  /*!
+      Defines the texture coordinate computation, wraping and filtering modes 
+   */
   class TexCoordXForm
   {
   public:
