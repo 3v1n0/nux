@@ -43,6 +43,8 @@ namespace nux
     XInputWindow();
     ~XInputWindow();
     
+    static std::list<Window> NativeHandleList();
+    
     void EnableStruts(bool enable);
     bool StrutsEnabled();
     
@@ -62,6 +64,8 @@ namespace nux
   
     void SetStruts ();
     void UnsetStruts ();
+  
+    static std::list<Window> _native_windows;
   
     bool _strutsEnabled;
     Window _window;

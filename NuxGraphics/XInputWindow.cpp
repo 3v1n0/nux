@@ -26,6 +26,8 @@
 namespace nux
 {
 
+  std::list<Window> XInputWindow::_native_windows;
+
   XInputWindow::XInputWindow()
   {
     Display* d = GetThreadGLWindow()->GetX11Display();
@@ -39,8 +41,10 @@ namespace nux
     
     attrib.override_redirect = 1;
     _window = XCreateWindow (d, XDefaultRootWindow (d), _x, _y, _width, _height, 0,
-                             CopyFromParent, InputOutput, CopyFromParent,
+                             CopyFromParent, InputOnly, CopyFromParent,
                              CWOverrideRedirect, &attrib);
+    
+    _native_windows.push_front (_window);
                                      
     XMapRaised (d, _window);
     
@@ -60,8 +64,15 @@ namespace nux
   
   XInputWindow::~XInputWindow()
   {
+    _native_windows.remove (_window);
     Display* d = GetThreadGLWindow()->GetX11Display();
     XDestroyWindow (d, _window);
+  }
+  
+  /* static */
+  std::list<Window> XInputWindow::NativeHandleList()
+  {
+    return _native_windows;
   }
   
   void XInputWindow::SetStruts()
