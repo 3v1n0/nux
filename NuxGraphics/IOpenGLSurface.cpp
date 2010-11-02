@@ -47,7 +47,6 @@ namespace nux
   int IOpenGLSurface::LockRect (
     SURFACE_LOCKED_RECT *pLockedRect,
     const SURFACE_RECT *pRect)
-
   {
     // If _LockedRect.pBits or _LockedRect.Pitch are not equal to zero, then we have already Locked the buffer
     // Unlock it before locking again.

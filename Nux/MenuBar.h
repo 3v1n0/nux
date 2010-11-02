@@ -47,7 +47,7 @@ namespace nux
   private:
     CoreArea   *area;
     MenuPage   *menu;
-    NTexture   *icon; // should be 24x24
+    BaseTexture   *icon; // should be 24x24
 
     friend class MenuBar;
   };
@@ -68,7 +68,7 @@ namespace nux
     //void AddActionItem(ActionItem* actionItem);
 
     void AddMenu (const TCHAR *MenuLabel, MenuPage *popup);
-    void AddMenu (const TCHAR *MenuLabel, MenuPage *menu, NTexture *icon);
+    void AddMenu (const TCHAR *MenuLabel, MenuPage *menu, BaseTexture *icon);
 
 
     /////////////////

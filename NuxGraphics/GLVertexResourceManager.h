@@ -34,9 +34,9 @@ namespace nux
 
   class NMeshObject;
 
-  class NVertexBuffer: public NResource
+  class NVertexBuffer: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NVertexBuffer, NResource);
+    NUX_DECLARE_OBJECT_TYPE (NVertexBuffer, ResourceData);
 
   public:
     NVertexBuffer();
@@ -59,9 +59,9 @@ namespace nux
     int _Stride;
   };
 
-  class NIndexBuffer: public NResource
+  class NIndexBuffer: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NIndexBuffer, NResource);
+    NUX_DECLARE_OBJECT_TYPE (NIndexBuffer, ResourceData);
 
     // NIndexBuffer is very similar to NVertexBuffer except that vertex indices
     // are not inter-mixed with other vertex data. So the Stride here should be 2 bytes or 4 bytes.
@@ -86,9 +86,9 @@ namespace nux
     int _Stride;
   };
 
-  class NVertexDeclaration: public NResource
+  class NVertexDeclaration: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NVertexDeclaration, NResource);
+    NUX_DECLARE_OBJECT_TYPE (NVertexDeclaration, ResourceData);
 
   public:
     NVertexDeclaration();
@@ -97,48 +97,48 @@ namespace nux
     std::vector<VERTEXELEMENT> m_Declaration;
   };
 
-  class NGLVertexBuffer: public NGLResource
+  class NGLVertexBuffer: public CachedResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLVertexBuffer, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE (NGLVertexBuffer, CachedResourceData);
 
   public:
     NGLVertexBuffer (NResourceSet *ResourceManager, NVertexBuffer *VertexData);
-    ~NGLVertexBuffer();
+    ~NGLVertexBuffer ();
 
-    TRefGL<IOpenGLVertexBuffer>	m_VtxBuffer;
+    IntrusiveSP<IOpenGLVertexBuffer>	m_VtxBuffer;
 
-    bool UpdateResource (NResource *Resource);
+    bool UpdateResource (ResourceData *Resource);
   private:
     void LoadVertexData (NVertexBuffer *VertexData);
     int _Size;
     int _Stride;
   };
 
-  class NGLIndexBuffer: public NGLResource
+  class NGLIndexBuffer: public CachedResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLIndexBuffer, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE (NGLIndexBuffer, CachedResourceData);
   public:
     NGLIndexBuffer (NResourceSet *ResourceManager, NIndexBuffer *Resource);
     ~NGLIndexBuffer();
 
-    TRefGL<IOpenGLIndexBuffer>	m_IdxBuffer;
+    IntrusiveSP<IOpenGLIndexBuffer>	m_IdxBuffer;
 
-    bool UpdateResource (NResource *Resource);
+    bool UpdateResource (ResourceData *Resource);
   private:
     void LoadIndexData (NIndexBuffer *VertexData);
     int _Size;
     int _Stride;
   };
 
-  class NGLVertexDeclaration: public NGLResource
+  class NGLVertexDeclaration: public CachedResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLVertexDeclaration, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE (NGLVertexDeclaration, CachedResourceData);
   public:
     NGLVertexDeclaration (NResourceSet *ResourceManager, NVertexDeclaration *Resource);
     ~NGLVertexDeclaration();
 
-    bool UpdateResource (NResource *Resource);
-    TRefGL< IOpenGLVertexDeclaration > m_VtxDeclaration;
+    bool UpdateResource (ResourceData *Resource);
+    IntrusiveSP< IOpenGLVertexDeclaration > m_VtxDeclaration;
   };
 
   class NMeshComponent
@@ -146,7 +146,7 @@ namespace nux
   public:
     NMeshComponent();
     NMeshComponent (const NMeshComponent &);
-    NMeshComponent (int StreamIndex/*TRefGL<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type);
+    NMeshComponent (int StreamIndex/*IntrusiveSP<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type);
 
     NMeshComponent &operator = (const NMeshComponent &);
 
@@ -161,9 +161,9 @@ namespace nux
     int _Offset;
   };
 
-  class NMesh: public NResource
+  class NMesh: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NStaticMesh, NResource);
+    NUX_DECLARE_OBJECT_TYPE (NStaticMesh, ResourceData);
 
     NMesh();
     virtual ~NMesh();
@@ -183,17 +183,17 @@ namespace nux
     NVertexDeclaration *m_pVertexDeclaration;
   };
 
-  class NGLStaticMesh: public NGLResource
+  class NGLStaticMesh: public CachedResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLStaticMesh, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE (NGLStaticMesh, CachedResourceData);
   public:
     NGLStaticMesh (NResourceSet *ResourceManager, NStaticMesh *);
-    ~NGLStaticMesh();
-    bool UpdateResource (NResource *Resource);
+    ~NGLStaticMesh ();
+    bool UpdateResource (ResourceData *Resource);
 
-    std::vector< TRefGL< NGLVertexBuffer > > m_VertexBufferArray;
-    TRefGL< NGLIndexBuffer > m_Index;
-    TRefGL< NGLVertexDeclaration > m_VertexDeclaration;
+    std::vector< IntrusiveSP<NGLVertexBuffer> > m_VertexBufferArray;
+    IntrusiveSP<NGLIndexBuffer> m_Index;
+    IntrusiveSP<NGLVertexDeclaration> m_VertexDeclaration;
   };
 
 }

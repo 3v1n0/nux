@@ -66,7 +66,7 @@ namespace nux
         @param RenderToMainTexture  If true, render to the main window texture. If false, render to the default back buffer.
         @param BluredBackground     If true, the texture is blended with the blurred version of the main window texture.
     */
-    void PresentBufferToScreen (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false);
+    void PresentBufferToScreen (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false);
     void PresentRendering();
 
     /*!
@@ -79,7 +79,7 @@ namespace nux
         @param x    Destination coordinates.
         @param y    Destination coordinates.
     */
-    void CopyTextureToMainColorRT (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y);
+    void CopyTextureToMainColorRT (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y);
 
     /*!
         Set the composition render target as the texture to draw into.
@@ -91,7 +91,7 @@ namespace nux
         @param x    Destination coordinates.
         @param y    Destination coordinates.
     */
-    void CopyTextureToCompositionRT (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y);
+    void CopyTextureToCompositionRT (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y);
 
     //! Get the Geometry of the tooltip based on the BaseWindow that initiated it.
     Geometry GetTooltipGeometry() const;
@@ -112,24 +112,24 @@ namespace nux
     void MoveWindowToFront (BaseWindow *);
     void MoveWindowToBack (BaseWindow *);
 
-    TRefGL<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
+    IntrusiveSP<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
       return m_FrameBufferObject;
     }
-    TRefGL<IOpenGLFrameBufferObject> m_FrameBufferObject;
+    IntrusiveSP<IOpenGLFrameBufferObject> m_FrameBufferObject;
 
-    TRefGL< IOpenGLBaseTexture > GetScreenBlurTexture();
+    IntrusiveSP< IOpenGLBaseTexture > GetScreenBlurTexture();
 
     // We use Rectangle texture to attach to the framebuffer because some GPU like the Geforce FX 5600 do not
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
     struct RenderTargetTextures
     {
-      TRefGL<IOpenGLBaseTexture> color_rt;
-      TRefGL<IOpenGLBaseTexture> depth_rt;
+      IntrusiveSP<IOpenGLBaseTexture> color_rt;
+      IntrusiveSP<IOpenGLBaseTexture> depth_rt;
     };
-    TRefGL<IOpenGLBaseTexture> m_MainColorRT;
-    TRefGL<IOpenGLBaseTexture> m_MainDepthRT;
-    TRefGL<IOpenGLBaseTexture> m_CompositionRT;
+    IntrusiveSP<IOpenGLBaseTexture> m_MainColorRT;
+    IntrusiveSP<IOpenGLBaseTexture> m_MainDepthRT;
+    IntrusiveSP<IOpenGLBaseTexture> m_CompositionRT;
 
     RenderTargetTextures &GetWindowBuffer (BaseWindow *window);
 
@@ -274,10 +274,10 @@ namespace nux
     int m_TooltipY;
 
     bool m_FullSceneBlurUpdated;
-    TRefGL<IOpenGLBaseTexture> m_BlurTexture;
-    TRefGL<IOpenGLBaseTexture> m_FullSceneMip0;
-    TRefGL<IOpenGLBaseTexture> m_FullSceneMip1;
-    TRefGL<IOpenGLBaseTexture> m_FullSceneMip2;
+    IntrusiveSP<IOpenGLBaseTexture> m_BlurTexture;
+    IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip0;
+    IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip1;
+    IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip2;
 
     //PBuffer *m_pbuffer;
   public:

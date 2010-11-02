@@ -95,7 +95,7 @@ namespace nux
   }
 
 /////////////////////////////////////////////////////
-  TextureLayer::TextureLayer (TRefGL<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color &color, bool write_alpha, const ROPConfig &ROP)
+  TextureLayer::TextureLayer (IntrusiveSP<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color &color, bool write_alpha, const ROPConfig &ROP)
   {
     m_device_texture = device_texture;
     m_color = color;
@@ -106,7 +106,7 @@ namespace nux
 
   void TextureLayer::Renderlayer (GraphicsContext &GfxContext)
   {
-    bool  current_alpha_blend;
+    t_u32 current_alpha_blend;
     t_u32 current_src_blend_factor;
     t_u32 current_dest_blend_factor;
     t_u32 current_red_mask;

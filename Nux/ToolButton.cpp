@@ -107,7 +107,7 @@ namespace nux
 
   }
 
-  void ToolButton::SetBitmap (const NTexture* Texture)
+  void ToolButton::SetBitmap (const BaseTexture* Texture)
   {
     if(m_Texture)
       NUX_SAFE_DELETE (m_Texture);

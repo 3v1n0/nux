@@ -63,7 +63,7 @@ namespace nux
 
     for (int n = 0; n < num; n++)
     {
-      delete m_ArchiveTextureArray[n]->TextureData;
+      delete m_ArchiveTextureArray[n]->BaseTexture;
       delete m_ArchiveTextureArray[n];
     }
 
@@ -78,7 +78,7 @@ namespace nux
     {
       if (Stricmp (m_ArchiveTextureArray[n]->Style.GetTCharPtr(), Style) == 0)
       {
-        return m_ArchiveTextureArray[n]->TextureData;
+        return m_ArchiveTextureArray[n]->BaseTexture;
       }
     }
 
@@ -93,7 +93,7 @@ namespace nux
     if ( (index < 0) || (index > m_ArchiveTextureArray.size() ) )
       return 0;
 
-    return m_ArchiveTextureArray[index]->TextureData;
+    return m_ArchiveTextureArray[index]->BaseTexture;
   }
 
   int NUITextureArchiver::GetNumTexture()
@@ -180,11 +180,11 @@ namespace nux
 
       if (filepath == TEXT ("") )
       {
-        pimage->TextureData = 0;
+        pimage->BaseTexture = 0;
       }
       else
       {
-        pimage->TextureData = LoadImageFile (filepath.GetTCharPtr() );
+        pimage->BaseTexture = LoadImageFile (filepath.GetTCharPtr() );
       }
 
       pimage->ArchiveOffset = 0;
@@ -252,11 +252,11 @@ namespace nux
       NFileName Filename (TEXT ("../../Data/UITextures/") );
 #endif
       Filename += ArchTexArray[i]->SourceFile.GetTCharPtr();
-      NBitmapData *TextureData = LoadImageFile (Filename.GetTCharPtr() );
+      NBitmapData *BaseTexture = LoadImageFile (Filename.GetTCharPtr() );
 
-      if (TextureData)
+      if (BaseTexture)
       {
-        TextureArchiveAdd_ver_0_0_1 (fileStream, TextureData, ArchTexArray[i]->SourceFile.GetTCharPtr(), OFFSET);
+        TextureArchiveAdd_ver_0_0_1 (fileStream, BaseTexture, ArchTexArray[i]->SourceFile.GetTCharPtr(), OFFSET);
         ++NumArchived;
         ArchTexArray[i]->ArchiveOffset = OFFSET;
       }
@@ -363,12 +363,12 @@ namespace nux
         nuxDebugMsg (TEXT ("[LoadUIArchive] Can't find file %s in UI archive %s. Skipping..."), SourceFile.GetTCharPtr(), ArchiveName);
       }
 
-      NBitmapData *TextureData = TextureArchiveLoad_ver_0_0_1 (fileStream, DataOffset);
+      NBitmapData *BaseTexture = TextureArchiveLoad_ver_0_0_1 (fileStream, DataOffset);
 
       ArchiveTextureData *pimage = new ArchiveTextureData;
       pimage->SourceFile = SourceFile;
       pimage->Style = Style;
-      pimage->TextureData = TextureData;
+      pimage->BaseTexture = BaseTexture;
       pimage->border_left = border_left;
       pimage->border_right = border_right;
       pimage->border_top = border_top;
@@ -490,13 +490,13 @@ namespace nux
     }
 
     Filename += TextureFilename;
-    NBitmapData *TextureData = LoadImageFile (Filename.GetTCharPtr() );
+    NBitmapData *BaseTexture = LoadImageFile (Filename.GetTCharPtr() );
 
-    if (TextureData == 0)
+    if (BaseTexture == 0)
       return false;
 
     t_s64 Offset = 0;
-    TextureArchiveAdd_ver_0_0_1 (m_FileStream, TextureData, TextureFilename, Offset);
+    TextureArchiveAdd_ver_0_0_1 (m_FileStream, BaseTexture, TextureFilename, Offset);
     m_NumberOfTextures++;
 
     // Update the "last modified" date and the number of textures in the archive.

@@ -358,7 +358,6 @@ namespace nux
 
   ColorEditor::~ColorEditor()
   {
-    NUX_SAFE_DELETE (radiogroup);
     NUX_SAFE_DELETE (m_RedShader);
     NUX_SAFE_DELETE (m_GreenShader);
     NUX_SAFE_DELETE (m_BlueShader);

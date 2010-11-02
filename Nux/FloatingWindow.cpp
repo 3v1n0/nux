@@ -111,8 +111,8 @@ namespace nux
     m_InterfaceObject.clear();
     NUX_SAFE_DELETE_ARRAY (m_WindowTitle);
 
-    delete CloseIcon;
-    delete MinimizeIcon;
+    CloseIcon->UnReference();
+    MinimizeIcon->UnReference();
   }
 
   long FloatingWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

@@ -84,8 +84,8 @@ namespace nux
     void LoadIShaderFile (const TCHAR *ShaderFileName, const TCHAR *VtxShaderPreprocessorDefines = TEXT (""), const TCHAR *FrgShaderPreprocessorDefines = TEXT ("") );
     void LoadIShader (const TCHAR *ShaderCode, const TCHAR *VtxShaderPreprocessorDefines = TEXT (""), const TCHAR *FrgShaderPreprocessorDefines = TEXT ("") );
     void AddShaderParameter (GLShaderParameter *Parameter);
-    void AddShaderObject (TRefGL<IOpenGLShader> ShaderObject);
-    void RemoveShaderObject (TRefGL<IOpenGLShader> ShaderObject);
+    void AddShaderObject (IntrusiveSP<IOpenGLShader> ShaderObject);
+    void RemoveShaderObject (IntrusiveSP<IOpenGLShader> ShaderObject);
     void ClearShaderObjects();
     bool Link();
 
@@ -187,7 +187,7 @@ namespace nux
   private:
     IOpenGLShaderProgram (NString ShaderProgramName = NString ("ShaderProgram") );
     ShaderAttributeDefinition m_ProgramAttributeDefinition[16/*NUM_VERTEX_SHADER_INPUT_ATTRIBUTE*/];
-    std::vector<TRefGL<IOpenGLShader> > ShaderObjectList;
+    std::vector<IntrusiveSP<IOpenGLShader> > ShaderObjectList;
     bool m_CompiledAndReady;
     NString _ShaderProgramName;
     friend class GLDeviceFactory;

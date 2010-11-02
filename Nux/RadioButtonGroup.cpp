@@ -124,7 +124,7 @@ namespace nux
     {
       if (m_RadioButtonArray[i] == radio)
       {
-        radio->m_Group = 0;
+        //radio->m_Group = 0;
         radio->m_GroupId = -1;
         radio->SetStatePrivate (false);
         m_RadioButtonArray.erase (it);

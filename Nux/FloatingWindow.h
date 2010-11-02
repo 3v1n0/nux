@@ -129,8 +129,8 @@ namespace nux
     bool m_bSizeMatchLayout;
 
 
-    NTexture* CloseIcon;
-    NTexture* MinimizeIcon;
+    BaseTexture* CloseIcon;
+    BaseTexture* MinimizeIcon;
 
     std::list<View *> m_InterfaceObject;
     HLayout *m_TitleBarLayout;

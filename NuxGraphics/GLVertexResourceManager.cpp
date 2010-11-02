@@ -237,7 +237,7 @@ namespace nux
     _StreamIndex = Other._StreamIndex;
   }
 
-  NMeshComponent::NMeshComponent (int StreamIndex/*TRefGL<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type)
+  NMeshComponent::NMeshComponent (int StreamIndex/*IntrusiveSP<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type)
   {
     nuxAssert (Offset >= 0);
     _Type = Type;
@@ -274,7 +274,7 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////////
   NGLVertexBuffer::NGLVertexBuffer (NResourceSet *ResourceManager, NVertexBuffer *SourceVtxBuffer)
-    :   NGLResource (ResourceManager)
+    :   CachedResourceData (ResourceManager)
     ,   _Size (0)
     ,   _Stride (0)
   {
@@ -284,10 +284,10 @@ namespace nux
   NGLVertexBuffer::~NGLVertexBuffer()
   {
     // Not necessary for a smart pointer but do it anyway to be clear;
-    m_VtxBuffer = 0;
+    m_VtxBuffer = IntrusiveSP<IOpenGLVertexBuffer> (0);
   }
 
-  bool NGLVertexBuffer::UpdateResource (NResource *Source)
+  bool NGLVertexBuffer::UpdateResource (ResourceData *Source)
   {
     if (Source == 0)
     {
@@ -350,7 +350,7 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////////
   NGLIndexBuffer::NGLIndexBuffer (NResourceSet *ResourceManager, NIndexBuffer *SourceIdxBuffer)
-    :   NGLResource (ResourceManager)
+    :   CachedResourceData (ResourceManager)
     ,   _Size (0)
     ,   _Stride (0)
   {
@@ -360,10 +360,10 @@ namespace nux
   NGLIndexBuffer::~NGLIndexBuffer()
   {
     // Not necessary for a smart pointer but do it anyway to be clear;
-    m_IdxBuffer = 0;
+    m_IdxBuffer = IntrusiveSP<IOpenGLIndexBuffer> (0);
   }
 
-  bool NGLIndexBuffer::UpdateResource (NResource *Source)
+  bool NGLIndexBuffer::UpdateResource (ResourceData *Source)
   {
     if (Source == 0)
     {
@@ -427,21 +427,21 @@ namespace nux
   }
 
   NGLVertexDeclaration::NGLVertexDeclaration (NResourceSet *ResourceManager, NVertexDeclaration *SourceVertexDeclaration)
-    :   NGLResource (ResourceManager)
+    :   CachedResourceData (ResourceManager)
   {
     UpdateResource (SourceVertexDeclaration);
   }
 
   NGLVertexDeclaration::~NGLVertexDeclaration()
   {
-    m_VtxDeclaration = 0;
+    m_VtxDeclaration = IntrusiveSP<IOpenGLVertexDeclaration> (0);
   }
 
-  bool NGLVertexDeclaration::UpdateResource (NResource *Source)
+  bool NGLVertexDeclaration::UpdateResource (ResourceData *Source)
   {
     if (Source == 0)
     {
-      m_VtxDeclaration = 0;
+      m_VtxDeclaration = IntrusiveSP<IOpenGLVertexDeclaration> (0);
       return true;
     }
 
@@ -459,7 +459,7 @@ namespace nux
 
     if (SourceVertexDeclaration == 0)
     {
-      m_VtxDeclaration = 0;
+      m_VtxDeclaration = IntrusiveSP<IOpenGLVertexDeclaration> (0);
       return true;
     }
 
@@ -633,7 +633,7 @@ namespace nux
   }
 
   NGLStaticMesh::NGLStaticMesh (NResourceSet *ResourceManager, NStaticMesh *StaticMesh)
-    :   NGLResource (ResourceManager)
+    :   CachedResourceData (ResourceManager)
   {
     int NumStreams = StaticMesh->GetNumStreams();
 
@@ -642,8 +642,8 @@ namespace nux
       m_VertexBufferArray.push_back (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pVertexStreamArray[s]) );
     }
 
-    m_Index = GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pIndex);
-    m_VertexDeclaration = GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pVertexDeclaration);
+    m_Index = IntrusiveSP<NGLIndexBuffer> (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pIndex));
+    m_VertexDeclaration = IntrusiveSP<NGLVertexDeclaration> (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pVertexDeclaration));
   }
 
   NGLStaticMesh::~NGLStaticMesh()
@@ -651,7 +651,7 @@ namespace nux
 
   }
 
-  bool NGLStaticMesh::UpdateResource (NResource *Source)
+  bool NGLStaticMesh::UpdateResource (ResourceData *Source)
   {
     if (Source == 0)
     {

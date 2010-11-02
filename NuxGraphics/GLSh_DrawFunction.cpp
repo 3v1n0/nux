@@ -119,7 +119,7 @@ namespace nux
 
   GLSh_DrawFunction::~GLSh_DrawFunction()
   {
-    sprog = 0;
+    sprog = IntrusiveSP<IOpenGLShaderProgram> (0);
   }
 
   void GLSh_DrawFunction::SetBackgroundColor (float R, float G, float B, float A)
@@ -225,7 +225,7 @@ namespace nux
 //    GLProgramObject::LoadCombinedShaderFile(TEXT("..//Shaders//DrawFunction.glsl"), TEXT("main"), TEXT("main"), Definitions);
   }
 
-  void GLSh_DrawFunction::SetTextureFunction (TRefGL<IOpenGLBaseTexture> device_texture)
+  void GLSh_DrawFunction::SetTextureFunction (IntrusiveSP<IOpenGLBaseTexture> device_texture)
   {
     m_device_texture = device_texture;
   }

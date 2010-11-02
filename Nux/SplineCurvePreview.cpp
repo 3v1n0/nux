@@ -183,7 +183,7 @@ namespace nux
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 4, 4);
-    NTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BaseTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
     BackgroundTexture->Update (&image);
 
     TexCoordXForm texxform;
@@ -243,7 +243,7 @@ namespace nux
 
     float tex_dx = (m_maxX - m_minX) / Texture->GetWidth();
     SURFACE_LOCKED_RECT lockrect;
-    Texture.Handle->LockRect (0, &lockrect, 0);
+    Texture->LockRect (0, &lockrect, 0);
     BYTE *dest = (BYTE *) lockrect.pBits;
 
     for (t_s32 i = 0; i < Texture->GetWidth(); i++)

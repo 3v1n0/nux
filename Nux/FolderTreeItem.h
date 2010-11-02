@@ -55,11 +55,11 @@ namespace nux
       return m_Synchronize;
     }
 
-    void SetOpenIcon (const NTexture* Texture)
+    void SetOpenIcon (const BaseTexture* Texture)
     {
       FolderOpenIcon = Texture->Clone ();
     }
-    void SetCloseIcon (const NTexture* Texture)
+    void SetCloseIcon (const BaseTexture* Texture)
     {
       FolderClosedIcon = Texture->Clone ();
     }
@@ -69,8 +69,8 @@ namespace nux
       return m_Searchable;
     }
   private:
-    NTexture* FolderOpenIcon;
-    NTexture* FolderClosedIcon;
+    BaseTexture* FolderOpenIcon;
+    BaseTexture* FolderClosedIcon;
 
     NFileName m_Path;
     NString m_FolderName;

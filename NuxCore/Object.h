@@ -188,6 +188,18 @@ namespace nux
     */
     bool IsHeapAllocated();
 
+    //! Get the reference count of this object.
+    /*!
+        @return The reference count of this object.
+    */
+    int GetReferenceCount () const;
+
+    //! Get the weak reference count of this object.
+    /*!
+        @return The weak reference count of this object.
+    */
+    int GetWeakReferenceCount () const;
+
     NThreadSafeCounter *m_reference_count; //!< Reference count.
     NThreadSafeCounter *m_weak_reference_count; //!< Weak reference count.
 

@@ -109,7 +109,7 @@ namespace nux
       m_ctx.width_clipregion  = C.GetWidth();
       m_ctx.height_clipregion = C.GetHeight();
 
-      TRefGL<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory()->GetCurrentFrameBufferObject();
+      IntrusiveSP<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory()->GetCurrentFrameBufferObject();
 
       if ( (m_FrameBufferObject->GetWidth() != buffer_width) || (m_FrameBufferObject->GetHeight() != buffer_height) )
       {

@@ -70,7 +70,7 @@ namespace nux
 
   }
 
-  void TextureArea::SetTexture (NTexture *texture)
+  void TextureArea::SetTexture (BaseTexture *texture)
   {
     NUX_RETURN_IF_NULL (texture);
     NUX_SAFE_DELETE (m_PaintLayer);

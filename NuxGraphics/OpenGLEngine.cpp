@@ -215,18 +215,18 @@ namespace nux
     return 0;
   }
 
-  void GraphicsContext::SetTexture (int TextureUnit, NTexture *Texture)
+  void GraphicsContext::SetTexture (int TextureUnit, BaseTexture *Texture)
   {
     nuxAssertMsg (Texture != 0, TEXT ("[GraphicsContext::SetTexture] Texture is NULL.") );
 
     if ( (TextureUnit < GL_TEXTURE0) || (TextureUnit > GL_TEXTURE31) )
       return;
 
-    TRefGL< NGLTexture > CachedTexture = ResourceCache.GetCachedResource (Texture);
+    IntrusiveSP <CachedBaseTexture> CachedTexture = ResourceCache.GetCachedResource (Texture);
     SetTexture (TextureUnit, CachedTexture->m_Texture);
   }
 
-  void GraphicsContext::SetTexture (int TextureUnit, TRefGL< IOpenGLBaseTexture > DeviceTexture)
+  void GraphicsContext::SetTexture (int TextureUnit, IntrusiveSP< IOpenGLBaseTexture > DeviceTexture)
   {
     NUX_RETURN_IF_FALSE (DeviceTexture.IsValid() );
 
@@ -834,14 +834,14 @@ namespace nux
     m_line_stats            = 0;
   }
 
-  TRefGL< NGLResource > GraphicsContext::CacheResource (NResource *Resource)
+  IntrusiveSP< CachedResourceData > GraphicsContext::CacheResource (ResourceData *Resource)
   {
     return ResourceCache.GetCachedResource (Resource);
   }
 
-  void GraphicsContext::UpdateResource (NResource *Resource)
+  void GraphicsContext::UpdateResource (ResourceData *Resource)
   {
-    TRefGL< NGLResource > GLResource = ResourceCache.FindCachedResourceById (Resource->GetResourceIndex() ); //(NGLResource*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
+    IntrusiveSP< CachedResourceData > GLResource = ResourceCache.FindCachedResourceById (Resource->GetResourceIndex() ); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
     bool bUpdated = FALSE;
 
     if (GLResource.IsValid() )
@@ -862,7 +862,7 @@ namespace nux
     }
   }
 
-  bool GraphicsContext::IsResourceCached (NResource *Resource)
+  bool GraphicsContext::IsResourceCached (ResourceData *Resource)
   {
     return ResourceCache.IsCachedResource (Resource);
   }

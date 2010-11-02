@@ -89,9 +89,24 @@ namespace nux
 
   WindowCompositor::~WindowCompositor()
   {
-    m_WindowList.clear();
     m_WindowToTextureMap.clear();
+    m_FrameBufferObject.Release ();
+    m_MainColorRT.Release ();
+    m_MainDepthRT.Release ();
     m_MenuList->clear();
+
+    std::list<BaseWindow*>::iterator it;
+    //for(it = m_WindowList.begin (); it != m_WindowList.end (); it++)
+    //{
+    //  (*it)->UnReference();
+    //}
+    m_WindowList.clear ();
+
+    //for(it = m_ModalWindowList.begin (); it != m_ModalWindowList.end (); it++)
+    //{
+    //  (*it)->UnReference();
+    //}
+    m_ModalWindowList.clear ();
 
     NUX_SAFE_DELETE (m_MenuList);
     NUX_SAFE_DELETE (m_Background);
@@ -140,6 +155,8 @@ namespace nux
 
     if (it == m_WindowList.end() )
     {
+      // The BaseWindow is referenced by the WindowCompositor.
+      window->Reference();
       m_WindowList.push_front (window);
       m_SelectedWindow = window;
 
@@ -174,8 +191,8 @@ namespace nux
 
       if (it2 != m_WindowToTextureMap.end() )
       {
-        (*it2).second.color_rt = 0;
-        (*it2).second.depth_rt = 0;
+        (*it2).second.color_rt = IntrusiveSP<IOpenGLBaseTexture> (0);
+        (*it2).second.depth_rt = IntrusiveSP<IOpenGLBaseTexture> (0);
         m_WindowToTextureMap.erase (it2);
       }
     }
@@ -1004,8 +1021,8 @@ namespace nux
 
     // Setup the Composition Render Target
     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-    m_FrameBufferObject->SetRenderTarget (0, m_MainColorRT->GetSurfaceLevel (0) );
-    m_FrameBufferObject->SetDepthSurface (0);
+    m_FrameBufferObject->SetRenderTarget (0, m_MainColorRT->GetSurfaceLevel (0));
+    m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
     m_FrameBufferObject->Activate();
     GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, buffer_width, buffer_height);
     GetGraphicsThread()->GetGraphicsContext().Push2DWindow (buffer_width, buffer_height);
@@ -1013,7 +1030,7 @@ namespace nux
     GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::CopyTextureToMainColorRT (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y)
+  void WindowCompositor::CopyTextureToMainColorRT (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y)
   {
     SetMainColorRT();
     HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
@@ -1045,16 +1062,16 @@ namespace nux
 
     // Setup the Composition Render Target
     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-    m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0) );
-    m_FrameBufferObject->SetDepthSurface (0);
+    m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0));
+    m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
     m_FrameBufferObject->Activate();
     GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, buffer_width, buffer_height);
     GetGraphicsThread()->GetGraphicsContext().Push2DWindow (buffer_width, buffer_height);
-    GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion();
+    GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion ();
     GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::CopyTextureToCompositionRT (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y)
+  void WindowCompositor::CopyTextureToCompositionRT (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y)
   {
     SetCompositionRT();
     HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
@@ -1073,7 +1090,7 @@ namespace nux
     GetGraphicsThread()->GetGraphicsContext().QRP_GLSL_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
   }
 
-  void WindowCompositor::PresentBufferToScreen (TRefGL<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground)
+  void WindowCompositor::PresentBufferToScreen (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground)
   {
     nuxAssert (HWTexture.IsValid() );
 
@@ -1432,7 +1449,7 @@ namespace nux
 
       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip0->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface ( 0 );
+      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
       m_FrameBufferObject->Activate();
 
       GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, dst_width, dst_height);
@@ -1456,7 +1473,7 @@ namespace nux
 
       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip1->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface ( 0 );
+      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
       m_FrameBufferObject->Activate();
 
       GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, dst_width, dst_height);
@@ -1480,7 +1497,7 @@ namespace nux
 
       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip2->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface ( 0 );
+      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
       m_FrameBufferObject->Activate();
 
       GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, dst_width, dst_height);
@@ -1504,7 +1521,7 @@ namespace nux
 
       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
       m_FrameBufferObject->SetRenderTarget ( 0, m_BlurTexture->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface ( 0 );
+      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
       m_FrameBufferObject->Activate();
 
       GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, dst_width, dst_height);
@@ -1549,14 +1566,14 @@ namespace nux
     // Restore Main Frame Buffer
     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
     m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0) );
-    m_FrameBufferObject->SetDepthSurface (0);
+    m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
     m_FrameBufferObject->Activate();
 
     GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, buffer_width, buffer_height);
     GetGraphicsThread()->GetGraphicsContext().Push2DWindow (buffer_width, buffer_height);
   }
 
-  TRefGL< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
+  IntrusiveSP< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
   {
     return m_BlurTexture;
   }

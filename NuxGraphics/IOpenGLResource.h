@@ -39,7 +39,7 @@ namespace nux
   class IOpenGLVertexShader;
   class IOpenGLPixelShader;
 
-  template<typename T> class TRefGL;
+  template<typename T> class IntrusiveSP;
 
 #define NUM_VERTEX_SHADER_INPUT_ATTRIBUTE      16
   enum VertexAttributeType
@@ -70,14 +70,14 @@ namespace nux
 
 
 //////////////////////////////////////////////////////////////////////////
-  class IOpenGLResource: public NThreadSafeCounter
+  class IOpenGLResource: public Object
   {
-    NUX_DECLARE_ROOT_OBJECT_TYPE (IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE (IOpenGLResource, Object);
 
   public:
     virtual int RefCount() const
     {
-      return GetValue();
+      return GetReferenceCount();
     }
 
     OpenGLResourceType GetResourceType() const

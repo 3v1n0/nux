@@ -251,7 +251,7 @@ namespace nux
     AddMenu (MenuLabel, menu, 0);
   }
 
-  void MenuBar::AddMenu (const TCHAR *MenuLabel, MenuPage *menu, NTexture *icon)
+  void MenuBar::AddMenu (const TCHAR *MenuLabel, MenuPage *menu, BaseTexture *icon)
   {
     // Need to add NUX_RETURN_IF_TRUE, NUX_RETURN_IF_FALSE
     NUX_RETURN_IF_NULL (menu);

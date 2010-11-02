@@ -44,15 +44,15 @@
 //         Filename.AddSlashAtEnd();
 //     }
 //     Filename += InputTextureFile;
-//     nux::NBitmapData *TextureData = LoadImageFile(Filename.GetTCharPtr());
+//     nux::NBitmapData *BaseTexture = LoadImageFile(Filename.GetTCharPtr());
 //
-//     if(!TextureData)
+//     if(!BaseTexture)
 //         return false;
 //
 //     if(!FileStream)
 //     {
 //         nuxAssertMsg(0, TEXT("[TextureArchiveAdd_ver_0_0_1] Cannot add texture to archive. Archive stream is not opened."));
-//         delete TextureData;
+//         delete BaseTexture;
 //         return false;
 //     }
 //
@@ -63,7 +63,7 @@
 //     int TextureNameSize = strlen(TextureName) + 1;
 //
 //     //  -------------------------------------------------------------------------------------------------------------------
-//     //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....TextureData....|Texture Name Size|....
+//     //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....BaseTexture....|Texture Name Size|....
 //     //  -------------------------------------------------------------------------------------------------------------------
 //
 //     // Write the number of char (including the terminating 0) in the texture file name.
@@ -76,9 +76,9 @@
 //     FileStream->Serialize((char*) &TextureDataSize,         sizeof(TextureDataSize));
 //     unsigned int TextureStartPosition = FileStream->Tell();
 //
-//     if(TextureData->isTextureData())
+//     if(BaseTexture->isTextureData())
 //     {
-//         nux::NTextureData* Texture2DData = static_cast<nux::NTextureData*>(TextureData);
+//         nux::NTextureData* Texture2DData = static_cast<nux::NTextureData*>(BaseTexture);
 //         int type = ARCH_TEXTURE2D;
 //         int NumMip = Texture2DData->GetNumMipmap();
 //         int Width = Texture2DData->GetWidth();
@@ -100,9 +100,9 @@
 //             FileStream->Serialize((char*) Texture2DData->GetSurface(mip).GetPtrRawData(),     Size);
 //         }
 //     }
-//     else if(TextureData->isCubemapTextureData())
+//     else if(BaseTexture->isCubemapTextureData())
 //     {
-//         nux::NCubemapData* CubemapData = static_cast<nux::NCubemapData*>(TextureData);
+//         nux::NCubemapData* CubemapData = static_cast<nux::NCubemapData*>(BaseTexture);
 //         int type = ARCH_CUBEMAP;
 //         int NumMip = CubemapData->GetNumMipmap();
 //         int Width = CubemapData->GetWidth();
@@ -127,9 +127,9 @@
 //             }
 //         }
 //     }
-//     else if(TextureData->isVolumeTextureData())
+//     else if(BaseTexture->isVolumeTextureData())
 //     {
-//         nux::NVolumeData* VolumeData = static_cast<nux::NVolumeData*>(TextureData);
+//         nux::NVolumeData* VolumeData = static_cast<nux::NVolumeData*>(BaseTexture);
 //         int type = ARCH_VOLUME;
 //         int NumMip = VolumeData->GetNumMipmap();
 //         int Width = VolumeData->GetWidth();
@@ -166,7 +166,7 @@
 //     FileStream->Seek(TextureDataSizePosition, nux::NSerializer::SeekStart);
 //     FileStream->Serialize((char*) &TextureDataSize, sizeof(TextureDataSize));
 //
-//     delete TextureData;
+//     delete BaseTexture;
 //     return true;
 // }
 //
@@ -187,7 +187,7 @@
 //     unsigned int TextureNameSize = 0;
 //
 //     //  -------------------------------------------------------------------------------------------------------------------
-//     //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....TextureData....|Texture Name Size|....
+//     //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....BaseTexture....|Texture Name Size|....
 //     //  -------------------------------------------------------------------------------------------------------------------
 //
 //     // Read the number of char (including the terminating 0) in the texture file name.

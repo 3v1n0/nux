@@ -39,7 +39,7 @@ namespace nux
     virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
 
-    void SetTexture (NAnimatedTexture *Texture);
+    void SetTexture (TextureFrameAnimation *Texture);
     void RecvMouseDown (int x, int y, long button_flags, long key_flags);
     void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
@@ -55,8 +55,8 @@ namespace nux
     TimerFunctor *m_TimerFunctor;
     TimerHandle m_TimerHandler;
 
-    NAnimatedTexture *m_DefaultTexture;
-    NAnimatedTexture *m_UserTexture;
+    TextureFrameAnimation *m_DefaultTexture;
+    TextureFrameAnimation *m_UserTexture;
   };
 
 }

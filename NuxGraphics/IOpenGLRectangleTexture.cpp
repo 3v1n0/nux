@@ -48,7 +48,7 @@ namespace nux
 
       if (Dummy == false) surface->InitializeLevel();
 
-      _SurfaceArray.push_back ( surface );
+      _SurfaceArray.push_back (IntrusiveSP<IOpenGLSurface> (surface));
     }
 
     SetFiltering (GL_NEAREST, GL_NEAREST);
@@ -61,7 +61,7 @@ namespace nux
   {
     for (int l = 0; l < _NumMipLevel; l++)
     {
-      _SurfaceArray[l] = 0;
+      _SurfaceArray[l] = IntrusiveSP<IOpenGLSurface> (0);;
     }
 
     _SurfaceArray.clear();
@@ -70,7 +70,7 @@ namespace nux
     GRunTimeStats.UnRegister (this);
   }
 
-  TRefGL<IOpenGLSurface> IOpenGLRectangleTexture::GetSurfaceLevel (int Level)
+  IntrusiveSP<IOpenGLSurface> IOpenGLRectangleTexture::GetSurfaceLevel (int Level)
   {
     if (Level < _NumMipLevel)
     {
@@ -81,12 +81,11 @@ namespace nux
       nuxAssertMsg (0, TEXT ("[IOpenGLRectangleTexture::GetSurfaceLevel] Invalid surface level") );
     }
 
-    return TRefGL<IOpenGLSurface> (0);
+    return IntrusiveSP<IOpenGLSurface> (0);
   }
 
-  void IOpenGLRectangleTexture::GetSurfaceLevel (int Level, TRefGL<IOpenGLSurface>& surface)
+  void IOpenGLRectangleTexture::GetSurfaceLevel (int Level, IntrusiveSP<IOpenGLSurface>& surface)
   {
-    surface = 0;
     surface = GetSurfaceLevel (Level);
   }
 
@@ -102,7 +101,7 @@ namespace nux
 
     if (Level < _NumMipLevel)
     {
-      TRefGL<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
+      IntrusiveSP<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
       return pSurfaceLevel->LockRect (pLockedRect, pRect);
     }
     else
@@ -124,7 +123,7 @@ namespace nux
 
     if (Level < _NumMipLevel)
     {
-      TRefGL<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
+      IntrusiveSP<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
       return pSurfaceLevel->UnlockRect();
     }
     else

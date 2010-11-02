@@ -81,7 +81,7 @@ namespace nux
 // class IOpenGLVertexBuffer;
 // class IOpenGLVertexDeclaration;
 // class GraphicsContext;
-  template<typename T> class TRefGL;
+  template<typename T> class IntrusiveSP;
 
 
   template<class T>
@@ -224,7 +224,7 @@ namespace nux
   struct STREAMSOURCE
   {
     WORD Stream;
-    TRefGL<IOpenGLVertexBuffer> VertexBuffer;
+    IntrusiveSP<IOpenGLVertexBuffer> VertexBuffer;
     t_u16 StreamOffset;
     t_u16 StreamStride;
 
@@ -240,7 +240,7 @@ namespace nux
     {
       Stream = 0;
       StreamOffset = 0;
-      VertexBuffer = 0;
+      VertexBuffer = IntrusiveSP<IOpenGLVertexBuffer> (0);
       StreamStride = 0;
     }
   };
@@ -365,65 +365,65 @@ namespace nux
 
   public:
 /////////////////////////////////////////////////////
-    TRefGL<IOpenGLTexture2D> CreateTexture (
+    IntrusiveSP<IOpenGLTexture2D> CreateTexture (
       int Width
       , int Height
       , int Levels
       , BitmapFormat PixelFormat);
 
-    TRefGL<IOpenGLRectangleTexture> CreateRectangleTexture (
+    IntrusiveSP<IOpenGLRectangleTexture> CreateRectangleTexture (
       int Width
       , int Height
       , int Levels
       , BitmapFormat PixelFormat);
 
-    TRefGL<IOpenGLCubeTexture> CreateCubeTexture (
+    IntrusiveSP<IOpenGLCubeTexture> CreateCubeTexture (
       int EdgeLength
       , int Levels
       , BitmapFormat PixelFormat);
 
-    TRefGL<IOpenGLVolumeTexture> CreateVolumeTexture (
+    IntrusiveSP<IOpenGLVolumeTexture> CreateVolumeTexture (
       int Width
       , int Height
       , int Depth
       , int Levels
       , BitmapFormat PixelFormat);
 
-    TRefGL<IOpenGLAnimatedTexture> CreateAnimatedTexture (
+    IntrusiveSP<IOpenGLAnimatedTexture> CreateAnimatedTexture (
       int Width
       , int Height
       , int Depth
       , BitmapFormat PixelFormat);
 
-    TRefGL<IOpenGLVertexBuffer> CreateVertexBuffer (
+    IntrusiveSP<IOpenGLVertexBuffer> CreateVertexBuffer (
       int Length
       , VBO_USAGE Usage);
 
-    TRefGL<IOpenGLIndexBuffer> CreateIndexBuffer (
+    IntrusiveSP<IOpenGLIndexBuffer> CreateIndexBuffer (
       int Length
       , VBO_USAGE Usage    // Dynamic or WriteOnly
       , INDEX_FORMAT Format);
 
-    TRefGL<IOpenGLPixelBufferObject> CreatePixelBufferObject (int Size, VBO_USAGE Usage);
+    IntrusiveSP<IOpenGLPixelBufferObject> CreatePixelBufferObject (int Size, VBO_USAGE Usage);
 
-    TRefGL<IOpenGLQuery> CreateQuery (
+    IntrusiveSP<IOpenGLQuery> CreateQuery (
       QUERY_TYPE Type);
 
-    TRefGL<IOpenGLVertexDeclaration> CreateVertexDeclaration (
+    IntrusiveSP<IOpenGLVertexDeclaration> CreateVertexDeclaration (
       const VERTEXELEMENT *pVertexElements);
 
-    TRefGL<IOpenGLFrameBufferObject> CreateFrameBufferObject();
+    IntrusiveSP<IOpenGLFrameBufferObject> CreateFrameBufferObject();
 
-    TRefGL<IOpenGLShaderProgram> CreateShaderProgram();
-    TRefGL<IOpenGLVertexShader> CreateVertexShader();
-    TRefGL<IOpenGLPixelShader> CreatePixelShader();
-    TRefGL<IOpenGLAsmShaderProgram> CreateAsmShaderProgram();
-    TRefGL<IOpenGLAsmVertexShader> CreateAsmVertexShader();
-    TRefGL<IOpenGLAsmPixelShader> CreateAsmPixelShader();
+    IntrusiveSP<IOpenGLShaderProgram> CreateShaderProgram();
+    IntrusiveSP<IOpenGLVertexShader> CreateVertexShader();
+    IntrusiveSP<IOpenGLPixelShader> CreatePixelShader();
+    IntrusiveSP<IOpenGLAsmShaderProgram> CreateAsmShaderProgram();
+    IntrusiveSP<IOpenGLAsmVertexShader> CreateAsmVertexShader();
+    IntrusiveSP<IOpenGLAsmPixelShader> CreateAsmPixelShader();
 
 #if (NUX_ENABLE_CG_SHADERS)
-    TRefGL<ICgVertexShader> CreateCGVertexShader();
-    TRefGL<ICgPixelShader> CreateCGPixelShader();
+    IntrusiveSP<ICgVertexShader> CreateCGVertexShader();
+    IntrusiveSP<ICgPixelShader> CreateCGPixelShader();
 #endif
 
     // This is for the fixed pipeline
@@ -434,15 +434,15 @@ namespace nux
     void DrawQuad_FixPipe (int x, int y, int width, int height,
                            FLOAT R, FLOAT G, FLOAT B, FLOAT A);
 
-    void DrawTextureQuad_FixPipe (TRefGL<IOpenGLTexture2D> texture, int x, int y, int width, int height,
+    void DrawTextureQuad_FixPipe (IntrusiveSP<IOpenGLTexture2D> texture, int x, int y, int width, int height,
                                   FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1);
 
-    void DrawTextureQuad_FixPipe (TRefGL<IOpenGLSurface> surface, int x, int y, int width, int height,
+    void DrawTextureQuad_FixPipe (IntrusiveSP<IOpenGLSurface> surface, int x, int y, int width, int height,
                                   FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1);
 
     int DrawIndexedPrimitive (
-      TRefGL<IOpenGLIndexBuffer> IndexBuffer,
-      TRefGL<IOpenGLVertexDeclaration> VertexDeclaration,
+      IntrusiveSP<IOpenGLIndexBuffer> IndexBuffer,
+      IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
       PRIMITIVE_TYPE PrimitiveType,
       int BaseVertexIndex,
       int MinIndex,
@@ -453,14 +453,14 @@ namespace nux
 
     // Draw Primitive without index buffer
     int DrawPrimitive (
-      TRefGL<IOpenGLVertexDeclaration> VertexDeclaration,
+      IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
       PRIMITIVE_TYPE pt_,
       unsigned vtx_start_,
       unsigned num_prims_);
 
     // Draw Primitive without index buffer, and use a user pointer for the source of the stream.
     int DrawPrimitiveUP (
-      TRefGL<IOpenGLVertexDeclaration> VertexDeclaration,
+      IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
       PRIMITIVE_TYPE PrimitiveType,
       unsigned int PrimitiveCount,
       const void *pVertexStreamZeroData,
@@ -469,7 +469,7 @@ namespace nux
 
     int SetStreamSource (
       unsigned int StreamNumber,
-      TRefGL<IOpenGLVertexBuffer> pStreamData,
+      IntrusiveSP<IOpenGLVertexBuffer> pStreamData,
       unsigned int OffsetInBytes,
       unsigned int Stride,
       unsigned int NumComponent = 0,
@@ -504,32 +504,32 @@ namespace nux
     void ClearStencilRT (int stencil);
     void ClearFloatingPointColorRT (int x, int y, int width, int height,
                                     FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha); // use a Quad.
-    void ClearSurfaceWithColor (TRefGL<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a);
+    void ClearSurfaceWithColor (IntrusiveSP<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a);
 
     // All these operations are done on the default frame buffer object: _FrameBufferObject.
     int FormatFrameBufferObject (unsigned int Width, unsigned int Height, BitmapFormat PixelFormat);
-    int SetColorRenderTargetSurface (unsigned int ColorAttachmentIndex, TRefGL<IOpenGLSurface> pRenderTargetSurface);
-    int SetDepthRenderTargetSurface (TRefGL<IOpenGLSurface> pDepthSurface);
-    TRefGL<IOpenGLSurface> GetColorRenderTargetSurface (unsigned int ColorAttachmentIndex);
-    TRefGL<IOpenGLSurface> GetDepthRenderTargetSurface();
+    int SetColorRenderTargetSurface (unsigned int ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface);
+    int SetDepthRenderTargetSurface (IntrusiveSP<IOpenGLSurface> pDepthSurface);
+    IntrusiveSP<IOpenGLSurface> GetColorRenderTargetSurface (unsigned int ColorAttachmentIndex);
+    IntrusiveSP<IOpenGLSurface> GetDepthRenderTargetSurface();
     // Activate and Deactivate the default framebuffer: _FrameBufferObject.
     void ActivateFrameBuffer();
     void DeactivateFrameBuffer();
 
   public:
-    void SetCurrentFrameBufferObject (TRefGL<IOpenGLFrameBufferObject> fbo); // {_CurrentFrameBufferObject = fbo;}
-    TRefGL<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject(); // {return _CurrentFrameBufferObject;}
+    void SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> fbo); // {_CurrentFrameBufferObject = fbo;}
+    IntrusiveSP<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject(); // {return _CurrentFrameBufferObject;}
 
     void CollectDeviceResource();
 
   private:
     // Default FrameBufferobject
-    TRefGL<IOpenGLFrameBufferObject> _FrameBufferObject;
-    TRefGL<IOpenGLFrameBufferObject> _CurrentFrameBufferObject;
+    IntrusiveSP<IOpenGLFrameBufferObject> _FrameBufferObject;
+    IntrusiveSP<IOpenGLFrameBufferObject> _CurrentFrameBufferObject;
 
     struct PixelBufferObject
     {
-      TRefGL<IOpenGLPixelBufferObject> PBO;
+      IntrusiveSP<IOpenGLPixelBufferObject> PBO;
       bool   IsReserved;
     };
 
@@ -537,27 +537,27 @@ namespace nux
 
     std::vector<PixelBufferObject> _PixelBufferArray;
 
-    TDeviceResourceList< TRefGL<IOpenGLPixelBufferObject> >   *_CachedPixelBufferObjectList;
-    TDeviceResourceList< TRefGL<IOpenGLVertexBuffer> >        *_CachedVertexBufferList;
-    TDeviceResourceList< TRefGL<IOpenGLIndexBuffer> >         *_CachedIndexBufferList;
-    TDeviceResourceList< TRefGL<IOpenGLTexture2D> >           *_CachedTextureList;
-    TDeviceResourceList< TRefGL<IOpenGLRectangleTexture> >    *_CachedTextureRectangleList;
-    TDeviceResourceList< TRefGL<IOpenGLCubeTexture> >         *_CachedCubeTextureList;
-    TDeviceResourceList< TRefGL<IOpenGLVolumeTexture> >       *_CachedVolumeTextureList;
-    TDeviceResourceList< TRefGL<IOpenGLAnimatedTexture> >     *_CachedAnimatedTextureList;
-    TDeviceResourceList< TRefGL<IOpenGLQuery> >               *_CachedQueryList;
-    TDeviceResourceList< TRefGL<IOpenGLVertexDeclaration> >   *_CachedVertexDeclarationList;
-    TDeviceResourceList< TRefGL<IOpenGLFrameBufferObject> >   *_CachedFrameBufferList;
-    TDeviceResourceList< TRefGL<IOpenGLVertexShader> >        *_CachedVertexShaderList;
-    TDeviceResourceList< TRefGL<IOpenGLPixelShader> >         *_CachedPixelShaderList;
-    TDeviceResourceList< TRefGL<IOpenGLShaderProgram> >       *_CachedShaderProgramList;
-    TDeviceResourceList< TRefGL<IOpenGLAsmVertexShader> >     *_CachedAsmVertexShaderList;
-    TDeviceResourceList< TRefGL<IOpenGLAsmPixelShader> >      *_CachedAsmPixelShaderList;
-    TDeviceResourceList< TRefGL<IOpenGLAsmShaderProgram> >    *_CachedAsmShaderProgramList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLPixelBufferObject> >   *_CachedPixelBufferObjectList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLVertexBuffer> >        *_CachedVertexBufferList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLIndexBuffer> >         *_CachedIndexBufferList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLTexture2D> >           *_CachedTextureList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLRectangleTexture> >    *_CachedTextureRectangleList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLCubeTexture> >         *_CachedCubeTextureList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLVolumeTexture> >       *_CachedVolumeTextureList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLAnimatedTexture> >     *_CachedAnimatedTextureList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLQuery> >               *_CachedQueryList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLVertexDeclaration> >   *_CachedVertexDeclarationList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLFrameBufferObject> >   *_CachedFrameBufferList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLVertexShader> >        *_CachedVertexShaderList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLPixelShader> >         *_CachedPixelShaderList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLShaderProgram> >       *_CachedShaderProgramList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLAsmVertexShader> >     *_CachedAsmVertexShaderList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLAsmPixelShader> >      *_CachedAsmPixelShaderList;
+    TDeviceResourceList< IntrusiveSP<IOpenGLAsmShaderProgram> >    *_CachedAsmShaderProgramList;
 
 #if (NUX_ENABLE_CG_SHADERS)
-    TDeviceResourceList< TRefGL<ICgVertexShader> >            *_CachedCGVertexShaderList;
-    TDeviceResourceList< TRefGL<ICgPixelShader> >             *_CachedCGPixelShaderList;
+    TDeviceResourceList< IntrusiveSP<ICgVertexShader> >            *_CachedCGVertexShaderList;
+    TDeviceResourceList< IntrusiveSP<ICgPixelShader> >             *_CachedCGPixelShaderList;
 #endif
 
   private:
@@ -730,9 +730,9 @@ namespace nux
       @Height       Texture height.
       @Levels       Texture number of mipmaps. If 0, all the mipmaps levels are created
       @PixelFormat  Texture format.
-      @return       A device texture. Depending on the system capabilities returns a TRefGL<IOpenGLTexture2D> or TRefGL<IOpenGLRectangleTexture>.
+      @return       A device texture. Depending on the system capabilities returns a IntrusiveSP<IOpenGLTexture2D> or IntrusiveSP<IOpenGLRectangleTexture>.
     */
-    TRefGL<IOpenGLBaseTexture> CreateSystemCapableDeviceTexture (
+    IntrusiveSP<IOpenGLBaseTexture> CreateSystemCapableDeviceTexture (
       int Width
       , int Height
       , int Levels
@@ -740,9 +740,9 @@ namespace nux
 
     //! Created a cached texture
     /*!
-      @return A cached texture. Depending on the system capabilities, returns a NTexture2D or NRectangleTexture.
+      @return A cached texture. Depending on the system capabilities, returns a Texture2D or TextureRectangle.
     */
-    NTexture* CreateSystemCapableTexture ();
+    BaseTexture* CreateSystemCapableTexture ();
 
   private:
     NString m_BoardVendorString;

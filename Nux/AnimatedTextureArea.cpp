@@ -35,7 +35,7 @@ namespace nux
 
 //     NAnimatedTextureData texData;
 //     texData.AllocateCheckBoardTexture(16, 16, 1, 0xFF222222, 0xFF666666);
-//     m_DefaultTexture = new NRectangleTexture();
+//     m_DefaultTexture = new TextureRectangle();
 //     m_DefaultTexture->Update(&texData);
 
     OnMouseDown.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDown) );
@@ -83,15 +83,15 @@ namespace nux
 
   }
 
-  void AnimatedTextureArea::SetTexture (NAnimatedTexture *Texture)
+  void AnimatedTextureArea::SetTexture (TextureFrameAnimation *Texture)
   {
     m_UserTexture = Texture;
 
     if (m_UserTexture)
     {
-      TRefGL< NGLAnimatedTexture > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
-      TRefGL<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
-      TRefGL<IOpenGLBaseTexture> Texture2D = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      IntrusiveSP< CachedTextureFrameAnimation > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
+      IntrusiveSP<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      IntrusiveSP<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
       AnimatedTexture->SetFiltering (GL_LINEAR, GL_LINEAR);
       AnimatedTexture->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -135,9 +135,9 @@ namespace nux
   {
     if (m_UserTexture)
     {
-      TRefGL< NGLAnimatedTexture > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
-      TRefGL<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
-      TRefGL<IOpenGLBaseTexture> Texture2D = Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      IntrusiveSP< CachedTextureFrameAnimation > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
+      IntrusiveSP<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      IntrusiveSP<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
       AnimatedTexture->PresentNextFrame();
       m_TimerHandler = GetThreadTimer().AddTimerHandler (41, m_TimerFunctor, 0);

@@ -258,7 +258,7 @@ namespace nux
     GPixelFormats[ BITFMT_A8           ].type	            = GL_UNSIGNED_BYTE;
   }
 
-  TRefGL<IOpenGLTexture2D> GLDeviceFactory::CreateTexture (
+  IntrusiveSP<IOpenGLTexture2D> GLDeviceFactory::CreateTexture (
     int Width
     , int Height
     , int Levels
@@ -266,11 +266,12 @@ namespace nux
   {
     IOpenGLTexture2D *ptr;
     CreateTexture (Width, Height, Levels, PixelFormat, (IOpenGLTexture2D **) &ptr);
-    TRefGL<IOpenGLTexture2D> h = ptr;
+    IntrusiveSP<IOpenGLTexture2D> h = IntrusiveSP<IOpenGLTexture2D> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLRectangleTexture> GLDeviceFactory::CreateRectangleTexture (
+  IntrusiveSP<IOpenGLRectangleTexture> GLDeviceFactory::CreateRectangleTexture (
     int Width
     , int Height
     , int Levels
@@ -278,22 +279,24 @@ namespace nux
   {
     IOpenGLRectangleTexture *ptr;
     CreateRectangleTexture (Width, Height, Levels, PixelFormat, (IOpenGLRectangleTexture **) &ptr);
-    TRefGL<IOpenGLRectangleTexture> h = ptr;
+    IntrusiveSP<IOpenGLRectangleTexture> h = IntrusiveSP<IOpenGLRectangleTexture> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLCubeTexture> GLDeviceFactory::CreateCubeTexture (
+  IntrusiveSP<IOpenGLCubeTexture> GLDeviceFactory::CreateCubeTexture (
     int EdgeLength
     , int Levels
     , BitmapFormat PixelFormat)
   {
     IOpenGLCubeTexture *ptr;
     CreateCubeTexture (EdgeLength, Levels, PixelFormat, (IOpenGLCubeTexture **) &ptr);
-    TRefGL<IOpenGLCubeTexture> h = ptr;
+    IntrusiveSP<IOpenGLCubeTexture> h = IntrusiveSP<IOpenGLCubeTexture> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLVolumeTexture> GLDeviceFactory::CreateVolumeTexture (
+  IntrusiveSP<IOpenGLVolumeTexture> GLDeviceFactory::CreateVolumeTexture (
     int Width
     , int Height
     , int Depth
@@ -302,101 +305,113 @@ namespace nux
   {
     IOpenGLVolumeTexture *ptr;
     CreateVolumeTexture (Width, Height, Depth, Levels, PixelFormat, (IOpenGLVolumeTexture **) &ptr);
-    TRefGL<IOpenGLVolumeTexture> h = ptr;
+    IntrusiveSP<IOpenGLVolumeTexture> h = IntrusiveSP<IOpenGLVolumeTexture> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLAnimatedTexture> GLDeviceFactory::CreateAnimatedTexture (
+  IntrusiveSP<IOpenGLAnimatedTexture> GLDeviceFactory::CreateAnimatedTexture (
     int Width
     , int Height
     , int Depth
     , BitmapFormat PixelFormat)
   {
-    IOpenGLAnimatedTexture *prt;
-    CreateAnimatedTexture (Width, Height, Depth, PixelFormat, (IOpenGLAnimatedTexture **) &prt);
-    TRefGL<IOpenGLAnimatedTexture> h = prt;
+    IOpenGLAnimatedTexture *ptr;
+    CreateAnimatedTexture (Width, Height, Depth, PixelFormat, (IOpenGLAnimatedTexture **) &ptr);
+    IntrusiveSP<IOpenGLAnimatedTexture> h = IntrusiveSP<IOpenGLAnimatedTexture> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
 
-  TRefGL<IOpenGLQuery> GLDeviceFactory::CreateQuery (QUERY_TYPE Type)
+  IntrusiveSP<IOpenGLQuery> GLDeviceFactory::CreateQuery (QUERY_TYPE Type)
   {
-    IOpenGLQuery *prt;
-    CreateQuery (Type, (IOpenGLQuery **) &prt);
-    TRefGL<IOpenGLQuery> h = prt;
+    IOpenGLQuery *ptr;
+    CreateQuery (Type, (IOpenGLQuery **) &ptr);
+    IntrusiveSP<IOpenGLQuery> h = IntrusiveSP<IOpenGLQuery> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLFrameBufferObject> GLDeviceFactory::CreateFrameBufferObject()
+  IntrusiveSP<IOpenGLFrameBufferObject> GLDeviceFactory::CreateFrameBufferObject()
   {
     IOpenGLFrameBufferObject *ptr;
     CreateFrameBufferObject ( (IOpenGLFrameBufferObject **) &ptr);
-    TRefGL<IOpenGLFrameBufferObject> h = ptr;
+    IntrusiveSP<IOpenGLFrameBufferObject> h = IntrusiveSP<IOpenGLFrameBufferObject> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLShaderProgram> GLDeviceFactory::CreateShaderProgram()
+  IntrusiveSP<IOpenGLShaderProgram> GLDeviceFactory::CreateShaderProgram()
   {
     IOpenGLShaderProgram *ptr;
     CreateShaderProgram ( (IOpenGLShaderProgram **) &ptr);
-    TRefGL<IOpenGLShaderProgram> h = ptr;
+    IntrusiveSP<IOpenGLShaderProgram> h = IntrusiveSP<IOpenGLShaderProgram> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLVertexShader> GLDeviceFactory::CreateVertexShader()
+  IntrusiveSP<IOpenGLVertexShader> GLDeviceFactory::CreateVertexShader()
   {
     IOpenGLVertexShader *ptr;
     CreateVertexShader ( (IOpenGLVertexShader **) &ptr);
-    TRefGL<IOpenGLVertexShader> h = ptr;
+    IntrusiveSP<IOpenGLVertexShader> h = IntrusiveSP<IOpenGLVertexShader> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLPixelShader> GLDeviceFactory::CreatePixelShader()
+  IntrusiveSP<IOpenGLPixelShader> GLDeviceFactory::CreatePixelShader()
   {
     IOpenGLPixelShader *ptr;
     CreatePixelShader ( (IOpenGLPixelShader **) &ptr);
-    TRefGL<IOpenGLPixelShader> h = ptr;
+    IntrusiveSP<IOpenGLPixelShader> h = IntrusiveSP<IOpenGLPixelShader> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLAsmShaderProgram> GLDeviceFactory::CreateAsmShaderProgram()
+  IntrusiveSP<IOpenGLAsmShaderProgram> GLDeviceFactory::CreateAsmShaderProgram()
   {
     IOpenGLAsmShaderProgram *ptr;
     CreateAsmShaderProgram ( (IOpenGLAsmShaderProgram **) &ptr);
-    TRefGL<IOpenGLAsmShaderProgram> h = ptr;
+    IntrusiveSP<IOpenGLAsmShaderProgram> h = IntrusiveSP<IOpenGLAsmShaderProgram> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLAsmVertexShader> GLDeviceFactory::CreateAsmVertexShader()
+  IntrusiveSP<IOpenGLAsmVertexShader> GLDeviceFactory::CreateAsmVertexShader()
   {
     IOpenGLAsmVertexShader *ptr;
     CreateAsmVertexShader ( (IOpenGLAsmVertexShader **) &ptr);
-    TRefGL<IOpenGLAsmVertexShader> h = ptr;
+    IntrusiveSP<IOpenGLAsmVertexShader> h = IntrusiveSP<IOpenGLAsmVertexShader> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<IOpenGLAsmPixelShader> GLDeviceFactory::CreateAsmPixelShader()
+  IntrusiveSP<IOpenGLAsmPixelShader> GLDeviceFactory::CreateAsmPixelShader()
   {
     IOpenGLAsmPixelShader *ptr;
     CreateAsmPixelShader ( (IOpenGLAsmPixelShader **) &ptr);
-    TRefGL<IOpenGLAsmPixelShader> h = ptr;
+    IntrusiveSP<IOpenGLAsmPixelShader> h = IntrusiveSP<IOpenGLAsmPixelShader> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
 #if (NUX_ENABLE_CG_SHADERS)
-  TRefGL<ICgVertexShader> GLDeviceFactory::CreateCGVertexShader()
+  IntrusiveSP<ICgVertexShader> GLDeviceFactory::CreateCGVertexShader()
   {
     ICgVertexShader *ptr;
     CreateCGVertexShader ( (ICgVertexShader **) &ptr);
-    TRefGL<ICgVertexShader> h = ptr;
+    IntrusiveSP<ICgVertexShader> h = ptr;
+    ptr->UnReference ();
     return h;
   }
 
-  TRefGL<ICgPixelShader> GLDeviceFactory::CreateCGPixelShader()
+  IntrusiveSP<ICgPixelShader> GLDeviceFactory::CreateCGPixelShader()
   {
     ICgPixelShader *ptr;
     CreateCGPixelShader ( (ICgPixelShader **) &ptr);
-    TRefGL<ICgPixelShader> h = ptr;
+    IntrusiveSP<ICgPixelShader> h = ptr;
+    ptr->UnReference ();
     return h;
   }
 #endif
@@ -414,9 +429,9 @@ namespace nux
   }
 
   STREAMSOURCE GLDeviceFactory::_StreamSource[MAX_NUM_STREAM];
-// TRefGL<IOpenGLIndexBuffer> GLDeviceFactory::_CurrentIndexBuffer = 0;
-// TRefGL<IOpenGLVertexBuffer> GLDeviceFactory::_CurrentVertexBuffer = 0;
-// TRefGL<IOpenGLVertexDeclaration> GLDeviceFactory::_CurrentVertexDeclaration = 0;
+// IntrusiveSP<IOpenGLIndexBuffer> GLDeviceFactory::_CurrentIndexBuffer = 0;
+// IntrusiveSP<IOpenGLVertexBuffer> GLDeviceFactory::_CurrentVertexBuffer = 0;
+// IntrusiveSP<IOpenGLVertexDeclaration> GLDeviceFactory::_CurrentVertexDeclaration = 0;
 
 //void TestARBShaders()
 //{
@@ -704,8 +719,8 @@ namespace nux
   {
     NUX_SAFE_DELETE (m_RenderStates);
 
-    _FrameBufferObject = 0;
-    _CurrentFrameBufferObject = 0;
+    _FrameBufferObject = IntrusiveSP<IOpenGLFrameBufferObject> (0);
+    _CurrentFrameBufferObject = IntrusiveSP<IOpenGLFrameBufferObject> (0);
     CollectDeviceResource();
 
     // NVidia CG
@@ -764,7 +779,7 @@ namespace nux
 
     *ppTexture = new IOpenGLTexture2D (Width, Height, NumMipLevel, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLTexture2D> > (*ppTexture, &_CachedTextureList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP< IOpenGLTexture2D > > (IntrusiveSP< IOpenGLTexture2D > (*ppTexture), &_CachedTextureList);
 
     return 1;
   }
@@ -820,7 +835,7 @@ namespace nux
 
     *ppTexture = new IOpenGLRectangleTexture (Width, Height, NumMipLevel, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLRectangleTexture> > (*ppTexture, &_CachedTextureRectangleList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLRectangleTexture> > (IntrusiveSP<IOpenGLRectangleTexture> (*ppTexture), &_CachedTextureRectangleList);
 
     return 1;
   }
@@ -858,7 +873,7 @@ namespace nux
 
     *ppCubeTexture = new IOpenGLCubeTexture (EdgeLength, NumMipLevel, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLCubeTexture> > (*ppCubeTexture, &_CachedCubeTextureList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLCubeTexture> > (IntrusiveSP<IOpenGLCubeTexture> (*ppCubeTexture), &_CachedCubeTextureList);
 
     return 1;
   }
@@ -897,7 +912,7 @@ namespace nux
 
     *ppVolumeTexture = new IOpenGLVolumeTexture (Width, Height, Depth, NumMipLevel, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLVolumeTexture> > (*ppVolumeTexture, &_CachedVolumeTextureList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVolumeTexture> > (IntrusiveSP<IOpenGLVolumeTexture> (*ppVolumeTexture), &_CachedVolumeTextureList);
 
     return OGL_OK;
   }
@@ -910,7 +925,7 @@ namespace nux
   {
     *ppAnimatedTexture = new IOpenGLAnimatedTexture (Width, Height, Depth, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAnimatedTexture> > (*ppAnimatedTexture, &_CachedAnimatedTextureList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAnimatedTexture> > (IntrusiveSP<IOpenGLAnimatedTexture> (*ppAnimatedTexture), &_CachedAnimatedTextureList);
 
     return OGL_OK;
   }
@@ -919,7 +934,7 @@ namespace nux
   {
     *ppQuery = new IOpenGLQuery (Type);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLQuery> > (*ppQuery, &_CachedQueryList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLQuery> > (IntrusiveSP<IOpenGLQuery> (*ppQuery), &_CachedQueryList);
 
     return OGL_OK;
   }
@@ -928,7 +943,7 @@ namespace nux
   {
     *ppFrameBufferObject = new IOpenGLFrameBufferObject();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLFrameBufferObject> > (*ppFrameBufferObject, &_CachedFrameBufferList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLFrameBufferObject> > (IntrusiveSP<IOpenGLFrameBufferObject> (*ppFrameBufferObject), &_CachedFrameBufferList);
 
     return OGL_OK;
   }
@@ -937,7 +952,7 @@ namespace nux
   {
     *ppShaderProgram = new IOpenGLShaderProgram();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLShaderProgram> > (*ppShaderProgram, &_CachedShaderProgramList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLShaderProgram> > (IntrusiveSP<IOpenGLShaderProgram> (*ppShaderProgram), &_CachedShaderProgramList);
 
     return OGL_OK;
   }
@@ -946,7 +961,7 @@ namespace nux
   {
     *ppVertexShader = new IOpenGLVertexShader();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLVertexShader> > (*ppVertexShader, &_CachedVertexShaderList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVertexShader> > (IntrusiveSP<IOpenGLVertexShader> (*ppVertexShader), &_CachedVertexShaderList);
 
     return OGL_OK;
   }
@@ -955,7 +970,7 @@ namespace nux
   {
     *ppPixelShader = new IOpenGLPixelShader();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLPixelShader> > (*ppPixelShader, &_CachedPixelShaderList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLPixelShader> > (IntrusiveSP<IOpenGLPixelShader> (*ppPixelShader), &_CachedPixelShaderList);
 
     return OGL_OK;
   }
@@ -964,7 +979,7 @@ namespace nux
   {
     *ppAsmShaderProgram = new IOpenGLAsmShaderProgram();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAsmShaderProgram> > (*ppAsmShaderProgram, &_CachedAsmShaderProgramList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAsmShaderProgram> > (IntrusiveSP<IOpenGLAsmShaderProgram> (*ppAsmShaderProgram), &_CachedAsmShaderProgramList);
 
     return OGL_OK;
   }
@@ -973,7 +988,7 @@ namespace nux
   {
     *ppAsmVertexShader = new IOpenGLAsmVertexShader();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAsmVertexShader> > (*ppAsmVertexShader, &_CachedAsmVertexShaderList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAsmVertexShader> > (IntrusiveSP<IOpenGLAsmVertexShader> (*ppAsmVertexShader), &_CachedAsmVertexShaderList);
 
     return OGL_OK;
   }
@@ -982,7 +997,7 @@ namespace nux
   {
     *ppAsmPixelShader = new IOpenGLAsmPixelShader();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLAsmPixelShader> > (*ppAsmPixelShader, &_CachedAsmPixelShaderList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAsmPixelShader> > (IntrusiveSP<IOpenGLAsmPixelShader> (*ppAsmPixelShader), &_CachedAsmPixelShaderList);
 
     return OGL_OK;
   }
@@ -992,7 +1007,7 @@ namespace nux
   {
     *ppCgVertexShader = new ICgVertexShader();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<ICgVertexShader> > (*ppCgVertexShader, &_CachedCGVertexShaderList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<ICgVertexShader> > (IntrusiveSP<ICgVertexShader> (*ppCgVertexShader), &_CachedCGVertexShaderList);
 
     return OGL_OK;
   }
@@ -1001,185 +1016,186 @@ namespace nux
   {
     *ppCgPixelShader = new ICgPixelShader();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<ICgPixelShader> > (*ppCgPixelShader, &_CachedCGPixelShaderList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<ICgPixelShader> > (IntrusiveSP<ICgPixelShader> (*ppCgPixelShader), &_CachedCGPixelShaderList);
 
     return OGL_OK;
   }
 #endif
 
+  // NUXTODO: It is pointless to fill the _Cached... arrays. The data is already in the resource manager.
   void GLDeviceFactory::CollectDeviceResource()
   {
-    TDeviceResourceList< TRefGL<IOpenGLVertexBuffer> >* pTempVertexBuffer = _CachedVertexBufferList;
-
-    while (pTempVertexBuffer)
-    {
-      if (pTempVertexBuffer->_DeviceResource->RefCount() == 1)
-      {
-        pTempVertexBuffer->_DeviceResource = 0;
-        pTempVertexBuffer = pTempVertexBuffer->_next;
-      }
-      else
-        pTempVertexBuffer = pTempVertexBuffer->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLIndexBuffer> >* pTempIndexBuffer = _CachedIndexBufferList;
-
-    while (pTempIndexBuffer)
-    {
-      if (pTempIndexBuffer->_DeviceResource->RefCount() == 1)
-      {
-        pTempIndexBuffer->_DeviceResource = 0;
-        pTempIndexBuffer = pTempIndexBuffer->_next;
-      }
-      else
-        pTempIndexBuffer = pTempIndexBuffer->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLVertexDeclaration> >* pTempVertexDeclaration = _CachedVertexDeclarationList;
-
-    while (pTempVertexDeclaration)
-    {
-      if (pTempVertexDeclaration->_DeviceResource->RefCount() == 1)
-      {
-        pTempVertexDeclaration->_DeviceResource = 0;
-        pTempVertexDeclaration = pTempVertexDeclaration->_next;
-      }
-      else
-        pTempVertexDeclaration = pTempVertexDeclaration->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLTexture2D> >* pTempTexture2D = _CachedTextureList;
-
-    while (pTempTexture2D)
-    {
-      if (pTempTexture2D->_DeviceResource->RefCount() == 1)
-      {
-        pTempTexture2D->_DeviceResource = 0;
-        pTempTexture2D = pTempTexture2D->_next;
-      }
-      else
-        pTempTexture2D = pTempTexture2D->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLCubeTexture> >* pTempCubeTexture = _CachedCubeTextureList;
-
-    while (pTempCubeTexture)
-    {
-      if (pTempCubeTexture->_DeviceResource->RefCount() == 1)
-      {
-        pTempCubeTexture->_DeviceResource = 0;
-        pTempCubeTexture = pTempCubeTexture->_next;
-      }
-      else
-        pTempCubeTexture = pTempCubeTexture->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLVolumeTexture> >* pTempVolumeTexture = _CachedVolumeTextureList;
-
-    while (pTempVolumeTexture)
-    {
-      if (pTempVolumeTexture->_DeviceResource->RefCount() == 1)
-      {
-        pTempVolumeTexture->_DeviceResource = 0;
-        pTempVolumeTexture = pTempVolumeTexture->_next;
-      }
-      else
-        pTempVolumeTexture = pTempVolumeTexture->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLAnimatedTexture> >* pTempAnimatedTexture = _CachedAnimatedTextureList;
-
-    while (pTempAnimatedTexture)
-    {
-      if (pTempAnimatedTexture->_DeviceResource->RefCount() == 1)
-      {
-        pTempAnimatedTexture->_DeviceResource = 0;
-        pTempAnimatedTexture = pTempAnimatedTexture->_next;
-      }
-      else
-        pTempAnimatedTexture = pTempAnimatedTexture->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLFrameBufferObject> >* pTempFrameBufferObject = _CachedFrameBufferList;
-
-    while (pTempFrameBufferObject)
-    {
-      if (pTempFrameBufferObject->_DeviceResource->RefCount() == 1)
-      {
-        pTempFrameBufferObject->_DeviceResource = 0;
-        pTempFrameBufferObject = pTempFrameBufferObject->_next;
-      }
-      else
-        pTempFrameBufferObject = pTempFrameBufferObject->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLQuery> >* pTempQuery = _CachedQueryList;
-
-    while (pTempQuery)
-    {
-      if (pTempQuery->_DeviceResource->RefCount() == 1)
-      {
-        pTempQuery->_DeviceResource = 0;
-        pTempQuery = pTempQuery->_next;
-      }
-      else
-        pTempQuery = pTempQuery->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLVertexShader> >* pTempVertexShader = _CachedVertexShaderList;
-
-    while (pTempVertexShader)
-    {
-      if (pTempVertexShader->_DeviceResource->RefCount() == 1)
-      {
-        pTempVertexShader->_DeviceResource = 0;
-        pTempVertexShader = pTempVertexShader->_next;
-      }
-      else
-        pTempVertexShader = pTempVertexShader->_next;
-    }
-
-    TDeviceResourceList< TRefGL<IOpenGLPixelShader> >* pTempPixelShader = _CachedPixelShaderList;
-
-    while (pTempPixelShader)
-    {
-      if (pTempPixelShader->_DeviceResource->RefCount() == 1)
-      {
-        pTempPixelShader->_DeviceResource = 0;
-        pTempPixelShader = pTempPixelShader->_next;
-      }
-      else
-        pTempPixelShader = pTempPixelShader->_next;
-    }
-
-#if (NUX_ENABLE_CG_SHADERS)
-    TDeviceResourceList< TRefGL<ICgVertexShader> >* pTempCgVertexShader = _CachedCGVertexShaderList;
-
-    while (pTempCgVertexShader)
-    {
-      if (pTempCgVertexShader->_DeviceResource->RefCount() == 1)
-      {
-        pTempCgVertexShader->_DeviceResource = 0;
-        pTempCgVertexShader = pTempCgVertexShader->_next;
-      }
-      else
-        pTempCgVertexShader = pTempCgVertexShader->_next;
-    }
-
-    TDeviceResourceList< TRefGL<ICgPixelShader> >* pTempCgPixelShader = _CachedCGPixelShaderList;
-
-    while (pTempCgPixelShader)
-    {
-      if (pTempCgPixelShader->_DeviceResource->RefCount() == 1)
-      {
-        pTempCgPixelShader->_DeviceResource = 0;
-        pTempCgPixelShader = pTempCgPixelShader->_next;
-      }
-      else
-        pTempCgPixelShader = pTempCgPixelShader->_next;
-    }
-
-#endif
+//     TDeviceResourceList< IntrusiveSP<IOpenGLVertexBuffer> >* pTempVertexBuffer = _CachedVertexBufferList;
+// 
+//     while (pTempVertexBuffer)
+//     {
+//       if (pTempVertexBuffer->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempVertexBuffer->_DeviceResource = IntrusiveSP<IOpenGLVertexBuffer> (0);;
+//         pTempVertexBuffer = pTempVertexBuffer->_next;
+//       }
+//       else
+//         pTempVertexBuffer = pTempVertexBuffer->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLIndexBuffer> >* pTempIndexBuffer = _CachedIndexBufferList;
+// 
+//     while (pTempIndexBuffer)
+//     {
+//       if (pTempIndexBuffer->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempIndexBuffer->_DeviceResource = IntrusiveSP<IOpenGLIndexBuffer> (0);;
+//         pTempIndexBuffer = pTempIndexBuffer->_next;
+//       }
+//       else
+//         pTempIndexBuffer = pTempIndexBuffer->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLVertexDeclaration> >* pTempVertexDeclaration = _CachedVertexDeclarationList;
+// 
+//     while (pTempVertexDeclaration)
+//     {
+//       if (pTempVertexDeclaration->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempVertexDeclaration->_DeviceResource = IntrusiveSP<IOpenGLVertexDeclaration> (0);
+//         pTempVertexDeclaration = pTempVertexDeclaration->_next;
+//       }
+//       else
+//         pTempVertexDeclaration = pTempVertexDeclaration->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLTexture2D> >* pTempTexture2D = _CachedTextureList;
+// 
+//     while (pTempTexture2D)
+//     {
+//       if (pTempTexture2D->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempTexture2D->_DeviceResource = IntrusiveSP<IOpenGLTexture2D> (0);
+//         pTempTexture2D = pTempTexture2D->_next;
+//       }
+//       else
+//         pTempTexture2D = pTempTexture2D->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLCubeTexture> >* pTempCubeTexture = _CachedCubeTextureList;
+// 
+//     while (pTempCubeTexture)
+//     {
+//       if (pTempCubeTexture->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempCubeTexture->_DeviceResource = IntrusiveSP<IOpenGLCubeTexture> (0);
+//         pTempCubeTexture = pTempCubeTexture->_next;
+//       }
+//       else
+//         pTempCubeTexture = pTempCubeTexture->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLVolumeTexture> >* pTempVolumeTexture = _CachedVolumeTextureList;
+// 
+//     while (pTempVolumeTexture)
+//     {
+//       if (pTempVolumeTexture->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempVolumeTexture->_DeviceResource = IntrusiveSP<IOpenGLVolumeTexture> (0);
+//         pTempVolumeTexture = pTempVolumeTexture->_next;
+//       }
+//       else
+//         pTempVolumeTexture = pTempVolumeTexture->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLAnimatedTexture> >* pTempAnimatedTexture = _CachedAnimatedTextureList;
+// 
+//     while (pTempAnimatedTexture)
+//     {
+//       if (pTempAnimatedTexture->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempAnimatedTexture->_DeviceResource = IntrusiveSP<IOpenGLAnimatedTexture> (0);
+//         pTempAnimatedTexture = pTempAnimatedTexture->_next;
+//       }
+//       else
+//         pTempAnimatedTexture = pTempAnimatedTexture->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLFrameBufferObject> >* pTempFrameBufferObject = _CachedFrameBufferList;
+// 
+//     while (pTempFrameBufferObject)
+//     {
+//       if (pTempFrameBufferObject->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempFrameBufferObject->_DeviceResource = IntrusiveSP<IOpenGLFrameBufferObject> (0);
+//         pTempFrameBufferObject = pTempFrameBufferObject->_next;
+//       }
+//       else
+//         pTempFrameBufferObject = pTempFrameBufferObject->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLQuery> >* pTempQuery = _CachedQueryList;
+// 
+//     while (pTempQuery)
+//     {
+//       if (pTempQuery->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempQuery->_DeviceResource = IntrusiveSP<IOpenGLQuery> (0);
+//         pTempQuery = pTempQuery->_next;
+//       }
+//       else
+//         pTempQuery = pTempQuery->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLVertexShader> >* pTempVertexShader = _CachedVertexShaderList;
+// 
+//     while (pTempVertexShader)
+//     {
+//       if (pTempVertexShader->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempVertexShader->_DeviceResource = IntrusiveSP<IOpenGLVertexShader> (0);
+//         pTempVertexShader = pTempVertexShader->_next;
+//       }
+//       else
+//         pTempVertexShader = pTempVertexShader->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<IOpenGLPixelShader> >* pTempPixelShader = _CachedPixelShaderList;
+// 
+//     while (pTempPixelShader)
+//     {
+//       if (pTempPixelShader->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempPixelShader->_DeviceResource = IntrusiveSP<IOpenGLPixelShader> (0);
+//         pTempPixelShader = pTempPixelShader->_next;
+//       }
+//       else
+//         pTempPixelShader = pTempPixelShader->_next;
+//     }
+// 
+// #if (NUX_ENABLE_CG_SHADERS)
+//     TDeviceResourceList< IntrusiveSP<ICgVertexShader> >* pTempCgVertexShader = _CachedCGVertexShaderList;
+// 
+//     while (pTempCgVertexShader)
+//     {
+//       if (pTempCgVertexShader->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempCgVertexShader->_DeviceResource = IntrusiveSP<ICgVertexShader> (0);
+//         pTempCgVertexShader = pTempCgVertexShader->_next;
+//       }
+//       else
+//         pTempCgVertexShader = pTempCgVertexShader->_next;
+//     }
+// 
+//     TDeviceResourceList< IntrusiveSP<ICgPixelShader> >* pTempCgPixelShader = _CachedCGPixelShaderList;
+// 
+//     while (pTempCgPixelShader)
+//     {
+//       if (pTempCgPixelShader->_DeviceResource->RefCount() == 1)
+//       {
+//         pTempCgPixelShader->_DeviceResource = IntrusiveSP<IOpenGLPixelShader> (0);
+//         pTempCgPixelShader = pTempCgPixelShader->_next;
+//       }
+//       else
+//         pTempCgPixelShader = pTempCgPixelShader->_next;
+//     }
+// 
+// #endif
   }
 
   void GLDeviceFactory::InvalidateTextureUnit (int TextureUnitIndex)
@@ -1337,7 +1353,7 @@ namespace nux
     return _FrameBufferObject->FormatFrameBufferObject (Width, Height, PixelFormat);
   }
 
-  int GLDeviceFactory::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, TRefGL<IOpenGLSurface> pRenderTargetSurface)
+  int GLDeviceFactory::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface)
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
@@ -1348,7 +1364,7 @@ namespace nux
     return _FrameBufferObject->SetRenderTarget (ColorAttachmentIndex, pRenderTargetSurface);
   }
 
-  int GLDeviceFactory::SetDepthRenderTargetSurface (TRefGL<IOpenGLSurface> pDepthSurface)
+  int GLDeviceFactory::SetDepthRenderTargetSurface (IntrusiveSP<IOpenGLSurface> pDepthSurface)
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
@@ -1359,23 +1375,23 @@ namespace nux
     return _FrameBufferObject->SetDepthSurface (pDepthSurface);
   }
 
-  TRefGL<IOpenGLSurface> GLDeviceFactory::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
+  IntrusiveSP<IOpenGLSurface> GLDeviceFactory::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
       nuxDebugMsg (TEXT ("[GLDeviceFactory::GetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
-      return 0;
+      return IntrusiveSP<IOpenGLSurface> (0);
     }
 
     return _FrameBufferObject->GetRenderTarget (ColorAttachmentIndex);
   }
 
-  TRefGL<IOpenGLSurface> GLDeviceFactory::GetDepthRenderTargetSurface()
+  IntrusiveSP<IOpenGLSurface> GLDeviceFactory::GetDepthRenderTargetSurface()
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
       nuxDebugMsg (TEXT ("[GLDeviceFactory::GetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
-      return 0;
+      return IntrusiveSP<IOpenGLSurface> (0);
     }
 
     return _FrameBufferObject->GetDepthRenderTarget();
@@ -1435,7 +1451,7 @@ namespace nux
     DrawQuad_FixPipe (x, y, width, height, red, green, blue, alpha);
   }
 
-  void GLDeviceFactory::ClearSurfaceWithColor (TRefGL<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
+  void GLDeviceFactory::ClearSurfaceWithColor (IntrusiveSP<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
@@ -1444,7 +1460,7 @@ namespace nux
 
     FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
     SetColorRenderTargetSurface (0, s_);
-    SetDepthRenderTargetSurface (0);
+    SetDepthRenderTargetSurface (IntrusiveSP<IOpenGLSurface> (0));
     ActivateFrameBuffer();
     ClearFloatingPointColorRT (rect_->left,
                                rect_->top,
@@ -1453,17 +1469,17 @@ namespace nux
                                r, g, b, a);
   }
 
-  void GLDeviceFactory::SetCurrentFrameBufferObject (TRefGL<IOpenGLFrameBufferObject> fbo)
+  void GLDeviceFactory::SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> fbo)
   {
     _CurrentFrameBufferObject = fbo;
   }
 
-  TRefGL<IOpenGLFrameBufferObject> GLDeviceFactory::GetCurrentFrameBufferObject()
+  IntrusiveSP<IOpenGLFrameBufferObject> GLDeviceFactory::GetCurrentFrameBufferObject()
   {
     return _CurrentFrameBufferObject;
   }
 
-  TRefGL<IOpenGLBaseTexture> GLDeviceFactory::CreateSystemCapableDeviceTexture (
+  IntrusiveSP<IOpenGLBaseTexture> GLDeviceFactory::CreateSystemCapableDeviceTexture (
     int Width
     , int Height
     , int Levels
@@ -1481,19 +1497,19 @@ namespace nux
 
     nuxAssertMsg(0, TEXT("[NuxGraphicsResources::CreateSystemCapableDeviceTexture] No support for non power of two textures or rectangle textures"));
 
-    return TRefGL<IOpenGLBaseTexture>();
+    return IntrusiveSP<IOpenGLBaseTexture>();
   }
 
-  NTexture* GLDeviceFactory::CreateSystemCapableTexture ()
+  BaseTexture* GLDeviceFactory::CreateSystemCapableTexture ()
   {
     if(SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO ())
     {
-      return new NTexture2D ();
+      return new Texture2D ();
     }
 
     if(SUPPORT_GL_EXT_TEXTURE_RECTANGLE () || SUPPORT_GL_ARB_TEXTURE_RECTANGLE ())
     {
-      return new NRectangleTexture ();
+      return new TextureRectangle ();
     }
 
     nuxAssertMsg(0, TEXT("[NuxGraphicsResources::CreateSystemCapableTexture] No support for non power of two textures or rectangle textures"));

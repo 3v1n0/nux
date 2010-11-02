@@ -30,13 +30,13 @@
 namespace nux
 {
 
-  bool TextureArchiveAdd_ver_0_0_1 (NSerializer *FileStream,  NBitmapData *TextureData, const TCHAR *InputTextureFile, NUX_OUT t_s64 &Offset)
+  bool TextureArchiveAdd_ver_0_0_1 (NSerializer *FileStream,  NBitmapData *BaseTexture, const TCHAR *InputTextureFile, NUX_OUT t_s64 &Offset)
   {
     nuxAssert (FileStream);
     nuxAssert (InputTextureFile);
-    nuxAssert (TextureData);
+    nuxAssert (BaseTexture);
 
-    if (FileStream == 0 || InputTextureFile == 0 || TextureData == 0)
+    if (FileStream == 0 || InputTextureFile == 0 || BaseTexture == 0)
       return false;
 
 //     NFileName Filename(SourceFolder);
@@ -46,15 +46,15 @@ namespace nux
 //         Filename.AddSlashAtEnd();
 //     }
 //     Filename += InputTextureFile;
-//     NBitmapData *TextureData = LoadImageFile(Filename.GetTCharPtr());
+//     NBitmapData *BaseTexture = LoadImageFile(Filename.GetTCharPtr());
 
-//     if(!TextureData)
+//     if(!BaseTexture)
 //         return false;
 
     if (!FileStream)
     {
       nuxAssertMsg (0, TEXT ("[TextureArchiveAdd_ver_0_0_1] Cannot add texture to archive. Archive stream is not opened.") );
-      delete TextureData;
+      delete BaseTexture;
       return false;
     }
 
@@ -65,7 +65,7 @@ namespace nux
     t_u32 TextureNameSize = (t_u32) strlen (TextureName) + 1;
 
     //  -------------------------------------------------------------------------------------------------------------------
-    //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....TextureData....|Texture Name Size|....
+    //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....BaseTexture....|Texture Name Size|....
     //  -------------------------------------------------------------------------------------------------------------------
 
     // Write the number of char (including the terminating 0) in the texture file name.
@@ -78,9 +78,9 @@ namespace nux
     FileStream->Serialize ( (char *) &TextureDataSize,         sizeof (TextureDataSize) );
     t_u32 TextureStartPosition = FileStream->Tell();
 
-    if (TextureData->IsTextureData() )
+    if (BaseTexture->IsTextureData() )
     {
-      NTextureData *Texture2DData = static_cast<NTextureData *> (TextureData);
+      NTextureData *Texture2DData = static_cast<NTextureData *> (BaseTexture);
       t_s32 type = ARCH_TEXTURE2D;
       t_s32 NumMip = Texture2DData->GetNumMipmap();
       t_s32 Width = Texture2DData->GetWidth();
@@ -102,9 +102,9 @@ namespace nux
         FileStream->Serialize ( (char *) Texture2DData->GetSurface (mip).GetPtrRawData(),     Size);
       }
     }
-    else if (TextureData->IsCubemapTextureData() )
+    else if (BaseTexture->IsCubemapTextureData() )
     {
-      NCubemapData *CubemapData = static_cast<NCubemapData *> (TextureData);
+      NCubemapData *CubemapData = static_cast<NCubemapData *> (BaseTexture);
       t_s32 type = ARCH_CUBEMAP;
       t_s32 NumMip = CubemapData->GetNumMipmap();
       t_s32 Width = CubemapData->GetWidth();
@@ -129,9 +129,9 @@ namespace nux
         }
       }
     }
-    else if (TextureData->IsVolumeTextureData() )
+    else if (BaseTexture->IsVolumeTextureData() )
     {
-      NVolumeData *VolumeData = static_cast<NVolumeData *> (TextureData);
+      NVolumeData *VolumeData = static_cast<NVolumeData *> (BaseTexture);
       t_u32 type = ARCH_VOLUME;
       t_s32 NumMip = VolumeData->GetNumMipmap();
       t_s32 Width = VolumeData->GetWidth();
@@ -158,9 +158,9 @@ namespace nux
         }
       }
     }
-    else if (TextureData->IsAnimatedTextureData() )
+    else if (BaseTexture->IsAnimatedTextureData() )
     {
-      NAnimatedTextureData *AnimatedTextureData = static_cast<NAnimatedTextureData *> (TextureData);
+      NAnimatedTextureData *AnimatedTextureData = static_cast<NAnimatedTextureData *> (BaseTexture);
       t_u32 type = ARCH_ANIMATEDTEXTURE;
       t_s32 NumMip = 1;;
       t_s32 Width = AnimatedTextureData->GetWidth();
@@ -223,7 +223,7 @@ namespace nux
     t_u32 TextureNameSize = 0;
 
     //  -------------------------------------------------------------------------------------------------------------------
-    //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....TextureData....|Texture Name Size|....
+    //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....BaseTexture....|Texture Name Size|....
     //  -------------------------------------------------------------------------------------------------------------------
 
     // Read the number of char (including the terminating 0) in the texture file name.
@@ -558,9 +558,9 @@ namespace nux
       return false;
 
     NFileName Filename = InputTextureFile;
-    NBitmapData *TextureData = LoadImageFile (Filename.GetTCharPtr() );
+    NBitmapData *BaseTexture = LoadImageFile (Filename.GetTCharPtr() );
 
-    if (TextureData == 0)
+    if (BaseTexture == 0)
       return false;
 
     NFileName OutputFilename;
@@ -583,7 +583,7 @@ namespace nux
     fileStream->Serialize ( (char *) &FileTag,     sizeof (FileTag) );;
     fileStream->Serialize ( (char *) &FileVersion,     sizeof (FileVersion) );
 
-    TextureArchiveAdd_ver_0_0_1 (fileStream, TextureData, InputTextureFile, Offset);
+    TextureArchiveAdd_ver_0_0_1 (fileStream, BaseTexture, InputTextureFile, Offset);
 
     fileStream->Close();
     return true;

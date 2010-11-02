@@ -128,11 +128,11 @@ namespace nux
 
   private:
     IOpenGLAsmShaderProgram (NString ShaderProgramName = NString ("AsmShaderProgram") );
-    std::vector<TRefGL<IOpenGLAsmShader> > ShaderObjectList;
+    std::vector<IntrusiveSP<IOpenGLAsmShader> > ShaderObjectList;
     NString _ShaderProgramName;
 
-    TRefGL<IOpenGLAsmVertexShader> m_AsmVertexProgram;
-    TRefGL<IOpenGLAsmPixelShader> m_AsmFragmentProgram;
+    IntrusiveSP<IOpenGLAsmVertexShader> m_AsmVertexProgram;
+    IntrusiveSP<IOpenGLAsmPixelShader> m_AsmFragmentProgram;
 
     friend class GLDeviceFactory;
   };

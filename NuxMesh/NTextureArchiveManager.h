@@ -37,7 +37,7 @@ namespace nux
     int border_bottom;
     bool draw_borders_only;
     unsigned int ArchiveOffset;
-    nux::NBitmapData *TextureData;
+    nux::NBitmapData *BaseTexture;
     NString SourceFile;
     NString Style;
   };

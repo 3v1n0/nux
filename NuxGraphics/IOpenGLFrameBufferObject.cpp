@@ -43,7 +43,7 @@ namespace nux
   {
     for (int i = 0; i < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment(); i++)
     {
-      _Color_AttachmentArray.push_back (TRefGL<IOpenGLSurface> (0) );
+      _Color_AttachmentArray.push_back (IntrusiveSP<IOpenGLSurface> (0) );
     }
 
     FormatFrameBufferObject (Width, Height, PixelFormat);
@@ -64,11 +64,11 @@ namespace nux
 
     for (int i = 0; i < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment(); i++)
     {
-      _Color_AttachmentArray[i] = NULL;
+      _Color_AttachmentArray[i] = IntrusiveSP<IOpenGLSurface> (0);
     }
 
-    _Depth_Attachment = NULL;
-    _Stencil_Attachment = NULL;
+    _Depth_Attachment = IntrusiveSP<IOpenGLSurface> (0);
+    _Stencil_Attachment = IntrusiveSP<IOpenGLSurface> (0);
 
     if ( (_Width == Width) && (_Height == Height) && (_PixelFormat == PixelFormat) )
       return 1;
@@ -83,13 +83,13 @@ namespace nux
     return 1;
   }
 
-  int IOpenGLFrameBufferObject::SetRenderTarget (int ColorAttachmentIndex, TRefGL<IOpenGLSurface> pRenderTargetSurface)
+  int IOpenGLFrameBufferObject::SetRenderTarget (int ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface)
   {
     nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment() );
 
     if (pRenderTargetSurface.IsNull() )
     {
-      _Color_AttachmentArray[ColorAttachmentIndex] = 0;
+      _Color_AttachmentArray[ColorAttachmentIndex] = IntrusiveSP<IOpenGLSurface> (0);
       return 1;
     }
 
@@ -114,14 +114,14 @@ namespace nux
     return 1;
   }
 
-  int IOpenGLFrameBufferObject::SetDepthSurface (TRefGL<IOpenGLSurface> pDepthSurface)
+  int IOpenGLFrameBufferObject::SetDepthSurface (IntrusiveSP<IOpenGLSurface> pDepthSurface)
   {
     //nuxAssert(pDepthSurface.IsValid());
 
     if (pDepthSurface.IsNull() )
     {
-      _Depth_Attachment = 0;
-      _Stencil_Attachment = 0;
+      _Depth_Attachment = IntrusiveSP<IOpenGLSurface> (0);
+      _Stencil_Attachment = IntrusiveSP<IOpenGLSurface> (0);
       return 1;
     }
 
@@ -148,13 +148,13 @@ namespace nux
     return 1;
   }
 
-  TRefGL<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget (int ColorAttachmentIndex)
+  IntrusiveSP<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget (int ColorAttachmentIndex)
   {
     nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment() );
     return _Color_AttachmentArray[ColorAttachmentIndex];
   }
 
-  TRefGL<IOpenGLSurface> IOpenGLFrameBufferObject::GetDepthRenderTarget()
+  IntrusiveSP<IOpenGLSurface> IOpenGLFrameBufferObject::GetDepthRenderTarget()
   {
     return _Depth_Attachment;
   }
@@ -165,7 +165,7 @@ namespace nux
     _Fbo.Bind();
 
     if (GetThreadGLDeviceFactory() )
-      GetThreadGLDeviceFactory()->SetCurrentFrameBufferObject (this);
+      GetThreadGLDeviceFactory()->SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> (this));
 
     for (int i = 0; i < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment(); i++)
     {
@@ -223,7 +223,7 @@ namespace nux
     CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
 
     if (GetThreadGLDeviceFactory() )
-      GetThreadGLDeviceFactory()->SetCurrentFrameBufferObject (0);
+      GetThreadGLDeviceFactory()->SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> (0));
 
     if (GetThreadGraphicsContext() )
       GetThreadGraphicsContext()->SetScissor (0, 0, _Width, _Height);

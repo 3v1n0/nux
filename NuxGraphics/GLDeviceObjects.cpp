@@ -36,7 +36,7 @@ namespace nux
 
   extern PixelFormatInfo GPixelFormats[];
 //NObjectType IOpenGLResource::StaticObjectType(TEXT("IOpenGLResource"), 0);
-  NUX_IMPLEMENT_ROOT_OBJECT_TYPE (IOpenGLResource);
+  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLResource);
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

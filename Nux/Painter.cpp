@@ -220,7 +220,7 @@ namespace nux
     return GfxContext.RenderColorTextLineStatic (Font, page, Str, color, WriteAlphaChannel, alignment);
   }
 
-  void BasePainter::Draw2DTexture (GraphicsContext &GfxContext, NTexture *texture, int x, int y) const
+  void BasePainter::Draw2DTexture (GraphicsContext &GfxContext, BaseTexture *texture, int x, int y) const
   {
     float tex_w, tex_h;
     tex_w = (float) texture->GetWidth();
@@ -230,7 +230,7 @@ namespace nux
     GfxContext.QRP_GLSL_1Tex (x, y, tex_w, tex_h, texture->GetDeviceTexture(), texxform, Color::White);
   }
 
-  void BasePainter::Draw2DTextureAligned (GraphicsContext &GfxContext, NTexture *texture, const Geometry &g, TextureAlignmentStyle tex_align) const
+  void BasePainter::Draw2DTextureAligned (GraphicsContext &GfxContext, BaseTexture *texture, const Geometry &g, TextureAlignmentStyle tex_align) const
   {
     int x_pos, y_pos;
     int tex_w, tex_h;
@@ -415,7 +415,7 @@ namespace nux
     if (pimage == 0)
       return;
 
-    NTexture *texture = pimage->texture;
+    BaseTexture *texture = pimage->texture;
 
     int border_left = pimage->border_left;
     int border_right = pimage->border_right;
@@ -550,7 +550,7 @@ namespace nux
     if (pimage == 0)
       return;
 
-    NTexture *texture = pimage->texture;
+    BaseTexture *texture = pimage->texture;
 
 
     int border_left = pimage->border_left;
@@ -563,7 +563,7 @@ namespace nux
                        border_left, border_right, border_top, border_bottom, draw_borders_only);
   }
 
-  void BasePainter::PaintTextureShape (GraphicsContext &GfxContext, const Geometry &geo, NTexture *texture,
+  void BasePainter::PaintTextureShape (GraphicsContext &GfxContext, const Geometry &geo, BaseTexture *texture,
                                        int border_left, int border_right, int border_top, int border_bottom,
                                        bool draw_borders_only) const
   {
@@ -678,7 +678,7 @@ namespace nux
     if (pimage == 0)
       return;
 
-    NTexture *texture = pimage->texture;
+    BaseTexture *texture = pimage->texture;
     Geometry content_geo (0, 0, texture->GetWidth(), texture->GetHeight() ) ;
     content_geo = ComputeGeometryPositioning (geo, content_geo, pctx);
 
@@ -729,9 +729,9 @@ namespace nux
     if (pimage == 0)
       return;
 
-    NTexture *texture = pimage->texture;
+    BaseTexture *texture = pimage->texture;
 
-//     NGLTexture* glr = (NGLTexture*)GetThreadGraphicsContext()->ResourceCache.GetCachedResource(texture);
+//     CachedBaseTexture* glr = (CachedBaseTexture*)GetThreadGraphicsContext()->ResourceCache.GetCachedResource(texture);
 //     glr->m_Texture->SetFiltering(GL_LINEAR, GL_LINEAR);
 
     Geometry content_geo (0, 0, texture->GetWidth(), texture->GetHeight() ) ;
@@ -882,7 +882,7 @@ namespace nux
   }
 
   void BasePainter::PushTextureLayer (GraphicsContext &GfxContext, Geometry geo,
-                                      TRefGL<IOpenGLBaseTexture> DeviceTexture,
+                                      IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
                                       TexCoordXForm texxform,
                                       const Color &color,
                                       bool WriteAlpha,
@@ -894,7 +894,7 @@ namespace nux
   }
 
   void BasePainter::PushDrawTextureLayer (GraphicsContext &GfxContext, Geometry geo,
-                                          TRefGL<IOpenGLBaseTexture> DeviceTexture,
+                                          IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
                                           TexCoordXForm texxform,
                                           const Color &color,
                                           bool WriteAlpha,

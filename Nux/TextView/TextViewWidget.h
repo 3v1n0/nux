@@ -130,8 +130,8 @@ namespace nux
     //SmartPtrGLTexture m_BackgroundTexture;
 
     // Backup texture to speed up scrolling
-    TRefGL<IOpenGLFrameBufferObject> m_FrameBufferObject;
-    TRefGL<IOpenGLBaseTexture> m_TextureBuffer[2];
+    IntrusiveSP<IOpenGLFrameBufferObject> m_FrameBufferObject;
+    IntrusiveSP<IOpenGLBaseTexture> m_TextureBuffer[2];
     void SwapTextureIndex()
     {
       m_TextureIndex = (m_TextureIndex == 0) ? 1 : 0;

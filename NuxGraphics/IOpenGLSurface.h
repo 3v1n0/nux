@@ -96,11 +96,11 @@ namespace nux
     int InitializeLevel();
 
     // By Default, the surface refers to the face 0 of the texture and to the mip level 0 of that face.
-    //    IOpenGLSurface(IOpenGLBaseTexture* BaseTexture, GLenum OpenGLID)
+    //    IOpenGLSurface(IOpenGLBaseTexture* DeviceBaseTexture, GLenum OpenGLID)
     //        : _STextureTarget(GL_TEXTURE_2D)
     //        , _SSurfaceTarget(GL_TEXTURE_2D)
     //        , _SMipLevel(0)
-    //        , _BaseTexture(BaseTexture)
+    //        , _BaseTexture(DeviceBaseTexture)
     //        , IOpenGLResource(RTSURFACE)
     //    {
     //        // IOpenGLSurface surfaces are created inside a IOpenGLTexture2D, IOpenGLCubeTexture and IOpenGLVolumeTexture.
@@ -109,13 +109,13 @@ namespace nux
     //        _RefCount = 0;
     //        _OpenGLID = OpenGLID;
     //    }
-    IOpenGLSurface (IOpenGLBaseTexture *BaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/)
+    IOpenGLSurface (IOpenGLBaseTexture *DeviceBaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/)
       : IOpenGLResource (RTSURFACE)
       , _STextureTarget (TextureTarget)
       , _SSurfaceTarget (SurfaceTarget)
       , _SMipLevel (MipLevel)
       , _SSlice (Slice)
-      , _BaseTexture (BaseTexture)
+      , _BaseTexture (DeviceBaseTexture)
       , _AllocatedUnpackBuffer (0xFFFFFFFF)
     {
       // IOpenGLSurface surfaces are created inside a IOpenGLTexture2D, IOpenGLCubeTexture and IOpenGLVolumeTexture.
@@ -163,7 +163,7 @@ namespace nux
     friend class IOpenGLCubeTexture;
     friend class IOpenGLVolumeTexture;
     friend class IOpenGLAnimatedTexture;
-    friend class TRefGL<IOpenGLSurface>;
+    friend class IntrusiveSP<IOpenGLSurface>;
   };
 
 }

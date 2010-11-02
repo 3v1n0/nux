@@ -60,10 +60,11 @@ namespace nux
 
   RadioButton::~RadioButton()
   {
-    if (m_Group)
+    if (m_Group && m_GroupId != -1)
     {
       m_Group->DisconnectButton (this);
       m_Group->UnReference();
+      m_Group = 0;
     }
   }
 
@@ -207,6 +208,9 @@ namespace nux
 
   void RadioButton::SetRadioGroupSelector (RadioButtonGroup *RadioSelector)
   {
+    if (m_Group == RadioSelector)
+      return;
+
     if (m_Group)
     {
       m_Group->UnReference();

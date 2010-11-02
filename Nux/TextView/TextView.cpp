@@ -438,7 +438,7 @@ namespace nux
       GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE); // Do not write the alpha of characters
 
       GfxContext.EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_RECTANGLE_ARB);
-      TRefGL< NGLRectangleTexture > glTexture = GfxContext.ResourceCache.GetCachedResource (m_TextFont->TextureArray[0]);
+      IntrusiveSP< CachedTextureRectangle > glTexture = GfxContext.ResourceCache.GetCachedResource (m_TextFont->TextureArray[0]);
       GetThreadGraphicsContext()->SetTexture (GL_TEXTURE0, glTexture->m_Texture);
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -101,8 +101,8 @@ namespace nux
       , int Levels
       , BitmapFormat PixelFormat);
 
-    std::vector< TRefGL<IOpenGLSurface> > *_VolumeSurfaceArray;
-    std::vector< TRefGL<IOpenGLVolume> > _VolumeArray;
+    std::vector< IntrusiveSP<IOpenGLSurface> > *_VolumeSurfaceArray;
+    std::vector< IntrusiveSP<IOpenGLVolume> > _VolumeArray;
 
     friend class GLDeviceFactory;
     friend class IOpenGLSurface;
