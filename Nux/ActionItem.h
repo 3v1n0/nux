@@ -58,15 +58,15 @@ namespace nux
 //    MenuPage* GetMenu() const;
 
     void SetFont (IntrusiveSP<FontTexture> font);
-    void SetIcon (const NTexture* icon);
-    const NTexture* GetIcon();
+    void SetIcon (const BaseTexture* icon);
+    const BaseTexture* GetIcon();
 
     sigc::signal<void> sigAction;
 
   private:
     //! A value defined by the user at construction time.
     int m_UserValue;
-    NTexture* m_Icon;
+    BaseTexture* m_Icon;
     NString m_Label;
     bool m_IsActivated;
     MenuPage *m_Menu;

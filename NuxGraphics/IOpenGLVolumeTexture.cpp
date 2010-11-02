@@ -39,7 +39,7 @@ namespace nux
     CHECKGL ( glGenTextures (1, &_OpenGLID) );
     CHECKGL ( glBindTexture (GL_TEXTURE_3D, _OpenGLID) );
 
-    _VolumeSurfaceArray = new std::vector< TRefGL<IOpenGLSurface> >[_NumMipLevel];
+    _VolumeSurfaceArray = new std::vector< IntrusiveSP<IOpenGLSurface> >[_NumMipLevel];
 
     for (t_s32 mip = 0; mip < _NumMipLevel; mip++)
     {
@@ -47,7 +47,7 @@ namespace nux
       {
         //IOpenGLSurface* surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice);
         //surface->InitializeLevel();
-        _VolumeSurfaceArray[mip].push_back (new IOpenGLSurface (this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice) );
+        _VolumeSurfaceArray[mip].push_back (IntrusiveSP<IOpenGLSurface> (new IOpenGLSurface (this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice)));
       }
     }
 
@@ -55,7 +55,7 @@ namespace nux
     {
       IOpenGLVolume *volume = new IOpenGLVolume (this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip);
       volume->InitializeLevel();
-      _VolumeArray.push_back (volume);
+      _VolumeArray.push_back (IntrusiveSP<IOpenGLVolume> (volume));
     }
 
     CHECKGL ( glBindTexture (GL_TEXTURE_3D, _OpenGLID) );
@@ -73,7 +73,7 @@ namespace nux
       for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim (_PixelFormat, _Depth, mip); slice++)
       {
         // destroying a surface
-        _VolumeSurfaceArray[mip][slice] = 0;;
+        _VolumeSurfaceArray[mip][slice] = IntrusiveSP<IOpenGLSurface> (0);
       }
 
       _VolumeSurfaceArray[mip].clear();
@@ -85,7 +85,7 @@ namespace nux
     for (int mip = 0; mip < _NumMipLevel; mip++)
     {
       // destroying a IOpenGLVolume
-      _VolumeArray[mip] = 0;
+      _VolumeArray[mip] = IntrusiveSP<IOpenGLVolume> (0);
     }
 
     CHECKGL ( glDeleteTextures (1, &_OpenGLID) );
@@ -113,7 +113,7 @@ namespace nux
 
     if (Level < _NumMipLevel)
     {
-      TRefGL<IOpenGLSurface> pVolumeSurfaceLevel = _VolumeSurfaceArray[Level][Slice];
+      IntrusiveSP<IOpenGLSurface> pVolumeSurfaceLevel = _VolumeSurfaceArray[Level][Slice];
       return pVolumeSurfaceLevel->LockRect (pLockedRect, pRect);
     }
     else
@@ -136,7 +136,7 @@ namespace nux
 
     if (Level < _NumMipLevel)
     {
-      TRefGL<IOpenGLSurface> pVolumeSurfaceLevel = _VolumeSurfaceArray[Level][Slice];
+      IntrusiveSP<IOpenGLSurface> pVolumeSurfaceLevel = _VolumeSurfaceArray[Level][Slice];
       return pVolumeSurfaceLevel->UnlockRect();
     }
     else

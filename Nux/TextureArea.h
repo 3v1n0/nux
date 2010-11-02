@@ -38,7 +38,7 @@ namespace nux
     virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
 
-    void SetTexture (NTexture *texture);
+    void SetTexture (BaseTexture *texture);
     void SetPaintLayer (AbstractPaintLayer *layer);
     //void SetTexture(const TCHAR* TextureFilename);
     void RecvMouseDown (int x, int y, long button_flags, long key_flags);

@@ -31,7 +31,7 @@ namespace nux
 {
 
   class GraphicsContext;
-  class NRectangleTexture;
+  class TextureRectangle;
   class ICgPixelShader;
   class ICgVertexShader;
   class TemplateQuadBuffer;
@@ -68,15 +68,15 @@ namespace nux
 
   private:
     TemplateQuadBuffer *m_QuadBuffer;
-    TRefGL<IOpenGLPixelShader> m_PixelShaderProg;
-    TRefGL<IOpenGLVertexShader> m_VertexShaderProg;
-    TRefGL<IOpenGLShaderProgram> m_ShaderProg;
+    IntrusiveSP<IOpenGLPixelShader> m_PixelShaderProg;
+    IntrusiveSP<IOpenGLVertexShader> m_VertexShaderProg;
+    IntrusiveSP<IOpenGLShaderProgram> m_ShaderProg;
 
-    //TRefGL<IOpenGLAsmPixelShader> m_AsmPixelShaderProg;
-    //TRefGL<IOpenGLAsmVertexShader> m_AsmVertexShaderProg;
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmShaderProg;
+    //IntrusiveSP<IOpenGLAsmPixelShader> m_AsmPixelShaderProg;
+    //IntrusiveSP<IOpenGLAsmVertexShader> m_AsmVertexShaderProg;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmShaderProg;
 
-    TRefGL<IOpenGLAsmShaderProgram> _asm_font_texture_rect_prog;
+    IntrusiveSP<IOpenGLAsmShaderProgram> _asm_font_texture_rect_prog;
   };
 
 }

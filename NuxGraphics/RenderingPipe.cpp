@@ -194,7 +194,7 @@ namespace nux
     m_tex_coord_type = tex_coord_type;
   }
 
-  void QRP_Compute_Texture_Coord (t_int32 quad_width, t_int32 quad_height, TRefGL<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
+  void QRP_Compute_Texture_Coord (t_int32 quad_width, t_int32 quad_height, IntrusiveSP<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
   {
     float tex_width = tex->GetWidth();
     float tex_height = tex->GetHeight();

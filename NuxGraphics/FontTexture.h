@@ -227,7 +227,7 @@ namespace nux
 
     const Charset &GetFontInfo() const;
 
-    std::vector<NTexture*> TextureArray;
+    std::vector<BaseTexture*> TextureArray;
 
   private:
     INT _RefCount;

@@ -26,60 +26,57 @@
 namespace nux
 {
 
-// class NTexture;
-// class NTexture2D;
-// class NRectangleTexture;
-// class NTextureCube;
-// class NTextureVolume;
-// class NAnimatedTexture;
+// class BaseTexture;
+// class Texture2D;
+// class TextureRectangle;
+// class TextureCube;
+// class TextureVolume;
+// class TextureFrameAnimation;
 //
 // class NVertexBuffer;
 // class NIndexBuffer;
 //
-// class NGLTexture2D;
-// class NGLRectangleTexture;
-// class NGLTextureCube;
-// class NGLTextureVolume;
-// class NGLAnimatedTexture;
+// class CachedTexture2D;
+// class CachedTextureRectangle;
+// class CachedTextureCube;
+// class CachedTextureVolume;
+// class CachedTextureFrameAnimation;
 
-//     NResource           NGLResource
+//     ResourceData           CachedResourceData
 //         |                   |
-//     NTexture            NGLTexture
+//     BaseTexture            CachedBaseTexture
 //         |                   |
-//     NTexture2D          NGLTexture2D
+//     Texture2D              CachedTexture2D
 //
 //
 //     NResourceFactory
 //         |
 //     NGLResourceFactory
 //         |
-//     TGLResourceFactory<class NTexture2D, class NGLTexture2D>
+//     TGLResourceFactory<class Texture2D, class CachedTexture2D>
 //
 //
 //     NResourceSet
 //         |
-//     TResourceCache<class IdType(int), class ResourceType(NGLResource)>
+//     TResourceCache<class IdType(int), class ResourceType(CachedResourceData)>
 //         |
-//     NResourceCache: TResourceCache<int, NGLResource>
+//     NResourceCache: TResourceCache<int, CachedResourceData>
 //
 //
 
-//! Device independent base resource.
-  class NResource: public NThreadSafeCounter
+  //! Base class for all types of resources.
+  class ResourceData: public Object
   {
-    NUX_DECLARE_ROOT_OBJECT_TYPE (NResource);
+    NUX_DECLARE_OBJECT_TYPE (ResourceData, Object);
   public:
-    NResource();
-    virtual NString GetResourceName()
-    {
-      return NString (TEXT ("") );
-    }
-    unsigned int GetResourceIndex() const;
+    ResourceData();
+    int GetResourceIndex() const;
+
   private:
-    unsigned int m_ResourceIndex;
+    int m_ResourceIndex;
   };
 
-  class NGLResource;
+  class CachedResourceData;
 
   class NResourceSet
   {
@@ -88,18 +85,18 @@ namespace nux
     virtual ~NResourceSet() {};
 
   protected:
-    NGLResource *FirstResource;
+    CachedResourceData *FirstResource;
 
     // Flush
     virtual void Flush() {}
 
     // FreeResource - Called when a potentially cached resource has been freed.
-    virtual void FreeResource (NResource *Resource) {}
+    virtual void FreeResource (ResourceData *Resource) {}
 
     // FlushResource - Removes a resource from the set.
-    virtual void FlushResource (NGLResource *Resource) {}
+    virtual void FlushResource (CachedResourceData *Resource) {}
 
-    friend class NGLResource;
+    friend class CachedResourceData;
   };
 
   enum EResourceUpdateHint
@@ -109,22 +106,13 @@ namespace nux
     RUH_Dynamic				// The resource changes every frame.
   };
 
-  class NGLResource: public NThreadSafeCounter
+  class CachedResourceData: public Object
   {
-    NUX_DECLARE_ROOT_OBJECT_TYPE (NGLResource);
+    NUX_DECLARE_OBJECT_TYPE (CachedResourceData, Object);
 
   public:
-    NGLResource (NResourceSet *InSet);
-    virtual ~NGLResource();
-
-    virtual NString GetSubTypeDescription()
-    {
-      return NString (TEXT ("Resource") );
-    }
-    virtual NString GetTypeDescription()
-    {
-      return NString (TEXT ("Resource") );
-    }
+    CachedResourceData (NResourceSet *InSet);
+    virtual ~CachedResourceData();
 
     //! Returns the size in bytes of the resource.
     /*! Returns the size in bytes of the resource.
@@ -149,20 +137,19 @@ namespace nux
     /*!
         Updates the resource.
     */
-    virtual bool UpdateResource (NResource *Resource) = 0;
+    virtual bool UpdateResource (ResourceData *Resource) = 0;
 
   protected:
     NResourceSet       *Set;
     bool                Cached;
     unsigned int        NumRefs;
-    NString             Description;
     NObjectType        *ResourceType;
 
     unsigned int        Size;
     EResourceUpdateHint UpdateHint;
 
-    NGLResource *PrevResource;
-    NGLResource *NextResource;
+    CachedResourceData *PrevResource;
+    CachedResourceData *NextResource;
 
     template<class IdType, class ResourceType>
     friend class TResourceCache;
@@ -185,18 +172,19 @@ namespace nux
     }
 
     /*!
-      Returns true if the given NResource is created by this factory.
+      Returns true if the given ResourceData is created by this factory.
       @param  Resource - the resource in question.
     */
-    bool BuildsThisResource (NResource *Resource)
+    bool BuildsThisResource (ResourceData *Resource)
     {
       return Resource->Type().IsObjectType (Type() );
     }
 
-    virtual NGLResource	*BuildResource (NResourceSet *ResourceManager, NResource *Resource)
+    virtual CachedResourceData *BuildResource (NResourceSet *ResourceManager, ResourceData *Resource)
     {
       return NULL;
     }
+
   private:
     //! Type associated with this factory class.
     NObjectType *m_ResourceType;
@@ -218,12 +206,12 @@ namespace nux
     {}
 
     //! Create a new resource.
-    /*! Create a new resource for the given NResource.
+    /*! Create a new resource for the given ResourceData.
         @param  ResourceManager The resource manager.
         @param  Resource        Resource to build and cache.
         @return The built resource.
     */
-    virtual NGLResource	*BuildResource (NResourceSet *ResourceManager, NResource *Resource)
+    virtual CachedResourceData *BuildResource (NResourceSet *ResourceManager, ResourceData *Resource)
     {
       return new D (ResourceManager, (T *) Resource);
     }
@@ -245,15 +233,15 @@ namespace nux
     }
 
     /*!
-        Returns true if the given NResource can be updated by this factory.
+        Returns true if the given ResourceData can be updated by this factory.
         @param  Resource    The resource in question.
     */
-    bool UpdatesThisResource (NResource *Resource)
+    bool UpdatesThisResource (ResourceData *Resource)
     {
       return Resource->Type().IsObjectType (Type() );
     }
 
-    virtual bool UpdateResource (TRefGL< NGLResource > DeviceResource, NResource *Resource) const
+    virtual bool UpdateResource (IntrusiveSP< CachedResourceData > DeviceResource, ResourceData *Resource) const
     {
       return DeviceResource->UpdateResource (Resource);
     }
@@ -267,12 +255,12 @@ namespace nux
   class TResourceCache: public NResourceSet
   {
   public:
-    std::map< IdType, TRefGL< ResourceType > > ResourceMap;
+    std::map< IdType, IntrusiveSP< ResourceType > > ResourceMap;
 
-    // Resource factory instances for each NResource/NGLResource pair.
+    // Resource factory instances for each ResourceData/CachedResourceData pair.
     std::vector<NResourceFactory *> ResourceFactories;
 
-    // Resource updater instances for each NResource type.
+    // Resource updater instances for each ResourceData type.
     std::vector<NResourceUpdater *> ResourceUpdaters;
 
 
@@ -283,41 +271,44 @@ namespace nux
     void Flush()
     {
       // See the language FAQ 35.18 at http://www.parashift.com/c++-faq-lite/templates.html  for why the "typename".
-      typename std::map< IdType, TRefGL< ResourceType > >::iterator It;
+      typename std::map< IdType, IntrusiveSP< ResourceType > >::iterator It;
 
       for (It = ResourceMap.begin(); It != ResourceMap.end(); It++)
       {
-        TRefGL< ResourceType >	CachedResource = (*It).second;
-        CachedResource->Cached = 0;
+//         IntrusiveSP< ResourceType >	CachedResource = (*It).second;
+//         CachedResource->Cached = 0;
+//         CachedResource.Release();
+        (*It).second->Cached = 0;
+        (*It).second.Release();
       }
 
       // Erases all elements from the map.
       ResourceMap.clear();
     }
 
-    void AddCachedResource (const IdType &Id, TRefGL< ResourceType > Resource)
+    void AddCachedResource (const IdType &Id, IntrusiveSP< ResourceType > Resource)
     {
-      typedef std::map< IdType, TRefGL< ResourceType > >  MapType;
+      typedef std::map< IdType, IntrusiveSP< ResourceType > >  MapType;
       ResourceMap.insert (typename MapType::value_type (Id, Resource) );
       Resource->Cached = 1;
     }
 
-    TRefGL< ResourceType > FindCachedResourceById (const IdType &Id)
+    IntrusiveSP<ResourceType> FindCachedResourceById (const IdType &Id)
     {
-      typedef std::map< IdType, TRefGL< ResourceType > >  MapType;
+      typedef std::map< IdType, IntrusiveSP< ResourceType > >  MapType;
       typename MapType::iterator it = ResourceMap.find (Id);
 
       if (it != ResourceMap.end() )
         return (*it).second;
 
-      return 0;
+      return IntrusiveSP<ResourceType> (0);
     }
 
     void FlushResourceId (const IdType &Id)
     {
-      TRefGL< ResourceType >	CachedResource = 0;
+      IntrusiveSP< ResourceType >	CachedResource (0);
 
-      typedef std::map< IdType, TRefGL< ResourceType > >  MapType;
+      typedef std::map< IdType, IntrusiveSP< ResourceType > >  MapType;
       typename MapType::iterator it = ResourceMap.find (Id);
 
       if (it != ResourceMap.end() )
@@ -330,14 +321,14 @@ namespace nux
       }
     }
 
-    virtual void FlushResource (NGLResource *Resource)
+    virtual void FlushResource (CachedResourceData *Resource)
     {
-      typedef std::map< IdType, TRefGL< ResourceType > >  MapType;
+      typedef std::map< IdType, IntrusiveSP< ResourceType > >  MapType;
       typename MapType::iterator it;
 
       for (it = ResourceMap.begin(); it != ResourceMap.end(); it++)
       {
-        TRefGL< ResourceType >	CachedResource = (*it).second;
+        IntrusiveSP< ResourceType >	CachedResource = (*it).second;
 
         if (CachedResource == Resource)
         {
@@ -348,7 +339,7 @@ namespace nux
       }
     }
 
-    // Register NGLResource with the corresponding NResource
+    // Register CachedResourceData with the corresponding ResourceData
     virtual void InitializeResourceFactories() = 0;
 
     std::vector<NResourceFactory *>&	GetResourceFactories (void)
@@ -361,18 +352,18 @@ namespace nux
     }
   };
 
-  class NResourceCache: public TResourceCache<int, NGLResource>
+  class NResourceCache: public TResourceCache<int, CachedResourceData>
   {
   public:
     NResourceCache()
-      :   TResourceCache<int, NGLResource>()
+      :   TResourceCache<int, CachedResourceData>()
     {}
 
-    TRefGL< NGLResource > GetCachedResource (NResource *Source);
-    bool         IsCachedResource (NResource *Source);
+    IntrusiveSP< CachedResourceData > GetCachedResource (ResourceData *Source);
+    bool         IsCachedResource (ResourceData *Source);
 
     virtual void InitializeResourceFactories();
-    virtual void FreeResource (NResource *Resource)
+    virtual void FreeResource (ResourceData *Resource)
     {
       FlushResourceId (Resource->GetResourceIndex() );
     }

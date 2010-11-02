@@ -53,8 +53,8 @@ namespace nux
 
   void GraphicsContext::InitSlColorShader()
   {
-    TRefGL<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    TRefGL<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
+    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -86,8 +86,8 @@ namespace nux
 
   void GraphicsContext::InitSlTextureShader()
   {
-    TRefGL<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    TRefGL<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
+    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -142,8 +142,8 @@ namespace nux
 
   void GraphicsContext::InitSlColorModTexMaskAlpha()
   {
-    TRefGL<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    TRefGL<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
+    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -209,8 +209,8 @@ namespace nux
 
   void GraphicsContext::InitSl2TextureAdd()
   {
-    TRefGL<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    TRefGL<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
+    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -280,8 +280,8 @@ namespace nux
 
   void GraphicsContext::InitSl4TextureAdd()
   {
-    TRefGL<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    TRefGL<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
+    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -398,7 +398,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f, c3.R(), c3.G(), c3.B(), c3.A(),
     };
 
-    TRefGL<IOpenGLShaderProgram> ShaderProg = m_SlColor;
+    IntrusiveSP<IOpenGLShaderProgram> ShaderProg = m_SlColor;
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
@@ -429,7 +429,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsContext::QRP_GLSL_1Tex (int x, int y, int width, int height, TRefGL<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
+  void GraphicsContext::QRP_GLSL_1Tex (int x, int y, int width, int height, IntrusiveSP<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
   {
 #if USE_ARB
     QRP_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
@@ -446,7 +446,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
     };
 
-    TRefGL<IOpenGLShaderProgram> ShaderProg;
+    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
 
     if (DeviceTexture->Type().IsDerivedFromType (IOpenGLTexture2D::StaticObjectType) )
     {
@@ -504,7 +504,7 @@ namespace nux
 
 // Render the texture alpha into RGB and modulated by a color.
   void GraphicsContext::QRP_GLSL_ColorModTexAlpha (int x, int y, int width, int height,
-      TRefGL< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
+      IntrusiveSP< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
   {
 #if USE_ARB
     QRP_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
@@ -522,7 +522,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.R(), color.G(), color.B(), color.A(),
     };
 
-    TRefGL<IOpenGLShaderProgram> ShaderProg;
+    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
 //     if(DeviceTexture->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType))
     {
       ShaderProg = m_SlColorModTexMaskAlpha;
@@ -591,15 +591,15 @@ namespace nux
 
 // Blend 2 textures together
   void GraphicsContext::QRP_GLSL_2Tex (int x, int y, int width, int height,
-                                       TRefGL<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
-                                       TRefGL<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
+                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
 #if USE_ARB
     QRP_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
     return;
 #endif
 
-    TRefGL<IOpenGLShaderProgram> ShaderProg;
+    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
 //     if(SrcTexture0->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
 //        SrcTexture1->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType))
     {
@@ -608,8 +608,8 @@ namespace nux
 
 //     if((SrcTexture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType) &&
 //         SrcTexture1->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType)) /*||
-//         (SrcTexture0->Type().IsDerivedFromType(NAnimatedTexture::StaticObjectType) &&
-//         SrcTexture1->Type().IsDerivedFromType(NAnimatedTexture::StaticObjectType)*/)
+//         (SrcTexture0->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType) &&
+//         SrcTexture1->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType)*/)
 //     {
 //         bRectangleTexture = true;
 //         ShaderProg = m_2TexBlendRectProg;
@@ -681,10 +681,10 @@ namespace nux
   }
 
   void GraphicsContext::QRP_GLSL_4Tex (int x, int y, int width, int height,
-                                       TRefGL<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
-                                       TRefGL<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
-                                       TRefGL<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
-                                       TRefGL<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3)
+                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
+                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
+                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3)
   {
 #if USE_ARB
     QRP_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
@@ -697,7 +697,7 @@ namespace nux
     QRP_Compute_Texture_Coord (width, height, DeviceTexture2, texxform2);
     QRP_Compute_Texture_Coord (width, height, DeviceTexture3, texxform3);
 
-    TRefGL<IOpenGLShaderProgram> ShaderProg;
+    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
 //     if(SrcTexture0->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
 //        SrcTexture1->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
 //        SrcTexture2->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
@@ -710,10 +710,10 @@ namespace nux
 //         SrcTexture1->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType) &&
 //         SrcTexture2->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType) &&
 //         SrcTexture3->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType)) /*||
-//         (SrcTexture0->Type().IsDerivedFromType(NAnimatedTexture::StaticObjectType) &&
-//         SrcTexture1->Type().IsDerivedFromType(NAnimatedTexture::StaticObjectType) &&
-//         SrcTexture2->Type().IsDerivedFromType(NAnimatedTexture::StaticObjectType) &&
-//         SrcTexture3->Type().IsDerivedFromType(NAnimatedTexture::StaticObjectType))*/)
+//         (SrcTexture0->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType) &&
+//         SrcTexture1->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType) &&
+//         SrcTexture2->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType) &&
+//         SrcTexture3->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType))*/)
 //     {
 //         bRectangleTexture = true;
 //         ShaderProg = m_4TexBlendRectProg;
@@ -894,7 +894,7 @@ namespace nux
       x1, y1, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c1.R(), c1.G(), c1.B(), c1.A(),
     };
 
-    TRefGL<IOpenGLShaderProgram> ShaderProg = m_SlColor;
+    IntrusiveSP<IOpenGLShaderProgram> ShaderProg = m_SlColor;
 
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -962,7 +962,7 @@ namespace nux
       x0, y0,                             0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.R(), c0.G(), c0.B(), c0.A(),
     };
 
-    TRefGL<IOpenGLShaderProgram> ShaderProg = m_SlColor;
+    IntrusiveSP<IOpenGLShaderProgram> ShaderProg = m_SlColor;
 
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );

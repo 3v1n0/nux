@@ -156,7 +156,7 @@ namespace nux
                           t_u32 SrcBlendFactor_   /*= GL_ONE*/,
                           t_u32 DestBlendFactor_  /*= GL_ZERO*/);
 
-    inline void GetBlend (bool& AlphaBlendEnable_,
+    inline void GetBlend (t_u32& AlphaBlendEnable_,
                       t_u32& SrcBlendFactor_,
                       t_u32& DestBlendFactor_);
     
@@ -394,7 +394,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::GetBlend (bool& AlphaBlendEnable_,
+  inline void GLRenderStates::GetBlend (t_u32& AlphaBlendEnable_,
                     t_u32& SrcBlendFactor_,
                     t_u32& DestBlendFactor_)
   {

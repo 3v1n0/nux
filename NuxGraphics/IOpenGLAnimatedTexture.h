@@ -37,8 +37,8 @@ namespace nux
   public:
     virtual ~IOpenGLAnimatedTexture();
 
-    void GetSurfaceFrame (int Frame, TRefGL<IOpenGLSurface>& surface);
-    TRefGL<IOpenGLSurface> GetSurfaceFrame (int Level);
+    void GetSurfaceFrame (int Frame, IntrusiveSP<IOpenGLSurface>& surface);
+    IntrusiveSP<IOpenGLSurface> GetSurfaceFrame (int Level);
 
     int LockRect (
       int Frame,
@@ -84,7 +84,7 @@ namespace nux
     //std::vector<IOpenGLSurface*> _VolumeArray;
 
     int _CurrentFrame;
-    std::vector< TRefGL<IOpenGLBaseTexture> > _FrameTextureArray;
+    std::vector< IntrusiveSP<IOpenGLBaseTexture> > _FrameTextureArray;
 
     std::vector< int >  _FrameTimeArray;
 

@@ -137,7 +137,7 @@ namespace nux
       @param tex          Device texture.
       @param texxform     Texture coordinates computation mode.
   */
-  void QRP_Compute_Texture_Coord (t_int32 quad_width, t_int32 quad_height, TRefGL<IOpenGLBaseTexture> tex, TexCoordXForm &texxform);
+  void QRP_Compute_Texture_Coord (t_int32 quad_width, t_int32 quad_height, IntrusiveSP<IOpenGLBaseTexture> tex, TexCoordXForm &texxform);
 
 }
 

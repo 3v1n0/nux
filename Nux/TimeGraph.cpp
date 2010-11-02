@@ -135,7 +135,7 @@ namespace nux
     Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 //     NString Path = NUX_FINDRESOURCELOCATION(TEXT("UITextures/FunctionGraphBackground.tga"));
-//     NRectangleTexture BackgroundTexture;
+//     TextureRectangle BackgroundTexture;
 //     BackgroundTexture.Update(Path.GetTCharPtr());
 //
 //     TexCoordXForm texxform;
@@ -149,7 +149,7 @@ namespace nux
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
-    NTexture* CheckboardPattern = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BaseTexture* CheckboardPattern = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
     CheckboardPattern->Update (&image);
 
     TexCoordXForm texxform;
@@ -370,7 +370,7 @@ namespace nux
 
         it = m_DynValueArray[index].m_ValueList.begin();
         SURFACE_LOCKED_RECT lockrect;
-        Texture.Handle->LockRect (0, &lockrect, 0);
+        Texture->LockRect (0, &lockrect, 0);
         BYTE *dest = (BYTE *) lockrect.pBits;
 
         for (t_s32 i = 0; i < Texture->GetWidth(); i++)

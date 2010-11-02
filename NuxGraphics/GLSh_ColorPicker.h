@@ -52,9 +52,9 @@ namespace nux
     float _R, _G, _B, _A;
     float _ScreenOffsetX, _ScreenOffsetY;
 
-    TRefGL<IOpenGLPixelShader> GlobalPixelShader;
-    TRefGL<IOpenGLShaderProgram> sprog;
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmProg;
+    IntrusiveSP<IOpenGLPixelShader> GlobalPixelShader;
+    IntrusiveSP<IOpenGLShaderProgram> sprog;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmProg;
 
     eColorChannel m_ColorChannel;
     UINT ViewPortX;

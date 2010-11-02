@@ -26,7 +26,7 @@
 namespace nux
 {
 #ifdef NUX_DEBUG
-  //static bool bBreakOnGLErrors = FALSE;
+  static bool bBreakOnGLErrors = FALSE;
 #endif
 
 // WARNING: never call glGetError between glBegin and glEnd.
@@ -65,7 +65,7 @@ namespace nux
       nuxWarningMsg (TEXT ("[CheckGLError] OpenGL Error %d ( %s )  in File %s at line: %d \n"), glErr, ANSI_TO_TCHAR (gluErrorString (glErr) ), ANSI_TO_TCHAR (file), line);
       retCode = 1;
 
-#ifdef _DEBUG
+#ifdef NUX_DEBUG
 
       // break on errors if asked to
       if (bBreakOnGLErrors)

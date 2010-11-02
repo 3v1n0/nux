@@ -32,46 +32,121 @@ namespace nux
 {
 
   class NTextureData;
-  class NTexture;
-  class NGLTexture;
+  class BaseTexture;
+  class CachedBaseTexture;
 
-  NTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf);
-  NTexture *CreateTextureFromFile (const TCHAR *TextureFilename);
-  NTexture *CreateTextureFromBitmapData (const NBitmapData *BitmapData);
+  BaseTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf);
+  BaseTexture *CreateTextureFromFile (const TCHAR *TextureFilename);
+  BaseTexture *CreateTextureFromBitmapData (const NBitmapData *BitmapData);
 
-  class NTexture: public NResource
+  //! Abstract base class for textures.
+  class BaseTexture: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NTexture, NResource);
+    NUX_DECLARE_OBJECT_TYPE (BaseTexture, ResourceData);
 
-    NTexture();
-    virtual ~NTexture();
+    BaseTexture();
+    virtual ~BaseTexture();
 
+    /*!
+      Update the texture with the provided Bitmap data. In doing so, if the texture as been cached in the resource manager, then
+      the the DeviceTexture inside the CachedTexture will no longer be returned by GetDeviceTexture (). Instead a new device texture will
+      be returned.
+
+      @BitmapData Pointer to the bitmap data.
+      @UpdateAndCacheResource If true, then the texture is cached immediately. If false, the texture will be cached the first time
+      GetDeviceTexture () or GetCachedTexture () is called.
+      @return True if there was no error during the update.
+    */
     virtual bool Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource = true) = 0;
+
+    /*!
+      Update the texture with the provided filename. In doing so, if the texture as been cached in the resource manager, then
+      the the DeviceTexture inside the CachedTexture will no longer be returned by GetDeviceTexture (). Instead a new device texture will
+      be returned.
+
+      @BitmapData Pointer to the bitmap data.
+      @UpdateAndCacheResource If true, then the texture is cached immediately. If false, the texture will be cached the first time
+      GetDeviceTexture () or GetCachedTexture () is called.
+      @return True if there was no error during the update.
+    */
     virtual bool Update (const TCHAR *filename, bool UpdateAndCacheResource = true) = 0;
 
     virtual void GetData (void *Buffer, int MipIndex, int StrideY, int face = 0) = 0;
-    virtual int GetWidth() const = 0;
-    virtual int GetHeight() const = 0;
-    virtual int GetDepth() const = 0;
-    virtual bool IsPowerOfTwo() const = 0;
+
+    /*!
+      @return The texture width.
+    */
+    virtual int GetWidth () const = 0;
+
+    /*!
+      @return The texture height.
+    */
+    virtual int GetHeight () const = 0;
+
+    /*!
+      @return The texture depth. Return 1 for Texture2D, TextureCube, TextureRenctangle. TextureVolume and TextureFrameAnimation have a depth equal or greater than 1.
+      For TextureFrameAnimation the depth represents the number of frames.
+    */
+    virtual int GetDepth() const
+    {
+      return 1;
+    }
+
+    /*!
+      @return True if the width and height of the texture are powers of two.
+    */
+    virtual bool IsPowerOfTwo () const = 0;
+
+    /*!
+      @return The texture data format.
+    */
     virtual BitmapFormat GetFormat() const = 0;
-    virtual int GetNumMipLevel() const = 0;
-    virtual bool IsNull() const = 0;
-    virtual NTexture* Clone() const = 0;
-    TRefGL<IOpenGLBaseTexture> GetDeviceTexture();
-    TRefGL<NGLTexture> GetCachedTexture();
+
+    /*!
+      @return The number of mip maps in the texture.
+    */
+    virtual int GetNumMipLevel () const = 0;
+
+    /*!
+      @return True if the texture storage contains valid bitmap data.
+    */
+    virtual bool IsNull () const = 0;
+
+    /*!
+      Clone the texture.
+      @return A cloned version of this texture.
+    */
+    virtual BaseTexture* Clone () const = 0;
+
+    /*!
+      Cache the texture if it hasn't been been already and return the device texture.
+
+      @return The device texture.
+    */
+    IntrusiveSP < IOpenGLBaseTexture > GetDeviceTexture ();
+
+    /*!
+      Cache the texture if it hasn't been been already and return the cached texture.
+
+      @return The cached texture.
+    */
+    IntrusiveSP < CachedBaseTexture > GetCachedTexture ();
   };
 
-  class NTexture2D: public NTexture
+  //! General Texture
+  /*!
+      The class of texture that cover power-of-two and non-power-of-two dimensions.
+  */
+  class Texture2D: public BaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (NTexture2D, NTexture);
+    NUX_DECLARE_OBJECT_TYPE (Texture2D, BaseTexture);
 
   public:
-    NTexture2D();
-    NTexture2D (const NTexture2D &texture);
-    NTexture2D (const NTextureData &TextureData);
-    NTexture2D &operator = (const NTexture2D &texture);
-    ~NTexture2D();
+    Texture2D ();
+    Texture2D (const Texture2D &texture);
+    Texture2D (const NTextureData &BaseTexture);
+    Texture2D &operator = (const Texture2D &texture);
+    ~Texture2D ();
 
     /*!
         Update the hardware resources associated to this with the provided texture data.
@@ -93,297 +168,391 @@ namespace nux
     */
     virtual bool Update (const TCHAR *Filename, bool UpdateAndCacheResource = true);
 
-    virtual bool IsNull() const
-    {
-      return m_Image.IsNull();
-    }
-    void GetData (void *Buffer, int MipIndex, int StrideY, int face = 0);
-    int GetNumMipLevel() const
-    {
-      return m_Image.GetNumMipmap();
-    }
-    int GetWidth() const
-    {
-      return m_Image.GetWidth();
-    }
-    int GetHeight() const
-    {
-      return m_Image.GetHeight();
-    }
-    int GetDepth() const
-    {
-      return 1;
-    }
-    BitmapFormat GetFormat() const
-    {
-      return m_Image.GetFormat();
-    }
-    bool IsPowerOfTwo() const
-    {
-      return IsPowerOf2 (m_Image.GetWidth() ) && IsPowerOf2 (m_Image.GetHeight() );
-    }
-
-    virtual NString GetResourceName()
-    {
-      return NString (TEXT ("NTexture2D") );
-    }
-
-    virtual NTexture* Clone() const;
-  private:
-    NTextureData m_Image;
-  };
-
-  class NRectangleTexture: public NTexture
-  {
-    NUX_DECLARE_OBJECT_TYPE (NRectangleTexture, NTexture);
-
-  public:
-    NRectangleTexture ();
-    NRectangleTexture (const NRectangleTexture &texture);
-    NRectangleTexture (const NTextureData& Image);
-    NRectangleTexture &operator = (const NRectangleTexture &texture);
-    ~NRectangleTexture ();
-
-    virtual bool Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
-    virtual bool Update (const TCHAR *filename, bool UpdateAndCacheResource = true);
-
+    /*!
+      @return True if the texture storage contains valid bitmap data.
+    */
     virtual bool IsNull () const
     {
-      return m_Image.IsNull ();
+      return _image.IsNull();
     }
+
     void GetData (void *Buffer, int MipIndex, int StrideY, int face = 0);
+
+    /*!
+      @return The number of mip maps in the texture.
+    */
     int GetNumMipLevel () const
     {
-      return m_Image.GetNumMipmap ();
+      return _image.GetNumMipmap ();
     }
-    int GetWidth() const
+    /*!
+      @return The texture width.
+    */
+    int GetWidth () const
     {
-      return m_Image.GetWidth();
-    }
-    int GetHeight() const
-    {
-      return m_Image.GetHeight();
-    }
-    int GetDepth() const
-    {
-      return 1;
-    }
-    BitmapFormat GetFormat() const
-    {
-      return m_Image.GetFormat();
-    }
-    bool IsPowerOfTwo() const
-    {
-      return IsPowerOf2 (m_Image.GetWidth() ) && IsPowerOf2 (m_Image.GetHeight() );
+      return _image.GetWidth ();
     }
 
-    virtual NString GetResourceName()
+    /*!
+      @return The texture height.
+    */
+    int GetHeight () const
     {
-      return NString (TEXT ("NRectangleTexture") );
+      return _image.GetHeight ();
     }
 
-    virtual NTexture* Clone() const;
+    /*!
+      @return The texture data format.
+    */
+    BitmapFormat GetFormat () const
+    {
+      return _image.GetFormat ();
+    }
+
+    /*!
+      @return True if the width and height of the texture are powers of two.
+    */
+    bool IsPowerOfTwo () const
+    {
+      return IsPowerOf2 (_image.GetWidth () ) && IsPowerOf2 (_image.GetHeight () );
+    }
+
+    /*!
+      Clone the texture.
+      @return A cloned version of this texture.
+    */
+    virtual BaseTexture* Clone() const;
 
   private:
-    NTextureData m_Image;
+    NTextureData _image; //!< Storage for the texture data
   };
 
-  class NTextureCube: public NTexture
+  class TextureRectangle: public BaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (NTextureCube, NTexture);
+    NUX_DECLARE_OBJECT_TYPE (TextureRectangle, BaseTexture);
 
   public:
-    NTextureCube();
-    //NTexture2D(const NTextureData& Image);
-    NTextureCube (const NTextureCube &texture);
-    NTextureCube &operator = (const NTextureCube &texture);
-    ~NTextureCube();
+    TextureRectangle ();
+    TextureRectangle (const TextureRectangle &texture);
+    TextureRectangle (const NTextureData& Image);
+    TextureRectangle &operator = (const TextureRectangle &texture);
+    ~TextureRectangle ();
 
     virtual bool Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
     virtual bool Update (const TCHAR *filename, bool UpdateAndCacheResource = true);
 
-    virtual bool IsNull() const
+    /*!
+      @return True if the texture storage contains valid bitmap data.
+    */
+    virtual bool IsNull () const
     {
-      return m_Image.IsNull();
+      return _image.IsNull ();
+    }
+
+    void GetData (void *Buffer, int MipIndex, int StrideY, int face = 0);
+
+    /*!
+      @return The number of mip maps in the texture.
+    */
+    int GetNumMipLevel () const
+    {
+      return _image.GetNumMipmap ();
+    }
+
+    /*!
+      @return The texture width.
+    */
+    int GetWidth () const
+    {
+      return _image.GetWidth ();
+    }
+
+    /*!
+      @return The texture height.
+    */
+    int GetHeight() const
+    {
+      return _image.GetHeight();
+    }
+
+    /*!
+      @return The texture data format.
+    */
+    BitmapFormat GetFormat() const
+    {
+      return _image.GetFormat();
+    }
+
+    /*!
+      @return True if the width and height of the texture are powers of two.
+    */
+    bool IsPowerOfTwo() const
+    {
+      return IsPowerOf2 (_image.GetWidth() ) && IsPowerOf2 (_image.GetHeight() );
+    }
+
+    /*!
+      Clone the texture.
+      @return A cloned version of this texture.
+    */
+    virtual BaseTexture* Clone() const;
+
+  private:
+    NTextureData _image;
+  };
+
+  class TextureCube: public BaseTexture
+  {
+    NUX_DECLARE_OBJECT_TYPE (TextureCube, BaseTexture);
+
+  public:
+    TextureCube();
+    //Texture2D(const NTextureData& Image);
+    TextureCube (const TextureCube &texture);
+    TextureCube &operator = (const TextureCube &texture);
+    ~TextureCube();
+
+    virtual bool Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update (const TCHAR *filename, bool UpdateAndCacheResource = true);
+
+    /*!
+      @return True if the texture storage contains valid bitmap data.
+    */
+    virtual bool IsNull () const
+    {
+      return _image.IsNull ();
     }
     void GetData (void *Buffer, int MipIndex, int StrideY, int face = 0);
-    int GetNumMipLevel() const
+
+    /*!
+      @return The number of mip maps in the texture.
+    */
+    int GetNumMipLevel () const
     {
-      return m_Image.GetNumMipmap();
-    }
-    int GetWidth() const
-    {
-      return m_Image.GetWidth();
-    }
-    int GetHeight() const
-    {
-      return m_Image.GetHeight();
-    }
-    int GetDepth() const
-    {
-      return 1;
-    }
-    BitmapFormat GetFormat() const
-    {
-      return m_Image.GetFormat();
-    }
-    bool IsPowerOfTwo() const
-    {
-      return IsPowerOf2 (m_Image.GetWidth() ) && IsPowerOf2 (m_Image.GetHeight() );
+      return _image.GetNumMipmap ();
     }
 
-    virtual NString GetResourceName()
+    /*!
+      @return The texture width.
+    */
+    int GetWidth () const
     {
-      return NString (TEXT ("NTextureCube") );
+      return _image.GetWidth ();
     }
 
-    virtual NTexture* Clone() const;
+    /*!
+      @return The texture height.
+    */
+    int GetHeight () const
+    {
+      return _image.GetHeight ();
+    }
+
+    /*!
+      @return The texture data format.
+    */
+    BitmapFormat GetFormat () const
+    {
+      return _image.GetFormat ();
+    }
+
+    /*!
+      @return True if the width and height of the texture are powers of two.
+    */
+    bool IsPowerOfTwo () const
+    {
+      return IsPowerOf2 (_image.GetWidth() ) && IsPowerOf2 (_image.GetHeight() );
+    }
+
+    /*!
+      Clone the texture.
+      @return A cloned version of this texture.
+    */
+    virtual BaseTexture* Clone () const;
 
   private:
-    NCubemapData m_Image;
+    NCubemapData _image;
   };
 
-  class NTextureVolume: public NTexture
+  class TextureVolume: public BaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (NTextureVolume, NTexture);
+    NUX_DECLARE_OBJECT_TYPE (TextureVolume, BaseTexture);
 
   public:
-    NTextureVolume();
-    //NTexture2D(const NTextureData& Image);
-    NTextureVolume (const NTextureVolume &texture);
-    NTextureVolume &operator = (const NTextureVolume &texture);
-    ~NTextureVolume();
+    TextureVolume();
+    //Texture2D(const NTextureData& Image);
+    TextureVolume (const TextureVolume &texture);
+    TextureVolume &operator = (const TextureVolume &texture);
+    ~TextureVolume();
 
     virtual bool Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
     virtual bool Update (const TCHAR *filename, bool UpdateAndCacheResource = true);
 
-    virtual bool IsNull() const
+    /*!
+      @return True if the texture storage contains valid bitmap data.
+    */
+    virtual bool IsNull () const
     {
-      return m_Image.IsNull();
+      return _image.IsNull ();
     }
     void GetData (void *Buffer, int MipIndex, int StrideY, int slice = 0);
-    int GetNumMipLevel() const
+    
+    /*!
+      @return The number of mip maps in the texture.
+    */
+    int GetNumMipLevel () const
     {
-      return m_Image.GetNumMipmap();
-    }
-    int GetWidth() const
-    {
-      return m_Image.GetWidth();
-    }
-    int GetHeight() const
-    {
-      return m_Image.GetHeight();
-    }
-    int GetDepth() const
-    {
-      return m_Image.GetDepth();
-    }
-    BitmapFormat GetFormat() const
-    {
-      return m_Image.GetFormat();
-    }
-    bool IsPowerOfTwo() const
-    {
-      return IsPowerOf2 (m_Image.GetWidth() ) && IsPowerOf2 (m_Image.GetHeight() );
+      return _image.GetNumMipmap ();
     }
 
-    virtual NString GetResourceName()
+    /*!
+      @return The texture width.
+    */
+    int GetWidth () const
     {
-      return NString (TEXT ("NTextureVolume") );
+      return _image.GetWidth ();
     }
 
-    virtual NTexture* Clone() const;
+    /*!
+      @return The texture height.
+    */
+    int GetHeight () const
+    {
+      return _image.GetHeight ();
+    }
+
+    /*!
+      @return The texture depth. 
+      For TextureFrameAnimation the depth represents the number of frames.
+    */
+    int GetDepth () const
+    {
+      return _image.GetDepth ();
+    }
+
+    /*!
+      @return The texture data format.
+    */
+    BitmapFormat GetFormat () const
+    {
+      return _image.GetFormat ();
+    }
+
+    /*!
+      @return True if the width and height of the texture are powers of two.
+    */
+    bool IsPowerOfTwo () const
+    {
+      return IsPowerOf2 (_image.GetWidth () ) && IsPowerOf2 (_image.GetHeight () );
+    }
+
+    /*!
+      Clone the texture.
+      @return A cloned version of this texture.
+    */
+    virtual BaseTexture* Clone () const;
 
   private:
-    NVolumeData m_Image;
+    NVolumeData _image;
   };
 
-  class NAnimatedTexture: public NTexture
+  class TextureFrameAnimation: public BaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (NAnimatedTexture, NTexture);
+    NUX_DECLARE_OBJECT_TYPE (TextureFrameAnimation, BaseTexture);
 
   public:
-    NAnimatedTexture();
-    NAnimatedTexture (const NAnimatedTexture &texture);
-    NAnimatedTexture &operator = (const NAnimatedTexture &texture);
-    ~NAnimatedTexture();
+    TextureFrameAnimation ();
+    TextureFrameAnimation (const TextureFrameAnimation &texture);
+    TextureFrameAnimation &operator = (const TextureFrameAnimation &texture);
+    ~TextureFrameAnimation ();
 
     virtual bool Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
     virtual bool Update (const TCHAR *filename, bool UpdateAndCacheResource = true);
 
-    virtual bool IsNull() const
+    /*!
+      @return True if the texture storage contains valid bitmap data.
+    */
+    virtual bool IsNull () const
     {
-      return m_Image.IsNull();
+      return _image.IsNull ();
     }
     void GetData (void *Buffer, int MipIndex, int StrideY, int slice = 0);
     int GetFrameTime (int Frame);
-    int GetNumMipLevel() const
+
+    /*!
+      @return The number of mip maps in the texture.
+    */
+    int GetNumMipLevel () const
     {
-      return m_Image.GetNumMipmap();
-    }
-    int GetWidth() const
-    {
-      return m_Image.GetWidth();
-    }
-    int GetHeight() const
-    {
-      return m_Image.GetHeight();
-    }
-    int GetDepth() const
-    {
-      return m_Image.GetDepth();
-    }
-    BitmapFormat GetFormat() const
-    {
-      return m_Image.GetFormat();
-    }
-    bool IsPowerOfTwo() const
-    {
-      return IsPowerOf2 (m_Image.GetWidth() ) && IsPowerOf2 (m_Image.GetHeight() );
+      return _image.GetNumMipmap ();
     }
 
-    virtual NString GetResourceName()
+    /*!
+      @return The texture width.
+    */
+    int GetWidth () const
     {
-      return NString (TEXT ("NAnimatedTexture") );
+      return _image.GetWidth ();
     }
 
-    virtual NTexture* Clone() const;
+    /*!
+      @return The texture height.
+    */
+    int GetHeight () const
+    {
+      return _image.GetHeight ();
+    }
+
+    /*!
+      @return The number of animation frames in the texture.
+    */
+    int GetDepth () const
+    {
+      return _image.GetDepth ();
+    }
+
+    /*!
+      @return The texture data format.
+    */
+    BitmapFormat GetFormat () const
+    {
+      return _image.GetFormat ();
+    }
+
+    /*!
+      @return true if the width and heigth of the texture are powers of two.
+    */
+    bool IsPowerOfTwo () const
+    {
+      return IsPowerOf2 (_image.GetWidth () ) && IsPowerOf2 (_image.GetHeight () );
+    }
+
+    /*!
+      Clone the texture.
+      @return A cloned version of this texture.
+    */
+    virtual BaseTexture* Clone () const;
 
   private:
-    NAnimatedTextureData m_Image;
+    NAnimatedTextureData _image;
   };
 
-  class NGLTexture: public NGLResource
+  class CachedBaseTexture: public CachedResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLTexture, NGLResource);
+    NUX_DECLARE_OBJECT_TYPE (CachedBaseTexture, CachedResourceData);
   public:
-    TRefGL<IOpenGLBaseTexture>	m_Texture;
+    IntrusiveSP < IOpenGLBaseTexture > m_Texture;
 
-    NGLTexture (NResourceSet *ResourceManager)
-      :   NGLResource (ResourceManager),
-          SourceWidth (0),
-          SourceHeight (0),
-          SourceDepth (0),
-          SourceFormat (BITFMT_UNKNOWN)
-    {
+    CachedBaseTexture (NResourceSet *ResourceManager);
+    ~CachedBaseTexture();
 
-    }
-    ~NGLTexture()
-    {
+    virtual void LoadMipLevel (BaseTexture *SourceTexture, int MipLevel) = 0;
 
-    }
+    virtual bool UpdateResource (ResourceData *Resource);
 
-    virtual void LoadMipLevel (NTexture *SourceTexture, int MipLevel) = 0;
+    bool RecreateTexture (BaseTexture *Source);
 
-    virtual bool UpdateResource (NResource *Resource)
-    {
-      UpdateTexture ( (NTexture *) Resource);
-      return TRUE;
-    }
-
-    bool RecreateTexture (NTexture *Source);
-
-    virtual void UpdateTexture (NTexture *Source) = 0;
+    virtual void UpdateTexture (BaseTexture *Source) = 0;
 
     unsigned int SourceWidth;
     unsigned int SourceHeight;
@@ -391,59 +560,59 @@ namespace nux
     BitmapFormat SourceFormat;
   };
 
-  class NGLTexture2D: public NGLTexture
+  class CachedTexture2D: public CachedBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLTexture2D, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE (CachedTexture2D, CachedBaseTexture);
   public:
-    NGLTexture2D (NResourceSet *ResourceManager, NTexture2D *SourceTexture);
-    ~NGLTexture2D();
+    CachedTexture2D (NResourceSet *ResourceManager, Texture2D *SourceTexture);
+    ~CachedTexture2D();
 
-    virtual void UpdateTexture (NTexture *Source);
-    virtual void LoadMipLevel (NTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture (BaseTexture *Source);
+    virtual void LoadMipLevel (BaseTexture *SourceTexture, int MipLevel);
   };
 
-  class NGLRectangleTexture: public NGLTexture
+  class CachedTextureRectangle: public CachedBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLRectangleTexture, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE (CachedTextureRectangle, CachedBaseTexture);
   public:
-    NGLRectangleTexture (NResourceSet *ResourceManager, NRectangleTexture *SourceTexture);
-    ~NGLRectangleTexture();
+    CachedTextureRectangle (NResourceSet *ResourceManager, TextureRectangle *SourceTexture);
+    ~CachedTextureRectangle ();
 
-    virtual void UpdateTexture (NTexture *Source);
-    virtual void LoadMipLevel (NTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture (BaseTexture *Source);
+    virtual void LoadMipLevel (BaseTexture *SourceTexture, int MipLevel);
   };
 
-  class NGLTextureCube: public NGLTexture
+  class CachedTextureCube: public CachedBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLTextureCube, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE (CachedTextureCube, CachedBaseTexture);
   public:
-    NGLTextureCube (NResourceSet *ResourceManager, NTextureCube *SourceTexture);
-    ~NGLTextureCube();
+    CachedTextureCube (NResourceSet *ResourceManager, TextureCube *SourceTexture);
+    ~CachedTextureCube ();
 
-    virtual void UpdateTexture (NTexture *Source);
-    virtual void LoadMipLevel (NTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture (BaseTexture *Source);
+    virtual void LoadMipLevel (BaseTexture *SourceTexture, int MipLevel);
   };
 
-  class NGLTextureVolume: public NGLTexture
+  class CachedTextureVolume: public CachedBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLTextureVolume, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE (CachedTextureVolume, CachedBaseTexture);
   public:
-    NGLTextureVolume (NResourceSet *ResourceManager, NTextureVolume *SourceTexture);
-    ~NGLTextureVolume();
+    CachedTextureVolume (NResourceSet *ResourceManager, TextureVolume *SourceTexture);
+    ~CachedTextureVolume ();
 
-    virtual void UpdateTexture (NTexture *Source);
-    virtual void LoadMipLevel (NTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture (BaseTexture *Source);
+    virtual void LoadMipLevel (BaseTexture *SourceTexture, int MipLevel);
   };
 
-  class NGLAnimatedTexture: public NGLTexture
+  class CachedTextureFrameAnimation: public CachedBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLAnimatedTexture, NGLTexture);
+    NUX_DECLARE_OBJECT_TYPE (CachedTextureFrameAnimation, CachedBaseTexture);
   public:
-    NGLAnimatedTexture (NResourceSet *ResourceManager, NAnimatedTexture *SourceTexture);
-    ~NGLAnimatedTexture();
+    CachedTextureFrameAnimation (NResourceSet *ResourceManager, TextureFrameAnimation *SourceTexture);
+    ~CachedTextureFrameAnimation ();
 
-    virtual void UpdateTexture (NTexture *Source);
-    virtual void LoadMipLevel (NTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture (BaseTexture *Source);
+    virtual void LoadMipLevel (BaseTexture *SourceTexture, int MipLevel);
   };
 
 }

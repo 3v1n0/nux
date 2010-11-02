@@ -73,13 +73,13 @@ namespace nux
 
   protected:
     //IOpenGLVertexBuffer* m_VB;
-    TRefGL<IOpenGLIndexBuffer> m_IB;
+    IntrusiveSP<IOpenGLIndexBuffer> m_IB;
     void FormatQuads();
 
   private:
 
     ShaderType m_ShaderType;
-    TRefGL<IOpenGLVertexBuffer> VertexAttributeBuffer[16];
+    IntrusiveSP<IOpenGLVertexBuffer> VertexAttributeBuffer[16];
     GLDeviceFactory *m_pDeviceFactory;
     INT m_NumVertex;
     INT m_NumQuad;

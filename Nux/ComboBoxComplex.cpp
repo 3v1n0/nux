@@ -109,6 +109,7 @@ namespace nux
 
   void ComboBoxComplex::DestroyLayout()
   {
+    m_PopupWindow->UnReference();
   }
 
   long ComboBoxComplex::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

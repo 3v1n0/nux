@@ -90,17 +90,17 @@ namespace nux
     // up the whole rendering by. If we setup a framebuffer instead, the client can never know the framebuffer
     // we use fror the whole rendering. all we have to do is to copy the client framebuffer into the main framebuffer
     // after the client as finished with the draw.
-    TRefGL<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
+    IntrusiveSP<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
       return m_FrameBufferObject;
     }
-    TRefGL<IOpenGLFrameBufferObject> m_FrameBufferObject;
+    IntrusiveSP<IOpenGLFrameBufferObject> m_FrameBufferObject;
 
   private:
     // We use Rectangle texture to attach to the framebuffer because some GPU like the Geforce FX 5600 do not
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
-    TRefGL<IOpenGLBaseTexture> m_MainColorRT;
-    TRefGL<IOpenGLBaseTexture> m_MainDepthRT;
+    IntrusiveSP<IOpenGLBaseTexture> m_MainColorRT;
+    IntrusiveSP<IOpenGLBaseTexture> m_MainDepthRT;
 
     TimerFunctor *m_RealTimeCallback;
     TimerHandle m_RealTimeHandler;

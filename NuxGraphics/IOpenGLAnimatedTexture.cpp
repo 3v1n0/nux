@@ -40,7 +40,7 @@ namespace nux
   {
     for (int i = 0; i < Depth; i++)
     {
-      TRefGL<IOpenGLBaseTexture> Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Width, Height, 1, PixelFormat);
+      IntrusiveSP<IOpenGLBaseTexture> Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Width, Height, 1, PixelFormat);
       _FrameTextureArray.push_back (Texture);
       _FrameTimeArray.push_back (41); // 41 ms = 24 frames/second
     }
@@ -64,7 +64,7 @@ namespace nux
   }
 
 
-  TRefGL<IOpenGLSurface> IOpenGLAnimatedTexture::GetSurfaceFrame (int Frame)
+  IntrusiveSP<IOpenGLSurface> IOpenGLAnimatedTexture::GetSurfaceFrame (int Frame)
   {
     nuxAssert (Frame >= 0);
     nuxAssert (Frame < _Depth);
@@ -78,12 +78,12 @@ namespace nux
       nuxAssertMsg (0, TEXT ("[IOpenGLAnimatedTexture::GetSurfaceFrame] Invalid surface level") );
     }
 
-    return TRefGL<IOpenGLSurface> (0);
+    return IntrusiveSP<IOpenGLSurface> (0);
   }
 
-  void IOpenGLAnimatedTexture::GetSurfaceFrame (int Frame, TRefGL<IOpenGLSurface>& surface)
+  void IOpenGLAnimatedTexture::GetSurfaceFrame (int Frame, IntrusiveSP<IOpenGLSurface>& surface)
   {
-    surface = 0;
+    surface = IntrusiveSP<IOpenGLSurface> (0);
     surface = GetSurfaceFrame (Frame);
   }
 

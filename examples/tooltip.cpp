@@ -62,7 +62,7 @@ namespace nux
                                       int height);
                                       
       nux::CairoGraphics*   _cairo_graphics;
-      nux::NTexture*        _texture2D;
+      nux::BaseTexture*     _texture2D;
       int                   _anchorX;
       int                   _anchorY;
       nux::NString          _labelText;
@@ -796,7 +796,7 @@ namespace nux
 
     nux::NBitmapData* bitmap =  _cairo_graphics->GetBitmap();
 
-    // NTexture2D is the high level representation of an image that is backed by
+    // Texture2D is the high level representation of an image that is backed by
     // an actual opengl texture.
     _texture2D = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
     _texture2D->Update(bitmap);

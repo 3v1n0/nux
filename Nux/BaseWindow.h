@@ -54,6 +54,10 @@ namespace nux
   */
   typedef void (*ConfigureNotifyCallback) (int, int, Geometry &, void *);
 
+  /*!
+    A floating area on top of the main window.
+    A BaseWindow is referenced by the WindowCompositor who calls Reference on the BaseWindow during registration.
+  */
   class BaseWindow: public View
   {
     NUX_DECLARE_OBJECT_TYPE (BaseWindow, View);

@@ -163,13 +163,11 @@ namespace nux
     for (it3 = m_column_sizehandler.begin(); it3 != m_column_sizehandler.end(); it3++)
     {
       (*it3)->UnReference();
-      delete (*it3);
     }
 
     for (it3 = m_row_sizehandler.begin(); it3 != m_row_sizehandler.end(); it3++)
     {
       (*it3)->UnReference();
-      delete (*it3);
     }
 
     //delete m_VLayout;
@@ -339,7 +337,7 @@ namespace nux
     return ret;
   }
 
-  void PresentBufferToScreen (TRefGL<IOpenGLBaseTexture> texture, int x, int y)
+  void PresentBufferToScreen (IntrusiveSP<IOpenGLBaseTexture> texture, int x, int y)
   {
     nuxAssert (texture.IsValid() );
 
@@ -730,42 +728,7 @@ namespace nux
 
   void TableCtrl::DrawTable (GraphicsContext &GfxContext)
   {
-    TRefGL<IOpenGLFrameBufferObject> CurrentFrameBuffer = GetThreadWindowCompositor().GetWindowFrameBufferObject();
-
-    if (0 /*m_ReformatTexture*/)
-    {
-      SetTextureIndex (0);
-      m_FrameBufferObject->FormatFrameBufferObject (m_ViewWidth, m_ViewHeight, BITFMT_R8G8B8A8);
-      m_TextureBuffer[0] = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_R8G8B8A8);
-      m_TextureBuffer[1] = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_D24S8);
-      m_FrameBufferObject->SetRenderTarget ( 0, m_TextureBuffer[0]->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface ( 0 );
-      m_FrameBufferObject->Activate();
-
-      GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, m_ViewWidth, m_ViewHeight);
-      GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion();
-      GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion (0, 0, m_ViewWidth, m_ViewHeight);
-      GetGraphicsThread()->GetGraphicsContext().SetViewport (0, 0, m_ViewWidth, m_ViewHeight);
-      GetGraphicsThread()->GetGraphicsContext().Push2DWindow (m_ViewWidth, m_ViewHeight);
-
-      Matrix4 mat, rot, trans;
-      mat.Translate (-m_ViewX, -m_ViewY, 0);
-      GfxContext.Clear2DModelViewMatrix();
-      GfxContext.Push2DModelViewMatrix (mat);
-
-      //glClearColor(1.0f, 0.5, 0, 1.0f);
-      //glClear(GL_COLOR_BUFFER_BIT);
-
-    }
-
-    //    else
-    //    {
-    //        int TextureIndex = ScrollView::GetTextureIndex();
-    //        m_FrameBufferObject->SetRenderTarget( 0, m_TextureBuffer[TextureIndex]->GetSurfaceLevel(0) );
-    //        m_FrameBufferObject->SetDepthSurface( 0 );
-    //        m_FrameBufferObject->Activate();
-    //    }
-
+    IntrusiveSP<IOpenGLFrameBufferObject> CurrentFrameBuffer = GetThreadWindowCompositor().GetWindowFrameBufferObject();
 
     Geometry tableGeometry = m_TableArea->GetGeometry();
     int xl, yl, wl, hl;
@@ -839,22 +802,6 @@ namespace nux
     }
     GfxContext.PopClippingRectangle();
 
-
-    if (0)
-    {
-      GfxContext.Pop2DModelViewMatrix();
-      GfxContext.Clear2DModelViewMatrix();
-      CurrentFrameBuffer->Activate();
-      int window_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
-      int window_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-      GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, window_width, window_height);
-      GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion();
-      GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion (0, 0, window_width, window_height);
-      GetGraphicsThread()->GetGraphicsContext().SetViewport (0, 0, window_width, window_height);
-      GetGraphicsThread()->GetGraphicsContext().Push2DWindow (window_width, window_height);
-      PresentBufferToScreen (m_TextureBuffer[0], m_ViewX, m_ViewY);
-    }
-
     DrawHeader (GfxContext);
   }
 
@@ -865,7 +812,7 @@ namespace nux
 
 
     std::vector<ColumnHeader>::iterator column_iterator;
-    std::vector<RowHeader *>::iterator row_iterator;
+    std::vector<RowHeader*>::iterator row_iterator;
 
     int ItemOffsetY = 0;
     ///////////////////////////////////
@@ -1630,7 +1577,7 @@ namespace nux
 
     for (it = m_row_sizehandler.begin(); it != m_row_sizehandler.end(); it++)
     {
-      delete (*it);
+      (*it)->UnReference();
     }
 
     m_row_sizehandler.clear();

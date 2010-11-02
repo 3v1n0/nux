@@ -35,7 +35,7 @@ namespace nux
 {
 
   class TextLineRenderer;
-  class NTexture;
+  class BaseTexture;
 
   class GeometryPositioning
   {
@@ -143,8 +143,8 @@ namespace nux
     int intTest;
 
     //! Draw unscaled texture at position (x, y). The size of the quad is the size of the texture.
-    virtual void Draw2DTexture (GraphicsContext &GfxContext, NTexture *Texture, int x, int y) const;
-    virtual void Draw2DTextureAligned (GraphicsContext &GfxContext, NTexture *Texture, const Geometry &g, TextureAlignmentStyle tex_align) const;
+    virtual void Draw2DTexture (GraphicsContext &GfxContext, BaseTexture *Texture, int x, int y) const;
+    virtual void Draw2DTextureAligned (GraphicsContext &GfxContext, BaseTexture *Texture, const Geometry &g, TextureAlignmentStyle tex_align) const;
 
     ///////////////////
 
@@ -223,7 +223,7 @@ namespace nux
                               const ROPConfig &ROP = ROPConfig::Default) const;
 
     void PaintTextureShape (GraphicsContext &GfxContext, const Geometry &geo, UXStyleImageRef style) const;
-    void PaintTextureShape (GraphicsContext &GfxContext, const Geometry &geo, NTexture *Texture,
+    void PaintTextureShape (GraphicsContext &GfxContext, const Geometry &geo, BaseTexture *Texture,
                             int border_left, int border_right, int border_top, int border_bottom, bool draw_borders_only) const;
 
     //! Draw Check Box.
@@ -260,7 +260,7 @@ namespace nux
                                       const ROPConfig &ROP = ROPConfig::Default);
 
     void PushTextureLayer (GraphicsContext &GfxContext, Geometry geo,
-                           TRefGL<IOpenGLBaseTexture> DeviceTexture,
+                           IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
                            TexCoordXForm texxform,
                            const Color &color,
                            bool WriteAlpha = false,
@@ -286,7 +286,7 @@ namespace nux
                                           const ROPConfig &ROP = ROPConfig::Default);
 
     void PushDrawTextureLayer (GraphicsContext &GfxContext, Geometry geo,
-                               TRefGL<IOpenGLBaseTexture> DeviceTexture,
+                               IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
                                TexCoordXForm texxform,
                                const Color &color,
                                bool WriteAlpha = false,

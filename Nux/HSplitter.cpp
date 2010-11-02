@@ -40,7 +40,6 @@ namespace nux
   HSplitter::HSplitter (NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
   {
-    m_layout                    = 0;
     new_addition                = false;
     m_initial_config            = true;
     m_focus_splitter_index      = -1;
@@ -59,9 +58,21 @@ namespace nux
 
   HSplitter::~HSplitter()
   {
-    // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters
-    //delete vlayout;
-    m_layout = 0;
+    std::vector< Area* >::iterator it0;
+    for (it0 = m_InterfaceObject.begin(); it0 != m_InterfaceObject.end(); it0++)
+    {
+      (*it0)->UnParentObject();
+    }
+    m_InterfaceObject.clear();
+
+    std::vector< MySplitter* >::iterator it2;
+    for (it2 = m_SplitterObject.begin(); it2 != m_SplitterObject.end(); it2++)
+    {
+      (*it2)->UnReference();
+    }
+    m_SplitterObject.clear();
+
+    m_SplitConfig.clear();
   }
 
   long HSplitter::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -317,7 +328,6 @@ namespace nux
 
   void HSplitter::clearContent()
   {
-    m_layout->Clear();
     m_InterfaceObject.clear();
   }
 

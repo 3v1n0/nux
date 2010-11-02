@@ -53,7 +53,7 @@ namespace nux
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/FunctionGraphBackground.tga") );
-    NTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BaseTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
     BackgroundTexture->Update (Path.GetTCharPtr() );
 
     TexCoordXForm texxform;
@@ -107,7 +107,7 @@ namespace nux
 
     float tex_dx = (m_maxX - m_minX) / Texture->GetWidth();
     SURFACE_LOCKED_RECT lockrect;
-    Texture.Handle->LockRect (0, &lockrect, 0);
+    Texture->LockRect (0, &lockrect, 0);
     BYTE *dest = (BYTE *) lockrect.pBits;
 
     for (t_s32 i = 0; i < Texture->GetWidth(); i++)

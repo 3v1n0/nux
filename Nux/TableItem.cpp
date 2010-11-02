@@ -36,12 +36,33 @@ namespace nux
   ColumnHeader::ColumnHeader()
   {
     m_header_area = new InputArea (NUX_TRACKER_LOCATION);
+    m_header_area->SinkReference();
   }
+
+//   ColumnHeader::ColumnHeader(const ColumnHeader& Other)
+//   {
+//     m_header_area = Other.m_header_area;
+//     m_header_area->Reference();
+//   }
 
   ColumnHeader::~ColumnHeader()
   {
-
+//     m_header_area->UnReference();
+//     m_header_area = 0;
   }
+
+//   ColumnHeader& ColumnHeader::operator = (const ColumnHeader& Other)
+//   {
+//     if (m_header_area)
+//       m_header_area->UnReference();
+// 
+//     if (Other.m_header_area)
+//     {
+//       m_header_area = Other.m_header_area;
+//       m_header_area->Reference();
+//     }
+//     return *this;
+//   }
 
   RowHeader::RowHeader()
   {

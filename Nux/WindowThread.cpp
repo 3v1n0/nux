@@ -306,13 +306,15 @@ namespace nux
   void WindowThread::SetLayout (Layout *layout)
   {
     m_AppLayout = layout;
-    m_AppLayout->SetStretchFactor (1);
-
-    int w = m_GLWindow->GetGraphicsContext()->GetContextWidth();
-    int h = m_GLWindow->GetGraphicsContext()->GetContextHeight();
 
     if (m_AppLayout)
     {
+      int w = m_GLWindow->GetGraphicsContext()->GetContextWidth();
+      int h = m_GLWindow->GetGraphicsContext()->GetContextHeight();
+
+      m_AppLayout->Reference();
+      m_AppLayout->SetStretchFactor (1);
+
       SetComputingLayout (true);
       m_AppLayout->SetGeometry (0, 0, w, h);
       m_AppLayout->ComputeLayout2();
@@ -1211,7 +1213,7 @@ namespace nux
 
     if (m_AppLayout)
     {
-      m_AppLayout = NULL;
+      m_AppLayout->UnReference();
     }
 
     NUX_SAFE_DELETE (m_window_compositor);

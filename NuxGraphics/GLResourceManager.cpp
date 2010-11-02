@@ -32,10 +32,10 @@ namespace nux
 
   extern PixelFormatInfo GPixelFormats[];
 
-  NUX_IMPLEMENT_ROOT_OBJECT_TYPE (NResource);
-  NUX_IMPLEMENT_ROOT_OBJECT_TYPE (NGLResource);
+  NUX_IMPLEMENT_OBJECT_TYPE (ResourceData);
+  NUX_IMPLEMENT_OBJECT_TYPE (CachedResourceData);
 
-  NResource::NResource()
+  ResourceData::ResourceData()
     :   m_ResourceIndex (NUX_INVALID_INDEX)
   {
 #define GET_UNIQUE_RESOURCE_INDEX NUX_GLOBAL_OBJECT_INSTANCE(UniqueIndex)
@@ -43,7 +43,7 @@ namespace nux
 #undef GET_UNIQUE_RESOURCE_INDEX
   }
 
-  unsigned int NResource::GetResourceIndex() const
+  int ResourceData::GetResourceIndex() const
   {
     return m_ResourceIndex;
   }
@@ -57,7 +57,7 @@ namespace nux
     }
   }
 
-  NGLResource::NGLResource (NResourceSet *ResourceManager)
+  CachedResourceData::CachedResourceData (NResourceSet *ResourceManager)
     :   Set (ResourceManager)
     ,   Cached (0)
     ,   NumRefs (0)
@@ -75,7 +75,7 @@ namespace nux
     }
   }
 
-  NGLResource::~NGLResource()
+  CachedResourceData::~CachedResourceData()
   {
     if (PrevResource)
     {
@@ -99,16 +99,16 @@ namespace nux
 
   void NResourceCache::InitializeResourceFactories()
   {
-    // Define the factory pair NResource - NGLResource
+    // Define the factory pair ResourceData - CachedResourceData
 #define NUX_DEFINE_RESOURCE_FACTORY_PAIR(SourceTypeName, ResourceTypeName) \
     static TGLResourceFactory<SourceTypeName, ResourceTypeName> Factory##SourceTypeName(&SourceTypeName::StaticObjectType); \
     GetResourceFactories().push_back(&Factory##SourceTypeName);
 
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NTexture2D, NGLTexture2D);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NRectangleTexture, NGLRectangleTexture);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NTextureCube, NGLTextureCube);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NTextureVolume, NGLTextureVolume);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NAnimatedTexture, NGLAnimatedTexture);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (Texture2D, CachedTexture2D);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureRectangle, CachedTextureRectangle);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureCube, CachedTextureCube);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureVolume, CachedTextureVolume);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureFrameAnimation, CachedTextureFrameAnimation);
     NUX_DEFINE_RESOURCE_FACTORY_PAIR (NVertexBuffer, NGLVertexBuffer);
     NUX_DEFINE_RESOURCE_FACTORY_PAIR (NIndexBuffer, NGLIndexBuffer);
     NUX_DEFINE_RESOURCE_FACTORY_PAIR (NVertexDeclaration, NGLVertexDeclaration);
@@ -116,16 +116,16 @@ namespace nux
 
 #undef NUX_DEFINE_RESOURCE_FACTORY_PAIR
 
-    // Define the factory updater for and NResource
+    // Define the factory updater for and ResourceData
 #define NUX_DEFINE_RESOURCE_UPDATER(SourceTypeName) \
     static NResourceUpdater Updater##SourceTypeName(&SourceTypeName::StaticObjectType); \
     GetResourceUpdaters().push_back(&Updater##SourceTypeName);
 
-    NUX_DEFINE_RESOURCE_UPDATER (NTexture2D);
-    NUX_DEFINE_RESOURCE_UPDATER (NRectangleTexture);
-    NUX_DEFINE_RESOURCE_UPDATER (NTextureCube);
-    NUX_DEFINE_RESOURCE_UPDATER (NTextureVolume);
-    NUX_DEFINE_RESOURCE_UPDATER (NAnimatedTexture);
+    NUX_DEFINE_RESOURCE_UPDATER (Texture2D);
+    NUX_DEFINE_RESOURCE_UPDATER (TextureRectangle);
+    NUX_DEFINE_RESOURCE_UPDATER (TextureCube);
+    NUX_DEFINE_RESOURCE_UPDATER (TextureVolume);
+    NUX_DEFINE_RESOURCE_UPDATER (TextureFrameAnimation);
     NUX_DEFINE_RESOURCE_UPDATER (NVertexBuffer);
     NUX_DEFINE_RESOURCE_UPDATER (NIndexBuffer);
     NUX_DEFINE_RESOURCE_UPDATER (NVertexDeclaration);
@@ -134,10 +134,10 @@ namespace nux
 #undef NUX_DEFINE_RESOURCE_UPDATER
   }
 
-  TRefGL< NGLResource > NResourceCache::GetCachedResource (NResource *Source)
+  IntrusiveSP<CachedResourceData> NResourceCache::GetCachedResource (ResourceData *Source)
   {
     // check to see if it already exists
-    TRefGL< NGLResource >	CachedResource = TResourceCache<int, NGLResource>::FindCachedResourceById (Source->GetResourceIndex() );
+    IntrusiveSP<CachedResourceData> CachedResource = TResourceCache<int, CachedResourceData>::FindCachedResourceById (Source->GetResourceIndex());
 
     if (CachedResource.IsNull() )
     {
@@ -150,7 +150,9 @@ namespace nux
         if (ResourceFactory->BuildsThisResource (Source) )
         {
           // cache the device resource
-          CachedResource = ResourceFactory->BuildResource (this, Source);
+          CachedResourceData* ptr = ResourceFactory->BuildResource (this, Source);
+          CachedResource = IntrusiveSP<CachedResourceData> (ptr);
+          ptr->UnReference();
           break;
         }
       }
@@ -162,8 +164,6 @@ namespace nux
       }
       else
       {
-        // Get resource textual description
-        CachedResource->Description		= Source->GetResourceName();
         // Get resource type
         CachedResource->ResourceType	= & (Source->Type() );
         // add it to the pool of cached resources
@@ -174,9 +174,9 @@ namespace nux
     return CachedResource;
   }
 
-  bool NResourceCache::IsCachedResource (NResource *Source)
+  bool NResourceCache::IsCachedResource (ResourceData *Source)
   {
-    TRefGL< NGLResource > CachedResource = TResourceCache< int, NGLResource >::FindCachedResourceById (Source->GetResourceIndex() );
+    IntrusiveSP<CachedResourceData> CachedResource = TResourceCache< int, CachedResourceData >::FindCachedResourceById (Source->GetResourceIndex() );
     return (CachedResource.IsValid() );
   }
 

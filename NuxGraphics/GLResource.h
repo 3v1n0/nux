@@ -57,21 +57,21 @@ namespace nux
 {
   class IOpenGLResource;
 
-  class NTexture;
-  class NTexture2D;
-  class NRectangleTexture;
-  class NTextureCube;
-  class NTextureVolume;
-  class NAnimatedTexture;
+  class BaseTexture;
+  class Texture2D;
+  class TextureRectangle;
+  class TextureCube;
+  class TextureVolume;
+  class TextureFrameAnimation;
 
   class NVertexBuffer;
   class NIndexBuffer;
 
-  class NGLTexture2D;
-  class NGLRectangleTexture;
-  class NGLTextureCube;
-  class NGLTextureVolume;
-  class NGLAnimatedTexture;
+  class CachedTexture2D;
+  class CachedTextureRectangle;
+  class CachedTextureCube;
+  class CachedTextureVolume;
+  class CachedTextureFrameAnimation;
   class FontTexture;
 
 }
@@ -555,320 +555,320 @@ namespace nux
   unsigned int   GetGLElementCount (PRIMITIVE_TYPE InPrimitiveType,
                                     unsigned int        InPrimitiveCount);
 
-  template<typename T> class TRefGL
-  {
-  public:
-    T	*Handle;
-
-  private:
-    void CheckReferenceObject()
-    {
-      if (Handle)
-      {
-        if (Handle->GetValue() == 0)
-        {
-          delete Handle;
-          //GetThreadGLDeviceFactory()->DestroyDeviceResource<T>(Handle);
-        }
-      }
-
-      Handle = 0;
-    }
-
-    //     // Do not allow access to the managed pointer. This also avoid compiler confusion between
-    //     //  int BindTexture(IOpenGLBaseTexture* texture);
-    //     // and
-    //     //  int BindTexture(TRefGL<IOpenGLBaseTexture> texture);
-    //
-    //     // Access operators.
-    //     typedef	T*	PtrT;
-    //     operator T*()
-    //     {
-    //         return Handle;
-    //     }
-
-  public:
-    T *operator -> ()
-    {
-      nuxAssert (Handle);
-      return Handle;
-    }
-
-    const T *operator -> () const
-    {
-      nuxAssert (Handle);
-      return Handle;
-    }
-
-    T &operator*()
-    {
-      nuxAssert (Handle);
-      return *Handle;
-    }
-
-    const T &operator *() const
-    {
-      nuxAssert (Handle);
-      return *Handle;
-    }
-
-    // Constructor/destructor.
-    TRefGL (T *InHandle = 0)
-      :   Handle (InHandle)
-    {
-      if (Handle)
-        Handle->Increment();
-    }
-
-    template <typename U>
-    TRefGL (U *InHandle)
-      :   Handle (0)
-    {
-      if (InHandle == 0)
-        return;
-
-      if (InHandle->Type().IsDerivedFromType (T::StaticObjectType) )
-      {
-        Handle = (T *) InHandle;
-      }
-
-      if (Handle)
-        Handle->Increment();
-    }
-
-    TRefGL (const TRefGL<T>& Copy)
-      :   Handle (0)
-    {
-      Handle = Copy.Handle;
-
-      if (Handle)
-        Handle->Increment();
-    }
-
-    template <typename U>
-    TRefGL (const TRefGL<U>& Copy)
-      :   Handle (0)
-    {
-      // Check if type U is derived from type T
-      // Type() is virtual. Even if we have a TRefGL<IOpenGLBaseTexture> but its internal pointer is a IOpenGLCubeTexture,
-      // Type() returns the static object type inside IOpenGLCubeTexture.
-      // This make this possible
-      //
-      //      TRefGL<IOpenGLBaseTexture> basetex;            // IOpenGLBaseTexture is an abstract base class for IOpenGLTexture2D
-      //      basetex = gGLDeviceFactory->CreateTexture(.....);
-      //      TRefGL<IOpenGLVertexBuffer> vtx(basetex);   // vtx Handle will be null
-      //      TRefGL<IOpenGLTexture2D> tex(basetex);      // tex Handle will be the same as basetex
-      //
-
-      if (Copy.Handle->Type().IsDerivedFromType (T::StaticObjectType) )
-      {
-        Handle = (T *) Copy.Handle;
-      }
-
-      if (Handle)
-        Handle->Increment();
-    }
-
-    ~TRefGL()
-    {
-      if (Handle)
-      {
-        Handle->Decrement();
-        CheckReferenceObject();
-      }
-    }
-
-    // Assignment operator.
-
-    TRefGL<T>& operator = (T *InHandle)
-    {
-      if (Handle != InHandle)
-      {
-        if (Handle)
-        {
-          Handle->Decrement();
-          CheckReferenceObject();
-        }
-
-        Handle = InHandle;
-
-        if (Handle)
-          Handle->Increment();
-      }
-
-      return *this;
-    }
-
-    TRefGL<T>& operator = (const TRefGL<T>& Other)
-    {
-      // Avoid self assignment
-      if (Handle == Other.Handle)
-      {
-        return *this;
-      }
-
-      if (Handle)
-      {
-        Handle->Decrement();
-        CheckReferenceObject();
-      }
-
-      Handle = Other.Handle;
-
-      if (Handle)
-        Handle->Increment();
-
-      return *this;
-    }
-
-    bool operator == (const TRefGL<T>& Other) const
-    {
-      if (Handle == Other.Handle)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    bool operator == (const T *Ptr) const
-    {
-      if (Handle == Ptr)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    template <typename U>
-    bool operator == (const U *Ptr) const
-    {
-      if (Handle == Ptr)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    template <typename U>
-    bool operator == (TRefGL<U>& Other) const
-    {
-      if (Handle == Other.Handle)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    bool operator != (const TRefGL<T>& Other) const
-    {
-      if (Handle != Other.Handle)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    bool operator != (const T *Ptr) const
-    {
-      if (Handle != Ptr)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    template <typename U>
-    bool operator != (const U *Ptr) const
-    {
-      if (Handle != Ptr)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    template <typename U>
-    bool operator != (TRefGL<U>& Other) const
-    {
-      if (Handle != Other.Handle)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    //    // This isn't safe. An assignment like the following is wrong, but it will no flag an error at compile time.
-    //    // TRefGL<IOpenGLVertexBuffer> vtx;
-    //    // TRefGL<IOpenGLTexture2D> tex;
-    //    // vtx = tex;         // WRONG
-    //
-    //    template<typename U>
-    //        TRefGL<T>& operator=(const TRefGL<U>& Other)
-    //    {
-    //        Handle = (T*)(Other.Handle);
-    //        return *this;
-    //    }
-
-    // Doing vtx = tex.Castref<IOpenGLVertexBuffer> will return a TRefGL<IOpenGLVertexBuffer> with a null Handle.
-    template<typename U>
-    TRefGL<U> CastRef()
-    {
-      TRefGL<U> t;
-
-      // Check if type U is derived from type T
-      if (U::StaticObjectType.IsDerivedFromType (T::StaticObjectType) )
-      {
-        t = (U *) Handle;
-      }
-
-      return t;
-    }
-
-    void Release()
-    {
-      if (Handle)
-      {
-        Handle->Decrement();
-        CheckReferenceObject();
-      }
-
-      Handle = 0;
-    }
-  private:
-    T &GetHandle()
-    {
-      return *Handle;
-    }
-
-  public:
-    bool IsValid()
-    {
-      if (Handle)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    bool IsNull()
-    {
-      if (Handle)
-      {
-        return false;
-      }
-
-      return true;
-    }
-  };
+//   template<typename T> class IntrusiveSP
+//   {
+//   public:
+//     T	*Handle;
+// 
+//   private:
+//     void CheckReferenceObject()
+//     {
+//       if (Handle)
+//       {
+//         if (Handle->GetValue() == 0)
+//         {
+//           delete Handle;
+//           //GetThreadGLDeviceFactory()->DestroyDeviceResource<T>(Handle);
+//         }
+//       }
+// 
+//       Handle = 0;
+//     }
+// 
+//     //     // Do not allow access to the managed pointer. This also avoid compiler confusion between
+//     //     //  int BindTexture(IOpenGLBaseTexture* texture);
+//     //     // and
+//     //     //  int BindTexture(IntrusiveSP<IOpenGLBaseTexture> texture);
+//     //
+//     //     // Access operators.
+//     //     typedef	T*	PtrT;
+//     //     operator T*()
+//     //     {
+//     //         return Handle;
+//     //     }
+// 
+//   public:
+//     T *operator -> ()
+//     {
+//       nuxAssert (Handle);
+//       return Handle;
+//     }
+// 
+//     const T *operator -> () const
+//     {
+//       nuxAssert (Handle);
+//       return Handle;
+//     }
+// 
+//     T &operator*()
+//     {
+//       nuxAssert (Handle);
+//       return *Handle;
+//     }
+// 
+//     const T &operator *() const
+//     {
+//       nuxAssert (Handle);
+//       return *Handle;
+//     }
+// 
+//     // Constructor/destructor.
+//     IntrusiveSP (T *InHandle = 0)
+//       :   Handle (InHandle)
+//     {
+//       if (Handle)
+//         Handle->Increment();
+//     }
+// 
+//     template <typename U>
+//     IntrusiveSP (U *InHandle)
+//       :   Handle (0)
+//     {
+//       if (InHandle == 0)
+//         return;
+// 
+//       if (InHandle->Type().IsDerivedFromType (T::StaticObjectType) )
+//       {
+//         Handle = (T *) InHandle;
+//       }
+// 
+//       if (Handle)
+//         Handle->Increment();
+//     }
+// 
+//     IntrusiveSP (const IntrusiveSP<T>& Copy)
+//       :   Handle (0)
+//     {
+//       Handle = Copy.Handle;
+// 
+//       if (Handle)
+//         Handle->Increment();
+//     }
+// 
+//     template <typename U>
+//     IntrusiveSP (const IntrusiveSP<U>& Copy)
+//       :   Handle (0)
+//     {
+//       // Check if type U is derived from type T
+//       // Type() is virtual. Even if we have a IntrusiveSP<IOpenGLBaseTexture> but its internal pointer is a IOpenGLCubeTexture,
+//       // Type() returns the static object type inside IOpenGLCubeTexture.
+//       // This make this possible
+//       //
+//       //      IntrusiveSP<IOpenGLBaseTexture> basetex;            // IOpenGLBaseTexture is an abstract base class for IOpenGLTexture2D
+//       //      basetex = gGLDeviceFactory->CreateTexture(.....);
+//       //      IntrusiveSP<IOpenGLVertexBuffer> vtx(basetex);   // vtx Handle will be null
+//       //      IntrusiveSP<IOpenGLTexture2D> tex(basetex);      // tex Handle will be the same as basetex
+//       //
+// 
+//       if (Copy.Handle->Type().IsDerivedFromType (T::StaticObjectType) )
+//       {
+//         Handle = (T *) Copy.Handle;
+//       }
+// 
+//       if (Handle)
+//         Handle->Increment();
+//     }
+// 
+//     ~IntrusiveSP()
+//     {
+//       if (Handle)
+//       {
+//         Handle->Decrement();
+//         CheckReferenceObject();
+//       }
+//     }
+// 
+//     // Assignment operator.
+// 
+//     IntrusiveSP<T>& operator = (T *InHandle)
+//     {
+//       if (Handle != InHandle)
+//       {
+//         if (Handle)
+//         {
+//           Handle->Decrement();
+//           CheckReferenceObject();
+//         }
+// 
+//         Handle = InHandle;
+// 
+//         if (Handle)
+//           Handle->Increment();
+//       }
+// 
+//       return *this;
+//     }
+// 
+//     IntrusiveSP<T>& operator = (const IntrusiveSP<T>& Other)
+//     {
+//       // Avoid self assignment
+//       if (Handle == Other.Handle)
+//       {
+//         return *this;
+//       }
+// 
+//       if (Handle)
+//       {
+//         Handle->Decrement();
+//         CheckReferenceObject();
+//       }
+// 
+//       Handle = Other.Handle;
+// 
+//       if (Handle)
+//         Handle->Increment();
+// 
+//       return *this;
+//     }
+// 
+//     bool operator == (const IntrusiveSP<T>& Other) const
+//     {
+//       if (Handle == Other.Handle)
+//       {
+//         return true;
+//       }
+// 
+//       return false;
+//     }
+// 
+//     bool operator == (const T *Ptr) const
+//     {
+//       if (Handle == Ptr)
+//       {
+//         return true;
+//       }
+// 
+//       return false;
+//     }
+// 
+//     template <typename U>
+//     bool operator == (const U *Ptr) const
+//     {
+//       if (Handle == Ptr)
+//       {
+//         return true;
+//       }
+// 
+//       return false;
+//     }
+// 
+//     template <typename U>
+//     bool operator == (IntrusiveSP<U>& Other) const
+//     {
+//       if (Handle == Other.Handle)
+//       {
+//         return true;
+//       }
+// 
+//       return false;
+//     }
+// 
+//     bool operator != (const IntrusiveSP<T>& Other) const
+//     {
+//       if (Handle != Other.Handle)
+//       {
+//         return true;
+//       }
+// 
+//       return false;
+//     }
+// 
+//     bool operator != (const T *Ptr) const
+//     {
+//       if (Handle != Ptr)
+//       {
+//         return true;
+//       }
+// 
+//       return false;
+//     }
+// 
+//     template <typename U>
+//     bool operator != (const U *Ptr) const
+//     {
+//       if (Handle != Ptr)
+//       {
+//         return true;
+//       }
+// 
+//       return false;
+//     }
+// 
+//     template <typename U>
+//     bool operator != (IntrusiveSP<U>& Other) const
+//     {
+//       if (Handle != Other.Handle)
+//       {
+//         return true;
+//       }
+// 
+//       return false;
+//     }
+// 
+//     //    // This isn't safe. An assignment like the following is wrong, but it will no flag an error at compile time.
+//     //    // IntrusiveSP<IOpenGLVertexBuffer> vtx;
+//     //    // IntrusiveSP<IOpenGLTexture2D> tex;
+//     //    // vtx = tex;         // WRONG
+//     //
+//     //    template<typename U>
+//     //        IntrusiveSP<T>& operator=(const IntrusiveSP<U>& Other)
+//     //    {
+//     //        Handle = (T*)(Other.Handle);
+//     //        return *this;
+//     //    }
+// 
+//     // Doing vtx = tex.Castref<IOpenGLVertexBuffer> will return a IntrusiveSP<IOpenGLVertexBuffer> with a null Handle.
+//     template<typename U>
+//     IntrusiveSP<U> CastRef()
+//     {
+//       IntrusiveSP<U> t;
+// 
+//       // Check if type U is derived from type T
+//       if (U::StaticObjectType.IsDerivedFromType (T::StaticObjectType) )
+//       {
+//         t = (U *) Handle;
+//       }
+// 
+//       return t;
+//     }
+// 
+//     void Release()
+//     {
+//       if (Handle)
+//       {
+//         Handle->Decrement();
+//         CheckReferenceObject();
+//       }
+// 
+//       Handle = 0;
+//     }
+//   private:
+//     T &GetHandle()
+//     {
+//       return *Handle;
+//     }
+// 
+//   public:
+//     bool IsValid()
+//     {
+//       if (Handle)
+//       {
+//         return true;
+//       }
+// 
+//       return false;
+//     }
+// 
+//     bool IsNull()
+//     {
+//       if (Handle)
+//       {
+//         return false;
+//       }
+// 
+//       return true;
+//     }
+//   };
 
 }
 

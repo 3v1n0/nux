@@ -29,19 +29,19 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (NTexture);
-  NUX_IMPLEMENT_OBJECT_TYPE (NTexture2D);
-  NUX_IMPLEMENT_OBJECT_TYPE (NRectangleTexture);
-  NUX_IMPLEMENT_OBJECT_TYPE (NTextureCube);
-  NUX_IMPLEMENT_OBJECT_TYPE (NTextureVolume);
-  NUX_IMPLEMENT_OBJECT_TYPE (NAnimatedTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE (BaseTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE (Texture2D);
+  NUX_IMPLEMENT_OBJECT_TYPE (TextureRectangle);
+  NUX_IMPLEMENT_OBJECT_TYPE (TextureCube);
+  NUX_IMPLEMENT_OBJECT_TYPE (TextureVolume);
+  NUX_IMPLEMENT_OBJECT_TYPE (TextureFrameAnimation);
 
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLTexture);
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLTexture2D);
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLRectangleTexture);
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLTextureCube);
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLTextureVolume);
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLAnimatedTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE (CachedBaseTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE (CachedTexture2D);
+  NUX_IMPLEMENT_OBJECT_TYPE (CachedTextureRectangle);
+  NUX_IMPLEMENT_OBJECT_TYPE (CachedTextureCube);
+  NUX_IMPLEMENT_OBJECT_TYPE (CachedTextureVolume);
+  NUX_IMPLEMENT_OBJECT_TYPE (CachedTextureFrameAnimation);
 
   /*! Up cast a Resource.
       The source must be derived from the destination type
@@ -49,23 +49,23 @@ namespace nux
       @param	U       Source type.
       @return	        The casted to the destination type
   */
-  template< class T, class U >
-  static T *UpCastResource ( U *Src )
+  template < class T, class U >
+  static T *UpCastResource (U *Src)
   {
-    if ( !Src || !Src->Type().IsDerivedFromType (T::StaticObjectType) )
-      nuxError ( TEXT ("[UpCastResource] Cast of %s to %s failed"), Src ? (const TCHAR *) Src->GetResourceName() () : TEXT ("NULL"), T::StaticObjectType.m_Name );
+    if (!Src || !Src->Type().IsDerivedFromType (T::StaticObjectType))
+      nuxError (TEXT ("[UpCastResource] Cast of %s to %s failed"), U::StaticObjectType.m_Name, T::StaticObjectType.m_Name);
 
     return (T *) Src;
   }
   
-  NTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf)
+  BaseTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf)
   {
     NBitmapData *BitmapData = LoadGdkPixbuf (pixbuf);
     NUX_RETURN_VALUE_IF_NULL (BitmapData, 0);
 
     if (BitmapData->IsTextureData() )
     {
-      NTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -74,32 +74,32 @@ namespace nux
   }
 
 
-  NTexture *CreateTextureFromFile (const TCHAR *TextureFilename)
+  BaseTexture *CreateTextureFromFile (const TCHAR *TextureFilename)
   {
     NBitmapData *BitmapData = LoadImageFile (TextureFilename);
     NUX_RETURN_VALUE_IF_NULL (BitmapData, 0);
 
     if (BitmapData->IsTextureData() )
     {
-      NTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
     else if (BitmapData->IsCubemapTextureData() )
     {
-      NTextureCube *texture = new NTextureCube();
+      TextureCube *texture = new TextureCube();
       texture->Update (BitmapData);
       return texture;
     }
     else if (BitmapData->IsVolumeTextureData() )
     {
-      NTextureVolume *texture = new NTextureVolume();
+      TextureVolume *texture = new TextureVolume();
       texture->Update (BitmapData);
       return texture;
     }
     else if (BitmapData->IsAnimatedTextureData() )
     {
-      NAnimatedTexture *texture = new NAnimatedTexture();
+      TextureFrameAnimation *texture = new TextureFrameAnimation();
       texture->Update (BitmapData);
       return texture;
     }
@@ -108,32 +108,32 @@ namespace nux
     return 0;
   }
 
-  NTexture *CreateTextureFromBitmapData (const NBitmapData *BitmapData)
+  BaseTexture *CreateTextureFromBitmapData (const NBitmapData *BitmapData)
   {
     if (BitmapData == 0)
       return 0;
 
     if (BitmapData->IsTextureData() )
     {
-      NTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
     else if (BitmapData->IsCubemapTextureData() )
     {
-      NTextureCube *texture = new NTextureCube();
+      TextureCube *texture = new TextureCube();
       texture->Update (BitmapData);
       return texture;
     }
     else if (BitmapData->IsVolumeTextureData() )
     {
-      NTextureVolume *texture = new NTextureVolume();
+      TextureVolume *texture = new TextureVolume();
       texture->Update (BitmapData);
       return texture;
     }
     else if (BitmapData->IsAnimatedTextureData() )
     {
-      NAnimatedTexture *texture = new NAnimatedTexture();
+      TextureFrameAnimation *texture = new TextureFrameAnimation();
       texture->Update (BitmapData);
       return texture;
     }
@@ -141,93 +141,93 @@ namespace nux
     return 0;
   }
 
-  NTexture::NTexture()
+  BaseTexture::BaseTexture()
   {
 
   }
 
-  NTexture::~NTexture()
+  BaseTexture::~BaseTexture()
   {
 
   }
 
-  TRefGL<IOpenGLBaseTexture> NTexture::GetDeviceTexture()
+  IntrusiveSP < IOpenGLBaseTexture > BaseTexture::GetDeviceTexture()
   {
-    TRefGL<NGLTexture> CachedTexture = GetThreadGraphicsContext()->CacheResource (this);
+    IntrusiveSP<CachedBaseTexture> CachedTexture = GetThreadGraphicsContext()->CacheResource (this);
     return CachedTexture->m_Texture;
   }
 
-  TRefGL<NGLTexture> NTexture::GetCachedTexture()
+  IntrusiveSP<CachedBaseTexture> BaseTexture::GetCachedTexture()
   {
     return GetThreadGraphicsContext()->CacheResource (this);
   }
 
-  NTexture2D::NTexture2D()
+  Texture2D::Texture2D()
   {
   }
 
-  NTexture2D::NTexture2D (const NTexture2D &texture)
+  Texture2D::Texture2D (const Texture2D &texture)
   {
-    m_Image = texture.m_Image;
+    _image = texture._image;
   }
 
-  NTexture2D::NTexture2D (const NTextureData &TextureData)
+  Texture2D::Texture2D (const NTextureData &BaseTexture)
   {
-    m_Image = TextureData;
+    _image = BaseTexture;
   }
 
-  NTexture2D &NTexture2D::operator = (const NTexture2D &texture)
+  Texture2D &Texture2D::operator = (const Texture2D &texture)
   {
     if (this == &texture)
       return *this;   // Handle self assignment
 
-    m_Image = texture.m_Image;
+    _image = texture._image;
     return *this;
   }
 
-  NTexture2D::~NTexture2D()
+  Texture2D::~Texture2D()
   {
 
   }
 
-  bool NTexture2D::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool Texture2D::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[NTexture2D::Update] Argument BitmapData is NULL.") );
+    nuxAssertMsg (BitmapData, TEXT ("[Texture2D::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
     if (!BitmapData->IsTextureData() )
     {
-      nuxAssertMsg (0, TEXT ("[NTexture2D::Update] Argument BitmapData is not a 2D texture") );
+      nuxAssertMsg (0, TEXT ("[Texture2D::Update] Argument BitmapData is not a 2D texture") );
       return false;
     }
 
-    m_Image = *static_cast<const NTextureData *> (BitmapData);
+    _image = *static_cast<const NTextureData *> (BitmapData);
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
       GetThreadGraphicsContext()->UpdateResource (this);
     }
 
     return true;
   }
 
-  bool NTexture2D::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool Texture2D::Update (const TCHAR *filename, bool UpdateAndCacheResource)
   {
     NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[NTexture2D::Update] Bitmap for file (%s) is NULL."), filename);
+    nuxAssertMsg (BitmapData, TEXT ("[Texture2D::Update] Bitmap for file (%s) is NULL."), filename);
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
     bool ret = Update (BitmapData, UpdateAndCacheResource);
     NUX_SAFE_DELETE (BitmapData);
     return ret;
   }
 
-  void NTexture2D::GetData (void *Buffer, int MipIndex, int StrideY, int face)
+  void Texture2D::GetData (void *Buffer, int MipIndex, int StrideY, int face)
   {
     BYTE	            *Dest        = (BYTE *) Buffer;
-    const BYTE         *Src         = m_Image.GetSurface (MipIndex).GetPtrRawData();
-    int                 RowByteSize = m_Image.GetSurface (MipIndex).GetPitch();
-    int                 NumRows     = m_Image.GetSurface (MipIndex).GetBlockHeight();
+    const BYTE         *Src         = _image.GetSurface (MipIndex).GetPtrRawData();
+    int                 RowByteSize = _image.GetSurface (MipIndex).GetPitch();
+    int                 NumRows     = _image.GetSurface (MipIndex).GetBlockHeight();
 
     for ( int Y = 0; Y < NumRows; Y++ )
     {
@@ -237,13 +237,34 @@ namespace nux
     }
   }
 
-  NTexture* NTexture2D::Clone () const
+  BaseTexture* Texture2D::Clone () const
   {
-    NTexture2D* texture = new NTexture2D(*this);
+    Texture2D* texture = new Texture2D(*this);
     return texture;
   }
 
-  bool NGLTexture::RecreateTexture (NTexture *Source)
+  CachedBaseTexture::CachedBaseTexture (NResourceSet *ResourceManager)
+    :   CachedResourceData (ResourceManager),
+    SourceWidth (0),
+    SourceHeight (0),
+    SourceDepth (0),
+    SourceFormat (BITFMT_UNKNOWN)
+  {
+
+  }
+
+  CachedBaseTexture::~CachedBaseTexture()
+  {
+    m_Texture.Release ();
+  }
+
+  bool CachedBaseTexture::UpdateResource (ResourceData *Resource)
+  {
+    UpdateTexture ( (BaseTexture *) Resource);
+    return TRUE;
+  }
+
+  bool CachedBaseTexture::RecreateTexture (BaseTexture *Source)
   {
     int CurrentWidth   = m_Texture->GetWidth();
     int CurrentHeight  = m_Texture->GetHeight();
@@ -261,12 +282,12 @@ namespace nux
     return Recreate;
   }
 
-  NGLTexture2D::NGLTexture2D (NResourceSet *ResourceManager, NTexture2D *SourceTexture)
-    : NGLTexture (ResourceManager)
+  CachedTexture2D::CachedTexture2D (NResourceSet *ResourceManager, Texture2D *SourceTexture)
+    : CachedBaseTexture (ResourceManager)
   {
     if (SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP <IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -281,29 +302,27 @@ namespace nux
     }
   }
 
-  NGLTexture2D::~NGLTexture2D()
+  CachedTexture2D::~CachedTexture2D()
   {
 
   }
 
-  void NGLTexture2D::UpdateTexture ( NTexture *SourceTexture )
+  void CachedTexture2D::UpdateTexture ( BaseTexture *SourceTexture )
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP <IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (NTexture2D::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType (Texture2D::StaticObjectType) )
     {
-      nuxAssertMsg (0, TEXT ("[NTexture2D::UpdateTexture] Source texture is not of type NTexture2D.") );
+      nuxAssertMsg (0, TEXT ("[Texture2D::UpdateTexture] Source texture is not of type Texture2D.") );
       return;
     }
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = NULL;
-
       m_Texture = GetThreadGLDeviceFactory()->CreateTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
@@ -323,10 +342,10 @@ namespace nux
     }
   }
 
-  void NGLTexture2D::LoadMipLevel (NTexture *SourceTexture, int MipLevel)
+  void CachedTexture2D::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT LockedRect;
-    TRefGL<IOpenGLTexture2D> Texture2D = m_Texture.CastRef<IOpenGLTexture2D>();
+    IntrusiveSP < IOpenGLTexture2D > Texture2D = m_Texture; //m_Texture.CastRef<IOpenGLTexture2D>();
 
     OGL_CALL ( Texture2D->LockRect ( MipLevel, &LockedRect, NULL) );
     SourceTexture->GetData ( LockedRect.pBits, MipLevel, LockedRect.Pitch );
@@ -335,72 +354,72 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////
 
-  NRectangleTexture::NRectangleTexture()
+  TextureRectangle::TextureRectangle()
   {
   }
 
-  NRectangleTexture::NRectangleTexture (const NRectangleTexture &texture)
+  TextureRectangle::TextureRectangle (const TextureRectangle &texture)
   {
-    m_Image = texture.m_Image;
+    _image = texture._image;
   }
 
-  NRectangleTexture::NRectangleTexture (const NTextureData &TextureData)
+  TextureRectangle::TextureRectangle (const NTextureData &BaseTexture)
   {
-    m_Image = TextureData;
+    _image = BaseTexture;
   }
 
-  NRectangleTexture &NRectangleTexture::operator = (const NRectangleTexture &texture)
+  TextureRectangle &TextureRectangle::operator = (const TextureRectangle &texture)
   {
     if (this == &texture)
       return *this;   // Handle self assignment
 
-    m_Image = texture.m_Image;
+    _image = texture._image;
     return *this;
   }
 
-  NRectangleTexture::~NRectangleTexture()
+  TextureRectangle::~TextureRectangle()
   {
 
   }
 
-  bool NRectangleTexture::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool TextureRectangle::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[NRectangleTexture::Update] Argument BitmapData is NULL.") );
+    nuxAssertMsg (BitmapData, TEXT ("[TextureRectangle::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
     if (!BitmapData->IsTextureData() )
     {
-      nuxAssertMsg (0, TEXT ("[NRectangleTexture::Update] Argument BitmapData is not a 2D texture") );
+      nuxAssertMsg (0, TEXT ("[TextureRectangle::Update] Argument BitmapData is not a 2D texture") );
       return false;
     }
 
-    m_Image = *static_cast<const NTextureData *> (BitmapData);
+    _image = *static_cast<const NTextureData *> (BitmapData);
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
       GetThreadGraphicsContext()->UpdateResource (this);
     }
     return true;
   }
 
-  bool NRectangleTexture::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool TextureRectangle::Update (const TCHAR *filename, bool UpdateAndCacheResource)
   {
     bool b = false;
     NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[NRectangleTexture::Update] Bitmap for file (%s) is NULL."), filename);
+    nuxAssertMsg (BitmapData, TEXT ("[TextureRectangle::Update] Bitmap for file (%s) is NULL."), filename);
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
     b = Update (BitmapData);
     NUX_SAFE_DELETE (BitmapData);
     return b;
   }
 
-  void NRectangleTexture::GetData (void *Buffer, int MipIndex, int StrideY, int face)
+  void TextureRectangle::GetData (void *Buffer, int MipIndex, int StrideY, int face)
   {
     BYTE	            *Dest        = (BYTE *) Buffer;
-    const BYTE         *Src         = m_Image.GetSurface (MipIndex).GetPtrRawData();
-    int                 RowByteSize = m_Image.GetSurface (MipIndex).GetPitch();
-    int                 NumRows     = m_Image.GetSurface (MipIndex).GetBlockHeight();
+    const BYTE         *Src         = _image.GetSurface (MipIndex).GetPtrRawData();
+    int                 RowByteSize = _image.GetSurface (MipIndex).GetPitch();
+    int                 NumRows     = _image.GetSurface (MipIndex).GetBlockHeight();
 
     for ( int Y = 0; Y < NumRows; Y++ )
     {
@@ -410,18 +429,18 @@ namespace nux
     }
   }
 
-  NTexture* NRectangleTexture::Clone () const
+  BaseTexture* TextureRectangle::Clone () const
   {
-    NRectangleTexture* texture = new NRectangleTexture(*this);
+    TextureRectangle* texture = new TextureRectangle(*this);
     return texture;
   }
 
-  NGLRectangleTexture::NGLRectangleTexture (NResourceSet *ResourceManager, NRectangleTexture *SourceTexture)
-    : NGLTexture (ResourceManager)
+  CachedTextureRectangle::CachedTextureRectangle (NResourceSet *ResourceManager, TextureRectangle *SourceTexture)
+    : CachedBaseTexture (ResourceManager)
   {
     if (SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -436,29 +455,27 @@ namespace nux
     }
   }
 
-  NGLRectangleTexture::~NGLRectangleTexture()
+  CachedTextureRectangle::~CachedTextureRectangle()
   {
 
   }
 
-  void NGLRectangleTexture::UpdateTexture ( NTexture *SourceTexture )
+  void CachedTextureRectangle::UpdateTexture ( BaseTexture *SourceTexture )
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (NRectangleTexture::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType (TextureRectangle::StaticObjectType) )
     {
-      nuxAssertMsg (0, TEXT ("[NGLRectangleTexture::UpdateTexture] Source texture is not of type NRectangleTexture.") );
+      nuxAssertMsg (0, TEXT ("[CachedTextureRectangle::UpdateTexture] Source texture is not of type TextureRectangle.") );
       return;
     }
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = NULL;
-
       m_Texture = GetThreadGLDeviceFactory()->CreateRectangleTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
@@ -478,10 +495,10 @@ namespace nux
     }
   }
 
-  void NGLRectangleTexture::LoadMipLevel (NTexture *SourceTexture, int MipLevel)
+  void CachedTextureRectangle::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT		        LockedRect;
-    TRefGL<IOpenGLRectangleTexture>	TextureRectangle     = m_Texture.CastRef<IOpenGLRectangleTexture>();
+    IntrusiveSP <IOpenGLRectangleTexture>	TextureRectangle = m_Texture; //m_Texture.CastRef<IOpenGLRectangleTexture>();
 
     OGL_CALL (TextureRectangle->LockRect ( MipLevel, &LockedRect, NULL) );
     SourceTexture->GetData ( LockedRect.pBits, MipLevel, LockedRect.Pitch );
@@ -490,67 +507,67 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////////
 
-  NTextureCube::NTextureCube()
+  TextureCube::TextureCube()
   {
   }
 
-  NTextureCube::NTextureCube (const NTextureCube &texture)
+  TextureCube::TextureCube (const TextureCube &texture)
   {
-    m_Image = texture.m_Image;
+    _image = texture._image;
   }
 
-  NTextureCube &NTextureCube::operator = (const NTextureCube &texture)
+  TextureCube &TextureCube::operator = (const TextureCube &texture)
   {
     if (this == &texture)
       return *this;   // Handle self assignment
 
-    m_Image = texture.m_Image;
+    _image = texture._image;
     return *this;
   }
 
-  NTextureCube::~NTextureCube()
+  TextureCube::~TextureCube()
   {
 
   }
 
-  bool NTextureCube::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool TextureCube::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[NTextureCube::Update] Argument BitmapData is NULL.") );
+    nuxAssertMsg (BitmapData, TEXT ("[TextureCube::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
     if (!BitmapData->IsCubemapTextureData() )
     {
-      nuxAssertMsg (0, TEXT ("[NTextureCube::Update] Argument BitmapData is not a Cube texture") );
+      nuxAssertMsg (0, TEXT ("[TextureCube::Update] Argument BitmapData is not a Cube texture") );
       return false;
     }
 
-    m_Image = *static_cast<const NCubemapData *> (BitmapData);
+    _image = *static_cast<const NCubemapData *> (BitmapData);
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
       GetThreadGraphicsContext()->UpdateResource (this);
     }
 
     return true;
   }
 
-  bool NTextureCube::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool TextureCube::Update (const TCHAR *filename, bool UpdateAndCacheResource)
   {
     NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[NTextureCube::Update] Bitmap for file (%s) is NULL."), filename);
+    nuxAssertMsg (BitmapData, TEXT ("[TextureCube::Update] Bitmap for file (%s) is NULL."), filename);
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
     bool ret = Update (BitmapData);
     NUX_SAFE_DELETE (BitmapData);
     return ret;
   }
 
-  void NTextureCube::GetData (void *Buffer, int MipIndex, int StrideY, int face)
+  void TextureCube::GetData (void *Buffer, int MipIndex, int StrideY, int face)
   {
     BYTE	            *Dest        = (BYTE *) Buffer;
-    const BYTE         *Src         = m_Image.GetSurface (face, MipIndex).GetPtrRawData();
-    int                 RowByteSize = m_Image.GetSurface (face, MipIndex).GetPitch();
-    int                 NumRows     = m_Image.GetSurface (face, MipIndex).GetBlockHeight();
+    const BYTE         *Src         = _image.GetSurface (face, MipIndex).GetPtrRawData();
+    int                 RowByteSize = _image.GetSurface (face, MipIndex).GetPitch();
+    int                 NumRows     = _image.GetSurface (face, MipIndex).GetBlockHeight();
 
     for ( int Y = 0; Y < NumRows; Y++ )
     {
@@ -560,18 +577,18 @@ namespace nux
     }
   }
 
-  NTexture* NTextureCube::Clone () const
+  BaseTexture* TextureCube::Clone () const
   {
-    NTextureCube* texture = new NTextureCube(*this);
+    TextureCube* texture = new TextureCube(*this);
     return texture;
   }
 
-  NGLTextureCube::NGLTextureCube (NResourceSet *ResourceManager, NTextureCube *SourceTexture)
-    : NGLTexture (ResourceManager)
+  CachedTextureCube::CachedTextureCube (NResourceSet *ResourceManager, TextureCube *SourceTexture)
+    : CachedBaseTexture (ResourceManager)
   {
     if (SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -585,29 +602,27 @@ namespace nux
     }
   }
 
-  NGLTextureCube::~NGLTextureCube()
+  CachedTextureCube::~CachedTextureCube()
   {
 
   }
 
-  void NGLTextureCube::UpdateTexture ( NTexture *SourceTexture )
+  void CachedTextureCube::UpdateTexture ( BaseTexture *SourceTexture )
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (NTextureCube::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType (TextureCube::StaticObjectType) )
     {
-      nuxAssertMsg (0, TEXT ("[NGLTextureCube::UpdateTexture] Source texture is not of type NTextureCube.") );
+      nuxAssertMsg (0, TEXT ("[CachedTextureCube::UpdateTexture] Source texture is not of type TextureCube.") );
       return;
     }
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = NULL;
-
       m_Texture = GetThreadGLDeviceFactory()->CreateCubeTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
@@ -626,10 +641,10 @@ namespace nux
     }
   }
 
-  void NGLTextureCube::LoadMipLevel (NTexture *SourceTexture, int MipLevel)
+  void CachedTextureCube::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT		LockedRect;
-    TRefGL<IOpenGLCubeTexture> CubemapTexture = m_Texture.CastRef<IOpenGLCubeTexture>();
+    IntrusiveSP <IOpenGLCubeTexture> CubemapTexture = m_Texture; //m_Texture.CastRef<IOpenGLCubeTexture>();
 
     for (int face = CUBEMAP_FACE_POSITIVE_X; face < GL_TEXTURE_CUBE_MAP_NEGATIVE_Z + 1; face++)
     {
@@ -641,73 +656,73 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////////
 
-  NTextureVolume::NTextureVolume()
+  TextureVolume::TextureVolume()
   {
   }
 
-  NTextureVolume::NTextureVolume (const NTextureVolume &texture)
+  TextureVolume::TextureVolume (const TextureVolume &texture)
   {
-    m_Image = texture.m_Image;
+    _image = texture._image;
   }
 
-  NTextureVolume &NTextureVolume::operator = (const NTextureVolume &texture)
+  TextureVolume &TextureVolume::operator = (const TextureVolume &texture)
   {
     if (this == &texture)
       return *this;   // Handle self assignment
 
-    m_Image = texture.m_Image;
+    _image = texture._image;
     return *this;
   }
 
-  NTextureVolume::~NTextureVolume()
+  TextureVolume::~TextureVolume()
   {
 
   }
 
-  bool NTextureVolume::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool TextureVolume::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[NTextureVolume::Update] Argument BitmapData is NULL.") );
+    nuxAssertMsg (BitmapData, TEXT ("[TextureVolume::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
     if (!BitmapData->IsVolumeTextureData() )
     {
-      nuxAssertMsg (0, TEXT ("[NTextureVolume::Update] Argument BitmapData is not a Volume texture") );
+      nuxAssertMsg (0, TEXT ("[TextureVolume::Update] Argument BitmapData is not a Volume texture") );
       return false;
     }
 
-    m_Image = *static_cast<const NVolumeData *> (BitmapData);
+    _image = *static_cast<const NVolumeData *> (BitmapData);
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
       GetThreadGraphicsContext()->UpdateResource (this);
     }
 
     return true;
   }
 
-  bool NTextureVolume::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool TextureVolume::Update (const TCHAR *filename, bool UpdateAndCacheResource)
   {
     NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[NTextureVolume::Update] Bitmap for file (%s) is NULL."), filename);
+    nuxAssertMsg (BitmapData, TEXT ("[TextureVolume::Update] Bitmap for file (%s) is NULL."), filename);
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
     bool ret = Update (filename);
     NUX_SAFE_DELETE (BitmapData);
     return ret;
   }
 
-  void NTextureVolume::GetData (void *Buffer, int MipIndex, int StrideY, int slice)
+  void TextureVolume::GetData (void *Buffer, int MipIndex, int StrideY, int slice)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
-//     const BYTE*         Src         = m_Image.GetSurface(MipIndex, slice).GetPtrRawData();
-//     int                 RowByteSize = m_Image.GetSurface(MipIndex, slice).GetPitch();
-//     int                 NumRows     = m_Image.GetSurface(MipIndex, slice).GetBlockHeight();
+//     const BYTE*         Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
+//     int                 RowByteSize = _image.GetSurface(MipIndex, slice).GetPitch();
+//     int                 NumRows     = _image.GetSurface(MipIndex, slice).GetBlockHeight();
 
-    for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim (m_Image.GetFormat(), m_Image.GetDepth(), MipIndex); slice++)
+    for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim (_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
     {
-      const BYTE         *Src         = m_Image.GetSurface (MipIndex, slice).GetPtrRawData();
-      int                 RowByteSize = m_Image.GetSurface (MipIndex, slice).GetPitch();
-      int                 NumRows     = m_Image.GetSurface (MipIndex, slice).GetBlockHeight();
+      const BYTE         *Src         = _image.GetSurface (MipIndex, slice).GetPtrRawData();
+      int                 RowByteSize = _image.GetSurface (MipIndex, slice).GetPitch();
+      int                 NumRows     = _image.GetSurface (MipIndex, slice).GetBlockHeight();
 
       for ( int Y = 0; Y < NumRows; Y++ )
       {
@@ -720,9 +735,9 @@ namespace nux
     }
 
 //     BYTE*	            Dest        = (BYTE*)Buffer;
-//     const BYTE*         Src         = m_Image.GetSurface(MipIndex, slice).GetPtrRawData();
-//     int                 RowByteSize = m_Image.GetSurface(MipIndex, slice).GetPitch();
-//     int                 NumRows     = m_Image.GetSurface(MipIndex, slice).GetBlockHeight();
+//     const BYTE*         Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
+//     int                 RowByteSize = _image.GetSurface(MipIndex, slice).GetPitch();
+//     int                 NumRows     = _image.GetSurface(MipIndex, slice).GetBlockHeight();
 //
 //     for( int Y = 0; Y < NumRows; Y++ )
 //     {
@@ -732,18 +747,18 @@ namespace nux
 //     }
   }
 
-  NTexture* NTextureVolume::Clone () const
+  BaseTexture* TextureVolume::Clone () const
   {
-    NTextureVolume* texture = new NTextureVolume(*this);
+    TextureVolume* texture = new TextureVolume(*this);
     return texture;
   }
 
-  NGLTextureVolume::NGLTextureVolume (NResourceSet *ResourceManager, NTextureVolume *SourceTexture)
-    :   NGLTexture (ResourceManager)
+  CachedTextureVolume::CachedTextureVolume (NResourceSet *ResourceManager, TextureVolume *SourceTexture)
+    :   CachedBaseTexture (ResourceManager)
   {
     if (SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -759,29 +774,27 @@ namespace nux
     }
   }
 
-  NGLTextureVolume::~NGLTextureVolume()
+  CachedTextureVolume::~CachedTextureVolume()
   {
 
   }
 
-  void NGLTextureVolume::UpdateTexture ( NTexture *SourceTexture )
+  void CachedTextureVolume::UpdateTexture ( BaseTexture *SourceTexture )
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (NTextureVolume::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType (TextureVolume::StaticObjectType) )
     {
-      nuxAssertMsg (0, TEXT ("[NGLTextureVolume::UpdateTexture] Source texture is not of type NTextureVolume.") );
+      nuxAssertMsg (0, TEXT ("[CachedTextureVolume::UpdateTexture] Source texture is not of type TextureVolume.") );
       return;
     }
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = NULL;
-
       m_Texture = GetThreadGLDeviceFactory()->CreateVolumeTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
@@ -802,11 +815,11 @@ namespace nux
     }
   }
 
-  void NGLTextureVolume::LoadMipLevel (NTexture *SourceTexture, int MipLevel)
+  void CachedTextureVolume::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     VOLUME_LOCKED_BOX       LockedBox;
-    TRefGL<IOpenGLVolumeTexture> VolumeTexture = m_Texture.CastRef<IOpenGLVolumeTexture>();
-    //NTextureVolume*     Source          = UpCastResource<NTextureVolume, NTexture>(SourceTexture);
+    IntrusiveSP <IOpenGLVolumeTexture> VolumeTexture = m_Texture; //m_Texture.CastRef<IOpenGLVolumeTexture>();
+    //TextureVolume*     Source          = UpCastResource<TextureVolume, BaseTexture>(SourceTexture);
 
     //for(int slice = 0; slice < ImageSurface::GetLevelDim(Source->GetFormat(), Source->GetDepth(), MipLevel); slice++)
     {
@@ -824,69 +837,69 @@ namespace nux
   }
 
 //////////////////////////////////////////////////////////////////////////
-  NAnimatedTexture::NAnimatedTexture()
+  TextureFrameAnimation::TextureFrameAnimation()
   {
   }
 
-  NAnimatedTexture::NAnimatedTexture (const NAnimatedTexture &texture)
+  TextureFrameAnimation::TextureFrameAnimation (const TextureFrameAnimation &texture)
   {
-    m_Image = texture.m_Image;
+    _image = texture._image;
   }
 
-  NAnimatedTexture &NAnimatedTexture::operator = (const NAnimatedTexture &texture)
+  TextureFrameAnimation &TextureFrameAnimation::operator = (const TextureFrameAnimation &texture)
   {
     if (this == &texture)
       return *this;   // Handle self assignment
 
-    m_Image = texture.m_Image;
+    _image = texture._image;
     return *this;
   }
 
-  NAnimatedTexture::~NAnimatedTexture()
+  TextureFrameAnimation::~TextureFrameAnimation()
   {
 
   }
 
-  bool NAnimatedTexture::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool TextureFrameAnimation::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[NAnimatedTexture::Update] Argument BitmapData is NULL.") );
+    nuxAssertMsg (BitmapData, TEXT ("[TextureFrameAnimation::Update] Argument BitmapData is NULL.") );
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
     if (!BitmapData->IsAnimatedTextureData() )
     {
-      nuxAssertMsg (0, TEXT ("[NAnimatedTexture::Update] Argument BitmapData is not a Animated texture") );
+      nuxAssertMsg (0, TEXT ("[TextureFrameAnimation::Update] Argument BitmapData is not a Animated texture") );
       return false;
     }
 
-    m_Image = *static_cast<const NAnimatedTextureData *> (BitmapData);
+    _image = *static_cast<const NAnimatedTextureData *> (BitmapData);
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (NGLTexture2D) associated with this object if any.
+      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
       GetThreadGraphicsContext()->UpdateResource (this);
     }
 
     return true;
   }
 
-  bool NAnimatedTexture::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool TextureFrameAnimation::Update (const TCHAR *filename, bool UpdateAndCacheResource)
   {
     NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[NAnimatedTexture::Update] Bitmap for file (%s) is NULL."), filename);
+    nuxAssertMsg (BitmapData, TEXT ("[TextureFrameAnimation::Update] Bitmap for file (%s) is NULL."), filename);
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
     bool ret = Update (BitmapData);
     NUX_SAFE_DELETE (BitmapData);
     return ret;
   }
 
-  void NAnimatedTexture::GetData (void *Buffer, int MipIndex, int StrideY, int slice)
+  void TextureFrameAnimation::GetData (void *Buffer, int MipIndex, int StrideY, int slice)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
-    //for(int slice = 0; slice < ImageSurface::GetLevelDim(m_Image.GetFormat(), m_Image.GetDepth(), MipIndex); slice++)
+    //for(int slice = 0; slice < ImageSurface::GetLevelDim(_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
     {
-      const BYTE         *Src         = m_Image.GetSurface (slice).GetPtrRawData();
-      int                 RowByteSize = m_Image.GetSurface (slice).GetPitch();
-      int                 NumRows     = m_Image.GetSurface (slice).GetBlockHeight();
+      const BYTE         *Src         = _image.GetSurface (slice).GetPtrRawData();
+      int                 RowByteSize = _image.GetSurface (slice).GetPitch();
+      int                 NumRows     = _image.GetSurface (slice).GetBlockHeight();
 
       for (int Y = 0; Y < NumRows; Y++)
       {
@@ -899,23 +912,23 @@ namespace nux
     }
   }
 
-  int NAnimatedTexture::GetFrameTime (int Frame)
+  int TextureFrameAnimation::GetFrameTime (int Frame)
   {
-    return m_Image.GetFrameTime (Frame);
+    return _image.GetFrameTime (Frame);
   }
 
-  NTexture* NAnimatedTexture::Clone () const
+  BaseTexture* TextureFrameAnimation::Clone () const
   {
-    NAnimatedTexture* texture = new NAnimatedTexture(*this);
+    TextureFrameAnimation* texture = new TextureFrameAnimation(*this);
     return texture;
   }
 
-  NGLAnimatedTexture::NGLAnimatedTexture (NResourceSet *ResourceManager, NAnimatedTexture *SourceTexture)
-    :   NGLTexture (ResourceManager)
+  CachedTextureFrameAnimation::CachedTextureFrameAnimation (NResourceSet *ResourceManager, TextureFrameAnimation *SourceTexture)
+    :   CachedBaseTexture (ResourceManager)
   {
     if (SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -930,29 +943,27 @@ namespace nux
     }
   }
 
-  NGLAnimatedTexture::~NGLAnimatedTexture()
+  CachedTextureFrameAnimation::~CachedTextureFrameAnimation()
   {
 
   }
 
-  void NGLAnimatedTexture::UpdateTexture ( NTexture *SourceTexture )
+  void CachedTextureFrameAnimation::UpdateTexture ( BaseTexture *SourceTexture )
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = 0;
+      m_Texture = IntrusiveSP <IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (NAnimatedTexture::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType (TextureFrameAnimation::StaticObjectType) )
     {
-      nuxAssertMsg (0, TEXT ("[NGLAnimatedTexture::UpdateTexture] Source texture is not of type NAnimatedTexture.") );
+      nuxAssertMsg (0, TEXT ("[CachedTextureFrameAnimation::UpdateTexture] Source texture is not of type TextureFrameAnimation.") );
       return;
     }
 
     if (RecreateTexture (SourceTexture) )
     {
-      m_Texture = NULL;
-
       m_Texture = GetThreadGLDeviceFactory()->CreateAnimatedTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
@@ -972,11 +983,11 @@ namespace nux
     }
   }
 
-  void NGLAnimatedTexture::LoadMipLevel (NTexture *SourceTexture, int MipLevel)
+  void CachedTextureFrameAnimation::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT       LockedRect;
-    TRefGL<IOpenGLAnimatedTexture> AnimatedTexture = m_Texture.CastRef<IOpenGLAnimatedTexture>();
-    NAnimatedTexture     *Source          = UpCastResource<NAnimatedTexture, NTexture> (SourceTexture);
+    IntrusiveSP <IOpenGLAnimatedTexture> AnimatedTexture = m_Texture; //m_Texture.CastRef<IOpenGLAnimatedTexture>();
+    TextureFrameAnimation     *Source          = UpCastResource<TextureFrameAnimation, BaseTexture> (SourceTexture);
 
     for (int frame = 0; frame < Source->GetDepth(); frame++)
     {

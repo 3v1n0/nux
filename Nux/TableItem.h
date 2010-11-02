@@ -42,7 +42,10 @@ namespace nux
   {
   public:
     ColumnHeader();
+    //ColumnHeader(const ColumnHeader& Other);
     ~ColumnHeader();
+
+    //ColumnHeader& operator = (const ColumnHeader& Other);
 
     InputArea *m_header_area;
     bool bFixWidth;

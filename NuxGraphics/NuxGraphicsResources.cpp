@@ -184,16 +184,16 @@ namespace nux
 
   void NuxGraphicsResources::CacheFontTextures (NResourceCache &RsrcCache)
   {
-    std::vector<NTexture*>::iterator it;
+    std::vector<BaseTexture*>::iterator it;
 
     for (it = m_normal_font->TextureArray.begin(); it != m_normal_font->TextureArray.end(); it++)
     {
-      RsrcCache.GetCachedResource ( (NResource *) (*it) /*NUX_STATIC_CAST(NResource*, *it)*/);
+      RsrcCache.GetCachedResource ( (ResourceData *) (*it) /*NUX_STATIC_CAST(ResourceData*, *it)*/);
     }
 
     for (it = m_bold_font->TextureArray.begin(); it != m_bold_font->TextureArray.end(); it++)
     {
-      RsrcCache.GetCachedResource ( (NResource *) (*it) /*NUX_STATIC_CAST(NResource*, *it)*/);
+      RsrcCache.GetCachedResource ( (ResourceData *) (*it) /*NUX_STATIC_CAST(ResourceData*, *it)*/);
     }
   }
 

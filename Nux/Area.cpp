@@ -365,9 +365,10 @@ namespace nux
 
     if (this->Type().IsDerivedFromType (View::StaticObjectType) )
     {
-      // The object that is being resized is a View object
-      if (this->OwnsTheReference() == false)
+      // The object that is being resized is a View object and it has a parent.
+      if (this->OwnsTheReference() == false && this->GetParentObject())
       {
+        // Only reference parented areas.
         this->Reference();
       }
 
@@ -397,8 +398,10 @@ namespace nux
     }
     else if (this->Type().IsDerivedFromType (Layout::StaticObjectType) )
     {
-      if (this->OwnsTheReference() == false)
+      // The object that is being resized is a View object and it has a parent.
+      if (this->OwnsTheReference() == false && this->GetParentObject())
       {
+        // Only reference parented areas.
         this->Reference();
       }
 
@@ -446,8 +449,10 @@ namespace nux
       // The object that is being resized is a CoreArea object.
       if (this->m_ParentObject)
       {
-        if (this->OwnsTheReference() == false)
+        // The object that is being resized is a View object and it has a parent.
+        if (this->OwnsTheReference() == false && this->GetParentObject())
         {
+          // Only reference parented areas.
           this->Reference();
         }
 
@@ -463,7 +468,5 @@ namespace nux
     {
       m_ParentObject->RequestBottomUpLayoutComputation (bo_initiator);
     }
-
   }
-
 }

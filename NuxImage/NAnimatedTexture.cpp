@@ -226,12 +226,12 @@ namespace nux
 //         int CurrentPos = fileStream->Tell();
 //
 //         //nuxDebugMsg(TEXT("%s - %s"), Style.GetTCharPtr(), SourceFile.GetTCharPtr());
-//         NBitmapData* TextureData = TextureArchiveLoad_ver_0_0_1(fileStream, DataOffset);
+//         NBitmapData* BaseTexture = TextureArchiveLoad_ver_0_0_1(fileStream, DataOffset);
 //
 //         ArchiveTextureData* pimage = new ArchiveTextureData;
 //         pimage->SourceFile = SourceFile;
 //         pimage->Style = Style;
-//         pimage->TextureData = TextureData;
+//         pimage->BaseTexture = BaseTexture;
 //         pimage->border_left = border_left;
 //         pimage->border_right = border_right;
 //         pimage->border_top = border_top;

@@ -45,7 +45,7 @@ namespace nux
 
     void SetAction (ActionItem *action);
     void SetState (bool b);
-    void SetBitmap (const NTexture* Texture);
+    void SetBitmap (const BaseTexture* Texture);
     // emitters
     void EmitClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
@@ -61,7 +61,7 @@ namespace nux
     HLayout    *hlayout;
     CoreArea   *m_IconArea;
     ActionItem *m_ActionItem;
-    NTexture   *m_Texture;
+    BaseTexture   *m_Texture;
 
   };
 

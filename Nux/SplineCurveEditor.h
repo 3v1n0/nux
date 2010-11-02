@@ -361,7 +361,7 @@ namespace nux
     void DestroyLayout();
 
   private:
-    TRefGL<IOpenGLBaseTexture> m_Texture;
+    IntrusiveSP<IOpenGLBaseTexture> m_Texture;
     GLSh_DrawFunction *m_DrawFunctionShader;
     AbstractPaintLayer *m_Background;
 

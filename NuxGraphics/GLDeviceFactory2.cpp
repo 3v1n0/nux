@@ -38,12 +38,12 @@ namespace nux
 
   static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-  TRefGL<IOpenGLVertexBuffer> GLDeviceFactory::CreateVertexBuffer (int Length,
+  IntrusiveSP<IOpenGLVertexBuffer> GLDeviceFactory::CreateVertexBuffer (int Length,
       VBO_USAGE Usage)
   {
     IOpenGLVertexBuffer *ptr;
     CreateVertexBuffer (Length, Usage, (IOpenGLVertexBuffer **) &ptr);
-    TRefGL<IOpenGLVertexBuffer> h = ptr;
+    IntrusiveSP<IOpenGLVertexBuffer> h = IntrusiveSP<IOpenGLVertexBuffer> (ptr);
     return h;
   }
 
@@ -53,19 +53,19 @@ namespace nux
   {
     *ppVertexBuffer = new IOpenGLVertexBuffer (Length, Usage);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLVertexBuffer> > (*ppVertexBuffer, &_CachedVertexBufferList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVertexBuffer> > (IntrusiveSP<IOpenGLVertexBuffer> (*ppVertexBuffer), &_CachedVertexBufferList);
 
     return OGL_OK;
   }
 
-  TRefGL<IOpenGLIndexBuffer> GLDeviceFactory::CreateIndexBuffer (
+  IntrusiveSP<IOpenGLIndexBuffer> GLDeviceFactory::CreateIndexBuffer (
     int Length
     , VBO_USAGE Usage    // Dynamic or WriteOnly
     , INDEX_FORMAT Format)
   {
     IOpenGLIndexBuffer *ptr;
     CreateIndexBuffer (Length, Usage, Format, (IOpenGLIndexBuffer **) &ptr);
-    TRefGL<IOpenGLIndexBuffer> h = ptr;
+    IntrusiveSP<IOpenGLIndexBuffer> h = IntrusiveSP<IOpenGLIndexBuffer> (ptr);
     return h;
   }
 
@@ -76,16 +76,16 @@ namespace nux
   {
     *ppIndexBuffer = new IOpenGLIndexBuffer (Length, Usage, Format);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLIndexBuffer> > (*ppIndexBuffer, &_CachedIndexBufferList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLIndexBuffer> > (IntrusiveSP<IOpenGLIndexBuffer> (*ppIndexBuffer), &_CachedIndexBufferList);
 
     return OGL_OK;
   }
 
-  TRefGL<IOpenGLPixelBufferObject> GLDeviceFactory::CreatePixelBufferObject (int Size, VBO_USAGE Usage)
+  IntrusiveSP<IOpenGLPixelBufferObject> GLDeviceFactory::CreatePixelBufferObject (int Size, VBO_USAGE Usage)
   {
     IOpenGLPixelBufferObject *ptr;
     CreatePixelBufferObject (Size, Usage, (IOpenGLPixelBufferObject **) &ptr);
-    TRefGL<IOpenGLPixelBufferObject> h = ptr;
+    IntrusiveSP<IOpenGLPixelBufferObject> h = IntrusiveSP<IOpenGLPixelBufferObject> (ptr);
     return h;
   }
 
@@ -94,17 +94,17 @@ namespace nux
   {
     *ppPixelBufferObject = new IOpenGLPixelBufferObject (Size, Usage);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLPixelBufferObject> > (*ppPixelBufferObject, &_CachedPixelBufferObjectList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLPixelBufferObject> > (IntrusiveSP<IOpenGLPixelBufferObject> (*ppPixelBufferObject), &_CachedPixelBufferObjectList);
 
     return OGL_OK;
   }
 
-  TRefGL<IOpenGLVertexDeclaration> GLDeviceFactory::CreateVertexDeclaration (
+  IntrusiveSP<IOpenGLVertexDeclaration> GLDeviceFactory::CreateVertexDeclaration (
     const VERTEXELEMENT *pVertexElements)
   {
     IOpenGLVertexDeclaration *ptr;
     CreateVertexDeclaration (pVertexElements, (IOpenGLVertexDeclaration **) &ptr);
-    TRefGL<IOpenGLVertexDeclaration> h = ptr;
+    IntrusiveSP<IOpenGLVertexDeclaration> h = IntrusiveSP<IOpenGLVertexDeclaration> (ptr);
     return h;
   }
 
@@ -113,7 +113,7 @@ namespace nux
   {
     *ppDecl = new IOpenGLVertexDeclaration (pVertexElements);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< TRefGL<IOpenGLVertexDeclaration> > (*ppDecl, &_CachedVertexDeclarationList);
+    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVertexDeclaration> > (IntrusiveSP<IOpenGLVertexDeclaration> (*ppDecl), &_CachedVertexDeclarationList);
 
     return OGL_OK;
   }
@@ -128,8 +128,8 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
   }
 
-  int GLDeviceFactory::DrawIndexedPrimitive (TRefGL<IOpenGLIndexBuffer> IndexBuffer,
-      TRefGL<IOpenGLVertexDeclaration> VertexDeclaration,
+  int GLDeviceFactory::DrawIndexedPrimitive (IntrusiveSP<IOpenGLIndexBuffer> IndexBuffer,
+      IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
       PRIMITIVE_TYPE PrimitiveType,
       int BaseVertexIndex,
       int MinIndex,
@@ -264,7 +264,7 @@ namespace nux
 
 
 // Draw Primitive without index buffer
-  int GLDeviceFactory::DrawPrimitive (TRefGL<IOpenGLVertexDeclaration> VertexDeclaration,
+  int GLDeviceFactory::DrawPrimitive (IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
                                       PRIMITIVE_TYPE PrimitiveType,
                                       unsigned vtx_start_,
                                       unsigned PrimitiveCount)
@@ -395,7 +395,7 @@ namespace nux
   }
 
 // Draw Primitive without index buffer, and use a user pointer for the source of the stream.
-  int GLDeviceFactory::DrawPrimitiveUP (TRefGL<IOpenGLVertexDeclaration> VertexDeclaration,
+  int GLDeviceFactory::DrawPrimitiveUP (IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
                                         PRIMITIVE_TYPE PrimitiveType,
                                         unsigned int PrimitiveCount,
                                         const void *pVertexStreamZeroData,
@@ -528,7 +528,7 @@ namespace nux
     CHECKGL ( glDisableClientState (GL_COLOR_ARRAY) );
   }
 
-  void GLDeviceFactory::DrawTextureQuad_FixPipe (TRefGL<IOpenGLTexture2D> texture, int x, int y, int width, int height,
+  void GLDeviceFactory::DrawTextureQuad_FixPipe (IntrusiveSP<IOpenGLTexture2D> texture, int x, int y, int width, int height,
       FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1)
   {
 //    DirectX Matrix
@@ -620,7 +620,7 @@ namespace nux
 
   int GLDeviceFactory::SetStreamSource (
     unsigned int StreamNumber,
-    TRefGL<IOpenGLVertexBuffer> pStreamData,
+    IntrusiveSP<IOpenGLVertexBuffer> pStreamData,
     unsigned int OffsetInBytes,
     unsigned int Stride,
     unsigned int NumComponent,

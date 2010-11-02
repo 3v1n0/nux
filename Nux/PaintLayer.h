@@ -29,7 +29,7 @@
 namespace nux
 {
 
-  class NTexture;
+  class BaseTexture;
 
   class ColorLayer: public AbstractPaintLayer
   {
@@ -80,12 +80,12 @@ namespace nux
   class TextureLayer: public AbstractPaintLayer
   {
   public:
-    TextureLayer (TRefGL< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
+    TextureLayer (IntrusiveSP< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
     virtual void Renderlayer (GraphicsContext &GfxContext);
     virtual AbstractPaintLayer *Clone() const;
 
   private:
-    TRefGL< IOpenGLBaseTexture > m_device_texture;
+    IntrusiveSP< IOpenGLBaseTexture > m_device_texture;
     Color m_color;
     bool m_write_alpha;
     ROPConfig m_rop;

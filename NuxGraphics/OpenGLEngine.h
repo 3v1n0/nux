@@ -48,8 +48,8 @@ namespace nux
   class FontTexture;
   class FontRenderer;
   class FilePath;
-  class NTexture;
-  class NRectangleTexture;
+  class BaseTexture;
+  class TextureRectangle;
 
   class ROPConfig
   {
@@ -94,12 +94,12 @@ namespace nux
     OpenGLContext m_CurrrentContext;
 
     // Load Textures
-    NTexture *Load2DTextureFile (const char *filename);
-    NTexture *Load2DRectangleTextureFile (const char *filename);
-    NTexture *Load2DTextureFileGenerateAlpha (const char *filename, int red, int green, int blue);
+    BaseTexture *Load2DTextureFile (const char *filename);
+    BaseTexture *Load2DRectangleTextureFile (const char *filename);
+    BaseTexture *Load2DTextureFileGenerateAlpha (const char *filename, int red, int green, int blue);
 
-    void SetTexture (int TextureUnit, NTexture *Texture);
-    void SetTexture (int TextureUnit, TRefGL< IOpenGLBaseTexture > Texture);
+    void SetTexture (int TextureUnit, BaseTexture *Texture);
+    void SetTexture (int TextureUnit, IntrusiveSP< IOpenGLBaseTexture > Texture);
     void EnableTextureMode (int TextureUnit, int TextureMode);
     void DisableTextureMode (int TextureUnit, int TextureMode);
     void DisableAllTextureMode (int TextureUnit);
@@ -110,22 +110,22 @@ namespace nux
     ///////////////////
 
 //     void QRP_GLSL_1Tex(int x, int y, int width, int height,
-//         NTexture* Texture, TexCoordXForm& texxform0, Color& color);
-    void QRP_1Tex (int x, int y, int width, int height, TRefGL<IOpenGLBaseTexture> Tex0, TexCoordXForm texxform, Color Color0);
+//         BaseTexture* Texture, TexCoordXForm& texxform0, Color& color);
+    void QRP_1Tex (int x, int y, int width, int height, IntrusiveSP<IOpenGLBaseTexture> Tex0, TexCoordXForm texxform, Color Color0);
     void QRP_Color (int x, int y, int width, int height, const Color &c0);
     void QRP_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
     void QRP_ColorModTexAlpha (int x, int y, int width, int height,
-                               TRefGL<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color);
+                               IntrusiveSP<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color);
 
     void QRP_2Tex (int x, int y, int width, int height,
-                   TRefGL<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
-                   TRefGL<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
+                   IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+                   IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
 
     void QRP_4Tex (int x, int y, int width, int height,
-                   TRefGL<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
-                   TRefGL<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
-                   TRefGL<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
-                   TRefGL<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3);
+                   IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+                   IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
+                   IntrusiveSP<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
+                   IntrusiveSP<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3);
 
     void QRP_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0);
     void QRP_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0, Color c1, Color c2);
@@ -135,23 +135,23 @@ namespace nux
 
 
     void QRP_GLSL_1Tex (int x, int y, int width, int height,
-                        TRefGL<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color);
+                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color);
 
     void QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0);
     void QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
 
     void QRP_GLSL_ColorModTexAlpha (int x, int y, int width, int height,
-                                    TRefGL<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color);
+                                    IntrusiveSP<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color);
 
     void QRP_GLSL_2Tex (int x, int y, int width, int height,
-                        TRefGL<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
-                        TRefGL<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
+                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
 
     void QRP_GLSL_4Tex (int x, int y, int width, int height,
-                        TRefGL<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
-                        TRefGL<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
-                        TRefGL<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
-                        TRefGL<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3);
+                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
+                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
+                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3);
 
     void QRP_GLSL_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0);
     void QRP_GLSL_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0, Color c1, Color c2);
@@ -237,18 +237,18 @@ namespace nux
 
     /*!
         Cache a resource if it has previously been cached. If the resource does not contain valid data
-        then the returned value is not valid. Check that the returned hardware resource is valid by calling TRefGL<NGLResource>.IsValid().
+        then the returned value is not valid. Check that the returned hardware resource is valid by calling IntrusiveSP<CachedResourceData>.IsValid().
         @param Resource The resource to cache.
         @return A hardware resource.
     */
-    TRefGL<NGLResource> CacheResource (NResource *Resource);
+    IntrusiveSP<CachedResourceData> CacheResource (ResourceData *Resource);
 
     /*!
         Update a resource if it has previously been cached.
         @param Resource The resource to cache.
     */
-    void UpdateResource (NResource *Resource);
-    bool IsResourceCached (NResource *Resource);
+    void UpdateResource (ResourceData *Resource);
+    bool IsResourceCached (ResourceData *Resource);
     NResourceCache ResourceCache;
 
     Matrix4 GetProjectionMatrix();
@@ -274,76 +274,76 @@ namespace nux
     void InitShaders();
 
     // Colored Quad shader
-    TRefGL<IOpenGLShaderProgram> m_ColoredQuadProg;
-    TRefGL<IOpenGLShaderProgram> m_ColoredPrimitiveProg;
+    IntrusiveSP<IOpenGLShaderProgram> m_ColoredQuadProg;
+    IntrusiveSP<IOpenGLShaderProgram> m_ColoredPrimitiveProg;
 
     //////////////////////
     // ASM shaders
 
     void InitAsmColorShader();
     //! Render polygons with a single color.
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmColor;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmColor;
 
     void InitAsmTextureShader();
     //! Render polygons with a texture modulated by a color.
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmTextureModColor;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmTextureModColor;
     //! Same as m_AsmTextureModColor for rectangle textures.
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmTextureRectModColor;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmTextureRectModColor;
 
     void InitAsmColorModTexMaskAlpha();
     //! Render polygons with a color masked by the alpha provided sampling a texture.
     //! Requires: Enable GPU Alpha Blending
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmColorModTexMaskAlpha;
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmColorModTexRectMaskAlpha;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmColorModTexMaskAlpha;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmColorModTexRectMaskAlpha;
 
     void InitAsm2TextureAdd();
     //! Render polygons with 2 textures, each modulated by a color, and added together.
-    TRefGL<IOpenGLAsmShaderProgram> m_Asm2TextureAdd;
-    TRefGL<IOpenGLAsmShaderProgram> m_Asm2TextureRectAdd;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_Asm2TextureAdd;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_Asm2TextureRectAdd;
 
     void InitAsm4TextureAdd();
     //! Render polygons with 4 textures, each modulated by a color, and added together.
-    TRefGL<IOpenGLAsmShaderProgram> m_Asm4TextureAdd;
-    TRefGL<IOpenGLAsmShaderProgram> m_Asm4TextureRectAdd;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_Asm4TextureAdd;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_Asm4TextureRectAdd;
 
     void InitAsmBlendModes();
 
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmPSBNormal;
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmPSBLighten;
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmPSBDarken;
-    TRefGL<IOpenGLAsmShaderProgram> m_AsmPSBMultiply;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmPSBNormal;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmPSBLighten;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmPSBDarken;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmPSBMultiply;
 
     //////////////////////
     // GLSL shaders
 
     void InitSlColorShader();
     //! Render polygons with a single color.
-    TRefGL<IOpenGLShaderProgram> m_SlColor;
+    IntrusiveSP<IOpenGLShaderProgram> m_SlColor;
 
     void InitSlTextureShader();
     //! Render polygons with a texture modulated by a color.
-    TRefGL<IOpenGLShaderProgram> m_SlTextureModColor;
+    IntrusiveSP<IOpenGLShaderProgram> m_SlTextureModColor;
 
     void InitSlColorModTexMaskAlpha();
     //! Render polygons with a color masked by the alpha provided sampling a texture.
     //! Requires: Enable GPU Alpha Blending
-    TRefGL<IOpenGLShaderProgram> m_SlColorModTexMaskAlpha;
-    TRefGL<IOpenGLShaderProgram> m_SlColorModTexRectMaskAlpha;
+    IntrusiveSP<IOpenGLShaderProgram> m_SlColorModTexMaskAlpha;
+    IntrusiveSP<IOpenGLShaderProgram> m_SlColorModTexRectMaskAlpha;
 
     void InitSl2TextureAdd();
     //! Render polygons with 2 textures, each modulated by a color, and added together.
-    TRefGL<IOpenGLShaderProgram> m_Sl2TextureAdd;
+    IntrusiveSP<IOpenGLShaderProgram> m_Sl2TextureAdd;
 
     void InitSl4TextureAdd();
     //! Render polygons with 4 textures, each modulated by a color, and added together.
-    TRefGL<IOpenGLShaderProgram> m_Sl4TextureAdd;
+    IntrusiveSP<IOpenGLShaderProgram> m_Sl4TextureAdd;
 
     void InitSlBlendModes();
 
-    TRefGL<IOpenGLShaderProgram> m_SlPSBNormal;
-    TRefGL<IOpenGLShaderProgram> m_SlPSBLighten;
-    TRefGL<IOpenGLShaderProgram> m_SlPSBDarken;
-    TRefGL<IOpenGLShaderProgram> m_SlPSBMultiply;
+    IntrusiveSP<IOpenGLShaderProgram> m_SlPSBNormal;
+    IntrusiveSP<IOpenGLShaderProgram> m_SlPSBLighten;
+    IntrusiveSP<IOpenGLShaderProgram> m_SlPSBDarken;
+    IntrusiveSP<IOpenGLShaderProgram> m_SlPSBMultiply;
 
     Matrix4 m_ProjectionMatrix;
     Matrix4 m_ModelViewMatrix;

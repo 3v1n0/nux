@@ -454,7 +454,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_AsmColor;
+    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_AsmColor;
 
     shader_program->Begin();
 
@@ -488,7 +488,7 @@ namespace nux
     shader_program->End();
   }
 
-  void GraphicsContext::QRP_1Tex (int x, int y, int width, int height, TRefGL<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, Color color)
+  void GraphicsContext::QRP_1Tex (int x, int y, int width, int height, IntrusiveSP<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, Color color)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
@@ -502,7 +502,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
     
-    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_AsmTextureModColor;
+    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_AsmTextureModColor;
     if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_AsmTextureRectModColor;
@@ -552,7 +552,7 @@ namespace nux
   }
 
   void GraphicsContext::QRP_ColorModTexAlpha (int x, int y, int width, int height,
-      TRefGL<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
+      IntrusiveSP<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
 
@@ -567,7 +567,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_AsmColorModTexMaskAlpha;
+    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_AsmColorModTexMaskAlpha;
     if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_AsmColorModTexRectMaskAlpha;
@@ -617,8 +617,8 @@ namespace nux
   }
 
   void GraphicsContext::QRP_2Tex (int x, int y, int width, int height,
-                                  TRefGL<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
-                                  TRefGL<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
+                                  IntrusiveSP<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
+                                  IntrusiveSP<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
@@ -634,7 +634,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_Asm2TextureAdd;
+    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_Asm2TextureAdd;
     if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_Asm2TextureRectAdd;
@@ -687,10 +687,10 @@ namespace nux
   }
 
   void GraphicsContext::QRP_4Tex (int x, int y, int width, int height,
-                                  TRefGL<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
-                                  TRefGL<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1,
-                                  TRefGL<IOpenGLBaseTexture> device_texture2, TexCoordXForm &texxform2, const Color &color2,
-                                  TRefGL<IOpenGLBaseTexture> device_texture3, TexCoordXForm &texxform3, const Color &color3)
+                                  IntrusiveSP<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
+                                  IntrusiveSP<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1,
+                                  IntrusiveSP<IOpenGLBaseTexture> device_texture2, TexCoordXForm &texxform2, const Color &color2,
+                                  IntrusiveSP<IOpenGLBaseTexture> device_texture3, TexCoordXForm &texxform3, const Color &color3)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
@@ -708,7 +708,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    TRefGL<IOpenGLAsmShaderProgram> shader_program = m_Asm4TextureAdd;
+    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_Asm4TextureAdd;
     if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_Asm4TextureRectAdd;
@@ -806,7 +806,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    TRefGL<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
+    IntrusiveSP<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
 
     ShaderProg->Begin();
 
@@ -854,7 +854,7 @@ namespace nux
       x1, y1, 0.0f, 1.0f, c1.R(), c1.G(), c1.B(), c1.A(),
     };
 
-    TRefGL<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
+    IntrusiveSP<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
 
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -907,7 +907,7 @@ namespace nux
       x0, y0,                             0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
     };
 
-    TRefGL<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
+    IntrusiveSP<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );

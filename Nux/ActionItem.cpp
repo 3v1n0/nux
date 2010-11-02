@@ -135,7 +135,7 @@ namespace nux
     return m_Label.GetTCharPtr();
   }
 
-  void ActionItem::SetIcon (const NTexture* icon)
+  void ActionItem::SetIcon (const BaseTexture* icon)
   {
     if(m_Icon)
       NUX_SAFE_DELETE (m_Icon);
@@ -143,7 +143,7 @@ namespace nux
   }
 
   // NUXTODO: should return the bitmap data instead or a const pointer?.
-  const NTexture* ActionItem::GetIcon()
+  const BaseTexture* ActionItem::GetIcon()
   {
     return m_Icon;
   }

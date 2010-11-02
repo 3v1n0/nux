@@ -84,7 +84,6 @@ namespace nux
     std::vector<MySplitter *> m_SplitterObject;
     std::vector<float> m_SplitConfig;
 
-    Layout *m_layout;
     Point m_point;
     bool new_addition;
 

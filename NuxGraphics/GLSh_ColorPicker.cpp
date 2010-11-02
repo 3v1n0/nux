@@ -338,7 +338,7 @@ namespace nux
 
   GLSh_ColorPicker::~GLSh_ColorPicker()
   {
-    GlobalPixelShader = 0;
+    GlobalPixelShader = IntrusiveSP<IOpenGLPixelShader> (0);
     sprog.Release();
     m_AsmProg.Release();
   }

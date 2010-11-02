@@ -322,7 +322,7 @@ namespace nux
     Vector4 *Offset = new Vector4[StrLength*4];
     Vector4 *Scale = new Vector4[StrLength*4];
 
-    TRefGL<NGLTexture> glTexture = m_OpenGLEngine.ResourceCache.GetCachedResource (Font->TextureArray[0]);
+    IntrusiveSP<CachedBaseTexture> glTexture = m_OpenGLEngine.ResourceCache.GetCachedResource (Font->TextureArray[0]);
 
     float tex_width = (float) glTexture->m_Texture->GetWidth();
     float tex_height = (float) glTexture->m_Texture->GetHeight();
@@ -442,7 +442,7 @@ namespace nux
     int iScale = 0;
     int iOffset = 0;
 
-    TRefGL<IOpenGLAsmShaderProgram> shader_program;
+    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program;
     if (!USE_ARB_SHADERS)
     {
       m_ShaderProg->Begin();

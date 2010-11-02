@@ -52,7 +52,7 @@ namespace nux
 
   FontTexture::~FontTexture()
   {
-    std::vector<NTexture*>::iterator it;
+    std::vector<BaseTexture*>::iterator it;
     for(it = TextureArray.begin(); it != TextureArray.end(); it++)
     {
       delete (*it);
@@ -221,7 +221,7 @@ namespace nux
           NString font_texture_file = GNuxGraphicsResources.FindResourceLocation (texture);
 #endif
 
-          NRectangleTexture *Texture = new NRectangleTexture ();
+          TextureRectangle *Texture = new TextureRectangle ();
           NBitmapData *BitmapData = LoadImageFile (font_texture_file.GetTCharPtr ());
 
           if (BitmapData)

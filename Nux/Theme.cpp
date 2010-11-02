@@ -264,7 +264,7 @@ namespace nux
       if (1)
       {
         NBitmapData *uitexturedata = UITextureArchive.ExtractTextureStyle (style.GetTCharPtr() );
-        NTexture* RectangleTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+        BaseTexture* RectangleTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
 
         if (uitexturedata)
           RectangleTexture->Update (uitexturedata);
@@ -321,9 +321,9 @@ namespace nux
     return Rect (0, 0, 0, 0);
   }
 
-  NTexture *UXTheme::Load2DTextureFile (const char *filename)
+  BaseTexture *UXTheme::Load2DTextureFile (const char *filename)
   {
-    NTexture* texture2D = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BaseTexture* texture2D = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
     NBitmapData *BitmapData = LoadImageFile (filename);
 
     if (BitmapData)
@@ -332,9 +332,9 @@ namespace nux
     return texture2D;
   }
 
-//   NTexture *UXTheme::Load2DRectangleTextureFile (const char *filename)
+//   BaseTexture *UXTheme::Load2DRectangleTextureFile (const char *filename)
 //   {
-//     NRectangleTexture *RectangleTexture = new NRectangleTexture();
+//     TextureRectangle *RectangleTexture = new TextureRectangle();
 //     NBitmapData *BitmapData = LoadImageFile (filename);
 // 
 //     if (BitmapData)
@@ -344,7 +344,7 @@ namespace nux
 //     return RectangleTexture;
 //   }
 
-  NTexture *UXTheme::Load2DTextureFileGenerateAlpha (const char *filename, int red, int green, int blue)
+  BaseTexture *UXTheme::Load2DTextureFileGenerateAlpha (const char *filename, int red, int green, int blue)
   {
     return 0;
   }

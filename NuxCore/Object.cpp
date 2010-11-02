@@ -272,5 +272,15 @@ namespace nux
     m_weak_reference_count->Decrement();
   }
 
+  int Object::GetReferenceCount () const
+  {
+    return m_reference_count->GetValue();
+  }
+
+  int Object::GetWeakReferenceCount () const
+  {
+    return m_weak_reference_count->GetValue();
+  }
+
 }
 
