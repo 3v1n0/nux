@@ -509,7 +509,8 @@ namespace nux
         {
           // We fall here after something dramatic has happen to the window such as a resizing. In this case
           // everything must be rendered. This is very costly and should happen rarely.
-          RenderMainWindowComposition (true, true);
+          if (!GetGraphicsThread()->IsEmbeddedWindow() )
+            RenderMainWindowComposition (true, true);
 
           if (1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
@@ -525,7 +526,8 @@ namespace nux
         {
           // A popup removed cause the whole window to be dirty (at least some part of it).
           // So exchange DrawList with a real Draw.
-          RenderMainWindowComposition (false, true);
+          if (!GetGraphicsThread()->IsEmbeddedWindow() )
+            RenderMainWindowComposition (false, true);
 
           if (1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
@@ -539,7 +541,8 @@ namespace nux
         }
         else
         {
-          RenderMainWindowComposition (false, true);
+          if (!GetGraphicsThread()->IsEmbeddedWindow() )
+            RenderMainWindowComposition (false, true);
 
           if (1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {

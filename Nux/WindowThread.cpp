@@ -699,9 +699,7 @@ namespace nux
             b |= true;
           }
 
-          //int n = (int) m_ClientAreaList.size();
-
-          if (b || IsRedrawNeeded() )
+          if (b || IsRedrawNeeded())
           {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
             if (IsEmbeddedWindow ())
