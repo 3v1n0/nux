@@ -37,7 +37,6 @@ namespace nux
 
   ClientArea::ClientArea (NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
-    ,   m_IsRealTime (false)
   {
     m_IsClientAreaEnabled = false;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, 4 * PRACTICAL_WIDGET_HEIGHT);
@@ -47,9 +46,6 @@ namespace nux
     OnMouseDrag.connect (sigc::mem_fun (this, &ClientArea::RecvMouseDrag) );
     OnMouseMove.connect (sigc::mem_fun (this, &ClientArea::RecvMouseMove) );
     OnKeyEvent.connect (sigc::mem_fun (this, &ClientArea::RecvKeyEvent) );
-
-    m_RealTimeCallback = new TimerFunctor;
-    m_RealTimeCallback->OnTimerExpired.connect (sigc::mem_fun (this, &ClientArea::RealTimeHandler) );
 
     if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
     {
@@ -61,7 +57,6 @@ namespace nux
 
   ClientArea::~ClientArea()
   {
-    NUX_SAFE_DELETE (m_RealTimeCallback);
   }
 
   long ClientArea::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -299,39 +294,15 @@ namespace nux
 
   void ClientArea::NeedRedraw()
   {
-    GetGraphicsThread()->AddClientAreaToRedrawList (this);
+    //GetThreadWindowCompositor()..AddToDrawList(this);
+    WindowThread* application = GetGraphicsThread();
+    if(application)
+    {
+      application->AddToDrawList(this);
+      application->RequestRedraw();
+      //GetThreadWindowCompositor().AddToDrawList(this);
+    }
     m_NeedRedraw = true;
-  }
-
-  void ClientArea::RealTime (bool b)
-  {
-    m_IsRealTime = b;
-
-    if (m_IsRealTime)
-    {
-      GetGraphicsThread()->AddClientAreaToRedrawList (this);
-      m_RealTimeHandler = GetThreadTimer().AddTimerHandler (10, m_RealTimeCallback, this);
-    }
-    else
-    {
-      m_RealTimeHandler = 0;
-    }
-  }
-
-  bool ClientArea::IsRealTime() const
-  {
-    return m_IsRealTime;
-  }
-
-  void ClientArea::RealTimeHandler (void *v)
-  {
-    GetGraphicsThread()->AddClientAreaToRedrawList (this);
-
-    if (m_IsRealTime)
-    {
-      // With a time set to 0, the timer will be trigger at the next frame (whenever that frame happens);
-      m_RealTimeHandler = GetThreadTimer().AddTimerHandler (0, m_RealTimeCallback, this);
-    }
   }
 
 }

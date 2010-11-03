@@ -70,6 +70,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (ResourceData, Object);
   public:
     ResourceData (NUX_FILE_LINE_PROTO);
+    virtual ~ResourceData ();
     int GetResourceIndex () const;
 
   private:

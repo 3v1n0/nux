@@ -36,8 +36,7 @@ namespace nux
 
   void NuxGraphicsResources::Destructor()
   {
-    m_normal_font.Release();
-    m_bold_font.Release();
+
   }
 
   void NuxGraphicsResources::InitializeResources()
@@ -164,45 +163,6 @@ namespace nux
     m_ResourcePathLocation.AddSearchPath (m_FontSearchPath);
     m_ResourcePathLocation.AddSearchPath (m_ShaderSearchPath);
     m_ResourcePathLocation.AddSearchPath (m_UITextureSearchPath);
-
-    if (m_normal_font == 0)
-    {
-      FontTexture* fnt = new FontTexture (FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      m_normal_font = IntrusiveSP<FontTexture> (fnt);
-      fnt->UnReference ();
-    }
-
-    if (m_bold_font == 0)
-    {
-      FontTexture* fnt = new FontTexture (FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      m_bold_font = IntrusiveSP<FontTexture> (fnt);
-      fnt->UnReference ();
-    }
-  }
-
-  IntrusiveSP<FontTexture> NuxGraphicsResources::GetFont()
-  {
-    return m_normal_font;
-  }
-
-  IntrusiveSP<FontTexture> NuxGraphicsResources::GetBoldFont()
-  {
-    return m_bold_font;
-  }
-
-  void NuxGraphicsResources::CacheFontTextures (NResourceCache &RsrcCache)
-  {
-    std::vector<BaseTexture*>::iterator it;
-
-    for (it = m_normal_font->TextureArray.begin(); it != m_normal_font->TextureArray.end(); it++)
-    {
-      RsrcCache.GetCachedResource ( (ResourceData *) (*it) /*NUX_STATIC_CAST(ResourceData*, *it)*/);
-    }
-
-    for (it = m_bold_font->TextureArray.begin(); it != m_bold_font->TextureArray.end(); it++)
-    {
-      RsrcCache.GetCachedResource ( (ResourceData *) (*it) /*NUX_STATIC_CAST(ResourceData*, *it)*/);
-    }
   }
 
 #ifdef NUX_OS_WINDOWS

@@ -157,7 +157,7 @@ namespace nux
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_BackgroundLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
 
-    delete CheckboardPattern;
+    CheckboardPattern->UnReference ();
 
     m_ValueIcon->SetMinMaxSize (40, 16);
     m_GraphIcon->SetMinMaxSize (16, 16);

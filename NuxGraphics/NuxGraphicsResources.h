@@ -39,22 +39,7 @@ namespace nux
     NString FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
     NString FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
 
-//         const std::vector<NString>& GetFontSearchPath() const {return m_FontSearchPath;}
-//         const std::vector<NString>& GetShaderSearchPath() const {return m_ShaderSearchPath;}
-//         const std::vector<NString>& GetUITextureSearchPath() const {return m_UITextureSearchPath;}
-
-    IntrusiveSP<FontTexture> GetFont();
-    IntrusiveSP<FontTexture> GetBoldFont();
-
-    /*!
-        Cache font textures into the provided resource cache.
-
-    */
-    void CacheFontTextures (NResourceCache &RsrcCache);
-
   private:
-    IntrusiveSP<FontTexture> m_normal_font;    //!< The normal font renderer
-    IntrusiveSP<FontTexture> m_bold_font;      //!< The bold font renderer
 
     std::vector<NString> m_FontSearchPath;
     std::vector<NString> m_ShaderSearchPath;

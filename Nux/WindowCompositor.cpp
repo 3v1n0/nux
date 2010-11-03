@@ -505,28 +505,10 @@ namespace nux
 
       if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
       {
-//             CHECKGL( glClearColor(0.0f, 0.0f, 1.0f, 0.0f) );
-//             CHECKGL( glClearDepth(1.0f) );
-//             CHECKGL( glClearStencil(0) );
-//             CHECKGL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
-//             GetGraphicsThread()->GetGraphicsContext().SetViewport(0, 0, m_Width, m_Height);
-//             GetGraphicsThread()->GetGraphicsContext().Push2DWindow(m_Width, m_Height);
-//             //GetGraphicsThread()->GetGraphicsContext().SetEnvModeSelectColor(GL_TEXTURE0);
-//
-//             glBegin(GL_QUADS);
-//             {
-//                 glColor4f(0, 1, 1, 1);
-//                 glVertex4f(0,  0, 0, 1.0f);
-//                 glVertex4f(0,  0 + 50, 0, 1.0f);
-//                 glVertex4f(0 + 50,  0 + 50, 0, 1.0f);
-//                 glVertex4f(0 + 50,  0, 0, 1.0f);
-//             }
-//             glEnd();
-//             GetGraphicsThread()->GetGraphicsContext().QRP_Color(10, 10, 100, 100, Color::RoyalBlue);
         if (force_draw || SizeConfigurationEvent)
         {
           // We fall here after something dramatic has happen to the window such as a resizing. In this case
-          // everything must be rendered This is very intensize and should happen rarely.
+          // everything must be rendered. This is very costly and should happen rarely.
           RenderMainWindowComposition (true, true);
 
           if (1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
@@ -612,19 +594,7 @@ namespace nux
       m_PopupRemoved = false;
       m_MenuRemoved = false;
 
-      PageBBox page;
-      page.xmin = 0;
-      page.xmax = 100;
-      page.ymin = 700;
-      page.ymax = 730;
-      page.x_margin = 0;
-      page.y_margin = 0;
-
-//         NString FPS = NString::Printf(TEXT("FPS: %3.2f"), GetGraphicsThread()->GetWindow().GetFrameRate());
-
       GetGraphicsThread()->GetGraphicsContext().Pop2DWindow();
-//         GetGraphicsThread()->GetGraphicsContext().ResetStats();
-//         GetGraphicsThread()->GetWindow().SwapBuffer();
     }
   }
 

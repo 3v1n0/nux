@@ -406,38 +406,6 @@ namespace nux
     m_LayoutRefreshList.clear();
   }
 
-  void WindowThread::AddClientAreaToRedrawList (ClientArea *clientarea)
-  {
-    nuxAssert (clientarea);
-
-    if (clientarea == 0)
-      return;
-
-    std::list<ClientArea *>::iterator it;
-    it = find (m_ClientAreaList.begin(), m_ClientAreaList.end(), clientarea);
-
-    if (it == m_ClientAreaList.end() )
-    {
-      m_ClientAreaList.push_back (clientarea);
-    }
-  }
-
-  void WindowThread::RemoveClientAreaFromRefreshList (ClientArea *clientarea)
-  {
-    std::list<ClientArea *>::iterator it;
-    it = find (m_ClientAreaList.begin(), m_ClientAreaList.end(), clientarea);
-
-    if (it != m_ClientAreaList.end() )
-    {
-      m_ClientAreaList.erase (it);
-    }
-  }
-
-  void WindowThread::EmptyClientAreaRedrawList()
-  {
-    m_ClientAreaList.clear();
-  }
-
   bool WindowThread::IsMainLayoutDrawDirty() const
   {
     if (m_AppLayout && m_AppLayout->IsDrawDirty() )
@@ -731,35 +699,9 @@ namespace nux
             b |= true;
           }
 
-          int n = (int) m_ClientAreaList.size();
+          //int n = (int) m_ClientAreaList.size();
 
-          if ( n & (b || IsRedrawNeeded() ) )
-          {
-            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-            if (IsEmbeddedWindow ())
-            {
-              RequestRequired = true;
-            }
-            else
-            {
-              m_window_compositor->Draw (m_size_configuration_event, false);
-            }
-            SwapGLBuffer = true;
-          }
-          else if (b || IsRedrawNeeded() )
-          {
-            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-            if (IsEmbeddedWindow ())
-            {
-              RequestRequired = true;
-            }
-            else
-            {
-              m_window_compositor->Draw (m_size_configuration_event, false);
-            }
-            SwapGLBuffer = true;
-          }
-          else if (n)
+          if (b || IsRedrawNeeded() )
           {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
             if (IsEmbeddedWindow ())
@@ -805,7 +747,6 @@ namespace nux
           {
             SleepForMilliseconds (16.6f - frame_time);
           }
-
 #endif
           // The frame rate calculation below is only reliable when we are constantly rendering.
           // Otherwise the frame rate drops, which does not mean that we are the performance is bad.
@@ -828,7 +769,6 @@ namespace nux
           RequestRedraw ();
 
         GetGraphicsThread()->GetGraphicsContext().ResetStats();
-        m_ClientAreaList.clear();
         m_size_configuration_event = false;
       }
     }
@@ -1208,7 +1148,6 @@ namespace nux
     NUX_RETURN_VALUE_IF_TRUE (m_ThreadDtorCalled, true);
 
     // Cleanup
-    EmptyClientAreaRedrawList();
     EmptyLayoutRefreshList();
 
     if (m_AppLayout)
@@ -1219,8 +1158,8 @@ namespace nux
     NUX_SAFE_DELETE (m_window_compositor);
     NUX_SAFE_DELETE (m_TimerHandler);
     NUX_SAFE_DELETE (m_Painter);
-    NUX_SAFE_DELETE (m_GLWindow);
     NUX_SAFE_DELETE (m_Theme);
+    NUX_SAFE_DELETE (m_GLWindow);
 
 #if defined(NUX_OS_WINDOWS)
     PostThreadMessage (NUX_GLOBAL_OBJECT_INSTANCE (NProcess).GetMainThreadID(),
@@ -1442,23 +1381,7 @@ namespace nux
         b |= true;
       }
 
-      int n = (int) m_ClientAreaList.size();
-
-      if ( n & (b || IsRedrawNeeded() ) )
-      {
-        //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRequired = true;
-        //m_window_compositor->Draw(event, false);
-        SwapGLBuffer = true;
-      }
-      else if (b || IsRedrawNeeded() )
-      {
-        //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRequired = true;
-        //m_window_compositor->Draw(event, false);
-        SwapGLBuffer = true;
-      }
-      else if (n)
+      if (b || IsRedrawNeeded() )
       {
         //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
         RequestRequired = true;
@@ -1503,7 +1426,6 @@ namespace nux
 
       // Cleanup
       GetGraphicsThread()->GetGraphicsContext().ResetStats();
-      m_ClientAreaList.clear();
       ClearRedrawFlag();
 
       m_size_configuration_event = false;

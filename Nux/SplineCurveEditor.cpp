@@ -69,7 +69,7 @@ namespace nux
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_Background = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
 
-    delete CheckboardPattern;
+    CheckboardPattern->UnReference ();;
 //     m_Background = PaintLayer(m_CheckboardPattern);
 //     m_Background.SetTileTexture(true);
   }

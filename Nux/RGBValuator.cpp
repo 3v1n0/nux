@@ -275,7 +275,7 @@ namespace nux
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_CheckboardLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
 
-    delete CheckboardPattern;
+    CheckboardPattern->UnReference ();
   }
 
   void RGBValuator::DestroyLayout()
