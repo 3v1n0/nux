@@ -226,6 +226,14 @@ AC_ARG_ENABLE([examples],
               [enable_examples=yes])
 
 AM_CONDITIONAL(BUILD_EXAMPLES, [test "x$enable_examples" = "xyes"])
+AM_COND_IF([BUILD_EXAMPLES],
+      [
+          PKG_CHECK_MODULES(NUX_EXAMPLES, x11)
+          AC_SUBST(NUX_EXAMPLES_CFLAGS)
+          AC_SUBST(NUX_EXAMPLES_LIBS)
+      ],
+)
+
 
 dnl ===========================================================================
 
