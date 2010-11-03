@@ -273,31 +273,31 @@ namespace nux
     return (static_cast<WindowThread *> (thread) )->GetWindow();
   }
 
-  GraphicsContext &GetGraphicsContext()
+  GraphicsContext &GetGraphicsContext ()
   {
-    NThread *thread = GetThreadApplication();
+    NThread *thread = GetThreadApplication ();
 
     if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
-      nuxAssertMsg (0, TEXT ("[GetGraphicsContext] You can't call GetGraphicsContext on this type of thread: s"), thread->Type().GetName() );
+      nuxAssertMsg (0, TEXT ("[GetGraphicsContext] You can't call GetGraphicsContext on this type of thread: s"), thread->Type ().GetName ());
     }
 
-    return (static_cast<WindowThread *> (thread) )->GetGraphicsContext();
+    return (static_cast<WindowThread *> (thread) )->GetGraphicsContext ();
   }
 
-  IntrusiveSP<FontTexture> GetThreadFont()
+  IntrusiveSP<FontTexture> GetThreadFont ()
   {
-    return GNuxGraphicsResources.GetFont();
+    return GetGraphicsContext ().GetFont ();
   }
 
-  IntrusiveSP<FontTexture> GetThreadBoldFont()
+  IntrusiveSP<FontTexture> GetThreadBoldFont ()
   {
-    return GNuxGraphicsResources.GetBoldFont();
+    return GetGraphicsContext ().GetBoldFont ();
   }
 
-  WindowCompositor &GetThreadWindowCompositor()
+  WindowCompositor &GetThreadWindowCompositor ()
   {
-    NThread *thread = GetThreadApplication();
+    NThread *thread = GetThreadApplication ();
 
     if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
     {

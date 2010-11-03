@@ -139,10 +139,6 @@ namespace nux
 
     void RefreshLayout();
 
-    void AddClientAreaToRedrawList (ClientArea *clientarea);
-    void RemoveClientAreaFromRefreshList (ClientArea *clientarea);
-    void EmptyClientAreaRedrawList();
-
     //! Return true if we are computing any layout that is part of this window.
     /*!
         Return true if we are computing any layout that is part of this window.
@@ -336,12 +332,6 @@ namespace nux
 
     //! This variable is true while we are computing the layout the starting from the outmost layout (the Main Layout);
     bool m_IsComputingMainLayout;
-
-    //! This list contains the client areas that need to be redraw.
-    /*!
-        This list contains the client areas that need to be redraw.
-    */
-    std::list<ClientArea *> m_ClientAreaList;
 
   private:
     float m_FrameRate;

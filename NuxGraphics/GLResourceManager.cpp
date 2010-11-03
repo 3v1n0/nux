@@ -23,7 +23,7 @@
 #include "GLResource.h"
 #include "IOpenGLResource.h"
 #include "GLResourceManager.h"
-
+#include "OpenGLEngine.h"
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
 
@@ -42,6 +42,11 @@ namespace nux
 #define GET_UNIQUE_RESOURCE_INDEX NUX_GLOBAL_OBJECT_INSTANCE(UniqueIndex)
     m_ResourceIndex = GET_UNIQUE_RESOURCE_INDEX.GetUniqueIndex();
 #undef GET_UNIQUE_RESOURCE_INDEX
+  }
+
+  ResourceData::~ResourceData ()
+  {
+    GetThreadGraphicsContext()->FlushCachedResourceData (this);
   }
 
   int ResourceData::GetResourceIndex() const

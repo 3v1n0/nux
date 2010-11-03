@@ -71,8 +71,6 @@ namespace nux
 
     ResourceCache.InitializeResourceFactories();
 
-    GNuxGraphicsResources.CacheFontTextures (ResourceCache);
-
     m_CurrrentContext.x = 0;
     m_CurrrentContext.y = 0;
     m_CurrrentContext.width = m_GLWindow.GetWindowWidth();
@@ -95,6 +93,22 @@ namespace nux
 //     InitSl4TextureAdd();
 //     InitSlColorModTexMaskAlpha();
 
+    //GNuxGraphicsResources.CacheFontTextures (ResourceCache);
+
+    if (_normal_font == 0)
+    {
+      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+      _normal_font = IntrusiveSP<FontTexture> (fnt);
+      fnt->UnReference ();
+    }
+
+    if (_bold_font == 0)
+    {
+      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+      _bold_font = IntrusiveSP<FontTexture> (fnt);
+      fnt->UnReference ();
+    }
+
     m_font_renderer = new FontRenderer (*this);
   }
 
@@ -102,6 +116,16 @@ namespace nux
   {
     ResourceCache.Flush();
     NUX_SAFE_DELETE (m_font_renderer);
+  }
+
+  IntrusiveSP<FontTexture> GraphicsContext::GetFont()
+  {
+    return _normal_font;
+  }
+
+  IntrusiveSP<FontTexture> GraphicsContext::GetBoldFont()
+  {
+    return _bold_font;
   }
 
   void GraphicsContext::SetContext (int x, int y, int width, int height)
@@ -837,6 +861,16 @@ namespace nux
   IntrusiveSP< CachedResourceData > GraphicsContext::CacheResource (ResourceData *Resource)
   {
     return ResourceCache.GetCachedResource (Resource);
+  }
+
+  bool GraphicsContext::FlushCachedResourceData (ResourceData *Resource)
+  {
+    bool cached = IsResourceCached (Resource);
+    if (cached == false)
+      return false;
+
+    ResourceCache.FlushResourceId (Resource->GetResourceIndex ());
+    return true;
   }
 
   void GraphicsContext::UpdateResource (ResourceData *Resource)

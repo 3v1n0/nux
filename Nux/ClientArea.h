@@ -82,10 +82,6 @@ namespace nux
     void SetClientViewport (GraphicsContext &GfxContext);
     void Setup2DMode (GraphicsContext &GfxContext);
 
-    void RealTime (bool b);
-    bool IsRealTime() const;
-    void RealTimeHandler (void *v);
-
     // Before the client start drawing we set up a framebuffer object. We don't want the client to start messing
     // up the whole rendering by. If we setup a framebuffer instead, the client can never know the framebuffer
     // we use fror the whole rendering. all we have to do is to copy the client framebuffer into the main framebuffer
@@ -102,12 +98,8 @@ namespace nux
     IntrusiveSP<IOpenGLBaseTexture> m_MainColorRT;
     IntrusiveSP<IOpenGLBaseTexture> m_MainDepthRT;
 
-    TimerFunctor *m_RealTimeCallback;
-    TimerHandle m_RealTimeHandler;
-
     DrawAreaContext m_ctx;
     bool m_IsClientAreaEnabled;
-    bool m_IsRealTime;
   };
 
 
