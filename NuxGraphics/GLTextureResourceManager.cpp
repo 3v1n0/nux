@@ -141,7 +141,8 @@ namespace nux
     return 0;
   }
 
-  BaseTexture::BaseTexture()
+  BaseTexture::BaseTexture(NUX_FILE_LINE_DECL)
+    : ResourceData (NUX_FILE_LINE_PARAM)
   {
 
   }
@@ -162,16 +163,16 @@ namespace nux
     return GetThreadGraphicsContext()->CacheResource (this);
   }
 
-  Texture2D::Texture2D()
+  Texture2D::Texture2D(NUX_FILE_LINE_DECL)
   {
   }
 
-  Texture2D::Texture2D (const Texture2D &texture)
+  Texture2D::Texture2D (const Texture2D &texture, NUX_FILE_LINE_DECL)
   {
     _image = texture._image;
   }
 
-  Texture2D::Texture2D (const NTextureData &BaseTexture)
+  Texture2D::Texture2D (const NTextureData &BaseTexture, NUX_FILE_LINE_DECL)
   {
     _image = BaseTexture;
   }
@@ -354,7 +355,8 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////
 
-  TextureRectangle::TextureRectangle()
+  TextureRectangle::TextureRectangle (NUX_FILE_LINE_DECL)
+    : BaseTexture (NUX_FILE_LINE_PARAM)
   {
   }
 
@@ -507,7 +509,8 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////////
 
-  TextureCube::TextureCube()
+  TextureCube::TextureCube(NUX_FILE_LINE_DECL)
+    : BaseTexture (NUX_FILE_LINE_PARAM)
   {
   }
 
@@ -656,7 +659,8 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////////
 
-  TextureVolume::TextureVolume()
+  TextureVolume::TextureVolume(NUX_FILE_LINE_DECL)
+    : BaseTexture (NUX_FILE_LINE_PARAM)
   {
   }
 
@@ -837,7 +841,8 @@ namespace nux
   }
 
 //////////////////////////////////////////////////////////////////////////
-  TextureFrameAnimation::TextureFrameAnimation()
+  TextureFrameAnimation::TextureFrameAnimation(NUX_FILE_LINE_DECL)
+    : BaseTexture (NUX_FILE_LINE_PARAM)
   {
   }
 

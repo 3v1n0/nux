@@ -67,7 +67,7 @@ namespace nux
     }
 
   private:
-    IOpenGLFrameBufferObject (int Width = 4, int Height = 4, BitmapFormat PixelFormat = BITFMT_R8G8B8A8);
+    IOpenGLFrameBufferObject (NUX_FILE_LINE_PROTO);
 
     int             _Width;
     int             _Height;

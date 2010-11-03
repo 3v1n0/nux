@@ -33,7 +33,8 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE (Area);
 
   Area::Area (NUX_FILE_LINE_DECL)
-    :   m_IsSizeDirty (true)
+    :   InitiallyUnownedObject (NUX_FILE_LINE_PARAM)
+    ,   m_IsSizeDirty (true)
     ,   m_ParentObject (0)
     ,   m_Application (0)
     ,   m_Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)

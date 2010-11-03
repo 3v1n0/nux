@@ -57,24 +57,31 @@ namespace nux
   MenuItem::MenuItem (const TCHAR *label, int UserValue, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
   {
-    m_ChildMenu     = 0;
-    m_ActionItem    = new ActionItem (label, UserValue);
+    _child_menu     = 0;
+    _action_item    = new ActionItem (label, UserValue, NUX_TRACKER_LOCATION);
   }
 
   MenuItem::~MenuItem()
   {
+    if (_action_item)
+      _action_item->UnReference ();
+    if (_child_menu)
+      _child_menu->UnReference ();
   }
 
   void MenuItem::SetChildMenu (MenuPage *menu)
   {
-    //nuxAssert(menu)
-    m_ChildMenu = menu;
+    nuxAssert(menu);
+    NUX_RETURN_IF_NULL (menu)
+    if (_child_menu)
+      _child_menu->UnReference ();
+    _child_menu = menu;
+    _child_menu->Reference ();
   }
 
   MenuPage *MenuItem::GetChildMenu() const
   {
-    //return m_ActionItem.GetMenu();
-    return m_ChildMenu;
+    return _child_menu;
   }
 
   void MenuItem::SetActionItem (ActionItem *action)
@@ -84,17 +91,19 @@ namespace nux
     if (action == 0)
       return;
 
-    m_ActionItem = action;
+    if (_action_item)
+      _action_item->UnReference ();
+    _action_item = action;
   }
 
   ActionItem *MenuItem::GetActionItem() const
   {
-    return m_ActionItem;
+    return _action_item;
   }
 
 //ActionItem* MenuItem::GetActionItem()
 //{
-//    return &m_ActionItem;
+//    return &_action_item;
 //}
 
   long MenuItem::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -119,7 +128,7 @@ namespace nux
     icon_geo.SetX (geo.x + 2);
     icon_geo.SetY (geo.y + 0);
 
-    const TCHAR *label = m_ActionItem->GetLabel();
+    const TCHAR *label = _action_item->GetLabel();
 
     if (is_highlighted)
     {
@@ -142,7 +151,7 @@ namespace nux
 
     //if(m_Icon)
     {
-      //gPainter.Draw2DTextureAligned(GfxContext, &m_ActionItem->GetIcon(), icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
+      //gPainter.Draw2DTextureAligned(GfxContext, &_action_item->GetIcon(), icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
     }
 
     if (label)
@@ -215,22 +224,7 @@ namespace nux
 
   MenuPage::~MenuPage()
   {
-    std::vector<MenuItem *>::iterator it;
-
-    for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
-    {
-      //delete (*it);
-    }
-
     m_MenuItemVector.clear();
-
-    std::vector< MenuSeparator * >::iterator it2;
-
-    for (it2 = m_MenuSeparatorVector.begin(); it2 != m_MenuSeparatorVector.end(); it2++)
-    {
-      //delete (*it2);
-    }
-
     m_MenuSeparatorVector.clear();
   }
 
@@ -363,7 +357,8 @@ namespace nux
 
   ActionItem *MenuPage::AddAction (const TCHAR *label, int UserValue)
   {
-    MenuItem *pMenuItem (new MenuItem (label, UserValue) );
+    // pMenuItem if added to the layout do not sink the Reference.
+    MenuItem *pMenuItem (new MenuItem (label, UserValue, NUX_TRACKER_LOCATION) );
 
     m_MenuItemVector.push_back (pMenuItem);
     pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -437,7 +432,8 @@ namespace nux
 //    if(actionItem == 0)
 //        return;
 //
-//     MenuItem* pMenuItem = new MenuItem(actionItem->GetLabel(), actionItem->GetUserValue());
+//     MenuItem* pMenuItem = new MenuItem(actionItem->GetLabel(), actionItem->GetUserValue(), NUX_TRACKER_LOCATION);
+//     pMenuItem->SinkReference ();
 //    pMenuItem->SetActionItem(actionItem);
 //
 //    m_MenuItemVector.push_back(pMenuItem);
@@ -504,7 +500,8 @@ namespace nux
 
   MenuPage *MenuPage::AddMenu (const TCHAR *label)
   {
-    MenuItem *pMenuItem (new MenuItem (label, 0) );
+    // pMenuItem if added to the layout do not sink the Reference.
+    MenuItem *pMenuItem (new MenuItem (label, 0, NUX_TRACKER_LOCATION));
 
     pMenuItem->SetChildMenu (new MenuPage (label) );
     //pMenuItem->SetActionItem(new ActionItem());
@@ -578,8 +575,9 @@ namespace nux
   ActionItem *MenuPage::AddSubMenu (const TCHAR *label, MenuPage *menu)
   {
     menu->m_IsTopOfMenuChain = false;
-    MenuItem *pMenuItem (new MenuItem (menu->GetName(), 0) );
-
+    // pMenuItem if added to the layout do not sink the Reference.
+    MenuItem *pMenuItem (new MenuItem (menu->GetName(), 0, NUX_TRACKER_LOCATION));
+    
     pMenuItem->SetChildMenu (menu);
     m_MenuItemVector.push_back (pMenuItem);
     pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -649,7 +647,9 @@ namespace nux
 
   void MenuPage::AddSeparator()
   {
-    MenuSeparator *pMenuSeparator (new MenuSeparator() );
+    // pMenuSeparator if added to the layout do not sink the Reference.
+    MenuSeparator *pMenuSeparator (new MenuSeparator(NUX_TRACKER_LOCATION) );
+
     m_MenuSeparatorVector.push_back (pMenuSeparator);
 
     if (ShowItemIcon() )

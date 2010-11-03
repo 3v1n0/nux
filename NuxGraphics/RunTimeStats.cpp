@@ -76,7 +76,7 @@ namespace nux
       nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Some 2D textures have not been released.") );
       std::vector<int>::iterator it;
 
-      for (it = v.begin(); it != v.end(); it++)
+      for (it = _texture_2d_array.begin(); it != _texture_2d_array.end(); it++)
       {
         nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Remaining 2D textures: %d."), *it);
       }
@@ -85,6 +85,12 @@ namespace nux
     if (m_NumTexRectangle != 0)
     {
       nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Some rectangle textures buffers have not been released.") );
+      std::vector<int>::iterator it;
+
+      for (it = _texture_2d_array.begin(); it != _texture_2d_array.end(); it++)
+      {
+        nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Remaining Rectangle textures: %d."), *it);
+      }
     }
   }
 
@@ -108,7 +114,7 @@ namespace nux
       }
       case RTTEXTURE:
       {
-        v.push_back (NUX_STATIC_CAST (IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID() );
+        _texture_2d_array.push_back (NUX_STATIC_CAST (IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID() );
         m_NumTex2D++;
         m_GPUSizeTex2D += GetTextureSize (NUX_REINTERPRET_CAST (IOpenGLBaseTexture *, GraphicsObject) );
         m_TotalGPUSize += m_GPUSizeTex2D;
@@ -116,6 +122,7 @@ namespace nux
       }
       case RTTEXTURERECTANGLE:
       {
+        _texture_rect_array.push_back (NUX_STATIC_CAST (IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID() );
         m_NumTexRectangle++;
         m_GPUSizeTexRectangle += GetTextureSize (NUX_REINTERPRET_CAST (IOpenGLBaseTexture *, GraphicsObject) );
         m_TotalGPUSize += m_GPUSizeTexRectangle;
@@ -176,10 +183,10 @@ namespace nux
       case RTTEXTURE:
       {
         std::vector<int>::iterator it;
-        it = std::find (v.begin(), v.end(), NUX_STATIC_CAST (IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID() );
+        it = std::find (_texture_2d_array.begin(), _texture_2d_array.end(), NUX_STATIC_CAST (IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID() );
 
-        if (it != v.end() )
-          v.erase (it);
+        if (it != _texture_2d_array.end() )
+          _texture_2d_array.erase (it);
 
         m_NumTex2D--;
         m_GPUSizeTex2D -= GetTextureSize (NUX_REINTERPRET_CAST (IOpenGLBaseTexture *, GraphicsObject) );

@@ -48,7 +48,7 @@ namespace nux
                         t_u32 Height,
                         t_u32 Depth,
                         t_u32 NumMipLevel,
-                        BitmapFormat PixelFormat);
+                        BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     virtual ~IOpenGLBaseTexture();
 

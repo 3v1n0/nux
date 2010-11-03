@@ -29,23 +29,27 @@
         NUX_GLOBAL_OBJECT_VARIABLE(NCPU);                       \
         NUX_GLOBAL_OBJECT_VARIABLE(NProcess);                   \
         NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
-        NUX_GLOBAL_OBJECT_VARIABLE(UniqueIndex);               \
+        NUX_GLOBAL_OBJECT_VARIABLE(UniqueIndex);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerWindows);        \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
-        NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);
+        NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);        \
+        NUX_GLOBAL_OBJECT_VARIABLE(ObjectStats);
+
 //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
 //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 
 #elif (defined NUX_OS_LINUX)
-#define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                   \
+#define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                       \
         NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NNullOutput);                \
-        NUX_GLOBAL_OBJECT_VARIABLE(UniqueIndex);               \
+        NUX_GLOBAL_OBJECT_VARIABLE(UniqueIndex);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerGNU);            \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputVisualDebugConsole);  \
         NUX_GLOBAL_OBJECT_VARIABLE(NOutputLogFile);             \
-        NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);
+        NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);        \
+        NUX_GLOBAL_OBJECT_VARIABLE(ObjectStats);
+
 //NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
 //NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #endif

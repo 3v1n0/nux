@@ -109,8 +109,8 @@ namespace nux
     //        _RefCount = 0;
     //        _OpenGLID = OpenGLID;
     //    }
-    IOpenGLSurface (IOpenGLBaseTexture *DeviceBaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/)
-      : IOpenGLResource (RTSURFACE)
+    IOpenGLSurface (IOpenGLBaseTexture *DeviceBaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/, NUX_FILE_LINE_PROTO)
+      : IOpenGLResource (RTSURFACE, NUX_FILE_LINE_PARAM)
       , _STextureTarget (TextureTarget)
       , _SSurfaceTarget (SurfaceTarget)
       , _SMipLevel (MipLevel)

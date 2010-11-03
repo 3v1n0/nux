@@ -29,28 +29,64 @@ namespace nux
 
   NUX_IMPLEMENT_ROOT_OBJECT_TYPE (Trackable);
   NUX_IMPLEMENT_OBJECT_TYPE (Object);
+  NUX_IMPLEMENT_GLOBAL_OBJECT (ObjectStats);
+
+//   int ObjectStats::_total_allocated_size = 0;
+//   int ObjectStats::_number_of_objects = 0;
+//   ObjectStats::AllocationList ObjectStats::_allocation_list;
+
+  ObjectStats::AllocationList::AllocationList()
+  {
+
+  }
+
+  ObjectStats::AllocationList::~AllocationList()
+  {
+
+  }
+
+  void ObjectStats::Constructor()
+  {
+    _total_allocated_size = 0;
+    _number_of_objects = 0;
+  }
+
+  void ObjectStats::Destructor()
+  {
+    nuxDebugMsg (TEXT("[ObjectStats::Destructor] %d undeleted objects."), _number_of_objects);
+
+#if defined(NUX_DEBUG)
+    AllocationList::iterator it;
+    for (it = _allocation_list.begin(); it != _allocation_list.end(); it++)
+    {
+      Object* obj = NUX_STATIC_CAST (Object*, (*it));
+      nuxDebugMsg (TEXT("Undeleted object: Type %s, %s line %d"), obj->Type().m_Name, obj->m_allocation_file_name.GetTCharPtr(), obj->m_allocation_line_number);
+
+    }
+#endif
+  }
 
   std::new_handler Trackable::m_new_current_handler = 0;
-  Trackable::AllocationList Trackable::m_allocation_list;
+  //Trackable::AllocationList Trackable::m_allocation_list;
 
-  Trackable::AllocationList::AllocationList()
-  {
+//   Trackable::AllocationList::AllocationList()
+//   {
+// 
+//   }
+// 
+//   Trackable::AllocationList::~AllocationList()
+//   {
+// 
+//   }
 
-  }
-
-  Trackable::AllocationList::~AllocationList()
-  {
-
-  }
-
-  int Trackable::m_total_allocated_size = 0;
-  int Trackable::m_number_of_objects = 0;
+//   int Trackable::m_total_allocated_size = 0;
+//   int Trackable::m_number_of_objects = 0;
 
   Trackable::Trackable()
   {
     m_owns_the_reference = false;
-    m_total_allocated_size = 0;
-    m_number_of_objects = 0;
+//     m_total_allocated_size = 0;
+//     m_number_of_objects = 0;
   }
 
   Trackable::~Trackable()
@@ -114,10 +150,10 @@ namespace nux
     try
     {
       ptr = ::operator new (size);
-      m_allocation_list.push_front (ptr);
+      GObjectStats._allocation_list.push_front (ptr);
       NUX_STATIC_CAST (Trackable *, ptr)->m_size_of_this_object = size;
-      m_total_allocated_size += size;
-      ++m_number_of_objects;
+      GObjectStats._total_allocated_size += size;
+      ++GObjectStats._number_of_objects;
     }
     catch (std::bad_alloc &)
     {
@@ -141,13 +177,13 @@ namespace nux
 
   void Trackable::operator delete (void *ptr)
   {
-    AllocationList::iterator i = std::find (m_allocation_list.begin(), m_allocation_list.end(), ptr);
+    ObjectStats::AllocationList::iterator i = std::find (GObjectStats._allocation_list.begin(), GObjectStats._allocation_list.end(), ptr);
 
-    if (i != m_allocation_list.end() )
+    if (i != GObjectStats._allocation_list.end() )
     {
-      m_total_allocated_size -= NUX_STATIC_CAST (Trackable *, ptr)->m_size_of_this_object;
-      --m_number_of_objects;
-      m_allocation_list.erase (i);
+      GObjectStats._total_allocated_size -= NUX_STATIC_CAST (Trackable *, ptr)->m_size_of_this_object;
+      --GObjectStats._number_of_objects;
+      GObjectStats._allocation_list.erase (i);
       ::operator delete (ptr);
     }
   }
@@ -163,8 +199,8 @@ namespace nux
     const void *ptr = dynamic_cast<const void *> (this);
 
     // Search for ptr in allocation_list
-    AllocationList::iterator i = std::find (m_allocation_list.begin(), m_allocation_list.end(), ptr);
-    return i != m_allocation_list.end();
+    ObjectStats::AllocationList::iterator i = std::find (GObjectStats._allocation_list.begin(), GObjectStats._allocation_list.end(), ptr);
+    return i != GObjectStats._allocation_list.end();
   }
 
 //////////////////////////////////////////////////////////////////////

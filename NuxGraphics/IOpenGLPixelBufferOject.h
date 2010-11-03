@@ -52,7 +52,7 @@ namespace nux
     t_u32 GetSize();
 
   private:
-    IOpenGLPixelBufferObject (unsigned int Size, VBO_USAGE Usage);
+    IOpenGLPixelBufferObject (unsigned int Size, VBO_USAGE Usage, NUX_FILE_LINE_PROTO);
 
     unsigned int _Length;
     VBO_USAGE _Usage;

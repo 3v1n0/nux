@@ -54,7 +54,7 @@ namespace nux
     t_u32 GetSize();
 
   private:
-    IOpenGLIndexBuffer (t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format);
+    IOpenGLIndexBuffer (t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format, NUX_FILE_LINE_PROTO);
 
     t_u32        _Length;
     INDEX_FORMAT   _Format;

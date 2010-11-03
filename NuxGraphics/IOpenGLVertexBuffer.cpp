@@ -29,8 +29,8 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexBuffer);
 
-  IOpenGLVertexBuffer::IOpenGLVertexBuffer (t_u32 Length, VBO_USAGE Usage)
-    :   IOpenGLResource (RTVERTEXBUFFER)
+  IOpenGLVertexBuffer::IOpenGLVertexBuffer (t_u32 Length, VBO_USAGE Usage, NUX_FILE_LINE_DECL)
+    :   IOpenGLResource (RTVERTEXBUFFER, NUX_FILE_LINE_PARAM)
     ,   _Length (Length)
     ,   _Usage (Usage)
     ,   _MemMap (0)

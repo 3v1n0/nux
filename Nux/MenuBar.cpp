@@ -40,14 +40,19 @@ namespace nux
   MenuBarItem::MenuBarItem (NUX_FILE_LINE_DECL)
     :   Object (true, NUX_FILE_LINE_PARAM)
   {
+    // This area is added to the layout of the MenuBar. The Menubar will will ref/unref it.
     area = new CoreArea (NUX_TRACKER_LOCATION);
     icon = 0;
   }
 
   MenuBarItem::~MenuBarItem()
   {
-    //menu.UnReference(); ?
-    //area.UnReference(); ?
+    if (menu)
+      menu->UnReference();
+    if (icon)
+      icon->UnReference ();
+
+    // The Area is owned by the MenuBar: do nothing for area.
   }
 
   MenuBar::MenuBar (NUX_FILE_LINE_DECL)
@@ -74,30 +79,11 @@ namespace nux
 
   MenuBar::~MenuBar()
   {
-    if (m_CurrentMenu)
-    {
-//         m_CurrentMenu->area->OnMouseEnter.clear();
-//         m_CurrentMenu->area->OnMouseEnter.clear();
-//         m_CurrentMenu->area->OnMouseLeave.clear();
-//         m_CurrentMenu->area->OnMouseDown.clear();
-//         m_CurrentMenu->area->OnMouseDrag.clear();
-//         m_CurrentMenu->area->OnMouseUp.clear();
-    }
-
     std::list< MenuBarItem * >::iterator it;
-
     for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
-//         (*it)->area->OnMouseEnter.clear();
-//         (*it)->area->OnMouseEnter.clear();
-//         (*it)->area->OnMouseLeave.clear();
-//         (*it)->area->OnMouseDown.clear();
-//         (*it)->area->OnMouseDrag.clear();
-//         (*it)->area->OnMouseUp.clear();
-
-      (*it) = 0;
+      (*it)->UnReference ();
     }
-
     m_MenuBarItemList.clear();
   }
 
@@ -248,20 +234,26 @@ namespace nux
 
   void MenuBar::AddMenu (const TCHAR *MenuLabel, MenuPage *menu)
   {
+    NUX_RETURN_IF_NULL (menu);
     AddMenu (MenuLabel, menu, 0);
   }
 
   void MenuBar::AddMenu (const TCHAR *MenuLabel, MenuPage *menu, BaseTexture *icon)
   {
-    // Need to add NUX_RETURN_IF_TRUE, NUX_RETURN_IF_FALSE
     NUX_RETURN_IF_NULL (menu);
 
-    MenuBarItem *menubar_item (new MenuBarItem() );
+    // MenuBarItem inherits from Object: no need to Sink the reference.
+    MenuBarItem *menubar_item (new MenuBarItem(NUX_TRACKER_LOCATION) );
 
     menu->m_IsTopOfMenuChain = true;
     menubar_item->area->SetBaseString (MenuLabel);
     menubar_item->menu = menu;
+    if (menubar_item->menu)
+      menubar_item->menu->Reference ();
+
     menubar_item->icon = icon;
+    if (menubar_item->icon)
+      menubar_item->icon->Reference ();
 
     m_MenuBarItemList.push_back (menubar_item);
 

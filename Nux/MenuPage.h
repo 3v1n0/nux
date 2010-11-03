@@ -56,8 +56,8 @@ namespace nux
     MenuPage *GetChildMenu() const;
     void SetActionItem (ActionItem *menu);
 
-    MenuPage *m_ChildMenu;
-    ActionItem *m_ActionItem;
+    MenuPage    *_child_menu;
+    ActionItem  *_action_item;
     friend class MenuPage;
   };
 

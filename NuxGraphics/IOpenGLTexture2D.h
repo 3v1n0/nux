@@ -82,7 +82,7 @@ namespace nux
       unsigned int Width
       , unsigned int Height
       , unsigned int Levels
-      , BitmapFormat PixelFormat, bool Dummy = false);
+      , BitmapFormat PixelFormat, bool Dummy = false, NUX_FILE_LINE_PROTO);
 
     //    unsigned int        _Width;
     //    unsigned int        _Height;

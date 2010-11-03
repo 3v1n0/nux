@@ -28,8 +28,8 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLPixelBufferObject);
 
-  IOpenGLPixelBufferObject::IOpenGLPixelBufferObject (unsigned int Size, VBO_USAGE Usage)
-    :   IOpenGLResource (RTVERTEXBUFFER)
+  IOpenGLPixelBufferObject::IOpenGLPixelBufferObject (unsigned int Size, VBO_USAGE Usage, NUX_FILE_LINE_DECL)
+    :   IOpenGLResource (RTVERTEXBUFFER, NUX_FILE_LINE_PARAM)
     ,   _Length (Size)
     ,   _Usage (Usage)
     ,   _MemMap (0)

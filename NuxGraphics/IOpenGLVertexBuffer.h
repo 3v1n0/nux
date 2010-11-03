@@ -51,7 +51,7 @@ namespace nux
     t_u32 GetSize();
 
   private:
-    IOpenGLVertexBuffer (t_u32 Length, VBO_USAGE Usage);
+    IOpenGLVertexBuffer (t_u32 Length, VBO_USAGE Usage, NUX_FILE_LINE_PROTO);
 
     t_u32 _Length;
     VBO_USAGE _Usage;

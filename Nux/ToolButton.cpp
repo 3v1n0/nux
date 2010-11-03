@@ -57,7 +57,7 @@ namespace nux
 
   ToolButton::~ToolButton()
   {
-    NUX_SAFE_DELETE (m_Texture);
+    m_Texture->UnReference ();
   }
 
   long ToolButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -109,8 +109,11 @@ namespace nux
 
   void ToolButton::SetBitmap (const BaseTexture* Texture)
   {
-    if(m_Texture)
-      NUX_SAFE_DELETE (m_Texture);
+    nuxAssert (Texture);
+    NUX_RETURN_IF_NULL (Texture);
+
+    if (m_Texture)
+      m_Texture->UnReference ();
     m_Texture = Texture->Clone();
   }
 
