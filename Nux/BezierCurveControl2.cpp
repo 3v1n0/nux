@@ -70,7 +70,7 @@ namespace nux
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_Background = new TextureLayer (m_CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
 
-    delete m_CheckboardPattern;
+    m_CheckboardPattern->UnReference ();
   }
 
   BezierCurveControl2::~BezierCurveControl2()

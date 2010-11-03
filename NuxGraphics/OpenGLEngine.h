@@ -248,6 +248,8 @@ namespace nux
         @param Resource The resource to cache.
     */
     void UpdateResource (ResourceData *Resource);
+
+    bool FlushCachedResourceData (ResourceData *Resource);
     bool IsResourceCached (ResourceData *Resource);
     NResourceCache ResourceCache;
 
@@ -269,7 +271,13 @@ namespace nux
       m_GLWindow.m_DeviceFactory->m_RenderStates->CheckStateChange();
     }
 
+    IntrusiveSP<FontTexture> GetFont();
+    IntrusiveSP<FontTexture> GetBoldFont();
+
   private:
+
+    IntrusiveSP<FontTexture> _normal_font;    //!< The normal font renderer
+    IntrusiveSP<FontTexture> _bold_font;      //!< The bold font renderer
 
     void InitShaders();
 

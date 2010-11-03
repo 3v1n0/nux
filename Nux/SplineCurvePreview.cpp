@@ -195,7 +195,7 @@ namespace nux
     m_ChangeDetectionTimer->OnTimerExpired.connect (sigc::mem_fun (this, &SplineCurvePreview::RecvTimer) );
     m_ChangeTimerHandler = 0;
 
-    delete BackgroundTexture;
+    BackgroundTexture->UnReference ();
   }
 
   SplineCurvePreview::~SplineCurvePreview()
