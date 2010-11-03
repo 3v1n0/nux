@@ -30,8 +30,8 @@ namespace nux
   IOpenGLTexture2D::IOpenGLTexture2D (unsigned int Width
                                       , unsigned int Height
                                       , unsigned int Levels
-                                      , BitmapFormat PixelFormat, bool Dummy)
-    :   IOpenGLBaseTexture (RTTEXTURE, Width, Height, 1, Levels, PixelFormat)
+                                      , BitmapFormat PixelFormat, bool Dummy, NUX_FILE_LINE_DECL)
+    :   IOpenGLBaseTexture (RTTEXTURE, Width, Height, 1, Levels, PixelFormat, NUX_FILE_LINE_PARAM)
   {
     if (Dummy == false)
     {
@@ -47,6 +47,7 @@ namespace nux
       if (Dummy == false) surface->InitializeLevel();
 
       _SurfaceArray.push_back (IntrusiveSP<IOpenGLSurface> (surface));
+      surface->UnReference ();
     }
 
     SetFiltering (GL_NEAREST, GL_NEAREST);

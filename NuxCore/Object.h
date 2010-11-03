@@ -44,6 +44,23 @@ namespace nux
 //     #define NUX_TRACKER_LOCATION    0xD0DECADE
 // #endif
 
+  class ObjectStats
+  {
+    NUX_DECLARE_GLOBAL_OBJECT (ObjectStats, GlobalSingletonInitializer);
+  public:
+    class AllocationList : public std::list<void *>
+    {
+    public:
+      AllocationList();
+      ~AllocationList();
+    };
+
+    AllocationList _allocation_list;
+    int _total_allocated_size;  //! Total allocated memory size in bytes.
+    int _number_of_objects;     //! Number of allocated objects;
+  };
+#define GObjectStats NUX_GLOBAL_OBJECT_INSTANCE(nux::ObjectStats)
+
 //! Base class of heap allocated objects.
   /*!
       Trackable does not implement reference counting. It only defines the API. It is up
@@ -135,19 +152,19 @@ namespace nux
     Trackable (const Trackable &);
     Trackable &operator= (const Trackable &);
 
-    class AllocationList : public std::list<void *>
-    {
-    public:
-      AllocationList();
-      ~AllocationList();
-    };
+//     class AllocationList : public std::list<void *>
+//     {
+//     public:
+//       AllocationList();
+//       ~AllocationList();
+//     };
 
-    static AllocationList m_allocation_list;
+    //static AllocationList m_allocation_list;
     static std::new_handler m_new_current_handler;
+//     static int m_total_allocated_size;  //! Total allocated memory size in bytes.
+//     static int m_number_of_objects;     //! Number of allocated objects;
 
     bool m_owns_the_reference;
-    static int m_total_allocated_size;  //! Total allocated memory size in bytes.
-    static int m_number_of_objects;     //! Number of allocated objects;
     int m_size_of_this_object;
 
     //template<typename T> friend class Pointer;
@@ -233,6 +250,7 @@ namespace nux
 
     template <typename T>
     friend class IntrusiveWeakSP;
+    friend class ObjectStats;
   };
 
 }

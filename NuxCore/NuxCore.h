@@ -750,15 +750,16 @@ namespace nux
 #include "ObjectType.h"
 #include "FileName.h"
 #include "Color.h"
+#include "Object.h"
 
 #ifdef NUX_OS_WINDOWS
-#include "Win32Dialogs/NWin32CustomDialog.h"
+  #include "Win32Dialogs/NWin32CustomDialog.h"
 #endif
 
 #include "NPrintf.h"
 
 #ifdef NUX_OS_WINDOWS
-#include "Win32Dialogs/NWin32Clipboard.h"
+  #include "Win32Dialogs/NWin32Clipboard.h"
 #endif
 //#include "NSocket.h"
 

@@ -75,6 +75,19 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (IOpenGLResource, Object);
 
   public:
+    IOpenGLResource (OpenGLResourceType ResourceType, NUX_FILE_LINE_PROTO)
+      : Object (true, NUX_FILE_LINE_PARAM)
+      , _OpenGLID (0)
+      , _RefCount (0)
+      , _ResourceType (ResourceType)
+    {
+    }
+
+    virtual ~IOpenGLResource()
+    {
+
+    }
+
     virtual int RefCount() const
     {
       return GetReferenceCount();
@@ -90,24 +103,9 @@ namespace nux
       return _OpenGLID;
     }
 
-    IOpenGLResource (OpenGLResourceType ResourceType)
-      : _OpenGLID (0)
-      , _RefCount (0)
-      , _ResourceType (ResourceType)
-    {
-    }
-
-    virtual ~IOpenGLResource()
-    {
-
-    }
-
   private:
     GLuint _OpenGLID;
-
-  private:
     int _RefCount;
-
     OpenGLResourceType _ResourceType;
 
     friend class IOpenGLFrameBufferObject;

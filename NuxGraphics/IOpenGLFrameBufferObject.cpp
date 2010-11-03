@@ -31,22 +31,20 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLFrameBufferObject);
 
-  IOpenGLFrameBufferObject::IOpenGLFrameBufferObject (int Width, int Height, BitmapFormat PixelFormat)
-    :   IOpenGLResource (RTFRAMEBUFFEROBJECT)
-    ,   _Width (Width)
-    ,   _Height (Height)
-    ,   _PixelFormat (PixelFormat)
-    ,   _IsActive (false)
-    ,   _Depth_Attachment (0)
-    ,   _Stencil_Attachment (0)
-
+  IOpenGLFrameBufferObject::IOpenGLFrameBufferObject (NUX_FILE_LINE_DECL)
+    :   IOpenGLResource (RTFRAMEBUFFEROBJECT, NUX_FILE_LINE_PARAM)
   {
+    _Width = 1;
+    _Height = 1;
+    _PixelFormat = BITFMT_R8G8B8A8;
+    _IsActive = false;
+
     for (int i = 0; i < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment(); i++)
     {
       _Color_AttachmentArray.push_back (IntrusiveSP<IOpenGLSurface> (0) );
     }
 
-    FormatFrameBufferObject (Width, Height, PixelFormat);
+    FormatFrameBufferObject (_Width, _Height, _PixelFormat);
     GRunTimeStats.Register (this);
   }
 
@@ -78,8 +76,9 @@ namespace nux
     // Clear clipping region stack
     _Width  = Width;
     _Height = Height;
-    EmptyClippingRegion();
     _PixelFormat = PixelFormat;
+    EmptyClippingRegion();
+    
     return 1;
   }
 

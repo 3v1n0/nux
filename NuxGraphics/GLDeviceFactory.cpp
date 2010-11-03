@@ -710,8 +710,8 @@ namespace nux
 
     if (GL_EXT_FRAMEBUFFER_OBJECT)
     {
-      _FrameBufferObject = CreateFrameBufferObject();
-      _FrameBufferObject->Deactivate();
+      _FrameBufferObject = CreateFrameBufferObject ();
+      _FrameBufferObject->Deactivate ();
     }
   }
 
@@ -721,7 +721,9 @@ namespace nux
 
     _FrameBufferObject = IntrusiveSP<IOpenGLFrameBufferObject> (0);
     _CurrentFrameBufferObject = IntrusiveSP<IOpenGLFrameBufferObject> (0);
-    CollectDeviceResource();
+    CollectDeviceResource ();
+
+    _PixelBufferArray.clear ();
 
     // NVidia CG
 #if (NUX_ENABLE_CG_SHADERS)
@@ -777,7 +779,7 @@ namespace nux
 //        is the dimension of level N+1.  The recursion stops when level
 //        numLevels-1 is reached.
 
-    *ppTexture = new IOpenGLTexture2D (Width, Height, NumMipLevel, PixelFormat);
+    *ppTexture = new IOpenGLTexture2D (Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
 
     if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP< IOpenGLTexture2D > > (IntrusiveSP< IOpenGLTexture2D > (*ppTexture), &_CachedTextureList);
 
@@ -833,7 +835,7 @@ namespace nux
     //        is the dimension of level N+1.  The recursion stops when level
     //        numLevels-1 is reached.
 
-    *ppTexture = new IOpenGLRectangleTexture (Width, Height, NumMipLevel, PixelFormat);
+    *ppTexture = new IOpenGLRectangleTexture (Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
 
     if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLRectangleTexture> > (IntrusiveSP<IOpenGLRectangleTexture> (*ppTexture), &_CachedTextureRectangleList);
 
@@ -941,7 +943,7 @@ namespace nux
 
   int GLDeviceFactory::CreateFrameBufferObject (IOpenGLFrameBufferObject **ppFrameBufferObject)
   {
-    *ppFrameBufferObject = new IOpenGLFrameBufferObject();
+    *ppFrameBufferObject = new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION);
 
     if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLFrameBufferObject> > (IntrusiveSP<IOpenGLFrameBufferObject> (*ppFrameBufferObject), &_CachedFrameBufferList);
 

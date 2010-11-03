@@ -44,6 +44,7 @@ namespace nux
     IOpenGLVertexBuffer *ptr;
     CreateVertexBuffer (Length, Usage, (IOpenGLVertexBuffer **) &ptr);
     IntrusiveSP<IOpenGLVertexBuffer> h = IntrusiveSP<IOpenGLVertexBuffer> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
@@ -51,7 +52,7 @@ namespace nux
       VBO_USAGE Usage,
       IOpenGLVertexBuffer **ppVertexBuffer)
   {
-    *ppVertexBuffer = new IOpenGLVertexBuffer (Length, Usage);
+    *ppVertexBuffer = new IOpenGLVertexBuffer (Length, Usage, NUX_TRACKER_LOCATION);
 
     if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVertexBuffer> > (IntrusiveSP<IOpenGLVertexBuffer> (*ppVertexBuffer), &_CachedVertexBufferList);
 
@@ -66,6 +67,7 @@ namespace nux
     IOpenGLIndexBuffer *ptr;
     CreateIndexBuffer (Length, Usage, Format, (IOpenGLIndexBuffer **) &ptr);
     IntrusiveSP<IOpenGLIndexBuffer> h = IntrusiveSP<IOpenGLIndexBuffer> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
@@ -74,7 +76,7 @@ namespace nux
                                           INDEX_FORMAT Format,
                                           IOpenGLIndexBuffer **ppIndexBuffer)
   {
-    *ppIndexBuffer = new IOpenGLIndexBuffer (Length, Usage, Format);
+    *ppIndexBuffer = new IOpenGLIndexBuffer (Length, Usage, Format, NUX_TRACKER_LOCATION);
 
     if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLIndexBuffer> > (IntrusiveSP<IOpenGLIndexBuffer> (*ppIndexBuffer), &_CachedIndexBufferList);
 
@@ -86,13 +88,14 @@ namespace nux
     IOpenGLPixelBufferObject *ptr;
     CreatePixelBufferObject (Size, Usage, (IOpenGLPixelBufferObject **) &ptr);
     IntrusiveSP<IOpenGLPixelBufferObject> h = IntrusiveSP<IOpenGLPixelBufferObject> (ptr);
+    ptr->UnReference ();
     return h;
   }
 
   int GLDeviceFactory::CreatePixelBufferObject (int Size, VBO_USAGE Usage,
       IOpenGLPixelBufferObject **ppPixelBufferObject)
   {
-    *ppPixelBufferObject = new IOpenGLPixelBufferObject (Size, Usage);
+    *ppPixelBufferObject = new IOpenGLPixelBufferObject (Size, Usage, NUX_TRACKER_LOCATION);
 
     if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLPixelBufferObject> > (IntrusiveSP<IOpenGLPixelBufferObject> (*ppPixelBufferObject), &_CachedPixelBufferObjectList);
 
@@ -105,6 +108,7 @@ namespace nux
     IOpenGLVertexDeclaration *ptr;
     CreateVertexDeclaration (pVertexElements, (IOpenGLVertexDeclaration **) &ptr);
     IntrusiveSP<IOpenGLVertexDeclaration> h = IntrusiveSP<IOpenGLVertexDeclaration> (ptr);
+    ptr->UnReference ();
     return h;
   }
 

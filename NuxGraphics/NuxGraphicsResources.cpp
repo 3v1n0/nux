@@ -166,10 +166,18 @@ namespace nux
     m_ResourcePathLocation.AddSearchPath (m_UITextureSearchPath);
 
     if (m_normal_font == 0)
-      m_normal_font = IntrusiveSP<FontTexture> (new FontTexture (FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr() ) );
+    {
+      FontTexture* fnt = new FontTexture (FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+      m_normal_font = IntrusiveSP<FontTexture> (fnt);
+      fnt->UnReference ();
+    }
 
     if (m_bold_font == 0)
-      m_bold_font = IntrusiveSP<FontTexture> (new FontTexture (FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr() ) );
+    {
+      FontTexture* fnt = new FontTexture (FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+      m_bold_font = IntrusiveSP<FontTexture> (fnt);
+      fnt->UnReference ();
+    }
   }
 
   IntrusiveSP<FontTexture> NuxGraphicsResources::GetFont()

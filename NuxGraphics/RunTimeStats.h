@@ -62,7 +62,8 @@ namespace nux
     void Register (IOpenGLResource *GraphicsObject);
     void UnRegister (IOpenGLResource *GraphicsObject);
 
-    std::vector<int> v;
+    std::vector<int> _texture_2d_array;
+    std::vector<int> _texture_rect_array;
   };
 
 }

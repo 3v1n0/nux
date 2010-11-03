@@ -67,7 +67,7 @@ namespace nux
 
       for (int l = 0; l < _NumMipLevel; l++)
       {
-        delete (*array) [l];
+        ((*array) [l])->UnReference ();
       }
 
       array->clear();

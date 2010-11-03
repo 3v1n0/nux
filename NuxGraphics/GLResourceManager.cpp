@@ -35,8 +35,9 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE (ResourceData);
   NUX_IMPLEMENT_OBJECT_TYPE (CachedResourceData);
 
-  ResourceData::ResourceData()
-    :   m_ResourceIndex (NUX_INVALID_INDEX)
+  ResourceData::ResourceData(NUX_FILE_LINE_DECL)
+    : Object (true, NUX_FILE_LINE_PARAM)
+    , m_ResourceIndex (NUX_INVALID_INDEX)
   {
 #define GET_UNIQUE_RESOURCE_INDEX NUX_GLOBAL_OBJECT_INSTANCE(UniqueIndex)
     m_ResourceIndex = GET_UNIQUE_RESOURCE_INDEX.GetUniqueIndex();

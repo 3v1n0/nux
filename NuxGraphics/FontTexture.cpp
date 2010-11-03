@@ -221,7 +221,7 @@ namespace nux
           NString font_texture_file = GNuxGraphicsResources.FindResourceLocation (texture);
 #endif
 
-          TextureRectangle *Texture = new TextureRectangle ();
+          TextureRectangle *Texture = new TextureRectangle (NUX_TRACKER_LOCATION);
           NBitmapData *BitmapData = LoadImageFile (font_texture_file.GetTCharPtr ());
 
           if (BitmapData)

@@ -44,7 +44,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE (BaseTexture, ResourceData);
 
-    BaseTexture();
+    BaseTexture(NUX_FILE_LINE_PROTO);
     virtual ~BaseTexture();
 
     /*!
@@ -142,9 +142,9 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (Texture2D, BaseTexture);
 
   public:
-    Texture2D ();
-    Texture2D (const Texture2D &texture);
-    Texture2D (const NTextureData &BaseTexture);
+    Texture2D (NUX_FILE_LINE_PROTO);
+    Texture2D (const Texture2D &texture, NUX_FILE_LINE_PROTO);
+    Texture2D (const NTextureData &BaseTexture, NUX_FILE_LINE_PROTO);
     Texture2D &operator = (const Texture2D &texture);
     ~Texture2D ();
 
@@ -232,7 +232,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (TextureRectangle, BaseTexture);
 
   public:
-    TextureRectangle ();
+    TextureRectangle (NUX_FILE_LINE_PROTO);
     TextureRectangle (const TextureRectangle &texture);
     TextureRectangle (const NTextureData& Image);
     TextureRectangle &operator = (const TextureRectangle &texture);
@@ -306,7 +306,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (TextureCube, BaseTexture);
 
   public:
-    TextureCube();
+    TextureCube (NUX_FILE_LINE_PROTO);
     //Texture2D(const NTextureData& Image);
     TextureCube (const TextureCube &texture);
     TextureCube &operator = (const TextureCube &texture);
@@ -379,7 +379,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (TextureVolume, BaseTexture);
 
   public:
-    TextureVolume();
+    TextureVolume (NUX_FILE_LINE_PROTO);
     //Texture2D(const NTextureData& Image);
     TextureVolume (const TextureVolume &texture);
     TextureVolume &operator = (const TextureVolume &texture);
@@ -461,7 +461,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (TextureFrameAnimation, BaseTexture);
 
   public:
-    TextureFrameAnimation ();
+    TextureFrameAnimation (NUX_FILE_LINE_PROTO);
     TextureFrameAnimation (const TextureFrameAnimation &texture);
     TextureFrameAnimation &operator = (const TextureFrameAnimation &texture);
     ~TextureFrameAnimation ();

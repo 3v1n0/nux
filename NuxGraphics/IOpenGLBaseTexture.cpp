@@ -38,8 +38,8 @@ namespace nux
                                           t_u32 Height,
                                           t_u32 Depth,
                                           t_u32 NumMipLevel,
-                                          BitmapFormat PixelFormat)
-    : IOpenGLResource (ResourceType)
+                                          BitmapFormat PixelFormat, NUX_FILE_LINE_DECL)
+    : IOpenGLResource (ResourceType, NUX_FILE_LINE_PARAM)
     , _IsPOT (false)
     , _NumMipLevel (NumMipLevel)
     , _PixelFormat (PixelFormat)

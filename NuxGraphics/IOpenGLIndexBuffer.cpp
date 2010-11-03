@@ -29,8 +29,8 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLIndexBuffer);
 
-  IOpenGLIndexBuffer::IOpenGLIndexBuffer (t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format)
-    :   IOpenGLResource (RTINDEXBUFFER)
+  IOpenGLIndexBuffer::IOpenGLIndexBuffer (t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format, NUX_FILE_LINE_DECL)
+    :   IOpenGLResource (RTINDEXBUFFER, NUX_FILE_LINE_PARAM)
     ,   _Length (Length)
     ,   _Format (Format)
     ,   _Usage (Usage)

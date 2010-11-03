@@ -47,7 +47,9 @@ namespace nux
       {
         //IOpenGLSurface* surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice);
         //surface->InitializeLevel();
-        _VolumeSurfaceArray[mip].push_back (IntrusiveSP<IOpenGLSurface> (new IOpenGLSurface (this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice)));
+        IOpenGLSurface* surface = new IOpenGLSurface (this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice);
+        _VolumeSurfaceArray[mip].push_back (IntrusiveSP<IOpenGLSurface> (surface));
+        surface->UnReference ();
       }
     }
 

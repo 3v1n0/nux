@@ -69,8 +69,8 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE (ResourceData, Object);
   public:
-    ResourceData();
-    int GetResourceIndex() const;
+    ResourceData (NUX_FILE_LINE_PROTO);
+    int GetResourceIndex () const;
 
   private:
     int m_ResourceIndex;
