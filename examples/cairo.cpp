@@ -24,8 +24,8 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 
     nux::NBitmapData* bitmap =  cairo_graphics.GetBitmap();
 
-    // NTexture2D is the high level representation of an image that is backed by an actual opengl texture.
-    nux::NTexture2D* texture2D = new nux::NTexture2D();
+    // Texture2D is the high level representation of an image that is backed by an actual opengl texture.
+    nux::Texture2D* texture2D = new nux::Texture2D();
     texture2D->Update(bitmap);
 
     nux::VLayout* MainVLayout((new nux::VLayout()));

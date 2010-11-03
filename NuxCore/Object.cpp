@@ -55,12 +55,15 @@ namespace nux
   {
     nuxDebugMsg (TEXT("[ObjectStats::Destructor] %d undeleted objects."), _number_of_objects);
 
+#if defined(NUX_DEBUG)
     AllocationList::iterator it;
     for (it = _allocation_list.begin(); it != _allocation_list.end(); it++)
     {
       Object* obj = NUX_STATIC_CAST (Object*, (*it));
       nuxDebugMsg (TEXT("Undeleted object: Type %s, %s line %d"), obj->Type().m_Name, obj->m_allocation_file_name.GetTCharPtr(), obj->m_allocation_line_number);
+
     }
+#endif
   }
 
   std::new_handler Trackable::m_new_current_handler = 0;
