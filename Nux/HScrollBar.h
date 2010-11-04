@@ -40,13 +40,13 @@ namespace nux
     ~HScrollBar();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    void DrawLeftTriangle (GraphicsContext &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
-    void DrawRightTriangle (GraphicsContext &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawLeftTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawRightTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
 
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
   private:
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw) {};
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw) {};
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
 
     void HScrollBarHandler (void *v);
     void ScrollRight (void *v);

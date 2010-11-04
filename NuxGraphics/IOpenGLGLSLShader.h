@@ -54,7 +54,7 @@ namespace nux
   private:
     IOpenGLVertexShader (NString ShaderName = NString ("VertexProgram") );
     int m_CompiledAndReady;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
   class IOpenGLPixelShader:  public IOpenGLShader
@@ -68,7 +68,7 @@ namespace nux
   private:
     IOpenGLPixelShader (NString ShaderName = NString ("PixelProgram") );
     int m_CompiledAndReady;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
 
@@ -190,7 +190,7 @@ namespace nux
     std::vector<IntrusiveSP<IOpenGLShader> > ShaderObjectList;
     bool m_CompiledAndReady;
     NString _ShaderProgramName;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
 }

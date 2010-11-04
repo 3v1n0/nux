@@ -47,10 +47,10 @@ namespace nux
     ClientArea (NUX_FILE_LINE_PROTO);
     ~ClientArea();
 
-    virtual void BeginDraw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void BeginDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void NeedRedraw();
 
@@ -63,13 +63,13 @@ namespace nux
       return m_IsClientAreaEnabled;
     };
 
-    virtual void ClientDraw (GraphicsContext &GfxContext, DrawAreaContext &ctx, bool force_draw);
+    virtual void ClientDraw (GraphicsEngine &GfxContext, DrawAreaContext &ctx, bool force_draw);
     virtual void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvKeyEvent (
-      GraphicsContext &    ,   /*Graphics Context for text operation*/
+      GraphicsEngine &    ,   /*Graphics Context for text operation*/
       unsigned long       ,    /*event type*/
       unsigned long       ,    /*event keysym*/
       unsigned long       ,    /*event state*/
@@ -79,8 +79,8 @@ namespace nux
     );
 
     sigc::signal<void, DrawAreaContext, bool> sigClientDraw;
-    void SetClientViewport (GraphicsContext &GfxContext);
-    void Setup2DMode (GraphicsContext &GfxContext);
+    void SetClientViewport (GraphicsEngine &GfxContext);
+    void Setup2DMode (GraphicsEngine &GfxContext);
 
     // Before the client start drawing we set up a framebuffer object. We don't want the client to start messing
     // up the whole rendering by. If we setup a framebuffer instead, the client can never know the framebuffer

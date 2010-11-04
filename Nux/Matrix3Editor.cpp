@@ -291,7 +291,7 @@ namespace nux
     return ret;
   }
 
-  void Matrix3Editor::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void Matrix3Editor::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
@@ -307,19 +307,19 @@ namespace nux
     m_ZeroMtxBtn->NeedRedraw();
     m_InverseMtxBtn->NeedRedraw();
     m_NegateMtxBtn->NeedRedraw();
-    //gPainter.PopBackground();
+    //GetPainter().PopBackground();
 
-    //gPainter.PopBackground();
+    //GetPainter().PopBackground();
   }
 
-  void Matrix3Editor::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void Matrix3Editor::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     if (force_draw)
-      gPainter.PushDrawShapeLayer (GfxContext, mtx_layout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color (0xFF000000), eAllCorners);
+      GetPainter().PushDrawShapeLayer (GfxContext, mtx_layout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color (0xFF000000), eAllCorners);
     else
-      gPainter.PushShapeLayer (GfxContext, mtx_layout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color (0xFF000000), eAllCorners);
+      GetPainter().PushShapeLayer (GfxContext, mtx_layout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color (0xFF000000), eAllCorners);
 
     for (int i = 0; i < 3; i++)
     {
@@ -333,10 +333,10 @@ namespace nux
     m_ZeroMtxBtn->ProcessDraw (GfxContext, force_draw);
     m_InverseMtxBtn->ProcessDraw (GfxContext, force_draw);
     m_NegateMtxBtn->ProcessDraw (GfxContext, force_draw);
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
   }
 
-  void Matrix3Editor::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void Matrix3Editor::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

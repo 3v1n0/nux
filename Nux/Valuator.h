@@ -35,9 +35,9 @@ namespace nux
     ~Valuator();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw) = 0;
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw) = 0;
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw) = 0;
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) = 0;
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) = 0;
 
     //  RECEIVERS
     void RecvMouseMove (int x, int y, unsigned long button_flags, unsigned long key_flags);

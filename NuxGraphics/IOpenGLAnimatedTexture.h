@@ -88,7 +88,7 @@ namespace nux
 
     std::vector< int >  _FrameTimeArray;
 
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
     friend class IOpenGLSurface;
   };
 }

@@ -85,26 +85,26 @@ namespace nux
     return ret;
   };
 
-  void NumericValuator::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void NumericValuator::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     GeometryPositioning gp (eHALeft, eVACenter);
-    Geometry GeoPo = ComputeGeometryPositioning (m_SpinnerUpBtn->GetGeometry(), gTheme.GetImageGeometry (eTRIANGLE_RIGHT), gp);
-    gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_RIGHT);
+    Geometry GeoPo = ComputeGeometryPositioning (m_SpinnerUpBtn->GetGeometry(), GetTheme().GetImageGeometry (eTRIANGLE_RIGHT), gp);
+    GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_RIGHT);
 
-    GeoPo = ComputeGeometryPositioning (m_SpinnerDownBtn->GetGeometry(), gTheme.GetImageGeometry (eTRIANGLE_LEFT), gp);
-    gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_LEFT);
+    GeoPo = ComputeGeometryPositioning (m_SpinnerDownBtn->GetGeometry(), GetTheme().GetImageGeometry (eTRIANGLE_LEFT), gp);
+    GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_LEFT);
 
     m_EditLine->NeedRedraw();
   }
 
-  void NumericValuator::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void NumericValuator::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     m_EditLine->ProcessDraw (GfxContext, force_draw);
   }
 
-  void NumericValuator::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void NumericValuator::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -146,7 +146,7 @@ namespace nux
 
     if (m_fValue < m_DoubleValidator.GetMaximum() )
     {
-      m_UpTimerHandler = GetThreadTimer().AddTimerHandler (100, m_UpTimerCallback, 0);
+      m_UpTimerHandler = GetTimer().AddTimerHandler (100, m_UpTimerCallback, 0);
       NeedRedraw();
     }
   }
@@ -159,7 +159,7 @@ namespace nux
 
     if (m_fValue > m_DoubleValidator.GetMinimum() )
     {
-      m_DownTimerHandler = GetThreadTimer().AddTimerHandler (100, m_DownTimerCallback, 0);
+      m_DownTimerHandler = GetTimer().AddTimerHandler (100, m_DownTimerCallback, 0);
       NeedRedraw();
     }
   }

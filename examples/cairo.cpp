@@ -22,7 +22,7 @@
 #include "Nux/VLayout.h"
 #include "Nux/HLayout.h"
 #include "Nux/WindowThread.h"
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 
 #include "Nux/TextureArea.h"
 #include "NuxImage/CairoGraphics.h"

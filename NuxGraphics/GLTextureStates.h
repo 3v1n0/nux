@@ -62,7 +62,7 @@ namespace nux
     }
   };
 
-  class GLDeviceFactory;
+  class GpuDevice;
   class GLTextureStates
   {
   public:
@@ -109,7 +109,7 @@ namespace nux
     GLuint m_Type;
     TextureStateMap m_TextureStateChanges[GFXTS_MAX_TEXTURESTATES];
 
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
 // #define SET_TS_VALUE(a, b)  (a).iValue = (b); (a).Dirty = true;

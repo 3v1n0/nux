@@ -21,7 +21,7 @@
 
 
 #include "Nux.h"
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "NuxGraphics/RenderingPipe.h"
 #include "Utils.h"
 #include "PaintLayer.h"
@@ -36,7 +36,7 @@ namespace nux
     m_rop = ROP;
   }
 
-  void ColorLayer::Renderlayer (GraphicsContext &GfxContext)
+  void ColorLayer::Renderlayer (GraphicsEngine &GfxContext)
   {
     GfxContext.GetRenderStates().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
     GfxContext.QRP_GLSL_Color (m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_color);
@@ -61,9 +61,9 @@ namespace nux
     m_corners = corners;
   }
 
-  void ShapeLayer::Renderlayer (GraphicsContext &GfxContext)
+  void ShapeLayer::Renderlayer (GraphicsEngine &GfxContext)
   {
-    GetThreadPainter().PaintShapeCornerROP (GfxContext, m_geometry, m_color, m_image_style, m_corners, m_write_alpha, m_rop);
+    GetPainter().PaintShapeCornerROP (GfxContext, m_geometry, m_color, m_image_style, m_corners, m_write_alpha, m_rop);
 
     if (m_rop.Blend)
       GfxContext.GetRenderStates().SetBlend (false);
@@ -84,9 +84,9 @@ namespace nux
     m_corners = corners;
   }
 
-  void SliceScaledTextureLayer::Renderlayer (GraphicsContext &GfxContext)
+  void SliceScaledTextureLayer::Renderlayer (GraphicsEngine &GfxContext)
   {
-    GetThreadPainter().PaintTextureShape (GfxContext, m_geometry, m_image_style);
+    GetPainter().PaintTextureShape (GfxContext, m_geometry, m_image_style);
   }
 
   AbstractPaintLayer *SliceScaledTextureLayer::Clone() const
@@ -104,7 +104,7 @@ namespace nux
     m_texxform = texxform;
   }
 
-  void TextureLayer::Renderlayer (GraphicsContext &GfxContext)
+  void TextureLayer::Renderlayer (GraphicsEngine &GfxContext)
   {
     t_u32 current_alpha_blend;
     t_u32 current_src_blend_factor;

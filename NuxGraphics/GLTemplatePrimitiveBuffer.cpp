@@ -20,13 +20,13 @@
  */
 
 
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLTemplatePrimitiveBuffer.h"
 
 namespace nux
 {
 
-  TemplateQuadBuffer::TemplateQuadBuffer (GLDeviceFactory *pDeviceFactory, ShaderType Type, int NumQuads)
+  TemplateQuadBuffer::TemplateQuadBuffer (GpuDevice *pDeviceFactory, ShaderType Type, int NumQuads)
     :   m_ShaderType (Type)
   {
     Memset (VertexAttributeBuffer, 0, 16);

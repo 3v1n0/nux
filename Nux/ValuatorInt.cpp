@@ -72,65 +72,65 @@ namespace nux
     return ret;
   }
 
-  void ValuatorInt::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void ValuatorInt::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
-    gPainter.PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (GfxContext, base);
 
     if (m_EditLine->IsMouseInside() ||
         m_MouseControlledButton->HasMouseFocus() || m_MouseControlledButton->IsMouseInside() )
     {
 
-      gPainter.PaintShapeCorner (GfxContext, base, SPINBOX_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (GfxContext, base, SPINBOX_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopLeft | eCornerBottomLeft, false);
     }
     else
     {
-      gPainter.PaintShapeCorner (GfxContext, base, SPINBOX_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (GfxContext, base, SPINBOX_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopLeft | eCornerBottomLeft, false);
     }
 
     GeometryPositioning gp (eHACenter, eVACenter);
-    Geometry GeoPo = ComputeGeometryPositioning (m_MouseControlledButton->GetGeometry(), gTheme.GetImageGeometry (eVALUATORMOVE), gp);
+    Geometry GeoPo = ComputeGeometryPositioning (m_MouseControlledButton->GetGeometry(), GetTheme().GetImageGeometry (eVALUATORMOVE), gp);
 
     if (m_Mouse == 1)
     {
       if (m_MouseControlledButton->IsMouseInside() )
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORHORIZONTALMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORHORIZONTALMOVE);
       else
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORHORIZONTALMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORHORIZONTALMOVE);
     }
     else if (m_Mouse == 3)
     {
       if (m_MouseControlledButton->IsMouseInside() )
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORVERTICALMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORVERTICALMOVE);
       else
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORVERTICALMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORVERTICALMOVE);
     }
     else
     {
       if (m_MouseControlledButton->IsMouseInside() )
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORMOVE);
       else
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORMOVE);
     }
 
 
 
     Geometry geo = m_EditLine->GetGeometry();
     geo.OffsetPosition (-4, 0);
-    gPainter.PaintShapeCorner (GfxContext, geo, m_EditLine->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
+    GetPainter().PaintShapeCorner (GfxContext, geo, m_EditLine->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
                                eCornerTopLeft | eCornerBottomLeft, false);
 
     m_EditLine->NeedRedraw();
   }
 
-  void ValuatorInt::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void ValuatorInt::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     m_EditLine->ProcessDraw (GfxContext, force_draw);
   }
 
-  void ValuatorInt::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void ValuatorInt::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

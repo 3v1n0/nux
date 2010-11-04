@@ -23,7 +23,7 @@
 #ifndef TIMEGRAPH_H
 #define TIMEGRAPH_H
 
-#include "NuxGraphics/GLDeviceFactory.h"
+#include "NuxGraphics/GpuDevice.h"
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 #include "TimerProc.h"
@@ -45,9 +45,9 @@ namespace nux
     TimeGraph (const TCHAR *Title, NUX_FILE_LINE_PROTO);
     ~TimeGraph();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
     void AddValue (float Value);
     void SetYAxisBounds (float minY, float maxY);

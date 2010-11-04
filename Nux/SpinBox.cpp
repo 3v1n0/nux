@@ -99,53 +99,53 @@ namespace nux
     return ret;
   }
 
-  void SpinBox::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void SpinBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
-    gPainter.PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (GfxContext, base);
 
     if (m_EditLine->IsMouseInside() || m_SpinnerUpBtn->IsMouseInside() || m_SpinnerDownBtn->IsMouseInside() )
     {
 
-      gPainter.PaintShapeCorner (GfxContext, m_SpinnerUpBtn->GetGeometry(), SPINBOX_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (GfxContext, m_SpinnerUpBtn->GetGeometry(), SPINBOX_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopRight, false);
-      gPainter.PaintShapeCorner (GfxContext, m_SpinnerDownBtn->GetGeometry(), SPINBOX_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (GfxContext, m_SpinnerDownBtn->GetGeometry(), SPINBOX_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerBottomRight, false);
     }
     else
     {
-      gPainter.PaintShapeCorner (GfxContext, m_SpinnerUpBtn->GetGeometry(), SPINBOX_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (GfxContext, m_SpinnerUpBtn->GetGeometry(), SPINBOX_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopRight, false);
-      gPainter.PaintShapeCorner (GfxContext, m_SpinnerDownBtn->GetGeometry(), SPINBOX_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (GfxContext, m_SpinnerDownBtn->GetGeometry(), SPINBOX_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerBottomRight, false);
     }
 
     GeometryPositioning gp (eHACenter, eVACenter);
-    Geometry GeoPo = ComputeGeometryPositioning (m_SpinnerUpBtn->GetGeometry(), gTheme.GetImageGeometry (eSPINER_UP), gp);
+    Geometry GeoPo = ComputeGeometryPositioning (m_SpinnerUpBtn->GetGeometry(), GetTheme().GetImageGeometry (eSPINER_UP), gp);
 
     if (m_SpinnerUpBtn->IsMouseInside() )
-      gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_UP);
+      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_UP);
     else
-      gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_UP);
+      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_UP);
 
 
     gp.SetAlignment (eHACenter, eVACenter);
-    GeoPo = ComputeGeometryPositioning (m_SpinnerDownBtn->GetGeometry(), gTheme.GetImageGeometry (eSPINER_DOWN), gp);
+    GeoPo = ComputeGeometryPositioning (m_SpinnerDownBtn->GetGeometry(), GetTheme().GetImageGeometry (eSPINER_DOWN), gp);
 
     if (m_SpinnerDownBtn->IsMouseInside() )
-      gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
+      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
     else
-      gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
+      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
 
     m_EditLine->NeedRedraw();
   }
 
-  void SpinBox::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void SpinBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     m_EditLine->ProcessDraw (GfxContext, force_draw);
   }
 
-  void SpinBox::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void SpinBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -206,9 +206,9 @@ namespace nux
     if (m_iValue < m_IntValidator.GetMaximum() )
     {
       if (m_UpTimerHandler.IsValid() )
-        m_UpTimerHandler = GetThreadTimer().AddTimerHandler (100, m_UpTimerCallback, 0);
+        m_UpTimerHandler = GetTimer().AddTimerHandler (100, m_UpTimerCallback, 0);
       else
-        m_UpTimerHandler = GetThreadTimer().AddTimerHandler (800, m_UpTimerCallback, 0);
+        m_UpTimerHandler = GetTimer().AddTimerHandler (800, m_UpTimerCallback, 0);
 
       NeedRedraw();
     }
@@ -225,9 +225,9 @@ namespace nux
     if (m_iValue > m_IntValidator.GetMinimum() )
     {
       if (m_DownTimerHandler.IsValid() )
-        m_DownTimerHandler = GetThreadTimer().AddTimerHandler (100, m_DownTimerCallback, 0);
+        m_DownTimerHandler = GetTimer().AddTimerHandler (100, m_DownTimerCallback, 0);
       else
-        m_DownTimerHandler = GetThreadTimer().AddTimerHandler (800, m_DownTimerCallback, 0);
+        m_DownTimerHandler = GetTimer().AddTimerHandler (800, m_DownTimerCallback, 0);
 
       NeedRedraw();
     }

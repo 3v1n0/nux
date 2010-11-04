@@ -46,7 +46,7 @@ namespace nux
     NUX_SAFE_DELETE (m_Icon);
   }
 
-  void ActionItem::DrawAsMenuItem (GraphicsContext &GfxContext, CoreArea &area, bool is_highlighted, bool draw_icone)
+  void ActionItem::DrawAsMenuItem (GraphicsEngine &GfxContext, CoreArea &area, bool is_highlighted, bool draw_icone)
   {
     Geometry geo = area.GetGeometry();
     Geometry icon_geo (0, 0, 20, 20);
@@ -62,16 +62,16 @@ namespace nux
 
     if (is_highlighted)
     {
-      gPainter.Paint2DQuadColor (GfxContext, geo, Color (COLOR_FOREGROUND_SECONDARY) );
+      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (COLOR_FOREGROUND_SECONDARY) );
     }
 
     if(m_Icon)
-      gPainter.Draw2DTextureAligned (GfxContext, m_Icon, icon_geo, TextureAlignmentStyle (eTACenter, eTACenter) );
+      GetPainter().Draw2DTextureAligned (GfxContext, m_Icon, icon_geo, TextureAlignmentStyle (eTACenter, eTACenter) );
 
-    gPainter.PaintTextLineStatic (GfxContext, GetThreadFont(), text_geo, std::string (label), Color (0xFF000000), eAlignTextLeft);
+    GetPainter().PaintTextLineStatic (GfxContext, GetSysFont(), text_geo, std::string (label), Color (0xFF000000), eAlignTextLeft);
   }
 
-  void ActionItem::DrawAsToolButton (GraphicsContext &GfxContext, CoreArea &area)
+  void ActionItem::DrawAsToolButton (GraphicsEngine &GfxContext, CoreArea &area)
   {
     Geometry base = area.GetGeometry();
 
@@ -79,30 +79,30 @@ namespace nux
     {
       if (area.IsMouseInside() )
       {
-        gPainter.PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
-        gPainter.PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
+        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
+        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
       }
       else
       {
-        gPainter.PaintShape (GfxContext, base, Color (COLOR_FOREGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
-        gPainter.PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
+        GetPainter().PaintShape (GfxContext, base, Color (COLOR_FOREGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
+        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
       }
     }
     else
     {
       if (area.IsMouseInside() && (!area.MouseFocusOnOtherArea() ) )
       {
-        gPainter.PaintShape (GfxContext, base, Color (COLOR_FOREGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
-        gPainter.PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
+        GetPainter().PaintShape (GfxContext, base, Color (COLOR_FOREGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
+        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
       }
       else
       {
-        gPainter.PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
-        gPainter.PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
+        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
+        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
       }
     }
 
-    gPainter.Draw2DTextureAligned (GfxContext, m_Icon, base, TextureAlignmentStyle (eTACenter, eTACenter) );
+    GetPainter().Draw2DTextureAligned (GfxContext, m_Icon, base, TextureAlignmentStyle (eTACenter, eTACenter) );
   }
 
   void ActionItem::Activate (bool b)

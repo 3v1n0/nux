@@ -111,7 +111,7 @@ namespace nux
     return ret;
   }
 
-  void RangeValue::DrawMarker (GraphicsContext &GfxContext)
+  void RangeValue::DrawMarker (GraphicsEngine &GfxContext)
   {
     int marker_position_x;
     int marker_position_y;
@@ -120,11 +120,11 @@ namespace nux
 
     marker_position_x = m_Percentage->GetBaseX() + (m_Value - m_min) * m_Percentage->GetBaseWidth() * 1 / (m_max - m_min);
     marker_position_y = m_Percentage->GetBaseY() + m_Percentage->GetBaseHeight();
-    gPainter.Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
                                   marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
 
-    gPainter.Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
                                   marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
 
@@ -132,19 +132,19 @@ namespace nux
   }
 
 
-  void RangeValue::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void RangeValue::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     bool highlighted;
     Geometry base = GetGeometry();
 
     // Percentage
     Geometry P = m_Percentage->GetGeometry();
-    gPainter.Paint2DQuadColor (GfxContext, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
+    GetPainter().Paint2DQuadColor (GfxContext, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
 
     if (m_EnableDrawProgress)
     {
       P.SetWidth ( (m_Value - m_min) * (float) P.GetWidth() / (m_max - m_min) );
-      gPainter.Paint2DQuadColor (GfxContext, P, m_ProgressColor);
+      GetPainter().Paint2DQuadColor (GfxContext, P, m_ProgressColor);
     }
 
     m_ValueString->ProcessDraw (GfxContext, true);
@@ -157,12 +157,12 @@ namespace nux
     DrawMarker (GfxContext);
   }
 
-  void RangeValue::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void RangeValue::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     m_ValueString->ProcessDraw (GfxContext, force_draw);
   }
 
-  void RangeValue::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void RangeValue::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

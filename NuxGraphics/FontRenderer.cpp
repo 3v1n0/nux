@@ -24,10 +24,10 @@
 #include "IOpenGLResource.h"
 #include "GLResourceManager.h"
 #include "IOpenGLBaseTexture.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLTextureResourceManager.h"
 
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 
 #include "FontRenderer.h"
 
@@ -103,7 +103,7 @@ namespace nux
     END");
 
 
-  FontRenderer::FontRenderer (GraphicsContext &OpenGLEngine)
+  FontRenderer::FontRenderer (GraphicsEngine &OpenGLEngine)
     :   m_OpenGLEngine (OpenGLEngine)
   {
     //m_QuadBuffer = new TemplateQuadBuffer(GetThreadGLDeviceFactory(), SHADER_TYPE_GLSL);

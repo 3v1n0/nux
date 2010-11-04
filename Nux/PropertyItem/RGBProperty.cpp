@@ -39,10 +39,10 @@ namespace nux
 
     m_ColorModel = new Button (TEXT ("RGB"), NUX_TRACKER_LOCATION);
     m_ColorModel->SetMinMaxSize (32, 14);
-    m_ColorModel->SetFont (GetThreadBoldFont() );
+    m_ColorModel->SetFont (GetSysBoldFont() );
     m_ColorFormat = new Button (TEXT ("float"), NUX_TRACKER_LOCATION);
     m_ColorFormat->SetMinMaxSize (32, 14);
-    m_ColorFormat->SetFont (GetThreadBoldFont() );
+    m_ColorFormat->SetFont (GetSysBoldFont() );
 
 
     PushChildBack (m_red);
@@ -176,7 +176,7 @@ namespace nux
     m_blue->NeedRedraw();
   }
 
-  void RGBPropertyItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
+  void RGBPropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
                                       RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     if (isDirtyItem() ||
@@ -185,7 +185,7 @@ namespace nux
         m_blue->IsRedrawNeeded() )
     {
       UINT nBackground = table->PushItemBackground (GfxContext, this);
-      Painter.PaintTextLineStatic (GfxContext, GetThreadBoldFont() /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
+      Painter.PaintTextLineStatic (GfxContext, GetSysBoldFont() /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
 
       if (m_ItemGeometryVector.size() >= 2)
       {

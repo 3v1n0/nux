@@ -30,7 +30,7 @@ class IOpenGLPixelShader;
 namespace nux
 {
 
-  class GraphicsContext;
+  class GraphicsEngine;
   class TextureRectangle;
   class ICgPixelShader;
   class ICgVertexShader;
@@ -40,10 +40,10 @@ namespace nux
   class FontRenderer
   {
   public:
-    FontRenderer (GraphicsContext &OpenGLEngine);
+    FontRenderer (GraphicsEngine &OpenGLEngine);
     ~FontRenderer();
 
-    GraphicsContext &m_OpenGLEngine;
+    GraphicsEngine &m_OpenGLEngine;
 
     int DrawColorString (IntrusiveSP<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int NumCharacter = 0, int SkipFirstNCharacters = 0);
 

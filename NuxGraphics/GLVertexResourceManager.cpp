@@ -23,11 +23,11 @@
 #include "GLResource.h"
 #include "GLResourceManager.h"
 #include "GLDeviceObjects.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLVertexResourceManager.h"
 
 #include "NuxMesh/NMeshObject.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 
 namespace nux
 {

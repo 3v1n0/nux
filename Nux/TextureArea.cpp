@@ -49,23 +49,23 @@ namespace nux
     return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
   }
 
-  void TextureArea::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void TextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    gPainter.PaintBackground (GfxContext, GetGeometry() );
+    GetPainter().PaintBackground (GfxContext, GetGeometry() );
 
     if (m_PaintLayer)
     {
       m_PaintLayer->SetGeometry (GetGeometry() );
-      gPainter.RenderSinglePaintLayer (GfxContext, GetGeometry(), m_PaintLayer);
+      GetPainter().RenderSinglePaintLayer (GfxContext, GetGeometry(), m_PaintLayer);
     }
   }
 
-  void TextureArea::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void TextureArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void TextureArea::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void TextureArea::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

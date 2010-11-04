@@ -21,7 +21,7 @@
 
 
 #include "GLResource.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 
 #include "GLDeviceObjects.h"
 #include "IOpenGLQuery.h"
@@ -71,7 +71,7 @@ namespace nux
     return 0;
   }
 
-  void IOpenGLQuery::GetDevice (GLDeviceFactory **ppDevice)
+  void IOpenGLQuery::GetDevice (GpuDevice **ppDevice)
   {
     // Do not call this function.
     *ppDevice = NULL;

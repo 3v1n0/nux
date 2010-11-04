@@ -41,7 +41,7 @@ namespace nux
     m_TextureIndex                  = 0;
     m_ReformatTexture               = true;
 
-    //gPainter.CreateBackgroundTexture(m_BackgroundTexture);
+    //GetPainter().CreateBackgroundTexture(m_BackgroundTexture);
     hscrollbar = new HScrollBar (NUX_TRACKER_LOCATION);
     vscrollbar = new VScrollBar (NUX_TRACKER_LOCATION);
 
@@ -83,7 +83,7 @@ namespace nux
     return ret;
   }
 
-  void ScrollView::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void ScrollView::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 

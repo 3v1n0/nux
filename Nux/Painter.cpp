@@ -174,7 +174,7 @@ namespace nux
   {
   }
 
-  int BasePainter::PaintColorTextLineEdit (GraphicsContext &GfxContext, const Geometry &g, const NString &Str,
+  int BasePainter::PaintColorTextLineEdit (GraphicsEngine &GfxContext, const Geometry &g, const NString &Str,
       Color TextColor,
       bool WriteAlphaChannel,
       Color SelectedTextColor,
@@ -192,7 +192,7 @@ namespace nux
     page.ymax = g.y + g.GetHeight();
     page.x_margin = DEFAULT_TEXT_X_MARGIN;
     page.y_margin = DEFAULT_TEXT_Y_MARGIN;
-    return GfxContext.RenderColorTextLineEdit (GetThreadFont(), page, Str,
+    return GfxContext.RenderColorTextLineEdit (GetSysFont(), page, Str,
            TextColor,
            WriteAlphaChannel,
            SelectedTextColor,
@@ -202,7 +202,7 @@ namespace nux
            ShowCursor, CursorPosition, offset, selection_start, selection_end);
   }
 
-  int BasePainter::PaintTextLineStatic (GraphicsContext &GfxContext,
+  int BasePainter::PaintTextLineStatic (GraphicsEngine &GfxContext,
                                         IntrusiveSP<FontTexture> Font,
                                         const Geometry &g,
                                         const NString &Str,
@@ -220,7 +220,7 @@ namespace nux
     return GfxContext.RenderColorTextLineStatic (Font, page, Str, color, WriteAlphaChannel, alignment);
   }
 
-  void BasePainter::Draw2DTexture (GraphicsContext &GfxContext, BaseTexture *texture, int x, int y) const
+  void BasePainter::Draw2DTexture (GraphicsEngine &GfxContext, BaseTexture *texture, int x, int y) const
   {
     float tex_w, tex_h;
     tex_w = (float) texture->GetWidth();
@@ -230,7 +230,7 @@ namespace nux
     GfxContext.QRP_GLSL_1Tex (x, y, tex_w, tex_h, texture->GetDeviceTexture(), texxform, Color::White);
   }
 
-  void BasePainter::Draw2DTextureAligned (GraphicsContext &GfxContext, BaseTexture *texture, const Geometry &g, TextureAlignmentStyle tex_align) const
+  void BasePainter::Draw2DTextureAligned (GraphicsEngine &GfxContext, BaseTexture *texture, const Geometry &g, TextureAlignmentStyle tex_align) const
   {
     int x_pos, y_pos;
     int tex_w, tex_h;
@@ -282,33 +282,33 @@ namespace nux
 // Draw QUADS    //
 ///////////////////
 
-  void BasePainter::Paint2DQuadColor (GraphicsContext &GfxContext, const Geometry &g, Color c0) const
+  void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0) const
   {
     GfxContext.QRP_GLSL_Color (g.x, g.y, g.GetWidth(), g.GetHeight(), c0);
   }
 
-  void BasePainter::Paint2DQuadColor (GraphicsContext &GfxContext, const Geometry &g, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const
+  void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const
   {
     GfxContext.QRP_GLSL_Color (g.x, g.y, g.GetWidth(), g.GetHeight(), c0_top_left, c1_bottom_left, c2_bottom_right, c3_top_right);
   }
 
-  void BasePainter::Paint2DQuadColor (GraphicsContext &GfxContext, int x, int y, int width, int height, Color c0) const
+  void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0) const
   {
     GfxContext.QRP_GLSL_Color (x, y, width, height, c0);
   }
 
 
-  void BasePainter::Paint2DQuadColor (GraphicsContext &GfxContext, int x, int y, int width, int height, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const
+  void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const
   {
     GfxContext.QRP_GLSL_Color (x, y, width, height, c0_top_left, c1_bottom_left, c2_bottom_right, c3_top_right);
   }
 
-  void BasePainter::Paint2DQuadVGradient (GraphicsContext &GfxContext, const Geometry &g, Color TopColor, Color BottomColor) const
+  void BasePainter::Paint2DQuadVGradient (GraphicsEngine &GfxContext, const Geometry &g, Color TopColor, Color BottomColor) const
   {
     Paint2DQuadColor (GfxContext, g, TopColor, BottomColor, BottomColor, TopColor);
   }
 
-  void BasePainter::Paint2DQuadHGradient (GraphicsContext &GfxContext, const Geometry &g, Color LeftColor, Color RightColor) const
+  void BasePainter::Paint2DQuadHGradient (GraphicsEngine &GfxContext, const Geometry &g, Color LeftColor, Color RightColor) const
   {
     Paint2DQuadColor (GfxContext, g, LeftColor, LeftColor, RightColor, LeftColor);
   }
@@ -317,32 +317,32 @@ namespace nux
 /////////////////////////////
 // Draw QUADS WIREFRAME    //
 /////////////////////////////
-  void BasePainter::Paint2DQuadWireframe (GraphicsContext &GfxContext, const Geometry &g, Color c0) const
+  void BasePainter::Paint2DQuadWireframe (GraphicsEngine &GfxContext, const Geometry &g, Color c0) const
   {
     GfxContext.QRP_GLSL_QuadWireframe (g.x, g.y, g.GetWidth(), g.GetHeight(), c0, c0, c0, c0);
   }
 
-// void BasePainter::Paint2DQuadWireframe(GraphicsContext& GfxContext, const Geometry &g, Color c0_left, Color c1_right) const
+// void BasePainter::Paint2DQuadWireframe(GraphicsEngine& GfxContext, const Geometry &g, Color c0_left, Color c1_right) const
 // {
 //     GfxContext.QRP_GLSL_QuadWireframe(g.x, g.y, g.GetWidth(), g.GetHeight(), c0_left, c0_left, c1_right, c1_right);
 // }
 
-  void BasePainter::Paint2DQuadWireframe (GraphicsContext &GfxContext, const Geometry &g, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const
+  void BasePainter::Paint2DQuadWireframe (GraphicsEngine &GfxContext, const Geometry &g, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const
   {
     GfxContext.QRP_GLSL_QuadWireframe (g.x, g.y, g.GetWidth(), g.GetHeight(), c_top_left, c_bottom_left, c_bottom_right, c_top_right);
   }
 
-  void BasePainter::Paint2DQuadWireframe (GraphicsContext &GfxContext, int x, int y, int width, int height, Color c0) const
+  void BasePainter::Paint2DQuadWireframe (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0) const
   {
     GfxContext.QRP_GLSL_QuadWireframe (x, y, width, height, c0, c0, c0, c0);
   }
 
-// void BasePainter::Paint2DQuadWireframe(GraphicsContext& GfxContext, int x, int y, int width, int height, Color c0_left, Color c1_right) const
+// void BasePainter::Paint2DQuadWireframe(GraphicsEngine& GfxContext, int x, int y, int width, int height, Color c0_left, Color c1_right) const
 // {
 //     GfxContext.QRP_GLSL_QuadWireframe(x, y, width, height, c0_left, c0_left, c1_right, c1_right);
 // }
 
-  void BasePainter::Paint2DQuadWireframe (GraphicsContext &GfxContext, int x, int y, int width, int height, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const
+  void BasePainter::Paint2DQuadWireframe (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const
   {
     GfxContext.QRP_GLSL_QuadWireframe (x, y, width, height, c_top_left, c_bottom_left, c_bottom_right, c_top_right);
   }
@@ -350,7 +350,7 @@ namespace nux
 //////////////////////
 // Draw TRIANGLES   //
 //////////////////////
-  void BasePainter::Draw2DTriangleColor (GraphicsContext &GfxContext, int x0, int y0,
+  void BasePainter::Draw2DTriangleColor (GraphicsEngine &GfxContext, int x0, int y0,
                                          int x1, int y1,
                                          int x2, int y2,
                                          Color c0)
@@ -358,7 +358,7 @@ namespace nux
     GfxContext.QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0);
   }
 
-  void BasePainter::Draw2DTriangleColor (GraphicsContext &GfxContext, int x0, int y0,
+  void BasePainter::Draw2DTriangleColor (GraphicsEngine &GfxContext, int x0, int y0,
                                          int x1, int y1,
                                          int x2, int y2,
                                          Color c0, Color c1, Color c2)
@@ -369,12 +369,12 @@ namespace nux
 //////////////////////
 // DRAW LINES       //
 //////////////////////
-  void BasePainter::Draw2DLine (GraphicsContext &GfxContext, int x0, int y0,
+  void BasePainter::Draw2DLine (GraphicsEngine &GfxContext, int x0, int y0,
                                 int x1, int y1, Color c0) const
   {
     GfxContext.QRP_GLSL_Line (x0, y0, x1, y1, c0);
   }
-  void BasePainter::Draw2DLine (GraphicsContext &GfxContext, int x0, int y0,
+  void BasePainter::Draw2DLine (GraphicsEngine &GfxContext, int x0, int y0,
                                 int x1, int y1, Color c0, Color c1) const
   {
     GfxContext.QRP_GLSL_Line (x0, y0, x1, y1, c0, c1);
@@ -385,7 +385,7 @@ namespace nux
 ////////////////////
 
 
-  void BasePainter::PaintShape (GraphicsContext &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha) const
+  void BasePainter::PaintShape (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha) const
   {
     ROPConfig ROP;
     ROP.Blend = true;
@@ -394,7 +394,7 @@ namespace nux
     PaintShapeCornerROP (GfxContext, geo, c0, style, eCornerTopLeft | eCornerTopRight | eCornerBottomLeft | eCornerBottomRight, WriteAlpha, ROP);
   }
 
-  void BasePainter::PaintShapeCorner (GraphicsContext &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha) const
+  void BasePainter::PaintShapeCorner (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha) const
   {
     ROPConfig ROP;
     ROP.Blend = true;
@@ -403,14 +403,14 @@ namespace nux
     PaintShapeCornerROP (GfxContext, geo, c0, style, corners, WriteAlpha, ROP);
   }
 
-  void BasePainter::PaintShapeROP (GraphicsContext &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha, const ROPConfig &ROP) const
+  void BasePainter::PaintShapeROP (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha, const ROPConfig &ROP) const
   {
     PaintShapeCornerROP (GfxContext, geo, c0, style, eCornerTopLeft | eCornerTopRight | eCornerBottomLeft | eCornerBottomRight, WriteAlpha, ROP);
   }
 
-  void BasePainter::PaintShapeCornerROP (GraphicsContext &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha, const ROPConfig &ROP) const
+  void BasePainter::PaintShapeCornerROP (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha, const ROPConfig &ROP) const
   {
-    const PainterImage *pimage = gTheme.GetImage (style);
+    const PainterImage *pimage = GetTheme().GetImage (style);
 
     if (pimage == 0)
       return;
@@ -543,9 +543,9 @@ namespace nux
     GfxContext.GetRenderStates().SetBlend (FALSE);
   }
 
-  void BasePainter::PaintTextureShape (GraphicsContext &GfxContext, const Geometry &geo, UXStyleImageRef style) const
+  void BasePainter::PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, UXStyleImageRef style) const
   {
-    const PainterImage *pimage = gTheme.GetImage (style);
+    const PainterImage *pimage = GetTheme().GetImage (style);
 
     if (pimage == 0)
       return;
@@ -563,7 +563,7 @@ namespace nux
                        border_left, border_right, border_top, border_bottom, draw_borders_only);
   }
 
-  void BasePainter::PaintTextureShape (GraphicsContext &GfxContext, const Geometry &geo, BaseTexture *texture,
+  void BasePainter::PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, BaseTexture *texture,
                                        int border_left, int border_right, int border_top, int border_bottom,
                                        bool draw_borders_only) const
   {
@@ -652,7 +652,7 @@ namespace nux
     GfxContext.GetRenderStates().SetBlend (FALSE);
   }
 
-  void BasePainter::PaintHorizontalGradientQuad (GraphicsContext &GfxContext, const Geometry &geo, int array_size, float *percentage_array, Color *color_array)
+  void BasePainter::PaintHorizontalGradientQuad (GraphicsEngine &GfxContext, const Geometry &geo, int array_size, float *percentage_array, Color *color_array)
   {
     for (int i = 0; i < array_size - 1; i++)
     {
@@ -665,7 +665,7 @@ namespace nux
     }
   }
 
-  void BasePainter::PaintCheckBox (GraphicsContext &GfxContext, const Geometry &geo, const InteractState &interaction_state,
+  void BasePainter::PaintCheckBox (GraphicsEngine &GfxContext, const Geometry &geo, const InteractState &interaction_state,
                                    Color check_mark_color, Color check_box_color)
   {
 
@@ -673,7 +673,7 @@ namespace nux
     pctx.m_stretch_horizontal = false;
     pctx.m_stretch_vertical = false;
 
-    const PainterImage *pimage = gTheme.GetImage (eCHECKBOX_NORMAL_ON);
+    const PainterImage *pimage = GetTheme().GetImage (eCHECKBOX_NORMAL_ON);
 
     if (pimage == 0)
       return;
@@ -686,37 +686,37 @@ namespace nux
 
     if (interaction_state.is_focus && interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eCHECKBOX_FOCUS_ON)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eCHECKBOX_FOCUS_ON)->texture, content_geo.x, content_geo.y);
     }
     else if (interaction_state.is_focus && !interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eCHECKBOX_FOCUS_OFF)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eCHECKBOX_FOCUS_OFF)->texture, content_geo.x, content_geo.y);
     }
     else if (interaction_state.is_prelight && interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eCHECKBOX_PRELIGHT_ON)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eCHECKBOX_PRELIGHT_ON)->texture, content_geo.x, content_geo.y);
     }
     else if (interaction_state.is_prelight && !interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eCHECKBOX_PRELIGHT_OFF)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eCHECKBOX_PRELIGHT_OFF)->texture, content_geo.x, content_geo.y);
     }
     else if (interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eCHECKBOX_NORMAL_ON)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eCHECKBOX_NORMAL_ON)->texture, content_geo.x, content_geo.y);
     }
     else
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eCHECKBOX_NORMAL_OFF)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eCHECKBOX_NORMAL_OFF)->texture, content_geo.x, content_geo.y);
     }
 
     GfxContext.GetRenderStates().SetBlend (false);
     //PaintShape(content_geo, check_box_color, eSHAPE_CHECK_BOX);
-    //Draw2DTexture(gTheme.GetImage(eSHAPE_CHECK_BOX)->texture, content_geo);
+    //Draw2DTexture(GetTheme().GetImage(eSHAPE_CHECK_BOX)->texture, content_geo);
 
     //PaintShape(const Geometry& geo, Color c0, UXStyleImageRef style)
   }
 
-  void BasePainter::PaintRadioButton (GraphicsContext &GfxContext, const Geometry &geo, const InteractState &interaction_state,
+  void BasePainter::PaintRadioButton (GraphicsEngine &GfxContext, const Geometry &geo, const InteractState &interaction_state,
                                       Color check_mark_color, Color check_box_color)
   {
     PaintBackground (GfxContext, geo);
@@ -724,7 +724,7 @@ namespace nux
     pctx.m_stretch_horizontal = false;
     pctx.m_stretch_vertical = false;
 
-    const PainterImage *pimage = gTheme.GetImage (eRADIO_NORMAL_ON);
+    const PainterImage *pimage = GetTheme().GetImage (eRADIO_NORMAL_ON);
 
     if (pimage == 0)
       return;
@@ -741,33 +741,33 @@ namespace nux
 
     if (interaction_state.is_focus && interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eRADIO_FOCUS_ON)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eRADIO_FOCUS_ON)->texture, content_geo.x, content_geo.y);
     }
     else if (interaction_state.is_focus && !interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eRADIO_FOCUS_OFF)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eRADIO_FOCUS_OFF)->texture, content_geo.x, content_geo.y);
     }
     else if (interaction_state.is_prelight && interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eRADIO_PRELIGHT_ON)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eRADIO_PRELIGHT_ON)->texture, content_geo.x, content_geo.y);
     }
     else if (interaction_state.is_prelight && !interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eRADIO_PRELIGHT_OFF)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eRADIO_PRELIGHT_OFF)->texture, content_geo.x, content_geo.y);
     }
     else if (interaction_state.is_on)
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eRADIO_NORMAL_ON)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eRADIO_NORMAL_ON)->texture, content_geo.x, content_geo.y);
     }
     else
     {
-      Draw2DTexture (GfxContext, gTheme.GetImage (eRADIO_NORMAL_OFF)->texture, content_geo.x, content_geo.y);
+      Draw2DTexture (GfxContext, GetTheme().GetImage (eRADIO_NORMAL_OFF)->texture, content_geo.x, content_geo.y);
     }
 
     GfxContext.GetRenderStates().SetBlend (false);
   }
 
-  void BasePainter::PaintBackground (GraphicsContext &GfxContext, const Geometry &geo)
+  void BasePainter::PaintBackground (GraphicsEngine &GfxContext, const Geometry &geo)
   {
 
     if (m_BackgroundStack.begin() == m_BackgroundStack.end() )
@@ -798,25 +798,25 @@ namespace nux
     }
   }
 
-  void BasePainter::RenderSinglePaintLayer (GraphicsContext &GfxContext, Geometry geo, AbstractPaintLayer *background)
+  void BasePainter::RenderSinglePaintLayer (GraphicsEngine &GfxContext, Geometry geo, AbstractPaintLayer *background)
   {
     background->Renderlayer (GfxContext);
   }
 
-  void BasePainter::PushLayer (GraphicsContext &GfxContext, const Geometry &geo, AbstractPaintLayer *layer)
+  void BasePainter::PushLayer (GraphicsEngine &GfxContext, const Geometry &geo, AbstractPaintLayer *layer)
   {
     AbstractPaintLayer *l = layer->Clone();
     l->SetGeometry (geo);
     m_BackgroundStack.push_front (l);
   }
 
-  void BasePainter::PushDrawLayer (GraphicsContext &GfxContext, const Geometry &geo, AbstractPaintLayer *layer)
+  void BasePainter::PushDrawLayer (GraphicsEngine &GfxContext, const Geometry &geo, AbstractPaintLayer *layer)
   {
     PushLayer (GfxContext, geo, layer);
     PaintBackground (GfxContext, geo);
   }
 
-  void BasePainter::PushColorLayer (GraphicsContext &GfxContext, const Geometry &geo,
+  void BasePainter::PushColorLayer (GraphicsEngine &GfxContext, const Geometry &geo,
                                     Color color,
                                     bool WriteAlpha,
                                     const ROPConfig &ROP)
@@ -826,7 +826,7 @@ namespace nux
     m_BackgroundStack.push_front (cl);
   }
 
-  void BasePainter::PushDrawColorLayer (GraphicsContext &GfxContext, const Geometry &geo,
+  void BasePainter::PushDrawColorLayer (GraphicsEngine &GfxContext, const Geometry &geo,
                                         Color color,
                                         bool WriteAlpha,
                                         const ROPConfig &ROP)
@@ -835,7 +835,7 @@ namespace nux
     PaintBackground (GfxContext, geo);
   }
 
-  void BasePainter::PushShapeLayer (GraphicsContext &GfxContext, Geometry geo,
+  void BasePainter::PushShapeLayer (GraphicsEngine &GfxContext, Geometry geo,
                                     UXStyleImageRef imageStyle,
                                     const Color &color,
                                     unsigned long Corners,
@@ -847,7 +847,7 @@ namespace nux
     m_BackgroundStack.push_front (sl);
   }
 
-  void BasePainter::PushDrawShapeLayer (GraphicsContext &GfxContext, Geometry geo,
+  void BasePainter::PushDrawShapeLayer (GraphicsEngine &GfxContext, Geometry geo,
                                         UXStyleImageRef imageStyle,
                                         const Color &color,
                                         unsigned long Corners,
@@ -858,7 +858,7 @@ namespace nux
     PaintBackground (GfxContext, geo);
   }
 
-  void BasePainter::PushSliceScaledTextureLayer (GraphicsContext &GfxContext, Geometry geo,
+  void BasePainter::PushSliceScaledTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
       UXStyleImageRef imageStyle,
       const Color &color,
       unsigned long Corners,
@@ -870,7 +870,7 @@ namespace nux
     m_BackgroundStack.push_front (sl);
   }
 
-  void BasePainter::PushDrawSliceScaledTextureLayer (GraphicsContext &GfxContext, Geometry geo,
+  void BasePainter::PushDrawSliceScaledTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
       UXStyleImageRef imageStyle,
       const Color &color,
       unsigned long Corners,
@@ -881,7 +881,7 @@ namespace nux
     PaintBackground (GfxContext, geo);
   }
 
-  void BasePainter::PushTextureLayer (GraphicsContext &GfxContext, Geometry geo,
+  void BasePainter::PushTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
                                       TexCoordXForm texxform,
                                       const Color &color,
@@ -893,7 +893,7 @@ namespace nux
     m_BackgroundStack.push_front (tl);
   }
 
-  void BasePainter::PushDrawTextureLayer (GraphicsContext &GfxContext, Geometry geo,
+  void BasePainter::PushDrawTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
                                           IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
                                           TexCoordXForm texxform,
                                           const Color &color,

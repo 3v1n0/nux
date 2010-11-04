@@ -27,12 +27,12 @@
 // {
 // 
 //   class GLWindowImpl;
-//   class GLDeviceFactory;
-//   class GraphicsContext;
+//   class GpuDevice;
+//   class GraphicsEngine;
 // 
 //   GLWindowImpl *GetThreadGLWindow();
-//   GLDeviceFactory *GetThreadGLDeviceFactory();
-//   GraphicsContext *GetThreadGraphicsContext();
+//   GpuDevice *GetThreadGLDeviceFactory();
+//   GraphicsEngine *GetThreadGraphicsContext();
 // 
 // #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
 // #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()

@@ -23,7 +23,7 @@
 #include "GLResource.h"
 #include "GLResourceManager.h"
 #include "GLTextureResourceManager.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 #include "FontTexture.h"
 
 namespace nux

@@ -28,7 +28,7 @@
 #elif defined(NUX_OS_LINUX)
 #include "NuxGraphics/GfxSetupX11.h"
 #endif
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "ClientArea.h"
 #include "WindowCompositor.h"
 #include "TimerProc.h"

@@ -73,9 +73,9 @@ namespace nux
         If force_draw is true then the system requests that all objects redraw themselves completely.
         \param force_draw.
     */
-    virtual void OnDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void OnDraw (GraphicsEngine &GfxContext, bool force_draw);
 
-    virtual void OverlayDrawing (GraphicsContext &GfxContext) {}
+    virtual void OverlayDrawing (GraphicsEngine &GfxContext) {}
 
     bool HasKeyboardFocus();
     void SetKeyboardFocus (bool b);
@@ -173,7 +173,7 @@ namespace nux
     sigc::signal<void> OnEndFocus;
 
     sigc::signal < void,
-         GraphicsContext &    ,   /*Graphics Context for text operation*/
+         GraphicsEngine &    ,   /*Graphics Context for text operation*/
          unsigned long       ,    /*event type*/
          unsigned long       ,    /*event keysym*/
          unsigned long       ,    /*event state*/

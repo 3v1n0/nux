@@ -51,7 +51,7 @@ namespace nux
     return ret;
   }
 
-  void CheckBoxPropertyItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry ItemGeo, const BasePainter &Painter,
+  void CheckBoxPropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry ItemGeo, const BasePainter &Painter,
       RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     Geometry geo2 = m_FirstColumnUsableGeometry;

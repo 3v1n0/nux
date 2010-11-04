@@ -89,7 +89,7 @@ namespace nux
     //    unsigned int        _Height;
     std::map<eCUBEMAP_FACES, std::vector<IOpenGLSurface *>* > _SurfaceArray;
 
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
     friend class IOpenGLSurface;
   };
 

@@ -81,7 +81,7 @@ namespace nux
     return ret;
   }
 
-  void Button::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void Button::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
@@ -95,43 +95,43 @@ namespace nux
     {
       if (m_State)
       {
-        gPainter.PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Color::White, eAllCorners);
-        gPainter.PopBackground();
+        GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Color::White, eAllCorners);
+        GetPainter().PopBackground();
       }
       else
       {
-        gPainter.PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Color::White, eAllCorners);
-        gPainter.PopBackground();
+        GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Color::White, eAllCorners);
+        GetPainter().PopBackground();
       }
     }
     else
     {
       if (is.is_focus)
       {
-        gPainter.PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Color::White, eAllCorners);
-        gPainter.PopBackground();
+        GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Color::White, eAllCorners);
+        GetPainter().PopBackground();
       }
       else if (is.is_prelight)
       {
-        gPainter.PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, Color::White, eAllCorners);
-        gPainter.PopBackground();
+        GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, Color::White, eAllCorners);
+        GetPainter().PopBackground();
       }
       else
       {
-        gPainter.PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Color::White, eAllCorners);
-        gPainter.PopBackground();
+        GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Color::White, eAllCorners);
+        GetPainter().PopBackground();
       }
     }
 
-    gPainter.PaintTextLineStatic (GfxContext, GetFont(), base, GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+    GetPainter().PaintTextLineStatic (GfxContext, GetFont(), base, GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
   }
 
-  void Button::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void Button::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void Button::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void Button::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

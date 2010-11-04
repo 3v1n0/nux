@@ -167,7 +167,7 @@ namespace nux
     }
     else
     {
-      nuxError (TEXT ("[GLDeviceFactory::BindTexture] Unknown texture type.") );
+      nuxError (TEXT ("[GpuDevice::BindTexture] Unknown texture type.") );
       return OGL_INVALID_TEXTURE;
     }
 

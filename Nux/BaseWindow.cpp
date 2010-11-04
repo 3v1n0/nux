@@ -62,7 +62,7 @@ namespace nux
     m_background_color = Color (0xFF707070);
 
     // Should be at the end of the constructor
-    GetThreadWindowCompositor().RegisterWindow (this);
+    GetWindowCompositor().RegisterWindow (this);
 
     SetMinimumSize (1, 1);
     SetGeometry (Geometry (100, 100, 320, 200) );
@@ -72,7 +72,7 @@ namespace nux
 
   BaseWindow::~BaseWindow()
   {
-    GetThreadWindowCompositor().UnRegisterWindow (this);
+    GetWindowCompositor().UnRegisterWindow (this);
     NUX_SAFE_DELETE (m_PaintLayer);
   }
 
@@ -129,7 +129,7 @@ namespace nux
     return ret;
   }
 
-  void BaseWindow::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void BaseWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     int x = base.x;
@@ -142,23 +142,23 @@ namespace nux
     if (UseBlurredBackground() )
     {
       TexCoordXForm texxform;
-      texxform.uoffset = (float) x / (float) GetThreadWindowCompositor().GetScreenBlurTexture()->GetWidth();
-      texxform.voffset = (float) y / (float) GetThreadWindowCompositor().GetScreenBlurTexture()->GetHeight();
+      texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
+      texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
       texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
 
-      gPainter.PushDrawTextureLayer (GfxContext, base, GetThreadWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
+      GetPainter().PushDrawTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
     }
     else
     {
       //nuxDebugMsg(TEXT("[BaseWindow::Draw]"));
-      gPainter.PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
+      GetPainter().PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
     }
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
   }
 
-  void BaseWindow::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void BaseWindow::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
     Geometry base = GetGeometry();
@@ -171,16 +171,16 @@ namespace nux
     if (UseBlurredBackground() )
     {
       TexCoordXForm texxform;
-      texxform.uoffset = (float) x / (float) GetThreadWindowCompositor().GetScreenBlurTexture()->GetWidth();
-      texxform.voffset = (float) y / (float) GetThreadWindowCompositor().GetScreenBlurTexture()->GetHeight();
+      texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
+      texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
       texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
 
-      gPainter.PushTextureLayer (GfxContext, base, GetThreadWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
+      GetPainter().PushTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
     }
     else
     {
       //nuxDebugMsg(TEXT("[BaseWindow::DrawContent]"));
-      gPainter.PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
+      GetPainter().PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
       //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f, 0.0f, 0.0f, 1.0f));
       //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 0.5f));
     }
@@ -192,10 +192,10 @@ namespace nux
       GfxContext.PopClippingRectangle();
     }
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
   }
 
-  void BaseWindow::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void BaseWindow::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -422,7 +422,7 @@ namespace nux
     }
 
     if (m_bIsModal)
-      GetThreadWindowCompositor().StartModalWindow (this);
+      GetWindowCompositor().StartModalWindow (this);
   }
 
   bool BaseWindow::IsVisible() const
@@ -435,7 +435,7 @@ namespace nux
     m_bIsVisible = false;
     m_bIsModal = false;
     //ShowWindow(false);
-    GetThreadWindowCompositor().StopModalWindow (this);
+    GetWindowCompositor().StopModalWindow (this);
   }
 
   bool BaseWindow::IsModal() const

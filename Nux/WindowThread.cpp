@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 #include "Layout.h"
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "ClientArea.h"
 #include "WindowCompositor.h"
 #include "TimerProc.h"
@@ -203,7 +203,7 @@ namespace nux
     bool repeat = false;
     TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
 
-    repeat = GetThreadTimer().ExecTimerHandler(dd->id);
+    repeat = GetTimer().ExecTimerHandler(dd->id);
 
     if(dd->window_thread->IsEmbeddedWindow())
         dd->window_thread->RedrawRequested.emit();
@@ -309,8 +309,8 @@ namespace nux
 
     if (m_AppLayout)
     {
-      int w = m_GLWindow->GetGraphicsContext()->GetContextWidth();
-      int h = m_GLWindow->GetGraphicsContext()->GetContextHeight();
+      int w = m_GLWindow->GetGraphicsEngine()->GetContextWidth();
+      int h = m_GLWindow->GetGraphicsEngine()->GetContextHeight();
 
       m_AppLayout->Reference();
       m_AppLayout->SetStretchFactor (1);
@@ -327,8 +327,8 @@ namespace nux
 
   void WindowThread::ReconfigureLayout()
   {
-    int w = m_GLWindow->GetGraphicsContext()->GetWindowWidth();
-    int h = m_GLWindow->GetGraphicsContext()->GetWindowHeight();
+    int w = m_GLWindow->GetGraphicsEngine()->GetWindowWidth();
+    int h = m_GLWindow->GetGraphicsEngine()->GetWindowHeight();
 
     if (m_AppLayout)
     {
@@ -355,7 +355,7 @@ namespace nux
     return ret;
   }
 
-  void WindowThread::ProcessDraw (GraphicsContext &GfxContext, bool force_draw)
+  void WindowThread::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if (m_AppLayout)
     {
@@ -367,7 +367,7 @@ namespace nux
         // clean any dirty region.
         int buffer_width = GfxContext.GetWindowWidth();
         int buffer_height = GfxContext.GetWindowHeight();
-        gPainter.PaintBackground (GfxContext, Geometry (0, 0, buffer_width, buffer_height) );
+        GetPainter().PaintBackground (GfxContext, Geometry (0, 0, buffer_width, buffer_height) );
       }
 
       m_AppLayout->ProcessDraw (GfxContext, force_draw || dirty);
@@ -576,7 +576,7 @@ namespace nux
       if(Application->m_bFirstDrawPass)
       {
         ms = 0.0f;
-        GetThreadTimer().StartEarlyTimerObjects ();
+        GetTimer().StartEarlyTimerObjects ();
       }
       else
       {
@@ -647,9 +647,9 @@ namespace nux
       }
 
 // #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-//       GetThreadTimer().ExecTimerHandler (timer_id);
+//       GetTimer().ExecTimerHandler (timer_id);
 // #else
-//       GetThreadTimer().ExecTimerHandler();
+//       GetTimer().ExecTimerHandler();
 // #endif
 
 
@@ -766,7 +766,7 @@ namespace nux
         if (IsEmbeddedWindow () && !m_RedrawRequested && RequestRequired)
           RequestRedraw ();
 
-        GetGraphicsThread()->GetGraphicsContext().ResetStats();
+        GetGraphicsThread()->GetGraphicsEngine().ResetStats();
         m_size_configuration_event = false;
       }
     }
@@ -1410,10 +1410,10 @@ namespace nux
 
     // Set Nux opengl states. The other plugin in compiz have changed the GPU opengl states.
     // Nux keep tracks of its own opengl states and restore them before doing any drawing.
-    GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SubmitChangeStates();
+    GetGraphicsThread()->GetGraphicsEngine().GetRenderStates().SubmitChangeStates();
 
-    GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion (0, 0, GetGraphicsThread()->GetGraphicsContext().GetWindowWidth(),
-        GetGraphicsThread()->GetGraphicsContext().GetWindowHeight() );
+    GetGraphicsThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth(),
+        GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight() );
 
     if (GetWindow().IsPauseThreadGraphicsRendering() == false)
     {
@@ -1423,7 +1423,7 @@ namespace nux
       // When rendering in embedded mode, nux does not attempt to mesure the frame rate...
 
       // Cleanup
-      GetGraphicsThread()->GetGraphicsContext().ResetStats();
+      GetGraphicsThread()->GetGraphicsEngine().ResetStats();
       ClearRedrawFlag();
 
       m_size_configuration_event = false;
@@ -1444,10 +1444,10 @@ namespace nux
 #endif
 
     GetThreadGLDeviceFactory()->DeactivateFrameBuffer();
-    /*GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
-    GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
-    GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);
-    GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE3, GL_TEXTURE_RECTANGLE);*/
+    /*GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
+    GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
+    GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);
+    GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE3, GL_TEXTURE_RECTANGLE);*/
 
   }
 

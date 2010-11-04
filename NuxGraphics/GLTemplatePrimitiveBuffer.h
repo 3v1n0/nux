@@ -28,7 +28,7 @@ namespace nux
 
   class IOpenGLVertexBuffer;
   class IOpenGLIndexBuffer;
-  class GLDeviceFactory;
+  class GpuDevice;
 
   typedef struct
   {
@@ -41,7 +41,7 @@ namespace nux
   class TemplateQuadBuffer
   {
   public:
-    TemplateQuadBuffer (GLDeviceFactory *, ShaderType Type = SHADER_TYPE_GLSL, int NumQuads = 256);
+    TemplateQuadBuffer (GpuDevice *, ShaderType Type = SHADER_TYPE_GLSL, int NumQuads = 256);
     ~TemplateQuadBuffer();
     //! Bind GLSL parameter
     void BindAttribute (INT AttributeLocation, UINT AttributeIndex);
@@ -80,7 +80,7 @@ namespace nux
 
     ShaderType m_ShaderType;
     IntrusiveSP<IOpenGLVertexBuffer> VertexAttributeBuffer[16];
-    GLDeviceFactory *m_pDeviceFactory;
+    GpuDevice *m_pDeviceFactory;
     INT m_NumVertex;
     INT m_NumQuad;
   };
