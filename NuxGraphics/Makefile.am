@@ -11,7 +11,7 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
   -DPREFIX=\""$(prefix)"\" \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
-  -DPKGDATADIR=\""$(pkgdatadir)"\" \
+  -DPKGDATADIR=\""$(pkgdatadir)/@NUX_API_VERSION@"\" \
   -DG_LOG_DOMAIN=\"NuxGraphics\" \
   $(GCC_FLAGS) \
   $(NUX_GRAPHICS_CFLAGS) \
