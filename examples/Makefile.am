@@ -47,4 +47,13 @@ checkbox_LDADD = $(ALL_LIBS)
 tooltip_SOURCES = tooltip.cpp
 tooltip_LDADD = $(ALL_LIBS)
 
+# distribute source along to the documentation
+sourceexampledir = "$(pkgdatadir)/examples"
+sourceexample_DATA = $(combobox_SOURCES) \
+                     $(cairo_SOURCES) \
+                     $(textedit_SOURCES) \
+                     $(button_SOURCES) \
+                     $(checkbox_SOURCES) \
+                     $(tooltip_SOURCES)
 endif
+
