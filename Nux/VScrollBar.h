@@ -40,13 +40,13 @@ namespace nux
     ~VScrollBar();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    void DrawDownTriangle (GraphicsContext &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
-    void DrawUpTriangle (GraphicsContext &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawDownTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawUpTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
 
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
   private:
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw) {};
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw) {};
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
 
     void VScrollBarHandler (void *v);
     void ScrollDown (void *v);

@@ -79,12 +79,12 @@ namespace nux
   }
 
 
-  void BezierCurveControl::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void BezierCurveControl::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
 
 #define N 3
     t_u32 i;
@@ -114,7 +114,7 @@ namespace nux
       double xprev, yprev;
       Bezier_XY (N, 0.0, xcon, ycon, &xprev, &yprev);
 
-      //gPainter.Draw2DLine(X, Y, X+W, Y+H, Color(0xFFFF0000));
+      //GetPainter().Draw2DLine(X, Y, X+W, Y+H, Color(0xFFFF0000));
 
       base.OffsetPosition (1, 1);
       base.OffsetSize (-2, -2);
@@ -135,7 +135,7 @@ namespace nux
         X1 = X + W * (xval - m_minX) / (m_maxX - m_minX);
         Y1 = Y + H * ( 1 - (yval - m_minY) / (m_maxY - m_minY) );
 
-        gPainter.Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFF0000) );
+        GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFF0000) );
 
         xprev = xval;
         yprev = yval;
@@ -152,7 +152,7 @@ namespace nux
         X1 = X + W * (m_control_knot[i+1].m_X - m_minX) / (m_maxX - m_minX);
         Y1 = Y + H * ( 1 - (m_control_knot[i+1].m_Y - m_minY) / (m_maxY - m_minY) );
 
-        gPainter.Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFF0000FF) );
+        GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFF0000FF) );
 
       }
 
@@ -163,9 +163,9 @@ namespace nux
         Y0 = Y + H * ( 1 - (m_control_knot[i].m_Y - m_minY) / (m_maxY - m_minY) );
 
         if (m_control_knot[i].m_IsSelected)
-          gPainter.Paint2DQuadColor (GfxContext, X0 - KNOT_SIZE, Y0 - KNOT_SIZE, 2 * KNOT_SIZE, 2 * KNOT_SIZE, Color (0xFF00FF00) );
+          GetPainter().Paint2DQuadColor (GfxContext, X0 - KNOT_SIZE, Y0 - KNOT_SIZE, 2 * KNOT_SIZE, 2 * KNOT_SIZE, Color (0xFF00FF00) );
         else
-          gPainter.Paint2DQuadColor (GfxContext, X0 - KNOT_SIZE, Y0 - KNOT_SIZE, 2 * KNOT_SIZE, 2 * KNOT_SIZE, Color (0xFF777777) );
+          GetPainter().Paint2DQuadColor (GfxContext, X0 - KNOT_SIZE, Y0 - KNOT_SIZE, 2 * KNOT_SIZE, 2 * KNOT_SIZE, Color (0xFF777777) );
       }
 
       delete xcon;
@@ -184,7 +184,7 @@ namespace nux
 //        Y0 = Y - H * (y0 + m_minY) / (m_maxY - m_minY);
 //        X1 = X + W * (x1 - m_minX) / (m_maxX - m_minX);
 //        Y1 = Y - H * (y1 + m_minY) / (m_maxY - m_minY);
-//        gPainter.Draw2DLine(X0, Y0, X1, Y1, Color(0xFFFF0000));
+//        GetPainter().Draw2DLine(X0, Y0, X1, Y1, Color(0xFFFF0000));
 //
 //        x0 = x1;
 //        y0 = y1;
@@ -194,12 +194,12 @@ namespace nux
   }
 
 
-  void BezierCurveControl::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void BezierCurveControl::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void BezierCurveControl::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void BezierCurveControl::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

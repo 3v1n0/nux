@@ -42,8 +42,8 @@ namespace nux
 
   struct IEvent;
   class MainFBO;
-  class GLDeviceFactory;
-  class GraphicsContext;
+  class GpuDevice;
+  class GraphicsEngine;
   class IOpenGLFrameBufferObject;
 
   enum WindowStyle
@@ -63,7 +63,7 @@ namespace nux
 // This will become GLWindow
   class GLWindowImpl : public GraphicSystem
   {
-    friend class GraphicsContext;
+    friend class GraphicsEngine;
 
   private:
     Display     *m_X11Display;
@@ -199,11 +199,11 @@ namespace nux
     float GetFrameTime() const;
     void ResetFrameTime();
 
-    GraphicsContext *GetGraphicsContext() const
+    GraphicsEngine *GetGraphicsEngine() const
     {
       return m_GraphicsContext;
     }
-    GLDeviceFactory *GetDeviceFactory() const
+    GpuDevice *GetGpuDevice () const
     {
       return m_DeviceFactory;
     }
@@ -244,8 +244,8 @@ namespace nux
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
     float m_FrameTime;
-    GLDeviceFactory *m_DeviceFactory;
-    GraphicsContext *m_GraphicsContext;
+    GpuDevice *m_DeviceFactory;
+    GraphicsEngine *m_GraphicsContext;
     WindowStyle m_Style;
 
   public:

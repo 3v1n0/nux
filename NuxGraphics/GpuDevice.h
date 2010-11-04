@@ -68,7 +68,7 @@ namespace nux
 //*/
 
 //
-// class GLDeviceFactory;
+// class GpuDevice;
 // class IOpenGLResource;
 // class IOpenGLBaseTexture;
 // class IOpenGLTexture2D;
@@ -80,7 +80,7 @@ namespace nux
 // class IOpenGLIndexBuffer;
 // class IOpenGLVertexBuffer;
 // class IOpenGLVertexDeclaration;
-// class GraphicsContext;
+// class GraphicsEngine;
   template<typename T> class IntrusiveSP;
 
 
@@ -245,10 +245,8 @@ namespace nux
     }
   };
 
-  class GLDeviceFactory
+  class GpuDevice
   {
-  public:
-    static void Initialize();
   private:
     static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
@@ -791,11 +789,11 @@ namespace nux
     GLRenderStates *m_RenderStates;
 
   public:
-    GLDeviceFactory (unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat);
-    ~GLDeviceFactory();
+    GpuDevice (unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat);
+    ~GpuDevice();
 
     friend class IOpenGLSurface;
-    friend class GraphicsContext;
+    friend class GraphicsEngine;
   };
 
 }

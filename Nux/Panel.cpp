@@ -93,7 +93,7 @@ namespace nux
     return ret;
   }
 
-  void Panel::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void Panel::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 
@@ -102,7 +102,7 @@ namespace nux
     if (m_layout)
       m_layout->NeedRedraw();
 
-    gPainter.PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (GfxContext, base);
 
     if (m_vertical_scrollbar_enable)
     {
@@ -117,7 +117,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void Panel::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void Panel::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 
@@ -145,7 +145,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void Panel::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void Panel::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

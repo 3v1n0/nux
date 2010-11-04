@@ -35,9 +35,9 @@ namespace nux
     virtual ~AbstractComboBox();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
     void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);

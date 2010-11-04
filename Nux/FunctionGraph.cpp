@@ -80,12 +80,12 @@ namespace nux
     return TraverseInfo;
   }
 
-  void FunctionGraph::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void FunctionGraph::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
 
     int W = GetBaseWidth() - 2;
     int H = GetBaseHeight() - 2;
@@ -98,7 +98,7 @@ namespace nux
     x0 = m_minX;
     y0 = EvalFunction (x0);
 
-    //gPainter.Draw2DLine(X, Y, X+W, Y+H, Color(0xFFFF0000));
+    //GetPainter().Draw2DLine(X, Y, X+W, Y+H, Color(0xFFFF0000));
 
     base.OffsetPosition (1, 1);
     base.OffsetSize (-2, -2);
@@ -149,7 +149,7 @@ namespace nux
       Y0 = Y + H * ( 1 - (y0 - m_minY) / (m_maxY - m_minY) );
       X1 = X + W * (x1 - m_minX) / (m_maxX - m_minX);
       Y1 = Y + H * ( 1 - (y1 - m_minY) / (m_maxY - m_minY) );
-      gPainter.Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
+      GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
 
       x0 = x1;
       y0 = y1;
@@ -161,12 +161,12 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void FunctionGraph::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void FunctionGraph::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void FunctionGraph::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void FunctionGraph::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

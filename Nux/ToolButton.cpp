@@ -68,36 +68,36 @@ namespace nux
     return ret;
   }
 
-  void ToolButton::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void ToolButton::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     if (IsMouseInside() && !HasMouseFocus() )
     {
-      gPainter.PaintBackground (GfxContext, base);
-      gPainter.PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
+      GetPainter().PaintBackground (GfxContext, base);
+      GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
     }
     else if (HasMouseFocus() )
     {
-      gPainter.PaintBackground (GfxContext, base);
-      gPainter.PaintShape (GfxContext, base, Color (0xFF2A2A2A),  eSHAPE_CORNER_ROUND2);
+      GetPainter().PaintBackground (GfxContext, base);
+      GetPainter().PaintShape (GfxContext, base, Color (0xFF2A2A2A),  eSHAPE_CORNER_ROUND2);
     }
     else
     {
-      gPainter.PaintBackground (GfxContext, base);
-      gPainter.PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
+      GetPainter().PaintBackground (GfxContext, base);
+      GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
     }
 
     if (m_Texture)
-      gPainter.Draw2DTextureAligned (GfxContext, m_Texture, base, TextureAlignmentStyle (eTACenter, eTACenter) );
+      GetPainter().Draw2DTextureAligned (GfxContext, m_Texture, base, TextureAlignmentStyle (eTACenter, eTACenter) );
   }
 
-  void ToolButton::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void ToolButton::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void ToolButton::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void ToolButton::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

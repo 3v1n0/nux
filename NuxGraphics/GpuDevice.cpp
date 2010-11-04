@@ -22,7 +22,7 @@
 
 #include "GLResource.h"
 #include "NuxGraphics.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
 
@@ -30,7 +30,7 @@
 #include "GLVertexResourceManager.h"
 #include "GLDeviceFrameBufferObject.h"
 #include "GLTemplatePrimitiveBuffer.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 
 namespace nux
 {
@@ -48,11 +48,6 @@ namespace nux
 #define NUX_USE_PBO     1
 
 #define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
-
-// float Log2(float f)
-// {
-//     return logf(f) / logf(2);
-// }
 
   extern PixelFormatInfo GPixelFormats[];
 
@@ -88,94 +83,6 @@ namespace nux
     {"WGL_ARB_render_texture",      "",                         "",                         0,  0,  0},
     {"WGL_ARB_render_texture",      "",                         "",                         0,  0,  0},
   };
-
-  static void InitializeExtension()
-  {
-
-    int NumReqExtension = sizeof (ReqNVidiaExtension) / sizeof (ReqNVidiaExtension[0]);
-
-    for (int index = 0; index < NumReqExtension; index++)
-    {
-      ReqNVidiaExtension[index].supported0 = 0;
-      ReqNVidiaExtension[index].supported1 = 0;
-      ReqNVidiaExtension[index].supported2 = 0;
-
-      if (ReqNVidiaExtension[index].extension0)
-      {
-        ReqNVidiaExtension[index].supported0 = glewIsSupported (ReqNVidiaExtension[index].extension0);
-      }
-
-      if (ReqNVidiaExtension[index].extension1)
-      {
-        ReqNVidiaExtension[index].supported1 = glewIsSupported (ReqNVidiaExtension[index].extension1);
-      }
-
-      if (ReqNVidiaExtension[index].extension2)
-      {
-        ReqNVidiaExtension[index].supported2 = glewIsSupported (ReqNVidiaExtension[index].extension2);
-      }
-
-      if ( (!ReqNVidiaExtension[index].supported0) &&
-           (!ReqNVidiaExtension[index].supported1) &&
-           (!ReqNVidiaExtension[index].supported2) )
-      {
-//            char error[512];
-//            sprintf(error, "Error - required extensions were not supported: \n %s \n %s \n %s \n"
-//                ,ReqNVidiaExtension[index].extension0
-//                ,ReqNVidiaExtension[index].extension1
-//                ,ReqNVidiaExtension[index].extension2);
-//            MessageBox(NULL,error,"ERROR",MB_OK|MB_ICONERROR);
-//            exit(-1);
-      }
-
-//        else
-//        {
-//            if(ReqNVidiaExtension[index].supported0)
-//                glh_init_extensions(ReqNVidiaExtension[index].extension0);
-//            if(ReqNVidiaExtension[index].supported1)
-//                glh_init_extensions(ReqNVidiaExtension[index].extension1);
-//            if(ReqNVidiaExtension[index].supported2)
-//                glh_init_extensions(ReqNVidiaExtension[index].extension2);
-//        }
-    }
-
-//
-//     if (!glewIsSupported("GL_ARB_multitexture "
-//         "GL_ARB_vertex_program "
-//         "GL_ARB_fragment_program "
-//         "GL_ARB_shader_objects "
-//         "GL_ARB_vertex_shader "
-//         "GL_ARB_fragment_shader "
-//         //"GL_NV_float_buffer "
-//         "GL_ARB_vertex_buffer_object "
-//         //"GL_EXT_pixel_buffer_object "
-//         //"GL_ARB_texture_non_power_of_two "
-//         "GL_EXT_framebuffer_object "
-//         "GL_ARB_texture_rectangle "
-//         "GL_EXT_pixel_buffer_object"
-//         ))
-//     {
-// //        char error[512];
-// //        sprintf(error, "Error - required extensions were not supported: %s", "XXXX");
-// //        MessageBox(NULL,error,"ERROR",MB_OK|MB_ICONERROR);
-// //        //fprintf(stderr, "Error - required extensions were not supported: %s", glh_get_unsupported_extensions());
-// //        exit(-1);
-//     }
-//
-//     if (!wglewIsSupported(
-//         "WGL_ARB_pbuffer "
-//         "WGL_ARB_pixel_format "
-//         "WGL_ARB_render_texture "
-//         ))
-//     {
-// //        char error[512];
-// //        sprintf(error, "Error - required extensions were not supported: %s", "XXXX");
-// //        MessageBox(NULL,error,"ERROR",MB_OK|MB_ICONERROR);
-// //        //fprintf(stderr, "Error - required extensions were not supported: %s", glh_get_unsupported_extensions());
-// //        exit(-1);
-//     }
-
-  }
 
   static void InitTextureFormats()
   {
@@ -258,180 +165,10 @@ namespace nux
     GPixelFormats[ BITFMT_A8           ].type	            = GL_UNSIGNED_BYTE;
   }
 
-  IntrusiveSP<IOpenGLTexture2D> GLDeviceFactory::CreateTexture (
-    int Width
-    , int Height
-    , int Levels
-    , BitmapFormat PixelFormat)
-  {
-    IOpenGLTexture2D *ptr;
-    CreateTexture (Width, Height, Levels, PixelFormat, (IOpenGLTexture2D **) &ptr);
-    IntrusiveSP<IOpenGLTexture2D> h = IntrusiveSP<IOpenGLTexture2D> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLRectangleTexture> GLDeviceFactory::CreateRectangleTexture (
-    int Width
-    , int Height
-    , int Levels
-    , BitmapFormat PixelFormat)
-  {
-    IOpenGLRectangleTexture *ptr;
-    CreateRectangleTexture (Width, Height, Levels, PixelFormat, (IOpenGLRectangleTexture **) &ptr);
-    IntrusiveSP<IOpenGLRectangleTexture> h = IntrusiveSP<IOpenGLRectangleTexture> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLCubeTexture> GLDeviceFactory::CreateCubeTexture (
-    int EdgeLength
-    , int Levels
-    , BitmapFormat PixelFormat)
-  {
-    IOpenGLCubeTexture *ptr;
-    CreateCubeTexture (EdgeLength, Levels, PixelFormat, (IOpenGLCubeTexture **) &ptr);
-    IntrusiveSP<IOpenGLCubeTexture> h = IntrusiveSP<IOpenGLCubeTexture> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLVolumeTexture> GLDeviceFactory::CreateVolumeTexture (
-    int Width
-    , int Height
-    , int Depth
-    , int Levels
-    , BitmapFormat PixelFormat)
-  {
-    IOpenGLVolumeTexture *ptr;
-    CreateVolumeTexture (Width, Height, Depth, Levels, PixelFormat, (IOpenGLVolumeTexture **) &ptr);
-    IntrusiveSP<IOpenGLVolumeTexture> h = IntrusiveSP<IOpenGLVolumeTexture> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLAnimatedTexture> GLDeviceFactory::CreateAnimatedTexture (
-    int Width
-    , int Height
-    , int Depth
-    , BitmapFormat PixelFormat)
-  {
-    IOpenGLAnimatedTexture *ptr;
-    CreateAnimatedTexture (Width, Height, Depth, PixelFormat, (IOpenGLAnimatedTexture **) &ptr);
-    IntrusiveSP<IOpenGLAnimatedTexture> h = IntrusiveSP<IOpenGLAnimatedTexture> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-
-  IntrusiveSP<IOpenGLQuery> GLDeviceFactory::CreateQuery (QUERY_TYPE Type)
-  {
-    IOpenGLQuery *ptr;
-    CreateQuery (Type, (IOpenGLQuery **) &ptr);
-    IntrusiveSP<IOpenGLQuery> h = IntrusiveSP<IOpenGLQuery> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLFrameBufferObject> GLDeviceFactory::CreateFrameBufferObject()
-  {
-    IOpenGLFrameBufferObject *ptr;
-    CreateFrameBufferObject ( (IOpenGLFrameBufferObject **) &ptr);
-    IntrusiveSP<IOpenGLFrameBufferObject> h = IntrusiveSP<IOpenGLFrameBufferObject> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLShaderProgram> GLDeviceFactory::CreateShaderProgram()
-  {
-    IOpenGLShaderProgram *ptr;
-    CreateShaderProgram ( (IOpenGLShaderProgram **) &ptr);
-    IntrusiveSP<IOpenGLShaderProgram> h = IntrusiveSP<IOpenGLShaderProgram> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLVertexShader> GLDeviceFactory::CreateVertexShader()
-  {
-    IOpenGLVertexShader *ptr;
-    CreateVertexShader ( (IOpenGLVertexShader **) &ptr);
-    IntrusiveSP<IOpenGLVertexShader> h = IntrusiveSP<IOpenGLVertexShader> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLPixelShader> GLDeviceFactory::CreatePixelShader()
-  {
-    IOpenGLPixelShader *ptr;
-    CreatePixelShader ( (IOpenGLPixelShader **) &ptr);
-    IntrusiveSP<IOpenGLPixelShader> h = IntrusiveSP<IOpenGLPixelShader> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLAsmShaderProgram> GLDeviceFactory::CreateAsmShaderProgram()
-  {
-    IOpenGLAsmShaderProgram *ptr;
-    CreateAsmShaderProgram ( (IOpenGLAsmShaderProgram **) &ptr);
-    IntrusiveSP<IOpenGLAsmShaderProgram> h = IntrusiveSP<IOpenGLAsmShaderProgram> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLAsmVertexShader> GLDeviceFactory::CreateAsmVertexShader()
-  {
-    IOpenGLAsmVertexShader *ptr;
-    CreateAsmVertexShader ( (IOpenGLAsmVertexShader **) &ptr);
-    IntrusiveSP<IOpenGLAsmVertexShader> h = IntrusiveSP<IOpenGLAsmVertexShader> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<IOpenGLAsmPixelShader> GLDeviceFactory::CreateAsmPixelShader()
-  {
-    IOpenGLAsmPixelShader *ptr;
-    CreateAsmPixelShader ( (IOpenGLAsmPixelShader **) &ptr);
-    IntrusiveSP<IOpenGLAsmPixelShader> h = IntrusiveSP<IOpenGLAsmPixelShader> (ptr);
-    ptr->UnReference ();
-    return h;
-  }
-
-#if (NUX_ENABLE_CG_SHADERS)
-  IntrusiveSP<ICgVertexShader> GLDeviceFactory::CreateCGVertexShader()
-  {
-    ICgVertexShader *ptr;
-    CreateCGVertexShader ( (ICgVertexShader **) &ptr);
-    IntrusiveSP<ICgVertexShader> h = ptr;
-    ptr->UnReference ();
-    return h;
-  }
-
-  IntrusiveSP<ICgPixelShader> GLDeviceFactory::CreateCGPixelShader()
-  {
-    ICgPixelShader *ptr;
-    CreateCGPixelShader ( (ICgPixelShader **) &ptr);
-    IntrusiveSP<ICgPixelShader> h = ptr;
-    ptr->UnReference ();
-    return h;
-  }
-#endif
-
-  void GLDeviceFactory::Initialize()
-  {
-    GLenum Glew_Ok = glewInit();
-
-    if (Glew_Ok != GLEW_OK)
-    {
-      nuxAssertMsg (0, TEXT ("[GLDeviceFactory::Initialize] Failed glewInit.") );
-    }
-
-    InitializeExtension();
-  }
-
-  STREAMSOURCE GLDeviceFactory::_StreamSource[MAX_NUM_STREAM];
-// IntrusiveSP<IOpenGLIndexBuffer> GLDeviceFactory::_CurrentIndexBuffer = 0;
-// IntrusiveSP<IOpenGLVertexBuffer> GLDeviceFactory::_CurrentVertexBuffer = 0;
-// IntrusiveSP<IOpenGLVertexDeclaration> GLDeviceFactory::_CurrentVertexDeclaration = 0;
+  STREAMSOURCE GpuDevice::_StreamSource[MAX_NUM_STREAM];
+// IntrusiveSP<IOpenGLIndexBuffer> GpuDevice::_CurrentIndexBuffer = 0;
+// IntrusiveSP<IOpenGLVertexBuffer> GpuDevice::_CurrentVertexBuffer = 0;
+// IntrusiveSP<IOpenGLVertexDeclaration> GpuDevice::_CurrentVertexDeclaration = 0;
 
 //void TestARBShaders()
 //{
@@ -493,7 +230,7 @@ namespace nux
 //}
 //
 
-  GLDeviceFactory::GLDeviceFactory (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat)
+  GpuDevice::GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat)
     :   _FrameBufferObject (0)
     ,   _PixelStoreAlignment (4)
     ,   _CachedPixelBufferObjectList (0)
@@ -529,7 +266,7 @@ namespace nux
     GLenum Glew_Ok = 0;
 #ifdef GLEW_MX
     Glew_Ok = glewContextInit (glewGetContext() );
-    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GLDeviceFactory::GLDeviceFactory] GL Extensions failed to initialize.") );
+    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] GL Extensions failed to initialize.") );
 
 #if defined(NUX_OS_WINDOWS)
     Glew_Ok = wglewContextInit (wglewGetContext() );
@@ -538,15 +275,11 @@ namespace nux
 #elif defined(NUX_OS_MACOSX)
     Glew_Ok = glxewContextInit (glxewGetContext() );
 #endif
-    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GLDeviceFactory::GLDeviceFactory] WGL Extensions failed to initialize.") );
+    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] WGL Extensions failed to initialize.") );
 #else
     Glew_Ok = glewInit();
 #endif
 
-    InitializeExtension();
-
-    //m_BoardVendorString = "aaaa";
-    //std::string str = (const char*) glGetString(GL_VENDOR);
     m_BoardVendorString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VENDOR) ) );
     CHECKGL_MSG (glGetString (GL_VENDOR) );
     m_BoardRendererString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER) ) );
@@ -627,7 +360,7 @@ namespace nux
 
     if (OPENGL_VERSION_2_1 == false)
     {
-      //nuxDebugMsg(TEXT("[GLDeviceFactory::GLDeviceFactory] No support for OpenGL 2.1"));
+      //nuxDebugMsg(TEXT("[GpuDevice::GpuDevice] No support for OpenGL 2.1"));
 //         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 //             TEXT("No Support for OpenGL 2.1.\nThe program will exit."));
 //         exit(-1);
@@ -635,7 +368,7 @@ namespace nux
 
     if (GLEW_EXT_framebuffer_object == false)
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::GLDeviceFactory] No support for Framebuffer Objects.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::GpuDevice] No support for Framebuffer Objects.") );
 //         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 //             TEXT("No support for Framebuffer Objects.\nThe program will exit."));
 //         exit(-1);
@@ -643,7 +376,7 @@ namespace nux
 
     if ( (GLEW_ARB_texture_rectangle == false) && (GLEW_EXT_texture_rectangle == false) )
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::GLDeviceFactory] No support for rectangle textures.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::GpuDevice] No support for rectangle textures.") );
 //         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 //             TEXT("No support for rectangle textures.\nThe program will exit."));
 //         exit(-1);
@@ -715,7 +448,7 @@ namespace nux
     }
   }
 
-  GLDeviceFactory::~GLDeviceFactory()
+  GpuDevice::~GpuDevice()
   {
     NUX_SAFE_DELETE (m_RenderStates);
 
@@ -732,216 +465,16 @@ namespace nux
 #endif
   }
 
-  int GLDeviceFactory::CreateTexture (
-    t_u32 Width
-    , t_u32 Height
-    , t_u32 Levels
-    //, DWORD Usage    // no use
-    , BitmapFormat PixelFormat
-    //, D3DPOOL Pool       // no use
-    , IOpenGLTexture2D **ppTexture
-    //, HANDLE* pSharedHandle       // no use
-  )
+  IntrusiveSP<IOpenGLFrameBufferObject> GpuDevice::CreateFrameBufferObject()
   {
-// From : http://oss.sgi.com/projects/ogl-sample/registry/ARB/texture_non_power_of_two.txt
-//    The "floor" convention has a relatively straightforward way to
-//        evaluate (with integer math) means to determine how many mipmap
-//        levels are required for a complete pyramid:
-//    numLevels = 1 + floor(log2(max(w, h, d)))
-    t_u32 NumTotalMipLevel    = 1 + floorf (Log2 (Max (Width, Height) ) );
-
-//    Levels
-//        [in] Number of levels in the texture. If this is zero, generate all texture sublevels
-//        down to 1 by 1 pixels for hardware that supports mip-maps textures. Call GetNumMipLevel to see the
-//        number of levels generated.
-    t_u32 NumMipLevel = 0;
-
-    if (Levels == 0)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else if (Levels > NumTotalMipLevel)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else
-    {
-      NumMipLevel = Levels;
-    }
-
-
-//    The "floor" convention can be evaluated incrementally with the
-//        following recursion:
-//
-//    nextLODdim = max(1, currentLODdim >> 1)
-//
-//        where currentLODdim is the dimension of a level N and nextLODdim
-//        is the dimension of level N+1.  The recursion stops when level
-//        numLevels-1 is reached.
-
-    *ppTexture = new IOpenGLTexture2D (Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP< IOpenGLTexture2D > > (IntrusiveSP< IOpenGLTexture2D > (*ppTexture), &_CachedTextureList);
-
-    return 1;
+    IOpenGLFrameBufferObject *ptr;
+    CreateFrameBufferObject ( (IOpenGLFrameBufferObject **) &ptr);
+    IntrusiveSP<IOpenGLFrameBufferObject> h = IntrusiveSP<IOpenGLFrameBufferObject> (ptr);
+    ptr->UnReference ();
+    return h;
   }
 
-  int GLDeviceFactory::CreateRectangleTexture (
-    t_u32 Width
-    , t_u32 Height
-    , t_u32 Levels
-    //, DWORD Usage    // no use
-    , BitmapFormat PixelFormat
-    //, D3DPOOL Pool       // no use
-    , IOpenGLRectangleTexture **ppTexture
-    //, HANDLE* pSharedHandle       // no use
-  )
-  {
-
-    // From : http://oss.sgi.com/projects/ogl-sample/registry/ARB/texture_non_power_of_two.txt
-    //    The "floor" convention has a relatively straightforward way to
-    //        evaluate (with integer math) means to determine how many mipmap
-    //        levels are required for a complete pyramid:
-    //    numLevels = 1 + floor(log2(max(w, h, d)))
-    t_u32 NumTotalMipLevel    = 1 + floorf (Log2 (Max (Width, Height) ) );
-
-    //    Levels
-    //        [in] Number of levels in the texture. If this is zero, generate all texture sublevels
-    //        down to 1 by 1 pixels for hardware that supports mip-maps textures. Call GetNumMipLevel to see the
-    //        number of levels generated.
-    t_u32 NumMipLevel = 0;
-
-    if (Levels == 0)
-    {
-      //Rectangle texture texture don't support mipmaps
-      NumMipLevel = 1;
-    }
-    else if (Levels > NumTotalMipLevel)
-    {
-      NumMipLevel = 1;
-    }
-    else
-    {
-      NumMipLevel = 1;
-    }
-
-
-    //    The "floor" convention can be evaluated incrementally with the
-    //        following recursion:
-    //
-    //    nextLODdim = max(1, currentLODdim >> 1)
-    //
-    //        where currentLODdim is the dimension of a level N and nextLODdim
-    //        is the dimension of level N+1.  The recursion stops when level
-    //        numLevels-1 is reached.
-
-    *ppTexture = new IOpenGLRectangleTexture (Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLRectangleTexture> > (IntrusiveSP<IOpenGLRectangleTexture> (*ppTexture), &_CachedTextureRectangleList);
-
-    return 1;
-  }
-
-
-  int GLDeviceFactory::CreateCubeTexture (
-    t_u32 EdgeLength
-    , t_u32 Levels
-    //, DWORD Usage    // no use
-    , BitmapFormat PixelFormat
-    //, D3DPOOL Pool    // no use
-    , IOpenGLCubeTexture **ppCubeTexture
-    //, HANDLE* pSharedHandle    // no use
-  )
-  {
-    t_u32 NumTotalMipLevel    = 1 + floorf (Log2 (EdgeLength) );
-    //    Levels
-    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
-    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
-    //        number of levels generated.
-    t_u32 NumMipLevel = 0;
-
-    if (Levels == 0)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else if (Levels > NumTotalMipLevel)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else
-    {
-      NumMipLevel = Levels;
-    }
-
-    *ppCubeTexture = new IOpenGLCubeTexture (EdgeLength, NumMipLevel, PixelFormat);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLCubeTexture> > (IntrusiveSP<IOpenGLCubeTexture> (*ppCubeTexture), &_CachedCubeTextureList);
-
-    return 1;
-  }
-
-  int GLDeviceFactory::CreateVolumeTexture (
-    t_u32 Width
-    , t_u32 Height
-    , t_u32 Depth
-    , t_u32 Levels
-    //, DWORD Usage        // no use
-    , BitmapFormat PixelFormat
-    //, D3DPOOL Pool       // no use
-    , IOpenGLVolumeTexture **ppVolumeTexture
-    //, HANDLE* pSharedHandle       // no use
-  )
-  {
-    t_u32 NumTotalMipLevel = 1 + floorf (Log2 (Max (Max (Width, Height), Depth) ) );
-    //    Levels
-    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
-    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
-    //        number of levels generated.
-    t_u32 NumMipLevel = 0;
-
-    if (Levels == 0)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else if (Levels > NumTotalMipLevel)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else
-    {
-      NumMipLevel = Levels;
-    }
-
-    *ppVolumeTexture = new IOpenGLVolumeTexture (Width, Height, Depth, NumMipLevel, PixelFormat);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVolumeTexture> > (IntrusiveSP<IOpenGLVolumeTexture> (*ppVolumeTexture), &_CachedVolumeTextureList);
-
-    return OGL_OK;
-  }
-
-  int GLDeviceFactory::CreateAnimatedTexture (t_u32 Width,
-      t_u32 Height,
-      t_u32 Depth,
-      BitmapFormat PixelFormat,
-      IOpenGLAnimatedTexture **ppAnimatedTexture)
-  {
-    *ppAnimatedTexture = new IOpenGLAnimatedTexture (Width, Height, Depth, PixelFormat);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAnimatedTexture> > (IntrusiveSP<IOpenGLAnimatedTexture> (*ppAnimatedTexture), &_CachedAnimatedTextureList);
-
-    return OGL_OK;
-  }
-
-  int GLDeviceFactory::CreateQuery (QUERY_TYPE Type, IOpenGLQuery **ppQuery)
-  {
-    *ppQuery = new IOpenGLQuery (Type);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLQuery> > (IntrusiveSP<IOpenGLQuery> (*ppQuery), &_CachedQueryList);
-
-    return OGL_OK;
-  }
-
-  int GLDeviceFactory::CreateFrameBufferObject (IOpenGLFrameBufferObject **ppFrameBufferObject)
+  int GpuDevice::CreateFrameBufferObject (IOpenGLFrameBufferObject **ppFrameBufferObject)
   {
     *ppFrameBufferObject = new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION);
 
@@ -950,82 +483,8 @@ namespace nux
     return OGL_OK;
   }
 
-  int GLDeviceFactory::CreateShaderProgram (IOpenGLShaderProgram **ppShaderProgram)
-  {
-    *ppShaderProgram = new IOpenGLShaderProgram();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLShaderProgram> > (IntrusiveSP<IOpenGLShaderProgram> (*ppShaderProgram), &_CachedShaderProgramList);
-
-    return OGL_OK;
-  }
-
-  int GLDeviceFactory::CreateVertexShader (IOpenGLVertexShader **ppVertexShader)
-  {
-    *ppVertexShader = new IOpenGLVertexShader();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVertexShader> > (IntrusiveSP<IOpenGLVertexShader> (*ppVertexShader), &_CachedVertexShaderList);
-
-    return OGL_OK;
-  }
-
-  int GLDeviceFactory::CreatePixelShader (IOpenGLPixelShader **ppPixelShader)
-  {
-    *ppPixelShader = new IOpenGLPixelShader();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLPixelShader> > (IntrusiveSP<IOpenGLPixelShader> (*ppPixelShader), &_CachedPixelShaderList);
-
-    return OGL_OK;
-  }
-
-  int GLDeviceFactory::CreateAsmShaderProgram (IOpenGLAsmShaderProgram **ppAsmShaderProgram)
-  {
-    *ppAsmShaderProgram = new IOpenGLAsmShaderProgram();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAsmShaderProgram> > (IntrusiveSP<IOpenGLAsmShaderProgram> (*ppAsmShaderProgram), &_CachedAsmShaderProgramList);
-
-    return OGL_OK;
-  }
-
-  int GLDeviceFactory::CreateAsmVertexShader (IOpenGLAsmVertexShader **ppAsmVertexShader)
-  {
-    *ppAsmVertexShader = new IOpenGLAsmVertexShader();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAsmVertexShader> > (IntrusiveSP<IOpenGLAsmVertexShader> (*ppAsmVertexShader), &_CachedAsmVertexShaderList);
-
-    return OGL_OK;
-  }
-
-  int GLDeviceFactory::CreateAsmPixelShader (IOpenGLAsmPixelShader **ppAsmPixelShader)
-  {
-    *ppAsmPixelShader = new IOpenGLAsmPixelShader();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAsmPixelShader> > (IntrusiveSP<IOpenGLAsmPixelShader> (*ppAsmPixelShader), &_CachedAsmPixelShaderList);
-
-    return OGL_OK;
-  }
-
-#if (NUX_ENABLE_CG_SHADERS)
-  int GLDeviceFactory::CreateCGVertexShader (ICgVertexShader **ppCgVertexShader)
-  {
-    *ppCgVertexShader = new ICgVertexShader();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<ICgVertexShader> > (IntrusiveSP<ICgVertexShader> (*ppCgVertexShader), &_CachedCGVertexShaderList);
-
-    return OGL_OK;
-  }
-
-  int GLDeviceFactory::CreateCGPixelShader (ICgPixelShader **ppCgPixelShader)
-  {
-    *ppCgPixelShader = new ICgPixelShader();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<ICgPixelShader> > (IntrusiveSP<ICgPixelShader> (*ppCgPixelShader), &_CachedCGPixelShaderList);
-
-    return OGL_OK;
-  }
-#endif
-
   // NUXTODO: It is pointless to fill the _Cached... arrays. The data is already in the resource manager.
-  void GLDeviceFactory::CollectDeviceResource()
+  void GpuDevice::CollectDeviceResource()
   {
 //     TDeviceResourceList< IntrusiveSP<IOpenGLVertexBuffer> >* pTempVertexBuffer = _CachedVertexBufferList;
 // 
@@ -1200,7 +659,7 @@ namespace nux
 // #endif
   }
 
-  void GLDeviceFactory::InvalidateTextureUnit (int TextureUnitIndex)
+  void GpuDevice::InvalidateTextureUnit (int TextureUnitIndex)
   {
     CHECKGL (glActiveTextureARB (TextureUnitIndex) );
 
@@ -1224,7 +683,7 @@ namespace nux
     CHECKGL (glDisable (GL_TEXTURE_CUBE_MAP) );
   }
 
-  int GLDeviceFactory::AllocateUnpackPixelBufferIndex (int *index)
+  int GpuDevice::AllocateUnpackPixelBufferIndex (int *index)
   {
     t_u32 num = (t_u32) _PixelBufferArray.size();
 
@@ -1247,10 +706,10 @@ namespace nux
     return OGL_OK;
   }
 
-  int GLDeviceFactory::FreeUnpackPixelBufferIndex (const int index)
+  int GpuDevice::FreeUnpackPixelBufferIndex (const int index)
   {
     t_s32 num = (t_s32) _PixelBufferArray.size();
-    nuxAssertMsg ( (index >= 0) && (index < num), TEXT ("[GLDeviceFactory::FreeUnpackPixelBufferIndex] Trying to Free a pixel buffer index that does not exist.") );
+    nuxAssertMsg ( (index >= 0) && (index < num), TEXT ("[GpuDevice::FreeUnpackPixelBufferIndex] Trying to Free a pixel buffer index that does not exist.") );
 
     if ( (index < 0) || (index >= num) )
     {
@@ -1268,7 +727,7 @@ namespace nux
     return OGL_OK;
   }
 
-  void *GLDeviceFactory::LockUnpackPixelBufferIndex (const int index, int Size)
+  void *GpuDevice::LockUnpackPixelBufferIndex (const int index, int Size)
   {
     GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex (index);
     CHECKGL ( glBufferDataARB (GL_PIXEL_UNPACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
@@ -1278,7 +737,7 @@ namespace nux
     return pBits;
   }
 
-  void *GLDeviceFactory::LockPackPixelBufferIndex (const int index, int Size)
+  void *GpuDevice::LockPackPixelBufferIndex (const int index, int Size)
   {
     GetThreadGLDeviceFactory()->BindPackPixelBufferIndex (index);
     CHECKGL ( glBufferDataARB (GL_PIXEL_PACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
@@ -1288,31 +747,31 @@ namespace nux
     return pBits;
   }
 
-  void GLDeviceFactory::UnlockUnpackPixelBufferIndex (const int index)
+  void GpuDevice::UnlockUnpackPixelBufferIndex (const int index)
   {
     GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex (index);
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
   }
 
-  void GLDeviceFactory::UnlockPackPixelBufferIndex (const int index)
+  void GpuDevice::UnlockPackPixelBufferIndex (const int index)
   {
     GetThreadGLDeviceFactory()->BindPackPixelBufferIndex (index);
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
   }
 
-  int GLDeviceFactory::BindUnpackPixelBufferIndex (const int index)
+  int GpuDevice::BindUnpackPixelBufferIndex (const int index)
   {
     t_s32 num = (t_s32) _PixelBufferArray.size();
-    nuxAssertMsg ( (index >= 0) && (index < num), TEXT ("[GLDeviceFactory::BindUnpackPixelBufferIndex] Trying to bind an invalid pixel buffer index.") );
+    nuxAssertMsg ( (index >= 0) && (index < num), TEXT ("[GpuDevice::BindUnpackPixelBufferIndex] Trying to bind an invalid pixel buffer index.") );
 
     if ( (index < 0) || (index >= num) )
     {
       return OGL_ERROR;
     }
 
-    nuxAssertMsg (_PixelBufferArray[index].IsReserved == true, TEXT ("[GLDeviceFactory::BindUnpackPixelBufferIndex] Trying to reserved pixel buffer index.") );
+    nuxAssertMsg (_PixelBufferArray[index].IsReserved == true, TEXT ("[GpuDevice::BindUnpackPixelBufferIndex] Trying to reserved pixel buffer index.") );
 
     if (_PixelBufferArray[index].IsReserved == false)
     {
@@ -1323,17 +782,17 @@ namespace nux
     return OGL_OK;
   }
 
-  int GLDeviceFactory::BindPackPixelBufferIndex (const int index)
+  int GpuDevice::BindPackPixelBufferIndex (const int index)
   {
     t_s32 num = (t_s32) _PixelBufferArray.size();
-    nuxAssertMsg ( (index >= 0) && (index < num), TEXT ("[GLDeviceFactory::BindPackPixelBufferIndex] Trying to bind an invalid pixel buffer index.") );
+    nuxAssertMsg ( (index >= 0) && (index < num), TEXT ("[GpuDevice::BindPackPixelBufferIndex] Trying to bind an invalid pixel buffer index.") );
 
     if ( (index < 0) || (index >= num) )
     {
       return OGL_ERROR;
     }
 
-    nuxAssertMsg (_PixelBufferArray[index].IsReserved == true, TEXT ("[GLDeviceFactory::BindPackPixelBufferIndex] Trying to reserved pixel buffer index.") );
+    nuxAssertMsg (_PixelBufferArray[index].IsReserved == true, TEXT ("[GpuDevice::BindPackPixelBufferIndex] Trying to reserved pixel buffer index.") );
 
     if (_PixelBufferArray[index].IsReserved == false)
     {
@@ -1344,77 +803,77 @@ namespace nux
     return OGL_OK;
   }
 
-  int GLDeviceFactory::FormatFrameBufferObject (t_u32 Width, t_u32 Height, BitmapFormat PixelFormat)
+  int GpuDevice::FormatFrameBufferObject (t_u32 Width, t_u32 Height, BitmapFormat PixelFormat)
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::FormatFrameBufferObject] No support for OpenGL framebuffer extension.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::FormatFrameBufferObject] No support for OpenGL framebuffer extension.") );
       return 0;
     }
 
     return _FrameBufferObject->FormatFrameBufferObject (Width, Height, PixelFormat);
   }
 
-  int GLDeviceFactory::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface)
+  int GpuDevice::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface)
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::SetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::SetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
       return 0;
     }
 
     return _FrameBufferObject->SetRenderTarget (ColorAttachmentIndex, pRenderTargetSurface);
   }
 
-  int GLDeviceFactory::SetDepthRenderTargetSurface (IntrusiveSP<IOpenGLSurface> pDepthSurface)
+  int GpuDevice::SetDepthRenderTargetSurface (IntrusiveSP<IOpenGLSurface> pDepthSurface)
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::SetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::SetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
       return 0;
     }
 
     return _FrameBufferObject->SetDepthSurface (pDepthSurface);
   }
 
-  IntrusiveSP<IOpenGLSurface> GLDeviceFactory::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
+  IntrusiveSP<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::GetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::GetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
       return IntrusiveSP<IOpenGLSurface> (0);
     }
 
     return _FrameBufferObject->GetRenderTarget (ColorAttachmentIndex);
   }
 
-  IntrusiveSP<IOpenGLSurface> GLDeviceFactory::GetDepthRenderTargetSurface()
+  IntrusiveSP<IOpenGLSurface> GpuDevice::GetDepthRenderTargetSurface()
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::GetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::GetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
       return IntrusiveSP<IOpenGLSurface> (0);
     }
 
     return _FrameBufferObject->GetDepthRenderTarget();
   }
 
-  void GLDeviceFactory::ActivateFrameBuffer()
+  void GpuDevice::ActivateFrameBuffer()
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::ActivateFrameBuffer] No support for OpenGL framebuffer extension.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::ActivateFrameBuffer] No support for OpenGL framebuffer extension.") );
       return;
     }
 
     _FrameBufferObject->Activate();
   }
 
-  void GLDeviceFactory::DeactivateFrameBuffer()
+  void GpuDevice::DeactivateFrameBuffer()
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::DeactivateFrameBuffer] No support for OpenGL framebuffer extension.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::DeactivateFrameBuffer] No support for OpenGL framebuffer extension.") );
       return;
     }
 
@@ -1422,7 +881,7 @@ namespace nux
     CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
   }
 
-  void GLDeviceFactory::Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil)
+  void GpuDevice::Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil)
   {
     CHECKGL ( glClearColor (red, green, blue, alpha) );
     CHECKGL ( glClearDepth (depth) );
@@ -1430,34 +889,34 @@ namespace nux
     CHECKGL ( glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
   }
 
-  void GLDeviceFactory::ClearColorRT (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha)
+  void GpuDevice::ClearColorRT (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha)
   {
     CHECKGL ( glClearColor (red, green, blue, alpha) );
     CHECKGL ( glClear (GL_COLOR_BUFFER_BIT) );
   }
 
-  void GLDeviceFactory::ClearDepthRT (FLOAT depth)
+  void GpuDevice::ClearDepthRT (FLOAT depth)
   {
     CHECKGL ( glClearDepth (depth) );
     CHECKGL ( glClear (GL_DEPTH_BUFFER_BIT) );
   }
-  void GLDeviceFactory::ClearStencilRT (int stencil)
+  void GpuDevice::ClearStencilRT (int stencil)
   {
     CHECKGL ( glClearStencil (stencil) );
     CHECKGL ( glClear (GL_STENCIL_BUFFER_BIT) );
   }
 
-  void GLDeviceFactory::ClearFloatingPointColorRT (int x, int y, int width, int height,
+  void GpuDevice::ClearFloatingPointColorRT (int x, int y, int width, int height,
       FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha) // use a Quad.
   {
     DrawQuad_FixPipe (x, y, width, height, red, green, blue, alpha);
   }
 
-  void GLDeviceFactory::ClearSurfaceWithColor (IntrusiveSP<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
+  void GpuDevice::ClearSurfaceWithColor (IntrusiveSP<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
   {
     if (!GL_EXT_FRAMEBUFFER_OBJECT)
     {
-      nuxDebugMsg (TEXT ("[GLDeviceFactory::ClearSurfaceWithColor] No support for OpenGL framebuffer extension.") );
+      nuxDebugMsg (TEXT ("[GpuDevice::ClearSurfaceWithColor] No support for OpenGL framebuffer extension.") );
     }
 
     FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
@@ -1471,17 +930,17 @@ namespace nux
                                r, g, b, a);
   }
 
-  void GLDeviceFactory::SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> fbo)
+  void GpuDevice::SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> fbo)
   {
     _CurrentFrameBufferObject = fbo;
   }
 
-  IntrusiveSP<IOpenGLFrameBufferObject> GLDeviceFactory::GetCurrentFrameBufferObject()
+  IntrusiveSP<IOpenGLFrameBufferObject> GpuDevice::GetCurrentFrameBufferObject()
   {
     return _CurrentFrameBufferObject;
   }
 
-  IntrusiveSP<IOpenGLBaseTexture> GLDeviceFactory::CreateSystemCapableDeviceTexture (
+  IntrusiveSP<IOpenGLBaseTexture> GpuDevice::CreateSystemCapableDeviceTexture (
     int Width
     , int Height
     , int Levels
@@ -1502,7 +961,7 @@ namespace nux
     return IntrusiveSP<IOpenGLBaseTexture>();
   }
 
-  BaseTexture* GLDeviceFactory::CreateSystemCapableTexture ()
+  BaseTexture* GpuDevice::CreateSystemCapableTexture ()
   {
     if(SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO ())
     {

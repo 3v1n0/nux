@@ -64,7 +64,7 @@ namespace nux
   private:
     ICgVertexShader (NString ShaderName = NString ("VertexProgram") );
     int _ready;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
   class ICgPixelShader:  public ICgShader
@@ -80,7 +80,7 @@ namespace nux
   private:
     ICgPixelShader (NString ShaderName = NString ("PixelProgram") );
     int _ready;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
 }

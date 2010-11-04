@@ -64,7 +64,7 @@ namespace nux
   }
 
 
-  void GroupBox2::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void GroupBox2::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 
@@ -73,13 +73,13 @@ namespace nux
     Geometry layoutgeomerty = GetGeometry();
     layoutgeomerty.OffsetPosition (0, TOP_HEADER_HEIGHT);
     layoutgeomerty.OffsetSize (0, -TOP_HEADER_HEIGHT);
-    gPainter.PaintShapeCorner (GfxContext, header, Color (0xFF000000), eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
+    GetPainter().PaintShapeCorner (GfxContext, header, Color (0xFF000000), eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
 
-    gPainter.PushDrawShapeLayer (GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eCornerBottomLeft | eCornerBottomRight);
+    GetPainter().PushDrawShapeLayer (GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eCornerBottomLeft | eCornerBottomRight);
 
     //if(bCaptionAvailable)
     {
-      gPainter.PaintTextLineStatic (GfxContext, GetThreadBoldFont(), m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
+      GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
     }
 
     if (m_layout != 0)
@@ -87,11 +87,11 @@ namespace nux
       m_layout->NeedRedraw();
     }
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
   }
 
-  void GroupBox2::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void GroupBox2::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     if (m_layout == 0)
       return;
@@ -102,9 +102,9 @@ namespace nux
     layoutgeomerty.OffsetSize (0, -TOP_HEADER_HEIGHT);
 
     if (force_draw)
-      gPainter.PushDrawShapeLayer (GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eAllCorners);
+      GetPainter().PushDrawShapeLayer (GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eAllCorners);
     else
-      gPainter.PushShapeLayer (GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eAllCorners);
+      GetPainter().PushShapeLayer (GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eAllCorners);
 
     if (m_layout)
     {
@@ -113,11 +113,11 @@ namespace nux
       GfxContext.PopClippingRectangle();
     }
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
   }
 
-  void GroupBox2::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void GroupBox2::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -231,8 +231,8 @@ namespace nux
     {
       //bCaptionAvailable = true;
       m_CaptionArea->SetBaseString (Caption);
-      m_CaptionArea->SetMinimumSize (4 + GetThreadBoldFont()->GetStringWidth (Caption), PRACTICAL_WIDGET_HEIGHT);
-      m_CaptionArea->SetBaseSize (4 + GetThreadBoldFont()->GetStringWidth (Caption), PRACTICAL_WIDGET_HEIGHT);
+      m_CaptionArea->SetMinimumSize (4 + GetSysBoldFont()->GetStringWidth (Caption), PRACTICAL_WIDGET_HEIGHT);
+      m_CaptionArea->SetBaseSize (4 + GetSysBoldFont()->GetStringWidth (Caption), PRACTICAL_WIDGET_HEIGHT);
 
       Size s = GetMinimumSize();
 

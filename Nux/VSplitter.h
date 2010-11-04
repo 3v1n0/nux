@@ -37,9 +37,9 @@ namespace nux
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
     void AddWidget (Area *ic, float stretchfactor);
     void ResetSplitConfig();
@@ -50,7 +50,7 @@ namespace nux
     void OnSplitterMouseUp (t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
     void OnSplitterMouseDrag (t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
 
-    virtual void OverlayDrawing (GraphicsContext &GfxContext);
+    virtual void OverlayDrawing (GraphicsEngine &GfxContext);
 
     //! Return true if this object can break the layout.
     /*

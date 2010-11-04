@@ -21,7 +21,7 @@
 
 
 #include "GLResource.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
 
@@ -29,7 +29,7 @@
 #include "GLVertexResourceManager.h"
 #include "GLDeviceFrameBufferObject.h"
 #include "GLTemplatePrimitiveBuffer.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 
 #define MANAGEDEVICERESOURCE    0
 
@@ -38,7 +38,7 @@ namespace nux
 
   static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-  IntrusiveSP<IOpenGLVertexBuffer> GLDeviceFactory::CreateVertexBuffer (int Length,
+  IntrusiveSP<IOpenGLVertexBuffer> GpuDevice::CreateVertexBuffer (int Length,
       VBO_USAGE Usage)
   {
     IOpenGLVertexBuffer *ptr;
@@ -48,7 +48,7 @@ namespace nux
     return h;
   }
 
-  int GLDeviceFactory::CreateVertexBuffer (unsigned int Length,
+  int GpuDevice::CreateVertexBuffer (unsigned int Length,
       VBO_USAGE Usage,
       IOpenGLVertexBuffer **ppVertexBuffer)
   {
@@ -59,7 +59,7 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLIndexBuffer> GLDeviceFactory::CreateIndexBuffer (
+  IntrusiveSP<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer (
     int Length
     , VBO_USAGE Usage    // Dynamic or WriteOnly
     , INDEX_FORMAT Format)
@@ -71,7 +71,7 @@ namespace nux
     return h;
   }
 
-  int GLDeviceFactory::CreateIndexBuffer (unsigned int Length,
+  int GpuDevice::CreateIndexBuffer (unsigned int Length,
                                           VBO_USAGE Usage,
                                           INDEX_FORMAT Format,
                                           IOpenGLIndexBuffer **ppIndexBuffer)
@@ -83,7 +83,7 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLPixelBufferObject> GLDeviceFactory::CreatePixelBufferObject (int Size, VBO_USAGE Usage)
+  IntrusiveSP<IOpenGLPixelBufferObject> GpuDevice::CreatePixelBufferObject (int Size, VBO_USAGE Usage)
   {
     IOpenGLPixelBufferObject *ptr;
     CreatePixelBufferObject (Size, Usage, (IOpenGLPixelBufferObject **) &ptr);
@@ -92,7 +92,7 @@ namespace nux
     return h;
   }
 
-  int GLDeviceFactory::CreatePixelBufferObject (int Size, VBO_USAGE Usage,
+  int GpuDevice::CreatePixelBufferObject (int Size, VBO_USAGE Usage,
       IOpenGLPixelBufferObject **ppPixelBufferObject)
   {
     *ppPixelBufferObject = new IOpenGLPixelBufferObject (Size, Usage, NUX_TRACKER_LOCATION);
@@ -102,7 +102,7 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLVertexDeclaration> GLDeviceFactory::CreateVertexDeclaration (
+  IntrusiveSP<IOpenGLVertexDeclaration> GpuDevice::CreateVertexDeclaration (
     const VERTEXELEMENT *pVertexElements)
   {
     IOpenGLVertexDeclaration *ptr;
@@ -112,7 +112,7 @@ namespace nux
     return h;
   }
 
-  int GLDeviceFactory::CreateVertexDeclaration (const VERTEXELEMENT *pVertexElements,
+  int GpuDevice::CreateVertexDeclaration (const VERTEXELEMENT *pVertexElements,
       IOpenGLVertexDeclaration **ppDecl)
   {
     *ppDecl = new IOpenGLVertexDeclaration (pVertexElements);
@@ -122,17 +122,17 @@ namespace nux
     return OGL_OK;
   }
 
-  void GLDeviceFactory::InvalidateVertexBuffer()
+  void GpuDevice::InvalidateVertexBuffer()
   {
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
   }
 
-  void GLDeviceFactory::InvalidateIndexBuffer()
+  void GpuDevice::InvalidateIndexBuffer()
   {
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
   }
 
-  int GLDeviceFactory::DrawIndexedPrimitive (IntrusiveSP<IOpenGLIndexBuffer> IndexBuffer,
+  int GpuDevice::DrawIndexedPrimitive (IntrusiveSP<IOpenGLIndexBuffer> IndexBuffer,
       IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
       PRIMITIVE_TYPE PrimitiveType,
       int BaseVertexIndex,
@@ -232,7 +232,7 @@ namespace nux
           break;
         default:
           // Unknown primitive type. This should not happen.
-          nuxAssertMsg (0, TEXT ("[GLDeviceFactory::DrawIndexedPrimitive] Unknown Primitive Type.") );
+          nuxAssertMsg (0, TEXT ("[GpuDevice::DrawIndexedPrimitive] Unknown Primitive Type.") );
       }
 
       t_size ptr = StartIndex * IndexBuffer->GetStride();
@@ -268,7 +268,7 @@ namespace nux
 
 
 // Draw Primitive without index buffer
-  int GLDeviceFactory::DrawPrimitive (IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
+  int GpuDevice::DrawPrimitive (IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
                                       PRIMITIVE_TYPE PrimitiveType,
                                       unsigned vtx_start_,
                                       unsigned PrimitiveCount)
@@ -365,7 +365,7 @@ namespace nux
           break;
         default:
           // Unknown primitive type. This should not happen.
-          nuxAssertMsg (0, TEXT ("[GLDeviceFactory::DrawPrimitive] Unknown Primitive Type.") );
+          nuxAssertMsg (0, TEXT ("[GpuDevice::DrawPrimitive] Unknown Primitive Type.") );
           return OGL_ERROR;
       }
 
@@ -399,13 +399,13 @@ namespace nux
   }
 
 // Draw Primitive without index buffer, and use a user pointer for the source of the stream.
-  int GLDeviceFactory::DrawPrimitiveUP (IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
+  int GpuDevice::DrawPrimitiveUP (IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
                                         PRIMITIVE_TYPE PrimitiveType,
                                         unsigned int PrimitiveCount,
                                         const void *pVertexStreamZeroData,
                                         unsigned int VertexStreamZeroStride)
   {
-    nuxAssertMsg (VertexDeclaration->IsUsingMoreThanStreamZero(), TEXT ("[GLDeviceFactory::DrawPrimitiveUP] Declaration is using more than stream 0.") );
+    nuxAssertMsg (VertexDeclaration->IsUsingMoreThanStreamZero(), TEXT ("[GpuDevice::DrawPrimitiveUP] Declaration is using more than stream 0.") );
     VERTEXELEMENT vtxelement = VertexDeclaration->GetUsage (ATTRIB_USAGE_DECL_POSITION);
     int Stream = vtxelement.Stream;
 
@@ -453,7 +453,7 @@ namespace nux
           break;
         default:
           // Unknown primitive type. This should not happen.
-          nuxAssertMsg (0, TEXT ("[GLDeviceFactory::DrawPrimitiveUP] Unknown Primitive Type.") );
+          nuxAssertMsg (0, TEXT ("[GpuDevice::DrawPrimitiveUP] Unknown Primitive Type.") );
           return OGL_ERROR;
       }
 
@@ -478,7 +478,7 @@ namespace nux
     return OGL_OK;
   }
 
-  void GLDeviceFactory::DrawQuad_FixPipe (int x, int y, int width, int height,
+  void GpuDevice::DrawQuad_FixPipe (int x, int y, int width, int height,
                                           FLOAT R, FLOAT G, FLOAT B, FLOAT A)
   {
     Matrix4 matrix;
@@ -532,7 +532,7 @@ namespace nux
     CHECKGL ( glDisableClientState (GL_COLOR_ARRAY) );
   }
 
-  void GLDeviceFactory::DrawTextureQuad_FixPipe (IntrusiveSP<IOpenGLTexture2D> texture, int x, int y, int width, int height,
+  void GpuDevice::DrawTextureQuad_FixPipe (IntrusiveSP<IOpenGLTexture2D> texture, int x, int y, int width, int height,
       FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1)
   {
 //    DirectX Matrix
@@ -622,7 +622,7 @@ namespace nux
     CHECKGL ( glDisableClientState (GL_TEXTURE_COORD_ARRAY) );
   }
 
-  int GLDeviceFactory::SetStreamSource (
+  int GpuDevice::SetStreamSource (
     unsigned int StreamNumber,
     IntrusiveSP<IOpenGLVertexBuffer> pStreamData,
     unsigned int OffsetInBytes,

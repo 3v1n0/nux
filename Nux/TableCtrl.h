@@ -59,13 +59,13 @@ namespace nux
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
-    void DrawTable (GraphicsContext &GfxContext);
-    void DrawHeader (GraphicsContext &GfxContext);
-    void DrawHeaderPreview (GraphicsContext &GfxContext);
-    void OverlayDrawing (GraphicsContext &GfxContext);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    void DrawTable (GraphicsEngine &GfxContext);
+    void DrawHeader (GraphicsEngine &GfxContext);
+    void DrawHeaderPreview (GraphicsEngine &GfxContext);
+    void OverlayDrawing (GraphicsEngine &GfxContext);
 
     // API
     void addHeader (const TCHAR *name, bool fixed_width = false, int column_width = 10);
@@ -182,20 +182,20 @@ namespace nux
         Paint the item hierarchy, open/close decoration in the first column.
         @param  item    The item whose decoration must be drawn.
     */
-    virtual void PaintDecoration (GraphicsContext &GfxContext, TableItem *item);
+    virtual void PaintDecoration (GraphicsEngine &GfxContext, TableItem *item);
 
     //! Paint Item row header decoration.
     /*!
         @param  item    The item whose row header must be drawn.
     */
-    virtual void PaintRowDecoration (GraphicsContext &GfxContext, TableItem *item, Color color);
+    virtual void PaintRowDecoration (GraphicsEngine &GfxContext, TableItem *item, Color color);
     //! Paint Item Background.
     /*!
         Paint Item Background. Also push the background on the painter background stack.
 
         @return The number of background pushed onto the painter stack.
     */
-    UINT PushItemBackground (GraphicsContext &GfxContext, TableItem *item, bool MouseOver = false);
+    UINT PushItemBackground (GraphicsEngine &GfxContext, TableItem *item, bool MouseOver = false);
 
     //! Pop the item background pushed on the painter stack.
     /*!
@@ -203,7 +203,7 @@ namespace nux
 
         @param NumBackground The number of background to pop of the painter stack.
     */
-    void PopItemBackground (GraphicsContext &GfxContext, UINT NumBackground);
+    void PopItemBackground (GraphicsEngine &GfxContext, UINT NumBackground);
 
     //! Enable  row to have a height fixed by the contained item.
     /*!

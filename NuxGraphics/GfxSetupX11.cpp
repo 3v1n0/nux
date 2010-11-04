@@ -21,13 +21,13 @@
 
 
 #include "GLResource.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
 
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 #include "GLWindowManager.h"
 #include "GfxEventsX11.h"
 #include "IniFile.h"
@@ -389,8 +389,8 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    m_DeviceFactory = new GLDeviceFactory (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
-    m_GraphicsContext = new GraphicsContext (*this);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_GraphicsContext = new GraphicsEngine (*this);
 
     EnableVSyncSwapControl();
     //DisableVSyncSwapControl();
@@ -421,8 +421,8 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    m_DeviceFactory = new GLDeviceFactory (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
-    m_GraphicsContext = new GraphicsContext (*this);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_GraphicsContext = new GraphicsEngine (*this);
 
     return true;
   }

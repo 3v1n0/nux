@@ -24,7 +24,7 @@
 #define OPENGLENGINE_H
 
 #include "GLResource.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
 #include "GLTextureResourceManager.h"
@@ -73,12 +73,12 @@ namespace nux
 
   } OpenGLContext;
 
-  class GraphicsContext
+  class GraphicsEngine
   {
   public:
 
-    GraphicsContext (GLWindowImpl &GlWindow);
-    ~GraphicsContext();
+    GraphicsEngine (GLWindowImpl &GlWindow);
+    ~GraphicsEngine();
 
     void SetContext (int x, int y, int width, int height);
     void GetContextSize (int &w, int &h) const;
@@ -378,11 +378,11 @@ namespace nux
     mutable long m_triangle_tex_stats;
     mutable long m_line_stats;
 
-    GraphicsContext (const GraphicsContext &);
+    GraphicsEngine (const GraphicsEngine &);
     // Does not make sense for a singleton. This is a self assignment.
-    GraphicsContext &operator= (const GraphicsContext &);
+    GraphicsEngine &operator= (const GraphicsEngine &);
     // Declare operator address-of as private
-    GraphicsContext *operator &();
+    GraphicsEngine *operator &();
   };
 
 }

@@ -210,18 +210,18 @@ namespace nux
   }
 
 
-  void TabView::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void TabView::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if (m_DrawBackgroundOnPreviousGeometry)
     {
-      gPainter.PaintBackground (GfxContext, m_PreviousGeometry);
+      GetPainter().PaintBackground (GfxContext, m_PreviousGeometry);
       m_DrawBackgroundOnPreviousGeometry = false;
     }
 
     GfxContext.PushClippingRectangle (GetGeometry() );
     Geometry base = GetGeometry();
 
-    gPainter.PushDrawShapeLayer (GfxContext, Geometry (base.x, base.y, base.GetWidth(), TAB_HEIGHT), eSHAPE_CORNER_ROUND4, TAB_HEADER_BACKGROUND_COLOR, eCornerTopLeft | eCornerTopRight);
+    GetPainter().PushDrawShapeLayer (GfxContext, Geometry (base.x, base.y, base.GetWidth(), TAB_HEIGHT), eSHAPE_CORNER_ROUND4, TAB_HEADER_BACKGROUND_COLOR, eCornerTopLeft | eCornerTopRight);
 
     if (m_ClientLayout)
       m_ClientLayout->NeedRedraw();
@@ -245,50 +245,50 @@ namespace nux
       if (m_TabVector[i]->_index == m_FocusTabIndex)
       {
         tab_geo.OffsetSize (-2, 0);
-        gPainter.PaintShapeCorner (GfxContext, tab_geo, TAB_HEADER_FOCUS_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
-        gPainter.PaintTextLineStatic (GfxContext, GetThreadBoldFont(), tab_geo, tab_text, Color (0xFFFFFFFF), true, eAlignTextCenter);
+        GetPainter().PaintShapeCorner (GfxContext, tab_geo, TAB_HEADER_FOCUS_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
+        GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), tab_geo, tab_text, Color (0xFFFFFFFF), true, eAlignTextCenter);
       }
       else
       {
         tab_geo.OffsetSize (-2, 0);
-        gPainter.PaintShapeCorner (GfxContext, tab_geo, TAB_HEADER_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
-        gPainter.PaintTextLineStatic (GfxContext, GetThreadBoldFont(), tab_geo, tab_text, Color (0xFF000000), true, eAlignTextCenter);
+        GetPainter().PaintShapeCorner (GfxContext, tab_geo, TAB_HEADER_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
+        GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), tab_geo, tab_text, Color (0xFF000000), true, eAlignTextCenter);
       }
     }
 
     GfxContext.PopClippingRectangle();
 
-    gPainter.PaintShapeCorner (GfxContext, Geometry (base.x, base.y + TAB_HEIGHT, base.GetWidth(), base.GetHeight() - TAB_HEIGHT),
+    GetPainter().PaintShapeCorner (GfxContext, Geometry (base.x, base.y + TAB_HEIGHT, base.GetWidth(), base.GetHeight() - TAB_HEIGHT),
                                TAB_BACKGROUND_COLOR, eSHAPE_CORNER_ROUND4, eCornerBottomLeft | eCornerBottomRight, false);
 
-    gPainter.Paint2DQuadColor (GfxContext, m_IncrTab->GetGeometry(), TAB_HEADER_BACKGROUND_COLOR);
+    GetPainter().Paint2DQuadColor (GfxContext, m_IncrTab->GetGeometry(), TAB_HEADER_BACKGROUND_COLOR);
     GeometryPositioning gp (eHACenter, eVACenter);
-    Geometry GeoPo = ComputeGeometryPositioning (m_IncrTab->GetGeometry(), gTheme.GetImageGeometry (eTAB_RIGHT), gp);
+    Geometry GeoPo = ComputeGeometryPositioning (m_IncrTab->GetGeometry(), GetTheme().GetImageGeometry (eTAB_RIGHT), gp);
 
     if (m_IncrTab->IsMouseInside() )
-      gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTAB_RIGHT);
+      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTAB_RIGHT);
     else
-      gPainter.PaintShape (GfxContext, GeoPo, TAB_HEADER_FOCUS_COLOR, eTAB_RIGHT);
+      GetPainter().PaintShape (GfxContext, GeoPo, TAB_HEADER_FOCUS_COLOR, eTAB_RIGHT);
 
-    gPainter.Paint2DQuadColor (GfxContext, m_DecrTab->GetGeometry(), TAB_HEADER_BACKGROUND_COLOR);
+    GetPainter().Paint2DQuadColor (GfxContext, m_DecrTab->GetGeometry(), TAB_HEADER_BACKGROUND_COLOR);
     gp.SetAlignment (eHACenter, eVACenter);
-    GeoPo = ComputeGeometryPositioning (m_DecrTab->GetGeometry(), gTheme.GetImageGeometry (eTAB_LEFT), gp);
+    GeoPo = ComputeGeometryPositioning (m_DecrTab->GetGeometry(), GetTheme().GetImageGeometry (eTAB_LEFT), gp);
 
     if (m_DecrTab->IsMouseInside() )
-      gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTAB_LEFT);
+      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTAB_LEFT);
     else
-      gPainter.PaintShape (GfxContext, GeoPo, TAB_HEADER_FOCUS_COLOR, eTAB_LEFT);
+      GetPainter().PaintShape (GfxContext, GeoPo, TAB_HEADER_FOCUS_COLOR, eTAB_LEFT);
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
   }
 
-  void TabView::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void TabView::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     GfxContext.PushClippingRectangle (GetGeometry() );
-    gPainter.PushShapeLayer (GfxContext, Geometry (base.x, base.y + TAB_HEIGHT, base.GetWidth(), base.GetHeight() - TAB_HEIGHT),
+    GetPainter().PushShapeLayer (GfxContext, Geometry (base.x, base.y + TAB_HEIGHT, base.GetWidth(), base.GetHeight() - TAB_HEIGHT),
                              eSHAPE_CORNER_ROUND4, TAB_BACKGROUND_COLOR, eCornerBottomLeft | eCornerBottomRight);
 
     if (m_ClientLayout)
@@ -298,11 +298,11 @@ namespace nux
       GfxContext.PopClippingRectangle();
     }
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
   }
 
-  void TabView::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void TabView::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -388,8 +388,8 @@ namespace nux
       GetGraphicsThread()->ComputeElementLayout (this);
     }
 
-    Tab->_tab_area->SetMinimumSize (6 + GetThreadBoldFont()->GetStringWidth (tab_name), PRACTICAL_WIDGET_HEIGHT);
-    Tab->_tab_area->SetMaximumSize (6 + GetThreadBoldFont()->GetStringWidth (tab_name), PRACTICAL_WIDGET_HEIGHT);
+    Tab->_tab_area->SetMinimumSize (6 + GetSysBoldFont()->GetStringWidth (tab_name), PRACTICAL_WIDGET_HEIGHT);
+    Tab->_tab_area->SetMaximumSize (6 + GetSysBoldFont()->GetStringWidth (tab_name), PRACTICAL_WIDGET_HEIGHT);
 
     Tab->_tab_area->OnMouseDown.connect (sigc::bind ( sigc::mem_fun (this, &TabView::RecvTabMouseDown), Tab) );
     Tab->_tab_area->OnMouseUp.connect (sigc::bind ( sigc::mem_fun (this, &TabView::RecvTabMouseUp), Tab) );
@@ -539,10 +539,10 @@ namespace nux
   void TabView::RecvTabButtonMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_TabRightTimerHandler.IsValid() )
-      GetThreadTimer().RemoveTimerHandler (m_TabRightTimerHandler);
+      GetTimer().RemoveTimerHandler (m_TabRightTimerHandler);
 
     if (m_TabLeftTimerHandler.IsValid() )
-      GetThreadTimer().RemoveTimerHandler (m_TabLeftTimerHandler);
+      GetTimer().RemoveTimerHandler (m_TabLeftTimerHandler);
 
     m_TabRightTimerHandler = 0;
     m_TabLeftTimerHandler = 0;
@@ -551,13 +551,13 @@ namespace nux
   void TabView::RecvTabRightTimerExpired (void *v)
   {
     TranslateTabLayout (-10);
-    m_TabRightTimerHandler = GetThreadTimer().AddTimerHandler (10, tabright_callback, this);
+    m_TabRightTimerHandler = GetTimer().AddTimerHandler (10, tabright_callback, this);
   }
 
   void TabView::RecvTabLeftTimerExpired (void *v)
   {
     TranslateTabLayout (10);
-    m_TabLeftTimerHandler = GetThreadTimer().AddTimerHandler (10, tableft_callback, this);
+    m_TabLeftTimerHandler = GetTimer().AddTimerHandler (10, tableft_callback, this);
   }
 
 }

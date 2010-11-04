@@ -155,13 +155,13 @@ namespace nux
     return ret;
   }
 
-  void VSplitter::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void VSplitter::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle (base);
     std::vector<Area *>::iterator it;
 
-    gPainter.PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (GfxContext, base);
     std::vector<MySplitter *>::iterator it_splitter;
 
     for (it_splitter = m_SplitterObject.begin(); it_splitter != m_SplitterObject.end(); it_splitter++)
@@ -185,14 +185,14 @@ namespace nux
         grip_geo.SetHeight (h);
       }
 
-      gPainter.Draw2DLine (GfxContext, grip_geo.x + 1, grip_geo.y, grip_geo.x + 1, grip_geo.y + grip_geo.GetHeight(), Color (0xFF111111) );
-      gPainter.Draw2DLine (GfxContext, grip_geo.x + 3, grip_geo.y, grip_geo.x + 3, grip_geo.y + grip_geo.GetHeight(), Color (0xFF111111) );
+      GetPainter().Draw2DLine (GfxContext, grip_geo.x + 1, grip_geo.y, grip_geo.x + 1, grip_geo.y + grip_geo.GetHeight(), Color (0xFF111111) );
+      GetPainter().Draw2DLine (GfxContext, grip_geo.x + 3, grip_geo.y, grip_geo.x + 3, grip_geo.y + grip_geo.GetHeight(), Color (0xFF111111) );
     }
 
     GfxContext.PopClippingRectangle();
   }
 
-  void VSplitter::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void VSplitter::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
     Geometry base = GetGeometry();
@@ -264,12 +264,12 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void VSplitter::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void VSplitter::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void VSplitter::OverlayDrawing (GraphicsContext &GfxContext)
+  void VSplitter::OverlayDrawing (GraphicsEngine &GfxContext)
   {
     t_u32 num_element = (t_u32) m_SplitterObject.size();
 
@@ -308,7 +308,7 @@ namespace nux
 
       GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       {
-        gPainter.Paint2DQuadColor (GfxContext, geo, Color (0xBB868686) );
+        GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0xBB868686) );
       }
       GfxContext.GetRenderStates().SetBlend (false);
     }
@@ -512,7 +512,7 @@ namespace nux
     m_point.Set (x, y);
 
     m_focus_splitter_index = header_pos;
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay (this, GetThreadWindowCompositor().GetCurrentWindow() );
+    GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor().GetCurrentWindow() );
 
     // Hint for the window to initiate a redraw
     GetGraphicsThread()->RequestRedraw();
@@ -543,7 +543,7 @@ namespace nux
     mvt_dy = 0;
 
     // End overlay drawing;
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay (0, GetThreadWindowCompositor().GetCurrentWindow() );
+    GetWindowCompositor().SetWidgetDrawingOverlay (0, GetWindowCompositor().GetCurrentWindow() );
     // Hint for the window to initiate a redraw
     GetGraphicsThread()->RequestRedraw();
   }

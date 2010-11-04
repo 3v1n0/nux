@@ -26,7 +26,7 @@
 #include "NuxImage/ImageSurface.h"
 #include "NuxMesh/NTextureArchiveManager.h"
 
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
 
@@ -37,7 +37,7 @@
 #include "FontRenderer.h"
 #include "UIColorTheme.h"
 
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 
 namespace nux
 {
@@ -54,7 +54,7 @@ namespace nux
   }
 
 
-  GraphicsContext::GraphicsContext (GLWindowImpl &GlWindow)
+  GraphicsEngine::GraphicsEngine (GLWindowImpl &GlWindow)
     :   m_GLWindow (GlWindow)
   {
     m_ScissorX = 0;
@@ -112,30 +112,30 @@ namespace nux
     m_font_renderer = new FontRenderer (*this);
   }
 
-  GraphicsContext::~GraphicsContext()
+  GraphicsEngine::~GraphicsEngine()
   {
     ResourceCache.Flush();
     NUX_SAFE_DELETE (m_font_renderer);
   }
 
-  IntrusiveSP<FontTexture> GraphicsContext::GetFont()
+  IntrusiveSP<FontTexture> GraphicsEngine::GetFont()
   {
     return _normal_font;
   }
 
-  IntrusiveSP<FontTexture> GraphicsContext::GetBoldFont()
+  IntrusiveSP<FontTexture> GraphicsEngine::GetBoldFont()
   {
     return _bold_font;
   }
 
-  void GraphicsContext::SetContext (int x, int y, int width, int height)
+  void GraphicsEngine::SetContext (int x, int y, int width, int height)
   {
     m_CurrrentContext.x = x;
     m_CurrrentContext.y = y;
 
     if (width <= 0 || height <= 0)
     {
-      //nuxAssertMsg(0, TEXT("[GraphicsContext::SetContext] Incorrect context size.") );
+      //nuxAssertMsg(0, TEXT("[GraphicsEngine::SetContext] Incorrect context size.") );
       if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
       {
         m_CurrrentContext.width = m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->GetWidth();
@@ -154,48 +154,48 @@ namespace nux
     }
   }
 
-  void GraphicsContext::GetContextSize (int &w, int &h) const
+  void GraphicsEngine::GetContextSize (int &w, int &h) const
   {
     w = m_CurrrentContext.width;
     h = m_CurrrentContext.height;
   }
 
-  int GraphicsContext::GetContextWidth() const
+  int GraphicsEngine::GetContextWidth() const
   {
     return m_CurrrentContext.width;
   }
 
-  int GraphicsContext::GetContextHeight() const
+  int GraphicsEngine::GetContextHeight() const
   {
     return m_CurrrentContext.height;
   }
 
-  int GraphicsContext::GetContextX() const
+  int GraphicsEngine::GetContextX() const
   {
     return m_CurrrentContext.x;
   }
 
-  int GraphicsContext::GetContextY() const
+  int GraphicsEngine::GetContextY() const
   {
     return m_CurrrentContext.y;
   }
 
-  void GraphicsContext::GetWindowSize (int &w, int &h) const
+  void GraphicsEngine::GetWindowSize (int &w, int &h) const
   {
     m_GLWindow.GetWindowSize (w, h);
   }
 
-  int GraphicsContext::GetWindowWidth() const
+  int GraphicsEngine::GetWindowWidth() const
   {
     return m_GLWindow.GetWindowWidth();
   }
 
-  int GraphicsContext::GetWindowHeight() const
+  int GraphicsEngine::GetWindowHeight() const
   {
     return m_GLWindow.GetWindowHeight();
   }
 
-  int GraphicsContext::RenderColorText (IntrusiveSP<FontTexture> Font, int x, int y, const NString &Str,
+  int GraphicsEngine::RenderColorText (IntrusiveSP<FontTexture> Font, int x, int y, const NString &Str,
                                         const Color &TextColor,
                                         bool WriteAlphaChannel,
                                         int NumCharacter)
@@ -206,7 +206,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsContext::RenderColorTextLineStatic (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
+  int GraphicsEngine::RenderColorTextLineStatic (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
       const Color &TextColor,
       bool WriteAlphaChannel,
       TextAlignment alignment)
@@ -217,7 +217,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsContext::RenderColorTextLineEdit (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
+  int GraphicsEngine::RenderColorTextLineEdit (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
       const Color &TextColor,
       bool WriteAlphaChannel,
       const Color &SelectedTextColor,
@@ -239,9 +239,9 @@ namespace nux
     return 0;
   }
 
-  void GraphicsContext::SetTexture (int TextureUnit, BaseTexture *Texture)
+  void GraphicsEngine::SetTexture (int TextureUnit, BaseTexture *Texture)
   {
-    nuxAssertMsg (Texture != 0, TEXT ("[GraphicsContext::SetTexture] Texture is NULL.") );
+    nuxAssertMsg (Texture != 0, TEXT ("[GraphicsEngine::SetTexture] Texture is NULL.") );
 
     if ( (TextureUnit < GL_TEXTURE0) || (TextureUnit > GL_TEXTURE31) )
       return;
@@ -250,7 +250,7 @@ namespace nux
     SetTexture (TextureUnit, CachedTexture->m_Texture);
   }
 
-  void GraphicsContext::SetTexture (int TextureUnit, IntrusiveSP< IOpenGLBaseTexture > DeviceTexture)
+  void GraphicsEngine::SetTexture (int TextureUnit, IntrusiveSP< IOpenGLBaseTexture > DeviceTexture)
   {
     NUX_RETURN_IF_FALSE (DeviceTexture.IsValid() );
 
@@ -258,7 +258,7 @@ namespace nux
     DeviceTexture->BindTextureToUnit (TextureUnit);
   }
 
-  void GraphicsContext::EnableTextureMode (int TextureUnit, int TextureMode)
+  void GraphicsEngine::EnableTextureMode (int TextureUnit, int TextureMode)
   {
     if ( (TextureUnit < GL_TEXTURE0) || (TextureUnit > GL_TEXTURE31) )
       return;
@@ -267,7 +267,7 @@ namespace nux
     CHECKGL ( glEnable (TextureMode) );
   }
 
-  void GraphicsContext::DisableTextureMode (int TextureUnit, int TextureMode)
+  void GraphicsEngine::DisableTextureMode (int TextureUnit, int TextureMode)
   {
     if ( (TextureUnit < GL_TEXTURE0) || (TextureUnit > GL_TEXTURE31) )
       return;
@@ -277,7 +277,7 @@ namespace nux
     CHECKGL ( glBindTexture (TextureMode, 0) );
   }
 
-  void GraphicsContext::DisableAllTextureMode (int TextureUnit)
+  void GraphicsEngine::DisableAllTextureMode (int TextureUnit)
   {
     if ( (TextureUnit < GL_TEXTURE0) || (TextureUnit > GL_TEXTURE31) )
       return;
@@ -288,7 +288,7 @@ namespace nux
 //////////////////////
 // DRAW CLIPPING    //
 //////////////////////
-  void GraphicsContext::PushClippingRectangle (Rect A)
+  void GraphicsEngine::PushClippingRectangle (Rect A)
   {
     if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
     {
@@ -344,7 +344,7 @@ namespace nux
     }
   }
 
-  void GraphicsContext::PopClippingRectangle()
+  void GraphicsEngine::PopClippingRectangle()
   {
     if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
     {
@@ -372,7 +372,7 @@ namespace nux
     }
   }
 
-  void GraphicsContext::ApplyClippingRectangle()
+  void GraphicsEngine::ApplyClippingRectangle()
   {
     if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
     {
@@ -399,7 +399,7 @@ namespace nux
     }
   }
 
-  void GraphicsContext::EmptyClippingRegion()
+  void GraphicsEngine::EmptyClippingRegion()
   {
     INT window_width, window_height;
     window_width = m_ViewportWidth;
@@ -411,7 +411,7 @@ namespace nux
     }
   }
 
-  Rect GraphicsContext::GetClippingRegion() const
+  Rect GraphicsEngine::GetClippingRegion() const
   {
     UINT stacksize = (UINT) ClippingRect.size();
 
@@ -426,12 +426,12 @@ namespace nux
     }
   }
 
-  int GraphicsContext::GetNumberOfClippingRegions() const
+  int GraphicsEngine::GetNumberOfClippingRegions() const
   {
     return (int) ClippingRect.size();
   }
 
-  void GraphicsContext::SetDrawClippingRegion (int x, int y, unsigned int width, unsigned int height)
+  void GraphicsEngine::SetDrawClippingRegion (int x, int y, unsigned int width, unsigned int height)
   {
     SetScissor (x, y, width, height);
   }
@@ -471,7 +471,7 @@ namespace nux
   /* render all primitives at integer positions */
 
   const float RASTERIZATION_OFFSET = 0.375f;
-  void GraphicsContext::Push2DWindow (int w, int h)
+  void GraphicsEngine::Push2DWindow (int w, int h)
   {
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     {
@@ -498,7 +498,7 @@ namespace nux
     }
   }
 
-  void GraphicsContext::Pop2DWindow()
+  void GraphicsEngine::Pop2DWindow()
   {
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
@@ -514,7 +514,7 @@ namespace nux
               ) );
   }
 
-  void GraphicsContext::Push2DModelViewMatrix (Matrix4 mat)
+  void GraphicsEngine::Push2DModelViewMatrix (Matrix4 mat)
   {
     m_2DModelViewMatricesStack.push_back (mat);
     {
@@ -535,7 +535,7 @@ namespace nux
     }
   }
 
-  Matrix4 GraphicsContext::Pop2DModelViewMatrix()
+  Matrix4 GraphicsEngine::Pop2DModelViewMatrix()
   {
     Matrix4 Mat;
     Mat.Zero();
@@ -568,7 +568,7 @@ namespace nux
     return Mat;
   }
 
-  void GraphicsContext::Clear2DModelViewMatrix()
+  void GraphicsEngine::Clear2DModelViewMatrix()
   {
     m_2DModelViewMatricesStack.clear();
 
@@ -590,28 +590,28 @@ namespace nux
     }
   }
 
-  Matrix4 GraphicsContext::GetProjectionMatrix()
+  Matrix4 GraphicsEngine::GetProjectionMatrix()
   {
     return m_ProjectionMatrix;
   }
 
-  Matrix4 GraphicsContext::GetModelViewMatrix()
+  Matrix4 GraphicsEngine::GetModelViewMatrix()
   {
     return m_ModelViewMatrix;
   }
 
-  Matrix4 GraphicsContext::GetModelViewProjectionMatrix()
+  Matrix4 GraphicsEngine::GetModelViewProjectionMatrix()
   {
     return m_ModelViewMatrix * m_ProjectionMatrix;
   }
 
-  Matrix4 GraphicsContext::GetOpenGLModelViewProjectionMatrix()
+  Matrix4 GraphicsEngine::GetOpenGLModelViewProjectionMatrix()
   {
     // This matrix is the transposed version of GetModelViewProjectionMatrix.
     return m_ModelViewMatrix * m_ProjectionMatrix;
   }
 
-  void GraphicsContext::SetEnvModeTextureAlphaBlend (int TextureUnit)
+  void GraphicsEngine::SetEnvModeTextureAlphaBlend (int TextureUnit)
   {
     // Render RGBA bitmap texture and alpha blend with the background
     // Make sure you call EnableBlending(bool b) before.
@@ -630,7 +630,7 @@ namespace nux
     CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA) );
   }
 
-  void GraphicsContext::SetEnvModeSelectTexture (int TextureUnit)
+  void GraphicsEngine::SetEnvModeSelectTexture (int TextureUnit)
   {
     // Render RGBA bitmap texture.
     CHECKGL ( glActiveTextureARB (TextureUnit) );
@@ -646,7 +646,7 @@ namespace nux
     CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA) );
   }
 
-  void GraphicsContext::SetEnvModeSelectColor (int TextureUnit)
+  void GraphicsEngine::SetEnvModeSelectColor (int TextureUnit)
   {
     // Render the color;
     CHECKGL ( glActiveTextureARB (TextureUnit) );
@@ -661,7 +661,7 @@ namespace nux
     CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA) );
   }
 
-  void GraphicsContext::SetEnvModeModulateColorWithTexture (int TextureUnit)
+  void GraphicsEngine::SetEnvModeModulateColorWithTexture (int TextureUnit)
   {
     // Render RGBA bitmat texture and alpha blend with the background
     CHECKGL ( glActiveTextureARB (TextureUnit) );
@@ -680,7 +680,7 @@ namespace nux
     CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA) );
   }
 
-  void GraphicsContext::SetViewport (int origin_x, int origin_y, int w, int h)
+  void GraphicsEngine::SetViewport (int origin_x, int origin_y, int w, int h)
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
@@ -692,31 +692,31 @@ namespace nux
 
     if (m_ViewportWidth < 0)
     {
-      nuxAssertMsg (0, TEXT ("[GraphicsContext::SetViewport] Incorrect context size.") );
+      nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
       m_ViewportWidth = 1;
     }
 
     if (m_ViewportHeight < 0)
     {
-      nuxAssertMsg (0, TEXT ("[GraphicsContext::SetViewport] Incorrect context size.") );
+      nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
       m_ViewportHeight = 1;
     }
 
     CHECKGL ( glViewport (origin_x, origin_y, m_ViewportWidth, m_ViewportHeight) );
   }
 
-  Rect GraphicsContext::GetViewportRect()
+  Rect GraphicsEngine::GetViewportRect()
   {
     return Rect (m_ViewportX, m_ViewportY, m_ViewportWidth, m_ViewportHeight);
   }
 
-  void GraphicsContext::SetScissorOffset (int x, int y)
+  void GraphicsEngine::SetScissorOffset (int x, int y)
   {
     m_ScissorXOffset = x;
     m_ScissorYOffset = y;
   }
 
-  void GraphicsContext::SetScissor (int x, int y, int w, int h)
+  void GraphicsEngine::SetScissor (int x, int y, int w, int h)
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
@@ -727,25 +727,25 @@ namespace nux
 
     if (m_ScissorWidth < 0)
     {
-      nuxAssertMsg (0, TEXT ("[GraphicsContext::SetViewport] Incorrect context size.") );
+      nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
       m_ScissorWidth = 1;
     }
 
     if (m_ScissorHeight < 0)
     {
-      nuxAssertMsg (0, TEXT ("[GraphicsContext::SetViewport] Incorrect context size.") );
+      nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
       m_ScissorHeight = 1;
     }
 
     CHECKGL ( glScissor (m_ScissorX + m_ScissorXOffset, m_ScissorY + m_ScissorYOffset, m_ScissorWidth, m_ScissorHeight) );
   }
 
-  Rect GraphicsContext::GetScissorRect()
+  Rect GraphicsEngine::GetScissorRect()
   {
     return Rect (m_ScissorX, m_ScissorY, m_ScissorWidth, m_ScissorHeight);
   }
 
-  void GraphicsContext::EnableScissoring (bool b)
+  void GraphicsEngine::EnableScissoring (bool b)
   {
     GetRenderStates().EnableScissor (b);
   }
@@ -754,7 +754,7 @@ namespace nux
 // 2D Area Clear Color Depth Stencil   //
 /////////////////////////////////////////
 
-  void GraphicsContext::ClearAreaColorDepthStencil (int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil)
+  void GraphicsEngine::ClearAreaColorDepthStencil (int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil)
   {
     GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE0);
     GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE1);
@@ -789,7 +789,7 @@ namespace nux
     CHECKGL ( glDisable (GL_STENCIL_TEST) );
   }
 
-  void GraphicsContext::ClearAreaColor (int x, int y, int width, int height, Color clearcolor)
+  void GraphicsEngine::ClearAreaColor (int x, int y, int width, int height, Color clearcolor)
   {
     //glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -811,7 +811,7 @@ namespace nux
     glEnd();
   }
 
-  void GraphicsContext::ClearAreaDepthStencil (int x, int y, int width, int height, float cleardepth, int clearstencil)
+  void GraphicsEngine::ClearAreaDepthStencil (int x, int y, int width, int height, float cleardepth, int clearstencil)
   {
     //glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -849,7 +849,7 @@ namespace nux
   }
 
 //Statistics
-  void GraphicsContext::ResetStats()
+  void GraphicsEngine::ResetStats()
   {
     m_quad_stats            = 0;
     m_quad_tex_stats        = 0;
@@ -858,12 +858,12 @@ namespace nux
     m_line_stats            = 0;
   }
 
-  IntrusiveSP< CachedResourceData > GraphicsContext::CacheResource (ResourceData *Resource)
+  IntrusiveSP< CachedResourceData > GraphicsEngine::CacheResource (ResourceData *Resource)
   {
     return ResourceCache.GetCachedResource (Resource);
   }
 
-  bool GraphicsContext::FlushCachedResourceData (ResourceData *Resource)
+  bool GraphicsEngine::FlushCachedResourceData (ResourceData *Resource)
   {
     bool cached = IsResourceCached (Resource);
     if (cached == false)
@@ -873,7 +873,7 @@ namespace nux
     return true;
   }
 
-  void GraphicsContext::UpdateResource (ResourceData *Resource)
+  void GraphicsEngine::UpdateResource (ResourceData *Resource)
   {
     IntrusiveSP< CachedResourceData > GLResource = ResourceCache.FindCachedResourceById (Resource->GetResourceIndex() ); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
     bool bUpdated = FALSE;
@@ -896,7 +896,7 @@ namespace nux
     }
   }
 
-  bool GraphicsContext::IsResourceCached (ResourceData *Resource)
+  bool GraphicsEngine::IsResourceCached (ResourceData *Resource)
   {
     return ResourceCache.IsCachedResource (Resource);
   }

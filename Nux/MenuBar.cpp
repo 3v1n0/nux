@@ -134,7 +134,7 @@ namespace nux
     return ret;
   }
 
-  void MenuBar::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void MenuBar::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle (base);
@@ -150,17 +150,17 @@ namespace nux
       if (area->IsMouseInside() )
       {
 
-        gPainter.PaintBackground (GfxContext, item_geometry);
+        GetPainter().PaintBackground (GfxContext, item_geometry);
 
         if (!m_MenuIsActive)
         {
-          gPainter.Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
-          //gPainter.PaintShape(GfxContext, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2);
+          GetPainter().Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
+          //GetPainter().PaintShape(GfxContext, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2);
         }
         else
         {
-          gPainter.Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
-          //gPainter.PaintShapeCorner(GfxContext, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2,
+          GetPainter().Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
+          //GetPainter().PaintShapeCorner(GfxContext, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2,
           //eCornerTopLeft|eCornerTopRight, false);
         }
 
@@ -168,30 +168,30 @@ namespace nux
         {
           GfxContext.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
           GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-          gPainter.Draw2DTexture (GfxContext, (*it)->icon, item_geometry.x, item_geometry.y);
+          GetPainter().Draw2DTexture (GfxContext, (*it)->icon, item_geometry.x, item_geometry.y);
           GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
           GfxContext.GetRenderStates().SetBlend (GL_FALSE);
         }
         else
         {
-          gPainter.PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
         }
       }
       else
       {
-        gPainter.PaintBackground (GfxContext, item_geometry);
+        GetPainter().PaintBackground (GfxContext, item_geometry);
 
         if ( (*it)->icon)
         {
           GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
           GfxContext.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-          gPainter.Draw2DTexture (GfxContext, (*it)->icon, item_geometry.x, item_geometry.y);
+          GetPainter().Draw2DTexture (GfxContext, (*it)->icon, item_geometry.x, item_geometry.y);
           GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
           GfxContext.GetRenderStates().SetBlend (GL_FALSE);
         }
         else
         {
-          gPainter.PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
         }
       }
     }
@@ -200,34 +200,34 @@ namespace nux
     {
       CoreArea *area = m_CurrentMenu->area;
       item_geometry = area->GetGeometry();
-      gPainter.PaintBackground (GfxContext, item_geometry);
-      gPainter.Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
-      //gPainter.PaintShapeCorner(GfxContext, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2, eCornerTopLeft|eCornerTopRight, true);
+      GetPainter().PaintBackground (GfxContext, item_geometry);
+      GetPainter().Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
+      //GetPainter().PaintShapeCorner(GfxContext, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2, eCornerTopLeft|eCornerTopRight, true);
 
       if (m_CurrentMenu->icon)
       {
         GfxContext.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        gPainter.Draw2DTexture (GfxContext, m_CurrentMenu->icon, item_geometry.x, item_geometry.y);
+        GetPainter().Draw2DTexture (GfxContext, m_CurrentMenu->icon, item_geometry.x, item_geometry.y);
         GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         GfxContext.GetRenderStates().SetBlend (GL_FALSE);
       }
       else
       {
-        gPainter.PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+        GetPainter().PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
       }
     }
 
     GfxContext.PopClippingRectangle();
   }
 
-  void MenuBar::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void MenuBar::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
     GfxContext.PopClippingRectangle();
   }
 
-  void MenuBar::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void MenuBar::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -308,7 +308,7 @@ namespace nux
   }
   void MenuBar::EmitItemMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
   {
-    m_MenuBarWindow = GetThreadWindowCompositor().GetCurrentWindow();
+    m_MenuBarWindow = GetWindowCompositor().GetCurrentWindow();
 
     if (m_MenuIsActive == false)
     {
@@ -378,9 +378,9 @@ namespace nux
   void MenuBar::RecvItemMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
   {
     // Transition between one menu bar item to another
-    if (GetThreadWindowCompositor().GetMouseFocusArea() == menubar_item->area)
+    if (GetWindowCompositor().GetMouseFocusArea() == menubar_item->area)
     {
-      if (!menubar_item->area->IsMouseInside() ) // can also test GetThreadWindowCompositor().GetMouseOverArea() != &menubar_item->area
+      if (!menubar_item->area->IsMouseInside() ) // can also test GetWindowCompositor().GetMouseOverArea() != &menubar_item->area
       {
         std::list< MenuBarItem * >::iterator it;
         // compute window coordinates x and y;
@@ -403,8 +403,8 @@ namespace nux
               m_IsOpeningMenu = true;
               area->ForceStartFocus (0, 0);
 
-              GetThreadWindowCompositor().SetMouseFocusArea (area);
-              GetThreadWindowCompositor().SetMouseOverArea (area);
+              GetWindowCompositor().SetMouseFocusArea (area);
+              GetWindowCompositor().SetMouseOverArea (area);
             }
 
             break;

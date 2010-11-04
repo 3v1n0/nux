@@ -23,7 +23,7 @@
 #include "Nux.h"
 
 #include "NuxGraphics/GLSh_DrawFunction.h"
-#include "NuxGraphics/GLDeviceFactory.h"
+#include "NuxGraphics/GpuDevice.h"
 #include "NuxGraphics/GLDeviceObjects.h"
 
 #include "TimeGraph.h"
@@ -145,7 +145,7 @@ namespace nux
 
     m_ScrollTimerFunctor = new TimerFunctor();
     m_ScrollTimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &TimeGraph::GraphTimerInterrupt) );
-    m_ScrollTimerHandler = GetThreadTimer().AddTimerHandler (1000, m_ScrollTimerFunctor, this);
+    m_ScrollTimerHandler = GetTimer().AddTimerHandler (1000, m_ScrollTimerFunctor, this);
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
@@ -168,7 +168,7 @@ namespace nux
     m_GraphIcon->OnMouseClick.connect (sigc::mem_fun (this, &TimeGraph::RecvShowCurveGraphics) );
     m_ValueIcon->OnMouseClick.connect (sigc::mem_fun (this, &TimeGraph::RecvShowValue) );
 
-    m_GraphTitle->SetFont (GetThreadBoldFont() );
+    m_GraphTitle->SetFont (GetSysBoldFont() );
     m_hlayout->AddView (new SpaceLayout (40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
     m_hlayout->AddView (m_GraphTitle, 1);
     m_hlayout->AddView (m_ValueIcon, 0);
@@ -203,7 +203,7 @@ namespace nux
 
   void TimeGraph::DestroyLayout()
   {
-    GetThreadTimer().RemoveTimerHandler (m_ScrollTimerHandler);
+    GetTimer().RemoveTimerHandler (m_ScrollTimerHandler);
     NUX_SAFE_DELETE (m_ScrollTimerFunctor);
     NUX_SAFE_DELETE (m_DrawFunctionShader);
     NUX_SAFE_DELETE (m_BackgroundLayer);
@@ -245,7 +245,7 @@ namespace nux
     }
 
     m_DynValueReceived = false;
-    m_ScrollTimerHandler = GetThreadTimer().AddTimerHandler(100, m_ScrollTimerFunctor, this);
+    m_ScrollTimerHandler = GetTimer().AddTimerHandler(100, m_ScrollTimerFunctor, this);
     NeedRedraw();
   }
 
@@ -277,12 +277,12 @@ namespace nux
     return ret;
   }
 
-  void TimeGraph::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void TimeGraph::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     GfxContext.PushClippingRectangle (base);
-    gPainter.PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (GfxContext, base);
 
     base.OffsetPosition (1, 1);
     base.OffsetSize (-2, -2);
@@ -304,28 +304,28 @@ namespace nux
     }
 
     {
-      gPainter.PaintBackground (GfxContext, m_GraphBarIcon->GetGeometry() );
+      GetPainter().PaintBackground (GfxContext, m_GraphBarIcon->GetGeometry() );
       GeometryPositioning gp (eHACenter, eVACenter);
-      Geometry GeoPo = ComputeGeometryPositioning (m_GraphBarIcon->GetGeometry(), gTheme.GetImageGeometry (eGraphBarIcon), gp);
-      gPainter.Paint2DQuadColor (GfxContext, m_GraphBarIcon->GetGeometry(), Color (0xFF000000) );
-      gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFF9C00), eGraphBarIcon);
+      Geometry GeoPo = ComputeGeometryPositioning (m_GraphBarIcon->GetGeometry(), GetTheme().GetImageGeometry (eGraphBarIcon), gp);
+      GetPainter().Paint2DQuadColor (GfxContext, m_GraphBarIcon->GetGeometry(), Color (0xFF000000) );
+      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFF9C00), eGraphBarIcon);
     }
 
     {
-      gPainter.PaintBackground (GfxContext, m_GraphIcon->GetGeometry() );
+      GetPainter().PaintBackground (GfxContext, m_GraphIcon->GetGeometry() );
       GeometryPositioning gp (eHACenter, eVACenter);
-      Geometry GeoPo = ComputeGeometryPositioning (m_GraphIcon->GetGeometry(), gTheme.GetImageGeometry (eGraphIcon), gp);
-      gPainter.Paint2DQuadColor (GfxContext, m_GraphIcon->GetGeometry(), Color (0xFF000000) );
-      gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFF9C00), eGraphIcon);
+      Geometry GeoPo = ComputeGeometryPositioning (m_GraphIcon->GetGeometry(), GetTheme().GetImageGeometry (eGraphIcon), gp);
+      GetPainter().Paint2DQuadColor (GfxContext, m_GraphIcon->GetGeometry(), Color (0xFF000000) );
+      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFF9C00), eGraphIcon);
     }
 
     {
       NString ValueString;
       ValueString = NString::Printf (TEXT ("%.2f"), m_maxY);
-      gPainter.PaintTextLineStatic (GfxContext, GetThreadFont(), Geometry (base.x, Y, 40, 12), ValueString, Color (0xFFFFFFFF) );
+      GetPainter().PaintTextLineStatic (GfxContext, GetSysFont(), Geometry (base.x, Y, 40, 12), ValueString, Color (0xFFFFFFFF) );
 
       ValueString = NString::Printf (TEXT ("%.2f"), m_minY);
-      gPainter.PaintTextLineStatic (GfxContext, GetThreadFont(), Geometry (base.x, Y + H - 12, 40, 12), ValueString, Color (0xFFFFFFFF) );
+      GetPainter().PaintTextLineStatic (GfxContext, GetSysFont(), Geometry (base.x, Y + H - 12, 40, 12), ValueString, Color (0xFFFFFFFF) );
 
     }
 
@@ -335,9 +335,9 @@ namespace nux
     for (t_u32 index = 0; index < numGraph; index++)
     {
       GeometryPositioning gp (eHACenter, eVACenter);
-      Geometry GeoPo = ComputeGeometryPositioning (Geometry (X + W + 2, PosY, 8, 8), gTheme.GetImageGeometry (eDOT6x6), gp);
-      //gPainter.Paint2DQuadColor(GfxContext, Geometry(X + W + 2, PosY, 8, 8), 0xFF000000);
-      gPainter.PaintShape (GfxContext, GeoPo, m_DynValueArray[index].m_PrimaryColor, eDOT6x6);
+      Geometry GeoPo = ComputeGeometryPositioning (Geometry (X + W + 2, PosY, 8, 8), GetTheme().GetImageGeometry (eDOT6x6), gp);
+      //GetPainter().Paint2DQuadColor(GfxContext, Geometry(X + W + 2, PosY, 8, 8), 0xFF000000);
+      GetPainter().PaintShape (GfxContext, GeoPo, m_DynValueArray[index].m_PrimaryColor, eDOT6x6);
 
       NString ValueString;
 
@@ -346,7 +346,7 @@ namespace nux
       else
         ValueString = NString::Printf (TEXT ("%.2f"), (*m_DynValueArray[index].m_ValueList.begin() ) );
 
-      gPainter.PaintTextLineStatic (GfxContext, GetThreadFont(), Geometry (X + W + 2 + 6, PosY, 40, 8), ValueString, Color (0xFFFFFFFF), true, eAlignTextCenter);
+      GetPainter().PaintTextLineStatic (GfxContext, GetSysFont(), Geometry (X + W + 2 + 6, PosY, 40, 8), ValueString, Color (0xFFFFFFFF), true, eAlignTextCenter);
 
       PosY += 12;
     }
@@ -423,7 +423,7 @@ namespace nux
           Y0 = Y + H * ( 1 - (y0 - m_minY) / (m_maxY - m_minY) );
           X1 = x1; //X + W * (x1 - m_minX) / (m_maxX - m_minX);
           Y1 = Y + H * ( 1 - (y1 - m_minY) / (m_maxY - m_minY) );
-          gPainter.Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (m_DynValueArray[index].m_PrimaryColor) );
+          GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (m_DynValueArray[index].m_PrimaryColor) );
 
           x0 = x1;
           y0 = y1;
@@ -472,13 +472,13 @@ namespace nux
           }
         }
 
-        gPainter.Paint2DQuadColor (GfxContext, X0, Y0, BarWidth, Y + H - Y0, m_DynValueArray[index].m_PrimaryColor);
+        GetPainter().Paint2DQuadColor (GfxContext, X0, Y0, BarWidth, Y + H - Y0, m_DynValueArray[index].m_PrimaryColor);
       }
 
       GfxContext.PopClippingRectangle();
     }
 
-    gPainter.Paint2DQuadWireframe (GfxContext, m_GraphArea->GetGeometry(), Color (COLOR_BACKGROUND_SECONDARY) );
+    GetPainter().Paint2DQuadWireframe (GfxContext, m_GraphArea->GetGeometry(), Color (COLOR_BACKGROUND_SECONDARY) );
 
     GfxContext.PopClippingRectangle();
 //     else
@@ -488,11 +488,11 @@ namespace nux
 //             ValueString = NString::Printf(TEXT("%.2f"), TEXT("0.00"));
 //         else
 //             ValueString = NString::Printf(TEXT("%.2f"), (*m_DynValueArray[index].m_ValueList.begin()));
-//         gPainter.PaintTextLineStatic(GfxContext, GetThreadBoldFont(), m_GraphArea->GetGeometry(), ValueString, 0xFFFFFFFF, eAlignTextCenter);
+//         GetPainter().PaintTextLineStatic(GfxContext, GetSysBoldFont(), m_GraphArea->GetGeometry(), ValueString, 0xFFFFFFFF, eAlignTextCenter);
 //     }
   }
 
-  void TimeGraph::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void TimeGraph::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle (base);
@@ -503,7 +503,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void TimeGraph::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void TimeGraph::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

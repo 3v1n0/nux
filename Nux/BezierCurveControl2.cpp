@@ -98,12 +98,12 @@ namespace nux
   }
 
 
-  void BezierCurveControl2::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void BezierCurveControl2::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.Paint2DQuadColor (GfxContext, base, Color (COLOR_BACKGROUND_PRIMARY) );
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().Paint2DQuadColor (GfxContext, base, Color (COLOR_BACKGROUND_PRIMARY) );
     base.OffsetPosition (GRAPH_MARGIN, GRAPH_MARGIN);
     base.OffsetSize (-2 * GRAPH_MARGIN, -2 * GRAPH_MARGIN);
 
@@ -119,8 +119,8 @@ namespace nux
 
     GfxContext.PushClippingRectangle (base);
 
-    gPainter.PushDrawLayer (GfxContext, base, m_Background);
-    gPainter.PopBackground();
+    GetPainter().PushDrawLayer (GfxContext, base, m_Background);
+    GetPainter().PopBackground();
 
     //DrawGrid(GfxContext);
     DrawCoordinateSystem (GfxContext);
@@ -161,7 +161,7 @@ namespace nux
         X1 = X + W * (xval - m_minX) / (m_maxX - m_minX);
         Y1 = Y + H * ( 1 - (yval - m_minY) / (m_maxY - m_minY) );
 
-        gPainter.Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
+        GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
 
         xprev = xval;
         yprev = yval;
@@ -174,7 +174,7 @@ namespace nux
         X0 = X + W * (m_control_knot[0].m_X - m_minX) / (m_maxX - m_minX);
         Y0 = Y + H * ( 1 - (m_control_knot[0].m_Y - m_minY) / (m_maxY - m_minY) );
 
-        gPainter.Draw2DLine (GfxContext, base.x, Y0, X0, Y0, Color (0xFFFFFFFF) );
+        GetPainter().Draw2DLine (GfxContext, base.x, Y0, X0, Y0, Color (0xFFFFFFFF) );
       }
 
       if (m_control_knot[nbKnot-1].m_X < m_maxX)
@@ -184,7 +184,7 @@ namespace nux
         X0 = X + W * (m_control_knot[nbKnot-1].m_X - m_minX) / (m_maxX - m_minX);
         Y0 = Y + H * ( 1 - (m_control_knot[nbKnot-1].m_Y - m_minY) / (m_maxY - m_minY) );
 
-        gPainter.Draw2DLine (GfxContext, X0, Y0, base.x + base.GetWidth(), Y0, Color (0xFFFFFFFF) );
+        GetPainter().Draw2DLine (GfxContext, X0, Y0, base.x + base.GetWidth(), Y0, Color (0xFFFFFFFF) );
       }
 
       glDisable (GL_POINT_SMOOTH);
@@ -203,7 +203,7 @@ namespace nux
           X1 = X + W * (m_control_knot[i+1].m_X - m_minX) / (m_maxX - m_minX);
           Y1 = Y + H * ( 1 - (m_control_knot[i+1].m_Y - m_minY) / (m_maxY - m_minY) );
 
-          gPainter.Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFF0000FF) );
+          GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFF0000FF) );
         }
 
         if ( i > 0)
@@ -211,11 +211,11 @@ namespace nux
           X2 = X + W * (m_control_knot[i-1].m_X - m_minX) / (m_maxX - m_minX);
           Y2 = Y + H * ( 1 - (m_control_knot[i-1].m_Y - m_minY) / (m_maxY - m_minY) );
 
-          gPainter.Draw2DLine (GfxContext, X0, Y0, X2, Y2, Color (0xFF0000FF) );
+          GetPainter().Draw2DLine (GfxContext, X0, Y0, X2, Y2, Color (0xFF0000FF) );
         }
       }
 
-      Geometry ShapeGeo = gTheme.GetImageGeometry (eDOT6x6);
+      Geometry ShapeGeo = GetTheme().GetImageGeometry (eDOT6x6);
 
       for (i = 0; i < nbKnot; i++)
       {
@@ -225,13 +225,13 @@ namespace nux
 
         if (m_control_knot[i].m_IsSelected)
         {
-          gPainter.PaintShape (GfxContext,
+          GetPainter().PaintShape (GfxContext,
                                Geometry (X0 - ShapeGeo.GetWidth() / 2, Y0 - ShapeGeo.GetHeight() / 2, ShapeGeo.GetWidth(), ShapeGeo.GetHeight() ),
                                Color (0xFF44FF44), eDOT6x6);
         }
         else
         {
-          gPainter.PaintShape (GfxContext,
+          GetPainter().PaintShape (GfxContext,
                                Geometry (X0 - ShapeGeo.GetWidth() / 2, Y0 - ShapeGeo.GetHeight() / 2, ShapeGeo.GetWidth(), ShapeGeo.GetHeight() ),
                                Color (0xFFFFFFFF), eDOT6x6);
         }
@@ -241,13 +241,13 @@ namespace nux
       delete ycon;
     }
 
-    gPainter.Paint2DQuadWireframe (GfxContext, base, Color (0xFF000000) );
+    GetPainter().Paint2DQuadWireframe (GfxContext, base, Color (0xFF000000) );
 
     DrawRuler (GfxContext);
     GfxContext.PopClippingRectangle();
   }
 
-  void BezierCurveControl2::DrawRuler (GraphicsContext &GfxContext)
+  void BezierCurveControl2::DrawRuler (GraphicsEngine &GfxContext)
   {
     Geometry base = GetGeometry();
 
@@ -277,7 +277,7 @@ namespace nux
 
       while (start_x > base.x)
       {
-        gPainter.Draw2DLine (GfxContext, start_x, base.y + base.GetHeight(), start_x, base.y + base.GetHeight() - 5, Color (0xFF000000) );
+        GetPainter().Draw2DLine (GfxContext, start_x, base.y + base.GetHeight(), start_x, base.y + base.GetHeight() - 5, Color (0xFF000000) );
         count++;
         start_x -= Funit * base.GetWidth() / rangex;
       }
@@ -287,7 +287,7 @@ namespace nux
 
       while (start_x < base.x + base.GetWidth() )
       {
-        gPainter.Draw2DLine (GfxContext, start_x, base.y + base.GetHeight(), start_x, base.y + base.GetHeight() - 5, Color (0xFF000000) );
+        GetPainter().Draw2DLine (GfxContext, start_x, base.y + base.GetHeight(), start_x, base.y + base.GetHeight() - 5, Color (0xFF000000) );
         count++;
         start_x += Funit * base.GetWidth() / rangex;
       }
@@ -301,7 +301,7 @@ namespace nux
 
       while (start_x < base.x + base.GetWidth() )
       {
-        gPainter.Draw2DLine (GfxContext, start_x, base.y + base.GetHeight(), start_x, base.y + base.GetHeight() - 5, Color (0xFF000000) );
+        GetPainter().Draw2DLine (GfxContext, start_x, base.y + base.GetHeight(), start_x, base.y + base.GetHeight() - 5, Color (0xFF000000) );
         count++;
         start_x += Funit * base.GetWidth() / rangex;
       }
@@ -315,7 +315,7 @@ namespace nux
 
       while (start_x > base.x)
       {
-        gPainter.Draw2DLine (GfxContext, start_x, base.y + base.GetHeight(), start_x, base.y + base.GetHeight() - 5, Color (0xFF000000) );
+        GetPainter().Draw2DLine (GfxContext, start_x, base.y + base.GetHeight(), start_x, base.y + base.GetHeight() - 5, Color (0xFF000000) );
         count++;
         start_x -= Funit * base.GetWidth() / rangex;
       }
@@ -344,7 +344,7 @@ namespace nux
 
       while (start_y > base.y)
       {
-        gPainter.Draw2DLine (GfxContext, base.x, start_y , base.x + 5, start_y, Color (0xFF000000) );
+        GetPainter().Draw2DLine (GfxContext, base.x, start_y , base.x + 5, start_y, Color (0xFF000000) );
         count++;
         start_y -= FunitY * base.GetHeight() / rangey;
       }
@@ -354,7 +354,7 @@ namespace nux
 
       while (start_y < base.y + base.GetHeight() )
       {
-        gPainter.Draw2DLine (GfxContext, base.x, start_y , base.x + 5, start_y, Color (0xFF000000) );
+        GetPainter().Draw2DLine (GfxContext, base.x, start_y , base.x + 5, start_y, Color (0xFF000000) );
         count++;
         start_y += FunitY * base.GetHeight() / rangey;
       }
@@ -368,7 +368,7 @@ namespace nux
 
       while (start_y > base.y)
       {
-        gPainter.Draw2DLine (GfxContext, base.x, start_y , base.x + 5, start_y, Color (0xFF000000) );
+        GetPainter().Draw2DLine (GfxContext, base.x, start_y , base.x + 5, start_y, Color (0xFF000000) );
         count++;
         start_y -= FunitY * base.GetHeight() / rangey;
       }
@@ -382,14 +382,14 @@ namespace nux
 
       while (start_y < base.y + base.GetHeight() )
       {
-        gPainter.Draw2DLine (GfxContext, base.x, start_y , base.x + 5, start_y, Color (0xFF000000) );
+        GetPainter().Draw2DLine (GfxContext, base.x, start_y , base.x + 5, start_y, Color (0xFF000000) );
         count++;
         start_y += FunitY * base.GetHeight() / rangey;
       }
     }
   }
 
-  void BezierCurveControl2::DrawGrid (GraphicsContext &GfxContext)
+  void BezierCurveControl2::DrawGrid (GraphicsEngine &GfxContext)
   {
     Geometry base = GetGeometry();
 
@@ -420,7 +420,7 @@ namespace nux
       while (start_x > base.x)
       {
         // vertical grid
-        gPainter.Draw2DLine (GfxContext, start_x, base.y,
+        GetPainter().Draw2DLine (GfxContext, start_x, base.y,
                              start_x, base.y + base.GetHeight(), Color (0xFF5F5F5F) );
 
         count++;
@@ -433,7 +433,7 @@ namespace nux
       while (start_x < base.x + base.GetWidth() )
       {
         // vertical grid
-        gPainter.Draw2DLine (GfxContext, start_x, base.y,
+        GetPainter().Draw2DLine (GfxContext, start_x, base.y,
                              start_x, base.y + base.GetHeight(), Color (0xFF5F5F5F) );
 
         count++;
@@ -450,7 +450,7 @@ namespace nux
       while (start_x < base.x + base.GetWidth() )
       {
         // vertical grid
-        gPainter.Draw2DLine (GfxContext, start_x, base.y,
+        GetPainter().Draw2DLine (GfxContext, start_x, base.y,
                              start_x, base.y + base.GetHeight(), Color (0xFF5F5F5F) );
 
         count++;
@@ -467,7 +467,7 @@ namespace nux
       while (start_x > base.x)
       {
         // vertical grid
-        gPainter.Draw2DLine (GfxContext, start_x, base.y,
+        GetPainter().Draw2DLine (GfxContext, start_x, base.y,
                              start_x, base.y + base.GetHeight(), Color (0xFF5F5F5F) );
 
         count++;
@@ -499,7 +499,7 @@ namespace nux
       while (start_y > base.y)
       {
         // horizontal grid
-        gPainter.Draw2DLine (GfxContext, base.x, start_y,
+        GetPainter().Draw2DLine (GfxContext, base.x, start_y,
                              base.x + base.GetWidth(), start_y, Color (0xFF5F5F5F) );
 
         count++;
@@ -511,7 +511,7 @@ namespace nux
 
       while (start_y < base.y + base.GetHeight() )
       {
-        gPainter.Draw2DLine (GfxContext, base.x, start_y,
+        GetPainter().Draw2DLine (GfxContext, base.x, start_y,
                              base.x + base.GetWidth(), start_y, Color (0xFF5F5F5F) );
 
         count++;
@@ -527,7 +527,7 @@ namespace nux
 
       while (start_y > base.y)
       {
-        gPainter.Draw2DLine (GfxContext, base.x, start_y,
+        GetPainter().Draw2DLine (GfxContext, base.x, start_y,
                              base.x + base.GetWidth(), start_y, Color (0xFF5F5F5F) );
 
         count++;
@@ -543,7 +543,7 @@ namespace nux
 
       while (start_y < base.y + base.GetHeight() )
       {
-        gPainter.Draw2DLine (GfxContext, base.x, start_y,
+        GetPainter().Draw2DLine (GfxContext, base.x, start_y,
                              base.x + base.GetWidth(), start_y, Color (0xFF5F5F5F) );
 
         count++;
@@ -552,7 +552,7 @@ namespace nux
     }
   }
 
-  void BezierCurveControl2::DrawCoordinateSystem (GraphicsContext &GfxContext)
+  void BezierCurveControl2::DrawCoordinateSystem (GraphicsEngine &GfxContext)
   {
     int W = GetBaseWidth() - 2 * GRAPH_MARGIN;
     int H = GetBaseHeight() - 2 * GRAPH_MARGIN;
@@ -563,16 +563,16 @@ namespace nux
     X0 = X + W * (0 - m_minX) / (m_maxX - m_minX);
     Y0 = Y + H * ( 1 - (0 - m_minY) / (m_maxY - m_minY) );
 
-    gPainter.Draw2DLine (GfxContext, X0, Y, X0, Y + H, Color (0xFF222222) );
-    gPainter.Draw2DLine (GfxContext, X, Y0, X + W, Y0, Color (0xFF000000) );
+    GetPainter().Draw2DLine (GfxContext, X0, Y, X0, Y + H, Color (0xFF222222) );
+    GetPainter().Draw2DLine (GfxContext, X, Y0, X + W, Y0, Color (0xFF000000) );
   }
 
-  void BezierCurveControl2::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void BezierCurveControl2::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void BezierCurveControl2::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void BezierCurveControl2::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -706,7 +706,7 @@ namespace nux
   }
 
   void BezierCurveControl2::RecvKeyEvent (
-    GraphicsContext &GfxContext , /*Graphics Context for text operation*/
+    GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
     unsigned long    eventType  , /*event type*/
     unsigned long    keysym     , /*event keysym*/
     unsigned long    state      , /*event state*/

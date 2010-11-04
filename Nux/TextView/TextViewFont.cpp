@@ -182,7 +182,7 @@ namespace nux
 //	Display an ASCII control character in inverted colours
 //  to what is currently set in the DC
 //
-  int TextView::PaintCtrlChar (GraphicsContext &GfxContext, int xpos, int ypos, t_u32 chValue)
+  int TextView::PaintCtrlChar (GraphicsEngine &GfxContext, int xpos, int ypos, t_u32 chValue)
   {
     SIZE  sz;
     Geometry  rect;
@@ -197,8 +197,8 @@ namespace nux
 
     rect = Geometry (xpos, ypos, sz.cx + 4, m_TextFont->GetFontInfo().FontHeight);
 
-    gPainter.Paint2DQuadColor (GfxContext, rect, fg);
-    gPainter.PaintTextLineStatic (GfxContext, m_TextFont, rect, str, bg);
+    GetPainter().Paint2DQuadColor (GfxContext, rect, fg);
+    GetPainter().PaintTextLineStatic (GfxContext, m_TextFont, rect, str, bg);
     return sz.cx + 4;
   }
 

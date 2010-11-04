@@ -33,7 +33,7 @@ source_h = \
   $(srcdir)/GfxSetupX11.h \
   $(srcdir)/Gfx_Events.h \
   $(srcdir)/Gfx_Interface.h \
-  $(srcdir)/GLDeviceFactory.h \
+  $(srcdir)/GpuDevice.h \
   $(srcdir)/GLDeviceFrameBufferObject.h \
   $(srcdir)/GLDeviceObjects.h \
   $(srcdir)/GLError.h \
@@ -72,7 +72,7 @@ source_h = \
   $(srcdir)/IOpenGLVolume.h \
   $(srcdir)/IOpenGLVolumeTexture.h \
   $(srcdir)/OpenGLDefinitions.h \
-  $(srcdir)/OpenGLEngine.h \
+  $(srcdir)/GraphicsEngine.h \
   $(srcdir)/UIColorTheme.h \
   $(srcdir)/VirtualKeyCodesX11.h \
   $(srcdir)/GlobalGraphicsInitializer.h \
@@ -95,7 +95,7 @@ source_cpp = \
   $(srcdir)/IOpenGLVolumeTexture.cpp \
   $(srcdir)/IOpenGLIndexBuffer.cpp \
   $(srcdir)/GLShaderParameter.cpp \
-  $(srcdir)/OpenGLEngine.cpp \
+  $(srcdir)/GraphicsEngine.cpp \
   $(srcdir)/GLResource.cpp \
   $(srcdir)/GLDeviceObjects.cpp \
   $(srcdir)/GLResourceManager.cpp \
@@ -117,7 +117,10 @@ source_cpp = \
   $(srcdir)/GLSh_DrawFunction.cpp \
   $(srcdir)/GLSh_Fill.cpp \
   $(srcdir)/IOpenGLAsmShader.cpp \
-  $(srcdir)/GLDeviceFactory2.cpp \
+  $(srcdir)/GpuDevice.cpp \
+  $(srcdir)/GpuDeviceShader.cpp \
+  $(srcdir)/GpuDeviceTexture.cpp \
+  $(srcdir)/GpuDeviceVertex.cpp \
   $(srcdir)/IOpenGLTexture2D.cpp \
   $(srcdir)/GLVertexResourceManager.cpp \
   $(srcdir)/IOpenGLFrameBufferObject.cpp \
@@ -125,7 +128,6 @@ source_cpp = \
   $(srcdir)/GLTemplatePrimitiveBuffer.cpp \
   $(srcdir)/IOpenGLSurface.cpp \
   $(srcdir)/GLRenderingAPI.cpp \
-  $(srcdir)/GLDeviceFactory.cpp \
   $(srcdir)/GLError.cpp \
   $(srcdir)/RunTimeStats.cpp \
   $(srcdir)/IOpenGLVertexBuffer.cpp \

@@ -261,48 +261,25 @@ namespace nux
     return THREADSTOP;
   }
 
-  GLWindowImpl &GetWindow()
+
+  IntrusiveSP<FontTexture> GetSysFont ()
   {
-    NThread *thread = GetThreadApplication();
-
-    if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
-    {
-      nuxAssertMsg (0, TEXT ("[GetWindow] You can't call GetWindow on this type of thread: s"), thread->Type().GetName() );
-    }
-
-    return (static_cast<WindowThread *> (thread) )->GetWindow();
+    return GetGraphicsEngine ().GetFont ();
   }
 
-  GraphicsContext &GetGraphicsContext ()
+  IntrusiveSP<FontTexture> GetSysBoldFont ()
+  {
+    return GetGraphicsEngine ().GetBoldFont ();
+  }
+
+  WindowCompositor &GetWindowCompositor ()
   {
     NThread *thread = GetThreadApplication ();
 
     if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
-      nuxAssertMsg (0, TEXT ("[GetGraphicsContext] You can't call GetGraphicsContext on this type of thread: s"), thread->Type ().GetName ());
-    }
-
-    return (static_cast<WindowThread *> (thread) )->GetGraphicsContext ();
-  }
-
-  IntrusiveSP<FontTexture> GetThreadFont ()
-  {
-    return GetGraphicsContext ().GetFont ();
-  }
-
-  IntrusiveSP<FontTexture> GetThreadBoldFont ()
-  {
-    return GetGraphicsContext ().GetBoldFont ();
-  }
-
-  WindowCompositor &GetThreadWindowCompositor ()
-  {
-    NThread *thread = GetThreadApplication ();
-
-    if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
-    {
-      nuxAssertMsg (0, TEXT ("[GetThreadWindowCompositor] You can't call GetThreadWindowCompositor on this type of thread: s"), thread->Type().GetName() );
-      PrintOutputDebugString (TEXT ("[GetThreadWindowCompositor] You can't call GetThreadWindowCompositor on this type of thread: s"), thread->Type().GetName() );
+      nuxAssertMsg (0, TEXT ("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s"), thread->Type().GetName() );
+      PrintOutputDebugString (TEXT ("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s"), thread->Type().GetName() );
       NUX_HARDWARE_BREAK;
     }
 
@@ -313,68 +290,44 @@ namespace nux
   NThread *GetThreadApplication()
   {
     NThread *thread = static_cast<NThread *> (inlGetThreadLocalStorage (ThreadLocal_InalogicAppImpl) );
-
-    if (thread == 0)
-    {
-    }
-
     return thread;
   }
 
   // NUXTODO: return a reference
-  WindowThread *GetGraphicsThread()
+  WindowThread* GetGraphicsThread()
   {
     NThread *thread = GetThreadApplication();
-    nuxAssertMsg (thread, TEXT ("[GetGraphicsThread] The current thread is not of the type WindowThread.") );
-
-    if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
-    {
-      nuxAssertMsg (0, TEXT ("[GetGraphicsThread] You can't call GetGraphicsThread on this type of thread: s"), thread->Type().GetName() );
-      return 0;
-    }
-
-    return static_cast<WindowThread *> (inlGetThreadLocalStorage (ThreadLocal_InalogicAppImpl) );
+    return NUX_STATIC_CAST (WindowThread *, inlGetThreadLocalStorage (ThreadLocal_InalogicAppImpl));
   }
 
-  BasePainter &GetThreadPainter()
+  BasePainter& GetPainter()
   {
     NThread *thread = GetThreadApplication();
-    nuxAssertMsg (thread, TEXT ("[GetGraphicsThread] The current thread is not of the type WindowThread.") );
-
-    if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
-    {
-      nuxAssertMsg (0, TEXT ("[GetThreadPainter] You can't call GetThreadPainter on this type of thread: s"), thread->Type().GetName() );
-    }
-
-    return (static_cast<WindowThread *> (thread) )->GetPainter();
+    return NUX_STATIC_CAST (WindowThread *, thread)->GetPainter();
   }
 
-  UXTheme &GetThreadTheme()
+  UXTheme& GetTheme()
   {
     NThread *thread = GetThreadApplication();
-    nuxAssertMsg (thread, TEXT ("[GetThreadTheme] The current thread is not of the type WindowThread.") );
-
-    if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
-    {
-      nuxAssertMsg (0, TEXT ("[GetThreadTheme] You can't call GetThreadTheme on this type of thread: s"), thread->Type().GetName() );
-    }
-
-    return (static_cast<WindowThread *> (thread) )->GetTheme();
+    return NUX_STATIC_CAST (WindowThread *, thread)->GetTheme();
   }
 
-  TimerHandler &GetThreadTimer()
+  TimerHandler& GetTimer()
   {
     NThread *thread = GetThreadApplication();
-    nuxAssertMsg (thread, TEXT ("[GetGraphicsThread] The current thread is not of the type WindowThread.") );
+    return NUX_STATIC_CAST (WindowThread *, thread)->GetTimerHandler();
+  }
 
-    if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
-    {
-      nuxAssertMsg (0, TEXT ("[GetThreadTimer] You can't call GetThreadTimer on this type of thread: s"), thread->Type().GetName() );
-      PrintOutputDebugString (TEXT ("[GetThreadTimer] You can't call GetThreadTimer on this type of thread: s"), thread->Type().GetName() );
-      NUX_HARDWARE_BREAK;
-    }
+  GLWindowImpl& GetWindow()
+  {
+    NThread *thread = GetThreadApplication();
+    return NUX_STATIC_CAST (WindowThread *, thread)->GetWindow();
+  }
 
-    return (static_cast<WindowThread *> (thread) )->GetTimerHandler();
+  GraphicsEngine& GetGraphicsEngine ()
+  {
+    NThread *thread = GetThreadApplication ();
+    return NUX_STATIC_CAST (WindowThread *, thread)->GetGraphicsEngine ();
   }
 
 }

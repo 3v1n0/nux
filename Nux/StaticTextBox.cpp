@@ -64,7 +64,7 @@ namespace nux
     return ret;
   }
 
-  void StaticTextBox::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void StaticTextBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     {
@@ -72,26 +72,26 @@ namespace nux
 
       if (m_bDrawBackground)
       {
-        gPainter.PushDrawLayer (GfxContext, base, m_Background);
-        gPainter.PaintTextLineStatic (GfxContext, GetFont(), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
-        gPainter.PopBackground();
+        GetPainter().PushDrawLayer (GfxContext, base, m_Background);
+        GetPainter().PaintTextLineStatic (GfxContext, GetFont(), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
+        GetPainter().PopBackground();
       }
       else
       {
-        //gPainter.PaintBackground(GfxContext, base);
-        gPainter.PaintTextLineStatic (GfxContext, GetFont(), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
+        //GetPainter().PaintBackground(GfxContext, base);
+        GetPainter().PaintTextLineStatic (GfxContext, GetFont(), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
       }
 
       GfxContext.PopClippingRectangle();
     }
   }
 
-  void StaticTextBox::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void StaticTextBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void StaticTextBox::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void StaticTextBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

@@ -69,7 +69,7 @@ namespace nux
 
     // Event, Drawing
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    void ProcessDraw (GraphicsContext &GfxContext, bool force_draw);
+    void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
     void SetWindowTitle (const TCHAR *WindowTitle)
     {
       m_WindowTitle = WindowTitle;
@@ -79,9 +79,9 @@ namespace nux
     {
       return *m_GLWindow;
     }
-    GraphicsContext &GetGraphicsContext() const
+    GraphicsEngine &GetGraphicsEngine() const
     {
-      return *m_GLWindow->GetGraphicsContext();
+      return *m_GLWindow->GetGraphicsEngine();
     }
     BasePainter &GetPainter() const
     {
@@ -352,7 +352,7 @@ namespace nux
     TimerHandler    *m_TimerHandler;
 
     GLWindowImpl *m_GLWindow;
-    GraphicsContext *m_GraphicsContext;
+    GraphicsEngine *m_GraphicsContext;
     WindowCompositor *m_window_compositor;
     std::list<NThread *> m_ThreadList;
     bool m_WidgetInitialized;

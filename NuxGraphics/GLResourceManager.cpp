@@ -23,7 +23,7 @@
 #include "GLResource.h"
 #include "IOpenGLResource.h"
 #include "GLResourceManager.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
 

@@ -23,7 +23,7 @@
 #ifndef FUNCTIONGRAPH_H
 #define FUNCTIONGRAPH_H
 
-#include "NuxGraphics/GLDeviceFactory.h"
+#include "NuxGraphics/GpuDevice.h"
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 
@@ -38,9 +38,9 @@ namespace nux
     FunctionGraph (NUX_FILE_LINE_PROTO);
     ~FunctionGraph();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
     void SetXAxisBounds (float minX, float maxX);
     void SetYAxisBounds (float minY, float maxY);

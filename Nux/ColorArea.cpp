@@ -43,17 +43,17 @@ namespace nux
     return TraverseInfo;
   }
 
-  void ColorArea::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void ColorArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    gPainter.Paint2DQuadColor (GfxContext, GetGeometry(), m_Color);
+    GetPainter().Paint2DQuadColor (GfxContext, GetGeometry(), m_Color);
   }
 
-  void ColorArea::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void ColorArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void ColorArea::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void ColorArea::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
