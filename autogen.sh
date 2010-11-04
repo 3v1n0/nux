@@ -7,5 +7,7 @@ which gnome-autogen.sh || {
 	exit 1
 }
 
-USE_GNOME2_MACROS=1 \
+USE_GNOME2_MACROS=1 NOCONFIGURE=1 \
 . gnome-autogen.sh
+
+./configure --enable-documentation=yes
