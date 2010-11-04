@@ -36,7 +36,7 @@
 namespace nux
 {
 
-  class GraphicsContext;
+  class GraphicsEngine;
 
   class BaseKeyboardHandler
   {

@@ -139,12 +139,12 @@ namespace nux
     return ret;
   }
 
-  void RadioButton::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void RadioButton::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.PaintTextLineStatic (GfxContext, GetFont(), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintTextLineStatic (GfxContext, GetFont(), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
     InteractState is;
     is.is_on = m_State;
     is.is_focus = m_TextArea->HasMouseFocus() ||
@@ -155,15 +155,15 @@ namespace nux
                      || IsMouseInside() ||
                      m_CheckArea->IsMouseInside();
 
-    gPainter.PaintRadioButton (GfxContext, m_CheckArea->GetGeometry(), is, Color (0xff000000) );
+    GetPainter().PaintRadioButton (GfxContext, m_CheckArea->GetGeometry(), is, Color (0xff000000) );
   }
 
-  void RadioButton::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void RadioButton::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void RadioButton::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void RadioButton::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

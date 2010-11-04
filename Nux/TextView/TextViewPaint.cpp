@@ -41,7 +41,7 @@ namespace nux
 //
 //	Painting procedure for TextView objects
 //
-  LONG TextView::OnPaint (GraphicsContext &GfxContext)
+  LONG TextView::OnPaint (GraphicsEngine &GfxContext)
   {
     t_u32 i, first, last;
 
@@ -65,7 +65,7 @@ namespace nux
     return 0;
   }
 
-  LONG TextView::OnPaintLine (GraphicsContext &GfxContext, unsigned int LigneNumber)
+  LONG TextView::OnPaintLine (GraphicsEngine &GfxContext, unsigned int LigneNumber)
   {
     t_u32 first, last;
 
@@ -87,7 +87,7 @@ namespace nux
 //
 //	Draw the specified line (including margins etc)
 //
-  void TextView::PaintLine (GraphicsContext &GfxContext, t_u32 nLineNo)
+  void TextView::PaintLine (GraphicsEngine &GfxContext, t_u32 nLineNo)
   {
     Geometry  rect;
 
@@ -110,7 +110,7 @@ namespace nux
 
     if (!b_RenderToVertexBuffer)
     {
-      gPainter.Paint2DQuadColor (GfxContext, rect, GetTextBkColor() );
+      GetPainter().Paint2DQuadColor (GfxContext, rect, GetTextBkColor() );
     }
     else
     {
@@ -143,7 +143,7 @@ namespace nux
     rect.OffsetPosition (-m_nHScrollPos * m_nFontWidth, 0);
     rect.OffsetSize ( (m_nHScrollPos * m_nFontWidth), 0);
 
-    //gPainter.Paint2DQuadColor(GfxContext, rect, GetTextBkColor());
+    //GetPainter().Paint2DQuadColor(GfxContext, rect, GetTextBkColor());
 
     //
     //	check we have data to draw on this line
@@ -208,7 +208,7 @@ namespace nux
 //
 //	Draw the specified line's margin into the area described by *margin*
 //
-  void TextView::PaintMargin (GraphicsContext &GfxContext, t_u32 nLineNo, Geometry &margin)
+  void TextView::PaintMargin (GraphicsEngine &GfxContext, t_u32 nLineNo, Geometry &margin)
   {
     Geometry rect = margin;
     TCHAR ach[32];
@@ -232,7 +232,7 @@ namespace nux
 // 	}
 
     if (!b_RenderToVertexBuffer)
-      gPainter.Paint2DQuadColor (GfxContext, rect, Color (0xFF222222) );
+      GetPainter().Paint2DQuadColor (GfxContext, rect, Color (0xFF222222) );
     else
     {
       if (m_ColorQuadBuffer1.size() - 2 * m_NumVBColorQuad1 * 16 < 2 * 16)
@@ -265,8 +265,8 @@ namespace nux
 
       if (!b_RenderToVertexBuffer)
       {
-        gPainter.Paint2DQuadColor (GfxContext, rect, Color (0xFF111111) );
-        gPainter.PaintTextLineStatic (GfxContext, m_TextFont, rect, ach, Color (0xFFFFFFFF), true, eAlignTextRight);
+        GetPainter().Paint2DQuadColor (GfxContext, rect, Color (0xFF111111) );
+        GetPainter().PaintTextLineStatic (GfxContext, m_TextFont, rect, ach, Color (0xFFFFFFFF), true, eAlignTextRight);
       }
       else
       {
@@ -361,7 +361,7 @@ namespace nux
 //
 //	Draw a line of text into the TextView window
 //
-  void TextView::PaintText (GraphicsContext &GfxContext, t_u32 nLineNo, Geometry &rect)
+  void TextView::PaintText (GraphicsEngine &GfxContext, t_u32 nLineNo, Geometry &rect)
   {
     TCHAR		buff[TEXTBUFSIZE];
     ATTR		attr[TEXTBUFSIZE];
@@ -420,7 +420,7 @@ namespace nux
     //
     //rect.OffsetPosition(xpos, 0);
     //rect.OffsetSize(xpos, 0);
-    //gPainter.Paint2DQuadColor(GfxContext, rect, GetTextBkColor());
+    //GetPainter().Paint2DQuadColor(GfxContext, rect, GetTextBkColor());
   }
 
 //
@@ -512,7 +512,7 @@ namespace nux
 //  it might contain ascii-control characters which must be output separately.
 //  because of this we'll just handle the tabs at the same time.
 //
-  int TextView::NeatTextOut (GraphicsContext &GfxContext, int xpos, int ypos, TCHAR *szText, int nLen, int nTabOrigin, ATTR *attr)
+  int TextView::NeatTextOut (GraphicsEngine &GfxContext, int xpos, int ypos, TCHAR *szText, int nLen, int nTabOrigin, ATTR *attr)
   {
     int   i;
     int   xold = xpos;
@@ -546,8 +546,8 @@ namespace nux
 
         if (!b_RenderToVertexBuffer)
         {
-          gPainter.Paint2DQuadColor (GfxContext, rect, Color (attr->bg) );
-          gPainter.PaintTextLineStatic (GfxContext, m_TextFont, rect, text.GetTCharPtr(), GetTextColor() );
+          GetPainter().Paint2DQuadColor (GfxContext, rect, Color (attr->bg) );
+          GetPainter().PaintTextLineStatic (GfxContext, m_TextFont, rect, text.GetTCharPtr(), GetTextColor() );
         }
         else
         {
@@ -590,7 +590,7 @@ namespace nux
           int width = TABWIDTHPIXELS - ( (xpos - nTabOrigin) % TABWIDTHPIXELS);
 
           // draw a blank space
-          gPainter.Paint2DQuadColor (GfxContext, xpos, ypos, width, m_TextFont->GetFontInfo().FontHeight, GetTextBkColor() );
+          GetPainter().Paint2DQuadColor (GfxContext, xpos, ypos, width, m_TextFont->GetFontInfo().FontHeight, GetTextBkColor() );
 
           xpos += width;
           lasti = i + 1;
@@ -610,9 +610,9 @@ namespace nux
     return xpos - xold;
   }
 
-  void TextView::PaintRect (GraphicsContext &GfxContext, int x, int y, int width, int height, COLORREF fill)
+  void TextView::PaintRect (GraphicsEngine &GfxContext, int x, int y, int width, int height, COLORREF fill)
   {
-    gPainter.Paint2DQuadColor (GfxContext, x, y, width, height/*, m_TextFont->GetFontInfo().FontHeight*/, GetTextBkColor() );
+    GetPainter().Paint2DQuadColor (GfxContext, x, y, width, height/*, m_TextFont->GetFontInfo().FontHeight*/, GetTextBkColor() );
   }
 
 //
@@ -732,7 +732,7 @@ namespace nux
 //	Paint a checkered rectangle, with each alternate
 //	pixel being assigned a different colour
 //
-  void TextView::DrawCheckedRect (GraphicsContext &GfxContext, RECT *rect, COLORREF fg, COLORREF bg)
+  void TextView::DrawCheckedRect (GraphicsEngine &GfxContext, RECT *rect, COLORREF fg, COLORREF bg)
   {
 // 	static WORD wCheckPat[8] =
 // 	{

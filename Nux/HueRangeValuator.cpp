@@ -61,7 +61,7 @@ namespace nux
 
   }
 
-  void HueRangeValuator::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void HueRangeValuator::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
@@ -76,25 +76,25 @@ namespace nux
       float fw = P.GetWidth() / 6;
 
       Geometry p = Geometry (P.x, P.y, fw, P.GetHeight() );
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (1.0f * l, s * l, s * l), Color (1.0f * l, s * l, s * l),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * l, s * l, s * l), Color (1.0f * l, s * l, s * l),
                                  Color (1.0f * l, 1.0f * l, s * l), Color (1.0f * l, 1.0f * l, s * l) );
       p.SetX (P.x + fw);
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (1.0f * l, 1.0f * l, s * l), Color (1.0f * l, 1.0f * l, s * l),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * l, 1.0f * l, s * l), Color (1.0f * l, 1.0f * l, s * l),
                                  Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l) );
 
       p.SetX (P.x + 2 * fw);
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l),
                                  Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, 1.0f * l, 1.0f * l) );
       p.SetX (P.x + 3 * fw);
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, 1.0f * l, 1.0f * l),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, 1.0f * l, 1.0f * l),
                                  Color (s * l, s * l, 1.0f * l), Color (s * l, s * l, 1.0f * l) );
 
       p.SetX (P.x + 4 * fw);
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (s * l, s * l, 1.0f * l), Color (s * l, s * l, 1.0f * l),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * l, s * l, 1.0f * l), Color (s * l, s * l, 1.0f * l),
                                  Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l) );
       p.SetX (P.x + 5 * fw);
       p.SetWidth (P.GetWidth() - 5 * fw); // correct rounding errors
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l),
                                  Color (1.0f * l, s * l, s * l), Color (1.0f * l, s * l, s * l) );
     }
     else
@@ -104,25 +104,25 @@ namespace nux
       float fw = P.GetWidth() / 6;
 
       Geometry p = Geometry (P.x, P.y, fw, P.GetHeight() );
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v),
                                  Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v) );
       p.SetX (P.x + fw);
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v),
                                  Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v) );
 
       p.SetX (P.x + 2 * fw);
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v),
                                  Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v) );
       p.SetX (P.x + 3 * fw);
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v),
                                  Color (s * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v) );
 
       p.SetX (P.x + 4 * fw);
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (s * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v),
                                  Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v) );
       p.SetX (P.x + 5 * fw);
       p.SetWidth (P.GetWidth() - 5 * fw); // correct rounding errors
-      gPainter.Paint2DQuadColor (GfxContext, p, Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v),
+      GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v),
                                  Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v) );
     }
 

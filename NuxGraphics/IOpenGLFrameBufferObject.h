@@ -81,7 +81,7 @@ namespace nux
     GLFramebufferObject _Fbo;   // The framebuffer object used for rendering to the texture
     GLRenderbuffer      _Rbo;
 
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
 }

@@ -215,7 +215,7 @@ namespace nux
 
     if (painter_filename == TEXT ("") )
     {
-      nuxDebugMsg (TEXT ("[GraphicsContext::LoadPainterImages] Can't find Painter.xml file.") );
+      nuxDebugMsg (TEXT ("[GraphicsEngine::LoadPainterImages] Can't find Painter.xml file.") );
       /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
           TEXT("Can't find User Interface xml file.\nThe program will exit."));
       exit(-1);*/
@@ -322,7 +322,7 @@ namespace nux
       }
     }
 
-    nuxDebugMsg (TEXT ("[GraphicsContext::GetImageGeometry] Cannot find UXStyleImageRef") );
+    nuxDebugMsg (TEXT ("[GraphicsEngine::GetImageGeometry] Cannot find UXStyleImageRef") );
     return Rect (0, 0, 0, 0);
   }
 

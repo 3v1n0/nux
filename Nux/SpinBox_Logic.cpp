@@ -96,13 +96,13 @@ namespace nux
   {
     if (m_UpTimerHandler.IsValid() )
     {
-      GetThreadTimer().RemoveTimerHandler (m_UpTimerHandler);
+      GetTimer().RemoveTimerHandler (m_UpTimerHandler);
       m_UpTimerHandler = 0;
     }
 
     if (m_DownTimerHandler.IsValid() )
     {
-      GetThreadTimer().RemoveTimerHandler (m_DownTimerHandler);
+      GetTimer().RemoveTimerHandler (m_DownTimerHandler);
       m_DownTimerHandler = 0;
     }
 

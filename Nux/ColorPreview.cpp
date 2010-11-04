@@ -47,7 +47,7 @@ namespace nux
     m_ColorArea->SetMinimumWidth (32);
     m_ColorArea->SetMaximumWidth (32);
     m_ColorValue->SetTextColor (Color (0xFFFFFFFF) );
-    m_ColorValue->SetFont (GetThreadBoldFont() );
+    m_ColorValue->SetFont (GetSysBoldFont() );
     m_ColorValue->SetMinimumWidth (128);
 
     if (colormodel == CM_HSV)
@@ -82,7 +82,7 @@ namespace nux
   ColorPreview::~ColorPreview()
   {
     if (m_ChangeTimerHandler.IsValid() )
-      GetThreadTimer().RemoveTimerHandler (m_ChangeTimerHandler);
+      GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 
     NUX_SAFE_DELETE (m_DialogThreadProxy);
   }
@@ -95,22 +95,22 @@ namespace nux
     return ret;
   }
 
-  void ColorPreview::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void ColorPreview::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.PaintShape (GfxContext, m_ColorArea->GetGeometry(), m_Color, eSHAPE_CORNER_ROUND4, false);
-    //gPainter.Paint2DQuadWireFrameColor(GfxContext, base, Color(COLOR_BACKGROUND_SECONDARY));
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintShape (GfxContext, m_ColorArea->GetGeometry(), m_Color, eSHAPE_CORNER_ROUND4, false);
+    //GetPainter().Paint2DQuadWireFrameColor(GfxContext, base, Color(COLOR_BACKGROUND_SECONDARY));
     m_ColorValue->NeedRedraw();
   }
 
-  void ColorPreview::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void ColorPreview::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     m_ColorValue->ProcessDraw (GfxContext, force_draw);
   }
 
-  void ColorPreview::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void ColorPreview::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -120,7 +120,7 @@ namespace nux
     m_DialogThreadProxy->SetColor (m_Color);
     m_DialogThreadProxy->Start();
 
-    m_ChangeTimerHandler = GetThreadTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
+    m_ChangeTimerHandler = GetTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
   }
 
   void ColorPreview::RecvTimer (void *v)
@@ -134,12 +134,12 @@ namespace nux
 
     if (m_DialogThreadProxy->IsActive() )
     {
-      m_ChangeTimerHandler = GetThreadTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
+      m_ChangeTimerHandler = GetTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
     }
     else
     {
       if (m_ChangeTimerHandler.IsValid() )
-        GetThreadTimer().RemoveTimerHandler (m_ChangeTimerHandler);
+        GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 
       m_ChangeTimerHandler = 0;
       m_Color = m_DialogThreadProxy->GetColor();

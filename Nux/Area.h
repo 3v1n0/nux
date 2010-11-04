@@ -43,7 +43,7 @@ namespace nux
 {
 
   class WindowThread;
-  class GraphicsContext;
+  class GraphicsEngine;
 
 
 // #if 0

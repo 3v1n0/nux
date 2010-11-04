@@ -28,7 +28,7 @@
 #include "NuxGraphics/GfxSetupX11.h"
 #endif
 
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "TimerProc.h"
 #include "ClientArea.h"
 
@@ -76,7 +76,7 @@ namespace nux
     return ret;
   }
 
-  void ClientArea::BeginDraw (GraphicsContext &GfxContext, bool force_draw)
+  void ClientArea::BeginDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if ( (IsRedrawNeeded() == false) && (force_draw == false) )
       return;
@@ -199,30 +199,30 @@ namespace nux
     }
   }
 
-  void ClientArea::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void ClientArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     // don't draw here or we risk drawing more than one time.
     //BeginDraw(GfxContext, force_draw);
   }
 
-  void ClientArea::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void ClientArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     BeginDraw (GfxContext, force_draw);
 
   }
-  void ClientArea::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void ClientArea::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     // don't draw here or we risk drawing more than one time.
     //BeginDraw(GfxContext, force_draw);
   }
 
-  void ClientArea::ClientDraw (GraphicsContext &GfxContext, DrawAreaContext &ctx, bool force_draw)
+  void ClientArea::ClientDraw (GraphicsEngine &GfxContext, DrawAreaContext &ctx, bool force_draw)
   {
     glClearColor (0, 0, 0, 1);
     glClear (GL_COLOR_BUFFER_BIT);
   }
 
-  void ClientArea::SetClientViewport (GraphicsContext &GfxContext)
+  void ClientArea::SetClientViewport (GraphicsEngine &GfxContext)
   {
     if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
     {
@@ -246,7 +246,7 @@ namespace nux
     }
   }
 
-  void ClientArea::Setup2DMode (GraphicsContext &GfxContext)
+  void ClientArea::Setup2DMode (GraphicsEngine &GfxContext)
   {
     int window_width, window_height;
     window_width = GfxContext.GetContextWidth();
@@ -280,7 +280,7 @@ namespace nux
   }
 
   void ClientArea::RecvKeyEvent (
-    GraphicsContext    &GfxContext,    /*Graphics Context for text operation*/
+    GraphicsEngine    &GfxContext,    /*Graphics Context for text operation*/
     unsigned long       event_type,    /*event type*/
     unsigned long       event_keysym,    /*event keysym*/
     unsigned long       event_state,    /*event state*/
@@ -294,13 +294,13 @@ namespace nux
 
   void ClientArea::NeedRedraw()
   {
-    //GetThreadWindowCompositor()..AddToDrawList(this);
+    //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetGraphicsThread();
     if(application)
     {
       application->AddToDrawList(this);
       application->RequestRedraw();
-      //GetThreadWindowCompositor().AddToDrawList(this);
+      //GetWindowCompositor().AddToDrawList(this);
     }
     m_NeedRedraw = true;
   }

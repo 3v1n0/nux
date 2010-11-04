@@ -27,7 +27,7 @@
 
 #include "Nux.h"
 #include "InputArea.h"
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "WindowCompositor.h"
 
 namespace nux
@@ -88,8 +88,8 @@ namespace nux
 
   long InputArea::OnEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    InputArea *PreviousMouseOverArea = (GetThreadWindowCompositor().m_PreviousMouseOverArea);
-    InputArea *CurrentMouseOverArea = (GetThreadWindowCompositor().m_MouseOverArea);
+    InputArea *PreviousMouseOverArea = (GetWindowCompositor().m_PreviousMouseOverArea);
+    InputArea *CurrentMouseOverArea = (GetWindowCompositor().m_MouseOverArea);
 
     gNumArea++;
 
@@ -179,10 +179,10 @@ namespace nux
       bool hadMouseFocus = HasMouseFocus();
       mouse_signals = m_EventHandler.Process (ievent, m_Geometry);
 
-      if (HasMouseFocus() && (GetThreadWindowCompositor().GetMouseFocusArea() == 0) ) // never evince and object that has the mouse focus.
+      if (HasMouseFocus() && (GetWindowCompositor().GetMouseFocusArea() == 0) ) // never evince and object that has the mouse focus.
       {
-        GetThreadWindowCompositor().SetMouseFocusArea (this);
-        GetThreadWindowCompositor().SetAreaEventRoot (ievent.e_x_root, ievent.e_y_root);
+        GetWindowCompositor().SetMouseFocusArea (this);
+        GetWindowCompositor().SetAreaEventRoot (ievent.e_x_root, ievent.e_y_root);
       }
 
       if (IsMouseInside() )
@@ -259,7 +259,7 @@ namespace nux
       // is being pressed, we can move it above a widget that is inside the toolbar. That widget should not claim that it has
       // resolved the mouse event because the mouse is still being owned by the Toolbar. At most, the widget
       // should be set in CurrentMouseOverArea.
-      if (m_EventHandler.MouseIn() && (GetThreadWindowCompositor().GetMouseFocusArea() == 0) )
+      if (m_EventHandler.MouseIn() && (GetWindowCompositor().GetMouseFocusArea() == 0) )
       {
         ret |=  eMouseEventSolved;
       }
@@ -349,7 +349,7 @@ namespace nux
     if (HasKeyboardFocus() && (ievent.e_event == NUX_KEYDOWN || ievent.e_event == NUX_KEYUP) )
     {
       OnKeyEvent.emit (
-        GetGraphicsThread()->GetGraphicsContext(),
+        GetGraphicsThread()->GetGraphicsEngine(),
         ievent.e_event,
         ievent.event_keysym(),
         ievent.event_key_state(),
@@ -358,13 +358,13 @@ namespace nux
         ievent.event_key_auto_repeat_count() );
     }
 
-    GetThreadWindowCompositor().m_PreviousMouseOverArea = PreviousMouseOverArea;
-    GetThreadWindowCompositor().m_MouseOverArea = CurrentMouseOverArea;
+    GetWindowCompositor().m_PreviousMouseOverArea = PreviousMouseOverArea;
+    GetWindowCompositor().m_MouseOverArea = CurrentMouseOverArea;
 
     return ret;
   }
 
-  void InputArea::OnDraw (GraphicsContext &GfxContext, bool force_draw)
+  void InputArea::OnDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.QRP_GLSL_Color (m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight(), m_AreaColor);
   }
@@ -406,7 +406,7 @@ namespace nux
 
   bool InputArea::MouseFocusOnOtherArea()
   {
-    return (GetThreadWindowCompositor().GetMouseFocusArea() == 0);
+    return (GetWindowCompositor().GetMouseFocusArea() == 0);
   }
 
   void InputArea::CaptureMouseDownAnyWhereElse (bool b)

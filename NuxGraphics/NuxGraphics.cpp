@@ -45,15 +45,15 @@ namespace nux
     return (GLWindowImpl *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
   }
 
-  GLDeviceFactory *GetThreadGLDeviceFactory()
+  GpuDevice *GetThreadGLDeviceFactory()
   {
-    return (GLDeviceFactory *) inlGetThreadLocalStorage (ThreadLocal_GLDeviceFactory);
+    return (GpuDevice *) inlGetThreadLocalStorage (ThreadLocal_GLDeviceFactory);
   }
 
-  GraphicsContext *GetThreadGraphicsContext()
+  GraphicsEngine *GetThreadGraphicsContext()
   {
     GLWindowImpl *glwindow = (GLWindowImpl *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
-    return glwindow->GetGraphicsContext();
+    return glwindow->GetGraphicsEngine();
   }
 
 }

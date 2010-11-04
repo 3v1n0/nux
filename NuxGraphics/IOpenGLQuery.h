@@ -40,7 +40,7 @@ namespace nux
     t_u32 GetDataSize();
 
     void GetDevice (
-      GLDeviceFactory **ppDevice
+      GpuDevice **ppDevice
     );
 
     QUERY_TYPE GetType();
@@ -65,7 +65,7 @@ namespace nux
   private:
     QUERY_TYPE _Type;
     bool _QueryStarted;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
     static t_u32 _CurrentlyActiveQuery;
   };
 

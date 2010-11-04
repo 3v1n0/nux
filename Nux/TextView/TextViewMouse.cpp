@@ -171,7 +171,7 @@ namespace nux
       // cancel the scroll-timer if it is still running
       if (MouseAutoScrollHandle.IsValid() )
       {
-        GetThreadTimer().RemoveTimerHandler (MouseAutoScrollHandle);
+        GetTimer().RemoveTimerHandler (MouseAutoScrollHandle);
         MouseAutoScrollHandle = 0;
       }
 
@@ -270,7 +270,7 @@ namespace nux
       {
         if (MouseAutoScrollHandle.IsValid() )
         {
-          GetThreadTimer().RemoveTimerHandler (MouseAutoScrollHandle);
+          GetTimer().RemoveTimerHandler (MouseAutoScrollHandle);
           MouseAutoScrollHandle = 0;
         }
       }
@@ -281,7 +281,7 @@ namespace nux
         if (m_nScrollTimer == 0)
         {
           m_nScrollCounter = 0;
-          MouseAutoScrollHandle = GetThreadTimer().AddTimerHandler (10, MouseAutoScrollTimer, this);
+          MouseAutoScrollHandle = GetTimer().AddTimerHandler (10, MouseAutoScrollTimer, this);
           nuxDebugMsg (TEXT ("Here") );
         }
       }
@@ -382,7 +382,7 @@ namespace nux
 
   void TextView::MouseAutoScrollHandler (void *v)
   {
-    MouseAutoScrollHandle = GetThreadTimer().AddTimerHandler (10, MouseAutoScrollTimer, this);
+    MouseAutoScrollHandle = GetTimer().AddTimerHandler (10, MouseAutoScrollTimer, this);
   }
 
 //

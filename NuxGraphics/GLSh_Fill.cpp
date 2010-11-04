@@ -22,11 +22,11 @@
 
 #include "NuxCore/NuxCore.h"
 #include "GLResource.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLSh_Fill.h"
 #include "GLShaderParameter.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLTemplatePrimitiveBuffer.h"
 #include "NuxCore/Math/Matrix4.h"
 

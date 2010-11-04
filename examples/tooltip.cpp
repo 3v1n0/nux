@@ -25,7 +25,7 @@
 #include "Nux/WindowCompositor.h"
 #include "Nux/BaseWindow.h"
 #include "Nux/Button.h"
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "NuxGraphics/GfxEventsX11.h"
 #include "NuxGraphics/GfxSetupX11.h"
 #include "Nux/TextureArea.h"
@@ -62,10 +62,10 @@ namespace nux
                          long    traverseInfo,
                          long    processEventInfo);
 
-      void Draw (GraphicsContext& gfxContext,
+      void Draw (GraphicsEngine& gfxContext,
                  bool             forceDraw);
 
-      void DrawContent (GraphicsContext& gfxContext,
+      void DrawContent (GraphicsEngine& gfxContext,
                         bool             forceDraw);
 
     protected:
@@ -687,7 +687,7 @@ namespace nux
     return 0;
   }
 
-  void Tooltip::Draw (GraphicsContext& gfxContext,
+  void Tooltip::Draw (GraphicsEngine& gfxContext,
                       bool             forceDraw)
   {
     Geometry base = GetGeometry();
@@ -719,7 +719,7 @@ namespace nux
     gfxContext.PopClippingRectangle ();
   }
 
-  void Tooltip::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void Tooltip::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     /*Geometry base = GetGeometry();
     int x = base.x;

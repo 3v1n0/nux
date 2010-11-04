@@ -220,7 +220,7 @@ namespace nux
     return ret;
   }
 
-  void TableItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
+  void TableItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
                                 RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
@@ -239,7 +239,7 @@ namespace nux
         nBackground = table->PushItemBackground (GfxContext, this, false);
       }
 
-      Painter.PaintTextLineStatic (GfxContext, GetThreadFont(), geo, row->m_item->GetName(), Color (0xFF000000) /*m_item[r].c_str()*/);
+      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), geo, row->m_item->GetName(), Color (0xFF000000) /*m_item[r].c_str()*/);
       table->PopItemBackground (GfxContext, nBackground);
       setDirtyItem (false);
     }

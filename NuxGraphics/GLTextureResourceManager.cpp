@@ -22,8 +22,8 @@
 
 #include "GLResource.h"
 #include "GLResourceManager.h"
-#include "GLDeviceFactory.h"
-#include "OpenGLEngine.h"
+#include "GpuDevice.h"
+#include "GraphicsEngine.h"
 #include "GLTextureResourceManager.h"
 
 namespace nux

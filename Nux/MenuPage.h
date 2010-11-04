@@ -41,11 +41,11 @@ namespace nux
     ~MenuItem();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw) {};
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw) {};
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
 
-    void DrawAsMenuItem (GraphicsContext &GfxContext, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone);
+    void DrawAsMenuItem (GraphicsEngine &GfxContext, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone);
 
     //const ActionItem& GetItem() const {return m_ActionItem;}
     ActionItem *GetActionItem() const;
@@ -69,9 +69,9 @@ namespace nux
     ~MenuSeparator();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw) {};
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw) {};
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
 
   private:
     friend class MenuPage;
@@ -86,9 +86,9 @@ namespace nux
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) ;
 
 
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
 //    void SetName(const TCHAR* name);
     const TCHAR *GetName() const;

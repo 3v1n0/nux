@@ -89,7 +89,7 @@ namespace nux
     return ret;
   }
 
-  void VToolBar::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void VToolBar::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle (base);
@@ -98,17 +98,17 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void VToolBar::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void VToolBar::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle (base);
-    gPainter.PushColorLayer (GfxContext, base, COLOR_BACKGROUND_PRIMARY);
+    GetPainter().PushColorLayer (GfxContext, base, COLOR_BACKGROUND_PRIMARY);
     m_vlayout->ProcessDraw (GfxContext, force_draw);
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
   }
 
-  void VToolBar::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void VToolBar::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

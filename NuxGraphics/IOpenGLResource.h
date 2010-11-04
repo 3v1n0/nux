@@ -26,7 +26,7 @@
 namespace nux
 {
 
-  class GLDeviceFactory;
+  class GpuDevice;
   class IOpenGLBaseTexture;
   class IOpenGLTexture2D;
   class IOpenGLRectangleTexture;
@@ -118,7 +118,7 @@ namespace nux
     friend class IOpenGLRectangleTexture;
     friend class IOpenGLVolume;
     friend class IOpenGLQuery;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
     friend class IOpenGLIndexBuffer;
     friend class IOpenGLVertexBuffer;
     friend class IOpenGLVertexDeclaration;

@@ -26,14 +26,14 @@
 #include "NuxImage/ImageSurface.h"
 #include "NuxMesh/NTextureArchiveManager.h"
 
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
 
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
 #include "RenderingPipe.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 
 
 namespace nux
@@ -51,7 +51,7 @@ namespace nux
 #define USE_ARB 1
   bool USE_ARB_SHADERS = true;
 
-  void GraphicsContext::InitSlColorShader()
+  void GraphicsEngine::InitSlColorShader()
   {
     IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
     IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
@@ -84,7 +84,7 @@ namespace nux
     m_SlColor->Link();
   }
 
-  void GraphicsContext::InitSlTextureShader()
+  void GraphicsEngine::InitSlTextureShader()
   {
     IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
     IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
@@ -140,7 +140,7 @@ namespace nux
     m_SlTextureModColor->Link();
   }
 
-  void GraphicsContext::InitSlColorModTexMaskAlpha()
+  void GraphicsEngine::InitSlColorModTexMaskAlpha()
   {
     IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
     IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
@@ -207,7 +207,7 @@ namespace nux
     m_SlColorModTexRectMaskAlpha->Link();
   }
 
-  void GraphicsContext::InitSl2TextureAdd()
+  void GraphicsEngine::InitSl2TextureAdd()
   {
     IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
     IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
@@ -278,7 +278,7 @@ namespace nux
     m_Sl2TextureAdd->Link();
   }
 
-  void GraphicsContext::InitSl4TextureAdd()
+  void GraphicsEngine::InitSl4TextureAdd()
   {
     IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
     IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
@@ -371,7 +371,7 @@ namespace nux
 //     m_4TexBlendRectProg->Link();
   }
 
-  void GraphicsContext::QRP_GLSL_Color (int x, int y, int width, int height, const Color &color)
+  void GraphicsEngine::QRP_GLSL_Color (int x, int y, int width, int height, const Color &color)
   {
 #if USE_ARB
     QRP_Color (x, y, width, height, color, color, color, color);
@@ -381,7 +381,7 @@ namespace nux
     QRP_GLSL_Color (x, y, width, height, color, color, color, color);
   }
 
-  void GraphicsContext::QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
+  void GraphicsEngine::QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
   {
 #if USE_ARB
     QRP_Color (x, y, width, height, c0, c1, c2, c3);
@@ -429,7 +429,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsContext::QRP_GLSL_1Tex (int x, int y, int width, int height, IntrusiveSP<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
+  void GraphicsEngine::QRP_GLSL_1Tex (int x, int y, int width, int height, IntrusiveSP<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
   {
 #if USE_ARB
     QRP_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
@@ -503,7 +503,7 @@ namespace nux
   }
 
 // Render the texture alpha into RGB and modulated by a color.
-  void GraphicsContext::QRP_GLSL_ColorModTexAlpha (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_GLSL_ColorModTexAlpha (int x, int y, int width, int height,
       IntrusiveSP< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
   {
 #if USE_ARB
@@ -590,7 +590,7 @@ namespace nux
   }
 
 // Blend 2 textures together
-  void GraphicsContext::QRP_GLSL_2Tex (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_GLSL_2Tex (int x, int y, int width, int height,
                                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
@@ -680,7 +680,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsContext::QRP_GLSL_4Tex (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_GLSL_4Tex (int x, int y, int width, int height,
                                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
                                        IntrusiveSP<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
@@ -810,7 +810,7 @@ namespace nux
     ShaderProg->End();
   }
 ///////////////////////////////////////////
-  void GraphicsContext::QRP_GLSL_Triangle (int x0, int y0,
+  void GraphicsEngine::QRP_GLSL_Triangle (int x0, int y0,
       int x1, int y1,
       int x2, int y2,
       Color c0)
@@ -823,7 +823,7 @@ namespace nux
     QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
   }
 
-  void GraphicsContext::QRP_GLSL_Triangle (int x0, int y0,
+  void GraphicsEngine::QRP_GLSL_Triangle (int x0, int y0,
       int x1, int y1,
       int x2, int y2,
       Color c0, Color c1, Color c2)
@@ -869,7 +869,7 @@ namespace nux
 //////////////////////
 // DRAW LINES       //
 //////////////////////
-  void GraphicsContext::QRP_GLSL_Line (int x0, int y0,
+  void GraphicsEngine::QRP_GLSL_Line (int x0, int y0,
                                        int x1, int y1, Color c0)
   {
 #if USE_ARB
@@ -880,7 +880,7 @@ namespace nux
     QRP_Line (x0, y0, x1, y1, c0, c0);
   }
 
-  void GraphicsContext::QRP_GLSL_Line (int x0, int y0,
+  void GraphicsEngine::QRP_GLSL_Line (int x0, int y0,
                                        int x1, int y1, Color c0, Color c1)
   {
 #if USE_ARB
@@ -942,7 +942,7 @@ namespace nux
     m_line_stats++;
   }
 
-  void GraphicsContext::QRP_GLSL_QuadWireframe (int x0, int y0, int width, int height,
+  void GraphicsEngine::QRP_GLSL_QuadWireframe (int x0, int y0, int width, int height,
       Color c0,
       Color c1,
       Color c2,

@@ -113,11 +113,11 @@ namespace nux
     bool m_UseStyleDrawing;
     bool m_IsEnabled;
   private:
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw) = 0;
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
   public:
-    virtual void ProcessDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
     //! Causes a redraw. The widget parameter m_NeedRedraw is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
     virtual void NeedRedraw();
     //! Causes a soft redraw. The widget parameter m_NeedRedraw is set to false. The widget DrawContent() and PostDraw() are called.
@@ -126,7 +126,7 @@ namespace nux
     virtual void DoneRedraw();
     virtual void DrawLayout();
 
-    virtual void OverlayDrawing (GraphicsContext &GfxContext) {}
+    virtual void OverlayDrawing (GraphicsEngine &GfxContext) {}
 
     //Layout Bridge
 

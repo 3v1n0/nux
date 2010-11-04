@@ -56,7 +56,7 @@ namespace nux
     m_hasTitleBar               = true;
 
     // Should be at the end of the constructor
-    //GetThreadWindowCompositor().RegisterWindow(this);
+    //GetWindowCompositor().RegisterWindow(this);
 
     m_MinimizeButton    = new CoreArea (NUX_TRACKER_LOCATION);
     m_CloseButton       = new CoreArea (NUX_TRACKER_LOCATION);
@@ -107,7 +107,7 @@ namespace nux
 
   FloatingWindow::~FloatingWindow()
   {
-    GetThreadWindowCompositor().UnRegisterWindow (this);
+    GetWindowCompositor().UnRegisterWindow (this);
     m_InterfaceObject.clear();
     NUX_SAFE_DELETE_ARRAY (m_WindowTitle);
 
@@ -191,7 +191,7 @@ namespace nux
     return ret;
   }
 
-  void FloatingWindow::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void FloatingWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
@@ -199,30 +199,30 @@ namespace nux
     base.SetY (0);
     GfxContext.PushClippingRectangle (base);
 
-    gPainter.PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, Color (m_background_color), eCornerTopLeft | eCornerTopRight, true);
+    GetPainter().PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, Color (m_background_color), eCornerTopLeft | eCornerTopRight, true);
 
     if (HasTitleBar() )
     {
-      gPainter.PaintShapeCorner (GfxContext, Geometry (m_TitleBar->GetBaseX(), m_TitleBar->GetBaseY(),
+      GetPainter().PaintShapeCorner (GfxContext, Geometry (m_TitleBar->GetBaseX(), m_TitleBar->GetBaseY(),
                                  m_TitleBar->GetBaseWidth(), m_TitleBar->GetBaseHeight() ), Color (0xFF2f2f2f),
                                  eSHAPE_CORNER_ROUND10, eCornerTopLeft | eCornerTopRight);
 
-      gPainter.PaintTextLineStatic (GfxContext, GetThreadBoldFont(), m_WindowTitleBar->GetGeometry(), m_WindowTitle, Color (0xFFFFFFFF), true, eAlignTextCenter);
-      gPainter.Draw2DTextureAligned (GfxContext, CloseIcon, m_CloseButton->GetGeometry(), TextureAlignmentStyle (eTACenter, eTACenter) );
+      GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_WindowTitleBar->GetGeometry(), m_WindowTitle, Color (0xFFFFFFFF), true, eAlignTextCenter);
+      GetPainter().Draw2DTextureAligned (GfxContext, CloseIcon, m_CloseButton->GetGeometry(), TextureAlignmentStyle (eTACenter, eTACenter) );
     }
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
   }
 
-  void FloatingWindow::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void FloatingWindow::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
     base.SetX (0);
     base.SetY (0);
 
-    gPainter.PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, Color (m_background_color), eCornerTopLeft | eCornerTopRight, true);
+    GetPainter().PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, Color (m_background_color), eCornerTopLeft | eCornerTopRight, true);
 
     if (m_layout)
     {
@@ -233,10 +233,10 @@ namespace nux
       GfxContext.PopClippingRectangle();
     }
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
   }
 
-  void FloatingWindow::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void FloatingWindow::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if (force_draw == false)
     {
@@ -246,7 +246,7 @@ namespace nux
     if ( (IsVisibleSizeGrip() == true) && (IsSizeMatchContent() == false) )
     {
       // Do not draw the size grip if the window is constrained by the size of the container layout.
-      gPainter.PaintShape (GfxContext, m_SizeGrip->GetGeometry(), Color (0xFF999999), eWINDOW_SIZEGRIP);
+      GetPainter().PaintShape (GfxContext, m_SizeGrip->GetGeometry(), Color (0xFF999999), eWINDOW_SIZEGRIP);
     }
   }
 
@@ -265,7 +265,7 @@ namespace nux
   {
     m_SizeGripDragPositionX = x;
     m_SizeGripDragPositionY = y;
-    //GetThreadWindowCompositor().SetMouseFocusArea(this);
+    //GetWindowCompositor().SetMouseFocusArea(this);
   }
 
   void FloatingWindow::OnSizeGrigMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)

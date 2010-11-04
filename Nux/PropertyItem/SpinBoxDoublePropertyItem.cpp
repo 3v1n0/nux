@@ -49,7 +49,7 @@ namespace nux
     return ret;
   }
 
-  void SpinBoxDoublePropertyItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
+  void SpinBoxDoublePropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
       RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     Geometry geo2 = m_FirstColumnUsableGeometry;

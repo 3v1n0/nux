@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 
-#include "NuxGraphics/GLDeviceFactory.h"
+#include "NuxGraphics/GpuDevice.h"
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 
@@ -213,13 +213,13 @@ namespace nux
     return ret;
   }
 
-  void SplineCurvePreview::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void SplineCurvePreview::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.Paint2DQuadColor (GfxContext, base, Color (0xFFAAAAAA) );
-    gPainter.Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().Paint2DQuadColor (GfxContext, base, Color (0xFFAAAAAA) );
+    GetPainter().Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
 
     base.OffsetPosition (GRAPH_MARGIN, GRAPH_MARGIN);
     base.OffsetSize (-2 * GRAPH_MARGIN, -2 * GRAPH_MARGIN);
@@ -297,7 +297,7 @@ namespace nux
       Y0 = Y + H * ( 1 - (y0 - m_minY) / (m_maxY - m_minY) );
       X1 = X + W * (x1 - m_minX) / (m_maxX - m_minX);
       Y1 = Y + H * ( 1 - (y1 - m_minY) / (m_maxY - m_minY) );
-      gPainter.Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
+      GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
 
       x0 = x1;
       y0 = y1;
@@ -311,12 +311,12 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void SplineCurvePreview::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void SplineCurvePreview::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void SplineCurvePreview::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void SplineCurvePreview::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -343,7 +343,7 @@ namespace nux
   void SplineCurvePreview::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     m_DialogThreadProxy->Start();
-    m_ChangeTimerHandler = GetThreadTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
+    m_ChangeTimerHandler = GetTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
   }
 
   void SplineCurvePreview::RecvTimer (void *v)
@@ -364,12 +364,12 @@ namespace nux
 
     if (m_DialogThreadProxy->IsActive() )
     {
-      m_ChangeTimerHandler = GetThreadTimer().AddTimerHandler (30, m_ChangeDetectionTimer, this);
+      m_ChangeTimerHandler = GetTimer().AddTimerHandler (30, m_ChangeDetectionTimer, this);
     }
     else
     {
       if (m_ChangeTimerHandler.IsValid() )
-        GetThreadTimer().RemoveTimerHandler (m_ChangeTimerHandler);
+        GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 
       m_ChangeTimerHandler = 0;
 

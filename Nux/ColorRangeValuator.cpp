@@ -63,7 +63,7 @@ namespace nux
     return m_Value * m_EndColor + (1.0f - m_Value) * m_StartColor;
   }
 
-  void ColorRangeValuator::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void ColorRangeValuator::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
@@ -71,7 +71,7 @@ namespace nux
 
     Geometry P = m_Percentage->GetGeometry();
 
-    gPainter.Paint2DQuadColor (GfxContext, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
+    GetPainter().Paint2DQuadColor (GfxContext, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
 
     m_ValueString->NeedRedraw();
     DrawMarker (GfxContext);

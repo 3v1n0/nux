@@ -45,7 +45,7 @@ namespace nux
   Matrix4Preview::~Matrix4Preview()
   {
     if (m_ChangeTimerHandler.IsValid() )
-      GetThreadTimer().RemoveTimerHandler (m_ChangeTimerHandler);
+      GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 
     NUX_SAFE_DELETE (m_DialogThreadProxy);
   }
@@ -57,27 +57,27 @@ namespace nux
     return ret;
   }
 
-  void Matrix4Preview::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void Matrix4Preview::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    //gPainter.PaintShape(GfxContext, base, 0xFF4D4D4D, eSHAPE_CORNER_ROUND4, false);
+    GetPainter().PaintBackground (GfxContext, base);
+    //GetPainter().PaintShape(GfxContext, base, 0xFF4D4D4D, eSHAPE_CORNER_ROUND4, false);
 
     GeometryPositioning gp (eHACenter, eVACenter);
-    Geometry GeoPo = ComputeGeometryPositioning (base, gTheme.GetImageGeometry (eMATRIX4PREVIEW), gp);
-    gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eMATRIX4PREVIEW);
+    Geometry GeoPo = ComputeGeometryPositioning (base, GetTheme().GetImageGeometry (eMATRIX4PREVIEW), gp);
+    GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eMATRIX4PREVIEW);
 
-    gPainter.Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
+    GetPainter().Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
 
-    //gPainter.Paint2DQuadWireframe(GfxContext, base, Color(COLOR_BACKGROUND_SECONDARY));
+    //GetPainter().Paint2DQuadWireframe(GfxContext, base, Color(COLOR_BACKGROUND_SECONDARY));
   }
 
-  void Matrix4Preview::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void Matrix4Preview::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
   }
 
-  void Matrix4Preview::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void Matrix4Preview::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -97,12 +97,12 @@ namespace nux
 
     if (m_DialogThreadProxy->IsActive() )
     {
-      m_ChangeTimerHandler = GetThreadTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
+      m_ChangeTimerHandler = GetTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
     }
     else
     {
       if (m_ChangeTimerHandler.IsValid() )
-        GetThreadTimer().RemoveTimerHandler (m_ChangeTimerHandler);
+        GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 
       m_ChangeTimerHandler = 0;
 

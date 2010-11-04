@@ -68,7 +68,7 @@ namespace nux
     return TraverseInfo;
   }
 
-  void VSeparator::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void VSeparator::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     int x0 = base.x + base.GetWidth() / 2;
@@ -82,15 +82,15 @@ namespace nux
       Color color1 = m_Color;
       color0.SetAlpha (m_Alpha0);
       color1.SetAlpha (m_Alpha1);
-      gPainter.Draw2DLine (GfxContext, x0, base.y, x0, base.y + m_BorderSize, color0, color1);
-      gPainter.Draw2DLine (GfxContext, x0, base.y + m_BorderSize, x0, base.y + base.GetHeight() - m_BorderSize, color1, color1);
-      gPainter.Draw2DLine (GfxContext, x0, base.y + base.GetHeight() - m_BorderSize, x0, base.y + base.GetHeight(), color1, color0);
+      GetPainter().Draw2DLine (GfxContext, x0, base.y, x0, base.y + m_BorderSize, color0, color1);
+      GetPainter().Draw2DLine (GfxContext, x0, base.y + m_BorderSize, x0, base.y + base.GetHeight() - m_BorderSize, color1, color1);
+      GetPainter().Draw2DLine (GfxContext, x0, base.y + base.GetHeight() - m_BorderSize, x0, base.y + base.GetHeight(), color1, color0);
     }
     else
     {
       Color color1 = m_Color;
       color1.SetAlpha (m_Alpha1);
-      gPainter.Draw2DLine (GfxContext, x0, base.y, x0, base.y + base.GetHeight(), color1);
+      GetPainter().Draw2DLine (GfxContext, x0, base.y, x0, base.y + base.GetHeight(), color1);
     }
 
     GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);

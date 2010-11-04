@@ -288,9 +288,9 @@ namespace nux
 //    m_ListBox->FindItemUnderPointer(X, Y, &item, row, column);
 //    m_ListBox->HighlightItem(row, column);
 
-    if (GetThreadWindowCompositor().GetCurrentEvent() )
+    if (GetWindowCompositor().GetCurrentEvent() )
     {
-      m_PopupWindow->ProcessEvent (const_cast<IEvent &> (*GetThreadWindowCompositor().GetCurrentEvent() ), 0, 0);
+      m_PopupWindow->ProcessEvent (const_cast<IEvent &> (*GetWindowCompositor().GetCurrentEvent() ), 0, 0);
     }
   }
 

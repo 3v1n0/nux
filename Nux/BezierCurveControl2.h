@@ -73,9 +73,9 @@ namespace nux
     BezierCurveControl2 (NUX_FILE_LINE_PROTO);
     ~BezierCurveControl2();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
     void EnablePanning (bool b)
     {
@@ -100,7 +100,7 @@ namespace nux
 
     void RecvKeyEvent
     (
-      GraphicsContext &GfxContext , /*Graphics Context for text operation*/
+      GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
       unsigned long    eventType  , /*event type*/
       unsigned long    keysym     , /*event keysym*/
       unsigned long    state      , /*event state*/
@@ -110,9 +110,9 @@ namespace nux
     );
 
   private:
-    void DrawRuler (GraphicsContext &GfxContext);
-    void DrawGrid (GraphicsContext &GfxContext);
-    void DrawCoordinateSystem (GraphicsContext &GfxContext);
+    void DrawRuler (GraphicsEngine &GfxContext);
+    void DrawGrid (GraphicsEngine &GfxContext);
+    void DrawCoordinateSystem (GraphicsEngine &GfxContext);
 
     void SetXAxisBounds (float minX, float maxX);
     void SetYAxisBounds (float minY, float maxY);

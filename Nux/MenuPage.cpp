@@ -111,12 +111,12 @@ namespace nux
     return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
   }
 
-  void MenuItem::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void MenuItem::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void MenuItem::DrawAsMenuItem (GraphicsContext &GfxContext, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone)
+  void MenuItem::DrawAsMenuItem (GraphicsEngine &GfxContext, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone)
   {
     Geometry geo = GetGeometry();
     Geometry icon_geo (0, 0, 20, 20);
@@ -134,28 +134,28 @@ namespace nux
     {
       /*
           if(isFirstItem && isLastItem)
-              gPainter.PaintShape(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4);
+              GetPainter().PaintShape(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4);
           else if(isFirstItem)
-              gPainter.PaintShapeCorner(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight);
+              GetPainter().PaintShapeCorner(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight);
           else if(isLastItem)
-              gPainter.PaintShapeCorner(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerBottomLeft | eCornerBottomRight);
+              GetPainter().PaintShapeCorner(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerBottomLeft | eCornerBottomRight);
           else
-              gPainter.Paint2DQuadColor(GfxContext, geo, COLOR_FOREGROUND_SECONDARY);
+              GetPainter().Paint2DQuadColor(GfxContext, geo, COLOR_FOREGROUND_SECONDARY);
       */
-      gPainter.Paint2DQuadColor (GfxContext, geo, Color (0xFF32DE01) /*COLOR_FOREGROUND_SECONDARY*/);
+      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0xFF32DE01) /*COLOR_FOREGROUND_SECONDARY*/);
     }
     else
     {
-      //gPainter.Paint2DQuadColor(GfxContext, geo, Color(0xFF868686));
+      //GetPainter().Paint2DQuadColor(GfxContext, geo, Color(0xFF868686));
     }
 
     //if(m_Icon)
     {
-      //gPainter.Draw2DTextureAligned(GfxContext, &_action_item->GetIcon(), icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
+      //GetPainter().Draw2DTextureAligned(GfxContext, &_action_item->GetIcon(), icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
     }
 
     if (label)
-      gPainter.PaintTextLineStatic (GfxContext, GetFont(), text_geo, std::string (label), textcolor, eAlignTextLeft);
+      GetPainter().PaintTextLineStatic (GfxContext, GetFont(), text_geo, std::string (label), textcolor, eAlignTextLeft);
   }
 
   MenuSeparator::MenuSeparator (NUX_FILE_LINE_DECL)
@@ -174,12 +174,12 @@ namespace nux
     return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
   }
 
-  void MenuSeparator::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void MenuSeparator::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
     int y0 = base.y + base.GetHeight() / 2;
-    gPainter.Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, Color (0xFF222222) );
-    gPainter.Draw2DLine (GfxContext, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color (0xFFAAAAAA) );
+    GetPainter().Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, Color (0xFF222222) );
+    GetPainter().Draw2DLine (GfxContext, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color (0xFFAAAAAA) );
   }
 
   MenuPage::MenuPage (const TCHAR *title, NUX_FILE_LINE_DECL)
@@ -306,7 +306,7 @@ namespace nux
     return ret;
   };
 
-  void MenuPage::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void MenuPage::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if (m_IsActive)
     {
@@ -314,10 +314,10 @@ namespace nux
       Geometry shadow;
       shadow = base;
       shadow.OffsetPosition (4, 4);
-      //gPainter.PaintShape(GfxContext, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
+      //GetPainter().PaintShape(GfxContext, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
 
       GfxContext.GetRenderStates().SetBlend (GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      gPainter.Paint2DQuadColor (GfxContext, base, Color (0xA0404040) );
+      GetPainter().Paint2DQuadColor (GfxContext, base, Color (0xA0404040) );
       GfxContext.GetRenderStates().SetBlend (GL_FALSE);
 
       Geometry text_area;
@@ -345,12 +345,12 @@ namespace nux
     }
   }
 
-  void MenuPage::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void MenuPage::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void MenuPage::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void MenuPage::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -893,8 +893,8 @@ namespace nux
     base.SetX (MenuXPosition);
     base.SetY (MenuYPosition);
 
-    int WindowWidth = GetGraphicsContext().GetWindowWidth();
-    int WindowHeight = GetGraphicsContext().GetWindowHeight();
+    int WindowWidth = GetGraphicsEngine().GetWindowWidth();
+    int WindowHeight = GetGraphicsEngine().GetWindowHeight();
 
     // Correct the position of the MenuPage if is going out of the screen
     // The first page of a menu chain has less opportunities to be adjusted than its child pages.
@@ -935,10 +935,10 @@ namespace nux
     if (GetParentMenu() == 0)
     {
       // This is the head of the menu chain
-      m_MenuWindow = GetThreadWindowCompositor().GetCurrentWindow();
+      m_MenuWindow = GetWindowCompositor().GetCurrentWindow();
     }
 
-    GetThreadWindowCompositor().AddMenu (this, m_MenuWindow/*, OverrideCurrentMenuChain*/);
+    GetWindowCompositor().AddMenu (this, m_MenuWindow/*, OverrideCurrentMenuChain*/);
     m_NextMouseUpMeanStop = false;
 
     StopActionSubMenu();

@@ -23,7 +23,7 @@
 #ifndef ACTIONITEM_H
 #define ACTIONITEM_H
 
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 
 namespace nux
 {
@@ -42,8 +42,8 @@ namespace nux
     void Activate (bool b);
     void Trigger() const;
 
-    void DrawAsMenuItem (GraphicsContext &GfxContext, CoreArea &area, bool is_highlighted, bool draw_icone);
-    void DrawAsToolButton (GraphicsContext &GfxContext, CoreArea &area);
+    void DrawAsMenuItem (GraphicsEngine &GfxContext, CoreArea &area, bool is_highlighted, bool draw_icone);
+    void DrawAsToolButton (GraphicsEngine &GfxContext, CoreArea &area);
     void Enable (bool b);
     bool isEnabled() const;
 

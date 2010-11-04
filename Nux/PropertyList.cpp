@@ -51,7 +51,7 @@ namespace nux
 //    return ret;
 //}
 
-  void SectionProperty::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
+  void SectionProperty::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
                                       RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
@@ -69,14 +69,14 @@ namespace nux
         nBackground = table->PushItemBackground (GfxContext, this, false);
       }
 
-      Painter.PaintTextLineStatic (GfxContext, GetThreadFont(), geo, row->m_item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/);
+      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), geo, row->m_item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/);
 
       if (m_ItemGeometryVector.size() >= 2)
       {
         Geometry prop_geo = m_ItemGeometryVector[1];
         prop_geo.Expand (-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
         GfxContext.PushClippingRectangle (prop_geo);
-        Painter.PaintTextLineStatic (GfxContext, GetThreadFont(), prop_geo, m_String.GetTCharPtr(), GetItemTextColor() /*m_item[r].c_str()*/);
+        Painter.PaintTextLineStatic (GfxContext, GetSysFont(), prop_geo, m_String.GetTCharPtr(), GetItemTextColor() /*m_item[r].c_str()*/);
         GfxContext.PopClippingRectangle();
       }
 

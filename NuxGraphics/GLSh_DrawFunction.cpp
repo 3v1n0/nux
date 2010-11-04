@@ -22,10 +22,10 @@
 
 #include "GLResource.h"
 #include "GLResourceManager.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 
 #include "GLTemplatePrimitiveBuffer.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 
 #include "GLSh_DrawFunction.h"
 

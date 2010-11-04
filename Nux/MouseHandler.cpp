@@ -208,7 +208,7 @@ namespace nux
   {
     if (b)
     {
-//          if(GetThreadWindowCompositor().GetMouseFocusArea()->m_EventHandler != this)
+//          if(GetWindowCompositor().GetMouseFocusArea()->m_EventHandler != this)
 //              GetMouseFocusOwner()->ReleaseMouseFocus();
 //         SetMouseFocusOwner(this);
       m_hasMouseFocus = true;

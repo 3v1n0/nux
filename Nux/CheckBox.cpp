@@ -130,12 +130,12 @@ namespace nux
     return ret;
   }
 
-  void CheckBox::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.PaintTextLineStatic (GfxContext, GetFont(), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintTextLineStatic (GfxContext, GetFont(), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
     InteractState is;
     is.is_on = m_State;
     is.is_focus = m_TextArea->HasMouseFocus() ||
@@ -146,15 +146,15 @@ namespace nux
                      || IsMouseInside() ||
                      m_CheckArea->IsMouseInside();
 
-    gPainter.PaintCheckBox (GfxContext, m_CheckArea->GetGeometry(), is, Color (0xff000000) );
+    GetPainter().PaintCheckBox (GfxContext, m_CheckArea->GetGeometry(), is, Color (0xff000000) );
   }
 
-  void CheckBox::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void CheckBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void CheckBox::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void CheckBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

@@ -92,9 +92,9 @@ namespace nux
     m_YLabel->SetTextColor (Color (0xFFCCCCCC) );
     m_ZLabel->SetTextColor (Color (0xFFCCCCCC) );
 
-    m_XLabel->SetFont (GetThreadBoldFont() );
-    m_YLabel->SetFont (GetThreadBoldFont() );
-    m_ZLabel->SetFont (GetThreadBoldFont() );
+    m_XLabel->SetFont (GetSysBoldFont() );
+    m_YLabel->SetFont (GetSysBoldFont() );
+    m_ZLabel->SetFont (GetSysBoldFont() );
 
 
     //SpaceLayout* spacex = new SpaceLayout;
@@ -134,10 +134,10 @@ namespace nux
     return ret;
   }
 
-  void Vector3DoubleValuator::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void Vector3DoubleValuator::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
-    gPainter.PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (GfxContext, base);
 
 
     Geometry geo = m_MouseControlledButton->GetGeometry();
@@ -149,11 +149,11 @@ namespace nux
         m_MouseControlledButton->HasMouseFocus() || m_MouseControlledButton->IsMouseInside() )
     {
 
-      gPainter.PushDrawShapeLayer (GfxContext, geo, eSHAPE_CORNER_ROUND4, SPINBOX_BUTTON_MOUSEOVER_COLOR, eCornerTopLeft | eCornerBottomLeft);
+      GetPainter().PushDrawShapeLayer (GfxContext, geo, eSHAPE_CORNER_ROUND4, SPINBOX_BUTTON_MOUSEOVER_COLOR, eCornerTopLeft | eCornerBottomLeft);
     }
     else
     {
-      gPainter.PushDrawShapeLayer (GfxContext, geo, eSHAPE_CORNER_ROUND4, SPINBOX_BUTTON_COLOR,
+      GetPainter().PushDrawShapeLayer (GfxContext, geo, eSHAPE_CORNER_ROUND4, SPINBOX_BUTTON_COLOR,
                                    eCornerTopLeft | eCornerBottomLeft);
     }
 
@@ -161,32 +161,32 @@ namespace nux
     geo.OffsetSize (-m_MouseControlledButton->GetBaseWidth(), 0);
     geo.OffsetPosition (+m_MouseControlledButton->GetBaseWidth(), 0);
 
-    gPainter.PushDrawShapeLayer (GfxContext, geo, eSHAPE_CORNER_ROUND4, SPINBOX_BUTTON_COLOR,
+    GetPainter().PushDrawShapeLayer (GfxContext, geo, eSHAPE_CORNER_ROUND4, SPINBOX_BUTTON_COLOR,
                                  eCornerTopLeft | eCornerBottomLeft | eCornerTopRight | eCornerBottomRight);
 
     GeometryPositioning gp (eHACenter, eVACenter);
-    Geometry GeoPo = ComputeGeometryPositioning (m_MouseControlledButton->GetGeometry(), gTheme.GetImageGeometry (eVALUATORMOVE), gp);
+    Geometry GeoPo = ComputeGeometryPositioning (m_MouseControlledButton->GetGeometry(), GetTheme().GetImageGeometry (eVALUATORMOVE), gp);
 
     if (m_Mouse == 1)
     {
       if (m_MouseControlledButton->IsMouseInside() )
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORHORIZONTALMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORHORIZONTALMOVE);
       else
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORHORIZONTALMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORHORIZONTALMOVE);
     }
     else if (m_Mouse == 3)
     {
       if (m_MouseControlledButton->IsMouseInside() )
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORVERTICALMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORVERTICALMOVE);
       else
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORVERTICALMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORVERTICALMOVE);
     }
     else
     {
       if (m_MouseControlledButton->IsMouseInside() )
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORMOVE);
       else
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORMOVE);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eVALUATORMOVE);
     }
 
 
@@ -194,24 +194,24 @@ namespace nux
     geo = m_XEdit->GetGeometry();
     geo.OffsetPosition (-4, 0);
     geo.OffsetSize (+8, 0);
-    gPainter.PaintShapeCorner (GfxContext, geo, m_XEdit->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
+    GetPainter().PaintShapeCorner (GfxContext, geo, m_XEdit->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
                                eCornerTopLeft | eCornerBottomLeft | eCornerTopRight | eCornerBottomRight, false);
 
     geo = m_YEdit->GetGeometry();
     geo.OffsetPosition (-4, 0);
     geo.OffsetSize (+8, 0);
-    gPainter.PaintShapeCorner (GfxContext, geo, m_YEdit->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
+    GetPainter().PaintShapeCorner (GfxContext, geo, m_YEdit->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
                                eCornerTopLeft | eCornerBottomLeft | eCornerTopRight | eCornerBottomRight, false);
 
     geo = m_ZEdit->GetGeometry();
     geo.OffsetPosition (-4, 0);
     geo.OffsetSize (+8, 0);
-    gPainter.PaintShapeCorner (GfxContext, geo, m_ZEdit->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
+    GetPainter().PaintShapeCorner (GfxContext, geo, m_ZEdit->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
                                eCornerTopLeft | eCornerBottomLeft | eCornerTopRight | eCornerBottomRight, false);
 
-//    gPainter.PaintShape(GfxContext, m_XLabel->GetGeometry(), m_XEdit->GetTextBackgroundColor(), eVECTORXLABEL);
-//    gPainter.PaintShape(GfxContext, m_YLabel->GetGeometry(), m_YEdit->GetTextBackgroundColor(), eVECTORYLABEL);
-//    gPainter.PaintShape(GfxContext, m_ZLabel->GetGeometry(), m_ZEdit->GetTextBackgroundColor(), eVECTORZLABEL);
+//    GetPainter().PaintShape(GfxContext, m_XLabel->GetGeometry(), m_XEdit->GetTextBackgroundColor(), eVECTORXLABEL);
+//    GetPainter().PaintShape(GfxContext, m_YLabel->GetGeometry(), m_YEdit->GetTextBackgroundColor(), eVECTORYLABEL);
+//    GetPainter().PaintShape(GfxContext, m_ZLabel->GetGeometry(), m_ZEdit->GetTextBackgroundColor(), eVECTORZLABEL);
 
 
     m_XEdit->NeedRedraw();
@@ -222,7 +222,7 @@ namespace nux
     m_ZLabel->NeedRedraw();
   }
 
-  void Vector3DoubleValuator::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void Vector3DoubleValuator::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     m_XEdit->ProcessDraw (GfxContext, force_draw);
     m_YEdit->ProcessDraw (GfxContext, force_draw);
@@ -232,7 +232,7 @@ namespace nux
     m_ZLabel->ProcessDraw (GfxContext, force_draw);
   }
 
-  void Vector3DoubleValuator::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void Vector3DoubleValuator::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

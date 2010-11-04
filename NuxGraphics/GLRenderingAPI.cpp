@@ -20,7 +20,7 @@
  */
 
 
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 
 namespace nux
 {

@@ -22,7 +22,7 @@
 
 #include "GLDeviceObjects.h"
 #include "IOpenGLVolume.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 
 namespace nux
 {

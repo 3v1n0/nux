@@ -68,7 +68,7 @@ namespace nux
   }
 
 
-  void GroupBox::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void GroupBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 
@@ -87,9 +87,9 @@ namespace nux
 
     //if(bCaptionAvailable)
     {
-      //gPainter.Paint2DQuadColor(m_CaptionArea.GetGeometry(), COLOR_BACKGROUND_PRIMARY);
-      //gPainter.PaintTextLineStatic(m_CaptionArea.GetGeometry(), m_CaptionArea.GetCaptionString(), eAlignTextCenter);
-      gPainter.PaintTextLineStatic (GfxContext, GetThreadBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
+      //GetPainter().Paint2DQuadColor(m_CaptionArea.GetGeometry(), COLOR_BACKGROUND_PRIMARY);
+      //GetPainter().PaintTextLineStatic(m_CaptionArea.GetGeometry(), m_CaptionArea.GetCaptionString(), eAlignTextCenter);
+      GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
                                     true, eAlignTextCenter);
     }
 
@@ -101,7 +101,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void GroupBox::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void GroupBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 
@@ -115,7 +115,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void GroupBox::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void GroupBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -233,8 +233,8 @@ namespace nux
     {
       //bCaptionAvailable = true;
       m_CaptionArea.SetBaseString (name);
-      m_CaptionArea.SetMinimumSize (4 + GetThreadBoldFont()->GetStringWidth (name), PRACTICAL_WIDGET_HEIGHT);
-      m_CaptionArea.SetBaseSize (4 + GetThreadBoldFont()->GetStringWidth (name), PRACTICAL_WIDGET_HEIGHT);
+      m_CaptionArea.SetMinimumSize (4 + GetSysBoldFont()->GetStringWidth (name), PRACTICAL_WIDGET_HEIGHT);
+      m_CaptionArea.SetBaseSize (4 + GetSysBoldFont()->GetStringWidth (name), PRACTICAL_WIDGET_HEIGHT);
     }
   }
 

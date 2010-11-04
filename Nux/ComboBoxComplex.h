@@ -44,9 +44,9 @@ namespace nux
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
 //    // make the class abstract
-//    virtual void Draw(GraphicsContext& GfxContext, bool force_draw) = 0;
-//    virtual void DrawContent(GraphicsContext& GfxContext, bool force_draw) = 0;
-//    virtual void PostDraw(GraphicsContext& GfxContext, bool force_draw) = 0;
+//    virtual void Draw(GraphicsEngine& GfxContext, bool force_draw) = 0;
+//    virtual void DrawContent(GraphicsEngine& GfxContext, bool force_draw) = 0;
+//    virtual void PostDraw(GraphicsEngine& GfxContext, bool force_draw) = 0;
 
     void SetPopupWindowSize (unsigned int width, unsigned int height);
     void SetPopupWidth (unsigned int width);

@@ -23,7 +23,7 @@
 #ifndef ANIMATEDTEXTUREAREA_H
 #define ANIMATEDTEXTUREAREA_H
 
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "TimerProc.h"
 
 namespace nux
@@ -35,9 +35,9 @@ namespace nux
     AnimatedTextureArea (NUX_FILE_LINE_PROTO);
     ~AnimatedTextureArea();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
     void SetTexture (TextureFrameAnimation *Texture);
     void RecvMouseDown (int x, int y, long button_flags, long key_flags);

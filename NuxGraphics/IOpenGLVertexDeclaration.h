@@ -47,7 +47,7 @@ namespace nux
     int Stride[8]; // Stride for each stream
     int ValideVertexInput[16]; // Vertex Input valid for this vertex declaration
     std::vector<VERTEXELEMENT *> _DeclarationsArray;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
 }

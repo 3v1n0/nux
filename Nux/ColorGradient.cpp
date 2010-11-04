@@ -113,7 +113,7 @@ namespace nux
     return ret;
   }
 
-  void ColorGradient::DrawMarker (GraphicsContext &GfxContext)
+  void ColorGradient::DrawMarker (GraphicsEngine &GfxContext)
   {
     int marker_position_x;
     int marker_position_y;
@@ -122,11 +122,11 @@ namespace nux
 
     marker_position_x = m_Percentage->GetBaseX() + (m_Value - m_min) * m_Percentage->GetBaseWidth() * 1 / (m_max - m_min);
     marker_position_y = m_Percentage->GetBaseY() + m_Percentage->GetBaseHeight();
-    gPainter.Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
                                   marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
 
-    gPainter.Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
                                   marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
 
@@ -134,7 +134,7 @@ namespace nux
   }
 
 
-  void ColorGradient::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void ColorGradient::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     bool highlighted;
     Geometry base = GetGeometry();
@@ -146,7 +146,7 @@ namespace nux
 
     if (NumColorMark < 2)
     {
-      gPainter.Paint2DQuadColor (GfxContext, P, m_BackgroundColor);
+      GetPainter().Paint2DQuadColor (GfxContext, P, m_BackgroundColor);
     }
     else
     {
@@ -159,14 +159,14 @@ namespace nux
         if ( (i == 0) && (coeff > 0) )
         {
           Geometry geo (X, P.y, P.GetWidth() *coeff, P.GetHeight() );
-          gPainter.Paint2DQuadColor (GfxContext, geo, color);
+          GetPainter().Paint2DQuadColor (GfxContext, geo, color);
           X += P.GetWidth() * coeff;
         }
         else if ( (i == NumColorMark - 1) && (coeff < 1.0f) )
         {
           nuxAssert (P.x + P.GetWidth() > X);
           Geometry geo (X, P.y, P.x + P.GetWidth() - X, P.GetHeight() );
-          gPainter.Paint2DQuadColor (GfxContext, geo, color);
+          GetPainter().Paint2DQuadColor (GfxContext, geo, color);
           X = P.GetWidth();
         }
         else if (i < NumColorMark - 1)
@@ -181,7 +181,7 @@ namespace nux
             geo.SetWidth (P.x + P.GetWidth() - X);
           }
 
-          gPainter.Paint2DQuadColor (GfxContext, geo, color, color, color1, color1);
+          GetPainter().Paint2DQuadColor (GfxContext, geo, color, color, color1, color1);
           X += P.GetWidth() * coeff1 - P.GetWidth() * coeff;
         }
       }
@@ -197,12 +197,12 @@ namespace nux
     DrawMarker (GfxContext);
   }
 
-  void ColorGradient::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void ColorGradient::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     m_ValueString->ProcessDraw (GfxContext, force_draw);
   }
 
-  void ColorGradient::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void ColorGradient::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

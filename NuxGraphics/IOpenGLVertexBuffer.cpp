@@ -20,7 +20,7 @@
  */
 
 
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "IOpenGLVertexBuffer.h"
 
