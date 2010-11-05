@@ -34,6 +34,9 @@
 
 namespace nux
 {
+  
+    TimerFunctor *m_ScrollTimerFunctor;
+    TimerHandle m_ScrollTimerHandler;  
 
 // Thread registration call. Hidden from the users. Implemented in Nux.cpp
   bool RegisterNuxThread (NThread *ThreadPtr);
@@ -203,12 +206,16 @@ namespace nux
     bool repeat = false;
     TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
 
+    dd->window_thread->_inside_timer_loop = true;
     repeat = GetTimer().ExecTimerHandler(dd->id);
+    dd->window_thread->_inside_timer_loop = false;
 
     if(dd->window_thread->IsEmbeddedWindow())
         dd->window_thread->RedrawRequested.emit();
     else
-        dd->window_thread->ExecutionLoop(0);
+    {
+      dd->window_thread->ExecutionLoop(0);
+    }
     
     if(!repeat)
       delete dd;
@@ -296,6 +303,12 @@ namespace nux
     m_GLibLoop      = 0;
     m_GLibContext   = 0;
 #endif
+    
+    _pending_wake_up_timer = false;
+    _inside_main_loop = false;
+    _inside_timer_loop = false;
+    _async_wake_up_functor = new TimerFunctor();
+    _async_wake_up_functor->OnTimerExpired.connect (sigc::mem_fun (this, &WindowThread::AsyncWakeUpCallback) );
   }
 
   WindowThread::~WindowThread()
@@ -303,6 +316,15 @@ namespace nux
     ThreadDtor();
   }
 
+  void WindowThread::AsyncWakeUpCallback (void* data)
+  {
+    GetTimer ().RemoveTimerHandler (_async_wake_up_timer);
+    _pending_wake_up_timer = false;
+    
+    WindowThread* window_thread = NUX_STATIC_CAST(WindowThread*, data);
+    window_thread->ExecutionLoop(0);
+  }
+  
   void WindowThread::SetLayout (Layout *layout)
   {
     m_AppLayout = layout;
@@ -374,6 +396,21 @@ namespace nux
     }
   }
 
+  void WindowThread::RequestRedraw()
+  {
+    m_RedrawRequested = true;
+    RedrawRequested.emit();
+    
+    if (!IsEmbeddedWindow())
+    {
+      if ((_inside_main_loop == false) && (_inside_timer_loop == false) && (_pending_wake_up_timer == false))
+      {
+        _pending_wake_up_timer = true;
+        _async_wake_up_timer = GetTimer().AddTimerHandler (0, _async_wake_up_functor, this);
+      }
+    }
+  }
+  
   void WindowThread::AddObjectToRefreshList (Area *bo)
   {
     nuxAssert (bo != 0);
@@ -573,6 +610,7 @@ namespace nux
     while (KeepRunning)
 #endif
     {
+      _inside_main_loop = true;
       if(Application->m_bFirstDrawPass)
       {
         ms = 0.0f;
@@ -645,6 +683,8 @@ namespace nux
           // Process the layouts that requested a recompute.
           RefreshLayout();
       }
+      
+      _inside_main_loop = false;
 
 // #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 //       GetTimer().ExecTimerHandler (timer_id);

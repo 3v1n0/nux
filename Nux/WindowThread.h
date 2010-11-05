@@ -23,6 +23,8 @@
 #ifndef WINDOWTHREAD_H
 #define WINDOWTHREAD_H
 
+#include "TimerProc.h"
+
 namespace nux
 {
 
@@ -100,11 +102,8 @@ namespace nux
 
     void SetWindowBackgroundPaintLayer (AbstractPaintLayer *bkg);
 
-    void RequestRedraw()
-    {
-      m_RedrawRequested = true;
-      RedrawRequested.emit();
-    }
+    void RequestRedraw();
+    
     void ClearRedrawFlag()
     {
       m_RedrawRequested = false;
@@ -273,8 +272,16 @@ namespace nux
 
     sigc::signal<void> RedrawRequested;
 
+    bool _inside_main_loop;
+    bool _inside_timer_loop;
+    bool _pending_wake_up_timer;
+    
+    TimerFunctor *_async_wake_up_functor;
+    TimerHandle _async_wake_up_timer;  
+    
   protected:
 
+    void AsyncWakeUpCallback (void*);
     //void SetModalWindow(bool b) {m_bIsModal = b;}
 
     /*!
