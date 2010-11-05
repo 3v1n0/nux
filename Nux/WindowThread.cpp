@@ -151,7 +151,7 @@ namespace nux
       if ( (m_GLibContext == 0) || (m_GLibLoop == 0) )
       {
         //create a context
-        m_GLibContext = g_main_context_new();
+        m_GLibContext = g_main_context_default ();
         //create a main loop with context
         m_GLibLoop = g_main_loop_new (m_GLibContext, TRUE);
       }
