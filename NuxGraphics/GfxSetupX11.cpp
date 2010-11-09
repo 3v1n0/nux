@@ -926,6 +926,23 @@ namespace nux
         _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
         _mouse_state |= NUX_STATE_BUTTON3_DOWN;
       }
+
+      if (xevent.xbutton.button == Button4)
+      {
+        _mouse_state |= NUX_EVENT_MOUSEWHEEL;
+        m_pEvent->e_event = NUX_MOUSEWHEEL;
+        m_pEvent->e_wheeldelta = -15;
+        return 1;
+      }
+
+      if (xevent.xbutton.button == Button5)
+      {
+        _mouse_state |= NUX_EVENT_MOUSEWHEEL;
+        m_pEvent->e_event = NUX_MOUSEWHEEL;
+        m_pEvent->e_wheeldelta = +15;
+        return 1;
+      }
+
     }
 
     m_pEvent->e_mouse_state = _mouse_state;

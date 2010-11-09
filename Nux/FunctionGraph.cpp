@@ -61,7 +61,7 @@ namespace nux
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Color::White);
 
-    delete BackgroundTexture;
+    BackgroundTexture->UnReference ();
   }
 
   void FunctionGraph::InitializeLayout()

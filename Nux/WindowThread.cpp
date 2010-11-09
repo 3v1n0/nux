@@ -1228,8 +1228,21 @@ namespace nux
       pgeo = parent->GetGeometry();
       geo.x += pgeo.x;
       geo.y += pgeo.y;
+
+      if (parent->Type().IsObjectType (BaseWindow::StaticObjectType))
+      {
+        BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, parent);
+        window->_child_need_redraw = true;
+      }
     }
-    
+
+    if (view->Type().IsObjectType (BaseWindow::StaticObjectType))
+    {
+      // If the view is a BaseWindow, allow it to mark itself for redraw, as if it was its own  child.
+      BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, view);
+      window->_child_need_redraw = true;
+    }
+
     m_dirty_areas.push_back(geo);
   }
   

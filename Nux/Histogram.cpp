@@ -43,16 +43,16 @@ namespace nux
 
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
-    NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Data/UITextures/FunctionGraphBackground.tga") );
+    NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Data/UITextures/FunctionGraphBackground.tga"));
     BaseTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
-    BackgroundTexture->Update (Path.GetTCharPtr() );
+    BackgroundTexture->Update (Path.GetTCharPtr());
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Color::White);
 
-    delete BackgroundTexture;
+    BackgroundTexture->UnReference ();
   }
 
   Histogram::~Histogram()

@@ -121,6 +121,10 @@ namespace nux
                    IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                    IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
 
+    void QRP_2TexMod (int x, int y, int width, int height,
+      IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+      IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
+
     void QRP_4Tex (int x, int y, int width, int height,
                    IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                    IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
@@ -146,6 +150,11 @@ namespace nux
     void QRP_GLSL_2Tex (int x, int y, int width, int height,
                         IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                         IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
+
+    void QRP_GLSL_2TexMod (int x, int y, int width, int height,
+      IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+      IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
+
 
     void QRP_GLSL_4Tex (int x, int y, int width, int height,
                         IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
@@ -309,6 +318,11 @@ namespace nux
     IntrusiveSP<IOpenGLAsmShaderProgram> m_Asm2TextureAdd;
     IntrusiveSP<IOpenGLAsmShaderProgram> m_Asm2TextureRectAdd;
 
+    void InitAsm2TextureMod();
+    //! Render polygons with 2 textures, each modulated by a color, and then multiplied together.
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_Asm2TextureMod;
+    IntrusiveSP<IOpenGLAsmShaderProgram> m_Asm2TextureRectMod;
+
     void InitAsm4TextureAdd();
     //! Render polygons with 4 textures, each modulated by a color, and added together.
     IntrusiveSP<IOpenGLAsmShaderProgram> m_Asm4TextureAdd;
@@ -340,7 +354,13 @@ namespace nux
 
     void InitSl2TextureAdd();
     //! Render polygons with 2 textures, each modulated by a color, and added together.
+    //! result = (tex0*color0)+(tex1*color1)
     IntrusiveSP<IOpenGLShaderProgram> m_Sl2TextureAdd;
+
+    void InitSl2TextureMod();
+    //! Render polygons with 2 textures, each modulated by a color, and then multiplied together.
+    //! result = (tex0*color0)*(tex1*color1)
+    IntrusiveSP<IOpenGLShaderProgram> m_Sl2TextureMod;
 
     void InitSl4TextureAdd();
     //! Render polygons with 4 textures, each modulated by a color, and added together.

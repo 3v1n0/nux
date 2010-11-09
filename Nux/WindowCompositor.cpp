@@ -413,7 +413,7 @@ namespace nux
         if ( (ordered == false) && (m_SelectedWindow != 0) )
         {
           // Move the newly selected window at the top of the visibility stack.
-          MoveWindowToFront (m_SelectedWindow);
+          PushToFront (m_SelectedWindow);
         }
 
         // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
@@ -464,7 +464,8 @@ namespace nux
     }
   }
 
-  void WindowCompositor::MoveWindowToFront (BaseWindow *window)
+  //! Push a floating view at the top of the stack.
+  void WindowCompositor::PushToFront (BaseWindow *window)
   {
     if (window == 0)
       return;
@@ -478,7 +479,8 @@ namespace nux
     }
   }
 
-  void WindowCompositor::MoveWindowToBack (BaseWindow *window)
+  //! Push a floating view at the bottom of the stack.
+  void WindowCompositor::PushToBack (BaseWindow *window)
   {
     if (window == 0)
       return;
@@ -492,9 +494,54 @@ namespace nux
     }
   }
 
+  //! Push a floating view just above another floating view.
+  void WindowCompositor::PushHigher (BaseWindow* top_floating_view, BaseWindow* bottom_floating_view, bool strict)
+  {
+    NUX_RETURN_IF_NULL (bottom_floating_view);
+    NUX_RETURN_IF_NULL (top_floating_view);
+    NUX_RETURN_IF_FALSE (bottom_floating_view != top_floating_view)
+    
+    std::list<BaseWindow *>::iterator it;
+    std::list<BaseWindow *>::iterator it_top = find (m_WindowList.begin(), m_WindowList.end(), top_floating_view);
+    std::list<BaseWindow *>::iterator it_bot = find (m_WindowList.begin(), m_WindowList.end(), bottom_floating_view);
+    
+    int i = 0;
+    int top_pos = -1;
+    int bot_pos = -1;
+
+    for (it_top = m_WindowList.begin (), i = 0; it_top != m_WindowList.end (); it_top++, i++)
+    {
+      if(*it = bottom_floating_view)
+      {
+        it_bot = it;
+        bot_pos = i;
+      }
+
+      if(*it = top_floating_view)
+      {
+        it_top = it;
+        top_pos = i;
+      }
+
+      if ((top_pos >= 0) && (bot_pos >= 0))
+        break;
+    }
+
+    if ((it_top == m_WindowList.end ()) || (it_bot == m_WindowList.end ()))
+    {
+      return;
+    }
+
+    if ((top_pos < bot_pos) && (strict == false))
+    {
+      m_WindowList.erase (it_top);
+      m_WindowList.insert (it_bot, top_floating_view);
+    }
+  }
+
   void WindowCompositor::Draw (bool SizeConfigurationEvent, bool force_draw)
   {
-    if (!GetGraphicsThread()->GetWindow().isWindowMinimized() )
+    if (!GetGraphicsThread()->GetWindow().isWindowMinimized())
     {
       //int w, h;
       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth(), GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight() );
@@ -727,7 +774,7 @@ namespace nux
         WindowNeedRedraw = window->IsRedrawNeeded();
 
         // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
-        if(force_draw || GetGraphicsThread()->IsRedrawNeeded ())
+        if(force_draw || window->IsRedrawNeeded() || window->ChildNeedsRedraw ())
         {
           if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
           {
@@ -828,6 +875,12 @@ namespace nux
           GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, 0, 0);
           //GetGraphicsThread()->GetGraphicsEngine().Pop2DModelViewMatrix();
         }
+      }
+      else
+      {
+        BaseWindow *window = *rev_it;
+        window->_child_need_redraw = false;
+        window->DoneRedraw ();
       }
     }
 
@@ -1107,7 +1160,7 @@ namespace nux
       src_width = HWTexture->GetWidth();
       src_height = HWTexture->GetHeight();
 
-      if (!BluredBackground)
+      if (1 /*!BluredBackground*/)
       {
         TexCoordXForm texxform0;
         texxform0.FlipVCoord (true);
@@ -1123,25 +1176,25 @@ namespace nux
       }
       else
       {
-        HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
-        HWTexture->BindTextureToUnit (GL_TEXTURE0);
-
-        m_BlurTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
-        m_BlurTexture->BindTextureToUnit (GL_TEXTURE1);
-
-        TexCoordXForm texxform0;
-        texxform0.SetFilter (TEXFILTER_NEAREST, TEXFILTER_NEAREST);
-        texxform0.FlipVCoord (true);
-        TexCoordXForm texxform1;
-        texxform1.SetFilter (TEXFILTER_NEAREST, TEXFILTER_NEAREST);
-        texxform1.FlipVCoord (true);
-        texxform1.uoffset = (float) x / (float) src_width;
-        texxform1.voffset = (float) y / (float) src_height;
-        texxform1.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-
-        GetGraphicsThread()->GetGraphicsEngine().QRP_GLSL_2Tex (x, y, src_width, src_height,
-            HWTexture, texxform0, Color::White,
-            m_BlurTexture, texxform1, Color::White);
+//         HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
+//         HWTexture->BindTextureToUnit (GL_TEXTURE0);
+// 
+//         m_BlurTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
+//         m_BlurTexture->BindTextureToUnit (GL_TEXTURE1);
+// 
+//         TexCoordXForm texxform0;
+//         texxform0.SetFilter (TEXFILTER_NEAREST, TEXFILTER_NEAREST);
+//         texxform0.FlipVCoord (true);
+//         TexCoordXForm texxform1;
+//         texxform1.SetFilter (TEXFILTER_NEAREST, TEXFILTER_NEAREST);
+//         texxform1.FlipVCoord (true);
+//         texxform1.uoffset = (float) x / (float) src_width;
+//         texxform1.voffset = (float) y / (float) src_height;
+//         texxform1.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
+// 
+//         GetGraphicsThread()->GetGraphicsEngine().QRP_GLSL_2Tex (x, y, src_width, src_height,
+//             HWTexture, texxform0, Color::White,
+//             m_BlurTexture, texxform1, Color::White);
       }
 
       //GetGraphicsThread()->GetGraphicsEngine().DisableAllTextureMode(GL_TEXTURE1);
@@ -1396,159 +1449,159 @@ namespace nux
     CHECKGL ( glClearStencil (0) );
     CHECKGL ( glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
 
-    m_BlurTexture   = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width, 1), Max (buffer_height, 1), 1, BITFMT_R8G8B8A8);
-    m_FullSceneMip0 = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width / 2, 1), Max (buffer_height / 2, 1), 1, BITFMT_R8G8B8A8);
-    m_FullSceneMip1 = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width / 4, 1), Max (buffer_height / 4, 1), 1, BITFMT_R8G8B8A8);
-    m_FullSceneMip2 = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width / 8, 1), Max (buffer_height / 8, 1), 1, BITFMT_R8G8B8A8);
+//     m_BlurTexture   = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width, 1), Max (buffer_height, 1), 1, BITFMT_R8G8B8A8);
+//     m_FullSceneMip0 = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width / 2, 1), Max (buffer_height / 2, 1), 1, BITFMT_R8G8B8A8);
+//     m_FullSceneMip1 = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width / 4, 1), Max (buffer_height / 4, 1), 1, BITFMT_R8G8B8A8);
+//     m_FullSceneMip2 = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (Max (buffer_width / 8, 1), Max (buffer_height / 8, 1), 1, BITFMT_R8G8B8A8);
   }
 
-  void WindowCompositor::UpdatePostProcessRT()
-  {
-    int buffer_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
-    int buffer_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
-
-    nuxAssert (buffer_width >= 1);
-    nuxAssert (buffer_height >= 1);
-
-    GetGraphicsThread()->GetGraphicsEngine().EmptyClippingRegion();
-
-    int src_width, src_height;
-    int dst_width, dst_height;
-    {
-      src_width = buffer_width;
-      src_height = buffer_height;
-      dst_width = Max (buffer_width / 2, 1);
-      dst_height = Max (buffer_height / 2, 1);
-
-      m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip0->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
-      m_FrameBufferObject->Activate();
-
-      GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
-      GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
-      GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
-
-      m_CompositionRT->SetFiltering (GL_LINEAR, GL_LINEAR);
-
-      TexCoordXForm texxform0;
-      texxform0.uwrap = TEXWRAP_CLAMP;
-      texxform0.vwrap = TEXWRAP_CLAMP;
-      texxform0.FlipVCoord (true);
-      GetThreadGraphicsContext()->QRP_GLSL_1Tex (0, 0, dst_width, dst_height, m_CompositionRT, texxform0, Color::White);
-    }
-
-    {
-      src_width = Max (buffer_width / 2, 1);
-      src_height = Max (buffer_height / 2, 1);
-      dst_width = Max (buffer_width / 4, 1);
-      dst_height = Max (buffer_height / 4, 1);
-
-      m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip1->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
-      m_FrameBufferObject->Activate();
-
-      GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
-      GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
-      GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
-
-
-      m_FullSceneMip0->SetFiltering (GL_LINEAR, GL_LINEAR);
-      TexCoordXForm texxform0;
-      texxform0.uwrap = TEXWRAP_CLAMP;
-      texxform0.vwrap = TEXWRAP_CLAMP;
-      texxform0.FlipVCoord (true);
-      GetThreadGraphicsContext()->QRP_GLSL_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip0, texxform0, Color::White);
-    }
-
-    {
-      src_width = Max (buffer_width / 4, 1);
-      src_height = Max (buffer_height / 4, 1);
-      dst_width = Max (buffer_width / 8, 1);
-      dst_height = Max (buffer_height / 8, 1);
-
-      m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip2->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
-      m_FrameBufferObject->Activate();
-
-      GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
-      GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
-      GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
-
-
-      m_FullSceneMip1->SetFiltering (GL_LINEAR, GL_LINEAR);
-      TexCoordXForm texxform0;
-      texxform0.uwrap = TEXWRAP_CLAMP;
-      texxform0.vwrap = TEXWRAP_CLAMP;
-      texxform0.FlipVCoord (true);
-      GetThreadGraphicsContext()->QRP_GLSL_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip1, texxform0, Color::White);
-    }
-
-    {
-      src_width = buffer_width;
-      src_height = buffer_height;
-      dst_width = buffer_width;
-      dst_height = buffer_height;
-
-      m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget ( 0, m_BlurTexture->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
-      m_FrameBufferObject->Activate();
-
-      GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
-      GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
-      GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
-
-      m_CompositionRT->SetFiltering (GL_LINEAR, GL_LINEAR);
-      m_CompositionRT->BindTextureToUnit (GL_TEXTURE0);
-
-      m_FullSceneMip0->SetFiltering (GL_LINEAR, GL_LINEAR);
-      m_FullSceneMip0->BindTextureToUnit (GL_TEXTURE1);
-
-      m_FullSceneMip1->SetFiltering (GL_LINEAR, GL_LINEAR);
-      m_FullSceneMip1->BindTextureToUnit (GL_TEXTURE2);
-
-      m_FullSceneMip2->SetFiltering (GL_LINEAR, GL_LINEAR);
-      m_FullSceneMip2->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
-      m_FullSceneMip2->BindTextureToUnit (GL_TEXTURE3);
-
-      TexCoordXForm texxform0;
-      texxform0.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
-      TexCoordXForm texxform1;
-      texxform1.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
-      TexCoordXForm texxform2;
-      texxform2.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
-      TexCoordXForm texxform3;
-      texxform3.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
-
-      GetGraphicsThread()->GetGraphicsEngine().QRP_GLSL_4Tex (0, 0, dst_width, dst_height,
-          m_CompositionRT, texxform0, Color::White,
-          m_FullSceneMip0, texxform1, Color::White,
-          m_FullSceneMip1, texxform2, Color::White,
-          m_FullSceneMip2, texxform3, Color::White);
-    }
-
-    GetGraphicsThread()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE1);
-    GetGraphicsThread()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE2);
-    GetGraphicsThread()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE3);
-    m_FrameBufferObject->Deactivate();
-    m_CompositionRT->SetFiltering (GL_NEAREST, GL_NEAREST);
-
-    // Restore Main Frame Buffer
-    m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-    m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0) );
-    m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
-    m_FrameBufferObject->Activate();
-
-    GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
-    GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
-  }
-
-  IntrusiveSP< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
-  {
-    return m_BlurTexture;
-  }
+//   void WindowCompositor::UpdatePostProcessRT()
+//   {
+//     int buffer_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
+//     int buffer_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
+// 
+//     nuxAssert (buffer_width >= 1);
+//     nuxAssert (buffer_height >= 1);
+// 
+//     GetGraphicsThread()->GetGraphicsEngine().EmptyClippingRegion();
+// 
+//     int src_width, src_height;
+//     int dst_width, dst_height;
+//     {
+//       src_width = buffer_width;
+//       src_height = buffer_height;
+//       dst_width = Max (buffer_width / 2, 1);
+//       dst_height = Max (buffer_height / 2, 1);
+// 
+//       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
+//       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip0->GetSurfaceLevel (0) );
+//       m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//       m_FrameBufferObject->Activate();
+// 
+//       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
+//       GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
+//       GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
+// 
+//       m_CompositionRT->SetFiltering (GL_LINEAR, GL_LINEAR);
+// 
+//       TexCoordXForm texxform0;
+//       texxform0.uwrap = TEXWRAP_CLAMP;
+//       texxform0.vwrap = TEXWRAP_CLAMP;
+//       texxform0.FlipVCoord (true);
+//       GetThreadGraphicsContext()->QRP_GLSL_1Tex (0, 0, dst_width, dst_height, m_CompositionRT, texxform0, Color::White);
+//     }
+// 
+//     {
+//       src_width = Max (buffer_width / 2, 1);
+//       src_height = Max (buffer_height / 2, 1);
+//       dst_width = Max (buffer_width / 4, 1);
+//       dst_height = Max (buffer_height / 4, 1);
+// 
+//       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
+//       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip1->GetSurfaceLevel (0) );
+//       m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//       m_FrameBufferObject->Activate();
+// 
+//       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
+//       GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
+//       GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
+// 
+// 
+//       m_FullSceneMip0->SetFiltering (GL_LINEAR, GL_LINEAR);
+//       TexCoordXForm texxform0;
+//       texxform0.uwrap = TEXWRAP_CLAMP;
+//       texxform0.vwrap = TEXWRAP_CLAMP;
+//       texxform0.FlipVCoord (true);
+//       GetThreadGraphicsContext()->QRP_GLSL_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip0, texxform0, Color::White);
+//     }
+// 
+//     {
+//       src_width = Max (buffer_width / 4, 1);
+//       src_height = Max (buffer_height / 4, 1);
+//       dst_width = Max (buffer_width / 8, 1);
+//       dst_height = Max (buffer_height / 8, 1);
+// 
+//       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
+//       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip2->GetSurfaceLevel (0) );
+//       m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//       m_FrameBufferObject->Activate();
+// 
+//       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
+//       GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
+//       GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
+// 
+// 
+//       m_FullSceneMip1->SetFiltering (GL_LINEAR, GL_LINEAR);
+//       TexCoordXForm texxform0;
+//       texxform0.uwrap = TEXWRAP_CLAMP;
+//       texxform0.vwrap = TEXWRAP_CLAMP;
+//       texxform0.FlipVCoord (true);
+//       GetThreadGraphicsContext()->QRP_GLSL_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip1, texxform0, Color::White);
+//     }
+// 
+//     {
+//       src_width = buffer_width;
+//       src_height = buffer_height;
+//       dst_width = buffer_width;
+//       dst_height = buffer_height;
+// 
+//       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
+//       m_FrameBufferObject->SetRenderTarget ( 0, m_BlurTexture->GetSurfaceLevel (0) );
+//       m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//       m_FrameBufferObject->Activate();
+// 
+//       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
+//       GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
+//       GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
+// 
+//       m_CompositionRT->SetFiltering (GL_LINEAR, GL_LINEAR);
+//       m_CompositionRT->BindTextureToUnit (GL_TEXTURE0);
+// 
+//       m_FullSceneMip0->SetFiltering (GL_LINEAR, GL_LINEAR);
+//       m_FullSceneMip0->BindTextureToUnit (GL_TEXTURE1);
+// 
+//       m_FullSceneMip1->SetFiltering (GL_LINEAR, GL_LINEAR);
+//       m_FullSceneMip1->BindTextureToUnit (GL_TEXTURE2);
+// 
+//       m_FullSceneMip2->SetFiltering (GL_LINEAR, GL_LINEAR);
+//       m_FullSceneMip2->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
+//       m_FullSceneMip2->BindTextureToUnit (GL_TEXTURE3);
+// 
+//       TexCoordXForm texxform0;
+//       texxform0.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
+//       TexCoordXForm texxform1;
+//       texxform1.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
+//       TexCoordXForm texxform2;
+//       texxform2.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
+//       TexCoordXForm texxform3;
+//       texxform3.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
+// 
+//       GetGraphicsThread()->GetGraphicsEngine().QRP_GLSL_4Tex (0, 0, dst_width, dst_height,
+//           m_CompositionRT, texxform0, Color::White,
+//           m_FullSceneMip0, texxform1, Color::White,
+//           m_FullSceneMip1, texxform2, Color::White,
+//           m_FullSceneMip2, texxform3, Color::White);
+//     }
+// 
+//     GetGraphicsThread()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE1);
+//     GetGraphicsThread()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE2);
+//     GetGraphicsThread()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE3);
+//     m_FrameBufferObject->Deactivate();
+//     m_CompositionRT->SetFiltering (GL_NEAREST, GL_NEAREST);
+// 
+//     // Restore Main Frame Buffer
+//     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
+//     m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0) );
+//     m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//     m_FrameBufferObject->Activate();
+// 
+//     GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
+//     GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
+//   }
+// 
+//   IntrusiveSP< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
+//   {
+//     return m_BlurTexture;
+//   }
 }
 

@@ -84,14 +84,18 @@ namespace nux
     InitAsmColorShader();
     InitAsmTextureShader();
     InitAsmColorModTexMaskAlpha();
+    InitAsm2TextureAdd();
+    InitAsm2TextureMod();
     InitAsm4TextureAdd();
     InitAsmBlendModes();
 
 //     InitSlColorShader();
 //     InitSlTextureShader();
+//     InitSlColorModTexMaskAlpha
 //     InitSl2TextureAdd();
+//     InitSl2TextureMod();
 //     InitSl4TextureAdd();
-//     InitSlColorModTexMaskAlpha();
+
 
     //GNuxGraphicsResources.CacheFontTextures (ResourceCache);
 

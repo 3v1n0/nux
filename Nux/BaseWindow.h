@@ -76,6 +76,11 @@ namespace nux
     void AddWidget (std::list<View *> *ViewList);
     void SetLayout (Layout *layout);
 
+    void PushHigher (BaseWindow* floating_view);
+    void PushLower (BaseWindow* floating_view);
+    void PushToFront ();
+    void PushToBack ();
+
     //! Set the window size to respect the layout container.
     /*!
         Set the window size to be such that the container layout size remains the same after ComputeSizeLayout2 is
@@ -171,6 +176,9 @@ namespace nux
 
     bool m_blured_background;
   private:
+    //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
+    IntrusiveSP<BaseTexture> _background_texture;
+
     #if defined(NUX_OS_LINUX)
     bool m_input_window_enabled;
     XInputWindow *m_input_window;
@@ -183,7 +191,11 @@ namespace nux
     std::list<View *> m_InterfaceObject;
     HLayout *m_TitleBarLayout;
 
+    bool ChildNeedsRedraw ();
+    bool _child_need_redraw;   //!<True is there is a child of the BaseWindow that needs to be redrawn;
     friend class PopUpWindow;
+
+    friend class WindowThread;
     friend class WindowCompositor;
   };
 

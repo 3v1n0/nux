@@ -60,7 +60,7 @@ namespace nux
 
   FileSelector::~FileSelector()
   {
-    delete m_Texture;
+    m_Texture->UnReference ();
   }
 
   long FileSelector::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

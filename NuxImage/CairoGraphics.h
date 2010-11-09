@@ -45,6 +45,8 @@ namespace nux
         @return A cairo context.
     */
     cairo_t *GetContext();
+
+    cairo_surface_t* GetSurface ();
     //! Create a NBitmapData pointer to a 2D texture data.
     /*!
         The returned data must be destroyed with delete.

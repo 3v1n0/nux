@@ -32,7 +32,7 @@ namespace nux
   {
   public:
     TextureArea (NUX_FILE_LINE_PROTO);
-    ~TextureArea();
+    virtual ~TextureArea();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);

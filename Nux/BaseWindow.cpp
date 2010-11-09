@@ -46,6 +46,7 @@ namespace nux
   BaseWindow::BaseWindow (const TCHAR *WindowName, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
   {
+    _child_need_redraw = true;
     m_TopBorder = 0;
     m_Border = 0;
     m_bSizeMatchLayout = false;
@@ -67,7 +68,8 @@ namespace nux
     SetMinimumSize (1, 1);
     SetGeometry (Geometry (100, 100, 320, 200) );
 
-    m_PaintLayer = new ColorLayer (Color (0xFFFF7070) );
+    m_PaintLayer = new ColorLayer (Color (0xFFFF7070));
+    //_background_texture = GetWindow ()->GetGpuDevice ()->CreateSystemCapableDeviceTexture(1, 1, 1, BITFMT_R8G8B8A8);
   }
 
   BaseWindow::~BaseWindow()
@@ -141,12 +143,12 @@ namespace nux
 
     if (UseBlurredBackground() )
     {
-      TexCoordXForm texxform;
-      texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
-      texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
-      texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-
-      GetPainter().PushDrawTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
+//       TexCoordXForm texxform;
+//       texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
+//       texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
+//       texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
+// 
+//       GetPainter().PushDrawTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
     }
     else
     {
@@ -170,12 +172,12 @@ namespace nux
 
     if (UseBlurredBackground() )
     {
-      TexCoordXForm texxform;
-      texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
-      texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
-      texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-
-      GetPainter().PushTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
+//       TexCoordXForm texxform;
+//       texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
+//       texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
+//       texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
+// 
+//       GetPainter().PushTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
     }
     else
     {
@@ -286,7 +288,11 @@ namespace nux
     {
       Geometry layout_geo = Geometry (m_Border, m_TopBorder,
                                       geo.GetWidth() - 2 * m_Border, geo.GetHeight() - m_Border - m_TopBorder);
-      m_layout->SetGeometry (layout_geo);
+
+      if (IsSizeMatchContent ())
+        m_layout->SetGeometry (Geometry (0, 0, 1, 1));
+      else
+        m_layout->SetGeometry (layout_geo);
     }
   }
 
@@ -401,28 +407,27 @@ namespace nux
     return m_TopBorder;
   }
 
-  void BaseWindow::ShowWindow (bool b, bool StartModal /*  = false */)
+  void BaseWindow::ShowWindow (bool visible, bool StartModal /*  = false */)
   {
-//    if(m_bIsModal)
-//        return;
+    if (visible == m_bIsVisible)
+      return;
 
     if (m_layout)
     {
       m_layout->SetGeometry (GetGeometry() );
     }
 
-    m_bIsVisible = b;
+    m_bIsVisible = visible;
     m_bIsModal = StartModal;
 
     ComputeChildLayout();
 
-    if (m_bIsVisible)
-    {
-      NeedRedraw();
-    }
-
     if (m_bIsModal)
       GetWindowCompositor().StartModalWindow (this);
+
+    // Whether this view is added or removed, call NeedRedraw. in the case where this view is removed, this is a signal 
+    // that the region below this view need to be redrawn.
+    NeedRedraw();
   }
 
   bool BaseWindow::IsVisible() const
@@ -480,4 +485,23 @@ namespace nux
     m_background_color = color;
   }
 
+  void BaseWindow::PushHigher (BaseWindow* floating_view)
+  {
+    GetWindowCompositor().PushHigher(this, floating_view);
+  }
+
+  void BaseWindow::PushToFront ()
+  {
+    GetWindowCompositor().PushToFront(this);
+  }
+
+  void BaseWindow::PushToBack ()
+  {
+    GetWindowCompositor().PushToBack(this);
+  }
+
+  bool BaseWindow::ChildNeedsRedraw ()
+  {
+    return _child_need_redraw;
+  }
 }

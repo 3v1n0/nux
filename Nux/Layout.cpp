@@ -65,7 +65,7 @@ namespace nux
     std::list<Area *>::iterator it;
     it = std::find (m_LayoutElementList.begin(), m_LayoutElementList.end(), bo);
 
-    if (it != m_LayoutElementList.end() )
+    if (it != m_LayoutElementList.end())
     {
       bo->UnParentObject();
       m_LayoutElementList.erase (it);

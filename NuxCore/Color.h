@@ -32,6 +32,85 @@ namespace nux
 
 #define NUX_COLOR_ARGB(a,r,g,b)   ((Color)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
+  // DirectX D3DFormat
+  //    All formats are listed from left to right, most significant bit (MSB) to least significant bit (LSB). For example,
+  //    D3DFORMAT_ARGB is ordered from the MSB channel A (alpha), to the LSB channel B (blue). When traversing surface data,
+  //    the data is stored in memory from LSB to MSB, which means that the channel order in memory is from LSB (blue) to MSB (alpha).
+  //
+  //    The default value for formats that contain undefined channels (G16R16, A8, and so on) is 1. The only exception is the
+  //    A8 format, which is initialized to 000 for the three color channels.
+  //
+  //    The order of the bits is from the most significant byte first, so D3DFMT_A8L8 indicates that the high byte of this 2-byte
+  //    format is alpha. D3DFMT_D16 indicates a 16-bit integer value and an application-lockable surface.
+  //
+  //    Pixel formats have been chosen to enable the expression of hardware-vendor-defined extension formats, as well as to include
+  //    the well-established four-character code (FOURCC) method. The set of formats understood by the Microsoft Direct3D runtime
+  //    is defined by D3DFORMAT.
+  //
+  //
+
+
+  //Format of RGBA colors is
+  //7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  //|    alpha        |      red    |     green      |     blue     |
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  //MSB 31                                                             0 LSB
+
+
+#define NUX_RGBA_GET_ALPHA(rgba)      ((rgba) >> 24)
+#define NUX_RGBA_GET_RED(rgba)        (((rgba) >> 16) & 0xff)
+#define NUX_RGBA_GET_GREEN(rgba)      (((rgba) >> 8) & 0xff)
+#define NUX_RGBA_GET_BLUE(rgba)       ((rgba) & 0xff)
+#define NUX_RGBA(r, g, b, a)          ((a << 24) | (r << 16) | (g << 8) | b)
+#define NUX_RGB(r, g, b)              ((r << 16) | (g << 8) | b)
+
+  //
+  // RGB and RGBA may be used as initialisers for D3DCOLORs
+  // The t_float values must be in the range 0..1
+  //
+
+// #define NUX_RGB(r, g, b)          \
+//   ( (t_u32) (BYTE) (r) << 16) |   \
+//   ( (t_u32) (BYTE) (g) << 8)  |   \
+//   ( (t_u32) (BYTE) (b) )
+// 
+// #define NUX_RGBA(r, g, b, a)       \
+//   ( (t_u32) (BYTE) (a)) << 24) |   \
+//   ( (t_u32) (BYTE) (r)) << 16) |   \
+//   ( (t_u32) (BYTE) (g)  << 8)  |   \
+//   ( (t_u32) (BYTE) (b) )
+// 
+// #define NUX_RGB_GET_RED(rgb)         (((rgb) >> 16) & 0xff)
+// #define NUX_RGB_GET_GREEN(rgb)       (((rgb) >> 8) & 0xff)
+// #define NUX_RGB_GET_BLUE(rgb)        ((rgb) & 0xff)
+
+
+  //Format of RGB colors is
+  //7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  //|   ignored     |      red      |     green     |     blue      |
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+  //Format of BGR colors is
+  //7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  //|   ignored     |      blue     |     green     |      red      |
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+  //Format of RGBA colors is
+  //7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  //|      red      |      green    |     blue      |     alpha     |
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+  //Format of BGRA colors is
+  //7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  //|      blue      |      green    |     red      |     alpha     |
+  //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
   enum eColorModel {CM_RGB, CM_HSV, CM_HLS, CM_YUV};
   enum eColorChannel {CC_RED, CC_GREEN, CC_BLUE, CC_HUE, CC_SATURATION, CC_LIGHT , CC_VALUE};
 
