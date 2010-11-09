@@ -753,7 +753,6 @@ namespace nux
     GetPainter().EmptyBackgroundStack();
   }
 
-//void WindowCompositor::DrawFloatingWindows(bool force_draw, bool UseFBO)
   void WindowCompositor::DrawFloatingWindows (bool force_draw, const std::list<BaseWindow *>& WindowList, bool drawModal, bool UseFBO)
   {
     GetGraphicsThread()->GetGraphicsEngine().EmptyClippingRegion();
@@ -875,6 +874,8 @@ namespace nux
           GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, 0, 0);
           //GetGraphicsThread()->GetGraphicsEngine().Pop2DModelViewMatrix();
         }
+        
+        window->_child_need_redraw = false;
       }
       else
       {

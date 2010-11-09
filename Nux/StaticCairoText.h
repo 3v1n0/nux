@@ -27,7 +27,7 @@
 
 #include "Nux/Nux.h"
 #include "Nux/View.h"
-#include "NuxGraphics/OpenGLEngine.h"
+//#include "NuxGraphics/OpenGLEngine.h"
 #include "Nux/TextureArea.h"
 #include "NuxImage/CairoGraphics.h"
 
@@ -62,11 +62,11 @@ namespace nux
       StaticCairoText (const TCHAR* text, NUX_FILE_LINE_PROTO);
 
       StaticCairoText (const TCHAR*     text,
-                       nux::NString     fontName,
+                       NString     fontName,
                        float            fontSize,
-                       nux::eFontStyle  fontStyle,
-                       nux::eFontWeight fontWeight,
-                       nux::Color       textColor,
+                       eFontStyle  fontStyle,
+                       eFontWeight fontWeight,
+                       Color       textColor,
                        NUX_FILE_LINE_PROTO);
 
       ~StaticCairoText ();
@@ -89,17 +89,17 @@ namespace nux
                 bool             forceDraw);
 
       // public API
-      void SetText (nux::NString text);
+      void SetText (NString text);
 
-      void SetFontName (nux::NString fontName);
+      void SetFontName (NString fontName);
 
       void SetFontSize (float fontSize);
 
-      void SetFontWeight (nux::eFontWeight fontWeight);
+      void SetFontWeight (eFontWeight fontWeight);
 
-      void SetFontStyle (nux::eFontStyle fontStyle);
+      void SetFontStyle (eFontStyle fontStyle);
 
-      void SetTextColor (nux::Color textColor);
+      void SetTextColor (Color textColor);
 
       void GetTextExtents (int &width, int &height);
 
@@ -108,15 +108,15 @@ namespace nux
     protected:
 	  
     private:
-      nux::NString          _text;
-      nux::NString          _fontName;
+      NString          _text;
+      NString          _fontName;
       float                 _fontSize;
-      nux::eFontStyle       _fontStyle;
-      nux::eFontWeight      _fontWeight;
-      nux::Color            _textColor;
+      eFontStyle       _fontStyle;
+      eFontWeight      _fontWeight;
+      Color            _textColor;
 
-      nux::CairoGraphics*   _cairoGraphics;
-      nux::BaseTexture*     _texture2D;
+      CairoGraphics*   _cairoGraphics;
+      BaseTexture*     _texture2D;
       int                   _dpiX;
       int                   _dpiY;
       cairo_font_options_t* _fontOpts;

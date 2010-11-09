@@ -197,7 +197,7 @@ StaticCairoText::PostDraw (GraphicsEngine& gfxContext,
 }
 
 void
-StaticCairoText::SetText (nux::NString text)
+StaticCairoText::SetText (NString text)
 {
   if (_text != text)
   {
@@ -209,7 +209,7 @@ StaticCairoText::SetText (nux::NString text)
 }
 
 void
-StaticCairoText::SetFontName (nux::NString fontName)
+StaticCairoText::SetFontName (NString fontName)
 {
   if (_fontName != fontName)
   {
@@ -231,7 +231,7 @@ StaticCairoText::SetFontSize (float fontSize)
 }
 
 void
-StaticCairoText::SetFontWeight (nux::eFontWeight fontWeight)
+StaticCairoText::SetFontWeight (eFontWeight fontWeight)
 {
   if (_fontWeight != fontWeight)
   {
@@ -242,7 +242,7 @@ StaticCairoText::SetFontWeight (nux::eFontWeight fontWeight)
 }
 
 void
-StaticCairoText::SetFontStyle (nux::eFontStyle fontStyle)
+StaticCairoText::SetFontStyle (eFontStyle fontStyle)
 {
   if (_fontStyle != fontStyle)
   {
@@ -253,7 +253,7 @@ StaticCairoText::SetFontStyle (nux::eFontStyle fontStyle)
 }
 
 void
-StaticCairoText::SetTextColor (nux::Color textColor)
+StaticCairoText::SetTextColor (Color textColor)
 {
   if (_textColor != textColor)
   {
@@ -346,7 +346,7 @@ void StaticCairoText::GetTextExtents (const TCHAR* font,
 void StaticCairoText::DrawText (cairo_t*   cr,
                                 int        width,
                                 int        height,
-                                nux::Color color)
+                                Color color)
 {
   int                   textWidth  = 0;
   int                   textHeight = 0;
