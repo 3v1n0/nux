@@ -223,7 +223,10 @@ namespace nux
 
   Object::~Object()
   {
-    //nuxAssertMsg(m_reference_count.GetValue() == 0, TEXT("[Object::~Object] Invalid object destruction."));
+    // If the object has properly been UnReference, it should have gone through Destroy(). if that is the case then
+    // m_reference_count and m_weak_reference_count should be 0;
+    // We can use this to detect when delete is called directly on an object.
+    nuxAssertMsg((m_reference_count == 0) && (m_weak_reference_count == 0), TEXT("[Object::~Object] Invalid object destruction. Make sure to call UnReference () instead of delete."));
   }
 
   void Object::Reference()

@@ -55,7 +55,7 @@ namespace nux
     std::vector<BaseTexture*>::iterator it;
     for(it = TextureArray.begin(); it != TextureArray.end(); it++)
     {
-      delete (*it);
+      (*it)->UnReference ();
     }
     TextureArray.clear();
   }

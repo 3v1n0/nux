@@ -213,10 +213,10 @@ namespace nux
 
   Color::Color (unsigned int c)
   {
-    red_   = (t_float) (RGB_GET_RED (c) ) * (1.f / 255.f);
-    green_ = (t_float) (RGB_GET_GREEN (c) ) * (1.f / 255.f);
-    blue_  = (t_float) (RGB_GET_BLUE (c) ) * (1.f / 255.f);
-    alpha_ = (t_float) (RGBA_GET_ALPHA (c) ) * (1.f / 255.f);
+    red_   = (t_float) (NUX_RGBA_GET_RED (c) ) * (1.f / 255.f);
+    green_ = (t_float) (NUX_RGBA_GET_GREEN (c) ) * (1.f / 255.f);
+    blue_  = (t_float) (NUX_RGBA_GET_BLUE (c) ) * (1.f / 255.f);
+    alpha_ = (t_float) (NUX_RGBA_GET_ALPHA (c) ) * (1.f / 255.f);
   }
 
   Color::Color (t_float r, t_float g, t_float b)

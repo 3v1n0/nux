@@ -218,7 +218,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (   "#version 110                                           \n\
+    VSString =  TEXT (  "#version 110                                           \n\
                         uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -232,7 +232,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (   "#version 110                                               \n\
+    PSString =  TEXT (  "#version 110                                               \n\
                         #extension GL_ARB_texture_rectangle : enable                \n\
                         varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
@@ -252,21 +252,14 @@ namespace nux
                         {                                                           \n\
                         return texture2DRect(TexObject, TexCoord.st);               \n\
                         }                                                           \n\
-                        #elif define MOD_TEX_COLOR_RGB                              \n\
-                        \n\
-                        #elif define MOD_TEX_COLOR_ALPHA                            \n\
-                        \n\
                         #endif                                                      \n\
                         void main()                                                 \n\
                         {                                                           \n\
                         vec4 b0 = color0*SampleTexture(TextureObject0, varyTexCoord0);     \n\
                         vec4 b1 = color1*SampleTexture(TextureObject1, varyTexCoord1);     \n\
-                        gl_FragColor = b0.a*b0 + b1;    \n\
+                        gl_FragColor = b0 + b1;                                             \n\
                         }");
 
-    //vec4(v.w, v.w, v.w, v.w)
-
-    // Textured 2D Primitive Shader
     m_Sl2TextureAdd = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
@@ -276,6 +269,70 @@ namespace nux
     m_Sl2TextureAdd->AddShaderObject (PS);
     CHECKGL ( glBindAttribLocation (m_Sl2TextureAdd->GetOpenGLID(), 0, "AVertex") );
     m_Sl2TextureAdd->Link();
+  }
+
+  void GraphicsEngine::InitSl2TextureMod()
+  {
+    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
+    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    NString VSString;
+    NString PSString;
+
+    // For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
+    // other  attributes. Otherwise you get a bug on NVidia! Why is that???
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    VSString =  TEXT (   "#version 110                                           \n\
+                         uniform mat4 ViewProjectionMatrix;                      \n\
+                         attribute vec4 AVertex;                                 \n\
+                         attribute vec4 MyTextureCoord0;                         \n\
+                         attribute vec4 MyTextureCoord1;                         \n\
+                         varying vec4 varyTexCoord0;                             \n\
+                         varying vec4 varyTexCoord1;                             \n\
+                         void main()                                             \n\
+                         {                                                       \n\
+                         varyTexCoord0 = MyTextureCoord0;                        \n\
+                         varyTexCoord1 = MyTextureCoord1;                        \n\
+                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
+                         }");
+
+    PSString =  TEXT (   "#version 110                                               \n\
+                         #extension GL_ARB_texture_rectangle : enable                \n\
+                         varying vec4 varyTexCoord0;                                 \n\
+                         varying vec4 varyTexCoord1;                                 \n\
+                         uniform vec4 color0;                                        \n\
+                         uniform vec4 color1;                                        \n\
+                         #ifdef SAMPLERTEX2D                                         \n\
+                         uniform sampler2D TextureObject0;                           \n\
+                         uniform sampler2D TextureObject1;                           \n\
+                         vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
+                         {                                                           \n\
+                         return texture2D(TexObject, TexCoord.st);                   \n\
+                         }                                                           \n\
+                         #elif defined SAMPLERTEX2DRECT                              \n\
+                         uniform sampler2DRect TextureObject0;                       \n\
+                         uniform sampler2DRect TextureObject1;                       \n\
+                         vec4 SampleTexture(sampler2DRect TexObject, vec4 TexCoord)  \n\
+                         {                                                           \n\
+                         return texture2DRect(TexObject, TexCoord.st);               \n\
+                         }                                                           \n\
+                         #endif                                                      \n\
+                         void main()                                                 \n\
+                         {                                                           \n\
+                         vec4 b0 = color0*SampleTexture(TextureObject0, varyTexCoord0);     \n\
+                         vec4 b1 = color1*SampleTexture(TextureObject1, varyTexCoord1);     \n\
+                         gl_FragColor = b0 * b1;                                            \n\
+                         }");
+
+    m_Sl2TextureMod = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
+    VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
+    PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
+
+    m_Sl2TextureMod->ClearShaderObjects();
+    m_Sl2TextureMod->AddShaderObject (VS);
+    m_Sl2TextureMod->AddShaderObject (PS);
+    CHECKGL ( glBindAttribLocation (m_Sl2TextureMod->GetOpenGLID(), 0, "AVertex") );
+    m_Sl2TextureMod->Link();
   }
 
   void GraphicsEngine::InitSl4TextureAdd()
@@ -614,6 +671,86 @@ namespace nux
 //         bRectangleTexture = true;
 //         ShaderProg = m_2TexBlendRectProg;
 //     }
+
+    QRP_Compute_Texture_Coord (width, height, DeviceTexture0, texxform0);
+    QRP_Compute_Texture_Coord (width, height, DeviceTexture1, texxform1);
+
+    float VtxBuffer[] =
+    {
+      x,          y,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0.0f, 1.0f, texxform1.u0, texxform1.v0, 0.0f, 1.0f,
+      x,          y + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0.0f, 1.0f, texxform1.u0, texxform1.v1, 0.0f, 1.0f,
+      x + width,  y + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0.0f, 1.0f, texxform1.u1, texxform1.v1, 0.0f, 1.0f,
+      x + width,  y,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0.0f, 1.0f, texxform1.u1, texxform1.v0, 0.0f, 1.0f,
+    };
+
+    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    ShaderProg->Begin();
+
+    int TextureObjectLocation0 = ShaderProg->GetUniformLocationARB ("TextureObject0");
+    int TextureObjectLocation1 = ShaderProg->GetUniformLocationARB ("TextureObject1");
+    int VertexLocation = ShaderProg->GetAttributeLocation ("AVertex");
+    int TextureCoord0Location = ShaderProg->GetAttributeLocation ("MyTextureCoord0");
+    int TextureCoord1Location = ShaderProg->GetAttributeLocation ("MyTextureCoord1");
+
+    int TextureCoef0Location = ShaderProg->GetUniformLocationARB ("color0");
+    int TextureCoef1Location = ShaderProg->GetUniformLocationARB ("color1");
+
+
+    SetTexture (GL_TEXTURE0, DeviceTexture0);
+    SetTexture (GL_TEXTURE1, DeviceTexture1);
+
+    CHECKGL ( glUniform1iARB (TextureObjectLocation0, 0) );
+    CHECKGL ( glUniform1iARB (TextureObjectLocation1, 1) );
+
+    CHECKGL ( glUniform4fARB (TextureCoef0Location, color0.R(), color0.G(), color0.B(), color0.A() ) );
+    CHECKGL ( glUniform4fARB (TextureCoef1Location, color1.R(), color1.G(), color1.B(), color1.A() ) );
+
+    int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+
+    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+
+    if (TextureCoord0Location != -1)
+    {
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+    }
+
+    if (TextureCoord1Location != -1)
+    {
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location) );
+      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+    }
+
+    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+
+    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+
+    if (TextureCoord0Location != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+
+    if (TextureCoord1Location != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord1Location) );
+
+    ShaderProg->End();
+  }
+
+
+  void GraphicsEngine::QRP_GLSL_2TexMod (int x, int y, int width, int height,
+    IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+    IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
+  {
+#if USE_ARB
+    QRP_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+    return;
+#endif
+
+    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
+    {
+      ShaderProg = m_Sl2TextureAdd;
+    }
 
     QRP_Compute_Texture_Coord (width, height, DeviceTexture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, DeviceTexture1, texxform1);

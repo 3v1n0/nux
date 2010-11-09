@@ -87,6 +87,8 @@ namespace nux
   {
     NUX_SAFE_DELETE (m_PaintLayer);
     m_PaintLayer = layer->Clone();
+
+    NeedRedraw();
   }
 
 // void TextureArea::SetTexture(const TCHAR* TextureFilename)

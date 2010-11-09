@@ -193,12 +193,12 @@ namespace nux
 
   bool Texture2D::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[Texture2D::Update] Argument BitmapData is NULL.") );
+    nuxAssertMsg (BitmapData, TEXT ("[Texture2D::Update] Argument BitmapData is NULL."));
     NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
 
-    if (!BitmapData->IsTextureData() )
+    if (!BitmapData->IsTextureData())
     {
-      nuxAssertMsg (0, TEXT ("[Texture2D::Update] Argument BitmapData is not a 2D texture") );
+      nuxAssertMsg (0, TEXT ("[Texture2D::Update] Argument BitmapData is not a 2D texture"));
       return false;
     }
 
@@ -286,7 +286,7 @@ namespace nux
   CachedTexture2D::CachedTexture2D (NResourceSet *ResourceManager, Texture2D *SourceTexture)
     : CachedBaseTexture (ResourceManager)
   {
-    if (SourceTexture->IsNull() )
+    if (SourceTexture->IsNull())
     {
       m_Texture = IntrusiveSP <IOpenGLBaseTexture> (0);
       return;
@@ -295,7 +295,7 @@ namespace nux
     m_Texture = GetThreadGLDeviceFactory()->CreateTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
-                SourceTexture->GetFormat() );
+                SourceTexture->GetFormat());
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {

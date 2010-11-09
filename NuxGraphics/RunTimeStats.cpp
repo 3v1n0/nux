@@ -87,7 +87,7 @@ namespace nux
       nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Some rectangle textures buffers have not been released.") );
       std::vector<int>::iterator it;
 
-      for (it = _texture_2d_array.begin(); it != _texture_2d_array.end(); it++)
+      for (it = _texture_rect_array.begin(); it != _texture_rect_array.end(); it++)
       {
         nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Remaining Rectangle textures: %d."), *it);
       }
@@ -161,6 +161,7 @@ namespace nux
       default:
         break;
     }
+
   }
   void RenderingStats::UnRegister (IOpenGLResource *GraphicsObject)
   {
@@ -195,6 +196,12 @@ namespace nux
       }
       case RTTEXTURERECTANGLE:
       {
+        std::vector<int>::iterator it;
+        it = std::find (_texture_rect_array.begin(), _texture_rect_array.end(), NUX_STATIC_CAST (IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID() );
+
+        if (it != _texture_rect_array.end() )
+          _texture_rect_array.erase (it);
+
         m_NumTexRectangle--;
         m_GPUSizeTexRectangle -= GetTextureSize (NUX_REINTERPRET_CAST (IOpenGLBaseTexture *, GraphicsObject) );
         m_TotalGPUSize -= m_GPUSizeTexRectangle;
@@ -233,6 +240,7 @@ namespace nux
       default:
         break;
     }
+
   }
 
 }
