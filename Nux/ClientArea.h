@@ -70,12 +70,11 @@ namespace nux
     virtual void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvKeyEvent (
       GraphicsEngine &    ,   /*Graphics Context for text operation*/
-      unsigned long       ,    /*event type*/
-      unsigned long       ,    /*event keysym*/
-      unsigned long       ,    /*event state*/
-      const char *         ,   /*character*/
-      bool                ,    /*true if the key is repeated more than once*/
-      unsigned short           /*key repeat count*/
+      unsigned long       ,   /*event type*/
+      unsigned long       ,   /*event keysym*/
+      unsigned long       ,   /*event state*/
+      TCHAR               ,   /*character*/
+      unsigned short          /*key repeat count*/
     );
 
     sigc::signal<void, DrawAreaContext, bool> sigClientDraw;

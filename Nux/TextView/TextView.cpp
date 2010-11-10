@@ -799,8 +799,8 @@ namespace nux
   void TextView::RecvMouseWheel (int x, int y, int delta, t_u32 button_flags, t_u32 key_flags)
   {
     m_MouseWheelAcc += delta;
-    int scrollunit = m_MouseWheelAcc / NUX_WIN32_MOUSEWHEEL_DELTA;
-    m_MouseWheelAcc = m_MouseWheelAcc % NUX_WIN32_MOUSEWHEEL_DELTA;
+    int scrollunit = m_MouseWheelAcc / NUX_MOUSEWHEEL_DELTA;
+    m_MouseWheelAcc = m_MouseWheelAcc % NUX_MOUSEWHEEL_DELTA;
 
     if (scrollunit > 0)
     {
@@ -843,8 +843,7 @@ namespace nux
     t_u32    eventType  , /*event type*/
     t_u32    keysym     , /*event keysym*/
     t_u32    state      , /*event state*/
-    const char      *character  , /*character*/
-    bool             isRepeated , /*true if the key is repeated more than once*/
+    TCHAR    character  , /*character*/
     unsigned short   keyCount     /*key repeat count*/
   )
   {

@@ -31,7 +31,7 @@
 namespace nux
 {
 
-  struct IEvent;
+  class IEvent;
   class MainFBO;
   class GpuDevice;
   class GraphicsEngine;

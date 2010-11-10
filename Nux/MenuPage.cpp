@@ -262,7 +262,7 @@ namespace nux
         }
         else
         {
-          EmitMouseUp (ievent.e_x - GetBaseX(), ievent.e_y - GetBaseY(), ievent.event_mouse_state(), ievent.event_key_state() );
+          EmitMouseUp (ievent.e_x - GetBaseX(), ievent.e_y - GetBaseY(), ievent.GetMouseState(), ievent.GetKeyState() );
         }
       }
       else if (ievent.e_event == NUX_MOUSE_PRESSED)
@@ -298,7 +298,7 @@ namespace nux
       }
     }
 
-    if (GetGeometry().IsPointInside (ievent.event_x(), ievent.event_y() ) )
+    if (GetGeometry().IsPointInside (ievent.GetX(), ievent.GetY() ) )
     {
       ret |= eMouseEventSolved;
     }

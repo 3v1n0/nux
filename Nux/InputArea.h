@@ -27,9 +27,9 @@
 #include "MouseHandler.h"
 
 #if defined(NUX_OS_WINDOWS)
-#include "NuxGraphics/Gfx_Events.h"
+#include "NuxGraphics/Events.h"
 #elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/GfxEventsX11.h"
+#include "NuxGraphics/Events.h"
 #endif
 
 
@@ -174,12 +174,11 @@ namespace nux
 
     sigc::signal < void,
          GraphicsEngine &    ,   /*Graphics Context for text operation*/
-         unsigned long       ,    /*event type*/
-         unsigned long       ,    /*event keysym*/
-         unsigned long       ,    /*event state*/
-         const char *         ,   /*character*/
-         bool                ,    /*true if the key is repeated more than once*/
-         unsigned short           /*key repeat count*/
+         unsigned long       ,   /*event type*/
+         unsigned long       ,   /*event keysym*/
+         unsigned long       ,   /*event state*/
+         TCHAR               ,   /*character*/
+         unsigned short          /*key repeat count*/
          > OnKeyEvent;
 
     sigc::signal<void, int, int, unsigned long, unsigned long> OnCaptureMouseDownAnyWhereElse;

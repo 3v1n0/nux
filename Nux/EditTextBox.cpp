@@ -314,19 +314,18 @@ namespace nux
 
 
   void EditTextBox::RecvKeyEvent (
-    GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
-    unsigned long    eventType  , /*event type*/
-    unsigned long    keysym     , /*event keysym*/
-    unsigned long    state      , /*event state*/
-    const char      *character  , /*character*/
-    bool             isRepeated , /*true if the key is repeated more than once*/
-    unsigned short   keyCount     /*key repeat count*/)
+    GraphicsEngine  &GfxContext, /*Graphics Context for text operation*/
+    unsigned long   eventType  , /*event type*/
+    unsigned long   keysym     , /*event keysym*/
+    unsigned long   state      , /*event state*/
+    TCHAR           character  , /*character*/
+    unsigned short  keyCount     /*key repeat count*/)
   {
     m_KeyboardHandler.ProcessKey (eventType, keysym, state, character, GetGeometry() );
 
     if (character)
     {
-      sigCharacter.emit (this, *character);
+      sigCharacter.emit (this, character);
       sigEditChange.emit (this);
 
       // When a writable character is entered, no blinking of cursor

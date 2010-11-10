@@ -29,7 +29,7 @@
 #include "GLVertexResourceManager.h"
 #include "GraphicsEngine.h"
 #include "GLWindowManager.h"
-#include "GfxEventsX11.h"
+#include "Events.h"
 #include "IniFile.h"
 
 #include "GfxSetupX11.h"
@@ -931,7 +931,7 @@ namespace nux
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
         m_pEvent->e_event = NUX_MOUSEWHEEL;
-        m_pEvent->e_wheeldelta = -15;
+        m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
 
@@ -939,7 +939,7 @@ namespace nux
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
         m_pEvent->e_event = NUX_MOUSEWHEEL;
-        m_pEvent->e_wheeldelta = +15;
+        m_pEvent->e_wheeldelta = +NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
 
@@ -1370,7 +1370,7 @@ namespace nux
         //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: Keysym: %d - %x."), keysym, keysym);
         if (XLookupString (&xevent.xkey, buffer, sizeof (buffer), NULL, &ComposeStatus) )
         {
-          m_pEvent->e_text = (char *) buffer;
+          m_pEvent->e_text[0] = buffer[0];
         }
 
         break;

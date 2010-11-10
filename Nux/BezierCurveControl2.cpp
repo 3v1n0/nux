@@ -629,7 +629,7 @@ namespace nux
 
   void BezierCurveControl2::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (! (button_flags & eLEFT_BUTTON) )
+    if (! (button_flags & NUX_EVENT_BUTTON1) )
     {
       return;
     }
@@ -706,13 +706,12 @@ namespace nux
   }
 
   void BezierCurveControl2::RecvKeyEvent (
-    GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
-    unsigned long    eventType  , /*event type*/
-    unsigned long    keysym     , /*event keysym*/
-    unsigned long    state      , /*event state*/
-    const char      *character  , /*character*/
-    bool             isRepeated , /*true if the key is repeated more than once*/
-    unsigned short   keyCount     /*key repeat count*/
+    GraphicsEngine  &GfxContext , /*Graphics Context for text operation*/
+    unsigned long   eventType  , /*event type*/
+    unsigned long   keysym     , /*event keysym*/
+    unsigned long   state      , /*event state*/
+    TCHAR           character  , /*character*/
+    unsigned short  keyCount     /*key repeat count*/
   )
   {
 
@@ -720,7 +719,7 @@ namespace nux
 
   void BezierCurveControl2::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if ( (m_bControlPointSelected == false) && (button_flags & eLEFT_BUTTON_DOWN) && S_KEY)
+    if ( (m_bControlPointSelected == false) && (button_flags & NUX_STATE_BUTTON1_DOWN) && S_KEY)
     {
       if (m_bPanningEnabled)
       {
@@ -729,7 +728,7 @@ namespace nux
       }
     }
 
-    if ( (m_bControlPointSelected == false) && (button_flags & eRIGHT_BUTTON_DOWN) && S_KEY)
+    if ( (m_bControlPointSelected == false) && (button_flags & NUX_STATE_BUTTON3_DOWN) && S_KEY)
     {
       if (m_bZoomingEnabled)
       {
@@ -738,7 +737,7 @@ namespace nux
       }
     }
 
-    if (button_flags & eLEFT_BUTTON_DOWN)
+    if (button_flags & NUX_STATE_BUTTON1_DOWN)
       ManipulateBezier (x, y, dx, dy, button_flags, key_flags);
   }
 

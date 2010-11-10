@@ -24,9 +24,9 @@
 #define EVENTHANDLER_H
 
 #if defined(NUX_OS_WINDOWS)
-#include "NuxGraphics/Gfx_Events.h"
+#include "NuxGraphics/Events.h"
 #elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/GfxEventsX11.h"
+#include "NuxGraphics/Events.h"
 #endif
 #include "Utils.h"
 namespace nux

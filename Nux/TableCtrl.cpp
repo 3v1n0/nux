@@ -275,7 +275,7 @@ namespace nux
       {
         // The mouse down event has already been captured. This call is going to find out if a cell was hit.
         OnMouseDown (ievent.e_x - ievent.e_x_root - m_TableArea->GetBaseX(),
-                     ievent.e_y - ievent.e_y_root - m_TableArea->GetBaseY(), ievent.event_mouse_state(), ievent.event_key_state() );
+                     ievent.e_y - ievent.e_y_root - m_TableArea->GetBaseY(), ievent.GetMouseState(), ievent.GetKeyState() );
       }
       else
         ret = m_TableArea->OnEvent (ievent, ret, ProcEvInfo);
@@ -310,7 +310,7 @@ namespace nux
       if (in_column && in_row)
       {
 //            OnMouseDown(ievent.e_x-m_TableArea->GetX(),
-//                ievent.e_y-m_TableArea->GetY(), ievent.event_mouse_state(), ievent.event_key_state());
+//                ievent.e_y-m_TableArea->GetY(), ievent.GetMouseState(), ievent.GetKeyState());
       }
       else
       {

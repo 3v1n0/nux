@@ -24,9 +24,9 @@
 #define GRAPHICINTERFACE_H
 
 #if defined(NUX_OS_WINDOWS)
-#include "Gfx_Events.h"
+#include "Events.h"
 #elif defined(NUX_OS_LINUX)
-#include "GfxEventsX11.h"
+#include "Events.h"
 #else
 #error Undefined GfxEvents for this platform
 #endif

@@ -148,7 +148,7 @@ namespace nux
           // Did we hit the area of the popup menu?
           Geometry window_geometry = m_PopupWindow->GetGeometry();
 
-          if (!window_geometry.IsPointInside (ievent.event_x(), ievent.event_y() ) && (m_IsOpeningMenu == false) )
+          if (!window_geometry.IsPointInside (ievent.GetX(), ievent.GetY() ) && (m_IsOpeningMenu == false) )
           {
             m_PopupWindow->Hide();
             m_MenuIsActive = false;

@@ -262,7 +262,7 @@ namespace nux
     unsigned long    eventType    /*event type*/,
     unsigned long    keysym       /*event keysym*/,
     unsigned long    state        /*event state*/,
-    const TCHAR      *character    /*character*/,
+    TCHAR      character    /*character*/,
     const Geometry &g)
   {
     //if(ievent.event_type != I_AsciiKey && ievent.event_type != I_KeyPress && ievent.event_type != I_KeyRelease)
@@ -274,7 +274,7 @@ namespace nux
     unsigned key = 0;
 
     if (character != 0)
-      key = (unsigned) * character;
+      key = character;
 
     long virtual_code = keysym;
 
