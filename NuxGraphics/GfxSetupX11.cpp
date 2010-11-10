@@ -967,23 +967,23 @@ namespace nux
     _mouse_state |= (xevent.xbutton.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
     _mouse_state |= (xevent.xbutton.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
 
-    if (xevent.xbutton.type == ButtonPress)
+    if (xevent.xbutton.type == ButtonRelease)
     {
       if (xevent.xbutton.button == Button1)
       {
-        _mouse_state |= NUX_EVENT_BUTTON1_DOWN;
+        _mouse_state |= NUX_EVENT_BUTTON1_UP;
         _mouse_state &= ~NUX_STATE_BUTTON1_DOWN;
       }
 
       if (xevent.xbutton.button == Button2)
       {
-        _mouse_state |= NUX_EVENT_BUTTON2_DOWN;
+        _mouse_state |= NUX_EVENT_BUTTON2_UP;
         _mouse_state &= ~NUX_STATE_BUTTON2_DOWN;
       }
 
       if (xevent.xbutton.button == Button3)
       {
-        _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
+        _mouse_state |= NUX_EVENT_BUTTON3_UP;
         _mouse_state &= ~NUX_STATE_BUTTON3_DOWN;
       }
     }
