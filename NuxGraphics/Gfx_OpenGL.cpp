@@ -30,7 +30,7 @@
 #include "GLVertexResourceManager.h"
 #include "GraphicsEngine.h"
 #include "GLWindowManager.h"
-#include "Gfx_Events.h"
+#include "Events.h"
 #include "IniFile.h"
 
 #include "Gfx_OpenGL.h"
@@ -1383,7 +1383,7 @@ J1:
           m_pEvent->e_length = 0;
         }
 
-        m_pEvent->e_text = buffer;
+        m_pEvent->e_text[0] = wParam;
         return 0;
       }
 

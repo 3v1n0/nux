@@ -27,11 +27,10 @@ libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_h = \
+  $(srcdir)/Events.h \
   $(srcdir)/FontTexture.h \
   $(srcdir)/FontRenderer.h \
-  $(srcdir)/GfxEventsX11.h \
   $(srcdir)/GfxSetupX11.h \
-  $(srcdir)/Gfx_Events.h \
   $(srcdir)/Gfx_Interface.h \
   $(srcdir)/GpuDevice.h \
   $(srcdir)/GLDeviceFrameBufferObject.h \
@@ -86,6 +85,7 @@ source_h = \
   $(srcdir)/XInputWindow.h
 
 source_cpp = \
+  $(srcdir)/Events.cpp \
   $(srcdir)/UIColorTheme.cpp \
   $(srcdir)/IOpenGLRectangleTexture.cpp \
   $(srcdir)/IOpenGLVertexDeclaration.cpp \

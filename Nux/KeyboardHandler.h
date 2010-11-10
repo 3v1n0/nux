@@ -27,9 +27,9 @@
 #include "Utils.h"
 #include "NuxGraphics/FontTexture.h"
 #if defined(NUX_OS_WINDOWS)
-#include "NuxGraphics/Gfx_Events.h"
+#include "NuxGraphics/Events.h"
 #elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/GfxEventsX11.h"
+#include "NuxGraphics/Events.h"
 #endif
 #include "NuxCore/Color.h"
 
@@ -58,7 +58,7 @@ namespace nux
       unsigned long    eventType    /*event type*/,
       unsigned long    keysym       /*event keysym*/,
       unsigned long    state        /*event state*/,
-      const TCHAR      *character    /*character*/,
+      TCHAR      character    /*character*/,
       const Geometry &g);
 
     NString GetTextLine() const

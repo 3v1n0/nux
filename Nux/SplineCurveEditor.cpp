@@ -581,13 +581,12 @@ namespace nux
   }
 
   void SplineCurveEditor::RecvKeyEvent (
-    GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
-    unsigned long    eventType  , /*event type*/
-    unsigned long    keysym     , /*event keysym*/
-    unsigned long    state      , /*event state*/
-    const char      *character  , /*character*/
-    bool             isRepeated , /*true if the key is repeated more than once*/
-    unsigned short   keyCount     /*key repeat count*/
+    GraphicsEngine  &GfxContext , /*Graphics Context for text operation*/
+    unsigned long   eventType  , /*event type*/
+    unsigned long   keysym     , /*event keysym*/
+    unsigned long   state      , /*event state*/
+    TCHAR           character  , /*character*/
+    unsigned short  keyCount     /*key repeat count*/
   )
   {
     if (!HasKeyboardFocus() )

@@ -98,7 +98,7 @@ namespace nux
       if (ievent.e_event == NUX_MOUSE_PRESSED)
       {
         if (m_CaptureMouseDownAnyWhereElse)
-          OnCaptureMouseDownAnyWhereElse.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.event_mouse_state(), ievent.event_key_state() );
+          OnCaptureMouseDownAnyWhereElse.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
 
         if (HasKeyboardFocus() )
         {
@@ -117,12 +117,12 @@ namespace nux
 
         if (mouse_signals & eSigMouseLeave)
         {
-          OnMouseLeave.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state() );
+          OnMouseLeave.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
         }
 
         if (mouse_signals & eSigMouseEnter)
         {
-          OnMouseEnter.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state() );
+          OnMouseEnter.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
         }
       }
       return TraverseInfo;
@@ -154,7 +154,7 @@ namespace nux
       if (ievent.e_event == NUX_MOUSE_PRESSED)
       {
         if (m_CaptureMouseDownAnyWhereElse)
-          OnCaptureMouseDownAnyWhereElse.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.event_mouse_state(), ievent.event_key_state() );
+          OnCaptureMouseDownAnyWhereElse.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
       }
 
       // Even if it is eMouseEventSolved, we still want to respond to mouse Enter/Leave events.
@@ -164,12 +164,12 @@ namespace nux
 
         if (mouse_signals & eSigMouseLeave)
         {
-          OnMouseLeave.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state() );
+          OnMouseLeave.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
         }
 
         if (mouse_signals & eSigMouseEnter)
         {
-          OnMouseEnter.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state() );
+          OnMouseEnter.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
         }
       }
     }
@@ -206,7 +206,7 @@ namespace nux
           // We should also have CurrentMouseOverArea == this.
           if (CurrentMouseOverArea)
           {
-            (CurrentMouseOverArea)->OnMouseLeave.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state() );
+            (CurrentMouseOverArea)->OnMouseLeave.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
             //nuxDebugMsg(TEXT("InputArea: Current MouseOver Leave"));
           }
 
@@ -219,7 +219,7 @@ namespace nux
       {
         if (PreviousMouseOverArea)
         {
-          (PreviousMouseOverArea)->OnMouseLeave.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state() );
+          (PreviousMouseOverArea)->OnMouseLeave.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
           // When calling OnMouseLeave.emit on a widget, we have to set the following states to false
           (PreviousMouseOverArea)->m_EventHandler.m_CurrentMouseIn = false;
           (PreviousMouseOverArea)->m_EventHandler.m_PreviousMouseIn = false;
@@ -228,7 +228,7 @@ namespace nux
 
         if (CurrentMouseOverArea)
         {
-          (CurrentMouseOverArea)->OnMouseEnter.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state() );
+          (CurrentMouseOverArea)->OnMouseEnter.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
           //nuxDebugMsg(TEXT("InputArea: Current MouseOver Enter"));
         }
 
@@ -251,7 +251,7 @@ namespace nux
         {
           OnMouseWheel.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root,
                              ievent.e_wheeldelta,
-                             ievent.event_mouse_state(), ievent.event_key_state() );
+                             ievent.GetMouseState(), ievent.GetKeyState() );
         }
       }
 
@@ -270,7 +270,7 @@ namespace nux
         {
           if (hadMouseFocus && (m_EventHandler.MouseIn() == false) )
             // The area has the mouse focus and a mouse down happened outside of it.
-            OnCaptureMouseDownAnyWhereElse.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.event_mouse_state(), ievent.event_key_state() );
+            OnCaptureMouseDownAnyWhereElse.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
         }
       }
 
@@ -289,13 +289,13 @@ namespace nux
         if (ievent.e_mouse_state & NUX_EVENT_BUTTON1_DBLCLICK)
         {
           // Double click
-          OnMouseDoubleClick.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state() );
+          OnMouseDoubleClick.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
         }
         else
         {
           OnMouseDown.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x,
                             m_EventHandler.m_mouse_positiony - m_Geometry.y,
-                            ievent.event_mouse_state(), ievent.event_key_state() );
+                            ievent.GetMouseState(), ievent.GetKeyState() );
         }
 
         if (HasKeyboardFocus() == false)
@@ -322,27 +322,27 @@ namespace nux
         // Just check that the mouse in. If the mouse is in, then it is a "Click".
         if (m_EventHandler.MouseIn() )
         {
-          OnMouseClick.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.event_mouse_state(), ievent.event_key_state() );
+          OnMouseClick.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
           ret |=  eMouseEventSolved;
         }
 
         OnMouseUp.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x,
                         m_EventHandler.m_mouse_positiony - m_Geometry.y,
-                        ievent.event_mouse_state(), ievent.event_key_state() );
+                        ievent.GetMouseState(), ievent.GetKeyState() );
       }
 
       if ( (mouse_signals & eSigMouseMove) && m_EventHandler.HasMouseFocus() )
       {
         OnMouseDrag.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y,
                           m_EventHandler.m_mouse_deltax, m_EventHandler.m_mouse_deltay,
-                          ievent.event_mouse_state(), ievent.event_key_state() );
+                          ievent.GetMouseState(), ievent.GetKeyState() );
       }
 
       if (mouse_signals & eSigMouseMove && (!m_EventHandler.HasMouseFocus() ) )
       {
         OnMouseMove.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y,
                           m_EventHandler.m_mouse_deltax, m_EventHandler.m_mouse_deltay,
-                          ievent.event_mouse_state(), ievent.event_key_state() );
+                          ievent.GetMouseState(), ievent.GetKeyState() );
       }
     }
 
@@ -351,11 +351,10 @@ namespace nux
       OnKeyEvent.emit (
         GetGraphicsThread()->GetGraphicsEngine(),
         ievent.e_event,
-        ievent.event_keysym(),
-        ievent.event_key_state(),
-        ievent.event_text(),
-        ievent.event_is_key_auto_repeat(),
-        ievent.event_key_auto_repeat_count() );
+        ievent.GetKeySym(),
+        ievent.GetKeyState(),
+        ievent.GetChar(),
+        ievent.GetKeyRepeatCount() );
     }
 
     GetWindowCompositor().m_PreviousMouseOverArea = PreviousMouseOverArea;

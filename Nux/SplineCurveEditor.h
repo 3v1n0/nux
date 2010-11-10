@@ -329,13 +329,12 @@ namespace nux
     void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void RecvKeyEvent (
-      GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
-      unsigned long    eventType  , /*event type*/
-      unsigned long    keysym     , /*event keysym*/
-      unsigned long    state      , /*event state*/
-      const char      *character  , /*character*/
-      bool             isRepeated , /*true if the key is repeated more than once*/
-      unsigned short   keyCount     /*key repeat count*/
+      GraphicsEngine  &GfxContext, /*Graphics Context for text operation*/
+      unsigned long   eventType  , /*event type*/
+      unsigned long   keysym     , /*event keysym*/
+      unsigned long   state      , /*event state*/
+      TCHAR           character  , /*character*/
+      unsigned short  keyCount     /*key repeat count*/
     );
 
     sigc::signal< void, SplineCurveEditor * > sigCurveChange;

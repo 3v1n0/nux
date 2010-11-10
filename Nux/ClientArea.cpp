@@ -281,12 +281,11 @@ namespace nux
 
   void ClientArea::RecvKeyEvent (
     GraphicsEngine    &GfxContext,    /*Graphics Context for text operation*/
-    unsigned long       event_type,    /*event type*/
-    unsigned long       event_keysym,    /*event keysym*/
-    unsigned long       event_state,    /*event state*/
-    const char         *event_char,    /*character*/
-    bool                repeated,    /*true if the key is repeated more than once*/
-    unsigned short      repeat_count     /*key repeat count*/
+    unsigned long     event_type,    /*event type*/
+    unsigned long     GetKeySym,    /*event keysym*/
+    unsigned long     event_state,    /*event state*/
+    TCHAR             event_char,    /*character*/
+    unsigned short    repeat_count     /*key repeat count*/
   )
   {
 
