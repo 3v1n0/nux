@@ -215,6 +215,8 @@ namespace nux
     {
       m_CurrentWindow = window;
     }
+    
+    void SetAlwaysOnFrontWindow (BaseWindow* window);
 
   private:
     void SetFocusAreaWindow (BaseWindow *window)
@@ -260,6 +262,7 @@ namespace nux
 
     std::list<BaseWindow*> m_WindowList;
     std::list<BaseWindow*> m_ModalWindowList;
+    BaseWindow*            _always_on_front_window;
 
     std::list<MenuPage *> *m_MenuList;
 

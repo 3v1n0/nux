@@ -181,7 +181,7 @@ namespace nux
          unsigned short          /*key repeat count*/
          > OnKeyEvent;
 
-    sigc::signal<void, int, int, unsigned long, unsigned long> OnCaptureMouseDownAnyWhereElse;
+    sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDownOutsideArea;
   };
 
 }

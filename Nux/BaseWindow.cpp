@@ -88,35 +88,14 @@ namespace nux
     window_event.e_x_root = base.x;
     window_event.e_y_root = base.y;
 
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!m_Geometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-        //return TraverseInfo;
-      }
-    }
-
-//    if(m_vertical_scrollbar_enable)
-//        ret = vscrollbar->ProcessEvent(ievent, ret, ProcEvInfo);
-//    if(m_horizontal_scrollbar_enable)
-//        ret = hscrollbar->ProcessEvent(ievent, ret, ProcEvInfo);
-
-    if (IsSizeMatchContent() == false)
-    {
-
-    }
-
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
-    Geometry viewGeometry = GetGeometry(); //Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-    bool traverse = true;
+    Geometry viewGeometry = GetGeometry();
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
       if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
       {
         ProcEvInfo = eDoNotProcess;
-        traverse = false;
       }
     }
 

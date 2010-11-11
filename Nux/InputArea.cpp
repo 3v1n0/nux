@@ -33,10 +33,6 @@
 namespace nux
 {
 
-  long g_FocusHandle = -1;
-
-  long gNumArea = 0;
-
   NUX_IMPLEMENT_OBJECT_TYPE (InputArea);
 
   InputArea::InputArea (NUX_FILE_LINE_DECL)
@@ -91,14 +87,14 @@ namespace nux
     InputArea *PreviousMouseOverArea = (GetWindowCompositor().m_PreviousMouseOverArea);
     InputArea *CurrentMouseOverArea = (GetWindowCompositor().m_MouseOverArea);
 
-    gNumArea++;
-
     if (ProcessEventInfo & eDoNotProcess)
     {
       if (ievent.e_event == NUX_MOUSE_PRESSED)
       {
         if (m_CaptureMouseDownAnyWhereElse)
-          OnCaptureMouseDownAnyWhereElse.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
+        {
+          OnMouseDownOutsideArea.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
+        }
 
         if (HasKeyboardFocus() )
         {
@@ -154,7 +150,9 @@ namespace nux
       if (ievent.e_event == NUX_MOUSE_PRESSED)
       {
         if (m_CaptureMouseDownAnyWhereElse)
-          OnCaptureMouseDownAnyWhereElse.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
+        {
+          OnMouseDownOutsideArea.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
+        }
       }
 
       // Even if it is eMouseEventSolved, we still want to respond to mouse Enter/Leave events.
@@ -176,7 +174,6 @@ namespace nux
     else
     {
       unsigned int mouse_signals;
-      bool hadMouseFocus = HasMouseFocus();
       mouse_signals = m_EventHandler.Process (ievent, m_Geometry);
 
       if (HasMouseFocus() && (GetWindowCompositor().GetMouseFocusArea() == 0) ) // never evince and object that has the mouse focus.
@@ -268,9 +265,11 @@ namespace nux
       {
         if (m_CaptureMouseDownAnyWhereElse)
         {
-          if (hadMouseFocus && (m_EventHandler.MouseIn() == false) )
-            // The area has the mouse focus and a mouse down happened outside of it.
-            OnCaptureMouseDownAnyWhereElse.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
+          if (m_EventHandler.MouseIn() == false)
+          {
+            // A mouse Down happened outside of this view.
+            OnMouseDownOutsideArea.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
+          }
         }
       }
 
