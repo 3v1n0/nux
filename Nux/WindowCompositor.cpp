@@ -64,7 +64,7 @@ namespace nux
     m_MouseFocusArea            = NULL;
     m_MouseOverArea             = NULL;
     m_PreviousMouseOverArea     = NULL;
-
+    _always_on_front_window     = NULL;
 
     m_SelectedWindow = NULL;
 
@@ -477,12 +477,17 @@ namespace nux
       m_WindowList.erase (it);
       m_WindowList.push_front (window);
     }
+
+    EnsureAlwaysOnFrontWindow ();
   }
 
   //! Push a floating view at the bottom of the stack.
   void WindowCompositor::PushToBack (BaseWindow *window)
   {
     if (window == 0)
+      return;
+
+    if (window == _always_on_front_window)
       return;
 
     std::list<BaseWindow *>::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
@@ -492,6 +497,8 @@ namespace nux
       m_WindowList.erase (it);
       m_WindowList.push_back (window);
     }
+
+    EnsureAlwaysOnFrontWindow ();
   }
 
   //! Push a floating view just above another floating view.
@@ -502,8 +509,8 @@ namespace nux
     NUX_RETURN_IF_FALSE (bottom_floating_view != top_floating_view)
     
     std::list<BaseWindow *>::iterator it;
-    std::list<BaseWindow *>::iterator it_top = find (m_WindowList.begin(), m_WindowList.end(), top_floating_view);
-    std::list<BaseWindow *>::iterator it_bot = find (m_WindowList.begin(), m_WindowList.end(), bottom_floating_view);
+    std::list<BaseWindow *>::iterator it_top;
+    std::list<BaseWindow *>::iterator it_bot;
     
     int i = 0;
     int top_pos = -1;
@@ -536,6 +543,28 @@ namespace nux
     {
       m_WindowList.erase (it_top);
       m_WindowList.insert (it_bot, top_floating_view);
+    }
+
+    EnsureAlwaysOnFrontWindow ();
+  }
+
+  void WindowCompositor::SetAlwaysOnFrontWindow (BaseWindow* window)
+  {
+    _always_on_front_window = window;
+
+    EnsureAlwaysOnFrontWindow ();
+  }
+
+  void WindowCompositor::EnsureAlwaysOnFrontWindow ()
+  {
+    if (_always_on_front_window == NULL)
+      return;
+
+    std::list<BaseWindow *>::iterator always_top_it = find (m_WindowList.begin(), m_WindowList.end(), _always_on_front_window);
+    if ((always_top_it != m_WindowList.end ()) && (always_top_it != m_WindowList.begin ()) && (_always_on_front_window != NULL))
+    {
+      m_WindowList.erase (always_top_it);
+      m_WindowList.insert (always_top_it, _always_on_front_window);
     }
   }
 

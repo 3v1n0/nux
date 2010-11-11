@@ -217,6 +217,7 @@ namespace nux
     }
     
     void SetAlwaysOnFrontWindow (BaseWindow* window);
+    void EnsureAlwaysOnFrontWindow ();
 
   private:
     void SetFocusAreaWindow (BaseWindow *window)
@@ -262,7 +263,7 @@ namespace nux
 
     std::list<BaseWindow*> m_WindowList;
     std::list<BaseWindow*> m_ModalWindowList;
-    BaseWindow*            _always_on_front_window;
+    BaseWindow*            _always_on_front_window;  //!< Floating view that always remains on top.
 
     std::list<MenuPage *> *m_MenuList;
 

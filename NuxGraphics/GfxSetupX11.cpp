@@ -1395,7 +1395,6 @@ namespace nux
 
       case ButtonPress:
       {
-        printf ("ButtonPress: %d %d\n", x_recalc, y_recalc);
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
