@@ -174,7 +174,6 @@ namespace nux
     else
     {
       unsigned int mouse_signals;
-      bool hadMouseFocus = HasMouseFocus();
       mouse_signals = m_EventHandler.Process (ievent, m_Geometry);
 
       if (HasMouseFocus() && (GetWindowCompositor().GetMouseFocusArea() == 0) ) // never evince and object that has the mouse focus.
