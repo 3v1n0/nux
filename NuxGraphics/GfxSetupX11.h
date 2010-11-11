@@ -99,6 +99,7 @@ namespace nux
     // size, position
     Size m_ViewportSize;
     Size m_WindowSize;
+    Point m_WindowPosition;
 
     // surface attibute;
     bool m_Fullscreen;
