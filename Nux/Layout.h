@@ -222,6 +222,11 @@ namespace nux
 
     virtual void SetApplication (WindowThread *Application);
 
+    std::list<Area *>& GetChildren ()
+    {
+      return m_LayoutElementList;
+    }
+
     //! Set dirty flag
     void SetDirty (bool b)
     {
