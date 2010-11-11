@@ -173,19 +173,14 @@ namespace nux
     {
       case NUX_MOUSE_PRESSED:
       {
-        /*me.MouseDown = true;
-        me.m_HWMouseDown = true;
-        me.m_HWMouseUp = false;*/
         m_events |= eSigMouseDown;
-        SetMouseFocus (true);
+        if (m_CurrentMouseIn)
+          SetMouseFocus (true);
       }
       break;
 
       case NUX_MOUSE_RELEASED:
       {
-        /*me.MouseUp = true;
-        me.m_HWMouseUp = true;
-        me.m_HWMouseDown = false;*/
         if (HasMouseFocus() )
         {
           m_events |= eSigMouseUp;
