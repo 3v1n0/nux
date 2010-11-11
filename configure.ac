@@ -179,9 +179,7 @@ AC_ARG_ENABLE([documentation],
 
 AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 
-dnl ===========================================================================
-
-AM_INIT_AUTOMAKE(nux, nux_api_version)
+dnl ==========================================================================
 
 if test "x$GCC" = "xyes"; then
   GCC_FLAGS="-g -Wall"
