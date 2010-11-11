@@ -36,6 +36,7 @@ namespace nux
   class SystemThread;
   class UXTheme;
   class TimerHandler;
+  class Timeline;
   struct ClientAreaDraw;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -117,9 +118,9 @@ namespace nux
     Area* GetTopRenderingParent(Area* area);
 
     void AddToDrawList (View *view);
-    
+
     void ClearDrawList ();
-  
+
     std::vector<Geometry> GetDrawList ();
 
     // Layout
@@ -165,7 +166,7 @@ namespace nux
     {
       return m_bWaitForModalWindow;
     }
-    
+
     bool IsModalWindow()
     {
       return m_bWaitForModalWindow;
@@ -175,7 +176,7 @@ namespace nux
     {
       m_WindowStyle = wstyle;
     }
-    
+
     WindowStyle GetWindowStyle() const
     {
       return m_WindowStyle;
@@ -270,6 +271,12 @@ namespace nux
     Layout* GetMainLayout();
 
     /*!
+        Add a timeline to our window
+    */
+    void AddTimeline (Timeline* timeline);
+    bool ProcessTimelines ();
+
+    /*!
         This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
     */
     void *m_InitData;
@@ -278,7 +285,7 @@ namespace nux
     sigc::signal<void> RedrawRequested;
 
   protected:
-
+    std::list<Timeline*> _Timelines;
     //void SetModalWindow(bool b) {m_bIsModal = b;}
 
     /*!

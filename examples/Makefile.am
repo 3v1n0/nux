@@ -1,4 +1,4 @@
-CLEANFILES = 
+CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST =
 
@@ -6,7 +6,7 @@ if BUILD_EXAMPLES
 
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
-noinst_PROGRAMS = combobox cairo textedit button checkbox tooltip
+noinst_PROGRAMS = combobox cairo textedit button checkbox tooltip timeline
 
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile
@@ -44,5 +44,7 @@ checkbox_SOURCES = checkbox.cpp
 checkbox_LDADD = $(ALL_LIBS)
 tooltip_SOURCES = tooltip.cpp
 tooltip_LDADD = $(ALL_LIBS)
+timeline_SOURCES = timeline.cpp
+timeline_LDADD = $(ALL_LIBS)
 
 endif

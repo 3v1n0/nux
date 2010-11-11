@@ -1,4 +1,4 @@
-CLEANFILES = 
+CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST =
 
@@ -131,6 +131,7 @@ source_cpp = \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/TimeGraph.cpp \
+  $(srcdir)/Timeline.cpp \
   $(srcdir)/TimerProc.cpp \
   $(srcdir)/ToolButton.cpp \
   $(srcdir)/TreeControl.cpp \
@@ -260,6 +261,7 @@ source_h = \
   $(srcdir)/TabView.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/TimeGraph.h \
+  $(srcdir)/Timeline.h \
   $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
   $(srcdir)/TreeControl.h \

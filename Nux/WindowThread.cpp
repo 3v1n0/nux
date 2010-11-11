@@ -29,9 +29,9 @@
 #include "WindowCompositor.h"
 #include "SystemThread.h"
 #include "FloatingWindow.h"
+//#include "Timeline.h"
 
 #include "WindowThread.h"
-
 namespace nux
 {
 
@@ -137,8 +137,56 @@ namespace nux
     NULL
   };
 
+  //~ // Timeline source functions
+  //~ static gboolean
+  //~ nux_timeline_prepare  (GSource  *source,
+                         //~ gint     *timeout)
+  //~ {
+    //~ *timeout = 0;
+//~
+    //~ return TRUE;
+  //~ }
+//~
+  //~ static gboolean
+  //~ nux_timeline_check    (GSource  *source)
+  //~ {
+    //~ return TRUE;
+  //~ }
+//~
+  //~ static gboolean
+  //~ nux_timeline_dispatch (GSource    *source,
+                         //~ GSourceFunc callback,
+                         //~ gpointer    user_data)
+  //~ {
+    //~ if (!callback)
+      //~ {
+        //~ //You forgot to call g_source_set_callback, stoopid gord!
+        //~ return FALSE;
+      //~ }
+//~
+    //~ nux_glib_threads_lock();
+    //~ WindowThread *window_thread = NUX_STATIC_CAST (WindowThread *, user_data);
+//~
+    //~ // pump the timelines
+    //~ window_thread->ProcessTimelines ();
+//~
+    //~ nux_glib_threads_unlock();
+//~
+    //~ return TRUE;
+  //~ }
+//~
+  //~ static GSourceFuncs timeline_funcs =
+  //~ {
+    //~ nux_timeline_prepare,
+    //~ nux_timeline_check,
+    //~ nux_timeline_dispatch,
+    //~ NULL
+  //~ };
+
   void WindowThread::InitGlibLoop()
   {
+    GSource *source;
+
     if (!IsEmbeddedWindow ())
     {
       static bool gthread_initialized = false;
@@ -159,8 +207,6 @@ namespace nux
 
     gLibEventMutex = 0; //g_mutex_new();
 
-
-    GSource *source;
     source = g_source_new (&event_funcs, sizeof (NuxEventSource) );
     NuxEventSource *event_source = (NuxEventSource *) source;
 
@@ -179,11 +225,22 @@ namespace nux
     g_source_add_poll (source, &event_source->event_poll_fd);
     g_source_set_can_recurse (source, TRUE);
     g_source_set_callback (source, 0, this, 0);
-    
+
     if (IsEmbeddedWindow ())
       g_source_attach (source, NULL);
     else
       g_source_attach (source, m_GLibContext);
+
+
+    // make a source for our master clock
+    //~ source = g_source_new (&timeline_funcs, sizeof (GSource));
+//~
+    //~ g_source_set_priority (source, G_PRIORITY_DEFAULT + 10);
+    //~ g_source_set_callback (source, 0, this, 0);
+    //~ if (IsEmbeddedWindow ())
+      //~ g_source_attach (source, NULL);
+    //~ else
+      //~ g_source_attach (source, m_GLibContext);
 
     if (!IsEmbeddedWindow ())
     {
@@ -209,7 +266,7 @@ namespace nux
         dd->window_thread->RedrawRequested.emit();
     else
         dd->window_thread->ExecutionLoop(0);
-    
+
     if(!repeat)
       delete dd;
 
@@ -513,6 +570,12 @@ namespace nux
       SetComputingLayout (false);
   }
 
+  void WindowThread::AddTimeline (Timeline *timeline)
+  {
+    _Timelines.push_back (timeline);
+    _Timelines.unique ();
+  }
+
   unsigned int WindowThread::Run (void *arg)
   {
     if (m_UserInitFunc && (m_WidgetInitialized == false) )
@@ -623,7 +686,7 @@ namespace nux
           KeepRunning = false;
           return 0; //break;
       }
-      
+
       if (IsEmbeddedWindow () && event.e_event ==	NUX_SIZE_CONFIGURATION)
         m_size_configuration_event = true;
 
@@ -670,7 +733,7 @@ namespace nux
           m_size_configuration_event = true;
       }
 
-      // Some action may have caused layouts and areas to request a recompute. 
+      // Some action may have caused layouts and areas to request a recompute.
       // Process them here before the Draw section.
       if(!GetWindow().isWindowMinimized())
       {
@@ -688,7 +751,7 @@ namespace nux
       if (!GetWindow().IsPauseThreadGraphicsRendering() || IsEmbeddedWindow ())
       {
         bool SwapGLBuffer = false;
-        
+
         bool RequestRequired = false;
 
         if (Application->m_bFirstDrawPass)
@@ -986,6 +1049,48 @@ namespace nux
     return state;
   }
 
+  bool WindowThread::ProcessTimelines ()
+  {
+    // go through our timelines and tick them
+    // return true if we still have active timelines
+    float ms_in_float = 0.0f;
+    std::list<Timeline*>::iterator li;
+    std::list<Timeline*> timelines_copy;
+
+    ms_in_float = GetWindow().GetFrameTime();
+
+    // we need to handle timelines being removed during our itteration
+    // so we copy the list
+    //copy (_Timelines.begin (), _Timelines.end (), timelines_copy);
+    for (li=_Timelines.begin (); li!=_Timelines.end (); ++li)
+      timelines_copy.push_back ((*li));
+
+
+    // need to reference each item in the list first
+    for (li=timelines_copy.begin (); li!=timelines_copy.end (); ++li)
+      (*li)->Reference ();
+
+  	for(li=timelines_copy.begin(); li!=timelines_copy.end(); ++li)
+    {
+      if (dynamic_cast<Timeline*> (*li) == NULL)
+      {
+        //the timeline died, remove it
+        _Timelines.remove ((*li));
+        continue;
+      }
+
+      (*li)->DoTick ((unsigned long) ms_in_float);
+    }
+
+    // need to reference each item in the list first
+    for (li=timelines_copy.begin (); li!=timelines_copy.end (); ++li)
+      (*li)->UnReference ();
+
+    // return if we have any timelines left
+
+    return (_Timelines.size () != 0);
+  }
+
   void WindowThread::EnableMouseKeyboardInput()
   {
     std::list<NThread *>::iterator it;
@@ -1250,7 +1355,7 @@ namespace nux
     if (m_window_compositor)
       m_window_compositor->SetBackgroundPaintLayer (bkg);
   }
-  
+
   Area* WindowThread::GetTopRenderingParent(Area* area)
   {
     NUX_RETURN_VALUE_IF_NULL(area, NULL);
@@ -1266,7 +1371,7 @@ namespace nux
       {
         return parent;
       }
-      else 
+      else
       {
         return GetTopRenderingParent (parent);
       }
@@ -1276,31 +1381,31 @@ namespace nux
       return 0;
     }
   }
-  
+
   void WindowThread::AddToDrawList (View *view)
   {
     Area *parent;
     Geometry geo, pgeo;
-    
+
     geo = view->GetGeometry();
-    
+
     parent = GetTopRenderingParent (view);
-    
+
     if (parent)
     {
       pgeo = parent->GetGeometry();
       geo.x += pgeo.x;
       geo.y += pgeo.y;
     }
-    
+
     m_dirty_areas.push_back(geo);
   }
-  
+
   void WindowThread::ClearDrawList ()
   {
     m_dirty_areas.clear ();
   }
-  
+
   std::vector<Geometry> WindowThread::GetDrawList ()
   {
     return m_dirty_areas;
@@ -1396,7 +1501,7 @@ namespace nux
         m_size_configuration_event = true;
     }
 
-    // Some action may have caused layouts and areas to request a recompute. 
+    // Some action may have caused layouts and areas to request a recompute.
     // Process them here before the Draw section.
     if (!GetWindow().isWindowMinimized() )
     {
