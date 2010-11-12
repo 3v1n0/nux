@@ -7,6 +7,5 @@ all: doxygen-doc
 endif
 
 DISTCLEANFILES = doc/html/* doc/*
-EXTRA_DIST = $(DX_CONFIG) doc/html
+EXTRA_DIST = $(DX_CONFIG)
 
-DISTCHECK_CONFIGURE_FLAGS = --enable-documentation
