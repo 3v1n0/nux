@@ -114,6 +114,7 @@ namespace nux
                       GSourceFunc  callback,
                       gpointer     user_data)
   {
+    printf ("nux_event_dispatch\n");
     nux_glib_threads_lock();
     WindowThread *window_thread = NUX_STATIC_CAST (WindowThread *, user_data);
     t_u32 return_code = window_thread->ExecutionLoop (0);
@@ -137,51 +138,45 @@ namespace nux
     NULL
   };
 
-  //~ // Timeline source functions
-  //~ static gboolean
-  //~ nux_timeline_prepare  (GSource  *source,
-                         //~ gint     *timeout)
-  //~ {
-    //~ *timeout = 0;
-//~
-    //~ return TRUE;
-  //~ }
-//~
-  //~ static gboolean
-  //~ nux_timeline_check    (GSource  *source)
-  //~ {
-    //~ return TRUE;
-  //~ }
-//~
-  //~ static gboolean
-  //~ nux_timeline_dispatch (GSource    *source,
-                         //~ GSourceFunc callback,
-                         //~ gpointer    user_data)
-  //~ {
-    //~ if (!callback)
-      //~ {
-        //~ //You forgot to call g_source_set_callback, stoopid gord!
-        //~ return FALSE;
-      //~ }
-//~
-    //~ nux_glib_threads_lock();
-    //~ WindowThread *window_thread = NUX_STATIC_CAST (WindowThread *, user_data);
-//~
-    //~ // pump the timelines
-    //~ window_thread->ProcessTimelines ();
-//~
-    //~ nux_glib_threads_unlock();
-//~
-    //~ return TRUE;
-  //~ }
-//~
-  //~ static GSourceFuncs timeline_funcs =
-  //~ {
-    //~ nux_timeline_prepare,
-    //~ nux_timeline_check,
-    //~ nux_timeline_dispatch,
-    //~ NULL
-  //~ };
+   // Timeline source functions
+  static gboolean
+  nux_timeline_prepare  (GSource  *source,
+                         gint     *timeout)
+  {
+    *timeout = 0;
+    return TRUE;
+  }
+
+  static gboolean
+  nux_timeline_check    (GSource  *source)
+  {
+    return TRUE;
+  }
+
+  static gboolean
+  nux_timeline_dispatch (GSource    *source,
+                         GSourceFunc callback,
+                         gpointer    user_data)
+  {
+    GTimeVal time_val;
+    nux_glib_threads_lock();
+    g_source_get_current_time (source, &time_val);
+    WindowThread *window_thread = NUX_STATIC_CAST (WindowThread *, user_data);
+
+    // pump the timelines
+    window_thread->ProcessTimelines (&time_val);
+
+    nux_glib_threads_unlock();
+    return TRUE;
+  }
+
+  static GSourceFuncs timeline_funcs =
+  {
+    nux_timeline_prepare,
+    nux_timeline_check,
+    nux_timeline_dispatch,
+    NULL
+  };
 
   void WindowThread::InitGlibLoop()
   {
@@ -233,14 +228,16 @@ namespace nux
 
 
     // make a source for our master clock
-    //~ source = g_source_new (&timeline_funcs, sizeof (GSource));
-//~
-    //~ g_source_set_priority (source, G_PRIORITY_DEFAULT + 10);
-    //~ g_source_set_callback (source, 0, this, 0);
-    //~ if (IsEmbeddedWindow ())
-      //~ g_source_attach (source, NULL);
-    //~ else
-      //~ g_source_attach (source, m_GLibContext);
+    source = g_source_new (&timeline_funcs, sizeof (GSource));
+
+    g_source_set_priority (source, G_PRIORITY_DEFAULT + 10);
+    g_source_set_callback (source, 0, this, 0);
+    g_source_set_can_recurse (source, TRUE);
+
+    if (IsEmbeddedWindow ())
+      g_source_attach (source, NULL);
+    else
+      g_source_attach (source, m_GLibContext);
 
     if (!IsEmbeddedWindow ())
     {
@@ -348,6 +345,8 @@ namespace nux
     m_FrameCounter = 0;
     m_FramePeriodeCounter = 0;
     m_PeriodeTime = 0;
+
+    _Timelines = new std::list<Timeline*> ();
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     m_GLibLoop      = 0;
@@ -572,8 +571,9 @@ namespace nux
 
   void WindowThread::AddTimeline (Timeline *timeline)
   {
-    _Timelines.push_back (timeline);
-    _Timelines.unique ();
+    printf ("timelines size: %iu\n", (unsigned int)_Timelines->size ());
+    _Timelines->push_back (timeline);
+    _Timelines->unique ();
   }
 
   unsigned int WindowThread::Run (void *arg)
@@ -1049,46 +1049,65 @@ namespace nux
     return state;
   }
 
-  bool WindowThread::ProcessTimelines ()
+  bool WindowThread::ProcessTimelines (GTimeVal *frame_time)
   {
     // go through our timelines and tick them
     // return true if we still have active timelines
-    float ms_in_float = 0.0f;
+
+    long msecs;
+    msecs = (frame_time->tv_sec - _last_timeline_frame_time_sec) * 1000 +
+            (frame_time->tv_usec - _last_timeline_frame_time_usec) / 1000;
+
+    if (msecs < 0)
+    {
+      _last_timeline_frame_time_sec = frame_time->tv_sec;
+      _last_timeline_frame_time_usec = frame_time->tv_usec;
+      return true;
+    }
+
+    if (msecs > 0)
+    {
+      _last_timeline_frame_time_sec += msecs / 1000;
+      _last_timeline_frame_time_usec += msecs * 1000;
+    }
+
     std::list<Timeline*>::iterator li;
     std::list<Timeline*> timelines_copy;
 
-    ms_in_float = GetWindow().GetFrameTime();
-
-    // we need to handle timelines being removed during our itteration
-    // so we copy the list
-    //copy (_Timelines.begin (), _Timelines.end (), timelines_copy);
-    for (li=_Timelines.begin (); li!=_Timelines.end (); ++li)
+    for (li=_Timelines->begin (); li!=_Timelines->end (); ++li)
+    {
       timelines_copy.push_back ((*li));
+    }
 
-
-    // need to reference each item in the list first
+    // loop through and remove the timelines that have no references left
     for (li=timelines_copy.begin (); li!=timelines_copy.end (); ++li)
+    {
+      if ((*li)->GetReferenceCount () == 1)
+        {
+          _Timelines->remove ((*li));
+          (*li)->UnReference ();
+        }
+    }
+
+    // make a new copy of the timelines and reference
+    timelines_copy.clear ();
+    for (li=_Timelines->begin (); li!=_Timelines->end (); ++li)
+    {
       (*li)->Reference ();
+      timelines_copy.push_back ((*li));
+    }
 
   	for(li=timelines_copy.begin(); li!=timelines_copy.end(); ++li)
     {
-      if (dynamic_cast<Timeline*> (*li) == NULL)
-      {
-        //the timeline died, remove it
-        _Timelines.remove ((*li));
-        continue;
-      }
-
-      (*li)->DoTick ((unsigned long) ms_in_float);
+      (*li)->DoTick (msecs);
     }
 
-    // need to reference each item in the list first
+    // unreference again
     for (li=timelines_copy.begin (); li!=timelines_copy.end (); ++li)
       (*li)->UnReference ();
 
     // return if we have any timelines left
-
-    return (_Timelines.size () != 0);
+    return (_Timelines->size () != 0);
   }
 
   void WindowThread::EnableMouseKeyboardInput()

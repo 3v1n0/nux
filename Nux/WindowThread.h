@@ -274,8 +274,9 @@ namespace nux
         Add a timeline to our window
     */
     void AddTimeline (Timeline* timeline);
-    bool ProcessTimelines ();
-
+    bool ProcessTimelines (GTimeVal *frame_time);
+    long _last_timeline_frame_time_sec;
+    long _last_timeline_frame_time_usec;
     /*!
         This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
     */
@@ -285,7 +286,6 @@ namespace nux
     sigc::signal<void> RedrawRequested;
 
   protected:
-    std::list<Timeline*> _Timelines;
     //void SetModalWindow(bool b) {m_bIsModal = b;}
 
     /*!
@@ -355,6 +355,8 @@ namespace nux
     t_u32 m_FrameCounter;
     t_u32 m_FramePeriodeCounter;
     float m_PeriodeTime;
+
+    std::list<Timeline*> *_Timelines;
 
     bool m_bFirstDrawPass;
     unsigned int m_StartupWidth;
