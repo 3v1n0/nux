@@ -201,7 +201,7 @@ namespace nux
     OnMouseDown.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDown) );
     OnMouseUp.connect (sigc::mem_fun (this, &MenuPage::EmitMouseUp) );
     OnMouseLeave.connect (sigc::mem_fun (this, &MenuPage::RecvMouseLeave) );
-    OnCaptureMouseDownAnyWhereElse.connect (sigc::mem_fun (this, &MenuPage::Terminate) );
+    OnMouseDownOutsideArea.connect (sigc::mem_fun (this, &MenuPage::Terminate) );
 
     // Set Geometry
     SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );

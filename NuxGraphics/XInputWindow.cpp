@@ -204,7 +204,40 @@ namespace nux
     
     return r;
   }
+  
+  Window XInputWindow::GetWindow ()
+  {
+    return _window;
+  }
+  
+  void XInputWindow::GrabPointer ()
+  {
+    Display* d = GetThreadGLWindow()->GetX11Display();
+    XGrabPointer(d,
+                 _window,
+                 True,
+                 KeyPressMask       |
+                 KeyReleaseMask     |
+                 ButtonPressMask    |
+                 ButtonReleaseMask  |
+                 EnterWindowMask    |
+                 LeaveWindowMask    |
+                 PointerMotionMask  |
+                 ButtonMotionMask   |
+                 PropertyChangeMask |
+                 FocusChangeMask,
+                 GrabModeAsync,
+                 GrabModeAsync,
+                 None,
+                 None,
+                 CurrentTime);
+  }
+  
+  void XInputWindow::UnGrabPointer ()
+  {
+    Display* d = GetThreadGLWindow()->GetX11Display();
+    XUngrabPointer(d, CurrentTime);
+  }
+    
 }
-
-
 

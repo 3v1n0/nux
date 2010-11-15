@@ -64,7 +64,8 @@ namespace nux
     m_MouseFocusArea            = NULL;
     m_MouseOverArea             = NULL;
     m_PreviousMouseOverArea     = NULL;
-
+    _always_on_front_window     = NULL;
+    _inside_event_processing    = false;
 
     m_SelectedWindow = NULL;
 
@@ -307,9 +308,6 @@ namespace nux
     {
       SetCurrentEvent (&ievent);
 
-      //SetMouseFocusArea(0);
-      //SetMouseOverArea(0);
-
       if (m_MenuWindow)
       {
         ievent.e_x_root = m_MenuWindow->GetBaseX();
@@ -372,18 +370,28 @@ namespace nux
       }
 
       std::list<BaseWindow *>::iterator it;
-
-      if (m_ModalWindowList.size() > 0)
+      for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
       {
-        SetCurrentWindow (*m_ModalWindowList.begin() );
-        ret = (*m_ModalWindowList.begin() )->ProcessEvent (ievent, ret, ProcessEventInfo);
+        // Reset the preemptive hidden/visible status of all base windows.
+        BaseWindow *window = NUX_STATIC_CAST (BaseWindow *, (*it));
+        window->_entering_visible_status = false;
+        window->_entering_hidden_status = false;
+      }
+      
+      if (m_ModalWindowList.size () > 0)
+      {
+        _inside_event_processing = true;
+        SetCurrentWindow (*m_ModalWindowList.begin());
+        ret = (*m_ModalWindowList.begin ())->ProcessEvent (ievent, ret, ProcessEventInfo);
         SetCurrentWindow (NULL);
+        _inside_event_processing = false;
       }
       else
       {
         bool ordered = true;
-
-        if (ievent.e_event == NUX_MOUSE_PRESSED )
+        _inside_event_processing = true;
+        
+        if (ievent.e_event == NUX_MOUSE_PRESSED)
         {
           // There is a possibility we might have to reorder the stack of windows.
           // Cancel the currently selected window.
@@ -391,16 +399,16 @@ namespace nux
           ordered = false;
         }
 
-        for (it = m_WindowList.begin(); it != m_WindowList.end(); it++)
+        for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
         {
-          if ( (*it)->IsVisible() )
+          if ((*it)->IsVisible () && ((*it)->_entering_visible_status == false))
           {
             // Traverse the window from the top of the visibility stack to the bottom.
             SetCurrentWindow (*it);
             ret = (*it)->ProcessEvent (ievent, ret, ProcessEventInfo);
             SetCurrentWindow (NULL);
 
-            if ( (ret & eMouseEventSolved) && (m_SelectedWindow == 0) )
+            if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0))
             {
               // The mouse event was solved in the window pointed by the iterator.
               // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
@@ -409,26 +417,30 @@ namespace nux
             }
           }
         }
-
-        if ( (ordered == false) && (m_SelectedWindow != 0) )
+        _inside_event_processing = false;
+        
+        if ((ordered == false) && (m_SelectedWindow != 0))
         {
           // Move the newly selected window at the top of the visibility stack.
           PushToFront (m_SelectedWindow);
         }
+        
+        // Make the designated BaseWindow always on top of the stack.
+        EnsureAlwaysOnFrontWindow ();
 
         // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
         // This avoid mouse in/out messages from widgets below the menu chain.
         if (!MouseIsOverMenu)
         {
           // Let the main window analyze the event.
-          ret = GetGraphicsThread()->ProcessEvent (ievent, ret, ProcessEventInfo) ;
+          ret = GetGraphicsThread ()->ProcessEvent (ievent, ret, ProcessEventInfo) ;
         }
       }
 
       SetCurrentEvent (0);
     }
 
-    CleanMenu();
+    CleanMenu ();
 //    menu_it = m_MenuList->begin();
 //    while(menu_it != m_MenuList->end())
 //    {
@@ -457,10 +469,10 @@ namespace nux
 
   void WindowCompositor::StopModalWindow (BaseWindow *window)
   {
-    if (m_ModalWindowList.size() > 0)
+    if (m_ModalWindowList.size () > 0)
     {
-      if (*m_ModalWindowList.begin() == window)
-        m_ModalWindowList.pop_front();
+      if (*m_ModalWindowList.begin () == window)
+        m_ModalWindowList.pop_front ();
     }
   }
 
@@ -470,13 +482,15 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list<BaseWindow *>::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
+    std::list<BaseWindow *>::iterator it = find (m_WindowList.begin(), m_WindowList.end (), window);
 
-    if (it != m_WindowList.end() )
+    if (it != m_WindowList.end () )
     {
       m_WindowList.erase (it);
       m_WindowList.push_front (window);
     }
+
+    EnsureAlwaysOnFrontWindow ();
   }
 
   //! Push a floating view at the bottom of the stack.
@@ -485,13 +499,18 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list<BaseWindow *>::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
+    if (window == _always_on_front_window)
+      return;
+
+    std::list<BaseWindow *>::iterator it = find (m_WindowList.begin (), m_WindowList.end (), window);
 
     if (it != m_WindowList.end() )
     {
       m_WindowList.erase (it);
       m_WindowList.push_back (window);
     }
+
+    EnsureAlwaysOnFrontWindow ();
   }
 
   //! Push a floating view just above another floating view.
@@ -502,8 +521,8 @@ namespace nux
     NUX_RETURN_IF_FALSE (bottom_floating_view != top_floating_view)
     
     std::list<BaseWindow *>::iterator it;
-    std::list<BaseWindow *>::iterator it_top = find (m_WindowList.begin(), m_WindowList.end(), top_floating_view);
-    std::list<BaseWindow *>::iterator it_bot = find (m_WindowList.begin(), m_WindowList.end(), bottom_floating_view);
+    std::list<BaseWindow *>::iterator it_top;
+    std::list<BaseWindow *>::iterator it_bot;
     
     int i = 0;
     int top_pos = -1;
@@ -536,6 +555,32 @@ namespace nux
     {
       m_WindowList.erase (it_top);
       m_WindowList.insert (it_bot, top_floating_view);
+    }
+
+    EnsureAlwaysOnFrontWindow ();
+  }
+
+  void WindowCompositor::SetAlwaysOnFrontWindow (BaseWindow* window)
+  {
+    _always_on_front_window = window;
+
+    EnsureAlwaysOnFrontWindow ();
+  }
+
+  void WindowCompositor::EnsureAlwaysOnFrontWindow ()
+  {
+    // Do not reoder while we are traversing the list of BaseWindow.
+    if (_inside_event_processing)
+      return;
+    
+    if (_always_on_front_window == NULL)
+      return;
+
+    std::list<BaseWindow *>::iterator always_top_it = find (m_WindowList.begin(), m_WindowList.end(), _always_on_front_window);
+    if ((always_top_it != m_WindowList.end ()) && (always_top_it != m_WindowList.begin ()) && (_always_on_front_window != NULL))
+    {
+      m_WindowList.erase (always_top_it);
+      m_WindowList.push_back (_always_on_front_window);
     }
   }
 

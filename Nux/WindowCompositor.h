@@ -215,6 +215,9 @@ namespace nux
     {
       m_CurrentWindow = window;
     }
+    
+    void SetAlwaysOnFrontWindow (BaseWindow* window);
+    void EnsureAlwaysOnFrontWindow ();
 
   private:
     void SetFocusAreaWindow (BaseWindow *window)
@@ -256,10 +259,13 @@ namespace nux
     Geometry    _tooltip_text_geometry;     //!< The geometry of the text area of the tooltip.
     Point m_EventRoot;
 
+    bool _inside_event_processing;
+    
     AbstractPaintLayer *m_Background;
 
     std::list<BaseWindow*> m_WindowList;
     std::list<BaseWindow*> m_ModalWindowList;
+    BaseWindow*            _always_on_front_window;  //!< Floating view that always remains on top.
 
     std::list<MenuPage *> *m_MenuList;
 

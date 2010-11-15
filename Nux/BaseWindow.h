@@ -135,6 +135,8 @@ namespace nux
     bool InputWindowEnabled ();
     void InputWindowEnableStruts (bool enable);
     bool InputWindowStrutsEnabled ();
+    void GrabPointer ();
+    void UnGrabPointer ();
     #endif
 
   protected:
@@ -175,6 +177,10 @@ namespace nux
     AbstractPaintLayer *m_PaintLayer;
 
     bool m_blured_background;
+    
+    bool _entering_visible_status;  //!< the window is about to be made visible during event processing
+    bool _entering_hidden_status;   //!< the window is about to be made hidden during event processing
+    
   private:
     //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
     IntrusiveSP<BaseTexture> _background_texture;
