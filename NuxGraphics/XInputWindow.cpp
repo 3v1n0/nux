@@ -216,21 +216,12 @@ namespace nux
     XGrabPointer(d,
                  _window,
                  True,
-                 KeyPressMask       |
-                 KeyReleaseMask     |
-                 ButtonPressMask    |
-                 ButtonReleaseMask  |
-                 EnterWindowMask    |
-                 LeaveWindowMask    |
-                 PointerMotionMask  |
-                 ButtonMotionMask   |
-                 PropertyChangeMask |
-                 FocusChangeMask,
+                 ButtonPressMask,
                  GrabModeAsync,
                  GrabModeAsync,
                  None,
                  None,
-                 CurrentTime);
+                 CurrentTime);    
   }
   
   void XInputWindow::UnGrabPointer ()
