@@ -102,7 +102,7 @@ namespace nux
       return m_bSizeMatchLayout;
     }
 
-    void ShowWindow (bool b, bool StartModal = false);
+    virtual void ShowWindow (bool b, bool StartModal = false);
     void StopModal();
     bool IsModal() const;
     bool IsVisible() const;
@@ -139,17 +139,25 @@ namespace nux
     void UnGrabPointer ();
     #endif
 
+    //! Emit a signal when the BaseWindow becomes visible.
+    sigc::signal<void, BaseWindow*> sigVisible;
+    //! Emit a signal when the BaseWindow becomes hidden.
+    sigc::signal<void, BaseWindow*> sigHidden;
+    
   protected:
-    ConfigureNotifyCallback m_configure_notify_callback;    //!< Callback function to set the window position and size.
-    void *m_configure_notify_callback_data;     //!< Callback data for ConfigureNotifyCallback.
+    
+     //! Callback function to set the window position and size.
+    ConfigureNotifyCallback m_configure_notify_callback;
+    //! Callback data for ConfigureNotifyCallback.
+    void *m_configure_notify_callback_data;
 
-    sigc::signal< bool, unsigned int, unsigned int, Geometry & > sigRequestConfigure;
+    //sigc::signal< bool, unsigned int, unsigned int, Geometry & > sigRequestConfigure;
 
     Layout *m_layout;
 
     friend class ComboBox_Logic_WindowView;
 
-    virtual void PreLayoutManagement();
+    virtual void PreLayoutManagement ();
     virtual long PostLayoutManagement (long LayoutResult);
     virtual void PositionChildLayout (float offsetX, float offsetY);
     //! Layout the window elements.

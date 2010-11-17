@@ -419,14 +419,20 @@ namespace nux
       m_layout->SetGeometry (GetGeometry() );
     }
 
-    if (visible)
-      _entering_visible_status = true;
-    else
-      _entering_hidden_status = true;
-      
     m_bIsVisible = visible;
     m_bIsModal = StartModal;
 
+    if (m_bIsVisible)
+    {
+      _entering_visible_status = true;
+      sigVisible.emit (this);
+    }
+    else
+    {
+      _entering_hidden_status = true;
+      sigHidden.emit (this);
+    }
+    
     ComputeChildLayout();
 
     if (m_bIsModal)
