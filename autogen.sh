@@ -1,5 +1,7 @@
 #!/bin/sh
 
+srcdir=`dirname $0`
+
 PKG_NAME="Nux"
 
 which gnome-autogen.sh || {
