@@ -38,6 +38,7 @@ namespace nux
   class SystemThread;
   class UXTheme;
   class TimerHandler;
+  class Timeline;
   struct ClientAreaDraw;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -103,7 +104,7 @@ namespace nux
     void SetWindowBackgroundPaintLayer (AbstractPaintLayer *bkg);
 
     void RequestRedraw();
-    
+
     void ClearRedrawFlag()
     {
       m_RedrawRequested = false;
@@ -121,9 +122,9 @@ namespace nux
     Area* GetTopRenderingParent(Area* area);
 
     void AddToDrawList (View *view);
-    
+
     void ClearDrawList ();
-  
+
     std::vector<Geometry> GetDrawList ();
 
     // Layout
@@ -165,7 +166,7 @@ namespace nux
     {
       return m_bWaitForModalWindow;
     }
-    
+
     bool IsModalWindow()
     {
       return m_bWaitForModalWindow;
@@ -175,7 +176,7 @@ namespace nux
     {
       m_WindowStyle = wstyle;
     }
-    
+
     WindowStyle GetWindowStyle() const
     {
       return m_WindowStyle;
@@ -270,6 +271,13 @@ namespace nux
     Layout* GetMainLayout();
 
     /*!
+        Add a timeline to our window
+    */
+    void AddTimeline (Timeline* timeline);
+    bool ProcessTimelines (GTimeVal *frame_time);
+    long _last_timeline_frame_time_sec;
+    long _last_timeline_frame_time_usec;
+    /*!
         This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
     */
     void *m_InitData;
@@ -280,13 +288,13 @@ namespace nux
     bool _inside_main_loop;
     bool _inside_timer_loop;
     bool _pending_wake_up_timer;
-    
-    TimerFunctor *_async_wake_up_functor;
-    TimerHandle _async_wake_up_timer;  
-    
-  protected:
 
+    TimerFunctor *_async_wake_up_functor;
+    TimerHandle _async_wake_up_timer;
+
+  protected:
     void AsyncWakeUpCallback (void*);
+
     //void SetModalWindow(bool b) {m_bIsModal = b;}
 
     /*!
@@ -350,6 +358,8 @@ namespace nux
     t_u32 m_FrameCounter;
     t_u32 m_FramePeriodeCounter;
     float m_PeriodeTime;
+
+    std::list<Timeline*> *_Timelines;
 
     bool m_bFirstDrawPass;
     unsigned int m_StartupWidth;
