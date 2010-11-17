@@ -64,6 +64,11 @@ namespace nux
     return cr;
   }
 
+  cairo_surface_t* CairoGraphics::GetSurface ()
+  {
+    return m_cairo_surface;
+  }
+
   NBitmapData *CairoGraphics::GetBitmap()
   {
     if ( (m_width <= 0) || (m_height <= 0) )

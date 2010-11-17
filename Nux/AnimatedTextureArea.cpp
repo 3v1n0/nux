@@ -49,7 +49,7 @@ namespace nux
   {
     NUX_SAFE_DELETE (m_DefaultTexture);
 
-    GetThreadTimer().RemoveTimerHandler (m_TimerHandler);
+    GetTimer().RemoveTimerHandler (m_TimerHandler);
     m_TimerHandler = 0;
     delete m_TimerFunctor;
     m_TimerFunctor = 0;
@@ -60,11 +60,11 @@ namespace nux
     return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
   }
 
-  void AnimatedTextureArea::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void AnimatedTextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if (m_UserTexture)
     {
-      gPainter.PaintBackground (GfxContext, GetGeometry() );
+      GetPainter().PaintBackground (GfxContext, GetGeometry() );
       GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       nux::Geometry base = GetGeometry();
       nux::TexCoordXForm texxform;
@@ -73,12 +73,12 @@ namespace nux
       GfxContext.GetRenderStates().SetBlend (false);
     }
   }
-  void AnimatedTextureArea::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void AnimatedTextureArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void AnimatedTextureArea::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void AnimatedTextureArea::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -114,11 +114,11 @@ namespace nux
   {
     if (m_TimerHandler.IsValid() )
     {
-      GetThreadTimer().RemoveTimerHandler (m_TimerHandler);
+      GetTimer().RemoveTimerHandler (m_TimerHandler);
       m_TimerHandler = 0;
     }
 
-    m_TimerHandler = GetThreadTimer().AddTimerHandler (41, m_TimerFunctor, 0);
+    m_TimerHandler = GetTimer().AddTimerHandler (41, m_TimerFunctor, 0);
     NeedRedraw();
   }
 
@@ -126,7 +126,7 @@ namespace nux
   {
     if (m_TimerHandler.IsValid() )
     {
-      GetThreadTimer().RemoveTimerHandler (m_TimerHandler);
+      GetTimer().RemoveTimerHandler (m_TimerHandler);
       m_TimerHandler = 0;
     }
   }
@@ -140,7 +140,7 @@ namespace nux
       IntrusiveSP<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
       AnimatedTexture->PresentNextFrame();
-      m_TimerHandler = GetThreadTimer().AddTimerHandler (41, m_TimerFunctor, 0);
+      m_TimerHandler = GetTimer().AddTimerHandler (41, m_TimerFunctor, 0);
     }
 
     NeedRedraw();

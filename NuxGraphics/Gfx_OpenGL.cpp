@@ -22,15 +22,15 @@
 
 #include "GLResource.h"
 #include "NuxGraphics.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
 
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 #include "GLWindowManager.h"
-#include "Gfx_Events.h"
+#include "Events.h"
 #include "IniFile.h"
 
 #include "Gfx_OpenGL.h"
@@ -485,8 +485,8 @@ namespace nux
     //m_GLEWContext = new GLEWContext();
     //m_WGLEWContext = new WGLEWContext();
 
-    m_DeviceFactory = new GLDeviceFactory (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
-    m_GraphicsContext = new GraphicsContext (*this);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_GraphicsContext = new GraphicsEngine (*this);
 
     //EnableVSyncSwapControl();
     //DisableVSyncSwapControl();
@@ -513,8 +513,8 @@ namespace nux
     // The opengl context should be made current by an external entity.
 
     m_GfxInterfaceCreated = true;
-    m_DeviceFactory = new GLDeviceFactory (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
-    m_GraphicsContext = new GraphicsContext (*this);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_GraphicsContext = new GraphicsEngine (*this);
 
     return true;
   }
@@ -1383,7 +1383,7 @@ J1:
           m_pEvent->e_length = 0;
         }
 
-        m_pEvent->e_text = buffer;
+        m_pEvent->e_text[0] = wParam;
         return 0;
       }
 

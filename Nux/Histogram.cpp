@@ -43,16 +43,16 @@ namespace nux
 
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
-    NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Data/UITextures/FunctionGraphBackground.tga") );
+    NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Data/UITextures/FunctionGraphBackground.tga"));
     BaseTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
-    BackgroundTexture->Update (Path.GetTCharPtr() );
+    BackgroundTexture->Update (Path.GetTCharPtr());
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Color::White);
 
-    delete BackgroundTexture;
+    BackgroundTexture->UnReference ();
   }
 
   Histogram::~Histogram()
@@ -66,12 +66,12 @@ namespace nux
     return TraverseInfo;
   }
 
-  void Histogram::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void Histogram::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().Paint2DQuadWireframe (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY) );
 
     int W = GetBaseWidth() - 2;
     int H = GetBaseHeight() - 2;
@@ -149,7 +149,7 @@ namespace nux
       Y0 = Y + H * ( 1 - (y0 - m_minY) / (m_maxY - m_minY) );
       X1 = X + W * (x1 - m_minX) / (m_maxX - m_minX);
       Y1 = Y + H * ( 1 - (y1 - m_minY) / (m_maxY - m_minY) );
-      gPainter.Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
+      GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
 
       x0 = x1;
       y0 = y1;
@@ -161,12 +161,12 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void Histogram::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void Histogram::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void Histogram::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void Histogram::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

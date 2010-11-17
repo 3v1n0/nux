@@ -19,6 +19,7 @@ AM_CPPFLAGS = \
   -DG_LOG_DOMAIN=\"NuxExamples\" \
   $(GCC_FLAGS) \
   $(NUX_CORE_CFLAGS) \
+  $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
@@ -28,6 +29,7 @@ ALL_LIBS = \
   $(top_builddir)/NuxMesh/libnux-mesh-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+  $(NUX_EXAMPLES_LIBS) \
   $(NUX_LIBS)
 
 # This is the individual executable build. For every $exe in noinst_PROGRAMS
@@ -47,4 +49,13 @@ tooltip_LDADD = $(ALL_LIBS)
 timeline_SOURCES = timeline.cpp
 timeline_LDADD = $(ALL_LIBS)
 
+# distribute source along to the documentation
+sourceexampledir = "$(pkgdatadir)/examples"
+sourceexample_DATA = $(combobox_SOURCES) \
+                     $(cairo_SOURCES) \
+                     $(textedit_SOURCES) \
+                     $(button_SOURCES) \
+                     $(checkbox_SOURCES) \
+                     $(tooltip_SOURCES)
 endif
+

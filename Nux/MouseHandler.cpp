@@ -60,7 +60,7 @@ namespace nux
     if (ievent.e_event == NUX_NO_EVENT)
       return m_events;
 
-    m_flag = ievent.event_key_state();
+    m_flag = ievent.GetKeyState();
 
     int x, y, lo_x, hi_x, lo_y, hi_y;
     // Usually (e_x_root, e_y_root) is equal to (0, 0). In that case, (x, y) is the mouse coordinate
@@ -116,7 +116,7 @@ namespace nux
     if (ievent.e_event == NUX_NO_EVENT)
       return m_events;
 
-    m_flag = ievent.event_key_state();
+    m_flag = ievent.GetKeyState();
 
     int x, y, lo_x, hi_x, lo_y, hi_y;
     // Normally e_x_root and e_y_root are equal to 0. Meaning, (x, y) is the mouse coordinate based on the window top-left corner.
@@ -208,7 +208,7 @@ namespace nux
   {
     if (b)
     {
-//          if(GetThreadWindowCompositor().GetMouseFocusArea()->m_EventHandler != this)
+//          if(GetWindowCompositor().GetMouseFocusArea()->m_EventHandler != this)
 //              GetMouseFocusOwner()->ReleaseMouseFocus();
 //         SetMouseFocusOwner(this);
       m_hasMouseFocus = true;

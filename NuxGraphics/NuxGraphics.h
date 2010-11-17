@@ -25,18 +25,18 @@
 namespace nux
 {
   class GLWindowImpl;
-  class GLDeviceFactory;
-  class GraphicsContext;
+  class GpuDevice;
+  class GraphicsEngine;
 
   GLWindowImpl *GetThreadGLWindow();
-  GLDeviceFactory *GetThreadGLDeviceFactory();
-  GraphicsContext *GetThreadGraphicsContext();
+  GpuDevice *GetThreadGLDeviceFactory();
+  GraphicsEngine *GetThreadGraphicsContext();
 
   #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
   #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
 
   inlDeclareThreadLocalStorage (GLWindowImpl *, 1, ThreadLocal_GLWindowImpl);
-  inlDeclareThreadLocalStorage (GLDeviceFactory *, 2, ThreadLocal_GLDeviceFactory);
+  inlDeclareThreadLocalStorage (GpuDevice *, 2, ThreadLocal_GLDeviceFactory);
 
   void NuxGraphicsInitialize();
 }

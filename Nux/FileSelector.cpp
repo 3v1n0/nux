@@ -60,7 +60,7 @@ namespace nux
 
   FileSelector::~FileSelector()
   {
-    delete m_Texture;
+    m_Texture->UnReference ();
   }
 
   long FileSelector::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -72,21 +72,21 @@ namespace nux
     return ret;
   }
 
-  void FileSelector::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void FileSelector::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (GfxContext, base);
 
     if (m_OpenButton->IsMouseInside() )
     {
 
-      gPainter.PaintShapeCorner (GfxContext, m_OpenButton->GetGeometry(), FILESELECTOR_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (GfxContext, m_OpenButton->GetGeometry(), FILESELECTOR_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopRight | eCornerBottomRight, false);
     }
     else
     {
-      gPainter.PaintShapeCorner (GfxContext, m_OpenButton->GetGeometry(), FILESELECTOR_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (GfxContext, m_OpenButton->GetGeometry(), FILESELECTOR_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopRight | eCornerBottomRight, false);
     }
 
@@ -106,14 +106,14 @@ namespace nux
     m_FileEditTextBox->NeedRedraw();
   }
 
-  void FileSelector::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void FileSelector::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     m_FileEditTextBox->ProcessDraw (GfxContext, force_draw);
   }
 
-  void FileSelector::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void FileSelector::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

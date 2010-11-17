@@ -52,7 +52,7 @@ namespace nux
     NUX_SAFE_DELETE (FolderClosedIcon);
   }
 
-  void FolderTreeItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter, RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
+  void FolderTreeItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter, RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
 
@@ -91,7 +91,7 @@ namespace nux
           GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
           GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
         }
-        Painter.PaintTextLineStatic (GfxContext, GetThreadFont(), TextGeometry, row->m_item->GetName(), GetItemTextColor() );
+        Painter.PaintTextLineStatic (GfxContext, GetSysFont(), TextGeometry, row->m_item->GetName(), GetItemTextColor() );
       }
       GfxContext.PopClippingRectangle();
       table->PopItemBackground (GfxContext, nBackground);

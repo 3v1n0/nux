@@ -28,7 +28,7 @@
 #include "NuxGraphics/GfxSetupX11.h"
 #endif
 
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "TimerProc.h"
 #include "ClientArea.h"
 
@@ -37,7 +37,6 @@ namespace nux
 
   ClientArea::ClientArea (NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
-    ,   m_IsRealTime (false)
   {
     m_IsClientAreaEnabled = false;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, 4 * PRACTICAL_WIDGET_HEIGHT);
@@ -47,9 +46,6 @@ namespace nux
     OnMouseDrag.connect (sigc::mem_fun (this, &ClientArea::RecvMouseDrag) );
     OnMouseMove.connect (sigc::mem_fun (this, &ClientArea::RecvMouseMove) );
     OnKeyEvent.connect (sigc::mem_fun (this, &ClientArea::RecvKeyEvent) );
-
-    m_RealTimeCallback = new TimerFunctor;
-    m_RealTimeCallback->OnTimerExpired.connect (sigc::mem_fun (this, &ClientArea::RealTimeHandler) );
 
     if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
     {
@@ -61,7 +57,6 @@ namespace nux
 
   ClientArea::~ClientArea()
   {
-    NUX_SAFE_DELETE (m_RealTimeCallback);
   }
 
   long ClientArea::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -81,7 +76,7 @@ namespace nux
     return ret;
   }
 
-  void ClientArea::BeginDraw (GraphicsContext &GfxContext, bool force_draw)
+  void ClientArea::BeginDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if ( (IsRedrawNeeded() == false) && (force_draw == false) )
       return;
@@ -204,30 +199,30 @@ namespace nux
     }
   }
 
-  void ClientArea::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void ClientArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     // don't draw here or we risk drawing more than one time.
     //BeginDraw(GfxContext, force_draw);
   }
 
-  void ClientArea::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void ClientArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     BeginDraw (GfxContext, force_draw);
 
   }
-  void ClientArea::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void ClientArea::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     // don't draw here or we risk drawing more than one time.
     //BeginDraw(GfxContext, force_draw);
   }
 
-  void ClientArea::ClientDraw (GraphicsContext &GfxContext, DrawAreaContext &ctx, bool force_draw)
+  void ClientArea::ClientDraw (GraphicsEngine &GfxContext, DrawAreaContext &ctx, bool force_draw)
   {
     glClearColor (0, 0, 0, 1);
     glClear (GL_COLOR_BUFFER_BIT);
   }
 
-  void ClientArea::SetClientViewport (GraphicsContext &GfxContext)
+  void ClientArea::SetClientViewport (GraphicsEngine &GfxContext)
   {
     if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
     {
@@ -251,7 +246,7 @@ namespace nux
     }
   }
 
-  void ClientArea::Setup2DMode (GraphicsContext &GfxContext)
+  void ClientArea::Setup2DMode (GraphicsEngine &GfxContext)
   {
     int window_width, window_height;
     window_width = GfxContext.GetContextWidth();
@@ -285,13 +280,12 @@ namespace nux
   }
 
   void ClientArea::RecvKeyEvent (
-    GraphicsContext    &GfxContext,    /*Graphics Context for text operation*/
-    unsigned long       event_type,    /*event type*/
-    unsigned long       event_keysym,    /*event keysym*/
-    unsigned long       event_state,    /*event state*/
-    const char         *event_char,    /*character*/
-    bool                repeated,    /*true if the key is repeated more than once*/
-    unsigned short      repeat_count     /*key repeat count*/
+    GraphicsEngine    &GfxContext,    /*Graphics Context for text operation*/
+    unsigned long     event_type,    /*event type*/
+    unsigned long     GetKeySym,    /*event keysym*/
+    unsigned long     event_state,    /*event state*/
+    TCHAR             event_char,    /*character*/
+    unsigned short    repeat_count     /*key repeat count*/
   )
   {
 
@@ -299,39 +293,15 @@ namespace nux
 
   void ClientArea::NeedRedraw()
   {
-    GetGraphicsThread()->AddClientAreaToRedrawList (this);
+    //GetWindowCompositor()..AddToDrawList(this);
+    WindowThread* application = GetGraphicsThread();
+    if(application)
+    {
+      application->AddToDrawList(this);
+      application->RequestRedraw();
+      //GetWindowCompositor().AddToDrawList(this);
+    }
     m_NeedRedraw = true;
-  }
-
-  void ClientArea::RealTime (bool b)
-  {
-    m_IsRealTime = b;
-
-    if (m_IsRealTime)
-    {
-      GetGraphicsThread()->AddClientAreaToRedrawList (this);
-      m_RealTimeHandler = GetThreadTimer().AddTimerHandler (10, m_RealTimeCallback, this);
-    }
-    else
-    {
-      m_RealTimeHandler = 0;
-    }
-  }
-
-  bool ClientArea::IsRealTime() const
-  {
-    return m_IsRealTime;
-  }
-
-  void ClientArea::RealTimeHandler (void *v)
-  {
-    GetGraphicsThread()->AddClientAreaToRedrawList (this);
-
-    if (m_IsRealTime)
-    {
-      // With a time set to 0, the timer will be trigger at the next frame (whenever that frame happens);
-      m_RealTimeHandler = GetThreadTimer().AddTimerHandler (0, m_RealTimeCallback, this);
-    }
   }
 
 }

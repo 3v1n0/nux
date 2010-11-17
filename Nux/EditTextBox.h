@@ -42,9 +42,9 @@ namespace nux
     EditTextBox (const TCHAR *Caption, NUX_FILE_LINE_PROTO);
     ~EditTextBox();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
     void SetText (const TCHAR &Caption);
     void SetText (const TCHAR *Caption);
@@ -114,12 +114,11 @@ namespace nux
     void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void RecvKeyEvent (
-      GraphicsContext &GfxContext ,   /*Graphics Context for text operation*/
+      GraphicsEngine &GfxContext ,   /*Graphics Context for text operation*/
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
       unsigned long    state      ,   /*event state*/
-      const char      *character  ,   /*character*/
-      bool             isRepeated ,   /*true if the key is repeated more than once*/
+      const TCHAR      character  ,   /*character*/
       unsigned short   keyCount       /*key repeat count*/);
 
     void RecvStartKeyFocus();

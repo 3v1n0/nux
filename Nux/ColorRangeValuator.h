@@ -32,7 +32,7 @@ namespace nux
     ColorRangeValuator (float value = 0.0f, Color StartColor = Color (0xFFFFFFFF), Color EndColor = Color (0x00000000) );
     ~ColorRangeValuator();
 
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
 
     //! Get the interpolated color.
     /*!

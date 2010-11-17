@@ -125,7 +125,7 @@ namespace nux
       else
       {
         scrollbar->NeedRedraw();
-        GetThreadTimer().AddTimerHandler (10, callback, scrollbar);
+        GetTimer().AddTimerHandler (10, callback, scrollbar);
       }
     }
 
@@ -141,7 +141,7 @@ namespace nux
       else
       {
         scrollbar->NeedRedraw();
-        GetThreadTimer().AddTimerHandler (10, callback, scrollbar);
+        GetTimer().AddTimerHandler (10, callback, scrollbar);
       }
     }
   }
@@ -153,7 +153,7 @@ namespace nux
     if (AtMaximum() )
       RecvEndScrollRight (0, 0, 0, 0);
     else
-      m_RightTimerHandler = GetThreadTimer().AddTimerHandler (10, right_callback, this);
+      m_RightTimerHandler = GetTimer().AddTimerHandler (10, right_callback, this);
 
     NeedRedraw();
   }
@@ -165,7 +165,7 @@ namespace nux
     if (AtMaximum() )
       RecvEndScrollLeft (0, 0, 0, 0);
     else
-      m_LeftTimerHandler = GetThreadTimer().AddTimerHandler (10, left_callback, this);
+      m_LeftTimerHandler = GetTimer().AddTimerHandler (10, left_callback, this);
 
     NeedRedraw();
   }
@@ -175,7 +175,7 @@ namespace nux
     if (m_TrackMouseCoord.x < m_SlideBar->GetBaseX() - m_Track->GetBaseX() )
     {
       OnScrollLeft.emit (m_containerWidth, 1);
-      m_TrackLeftTimerHandler  = GetThreadTimer().AddTimerHandler (10, trackleft_callback, this);
+      m_TrackLeftTimerHandler  = GetTimer().AddTimerHandler (10, trackleft_callback, this);
       NeedRedraw();
     }
   }
@@ -185,7 +185,7 @@ namespace nux
     if (m_TrackMouseCoord.x > m_SlideBar->GetBaseX() + m_SlideBar->GetBaseWidth() - m_Track->GetBaseX() )
     {
       OnScrollRight.emit (m_containerWidth, 1);
-      m_TrackRightTimerHandler  = GetThreadTimer().AddTimerHandler (10, trackright_callback, this);
+      m_TrackRightTimerHandler  = GetTimer().AddTimerHandler (10, trackright_callback, this);
       NeedRedraw();
     }
   }
@@ -205,7 +205,7 @@ namespace nux
   void HScrollBar::RecvEndScrollRight (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_RightTimerHandler.IsValid() )
-      GetThreadTimer().RemoveTimerHandler (m_RightTimerHandler);
+      GetTimer().RemoveTimerHandler (m_RightTimerHandler);
 
     m_RightTimerHandler = 0;
   }
@@ -213,7 +213,7 @@ namespace nux
   void HScrollBar::RecvEndScrollLeft (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_LeftTimerHandler.IsValid() )
-      GetThreadTimer().RemoveTimerHandler (m_LeftTimerHandler);
+      GetTimer().RemoveTimerHandler (m_LeftTimerHandler);
 
     m_LeftTimerHandler = 0;
   }
@@ -239,10 +239,10 @@ namespace nux
   void HScrollBar::RecvTrackMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_TrackLeftTimerHandler.IsValid() )
-      GetThreadTimer().RemoveTimerHandler (m_TrackLeftTimerHandler);
+      GetTimer().RemoveTimerHandler (m_TrackLeftTimerHandler);
 
     if (m_TrackRightTimerHandler.IsValid() )
-      GetThreadTimer().RemoveTimerHandler (m_TrackRightTimerHandler);
+      GetTimer().RemoveTimerHandler (m_TrackRightTimerHandler);
 
     m_TrackLeftTimerHandler = 0;
     m_TrackRightTimerHandler = 0;
@@ -265,19 +265,19 @@ namespace nux
     return ret;
   }
 
-  void HScrollBar::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void HScrollBar::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
-    gPainter.PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (GfxContext, base);
     base.OffsetPosition (HSCROLLBAR_WIDTH, 0);
     base.OffsetSize (-2 * HSCROLLBAR_WIDTH, 0);
-    gPainter.PaintShape (GfxContext, base,
+    GetPainter().PaintShape (GfxContext, base,
                          Color (COLOR_SCROLLBAR_TRACK), eHSCROLLBAR, false);
 
-    gPainter.PaintShape (GfxContext, m_LeftThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_LEFT);
-    gPainter.PaintShape (GfxContext, m_RightThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_RIGHT);
+    GetPainter().PaintShape (GfxContext, m_LeftThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_LEFT);
+    GetPainter().PaintShape (GfxContext, m_RightThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_RIGHT);
 
-    gPainter.PaintShape (GfxContext, m_SlideBar->GetGeometry(),
+    GetPainter().PaintShape (GfxContext, m_SlideBar->GetGeometry(),
                          Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f),
                          eHSCROLLBAR, true);
   };
@@ -379,14 +379,14 @@ namespace nux
     //sigVScrollBarSliderMouseDown.emit();
     b_MouseDownTimer = true;
     b_MouseUpTimer = false;
-    GetThreadTimer().AddTimerHandler (10, callback, this);
+    GetTimer().AddTimerHandler (10, callback, this);
   }
 
   void HScrollBar::OnSliderMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     b_MouseDownTimer = false;
     b_MouseUpTimer = true;
-    GetThreadTimer().AddTimerHandler (10, callback, this);
+    GetTimer().AddTimerHandler (10, callback, this);
   }
 
   void HScrollBar::OnSliderMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)

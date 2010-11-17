@@ -21,7 +21,7 @@
 
 
 #include "GLResource.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "IOpenGLSurface.h"
 

@@ -34,8 +34,8 @@
 namespace nux
 {
   class GLWindowImpl;
-  class GLDeviceFactory;
-  class GraphicsContext;
+  class GpuDevice;
+  class GraphicsEngine;
 
   extern const TCHAR *WINDOW_CLASS_NAME;
 

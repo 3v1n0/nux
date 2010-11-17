@@ -80,9 +80,9 @@ namespace nux
     float GetAlpha();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
     void SetRGB (Color color);
     void SetRGB (float r, float g, float b);
@@ -133,14 +133,14 @@ namespace nux
     void DestroyLayout();
 
   private:
-    void DrawRedMarker (GraphicsContext &GfxContext);
-    void DrawGreenMarker (GraphicsContext &GfxContext);
-    void DrawBlueMarker (GraphicsContext &GfxContext);
-    void DrawAlphaMarker (GraphicsContext &GfxContext);
+    void DrawRedMarker (GraphicsEngine &GfxContext);
+    void DrawGreenMarker (GraphicsEngine &GfxContext);
+    void DrawBlueMarker (GraphicsEngine &GfxContext);
+    void DrawAlphaMarker (GraphicsEngine &GfxContext);
 
-    void DrawRGB (GraphicsContext &GfxContext);
-    void DrawHSV (GraphicsContext &GfxContext);
-    void DrawHLS (GraphicsContext &GfxContext);
+    void DrawRGB (GraphicsEngine &GfxContext);
+    void DrawHSV (GraphicsEngine &GfxContext);
+    void DrawHLS (GraphicsEngine &GfxContext);
 
     HLayout *hlayout;
     HLayout *redlayout;

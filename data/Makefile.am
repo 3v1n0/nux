@@ -1,13 +1,14 @@
 # Please keep these in alphabetical order
+PKGDATADIR="$(pkgdatadir)/@NUX_API_VERSION@"
 
-fontdir = $(pkgdatadir)/Fonts
+fontdir = $(PKGDATADIR)/Fonts
 dist_font_DATA = \
   Fonts/Tahoma_size_8_bold_page_0.bmp \
   Fonts/Tahoma_size_8_bold.txt \
   Fonts/Tahoma_size_8_page_0.bmp \
   Fonts/Tahoma_size_8.txt
 
-iconsdir = $(pkgdatadir)/Icons
+iconsdir = $(PKGDATADIR)/Icons
 dist_icons_DATA = \
   Icons/169034134.png \
   Icons/Delicious.png \
@@ -36,13 +37,13 @@ dist_icons_DATA = \
   Icons/Yahoo.png \
   Icons/YouTube.png
 
-meshesdir = $(pkgdatadir)/Meshes
+meshesdir = $(PKGDATADIR)/Meshes
 dist_meshes_DATA = \
   Meshes/Sphere.imsh \
   Meshes/Teapot.imsh \
   Meshes/Venus.imsh
 
-uitexturesdir = $(pkgdatadir)/UITextures
+uitexturesdir = $(PKGDATADIR)/UITextures
 dist_uitextures_DATA = \
   UITextures/AddButton.png \
   UITextures/ButtonDisable.tga \

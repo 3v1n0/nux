@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 #include "Area.h"
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "Layout.h"
 #include "VSplitter.h"
 #include "HSplitter.h"

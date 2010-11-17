@@ -271,11 +271,11 @@ namespace nux
     }
     else
     {
-      if (ievent.e_event == NUX_MOUSE_PRESSED && ItemSolvedEvent && ! (EventAlreadySolved) /*&& GetThreadWindowCompositor().GetMouseFocusArea()*/)
+      if (ievent.e_event == NUX_MOUSE_PRESSED && ItemSolvedEvent && ! (EventAlreadySolved) /*&& GetWindowCompositor().GetMouseFocusArea()*/)
       {
         // The mouse down event has already been captured. This call is going to find out if a cell was hit.
         OnMouseDown (ievent.e_x - ievent.e_x_root - m_TableArea->GetBaseX(),
-                     ievent.e_y - ievent.e_y_root - m_TableArea->GetBaseY(), ievent.event_mouse_state(), ievent.event_key_state() );
+                     ievent.e_y - ievent.e_y_root - m_TableArea->GetBaseY(), ievent.GetMouseState(), ievent.GetKeyState() );
       }
       else
         ret = m_TableArea->OnEvent (ievent, ret, ProcEvInfo);
@@ -310,7 +310,7 @@ namespace nux
       if (in_column && in_row)
       {
 //            OnMouseDown(ievent.e_x-m_TableArea->GetX(),
-//                ievent.e_y-m_TableArea->GetY(), ievent.event_mouse_state(), ievent.event_key_state());
+//                ievent.e_y-m_TableArea->GetY(), ievent.GetMouseState(), ievent.GetKeyState());
       }
       else
       {
@@ -333,7 +333,7 @@ namespace nux
     }
 
 
-    //GetThreadWindowCompositor()..AddToDrawList(this);
+    //GetWindowCompositor()..AddToDrawList(this);
     return ret;
   }
 
@@ -345,18 +345,18 @@ namespace nux
       return;
 
     t_u32 window_width, window_height;
-    window_width = GetGraphicsThread()->GetGraphicsContext().GetWindowWidth();
-    window_height = GetGraphicsThread()->GetGraphicsContext().GetWindowHeight();
-    GetGraphicsThread()->GetGraphicsContext().SetContext (0, 0, window_width, window_height);
-    GetGraphicsThread()->GetGraphicsContext().EmptyClippingRegion();
-    GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion (0, 0, window_width, window_height);
-    GetGraphicsThread()->GetGraphicsContext().SetViewport (0, 0, window_width, window_height);
-    GetGraphicsThread()->GetGraphicsContext().Push2DWindow (window_width, window_height);
+    window_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
+    window_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
+    GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
+    GetGraphicsThread()->GetGraphicsEngine().EmptyClippingRegion();
+    GetGraphicsThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
+    GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
+    GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
 
     // Render the MAINFBO
     {
-      GetGraphicsThread()->GetGraphicsContext().EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_2D);
-      GetGraphicsThread()->GetGraphicsContext().SetEnvModeSelectTexture (GL_TEXTURE0);
+      GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_2D);
+      GetGraphicsThread()->GetGraphicsEngine().SetEnvModeSelectTexture (GL_TEXTURE0);
       texture->BindTextureToUnit (GL_TEXTURE0);
 
       UINT w, h;
@@ -371,12 +371,12 @@ namespace nux
     }
   }
 
-  void TableCtrl::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void TableCtrl::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if (IsSizeMatchContent() )
     {
       if (m_DrawBackgroundOnPreviousGeometry)
-        gPainter.PaintBackground (GfxContext, m_PreviousGeometry);
+        GetPainter().PaintBackground (GfxContext, m_PreviousGeometry);
 
       m_DrawBackgroundOnPreviousGeometry = false;
     }
@@ -384,9 +384,9 @@ namespace nux
 
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle (base);
-    gPainter.PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (GfxContext, base);
 
-    PushShapeCornerBackgroundScope pbs (gPainter, GfxContext,
+    PushShapeCornerBackgroundScope pbs (GetPainter(), GfxContext,
                                         Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight),
                                         eSHAPE_CORNER_ROUND10,
                                         Color (0xFF4D4D4D),
@@ -410,7 +410,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void TableCtrl::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void TableCtrl::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 
@@ -448,7 +448,7 @@ namespace nux
 
           // Draw content of a row
           {
-            m_row_header[r]->m_item->DrawProperty (GfxContext, this, force_draw, geo, gPainter, m_row_header[r], m_column_header, odd_or_even ? GetRowColorEven() : GetRowColorOdd() );
+            m_row_header[r]->m_item->DrawProperty (GfxContext, this, force_draw, geo, GetPainter(), m_row_header[r], m_column_header, odd_or_even ? GetRowColorEven() : GetRowColorOdd() );
           }
           ItemOffsetY += m_row_header[r]->m_item->m_row_header->GetBaseHeight();
         }
@@ -474,7 +474,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void TableCtrl::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void TableCtrl::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if (IsRedrawNeeded() )
     {
@@ -495,7 +495,7 @@ namespace nux
     ScrollView::SwapTextureIndex();
   }
 
-  void TableCtrl::PaintDecoration (GraphicsContext &GfxContext, TableItem *item)
+  void TableCtrl::PaintDecoration (GraphicsEngine &GfxContext, TableItem *item)
   {
     //int ItemOffsetY = (m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0);
 
@@ -523,8 +523,8 @@ namespace nux
         geo.SetWidth (OPENCLOSE_BTN_WIDTH);
 
         GeometryPositioning gp (eHACenter, eVACenter);
-        Geometry GeoPo = ComputeGeometryPositioning (geo, gTheme.GetImageGeometry (eTREE_NODE_OPEN), gp);
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFF000000), eTREE_NODE_OPEN);
+        Geometry GeoPo = ComputeGeometryPositioning (geo, GetTheme().GetImageGeometry (eTREE_NODE_OPEN), gp);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFF000000), eTREE_NODE_OPEN);
 
         GfxContext.PopClippingRectangle();
       }
@@ -535,25 +535,25 @@ namespace nux
         geo.SetWidth (OPENCLOSE_BTN_WIDTH);
 
         GeometryPositioning gp (eHACenter, eVACenter);
-        Geometry GeoPo = ComputeGeometryPositioning (geo, gTheme.GetImageGeometry (eTREE_NODE_CLOSE), gp);
-        gPainter.PaintShape (GfxContext, GeoPo, Color (0xFF000000), eTREE_NODE_CLOSE);
+        Geometry GeoPo = ComputeGeometryPositioning (geo, GetTheme().GetImageGeometry (eTREE_NODE_CLOSE), gp);
+        GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFF000000), eTREE_NODE_CLOSE);
 
         GfxContext.PopClippingRectangle();
       }
     }
   }
 
-  void TableCtrl::PaintRowDecoration (GraphicsContext &GfxContext, TableItem *item, Color color)
+  void TableCtrl::PaintRowDecoration (GraphicsEngine &GfxContext, TableItem *item, Color color)
   {
     if (m_bShowRowHeader)
     {
       Geometry geo = item->m_RowHeaderGeometry;
-      gPainter.Paint2DQuadColor (GfxContext, geo, color);
-      gPainter.PaintTextLineStatic (GfxContext, GetFont(), geo, "i");
+      GetPainter().Paint2DQuadColor (GfxContext, geo, color);
+      GetPainter().PaintTextLineStatic (GfxContext, GetFont(), geo, "i");
     }
   }
 
-  UINT TableCtrl::PushItemBackground (GraphicsContext &GfxContext, TableItem *item, bool MouseOver)
+  UINT TableCtrl::PushItemBackground (GraphicsEngine &GfxContext, TableItem *item, bool MouseOver)
   {
     Geometry row_geometry = item->m_TotalGeometry;
     Color BackgroundColor = item->m_ItemBackgroundColor;
@@ -563,7 +563,7 @@ namespace nux
 
     UINT NumBackground = 0;
 
-    gPainter.PushShapeLayer (GfxContext,
+    GetPainter().PushShapeLayer (GfxContext,
                              Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight),
                              eSHAPE_CORNER_ROUND2,
                              Color (0xFF4D4D4D),
@@ -575,12 +575,12 @@ namespace nux
     {
       if (m_bShowColumnHeader)
       {
-        gPainter.PushDrawShapeLayer (GfxContext, row_geometry, eSHAPE_CORNER_ROUND2, BackgroundColor, eCornerBottomLeft | eCornerBottomRight);
+        GetPainter().PushDrawShapeLayer (GfxContext, row_geometry, eSHAPE_CORNER_ROUND2, BackgroundColor, eCornerBottomLeft | eCornerBottomRight);
         NumBackground++;
       }
       else
       {
-        gPainter.PushDrawShapeLayer (GfxContext, row_geometry, eSHAPE_CORNER_ROUND2, BackgroundColor, eAllCorners);
+        GetPainter().PushDrawShapeLayer (GfxContext, row_geometry, eSHAPE_CORNER_ROUND2, BackgroundColor, eAllCorners);
         NumBackground++;
       }
     }
@@ -588,23 +588,23 @@ namespace nux
     {
       if (m_bShowColumnHeader)
       {
-        gPainter.PushDrawColorLayer (GfxContext, row_geometry, BackgroundColor);
+        GetPainter().PushDrawColorLayer (GfxContext, row_geometry, BackgroundColor);
         NumBackground++;
       }
       else
       {
-        gPainter.PushDrawShapeLayer (GfxContext, row_geometry, eSHAPE_CORNER_ROUND2, BackgroundColor, eCornerTopLeft | eCornerTopRight);
+        GetPainter().PushDrawShapeLayer (GfxContext, row_geometry, eSHAPE_CORNER_ROUND2, BackgroundColor, eCornerTopLeft | eCornerTopRight);
         NumBackground++;
       }
     }
     else if (item->m_bIsLastVisibleItem)
     {
-      gPainter.PushDrawShapeLayer (GfxContext, row_geometry, eSHAPE_CORNER_ROUND2, BackgroundColor, eCornerBottomLeft | eCornerBottomRight);
+      GetPainter().PushDrawShapeLayer (GfxContext, row_geometry, eSHAPE_CORNER_ROUND2, BackgroundColor, eCornerBottomLeft | eCornerBottomRight);
       NumBackground++;
     }
     else
     {
-      gPainter.PushDrawColorLayer (GfxContext, row_geometry, BackgroundColor);
+      GetPainter().PushDrawColorLayer (GfxContext, row_geometry, BackgroundColor);
       NumBackground++;
     }
 
@@ -632,12 +632,12 @@ namespace nux
             if (Column == GetNumColumn() - 1)
               corners |= eCornerBottomRight;
 
-            gPainter.PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, corners);
+            GetPainter().PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, corners);
             NumBackground++;
           }
           else
           {
-            gPainter.PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, eAllCorners);
+            GetPainter().PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, eAllCorners);
             NumBackground++;
           }
         }
@@ -645,7 +645,7 @@ namespace nux
         {
           if (m_bShowColumnHeader)
           {
-            gPainter.PushDrawColorLayer (GfxContext, item->m_ItemGeometryVector[Column], SelectionColor);
+            GetPainter().PushDrawColorLayer (GfxContext, item->m_ItemGeometryVector[Column], SelectionColor);
             NumBackground++;
           }
           else
@@ -658,7 +658,7 @@ namespace nux
             if (Column == GetNumColumn() - 1)
               corners |= eCornerTopRight;
 
-            gPainter.PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, corners);
+            GetPainter().PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, corners);
             NumBackground++;
           }
         }
@@ -668,29 +668,29 @@ namespace nux
           {
             if (m_bShowRowHeader == false)
             {
-              gPainter.PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, eCornerBottomLeft);
+              GetPainter().PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, eCornerBottomLeft);
               NumBackground++;
             }
             else
             {
-              gPainter.PushDrawColorLayer (GfxContext, item->m_ItemGeometryVector[Column], SelectionColor);
+              GetPainter().PushDrawColorLayer (GfxContext, item->m_ItemGeometryVector[Column], SelectionColor);
               NumBackground++;
             }
           }
           else if (Column == GetNumColumn() - 1)
           {
-            gPainter.PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, eCornerBottomRight);
+            GetPainter().PushDrawShapeLayer (GfxContext, item->m_ItemGeometryVector[Column], eSHAPE_CORNER_ROUND2, SelectionColor, eCornerBottomRight);
             NumBackground++;
           }
           else
           {
-            gPainter.PushDrawColorLayer (GfxContext, item->m_ItemGeometryVector[Column], SelectionColor);
+            GetPainter().PushDrawColorLayer (GfxContext, item->m_ItemGeometryVector[Column], SelectionColor);
             NumBackground++;
           }
         }
         else
         {
-          gPainter.PushDrawColorLayer (GfxContext, item->m_ItemGeometryVector[Column], SelectionColor);
+          GetPainter().PushDrawColorLayer (GfxContext, item->m_ItemGeometryVector[Column], SelectionColor);
           NumBackground++;
         }
       }
@@ -699,7 +699,7 @@ namespace nux
       {
         if (m_bShowVerticalSeparationLine)
         {
-          gPainter.Draw2DLine (GfxContext,
+          GetPainter().Draw2DLine (GfxContext,
                                item->m_ItemGeometryVector[Column].x,
                                item->m_ItemGeometryVector[Column].y,
                                item->m_ItemGeometryVector[Column].x,
@@ -716,24 +716,24 @@ namespace nux
     // Draw horizontal line
     if (item->m_bIsLastVisibleItem == false)
       if (m_bShowHorizontalSeparationLine)
-        gPainter.Draw2DLine (GfxContext, row_geometry.x, row_geometry.y + row_geometry.GetHeight() - 1, row_geometry.x + row_geometry.GetWidth(), row_geometry.y + row_geometry.GetHeight() - 1, GetHorizontalSeparationLineColor() );
+        GetPainter().Draw2DLine (GfxContext, row_geometry.x, row_geometry.y + row_geometry.GetHeight() - 1, row_geometry.x + row_geometry.GetWidth(), row_geometry.y + row_geometry.GetHeight() - 1, GetHorizontalSeparationLineColor() );
 
     return NumBackground;
   }
 
-  void TableCtrl::PopItemBackground (GraphicsContext &GfxContext, UINT NumBackground)
+  void TableCtrl::PopItemBackground (GraphicsEngine &GfxContext, UINT NumBackground)
   {
-    gPainter.PopBackground (NumBackground);
+    GetPainter().PopBackground (NumBackground);
   }
 
-  void TableCtrl::DrawTable (GraphicsContext &GfxContext)
+  void TableCtrl::DrawTable (GraphicsEngine &GfxContext)
   {
-    IntrusiveSP<IOpenGLFrameBufferObject> CurrentFrameBuffer = GetThreadWindowCompositor().GetWindowFrameBufferObject();
+    IntrusiveSP<IOpenGLFrameBufferObject> CurrentFrameBuffer = GetWindowCompositor().GetWindowFrameBufferObject();
 
     Geometry tableGeometry = m_TableArea->GetGeometry();
     int xl, yl, wl, hl;
 
-    //--->gPainter.Paint2DQuadColor(tableGeometry, Color(HEADER_BACKGROUND_COLOR));
+    //--->GetPainter().Paint2DQuadColor(tableGeometry, Color(HEADER_BACKGROUND_COLOR));
 
     int colum_width = (m_bShowRowHeader ? ROWHEADERWIDTH : 0);
     std::vector<ColumnHeader>::iterator column_iterator;
@@ -772,7 +772,7 @@ namespace nux
       hl = m_TableArea->GetGeometry().GetHeight();
 
       // Paint the first horizontal separation line.
-      gPainter.Draw2DLine (GfxContext, xl, yl, xl + m_ContentGeometry.GetWidth(), yl, GetHorizontalSeparationLineColor() );
+      GetPainter().Draw2DLine (GfxContext, xl, yl, xl + m_ContentGeometry.GetWidth(), yl, GetHorizontalSeparationLineColor() );
 
       for (row_iterator = m_row_header.begin(), row_sizehandler_iterator = m_row_sizehandler.begin();
            row_iterator != m_row_header.end();
@@ -785,11 +785,11 @@ namespace nux
           geo.OffsetPosition (m_TableArea->GetBaseX(), m_TableArea->GetBaseY() /* - ItemOffsetY*/);
 
           // Paint the number of the row
-          //gPainter.PaintTextLineStatic(geo, (*row_iterator)->header.GetBaseString());
+          //GetPainter().PaintTextLineStatic(geo, (*row_iterator)->header.GetBaseString());
 
           // Paint row horizontal separation line.
           yl += (*row_iterator)->m_item->m_row_header->GetGeometry().GetHeight();
-          gPainter.Draw2DLine (GfxContext, xl, yl, xl + m_ContentGeometry.GetWidth(), yl, GetHorizontalSeparationLineColor() );
+          GetPainter().Draw2DLine (GfxContext, xl, yl, xl + m_ContentGeometry.GetWidth(), yl, GetHorizontalSeparationLineColor() );
 
           // Draw the row size handler on the separation line.
           Geometry sizehandler_geo (xl, yl - HANDLERSIZE / 2, (m_bShowRowHeader ? ROWHEADERWIDTH : 0), HANDLERSIZE);
@@ -805,7 +805,7 @@ namespace nux
     DrawHeader (GfxContext);
   }
 
-  void TableCtrl::DrawHeader (GraphicsContext &GfxContext)
+  void TableCtrl::DrawHeader (GraphicsEngine &GfxContext)
   {
     GfxContext.PushClippingRectangle (Geometry (m_ViewX, m_ViewY /*+ (!m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0)*/,
                                       m_ViewWidth, m_ViewHeight /*- (!m_bShowColumnHeader? COLUMNHEADERHEIGHT : 0)*/) );
@@ -842,11 +842,11 @@ namespace nux
     ////////////////////////////
     // Draw Top Header Background
     Geometry header_geo = Geometry (m_ViewX, m_ViewY, m_ViewWidth, (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) );
-    //--->gPainter.Paint2DQuadColor(header_geo, Color(HEADER_BACKGROUND_COLOR));
+    //--->GetPainter().Paint2DQuadColor(header_geo, Color(HEADER_BACKGROUND_COLOR));
 
     if (m_bShowColumnHeader)
     {
-      //gPainter.PaintShapeCorner(GfxContext, header_geo, 0xFF2f2f2f, eSHAPE_CORNER_ROUND10, eCornerTopLeft|eCornerTopRight);
+      //GetPainter().PaintShapeCorner(GfxContext, header_geo, 0xFF2f2f2f, eSHAPE_CORNER_ROUND10, eCornerTopLeft|eCornerTopRight);
     }
 
     int xl, yl, wl, hl;
@@ -863,7 +863,7 @@ namespace nux
     }
     else
     {
-      gPainter.Draw2DLine (GfxContext, xl, yl, xl, yl + row_height, GetVerticalSeparationLineColor() );
+      GetPainter().Draw2DLine (GfxContext, xl, yl, xl, yl + row_height, GetVerticalSeparationLineColor() );
     }
 
     if (m_bShowColumnHeader)
@@ -873,7 +873,7 @@ namespace nux
         // Draw the Top-Left corner of the header
         Geometry geo = Geometry (GetBaseX(), GetBaseY(), ROWHEADERWIDTH, COLUMNHEADERHEIGHT);
         geo.OffsetSize (-1, 0);
-        gPainter.PaintShape (GfxContext, geo, TABLE_HEADER_BASE_COLOR, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
+        GetPainter().PaintShape (GfxContext, geo, TABLE_HEADER_BASE_COLOR, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
       }
 
       for (column_iterator = m_column_header.begin(); column_iterator != m_column_header.end(); column_iterator++)
@@ -907,14 +907,14 @@ namespace nux
           header_title_geo.OffsetPosition (1, 0);
         }
 
-        gPainter.PaintShape (GfxContext, header_title_geo, TABLE_HEADER_BASE_COLOR/*0xFF2f2f2f*/, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
+        GetPainter().PaintShape (GfxContext, header_title_geo, TABLE_HEADER_BASE_COLOR/*0xFF2f2f2f*/, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
         // This is arbitrary to get the text away from the borders of the column.
         {
           geo.OffsetPosition (4, 0);
           geo.OffsetSize (-8, 0);
         }
 
-        gPainter.PaintTextLineStatic (GfxContext, GetThreadBoldFont(), geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
+        GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
 
         if (!isFloatingColumn() && (column_iterator + 1 == m_column_header.end() ) )
         {
@@ -925,13 +925,13 @@ namespace nux
         {
           // Paint column vertical separation.
           xl += (*column_iterator).m_header_area->GetGeometry().GetWidth();
-          //gPainter.Draw2DLine(GfxContext, xl, yl, xl, yl + row_height, GetVerticalSeparationLineColor());
+          //GetPainter().Draw2DLine(GfxContext, xl, yl, xl, yl + row_height, GetVerticalSeparationLineColor());
         }
 
         ////////////////////////////////////
         // Draw the column size handler on the line
         Geometry sizehandler_geo (xl - HANDLERSIZE / 2, m_ViewY, HANDLERSIZE, (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) );
-        //gPainter.Paint2DQuadColor(sizehandler_geo, Color(0.1, 0.1, 0.1, 1.0));
+        //GetPainter().Paint2DQuadColor(sizehandler_geo, Color(0.1, 0.1, 0.1, 1.0));
       }
 
       if (isFloatingColumn() && (m_column_header.size() > 0) )
@@ -946,7 +946,7 @@ namespace nux
                                     GetBaseY(), width, COLUMNHEADERHEIGHT);
           geo.OffsetSize (-2, 0);
           geo.OffsetPosition (4, 0);
-          gPainter.PaintShape (GfxContext, geo, TABLE_HEADER_BASE_COLOR, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
+          GetPainter().PaintShape (GfxContext, geo, TABLE_HEADER_BASE_COLOR, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
         }
       }
     }
@@ -954,7 +954,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void TableCtrl::DrawHeaderPreview (GraphicsContext &GfxContext)
+  void TableCtrl::DrawHeaderPreview (GraphicsEngine &GfxContext)
   {
     GfxContext.PushClippingRectangle (Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight) );
     std::vector<ColumnHeader>::iterator column_iterator;
@@ -975,7 +975,7 @@ namespace nux
     // Draw Top Header Background
     Geometry header_geo = Geometry (m_ViewX, m_ViewY, m_ViewWidth, (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) );
 
-    gPainter.PaintShape (GfxContext, header_geo, TABLE_HEADER_BASE_COLOR, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
+    GetPainter().PaintShape (GfxContext, header_geo, TABLE_HEADER_BASE_COLOR, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
 
     Color header_base_color = Color (0xa0808080);
 
@@ -986,7 +986,7 @@ namespace nux
         // Draw the Top-Left corner of the header
         Geometry geo = Geometry (GetBaseX(), GetBaseY(), ROWHEADERWIDTH, COLUMNHEADERHEIGHT);
         geo.OffsetSize (-1, 0);
-        gPainter.PaintShape (GfxContext, geo, header_base_color, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
+        GetPainter().PaintShape (GfxContext, geo, header_base_color, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
       }
 
       for (column_iterator = m_column_header.begin(); column_iterator != m_column_header.end(); column_iterator++)
@@ -1014,13 +1014,13 @@ namespace nux
           header_title_geo.OffsetPosition (1, 0);
         }
 
-        gPainter.PaintShape (GfxContext, header_title_geo, header_base_color/*0xFF2f2f2f*/, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
+        GetPainter().PaintShape (GfxContext, header_title_geo, header_base_color/*0xFF2f2f2f*/, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
         // This is arbitrary to get the text away from the borders of the column.
         {
           geo.OffsetPosition (4, 0);
           geo.OffsetSize (-8, 0);
         }
-        gPainter.PaintTextLineStatic (GfxContext, GetThreadBoldFont(), geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
+        GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), geo, (*column_iterator).m_header_area->GetBaseString().GetTCharPtr(), TABLE_HEADER_TEXT_COLOR);
       }
 
       if (isFloatingColumn() && (m_column_header.size() > 0) )
@@ -1035,7 +1035,7 @@ namespace nux
                                     GetBaseY(), width, COLUMNHEADERHEIGHT);
           geo.OffsetSize (-2, 0);
           geo.OffsetPosition (4, 0);
-          gPainter.PaintShape (GfxContext, geo, header_base_color, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
+          GetPainter().PaintShape (GfxContext, geo, header_base_color, eSHAPE_CORNER_ROUND4/*, eCornerTopLeft|eCornerTopRight*/);
         }
       }
     }
@@ -1043,7 +1043,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void TableCtrl::OverlayDrawing (GraphicsContext &GfxContext)
+  void TableCtrl::OverlayDrawing (GraphicsEngine &GfxContext)
   {
     DrawHeaderPreview (GfxContext);
   }
@@ -1998,7 +1998,7 @@ namespace nux
   {
     //m_column_header = m_column_header_preview;
     //m_column_header_preview.clear();
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay (NULL, GetThreadWindowCompositor().GetCurrentWindow() );
+    GetWindowCompositor().SetWidgetDrawingOverlay (NULL, GetWindowCompositor().GetCurrentWindow() );
 
     if (true)
     {
@@ -2011,7 +2011,7 @@ namespace nux
 
   void TableCtrl::OnResizeHeaderMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
   {
-    GetThreadWindowCompositor().SetWidgetDrawingOverlay (this, GetThreadWindowCompositor().GetCurrentWindow() );
+    GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor().GetCurrentWindow() );
 
     bool recompute = false;
 

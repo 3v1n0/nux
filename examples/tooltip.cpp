@@ -1,3 +1,23 @@
+/*
+ * Copyright 2010 Inalogic Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 3, as published
+ * by the  Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * version 3 along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ *
+ */
+
 #include "Nux/Nux.h"
 #include "Nux/VLayout.h"
 #include "Nux/HLayout.h"
@@ -5,8 +25,8 @@
 #include "Nux/WindowCompositor.h"
 #include "Nux/BaseWindow.h"
 #include "Nux/Button.h"
-#include "NuxGraphics/OpenGLEngine.h"
-#include "NuxGraphics/GfxEventsX11.h"
+#include "NuxGraphics/GraphicsEngine.h"
+#include "NuxGraphics/Events.h"
 #include "NuxGraphics/GfxSetupX11.h"
 #include "Nux/TextureArea.h"
 #include "NuxImage/CairoGraphics.h"
@@ -42,10 +62,10 @@ namespace nux
                          long    traverseInfo,
                          long    processEventInfo);
 
-      void Draw (GraphicsContext& gfxContext,
+      void Draw (GraphicsEngine& gfxContext,
                  bool             forceDraw);
 
-      void DrawContent (GraphicsContext& gfxContext,
+      void DrawContent (GraphicsEngine& gfxContext,
                         bool             forceDraw);
 
     protected:
@@ -667,7 +687,7 @@ namespace nux
     return 0;
   }
 
-  void Tooltip::Draw (GraphicsContext& gfxContext,
+  void Tooltip::Draw (GraphicsEngine& gfxContext,
                       bool             forceDraw)
   {
     Geometry base = GetGeometry();
@@ -699,7 +719,7 @@ namespace nux
     gfxContext.PopClippingRectangle ();
   }
 
-  void Tooltip::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void Tooltip::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     /*Geometry base = GetGeometry();
     int x = base.x;

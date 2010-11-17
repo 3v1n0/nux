@@ -48,7 +48,7 @@ namespace nux
     return ret;
   }
 
-  void ComboBoxPropertyItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
+  void ComboBoxPropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
       RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     Geometry geo2 = m_FirstColumnUsableGeometry;

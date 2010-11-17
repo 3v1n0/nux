@@ -21,15 +21,15 @@
 
 
 #include "GLResource.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
 
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 #include "GLWindowManager.h"
-#include "GfxEventsX11.h"
+#include "Events.h"
 #include "IniFile.h"
 
 #include "GfxSetupX11.h"
@@ -389,8 +389,8 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    m_DeviceFactory = new GLDeviceFactory (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
-    m_GraphicsContext = new GraphicsContext (*this);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_GraphicsContext = new GraphicsEngine (*this);
 
     EnableVSyncSwapControl();
     //DisableVSyncSwapControl();
@@ -417,12 +417,14 @@ namespace nux
 
     XGetGeometry (X11Display, X11Window, &root_return, &x_return, &y_return, &width_return, &height_return, &border_width_return, &depth_return);
     m_WindowSize = Size (width_return, height_return);
+    m_WindowPosition = Point (x_return, y_return);
+
     m_ViewportSize = Size (width_return, height_return);
 
     m_GfxInterfaceCreated = true;
 
-    m_DeviceFactory = new GLDeviceFactory (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
-    m_GraphicsContext = new GraphicsContext (*this);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_GraphicsContext = new GraphicsEngine (*this);
 
     return true;
   }
@@ -926,6 +928,23 @@ namespace nux
         _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
         _mouse_state |= NUX_STATE_BUTTON3_DOWN;
       }
+
+      if (xevent.xbutton.button == Button4)
+      {
+        _mouse_state |= NUX_EVENT_MOUSEWHEEL;
+        m_pEvent->e_event = NUX_MOUSEWHEEL;
+        m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
+        return 1;
+      }
+
+      if (xevent.xbutton.button == Button5)
+      {
+        _mouse_state |= NUX_EVENT_MOUSEWHEEL;
+        m_pEvent->e_event = NUX_MOUSEWHEEL;
+        m_pEvent->e_wheeldelta = +NUX_MOUSEWHEEL_DELTA;
+        return 1;
+      }
+
     }
 
     m_pEvent->e_mouse_state = _mouse_state;
@@ -950,23 +969,23 @@ namespace nux
     _mouse_state |= (xevent.xbutton.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
     _mouse_state |= (xevent.xbutton.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
 
-    if (xevent.xbutton.type == ButtonPress)
+    if (xevent.xbutton.type == ButtonRelease)
     {
       if (xevent.xbutton.button == Button1)
       {
-        _mouse_state |= NUX_EVENT_BUTTON1_DOWN;
+        _mouse_state |= NUX_EVENT_BUTTON1_UP;
         _mouse_state &= ~NUX_STATE_BUTTON1_DOWN;
       }
 
       if (xevent.xbutton.button == Button2)
       {
-        _mouse_state |= NUX_EVENT_BUTTON2_DOWN;
+        _mouse_state |= NUX_EVENT_BUTTON2_UP;
         _mouse_state &= ~NUX_STATE_BUTTON2_DOWN;
       }
 
       if (xevent.xbutton.button == Button3)
       {
-        _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
+        _mouse_state |= NUX_EVENT_BUTTON3_UP;
         _mouse_state &= ~NUX_STATE_BUTTON3_DOWN;
       }
     }
@@ -1176,17 +1195,9 @@ namespace nux
 
   void GLWindowImpl::RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x_recalc, int &y_recalc)
   {
-    XWindowAttributes window_attributes_return;
-    int main_window_x;
-    int main_window_y;
+    int main_window_x = m_WindowPosition.x;
+    int main_window_y = m_WindowPosition.y;
     bool same = (TheMainWindow == xevent.xany.window);
-
-    if (!same)
-    {
-      XGetWindowAttributes (m_X11Display, TheMainWindow, &window_attributes_return);
-      main_window_x = window_attributes_return.x;
-      main_window_y = window_attributes_return.y;
-    }
     
     switch (xevent.type)
     {
@@ -1288,6 +1299,7 @@ namespace nux
         m_pEvent->height = xevent.xconfigure.height;
         m_WindowSize.SetWidth (xevent.xconfigure.width);
         m_WindowSize.SetHeight (xevent.xconfigure.height);
+        m_WindowPosition.Set (xevent.xconfigure.x, xevent.xconfigure.y);
 
         //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: ConfigureNotify event."));
         break;
@@ -1348,12 +1360,12 @@ namespace nux
 
         static XComposeStatus ComposeStatus;
         static char buffer[16];
-        m_pEvent->e_text = 0;
+        m_pEvent->e_text[0] = 0;
 
         //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: Keysym: %d - %x."), keysym, keysym);
         if (XLookupString (&xevent.xkey, buffer, sizeof (buffer), NULL, &ComposeStatus) )
         {
-          m_pEvent->e_text = (char *) buffer;
+          m_pEvent->e_text[0] = buffer[0];
         }
 
         break;

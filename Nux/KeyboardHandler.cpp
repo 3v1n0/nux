@@ -23,7 +23,7 @@
 #include "Nux.h"
 #include "KeyboardHandler.h"
 #include "Utils.h"
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "NuxCore/Win32Dialogs/NWin32Clipboard.h"
 
 namespace nux
@@ -43,7 +43,7 @@ namespace nux
     m_mouse_drag                = false;
     m_mouse_inside_text_area    = true;
     m_entering_focus            = false;
-    m_Font                      = GetThreadFont();
+    m_Font                      = GetSysFont();
 
     m_caret = m_selection_start = 0;
     m_insert_mode = true;
@@ -262,7 +262,7 @@ namespace nux
     unsigned long    eventType    /*event type*/,
     unsigned long    keysym       /*event keysym*/,
     unsigned long    state        /*event state*/,
-    const TCHAR      *character    /*character*/,
+    TCHAR      character    /*character*/,
     const Geometry &g)
   {
     //if(ievent.event_type != I_AsciiKey && ievent.event_type != I_KeyPress && ievent.event_type != I_KeyRelease)
@@ -274,7 +274,7 @@ namespace nux
     unsigned key = 0;
 
     if (character != 0)
-      key = (unsigned) * character;
+      key = character;
 
     long virtual_code = keysym;
 

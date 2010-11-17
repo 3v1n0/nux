@@ -23,7 +23,7 @@
 #include "GLResource.h"
 #include "GLResourceManager.h"
 #include "GLTextureResourceManager.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 #include "FontTexture.h"
 
 namespace nux
@@ -55,7 +55,7 @@ namespace nux
     std::vector<BaseTexture*>::iterator it;
     for(it = TextureArray.begin(); it != TextureArray.end(); it++)
     {
-      delete (*it);
+      (*it)->UnReference ();
     }
     TextureArray.clear();
   }

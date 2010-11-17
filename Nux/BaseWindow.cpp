@@ -46,6 +46,7 @@ namespace nux
   BaseWindow::BaseWindow (const TCHAR *WindowName, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
   {
+    _child_need_redraw = true;
     m_TopBorder = 0;
     m_Border = 0;
     m_bSizeMatchLayout = false;
@@ -62,17 +63,18 @@ namespace nux
     m_background_color = Color (0xFF707070);
 
     // Should be at the end of the constructor
-    GetThreadWindowCompositor().RegisterWindow (this);
+    GetWindowCompositor().RegisterWindow (this);
 
     SetMinimumSize (1, 1);
     SetGeometry (Geometry (100, 100, 320, 200) );
 
-    m_PaintLayer = new ColorLayer (Color (0xFFFF7070) );
+    m_PaintLayer = new ColorLayer (Color (0xFFFF7070));
+    //_background_texture = GetWindow ()->GetGpuDevice ()->CreateSystemCapableDeviceTexture(1, 1, 1, BITFMT_R8G8B8A8);
   }
 
   BaseWindow::~BaseWindow()
   {
-    GetThreadWindowCompositor().UnRegisterWindow (this);
+    GetWindowCompositor().UnRegisterWindow (this);
     NUX_SAFE_DELETE (m_PaintLayer);
   }
 
@@ -129,11 +131,9 @@ namespace nux
     return ret;
   }
 
-  void BaseWindow::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void BaseWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
-    int x = base.x;
-    int y = base.y;
     // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
     base.SetX (0);
     base.SetY (0);
@@ -141,46 +141,44 @@ namespace nux
 
     if (UseBlurredBackground() )
     {
-      TexCoordXForm texxform;
-      texxform.uoffset = (float) x / (float) GetThreadWindowCompositor().GetScreenBlurTexture()->GetWidth();
-      texxform.voffset = (float) y / (float) GetThreadWindowCompositor().GetScreenBlurTexture()->GetHeight();
-      texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-
-      gPainter.PushDrawTextureLayer (GfxContext, base, GetThreadWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
+//       TexCoordXForm texxform;
+//       texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
+//       texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
+//       texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
+// 
+//       GetPainter().PushDrawTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
     }
     else
     {
       //nuxDebugMsg(TEXT("[BaseWindow::Draw]"));
-      gPainter.PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
+      GetPainter().PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
     }
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
   }
 
-  void BaseWindow::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void BaseWindow::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
     Geometry base = GetGeometry();
-    int x = base.x;
-    int y = base.y;
     // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
     base.SetX (0);
     base.SetY (0);
 
     if (UseBlurredBackground() )
     {
-      TexCoordXForm texxform;
-      texxform.uoffset = (float) x / (float) GetThreadWindowCompositor().GetScreenBlurTexture()->GetWidth();
-      texxform.voffset = (float) y / (float) GetThreadWindowCompositor().GetScreenBlurTexture()->GetHeight();
-      texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-
-      gPainter.PushTextureLayer (GfxContext, base, GetThreadWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
+//       TexCoordXForm texxform;
+//       texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
+//       texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
+//       texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
+// 
+//       GetPainter().PushTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
     }
     else
     {
       //nuxDebugMsg(TEXT("[BaseWindow::DrawContent]"));
-      gPainter.PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
+      GetPainter().PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
       //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f, 0.0f, 0.0f, 1.0f));
       //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 0.5f));
     }
@@ -192,10 +190,10 @@ namespace nux
       GfxContext.PopClippingRectangle();
     }
 
-    gPainter.PopBackground();
+    GetPainter().PopBackground();
   }
 
-  void BaseWindow::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void BaseWindow::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -286,7 +284,11 @@ namespace nux
     {
       Geometry layout_geo = Geometry (m_Border, m_TopBorder,
                                       geo.GetWidth() - 2 * m_Border, geo.GetHeight() - m_Border - m_TopBorder);
-      m_layout->SetGeometry (layout_geo);
+
+      if (IsSizeMatchContent ())
+        m_layout->SetGeometry (Geometry (0, 0, 1, 1));
+      else
+        m_layout->SetGeometry (layout_geo);
     }
   }
 
@@ -401,28 +403,27 @@ namespace nux
     return m_TopBorder;
   }
 
-  void BaseWindow::ShowWindow (bool b, bool StartModal /*  = false */)
+  void BaseWindow::ShowWindow (bool visible, bool StartModal /*  = false */)
   {
-//    if(m_bIsModal)
-//        return;
+    if (visible == m_bIsVisible)
+      return;
 
     if (m_layout)
     {
       m_layout->SetGeometry (GetGeometry() );
     }
 
-    m_bIsVisible = b;
+    m_bIsVisible = visible;
     m_bIsModal = StartModal;
 
     ComputeChildLayout();
 
-    if (m_bIsVisible)
-    {
-      NeedRedraw();
-    }
-
     if (m_bIsModal)
-      GetThreadWindowCompositor().StartModalWindow (this);
+      GetWindowCompositor().StartModalWindow (this);
+
+    // Whether this view is added or removed, call NeedRedraw. in the case where this view is removed, this is a signal 
+    // that the region below this view need to be redrawn.
+    NeedRedraw();
   }
 
   bool BaseWindow::IsVisible() const
@@ -435,7 +436,7 @@ namespace nux
     m_bIsVisible = false;
     m_bIsModal = false;
     //ShowWindow(false);
-    GetThreadWindowCompositor().StopModalWindow (this);
+    GetWindowCompositor().StopModalWindow (this);
   }
 
   bool BaseWindow::IsModal() const
@@ -480,4 +481,23 @@ namespace nux
     m_background_color = color;
   }
 
+  void BaseWindow::PushHigher (BaseWindow* floating_view)
+  {
+    GetWindowCompositor().PushHigher(this, floating_view);
+  }
+
+  void BaseWindow::PushToFront ()
+  {
+    GetWindowCompositor().PushToFront(this);
+  }
+
+  void BaseWindow::PushToBack ()
+  {
+    GetWindowCompositor().PushToBack(this);
+  }
+
+  bool BaseWindow::ChildNeedsRedraw ()
+  {
+    return _child_need_redraw;
+  }
 }

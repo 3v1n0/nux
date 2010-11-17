@@ -126,20 +126,20 @@ namespace nux
   ThreadState GetThreadState (unsigned int ThreadID);
 
 
-  GLWindowImpl &GetWindow();
-  GraphicsContext &GetGraphicsContext();
-  IntrusiveSP<FontTexture> GetThreadFont();
-  IntrusiveSP<FontTexture> GetThreadBoldFont();
+  IntrusiveSP<FontTexture> GetSysFont();
+  IntrusiveSP<FontTexture> GetSysBoldFont();
 
-  NThread *GetThreadApplication();
-  WindowThread *GetGraphicsThread();
-  WindowCompositor &GetThreadWindowCompositor();
-  BasePainter &GetThreadPainter();
-#define  gPainter nux::GetThreadPainter()
-  UXTheme &GetThreadTheme();
-#define  gTheme nux::GetThreadTheme()
+  NThread           *GetThreadApplication();
+  WindowThread      *GetGraphicsThread();
+  GLWindowImpl      &GetWindow();
+  GraphicsEngine    &GetGraphicsEngine();
+  WindowCompositor  &GetWindowCompositor();
+  BasePainter       &GetPainter();
+  UXTheme           &GetTheme();
+  TimerHandler      &GetTimer();
 
-  TimerHandler &GetThreadTimer();
+#define  gPainter nux::GetPainter()
+#define  gTheme   nux::GetTheme()
 
   inlDeclareThreadLocalStorage (NThread *, 0, ThreadLocal_InalogicAppImpl);
 

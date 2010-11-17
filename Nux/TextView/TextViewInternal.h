@@ -103,9 +103,9 @@ namespace nux
     long WINAPI WndProc (UINT msg, WPARAM wParam, LPARAM lParam);
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw) {};
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
 
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement (long LayoutResult);
@@ -123,12 +123,11 @@ namespace nux
     void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseWheel (int x, int y, int delta, t_u32 button_flags, t_u32 key_flags);
     void RecvKeyEvent (
-      GraphicsContext &GfxContext , /*Graphics Context for text operation*/
+      GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
       t_u32    eventType  , /*event type*/
       t_u32    keysym     , /*event keysym*/
       t_u32    state      , /*event state*/
-      const char      *character  , /*character*/
-      bool             isRepeated , /*true if the key is repeated more than once*/
+      TCHAR    character  , /*character*/
       unsigned short   keyCount     /*key repeat count*/
     );
 
@@ -141,8 +140,8 @@ namespace nux
     //
     //	Message handlers
     //
-    long OnPaint (GraphicsContext &GfxContext);
-    long TextView::OnPaintLine (GraphicsContext &GfxContext, unsigned int LigneNumber);
+    long OnPaint (GraphicsEngine &GfxContext);
+    long TextView::OnPaintLine (GraphicsEngine &GfxContext, unsigned int LigneNumber);
     long OnSize (UINT nFlags, int width, int height);
     long OnVScroll (UINT nSBCode, UINT nPos);
     long OnHScroll (UINT nSBCode, UINT nPos);
@@ -174,15 +173,15 @@ namespace nux
     //
     //	Private Helper functions
     //
-    void PaintLine (GraphicsContext &GfxContext, t_u32 line);
-    void PaintText (GraphicsContext &GfxContext, t_u32 nLineNo, Geometry &rect);
-    void PaintMargin (GraphicsContext &GfxContext, t_u32 line, Geometry &margin);
+    void PaintLine (GraphicsEngine &GfxContext, t_u32 line);
+    void PaintText (GraphicsEngine &GfxContext, t_u32 nLineNo, Geometry &rect);
+    void PaintMargin (GraphicsEngine &GfxContext, t_u32 line, Geometry &margin);
     void RenderColorQuadToBuffer (float *VertexBuffer, int VBSize, Rect geo, Color color);
 
     int   ApplyTextAttributes (t_u32 nLineNo, t_u32 offset, t_u32 &nColumn, TCHAR *szText, int nTextLen, ATTR *attr);
-    int   NeatTextOut (GraphicsContext &GfxContext, int xpos, int ypos, TCHAR *szText, int nLen, int nTabOrigin, ATTR *attr);
+    int   NeatTextOut (GraphicsEngine &GfxContext, int xpos, int ypos, TCHAR *szText, int nLen, int nTabOrigin, ATTR *attr);
 
-    int  PaintCtrlChar (GraphicsContext &GfxContext, int xpos, int ypos, t_u32 chValue);
+    int  PaintCtrlChar (GraphicsEngine &GfxContext, int xpos, int ypos, t_u32 chValue);
     void InitCtrlCharFontAttr();
 
     void RefreshWindow();
@@ -191,9 +190,9 @@ namespace nux
     void UpdateLine (t_u32 nLineNo);
     void AddDirtyLine (t_u32 nLineNo);
 
-    void	PaintRect (GraphicsContext &GfxContext, int x, int y, int width, int height, COLORREF fill);
-    void	PaintRect (GraphicsContext &GfxContext, RECT *rect, COLORREF fill);
-    void	DrawCheckedRect (GraphicsContext &GfxContext, RECT *rect, COLORREF fg, COLORREF bg);
+    void	PaintRect (GraphicsEngine &GfxContext, int x, int y, int width, int height, COLORREF fill);
+    void	PaintRect (GraphicsEngine &GfxContext, RECT *rect, COLORREF fill);
+    void	DrawCheckedRect (GraphicsEngine &GfxContext, RECT *rect, COLORREF fg, COLORREF bg);
 
     int  CtrlCharWidth (t_u32 chValue, FONT *fa);
     int  NeatTextYOffset (FONT *font);

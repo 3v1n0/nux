@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [0])
 m4_define([nux_minor_version], [9])
-m4_define([nux_micro_version], [0])
+m4_define([nux_micro_version], [2])
 
 # Bump this when we break ABI
 m4_define([nux_api_version], [0.9])
@@ -179,9 +179,7 @@ AC_ARG_ENABLE([documentation],
 
 AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 
-dnl ===========================================================================
-
-AM_INIT_AUTOMAKE(nux, nux_api_version)
+dnl ==========================================================================
 
 if test "x$GCC" = "xyes"; then
   GCC_FLAGS="-g -Wall"
@@ -226,6 +224,14 @@ AC_ARG_ENABLE([examples],
               [enable_examples=yes])
 
 AM_CONDITIONAL(BUILD_EXAMPLES, [test "x$enable_examples" = "xyes"])
+AM_COND_IF([BUILD_EXAMPLES],
+      [
+          PKG_CHECK_MODULES(NUX_EXAMPLES, x11)
+          AC_SUBST(NUX_EXAMPLES_CFLAGS)
+          AC_SUBST(NUX_EXAMPLES_LIBS)
+      ],
+)
+
 
 dnl ===========================================================================
 

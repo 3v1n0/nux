@@ -62,20 +62,20 @@ namespace nux
     return ret;
   }
 
-  void MouseAreaCtrl::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void MouseAreaCtrl::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
-    gPainter.PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND10);
+    GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND10);
 
     sigDraw.emit (force_draw);
   }
 
-  void MouseAreaCtrl::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void MouseAreaCtrl::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     sigDraw.emit (force_draw);
   }
 
-  void MouseAreaCtrl::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void MouseAreaCtrl::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

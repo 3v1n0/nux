@@ -137,7 +137,7 @@ namespace nux
     {
       for (UINT i = 0; i < m_ItemGeometryVector.size(); i++)
       {
-        if (m_ItemGeometryVector[i].IsPointInside (ievent.event_x() - ievent.event_x_root(), ievent.event_y() - ievent.event_y_root() ) )
+        if (m_ItemGeometryVector[i].IsPointInside (ievent.GetX() - ievent.GetRootX(), ievent.GetY() - ievent.GetRootY() ) )
         {
           sigCellFocus.emit();
           ret |= 0; // if we don't return 0, then we can't have doubleclick on this item. //eMouseEventSolved;
@@ -149,7 +149,7 @@ namespace nux
     {
       for (UINT i = 0; i < m_ItemGeometryVector.size(); i++)
       {
-        if (m_ItemGeometryVector[i].IsPointInside (ievent.event_x() - ievent.event_x_root(), ievent.event_y() - ievent.event_y_root() ) )
+        if (m_ItemGeometryVector[i].IsPointInside (ievent.GetX() - ievent.GetRootX(), ievent.GetY() - ievent.GetRootY() ) )
         {
           if (! (ret & eMouseEventSolved) && ! (ProcessEventInfo & eDoNotProcess) )
           {
@@ -195,7 +195,7 @@ namespace nux
     //  - Find the newly selected TableItem and set its dirty flag to true.
 
 
-//    if(geo.IsPointInside(ievent.event_x()-ievent.event_x_root(), ievent.event_y()-ievent.event_y_root()))
+//    if(geo.IsPointInside(ievent.GetX()-ievent.GetRootX(), ievent.GetY()-ievent.GetRootY()))
 //    {
 //        if(m_bIsMouseInside != true)
 //        {
@@ -220,7 +220,7 @@ namespace nux
     return ret;
   }
 
-  void TableItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
+  void TableItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
                                 RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     Geometry FirstColumnGeometry = m_ItemGeometryVector[0];
@@ -239,7 +239,7 @@ namespace nux
         nBackground = table->PushItemBackground (GfxContext, this, false);
       }
 
-      Painter.PaintTextLineStatic (GfxContext, GetThreadFont(), geo, row->m_item->GetName(), Color (0xFF000000) /*m_item[r].c_str()*/);
+      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), geo, row->m_item->GetName(), Color (0xFF000000) /*m_item[r].c_str()*/);
       table->PopItemBackground (GfxContext, nBackground);
       setDirtyItem (false);
     }

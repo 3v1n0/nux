@@ -45,7 +45,7 @@ namespace nux
 //m_containerWidth(0),
 //m_containerHeight(0)
   {
-    //gPainter.CreateBackgroundTexture(m_BackgroundTexture);
+    //GetPainter().CreateBackgroundTexture(m_BackgroundTexture);
     hscrollbar = new HScrollBar;
     vscrollbar = new VScrollBar;
 
@@ -103,7 +103,7 @@ namespace nux
     return ret;
   }
 
-  void TextViewWidget::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void TextViewWidget::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 
@@ -120,7 +120,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void TextViewWidget::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void TextViewWidget::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     vscrollbar->Draw (GfxContext, force_draw);
     hscrollbar->Draw (GfxContext, force_draw);

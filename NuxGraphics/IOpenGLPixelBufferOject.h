@@ -60,7 +60,7 @@ namespace nux
     BYTE *_MemMap;
     unsigned int  _OffsetToLock;
     unsigned int  _SizeToLock;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
 }

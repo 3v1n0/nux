@@ -33,9 +33,9 @@ namespace nux
     ~ScrollBar();
 
   private:
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw) = 0;
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw) = 0;
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw) = 0;
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) = 0;
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) = 0;
 
   public:
     int visible() const

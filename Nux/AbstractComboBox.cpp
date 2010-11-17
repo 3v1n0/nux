@@ -72,24 +72,24 @@ namespace nux
   {
   }
 
-  void AbstractComboBox::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void AbstractComboBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.PaintShape (GfxContext, base, m_sCOMBO_COLOR,  eSHAPE_CORNER_ROUND4);
-    gPainter.PaintTextLineStatic (GfxContext, GetFont(), m_ComboArea->GetGeometry(), m_ComboArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintShape (GfxContext, base, m_sCOMBO_COLOR,  eSHAPE_CORNER_ROUND4);
+    GetPainter().PaintTextLineStatic (GfxContext, GetFont(), m_ComboArea->GetGeometry(), m_ComboArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
     Geometry button_geo = m_Button->GetGeometry();
     button_geo.OffsetSize (-5, -2);
     button_geo.OffsetPosition (+4, +1);
 
     if (m_ComboArea->IsMouseInside() || m_Button->IsMouseInside() )
-      gPainter.PaintShape (GfxContext, button_geo, m_sCOMBO_MOUSEOVER_COLOR,  eSHAPE_CORNER_ROUND4);
+      GetPainter().PaintShape (GfxContext, button_geo, m_sCOMBO_MOUSEOVER_COLOR,  eSHAPE_CORNER_ROUND4);
     else
-      gPainter.PaintShape (GfxContext, button_geo, m_sCOMBO_BUTTON_COLOR,  eSHAPE_CORNER_ROUND4);
+      GetPainter().PaintShape (GfxContext, button_geo, m_sCOMBO_BUTTON_COLOR,  eSHAPE_CORNER_ROUND4);
 
     GeometryPositioning gp (eHACenter, eVACenter);
-    Geometry GeoPo = ComputeGeometryPositioning (button_geo, gTheme.GetImageGeometry (eCOMBOBOX_OPEN_BUTTON), gp);
-    gPainter.PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eCOMBOBOX_OPEN_BUTTON);
+    Geometry GeoPo = ComputeGeometryPositioning (button_geo, GetTheme().GetImageGeometry (eCOMBOBOX_OPEN_BUTTON), gp);
+    GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eCOMBOBOX_OPEN_BUTTON);
 
     Geometry popup_geometry;
     popup_geometry.SetX (m_ComboArea->GetBaseX() );
@@ -98,14 +98,14 @@ namespace nux
     popup_geometry.SetHeight (m_ComboArea->GetBaseHeight() );
   }
 
-  void AbstractComboBox::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void AbstractComboBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 
     GfxContext.PopClippingRectangle();
   }
 
-  void AbstractComboBox::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void AbstractComboBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

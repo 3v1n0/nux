@@ -51,7 +51,7 @@ namespace nux
     return ret;
   }
 
-  void EditTextLinePropertyItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
+  void EditTextLinePropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
       RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     if (isDirtyItem() || IsRedrawNeeded() )

@@ -420,7 +420,7 @@ namespace nux
     return ret;
   }
 
-  void TextView::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void TextView::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.PushClippingRectangle (GetGeometry() );
 
@@ -622,7 +622,7 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void TextView::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void TextView::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
     static int n = 0;
 
@@ -653,9 +653,9 @@ namespace nux
       {
         GfxContext.PushClippingRectangle (Geometry (m_ViewX /*+ LeftMarginWidth()*/, m_ViewY, m_ViewWidth /*- LeftMarginWidth()*/, m_ViewHeight) );
 
-        //gPainter.Draw2DLine(GfxContext, m_CaretPosition.x, m_CaretPosition.y, m_CaretPosition.x, m_CaretPosition.y + m_nLineHeight, Color(0xFFAA0000));
+        //GetPainter().Draw2DLine(GfxContext, m_CaretPosition.x, m_CaretPosition.y, m_CaretPosition.x, m_CaretPosition.y + m_nLineHeight, Color(0xFFAA0000));
         if (!BlinkCursor)
-          gPainter.Paint2DQuadColor (GfxContext, m_CaretPosition.x, m_CaretPosition.y, 2, m_nLineHeight, Color (0xFFAA0000) );
+          GetPainter().Paint2DQuadColor (GfxContext, m_CaretPosition.x, m_CaretPosition.y, 2, m_nLineHeight, Color (0xFFAA0000) );
 
         GfxContext.PopClippingRectangle();
         m_DirtyLines.clear();
@@ -799,8 +799,8 @@ namespace nux
   void TextView::RecvMouseWheel (int x, int y, int delta, t_u32 button_flags, t_u32 key_flags)
   {
     m_MouseWheelAcc += delta;
-    int scrollunit = m_MouseWheelAcc / NUX_WIN32_MOUSEWHEEL_DELTA;
-    m_MouseWheelAcc = m_MouseWheelAcc % NUX_WIN32_MOUSEWHEEL_DELTA;
+    int scrollunit = m_MouseWheelAcc / NUX_MOUSEWHEEL_DELTA;
+    m_MouseWheelAcc = m_MouseWheelAcc % NUX_MOUSEWHEEL_DELTA;
 
     if (scrollunit > 0)
     {
@@ -839,12 +839,11 @@ namespace nux
   }
 
   void TextView::RecvKeyEvent (
-    GraphicsContext &GfxContext , /*Graphics Context for text operation*/
+    GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
     t_u32    eventType  , /*event type*/
     t_u32    keysym     , /*event keysym*/
     t_u32    state      , /*event state*/
-    const char      *character  , /*character*/
-    bool             isRepeated , /*true if the key is repeated more than once*/
+    TCHAR    character  , /*character*/
     unsigned short   keyCount     /*key repeat count*/
   )
   {
@@ -904,8 +903,8 @@ namespace nux
 
   void TextView::BlinkCursorTimerInterrupt (void *v)
   {
-    GetThreadTimer().RemoveTimerHandler (m_BlinkTimerHandler);
-    m_BlinkTimerHandler = GetThreadTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
+    GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+    m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
     BlinkCursor = !BlinkCursor;
     AddDirtyLine (m_nCurrentLine);
     NeedRedraw();
@@ -913,7 +912,7 @@ namespace nux
 
   void TextView::StopBlinkCursor (bool BlinkState)
   {
-    GetThreadTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+    GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
     BlinkCursor = BlinkState;
     AddDirtyLine (m_nCurrentLine);
@@ -922,7 +921,7 @@ namespace nux
 
   void TextView::StartBlinkCursor (bool BlinkState)
   {
-    m_BlinkTimerHandler = GetThreadTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
+    m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
     BlinkCursor = BlinkState;
     AddDirtyLine (m_nCurrentLine);
     NeedRedraw();

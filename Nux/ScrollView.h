@@ -36,7 +36,7 @@ namespace nux
     virtual ~ScrollView();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    void Draw (GraphicsContext &GfxContext, bool force_draw);
+    void Draw (GraphicsEngine &GfxContext, bool force_draw);
 
     // API
     void EnableVerticalScrollBar (bool b);

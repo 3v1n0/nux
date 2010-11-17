@@ -56,7 +56,7 @@ namespace nux
     return ret;
   }
 
-  void FilePropertyItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
+  void FilePropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
                                        RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     if (isDirtyItem() ||
@@ -64,7 +64,7 @@ namespace nux
         m_TextEntry->IsRedrawNeeded() )
     {
       UINT nBackground = table->PushItemBackground (GfxContext, this);
-      Painter.PaintTextLineStatic (GfxContext, GetThreadFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
+      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
 
       if (m_ItemGeometryVector.size() >= 2)
       {

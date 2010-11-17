@@ -65,7 +65,7 @@ namespace nux
     std::list<Area *>::iterator it;
     it = std::find (m_LayoutElementList.begin(), m_LayoutElementList.end(), bo);
 
-    if (it != m_LayoutElementList.end() )
+    if (it != m_LayoutElementList.end())
     {
       bo->UnParentObject();
       m_LayoutElementList.erase (it);
@@ -339,7 +339,7 @@ namespace nux
     return ret;
   }
 
-  void Layout::ProcessDraw (GraphicsContext &GfxContext, bool force_draw)
+  void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     //GfxContext.Push2DModelViewMatrix(m_Matrix);
     std::list<Area *>::iterator it;

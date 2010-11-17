@@ -168,7 +168,8 @@ source_h = \
   $(srcdir)/NTemplate.h \
   $(srcdir)/NUniqueIndex.h \
   $(srcdir)/FileIO.h \
-  $(srcdir)/InitiallyUnownedObject.h
+  $(srcdir)/InitiallyUnownedObject.h \
+  $(srcdir)/Win32Dialogs/NWin32Clipboard.h
 
 libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \

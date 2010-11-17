@@ -75,7 +75,7 @@ namespace nux
   private:
 
     // The Dummy boolean is used to create a skeletal frame for the default
-    // render target texture and surface; Only GLDeviceFactory uses it in its constructor.
+    // render target texture and surface; Only GpuDevice uses it in its constructor.
     // Do not use it otherwise!!!
 
     IOpenGLRectangleTexture (
@@ -87,7 +87,7 @@ namespace nux
     //    unsigned int        _Width;
     //    unsigned int        _Height;
     std::vector< IntrusiveSP<IOpenGLSurface> > _SurfaceArray;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
     friend class IOpenGLSurface;
   };
 

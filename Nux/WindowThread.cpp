@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 #include "Layout.h"
-#include "NuxGraphics/OpenGLEngine.h"
+#include "NuxGraphics/GraphicsEngine.h"
 #include "ClientArea.h"
 #include "WindowCompositor.h"
 #include "TimerProc.h"
@@ -34,6 +34,9 @@
 #include "WindowThread.h"
 namespace nux
 {
+
+    TimerFunctor *m_ScrollTimerFunctor;
+    TimerHandle m_ScrollTimerHandler;
 
 // Thread registration call. Hidden from the users. Implemented in Nux.cpp
   bool RegisterNuxThread (NThread *ThreadPtr);
@@ -194,7 +197,7 @@ namespace nux
       if ( (m_GLibContext == 0) || (m_GLibLoop == 0) )
       {
         //create a context
-        m_GLibContext = g_main_context_new();
+        m_GLibContext = g_main_context_default ();
         //create a main loop with context
         m_GLibLoop = g_main_loop_new (m_GLibContext, TRUE);
       }
@@ -257,12 +260,16 @@ namespace nux
     bool repeat = false;
     TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
 
-    repeat = GetThreadTimer().ExecTimerHandler(dd->id);
+    dd->window_thread->_inside_timer_loop = true;
+    repeat = GetTimer().ExecTimerHandler(dd->id);
+    dd->window_thread->_inside_timer_loop = false;
 
     if(dd->window_thread->IsEmbeddedWindow())
         dd->window_thread->RedrawRequested.emit();
     else
-        dd->window_thread->ExecutionLoop(0);
+    {
+      dd->window_thread->ExecutionLoop(0);
+    }
 
     if(!repeat)
       delete dd;
@@ -352,11 +359,26 @@ namespace nux
     m_GLibLoop      = 0;
     m_GLibContext   = 0;
 #endif
+
+    _pending_wake_up_timer = false;
+    _inside_main_loop = false;
+    _inside_timer_loop = false;
+    _async_wake_up_functor = new TimerFunctor();
+    _async_wake_up_functor->OnTimerExpired.connect (sigc::mem_fun (this, &WindowThread::AsyncWakeUpCallback) );
   }
 
   WindowThread::~WindowThread()
   {
     ThreadDtor();
+  }
+
+  void WindowThread::AsyncWakeUpCallback (void* data)
+  {
+    GetTimer ().RemoveTimerHandler (_async_wake_up_timer);
+    _pending_wake_up_timer = false;
+
+    WindowThread* window_thread = NUX_STATIC_CAST(WindowThread*, data);
+    window_thread->ExecutionLoop(0);
   }
 
   void WindowThread::SetLayout (Layout *layout)
@@ -365,8 +387,8 @@ namespace nux
 
     if (m_AppLayout)
     {
-      int w = m_GLWindow->GetGraphicsContext()->GetContextWidth();
-      int h = m_GLWindow->GetGraphicsContext()->GetContextHeight();
+      int w = m_GLWindow->GetGraphicsEngine()->GetContextWidth();
+      int h = m_GLWindow->GetGraphicsEngine()->GetContextHeight();
 
       m_AppLayout->Reference();
       m_AppLayout->SetStretchFactor (1);
@@ -383,8 +405,8 @@ namespace nux
 
   void WindowThread::ReconfigureLayout()
   {
-    int w = m_GLWindow->GetGraphicsContext()->GetWindowWidth();
-    int h = m_GLWindow->GetGraphicsContext()->GetWindowHeight();
+    int w = m_GLWindow->GetGraphicsEngine()->GetWindowWidth();
+    int h = m_GLWindow->GetGraphicsEngine()->GetWindowHeight();
 
     if (m_AppLayout)
     {
@@ -411,7 +433,7 @@ namespace nux
     return ret;
   }
 
-  void WindowThread::ProcessDraw (GraphicsContext &GfxContext, bool force_draw)
+  void WindowThread::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     if (m_AppLayout)
     {
@@ -423,10 +445,25 @@ namespace nux
         // clean any dirty region.
         int buffer_width = GfxContext.GetWindowWidth();
         int buffer_height = GfxContext.GetWindowHeight();
-        gPainter.PaintBackground (GfxContext, Geometry (0, 0, buffer_width, buffer_height) );
+        GetPainter().PaintBackground (GfxContext, Geometry (0, 0, buffer_width, buffer_height) );
       }
 
       m_AppLayout->ProcessDraw (GfxContext, force_draw || dirty);
+    }
+  }
+
+  void WindowThread::RequestRedraw()
+  {
+    m_RedrawRequested = true;
+    RedrawRequested.emit();
+
+    if (!IsEmbeddedWindow())
+    {
+      if ((_inside_main_loop == false) && (_inside_timer_loop == false) && (_pending_wake_up_timer == false))
+      {
+        _pending_wake_up_timer = true;
+        _async_wake_up_timer = GetTimer().AddTimerHandler (0, _async_wake_up_functor, this);
+      }
     }
   }
 
@@ -460,38 +497,6 @@ namespace nux
   void WindowThread::EmptyLayoutRefreshList()
   {
     m_LayoutRefreshList.clear();
-  }
-
-  void WindowThread::AddClientAreaToRedrawList (ClientArea *clientarea)
-  {
-    nuxAssert (clientarea);
-
-    if (clientarea == 0)
-      return;
-
-    std::list<ClientArea *>::iterator it;
-    it = find (m_ClientAreaList.begin(), m_ClientAreaList.end(), clientarea);
-
-    if (it == m_ClientAreaList.end() )
-    {
-      m_ClientAreaList.push_back (clientarea);
-    }
-  }
-
-  void WindowThread::RemoveClientAreaFromRefreshList (ClientArea *clientarea)
-  {
-    std::list<ClientArea *>::iterator it;
-    it = find (m_ClientAreaList.begin(), m_ClientAreaList.end(), clientarea);
-
-    if (it != m_ClientAreaList.end() )
-    {
-      m_ClientAreaList.erase (it);
-    }
-  }
-
-  void WindowThread::EmptyClientAreaRedrawList()
-  {
-    m_ClientAreaList.clear();
   }
 
   bool WindowThread::IsMainLayoutDrawDirty() const
@@ -668,10 +673,11 @@ namespace nux
     while (KeepRunning)
 #endif
     {
+      _inside_main_loop = true;
       if(Application->m_bFirstDrawPass)
       {
         ms = 0.0f;
-        GetThreadTimer().StartEarlyTimerObjects ();
+        GetTimer().StartEarlyTimerObjects ();
       }
       else
       {
@@ -741,10 +747,12 @@ namespace nux
           RefreshLayout();
       }
 
+      _inside_main_loop = false;
+
 // #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-//       GetThreadTimer().ExecTimerHandler (timer_id);
+//       GetTimer().ExecTimerHandler (timer_id);
 // #else
-//       GetThreadTimer().ExecTimerHandler();
+//       GetTimer().ExecTimerHandler();
 // #endif
 
 
@@ -794,35 +802,7 @@ namespace nux
             b |= true;
           }
 
-          int n = (int) m_ClientAreaList.size();
-
-          if ( n & (b || IsRedrawNeeded() ) )
-          {
-            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-            if (IsEmbeddedWindow ())
-            {
-              RequestRequired = true;
-            }
-            else
-            {
-              m_window_compositor->Draw (m_size_configuration_event, false);
-            }
-            SwapGLBuffer = true;
-          }
-          else if (b || IsRedrawNeeded() )
-          {
-            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-            if (IsEmbeddedWindow ())
-            {
-              RequestRequired = true;
-            }
-            else
-            {
-              m_window_compositor->Draw (m_size_configuration_event, false);
-            }
-            SwapGLBuffer = true;
-          }
-          else if (n)
+          if (b || IsRedrawNeeded())
           {
             //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
             if (IsEmbeddedWindow ())
@@ -868,7 +848,6 @@ namespace nux
           {
             SleepForMilliseconds (16.6f - frame_time);
           }
-
 #endif
           // The frame rate calculation below is only reliable when we are constantly rendering.
           // Otherwise the frame rate drops, which does not mean that we are the performance is bad.
@@ -890,8 +869,7 @@ namespace nux
         if (IsEmbeddedWindow () && !m_RedrawRequested && RequestRequired)
           RequestRedraw ();
 
-        GetGraphicsThread()->GetGraphicsContext().ResetStats();
-        m_ClientAreaList.clear();
+        GetGraphicsThread()->GetGraphicsEngine().ResetStats();
         m_size_configuration_event = false;
       }
     }
@@ -1332,7 +1310,6 @@ namespace nux
     NUX_RETURN_VALUE_IF_TRUE (m_ThreadDtorCalled, true);
 
     // Cleanup
-    EmptyClientAreaRedrawList();
     EmptyLayoutRefreshList();
 
     if (m_AppLayout)
@@ -1343,8 +1320,8 @@ namespace nux
     NUX_SAFE_DELETE (m_window_compositor);
     NUX_SAFE_DELETE (m_TimerHandler);
     NUX_SAFE_DELETE (m_Painter);
-    NUX_SAFE_DELETE (m_GLWindow);
     NUX_SAFE_DELETE (m_Theme);
+    NUX_SAFE_DELETE (m_GLWindow);
 
 #if defined(NUX_OS_WINDOWS)
     PostThreadMessage (NUX_GLOBAL_OBJECT_INSTANCE (NProcess).GetMainThreadID(),
@@ -1415,6 +1392,19 @@ namespace nux
       pgeo = parent->GetGeometry();
       geo.x += pgeo.x;
       geo.y += pgeo.y;
+
+      if (parent->Type().IsObjectType (BaseWindow::StaticObjectType))
+      {
+        BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, parent);
+        window->_child_need_redraw = true;
+      }
+    }
+
+    if (view->Type().IsObjectType (BaseWindow::StaticObjectType))
+    {
+      // If the view is a BaseWindow, allow it to mark itself for redraw, as if it was its own  child.
+      BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, view);
+      window->_child_need_redraw = true;
     }
 
     m_dirty_areas.push_back(geo);
@@ -1566,23 +1556,7 @@ namespace nux
         b |= true;
       }
 
-      int n = (int) m_ClientAreaList.size();
-
-      if ( n & (b || IsRedrawNeeded() ) )
-      {
-        //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRequired = true;
-        //m_window_compositor->Draw(event, false);
-        SwapGLBuffer = true;
-      }
-      else if (b || IsRedrawNeeded() )
-      {
-        //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRequired = true;
-        //m_window_compositor->Draw(event, false);
-        SwapGLBuffer = true;
-      }
-      else if (n)
+      if (b || IsRedrawNeeded() )
       {
         //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
         RequestRequired = true;
@@ -1613,10 +1587,10 @@ namespace nux
 
     // Set Nux opengl states. The other plugin in compiz have changed the GPU opengl states.
     // Nux keep tracks of its own opengl states and restore them before doing any drawing.
-    GetGraphicsThread()->GetGraphicsContext().GetRenderStates().SubmitChangeStates();
+    GetGraphicsThread()->GetGraphicsEngine().GetRenderStates().SubmitChangeStates();
 
-    GetGraphicsThread()->GetGraphicsContext().SetDrawClippingRegion (0, 0, GetGraphicsThread()->GetGraphicsContext().GetWindowWidth(),
-        GetGraphicsThread()->GetGraphicsContext().GetWindowHeight() );
+    GetGraphicsThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth(),
+        GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight() );
 
     if (GetWindow().IsPauseThreadGraphicsRendering() == false)
     {
@@ -1626,8 +1600,7 @@ namespace nux
       // When rendering in embedded mode, nux does not attempt to mesure the frame rate...
 
       // Cleanup
-      GetGraphicsThread()->GetGraphicsContext().ResetStats();
-      m_ClientAreaList.clear();
+      GetGraphicsThread()->GetGraphicsEngine().ResetStats();
       ClearRedrawFlag();
 
       m_size_configuration_event = false;
@@ -1648,10 +1621,10 @@ namespace nux
 #endif
 
     GetThreadGLDeviceFactory()->DeactivateFrameBuffer();
-    /*GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
-    GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
-    GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);
-    GetGraphicsThread()->GetGraphicsContext().EnableTextureMode(GL_TEXTURE3, GL_TEXTURE_RECTANGLE);*/
+    /*GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
+    GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
+    GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);
+    GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE3, GL_TEXTURE_RECTANGLE);*/
 
   }
 

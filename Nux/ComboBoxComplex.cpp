@@ -148,7 +148,7 @@ namespace nux
           // Did we hit the area of the popup menu?
           Geometry window_geometry = m_PopupWindow->GetGeometry();
 
-          if (!window_geometry.IsPointInside (ievent.event_x(), ievent.event_y() ) && (m_IsOpeningMenu == false) )
+          if (!window_geometry.IsPointInside (ievent.GetX(), ievent.GetY() ) && (m_IsOpeningMenu == false) )
           {
             m_PopupWindow->Hide();
             m_MenuIsActive = false;
@@ -288,9 +288,9 @@ namespace nux
 //    m_ListBox->FindItemUnderPointer(X, Y, &item, row, column);
 //    m_ListBox->HighlightItem(row, column);
 
-    if (GetThreadWindowCompositor().GetCurrentEvent() )
+    if (GetWindowCompositor().GetCurrentEvent() )
     {
-      m_PopupWindow->ProcessEvent (const_cast<IEvent &> (*GetThreadWindowCompositor().GetCurrentEvent() ), 0, 0);
+      m_PopupWindow->ProcessEvent (const_cast<IEvent &> (*GetWindowCompositor().GetCurrentEvent() ), 0, 0);
     }
   }
 

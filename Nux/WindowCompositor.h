@@ -109,8 +109,20 @@ namespace nux
 
     void RegisterWindow (BaseWindow *);
     void UnRegisterWindow (BaseWindow *);
-    void MoveWindowToFront (BaseWindow *);
-    void MoveWindowToBack (BaseWindow *);
+
+    //! Push a floating view just above another floating view.
+    /*!
+        Note that only the top_floating_view is moving. The overall position of the reference view is not changing. 
+        @param top_floating_view The view to place above bottom_floating_view.
+        @param top_floating_view The reference view that will be below top_floating_view.
+        @param strict If true and top_floating_view is already above bottom_floating_view, then bring top_floating_view lower
+        so that it is strictly above bottom_floating_view.
+    */
+    void PushHigher (BaseWindow* top_floating_view, BaseWindow* bottom_floating_view, bool strict = false);
+    //! Push a floating view at the top of the stack.
+    void PushToFront (BaseWindow* bottom_floating_view);
+    //! Push a floating view at the bottom of the stack.
+    void PushToBack (BaseWindow* bottom_floating_view);
 
     IntrusiveSP<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
@@ -216,7 +228,7 @@ namespace nux
 
     void FormatRenderTargets (int width, int height);
 
-    void UpdatePostProcessRT();
+    //void UpdatePostProcessRT();
 
     /*!
         Floating Area need to be informed when the main window has been resized.
@@ -273,11 +285,11 @@ namespace nux
     int m_TooltipX;
     int m_TooltipY;
 
-    bool m_FullSceneBlurUpdated;
-    IntrusiveSP<IOpenGLBaseTexture> m_BlurTexture;
-    IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip0;
-    IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip1;
-    IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip2;
+//     bool m_FullSceneBlurUpdated;
+//     IntrusiveSP<IOpenGLBaseTexture> m_BlurTexture;
+//     IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip0;
+//     IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip1;
+//     IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip2;
 
     //PBuffer *m_pbuffer;
   public:

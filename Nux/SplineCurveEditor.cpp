@@ -24,7 +24,7 @@
 
 #include "NuxCore/Math/Spline.h"
 
-#include "NuxGraphics/GLDeviceFactory.h"
+#include "NuxGraphics/GpuDevice.h"
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 
@@ -69,7 +69,7 @@ namespace nux
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_Background = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
 
-    delete CheckboardPattern;
+    CheckboardPattern->UnReference ();;
 //     m_Background = PaintLayer(m_CheckboardPattern);
 //     m_Background.SetTileTexture(true);
   }
@@ -166,12 +166,12 @@ namespace nux
   }
 
 
-  void SplineCurveEditor::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void SplineCurveEditor::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    gPainter.PaintBackground (GfxContext, base);
-    gPainter.Paint2DQuadColor (GfxContext, base, Color (COLOR_BACKGROUND_PRIMARY) );
+    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().Paint2DQuadColor (GfxContext, base, Color (COLOR_BACKGROUND_PRIMARY) );
 
     base.OffsetPosition (GRAPH_MARGIN, GRAPH_MARGIN);
     base.OffsetSize (-2 * GRAPH_MARGIN, -2 * GRAPH_MARGIN);
@@ -216,8 +216,8 @@ namespace nux
 
       val_prev = Eval (tval_prev);
 
-      gPainter.PushDrawLayer (GfxContext, base, m_Background);
-      gPainter.PopBackground();
+      GetPainter().PushDrawLayer (GfxContext, base, m_Background);
+      GetPainter().PopBackground();
 
       GfxContext.PushClippingRectangle (base);
 
@@ -226,7 +226,7 @@ namespace nux
       GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
       if (nbKnot <= 1)
-        gPainter.Draw2DLine (GfxContext, X, Y + H - 1, X + W, Y + H - 1, Color (0xFFFFFFFF) );
+        GetPainter().Draw2DLine (GfxContext, X, Y + H - 1, X + W, Y + H - 1, Color (0xFFFFFFFF) );
       else
       {
         float tex_dx = (m_maxX - m_minX) / m_Texture->GetWidth();
@@ -273,7 +273,7 @@ namespace nux
           X1 = X + W * (tval - m_minX) / (m_maxX - m_minX);
           Y1 = Y + H * ( 1 - (val - m_minY) / (m_maxY - m_minY) );
 
-          gPainter.Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
+          GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (0xFFFFFFFF) );
 
           tval_prev = tval;
           val_prev = val;
@@ -293,17 +293,17 @@ namespace nux
         X0 = X + W * (m_control_knot[i].GetX() - m_minX) / (m_maxX - m_minX);
         Y0 = Y + H * ( 1 - (m_control_knot[i].GetY() - m_minY) / (m_maxY - m_minY) );
 
-        Geometry ShapeGeo = gTheme.GetImageGeometry (eDOT6x6);
+        Geometry ShapeGeo = GetTheme().GetImageGeometry (eDOT6x6);
 
         if (m_control_knot.isKnotSelected (i) )
         {
-          gPainter.PaintShape (GfxContext,
+          GetPainter().PaintShape (GfxContext,
                                Geometry (X0 - ShapeGeo.GetWidth() / 2, Y0 - ShapeGeo.GetHeight() / 2, ShapeGeo.GetWidth(), ShapeGeo.GetHeight() ),
                                Color (0xFF44FF44), eDOT6x6);
         }
         else
         {
-          gPainter.PaintShape (GfxContext,
+          GetPainter().PaintShape (GfxContext,
                                Geometry (X0 - ShapeGeo.GetWidth() / 2, Y0 - ShapeGeo.GetHeight() / 2, ShapeGeo.GetWidth(), ShapeGeo.GetHeight() ),
                                Color (0xFFFFFFFF), eDOT6x6);
 
@@ -316,19 +316,19 @@ namespace nux
 
     // We do some ajustment here because when a knot is at one of the border, we still want to see the entire knot and not have the wireframe
     // square draw itself over it.
-    gPainter.Paint2DQuadWireframe (GfxContext, Geometry (base.x - KNOT_SIZE,
+    GetPainter().Paint2DQuadWireframe (GfxContext, Geometry (base.x - KNOT_SIZE,
                                    base.y - KNOT_SIZE,
                                    base.GetWidth() + 2 * KNOT_SIZE,
                                    base.GetHeight() + 2 * KNOT_SIZE), Color (0xFF000000) );
   }
 
 
-  void SplineCurveEditor::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void SplineCurveEditor::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void SplineCurveEditor::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void SplineCurveEditor::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -581,13 +581,12 @@ namespace nux
   }
 
   void SplineCurveEditor::RecvKeyEvent (
-    GraphicsContext &GfxContext , /*Graphics Context for text operation*/
-    unsigned long    eventType  , /*event type*/
-    unsigned long    keysym     , /*event keysym*/
-    unsigned long    state      , /*event state*/
-    const char      *character  , /*character*/
-    bool             isRepeated , /*true if the key is repeated more than once*/
-    unsigned short   keyCount     /*key repeat count*/
+    GraphicsEngine  &GfxContext , /*Graphics Context for text operation*/
+    unsigned long   eventType  , /*event type*/
+    unsigned long   keysym     , /*event keysym*/
+    unsigned long   state      , /*event state*/
+    TCHAR           character  , /*character*/
+    unsigned short  keyCount     /*key repeat count*/
   )
   {
     if (!HasKeyboardFocus() )

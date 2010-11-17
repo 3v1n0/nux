@@ -123,7 +123,6 @@ source_cpp = \
   $(srcdir)/SpinBox_Logic.cpp \
   $(srcdir)/SplineCurveEditor.cpp \
   $(srcdir)/SplineCurvePreview.cpp \
-  $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/StaticTextBox.cpp \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TableCtrl.cpp \
@@ -150,6 +149,7 @@ source_cpp = \
   $(srcdir)/VToolBar.cpp \
   $(srcdir)/WidgetMetrics.cpp \
   $(srcdir)/WidgetSmartPointer.cpp \
+  $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/WindowThread.cpp
 
 source_property_item_h = \
@@ -253,7 +253,6 @@ source_h = \
   $(srcdir)/SpinBox_Logic.h \
   $(srcdir)/SplineCurveEditor.h \
   $(srcdir)/SplineCurvePreview.h \
-  $(srcdir)/WindowCompositor.h \
   $(srcdir)/StaticTextBox.h \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TableCtrl.h \
@@ -265,8 +264,8 @@ source_h = \
   $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
   $(srcdir)/TreeControl.h \
-  $(srcdir)/Utils.h \
   $(srcdir)/Theme.h \
+  $(srcdir)/Utils.h \
   $(srcdir)/Validator.h \
   $(srcdir)/Valuator.h \
   $(srcdir)/ValuatorDouble.h \
@@ -280,6 +279,7 @@ source_h = \
   $(srcdir)/VToolBar.h \
   $(srcdir)/WidgetMetrics.h \
   $(srcdir)/WidgetSmartPointer.h \
+  $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
 
 libnux_@NUX_API_VERSION@_la_SOURCES = \

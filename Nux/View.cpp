@@ -38,7 +38,7 @@ namespace nux
     m_UseStyleDrawing   = true;
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
     m_IsEnabled         = true;
-    m_font              = GetThreadFont();
+    m_font              = GetSysFont();
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -180,7 +180,7 @@ namespace nux
     return OnEvent (ievent, TraverseInfo, ProcessEventInfo);
   }
 
-  void View::ProcessDraw (GraphicsContext &GfxContext, bool force_draw)
+  void View::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     m_IsFullRedraw = false;
 
@@ -212,32 +212,32 @@ namespace nux
     m_IsFullRedraw = false;
   }
 
-  void View::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void View::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void View::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void View::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
   void View::NeedRedraw()
   {
-    //GetThreadWindowCompositor()..AddToDrawList(this);
+    //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetGraphicsThread();
     if(application)
     {
         application->AddToDrawList(this);
         application->RequestRedraw();
-        //GetThreadWindowCompositor().AddToDrawList(this);
+        //GetWindowCompositor().AddToDrawList(this);
     }
     m_NeedRedraw = true;
   }
 
   void View::NeedSoftRedraw()
   {
-    //GetThreadWindowCompositor()..AddToDrawList(this);
+    //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetGraphicsThread();
     if(application)
     {

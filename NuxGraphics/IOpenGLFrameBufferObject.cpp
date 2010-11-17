@@ -21,10 +21,10 @@
 
 
 #include "GLResource.h"
-#include "GLDeviceFactory.h"
+#include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "IOpenGLFrameBufferObject.h"
-#include "OpenGLEngine.h"
+#include "GraphicsEngine.h"
 
 namespace nux
 {

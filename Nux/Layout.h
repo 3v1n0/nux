@@ -185,7 +185,7 @@ namespace nux
     \param ProcessEventInfo
     \return The state of the Process Event.
     */
-    virtual void ProcessDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
 
     //! Mark all element in the layout as dirty.
     /*!
@@ -221,6 +221,11 @@ namespace nux
     virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
 
     virtual void SetApplication (WindowThread *Application);
+
+    std::list<Area *>& GetChildren ()
+    {
+      return m_LayoutElementList;
+    }
 
     //! Set dirty flag
     void SetDirty (bool b)

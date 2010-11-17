@@ -59,7 +59,7 @@ namespace nux
     return ret;
   }
 
-  void Matrix3PreviewPropertyItem::DrawProperty (GraphicsContext &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
+  void Matrix3PreviewPropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
       RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
   {
     if (isDirtyItem() || IsRedrawNeeded() )

@@ -25,9 +25,9 @@
 
 
 #if defined(NUX_OS_WINDOWS)
-#include "NuxGraphics/Gfx_Events.h"
+#include "NuxGraphics/Events.h"
 #elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/GfxEventsX11.h"
+#include "NuxGraphics/Events.h"
 #endif
 #include "EditTextBox.h"
 #include "StaticTextBox.h"
@@ -42,7 +42,7 @@ namespace nux
     HueRangeValuator (float value = 0.0f, float vmin = 0, float vmax = 1.0f);
     ~HueRangeValuator();
 
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     void SetHLSLight (float light)
     {
       m_HLSLight = light;

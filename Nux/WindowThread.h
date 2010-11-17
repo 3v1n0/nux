@@ -23,6 +23,8 @@
 #ifndef WINDOWTHREAD_H
 #define WINDOWTHREAD_H
 
+#include "TimerProc.h"
+
 namespace nux
 {
 
@@ -70,7 +72,7 @@ namespace nux
 
     // Event, Drawing
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    void ProcessDraw (GraphicsContext &GfxContext, bool force_draw);
+    void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
     void SetWindowTitle (const TCHAR *WindowTitle)
     {
       m_WindowTitle = WindowTitle;
@@ -80,9 +82,9 @@ namespace nux
     {
       return *m_GLWindow;
     }
-    GraphicsContext &GetGraphicsContext() const
+    GraphicsEngine &GetGraphicsEngine() const
     {
-      return *m_GLWindow->GetGraphicsContext();
+      return *m_GLWindow->GetGraphicsEngine();
     }
     BasePainter &GetPainter() const
     {
@@ -101,11 +103,8 @@ namespace nux
 
     void SetWindowBackgroundPaintLayer (AbstractPaintLayer *bkg);
 
-    void RequestRedraw()
-    {
-      m_RedrawRequested = true;
-      RedrawRequested.emit();
-    }
+    void RequestRedraw();
+
     void ClearRedrawFlag()
     {
       m_RedrawRequested = false;
@@ -115,6 +114,11 @@ namespace nux
       return m_RedrawRequested;
     }
 
+    /*!
+      Returns the main layout, a BaseWindow object or 0 as the parent of the area.
+      A BaseWindow has no parent so 0 is returned. Also for objects that have not been
+      added to the rendering tree, 0 is returned.
+    */
     Area* GetTopRenderingParent(Area* area);
 
     void AddToDrawList (View *view);
@@ -139,10 +143,6 @@ namespace nux
     void EmptyLayoutRefreshList();
 
     void RefreshLayout();
-
-    void AddClientAreaToRedrawList (ClientArea *clientarea);
-    void RemoveClientAreaFromRefreshList (ClientArea *clientarea);
-    void EmptyClientAreaRedrawList();
 
     //! Return true if we are computing any layout that is part of this window.
     /*!
@@ -285,7 +285,16 @@ namespace nux
 
     sigc::signal<void> RedrawRequested;
 
+    bool _inside_main_loop;
+    bool _inside_timer_loop;
+    bool _pending_wake_up_timer;
+
+    TimerFunctor *_async_wake_up_functor;
+    TimerHandle _async_wake_up_timer;
+
   protected:
+    void AsyncWakeUpCallback (void*);
+
     //void SetModalWindow(bool b) {m_bIsModal = b;}
 
     /*!
@@ -344,12 +353,6 @@ namespace nux
     //! This variable is true while we are computing the layout the starting from the outmost layout (the Main Layout);
     bool m_IsComputingMainLayout;
 
-    //! This list contains the client areas that need to be redraw.
-    /*!
-        This list contains the client areas that need to be redraw.
-    */
-    std::list<ClientArea *> m_ClientAreaList;
-
   private:
     float m_FrameRate;
     t_u32 m_FrameCounter;
@@ -371,7 +374,7 @@ namespace nux
     TimerHandler    *m_TimerHandler;
 
     GLWindowImpl *m_GLWindow;
-    GraphicsContext *m_GraphicsContext;
+    GraphicsEngine *m_GraphicsContext;
     WindowCompositor *m_window_compositor;
     std::list<NThread *> m_ThreadList;
     bool m_WidgetInitialized;

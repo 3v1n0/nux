@@ -76,7 +76,7 @@ namespace nux
     NUX_SAFE_DELETE (m_Validator);
 
     if (m_BlinkTimerHandler.IsValid() )
-      GetThreadTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+      GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
 
     m_BlinkTimerHandler = 0;
   }
@@ -92,11 +92,11 @@ namespace nux
     if ( ( (X < base.x) && (m_KeyboardHandler.GetCursorPosition() > 0) ) ||
          ( (X > base.x + base.GetWidth() ) && (m_KeyboardHandler.GetCursorPosition() < m_KeyboardHandler.GetLength() ) ) )
     {
-      m_ScrollTimerHandler = GetThreadTimer().AddTimerHandler (50, m_ScrollTimerFunctor, this);
+      m_ScrollTimerHandler = GetTimer().AddTimerHandler (50, m_ScrollTimerFunctor, this);
     }
     else
     {
-      GetThreadTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+      GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
       m_ScrollTimerHandler = 0;
     }
 
@@ -109,15 +109,15 @@ namespace nux
 
   void EditTextBox::BlinkCursorTimerInterrupt (void *v)
   {
-    GetThreadTimer().RemoveTimerHandler (m_BlinkTimerHandler);
-    m_BlinkTimerHandler = GetThreadTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
+    GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+    m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
     BlinkCursor = !BlinkCursor;
     NeedRedraw();
   }
 
   void EditTextBox::StopBlinkCursor (bool BlinkState)
   {
-    GetThreadTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+    GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
     BlinkCursor = BlinkState;
     NeedRedraw();
@@ -125,7 +125,7 @@ namespace nux
 
   void EditTextBox::StartBlinkCursor (bool BlinkState)
   {
-    m_BlinkTimerHandler = GetThreadTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
+    m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
     BlinkCursor = BlinkState;
     NeedRedraw();
   }
@@ -145,19 +145,19 @@ namespace nux
     return ret;
   }
 
-  void EditTextBox::Draw (GraphicsContext &GfxContext, bool force_draw)
+  void EditTextBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     {
       GfxContext.PushClippingRectangle (base);
 
-      gPainter.Paint2DQuadColor (GfxContext, base, Color (m_BackgroundColor) );
+      GetPainter().Paint2DQuadColor (GfxContext, base, Color (m_BackgroundColor) );
 
       if (HasKeyboardFocus() )
       {
 
-        gPainter.PaintColorTextLineEdit (GfxContext, GetGeometry(),
+        GetPainter().PaintColorTextLineEdit (GfxContext, GetGeometry(),
                                          m_KeyboardHandler.GetTextLine(),
                                          GetTextColor(),
                                          m_WriteAlpha,
@@ -174,7 +174,7 @@ namespace nux
       }
       else
       {
-        gPainter.PaintTextLineStatic (GfxContext, GetFont(), GetGeometry(),
+        GetPainter().PaintTextLineStatic (GfxContext, GetFont(), GetGeometry(),
                                       m_KeyboardHandler.GetTextLine(),
                                       GetTextColor() );
       }
@@ -182,12 +182,12 @@ namespace nux
     GfxContext.PopClippingRectangle();
   }
 
-  void EditTextBox::DrawContent (GraphicsContext &GfxContext, bool force_draw)
+  void EditTextBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void EditTextBox::PostDraw (GraphicsContext &GfxContext, bool force_draw)
+  void EditTextBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -254,7 +254,7 @@ namespace nux
 
     if (m_ScrollTimerHandler.IsValid() )
     {
-      GetThreadTimer().RemoveTimerHandler (m_ScrollTimerHandler);
+      GetTimer().RemoveTimerHandler (m_ScrollTimerHandler);
       m_ScrollTimerHandler = 0;
     }
 
@@ -290,7 +290,7 @@ namespace nux
 
     if ( (!m_ScrollTimerHandler.IsValid() ) && ( (X < base.x) || (X > base.x + base.GetWidth() ) ) )
     {
-      m_ScrollTimerHandler = GetThreadTimer().AddTimerHandler (25, m_ScrollTimerFunctor, this);
+      m_ScrollTimerHandler = GetTimer().AddTimerHandler (25, m_ScrollTimerFunctor, this);
     }
     else if ( (X >= base.x) && (X < base.x + base.GetWidth() ) )
     {
@@ -314,19 +314,18 @@ namespace nux
 
 
   void EditTextBox::RecvKeyEvent (
-    GraphicsContext &GfxContext , /*Graphics Context for text operation*/
-    unsigned long    eventType  , /*event type*/
-    unsigned long    keysym     , /*event keysym*/
-    unsigned long    state      , /*event state*/
-    const char      *character  , /*character*/
-    bool             isRepeated , /*true if the key is repeated more than once*/
-    unsigned short   keyCount     /*key repeat count*/)
+    GraphicsEngine  &GfxContext, /*Graphics Context for text operation*/
+    unsigned long   eventType  , /*event type*/
+    unsigned long   keysym     , /*event keysym*/
+    unsigned long   state      , /*event state*/
+    TCHAR           character  , /*character*/
+    unsigned short  keyCount     /*key repeat count*/)
   {
     m_KeyboardHandler.ProcessKey (eventType, keysym, state, character, GetGeometry() );
 
     if (character)
     {
-      sigCharacter.emit (this, *character);
+      sigCharacter.emit (this, character);
       sigEditChange.emit (this);
 
       // When a writable character is entered, no blinking of cursor
@@ -425,13 +424,13 @@ namespace nux
   void EditTextBox::RecvStartKeyFocus()
   {
     EnteringKeyboardFocus();
-    m_BlinkTimerHandler = GetThreadTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
+    m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
   }
 
   void EditTextBox::RecvEndKeyFocus()
   {
     QuitingKeyboardFocus();
-    GetThreadTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+    GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
     BlinkCursor = false;
   }

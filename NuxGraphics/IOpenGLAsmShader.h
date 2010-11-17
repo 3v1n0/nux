@@ -73,7 +73,7 @@ namespace nux
   private:
     IOpenGLAsmVertexShader (NString ShaderName = NString ("VertexProgram") );
     bool m_CompiledAndReady;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
   class IOpenGLAsmPixelShader:  public IOpenGLAsmShader
@@ -87,7 +87,7 @@ namespace nux
   private:
     IOpenGLAsmPixelShader (NString ShaderName = NString ("PixelProgram") );
     bool m_CompiledAndReady;
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
 
@@ -134,7 +134,7 @@ namespace nux
     IntrusiveSP<IOpenGLAsmVertexShader> m_AsmVertexProgram;
     IntrusiveSP<IOpenGLAsmPixelShader> m_AsmFragmentProgram;
 
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
   };
 
 }

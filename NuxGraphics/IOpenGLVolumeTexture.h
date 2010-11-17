@@ -104,7 +104,7 @@ namespace nux
     std::vector< IntrusiveSP<IOpenGLSurface> > *_VolumeSurfaceArray;
     std::vector< IntrusiveSP<IOpenGLVolume> > _VolumeArray;
 
-    friend class GLDeviceFactory;
+    friend class GpuDevice;
     friend class IOpenGLSurface;
   };
 

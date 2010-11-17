@@ -23,7 +23,7 @@
 #ifndef COLOREDITOR_H
 #define COLOREDITOR_H
 
-#include "NuxGraphics/GLDeviceFactory.h"
+#include "NuxGraphics/GpuDevice.h"
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "NuxGraphics/GLSh_DrawFunction.h"
 #include "DoubleValidator.h"
@@ -87,9 +87,9 @@ namespace nux
     ColorEditor (NUX_FILE_LINE_PROTO);
     ~ColorEditor();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsContext &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsContext &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsContext &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
 
     void SetRed (double r);
@@ -122,9 +122,9 @@ namespace nux
 
     sigc::signal< void, ColorEditor * > sigChange;
   private:
-    void DrawBaseChannelMarker (GraphicsContext &GfxContext);
-    void DrawRGB (GraphicsContext &GfxContext, bool force_draw);
-    void DrawHSV (GraphicsContext &GfxContext, bool force_draw);
+    void DrawBaseChannelMarker (GraphicsEngine &GfxContext);
+    void DrawRGB (GraphicsEngine &GfxContext, bool force_draw);
+    void DrawHSV (GraphicsEngine &GfxContext, bool force_draw);
 
     eColorChannel   m_ColorChannel;
     eColorModel     m_ColorModel;
