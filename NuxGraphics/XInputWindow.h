@@ -59,6 +59,11 @@ namespace nux
     //! Get the window geometry.
     Rect GetGeometry() const;
     
+    //! Get X11 the Window.
+    Window GetWindow ();
+    
+    void GrabPointer ();
+    void UnGrabPointer ();
     
   private:
   

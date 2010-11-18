@@ -173,19 +173,14 @@ namespace nux
     {
       case NUX_MOUSE_PRESSED:
       {
-        /*me.MouseDown = true;
-        me.m_HWMouseDown = true;
-        me.m_HWMouseUp = false;*/
         m_events |= eSigMouseDown;
-        SetMouseFocus (true);
+        if (m_CurrentMouseIn)
+          SetMouseFocus (true);
       }
       break;
 
       case NUX_MOUSE_RELEASED:
       {
-        /*me.MouseUp = true;
-        me.m_HWMouseUp = true;
-        me.m_HWMouseDown = false;*/
         if (HasMouseFocus() )
         {
           m_events |= eSigMouseUp;
@@ -266,22 +261,23 @@ namespace nux
 
   void BaseMouseHandler::StopMouseFocus (int x, int y, const Geometry &g)
   {
-//    int lo_x, hi_x, lo_y, hi_y;
-//    lo_x = g.x;
-//    hi_x = g.x + g.GetWidth();
-//    lo_y = g.y;
-//    hi_y = g.y + g.GetBaseHeight();
-//
-//    bool isIn = PT_IN_BOX( x, y, lo_x, hi_x, lo_y, hi_y );
-//    if(isIn)
-//    {
-//        m_PreviousMouseIn = m_CurrentMouseIn = true;
-//    }
-//    else
-//    {
-//        m_PreviousMouseIn = m_CurrentMouseIn = false;
-//    }
-
+//     int lo_x, hi_x, lo_y, hi_y;
+//     lo_x = g.x;
+//     hi_x = g.x + g.GetWidth() - 1;
+//     lo_y = g.y;
+//     hi_y = g.y + g.GetHeight() - 1;
+// 
+//     bool isIn = PT_IN_BOX ( x, y, lo_x, hi_x, lo_y, hi_y );
+// 
+//     if (isIn)
+//     {
+//       m_PreviousMouseIn = m_CurrentMouseIn = true;
+//     }
+//     else
+//     {
+//       m_PreviousMouseIn = m_CurrentMouseIn = false;
+//     }
+    
     m_hasMouseFocus = false;
   }
 }
