@@ -117,7 +117,6 @@ namespace nux
                       GSourceFunc  callback,
                       gpointer     user_data)
   {
-    printf ("nux_event_dispatch\n");
     nux_glib_threads_lock();
     WindowThread *window_thread = NUX_STATIC_CAST (WindowThread *, user_data);
     t_u32 return_code = window_thread->ExecutionLoop (0);
@@ -588,7 +587,6 @@ namespace nux
 
   void WindowThread::AddTimeline (Timeline *timeline)
   {
-    printf ("timelines size: %iu\n", (unsigned int)_Timelines->size ());
     _Timelines->push_back (timeline);
     _Timelines->unique ();
   }
