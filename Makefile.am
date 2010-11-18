@@ -7,5 +7,5 @@ all: doxygen-doc
 endif
 
 DISTCLEANFILES = doc/html/* doc/*
-EXTRA_DIST = $(DX_CONFIG) autogen.sh
+EXTRA_DIST = $(DX_CONFIG) autogen.sh COPYING.gpl
 
