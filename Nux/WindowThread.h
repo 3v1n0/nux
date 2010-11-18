@@ -292,6 +292,9 @@ namespace nux
     TimerFunctor *_async_wake_up_functor;
     TimerHandle _async_wake_up_timer;
 
+    // quits the main loop.
+    void NuxMainLoopQuit ();
+
   protected:
     void AsyncWakeUpCallback (void*);
 

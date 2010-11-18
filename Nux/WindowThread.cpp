@@ -249,6 +249,14 @@ namespace nux
     }
   }
 
+  void WindowThread::NuxMainLoopQuit ()
+  {
+    // woo no more main loop! this is prolly bad for nux, so erm
+    // FIXME!! - Jay take a look at this, make sure just quitting the mainloop
+    // is an idea that makes sense (needed for testing)
+    g_main_loop_quit (m_GLibLoop);
+  }
+
   typedef struct
   {
     WindowThread *window_thread;
