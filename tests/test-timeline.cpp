@@ -34,22 +34,42 @@ test_timeline_create_suite (void)
   g_test_add_func (TESTDOMAIN"/Timeline", test_timeline);
 }
 
-
-void timeline_callback (unsigned long msecs)
+class TimelineTestClass
 {
-  // got a new frame!
-  printf ("New Frame!\n");
-}
+public:
+  nux::Button *button;
+  nux::Timeline *timeline_1;
 
-void timeline_completed ()
-{
-  printf ("Completed!\n");
-}
+  void OnNewFrame (unsigned long msecs)
+  {
+    printf ("InClass New Frame!\n");
+  }
+
+  void OnCompleted ()
+  {
+    printf ("Completed Timeline\n");
+    button->GetApplication ()->NuxMainLoopQuit ();
+  }
+
+  void Init (nux::Layout *layout)
+  {
+    button = new nux::Button("Timeline Test!", NUX_TRACKER_LOCATION);
+
+    button->SetMaximumWidth(80);
+    button->SetMaximumHeight(60);
+
+    layout->AddView(button, 1, nux::eCenter, nux::eFull);
+  }
+
+};
 
 void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 {
+  TimelineTestClass *self = (TimelineTestClass*) InitData;
   nux::VLayout* MainVLayout = new nux::VLayout("", NUX_TRACKER_LOCATION);
   MainVLayout->SetContentDistribution(nux::eStackCenter);
+
+  self->Init (MainVLayout);
 
   nux::GetGraphicsThread()->SetLayout(MainVLayout);
   nux::ColorLayer background(nux::Color(0xFF4D4D4D));
@@ -59,15 +79,17 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 static void
 test_timeline (void)
 {
+  printf ("running test\n");
   TimelineTestClass *test_class = new TimelineTestClass ();
   nux::NuxInitialize(0);
-  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Timeline Test"), 400, 300, 0, ThreadWidgetInit, 0);
+  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Timeline Test"), 400, 300, 0, ThreadWidgetInit, test_class);
 
   nux::Timeline *timeline = new nux::Timeline (1000, "My Timeline", NUX_TRACKER_LOCATION);
   timeline->Looping = false;
-  timeline->NewFrame.connect (sigc::ptr_fun (timeline_callback));
-  timeline->Completed.connect (sigc::ptr_fun (timeline_completed));
+  timeline->NewFrame.connect (sigc::mem_fun (test_class, &TimelineTestClass::OnNewFrame));
+  timeline->Completed.connect (sigc::mem_fun (test_class, &TimelineTestClass::OnCompleted));
 
   wt->AddTimeline (timeline);
   wt->Run(NULL);
+  printf ("done running the test \n");
 }
