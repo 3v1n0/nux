@@ -42,12 +42,10 @@ public:
 
   void OnNewFrame (unsigned long msecs)
   {
-    printf ("InClass New Frame!\n");
   }
 
   void OnCompleted ()
   {
-    printf ("Completed Timeline\n");
     button->GetApplication ()->NuxMainLoopQuit ();
   }
 
@@ -79,7 +77,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 static void
 test_timeline (void)
 {
-  printf ("running test\n");
+
   TimelineTestClass *test_class = new TimelineTestClass ();
   nux::NuxInitialize(0);
   nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Timeline Test"), 400, 300, 0, ThreadWidgetInit, test_class);
@@ -89,7 +87,16 @@ test_timeline (void)
   timeline->NewFrame.connect (sigc::mem_fun (test_class, &TimelineTestClass::OnNewFrame));
   timeline->Completed.connect (sigc::mem_fun (test_class, &TimelineTestClass::OnCompleted));
 
+  GTimeVal time_val;
+  g_get_current_time (&time_val);
+
+  unsigned long current_time = (time_val.tv_sec * 1000) + (time_val.tv_usec / 1000);
+
   wt->AddTimeline (timeline);
   wt->Run(NULL);
-  printf ("done running the test \n");
+
+  g_get_current_time (&time_val);
+  g_assert ((time_val.tv_sec * 1000) + (time_val.tv_usec / 1000) - current_time > 1000); // we got at least 1000 ms of timeline
+  g_assert (timeline->GetReferenceCount () == 0);
+
 }

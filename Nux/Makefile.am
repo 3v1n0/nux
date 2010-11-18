@@ -131,6 +131,7 @@ source_cpp = \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/TimeGraph.cpp \
   $(srcdir)/Timeline.cpp \
+  $(srcdir)/TimelineEasings.cpp \
   $(srcdir)/TimerProc.cpp \
   $(srcdir)/ToolButton.cpp \
   $(srcdir)/TreeControl.cpp \

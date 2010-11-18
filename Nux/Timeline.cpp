@@ -73,16 +73,16 @@ namespace nux
 
   void Timeline::DoTick (unsigned long msecs)
   {
-    printf ("number of msecs this dotick: %lu", msecs);
+    //printf ("number of msecs this dotick: %lu\n", msecs);
     if (msecs < 1)
       return;
 
     _ElapsedTime += msecs;
-    printf ("_ElapsedTime! %lu\n", _ElapsedTime);
+    //printf ("_ElapsedTime! %lu\n", _ElapsedTime);
     if (Looping)
       _ElapsedTime %= Duration;
 
-    printf ("_ElapsedTime! post looping %lu\n", _ElapsedTime);
+    //printf ("_ElapsedTime! post looping %lu\n", _ElapsedTime);
     unsigned long remainder = 0;
     if (_ElapsedTime > Duration)
     {
@@ -99,6 +99,6 @@ namespace nux
         UnReference ();
       }
 
-    printf ("Number of references %i\n", GetReferenceCount ());
+    //printf ("Number of references %i\n", GetReferenceCount ());
   }
 }

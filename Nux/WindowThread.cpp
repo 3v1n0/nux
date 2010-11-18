@@ -362,6 +362,10 @@ namespace nux
     m_PeriodeTime = 0;
 
     _Timelines = new std::list<Timeline*> ();
+    GTimeVal time_val;
+    g_get_current_time (&time_val);
+    _last_timeline_frame_time_sec = time_val.tv_sec;
+    _last_timeline_frame_time_usec = time_val.tv_usec;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     m_GLibLoop      = 0;
