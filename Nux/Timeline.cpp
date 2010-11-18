@@ -73,6 +73,7 @@ namespace nux
 
   void Timeline::DoTick (unsigned long msecs)
   {
+    printf ("number of msecs this dotick: %lu", msecs);
     if (msecs < 1)
       return;
 
