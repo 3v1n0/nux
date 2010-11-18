@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <Nux/Nux.h>
 
-//void test_timeline_create_suite ();
+void test_timeline_create_suite ();
 
 gint
 main (gint argc, gchar *argv[])
@@ -32,7 +32,7 @@ main (gint argc, gchar *argv[])
 
 
   /* Please keep this alphabetically ordered */
-  //test_timeline_create_suite ();
+  test_timeline_create_suite ();
 
   return g_test_run ();
 }
