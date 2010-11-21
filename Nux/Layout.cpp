@@ -182,7 +182,6 @@ namespace nux
 
     bo->SetParentObject (this);
 
-    bo->SetApplication (GetApplication() );
     m_LayoutElementList.push_back (bo);
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
@@ -402,18 +401,6 @@ namespace nux
   void Layout::RequestBottomUpLayoutComputation (Area *bo_initiator)
   {
 
-  }
-
-  void Layout::SetApplication (WindowThread *Application)
-  {
-    Area::SetApplication (Application);
-
-    std::list<Area *>::iterator it;
-
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
-    {
-      (*it)->SetApplication (Application);
-    }
   }
 
   void Layout::Translate (int x, int y)

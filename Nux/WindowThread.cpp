@@ -411,6 +411,7 @@ namespace nux
     }
   }
   
+  // NUXTODO: rename to ComputeLayoutBeforeRendering
   void WindowThread::AddObjectToRefreshList (Area *bo)
   {
     nuxAssert (bo != 0);

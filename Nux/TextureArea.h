@@ -33,19 +33,31 @@ namespace nux
   public:
     TextureArea (NUX_FILE_LINE_PROTO);
     virtual ~TextureArea();
+
+    /*!
+        Render this area with a Texture. The reference count of the device texture which is cached by \a texture is increased by 1.
+        It \a layer was allocated on the heap, it must be deleted later. 
+        @param layer A pointer to a BaseTexture class.
+    */
+    void SetTexture (BaseTexture *texture);
+
+    /*!
+        Set the paint layer of this area. The \a layer argument to this function is cloned by this object.
+        It \a layer was allocated on the heap, it must be deleted later. 
+        @param layer A pointer to a concrete class that inherit from AbstractPaintLayer.
+    */
+    void SetPaintLayer (AbstractPaintLayer *layer);
+
+    sigc::signal<void, int, int> sigMouseDown;  //!< Signal emmitted when a mouse button is pressed over this area.
+    sigc::signal<void, int, int> sigMouseDrag;  //!< Signal emmitted when the mouse is dragged over this area.
+
+  protected:
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
-    void SetTexture (BaseTexture *texture);
-    void SetPaintLayer (AbstractPaintLayer *layer);
-    //void SetTexture(const TCHAR* TextureFilename);
     void RecvMouseDown (int x, int y, long button_flags, long key_flags);
     void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-
-    sigc::signal<void, int, int> sigMouseDown;
-    sigc::signal<void, int, int> sigMouseDrag;
 
   private:
     AbstractPaintLayer *m_PaintLayer;

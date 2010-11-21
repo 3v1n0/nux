@@ -67,7 +67,7 @@ namespace nux
     int             Duration;               //!< How long the timer will be running from start to finish (in milliseconds);
     int             ElapsedTime;            //!< Elapsed time during execution (in milliseconds).
     bool            MarkedForRemoval;
-    BaseWindow*     Window;                 //!< BaseWindow from where the timer was created.
+    BaseWindow      *Window;                 //!< BaseWindow from where the timer was created.
     TimerObject     *next;
     TimerObject     *prev;
     t_u32           glibid;
@@ -199,7 +199,7 @@ namespace nux
     timer_object->TimerCallback = Callback;
     timer_object->Period        = Period;
     timer_object->Type          = TIMERTYPE_PERIODIC;
-    timer_object->Window        = GetWindowCompositor().GetCurrentWindow();
+    timer_object->Window        = GetWindowCompositor ().GetCurrentWindow();
 
     AddHandle (timer_object);
 
@@ -476,7 +476,7 @@ namespace nux
         {
           GetWindowCompositor().SetCurrentWindow(timer_object->Window);
           timer_object->TimerCallback->OnTimerExpired.emit(timer_object->CallbackData);
-          GetWindowCompositor().SetCurrentWindow(NULL);          
+          GetWindowCompositor().SetCurrentWindow (NULL);          
           // Reset glibid to 0. glibid is not null, if this element ever happened to be at the head of the queue
           // and we set a timer for it.
           //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Executed Timeout ID: %d"), timer_object->glibid);

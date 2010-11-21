@@ -66,6 +66,8 @@ namespace nux
   ScrollView::~ScrollView()
   {
     // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters
+    hscrollbar->Dispose ();
+    vscrollbar->Dispose ();
   }
 
   long ScrollView::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

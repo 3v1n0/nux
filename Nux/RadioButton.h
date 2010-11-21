@@ -63,12 +63,6 @@ namespace nux
 
     void EmitStateChangedSignal();
 
-    //+++ Inherited from AbstractButton
-    virtual bool IsCheckable() const
-    {
-      return true;
-    }
-
     virtual void SetCaption (const TCHAR *Caption);
     virtual const NString &GetCaption() const;
 

@@ -21,13 +21,13 @@
 
 
 #include "Nux.h"
-#include "Button.h"
+#include "PushButton.h"
 #include "HLayout.h"
 
 namespace nux
 {
 
-  Button::Button (const TCHAR *Caption, NUX_FILE_LINE_DECL)
+  PushButton::PushButton (const TCHAR *Caption, NUX_FILE_LINE_DECL)
     :   AbstractButton (Caption, NUX_FILE_LINE_PARAM)
   {
     _state     = false;
@@ -37,52 +37,53 @@ namespace nux
     SetCaption (Caption);
   }
 
-  Button::~Button()
+  PushButton::~PushButton()
   {
     DestroyLayout();
   }
 
-  void Button::InitializeWidgets()
+  void PushButton::InitializeWidgets()
   {
     // Set Signals
-    OnMouseClick.connect (sigc::mem_fun (this, &Button::RecvClick) );
-    OnMouseDown.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &Button::RecvMouseUp) );
-    OnMouseMove.connect (sigc::mem_fun (this, &Button::RecvMouseMove) );
-    OnMouseEnter.connect (sigc::mem_fun (this, &Button::RecvMouseEnter) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &Button::RecvMouseLeave) );
+    OnMouseClick.connect (sigc::mem_fun (this, &PushButton::RecvClick) );
+    OnMouseDown.connect (sigc::mem_fun (this, &PushButton::RecvMouseDown) );
+    OnMouseDoubleClick.connect (sigc::mem_fun (this, &PushButton::RecvMouseDown) );
+    OnMouseUp.connect (sigc::mem_fun (this, &PushButton::RecvMouseUp) );
+    OnMouseMove.connect (sigc::mem_fun (this, &PushButton::RecvMouseMove) );
+    OnMouseEnter.connect (sigc::mem_fun (this, &PushButton::RecvMouseEnter) );
+    OnMouseLeave.connect (sigc::mem_fun (this, &PushButton::RecvMouseLeave) );
 
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-
     SetTextColor (Color::Black);
   }
 
-  void Button::InitializeLayout()
+  void PushButton::InitializeLayout()
   {
   }
 
-  void Button::DestroyLayout()
+  void PushButton::DestroyLayout()
   {
   }
 
-  long Button::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  long PushButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
     return ret;
   }
 
-  void Button::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void PushButton::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
+
     InteractState is;
     is.is_on = _state;
     is.is_focus = HasMouseFocus();
+
     is.is_prelight = IsMouseInside();
 
-    if (is.is_focus || is.is_on)
+    if (is.is_focus)
     {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Color::White, eAllCorners);
       GetPainter().PopBackground();
@@ -97,31 +98,20 @@ namespace nux
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Color::White, eAllCorners);
       GetPainter().PopBackground();
     }
-
-    //if (_state)
-    //{
-    //  GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Color::White, eAllCorners);
-    //  GetPainter().PopBackground();
-    //}
-    //else
-    //{
-    //  GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Color::White, eAllCorners);
-    //  GetPainter().PopBackground();
-    //}
     GetPainter().PaintTextLineStatic (GfxContext, GetFont(), base, GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
   }
 
-  void Button::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void PushButton::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void Button::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void PushButton::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void Button::SetCaption (const TCHAR *Caption)
+  void PushButton::SetCaption (const TCHAR *Caption)
   {
     if (Caption == 0 || (StringLength (Caption) == 0) )
     {
@@ -131,70 +121,54 @@ namespace nux
       SetBaseString (Caption);
   }
 
-  const NString &Button::GetCaption() const
+  const NString &PushButton::GetCaption() const
   {
     return GetBaseString();
   }
 
-  void Button::SetState (bool b)
+  void PushButton::SetState (bool b)
   {
-    _state = b;
-    NeedRedraw();
+
   }
 
-  void Button::SetState (bool State, bool EmitSignal)
+  void PushButton::SetState (bool State, bool EmitSignal)
   {
-    _state = State;
 
-    if (EmitSignal)
-    {
-      sigClick.emit();
-      sigToggled.emit();
-      sigStateChanged.emit (_state);
-
-    }
-
-    NeedRedraw();
   }
 
-  bool Button::GetState() const
+  bool PushButton::GetState() const
   {
-    return _state;
+    return false;
   }
 
-  void Button::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void PushButton::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    _state = !_state;
     sigClick.emit();
     NeedRedraw();
   }
 
-  void Button::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void PushButton::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     NeedRedraw();
   }
 
-  void Button::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void PushButton::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     NeedRedraw();
   }
 
-  void Button::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void PushButton::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
 
   }
 
-  void Button::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    NeedRedraw();
-  }
-
-  void Button::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void PushButton::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     NeedRedraw();
   }
 
-
-
-
+  void PushButton::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    NeedRedraw();
+  }
 }

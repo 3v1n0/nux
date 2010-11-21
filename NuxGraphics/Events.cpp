@@ -140,7 +140,7 @@ namespace nux
     return 0;
   }
 
-  bool IEvent::IsButtonDown(int button) const
+  bool IEvent::GetButtonState(int button) const
   {
     if (button == 1)
       return (e_mouse_state & NUX_STATE_BUTTON1_DOWN) ? true : false;

@@ -282,10 +282,10 @@ namespace nux
       }
     }
 
-    ret = m_IdentityMtxBtn->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ZeroMtxBtn->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_InverseMtxBtn->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_NegateMtxBtn->ProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_IdentityMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_ZeroMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_InverseMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_NegateMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
 
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
     return ret;

@@ -270,7 +270,7 @@ namespace nux
 
   long TimeGraph::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    long ret = m_button->ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
+    long ret = m_button->BaseProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
     ret = m_GraphBarIcon->OnEvent (ievent, ret, ProcessEventInfo);
     ret = m_GraphIcon->OnEvent (ievent, ret, ProcessEventInfo);
     ret = m_ValueIcon->OnEvent (ievent, ret, ProcessEventInfo);

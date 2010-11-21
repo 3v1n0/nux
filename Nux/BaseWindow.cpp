@@ -76,11 +76,17 @@ namespace nux
 
   BaseWindow::~BaseWindow()
   {
+#if defined(NUX_OS_LINUX)
     if (m_input_window)
     {
       EnableInputWindow (false);
     }
-    
+#endif
+
+    // At this stage, the reference count of this object is 0 and while the weak reference count is > 0.
+    // The weak reference count is probably 2: one reference in m_WindowList and another in m_WindowToTextureMap.
+    // Reference the object here to avoid it being destroy when the call from UnRegisterWindow returns;
+
     GetWindowCompositor().UnRegisterWindow (this);
     NUX_SAFE_DELETE (m_PaintLayer);
 
@@ -436,7 +442,7 @@ namespace nux
     ComputeChildLayout();
 
     if (m_bIsModal)
-      GetWindowCompositor().StartModalWindow (this);
+      GetWindowCompositor().StartModalWindow (IntrusiveWeakSP<BaseWindow> (this));
 
     // Whether this view is added or removed, call NeedRedraw. in the case where this view is removed, this is a signal 
     // that the region below this view need to be redrawn.
@@ -453,7 +459,7 @@ namespace nux
     m_bIsVisible = false;
     m_bIsModal = false;
     //ShowWindow(false);
-    GetWindowCompositor().StopModalWindow (this);
+    GetWindowCompositor().StopModalWindow (IntrusiveWeakSP<BaseWindow> (this));
   }
 
   bool BaseWindow::IsModal() const
@@ -500,17 +506,17 @@ namespace nux
 
   void BaseWindow::PushHigher (BaseWindow* floating_view)
   {
-    GetWindowCompositor().PushHigher(this, floating_view);
+    GetWindowCompositor().PushHigher (this, floating_view);
   }
 
   void BaseWindow::PushToFront ()
   {
-    GetWindowCompositor().PushToFront(this);
+    GetWindowCompositor().PushToFront (this);
   }
 
   void BaseWindow::PushToBack ()
   {
-    GetWindowCompositor().PushToBack(this);
+    GetWindowCompositor().PushToBack (this);
   }
 
   bool BaseWindow::ChildNeedsRedraw ()

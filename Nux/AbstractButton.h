@@ -25,14 +25,20 @@
 
 namespace nux
 {
+  typedef enum
+  {
+    BUTTON_TYPE_UNKNOWN = 0,
+    BUTTON_TYPE_NORMAL,
+    BUTTON_TYPE_PUSH,
+    BUTTON_TYPE_CHECK,
+    BUTTON_TYPE_RADIO,
+  } ButtonType;
 
   class AbstractButton : public View
   {
   public:
     AbstractButton (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
     ~AbstractButton();
-
-    virtual bool IsCheckable() const = 0;
 
     virtual void SetCaption (const TCHAR *Caption) = 0;
     virtual const NString &GetCaption() const = 0;
@@ -42,7 +48,9 @@ namespace nux
     virtual bool GetState() const = 0;
 
   protected:
-    bool m_State;
+    bool _state;
+    ButtonType _type;
+
 
   };
 

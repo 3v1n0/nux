@@ -19,16 +19,14 @@
  *
  */
 
-
 #include "Nux.h"
 #include "RadioButton.h"
 #include "RadioButtonGroup.h"
 
 namespace nux
 {
-
   RadioButtonGroup::RadioButtonGroup (NUX_FILE_LINE_DECL)
-    :   Object (false, NUX_FILE_LINE_PARAM)  // RadioButtonGroup is created as unowned
+    : Object (false, NUX_FILE_LINE_PARAM)  // RadioButtonGroup is created as unowned
   {
     m_ActiveRadioButtonIndex = 0;
   }

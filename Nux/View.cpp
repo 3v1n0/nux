@@ -53,6 +53,11 @@ namespace nux
       m_CompositionLayout->UnParentObject();
   }
 
+  long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    return ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
+  }
+
   long View::ComputeChildLayout()
   {
     if (m_CompositionLayout)

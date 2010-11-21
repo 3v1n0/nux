@@ -220,8 +220,6 @@ namespace nux
     */
     virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
 
-    virtual void SetApplication (WindowThread *Application);
-
     std::list<Area *>& GetChildren ()
     {
       return m_LayoutElementList;

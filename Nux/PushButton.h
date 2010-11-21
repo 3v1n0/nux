@@ -20,20 +20,19 @@
  */
 
 
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef PUSHBUTTON_H
+#define PUSHBUTTON_H
 #include "AbstractButton.h"
 
 namespace nux
 {
-
   class HLayout;
 
-  class Button: public AbstractButton
+  class PushButton: public AbstractButton
   {
   public:
-    Button (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
-    ~Button();
+    PushButton (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
+    ~PushButton();
 
     virtual void SetCaption (const TCHAR *Caption);
     virtual const NString &GetCaption() const;
@@ -43,8 +42,6 @@ namespace nux
     virtual bool GetState() const;
 
     sigc::signal<void> sigClick;
-    sigc::signal<void> sigToggled;
-    sigc::signal<void, bool> sigStateChanged;
 
   protected:
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -63,7 +60,9 @@ namespace nux
     void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
+  private:
   };
+
 }
 
-#endif // BUTTON_H
+#endif // PUSHBUTTON_H

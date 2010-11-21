@@ -135,7 +135,7 @@ namespace nux
         if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
         {
           View *ic = NUX_STATIC_CAST (View *, (*it) );
-          ret = ic->ProcessEvent (ievent, ret, ProcEvInfo | DoNotProcess);
+          ret = ic->BaseProcessEvent (ievent, ret, ProcEvInfo | DoNotProcess);
         }
         else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
         {

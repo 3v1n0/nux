@@ -247,8 +247,6 @@ namespace nux
   {
     // re implemented by Layout
     m_stretchfactor = sf;
-    //if(m_stretchfactor == 0)
-    //ComputeLayout2(); // This will make the layout fit exactly its children if any.
   }
 
   void Area::SetParentObject (Area *bo)
