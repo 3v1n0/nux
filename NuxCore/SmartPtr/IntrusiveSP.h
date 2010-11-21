@@ -518,7 +518,7 @@ namespace nux
       {
         if (WarnMissuse && (ptr->OwnsTheReference() == false) )
         {
-          nuxDebugMsg (TEXT ("[IntrusiveWeakSP::IntrusiveWeakSP] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
+          //nuxDebugMsg (TEXT ("[IntrusiveWeakSP::IntrusiveWeakSP] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
         }
 
         ptr_ = ptr;
@@ -550,7 +550,7 @@ namespace nux
         {
           if (WarnMissuse && (ptr->OwnsTheReference() == false) )
           {
-            nuxDebugMsg (TEXT ("[IntrusiveWeakSP::IntrusiveWeakSP] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
+            //nuxDebugMsg (TEXT ("[IntrusiveWeakSP::IntrusiveWeakSP] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
           }
 
           ptr_ = (T *) ptr;
@@ -790,7 +790,7 @@ namespace nux
       {
         if (ptr->OwnsTheReference() == false)
         {
-          nuxDebugMsg (TEXT ("[IntrusiveWeakSP::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
+          //nuxDebugMsg (TEXT ("[IntrusiveWeakSP::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
         }
 
         ptr_ = ptr;
@@ -854,7 +854,7 @@ namespace nux
         {
           if (ptr->OwnsTheReference() == false)
           {
-            nuxDebugMsg (TEXT ("[IntrusiveWeakSP::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
+            //nuxDebugMsg (TEXT ("[IntrusiveWeakSP::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
           }
 
           ptr_ = (T *) ptr;
