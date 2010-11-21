@@ -259,6 +259,8 @@ namespace nux
     Geometry    _tooltip_text_geometry;     //!< The geometry of the text area of the tooltip.
     Point m_EventRoot;
 
+    bool _inside_event_processing;
+    
     AbstractPaintLayer *m_Background;
 
     std::list<BaseWindow*> m_WindowList;

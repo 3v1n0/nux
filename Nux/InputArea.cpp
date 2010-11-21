@@ -80,6 +80,21 @@ namespace nux
   {
     OnEndFocus.emit();
     m_EventHandler.StopMouseFocus (x, y, m_Geometry);
+    
+//     if (GetWindowCompositor().m_PreviousMouseOverArea == this)
+//     {
+//       GetWindowCompositor().SetPreviousMouseOverArea (0);
+//     }
+    
+//     if (GetWindowCompositor().GetMouseOverArea () == this)
+//     {
+//       GetWindowCompositor().SetMouseOverArea (0);
+//     }
+    
+    if (GetWindowCompositor().GetMouseFocusArea () == this)
+    {
+      GetWindowCompositor().SetMouseFocusArea (0);
+    }
   }
 
   long InputArea::OnEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

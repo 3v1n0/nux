@@ -61,6 +61,8 @@ namespace nux
     m_configure_notify_callback_data = NULL;
     m_blured_background = false;
     m_background_color = Color (0xFF707070);
+    _entering_visible_status = false;
+    _entering_hidden_status = false;
 
     // Should be at the end of the constructor
     GetWindowCompositor().RegisterWindow (this);
@@ -74,8 +76,14 @@ namespace nux
 
   BaseWindow::~BaseWindow()
   {
+    if (m_input_window)
+    {
+      EnableInputWindow (false);
+    }
+    
     GetWindowCompositor().UnRegisterWindow (this);
     NUX_SAFE_DELETE (m_PaintLayer);
+
   }
 
   long BaseWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -304,16 +312,21 @@ namespace nux
   {
     if (b)
     {
+      if (m_input_window == 0)
+      {
+        m_input_window = new XInputWindow ();
+        m_input_window->SetGeometry (GetGeometry());
+      }
       m_input_window_enabled = true;
-      m_input_window = new XInputWindow ();
-    
-      m_input_window->SetGeometry (GetGeometry());
     }
     else
     {
-      m_input_window_enabled = false;
       if (m_input_window)
+      {
         delete (m_input_window);
+        m_input_window = 0;
+      }
+      m_input_window_enabled = false;
     }
   }
   
@@ -334,6 +347,20 @@ namespace nux
   {
     return m_input_window_enabled && m_input_window->StrutsEnabled ();
   }
+  
+  void BaseWindow::GrabPointer ()
+  {
+    if (m_input_window)
+      m_input_window->GrabPointer ();
+      
+  }
+  
+  void BaseWindow::UnGrabPointer ()
+  {
+    if (m_input_window)
+      m_input_window->UnGrabPointer ();    
+  }
+  
   #endif
 
   void BaseWindow::SetGeometry (const Geometry &geo)
@@ -395,6 +422,17 @@ namespace nux
     m_bIsVisible = visible;
     m_bIsModal = StartModal;
 
+    if (m_bIsVisible)
+    {
+      _entering_visible_status = true;
+      sigVisible.emit (this);
+    }
+    else
+    {
+      _entering_hidden_status = true;
+      sigHidden.emit (this);
+    }
+    
     ComputeChildLayout();
 
     if (m_bIsModal)
