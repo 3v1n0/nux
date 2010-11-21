@@ -63,7 +63,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (BaseWindow, View);
   public:
     BaseWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
-    ~BaseWindow();
+    virtual ~BaseWindow();
 
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

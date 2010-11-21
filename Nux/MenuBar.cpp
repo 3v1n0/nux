@@ -308,7 +308,7 @@ namespace nux
   }
   void MenuBar::EmitItemMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
   {
-    m_MenuBarWindow = GetWindowCompositor().GetCurrentWindow();
+    m_MenuBarWindow = GetWindowCompositor ().GetCurrentWindow ();
 
     if (m_MenuIsActive == false)
     {
@@ -317,7 +317,7 @@ namespace nux
       {
         // This should never happen
         nuxAssert (0);
-        m_CurrentMenu->menu->StopMenu();
+        m_CurrentMenu->menu->StopMenu ();
       }
 
       m_MenuIsActive = true;
@@ -326,8 +326,8 @@ namespace nux
       m_IsOpeningMenu = true;
 
       //m_CurrentMenu->area->ForceStopFocus(0, 0);
-      m_CurrentMenu->menu->StartMenu (menubar_item->area->GetBaseX(),
-                                      menubar_item->area->GetBaseY() + menubar_item->area->GetBaseHeight(), 0, 0);
+      m_CurrentMenu->menu->StartMenu (menubar_item->area->GetBaseX (),
+                                      menubar_item->area->GetBaseY () + menubar_item->area->GetBaseHeight (), 0, 0);
     }
     else
     {
@@ -335,7 +335,7 @@ namespace nux
       m_IsOpeningMenu = false;
     }
 
-    NeedRedraw();
+    NeedRedraw ();
   }
 
   void MenuBar::EmitItemMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)

@@ -121,7 +121,7 @@ namespace nux
         if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
         {
           View *ic = NUX_STATIC_CAST (View *, (*it) );
-          ret = ic->ProcessEvent (ievent, ret, ProcEvInfo | DoNotProcess);
+          ret = ic->BaseProcessEvent (ievent, ret, ProcEvInfo | DoNotProcess);
         }
         else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
         {
@@ -504,7 +504,7 @@ namespace nux
     m_point.Set (x, y);
 
     m_focus_splitter_index = header_pos;
-    GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor().GetCurrentWindow() );
+    GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor ().GetCurrentWindow () );
 
 
     // Hint for the window to initiate a redraw

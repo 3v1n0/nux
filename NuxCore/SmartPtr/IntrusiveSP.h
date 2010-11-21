@@ -497,6 +497,7 @@ namespace nux
     {
       m_reference_count = 0;
       m_weak_reference_count = 0;
+      _destroyed = 0;
     }
 
     //! Construction with a base pointer of type T.
@@ -511,6 +512,7 @@ namespace nux
     {
       m_reference_count = 0;
       m_weak_reference_count = 0;
+      _destroyed = 0;
 
       if (ptr != 0)
       {
@@ -522,6 +524,7 @@ namespace nux
         ptr_ = ptr;
         m_reference_count = ptr->m_reference_count;
         m_weak_reference_count = ptr->m_weak_reference_count;
+        _destroyed = ptr->_destroyed;
         ptr_->IncrementWeakCounter();
       }
     }
@@ -539,6 +542,7 @@ namespace nux
     {
       m_reference_count = 0;
       m_weak_reference_count = 0;
+      _destroyed = 0;
 
       if (ptr != 0)
       {
@@ -552,6 +556,7 @@ namespace nux
           ptr_ = (T *) ptr;
           m_reference_count = ptr->m_reference_count;
           m_weak_reference_count = ptr->m_weak_reference_count;
+          _destroyed = ptr->_destroyed;
           ptr_->IncrementWeakCounter();
         }
       }
@@ -566,6 +571,7 @@ namespace nux
       ptr_ = other.ptr_;
       m_reference_count = other.m_reference_count;
       m_weak_reference_count = other.m_weak_reference_count;
+      _destroyed = other._destroyed;
 
       if (ptr_ != 0)
       {
@@ -583,12 +589,14 @@ namespace nux
     {
       m_reference_count = 0;
       m_weak_reference_count = 0;
+      _destroyed = 0;
 
       if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
       {
         ptr_ = other.ptr_;
         m_reference_count = other.m_reference_count;
         m_weak_reference_count = other.m_weak_reference_count;
+        _destroyed = other._destroyed;
 
         if (ptr_ != 0)
         {
@@ -627,12 +635,14 @@ namespace nux
     {
       m_reference_count = 0;
       m_weak_reference_count = 0;
+      _destroyed = 0;
 
       if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
       {
         ptr_ = other.ptr_;
         m_reference_count = other.m_reference_count;
         m_weak_reference_count = other.m_weak_reference_count;
+        _destroyed = other._destroyed;
 
         if (ptr_ != 0)
         {
@@ -655,6 +665,7 @@ namespace nux
         //refCounts_ = other.refCounts_;
         m_reference_count = other.m_reference_count;
         m_weak_reference_count = other.m_weak_reference_count;
+        _destroyed = other._destroyed;
 
         if (ptr_ != 0)
         {
@@ -683,6 +694,7 @@ namespace nux
           //refCounts_ = other.refCounts_;
           m_reference_count = other.m_reference_count;
           m_weak_reference_count = other.m_weak_reference_count;
+          _destroyed = other._destroyed;
 
           if (ptr_ != 0)
           {
@@ -716,6 +728,7 @@ namespace nux
           //refCounts_ = other.refCounts_;
           m_reference_count = other.m_reference_count;
           m_weak_reference_count = other.m_weak_reference_count;
+          _destroyed = other._destroyed;
 
           if (ptr_ != 0)
           {
@@ -749,19 +762,29 @@ namespace nux
       {
         m_weak_reference_count->Decrement();
       }
-      else
-      {
-        nuxAssertMsg (0, TEXT ("Could there be something wrong her?") );
-      }
 
       if (m_reference_count && m_weak_reference_count && (m_reference_count->GetValue() == 0) && (m_weak_reference_count->GetValue() == 0) )
       {
+        if (!(*_destroyed))
+        {
+          // The object is between Object::Destroy() and Object::~Object()
+          ptr_->m_reference_count = 0;
+          ptr_->m_weak_reference_count = 0;
+        }
+        else
+        {
+          // The object has been destroyed and this is the last weak reference to it.
+          delete _destroyed;
+        }
         delete m_reference_count;
         delete m_weak_reference_count;
+        
       }
-
+      
+      ptr_ = 0;
       m_reference_count = 0;
       m_weak_reference_count = 0;
+      _destroyed = 0;
 
       if (ptr != 0)
       {
@@ -773,8 +796,11 @@ namespace nux
         ptr_ = ptr;
         m_reference_count = ptr->m_reference_count;
         m_weak_reference_count = ptr->m_weak_reference_count;
+        _destroyed = ptr->_destroyed;
         ptr_->IncrementWeakCounter();
       }
+
+      return *this;
     }
 
     //! Construction with a base pointer of type O that inherits from type T.
@@ -802,12 +828,25 @@ namespace nux
 
       if (m_reference_count && m_weak_reference_count && (m_reference_count->GetValue() == 0) && (m_weak_reference_count->GetValue() == 0) )
       {
+        if (!(*_destroyed))
+        {
+          // The object is between Object::Destroy() and Object::~Object()
+          ptr_->m_reference_count = 0;
+          ptr_->m_weak_reference_count = 0;
+        }
+        else
+        {
+          // The object has been destroyed and this is the last weak reference to it.
+          delete _destroyed;
+        }
         delete m_reference_count;
         delete m_weak_reference_count;
       }
 
+      ptr_ = 0;
       m_reference_count = 0;
       m_weak_reference_count = 0;
+      _destroyed = 0;
 
       if (ptr != 0)
       {
@@ -821,6 +860,7 @@ namespace nux
           ptr_ = (T *) ptr;
           m_reference_count = ptr->m_reference_count;
           m_weak_reference_count = ptr->m_weak_reference_count;
+          _destroyed = ptr->_destroyed;
           ptr_->IncrementWeakCounter();
         }
       }
@@ -835,14 +875,14 @@ namespace nux
     {
       nuxAssert (m_reference_count && (m_reference_count->GetValue() != 0) && (ptr_ != 0) );
 
-      return *GetPointer ();
+      return *(NUX_CONST_CAST (T*, GetPointer ()));
     }
 
     T *operator -> () const
     {
       nuxAssert (m_reference_count && (m_reference_count->GetValue() != 0) && (ptr_ != 0) );
 
-      return GetPointer ();
+      return NUX_CONST_CAST (T*, GetPointer ());
     }
 
 //     void Swap (IntrusiveWeakSP<T>& other)
@@ -959,10 +999,14 @@ namespace nux
       ReleaseReference();
     }
 
-  private:
-    T *GetPointer() const
+    //! Return the stored pointer.
+    /*!
+        Caller of this function should Reference the pointer if they intend to keep it.
+        @param Return the stored pointer.
+    */
+    const T *GetPointer() const
     {
-      if ( (m_weak_reference_count == 0) || (m_weak_reference_count->GetValue() == 0) )
+      if ((m_weak_reference_count == 0) || (m_weak_reference_count->GetValue() == 0))
       {
         return 0;
       }
@@ -970,6 +1014,17 @@ namespace nux
       return ptr_;
     }
 
+    //! Return the stored pointer.
+    /*!
+        Caller of this function should Reference the pointer if they intend to keep it.
+        @param Return the stored pointer.
+    */
+    T *GetPointer() 
+    {
+      return NUX_CONST_CAST (T*, (const_cast< const IntrusiveWeakSP* >(this))->GetPointer ());
+    }
+
+  private:
     void ReleaseReference ()
     {
       if (ptr_ == 0)
@@ -984,7 +1039,17 @@ namespace nux
 
       if (DeleteWarning)
       {
-        // There are no more reference to ptr_
+        if (!(*_destroyed))
+        {
+          // The object is between Object::Destroy() and Object::~Object()
+          ptr_->m_reference_count = 0;
+          ptr_->m_weak_reference_count = 0;
+        }
+        else
+        {
+          // The object has been destroyed and this is the last weak reference to it.
+          delete _destroyed;
+        }
         delete m_reference_count;
         delete m_weak_reference_count;
       }
@@ -997,6 +1062,7 @@ namespace nux
     T *ptr_;
     NThreadSafeCounter *m_reference_count;
     NThreadSafeCounter *m_weak_reference_count;
+    bool               *_destroyed;
 
     template <typename O>
     friend class IntrusiveWeakSP;

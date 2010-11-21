@@ -107,7 +107,6 @@ namespace nux
 
   FloatingWindow::~FloatingWindow()
   {
-    GetWindowCompositor().UnRegisterWindow (this);
     m_InterfaceObject.clear();
     NUX_SAFE_DELETE_ARRAY (m_WindowTitle);
 

@@ -217,10 +217,20 @@ namespace nux
     */
     int GetWeakReferenceCount () const;
 
+  protected:
     NThreadSafeCounter *m_reference_count; //!< Reference count.
     NThreadSafeCounter *m_weak_reference_count; //!< Weak reference count.
 
-  protected:
+    /*! 
+        Between the time an object goes into Destroy () and the moment it goes into ~Object (), there is
+        the possibility that some weak smart pointer references of the object will be destroyed. For these smart pointers,
+        the reference count of the object is 0 and the weak reference count is > 0. We want the last weak pointer reference 
+        to set the object m_reference_count and m_weak_reference_count variable to 0 after deleting them (rather than leaving them as invalid pointers).
+        So when the object goes into the destructor (~Object ()) we can do some additional checks and verifications.
+        _destroyed is set to true before the destructor returns.
+    */
+    bool *_destroyed;
+
     //! Private destructor.
     /*
         Private destructor. Ensure that Object cannot be created on the stack (only on the heap), but objects that inherits

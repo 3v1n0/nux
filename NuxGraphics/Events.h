@@ -194,7 +194,7 @@ namespace nux
   };
 
   unsigned long GetEventButton(unsigned long button_state);
-  bool IsButtonDown(unsigned long button_state, int button);
+  bool GetButtonState(unsigned long button_state, int button);
     
   class IEvent
   {
@@ -213,8 +213,19 @@ namespace nux
     int GetDeltaY() const;
     unsigned long GetKeyState()	const;
     unsigned long GetMouseState() const;
+
+    /*!
+        Get the button responsible for the event.
+        @return The index of the button responsible for the event: 1 left mouse button, 2 middle mouse button, 3 right mouse button.
+    */
     unsigned long GetEventButton() const;
-    bool IsButtonDown(int button) const;
+
+    /*!
+        Check if a mouse button is down.
+        @param button The button whose state is to be checked.
+        @return True if the button is down.
+    */
+    bool GetButtonState(int button) const;
 
 
 

@@ -321,17 +321,6 @@ namespace nux
     void _SetBaseWidth (int w);
     void _SetBaseHeight (int h);
 
-  public:
-    WindowThread *GetApplication() const
-    {
-      return m_Application;
-    }
-
-    virtual void SetApplication (WindowThread *Application)
-    {
-      m_Application = Application;
-    }
-
   private:
     WindowThread *m_Application;
 

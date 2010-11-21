@@ -48,8 +48,7 @@ namespace nux
 
   public:
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
-
+    long BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual long ComputeChildLayout();
     virtual void PositionChildLayout (float offsetX, float offsetY);
@@ -105,6 +104,11 @@ namespace nux
     bool IsWidgetEnabled();
 
   protected:
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+
     void InitializeWidgets();
     void InitializeLayout();
     void DestroyLayout();
@@ -112,10 +116,7 @@ namespace nux
   private:
     bool m_UseStyleDrawing;
     bool m_IsEnabled;
-  private:
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+
   public:
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
     //! Causes a redraw. The widget parameter m_NeedRedraw is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
