@@ -1,43 +1,51 @@
 #include "Nux/Nux.h"
+#include "Nux/TimelineEasings.h"
 #include "Nux/VLayout.h"
 #include "Nux/HLayout.h"
 #include "Nux/WindowThread.h"
 #include "Nux/Button.h"
+#include "Nux/ColorPreview.h"
+#include "Nux/TextureArea.h"
+#include "Nux/PaintLayer.h"
 
-void timeline_callback (unsigned long msecs)
-{
-  // got a new frame!
-  printf ("New Frame!\n");
-}
-
-void timeline_completed ()
-{
-  printf ("Completed!\n");
-}
 class TimelineTestClass
 {
 public:
-  nux::Button *button;
   nux::Timeline *timeline_1;
+  nux::Timeline *timeline_2;
+  nux::TextureArea *texture_area;
+  nux::TextureArea *texture_area_2;
 
   void OnNewFrame (unsigned long msecs)
   {
-    printf ("InClass New Frame!\n");
+    nux::Color color = nux::Color ((float)timeline_1->GetProgress (), 0.5, 0.6, 1.0);
+    nux::ColorLayer *colorlayer = new nux::ColorLayer(color);
+    texture_area->SetPaintLayer (colorlayer);
+  }
+
+  void OnNewFrame2 (unsigned long msecs)
+  {
+    nux::Color color = nux::Color (0.6, (float)timeline_2->GetProgress (), 0.5, 1.0);
+    nux::ColorLayer *colorlayer = new nux::ColorLayer(color);
+    texture_area_2->SetPaintLayer (colorlayer);
   }
 
   void Init (nux::Layout *layout)
   {
-    button = new nux::Button("Timeline Test!", NUX_TRACKER_LOCATION);
+    texture_area = new nux::TextureArea ();
 
-    button->SetMaximumWidth(80);
-    button->SetMaximumHeight(60);
+    layout->AddView(texture_area, 1, nux::eCenter, nux::eFull);
 
-    layout->AddView(button, 1, nux::eCenter, nux::eFull);
+    texture_area_2 = new nux::TextureArea ();
+    layout->AddView (texture_area_2, 1, nux::eCenter, nux::eFull);
 
-    nux::Timeline *timeline = new nux::Timeline (1000, "Timeline_1", NUX_TRACKER_LOCATION);
-    timeline->Looping = true;
-    timeline->NewFrame.connect (sigc::mem_fun (this, &TimelineTestClass::OnNewFrame));
-    button->GetApplication ()->AddTimeline (timeline);
+    timeline_1 = new nux::TimelineEaseInOutQuad (1000, "Timeline_1", NUX_TRACKER_LOCATION);
+    timeline_1->Looping = true;
+    timeline_1->NewFrame.connect (sigc::mem_fun (this, &TimelineTestClass::OnNewFrame));
+
+    timeline_2 = new nux::TimelineEaseOutQuad (2000, "Timeline_2", NUX_TRACKER_LOCATION);
+    //timeline_2->Looping = true;
+    timeline_2->NewFrame.connect (sigc::mem_fun (this, &TimelineTestClass::OnNewFrame2));
   }
 
 };
@@ -62,12 +70,6 @@ int main(int argc, char **argv)
     nux::NuxInitialize(0);
     nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Timeline Test"), 400, 300, 0, ThreadWidgetInit, test_class);
 
-    nux::Timeline *timeline = new nux::Timeline (1000, "My Timeline", NUX_TRACKER_LOCATION);
-    timeline->Looping = true;
-    timeline->NewFrame.connect (sigc::ptr_fun (timeline_callback));
-    timeline->Completed.connect (sigc::ptr_fun (timeline_completed));
-
-    wt->AddTimeline (timeline);
     wt->Run(NULL);
 
     delete wt;

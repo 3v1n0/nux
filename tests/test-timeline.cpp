@@ -57,12 +57,6 @@ public:
 
   void Init (nux::Layout *layout)
   {
-    button = new nux::Button("Timeline Test!", NUX_TRACKER_LOCATION);
-
-    button->SetMaximumWidth(80);
-    button->SetMaximumHeight(60);
-
-    layout->AddView(button, 1, nux::eCenter, nux::eFull);
   }
 
   bool has_got_new_frame;
@@ -105,6 +99,6 @@ test_timeline (void)
 
   g_get_current_time (&time_val);
   g_assert ((time_val.tv_sec * 1000) + (time_val.tv_usec / 1000) - current_time > 1000); // we got at least 1000 ms of timeline
-  g_assert (timeline->GetReferenceCount () == 0);
   g_assert (test_class->has_got_new_frame);
+  delete test_class;
 }

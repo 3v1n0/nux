@@ -145,6 +145,10 @@ namespace nux
   nux_timeline_prepare  (GSource  *source,
                          gint     *timeout)
   {
+    // right now we are assuming that we are vsynced, so that will handle syncronisation
+    // we could guess how long we have to wait for the next frame but thats rather ugly
+    // idealy we need some more api that ensures that timeline/event/relayout/draws are all in sync
+
     *timeout = 0;
     return TRUE;
   }
@@ -161,12 +165,20 @@ namespace nux
                          gpointer    user_data)
   {
     GTimeVal time_val;
+    bool has_timelines_left = false;
     nux_glib_threads_lock();
     g_source_get_current_time (source, &time_val);
     WindowThread *window_thread = NUX_STATIC_CAST (WindowThread *, user_data);
 
     // pump the timelines
-    window_thread->ProcessTimelines (&time_val);
+    has_timelines_left = window_thread->ProcessTimelines (&time_val);
+
+    if (!has_timelines_left)
+    {
+      // no timelines left on the stack so lets go ahead and remove the
+      // master clock, to save on wakeups
+      window_thread->StopMasterClock ();
+    }
 
     nux_glib_threads_unlock();
     return TRUE;
@@ -228,18 +240,8 @@ namespace nux
     else
       g_source_attach (source, m_GLibContext);
 
-
-    // make a source for our master clock
-    source = g_source_new (&timeline_funcs, sizeof (GSource));
-
-    g_source_set_priority (source, G_PRIORITY_DEFAULT + 10);
-    g_source_set_callback (source, 0, this, 0);
-    g_source_set_can_recurse (source, TRUE);
-
-    if (IsEmbeddedWindow ())
-      g_source_attach (source, NULL);
-    else
-      g_source_attach (source, m_GLibContext);
+    if (_Timelines->size () > 0)
+      StartMasterClock ();
 
     if (!IsEmbeddedWindow ())
     {
@@ -248,12 +250,50 @@ namespace nux
     }
   }
 
+  void WindowThread::StartMasterClock ()
+  {
+    // if we are not embedded and don't have a context yet
+    if (!IsEmbeddedWindow () && m_GLibContext == 0)
+      return;
+
+    if (_MasterClock == NULL)
+      {
+        GTimeVal time_val;
+        // make a source for our master clock
+        _MasterClock = g_source_new (&timeline_funcs, sizeof (GSource));
+
+        g_source_set_priority (_MasterClock, G_PRIORITY_DEFAULT + 10);
+        g_source_set_callback (_MasterClock, 0, this, 0);
+        g_source_set_can_recurse (_MasterClock, TRUE);
+
+        if (IsEmbeddedWindow ())
+          g_source_attach (_MasterClock, NULL);
+        else if (m_GLibContext != 0)
+          g_source_attach (_MasterClock, m_GLibContext);
+
+
+        g_get_current_time (&time_val);
+        _last_timeline_frame_time_sec = time_val.tv_sec;
+        _last_timeline_frame_time_usec = time_val.tv_usec;
+      }
+  }
+
+  void WindowThread::StopMasterClock ()
+  {
+    if (_MasterClock)
+    {
+      g_source_remove (g_source_get_id (_MasterClock));
+      _MasterClock = NULL;
+    }
+  }
+
   void WindowThread::NuxMainLoopQuit ()
   {
     // woo no more main loop! this is prolly bad for nux, so erm
     // FIXME!! - Jay take a look at this, make sure just quitting the mainloop
     // is an idea that makes sense (needed for testing)
-    g_main_loop_quit (m_GLibLoop);
+    if (!IsEmbeddedWindow ())
+      g_main_loop_quit (m_GLibLoop);
   }
 
   typedef struct
@@ -365,6 +405,7 @@ namespace nux
     g_get_current_time (&time_val);
     _last_timeline_frame_time_sec = time_val.tv_sec;
     _last_timeline_frame_time_usec = time_val.tv_usec;
+    _MasterClock = NULL;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     m_GLibLoop      = 0;
@@ -381,6 +422,12 @@ namespace nux
   WindowThread::~WindowThread()
   {
     ThreadDtor();
+    std::list<Timeline*>::iterator li;
+    for (li=_Timelines->begin (); li!=_Timelines->end (); ++li)
+    {
+      (*li)->UnReference ();
+    }
+    delete _Timelines;
   }
 
   void WindowThread::AsyncWakeUpCallback (void* data)
@@ -589,6 +636,16 @@ namespace nux
   {
     _Timelines->push_back (timeline);
     _Timelines->unique ();
+    StartMasterClock ();
+  }
+
+  void WindowThread::RemoveTimeline (Timeline *timeline)
+  {
+    _Timelines->remove (timeline);
+    if (_Timelines->size () == 0)
+    {
+      StopMasterClock ();
+    }
   }
 
   unsigned int WindowThread::Run (void *arg)
@@ -1062,23 +1119,6 @@ namespace nux
     std::list<Timeline*>::iterator li;
     std::list<Timeline*> timelines_copy;
 
-    for (li=_Timelines->begin (); li!=_Timelines->end (); ++li)
-    {
-      timelines_copy.push_back ((*li));
-    }
-
-    // loop through and remove the timelines that have no references left
-    for (li=timelines_copy.begin (); li!=timelines_copy.end (); ++li)
-    {
-      if ((*li)->GetReferenceCount () == 1)
-        {
-          _Timelines->remove ((*li));
-          (*li)->UnReference ();
-        }
-    }
-
-    // make a new copy of the timelines and reference
-    timelines_copy.clear ();
     for (li=_Timelines->begin (); li!=_Timelines->end (); ++li)
     {
       (*li)->Reference ();

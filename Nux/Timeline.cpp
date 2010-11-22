@@ -30,7 +30,8 @@ namespace nux
     IsPlaying = false;
     Duration = msecs;
     Rewind ();
-    Reference (); // get rid of our floating reference
+    SinkReference (); // get rid of our floating reference
+    nux::GetGraphicsThread ()->AddTimeline (this);
   }
 
   Timeline::~Timeline ()
@@ -62,7 +63,7 @@ namespace nux
 
   double Timeline::GetProgress ()
   {
-    return _ElapsedTime / Duration;
+    return (float)_ElapsedTime / Duration;
   }
 
   double Timeline::GetEasing ()
@@ -73,16 +74,13 @@ namespace nux
 
   void Timeline::DoTick (unsigned long msecs)
   {
-    //printf ("number of msecs this dotick: %lu\n", msecs);
     if (msecs < 1)
       return;
 
     _ElapsedTime += msecs;
-    //printf ("_ElapsedTime! %lu\n", _ElapsedTime);
     if (Looping)
       _ElapsedTime %= Duration;
 
-    //printf ("_ElapsedTime! post looping %lu\n", _ElapsedTime);
     unsigned long remainder = 0;
     if (_ElapsedTime > Duration)
     {
@@ -94,11 +92,10 @@ namespace nux
 
     if (remainder > 0)
       {
+        nux::GetGraphicsThread ()->RemoveTimeline (this);
         IsPlaying = false;
         Completed.emit ();
         UnReference ();
       }
-
-    //printf ("Number of references %i\n", GetReferenceCount ());
   }
 }

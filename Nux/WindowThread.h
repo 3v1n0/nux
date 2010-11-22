@@ -274,9 +274,13 @@ namespace nux
         Add a timeline to our window
     */
     void AddTimeline (Timeline* timeline);
+    void RemoveTimeline (Timeline* timeline);
     bool ProcessTimelines (GTimeVal *frame_time);
     long _last_timeline_frame_time_sec;
     long _last_timeline_frame_time_usec;
+
+    void StartMasterClock ();
+    void StopMasterClock ();
     /*!
         This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
     */
@@ -338,6 +342,8 @@ namespace nux
     std::list< ThreadInfo * > m_ChildThreadInfo;
 
   private:
+
+    GSource *_MasterClock;
 
     WindowThread (const WindowThread &);
     // Does not make sense for a singleton. This is a self assignment.
