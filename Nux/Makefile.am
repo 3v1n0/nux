@@ -111,6 +111,7 @@ source_cpp = \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
   $(srcdir)/PropertyList.cpp \
+  $(srcdir)/PushButton.cpp \
   $(srcdir)/RadioButton.cpp \
   $(srcdir)/RadioButtonGroup.cpp \
   $(srcdir)/RangeValue.cpp \
@@ -241,6 +242,7 @@ source_h = \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
   $(srcdir)/PropertyList.h \
+  $(srcdir)/PushButton.h \
   $(srcdir)/RadioButton.h \
   $(srcdir)/RadioButtonGroup.h \
   $(srcdir)/RangeValue.h \

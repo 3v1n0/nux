@@ -27,7 +27,6 @@
 
 namespace nux
 {
-
   class HLayout;
   class InputArea;
 
@@ -61,13 +60,6 @@ namespace nux
     sigc::signal<void, bool> sigStateChanged;
 
     void EmitStateSignal();
-
-
-    //+++ Inherited from AbstractButton
-    virtual bool IsCheckable() const
-    {
-      return true;
-    }
 
     virtual void SetCaption (const TCHAR *Caption);
     virtual const NString &GetCaption() const;

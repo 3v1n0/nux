@@ -34,9 +34,9 @@
 #include "WindowThread.h"
 namespace nux
 {
-
+  
     TimerFunctor *m_ScrollTimerFunctor;
-    TimerHandle m_ScrollTimerHandler;
+    TimerHandle m_ScrollTimerHandler;  
 
 // Thread registration call. Hidden from the users. Implemented in Nux.cpp
   bool RegisterNuxThread (NThread *ThreadPtr);
@@ -234,7 +234,7 @@ namespace nux
     g_source_add_poll (source, &event_source->event_poll_fd);
     g_source_set_can_recurse (source, TRUE);
     g_source_set_callback (source, 0, this, 0);
-
+    
     if (IsEmbeddedWindow ())
       g_source_attach (source, NULL);
     else
@@ -317,7 +317,7 @@ namespace nux
     {
       dd->window_thread->ExecutionLoop(0);
     }
-
+    
     if(!repeat)
       delete dd;
 
@@ -411,7 +411,7 @@ namespace nux
     m_GLibLoop      = 0;
     m_GLibContext   = 0;
 #endif
-
+    
     _pending_wake_up_timer = false;
     _inside_main_loop = false;
     _inside_timer_loop = false;
@@ -434,11 +434,11 @@ namespace nux
   {
     GetTimer ().RemoveTimerHandler (_async_wake_up_timer);
     _pending_wake_up_timer = false;
-
+    
     WindowThread* window_thread = NUX_STATIC_CAST(WindowThread*, data);
     window_thread->ExecutionLoop(0);
   }
-
+  
   void WindowThread::SetLayout (Layout *layout)
   {
     m_AppLayout = layout;
@@ -514,7 +514,7 @@ namespace nux
   {
     m_RedrawRequested = true;
     RedrawRequested.emit();
-
+    
     if (!IsEmbeddedWindow())
     {
       if ((_inside_main_loop == false) && (_inside_timer_loop == false) && (_pending_wake_up_timer == false))
@@ -524,7 +524,8 @@ namespace nux
       }
     }
   }
-
+  
+  // NUXTODO: rename to ComputeLayoutBeforeRendering
   void WindowThread::AddObjectToRefreshList (Area *bo)
   {
     nuxAssert (bo != 0);
@@ -759,7 +760,7 @@ namespace nux
           KeepRunning = false;
           return 0; //break;
       }
-
+      
       if (IsEmbeddedWindow () && event.e_event ==	NUX_SIZE_CONFIGURATION)
         m_size_configuration_event = true;
 
@@ -806,14 +807,14 @@ namespace nux
           m_size_configuration_event = true;
       }
 
-      // Some action may have caused layouts and areas to request a recompute.
+      // Some action may have caused layouts and areas to request a recompute. 
       // Process them here before the Draw section.
       if(!GetWindow().isWindowMinimized())
       {
           // Process the layouts that requested a recompute.
           RefreshLayout();
       }
-
+      
       _inside_main_loop = false;
 
 // #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -826,7 +827,7 @@ namespace nux
       if (!GetWindow().IsPauseThreadGraphicsRendering() || IsEmbeddedWindow ())
       {
         bool SwapGLBuffer = false;
-
+        
         bool RequestRequired = false;
 
         if (Application->m_bFirstDrawPass)
@@ -1401,7 +1402,7 @@ namespace nux
     if (m_window_compositor)
       m_window_compositor->SetBackgroundPaintLayer (bkg);
   }
-
+  
   Area* WindowThread::GetTopRenderingParent(Area* area)
   {
     NUX_RETURN_VALUE_IF_NULL(area, NULL);
@@ -1417,7 +1418,7 @@ namespace nux
       {
         return parent;
       }
-      else
+      else 
       {
         return GetTopRenderingParent (parent);
       }
@@ -1427,16 +1428,16 @@ namespace nux
       return 0;
     }
   }
-
+  
   void WindowThread::AddToDrawList (View *view)
   {
     Area *parent;
     Geometry geo, pgeo;
-
+    
     geo = view->GetGeometry();
-
+    
     parent = GetTopRenderingParent (view);
-
+    
     if (parent)
     {
       pgeo = parent->GetGeometry();
@@ -1459,12 +1460,12 @@ namespace nux
 
     m_dirty_areas.push_back(geo);
   }
-
+  
   void WindowThread::ClearDrawList ()
   {
     m_dirty_areas.clear ();
   }
-
+  
   std::vector<Geometry> WindowThread::GetDrawList ()
   {
     return m_dirty_areas;
@@ -1560,7 +1561,7 @@ namespace nux
         m_size_configuration_event = true;
     }
 
-    // Some action may have caused layouts and areas to request a recompute.
+    // Some action may have caused layouts and areas to request a recompute. 
     // Process them here before the Draw section.
     if (!GetWindow().isWindowMinimized() )
     {

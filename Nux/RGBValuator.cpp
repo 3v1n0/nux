@@ -295,13 +295,13 @@ namespace nux
     ret = m_GreenValuator->OnEvent (ievent, ret, ProcessEventInfo);
     ret = m_BlueValuator->OnEvent (ievent, ret, ProcessEventInfo);
     ret = m_AlphaValuator->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ColorModel->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ColorFormat->ProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_ColorModel->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_ColorFormat->BaseProcessEvent (ievent, ret, ProcessEventInfo);
 
-    ret = m_RedCaption->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_GreenCaption->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_BlueCaption->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_AlphaCaption->ProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_RedCaption->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_GreenCaption->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_BlueCaption->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+    ret = m_AlphaCaption->BaseProcessEvent (ievent, ret, ProcessEventInfo);
 
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
     return ret;
@@ -518,8 +518,8 @@ namespace nux
                                Color (m_Red, m_Green, m_Blue), Color (m_Red, m_Green, m_Blue) );
     GetPainter().Paint2DQuadWireframe (GfxContext, P, Color (0, 0, 0) );
 
-    m_ColorModel->Draw (GfxContext, true);
-    m_ColorFormat->Draw (GfxContext, true);
+    m_ColorModel->ProcessDraw (GfxContext, true);
+    m_ColorFormat->ProcessDraw (GfxContext, true);
   }
   void RGBValuator::DrawHSV (GraphicsEngine &GfxContext)
   {
@@ -588,8 +588,8 @@ namespace nux
     GetPainter().Paint2DQuadColor (GfxContext, P, Color (r, g, b) );
     GetPainter().Paint2DQuadWireframe (GfxContext, P, Color (0, 0, 0) );
 
-    m_ColorModel->Draw (GfxContext, true);
-    m_ColorFormat->Draw (GfxContext, true);
+    m_ColorModel->ProcessDraw (GfxContext, true);
+    m_ColorFormat->ProcessDraw (GfxContext, true);
   }
 
   void RGBValuator::DrawHLS (GraphicsEngine &GfxContext)
@@ -682,8 +682,8 @@ namespace nux
     GetPainter().Paint2DQuadColor (GfxContext, P, Color (r, g, b) );
     GetPainter().Paint2DQuadWireframe (GfxContext, P, Color (0, 0, 0) );
 
-    m_ColorModel->Draw (GfxContext, true);
-    m_ColorFormat->Draw (GfxContext, true);
+    m_ColorModel->ProcessDraw (GfxContext, true);
+    m_ColorFormat->ProcessDraw (GfxContext, true);
   }
 
   void RGBValuator::SetRGBA (Color color)

@@ -146,7 +146,7 @@ namespace nux
     GetPainter().PaintBackground (GfxContext, base);
     GetPainter().PaintTextLineStatic (GfxContext, GetFont(), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
     InteractState is;
-    is.is_on = m_State;
+    is.is_on = _state;
     is.is_focus = m_TextArea->HasMouseFocus() ||
                   HasMouseFocus() ||
                   m_CheckArea->HasMouseFocus();
@@ -226,18 +226,18 @@ namespace nux
 
   void RadioButton::SetStatePrivate (bool State)
   {
-    m_State = State;
+    _state = State;
     NeedRedraw();
   }
 
   void RadioButton::SetStatePrivate (bool State, bool EmitSignal)
   {
-    m_State = State;
+    _state = State;
 
     if (EmitSignal)
     {
       sigToggled.emit();
-      sigStateChanged.emit (m_State);
+      sigStateChanged.emit (_state);
     }
 
     NeedRedraw();
@@ -245,7 +245,7 @@ namespace nux
 
   bool RadioButton::GetState() const
   {
-    return m_State;
+    return _state;
   }
 
   void RadioButton::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -256,10 +256,10 @@ namespace nux
     }
     else
     {
-      m_State = !m_State;
+      _state = !_state;
       sigToggled.emit();
       sigStateToggled.emit (this);
-      sigStateChanged.emit (m_State);
+      sigStateChanged.emit (_state);
     }
 
     NeedRedraw();
@@ -292,7 +292,7 @@ namespace nux
 
   void RadioButton::EmitStateChangedSignal()
   {
-    sigStateChanged.emit (m_State);
+    sigStateChanged.emit (_state);
   }
 
 

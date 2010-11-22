@@ -68,9 +68,7 @@ namespace nux
     m_ComboArea->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     m_ComboArea->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
 
-    m_ListBox = new ListControl (false);
     m_ListBox->UsedForComboBox (true);
-    m_Layout  = new HLayout();
 
     // Remove horizontal scrollbar
     m_ListBox->EnableHorizontalScrollBar (false);
@@ -103,13 +101,13 @@ namespace nux
   void ComboBoxComplex::InitializeLayout()
   {
     m_Layout        = new HLayout();
-    m_ListBox       = new ListControl();
+    m_ListBox       = new ListControl(false);
     m_PopupWindow   = new PopUpWindow();
   }
 
   void ComboBoxComplex::DestroyLayout()
   {
-    m_PopupWindow->UnReference();
+    m_PopupWindow->Dispose ();
   }
 
   long ComboBoxComplex::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

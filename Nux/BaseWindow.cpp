@@ -61,6 +61,8 @@ namespace nux
     m_configure_notify_callback_data = NULL;
     m_blured_background = false;
     m_background_color = Color (0xFF707070);
+    _entering_visible_status = false;
+    _entering_hidden_status = false;
 
     // Should be at the end of the constructor
     GetWindowCompositor().RegisterWindow (this);
@@ -74,8 +76,20 @@ namespace nux
 
   BaseWindow::~BaseWindow()
   {
+#if defined(NUX_OS_LINUX)
+    if (m_input_window)
+    {
+      EnableInputWindow (false);
+    }
+#endif
+
+    // At this stage, the reference count of this object is 0 and while the weak reference count is > 0.
+    // The weak reference count is probably 2: one reference in m_WindowList and another in m_WindowToTextureMap.
+    // Reference the object here to avoid it being destroy when the call from UnRegisterWindow returns;
+
     GetWindowCompositor().UnRegisterWindow (this);
     NUX_SAFE_DELETE (m_PaintLayer);
+
   }
 
   long BaseWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -88,35 +102,14 @@ namespace nux
     window_event.e_x_root = base.x;
     window_event.e_y_root = base.y;
 
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!m_Geometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-        //return TraverseInfo;
-      }
-    }
-
-//    if(m_vertical_scrollbar_enable)
-//        ret = vscrollbar->ProcessEvent(ievent, ret, ProcEvInfo);
-//    if(m_horizontal_scrollbar_enable)
-//        ret = hscrollbar->ProcessEvent(ievent, ret, ProcEvInfo);
-
-    if (IsSizeMatchContent() == false)
-    {
-
-    }
-
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
-    Geometry viewGeometry = GetGeometry(); //Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-    bool traverse = true;
+    Geometry viewGeometry = GetGeometry();
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
       if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
       {
         ProcEvInfo = eDoNotProcess;
-        traverse = false;
       }
     }
 
@@ -325,16 +318,21 @@ namespace nux
   {
     if (b)
     {
+      if (m_input_window == 0)
+      {
+        m_input_window = new XInputWindow ();
+        m_input_window->SetGeometry (GetGeometry());
+      }
       m_input_window_enabled = true;
-      m_input_window = new XInputWindow ();
-    
-      m_input_window->SetGeometry (GetGeometry());
     }
     else
     {
-      m_input_window_enabled = false;
       if (m_input_window)
+      {
         delete (m_input_window);
+        m_input_window = 0;
+      }
+      m_input_window_enabled = false;
     }
   }
   
@@ -355,6 +353,20 @@ namespace nux
   {
     return m_input_window_enabled && m_input_window->StrutsEnabled ();
   }
+  
+  void BaseWindow::GrabPointer ()
+  {
+    if (m_input_window)
+      m_input_window->GrabPointer ();
+      
+  }
+  
+  void BaseWindow::UnGrabPointer ()
+  {
+    if (m_input_window)
+      m_input_window->UnGrabPointer ();    
+  }
+  
   #endif
 
   void BaseWindow::SetGeometry (const Geometry &geo)
@@ -416,10 +428,21 @@ namespace nux
     m_bIsVisible = visible;
     m_bIsModal = StartModal;
 
+    if (m_bIsVisible)
+    {
+      _entering_visible_status = true;
+      sigVisible.emit (this);
+    }
+    else
+    {
+      _entering_hidden_status = true;
+      sigHidden.emit (this);
+    }
+    
     ComputeChildLayout();
 
     if (m_bIsModal)
-      GetWindowCompositor().StartModalWindow (this);
+      GetWindowCompositor().StartModalWindow (IntrusiveWeakSP<BaseWindow> (this));
 
     // Whether this view is added or removed, call NeedRedraw. in the case where this view is removed, this is a signal 
     // that the region below this view need to be redrawn.
@@ -436,7 +459,7 @@ namespace nux
     m_bIsVisible = false;
     m_bIsModal = false;
     //ShowWindow(false);
-    GetWindowCompositor().StopModalWindow (this);
+    GetWindowCompositor().StopModalWindow (IntrusiveWeakSP<BaseWindow> (this));
   }
 
   bool BaseWindow::IsModal() const
@@ -483,17 +506,17 @@ namespace nux
 
   void BaseWindow::PushHigher (BaseWindow* floating_view)
   {
-    GetWindowCompositor().PushHigher(this, floating_view);
+    GetWindowCompositor().PushHigher (this, floating_view);
   }
 
   void BaseWindow::PushToFront ()
   {
-    GetWindowCompositor().PushToFront(this);
+    GetWindowCompositor().PushToFront (this);
   }
 
   void BaseWindow::PushToBack ()
   {
-    GetWindowCompositor().PushToBack(this);
+    GetWindowCompositor().PushToBack (this);
   }
 
   bool BaseWindow::ChildNeedsRedraw ()

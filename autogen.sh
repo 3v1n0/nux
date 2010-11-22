@@ -1,5 +1,7 @@
 #!/bin/sh
 
+srcdir=`dirname $0`
+
 PKG_NAME="Nux"
 
 which gnome-autogen.sh || {
@@ -9,3 +11,4 @@ which gnome-autogen.sh || {
 
 USE_GNOME2_MACROS=1 \
 . gnome-autogen.sh
+

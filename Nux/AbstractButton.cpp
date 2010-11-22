@@ -27,18 +27,15 @@
 
 namespace nux
 {
-
   AbstractButton::AbstractButton (const TCHAR *Caption, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
-    ,   m_State (false)
   {
-
+    _state  = false;
+    _type   = BUTTON_TYPE_UNKNOWN;
   }
 
   AbstractButton::~AbstractButton()
   {
 
   }
-
-
 }

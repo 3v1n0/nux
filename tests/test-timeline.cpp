@@ -52,7 +52,7 @@ public:
 
   void OnCompleted ()
   {
-    button->GetApplication ()->NuxMainLoopQuit ();
+    nux::GetGraphicsThread ()->NuxMainLoopQuit ();
   }
 
   void Init (nux::Layout *layout)
@@ -101,4 +101,5 @@ test_timeline (void)
   g_assert ((time_val.tv_sec * 1000) + (time_val.tv_usec / 1000) - current_time > 1000); // we got at least 1000 ms of timeline
   g_assert (test_class->has_got_new_frame);
   delete test_class;
+  delete wt;
 }

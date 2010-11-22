@@ -137,7 +137,7 @@ namespace nux
     GetPainter().PaintBackground (GfxContext, base);
     GetPainter().PaintTextLineStatic (GfxContext, GetFont(), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
     InteractState is;
-    is.is_on = m_State;
+    is.is_on = _state;
     is.is_focus = m_TextArea->HasMouseFocus() ||
                   HasMouseFocus() ||
                   m_CheckArea->HasMouseFocus();
@@ -179,18 +179,18 @@ namespace nux
 
   void CheckBox::SetState (bool State)
   {
-    m_State = State;
+    _state = State;
     NeedRedraw();
   }
 
   void CheckBox::SetState (bool State, bool EmitSignal)
   {
-    m_State = State;
+    _state = State;
 
     if (EmitSignal)
     {
       sigToggled.emit();
-      sigStateChanged.emit (m_State);
+      sigStateChanged.emit (_state);
     }
 
     NeedRedraw();
@@ -198,14 +198,14 @@ namespace nux
 
   bool CheckBox::GetState() const
   {
-    return m_State;
+    return _state;
   }
 
   void CheckBox::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    m_State = !m_State;
+    _state = !_state;
     sigStateToggled.emit (this);
-    sigStateChanged.emit (m_State);
+    sigStateChanged.emit (_state);
     NeedRedraw();
   }
 
@@ -236,7 +236,7 @@ namespace nux
 
   void CheckBox::EmitStateSignal()
   {
-    sigStateChanged.emit (m_State);
+    sigStateChanged.emit (_state);
   }
 
 

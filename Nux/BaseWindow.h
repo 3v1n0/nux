@@ -63,7 +63,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (BaseWindow, View);
   public:
     BaseWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
-    ~BaseWindow();
+    virtual ~BaseWindow();
 
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
@@ -102,7 +102,7 @@ namespace nux
       return m_bSizeMatchLayout;
     }
 
-    void ShowWindow (bool b, bool StartModal = false);
+    virtual void ShowWindow (bool b, bool StartModal = false);
     void StopModal();
     bool IsModal() const;
     bool IsVisible() const;
@@ -135,19 +135,29 @@ namespace nux
     bool InputWindowEnabled ();
     void InputWindowEnableStruts (bool enable);
     bool InputWindowStrutsEnabled ();
+    void GrabPointer ();
+    void UnGrabPointer ();
     #endif
 
+    //! Emit a signal when the BaseWindow becomes visible.
+    sigc::signal<void, BaseWindow*> sigVisible;
+    //! Emit a signal when the BaseWindow becomes hidden.
+    sigc::signal<void, BaseWindow*> sigHidden;
+    
   protected:
-    ConfigureNotifyCallback m_configure_notify_callback;    //!< Callback function to set the window position and size.
-    void *m_configure_notify_callback_data;     //!< Callback data for ConfigureNotifyCallback.
+    
+     //! Callback function to set the window position and size.
+    ConfigureNotifyCallback m_configure_notify_callback;
+    //! Callback data for ConfigureNotifyCallback.
+    void *m_configure_notify_callback_data;
 
-    sigc::signal< bool, unsigned int, unsigned int, Geometry & > sigRequestConfigure;
+    //sigc::signal< bool, unsigned int, unsigned int, Geometry & > sigRequestConfigure;
 
     Layout *m_layout;
 
     friend class ComboBox_Logic_WindowView;
 
-    virtual void PreLayoutManagement();
+    virtual void PreLayoutManagement ();
     virtual long PostLayoutManagement (long LayoutResult);
     virtual void PositionChildLayout (float offsetX, float offsetY);
     //! Layout the window elements.
@@ -175,6 +185,10 @@ namespace nux
     AbstractPaintLayer *m_PaintLayer;
 
     bool m_blured_background;
+    
+    bool _entering_visible_status;  //!< the window is about to be made visible during event processing
+    bool _entering_hidden_status;   //!< the window is about to be made hidden during event processing
+    
   private:
     //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
     IntrusiveSP<BaseTexture> _background_texture;
