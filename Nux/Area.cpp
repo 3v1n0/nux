@@ -281,76 +281,68 @@ namespace nux
     return m_ParentObject;
   }
 
+  int Area::_Clamp (int val, int min, int max)
+  {
+    if (val < min)
+      return min;
+      
+    if (val > max)
+      return max;
+    
+    return val;
+  }
+
   void Area::SetGeometry (int x, int y, int w, int h)
   {
-    m_Geometry.SetX (x);
-    m_Geometry.SetY (y);
-    _SetBaseWidth (w);
-    _SetBaseHeight (h);
-
+    h = _Clamp (h, m_minSize.GetHeight (), m_maxSize.GetHeight ());
+    w = _Clamp (w, m_minSize.GetWidth (), m_maxSize.GetWidth ());
+    
+    if (m_Geometry.x == x && m_Geometry.y == y && m_Geometry.width == w && m_Geometry.height == h)
+      return;
+    
+    GeometryChangePending ();
+    m_Geometry = nux::Geometry (x, y, w, h);
     InitiateResizeLayout();
+    GeometryChanged ();
   }
 
   void Area::SetGeometry (const Geometry &geo)
   {
-    SetBaseX (geo.x);
-    SetBaseY (geo.y);
-    _SetBaseWidth (geo.GetWidth() );
-    _SetBaseHeight (geo.GetHeight() );
-
-    InitiateResizeLayout();
+    SetGeometry (geo.x, geo.y, geo.width, geo.height);
+  }
+  
+  void Area::SetBaseX    (int x)
+  {
+    SetGeometry (x, m_Geometry.y, m_Geometry.width, m_Geometry.height);
+  }
+  
+  void Area::SetBaseY    (int y)
+  {
+    SetGeometry (m_Geometry.x, y, m_Geometry.width, m_Geometry.height);
+  }
+  
+  void Area::SetBaseXY    (int x, int y)
+  {
+    SetGeometry (x, y, m_Geometry.width, m_Geometry.height);
   }
 
   void Area::SetBaseSize (int w, int h)
   {
-    _SetBaseWidth (w);
-    _SetBaseHeight (h);
+    SetGeometry (m_Geometry.x, m_Geometry.y, w, h);
 
     InitiateResizeLayout();
   }
 
   void Area::SetBaseWidth (int w)
   {
-    _SetBaseWidth (w);
+    SetGeometry (m_Geometry.x, m_Geometry.y, w, m_Geometry.height);
     InitiateResizeLayout();
   }
 
   void Area::SetBaseHeight (int h)
   {
-    _SetBaseHeight (h);
+    SetGeometry (m_Geometry.x, m_Geometry.y, m_Geometry.width, h);
     InitiateResizeLayout();
-  }
-
-  void Area::_SetBaseWidth (int w)
-  {
-    if (w < m_minSize.GetWidth() )
-    {
-      m_Geometry.SetWidth (m_minSize.GetWidth() );
-    }
-    else if (w > m_maxSize.GetWidth() )
-    {
-      m_Geometry.SetWidth (m_maxSize.GetWidth() );
-    }
-    else
-    {
-      m_Geometry.SetWidth (w);
-    }
-  }
-
-  void Area::_SetBaseHeight (int h)
-  {
-    if (h < m_minSize.GetHeight() )
-    {
-      m_Geometry.SetHeight (m_minSize.GetHeight() );
-    }
-    else if (h > m_maxSize.GetHeight() )
-    {
-      m_Geometry.SetHeight (m_maxSize.GetHeight() );
-    }
-    else
-    {
-      m_Geometry.SetHeight (h);
-    }
   }
 
   void Area::InitiateResizeLayout (Area *child)

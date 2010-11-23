@@ -55,9 +55,6 @@ namespace nux
       SetGeometry (Geometry (x, y, w, h) );
     }
 
-    virtual int GetBaseWidth() = 0;
-    virtual int GetBaseHeight() = 0;
-
     void SetScrollUnit (int unit);
     int GetScrollUnit() const;
 

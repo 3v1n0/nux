@@ -180,6 +180,9 @@ namespace nux
     {
       return m_IsFullRedraw;
     }
+    
+    virtual void GeometryChangePending () { NeedRedraw (); }
+    virtual void GeometryChanged () { NeedRedraw (); }
 
   protected:
     Layout *m_CompositionLayout;

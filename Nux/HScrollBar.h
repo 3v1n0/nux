@@ -60,9 +60,6 @@ namespace nux
     void SetContentOffset (float dx, float dy);
     void ComputeScrolling();
 
-    virtual int GetBaseWidth();
-    virtual int GetBaseHeight();
-
     /////////////////
     //  RECEIVERS  //
     /////////////////
