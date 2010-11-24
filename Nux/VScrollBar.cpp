@@ -440,17 +440,6 @@ namespace nux
     return FALSE;
   }
 
-
-  int VScrollBar::GetBaseWidth()
-  {
-    return VSCROLLBAR_WIDTH;
-  }
-
-  int VScrollBar::GetBaseHeight()
-  {
-    return Area::GetBaseHeight();
-  }
-
   long VScrollBar::PostLayoutManagement (long LayoutResult)
   {
     long ret = ScrollBar::PostLayoutManagement (LayoutResult);

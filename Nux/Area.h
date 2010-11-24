@@ -136,39 +136,35 @@ namespace nux
     Area (NUX_FILE_LINE_DECL);
     virtual ~Area();
 
-    virtual int GetBaseX     () const
+    int GetBaseX     () const
     {
       return m_Geometry.x;
     }
-    virtual int GetBaseY     () const
+    
+    int GetBaseY     () const
     {
       return m_Geometry.y;
     }
-    virtual int GetBaseWidth    () const
+    
+    int GetBaseWidth    () const
     {
       return m_Geometry.GetWidth();
     }
-    virtual int GetBaseHeight   () const
+    
+    int GetBaseHeight   () const
     {
       return m_Geometry.GetHeight();
     }
 
-    virtual void SetBaseX    (int x)
-    {
-      m_Geometry.SetX (x);
-    }
-    virtual void SetBaseY    (int y)
-    {
-      m_Geometry.SetY (y);
-    }
-    virtual void SetBaseXY    (int x, int y)
-    {
-      m_Geometry.SetX (x);
-      m_Geometry.SetY (y);
-    }
-    virtual void SetBaseWidth (int w);
+    void SetBaseX    (int x);
+    
+    void SetBaseY    (int y);
+    
+    void SetBaseXY    (int x, int y);
+    
+    void SetBaseWidth (int w);
 
-    virtual void SetBaseHeight (int h);
+    void SetBaseHeight (int h);
 
     //! Set the size of the object.
     /*
@@ -176,16 +172,16 @@ namespace nux
         The size is adjusted to respect the min and max size policy
         \sa SetWidth(), SetHeight(), SetMinimumSize(), SetMaximumSize().
     */
-    virtual void SetBaseSize (int w, int h);
+    void SetBaseSize (int w, int h);
 
-    virtual void SetMinimumSize (int w, int h);
-    virtual void SetMaximumSize (int w, int h);
-    virtual void SetMinMaxSize (int w, int h);
+    void SetMinimumSize (int w, int h);
+    void SetMaximumSize (int w, int h);
+    void SetMinMaxSize (int w, int h);
 
-    virtual void SetMinimumWidth (int w);
-    virtual void SetMaximumWidth (int w);
-    virtual void SetMinimumHeight (int h);
-    virtual void SetMaximumHeight (int h);
+    void SetMinimumWidth (int w);
+    void SetMaximumWidth (int w);
+    void SetMinimumHeight (int h);
+    void SetMaximumHeight (int h);
 
     int GetMinimumWidth() const;
     int GetMaximumWidth() const;
@@ -205,7 +201,7 @@ namespace nux
         @return The Geometry of the object.
         @sa GetBaseWidth(), GetBaseHeight(), GetBaseX(), GetBaseY().
     */
-    virtual Geometry GetGeometry() const
+    Geometry GetGeometry() const
     {
       return m_Geometry;
     }
@@ -220,7 +216,7 @@ namespace nux
 
         \sa SetBaseWidth(), SetBaseHeight(), SetBaseX(), SetBaseY().
     */
-    virtual void SetGeometry (int x, int y, int w, int h);
+    void SetGeometry (int x, int y, int w, int h);
 
     //! Set the geometry of the object.
     /*!
@@ -229,7 +225,7 @@ namespace nux
         \param geo Geometry object.
         \sa SetWidth(), SetHeight(), SetX(), SetY().
     */
-    virtual void SetGeometry (const Geometry &geo);
+    void SetGeometry (const Geometry &geo);
 
     void IncreaseSize (int x, int y)
     {
@@ -290,6 +286,9 @@ namespace nux
     */
     virtual void SetParentObject (Area *);
     virtual void UnParentObject();
+    
+    virtual void GeometryChangePending () {}
+    virtual void GeometryChanged () {}
 
     Area *GetParentObject();
 
@@ -317,9 +316,6 @@ namespace nux
         A Area cannot have children (that may change later).
     */
     Area *m_ParentObject;
-
-    void _SetBaseWidth (int w);
-    void _SetBaseHeight (int h);
 
   private:
     WindowThread *m_Application;

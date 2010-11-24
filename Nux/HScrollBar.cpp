@@ -427,16 +427,6 @@ namespace nux
     return FALSE;
   }
 
-  int HScrollBar::GetBaseWidth()
-  {
-    return Area::GetBaseWidth();
-  }
-
-  int HScrollBar::GetBaseHeight()
-  {
-    return HSCROLLBAR_HEIGHT;
-  }
-
   long HScrollBar::PostLayoutManagement (long LayoutResult)
   {
     long ret = ScrollBar::PostLayoutManagement (LayoutResult);

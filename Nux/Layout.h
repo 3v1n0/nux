@@ -126,24 +126,6 @@ namespace nux
     }
 
   public:
-    virtual int GetBaseWidth() const = 0;
-    virtual void SetBaseWidth (int w) = 0;
-    virtual int GetBaseHeight() const = 0;
-    virtual void SetBaseHeight (int h) = 0;
-
-    virtual int GetBaseX() const = 0;
-    virtual void SetBaseX (int x) = 0;
-    virtual int GetBaseY() const = 0;
-    virtual void SetBaseY (int y) = 0;
-
-    virtual Size GetMaximumSize() = 0;
-    virtual Size GetMinimumSize() = 0;
-
-    virtual void ApplyMinWidth() = 0;
-    virtual void ApplyMinHeight() = 0;
-    virtual void ApplyMaxWidth() = 0;
-    virtual void ApplyMaxHeight() = 0;
-
 
     virtual bool IsLayout() const
     {
@@ -330,67 +312,6 @@ namespace nux
     }
     virtual void ComputePosition2 (float offsetX, float offsetY)
     {
-    }
-
-    virtual int GetBaseWidth() const
-    {
-      return Area::GetBaseWidth();
-    }
-    virtual void SetBaseWidth (int w)
-    {
-      Area::SetBaseWidth (w);
-    }
-
-    virtual int GetBaseHeight() const
-    {
-      return Area::GetBaseHeight();
-    }
-    virtual void SetBaseHeight (int h)
-    {
-      Area::SetBaseHeight (h);
-    }
-
-    virtual int GetBaseX() const
-    {
-      return Area::GetBaseX();
-    }
-    virtual void SetBaseX (int x)
-    {
-      Area::SetBaseX (x);
-    }
-    virtual int GetBaseY() const
-    {
-      return Area::GetBaseY();
-    }
-    virtual void SetBaseY (int y)
-    {
-      Area::SetBaseY (y);
-    }
-
-    virtual Size GetMaximumSize()
-    {
-      return Area::GetMaximumSize();
-    }
-    virtual Size GetMinimumSize()
-    {
-      return Area::GetMinimumSize();
-    }
-
-    virtual void ApplyMinWidth()
-    {
-      Area::ApplyMinWidth();
-    }
-    virtual void ApplyMinHeight()
-    {
-      Area::ApplyMinHeight();
-    }
-    virtual void ApplyMaxWidth()
-    {
-      Area::ApplyMaxWidth();
-    }
-    virtual void ApplyMaxHeight()
-    {
-      Area::ApplyMaxHeight();
     }
     // End: Abstract virtual function member (inherited from class Layout) that must be implemented
 
