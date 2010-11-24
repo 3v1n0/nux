@@ -281,21 +281,10 @@ namespace nux
     return m_ParentObject;
   }
 
-  int Area::_Clamp (int val, int min, int max)
-  {
-    if (val < min)
-      return min;
-      
-    if (val > max)
-      return max;
-    
-    return val;
-  }
-
   void Area::SetGeometry (int x, int y, int w, int h)
   {
-    h = _Clamp (h, m_minSize.GetHeight (), m_maxSize.GetHeight ());
-    w = _Clamp (w, m_minSize.GetWidth (), m_maxSize.GetWidth ());
+    h = nux::Clamp<int> (h, m_minSize.GetHeight (), m_maxSize.GetHeight ());
+    w = nux::Clamp<int> (w, m_minSize.GetWidth (), m_maxSize.GetWidth ());
     
     if (m_Geometry.x == x && m_Geometry.y == y && m_Geometry.width == w && m_Geometry.height == h)
       return;
@@ -329,20 +318,16 @@ namespace nux
   void Area::SetBaseSize (int w, int h)
   {
     SetGeometry (m_Geometry.x, m_Geometry.y, w, h);
-
-    InitiateResizeLayout();
   }
 
   void Area::SetBaseWidth (int w)
   {
     SetGeometry (m_Geometry.x, m_Geometry.y, w, m_Geometry.height);
-    InitiateResizeLayout();
   }
 
   void Area::SetBaseHeight (int h)
   {
     SetGeometry (m_Geometry.x, m_Geometry.y, m_Geometry.width, h);
-    InitiateResizeLayout();
   }
 
   void Area::InitiateResizeLayout (Area *child)

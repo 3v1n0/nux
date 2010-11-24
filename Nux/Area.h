@@ -317,8 +317,6 @@ namespace nux
     */
     Area *m_ParentObject;
 
-    int _Clamp (int val, int min, int max);
-
   private:
     WindowThread *m_Application;
 
