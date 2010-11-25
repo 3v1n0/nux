@@ -31,7 +31,7 @@ test_nux_LDADD = \
 #run make test as part of make check
 check-local: test
 test:
-	@gtester -k -o=test-nux-results.xml ./test-nux
+	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
 
 .PHONY: check-report full-report
 check-report:

@@ -264,6 +264,7 @@ source_h = \
   $(srcdir)/TextureArea.h \
   $(srcdir)/TimeGraph.h \
   $(srcdir)/Timeline.h \
+  $(srcdir)/TimelineEasings.h \
   $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
   $(srcdir)/TreeControl.h \
