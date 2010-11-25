@@ -39,8 +39,8 @@ namespace nux
   }
 
   static WindowThread *_CreateModalWindowThread (const TCHAR *WindowTitle,
-      UINT width,
-      UINT height,
+      t_u32 width,
+      t_u32 height,
       WindowThread *Parent,
       ThreadUserInitFunc UserInitFunc,
       void *InitData,
@@ -59,8 +59,8 @@ namespace nux
   }
 
   WindowThread *CreateGUIThread (const TCHAR *WindowTitle,
-                                 UINT width,
-                                 UINT height,
+                                 t_u32 width,
+                                 t_u32 height,
                                  WindowThread *Parent,
                                  ThreadUserInitFunc UserInitFunc,
                                  void *InitData)
@@ -159,8 +159,8 @@ namespace nux
 // Create a window thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateWindowThread (WindowStyle WndStyle,
                                     const TCHAR *WindowTitle,
-                                    UINT width,
-                                    UINT height,
+                                    t_u32 width,
+                                    t_u32 height,
                                     WindowThread *Parent,
                                     ThreadUserInitFunc UserInitFunc,
                                     void *InitData)
@@ -185,8 +185,8 @@ namespace nux
 // Create modal graphics thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateModalWindowThread (WindowStyle WndStyle,
                                          const TCHAR *WindowTitle,
-                                         UINT width,
-                                         UINT height,
+                                         t_u32 width,
+                                         t_u32 height,
                                          WindowThread *Parent,
                                          ThreadUserInitFunc UserInitFunc,
                                          void *InitData)
@@ -315,7 +315,7 @@ namespace nux
     return NUX_STATIC_CAST (WindowThread *, thread)->GetTimerHandler();
   }
 
-  GLWindowImpl& GetWindow()
+  GraphicsDisplay& GetWindow()
   {
     NThread *thread = GetThreadApplication();
     return NUX_STATIC_CAST (WindowThread *, thread)->GetWindow();

@@ -32,194 +32,7 @@
 
 namespace nux
 {
-
-///*
-//    We create a set of classes that wraps OpenGL objects ID.
-//    The equivalent of OpenGL object ID on D3D are
-//    IDirect3DResource9
-//        IDirect3DSurface9,
-//        IDirect3DIndexBuffer9,
-//        IDirect3DVertexBuffer9,
-//        IDirect3DVolume9
-//        - IDirect3DBaseTexture9
-//            IDirect3DCubeTexture9
-//            IDirect3DTexture9
-//            IDirect3DVolumeTexture9
-//
-//    All the D3D object support Release() and AddRef() and are managed by the DirectX Api.
-//    On OpenGL, we must create an object interface that support Release() and AddRef() and we define a class
-//    that create opengl object and maintain a reference count of them. The creator class calls the following functions:
-//        glGenQueriesARB         (occlusion query objects)
-//        glGenTextures           (texture objects)
-//        glGenFramebuffersEXT    (frame buffer objects)
-//        glGenRenderbuffersEXT   (render buffer objects)
-//        glGenBuffersARB         (index and vertex buffers)
-//
-//    At creation, and opengl object has a reference count equl to 1. When the object reference count reaches 0,
-//    the creator classes delete it using the appropriate semantic calls:
-//        glDeleteQueries
-//        glDeleteTextures
-//        glDeleteFramebuffersEXT
-//        glDeleteRenderbuffersEXT
-//        glDeleteBuffersARB
-//
-//    Note that all these opengl object may not have have an equivalent in OpenGL ES.
-//
-//*/
-
-//
-// class GpuDevice;
-// class IOpenGLResource;
-// class IOpenGLBaseTexture;
-// class IOpenGLTexture2D;
-// class IOpenGLCubeTexture;
-// class IOpenGLVolumeTexture;
-// class IOpenGLSurface;
-// class IOpenGLVolume;
-// class IOpenGLQuery;
-// class IOpenGLIndexBuffer;
-// class IOpenGLVertexBuffer;
-// class IOpenGLVertexDeclaration;
-// class GraphicsEngine;
   template<typename T> class IntrusiveSP;
-
-
-  template<class T>
-  struct TDeviceResourceList
-  {
-    T _DeviceResource;
-    TDeviceResourceList *_next;
-    TDeviceResourceList *_previous;
-
-    TDeviceResourceList (T DeviceResource)
-    {
-      Reset();
-      _DeviceResource = DeviceResource;
-    }
-    void Reset()
-    {
-      //_DeviceResource = 0;
-      _next = 0;
-      _previous = 0;
-    }
-  };
-
-  template<class T>
-  void ManageDeviceResource (T DeviceResource, TDeviceResourceList<T>** DeviceResourceList)
-  {
-    if ( (*DeviceResourceList) == 0)
-    {
-      (*DeviceResourceList) = new TDeviceResourceList<T> (DeviceResource);
-      (*DeviceResourceList)->_previous = 0;
-      (*DeviceResourceList)->_next = 0;
-    }
-    else
-    {
-      TDeviceResourceList<T>* pTemp = new TDeviceResourceList<T> (DeviceResource);
-      pTemp->_next = (*DeviceResourceList);
-      pTemp->_previous = 0;
-      (*DeviceResourceList)->_previous = pTemp;
-      (*DeviceResourceList) = pTemp;
-
-    }
-  }
-
-  template<class T>
-  bool FindDeviceResource (T DeviceResource, TDeviceResourceList<T>** DeviceResourceList)
-  {
-    TDeviceResourceList<T>* pTemp = *DeviceResourceList;
-
-    if (pTemp == NULL)
-      return false;
-
-    while (pTemp)
-    {
-      if (pTemp->_DeviceResource == DeviceResource)
-      {
-        return true;
-      }
-
-      pTemp = pTemp->_next;
-    }
-
-    return false;
-  }
-
-  template<class T>
-  unsigned int DeviceResourceRefCount (T DeviceResource, TDeviceResourceList<T>** DeviceResourceList)
-  {
-    if (!DeviceResource || ( (*DeviceResourceList) == 0) )
-      return 0;
-
-    TDeviceResourceList<T>* pTemp = *DeviceResourceList;
-
-    if (pTemp == NULL)
-      return 0;
-
-    while (pTemp->_DeviceResource)
-    {
-      if (pTemp->_DeviceResource == DeviceResource)
-      {
-        return DeviceResource->RefCount();
-      }
-
-      pTemp = pTemp->_next;
-    }
-
-    return 0;
-  }
-
-  template<class T>
-  unsigned int RemoveDeviceResource (T DeviceResource, TDeviceResourceList<T>** DeviceResourceList)
-  {
-    bool CanRemove = false;
-    TDeviceResourceList<T>* pTemp = *DeviceResourceList;
-
-    if (pTemp == NULL)
-      return 0;
-
-    while (pTemp)
-    {
-      if (pTemp->_DeviceResource == DeviceResource)
-      {
-        CanRemove = true;
-        break;
-      }
-
-      pTemp = pTemp->_next;
-    }
-
-    if (CanRemove)
-    {
-      TDeviceResourceList<T>* pMarkedForDelete = pTemp;
-
-      if (pMarkedForDelete->_previous)
-      {
-        pTemp = pMarkedForDelete->_previous;
-        pTemp->_next = pMarkedForDelete->_next;
-
-        if (pMarkedForDelete->_next)
-          pMarkedForDelete->_next->_previous = pTemp;
-      }
-      else if (pMarkedForDelete->_next)
-      {
-        // removing the first element
-        pTemp = pMarkedForDelete->_next;
-        pTemp->_previous = 0;
-        (*DeviceResourceList) = pTemp;
-      }
-      else
-      {
-        // removing the only element in the list
-        (*DeviceResourceList) = 0;
-      }
-
-      delete pMarkedForDelete;
-      return 1;
-    }
-
-    return 0;
-  }
 
   struct STREAMSOURCE
   {
@@ -243,6 +56,86 @@ namespace nux
       VertexBuffer = IntrusiveSP<IOpenGLVertexBuffer> (0);
       StreamStride = 0;
     }
+  };
+
+  // GPU Graphics information.
+  class GpuInfo
+  {
+  public:
+
+    GpuInfo();
+
+    bool SupportOpenGL11() const    {return _support_opengl_version_11;}
+    bool SupportOpenGL12() const    {return _support_opengl_version_12;}
+    bool SupportOpenGL13() const    {return _support_opengl_version_13;}
+    bool SupportOpenGL14() const    {return _support_opengl_version_14;}
+    bool SupportOpenGL15() const    {return _support_opengl_version_15;}
+    bool SupportOpenGL20() const    {return _support_opengl_version_20;}
+    bool SupportOpenGL21() const    {return _support_opengl_version_21;}
+    bool SupportOpenGL30() const    {return _support_opengl_version_30;}
+    bool SupportOpenGL31() const    {return _support_opengl_version_31;}
+    bool SupportOpenGL33() const    {return _support_opengl_version_33;}
+    bool SupportOpenGL32() const    {return _support_opengl_version_32;}
+    bool SupportOpenGL40() const    {return _support_opengl_version_40;}
+    bool SupportOpenGL41() const    {return _support_opengl_version_41;}
+
+    bool Support_EXT_Swap_Control()             const    {return _support_ext_swap_control;}
+    bool Support_ARB_Texture_Rectangle()        const    {return _support_arb_texture_rectangle;}
+    bool Support_ARB_Vertex_Program()           const    {return _support_arb_vertex_program;}
+    bool Support_ARB_Fragment_Program()         const    {return _support_arb_fragment_program;}
+    bool Support_ARB_Shader_Objects()           const    {return _support_arb_shader_objects;}
+    bool Support_ARB_Vertex_Shader()            const    {return _support_arb_vertex_shader;}
+    bool Support_ARB_Fragment_Shader()          const    {return _support_arb_fragment_shader;}
+    bool Support_ARB_Vertex_Buffer_Object()     const    {return _support_arb_vertex_buffer_object;}
+    bool Support_ARB_Texture_Non_Power_Of_Two() const    {return _support_arb_texture_non_power_of_two;}
+    bool Support_EXT_Framebuffer_Object()       const    {return _support_ext_framebuffer_object;}
+    bool Support_EXT_Draw_Range_Elements()      const    {return _support_ext_draw_range_elements;}
+    bool Support_EXT_Stencil_Two_Side()         const    {return _support_ext_stencil_two_side;}
+    bool Support_EXT_Texture_Rectangle()        const    {return _support_ext_texture_rectangle;}
+    bool Support_NV_Texture_Rectangle()         const    {return _support_nv_texture_rectangle;}
+
+    int GetMaxFboAttachment () {return _opengl_max_fb_attachment;}
+
+
+  private:
+    void Setup ();
+
+    bool _support_opengl_version_11;
+    bool _support_opengl_version_12;
+    bool _support_opengl_version_13;
+    bool _support_opengl_version_14;
+    bool _support_opengl_version_15;
+    bool _support_opengl_version_20;
+    bool _support_opengl_version_21;
+    bool _support_opengl_version_30;
+    bool _support_opengl_version_31;
+    bool _support_opengl_version_32;
+    bool _support_opengl_version_33;
+    bool _support_opengl_version_40;
+    bool _support_opengl_version_41;
+
+    int _opengl_max_texture_units;
+    int _opengl_max_texture_coords;
+    int _opengl_max_texture_image_units;
+    int _opengl_max_fb_attachment;
+    int _opengl_max_vertex_attributes;
+
+    bool _support_ext_swap_control;
+    bool _support_arb_vertex_program;
+    bool _support_arb_fragment_program;
+    bool _support_arb_shader_objects;
+    bool _support_arb_vertex_shader;
+    bool _support_arb_fragment_shader;
+    bool _support_arb_vertex_buffer_object;
+    bool _support_arb_texture_non_power_of_two;
+    bool _support_ext_framebuffer_object;
+    bool _support_ext_draw_range_elements;
+    bool _support_ext_stencil_two_side;
+    bool _support_ext_texture_rectangle;
+    bool _support_arb_texture_rectangle; //!< Promoted from GL_EXT_TEXTURE_RECTANGLE to ARB.
+    bool _support_nv_texture_rectangle;
+
+    friend class GpuDevice;
   };
 
   class GpuDevice
@@ -362,7 +255,6 @@ namespace nux
 #endif
 
   public:
-/////////////////////////////////////////////////////
     IntrusiveSP<IOpenGLTexture2D> CreateTexture (
       int Width
       , int Height
@@ -535,29 +427,6 @@ namespace nux
 
     std::vector<PixelBufferObject> _PixelBufferArray;
 
-    TDeviceResourceList< IntrusiveSP<IOpenGLPixelBufferObject> >   *_CachedPixelBufferObjectList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLVertexBuffer> >        *_CachedVertexBufferList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLIndexBuffer> >         *_CachedIndexBufferList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLTexture2D> >           *_CachedTextureList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLRectangleTexture> >    *_CachedTextureRectangleList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLCubeTexture> >         *_CachedCubeTextureList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLVolumeTexture> >       *_CachedVolumeTextureList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLAnimatedTexture> >     *_CachedAnimatedTextureList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLQuery> >               *_CachedQueryList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLVertexDeclaration> >   *_CachedVertexDeclarationList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLFrameBufferObject> >   *_CachedFrameBufferList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLVertexShader> >        *_CachedVertexShaderList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLPixelShader> >         *_CachedPixelShaderList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLShaderProgram> >       *_CachedShaderProgramList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLAsmVertexShader> >     *_CachedAsmVertexShaderList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLAsmPixelShader> >      *_CachedAsmPixelShaderList;
-    TDeviceResourceList< IntrusiveSP<IOpenGLAsmShaderProgram> >    *_CachedAsmShaderProgramList;
-
-#if (NUX_ENABLE_CG_SHADERS)
-    TDeviceResourceList< IntrusiveSP<ICgVertexShader> >            *_CachedCGVertexShaderList;
-    TDeviceResourceList< IntrusiveSP<ICgPixelShader> >             *_CachedCGPixelShaderList;
-#endif
-
   private:
     int _DeviceWidth;
     int _DeviceHeight;
@@ -566,124 +435,9 @@ namespace nux
     int _ViewportWidth;
     int _ViewportHeight;
 
-    // OPENGL capabilities
   public:
-    bool SUPPORT_OPENGL_VERSION_1_1() const
-    {
-      return OPENGL_VERSION_1_1;
-    }
-    bool SUPPORT_OPENGL_VERSION_1_2() const
-    {
-      return OPENGL_VERSION_1_2;
-    }
-    bool SUPPORT_OPENGL_VERSION_1_3() const
-    {
-      return OPENGL_VERSION_1_3;
-    }
-    bool SUPPORT_OPENGL_VERSION_1_4() const
-    {
-      return OPENGL_VERSION_1_4;
-    }
-    bool SUPPORT_OPENGL_VERSION_1_5() const
-    {
-      return OPENGL_VERSION_1_5;
-    }
-    bool SUPPORT_OPENGL_VERSION_2_0() const
-    {
-      return OPENGL_VERSION_2_0;
-    }
-    bool SUPPORT_OPENGL_VERSION_2_1() const
-    {
-      return OPENGL_VERSION_2_1;
-    }
-    bool SUPPORT_GLSL_VERSION_1_0() const
-    {
-      return GLSL_VERSION_1_0;
-    }
-    bool SUPPORT_GLSL_VERSION_1_1() const
-    {
-      return GLSL_VERSION_1_1;
-    }
 
-    bool SUPPORT_WGL_EXT_SWAP_CONTROL()        const
-    {
-      return OGL_EXT_SWAP_CONTROL;
-    }
-    bool SUPPORT_GL_ARB_TEXTURE_RECTANGLE()    const
-    {
-      return GL_ARB_TEXTURE_RECTANGLE;
-    }
-    bool SUPPORT_GL_ARB_VERTEX_PROGRAM()       const
-    {
-      return GL_ARB_VERTEX_PROGRAM;
-    }
-    bool SUPPORT_GL_ARB_FRAGMENT_PROGRAM()     const
-    {
-      return GL_ARB_FRAGMENT_PROGRAM;
-    }
-    bool SUPPORT_GL_ARB_SHADER_OBJECTS()       const
-    {
-      return GL_ARB_SHADER_OBJECTS;
-    }
-    bool SUPPORT_GL_ARB_VERTEX_SHADER()        const
-    {
-      return GL_ARB_VERTEX_SHADER;
-    }
-    bool SUPPORT_GL_ARB_FRAGMENT_SHADER()      const
-    {
-      return GL_ARB_FRAGMENT_SHADER;
-    }
-    bool SUPPORT_GL_ARB_VERTEX_BUFFER_OBJECT() const
-    {
-      return GL_ARB_VERTEX_BUFFER_OBJECT;
-    }
-    bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO() const
-    {
-      return GL_ARB_TEXTURE_NON_POWER_OF_TWO;
-    }
-    bool SUPPORT_GL_EXT_FRAMEBUFFER_OBJECT()   const
-    {
-      return GL_EXT_FRAMEBUFFER_OBJECT;
-    }
-    bool SUPPORT_GL_EXT_DRAW_RANGE_ELEMENTS()  const
-    {
-      return GL_EXT_DRAW_RANGE_ELEMENTS;
-    }
-    bool SUPPORT_GL_EXT_STENCIL_TWO_SIDE()     const
-    {
-      return GL_EXT_STENCIL_TWO_SIDE;
-    }
-    bool SUPPORT_GL_EXT_TEXTURE_RECTANGLE()    const
-    {
-      return GL_EXT_TEXTURE_RECTANGLE;
-    }
-    bool SUPPORT_NV_TEXTURE_RECTANGLE()        const
-    {
-      return GL_NV_TEXTURE_RECTANGLE;
-    }
 
-    int GetOpenGLMaxTextureUnits() const
-    {
-      return OPENGL_MAX_TEXTURE_UNITS;
-    }
-    int GetOpenGLMaxTextureCoords() const
-    {
-      return OPENGL_MAX_TEXTURE_COORDS;
-    }
-    int GetOpenGLMaxTextureImageUnits() const
-    {
-      return OPENGL_MAX_TEXTURE_IMAGE_UNITS;
-    }
-    int GetOpenGLMaxFrameBufferAttachment() const
-    {
-      return OPENGL_MAX_FB_ATTACHMENT;
-    }
-    int GetOpenGLMaxVertexAttributes() const
-    {
-      return OPENGL_MAX_VERTEX_ATTRIBUTES;
-    }
-
-    // NVidia Cg
 #if (NUX_ENABLE_CG_SHADERS)
     CGcontext GetCgContext()
     {
@@ -692,34 +446,32 @@ namespace nux
     CGcontext m_Cgcontext;
 #endif
 
-    inline bool isATIBoard() const
-    {
-      return m_isATIBoard;
-    }
-    inline bool isNVIDIABoard() const
-    {
-      return m_isNVIDIABoard;
-    }
     inline bool UsePixelBufferObjects() const
     {
-      return m_UsePixelBufferObject;
+      return _UsePixelBufferObject;
     }
-    eGraphicsBoardVendor GetGraphicsBoardVendor() const
+    GpuBrand GetGPUBrand() const
     {
-      return m_GraphicsBoardVendor;
+      return _gpu_brand;
     }
 
-    GLRenderStates &GetRenderStates()
+    GpuRenderStates &GetRenderStates()
     {
-      return *m_RenderStates;
+      return *_gpu_render_states;
     }
+
+    GpuInfo &GetGpuInfo()
+    {
+      return *_gpu_info;
+    }
+
     void ResetRenderStates()
     {
-      m_RenderStates->ResetStateChangeToDefault();
+      _gpu_render_states->ResetStateChangeToDefault();
     }
     void VerifyRenderStates()
     {
-      m_RenderStates->CheckStateChange();
+      _gpu_render_states->CheckStateChange();
     }
 
     //! Create a texture that the system supports. Rectangle texture or 2D texture.
@@ -743,33 +495,20 @@ namespace nux
     BaseTexture* CreateSystemCapableTexture ();
 
   private:
-    NString m_BoardVendorString;
-    NString m_BoardRendererString;
-    NString m_OpenGLVersionString;
-    NString m_GLSLVersionString;
 
-    bool m_isINTELBoard;
-    bool m_isATIBoard;
-    bool m_isNVIDIABoard;
-    bool m_UsePixelBufferObject;
-    eGraphicsBoardVendor m_GraphicsBoardVendor;
+    // 
+    int _opengl_major;  //!< OpenGL major version.
+    int _opengl_minor;  //!< OpenGL minor version.
+    int _glsl_version_major;  //!< GLSL major version.
+    int _glsl_version_minor;  //!< GLSL major version.
 
-    bool OPENGL_VERSION_1_1;
-    bool OPENGL_VERSION_1_2;
-    bool OPENGL_VERSION_1_3;
-    bool OPENGL_VERSION_1_4;
-    bool OPENGL_VERSION_1_5;
-    bool OPENGL_VERSION_2_0;
-    bool OPENGL_VERSION_2_1;
+    NString _board_vendor_string;     //!< GPU vendor sting.
+    NString _board_renderer_string;   //!< GPU renderer sting.
+    NString _openGL_version_string;   //!< OpenGL version string.
+    NString _glsl_version_string;     //!< GLSL version string.
+    GpuBrand _gpu_brand;              //!< GPU brand.
 
-    int OPENGL_MAX_TEXTURE_UNITS;
-    int OPENGL_MAX_TEXTURE_COORDS;
-    int OPENGL_MAX_TEXTURE_IMAGE_UNITS;
-    int OPENGL_MAX_FB_ATTACHMENT;
-    int OPENGL_MAX_VERTEX_ATTRIBUTES;
-
-    bool GLSL_VERSION_1_0;
-    bool GLSL_VERSION_1_1;
+    bool _UsePixelBufferObject;
 
     bool OGL_EXT_SWAP_CONTROL;
     bool GL_ARB_VERTEX_PROGRAM;
@@ -786,10 +525,16 @@ namespace nux
     bool GL_ARB_TEXTURE_RECTANGLE; //!< Promoted from GL_EXT_TEXTURE_RECTANGLE to ARB.
     bool GL_NV_TEXTURE_RECTANGLE;
 
-    GLRenderStates *m_RenderStates;
+    GpuRenderStates *_gpu_render_states;
+    GpuInfo *_gpu_info;
 
   public:
-    GpuDevice (unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat);
+    GpuDevice (unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
+      HDC device_context,
+      HGLRC &opengl_rendering_context,
+      int req_opengl_major = 1,   // requested opengl major version.
+      int req_opengl_minor = 0,   // requested opengl minor version.
+      bool opengl_es_20 = false);
     ~GpuDevice();
 
     friend class IOpenGLSurface;

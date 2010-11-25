@@ -26,11 +26,11 @@
 // namespace nux
 // {
 // 
-//   class GLWindowImpl;
+//   class GraphicsDisplay;
 //   class GpuDevice;
 //   class GraphicsEngine;
 // 
-//   GLWindowImpl *GetThreadGLWindow();
+//   GraphicsDisplay *GetThreadGLWindow();
 //   GpuDevice *GetThreadGLDeviceFactory();
 //   GraphicsEngine *GetThreadGraphicsContext();
 // 

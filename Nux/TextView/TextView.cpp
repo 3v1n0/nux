@@ -345,7 +345,7 @@ namespace nux
 //
 //	Public memberfunction
 //
-  LONG WINAPI TextView::WndProc (UINT msg, WPARAM wParam, LPARAM lParam)
+  LONG WINAPI TextView::WndProc (t_u32 msg, WPARAM wParam, LPARAM lParam)
   {
     switch (msg)
     {

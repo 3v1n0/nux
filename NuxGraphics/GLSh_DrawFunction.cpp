@@ -101,7 +101,7 @@ namespace nux
     :   _ScreenOffsetX (0)
     ,   _ScreenOffsetY (0)
   {
-    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL) )
+    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       sprog = GetThreadGLDeviceFactory()->CreateShaderProgram();
       sprog->LoadVertexShader (VtxShader.GetTCharPtr(), NULL);
@@ -148,7 +148,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f,
     };
 
-    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL) )
+    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
       CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );

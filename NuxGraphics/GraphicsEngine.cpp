@@ -54,7 +54,7 @@ namespace nux
   }
 
 
-  GraphicsEngine::GraphicsEngine (GLWindowImpl &GlWindow)
+  GraphicsEngine::GraphicsEngine (GraphicsDisplay &GlWindow)
     :   m_GLWindow (GlWindow)
   {
     m_ScissorX = 0;

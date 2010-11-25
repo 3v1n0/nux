@@ -26,14 +26,14 @@
 #include "NuxCore/NuxCore.h"
 
 #if defined(NUX_OS_WINDOWS)
-  #include "Gfx_OpenGL.h"
+  #include "GraphicsDisplayWin.h"
 #elif defined(NUX_OS_LINUX)
-  #include "GfxSetupX11.h"
+  #include "GraphicsDisplayX11.h"
 #endif
 
 namespace nux
 {
-  class GLWindowImpl;
+  class GraphicsDisplay;
   class GpuDevice;
   class GraphicsEngine;
 
@@ -42,7 +42,7 @@ namespace nux
   class DisplayAccessController
   {
   public:
-    GLWindowImpl *CreateGLWindow (const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style, GLWindowImpl *GLWindow, bool FullscreenFlag = FALSE);
+    GraphicsDisplay *CreateGLWindow (const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style, GraphicsDisplay *GLWindow, bool FullscreenFlag = FALSE);
 
 #if defined(NUX_OS_WINDOWS)
     HINSTANCE GetInstance()
@@ -52,11 +52,11 @@ namespace nux
 #endif
 
 #if defined(NUX_OS_WINDOWS)
-    //! Create a GLWindowImpl from a foreign window and display.
-    GLWindowImpl *CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
+    //! Create a GraphicsDisplay from a foreign window and display.
+    GraphicsDisplay *CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
 #elif defined(NUX_OS_LINUX)
-    //! Create a GLWindowImpl from a foreign window and display.
-    GLWindowImpl *CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext);
+    //! Create a GraphicsDisplay from a foreign window and display.
+    GraphicsDisplay *CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext);
 #endif
 
     static DisplayAccessController &Instance();

@@ -53,7 +53,7 @@ namespace nux
 //         NString FileName = m_FilePath.GetFile(file_search.GetTCharPtr());
 //         if (FileName == TEXT(""))
 //         {
-//             nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Can't find inalogic.ini file."));
+//             nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Can't find inalogic.ini file."));
 // //             inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 // //                 TEXT("Can't find .ini file.\nThe program will exit."));
 // //             exit(-1);
@@ -66,7 +66,7 @@ namespace nux
 //
 //             if(CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()) == false)
 //             {
-//                 nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Key [%s] does not exit in .ini file."));
+//                 nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Key [%s] does not exit in .ini file."));
 //             }
 //             else
 //             {
@@ -91,7 +91,7 @@ namespace nux
 //             }
 //             else
 //             {
-//                 nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Failed to read font search path from .ini file."));
+//                 nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read font search path from .ini file."));
 // //                 inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 // //                     TEXT("Failed to read font search path from .ini file.\nThe program will exit."));
 // //                 exit(-1);
@@ -106,7 +106,7 @@ namespace nux
 //             }
 //             else
 //             {
-//                 nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Failed to read texture search path from .ini file."));
+//                 nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read texture search path from .ini file."));
 // //                 inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 // //                     TEXT("Failed to read texture search path from .ini file.\nThe program will exit."));
 // //                 exit(-1);
@@ -120,7 +120,7 @@ namespace nux
 //             }
 //             else
 //             {
-//                 nuxDebugMsg(TEXT("[GLWindowImpl::GLWindowImpl] Failed to read shader search path from .ini file."));
+//                 nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read shader search path from .ini file."));
 // //                 inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
 // //                     TEXT("Failed to read shader search path from .ini file.\nThe program will exit."));
 // //                 exit(-1);
