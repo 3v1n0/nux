@@ -39,26 +39,30 @@ namespace nux
     _height = 1;
     _strutsEnabled = false;
     
-    attrib.override_redirect = 1;
+    attrib.override_redirect = 0;
     _window = XCreateWindow (d, XDefaultRootWindow (d), _x, _y, _width, _height, 0,
                              CopyFromParent, InputOnly, CopyFromParent,
                              CWOverrideRedirect, &attrib);
     
     _native_windows.push_front (_window);
-                                     
-    XMapRaised (d, _window);
     
     Atom data[32];
     int     i = 0;
     data[i++] = XInternAtom (d, "_NET_WM_STATE_STICKY", 0);
     data[i++] = XInternAtom (d, "_NET_WM_STATE_SKIP_TASKBAR", 0);
     data[i++] = XInternAtom (d, "_NET_WM_STATE_SKIP_PAGER", 0);
-    data[i++] = XInternAtom (d, "_NET_WM_STATE_ABOVE", 0);
 
     XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_STATE", 0),
                  XA_ATOM, 32, PropModeReplace,
                  (unsigned char *) data, i);
-                 
+    
+    Atom type[1];
+    type[0] = XInternAtom (d, "_NET_WM_WINDOW_TYPE_DOCK", 0);
+    XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_WINDOW_TYPE", 0),
+                     XA_ATOM, 32, PropModeReplace,
+                     (unsigned char *) type, 1);
+    
+    XMapRaised (d, _window);
     EnsureInputs ();
   }
   
