@@ -41,7 +41,7 @@ namespace nux
     
     attrib.override_redirect = 0;
     _window = XCreateWindow (d, XDefaultRootWindow (d), _x, _y, _width, _height, 0,
-                             CopyFromParent, InputOnly, CopyFromParent,
+                             CopyFromParent, InputOutput, CopyFromParent,
                              CWOverrideRedirect, &attrib);
     
     _native_windows.push_front (_window);
