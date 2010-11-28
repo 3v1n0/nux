@@ -24,7 +24,7 @@ namespace nux
 {
 
   Timeline::Timeline (unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL)
-    :   Object (Caption, NUX_FILE_LINE_PARAM)
+    :   Object (true, NUX_FILE_LINE_PARAM)
   {
     Looping = false;
     IsPlaying = false;

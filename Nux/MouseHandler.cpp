@@ -44,8 +44,10 @@ namespace nux
   BaseMouseHandler::BaseMouseHandler()
   {
     m_first_time        = true;
-    m_hasMouseFocus     = false;
-    m_CurrentMouseIn    = false;
+    _has_mouse_focus    = false;
+    _current_mouse_in   = false;
+    _previous_mouse_in  = false;
+    _geometric_mouse_status = 0;
   }
 
   BaseMouseHandler::~BaseMouseHandler()
@@ -53,14 +55,14 @@ namespace nux
 
   }
 
-  unsigned int BaseMouseHandler::ProcessMouseInOut (IEvent &ievent, const Geometry &g)
+  unsigned int BaseMouseHandler::Process (IEvent &ievent, const Geometry &geo, bool process_mouse_focus)
   {
-    m_events = eSigMouseNone;
+    _geometric_mouse_status = AREA_MOUSE_STATUS_NONE;
 
     if (ievent.e_event == NUX_NO_EVENT)
-      return m_events;
+      return _geometric_mouse_status;
 
-    m_flag = ievent.GetKeyState();
+    _previous_mouse_in = _current_mouse_in;
 
     int x, y, lo_x, hi_x, lo_y, hi_y;
     // Usually (e_x_root, e_y_root) is equal to (0, 0). In that case, (x, y) is the mouse coordinate
@@ -70,20 +72,20 @@ namespace nux
     x = ievent.e_x - ievent.e_x_root;
     y = ievent.e_y - ievent.e_y_root;
 
-    lo_x = g.x;
-    hi_x = g.x + g.GetWidth() - 1;
-    lo_y = g.y;
-    hi_y = g.y + g.GetHeight() - 1;
+    lo_x = geo.x;
+    hi_x = geo.x + geo.GetWidth() - 1;
+    lo_y = geo.y;
+    hi_y = geo.y + geo.GetHeight() - 1;
 
-    if ( (ievent.e_x == -1) && (ievent.e_y == -1) )
+    if ((ievent.e_x == -1) && (ievent.e_y == -1))
     {
       // e_x == -1 and e_y == -1 are associated with some specific window events that have the mouse outside of any widget.
       // See WM_SETFOCUS, WM_KILLFOCUS, NUX_WINDOW_MOUSELEAVE
-      m_CurrentMouseIn = false;
+      _current_mouse_in = false;
     }
     else
     {
-      m_CurrentMouseIn = PT_IN_BOX ( x, y, lo_x, hi_x, lo_y, hi_y );
+      _current_mouse_in = PT_IN_BOX (x, y, lo_x, hi_x, lo_y, hi_y);
     }
 
 
@@ -93,97 +95,49 @@ namespace nux
     }
     else
     {
-      if ( (m_PreviousMouseIn == true) && (m_CurrentMouseIn == false) )
+      if ( (_previous_mouse_in == true) && (_current_mouse_in == false) )
       {
-        m_events |= eSigMouseLeave;
+        _geometric_mouse_status |= AREA_MOUSE_STATUS_LEAVE;
       }
 
-      if ( (m_PreviousMouseIn == false) && (m_CurrentMouseIn == true) )
+      if ( (_previous_mouse_in == false) && (_current_mouse_in == true) )
       {
-        m_events |= eSigMouseEnter;
+        _geometric_mouse_status |= AREA_MOUSE_STATUS_ENTER;
       }
     }
-
-    m_PreviousMouseIn = m_CurrentMouseIn;
-
-    return m_events;
-  }
-
-  unsigned int BaseMouseHandler::Process (IEvent &ievent, const Geometry &g)
-  {
-    m_events = eSigMouseNone;
-
-    if (ievent.e_event == NUX_NO_EVENT)
-      return m_events;
-
-    m_flag = ievent.GetKeyState();
-
-    int x, y, lo_x, hi_x, lo_y, hi_y;
-    // Normally e_x_root and e_y_root are equal to 0. Meaning, (x, y) is the mouse coordinate based on the window top-left corner.
-    // If (e_x_root, e_y_root) is equal to this area top-left corner position, then (x, y) is the mouse coordinate based on this area.
-    x = ievent.e_x - ievent.e_x_root;
-    y = ievent.e_y - ievent.e_y_root;
-
-    lo_x = g.x;
-    hi_x = g.x + g.GetWidth() - 1;
-    lo_y = g.y;
-    hi_y = g.y + g.GetHeight() - 1;
-
-    if ( (ievent.e_x == -1) && (ievent.e_y == -1) )
-    {
-      // e_x == -1 and e_y == -1 are associated with some specific window events that have the mouse outside of any widget.
-      // See WM_SETFOCUS, WM_KILLFOCUS, NUX_WINDOW_MOUSELEAVE
-      m_CurrentMouseIn = false;
-    }
-    else
-      m_CurrentMouseIn = PT_IN_BOX ( x, y, lo_x, hi_x, lo_y, hi_y );
-
-
-    if (m_first_time)
-    {
-      m_first_time = false;
-    }
-    else
-    {
-      if ( (m_PreviousMouseIn == true) && (m_CurrentMouseIn == false) )
-      {
-        m_events |= eSigMouseLeave;
-      }
-
-      if ( (m_PreviousMouseIn == false) && (m_CurrentMouseIn == true) )
-      {
-        m_events |= eSigMouseEnter;
-      }
-    }
-
-    m_PreviousMouseIn = m_CurrentMouseIn;
 
     m_mouse_deltax = x - m_mouse_positionx;
     m_mouse_deltay = y - m_mouse_positiony;
     m_mouse_positionx = x;
     m_mouse_positiony = y;
 
-    if (m_CurrentMouseIn == false
-        && HasMouseFocus() == false)
+    if ((_current_mouse_in == false) && (HasMouseFocus () == false))
     {
-      return m_events;
+      return _geometric_mouse_status;
+    }
+
+    if (process_mouse_focus == false)
+    {
+      return _geometric_mouse_status;
     }
 
     switch (ievent.e_event)
     {
       case NUX_MOUSE_PRESSED:
       {
-        m_events |= eSigMouseDown;
-        if (m_CurrentMouseIn)
+        if (_current_mouse_in)
+        {
+          _geometric_mouse_status |= AREA_MOUSE_STATUS_DOWN;
           SetMouseFocus (true);
+        }
       }
       break;
 
       case NUX_MOUSE_RELEASED:
       {
-        if (HasMouseFocus() )
+        if (HasMouseFocus ())
         {
-          m_events |= eSigMouseUp;
+          _geometric_mouse_status |= AREA_MOUSE_STATUS_UP;
           SetMouseFocus (false);
         }
       }
@@ -191,33 +145,31 @@ namespace nux
 
       case NUX_MOUSE_MOVE:
       {
-        m_events |= eSigMouseMove;
+        _geometric_mouse_status |= AREA_MOUSE_STATUS_MOVE;
       }
       break;
     }
 
-    return m_events;
+    return _geometric_mouse_status;
   }
 
-  void BaseMouseHandler::SetMouseFocus (bool b)
+  void BaseMouseHandler::SetMouseFocus (bool focus)
   {
-    if (b)
+    if (focus)
     {
-//          if(GetWindowCompositor().GetMouseFocusArea()->m_EventHandler != this)
-//              GetMouseFocusOwner()->ReleaseMouseFocus();
-//         SetMouseFocusOwner(this);
-      m_hasMouseFocus = true;
-      m_CurrentMouseIn = true;
+      _has_mouse_focus = true;
+      //_current_mouse_in = true;
     }
     else
     {
-//         if(GetMouseFocusOwner() == this)
-//             SetMouseFocusOwner(0);
-      m_hasMouseFocus = false;
-
-      // If the mouse is released do not change the MouseIn status.
-      if (! (m_events & eSigMouseUp) )
-        m_CurrentMouseIn = false;
+      _has_mouse_focus = false;
+//       // If the mouse is released do not change the MouseIn status.
+//       if (!(_geometric_mouse_status & AREA_MOUSE_STATUS_UP))
+//         _current_mouse_in = false;
+//       else
+//       {
+//         int i = 4;
+//       }
     }
   }
 
@@ -229,12 +181,12 @@ namespace nux
 
   bool BaseMouseHandler::HasMouseFocus()
   {
-    return m_hasMouseFocus;
+    return _has_mouse_focus;
   }
 
   bool BaseMouseHandler::MouseIn()
   {
-    return m_CurrentMouseIn;
+    return _current_mouse_in;
   }
 
   void BaseMouseHandler::ForceMouseFocus (int x, int y, const Geometry &g)
@@ -249,35 +201,18 @@ namespace nux
 
     if (isIn)
     {
-      m_PreviousMouseIn = m_CurrentMouseIn = true;
+      _previous_mouse_in = _current_mouse_in = true;
     }
     else
     {
-      m_PreviousMouseIn = m_CurrentMouseIn = false;
+      _previous_mouse_in = _current_mouse_in = false;
     }
 
-    m_hasMouseFocus = true;
+    _has_mouse_focus = true;
   }
 
   void BaseMouseHandler::StopMouseFocus (int x, int y, const Geometry &g)
   {
-//     int lo_x, hi_x, lo_y, hi_y;
-//     lo_x = g.x;
-//     hi_x = g.x + g.GetWidth() - 1;
-//     lo_y = g.y;
-//     hi_y = g.y + g.GetHeight() - 1;
-// 
-//     bool isIn = PT_IN_BOX ( x, y, lo_x, hi_x, lo_y, hi_y );
-// 
-//     if (isIn)
-//     {
-//       m_PreviousMouseIn = m_CurrentMouseIn = true;
-//     }
-//     else
-//     {
-//       m_PreviousMouseIn = m_CurrentMouseIn = false;
-//     }
-    
-    m_hasMouseFocus = false;
+    _has_mouse_focus = false;
   }
 }

@@ -66,19 +66,6 @@ namespace nux
 
     IntrusiveSP< IOpenGLBaseTexture > GetScreenBlurTexture();
 
-    // We use Rectangle texture to attach to the framebuffer because some GPU like the Geforce FX 5600 do not
-    // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
-    struct RenderTargetTextures
-    {
-      IntrusiveSP<IOpenGLBaseTexture> color_rt;
-      IntrusiveSP<IOpenGLBaseTexture> depth_rt;
-    };
-    IntrusiveSP<IOpenGLBaseTexture> m_MainColorRT;
-    IntrusiveSP<IOpenGLBaseTexture> m_MainDepthRT;
-    IntrusiveSP<IOpenGLBaseTexture> m_CompositionRT;
-
-    RenderTargetTextures &GetWindowBuffer (BaseWindow* window);
-
     void StartModalWindow (IntrusiveWeakSP<BaseWindow>);
     void StopModalWindow (IntrusiveWeakSP<BaseWindow>);
 
@@ -126,6 +113,33 @@ namespace nux
         \sa m_SelectedWindow, \sa GetSelectedWindow.
     */
     void SetAlwaysOnFrontWindow (BaseWindow *window);
+
+
+    //! Enable the exclusive event input mode.
+    /*!
+        Set the exclusive event input area (\sa _exclusive_input_area). The greedy input area gets all input events (mouse and keyboard).
+        The exclusive input mode can only be set if there is no exclusive input area already set.
+        To disable the exclusive input move, call DisableExclusiveInputArea with the current exclusive input area as parameter.
+        The exclusive event input mode can only change once during the processing of one event. The change it again, 
+        you have to wait for the next event cycle.
+        \sa DisableExclusiveInputArea.
+        @return True, if the exclusive input mode was enabled.
+    */
+    bool EnableExclusiveInputArea (InputArea *input_area);
+    
+    //! Disable the exclusive event input mode.
+    /*!
+        Disable the exclusive event input mode. It can only be disable if the current exclusive input area is passed as parameter.
+        \sa EnableExclusiveInputArea.
+        @return True, if the exclusive input mode was disabled.
+    */
+    bool DisableExclusiveInputArea (InputArea *input_area);
+
+    //! Return true if the system is in exclusive input event mode.
+    /*!
+        @return True if the system is in exclusive input mode.
+    */
+    bool InExclusiveInputMode ();
 
   private:
     //! Render the interface.
@@ -246,25 +260,87 @@ namespace nux
     void RegisterWindow (BaseWindow*);
     void UnRegisterWindow (BaseWindow*);
 
+    // We use Rectangle texture to attach to the framebuffer because some GPU like the Geforce FX 5600 do not
+    // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
+    struct RenderTargetTextures
+    {
+      IntrusiveSP<IOpenGLBaseTexture> color_rt;
+      IntrusiveSP<IOpenGLBaseTexture> depth_rt;
+    };
+    IntrusiveSP<IOpenGLBaseTexture> m_MainColorRT;
+    IntrusiveSP<IOpenGLBaseTexture> m_MainDepthRT;
+    IntrusiveSP<IOpenGLBaseTexture> m_CompositionRT;
+
+    RenderTargetTextures &GetWindowBuffer (BaseWindow* window);
+
     IntrusiveWeakSP<BaseWindow> m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
     IntrusiveWeakSP<BaseWindow> m_FocusAreaWindow;  //!< The BaseWindow that contains the m_MouseFocusArea.
     IntrusiveWeakSP<BaseWindow> m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
     IEvent* m_CurrentEvent; 
 
-    InputArea* m_MouseFocusArea;     //!< The base area that has the mouse focus.
+    /*!
+        The area that has the mouse focus. Mouse focus happens when the mouse down is received on and area.
+        The mouse focus stops when the last mouse button is released.
+        Incidentally, when the mouse focus first occurs on an area, we set the keyboard focus over that area.
+        The keyboard focus of an area stops when the mouse down happens over a different area.
+    */
+    InputArea* m_MouseFocusArea;     
     InputArea* m_MouseOverArea;      //!< The base area that has the mouse directly over itself.
     InputArea* m_PreviousMouseOverArea;
+
+    //! Set the exclusive input area according to _pending_exclusive_input_mode_action.
+    /*!
+        Following the event processing cycle, it is necessary to setup the exclusive input area is _pending_exclusive_input_mode_action is true.
+        The exclusive input area status always takes effect after the event processing cycle.
+    */
+    void ExecPendingExclusiveInputAreaAction ();
+
+    //! Get the input area that has the exclusivity on events.
+    /*!
+        @return The input area that has the exclusivity on all events.
+    */
+    InputArea *GetExclusiveInputArea ();
+
+    /*!
+        The exclusive input area gets all events without exception (greedy). The exclusive input area may decide to pass events 
+        down to other areas. If it does, the following restrictions apply:
+          - The other input area cannot have the mouse focus.
+          - They cannot have the keyboard focus.
+          - they cannot call ForceStartFocus or ForceStopFocus.
+          - No synthetic events: 
+            * mouse click
+            * mouse drag
+          - Only atomic events:
+            * mouse down
+            * mouse up
+            * mouse move
+            * mouse enter/leave
+    */
+    InputArea* _exclusive_input_area;
+    
+    /*!
+        \a _exclusive_input_area is true when there is an active greedy input area.
+    */
+    bool _in_exclusive_input_mode;
+
+    /*!
+        The exclusive input mode starts after after events have been processed inside ProcessEvent ().
+        This flags signals that some action are required to enable/disable the exclusive input mode.
+    */
+    bool _pending_exclusive_input_mode_action;
+
+    //! True while events are being processed inside ProcessEvent ().
+    bool _inside_event_processing;
 
     InputArea* OverlayDrawingCommand;
     IntrusiveWeakSP<BaseWindow> m_OverlayWindow;            //!< The window that owns the overlay;
     IntrusiveWeakSP<BaseWindow> _tooltip_window;            //!< The window that owns the tooltip;
-    Geometry    _tooltip_geometry;          //!< The geometry of the entire tooltip It includes the decoration surrounding the text such as round corners.
+    Geometry    _tooltip_geometry;              //!< The geometry of the entire tooltip It includes the decoration surrounding the text such as round corners.
     Geometry    _tooltip_mainwindow_geometry;   //!< Same as _tooltip_geometry but based on the entire physical window of the application.
-    Geometry    _tooltip_text_geometry;     //!< The geometry of the text area of the tooltip.
+    Geometry    _tooltip_text_geometry;         //!< The geometry of the text area of the tooltip.
     Point m_EventRoot;
 
-    bool _inside_event_processing;
-    
+
     AbstractPaintLayer *m_Background;
 
     std::list< IntrusiveWeakSP<BaseWindow> > m_WindowList;
@@ -322,6 +398,7 @@ namespace nux
     friend class HSplitter;
     friend class VSplitter;
     friend class TableCtrl;
+    friend class View;
   };
 
 }
