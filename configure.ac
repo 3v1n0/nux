@@ -187,15 +187,15 @@ fi
 AC_SUBST(GCC_FLAGS)
 
 # use strict compiler flags only on development releases
-m4_define([maintainer_flags_default], [m4_if(m4_eval(nux_minor_version % 2), [1], [yes], [no])])
-AC_ARG_ENABLE([maintainer-flags],
-              [AC_HELP_STRING([--enable-maintainer-flags=@<:@no/yes@:>@],
+m4_define([maintainer_mode_default], [m4_if(m4_eval(nux_micro_version % 2), [1], [yes], [no])])
+AC_ARG_ENABLE([maintainer-mode],
+              [AC_HELP_STRING([--enable-maintainer-mode=@<:@no/yes@:>@],
                               [Use strict compiler flags @<:@default=no@:>@])],
               [],
-              [enable_maintainer_flags=maintainer_flags_default])
+              [enable_maintainer_mode=maintainer_mode_default])
 
 MAINTAINER_CFLAGS=""
-AS_IF([test "x$enable_maintainer_flags" = "xyes" && test "x$GCC" = "xyes"],
+AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
          MAINTAINER_CFLAGS+="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
       ]
