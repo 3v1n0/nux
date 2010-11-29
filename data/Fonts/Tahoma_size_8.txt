@@ -1,5 +1,5 @@
 common face=Tahoma Bold=0 Italic=0 Charset=ANSI_CHARSET scaleW=512 scaleH=256 NumPages=1 FontHeight=13 Ascent=8 Descent=-2 MaxCharWidth=23 AvgCharWidth=5 InternalLeading=2 ExternalLeading=0
-Texture Tahoma_size_8_page_0.bmp
+Texture Tahoma_size_8_page_0.png
 char ' ' id=32          x=5           y=5           width=23          height=13          xadvance=3           abcA=0            abcB=3           abcC=0            page=0            
 char '!' id=33          x=28          y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
 char '"' id=34          x=51          y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
