@@ -220,7 +220,7 @@ namespace nux
     XGrabPointer(d,
                  _window,
                  True,
-                 ButtonPressMask,
+                 ButtonPressMask|ButtonReleaseMask,
                  GrabModeAsync,
                  GrabModeAsync,
                  None,
