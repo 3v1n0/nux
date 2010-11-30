@@ -3,9 +3,9 @@ PKGDATADIR="$(pkgdatadir)/@NUX_API_VERSION@"
 
 fontdir = $(PKGDATADIR)/Fonts
 dist_font_DATA = \
-  Fonts/Tahoma_size_8_bold_page_0.bmp \
+  Fonts/Tahoma_size_8_bold_page_0.png \
   Fonts/Tahoma_size_8_bold.txt \
-  Fonts/Tahoma_size_8_page_0.bmp \
+  Fonts/Tahoma_size_8_page_0.png \
   Fonts/Tahoma_size_8.txt
 
 iconsdir = $(PKGDATADIR)/Icons
