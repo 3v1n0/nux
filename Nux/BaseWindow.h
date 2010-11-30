@@ -131,7 +131,7 @@ namespace nux
     }
     
     #if defined(NUX_OS_LINUX)
-    void EnableInputWindow (bool b);
+    void EnableInputWindow (bool b, bool override_redirect = 0);
     bool InputWindowEnabled ();
     void InputWindowEnableStruts (bool enable);
     bool InputWindowStrutsEnabled ();

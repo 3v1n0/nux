@@ -28,7 +28,7 @@ namespace nux
 
   std::list<Window> XInputWindow::_native_windows;
 
-  XInputWindow::XInputWindow()
+  XInputWindow::XInputWindow(int override_redirect)
   {
     Display* d = GetThreadGLWindow()->GetX11Display();
     XSetWindowAttributes attrib;
@@ -39,7 +39,7 @@ namespace nux
     _height = 1;
     _strutsEnabled = false;
     
-    attrib.override_redirect = 0;
+    attrib.override_redirect = override_redirect;
     _window = XCreateWindow (d, XDefaultRootWindow (d), _x, _y, _width, _height, 0,
                              CopyFromParent, InputOutput, CopyFromParent,
                              CWOverrideRedirect, &attrib);
