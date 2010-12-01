@@ -468,6 +468,16 @@ namespace nux
     #define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerGNU)
 #endif
 
+// Define architecture specific asm statements for hardware breakpoint
+#if defined(NUX_GNUC_COMPILER)
+    #if (defined __i386__) || (defined __x86_64__)
+        #define ARCH_HARDWARE_BREAK asm("int3")
+    #elif defined (__arm__) || (defined __ppc__)
+        #define ARCH_HARDWARE_BREAK do {} while(0)
+    #else
+        #define ARCH_HARDWARE_BREAK do {} while(0)
+    #endif
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // Breaks into the debugger.  Forces a GPF in non-debug builds.         //
@@ -480,7 +490,7 @@ namespace nux
     #define inlDebugBreak()			( IsDebuggerPresent() ? *((INT*)3)=13 : 1 )
 #elif (defined NUX_DEBUG) && (defined NUX_GNUCPP_COMPILER)
     #define nuxIsDebuggerPresent()  1
-    #define inlDebugBreak()         asm("int3");
+    #define inlDebugBreak()         ARCH_HARDWARE_BREAK
 #else
     #define nuxIsDebuggerPresent()	0
     #define inlDebugBreak()
@@ -490,8 +500,8 @@ namespace nux
     #define NUX_HARDWARE_BREAK      {__debugbreak();}
     #define NUX_BREAK_ASM_INT3      {__debugbreak();}
 #elif defined(NUX_GNUC_COMPILER)
-    #define NUX_HARDWARE_BREAK      asm("int3");
-    #define NUX_BREAK_ASM_INT3      asm("int3");
+    #define NUX_HARDWARE_BREAK     ARCH_HARDWARE_BREAK
+    #define NUX_BREAK_ASM_INT3     ARCH_HARDWARE_BREAK
 #else
     #define NUX_HARDWARE_BREAK
     #define NUX_BREAK_ASM_INT3
