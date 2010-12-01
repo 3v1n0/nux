@@ -23,27 +23,20 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-#if defined(NUX_OS_WINDOWS)
 #include "NuxGraphics/Events.h"
-#elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/Events.h"
-#endif
 #include "Utils.h"
+
 namespace nux
 {
   typedef enum
   {
-    eSigMouseNone   = 0L,
-    eSigMouseDown   = (1L << 0),
-    eSigMouseUp     = (1L << 1),
-    eSigMouseMove   = (1L << 2),
-    eSigMouseEnter  = (1L << 3),
-    eSigMouseLeave  = (1L << 4),
-  } eSignals;
-
-////////////////////////////////////////////////////////////////////////////
-// EventHandlers Policies
-////////////////////////////////////////////////////////////////////////////
+    AREA_MOUSE_STATUS_NONE   = 0L,
+    AREA_MOUSE_STATUS_DOWN   = (1L << 0),
+    AREA_MOUSE_STATUS_UP     = (1L << 1),
+    AREA_MOUSE_STATUS_MOVE   = (1L << 2),
+    AREA_MOUSE_STATUS_ENTER  = (1L << 3),
+    AREA_MOUSE_STATUS_LEAVE  = (1L << 4),
+  } AreaMouseStatus;
 
   class BaseMouseHandler
   {
@@ -51,8 +44,16 @@ namespace nux
     BaseMouseHandler();
     ~BaseMouseHandler();
 
-    unsigned int ProcessMouseInOut (IEvent &ievent, const Geometry &g);
-    unsigned int Process (IEvent &ievent, const Geometry &g);
+    /*!
+        Return the physical status of the mouse with regard to the area.
+
+        @param ievent The event to process.
+        @param geo The geometry of the area.
+        @param process_mouse_focus This parameter should be true if it is allowed to change the mouse focus status.
+          process_mouse_focus should be true only when the event has not been solved yet.
+        @return A value of type AreaMouseStatus, reflecting the position of the mouse relatively to the area.
+    */
+    unsigned int Process (IEvent &ievent, const Geometry &g, bool process_mouse_focus);
     void SetMouseFocus (bool b);
 
     // HasMouseFous == true mean the mouse (left button) was pressed on an area at a previous moment,
@@ -65,11 +66,11 @@ namespace nux
     void ForceMouseFocus (int x, int y, const Geometry &g);
     void StopMouseFocus (int x, int y, const Geometry &g);
 
-  public:
-    bool m_hasMouseFocus;
-    bool m_PreviousMouseIn, m_CurrentMouseIn;
-    unsigned int m_events;
-    unsigned int m_flag;
+  private:
+    bool _has_mouse_focus;
+    bool _previous_mouse_in;
+    bool _current_mouse_in;
+    unsigned int _geometric_mouse_status;
 
     //! Last know mouse X coordinate inside the area.
     int m_mouse_positionx;
@@ -81,80 +82,9 @@ namespace nux
     int m_mouse_deltay;
 
     bool m_first_time;
+
+    friend class InputArea;
   };
-
-
-//class ButtonEventHandler
-//{
-//public:
-//    ButtonEventHandler(){};
-//    ~ButtonEventHandler(){};
-//
-//    void EventHandler(InputArea& area, IEvent& ievent, bool HasFocus = false)
-//    {
-//        int x, y, lo_x, hi_x, lo_y, hi_y;
-//        x = ievent.x;
-//        y = ievent.y;
-//
-//        lo_x = area.GetPosX();
-//        hi_x = area.GetPosX() + area.GetWidth();
-//        lo_y = area.GetPosY();
-//        hi_y = area.GetPosY() + area.GetHeight();
-//
-//        bool is_in = PT_IN_BOX( x, y, lo_x, hi_x, lo_y, hi_y );
-//        if(!is_in && !HasFocus)
-//        {
-//            area.m_MouseEventCurrent.MouseIn = false;
-//            return;
-//        }
-//        area.m_MouseEventCurrent.MouseIn = true;
-//        area.m_MouseEventCurrent.PosX = area.GetPosX() - ievent.x;
-//        area.m_MouseEventCurrent.PosY = area.GetPosY() - ievent.y;
-//        switch(ievent.event_type)
-//        {
-//        case I_ButtonPress:
-//            {
-//                area.m_MouseEventCurrent.MouseDown = true;
-//                area.m_HWMouseDown = true;
-//            }
-//            break;
-//
-//        case I_ButtonRelease:
-//            {
-//                area.m_MouseEventCurrent.MouseUp = true;
-//                area.m_HWMouseUp = true;
-//            }
-//            break;
-//
-//        case I_EnterNotify:
-//            {
-//                area.m_HWMouseEnter = true;
-//            }
-//            break;
-//
-//        case I_LeaveNotify:
-//            {
-//                area.m_HWMouseLeave = true;
-//            }
-//            break;
-//        }
-//    }
-//};
-
-  class IncrButtonEventHandler
-  {
-  public:
-    IncrButtonEventHandler() {};
-    ~IncrButtonEventHandler() {};
-  };
-
-  class DecButtonEventHandler
-  {
-  public:
-    DecButtonEventHandler() {};
-    ~DecButtonEventHandler() {};
-  };
-
 }
 
 #endif // EVENTHANDLER_H

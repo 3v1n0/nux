@@ -66,6 +66,9 @@ namespace nux
     m_PreviousMouseOverArea     = NULL;
     _always_on_front_window     = NULL;
     _inside_event_processing    = false;
+    _exclusive_input_area       = NULL;
+    _in_exclusive_input_mode    = false;
+    _pending_exclusive_input_mode_action = false;
 
     if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
     {
@@ -179,16 +182,16 @@ namespace nux
 
     std::list< IntrusiveWeakSP<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
 
-    if (it != m_WindowList.end() )
+    if (it != m_WindowList.end ())
     {
       m_WindowList.erase (it); // @see STL for note about list.erase(it++). It is valid for lists.
 
-      if (m_WindowList.size() )
-        m_SelectedWindow = (*m_WindowList.begin());
+      if (m_WindowList.size ())
+        m_SelectedWindow = (*m_WindowList.begin ());
 
       std::map< BaseWindow*, RenderTargetTextures >::iterator it2 = m_WindowToTextureMap.find (window);
 
-      if (it2 != m_WindowToTextureMap.end())
+      if (it2 != m_WindowToTextureMap.end ())
       {
         (*it2).second.color_rt = IntrusiveSP<IOpenGLBaseTexture> (0);
         (*it2).second.depth_rt = IntrusiveSP<IOpenGLBaseTexture> (0);
@@ -214,24 +217,24 @@ namespace nux
       ievent.e_y_root = m_EventRoot.y; //GetFocusAreaWindow()->GetBaseY();
     }
 
-    if (object->Type().IsDerivedFromType (View::StaticObjectType) )
+    if (object->Type().IsDerivedFromType (View::StaticObjectType))
     {
       View *ic = NUX_STATIC_CAST (View *, object);
       ret = ic->BaseProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
     }
-    else if (object->Type().IsObjectType (InputArea::StaticObjectType) )
+    else if (object->Type().IsObjectType (InputArea::StaticObjectType))
     {
       InputArea *base_area = NUX_STATIC_CAST (InputArea *, object);
       ret = base_area->OnEvent (ievent, TraverseInfo, ProcessEventInfo);
     }
-    else if (object->Type().IsDerivedFromType (Layout::StaticObjectType) )
+    else if (object->Type().IsDerivedFromType (Layout::StaticObjectType))
     {
       Layout *layout = NUX_STATIC_CAST (Layout *, object);
       ret = layout->ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
     }
     else
     {
-      nuxAssertMsg (0, TEXT ("This should not happen") );
+      nuxAssertMsg (0, TEXT ("This should not happen"));
     }
 
     return ret;
@@ -240,14 +243,33 @@ namespace nux
   // NUXTODO: rename as EventCycle
   void WindowCompositor::ProcessEvent (IEvent &ievent)
   {
+    // Event processing cycle begins.
+    _inside_event_processing = true;
+    _pending_exclusive_input_mode_action = false;
+
+    long exclusive_event_cycle_report = 0;
+    if (_in_exclusive_input_mode && _exclusive_input_area)
+    {
+      exclusive_event_cycle_report = ProcessEventOnObject (ievent, _exclusive_input_area, 0, EVENT_CYCLE_EXCLUSIVE);
+    }
+
+
+    if (_in_exclusive_input_mode && (!(exclusive_event_cycle_report & EVENT_CYCLE_EXCLUSIVE_CONTINUE)))
+    {
+      _inside_event_processing = false;
+      return;
+    }
+
     long ret = 0;
+    bool base_window_reshuffling = false; // Will be set to true if the BaseWindow are reshuffled.
+
     std::list<MenuPage *>::iterator menu_it;
 
     if (ievent.e_event == NUX_WINDOW_EXIT_FOCUS)
     {
       SetCurrentEvent (&ievent);
 
-      if (GetMouseFocusArea() )
+      if (GetMouseFocusArea ())
         ProcessEventOnObject (ievent, GetMouseFocusArea(), 0, 0);
 
       SetMouseFocusArea (0);
@@ -255,10 +277,10 @@ namespace nux
       SetCurrentEvent (0);
     }
 
-    if (GetMouseFocusArea() && ievent.e_event != NUX_MOUSE_PRESSED)
+    if (GetMouseFocusArea() && (ievent.e_event != NUX_MOUSE_PRESSED) && (!InExclusiveInputMode ()))
     {
       SetCurrentEvent (&ievent);
-      SetCurrentWindow (GetFocusAreaWindow() );
+      SetCurrentWindow (GetFocusAreaWindow());
       ProcessEventOnObject (ievent, GetMouseFocusArea(), 0, 0);
 
       if (ievent.e_event == NUX_MOUSE_RELEASED)
@@ -268,7 +290,7 @@ namespace nux
         //SetMouseOverArea(0);
       }
 
-      if ( (ievent.e_event == NUX_MOUSE_RELEASED) )
+      if ((ievent.e_event == NUX_MOUSE_RELEASED))
       {
         SetWidgetDrawingOverlay (NULL, NULL);
       }
@@ -307,55 +329,58 @@ namespace nux
     {
       SetCurrentEvent (&ievent);
 
-      if (m_MenuWindow.IsValid())
+      if (!InExclusiveInputMode ()) // Menus are not enabled in exclusive mode
       {
-        ievent.e_x_root = m_MenuWindow->GetBaseX();
-        ievent.e_y_root = m_MenuWindow->GetBaseY();
-      }
+        if (m_MenuWindow.IsValid())
+        {
+          ievent.e_x_root = m_MenuWindow->GetBaseX();
+          ievent.e_y_root = m_MenuWindow->GetBaseY();
+        }
 
-      // Let all the menu area check the event first. Beside, they are on top of everything else.
-      for (menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
-      {
-        // The deepest menu in the menu cascade is in the front of the list.
-        ret = (*menu_it)->ProcessEvent (ievent, ret, 0);
-      }
-
-      if ( (ievent.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size() )
-      {
-        bool inside = false;
-
+        // Let all the menu area check the event first. Beside, they are on top of everything else.
         for (menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
         {
-          Geometry geo = (*menu_it)->GetGeometry();
+          // The deepest menu in the menu cascade is in the front of the list.
+          ret = (*menu_it)->ProcessEvent (ievent, ret, 0);
+        }
 
-          if (PT_IN_BOX ( ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root,
-                          geo.x, geo.x + geo.width, geo.y, geo.y + geo.height ) )
+        if ( (ievent.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size() )
+        {
+          bool inside = false;
+
+          for (menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
           {
-            inside = true;
-            break;
+            Geometry geo = (*menu_it)->GetGeometry();
+
+            if (PT_IN_BOX ( ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root,
+                            geo.x, geo.x + geo.width, geo.y, geo.y + geo.height ) )
+            {
+              inside = true;
+              break;
+            }
+          }
+
+          if (inside == false)
+          {
+            (*m_MenuList->begin() )->NotifyMouseDownOutsideMenuCascade (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root);
           }
         }
 
-        if (inside == false)
+        if (m_MenuWindow.IsValid())
         {
-          (*m_MenuList->begin() )->NotifyMouseDownOutsideMenuCascade (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root);
+          ievent.e_x_root = 0;
+          ievent.e_y_root = 0;
         }
-      }
 
-      if (m_MenuWindow.IsValid())
-      {
-        ievent.e_x_root = 0;
-        ievent.e_y_root = 0;
-      }
+        if ( (ievent.e_event == NUX_MOUSE_RELEASED) )
+        {
+          SetWidgetDrawingOverlay (NULL, NULL);
+        }
 
-      if ( (ievent.e_event == NUX_MOUSE_RELEASED) )
-      {
-        SetWidgetDrawingOverlay (NULL, NULL);
-      }
-
-      if ( (ievent.e_event == NUX_SIZE_CONFIGURATION) && m_MenuList->size() )
-      {
-        (*m_MenuList->begin() )->NotifyTerminateMenuCascade();
+        if ( (ievent.e_event == NUX_SIZE_CONFIGURATION) && m_MenuList->size() )
+        {
+          (*m_MenuList->begin() )->NotifyTerminateMenuCascade();
+        }
       }
 
       long ProcessEventInfo = 0;
@@ -376,26 +401,21 @@ namespace nux
         window->_entering_visible_status = false;
         window->_entering_hidden_status = false;
       }
-      
+
       if (m_ModalWindowList.size () > 0)
       {
-        _inside_event_processing = true;
         SetCurrentWindow ((*m_ModalWindowList.begin ()).GetPointer ());
         ret = (*m_ModalWindowList.begin ())->ProcessEvent (ievent, ret, ProcessEventInfo);
         SetCurrentWindow (NULL);
-        _inside_event_processing = false;
       }
       else
       {
-        bool ordered = true;
-        _inside_event_processing = true;
-        
-        if (ievent.e_event == NUX_MOUSE_PRESSED)
+        if ((ievent.e_event == NUX_MOUSE_PRESSED) && (!InExclusiveInputMode ()))
         {
           // There is a possibility we might have to reorder the stack of windows.
           // Cancel the currently selected window.
           m_SelectedWindow = NULL;
-          ordered = false;
+          base_window_reshuffling = true;
         }
 
         for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
@@ -409,27 +429,17 @@ namespace nux
               ret = (*it)->ProcessEvent (ievent, ret, ProcessEventInfo);
               SetCurrentWindow (NULL);
 
-              if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0))
+              if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
               {
                 // The mouse event was solved in the window pointed by the iterator.
                 // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
-                ordered = false;
+                base_window_reshuffling = true;
                 m_SelectedWindow = (*it);
               }
             }
           }
         }
-        _inside_event_processing = false;
         
-        if ((ordered == false) && (m_SelectedWindow != 0))
-        {
-          // Move the newly selected window at the top of the visibility stack.
-          PushToFront (m_SelectedWindow.GetPointer ());
-        }
-        
-        // Make the designated BaseWindow always on top of the stack.
-        EnsureAlwaysOnFrontWindow ();
-
         // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
         // This avoid mouse in/out messages from widgets below the menu chain.
         if (!MouseIsOverMenu)
@@ -442,18 +452,24 @@ namespace nux
       SetCurrentEvent (0);
     }
 
+    // Event processing cycle has ended.
+    _inside_event_processing = false;
+
+    if (!InExclusiveInputMode ())
+    {
+      if ((base_window_reshuffling == true) && (m_SelectedWindow != 0))
+      {
+        // Move the newly selected window at the top of the visibility stack.
+        PushToFront (m_SelectedWindow.GetPointer ());
+      }
+
+      // Make the designated BaseWindow always on top of the stack.
+      EnsureAlwaysOnFrontWindow ();
+    }
+
+    ExecPendingExclusiveInputAreaAction ();
+
     CleanMenu ();
-//    menu_it = m_MenuList->begin();
-//    while(menu_it != m_MenuList->end())
-//    {
-//        if((*menu_it)->isVisible() == false)
-//        {
-//            menu_it = m_MenuList->erase(menu_it);
-//            m_MenuRemoved = true;
-//        }
-//        else
-//            menu_it++;
-//    }
   }
 
   void WindowCompositor::StartModalWindow (IntrusiveWeakSP<BaseWindow> window)
@@ -584,6 +600,116 @@ namespace nux
       m_WindowList.erase (always_top_it);
       m_WindowList.push_back (_always_on_front_window);
     }
+  }
+
+  bool WindowCompositor::EnableExclusiveInputArea (InputArea *input_area)
+  {
+    NUX_RETURN_VALUE_IF_NULL (input_area, false);
+
+    if (!input_area->Type().IsDerivedFromType (InputArea::StaticObjectType))
+    {
+      nuxDebugMsg (TEXT("[WindowCompositor::EnableExclusiveInputArea] Invalid input. The object does not inherit from InputArea."));
+      return false;
+    }
+
+    if (_exclusive_input_area)
+    {
+      if (input_area == _exclusive_input_area)
+        return true;
+      return false;
+    }
+
+//     if (_pending_exclusive_input_mode_action)
+//     {
+//       nuxDebugMsg (TEXT("[WindowCompositor::EnableExclusiveInputArea] Eclusive event status has already changed once during event processing."));
+//       return false;
+//     }
+
+    if (_inside_event_processing)
+    {
+      _pending_exclusive_input_mode_action = true;
+      _exclusive_input_area = input_area;
+    }
+    else
+    {
+      // Initiating exclusive mode
+      SetMouseFocusArea (NULL);
+      // The area where the mouse is located is set to null;
+      SetMouseOverArea (NULL);
+      SetPreviousMouseOverArea (NULL);
+
+      // Deactivate any active menu chain.
+      CleanMenu ();
+
+      _pending_exclusive_input_mode_action = false;
+      _in_exclusive_input_mode = true;
+      _exclusive_input_area = input_area;
+    }
+
+    return true;
+  }
+  
+  bool WindowCompositor::DisableExclusiveInputArea (InputArea *input_area)
+  {
+    NUX_RETURN_VALUE_IF_NULL (input_area, false);
+
+    if (input_area != _exclusive_input_area)
+      return false;
+
+    if (_inside_event_processing)
+    {
+      _pending_exclusive_input_mode_action = true;
+      _exclusive_input_area = 0;
+    }
+    else
+    {
+      // Initiating exclusive mode
+      SetMouseFocusArea (NULL);
+      // The area where the mouse is located is set to null;
+      SetMouseOverArea (NULL);
+      SetPreviousMouseOverArea (NULL);
+
+      // Deactivate any active menu chain.
+      CleanMenu ();
+
+      _pending_exclusive_input_mode_action = false;
+      _in_exclusive_input_mode = false;
+      _exclusive_input_area = 0;
+    }
+
+    return true;
+  }
+
+  void WindowCompositor::ExecPendingExclusiveInputAreaAction ()
+  {
+    if (_pending_exclusive_input_mode_action)
+    {
+      if (_exclusive_input_area)
+      {
+        // Initiating exclusive mode
+        SetMouseFocusArea (NULL);
+        // The area where the mouse is located is set to null;
+        SetMouseOverArea (NULL);
+        SetPreviousMouseOverArea (NULL);
+        _pending_exclusive_input_mode_action = false;
+        _in_exclusive_input_mode = true;
+      }
+      else
+      {
+        _pending_exclusive_input_mode_action = false;
+        _in_exclusive_input_mode = false;
+      }
+    }
+  }
+
+  InputArea *WindowCompositor::GetExclusiveInputArea ()
+  {
+    return _exclusive_input_area;
+  }
+
+  bool WindowCompositor::InExclusiveInputMode ()
+  {
+    return _in_exclusive_input_mode;
   }
 
   void WindowCompositor::Draw (bool SizeConfigurationEvent, bool force_draw)

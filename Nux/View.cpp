@@ -55,6 +55,12 @@ namespace nux
 
   long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
+    if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
+    {
+      // Skip the area that has the exclusivity on events
+      return TraverseInfo;
+    }
+
     return ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
   }
 
