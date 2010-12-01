@@ -142,6 +142,8 @@ namespace nux
 
   IntrusiveSP<CachedResourceData> NResourceCache::GetCachedResource (ResourceData *Source)
   {
+    NUX_RETURN_VALUE_IF_NULL (Source, IntrusiveSP<CachedResourceData>(0));
+    
     // check to see if it already exists
     IntrusiveSP<CachedResourceData> CachedResource = TResourceCache<int, CachedResourceData>::FindCachedResourceById (Source->GetResourceIndex());
 
