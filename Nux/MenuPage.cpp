@@ -690,7 +690,7 @@ namespace nux
       m_NextMouseUpMeanStop = true;
       // Find on which item the mouse is
       std::vector< MenuItem * >::iterator item_iterator;
-      UINT i = 0;
+      t_u32 i = 0;
       m_HighlightedItem = -1;
 
       for (item_iterator = m_MenuItemVector.begin(), i = 0; item_iterator != m_MenuItemVector.end(); item_iterator++, i++)

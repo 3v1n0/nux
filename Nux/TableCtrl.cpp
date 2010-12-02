@@ -359,7 +359,7 @@ namespace nux
       GetGraphicsThread()->GetGraphicsEngine().SetEnvModeSelectTexture (GL_TEXTURE0);
       texture->BindTextureToUnit (GL_TEXTURE0);
 
-      UINT w, h;
+      t_u32 w, h;
       w = texture->GetWidth();
       h = texture->GetHeight();
 
@@ -553,7 +553,7 @@ namespace nux
     }
   }
 
-  UINT TableCtrl::PushItemBackground (GraphicsEngine &GfxContext, TableItem *item, bool MouseOver)
+  t_u32 TableCtrl::PushItemBackground (GraphicsEngine &GfxContext, TableItem *item, bool MouseOver)
   {
     Geometry row_geometry = item->m_TotalGeometry;
     Color BackgroundColor = item->m_ItemBackgroundColor;
@@ -561,7 +561,7 @@ namespace nux
     if (MouseOver && m_IsEnableMouseOverColor)
       BackgroundColor = GetMouseOverColor();
 
-    UINT NumBackground = 0;
+    t_u32 NumBackground = 0;
 
     GetPainter().PushShapeLayer (GfxContext,
                              Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight),
@@ -721,7 +721,7 @@ namespace nux
     return NumBackground;
   }
 
-  void TableCtrl::PopItemBackground (GraphicsEngine &GfxContext, UINT NumBackground)
+  void TableCtrl::PopItemBackground (GraphicsEngine &GfxContext, t_u32 NumBackground)
   {
     GetPainter().PopBackground (NumBackground);
   }

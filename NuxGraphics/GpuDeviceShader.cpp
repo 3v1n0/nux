@@ -31,8 +31,6 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "GraphicsEngine.h"
 
-#define MANAGEDEVICERESOURCE    0
-
 namespace nux
 {
   IntrusiveSP<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
@@ -47,8 +45,6 @@ namespace nux
   int GpuDevice::CreateShaderProgram (IOpenGLShaderProgram **ppShaderProgram)
   {
     *ppShaderProgram = new IOpenGLShaderProgram();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLShaderProgram> > (IntrusiveSP<IOpenGLShaderProgram> (*ppShaderProgram), &_CachedShaderProgramList);
 
     return OGL_OK;
   }
@@ -66,8 +62,6 @@ namespace nux
   {
     *ppVertexShader = new IOpenGLVertexShader();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVertexShader> > (IntrusiveSP<IOpenGLVertexShader> (*ppVertexShader), &_CachedVertexShaderList);
-
     return OGL_OK;
   }
 
@@ -83,8 +77,6 @@ namespace nux
   int GpuDevice::CreatePixelShader (IOpenGLPixelShader **ppPixelShader)
   {
     *ppPixelShader = new IOpenGLPixelShader();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLPixelShader> > (IntrusiveSP<IOpenGLPixelShader> (*ppPixelShader), &_CachedPixelShaderList);
 
     return OGL_OK;
   }
@@ -102,8 +94,6 @@ namespace nux
   {
     *ppAsmShaderProgram = new IOpenGLAsmShaderProgram();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAsmShaderProgram> > (IntrusiveSP<IOpenGLAsmShaderProgram> (*ppAsmShaderProgram), &_CachedAsmShaderProgramList);
-
     return OGL_OK;
   }
 
@@ -120,8 +110,6 @@ namespace nux
   {
     *ppAsmVertexShader = new IOpenGLAsmVertexShader();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAsmVertexShader> > (IntrusiveSP<IOpenGLAsmVertexShader> (*ppAsmVertexShader), &_CachedAsmVertexShaderList);
-
     return OGL_OK;
   }
 
@@ -137,8 +125,6 @@ namespace nux
   int GpuDevice::CreateAsmPixelShader (IOpenGLAsmPixelShader **ppAsmPixelShader)
   {
     *ppAsmPixelShader = new IOpenGLAsmPixelShader();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAsmPixelShader> > (IntrusiveSP<IOpenGLAsmPixelShader> (*ppAsmPixelShader), &_CachedAsmPixelShaderList);
 
     return OGL_OK;
   }
@@ -158,8 +144,6 @@ namespace nux
   {
     *ppCgVertexShader = new ICgVertexShader();
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<ICgVertexShader> > (IntrusiveSP<ICgVertexShader> (*ppCgVertexShader), &_CachedCGVertexShaderList);
-
     return OGL_OK;
   }
 
@@ -175,8 +159,6 @@ namespace nux
   int GpuDevice::CreateCGPixelShader (ICgPixelShader **ppCgPixelShader)
   {
     *ppCgPixelShader = new ICgPixelShader();
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<ICgPixelShader> > (IntrusiveSP<ICgPixelShader> (*ppCgPixelShader), &_CachedCGPixelShaderList);
 
     return OGL_OK;
   }

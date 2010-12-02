@@ -27,7 +27,6 @@
 #include "Nux/Button.h"
 #include "NuxGraphics/GraphicsEngine.h"
 #include "NuxGraphics/Events.h"
-#include "NuxGraphics/GfxSetupX11.h"
 #include "Nux/TextureArea.h"
 #include "NuxImage/CairoGraphics.h"
 

@@ -29,9 +29,9 @@
 #include "WindowCompositor.h"
 #include "SystemThread.h"
 #include "FloatingWindow.h"
-//#include "Timeline.h"
 
 #include "WindowThread.h"
+
 namespace nux
 {
   
@@ -709,7 +709,7 @@ namespace nux
       }
       else
       {
-        // Do not sleep. Just return and let the GLWindowImpl::SwapBuffer do the sleep if necessary.
+        // Do not sleep. Just return and let the GraphicsDisplay::SwapBuffer do the sleep if necessary.
       }
     }
 
@@ -730,7 +730,7 @@ namespace nux
 
     if (!IsEmbeddedWindow() && GetWindow().IsPauseThreadGraphicsRendering() )
     {
-      // Do not sleep. Just return and let the GLWindowImpl::SwapBuffer do the sleep if necessary.
+      // Do not sleep. Just return and let the GraphicsDisplay::SwapBuffer do the sleep if necessary.
       return 0;
     }
 
@@ -1202,7 +1202,7 @@ namespace nux
     }
 
     inlSetThreadLocalStorage (ThreadLocal_InalogicAppImpl, this);
-    GLWindowImpl *ParentWindow = 0;
+    GraphicsDisplay *ParentWindow = 0;
 
     if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
@@ -1255,7 +1255,7 @@ namespace nux
     }
 
     inlSetThreadLocalStorage (ThreadLocal_InalogicAppImpl, this);
-    GLWindowImpl *ParentWindow = 0;
+    GraphicsDisplay *ParentWindow = 0;
 
     if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
@@ -1311,7 +1311,7 @@ namespace nux
     }
 
     inlSetThreadLocalStorage (ThreadLocal_InalogicAppImpl, this);
-    GLWindowImpl *ParentWindow = 0;
+    GraphicsDisplay *ParentWindow = 0;
 
     if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
@@ -1680,3 +1680,4 @@ namespace nux
   }
 
 }
+

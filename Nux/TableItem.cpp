@@ -135,7 +135,7 @@ namespace nux
 
     if (ievent.e_event == NUX_MOUSE_PRESSED && ! (ret & eMouseEventSolved) && ! (ProcessEventInfo & eDoNotProcess) )
     {
-      for (UINT i = 0; i < m_ItemGeometryVector.size(); i++)
+      for (t_u32 i = 0; i < m_ItemGeometryVector.size(); i++)
       {
         if (m_ItemGeometryVector[i].IsPointInside (ievent.GetX() - ievent.GetRootX(), ievent.GetY() - ievent.GetRootY() ) )
         {
@@ -147,7 +147,7 @@ namespace nux
     }
     else
     {
-      for (UINT i = 0; i < m_ItemGeometryVector.size(); i++)
+      for (t_u32 i = 0; i < m_ItemGeometryVector.size(); i++)
       {
         if (m_ItemGeometryVector[i].IsPointInside (ievent.GetX() - ievent.GetRootX(), ievent.GetY() - ievent.GetRootY() ) )
         {
@@ -227,7 +227,7 @@ namespace nux
 
     if (isDirtyItem() )
     {
-      UINT nBackground;
+      t_u32 nBackground;
 
       if (m_bIsMouseInside)
       {

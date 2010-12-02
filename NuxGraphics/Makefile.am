@@ -30,7 +30,7 @@ source_h = \
   $(srcdir)/Events.h \
   $(srcdir)/FontTexture.h \
   $(srcdir)/FontRenderer.h \
-  $(srcdir)/GfxSetupX11.h \
+  $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/Gfx_Interface.h \
   $(srcdir)/GpuDevice.h \
   $(srcdir)/GLDeviceFrameBufferObject.h \
@@ -131,7 +131,7 @@ source_cpp = \
   $(srcdir)/GLError.cpp \
   $(srcdir)/RunTimeStats.cpp \
   $(srcdir)/IOpenGLVertexBuffer.cpp \
-  $(srcdir)/GfxSetupX11.cpp \
+  $(srcdir)/GraphicsDisplayX11.cpp \
   $(srcdir)/IOpenGLQuery.cpp \
   $(srcdir)/GLShader.cpp \
   $(srcdir)/IOpenGLGLSLShader.cpp \

@@ -52,16 +52,16 @@ namespace nux
 #define NUX_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
 
 // This will become GLWindow
-  class GLWindowImpl : public GraphicSystem
+  class GraphicsDisplay : public GraphicSystem
   {
     friend class GraphicsEngine;
 
   private:
 #ifdef WIN32
     // WIN32 system variables
-    HGLRC       m_GLRC;     //!< OpenGL Rendering Context.
-    HDC         m_hDC;      //!< Device Context.
-    HWND        m_hWnd;       //!< Window Handle.
+    HGLRC       _opengl_rendering_context;  //!< OpenGL Rendering Context.
+    HDC         _device_context;            //!< Device Context.
+    HWND        m_hWnd;                     //!< Window Handle.
     HWND        m_ParentWindow;
 
     TCHAR m_WindowClassName[256];
@@ -119,7 +119,7 @@ namespace nux
       unsigned int WindowWidth,
       unsigned int WindowHeight,
       WindowStyle Style,
-      const GLWindowImpl *Parent,
+      const GraphicsDisplay *Parent,
       bool FullscreenFlag = false);
 
     //! Create a GLWindow from a window and device context.
@@ -167,7 +167,7 @@ namespace nux
     }
     HDC GetWindowHDC() const
     {
-      return m_hDC;
+      return _device_context;
     }
     bool IsChildWindow() const
     {
@@ -230,7 +230,7 @@ namespace nux
     WindowStyle m_Style;
 
   public:
-    ~GLWindowImpl();
+    ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
     {
       return &m_GLEWContext;
@@ -241,10 +241,10 @@ namespace nux
     }
 
   private:
-    GLWindowImpl();
-    GLWindowImpl (const GLWindowImpl &);
+    GraphicsDisplay();
+    GraphicsDisplay (const GraphicsDisplay &);
     // Does not make sense for a singleton. This is a self assignment.
-    GLWindowImpl &operator= (const GLWindowImpl &);
+    GraphicsDisplay &operator= (const GraphicsDisplay &);
 
 
     GLEWContext m_GLEWContext;

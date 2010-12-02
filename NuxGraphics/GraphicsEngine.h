@@ -35,11 +35,11 @@
 #include "GLShader.h"
 
 #if defined(NUX_OS_WINDOWS)
-#include "Gfx_OpenGL.h"
-#include "GLWindowManager.h"
+  #include "GraphicsDisplayWin.h"
+  #include "GLWindowManager.h"
 #elif defined(NUX_OS_LINUX)
-#include "GfxSetupX11.h"
-#include "GLWindowManager.h"
+  #include "GraphicsDisplayX11.h"
+  #include "GLWindowManager.h"
 #endif
 
 namespace nux
@@ -77,7 +77,7 @@ namespace nux
   {
   public:
 
-    GraphicsEngine (GLWindowImpl &GlWindow);
+    GraphicsEngine (GraphicsDisplay &GlWindow);
     ~GraphicsEngine();
 
     void SetContext (int x, int y, int width, int height);
@@ -267,17 +267,17 @@ namespace nux
     Matrix4 GetModelViewProjectionMatrix();
     Matrix4 GetOpenGLModelViewProjectionMatrix();
 
-    GLRenderStates &GetRenderStates()
+    GpuRenderStates &GetRenderStates()
     {
-      return *m_GLWindow.m_DeviceFactory->m_RenderStates;
+      return *m_GLWindow.m_DeviceFactory->_gpu_render_states;
     }
     void ResetRenderStates()
     {
-      m_GLWindow.m_DeviceFactory->m_RenderStates->ResetStateChangeToDefault();
+      m_GLWindow.m_DeviceFactory->_gpu_render_states->ResetStateChangeToDefault();
     }
     void VerifyRenderStates()
     {
-      m_GLWindow.m_DeviceFactory->m_RenderStates->CheckStateChange();
+      m_GLWindow.m_DeviceFactory->_gpu_render_states->CheckStateChange();
     }
 
     IntrusiveSP<FontTexture> GetFont();
@@ -376,7 +376,7 @@ namespace nux
     Matrix4 m_ProjectionMatrix;
     Matrix4 m_ModelViewMatrix;
 
-    GLWindowImpl &m_GLWindow;
+    GraphicsDisplay &m_GLWindow;
 
     int m_ViewportWidth, m_ViewportHeight;
     int m_ViewportX, m_ViewportY;

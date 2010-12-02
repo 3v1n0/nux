@@ -111,27 +111,28 @@ namespace nux
     GFXSS_MAX_SAMPLERSTATES,
   };
 
+  //! Brand of GPUs.
   typedef enum
   {
-    BOARD_UNKNOWN = 0,
-    BOARD_ATI,
-    BOARD_NVIDIA,
-    BOARD_INTEL,
-  } eGraphicsBoardVendor;
+    GPU_VENDOR_UNKNOWN = 0,
+    GPU_BRAND_AMD,
+    GPU_BRAND_NVIDIA,
+    GPU_BRAND_INTEL,
+  } GpuBrand;
 
   struct RenderStateMap
   {
     t_u32   Checked;
     t_u32    State;
     t_u32    iValue;
-    FLOAT   fValue;
+    float   fValue;
   };
 
-  class GLRenderStates
+  class GpuRenderStates
   {
   public:
-    GLRenderStates (eGraphicsBoardVendor board);
-    ~GLRenderStates();
+    GpuRenderStates (GpuBrand board);
+    ~GpuRenderStates();
 
     void ResetDefault();
     void ResetStateChangeToDefault();
@@ -245,7 +246,7 @@ namespace nux
 
   private:
 
-    eGraphicsBoardVendor m_BoardVendor;
+    GpuBrand _gpu_brand;
 
     inline void HW__EnableAlphaTest (t_u32 b);
 
@@ -334,7 +335,7 @@ namespace nux
 //#define RS_VALUE_FLOAT(a, b)      (a).fValue
 
 
-  inline void GLRenderStates::SetAlphaTest (
+  inline void GpuRenderStates::SetAlphaTest (
     bool EnableAlphaTest_,
     t_u32 AlphaTestFunc_,
     BYTE AlphaTestRef_)
@@ -359,7 +360,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetBlend (bool AlphaBlendEnable_)
+  inline void GpuRenderStates::SetBlend (bool AlphaBlendEnable_)
   {
     if (AlphaBlendEnable_)
     {
@@ -377,7 +378,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetBlend (bool AlphaBlendEnable_,
+  inline void GpuRenderStates::SetBlend (bool AlphaBlendEnable_,
                                         t_u32 SrcBlendFactor_,
                                         t_u32 DestBlendFactor_)
   {
@@ -394,7 +395,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::GetBlend (t_u32& AlphaBlendEnable_,
+  inline void GpuRenderStates::GetBlend (t_u32& AlphaBlendEnable_,
                     t_u32& SrcBlendFactor_,
                     t_u32& DestBlendFactor_)
   {
@@ -403,7 +404,7 @@ namespace nux
     DestBlendFactor_  = RS_VALUE (m_RenderStateChanges[GFXRS_DESTBLEND]);
   }
     
-  inline void GLRenderStates::SetSeparateBlend (bool EnableSeparateAlphaBlend,
+  inline void GpuRenderStates::SetSeparateBlend (bool EnableSeparateAlphaBlend,
       t_u32 SrcBlendFactor_,
       t_u32 DestBlendFactor_,
       t_u32 SrcBlendFactorAlpha_,
@@ -442,7 +443,7 @@ namespace nux
 //     }
   }
 
-  inline void GLRenderStates::SetBlendOp (t_u32 BlendOp)
+  inline void GpuRenderStates::SetBlendOp (t_u32 BlendOp)
   {
     if ( (RS_VALUE (m_RenderStateChanges[GFXRS_BLENDOP]) != BlendOp) )
     {
@@ -450,7 +451,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetSeparateBlendOp (
+  inline void GpuRenderStates::SetSeparateBlendOp (
     t_u32 BlendOpRGB_,
     t_u32 BlendOpAlpha_)
   {
@@ -461,7 +462,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetCullMode (bool EnableCullFace,
+  inline void GpuRenderStates::SetCullMode (bool EnableCullFace,
       t_u32 FrontFace_,
       t_u32 Cullface_)
   {
@@ -490,7 +491,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetDepthTest (bool EnableDepthTest,
+  inline void GpuRenderStates::SetDepthTest (bool EnableDepthTest,
       t_u32 WriteEnable_,
       t_u32 DepthFunc_)
   {
@@ -519,7 +520,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetDepthRange (FLOAT zNear, FLOAT zFar)
+  inline void GpuRenderStates::SetDepthRange (FLOAT zNear, FLOAT zFar)
   {
     if ( (RS_VALUE (m_RenderStateChanges[GFXRS_ZNEAR]) != static_cast<t_u32> (zNear) ) ||
          (RS_VALUE (m_RenderStateChanges[GFXRS_ZFAR]) != static_cast<t_u32> (zFar) ) )
@@ -528,7 +529,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetStencilFrontFace (
+  inline void GpuRenderStates::SetStencilFrontFace (
     bool EnableStencil_,                            // GL_TRUE enable stencil test
     t_u32 Func_,
     t_u32 FailOp_,
@@ -565,7 +566,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetStencilBackFace (
+  inline void GpuRenderStates::SetStencilBackFace (
     bool EnableTwoSideStencil_,                     // GL_TRUE enable Two Sided Stencil test
     t_u32 Func_,
     t_u32 FailOp_,
@@ -607,19 +608,19 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetFrontFaceStencilWriteMask (
+  inline void GpuRenderStates::SetFrontFaceStencilWriteMask (
     t_u32 WriteMask_)
   {
     HW__SetStencilFrontFaceWriteMask (WriteMask_);
   }
 
-  inline void GLRenderStates::SetBackFaceStencilWriteMask (
+  inline void GpuRenderStates::SetBackFaceStencilWriteMask (
     t_u32 WriteMask_)
   {
     HW__SetStencilBackFaceWriteMask (WriteMask_);
   }
 
-  inline void GLRenderStates::EnableLineSmooth (
+  inline void GpuRenderStates::EnableLineSmooth (
     bool EnableLineSmooth,
     t_u32  LineWidth,
     t_u32 Hint)
@@ -644,7 +645,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::EnablePointSmooth (
+  inline void GpuRenderStates::EnablePointSmooth (
     bool EnablePointSmooth,
     t_u32  PointSize,
     t_u32 Hint)
@@ -669,7 +670,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetColorMask (
+  inline void GpuRenderStates::SetColorMask (
     t_u32 bRed,
     t_u32 bGreen,
     t_u32 bBlue,
@@ -685,7 +686,7 @@ namespace nux
 
   }
 
-  inline void GLRenderStates::GetColorMask (
+  inline void GpuRenderStates::GetColorMask (
     t_u32& bRed,
     t_u32& bGreen,
     t_u32& bBlue,
@@ -697,7 +698,7 @@ namespace nux
     bAlpha  = RS_VALUE (m_RenderStateChanges[GFXRS_COLORWRITEENABLE_A]);
   }
   
-  inline void GLRenderStates::SetDepthMask (t_u32 bDepth)
+  inline void GpuRenderStates::SetDepthMask (t_u32 bDepth)
   {
     if ( (RS_VALUE (m_RenderStateChanges[GFXRS_ZWRITEENABLE]) != bDepth) )
     {
@@ -705,7 +706,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::EnableScissor (t_u32 bScissor)
+  inline void GpuRenderStates::EnableScissor (t_u32 bScissor)
   {
     if ( (RS_VALUE (m_RenderStateChanges[GFXRS_SCISSORTESTENABLE]) != bScissor) )
     {
@@ -713,7 +714,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::EnableFog (t_u32 bFog)
+  inline void GpuRenderStates::EnableFog (t_u32 bFog)
   {
     if ( (RS_VALUE (m_RenderStateChanges[GFXRS_FOGENABLE]) != bFog) )
     {
@@ -721,7 +722,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetPolygonMode (t_u32 FrontMode, t_u32 BackMode)
+  inline void GpuRenderStates::SetPolygonMode (t_u32 FrontMode, t_u32 BackMode)
   {
     if ( (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_POLYGONMODE]) != FrontMode) ||
          (RS_VALUE (m_RenderStateChanges[GFXRS_BACK_POLYGONMODE]) != BackMode) )
@@ -730,7 +731,7 @@ namespace nux
     }
   }
 
-  inline void GLRenderStates::SetPolygonOffset (t_u32 bEnable,
+  inline void GpuRenderStates::SetPolygonOffset (t_u32 bEnable,
       FLOAT Factor, FLOAT Units)
   {
     if (bEnable)
@@ -754,7 +755,7 @@ namespace nux
 
 
 //////////////////////////////////////
-  inline void GLRenderStates::HW__EnableAlphaTest (t_u32 b)
+  inline void GpuRenderStates::HW__EnableAlphaTest (t_u32 b)
   {
     if (b)
     {
@@ -768,7 +769,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTENABLE], b ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__SetAlphaTestFunc (t_u32 AlphaTestFunc_,
+  inline void GpuRenderStates::HW__SetAlphaTestFunc (t_u32 AlphaTestFunc_,
       BYTE  AlphaTestRef_)
   {
     nuxAssertMsg (
@@ -787,7 +788,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTREF], AlphaTestRef_);
   }
 
-  inline void GLRenderStates::HW__EnableAlphaBlend (t_u32 b)
+  inline void GpuRenderStates::HW__EnableAlphaBlend (t_u32 b)
   {
     if (b)
     {
@@ -801,7 +802,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHABLENDENABLE], b ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__SetSeparateAlphaBlendFactors (
+  inline void GpuRenderStates::HW__SetSeparateAlphaBlendFactors (
     t_u32 SrcBlendFactor_,
     t_u32 DestBlendFactor_,
     t_u32 SrcFactorAlpha_,
@@ -828,7 +829,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_DESTBLENDALPHA], DestFactorAlpha_);
   }
 
-  inline void GLRenderStates::HW__SetAlphaBlendOp (
+  inline void GpuRenderStates::HW__SetAlphaBlendOp (
     t_u32 BlendOpRGB_,
     t_u32 BlendOpAlpha_)
   {
@@ -853,7 +854,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BLENDOPALPHA], BlendOpAlpha_);
   }
 
-  inline void GLRenderStates::HW__EnableCulling (t_u32 b)
+  inline void GpuRenderStates::HW__EnableCulling (t_u32 b)
   {
     if (b)
     {
@@ -868,7 +869,7 @@ namespace nux
   }
 
 
-  inline void GLRenderStates::HW__SetFrontFace (t_u32 FrontFace_)
+  inline void GpuRenderStates::HW__SetFrontFace (t_u32 FrontFace_)
   {
     nuxAssertMsg (
       (FrontFace_ == GL_CW) ||
@@ -879,7 +880,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONTFACE], FrontFace_);
   }
 
-  inline void GLRenderStates::HW__SetCullFace (t_u32 CullFace_)
+  inline void GpuRenderStates::HW__SetCullFace (t_u32 CullFace_)
   {
     nuxAssertMsg (
       (CullFace_ == GL_FRONT) ||
@@ -891,7 +892,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_CULLFACE], CullFace_);
   }
 
-  inline void GLRenderStates::HW__SetEnableDepthTest (t_u32 b)
+  inline void GpuRenderStates::HW__SetEnableDepthTest (t_u32 b)
   {
     if (b)
     {
@@ -905,14 +906,14 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ZTESTENABLE], b ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__SetDepthRange (FLOAT zNear, FLOAT zFar)
+  inline void GpuRenderStates::HW__SetDepthRange (FLOAT zNear, FLOAT zFar)
   {
     CHECKGL (glDepthRange (zNear, zFar) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ZNEAR], static_cast<t_u32> (Clamp (zNear, 0.0f, 1.0f) ) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ZFAR], static_cast<t_u32> (Clamp (zFar, 0.0f, 1.0f) ) );
   }
 
-  inline void GLRenderStates::HW__SetDepthFunc (t_u32 Func)
+  inline void GpuRenderStates::HW__SetDepthFunc (t_u32 Func)
   {
     nuxAssertMsg (
       (Func == GL_NEVER) ||
@@ -929,7 +930,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ZFUNC], Func);
   }
 
-  inline void GLRenderStates::HW__EnableStencil (t_u32 b)
+  inline void GpuRenderStates::HW__EnableStencil (t_u32 b)
   {
     if (b)
     {
@@ -943,11 +944,11 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_STENCILENABLE], b ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__EnableTwoSidedStencil (t_u32 b)
+  inline void GpuRenderStates::HW__EnableTwoSidedStencil (t_u32 b)
   {
     if (b)
     {
-      if (m_BoardVendor == BOARD_ATI)
+      if (_gpu_brand == GPU_BRAND_AMD)
       {
         CHECKGL (glEnable (GL_STENCIL_TEST) );
       }
@@ -958,7 +959,7 @@ namespace nux
     }
     else
     {
-      if (m_BoardVendor == BOARD_ATI)
+      if (_gpu_brand == GPU_BRAND_AMD)
       {
         CHECKGL (glDisable (GL_STENCIL_TEST) );
       }
@@ -971,14 +972,14 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_TWOSIDEDSTENCILENABLE], b ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__SetStencilFrontFaceWriteMask (t_u32 WriteMask_)
+  inline void GpuRenderStates::HW__SetStencilFrontFaceWriteMask (t_u32 WriteMask_)
   {
     CHECKGL (glActiveStencilFaceEXT (GL_FRONT) );
     CHECKGL (glStencilMask (WriteMask_) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILWRITEMASK], WriteMask_);
   }
 
-  inline void GLRenderStates::HW__SetStencilBackFaceWriteMask (t_u32 WriteMask_)
+  inline void GpuRenderStates::HW__SetStencilBackFaceWriteMask (t_u32 WriteMask_)
   {
     CHECKGL (glActiveStencilFaceEXT (GL_BACK) );
     CHECKGL (glStencilMask (WriteMask_) );
@@ -986,7 +987,7 @@ namespace nux
   }
 
 
-  inline void GLRenderStates::HW__SetFrontFaceStencilFunc (t_u32 Func_,
+  inline void GpuRenderStates::HW__SetFrontFaceStencilFunc (t_u32 Func_,
       t_u32 Ref_,
       t_u32 Mask_)
   {
@@ -1009,7 +1010,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILMASK], Mask_);
   }
 
-  inline void GLRenderStates::HW__SetBackFaceStencilFunc (
+  inline void GpuRenderStates::HW__SetBackFaceStencilFunc (
     t_u32 Func_,
     t_u32 Ref_,
     t_u32 Mask_)
@@ -1025,7 +1026,7 @@ namespace nux
       (Func_ == GL_ALWAYS),
       TEXT ("Error(HW__SetBackFaceStencilFunc): Invalid Stencil Function RenderState") );
 
-    if (m_BoardVendor == BOARD_ATI)
+    if (_gpu_brand == GPU_BRAND_AMD)
     {
       CHECKGL (glStencilFuncSeparateATI (Func_/*Front function*/, Func_/*Back function*/, Ref_, Mask_) ); // incorrect
     }
@@ -1040,7 +1041,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BACK_STENCILMASK], Mask_);
   }
 
-  inline void GLRenderStates::HW__SetFrontFaceStencilOp (
+  inline void GpuRenderStates::HW__SetFrontFaceStencilOp (
     t_u32 FailOp_,
     t_u32 ZFailOp_,
     t_u32 ZPassOp_)
@@ -1078,7 +1079,7 @@ namespace nux
       (ZPassOp_ == GL_INVERT),
       TEXT ("Error(HW__SetFrontFaceStencilOp): Invalid ZPassOp RenderState") );
 
-    if (m_BoardVendor == BOARD_ATI)
+    if (_gpu_brand == GPU_BRAND_AMD)
     {
       CHECKGL (glStencilOpSeparateATI (GL_FRONT, FailOp_, ZFailOp_, ZPassOp_) );
     }
@@ -1093,7 +1094,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILZPASS], ZPassOp_);
   }
 
-  inline void GLRenderStates::HW__SetBackFaceStencilOp (
+  inline void GpuRenderStates::HW__SetBackFaceStencilOp (
     t_u32 FailOp_,
     t_u32 ZFailOp_,
     t_u32 ZPassOp_)
@@ -1131,7 +1132,7 @@ namespace nux
       (ZPassOp_ == GL_INVERT),
       TEXT ("Error(HW__SetBackFaceStencilOp): Invalid ZPassOp RenderState") );
 
-    if (m_BoardVendor == BOARD_ATI)
+    if (_gpu_brand == GPU_BRAND_AMD)
     {
       CHECKGL (glStencilOpSeparateATI (GL_BACK, FailOp_, ZFailOp_, ZPassOp_) );
     }
@@ -1146,7 +1147,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BACK_STENCILZPASS], ZPassOp_);
   }
 
-  inline void GLRenderStates::HW__EnableLineSmooth (t_u32 EnableLineSmooth)
+  inline void GpuRenderStates::HW__EnableLineSmooth (t_u32 EnableLineSmooth)
   {
     if (EnableLineSmooth)
     {
@@ -1160,7 +1161,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_LINESMOOTHENABLE], EnableLineSmooth ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__SetLineWidth (t_u32 width,  t_u32 Hint)
+  inline void GpuRenderStates::HW__SetLineWidth (t_u32 width,  t_u32 Hint)
   {
     nuxAssertMsg (
       (Hint == GL_NICEST) ||
@@ -1174,7 +1175,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_LINEHINT], Hint);
   }
 
-  inline void GLRenderStates::HW__EnablePointSmooth (t_u32 EnablePointSmooth)
+  inline void GpuRenderStates::HW__EnablePointSmooth (t_u32 EnablePointSmooth)
   {
     if (EnablePointSmooth)
     {
@@ -1188,7 +1189,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_POINTSMOOTHENABLE], EnablePointSmooth ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__SetPointSize (t_u32 size,  t_u32 Hint)
+  inline void GpuRenderStates::HW__SetPointSize (t_u32 size,  t_u32 Hint)
   {
     nuxAssertMsg (
       (Hint == GL_NICEST) ||
@@ -1202,7 +1203,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_POINTHINT], Hint);
   }
 
-  inline void GLRenderStates::HW__SetColorMask (
+  inline void GpuRenderStates::HW__SetColorMask (
     t_u32 bRed,
     t_u32 bGreen,
     t_u32 bBlue,
@@ -1215,13 +1216,13 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_COLORWRITEENABLE_A], bAlpha);
   }
 
-  inline void GLRenderStates::HW__SetDepthMask (t_u32 bDepth)
+  inline void GpuRenderStates::HW__SetDepthMask (t_u32 bDepth)
   {
     CHECKGL (glDepthMask (bDepth) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ZWRITEENABLE], bDepth);
   }
 
-  inline void GLRenderStates::HW__EnableScissor (t_u32 bScissor)
+  inline void GpuRenderStates::HW__EnableScissor (t_u32 bScissor)
   {
     if (bScissor)
     {
@@ -1235,7 +1236,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_SCISSORTESTENABLE], bScissor ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__EnableFog (t_u32 bFog)
+  inline void GpuRenderStates::HW__EnableFog (t_u32 bFog)
   {
     if (bFog)
     {
@@ -1249,7 +1250,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FOGENABLE], bFog ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__SetPolygonMode (t_u32 FrontMode, t_u32 BackMode)
+  inline void GpuRenderStates::HW__SetPolygonMode (t_u32 FrontMode, t_u32 BackMode)
   {
     nuxAssertMsg (
       (FrontMode == GL_FILL) ||
@@ -1270,7 +1271,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BACK_POLYGONMODE], BackMode);
   }
 
-  inline void GLRenderStates::HW__EnablePolygonOffset (t_u32 EnablePolygonOffset)
+  inline void GpuRenderStates::HW__EnablePolygonOffset (t_u32 EnablePolygonOffset)
   {
     if (EnablePolygonOffset)
     {
@@ -1284,7 +1285,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GL_POLYGON_OFFSET_FILL], EnablePolygonOffset ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GLRenderStates::HW__SetPolygonOffset (FLOAT Factor, FLOAT Units)
+  inline void GpuRenderStates::HW__SetPolygonOffset (FLOAT Factor, FLOAT Units)
   {
     CHECKGL (glPolygonOffset (Factor, Units) );
 

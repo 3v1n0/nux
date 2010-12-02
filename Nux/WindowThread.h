@@ -31,7 +31,7 @@ namespace nux
   class WindowThread;
   class Layout;
   class HLayout;
-  class GLWindowImpl;
+  class GraphicsDisplay;
   class ClientArea;
   class WindowCompositor;
   class AbstractThread;
@@ -78,7 +78,7 @@ namespace nux
       m_WindowTitle = WindowTitle;
     }
 
-    GLWindowImpl &GetWindow() const
+    GraphicsDisplay &GetWindow() const
     {
       return *m_GLWindow;
     }
@@ -129,12 +129,20 @@ namespace nux
 
     // Layout
 
-    //! This list contains the layout that need to be recomputed following the resizing of one of the sub element.
+    //! Schedule a size computation cycle on an area before the rendering is performed.
     /*!
-        This list contains the layout that need to be recomputed following the resizing of one of the sub element.
+        This list contains the area whose size need to be computed.
+        @param area The object that will perform a size computation cycle.
+        \sa RefreshLayout.
     */
-    void AddObjectToRefreshList (Area *bo);
-    void RemoveObjectFromRefreshList (Area *bo);
+    void AddObjectToRefreshList (Area *area);
+
+    //! Remove an area from the list of object whose size was scheduled to be computed before the rendering cycle.
+    /*!
+        @param area The object to remove form the list.
+        \sa RefreshLayout, AddObjectToRefreshList.
+    */
+    void RemoveObjectFromRefreshList (Area *area);
 
     //! Empty the list that contains the layout that need to be recomputed following the resizing of one of the sub element.
     /*!
@@ -142,6 +150,12 @@ namespace nux
     */
     void EmptyLayoutRefreshList();
 
+    //! Execute the size computation cycle on objects.
+    /*
+        The objects whose size is to be computed are added to a list with a call to AddObjectToRefreshList.
+        Size computation is performed just before the rendering cycle.
+        \sa AddObjectToRefreshList
+    */
     void RefreshLayout();
 
     //! Return true if we are computing any layout that is part of this window.
@@ -382,7 +396,7 @@ namespace nux
     BasePainter     *m_Painter;
     TimerHandler    *m_TimerHandler;
 
-    GLWindowImpl *m_GLWindow;
+    GraphicsDisplay *m_GLWindow;
     GraphicsEngine *m_GraphicsContext;
     WindowCompositor *m_window_compositor;
     std::list<NThread *> m_ThreadList;
@@ -419,24 +433,24 @@ namespace nux
     friend class TimerHandler;
 
     friend WindowThread *CreateGUIThread (const TCHAR *WindowTitle,
-                                          UINT width,
-                                          UINT height,
+                                          t_u32 width,
+                                          t_u32 height,
                                           WindowThread *Parent,
                                           ThreadUserInitFunc UserInitFunc,
                                           void *InitData);
 
     friend WindowThread *CreateWindowThread (WindowStyle WndStyle,
         const TCHAR *WindowTitle,
-        UINT width,
-        UINT height,
+        t_u32 width,
+        t_u32 height,
         WindowThread *Parent,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
 
     friend WindowThread *CreateModalWindowThread (WindowStyle WndStyle,
         const TCHAR *WindowTitle,
-        UINT width,
-        UINT height,
+        t_u32 width,
+        t_u32 height,
         WindowThread *Parent,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);

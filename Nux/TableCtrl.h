@@ -195,7 +195,7 @@ namespace nux
 
         @return The number of background pushed onto the painter stack.
     */
-    UINT PushItemBackground (GraphicsEngine &GfxContext, TableItem *item, bool MouseOver = false);
+    t_u32 PushItemBackground (GraphicsEngine &GfxContext, TableItem *item, bool MouseOver = false);
 
     //! Pop the item background pushed on the painter stack.
     /*!
@@ -203,7 +203,7 @@ namespace nux
 
         @param NumBackground The number of background to pop of the painter stack.
     */
-    void PopItemBackground (GraphicsEngine &GfxContext, UINT NumBackground);
+    void PopItemBackground (GraphicsEngine &GfxContext, t_u32 NumBackground);
 
     //! Enable  row to have a height fixed by the contained item.
     /*!

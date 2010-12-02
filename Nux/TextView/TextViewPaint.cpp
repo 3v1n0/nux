@@ -704,7 +704,7 @@ namespace nux
 //  of the GetSysColor COLOR_xxx indices. This allows us to use
 //	system colours without worrying about colour-scheme changes etc.
 //
-  COLORREF TextView::GetColour (UINT idx)
+  COLORREF TextView::GetColour (t_u32 idx)
   {
     if (idx >= TXC_MAX_COLOURS)
       return 0;
@@ -712,7 +712,7 @@ namespace nux
     return REALIZE_SYSCOL (m_rgbColourList[idx]);
   }
 
-  COLORREF TextView::SetColour (UINT idx, COLORREF rgbColour)
+  COLORREF TextView::SetColour (t_u32 idx, COLORREF rgbColour)
   {
     COLORREF rgbOld;
 

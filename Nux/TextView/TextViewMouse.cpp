@@ -36,7 +36,7 @@ namespace nux
 //
 //	Grab the keyboard input focus
 //
-  LONG TextView::OnMouseActivate (HWND hwndTop, UINT nHitTest, UINT nMessage)
+  LONG TextView::OnMouseActivate (HWND hwndTop, t_u32 nHitTest, t_u32 nMessage)
   {
     SetFocus (m_hWnd);
     return MA_ACTIVATE;
@@ -47,7 +47,7 @@ namespace nux
 //
 //  Position caret to nearest text character under mouse
 //
-  void TextView::OnLButtonDown (int mx, int my, unsigned long button_flags, unsigned long key_flags /*UINT nFlags, int mx, int my*/)
+  void TextView::OnLButtonDown (int mx, int my, unsigned long button_flags, unsigned long key_flags /*t_u32 nFlags, int mx, int my*/)
   {
     t_u32 nLineNo;
     t_u32 nFileOff;
@@ -152,7 +152,7 @@ namespace nux
 //
 //	Release capture and cancel any mouse-scrolling
 //
-  void TextView::OnLButtonUp (int mx, int my, unsigned long button_flags, unsigned long key_flags /*UINT nFlags, int mx, int my*/)
+  void TextView::OnLButtonUp (int mx, int my, unsigned long button_flags, unsigned long key_flags /*t_u32 nFlags, int mx, int my*/)
   {
     mx = mx - getBorder() - GetViewContentLeftMargin();
     my = my - getTopBorder() - GetViewContentTopMargin();
@@ -227,7 +227,7 @@ namespace nux
 //
 //	Set the selection end-point if we are dragging the mouse
 //
-  void TextView::RecvMouseMove (int mx, int my, int dx, int dy, unsigned long button_flags, unsigned long key_flags /*UINT nFlags, int mx, int my*/)
+  void TextView::RecvMouseMove (int mx, int my, int dx, int dy, unsigned long button_flags, unsigned long key_flags /*t_u32 nFlags, int mx, int my*/)
   {
     mx = mx - getBorder() - GetViewContentLeftMargin();
     my = my - getTopBorder() - GetViewContentTopMargin();

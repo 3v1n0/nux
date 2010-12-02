@@ -61,7 +61,7 @@ namespace nux
 #define NUX_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
 
 // This will become GLWindow
-  class GLWindowImpl : public GraphicSystem
+  class GraphicsDisplay : public GraphicSystem
   {
     friend class GraphicsEngine;
 
@@ -144,7 +144,7 @@ namespace nux
       unsigned int WindowWidth,
       unsigned int WindowHeight,
       WindowStyle Style,
-      const GLWindowImpl *Parent,
+      const GraphicsDisplay *Parent,
       bool FullscreenFlag = false);
 
     //! Create a GLWindow from a display and window created externally.
@@ -250,7 +250,7 @@ namespace nux
     WindowStyle m_Style;
 
   public:
-    ~GLWindowImpl();
+    ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
     {
       return &m_GLEWContext;
@@ -284,10 +284,10 @@ namespace nux
     std::vector<NString> m_UITextureSearchPath;
     FilePath m_ResourcePathLocation;
 
-    GLWindowImpl();
-    GLWindowImpl (const GLWindowImpl &);
+    GraphicsDisplay();
+    GraphicsDisplay (const GraphicsDisplay &);
     // Does not make sense for a singleton. This is a self assignment.
-    GLWindowImpl &operator= (const GLWindowImpl &);
+    GraphicsDisplay &operator= (const GraphicsDisplay &);
 
     GLEWContext m_GLEWContext;
     GLXEWContext m_GLXEWContext;

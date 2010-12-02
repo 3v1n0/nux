@@ -109,18 +109,18 @@ namespace nux
   } s_StateLUT;
 
 
-  GLRenderStates::GLRenderStates (eGraphicsBoardVendor board)
+  GpuRenderStates::GpuRenderStates (GpuBrand board)
   {
-    m_BoardVendor = board;
+    _gpu_brand = board;
     Memcpy (&m_RenderStateChanges, &s_StateLUT.default_render_state, sizeof (m_RenderStateChanges) );
   }
 
-  GLRenderStates::~GLRenderStates()
+  GpuRenderStates::~GpuRenderStates()
   {
 
   }
 
-  void GLRenderStates::ResetDefault()
+  void GpuRenderStates::ResetDefault()
   {
     HW__EnableCulling ( s_StateLUT.default_render_state[GFXRS_CULLFACEENABLE].iValue );
     HW__SetFrontFace ( s_StateLUT.default_render_state[GFXRS_FRONTFACE].iValue );
@@ -168,7 +168,7 @@ namespace nux
     HW__EnableFog ( s_StateLUT.default_render_state[GFXRS_FOGENABLE].iValue );
   }
 
-  void GLRenderStates::SubmitChangeStates()
+  void GpuRenderStates::SubmitChangeStates()
   {
     HW__EnableCulling ( m_RenderStateChanges[GFXRS_CULLFACEENABLE].iValue );
     HW__SetFrontFace ( m_RenderStateChanges[GFXRS_FRONTFACE].iValue );
@@ -217,7 +217,7 @@ namespace nux
 
   }
 
-  void GLRenderStates::ResetStateChangeToDefault()
+  void GpuRenderStates::ResetStateChangeToDefault()
   {
     for (t_u32 i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
     {
@@ -231,7 +231,7 @@ namespace nux
     }
   }
 
-  void GLRenderStates::CheckStateChange()
+  void GpuRenderStates::CheckStateChange()
   {
     for (t_u32 i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
     {
@@ -241,12 +241,12 @@ namespace nux
       {
         m_RenderStateChanges[i].iValue = s_StateLUT.default_render_state[i].iValue;
         m_RenderStateChanges[i].fValue = s_StateLUT.default_render_state[i].fValue;
-        nuxError (TEXT ("[GLRenderStates::Check] Render state doesn't have default value") );
+        nuxError (TEXT ("[GpuRenderStates::Check] Render state doesn't have default value") );
       }
     }
   }
 
-  void GLRenderStates::SetRenderStates (t_u32 rs, t_u32 value)
+  void GpuRenderStates::SetRenderStates (t_u32 rs, t_u32 value)
   {
 #define RS_VALUE(a)      (a).iValue
 
