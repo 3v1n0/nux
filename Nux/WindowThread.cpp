@@ -479,7 +479,8 @@ namespace nux
     
     _ready_for_next_fake_event = false;
     _fake_event = *xevent;
-    _fake_event_timer = window_thread->GetTimerHandler().AddTimerHandler (0, _fake_event_call_back, this, this);
+    _fake_event.xany.window = this->GetWindow ().GetWindowHandle ();
+    _fake_event_timer = this->GetTimerHandler().AddTimerHandler (0, _fake_event_call_back, this, this);
     return true;
   }
   
