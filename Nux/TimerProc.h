@@ -27,7 +27,8 @@ namespace nux
 {
 
   class TimerHandler;
-
+  class WindowThread;
+  
   class TimerFunctor : public sigc::trackable
   {
   public:
@@ -83,9 +84,10 @@ namespace nux
       @param Milliseconds   Period delay before the callback is executed.
       @param Callback       The callback to execute when the timer expires.
       @param Data           The callback data
+      @param window_thread  Thread safety mesure. Pass the WindowThread associated to this TimerHandler if it is called from a diferent thread than the one where the main thread was created.
       @return               A handle to the timer.
     */
-    TimerHandle AddTimerHandler (unsigned int Period, TimerFunctor *Callback, void *Data);
+    TimerHandle AddTimerHandler (unsigned int Period, TimerFunctor *Callback, void *Data, WindowThread* window_thread = NULL);
     //! Add a periodic timer callback.
     /*!
       Add a timer callback to the timer manager. Every time the timer expires, the callback function is executed.

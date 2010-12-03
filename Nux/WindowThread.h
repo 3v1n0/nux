@@ -327,7 +327,7 @@ namespace nux
        @param xevent Simulated XEvent
        @return True if the fake event was successfully registered for later processing.
     */
-    bool PumpFakeEventIntoPipe (XEvent xevent);
+    bool PumpFakeEventIntoPipe (WindowThread* window_thread, XEvent *xevent);
     
     /*!
         Called when the timer set in PumpFakeEventIntoPipe expires.This is the signal that the main 
@@ -339,7 +339,7 @@ namespace nux
         Fake events are processed one after the other. While this function return false,
         PumpFakeEventIntoPipe should not be called.
     */
-    bool IsReadyForFakeEvent () const;
+    bool ReadyForNextFakeEvent () const;
     
     bool _ready_for_next_fake_event;
     bool _processing_fake_event;

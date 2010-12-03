@@ -458,12 +458,12 @@ namespace nux
     return _fake_event_mode;
   }
   
-  bool WindowThread::IsReadyForFakeEvent () const
+  bool WindowThread::ReadyForNextFakeEvent () const
   {
     return _ready_for_next_fake_event;
   }
   
-  bool WindowThread::PumpFakeEventIntoPipe (XEvent xevent)
+  bool WindowThread::PumpFakeEventIntoPipe (WindowThread* window_thread, XEvent *xevent)
   {
     if (!_fake_event_mode)
     {
@@ -478,14 +478,14 @@ namespace nux
     }
     
     _ready_for_next_fake_event = false;
-    _fake_event = xevent;
-    _fake_event_timer = GetTimer().AddTimerHandler (0, _fake_event_call_back, this);
-    
+    _fake_event = *xevent;
+    _fake_event_timer = window_thread->GetTimerHandler().AddTimerHandler (0, _fake_event_call_back, this, this);
     return true;
   }
   
   void WindowThread::ReadyFakeEventProcessing (void* data)
   {
+    nuxDebugMsg (TEXT("[WindowThread::ReadyFakeEventProcessing] Ready to process fake event."));
     _processing_fake_event = true;
   }
   
@@ -812,6 +812,15 @@ namespace nux
         memset(&event, 0, sizeof(IEvent));
         
         GetWindow().InjectXEvent(&event, _fake_event);
+        
+        if (event.e_event == NUX_MOUSE_PRESSED)
+        {
+          nuxDebugMsg (TEXT("[WindowThread::ExecutionLoop] Fake Event: Mouse Down."));
+        }
+        else if (event.e_event == NUX_MOUSE_RELEASED)
+        {
+          nuxDebugMsg (TEXT("[WindowThread::ExecutionLoop] Fake Event: Mouse Up."));
+        }
       }
       else if (_fake_event_mode)
       {
