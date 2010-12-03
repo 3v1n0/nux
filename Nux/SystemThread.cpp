@@ -52,7 +52,7 @@ namespace nux
   {
   }
 
-  ThreadState SystemThread::Start ( void *arg )
+  ThreadState SystemThread::Start (void *arg)
   {
     if (!m_Parent)
     {

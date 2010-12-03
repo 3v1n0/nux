@@ -299,7 +299,61 @@ namespace nux
     // quits the main loop.
     void NuxMainLoopQuit ();
 
+    // Automation
+#if defined (NUX_OS_LINUX)
+    
+    /*!
+        Enable the processing of fake events set through PumpFakeEventIntoPipe.
+        Disable the processing of mouse up/down events coming from the display server.
+        Process other mouse events normaly.
+        
+        @param enable True to enable fake events.
+        \sa InFakeEventMode
+    */
+    void SetFakeEventMode (bool enable);
+    
+    /*!
+        Return True if the system is in accepting fake events.
+        
+        @return True if the fake event mode is active.
+
+    */
+    bool InFakeEventMode () const;
+    
+    /*!
+       Used by an external thread to push a fake event for processing.
+       Start a 0 delay timer with a call back to ReadyFakeEventProcessing.
+       
+       @param xevent Simulated XEvent
+       @return True if the fake event was successfully registered for later processing.
+    */
+    bool PumpFakeEventIntoPipe (XEvent xevent);
+    
+    /*!
+        Called when the timer set in PumpFakeEventIntoPipe expires.This is the signal that the main 
+        thread is ready to process the fake event.
+    */
+    void ReadyFakeEventProcessing (void*);
+    
+    /*!
+        Fake events are processed one after the other. While this function return false,
+        PumpFakeEventIntoPipe should not be called.
+    */
+    bool IsReadyForFakeEvent () const;
+    
+    bool _ready_for_next_fake_event;
+    bool _processing_fake_event;
+    bool _fake_event_mode;
+    XEvent _fake_event;
+    
+    //std::list<XEvent> _fake_event_pipe;
+
+    TimerFunctor *_fake_event_call_back;
+    TimerHandle _fake_event_timer;
+#endif
+
   protected:
+    
     void AsyncWakeUpCallback (void*);
 
     //void SetModalWindow(bool b) {m_bIsModal = b;}
@@ -451,7 +505,7 @@ namespace nux
         void *InitData);
 #endif
 
-    SystemThread *CreateSimpleThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);
+    friend SystemThread *CreateSystemThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);
 
   };
 

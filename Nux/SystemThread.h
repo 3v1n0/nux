@@ -88,9 +88,10 @@ namespace nux
     // Declare operator adress-of as private
     SystemThread *operator &();
 
-  private:
     NString m_ThreadName;
 
+    friend SystemThread *CreateSystemThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);
+    
     friend class WindowThread;
   };
 
