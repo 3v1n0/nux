@@ -120,7 +120,7 @@ namespace nux
                                          void *InitData = NULL);
 
 // Create a simple thread
-  SystemThread *CreateSimpleThread (AbstractThread *Parent = NULL,
+  SystemThread *CreateSystemThread (AbstractThread *Parent = NULL,
                                     ThreadUserInitFunc UserInitFunc = NULL, void *InitData = NULL);
 
   ThreadState GetThreadState (unsigned int ThreadID);

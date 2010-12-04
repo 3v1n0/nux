@@ -1119,6 +1119,19 @@ namespace nux
       memcpy (evt, m_pEvent, sizeof (IEvent) );
     }
   }
+  
+#if defined (NUX_OS_LINUX)
+  void GLWindowImpl::InjectXEvent (IEvent *evt, XEvent xevent)
+  {
+    m_pEvent->Reset();
+    // Erase mouse event and mouse doubleclick states. Keep the mouse states.
+    m_pEvent->e_mouse_state &= 0x0F000000;
+    
+    // We could do some checks here to make sure the xevent is really what it pretends to be.
+    ProcessXEvent (xevent, false);
+    memcpy (evt, m_pEvent, sizeof (IEvent));
+  }
+#endif
 
   void GLWindowImpl::ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event)
   {

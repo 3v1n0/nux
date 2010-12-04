@@ -23,6 +23,7 @@
 #include "Nux.h"
 #include "TimerProc.h"
 #include "WindowCompositor.h"
+#include "WindowThread.h"
 
 class BaseWindow;
     
@@ -188,7 +189,7 @@ namespace nux
     _early_timer_objects.clear();
   }
 
-  TimerHandle TimerHandler::AddTimerHandler (unsigned int Period, TimerFunctor *Callback, void *Data)
+  TimerHandle TimerHandler::AddTimerHandler (unsigned int Period, TimerFunctor *Callback, void *Data, WindowThread* window_thread)
   {
     TimerObject *timer_object = new TimerObject();
 
@@ -199,14 +200,20 @@ namespace nux
     timer_object->TimerCallback = Callback;
     timer_object->Period        = Period;
     timer_object->Type          = TIMERTYPE_PERIODIC;
-    timer_object->Window        = GetWindowCompositor ().GetCurrentWindow();
-
+    if (window_thread)
+      timer_object->Window        = window_thread->GetWindowCompositor ().GetCurrentWindow();
+    else
+      timer_object->Window        = GetWindowCompositor ().GetCurrentWindow();
+    
     AddHandle (timer_object);
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
-      timer_object->glibid = GetGraphicsThread()->AddGLibTimeout (Period);
-
+      if (window_thread)
+        timer_object->glibid = window_thread->AddGLibTimeout (Period);
+      else
+        timer_object->glibid = GetGraphicsThread()->AddGLibTimeout (Period);
+      
       if (timer_object->glibid == 0)
       {
         _early_timer_objects.push_back(timer_object);

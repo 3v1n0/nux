@@ -208,10 +208,20 @@ namespace nux
     return w;
   }
 
-  SystemThread *CreateSimpleThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData)
+  SystemThread *CreateSystemThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData)
   {
-    SystemThread *simpleThread = new SystemThread (Parent);
-    return static_cast<SystemThread *> (simpleThread);
+    SystemThread *system_thread = new SystemThread (Parent);
+    
+    if (system_thread == 0)
+    {
+      nuxAssertMsg (0, TEXT ("[CreateSimpleThread] SystemThread creation failed.") );
+      return 0;
+    }
+    system_thread->m_UserInitFunc = UserInitFunc;
+    system_thread->m_UserExitFunc = 0;
+    system_thread->m_InitData = InitData;
+    system_thread->m_ExitData = 0;
+    return system_thread;
   }
 
   bool RegisterNuxThread (NThread *ThreadPtr)

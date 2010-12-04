@@ -170,6 +170,11 @@ namespace nux
 
     // Event methods
     void GetSystemEvent (IEvent *evt);
+
+#if defined (NUX_OS_LINUX)
+    void InjectXEvent (IEvent *evt, XEvent xevent);
+#endif
+    
     IEvent &GetCurrentEvent();
 
     bool isWindowMinimized() const
