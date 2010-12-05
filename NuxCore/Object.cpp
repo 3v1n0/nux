@@ -228,25 +228,42 @@ namespace nux
   {
     *_destroyed = true;
 
-    // If the object has properly been UnReference, it should have gone through Destroy(). if that is the case then
-    // m_reference_count should be NULL or its value (returned by GetValue ()) should be equal to 0;
-    // We can use this to detect when delete is called directly on an object.
-    nuxAssertMsg((m_reference_count == 0) || (m_reference_count && (m_reference_count->GetValue () == 0)), TEXT("[Object::~Object] Invalid object destruction. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object."));
-    nuxAssertMsg((m_weak_reference_count == 0) || (m_weak_reference_count && (m_weak_reference_count->GetValue () > 0)), TEXT("[Object::~Object] Invalid value of the weak reference count pointer. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object."));
-
-    if ((m_reference_count == 0) && (m_weak_reference_count == 0))
+    if (IsHeapAllocated ())
     {
-      delete _destroyed;
+      // If the object has properly been UnReference, it should have gone through Destroy(). if that is the case then
+      // m_reference_count should be NULL or its value (returned by GetValue ()) should be equal to 0;
+      // We can use this to detect when delete is called directly on an object.
+      nuxAssertMsg((m_reference_count == 0) || (m_reference_count && (m_reference_count->GetValue () == 0)), TEXT("[Object::~Object] Invalid object destruction. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object."));
+      nuxAssertMsg((m_weak_reference_count == 0) || (m_weak_reference_count && (m_weak_reference_count->GetValue () > 0)), TEXT("[Object::~Object] Invalid value of the weak reference count pointer. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object."));
+
+      if ((m_reference_count == 0) && (m_weak_reference_count == 0))
+      {
+        delete _destroyed;
+      }
+      else
+      {
+        // There is a smart pointer holding a weak reference to this object. It is the responsibility
+        // of the last smart pointer to delete '_destroyed'.
+      }
     }
     else
     {
-      // There is a smart pointer holding a weak reference to this object. It is the responsibility
-      // of the last smart pointer to delete '_destroyed'.
+      delete m_reference_count;
+      delete m_weak_reference_count;
+      delete _destroyed;
     }
   }
 
   void Object::Reference()
   {
+#if defined (NUX_DEBUG)
+    if (!IsHeapAllocated ())
+    {
+      nuxAssertMsg (0, TEXT("[Object::Reference] Trying to reference an object that was not heap allocated."));
+      return;
+    }
+#endif
+
     if (m_reference_count->GetValue() == 0)
     {
       nuxAssertMsg (0, TEXT("[Object::Reference] Trying to reference an object that has been delete."));
@@ -266,6 +283,14 @@ namespace nux
 
   bool Object::UnReference()
   {
+#if defined (NUX_DEBUG)
+    if (!IsHeapAllocated ())
+    {
+      nuxAssertMsg (0, TEXT("[Object::Reference] Trying to un-reference an object that was not heap allocated."));
+      return false;
+    }
+#endif
+
     if (!OwnsTheReference() )
     {
       nuxAssertMsg (0, TEXT ("[Object::Unref] Never call Unref on an object with a floating reference. Call Dispose() instead.") );
@@ -286,6 +311,14 @@ namespace nux
 
   bool Object::SinkReference()
   {
+#if defined (NUX_DEBUG)
+    if (!IsHeapAllocated ())
+    {
+      nuxAssertMsg (0, TEXT("[Object::Reference] Trying to sink an object that was not heap allocated."));
+      return false;
+    }
+#endif
+
     if (!OwnsTheReference() )
     {
       SetOwnedReference (true);
@@ -298,6 +331,14 @@ namespace nux
 
   bool Object::Dispose()
   {
+#if defined (NUX_DEBUG)
+    if (!IsHeapAllocated ())
+    {
+      nuxAssertMsg (0, TEXT("[Object::Reference] Trying to dispose an object that was not heap allocated."));
+      return false;
+    }
+#endif
+
     if (!OwnsTheReference() && (m_reference_count->GetValue() == 1) )
     {
       m_reference_count->Decrement ();
@@ -306,12 +347,20 @@ namespace nux
       return true;
     }
 
-    nuxAssertMsg (0, TEXT ("[Object::Dispose] Trying to destroy and object taht is still referenced") );
+    nuxAssertMsg (0, TEXT ("[Object::Dispose] Trying to destroy and object that is still referenced") );
     return false;
   }
 
   void Object::Destroy()
   {
+#if defined (NUX_DEBUG)
+    if (!IsHeapAllocated ())
+    {
+      nuxAssertMsg (0, TEXT("[Object::Reference] Trying to destroy an object that was not heap allocated."));
+      return;
+    }
+#endif
+
     nuxAssert (m_reference_count->GetValue() == 0);
 
     if ( (m_reference_count->GetValue() == 0) && (m_weak_reference_count->GetValue() == 0) )
@@ -333,11 +382,27 @@ namespace nux
 
   void Object::IncrementWeakCounter()
   {
+#if defined (NUX_DEBUG)
+    if (!IsHeapAllocated ())
+    {
+      nuxAssertMsg (0, TEXT("[Object::Reference] Trying to increment weak counter on an object that was not heap allocated."));
+      return;
+    }
+#endif
+
     m_weak_reference_count->Increment();
   }
 
   void Object::DecrementWeakCounter()
   {
+#if defined (NUX_DEBUG)
+    if (!IsHeapAllocated ())
+    {
+      nuxAssertMsg (0, TEXT("[Object::Reference] Trying to decrement weak counter on an object that was not heap allocated."));
+      return;
+    }
+#endif
+
     m_weak_reference_count->Decrement();
   }
 

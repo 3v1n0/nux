@@ -314,7 +314,30 @@ namespace nux
     void NuxMainLoopQuit ();
 
     // Automation
-#if defined (NUX_OS_LINUX)
+
+#if defined (NUX_OS_WINDOWS)
+    /*!
+       Used by an external thread to push a fake event for processing.
+       Start a 0 delay timer with a call back to ReadyFakeEventProcessing.
+       
+       @param xevent Simulated XEvent
+       @return True if the fake event was successfully registered for later processing.
+    */
+    bool PumpFakeEventIntoPipe (WindowThread* window_thread, INPUT *win_event);
+    
+    INPUT _fake_event;
+#elif defined (NUX_OS_LINUX)
+    /*!
+       Used by an external thread to push a fake event for processing.
+       Start a 0 delay timer with a call back to ReadyFakeEventProcessing.
+       
+       @param xevent Simulated XEvent
+       @return True if the fake event was successfully registered for later processing.
+    */
+    bool PumpFakeEventIntoPipe (WindowThread* window_thread, XEvent *xevent);
+    
+    XEvent _fake_event;
+#endif
     
     /*!
         Enable the processing of fake events set through PumpFakeEventIntoPipe.
@@ -333,16 +356,7 @@ namespace nux
 
     */
     bool InFakeEventMode () const;
-    
-    /*!
-       Used by an external thread to push a fake event for processing.
-       Start a 0 delay timer with a call back to ReadyFakeEventProcessing.
-       
-       @param xevent Simulated XEvent
-       @return True if the fake event was successfully registered for later processing.
-    */
-    bool PumpFakeEventIntoPipe (WindowThread* window_thread, XEvent *xevent);
-    
+
     /*!
         Called when the timer set in PumpFakeEventIntoPipe expires.This is the signal that the main 
         thread is ready to process the fake event.
@@ -354,17 +368,12 @@ namespace nux
         PumpFakeEventIntoPipe should not be called.
     */
     bool ReadyForNextFakeEvent () const;
-    
+
     bool _ready_for_next_fake_event;
     bool _processing_fake_event;
     bool _fake_event_mode;
-    XEvent _fake_event;
-    
-    //std::list<XEvent> _fake_event_pipe;
-
     TimerFunctor *_fake_event_call_back;
     TimerHandle _fake_event_timer;
-#endif
 
   protected:
     

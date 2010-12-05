@@ -33,9 +33,6 @@
 #endif
 
 
-#define INPUT
-#define OUTPUT
-
 #define FOCUSNONE -1
 
 namespace nux

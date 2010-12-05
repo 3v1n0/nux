@@ -463,7 +463,8 @@ namespace nux
     return _ready_for_next_fake_event;
   }
   
-  bool WindowThread::PumpFakeEventIntoPipe (WindowThread* window_thread, XEvent *xevent)
+#if defined (NUX_OS_WINDOWS)
+  bool WindowThread::PumpFakeEventIntoPipe (WindowThread* window_thread, INPUT *win_event)
   {
     if (!_fake_event_mode)
     {
@@ -478,12 +479,34 @@ namespace nux
     }
     
     _ready_for_next_fake_event = false;
+//     _fake_event = *xevent;
+//     _fake_event.xany.window = this->GetWindow ().GetWindowHandle ();
+    _fake_event_timer = this->GetTimerHandler().AddTimerHandler (0, _fake_event_call_back, this, this);
+    return true;
+  }
+#elif defined (NUX_OS_LINUX)
+  bool WindowThread::PumpFakeEventIntoPipe (WindowThread* window_thread, XEvent *xevent)
+  {
+    if (!_fake_event_mode)
+    {
+      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled."));
+      return false;
+    }
+
+    if (!_ready_for_next_fake_event)
+    {
+      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time."));
+      return false;
+    }
+
+    _ready_for_next_fake_event = false;
     _fake_event = *xevent;
     _fake_event.xany.window = this->GetWindow ().GetWindowHandle ();
     _fake_event_timer = this->GetTimerHandler().AddTimerHandler (0, _fake_event_call_back, this, this);
     return true;
   }
-  
+#endif
+
   void WindowThread::ReadyFakeEventProcessing (void* data)
   {
     nuxDebugMsg (TEXT("[WindowThread::ReadyFakeEventProcessing] Ready to process fake event."));

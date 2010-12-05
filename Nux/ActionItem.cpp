@@ -43,7 +43,8 @@ namespace nux
 
   ActionItem::~ActionItem()
   {
-    NUX_SAFE_DELETE (m_Icon);
+    if(m_Icon)
+      m_Icon->UnReference();
   }
 
   void ActionItem::DrawAsMenuItem (GraphicsEngine &GfxContext, CoreArea &area, bool is_highlighted, bool draw_icone)
@@ -138,7 +139,7 @@ namespace nux
   void ActionItem::SetIcon (const BaseTexture* icon)
   {
     if(m_Icon)
-      NUX_SAFE_DELETE (m_Icon);
+      m_Icon->UnReference();
     m_Icon = icon->Clone();
   }
 
