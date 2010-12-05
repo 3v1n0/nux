@@ -152,7 +152,7 @@ namespace nux
 //
 //	The window has changed size - update the scrollbars
 //
-  LONG TextView::OnSize (UINT nFlags, int width, int height)
+  LONG TextView::OnSize (t_u32 nFlags, int width, int height)
   {
     int margin = LeftMarginWidth();
 
@@ -276,7 +276,7 @@ namespace nux
 //
 //	Vertical scrollbar support
 //
-  LONG TextView::OnVScroll (UINT nSBCode, UINT nPos)
+  LONG TextView::OnVScroll (t_u32 nSBCode, t_u32 nPos)
   {
     ULONG oldpos = m_nVScrollPos;
 
@@ -330,7 +330,7 @@ namespace nux
 //
 //	Horizontal scrollbar support
 //
-  LONG TextView::OnHScroll (UINT nSBCode, UINT nPos)
+  LONG TextView::OnHScroll (t_u32 nSBCode, t_u32 nPos)
   {
     int oldpos = m_nHScrollPos;
 

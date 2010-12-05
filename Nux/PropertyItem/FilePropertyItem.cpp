@@ -63,7 +63,7 @@ namespace nux
         m_OpenButton->IsRedrawNeeded() ||
         m_TextEntry->IsRedrawNeeded() )
     {
-      UINT nBackground = table->PushItemBackground (GfxContext, this);
+      t_u32 nBackground = table->PushItemBackground (GfxContext, this);
       Painter.PaintTextLineStatic (GfxContext, GetSysFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
 
       if (m_ItemGeometryVector.size() >= 2)

@@ -31,8 +31,6 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "GraphicsEngine.h"
 
-#define MANAGEDEVICERESOURCE    0
-
 namespace nux
 {
   IntrusiveSP<IOpenGLTexture2D> GpuDevice::CreateTexture (
@@ -96,8 +94,6 @@ namespace nux
     //        numLevels-1 is reached.
 
     *ppTexture = new IOpenGLTexture2D (Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP< IOpenGLTexture2D > > (IntrusiveSP< IOpenGLTexture2D > (*ppTexture), &_CachedTextureList);
 
     return 1;
   }
@@ -166,7 +162,6 @@ namespace nux
 
     *ppTexture = new IOpenGLRectangleTexture (Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLRectangleTexture> > (IntrusiveSP<IOpenGLRectangleTexture> (*ppTexture), &_CachedTextureRectangleList);
 
     return 1;
   }
@@ -214,8 +209,6 @@ namespace nux
     }
 
     *ppCubeTexture = new IOpenGLCubeTexture (EdgeLength, NumMipLevel, PixelFormat);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLCubeTexture> > (IntrusiveSP<IOpenGLCubeTexture> (*ppCubeTexture), &_CachedCubeTextureList);
 
     return 1;
   }
@@ -268,8 +261,6 @@ namespace nux
 
     *ppVolumeTexture = new IOpenGLVolumeTexture (Width, Height, Depth, NumMipLevel, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVolumeTexture> > (IntrusiveSP<IOpenGLVolumeTexture> (*ppVolumeTexture), &_CachedVolumeTextureList);
-
     return OGL_OK;
   }
 
@@ -294,8 +285,6 @@ namespace nux
   {
     *ppAnimatedTexture = new IOpenGLAnimatedTexture (Width, Height, Depth, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAnimatedTexture> > (IntrusiveSP<IOpenGLAnimatedTexture> (*ppAnimatedTexture), &_CachedAnimatedTextureList);
-
     return OGL_OK;
   }
 
@@ -311,8 +300,6 @@ namespace nux
   int GpuDevice::CreateQuery (QUERY_TYPE Type, IOpenGLQuery **ppQuery)
   {
     *ppQuery = new IOpenGLQuery (Type);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLQuery> > (IntrusiveSP<IOpenGLQuery> (*ppQuery), &_CachedQueryList);
 
     return OGL_OK;
   }

@@ -100,7 +100,7 @@ namespace nux
     TextView (HWND hwnd);
     ~TextView();
 
-    long WINAPI WndProc (UINT msg, WPARAM wParam, LPARAM lParam);
+    long WINAPI WndProc (t_u32 msg, WPARAM wParam, LPARAM lParam);
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
@@ -142,22 +142,22 @@ namespace nux
     //
     long OnPaint (GraphicsEngine &GfxContext);
     long TextView::OnPaintLine (GraphicsEngine &GfxContext, unsigned int LigneNumber);
-    long OnSize (UINT nFlags, int width, int height);
-    long OnVScroll (UINT nSBCode, UINT nPos);
-    long OnHScroll (UINT nSBCode, UINT nPos);
+    long OnSize (t_u32 nFlags, int width, int height);
+    long OnVScroll (t_u32 nSBCode, t_u32 nPos);
+    long OnHScroll (t_u32 nSBCode, t_u32 nPos);
     long OnMouseWheelFunc (int nDelta);
     void RecvTimer (void *);
 
-    LONG OnMouseActivate (HWND hwndTop, UINT nHitTest, UINT nMessage);
-    void OnLButtonDown (int x, int y, unsigned long button_flags, unsigned long key_flags /*UINT nFlags, int x, int y*/);
-    void OnLButtonUp (int x, int y, unsigned long button_flags, unsigned long key_flags /*UINT nFlags, int x, int y*/);
-    void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags /*UINT nFlags, int x, int y*/);
-    void OnLButtonDblClick (int x, int y, unsigned long button_flags, unsigned long key_flags /*UINT nFlags, int mx, int my*/);
+    LONG OnMouseActivate (HWND hwndTop, t_u32 nHitTest, t_u32 nMessage);
+    void OnLButtonDown (int x, int y, unsigned long button_flags, unsigned long key_flags /*t_u32 nFlags, int x, int y*/);
+    void OnLButtonUp (int x, int y, unsigned long button_flags, unsigned long key_flags /*t_u32 nFlags, int x, int y*/);
+    void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags /*t_u32 nFlags, int x, int y*/);
+    void OnLButtonDblClick (int x, int y, unsigned long button_flags, unsigned long key_flags /*t_u32 nFlags, int mx, int my*/);
 
     long OnSetFocus (HWND hwndOld);
     long OnKillFocus (HWND hwndNew);
 
-    long OnKeyDown (UINT nVirtKey, UINT nFlags);
+    long OnKeyDown (t_u32 nVirtKey, t_u32 nFlags);
 
     //
     //
@@ -168,7 +168,7 @@ namespace nux
     void SetFont();
     long SetLineSpacing (int nAbove, int nBelow);
     long SetLongLine (int nLength);
-    COLORREF SetColour (UINT idx, COLORREF rgbColour);
+    COLORREF SetColour (t_u32 idx, COLORREF rgbColour);
 
     //
     //	Private Helper functions
@@ -217,7 +217,7 @@ namespace nux
     t_u32	GetStyleMask (t_u32 uMask);
     bool	CheckStyle (t_u32 uMask);
 
-    COLORREF GetColour (UINT idx);
+    COLORREF GetColour (t_u32 idx);
     COLORREF LineColour (t_u32 nLineNo);
     COLORREF LongColour (t_u32 nLineNo);
 
@@ -294,7 +294,7 @@ namespace nux
 
     t_u32		m_nSelMarginOffset1;
     t_u32		m_nSelMarginOffset2;
-    UINT		m_nScrollTimer;
+    t_u32		m_nScrollTimer;
     int			m_nScrollCounter;
     bool		m_fHideCaret;
     Point  m_CaretPosition;

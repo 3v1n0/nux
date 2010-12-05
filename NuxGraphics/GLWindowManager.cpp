@@ -100,7 +100,7 @@ namespace nux
     return *m_pInstance;
   }
 
-  GLWindowImpl *DisplayAccessController::CreateGLWindow (const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style, GLWindowImpl *GLWindow, bool FullscreenFlag/* = FALSE*/)
+  GraphicsDisplay *DisplayAccessController::CreateGLWindow (const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style, GraphicsDisplay *GLWindow, bool FullscreenFlag/* = FALSE*/)
   {
     if (GetThreadGLWindow() )
     {
@@ -109,14 +109,14 @@ namespace nux
       return 0;
     }
 
-    GLWindowImpl *glwindow = new GLWindowImpl();
+    GraphicsDisplay *glwindow = new GraphicsDisplay();
     glwindow->CreateOpenGLWindow (WindowTitle, WindowWidth, WindowHeight, Style, GLWindow, FullscreenFlag);
 
     return glwindow;
   }
 
 #if defined(NUX_OS_WINDOWS)
-  GLWindowImpl *DisplayAccessController::CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
+  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
   {
     if (GetThreadGLWindow() )
     {
@@ -125,13 +125,13 @@ namespace nux
       return 0;
     }
 
-    GLWindowImpl *glwindow = new GLWindowImpl();
+    GraphicsDisplay *glwindow = new GraphicsDisplay();
     glwindow->CreateFromOpenGLWindow (WindowHandle, WindowDCHandle, OpenGLRenderingContext);
 
     return glwindow;
   }
 #elif defined(NUX_OS_LINUX)
-  GLWindowImpl *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
+  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
   {
     if (GetThreadGLWindow() )
     {
@@ -140,7 +140,7 @@ namespace nux
       return 0;
     }
 
-    GLWindowImpl *glwindow = new GLWindowImpl();
+    GraphicsDisplay *glwindow = new GraphicsDisplay();
     glwindow->CreateFromOpenGLWindow (X11Display, X11Window, OpenGLContext);
 
     return glwindow;

@@ -34,55 +34,45 @@
 
 namespace nux
 {
-
-#define MANAGEDEVICERESOURCE    0
-
+#if (NUX_ENABLE_CG_SHADERS)
   extern void cgErrorCallback (void);
+#endif
 
-// Pixel buffer object seems to corrupt textures. This can be seen when the window is moved
-// to the second screen in a multi-display configuration...
-// Happens on geforce 6600. Does not happens on geforce 6800.
+  typedef struct
+  {
+    int major;
+    int minor;
+  } OpenGLVersion;
 
-// ATI Radeon 4670 has problems loading textures from pixel buffer object. PBO should be deactivated if the
-// graphics card is made by AMD/ATI
-#define NUX_USE_PBO     1
+  static OpenGLVersion OpenGLVersionTable [] =
+  {
+    {1, 0},
+    {1, 1},
+    {1, 2},
+    {1, 3},
+    {1, 4},
+    {2, 0},
+    {2, 1},
+    {3, 0},
+    {3, 1},
+    {3, 2},
+    {3, 3},
+    {4, 0},
+    {4, 1},
+    {0, 0}
+  };
 
-#define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
+  // Pixel buffer object seems to corrupt textures. This can be seen when the window is moved
+  // to the second screen in a multi-display configuration...
+  // Happens on geforce 6600. Does not happens on geforce 6800.
+
+  // ATI Radeon 4670 has problems loading textures from pixel buffer object. PBO should be deactivated if the
+  // graphics card is made by AMD/ATI
+  #define NUX_USE_PBO     1
+
+  #define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
 
   extern PixelFormatInfo GPixelFormats[];
-
-  struct ReqExtension
-  {
-    const char *extension0;
-    const char *extension1;
-    const char *extension2;
-    int supported0;
-    int supported1;
-    int supported2;
-  };
-
-  struct ReqExtension ReqNVidiaExtension[] =
-  {
-    {"GL_VERSION_1_5",              "",                         "",                         0,  0,  0},
-    {"GL_ARB_texture_rectangle",    "GL_NV_texture_rectangle",  "GL_EXT_texture_rectangle", 0,  0,  0},
-    {"GL_ARB_vertex_program",       "",                         "",                         0,  0,  0},
-    {"GL_ARB_fragment_program",     "",                         "",                         0,  0,  0},
-    {"GL_ARB_shader_objects",       "",                         "",                         0,  0,  0},
-    {"GL_ARB_vertex_shader",        "",                         "",                         0,  0,  0},
-    {"GL_ARB_fragment_shader",      "",                         "",                         0,  0,  0},
-    {"GL_ARB_vertex_buffer_object", "",                         "",                         0,  0,  0},
-    {"GL_EXT_framebuffer_object",   "",                         "",                         0,  0,  0},
-    {"GL_EXT_draw_range_elements",  "",                         "",                         0,  0,  0},
-    {"GL_EXT_stencil_two_side",     "",                         "",                         0,  0,  0},
-  };
-
-  struct ReqExtension ReqNVidiaWGLExtension[] =
-  {
-    {"WGL_ARB_pbuffer",             "",                         "",                         0,  0,  0},
-    {"WGL_ARB_pixel_format",        "",                         "",                         0,  0,  0},
-    {"WGL_ARB_render_texture",      "",                         "",                         0,  0,  0},
-    {"WGL_ARB_render_texture",      "",                         "",                         0,  0,  0},
-  };
 
   static void InitTextureFormats()
   {
@@ -230,43 +220,99 @@ namespace nux
 //}
 //
 
-  GpuDevice::GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat)
+  GpuInfo::GpuInfo ()
+  {
+    _support_opengl_version_11 = false;
+    _support_opengl_version_12 = false;
+    _support_opengl_version_13 = false;
+    _support_opengl_version_14 = false;
+    _support_opengl_version_15 = false;
+    _support_opengl_version_20 = false;
+    _support_opengl_version_21 = false;
+    _support_opengl_version_30 = false;
+    _support_opengl_version_31 = false;
+    _support_opengl_version_32 = false;
+    _support_opengl_version_33 = false;
+    _support_opengl_version_40 = false;
+    _support_opengl_version_41 = false;
+  }
+
+  void GpuInfo::Setup()
+  {
+    _support_opengl_version_11 = GLEW_VERSION_1_1 ? true : false;
+    _support_opengl_version_12 = GLEW_VERSION_1_2 ? true : false;
+    _support_opengl_version_13 = GLEW_VERSION_1_3 ? true : false;
+    _support_opengl_version_14 = GLEW_VERSION_1_4 ? true : false;
+    _support_opengl_version_15 = GLEW_VERSION_1_5 ? true : false;
+    _support_opengl_version_20 = GLEW_VERSION_2_0 ? true : false;
+    _support_opengl_version_21 = GLEW_VERSION_2_1 ? true : false;
+    _support_opengl_version_30 = GLEW_VERSION_3_0 ? true : false;
+    _support_opengl_version_31 = GLEW_VERSION_3_1 ? true : false;
+    _support_opengl_version_32 = GLEW_VERSION_3_2 ? true : false;
+//     _support_opengl_version_33 = GLEW_VERSION_3_3 ? true : false;
+//     _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
+//     _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
+
+
+    // See: http://developer.nvidia.com/object/General_FAQ.html
+    // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
+    glGetIntegerv (GL_MAX_TEXTURE_UNITS, &_opengl_max_texture_units);
+    glGetIntegerv (GL_MAX_TEXTURE_COORDS, &_opengl_max_texture_coords);
+    glGetIntegerv (GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &_opengl_max_texture_image_units);
+    glGetIntegerv (GL_MAX_VERTEX_ATTRIBS, &_opengl_max_vertex_attributes);
+    glGetIntegerv (GL_MAX_COLOR_ATTACHMENTS_EXT, &_opengl_max_fb_attachment);
+
+#if defined(NUX_OS_WINDOWS)
+    _support_ext_swap_control                 = WGLEW_EXT_swap_control ? true : false;
+#elif defined(NUX_OS_LINUX)
+    _support_ext_swap_control                 = GLXEW_SGI_swap_control ? true : false;
+#elif defined(NUX_OS_LINUX)
+    _support_ext_swap_control                 = GLXEW_SGI_swap_control ? true : false;
+#endif
+    _support_arb_vertex_program               = GLEW_ARB_vertex_program ? true : false;
+    _support_arb_fragment_program             = GLEW_ARB_fragment_program ? true : false;
+    _support_arb_shader_objects               = GLEW_ARB_shader_objects ? true : false;
+    _support_arb_vertex_shader                = GLEW_ARB_vertex_shader ? true : false;
+    _support_arb_fragment_shader              = GLEW_ARB_fragment_shader ? true : false;
+    _support_arb_vertex_buffer_object         = GLEW_ARB_vertex_buffer_object ? true : false;
+    _support_arb_texture_non_power_of_two     = GLEW_ARB_texture_non_power_of_two ? true : false;
+    _support_ext_framebuffer_object           = GLEW_EXT_framebuffer_object ? true : false;
+    _support_ext_draw_range_elements          = GLEW_EXT_draw_range_elements ? true : false;
+    _support_ext_stencil_two_side             = GLEW_EXT_stencil_two_side ? true : false;
+    _support_ext_texture_rectangle            = GLEW_EXT_texture_rectangle ? true : false;
+    _support_arb_texture_rectangle            = GLEW_ARB_texture_rectangle ? true : false;
+    _support_nv_texture_rectangle             = GLEW_NV_texture_rectangle ? true : false;
+  }
+
+#if defined (NUX_OS_WINDOWS)
+  GpuDevice::GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+    HDC device_context,
+    HGLRC &opengl_rendering_context,
+    int req_opengl_major,
+    int req_opengl_minor,
+    bool opengl_es_20)
+#elif defined (NUX_OS_LINUX)
+    GpuDevice::GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat)
+#endif
     :   _FrameBufferObject (0)
-    ,   _PixelStoreAlignment (4)
-    ,   _CachedPixelBufferObjectList (0)
-    ,   _CachedVertexBufferList (0)
-    ,   _CachedIndexBufferList (0)
-    ,   _CachedTextureList (0)
-    ,   _CachedTextureRectangleList (0)
-    ,   _CachedCubeTextureList (0)
-    ,   _CachedVolumeTextureList (0)
-    ,   _CachedAnimatedTextureList (0)
-    ,   _CachedQueryList (0)
-    ,   _CachedVertexDeclarationList (0)
-    ,   _CachedFrameBufferList (0)
-    ,   _CachedVertexShaderList (0)
-    ,   _CachedPixelShaderList (0)
-    ,   _CachedShaderProgramList (0)
-    ,   _CachedAsmVertexShaderList (0)
-    ,   _CachedAsmPixelShaderList (0)
-    ,   _CachedAsmShaderProgramList (0)
-    ,   m_isINTELBoard (false)
-    ,   m_isATIBoard (false)
-    ,   m_isNVIDIABoard (false)
-    ,   m_UsePixelBufferObject (false)
-    ,   m_GraphicsBoardVendor (BOARD_UNKNOWN)
 #if (NUX_ENABLE_CG_SHADERS)
     ,   _CachedCGVertexShaderList (0)
     ,   _CachedCGPixelShaderList (0)
     ,   m_Cgcontext (0)
 #endif
   {
-    inlSetThreadLocalStorage (ThreadLocal_GLDeviceFactory, this);
-
+    inlSetThreadLocalStorage (_TLS_GpuDevice_, this);
+    
+    _PixelStoreAlignment  = 4;
+    _UsePixelBufferObject = false;
+    _gpu_info             = NULL;
+    _gpu_brand            = GPU_VENDOR_UNKNOWN;
+    
+    // OpenGL extension initialization
     GLenum Glew_Ok = 0;
 #ifdef GLEW_MX
     Glew_Ok = glewContextInit (glewGetContext() );
-    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] GL Extensions failed to initialize.") );
+    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] GL Extensions failed to initialize."));
 
 #if defined(NUX_OS_WINDOWS)
     Glew_Ok = wglewContextInit (wglewGetContext() );
@@ -275,112 +321,187 @@ namespace nux
 #elif defined(NUX_OS_MACOSX)
     Glew_Ok = glxewContextInit (glxewGetContext() );
 #endif
-    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] WGL Extensions failed to initialize.") );
+    nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] OpenGL Extensions failed to initialize."));
 #else
     Glew_Ok = glewInit();
 #endif
 
-    m_BoardVendorString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VENDOR) ) );
+    glGetIntegerv (GL_MAJOR_VERSION, &_opengl_major);
+    glGetIntegerv (GL_MINOR_VERSION, &_opengl_minor);
+
+#if defined (NUX_WINDOWS_OS)    
+    if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || ((_opengl_major >= 3) && opengl_es_20))
+    {
+      // Create a new Opengl Rendering Context
+      bool requested_profile_is_supported = false;
+      int index = 0;
+      for (index = 0; ; index++)
+      {
+        if ((OpenGLVersionTable[index].major == req_opengl_major) &&
+          (OpenGLVersionTable[index].minor == req_opengl_minor))
+        {
+          if (_opengl_major == 1)
+          {
+            if ((req_opengl_major == 1) && (req_opengl_minor >= 0) && (req_opengl_minor <= 5))
+              requested_profile_is_supported = true;
+          }
+          else if (_opengl_major == 2)
+          {
+            if ((req_opengl_major == 2) && (req_opengl_minor >= 0) && (req_opengl_minor <= 1))
+              requested_profile_is_supported = true;
+          }
+          else if (_opengl_major == 3)
+          {
+            if ((req_opengl_major == 3) && (req_opengl_minor >= 0) && (req_opengl_minor <= 3))
+              requested_profile_is_supported = true;
+          }
+          else if (_opengl_major == 4)
+          {
+            if ((req_opengl_major == 4) && (req_opengl_minor >= 0) && (req_opengl_minor <= 1))
+              requested_profile_is_supported = true;
+          }
+          break;
+        }
+      }
+
+      if (opengl_es_20)
+      {
+        int attribs[] =
+        {
+          WGL_CONTEXT_MAJOR_VERSION_ARB,  2,
+          WGL_CONTEXT_MINOR_VERSION_ARB,  0,
+          WGL_CONTEXT_PROFILE_MASK_ARB,   WGL_CONTEXT_ES2_PROFILE_BIT_EXT,
+          0
+        };
+
+        HGLRC new_opengl_rendering_context = wglCreateContextAttribsARB(device_context,0, attribs);
+
+        if (new_opengl_rendering_context == 0)
+        {
+          nuxDebugMsg (TEXT("[GpuDevice::GpuDevice] OpenGL ES 2.0 context creation has failed."));
+        }
+        else
+        {
+          wglMakeCurrent (NULL, NULL);
+          wglDeleteContext (opengl_rendering_context);
+          opengl_rendering_context = new_opengl_rendering_context;
+          wglMakeCurrent (device_context, opengl_rendering_context);
+        }
+
+      }
+      else if (requested_profile_is_supported)
+      {
+        int profile_mask = 0;
+        int profile_value = 0;
+        int flag_mask = 0;
+        int flag_value = 0;
+
+        if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
+        {
+          profile_mask = WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+          profile_value = WGL_CONTEXT_PROFILE_MASK_ARB;
+          flag_mask = WGL_CONTEXT_FLAGS_ARB;
+          flag_value = 0;
+        }
+
+        int attribs[] =
+        {
+          WGL_CONTEXT_MAJOR_VERSION_ARB,  req_opengl_major,
+          WGL_CONTEXT_MINOR_VERSION_ARB,  req_opengl_minor,
+          profile_mask,                   profile_value,
+          flag_mask,                      flag_value,
+          0
+        };
+
+        HGLRC new_opengl_rendering_context = wglCreateContextAttribsARB(device_context,0, attribs);
+
+        if (new_opengl_rendering_context == 0)
+        {
+          nuxDebugMsg (TEXT("[GpuDevice::GpuDevice] OpenGL version %d.%d context creation has failed."), req_opengl_major, req_opengl_minor);
+        }
+        else
+        {
+          wglMakeCurrent (NULL, NULL);
+          wglDeleteContext (opengl_rendering_context);
+          opengl_rendering_context = new_opengl_rendering_context;
+          wglMakeCurrent (device_context, opengl_rendering_context);
+        }
+      }
+      else
+      {
+        nuxDebugMsg (TEXT("[GpuDevice::GpuDevice] Using highest default OpenGL version."));
+      }
+    }
+    else
+    {
+      opengl_rendering_context = 0;
+    }
+#endif
+
+    _board_vendor_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VENDOR) ) );
     CHECKGL_MSG (glGetString (GL_VENDOR) );
-    m_BoardRendererString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER) ) );
+    _board_renderer_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER) ) );
     CHECKGL_MSG (glGetString (GL_RENDERER) );
-    m_OpenGLVersionString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VERSION) ) );
+    _openGL_version_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VERSION) ) );
     CHECKGL_MSG (glGetString (GL_VERSION) );
     if (GLEW_VERSION_2_0)
     {
-      m_GLSLVersionString = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_SHADING_LANGUAGE_VERSION) ) );
+      _glsl_version_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_SHADING_LANGUAGE_VERSION) ) );
       CHECKGL_MSG (glGetString (GL_SHADING_LANGUAGE_VERSION) );
+
+      NString glsl_major;
+      NString glsl_minor;
+      TCHAR split = TEXT('.');
+      _glsl_version_string.SplitAtFirstOccurenceOf(split, glsl_major, glsl_minor);
+
     }
 
-    nuxDebugMsg (TEXT ("Board Vendor: %s"), m_BoardVendorString.GetTCharPtr() );
-    nuxDebugMsg (TEXT ("Board Renderer: %s"), m_BoardRendererString.GetTCharPtr() );
-    nuxDebugMsg (TEXT ("Board OpenGL Version: %s"), m_OpenGLVersionString.GetTCharPtr() );
-    nuxDebugMsg (TEXT ("Board GLSL Version: %s"), m_GLSLVersionString.GetTCharPtr() );
+    nuxDebugMsg (TEXT ("Gpu Vendor: %s"), _board_vendor_string.GetTCharPtr() );
+    nuxDebugMsg (TEXT ("Gpu Renderer: %s"), _board_renderer_string.GetTCharPtr() );
+    nuxDebugMsg (TEXT ("Gpu OpenGL Version: %s"), _openGL_version_string.GetTCharPtr() );
+    nuxDebugMsg (TEXT ("Gpu GLSL Version: %s"), _glsl_version_string.GetTCharPtr() );
 
-    // See: http://developer.nvidia.com/object/General_FAQ.html
-    // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
-    glGetIntegerv (GL_MAX_TEXTURE_UNITS, &OPENGL_MAX_TEXTURE_UNITS);
-    glGetIntegerv (GL_MAX_TEXTURE_COORDS, &OPENGL_MAX_TEXTURE_COORDS);
-    glGetIntegerv (GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &OPENGL_MAX_TEXTURE_IMAGE_UNITS);
+    // Get the version supported by the context that was set.
+    int new_opengl_major;
+    int new_opengl_minor;
+    glGetIntegerv (GL_MAJOR_VERSION, &new_opengl_major);
+    glGetIntegerv (GL_MINOR_VERSION, &new_opengl_minor);
 
-    glGetIntegerv (GL_MAX_VERTEX_ATTRIBS, &OPENGL_MAX_VERTEX_ATTRIBUTES);
+    if ((new_opengl_minor != _opengl_major) || (new_opengl_minor != _opengl_minor))
+    {
+      nuxDebugMsg (TEXT ("The Gpu supports OpenGL %d.%d but version %d.%d has been requested."), _opengl_major, _opengl_minor, new_opengl_major, new_opengl_minor);
+    }
 
-//     // ARB shaders
-//     int OPENGL_MAX_VERTEX_ATTRIBS_ARB;
-//     int OPENGL_MAX_PROGRAM_MATRIX_STACK_DEPTH;
-//
-//     CHECKGL(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS_ARB, &OPENGL_MAX_VERTEX_ATTRIBS_ARB));
-//     CHECKGL(glGetIntegerv(GL_MAX_PROGRAM_MATRIX_STACK_DEPTH_ARB, &OPENGL_MAX_PROGRAM_MATRIX_STACK_DEPTH));
-
-    //TestARBShaders();
-
-    glGetIntegerv (GL_MAX_COLOR_ATTACHMENTS_EXT, &OPENGL_MAX_FB_ATTACHMENT);
-
-    NString TempStr = (const TCHAR *) TCharToUpperCase (m_BoardVendorString.GetTCharPtr() );
+    NString TempStr = (const TCHAR *) TCharToUpperCase (_board_vendor_string.GetTCharPtr() );
 
     if (TempStr.FindFirstOccurence (TEXT ("NVIDIA") ) != tstring::npos)
     {
-      m_isNVIDIABoard = true;
-      m_GraphicsBoardVendor = BOARD_NVIDIA;
+      _gpu_brand = GPU_BRAND_NVIDIA;
     }
     else if (TempStr.FindFirstOccurence (TEXT ("ATI") ) != tstring::npos)
     {
-      m_isATIBoard = true;
-      m_GraphicsBoardVendor = BOARD_ATI;
+      _gpu_brand = GPU_BRAND_AMD;
     }
     else if (TempStr.FindFirstOccurence (TEXT ("TUNGSTEN") ) != tstring::npos)
     {
-      m_isINTELBoard = true;
-      m_GraphicsBoardVendor = BOARD_INTEL;
+      _gpu_brand = GPU_BRAND_INTEL;
     }
 
     if (NUX_USE_PBO)
     {
-      if (isATIBoard() )
-        m_UsePixelBufferObject = false;
+      if (GetGPUBrand() == GPU_BRAND_AMD)
+        _UsePixelBufferObject = false;
       else
-        m_UsePixelBufferObject = true;
+        _UsePixelBufferObject = true;
     }
     else
     {
-      m_UsePixelBufferObject = false;
+      _UsePixelBufferObject = false;
     }
 
-    m_RenderStates = new GLRenderStates (m_GraphicsBoardVendor);
-
-    OPENGL_VERSION_1_1 = GLEW_VERSION_1_1 ? true : false;
-    OPENGL_VERSION_1_2 = GLEW_VERSION_1_2 ? true : false;
-    OPENGL_VERSION_1_3 = GLEW_VERSION_1_3 ? true : false;
-    OPENGL_VERSION_1_4 = GLEW_VERSION_1_4 ? true : false;
-    OPENGL_VERSION_1_5 = GLEW_VERSION_1_5 ? true : false;
-    OPENGL_VERSION_2_0 = GLEW_VERSION_2_0 ? true : false;
-    OPENGL_VERSION_2_1 = GLEW_VERSION_2_1 ? true : false;
-    GLSL_VERSION_1_0 = 1;
-    GLSL_VERSION_1_1 = 1;
-
-    if (OPENGL_VERSION_2_1 == false)
-    {
-      //nuxDebugMsg(TEXT("[GpuDevice::GpuDevice] No support for OpenGL 2.1"));
-//         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-//             TEXT("No Support for OpenGL 2.1.\nThe program will exit."));
-//         exit(-1);
-    }
-
-    if (GLEW_EXT_framebuffer_object == false)
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::GpuDevice] No support for Framebuffer Objects.") );
-//         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-//             TEXT("No support for Framebuffer Objects.\nThe program will exit."));
-//         exit(-1);
-    }
-
-    if ( (GLEW_ARB_texture_rectangle == false) && (GLEW_EXT_texture_rectangle == false) )
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::GpuDevice] No support for rectangle textures.") );
-//         inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-//             TEXT("No support for rectangle textures.\nThe program will exit."));
-//         exit(-1);
-    }
+    _gpu_render_states = new GpuRenderStates (_gpu_brand);
+    _gpu_info = new GpuInfo ();
+    _gpu_info->Setup ();
 
 #if defined(NUX_OS_WINDOWS)
     OGL_EXT_SWAP_CONTROL                = WGLEW_EXT_swap_control ? true : false;
@@ -389,21 +510,6 @@ namespace nux
 #elif defined(NUX_OS_LINUX)
     OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
 #endif
-
-    
-    GL_ARB_VERTEX_PROGRAM               = GLEW_ARB_vertex_program ? true : false;
-    GL_ARB_FRAGMENT_PROGRAM             = GLEW_ARB_fragment_program ? true : false;
-    GL_ARB_SHADER_OBJECTS               = GLEW_ARB_shader_objects ? true : false;
-    GL_ARB_VERTEX_SHADER                = GLEW_ARB_vertex_shader ? true : false;
-    GL_ARB_FRAGMENT_SHADER              = GLEW_ARB_fragment_shader ? true : false;
-    GL_ARB_VERTEX_BUFFER_OBJECT         = GLEW_ARB_vertex_buffer_object ? true : false;
-    GL_ARB_TEXTURE_NON_POWER_OF_TWO     = GLEW_ARB_texture_non_power_of_two ? true : false;
-    GL_EXT_FRAMEBUFFER_OBJECT           = GLEW_EXT_framebuffer_object ? true : false;
-    GL_EXT_DRAW_RANGE_ELEMENTS          = GLEW_EXT_draw_range_elements ? true : false;
-    GL_EXT_STENCIL_TWO_SIDE             = GLEW_EXT_stencil_two_side ? true : false;
-    GL_EXT_TEXTURE_RECTANGLE            = GLEW_EXT_texture_rectangle ? true : false;
-    GL_ARB_TEXTURE_RECTANGLE            = GLEW_ARB_texture_rectangle ? true : false;
-    GL_NV_TEXTURE_RECTANGLE             = GLEW_NV_texture_rectangle ? true : false;
 
     InitTextureFormats();
 
@@ -441,7 +547,7 @@ namespace nux
     }
 #endif
 
-    if (GL_EXT_FRAMEBUFFER_OBJECT)
+    if (GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       _FrameBufferObject = CreateFrameBufferObject ();
       _FrameBufferObject->Deactivate ();
@@ -450,7 +556,8 @@ namespace nux
 
   GpuDevice::~GpuDevice()
   {
-    NUX_SAFE_DELETE (m_RenderStates);
+    NUX_SAFE_DELETE (_gpu_info);
+    NUX_SAFE_DELETE (_gpu_render_states);
 
     _FrameBufferObject = IntrusiveSP<IOpenGLFrameBufferObject> (0);
     _CurrentFrameBufferObject = IntrusiveSP<IOpenGLFrameBufferObject> (0);
@@ -461,8 +568,9 @@ namespace nux
     // NVidia CG
 #if (NUX_ENABLE_CG_SHADERS)
     cgDestroyContext (m_Cgcontext);
-    inlSetThreadLocalStorage (ThreadLocal_GLDeviceFactory, 0);
 #endif
+
+    inlSetThreadLocalStorage (_TLS_GpuDevice_, 0);
   }
 
   IntrusiveSP<IOpenGLFrameBufferObject> GpuDevice::CreateFrameBufferObject()
@@ -478,8 +586,6 @@ namespace nux
   {
     *ppFrameBufferObject = new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLFrameBufferObject> > (IntrusiveSP<IOpenGLFrameBufferObject> (*ppFrameBufferObject), &_CachedFrameBufferList);
-
     return OGL_OK;
   }
 
@@ -492,7 +598,7 @@ namespace nux
 //     {
 //       if (pTempVertexBuffer->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempVertexBuffer->_DeviceResource = IntrusiveSP<IOpenGLVertexBuffer> (0);;
+//         pTempVertexBuffer->_DeviceResource = IntrusiveSP<IOpenGLVertexBuffer> (0);
 //         pTempVertexBuffer = pTempVertexBuffer->_next;
 //       }
 //       else
@@ -505,7 +611,7 @@ namespace nux
 //     {
 //       if (pTempIndexBuffer->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempIndexBuffer->_DeviceResource = IntrusiveSP<IOpenGLIndexBuffer> (0);;
+//         pTempIndexBuffer->_DeviceResource = IntrusiveSP<IOpenGLIndexBuffer> (0);
 //         pTempIndexBuffer = pTempIndexBuffer->_next;
 //       }
 //       else
@@ -805,7 +911,7 @@ namespace nux
 
   int GpuDevice::FormatFrameBufferObject (t_u32 Width, t_u32 Height, BitmapFormat PixelFormat)
   {
-    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       nuxDebugMsg (TEXT ("[GpuDevice::FormatFrameBufferObject] No support for OpenGL framebuffer extension.") );
       return 0;
@@ -816,7 +922,7 @@ namespace nux
 
   int GpuDevice::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface)
   {
-    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       nuxDebugMsg (TEXT ("[GpuDevice::SetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
       return 0;
@@ -827,7 +933,7 @@ namespace nux
 
   int GpuDevice::SetDepthRenderTargetSurface (IntrusiveSP<IOpenGLSurface> pDepthSurface)
   {
-    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       nuxDebugMsg (TEXT ("[GpuDevice::SetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
       return 0;
@@ -838,7 +944,7 @@ namespace nux
 
   IntrusiveSP<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
   {
-    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       nuxDebugMsg (TEXT ("[GpuDevice::GetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
       return IntrusiveSP<IOpenGLSurface> (0);
@@ -849,7 +955,7 @@ namespace nux
 
   IntrusiveSP<IOpenGLSurface> GpuDevice::GetDepthRenderTargetSurface()
   {
-    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       nuxDebugMsg (TEXT ("[GpuDevice::GetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
       return IntrusiveSP<IOpenGLSurface> (0);
@@ -860,7 +966,7 @@ namespace nux
 
   void GpuDevice::ActivateFrameBuffer()
   {
-    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       nuxDebugMsg (TEXT ("[GpuDevice::ActivateFrameBuffer] No support for OpenGL framebuffer extension.") );
       return;
@@ -871,7 +977,7 @@ namespace nux
 
   void GpuDevice::DeactivateFrameBuffer()
   {
-    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object () )
     {
       nuxDebugMsg (TEXT ("[GpuDevice::DeactivateFrameBuffer] No support for OpenGL framebuffer extension.") );
       return;
@@ -914,7 +1020,7 @@ namespace nux
 
   void GpuDevice::ClearSurfaceWithColor (IntrusiveSP<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
   {
-    if (!GL_EXT_FRAMEBUFFER_OBJECT)
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       nuxDebugMsg (TEXT ("[GpuDevice::ClearSurfaceWithColor] No support for OpenGL framebuffer extension.") );
     }
@@ -946,12 +1052,12 @@ namespace nux
     , int Levels
     , BitmapFormat PixelFormat)
   {
-    if(GetThreadGLDeviceFactory()->SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO ())
+    if(GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
       return GetThreadGLDeviceFactory ()->CreateTexture (Width, Height, Levels, PixelFormat);
     }
 
-    if(SUPPORT_GL_EXT_TEXTURE_RECTANGLE () || SUPPORT_GL_ARB_TEXTURE_RECTANGLE ())
+    if(GetGpuInfo().Support_EXT_Texture_Rectangle () || GetGpuInfo().Support_ARB_Texture_Rectangle ())
     {
       return GetThreadGLDeviceFactory ()->CreateRectangleTexture (Width, Height, Levels, PixelFormat);
     }
@@ -963,12 +1069,12 @@ namespace nux
 
   BaseTexture* GpuDevice::CreateSystemCapableTexture ()
   {
-    if(SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO ())
+    if(GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
       return new Texture2D ();
     }
 
-    if(SUPPORT_GL_EXT_TEXTURE_RECTANGLE () || SUPPORT_GL_ARB_TEXTURE_RECTANGLE ())
+    if(GetGpuInfo().Support_EXT_Texture_Rectangle () || GetGpuInfo().Support_ARB_Texture_Rectangle ())
     {
       return new TextureRectangle ();
     }

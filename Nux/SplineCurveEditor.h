@@ -224,12 +224,12 @@ namespace nux
       m_knot[i].m_IsSelected = b;
     }
 
-    UINT GetNumSelectedKnot()
+    t_u32 GetNumSelectedKnot()
     {
-      UINT n = 0;
+      t_u32 n = 0;
       std::vector<Knot>::iterator it;
 
-      for (UINT i = 0; i < (UINT) m_knot.size(); i++)
+      for (t_u32 i = 0; i < (t_u32) m_knot.size(); i++)
       {
         if (m_knot[i].m_IsSelected)
           n++;

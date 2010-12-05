@@ -39,7 +39,7 @@ namespace nux
     _PixelFormat = BITFMT_R8G8B8A8;
     _IsActive = false;
 
-    for (int i = 0; i < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment(); i++)
+    for (int i = 0; i < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment(); i++)
     {
       _Color_AttachmentArray.push_back (IntrusiveSP<IOpenGLSurface> (0) );
     }
@@ -60,7 +60,7 @@ namespace nux
   {
     Deactivate();
 
-    for (int i = 0; i < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment(); i++)
+    for (int i = 0; i < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment(); i++)
     {
       _Color_AttachmentArray[i] = IntrusiveSP<IOpenGLSurface> (0);
     }
@@ -84,7 +84,7 @@ namespace nux
 
   int IOpenGLFrameBufferObject::SetRenderTarget (int ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface)
   {
-    nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment() );
+    nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment());
 
     if (pRenderTargetSurface.IsNull() )
     {
@@ -149,7 +149,7 @@ namespace nux
 
   IntrusiveSP<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget (int ColorAttachmentIndex)
   {
-    nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment() );
+    nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment());
     return _Color_AttachmentArray[ColorAttachmentIndex];
   }
 
@@ -166,7 +166,7 @@ namespace nux
     if (GetThreadGLDeviceFactory() )
       GetThreadGLDeviceFactory()->SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> (this));
 
-    for (int i = 0; i < GetThreadGLDeviceFactory()->GetOpenGLMaxFrameBufferAttachment(); i++)
+    for (int i = 0; i < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment(); i++)
     {
       if (_Color_AttachmentArray[i].IsValid() )
       {

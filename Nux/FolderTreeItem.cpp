@@ -58,7 +58,7 @@ namespace nux
 
     if (isDirtyItem() )
     {
-      UINT nBackground;
+      t_u32 nBackground;
 
       if (m_bIsMouseInside)
       {

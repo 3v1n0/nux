@@ -20,18 +20,27 @@
  */
 
 
-#ifndef OPENGL_GFX_H
-#define OPENGL_GFX_H
+#ifndef GFXSETUPX11_H
+#define GFXSETUPX11_H
 
 #include "Gfx_Interface.h"
 #include "GLTimer.h"
 #include "GLDeviceObjects.h"
 #include "GLRenderStates.h"
 
+/* Xlib.h is the default header that is included and has the core functionallity */
+#include <X11/Xlib.h>
+/* Xatom.h includes functionallity for creating new protocol messages */
+#include <X11/Xatom.h>
+/* keysym.h contains keysymbols which we use to resolv what keys that are being pressed */
+#include <X11/keysym.h>
+
+#include <X11/extensions/xf86vmode.h>
+
 namespace nux
 {
 
-  class IEvent;
+  struct IEvent;
   class MainFBO;
   class GpuDevice;
   class GraphicsEngine;
@@ -52,34 +61,48 @@ namespace nux
 #define NUX_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
 
 // This will become GLWindow
-  class GLWindowImpl : public GraphicSystem
+  class GraphicsDisplay : public GraphicSystem
   {
     friend class GraphicsEngine;
 
   private:
-#ifdef WIN32
-    // WIN32 system variables
-    HGLRC       m_GLRC;     //!< OpenGL Rendering Context.
-    HDC         m_hDC;      //!< Device Context.
-    HWND        m_hWnd;       //!< Window Handle.
-    HWND        m_ParentWindow;
+    Display     *m_X11Display;
+    int         m_X11Screen;
+    Window      m_X11Window;
+    XVisualInfo *m_X11VisualInfo;
+
+    int         m_ParentWindow;
+    GLXContext  m_GLCtx;
+    XSetWindowAttributes m_X11Attr;
+
+    int m_NumVideoModes;
+    XF86VidModeModeInfo **m_X11VideoModes;
+    /* original desktop mode which we save so we can restore it later */
+    XF86VidModeModeInfo m_X11OriginalVideoMode;
+
+    Atom            m_WMDeleteWindow;
+    Colormap        m_X11Colormap;
+    int             m_BorderPixel;
+
+    int m_X11VerMajor;
+    int m_X11VerMinor;
+    int m_GLXVerMajor;
+    int m_GLXVerMinor;
+
+    XEvent m_X11LastEvent;
+    Bool m_X11RepeatKey;
 
     TCHAR m_WindowClassName[256];
     GLuint      m_PixelFormat;      // Holds The Results After Searching For A Match
-    DWORD       m_dwExStyle;        // Window Extended Style
-    DWORD       m_dwStyle;          // Window Style
     NString     m_WindowTitle;
-#endif
-
-    static HGLRC sMainGLRC;         // Used as the first argument of wglShareLists to make all successive OpenGL  context share their objects
-    static HDC   sMainDC;           // Used as the first argument of wglShareLists to make all successive OpenGL  context share their objects
 
     // size, position
-    Size  m_ViewportSize;
+    Size m_ViewportSize;
     Size m_WindowSize;
+    Point m_WindowPosition;
 
     // surface attibute;
-    bool m_fullscreen;
+    bool m_Fullscreen;
     unsigned int m_ScreenBitDepth;
 
     // verifiy that the interface is properly created
@@ -87,22 +110,24 @@ namespace nux
 
     // Device information
     void GetDisplayInfo();
-    int m_index_of_current_mode;
+    int m_BestMode;
 
     bool m_is_window_minimized;
 
-    HCURSOR m_Cursor;
+    static int X11KeySymToINL (int Keysym);
 
-    static int Win32KeySymToINL (int Keysym);
   public:
-
+    bool HasXPendingEvent() const;
+    Display *GetX11Display()
+    {
+      return m_X11Display;
+    }
     // Device
     int m_num_device_modes;
 
     // Event object
     IEvent *m_pEvent;
 
-    // Creation
     bool IsGfxInterfaceCreated();
 
     //! Create a window with and OpenGL context.
@@ -119,32 +144,37 @@ namespace nux
       unsigned int WindowWidth,
       unsigned int WindowHeight,
       WindowStyle Style,
-      const GLWindowImpl *Parent,
+      const GraphicsDisplay *Parent,
       bool FullscreenFlag = false);
 
-    //! Create a GLWindow from a window and device context.
+    //! Create a GLWindow from a display and window created externally.
     /*!
-        @param WindowHandle     Provided window.
-        @param WindowDCHandle   Provided device context.
-        @param OpenGLRenderingContext   And OpenGL rendering context.
+        @param X11Display   Provided display.
+        @param X11Window    Provided window.
     */
-    bool CreateFromOpenGLWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
+    bool CreateFromOpenGLWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext);
 
     void DestroyOpenGLWindow();
 
     void SetWindowTitle (const TCHAR *Title);
     void SetWindowSize (int width, int height);
+    void SetWindowPosition (int width, int height);
     void SetViewPort (int x, int y, int width, int height);
     Point GetMouseScreenCoord();
     Point GetMouseWindowCoord();
     Point GetWindowCoord();
     Rect GetWindowGeometry();
     Rect GetNCWindowGeometry();
-    void MakeGLContextCurrent (bool b = true);
+    void MakeGLContextCurrent();
     void SwapBuffer (bool glswap = true);
 
     // Event methods
     void GetSystemEvent (IEvent *evt);
+
+#if defined (NUX_OS_LINUX)
+    void InjectXEvent (IEvent *evt, XEvent xevent);
+#endif
+    
     IEvent &GetCurrentEvent();
 
     bool isWindowMinimized() const
@@ -157,17 +187,9 @@ namespace nux
     void EnterMaximizeWindow();
     void ExitMaximizeWindow();
 
-    HWND GetWindowHandle() const
+    Window GetWindowHandle() const
     {
-      return m_hWnd;
-    }
-    HWND GetParentWindowHandle() const
-    {
-      return m_ParentWindow;
-    }
-    HDC GetWindowHDC() const
-    {
-      return m_hDC;
+      return m_X11Window;
     }
     bool IsChildWindow() const
     {
@@ -192,21 +214,20 @@ namespace nux
       return m_DeviceFactory;
     }
     // Dialog
-    bool StartOpenFileDialog (FileDialogOption &fdo);
-    bool StartSaveFileDialog (FileDialogOption &fdo);
-    bool StartColorDialog (ColorDialogOption &cdo);
+    /*bool StartOpenFileDialog(FileDialogOption& fdo);
+    bool StartSaveFileDialog(FileDialogOption& fdo);
+    bool StartColorDialog(ColorDialogOption& cdo);*/
 
 
+    void GetDesktopSize (int &w, int &h);
     void GetWindowSize (int &w, int &h);
     unsigned int GetWindowWidth();
     unsigned int GetWindowHeight();
 
     bool HasFrameBufferSupport();
-    void SetWindowCursor (HCURSOR cursor);
-    HCURSOR GetWindowCursor() const;
+    /*void SetWindowCursor(HCURSOR cursor);
+    HCURSOR GetWindowCursor() const;*/
 
-    void ProcessForeignWin32Event (HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, IEvent *event);
-    LRESULT ProcessWin32Event (HWND hWnd, t_u32 uMsg, WPARAM wParam, LPARAM lParam);
 
     //! Pause graphics rendering.
     /*!
@@ -221,6 +242,10 @@ namespace nux
     void PauseThreadGraphicsRendering();
     bool IsPauseThreadGraphicsRendering() const;
 
+    void ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event);
+    void ProcessXEvent (XEvent xevent, bool foreign);
+    void RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x, int &y);
+
   private:
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
@@ -230,34 +255,50 @@ namespace nux
     WindowStyle m_Style;
 
   public:
-    ~GLWindowImpl();
+    ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
     {
       return &m_GLEWContext;
     }
-    WGLEWContext *GetWGLEWContext()
+    GLXEWContext *GetGLXEWContext()
     {
-      return &m_WGLEWContext;
+      return &m_GLXEWContext;
+    }
+
+    NString FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
+    NString FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
+    NString FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
+    NString FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
+
+    const std::vector<NString>& GetFontSearchPath() const
+    {
+      return m_FontSearchPath;
+    }
+    const std::vector<NString>& GetShaderSearchPath() const
+    {
+      return m_ShaderSearchPath;
+    }
+    const std::vector<NString>& GetUITextureSearchPath() const
+    {
+      return m_UITextureSearchPath;
     }
 
   private:
-    GLWindowImpl();
-    GLWindowImpl (const GLWindowImpl &);
-    // Does not make sense for a singleton. This is a self assignment.
-    GLWindowImpl &operator= (const GLWindowImpl &);
+    std::vector<NString> m_FontSearchPath;
+    std::vector<NString> m_ShaderSearchPath;
+    std::vector<NString> m_UITextureSearchPath;
+    FilePath m_ResourcePathLocation;
 
+    GraphicsDisplay();
+    GraphicsDisplay (const GraphicsDisplay &);
+    // Does not make sense for a singleton. This is a self assignment.
+    GraphicsDisplay &operator= (const GraphicsDisplay &);
 
     GLEWContext m_GLEWContext;
-    WGLEWContext m_WGLEWContext;
+    GLXEWContext m_GLXEWContext;
     friend class DisplayAccessController;
   };
 
-  LRESULT CALLBACK WndProcManager (HWND    hWnd,          // Handle For This Window
-                                   t_u32   uMsg,           // Message For This Window
-                                   WPARAM  wParam,         // Additional Message Information
-                                   LPARAM  lParam);        // Additional Message Information
-
 }
 
-#endif //OPENGL_GFX_H
-
+#endif //GFXSETUPX11_H

@@ -24,9 +24,9 @@
 
 #include "Layout.h"
 #if defined(NUX_OS_WINDOWS)
-#include "NuxGraphics/Gfx_OpenGL.h"
+#include "NuxGraphics/GraphicsDisplayWin.h"
 #elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/GfxSetupX11.h"
+#include "NuxGraphics/GraphicsDisplayX11.h"
 #endif
 #include "NuxGraphics/GraphicsEngine.h"
 #include "ClientArea.h"
@@ -71,7 +71,7 @@ namespace nux
     }
   }
 
-  UINT SystemThread::Run (void *arg)
+  t_u32 SystemThread::Run (void *arg)
   {
     if (m_UserInitFunc)
     {

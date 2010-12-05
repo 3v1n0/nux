@@ -33,7 +33,7 @@
 #include "Events.h"
 #include "IniFile.h"
 
-#include "Gfx_OpenGL.h"
+#include "GraphicsDisplayWin.h"
 
 namespace nux
 {
@@ -105,10 +105,10 @@ namespace nux
   };
 
 //---------------------------------------------------------------------------------------------------------
-  HGLRC GLWindowImpl::sMainGLRC = 0;
-  HDC   GLWindowImpl::sMainDC = 0;
+  HGLRC GraphicsDisplay::sMainGLRC = 0;
+  HDC   GraphicsDisplay::sMainDC = 0;
 
-  GLWindowImpl::GLWindowImpl()
+  GraphicsDisplay::GraphicsDisplay()
     :   m_pEvent (NULL)
     ,   m_GfxInterfaceCreated (false)
     ,   m_fullscreen (false)
@@ -140,7 +140,7 @@ namespace nux
   }
 
 //---------------------------------------------------------------------------------------------------------
-  GLWindowImpl::~GLWindowImpl()
+  GraphicsDisplay::~GraphicsDisplay()
   {
     NUX_SAFE_DELETE ( m_GraphicsContext );
     NUX_SAFE_DELETE ( m_DeviceFactory );
@@ -155,18 +155,18 @@ namespace nux
   }
 
 //---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::IsGfxInterfaceCreated()
+  bool GraphicsDisplay::IsGfxInterfaceCreated()
   {
     return m_GfxInterfaceCreated;
   }
 
 //---------------------------------------------------------------------------------------------------------
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
-  bool GLWindowImpl::CreateOpenGLWindow (const TCHAR *WindowTitle,
+  bool GraphicsDisplay::CreateOpenGLWindow (const TCHAR *WindowTitle,
                                          unsigned int WindowWidth,
                                          unsigned int WindowHeight,
                                          WindowStyle Style,
-                                         const GLWindowImpl *Parent,
+                                         const GraphicsDisplay *Parent,
                                          bool FullscreenFlag)
   {
     NScopeLock Scope (&CreateOpenGLWindow_CriticalSection);
@@ -419,28 +419,28 @@ namespace nux
       //        Ignored. Earlier implementations of OpenGL used this member, but it is no longer used.
     };
 
-    if (! (m_hDC = GetDC (m_hWnd) ) ) // Did We Get A Device Context?
+    if (! (_device_context = GetDC (m_hWnd) ) ) // Did We Get A Device Context?
     {
       DestroyOpenGLWindow();
       MessageBox (NULL, TEXT ("Can't Create A GL Device Context."), TEXT ("ERROR"), MB_OK | MB_ICONERROR);
       return FALSE;
     }
 
-    if (! (m_PixelFormat = ChoosePixelFormat (m_hDC, &pfd) ) ) // Did Windows Find A Matching Pixel Format?
+    if (! (m_PixelFormat = ChoosePixelFormat (_device_context, &pfd) ) ) // Did Windows Find A Matching Pixel Format?
     {
       DestroyOpenGLWindow();
       MessageBox (NULL, TEXT ("Can't Find A Suitable PixelFormat."), TEXT ("ERROR"), MB_OK | MB_ICONERROR);
       return FALSE;
     }
 
-    if (!SetPixelFormat (m_hDC, m_PixelFormat, &pfd) )        // Are We Able To Set The Pixel Format?
+    if (!SetPixelFormat (_device_context, m_PixelFormat, &pfd) )        // Are We Able To Set The Pixel Format?
     {
       DestroyOpenGLWindow();
       MessageBox (NULL, TEXT ("Can't Set The PixelFormat."), TEXT ("ERROR"), MB_OK | MB_ICONERROR);
       return FALSE;
     }
 
-    if (! (m_GLRC = wglCreateContext (m_hDC) ) )               // Are We Able To Get A Rendering Context?
+    if (! (_opengl_rendering_context = wglCreateContext (_device_context) ) )               // Are We Able To Get A Rendering Context?
     {
       DestroyOpenGLWindow();
       MessageBox (NULL, TEXT ("Can't Create A GL Rendering Context."), TEXT ("ERROR"), MB_OK | MB_ICONERROR);
@@ -449,14 +449,14 @@ namespace nux
 
     if (sMainGLRC == 0)
     {
-      sMainGLRC = m_GLRC;
-      sMainDC = m_hDC;
+      sMainGLRC = _opengl_rendering_context;
+      sMainDC = _device_context;
     }
     else
     {
-//         wglMakeCurrent(m_hDC, 0);
+//         wglMakeCurrent(_device_context, 0);
 //         // Make the newly created context share it resources with all the other OpenGL context
-//         if(wglShareLists(sMainGLRC, m_GLRC) == FALSE)
+//         if(wglShareLists(sMainGLRC, _opengl_rendering_context) == FALSE)
 //         {
 //             DWORD err = GetLastError();
 //             DestroyOpenGLWindow();
@@ -485,7 +485,17 @@ namespace nux
     //m_GLEWContext = new GLEWContext();
     //m_WGLEWContext = new WGLEWContext();
 
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    HGLRC new_opengl_rendering_context = _opengl_rendering_context;
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8,
+      _device_context,
+      new_opengl_rendering_context,
+      1, 0, false);
+
+    if (new_opengl_rendering_context != 0)
+    {
+      _opengl_rendering_context = new_opengl_rendering_context;
+    }
+
     m_GraphicsContext = new GraphicsEngine (*this);
 
     //EnableVSyncSwapControl();
@@ -494,7 +504,7 @@ namespace nux
     return true;
   }
 
-  bool GLWindowImpl::CreateFromOpenGLWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
+  bool GraphicsDisplay::CreateFromOpenGLWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
   {
     // Do not make the opengl context current
     // Do not swap the framebuffer
@@ -502,8 +512,8 @@ namespace nux
     // Do not enable/disable VSync
 
     m_hWnd = WindowHandle;
-    m_hDC = WindowDCHandle;
-    m_GLRC = OpenGLRenderingContext;
+    _device_context = WindowDCHandle;
+    _opengl_rendering_context = OpenGLRenderingContext;
 
     RECT rect;
     ::GetClientRect (m_hWnd, &rect);
@@ -513,39 +523,43 @@ namespace nux
     // The opengl context should be made current by an external entity.
 
     m_GfxInterfaceCreated = true;
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8,
+      _device_context,
+      _opengl_rendering_context);
+
     m_GraphicsContext = new GraphicsEngine (*this);
 
     return true;
   }
 
 //---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::HasFrameBufferSupport()
+  // NUXTODO: remove this call. Make a direct access to GpuInfo via GpuDevice.
+  bool GraphicsDisplay::HasFrameBufferSupport()
   {
-    return m_DeviceFactory->SUPPORT_GL_EXT_FRAMEBUFFER_OBJECT();
+    return m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object ();
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::GetWindowSize (int &w, int &h)
+  void GraphicsDisplay::GetWindowSize (int &w, int &h)
   {
     w = m_WindowSize.GetWidth();
     h = m_WindowSize.GetHeight();
   }
 
 //---------------------------------------------------------------------------------------------------------
-  unsigned int GLWindowImpl::GetWindowWidth()
+  unsigned int GraphicsDisplay::GetWindowWidth()
   {
     return m_WindowSize.GetWidth();
   }
 
 //---------------------------------------------------------------------------------------------------------
-  unsigned int GLWindowImpl::GetWindowHeight()
+  unsigned int GraphicsDisplay::GetWindowHeight()
   {
     return m_WindowSize.GetHeight();
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::SetWindowSize (int width, int height)
+  void GraphicsDisplay::SetWindowSize (int width, int height)
   {
     RECT window_rect;
     RECT new_rect;
@@ -566,7 +580,7 @@ namespace nux
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::SetViewPort (int x, int y, int width, int height)
+  void GraphicsDisplay::SetViewPort (int x, int y, int width, int height)
   {
     if (IsGfxInterfaceCreated() )
     {
@@ -579,7 +593,7 @@ namespace nux
     }
   }
 
-  Point GLWindowImpl::GetMouseScreenCoord()
+  Point GraphicsDisplay::GetMouseScreenCoord()
   {
     POINT pt;
     ::GetCursorPos (&pt);
@@ -588,7 +602,7 @@ namespace nux
     return point;
   }
 
-  Point GLWindowImpl::GetMouseWindowCoord()
+  Point GraphicsDisplay::GetMouseWindowCoord()
   {
     POINT pt;
     ::GetCursorPos (&pt);
@@ -597,7 +611,7 @@ namespace nux
     return point;
   }
 
-  Point GLWindowImpl::GetWindowCoord()
+  Point GraphicsDisplay::GetWindowCoord()
   {
     RECT rect;
     ::GetWindowRect (m_hWnd, &rect);
@@ -605,7 +619,7 @@ namespace nux
     return point;
   }
 
-  Rect GLWindowImpl::GetWindowGeometry()
+  Rect GraphicsDisplay::GetWindowGeometry()
   {
     RECT rect;
     ::GetClientRect (m_hWnd, &rect);
@@ -613,7 +627,7 @@ namespace nux
     return geo;
   }
 
-  Rect GLWindowImpl::GetNCWindowGeometry()
+  Rect GraphicsDisplay::GetNCWindowGeometry()
   {
     RECT rect;
     ::GetWindowRect (m_hWnd, &rect);
@@ -621,16 +635,16 @@ namespace nux
     return geo;
   }
 
-  void GLWindowImpl::MakeGLContextCurrent (bool b)
+  void GraphicsDisplay::MakeGLContextCurrent (bool b)
   {
-    HGLRC glrc = m_GLRC;
+    HGLRC glrc = _opengl_rendering_context;
 
     if (b == false)
     {
       glrc = 0;
     }
 
-    if (!wglMakeCurrent (m_hDC, glrc) )
+    if (!wglMakeCurrent (_device_context, glrc) )
     {
       NString error = inlGetSystemErrorMessage();
       DestroyOpenGLWindow();
@@ -638,14 +652,14 @@ namespace nux
     }
   }
 
-  void GLWindowImpl::SwapBuffer (bool glswap)
+  void GraphicsDisplay::SwapBuffer (bool glswap)
   {
     if (IsPauseThreadGraphicsRendering() )
       return;
 
     if (glswap)
     {
-      SwapBuffers (m_hDC);
+      SwapBuffers (_device_context);
     }
 
     m_FrameTime = m_Timer.PassedMilliseconds();
@@ -669,7 +683,7 @@ namespace nux
 //     }
   }
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::DestroyOpenGLWindow()
+  void GraphicsDisplay::DestroyOpenGLWindow()
   {
     if (m_GfxInterfaceCreated == true)
     {
@@ -679,25 +693,25 @@ namespace nux
         ShowCursor (TRUE);								// Show Mouse Pointer
       }
 
-      if (m_GLRC)											// Do We Have A Rendering Context?
+      if (_opengl_rendering_context)											// Do We Have A Rendering Context?
       {
-        if (!wglMakeCurrent (m_hDC, NULL) )					// Are We Able To Release The DC And RC Contexts?
+        if (!wglMakeCurrent (_device_context, NULL) )					// Are We Able To Release The DC And RC Contexts?
         {
           MessageBox (NULL, TEXT ("Release Of DC And RC Failed."), TEXT ("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
         }
 
-        if (!wglDeleteContext (m_GLRC) )						// Are We Able To Delete The RC?
+        if (!wglDeleteContext (_opengl_rendering_context) )						// Are We Able To Delete The RC?
         {
           MessageBox (NULL, TEXT ("Release Rendering Context Failed."), TEXT ("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
         }
 
-        m_GLRC = NULL;										// Set RC To NULL
+        _opengl_rendering_context = NULL;										// Set RC To NULL
       }
 
-      if (m_hDC && !ReleaseDC (m_hWnd, m_hDC) )					// Are We Able To Release The DC
+      if (_device_context && !ReleaseDC (m_hWnd, _device_context) )					// Are We Able To Release The DC
       {
         MessageBox (NULL, TEXT ("Release Device Context Failed."), TEXT ("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
-        m_hDC = NULL;										// Set DC To NULL
+        _device_context = NULL;										// Set DC To NULL
       }
 
       if (m_hWnd && ! (::DestroyWindow (m_hWnd) ) )					// Are We Able To Destroy The Window?
@@ -1014,7 +1028,7 @@ J1:
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::GetSystemEvent (IEvent *evt)
+  void GraphicsDisplay::GetSystemEvent (IEvent *evt)
   {
     MSG		msg;
     m_pEvent->Reset();
@@ -1060,7 +1074,7 @@ J1:
     }
   }
 
-  void GLWindowImpl::ProcessForeignWin32Event (HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, IEvent *event)
+  void GraphicsDisplay::ProcessForeignWin32Event (HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, IEvent *event)
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
@@ -1090,7 +1104,7 @@ J1:
     }
   }
 
-  IEvent &GLWindowImpl::GetCurrentEvent()
+  IEvent &GraphicsDisplay::GetCurrentEvent()
   {
     return *m_pEvent;
   }
@@ -1105,7 +1119,7 @@ J1:
     // When not in 64-bit you can disable the warning:
     // Project Properties --> C/C++ tab --> General --> Select "NO" for - Detect 64-bit Portability Issues.
     // See also GetWindowLongPtr
-    GLWindowImpl *GLWindow = reinterpret_cast<GLWindowImpl *> (::GetWindowLongPtr (hWnd, GWLP_USERDATA) );
+    GraphicsDisplay *GLWindow = reinterpret_cast<GraphicsDisplay *> (::GetWindowLongPtr (hWnd, GWLP_USERDATA) );
 
     if (GLWindow == 0)
     {
@@ -1137,7 +1151,7 @@ J1:
     return GLWindow->ProcessWin32Event (hWnd, uMsg, wParam, lParam);
   }
 
-  LRESULT GLWindowImpl::ProcessWin32Event (HWND	hWnd,          // Handle For This Window
+  LRESULT GraphicsDisplay::ProcessWin32Event (HWND	hWnd,          // Handle For This Window
       UINT	uMsg,           // Message For This Window
       WPARAM	wParam,		// Additional Message Information
       LPARAM	lParam)		// Additional Message Information
@@ -1146,13 +1160,13 @@ J1:
     {
       case WM_DESTROY:
       {
-        nuxDebugMsg (TEXT ("[GLWindowImpl::WndProc]: Window \"%s\" received WM_DESTROY message."), m_WindowTitle.GetTCharPtr() );
+        nuxDebugMsg (TEXT ("[GraphicsDisplay::WndProc]: Window \"%s\" received WM_DESTROY message."), m_WindowTitle.GetTCharPtr() );
         break;
       }
 
       case WM_CLOSE:
       {
-        nuxDebugMsg (TEXT ("[GLWindowImpl::WndProc]: Window \"%s\" received WM_CLOSE message."), m_WindowTitle.GetTCharPtr() );
+        nuxDebugMsg (TEXT ("[GraphicsDisplay::WndProc]: Window \"%s\" received WM_CLOSE message."), m_WindowTitle.GetTCharPtr() );
         // close? yes or no?
         PostQuitMessage (0);
         return 0;
@@ -1288,7 +1302,7 @@ J1:
 
         if ( (uMsg == WM_KEYDOWN) || (uMsg == WM_SYSKEYDOWN) )
         {
-          m_pEvent->VirtualKeycodeState[GLWindowImpl::Win32KeySymToINL (wParam) ] = 1;
+          m_pEvent->VirtualKeycodeState[GraphicsDisplay::Win32KeySymToINL (wParam) ] = 1;
         }
 
         if (wParam == VK_CONTROL)
@@ -1339,7 +1353,7 @@ J1:
 
         if ( (uMsg == WM_KEYUP) || (uMsg == WM_SYSKEYUP) )
         {
-          m_pEvent->VirtualKeycodeState[GLWindowImpl::Win32KeySymToINL (wParam) ] = 0;
+          m_pEvent->VirtualKeycodeState[GraphicsDisplay::Win32KeySymToINL (wParam) ] = 0;
         }
 
         break;
@@ -1526,7 +1540,7 @@ J1:
 
       case WM_COMMAND:
       {
-        nuxDebugMsg (TEXT ("[GLWindowImpl::WndProc]: Window \"%s\" received WM_COMMAND message."), m_WindowTitle.GetTCharPtr() );
+        nuxDebugMsg (TEXT ("[GraphicsDisplay::WndProc]: Window \"%s\" received WM_COMMAND message."), m_WindowTitle.GetTCharPtr() );
         break;;
       }
 
@@ -1579,7 +1593,7 @@ J1:
     return DefWindowProc (hWnd, uMsg, wParam, lParam);
   }
 
-  int GLWindowImpl::Win32KeySymToINL (int Keysym)
+  int GraphicsDisplay::Win32KeySymToINL (int Keysym)
   {
     switch (Keysym)
     {
@@ -1813,7 +1827,7 @@ J1:
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::GetDisplayInfo()
+  void GraphicsDisplay::GetDisplayInfo()
   {
     DEVMODE   devmode;
     INT         iMode = 0;
@@ -1838,43 +1852,44 @@ J1:
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::ShowWindow()
+  void GraphicsDisplay::ShowWindow()
   {
     ::ShowWindow (m_hWnd, SW_RESTORE);
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::HideWindow()
+  void GraphicsDisplay::HideWindow()
   {
     ::ShowWindow (m_hWnd, SW_MINIMIZE);
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::EnterMaximizeWindow()
+  void GraphicsDisplay::EnterMaximizeWindow()
   {
     ::ShowWindow (m_hWnd, SW_MAXIMIZE);
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::ExitMaximizeWindow()
+  void GraphicsDisplay::ExitMaximizeWindow()
   {
     ::ShowWindow (m_hWnd, SW_RESTORE);
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::SetWindowTitle (const TCHAR *Title)
+  void GraphicsDisplay::SetWindowTitle (const TCHAR *Title)
   {
     SetWindowText (m_hWnd, Title);
   }
 
 //---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::HasVSyncSwapControl() const
+  // NUXTODO: remove this call. Make a direct access to GpuInfo via GpuDevice.
+  bool GraphicsDisplay::HasVSyncSwapControl() const
   {
-    return GetThreadGLDeviceFactory()->SUPPORT_WGL_EXT_SWAP_CONTROL();
+    return GetThreadGLDeviceFactory()->GetGpuInfo().Support_EXT_Swap_Control();
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::EnableVSyncSwapControl()
+  void GraphicsDisplay::EnableVSyncSwapControl()
   {
 #if WIN32
 
@@ -1887,7 +1902,7 @@ J1:
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::DisableVSyncSwapControl()
+  void GraphicsDisplay::DisableVSyncSwapControl()
   {
 #if WIN32
 
@@ -1899,52 +1914,52 @@ J1:
 #endif
   }
 
-  float GLWindowImpl::GetFrameTime() const
+  float GraphicsDisplay::GetFrameTime() const
   {
     return m_FrameTime;
   }
 
-  void GLWindowImpl::ResetFrameTime()
+  void GraphicsDisplay::ResetFrameTime()
   {
     m_Timer.Reset();
   }
 
-  bool GLWindowImpl::StartOpenFileDialog (FileDialogOption &fdo)
+  bool GraphicsDisplay::StartOpenFileDialog (FileDialogOption &fdo)
   {
     return Win32OpenFileDialog (GetWindowHandle(), fdo);
   }
 
-  bool GLWindowImpl::StartSaveFileDialog (FileDialogOption &fdo)
+  bool GraphicsDisplay::StartSaveFileDialog (FileDialogOption &fdo)
   {
     return Win32SaveFileDialog (GetWindowHandle(), fdo);
   }
 
-  bool GLWindowImpl::StartColorDialog (ColorDialogOption &cdo)
+  bool GraphicsDisplay::StartColorDialog (ColorDialogOption &cdo)
   {
     return Win32ColorDialog (GetWindowHandle(), cdo);
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::SetWindowCursor (HCURSOR cursor)
+  void GraphicsDisplay::SetWindowCursor (HCURSOR cursor)
   {
     m_Cursor = cursor;
   }
 
 //---------------------------------------------------------------------------------------------------------
-  HCURSOR GLWindowImpl::GetWindowCursor() const
+  HCURSOR GraphicsDisplay::GetWindowCursor() const
   {
     return m_Cursor;
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::PauseThreadGraphicsRendering()
+  void GraphicsDisplay::PauseThreadGraphicsRendering()
   {
     m_PauseGraphicsRendering = true;
     MakeGLContextCurrent (false);
   }
 
 //---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::IsPauseThreadGraphicsRendering() const
+  bool GraphicsDisplay::IsPauseThreadGraphicsRendering() const
   {
     return m_PauseGraphicsRendering;
   }

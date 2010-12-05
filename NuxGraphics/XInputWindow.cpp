@@ -20,7 +20,7 @@
  */
 
 #include "XInputWindow.h"
-#include "GfxSetupX11.h"
+#include "GraphicsDisplayX11.h"
 #include "GLThread.h"
 
 namespace nux

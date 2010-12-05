@@ -83,8 +83,8 @@ namespace nux
 
 //! Create a main graphics thread. This thread has a window and no parent window (The Parent parameter should always be null).
   WindowThread *CreateGUIThread (const TCHAR *WindowTitle,
-                                 UINT width,
-                                 UINT height,
+                                 t_u32 width,
+                                 t_u32 height,
                                  WindowThread *Parent = NULL,
                                  ThreadUserInitFunc UserInitFunc = NULL,
                                  void *InitData = NULL);
@@ -104,8 +104,8 @@ namespace nux
 // Create a window thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateWindowThread (WindowStyle WndStyle,
                                     const TCHAR *WindowTitle,
-                                    UINT width,
-                                    UINT height,
+                                    t_u32 width,
+                                    t_u32 height,
                                     WindowThread *Parent,
                                     ThreadUserInitFunc UserInitFunc = NULL,
                                     void *InitData = NULL);
@@ -113,8 +113,8 @@ namespace nux
 // Create a Modal window thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateModalWindowThread (WindowStyle WndStyle,
                                          const TCHAR *WindowTitle,
-                                         UINT width,
-                                         UINT height,
+                                         t_u32 width,
+                                         t_u32 height,
                                          WindowThread *Parent,
                                          ThreadUserInitFunc UserInitFunc = NULL,
                                          void *InitData = NULL);
@@ -131,7 +131,7 @@ namespace nux
 
   NThread           *GetThreadApplication();
   WindowThread      *GetGraphicsThread();
-  GLWindowImpl      &GetWindow();
+  GraphicsDisplay      &GetWindow();
   GraphicsEngine    &GetGraphicsEngine();
   WindowCompositor  &GetWindowCompositor();
   BasePainter       &GetPainter();
