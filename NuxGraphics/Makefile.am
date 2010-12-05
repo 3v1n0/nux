@@ -52,6 +52,7 @@ source_h = \
   $(srcdir)/GLTimer.h \
   $(srcdir)/GLVertexResourceManager.h \
   $(srcdir)/GLWindowManager.h \
+  $(srcdir)/GraphicsDisplay.h \
   $(srcdir)/IniFile.h \
   $(srcdir)/IOpenGLAnimatedTexture.h \
   $(srcdir)/IOpenGLAsmShader.h \
@@ -90,32 +91,33 @@ source_cpp = \
   $(srcdir)/IOpenGLRectangleTexture.cpp \
   $(srcdir)/IOpenGLVertexDeclaration.cpp \
   $(srcdir)/GLDeviceFrameBufferObject.cpp \
-  $(srcdir)/GLSh_ColorPicker.cpp \
   $(srcdir)/RenderingPipeGLSL.cpp \
   $(srcdir)/IOpenGLVolumeTexture.cpp \
   $(srcdir)/IOpenGLIndexBuffer.cpp \
   $(srcdir)/GLShaderParameter.cpp \
   $(srcdir)/GraphicsEngine.cpp \
-  $(srcdir)/GLResource.cpp \
   $(srcdir)/GLDeviceObjects.cpp \
-  $(srcdir)/GLResourceManager.cpp \
   $(srcdir)/GLPBuffer.cpp \
+  $(srcdir)/GLRenderStates.cpp \
+  $(srcdir)/GLResource.cpp \
+  $(srcdir)/GLResourceManager.cpp \
+  $(srcdir)/GLTextureResourceManager.cpp \
+  $(srcdir)/GLTextureStates.cpp \
+  $(srcdir)/GraphicsDisplayX11.cpp \
+  $(srcdir)/GLSh_ColorPicker.cpp \
+  $(srcdir)/GLSh_DrawFunction.cpp \
+  $(srcdir)/GLSh_Fill.cpp \
   $(srcdir)/IOpenGLCubeTexture.cpp \
   $(srcdir)/GlobalGraphicsInitializer.cpp \
   $(srcdir)/IOpenGLAnimatedTexture.cpp \
-  $(srcdir)/GLRenderStates.cpp \
   $(srcdir)/RenderingPipe.cpp \
   $(srcdir)/IniFile.cpp \
   $(srcdir)/FontTexture.cpp \
   $(srcdir)/FontRenderer.cpp \
-  $(srcdir)/GLTextureResourceManager.cpp \
-  $(srcdir)/GLTextureStates.cpp \
   $(srcdir)/IOpenGLVolume.cpp \
   $(srcdir)/IOpenGLBaseTexture.cpp \
   $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/GLWindowManager.cpp \
-  $(srcdir)/GLSh_DrawFunction.cpp \
-  $(srcdir)/GLSh_Fill.cpp \
   $(srcdir)/IOpenGLAsmShader.cpp \
   $(srcdir)/GpuDevice.cpp \
   $(srcdir)/GpuDeviceShader.cpp \
@@ -131,7 +133,6 @@ source_cpp = \
   $(srcdir)/GLError.cpp \
   $(srcdir)/RunTimeStats.cpp \
   $(srcdir)/IOpenGLVertexBuffer.cpp \
-  $(srcdir)/GraphicsDisplayX11.cpp \
   $(srcdir)/IOpenGLQuery.cpp \
   $(srcdir)/GLShader.cpp \
   $(srcdir)/IOpenGLGLSLShader.cpp \

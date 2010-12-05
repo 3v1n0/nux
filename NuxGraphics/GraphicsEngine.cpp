@@ -101,14 +101,14 @@ namespace nux
 
     if (_normal_font == 0)
     {
-      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
       _normal_font = IntrusiveSP<FontTexture> (fnt);
       fnt->UnReference ();
     }
 
     if (_bold_font == 0)
     {
-      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
       _bold_font = IntrusiveSP<FontTexture> (fnt);
       fnt->UnReference ();
     }

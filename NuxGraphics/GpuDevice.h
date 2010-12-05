@@ -147,32 +147,23 @@ namespace nux
       unsigned int Width
       , unsigned int Height
       , unsigned int Levels
-      //, DWORD Usage    // no use
       , BitmapFormat PixelFormat
-      //, D3DPOOL Pool       // no use
       , IOpenGLTexture2D **ppTexture
-      //, HANDLE* pSharedHandle       // no use
     );
 
     int CreateRectangleTexture (
       unsigned int Width
       , unsigned int Height
       , unsigned int Levels
-      //, DWORD Usage    // no use
       , BitmapFormat PixelFormat
-      //, D3DPOOL Pool       // no use
       , IOpenGLRectangleTexture **ppTexture
-      //, HANDLE* pSharedHandle       // no use
     );
 
     int CreateCubeTexture (
       unsigned int EdgeLength
       , unsigned int Levels
-      //, DWORD Usage    // no use
       , BitmapFormat PixelFormat
-      //, D3DPOOL Pool    // no use
       , IOpenGLCubeTexture **ppCubeTexture
-      //, HANDLE* pSharedHandle    // no use
     );
 
     int CreateVolumeTexture (
@@ -180,11 +171,8 @@ namespace nux
       , unsigned int Height
       , unsigned int Depth
       , unsigned int Levels
-      //, DWORD Usage        // no use
       , BitmapFormat PixelFormat
-      //, D3DPOOL Pool       // no use
       , IOpenGLVolumeTexture **ppVolumeTexture
-      //, HANDLE* pSharedHandle       // no use
     );
 
     int CreateAnimatedTexture (
@@ -198,19 +186,14 @@ namespace nux
     int CreateVertexBuffer (
       unsigned int Length
       , VBO_USAGE Usage    // Dynamic or WriteOnly
-      //, DWORD FVF             // Not Used
-      //, D3DPOOL Pool    // no use
       , IOpenGLVertexBuffer **ppVertexBuffer
-      //, HANDLE* pSharedHandle    // no use
     );
 
     int CreateIndexBuffer (
       unsigned int Length
       , VBO_USAGE Usage    // Dynamic or WriteOnly
       , INDEX_FORMAT Format
-      //, D3DPOOL Pool    // no use
       , IOpenGLIndexBuffer **ppIndexBuffer
-      //, HANDLE* pSharedHandle    // no use
     );
 
     int CreatePixelBufferObject (int Size, VBO_USAGE Usage,   // Dynamic or WriteOnly

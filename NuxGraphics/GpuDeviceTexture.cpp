@@ -52,7 +52,6 @@ namespace nux
     , t_u32 Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
-    //, D3DPOOL Pool       // no use
     , IOpenGLTexture2D **ppTexture
     //, HANDLE* pSharedHandle       // no use
     )
@@ -117,7 +116,6 @@ namespace nux
     , t_u32 Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
-    //, D3DPOOL Pool       // no use
     , IOpenGLRectangleTexture **ppTexture
     //, HANDLE* pSharedHandle       // no use
     )
@@ -183,7 +181,6 @@ namespace nux
     , t_u32 Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
-    //, D3DPOOL Pool    // no use
     , IOpenGLCubeTexture **ppCubeTexture
     //, HANDLE* pSharedHandle    // no use
     )
@@ -234,7 +231,6 @@ namespace nux
     , t_u32 Levels
     //, DWORD Usage        // no use
     , BitmapFormat PixelFormat
-    //, D3DPOOL Pool       // no use
     , IOpenGLVolumeTexture **ppVolumeTexture
     //, HANDLE* pSharedHandle       // no use
     )

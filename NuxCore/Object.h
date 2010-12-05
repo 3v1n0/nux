@@ -199,12 +199,6 @@ namespace nux
     */
     virtual bool Dispose();
 
-    //! Returns true if the object was allocated on the heap.
-    /*!
-        @return True if the object was allocated on the heap.
-    */
-    bool IsHeapAllocated();
-
     //! Get the reference count of this object.
     /*!
         @return The reference count of this object.

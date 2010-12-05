@@ -3,45 +3,10 @@ PKGDATADIR="$(pkgdatadir)/@NUX_API_VERSION@"
 
 fontdir = $(PKGDATADIR)/Fonts
 dist_font_DATA = \
-  Fonts/Tahoma_size_8_bold_page_0.png \
-  Fonts/Tahoma_size_8_bold.txt \
-  Fonts/Tahoma_size_8_page_0.png \
-  Fonts/Tahoma_size_8.txt
-
-iconsdir = $(PKGDATADIR)/Icons
-dist_icons_DATA = \
-  Icons/169034134.png \
-  Icons/Delicious.png \
-  Icons/DeviantArt.png \
-  Icons/Digg.png \
-  Icons/Facebook.png \
-  Icons/Flicker.png \
-  Icons/Folder-16x16.png \
-  Icons/Folder-24x24.png \
-  Icons/FolderClose-16x16.png \
-  Icons/FolderOpen-16x16.png \
-  Icons/GMail.png \
-  Icons/LastFM.png \
-  Icons/MobileMe.png \
-  Icons/MySpace.png \
-  Icons/PlayStationWhite.png \
-  Icons/reflec.png \
-  Icons/RSS.png \
-  Icons/Skype.png \
-  Icons/Twitter2.png \
-  Icons/Twitter.png \
-  Icons/Vimeo.png \
-  Icons/Wii.png \
-  Icons/XBox.png \
-  Icons/Yahoo2.png \
-  Icons/Yahoo.png \
-  Icons/YouTube.png
-
-meshesdir = $(PKGDATADIR)/Meshes
-dist_meshes_DATA = \
-  Meshes/Sphere.imsh \
-  Meshes/Teapot.imsh \
-  Meshes/Venus.imsh
+  Fonts/Ubuntu_size_10_bold_page_0.png \
+  Fonts/Ubuntu_size_10_bold.txt \
+  Fonts/Ubuntu_size_10_page_0.png \
+  Fonts/Ubuntu_size_10.txt
 
 uitexturesdir = $(PKGDATADIR)/UITextures
 dist_uitextures_DATA = \
@@ -72,8 +37,6 @@ dist_uitextures_DATA = \
   UITextures/GraphBarIcon.tga \
   UITextures/GraphIcon.tga \
   UITextures/HScrollBar.tga \
-  UITextures/InalogicShapes.csh \
-  UITextures/InalogicStyle.asl \
   UITextures/Matrix3Preview.tga \
   UITextures/Matrix4Preview.tga \
   UITextures/Painter.xml \
@@ -97,8 +60,6 @@ dist_uitextures_DATA = \
   UITextures/ScrollBarTriangleUp.tga \
   UITextures/SpinerDown.tga \
   UITextures/SpinerUp.tga \
-  UITextures/Square.png \
-  UITextures/Square.tga \
   UITextures/Stroke_0pxrad_1px.tga \
   UITextures/Stroke_10pxrad_2px.tga \
   UITextures/Stroke_1pxrad_1px.tga \
@@ -115,7 +76,6 @@ dist_uitextures_DATA = \
   UITextures/TriangleRight.tga \
   UITextures/TriangleUp.tga \
   UITextures/UIArchive.iar \
-  UITextures/Untitled_Styles.asl \
   UITextures/ValuatorHorizontalMove.tga \
   UITextures/ValuatorMove.tga \
   UITextures/ValuatorVerticalMove.tga \
@@ -124,5 +84,5 @@ dist_uitextures_DATA = \
   UITextures/VectorYLabel.tga \
   UITextures/VectorZLabel.tga \
   UITextures/VScrollBar.tga \
-  UITextures/WindowSizeGrip2.tga \
   UITextures/WindowSizeGrip.tga
+  

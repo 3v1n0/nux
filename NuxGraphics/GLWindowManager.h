@@ -26,9 +26,9 @@
 #include "NuxCore/NuxCore.h"
 
 #if defined(NUX_OS_WINDOWS)
-  #include "GraphicsDisplayWin.h"
+  #include "GraphicsDisplay.h"
 #elif defined(NUX_OS_LINUX)
-  #include "GraphicsDisplayX11.h"
+  #include "GraphicsDisplay.h"
 #endif
 
 namespace nux

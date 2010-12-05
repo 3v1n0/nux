@@ -23,9 +23,9 @@
 #include "Nux.h"
 
 #if defined(NUX_OS_WINDOWS)
-  #include "NuxGraphics/GraphicsDisplayWin.h"
+  #include "NuxGraphics/GraphicsDisplay.h"
 #elif defined(NUX_OS_LINUX)
-  #include "NuxGraphics/GraphicsDisplayX11.h"
+  #include "NuxGraphics/GraphicsDisplay.h"
 #endif
 
 #include "NuxGraphics/GraphicsEngine.h"

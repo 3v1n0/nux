@@ -33,7 +33,7 @@
 #include "Events.h"
 #include "IniFile.h"
 
-#include "GraphicsDisplayWin.h"
+#include "GraphicsDisplay.h"
 
 namespace nux
 {

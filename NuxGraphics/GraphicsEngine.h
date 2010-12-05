@@ -35,10 +35,10 @@
 #include "GLShader.h"
 
 #if defined(NUX_OS_WINDOWS)
-  #include "GraphicsDisplayWin.h"
+  #include "GraphicsDisplay.h"
   #include "GLWindowManager.h"
 #elif defined(NUX_OS_LINUX)
-  #include "GraphicsDisplayX11.h"
+  #include "GraphicsDisplay.h"
   #include "GLWindowManager.h"
 #endif
 
