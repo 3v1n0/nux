@@ -19,7 +19,6 @@
  *
  */
 
-
 #ifndef NUXCORE_H
 #define NUXCORE_H
 
@@ -471,7 +470,7 @@ namespace nux
 // Define architecture specific asm statements for hardware breakpoint
 #if defined(NUX_GNUC_COMPILER)
     #if (defined __i386__) || (defined __x86_64__)
-        #define ARCH_HARDWARE_BREAK abort ()
+        #define ARCH_HARDWARE_BREAK std::abort ()
     #elif defined (__arm__) || (defined __ppc__)
         #define ARCH_HARDWARE_BREAK do {} while(0)
     #else
@@ -486,7 +485,7 @@ namespace nux
     #define inlDebugBreak()         ( IsDebuggerPresent() ? (DebugBreak(),1) : 1 )
 #elif (defined _WIN32)
     #define nuxIsDebuggerPresent()  IsDebuggerPresent()
-    #define inlDebugBreak()         abort ()
+    #define inlDebugBreak()         std::abort ()
 #elif (defined NUX_DEBUG) && (defined NUX_GNUCPP_COMPILER)
     #define nuxIsDebuggerPresent()  1
     #define inlDebugBreak()         ARCH_HARDWARE_BREAK
