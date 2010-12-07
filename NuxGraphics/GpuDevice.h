@@ -538,7 +538,7 @@ namespace nux
 
 #elif defined (NUX_OS_LINUX)
     GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
-      Display display,
+      Display *display,
       Window window,
       bool has_new_glx_support,
       GLXFBConfig fb_config,
