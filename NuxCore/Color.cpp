@@ -192,10 +192,13 @@ namespace nux
   const Color Color::DarkSlateGray       (0x2F / 255.0f, 0x4F / 255.0f, 0x4F / 255.0f); // 	47      79      79
   const Color Color::Black               (0x00 / 255.0f, 0x00 / 255.0f, 0x00 / 255.0f); // 	0       0       0
 
+  // More Colors
+  const Color Color::Aubergine           (0x2B / 255.0f, 0x0B / 255.0f, 0x30 / 255.0f); //  43      11      48
+
   Color Color::Dummy = Color::Black;
 
   Color::Color()
-    : red_ (0.0), green_ (0.0), blue_ (0.0f), alpha_ (1.0f)
+    : _red (0.0), _green (0.0), _blue (0.0f), _alpha (1.0f)
   {
   }
 
@@ -205,34 +208,34 @@ namespace nux
 
   Color::Color (const Color &color)
   {
-    red_   = color.R();
-    green_ = color.G();
-    blue_  = color.B();
-    alpha_ = color.A();
+    _red   = color.R();
+    _green = color.G();
+    _blue  = color.B();
+    _alpha = color.A();
   }
 
   Color::Color (unsigned int c)
   {
-    red_   = (t_float) (NUX_RGBA_GET_RED (c) ) * (1.f / 255.f);
-    green_ = (t_float) (NUX_RGBA_GET_GREEN (c) ) * (1.f / 255.f);
-    blue_  = (t_float) (NUX_RGBA_GET_BLUE (c) ) * (1.f / 255.f);
-    alpha_ = (t_float) (NUX_RGBA_GET_ALPHA (c) ) * (1.f / 255.f);
+    _red   = (float) (NUX_RGBA_GET_RED (c) ) * (1.f / 255.f);
+    _green = (float) (NUX_RGBA_GET_GREEN (c) ) * (1.f / 255.f);
+    _blue  = (float) (NUX_RGBA_GET_BLUE (c) ) * (1.f / 255.f);
+    _alpha = (float) (NUX_RGBA_GET_ALPHA (c) ) * (1.f / 255.f);
   }
 
-  Color::Color (t_float r, t_float g, t_float b)
+  Color::Color (float r, float g, float b)
   {
-    red_ = r;
-    green_ = g;
-    blue_ = b;
-    alpha_ = 1.0f;
+    _red = r;
+    _green = g;
+    _blue = b;
+    _alpha = 1.0f;
   }
 
-  Color::Color (t_float r, t_float g, t_float b, t_float a)
+  Color::Color (float r, float g, float b, float a)
   {
-    red_ = r;
-    green_ = g;
-    blue_ = b;
-    alpha_ = a;
+    _red = r;
+    _green = g;
+    _blue = b;
+    _alpha = a;
   }
 
   Color *Color::Clone() const
@@ -240,22 +243,79 @@ namespace nux
     return new Color (*this);
   }
 
+  float Color::GetRed() const
+  {
+    return _red;
+  };
+
+  float Color::GetGreen() const
+  {
+    return _green;
+  };
+
+  float Color::GetBlue() const
+  {
+    return _blue;
+  };
+
+  float Color::GetAlpha() const
+  {
+    return _alpha;
+  };
+
+  float Color::R() const
+  {
+    return _red;
+  };
+
+  float Color::G() const
+  {
+    return _green;
+  };
+
+  float Color::B() const
+  {
+    return _blue;
+  };
+
+  float Color::A() const
+  {
+    return _alpha;
+  };
+
+  void Color::SetRed (float r)
+  {
+    _red = r;
+  };
+  void Color::SetGreen (float g)
+  {
+    _green = g;
+  };
+  void Color::SetBlue (float b)
+  {
+    _blue = b;
+  };
+  void Color::SetAlpha (float a)
+  {
+    _alpha = a;
+  };
+
   Color &Color::operator= (const Color &color)
   {
-    red_   = color.R();
-    green_ = color.G();
-    blue_  = color.B();
-    alpha_ = color.A();
+    _red   = color.R();
+    _green = color.G();
+    _blue  = color.B();
+    _alpha = color.A();
 
     return *this;
   }
 
   bool Color::operator == (const Color &color) const
   {
-    if ( (red_ == color.R() )
-         && (green_ == color.G() )
-         && (blue_ == color.B() )
-         && (alpha_ == color.A() )
+    if ( (_red == color.R() )
+         && (_green == color.G() )
+         && (_blue == color.B() )
+         && (_alpha == color.A() )
        )
     {
       return true;
@@ -266,10 +326,10 @@ namespace nux
 
   bool Color::operator!= (const Color &color) const
   {
-    if ( (red_ == color.R() )
-         && (green_ == color.G() )
-         && (blue_ == color.B() )
-         && (alpha_ == color.A() )
+    if ( (_red == color.R() )
+         && (_green == color.G() )
+         && (_blue == color.B() )
+         && (_alpha == color.A() )
        )
     {
       return false;
@@ -278,495 +338,65 @@ namespace nux
     return true;
   }
 
-  void Color::SetRGB (t_float r, t_float g, t_float b)
+  void Color::SetRGB (float r, float g, float b)
   {
-    red_   = r;
-    green_ = g;
-    blue_  = b;
-    alpha_ = 1.0f;
+    _red   = r;
+    _green = g;
+    _blue  = b;
+    _alpha = 1.0f;
   }
 
-  void Color::SetRGBA (t_float r, t_float g, t_float b, t_float a)
+  void Color::SetRGBA (float r, float g, float b, float a)
   {
-    red_   = r;
-    green_ = g;
-    blue_  = b;
-    alpha_ = a;
+    _red   = r;
+    _green = g;
+    _blue  = b;
+    _alpha = a;
   }
 
   /*void Color::set_rgba(t_uint32 val)
   {
-    red_   = (t_float)RGBA_GET_RED(   val )*(1.f/255.f);
-    green_ = (t_float)RGBA_GET_GREEN( val )*(1.f/255.f);
-    blue_  = (t_float)RGBA_GET_BLUE(  val )*(1.f/255.f);
-    alpha_ = (t_float)RGBA_GET_ALPHA( val )*(1.f/255.f);
+    _red   = (float)RGBA_GET_RED(   val )*(1.f/255.f);
+    _green = (float)RGBA_GET_GREEN( val )*(1.f/255.f);
+    _blue  = (float)RGBA_GET_BLUE(  val )*(1.f/255.f);
+    _alpha = (float)RGBA_GET_ALPHA( val )*(1.f/255.f);
   }*/
 
   void Color::ClampVal()
   {
-    red_ = Max<t_float> (0.f, Min (1.f, red_) );
-    green_ = Max<t_float> (0.f, Min (1.f, green_) );
-    blue_  = Max<t_float> (0.f, Min (1.f, blue_) );
-    alpha_ = Max<t_float> (0.f, Min (1.f, alpha_) );
+    _red = Max<float> (0.f, Min (1.f, _red) );
+    _green = Max<float> (0.f, Min (1.f, _green) );
+    _blue  = Max<float> (0.f, Min (1.f, _blue) );
+    _alpha = Max<float> (0.f, Min (1.f, _alpha) );
   }
 
   void Color::Saturate()
   {
-    red_   = Min<t_float> (1.f, red_);
-    green_ = Min<t_float> (1.f, green_);
-    blue_  = Min<t_float> (1.f, blue_);
-    alpha_ = Min<t_float> (1.f, alpha_);
+    _red   = Min<float> (1.f, _red);
+    _green = Min<float> (1.f, _green);
+    _blue  = Min<float> (1.f, _blue);
+    _alpha = Min<float> (1.f, _alpha);
   }
 
   void Color::Complement()
   {
-    red_   = 1.0f - red_;
-    green_ = 1.0f - green_;
-    blue_  = 1.0f - blue_;
-    alpha_ = 1.0f - alpha_;
+    _red   = 1.0f - _red;
+    _green = 1.0f - _green;
+    _blue  = 1.0f - _blue;
+    _alpha = 1.0f - _alpha;
   }
 
   Color Color::Luminance()
   {
-    float L = 0.30 * red_ + 0.59 * green_ + 0.11 * blue_;
+    float L = 0.30 * _red + 0.59 * _green + 0.11 * _blue;
     return Color (L, L, L, 1.0f);
   }
 
   Color Color::OneMinusLuminance()
   {
-    float L = 1.0f - (0.30 * red_ + 0.59 * green_ + 0.11 * blue_);
+    float L = 1.0f - (0.30 * _red + 0.59 * _green + 0.11 * _blue);
     return Color (L, L, L, 1.0f);
   }
-
-// void Color::ConvertTo(BitmapFormat format, char* data_bits, t_float round_offset, bool gamma_correct) const
-// {
-//     t_uint32 iR, iG, iB, iA;
-//     t_float Rg, Gg, Bg; // Gamma Corrected values
-//     t_float Ag;
-//
-//     if(gamma_correct)
-//     {
-//         Rg = Do_Gamma_Correction(red_);
-//         Gg = Do_Gamma_Correction(green_);
-//         Bg = Do_Gamma_Correction(blue_);
-//     }
-//     else
-//     {
-//         Rg = red_;
-//         Gg = green_;
-//         Bg = blue_;
-//     }
-//
-//     Ag = alpha_;
-//
-//     switch(format)
-//     {
-//         case BITFMT_R8G8B8A8:
-//         *((t_byte*)data_bits+0) = (t_byte)((t_float)Ag * 255. + round_offset);
-//         *((t_byte*)data_bits+1) = (t_byte)((t_float)Bg * 255. + round_offset);
-//         *((t_byte*)data_bits+2) = (t_byte)((t_float)Gg * 255. + round_offset);
-//         *((t_byte*)data_bits+3) = (t_byte)((t_float)Rg * 255. + round_offset);
-//         break;
-//
-//         case BITFMT_B8G8R8A8:
-//         *((t_byte*)data_bits+0) = (t_byte)((t_float)Ag * 255. + round_offset);
-//         *((t_byte*)data_bits+1) = (t_byte)((t_float)Rg * 255. + round_offset);
-//         *((t_byte*)data_bits+2) = (t_byte)((t_float)Gg * 255. + round_offset);
-//         *((t_byte*)data_bits+3) = (t_byte)((t_float)Bg * 255. + round_offset);
-//         break;
-//
-//         case BITFMT_A8R8G8B8:
-//         *((t_byte*)data_bits+0) = (t_byte)((t_float)Bg * 255. + round_offset);
-//         *((t_byte*)data_bits+1) = (t_byte)((t_float)Gg * 255. + round_offset);
-//         *((t_byte*)data_bits+2) = (t_byte)((t_float)Rg * 255. + round_offset);
-//         *((t_byte*)data_bits+3) = (t_byte)((t_float)Ag * 255. + round_offset);
-//         break;
-//
-//         case BITFMT_A8B8G8R8:
-//         *((t_byte*)data_bits+0) = (t_byte)((t_float)Rg * 255. + round_offset);
-//         *((t_byte*)data_bits+1) = (t_byte)((t_float)Gg * 255. + round_offset);
-//         *((t_byte*)data_bits+2) = (t_byte)((t_float)Bg * 255. + round_offset);
-//         *((t_byte*)data_bits+3) = (t_byte)((t_float)Ag * 255. + round_offset);
-//         break;
-//
-//         case BITFMT_X8R8G8B8:
-//         *((t_byte*)data_bits+0) = 0x00;
-//         *((t_byte*)data_bits+1) = (t_byte)((t_float)Bg * 255. + round_offset);
-//         *((t_byte*)data_bits+2) = (t_byte)((t_float)Gg * 255. + round_offset);
-//         *((t_byte*)data_bits+3) = (t_byte)((t_float)Rg * 255. + round_offset);
-//         break;
-//
-//         case BITFMT_X8B8G8R8:
-//         *((t_byte*)data_bits+0) = 0x00;
-//         *((t_byte*)data_bits+1) = (t_byte)((t_float)Rg * 255. + round_offset);
-//         *((t_byte*)data_bits+2) = (t_byte)((t_float)Gg * 255. + round_offset);
-//         *((t_byte*)data_bits+3) = (t_byte)((t_float)Bg * 255. + round_offset);
-//         break;
-//     ////////////////////////////////////////////////////////////////////////////////////////
-//         case BITFMT_A2R10G10B10:
-//         iR = (t_uint32) ((t_float)Rg * 1023.f + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 1023.f + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 1023.f + round_offset);
-//         iA = (t_uint32) ((t_float)Ag * 3.f + round_offset);
-//         *((t_uint32*)data_bits) = (iA<<(10+10+10)) | (iR<<(10+10)) | (iG<<10) | iB;
-//         break;
-//
-//         case BITFMT_A2B10G10R10:
-//         iR = (t_uint32) ((t_float)Rg * 1023.f + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 1023.f + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 1023.f + round_offset);
-//         iA = (t_uint32) ((t_float)Ag * 3.f + round_offset);
-//         *((t_uint32*)data_bits) = (iA<<(10+10+10)) | (iB<<(10+10)) | (iG<<10) | iR;
-//         break;
-//
-//         case BITFMT_R10G10B10A2:
-//         iR = (t_uint32) ((t_float)Rg * 1023.f + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 1023.f + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 1023.f + round_offset);
-//         iA = (t_uint32) ((t_float)Ag * 3.f + round_offset);
-//         *((t_uint32*)data_bits) = (iR<<(10+10+10)) | (iG<<(10+10)) | (iB<<10) | iA;
-//         break;
-//
-//         case BITFMT_B10G10R10A2:
-//         iR = (t_uint32) ((t_float)Rg * 1023.f + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 1023.f + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 1023.f + round_offset);
-//         iA = (t_uint32) ((t_float)Ag * 3.f + round_offset);
-//         *((t_uint32*)data_bits) = (iB<<(10+10+10)) | (iG<<(10+10)) | (iR<<10) | iA;
-//         break;
-//
-//         case BITFMT_R8G8B8:
-//         *((t_byte*)data_bits+0) = (t_byte)((t_float)Bg * 255. + round_offset);
-//         *((t_byte*)data_bits+1) = (t_byte)((t_float)Gg * 255. + round_offset);
-//         *((t_byte*)data_bits+2) = (t_byte)((t_float)Rg * 255. + round_offset);
-//         break;
-//
-//         case BITFMT_B8G8R8:
-//         *((t_byte*)data_bits+0) = (t_byte)((t_float)Rg * 255. + round_offset);
-//         *((t_byte*)data_bits+1) = (t_byte)((t_float)Gg * 255. + round_offset);
-//         *((t_byte*)data_bits+2) = (t_byte)((t_float)Bg * 255. + round_offset);
-//         break;
-//
-//         case BITFMT_R5G6B5:
-//         iR = (t_uint32) ((t_float)Rg * 31. + round_offset); // apply rounding bias then truncate
-//         iG = (t_uint32) ((t_float)Gg * 63. + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 31. + round_offset);
-//         *((t_uint16*)data_bits) = (t_uint16) ((iR<<11) | (iG<<5) | iB);
-//         break;
-//
-//         case BITFMT_X1R5G5B5:
-//         iR = (t_uint32) ((t_float)Rg * 31. + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 31. + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 31. + round_offset);
-//         *((t_uint16*)data_bits) = (t_uint16) ((iR<<10) | (iG<<5) | iB);
-//         break;
-//
-//         case BITFMT_A1R5G5B5:
-//         iA = (t_uint32) ((t_float)Ag *  1. + round_offset);
-//         iR = (t_uint32) ((t_float)Rg * 31. + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 31. + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 31. + round_offset);
-//         *((t_uint16*)data_bits) = (t_uint16) ((iA<<15) | (iR<<10) | (iG<<5) | iB);
-//         break;
-//
-//         case BITFMT_A4R4G4B4:
-//         iA = (t_uint32) ((t_float)Ag * 15. + round_offset);
-//         iR = (t_uint32) ((t_float)Rg * 15. + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 15. + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 15. + round_offset);
-//         *((t_uint16*)data_bits) = (t_uint16) ((iA<<12) | (iR<<8) | (iG<<4) | iB);
-//         break;
-//
-//         case BITFMT_X4R4G4B4:
-//         iR = (t_uint32) ((t_float)Rg * 15. + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 15. + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 15. + round_offset);
-//         *((t_uint16*)data_bits) = (t_uint16) ((0x00<<12) | (iR<<8) | (iG<<4) | iB);
-//         break;
-//
-//         case BITFMT_A8R3G3B2:
-//         iA = (t_uint32) ((t_float)Ag * 255. + round_offset);
-//         iR = (t_uint32) ((t_float)Rg * 7. + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 7. + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 3. + round_offset);
-//         *((t_uint16*)data_bits) = (t_uint16) ((iA<<8) | (iR<<5) | (iG<<2) | iB);
-//         break;
-//
-//         case BITFMT_R3G3B2:
-//         iR = (t_uint32) ((t_float)Rg * 7. + round_offset);
-//         iG = (t_uint32) ((t_float)Gg * 7. + round_offset);
-//         iB = (t_uint32) ((t_float)Bg * 3. + round_offset);
-//         *((t_byte*)data_bits) = (t_byte) ((iR<<5) | (iG<<2) | iB);
-//         break;
-//
-//         case BITFMT_RGBA16F:
-//         case BITFMT_RGB32F:
-//         case BITFMT_RGBA32F:
-//         case BITFMT_D24S8:
-//         case BITFMT_DXT1:
-//         case BITFMT_DXT2:
-//         case BITFMT_DXT3:
-//         case BITFMT_DXT4:
-//         case BITFMT_DXT5:
-//         case BITFMT_A8:
-//         case BITFMT_UNKNOWN:
-//         case BITFMT_END_GFX_FORMATS:
-//         default:
-//             break;
-//
-//         /*    case BITFMT_A16B16G16R16:
-//         *((t_uint16*)data_bits+0) = (t_uint16)((t_float)Rg * 65535. + round_offset);
-//         *((t_uint16*)data_bits+1) = (t_uint16)((t_float)Gg * 65535. + round_offset);
-//         *((t_uint16*)data_bits+2) = (t_uint16)((t_float)Bg * 65535. + round_offset);
-//         *((t_uint16*)data_bits+3) = (t_uint16)((t_float)A * 65535. + round_offset);
-//         break;
-//
-//         case BITFMT_R16F:
-//         {
-//         *((CFloat16*)data_bits+0) = Rg;
-//         }
-//         break;
-//
-//         case BITFMT_G16R16F:
-//         {
-//         *((CFloat16*)data_bits+0) = Rg;
-//         *((CFloat16*)data_bits+1) = Gg;
-//         }
-//         break;
-//
-//         case BITFMT_A16B16G16R16F:
-//         {
-//         *((CFloat16*)data_bits+0) = Rg;
-//         *((CFloat16*)data_bits+1) = Gg;
-//         *((CFloat16*)data_bits+2) = Bg;
-//         *((CFloat16*)data_bits+3) = A;
-//         }
-//         break;
-//
-//         case BITFMT_R32F:
-//         {
-//         *((t_float*)data_bits+0) = Rg;
-//         }
-//         break;
-//
-//         case BITFMT_G32R32F:
-//         {
-//         *((t_float*)data_bits+0) = Rg;
-//         *((t_float*)data_bits+1) = Gg;
-//         }
-//         break;
-//
-//         case BITFMT_A32B32G32R32F:
-//         {
-//         *((t_float*)data_bits+0) = Rg;
-//         *((t_float*)data_bits+1) = Gg;
-//         *((t_float*)data_bits+2) = Bg;
-//         *((t_float*)data_bits+3) = A;
-//         }
-//         break;
-//         */
-//     }
-// }
-//
-// void Color::ConvertFrom(BitmapFormat format,
-//                          const char* data_bits,
-//                          bool undo_gamma_correction // (gamma 2.2 -> gamma 1.0)
-//                          )
-// {
-//     t_uint16 u16BITS;
-//     t_byte u8BITS;
-//
-//     t_float R, G, B, A;
-//
-//     switch (format)
-//     {
-//         default:
-//         case BITFMT_UNKNOWN:
-//         {
-//             return;
-//         }
-//         break;
-//
-//         case BITFMT_R8G8B8A8:
-//         {
-//         R = *(( t_byte*)data_bits+3)/255.f;
-//         G = *(( t_byte*)data_bits+2)/255.f;
-//         B = *(( t_byte*)data_bits+1)/255.f;
-//         A = *(( t_byte*)data_bits+0)/255.f;
-//         }
-//         break;
-//
-//         case BITFMT_B8G8R8A8:
-//         {
-//         R = *(( t_byte*)data_bits+1)/255.f;
-//         G = *(( t_byte*)data_bits+2)/255.f;
-//         B = *(( t_byte*)data_bits+3)/255.f;
-//         A = *(( t_byte*)data_bits+0)/255.f;
-//         }
-//         break;
-//
-//
-//         case BITFMT_A8R8G8B8:
-//         {
-//         R = *(( t_byte*)data_bits+2)/255.f;
-//         G = *(( t_byte*)data_bits+1)/255.f;
-//         B = *(( t_byte*)data_bits+0)/255.f;
-//         A = *(( t_byte*)data_bits+3)/255.f;
-//         }
-//         break;
-//
-//         case BITFMT_A8B8G8R8:
-//         {
-//         R = *(( t_byte*)data_bits+0)/255.f;
-//         G = *(( t_byte*)data_bits+1)/255.f;
-//         B = *(( t_byte*)data_bits+2)/255.f;
-//         A = *(( t_byte*)data_bits+3)/255.f;
-//         }
-//         break;
-//
-//         case BITFMT_X8R8G8B8:
-//         {
-//         R = *(( t_byte*)data_bits+2)/255.f;
-//         G = *(( t_byte*)data_bits+1)/255.f;
-//         B = *(( t_byte*)data_bits+0)/255.f;
-//         A = 1.f;
-//         }
-//         break;
-//
-//         case BITFMT_X8B8G8R8:
-//         {
-//         R = *(( t_byte*)data_bits+0)/255.f;
-//         G = *(( t_byte*)data_bits+1)/255.f;
-//         B = *(( t_byte*)data_bits+2)/255.f;
-//         A = 1.f;
-//         }
-//         break;
-//
-//     //////////////////////////////////////////////////////////////////////
-//         case BITFMT_A2R10G10B10:
-//         {
-//         t_uint32 u32BITS = *((t_uint32*)data_bits);
-//         B = ((u32BITS>>(0    ))  & 0x3FF)/1023.f;
-//         G = ((u32BITS>>(10   ))  & 0x3FF)/1023.f;
-//         R = ((u32BITS>>(10+10))  & 0x3FF)/1023.f;
-//         A = ((u32BITS>>(10+10+10)) & 0x3)/3.f;
-//         }
-//         break;
-//
-//         case BITFMT_A2B10G10R10:
-//         {
-//         t_uint32 u32BITS = *((t_uint32*)data_bits);
-//         R = ((u32BITS>>(0    ))  & 0x3FF)/1023.f;
-//         G = ((u32BITS>>(10   ))  & 0x3FF)/1023.f;
-//         B = ((u32BITS>>(10+10))  & 0x3FF)/1023.f;
-//         A = ((u32BITS>>(10+10+10)) & 0x3)/3.f;
-//         }
-//         break;
-//
-//         case BITFMT_R10G10B10A2:
-//         {
-//         t_uint32 u32BITS = *((t_uint32*)data_bits);
-//         A = ((u32BITS>>(0    ))  & 0x3FF)/1023.f;
-//         B = ((u32BITS>>(10   ))  & 0x3FF)/1023.f;
-//         G = ((u32BITS>>(10+10))  & 0x3FF)/1023.f;
-//         R = ((u32BITS>>(10+10+10)) & 0x3)/3.f;
-//         }
-//         break;
-//
-//         case BITFMT_B10G10R10A2:
-//         {
-//         t_uint32 u32BITS = *((t_uint32*)data_bits);
-//         A = ((u32BITS>>(0    ))  & 0x3FF)/1023.f;
-//         R = ((u32BITS>>(10   ))  & 0x3FF)/1023.f;
-//         G = ((u32BITS>>(10+10))  & 0x3FF)/1023.f;
-//         B = ((u32BITS>>(10+10+10)) & 0x3)/3.f;
-//         }
-//         break;
-//
-//         case BITFMT_R8G8B8:
-//         R = *((t_byte*)data_bits+2)/255.f;
-//         G = *((t_byte*)data_bits+1)/255.f;
-//         B = *((t_byte*)data_bits+0)/255.f;
-//         A = 1.0f;
-//         break;
-//
-//         case BITFMT_B8G8R8:
-//         R = *((t_byte*)data_bits+0)/255.f;
-//         G = *((t_byte*)data_bits+1)/255.f;
-//         B = *((t_byte*)data_bits+2)/255.f;
-//         A = 1.0f;
-//         break;
-//
-//         case BITFMT_R5G6B5:
-//         u16BITS = *((t_uint16*)data_bits);
-//         R = ((u16BITS>>(6+5)) & 0x001F)/31.f;
-//         G = ((u16BITS>>   5) & 0x003F)/63.f;
-//         B = ((u16BITS      ) & 0x001F)/31.f;
-//         A = 1.0f;
-//         break;
-//
-//         case BITFMT_X1R5G5B5:
-//         u16BITS = *((t_uint16*)data_bits);
-//         R = ((u16BITS>>(5+5)) & 0x001F)/31.f;
-//         G = ((u16BITS>>   5) & 0x001F)/31.f;
-//         B = ((u16BITS      ) & 0x001F)/31.f;
-//         A = 1.0f;
-//         break;
-//
-//         case BITFMT_A1R5G5B5:
-//         u16BITS = *((t_uint16*)data_bits);
-//         R = ((u16BITS>>(5+5)) & 0x001F)/31.f;
-//         G = ((u16BITS>>   5) & 0x001F)/31.f;
-//         B = ((u16BITS      ) & 0x001F)/31.f;
-//         A = ( u16BITS & 0x8000 ) ? 1.f : 0.f;
-//         break;
-//
-//         case BITFMT_A4R4G4B4:
-//         u16BITS = *((t_uint16*)data_bits);
-//         R = ((u16BITS>>  (4+4)) & 0x000F)/15.f;
-//         G = ((u16BITS>>    (4)) & 0x000F)/15.f;
-//         B = ((u16BITS         ) & 0x000F)/15.f;
-//         A = ((u16BITS>>(4+4+4)) & 0x000F)/15.f;
-//         break;
-//
-//         case BITFMT_X4R4G4B4:
-//         u16BITS = *((t_uint16*)data_bits);
-//         R = ((u16BITS>>(4+4)) & 0x000F)/15.f;
-//         G = ((u16BITS>>  (4)) & 0x000F)/15.f;
-//         B = ((u16BITS       ) & 0x000F)/15.f;
-//         A = 1.f;
-//         break;
-//
-//         case BITFMT_A8R3G3B2:
-//         u16BITS = *((t_uint16*)data_bits);
-//         R = ((u16BITS>>(3+2)) & 0x07)/7.f;
-//         G = ((u16BITS>>   2) & 0x07)/7.f;
-//         B = ((u16BITS      ) & 0x03)/3.f;
-//         A = (t_byte)(0xff & (u16BITS >> 8))/255.f;
-//         break;
-//
-//         case BITFMT_R3G3B2:
-//         u8BITS = *((t_byte*)data_bits);
-//         R = ((u8BITS>>(3+2)) & 0x07)/7.f;
-//         G = ((u8BITS>>   2) & 0x07)/7.f;
-//         B = ((u8BITS      ) & 0x03)/3.f;
-//         A = 1.0f;
-//         break;
-//     }
-//
-//     if(undo_gamma_correction)
-//     {
-//         Undo_Gamma_Correction(R);
-//         Undo_Gamma_Correction(G);
-//         Undo_Gamma_Correction(B);
-//         Undo_Gamma_Correction(A);
-//     }
-//
-//     red_   = R;
-//     green_ = G;
-//     blue_  = B;
-//     alpha_ = A;
-// }
 
   Color Color::RandomColor()
   {
@@ -863,8 +493,8 @@ namespace nux
   {
     float min, max, delta;
 
-    min = Min<t_float> ( Min<t_float> (r, g), b );
-    max = Max<t_float> ( Max<t_float> (r, g), b );
+    min = Min<float> ( Min<float> (r, g), b );
+    max = Max<float> ( Max<float> (r, g), b );
     v = max;				// v
 
     delta = max - min;

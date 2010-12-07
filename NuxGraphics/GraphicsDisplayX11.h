@@ -73,6 +73,7 @@ namespace nux
 
     int         m_ParentWindow;
     GLXContext  m_GLCtx;
+    GLXFBConfig _fb_config;
     XSetWindowAttributes m_X11Attr;
 
     int m_NumVideoModes;
@@ -84,10 +85,11 @@ namespace nux
     Colormap        m_X11Colormap;
     int             m_BorderPixel;
 
-    int m_X11VerMajor;
-    int m_X11VerMinor;
-    int m_GLXVerMajor;
-    int m_GLXVerMinor;
+    int _x11_major;
+    int _x11_minor;
+    int _glx_major;
+    int _glx_minor;
+    bool _has_glx_13;
 
     XEvent m_X11LastEvent;
     Bool m_X11RepeatKey;

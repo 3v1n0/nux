@@ -110,16 +110,16 @@ namespace nux
     ~Color();
     Color (const Color &);
     explicit Color (unsigned int c);
-    Color (t_float r, t_float g, t_float b);
-    Color (t_float r, t_float g, t_float b, t_float a);
+    Color (float r, float g, float b);
+    Color (float r, float g, float b, float a);
     Color *Clone() const;
 
-    Color &operator= (const Color &);
-    bool operator== (const Color &) const;
-    bool operator!= (const Color &) const;
+    Color &operator = (const Color &);
+    bool operator == (const Color &) const;
+    bool operator != (const Color &) const;
 
-    void SetRGB (t_float r, t_float g, t_float b);
-    void SetRGBA (t_float r, t_float g, t_float b, t_float a);
+    void SetRGB (float r, float g, float b);
+    void SetRGBA (float r, float g, float b, float a);
 
     void ClampVal();
     void Saturate();
@@ -127,56 +127,19 @@ namespace nux
     Color Luminance();
     Color OneMinusLuminance();
 
-    t_float GetRed() const
-    {
-      return red_;
-    };
-    t_float GetGreen() const
-    {
-      return green_;
-    };
-    t_float GetBlue() const
-    {
-      return blue_;
-    };
-    t_float GetAlpha() const
-    {
-      return alpha_;
-    };
+    float GetRed() const;
+    float GetGreen() const;
+    float GetBlue() const;
+    float GetAlpha() const;
+    float R() const;
+    float G() const;
+    float B() const;
+    float A() const;
+    void SetRed (float r);
+    void SetGreen (float g);
+    void SetBlue (float b);
+    void SetAlpha (float a);
 
-    t_float R() const
-    {
-      return red_;
-    };
-    t_float G() const
-    {
-      return green_;
-    };
-    t_float B() const
-    {
-      return blue_;
-    };
-    t_float A() const
-    {
-      return alpha_;
-    };
-
-    void SetRed (t_float r)
-    {
-      red_ = r;
-    };
-    void SetGreen (t_float g)
-    {
-      green_ = g;
-    };
-    void SetBlue (t_float b)
-    {
-      blue_ = b;
-    };
-    void SetAlpha (t_float a)
-    {
-      alpha_ = a;
-    };
 
     static Color RandomColor();
     static unsigned int RandomColorINT();
@@ -192,10 +155,10 @@ namespace nux
 
 
   private:
-    t_float red_;
-    t_float green_;
-    t_float blue_;
-    t_float alpha_;
+    float _red;
+    float _green;
+    float _blue;
+    float _alpha;
 
   public:
 //X11 color names from:http://en.wikipedia.org/wiki/Web_colors
@@ -360,6 +323,9 @@ namespace nux
     static const Color      SlateGray           ;//        70 80 90 	112 128 144
     static const Color      DarkSlateGray       ;//        2F 4F 4F 	47 79 79
     static const Color      Black               ;//        00 00 00 	0 0 0
+
+    // More Colors
+    static const Color      Aubergine           ;//        2B 0B 30 	43 11 48
 
     static Color    Dummy;
   };

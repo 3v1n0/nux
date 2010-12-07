@@ -292,7 +292,15 @@ namespace nux
     int req_opengl_minor,
     bool opengl_es_20)
 #elif defined (NUX_OS_LINUX)
-    GpuDevice::GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat)
+  GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+    Display display,
+    Window window,
+    bool has_glx_13_support,
+    GLXFBConfig fb_config,
+    GLXContext &opengl_rendering_context,
+    int req_opengl_major,
+    int req_opengl_minor,
+    bool opengl_es_20 = false);
 #endif
     :   _FrameBufferObject (0)
 #if (NUX_ENABLE_CG_SHADERS)
@@ -329,8 +337,11 @@ namespace nux
     glGetIntegerv (GL_MAJOR_VERSION, &_opengl_major);
     glGetIntegerv (GL_MINOR_VERSION, &_opengl_minor);
 
-#if defined (NUX_WINDOWS_OS)    
+#if defined (NUX_OS_WINDOWS)
     if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || ((_opengl_major >= 3) && opengl_es_20))
+#elif defined (NUX_OS_LINUX)
+    if (has_glx_13_support && (((_opengl_major >= 3) && (req_opengl_major >= 3)) || ((_opengl_major >= 3) && opengl_es_20)))
+#endif
     {
       // Create a new Opengl Rendering Context
       bool requested_profile_is_supported = false;
@@ -366,6 +377,7 @@ namespace nux
 
       if (opengl_es_20)
       {
+#if defined (NUX_OS_WINDOWS)
         int attribs[] =
         {
           WGL_CONTEXT_MAJOR_VERSION_ARB,  2,
@@ -387,7 +399,27 @@ namespace nux
           opengl_rendering_context = new_opengl_rendering_context;
           wglMakeCurrent (device_context, opengl_rendering_context);
         }
+#elif defined (NUX_OS_LINUX)
+        int attribs[] =
+        {
+          WGL_CONTEXT_MAJOR_VERSION_ARB,  2,
+          WGL_CONTEXT_MINOR_VERSION_ARB,  0,
+          WGL_CONTEXT_PROFILE_MASK_ARB,   GLX_CONTEXT_ES2_PROFILE_BIT_EXT,
+          0
+        };
 
+        GLXContext new_opengl_rendering_context = glxCreateContextAttribsARB(display, fb_config, 0, true, attribs);
+
+        if (new_opengl_rendering_context == 0)
+        {
+          nuxDebugMsg (TEXT("[GpuDevice::GpuDevice] OpenGL ES 2.0 context creation has failed."));
+        }
+        else
+        {
+          opengl_rendering_context = new_opengl_rendering_context;
+          glxMakeCurrent (display, window, opengl_rendering_context);
+        }
+#endif
       }
       else if (requested_profile_is_supported)
       {
@@ -396,6 +428,7 @@ namespace nux
         int flag_mask = 0;
         int flag_value = 0;
 
+#if defined (NUX_OS_WINDOWS)
         if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
         {
           profile_mask = WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
@@ -426,6 +459,43 @@ namespace nux
           opengl_rendering_context = new_opengl_rendering_context;
           wglMakeCurrent (device_context, opengl_rendering_context);
         }
+#elif defined (NUX_OS_LINUX)
+        if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
+        {
+          profile_mask  = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+          profile_value = GLX_CONTEXT_PROFILE_MASK_ARB;
+          flag_mask     = GLX_CONTEXT_FLAGS_ARB;
+          flag_value    = 0;
+        }
+
+        int attribs[] =
+        {
+          GLX_CONTEXT_MAJOR_VERSION_ARB,  req_opengl_major,
+          GLX_CONTEXT_MINOR_VERSION_ARB,  req_opengl_minor,
+          profile_mask,                   profile_value,
+          flag_mask,                      flag_value,
+          0
+        };
+
+        GLXContext new_opengl_rendering_context = glxCreateContextAttribsARB(display, fb_config, 0, true, attribs);
+
+        if (new_opengl_rendering_context == 0)
+        {
+          nuxDebugMsg (TEXT("[GpuDevice::GpuDevice] OpenGL version %d.%d context creation has failed."), req_opengl_major, req_opengl_minor);
+          attribs[0] = 1; // major version
+          attribs[1] = 0; // minor version
+          attribs[2] = 0;
+          new_opengl_rendering_context = glxCreateContextAttribsARB(display, fb_config, 0, true, attribs);
+
+          opengl_rendering_context = new_opengl_rendering_context;
+          glxMakeCurrent (display, window, opengl_rendering_context);
+        }
+        else
+        {
+          opengl_rendering_context = new_opengl_rendering_context;
+          glxMakeCurrent (display, window, opengl_rendering_context);
+        }
+#endif
       }
       else
       {
@@ -436,7 +506,6 @@ namespace nux
     {
       opengl_rendering_context = 0;
     }
-#endif
 
     _board_vendor_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VENDOR) ) );
     CHECKGL_MSG (glGetString (GL_VENDOR) );

@@ -537,7 +537,15 @@ namespace nux
       bool opengl_es_20 = false);
 
 #elif defined (NUX_OS_LINUX)
-    GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat);
+    GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+      Display display,
+      Window window,
+      bool has_new_glx_support,
+      GLXFBConfig fb_config,
+      GLXContext &opengl_rendering_context,
+      int req_opengl_major = 1,   // requested opengl major version.
+      int req_opengl_minor = 0,   // requested opengl minor version.
+      bool opengl_es_20 = false);
 #endif
     
     ~GpuDevice();

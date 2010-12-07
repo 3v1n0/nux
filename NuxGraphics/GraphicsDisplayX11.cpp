@@ -92,6 +92,9 @@ namespace nux
 
     // A window never starts in a minimized state.
     m_is_window_minimized = false;
+    _has_glx_13 = false;
+    _glx_major = 0;
+    _glx_minor = 0;
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -212,20 +215,8 @@ namespace nux
       return false;
     }
 
-    // Check support for GLX
-    int dummy0, dummy1;
-    if (!glXQueryExtension(m_X11Display, &dummy0, &dummy1))
-    {
-      nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] GLX is not supported."));
-      exit (-1);
-    }
-
-    // Check GLX version
-    glXQueryVersion (m_X11Display, &m_GLXVerMajor, &m_GLXVerMinor);
-
-
     m_X11Screen = DefaultScreen (m_X11Display);
-    XF86VidModeQueryVersion (m_X11Display, &m_X11VerMajor, &m_X11VerMinor);
+    XF86VidModeQueryVersion (m_X11Display, &_x11_major, &_x11_minor);
 
     XF86VidModeGetAllModeLines (m_X11Display, m_X11Screen, &m_NumVideoModes, &m_X11VideoModes);
     m_X11OriginalVideoMode = *m_X11VideoModes[0];
@@ -238,7 +229,7 @@ namespace nux
       for (int num_modes = 0 ; num_modes < m_NumVideoModes; num_modes++)
       {
         if ( (m_X11VideoModes[num_modes]->hdisplay == m_ViewportSize.GetWidth() )
-             && (m_X11VideoModes[num_modes]->vdisplay == m_ViewportSize.GetHeight() ) )
+          && (m_X11VideoModes[num_modes]->vdisplay == m_ViewportSize.GetHeight() ) )
         {
           mode_supported = true;
           m_BestMode = num_modes;
@@ -252,73 +243,126 @@ namespace nux
       }
     }
 
-
-    // Find an OpenGL capable visual.
-    static int g_DoubleBufferVisual[] =
+    // Check support for GLX
+    int dummy0, dummy1;
+    if (!glXQueryExtension(m_X11Display, &dummy0, &dummy1))
     {
-      GLX_RGBA,
-      GLX_DOUBLEBUFFER,
-      GLX_RED_SIZE,       8,
-      GLX_GREEN_SIZE,     8,
-      GLX_BLUE_SIZE,      8,
-      GLX_ALPHA_SIZE,     8,
-      GLX_DEPTH_SIZE,     24,
-      GLX_STENCIL_SIZE,   8,
-      None
-    };
-    m_X11VisualInfo = glXChooseVisual (m_X11Display, m_X11Screen, g_DoubleBufferVisual);
-
-    if (m_X11VisualInfo == NULL)
-    {
-      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get appropriate visual.") );
-      return false;
+      nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] GLX is not supported."));
+      exit (-1);
     }
 
-    // Create OpenGL Context.
-    m_GLCtx = glXCreateContext (m_X11Display, m_X11VisualInfo, 0, GL_TRUE);
+    // Check GLX version
+    glXQueryVersion (m_X11Display, &_glx_major, &_glx_minor);
 
-    m_X11Colormap = XCreateColormap (m_X11Display,
-                                     RootWindow (m_X11Display, m_X11VisualInfo->screen),
-                                     m_X11VisualInfo->visual,
-                                     AllocNone);
+    // FBConfigs support added in GLX version 1.3
+    if (((_glx_major == 1) && (_glx_minor < 3)) || (_glx_major < 1))
+    {
+      _has_glx_13 = false;
+    }
+    else
+    {
+      _has_glx_13 = true;
+    }
 
-//     {
-//       int DoubleBufferAttributes[] =
-//       {
-//         GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-//         GLX_RENDER_TYPE,   GLX_RGBA_BIT,
-//         GLX_DOUBLEBUFFER,  True,
-//         GLX_RED_SIZE,      8,     /* the maximum number of bits per component    */
-//         GLX_GREEN_SIZE,    8, 
-//         GLX_BLUE_SIZE,     8,
-//         GLX_ALPHA_SIZE,    8,
-//         GLX_DEPTH_SIZE,    24,
-//         GLX_STENCIL_SIZE,  8,
-//         None
-//       };
-// 
-//       XSetWindowAttributes  swa;
-//       GLXFBConfig           *fbConfigs;
-//       GLXContext            context;
-//       GLXWindow             glxWin;
-//       int                   numReturned;
-// 
-//       /* Request a suitable framebuffer configuration - try for a double 
-//       ** buffered configuration first */
-//       fbConfigs = glXChooseFBConfig (m_X11Display, DefaultScreen(m_X11Display), DoubleBufferAttributes, &numReturned );
-// 
-//       /* Create an X colormap and window with a visual matching the first
-//       ** returned framebuffer config */
-//       m_X11VisualInfo = glXGetVisualFromFBConfig (m_X11Display, fbConfigs[0]);
-// 
-//       m_X11Colormap = XCreateColormap (m_X11Display, RootWindow (m_X11Display, m_X11VisualInfo->screen),
-//         m_X11VisualInfo->visual,
-//         AllocNone);
-// 
-//     }
+ 
+    if (_has_glx_13 == false)
+    {
+      // Find an OpenGL capable visual.
+      static int g_DoubleBufferVisual[] =
+      {
+        GLX_RGBA,
+        GLX_DOUBLEBUFFER,
+        GLX_RED_SIZE,       8,
+        GLX_GREEN_SIZE,     8,
+        GLX_BLUE_SIZE,      8,
+        GLX_ALPHA_SIZE,     8,
+        GLX_DEPTH_SIZE,     24,
+        GLX_STENCIL_SIZE,   8,
+        None
+      };
 
-    m_X11Attr.border_pixel = 0;
-    m_X11Attr.colormap = m_X11Colormap;
+      m_X11VisualInfo = glXChooseVisual (m_X11Display, m_X11Screen, g_DoubleBufferVisual);
+
+      if (m_X11VisualInfo == NULL)
+      {
+        nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get appropriate visual.") );
+        return false;
+      }
+
+      // Create OpenGL Context.
+      m_GLCtx = glXCreateContext (m_X11Display, m_X11VisualInfo, 0, GL_TRUE);
+
+      m_X11Colormap = XCreateColormap (m_X11Display,
+                                       RootWindow (m_X11Display, m_X11VisualInfo->screen),
+                                       m_X11VisualInfo->visual,
+                                       AllocNone);
+    }
+    else
+    {
+        int DoubleBufferAttributes[] =
+        {
+          GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+          GLX_RENDER_TYPE,   GLX_RGBA_BIT,
+          GLX_DOUBLEBUFFER,  True,
+          GLX_RED_SIZE,      8,     /* the maximum number of bits per component    */
+          GLX_GREEN_SIZE,    8, 
+          GLX_BLUE_SIZE,     8,
+          GLX_ALPHA_SIZE,    8,
+          GLX_DEPTH_SIZE,    24,
+          GLX_STENCIL_SIZE,  8,
+          None
+        };
+
+        XSetWindowAttributes  swa;
+        GLXFBConfig           *fbconfigs;
+        GLXContext            context;
+        GLXWindow             glxWin;
+        int                   fbcount;
+
+        // Request a double buffer configuration
+        fbconfigs = glXChooseFBConfig (m_X11Display, DefaultScreen(m_X11Display), DoubleBufferAttributes, &fbcount );
+
+        if (fbconfigs == NULL)
+        {
+          nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] glXChooseFBConfig cannot get a supported configuration."));
+          exit (-1);
+        }
+
+        // Select the best config
+        int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
+        for (int i = 0; i < fbcount; i++)
+        {
+          XVisualInfo *vi = glXGetVisualFromFBConfig (display, fbc[i]);
+          if (vi)
+          {
+            int samp_buf, samples;
+            glXGetFBConfigAttrib (display, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
+            glXGetFBConfigAttrib (display, fbc[i], GLX_SAMPLES       , &samples);
+
+            nuxDebugMsg (TEXT("Matching fbconfig %d, visual ID 0x%2x: SAMPLE_BUFFERS = %d SAMPLES = %d\n"), i, vi->visualid, samp_buf, samples);
+
+            if (best_fbc < 0 || samp_buf && samples > best_num_samp)
+              best_fbc = i, best_num_samp = samples;
+            if (worst_fbc < 0 || !samp_buf || samples < worst_num_samp)
+              worst_fbc = i, worst_num_samp = samples;
+          }
+          XFree (vi);
+        }
+
+        _fb_config = fbc[best_fbc];
+
+        XFree (fbc);
+
+        m_X11VisualInfo = glXGetVisualFromFBConfig( display, bestFbc );
+
+        m_X11Colormap = XCreateColormap (m_X11Display, RootWindow (m_X11Display, m_X11VisualInfo->screen),
+          m_X11VisualInfo->visual,
+          AllocNone);
+    }
+
+    m_X11Attr.background_pixmap = 0;
+    m_X11Attr.border_pixel      = 0;
+    m_X11Attr.colormap          = m_X11Colormap;
     m_X11Attr.override_redirect = m_Fullscreen;
     m_X11Attr.event_mask =
       // Mouse
@@ -417,21 +461,25 @@ namespace nux
       XMapRaised (m_X11Display, m_X11Window);
     }
 
-//     {
-//       /* Create a GLX context for OpenGL rendering */
-//       GLXContext context = glXCreateNewContext (m_X11Display, fbConfigs[0], GLX_RGBA_TYPE, NULL, True);
-// 
-//       /* Create a GLX window to associate the frame buffer configuration
-//       ** with the created X window */
-//       GLXWindow = glXCreateWindow (m_X11Display, fbConfigs[0], m_X11Window, NULL );
-//       
-//       /* Map the window to the screen, and wait for it to appear */
-//       XMapWindow( m_X11Display, m_X11Window );
-//       XIfEvent( m_X11Display, &event, WaitForNotify, (XPointer) m_X11Window );
-// 
-//       /* Bind the GLX context to the Window */
-//       glXMakeContextCurrent( dpy, glxWin, glxWin, context );
-//     }
+    if (_has_glx_13)
+    {
+      XFree (m_X11VisualInfo);
+      m_X11VisualInfo = 0;
+
+      /* Create a GLX context for OpenGL rendering */
+      GLXContext context = glXCreateNewContext (m_X11Display, fbconfigs[0], GLX_RGBA_TYPE, NULL, True);
+
+      /* Create a GLX window to associate the frame buffer configuration
+      ** with the created X window */
+      GLXWindow = glXCreateWindow (m_X11Display, fbconfigs[0], m_X11Window, NULL );
+      
+      // Map the window to the screen, and wait for it to appear */
+      XMapWindow( m_X11Display, m_X11Window );
+      XIfEvent( m_X11Display, &event, WaitForNotify, (XPointer) m_X11Window );
+
+      /* Bind the GLX context to the Window */
+      glXMakeContextCurrent( dpy, glxWin, glxWin, context );
+    }
 
     MakeGLContextCurrent();
     glClearColor (0.0, 0.0, 0.0, 0.0);
@@ -440,7 +488,14 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8,
+        m_X11Display,
+        m_X11Window,
+        _has_glx_13,
+        _fb_config,
+        m_GLCtx,
+        1, 0, false);
+
     m_GraphicsContext = new GraphicsEngine (*this);
 
     EnableVSyncSwapControl();
@@ -767,7 +822,7 @@ namespace nux
     // In this case, don't sleep the thread... Swap the framebuffer to see the result of the current single motion event.
     // It maybe worth investigating how to properly balance event processing and drawing in order to keep the
     // frame rate and the responsiveness at acceptable levels.
-    // As a consequence, when the mouse is moving, the frame rate goes beyong 60fps.
+    // As a consequence, when the mouse is moving, the frame rate goes beyond 60fps.
 
     /*bool bsleep = true;
     if(XPending(m_X11Display) > 0)

@@ -499,7 +499,7 @@ namespace nux
     m_GraphicsContext = new GraphicsEngine (*this);
 
     //EnableVSyncSwapControl();
-    //DisableVSyncSwapControl();
+    DisableVSyncSwapControl();
 
     return true;
   }
@@ -1891,27 +1891,19 @@ J1:
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::EnableVSyncSwapControl()
   {
-#if WIN32
-
     if (HasVSyncSwapControl() )
     {
       wglSwapIntervalEXT (1);
     }
-
-#endif
   }
 
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::DisableVSyncSwapControl()
   {
-#if WIN32
-
     if (HasVSyncSwapControl() )
     {
       wglSwapIntervalEXT (0);
     }
-
-#endif
   }
 
   float GraphicsDisplay::GetFrameTime() const
