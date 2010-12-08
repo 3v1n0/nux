@@ -44,27 +44,29 @@ bool unity_supported = false;
 void UnitySupportTest ()
 {
   nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 100, 100, nux::WINDOWSTYLE_NORMAL, 0, false);
-  nux::GraphicsEngine* graphics_engine = graphics_display->GetGraphicsEngine();
+  //nux::GraphicsEngine* graphics_engine = graphics_display->GetGraphicsEngine();
   nux::GpuDevice* gpu_device = graphics_display->GetGpuDevice();
 
   
   int opengl_major = gpu_device->GetOpenGLMajorVersion ();
   int opengl_minor = gpu_device->GetOpenGLMinorVersion ();
   
+  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("OpenGL version check ..."));
+  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("------------------------"));
+  
   if ((opengl_major == 1) && (opengl_minor < 4))
   {
     unity_not_supported = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, "System OpenGL: %d.%d [Minimum Required %d.%d]");
+    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, TEXT("System OpenGL: %d.%d [Minimum Required 1.4]"), opengl_major, opengl_minor);
   }
   else
   {
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "System OpenGL: %d.%d [Minimum Required %d.%d]");
+    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, TEXT("System OpenGL: %d.%d [Minimum Required 1.4"), opengl_major, opengl_minor);
   }
 
-#if defined (NUX_OS_LINUX)
 
-#endif
-
+  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("OpenGL extension check ..."));
+  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("--------------------------"));
   if (gpu_device->GetGpuInfo ().Support_EXT_Framebuffer_Object ())
   {
     frame_buffer_object = true;
@@ -140,14 +142,15 @@ void UnitySupportTest ()
   }
 
   // Evaluation
-
+  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("Unity support assesment ..."));
+  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("-----------------------"));
   if (unity_not_supported)
   {
     nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_CRITICAL, "The system graphics capabilities are insufficient to run Unity.");
   }
   else
   {
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_CRITICAL, "The system can run Unity.");
+    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "The system can run Unity.");
   }
 
   delete graphics_display;

@@ -33,3 +33,5 @@ examples/textedit
 examples/tooltip
 m4
 m4/*
+examples/timeline
+examples/unity_support_test
