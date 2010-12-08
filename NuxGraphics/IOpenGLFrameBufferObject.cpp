@@ -197,7 +197,7 @@ namespace nux
 //         // On the PC you need to bing the same D24S8 surface to the depth and the stencil attachment.
 //     }
 
-    //_Rbo.Set (GL_DEPTH_COMPONENT, _Width, _Height);
+    _Rbo.Set (GL_DEPTH_COMPONENT, _Width, _Height);
     CHECKGL ( glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
                                             GL_DEPTH_ATTACHMENT_EXT,
                                             GL_RENDERBUFFER_EXT,

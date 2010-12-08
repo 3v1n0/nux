@@ -173,6 +173,10 @@ namespace nux
     // Event methods
     void GetSystemEvent (IEvent *evt);
 
+    // Os specific
+    int GetGlXMajor () const;
+    int GetGlXMinor () const;
+
 #if defined (NUX_OS_LINUX)
     void InjectXEvent (IEvent *evt, XEvent xevent);
 #endif

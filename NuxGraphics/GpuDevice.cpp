@@ -282,6 +282,7 @@ namespace nux
     _support_ext_texture_rectangle            = GLEW_EXT_texture_rectangle ? true : false;
     _support_arb_texture_rectangle            = GLEW_ARB_texture_rectangle ? true : false;
     _support_nv_texture_rectangle             = GLEW_NV_texture_rectangle ? true : false;
+    _support_arb_pixel_buffer_object          = GLEW_ARB_pixel_buffer_object ? true : false;
   }
 
 #if defined (NUX_OS_WINDOWS)
@@ -292,15 +293,15 @@ namespace nux
     int req_opengl_minor,
     bool opengl_es_20)
 #elif defined (NUX_OS_LINUX)
-  GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
-    Display display,
+  GpuDevice::GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+    Display *display,
     Window window,
     bool has_glx_13_support,
     GLXFBConfig fb_config,
     GLXContext &opengl_rendering_context,
     int req_opengl_major,
     int req_opengl_minor,
-    bool opengl_es_20 = false);
+    bool opengl_es_20)
 #endif
     :   _FrameBufferObject (0)
 #if (NUX_ENABLE_CG_SHADERS)
@@ -375,7 +376,7 @@ namespace nux
         }
       }
 
-      if (opengl_es_20)
+      if (0 /*opengl_es_20*/)
       {
 #if defined (NUX_OS_WINDOWS)
         int attribs[] =
@@ -402,13 +403,13 @@ namespace nux
 #elif defined (NUX_OS_LINUX)
         int attribs[] =
         {
-          WGL_CONTEXT_MAJOR_VERSION_ARB,  2,
-          WGL_CONTEXT_MINOR_VERSION_ARB,  0,
-          WGL_CONTEXT_PROFILE_MASK_ARB,   GLX_CONTEXT_ES2_PROFILE_BIT_EXT,
+          GLX_CONTEXT_MAJOR_VERSION_ARB,  2,
+          GLX_CONTEXT_MINOR_VERSION_ARB,  0,
+          //GLX_CONTEXT_PROFILE_MASK_ARB,   GLX_CONTEXT_ES2_PROFILE_BIT_EXT,
           0
         };
 
-        GLXContext new_opengl_rendering_context = glxCreateContextAttribsARB(display, fb_config, 0, true, attribs);
+        GLXContext new_opengl_rendering_context = glXCreateContextAttribsARB(display, fb_config, 0, true, attribs);
 
         if (new_opengl_rendering_context == 0)
         {
@@ -417,7 +418,7 @@ namespace nux
         else
         {
           opengl_rendering_context = new_opengl_rendering_context;
-          glxMakeCurrent (display, window, opengl_rendering_context);
+          glXMakeCurrent (display, window, opengl_rendering_context);
         }
 #endif
       }
@@ -477,7 +478,7 @@ namespace nux
           0
         };
 
-        GLXContext new_opengl_rendering_context = glxCreateContextAttribsARB(display, fb_config, 0, true, attribs);
+        GLXContext new_opengl_rendering_context = glXCreateContextAttribsARB(display, fb_config, 0, true, attribs);
 
         if (new_opengl_rendering_context == 0)
         {
@@ -485,15 +486,15 @@ namespace nux
           attribs[0] = 1; // major version
           attribs[1] = 0; // minor version
           attribs[2] = 0;
-          new_opengl_rendering_context = glxCreateContextAttribsARB(display, fb_config, 0, true, attribs);
+          new_opengl_rendering_context = glXCreateContextAttribsARB(display, fb_config, 0, true, attribs);
 
           opengl_rendering_context = new_opengl_rendering_context;
-          glxMakeCurrent (display, window, opengl_rendering_context);
+          glXMakeCurrent (display, window, opengl_rendering_context);
         }
         else
         {
           opengl_rendering_context = new_opengl_rendering_context;
-          glxMakeCurrent (display, window, opengl_rendering_context);
+          glXMakeCurrent (display, window, opengl_rendering_context);
         }
 #endif
       }
@@ -656,6 +657,41 @@ namespace nux
     *ppFrameBufferObject = new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION);
 
     return OGL_OK;
+  }
+
+  int GpuDevice::GetOpenGLMajorVersion () const
+  {
+    return _opengl_major;
+  }
+
+  int GpuDevice::GetOpenGLMinorVersion () const
+  {
+    return _opengl_minor;
+  }
+
+  GpuBrand GpuDevice::GetGPUBrand() const
+  {
+    return _gpu_brand;
+  }
+
+  GpuRenderStates &GpuDevice::GetRenderStates()
+  {
+    return *_gpu_render_states;
+  }
+
+  GpuInfo &GpuDevice::GetGpuInfo()
+  {
+    return *_gpu_info;
+  }
+
+  void GpuDevice::ResetRenderStates()
+  {
+    _gpu_render_states->ResetStateChangeToDefault();
+  }
+
+  void GpuDevice::VerifyRenderStates()
+  {
+    _gpu_render_states->CheckStateChange();
   }
 
   // NUXTODO: It is pointless to fill the _Cached... arrays. The data is already in the resource manager.

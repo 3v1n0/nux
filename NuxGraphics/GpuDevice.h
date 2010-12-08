@@ -79,20 +79,21 @@ namespace nux
     bool SupportOpenGL40() const    {return _support_opengl_version_40;}
     bool SupportOpenGL41() const    {return _support_opengl_version_41;}
 
-    bool Support_EXT_Swap_Control()             const    {return _support_ext_swap_control;}
-    bool Support_ARB_Texture_Rectangle()        const    {return _support_arb_texture_rectangle;}
-    bool Support_ARB_Vertex_Program()           const    {return _support_arb_vertex_program;}
-    bool Support_ARB_Fragment_Program()         const    {return _support_arb_fragment_program;}
-    bool Support_ARB_Shader_Objects()           const    {return _support_arb_shader_objects;}
-    bool Support_ARB_Vertex_Shader()            const    {return _support_arb_vertex_shader;}
-    bool Support_ARB_Fragment_Shader()          const    {return _support_arb_fragment_shader;}
-    bool Support_ARB_Vertex_Buffer_Object()     const    {return _support_arb_vertex_buffer_object;}
-    bool Support_ARB_Texture_Non_Power_Of_Two() const    {return _support_arb_texture_non_power_of_two;}
-    bool Support_EXT_Framebuffer_Object()       const    {return _support_ext_framebuffer_object;}
-    bool Support_EXT_Draw_Range_Elements()      const    {return _support_ext_draw_range_elements;}
-    bool Support_EXT_Stencil_Two_Side()         const    {return _support_ext_stencil_two_side;}
-    bool Support_EXT_Texture_Rectangle()        const    {return _support_ext_texture_rectangle;}
-    bool Support_NV_Texture_Rectangle()         const    {return _support_nv_texture_rectangle;}
+    bool Support_EXT_Swap_Control ()              const    {return _support_ext_swap_control;}
+    bool Support_ARB_Texture_Rectangle ()         const    {return _support_arb_texture_rectangle;}
+    bool Support_ARB_Vertex_Program ()            const    {return _support_arb_vertex_program;}
+    bool Support_ARB_Fragment_Program ()          const    {return _support_arb_fragment_program;}
+    bool Support_ARB_Shader_Objects ()            const    {return _support_arb_shader_objects;}
+    bool Support_ARB_Vertex_Shader ()             const    {return _support_arb_vertex_shader;}
+    bool Support_ARB_Fragment_Shader ()           const    {return _support_arb_fragment_shader;}
+    bool Support_ARB_Vertex_Buffer_Object ()      const    {return _support_arb_vertex_buffer_object;}
+    bool Support_ARB_Texture_Non_Power_Of_Two ()  const    {return _support_arb_texture_non_power_of_two;}
+    bool Support_EXT_Framebuffer_Object ()        const    {return _support_ext_framebuffer_object;}
+    bool Support_EXT_Draw_Range_Elements ()       const    {return _support_ext_draw_range_elements;}
+    bool Support_EXT_Stencil_Two_Side ()          const    {return _support_ext_stencil_two_side;}
+    bool Support_EXT_Texture_Rectangle ()         const    {return _support_ext_texture_rectangle;}
+    bool Support_NV_Texture_Rectangle ()          const    {return _support_nv_texture_rectangle;}
+    bool Support_ARB_Pixel_Buffer_Object ()       const    {return _support_arb_pixel_buffer_object;}
 
     int GetMaxFboAttachment () {return _opengl_max_fb_attachment;}
 
@@ -134,6 +135,7 @@ namespace nux
     bool _support_ext_texture_rectangle;
     bool _support_arb_texture_rectangle; //!< Promoted from GL_EXT_TEXTURE_RECTANGLE to ARB.
     bool _support_nv_texture_rectangle;
+    bool _support_arb_pixel_buffer_object;
 
     friend class GpuDevice;
   };
@@ -395,6 +397,8 @@ namespace nux
 
     void CollectDeviceResource();
 
+    int GetOpenGLMajorVersion () const;
+    int GetOpenGLMinorVersion () const;
   private:
     // Default FrameBufferobject
     IntrusiveSP<IOpenGLFrameBufferObject> _FrameBufferObject;
@@ -429,33 +433,20 @@ namespace nux
     CGcontext m_Cgcontext;
 #endif
 
-    inline bool UsePixelBufferObjects() const
+    inline bool UsePixelBufferObjects () const
     {
       return _UsePixelBufferObject;
     }
-    GpuBrand GetGPUBrand() const
-    {
-      return _gpu_brand;
-    }
 
-    GpuRenderStates &GetRenderStates()
-    {
-      return *_gpu_render_states;
-    }
+    GpuBrand GetGPUBrand () const;
 
-    GpuInfo &GetGpuInfo()
-    {
-      return *_gpu_info;
-    }
+    GpuRenderStates &GetRenderStates ();
 
-    void ResetRenderStates()
-    {
-      _gpu_render_states->ResetStateChangeToDefault();
-    }
-    void VerifyRenderStates()
-    {
-      _gpu_render_states->CheckStateChange();
-    }
+    GpuInfo &GetGpuInfo ();
+
+    void ResetRenderStates ();
+
+    void VerifyRenderStates ();
 
     //! Create a texture that the system supports. Rectangle texture or 2D texture.
     /*!
@@ -538,7 +529,7 @@ namespace nux
 
 #elif defined (NUX_OS_LINUX)
     GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
-      Display display,
+      Display *display,
       Window window,
       bool has_new_glx_support,
       GLXFBConfig fb_config,

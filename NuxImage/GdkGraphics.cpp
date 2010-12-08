@@ -96,23 +96,40 @@ namespace nux
     unsigned int height = gdk_pixbuf_get_height (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
     unsigned int row_bytes = gdk_pixbuf_get_rowstride (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
 
-    NTextureData *Texture = new NTextureData (BITFMT_R8G8B8A8, width, height, 1);
+    int channels = gdk_pixbuf_get_n_channels (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
+    int src_pitch = gdk_pixbuf_get_rowstride (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
 
-    guchar *img = gdk_pixbuf_get_pixels (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
+    NTextureData *Texture = NULL;
 
-    for (unsigned int i = 0; i < width; i++)
+    if (channels == 4)
+    {      
+      Texture = new NTextureData (BITFMT_R8G8B8A8, width, height, 1);
+    }
+    else if (channels == 3)
     {
-      for (unsigned int j = 0; j < height; j++)
-      {
-        guchar *pixels = img + ( j * row_bytes + i * 4);
-        UINT value =
-          (* (pixels + 3) << 24) |  // a
-          (* (pixels + 2) << 16) |  // b
-          (* (pixels + 1) << 8)  |  // g
-          * (pixels + 0);           // r
+      Texture = new NTextureData (BITFMT_R8G8B8, width, height, 1);
+    }
+    else if (channels == 1)
+    {
+      Texture = new NTextureData (BITFMT_A8, width, height, 1);
+    }
+    else
+    {
+      nuxDebugMsg (TEXT("[GdkGraphics::GetBitmap] Invalid number of channels."));
+      return 0;
+    }
 
-        Texture->GetSurface (0).Write32b (i, j, value); // = vec4ub(img + ((h-j-1)*row_bytes + i * 4));
-      }
+    ImageSurface &image_surface = Texture->GetSurface (0);
+    t_u8* dest = image_surface.GetPtrRawData ();
+    int dest_pitch = image_surface.GetPitch ();
+
+    t_u8* dst = dest;
+    guchar *src = gdk_pixbuf_get_pixels (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
+
+    for (unsigned int i = 0; i < height; i++)
+    {
+      Memcpy (dst, src + i*src_pitch, width*channels);
+      dst += dest_pitch;
     }
     return Texture;
   }

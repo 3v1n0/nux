@@ -6,7 +6,7 @@ if BUILD_EXAMPLES
 
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
-noinst_PROGRAMS = combobox cairo textedit button checkbox tooltip timeline
+noinst_PROGRAMS = combobox cairo textedit button checkbox tooltip timeline unity_support_test
 
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile
@@ -48,6 +48,8 @@ tooltip_SOURCES = tooltip.cpp
 tooltip_LDADD = $(ALL_LIBS)
 timeline_SOURCES = timeline.cpp
 timeline_LDADD = $(ALL_LIBS)
+unity_support_test_SOURCES = unity_support_test.cpp
+unity_support_test_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
 sourceexampledir = "$(pkgdatadir)/examples"
@@ -56,6 +58,10 @@ sourceexample_DATA = $(combobox_SOURCES) \
                      $(textedit_SOURCES) \
                      $(button_SOURCES) \
                      $(checkbox_SOURCES) \
-                     $(tooltip_SOURCES)
+                     $(tooltip_SOURCES) \
+                     $(unity_support_test_SOURCES)
+
 endif
+
+
 
