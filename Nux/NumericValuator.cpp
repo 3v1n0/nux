@@ -48,7 +48,7 @@ namespace nux
   void NumericValuator::InitializeWidgets()
   {
     m_EditLine->SetValidator (&m_DoubleValidator);
-    m_EditLine->SetText (inlPrintf (TEXT ("%d"), m_DoubleValidator.GetMinimum() ) );
+    m_EditLine->SetText (NString::Printf (TEXT ("%d"), m_DoubleValidator.GetMinimum() ) );
 
     m_EditLine->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     m_EditLine->SetGeometry (Geometry (0, 0, 2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
@@ -119,7 +119,7 @@ namespace nux
     if (m_fValue > m_DoubleValidator.GetMaximum() )
       m_fValue = m_DoubleValidator.GetMaximum();
 
-    m_EditLine->SetText (inlPrintf ("%f", m_fValue) );
+    m_EditLine->SetText (NString::Printf ("%f", m_fValue) );
   }
 
   float NumericValuator::GetValue() const
@@ -174,18 +174,18 @@ namespace nux
       if (m_fValue < m_DoubleValidator.GetMinimum() )
       {
         m_fValue = m_DoubleValidator.GetMinimum();
-        m_EditLine->SetText (inlPrintf ("%f", m_fValue) );
+        m_EditLine->SetText (NString::Printf ("%f", m_fValue) );
       }
 
       if (m_fValue > m_DoubleValidator.GetMaximum() )
       {
         m_fValue = m_DoubleValidator.GetMaximum();
-        m_EditLine->SetText (inlPrintf ("%f", m_fValue) );
+        m_EditLine->SetText (NString::Printf ("%f", m_fValue) );
       }
     }
 //     else
 //     {
-//         m_EditLine->SetText(inlPrintf("%f", m_fValue));
+//         m_EditLine->SetText(NString::Printf("%f", m_fValue));
 //     }
   }
 

@@ -242,20 +242,20 @@ namespace nux
 
     if (m_color_format == Color::COLORFORMAT_FLOAT)
     {
-      m_ValueString->SetText (inlPrintf ("%.3f", m_Value ) );
+      m_ValueString->SetText (NString::Printf ("%.3f", m_Value ) );
     }
 
     if (m_color_format == Color::COLORFORMAT_INT)
     {
-      m_ValueString->SetText (inlPrintf ("%d", (int) (m_Value * 255) ) );
+      m_ValueString->SetText (NString::Printf ("%d", (int) (m_Value * 255) ) );
     }
 
     if (m_color_format == Color::COLORFORMAT_HEX)
     {
-      m_ValueString->SetText (inlPrintf ("%x", (int) (m_Value * 255) ) );
+      m_ValueString->SetText (NString::Printf ("%x", (int) (m_Value * 255) ) );
     }
 
-    //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
+    //m_ValueString->SetText(NString::Printf("%.3f", m_Value));
     NeedRedraw();
   }
 
@@ -277,7 +277,7 @@ namespace nux
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
     SetValue (m_Value);
-    //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
+    //m_ValueString->SetText(NString::Printf("%.3f", m_Value));
     sigValueChanged.emit (this);
     sigFloatChanged.emit (m_Value);
     sigMouseDown.emit (m_Value);
@@ -296,7 +296,7 @@ namespace nux
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
     SetValue (m_Value);
-    //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
+    //m_ValueString->SetText(NString::Printf("%.3f", m_Value));
     sigValueChanged.emit (this);
     sigFloatChanged.emit (m_Value);
     sigMouseUp.emit (m_Value);
@@ -314,7 +314,7 @@ namespace nux
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
     SetValue (m_Value);
-    //m_ValueString->SetText(inlPrintf("%.3f", m_Value));
+    //m_ValueString->SetText(NString::Printf("%.3f", m_Value));
     sigValueChanged.emit (this);
     sigFloatChanged.emit (m_Value);
     sigMouseDrag.emit (m_Value);

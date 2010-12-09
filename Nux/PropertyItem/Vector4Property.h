@@ -55,19 +55,19 @@ namespace nux
     double GetW() const;
     void SetX (double x)
     {
-      m_X->SetText (inlPrintf (TEXT ("%f"), x) );
+      m_X->SetText (NString::Printf (TEXT ("%f"), x) );
     };
     void SetY (double y)
     {
-      m_Y->SetText (inlPrintf (TEXT ("%f"), y) );
+      m_Y->SetText (NString::Printf (TEXT ("%f"), y) );
     };
     void SetZ (double z)
     {
-      m_Z->SetText (inlPrintf (TEXT ("%f"), z) );
+      m_Z->SetText (NString::Printf (TEXT ("%f"), z) );
     };
     void SetW (double w)
     {
-      m_W->SetText (inlPrintf (TEXT ("%f"), w) );
+      m_W->SetText (NString::Printf (TEXT ("%f"), w) );
     };
 
     const TCHAR *GetXLabel() const

@@ -25,7 +25,7 @@
 #include <fstream>
 
 #include "NuxCore/NuxCore.h"
-#include "NuxCore/NStreamBuffer.h"
+#include "NuxCore/StreamBuffer.h"
 
 #include "Tga.h"
 #include "BitmapFormats.h"

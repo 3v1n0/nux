@@ -52,15 +52,15 @@ namespace nux
     double GetZ() const;
     void SetX (double x)
     {
-      m_X->SetText (inlPrintf (TEXT ("%f"), x) );
+      m_X->SetText (NString::Printf (TEXT ("%f"), x) );
     };
     void SetY (double y)
     {
-      m_Y->SetText (inlPrintf (TEXT ("%f"), y) );
+      m_Y->SetText (NString::Printf (TEXT ("%f"), y) );
     };
     void SetZ (double z)
     {
-      m_Z->SetText (inlPrintf (TEXT ("%f"), z) );
+      m_Z->SetText (NString::Printf (TEXT ("%f"), z) );
     };
 
     const TCHAR *GetXLabel() const

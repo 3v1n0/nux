@@ -21,7 +21,7 @@
 
 
 #include "NuxCore.h"
-#include "NSystemTypes.h"
+#include "SystemTypes.h"
 #include "ColorFunctions.h"
 
 

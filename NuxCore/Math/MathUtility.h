@@ -30,6 +30,7 @@
 #include <cstring>
 #include <ctime>
 
+#include "SystemTypes.h"
 #include "Constants.h"
 
 namespace nux

@@ -47,9 +47,9 @@ namespace nux
     m_Y->SetValidator (&validator);
     m_Z->SetValidator (&validator);
 
-    m_X->SetText (inlPrintf ("%.3f", X) );
-    m_Y->SetText (inlPrintf ("%.3f", Y) );
-    m_Z->SetText (inlPrintf ("%.3f", Z) );
+    m_X->SetText (NString::Printf ("%.3f", X) );
+    m_Y->SetText (NString::Printf ("%.3f", Y) );
+    m_Z->SetText (NString::Printf ("%.3f", Z) );
 
     m_X->SetTextColor (GPropertyItemTextColor1);
     m_Y->SetTextColor (GPropertyItemTextColor1);

@@ -21,7 +21,7 @@
 
 
 #include "NuxCore.h"
-#include "NString.h"
+#include "TextString.h"
 #include "NThread.h"
 
 

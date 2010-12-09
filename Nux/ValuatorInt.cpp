@@ -38,7 +38,7 @@ namespace nux
     m_EditLine->SetValidator (&m_IntValidator);
     m_EditLine->SetSuffix (TEXT ("") );
     m_EditLine->SetPrefix (TEXT ("") );
-    m_EditLine->SetText (inlPrintf (TEXT ("%d"), m_IntValidator.GetMinimum() ) );
+    m_EditLine->SetText (NString::Printf (TEXT ("%d"), m_IntValidator.GetMinimum() ) );
 
     m_EditLine->SetMinimumSize (1.5 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     m_EditLine->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
@@ -138,7 +138,7 @@ namespace nux
   void ValuatorInt::SetValue (int value)
   {
     m_iValue = m_IntValidator.Validate (value);
-    m_EditLine->SetText (inlPrintf ("%d", m_iValue) );
+    m_EditLine->SetText (NString::Printf ("%d", m_iValue) );
     sigValueChanged.emit (this);
     sigValue.emit (m_iValue);
     NeedRedraw();
@@ -218,24 +218,24 @@ namespace nux
     ret = CharToDouble (m_EditLine->GetCleanText().GetTCharPtr() );
     {
       m_iValue = m_IntValidator.Validate (ret);
-      m_EditLine->SetText (inlPrintf ("%d", m_iValue) );
+      m_EditLine->SetText (NString::Printf ("%d", m_iValue) );
       sigValueChanged.emit (this);
       sigValue.emit (m_iValue);
 //
 //        if(m_iValue < m_IntValidator.GetMinimum())
 //        {
 //            m_iValue = m_IntValidator.GetMinimum();
-//            m_EditLine->SetText(inlPrintf("%d", m_iValue));
+//            m_EditLine->SetText(NString::Printf("%d", m_iValue));
 //        }
 //        if(m_iValue > m_IntValidator.GetMaximum())
 //        {
 //            m_iValue = m_IntValidator.GetMaximum();
-//            m_EditLine->SetText(inlPrintf("%d", m_iValue));
+//            m_EditLine->SetText(NString::Printf("%d", m_iValue));
 //        }
     }
 //     else
 //     {
-//         m_EditLine->SetText(inlPrintf("%d", m_iValue));
+//         m_EditLine->SetText(NString::Printf("%d", m_iValue));
 //         sigValueChanged.emit(this);
 //         sigValue.emit(m_iValue);
 //     }

@@ -25,7 +25,7 @@
 
 #include "NuxCore/NuxCore.h"
 #include "NuxCore/Namespace.h"
-#include "NuxCore/NSystemTypes.h"
+#include "NuxCore/SystemTypes.h"
 #include "NuxCore/Error.h"
 #include "NuxCore/FilePath.h"
 #include "NuxCore/Color.h"
@@ -33,7 +33,7 @@
 #include "NuxCore/Point.h"
 #include "NuxCore/Size.h"
 #include "NuxImage/BitmapFormats.h"
-#include "NuxCore/NParsing.h"
+#include "NuxCore/Parsing.h"
 #include "NuxCore/Object.h"
 #include "NuxCore/SmartPtr/GenericSmartPointer.h"
 #include "NuxCore/SmartPtr/IntrusiveSP.h"
