@@ -147,6 +147,7 @@ namespace nux
     Trackable();
     virtual ~Trackable() = 0;
     void SetOwnedReference (bool b);
+    bool _heap_allocated;
 
   private:
     Trackable (const Trackable &);
@@ -164,8 +165,8 @@ namespace nux
 //     static int m_total_allocated_size;  //! Total allocated memory size in bytes.
 //     static int m_number_of_objects;     //! Number of allocated objects;
 
-    bool m_owns_the_reference;
-    int m_size_of_this_object;
+    bool _owns_the_reference;
+    int _size_of_this_object;
 
     //template<typename T> friend class Pointer;
   };

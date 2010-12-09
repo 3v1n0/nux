@@ -67,26 +67,10 @@ namespace nux
   }
 
   std::new_handler Trackable::m_new_current_handler = 0;
-  //Trackable::AllocationList Trackable::m_allocation_list;
-
-//   Trackable::AllocationList::AllocationList()
-//   {
-// 
-//   }
-// 
-//   Trackable::AllocationList::~AllocationList()
-//   {
-// 
-//   }
-
-//   int Trackable::m_total_allocated_size = 0;
-//   int Trackable::m_number_of_objects = 0;
 
   Trackable::Trackable()
   {
-    m_owns_the_reference = false;
-//     m_total_allocated_size = 0;
-//     m_number_of_objects = 0;
+    _owns_the_reference = false;
   }
 
   Trackable::~Trackable()
@@ -116,18 +100,18 @@ namespace nux
 
   bool Trackable::OwnsTheReference()
   {
-    return m_owns_the_reference;
+    return _owns_the_reference;
   }
 
   void Trackable::SetOwnedReference (bool b)
   {
-    if (m_owns_the_reference == true)
+    if (_owns_the_reference == true)
     {
       nuxDebugMsg (TEXT ("[Trackable::SetOwnedReference] Do not change the ownership if is already set to true!") );
       return;
     }
 
-    m_owns_the_reference = b;
+    _owns_the_reference = b;
   }
 
   std::new_handler
@@ -150,8 +134,12 @@ namespace nux
     try
     {
       ptr = ::operator new (size);
+      // Clear the object memory region to 0, so we can set _size_of_this_object and _heap_allocated.
+      Memset (ptr, 0, size);
+
       GObjectStats._allocation_list.push_front (ptr);
-      NUX_STATIC_CAST (Trackable *, ptr)->m_size_of_this_object = size;
+      NUX_STATIC_CAST (Trackable *, ptr)->_size_of_this_object = size;
+      NUX_STATIC_CAST (Trackable *, ptr)->_heap_allocated = true;
       GObjectStats._total_allocated_size += size;
       ++GObjectStats._number_of_objects;
     }
@@ -181,19 +169,20 @@ namespace nux
 
     if (i != GObjectStats._allocation_list.end() )
     {
-      GObjectStats._total_allocated_size -= NUX_STATIC_CAST (Trackable *, ptr)->m_size_of_this_object;
+      GObjectStats._total_allocated_size -= NUX_STATIC_CAST (Trackable *, ptr)->_size_of_this_object;
       --GObjectStats._number_of_objects;
       GObjectStats._allocation_list.erase (i);
       ::operator delete (ptr);
     }
   }
 
-  bool Trackable::IsHeapAllocated() const
+  bool Trackable::IsHeapAllocated () const
   {
-    return IsDynamic();
+    return _heap_allocated;
+    //return IsDynamic ();
   }
 
-  bool Trackable::IsDynamic() const
+  bool Trackable::IsDynamic () const
   {
     // Get pointer to beginning of the memory occupied by this.
     const void *ptr = dynamic_cast<const void *> (this);
@@ -300,7 +289,7 @@ namespace nux
     m_reference_count->Decrement();
     m_weak_reference_count->Decrement();
 
-    if ( (m_reference_count->GetValue() == 0) && IsDynamic() )
+    if ( (m_reference_count->GetValue() == 0) && IsHeapAllocated () )
     {
       Destroy();
       return true;

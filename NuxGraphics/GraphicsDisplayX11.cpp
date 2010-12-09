@@ -432,7 +432,7 @@ namespace nux
                                    &m_X11Attr);
 
       XWarpPointer (m_X11Display, None, m_X11Window, 0, 0, 0, 0, 0, 0);
-      XMapRaised (m_X11Display, m_X11Window);
+      //XMapRaised (m_X11Display, m_X11Window);
       XGrabKeyboard (m_X11Display, m_X11Window, True,
                      GrabModeAsync,
                      GrabModeAsync,
@@ -462,7 +462,7 @@ namespace nux
       XSetWMProtocols (m_X11Display, m_X11Window, &m_WMDeleteWindow, 1);
 
       XSetStandardProperties (m_X11Display, m_X11Window, WindowTitle, WindowTitle, None, NULL, 0, NULL);
-      XMapRaised (m_X11Display, m_X11Window);
+      //XMapRaised (m_X11Display, m_X11Window);
     }
 
     if (0 /*_has_glx_13*/)
@@ -1277,7 +1277,7 @@ namespace nux
           // Note that the logical state of a device (as seen by client applications) may lag the physical state if device
           // event processing is frozen.
 
-          XQueryKeymap (xevent->xany.display, Keys);
+          XQueryKeymap (m_X11Display, Keys);
 
           if (Keys[xevent->xkey.keycode >> 3] & (1 << (xevent->xkey.keycode % 8) ) )
           {
@@ -1817,37 +1817,27 @@ namespace nux
 
   void GraphicsDisplay::ShowWindow()
   {
-#if defined(_WIN32)
-    ::ShowWindow (hWnd, SW_RESTORE);
-#endif
+    XMapWindow (m_X11Display, m_X11Window);
   }
 
   void GraphicsDisplay::HideWindow()
   {
-#if defined(_WIN32)
-    ::ShowWindow (hWnd, SW_MINIMIZE);
-#endif
+    XUnmapWindow (m_X11Display, m_X11Window);
   }
 
   void GraphicsDisplay::EnterMaximizeWindow()
   {
-#if defined(_WIN32)
-    ::ShowWindow (hWnd, SW_MAXIMIZE);
-#endif
+
   }
 
   void GraphicsDisplay::ExitMaximizeWindow()
   {
-#if defined(_WIN32)
-    ::ShowWindow (hWnd, SW_RESTORE);
-#endif
+
   }
 
   void GraphicsDisplay::SetWindowTitle (const TCHAR *Title)
   {
-#if defined(_WIN32)
-    SetWindowText (hWnd, Title);
-#endif
+    XStoreName(m_X11Display, m_X11Window, TCHAR_TO_ANSI (Title));
   }
 
   bool GraphicsDisplay::HasVSyncSwapControl() const
@@ -1857,26 +1847,14 @@ namespace nux
 
   void GraphicsDisplay::EnableVSyncSwapControl()
   {
-#if _WIN32
-
-    if (HasVSyncSwapControl() )
-    {
-      wglSwapIntervalEXT (1);
-    }
-
-#endif
+    GLXDrawable drawable = glXGetCurrentDrawable();
+    glXSwapIntervalEXT(m_X11Display, drawable, 1);
   }
 
   void GraphicsDisplay::DisableVSyncSwapControl()
   {
-#if _WIN32
-
-    if (HasVSyncSwapControl() )
-    {
-      wglSwapIntervalEXT (0);
-    }
-
-#endif
+    GLXDrawable drawable = glXGetCurrentDrawable();
+    glXSwapIntervalEXT(m_X11Display, drawable, 0);
   }
 
   float GraphicsDisplay::GetFrameTime() const
@@ -1927,3 +1905,5 @@ namespace nux
   }
 
 }
+
+
