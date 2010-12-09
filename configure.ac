@@ -250,6 +250,7 @@ AC_CONFIG_FILES([
   Nux/nux.pc
   examples/Makefile
   tests/Makefile
+  tools/Makefile
 ])
 
 AC_OUTPUT
