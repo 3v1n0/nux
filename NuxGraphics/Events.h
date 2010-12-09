@@ -120,10 +120,10 @@ namespace nux
 #define NUX_RIGHT_MOUSE	3
 
 // Key States. Set in e_key_modifiers.
-#define NUX_STATE_SHIFT	        0x00010000
-#define NUX_STATE_CAPS_LOCK	    0x00020000
+#define NUX_STATE_SHIFT	      0x00010000
+#define NUX_STATE_CAPS_LOCK	  0x00020000
 #define NUX_STATE_CTRL		    0x00040000
-#define NUX_STATE_ALT		    0x00080000
+#define NUX_STATE_ALT		      0x00080000
 #define NUX_STATE_NUMLOCK	    0x00100000          // most X servers do this?
 #define NUX_STATE_META		    0x00400000          // correct for XFree86
 #define NUX_STATE_SCROLLLOCK	0x00800000          // correct for XFree86
