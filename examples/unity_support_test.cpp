@@ -41,7 +41,7 @@ bool pixel_buffer_object = false;
 bool unity_not_supported = false;
 bool unity_supported = false;
 
-void UnitySupportTest ()
+bool UnitySupportTest ()
 {
   nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 100, 100, nux::WINDOWSTYLE_NORMAL, 0, false);
   //nux::GraphicsEngine* graphics_engine = graphics_display->GetGraphicsEngine();
@@ -154,6 +154,11 @@ void UnitySupportTest ()
   }
 
   delete graphics_display;
+  
+  if (unity_not_supported)
+    return false;
+
+  return true;
 }
 
 
@@ -163,7 +168,10 @@ int main(int argc, char **argv)
   nux::NuxCoreInitialize(0);
   nux::NuxGraphicsInitialize();
 
-  UnitySupportTest ();
+  bool supported = UnitySupportTest ();
 
-  return 0;
+  if (supported)
+    return 0;
+
+  return 1;
 }
