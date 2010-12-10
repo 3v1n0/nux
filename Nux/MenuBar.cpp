@@ -308,7 +308,7 @@ namespace nux
   }
   void MenuBar::EmitItemMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
   {
-    m_MenuBarWindow = GetWindowCompositor ().GetCurrentWindow ();
+    m_MenuBarWindow = GetWindowCompositor ().GetProcessingTopView ();
 
     if (m_MenuIsActive == false)
     {

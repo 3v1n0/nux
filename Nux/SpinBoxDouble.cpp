@@ -53,7 +53,7 @@ namespace nux
     m_EditLine->SetValidator (&m_DoubleValidator);
     m_EditLine->SetSuffix (TEXT ("") );
     m_EditLine->SetPrefix (TEXT ("") );
-    m_EditLine->SetText (inlPrintf (TEXT ("%.3f"), m_DoubleValidator.GetMinimum() ) );
+    m_EditLine->SetText (NString::Printf (TEXT ("%.3f"), m_DoubleValidator.GetMinimum() ) );
 
     m_EditLine->SetMinimumSize (1.5 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     m_EditLine->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
@@ -159,7 +159,7 @@ namespace nux
 //        m_Value = m_DoubleValidator.GetMinimum();
 //    if(m_Value > m_DoubleValidator.GetMaximum())
 //        m_Value = m_DoubleValidator.GetMaximum();
-    m_EditLine->SetText (inlPrintf ("%.3f", m_Value) );
+    m_EditLine->SetText (NString::Printf ("%.3f", m_Value) );
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
     NeedRedraw();
@@ -249,24 +249,24 @@ namespace nux
     ret = CharToDouble (m_EditLine->GetCleanText().GetTCharPtr() );
     {
       m_Value = m_DoubleValidator.Validate (ret);
-      m_EditLine->SetText (inlPrintf ("%.3f", m_Value) );
+      m_EditLine->SetText (NString::Printf ("%.3f", m_Value) );
       sigValueChanged.emit (this);
       sigValue.emit (m_Value);
 //
 //        if(m_Value < m_DoubleValidator.GetMinimum())
 //        {
 //            m_Value = m_DoubleValidator.GetMinimum();
-//            m_EditLine->SetText(inlPrintf("%.3f", m_Value));
+//            m_EditLine->SetText(NString::Printf("%.3f", m_Value));
 //        }
 //        if(m_Value > m_DoubleValidator.GetMaximum())
 //        {
 //            m_Value = m_DoubleValidator.GetMaximum();
-//            m_EditLine->SetText(inlPrintf("%.3f", m_Value));
+//            m_EditLine->SetText(NString::Printf("%.3f", m_Value));
 //        }
     }
 //     else
 //     {
-//         m_EditLine->SetText(inlPrintf("%.3f", m_Value));
+//         m_EditLine->SetText(NString::Printf("%.3f", m_Value));
 //         sigValueChanged.emit(this);
 //         sigValue.emit(m_Value);
 //     }

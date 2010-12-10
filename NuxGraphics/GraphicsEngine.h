@@ -179,7 +179,7 @@ namespace nux
     void ApplyClippingRectangle();
     void SetDrawClippingRegion (int x, int y, unsigned int width, unsigned int height);
     Rect GetClippingRegion() const;
-    int GetNumberOfClippingRegions() const;
+    int GetNumberOfClippingRegions () const;
 
     void ClearAreaColorDepthStencil (int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil);
     void ClearAreaColor (int x, int y, int width, int height, Color clearcolor);

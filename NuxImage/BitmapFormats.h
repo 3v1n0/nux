@@ -23,7 +23,7 @@
 #ifndef BITMAPFORMATS_H
 #define BITMAPFORMATS_H
 
-#include "NuxCore/NSystemTypes.h"
+#include "NuxCore/SystemTypes.h"
 
 namespace nux
 {

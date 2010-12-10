@@ -200,7 +200,7 @@ namespace nux
     else
       m_Value = value;
 
-    m_ValueString->SetText (inlPrintf ("%.3f", m_Value) );
+    m_ValueString->SetText (NString::Printf ("%.3f", m_Value) );
     NeedRedraw();
   }
 
@@ -221,7 +221,7 @@ namespace nux
     else
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
-    m_ValueString->SetText (inlPrintf ("%.3f", m_Value) );
+    m_ValueString->SetText (NString::Printf ("%.3f", m_Value) );
     sigValueChanged.emit (this);
     sigFloatChanged.emit (m_Value);
     sigMouseDown.emit (m_Value);
@@ -239,7 +239,7 @@ namespace nux
     else
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
-    m_ValueString->SetText (inlPrintf ("%.3f", m_Value) );
+    m_ValueString->SetText (NString::Printf ("%.3f", m_Value) );
     sigValueChanged.emit (this);
     sigFloatChanged.emit (m_Value);
     sigMouseUp.emit (m_Value);
@@ -256,7 +256,7 @@ namespace nux
     else
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
-    m_ValueString->SetText (inlPrintf ("%.3f", m_Value) );
+    m_ValueString->SetText (NString::Printf ("%.3f", m_Value) );
     sigValueChanged.emit (this);
     sigFloatChanged.emit (m_Value);
     sigMouseDrag.emit (m_Value);

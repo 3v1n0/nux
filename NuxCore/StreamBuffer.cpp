@@ -21,7 +21,7 @@
 
 
 #include "NuxCore.h"
-#include "NStreamBuffer.h"
+#include "StreamBuffer.h"
 #include <functional>
 #include <cassert>
 #include <cstring>

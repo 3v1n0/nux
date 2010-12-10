@@ -112,8 +112,10 @@ namespace nux
         Assuming that all functions that receive a reference counted object properly call ref on the object and that the compiler
         can detect unused variables, then the developer should have a way to detect reference counted objects that are not owned.
         It is up to the developer to properly handle these objects.
+
+        @return True if the object has been referenced.
     */
-    virtual void Reference();
+    virtual bool Reference();
 
     //! Decrease the reference count.
     /*!
@@ -133,6 +135,12 @@ namespace nux
         @return True if the object has been destroyed
     */
     virtual bool Dispose();
+
+    //! Return the size of allocated for this object.
+    /*!
+        @return The size allocated for this object.
+    */
+    virtual int GetObjectSize ();
 
     static std::new_handler set_new_handler (std::new_handler handler);
     static void *operator new (size_t size);
@@ -180,7 +188,11 @@ namespace nux
     //! Constructor
     Object (bool OwnTheReference = true, NUX_FILE_LINE_PROTO);
     //! Increase reference count.
-    void Reference();
+    /*!
+        @return True if the object has successfully referenced.
+    */
+    bool Reference();
+
     //! Decrease reference count.
     /*!
         @return True if the object reference count has reached 0 and the object has been destroyed.

@@ -61,7 +61,7 @@ namespace nux
 //         m_ColorEditor->SetColorModel(CM_RGB, CC_RED);
     }
 
-    NString text = inlPrintf (TEXT ("[ R:%d, G:%d, B:%d ]"), (int) (m_Color.R() * 255), (int) (m_Color.G() * 255), (int) (m_Color.B() * 255) );
+    NString text = NString::Printf (TEXT ("[ R:%d, G:%d, B:%d ]"), (int) (m_Color.R() * 255), (int) (m_Color.G() * 255), (int) (m_Color.B() * 255) );
     m_ColorValue->SetText (text);
 
 

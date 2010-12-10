@@ -23,7 +23,7 @@
 #include "NuxCore.h"
 #include "Math/MathUtility.h"
 #include <cmath>
-#include "NSystemTypes.h"
+#include "SystemTypes.h"
 #include "ColorFunctions.h"
 #include "Color.h"
 

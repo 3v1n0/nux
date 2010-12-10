@@ -142,8 +142,8 @@ namespace nux
 
   NString DoubleValidator::ToString (double d)
   {
-    NString Prec = NString (TEXT ("%.") ) + inlPrintf (TEXT ("%d"), m_Decimals) + NString (TEXT ("f") );
-    return inlPrintf (Prec.GetTCharPtr(), d);
+    NString Prec = NString (TEXT ("%.") ) + NString::Printf (TEXT ("%d"), m_Decimals) + NString (TEXT ("f") );
+    return NString::Printf (Prec.GetTCharPtr(), d);
   }
 
   double DoubleValidator::ToDouble (const TCHAR *str)

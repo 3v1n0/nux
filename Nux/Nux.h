@@ -26,7 +26,7 @@
 #include "NuxCore/NuxCore.h"
 
 #include "NuxCore/Namespace.h"
-#include "NuxCore/NSystemTypes.h"
+#include "NuxCore/SystemTypes.h"
 #include "NuxCore/Error.h"
 #include "NuxCore/FilePath.h"
 #include "NuxCore/Color.h"

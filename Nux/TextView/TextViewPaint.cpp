@@ -201,7 +201,7 @@ namespace nux
 //
   void TextView::UpdateMarginWidth()
   {
-    NString linestr = inlPrintf (LINENO_FMT, m_nLineCount);
+    NString linestr = NString::Printf (LINENO_FMT, m_nLineCount);
     m_nLinenoWidth = NeatTextWidth (linestr.GetTCharPtr(), linestr.Length(), 0);
   }
 

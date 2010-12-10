@@ -199,7 +199,7 @@ namespace nux
       m_Value = value;
 
     m_MarkerPosition = m_Value;
-    m_ValueString->SetText (inlPrintf ("%d", m_Value) );
+    m_ValueString->SetText (NString::Printf ("%d", m_Value) );
     NeedRedraw();
   }
 
@@ -232,7 +232,7 @@ namespace nux
         m_Value++;
     }
 
-    m_ValueString->SetText (inlPrintf ("%d", m_Value) );
+    m_ValueString->SetText (NString::Printf ("%d", m_Value) );
     sigValueChanged.emit (this);
     sigMouseDown.emit (m_Value);
 
@@ -254,7 +254,7 @@ namespace nux
     }
 
     m_MarkerPosition = m_Value;
-    m_ValueString->SetText (inlPrintf ("%d", m_Value) );
+    m_ValueString->SetText (NString::Printf ("%d", m_Value) );
     sigValueChanged.emit (this);
     sigMouseUp.emit (m_Value);
 
@@ -282,7 +282,7 @@ namespace nux
         m_Value++;
     }
 
-    m_ValueString->SetText (inlPrintf ("%d", m_Value) );
+    m_ValueString->SetText (NString::Printf ("%d", m_Value) );
     sigValueChanged.emit (this);
     sigMouseDrag.emit (m_Value);
 

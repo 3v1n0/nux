@@ -23,7 +23,7 @@
 #define NUXCORE_H
 
 
-#include "NSystem.h"
+#include "System.h"
 
 #include <cassert>  // (assert.h)
 #include <cctype>   // (ctype.h)
@@ -63,7 +63,7 @@
 
 
 #include "Namespace.h"
-#include "NSystemTypes.h"
+#include "SystemTypes.h"
 
 
 // WIN32_SECURE if define for the latest version of Visual Studio starting at VS 2005. We use it for security improvement.
@@ -139,9 +139,9 @@
 
 // Compiler specific include.
 #if defined(NUX_OS_WINDOWS) && defined (NUX_MICROSOFT_COMPILER)
-    #include "NSystemWindows.h"
+    #include "SystemWindows.h"
 #elif defined (NUX_OS_LINUX) && defined (NUX_GNUCPP_COMPILER)
-    #include "NSystemGNU.h"
+    #include "SystemGNU.h"
 #elif defined (NUX_OS_MACOSX) && defined (NUX_GNUCPP_COMPILER)
     #error Unknown Compiler
 #else
@@ -710,10 +710,10 @@ namespace nux
     #include "Character/NUnicode.h"
 #endif
 
-#include "NTemplate.h"
+#include "Template.h"
 #include "NumberConversion.h"
 
-#include "NString.h"
+#include "TextString.h"
 
 #if defined(NUX_OS_WINDOWS)
     #include "NThread.h"
@@ -740,11 +740,11 @@ namespace nux
 
 #include "NTime.h"
 #include "CPU.h"
-#include "NPlatform.h"
+#include "Platform.h"
 #include "FileManager/NSerializer.h"
-#include "NProcess.h"
+#include "Process.h"
 
-#include "NOutputDevice.h"
+#include "OutputDevice.h"
 #include "FileManager/NFileManagerGeneric.h"
 
 #ifdef NUX_OS_WINDOWS
@@ -763,8 +763,6 @@ namespace nux
 #ifdef NUX_OS_WINDOWS
   #include "Win32Dialogs/NWin32CustomDialog.h"
 #endif
-
-#include "NPrintf.h"
 
 #ifdef NUX_OS_WINDOWS
   #include "Win32Dialogs/NWin32Clipboard.h"

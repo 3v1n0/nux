@@ -247,7 +247,7 @@ namespace nux
   void Vector3DoubleValuator::SetVectorX (double value)
   {
     m_X = m_DoubleValidator.Validate (value);
-    m_XEdit->SetText (inlPrintf ("%.3f", m_X) );
+    m_XEdit->SetText (NString::Printf ("%.3f", m_X) );
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
     NeedRedraw();
@@ -256,7 +256,7 @@ namespace nux
   void Vector3DoubleValuator::SetVectorY (double value)
   {
     m_Y = m_DoubleValidator.Validate (value);
-    m_YEdit->SetText (inlPrintf ("%.3f", m_Y) );
+    m_YEdit->SetText (NString::Printf ("%.3f", m_Y) );
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
     NeedRedraw();
@@ -265,7 +265,7 @@ namespace nux
   void Vector3DoubleValuator::SetVectorZ (double value)
   {
     m_Z = m_DoubleValidator.Validate (value);
-    m_ZEdit->SetText (inlPrintf ("%.3f", m_Z) );
+    m_ZEdit->SetText (NString::Printf ("%.3f", m_Z) );
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
     NeedRedraw();
@@ -413,13 +413,13 @@ namespace nux
     ret = CharToDouble (m_XEdit->GetCleanText().GetTCharPtr() );
     {
       m_X = m_DoubleValidator.Validate (ret);
-      m_XEdit->SetText (inlPrintf ("%.3f", m_X) );
+      m_XEdit->SetText (NString::Printf ("%.3f", m_X) );
       sigValueChanged.emit (this);
       sigValue.emit (m_X, m_Y, m_Z);
     }
 //     else
 //     {
-//         m_XEdit->SetText(inlPrintf("%.3f", m_X));
+//         m_XEdit->SetText(NString::Printf("%.3f", m_X));
 //         sigValueChanged.emit(this);
 //         sigValue.emit(m_X, m_Y, m_Z);
 //     }
@@ -431,13 +431,13 @@ namespace nux
     ret = CharToDouble (m_YEdit->GetCleanText().GetTCharPtr() );
     {
       m_Y = m_DoubleValidator.Validate (ret);
-      m_YEdit->SetText (inlPrintf ("%.3f", m_Y) );
+      m_YEdit->SetText (NString::Printf ("%.3f", m_Y) );
       sigValueChanged.emit (this);
       sigValue.emit (m_X, m_Y, m_Z);
     }
 //     else
 //     {
-//         m_YEdit->SetText(inlPrintf("%.3f", m_Y));
+//         m_YEdit->SetText(NString::Printf("%.3f", m_Y));
 //         sigValueChanged.emit(this);
 //         sigValue.emit(m_X, m_Y, m_Z);
 //     }
@@ -449,13 +449,13 @@ namespace nux
     ret = CharToDouble (m_ZEdit->GetCleanText().GetTCharPtr() );
     {
       m_Z = m_DoubleValidator.Validate (ret);
-      m_ZEdit->SetText (inlPrintf ("%.3f", m_Z) );
+      m_ZEdit->SetText (NString::Printf ("%.3f", m_Z) );
       sigValueChanged.emit (this);
       sigValue.emit (m_X, m_Y, m_Z);
     }
 //     else
 //     {
-//         m_ZEdit->SetText(inlPrintf("%.3f", m_Z));
+//         m_ZEdit->SetText(NString::Printf("%.3f", m_Z));
 //         sigValueChanged.emit(this);
 //         sigValue.emit(m_X, m_Y, m_Z);
 //     }

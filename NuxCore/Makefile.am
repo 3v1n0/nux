@@ -25,9 +25,9 @@ libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_cpp = \
-  $(srcdir)/NString.cpp \
+  $(srcdir)/TextString.cpp \
   $(srcdir)/NTime.cpp \
-  $(srcdir)/NTemplate.cpp \
+  $(srcdir)/Template.cpp \
   $(srcdir)/FilePath.cpp \
   $(srcdir)/TinyXML/tinyxmlparser.cpp \
   $(srcdir)/TinyXML/tinyxml.cpp \
@@ -36,18 +36,18 @@ source_cpp = \
   $(srcdir)/FileManager/NSerializer.cpp \
   $(srcdir)/FileManager/NFileManagerGeneric.cpp \
   $(srcdir)/FileManager/NFileManagerGNU.cpp \
-  $(srcdir)/NSystemGNU.cpp \
-  $(srcdir)/NOutputDevice.cpp \
+  $(srcdir)/SystemGNU.cpp \
+  $(srcdir)/OutputDevice.cpp \
   $(srcdir)/Exception.cpp \
   $(srcdir)/Memory.cpp \
-  $(srcdir)/NStreamBuffer.cpp \
+  $(srcdir)/StreamBuffer.cpp \
   $(srcdir)/Character/NUTF.cpp \
   $(srcdir)/Character/NUni.cpp \
   $(srcdir)/Character/NUnicode.cpp \
   $(srcdir)/Color.cpp \
   $(srcdir)/FileName.cpp \
   $(srcdir)/NThreadGNU.cpp \
-  $(srcdir)/NParsing.cpp \
+  $(srcdir)/Parsing.cpp \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
   $(srcdir)/ColorFunctions.cpp \
@@ -55,11 +55,10 @@ source_cpp = \
   $(srcdir)/Point.cpp \
   $(srcdir)/GlobalInitializer.cpp \
   $(srcdir)/ObjectType.cpp \
-  $(srcdir)/NPlatform.cpp \
+  $(srcdir)/Platform.cpp \
   $(srcdir)/Rect.cpp \
-  $(srcdir)/NPrintf.cpp \
   $(srcdir)/FileIO.cpp \
-  $(srcdir)/NProcess.cpp \
+  $(srcdir)/Process.cpp \
   $(srcdir)/NumberConversion.cpp \
   $(srcdir)/NuxCore.cpp \
   $(srcdir)/Object.cpp \
@@ -132,28 +131,27 @@ source_datastruct_h = \
   $(srcdir)/DataStruct/NList.h
 
 source_h = \
-  $(srcdir)/NSystemTypes.h \
+  $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
   $(srcdir)/CPU.h \
   $(srcdir)/FilePath.h \
-  $(srcdir)/NSystem.h \
-  $(srcdir)/NParsing.h \
-  $(srcdir)/NStringConversion.h \
+  $(srcdir)/System.h \
+  $(srcdir)/Parsing.h \
+  $(srcdir)/StringConversion.h \
   $(srcdir)/GlobalInitializer.h \
-  $(srcdir)/NPrintf.h \
   $(srcdir)/Rect.h \
-  $(srcdir)/NPlatform.h \
+  $(srcdir)/Platform.h \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
-  $(srcdir)/NStreamBuffer.h \
+  $(srcdir)/StreamBuffer.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
   $(srcdir)/Namespace.h \
-  $(srcdir)/NSystemGNU.h \
+  $(srcdir)/SystemGNU.h \
   $(srcdir)/NuxCore.h \
   $(srcdir)/FileName.h \
-  $(srcdir)/NOutputDevice.h \
-  $(srcdir)/NProcess.h \
+  $(srcdir)/OutputDevice.h \
+  $(srcdir)/Process.h \
   $(srcdir)/ObjectType.h \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/Object.h \
@@ -164,8 +162,8 @@ source_h = \
   $(srcdir)/CRC32.h \
   $(srcdir)/Macros.h \
   $(srcdir)/NThreadGNU.h \
-  $(srcdir)/NString.h \
-  $(srcdir)/NTemplate.h \
+  $(srcdir)/TextString.h \
+  $(srcdir)/Template.h \
   $(srcdir)/NUniqueIndex.h \
   $(srcdir)/FileIO.h \
   $(srcdir)/InitiallyUnownedObject.h \

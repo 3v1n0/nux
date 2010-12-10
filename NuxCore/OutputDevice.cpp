@@ -21,7 +21,7 @@
 
 
 #include "NuxCore.h"
-#include "NParsing.h"
+#include "Parsing.h"
 
 namespace nux
 {

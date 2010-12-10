@@ -935,7 +935,7 @@ namespace nux
     if (GetParentMenu() == 0)
     {
       // This is the head of the menu chain
-      m_MenuWindow = GetWindowCompositor().GetCurrentWindow();
+      m_MenuWindow = GetWindowCompositor().GetProcessingTopView();
     }
 
     GetWindowCompositor().AddMenu (this, m_MenuWindow/*, OverrideCurrentMenuChain*/);

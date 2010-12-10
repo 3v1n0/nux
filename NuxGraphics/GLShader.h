@@ -25,7 +25,7 @@
 
 #include "NuxCore/NuxCore.h"
 #include "NuxCore/Error.h"
-#include "NuxCore/NOutputDevice.h"
+#include "NuxCore/OutputDevice.h"
 
 #include "GLResource.h"
 

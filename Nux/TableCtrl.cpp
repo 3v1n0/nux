@@ -1998,7 +1998,7 @@ namespace nux
   {
     //m_column_header = m_column_header_preview;
     //m_column_header_preview.clear();
-    GetWindowCompositor().SetWidgetDrawingOverlay (NULL, GetWindowCompositor().GetCurrentWindow() );
+    GetWindowCompositor().SetWidgetDrawingOverlay (NULL, GetWindowCompositor().GetProcessingTopView() );
 
     if (true)
     {
@@ -2011,7 +2011,7 @@ namespace nux
 
   void TableCtrl::OnResizeHeaderMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
   {
-    GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor().GetCurrentWindow() );
+    GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor().GetProcessingTopView() );
 
     bool recompute = false;
 

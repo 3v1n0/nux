@@ -43,6 +43,8 @@ namespace nux
   class HLayout;
   class PopUpWindow;
 
+  //typedef TopView BaseWindow;
+
   /*!
       A user provided callback to assert the size and position of a floating area.
       The callback receives a proposed size and position for the floating area. Inside the callback,

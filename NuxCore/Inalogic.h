@@ -24,7 +24,7 @@
 #define INALOGIC_H
 
 #include "Namespace.h"
-#include "NSystemTypes.h"
+#include "SystemTypes.h"
 
 
 #endif // INALOGIC_H
