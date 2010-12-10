@@ -149,10 +149,21 @@ namespace nux
     void DrawMenu (bool force_draw);
     void DrawOverlay (bool force_draw);
     void DrawTooltip (bool force_draw);
-    void DrawFloatingWindows (bool force_draw, std::list< IntrusiveWeakSP<BaseWindow> >& WindowList, bool drawModal, bool UseFBO);
+
+    //! Render all top views.
+    /*!
+        @force_draw True if the entire surface of the backup rendering mush flushed.
+        @WindowList The list of top views.
+        @draw_modal True if the top view that is modal is to be rendered.
+        @use_fbo True if TopViews should be backed by an fbo.
+    */
+    void RenderTopViews (bool force_draw, std::list< IntrusiveWeakSP<BaseWindow> >& WindowList, bool draw_modal, bool use_fbo);
+
+    //! Render the content of a top view.
+    void RenderTopViewContent (BaseWindow *window, bool force_draw);
 
     void RenderMainWindowComposition (bool force_draw, bool UseFBO);
-    void RenderWindowComposition (BaseWindow *window, bool force_draw);
+
 
 
     /*!
@@ -212,25 +223,43 @@ namespace nux
     */
     BaseWindow *GetSelectedWindow();
 
-    BaseWindow *GetCurrentWindow()
-    {
-      return m_CurrentWindow.GetPointer ();
-    }
     
     BaseWindow *GetFocusAreaWindow()
     {
       return m_FocusAreaWindow.GetPointer ();
     }
 
-    void SetCurrentWindow (BaseWindow* window)
+    //! Set the top view that is about to be processed (event or rendering).
+    /*!
+        Before event processing or rendering, this should be called to set the TopView that is about 
+        to be processed. This function is used internally by the system.
+    */
+    void SetProcessingTopView (BaseWindow* window)
     {
       m_CurrentWindow = window;
+    }
+
+    //! Get the top view that is being processed (event or rendering).
+    /*!
+        Get the active TopView during and event processing or rendering.
+    */
+    BaseWindow *GetProcessingTopView()
+    {
+      return m_CurrentWindow.GetPointer ();
     }
 
     void SetFocusAreaWindow (BaseWindow *window)
     {
       m_FocusAreaWindow = window;
     }
+
+    //! Set the rendering surface for the current rendering.
+    /*!
+        This function is used to restore the rendering surface according to the system state. This is necessary after using a custom frame buffer obejct.
+    */
+    void RestoreRenderingSurface ();
+
+
     void SetCurrentEvent (IEvent *event)
     {
       m_CurrentEvent = event;
@@ -271,6 +300,7 @@ namespace nux
     IntrusiveSP<IOpenGLBaseTexture> m_MainDepthRT;
     IntrusiveSP<IOpenGLBaseTexture> m_CompositionRT;
 
+    //! Return the RenderTargetTextures structure of a TopView.
     RenderTargetTextures &GetWindowBuffer (BaseWindow* window);
 
     IntrusiveWeakSP<BaseWindow> m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
@@ -331,6 +361,9 @@ namespace nux
 
     //! True while events are being processed inside ProcessEvent ().
     bool _inside_event_processing;
+
+    //! True while rendering is being done.
+    bool _inside_rendering_cycle;
 
     InputArea* OverlayDrawingCommand;
     IntrusiveWeakSP<BaseWindow> m_OverlayWindow;            //!< The window that owns the overlay;

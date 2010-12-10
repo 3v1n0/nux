@@ -57,6 +57,8 @@ namespace nux
     void ApplyClippingRegion();
     void SetClippingRegion (int x, int y, int width, int height);
     Rect GetClippingRegion();
+    int GetNumberOfClippingRegions () const;
+
     int GetWidth() const
     {
       return _Width;

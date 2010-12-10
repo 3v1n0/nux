@@ -66,6 +66,7 @@ namespace nux
     m_PreviousMouseOverArea     = NULL;
     _always_on_front_window     = NULL;
     _inside_event_processing    = false;
+    _inside_rendering_cycle     = false;
     _exclusive_input_area       = NULL;
     _in_exclusive_input_mode    = false;
     _pending_exclusive_input_mode_action = false;
@@ -280,7 +281,7 @@ namespace nux
     if (GetMouseFocusArea() && (ievent.e_event != NUX_MOUSE_PRESSED) && (!InExclusiveInputMode ()))
     {
       SetCurrentEvent (&ievent);
-      SetCurrentWindow (GetFocusAreaWindow());
+      SetProcessingTopView (GetFocusAreaWindow());
       ProcessEventOnObject (ievent, GetMouseFocusArea(), 0, 0);
 
       if (ievent.e_event == NUX_MOUSE_RELEASED)
@@ -323,7 +324,7 @@ namespace nux
 //             }
 //         }
       SetCurrentEvent (NULL);
-      SetCurrentWindow (NULL);
+      SetProcessingTopView (NULL);
     }
     else
     {
@@ -404,9 +405,9 @@ namespace nux
 
       if (m_ModalWindowList.size () > 0)
       {
-        SetCurrentWindow ((*m_ModalWindowList.begin ()).GetPointer ());
+        SetProcessingTopView ((*m_ModalWindowList.begin ()).GetPointer ());
         ret = (*m_ModalWindowList.begin ())->ProcessEvent (ievent, ret, ProcessEventInfo);
-        SetCurrentWindow (NULL);
+        SetProcessingTopView (NULL);
       }
       else
       {
@@ -425,9 +426,9 @@ namespace nux
             // Traverse the window from the top of the visibility stack to the bottom.
             if ((*it).GetPointer ())
             {
-              SetCurrentWindow ((*it).GetPointer ());
+              SetProcessingTopView ((*it).GetPointer ());
               ret = (*it)->ProcessEvent (ievent, ret, ProcessEventInfo);
-              SetCurrentWindow (NULL);
+              SetProcessingTopView (NULL);
 
               if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
               {
@@ -714,6 +715,7 @@ namespace nux
 
   void WindowCompositor::Draw (bool SizeConfigurationEvent, bool force_draw)
   {
+    _inside_rendering_cycle = true;
     if (!GetGraphicsThread()->GetWindow().isWindowMinimized())
     {
       //int w, h;
@@ -734,8 +736,8 @@ namespace nux
 
           if (1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
-            DrawFloatingWindows (true, m_WindowList, false, true);
-            DrawFloatingWindows (true, m_ModalWindowList, true, true);
+            RenderTopViews (true, m_WindowList, false, true);
+            RenderTopViews (true, m_ModalWindowList, true, true);
 
             DrawMenu (true);
             DrawTooltip (true);
@@ -751,8 +753,8 @@ namespace nux
 
           if (1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
-            DrawFloatingWindows (false, m_WindowList, false, true);
-            DrawFloatingWindows (false, m_ModalWindowList, true, true);
+            RenderTopViews (false, m_WindowList, false, true);
+            RenderTopViews (false, m_ModalWindowList, true, true);
 
             DrawMenu (true);
             DrawTooltip (true);
@@ -766,8 +768,8 @@ namespace nux
 
           if (1 /*GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
-            DrawFloatingWindows (false, m_WindowList, false, true);
-            DrawFloatingWindows (false, m_ModalWindowList, true, true);
+            RenderTopViews (false, m_WindowList, false, true);
+            RenderTopViews (false, m_ModalWindowList, true, true);
 
             DrawMenu (true);
             DrawTooltip (true);
@@ -782,8 +784,8 @@ namespace nux
           GetPainter().PushDrawColorLayer (GetGraphicsThread()->GetGraphicsEngine(), Geometry (0, 0, m_Width, m_Height), Color (0xFF4D4D4D), true);
           RenderMainWindowComposition (true, false);
 
-          DrawFloatingWindows (true, m_WindowList, false, false);
-          DrawFloatingWindows (true, m_ModalWindowList, true, false);
+          RenderTopViews (true, m_WindowList, false, false);
+          RenderTopViews (true, m_ModalWindowList, true, false);
           DrawMenu (true);
           DrawOverlay (true);
           DrawTooltip (true);
@@ -794,8 +796,8 @@ namespace nux
           GetPainter().PushDrawColorLayer (GetGraphicsThread()->GetGraphicsEngine(), Geometry (0, 0, m_Width, m_Height), Color (0xFF4D4D4D), true);
           RenderMainWindowComposition (true, false);
 
-          DrawFloatingWindows (false, m_WindowList, false, false);
-          DrawFloatingWindows (false, m_ModalWindowList, true, false);
+          RenderTopViews (false, m_WindowList, false, false);
+          RenderTopViews (false, m_ModalWindowList, true, false);
           DrawMenu (true);
           DrawOverlay (true);
           DrawTooltip (true);
@@ -804,8 +806,8 @@ namespace nux
         else
         {
           RenderMainWindowComposition (false, false);
-          DrawFloatingWindows (true, m_WindowList, false, false);
-          DrawFloatingWindows (true, m_ModalWindowList, true, false);
+          RenderTopViews (true, m_WindowList, false, false);
+          RenderTopViews (true, m_ModalWindowList, true, false);
           DrawMenu (true);
           DrawOverlay (true);
           DrawTooltip (true);
@@ -819,6 +821,7 @@ namespace nux
 
       GetGraphicsThread()->GetGraphicsEngine().Pop2DWindow();
     }
+    _inside_rendering_cycle = false;
   }
 
   void WindowCompositor::DrawMenu (bool force_draw)
@@ -848,9 +851,9 @@ namespace nux
 
     for (rev_it_menu = m_MenuList->rbegin(); rev_it_menu != m_MenuList->rend( ); rev_it_menu++)
     {
-      SetCurrentWindow (m_MenuWindow.GetPointer ());
+      SetProcessingTopView (m_MenuWindow.GetPointer ());
       (*rev_it_menu)->ProcessDraw (GetGraphicsThread()->GetGraphicsEngine(), force_draw);
-      SetCurrentWindow (NULL);
+      SetProcessingTopView (NULL);
     }
 
     GetThreadGraphicsContext()->SetContext (0, 0,
@@ -877,9 +880,9 @@ namespace nux
 
     if (OverlayDrawingCommand)
     {
-      SetCurrentWindow (m_OverlayWindow.GetPointer ());
+      SetProcessingTopView (m_OverlayWindow.GetPointer ());
       OverlayDrawingCommand->OverlayDrawing (GetGraphicsThread()->GetGraphicsEngine() );
-      SetCurrentWindow (NULL);
+      SetProcessingTopView (NULL);
     }
 
     GetThreadGraphicsContext()->SetContext (0, 0, buffer_width, buffer_height);
@@ -904,37 +907,37 @@ namespace nux
 
     if(m_TooltipText.Size())
     {
-        //SetCurrentWindow(_tooltip_window);
+        //SetProcessingTopView(_tooltip_window);
         GetPainter().PaintShape(GetGraphicsThread()->GetGraphicsEngine(), _tooltip_geometry, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
         GetPainter().PaintTextLineStatic(GetGraphicsThread()->GetGraphicsEngine(), GetSysBoldFont(), _tooltip_text_geometry, m_TooltipText, Color(0xFFFFFFFF));
-        //SetCurrentWindow(NULL);
+        //SetProcessingTopView(NULL);
     }
 
     GetThreadGraphicsContext()->SetContext (0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::RenderWindowComposition (BaseWindow *window, bool force_draw)
+  void WindowCompositor::RenderTopViewContent (BaseWindow *window, bool force_draw)
   {
     unsigned int window_width, window_height;
     window_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
     window_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
 
     GetPainter().EmptyBackgroundStack();
-    SetCurrentWindow (window);
+    SetProcessingTopView (window);
     window->ProcessDraw (GetGraphicsThread()->GetGraphicsEngine(), force_draw || window->IsRedrawNeeded() );
-    SetCurrentWindow (NULL);
+    SetProcessingTopView (NULL);
     GetPainter().EmptyBackgroundStack();
   }
 
-  void WindowCompositor::DrawFloatingWindows (bool force_draw, std::list< IntrusiveWeakSP<BaseWindow> >& WindowList, bool drawModal, bool UseFBO)
+  void WindowCompositor::RenderTopViews (bool force_draw, std::list< IntrusiveWeakSP<BaseWindow> >& WindowList, bool drawModal, bool use_fbo)
   {
-    GetGraphicsThread()->GetGraphicsEngine().EmptyClippingRegion();
+    GetGraphicsThread ()->GetGraphicsEngine ().EmptyClippingRegion ();
     // Raw the windows from back to front;
     std::list< IntrusiveWeakSP<BaseWindow> >::reverse_iterator rev_it;
 
-    for (rev_it = WindowList.rbegin(); rev_it != WindowList.rend(); rev_it++)
+    for (rev_it = WindowList.rbegin (); rev_it != WindowList.rend (); rev_it++)
     {
-      if ( (drawModal == false) && (*rev_it)->IsModal() )
+      if ((drawModal == false) && (*rev_it)->IsModal ())
         continue;
 
       bool WindowNeedRedraw = false;
@@ -948,7 +951,7 @@ namespace nux
         // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
         if(force_draw || window->IsRedrawNeeded() || window->ChildNeedsRedraw ())
         {
-          if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
+          if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && use_fbo)
           {
             t_s32 buffer_width = window->GetBaseWidth();
             t_s32 buffer_height = window->GetBaseHeight();
@@ -986,10 +989,10 @@ namespace nux
             //GetGraphicsThread()->GetGraphicsEngine().Push2DModelViewMatrix(mat);
           }
 
-          RenderWindowComposition (/*fbo,*/ window, force_draw);
+          RenderTopViewContent (/*fbo,*/ window, force_draw);
         }
         
-        if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && UseFBO)
+        if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/ && use_fbo)
         {
           // GetGraphicsThread()->GetGraphicsEngine().EmptyClippingRegion();
           m_FrameBufferObject->Deactivate();
@@ -1058,7 +1061,7 @@ namespace nux
       }
     }
 
-    if (UseFBO)
+    if (use_fbo)
       m_FrameBufferObject->Deactivate();
   }
 
@@ -1463,7 +1466,7 @@ namespace nux
 
   void WindowCompositor::SetTooltip(InputArea* TooltipArea, const TCHAR *TooltipText, int x, int y)
   {
-    _tooltip_window = GetCurrentWindow();
+    _tooltip_window = GetProcessingTopView();
     m_TooltipArea = TooltipArea;
     m_TooltipText = TooltipText;
     m_TooltipX = x;
@@ -1540,7 +1543,7 @@ namespace nux
       m_EventRoot.Set (0, 0);
     }
 
-    SetFocusAreaWindow (GetCurrentWindow() );
+    SetFocusAreaWindow (GetProcessingTopView() );
   }
 
   InputArea *WindowCompositor::GetMouseFocusArea()
@@ -1777,5 +1780,59 @@ namespace nux
 //   {
 //     return m_BlurTexture;
 //   }
+
+
+  void WindowCompositor::RestoreRenderingSurface ()
+  {
+    BaseWindow *top_view = GetProcessingTopView ();
+
+    if (top_view && _inside_rendering_cycle)
+    {
+      nuxAssert (top_view->Type ().IsDerivedFromType (BaseWindow::StaticObjectType));
+
+      RenderTargetTextures rt = GetWindowBuffer (top_view);
+
+      int buffer_width = top_view->GetBaseWidth();
+      int buffer_height = top_view->GetBaseHeight();
+
+      nuxAssert (buffer_width >= 1);
+      nuxAssert (buffer_height >= 1);
+
+      if ((rt.color_rt->GetWidth () != buffer_width) || (rt.color_rt->GetHeight () != buffer_height))
+      {
+        rt.color_rt = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+        rt.depth_rt = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+      }
+
+      m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
+      m_FrameBufferObject->SetRenderTarget ( 0, rt.color_rt->GetSurfaceLevel (0) );
+      m_FrameBufferObject->SetDepthSurface ( rt.depth_rt->GetSurfaceLevel (0) );
+      m_FrameBufferObject->Activate();
+
+      GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
+      GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
+      GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
+      GetGraphicsThread()->GetGraphicsEngine().ApplyClippingRectangle();
+    }
+    else
+    {
+      int buffer_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
+      int buffer_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
+
+      nuxAssert (buffer_width >= 1);
+      nuxAssert (buffer_height >= 1);
+      // Restore Main Frame Buffer
+      m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
+      m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0) );
+      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+      m_FrameBufferObject->Activate();
+
+      GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
+      GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
+      GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
+      GetGraphicsThread()->GetGraphicsEngine().ApplyClippingRectangle();
+    }
+  }
+
 }
 

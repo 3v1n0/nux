@@ -201,9 +201,9 @@ namespace nux
     timer_object->Period        = Period;
     timer_object->Type          = TIMERTYPE_PERIODIC;
     if (window_thread)
-      timer_object->Window        = window_thread->GetWindowCompositor ().GetCurrentWindow();
+      timer_object->Window        = window_thread->GetWindowCompositor ().GetProcessingTopView();
     else
-      timer_object->Window        = GetWindowCompositor ().GetCurrentWindow();
+      timer_object->Window        = GetWindowCompositor ().GetProcessingTopView();
     
     AddHandle (timer_object);
 
@@ -481,9 +481,9 @@ namespace nux
 
         if (timer_object->TimerCallback != 0)
         {
-          GetWindowCompositor().SetCurrentWindow(timer_object->Window);
+          GetWindowCompositor().SetProcessingTopView(timer_object->Window);
           timer_object->TimerCallback->OnTimerExpired.emit(timer_object->CallbackData);
-          GetWindowCompositor().SetCurrentWindow (NULL);          
+          GetWindowCompositor().SetProcessingTopView (NULL);          
           // Reset glibid to 0. glibid is not null, if this element ever happened to be at the head of the queue
           // and we set a timer for it.
           //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Executed Timeout ID: %d"), timer_object->glibid);

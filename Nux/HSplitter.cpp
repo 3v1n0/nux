@@ -504,7 +504,7 @@ namespace nux
     m_point.Set (x, y);
 
     m_focus_splitter_index = header_pos;
-    GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor ().GetCurrentWindow () );
+    GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor ().GetProcessingTopView () );
 
 
     // Hint for the window to initiate a redraw
@@ -536,7 +536,7 @@ namespace nux
     mvt_dy = 0;
 
     // End overlay drawing;
-    GetWindowCompositor().SetWidgetDrawingOverlay (0, GetWindowCompositor().GetCurrentWindow() );
+    GetWindowCompositor().SetWidgetDrawingOverlay (0, GetWindowCompositor().GetProcessingTopView() );
     // Hint for the window to initiate a redraw
     GetGraphicsThread()->RequestRedraw();
   }
