@@ -70,13 +70,8 @@ namespace nux
 
   Trackable::Trackable()
   {
-    _heap_allocated = IsDynamic ();
+    _heap_allocated = -1;
     
-    if (!_heap_allocated)
-    {
-      _size_of_this_object = 0;
-    }
-
     _owns_the_reference = false;
   }
 
@@ -141,8 +136,6 @@ namespace nux
     try
     {
       ptr = ::operator new (size);
-      // Clear the object memory region to 0, so we can set _size_of_this_object and _heap_allocated.
-      Memset (ptr, 0, size);
 
       GObjectStats._allocation_list.push_front (ptr);
       NUX_STATIC_CAST (Trackable *, ptr)->_size_of_this_object = size;
@@ -182,10 +175,12 @@ namespace nux
     }
   }
 
-  bool Trackable::IsHeapAllocated () const
+  bool Trackable::IsHeapAllocated () 
   {
-    //return _heap_allocated;
-    return IsDynamic ();
+    if (_heap_allocated == -1)
+      _heap_allocated = IsDynamic () ? 1 : 0;
+    else
+      return _heap_allocated;
   }
 
   bool Trackable::IsDynamic () const

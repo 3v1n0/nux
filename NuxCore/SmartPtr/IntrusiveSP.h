@@ -951,7 +951,7 @@ namespace nux
     template<typename U>
     bool operator == (const IntrusiveWeakSP<U>& other) const
     {
-      if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
+      if ((other.m_reference_count->GetValue () != 0) && other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType)))
         return false;
 
       return ( (void *) ptr_ == (void *) other.ptr_);

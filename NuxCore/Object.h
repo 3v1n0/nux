@@ -80,7 +80,7 @@ namespace nux
     /*
         @return True if the object was allocated dynamically.
     */
-    bool IsHeapAllocated() const;
+    bool IsHeapAllocated() ;
 
     //! Test if object was allocated dynamically.
     /*
@@ -155,7 +155,7 @@ namespace nux
     Trackable();
     virtual ~Trackable() = 0;
     void SetOwnedReference (bool b);
-    bool _heap_allocated;
+    int _heap_allocated;
 
   private:
     Trackable (const Trackable &);
