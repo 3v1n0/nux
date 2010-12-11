@@ -1277,7 +1277,7 @@ namespace nux
           // Note that the logical state of a device (as seen by client applications) may lag the physical state if device
           // event processing is frozen.
 
-          XQueryKeymap (m_X11Display, Keys);
+          XQueryKeymap (xevent->xany.display, Keys);
 
           if (Keys[xevent->xkey.keycode >> 3] & (1 << (xevent->xkey.keycode % 8) ) )
           {
