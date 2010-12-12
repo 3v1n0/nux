@@ -61,7 +61,7 @@ bool UnitySupportTest ()
   }
   else
   {
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, TEXT("System OpenGL: %d.%d [Minimum Required 1.4"), opengl_major, opengl_minor);
+    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, TEXT("System OpenGL: %d.%d [Minimum Required 1.4]"), opengl_major, opengl_minor);
   }
 
 
