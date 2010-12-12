@@ -728,7 +728,7 @@ namespace nux
 */
 
 #include "NUniqueIndex.h"
-//#include "SmartPtr/IntrusiveSP.h"
+//#include "SmartPtr/ObjectPtr.h"
 
 //#include "GlobalInitializer.h"
 

@@ -38,7 +38,7 @@ namespace nux
     ~InitiallyUnownedObject ();
 
   private:
-    NString m_allocation_file_name;
+    NString _allocation_file_name;
     int     m_allocation_line_number;
   };
 

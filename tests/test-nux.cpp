@@ -21,6 +21,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <Nux/Nux.h>
+#include <glib-object.h>
+
+void test_Object_suite ();
 
 void test_timeline_create_suite ();
 
@@ -29,7 +32,10 @@ main (gint argc, gchar *argv[])
 {
   g_type_init ();
   g_test_init (&argc, &argv, NULL);
+  nux::NuxInitialize(0);
 
+  /* First the Nux specific tests */
+  test_Object_suite ();
 
   /* Please keep this alphabetically ordered */
   test_timeline_create_suite ();

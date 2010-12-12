@@ -27,10 +27,10 @@ namespace nux
 {
 
   template <typename T>
-  class IntrusiveSP;
+  class ObjectPtr;
 
   template <typename T>
-  class IntrusiveWeakSP;
+  class ObjectWeakPtr;
 
 // #if defined(NUX_DEBUG)
 #define NUX_FILE_LINE_PROTO     const char* __Nux_FileName__=__FILE__, int __Nux_LineNumber__ = __LINE__
@@ -169,7 +169,7 @@ namespace nux
 //     };
 
     //static AllocationList m_allocation_list;
-    static std::new_handler m_new_current_handler;
+    static std::new_handler _new_current_handler;
 //     static int m_total_allocated_size;  //! Total allocated memory size in bytes.
 //     static int m_number_of_objects;     //! Number of allocated objects;
 
@@ -225,14 +225,15 @@ namespace nux
     int GetWeakReferenceCount () const;
 
   protected:
-    NThreadSafeCounter *m_reference_count; //!< Reference count.
-    NThreadSafeCounter *m_weak_reference_count; //!< Weak reference count.
+    NThreadSafeCounter *_reference_count; //!< Reference count.
+    NThreadSafeCounter *_weak_reference_count; //!< Weak reference count.
+    NThreadSafeCounter *_objectptr_count; //!< Number of ObjectPtr hosting the object.
 
     /*! 
         Between the time an object goes into Destroy () and the moment it goes into ~Object (), there is
         the possibility that some weak smart pointer references of the object will be destroyed. For these smart pointers,
         the reference count of the object is 0 and the weak reference count is > 0. We want the last weak pointer reference 
-        to set the object m_reference_count and m_weak_reference_count variable to 0 after deleting them (rather than leaving them as invalid pointers).
+        to set the object _reference_count and _weak_reference_count variable to 0 after deleting them (rather than leaving them as invalid pointers).
         So when the object goes into the destructor (~Object ()) we can do some additional checks and verifications.
         _destroyed is set to true before the destructor returns.
     */
@@ -258,15 +259,15 @@ namespace nux
 
 
 //#if defined(NUX_DEBUG)
-    NString m_allocation_file_name;
-    int     m_allocation_line_number;
+    NString _allocation_file_name;
+    int     _allocation_line_number;
 //#endif
 
     template <typename T>
-    friend class IntrusiveSP;
+    friend class ObjectPtr;
 
     template <typename T>
-    friend class IntrusiveWeakSP;
+    friend class ObjectWeakPtr;
     friend class ObjectStats;
   };
 

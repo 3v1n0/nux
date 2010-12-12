@@ -66,7 +66,7 @@ public:
 void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 {
   TimelineTestClass *self = (TimelineTestClass*) InitData;
-  nux::VLayout* MainVLayout = new nux::VLayout("", NUX_TRACKER_LOCATION);
+  nux::VLayout* MainVLayout = new nux::VLayout(TEXT(""), NUX_TRACKER_LOCATION);
   MainVLayout->SetContentDistribution(nux::eStackCenter);
 
   self->Init (MainVLayout);
@@ -81,7 +81,7 @@ test_timeline (void)
 {
 
   TimelineTestClass *test_class = new TimelineTestClass ();
-  nux::NuxInitialize(0);
+
   nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Timeline Test"), 400, 300, 0, ThreadWidgetInit, test_class);
 
   nux::Timeline *timeline = new nux::Timeline (1000, "My Timeline", NUX_TRACKER_LOCATION);
