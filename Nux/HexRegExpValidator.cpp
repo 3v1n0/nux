@@ -136,7 +136,7 @@ namespace nux
   NString HexRegExpValidator::ToString (int i)
   {
     NString Prec (TEXT ("%d") );
-    return inlPrintf (Prec.GetTCharPtr(), i);
+    return NString::Printf (Prec.GetTCharPtr(), i);
   }
 
   int HexRegExpValidator::ToInteger (const TCHAR *str)

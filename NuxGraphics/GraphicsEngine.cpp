@@ -392,7 +392,7 @@ namespace nux
     }
   }
 
-  void GraphicsEngine::ApplyClippingRectangle()
+  void GraphicsEngine::ApplyClippingRectangle ()
   {
     if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
     {
@@ -419,8 +419,14 @@ namespace nux
     }
   }
 
-  void GraphicsEngine::EmptyClippingRegion()
+  void GraphicsEngine::EmptyClippingRegion ()
   {
+    if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
+    {
+      m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->EmptyClippingRegion ();
+      return;
+    }
+
     INT window_width, window_height;
     window_width = m_ViewportWidth;
     window_height = m_ViewportHeight;
@@ -431,8 +437,14 @@ namespace nux
     }
   }
 
-  Rect GraphicsEngine::GetClippingRegion() const
+  Rect GraphicsEngine::GetClippingRegion () const
   {
+    if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
+    {
+      Rect r = m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->GetClippingRegion ();
+      return r;      
+    }
+
     UINT stacksize = (UINT) ClippingRect.size();
 
     if (stacksize == 0)
@@ -446,8 +458,14 @@ namespace nux
     }
   }
 
-  int GraphicsEngine::GetNumberOfClippingRegions() const
+  int GraphicsEngine::GetNumberOfClippingRegions () const
   {
+    if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
+    {
+      int n = m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->GetNumberOfClippingRegions ();
+      return n;
+    }
+
     return (int) ClippingRect.size();
   }
 

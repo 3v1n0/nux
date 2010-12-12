@@ -29,34 +29,42 @@ namespace nux
 // forward definitions
 
   template <typename T>
-  class IntrusiveWeakSP;
+  class ObjectWeakPtr;
 
   template <typename T>
-  class IntrusiveSP;
+  class ObjectPtr;
+
+  #define IntrusiveSP ObjectPtr
+  #define IntrusiveWeakSP ObjectWeakPtr
 
 //! A smart pointer class. Implemented as an intrusive smart pointer.
   template <typename T>
-  class IntrusiveSP
+  class ObjectPtr
   {
   public:
     //! Constructor
-    IntrusiveSP()
+    ObjectPtr()
       :   ptr_ (0)
     {
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
+      _objectptr_count = 0;
+      _destroyed = 0;
     }
 
     //! Copy constructor
-    IntrusiveSP (const IntrusiveSP<T>& other)
+    ObjectPtr (const ObjectPtr<T>& other)
       :   ptr_ (0)
     {
       ptr_ = other.ptr_;
 
       if (ptr_ != 0)
       {
-        m_reference_count = other->m_reference_count;
-        m_weak_reference_count = other->m_weak_reference_count;
+        _reference_count = other->_reference_count;
+        _weak_reference_count = other->_weak_reference_count;
+        _objectptr_count = other->_objectptr_count;
+        _objectptr_count->Increment ();
+        _destroyed = other->_destroyed;
         ptr_->Reference();
       }
     }
@@ -66,17 +74,22 @@ namespace nux
         @param other Parameter with a type derived from T.
     */
     template <typename O>
-    IntrusiveSP (const IntrusiveSP<O>& other)
+    ObjectPtr (const ObjectPtr<O>& other)
       :   ptr_ (0)
     {
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
+      _objectptr_count = 0;
+      _destroyed = 0;
 
       if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
       {
         ptr_ = (T *) other.ptr_;
-        m_reference_count = other->m_reference_count;
-        m_weak_reference_count = other->m_weak_reference_count;
+        _reference_count = other->_reference_count;
+        _weak_reference_count = other->_weak_reference_count;
+        _objectptr_count = other->_objectptr_count;
+        _objectptr_count->Increment ();
+        _destroyed = other->_destroyed;
         ptr_->Reference();
       }
     }
@@ -84,26 +97,31 @@ namespace nux
     //! Construction with a base pointer of type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
         and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
     */
-    explicit IntrusiveSP (T *ptr, bool WarnMissuse = false)
+    explicit ObjectPtr (T *ptr, bool WarnMissuse = false)
       :   ptr_ (0)
     {
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
+      _objectptr_count = 0;
+      _destroyed = 0;
 
       if (ptr != 0)
       {
         if (WarnMissuse && (ptr->OwnsTheReference() == false) )
         {
-          nuxDebugMsg (TEXT ("[IntrusiveSP::IntrusiveSP] Warning: Constructing a smart pointer from an object with a floating reference.") );
+          nuxDebugMsg (TEXT ("[ObjectPtr::ObjectPtr] Warning: Constructing a smart pointer from an object with a floating reference.") );
         }
 
         ptr_ = ptr;
-        m_reference_count = ptr->m_reference_count;
-        m_weak_reference_count = ptr->m_weak_reference_count;
+        _reference_count = ptr->_reference_count;
+        _weak_reference_count = ptr->_weak_reference_count;
+        _objectptr_count = ptr->_objectptr_count;
+        _objectptr_count->Increment ();
+        _destroyed = ptr->_destroyed;
         ptr_->Reference();
       }
     }
@@ -111,16 +129,18 @@ namespace nux
     //! Construction with a base pointer of type O that inherits from type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
         and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
     */
     template <typename O>
-    explicit IntrusiveSP (O *ptr, bool WarnMissuse = false)
+    explicit ObjectPtr (O *ptr, bool WarnMissuse = false)
       :   ptr_ (0)
     {
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
+      _objectptr_count = 0;
+      _destroyed = 0;
 
       if (ptr != 0)
       {
@@ -128,12 +148,15 @@ namespace nux
         {
           if (WarnMissuse && (ptr->OwnsTheReference() == false) )
           {
-            nuxDebugMsg (TEXT ("[IntrusiveSP::IntrusiveSP] Warning: Constructing a smart pointer from an object with a floating reference.") );
+            nuxDebugMsg (TEXT ("[ObjectPtr::ObjectPtr] Warning: Constructing a smart pointer from an object with a floating reference.") );
           }
 
           ptr_ = (T *) ptr;
-          m_reference_count = ptr->m_reference_count;
-          m_weak_reference_count = ptr->m_weak_reference_count;
+          _reference_count = ptr->_reference_count;
+          _weak_reference_count = ptr->_weak_reference_count;
+          _objectptr_count = ptr->_objectptr_count;
+          _objectptr_count->Increment ();
+          _destroyed = ptr->_destroyed;
           ptr_->Reference();
         }
       }
@@ -143,7 +166,7 @@ namespace nux
     /*!
         @param other Smart pointer of type T.
     */
-    IntrusiveSP &operator = (const IntrusiveSP<T>& other)
+    ObjectPtr &operator = (const ObjectPtr<T>& other)
     {
       if (ptr_ != other.ptr_)
       {
@@ -153,8 +176,11 @@ namespace nux
 
         if (ptr_ != 0)
         {
-          m_reference_count = other->m_reference_count;
-          m_weak_reference_count = other->m_weak_reference_count;
+          _reference_count = other->_reference_count;
+          _weak_reference_count = other->_weak_reference_count;
+          _objectptr_count = other->_objectptr_count;
+          _objectptr_count->Increment ();
+          _destroyed = other->_destroyed;
           ptr_->Reference();
         }
       }
@@ -167,7 +193,7 @@ namespace nux
         @param other Smart pointer of type O.
     */
     template <typename O>
-    IntrusiveSP &operator = (const IntrusiveSP<O>& other)
+    ObjectPtr &operator = (const ObjectPtr<O>& other)
     {
       if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
       {
@@ -179,8 +205,11 @@ namespace nux
 
           if (ptr_ != 0)
           {
-            m_reference_count = other->m_reference_count;
-            m_weak_reference_count = other->m_weak_reference_count;
+            _reference_count = other->_reference_count;
+            _weak_reference_count = other->_weak_reference_count;
+            _objectptr_count = other->_objectptr_count;
+            _objectptr_count->Increment ();
+            _destroyed = other->_destroyed;
             ptr_->Reference();
           }
         }
@@ -200,7 +229,7 @@ namespace nux
       return ptr_;
     }
 
-    ~IntrusiveSP ()
+    ~ObjectPtr ()
     {
       ReleaseReference ();
     }
@@ -221,7 +250,7 @@ namespace nux
 //     /*!
 //         @param other Smart pointer to swap with.
 //     */
-//     void Swap (IntrusiveSP<T>& other)
+//     void Swap (ObjectPtr<T>& other)
 //     {
 //         std::swap (ptr_, other.ptr_);
 //         std::swap (refCounts_, other.refCounts_);
@@ -270,12 +299,12 @@ namespace nux
       return (ptr_ > ptr);
     }
 
-    bool operator < (IntrusiveSP<T> other) const
+    bool operator < (ObjectPtr<T> other) const
     {
       return (ptr_ < other.ptr_);
     }
 
-    bool operator > (IntrusiveSP<T> other) const
+    bool operator > (ObjectPtr<T> other) const
     {
       return (ptr_ > other.ptr_);
     }
@@ -309,7 +338,7 @@ namespace nux
     }
 
     template<typename U>
-    bool operator != (const IntrusiveSP<U>& other) const
+    bool operator != (const ObjectPtr<U>& other) const
     {
       if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
         return true;
@@ -318,7 +347,7 @@ namespace nux
     }
 
     template<typename U>
-    bool operator == (const IntrusiveSP<U>& other) const
+    bool operator == (const ObjectPtr<U>& other) const
     {
       if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
         return false;
@@ -327,7 +356,7 @@ namespace nux
     }
 
     template<typename U>
-    bool operator != (const IntrusiveWeakSP<U>& other) const
+    bool operator != (const ObjectWeakPtr<U>& other) const
     {
       if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
         return true;
@@ -336,7 +365,7 @@ namespace nux
     }
 
     template<typename U>
-    bool operator == (const IntrusiveWeakSP<U>& other) const
+    bool operator == (const ObjectWeakPtr<U>& other) const
     {
       if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
         return false;
@@ -344,140 +373,170 @@ namespace nux
       return (void *) ptr_ == (void *) other.ptr_;
     }
 
-    void Release()
+    //! Release the hosted pointer from this object.
+    /*!
+        Release the hosted pointer from this object. After this call, the following members are null:
+          _reference_count
+          _weak_reference_count
+          ptr_
+        This call decreases the count of strong and weak references reference before setting _reference_count and _weak_reference_count to null.
+
+        @return True if the hosted object was destroyed.
+    */
+    bool Release()
     {
-      ReleaseReference();
+      return ReleaseReference ();
     }
 
   private:
 
-    void ReleaseReference()
+    bool ReleaseReference()
     {
       if (ptr_ == 0)
       {
-        return;
+        return false;
       }
 
-      bool DeleteWarning = (m_reference_count->GetValue() == 1) && (m_weak_reference_count->GetValue() == 1);
-      // If DeleteWarning == true, then we know that the cal to Unref will delete the pointer ptr. Also, the pointer to
-      // m_reference_count and m_weak_reference_count will be deleted.
-      bool Destroyed = ptr_->UnReference();
-      // if Destroyed is true and DeleteWarning is false, it means that the pointer was destroyed. But to to hanging Weak pointers,
-      // m_weak_reference_count and m_weak_reference_count have not been deleted.
+      // Decrease the number of strong reference on the hosted pointer.
+      _objectptr_count->Decrement ();
 
-      if (DeleteWarning)
+      bool delete_warning = (_reference_count->GetValue() == 1) && (_weak_reference_count->GetValue() == 1);
+
+      // If delete_warning == true, then we know that the cal to Unref will delete the pointer ptr. Also, the pointer to
+      // _reference_count and _weak_reference_count will be deleted.
+      if (delete_warning)
       {
-        nuxAssert (Destroyed);
+        nuxAssert (_objectptr_count->GetValue () == 0);
       }
 
-      if (Destroyed && DeleteWarning)
+      bool destroyed = ptr_->UnReference();
+      // if destroyed is true and delete_warning is false, it means that the pointer was destroyed. But to to hanging Weak pointers,
+      // _weak_reference_count and _weak_reference_count have not been deleted.
+
+      if (delete_warning)
+      {
+        nuxAssert (destroyed);
+      }
+
+      if (destroyed && delete_warning)
       {
         // Everything has been destroyed and there are no hanging weak pointers. Reset the pointers for this object.
-        m_reference_count = 0;
-        m_weak_reference_count = 0;
+        _reference_count = 0;
+        _weak_reference_count = 0;
+        _objectptr_count = 0;
+        _destroyed = 0;
         ptr_ = 0;
       }
-      else if (Destroyed && (DeleteWarning == false) )
+      else if (destroyed && (delete_warning == false) )
       {
         // Only the ptr_ has been destroyed.There are still hanging weak pointers. Reset the pointers for this object.
-        nuxAssert (m_reference_count->GetValue() == 0);
-        nuxAssert (m_weak_reference_count->GetValue() >= 1);
-        m_reference_count = 0;
-        m_weak_reference_count = 0;
+        nuxAssert (_reference_count->GetValue() == 0);
+        nuxAssert (_objectptr_count->GetValue () == 0);
+        nuxAssert (_weak_reference_count->GetValue() >= 1);
+        _reference_count = 0;
+        _weak_reference_count = 0;
+        _objectptr_count = 0;
+        _destroyed = 0;
         ptr_ = 0;
       }
       else
       {
         // There are still pending references to ptr_. Reset the pointers for this object.
         // Notice how we do the same thing here as in the previous conditions. We end up setting
-        // m_reference_count, m_weak_reference_count and ptr_ to 0.
-        m_reference_count = 0;
-        m_weak_reference_count = 0;
+        // _reference_count, _weak_reference_count and ptr_ to 0.
+        _reference_count = 0;
+        _weak_reference_count = 0;
+        _objectptr_count = 0;
+        _destroyed = 0;
         ptr_ = 0;
       }
+
+      return destroyed;
     }
 
     T *ptr_;
-    NThreadSafeCounter *m_reference_count;
-    NThreadSafeCounter *m_weak_reference_count;
+    NThreadSafeCounter *_reference_count;
+    NThreadSafeCounter *_weak_reference_count;
+    NThreadSafeCounter *_objectptr_count;
+    bool *_destroyed;
 
     template <typename U>
-    friend IntrusiveSP<U> Create ();
+    friend ObjectPtr<U> Create ();
 
     template <typename U, typename P1>
-    friend IntrusiveSP<U> Create (P1 p1);
+    friend ObjectPtr<U> Create (P1 p1);
 
     template <typename U, typename P1, typename P2>
-    friend IntrusiveSP<U> Create (P1 p1, P2 p2);
+    friend ObjectPtr<U> Create (P1 p1, P2 p2);
 
     template <typename U, typename P1, typename P2, typename P3>
-    friend IntrusiveSP<U> Create (P1 p1, P2 p2, P3 p3);
+    friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3);
 
     template <typename U, typename P1, typename P2, typename P3, typename P4>
-    friend IntrusiveSP<U> Create (P1 p1, P2 p2, P3 p3, P4 p4);
+    friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3, P4 p4);
 
     template <typename U, typename P1, typename P2, typename P3, typename P4, typename P5>
-    friend IntrusiveSP<U> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5);
+    friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5);
 
     template <typename U, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
-    friend IntrusiveSP<U> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6);
+    friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6);
 
     template <typename U, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
-    friend IntrusiveSP<U> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7);
+    friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7);
 
     template <typename U>
-    friend IntrusiveSP<U> WrapWSPtr (U *u);
+    friend ObjectPtr<U> WrapWSPtr (U *u);
 
     template <typename O>
-    friend class IntrusiveSP;
+    friend class ObjectPtr;
 
     template <typename O>
-    friend class IntrusiveWeakSP;
+    friend class ObjectWeakPtr;
 
     //     template<typename T, typename U>
-    //     friend bool operator == (const IntrusiveSP<T>& a, const IntrusiveSP<U>& b);
+    //     friend bool operator == (const ObjectPtr<T>& a, const ObjectPtr<U>& b);
 
     //     template<typename T, typename U>
-    //     friend bool operator != (const IntrusiveSP<T>& a, const IntrusiveSP<U>& b);
+    //     friend bool operator != (const ObjectPtr<T>& a, const ObjectPtr<U>& b);
 
     //     template<typename T>
-    //     friend bool operator == (const IntrusiveSP<T>& a, T*);
+    //     friend bool operator == (const ObjectPtr<T>& a, T*);
 
     template<typename U>
-    friend bool operator == (U *, const IntrusiveSP<U>& a);
+    friend bool operator == (U *, const ObjectPtr<U>& a);
 
     //     template<typename T>
-    //     friend bool operator != (const IntrusiveSP<T>& a, T*);
+    //     friend bool operator != (const ObjectPtr<T>& a, T*);
 
     template<typename U>
-    friend bool operator != (U *, const IntrusiveSP<U>& a);
+    friend bool operator != (U *, const ObjectPtr<U>& a);
 
     //     template<typename T, typename U>
-    //     friend bool operator == (const IntrusiveSP<T>& a, const IntrusiveWeakSP<U>& b);
+    //     friend bool operator == (const ObjectPtr<T>& a, const ObjectWeakPtr<U>& b);
 
     //     template<typename T, typename U>
-    //     friend bool operator == (const IntrusiveWeakSP<T>& a, const IntrusiveSP<U>& b);
+    //     friend bool operator == (const ObjectWeakPtr<T>& a, const ObjectPtr<U>& b);
     //
     //     template<typename T, typename U>
-    //     friend bool operator != (const IntrusiveSP<T>& a, const IntrusiveWeakSP<U>& b);
+    //     friend bool operator != (const ObjectPtr<T>& a, const ObjectWeakPtr<U>& b);
     //
     //     template<typename T, typename U>
-    //     friend bool operator != (const IntrusiveWeakSP<T>& a, const IntrusiveSP<U>& b);
+    //     friend bool operator != (const ObjectWeakPtr<T>& a, const ObjectPtr<U>& b);
 
     template <typename U, typename F>
-    friend IntrusiveSP<U> staticCast (const IntrusiveSP<F>& from);
+    friend ObjectPtr<U> staticCast (const ObjectPtr<F>& from);
 
     template <typename U, typename F>
-    friend IntrusiveSP<U> constCast (const IntrusiveSP<F>& from);
+    friend ObjectPtr<U> constCast (const ObjectPtr<F>& from);
 
     template <typename U, typename F>
-    friend IntrusiveSP<U> dynamicCast (const IntrusiveSP<F>& from);
+    friend ObjectPtr<U> dynamicCast (const ObjectPtr<F>& from);
 
     template <typename U, typename F>
-    friend IntrusiveSP<U> checkedCast (const IntrusiveSP<F>& from);
+    friend ObjectPtr<U> checkedCast (const ObjectPtr<F>& from);
 
     template <typename U, typename F>
-    friend IntrusiveSP<U> queryCast (const IntrusiveSP<F>& from);
+    friend ObjectPtr<U> queryCast (const ObjectPtr<F>& from);
   };
 
 
@@ -488,42 +547,42 @@ namespace nux
       to the RefCounts pointers of the original pointer and can use it to check if the pointer is still valid or not.
   */
   template <typename T>
-  class IntrusiveWeakSP
+  class ObjectWeakPtr
   {
   public:
     //! Constructor
-    IntrusiveWeakSP ()
+    ObjectWeakPtr ()
       :   ptr_ (0)
     {
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
       _destroyed = 0;
     }
 
     //! Construction with a base pointer of type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
         and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
     */
-    explicit IntrusiveWeakSP (T *ptr, bool WarnMissuse = false)
+    explicit ObjectWeakPtr (T *ptr, bool WarnMissuse = false)
       :   ptr_ (0)
     {
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
       _destroyed = 0;
 
       if (ptr != 0)
       {
         if (WarnMissuse && (ptr->OwnsTheReference() == false) )
         {
-          //nuxDebugMsg (TEXT ("[IntrusiveWeakSP::IntrusiveWeakSP] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
+          //nuxDebugMsg (TEXT ("[ObjectWeakPtr::ObjectWeakPtr] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
         }
 
         ptr_ = ptr;
-        m_reference_count = ptr->m_reference_count;
-        m_weak_reference_count = ptr->m_weak_reference_count;
+        _reference_count = ptr->_reference_count;
+        _weak_reference_count = ptr->_weak_reference_count;
         _destroyed = ptr->_destroyed;
         ptr_->IncrementWeakCounter();
       }
@@ -532,16 +591,16 @@ namespace nux
     //! Construction with a base pointer of type O that inherits from type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
         and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
     */
     template <typename O>
-    explicit IntrusiveWeakSP (O *ptr, bool WarnMissuse = false)
+    explicit ObjectWeakPtr (O *ptr, bool WarnMissuse = false)
       :   ptr_ (0)
     {
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
       _destroyed = 0;
 
       if (ptr != 0)
@@ -550,12 +609,12 @@ namespace nux
         {
           if (WarnMissuse && (ptr->OwnsTheReference() == false) )
           {
-            //nuxDebugMsg (TEXT ("[IntrusiveWeakSP::IntrusiveWeakSP] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
+            //nuxDebugMsg (TEXT ("[ObjectWeakPtr::ObjectWeakPtr] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
           }
 
           ptr_ = (T *) ptr;
-          m_reference_count = ptr->m_reference_count;
-          m_weak_reference_count = ptr->m_weak_reference_count;
+          _reference_count = ptr->_reference_count;
+          _weak_reference_count = ptr->_weak_reference_count;
           _destroyed = ptr->_destroyed;
           ptr_->IncrementWeakCounter();
         }
@@ -566,11 +625,11 @@ namespace nux
     /*!
         @param other Parameter with type T.
     */
-    IntrusiveWeakSP (const IntrusiveWeakSP<T>& other)
+    ObjectWeakPtr (const ObjectWeakPtr<T>& other)
     {
       ptr_ = other.ptr_;
-      m_reference_count = other.m_reference_count;
-      m_weak_reference_count = other.m_weak_reference_count;
+      _reference_count = other._reference_count;
+      _weak_reference_count = other._weak_reference_count;
       _destroyed = other._destroyed;
 
       if (ptr_ != 0)
@@ -584,23 +643,23 @@ namespace nux
         @param other Parameter with a type derived from T.
     */
     template <typename O>
-    IntrusiveWeakSP (const IntrusiveWeakSP<O>& other)
+    ObjectWeakPtr (const ObjectWeakPtr<O>& other)
       :   ptr_ (0)
     {
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
       _destroyed = 0;
 
       if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
       {
         ptr_ = other.ptr_;
-        m_reference_count = other.m_reference_count;
-        m_weak_reference_count = other.m_weak_reference_count;
+        _reference_count = other._reference_count;
+        _weak_reference_count = other._weak_reference_count;
         _destroyed = other._destroyed;
 
         if (ptr_ != 0)
         {
-          m_weak_reference_count->Increment();
+          _weak_reference_count->Increment();
         }
       }
     }
@@ -609,7 +668,7 @@ namespace nux
 //     /*!
 //         @param other Maintains a weak smart pointer reference to this parameter.
 //     */
-//     IntrusiveWeakSP (const IntrusiveSP<T>& other)
+//     ObjectWeakPtr (const ObjectPtr<T>& other)
 //         :   ptr_(0)
 //         ,   refCounts_(0)
 //     {
@@ -630,23 +689,23 @@ namespace nux
         @param other Maintains a weak smart pointer reference to this parameter.
     */
     template <typename O>
-    IntrusiveWeakSP (const IntrusiveSP<O>& other)
+    ObjectWeakPtr (const ObjectPtr<O>& other)
       :   ptr_ (0)
     {
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
       _destroyed = 0;
 
       if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
       {
         ptr_ = other.ptr_;
-        m_reference_count = other.m_reference_count;
-        m_weak_reference_count = other.m_weak_reference_count;
+        _reference_count = other._reference_count;
+        _weak_reference_count = other._weak_reference_count;
         _destroyed = other._destroyed;
 
         if (ptr_ != 0)
         {
-          m_weak_reference_count->Increment();
+          _weak_reference_count->Increment();
         }
       }
     }
@@ -655,7 +714,7 @@ namespace nux
     /*!
         @param other Weak smart pointer of type T.
     */
-    IntrusiveWeakSP &operator = (const IntrusiveWeakSP<T>& other)
+    ObjectWeakPtr &operator = (const ObjectWeakPtr<T>& other)
     {
       if (GetPointer () != other.GetPointer () ) // Avoid self assignment.
       {
@@ -663,14 +722,14 @@ namespace nux
 
         ptr_ = other.ptr_;
         //refCounts_ = other.refCounts_;
-        m_reference_count = other.m_reference_count;
-        m_weak_reference_count = other.m_weak_reference_count;
+        _reference_count = other._reference_count;
+        _weak_reference_count = other._weak_reference_count;
         _destroyed = other._destroyed;
 
         if (ptr_ != 0)
         {
           //refCounts_->totalRefs_.Increment();
-          m_weak_reference_count->Increment();
+          _weak_reference_count->Increment();
         }
       }
 
@@ -682,7 +741,7 @@ namespace nux
         @param other Weak smart pointer of type O.
     */
     template <typename O>
-    IntrusiveWeakSP &operator = (const IntrusiveWeakSP<O>& other)
+    ObjectWeakPtr &operator = (const ObjectWeakPtr<O>& other)
     {
       if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
       {
@@ -692,14 +751,14 @@ namespace nux
 
           ptr_ = other.ptr_;
           //refCounts_ = other.refCounts_;
-          m_reference_count = other.m_reference_count;
-          m_weak_reference_count = other.m_weak_reference_count;
+          _reference_count = other._reference_count;
+          _weak_reference_count = other._weak_reference_count;
           _destroyed = other._destroyed;
 
           if (ptr_ != 0)
           {
             //refCounts_->totalRefs_.Increment();
-            m_weak_reference_count->Increment();
+            _weak_reference_count->Increment();
           }
         }
       }
@@ -716,7 +775,7 @@ namespace nux
         @param other Maintains a weak smart pointer reference to this parameter.
     */
     template <typename O>
-    IntrusiveWeakSP &operator = (const IntrusiveSP<O>& other)
+    ObjectWeakPtr &operator = (const ObjectPtr<O>& other)
     {
       if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
       {
@@ -726,14 +785,14 @@ namespace nux
 
           ptr_ = other.ptr_;
           //refCounts_ = other.refCounts_;
-          m_reference_count = other.m_reference_count;
-          m_weak_reference_count = other.m_weak_reference_count;
+          _reference_count = other._reference_count;
+          _weak_reference_count = other._weak_reference_count;
           _destroyed = other._destroyed;
 
           if (ptr_ != 0)
           {
             //refCounts_->totalRefs_.Increment();
-            m_weak_reference_count->Increment();
+            _weak_reference_count->Increment();
           }
         }
       }
@@ -748,54 +807,54 @@ namespace nux
     //! Construction with a base pointer of type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
         and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
     */
-    IntrusiveWeakSP &operator = (T *ptr)
+    ObjectWeakPtr &operator = (T *ptr)
     {
-      if (ptr_ && m_reference_count && (m_reference_count->GetValue() != 0) )
+      if (ptr_ && _reference_count && (_reference_count->GetValue() != 0) )
       {
         ptr_->DecrementWeakCounter();
       }
-      else if (m_reference_count && m_weak_reference_count)
+      else if (_reference_count && _weak_reference_count)
       {
-        m_weak_reference_count->Decrement();
+        _weak_reference_count->Decrement();
       }
 
-      if (m_reference_count && m_weak_reference_count && (m_reference_count->GetValue() == 0) && (m_weak_reference_count->GetValue() == 0) )
+      if (_reference_count && _weak_reference_count && (_reference_count->GetValue() == 0) && (_weak_reference_count->GetValue() == 0) )
       {
         if (!(*_destroyed))
         {
           // The object is between Object::Destroy() and Object::~Object()
-          ptr_->m_reference_count = 0;
-          ptr_->m_weak_reference_count = 0;
+          ptr_->_reference_count = 0;
+          ptr_->_weak_reference_count = 0;
         }
         else
         {
           // The object has been destroyed and this is the last weak reference to it.
           delete _destroyed;
         }
-        delete m_reference_count;
-        delete m_weak_reference_count;
+        delete _reference_count;
+        delete _weak_reference_count;
         
       }
       
       ptr_ = 0;
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
       _destroyed = 0;
 
       if (ptr != 0)
       {
         if (ptr->OwnsTheReference() == false)
         {
-          //nuxDebugMsg (TEXT ("[IntrusiveWeakSP::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
+          //nuxDebugMsg (TEXT ("[ObjectWeakPtr::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
         }
 
         ptr_ = ptr;
-        m_reference_count = ptr->m_reference_count;
-        m_weak_reference_count = ptr->m_weak_reference_count;
+        _reference_count = ptr->_reference_count;
+        _weak_reference_count = ptr->_weak_reference_count;
         _destroyed = ptr->_destroyed;
         ptr_->IncrementWeakCounter();
       }
@@ -806,46 +865,46 @@ namespace nux
     //! Construction with a base pointer of type O that inherits from type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then IntrusiveSP test is ptr is owned or not. If ptr is not owned
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
         and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "IntrusiveSP(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
     */
     template <typename O>
-    IntrusiveWeakSP &operator = (O *ptr)
+    ObjectWeakPtr &operator = (O *ptr)
     {
-      if (ptr_ && m_reference_count && (m_reference_count->GetValue() != 0) )
+      if (ptr_ && _reference_count && (_reference_count->GetValue() != 0) )
       {
         ptr_->DecrementWeakCounter();
       }
-      else if (m_reference_count && m_weak_reference_count)
+      else if (_reference_count && _weak_reference_count)
       {
-        m_weak_reference_count->Decrement();
+        _weak_reference_count->Decrement();
       }
       else
       {
         nuxAssertMsg (0, TEXT ("Could there be something wrong her?") );
       }
 
-      if (m_reference_count && m_weak_reference_count && (m_reference_count->GetValue() == 0) && (m_weak_reference_count->GetValue() == 0) )
+      if (_reference_count && _weak_reference_count && (_reference_count->GetValue() == 0) && (_weak_reference_count->GetValue() == 0) )
       {
         if (!(*_destroyed))
         {
           // The object is between Object::Destroy() and Object::~Object()
-          ptr_->m_reference_count = 0;
-          ptr_->m_weak_reference_count = 0;
+          ptr_->_reference_count = 0;
+          ptr_->_weak_reference_count = 0;
         }
         else
         {
           // The object has been destroyed and this is the last weak reference to it.
           delete _destroyed;
         }
-        delete m_reference_count;
-        delete m_weak_reference_count;
+        delete _reference_count;
+        delete _weak_reference_count;
       }
 
       ptr_ = 0;
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
       _destroyed = 0;
 
       if (ptr != 0)
@@ -854,38 +913,38 @@ namespace nux
         {
           if (ptr->OwnsTheReference() == false)
           {
-            //nuxDebugMsg (TEXT ("[IntrusiveWeakSP::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
+            //nuxDebugMsg (TEXT ("[ObjectWeakPtr::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
           }
 
           ptr_ = (T *) ptr;
-          m_reference_count = ptr->m_reference_count;
-          m_weak_reference_count = ptr->m_weak_reference_count;
+          _reference_count = ptr->_reference_count;
+          _weak_reference_count = ptr->_weak_reference_count;
           _destroyed = ptr->_destroyed;
           ptr_->IncrementWeakCounter();
         }
       }
     }
 
-    ~IntrusiveWeakSP ()
+    ~ObjectWeakPtr ()
     {
       ReleaseReference ();
     }
 
     T &operator * () const
     {
-      nuxAssert (m_reference_count && (m_reference_count->GetValue() != 0) && (ptr_ != 0) );
+      nuxAssert (_reference_count && (_reference_count->GetValue() != 0) && (ptr_ != 0) );
 
       return *(NUX_CONST_CAST (T*, GetPointer ()));
     }
 
     T *operator -> () const
     {
-      nuxAssert (m_reference_count && (m_reference_count->GetValue() != 0) && (ptr_ != 0) );
+      nuxAssert (_reference_count && (_reference_count->GetValue() != 0) && (ptr_ != 0) );
 
       return NUX_CONST_CAST (T*, GetPointer ());
     }
 
-//     void Swap (IntrusiveWeakSP<T>& other)
+//     void Swap (ObjectWeakPtr<T>& other)
 //     {
 //         std::swap (ptr_, other.ptr_);
 //         std::swap (refCounts_, other.refCounts_);
@@ -901,12 +960,12 @@ namespace nux
       return (ptr_ > ptr);
     }
 
-    bool operator < (IntrusiveWeakSP<T> other) const
+    bool operator < (ObjectWeakPtr<T> other) const
     {
       return (ptr_ < other.ptr_);
     }
 
-    bool operator > (IntrusiveWeakSP<T> other) const
+    bool operator > (ObjectWeakPtr<T> other) const
     {
       return (ptr_ > other.ptr_);
     }
@@ -939,64 +998,106 @@ namespace nux
       return ( (void *) ptr_ == (void *) ptr);
     }
 
-    template<typename U>
-    bool operator != (const IntrusiveWeakSP<U>& other) const
-    {
-      if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
-        return true;
-
-      return ( (void *) ptr_ != (void *) other.ptr_);
-    }
-
-    template<typename U>
-    bool operator == (const IntrusiveWeakSP<U>& other) const
-    {
-      if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
-        return false;
-
-      return ( (void *) ptr_ == (void *) other.ptr_);
-    }
-
-    template<typename U>
-    bool operator != (const IntrusiveSP<U>& other) const
-    {
-      if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
-        return true;
-
-      return ( (void *) ptr_ != (void *) other.ptr_);
-    }
-
-    template<typename U>
-    bool operator == (const IntrusiveSP<U>& other) const
-    {
-      if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
-        return false;
-
-      return ( (void *) ptr_ == (void *) other.ptr_);
-    }
-
-    //! Test validity of the smart pointer.
     /*!
-        Return True if the internal pointer is not null.
+        @other  A weak pointer
+        @return True is this weak pointer host a different pointer as the weak pointer passed as parameter.
+    */
+    template<typename U>
+    bool operator != (const ObjectWeakPtr<U>& other) const
+    {
+      // Test if the object in other has been destroyed. If yes, then we can't call other.ptr_->Type().
+      if (other._reference_count->GetValue () != 0)
+      {
+        if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
+          return true;
+      }
+
+      return ( (void *) ptr_ != (void *) other.ptr_);
+    }
+
+    /*!
+        @other  A weak pointer
+        @return True is this weak pointer host the same pointer as the weak pointer passed as parameter.
+    */
+    template<typename U>
+    bool operator == (const ObjectWeakPtr<U>& other) const
+    {
+      // Test if the object in other has been destroyed. If yes, then we can't call other.ptr_->Type().
+      if (other._reference_count->GetValue () != 0)
+      {
+        if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType)))
+          return false;
+      }
+
+      return ( (void *) ptr_ == (void *) other.ptr_);
+    }
+
+    /*!
+        @other  An object pointer
+        @return True is this weak pointer host a different pointer as the object pointer passed as parameter.
+    */
+    template<typename U>
+    bool operator != (const ObjectPtr<U>& other) const
+    {
+      if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
+        return true;
+
+      return ( (void *) ptr_ != (void *) other.ptr_);
+    }
+
+    /*!
+        @other  An object pointer
+        @return True is this weak pointer host the same pointer as the object pointer passed as parameter.
+    */
+    template<typename U>
+    bool operator == (const ObjectPtr<U>& other) const
+    {
+      if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
+        return false;
+
+      return ( (void *) ptr_ == (void *) other.ptr_);
+    }
+
+    //! Return true is the hosted pointer is not null or has not been destroyed.
+    /*!
+        @return True if the internal pointer is not null.
     */
     bool operator () () const
     {
       return GetPointer() != 0;
     }
-
-    bool IsNull() const
-    {
-      return GetPointer() == 0;
-    }
-
+    
+    //! Return true is the hosted pointer is not null or has not been destroyed.
+    /*!
+        @return True if the internal pointer is not null or has not been destroyed.
+    */
     bool IsValid() const
     {
       return GetPointer() != 0;
     }
 
-    void Release()
+    //! Return true is the hosted pointer is null or has been destroyed.
+    /*!
+        @return True if the internal pointer is null or has been destroyed.
+    */
+    bool IsNull() const
     {
-      ReleaseReference();
+      return GetPointer() == 0;
+    }
+
+    //! Release the hosted pointer from this object.
+    /*!
+        Release the hosted pointer from this object. After this call, the following members are null:
+          _reference_count
+          _weak_reference_count
+          ptr_
+        This call decreases the count of weak reference before setting _weak_reference_count to null.
+
+        @return True this was the last weak reference on the hosted object.
+    */
+    bool Release()
+    {
+      return ReleaseReference ();
     }
 
     //! Return the stored pointer.
@@ -1006,7 +1107,12 @@ namespace nux
     */
     const T *GetPointer() const
     {
-      if ((m_weak_reference_count == 0) || (m_weak_reference_count->GetValue() == 0))
+      if ((_weak_reference_count == 0) || (_weak_reference_count->GetValue() == 0))
+      {
+        return 0;
+      }
+
+      if ((_reference_count == 0) || (_reference_count->GetValue() == 0))
       {
         return 0;
       }
@@ -1021,196 +1127,218 @@ namespace nux
     */
     T *GetPointer() 
     {
-      return NUX_CONST_CAST (T*, (const_cast< const IntrusiveWeakSP* >(this))->GetPointer ());
+      return NUX_CONST_CAST (T*, (const_cast< const ObjectWeakPtr* >(this))->GetPointer ());
+    }
+
+    int GetReferenceCount ()
+    {
+      if (_reference_count == 0)
+      {
+        return 0;
+      }
+
+      return _reference_count()->GetValue ();
+    }
+
+    int GetWeakReferenceCount ()
+    {
+      if (_weak_reference_count == 0)
+      {
+        return 0;
+      }
+
+      return _weak_reference_count->GetValue ();
     }
 
   private:
-    void ReleaseReference ()
+    bool ReleaseReference ()
     {
       if (ptr_ == 0)
       {
-        return;
+        return false;
       }
 
-      nuxAssert (m_weak_reference_count->GetValue() >= 1);
+      nuxAssert (_weak_reference_count->GetValue() >= 1);
 
-      m_weak_reference_count->Decrement();
-      bool DeleteWarning = (m_weak_reference_count->GetValue() == 0);
+      _weak_reference_count->Decrement();
+      bool delete_warning = (_weak_reference_count->GetValue() == 0);
 
-      if (DeleteWarning)
+      if (delete_warning)
       {
         if (!(*_destroyed))
         {
           // The object is between Object::Destroy() and Object::~Object()
-          ptr_->m_reference_count = 0;
-          ptr_->m_weak_reference_count = 0;
+          ptr_->_reference_count = 0;
+          ptr_->_weak_reference_count = 0;
         }
         else
         {
           // The object has been destroyed and this is the last weak reference to it.
           delete _destroyed;
         }
-        delete m_reference_count;
-        delete m_weak_reference_count;
+        delete _reference_count;
+        delete _weak_reference_count;
       }
 
-      m_reference_count = 0;
-      m_weak_reference_count = 0;
+      _reference_count = 0;
+      _weak_reference_count = 0;
       ptr_ = 0;
+
+      return delete_warning; 
     }
 
     T *ptr_;
-    NThreadSafeCounter *m_reference_count;
-    NThreadSafeCounter *m_weak_reference_count;
+    NThreadSafeCounter *_reference_count;
+    NThreadSafeCounter *_weak_reference_count;
     bool               *_destroyed;
 
     template <typename O>
-    friend class IntrusiveWeakSP;
+    friend class ObjectWeakPtr;
 
     template <typename O>
     friend class SmartPtr;
 
     //     template<typename T, typename U>
-    //     friend bool operator == (const IntrusiveWeakSP<T>& a, const IntrusiveWeakSP<U>& b);
+    //     friend bool operator == (const ObjectWeakPtr<T>& a, const ObjectWeakPtr<U>& b);
 
     //     template<typename T, typename U>
-    //     friend bool operator != (const IntrusiveWeakSP<T>& a, const IntrusiveWeakSP<U>& b);
+    //     friend bool operator != (const ObjectWeakPtr<T>& a, const ObjectWeakPtr<U>& b);
 
     //     template<typename T>
-    //     friend bool operator == (const IntrusiveWeakSP<T>& a, T*);
+    //     friend bool operator == (const ObjectWeakPtr<T>& a, T*);
 
     template<typename U>
-    friend bool operator == (U *, const IntrusiveWeakSP<U>& a);
+    friend bool operator == (U *, const ObjectWeakPtr<U>& a);
 
     //     template<typename T>
-    //     friend bool operator != (const IntrusiveWeakSP<T>& a, T*);
+    //     friend bool operator != (const ObjectWeakPtr<T>& a, T*);
 
     template<typename U>
-    friend bool operator != (U *, const IntrusiveWeakSP<U>& a);
+    friend bool operator != (U *, const ObjectWeakPtr<U>& a);
 
     //     template<typename T, typename U>
-    //     friend bool operator == (const IntrusiveSP<T>& a, const IntrusiveWeakSP<U>& b);
+    //     friend bool operator == (const ObjectPtr<T>& a, const ObjectWeakPtr<U>& b);
     //
     //     template<typename T, typename U>
-    //     friend bool operator == (const IntrusiveWeakSP<T>& a, const IntrusiveSP<U>& b);
+    //     friend bool operator == (const ObjectWeakPtr<T>& a, const ObjectPtr<U>& b);
     //
     //     template<typename T, typename U>
-    //     friend bool operator != (const IntrusiveSP<T>& a, const IntrusiveWeakSP<U>& b);
+    //     friend bool operator != (const ObjectPtr<T>& a, const ObjectWeakPtr<U>& b);
     //
     //     template<typename T, typename U>
-    //     friend bool operator != (const IntrusiveWeakSP<T>& a, const IntrusiveSP<U>& b);
+    //     friend bool operator != (const ObjectWeakPtr<T>& a, const ObjectPtr<U>& b);
 
     template <typename U, typename F>
-    friend IntrusiveWeakSP<U> staticCast (const IntrusiveWeakSP<F>& from);
+    friend ObjectWeakPtr<U> staticCast (const ObjectWeakPtr<F>& from);
 
     template <typename U, typename F>
-    friend IntrusiveWeakSP<U> constCast (const IntrusiveWeakSP<F>& from);
+    friend ObjectWeakPtr<U> constCast (const ObjectWeakPtr<F>& from);
 
     template <typename U, typename F>
-    friend IntrusiveWeakSP<U> dynamicCast (const IntrusiveWeakSP<F>& from);
+    friend ObjectWeakPtr<U> dynamicCast (const ObjectWeakPtr<F>& from);
 
     template <typename U, typename F>
-    friend IntrusiveWeakSP<U> checkedCast (const IntrusiveWeakSP<F>& from);
+    friend ObjectWeakPtr<U> checkedCast (const ObjectWeakPtr<F>& from);
 
     template <typename U, typename F>
-    friend IntrusiveWeakSP<U> queryCast (const IntrusiveWeakSP<F>& from);
+    friend ObjectWeakPtr<U> queryCast (const ObjectWeakPtr<F>& from);
   };
 
 ///////////////////////////////////////////////////////
 // globals
 
 // template<typename T, typename U>
-// inline bool operator == (const IntrusiveSP<T>& a, const IntrusiveSP<U>& b)
+// inline bool operator == (const ObjectPtr<T>& a, const ObjectPtr<U>& b)
 // {
 //     return a.ptr_ == b.ptr_;
 // }
 //
 // template<typename T, typename U>
-// inline bool operator == (const IntrusiveWeakSP<T>& a, const IntrusiveWeakSP<U>& b)
+// inline bool operator == (const ObjectWeakPtr<T>& a, const ObjectWeakPtr<U>& b)
 // {
 //     return a.GetPointer () == b.GetPointer ();
 // }
 //
 // template<typename T, typename U>
-// inline bool operator == (const IntrusiveSP<T>& a, const IntrusiveWeakSP<U>& b)
+// inline bool operator == (const ObjectPtr<T>& a, const ObjectWeakPtr<U>& b)
 // {
 //     return a.ptr_ == b.GetPointer ();
 // }
 //
 // template<typename T, typename U>
-// inline bool operator == (const IntrusiveWeakSP<T>& a, const IntrusiveSP<U>& b)
+// inline bool operator == (const ObjectWeakPtr<T>& a, const ObjectPtr<U>& b)
 // {
 //     return a.GetPointer () == b.ptr_;
 // }
 //
 // template<typename T, typename U>
-// inline bool operator != (const IntrusiveSP<T>& a, const IntrusiveSP<U>& b)
+// inline bool operator != (const ObjectPtr<T>& a, const ObjectPtr<U>& b)
 // {
 //     return a.ptr_ != b.ptr_;
 // }
 //
 // template<typename T, typename U>
-// inline bool operator != (const IntrusiveWeakSP<T>& a, const IntrusiveWeakSP<U>& b)
+// inline bool operator != (const ObjectWeakPtr<T>& a, const ObjectWeakPtr<U>& b)
 // {
 //     return a.GetPointer () != b.GetPointer ();
 // }
 //
 // template<typename T, typename U>
-// inline bool operator != (const IntrusiveSP<T>& a, const IntrusiveWeakSP<U>& b)
+// inline bool operator != (const ObjectPtr<T>& a, const ObjectWeakPtr<U>& b)
 // {
 //     return a.ptr_ != b.GetPointer ();
 // }
 //
 // template<typename T, typename U>
-// inline bool operator != (const IntrusiveWeakSP<T>& a, const IntrusiveSP<U>& b)
+// inline bool operator != (const ObjectWeakPtr<T>& a, const ObjectPtr<U>& b)
 // {
 //     return a.GetPointer () != b.ptr_;
 // }
 
 // template<typename T>
-// inline bool operator == (const IntrusiveSP<T>& a, T* ptr)
+// inline bool operator == (const ObjectPtr<T>& a, T* ptr)
 // {
 //     return a.ptr_ == ptr;
 // }
 
   template<typename T>
-  inline bool operator == (T *ptr, const IntrusiveSP<T>& a)
+  inline bool operator == (T *ptr, const ObjectPtr<T>& a)
   {
     return a.ptr_ == ptr;
   }
 
 // template<typename T>
-// inline bool operator != (const IntrusiveSP<T>& a, T* ptr)
+// inline bool operator != (const ObjectPtr<T>& a, T* ptr)
 // {
 //     return a.ptr_ != ptr;
 // }
 
   template<typename T>
-  inline bool operator != (T *ptr, const IntrusiveSP<T>& a)
+  inline bool operator != (T *ptr, const ObjectPtr<T>& a)
   {
     return a.ptr_ != ptr;
   }
 
 // template<typename T>
-// inline bool operator == (const IntrusiveWeakSP<T>& a, T* ptr)
+// inline bool operator == (const ObjectWeakPtr<T>& a, T* ptr)
 // {
 //     return a.ptr_ == ptr;
 // }
 
   template<typename T>
-  inline bool operator == (T *ptr, const IntrusiveWeakSP<T>& a)
+  inline bool operator == (T *ptr, const ObjectWeakPtr<T>& a)
   {
     return a.ptr_ == ptr;
   }
 
 // template<typename T>
-// inline bool operator != (const IntrusiveWeakSP<T>& a, T* ptr)
+// inline bool operator != (const ObjectWeakPtr<T>& a, T* ptr)
 // {
 //     return a.ptr_ != ptr;
 // }
 
   template<typename T>
-  inline bool operator != (T *ptr, const IntrusiveWeakSP<T>& a)
+  inline bool operator != (T *ptr, const ObjectWeakPtr<T>& a)
   {
     return a.ptr_ != ptr;
   }
@@ -1219,14 +1347,14 @@ namespace nux
 // // creation functions
 //
 // template <typename T>
-// IntrusiveSP<T> Create ()
+// ObjectPtr<T> Create ()
 // {
 //     RefCounts* rc = new RefCounts;
 //
 //     try
 //     {
 //         T* t = new T;
-//         return IntrusiveSP<T> (t, rc);
+//         return ObjectPtr<T> (t, rc);
 //     }
 //     catch (...)
 //     {
@@ -1236,14 +1364,14 @@ namespace nux
 // }
 //
 // template <typename T, typename P1>
-// IntrusiveSP<T> Create (P1 p1)
+// ObjectPtr<T> Create (P1 p1)
 // {
 //     RefCounts* rc = new RefCounts;
 //
 //     try
 //     {
 //         T* t = new T (p1);
-//         return IntrusiveSP<T> (t, rc);
+//         return ObjectPtr<T> (t, rc);
 //     }
 //     catch (...)
 //     {
@@ -1253,14 +1381,14 @@ namespace nux
 // }
 //
 // template <typename T, typename P1, typename P2>
-// IntrusiveSP<T> Create (P1 p1, P2 p2)
+// ObjectPtr<T> Create (P1 p1, P2 p2)
 // {
 //     RefCounts* rc = new RefCounts;
 //
 //     try
 //     {
 //         T* t = new T (p1, p2);
-//         return IntrusiveSP<T> (t, rc);
+//         return ObjectPtr<T> (t, rc);
 //     }
 //     catch (...)
 //     {
@@ -1270,14 +1398,14 @@ namespace nux
 // }
 //
 // template <typename T, typename P1, typename P2, typename P3>
-// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3)
+// ObjectPtr<T> Create (P1 p1, P2 p2, P3 p3)
 // {
 //     RefCounts* rc = new RefCounts;
 //
 //     try
 //     {
 //         T* t = new T (p1, p2, p3);
-//         return IntrusiveSP<T> (t, rc);
+//         return ObjectPtr<T> (t, rc);
 //     }
 //     catch (...)
 //     {
@@ -1287,14 +1415,14 @@ namespace nux
 // }
 //
 // template <typename T, typename P1, typename P2, typename P3, typename P4>
-// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4)
+// ObjectPtr<T> Create (P1 p1, P2 p2, P3 p3, P4 p4)
 // {
 //     RefCounts* rc = new RefCounts;
 //
 //     try
 //     {
 //         T* t = new T (p1, p2, p3, p4);
-//         return IntrusiveSP<T> (t, rc);
+//         return ObjectPtr<T> (t, rc);
 //     }
 //     catch (...)
 //     {
@@ -1304,14 +1432,14 @@ namespace nux
 // }
 //
 // template <typename T, typename P1, typename P2, typename P3, typename P4, typename P5>
-// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+// ObjectPtr<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
 // {
 //     RefCounts* rc = new RefCounts;
 //
 //     try
 //     {
 //         T* t = new T (p1, p2, p3, p4, p5);
-//         return IntrusiveSP<T> (t, rc);
+//         return ObjectPtr<T> (t, rc);
 //     }
 //     catch (...)
 //     {
@@ -1321,14 +1449,14 @@ namespace nux
 // }
 //
 // template <typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
-// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
+// ObjectPtr<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
 // {
 //     RefCounts* rc = new RefCounts;
 //
 //     try
 //     {
 //         T* t = new T (p1, p2, p3, p4, p5, p6);
-//         return IntrusiveSP<T> (t, rc);
+//         return ObjectPtr<T> (t, rc);
 //     }
 //     catch (...)
 //     {
@@ -1338,14 +1466,14 @@ namespace nux
 // }
 //
 // template <typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
-// IntrusiveSP<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)
+// ObjectPtr<T> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)
 // {
 //     RefCounts* rc = new RefCounts;
 //
 //     try
 //     {
 //         T* t = new T (p1, p2, p3, p4, p5, p6, p7);
-//         return IntrusiveSP<T> (t, rc);
+//         return ObjectPtr<T> (t, rc);
 //     }
 //     catch (...)
 //     {
@@ -1355,18 +1483,18 @@ namespace nux
 // }
 //
 // template <typename T>
-// IntrusiveSP<T> WrapWSPtr (T* t)
+// ObjectPtr<T> WrapWSPtr (T* t)
 // {
 //     if (t == 0)
 //     {
-//         return IntrusiveSP<T> ();
+//         return ObjectPtr<T> ();
 //     }
 //
 //     try
 //     {
 //         RefCounts* rc = new RefCounts;
 //
-//         return IntrusiveSP<T> (t, rc);
+//         return ObjectPtr<T> (t, rc);
 //     }
 //     catch (...)
 //     {
@@ -1379,11 +1507,11 @@ namespace nux
 // // casts
 //
 // template <typename U, typename F>
-// IntrusiveSP<U> staticCast (const IntrusiveSP<F>& from)
+// ObjectPtr<U> staticCast (const ObjectPtr<F>& from)
 // {
 //     if (from.ptr_ == 0)
 //     {
-//         return IntrusiveSP<U>();
+//         return ObjectPtr<U>();
 //     }
 //
 //     U* ptr = static_cast <U*> (from.ptr_);
@@ -1393,19 +1521,19 @@ namespace nux
 //     {
 //         //refCounts->strongRefs_.Increment();
 //         //refCounts->totalRefs_.Increment();
-//         from.m_reference_count->Increment();
-//         from.m_weak_reference_count->Increment();
+//         from._reference_count->Increment();
+//         from._weak_reference_count->Increment();
 //     }
 //
-//     return IntrusiveSP<U> (ptr, refCounts);
+//     return ObjectPtr<U> (ptr, refCounts);
 // }
 //
 // template <typename T, typename F>
-// IntrusiveSP<T> constCast (const IntrusiveSP<F>& from)
+// ObjectPtr<T> constCast (const ObjectPtr<F>& from)
 // {
 //     if (from.ptr_ == 0)
 //     {
-//         return IntrusiveSP<T>();
+//         return ObjectPtr<T>();
 //     }
 //
 //     T* ptr = const_cast <T*> (from.ptr_);
@@ -1414,19 +1542,19 @@ namespace nux
 //     if (ptr != 0) {
 //         //refCounts->strongRefs_.Increment();
 //         //refCounts->totalRefs_.Increment();
-//         from.m_reference_count->Increment();
-//         from.m_weak_reference_count->Increment();
+//         from._reference_count->Increment();
+//         from._weak_reference_count->Increment();
 //     }
 //
-//     return IntrusiveSP<T> (ptr, refCounts);
+//     return ObjectPtr<T> (ptr, refCounts);
 // }
 //
 // template <typename T, typename F>
-// IntrusiveSP<T> dynamicCast (const IntrusiveSP<F>& from)
+// ObjectPtr<T> dynamicCast (const ObjectPtr<F>& from)
 // {
 //     if (from.ptr_ == 0)
 //     {
-//         return IntrusiveSP<T>();
+//         return ObjectPtr<T>();
 //     }
 //
 //     T* ptr = &dynamic_cast <T&> (*from.ptr_);
@@ -1436,21 +1564,21 @@ namespace nux
 //     {
 //         //refCounts->strongRefs_.Increment();
 //         //refCounts->totalRefs_.Increment();
-//         from.m_reference_count->Increment();
-//         from.m_weak_reference_count->Increment();
+//         from._reference_count->Increment();
+//         from._weak_reference_count->Increment();
 //     }
 //
-//     return IntrusiveSP<T> (ptr, refCounts);
+//     return ObjectPtr<T> (ptr, refCounts);
 // }
 //
 // template <typename T, typename F>
-// IntrusiveSP<T> queryCast (const IntrusiveSP<F>& from)
+// ObjectPtr<T> queryCast (const ObjectPtr<F>& from)
 // {
 //     T* ptr = dynamic_cast <T*> (from.ptr_);
 //
 //     if (ptr == 0)
 //     {
-//         return IntrusiveSP<T>();
+//         return ObjectPtr<T>();
 //     }
 //
 //     RefCounts* refCounts = from.refCounts_;
@@ -1459,19 +1587,19 @@ namespace nux
 //     {
 //         //refCounts->strongRefs_.Increment();
 //         //refCounts->totalRefs_.Increment();
-//         from.m_reference_count->Increment();
-//         from.m_weak_reference_count->Increment();
+//         from._reference_count->Increment();
+//         from._weak_reference_count->Increment();
 //     }
 //
-//     return IntrusiveSP<T> (ptr, refCounts);
+//     return ObjectPtr<T> (ptr, refCounts);
 // }
 //
 // template <typename T, typename F>
-// IntrusiveSP<T> checkedCast (const IntrusiveSP<F>& from)
+// ObjectPtr<T> checkedCast (const ObjectPtr<F>& from)
 // {
 //     if (from.ptr_ == 0)
 //     {
-//         return IntrusiveSP<T>();
+//         return ObjectPtr<T>();
 //     }
 //
 //     nuxAssert(dynamic_cast<T*> (from.ptr_) != 0);
@@ -1483,19 +1611,19 @@ namespace nux
 //     {
 //         //refCounts->strongRefs_.Increment();
 //         //refCounts->totalRefs_.Increment();
-//         from.m_reference_count->Increment();
-//         from.m_weak_reference_count->Increment();
+//         from._reference_count->Increment();
+//         from._weak_reference_count->Increment();
 //     }
 //
-//     return IntrusiveSP<T> (ptr, refCounts);
+//     return ObjectPtr<T> (ptr, refCounts);
 // }
 //
 // template <typename U, typename F>
-// IntrusiveWeakSP<U> staticCast (const IntrusiveWeakSP<F>& from)
+// ObjectWeakPtr<U> staticCast (const ObjectWeakPtr<F>& from)
 // {
 //     if (from.GetPointer () == 0)
 //     {
-//         return IntrusiveWeakSP<U>();
+//         return ObjectWeakPtr<U>();
 //     }
 //
 //     U* ptr = static_cast <U*> (from.ptr_);
@@ -1506,15 +1634,15 @@ namespace nux
 //         refCounts->totalRefs_.Increment();
 //     }
 //
-//     return IntrusiveWeakSP<U> (ptr, refCounts);
+//     return ObjectWeakPtr<U> (ptr, refCounts);
 // }
 //
 // template <typename T, typename F>
-// IntrusiveWeakSP<T> constCast (const IntrusiveWeakSP<F>& from)
+// ObjectWeakPtr<T> constCast (const ObjectWeakPtr<F>& from)
 // {
 //     if (from.GetPointer () == 0)
 //     {
-//         return IntrusiveWeakSP<T>();
+//         return ObjectWeakPtr<T>();
 //     }
 //
 //     T* ptr = const_cast <T*> (from.ptr_);
@@ -1523,18 +1651,18 @@ namespace nux
 //     if (ptr != 0)
 //     {
 //         //refCounts->totalRefs_.Increment();
-//         from.m_weak_reference_count->Increment();
+//         from._weak_reference_count->Increment();
 //     }
 //
-//     return IntrusiveWeakSP<T> (ptr, refCounts);
+//     return ObjectWeakPtr<T> (ptr, refCounts);
 // }
 //
 // template <typename T, typename F>
-// IntrusiveWeakSP<T> dynamicCast (const IntrusiveWeakSP<F>& from)
+// ObjectWeakPtr<T> dynamicCast (const ObjectWeakPtr<F>& from)
 // {
 //     if (from.GetPointer () == 0)
 //     {
-//         return IntrusiveWeakSP<T>();
+//         return ObjectWeakPtr<T>();
 //     }
 //
 //     T* ptr = &dynamic_cast <T&> (*from.ptr_);
@@ -1543,20 +1671,20 @@ namespace nux
 //     if (ptr != 0)
 //     {
 //         //refCounts->totalRefs_.Increment();
-//         from.m_weak_reference_count->Increment();
+//         from._weak_reference_count->Increment();
 //     }
 //
-//     return IntrusiveWeakSP<T> (ptr, refCounts);
+//     return ObjectWeakPtr<T> (ptr, refCounts);
 // }
 //
 // template <typename T, typename F>
-// IntrusiveWeakSP<T> queryCast (const IntrusiveWeakSP<F>& from)
+// ObjectWeakPtr<T> queryCast (const ObjectWeakPtr<F>& from)
 // {
 //     T* ptr = dynamic_cast <T*> (from.GetPointer ());
 //
 //     if (ptr == 0)
 //     {
-//         return IntrusiveWeakSP<T>();
+//         return ObjectWeakPtr<T>();
 //     }
 //
 //     RefCounts* refCounts = from.refCounts_;
@@ -1564,18 +1692,18 @@ namespace nux
 //     if (ptr != 0)
 //     {
 //         //refCounts->totalRefs_.Increment();
-//         from.m_weak_reference_count->Increment();
+//         from._weak_reference_count->Increment();
 //     }
 //
-//     return IntrusiveWeakSP<T> (ptr, refCounts);
+//     return ObjectWeakPtr<T> (ptr, refCounts);
 // }
 //
 // template <typename T, typename F>
-// IntrusiveWeakSP<T> checkedCast (const IntrusiveWeakSP<F>& from)
+// ObjectWeakPtr<T> checkedCast (const ObjectWeakPtr<F>& from)
 // {
 //     if (from.GetPointer () == 0)
 //     {
-//         return IntrusiveWeakSP<T>();
+//         return ObjectWeakPtr<T>();
 //     }
 //
 //     nuxAssert(dynamic_cast<T*> (from.ptr_) != 0);
@@ -1586,23 +1714,23 @@ namespace nux
 //     if (ptr != 0)
 //     {
 //         //refCounts->totalRefs_.Increment();
-//         from.m_weak_reference_count->Increment();
+//         from._weak_reference_count->Increment();
 //     }
 //
-//     return IntrusiveWeakSP<T> (ptr, refCounts);
+//     return ObjectWeakPtr<T> (ptr, refCounts);
 // }
 
 // ///////////////////////////////////////////////////////
 // // std specializations
 //
 // template <typename T>
-// inline void swap (IntrusiveSP<T>& t1, IntrusiveSP<T>& t2)
+// inline void swap (ObjectPtr<T>& t1, ObjectPtr<T>& t2)
 // {
 //     t1.swap (t2);
 // }
 //
 // template <typename T>
-// inline void swap (IntrusiveWeakSP<T>& t1, IntrusiveWeakSP<T>& t2)
+// inline void swap (ObjectWeakPtr<T>& t1, ObjectWeakPtr<T>& t2)
 // {
 //     t1.swap (t2);
 // }

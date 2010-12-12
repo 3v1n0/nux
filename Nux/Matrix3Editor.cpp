@@ -236,7 +236,7 @@ namespace nux
     {
       for (int j = 0; j < 3; j++)
       {
-        m_MtxInput[i][j]->SetText (inlPrintf (TEXT ("%.3f"), m_Matrix.m[i][j]) );
+        m_MtxInput[i][j]->SetText (NString::Printf (TEXT ("%.3f"), m_Matrix.m[i][j]) );
       }
     }
   }
@@ -253,7 +253,7 @@ namespace nux
 
     float f = 0;
     f = CharToDouble (text.GetTCharPtr() );
-    m_MtxInput[i][j]->SetText (inlPrintf (TEXT ("%.3f"), f) );
+    m_MtxInput[i][j]->SetText (NString::Printf (TEXT ("%.3f"), f) );
     m_Matrix.m[i][j] = f;
 
     sigMatrixChanged.emit (this);
@@ -265,7 +265,7 @@ namespace nux
     {
       for (int j = 0; j < 3; j++)
       {
-        m_MtxInput[i][j]->SetText (inlPrintf (TEXT ("%.3f"), m_Matrix.m[i][j]) );
+        m_MtxInput[i][j]->SetText (NString::Printf (TEXT ("%.3f"), m_Matrix.m[i][j]) );
       }
     }
   }

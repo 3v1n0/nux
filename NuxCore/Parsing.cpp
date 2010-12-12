@@ -21,7 +21,7 @@
 
 
 #include "NuxCore.h"
-#include "NParsing.h"
+#include "Parsing.h"
 
 #define CHAR_TAB        TEXT('\t')
 #define CHAR_CR         TEXT('\r')

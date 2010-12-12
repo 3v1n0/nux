@@ -20,8 +20,8 @@
  */
 
 
-#ifndef NSYSTEM_H
-#define NSYSTEM_H
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
 #ifdef _DEBUG
 #define NUX_DEBUG
@@ -256,5 +256,5 @@
 
 #define STL std
 
-#endif // NSYSTEM_H
+#endif // SYSTEM_H
 

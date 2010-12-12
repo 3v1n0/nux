@@ -23,7 +23,7 @@
 #ifndef COLORFUNCTIONS_H
 #define COLORFUNCTIONS_H
 
-#include "NSystemTypes.h"
+#include "SystemTypes.h"
 ///////////////////////////////////////////////////////////////////////////
 //
 // Gamma correction

@@ -23,7 +23,7 @@
 #ifndef NFILENAME_H
 #define NFILENAME_H
 
-#include "NString.h"
+#include "TextString.h"
 
 namespace nux
 {

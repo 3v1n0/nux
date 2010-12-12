@@ -20,8 +20,8 @@
  */
 
 
-#ifndef NSTRING_H
-#define NSTRING_H
+#ifndef TEXTSTRING_H
+#define TEXTSTRING_H
 
 #include "Math/MathUtility.h"
 
@@ -871,5 +871,5 @@ namespace nux
 
 }
 
-#endif // NSTRING_H
+#endif // TEXTSTRING_H
 

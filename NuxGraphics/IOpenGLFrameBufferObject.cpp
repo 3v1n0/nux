@@ -326,8 +326,13 @@ namespace nux
     }
     else
     {
-      Rect r = _ClippingRegionStack[stacksize-1];
+      Rect r = _ClippingRegionStack [stacksize-1];
       return r;
     }
+  }
+
+  int IOpenGLFrameBufferObject::GetNumberOfClippingRegions () const
+  {
+    return _ClippingRegionStack.size ();
   }
 }

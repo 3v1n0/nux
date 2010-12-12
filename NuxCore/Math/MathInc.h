@@ -24,7 +24,7 @@
 #define MATHINC_H
 
 #include "../Namespace.h"
-#include "../NSystemTypes.h"
+#include "../SystemTypes.h"
 
 #include "Constants.h"
 #include "MathUtility.h"

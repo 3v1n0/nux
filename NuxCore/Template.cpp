@@ -20,7 +20,7 @@
  */
 
 #include "NuxCore.h"
-#include "NTemplate.h"
+#include "Template.h"
 
 namespace nux
 {

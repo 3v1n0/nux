@@ -136,7 +136,7 @@ namespace nux
   NString IntegerValidator::ToString (int i)
   {
     NString Prec (TEXT ("%d") );
-    return inlPrintf (Prec.GetTCharPtr(), i);
+    return NString::Printf (Prec.GetTCharPtr(), i);
   }
 
   int IntegerValidator::ToInteger (const TCHAR *str)

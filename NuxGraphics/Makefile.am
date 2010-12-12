@@ -126,7 +126,6 @@ source_cpp = \
   $(srcdir)/IOpenGLTexture2D.cpp \
   $(srcdir)/GLVertexResourceManager.cpp \
   $(srcdir)/IOpenGLFrameBufferObject.cpp \
-  $(srcdir)/GLShader2.cpp \
   $(srcdir)/GLTemplatePrimitiveBuffer.cpp \
   $(srcdir)/IOpenGLSurface.cpp \
   $(srcdir)/GLRenderingAPI.cpp \

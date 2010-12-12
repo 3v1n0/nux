@@ -23,7 +23,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "NSystemTypes.h"
+#include "SystemTypes.h"
 
 namespace nux
 {

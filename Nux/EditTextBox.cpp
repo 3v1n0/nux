@@ -437,12 +437,12 @@ namespace nux
 
   void EditTextBox::SetDoubleValue (double d)
   {
-    SetText (inlPrintf ("%f", d) );
+    SetText (NString::Printf ("%f", d) );
   }
 
   void EditTextBox::SetIntegerValue (int i)
   {
-    SetText (inlPrintf ("%d", i) );
+    SetText (NString::Printf ("%d", i) );
   }
 
   void EditTextBox::SetTextBackgroundColor (const Color &color)

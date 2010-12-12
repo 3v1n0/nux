@@ -714,21 +714,21 @@ namespace nux
 
     if (m_color_format == COLORFORMAT_HEX)
     {
-      m_RedCaption->SetText (inlPrintf ("%x", (int) (m_Red * 255) ) );
-      m_GreenCaption->SetText (inlPrintf ("%x", (int) (m_Green * 255) ) );
-      m_BlueCaption->SetText (inlPrintf ("%x", (int) (m_Blue * 255) ) );
+      m_RedCaption->SetText (NString::Printf ("%x", (int) (m_Red * 255) ) );
+      m_GreenCaption->SetText (NString::Printf ("%x", (int) (m_Green * 255) ) );
+      m_BlueCaption->SetText (NString::Printf ("%x", (int) (m_Blue * 255) ) );
     }
     else if (m_color_format == COLORFORMAT_INT)
     {
-      m_RedCaption->SetText (inlPrintf ("%d", (int) (m_Red * 255) ) );
-      m_GreenCaption->SetText (inlPrintf ("%d", (int) (m_Green * 255) ) );
-      m_BlueCaption->SetText (inlPrintf ("%d", (int) (m_Blue * 255) ) );
+      m_RedCaption->SetText (NString::Printf ("%d", (int) (m_Red * 255) ) );
+      m_GreenCaption->SetText (NString::Printf ("%d", (int) (m_Green * 255) ) );
+      m_BlueCaption->SetText (NString::Printf ("%d", (int) (m_Blue * 255) ) );
     }
     else
     {
-      m_RedCaption->SetText (inlPrintf ("%.3f", m_Red) );
-      m_GreenCaption->SetText (inlPrintf ("%.3f", m_Green) );
-      m_BlueCaption->SetText (inlPrintf ("%.3f", m_Blue) );
+      m_RedCaption->SetText (NString::Printf ("%.3f", m_Red) );
+      m_GreenCaption->SetText (NString::Printf ("%.3f", m_Green) );
+      m_BlueCaption->SetText (NString::Printf ("%.3f", m_Blue) );
     }
 
     // Restore text selection if necessary.
@@ -755,21 +755,21 @@ namespace nux
 
     if (m_color_format == COLORFORMAT_HEX)
     {
-      m_RedCaption->SetText (inlPrintf ("%x", (int) (m_HSVHue * 255) ) );
-      m_GreenCaption->SetText (inlPrintf ("%x", (int) (m_HSVSaturation * 255) ) );
-      m_BlueCaption->SetText (inlPrintf ("%x", (int) (m_HSVValue * 255) ) );
+      m_RedCaption->SetText (NString::Printf ("%x", (int) (m_HSVHue * 255) ) );
+      m_GreenCaption->SetText (NString::Printf ("%x", (int) (m_HSVSaturation * 255) ) );
+      m_BlueCaption->SetText (NString::Printf ("%x", (int) (m_HSVValue * 255) ) );
     }
     else if (m_color_format == COLORFORMAT_INT)
     {
-      m_RedCaption->SetText (inlPrintf ("%d", (int) (m_HSVHue * 255) ) );
-      m_GreenCaption->SetText (inlPrintf ("%d", (int) (m_HSVSaturation * 255) ) );
-      m_BlueCaption->SetText (inlPrintf ("%d", (int) (m_HSVValue * 255) ) );
+      m_RedCaption->SetText (NString::Printf ("%d", (int) (m_HSVHue * 255) ) );
+      m_GreenCaption->SetText (NString::Printf ("%d", (int) (m_HSVSaturation * 255) ) );
+      m_BlueCaption->SetText (NString::Printf ("%d", (int) (m_HSVValue * 255) ) );
     }
     else
     {
-      m_RedCaption->SetText (inlPrintf ("%.3f", m_HSVHue) );
-      m_GreenCaption->SetText (inlPrintf ("%.3f", m_HSVSaturation) );
-      m_BlueCaption->SetText (inlPrintf ("%.3f", m_HSVValue) );
+      m_RedCaption->SetText (NString::Printf ("%.3f", m_HSVHue) );
+      m_GreenCaption->SetText (NString::Printf ("%.3f", m_HSVSaturation) );
+      m_BlueCaption->SetText (NString::Printf ("%.3f", m_HSVValue) );
     }
 
     if (m_HSVHue >= 1.0f)
@@ -801,21 +801,21 @@ namespace nux
 
     if (m_color_format == COLORFORMAT_HEX)
     {
-      m_RedCaption->SetText (inlPrintf (TEXT ("%x"), (int) (m_HLSHue * 255) ) );
-      m_GreenCaption->SetText (inlPrintf ("%x", (int) (m_HLSLight * 255) ) );
-      m_BlueCaption->SetText (inlPrintf ("%x", (int) (m_HLSSaturation * 255) ) );
+      m_RedCaption->SetText (NString::Printf (TEXT ("%x"), (int) (m_HLSHue * 255) ) );
+      m_GreenCaption->SetText (NString::Printf ("%x", (int) (m_HLSLight * 255) ) );
+      m_BlueCaption->SetText (NString::Printf ("%x", (int) (m_HLSSaturation * 255) ) );
     }
     else if (m_color_format == COLORFORMAT_INT)
     {
-      m_RedCaption->SetText (inlPrintf (TEXT ("%d"), (int) (m_HLSHue * 255) ) );
-      m_GreenCaption->SetText (inlPrintf ("%d", (int) (m_HLSLight * 255) ) );
-      m_BlueCaption->SetText (inlPrintf ("%d", (int) (m_HLSSaturation * 255) ) );
+      m_RedCaption->SetText (NString::Printf (TEXT ("%d"), (int) (m_HLSHue * 255) ) );
+      m_GreenCaption->SetText (NString::Printf ("%d", (int) (m_HLSLight * 255) ) );
+      m_BlueCaption->SetText (NString::Printf ("%d", (int) (m_HLSSaturation * 255) ) );
     }
     else
     {
-      m_RedCaption->SetText (inlPrintf (TEXT ("%.3f"), m_HLSHue) );
-      m_GreenCaption->SetText (inlPrintf ("%.3f", m_HLSLight) );
-      m_BlueCaption->SetText (inlPrintf ("%.3f", m_HLSSaturation) );
+      m_RedCaption->SetText (NString::Printf (TEXT ("%.3f"), m_HLSHue) );
+      m_GreenCaption->SetText (NString::Printf ("%.3f", m_HLSLight) );
+      m_BlueCaption->SetText (NString::Printf ("%.3f", m_HLSSaturation) );
     }
 
     if (m_HLSHue >= 1.0f)
@@ -841,15 +841,15 @@ namespace nux
 
     if (m_color_format == COLORFORMAT_HEX)
     {
-      m_AlphaCaption->SetText (inlPrintf ("%x", (int) (m_Alpha * 255) ) );
+      m_AlphaCaption->SetText (NString::Printf ("%x", (int) (m_Alpha * 255) ) );
     }
     else if (m_color_format == COLORFORMAT_INT)
     {
-      m_AlphaCaption->SetText (inlPrintf ("%d", (int) (m_Alpha * 255) ) );
+      m_AlphaCaption->SetText (NString::Printf ("%d", (int) (m_Alpha * 255) ) );
     }
     else
     {
-      m_AlphaCaption->SetText (inlPrintf ("%.3f", m_Alpha) );
+      m_AlphaCaption->SetText (NString::Printf ("%.3f", m_Alpha) );
     }
 
     sigColorChanged.emit (m_Red, m_Green, m_Blue, m_Alpha);
