@@ -144,7 +144,6 @@ static void
 TestObjectPtr (void)
 {
   OwnedObject *a = new OwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
-  UnOwnedObject *b = new UnOwnedObject (NUX_TRACKER_LOCATION); // ref count = 1, unowned
 
   nux::ObjectPtr<OwnedObject> object_ptr (a); // ref count = 2
 
@@ -166,7 +165,6 @@ static void
 TestObjectPtr1 (void)
 {
   ChildOwnedObject *c = new ChildOwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
-  ChildUnOwnedObject *d = new ChildUnOwnedObject (NUX_TRACKER_LOCATION); // ref count = 1, unowned
 
   nux::ObjectPtr<OwnedObject> object_ptr0 (c); // ref count = 2
 
@@ -195,7 +193,6 @@ static void
 TestObjectPtr2 (void)
 {
   ChildOwnedObject *c = new ChildOwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
-  ChildUnOwnedObject *d = new ChildUnOwnedObject (NUX_TRACKER_LOCATION); // ref count = 1, unowned
 
   nux::ObjectPtr<OwnedObject> object_ptr0 (c); // ref count = 2
 
