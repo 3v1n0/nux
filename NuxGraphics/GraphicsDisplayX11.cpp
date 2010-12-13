@@ -503,7 +503,7 @@ namespace nux
 
     m_GraphicsContext = new GraphicsEngine (*this);
 
-    EnableVSyncSwapControl();
+    //EnableVSyncSwapControl();
     //DisableVSyncSwapControl();
 
     return TRUE;
@@ -1837,34 +1837,40 @@ namespace nux
 
   void GraphicsDisplay::SetWindowTitle (const TCHAR *Title)
   {
-    XStoreName(m_X11Display, m_X11Window, TCHAR_TO_ANSI (Title));
+    XStoreName (m_X11Display, m_X11Window, TCHAR_TO_ANSI (Title));
   }
 
-  bool GraphicsDisplay::HasVSyncSwapControl() const
+  bool GraphicsDisplay::HasVSyncSwapControl () const
   {
-    return GetThreadGLDeviceFactory()->GetGpuInfo().Support_EXT_Swap_Control();
+    return GetThreadGLDeviceFactory ()->GetGpuInfo().Support_EXT_Swap_Control ();
   }
 
-  void GraphicsDisplay::EnableVSyncSwapControl()
+  void GraphicsDisplay::EnableVSyncSwapControl ()
   {
-    GLXDrawable drawable = glXGetCurrentDrawable();
-    glXSwapIntervalEXT(m_X11Display, drawable, 1);
+    if (GetGpuDevice ()->GetGpuInfo ().Support_EXT_Swap_Control ())
+    {
+      GLXDrawable drawable = glXGetCurrentDrawable();
+      glXSwapIntervalEXT(m_X11Display, drawable, 1);
+    }
   }
 
-  void GraphicsDisplay::DisableVSyncSwapControl()
+  void GraphicsDisplay::DisableVSyncSwapControl ()
   {
-    GLXDrawable drawable = glXGetCurrentDrawable();
-    glXSwapIntervalEXT(m_X11Display, drawable, 0);
+    if (GetGpuDevice ()->GetGpuInfo ().Support_EXT_Swap_Control ())
+    {
+      GLXDrawable drawable = glXGetCurrentDrawable ();
+      glXSwapIntervalEXT (m_X11Display, drawable, 0);
+    }
   }
 
-  float GraphicsDisplay::GetFrameTime() const
+  float GraphicsDisplay::GetFrameTime () const
   {
     return m_FrameTime;
   }
 
-  void GraphicsDisplay::ResetFrameTime()
+  void GraphicsDisplay::ResetFrameTime ()
   {
-    m_Timer.Reset();
+    m_Timer.Reset ();
   }
 
   /*
