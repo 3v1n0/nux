@@ -173,10 +173,10 @@ int main(int argc, char **argv)
     }
     else if (strcmp (argv[i], "--help") == 0 || strcmp (argv[i], "-h") == 0)
     {
-      printf ("Usage: unity_support_test [option]           \n");
-      printf ("Option:                                      \n");
+      printf ("Usage: unity_support_test [options]           \n");
+      printf ("Options:                                      \n");
       printf ("         -h, --help: print help.             \n");
-      printf ("         -p, --print: print detection result.\n");
+      printf ("         -p, --print: print detection results.\n");
 
       exit (0);
     }

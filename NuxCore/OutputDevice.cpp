@@ -310,13 +310,11 @@ namespace nux
   */
   void VisualOutputConsole::Serialize (const TCHAR *text, const TCHAR *log_prefix, int severity)
   {
+#if defined (NUX_OS_WINDOWS)
     TCHAR Temp[4096];
 
-#if defined (NUX_OS_WINDOWS)
     Snprintf (Temp, 4096, 4096 - 1, TEXT ("%s: %s%s"), log_prefix, text, NUX_LINE_TERMINATOR);
     OutputDebugString (Temp);
-#else
-    #error VisualOutputConsole::Serialize not implemented for this platform.
 #endif
   }
 
