@@ -38,11 +38,8 @@
 namespace nux
 {
 
-// Compute the frame rate every FRAME_RATE_PERIODE;
-#define FRAME_RATE_PERIODE    10
-
-#define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
-#define NUX_ERROR_EXIT_MESSAGE(message) inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, #message " The program will exit.")); exit(-1);
+  // Compute the frame rate every FRAME_RATE_PERIODE;
+  #define FRAME_RATE_PERIODE    10
 
   void ClipOrCenterRectToMonitor (LPRECT prc, t_u32 flags)
   {
@@ -238,7 +235,6 @@ namespace nux
         {
           // Pop Up A Message Box Letting User Know The Program Is Closing.
           MessageBox (NULL, "Program Will Now Close.", "ERROR", MB_OK | MB_ICONSTOP);
-          exit (1);
         }
       }
     }
@@ -356,7 +352,7 @@ namespace nux
     {
       DestroyOpenGLWindow();
       MessageBox (NULL, TEXT ("Window Creation Error."), TEXT ("ERROR"), MB_OK | MB_ICONERROR);
-      exit (1);                                                   // Return FALSE
+                                                 // Return FALSE
     }
 
     static	PIXELFORMATDESCRIPTOR pfd =				// pfd Tells Windows How We Want Things To Be

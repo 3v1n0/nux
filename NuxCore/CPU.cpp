@@ -345,9 +345,8 @@ namespace nux
           if (!fnIsWow64Process (GetCurrentProcess(), &bIsWow64) )
           {
             // handle error
-            inlWin32MessageBox (NULL, TEXT ("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-                                TEXT ("Failed to getOS info.\nThe program will exit.") );
-            exit (-1);
+            nuxCriticalMsg(TEXT("[NCPU::GetOS] Failed to getOS info."));
+            return;
           }
         }
 

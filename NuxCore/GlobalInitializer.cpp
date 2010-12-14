@@ -33,8 +33,14 @@ namespace nux
     // Placement new in our reserved buffer.
     GGlobalInitializer =  new (StaticBuffer) GlobalSingletonInitializer();
 
-    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (NOutputLogFile) );
-    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (NOutputVisualDebugConsole) );
+#if defined (NUX_OS_WINDOWS)
+    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (LogFileOutput));
+    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (VisualOutputConsole));
+    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (PrintfOutputConsole));
+#else
+    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (LogFileOutput));
+    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (PrintfOutputConsole));
+#endif
   }
 
   static void SystemShutdown()

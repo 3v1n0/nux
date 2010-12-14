@@ -87,10 +87,12 @@ namespace nux
   void *Realloc (void *Original, t_size Count, t_u32 Alignment)
   {
     void *mem = std::realloc ( Original, Count );
-    nuxAssertMsg (mem, TEXT ("[inlRealloc] realloc failed.") );
 
     if (mem == 0)
-      std::exit (0);
+    {
+      nuxCriticalMsg (TEXT ("[Realloc] realloc failed."));
+      return NULL;
+    }
 
     return mem;
   }

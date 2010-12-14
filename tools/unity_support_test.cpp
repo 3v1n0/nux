@@ -24,9 +24,7 @@
 
 #include "NuxCore/NuxCore.h"
 #include "NuxImage/BitmapFormats.h"
-
-#include "NuxGraphics/GraphicsDisplayX11.h"
-
+#include "NuxGraphics/GraphicsDisplay.h"
 #include "NuxGraphics/GLWindowManager.h"
 #include "NuxGraphics/GraphicsEngine.h"
 
@@ -41,116 +39,117 @@ bool pixel_buffer_object = false;
 bool unity_not_supported = false;
 bool unity_supported = false;
 
-bool UnitySupportTest ()
+#define NuxPrintDetectionInfo(b, level, text, ...)  {if (b) {nux::LogOutputSeverityMessage (level, text, ##__VA_ARGS__);} }
+
+bool UnitySupportTest (bool print_info)
 {
   nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 100, 100, nux::WINDOWSTYLE_NORMAL, 0, false);
-  //nux::GraphicsEngine* graphics_engine = graphics_display->GetGraphicsEngine();
   nux::GpuDevice* gpu_device = graphics_display->GetGpuDevice();
 
   
   int opengl_major = gpu_device->GetOpenGLMajorVersion ();
   int opengl_minor = gpu_device->GetOpenGLMinorVersion ();
-  
-  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("OpenGL version check ..."));
-  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("------------------------"));
+
+  NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_NONE, TEXT("OpenGL version check ..."));
+  NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_NONE, TEXT("------------------------"));
   
   if ((opengl_major == 1) && (opengl_minor < 4))
   {
     unity_not_supported = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, TEXT("System OpenGL: %d.%d [Minimum Required 1.4]"), opengl_major, opengl_minor);
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_ALERT, TEXT("System OpenGL: %d.%d [Minimum Required 1.4]"), opengl_major, opengl_minor);
   }
   else
   {
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, TEXT("System OpenGL: %d.%d [Minimum Required 1.4]"), opengl_major, opengl_minor);
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_INFO, TEXT("System OpenGL: %d.%d [Minimum Required 1.4]"), opengl_major, opengl_minor);
   }
 
 
-  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("OpenGL extension check ..."));
-  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("--------------------------"));
+  NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_NONE, TEXT("OpenGL extension check ..."));
+  NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_NONE, TEXT("--------------------------"));
   if (gpu_device->GetGpuInfo ().Support_EXT_Framebuffer_Object ())
   {
     frame_buffer_object = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "Frame Buffer Object support: YES");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_INFO, "Frame Buffer Object support: YES");
   }
   else
   {
     unity_not_supported = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, "Frame Buffer Object support: NO [Required]");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_ALERT, "Frame Buffer Object support: NO [Required]");
   }
   
   if (gpu_device->GetGpuInfo ().Support_ARB_Vertex_Program ())
   {
     vertex_program = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "ARB Vertex Program: YES");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_INFO, "ARB Vertex Program: YES");
   }
   else
   {
     unity_not_supported = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, "ARB Vertex Program: NO [Required]");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_ALERT, "ARB Vertex Program: NO [Required]");
   }
   
   if (gpu_device->GetGpuInfo ().Support_ARB_Fragment_Program ())
   {
     fragment_program = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "ARB Fragment Program: YES");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_INFO, "ARB Fragment Program: YES");
   }
   else
   {
     unity_not_supported = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, "ARB Fragment Program: NO [Required]");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_ALERT, "ARB Fragment Program: NO [Required]");
   }
   
   if (gpu_device->GetGpuInfo ().Support_ARB_Texture_Non_Power_Of_Two ())
   {
     non_power_of_2_textures = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "Non Power Of Two Textures: YES");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_INFO, "Non Power Of Two Textures: YES");
   }
   else
   {
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, "Non Power Of Two Textures: NO [Optional]");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_ALERT, "Non Power Of Two Textures: NO [Optional]");
   }
   
   if (gpu_device->GetGpuInfo ().Support_EXT_Texture_Rectangle () || gpu_device->GetGpuInfo ().Support_ARB_Texture_Rectangle())
   {
     rectangle_textures = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "Rectangle Texture: YES");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_INFO, "Rectangle Texture: YES");
   }
   else
   {
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, "Rectangle Texture: NO [Required]");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_ALERT, "Rectangle Texture: NO [Required]");
   }
   
   if (gpu_device->GetGpuInfo ().Support_ARB_Vertex_Buffer_Object ())
   {
     vertex_buffer_object = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "Vertex Buffer Object: YES");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_INFO, "Vertex Buffer Object: YES");
   }
   else
   {
     unity_not_supported = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, "Vertex Buffer Object: NO [Required]");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_ALERT, "Vertex Buffer Object: NO [Required]");
   }
 
   if (gpu_device->GetGpuInfo ().Support_ARB_Pixel_Buffer_Object ())
   {
     pixel_buffer_object = true;
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "Pixel Buffer Object: YES");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_INFO, "Pixel Buffer Object: YES");
   }
   else
   {
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, "Pixel Buffer Object: NO [Optional]");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_ALERT, "Pixel Buffer Object: NO [Optional]");
   }
 
   // Evaluation
-  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("Unity support assesment ..."));
-  nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("-----------------------"));
+  NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_NONE, TEXT("Unity support assesment ..."));
+  NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_NONE, TEXT("-----------------------"));
   if (unity_not_supported)
   {
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_CRITICAL, "The system graphics capabilities are insufficient to run Unity.");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_CRITICAL, "The system graphics capabilities are insufficient to run Unity.");
   }
   else
   {
-    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_INFO, "The system can run Unity.");
+    NuxPrintDetectionInfo (print_info, nux::NUX_MSG_SEVERITY_INFO, "The system can run Unity.");
   }
 
   delete graphics_display;
@@ -163,12 +162,30 @@ bool UnitySupportTest ()
 
 
 int main(int argc, char **argv)
-
 {
-  nux::NuxCoreInitialize(0);
-  nux::NuxGraphicsInitialize();
+  bool print_result = false;
 
-  bool supported = UnitySupportTest ();
+  for(int i = 1; i < argc; ++i)
+  {
+    if (strcmp (argv[i], "--print") == 0 || strcmp (argv[i], "-p") == 0)
+    {
+      print_result = true;
+    }
+    else if (strcmp (argv[i], "--help") == 0 || strcmp (argv[i], "-h") == 0)
+    {
+      printf ("Usage: unity_support_test [option]           \n");
+      printf ("Option:                                      \n");
+      printf ("         -h, --help: print help.             \n");
+      printf ("         -p, --print: print detection result.\n");
+
+      exit (0);
+    }
+  }
+
+  nux::NuxCoreInitialize (0);
+  nux::NuxGraphicsInitialize ();
+
+  bool supported = UnitySupportTest (print_result);
 
   if (supported)
     return 0;

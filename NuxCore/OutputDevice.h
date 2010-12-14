@@ -52,18 +52,18 @@ namespace nux
   };
 
 //! Output to null device.
-  class NNullOutput : public LogOutputDevice
+  class NullOutput : public LogOutputDevice
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NNullOutput, GlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (NullOutput, GlobalSingletonInitializer);
   public:
     void Serialize ( const TCHAR *V, const TCHAR *LogPrefix, int Severity) {}
   };
 
 //! Output to log file.
-  class NOutputLogFile : public LogOutputDevice
+  class LogFileOutput : public LogOutputDevice
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NOutputLogFile, GlobalSingletonInitializer);
-    //NOutputLogFile( const TCHAR* InFilename);
+    NUX_DECLARE_GLOBAL_OBJECT (LogFileOutput, GlobalSingletonInitializer);
+    //LogFileOutput( const TCHAR* InFilename);
 
   public:
     /*!
@@ -98,18 +98,34 @@ namespace nux
     void SerializeRaw (const TCHAR *Data);
   };
 
-//! Output to microsoft visual console.
-  class NOutputVisualDebugConsole : public LogOutputDevice
+  //! Output to microsoft visual console.
+  class VisualOutputConsole : public LogOutputDevice
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NOutputVisualDebugConsole, GlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT (VisualOutputConsole, GlobalSingletonInitializer);
   public:
 
     //! Write data to visual studio output debug console.
     /*!
-        @param  Data        Text to log.
-        @param  LogPrefix	Prefix for the text
+        @param text       Text to log.
+        @param log_prefix	Prefix for the text.
+        @param severity   Importance of the message.
     */
-    void Serialize (const TCHAR *Data, const TCHAR *LogPrefix, int Severity);
+    void Serialize (const TCHAR *text, const TCHAR *log_prefix, int severity);
+  };
+
+    //! Standard printf output console.
+  class PrintfOutputConsole : public LogOutputDevice
+  {
+    NUX_DECLARE_GLOBAL_OBJECT (PrintfOutputConsole, GlobalSingletonInitializer);
+  public:
+
+    //! Write text to the standard printf output debug console.
+    /*!
+        @param text       Text to log.
+        @param log_prefix	Prefix for the text.
+        @param severity   Importance of the message.
+    */
+    void Serialize (const TCHAR *text, const TCHAR *log_prefix, int severity);
   };
 
   class LogOutputRedirector : public LogOutputDevice

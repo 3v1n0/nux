@@ -56,10 +56,11 @@ namespace nux
   }
 #endif
 
-  NUX_IMPLEMENT_GLOBAL_OBJECT (NNullOutput);
+  NUX_IMPLEMENT_GLOBAL_OBJECT (NullOutput);
   NUX_IMPLEMENT_GLOBAL_OBJECT (LogOutputRedirector);
-  NUX_IMPLEMENT_GLOBAL_OBJECT (NOutputLogFile);
-  NUX_IMPLEMENT_GLOBAL_OBJECT (NOutputVisualDebugConsole)
+  NUX_IMPLEMENT_GLOBAL_OBJECT (LogFileOutput);
+  NUX_IMPLEMENT_GLOBAL_OBJECT (VisualOutputConsole)
+  NUX_IMPLEMENT_GLOBAL_OBJECT (PrintfOutputConsole)
 
   void LogOutputDevice::Shutdown()
   {
@@ -104,12 +105,12 @@ namespace nux
 
     Buffer[Result] = 0;
 
-    Serialize (Buffer, TEXT ("Log"), Severity);
+    Serialize (Buffer, TEXT ("Nux"), Severity);
 
     NUX_SAFE_DELETE_ARRAY (Buffer);
   }
 
-  void NOutputLogFile::Constructor()
+  void LogFileOutput::Constructor()
   {
     m_LogSerializer = NULL;
     m_Opened = false;
@@ -128,7 +129,7 @@ namespace nux
     GFileManager.MakeDirectory (m_Filename.GetTCharPtr(), 1);
 
     m_Filename += (const TCHAR *) NUX_PATH_SEPARATOR_STRING;
-    m_Filename += TEXT ("inalogic");
+    m_Filename += TEXT ("nux");
     m_Filename += TEXT (".log");
 
     // if the file already exists, create a backup as we are going to overwrite it
@@ -157,7 +158,7 @@ namespace nux
 
   }
 
-  void NOutputLogFile::Destructor()
+  void LogFileOutput::Destructor()
   {
     Shutdown();
   }
@@ -166,7 +167,7 @@ namespace nux
       Closes output device and cleans up. This can't happen in the destructor
       as we have to call "delete" which cannot be done for static/ global objects.
   */
-  void NOutputLogFile::Shutdown()
+  void LogFileOutput::Shutdown()
   {
     if (m_LogSerializer)
     {
@@ -179,7 +180,7 @@ namespace nux
     m_Closed = true;
   }
 
-  void NOutputLogFile::Flush()
+  void LogFileOutput::Flush()
   {
     if (m_LogSerializer)
     {
@@ -193,7 +194,7 @@ namespace nux
       @param  Data        Text to log.
       @param  LogPrefix	Prefix for the text
   */
-  void NOutputLogFile::Serialize (const TCHAR *Data, const TCHAR *LogPrefix, int Severity)
+  void LogFileOutput::Serialize (const TCHAR *Data, const TCHAR *LogPrefix, int Severity)
   {
     if (m_ObjectDestroyed)
       return;
@@ -229,7 +230,7 @@ namespace nux
     }
   }
 
-  void NOutputLogFile::SerializeRaw (const TCHAR *Data)
+  void LogFileOutput::SerializeRaw (const TCHAR *Data)
   {
     t_u32 s = (t_u32) StringLength (Data) * sizeof (TCHAR);
     m_LogSerializer->Serialize (NUX_CONST_CAST (TCHAR *, Data), s);
@@ -298,23 +299,71 @@ namespace nux
   }
 
 
-  void NOutputVisualDebugConsole::Constructor() {}
+  void VisualOutputConsole::Constructor() {}
 
-  void NOutputVisualDebugConsole::Destructor() {}
+  void VisualOutputConsole::Destructor() {}
 
 //! Write data to visual studio output debug console.
   /*!
       @param  Data        Text to log.
       @param  LogPrefix	Prefix for the text
   */
-  void NOutputVisualDebugConsole::Serialize (const TCHAR *Data, const TCHAR *LogPrefix, int Severity)
+  void VisualOutputConsole::Serialize (const TCHAR *text, const TCHAR *log_prefix, int severity)
   {
     TCHAR Temp[4096];
 
-
 #if defined (NUX_OS_WINDOWS)
-    Snprintf (Temp, 4096, 4096 - 1, TEXT ("%s: %s%s"), LogPrefix, Data, NUX_LINE_TERMINATOR);
+    Snprintf (Temp, 4096, 4096 - 1, TEXT ("%s: %s%s"), log_prefix, text, NUX_LINE_TERMINATOR);
     OutputDebugString (Temp);
+#else
+    #error VisualOutputConsole::Serialize not implemented for this platform.
+#endif
+  }
+
+  void PrintfOutputConsole::Constructor() {}
+
+  void PrintfOutputConsole::Destructor() {}
+
+//! Write data to visual studio output debug console.
+  /*!
+      @param  Data        Text to log.
+      @param  LogPrefix	Prefix for the text
+  */
+  void PrintfOutputConsole::Serialize (const TCHAR *text, const TCHAR *log_prefix, int severity)
+  {
+    TCHAR Temp[4096];
+#if defined (NUX_OS_WINDOWS)
+    Snprintf (Temp, 4096, 4096 - 1, TEXT ("%s: %s%s"), log_prefix, text, NUX_LINE_TERMINATOR);
+
+    HANDLE hConsole;
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    
+
+    if (severity == NUX_MSG_SEVERITY_CRITICAL)
+    {
+      SetConsoleTextAttribute(hConsole, FOREGROUND_RED|FOREGROUND_INTENSITY|BACKGROUND_BLUE|BACKGROUND_GREEN|BACKGROUND_INTENSITY);
+    }
+    else if (severity == NUX_MSG_SEVERITY_ALERT)
+    {
+      SetConsoleTextAttribute(hConsole, FOREGROUND_RED|FOREGROUND_INTENSITY);
+    }
+    else if (severity == NUX_MSG_SEVERITY_WARNING)
+    {
+      SetConsoleTextAttribute(hConsole, FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
+    }
+    else if (severity == NUX_MSG_SEVERITY_INFO)
+    {
+      SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN|FOREGROUND_INTENSITY);
+    }
+    else if (severity == NUX_MSG_SEVERITY_NONE)
+    {
+      SetConsoleTextAttribute(hConsole, FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
+    }
+
+    printf ("%s", &Temp[0]);
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
+
 #elif defined (NUX_OS_LINUX)
 //     {attr} is one of following
 //
@@ -354,46 +403,47 @@ namespace nux
     int Background = 48;
     int Bold = 0;
 
-    if (Severity == NUX_MSG_SEVERITY_CRITICAL)
+    if (severity == NUX_MSG_SEVERITY_CRITICAL)
     {
       Foreground = 31;
       Background = 44;
       Bold = 1;
     }
-    else if (Severity == NUX_MSG_SEVERITY_ALERT)
+    else if (severity == NUX_MSG_SEVERITY_ALERT)
     {
       Foreground = 31;
       Bold = 1;
     }
-    else if (Severity == NUX_MSG_SEVERITY_WARNING)
+    else if (severity == NUX_MSG_SEVERITY_WARNING)
     {
       Foreground = 33;
       Bold = 1;
     }
-    else if (Severity == NUX_MSG_SEVERITY_INFO)
+    else if (severity == NUX_MSG_SEVERITY_INFO)
     {
       Foreground = 32;
       Bold = 1;
     }
-    else if (Severity == NUX_MSG_SEVERITY_NONE)
+    else if (severity == NUX_MSG_SEVERITY_NONE)
     {
       Foreground = 38;
       Bold = 0;
     }
 
 
-    Snprintf (Temp, 4096, 4096 - 1, TEXT ("%c[%d;%d;%dm%s: %s%c[%d;%d;%dm%s"), 0x1B, Bold, Foreground, Background, LogPrefix, Data, 0x1B, 0, 38, 48, NUX_LINE_TERMINATOR);
+    Snprintf (Temp, 4096, 4096 - 1, TEXT ("%c[%d;%d;%dm%s: %s%c[%d;%d;%dm%s"), 0x1B, Bold, Foreground, Background, log_prefix, text, 0x1B, 0, 38, 48, NUX_LINE_TERMINATOR);
     printf ("%s", &Temp[0]);
 
 #else
-    Snprintf (Temp, 4096, 4096 - 1, TEXT ("%s: %s%s"), LogPrefix, Data, NUX_LINE_TERMINATOR);
+    Snprintf (Temp, 4096, 4096 - 1, TEXT ("%s: %s%s"), log_prefix, text, NUX_LINE_TERMINATOR);
     printf ("%s", &Temp[0]);
 #endif
   }
 
-  void NNullOutput::Constructor() {}
 
-  void NNullOutput::Destructor() {}
+  void NullOutput::Constructor() {}
+
+  void NullOutput::Destructor() {}
 
 
 }
