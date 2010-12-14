@@ -1,0 +1,6 @@
+
+Usage: unity_support_test [options]
+
+Options:
+    -h, --help: print help.
+    -p, --print: print detection results.

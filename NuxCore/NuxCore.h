@@ -457,9 +457,8 @@ namespace nux
   class NFileManager;
 
 
-#define GNullDevice         NUX_GLOBAL_OBJECT_INSTANCE(nux::NNullOutput)
+#define GNullDevice         NUX_GLOBAL_OBJECT_INSTANCE(nux::NullOutput)
 #define GLogDevice          NUX_GLOBAL_OBJECT_INSTANCE(nux::LogOutputRedirector)
-#define GThrow              NUX_GLOBAL_OBJECT_INSTANCE(nux::NThrowOutput)
 
 #if (defined NUX_OS_WINDOWS)
     #define GFileManager    NUX_GLOBAL_OBJECT_INSTANCE(nux::NFileManagerWindows)

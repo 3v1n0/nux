@@ -66,11 +66,7 @@ namespace nux
 
     if (!RegisterClassEx (&WinClass) )									// Attempt To Register The Window Class
     {
-      nuxDebugMsg (TEXT ("[DisplayAccessController::~DisplayAccessController] Failed to register window class name: %s."), WINDOW_CLASS_NAME);
-      inlWin32MessageBox (NULL, TEXT ("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-                          TEXT ("Failed to register window class name.\nThe program will exit.") );
-      //MessageBox(NULL, TEXT("Failed To Register The Window Class."), TEXT(""ERROR"), MB_OK | MB_ICONERROR);
-      exit (1);
+      nuxCriticalMsg (TEXT ("[DisplayAccessController::~DisplayAccessController] Failed to register window class name: %s."), WINDOW_CLASS_NAME);
     }
 
 #endif

@@ -215,29 +215,27 @@ namespace nux
 
     if (painter_filename == TEXT ("") )
     {
-      nuxDebugMsg (TEXT ("[GraphicsEngine::LoadPainterImages] Can't find Painter.xml file.") );
-      /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-          TEXT("Can't find User Interface xml file.\nThe program will exit."));
-      exit(-1);*/
+      nuxCriticalMsg (TEXT ("[GraphicsEngine::LoadPainterImages] Can't find Painter.xml file."));
+      return;
     }
 
-    NUITextureArchiver UITextureArchive (NUX_FIND_RESOURCE_LOCATION_NOFAIL (TEXT ("UITextures/UIArchive.iar") ) );
+    NUITextureArchiver UITextureArchive (NUX_FIND_RESOURCE_LOCATION_NOFAIL (TEXT ("UITextures/UIArchive.iar")));
 
     TiXmlDocument doc (painter_filename.GetTCharPtr() );
     doc.LoadFile();
 
     TiXmlHandle docHandle ( &doc );
-    TiXmlElement *data = docHandle.FirstChild (TCHARToUTF8 (TEXT ("PaintData") ) ).Element();
+    TiXmlElement *data = docHandle.FirstChild (TCHARToUTF8 (TEXT ("PaintData"))).Element();
     TiXmlElement *image = 0;
 
-    for (image = data->FirstChildElement (TCHARToUTF8 (TEXT ("Image") ) ); image; image = image->NextSiblingElement (TCHARToUTF8 (TEXT ("Image") ) ) )
+    for (image = data->FirstChildElement (TCHARToUTF8 (TEXT ("Image"))); image; image = image->NextSiblingElement (TCHARToUTF8 (TEXT ("Image"))))
     {
       PainterImage *pimage = new PainterImage;
       Memset (pimage, 0, sizeof (PainterImage) );
 
-      NString style = image->Attribute (TCHARToUTF8 (TEXT ("style") ) );
+      NString style = image->Attribute (TCHARToUTF8 (TEXT ("style")));
 
-      pimage->style = GetStyleImageRef (style.GetTCharPtr() );
+      pimage->style = GetStyleImageRef (style.GetTCharPtr());
 
       // If the attributes border_left, border_right, border_top, border_bottom are not present, assume they are equal to 0;
       pimage->border_left = pimage->border_right = pimage->border_top = pimage->border_bottom = 0;
@@ -248,7 +246,7 @@ namespace nux
       image->Attribute (TCHARToUTF8 (TEXT ("border_bottom") ), &pimage->border_bottom);
 
 
-      const char *draw_borders_only = image->Attribute (TCHARToUTF8 (TEXT ("border_only") ) );
+      const char *draw_borders_only = image->Attribute (TCHARToUTF8 (TEXT ("border_only")));
 
       if (draw_borders_only == 0)
       {
@@ -256,7 +254,7 @@ namespace nux
       }
       else
       {
-        if (strcmp (TCHARToUTF8 (TEXT ("false") ), draw_borders_only) == 0)
+        if (strcmp (TCHARToUTF8 (TEXT ("false")), draw_borders_only) == 0)
         {
           pimage->draw_borders_only = false;
         }
@@ -268,25 +266,25 @@ namespace nux
 
       if (1)
       {
-        NBitmapData *uitexturedata = UITextureArchive.ExtractTextureStyle (style.GetTCharPtr() );
+        NBitmapData *uitexturedata = UITextureArchive.ExtractTextureStyle (style.GetTCharPtr());
         BaseTexture* RectangleTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
 
         if (uitexturedata)
           RectangleTexture->Update (uitexturedata);
         else
         {
-          NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name") ) );
-          NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (filename.GetTCharPtr() );
-          RectangleTexture = Load2DTextureFile (texture_filename.GetTCharPtr() );
+          NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name")));
+          NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (filename.GetTCharPtr());
+          RectangleTexture = Load2DTextureFile (texture_filename.GetTCharPtr());
         }
 
         pimage->texture = RectangleTexture;
       }
       else
       {
-        NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name") ) );
-        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (filename.GetTCharPtr() );
-        pimage->texture = Load2DTextureFile (texture_filename.GetTCharPtr() );
+        NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name")));
+        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (filename.GetTCharPtr());
+        pimage->texture = Load2DTextureFile (texture_filename.GetTCharPtr());
       }
 
       m_PainterImageList.push_back (pimage);

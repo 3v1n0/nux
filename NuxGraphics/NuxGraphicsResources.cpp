@@ -53,9 +53,7 @@ namespace nux
 //         NString FileName = m_FilePath.GetFile(file_search.GetTCharPtr());
 //         if (FileName == TEXT(""))
 //         {
-//             nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Can't find inalogic.ini file."));
-// //             inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-// //                 TEXT("Can't find .ini file.\nThe program will exit."));
+//             nuxCriticalMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Can't find inalogic.ini file."));
 // //             exit(-1);
 //         }
 //
@@ -91,10 +89,8 @@ namespace nux
 //             }
 //             else
 //             {
-//                 nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read font search path from .ini file."));
-// //                 inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-// //                     TEXT("Failed to read font search path from .ini file.\nThe program will exit."));
-// //                 exit(-1);
+//                 nuxCriticalMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read font search path from .ini file."));
+// //                 return;
 //
 //             }
 //
@@ -106,10 +102,8 @@ namespace nux
 //             }
 //             else
 //             {
-//                 nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read texture search path from .ini file."));
-// //                 inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-// //                     TEXT("Failed to read texture search path from .ini file.\nThe program will exit."));
-// //                 exit(-1);
+//                 nuxCriticalMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read texture search path from .ini file."));
+// //                 return;
 //             }
 //
 //             key_name = TEXT("ShaderPath");
@@ -120,10 +114,8 @@ namespace nux
 //             }
 //             else
 //             {
-//                 nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read shader search path from .ini file."));
-// //                 inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-// //                     TEXT("Failed to read shader search path from .ini file.\nThe program will exit."));
-// //                 exit(-1);
+//                 nuxCriticalMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read shader search path from .ini file."));
+// //                 return;
 //             }
 //         }
 
@@ -172,10 +164,8 @@ namespace nux
 
     if (path == TEXT ("") && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
-      inlWin32MessageBox (NULL, TEXT ("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-                          TEXT ("Failed to locate resource file %s.\nThe program will exit."), ResourceFileName);
-      exit (1);
+      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -189,10 +179,8 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
-      inlWin32MessageBox (NULL, TEXT ("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-                          TEXT ("Failed to locate ui texture file %s.\nThe program will exit."), ResourceFileName);
-      exit (1);
+      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -206,10 +194,8 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
-      inlWin32MessageBox (NULL, TEXT ("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-                          TEXT ("Failed to locate shader file %s.\nThe program will exit."), ResourceFileName);
-      exit (1);
+      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -223,10 +209,8 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
-      inlWin32MessageBox (NULL, TEXT ("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-                          TEXT ("Failed to locate font file %s.\nThe program will exit."), ResourceFileName);
-      exit (1);
+      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -238,10 +222,8 @@ namespace nux
 
     if (path == TEXT ("") && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
-      /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-          TEXT("Failed to locate resource file %s.\nThe program will exit."), ResourceFileName);*/
-      exit (1);
+      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -255,10 +237,8 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
-      /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-          TEXT("Failed to locate ui texture file %s.\nThe program will exit."), ResourceFileName);*/
-      exit (1);
+      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -272,10 +252,8 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
-      /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-          TEXT("Failed to locate shader file %s.\nThe program will exit."), ResourceFileName);*/
-      exit (1);
+      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -289,10 +267,8 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
-      /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-          TEXT("Failed to locate font file %s.\nThe program will exit."), ResourceFileName);*/
-      exit (1);
+      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
