@@ -109,7 +109,7 @@ namespace nux
     int            _AllocatedUnpackBuffer;
 
     friend class IOpenGLVolumeTexture;
-    friend class IntrusiveSP<IOpenGLVolume>;
+    friend class ObjectPtr<IOpenGLVolume>;
   };
 
 }

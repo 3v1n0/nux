@@ -39,7 +39,7 @@ namespace nux
   class IOpenGLVertexShader;
   class IOpenGLPixelShader;
 
-  template<typename T> class IntrusiveSP;
+  template<typename T> class ObjectPtr;
 
 #define NUM_VERTEX_SHADER_INPUT_ATTRIBUTE      16
   enum VertexAttributeType

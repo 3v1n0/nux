@@ -145,7 +145,7 @@ namespace nux
     SetMinimumWidth (/*4 + */GetFont()->GetStringWidth (m_Text.GetTStringRef() ) );
   }
 
-  void StaticTextBox::SetFont (IntrusiveSP<FontTexture> Font)
+  void StaticTextBox::SetFont (ObjectPtr<FontTexture> Font)
   {
     View::SetFont (Font);
 

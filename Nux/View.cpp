@@ -365,12 +365,12 @@ namespace nux
     PostResizeGeometry();
   }
 
-  void View::SetFont (IntrusiveSP<FontTexture> Font)
+  void View::SetFont (ObjectPtr<FontTexture> Font)
   {
     m_font = Font;
   }
 
-  IntrusiveSP<FontTexture> View::GetFont()
+  ObjectPtr<FontTexture> View::GetFont()
   {
     return m_font;
   }

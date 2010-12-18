@@ -25,7 +25,7 @@
 #include "HLayout.h"
 #include "VLayout.h"
 #include "EditTextBox.h"
-#include "Button.h"
+#include "PushButton.h"
 #include "HexRegExpValidator.h"
 #include "IntegerValidator.h"
 #include "DoubleValidator.h"
@@ -114,8 +114,8 @@ namespace nux
     vlayout             = new VLayout (TEXT ("RGBVLayout"), NUX_TRACKER_LOCATION);
     colormodel_layout   = new VLayout (TEXT ("ColorModel"), NUX_TRACKER_LOCATION);
 
-    m_ColorModel        = new Button();
-    m_ColorFormat       = new Button();
+    m_ColorModel        = new PushButton();
+    m_ColorFormat       = new PushButton();
 
     m_RedCaption        = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     m_GreenCaption      = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);

@@ -39,7 +39,7 @@ namespace nux
   class CheckBox;
   class RadioButton;
   class RadioButtonGroup;
-  class Button;
+  class PushButton;
 
   class ColorEditor;
   class ColorPreview;
@@ -175,8 +175,8 @@ namespace nux
     RadioButton *valuecheck;
     EditTextBox *valuetext;
 
-    Button *OkButton;
-    Button *CancelButton;
+    PushButton *OkButton;
+    PushButton *CancelButton;
     RadioButtonGroup *radiogroup;
 
     DoubleValidator m_Validator;

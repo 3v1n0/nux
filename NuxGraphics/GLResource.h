@@ -78,6 +78,8 @@ namespace nux
 
 #define NUX_ENABLE_CG_SHADERS 0
 
+//#define NUX_OPENGL_ES_20
+
 #if defined(NUX_OS_WINDOWS)
 #include "GL/glew.h"
 #include "GL/wglew.h"
@@ -555,7 +557,7 @@ namespace nux
   unsigned int   GetGLElementCount (PRIMITIVE_TYPE InPrimitiveType,
                                     unsigned int        InPrimitiveCount);
 
-//   template<typename T> class IntrusiveSP
+//   template<typename T> class ObjectPtr
 //   {
 //   public:
 //     T	*Handle;
@@ -578,7 +580,7 @@ namespace nux
 //     //     // Do not allow access to the managed pointer. This also avoid compiler confusion between
 //     //     //  int BindTexture(IOpenGLBaseTexture* texture);
 //     //     // and
-//     //     //  int BindTexture(IntrusiveSP<IOpenGLBaseTexture> texture);
+//     //     //  int BindTexture(ObjectPtr<IOpenGLBaseTexture> texture);
 //     //
 //     //     // Access operators.
 //     //     typedef	T*	PtrT;
@@ -613,7 +615,7 @@ namespace nux
 //     }
 // 
 //     // Constructor/destructor.
-//     IntrusiveSP (T *InHandle = 0)
+//     ObjectPtr (T *InHandle = 0)
 //       :   Handle (InHandle)
 //     {
 //       if (Handle)
@@ -621,7 +623,7 @@ namespace nux
 //     }
 // 
 //     template <typename U>
-//     IntrusiveSP (U *InHandle)
+//     ObjectPtr (U *InHandle)
 //       :   Handle (0)
 //     {
 //       if (InHandle == 0)
@@ -636,7 +638,7 @@ namespace nux
 //         Handle->Increment();
 //     }
 // 
-//     IntrusiveSP (const IntrusiveSP<T>& Copy)
+//     ObjectPtr (const ObjectPtr<T>& Copy)
 //       :   Handle (0)
 //     {
 //       Handle = Copy.Handle;
@@ -646,18 +648,18 @@ namespace nux
 //     }
 // 
 //     template <typename U>
-//     IntrusiveSP (const IntrusiveSP<U>& Copy)
+//     ObjectPtr (const ObjectPtr<U>& Copy)
 //       :   Handle (0)
 //     {
 //       // Check if type U is derived from type T
-//       // Type() is virtual. Even if we have a IntrusiveSP<IOpenGLBaseTexture> but its internal pointer is a IOpenGLCubeTexture,
+//       // Type() is virtual. Even if we have a ObjectPtr<IOpenGLBaseTexture> but its internal pointer is a IOpenGLCubeTexture,
 //       // Type() returns the static object type inside IOpenGLCubeTexture.
 //       // This make this possible
 //       //
-//       //      IntrusiveSP<IOpenGLBaseTexture> basetex;            // IOpenGLBaseTexture is an abstract base class for IOpenGLTexture2D
+//       //      ObjectPtr<IOpenGLBaseTexture> basetex;            // IOpenGLBaseTexture is an abstract base class for IOpenGLTexture2D
 //       //      basetex = gGLDeviceFactory->CreateTexture(.....);
-//       //      IntrusiveSP<IOpenGLVertexBuffer> vtx(basetex);   // vtx Handle will be null
-//       //      IntrusiveSP<IOpenGLTexture2D> tex(basetex);      // tex Handle will be the same as basetex
+//       //      ObjectPtr<IOpenGLVertexBuffer> vtx(basetex);   // vtx Handle will be null
+//       //      ObjectPtr<IOpenGLTexture2D> tex(basetex);      // tex Handle will be the same as basetex
 //       //
 // 
 //       if (Copy.Handle->Type().IsDerivedFromType (T::StaticObjectType) )
@@ -669,7 +671,7 @@ namespace nux
 //         Handle->Increment();
 //     }
 // 
-//     ~IntrusiveSP()
+//     ~ObjectPtr()
 //     {
 //       if (Handle)
 //       {
@@ -680,7 +682,7 @@ namespace nux
 // 
 //     // Assignment operator.
 // 
-//     IntrusiveSP<T>& operator = (T *InHandle)
+//     ObjectPtr<T>& operator = (T *InHandle)
 //     {
 //       if (Handle != InHandle)
 //       {
@@ -699,7 +701,7 @@ namespace nux
 //       return *this;
 //     }
 // 
-//     IntrusiveSP<T>& operator = (const IntrusiveSP<T>& Other)
+//     ObjectPtr<T>& operator = (const ObjectPtr<T>& Other)
 //     {
 //       // Avoid self assignment
 //       if (Handle == Other.Handle)
@@ -721,7 +723,7 @@ namespace nux
 //       return *this;
 //     }
 // 
-//     bool operator == (const IntrusiveSP<T>& Other) const
+//     bool operator == (const ObjectPtr<T>& Other) const
 //     {
 //       if (Handle == Other.Handle)
 //       {
@@ -753,7 +755,7 @@ namespace nux
 //     }
 // 
 //     template <typename U>
-//     bool operator == (IntrusiveSP<U>& Other) const
+//     bool operator == (ObjectPtr<U>& Other) const
 //     {
 //       if (Handle == Other.Handle)
 //       {
@@ -763,7 +765,7 @@ namespace nux
 //       return false;
 //     }
 // 
-//     bool operator != (const IntrusiveSP<T>& Other) const
+//     bool operator != (const ObjectPtr<T>& Other) const
 //     {
 //       if (Handle != Other.Handle)
 //       {
@@ -795,7 +797,7 @@ namespace nux
 //     }
 // 
 //     template <typename U>
-//     bool operator != (IntrusiveSP<U>& Other) const
+//     bool operator != (ObjectPtr<U>& Other) const
 //     {
 //       if (Handle != Other.Handle)
 //       {
@@ -806,22 +808,22 @@ namespace nux
 //     }
 // 
 //     //    // This isn't safe. An assignment like the following is wrong, but it will no flag an error at compile time.
-//     //    // IntrusiveSP<IOpenGLVertexBuffer> vtx;
-//     //    // IntrusiveSP<IOpenGLTexture2D> tex;
+//     //    // ObjectPtr<IOpenGLVertexBuffer> vtx;
+//     //    // ObjectPtr<IOpenGLTexture2D> tex;
 //     //    // vtx = tex;         // WRONG
 //     //
 //     //    template<typename U>
-//     //        IntrusiveSP<T>& operator=(const IntrusiveSP<U>& Other)
+//     //        ObjectPtr<T>& operator=(const ObjectPtr<U>& Other)
 //     //    {
 //     //        Handle = (T*)(Other.Handle);
 //     //        return *this;
 //     //    }
 // 
-//     // Doing vtx = tex.Castref<IOpenGLVertexBuffer> will return a IntrusiveSP<IOpenGLVertexBuffer> with a null Handle.
+//     // Doing vtx = tex.Castref<IOpenGLVertexBuffer> will return a ObjectPtr<IOpenGLVertexBuffer> with a null Handle.
 //     template<typename U>
-//     IntrusiveSP<U> CastRef()
+//     ObjectPtr<U> CastRef()
 //     {
-//       IntrusiveSP<U> t;
+//       ObjectPtr<U> t;
 // 
 //       // Check if type U is derived from type T
 //       if (U::StaticObjectType.IsDerivedFromType (T::StaticObjectType) )

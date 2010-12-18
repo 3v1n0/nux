@@ -30,7 +30,7 @@
 namespace nux
 {
 
-  class Button;
+  class PushButton;
   class VLayout;
   class HLayout;
   class EditTextBox;
@@ -179,8 +179,8 @@ namespace nux
     float m_HLSLight;
     float m_HLSSaturation;
 
-    Button *m_ColorModel;
-    Button *m_ColorFormat;
+    PushButton *m_ColorModel;
+    PushButton *m_ColorFormat;
 
     enum eColorModel m_color_model;
     enum ColorFormat m_color_format;

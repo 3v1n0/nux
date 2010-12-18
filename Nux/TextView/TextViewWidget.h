@@ -130,8 +130,8 @@ namespace nux
     //SmartPtrGLTexture m_BackgroundTexture;
 
     // Backup texture to speed up scrolling
-    IntrusiveSP<IOpenGLFrameBufferObject> m_FrameBufferObject;
-    IntrusiveSP<IOpenGLBaseTexture> m_TextureBuffer[2];
+    ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
+    ObjectPtr<IOpenGLBaseTexture> m_TextureBuffer[2];
     void SwapTextureIndex()
     {
       m_TextureIndex = (m_TextureIndex == 0) ? 1 : 0;
@@ -216,7 +216,7 @@ namespace nux
     virtual long PostLayoutManagement2 (long LayoutResult);
 
   public:
-    IntrusiveSP<FontTexture> m_TextFont;
+    ObjectPtr<FontTexture> m_TextFont;
 
     ///////////////////////////////////////////////////////
     // AbstractInterfaceObject

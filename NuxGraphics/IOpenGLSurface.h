@@ -163,7 +163,7 @@ namespace nux
     friend class IOpenGLCubeTexture;
     friend class IOpenGLVolumeTexture;
     friend class IOpenGLAnimatedTexture;
-    friend class IntrusiveSP<IOpenGLSurface>;
+    friend class ObjectPtr<IOpenGLSurface>;
   };
 
 }

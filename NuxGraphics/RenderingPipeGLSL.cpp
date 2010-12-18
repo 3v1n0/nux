@@ -53,8 +53,8 @@ namespace nux
 
   void GraphicsEngine::InitSlColorShader()
   {
-    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -77,7 +77,7 @@ namespace nux
                      }");
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString) );
 
-    m_SlColor = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
+    m_SlColor = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     m_SlColor->ClearShaderObjects();
     m_SlColor->AddShaderObject (VS);
     m_SlColor->AddShaderObject (PS);
@@ -86,8 +86,8 @@ namespace nux
 
   void GraphicsEngine::InitSlTextureShader()
   {
-    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -129,7 +129,7 @@ namespace nux
                      }");
 
     // Textured 2D Primitive Shader
-    m_SlTextureModColor = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
+    m_SlTextureModColor = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
 
@@ -142,8 +142,8 @@ namespace nux
 
   void GraphicsEngine::InitSlColorModTexMaskAlpha()
   {
-    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -184,7 +184,7 @@ namespace nux
                      gl_FragColor = vec4(varyVertexColor.xyz, alpha*varyVertexColor.a); \n\
                      }");
 
-    m_SlColorModTexMaskAlpha = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
+    m_SlColorModTexMaskAlpha = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
     m_SlColorModTexMaskAlpha->ClearShaderObjects();
@@ -195,7 +195,7 @@ namespace nux
     CHECKGL ( glBindAttribLocation (m_SlColorModTexMaskAlpha->GetOpenGLID(), 2, "VectexColor") );
     m_SlColorModTexMaskAlpha->Link();
 
-    m_SlColorModTexRectMaskAlpha = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
+    m_SlColorModTexRectMaskAlpha = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2DRECT") );
     m_SlColorModTexRectMaskAlpha->ClearShaderObjects();
@@ -209,8 +209,8 @@ namespace nux
 
   void GraphicsEngine::InitSl2TextureAdd()
   {
-    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -260,7 +260,7 @@ namespace nux
                         gl_FragColor = b0 + b1;                                             \n\
                         }");
 
-    m_Sl2TextureAdd = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
+    m_Sl2TextureAdd = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
 
@@ -273,8 +273,8 @@ namespace nux
 
   void GraphicsEngine::InitSl2TextureMod()
   {
-    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -324,7 +324,7 @@ namespace nux
                          gl_FragColor = b0 * b1;                                            \n\
                          }");
 
-    m_Sl2TextureMod = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
+    m_Sl2TextureMod = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
 
@@ -337,8 +337,8 @@ namespace nux
 
   void GraphicsEngine::InitSl4TextureAdd()
   {
-    IntrusiveSP<IOpenGLVertexShader> VS = m_GLWindow.m_DeviceFactory->CreateVertexShader();
-    IntrusiveSP<IOpenGLPixelShader> PS = m_GLWindow.m_DeviceFactory->CreatePixelShader();
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
     NString VSString;
     NString PSString;
 
@@ -407,7 +407,7 @@ namespace nux
     //vec4(v.w, v.w, v.w, v.w)
 
     // Textured 2D Primitive Shader
-    m_Sl4TextureAdd = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
+    m_Sl4TextureAdd = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
 
@@ -418,7 +418,7 @@ namespace nux
     m_Sl4TextureAdd->Link();
 
 //     // Textured Rect Primitive Shader
-//     m_4TexBlendRectProg = m_GLWindow.m_DeviceFactory->CreateShaderProgram();
+//     m_4TexBlendRectProg = _graphics_display.m_DeviceFactory->CreateShaderProgram();
 //     VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
 //     PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), TEXT("#define SAMPLERTEX2DRECT"));
 //     m_4TexBlendRectProg->ClearShaderObjects();
@@ -430,21 +430,11 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_Color (int x, int y, int width, int height, const Color &color)
   {
-#if USE_ARB
-    QRP_Color (x, y, width, height, color, color, color, color);
-    return;
-#endif
-
     QRP_GLSL_Color (x, y, width, height, color, color, color, color);
   }
 
   void GraphicsEngine::QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
   {
-#if USE_ARB
-    QRP_Color (x, y, width, height, c0, c1, c2, c3);
-    return;
-#endif
-
     m_quad_tex_stats++;
 
     float VtxBuffer[] =
@@ -455,7 +445,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f, c3.R(), c3.G(), c3.B(), c3.A(),
     };
 
-    IntrusiveSP<IOpenGLShaderProgram> ShaderProg = m_SlColor;
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_SlColor;
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
@@ -486,13 +476,8 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_1Tex (int x, int y, int width, int height, IntrusiveSP<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
+  void GraphicsEngine::QRP_GLSL_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
   {
-#if USE_ARB
-    QRP_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
-    return;
-#endif
-
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, DeviceTexture, texxform0);
     float VtxBuffer[] =
@@ -503,7 +488,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
     };
 
-    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
 
     if (DeviceTexture->Type().IsDerivedFromType (IOpenGLTexture2D::StaticObjectType) )
     {
@@ -561,13 +546,8 @@ namespace nux
 
 // Render the texture alpha into RGB and modulated by a color.
   void GraphicsEngine::QRP_GLSL_ColorModTexAlpha (int x, int y, int width, int height,
-      IntrusiveSP< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
+      ObjectPtr< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
   {
-#if USE_ARB
-    QRP_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
-    return;
-#endif
-
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, DeviceTexture, texxform);
 
@@ -579,7 +559,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.R(), color.G(), color.B(), color.A(),
     };
 
-    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
 //     if(DeviceTexture->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType))
     {
       ShaderProg = m_SlColorModTexMaskAlpha;
@@ -648,15 +628,10 @@ namespace nux
 
 // Blend 2 textures together
   void GraphicsEngine::QRP_GLSL_2Tex (int x, int y, int width, int height,
-                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
-                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
+                                       ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+                                       ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
-#if USE_ARB
-    QRP_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
-    return;
-#endif
-
-    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
 //     if(SrcTexture0->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
 //        SrcTexture1->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType))
     {
@@ -739,15 +714,10 @@ namespace nux
 
 
   void GraphicsEngine::QRP_GLSL_2TexMod (int x, int y, int width, int height,
-    IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
-    IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
-#if USE_ARB
-    QRP_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
-    return;
-#endif
-
-    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
     {
       ShaderProg = m_Sl2TextureAdd;
     }
@@ -818,23 +788,17 @@ namespace nux
   }
 
   void GraphicsEngine::QRP_GLSL_4Tex (int x, int y, int width, int height,
-                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
-                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
-                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
-                                       IntrusiveSP<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3)
+                                       ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+                                       ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
+                                       ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
+                                       ObjectPtr<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3)
   {
-#if USE_ARB
-    QRP_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
-              DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
-    return;
-#endif
-
     QRP_Compute_Texture_Coord (width, height, DeviceTexture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, DeviceTexture1, texxform1);
     QRP_Compute_Texture_Coord (width, height, DeviceTexture2, texxform2);
     QRP_Compute_Texture_Coord (width, height, DeviceTexture3, texxform3);
 
-    IntrusiveSP<IOpenGLShaderProgram> ShaderProg;
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
 //     if(SrcTexture0->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
 //        SrcTexture1->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
 //        SrcTexture2->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
@@ -952,11 +916,6 @@ namespace nux
       int x2, int y2,
       Color c0)
   {
-#if USE_ARB
-    QRP_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
-    return;
-#endif
-
     QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
   }
 
@@ -965,11 +924,6 @@ namespace nux
       int x2, int y2,
       Color c0, Color c1, Color c2)
   {
-#if USE_ARB
-    QRP_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
-    return;
-#endif
-
     float VtxBuffer[] =
     {
       x0, y0, 0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
@@ -1009,29 +963,19 @@ namespace nux
   void GraphicsEngine::QRP_GLSL_Line (int x0, int y0,
                                        int x1, int y1, Color c0)
   {
-#if USE_ARB
-    QRP_Line (x0, y0, x1, y1, c0, c0);
-    return;
-#endif
-
-    QRP_Line (x0, y0, x1, y1, c0, c0);
+    QRP_GLSL_Line (x0, y0, x1, y1, c0, c0);
   }
 
   void GraphicsEngine::QRP_GLSL_Line (int x0, int y0,
                                        int x1, int y1, Color c0, Color c1)
   {
-#if USE_ARB
-    QRP_Line (x0, y0, x1, y1, c0, c1);
-    return;
-#endif
-
     float VtxBuffer[] =
     {
       x0, y0, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.R(), c0.G(), c0.B(), c0.A(),
       x1, y1, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c1.R(), c1.G(), c1.B(), c1.A(),
     };
 
-    IntrusiveSP<IOpenGLShaderProgram> ShaderProg = m_SlColor;
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_SlColor;
 
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -1085,11 +1029,6 @@ namespace nux
       Color c2,
       Color c3)
   {
-#if USE_ARB
-    QRP_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
-    return;
-#endif
-
     float VtxBuffer[] =
     {
       x0, y0,                             0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.R(), c0.G(), c0.B(), c0.A(),
@@ -1099,7 +1038,7 @@ namespace nux
       x0, y0,                             0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.R(), c0.G(), c0.B(), c0.A(),
     };
 
-    IntrusiveSP<IOpenGLShaderProgram> ShaderProg = m_SlColor;
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_SlColor;
 
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );

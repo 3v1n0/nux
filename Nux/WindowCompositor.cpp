@@ -98,7 +98,7 @@ namespace nux
     m_MainDepthRT.Release ();
     m_MenuList->clear();
 
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it;
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
     for(it = m_WindowList.begin (); it != m_WindowList.end (); it++)
     {
       //(*it)->UnReference();
@@ -154,13 +154,13 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
 
     if (it == m_WindowList.end() )
     {
       // The BaseWindow is referenced by the WindowCompositor.
       //window->Reference();
-      m_WindowList.push_front (IntrusiveWeakSP<BaseWindow> (window));
+      m_WindowList.push_front (ObjectWeakPtr<BaseWindow> (window));
       m_SelectedWindow = window;
 
       RenderTargetTextures rt;
@@ -181,7 +181,7 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
 
     if (it != m_WindowList.end ())
     {
@@ -194,8 +194,8 @@ namespace nux
 
       if (it2 != m_WindowToTextureMap.end ())
       {
-        (*it2).second.color_rt = IntrusiveSP<IOpenGLBaseTexture> (0);
-        (*it2).second.depth_rt = IntrusiveSP<IOpenGLBaseTexture> (0);
+        (*it2).second.color_rt = ObjectPtr<IOpenGLBaseTexture> (0);
+        (*it2).second.depth_rt = ObjectPtr<IOpenGLBaseTexture> (0);
         m_WindowToTextureMap.erase (it2);
       }
     }
@@ -394,11 +394,11 @@ namespace nux
         MouseIsOverMenu = TRUE;
       }
 
-      std::list< IntrusiveWeakSP<BaseWindow> >::iterator it;
+      std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
       for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
       {
         // Reset the preemptive hidden/visible status of all base windows.
-        IntrusiveWeakSP<BaseWindow> window = (*it); //NUX_STATIC_CAST (BaseWindow *, (*it));
+        ObjectWeakPtr<BaseWindow> window = (*it); //NUX_STATIC_CAST (BaseWindow *, (*it));
         window->_entering_visible_status = false;
         window->_entering_hidden_status = false;
       }
@@ -473,12 +473,12 @@ namespace nux
     CleanMenu ();
   }
 
-  void WindowCompositor::StartModalWindow (IntrusiveWeakSP<BaseWindow> window)
+  void WindowCompositor::StartModalWindow (ObjectWeakPtr<BaseWindow> window)
   {
     if (window == 0)
       return;
 
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it = find (m_ModalWindowList.begin(), m_ModalWindowList.end(), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_ModalWindowList.begin(), m_ModalWindowList.end(), window);
 
     if (it == m_ModalWindowList.end() )
     {
@@ -486,7 +486,7 @@ namespace nux
     }
   }
 
-  void WindowCompositor::StopModalWindow (IntrusiveWeakSP<BaseWindow> window)
+  void WindowCompositor::StopModalWindow (ObjectWeakPtr<BaseWindow> window)
   {
     if (m_ModalWindowList.size () > 0)
     {
@@ -501,12 +501,12 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end (), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end (), window);
 
     if (it != m_WindowList.end () )
     {
       m_WindowList.erase (it);
-      m_WindowList.push_front (IntrusiveWeakSP<BaseWindow> (window));
+      m_WindowList.push_front (ObjectWeakPtr<BaseWindow> (window));
     }
 
     EnsureAlwaysOnFrontWindow ();
@@ -521,12 +521,12 @@ namespace nux
     if (window == _always_on_front_window)
       return;
 
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it = find (m_WindowList.begin (), m_WindowList.end (), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_WindowList.begin (), m_WindowList.end (), window);
 
     if (it != m_WindowList.end() )
     {
       m_WindowList.erase (it);
-      m_WindowList.push_back (IntrusiveWeakSP<BaseWindow> (window));
+      m_WindowList.push_back (ObjectWeakPtr<BaseWindow> (window));
     }
 
     EnsureAlwaysOnFrontWindow ();
@@ -539,9 +539,9 @@ namespace nux
     NUX_RETURN_IF_NULL (top_floating_view);
     NUX_RETURN_IF_FALSE (bottom_floating_view != top_floating_view)
     
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it;
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it_top;
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it_bot;
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it_top;
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it_bot;
     
     int i = 0;
     int top_pos = -1;
@@ -573,7 +573,7 @@ namespace nux
     if ((top_pos < bot_pos) && (strict == false))
     {
       m_WindowList.erase (it_top);
-      m_WindowList.insert (it_bot, IntrusiveWeakSP<BaseWindow> (top_floating_view));
+      m_WindowList.insert (it_bot, ObjectWeakPtr<BaseWindow> (top_floating_view));
     }
 
     EnsureAlwaysOnFrontWindow ();
@@ -581,7 +581,7 @@ namespace nux
 
   void WindowCompositor::SetAlwaysOnFrontWindow (BaseWindow *window)
   {
-    _always_on_front_window = IntrusiveWeakSP<BaseWindow> (window);
+    _always_on_front_window = ObjectWeakPtr<BaseWindow> (window);
 
     EnsureAlwaysOnFrontWindow ();
   }
@@ -595,7 +595,7 @@ namespace nux
     if (_always_on_front_window == NULL)
       return;
 
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator always_top_it = find (m_WindowList.begin(), m_WindowList.end(), _always_on_front_window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator always_top_it = find (m_WindowList.begin(), m_WindowList.end(), _always_on_front_window);
     if ((always_top_it != m_WindowList.end ()) && (always_top_it != m_WindowList.begin ()) && (_always_on_front_window != NULL))
     {
       m_WindowList.erase (always_top_it);
@@ -826,7 +826,7 @@ namespace nux
 
   void WindowCompositor::DrawMenu (bool force_draw)
   {
-    IntrusiveWeakSP<BaseWindow> window = m_MenuWindow;
+    ObjectWeakPtr<BaseWindow> window = m_MenuWindow;
     int buffer_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
     int buffer_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
 
@@ -863,7 +863,7 @@ namespace nux
 
   void WindowCompositor::DrawOverlay (bool force_draw)
   {
-    IntrusiveWeakSP<BaseWindow> window = m_OverlayWindow;
+    ObjectWeakPtr<BaseWindow> window = m_OverlayWindow;
     int buffer_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
     int buffer_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
 
@@ -890,7 +890,7 @@ namespace nux
 
   void WindowCompositor::DrawTooltip (bool force_draw)
   {
-    IntrusiveWeakSP<BaseWindow> window = _tooltip_window;
+    ObjectWeakPtr<BaseWindow> window = _tooltip_window;
     int buffer_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
     int buffer_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
 
@@ -929,11 +929,11 @@ namespace nux
     GetPainter().EmptyBackgroundStack();
   }
 
-  void WindowCompositor::RenderTopViews (bool force_draw, std::list< IntrusiveWeakSP<BaseWindow> >& WindowList, bool drawModal, bool use_fbo)
+  void WindowCompositor::RenderTopViews (bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool drawModal, bool use_fbo)
   {
     GetGraphicsThread ()->GetGraphicsEngine ().EmptyClippingRegion ();
     // Raw the windows from back to front;
-    std::list< IntrusiveWeakSP<BaseWindow> >::reverse_iterator rev_it;
+    std::list< ObjectWeakPtr<BaseWindow> >::reverse_iterator rev_it;
 
     for (rev_it = WindowList.rbegin (); rev_it != WindowList.rend (); rev_it++)
     {
@@ -1055,7 +1055,7 @@ namespace nux
       }
       else
       {
-        IntrusiveWeakSP<BaseWindow> window = *rev_it;
+        ObjectWeakPtr<BaseWindow> window = *rev_it;
         window->_child_need_redraw = false;
         window->DoneRedraw ();
       }
@@ -1225,7 +1225,7 @@ namespace nux
     // Setup the Composition Render Target
     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
     m_FrameBufferObject->SetRenderTarget (0, m_MainColorRT->GetSurfaceLevel (0));
-    m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+    m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
     m_FrameBufferObject->Activate();
     GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
     GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
@@ -1233,7 +1233,7 @@ namespace nux
     GetGraphicsThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::CopyTextureToMainColorRT (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y)
+  void WindowCompositor::CopyTextureToMainColorRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y)
   {
     SetMainColorRT();
     HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
@@ -1249,7 +1249,7 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetGraphicsThread()->GetGraphicsEngine().QRP_GLSL_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
+    GetGraphicsThread()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
   }
 
   void WindowCompositor::SetCompositionRT()
@@ -1266,7 +1266,7 @@ namespace nux
     // Setup the Composition Render Target
     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
     m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0));
-    m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+    m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
     m_FrameBufferObject->Activate();
     GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
     GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
@@ -1274,7 +1274,7 @@ namespace nux
     GetGraphicsThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::CopyTextureToCompositionRT (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y)
+  void WindowCompositor::CopyTextureToCompositionRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y)
   {
     SetCompositionRT();
     HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
@@ -1290,10 +1290,10 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetGraphicsThread()->GetGraphicsEngine().QRP_GLSL_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
+    GetGraphicsThread()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
   }
 
-  void WindowCompositor::PresentBufferToScreen (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground)
+  void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground)
   {
     nuxAssert (HWTexture.IsValid() );
 
@@ -1348,7 +1348,7 @@ namespace nux
           GetGraphicsThread()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
 
-        GetThreadGraphicsContext()->QRP_GLSL_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color::White);
+        GetThreadGraphicsContext()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color::White);
         GetGraphicsThread()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
       }
       else
@@ -1369,7 +1369,7 @@ namespace nux
 //         texxform1.voffset = (float) y / (float) src_height;
 //         texxform1.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
 // 
-//         GetGraphicsThread()->GetGraphicsEngine().QRP_GLSL_2Tex (x, y, src_width, src_height,
+//         GetGraphicsThread()->GetGraphicsEngine().QRP_2Tex (x, y, src_width, src_height,
 //             HWTexture, texxform0, Color::White,
 //             m_BlurTexture, texxform1, Color::White);
       }
@@ -1587,7 +1587,7 @@ namespace nux
 
   void WindowCompositor::FloatingAreaConfigureNotify (int Width, int Height)
   {
-    std::list< IntrusiveWeakSP<BaseWindow> >::iterator it;
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
 
     for (it = m_WindowList.begin(); it != m_WindowList.end(); it++)
     {
@@ -1652,7 +1652,7 @@ namespace nux
 // 
 //       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
 //       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip0->GetSurfaceLevel (0) );
-//       m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
 //       m_FrameBufferObject->Activate();
 // 
 //       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
@@ -1665,7 +1665,7 @@ namespace nux
 //       texxform0.uwrap = TEXWRAP_CLAMP;
 //       texxform0.vwrap = TEXWRAP_CLAMP;
 //       texxform0.FlipVCoord (true);
-//       GetThreadGraphicsContext()->QRP_GLSL_1Tex (0, 0, dst_width, dst_height, m_CompositionRT, texxform0, Color::White);
+//       GetThreadGraphicsContext()->QRP_1Tex (0, 0, dst_width, dst_height, m_CompositionRT, texxform0, Color::White);
 //     }
 // 
 //     {
@@ -1676,7 +1676,7 @@ namespace nux
 // 
 //       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
 //       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip1->GetSurfaceLevel (0) );
-//       m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
 //       m_FrameBufferObject->Activate();
 // 
 //       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
@@ -1689,7 +1689,7 @@ namespace nux
 //       texxform0.uwrap = TEXWRAP_CLAMP;
 //       texxform0.vwrap = TEXWRAP_CLAMP;
 //       texxform0.FlipVCoord (true);
-//       GetThreadGraphicsContext()->QRP_GLSL_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip0, texxform0, Color::White);
+//       GetThreadGraphicsContext()->QRP_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip0, texxform0, Color::White);
 //     }
 // 
 //     {
@@ -1700,7 +1700,7 @@ namespace nux
 // 
 //       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
 //       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip2->GetSurfaceLevel (0) );
-//       m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
 //       m_FrameBufferObject->Activate();
 // 
 //       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
@@ -1713,7 +1713,7 @@ namespace nux
 //       texxform0.uwrap = TEXWRAP_CLAMP;
 //       texxform0.vwrap = TEXWRAP_CLAMP;
 //       texxform0.FlipVCoord (true);
-//       GetThreadGraphicsContext()->QRP_GLSL_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip1, texxform0, Color::White);
+//       GetThreadGraphicsContext()->QRP_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip1, texxform0, Color::White);
 //     }
 // 
 //     {
@@ -1724,7 +1724,7 @@ namespace nux
 // 
 //       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
 //       m_FrameBufferObject->SetRenderTarget ( 0, m_BlurTexture->GetSurfaceLevel (0) );
-//       m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
 //       m_FrameBufferObject->Activate();
 // 
 //       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
@@ -1753,7 +1753,7 @@ namespace nux
 //       TexCoordXForm texxform3;
 //       texxform3.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
 // 
-//       GetGraphicsThread()->GetGraphicsEngine().QRP_GLSL_4Tex (0, 0, dst_width, dst_height,
+//       GetGraphicsThread()->GetGraphicsEngine().QRP_4Tex (0, 0, dst_width, dst_height,
 //           m_CompositionRT, texxform0, Color::White,
 //           m_FullSceneMip0, texxform1, Color::White,
 //           m_FullSceneMip1, texxform2, Color::White,
@@ -1769,14 +1769,14 @@ namespace nux
 //     // Restore Main Frame Buffer
 //     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
 //     m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0) );
-//     m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+//     m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
 //     m_FrameBufferObject->Activate();
 // 
 //     GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
 //     GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
 //   }
 // 
-//   IntrusiveSP< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
+//   ObjectPtr< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
 //   {
 //     return m_BlurTexture;
 //   }
@@ -1824,7 +1824,7 @@ namespace nux
       // Restore Main Frame Buffer
       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
       m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+      m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
       m_FrameBufferObject->Activate();
 
       GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);

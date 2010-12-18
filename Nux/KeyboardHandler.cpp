@@ -905,12 +905,12 @@ namespace nux
     return false;
   }
 
-  void BaseKeyboardHandler::SetFont (IntrusiveSP<FontTexture> Font)
+  void BaseKeyboardHandler::SetFont (ObjectPtr<FontTexture> Font)
   {
     m_Font = Font;
   }
 
-  IntrusiveSP<FontTexture> BaseKeyboardHandler::GetFont() const
+  ObjectPtr<FontTexture> BaseKeyboardHandler::GetFont() const
   {
     return m_Font;
   }

@@ -104,7 +104,7 @@ namespace nux
       m_ctx.width_clipregion  = C.GetWidth();
       m_ctx.height_clipregion = C.GetHeight();
 
-      IntrusiveSP<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory()->GetCurrentFrameBufferObject();
+      ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory()->GetCurrentFrameBufferObject();
 
       if ( (m_FrameBufferObject->GetWidth() != buffer_width) || (m_FrameBufferObject->GetHeight() != buffer_height) )
       {
@@ -140,7 +140,7 @@ namespace nux
         texxform0.uwrap = TEXWRAP_CLAMP;
         texxform0.vwrap = TEXWRAP_CLAMP;
         texxform0.FlipVCoord (true);
-        GetThreadGraphicsContext()->QRP_GLSL_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (Color::White) );
+        GetThreadGraphicsContext()->QRP_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (Color::White) );
       }
 
       // After the client area is drawn reset the texture environment so that the color is used for next drawing.

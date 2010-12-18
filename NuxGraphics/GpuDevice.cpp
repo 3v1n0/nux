@@ -74,6 +74,7 @@ namespace nux
 
   static void InitTextureFormats()
   {
+#ifndef NUX_OPENGL_ES_20
     GPixelFormats[ BITFMT_UNKNOWN		].PlatformFormat	= GL_NONE;							// Not supported for rendering.
 
     // Data in PC system memory: R(LSB) G B A(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
@@ -151,12 +152,91 @@ namespace nux
     GPixelFormats[ BITFMT_A8           ].PlatformFormat	= GL_RGBA8;
     GPixelFormats[ BITFMT_A8           ].Format	        = GL_LUMINANCE;
     GPixelFormats[ BITFMT_A8           ].type	            = GL_UNSIGNED_BYTE;
+#else
+    GPixelFormats[ BITFMT_UNKNOWN		].PlatformFormat	= GL_NONE;							// Not supported for rendering.
+
+    // Data in PC system memory: R(LSB) G B A(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
+    GPixelFormats[ BITFMT_R8G8B8A8     ].PlatformFormat	= GL_RGBA;
+    GPixelFormats[ BITFMT_R8G8B8A8     ].Format	        = GL_RGBA;
+    GPixelFormats[ BITFMT_R8G8B8A8     ].type	          = GL_UNSIGNED_BYTE;
+
+    // Data in PC system memory: A(LSB) B G R(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8
+    GPixelFormats[ BITFMT_A8B8G8R8     ].PlatformFormat	= GL_RGBA;
+    GPixelFormats[ BITFMT_A8B8G8R8     ].Format	        = GL_RGBA;
+    GPixelFormats[ BITFMT_A8B8G8R8     ].type	          = GL_UNSIGNED_BYTE;
+
+    // Data in PC system memory: B(LSB) G R A(MSB) ---> GL Format:GL_BGRA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
+    GPixelFormats[ BITFMT_B8G8R8A8     ].PlatformFormat	= GL_RGBA;
+    GPixelFormats[ BITFMT_B8G8R8A8     ].Format	        = GL_RGBA;
+    GPixelFormats[ BITFMT_B8G8R8A8     ].type	          = GL_UNSIGNED_BYTE;
+
+    // Data in PC system memory: A(LSB) R G B(MSB) ---> GL Format:GL_BGRA - GL Type:GL_UNSIGNED_INT_8_8_8_8
+    GPixelFormats[ BITFMT_A8R8G8B8     ].PlatformFormat	= GL_RGBA;
+    GPixelFormats[ BITFMT_A8R8G8B8     ].Format	        = GL_RGBA;
+    GPixelFormats[ BITFMT_A8R8G8B8     ].type	          = GL_UNSIGNED_BYTE;
+
+    // Data in PC system memory: R(LSB) G B(MSB) ---> GL Format:GL_RGB - GL Type:GL_UNSIGNED
+    GPixelFormats[ BITFMT_R8G8B8		].PlatformFormat	= GL_RGB;
+    GPixelFormats[ BITFMT_R8G8B8		].Format	        = GL_RGB;
+    GPixelFormats[ BITFMT_R8G8B8		].type	          = GL_UNSIGNED_BYTE;
+
+    GPixelFormats[ BITFMT_B8G8R8		].PlatformFormat	= GL_RGB;
+    GPixelFormats[ BITFMT_B8G8R8		].Format	        = GL_RGB;
+    GPixelFormats[ BITFMT_B8G8R8		].type	          = GL_UNSIGNED_BYTE;
+
+    GPixelFormats[ BITFMT_R5G6B5       ].PlatformFormat	= GL_RGB;
+    GPixelFormats[ BITFMT_R5G6B5       ].Format	        = GL_RGB;
+    GPixelFormats[ BITFMT_R5G6B5       ].type	          = GL_UNSIGNED_SHORT_5_6_5;
+
+    GPixelFormats[ BITFMT_RGBA16F		].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_RGBA16F		].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_RGBA16F		].type	          = GL_NONE;
+
+    GPixelFormats[ BITFMT_RGB32F		].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_RGB32F		].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_RGB32F		].type	          = GL_NONE;
+
+    GPixelFormats[ BITFMT_RGBA32F		].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_RGBA32F		].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_RGBA32F		].type	          = GL_NONE;
+
+    // Note: Using GL_DEPTH_COMPONENT24 or GL_DEPTH_COMPONENT for PlatformFormat generate error GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT.
+    GPixelFormats[ BITFMT_D24S8		].PlatformFormat	  = GL_NONE;
+    GPixelFormats[ BITFMT_D24S8		].Format	          = GL_NONE;     // or GL_DEPTH_STENCIL_NV;
+    GPixelFormats[ BITFMT_D24S8		].type	            = GL_NONE; // or GL_UNSIGNED_INT_24_8_NV;
+
+    GPixelFormats[ BITFMT_DXT1			].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_DXT2			].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_DXT3			].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_DXT4			].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_DXT5			].PlatformFormat	= GL_NONE;
+
+    GPixelFormats[ BITFMT_R10G10B10A2  ].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_R10G10B10A2  ].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_R10G10B10A2  ].type	          = GL_NONE;
+
+    GPixelFormats[ BITFMT_A2B10G10R10  ].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_A2B10G10R10  ].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_A2B10G10R10  ].type	          = GL_NONE;
+
+    GPixelFormats[ BITFMT_B10G10R10A2  ].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_B10G10R10A2  ].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_B10G10R10A2  ].type	          = GL_NONE;
+
+    GPixelFormats[ BITFMT_A2R10G10B10  ].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_A2R10G10B10  ].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_A2R10G10B10  ].type	          = GL_NONE;
+
+    GPixelFormats[ BITFMT_A8           ].PlatformFormat	= GL_ALPHA;
+    GPixelFormats[ BITFMT_A8           ].Format	        = GL_ALPHA;
+    GPixelFormats[ BITFMT_A8           ].type	          = GL_UNSIGNED_BYTE;
+#endif
   }
 
   STREAMSOURCE GpuDevice::_StreamSource[MAX_NUM_STREAM];
-// IntrusiveSP<IOpenGLIndexBuffer> GpuDevice::_CurrentIndexBuffer = 0;
-// IntrusiveSP<IOpenGLVertexBuffer> GpuDevice::_CurrentVertexBuffer = 0;
-// IntrusiveSP<IOpenGLVertexDeclaration> GpuDevice::_CurrentVertexDeclaration = 0;
+// ObjectPtr<IOpenGLIndexBuffer> GpuDevice::_CurrentIndexBuffer = 0;
+// ObjectPtr<IOpenGLVertexBuffer> GpuDevice::_CurrentVertexBuffer = 0;
+// ObjectPtr<IOpenGLVertexDeclaration> GpuDevice::_CurrentVertexDeclaration = 0;
 
 //void TestARBShaders()
 //{
@@ -251,14 +331,17 @@ namespace nux
 //     _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
 //     _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
 
-
+#ifndef NUX_OPENGL_ES_20
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
-    glGetIntegerv (GL_MAX_TEXTURE_UNITS, &_opengl_max_texture_units);
-    glGetIntegerv (GL_MAX_TEXTURE_COORDS, &_opengl_max_texture_coords);
-    glGetIntegerv (GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &_opengl_max_texture_image_units);
-    glGetIntegerv (GL_MAX_VERTEX_ATTRIBS, &_opengl_max_vertex_attributes);
-    glGetIntegerv (GL_MAX_COLOR_ATTACHMENTS_EXT, &_opengl_max_fb_attachment);
+    CHECKGL (glGetIntegerv (GL_MAX_TEXTURE_UNITS, &_opengl_max_texture_units));
+    CHECKGL (glGetIntegerv (GL_MAX_TEXTURE_COORDS, &_opengl_max_texture_coords));
+    CHECKGL (glGetIntegerv (GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &_opengl_max_texture_image_units));
+    CHECKGL (glGetIntegerv (GL_MAX_VERTEX_ATTRIBS, &_opengl_max_vertex_attributes));
+    CHECKGL (glGetIntegerv (GL_MAX_COLOR_ATTACHMENTS_EXT, &_opengl_max_fb_attachment));
+#else
+    _opengl_max_fb_attachment = 1;
+#endif
 
 #if defined(NUX_OS_WINDOWS)
     _support_ext_swap_control                 = WGLEW_EXT_swap_control ? true : false;
@@ -333,11 +416,18 @@ namespace nux
     Glew_Ok = glewInit();
 #endif
 
-    glGetIntegerv (GL_MAJOR_VERSION, &_opengl_major);
-    glGetIntegerv (GL_MINOR_VERSION, &_opengl_minor);
+#ifndef NUX_OPENGL_ES_20
+    CHECKGL (glGetIntegerv (GL_MAJOR_VERSION, &_opengl_major));
+    CHECKGL (glGetIntegerv (GL_MINOR_VERSION, &_opengl_minor));
+#else
+    _opengl_major = 2;
+    _opengl_minor = 0;
+#endif
+
+    bool opengl_es_context_created = false;
 
 #if defined (NUX_OS_WINDOWS)
-    if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || ((_opengl_major >= 3) && opengl_es_20))
+    if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || (_opengl_major >= 3) || opengl_es_20)
 #elif defined (NUX_OS_LINUX)
     if (has_glx_13_support && (((_opengl_major >= 3) && (req_opengl_major >= 3)) || ((_opengl_major >= 3) && opengl_es_20)))
 #endif
@@ -345,7 +435,7 @@ namespace nux
       // Create a new Opengl Rendering Context
       bool requested_profile_is_supported = false;
       int index = 0;
-      for (index = 0; ; index++)
+      for (index = 0; OpenGLVersionTable [index].major != 0; index++)
       {
         if ((OpenGLVersionTable[index].major == req_opengl_major) &&
           (OpenGLVersionTable[index].minor == req_opengl_minor))
@@ -374,7 +464,7 @@ namespace nux
         }
       }
 
-      if (0 /*opengl_es_20*/)
+      if (opengl_es_20)
       {
 #if defined (NUX_OS_WINDOWS)
         int attribs[] =
@@ -397,6 +487,7 @@ namespace nux
           wglDeleteContext (opengl_rendering_context);
           opengl_rendering_context = new_opengl_rendering_context;
           wglMakeCurrent (device_context, opengl_rendering_context);
+          opengl_es_context_created = true;
         }
 #elif defined (NUX_OS_LINUX)
         int attribs[] =
@@ -417,6 +508,7 @@ namespace nux
         {
           opengl_rendering_context = new_opengl_rendering_context;
           glXMakeCurrent (display, window, opengl_rendering_context);
+          opengl_es_context_created = true;
         }
 #endif
       }
@@ -530,14 +622,22 @@ namespace nux
     nuxDebugMsg (TEXT ("Gpu GLSL Version: %s"), _glsl_version_string.GetTCharPtr() );
 
     // Get the version supported by the context that was set.
-    int new_opengl_major;
-    int new_opengl_minor;
-    glGetIntegerv (GL_MAJOR_VERSION, &new_opengl_major);
-    glGetIntegerv (GL_MINOR_VERSION, &new_opengl_minor);
 
-    if ((new_opengl_major != _opengl_major) || (new_opengl_minor != _opengl_minor))
+    if (opengl_es_20 && opengl_es_context_created)
     {
-      nuxDebugMsg (TEXT ("The Gpu supports OpenGL %d.%d but version %d.%d has been requested."), _opengl_major, _opengl_minor, new_opengl_major, new_opengl_minor);
+      
+    }
+    else
+    {
+      int new_opengl_major;
+      int new_opengl_minor;
+      CHECKGL (glGetIntegerv (GL_MAJOR_VERSION, &new_opengl_major));
+      CHECKGL (glGetIntegerv (GL_MINOR_VERSION, &new_opengl_minor));
+
+      if ((new_opengl_major != _opengl_major) || (new_opengl_minor != _opengl_minor))
+      {
+        nuxDebugMsg (TEXT ("The Gpu supports OpenGL %d.%d but version %d.%d has been requested."), _opengl_major, _opengl_minor, new_opengl_major, new_opengl_minor);
+      }
     }
 
     NString TempStr = (const TCHAR *) TCharToUpperCase (_board_vendor_string.GetTCharPtr() );
@@ -586,8 +686,8 @@ namespace nux
     // http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall/
     // We use a pack /unpack alignment to 1 so we don't have any padding at the end of row.
 
-    glPixelStorei (GL_UNPACK_ALIGNMENT, _PixelStoreAlignment);
-    glPixelStorei (GL_PACK_ALIGNMENT, _PixelStoreAlignment);
+    CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, _PixelStoreAlignment));
+    CHECKGL (glPixelStorei (GL_PACK_ALIGNMENT, _PixelStoreAlignment));
 
     _DeviceWidth = DeviceWidth;
     _DeviceHeight = DeviceHeight;
@@ -627,8 +727,8 @@ namespace nux
     NUX_SAFE_DELETE (_gpu_info);
     NUX_SAFE_DELETE (_gpu_render_states);
 
-    _FrameBufferObject = IntrusiveSP<IOpenGLFrameBufferObject> (0);
-    _CurrentFrameBufferObject = IntrusiveSP<IOpenGLFrameBufferObject> (0);
+    _FrameBufferObject = ObjectPtr<IOpenGLFrameBufferObject> (0);
+    _CurrentFrameBufferObject = ObjectPtr<IOpenGLFrameBufferObject> (0);
     CollectDeviceResource ();
 
     _PixelBufferArray.clear ();
@@ -641,11 +741,11 @@ namespace nux
     inlSetThreadLocalStorage (_TLS_GpuDevice_, 0);
   }
 
-  IntrusiveSP<IOpenGLFrameBufferObject> GpuDevice::CreateFrameBufferObject()
+  ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::CreateFrameBufferObject()
   {
     IOpenGLFrameBufferObject *ptr;
     CreateFrameBufferObject ( (IOpenGLFrameBufferObject **) &ptr);
-    IntrusiveSP<IOpenGLFrameBufferObject> h = IntrusiveSP<IOpenGLFrameBufferObject> (ptr);
+    ObjectPtr<IOpenGLFrameBufferObject> h = ObjectPtr<IOpenGLFrameBufferObject> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -695,143 +795,143 @@ namespace nux
   // NUXTODO: It is pointless to fill the _Cached... arrays. The data is already in the resource manager.
   void GpuDevice::CollectDeviceResource()
   {
-//     TDeviceResourceList< IntrusiveSP<IOpenGLVertexBuffer> >* pTempVertexBuffer = _CachedVertexBufferList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLVertexBuffer> >* pTempVertexBuffer = _CachedVertexBufferList;
 // 
 //     while (pTempVertexBuffer)
 //     {
 //       if (pTempVertexBuffer->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempVertexBuffer->_DeviceResource = IntrusiveSP<IOpenGLVertexBuffer> (0);
+//         pTempVertexBuffer->_DeviceResource = ObjectPtr<IOpenGLVertexBuffer> (0);
 //         pTempVertexBuffer = pTempVertexBuffer->_next;
 //       }
 //       else
 //         pTempVertexBuffer = pTempVertexBuffer->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLIndexBuffer> >* pTempIndexBuffer = _CachedIndexBufferList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLIndexBuffer> >* pTempIndexBuffer = _CachedIndexBufferList;
 // 
 //     while (pTempIndexBuffer)
 //     {
 //       if (pTempIndexBuffer->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempIndexBuffer->_DeviceResource = IntrusiveSP<IOpenGLIndexBuffer> (0);
+//         pTempIndexBuffer->_DeviceResource = ObjectPtr<IOpenGLIndexBuffer> (0);
 //         pTempIndexBuffer = pTempIndexBuffer->_next;
 //       }
 //       else
 //         pTempIndexBuffer = pTempIndexBuffer->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLVertexDeclaration> >* pTempVertexDeclaration = _CachedVertexDeclarationList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLVertexDeclaration> >* pTempVertexDeclaration = _CachedVertexDeclarationList;
 // 
 //     while (pTempVertexDeclaration)
 //     {
 //       if (pTempVertexDeclaration->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempVertexDeclaration->_DeviceResource = IntrusiveSP<IOpenGLVertexDeclaration> (0);
+//         pTempVertexDeclaration->_DeviceResource = ObjectPtr<IOpenGLVertexDeclaration> (0);
 //         pTempVertexDeclaration = pTempVertexDeclaration->_next;
 //       }
 //       else
 //         pTempVertexDeclaration = pTempVertexDeclaration->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLTexture2D> >* pTempTexture2D = _CachedTextureList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLTexture2D> >* pTempTexture2D = _CachedTextureList;
 // 
 //     while (pTempTexture2D)
 //     {
 //       if (pTempTexture2D->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempTexture2D->_DeviceResource = IntrusiveSP<IOpenGLTexture2D> (0);
+//         pTempTexture2D->_DeviceResource = ObjectPtr<IOpenGLTexture2D> (0);
 //         pTempTexture2D = pTempTexture2D->_next;
 //       }
 //       else
 //         pTempTexture2D = pTempTexture2D->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLCubeTexture> >* pTempCubeTexture = _CachedCubeTextureList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLCubeTexture> >* pTempCubeTexture = _CachedCubeTextureList;
 // 
 //     while (pTempCubeTexture)
 //     {
 //       if (pTempCubeTexture->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempCubeTexture->_DeviceResource = IntrusiveSP<IOpenGLCubeTexture> (0);
+//         pTempCubeTexture->_DeviceResource = ObjectPtr<IOpenGLCubeTexture> (0);
 //         pTempCubeTexture = pTempCubeTexture->_next;
 //       }
 //       else
 //         pTempCubeTexture = pTempCubeTexture->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLVolumeTexture> >* pTempVolumeTexture = _CachedVolumeTextureList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLVolumeTexture> >* pTempVolumeTexture = _CachedVolumeTextureList;
 // 
 //     while (pTempVolumeTexture)
 //     {
 //       if (pTempVolumeTexture->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempVolumeTexture->_DeviceResource = IntrusiveSP<IOpenGLVolumeTexture> (0);
+//         pTempVolumeTexture->_DeviceResource = ObjectPtr<IOpenGLVolumeTexture> (0);
 //         pTempVolumeTexture = pTempVolumeTexture->_next;
 //       }
 //       else
 //         pTempVolumeTexture = pTempVolumeTexture->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLAnimatedTexture> >* pTempAnimatedTexture = _CachedAnimatedTextureList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLAnimatedTexture> >* pTempAnimatedTexture = _CachedAnimatedTextureList;
 // 
 //     while (pTempAnimatedTexture)
 //     {
 //       if (pTempAnimatedTexture->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempAnimatedTexture->_DeviceResource = IntrusiveSP<IOpenGLAnimatedTexture> (0);
+//         pTempAnimatedTexture->_DeviceResource = ObjectPtr<IOpenGLAnimatedTexture> (0);
 //         pTempAnimatedTexture = pTempAnimatedTexture->_next;
 //       }
 //       else
 //         pTempAnimatedTexture = pTempAnimatedTexture->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLFrameBufferObject> >* pTempFrameBufferObject = _CachedFrameBufferList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLFrameBufferObject> >* pTempFrameBufferObject = _CachedFrameBufferList;
 // 
 //     while (pTempFrameBufferObject)
 //     {
 //       if (pTempFrameBufferObject->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempFrameBufferObject->_DeviceResource = IntrusiveSP<IOpenGLFrameBufferObject> (0);
+//         pTempFrameBufferObject->_DeviceResource = ObjectPtr<IOpenGLFrameBufferObject> (0);
 //         pTempFrameBufferObject = pTempFrameBufferObject->_next;
 //       }
 //       else
 //         pTempFrameBufferObject = pTempFrameBufferObject->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLQuery> >* pTempQuery = _CachedQueryList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLQuery> >* pTempQuery = _CachedQueryList;
 // 
 //     while (pTempQuery)
 //     {
 //       if (pTempQuery->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempQuery->_DeviceResource = IntrusiveSP<IOpenGLQuery> (0);
+//         pTempQuery->_DeviceResource = ObjectPtr<IOpenGLQuery> (0);
 //         pTempQuery = pTempQuery->_next;
 //       }
 //       else
 //         pTempQuery = pTempQuery->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLVertexShader> >* pTempVertexShader = _CachedVertexShaderList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLVertexShader> >* pTempVertexShader = _CachedVertexShaderList;
 // 
 //     while (pTempVertexShader)
 //     {
 //       if (pTempVertexShader->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempVertexShader->_DeviceResource = IntrusiveSP<IOpenGLVertexShader> (0);
+//         pTempVertexShader->_DeviceResource = ObjectPtr<IOpenGLVertexShader> (0);
 //         pTempVertexShader = pTempVertexShader->_next;
 //       }
 //       else
 //         pTempVertexShader = pTempVertexShader->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<IOpenGLPixelShader> >* pTempPixelShader = _CachedPixelShaderList;
+//     TDeviceResourceList< ObjectPtr<IOpenGLPixelShader> >* pTempPixelShader = _CachedPixelShaderList;
 // 
 //     while (pTempPixelShader)
 //     {
 //       if (pTempPixelShader->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempPixelShader->_DeviceResource = IntrusiveSP<IOpenGLPixelShader> (0);
+//         pTempPixelShader->_DeviceResource = ObjectPtr<IOpenGLPixelShader> (0);
 //         pTempPixelShader = pTempPixelShader->_next;
 //       }
 //       else
@@ -839,26 +939,26 @@ namespace nux
 //     }
 // 
 // #if (NUX_ENABLE_CG_SHADERS)
-//     TDeviceResourceList< IntrusiveSP<ICgVertexShader> >* pTempCgVertexShader = _CachedCGVertexShaderList;
+//     TDeviceResourceList< ObjectPtr<ICgVertexShader> >* pTempCgVertexShader = _CachedCGVertexShaderList;
 // 
 //     while (pTempCgVertexShader)
 //     {
 //       if (pTempCgVertexShader->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempCgVertexShader->_DeviceResource = IntrusiveSP<ICgVertexShader> (0);
+//         pTempCgVertexShader->_DeviceResource = ObjectPtr<ICgVertexShader> (0);
 //         pTempCgVertexShader = pTempCgVertexShader->_next;
 //       }
 //       else
 //         pTempCgVertexShader = pTempCgVertexShader->_next;
 //     }
 // 
-//     TDeviceResourceList< IntrusiveSP<ICgPixelShader> >* pTempCgPixelShader = _CachedCGPixelShaderList;
+//     TDeviceResourceList< ObjectPtr<ICgPixelShader> >* pTempCgPixelShader = _CachedCGPixelShaderList;
 // 
 //     while (pTempCgPixelShader)
 //     {
 //       if (pTempCgPixelShader->_DeviceResource->RefCount() == 1)
 //       {
-//         pTempCgPixelShader->_DeviceResource = IntrusiveSP<IOpenGLPixelShader> (0);
+//         pTempCgPixelShader->_DeviceResource = ObjectPtr<IOpenGLPixelShader> (0);
 //         pTempCgPixelShader = pTempCgPixelShader->_next;
 //       }
 //       else
@@ -1023,7 +1123,7 @@ namespace nux
     return _FrameBufferObject->FormatFrameBufferObject (Width, Height, PixelFormat);
   }
 
-  int GpuDevice::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface)
+  int GpuDevice::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
   {
     if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
@@ -1034,7 +1134,7 @@ namespace nux
     return _FrameBufferObject->SetRenderTarget (ColorAttachmentIndex, pRenderTargetSurface);
   }
 
-  int GpuDevice::SetDepthRenderTargetSurface (IntrusiveSP<IOpenGLSurface> pDepthSurface)
+  int GpuDevice::SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> pDepthSurface)
   {
     if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
@@ -1045,23 +1145,23 @@ namespace nux
     return _FrameBufferObject->SetDepthSurface (pDepthSurface);
   }
 
-  IntrusiveSP<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
+  ObjectPtr<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
   {
     if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       nuxDebugMsg (TEXT ("[GpuDevice::GetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
-      return IntrusiveSP<IOpenGLSurface> (0);
+      return ObjectPtr<IOpenGLSurface> (0);
     }
 
     return _FrameBufferObject->GetRenderTarget (ColorAttachmentIndex);
   }
 
-  IntrusiveSP<IOpenGLSurface> GpuDevice::GetDepthRenderTargetSurface()
+  ObjectPtr<IOpenGLSurface> GpuDevice::GetDepthRenderTargetSurface()
   {
     if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
       nuxDebugMsg (TEXT ("[GpuDevice::GetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
-      return IntrusiveSP<IOpenGLSurface> (0);
+      return ObjectPtr<IOpenGLSurface> (0);
     }
 
     return _FrameBufferObject->GetDepthRenderTarget();
@@ -1121,7 +1221,7 @@ namespace nux
     DrawQuad_FixPipe (x, y, width, height, red, green, blue, alpha);
   }
 
-  void GpuDevice::ClearSurfaceWithColor (IntrusiveSP<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
+  void GpuDevice::ClearSurfaceWithColor (ObjectPtr<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
   {
     if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
     {
@@ -1130,7 +1230,7 @@ namespace nux
 
     FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
     SetColorRenderTargetSurface (0, s_);
-    SetDepthRenderTargetSurface (IntrusiveSP<IOpenGLSurface> (0));
+    SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> (0));
     ActivateFrameBuffer();
     ClearFloatingPointColorRT (rect_->left,
                                rect_->top,
@@ -1139,17 +1239,17 @@ namespace nux
                                r, g, b, a);
   }
 
-  void GpuDevice::SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> fbo)
+  void GpuDevice::SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> fbo)
   {
     _CurrentFrameBufferObject = fbo;
   }
 
-  IntrusiveSP<IOpenGLFrameBufferObject> GpuDevice::GetCurrentFrameBufferObject()
+  ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::GetCurrentFrameBufferObject()
   {
     return _CurrentFrameBufferObject;
   }
 
-  IntrusiveSP<IOpenGLBaseTexture> GpuDevice::CreateSystemCapableDeviceTexture (
+  ObjectPtr<IOpenGLBaseTexture> GpuDevice::CreateSystemCapableDeviceTexture (
     int Width
     , int Height
     , int Levels
@@ -1167,7 +1267,7 @@ namespace nux
 
     nuxAssertMsg(0, TEXT("[NuxGraphicsResources::CreateSystemCapableDeviceTexture] No support for non power of two textures or rectangle textures"));
 
-    return IntrusiveSP<IOpenGLBaseTexture>();
+    return ObjectPtr<IOpenGLBaseTexture>();
   }
 
   BaseTexture* GpuDevice::CreateSystemCapableTexture ()

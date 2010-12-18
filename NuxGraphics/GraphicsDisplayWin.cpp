@@ -543,13 +543,13 @@ namespace nux
   }
 
 //---------------------------------------------------------------------------------------------------------
-  unsigned int GraphicsDisplay::GetWindowWidth()
+  int GraphicsDisplay::GetWindowWidth()
   {
     return m_WindowSize.GetWidth();
   }
 
 //---------------------------------------------------------------------------------------------------------
-  unsigned int GraphicsDisplay::GetWindowHeight()
+  int GraphicsDisplay::GetWindowHeight()
   {
     return m_WindowSize.GetHeight();
   }
@@ -1378,23 +1378,78 @@ J1:
           m_pEvent->e_key_repeat_count = (int) (lParam & 0xff);
         }
 
-        static char buffer[2];
-        buffer[0] = 0;
-        buffer[1] = 0;
 
-        if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR)
+        t_UTF16 *utf16_str = new t_UTF16 [4];
+        Memset (utf16_str, 0, sizeof (t_UTF16) * 4);
+        Memcpy (utf16_str, (int*) &wParam, sizeof (wParam));
+        t_UTF16 *temp0 = utf16_str;
+
+        t_UTF8 *utf8_str = new t_UTF8 [NUX_EVENT_TEXT_BUFFER_SIZE];
+        Memset (utf8_str, 0, sizeof (t_UTF8) * NUX_EVENT_TEXT_BUFFER_SIZE);
+        t_UTF8 *temp1 = utf8_str;
+
+
+        ConversionResult res = ConvertUTF16toUTF8 ((const nux::t_UTF16 **) &temp0,
+          utf16_str + sizeof (t_UTF16) * 4,
+          &temp1,
+          utf8_str + NUX_EVENT_TEXT_BUFFER_SIZE,
+          lenientConversion);
+
+        if (res == conversionOK)
         {
-          buffer[0] = char (wParam);
-          m_pEvent->e_length = 1;
+          Memcpy (m_pEvent->e_text, utf8_str, NUX_EVENT_TEXT_BUFFER_SIZE);
+        }
+        delete utf8_str;
+        delete utf16_str;
+
+        return 0;
+      }
+
+      case WM_UNICHAR:
+      {
+        if (wParam == UNICODE_NOCHAR)
+          return 1;
+
+        m_pEvent->e_key_modifiers = GetModifierKeyState();
+
+        // reset key repeat count to 0.
+        m_pEvent->e_key_repeat_count = 0;
+
+        if (lParam & (1 << 31) )
+        {
+          // key up events.
+          m_pEvent->e_event = NUX_KEYUP;
+          return 0;
         }
         else
         {
-          buffer[0] = 0;
-          m_pEvent->e_length = 0;
+          // key down events.
+          m_pEvent->e_event = NUX_KEYDOWN;
+          m_pEvent->e_key_repeat_count = (int) (lParam & 0xff);
         }
 
-        m_pEvent->e_text[0] = wParam;
-        return 0;
+        t_UTF32 *utf32_str = new t_UTF32 [4];
+        Memset (utf32_str, 0, sizeof (t_UTF32) * 4);
+        Memcpy (utf32_str, (int*) &wParam, sizeof (wParam));
+        t_UTF32 *temp0 = utf32_str;
+
+        t_UTF8 *utf8_str = new t_UTF8 [NUX_EVENT_TEXT_BUFFER_SIZE];
+        Memset (utf8_str, 0, sizeof (t_UTF8) * NUX_EVENT_TEXT_BUFFER_SIZE);
+        t_UTF8 *temp1 = utf8_str;
+
+
+        ConversionResult res = ConvertUTF32toUTF8 ((const nux::t_UTF32 **) &temp0,
+          utf32_str + sizeof (t_UTF32) * 4,
+          &temp1,
+          utf8_str + NUX_EVENT_TEXT_BUFFER_SIZE,
+          lenientConversion);
+
+        if (res == conversionOK)
+        {
+          Memcpy (m_pEvent->e_text, utf8_str, NUX_EVENT_TEXT_BUFFER_SIZE);
+        }
+        delete utf8_str;
+        delete utf32_str;
       }
 
       case WM_LBUTTONDOWN:
@@ -1850,15 +1905,19 @@ J1:
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::ShowWindow()
   {
-    ::ShowWindow (m_hWnd, SW_RESTORE);
+    ::ShowWindow (m_hWnd, SW_SHOW);
   }
 
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::HideWindow()
   {
-    ::ShowWindow (m_hWnd, SW_MINIMIZE);
+    ::ShowWindow (m_hWnd, SW_HIDE);
   }
 
+  bool GraphicsDisplay::IsWindowVisible ()
+  {
+    return (::IsWindowVisible (m_hWnd) ? true : false);
+  }
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::EnterMaximizeWindow()
   {

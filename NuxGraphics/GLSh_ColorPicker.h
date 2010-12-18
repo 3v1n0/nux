@@ -52,9 +52,9 @@ namespace nux
     float _R, _G, _B, _A;
     float _ScreenOffsetX, _ScreenOffsetY;
 
-    IntrusiveSP<IOpenGLPixelShader> GlobalPixelShader;
-    IntrusiveSP<IOpenGLShaderProgram> sprog;
-    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmProg;
+    ObjectPtr<IOpenGLPixelShader> GlobalPixelShader;
+    ObjectPtr<IOpenGLShaderProgram> sprog;
+    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmProg;
 
     eColorChannel m_ColorChannel;
     UINT ViewPortX;

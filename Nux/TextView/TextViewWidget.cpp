@@ -72,13 +72,13 @@ namespace nux
 
     m_FrameBufferObject->FormatFrameBufferObject (m_ViewWidth, m_ViewHeight, BITFMT_R8G8B8A8);
     m_FrameBufferObject->SetRenderTarget ( 0, m_TextureBuffer[0]->GetSurfaceLevel (0) );
-    m_FrameBufferObject->SetDepthSurface (IntrusiveSP<IOpenGLSurface> (0));
+    m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
 
     VLayout *layout = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
     //layout->AddView(new Button(TEXT("Hello")));
     SetCompositionLayout (layout);
 
-    m_TextFont = IntrusiveSP<FontTexture> (new FontTexture (TEXT ("Courier_size_10.txt") ) );
+    m_TextFont = ObjectPtr<FontTexture> (new FontTexture (TEXT ("Courier_size_10.txt") ) );
   }
 
   TextViewWidget::~TextViewWidget()

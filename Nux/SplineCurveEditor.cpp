@@ -285,8 +285,6 @@ namespace nux
       GfxContext.GetRenderStates().SetBlend (GL_FALSE);
       GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
-      GfxContext.PopClippingRectangle();
-
       for (i = 0; i < nbKnot; i++)
       {
         int X0, Y0;
@@ -309,6 +307,8 @@ namespace nux
 
         }
       }
+
+      GfxContext.PopClippingRectangle();
 
       delete t;
       delete y;

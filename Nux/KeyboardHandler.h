@@ -123,11 +123,11 @@ namespace nux
     void MouseDrag (t_s32 x, t_s32 y);
     //bool IsMouseDrag();
 
-    void SetFont (IntrusiveSP<FontTexture> Font);
-    IntrusiveSP<FontTexture> GetFont() const;
+    void SetFont (ObjectPtr<FontTexture> Font);
+    ObjectPtr<FontTexture> GetFont() const;
 
   protected:
-    IntrusiveSP<FontTexture> m_Font;
+    ObjectPtr<FontTexture> m_Font;
     NString m_textline;
     t_s32 m_previous_cursor_position;
     bool m_need_redraw;

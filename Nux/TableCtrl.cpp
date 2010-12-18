@@ -337,7 +337,7 @@ namespace nux
     return ret;
   }
 
-  void PresentBufferToScreen (IntrusiveSP<IOpenGLBaseTexture> texture, int x, int y)
+  void PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> texture, int x, int y)
   {
     nuxAssert (texture.IsValid() );
 
@@ -728,7 +728,7 @@ namespace nux
 
   void TableCtrl::DrawTable (GraphicsEngine &GfxContext)
   {
-    IntrusiveSP<IOpenGLFrameBufferObject> CurrentFrameBuffer = GetWindowCompositor().GetWindowFrameBufferObject();
+    ObjectPtr<IOpenGLFrameBufferObject> CurrentFrameBuffer = GetWindowCompositor().GetWindowFrameBufferObject();
 
     Geometry tableGeometry = m_TableArea->GetGeometry();
     int xl, yl, wl, hl;

@@ -692,12 +692,12 @@ namespace nux
     XFlush (m_X11Display);
   }
 
-  unsigned int GraphicsDisplay::GetWindowWidth()
+  int GraphicsDisplay::GetWindowWidth()
   {
     return m_WindowSize.GetWidth();
   }
 
-  unsigned int GraphicsDisplay::GetWindowHeight()
+  int GraphicsDisplay::GetWindowHeight()
   {
     return m_WindowSize.GetHeight();
   }
@@ -1478,14 +1478,13 @@ namespace nux
         m_pEvent->e_keysym = inlKeysym;
         m_pEvent->e_event = NUX_KEYDOWN;
 
-        static XComposeStatus ComposeStatus;
-        static char buffer[16];
-        m_pEvent->e_text[0] = 0;
+        char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
+        Memset (m_pEvent->e_text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
 
-        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: Keysym: %d - %x."), keysym, keysym);
-        if (XLookupString (&xevent.xkey, buffer, sizeof (buffer), NULL, &ComposeStatus) )
+        int num_char_stored = XLookupString (&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, &m_pEvent->e_keysym, NULL);
+        if (num_char_stored)
         {
-          m_pEvent->e_text[0] = buffer[0];
+          Memcpy (m_pEvent->e_text, buffer, num_char_stored);
         }
 
         break;
@@ -1811,6 +1810,17 @@ namespace nux
   void GraphicsDisplay::HideWindow()
   {
     XUnmapWindow (m_X11Display, m_X11Window);
+  }
+
+  bool GraphicsDisplay::IsWindowVisible ()
+  {
+    XWindowAttributes window_attributes_return;
+    XGetWindowAttributes (m_X11Display, m_X11Window);
+    
+    if (window_attributes_return.map_state == IsViewable)
+      return true;
+    
+    return false;
   }
 
   void GraphicsDisplay::EnterMaximizeWindow()

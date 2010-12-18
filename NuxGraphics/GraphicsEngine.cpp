@@ -55,13 +55,17 @@ namespace nux
 
 
   GraphicsEngine::GraphicsEngine (GraphicsDisplay &GlWindow)
-    :   m_GLWindow (GlWindow)
+    :   _graphics_display (GlWindow)
   {
     m_ScissorX = 0;
     m_ScissorY = 0;
     m_ScissorXOffset = 0;
     m_ScissorYOffset = 0;
     m_font_renderer = 0;
+
+    _use_glsl_shaders = false;
+    // Evaluate the features provided by the GPU.
+    EvaluateGpuCaps ();
 
     GlWindow.m_GraphicsContext = this;
     ResetStats();
@@ -73,14 +77,15 @@ namespace nux
 
     m_CurrrentContext.x = 0;
     m_CurrrentContext.y = 0;
-    m_CurrrentContext.width = m_GLWindow.GetWindowWidth();
-    m_CurrrentContext.height = m_GLWindow.GetWindowHeight();
+    m_CurrrentContext.width = _graphics_display.GetWindowWidth();
+    m_CurrrentContext.height = _graphics_display.GetWindowHeight();
 
-    SetViewport (0, 0, m_GLWindow.GetWindowWidth(), m_GLWindow.GetWindowHeight() );
-    SetScissor (0, 0, m_GLWindow.GetWindowWidth(), m_GLWindow.GetWindowHeight() );
+    SetViewport (0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight() );
+    SetScissor (0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight() );
     SetScissorOffset (0, 0);
     EnableScissoring (true);
 
+#ifndef NUX_OPENGL_ES_20
     InitAsmColorShader();
     InitAsmTextureShader();
     InitAsmColorModTexMaskAlpha();
@@ -88,13 +93,14 @@ namespace nux
     InitAsm2TextureMod();
     InitAsm4TextureAdd();
     InitAsmBlendModes();
+#endif
 
-//     InitSlColorShader();
-//     InitSlTextureShader();
-//     InitSlColorModTexMaskAlpha
-//     InitSl2TextureAdd();
-//     InitSl2TextureMod();
-//     InitSl4TextureAdd();
+    InitSlColorShader();
+    InitSlTextureShader();
+    InitSlColorModTexMaskAlpha ();
+    InitSl2TextureAdd();
+    InitSl2TextureMod();
+    InitSl4TextureAdd();
 
 
     //GNuxGraphicsResources.CacheFontTextures (ResourceCache);
@@ -103,28 +109,28 @@ namespace nux
     if (_normal_font == 0)
     {
       FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      _normal_font = IntrusiveSP<FontTexture> (fnt);
+      _normal_font = ObjectPtr<FontTexture> (fnt);
       fnt->UnReference ();
     }
 
     if (_bold_font == 0)
     {
       FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      _bold_font = IntrusiveSP<FontTexture> (fnt);
+      _bold_font = ObjectPtr<FontTexture> (fnt);
       fnt->UnReference ();
     }
 #else
     if (_normal_font == 0)
     {
       FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      _normal_font = IntrusiveSP<FontTexture> (fnt);
+      _normal_font = ObjectPtr<FontTexture> (fnt);
       fnt->UnReference ();
     }
 
     if (_bold_font == 0)
     {
       FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      _bold_font = IntrusiveSP<FontTexture> (fnt);
+      _bold_font = ObjectPtr<FontTexture> (fnt);
       fnt->UnReference ();
     }
 #endif
@@ -138,12 +144,36 @@ namespace nux
     NUX_SAFE_DELETE (m_font_renderer);
   }
 
-  IntrusiveSP<FontTexture> GraphicsEngine::GetFont()
+  void GraphicsEngine::EvaluateGpuCaps ()
+  {
+    if (_graphics_display.GetGpuDevice ()->GetGpuInfo ().Support_ARB_Vertex_Shader() &&
+      _graphics_display.GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader() &&
+      _graphics_display.GetGpuDevice ()->GetGPUBrand () ==  GPU_BRAND_NVIDIA)
+    {
+      _use_glsl_shaders = true;
+    }
+    else
+    {
+      _use_glsl_shaders = false;
+    }
+  }
+
+  bool GraphicsEngine::UsingGLSLCodePath ()
+  {
+    return _use_glsl_shaders;
+  }
+
+  bool GraphicsEngine::UsingARBProgramCodePath ()
+  {
+    return !_use_glsl_shaders;
+  }
+
+  ObjectPtr<FontTexture> GraphicsEngine::GetFont()
   {
     return _normal_font;
   }
 
-  IntrusiveSP<FontTexture> GraphicsEngine::GetBoldFont()
+  ObjectPtr<FontTexture> GraphicsEngine::GetBoldFont()
   {
     return _bold_font;
   }
@@ -156,10 +186,10 @@ namespace nux
     if (width <= 0 || height <= 0)
     {
       //nuxAssertMsg(0, TEXT("[GraphicsEngine::SetContext] Incorrect context size.") );
-      if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
+      if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
       {
-        m_CurrrentContext.width = m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->GetWidth();
-        m_CurrrentContext.height = m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->GetHeight();
+        m_CurrrentContext.width = _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->GetWidth();
+        m_CurrrentContext.height = _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->GetHeight();
       }
       else
       {
@@ -202,20 +232,20 @@ namespace nux
 
   void GraphicsEngine::GetWindowSize (int &w, int &h) const
   {
-    m_GLWindow.GetWindowSize (w, h);
+    _graphics_display.GetWindowSize (w, h);
   }
 
   int GraphicsEngine::GetWindowWidth() const
   {
-    return m_GLWindow.GetWindowWidth();
+    return _graphics_display.GetWindowWidth();
   }
 
   int GraphicsEngine::GetWindowHeight() const
   {
-    return m_GLWindow.GetWindowHeight();
+    return _graphics_display.GetWindowHeight();
   }
 
-  int GraphicsEngine::RenderColorText (IntrusiveSP<FontTexture> Font, int x, int y, const NString &Str,
+  int GraphicsEngine::RenderColorText (ObjectPtr<FontTexture> Font, int x, int y, const NString &Str,
                                         const Color &TextColor,
                                         bool WriteAlphaChannel,
                                         int NumCharacter)
@@ -226,7 +256,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineStatic (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
+  int GraphicsEngine::RenderColorTextLineStatic (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
       const Color &TextColor,
       bool WriteAlphaChannel,
       TextAlignment alignment)
@@ -237,7 +267,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineEdit (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
+  int GraphicsEngine::RenderColorTextLineEdit (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
       const Color &TextColor,
       bool WriteAlphaChannel,
       const Color &SelectedTextColor,
@@ -266,11 +296,11 @@ namespace nux
     if ( (TextureUnit < GL_TEXTURE0) || (TextureUnit > GL_TEXTURE31) )
       return;
 
-    IntrusiveSP <CachedBaseTexture> CachedTexture = ResourceCache.GetCachedResource (Texture);
+    ObjectPtr <CachedBaseTexture> CachedTexture = ResourceCache.GetCachedResource (Texture);
     SetTexture (TextureUnit, CachedTexture->m_Texture);
   }
 
-  void GraphicsEngine::SetTexture (int TextureUnit, IntrusiveSP< IOpenGLBaseTexture > DeviceTexture)
+  void GraphicsEngine::SetTexture (int TextureUnit, ObjectPtr< IOpenGLBaseTexture > DeviceTexture)
   {
     NUX_RETURN_IF_FALSE (DeviceTexture.IsValid() );
 
@@ -310,10 +340,10 @@ namespace nux
 //////////////////////
   void GraphicsEngine::PushClippingRectangle (Rect A)
   {
-    if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
+    if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
     {
       // There is an active framebuffer set. Push the clipping rectangles to that fbo clipping stack.
-      m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->PushClippingRegion (A);
+      _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->PushClippingRegion (A);
       return;
     }
 
@@ -366,9 +396,9 @@ namespace nux
 
   void GraphicsEngine::PopClippingRectangle()
   {
-    if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
+    if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
     {
-      m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->PopClippingRegion();
+      _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->PopClippingRegion();
       return;
     }
 
@@ -394,9 +424,9 @@ namespace nux
 
   void GraphicsEngine::ApplyClippingRectangle ()
   {
-    if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
+    if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
     {
-      m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->ApplyClippingRegion();
+      _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->ApplyClippingRegion();
       return;
     }
 
@@ -421,9 +451,9 @@ namespace nux
 
   void GraphicsEngine::EmptyClippingRegion ()
   {
-    if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
+    if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
     {
-      m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->EmptyClippingRegion ();
+      _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->EmptyClippingRegion ();
       return;
     }
 
@@ -439,9 +469,9 @@ namespace nux
 
   Rect GraphicsEngine::GetClippingRegion () const
   {
-    if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
+    if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
     {
-      Rect r = m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->GetClippingRegion ();
+      Rect r = _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->GetClippingRegion ();
       return r;      
     }
 
@@ -460,9 +490,9 @@ namespace nux
 
   int GraphicsEngine::GetNumberOfClippingRegions () const
   {
-    if (m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
+    if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
     {
-      int n = m_GLWindow.m_DeviceFactory->GetCurrentFrameBufferObject()->GetNumberOfClippingRegions ();
+      int n = _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->GetNumberOfClippingRegions ();
       return n;
     }
 
@@ -511,6 +541,7 @@ namespace nux
   const float RASTERIZATION_OFFSET = 0.375f;
   void GraphicsEngine::Push2DWindow (int w, int h)
   {
+#ifndef NUX_OPENGL_ES_20
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     {
       m_ModelViewMatrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
@@ -534,10 +565,35 @@ namespace nux
       m_ProjectionMatrix.Transpose();
       CHECKGL ( glLoadMatrixf ( (GLfloat *) (m_ProjectionMatrix.m) ) );
     }
+#else
+    // ModelView
+    {
+      m_ModelViewMatrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
+      Matrix4 temp;
+      std::list<Matrix4>::iterator it;
+
+      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
+      {
+        temp = m_ModelViewMatrix;
+        m_ModelViewMatrix = temp * (*it);
+      }
+
+      // m_ModelViewMatrix is row_major while opengl is column major. We need to transpose.
+      m_ModelViewMatrix.Transpose();
+    }
+
+    // Projection
+    {
+      m_ProjectionMatrix.Orthographic (0, w, h, 0, -1.0f, 1.0f);
+      // m_ProjectionMatrix is row_major while opengl is column major. We need to transpose.
+      m_ProjectionMatrix.Transpose();
+    }
+#endif
   }
 
   void GraphicsEngine::Pop2DWindow()
   {
+#ifndef NUX_OPENGL_ES_20
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
@@ -550,6 +606,7 @@ namespace nux
                 0.1,    // near,
                 2000.0  // far
               ) );
+#endif
   }
 
   void GraphicsEngine::Push2DModelViewMatrix (Matrix4 mat)
@@ -896,7 +953,7 @@ namespace nux
     m_line_stats            = 0;
   }
 
-  IntrusiveSP< CachedResourceData > GraphicsEngine::CacheResource (ResourceData *Resource)
+  ObjectPtr< CachedResourceData > GraphicsEngine::CacheResource (ResourceData *Resource)
   {
     return ResourceCache.GetCachedResource (Resource);
   }
@@ -913,7 +970,7 @@ namespace nux
 
   void GraphicsEngine::UpdateResource (ResourceData *Resource)
   {
-    IntrusiveSP< CachedResourceData > GLResource = ResourceCache.FindCachedResourceById (Resource->GetResourceIndex() ); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
+    ObjectPtr< CachedResourceData > GLResource = ResourceCache.FindCachedResourceById (Resource->GetResourceIndex() ); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
     bool bUpdated = FALSE;
 
     if (GLResource.IsValid() )

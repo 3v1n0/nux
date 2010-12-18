@@ -98,7 +98,7 @@ namespace nux
     GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE);
 
     nux::TexCoordXForm texxform;
-    GfxContext.QRP_GLSL_1Tex (GeoPo.x, GeoPo.y, GeoPo.width, GeoPo.height, m_Texture->GetDeviceTexture(), texxform, nux::Color::White);
+    GfxContext.QRP_1Tex (GeoPo.x, GeoPo.y, GeoPo.width, GeoPo.height, m_Texture->GetDeviceTexture(), texxform, nux::Color::White);
 
     GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
     GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);

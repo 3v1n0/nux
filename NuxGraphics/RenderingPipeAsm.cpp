@@ -19,11 +19,11 @@
  *
  */
 
+#ifndef NUX_OPENGL_ES_20
 
 #include "GLResource.h"
 #include "IOpenGLBaseTexture.h"
 #include "RenderingPipe.h"
-//#include "RenderingPipeAsm.h"
 #include "GraphicsEngine.h"
 
 namespace nux
@@ -494,12 +494,12 @@ namespace nux
     m_AsmPSBMultiply->Link();
   }
 
-  void GraphicsEngine::QRP_Color (int x, int y, int width, int height, const Color &c0)
+  void GraphicsEngine::QRP_ASM_Color (int x, int y, int width, int height, const Color &c0)
   {
-    QRP_Color (x, y, width, height, c0, c0, c0, c0);
+    QRP_ASM_Color (x, y, width, height, c0, c0, c0, c0);
   }
 
-  void GraphicsEngine::QRP_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
+  void GraphicsEngine::QRP_ASM_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
   {
     float VtxBuffer[] =
     {
@@ -512,7 +512,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_AsmColor;
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_AsmColor;
 
     shader_program->Begin();
 
@@ -546,7 +546,7 @@ namespace nux
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_1Tex (int x, int y, int width, int height, IntrusiveSP<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, Color color)
+  void GraphicsEngine::QRP_ASM_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
@@ -560,7 +560,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
     
-    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_AsmTextureModColor;
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_AsmTextureModColor;
     if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_AsmTextureRectModColor;
@@ -609,8 +609,8 @@ namespace nux
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ColorModTexAlpha (int x, int y, int width, int height,
-      IntrusiveSP<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
+  void GraphicsEngine::QRP_ASM_ColorModTexAlpha (int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
 
@@ -625,7 +625,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_AsmColorModTexMaskAlpha;
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_AsmColorModTexMaskAlpha;
     if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_AsmColorModTexRectMaskAlpha;
@@ -674,9 +674,9 @@ namespace nux
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_2Tex (int x, int y, int width, int height,
-                                  IntrusiveSP<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
-                                  IntrusiveSP<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
+  void GraphicsEngine::QRP_ASM_2Tex (int x, int y, int width, int height,
+                                  ObjectPtr<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
+                                  ObjectPtr<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
@@ -692,7 +692,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_Asm2TextureAdd;
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_Asm2TextureAdd;
     if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_Asm2TextureRectAdd;
@@ -744,9 +744,9 @@ namespace nux
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_2TexMod (int x, int y, int width, int height,
-    IntrusiveSP<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
-    IntrusiveSP<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
+  void GraphicsEngine::QRP_ASM_2TexMod (int x, int y, int width, int height,
+    ObjectPtr<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
+    ObjectPtr<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
@@ -762,7 +762,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_Asm2TextureMod;
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_Asm2TextureMod;
     if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_Asm2TextureRectMod;
@@ -814,11 +814,11 @@ namespace nux
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_4Tex (int x, int y, int width, int height,
-                                  IntrusiveSP<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
-                                  IntrusiveSP<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1,
-                                  IntrusiveSP<IOpenGLBaseTexture> device_texture2, TexCoordXForm &texxform2, const Color &color2,
-                                  IntrusiveSP<IOpenGLBaseTexture> device_texture3, TexCoordXForm &texxform3, const Color &color3)
+  void GraphicsEngine::QRP_ASM_4Tex (int x, int y, int width, int height,
+                                  ObjectPtr<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
+                                  ObjectPtr<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1,
+                                  ObjectPtr<IOpenGLBaseTexture> device_texture2, TexCoordXForm &texxform2, const Color &color2,
+                                  ObjectPtr<IOpenGLBaseTexture> device_texture3, TexCoordXForm &texxform3, const Color &color3)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
@@ -836,7 +836,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program = m_Asm4TextureAdd;
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_Asm4TextureAdd;
     if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_Asm4TextureRectAdd;
@@ -913,15 +913,15 @@ namespace nux
   }
 
 ////////////////////////////////////////////////////////////////////////////////////
-  void GraphicsEngine::QRP_Triangle (int x0, int y0,
+  void GraphicsEngine::QRP_ASM_Triangle (int x0, int y0,
                                       int x1, int y1,
                                       int x2, int y2,
                                       Color c0)
   {
-    QRP_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
+    QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
   }
 
-  void GraphicsEngine::QRP_Triangle (int x0, int y0,
+  void GraphicsEngine::QRP_ASM_Triangle (int x0, int y0,
                                       int x1, int y1,
                                       int x2, int y2,
                                       Color c0, Color c1, Color c2)
@@ -936,7 +936,7 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
+    ObjectPtr<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
 
     ShaderProg->Begin();
 
@@ -968,13 +968,13 @@ namespace nux
 //////////////////////
 // DRAW LINES       //
 //////////////////////
-  void GraphicsEngine::QRP_Line (int x0, int y0,
+  void GraphicsEngine::QRP_ASM_Line (int x0, int y0,
                                   int x1, int y1, Color c0)
   {
-    QRP_Line (x0, y0, x1, y1, c0, c0);
+    QRP_ASM_Line (x0, y0, x1, y1, c0, c0);
   }
 
-  void GraphicsEngine::QRP_Line (int x0, int y0,
+  void GraphicsEngine::QRP_ASM_Line (int x0, int y0,
                                   int x1, int y1, Color c0, Color c1)
   {
 
@@ -984,7 +984,7 @@ namespace nux
       x1, y1, 0.0f, 1.0f, c1.R(), c1.G(), c1.B(), c1.A(),
     };
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
+    ObjectPtr<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
 
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -1022,7 +1022,7 @@ namespace nux
     m_line_stats++;
   }
 
-  void GraphicsEngine::QRP_QuadWireframe (int x0, int y0, int width, int height,
+  void GraphicsEngine::QRP_ASM_QuadWireframe (int x0, int y0, int width, int height,
       Color c0,
       Color c1,
       Color c2,
@@ -1037,7 +1037,7 @@ namespace nux
       x0, y0,                             0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
     };
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
+    ObjectPtr<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
@@ -1075,3 +1075,4 @@ namespace nux
   }
 
 }
+#endif // NUX_OPENGL_ES_20

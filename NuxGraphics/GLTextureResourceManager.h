@@ -123,14 +123,14 @@ namespace nux
 
       @return The device texture.
     */
-    IntrusiveSP < IOpenGLBaseTexture > GetDeviceTexture ();
+    ObjectPtr < IOpenGLBaseTexture > GetDeviceTexture ();
 
     /*!
       Cache the texture if it hasn't been been already and return the cached texture.
 
       @return The cached texture.
     */
-    IntrusiveSP < CachedBaseTexture > GetCachedTexture ();
+    ObjectPtr < CachedBaseTexture > GetCachedTexture ();
   };
 
   //! General Texture
@@ -541,7 +541,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE (CachedBaseTexture, CachedResourceData);
   public:
-    IntrusiveSP < IOpenGLBaseTexture > m_Texture;
+    ObjectPtr < IOpenGLBaseTexture > m_Texture;
 
     CachedBaseTexture (NResourceSet *ResourceManager);
     ~CachedBaseTexture();

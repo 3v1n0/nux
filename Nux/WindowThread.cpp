@@ -194,6 +194,8 @@ namespace nux
 
   void WindowThread::InitGlibLoop()
   {
+    static bool main_context_created = false;
+
     GSource *source;
 
     if (!IsEmbeddedWindow ())
@@ -205,14 +207,24 @@ namespace nux
 
       gthread_initialized = true;
 
-      if ( (m_GLibContext == 0) || (m_GLibLoop == 0) )
+      if (((m_GLibContext == 0) || (m_GLibLoop == 0)) && (main_context_created == false))
       {
         //create a context
         m_GLibContext = g_main_context_default ();
         //create a main loop with context
         m_GLibLoop = g_main_loop_new (m_GLibContext, TRUE);
       }
+      else
+      {
+        // Secondary physical windows goes in here
+        //create a context
+        m_GLibContext = g_main_context_new();
+        //create a main loop with context
+        m_GLibLoop = g_main_loop_new (m_GLibContext, TRUE);
+      }
     }
+
+    main_context_created = true;
 
     gLibEventMutex = 0; //g_mutex_new();
 

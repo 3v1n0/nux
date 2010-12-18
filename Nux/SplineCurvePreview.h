@@ -105,7 +105,7 @@ namespace nux
     TimerHandle m_ChangeTimerHandler;
 
     TextureLayer *m_BackgroundLayer;
-    IntrusiveSP<IOpenGLBaseTexture> Texture;
+    ObjectPtr<IOpenGLBaseTexture> Texture;
     GLSh_DrawFunction *m_DrawFunctionShader;
     WindowThread *m_WindowDialog;
 

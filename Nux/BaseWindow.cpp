@@ -172,8 +172,8 @@ namespace nux
     {
       //nuxDebugMsg(TEXT("[BaseWindow::DrawContent]"));
       GetPainter().PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
-      //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f, 0.0f, 0.0f, 1.0f));
-      //GfxContext.QRP_GLSL_Color(base.x, base.y, base.width, base.height, Color(1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 0.5f));
+      //GfxContext.QRP_Color(base.x, base.y, base.width, base.height, Color(1.0f, 0.0f, 0.0f, 1.0f));
+      //GfxContext.QRP_Color(base.x, base.y, base.width, base.height, Color(1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 0.5f));
     }
 
     if (m_layout)
@@ -442,7 +442,7 @@ namespace nux
     ComputeChildLayout();
 
     if (m_bIsModal)
-      GetWindowCompositor().StartModalWindow (IntrusiveWeakSP<BaseWindow> (this));
+      GetWindowCompositor().StartModalWindow (ObjectWeakPtr<BaseWindow> (this));
 
     // Whether this view is added or removed, call NeedRedraw. in the case where this view is removed, this is a signal 
     // that the region below this view need to be redrawn.
@@ -459,7 +459,7 @@ namespace nux
     m_bIsVisible = false;
     m_bIsModal = false;
     //ShowWindow(false);
-    GetWindowCompositor().StopModalWindow (IntrusiveWeakSP<BaseWindow> (this));
+    GetWindowCompositor().StopModalWindow (ObjectWeakPtr<BaseWindow> (this));
   }
 
   bool BaseWindow::IsModal() const

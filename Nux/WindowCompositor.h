@@ -58,22 +58,22 @@ namespace nux
     void ProcessEvent (IEvent &ievent);
 
 
-    IntrusiveSP<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
+    ObjectPtr<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
       return m_FrameBufferObject;
     }
-    IntrusiveSP<IOpenGLFrameBufferObject> m_FrameBufferObject;
+    ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
 
-    IntrusiveSP< IOpenGLBaseTexture > GetScreenBlurTexture();
+    ObjectPtr< IOpenGLBaseTexture > GetScreenBlurTexture();
 
-    void StartModalWindow (IntrusiveWeakSP<BaseWindow>);
-    void StopModalWindow (IntrusiveWeakSP<BaseWindow>);
+    void StartModalWindow (ObjectWeakPtr<BaseWindow>);
+    void StopModalWindow (ObjectWeakPtr<BaseWindow>);
 
     void AddMenu(MenuPage* menu, BaseWindow *window, bool OverrideCurrentMenuChain = true);
     void RemoveMenu(MenuPage* menu);
     void CleanMenu();
 
-    void PushModalWindow (IntrusiveWeakSP<BaseWindow> window);
+    void PushModalWindow (ObjectWeakPtr<BaseWindow> window);
 
     void SetWidgetDrawingOverlay (InputArea *ic, BaseWindow *OverlayWindow);
     InputArea *GetWidgetDrawingOverlay();
@@ -163,7 +163,7 @@ namespace nux
         @draw_modal True if the top view that is modal is to be rendered.
         @use_fbo True if TopViews should be backed by an fbo.
     */
-    void RenderTopViews (bool force_draw, std::list< IntrusiveWeakSP<BaseWindow> >& WindowList, bool draw_modal, bool use_fbo);
+    void RenderTopViews (bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool draw_modal, bool use_fbo);
 
     //! Render the content of a top view.
     void RenderTopViewContent (BaseWindow *window, bool force_draw);
@@ -181,7 +181,7 @@ namespace nux
         @param RenderToMainTexture  If true, render to the main window texture. If false, render to the default back buffer.
         @param BluredBackground     If true, the texture is blended with the blurred version of the main window texture.
     */
-    void PresentBufferToScreen (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false);
+    void PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false);
     void PresentRendering();
 
     /*!
@@ -194,7 +194,7 @@ namespace nux
         @param x    Destination coordinates.
         @param y    Destination coordinates.
     */
-    void CopyTextureToMainColorRT (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y);
+    void CopyTextureToMainColorRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y);
 
     /*!
         Set the composition render target as the texture to draw into.
@@ -206,7 +206,7 @@ namespace nux
         @param x    Destination coordinates.
         @param y    Destination coordinates.
     */
-    void CopyTextureToCompositionRT (IntrusiveSP<IOpenGLBaseTexture> HWTexture, int x, int y);
+    void CopyTextureToCompositionRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y);
 
     //! Push a floating view just above another floating view.
     /*!
@@ -292,19 +292,19 @@ namespace nux
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
     struct RenderTargetTextures
     {
-      IntrusiveSP<IOpenGLBaseTexture> color_rt;
-      IntrusiveSP<IOpenGLBaseTexture> depth_rt;
+      ObjectPtr<IOpenGLBaseTexture> color_rt;
+      ObjectPtr<IOpenGLBaseTexture> depth_rt;
     };
-    IntrusiveSP<IOpenGLBaseTexture> m_MainColorRT;
-    IntrusiveSP<IOpenGLBaseTexture> m_MainDepthRT;
-    IntrusiveSP<IOpenGLBaseTexture> m_CompositionRT;
+    ObjectPtr<IOpenGLBaseTexture> m_MainColorRT;
+    ObjectPtr<IOpenGLBaseTexture> m_MainDepthRT;
+    ObjectPtr<IOpenGLBaseTexture> m_CompositionRT;
 
     //! Return the RenderTargetTextures structure of a TopView.
     RenderTargetTextures &GetWindowBuffer (BaseWindow* window);
 
-    IntrusiveWeakSP<BaseWindow> m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
-    IntrusiveWeakSP<BaseWindow> m_FocusAreaWindow;  //!< The BaseWindow that contains the m_MouseFocusArea.
-    IntrusiveWeakSP<BaseWindow> m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
+    ObjectWeakPtr<BaseWindow> m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
+    ObjectWeakPtr<BaseWindow> m_FocusAreaWindow;  //!< The BaseWindow that contains the m_MouseFocusArea.
+    ObjectWeakPtr<BaseWindow> m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
     IEvent* m_CurrentEvent; 
 
     /*!
@@ -365,8 +365,8 @@ namespace nux
     bool _inside_rendering_cycle;
 
     InputArea* OverlayDrawingCommand;
-    IntrusiveWeakSP<BaseWindow> m_OverlayWindow;            //!< The window that owns the overlay;
-    IntrusiveWeakSP<BaseWindow> _tooltip_window;            //!< The window that owns the tooltip;
+    ObjectWeakPtr<BaseWindow> m_OverlayWindow;            //!< The window that owns the overlay;
+    ObjectWeakPtr<BaseWindow> _tooltip_window;            //!< The window that owns the tooltip;
     Geometry    _tooltip_geometry;              //!< The geometry of the entire tooltip It includes the decoration surrounding the text such as round corners.
     Geometry    _tooltip_mainwindow_geometry;   //!< Same as _tooltip_geometry but based on the entire physical window of the application.
     Geometry    _tooltip_text_geometry;         //!< The geometry of the text area of the tooltip.
@@ -375,9 +375,9 @@ namespace nux
 
     AbstractPaintLayer *m_Background;
 
-    std::list< IntrusiveWeakSP<BaseWindow> > m_WindowList;
-    std::list< IntrusiveWeakSP<BaseWindow> > m_ModalWindowList;
-    IntrusiveWeakSP<BaseWindow>            _always_on_front_window;  //!< Floating view that always remains on top.
+    std::list< ObjectWeakPtr<BaseWindow> > m_WindowList;
+    std::list< ObjectWeakPtr<BaseWindow> > m_ModalWindowList;
+    ObjectWeakPtr<BaseWindow>            _always_on_front_window;  //!< Floating view that always remains on top.
 
     std::list<MenuPage *> *m_MenuList;
 
@@ -386,11 +386,11 @@ namespace nux
         This BaseWindow will be raised to the top of the stack. 
         \sa GetSelectedWindow.
     */
-    IntrusiveWeakSP<BaseWindow> m_SelectedWindow;
+    ObjectWeakPtr<BaseWindow> m_SelectedWindow;
 
     std::map< BaseWindow*, struct RenderTargetTextures > m_WindowToTextureMap;
 
-    IntrusiveWeakSP<BaseWindow> m_ModalWindow;
+    ObjectWeakPtr<BaseWindow> m_ModalWindow;
     Point m_MouseLastPos;
     Point m_MouseCurrentPos;
 
@@ -409,10 +409,10 @@ namespace nux
     int m_TooltipY;
 
 //     bool m_FullSceneBlurUpdated;
-//     IntrusiveSP<IOpenGLBaseTexture> m_BlurTexture;
-//     IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip0;
-//     IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip1;
-//     IntrusiveSP<IOpenGLBaseTexture> m_FullSceneMip2;
+//     ObjectPtr<IOpenGLBaseTexture> m_BlurTexture;
+//     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip0;
+//     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip1;
+//     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip2;
 
   private:
     WindowCompositor (const WindowCompositor &);

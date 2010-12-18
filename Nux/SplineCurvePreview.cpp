@@ -84,7 +84,7 @@ namespace nux
     static_cast<WindowThread *> (thread)->SetWindowSize (MainLayout->GetBaseWidth(), MainLayout->GetBaseHeight() );
 
     // Call StopThreadMonitoring in case the dialog was close by clicking the window close button.
-    splinecurveproxy->StopThreadMonitoring();
+    //splinecurveproxy->StopThreadMonitoring();
   }
 
   SplineCurveDialogProxy::SplineCurveDialogProxy (bool ModalWindow)

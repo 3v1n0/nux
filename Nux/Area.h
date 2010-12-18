@@ -35,9 +35,9 @@
 #include "WidgetSmartPointer.h"
 
 #define inlptr(T) T*
-#define smptr(T) nux::IntrusiveSP<T>
-#define weaksmptr(T) nux::IntrusiveWeakSP<T>
-#define smptrnull(T) nux::IntrusiveSP<T> (0)
+#define smptr(T) nux::ObjectPtr<T>
+#define weaksmptr(T) nux::ObjectWeakPtr<T>
+#define smptrnull(T) nux::ObjectPtr<T> (0)
 
 namespace nux
 {

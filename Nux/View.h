@@ -158,20 +158,20 @@ namespace nux
         Set the font to be used by the widget. If Font is null then use the default system font.
         @param Font The font to use when rendering text.
     */
-    virtual void SetFont (IntrusiveSP<FontTexture> Font);
+    virtual void SetFont (ObjectPtr<FontTexture> Font);
 
     //! Get the font used for rendering text.
     /*!
         Get the font used for rendering text.
         @return The font to use when rendering text.
     */
-    IntrusiveSP<FontTexture> GetFont();
+    ObjectPtr<FontTexture> GetFont();
 
     virtual void SetTextColor (const Color &color);
     virtual Color GetTextColor();
 
   protected:
-    IntrusiveSP<FontTexture> m_font;
+    ObjectPtr<FontTexture> m_font;
     Color m_TextColor;
     virtual Layout *GetCompositionLayout() const;
     virtual void SetCompositionLayout (Layout *lyt);

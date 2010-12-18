@@ -25,6 +25,7 @@
 #include "IOpenGLTexture2D.h"
 #include "IOpenGLRectangleTexture.h"
 #include "RenderingPipe.h"
+#include "GraphicsEngine.h"
 
 namespace nux
 {
@@ -194,7 +195,7 @@ namespace nux
     m_tex_coord_type = tex_coord_type;
   }
 
-  void QRP_Compute_Texture_Coord (t_int32 quad_width, t_int32 quad_height, IntrusiveSP<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
+  void QRP_Compute_Texture_Coord (t_int32 quad_width, t_int32 quad_height, ObjectPtr<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
   {
     float tex_width = tex->GetWidth();
     float tex_height = tex->GetHeight();
@@ -289,4 +290,176 @@ namespace nux
     tex->SetFiltering (TexFilterGLMapping (texxform.min_filter), TexFilterGLMapping (texxform.mag_filter) );
   }
 
+
+  void GraphicsEngine::QRP_Color (int x, int y, int width, int height, const Color &color)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_Color (x, y, width, height, color, color, color, color);
+    else
+      QRP_GLSL_Color (x, y, width, height, color, color, color, color);
+#else
+    QRP_GLSL_Color (x, y, width, height, color, color, color, color);
+#endif
+  }
+
+  void GraphicsEngine::QRP_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_Color (x, y, width, height, c0, c1, c2, c3);
+    else
+      QRP_GLSL_Color (x, y, width, height, c0, c1, c2, c3);
+#else
+    QRP_GLSL_Color (x, y, width, height, c0, c1, c2, c3);
+#endif
+  }
+
+  void GraphicsEngine::QRP_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
+    else
+      QRP_GLSL_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
+#else
+    QRP_GLSL_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
+#endif
+  }
+
+  // Render the texture alpha into RGB and modulated by a color.
+  void GraphicsEngine::QRP_ColorModTexAlpha (int x, int y, int width, int height,
+    ObjectPtr< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
+    else
+      QRP_GLSL_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
+#else
+    QRP_GLSL_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
+#endif
+  }
+
+  // Blend 2 textures together
+  void GraphicsEngine::QRP_2Tex (int x, int y, int width, int height,
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+    else
+      QRP_GLSL_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+#else
+    QRP_GLSL_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+#endif
+  }
+
+
+  void GraphicsEngine::QRP_2TexMod (int x, int y, int width, int height,
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+    else
+      QRP_GLSL_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+#else
+    QRP_GLSL_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+#endif
+  }
+
+  void GraphicsEngine::QRP_4Tex (int x, int y, int width, int height,
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
+    ObjectPtr<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
+      DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
+    else
+      QRP_GLSL_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
+      DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
+#else
+    QRP_GLSL_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
+      DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
+#endif
+  }
+
+  void GraphicsEngine::QRP_Triangle (int x0, int y0,
+    int x1, int y1,
+    int x2, int y2,
+    Color c0)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
+    else
+      QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
+#else
+    QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
+#endif
+  }
+
+  void GraphicsEngine::QRP_Triangle (int x0, int y0,
+    int x1, int y1,
+    int x2, int y2,
+    Color c0, Color c1, Color c2)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
+    else
+      QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
+#else
+    QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
+#endif
+  }
+
+  void GraphicsEngine::QRP_Line (int x0, int y0,
+    int x1, int y1, Color c0)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_Line (x0, y0, x1, y1, c0, c0);
+    else
+      QRP_GLSL_Line (x0, y0, x1, y1, c0, c0);
+#else
+    QRP_GLSL_Line (x0, y0, x1, y1, c0, c0);
+#endif
+  }
+
+  void GraphicsEngine::QRP_Line (int x0, int y0,
+    int x1, int y1, Color c0, Color c1)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_Line (x0, y0, x1, y1, c0, c1);
+    else
+      QRP_GLSL_Line (x0, y0, x1, y1, c0, c1);
+#else
+    QRP_GLSL_Line (x0, y0, x1, y1, c0, c1);
+#endif
+  }
+
+  void GraphicsEngine::QRP_QuadWireframe (int x0, int y0, int width, int height,
+    Color c0,
+    Color c1,
+    Color c2,
+    Color c3)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      QRP_ASM_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
+    else
+      QRP_GLSL_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
+#else
+    QRP_GLSL_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
+#endif
+  }
 }
+

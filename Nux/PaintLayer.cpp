@@ -39,7 +39,7 @@ namespace nux
   void ColorLayer::Renderlayer (GraphicsEngine &GfxContext)
   {
     GfxContext.GetRenderStates().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
-    GfxContext.QRP_GLSL_Color (m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_color);
+    GfxContext.QRP_Color (m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_color);
 
     if (m_rop.Blend)
       GfxContext.GetRenderStates().SetBlend (false);
@@ -95,7 +95,7 @@ namespace nux
   }
 
 /////////////////////////////////////////////////////
-  TextureLayer::TextureLayer (IntrusiveSP<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color &color, bool write_alpha, const ROPConfig &ROP)
+  TextureLayer::TextureLayer (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color &color, bool write_alpha, const ROPConfig &ROP)
   {
     m_device_texture = device_texture;
     m_color = color;
@@ -122,7 +122,7 @@ namespace nux
     GfxContext.GetRenderStates ().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, m_write_alpha ? GL_TRUE : GL_FALSE);
     GfxContext.GetRenderStates ().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
     
-    GfxContext.QRP_GLSL_1Tex (m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_device_texture,
+    GfxContext.QRP_1Tex (m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_device_texture,
                               m_texxform, m_color);
     
     // Restore Color mask and blend states.
