@@ -54,7 +54,7 @@ static void TestMainWindow (void)
 static void TestMainWindowStatus (void)
 {
   // Warning: on windows the window can not be physically smaller than ~120x100
-  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Timeline Test"), 120, 100, 0, 0, 0);
+  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("TestMainWindowStatus"), 120, 100, 0, 0, 0);
 
   g_assert (wt != 0);
   g_assert (nux::GetGraphicsThread () == wt);
@@ -75,7 +75,7 @@ static void TestMainWindowStatus (void)
 static void TestMainWindowSize (void)
 {
   // Warning: on windows the window can not be physically smaller than ~120x100
-  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Timeline Test"), 120, 100, 0, 0, 0);
+  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("TestMainWindowSize"), 120, 100, 0, 0, 0);
 
   nux::GetWindow ().ShowWindow ();
 
