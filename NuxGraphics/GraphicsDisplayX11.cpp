@@ -1481,7 +1481,7 @@ namespace nux
         char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
         Memset (m_pEvent->e_text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
 
-        int num_char_stored = XLookupString (&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, &m_pEvent->e_keysym, NULL);
+        int num_char_stored = XLookupString (&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->e_keysym, NULL);
         if (num_char_stored)
         {
           Memcpy (m_pEvent->e_text, buffer, num_char_stored);
@@ -1804,7 +1804,7 @@ namespace nux
 
   void GraphicsDisplay::ShowWindow()
   {
-    XMapWindow (m_X11Display, m_X11Window);
+    XMapRaised (m_X11Display, m_X11Window);
   }
 
   void GraphicsDisplay::HideWindow()
@@ -1815,11 +1815,12 @@ namespace nux
   bool GraphicsDisplay::IsWindowVisible ()
   {
     XWindowAttributes window_attributes_return;
-    XGetWindowAttributes (m_X11Display, m_X11Window);
-    
+    XGetWindowAttributes (m_X11Display, m_X11Window, &window_attributes_return);
+
     if (window_attributes_return.map_state == IsViewable)
+    {
       return true;
-    
+    }
     return false;
   }
 
