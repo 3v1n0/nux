@@ -29,11 +29,11 @@ namespace nux
   {
   public:
     GdkGraphics ();
-    GdkGraphics (TCHAR* Filename);
+    GdkGraphics (const TCHAR* Filename);
     GdkGraphics (void* GdkPixbufPtr);
     ~GdkGraphics ();
 
-    bool LoadImage (TCHAR* Filename);
+    bool LoadImage (const TCHAR* Filename);
     void LoadGdkPixbuf (void* GdkPixbufPtr);
 
     NBitmapData *GetBitmap();

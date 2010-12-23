@@ -381,27 +381,17 @@ namespace nux
                                     FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha); // use a Quad.
     void ClearSurfaceWithColor (ObjectPtr<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a);
 
-    // All these operations are done on the default frame buffer object: _FrameBufferObject.
-    int FormatFrameBufferObject (unsigned int Width, unsigned int Height, BitmapFormat PixelFormat);
-    int SetColorRenderTargetSurface (unsigned int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface);
-    int SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> pDepthSurface);
-    ObjectPtr<IOpenGLSurface> GetColorRenderTargetSurface (unsigned int ColorAttachmentIndex);
-    ObjectPtr<IOpenGLSurface> GetDepthRenderTargetSurface();
-    // Activate and Deactivate the default framebuffer: _FrameBufferObject.
-    void ActivateFrameBuffer();
-    void DeactivateFrameBuffer();
+    //! Restore the backbuffer as the render target.
+    void DeactivateFrameBuffer (); 
 
   public:
-    void SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> fbo); // {_CurrentFrameBufferObject = fbo;}
-    ObjectPtr<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject(); // {return _CurrentFrameBufferObject;}
-
-    void CollectDeviceResource();
+    void SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> fbo);
+    ObjectPtr<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject();
 
     int GetOpenGLMajorVersion () const;
     int GetOpenGLMinorVersion () const;
   private:
     // Default FrameBufferobject
-    ObjectPtr<IOpenGLFrameBufferObject> _FrameBufferObject;
     ObjectPtr<IOpenGLFrameBufferObject> _CurrentFrameBufferObject;
 
     struct PixelBufferObject

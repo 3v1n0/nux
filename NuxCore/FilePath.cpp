@@ -93,7 +93,13 @@ namespace nux
       if (m_SearchPath[i].Size() == 0)
         continue;
 
-      NString FilePath = m_SearchPath[i] + NUX_PATH_SEPARATOR_STRING + filename;
+      NString FilePath;
+   
+      if ((m_SearchPath[i].GetLastChar () == TEXT('/')) || (m_SearchPath[i].GetLastChar () == TEXT('\\')))
+        FilePath = m_SearchPath[i] + filename;
+      else
+        FilePath = m_SearchPath[i] + NUX_PATH_SEPARATOR_STRING + filename;
+
 
       if (GFileManager.FileExist (FilePath.GetTCharPtr() ) )
         return FilePath;
@@ -124,7 +130,12 @@ namespace nux
         pos = FileName.FindFirstOccurenceOf (TEXT ("\\/") ) + 1;
 
         FileName = FileName.GetSubString (pos, FileName.Length() - pos);
-        PathName = m_SearchPath[i] + NUX_PATH_SEPARATOR_STRING + FileName;
+
+        if ((m_SearchPath[i].GetLastChar () == TEXT('/')) || (m_SearchPath[i].GetLastChar () == TEXT('\\')))
+          PathName = m_SearchPath[i] + FileName;
+        else
+          PathName = m_SearchPath[i] + NUX_PATH_SEPARATOR_STRING + FileName;
+
 
         if (GFileManager.FileExist (PathName.GetTCharPtr() ) )
           return PathName;

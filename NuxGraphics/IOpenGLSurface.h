@@ -90,6 +90,8 @@ namespace nux
       return OGL_OK;
     }
 
+    void CopyRenderTarget (int x, int y, int width, int height);
+
   private:
     virtual ~IOpenGLSurface();
 

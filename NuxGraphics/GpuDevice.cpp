@@ -384,12 +384,6 @@ namespace nux
     int req_opengl_minor,
     bool opengl_es_20)
 #endif
-    :   _FrameBufferObject (0)
-#if (NUX_ENABLE_CG_SHADERS)
-    ,   _CachedCGVertexShaderList (0)
-    ,   _CachedCGPixelShaderList (0)
-    ,   m_Cgcontext (0)
-#endif
   {
     inlSetThreadLocalStorage (_TLS_GpuDevice_, this);
     
@@ -705,6 +699,8 @@ namespace nux
     // Configure NVidia CG
 #if (NUX_ENABLE_CG_SHADERS)
     {
+      m_Cgcontext = 0;
+
       // Create Cg context and set profile.
       CHECKGL ( cgSetErrorCallback ( cgErrorCallback ) );
       m_Cgcontext = cgCreateContext();
@@ -715,11 +711,6 @@ namespace nux
     }
 #endif
 
-    if (GetGpuInfo ().Support_EXT_Framebuffer_Object ())
-    {
-      _FrameBufferObject = CreateFrameBufferObject ();
-      _FrameBufferObject->Deactivate ();
-    }
   }
 
   GpuDevice::~GpuDevice()
@@ -727,9 +718,7 @@ namespace nux
     NUX_SAFE_DELETE (_gpu_info);
     NUX_SAFE_DELETE (_gpu_render_states);
 
-    _FrameBufferObject = ObjectPtr<IOpenGLFrameBufferObject> (0);
     _CurrentFrameBufferObject = ObjectPtr<IOpenGLFrameBufferObject> (0);
-    CollectDeviceResource ();
 
     _PixelBufferArray.clear ();
 
@@ -790,182 +779,6 @@ namespace nux
   void GpuDevice::VerifyRenderStates()
   {
     _gpu_render_states->CheckStateChange();
-  }
-
-  // NUXTODO: It is pointless to fill the _Cached... arrays. The data is already in the resource manager.
-  void GpuDevice::CollectDeviceResource()
-  {
-//     TDeviceResourceList< ObjectPtr<IOpenGLVertexBuffer> >* pTempVertexBuffer = _CachedVertexBufferList;
-// 
-//     while (pTempVertexBuffer)
-//     {
-//       if (pTempVertexBuffer->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempVertexBuffer->_DeviceResource = ObjectPtr<IOpenGLVertexBuffer> (0);
-//         pTempVertexBuffer = pTempVertexBuffer->_next;
-//       }
-//       else
-//         pTempVertexBuffer = pTempVertexBuffer->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLIndexBuffer> >* pTempIndexBuffer = _CachedIndexBufferList;
-// 
-//     while (pTempIndexBuffer)
-//     {
-//       if (pTempIndexBuffer->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempIndexBuffer->_DeviceResource = ObjectPtr<IOpenGLIndexBuffer> (0);
-//         pTempIndexBuffer = pTempIndexBuffer->_next;
-//       }
-//       else
-//         pTempIndexBuffer = pTempIndexBuffer->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLVertexDeclaration> >* pTempVertexDeclaration = _CachedVertexDeclarationList;
-// 
-//     while (pTempVertexDeclaration)
-//     {
-//       if (pTempVertexDeclaration->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempVertexDeclaration->_DeviceResource = ObjectPtr<IOpenGLVertexDeclaration> (0);
-//         pTempVertexDeclaration = pTempVertexDeclaration->_next;
-//       }
-//       else
-//         pTempVertexDeclaration = pTempVertexDeclaration->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLTexture2D> >* pTempTexture2D = _CachedTextureList;
-// 
-//     while (pTempTexture2D)
-//     {
-//       if (pTempTexture2D->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempTexture2D->_DeviceResource = ObjectPtr<IOpenGLTexture2D> (0);
-//         pTempTexture2D = pTempTexture2D->_next;
-//       }
-//       else
-//         pTempTexture2D = pTempTexture2D->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLCubeTexture> >* pTempCubeTexture = _CachedCubeTextureList;
-// 
-//     while (pTempCubeTexture)
-//     {
-//       if (pTempCubeTexture->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempCubeTexture->_DeviceResource = ObjectPtr<IOpenGLCubeTexture> (0);
-//         pTempCubeTexture = pTempCubeTexture->_next;
-//       }
-//       else
-//         pTempCubeTexture = pTempCubeTexture->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLVolumeTexture> >* pTempVolumeTexture = _CachedVolumeTextureList;
-// 
-//     while (pTempVolumeTexture)
-//     {
-//       if (pTempVolumeTexture->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempVolumeTexture->_DeviceResource = ObjectPtr<IOpenGLVolumeTexture> (0);
-//         pTempVolumeTexture = pTempVolumeTexture->_next;
-//       }
-//       else
-//         pTempVolumeTexture = pTempVolumeTexture->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLAnimatedTexture> >* pTempAnimatedTexture = _CachedAnimatedTextureList;
-// 
-//     while (pTempAnimatedTexture)
-//     {
-//       if (pTempAnimatedTexture->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempAnimatedTexture->_DeviceResource = ObjectPtr<IOpenGLAnimatedTexture> (0);
-//         pTempAnimatedTexture = pTempAnimatedTexture->_next;
-//       }
-//       else
-//         pTempAnimatedTexture = pTempAnimatedTexture->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLFrameBufferObject> >* pTempFrameBufferObject = _CachedFrameBufferList;
-// 
-//     while (pTempFrameBufferObject)
-//     {
-//       if (pTempFrameBufferObject->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempFrameBufferObject->_DeviceResource = ObjectPtr<IOpenGLFrameBufferObject> (0);
-//         pTempFrameBufferObject = pTempFrameBufferObject->_next;
-//       }
-//       else
-//         pTempFrameBufferObject = pTempFrameBufferObject->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLQuery> >* pTempQuery = _CachedQueryList;
-// 
-//     while (pTempQuery)
-//     {
-//       if (pTempQuery->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempQuery->_DeviceResource = ObjectPtr<IOpenGLQuery> (0);
-//         pTempQuery = pTempQuery->_next;
-//       }
-//       else
-//         pTempQuery = pTempQuery->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLVertexShader> >* pTempVertexShader = _CachedVertexShaderList;
-// 
-//     while (pTempVertexShader)
-//     {
-//       if (pTempVertexShader->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempVertexShader->_DeviceResource = ObjectPtr<IOpenGLVertexShader> (0);
-//         pTempVertexShader = pTempVertexShader->_next;
-//       }
-//       else
-//         pTempVertexShader = pTempVertexShader->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<IOpenGLPixelShader> >* pTempPixelShader = _CachedPixelShaderList;
-// 
-//     while (pTempPixelShader)
-//     {
-//       if (pTempPixelShader->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempPixelShader->_DeviceResource = ObjectPtr<IOpenGLPixelShader> (0);
-//         pTempPixelShader = pTempPixelShader->_next;
-//       }
-//       else
-//         pTempPixelShader = pTempPixelShader->_next;
-//     }
-// 
-// #if (NUX_ENABLE_CG_SHADERS)
-//     TDeviceResourceList< ObjectPtr<ICgVertexShader> >* pTempCgVertexShader = _CachedCGVertexShaderList;
-// 
-//     while (pTempCgVertexShader)
-//     {
-//       if (pTempCgVertexShader->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempCgVertexShader->_DeviceResource = ObjectPtr<ICgVertexShader> (0);
-//         pTempCgVertexShader = pTempCgVertexShader->_next;
-//       }
-//       else
-//         pTempCgVertexShader = pTempCgVertexShader->_next;
-//     }
-// 
-//     TDeviceResourceList< ObjectPtr<ICgPixelShader> >* pTempCgPixelShader = _CachedCGPixelShaderList;
-// 
-//     while (pTempCgPixelShader)
-//     {
-//       if (pTempCgPixelShader->_DeviceResource->RefCount() == 1)
-//       {
-//         pTempCgPixelShader->_DeviceResource = ObjectPtr<IOpenGLPixelShader> (0);
-//         pTempCgPixelShader = pTempCgPixelShader->_next;
-//       }
-//       else
-//         pTempCgPixelShader = pTempCgPixelShader->_next;
-//     }
-// 
-// #endif
   }
 
   void GpuDevice::InvalidateTextureUnit (int TextureUnitIndex)
@@ -1112,84 +925,6 @@ namespace nux
     return OGL_OK;
   }
 
-  int GpuDevice::FormatFrameBufferObject (t_u32 Width, t_u32 Height, BitmapFormat PixelFormat)
-  {
-    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::FormatFrameBufferObject] No support for OpenGL framebuffer extension.") );
-      return 0;
-    }
-
-    return _FrameBufferObject->FormatFrameBufferObject (Width, Height, PixelFormat);
-  }
-
-  int GpuDevice::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
-  {
-    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::SetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
-      return 0;
-    }
-
-    return _FrameBufferObject->SetRenderTarget (ColorAttachmentIndex, pRenderTargetSurface);
-  }
-
-  int GpuDevice::SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> pDepthSurface)
-  {
-    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::SetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
-      return 0;
-    }
-
-    return _FrameBufferObject->SetDepthSurface (pDepthSurface);
-  }
-
-  ObjectPtr<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
-  {
-    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::GetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
-      return ObjectPtr<IOpenGLSurface> (0);
-    }
-
-    return _FrameBufferObject->GetRenderTarget (ColorAttachmentIndex);
-  }
-
-  ObjectPtr<IOpenGLSurface> GpuDevice::GetDepthRenderTargetSurface()
-  {
-    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::GetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
-      return ObjectPtr<IOpenGLSurface> (0);
-    }
-
-    return _FrameBufferObject->GetDepthRenderTarget();
-  }
-
-  void GpuDevice::ActivateFrameBuffer()
-  {
-    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::ActivateFrameBuffer] No support for OpenGL framebuffer extension.") );
-      return;
-    }
-
-    _FrameBufferObject->Activate();
-  }
-
-  void GpuDevice::DeactivateFrameBuffer()
-  {
-    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object () )
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::DeactivateFrameBuffer] No support for OpenGL framebuffer extension.") );
-      return;
-    }
-
-    CHECKGL ( glBindFramebufferEXT ( GL_FRAMEBUFFER_EXT, 0 ) );
-    CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
-  }
-
   void GpuDevice::Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil)
   {
     CHECKGL ( glClearColor (red, green, blue, alpha) );
@@ -1228,15 +963,15 @@ namespace nux
       nuxDebugMsg (TEXT ("[GpuDevice::ClearSurfaceWithColor] No support for OpenGL framebuffer extension.") );
     }
 
-    FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
-    SetColorRenderTargetSurface (0, s_);
-    SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> (0));
-    ActivateFrameBuffer();
-    ClearFloatingPointColorRT (rect_->left,
-                               rect_->top,
-                               rect_->right - rect_->left,
-                               rect_->bottom - rect_->top,
-                               r, g, b, a);
+//     FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
+//     SetColorRenderTargetSurface (0, s_);
+//     SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> (0));
+//     ActivateFrameBuffer();
+//     ClearFloatingPointColorRT (rect_->left,
+//                                rect_->top,
+//                                rect_->right - rect_->left,
+//                                rect_->bottom - rect_->top,
+//                                r, g, b, a);
   }
 
   void GpuDevice::SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> fbo)
@@ -1247,6 +982,19 @@ namespace nux
   ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::GetCurrentFrameBufferObject()
   {
     return _CurrentFrameBufferObject;
+  }
+
+  void GpuDevice::DeactivateFrameBuffer ()
+  {
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object () )
+    {
+      nuxDebugMsg (TEXT ("[GpuDevice::DeactivateFrameBuffer] No support for OpenGL framebuffer extension.") );
+      return;
+    }
+
+    _CurrentFrameBufferObject.Release ();
+    CHECKGL ( glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0));
+    CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0));
   }
 
   ObjectPtr<IOpenGLBaseTexture> GpuDevice::CreateSystemCapableDeviceTexture (

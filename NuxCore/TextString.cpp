@@ -435,7 +435,7 @@ namespace nux
     m_string.clear();
   }
 
-  bool NString::IsEmpty()
+  bool NString::IsEmpty() const
   {
     return m_string.empty();
   }
@@ -1269,19 +1269,17 @@ namespace nux
     }
   }
 
-  TCHAR NString::GetFirstChar()
+  TCHAR NString::GetFirstChar() const
   {
     if (IsEmpty() )
       return 0;
-
     return m_string[0];
   }
 
-  TCHAR NString::GetLastChar()
+  TCHAR NString::GetLastChar() const
   {
     if (IsEmpty() )
       return 0;
-
     return m_string[Size()-1];
   }
 

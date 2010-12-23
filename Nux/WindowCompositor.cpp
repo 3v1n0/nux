@@ -1800,37 +1800,37 @@ namespace nux
 
       if ((rt.color_rt->GetWidth () != buffer_width) || (rt.color_rt->GetHeight () != buffer_height))
       {
-        rt.color_rt = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        rt.depth_rt = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+        rt.color_rt = GetThreadGLDeviceFactory ()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+        rt.depth_rt = GetThreadGLDeviceFactory ()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
       }
 
       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget ( 0, rt.color_rt->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface ( rt.depth_rt->GetSurfaceLevel (0) );
-      m_FrameBufferObject->Activate();
+      m_FrameBufferObject->SetRenderTarget (0, rt.color_rt->GetSurfaceLevel (0));
+      m_FrameBufferObject->SetDepthSurface (rt.depth_rt->GetSurfaceLevel (0));
+      m_FrameBufferObject->Activate ();
 
-      GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
-      GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
-      GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
-      GetGraphicsThread()->GetGraphicsEngine().ApplyClippingRectangle();
+      GetGraphicsThread ()->GetGraphicsEngine ().SetContext (0, 0, buffer_width, buffer_height);
+      GetGraphicsThread ()->GetGraphicsEngine ().SetViewport (0, 0, buffer_width, buffer_height);
+      GetGraphicsThread ()->GetGraphicsEngine ().Push2DWindow (buffer_width, buffer_height);
+      GetGraphicsThread ()->GetGraphicsEngine ().ApplyClippingRectangle ();
     }
     else
     {
-      int buffer_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
-      int buffer_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
+      int buffer_width = GetGraphicsThread ()->GetGraphicsEngine ().GetWindowWidth ();
+      int buffer_height = GetGraphicsThread ()->GetGraphicsEngine ().GetWindowHeight ();
 
       nuxAssert (buffer_width >= 1);
       nuxAssert (buffer_height >= 1);
       // Restore Main Frame Buffer
       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0) );
+      m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0));
       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
-      m_FrameBufferObject->Activate();
+      m_FrameBufferObject->Activate ();
 
-      GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
-      GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
-      GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
-      GetGraphicsThread()->GetGraphicsEngine().ApplyClippingRectangle();
+      GetGraphicsThread ()->GetGraphicsEngine ().SetContext (0, 0, buffer_width, buffer_height);
+      GetGraphicsThread ()->GetGraphicsEngine ().SetViewport (0, 0, buffer_width, buffer_height);
+      GetGraphicsThread ()->GetGraphicsEngine ().Push2DWindow (buffer_width, buffer_height);
+      GetGraphicsThread ()->GetGraphicsEngine ().ApplyClippingRectangle ();
     }
   }
 

@@ -407,7 +407,7 @@ namespace nux
     }
     else
     {
-      std::cout << "Incorrect Texture Target\n";
+      nuxDebugMsg (TEXT("[IOpenGLSurface::UnlockRect] Incorrect Texture Target."));
     }
 
     if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
@@ -540,10 +540,62 @@ namespace nux
     //        delete [] color_array;
     //    }
 
-    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetThreadGLDeviceFactory()->GetPixelStoreAlignment() ) );
+    CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, GetThreadGLDeviceFactory ()->GetPixelStoreAlignment ()));
 
     _Initialized = true;
     return OGL_OK;
   }
 
+  void IOpenGLSurface::CopyRenderTarget (int x, int y, int width, int height)
+  {
+    CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, _BaseTexture->GetFormatRowMemoryAlignment ()));
+
+    BYTE *DataPtr = 0;
+
+    if (_STextureTarget == GL_TEXTURE_2D || _STextureTarget == GL_TEXTURE_RECTANGLE_ARB || _STextureTarget == GL_TEXTURE_CUBE_MAP || _STextureTarget == GL_TEXTURE_3D)
+    {
+      int w = _Rect.right - _Rect.left;
+      int h = _Rect.bottom - _Rect.top;
+      CHECKGL ( glBindTexture (_STextureTarget, _BaseTexture->_OpenGLID) );
+
+
+#ifndef NUX_OPENGL_ES_20
+      if (_STextureTarget != GL_TEXTURE_3D)
+      {
+        CHECKGL (glCopyTexImage2D (_SSurfaceTarget,
+          _SMipLevel,
+          GPixelFormats [_BaseTexture->_PixelFormat].Format,
+          x,
+          y,
+          width,
+          height,
+          0));
+      }
+      else
+      {
+        CHECKGL (glCopyTexSubImage3D (_SSurfaceTarget,
+          _SMipLevel,
+          0,
+          0,
+          0,
+          x,
+          y,
+          width,
+          height));
+      }
+#else
+      if (_STextureTarget != GL_TEXTURE_3D)
+      {
+        CHECKGL (glCopyTexImage2D (_SSurfaceTarget,
+          _SMipLevel,
+          GPixelFormats [texture->_PixelFormat].Format,
+          x,
+          y,
+          width,
+          height,
+          0));
+      }
+#endif
+    }
+  }
 }

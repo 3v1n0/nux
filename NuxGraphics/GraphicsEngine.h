@@ -164,7 +164,41 @@ namespace nux
     void QRP_ASM_Line (int x0, int y0, int x1, int y1, Color c0, Color c1);
     void QRP_ASM_QuadWireframe (int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
 
+    void QRP_ASM_Exponentiation  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent);
+    void QRP_ASM_AlphaReplicate  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
+    void QRP_ASM_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
+    void QRP_ASM_VerticalGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
+    void QRP_ASM_ColorMatrix     (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Matrix4 color_matrix, Vector4 offset);
 
+    /*!
+        @param device_texture The texture that is to be blurred.
+        @param texxform       Texture transformation of device_texture.
+        @param x              Position of the source texture in result buffer.
+        @param y              Position of the source texture in result buffer.
+        @param buffer_width   Width of result texture.
+        @param buffer_height  Height of result texture.
+    */
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetBlurTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      int x, int y,
+      int buffer_width, int buffer_height);
+
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetAlphaTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      int x, int y,
+      int buffer_width, int buffer_height);
+
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetColorMatrixTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Matrix4 color_matrix, Vector4 offset,
+      int x, int y,
+      int buffer_width, int buffer_height);
+
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetComponentExponentiation (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Vector4 exponent,
+      int x, int y,
+      int buffer_width, int buffer_height);
     // GLSL
 
     void QRP_GLSL_1Tex (int x, int y, int width, int height,
@@ -189,11 +223,47 @@ namespace nux
                         ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
                         ObjectPtr<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3);
 
-    void QRP_GLSL_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0);
-    void QRP_GLSL_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0, Color c1, Color c2);
-    void QRP_GLSL_Line (int x0, int y0, int x1, int y1, Color c0);
-    void QRP_GLSL_Line (int x0, int y0, int x1, int y1, Color c0, Color c1);
+    void QRP_GLSL_Triangle      (int x0, int y0, int x1, int y1, int x2, int y2, Color c0);
+    void QRP_GLSL_Triangle      (int x0, int y0, int x1, int y1, int x2, int y2, Color c0, Color c1, Color c2);
+    void QRP_GLSL_Line          (int x0, int y0, int x1, int y1, Color c0);
+    void QRP_GLSL_Line          (int x0, int y0, int x1, int y1, Color c0, Color c1);
     void QRP_GLSL_QuadWireframe (int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
+
+    void QRP_GLSL_Exponentiation  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent);
+    void QRP_GLSL_AlphaReplicate  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
+    void QRP_GLSL_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
+    void QRP_GLSL_VerticalGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
+    void QRP_GLSL_ColorMatrix     (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Matrix4 color_matrix, Vector4 offset);
+
+    /*!
+        @param device_texture The texture that is to be blurred.
+        @param texxform       Texture transformation of device_texture.
+        @param x              Position of the source texture in result buffer.
+        @param y              Position of the source texture in result buffer.
+        @param buffer_width   Width of result texture.
+        @param buffer_height  Height of result texture.
+    */
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetBlurTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      int x, int y,
+      int buffer_width, int buffer_height);
+
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetAlphaTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      int x, int y,
+      int buffer_width, int buffer_height);
+
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetColorMatrixTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Matrix4 color_matrix, Vector4 offset,
+      int x, int y,
+      int buffer_width, int buffer_height);
+
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetComponentExponentiation (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Vector4 exponent,
+      int x, int y,
+      int buffer_width, int buffer_height);
 
     //////////////////////
     // DRAW CLIPPING    //
@@ -201,11 +271,11 @@ namespace nux
 
     mutable std::vector<Rect> ClippingRect;
     void PushClippingRectangle (Rect rect);
-    void PopClippingRectangle();
-    void EmptyClippingRegion();
-    void ApplyClippingRectangle();
+    void PopClippingRectangle ();
+    void EmptyClippingRegion ();
+    void ApplyClippingRectangle ();
     void SetDrawClippingRegion (int x, int y, unsigned int width, unsigned int height);
-    Rect GetClippingRegion() const;
+    Rect GetClippingRegion () const;
     int GetNumberOfClippingRegions () const;
 
     void ClearAreaColorDepthStencil (int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil);
@@ -214,10 +284,10 @@ namespace nux
 
     void Set3DView (int w, int h);
     void Push2DWindow (int w, int h);
-    void Pop2DWindow();
+    void Pop2DWindow ();
     void Push2DModelViewMatrix (Matrix4 mat);
-    Matrix4 Pop2DModelViewMatrix();
-    void Clear2DModelViewMatrix();
+    Matrix4 Pop2DModelViewMatrix ();
+    void Clear2DModelViewMatrix ();
     std::list<Matrix4> m_2DModelViewMatricesStack;
 
     void SetEnvModeTextureAlphaBlend (int TextureUnit);
@@ -227,7 +297,7 @@ namespace nux
 
 
     void SetViewport (int x, int y, int w, int h);
-    Rect GetViewportRect();
+    Rect GetViewportRect ();
     void SetScissor (int x, int y, int w, int h);
 
     /*!
@@ -267,6 +337,8 @@ namespace nux
                                  const Color &CursorColor,
                                  bool ShowCursor, unsigned int CursorPosition,
                                  int offset = 0, int selection_start = 0, int selection_end = 0);
+
+    ObjectPtr <IOpenGLBaseTexture> CreateTextureFromBackBuffer (int x, int y, int width, int height);
 
     //Statistics
     void ResetStats();
@@ -329,6 +401,15 @@ namespace nux
 
     void InitShaders();
 
+    //! Helper function to compute a Gaussian filter weights
+    void GaussianWeights (float **weights, float sigma, unsigned int num_tap);
+
+    //! Helper function to set an fbo
+    void GraphicsEngine::SetFrameBufferHelper(
+      ObjectPtr<IOpenGLFrameBufferObject>& fbo,
+      ObjectPtr<IOpenGLTexture2D>& colorbuffer,
+      ObjectPtr<IOpenGLTexture2D>& depthbuffer,
+      int width, int height);
 
 #ifndef NUX_OPENGL_ES_20
     void InitAsmColorShader();
@@ -361,6 +442,38 @@ namespace nux
     //! Render polygons with 4 textures, each modulated by a color, and added together.
     ObjectPtr<IOpenGLAsmShaderProgram> m_Asm4TextureAdd;
     ObjectPtr<IOpenGLAsmShaderProgram> m_Asm4TextureRectAdd;
+
+    void InitAsmComponentExponentiation ();
+    //! Raise a texture component to a power.
+    /*!
+        result = color0 * (tex0)^(exponent) = (tex0.r^exponent.r, tex0.g^exponent.g, tex0.b^exponent.b, tex0.a^exponent.a);
+    */
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_component_exponentiation_prog;
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_component_exponentiation_prog;
+
+    void InitAsmAlphaReplicate ();
+    //! Replicate the alpha component into r, g and b.
+    /*!
+        result = color0 * (tex0.a, tex0.a, tex0.a, tex0.a);
+    */
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_alpha_replicate_prog;
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_alpha_replicate_prog;
+
+    void InitAsmSeparableGaussFilter ();
+    //! Gauss horizontal filter.
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_separable_gauss_filter_prog;
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_separable_gauss_filter_prog;
+
+//     void InitAsmSeparableGaussFilter2 ();
+//     //! Gauss horizontal filter.
+//     ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_separable_gauss_filter_prog2;
+//     ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_separable_gauss_filter_prog2;
+
+    void InitAsmColorMatrixFilter ();
+    //! Color matrix filter.
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_color_matrix_filter_prog;
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_color_matrix_filter_prog;
+
 
     void InitAsmBlendModes();
 
@@ -398,6 +511,32 @@ namespace nux
     //! Render polygons with 4 textures, each modulated by a color, and added together.
     ObjectPtr<IOpenGLShaderProgram> m_Sl4TextureAdd;
 
+    void InitSLComponentExponentiation ();
+    //! Raise a texture component to a power.
+    /*!
+        result = color0 * (tex0)^(exponent) = (tex0.r^exponent.r, tex0.g^exponent.g, tex0.b^exponent.b, tex0.a^exponent.a);
+    */
+    ObjectPtr<IOpenGLShaderProgram> _component_exponentiation_prog;
+
+    void InitSLAlphaReplicate ();
+    //! Replicate the alpha component into r, g and b.
+    /*!
+        result = color0 * (tex0.a, tex0.a, tex0.a, tex0.a);
+    */
+    ObjectPtr<IOpenGLShaderProgram> _alpha_replicate_prog;
+
+    void InitSLHorizontalGaussFilter ();
+    //! Gauss horizontal filter.
+    ObjectPtr<IOpenGLShaderProgram> _horizontal_gauss_filter_prog;
+    
+    void InitSLVerticalGaussFilter ();
+    //! Gauss vertical filter.
+    ObjectPtr<IOpenGLShaderProgram> _vertical_gauss_filter_prog;
+    
+    void InitSLColorMatrixFilter ();
+    //! Color matrix filter.
+    ObjectPtr<IOpenGLShaderProgram> _color_matrix_filter_prog;
+
     void InitSlBlendModes();
 
     ObjectPtr<IOpenGLShaderProgram> m_SlPSBNormal;
@@ -410,6 +549,12 @@ namespace nux
     void EvaluateGpuCaps ();
 
     bool _use_glsl_shaders; //!< True if the system is using the glsl code path.
+
+    ObjectPtr<IOpenGLFrameBufferObject> _offscreen_fbo;
+    ObjectPtr<IOpenGLTexture2D> _offscreen_color_rt0;
+    ObjectPtr<IOpenGLTexture2D> _offscreen_depth_rt0;
+    ObjectPtr<IOpenGLTexture2D> _offscreen_color_rt1;
+    ObjectPtr<IOpenGLTexture2D> _offscreen_depth_rt1;
 
     Matrix4 m_ProjectionMatrix;
     Matrix4 m_ModelViewMatrix;

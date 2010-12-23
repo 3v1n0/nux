@@ -34,6 +34,7 @@
 #include "OpenEXR.h"
 #include "NITX.h"
 #include "NAnimatedTexture.h"
+#include "GdkGraphics.h"
 
 namespace nux
 {
@@ -76,6 +77,12 @@ namespace nux
       nuxAssertMsg (0, TEXT ("[LoadImageFile] Can't find file: %s"), filename);
       return 0;
     }
+
+//     GdkGraphics *gdkgraphics = new GdkGraphics ();
+//     if (gdkgraphics->LoadImage (filename))
+//     {
+//       return gdkgraphics->GetBitmap ();
+//     }
 
     NBitmapData *BitmapData = 0;
     BitmapData = read_tga_file (filename);

@@ -221,7 +221,8 @@ namespace nux
       dmScreenSettings.dmPelsWidth	= m_ViewportSize.GetWidth();                 // Selected Screen Width
       dmScreenSettings.dmPelsHeight	= m_ViewportSize.GetHeight();                // Selected Screen Height
       dmScreenSettings.dmBitsPerPel	= m_ScreenBitDepth;                              // Selected Bits Per Pixel
-      dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+      dmScreenSettings.dmDisplayFrequency = 60;
+      dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
 
       // Try To Set Selected Mode And Get Results.  NOTE: CDS_FULLSCREEN Gets Rid Of Start Bar.
       if (ChangeDisplaySettings (&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
@@ -246,7 +247,7 @@ namespace nux
     {
       m_dwExStyle = WS_EX_APPWINDOW;                    // Window Extended Style
       m_dwStyle = WS_POPUP;                             // Windows Style
-      ShowCursor (TRUE);                              // Hide Mouse Pointer
+      ShowCursor (FALSE);                              // Hide Mouse Pointer
     }
     else
     {
@@ -254,54 +255,53 @@ namespace nux
       m_dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
       // Windows Style
       m_dwStyle = WS_OVERLAPPED;    // Creates an overlapped window. An overlapped window has a title bar and a border
+
+      // See Win32 Window Hierarchy and Styles: http://msdn.microsoft.com/en-us/library/ms997562.aspx
+
+      //WS_EX_APPWINDOW       // Forces a top-level window onto the taskbar when the window is visible
+      //WS_EX_WINDOWEDGE      // Specifies that a window has a border with a raised edge
+
+      //WS_POPUP      // Creates a pop-up window. This style cannot be used with the WS_CHILD style.
+      //WS_SYSMENU    // Creates a window that has a window menu on its title bar. The WS_CAPTION style must also be specified.
+      //WS_SIZEBOX    // Creates a window that has a sizing border. Same as the WS_THICKFRAME style.
+      //WS_CAPTION    // Creates a window that has a title bar (includes the WS_BORDER style).
+
+      m_Style = Style;
+
+      if (Style == WINDOWSTYLE_TOOL)
+      {
+        m_dwExStyle = WS_EX_TOOLWINDOW;
+        m_dwStyle = WS_CAPTION | WS_SYSMENU;
+      }
+      else if (Style == WINDOWSTYLE_DIALOG)
+      {
+        m_dwExStyle = WS_EX_DLGMODALFRAME;
+        m_dwStyle = WS_CAPTION | WS_SYSMENU;
+      }
+      else if (Style == WINDOWSTYLE_NOBORDER)
+      {
+        m_dwExStyle = WS_EX_TOPMOST | WS_EX_TOOLWINDOW;
+        m_dwStyle = WS_POPUP;
+      }
+      else if (Style == WINDOWSTYLE_PANEL)
+      {
+        m_dwExStyle = 0;           // Specifies that a window has a border with a raised edge
+        m_dwStyle = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX;
+      }
+      else
+      {
+        // Normal Window: NormalWindow
+        m_dwExStyle = WS_EX_APPWINDOW |   // Forces a top-level window onto the taskbar when the window is visible
+                      WS_EX_WINDOWEDGE;   // Specifies that a window has a border with a raised edge
+
+        m_dwStyle |= WS_CAPTION |         // Creates a window that has a title bar.
+                     WS_SYSMENU |         // Creates a window that has a window menu on its title bar. The WS_CAPTION style must also be specified.
+                     WS_THICKFRAME |      // Creates a window that has a sizing border.
+                     WS_MINIMIZEBOX |     // Creates a window that has a minimize button.
+                     WS_MAXIMIZEBOX |     // Creates a window that has a maximize button.
+                     WS_BORDER;           // Creates a window that has a thin-line border.
+      }
     }
-
-    // See Win32 Window Hierarchy and Styles: http://msdn.microsoft.com/en-us/library/ms997562.aspx
-
-    //WS_EX_APPWINDOW       // Forces a top-level window onto the taskbar when the window is visible
-    //WS_EX_WINDOWEDGE      // Specifies that a window has a border with a raised edge
-
-    //WS_POPUP      // Creates a pop-up window. This style cannot be used with the WS_CHILD style.
-    //WS_SYSMENU    // Creates a window that has a window menu on its title bar. The WS_CAPTION style must also be specified.
-    //WS_SIZEBOX    // Creates a window that has a sizing border. Same as the WS_THICKFRAME style.
-    //WS_CAPTION    // Creates a window that has a title bar (includes the WS_BORDER style).
-
-    m_Style = Style;
-
-    if (Style == WINDOWSTYLE_TOOL)
-    {
-      m_dwExStyle = WS_EX_TOOLWINDOW;
-      m_dwStyle = WS_CAPTION | WS_SYSMENU;
-    }
-    else if (Style == WINDOWSTYLE_DIALOG)
-    {
-      m_dwExStyle = WS_EX_DLGMODALFRAME;
-      m_dwStyle = WS_CAPTION | WS_SYSMENU;
-    }
-    else if (Style == WINDOWSTYLE_NOBORDER)
-    {
-      m_dwExStyle = WS_EX_TOPMOST | WS_EX_TOOLWINDOW;
-      m_dwStyle = WS_POPUP;
-    }
-    else if (Style == WINDOWSTYLE_PANEL)
-    {
-      m_dwExStyle = 0;           // Specifies that a window has a border with a raised edge
-      m_dwStyle = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX;
-    }
-    else
-    {
-      // Normal Window: NormalWindow
-      m_dwExStyle = WS_EX_APPWINDOW |   // Forces a top-level window onto the taskbar when the window is visible
-                    WS_EX_WINDOWEDGE;           // Specifies that a window has a border with a raised edge
-
-      m_dwStyle |= WS_CAPTION | // Creates a window that has a title bar.
-                   WS_SYSMENU |        // Creates a window that has a window menu on its title bar. The WS_CAPTION style must also be specified.
-                   WS_THICKFRAME |     // Creates a window that has a sizing border.
-                   WS_MINIMIZEBOX |    // Creates a window that has a minimize button.
-                   WS_MAXIMIZEBOX |    // Creates a window that has a maximize button.
-                   WS_BORDER;          // Creates a window that has a thin-line border.
-    }
-
     // The AdjustWindowRectEx function calculates the required size of the window rectangle,
     // based on the desired size of the client rectangle. The window rectangle can then be passed to
     // the CreateWindowEx function to create a window whose client area is the desired size.
@@ -326,7 +326,7 @@ namespace nux
       WindowX = rect.left + (width - (WindowRect.right - WindowRect.left) ) / 2;
       WindowY = rect.top + (height - (WindowRect.bottom - WindowRect.top) ) / 2;
     }
-    else
+    else if (!m_fullscreen)
     {
       ClipOrCenterRectToMonitor (&rect, 0);
       WindowX = rect.left;
@@ -1884,6 +1884,7 @@ J1:
     INT         iMode = 0;
     BOOL		bRetVal;
     DeviceModes dm;
+    m_num_gfx_device_modes = 0;
 
     do
     {
@@ -1897,6 +1898,7 @@ J1:
         dm.format       = devmode.dmBitsPerPel;
         dm.refresh_rate = devmode.dmDisplayFrequency;
         m_gfx_device_modes.push_back (dm);
+        m_num_gfx_device_modes++;
       }
     }
     while (bRetVal);

@@ -295,9 +295,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_Color (x, y, width, height, color, color, color, color);
-    else
       QRP_GLSL_Color (x, y, width, height, color, color, color, color);
+    else
+      QRP_ASM_Color (x, y, width, height, color, color, color, color);
 #else
     QRP_GLSL_Color (x, y, width, height, color, color, color, color);
 #endif
@@ -307,9 +307,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_Color (x, y, width, height, c0, c1, c2, c3);
-    else
       QRP_GLSL_Color (x, y, width, height, c0, c1, c2, c3);
+    else
+      QRP_ASM_Color (x, y, width, height, c0, c1, c2, c3);
 #else
     QRP_GLSL_Color (x, y, width, height, c0, c1, c2, c3);
 #endif
@@ -319,9 +319,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
-    else
       QRP_GLSL_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
+    else
+      QRP_ASM_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
 #else
     QRP_GLSL_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
 #endif
@@ -333,9 +333,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
-    else
       QRP_GLSL_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
+    else
+      QRP_ASM_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
 #else
     QRP_GLSL_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
 #endif
@@ -348,9 +348,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
-    else
       QRP_GLSL_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+    else
+      QRP_ASM_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
 #else
     QRP_GLSL_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
 #endif
@@ -363,9 +363,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
-    else
       QRP_GLSL_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+    else
+      QRP_ASM_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
 #else
     QRP_GLSL_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
 #endif
@@ -379,10 +379,10 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
+      QRP_GLSL_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
       DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
     else
-      QRP_GLSL_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
+      QRP_ASM_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
       DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
 #else
     QRP_GLSL_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
@@ -397,9 +397,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
-    else
       QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
+    else
+      QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
 #else
     QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
 #endif
@@ -412,9 +412,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
-    else
       QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
+    else
+      QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
 #else
     QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
 #endif
@@ -425,9 +425,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_Line (x0, y0, x1, y1, c0, c0);
-    else
       QRP_GLSL_Line (x0, y0, x1, y1, c0, c0);
+    else
+      QRP_ASM_Line (x0, y0, x1, y1, c0, c0);
 #else
     QRP_GLSL_Line (x0, y0, x1, y1, c0, c0);
 #endif
@@ -438,9 +438,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_Line (x0, y0, x1, y1, c0, c1);
-    else
       QRP_GLSL_Line (x0, y0, x1, y1, c0, c1);
+    else
+      QRP_ASM_Line (x0, y0, x1, y1, c0, c1);
 #else
     QRP_GLSL_Line (x0, y0, x1, y1, c0, c1);
 #endif
@@ -454,9 +454,9 @@ namespace nux
   {
 #ifndef NUX_OPENGL_ES_20
     if (UsingGLSLCodePath ())
-      QRP_ASM_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
-    else
       QRP_GLSL_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
+    else
+      QRP_ASM_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
 #else
     QRP_GLSL_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
 #endif

@@ -668,7 +668,7 @@ namespace nux
     t_size Length() const;
     t_size Size() const;
     void Clear();
-    bool IsEmpty();
+    bool IsEmpty() const;
 
     void Erase (t_size Pos, t_size count);
     NString &Insert (t_size Pos, const TCHAR *Ptr);
@@ -813,13 +813,13 @@ namespace nux
     /*!
         @return The first character or 0 if the string is empty.
     */
-    TCHAR GetFirstChar();
+    TCHAR GetFirstChar() const;
 
     //! Get last character.
     /*!
         @return The last character or 0 if the string is empty.
     */
-    TCHAR GetLastChar();
+    TCHAR GetLastChar() const;
 
     const TCHAR *operator () () const;
     const TCHAR *operator * () const;

@@ -93,6 +93,12 @@ namespace nux
     InitAsm2TextureMod();
     InitAsm4TextureAdd();
     InitAsmBlendModes();
+
+    InitAsmComponentExponentiation ();
+    InitAsmAlphaReplicate ();
+    InitAsmSeparableGaussFilter ();
+    InitAsmColorMatrixFilter ();
+
 #endif
 
     InitSlColorShader();
@@ -102,8 +108,19 @@ namespace nux
     InitSl2TextureMod();
     InitSl4TextureAdd();
 
+    InitSLComponentExponentiation ();
+    InitSLAlphaReplicate ();
+    InitSLHorizontalGaussFilter ();
+    InitSLVerticalGaussFilter ();
+    InitSLColorMatrixFilter ();
 
     //GNuxGraphicsResources.CacheFontTextures (ResourceCache);
+
+    _offscreen_fbo        = GetThreadGLDeviceFactory()->CreateFrameBufferObject();
+    _offscreen_color_rt0  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+    _offscreen_depth_rt0  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_D24S8);
+    _offscreen_color_rt1  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+    _offscreen_depth_rt1  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_D24S8);
 
 #if defined (NUX_OS_WINDOWS)
     if (_normal_font == 0)
@@ -994,6 +1011,100 @@ namespace nux
   bool GraphicsEngine::IsResourceCached (ResourceData *Resource)
   {
     return ResourceCache.IsCachedResource (Resource);
+  }
+
+  void GraphicsEngine::SetFrameBufferHelper (
+    ObjectPtr<IOpenGLFrameBufferObject>& fbo,
+    ObjectPtr<IOpenGLTexture2D>& colorbuffer,
+    ObjectPtr<IOpenGLTexture2D>& depthbuffer,
+    int width, int height)
+  {
+    if ((colorbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
+    {
+      colorbuffer = GetThreadGLDeviceFactory ()->CreateTexture (width, height, 1, BITFMT_R8G8B8A8);
+      depthbuffer = GetThreadGLDeviceFactory ()->CreateTexture (width, height, 1, BITFMT_D24S8);
+    }
+
+    fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
+    fbo->SetRenderTarget (0, colorbuffer->GetSurfaceLevel (0));
+    fbo->SetDepthSurface (depthbuffer->GetSurfaceLevel (0));
+    fbo->Activate ();
+    fbo->EmptyClippingRegion ();
+    SetContext (0, 0, width, height);
+    SetViewport (0, 0, width, height);
+    Push2DWindow (width, height);
+  }
+
+  void GraphicsEngine::GaussianWeights(float **weights, float sigma, unsigned int num_tap)
+  {
+    *weights = new float[num_tap];
+    float sum = 0.0f;
+    unsigned int i = 0;
+
+    unsigned int half = (num_tap-1)/2;
+
+    (*weights)[half] = (1.0f/(sqrt(2.0f*3.14159265358f)*sigma)) * exp(-0.0f/(2.0f*sigma*sigma));
+    sum += (*weights)[half];
+    for(i = 0; i < half; i++)
+    {
+      float X = (i + 1)*(i + 1);
+      (*weights)[half - i - 1] = (*weights)[half + i + 1] = (1.0f/(sqrt(2.0f*3.14159265358f)*sigma)) * exp(-X/(2.0f*sigma*sigma));
+      sum += 2.0f * ((*weights)[half - i - 1]);
+    }
+
+    /* normalization */
+    for(i = 0; i < num_tap; i++)
+    {
+      (*weights)[i] = (*weights)[i] / sum;
+    }
+  }
+
+  ObjectPtr <IOpenGLBaseTexture> GraphicsEngine::CreateTextureFromBackBuffer (int x, int y, int width, int height)
+  {
+    ObjectPtr<IOpenGLFrameBufferObject> fbo = _graphics_display.GetGpuDevice ()->GetCurrentFrameBufferObject ();
+
+    int X, Y, W, H;
+    if (fbo.IsValid())
+    {
+      int fbo_width = fbo->GetWidth ();
+      int fbo_height = fbo->GetHeight ();
+
+      X = Clamp<int> (x, 0, fbo_width);
+      Y = Clamp<int> (y, 0, fbo_height);
+      W = Min<int> (fbo_width - x, width);
+      H = Min<int> (fbo_height - y, height);
+
+
+      if ((W <= 0) || (H <= 0))
+      {
+        nuxAssertMsg (0, TEXT("[GraphicsEngine::CreateTextureFromBackBuffer] Invalid request."));
+        return ObjectPtr<IOpenGLBaseTexture> (0);
+      }
+    }
+    else
+    {
+      // There is no fbo. Reading directly from the back-buffer.
+      int bb_width = _graphics_display.GetWindowWidth ();
+      int bb_height = _graphics_display.GetWindowHeight ();
+
+      X = Clamp<int> (x, 0, bb_width);
+      Y = Clamp<int> (y, 0, bb_height);
+      W = Min<int> (bb_width - x, width);
+      H = Min<int> (bb_height - y, height);
+
+      if ((W <= 0) || (H <= 0))
+      {
+        nuxAssertMsg (0, TEXT("[GraphicsEngine::CreateTextureFromBackBuffer] Invalid request."));
+        return ObjectPtr<IOpenGLBaseTexture> (0);
+      }
+    }
+
+    ObjectPtr <IOpenGLBaseTexture> device_texture = _graphics_display.GetGpuDevice ()->CreateSystemCapableDeviceTexture (W, H, 1, BITFMT_R8G8B8A8);
+    ObjectPtr <IOpenGLSurface> sfc = device_texture->GetSurfaceLevel (0);
+
+    sfc->CopyRenderTarget (X, Y, W, H);
+
+    return device_texture;
   }
 
 }
