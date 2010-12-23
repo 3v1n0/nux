@@ -405,7 +405,7 @@ namespace nux
     void GaussianWeights (float **weights, float sigma, unsigned int num_tap);
 
     //! Helper function to set an fbo
-    void GraphicsEngine::SetFrameBufferHelper(
+    void SetFrameBufferHelper(
       ObjectPtr<IOpenGLFrameBufferObject>& fbo,
       ObjectPtr<IOpenGLTexture2D>& colorbuffer,
       ObjectPtr<IOpenGLTexture2D>& depthbuffer,

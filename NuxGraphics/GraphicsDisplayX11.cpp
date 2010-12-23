@@ -1579,8 +1579,6 @@ namespace nux
   {
     switch (Keysym)
     {
-      case XK_Cancel:
-        return NUX_VK_CANCEL;
       case XK_BackSpace:
         return NUX_VK_BACKSPACE;
       case XK_Tab:
@@ -1619,8 +1617,6 @@ namespace nux
         return NUX_VK_RIGHT;
       case XK_Down:
         return NUX_VK_DOWN;
-      case XK_Select:
-        return NUX_VK_SELECT;
       case XK_Print:
         return NUX_VK_PRINT;
       case XK_Execute:
@@ -1629,8 +1625,6 @@ namespace nux
         return NUX_VK_INSERT;
       case XK_Delete:
         return NUX_VK_DELETE;
-      case XK_Help:
-        return NUX_VK_HELP;
       case XK_0:
         return NUX_VK_0;
       case XK_1:

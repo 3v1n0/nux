@@ -53,7 +53,6 @@ namespace nux
 #define     NUX_VK_EXECUTE                                  XK_Execute                   //   EXECUTE key
 #define     NUX_VK_INSERT                                   XK_Insert                   //   INS key
 #define     NUX_VK_DELETE                                   XK_Delete                   //   DEL key
-#define     NUX_VK_DELETE                                   XK_Escape                   // Escape
 #define     NUX_VK_0                                        XK_0                      //   0 key
 #define     NUX_VK_1                                        XK_1                      //   1 key
 #define     NUX_VK_2                                        XK_2                      //   2 key
