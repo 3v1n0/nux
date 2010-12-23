@@ -711,6 +711,11 @@ namespace nux
     }
 #endif
 
+    if (GetGpuInfo ().Support_EXT_Framebuffer_Object ())
+    {
+      _FrameBufferObject = CreateFrameBufferObject ();
+      _FrameBufferObject->Deactivate ();
+    }
   }
 
   GpuDevice::~GpuDevice()
@@ -718,7 +723,8 @@ namespace nux
     NUX_SAFE_DELETE (_gpu_info);
     NUX_SAFE_DELETE (_gpu_render_states);
 
-    _CurrentFrameBufferObject = ObjectPtr<IOpenGLFrameBufferObject> (0);
+    _FrameBufferObject.Release ();
+    _CurrentFrameBufferObject.Release ();
 
     _PixelBufferArray.clear ();
 
@@ -925,6 +931,71 @@ namespace nux
     return OGL_OK;
   }
 
+  int GpuDevice::FormatFrameBufferObject (t_u32 Width, t_u32 Height, BitmapFormat PixelFormat)
+  {
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
+    {
+      nuxDebugMsg (TEXT ("[GpuDevice::FormatFrameBufferObject] No support for OpenGL framebuffer extension.") );
+      return 0;
+    }
+
+    return _FrameBufferObject->FormatFrameBufferObject (Width, Height, PixelFormat);
+  }
+
+  int GpuDevice::SetColorRenderTargetSurface (t_u32 ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
+  {
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
+    {
+      nuxDebugMsg (TEXT ("[GpuDevice::SetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      return 0;
+    }
+
+    return _FrameBufferObject->SetRenderTarget (ColorAttachmentIndex, pRenderTargetSurface);
+  }
+
+  int GpuDevice::SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> pDepthSurface)
+  {
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
+    {
+      nuxDebugMsg (TEXT ("[GpuDevice::SetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      return 0;
+    }
+
+    return _FrameBufferObject->SetDepthSurface (pDepthSurface);
+  }
+
+  ObjectPtr<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface (t_u32 ColorAttachmentIndex)
+  {
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
+    {
+      nuxDebugMsg (TEXT ("[GpuDevice::GetColorRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      return ObjectPtr<IOpenGLSurface> (0);
+    }
+
+    return _FrameBufferObject->GetRenderTarget (ColorAttachmentIndex);
+  }
+
+  ObjectPtr<IOpenGLSurface> GpuDevice::GetDepthRenderTargetSurface()
+  {
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
+    {
+      nuxDebugMsg (TEXT ("[GpuDevice::GetDepthRenderTargetSurface] No support for OpenGL framebuffer extension.") );
+      return ObjectPtr<IOpenGLSurface> (0);
+    }
+
+    return _FrameBufferObject->GetDepthRenderTarget();
+  }
+
+  void GpuDevice::ActivateFrameBuffer()
+  {
+    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
+    {
+      nuxDebugMsg (TEXT ("[GpuDevice::ActivateFrameBuffer] No support for OpenGL framebuffer extension.") );
+      return;
+    }
+
+    _FrameBufferObject->Activate();
+  }
   void GpuDevice::Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil)
   {
     CHECKGL ( glClearColor (red, green, blue, alpha) );
@@ -963,15 +1034,15 @@ namespace nux
       nuxDebugMsg (TEXT ("[GpuDevice::ClearSurfaceWithColor] No support for OpenGL framebuffer extension.") );
     }
 
-//     FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
-//     SetColorRenderTargetSurface (0, s_);
-//     SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> (0));
-//     ActivateFrameBuffer();
-//     ClearFloatingPointColorRT (rect_->left,
-//                                rect_->top,
-//                                rect_->right - rect_->left,
-//                                rect_->bottom - rect_->top,
-//                                r, g, b, a);
+    FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
+    SetColorRenderTargetSurface (0, s_);
+    SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> (0));
+    ActivateFrameBuffer();
+    ClearFloatingPointColorRT (rect_->left,
+                               rect_->top,
+                               rect_->right - rect_->left,
+                               rect_->bottom - rect_->top,
+                               r, g, b, a);
   }
 
   void GpuDevice::SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> fbo)
