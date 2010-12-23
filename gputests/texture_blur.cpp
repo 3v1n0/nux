@@ -111,7 +111,7 @@ void RenderBlurredTexture ()
 
     nux::TexCoordXForm texxform;
     // Make a blurred copy of the previous render target
-    nux::ObjectPtr <nux::IOpenGLBaseTexture> tex_blur = graphics_engine->QRP_GLSL_GetBlurTexture (texture_rt, texxform, nux::Color::White,
+    nux::ObjectPtr <nux::IOpenGLBaseTexture> tex_blur = graphics_engine->QRP_ASM_GetBlurTexture (texture_rt, texxform, nux::Color::White,
       0, 0, texture_rt->GetWidth(), texture_rt->GetHeight());
 
     graphics_engine->QRP_1Tex(0, 0, tex_blur->GetWidth(), tex_blur->GetHeight(), tex_blur, texxform, nux::Color::White);

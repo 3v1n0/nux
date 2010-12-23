@@ -116,7 +116,7 @@ void RenderBlurredCopyOfRenderTarget ()
     graphics_display->GetGpuDevice ()->DeactivateFrameBuffer ();
 
     // Make a blurred version of the back buffer
-    nux::ObjectPtr <nux::IOpenGLBaseTexture> tex_blur = graphics_engine->QRP_GLSL_GetBlurTexture (tex_copy, texxform, nux::Color::White,
+    nux::ObjectPtr <nux::IOpenGLBaseTexture> tex_blur = graphics_engine->QRP_ASM_GetBlurTexture (tex_copy, texxform, nux::Color::White,
       0, 0, tex_copy->GetWidth(), tex_copy->GetHeight());
 
     // Render the blurred texture

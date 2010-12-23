@@ -1756,9 +1756,18 @@ namespace nux
     int quad_height = device_texture->GetHeight ();
 
     ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
-    unsigned int previous_width, previous_height;
-    previous_width = prevFBO->GetWidth ();
-    previous_height = prevFBO->GetHeight ();
+    int previous_width = 0;
+    int previous_height = 0;
+    if (prevFBO.IsValid ())
+    {
+      previous_width = prevFBO->GetWidth ();
+      previous_height = prevFBO->GetHeight ();
+    }
+    else
+    {
+      previous_width = _graphics_display.GetWindowWidth ();
+      previous_height = _graphics_display.GetWindowHeight ();
+    }
 
     CHECKGL (glClearColor (0, 0, 0, 0));
     _offscreen_color_rt0->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -1776,11 +1785,19 @@ namespace nux
 
     _offscreen_fbo->Deactivate();
 
-    prevFBO->Activate();
-    SetContext(0, 0, previous_width, previous_height);
-    SetViewport(0, 0, previous_width, previous_height);
-    Push2DWindow(previous_width, previous_height);
-    prevFBO->EmptyClippingRegion ();
+    if (prevFBO.IsValid ())
+    {
+      prevFBO->Activate();
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
+    else
+    {
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
 
     return _offscreen_color_rt1;
   }
@@ -1794,9 +1811,18 @@ namespace nux
     int quad_height = device_texture->GetHeight ();
 
     ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
-    unsigned int previous_width, previous_height;
-    previous_width = prevFBO->GetWidth ();
-    previous_height = prevFBO->GetHeight ();
+    int previous_width = 0;
+    int previous_height = 0;
+    if (prevFBO.IsValid ())
+    {
+      previous_width = prevFBO->GetWidth ();
+      previous_height = prevFBO->GetHeight ();
+    }
+    else
+    {
+      previous_width = _graphics_display.GetWindowWidth ();
+      previous_height = _graphics_display.GetWindowHeight ();
+    }
 
     CHECKGL (glClearColor (0, 0, 0, 0));
     _offscreen_color_rt0->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -1814,11 +1840,19 @@ namespace nux
 
     _offscreen_fbo->Deactivate();
 
-    prevFBO->Activate();
-    SetContext(0, 0, previous_width, previous_height);
-    SetViewport(0, 0, previous_width, previous_height);
-    Push2DWindow(previous_width, previous_height);
-    prevFBO->EmptyClippingRegion ();
+    if (prevFBO.IsValid ())
+    {
+      prevFBO->Activate();
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
+    else
+    {
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
 
     return _offscreen_color_rt1;
   }
@@ -1833,9 +1867,18 @@ namespace nux
     int quad_height = device_texture->GetHeight ();
 
     ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
-    unsigned int previous_width, previous_height;
-    previous_width = prevFBO->GetWidth ();
-    previous_height = prevFBO->GetHeight ();
+    int previous_width = 0;
+    int previous_height = 0;
+    if (prevFBO.IsValid ())
+    {
+      previous_width = prevFBO->GetWidth ();
+      previous_height = prevFBO->GetHeight ();
+    }
+    else
+    {
+      previous_width = _graphics_display.GetWindowWidth ();
+      previous_height = _graphics_display.GetWindowHeight ();
+    }
 
     CHECKGL (glClearColor (0, 0, 0, 0));
     _offscreen_color_rt0->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -1853,11 +1896,19 @@ namespace nux
 
     _offscreen_fbo->Deactivate();
 
-    prevFBO->Activate();
-    SetContext(0, 0, previous_width, previous_height);
-    SetViewport(0, 0, previous_width, previous_height);
-    Push2DWindow(previous_width, previous_height);
-    prevFBO->EmptyClippingRegion ();
+    if (prevFBO.IsValid ())
+    {
+      prevFBO->Activate();
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
+    else
+    {
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
 
     return _offscreen_color_rt1;
   }
