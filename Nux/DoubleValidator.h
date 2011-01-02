@@ -25,7 +25,6 @@
 
 #include "Validator.h"
 
-
 namespace nux
 {
 
@@ -46,9 +45,9 @@ namespace nux
 
     void SetDecimals (int dec);
     void SetMinimum (double value);
-    double GetMinimum() const;
+    double GetMinimum () const;
     void SetMaximum (double value);
-    double GetMaximum() const;
+    double GetMaximum () const;
 
     NString ToString (double d);
     double ToDouble (const TCHAR *str);
@@ -56,7 +55,6 @@ namespace nux
   private:
     double m_Minimum;
     double m_Maximum;
-    GRegex *m_reg_exp;
     int m_Decimals;
   };
 

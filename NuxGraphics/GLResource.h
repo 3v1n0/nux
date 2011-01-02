@@ -81,31 +81,39 @@ namespace nux
 //#define NUX_OPENGL_ES_20
 
 #if defined(NUX_OS_WINDOWS)
-#include "GL/glew.h"
-#include "GL/wglew.h"
+  #include "GL/glew.h"
+  #include "GL/wglew.h"
 
-GLEWContext *glewGetContext();
-WGLEWContext *wglewGetContext();
+  GLEWContext *glewGetContext();
+  WGLEWContext *wglewGetContext();
 
-#if (NUX_ENABLE_CG_SHADERS)
-#include "CG/cg.h"
-#include "CG/cgGL.h"
-#pragma comment( lib, "cg.lib" )
-#pragma comment( lib, "cgGL.lib"  )
-#endif
+  #if (NUX_ENABLE_CG_SHADERS)
+  #include "CG/cg.h"
+  #include "CG/cgGL.h"
+  #pragma comment( lib, "cg.lib" )
+  #pragma comment( lib, "cgGL.lib"  )
+  #endif
 
 #elif defined(NUX_OS_LINUX)
-#define GLEW_MX
-#include "GL/glew.h"
-#include "GL/glxew.h"
 
-GLEWContext *glewGetContext();
-GLXEWContext *glxewGetContext();
+  #ifdef NUX_OPENGL_ES_20
+    #define GLEW_MX
+    #include "EGL/egl.h"
+    #include "GLES2/gl2.h"
+  #else
+    #define GLEW_MX
+    #include "GL/glew.h"
+    #include "GL/glxew.h"
+    
+    GLEWContext *glewGetContext();
+    GLXEWContext *glxewGetContext();
 
-#if (NUX_ENABLE_CG_SHADERS)
-#include "Cg/cg.h"
-#include "Cg/cgGL.h"
-#endif
+    #if (NUX_ENABLE_CG_SHADERS)
+      #include "Cg/cg.h"
+      #include "Cg/cgGL.h"
+    #endif
+  #endif
+
 #endif
 
 #include "RunTimeStats.h"

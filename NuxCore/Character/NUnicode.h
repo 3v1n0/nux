@@ -215,7 +215,7 @@ namespace nux
     }*/
   };
 
-//! ANSICHAR to UNICHAR conversion
+  //! ANSICHAR to UNICHAR conversion
   class AnsicharToUnicharConvertion
   {
   public:
@@ -253,6 +253,34 @@ namespace nux
       ANSICHAR *Dest = new ANSICHAR[size];
       STRNCPY_S (Dest, size, Source, length);
       return Dest;
+#endif
+    }
+  };
+
+  //! TCHAR to Unichar conversion
+  // TCHAR can be ansi or unicode depending if UNICODE is defined or not.
+  class TCharToUnicharConvertion
+  {
+  public:
+    NUX_INLINE TCharToUnicharConvertion() {}
+
+    /*!
+    Convert from TCHAR to ANSICHAR
+    @param Source String to convert. Null terminated.
+    @return Return a pointer to the new string. Null terminated.
+    */
+    NUX_INLINE UNICHAR *Convert (const TCHAR *Source)
+    {
+      // Determine whether we need to allocate memory or not
+#ifdef UNICODE
+      size_t length = strlen (Source) + 1;
+      size_t size = length * sizeof (UNICHAR);
+      UNICHAR *Dest = new UNICHAR[size];
+      STRNCPY_S (Dest, size, Source, length);
+      return Dest;
+#else
+      AnsicharToUnicharConvertion convert;
+      return convert.Convert (Source);
 #endif
     }
   };

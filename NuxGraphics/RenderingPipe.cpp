@@ -461,5 +461,84 @@ namespace nux
     QRP_GLSL_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
 #endif
   }
+
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetBlurTexture (
+    int x, int y,
+    int buffer_width, int buffer_height,
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    float sigma)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma);
+    else
+      return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma);
+#else
+    return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma);
+#endif
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetAlphaTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    int x, int y,
+    int buffer_width, int buffer_height)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      return QRP_GLSL_GetAlphaTexture (device_texture, texxform, c0, x, y, buffer_width, buffer_height);
+    else
+      return QRP_ASM_GetAlphaTexture (device_texture, texxform, c0, x, y, buffer_width, buffer_height);
+#else
+    return QRP_GLSL_GetAlphaTexture (device_texture, texxform, c0, x, y, buffer_width, buffer_height);
+#endif
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetColorMatrixTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    Matrix4 color_matrix, Vector4 offset,
+    int x, int y,
+    int buffer_width, int buffer_height)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      return QRP_GLSL_GetColorMatrixTexture (device_texture, texxform, c0, color_matrix, offset, x, y, buffer_width, buffer_height);
+    else
+      return QRP_ASM_GetColorMatrixTexture (device_texture, texxform, c0, color_matrix, offset, x, y, buffer_width, buffer_height);
+#else
+    return QRP_GLSL_GetColorMatrixTexture (device_texture, texxform, c0, color_matrix, offset, x, y, buffer_width, buffer_height);
+#endif
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetComponentExponentiation (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    Vector4 exponent,
+    int x, int y,
+    int buffer_width, int buffer_height)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      return QRP_GLSL_GetComponentExponentiation (device_texture, texxform, c0, exponent, x, y, buffer_width, buffer_height);
+    else
+      return QRP_ASM_GetComponentExponentiation (device_texture, texxform, c0, exponent, x, y, buffer_width, buffer_height);
+#else
+    return QRP_GLSL_GetComponentExponentiation (device_texture, texxform, c0, exponent, x, y, buffer_width, buffer_height);
+#endif
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetLQBlur (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    int x, int y,
+    int buffer_width, int buffer_height)
+  {
+#ifndef NUX_OPENGL_ES_20
+    if (UsingGLSLCodePath ())
+      return QRP_GLSL_GetLQBlur (device_texture, texxform, c0, x, y, buffer_width, buffer_height);
+    else
+      return QRP_ASM_GetLQBlur (device_texture, texxform, c0, x, y, buffer_width, buffer_height);
+#else
+    return QRP_GLSL_GetLQBlur (device_texture, texxform, c0, x, y, buffer_width, buffer_height);
+#endif
+  }
 }
 

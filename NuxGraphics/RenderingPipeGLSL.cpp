@@ -271,6 +271,62 @@ namespace nux
     m_Sl2TextureAdd->Link();
   }
 
+  void GraphicsEngine::InitSl2TextureDepRead()
+  {
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
+    NString VSString;
+    NString PSString;
+
+    // For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
+    // other  attributes. Otherwise you get a bug on NVidia! Why is that???
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    VSString =  TEXT (  "#version 110                                           \n\
+                        uniform mat4 ViewProjectionMatrix;                      \n\
+                        attribute vec4 AVertex;                                 \n\
+                        attribute vec4 MyTextureCoord0;                         \n\
+                        attribute vec4 MyTextureCoord1;                         \n\
+                        varying vec4 varyTexCoord0;                             \n\
+                        varying vec4 varyTexCoord1;                             \n\
+                        void main()                                             \n\
+                        {                                                       \n\
+                        varyTexCoord0 = MyTextureCoord0;                        \n\
+                        varyTexCoord1 = MyTextureCoord1;                        \n\
+                        gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
+                        }");
+
+    PSString =  TEXT (  "#version 110                                               \n\
+                        varying vec4 varyTexCoord0;                                 \n\
+                        varying vec4 varyTexCoord1;                                 \n\
+                        uniform vec4 color0;                                        \n\
+                        uniform vec4 color1;                                        \n\
+                        uniform vec4 noise_factor;                                  \n\
+                        uniform sampler2D TextureObject0;                           \n\
+                        uniform sampler2D TextureObject1;                           \n\
+                        vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
+                        {                                                           \n\
+                          return texture2D(TexObject, TexCoord.st);                 \n\
+                        }                                                           \n\
+                        void main()                                                 \n\
+                        {                                                           \n\
+                          vec4 noise = SampleTexture (TextureObject0, varyTexCoord0); \n\
+                          vec4 noise_bx2 = color0 * (2.0 * noise - vec4 (1.0, 1.0, 1.0, 1.0));     \n\
+                          vec4 b1 = color1 * SampleTexture(TextureObject1, varyTexCoord1 + noise_bx2);     \n\
+                          gl_FragColor = b1;                                          \n\
+                        }");
+
+    m_Sl2TextureDepRead = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
+    PS->SetShaderCode (TCHAR_TO_ANSI (*PSString) );
+
+    m_Sl2TextureDepRead->ClearShaderObjects();
+    m_Sl2TextureDepRead->AddShaderObject (VS);
+    m_Sl2TextureDepRead->AddShaderObject (PS);
+    CHECKGL ( glBindAttribLocation (m_Sl2TextureDepRead->GetOpenGLID(), 0, "AVertex") );
+    m_Sl2TextureDepRead->Link();
+  }
+
   void GraphicsEngine::InitSl2TextureMod()
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
@@ -376,7 +432,6 @@ namespace nux
                         uniform vec4 color1;                                        \n\
                         uniform vec4 color2;                                        \n\
                         uniform vec4 color3;                                        \n\
-                        #ifdef SAMPLERTEX2D                                         \n\
                         uniform sampler2D TextureObject0;                           \n\
                         uniform sampler2D TextureObject1;                           \n\
                         uniform sampler2D TextureObject2;                           \n\
@@ -385,23 +440,13 @@ namespace nux
                         {                                                           \n\
                         return texture2D(TexObject, TexCoord.st);                   \n\
                         }                                                           \n\
-                        #elif defined SAMPLERTEX2DRECT                              \n\
-                        uniform sampler2DRect TextureObject0;                       \n\
-                        uniform sampler2DRect TextureObject1;                       \n\
-                        uniform sampler2DRect TextureObject2;                       \n\
-                        uniform sampler2DRect TextureObject3;                       \n\
-                        vec4 SampleTexture(sampler2DRect TexObject, vec4 TexCoord)  \n\
-                        {                                                           \n\
-                        return texture2DRect(TexObject, TexCoord.st);               \n\
-                        }                                                           \n\
-                        #endif                                                      \n\
                         void main()                                                 \n\
                         {                                                           \n\
-                        vec4 b0 = color0*SampleTexture(TextureObject0, varyTexCoord0);  \n\
-                        vec4 b1 = color1*SampleTexture(TextureObject1, varyTexCoord1);  \n\
-                        vec4 b2 = color2*SampleTexture(TextureObject2, varyTexCoord2);  \n\
-                        vec4 b3 = color3*SampleTexture(TextureObject3, varyTexCoord3);  \n\
-                        gl_FragColor = b0+b1+b2+b3;                                     \n\
+                          vec4 b0 = color0*SampleTexture(TextureObject0, varyTexCoord0);  \n\
+                          vec4 b1 = color1*SampleTexture(TextureObject1, varyTexCoord1);  \n\
+                          vec4 b2 = color2*SampleTexture(TextureObject2, varyTexCoord2);  \n\
+                          vec4 b3 = color3*SampleTexture(TextureObject3, varyTexCoord3);  \n\
+                          gl_FragColor = b0+b1+b2+b3;                              \n\
                         }");
 
     //vec4(v.w, v.w, v.w, v.w)
@@ -409,7 +454,7 @@ namespace nux
     // Textured 2D Primitive Shader
     m_Sl4TextureAdd = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
-    PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
+    PS->SetShaderCode (TCHAR_TO_ANSI (*PSString) );
 
     m_Sl4TextureAdd->ClearShaderObjects();
     m_Sl4TextureAdd->AddShaderObject (VS);
@@ -552,7 +597,7 @@ namespace nux
         {                                                             \n\
           return texture2D(TexObject, TexCoord.st);                   \n\
         }                                                             \n\
-        #define NUM_SAMPLES 7                                         \n\
+        #define NUM_SAMPLES 55                                         \n\
         uniform float W[NUM_SAMPLES];                                 \n\
         void main()                                                   \n\
         {                                                             \n\
@@ -612,7 +657,7 @@ namespace nux
         {                                                             \n\
           return texture2D (TexObject, TexCoord.st);                  \n\
         }                                                             \n\
-        #define NUM_SAMPLES 7                                         \n\
+        #define NUM_SAMPLES 55                                         \n\
         uniform float W [NUM_SAMPLES];                                \n\
         void main ()                                                  \n\
         {                                                             \n\
@@ -978,6 +1023,80 @@ namespace nux
     ShaderProg->End();
   }
 
+  void GraphicsEngine::QRP_GLSL_DisturbedTexture (
+    int x, int y, int width, int height,
+    ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
+    ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1)
+  {
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
+    {
+      ShaderProg = m_Sl2TextureDepRead;
+    }
+
+    QRP_Compute_Texture_Coord (width, height, distorsion_texture, texxform0);
+    QRP_Compute_Texture_Coord (width, height, src_device_texture, texxform1);
+
+    float VtxBuffer [] =
+    {
+      x,          y,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0.0f, 1.0f, texxform1.u0, texxform1.v0, 0.0f, 1.0f,
+      x,          y + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0.0f, 1.0f, texxform1.u0, texxform1.v1, 0.0f, 1.0f,
+      x + width,  y + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0.0f, 1.0f, texxform1.u1, texxform1.v1, 0.0f, 1.0f,
+      x + width,  y,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0.0f, 1.0f, texxform1.u1, texxform1.v0, 0.0f, 1.0f,
+    };
+
+    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    ShaderProg->Begin();
+
+    int TextureObjectLocation0 = ShaderProg->GetUniformLocationARB ("TextureObject0");
+    int TextureObjectLocation1 = ShaderProg->GetUniformLocationARB ("TextureObject1");
+    int VertexLocation = ShaderProg->GetAttributeLocation ("AVertex");
+    int TextureCoord0Location = ShaderProg->GetAttributeLocation ("MyTextureCoord0");
+    int TextureCoord1Location = ShaderProg->GetAttributeLocation ("MyTextureCoord1");
+
+    int TextureCoef0Location = ShaderProg->GetUniformLocationARB ("color0");
+    int TextureCoef1Location = ShaderProg->GetUniformLocationARB ("color1");
+
+
+    SetTexture (GL_TEXTURE0, distorsion_texture);
+    SetTexture (GL_TEXTURE1, src_device_texture);
+
+    CHECKGL ( glUniform1iARB (TextureObjectLocation0, 0) );
+    CHECKGL ( glUniform1iARB (TextureObjectLocation1, 1) );
+
+    CHECKGL ( glUniform4fARB (TextureCoef0Location, c0.R(), c0.G(), c0.B(), c0.A() ) );
+    CHECKGL ( glUniform4fARB (TextureCoef1Location, c1.R(), c1.G(), c1.B(), c1.A() ) );
+
+    int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+
+    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+
+    if (TextureCoord0Location != -1)
+    {
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+    }
+
+    if (TextureCoord1Location != -1)
+    {
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location) );
+      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+    }
+
+    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+
+    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+
+    if (TextureCoord0Location != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+
+    if (TextureCoord1Location != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord1Location) );
+
+    ShaderProg->End();
+  }
 
   void GraphicsEngine::QRP_GLSL_2TexMod (int x, int y, int width, int height,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
@@ -1473,7 +1592,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0)
+  void GraphicsEngine::QRP_GLSL_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
@@ -1507,11 +1626,12 @@ namespace nux
     SetTexture (GL_TEXTURE0, device_texture);
     CHECKGL (glUniform1iARB (TextureObjectLocation, 0));
 
+    sigma = Clamp <float> (sigma, 0.1f, 9.0f);
     // Set the Gaussian weights
     {
       float *W;
-      GaussianWeights(&W, 1, 7);
-      CHECKGL( glUniform1fv(WeightsLocation, 7, W) );
+      GaussianWeights(&W, sigma, 55);
+      CHECKGL( glUniform1fv(WeightsLocation, 55, W) );
       delete(W);
     }
 
@@ -1539,7 +1659,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_VerticalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0)
+  void GraphicsEngine::QRP_GLSL_VerticalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
@@ -1575,11 +1695,12 @@ namespace nux
 
     CHECKGL (glUniform1iARB (TextureObjectLocation, 0));
 
+    sigma = Clamp <float> (sigma, 0.1f, 9.0f);
     // Set the Gaussian weights
     {
       float *W;
-      GaussianWeights(&W, 1, 7);
-      CHECKGL( glUniform1fv(WeightsLocation, 7, W) );
+      GaussianWeights(&W, sigma, 55);
+      CHECKGL( glUniform1fv(WeightsLocation, 55, W) );
       delete(W);
     }
 
@@ -1683,11 +1804,18 @@ namespace nux
     ShaderProg->End();
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetBlurTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color& c0,
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetBlurTexture (
     int x, int y,
-    int buffer_width, int buffer_height)
+    int buffer_width, int buffer_height,
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    float sigma)
   {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -1720,18 +1848,18 @@ namespace nux
     {
       SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-      QRP_GLSL_HorizontalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt0, texxform, c0);
+      QRP_GLSL_HorizontalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt0, texxform, c0, sigma);
 
       SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-      QRP_GLSL_VerticalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt1, texxform, c0);
+      QRP_GLSL_VerticalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt1, texxform, c0, sigma);
     }
 
     _offscreen_fbo->Deactivate();
 
     if (prevFBO.IsValid ())
     {
-      prevFBO->Activate();
+      prevFBO->Activate(true);
       SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
       Push2DWindow(previous_width, previous_height);
@@ -1752,6 +1880,11 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -1787,7 +1920,7 @@ namespace nux
 
     if (prevFBO.IsValid ())
     {
-      prevFBO->Activate();
+      prevFBO->Activate (true);
       SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
       Push2DWindow(previous_width, previous_height);
@@ -1807,6 +1940,11 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -1842,7 +1980,7 @@ namespace nux
 
     if (prevFBO.IsValid ())
     {
-      prevFBO->Activate();
+      prevFBO->Activate (true);
       SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
       Push2DWindow(previous_width, previous_height);
@@ -1863,6 +2001,11 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -1898,7 +2041,7 @@ namespace nux
 
     if (prevFBO.IsValid ())
     {
-      prevFBO->Activate();
+      prevFBO->Activate (true);
       SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
       Push2DWindow(previous_width, previous_height);
@@ -1911,6 +2054,75 @@ namespace nux
     }
 
     return _offscreen_color_rt1;
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetLQBlur (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    int x, int y,
+    int buffer_width, int buffer_height)
+  {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
+    int quad_width = device_texture->GetWidth ();
+    int quad_height = device_texture->GetHeight ();
+
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
+    int previous_width = 0;
+    int previous_height = 0;
+    if (prevFBO.IsValid ())
+    {
+      previous_width  = prevFBO->GetWidth ();
+      previous_height = prevFBO->GetHeight ();
+    }
+    else
+    {
+      previous_width  = _graphics_display.GetWindowWidth ();
+      previous_height = _graphics_display.GetWindowHeight ();
+    }
+
+    CHECKGL (glClearColor (0, 0, 0, 0));
+    texxform.mag_filter = TEXFILTER_LINEAR;
+    texxform.min_filter = TEXFILTER_LINEAR;
+
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width/2, quad_height/2);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_GLSL_1Tex (0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, Color::White);
+
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width/4, quad_height/4);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_GLSL_1Tex (0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, Color::White);
+
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt2, _offscreen_depth_rt2, quad_width/8, quad_height/8);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_GLSL_1Tex (0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, Color::White);
+
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt3, _offscreen_depth_rt3, quad_width, quad_height);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_GLSL_4Tex (0, 0, quad_width, quad_height,
+      device_texture, texxform, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt0, texxform, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt1, texxform, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt2, texxform, Color(0.25, 0.25, 0.25, 0.25));
+
+    _offscreen_fbo->Deactivate();
+
+    if (prevFBO.IsValid ())
+    {
+      prevFBO->Activate (true);
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
+    else
+    {
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
+    return _offscreen_color_rt3;
   }
 
 }

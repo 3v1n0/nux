@@ -1494,7 +1494,7 @@ namespace nux
     _asm_texrect_separable_gauss_filter_prog->Link ();
   }
 
-  void GraphicsEngine::QRP_ASM_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0)
+  void GraphicsEngine::QRP_ASM_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
@@ -1563,7 +1563,7 @@ namespace nux
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_VerticalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0)
+  void GraphicsEngine::QRP_ASM_VerticalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
@@ -1632,11 +1632,18 @@ namespace nux
     shader_program->End();
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetBlurTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color& c0,
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetBlurTexture (
     int x, int y,
-    int buffer_width, int buffer_height)
+    int buffer_width, int buffer_height,
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    float sigma)
   {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -1680,7 +1687,7 @@ namespace nux
 
     if (prevFBO.IsValid ())
     {
-      prevFBO->Activate();
+      prevFBO->Activate (true);
       SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
       Push2DWindow(previous_width, previous_height);
@@ -1701,6 +1708,11 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -1736,7 +1748,7 @@ namespace nux
 
     if (prevFBO.IsValid ())
     {
-      prevFBO->Activate();
+      prevFBO->Activate (true);
       SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
       Push2DWindow(previous_width, previous_height);
@@ -1756,6 +1768,11 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -1791,7 +1808,7 @@ namespace nux
 
     if (prevFBO.IsValid ())
     {
-      prevFBO->Activate();
+      prevFBO->Activate (true);
       SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
       Push2DWindow(previous_width, previous_height);
@@ -1812,6 +1829,11 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -1847,7 +1869,7 @@ namespace nux
 
     if (prevFBO.IsValid ())
     {
-      prevFBO->Activate();
+      prevFBO->Activate (true);
       SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
       Push2DWindow(previous_width, previous_height);
@@ -1861,6 +1883,82 @@ namespace nux
 
     return _offscreen_color_rt1;
   }
+
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetLQBlur (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    int x, int y,
+    int buffer_width, int buffer_height)
+  {
+    //     _offscreen_color_rt0.Release ();
+    //     _offscreen_color_rt1.Release ();
+    //     _offscreen_depth_rt0.Release ();
+    //     _offscreen_depth_rt1.Release ();
+
+    int quad_width = device_texture->GetWidth ();
+    int quad_height = device_texture->GetHeight ();
+
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
+    int previous_width = 0;
+    int previous_height = 0;
+    if (prevFBO.IsValid ())
+    {
+      previous_width  = prevFBO->GetWidth ();
+      previous_height = prevFBO->GetHeight ();
+    }
+    else
+    {
+      previous_width  = _graphics_display.GetWindowWidth ();
+      previous_height = _graphics_display.GetWindowHeight ();
+    }
+
+    CHECKGL (glClearColor (0, 0, 0, 0));
+    _offscreen_color_rt0->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    _offscreen_color_rt0->SetFiltering (GL_NEAREST, GL_NEAREST);
+    _offscreen_color_rt1->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    _offscreen_color_rt1->SetFiltering (GL_NEAREST, GL_NEAREST);
+    _offscreen_color_rt2->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    _offscreen_color_rt2->SetFiltering (GL_NEAREST, GL_NEAREST);
+    _offscreen_color_rt3->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    _offscreen_color_rt3->SetFiltering (GL_NEAREST, GL_NEAREST);
+
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width/2, quad_height/2);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_ASM_1Tex (0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, Color::White);
+
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width/4, quad_height/4);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_ASM_1Tex (0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, Color::White);
+
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt2, _offscreen_depth_rt2, quad_width/8, quad_height/8);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_ASM_1Tex (0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, Color::White);
+
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt3, _offscreen_depth_rt3, quad_width, quad_height);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_ASM_4Tex (0, 0, quad_width, quad_height,
+      device_texture, texxform, Color::White,
+      _offscreen_color_rt0, texxform, Color::White,
+      _offscreen_color_rt1, texxform, Color::White,
+      _offscreen_color_rt2, texxform, Color::White);
+
+    _offscreen_fbo->Deactivate();
+
+    if (prevFBO.IsValid ())
+    {
+      prevFBO->Activate (true);
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
+    else
+    {
+      SetContext(0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
+      Push2DWindow(previous_width, previous_height);
+    }
+    return _offscreen_color_rt3;
+  }
+
 }
 #endif // NUX_OPENGL_ES_20
 

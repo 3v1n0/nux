@@ -23,6 +23,8 @@
 #ifndef VALIDATOR_H
 #define VALIDATOR_H
 
+#include "pcre/pcre.h"
+
 namespace nux
 {
 
@@ -44,6 +46,10 @@ namespace nux
     virtual Validator::State Validate (const TCHAR *str) const = 0;
     virtual void Alternative (const TCHAR *str) {}
 
+  protected:
+    bool InitRegExp ();
+    NString _regexp_str;
+    pcre *_regexp;
   };
 }
 

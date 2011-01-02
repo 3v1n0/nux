@@ -53,7 +53,6 @@ namespace nux
   private:
     int m_Minimum;
     int m_Maximum;
-    GRegex *m_reg_exp;
   };
 }
 

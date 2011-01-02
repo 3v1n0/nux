@@ -437,8 +437,8 @@ namespace nux
     int	font	= nLineNo % m_nNumFonts;
     int i;
 
-    t_u32 selstart = std::min (m_nSelectionStart, m_nSelectionEnd);
-    t_u32 selend   = std::max (m_nSelectionStart, m_nSelectionEnd);
+    t_u32 selstart = Min<int> (m_nSelectionStart, m_nSelectionEnd);
+    t_u32 selend   = Max<int> (m_nSelectionStart, m_nSelectionEnd);
 
     //
     //	STEP 1. Apply the "base coat"

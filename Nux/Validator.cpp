@@ -28,7 +28,7 @@ namespace nux
 
   Validator::Validator()
   {
-
+    _regexp = 0;
   }
 
   Validator::~Validator()
@@ -36,5 +36,23 @@ namespace nux
 
   }
 
+  bool Validator::InitRegExp ()
+  {
+    const char *error;
+    int   erroffset;
+    _regexp = pcre_compile (
+      _regexp_str.GetTCharPtr (),    /* the pattern */
+      PCRE_MULTILINE,
+      &error,         /* for error message */
+      &erroffset,     /* for error offset */
+      0);             /* use default character tables */
+
+    if (!_regexp)
+    {
+      nuxDebugMsg (TEXT("[IntegerValidator::IntegerValidator] Invalid regular expression: %s"), _regexp_str);
+      return false;
+    }    
+    return true;
+  }
 
 }

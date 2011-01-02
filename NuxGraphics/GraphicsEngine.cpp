@@ -86,21 +86,39 @@ namespace nux
     EnableScissoring (true);
 
 #ifndef NUX_OPENGL_ES_20
-    InitAsmColorShader();
-    InitAsmTextureShader();
-    InitAsmColorModTexMaskAlpha();
-    InitAsm2TextureAdd();
-    InitAsm2TextureMod();
-    InitAsm4TextureAdd();
-    InitAsmBlendModes();
+    if (UsingGLSLCodePath ())
+    {
+      InitSlColorShader();
+      InitSlTextureShader();
+      InitSlColorModTexMaskAlpha ();
+      InitSl2TextureAdd();
+      InitSl2TextureMod();
+      InitSl4TextureAdd();
 
-    InitAsmComponentExponentiation ();
-    InitAsmAlphaReplicate ();
-    InitAsmSeparableGaussFilter ();
-    InitAsmColorMatrixFilter ();
+      InitSLComponentExponentiation ();
+      InitSLAlphaReplicate ();
+      InitSLHorizontalGaussFilter ();
+      InitSLVerticalGaussFilter ();
+      InitSLColorMatrixFilter ();
 
-#endif
+      InitSl2TextureDepRead ();
+    }
+    else
+    {
+      InitAsmColorShader();
+      InitAsmTextureShader();
+      InitAsmColorModTexMaskAlpha();
+      InitAsm2TextureAdd();
+      InitAsm2TextureMod();
+      InitAsm4TextureAdd();
+      InitAsmBlendModes();
 
+      InitAsmComponentExponentiation ();
+      InitAsmAlphaReplicate ();
+      InitAsmSeparableGaussFilter ();
+      InitAsmColorMatrixFilter ();
+    }
+#else
     InitSlColorShader();
     InitSlTextureShader();
     InitSlColorModTexMaskAlpha ();
@@ -113,14 +131,17 @@ namespace nux
     InitSLHorizontalGaussFilter ();
     InitSLVerticalGaussFilter ();
     InitSLColorMatrixFilter ();
+#endif
 
     //GNuxGraphicsResources.CacheFontTextures (ResourceCache);
 
-    _offscreen_fbo        = GetThreadGLDeviceFactory()->CreateFrameBufferObject();
+    _offscreen_fbo        = GetThreadGLDeviceFactory()->CreateFrameBufferObject ();
     _offscreen_color_rt0  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-    _offscreen_depth_rt0  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_D24S8);
+    //_offscreen_depth_rt0  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_D24S8);
     _offscreen_color_rt1  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-    _offscreen_depth_rt1  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_D24S8);
+    //_offscreen_depth_rt1  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_D24S8);
+    _offscreen_color_rt2  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+    _offscreen_color_rt3  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
 
 #if defined (NUX_OS_WINDOWS)
     if (_normal_font == 0)
@@ -157,6 +178,12 @@ namespace nux
 
   GraphicsEngine::~GraphicsEngine()
   {
+    _offscreen_color_rt0.Release ();
+    _offscreen_color_rt1.Release ();
+    _offscreen_depth_rt0.Release ();
+    _offscreen_depth_rt1.Release ();
+    _offscreen_fbo.Release ();
+
     ResourceCache.Flush();
     NUX_SAFE_DELETE (m_font_renderer);
   }
@@ -1019,7 +1046,7 @@ namespace nux
     ObjectPtr<IOpenGLTexture2D>& depthbuffer,
     int width, int height)
   {
-    if ((colorbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
+    //if ((colorbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
     {
       colorbuffer = GetThreadGLDeviceFactory ()->CreateTexture (width, height, 1, BITFMT_R8G8B8A8);
       depthbuffer = GetThreadGLDeviceFactory ()->CreateTexture (width, height, 1, BITFMT_D24S8);
