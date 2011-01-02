@@ -35,7 +35,10 @@
 #include "NITX.h"
 #include "NAnimatedTexture.h"
 #include "GdkGraphics.h"
-#include "GdiImageLoader.h"
+
+#if defined (NUX_OS_WINDOWS)
+  #include "GdiImageLoader.h"
+#endif
 
 namespace nux
 {

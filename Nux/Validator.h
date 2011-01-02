@@ -23,7 +23,11 @@
 #ifndef VALIDATOR_H
 #define VALIDATOR_H
 
-#include "pcre/pcre.h"
+#if defined (NUX_OS_WINDOWS)
+  #include "pcre/pcre.h"
+#else
+  #include <pcre.h>
+#endif
 
 namespace nux
 {

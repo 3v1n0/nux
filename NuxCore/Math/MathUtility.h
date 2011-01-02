@@ -34,16 +34,6 @@
 
 namespace nux
 {
-  template<typename T> inline T Max3 (const T A, const T B, const T C)
-  {
-    return Max<T> (Max<T> (A, B), C);
-  }
-
-  template<typename T> inline T Min3 (const T A, const T B, const T C)
-  {
-    return Min<T> (Min<T> (A, B), C);
-  }
-
   template<typename T> inline T Square (const T A)
   {
     return A * A;
@@ -147,6 +137,17 @@ namespace nux
   {
     return Max<T> (Max<T> (a, b, c), d);
   }
+  
+  template<typename T> inline T Max3 (const T A, const T B, const T C)
+  {
+    return Max<T> (Max<T> (A, B), C);
+  }
+
+  template<typename T> inline T Min3 (const T A, const T B, const T C)
+  {
+    return Min<T> (Min<T> (A, B), C);
+  }
+  
   //! Return the sign of x.
   template<typename T> inline T Sign (const T &x)
   {
