@@ -212,7 +212,7 @@ namespace nux
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
-      float sigma);
+      float sigma = 1.0f);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetAlphaTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
@@ -285,7 +285,7 @@ namespace nux
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
-      float sigma);
+      float sigma = 1.0f);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetAlphaTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
@@ -460,7 +460,7 @@ namespace nux
       ObjectPtr<IOpenGLTexture2D>& depthbuffer,
       int width, int height);
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     void InitAsmColorShader();
     //! Render polygons with a single color.
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmColor;

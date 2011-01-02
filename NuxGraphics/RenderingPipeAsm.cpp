@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
 
 #include "GLResource.h"
 #include "IOpenGLBaseTexture.h"
@@ -1960,5 +1960,5 @@ namespace nux
   }
 
 }
-#endif // NUX_OPENGL_ES_20
+#endif // NUX_OPENGLES_20
 

@@ -293,7 +293,7 @@ namespace nux
 
   void GraphicsEngine::QRP_Color (int x, int y, int width, int height, const Color &color)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_Color (x, y, width, height, color, color, color, color);
     else
@@ -305,7 +305,7 @@ namespace nux
 
   void GraphicsEngine::QRP_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_Color (x, y, width, height, c0, c1, c2, c3);
     else
@@ -317,7 +317,7 @@ namespace nux
 
   void GraphicsEngine::QRP_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
     else
@@ -331,7 +331,7 @@ namespace nux
   void GraphicsEngine::QRP_ColorModTexAlpha (int x, int y, int width, int height,
     ObjectPtr< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
     else
@@ -346,7 +346,7 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
     else
@@ -361,7 +361,7 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
     else
@@ -377,7 +377,7 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
       DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
@@ -395,7 +395,7 @@ namespace nux
     int x2, int y2,
     Color c0)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
     else
@@ -410,7 +410,7 @@ namespace nux
     int x2, int y2,
     Color c0, Color c1, Color c2)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
     else
@@ -423,7 +423,7 @@ namespace nux
   void GraphicsEngine::QRP_Line (int x0, int y0,
     int x1, int y1, Color c0)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_Line (x0, y0, x1, y1, c0, c0);
     else
@@ -436,7 +436,7 @@ namespace nux
   void GraphicsEngine::QRP_Line (int x0, int y0,
     int x1, int y1, Color c0, Color c1)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_Line (x0, y0, x1, y1, c0, c1);
     else
@@ -452,7 +452,7 @@ namespace nux
     Color c2,
     Color c3)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       QRP_GLSL_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
     else
@@ -469,7 +469,7 @@ namespace nux
     const Color& c0,
     float sigma)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma);
     else
@@ -484,7 +484,7 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       return QRP_GLSL_GetAlphaTexture (device_texture, texxform, c0, x, y, buffer_width, buffer_height);
     else
@@ -500,7 +500,7 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       return QRP_GLSL_GetColorMatrixTexture (device_texture, texxform, c0, color_matrix, offset, x, y, buffer_width, buffer_height);
     else
@@ -516,7 +516,7 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       return QRP_GLSL_GetComponentExponentiation (device_texture, texxform, c0, exponent, x, y, buffer_width, buffer_height);
     else
@@ -531,7 +531,7 @@ namespace nux
     int x, int y,
     int buffer_width, int buffer_height)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
       return QRP_GLSL_GetLQBlur (device_texture, texxform, c0, x, y, buffer_width, buffer_height);
     else

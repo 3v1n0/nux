@@ -162,7 +162,7 @@ namespace nux
 
   void GLFramebufferObject::_GuardedBind()
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     // Only binds if m_fboId is different than the currently bound FBO
     CHECKGL ( glGetIntegerv ( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ) );
 

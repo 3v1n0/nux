@@ -85,7 +85,7 @@ namespace nux
     SetScissorOffset (0, 0);
     EnableScissoring (true);
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
     {
       InitSlColorShader();
@@ -585,7 +585,7 @@ namespace nux
   const float RASTERIZATION_OFFSET = 0.375f;
   void GraphicsEngine::Push2DWindow (int w, int h)
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     {
       m_ModelViewMatrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
@@ -637,7 +637,7 @@ namespace nux
 
   void GraphicsEngine::Pop2DWindow()
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );

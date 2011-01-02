@@ -74,7 +74,7 @@ namespace nux
 
   static void InitTextureFormats()
   {
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     GPixelFormats[ BITFMT_UNKNOWN		].PlatformFormat	= GL_NONE;							// Not supported for rendering.
 
     // Data in PC system memory: R(LSB) G B A(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
@@ -331,7 +331,7 @@ namespace nux
 //     _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
 //     _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
     CHECKGL (glGetIntegerv (GL_MAX_TEXTURE_UNITS, &_opengl_max_texture_units));
@@ -410,7 +410,7 @@ namespace nux
     Glew_Ok = glewInit();
 #endif
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     CHECKGL (glGetIntegerv (GL_MAJOR_VERSION, &_opengl_major));
     CHECKGL (glGetIntegerv (GL_MINOR_VERSION, &_opengl_minor));
 #else

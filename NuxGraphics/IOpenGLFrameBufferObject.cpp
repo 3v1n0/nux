@@ -71,7 +71,7 @@ namespace nux
     if ( (_Width == Width) && (_Height == Height) && (_PixelFormat == PixelFormat) )
       return 1;
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     _Rbo.Set (GL_DEPTH_COMPONENT, Width, Height);
 #endif
 
@@ -177,7 +177,7 @@ namespace nux
         GLint level     = _Color_AttachmentArray[i]->GetMipLevel();
         CHECKGL ( glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, target, glID, level) );
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
         CHECKGL ( glDrawBuffer (GL_COLOR_ATTACHMENT0 + i) );
 #endif
         NumBuffers++;
@@ -201,7 +201,7 @@ namespace nux
 //         // On the PC you need to bing the same D24S8 surface to the depth and the stencil attachment.
 //     }
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     _Rbo.Set (GL_DEPTH_COMPONENT, _Width, _Height);
     CHECKGL ( glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
                                             GL_DEPTH_ATTACHMENT_EXT,
@@ -226,7 +226,7 @@ namespace nux
   {
     CHECKGL ( glBindFramebufferEXT ( GL_FRAMEBUFFER_EXT, 0 ) );
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
 #endif
 

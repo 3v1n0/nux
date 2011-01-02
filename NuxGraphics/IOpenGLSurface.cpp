@@ -559,7 +559,7 @@ namespace nux
       CHECKGL ( glBindTexture (_STextureTarget, _BaseTexture->_OpenGLID) );
 
 
-#ifndef NUX_OPENGL_ES_20
+#ifndef NUX_OPENGLES_20
       if (_STextureTarget != GL_TEXTURE_3D)
       {
         CHECKGL (glCopyTexImage2D (_SSurfaceTarget,
