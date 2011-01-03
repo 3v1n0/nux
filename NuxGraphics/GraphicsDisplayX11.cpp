@@ -74,7 +74,7 @@ namespace nux
     m_Style                         = WINDOWSTYLE_NORMAL;
     m_PauseGraphicsRendering        = false;
 
-    inlSetThreadLocalStorage (ThreadLocal_GLWindowImpl, this);
+    inlSetThreadLocalStorage (_TLS_GraphicsDisplay, this);
 
     m_X11LastEvent.type = -1;
     m_X11RepeatKey = true;
@@ -100,7 +100,7 @@ namespace nux
     DestroyOpenGLWindow();
     NUX_SAFE_DELETE ( m_pEvent );
 
-    inlSetThreadLocalStorage (ThreadLocal_GLWindowImpl, 0);
+    inlSetThreadLocalStorage (_TLS_GraphicsDisplay, 0);
   }
 
   NString GraphicsDisplay::FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
@@ -1835,7 +1835,7 @@ namespace nux
 
   bool GraphicsDisplay::HasVSyncSwapControl () const
   {
-    return GetThreadGLDeviceFactory ()->GetGpuInfo().Support_EXT_Swap_Control ();
+    return GetGpuDevice ()->GetGpuInfo().Support_EXT_Swap_Control ();
   }
 
   void GraphicsDisplay::EnableVSyncSwapControl ()

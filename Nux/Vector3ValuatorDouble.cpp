@@ -246,7 +246,7 @@ namespace nux
 
   void Vector3DoubleValuator::SetVectorX (double value)
   {
-    m_X = m_DoubleValidator.Validate (value);
+    m_X = m_DoubleValidator.GetClampedValue (value);
     m_XEdit->SetText (NString::Printf ("%.3f", m_X) );
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
@@ -255,7 +255,7 @@ namespace nux
 
   void Vector3DoubleValuator::SetVectorY (double value)
   {
-    m_Y = m_DoubleValidator.Validate (value);
+    m_Y = m_DoubleValidator.GetClampedValue (value);
     m_YEdit->SetText (NString::Printf ("%.3f", m_Y) );
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
@@ -264,7 +264,7 @@ namespace nux
 
   void Vector3DoubleValuator::SetVectorZ (double value)
   {
-    m_Z = m_DoubleValidator.Validate (value);
+    m_Z = m_DoubleValidator.GetClampedValue (value);
     m_ZEdit->SetText (NString::Printf ("%.3f", m_Z) );
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
@@ -315,9 +315,9 @@ namespace nux
   {
     m_DoubleValidator.SetMinimum (MinValue);
     m_DoubleValidator.SetMaximum (Maxvalue);
-    m_X = m_DoubleValidator.Validate (m_X);
-    m_Y = m_DoubleValidator.Validate (m_Y);
-    m_Z = m_DoubleValidator.Validate (m_Z);
+    m_X = m_DoubleValidator.GetClampedValue (m_X);
+    m_Y = m_DoubleValidator.GetClampedValue (m_Y);
+    m_Z = m_DoubleValidator.GetClampedValue (m_Z);
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
     NeedRedraw();
@@ -412,7 +412,7 @@ namespace nux
     double ret = 0;
     ret = CharToDouble (m_XEdit->GetCleanText().GetTCharPtr() );
     {
-      m_X = m_DoubleValidator.Validate (ret);
+      m_X = m_DoubleValidator.GetClampedValue (ret);
       m_XEdit->SetText (NString::Printf ("%.3f", m_X) );
       sigValueChanged.emit (this);
       sigValue.emit (m_X, m_Y, m_Z);
@@ -430,7 +430,7 @@ namespace nux
     double ret = 0;
     ret = CharToDouble (m_YEdit->GetCleanText().GetTCharPtr() );
     {
-      m_Y = m_DoubleValidator.Validate (ret);
+      m_Y = m_DoubleValidator.GetClampedValue (ret);
       m_YEdit->SetText (NString::Printf ("%.3f", m_Y) );
       sigValueChanged.emit (this);
       sigValue.emit (m_X, m_Y, m_Z);
@@ -448,7 +448,7 @@ namespace nux
     double ret = 0;
     ret = CharToDouble (m_ZEdit->GetCleanText().GetTCharPtr() );
     {
-      m_Z = m_DoubleValidator.Validate (ret);
+      m_Z = m_DoubleValidator.GetClampedValue (ret);
       m_ZEdit->SetText (NString::Printf ("%.3f", m_Z) );
       sigValueChanged.emit (this);
       sigValue.emit (m_X, m_Y, m_Z);

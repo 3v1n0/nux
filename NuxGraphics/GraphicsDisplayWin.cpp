@@ -123,7 +123,7 @@ namespace nux
     ,   m_dwExStyle (0)
     ,   m_dwStyle (0)
   {
-    inlSetThreadLocalStorage (ThreadLocal_GLWindowImpl, this);
+    inlSetThreadLocalStorage (_TLS_GraphicsDisplay, this);
 
     m_GfxInterfaceCreated = false;
     m_pEvent = new IEvent();
@@ -148,7 +148,7 @@ namespace nux
     DestroyOpenGLWindow();
     NUX_SAFE_DELETE ( m_pEvent );
 
-    inlSetThreadLocalStorage (ThreadLocal_GLWindowImpl, 0);
+    inlSetThreadLocalStorage (_TLS_GraphicsDisplay, 0);
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -1942,7 +1942,7 @@ J1:
   // NUXTODO: remove this call. Make a direct access to GpuInfo via GpuDevice.
   bool GraphicsDisplay::HasVSyncSwapControl() const
   {
-    return GetThreadGLDeviceFactory()->GetGpuInfo().Support_EXT_Swap_Control();
+    return GetGpuDevice()->GetGpuInfo().Support_EXT_Swap_Control();
   }
 
 //---------------------------------------------------------------------------------------------------------

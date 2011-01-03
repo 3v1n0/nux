@@ -39,7 +39,7 @@ namespace nux
     _PixelFormat = BITFMT_R8G8B8A8;
     _IsActive = false;
 
-    for (int i = 0; i < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment(); i++)
+    for (int i = 0; i < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); i++)
     {
       _Color_AttachmentArray.push_back (ObjectPtr<IOpenGLSurface> (0) );
     }
@@ -60,7 +60,7 @@ namespace nux
   {
     Deactivate();
 
-    for (int i = 0; i < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment(); i++)
+    for (int i = 0; i < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); i++)
     {
       _Color_AttachmentArray[i] = ObjectPtr<IOpenGLSurface> (0);
     }
@@ -86,7 +86,7 @@ namespace nux
 
   int IOpenGLFrameBufferObject::SetRenderTarget (int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
   {
-    nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment());
+    nuxAssert (ColorAttachmentIndex < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment());
 
     if (pRenderTargetSurface.IsNull() )
     {
@@ -151,7 +151,7 @@ namespace nux
 
   ObjectPtr<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget (int ColorAttachmentIndex)
   {
-    nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment());
+    nuxAssert (ColorAttachmentIndex < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment());
     return _Color_AttachmentArray[ColorAttachmentIndex];
   }
 
@@ -165,10 +165,10 @@ namespace nux
     GLuint NumBuffers = 0;
     _Fbo.Bind();
 
-    if (GetThreadGLDeviceFactory() )
-      GetThreadGLDeviceFactory()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (this));
+    if (GetGpuDevice() )
+      GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (this));
 
-    for (int i = 0; i < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment(); i++)
+    for (int i = 0; i < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); i++)
     {
       if (_Color_AttachmentArray[i].IsValid() )
       {
@@ -230,8 +230,8 @@ namespace nux
     CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
 #endif
 
-    if (GetThreadGLDeviceFactory() )
-      GetThreadGLDeviceFactory()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (0));
+    if (GetGpuDevice() )
+      GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (0));
 
     if (GetThreadGraphicsContext() )
       GetThreadGraphicsContext()->SetScissor (0, 0, _Width, _Height);

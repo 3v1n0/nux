@@ -37,10 +37,10 @@ namespace nux
     TableItem::SetAlwaysShowOpeningButton (true);
 
     NString IconPath = NUX_FINDRESOURCELOCATION (TEXT ("Icons/FolderOpen-16x16.png") );
-    FolderOpenIcon = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    FolderOpenIcon = GetGpuDevice()->CreateSystemCapableTexture ();
     FolderOpenIcon->Update (IconPath.GetTCharPtr() );
     IconPath = NUX_FINDRESOURCELOCATION (TEXT ("Icons/FolderClose-16x16.png") );
-    FolderClosedIcon = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    FolderClosedIcon = GetGpuDevice()->CreateSystemCapableTexture ();
     FolderClosedIcon->Update (IconPath.GetTCharPtr() );
     //FolderOpenIcon.Update(TEXT("../Media/Icons/FolderOpenGrey-16x16.png"));
     //FolderClosedIcon.Update(TEXT("../Media/Icons/FolderClosedGrey-16x16.png"));

@@ -115,12 +115,12 @@ namespace nux
     SQWORD	Num					= InNum; // This avoids having to deal with negating -MaxS32 - 1
     NString NumberString;
     const TCHAR	*NumberChar[10]		= { TEXT ("0"), TEXT ("1"), TEXT ("2"), TEXT ("3"), TEXT ("4"), TEXT ("5"), TEXT ("6"), TEXT ("7"), TEXT ("8"), TEXT ("9") };
-    bool	bIsNumberNegative	= FALSE;
+    bool	bIsNumberNegative	= false;
 
     // Correctly handle negative numbers and convert to positive integer.
     if (Num < 0)
     {
-      bIsNumberNegative = TRUE;
+      bIsNumberNegative = true;
       Num = -Num;
     }
 
@@ -338,7 +338,7 @@ namespace nux
 
   NString::NString()
   {
-
+    m_string = TEXT("");
   }
 
   NString::NString (const NString &s)
@@ -773,12 +773,12 @@ namespace nux
     t_size l = m_string.length() - 1;
 
     if (l < 0)
-      return FALSE;
+      return false;
 
     t_size pos = FindLastOccurence (suffix);
 
     if (pos == tstring::npos)
-      return FALSE;
+      return false;
 
     return (pos == l);
   }
@@ -788,17 +788,17 @@ namespace nux
     t_size sl = StringLength (suffix);
 
     if (sl == 0)
-      return FALSE;
+      return false;
 
     t_size l = m_string.length() - sl;
 
     if (l < 0)
-      return FALSE;
+      return false;
 
     t_size pos = FindLastOccurence (suffix);
 
     if (pos == tstring::npos)
-      return FALSE;
+      return false;
 
     return (pos == l);
   }
@@ -809,17 +809,17 @@ namespace nux
     t_size sl = suffix.length();
 
     if (sl == 0)
-      return FALSE;
+      return false;
 
     t_size l = m_string.length() - sl;
 
     if (l < 0)
-      return FALSE;
+      return false;
 
     t_size pos = FindLastOccurence (suffix);
 
     if (pos == tstring::npos)
-      return FALSE;
+      return false;
 
     return (pos == l);
   }
@@ -830,17 +830,17 @@ namespace nux
     t_size sl = suffix.Length();
 
     if (sl == 0)
-      return FALSE;
+      return false;
 
     t_size l = m_string.length() - sl;
 
     if (l < 0)
-      return FALSE;
+      return false;
 
     t_size pos = FindLastOccurence (suffix);
 
     if (pos == tstring::npos)
-      return FALSE;
+      return false;
 
     return (pos == l);
   }
@@ -851,12 +851,12 @@ namespace nux
     t_size l = m_string.length() - 1;
 
     if (l < 0)
-      return FALSE;
+      return false;
 
     t_size pos = FindFirstOccurence (prefix);
 
     if (pos == tstring::npos)
-      return FALSE;
+      return false;
 
     return (pos == 0);
   }
@@ -867,12 +867,12 @@ namespace nux
     t_size sl = StringLength (prefix);
 
     if (sl == 0)
-      return FALSE;
+      return false;
 
     t_size pos = FindFirstOccurence (prefix);
 
     if (pos == tstring::npos)
-      return FALSE;
+      return false;
 
     return (pos == 0);
   }
@@ -883,12 +883,12 @@ namespace nux
     t_size sl = prefix.length();
 
     if (sl == 0)
-      return FALSE;
+      return false;
 
     t_size pos = FindFirstOccurence (prefix);
 
     if (pos == tstring::npos)
-      return FALSE;
+      return false;
 
     return (pos == 0);
   }
@@ -898,12 +898,12 @@ namespace nux
     t_size sl = prefix.Length();
 
     if (sl == 0)
-      return FALSE;
+      return false;
 
     t_size pos = FindFirstOccurence (prefix);
 
     if (pos == tstring::npos)
-      return FALSE;
+      return false;
 
     return (pos == 0);
   }
@@ -1338,6 +1338,11 @@ namespace nux
     return o << s.m_string;
   }
 
+  /*!
+      Behave like printf. Use an internal buffer of 1024 characters. Do not use this function if you are expecting
+      the result to be more that 1024-1 characters.
+      @return A string with formated arguments in a NString.
+  */
   VARARG_BODY (NString, NString::Printf, const TCHAR *, VARARG_NONE)
   {
     t_u32  BufferSize  = 1024;

@@ -863,6 +863,11 @@ namespace nux
 
     friend tostream &operator << (tostream &o, const NString &s);
 
+    /*!
+        Behave like printf. Use an internal buffer of 1024 characters. Do not use this function if you are expecting
+        the result to be more that 1024-1 characters.
+        @return A string with formated arguments in a NString.
+    */
     VARARG_DECL ( static NString, static NString, return, Printf, VARARG_NONE, const TCHAR *, VARARG_NONE, VARARG_NONE );
 
   public:

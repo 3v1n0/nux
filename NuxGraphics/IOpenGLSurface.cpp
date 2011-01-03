@@ -177,17 +177,17 @@ namespace nux
     _Rect.right   = texwidth;
 
 
-    if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+    if (GetGpuDevice()->UsePixelBufferObjects() )
     {
-      GetThreadGLDeviceFactory()->AllocateUnpackPixelBufferIndex (&_AllocatedUnpackBuffer);
+      GetGpuDevice()->AllocateUnpackPixelBufferIndex (&_AllocatedUnpackBuffer);
     }
 
     if (pRect == 0)
     {
-      if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+      if (GetGpuDevice()->UsePixelBufferObjects() )
       {
         // Mapping the entire area of the surface
-        _LockedRect.pBits = GetThreadGLDeviceFactory()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, surface_size);
+        _LockedRect.pBits = GetGpuDevice()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, surface_size);
         pLockedRect->pBits = _LockedRect.pBits;
         pLockedRect->Pitch = _LockedRect.Pitch;
       }
@@ -223,9 +223,9 @@ namespace nux
         return OGL_INVALID_LOCK;
       }
 
-      if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+      if (GetGpuDevice()->UsePixelBufferObjects() )
       {
-        _LockedRect.pBits = GetThreadGLDeviceFactory()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, RectSize);
+        _LockedRect.pBits = GetGpuDevice()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, RectSize);
         pLockedRect->pBits = ( (BYTE *) _LockedRect.pBits);
         pLockedRect->Pitch = ( ( (RectWidth * BytePerPixel + (unpack_alignment - 1) ) >> (halfUnpack) ) << (halfUnpack) );
       }
@@ -263,10 +263,10 @@ namespace nux
       int h = _Rect.bottom - _Rect.top;
       CHECKGL ( glBindTexture (_STextureTarget, _BaseTexture->_OpenGLID) );
 
-      if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+      if (GetGpuDevice()->UsePixelBufferObjects() )
       {
         // Unmap the texture image buffer
-        GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
+        GetGpuDevice()->BindUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
         CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
         DataPtr = NUX_BUFFER_OFFSET (0);
       }
@@ -410,10 +410,10 @@ namespace nux
       nuxDebugMsg (TEXT("[IOpenGLSurface::UnlockRect] Incorrect Texture Target."));
     }
 
-    if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+    if (GetGpuDevice()->UsePixelBufferObjects() )
     {
       CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
-      GetThreadGLDeviceFactory()->FreeUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
+      GetGpuDevice()->FreeUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
     }
     else
     {
@@ -424,7 +424,7 @@ namespace nux
       }
     }
 
-    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetThreadGLDeviceFactory()->GetPixelStoreAlignment() ) );
+    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetGpuDevice()->GetPixelStoreAlignment() ) );
 
     _LockedRect.pBits = 0;
     _LockedRect.Pitch = 0;
@@ -540,7 +540,7 @@ namespace nux
     //        delete [] color_array;
     //    }
 
-    CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, GetThreadGLDeviceFactory ()->GetPixelStoreAlignment ()));
+    CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, GetGpuDevice ()->GetPixelStoreAlignment ()));
 
     _Initialized = true;
     return OGL_OK;

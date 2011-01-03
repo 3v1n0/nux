@@ -578,7 +578,7 @@ namespace nux
 //         if (Handle->GetValue() == 0)
 //         {
 //           delete Handle;
-//           //GetThreadGLDeviceFactory()->DestroyDeviceResource<T>(Handle);
+//           //GetGpuDevice()->DestroyDeviceResource<T>(Handle);
 //         }
 //       }
 // 

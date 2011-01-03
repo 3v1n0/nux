@@ -549,7 +549,7 @@ namespace nux
     {
       Geometry geo = item->m_RowHeaderGeometry;
       GetPainter().Paint2DQuadColor (GfxContext, geo, color);
-      GetPainter().PaintTextLineStatic (GfxContext, GetFont(), geo, "i");
+      GetPainter().PaintTextLineStatic (GfxContext, GetFont (), geo, "i");
     }
   }
 

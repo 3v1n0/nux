@@ -322,7 +322,7 @@ namespace nux
 
       //Release the previous vertex buffer if any.
       m_VtxBuffer.Release();
-      m_VtxBuffer = GetThreadGLDeviceFactory()->CreateVertexBuffer (_Size, VBO_USAGE_DYNAMIC);
+      m_VtxBuffer = GetGpuDevice()->CreateVertexBuffer (_Size, VBO_USAGE_DYNAMIC);
       LoadVertexData (SourceVtxBuffer);
     }
     else
@@ -400,7 +400,7 @@ namespace nux
 
       //Release the previous vertex buffer if any.
       m_IdxBuffer.Release();
-      m_IdxBuffer = GetThreadGLDeviceFactory()->CreateIndexBuffer (_Size, VBO_USAGE_DYNAMIC,
+      m_IdxBuffer = GetGpuDevice()->CreateIndexBuffer (_Size, VBO_USAGE_DYNAMIC,
                     (SourceIdxBuffer->GetStride() == 2) ? INDEX_FORMAT_USHORT : INDEX_FORMAT_UINT);
       LoadIndexData (SourceIdxBuffer);
     }
@@ -463,7 +463,7 @@ namespace nux
       return true;
     }
 
-    m_VtxDeclaration = GetThreadGLDeviceFactory()->CreateVertexDeclaration (&SourceVertexDeclaration->m_Declaration[0]);
+    m_VtxDeclaration = GetGpuDevice()->CreateVertexDeclaration (&SourceVertexDeclaration->m_Declaration[0]);
     return true;
   }
 

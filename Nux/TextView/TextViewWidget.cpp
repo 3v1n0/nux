@@ -66,9 +66,9 @@ namespace nux
     m_ViewContentBottomMargin    = 0;
     FormatContent();
 
-    m_FrameBufferObject = GetThreadGLDeviceFactory()->CreateFrameBufferObject();
-    m_TextureBuffer[0] = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_R8G8B8A8);
-    m_TextureBuffer[1] = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_D24S8);
+    m_FrameBufferObject = GetGpuDevice()->CreateFrameBufferObject();
+    m_TextureBuffer[0] = GetGpuDevice()->CreateSystemCapableDeviceTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_R8G8B8A8);
+    m_TextureBuffer[1] = GetGpuDevice()->CreateSystemCapableDeviceTexture (m_ViewWidth, m_ViewHeight, 1, BITFMT_D24S8);
 
     m_FrameBufferObject->FormatFrameBufferObject (m_ViewWidth, m_ViewHeight, BITFMT_R8G8B8A8);
     m_FrameBufferObject->SetRenderTarget ( 0, m_TextureBuffer[0]->GetSurfaceLevel (0) );

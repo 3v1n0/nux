@@ -135,13 +135,13 @@ namespace nux
 
     //GNuxGraphicsResources.CacheFontTextures (ResourceCache);
 
-    _offscreen_fbo        = GetThreadGLDeviceFactory()->CreateFrameBufferObject ();
-    _offscreen_color_rt0  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-    //_offscreen_depth_rt0  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_D24S8);
-    _offscreen_color_rt1  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-    //_offscreen_depth_rt1  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_D24S8);
-    _offscreen_color_rt2  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-    _offscreen_color_rt3  = GetThreadGLDeviceFactory()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+    _offscreen_fbo        = GetGpuDevice()->CreateFrameBufferObject ();
+    _offscreen_color_rt0  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+    //_offscreen_depth_rt0  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8);
+    _offscreen_color_rt1  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+    //_offscreen_depth_rt1  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8);
+    _offscreen_color_rt2  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+    _offscreen_color_rt3  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
 
 #if defined (NUX_OS_WINDOWS)
     if (_normal_font == 0)
@@ -376,7 +376,7 @@ namespace nux
     if ( (TextureUnit < GL_TEXTURE0) || (TextureUnit > GL_TEXTURE31) )
       return;
 
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (TextureUnit);
+    GetGpuDevice()->InvalidateTextureUnit (TextureUnit);
   }
 
 //////////////////////
@@ -889,18 +889,12 @@ namespace nux
     GetRenderStates().EnableScissor (b);
   }
 
-/////////////////////////////////////////
-// 2D Area Clear Color Depth Stencil   //
-/////////////////////////////////////////
+  /////////////////////////////////////////
+  // 2D Area Clear Color Depth Stencil   //
+  /////////////////////////////////////////
 
-  void GraphicsEngine::ClearAreaColorDepthStencil (int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil)
+  void GraphicsEngine::ClearAreaColorDepthStencil (int x, int y, int width, int height, Color clear_color, float cleardepth, int clearstencil)
   {
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE0);
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE1);
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE2);
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE3);
-    EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_2D);
-    SetEnvModeSelectColor (GL_TEXTURE0);
     // enable stencil buffer
     CHECKGL ( glEnable (GL_STENCIL_TEST) );
     // write a one to the stencil buffer everywhere we are about to draw
@@ -908,82 +902,40 @@ namespace nux
     // this is to always pass a one to the stencil buffer where we draw
     CHECKGL ( glStencilOp (GL_REPLACE, GL_REPLACE, GL_REPLACE) );
 
-
-
     //CHECKGL( glEnable(GL_DEPTH_TEST) );
     //CHECKGL( glDepthFunc(GL_ALWAYS) );
 
-    glBegin (GL_QUADS);
-    {
-      glColor4f (clearcolor.R(), clearcolor.G(), clearcolor.B(), clearcolor.A() );
-      glVertex4f (x,           y,          0.0f, 1.0f);
-      glVertex4f (x + width,   y,          0.0f, 1.0f);
-      glVertex4f (x + width,   y + height, 0.0f, 1.0f);
-      glVertex4f (x,           y + height, 0.0f, 1.0f);
-    }
-    glEnd();
+    QRP_Color(x, y, width, height, clear_color);
 
     //CHECKGL( glDepthFunc(GL_LESS) );
     //CHECKGL( glDisable(GL_DEPTH_TEST) );
     CHECKGL ( glDisable (GL_STENCIL_TEST) );
   }
 
-  void GraphicsEngine::ClearAreaColor (int x, int y, int width, int height, Color clearcolor)
+  void GraphicsEngine::ClearAreaColor (int x, int y, int width, int height, Color clear_color)
   {
-    //glClear(GL_DEPTH_BUFFER_BIT);
-
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE0);
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE1);
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE2);
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE3);
-    EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_2D);
-    SetEnvModeSelectColor (GL_TEXTURE0);
-
-    glBegin (GL_QUADS);
-    {
-      glColor4f (clearcolor.R(), clearcolor.G(), clearcolor.B(), clearcolor.A() );
-      glVertex4f (x,           y,          0.0f, 1.0f);
-      glVertex4f (x + width,   y,          0.0f, 1.0f);
-      glVertex4f (x + width,   y + height, 0.0f, 1.0f);
-      glVertex4f (x,           y + height, 0.0f, 1.0f);
-    }
-    glEnd();
+    QRP_Color(x, y, width, height, clear_color);
   }
 
   void GraphicsEngine::ClearAreaDepthStencil (int x, int y, int width, int height, float cleardepth, int clearstencil)
   {
-    //glClear(GL_DEPTH_BUFFER_BIT);
-
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE0);
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE1);
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE2);
-    GetThreadGLDeviceFactory()->InvalidateTextureUnit (GL_TEXTURE3);
-    EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_2D);
-    SetEnvModeSelectColor (GL_TEXTURE0);
     // enable stencil buffer
-    CHECKGL ( glEnable (GL_STENCIL_TEST) );
+    CHECKGL (glEnable (GL_STENCIL_TEST));
     // write a one to the stencil buffer everywhere we are about to draw
-    CHECKGL ( glStencilFunc (GL_ALWAYS, clearstencil, 0xFFFFFFFF) );
+    CHECKGL (glStencilFunc (GL_ALWAYS, clearstencil, 0xFFFFFFFF));
     // this is to always pass a one to the stencil buffer where we draw
-    CHECKGL ( glStencilOp (GL_REPLACE, GL_REPLACE, GL_REPLACE) );
+    CHECKGL (glStencilOp (GL_REPLACE, GL_REPLACE, GL_REPLACE));
 
-    CHECKGL ( glColorMask (GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE) );
-    //CHECKGL( glEnable(GL_DEPTH_TEST) );
-    //CHECKGL( glDepthFunc(GL_ALWAYS) );
+    CHECKGL (glColorMask (GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE));
+    //CHECKGL (glEnable(GL_DEPTH_TEST));
+    //CHECKGL (glDepthFunc(GL_ALWAYS));
 
-    glBegin (GL_QUADS);
-    {
-      glVertex4f (x,           y,          0.0f, 1.0f);
-      glVertex4f (x + width,   y,          0.0f, 1.0f);
-      glVertex4f (x + width,   y + height, 0.0f, 1.0f);
-      glVertex4f (x,           y + height, 0.0f, 1.0f);
-    }
-    glEnd();
+    QRP_Color(x, y, width, height, Color::Black);
 
     //CHECKGL( glDepthFunc(GL_LESS) );
     //CHECKGL( glDisable(GL_DEPTH_TEST) );
-    CHECKGL ( glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
-    CHECKGL ( glDisable (GL_STENCIL_TEST) );
+    CHECKGL (glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
+    CHECKGL (glDisable (GL_STENCIL_TEST));
 
   }
 
@@ -1048,8 +1000,8 @@ namespace nux
   {
     //if ((colorbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
     {
-      colorbuffer = GetThreadGLDeviceFactory ()->CreateTexture (width, height, 1, BITFMT_R8G8B8A8);
-      depthbuffer = GetThreadGLDeviceFactory ()->CreateTexture (width, height, 1, BITFMT_D24S8);
+      colorbuffer = GetGpuDevice ()->CreateTexture (width, height, 1, BITFMT_R8G8B8A8);
+      depthbuffer = GetGpuDevice ()->CreateTexture (width, height, 1, BITFMT_D24S8);
     }
 
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);

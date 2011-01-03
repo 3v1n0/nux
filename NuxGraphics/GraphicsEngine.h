@@ -144,27 +144,31 @@ namespace nux
       const Color& c0,
       float sigma);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetAlphaTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetAlphaTexture (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetColorMatrixTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Matrix4 color_matrix, Vector4 offset,
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetColorMatrixTexture (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Matrix4 color_matrix, Vector4 offset);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetComponentExponentiation (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Vector4 exponent,
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetComponentExponentiation (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Vector4 exponent);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetLQBlur (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetLQBlur (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0);
 
     // ASM
     void QRP_ASM_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
@@ -214,27 +218,31 @@ namespace nux
       const Color& c0,
       float sigma = 1.0f);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetAlphaTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetAlphaTexture (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetColorMatrixTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Matrix4 color_matrix, Vector4 offset,
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetColorMatrixTexture (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Matrix4 color_matrix, Vector4 offset);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetComponentExponentiation (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Vector4 exponent,
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetComponentExponentiation (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Vector4 exponent);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetLQBlur (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetLQBlur (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0);
 
     // GLSL
 
@@ -287,27 +295,31 @@ namespace nux
       const Color& c0,
       float sigma = 1.0f);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetAlphaTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetAlphaTexture (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetColorMatrixTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Matrix4 color_matrix, Vector4 offset,
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetColorMatrixTexture (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Matrix4 color_matrix, Vector4 offset);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetComponentExponentiation (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Vector4 exponent,
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetComponentExponentiation (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0,
+      Vector4 exponent);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetLQBlur (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetLQBlur (
       int x, int y,
-      int buffer_width, int buffer_height);
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0);
 
     void QRP_GLSL_DisturbedTexture (
       int x, int y, int width, int height,

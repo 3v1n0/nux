@@ -394,8 +394,8 @@ namespace nux
     NString PixelShaderSource;
     ExtractShaderString3 (TEXT ("[Fragment Shader]"), ShaderCode, PixelShaderSource, NString (FrgShaderPreprocessorDefines) );
 
-    ObjectPtr<IOpenGLVertexShader> vs = GetThreadGLDeviceFactory()->CreateVertexShader(); //new IOpenGLVertexShader;
-    ObjectPtr<IOpenGLPixelShader> ps = GetThreadGLDeviceFactory()->CreatePixelShader(); //new IOpenGLPixelShader;
+    ObjectPtr<IOpenGLVertexShader> vs = GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
+    ObjectPtr<IOpenGLPixelShader> ps = GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     vs->SetShaderCode (&VertexShaderSource[0]);
     ps->SetShaderCode (&PixelShaderSource[0]);
@@ -412,7 +412,7 @@ namespace nux
   {
     nuxAssertMsg (glslshader, TEXT ("[IOpenGLShaderProgram::LoadVertexShader] Invalid shader code.") );
     NUX_RETURN_IF_NULL (glslshader);
-    ObjectPtr<IOpenGLVertexShader> vs = GetThreadGLDeviceFactory()->CreateVertexShader(); //new IOpenGLVertexShader;
+    ObjectPtr<IOpenGLVertexShader> vs = GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
 
     NString ProcessedShaderSource;
     NString Defines (VtxShaderPreprocessorDefines);
@@ -427,7 +427,7 @@ namespace nux
   {
     nuxAssertMsg (glslshader, TEXT ("[IOpenGLShaderProgram::LoadPixelShader] Invalid shader code.") );
     NUX_RETURN_IF_NULL (glslshader);
-    ObjectPtr<IOpenGLPixelShader> ps = GetThreadGLDeviceFactory()->CreatePixelShader(); //new IOpenGLPixelShader;
+    ObjectPtr<IOpenGLPixelShader> ps = GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     NString ProcessedShaderSource;
     NString Defines (FrgShaderPreprocessorDefines);

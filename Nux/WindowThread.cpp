@@ -1793,7 +1793,7 @@ namespace nux
     CHECKGL ( glUseProgramObjectARB (0) );
 #endif
 
-    GetThreadGLDeviceFactory()->DeactivateFrameBuffer();
+    GetGpuDevice()->DeactivateFrameBuffer();
     /*GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
     GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
     GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);

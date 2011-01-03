@@ -113,7 +113,7 @@ namespace nux
       GL_ONE,
       GL_ONE_MINUS_SRC_ALPHA);
 
-    gfxContext.QRP_GLSL_1Tex (base.x,
+    gfxContext.QRP_1Tex (base.x,
       base.y,
       base.width,
       base.height,
@@ -288,7 +288,7 @@ namespace nux
     if (_texture2D)
       _texture2D->UnReference ();
 
-    _texture2D = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    _texture2D = GetGpuDevice()->CreateSystemCapableTexture ();
     _texture2D->Update (bitmap);
 
     delete _cairoGraphics;

@@ -243,7 +243,6 @@ namespace nux
       return 0;
     }
     virtual void PositionChildLayout (float offsetX, float offsetY) {}
-    virtual void DrawLayout() {};
 
     virtual long ComputeLayout2()
     {

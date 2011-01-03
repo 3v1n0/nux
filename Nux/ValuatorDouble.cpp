@@ -38,7 +38,9 @@ namespace nux
     m_EditLine->SetValidator (&m_DoubleValidator);
     m_EditLine->SetSuffix (TEXT ("") );
     m_EditLine->SetPrefix (TEXT ("") );
-    m_EditLine->SetText (NString::Printf (TEXT ("%.3f"), m_DoubleValidator.GetMinimum() ) );
+
+    NString s = NString::Printf (TEXT ("%.3f"), m_DoubleValidator.GetMinimum ());
+    m_EditLine->SetText (s);
 
     m_EditLine->SetMinimumSize (1.5 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     m_EditLine->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
@@ -138,7 +140,7 @@ namespace nux
 
   void ValuatorDouble::SetValue (double value)
   {
-    m_Value = m_DoubleValidator.Validate (value);
+    m_Value = m_DoubleValidator.GetClampedValue (value);
     m_EditLine->SetText (NString::Printf ("%.3f", m_Value) );
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
@@ -179,7 +181,7 @@ namespace nux
   {
     m_DoubleValidator.SetMinimum (MinValue);
     m_DoubleValidator.SetMaximum (Maxvalue);
-    m_Value = m_DoubleValidator.Validate (m_Value);
+    m_Value = m_DoubleValidator.GetClampedValue (m_Value);
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
     NeedRedraw();
@@ -218,7 +220,7 @@ namespace nux
     DOUBLE ret = 0;
     ret = CharToDouble (m_EditLine->GetCleanText().GetTCharPtr() );
     {
-      m_Value = m_DoubleValidator.Validate (ret);
+      m_Value = m_DoubleValidator.GetClampedValue (ret);
       m_EditLine->SetText (NString::Printf ("%.3f", m_Value) );
       sigValueChanged.emit (this);
       sigValue.emit (m_Value);

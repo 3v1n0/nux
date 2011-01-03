@@ -857,7 +857,7 @@ namespace nux
 
   void *GpuDevice::LockUnpackPixelBufferIndex (const int index, int Size)
   {
-    GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex (index);
+    GetGpuDevice()->BindUnpackPixelBufferIndex (index);
     CHECKGL ( glBufferDataARB (GL_PIXEL_UNPACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
     void *pBits = glMapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
     CHECKGL_MSG (glMapBufferARB );
@@ -867,7 +867,7 @@ namespace nux
 
   void *GpuDevice::LockPackPixelBufferIndex (const int index, int Size)
   {
-    GetThreadGLDeviceFactory()->BindPackPixelBufferIndex (index);
+    GetGpuDevice()->BindPackPixelBufferIndex (index);
     CHECKGL ( glBufferDataARB (GL_PIXEL_PACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
     void *pBits = glMapBufferARB (GL_PIXEL_PACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
     CHECKGL_MSG (glMapBufferARB );
@@ -877,14 +877,14 @@ namespace nux
 
   void GpuDevice::UnlockUnpackPixelBufferIndex (const int index)
   {
-    GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex (index);
+    GetGpuDevice()->BindUnpackPixelBufferIndex (index);
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
   }
 
   void GpuDevice::UnlockPackPixelBufferIndex (const int index)
   {
-    GetThreadGLDeviceFactory()->BindPackPixelBufferIndex (index);
+    GetGpuDevice()->BindPackPixelBufferIndex (index);
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
   }
@@ -1076,12 +1076,12 @@ namespace nux
   {
     if(GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
-      return GetThreadGLDeviceFactory ()->CreateTexture (Width, Height, Levels, PixelFormat);
+      return GetGpuDevice ()->CreateTexture (Width, Height, Levels, PixelFormat);
     }
 
     if(GetGpuInfo().Support_EXT_Texture_Rectangle () || GetGpuInfo().Support_ARB_Texture_Rectangle ())
     {
-      return GetThreadGLDeviceFactory ()->CreateRectangleTexture (Width, Height, Levels, PixelFormat);
+      return GetGpuDevice ()->CreateRectangleTexture (Width, Height, Levels, PixelFormat);
     }
 
     nuxAssertMsg(0, TEXT("[NuxGraphicsResources::CreateSystemCapableDeviceTexture] No support for non power of two textures or rectangle textures"));

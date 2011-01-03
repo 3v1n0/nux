@@ -60,7 +60,7 @@ namespace nux
 
     b_RenderToVertexBuffer = false;
 
-    m_ShaderProg = GetThreadGLDeviceFactory()->CreateShaderProgram();
+    m_ShaderProg = GetGpuDevice()->CreateShaderProgram();
     m_ShaderProg->LoadIShaderFile (NUX_FINDRESOURCELOCATION (TEXT ("Shaders/TextViewShader.glsl") ) );
     m_ShaderProg->Link();
 
@@ -71,7 +71,7 @@ namespace nux
     m_CgFontTexture         = m_ShaderProg->GetUniformLocationARB (TEXT ("FontTexture") );
     m_ViewProjectionMatrix0   = m_ShaderProg->GetUniformLocationARB (TEXT ("ViewProjectionMatrix") );
 
-    m_ColorQuadShaderProg = GetThreadGLDeviceFactory()->CreateShaderProgram();
+    m_ColorQuadShaderProg = GetGpuDevice()->CreateShaderProgram();
     m_ColorQuadShaderProg->LoadIShaderFile (NUX_FINDRESOURCELOCATION (TEXT ("Shaders//TextViewColorQuadShader.glsl") ) );
     m_ColorQuadShaderProg->Link();
 

@@ -39,8 +39,11 @@ namespace nux
 
     virtual Validator *Clone()  const; //Virtual Constructor Idiom
 
-    double Validate (double d) const;
-    virtual Validator::State Validate (const TCHAR *str) const;
+    /*!
+        @return The input value clamped to the range [m_Minimum, m_Maximum].
+    */
+    double GetClampedValue (double d) const;
+
     virtual void Alternative (const TCHAR *str);
 
     void SetDecimals (int dec);

@@ -79,7 +79,7 @@ namespace nux
 
     _ShaderCode = ANSI_TO_TCHAR (ShaderCode);
     _EntryPoint = ANSI_TO_TCHAR (EntryPoint);
-    _CgProgram = cgCreateProgram (GetThreadGLDeviceFactory()->GetCgContext(),
+    _CgProgram = cgCreateProgram (GetGpuDevice()->GetCgContext(),
                                   CG_SOURCE,
                                   ShaderCode,
                                   cg_vprofile, //CG_PROFILE_VP40
@@ -139,7 +139,7 @@ namespace nux
 
     _ShaderCode = ANSI_TO_TCHAR (ShaderCode);
     _EntryPoint = ANSI_TO_TCHAR (EntryPoint);
-    _CgProgram = cgCreateProgram (GetThreadGLDeviceFactory()->GetCgContext(),
+    _CgProgram = cgCreateProgram (GetGpuDevice()->GetCgContext(),
                                   CG_SOURCE,
                                   ShaderCode,
                                   cg_fprofile, //CG_PROFILE_FP40,
@@ -185,7 +185,7 @@ namespace nux
     if (LastError)
     {
       nuxDebugMsg (TEXT ("%s\n\n"), cgGetErrorString (LastError) );
-      nuxDebugMsg (TEXT ("%s\n"), cgGetLastListing (GetThreadGLDeviceFactory()->GetCgContext() ) );
+      nuxDebugMsg (TEXT ("%s\n"), cgGetLastListing (GetGpuDevice()->GetCgContext() ) );
       nuxDebugMsg (TEXT ("Cg error, exiting...\n") );
       nuxAssertMsg (0, TEXT ("[cgErrorCallback]: Cg Error.") );
     }

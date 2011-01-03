@@ -267,7 +267,7 @@ namespace nux
       if (1)
       {
         NBitmapData *uitexturedata = UITextureArchive.ExtractTextureStyle (style.GetTCharPtr());
-        BaseTexture* RectangleTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+        BaseTexture* RectangleTexture = GetGpuDevice()->CreateSystemCapableTexture ();
 
         if (uitexturedata)
           RectangleTexture->Update (uitexturedata);
@@ -326,7 +326,7 @@ namespace nux
 
   BaseTexture *UXTheme::Load2DTextureFile (const char *filename)
   {
-    BaseTexture* texture2D = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BaseTexture* texture2D = GetGpuDevice()->CreateSystemCapableTexture ();
     NBitmapData *BitmapData = LoadImageFile (filename);
 
     if (BitmapData)

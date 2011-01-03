@@ -107,7 +107,7 @@ namespace nux
     return m_Maximum;
   }
 
-  double DoubleValidator::Validate (double d) const
+  double DoubleValidator::GetClampedValue (double d) const
   {
     if (d < m_Minimum)
       return m_Minimum;
@@ -116,25 +116,6 @@ namespace nux
       return m_Maximum;
 
     return d;
-  }
-
-
-  Validator::State DoubleValidator::Validate (const TCHAR *str) const
-  {
-    if (_regexp == 0)
-      return Validator::Invalid;
-
-    int out_vector [10];
-    unsigned int offset = 0;
-    unsigned int len    = strlen (str);
-
-    int rc = pcre_exec(_regexp, 0, str, len, offset, 0, out_vector, sizeof(out_vector));
-    if (rc <= -1)
-    {
-      return Validator::Invalid;
-    }
-
-    return Validator::Acceptable;
   }
 
   void DoubleValidator::Alternative (const TCHAR *str)

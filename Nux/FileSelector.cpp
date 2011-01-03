@@ -54,7 +54,7 @@ namespace nux
     SetCompositionLayout (m_hlayout);
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Icons/Folder-16x16.png") );
-    m_Texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    m_Texture = GetGpuDevice()->CreateSystemCapableTexture ();
     m_Texture->Update (Path.GetTCharPtr() );
   }
 

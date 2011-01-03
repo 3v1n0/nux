@@ -124,7 +124,7 @@ namespace nux
     //bool IsMouseDrag();
 
     void SetFont (ObjectPtr<FontTexture> Font);
-    ObjectPtr<FontTexture> GetFont() const;
+    ObjectPtr<FontTexture> GetFont () const;
 
   protected:
     ObjectPtr<FontTexture> m_Font;

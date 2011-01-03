@@ -106,12 +106,12 @@ namespace nux
   FontRenderer::FontRenderer (GraphicsEngine &OpenGLEngine)
     :   m_OpenGLEngine (OpenGLEngine)
   {
-    //m_QuadBuffer = new TemplateQuadBuffer(GetThreadGLDeviceFactory(), SHADER_TYPE_GLSL);
+    //m_QuadBuffer = new TemplateQuadBuffer(GetGpuDevice(), SHADER_TYPE_GLSL);
     if (!USE_ARB_SHADERS)
     {
-      m_PixelShaderProg   = GetThreadGLDeviceFactory()->CreatePixelShader();
-      m_VertexShaderProg  = GetThreadGLDeviceFactory()->CreateVertexShader();
-      m_ShaderProg        = GetThreadGLDeviceFactory()->CreateShaderProgram();
+      m_PixelShaderProg   = GetGpuDevice()->CreatePixelShader();
+      m_VertexShaderProg  = GetGpuDevice()->CreateVertexShader();
+      m_ShaderProg        = GetGpuDevice()->CreateShaderProgram();
 
       m_VertexShaderProg->SetShaderCode (TCHAR_TO_ANSI (*gFontVtxShader) );
       m_PixelShaderProg->SetShaderCode (TCHAR_TO_ANSI (*gFontFragShader) );
@@ -123,15 +123,15 @@ namespace nux
     }
     else
     {
-      //m_AsmVertexShaderProg  = GetThreadGLDeviceFactory()->CreateAsmVertexShader();
-      //m_AsmPixelShaderProg   = GetThreadGLDeviceFactory()->CreateAsmPixelShader();
-      m_AsmShaderProg        = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+      //m_AsmVertexShaderProg  = GetGpuDevice()->CreateAsmVertexShader();
+      //m_AsmPixelShaderProg   = GetGpuDevice()->CreateAsmPixelShader();
+      m_AsmShaderProg        = GetGpuDevice()->CreateAsmShaderProgram();
 
       m_AsmShaderProg->LoadVertexShader (TCHAR_TO_ANSI (*FontAsmVtx) );
       m_AsmShaderProg->LoadPixelShader (TCHAR_TO_ANSI (*FontAsmFrg) );
       m_AsmShaderProg->Link();
 
-      _asm_font_texture_rect_prog = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+      _asm_font_texture_rect_prog = GetGpuDevice()->CreateAsmShaderProgram();
       _asm_font_texture_rect_prog->LoadVertexShader (TCHAR_TO_ANSI (*FontAsmVtx) );
       _asm_font_texture_rect_prog->LoadPixelShader (TCHAR_TO_ANSI (*FontAsmFrgRect) );
       _asm_font_texture_rect_prog->Link();

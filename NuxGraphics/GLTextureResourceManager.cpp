@@ -65,7 +65,7 @@ namespace nux
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetGpuDevice()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -81,7 +81,7 @@ namespace nux
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetGpuDevice()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -115,7 +115,7 @@ namespace nux
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetGpuDevice()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -292,7 +292,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
                 SourceTexture->GetFormat());
@@ -324,7 +324,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
@@ -446,7 +446,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateRectangleTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
                 SourceTexture->GetFormat() );
@@ -478,7 +478,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateRectangleTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
@@ -595,7 +595,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateCubeTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetNumMipLevel(),
                 SourceTexture->GetFormat() );
 
@@ -626,7 +626,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateCubeTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
 
@@ -766,7 +766,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateVolumeTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetDepth(),
                 SourceTexture->GetNumMipLevel(),
@@ -799,7 +799,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateVolumeTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
                   SourceTexture->GetNumMipLevel(),
@@ -937,7 +937,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateAnimatedTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetDepth(),
                 SourceTexture->GetFormat() );
@@ -969,7 +969,7 @@ namespace nux
 
     if (RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateAnimatedTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
                   SourceTexture->GetFormat() );

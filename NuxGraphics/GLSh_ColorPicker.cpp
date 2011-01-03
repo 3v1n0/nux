@@ -235,7 +235,7 @@ namespace nux
     NString FrgShaderCode;
     m_ColorChannel = cc;
 
-    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       switch (m_ColorChannel)
       {
@@ -277,8 +277,8 @@ namespace nux
         }
       }
 
-      GlobalPixelShader = GetThreadGLDeviceFactory()->CreatePixelShader();
-      sprog = GetThreadGLDeviceFactory()->CreateShaderProgram();
+      GlobalPixelShader = GetGpuDevice()->CreatePixelShader();
+      sprog = GetGpuDevice()->CreateShaderProgram();
 
       GlobalPixelShader->SetShaderCode (HSV_To_RGBFrgShader.GetTCharPtr() );
 
@@ -329,7 +329,7 @@ namespace nux
         }
       }
 
-      m_AsmProg = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+      m_AsmProg = GetGpuDevice()->CreateAsmShaderProgram();
       m_AsmProg->LoadVertexShader (AsmVtxShader.GetTCharPtr() );
       m_AsmProg->LoadPixelShader (FrgShaderCode.GetTCharPtr() );
       m_AsmProg->Link();
@@ -367,7 +367,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f,
     };
 
-    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
       CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
@@ -394,12 +394,13 @@ namespace nux
       CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 16, VtxBuffer) );
 
-      CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+      CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
       CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
       sprog->End();
     }
+#ifndef NUX_OPENGLES_20
     else
     {
       CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -422,12 +423,13 @@ namespace nux
       CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 16, VtxBuffer) );
 
-      CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+      CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
       CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
       m_AsmProg->End();
     }
+#endif
   }
 
 }

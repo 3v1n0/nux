@@ -267,7 +267,7 @@ namespace nux
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff000000), Color (0xff323232), 4, 4);
-    BaseTexture* CheckboardPattern = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BaseTexture* CheckboardPattern = GetGpuDevice()->CreateSystemCapableTexture ();
     CheckboardPattern->Update (&image);
 
     TexCoordXForm texxform;

@@ -55,4 +55,27 @@ namespace nux
     return true;
   }
 
+  Validator::State Validator::Validate (const TCHAR *str) const
+  {
+    if (_regexp == 0)
+      return Validator::Invalid;
+
+    int out_vector [10];
+    unsigned int offset = 0;
+    int len = (int) strlen (str);
+
+    // See the "PCRE DISCUSSION OF STACK USAGE" and why it maybe necessary to limit the stack usage.
+    pcre_extra extra;
+    extra.flags = PCRE_EXTRA_MATCH_LIMIT_RECURSION;
+    extra.match_limit_recursion = 2000; 
+
+    int rc = pcre_exec(_regexp, &extra, str, len, offset, 0, out_vector, 10);
+    if (rc <= -1)
+    {
+      return Validator::Invalid;
+    }
+
+    return Validator::Acceptable;
+  }
+
 }

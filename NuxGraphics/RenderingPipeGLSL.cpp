@@ -777,7 +777,7 @@ namespace nux
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4) );
     }
 
-    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
     CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
@@ -842,7 +842,7 @@ namespace nux
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
     }
 
-    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
     CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
@@ -919,7 +919,7 @@ namespace nux
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
     }
 
-    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
     if (VertexLocation != -1)
       CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
@@ -1010,7 +1010,7 @@ namespace nux
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
     }
 
-    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
     CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
@@ -1085,7 +1085,7 @@ namespace nux
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
     }
 
-    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
     CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
@@ -1159,7 +1159,7 @@ namespace nux
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
     }
 
-    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
     CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
@@ -1277,7 +1277,7 @@ namespace nux
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord3Location, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer + 16) );
     }
 
-    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
     CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
@@ -1523,7 +1523,7 @@ namespace nux
       CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
     CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
@@ -1582,7 +1582,7 @@ namespace nux
       CHECKGL (glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL (glDrawArrays (GL_QUADS, 0, 4));
+    CHECKGL (glDrawArrays (GL_TRIANGLE_FAN, 0, 4));
 
     CHECKGL (glDisableVertexAttribArrayARB (VertexLocation));
 
@@ -1649,7 +1649,7 @@ namespace nux
       CHECKGL (glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL (glDrawArrays (GL_QUADS, 0, 4));
+    CHECKGL (glDrawArrays (GL_TRIANGLE_FAN, 0, 4));
 
     CHECKGL (glDisableVertexAttribArrayARB (VertexLocation));
 
@@ -1718,7 +1718,7 @@ namespace nux
       CHECKGL (glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL (glDrawArrays (GL_QUADS, 0, 4));
+    CHECKGL (glDrawArrays (GL_TRIANGLE_FAN, 0, 4));
 
     CHECKGL (glDisableVertexAttribArrayARB (VertexLocation));
 
@@ -1794,7 +1794,7 @@ namespace nux
       CHECKGL (glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL (glDrawArrays (GL_QUADS, 0, 4));
+    CHECKGL (glDrawArrays (GL_TRIANGLE_FAN, 0, 4));
 
     CHECKGL (glDisableVertexAttribArrayARB (VertexLocation));
 
@@ -1819,7 +1819,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -1874,11 +1874,12 @@ namespace nux
     return _offscreen_color_rt0;
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetComponentExponentiation (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color & c0,
-    Vector4 exponent,
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetComponentExponentiation (
     int x, int y,
-    int buffer_width, int buffer_height)
+    int buffer_width, int buffer_height,
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color & c0,
+    Vector4 exponent)
   {
     //     _offscreen_color_rt0.Release ();
     //     _offscreen_color_rt1.Release ();
@@ -1888,7 +1889,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -1935,10 +1936,11 @@ namespace nux
     return _offscreen_color_rt1;
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetAlphaTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color & c0,
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetAlphaTexture (
     int x, int y,
-    int buffer_width, int buffer_height)
+    int buffer_width, int buffer_height,
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color & c0)
   {
     //     _offscreen_color_rt0.Release ();
     //     _offscreen_color_rt1.Release ();
@@ -1948,7 +1950,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -1995,11 +1997,12 @@ namespace nux
     return _offscreen_color_rt1;
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetColorMatrixTexture (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color & c0,
-    Matrix4 color_matrix, Vector4 offset,
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetColorMatrixTexture (
     int x, int y,
-    int buffer_width, int buffer_height)
+    int buffer_width, int buffer_height,
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color & c0,
+    Matrix4 color_matrix, Vector4 offset)
   {
     //     _offscreen_color_rt0.Release ();
     //     _offscreen_color_rt1.Release ();
@@ -2009,7 +2012,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2056,10 +2059,11 @@ namespace nux
     return _offscreen_color_rt1;
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetLQBlur (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color& c0,
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetLQBlur (
     int x, int y,
-    int buffer_width, int buffer_height)
+    int buffer_width, int buffer_height,
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0)
   {
     //     _offscreen_color_rt0.Release ();
     //     _offscreen_color_rt1.Release ();
@@ -2069,7 +2073,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
