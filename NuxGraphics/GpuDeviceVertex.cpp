@@ -36,12 +36,12 @@ namespace nux
 
   static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-  IntrusiveSP<IOpenGLVertexBuffer> GpuDevice::CreateVertexBuffer (int Length,
+  ObjectPtr<IOpenGLVertexBuffer> GpuDevice::CreateVertexBuffer (int Length,
       VBO_USAGE Usage)
   {
     IOpenGLVertexBuffer *ptr;
     CreateVertexBuffer (Length, Usage, (IOpenGLVertexBuffer **) &ptr);
-    IntrusiveSP<IOpenGLVertexBuffer> h = IntrusiveSP<IOpenGLVertexBuffer> (ptr);
+    ObjectPtr<IOpenGLVertexBuffer> h = ObjectPtr<IOpenGLVertexBuffer> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -55,14 +55,14 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer (
+  ObjectPtr<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer (
     int Length
     , VBO_USAGE Usage    // Dynamic or WriteOnly
     , INDEX_FORMAT Format)
   {
     IOpenGLIndexBuffer *ptr;
     CreateIndexBuffer (Length, Usage, Format, (IOpenGLIndexBuffer **) &ptr);
-    IntrusiveSP<IOpenGLIndexBuffer> h = IntrusiveSP<IOpenGLIndexBuffer> (ptr);
+    ObjectPtr<IOpenGLIndexBuffer> h = ObjectPtr<IOpenGLIndexBuffer> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -77,11 +77,11 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLPixelBufferObject> GpuDevice::CreatePixelBufferObject (int Size, VBO_USAGE Usage)
+  ObjectPtr<IOpenGLPixelBufferObject> GpuDevice::CreatePixelBufferObject (int Size, VBO_USAGE Usage)
   {
     IOpenGLPixelBufferObject *ptr;
     CreatePixelBufferObject (Size, Usage, (IOpenGLPixelBufferObject **) &ptr);
-    IntrusiveSP<IOpenGLPixelBufferObject> h = IntrusiveSP<IOpenGLPixelBufferObject> (ptr);
+    ObjectPtr<IOpenGLPixelBufferObject> h = ObjectPtr<IOpenGLPixelBufferObject> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -94,12 +94,12 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLVertexDeclaration> GpuDevice::CreateVertexDeclaration (
+  ObjectPtr<IOpenGLVertexDeclaration> GpuDevice::CreateVertexDeclaration (
     const VERTEXELEMENT *pVertexElements)
   {
     IOpenGLVertexDeclaration *ptr;
     CreateVertexDeclaration (pVertexElements, (IOpenGLVertexDeclaration **) &ptr);
-    IntrusiveSP<IOpenGLVertexDeclaration> h = IntrusiveSP<IOpenGLVertexDeclaration> (ptr);
+    ObjectPtr<IOpenGLVertexDeclaration> h = ObjectPtr<IOpenGLVertexDeclaration> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -122,8 +122,8 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
   }
 
-  int GpuDevice::DrawIndexedPrimitive (IntrusiveSP<IOpenGLIndexBuffer> IndexBuffer,
-      IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
+  int GpuDevice::DrawIndexedPrimitive (ObjectPtr<IOpenGLIndexBuffer> IndexBuffer,
+      ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
       PRIMITIVE_TYPE PrimitiveType,
       int BaseVertexIndex,
       int MinIndex,
@@ -258,7 +258,7 @@ namespace nux
 
 
 // Draw Primitive without index buffer
-  int GpuDevice::DrawPrimitive (IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
+  int GpuDevice::DrawPrimitive (ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
                                       PRIMITIVE_TYPE PrimitiveType,
                                       unsigned vtx_start_,
                                       unsigned PrimitiveCount)
@@ -389,7 +389,7 @@ namespace nux
   }
 
 // Draw Primitive without index buffer, and use a user pointer for the source of the stream.
-  int GpuDevice::DrawPrimitiveUP (IntrusiveSP<IOpenGLVertexDeclaration> VertexDeclaration,
+  int GpuDevice::DrawPrimitiveUP (ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
                                         PRIMITIVE_TYPE PrimitiveType,
                                         unsigned int PrimitiveCount,
                                         const void *pVertexStreamZeroData,
@@ -522,7 +522,7 @@ namespace nux
     CHECKGL ( glDisableClientState (GL_COLOR_ARRAY) );
   }
 
-  void GpuDevice::DrawTextureQuad_FixPipe (IntrusiveSP<IOpenGLTexture2D> texture, int x, int y, int width, int height,
+  void GpuDevice::DrawTextureQuad_FixPipe (ObjectPtr<IOpenGLTexture2D> texture, int x, int y, int width, int height,
       FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1)
   {
 //    DirectX Matrix
@@ -614,7 +614,7 @@ namespace nux
 
   int GpuDevice::SetStreamSource (
     unsigned int StreamNumber,
-    IntrusiveSP<IOpenGLVertexBuffer> pStreamData,
+    ObjectPtr<IOpenGLVertexBuffer> pStreamData,
     unsigned int OffsetInBytes,
     unsigned int Stride,
     unsigned int NumComponent,

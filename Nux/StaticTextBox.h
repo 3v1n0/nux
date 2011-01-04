@@ -95,7 +95,7 @@ namespace nux
     //  SIGNALS    //
     /////////////////
 
-    virtual void SetFont (IntrusiveSP<FontTexture> Font);
+    virtual void SetFont (ObjectPtr<FontTexture> Font);
   protected:
     void AdjustMinWidthToMatchText();
 

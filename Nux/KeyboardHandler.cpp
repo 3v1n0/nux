@@ -168,8 +168,8 @@ namespace nux
 
     for (t_u32 i = 0; i < StrLength; i++)
     {
-      t_u32 cw0 = GetFont()->GetCharWidth (m_textline[i]);
-      t_u32 cw1 = GetFont()->GetCharWidth (m_textline[i+1]);
+      t_u32 cw0 = GetFont ()->GetCharWidth (m_textline[i]);
+      t_u32 cw1 = GetFont ()->GetCharWidth (m_textline[i+1]);
       {
         if (total == x)
         {
@@ -214,7 +214,7 @@ namespace nux
     {
       if (m_mouse_inside_text_area)
       {
-        while (m_caret && (GetFont()->GetCharStringWidth (m_textline.GetTCharPtr(), m_caret) + m_text_positionx > 0) )
+        while (m_caret && (GetFont ()->GetCharStringWidth (m_textline.GetTCharPtr(), m_caret) + m_text_positionx > 0) )
         {
           --m_caret;
           //nuxDebugMsg(TEXT("Group Add: %c"), m_textline[m_caret]);
@@ -236,7 +236,7 @@ namespace nux
     {
       if (m_mouse_inside_text_area)
       {
-        while ( (m_caret != StrLength) && (GetFont()->GetCharStringWidth (m_textline.GetTCharPtr(), m_caret) + m_text_positionx < geo.GetWidth() ) )
+        while ( (m_caret != StrLength) && (GetFont ()->GetCharStringWidth (m_textline.GetTCharPtr(), m_caret) + m_text_positionx < geo.GetWidth() ) )
         {
           ++m_caret;
           //nuxDebugMsg(TEXT("Group Add: %c"), m_textline[m_caret-1]);
@@ -690,7 +690,7 @@ namespace nux
     }
     else if (virtual_code == NUX_KP_END)
     {
-      t_u32 str_width = GetFont()->GetStringWidth (m_textline.GetTCharPtr() );
+      t_u32 str_width = GetFont ()->GetStringWidth (m_textline.GetTCharPtr() );
 
       if (str_width + s_cursor_width > (t_u32) m_clip_region.GetWidth() )
         m_text_positionx = m_clip_region.GetWidth() - (str_width + s_cursor_width);
@@ -714,7 +714,7 @@ namespace nux
 
   void BaseKeyboardHandler::AdjustCursorAndTextPosition()
   {
-    t_s32 str_width = GetFont()->GetStringWidth (m_textline.GetTCharPtr() );
+    t_s32 str_width = GetFont ()->GetStringWidth (m_textline.GetTCharPtr() );
     NString temp0;
 
     if (m_caret > 0)
@@ -733,9 +733,9 @@ namespace nux
 
     NString temp1 = m_textline.GetSubString (0, m_caret).GetTStringRef();
     NString temp2 = m_textline.GetSubString (0, m_caret + 1).GetTStringRef();
-    t_s32 str_width0 = GetFont()->GetStringWidth (temp0);
-    t_s32 str_width1 = GetFont()->GetStringWidth (temp1);
-    t_s32 str_width2 = GetFont()->GetStringWidth (temp2);
+    t_s32 str_width0 = GetFont ()->GetStringWidth (temp0);
+    t_s32 str_width1 = GetFont ()->GetStringWidth (temp1);
+    t_s32 str_width2 = GetFont ()->GetStringWidth (temp2);
 
 
     if ( (m_text_positionx + str_width1 + s_cursor_width) > m_clip_region.GetWidth() )
@@ -905,12 +905,12 @@ namespace nux
     return false;
   }
 
-  void BaseKeyboardHandler::SetFont (IntrusiveSP<FontTexture> Font)
+  void BaseKeyboardHandler::SetFont (ObjectPtr<FontTexture> Font)
   {
     m_Font = Font;
   }
 
-  IntrusiveSP<FontTexture> BaseKeyboardHandler::GetFont() const
+  ObjectPtr<FontTexture> BaseKeyboardHandler::GetFont () const
   {
     return m_Font;
   }

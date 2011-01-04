@@ -41,11 +41,11 @@ namespace nux
 
     HLayout *ButtonLayout (new HLayout (TEXT ("Dialog Buttons"), NUX_TRACKER_LOCATION) );
 
-    Button *OkButton (new Button (TEXT ("OK"), NUX_TRACKER_LOCATION) );
+    PushButton *OkButton (new PushButton (TEXT ("OK"), NUX_TRACKER_LOCATION) );
     OkButton->SetMinimumWidth (60);
     OkButton->SetMinimumHeight (20);
 
-    Button *CancelButton (new Button (TEXT ("Cancel"), NUX_TRACKER_LOCATION) );
+    PushButton *CancelButton (new PushButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION) );
     CancelButton->SetMinimumWidth (60);
     CancelButton->SetMinimumHeight (20);
 
@@ -70,7 +70,7 @@ namespace nux
     static_cast<WindowThread *> (thread)->SetWindowSize (MainLayout->GetBaseWidth(), MainLayout->GetBaseHeight() );
 
     // Call StopThreadMonitoring in case the dialog was close by clicking the window close button.
-    matrixeditorproxy->StopThreadMonitoring();
+    //matrixeditorproxy->StopThreadMonitoring();
     //delete CancelButton;
     //delete OkButton;
     //delete matrixeditor;
@@ -151,10 +151,10 @@ namespace nux
     mtx_row_layout[1]   = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
     mtx_row_layout[2]   = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
 
-    m_IdentityMtxBtn    = new Button (TEXT (""), NUX_TRACKER_LOCATION);
-    m_ZeroMtxBtn        = new Button (TEXT (""), NUX_TRACKER_LOCATION);
-    m_InverseMtxBtn     = new Button (TEXT (""), NUX_TRACKER_LOCATION);
-    m_NegateMtxBtn      = new Button (TEXT (""), NUX_TRACKER_LOCATION);
+    m_IdentityMtxBtn    = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_ZeroMtxBtn        = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_InverseMtxBtn     = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_NegateMtxBtn      = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
 
     m_IdentityMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvIdentityMatrixCmd) );
     m_ZeroMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvZeroMatrixCmd) );

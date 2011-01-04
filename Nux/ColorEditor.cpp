@@ -29,7 +29,7 @@
 #include "EditTextBox.h"
 #include "RadioButton.h"
 #include "RadioButtonGroup.h"
-#include "Button.h"
+#include "PushButton.h"
 #include "Layout.h"
 #include "ColorEditor.h"
 
@@ -52,11 +52,11 @@ namespace nux
 
     HLayout *ButtonLayout (new HLayout (TEXT ("Dialog Buttons"), NUX_TRACKER_LOCATION) );
 
-    Button *OkButton (new Button (TEXT ("OK"), NUX_TRACKER_LOCATION) );
+    PushButton *OkButton (new PushButton (TEXT ("OK"), NUX_TRACKER_LOCATION) );
     OkButton->SetMinimumWidth (60);
     OkButton->SetMinimumHeight (20);
 
-    Button *CancelButton (new Button (TEXT ("Cancel"), NUX_TRACKER_LOCATION) );
+    PushButton *CancelButton (new PushButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION) );
     CancelButton->SetMinimumWidth (60);
     CancelButton->SetMinimumHeight (20);
 
@@ -80,7 +80,7 @@ namespace nux
     static_cast<WindowThread *> (thread)->SetWindowSize (MainLayout->GetBaseWidth(), MainLayout->GetBaseHeight() );
 
     // Call StopThreadMonitoring in case the dialog was close by clicking the window close button.
-    coloreditorproxy->StopThreadMonitoring();
+    //coloreditorproxy->StopThreadMonitoring();
   }
 
   ColorDialogProxy::ColorDialogProxy (bool ModalWindow)
@@ -318,11 +318,11 @@ namespace nux
     ctrllayout->SetVerticalInternalMargin (2);
 
     //ctrllayout->AddView(new SpaceLayout(20,20,20,40), 1);
-    OkButton = new Button (TEXT ("OK"), NUX_TRACKER_LOCATION);
+    OkButton = new PushButton (TEXT ("OK"), NUX_TRACKER_LOCATION);
     OkButton->SetMinimumWidth (60);
     OkButton->SetMinimumHeight (20);
 
-    CancelButton = new Button (TEXT ("Cancel"), NUX_TRACKER_LOCATION);
+    CancelButton = new PushButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION);
     CancelButton->SetMinimumWidth (60);
     CancelButton->SetMinimumHeight (20);
 

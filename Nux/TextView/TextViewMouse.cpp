@@ -575,8 +575,8 @@ namespace nux
 //
   LONG TextView::InvalidateRange (t_u32 nStart, t_u32 nFinish)
   {
-    t_u32 start  = std::min (nStart, nFinish);
-    t_u32 finish = std::max (nStart, nFinish);
+    t_u32 start  = Min<int> (nStart, nFinish);
+    t_u32 finish = Max<int> (nStart, nFinish);
 
     int   ypos;
     Geometry  rect;

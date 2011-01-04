@@ -42,7 +42,7 @@ namespace nux
     void CacheShader();
     void SetBackgroundColor (float R, float G, float B, float A);
     void SetBackgroundColor (Color color);
-    void SetTextureFunction (IntrusiveSP<IOpenGLBaseTexture> device_texture);
+    void SetTextureFunction (ObjectPtr<IOpenGLBaseTexture> device_texture);
     void SetTransformMatrix (const Matrix4 &TransformMatrix)
     {
       m_TransformMatrix = TransformMatrix;
@@ -52,8 +52,8 @@ namespace nux
 
   private:
     float _R, _G, _B, _A;
-    IntrusiveSP<IOpenGLShaderProgram> sprog;
-    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmProg;
+    ObjectPtr<IOpenGLShaderProgram> sprog;
+    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmProg;
 
     float _ScreenOffsetX, _ScreenOffsetY;
     UINT ViewPortX;
@@ -61,7 +61,7 @@ namespace nux
     UINT ViewPortWidth;
     UINT ViewPortHeight;
     Matrix4 m_TransformMatrix;
-    IntrusiveSP<IOpenGLBaseTexture> m_device_texture;
+    ObjectPtr<IOpenGLBaseTexture> m_device_texture;
 
   private:
     TemplateQuadBuffer *m_QuadBuffer;

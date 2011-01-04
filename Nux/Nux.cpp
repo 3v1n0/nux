@@ -272,12 +272,12 @@ namespace nux
   }
 
 
-  IntrusiveSP<FontTexture> GetSysFont ()
+  ObjectPtr<FontTexture> GetSysFont ()
   {
     return GetGraphicsEngine ().GetFont ();
   }
 
-  IntrusiveSP<FontTexture> GetSysBoldFont ()
+  ObjectPtr<FontTexture> GetSysBoldFont ()
   {
     return GetGraphicsEngine ().GetBoldFont ();
   }

@@ -49,9 +49,9 @@ namespace nux
 
     if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
     {
-      m_FrameBufferObject = GetThreadGLDeviceFactory()->CreateFrameBufferObject();
-      m_MainColorRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
-      m_MainDepthRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
+      m_FrameBufferObject = GetGpuDevice()->CreateFrameBufferObject();
+      m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
+      m_MainDepthRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
     }
   }
 
@@ -104,13 +104,13 @@ namespace nux
       m_ctx.width_clipregion  = C.GetWidth();
       m_ctx.height_clipregion = C.GetHeight();
 
-      IntrusiveSP<IOpenGLFrameBufferObject> prevFBO = GetThreadGLDeviceFactory()->GetCurrentFrameBufferObject();
+      ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice()->GetCurrentFrameBufferObject();
 
       if ( (m_FrameBufferObject->GetWidth() != buffer_width) || (m_FrameBufferObject->GetHeight() != buffer_height) )
       {
         m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-        m_MainColorRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        m_MainDepthRT = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+        m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+        m_MainDepthRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
       }
 
       m_FrameBufferObject->SetRenderTarget (0, m_MainColorRT->GetSurfaceLevel (0) );
@@ -140,7 +140,7 @@ namespace nux
         texxform0.uwrap = TEXWRAP_CLAMP;
         texxform0.vwrap = TEXWRAP_CLAMP;
         texxform0.FlipVCoord (true);
-        GetThreadGraphicsContext()->QRP_GLSL_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (Color::White) );
+        GetThreadGraphicsContext()->QRP_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (Color::White) );
       }
 
       // After the client area is drawn reset the texture environment so that the color is used for next drawing.
@@ -301,7 +301,7 @@ namespace nux
       application->RequestRedraw();
       //GetWindowCompositor().AddToDrawList(this);
     }
-    m_NeedRedraw = true;
+    _need_redraw = true;
   }
 
 }

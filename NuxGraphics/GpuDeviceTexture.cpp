@@ -33,7 +33,7 @@
 
 namespace nux
 {
-  IntrusiveSP<IOpenGLTexture2D> GpuDevice::CreateTexture (
+  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture (
     int Width
     , int Height
     , int Levels
@@ -41,7 +41,7 @@ namespace nux
   {
     IOpenGLTexture2D *ptr;
     CreateTexture (Width, Height, Levels, PixelFormat, (IOpenGLTexture2D **) &ptr);
-    IntrusiveSP<IOpenGLTexture2D> h = IntrusiveSP<IOpenGLTexture2D> (ptr);
+    ObjectPtr<IOpenGLTexture2D> h = ObjectPtr<IOpenGLTexture2D> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -97,7 +97,7 @@ namespace nux
     return 1;
   }
 
-  IntrusiveSP<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture (
+  ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture (
     int Width
     , int Height
     , int Levels
@@ -105,7 +105,7 @@ namespace nux
   {
     IOpenGLRectangleTexture *ptr;
     CreateRectangleTexture (Width, Height, Levels, PixelFormat, (IOpenGLRectangleTexture **) &ptr);
-    IntrusiveSP<IOpenGLRectangleTexture> h = IntrusiveSP<IOpenGLRectangleTexture> (ptr);
+    ObjectPtr<IOpenGLRectangleTexture> h = ObjectPtr<IOpenGLRectangleTexture> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -164,14 +164,14 @@ namespace nux
     return 1;
   }
 
-  IntrusiveSP<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture (
+  ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture (
     int EdgeLength
     , int Levels
     , BitmapFormat PixelFormat)
   {
     IOpenGLCubeTexture *ptr;
     CreateCubeTexture (EdgeLength, Levels, PixelFormat, (IOpenGLCubeTexture **) &ptr);
-    IntrusiveSP<IOpenGLCubeTexture> h = IntrusiveSP<IOpenGLCubeTexture> (ptr);
+    ObjectPtr<IOpenGLCubeTexture> h = ObjectPtr<IOpenGLCubeTexture> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -210,7 +210,7 @@ namespace nux
     return 1;
   }
 
-  IntrusiveSP<IOpenGLVolumeTexture> GpuDevice::CreateVolumeTexture (
+  ObjectPtr<IOpenGLVolumeTexture> GpuDevice::CreateVolumeTexture (
     int Width
     , int Height
     , int Depth
@@ -219,7 +219,7 @@ namespace nux
   {
     IOpenGLVolumeTexture *ptr;
     CreateVolumeTexture (Width, Height, Depth, Levels, PixelFormat, (IOpenGLVolumeTexture **) &ptr);
-    IntrusiveSP<IOpenGLVolumeTexture> h = IntrusiveSP<IOpenGLVolumeTexture> (ptr);
+    ObjectPtr<IOpenGLVolumeTexture> h = ObjectPtr<IOpenGLVolumeTexture> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -260,7 +260,7 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLAnimatedTexture> GpuDevice::CreateAnimatedTexture (
+  ObjectPtr<IOpenGLAnimatedTexture> GpuDevice::CreateAnimatedTexture (
     int Width
     , int Height
     , int Depth
@@ -268,7 +268,7 @@ namespace nux
   {
     IOpenGLAnimatedTexture *ptr;
     CreateAnimatedTexture (Width, Height, Depth, PixelFormat, (IOpenGLAnimatedTexture **) &ptr);
-    IntrusiveSP<IOpenGLAnimatedTexture> h = IntrusiveSP<IOpenGLAnimatedTexture> (ptr);
+    ObjectPtr<IOpenGLAnimatedTexture> h = ObjectPtr<IOpenGLAnimatedTexture> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -284,11 +284,11 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLQuery> GpuDevice::CreateQuery (QUERY_TYPE Type)
+  ObjectPtr<IOpenGLQuery> GpuDevice::CreateQuery (QUERY_TYPE Type)
   {
     IOpenGLQuery *ptr;
     CreateQuery (Type, (IOpenGLQuery **) &ptr);
-    IntrusiveSP<IOpenGLQuery> h = IntrusiveSP<IOpenGLQuery> (ptr);
+    ObjectPtr<IOpenGLQuery> h = ObjectPtr<IOpenGLQuery> (ptr);
     ptr->UnReference ();
     return h;
   }

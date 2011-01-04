@@ -25,7 +25,6 @@
 
 #include "Validator.h"
 
-
 namespace nux
 {
 
@@ -40,15 +39,18 @@ namespace nux
 
     virtual Validator *Clone()  const; //Virtual Constructor Idiom
 
-    double Validate (double d) const;
-    virtual Validator::State Validate (const TCHAR *str) const;
+    /*!
+        @return The input value clamped to the range [m_Minimum, m_Maximum].
+    */
+    double GetClampedValue (double d) const;
+
     virtual void Alternative (const TCHAR *str);
 
     void SetDecimals (int dec);
     void SetMinimum (double value);
-    double GetMinimum() const;
+    double GetMinimum () const;
     void SetMaximum (double value);
-    double GetMaximum() const;
+    double GetMaximum () const;
 
     NString ToString (double d);
     double ToDouble (const TCHAR *str);
@@ -56,7 +58,6 @@ namespace nux
   private:
     double m_Minimum;
     double m_Maximum;
-    GRegex *m_reg_exp;
     int m_Decimals;
   };
 

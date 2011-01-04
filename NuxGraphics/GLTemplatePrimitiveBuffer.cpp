@@ -155,10 +155,10 @@ namespace nux
 
     m_NumVertex = m_NumQuad * 6;
 
-    m_IB = IntrusiveSP<IOpenGLIndexBuffer> (0);;
+    m_IB = ObjectPtr<IOpenGLIndexBuffer> (0);;
 
     for (int i = 0; i < 16; i++)
-      VertexAttributeBuffer[i] = IntrusiveSP<IOpenGLVertexBuffer> (0);
+      VertexAttributeBuffer[i] = ObjectPtr<IOpenGLVertexBuffer> (0);
 
     FormatQuads();
   }
@@ -308,7 +308,7 @@ namespace nux
     nuxAssert (AttributeIndex < 16);
 
     // Destroy the vertex buffer by setting it to NULL;
-    VertexAttributeBuffer[AttributeIndex] = IntrusiveSP<IOpenGLVertexBuffer> (0);;
+    VertexAttributeBuffer[AttributeIndex] = ObjectPtr<IOpenGLVertexBuffer> (0);;
 
     VertexAttributeBuffer[AttributeIndex] = m_pDeviceFactory->CreateVertexBuffer (m_NumQuad * 4 * sizeof (Vector4), VBO_USAGE_DYNAMIC);
 
@@ -352,7 +352,7 @@ namespace nux
     nuxAssert (AttributeIndex < 16);
 
     // Destroy the vertex buffer by setting it to NULL;
-    VertexAttributeBuffer[AttributeIndex] = IntrusiveSP<IOpenGLVertexBuffer> (0);;
+    VertexAttributeBuffer[AttributeIndex] = ObjectPtr<IOpenGLVertexBuffer> (0);;
 
     VertexAttributeBuffer[AttributeIndex] = m_pDeviceFactory->CreateVertexBuffer (m_NumQuad * 4 * sizeof (Vector4), VBO_USAGE_DYNAMIC);
 

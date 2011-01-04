@@ -156,8 +156,8 @@ namespace nux
   {
     int margin = LeftMarginWidth();
 
-    m_nWindowLines   = std::min<int> ( (unsigned) height		/ m_nLineHeight, m_nLineCount);
-    m_nWindowColumns = std::min<int> ( (width - margin)		/ m_nFontWidth,  m_nLongestLine);
+    m_nWindowLines   = Min<int> ( (unsigned) height		/ m_nLineHeight, m_nLineCount);
+    m_nWindowColumns = Min<int> ( (width - margin)		/ m_nFontWidth,  m_nLongestLine);
 
     if (PinToBottomCorner() )
     {
@@ -192,13 +192,13 @@ namespace nux
     // scroll up
     if (dy < 0)
     {
-      dy = - (int) std::min (-dy, m_nVScrollPos);
+      dy = - (int) Min<int> (-dy, m_nVScrollPos);
       clip.top = -dy * m_nLineHeight;
     }
     // scroll down
     else if (dy > 0)
     {
-      dy = std::min (dy, m_nVScrollMax - m_nVScrollPos);
+      dy = Min<int> (dy, m_nVScrollMax - m_nVScrollPos);
       clip.bottom = (m_nWindowLines - dy) * m_nLineHeight;
     }
 
@@ -206,13 +206,13 @@ namespace nux
     // scroll left
     if (dx < 0)
     {
-      dx = - (int) std::min (-dx, m_nHScrollPos);
+      dx = - (int) Min<int> (-dx, m_nHScrollPos);
       clip.left = -dx * m_nFontWidth * 4;
     }
     // scroll right
     else if (dx > 0)
     {
-      dx = std::min (dx, m_nHScrollMax - m_nHScrollPos);
+      dx = Min<int> (dx, m_nHScrollMax - m_nHScrollPos);
       clip.right = (m_nWindowColumns - dx - 4) * m_nFontWidth ;
     }
 

@@ -34,6 +34,11 @@
 #include "OpenEXR.h"
 #include "NITX.h"
 #include "NAnimatedTexture.h"
+#include "GdkGraphics.h"
+
+#if defined (NUX_OS_WINDOWS)
+  #include "GdiImageLoader.h"
+#endif
 
 namespace nux
 {
@@ -77,38 +82,74 @@ namespace nux
       return 0;
     }
 
-    NBitmapData *BitmapData = 0;
-    BitmapData = read_tga_file (filename);
+//     GdkGraphics *gdkgraphics = new GdkGraphics ();
+//     if (gdkgraphics->LoadImage (filename))
+//     {
+//       return gdkgraphics->GetBitmap ();
+//     }
 
+    NBitmapData *BitmapData = 0;
+
+#if defined(NUX_OS_WINDOWS)
+    BitmapData = GdiLoadImageFile (filename);
+    if (BitmapData) return BitmapData;
+
+    BitmapData = read_tga_file (filename);
+    if (BitmapData) return BitmapData;
+
+//     BitmapData = read_bmp_file (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = read_png_rgba (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = read_png_rgb (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = Load_DDS_File (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = LoadRGBE (filename);
+//     if (BitmapData) return BitmapData;
+
+    BitmapData = LoadAnimatedTextureFile (filename);
+    if (BitmapData) return BitmapData;
+    
+//     BitmapData = LoadITXFile (filename);
+//     if (BitmapData) return BitmapData;
+
+#elif defined(NUX_OS_LINUX)
+//     GdkGraphics *gdkgraphics = new GdkGraphics ();
+//     if (gdkgraphics->LoadImage (filename))
+//     {
+//       return gdkgraphics->GetBitmap ();
+//     }
+
+    BitmapData = read_tga_file (filename);
     if (BitmapData) return BitmapData;
 
     BitmapData = read_bmp_file (filename);
-
     if (BitmapData) return BitmapData;
 
     BitmapData = read_png_rgba (filename);
-
     if (BitmapData) return BitmapData;
 
     BitmapData = read_png_rgb (filename);
-
     if (BitmapData) return BitmapData;
 
     BitmapData = Load_DDS_File (filename);
-
     if (BitmapData) return BitmapData;
 
     BitmapData = LoadRGBE (filename);
-
     if (BitmapData) return BitmapData;
 
     BitmapData = LoadAnimatedTextureFile (filename);
-
     if (BitmapData) return BitmapData;
 
     BitmapData = LoadITXFile (filename);
-
     if (BitmapData) return BitmapData;
+
+#endif
 
 #ifdef NUX_OPENEXR_SUPPORT
     BitmapData = Load_OpenEXR (filename);

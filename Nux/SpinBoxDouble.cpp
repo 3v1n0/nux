@@ -154,12 +154,12 @@ namespace nux
 
   void SpinBoxDouble::SetValue (double value)
   {
-    m_Value = m_DoubleValidator.Validate (value);
+    m_Value = m_DoubleValidator.GetClampedValue (value);
 //    if(m_Value < m_DoubleValidator.GetMinimum())
 //        m_Value = m_DoubleValidator.GetMinimum();
 //    if(m_Value > m_DoubleValidator.GetMaximum())
 //        m_Value = m_DoubleValidator.GetMaximum();
-    m_EditLine->SetText (NString::Printf ("%.3f", m_Value) );
+    m_EditLine->SetText (NString::Printf ("%.3f", m_Value));
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
     NeedRedraw();
@@ -199,7 +199,7 @@ namespace nux
   {
     m_DoubleValidator.SetMinimum (MinValue);
     m_DoubleValidator.SetMaximum (Maxvalue);
-    m_Value = m_DoubleValidator.Validate (m_Value);
+    m_Value = m_DoubleValidator.GetClampedValue (m_Value);
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
     NeedRedraw();
@@ -248,7 +248,7 @@ namespace nux
     double ret = 0;
     ret = CharToDouble (m_EditLine->GetCleanText().GetTCharPtr() );
     {
-      m_Value = m_DoubleValidator.Validate (ret);
+      m_Value = m_DoubleValidator.GetClampedValue (ret);
       m_EditLine->SetText (NString::Printf ("%.3f", m_Value) );
       sigValueChanged.emit (this);
       sigValue.emit (m_Value);

@@ -52,9 +52,9 @@ namespace nux
   private:
     FLOAT _R, _G, _B, _A;
 
-    IntrusiveSP<IOpenGLVertexShader> vs;
-    IntrusiveSP<IOpenGLPixelShader> ps;
-    IntrusiveSP<IOpenGLShaderProgram> sprog;
+    ObjectPtr<IOpenGLVertexShader> vs;
+    ObjectPtr<IOpenGLPixelShader> ps;
+    ObjectPtr<IOpenGLShaderProgram> sprog;
     Matrix4 m_TransformMatrix;
     TemplateQuadBuffer *m_QuadBuffer;
   };

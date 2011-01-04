@@ -41,8 +41,6 @@ namespace nux
     virtual void HLayoutManagement (t_s32 width, t_s32 height);
     virtual t_u32 getMaxStretchFactor();
 
-    virtual void Draw();
-
     virtual void GetCompositeList (std::list<Area *> *ViewList);
 
     //! Compute the how elements are spread inside the layout

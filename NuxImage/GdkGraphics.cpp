@@ -32,7 +32,7 @@ namespace nux
     _gdkpixbuf_ptr = 0;
   }
   
-  GdkGraphics::GdkGraphics (TCHAR* Filename)
+  GdkGraphics::GdkGraphics (const TCHAR* Filename)
   {
     _gdkpixbuf_ptr = 0;
   }
@@ -48,7 +48,7 @@ namespace nux
 
   }
 
-  bool GdkGraphics::LoadImage (TCHAR* Filename)
+  bool GdkGraphics::LoadImage (const TCHAR* Filename)
   {
     if (_gdkpixbuf_ptr)
     {
@@ -57,7 +57,7 @@ namespace nux
     }
 
     GError *error = 0;
-    _gdkpixbuf_ptr = gdk_pixbuf_new_from_file (Filename, &error);
+    _gdkpixbuf_ptr = gdk_pixbuf_new_from_file (Filename, 0);
 
     if (_gdkpixbuf_ptr == 0)
     {

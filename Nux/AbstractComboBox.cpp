@@ -77,7 +77,7 @@ namespace nux
     Geometry base = GetGeometry();
     GetPainter().PaintBackground (GfxContext, base);
     GetPainter().PaintShape (GfxContext, base, m_sCOMBO_COLOR,  eSHAPE_CORNER_ROUND4);
-    GetPainter().PaintTextLineStatic (GfxContext, GetFont(), m_ComboArea->GetGeometry(), m_ComboArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), m_ComboArea->GetGeometry(), m_ComboArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
     Geometry button_geo = m_Button->GetGeometry();
     button_geo.OffsetSize (-5, -2);
     button_geo.OffsetPosition (+4, +1);

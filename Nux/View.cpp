@@ -33,12 +33,12 @@ namespace nux
   View::View (NUX_FILE_LINE_DECL)
     :   InputArea (NUX_FILE_LINE_PARAM)
   {
+    _font = GetSysFont ();
+    _is_view_active     = true; // The view is active by default
     m_CompositionLayout = 0;
-    m_NeedRedraw        = false;
+    _need_redraw        = false;
     m_UseStyleDrawing   = true;
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
-    m_IsEnabled         = true;
-    m_font              = GetSysFont();
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -193,21 +193,21 @@ namespace nux
 
   void View::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    m_IsFullRedraw = false;
+    _full_redraw = false;
 
     if (force_draw)
     {
-      m_NeedRedraw = true;
-      m_IsFullRedraw = true;
+      _need_redraw = true;
+      _full_redraw = true;
       Draw (GfxContext, force_draw);
       DrawContent (GfxContext, force_draw);
       PostDraw (GfxContext, force_draw);
     }
     else
     {
-      if (m_NeedRedraw)
+      if (_need_redraw)
       {
-        m_IsFullRedraw = true;
+        _full_redraw = true;
         Draw (GfxContext, false);
         DrawContent (GfxContext, false);
         PostDraw (GfxContext, false);
@@ -219,8 +219,8 @@ namespace nux
       }
     }
 
-    m_NeedRedraw = false;
-    m_IsFullRedraw = false;
+    _need_redraw = false;
+    _full_redraw = false;
   }
 
   void View::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -243,7 +243,7 @@ namespace nux
         application->RequestRedraw();
         //GetWindowCompositor().AddToDrawList(this);
     }
-    m_NeedRedraw = true;
+    _need_redraw = true;
   }
 
   void View::NeedSoftRedraw()
@@ -255,49 +255,26 @@ namespace nux
         application->AddToDrawList(this);
         application->RequestRedraw();
     }
-    //m_NeedRedraw = false;
+    //_need_redraw = false;
   }
 
   bool View::IsRedrawNeeded()
   {
-    return m_NeedRedraw;
+    return _need_redraw;
+  }
+
+  bool View::IsFullRedraw() const
+  {
+    return _full_redraw;
   }
 
   void View::DoneRedraw()
   {
-    m_NeedRedraw = false;
+    _need_redraw = false;
 
     if (m_CompositionLayout)
     {
       m_CompositionLayout->DoneRedraw();
-    }
-  }
-
-  void View::DrawLayout()
-  {
-    if (m_CompositionLayout)
-    {
-      m_CompositionLayout->Draw();
-    }
-    else
-    {
-      int x, y, width, height;
-      x = GetBaseX();
-      y = GetBaseY();
-      width = GetBaseWidth();
-      height = GetBaseHeight();
-
-      glColor3f (0.0f, 1.0f, 0.0f);
-      glDisable (GL_TEXTURE_2D);
-      glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
-      glBegin (GL_QUADS);
-      glVertex3i (x,  y, 1);
-      glVertex3i (x + width,  y, 1);
-      glVertex3i (x + width,  y + height, 1);
-      glVertex3i (x,  y + height, 1);
-      glEnd();
-      glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-      glEnable (GL_TEXTURE_2D);
     }
   }
 
@@ -365,14 +342,14 @@ namespace nux
     PostResizeGeometry();
   }
 
-  void View::SetFont (IntrusiveSP<FontTexture> Font)
+  void View::SetFont (ObjectPtr<FontTexture> font)
   {
-    m_font = Font;
+    _font = font;
   }
 
-  IntrusiveSP<FontTexture> View::GetFont()
+  ObjectPtr<FontTexture> View::GetFont ()
   {
-    return m_font;
+    return _font;
   }
 
   void View::SetTextColor (const Color &color)
@@ -385,20 +362,19 @@ namespace nux
     return m_TextColor;
   }
 
-  void View::DisableWidget()
+  void View::ActivateView ()
   {
-    m_IsEnabled = false;
+    _is_view_active = false;
   }
 
-  void View::EnableWidget()
+  void View::DeactivateView ()
   {
-    m_IsEnabled = true;
+    _is_view_active = true;
   }
 
-  bool View::IsWidgetEnabled()
+  bool View::IsViewActive () const
   {
-    return m_IsEnabled;
+    return _is_view_active;
   }
-
 
 }

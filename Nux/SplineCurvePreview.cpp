@@ -84,7 +84,7 @@ namespace nux
     static_cast<WindowThread *> (thread)->SetWindowSize (MainLayout->GetBaseWidth(), MainLayout->GetBaseHeight() );
 
     // Call StopThreadMonitoring in case the dialog was close by clicking the window close button.
-    splinecurveproxy->StopThreadMonitoring();
+    //splinecurveproxy->StopThreadMonitoring();
   }
 
   SplineCurveDialogProxy::SplineCurveDialogProxy (bool ModalWindow)
@@ -174,7 +174,7 @@ namespace nux
     m_control_knot.Reset();
     m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
 
-    Texture = GetThreadGLDeviceFactory()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
+    Texture = GetGpuDevice()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     m_DialogThreadProxy = new SplineCurveDialogProxy (true);
@@ -183,7 +183,7 @@ namespace nux
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 4, 4);
-    BaseTexture* BackgroundTexture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    BaseTexture* BackgroundTexture = GetGpuDevice()->CreateSystemCapableTexture ();
     BackgroundTexture->Update (&image);
 
     TexCoordXForm texxform;

@@ -108,7 +108,7 @@ namespace nux
     //  GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Color::White, eAllCorners);
     //  GetPainter().PopBackground();
     //}
-    GetPainter().PaintTextLineStatic (GfxContext, GetFont(), base, GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), base, GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
   }
 
   void Button::DrawContent (GraphicsEngine &GfxContext, bool force_draw)

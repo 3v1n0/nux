@@ -73,13 +73,13 @@ namespace nux
       if (m_bDrawBackground)
       {
         GetPainter().PushDrawLayer (GfxContext, base, m_Background);
-        GetPainter().PaintTextLineStatic (GfxContext, GetFont(), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
+        GetPainter().PaintTextLineStatic (GfxContext, GetFont (), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
         GetPainter().PopBackground();
       }
       else
       {
         //GetPainter().PaintBackground(GfxContext, base);
-        GetPainter().PaintTextLineStatic (GfxContext, GetFont(), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
+        GetPainter().PaintTextLineStatic (GfxContext, GetFont (), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
       }
 
       GfxContext.PopClippingRectangle();
@@ -142,10 +142,10 @@ namespace nux
     if (m_Text.Size() == 0)
       return;
 
-    SetMinimumWidth (/*4 + */GetFont()->GetStringWidth (m_Text.GetTStringRef() ) );
+    SetMinimumWidth (/*4 + */GetFont ()->GetStringWidth (m_Text.GetTStringRef() ) );
   }
 
-  void StaticTextBox::SetFont (IntrusiveSP<FontTexture> Font)
+  void StaticTextBox::SetFont (ObjectPtr<FontTexture> Font)
   {
     View::SetFont (Font);
 

@@ -190,6 +190,8 @@ namespace nux
 
     void ShowWindow();
     void HideWindow();
+    bool IsWindowVisible ();
+
     void EnterMaximizeWindow();
     void ExitMaximizeWindow();
 
@@ -227,8 +229,8 @@ namespace nux
 
     void GetDesktopSize (int &w, int &h);
     void GetWindowSize (int &w, int &h);
-    unsigned int GetWindowWidth();
-    unsigned int GetWindowHeight();
+    int GetWindowWidth();
+    int GetWindowHeight();
 
     bool HasFrameBufferSupport();
     /*void SetWindowCursor(HCURSOR cursor);

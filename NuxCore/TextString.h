@@ -668,7 +668,7 @@ namespace nux
     t_size Length() const;
     t_size Size() const;
     void Clear();
-    bool IsEmpty();
+    bool IsEmpty() const;
 
     void Erase (t_size Pos, t_size count);
     NString &Insert (t_size Pos, const TCHAR *Ptr);
@@ -813,13 +813,13 @@ namespace nux
     /*!
         @return The first character or 0 if the string is empty.
     */
-    TCHAR GetFirstChar();
+    TCHAR GetFirstChar() const;
 
     //! Get last character.
     /*!
         @return The last character or 0 if the string is empty.
     */
-    TCHAR GetLastChar();
+    TCHAR GetLastChar() const;
 
     const TCHAR *operator () () const;
     const TCHAR *operator * () const;
@@ -863,6 +863,11 @@ namespace nux
 
     friend tostream &operator << (tostream &o, const NString &s);
 
+    /*!
+        Behave like printf. Use an internal buffer of 1024 characters. Do not use this function if you are expecting
+        the result to be more that 1024-1 characters.
+        @return A string with formated arguments in a NString.
+    */
     VARARG_DECL ( static NString, static NString, return, Printf, VARARG_NONE, const TCHAR *, VARARG_NONE, VARARG_NONE );
 
   public:

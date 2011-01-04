@@ -320,11 +320,11 @@ namespace nux
 #define inlUTF16ToUTF8(s) (const char*)nux::NUTF8(s)
 #define inlUTF8ToUTF16(s) (const wchar_t*)nux::NUTF16(s)
 
-#define ANSICHAR_TO_UNICHAR(str) (UNICHAR*)nux::NCharacterConversion<UNICHAR, ANSICHAR, nux::AnsicharToUnicharConvertion>((const ANSICHAR*)str)
-#define UNICHAR_TO_ANSICHAR(str) (ANSICHAR*)nux::NCharacterConversion<ANSICHAR, UNICHAR, nux::UnicharToAnsicharConvertion>((const UNICHAR*)str)
-#define ANSICHAR_TO_TCHAR(str) (UNICHAR*)nux::NCharacterConversion <TCHAR, ANSICHAR, nux::AnsiToTCharConversion>((const ANSICHAR*)str)
-#define TCHAR_TO_ANSICHAR(str) (ANSICHAR*)nux::NCharacterConversion <ANSICHAR, TCHAR, nux::TCharToAnsiConvertion>((const TCHAR*)str)
-
+#define ANSICHAR_TO_UNICHAR(str)  (UNICHAR*)  nux::NCharacterConversion <UNICHAR,   ANSICHAR, nux::AnsicharToUnicharConvertion>((const ANSICHAR*)str)
+#define UNICHAR_TO_ANSICHAR(str)  (ANSICHAR*) nux::NCharacterConversion <ANSICHAR,  UNICHAR,  nux::UnicharToAnsicharConvertion>((const UNICHAR*)str)
+#define ANSICHAR_TO_TCHAR(str)    (UNICHAR*)  nux::NCharacterConversion <TCHAR,     ANSICHAR, nux::AnsiToTCharConversion>((const ANSICHAR*)str)
+#define TCHAR_TO_ANSICHAR(str)    (ANSICHAR*) nux::NCharacterConversion <ANSICHAR,  TCHAR,    nux::TCharToAnsiConvertion>((const TCHAR*)str)
+#define TCHAR_TO_UNICHAR(str)     (UNICHAR*)  nux::NCharacterConversion <UNICHAR,   TCHAR,    nux::TCharToUnicharConvertion>((const TCHAR*)str)
 
 #define NUX_WIN32_LINE_TERMINATOR   TEXT("\r\n")
 #define NUX_UNIX_LINE_TERMINATOR    TEXT("\n")

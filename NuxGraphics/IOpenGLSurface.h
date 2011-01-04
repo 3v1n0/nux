@@ -90,6 +90,8 @@ namespace nux
       return OGL_OK;
     }
 
+    void CopyRenderTarget (int x, int y, int width, int height);
+
   private:
     virtual ~IOpenGLSurface();
 
@@ -163,7 +165,7 @@ namespace nux
     friend class IOpenGLCubeTexture;
     friend class IOpenGLVolumeTexture;
     friend class IOpenGLAnimatedTexture;
-    friend class IntrusiveSP<IOpenGLSurface>;
+    friend class ObjectPtr<IOpenGLSurface>;
   };
 
 }

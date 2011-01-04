@@ -174,7 +174,7 @@ namespace nux
         }
         else
         {
-          GetPainter().PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic (GfxContext, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
         }
       }
       else
@@ -191,7 +191,7 @@ namespace nux
         }
         else
         {
-          GetPainter().PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic (GfxContext, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
         }
       }
     }
@@ -214,7 +214,7 @@ namespace nux
       }
       else
       {
-        GetPainter().PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+        GetPainter().PaintTextLineStatic (GfxContext, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
       }
     }
 
@@ -260,7 +260,7 @@ namespace nux
     //menubar_item->area->SetMinimumSize(DEFAULT_WIDGET_WIDTH, 40);
     if (!icon)
     {
-      menubar_item->area->SetMinimumSize (Max (MENU_MINIMUM_WIDTH, (t_u32) (10 + GetFont()->GetStringWidth (MenuLabel) ) ), Max (MENU_MINIMUM_WIDTH, (t_u32) 16) );
+      menubar_item->area->SetMinimumSize (Max (MENU_MINIMUM_WIDTH, (t_u32) (10 + GetFont ()->GetStringWidth (MenuLabel) ) ), Max (MENU_MINIMUM_WIDTH, (t_u32) 16) );
     }
     else
     {

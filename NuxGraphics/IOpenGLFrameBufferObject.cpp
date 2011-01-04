@@ -39,9 +39,9 @@ namespace nux
     _PixelFormat = BITFMT_R8G8B8A8;
     _IsActive = false;
 
-    for (int i = 0; i < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment(); i++)
+    for (int i = 0; i < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); i++)
     {
-      _Color_AttachmentArray.push_back (IntrusiveSP<IOpenGLSurface> (0) );
+      _Color_AttachmentArray.push_back (ObjectPtr<IOpenGLSurface> (0) );
     }
 
     FormatFrameBufferObject (_Width, _Height, _PixelFormat);
@@ -60,18 +60,20 @@ namespace nux
   {
     Deactivate();
 
-    for (int i = 0; i < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment(); i++)
+    for (int i = 0; i < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); i++)
     {
-      _Color_AttachmentArray[i] = IntrusiveSP<IOpenGLSurface> (0);
+      _Color_AttachmentArray[i] = ObjectPtr<IOpenGLSurface> (0);
     }
 
-    _Depth_Attachment = IntrusiveSP<IOpenGLSurface> (0);
-    _Stencil_Attachment = IntrusiveSP<IOpenGLSurface> (0);
+    _Depth_Attachment = ObjectPtr<IOpenGLSurface> (0);
+    _Stencil_Attachment = ObjectPtr<IOpenGLSurface> (0);
 
     if ( (_Width == Width) && (_Height == Height) && (_PixelFormat == PixelFormat) )
       return 1;
 
+#ifndef NUX_OPENGLES_20
     _Rbo.Set (GL_DEPTH_COMPONENT, Width, Height);
+#endif
 
     // Clear clipping region stack
     _Width  = Width;
@@ -82,13 +84,13 @@ namespace nux
     return 1;
   }
 
-  int IOpenGLFrameBufferObject::SetRenderTarget (int ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface)
+  int IOpenGLFrameBufferObject::SetRenderTarget (int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
   {
-    nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment());
+    nuxAssert (ColorAttachmentIndex < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment());
 
     if (pRenderTargetSurface.IsNull() )
     {
-      _Color_AttachmentArray[ColorAttachmentIndex] = IntrusiveSP<IOpenGLSurface> (0);
+      _Color_AttachmentArray[ColorAttachmentIndex] = ObjectPtr<IOpenGLSurface> (0);
       return 1;
     }
 
@@ -113,14 +115,14 @@ namespace nux
     return 1;
   }
 
-  int IOpenGLFrameBufferObject::SetDepthSurface (IntrusiveSP<IOpenGLSurface> pDepthSurface)
+  int IOpenGLFrameBufferObject::SetDepthSurface (ObjectPtr<IOpenGLSurface> pDepthSurface)
   {
     //nuxAssert(pDepthSurface.IsValid());
 
     if (pDepthSurface.IsNull() )
     {
-      _Depth_Attachment = IntrusiveSP<IOpenGLSurface> (0);
-      _Stencil_Attachment = IntrusiveSP<IOpenGLSurface> (0);
+      _Depth_Attachment = ObjectPtr<IOpenGLSurface> (0);
+      _Stencil_Attachment = ObjectPtr<IOpenGLSurface> (0);
       return 1;
     }
 
@@ -147,13 +149,13 @@ namespace nux
     return 1;
   }
 
-  IntrusiveSP<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget (int ColorAttachmentIndex)
+  ObjectPtr<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget (int ColorAttachmentIndex)
   {
-    nuxAssert (ColorAttachmentIndex < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment());
+    nuxAssert (ColorAttachmentIndex < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment());
     return _Color_AttachmentArray[ColorAttachmentIndex];
   }
 
-  IntrusiveSP<IOpenGLSurface> IOpenGLFrameBufferObject::GetDepthRenderTarget()
+  ObjectPtr<IOpenGLSurface> IOpenGLFrameBufferObject::GetDepthRenderTarget()
   {
     return _Depth_Attachment;
   }
@@ -163,10 +165,10 @@ namespace nux
     GLuint NumBuffers = 0;
     _Fbo.Bind();
 
-    if (GetThreadGLDeviceFactory() )
-      GetThreadGLDeviceFactory()->SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> (this));
+    if (GetGpuDevice() )
+      GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (this));
 
-    for (int i = 0; i < GetThreadGLDeviceFactory()->GetGpuInfo().GetMaxFboAttachment(); i++)
+    for (int i = 0; i < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); i++)
     {
       if (_Color_AttachmentArray[i].IsValid() )
       {
@@ -174,13 +176,15 @@ namespace nux
         GLenum glID     = _Color_AttachmentArray[i]->GetOpenGLID();
         GLint level     = _Color_AttachmentArray[i]->GetMipLevel();
         CHECKGL ( glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, target, glID, level) );
-        CHECKGL ( glDrawBuffer (GL_COLOR_ATTACHMENT0_EXT + i) );
 
+#ifndef NUX_OPENGLES_20
+        CHECKGL ( glDrawBuffer (GL_COLOR_ATTACHMENT0 + i) );
+#endif
         NumBuffers++;
       }
       else
       {
-        CHECKGL ( glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, 0, 0) );
+        CHECKGL ( glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0) );
       }
     }
 
@@ -197,11 +201,13 @@ namespace nux
 //         // On the PC you need to bing the same D24S8 surface to the depth and the stencil attachment.
 //     }
 
+#ifndef NUX_OPENGLES_20
     _Rbo.Set (GL_DEPTH_COMPONENT, _Width, _Height);
     CHECKGL ( glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
                                             GL_DEPTH_ATTACHMENT_EXT,
                                             GL_RENDERBUFFER_EXT,
                                             _Rbo.GetId() ) );
+#endif
 
     nuxAssert ( _Fbo.IsValid() == true );
 
@@ -219,10 +225,13 @@ namespace nux
   int IOpenGLFrameBufferObject::Deactivate()
   {
     CHECKGL ( glBindFramebufferEXT ( GL_FRAMEBUFFER_EXT, 0 ) );
-    CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
 
-    if (GetThreadGLDeviceFactory() )
-      GetThreadGLDeviceFactory()->SetCurrentFrameBufferObject (IntrusiveSP<IOpenGLFrameBufferObject> (0));
+#ifndef NUX_OPENGLES_20
+    CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
+#endif
+
+    if (GetGpuDevice() )
+      GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (0));
 
     if (GetThreadGraphicsContext() )
       GetThreadGraphicsContext()->SetScissor (0, 0, _Width, _Height);

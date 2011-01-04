@@ -34,7 +34,7 @@ namespace nux
 {
   void NuxGraphicsInitialize()
   {
-    inlRegisterThreadLocalIndex (1, ThreadLocal_GLWindowImpl, NULL);
+    inlRegisterThreadLocalIndex (1, _TLS_GraphicsDisplay, NULL);
     inlRegisterThreadLocalIndex (2, _TLS_GpuDevice_, NULL);
 
     GNuxGraphicsResources.InitializeResources();
@@ -42,18 +42,28 @@ namespace nux
 
   GraphicsDisplay *GetThreadGLWindow()
   {
-    return (GraphicsDisplay *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
+    return GetDisplayDevice ();
   }
 
-  GpuDevice *GetThreadGLDeviceFactory()
+  GraphicsDisplay *GetDisplayDevice ()
+  {
+    return (GraphicsDisplay *) inlGetThreadLocalStorage (_TLS_GraphicsDisplay);
+  }
+
+  GpuDevice *GetThreadGLDeviceFactory () // Deprecated
+  {
+    return GetGpuDevice ();
+  }
+
+  GpuDevice *GetGpuDevice ()
   {
     return (GpuDevice *) inlGetThreadLocalStorage (_TLS_GpuDevice_);
   }
 
-  GraphicsEngine *GetThreadGraphicsContext()
+  GraphicsEngine *GetThreadGraphicsContext ()
   {
-    GraphicsDisplay *glwindow = (GraphicsDisplay *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
-    return glwindow->GetGraphicsEngine();
+    GraphicsDisplay *glwindow = (GraphicsDisplay *) inlGetThreadLocalStorage (_TLS_GraphicsDisplay);
+    return glwindow->GetGraphicsEngine ();
   }
 
 }

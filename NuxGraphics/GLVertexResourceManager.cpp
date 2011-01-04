@@ -237,7 +237,7 @@ namespace nux
     _StreamIndex = Other._StreamIndex;
   }
 
-  NMeshComponent::NMeshComponent (int StreamIndex/*IntrusiveSP<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type)
+  NMeshComponent::NMeshComponent (int StreamIndex/*ObjectPtr<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type)
   {
     nuxAssert (Offset >= 0);
     _Type = Type;
@@ -284,7 +284,7 @@ namespace nux
   NGLVertexBuffer::~NGLVertexBuffer()
   {
     // Not necessary for a smart pointer but do it anyway to be clear;
-    m_VtxBuffer = IntrusiveSP<IOpenGLVertexBuffer> (0);
+    m_VtxBuffer = ObjectPtr<IOpenGLVertexBuffer> (0);
   }
 
   bool NGLVertexBuffer::UpdateResource (ResourceData *Source)
@@ -322,7 +322,7 @@ namespace nux
 
       //Release the previous vertex buffer if any.
       m_VtxBuffer.Release();
-      m_VtxBuffer = GetThreadGLDeviceFactory()->CreateVertexBuffer (_Size, VBO_USAGE_DYNAMIC);
+      m_VtxBuffer = GetGpuDevice()->CreateVertexBuffer (_Size, VBO_USAGE_DYNAMIC);
       LoadVertexData (SourceVtxBuffer);
     }
     else
@@ -360,7 +360,7 @@ namespace nux
   NGLIndexBuffer::~NGLIndexBuffer()
   {
     // Not necessary for a smart pointer but do it anyway to be clear;
-    m_IdxBuffer = IntrusiveSP<IOpenGLIndexBuffer> (0);
+    m_IdxBuffer = ObjectPtr<IOpenGLIndexBuffer> (0);
   }
 
   bool NGLIndexBuffer::UpdateResource (ResourceData *Source)
@@ -400,7 +400,7 @@ namespace nux
 
       //Release the previous vertex buffer if any.
       m_IdxBuffer.Release();
-      m_IdxBuffer = GetThreadGLDeviceFactory()->CreateIndexBuffer (_Size, VBO_USAGE_DYNAMIC,
+      m_IdxBuffer = GetGpuDevice()->CreateIndexBuffer (_Size, VBO_USAGE_DYNAMIC,
                     (SourceIdxBuffer->GetStride() == 2) ? INDEX_FORMAT_USHORT : INDEX_FORMAT_UINT);
       LoadIndexData (SourceIdxBuffer);
     }
@@ -434,14 +434,14 @@ namespace nux
 
   NGLVertexDeclaration::~NGLVertexDeclaration()
   {
-    m_VtxDeclaration = IntrusiveSP<IOpenGLVertexDeclaration> (0);
+    m_VtxDeclaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
   }
 
   bool NGLVertexDeclaration::UpdateResource (ResourceData *Source)
   {
     if (Source == 0)
     {
-      m_VtxDeclaration = IntrusiveSP<IOpenGLVertexDeclaration> (0);
+      m_VtxDeclaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
       return true;
     }
 
@@ -459,11 +459,11 @@ namespace nux
 
     if (SourceVertexDeclaration == 0)
     {
-      m_VtxDeclaration = IntrusiveSP<IOpenGLVertexDeclaration> (0);
+      m_VtxDeclaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
       return true;
     }
 
-    m_VtxDeclaration = GetThreadGLDeviceFactory()->CreateVertexDeclaration (&SourceVertexDeclaration->m_Declaration[0]);
+    m_VtxDeclaration = GetGpuDevice()->CreateVertexDeclaration (&SourceVertexDeclaration->m_Declaration[0]);
     return true;
   }
 
@@ -642,8 +642,8 @@ namespace nux
       m_VertexBufferArray.push_back (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pVertexStreamArray[s]) );
     }
 
-    m_Index = IntrusiveSP<NGLIndexBuffer> (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pIndex));
-    m_VertexDeclaration = IntrusiveSP<NGLVertexDeclaration> (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pVertexDeclaration));
+    m_Index = ObjectPtr<NGLIndexBuffer> (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pIndex));
+    m_VertexDeclaration = ObjectPtr<NGLVertexDeclaration> (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pVertexDeclaration));
   }
 
   NGLStaticMesh::~NGLStaticMesh()

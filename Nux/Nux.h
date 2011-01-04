@@ -126,8 +126,8 @@ namespace nux
   ThreadState GetThreadState (unsigned int ThreadID);
 
 
-  IntrusiveSP<FontTexture> GetSysFont();
-  IntrusiveSP<FontTexture> GetSysBoldFont();
+  ObjectPtr<FontTexture> GetSysFont();
+  ObjectPtr<FontTexture> GetSysBoldFont();
 
   NThread           *GetThreadApplication();
   WindowThread      *GetGraphicsThread();

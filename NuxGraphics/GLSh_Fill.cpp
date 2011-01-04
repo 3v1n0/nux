@@ -40,9 +40,9 @@ namespace nux
 //     Scale                 = new GLShaderParameter(0,  TEXT("Scale"),                      eVERTEXUNIFORMTYPE, TRUE);
 //     Offset                = new GLShaderParameter(0,  TEXT("Offset"),                     eVERTEXUNIFORMTYPE, TRUE);
 //
-//     vs = GetThreadGLDeviceFactory()->CreateVertexShader();
-//     ps = GetThreadGLDeviceFactory()->CreatePixelShader();
-//     sprog = GetThreadGLDeviceFactory()->CreateShaderProgram();
+//     vs = GetGpuDevice()->CreateVertexShader();
+//     ps = GetGpuDevice()->CreatePixelShader();
+//     sprog = GetGpuDevice()->CreateShaderProgram();
 //
 //     sprog->AddShaderParameter(Color);
 //     sprog->AddShaderParameter(ViewProjectionMatrix);
@@ -65,7 +65,7 @@ namespace nux
 //     sprog->AddShaderObject(ps);
 //     sprog->Link();
 //
-//     m_QuadBuffer = new TemplateQuadBuffer(GetThreadGLDeviceFactory());
+//     m_QuadBuffer = new TemplateQuadBuffer(GetGpuDevice());
 // //     Vector4 v[] =
 // //     {
 // //         Vector4(1, 0, 0, 0),

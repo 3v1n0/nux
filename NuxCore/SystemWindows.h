@@ -26,6 +26,8 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN 1
 #endif
+
+
 #include <windows.h>
 
 #include <tchar.h>
@@ -44,24 +46,24 @@
 // If NUX_LOG_FILE_ANSI is set to 1, log files will be written in ASCII characters even when in UNICODE.
 #define NUX_LOG_FILE_ANSI   1
 
-// Undo any Windows defines.
-#undef BYTE
-#undef WORD
-#undef DWORD
-#undef INT
-#undef FLOAT
-#undef MAXBYTE
-#undef MAXWORD
-#undef MAXDWORD
-#undef MAXINT
-#undef CDECL
-#undef BOOL
-#undef TCHAR
-
-// Undef Windows min and max. Conflict with std::min, std::max.
-#undef min
-#undef max
-
+// // Undo any Windows defines.
+// #undef BYTE
+// #undef WORD
+// #undef DWORD
+// #undef INT
+// #undef FLOAT
+// #undef MAXBYTE
+// #undef MAXWORD
+// #undef MAXDWORD
+// #undef MAXINT
+// #undef CDECL
+// #undef BOOL
+// #undef TCHAR
+// 
+// // Undef Windows min and max. Conflict with std::min, std::max.
+// #undef min
+// #undef max
+// 
 
 
 #define NUX_VARARGS     __cdecl					// Functions with variable arguments

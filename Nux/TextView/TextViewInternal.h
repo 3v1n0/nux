@@ -317,12 +317,12 @@ namespace nux
     int m_VBSize1;
     bool b_RenderToVertexBuffer;
 
-    IntrusiveSP<IOpenGLPixelShader> m_PixelShaderProg;
-    IntrusiveSP<IOpenGLVertexShader> m_VertexShaderProg;
-    IntrusiveSP<IOpenGLShaderProgram> m_ShaderProg;
-    IntrusiveSP<IOpenGLPixelShader> m_ColorQuadPixelShader;
-    IntrusiveSP<IOpenGLVertexShader> m_ColorQuadVertexShader;
-    IntrusiveSP<IOpenGLShaderProgram> m_ColorQuadShaderProg;
+    ObjectPtr<IOpenGLPixelShader> m_PixelShaderProg;
+    ObjectPtr<IOpenGLVertexShader> m_VertexShaderProg;
+    ObjectPtr<IOpenGLShaderProgram> m_ShaderProg;
+    ObjectPtr<IOpenGLPixelShader> m_ColorQuadPixelShader;
+    ObjectPtr<IOpenGLVertexShader> m_ColorQuadVertexShader;
+    ObjectPtr<IOpenGLShaderProgram> m_ColorQuadShaderProg;
     int m_CgPosition;
     int m_CgTexUV;
     int m_CgColor;

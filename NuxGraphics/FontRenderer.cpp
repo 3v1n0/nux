@@ -106,12 +106,12 @@ namespace nux
   FontRenderer::FontRenderer (GraphicsEngine &OpenGLEngine)
     :   m_OpenGLEngine (OpenGLEngine)
   {
-    //m_QuadBuffer = new TemplateQuadBuffer(GetThreadGLDeviceFactory(), SHADER_TYPE_GLSL);
+    //m_QuadBuffer = new TemplateQuadBuffer(GetGpuDevice(), SHADER_TYPE_GLSL);
     if (!USE_ARB_SHADERS)
     {
-      m_PixelShaderProg   = GetThreadGLDeviceFactory()->CreatePixelShader();
-      m_VertexShaderProg  = GetThreadGLDeviceFactory()->CreateVertexShader();
-      m_ShaderProg        = GetThreadGLDeviceFactory()->CreateShaderProgram();
+      m_PixelShaderProg   = GetGpuDevice()->CreatePixelShader();
+      m_VertexShaderProg  = GetGpuDevice()->CreateVertexShader();
+      m_ShaderProg        = GetGpuDevice()->CreateShaderProgram();
 
       m_VertexShaderProg->SetShaderCode (TCHAR_TO_ANSI (*gFontVtxShader) );
       m_PixelShaderProg->SetShaderCode (TCHAR_TO_ANSI (*gFontFragShader) );
@@ -123,15 +123,15 @@ namespace nux
     }
     else
     {
-      //m_AsmVertexShaderProg  = GetThreadGLDeviceFactory()->CreateAsmVertexShader();
-      //m_AsmPixelShaderProg   = GetThreadGLDeviceFactory()->CreateAsmPixelShader();
-      m_AsmShaderProg        = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+      //m_AsmVertexShaderProg  = GetGpuDevice()->CreateAsmVertexShader();
+      //m_AsmPixelShaderProg   = GetGpuDevice()->CreateAsmPixelShader();
+      m_AsmShaderProg        = GetGpuDevice()->CreateAsmShaderProgram();
 
       m_AsmShaderProg->LoadVertexShader (TCHAR_TO_ANSI (*FontAsmVtx) );
       m_AsmShaderProg->LoadPixelShader (TCHAR_TO_ANSI (*FontAsmFrg) );
       m_AsmShaderProg->Link();
 
-      _asm_font_texture_rect_prog = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+      _asm_font_texture_rect_prog = GetGpuDevice()->CreateAsmShaderProgram();
       _asm_font_texture_rect_prog->LoadVertexShader (TCHAR_TO_ANSI (*FontAsmVtx) );
       _asm_font_texture_rect_prog->LoadPixelShader (TCHAR_TO_ANSI (*FontAsmFrgRect) );
       _asm_font_texture_rect_prog->Link();
@@ -143,12 +143,12 @@ namespace nux
     //delete m_QuadBuffer;
   }
 
-  int FontRenderer::DrawColorString (IntrusiveSP<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int SkipFirstNCharacters, int NumCharacter)
+  int FontRenderer::DrawColorString (ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int SkipFirstNCharacters, int NumCharacter)
   {
     return RenderText (Font, x, y, str, color, WriteAlphaChannel, SkipFirstNCharacters, NumCharacter);
   }
 
-  void FontRenderer::PositionString (IntrusiveSP<FontTexture> Font, const NString &str, const PageBBox &pageBBox, StringBBox &strBBox, TextAlignment alignment, int NumCharacter)
+  void FontRenderer::PositionString (ObjectPtr<FontTexture> Font, const NString &str, const PageBBox &pageBBox, StringBBox &strBBox, TextAlignment alignment, int NumCharacter)
   {
     int x, y;
     int xmin, ymin, xmax, ymax;
@@ -195,14 +195,14 @@ namespace nux
     strBBox.y = y;
   }
 
-  int FontRenderer::RenderColorText (IntrusiveSP<FontTexture> Font, int x, int y, const NString &Str, const Color &color,
+  int FontRenderer::RenderColorText (ObjectPtr<FontTexture> Font, int x, int y, const NString &Str, const Color &color,
                                      bool WriteAlphaChannel, int NumCharacter)
   {
     int off = DrawColorString (Font, x, y, Str, color, WriteAlphaChannel, 0, NumCharacter);
     return off;
   }
 
-  int FontRenderer::RenderColorTextLineStatic (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str, const Color &color,
+  int FontRenderer::RenderColorTextLineStatic (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str, const Color &color,
       bool WriteAlphaChannel, TextAlignment alignment)
   {
     StringBBox stringBBox;
@@ -215,7 +215,7 @@ namespace nux
     return off;
   }
 
-  int FontRenderer::RenderColorTextLineEdit (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
+  int FontRenderer::RenderColorTextLineEdit (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
       const Color &TextColor,
       bool WriteAlphaChannel,
       const Color &SelectedTextColor,
@@ -289,7 +289,7 @@ namespace nux
     return off;
   }
 
-  int FontRenderer::RenderText (IntrusiveSP<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int StartCharacter, int NumCharacter)
+  int FontRenderer::RenderText (ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int StartCharacter, int NumCharacter)
   {
     // !WARNING This call works if all the glyph of the font are in a single texture.
 
@@ -322,7 +322,7 @@ namespace nux
     Vector4 *Offset = new Vector4[StrLength*4];
     Vector4 *Scale = new Vector4[StrLength*4];
 
-    IntrusiveSP<CachedBaseTexture> glTexture = m_OpenGLEngine.ResourceCache.GetCachedResource (Font->TextureArray[0]);
+    ObjectPtr<CachedBaseTexture> glTexture = m_OpenGLEngine.ResourceCache.GetCachedResource (Font->TextureArray[0]);
 
     float tex_width = (float) glTexture->m_Texture->GetWidth();
     float tex_height = (float) glTexture->m_Texture->GetHeight();
@@ -442,7 +442,7 @@ namespace nux
     int iScale = 0;
     int iOffset = 0;
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> shader_program;
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program;
     if (!USE_ARB_SHADERS)
     {
       m_ShaderProg->Begin();
@@ -559,7 +559,7 @@ namespace nux
   }
 
   int FontRenderer::RenderTextToBuffer (float *VertexBuffer, int VBSize,
-                                        IntrusiveSP<FontTexture> Font, Rect geo, const NString &str, const Color &color, TextAlignment alignment, int NumCharacter)
+                                        ObjectPtr<FontTexture> Font, Rect geo, const NString &str, const Color &color, TextAlignment alignment, int NumCharacter)
   {
     nuxAssertMsg (NumCharacter >= 0, TEXT ("[FontRenderer::RenderTextToBuffer] Number of char to draw must be positive.") );
     int NumCharToDraw = 0;

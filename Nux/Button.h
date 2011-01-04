@@ -29,6 +29,7 @@ namespace nux
 
   class HLayout;
 
+  //! A Button control that represents a state.
   class Button: public AbstractButton
   {
   public:

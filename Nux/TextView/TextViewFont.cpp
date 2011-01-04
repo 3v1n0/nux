@@ -215,8 +215,8 @@ namespace nux
     {
       // always include a font's external-leading
       int fontheight = m_TextFont->GetFontInfo().FontHeight + m_TextFont->GetFontInfo().ExternalLeading;
-      m_nLineHeight = std::max (m_nLineHeight, fontheight);
-      m_nMaxAscent  = std::max<LONG> (m_nMaxAscent, m_TextFont->GetFontInfo().Ascent);
+      m_nLineHeight = Max<int> (m_nLineHeight, fontheight);
+      m_nMaxAscent  = Max<long> (m_nMaxAscent, m_TextFont->GetFontInfo().Ascent);
     }
 
     // add on the above+below spacings

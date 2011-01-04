@@ -45,13 +45,13 @@ namespace nux
 
     GraphicsEngine &m_OpenGLEngine;
 
-    int DrawColorString (IntrusiveSP<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int NumCharacter = 0, int SkipFirstNCharacters = 0);
+    int DrawColorString (ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int NumCharacter = 0, int SkipFirstNCharacters = 0);
 
-    void PositionString (IntrusiveSP<FontTexture> Font, const NString &str, const PageBBox &, StringBBox &, TextAlignment align = eAlignTextCenter, int NumCharacter = 0);
-    int RenderColorText (IntrusiveSP<FontTexture> Font, int x, int y, const NString &Str, const Color &color, bool WriteAlphaChannel, int NumCharacter);
-    int RenderColorTextLineStatic (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str, const Color &color,
+    void PositionString (ObjectPtr<FontTexture> Font, const NString &str, const PageBBox &, StringBBox &, TextAlignment align = eAlignTextCenter, int NumCharacter = 0);
+    int RenderColorText (ObjectPtr<FontTexture> Font, int x, int y, const NString &Str, const Color &color, bool WriteAlphaChannel, int NumCharacter);
+    int RenderColorTextLineStatic (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str, const Color &color,
                                    bool WriteAlphaChannel, TextAlignment alignment);
-    int RenderColorTextLineEdit (IntrusiveSP<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
+    int RenderColorTextLineEdit (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
                                  const Color &TextColor,
                                  bool WriteAlphaChannel,
                                  const Color &SelectedTextColor,
@@ -61,22 +61,22 @@ namespace nux
                                  bool ShowCursor, unsigned int CursorPosition,
                                  int offset = 0, int selection_start = 0, int selection_end = 0);
 
-    int RenderText (IntrusiveSP<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int StartCharacter = 0, int NumCharacters = 0);
+    int RenderText (ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int StartCharacter = 0, int NumCharacters = 0);
     int RenderTextToBuffer (
       float *VertexBuffer, int VBSize,
-      IntrusiveSP<FontTexture> Font, Rect geo, const NString &str, const Color &color, TextAlignment alignment = eAlignTextCenter, int NumCharacter = 0);
+      ObjectPtr<FontTexture> Font, Rect geo, const NString &str, const Color &color, TextAlignment alignment = eAlignTextCenter, int NumCharacter = 0);
 
   private:
     TemplateQuadBuffer *m_QuadBuffer;
-    IntrusiveSP<IOpenGLPixelShader> m_PixelShaderProg;
-    IntrusiveSP<IOpenGLVertexShader> m_VertexShaderProg;
-    IntrusiveSP<IOpenGLShaderProgram> m_ShaderProg;
+    ObjectPtr<IOpenGLPixelShader> m_PixelShaderProg;
+    ObjectPtr<IOpenGLVertexShader> m_VertexShaderProg;
+    ObjectPtr<IOpenGLShaderProgram> m_ShaderProg;
 
-    //IntrusiveSP<IOpenGLAsmPixelShader> m_AsmPixelShaderProg;
-    //IntrusiveSP<IOpenGLAsmVertexShader> m_AsmVertexShaderProg;
-    IntrusiveSP<IOpenGLAsmShaderProgram> m_AsmShaderProg;
+    //ObjectPtr<IOpenGLAsmPixelShader> m_AsmPixelShaderProg;
+    //ObjectPtr<IOpenGLAsmVertexShader> m_AsmVertexShaderProg;
+    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmShaderProg;
 
-    IntrusiveSP<IOpenGLAsmShaderProgram> _asm_font_texture_rect_prog;
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_font_texture_rect_prog;
   };
 
 }

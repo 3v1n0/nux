@@ -49,7 +49,7 @@ namespace nux
     int m_minX, m_minY, m_maxX, m_maxY;
 
     std::vector<int> m_HistogramData;
-    IntrusiveSP<IOpenGLBaseTexture> Texture;
+    ObjectPtr<IOpenGLBaseTexture> Texture;
     TextureLayer *m_BackgroundLayer;
     GLSh_DrawFunction *m_DrawFunctionShader;
   };
