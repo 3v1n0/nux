@@ -50,7 +50,7 @@ texture_blur_LDADD = $(ALL_LIBS)
 sourcegputestsdir = "$(pkgdatadir)/gputests"
 sourcegputests_DATA = $(texture_power_of_2_SOURCES) \
                       $(framebufferobject_SOURCES) \
-                      $(quad_2texmod)
+                      $(quad_2texmod) \
                       $(texture_copy_blur_SOURCES) \
                       $(texture_blur_SOURCES)
 
