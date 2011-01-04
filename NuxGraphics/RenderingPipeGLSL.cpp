@@ -789,6 +789,9 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
   {
+    QRP_ASM_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
+    return;
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, DeviceTexture, texxform0);
     float VtxBuffer[] =
@@ -1102,6 +1105,10 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
+    QRP_ASM_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0,
+      DeviceTexture1, texxform1, color1);
+    return;
+
     ObjectPtr<IOpenGLShaderProgram> ShaderProg;
     {
       ShaderProg = m_Sl2TextureMod;

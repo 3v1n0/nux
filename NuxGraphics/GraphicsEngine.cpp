@@ -194,7 +194,7 @@ namespace nux
       _graphics_display.GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader() &&
       _graphics_display.GetGpuDevice ()->GetGPUBrand () ==  GPU_BRAND_NVIDIA)
     {
-      _use_glsl_shaders = true;
+      _use_glsl_shaders = false;
     }
     else
     {

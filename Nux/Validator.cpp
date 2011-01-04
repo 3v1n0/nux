@@ -49,7 +49,7 @@ namespace nux
 
     if (!_regexp)
     {
-      nuxDebugMsg (TEXT("[IntegerValidator::IntegerValidator] Invalid regular expression: %s"), _regexp_str);
+      nuxDebugMsg (TEXT("[IntegerValidator::IntegerValidator] Invalid regular expression: %s"), _regexp_str.GetTCharPtr ());
       return false;
     }    
     return true;
