@@ -34,7 +34,7 @@
 #include "NuxCore/Point.h"
 #include "NuxCore/Size.h"
 
-#include "NuxCore/SmartPtr/IntrusiveSP.h"
+#include "NuxCore/ObjectPtr.h"
 
 #include "NuxCore/Math/Constants.h"
 #include "NuxCore/Math/Vector3.h"

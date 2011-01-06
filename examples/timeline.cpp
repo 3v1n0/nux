@@ -34,10 +34,10 @@ public:
   {
     texture_area = new nux::TextureArea ();
 
-    layout->AddView(texture_area, 1, nux::MinorDimensionPosition::eCenter, nux::MinorDimensionSize::eFull);
+    layout->AddView(texture_area, 1, nux::eCenter, nux::eFull);
 
     texture_area_2 = new nux::TextureArea ();
-    layout->AddView (texture_area_2, 1, nux::MinorDimensionPosition::eCenter, nux::MinorDimensionSize::eFull);
+    layout->AddView (texture_area_2, 1, nux::eCenter, nux::eFull);
 
     timeline_1 = new nux::TimelineEaseInOutQuad (1000, "Timeline_1", NUX_TRACKER_LOCATION);
     timeline_1->Looping = true;

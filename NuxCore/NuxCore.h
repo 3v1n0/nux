@@ -717,7 +717,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     #include "ThreadWin.h"
 #elif defined(NUX_OS_LINUX)
-    #include "NThreadGNU.h"
+    #include "ThreadGNU.h"
 #endif
 
 /*#include "Memory/NMemoryAllocatorInterface.h"

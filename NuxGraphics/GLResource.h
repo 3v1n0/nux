@@ -36,7 +36,7 @@
 #include "NuxCore/Parsing.h"
 #include "NuxCore/Object.h"
 #include "NuxCore/SmartPtr/GenericSmartPointer.h"
-#include "NuxCore/SmartPtr/IntrusiveSP.h"
+#include "NuxCore/ObjectPtr.h"
 
 #include "NuxCore/Math/MathUtility.h"
 #include "NuxCore/Math/Constants.h"
