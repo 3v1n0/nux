@@ -20,8 +20,8 @@
  */
 
 
-#ifndef NTIME_H
-#define NTIME_H
+#ifndef TIMEFUNCTIONS_H
+#define TIMEFUNCTIONS_H
 
 namespace nux
 {
@@ -142,4 +142,4 @@ namespace nux
 
 }
 
-#endif // NTIME_H
+#endif // TIMEFUNCTIONS_H

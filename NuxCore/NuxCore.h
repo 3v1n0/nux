@@ -715,7 +715,7 @@ namespace nux
 #include "TextString.h"
 
 #if defined(NUX_OS_WINDOWS)
-    #include "NThread.h"
+    #include "ThreadWin.h"
 #elif defined(NUX_OS_LINUX)
     #include "NThreadGNU.h"
 #endif
@@ -737,7 +737,7 @@ namespace nux
 
 #include "Character/NTChar.h"
 
-#include "NTime.h"
+#include "TimeFunctions.h"
 #include "CPU.h"
 #include "Platform.h"
 #include "FileManager/NSerializer.h"

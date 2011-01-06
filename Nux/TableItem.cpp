@@ -157,7 +157,7 @@ namespace nux
             {
               setDirtyItem (true);
 
-              WindowThread *application = GetGraphicsThread();
+              WindowThread *application = GetWindowThread ();
 
               if (application)
                 application->RequestRedraw();
@@ -176,7 +176,7 @@ namespace nux
           {
             setDirtyItem (true);
 
-            WindowThread *application = GetGraphicsThread();
+            WindowThread *application = GetWindowThread ();
 
             if (application)
               application->RequestRedraw();

@@ -138,8 +138,8 @@ namespace nux
 
   void TabView::InitializeWidgets()
   {
-    m_TabLayout         = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
-    m_TabControlLayout  = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_TabLayout         = new HLayout (NUX_TRACKER_LOCATION);
+    m_TabControlLayout  = new HLayout (NUX_TRACKER_LOCATION);
     m_IncrTab           = new CoreArea (NUX_TRACKER_LOCATION);
     m_DecrTab           = new CoreArea (NUX_TRACKER_LOCATION);
 
@@ -165,8 +165,8 @@ namespace nux
 
   void TabView::InitializeLayout()
   {
-    m_TabLayout         = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
-    m_TabControlLayout  = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_TabLayout         = new HLayout (NUX_TRACKER_LOCATION);
+    m_TabControlLayout  = new HLayout (NUX_TRACKER_LOCATION);
     m_IncrTab           = new CoreArea (NUX_TRACKER_LOCATION);
     m_DecrTab           = new CoreArea (NUX_TRACKER_LOCATION);
   }
@@ -348,12 +348,12 @@ namespace nux
 
     m_TabControlLayout->SetBaseXY (tab_x, tab_y);
     m_TabControlLayout->SetBaseSize (2 * TAB_BUTTON_WIDTH, TAB_HEIGHT);
-    GetGraphicsThread()->ComputeElementLayout (m_TabControlLayout);
+    GetWindowThread ()->ComputeElementLayout (m_TabControlLayout);
 
     if (m_ClientLayout)
     {
 //        m_ClientLayout->SetGeometry(m_CompositionLayout->GetGeometry());
-//        GetGraphicsThread()->ComputeElementLayout(m_ClientLayout);
+//        GetWindowThread ()->ComputeElementLayout(m_ClientLayout);
       m_ClientLayout->NeedRedraw();
     }
 
@@ -385,7 +385,7 @@ namespace nux
       m_ClientLayout = Tab->_tab_layout;
       //m_ClientLayout->SetGeometry(m_CompositionLayout->GetGeometry());
       SetCompositionLayout (m_ClientLayout);
-      GetGraphicsThread()->ComputeElementLayout (this);
+      GetWindowThread ()->ComputeElementLayout (this);
     }
 
     Tab->_tab_area->SetMinimumSize (6 + GetSysBoldFont()->GetStringWidth (tab_name), PRACTICAL_WIDGET_HEIGHT);
@@ -395,7 +395,7 @@ namespace nux
     Tab->_tab_area->OnMouseUp.connect (sigc::bind ( sigc::mem_fun (this, &TabView::RecvTabMouseUp), Tab) );
 
     m_TabLayout->AddView (Tab->_tab_area, 1, eCenter);
-    GetGraphicsThread()->ComputeElementLayout (m_TabLayout);
+    GetWindowThread ()->ComputeElementLayout (m_TabLayout);
 
     m_TabVector.push_back (Tab);
   }
@@ -416,7 +416,7 @@ namespace nux
     if (m_ClientLayout)
       SetCompositionLayout (m_ClientLayout);
 
-    GetGraphicsThread()->ComputeElementLayout (this);
+    GetWindowThread ()->ComputeElementLayout (this);
 
     sigTabChanged (this);
     sigTabIndexChanged (m_FocusTabIndex);
@@ -467,7 +467,7 @@ namespace nux
     }
 
     m_TabLayout->SetBaseX (lx);
-    GetGraphicsThread()->ComputeElementLayout (m_TabLayout);
+    GetWindowThread ()->ComputeElementLayout (m_TabLayout);
     NeedRedraw();
 
   }
@@ -489,7 +489,7 @@ namespace nux
     int PrevWidth = GetBaseWidth();
     int PrevHeight = GetBaseHeight();
 
-    GetGraphicsThread()->ComputeElementLayout (this, true);
+    GetWindowThread ()->ComputeElementLayout (this, true);
 
 
     int NewWidth = GetBaseWidth();

@@ -31,24 +31,22 @@ namespace nux
   class LogOutputDevice
   {
   public:
-    LogOutputDevice()
-      : m_ObjectDestroyed (FALSE)
-    { }
-
-    virtual ~LogOutputDevice()
-    {
-      m_ObjectDestroyed = TRUE;
-    }
+    LogOutputDevice ();
+    virtual ~LogOutputDevice ();
 
     BOOL m_terminated;
-    virtual void Serialize (const TCHAR *V, const TCHAR *LogPrefix, int Severity) = 0;
-    virtual void Flush();
-    virtual void Shutdown();
+    virtual void Serialize (const TCHAR *log_data, const TCHAR *log_prefix, int severity) = 0;
+    virtual void Flush ();
+    virtual void Shutdown ();
 
-    VARARG_DECL ( void/*FuncRet*/, void/*StaticFuncRet*/, {}/*Return*/, LogFunction/*FuncName*/, VARARG_NONE/*Pure*/, const TCHAR*/*FmtType*/, VARARG_EXTRA (int Severity) /*ExtraDecl*/, VARARG_EXTRA (Severity) /*ExtraParam*/ );
+    VARARG_DECL (void/*FuncRet*/, void/*StaticFuncRet*/, {}/*Return*/, LogFunction/*FuncName*/, VARARG_NONE/*Pure*/, const TCHAR*/*FmtType*/, VARARG_EXTRA (int severity) /*ExtraDecl*/, VARARG_EXTRA (severity) /*ExtraParam*/ );
+
+    void Enable ();
+    void Disable ();
 
   protected:
-    BOOL m_ObjectDestroyed;
+    bool _object_destroyed;
+    bool _enabled;
   };
 
 //! Output to null device.
@@ -56,7 +54,7 @@ namespace nux
   {
     NUX_DECLARE_GLOBAL_OBJECT (NullOutput, GlobalSingletonInitializer);
   public:
-    void Serialize ( const TCHAR *V, const TCHAR *LogPrefix, int Severity) {}
+    void Serialize ( const TCHAR *V, const TCHAR *LogPrefix, int severity) {}
   };
 
 //! Output to log file.
@@ -79,10 +77,10 @@ namespace nux
     /*!
         Write a stream to the log file.
 
-        @param Data         Stream characters to write.
+        @param log_data     Stream characters to write.
         @param LogPrefix    A string to write before the input stream of characters.
     */
-    void Serialize (const TCHAR *Data, const TCHAR *LogPrefix, int Severity);
+    void Serialize (const TCHAR *log_data, const TCHAR *LogPrefix, int severity);
 
   private:
     NSerializer    *m_LogSerializer;
@@ -93,9 +91,9 @@ namespace nux
     /*!
         Serialize data directly to the log file without any type of conversion or preprocessing.
 
-        @param Data     String of char to write to the output file.
+        @param log_data     String of char to write to the output file.
     */
-    void SerializeRaw (const TCHAR *Data);
+    void SerializeRaw (const TCHAR *log_data);
   };
 
   //! Output to microsoft visual console.
@@ -135,7 +133,7 @@ namespace nux
     virtual void AddOutputDevice (LogOutputDevice *OutputDevice);
     virtual void RemoveOutputDevice (LogOutputDevice *OutputDevice);
     virtual bool IsRedirectingTo (LogOutputDevice *OutputDevice);
-    void Serialize (const TCHAR *Data, const TCHAR *LogPrefix, int Severity);
+    void Serialize (const TCHAR *log_data, const TCHAR *log_prefix, int severity);
     void Flush();
 
     void Shutdown();

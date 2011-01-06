@@ -22,7 +22,7 @@
 
 #include "NuxCore.h"
 #include "TextString.h"
-#include "NThread.h"
+#include "ThreadWin.h"
 
 
 namespace nux

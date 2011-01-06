@@ -1,8 +1,8 @@
-#include "Nux/Nux.h"
-#include "Nux/Layout.h"
-#include "Nux/HLayout.h"
-#include "Nux/VLayout.h"
-#include "Nux/Validator.h"
+#include "Nux.h"
+#include "Layout.h"
+#include "HLayout.h"
+#include "VLayout.h"
+#include "Validator.h"
 
 #include "cairo/cairo.h"
 #include "pango/pango.h"

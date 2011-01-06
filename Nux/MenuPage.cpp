@@ -214,7 +214,7 @@ namespace nux
     m_NextMouseUpMeanStop = false;
     m_SubMenuAction = 0;
 
-    vlayout = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    vlayout = new VLayout (NUX_TRACKER_LOCATION);
     // No Need to set a composition layout.
     // The MenuPage is floating above everything else.
     SetCompositionLayout (vlayout);

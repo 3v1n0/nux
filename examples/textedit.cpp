@@ -33,10 +33,10 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     text_box_edit->SetMaximumWidth(300);
 
     
-    MainVLayout->AddView(text_box_edit, 0, nux::eCenter, nux::eFull);
+    MainVLayout->AddView(text_box_edit, 0, nux::MinorDimensionPosition::eCenter, nux::MinorDimensionSize::eFull);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
     
-    nux::GetGraphicsThread()->SetLayout(MainVLayout);
+    nux::GetWindowThread ()->SetLayout(MainVLayout);
     nux::ColorLayer background(nux::Color(0xFF4D4D4D));
     static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
 }

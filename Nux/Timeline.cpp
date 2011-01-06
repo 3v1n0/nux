@@ -31,7 +31,7 @@ namespace nux
     Duration = msecs;
     Rewind ();
     SinkReference (); // get rid of our floating reference
-    nux::GetGraphicsThread ()->AddTimeline (this);
+    nux::GetWindowThread ()->AddTimeline (this);
   }
 
   Timeline::~Timeline ()
@@ -92,7 +92,7 @@ namespace nux
 
     if (remainder > 0)
       {
-        nux::GetGraphicsThread ()->RemoveTimeline (this);
+        nux::GetWindowThread ()->RemoveTimeline (this);
         IsPlaying = false;
         Completed.emit ();
         UnReference ();

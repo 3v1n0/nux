@@ -386,7 +386,7 @@ namespace nux
     // Define the geometry of some of the component of the window. Otherwise, if the composition layout is not set,
     // then the component won't be correctly placed after a SetGeometry. This can be redondant if the composition layout is set.
     Geometry base = GetGeometry();
-    //GetGraphicsThread()->ComputeElementLayout(m_TitleBarLayout);
+    //GetWindowThread ()->ComputeElementLayout(m_TitleBarLayout);
   }
 
   void BaseWindow::SetBorder (int border)

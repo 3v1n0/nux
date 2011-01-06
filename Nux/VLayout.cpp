@@ -249,8 +249,8 @@ namespace nux
         (*it)->SetBaseX (current_x);
         (*it)->SetBaseY (current_y);
 
-        eMinorSize extend = (*it)->GetExtend();
-        eMinorPosition positioning = (*it)->getPositioning();
+        MinorDimensionSize extend = (*it)->GetExtend();
+        MinorDimensionPosition positioning = (*it)->getPositioning();
         float percentage = (*it)->GetPercentage();
 
         // Compute the size of an element in the minor dimension (horizontal)
@@ -734,8 +734,8 @@ namespace nux
         (*it)->SetBaseX (current_x);
         (*it)->SetBaseY (current_y);
 
-        eMinorSize extend = (*it)->GetExtend();
-        eMinorPosition positioning = (*it)->getPositioning();
+        MinorDimensionSize extend = (*it)->GetExtend();
+        MinorDimensionPosition positioning = (*it)->getPositioning();
 
         if ( (extend != eFull) || ( (*it)->GetBaseWidth() < width) )
         {

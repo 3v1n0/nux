@@ -43,7 +43,7 @@ namespace nux
     m_Y = Y;
     m_Z = Z;
 
-    m_hlayout   = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_hlayout   = new HLayout (NUX_TRACKER_LOCATION);
     m_XEdit     = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     m_YEdit     = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     m_ZEdit     = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);

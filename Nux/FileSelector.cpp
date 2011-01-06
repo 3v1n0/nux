@@ -36,7 +36,7 @@ namespace nux
   FileSelector::FileSelector (NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
   {
-    m_hlayout           = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_hlayout           = new HLayout (NUX_TRACKER_LOCATION);
     m_OpenButton        = new Button (TEXT (""), NUX_TRACKER_LOCATION);
     m_FileEditTextBox   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
 

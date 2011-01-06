@@ -62,9 +62,20 @@ namespace nux
   NUX_IMPLEMENT_GLOBAL_OBJECT (VisualOutputConsole)
   NUX_IMPLEMENT_GLOBAL_OBJECT (PrintfOutputConsole)
 
+  LogOutputDevice::LogOutputDevice()
+  : _object_destroyed (false)
+  {
+    _enabled = true;
+  }
+
+  LogOutputDevice::~LogOutputDevice()
+  {
+    _object_destroyed = true;
+  }
+
   void LogOutputDevice::Shutdown()
   {
-    m_ObjectDestroyed = TRUE;
+    _object_destroyed = true;
   }
 
   void LogOutputDevice::Flush()
@@ -72,9 +83,20 @@ namespace nux
 
   }
 
-  VARARG_BODY ( void /*FuncRet*/, LogOutputDevice::LogFunction/*FuncName*/, const TCHAR* /*FmtType*/, VARARG_EXTRA (int Severity) /*ExtraDecl*/)
+  void LogOutputDevice::Enable ()
   {
-    if (m_ObjectDestroyed)
+    _enabled = true;
+  }
+
+  void LogOutputDevice::Disable ()
+  {
+    _enabled = false;
+  }
+
+
+  VARARG_BODY ( void /*FuncRet*/, LogOutputDevice::LogFunction/*FuncName*/, const TCHAR* /*FmtType*/, VARARG_EXTRA (int severity) /*ExtraDecl*/)
+  {
+    if (_object_destroyed)
       return;
 
     t_int   BufferSize	= 1024;
@@ -105,7 +127,7 @@ namespace nux
 
     Buffer[Result] = 0;
 
-    Serialize (Buffer, TEXT ("Nux"), Severity);
+    Serialize (Buffer, TEXT ("Nux"), severity);
 
     NUX_SAFE_DELETE_ARRAY (Buffer);
   }
@@ -189,14 +211,17 @@ namespace nux
   }
 
 
-//! Write data to the output log file.
+  //! Write data to the output log file.
   /*!
-      @param  Data        Text to log.
-      @param  LogPrefix	Prefix for the text
+      @param  log_data    Text to log.
+      @param  log_prefix	Prefix for the text
   */
-  void LogFileOutput::Serialize (const TCHAR *Data, const TCHAR *LogPrefix, int Severity)
+  void LogFileOutput::Serialize (const TCHAR *log_data, const TCHAR *log_prefix, int severity)
   {
-    if (m_ObjectDestroyed)
+    if (!_enabled)
+      return;
+
+    if (_object_destroyed)
       return;
 
     if (m_LogSerializer)
@@ -206,11 +231,11 @@ namespace nux
       INT DataOffset = 0;
       INT i;
 
-      while (Data[DataOffset])
+      while (log_data[DataOffset])
       {
-        for (i = 0; i < NUX_ARRAY_COUNT (ACh) && Data[DataOffset]; i++, DataOffset++)
+        for (i = 0; i < NUX_ARRAY_COUNT (ACh) && log_data[DataOffset]; i++, DataOffset++)
         {
-          ACh[i] = ConvertTCHARToAnsiChar (Data[DataOffset]);
+          ACh[i] = ConvertTCHARToAnsiChar (log_data[DataOffset]);
         }
 
         // serialize chunks of 1024 characters
@@ -224,16 +249,16 @@ namespace nux
 
       m_LogSerializer->Serialize (ACh, i);
 #else
-      NString Raw = NString (LogPrefix) + NString (TEXT (": ") ) + NString (Data) + NString (NUX_LINE_TERMINATOR);
+      NString Raw = NString (log_prefix) + NString (TEXT (": ") ) + NString (log_data) + NString (NUX_LINE_TERMINATOR);
       SerializeRaw (Raw.GetTCharPtr() );
 #endif
     }
   }
 
-  void LogFileOutput::SerializeRaw (const TCHAR *Data)
+  void LogFileOutput::SerializeRaw (const TCHAR *log_data)
   {
-    t_u32 s = (t_u32) StringLength (Data) * sizeof (TCHAR);
-    m_LogSerializer->Serialize (NUX_CONST_CAST (TCHAR *, Data), s);
+    t_u32 s = (t_u32) StringLength (log_data) * sizeof (TCHAR);
+    m_LogSerializer->Serialize (NUX_CONST_CAST (TCHAR *, log_data), s);
   }
 
   void LogOutputRedirector::Constructor()
@@ -271,11 +296,14 @@ namespace nux
     return false;
   }
 
-  void LogOutputRedirector::Serialize (const TCHAR *Data, const TCHAR *LogPrefix, int Severity)
+  void LogOutputRedirector::Serialize (const TCHAR *log_data, const TCHAR *log_prefix, int severity)
   {
+    if (!_enabled)
+      return;
+
     for (t_u32 OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
     {
-      OutputDevices[OutputDeviceIndex]->Serialize (Data, LogPrefix, Severity);
+      OutputDevices[OutputDeviceIndex]->Serialize (log_data, log_prefix, severity);
     }
   }
 
@@ -305,11 +333,14 @@ namespace nux
 
 //! Write data to visual studio output debug console.
   /*!
-      @param  Data        Text to log.
-      @param  LogPrefix	Prefix for the text
+      @param  log_data        Text to log.
+      @param  log_prefix	Prefix for the text
   */
   void VisualOutputConsole::Serialize (const TCHAR *text, const TCHAR *log_prefix, int severity)
   {
+    if (!_enabled)
+      return;
+
 #if defined (NUX_OS_WINDOWS)
     TCHAR Temp[4096];
 
@@ -324,11 +355,14 @@ namespace nux
 
 //! Write data to visual studio output debug console.
   /*!
-      @param  Data        Text to log.
-      @param  LogPrefix	Prefix for the text
+      @param  log_data        Text to log.
+      @param  log_prefix	Prefix for the text
   */
   void PrintfOutputConsole::Serialize (const TCHAR *text, const TCHAR *log_prefix, int severity)
   {
+    if (!_enabled)
+      return;
+
     TCHAR Temp[4096];
 #if defined (NUX_OS_WINDOWS)
     Snprintf (Temp, 4096, 4096 - 1, TEXT ("%s: %s%s"), log_prefix, text, NUX_LINE_TERMINATOR);

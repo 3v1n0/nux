@@ -20,8 +20,8 @@
  */
 
 
-#ifndef NTHREAD_H
-#define NTHREAD_H
+#ifndef THREADWIN_H
+#define THREADWIN_H
 
 #include "ObjectType.h"
 
@@ -491,5 +491,5 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
 
 }
 
-#endif // NTHREAD_H
+#endif // THREADWIN_H
 
