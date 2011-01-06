@@ -194,7 +194,7 @@ namespace nux
       _graphics_display.GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader() &&
       _graphics_display.GetGpuDevice ()->GetGPUBrand () ==  GPU_BRAND_NVIDIA)
     {
-      _use_glsl_shaders = false;
+      _use_glsl_shaders = true;
     }
     else
     {
@@ -1059,6 +1059,9 @@ namespace nux
         nuxAssertMsg (0, TEXT("[GraphicsEngine::CreateTextureFromBackBuffer] Invalid request."));
         return ObjectPtr<IOpenGLBaseTexture> (0);
       }
+      
+      // Inverse Y because of opengl upside-down nature
+      Y = fbo_height - Y - H;
     }
     else
     {
@@ -1076,6 +1079,9 @@ namespace nux
         nuxAssertMsg (0, TEXT("[GraphicsEngine::CreateTextureFromBackBuffer] Invalid request."));
         return ObjectPtr<IOpenGLBaseTexture> (0);
       }
+
+      // Inverse Y because of Opengl upside-down nature
+      Y = bb_height - Y - H;
     }
 
     ObjectPtr <IOpenGLBaseTexture> device_texture = _graphics_display.GetGpuDevice ()->CreateSystemCapableDeviceTexture (W, H, 1, BITFMT_R8G8B8A8);
