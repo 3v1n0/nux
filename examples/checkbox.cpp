@@ -35,7 +35,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     checkbox->SetMaximumHeight(60);
 
     
-    MainVLayout->AddView(checkbox, 1, nux::MinorDimensionPosition::eCenter, nux::MinorDimensionSize::eFull);
+    MainVLayout->AddView(checkbox, 1, nux::eCenter, nux::eFull);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
     
     nux::GetWindowThread ()->SetLayout(MainVLayout);
