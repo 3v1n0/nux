@@ -34,10 +34,10 @@ public:
   {
     texture_area = new nux::TextureArea ();
 
-    layout->AddView(texture_area, 1, nux::eCenter, nux::eFull);
+    layout->AddView(texture_area, 1, nux::MinorDimensionPosition::eCenter, nux::MinorDimensionSize::eFull);
 
     texture_area_2 = new nux::TextureArea ();
-    layout->AddView (texture_area_2, 1, nux::eCenter, nux::eFull);
+    layout->AddView (texture_area_2, 1, nux::MinorDimensionPosition::eCenter, nux::MinorDimensionSize::eFull);
 
     timeline_1 = new nux::TimelineEaseInOutQuad (1000, "Timeline_1", NUX_TRACKER_LOCATION);
     timeline_1->Looping = true;
@@ -58,7 +58,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
   self->Init (MainVLayout);
   MainVLayout->SetContentDistribution(nux::eStackCenter);
 
-  nux::GetGraphicsThread()->SetLayout(MainVLayout);
+  nux::GetWindowThread ()->SetLayout(MainVLayout);
   nux::ColorLayer background(nux::Color(0xFF4D4D4D));
   static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
 }

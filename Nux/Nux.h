@@ -129,17 +129,18 @@ namespace nux
   ObjectPtr<FontTexture> GetSysFont();
   ObjectPtr<FontTexture> GetSysBoldFont();
 
-  NThread           *GetThreadApplication();
-  WindowThread      *GetGraphicsThread();
-  GraphicsDisplay      &GetWindow();
-  GraphicsEngine    &GetGraphicsEngine();
-  WindowCompositor  &GetWindowCompositor();
-  BasePainter       &GetPainter();
-  UXTheme           &GetTheme();
-  TimerHandler      &GetTimer();
+  NThread           *GetThreadApplication (); // deprecated
+  WindowThread      *GetGraphicsThread (); // deprecated
+  WindowThread      *GetWindowThread ();
+  GraphicsDisplay   &GetWindow ();
+  GraphicsEngine    &GetGraphicsEngine ();
+  WindowCompositor  &GetWindowCompositor ();
+  BasePainter       &GetPainter ();
+  UXTheme           &GetTheme ();
+  TimerHandler      &GetTimer ();
 
-#define  gPainter nux::GetPainter()
-#define  gTheme   nux::GetTheme()
+#define  gPainter nux::GetPainter () // deprecated
+#define  gTheme   nux::GetTheme () // deprecated
 
   inlDeclareThreadLocalStorage (NThread *, 0, ThreadLocal_InalogicAppImpl);
 

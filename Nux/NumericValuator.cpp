@@ -68,7 +68,7 @@ namespace nux
 
   void NumericValuator::InitializeLayout()
   {
-    hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    hlayout = new HLayout (NUX_TRACKER_LOCATION);
   }
 
   void NumericValuator::DestroyLayout()

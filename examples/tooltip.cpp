@@ -859,7 +859,7 @@ initGUIThread (nux::NThread* thread,
   nux::ColorLayer background(nux::Color(0xFF4D4D4D));
   static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
   
-  nux::GetGraphicsThread()->SetLayout (layout);
+  nux::GetWindowThread ()->SetLayout (layout);
 }
 
 int main (int          argc,

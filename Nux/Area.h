@@ -34,36 +34,12 @@
 #include "WidgetMetrics.h"
 #include "WidgetSmartPointer.h"
 
-#define inlptr(T) T*
-#define smptr(T) nux::ObjectPtr<T>
-#define weaksmptr(T) nux::ObjectWeakPtr<T>
-#define smptrnull(T) nux::ObjectPtr<T> (0)
+
 
 namespace nux
 {
-
   class WindowThread;
   class GraphicsEngine;
-
-
-// #if 0
-//     #define usingwsptr
-//     #define smartptr(T, a)      WSPtr<T>(a)
-//     #define smartptrobj(a)      smptr(Area)(a)
-//     #define smartptrtype(T)     WSPtr<T>
-//     #define smartptrwrap(T)     WrapWSPtr<T>
-//     #define smartptrweak(T)     WeakWSPtr<T>
-// #else
-//     #define smartptr(T, a) T* a
-//     #define smartptrobj(a) smptr(Area) a
-//     #define smartptrtype(T) (T*)
-//     #define smartptrwrap(T) (T*)
-//     #define smartptrweak(T) T*
-// #endif
-
-////////////////////////////////////////////////////////////////////////////
-// Base Area
-////////////////////////////////////////////////////////////////////////////
 
 // In a Horizontal/Vertical Layout, the following enum have the respective meanings:
 // eFull: the object has the full height/width of the parent layout(minus margins)
@@ -72,53 +48,77 @@ namespace nux
 
 // Another way to see it
 // eFix = The minor dimension of the object will remain what it is. But the positioning in the
-//        minor dimension inside the layout can be controlled with eMinorPosition.
+//        minor dimension inside the layout can be controlled with MinorDimensionPosition.
 // eFull = The minor dimension of the object will take the entire size that is offered by the parent layout.
-//         eMinorPosition has no effect if eMinorSize = eFull
+//         MinorDimensionPosition has no effect if MinorDimensionSize = eFull
 // eContent = The minor dimension of the object will be set to 1 by its parent and later on, the minor dimemsion will be
 //         resized larger by the children of the element if necessary.
 //
 
 
-  enum eMinorSize
+  typedef enum
   {
-    eFull,
-    ePercentage,
-    eFix,
-    eMatchContent,
-  };
+    MINOR_SIZE_FULL,
+    MINOR_SIZE_PERCENTAGE,
+    MINOR_SIZE_FIX,
+    MINOR_SIZE_MATCHCONTENT,
+    eFull = MINOR_SIZE_FULL,  //deprecated
+    ePercentage = MINOR_SIZE_PERCENTAGE,  //deprecated
+    eFix  = MINOR_SIZE_FIX,  //deprecated
+    eMatchContent = MINOR_SIZE_MATCHCONTENT,  //deprecated
+  } MinorDimensionSize;
 
 //! Policy for and element position in the minor dimension of a layout.
-  enum eMinorPosition
+  typedef enum
   {
-    eAbove,         //!< Place the element on the top side of the layout (Hlayout)
-    eBelow,         //!< Place the element on the bottom side of the layout (Hlayout)
-    eLeft,          //!< Place the element on the left side of the layout (Vlayout)
-    eRight,         //!< Place the element on the right side of the layout (Hlayout)
-    eCenter,        //!< Place the element at the center of the layout (Hlayout and VLayout)
-  };
+    MINOR_POSITION_TOP,         //!< Place the element on the top side of the layout (Hlayout)
+    MINOR_POSITION_BOTTOM,         //!< Place the element on the bottom side of the layout (Hlayout)
+    MINOR_POSITION_LEFT,          //!< Place the element on the left side of the layout (Vlayout)
+    MINOR_POSITION_RIGHT,         //!< Place the element on the right side of the layout (Hlayout)
+    MINOR_POSITION_CENTER,        //!< Place the element at the center of the layout (Hlayout and VLayout)
+    eAbove = MINOR_POSITION_TOP,  //deprecated
+    eBelow = MINOR_POSITION_BOTTOM,  //deprecated
+    eLeft = MINOR_POSITION_LEFT,    //deprecated
+    eRight = MINOR_POSITION_RIGHT,  //deprecated
+    eCenter = MINOR_POSITION_CENTER,  //deprecated
+  } MinorDimensionPosition;
 
 //! Stacking order inside a layout.
   typedef enum
   {
-    eStackTop,      //!< Stack elements at the top (VLayout)
-    eStackBottom,   //!< Stack elements at the bottom (VLayout)
-    eStackLeft,     //!< Stack elements at the left (HLayout)
-    eStackRight,    //!< Stack elements at the right (HLayout)
-    eStackCenter,   //!< Stack elements in the center of the layout (HLayout and VLayout)
-    eStackExpand,   //!< Spread elements evenly inside the layout (HLayout and VLayout)
+    MAJOR_POSITION_TOP,      //!< Stack elements at the top (VLayout)
+    MAJOR_POSITION_BOTTOM,   //!< Stack elements at the bottom (VLayout)
+    MAJOR_POSITION_LEFT,     //!< Stack elements at the left (HLayout)
+    MAJOR_POSITION_RIGHT,    //!< Stack elements at the right (HLayout)
+    MAJOR_POSITION_CENTER,   //!< Stack elements in the center of the layout (HLayout and VLayout)
+    MAJOR_POSITION_EXPAND,   //!< Spread elements evenly inside the layout (HLayout and VLayout)
+
+    eStackTop = MAJOR_POSITION_TOP,       //deprecated
+    eStackBottom = MAJOR_POSITION_BOTTOM,    //deprecated
+    eStackLeft = MAJOR_POSITION_LEFT,      //deprecated
+    eStackRight = MAJOR_POSITION_RIGHT,     //deprecated
+    eStackCenter = MAJOR_POSITION_CENTER,    //deprecated
+    eStackExpand = MAJOR_POSITION_EXPAND,    //deprecated
   }  LayoutContentDistribution;
 
-  enum eSizeCompliance
+  typedef enum
   {
-    eCompliantWidth     = (1L),
-    eCompliantHeight    = (1L) << 1,
-    eSmallerWidth       = (1L) << 2,
-    eSmallerHeight      = (1L) << 3,
-    eLargerWidth        = (1L) << 4,
-    eLargerHeight       = (1L) << 5,
-    eForceComply        = (1L) << 6,
-  };
+    SIZE_EQUAL_WIDTH     = (1L),
+    SIZE_EQUAL_HEIGHT    = (1L) << 1,
+    SIZE_SMALLER_WIDTH   = (1L) << 2,
+    SIZE_SMALLER_HEIGHT  = (1L) << 3,
+    SIZE_LARGER_WIDTH    = (1L) << 4,
+    SIZE_LARGER_HEIGHT   = (1L) << 5,
+    SIZE_FORCE_COMPLY    = (1L) << 6,
+
+    eCompliantWidth     = SIZE_EQUAL_WIDTH, //deprecated
+    eCompliantHeight    = SIZE_EQUAL_HEIGHT, //deprecated
+    eSmallerWidth       = SIZE_SMALLER_WIDTH, //deprecated
+    eSmallerHeight      = SIZE_SMALLER_HEIGHT, //deprecated
+    eLargerWidth        = SIZE_LARGER_WIDTH, //deprecated
+    eLargerHeight       = SIZE_LARGER_HEIGHT, //deprecated
+    eForceComply        = SIZE_FORCE_COMPLY, //deprecated
+  } SizeCompliance;
 
   class Layout;
   class View;
@@ -338,20 +338,20 @@ namespace nux
     virtual unsigned int GetStretchFactor();
     virtual void SetStretchFactor (unsigned int sf);
 
-    virtual eMinorPosition getPositioning()
+    virtual MinorDimensionPosition getPositioning()
     {
       return positioning;
     }
-    virtual void setPositioning (eMinorPosition p)
+    virtual void setPositioning (MinorDimensionPosition p)
     {
       positioning = p;
     }
 
-    virtual eMinorSize GetExtend()
+    virtual MinorDimensionSize GetExtend()
     {
       return extend;
     }
-    virtual void SetExtend (eMinorSize ext)
+    virtual void SetExtend (MinorDimensionSize ext)
     {
       extend = ext;
     }
@@ -376,8 +376,8 @@ namespace nux
 
 
     unsigned int    m_stretchfactor;
-    eMinorPosition    positioning;
-    eMinorSize         extend;
+    MinorDimensionPosition    positioning;
+    MinorDimensionSize         extend;
     float           percentage;
     bool            outofbound;
   public:

@@ -28,7 +28,7 @@ namespace nux
 
   static void ThreadMatrix4EditorDialog (NThread *thread, void *InitData)
   {
-    VLayout *MainLayout (new VLayout (TEXT (""), NUX_TRACKER_LOCATION) );
+    VLayout *MainLayout (new VLayout (NUX_TRACKER_LOCATION) );
     Matrix4Editor *matrixeditor (new Matrix4Editor (Matrix4::IDENTITY(), NUX_TRACKER_LOCATION) );
     matrixeditor->ComputeChildLayout(); // necessary so all element of the widget get their rightful size.
     Matrix4DialogProxy *matrixeditorproxy = static_cast<Matrix4DialogProxy *> (InitData);
@@ -90,7 +90,7 @@ namespace nux
   void Matrix4DialogProxy::Start()
   {
     m_PreviousMatrix = m_Matrix;
-    m_Thread = CreateModalWindowThread (WINDOWSTYLE_TOOL, TEXT ("Matrix Editor"), 290, 230, GetGraphicsThread(),
+    m_Thread = CreateModalWindowThread (WINDOWSTYLE_TOOL, TEXT ("Matrix Editor"), 290, 230, GetWindowThread (),
                                         ThreadMatrix4EditorDialog,
                                         this);
 
@@ -141,14 +141,14 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
     ,   m_Matrix (matrix)
   {
-    m_vlayout           = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
-    mtx_layout          = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
-    m_MtxFunctionLayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_vlayout           = new VLayout (NUX_TRACKER_LOCATION);
+    mtx_layout          = new VLayout (NUX_TRACKER_LOCATION);
+    m_MtxFunctionLayout = new HLayout (NUX_TRACKER_LOCATION);
 
-    mtx_row_layout[0]   = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
-    mtx_row_layout[1]   = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
-    mtx_row_layout[2]   = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
-    mtx_row_layout[3]   = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    mtx_row_layout[0]   = new HLayout (NUX_TRACKER_LOCATION);
+    mtx_row_layout[1]   = new HLayout (NUX_TRACKER_LOCATION);
+    mtx_row_layout[2]   = new HLayout (NUX_TRACKER_LOCATION);
+    mtx_row_layout[3]   = new HLayout (NUX_TRACKER_LOCATION);
 
     m_IdentityMtxBtn    = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
     m_ZeroMtxBtn        = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);

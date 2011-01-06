@@ -51,7 +51,7 @@ namespace nux
     m_LeftTimerHandler  = 0;
     m_RightTimerHandler = 0;
 
-    hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    hlayout = new HLayout (NUX_TRACKER_LOCATION);
     m_LeftThumb = new CoreArea (NUX_TRACKER_LOCATION);
     m_Track = new CoreArea (NUX_TRACKER_LOCATION);
     m_RightThumb = new CoreArea (NUX_TRACKER_LOCATION);

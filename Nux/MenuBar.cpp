@@ -63,7 +63,7 @@ namespace nux
   {
     m_CurrentMenu = NULL;
     m_MenuBarWindow = NULL;
-    m_hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_hlayout = new HLayout (NUX_TRACKER_LOCATION);
     m_hlayout->SetHorizontalInternalMargin (4);
     m_hlayout->SetHorizontalExternalMargin (2);
 
@@ -279,7 +279,7 @@ namespace nux
     menubar_item->menu->sigMouseDownOutsideMenuCascade.connect (sigc::mem_fun (this, &MenuBar::RecvSigMouseDownOutsideMenuCascade) );
 
     m_hlayout->AddView (menubar_item->area, 0, eCenter);
-    GetGraphicsThread()->ComputeElementLayout (m_hlayout);
+    GetWindowThread ()->ComputeElementLayout (m_hlayout);
   }
 
   void MenuBar::EmitItemMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)

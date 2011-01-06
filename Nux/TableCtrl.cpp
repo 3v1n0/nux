@@ -345,18 +345,18 @@ namespace nux
       return;
 
     t_u32 window_width, window_height;
-    window_width = GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth();
-    window_height = GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight();
-    GetGraphicsThread()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
-    GetGraphicsThread()->GetGraphicsEngine().EmptyClippingRegion();
-    GetGraphicsThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
-    GetGraphicsThread()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
-    GetGraphicsThread()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
+    window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
+    window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
+    GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
+    GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
+    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
+    GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
+    GetWindowThread ()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
 
     // Render the MAINFBO
     {
-      GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_2D);
-      GetGraphicsThread()->GetGraphicsEngine().SetEnvModeSelectTexture (GL_TEXTURE0);
+      GetWindowThread ()->GetGraphicsEngine().EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_2D);
+      GetWindowThread ()->GetGraphicsEngine().SetEnvModeSelectTexture (GL_TEXTURE0);
       texture->BindTextureToUnit (GL_TEXTURE0);
 
       t_u32 w, h;

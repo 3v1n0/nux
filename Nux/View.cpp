@@ -47,7 +47,7 @@ namespace nux
   View::~View()
   {
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
-    GetGraphicsThread()->RemoveObjectFromRefreshList (this);
+    GetWindowThread ()->RemoveObjectFromRefreshList (this);
 
     if (m_CompositionLayout)
       m_CompositionLayout->UnParentObject();
@@ -236,7 +236,7 @@ namespace nux
   void View::NeedRedraw()
   {
     //GetWindowCompositor()..AddToDrawList(this);
-    WindowThread* application = GetGraphicsThread();
+    WindowThread* application = GetWindowThread ();
     if(application)
     {
         application->AddToDrawList(this);
@@ -249,7 +249,7 @@ namespace nux
   void View::NeedSoftRedraw()
   {
     //GetWindowCompositor()..AddToDrawList(this);
-    WindowThread* application = GetGraphicsThread();
+    WindowThread* application = GetWindowThread ();
     if(application)
     {
         application->AddToDrawList(this);

@@ -38,7 +38,7 @@ namespace nux
 
   static void ThreadColorEditorDialog (NThread *thread, void *InitData)
   {
-    VLayout *MainLayout (new VLayout (TEXT (""), NUX_TRACKER_LOCATION) );
+    VLayout *MainLayout (new VLayout (NUX_TRACKER_LOCATION) );
     ColorEditor *coloreditor (new ColorEditor() );
     coloreditor->ComputeChildLayout(); // necessary so all element of the widget get their rightful size.
     ColorDialogProxy *coloreditorproxy = static_cast<ColorDialogProxy *> (InitData);
@@ -103,7 +103,7 @@ namespace nux
 
     int Width = 290;
     int Height = 230;
-    m_Thread = CreateModalWindowThread (WINDOWSTYLE_TOOL, TEXT ("Color Editor"), Width, Height, GetGraphicsThread(),
+    m_Thread = CreateModalWindowThread (WINDOWSTYLE_TOOL, TEXT ("Color Editor"), Width, Height, GetWindowThread (),
                                         ThreadColorEditorDialog,
                                         this);
 
@@ -212,7 +212,7 @@ namespace nux
     m_PickerArea        = new CoreArea (NUX_TRACKER_LOCATION);
     m_BaseChannelArea   = new CoreArea (NUX_TRACKER_LOCATION);
     m_ColorSquare       = new CoreArea (NUX_TRACKER_LOCATION);
-    m_hlayout           = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_hlayout           = new HLayout (NUX_TRACKER_LOCATION);
 
     m_BaseChannelArea->OnMouseDown.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseDown) );
     m_BaseChannelArea->OnMouseUp.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseUp) );
@@ -236,7 +236,7 @@ namespace nux
 
     // RGB
     {
-      redlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+      redlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         redcheck = new RadioButton (TEXT ("R:") );
         redcheck->SetMinimumWidth (30);
@@ -246,7 +246,7 @@ namespace nux
         redlayout->AddView (redtext, 0);
         redcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_RED), CM_RGB ) );
       }
-      greenlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+      greenlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         greencheck = new RadioButton (TEXT ("G:") );
         greencheck->SetMinimumWidth (30);
@@ -257,7 +257,7 @@ namespace nux
         greencheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_GREEN), CM_RGB ) );
 
       }
-      bluelayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+      bluelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         bluecheck = new RadioButton (TEXT ("B:") );
         bluecheck->SetMinimumWidth (30);
@@ -272,7 +272,7 @@ namespace nux
 
     // HSV
     {
-      huelayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+      huelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         huecheck = new RadioButton (TEXT ("H:") );
         huecheck->SetMinimumWidth (30);
@@ -282,7 +282,7 @@ namespace nux
         huelayout->AddView (huetext, 0);
         huecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_HUE), CM_HSV ) );
       }
-      saturationlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+      saturationlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         saturationcheck = new RadioButton (TEXT ("S:") );
         saturationcheck->SetMinimumWidth (30);
@@ -292,7 +292,7 @@ namespace nux
         saturationlayout->AddView (saturationtext, 0);
         saturationcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_SATURATION), CM_HSV ) );
       }
-      valuelayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+      valuelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         valuecheck = new RadioButton (TEXT ("V:") );
         valuecheck->SetMinimumWidth (30);
@@ -304,7 +304,7 @@ namespace nux
       }
     }
 
-    ctrllayout = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    ctrllayout = new VLayout (NUX_TRACKER_LOCATION);
     ctrllayout->AddView (m_ColorSquare);
     ctrllayout->AddView (new SpaceLayout (20, 20, 10, 10), 1);
     ctrllayout->AddLayout (redlayout, 0);

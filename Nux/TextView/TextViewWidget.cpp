@@ -75,7 +75,7 @@ namespace nux
 
     m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
 
-    VLayout *layout = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    VLayout *layout = new VLayout (NUX_TRACKER_LOCATION);
     //layout->AddView(new Button(TEXT("Hello")));
     SetCompositionLayout (layout);
 

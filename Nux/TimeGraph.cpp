@@ -226,7 +226,7 @@ namespace nux
             prev = 0.0f;
 
           if (i == 0)
-            m_DynValueArray[i].Update (GetGraphicsThread()->GetFrameRate() );
+            m_DynValueArray[i].Update (GetWindowThread ()->GetFrameRate() );
 
           if (i == 1)
             m_DynValueArray[i].Update (RandomUInt (25) + 25);

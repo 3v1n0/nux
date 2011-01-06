@@ -51,7 +51,7 @@ namespace nux
     m_UpTimerHandler    = 0;
     m_DownTimerHandler  = 0;
 
-    vlayout         = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    vlayout         = new VLayout (NUX_TRACKER_LOCATION);
     m_TopThumb      = new CoreArea (NUX_TRACKER_LOCATION);
     m_Track         = new CoreArea (NUX_TRACKER_LOCATION);
     m_BottomThumb   = new CoreArea (NUX_TRACKER_LOCATION);

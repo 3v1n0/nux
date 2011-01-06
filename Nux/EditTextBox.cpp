@@ -63,7 +63,7 @@ namespace nux
     m_CursorColor = Color (0xFFDDDDDD);
 
 
-    hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    hlayout = new HLayout (NUX_TRACKER_LOCATION);
     SetCompositionLayout (hlayout);
 
     m_BlinkTimerFunctor = new TimerFunctor();

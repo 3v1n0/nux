@@ -47,7 +47,7 @@ namespace nux
     OnMouseMove.connect (sigc::mem_fun (this, &ClientArea::RecvMouseMove) );
     OnKeyEvent.connect (sigc::mem_fun (this, &ClientArea::RecvKeyEvent) );
 
-    if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
+    if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
     {
       m_FrameBufferObject = GetGpuDevice()->CreateFrameBufferObject();
       m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
@@ -81,7 +81,7 @@ namespace nux
     if ( (IsRedrawNeeded() == false) && (force_draw == false) )
       return;
 
-    if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
+    if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
     {
       int buffer_width = m_Geometry.GetWidth();
       int buffer_height = m_Geometry.GetHeight();
@@ -224,7 +224,7 @@ namespace nux
 
   void ClientArea::SetClientViewport (GraphicsEngine &GfxContext)
   {
-    if (GetGraphicsThread()->GetWindow().HasFrameBufferSupport() )
+    if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
     {
       GfxContext.SetViewport (0, 0, m_FrameBufferObject->GetWidth(), m_FrameBufferObject->GetHeight() );
       m_FrameBufferObject->EmptyClippingRegion();
@@ -294,7 +294,7 @@ namespace nux
   void ClientArea::NeedRedraw()
   {
     //GetWindowCompositor()..AddToDrawList(this);
-    WindowThread* application = GetGraphicsThread();
+    WindowThread* application = GetWindowThread ();
     if(application)
     {
       application->AddToDrawList(this);

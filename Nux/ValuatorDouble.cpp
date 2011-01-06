@@ -52,7 +52,7 @@ namespace nux
     // This is use by TextLineEditPropertyItem::GetItemBestHeight
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    m_hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_hlayout = new HLayout (NUX_TRACKER_LOCATION);
 
     m_hlayout->AddView (m_MouseControlledButton, 0);
     m_hlayout->AddView (m_EditLine, 1);

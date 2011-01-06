@@ -38,7 +38,7 @@ namespace nux
 
   static void ThreadWidgetInitDialog (NThread *thread, void *InitData)
   {
-    VLayout *MainLayout (new VLayout (TEXT (""), NUX_TRACKER_LOCATION) );
+    VLayout *MainLayout (new VLayout (NUX_TRACKER_LOCATION) );
     SplineCurveEditor *SplineControl (new SplineCurveEditor (NUX_TRACKER_LOCATION) );
     SplineCurveDialogProxy *splinecurveproxy = static_cast<SplineCurveDialogProxy *> (InitData);
 
@@ -103,7 +103,7 @@ namespace nux
   {
     m_PreviousControlPoints = m_ControlPoints;
 
-    m_Thread = CreateModalWindowThread (WINDOWSTYLE_TOOL, TEXT ("Spline Curve"), 200, 200, GetGraphicsThread(),
+    m_Thread = CreateModalWindowThread (WINDOWSTYLE_TOOL, TEXT ("Spline Curve"), 200, 200, GetWindowThread (),
                                         ThreadWidgetInitDialog,
                                         this);
 

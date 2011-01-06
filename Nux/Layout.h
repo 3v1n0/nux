@@ -36,7 +36,7 @@ namespace nux
     Layout (NUX_FILE_LINE_PROTO);
     virtual ~Layout();
 
-    virtual void AddLayout (Layout *, unsigned int stretchFactor = 1, eMinorPosition = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
+    virtual void AddLayout (Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f);
 
     //! Add an object to the layout.
     /*! Add an object to the layout.
@@ -53,7 +53,7 @@ namespace nux
         The positioning parameter controls how the layout will place the object within itself. A vertical layout object controls the horizontal positioning
         of its children baseobject, While an horizontal layout object controls the vertical positioning of its children baseobject.
 
-        The extend parameter controls how much size the baseobject minor dimension gets from the layout minor dimension. See eMinorSize.
+        The extend parameter controls how much size the baseobject minor dimension gets from the layout minor dimension. See MinorDimensionSize.
 
         /param baseobject The object that is being added.
         /param stretchFactor This value controls how the layout object share space between its children baseobject.
@@ -61,7 +61,7 @@ namespace nux
         /param extend Controls the object minor dimension size.
         /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
     */
-    virtual void AddView (Area *baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f);
+    virtual void AddView (Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f);
     virtual void AddSpace (unsigned int width, unsigned int stretchFactor = 0);
 
     virtual void Clear();
@@ -290,12 +290,12 @@ namespace nux
       return true;
     }
 
-    virtual void AddLayout (Layout *, unsigned int stretchFactor = 1, eMinorPosition minor_position = eAbove, eMinorSize minor_size = eFull, float percentage = 100.0f)
+    virtual void AddLayout (Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition minor_position = eAbove, MinorDimensionSize minor_size = eFull, float percentage = 100.0f)
     {
       // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
 
-    virtual void AddView (Area *baseobject, unsigned int stretchFactor = 1, eMinorPosition positioning = eAbove, eMinorSize extend = eFull, float percentage = 100.0f)
+    virtual void AddView (Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f)
     {
       // the baseObject is provided via the constructor.
     };

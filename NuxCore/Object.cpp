@@ -22,7 +22,7 @@
 
 #include "NuxCore.h"
 #include "Object.h"
-#include "SmartPtr/IntrusiveSP.h"
+#include "ObjectPtr.h"
 
 namespace nux
 {
@@ -53,7 +53,10 @@ namespace nux
 
   void ObjectStats::Destructor()
   {
-    nuxDebugMsg (TEXT("[ObjectStats::Destructor] %d undeleted objects."), _number_of_objects);
+    if (_number_of_objects)
+    {
+      nuxDebugMsg (TEXT("[ObjectStats::Destructor] %d undeleted objects."), _number_of_objects);
+    }
 
 #if defined(NUX_DEBUG)
     AllocationList::iterator it;

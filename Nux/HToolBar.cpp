@@ -61,7 +61,7 @@ namespace nux
 
   void HToolBar::InitializeLayout()
   {
-    m_hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_hlayout = new HLayout (NUX_TRACKER_LOCATION);
   }
 
   void HToolBar::DestroyLayout()

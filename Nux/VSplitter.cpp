@@ -430,7 +430,7 @@ namespace nux
         ic->SetGeometry (Geometry (accwidth, y, splitter_geo.x - accwidth, h) );
         // if we are already computing the layout from the main window down, we need to call
         // ComputeElementLayout to force the computing of this element layout.
-        GetGraphicsThread()->ComputeElementLayout (ic);
+        GetWindowThread ()->ComputeElementLayout (ic);
       }
       else if (m_InterfaceObject[i]->Type().IsObjectType (InputArea::StaticObjectType) )
       {
@@ -443,7 +443,7 @@ namespace nux
         layout->SetGeometry (Geometry (accwidth, y, splitter_geo.x - accwidth, h) );
         // if we are already computing the layout from the main window down, we need to call
         // ComputeElementLayout to force the computing of this element layout.
-        GetGraphicsThread()->ComputeElementLayout (layout);
+        GetWindowThread ()->ComputeElementLayout (layout);
       }
 
       accwidth += splitter_geo.x - accwidth + VSPLITTERWIDTH;
@@ -515,7 +515,7 @@ namespace nux
     GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor().GetProcessingTopView() );
 
     // Hint for the window to initiate a redraw
-    GetGraphicsThread()->RequestRedraw();
+    GetWindowThread ()->RequestRedraw();
   }
 
   void VSplitter::OnSplitterMouseUp (t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
@@ -545,7 +545,7 @@ namespace nux
     // End overlay drawing;
     GetWindowCompositor().SetWidgetDrawingOverlay (0, GetWindowCompositor().GetProcessingTopView() );
     // Hint for the window to initiate a redraw
-    GetGraphicsThread()->RequestRedraw();
+    GetWindowThread ()->RequestRedraw();
   }
 
   void VSplitter::OnSplitterMouseDrag (t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
@@ -577,7 +577,7 @@ namespace nux
     }
 
     // Hint for the window to initiate a redraw
-    GetGraphicsThread()->RequestRedraw();
+    GetWindowThread ()->RequestRedraw();
   }
 
   void VSplitter::ResizeSplitter (t_s32 header_pos)
