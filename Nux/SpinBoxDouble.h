@@ -31,7 +31,7 @@ namespace nux
   class SpinBoxDouble: public SpinBox_Logic
   {
   public:
-    SpinBoxDouble (double Value = 0, double Step = 1, double MinValue = 0, double MaxValue = 100);
+    SpinBoxDouble (double Value = 0, double Step = 1, double MinValue = 0, double MaxValue = 100, NUX_FILE_LINE_PROTO);
     ~SpinBoxDouble();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

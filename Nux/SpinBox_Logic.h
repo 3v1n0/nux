@@ -33,7 +33,7 @@ namespace nux
   {
   public:
     SpinBox_Logic (NUX_FILE_LINE_PROTO);
-    virtual ~SpinBox_Logic();
+    virtual ~SpinBox_Logic ();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;

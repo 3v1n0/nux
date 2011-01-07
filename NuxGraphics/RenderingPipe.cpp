@@ -467,15 +467,15 @@ namespace nux
     int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0,
-    float sigma)
+    float sigma, int num_pass)
   {
 #ifndef NUX_OPENGLES_20
     if (UsingGLSLCodePath ())
-      return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma);
+      return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
     else
-      return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma);
+      return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #else
-    return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma);
+    return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #endif
   }
 
@@ -544,5 +544,40 @@ namespace nux
     return QRP_GLSL_GetLQBlur (x, y, buffer_width, buffer_height, device_texture, texxform, c0);
 #endif
   }
+
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetHQBlur (
+    int x, int y, int buffer_width, int buffer_height,
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+    const Color& c0,
+    float sigma, int num_pass)
+  {
+#ifndef NUX_OPENGLES_20
+    if (UsingGLSLCodePath () && (GetGpuDevice ()->GetOpenGLMajorVersion () >= 3))
+      return QRP_GLSL_GetHQBlur (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+    else
+      return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+#else
+    return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+#endif
+  }
+
+  void GraphicsEngine::QRP_DisturbedTexture (
+    int x, int y, int width, int height,
+    ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
+    ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1)
+  {
+#ifndef NUX_OPENGLES_20
+    if (UsingGLSLCodePath ())
+      QRP_GLSL_DisturbedTexture (x, y, width, height, distorsion_texture, texxform0, c0, src_device_texture, texxform1, c1);
+    else
+    {
+      // NUXTODO
+      //QRP_ASM_DisturbedTexture (x, y, width, height, distorsion_texture, texxform0, c0, src_device_texture, texxform1, c1);
+    }
+#else
+    QRP_GLSL_DisturbedTexture (x, y, width, height, distorsion_texture, texxform0, c0, src_device_texture, texxform1, c1);
+#endif
+  }
+
 }
 
