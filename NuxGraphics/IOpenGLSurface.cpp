@@ -550,12 +550,8 @@ namespace nux
   {
     CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, _BaseTexture->GetFormatRowMemoryAlignment ()));
 
-    BYTE *DataPtr = 0;
-
     if (_STextureTarget == GL_TEXTURE_2D || _STextureTarget == GL_TEXTURE_RECTANGLE_ARB || _STextureTarget == GL_TEXTURE_CUBE_MAP || _STextureTarget == GL_TEXTURE_3D)
     {
-      int w = _Rect.right - _Rect.left;
-      int h = _Rect.bottom - _Rect.top;
       CHECKGL ( glBindTexture (_STextureTarget, _BaseTexture->_OpenGLID) );
 
 
