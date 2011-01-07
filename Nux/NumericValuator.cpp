@@ -48,7 +48,7 @@ namespace nux
   void NumericValuator::InitializeWidgets()
   {
     m_EditLine->SetValidator (&m_DoubleValidator);
-    m_EditLine->SetText (NString::Printf (TEXT ("%d"), m_DoubleValidator.GetMinimum() ) );
+    m_EditLine->SetText (NString::Printf (TEXT ("%d"), m_DoubleValidator.GetMinimum ()));
 
     m_EditLine->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     m_EditLine->SetGeometry (Geometry (0, 0, 2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
@@ -68,7 +68,7 @@ namespace nux
 
   void NumericValuator::InitializeLayout()
   {
-    hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    hlayout = new HLayout (NUX_TRACKER_LOCATION);
   }
 
   void NumericValuator::DestroyLayout()

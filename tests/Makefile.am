@@ -5,7 +5,8 @@ check_PROGRAMS = \
 test_nux_SOURCES = \
   test-nux.cpp \
   test-timeline.cpp \
-  test-object.cpp
+  test-object.cpp \
+  test-system.cpp
   
 test_nux_CPPFLAGS = \
   -I$(srcdir) \

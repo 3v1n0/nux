@@ -30,7 +30,9 @@ namespace nux
     :   m_Minimum (Minimum)
     ,   m_Maximum (Maximum)
   {
-    m_reg_exp = g_regex_new ("[-+]?[0-9]+", G_REGEX_CASELESS, G_REGEX_MATCH_ANCHORED, NULL);
+    _regexp_str = "^[-+]?[0-9]+$";
+
+    InitRegExp ();
 
     if (m_Minimum > m_Maximum)
     {
@@ -44,8 +46,8 @@ namespace nux
   {
     m_Minimum   = copy.m_Minimum;
     m_Minimum   = copy.m_Maximum;
-    m_reg_exp    = copy.m_reg_exp;
-    g_regex_ref (m_reg_exp);
+    _regexp_str    = copy._regexp_str;
+    InitRegExp ();
   }
 
   IntegerValidator &IntegerValidator::operator= (const IntegerValidator &rhs)
@@ -54,8 +56,8 @@ namespace nux
     {
       m_Minimum   = rhs.m_Minimum;
       m_Minimum   = rhs.m_Maximum;
-      m_reg_exp    = rhs.m_reg_exp;
-      g_regex_ref (m_reg_exp);
+      _regexp_str    = rhs._regexp_str;
+      InitRegExp ();
     }
 
     return *this;
@@ -63,7 +65,7 @@ namespace nux
 
   IntegerValidator::~IntegerValidator()
   {
-    g_regex_unref (m_reg_exp);
+
   }
 
   Validator *IntegerValidator::Clone()  const
@@ -105,7 +107,7 @@ namespace nux
     return m_Maximum;
   }
 
-  int IntegerValidator::Validate (int i) const
+  int IntegerValidator::GetClampedValue (int i) const
   {
     if (i < m_Minimum)
       return m_Minimum;
@@ -114,18 +116,6 @@ namespace nux
       return m_Maximum;
 
     return i;
-  }
-
-  Validator::State IntegerValidator::Validate (const TCHAR *str) const
-  {
-    GMatchInfo *match_info;
-
-    if (!g_regex_match (m_reg_exp, str, G_REGEX_MATCH_ANCHORED, &match_info) )
-    {
-      return Validator::Invalid;
-    }
-
-    return Validator::Acceptable;
   }
 
   void IntegerValidator::Alternative (const TCHAR *str)
@@ -146,7 +136,5 @@ namespace nux
     else
       return 0;
   }
-
-
-
 }
+

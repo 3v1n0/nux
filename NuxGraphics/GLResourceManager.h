@@ -242,7 +242,7 @@ namespace nux
       return Resource->Type().IsObjectType (Type() );
     }
 
-    virtual bool UpdateResource (IntrusiveSP< CachedResourceData > DeviceResource, ResourceData *Resource) const
+    virtual bool UpdateResource (ObjectPtr< CachedResourceData > DeviceResource, ResourceData *Resource) const
     {
       return DeviceResource->UpdateResource (Resource);
     }
@@ -256,7 +256,7 @@ namespace nux
   class TResourceCache: public NResourceSet
   {
   public:
-    std::map< IdType, IntrusiveSP< ResourceType > > ResourceMap;
+    std::map< IdType, ObjectPtr< ResourceType > > ResourceMap;
 
     // Resource factory instances for each ResourceData/CachedResourceData pair.
     std::vector<NResourceFactory *> ResourceFactories;
@@ -272,11 +272,11 @@ namespace nux
     void Flush()
     {
       // See the language FAQ 35.18 at http://www.parashift.com/c++-faq-lite/templates.html  for why the "typename".
-      typename std::map< IdType, IntrusiveSP< ResourceType > >::iterator It;
+      typename std::map< IdType, ObjectPtr< ResourceType > >::iterator It;
 
       for (It = ResourceMap.begin(); It != ResourceMap.end(); It++)
       {
-//         IntrusiveSP< ResourceType >	CachedResource = (*It).second;
+//         ObjectPtr< ResourceType >	CachedResource = (*It).second;
 //         CachedResource->Cached = 0;
 //         CachedResource.Release();
         (*It).second->Cached = 0;
@@ -287,29 +287,29 @@ namespace nux
       ResourceMap.clear();
     }
 
-    void AddCachedResource (const IdType &Id, IntrusiveSP< ResourceType > Resource)
+    void AddCachedResource (const IdType &Id, ObjectPtr< ResourceType > Resource)
     {
-      typedef std::map< IdType, IntrusiveSP< ResourceType > >  MapType;
+      typedef std::map< IdType, ObjectPtr< ResourceType > >  MapType;
       ResourceMap.insert (typename MapType::value_type (Id, Resource) );
       Resource->Cached = 1;
     }
 
-    IntrusiveSP<ResourceType> FindCachedResourceById (const IdType &Id)
+    ObjectPtr<ResourceType> FindCachedResourceById (const IdType &Id)
     {
-      typedef std::map< IdType, IntrusiveSP< ResourceType > >  MapType;
+      typedef std::map< IdType, ObjectPtr< ResourceType > >  MapType;
       typename MapType::iterator it = ResourceMap.find (Id);
 
       if (it != ResourceMap.end() )
         return (*it).second;
 
-      return IntrusiveSP<ResourceType> (0);
+      return ObjectPtr<ResourceType> (0);
     }
 
     void FlushResourceId (const IdType &Id)
     {
-      IntrusiveSP< ResourceType >	CachedResource (0);
+      ObjectPtr< ResourceType >	CachedResource (0);
 
-      typedef std::map< IdType, IntrusiveSP< ResourceType > >  MapType;
+      typedef std::map< IdType, ObjectPtr< ResourceType > >  MapType;
       typename MapType::iterator it = ResourceMap.find (Id);
 
       if (it != ResourceMap.end() )
@@ -324,12 +324,12 @@ namespace nux
 
     virtual void FlushResource (CachedResourceData *Resource)
     {
-      typedef std::map< IdType, IntrusiveSP< ResourceType > >  MapType;
+      typedef std::map< IdType, ObjectPtr< ResourceType > >  MapType;
       typename MapType::iterator it;
 
       for (it = ResourceMap.begin(); it != ResourceMap.end(); it++)
       {
-        IntrusiveSP< ResourceType >	CachedResource = (*it).second;
+        ObjectPtr< ResourceType >	CachedResource = (*it).second;
 
         if (CachedResource == Resource)
         {
@@ -360,7 +360,7 @@ namespace nux
       :   TResourceCache<int, CachedResourceData>()
     {}
 
-    IntrusiveSP< CachedResourceData > GetCachedResource (ResourceData *Source);
+    ObjectPtr< CachedResourceData > GetCachedResource (ResourceData *Source);
     bool         IsCachedResource (ResourceData *Source);
 
     virtual void InitializeResourceFactories();

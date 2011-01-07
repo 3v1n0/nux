@@ -30,7 +30,9 @@ namespace nux
     :   m_Minimum (Minimum)
     ,   m_Maximum (Maximum)
   {
-    m_reg_exp = g_regex_new ("(0[xX])*[0-9a-fA-F]+", G_REGEX_CASELESS, G_REGEX_MATCH_ANCHORED, NULL);
+    _regexp_str = "^(0[xX])*[0-9a-fA-F]+$";
+
+    InitRegExp ();
 
     if (m_Minimum > m_Maximum)
     {
@@ -44,8 +46,8 @@ namespace nux
   {
     m_Minimum   = copy.m_Minimum;
     m_Minimum   = copy.m_Maximum;
-    m_reg_exp    = copy.m_reg_exp;
-    g_regex_ref (m_reg_exp);
+    _regexp_str = copy._regexp_str;
+    InitRegExp ();
   }
 
   HexRegExpValidator &HexRegExpValidator::operator= (const HexRegExpValidator &rhs)
@@ -54,8 +56,8 @@ namespace nux
     {
       m_Minimum   = rhs.m_Minimum;
       m_Minimum   = rhs.m_Maximum;
-      m_reg_exp    = rhs.m_reg_exp;
-      g_regex_ref (m_reg_exp);
+      _regexp_str = rhs._regexp_str;
+      InitRegExp ();
     }
 
     return *this;
@@ -63,7 +65,6 @@ namespace nux
 
   HexRegExpValidator::~HexRegExpValidator()
   {
-    g_regex_unref (m_reg_exp);
   }
 
   Validator *HexRegExpValidator::Clone()  const
@@ -105,7 +106,7 @@ namespace nux
     return m_Maximum;
   }
 
-  int HexRegExpValidator::Validate (int i) const
+  int HexRegExpValidator::GetClampedValue (int i) const
   {
     if (i < m_Minimum)
       return m_Minimum;
@@ -116,18 +117,6 @@ namespace nux
     return i;
   }
 
-  Validator::State HexRegExpValidator::Validate (const TCHAR *str) const
-  {
-    GMatchInfo *match_info;
-
-    if (!g_regex_match (m_reg_exp, str, G_REGEX_MATCH_ANCHORED, &match_info) )
-    {
-      return Validator::Invalid;
-    }
-
-    return Validator::Acceptable;
-  }
-
   void HexRegExpValidator::Alternative (const TCHAR *str)
   {
     str = TEXT ("0x0");
@@ -135,8 +124,8 @@ namespace nux
 
   NString HexRegExpValidator::ToString (int i)
   {
-    NString Prec (TEXT ("%d") );
-    return NString::Printf (Prec.GetTCharPtr(), i);
+    NString Prec (TEXT ("%d"));
+    return NString::Printf (Prec.GetTCharPtr (), i);
   }
 
   int HexRegExpValidator::ToInteger (const TCHAR *str)
@@ -146,7 +135,5 @@ namespace nux
     else
       return 0;
   }
-
-
 
 }

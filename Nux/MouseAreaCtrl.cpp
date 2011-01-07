@@ -30,7 +30,7 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
   {
     // Set Original State
-    m_vlayout   = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_vlayout   = new VLayout (NUX_TRACKER_LOCATION);
     m_Area      = new CoreArea (NUX_TRACKER_LOCATION);
 
     // Set Signals

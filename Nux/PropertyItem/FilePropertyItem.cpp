@@ -37,7 +37,7 @@ namespace nux
     m_hlayout->AddView (m_TextEntry, 1, eCenter);
     m_hlayout->AddView (m_OpenButton, 0, eCenter);
     m_hlayout->SetHorizontalInternalMargin (2);
-    GetGraphicsThread()->ComputeElementLayout (m_hlayout);
+    GetWindowThread ()->ComputeElementLayout (m_hlayout);
 
     m_OpenButton->SetCaption (TEXT ("...") );
     m_OpenButton->SetMinimumSize (32, DEFAULT_WIDGET_HEIGHT);
@@ -91,7 +91,7 @@ namespace nux
       geo = m_ItemGeometryVector[1];
       geo = geo.GetExpand (-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
       m_hlayout->SetGeometry (geo);
-      GetGraphicsThread()->ComputeElementLayout (m_hlayout);
+      GetWindowThread ()->ComputeElementLayout (m_hlayout);
     }
   }
 

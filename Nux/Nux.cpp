@@ -65,7 +65,7 @@ namespace nux
                                  ThreadUserInitFunc UserInitFunc,
                                  void *InitData)
   {
-    if (GetThreadApplication() )
+    if (GetWindowThread() )
     {
       // An WindowThread already exist for this thread.
       nuxAssertMsg (0, "[CreateGUIThread] Only one WindowThread per thread is allowed");
@@ -97,7 +97,7 @@ namespace nux
                                          void *InitData
                                         )
   {
-    if (GetThreadApplication() )
+    if (GetWindowThread() )
     {
       // An WindowThread already exist for this thread.
       nuxAssertMsg (0, "[CreateGUIThread] Only one WindowThread per thread is allowed");
@@ -128,7 +128,7 @@ namespace nux
                                          ThreadUserInitFunc UserInitFunc,
                                          void *InitData)
   {
-    if (GetThreadApplication() )
+    if (GetWindowThread() )
     {
       // An WindowThread already exist for this thread.
       nuxAssertMsg (0, "[CreateGUIThread] Only one WindowThread per thread is allowed");
@@ -272,19 +272,19 @@ namespace nux
   }
 
 
-  IntrusiveSP<FontTexture> GetSysFont ()
+  ObjectPtr<FontTexture> GetSysFont ()
   {
     return GetGraphicsEngine ().GetFont ();
   }
 
-  IntrusiveSP<FontTexture> GetSysBoldFont ()
+  ObjectPtr<FontTexture> GetSysBoldFont ()
   {
     return GetGraphicsEngine ().GetBoldFont ();
   }
 
   WindowCompositor &GetWindowCompositor ()
   {
-    NThread *thread = GetThreadApplication ();
+    NThread *thread = GetWindowThread ();
 
     if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
@@ -296,44 +296,50 @@ namespace nux
     return (static_cast<WindowThread *> (thread) )->GetWindowCompositor();
   }
 
-  NThread *GetThreadApplication()
+  NThread *GetThreadApplication ()
   {
     NThread *thread = static_cast<NThread *> (inlGetThreadLocalStorage (ThreadLocal_InalogicAppImpl) );
     return thread;
   }
 
-  WindowThread* GetGraphicsThread()
+  WindowThread *GetGraphicsThread ()
   {
-    return NUX_STATIC_CAST (WindowThread *, GetThreadApplication ());
+    return NUX_STATIC_CAST (WindowThread *, GetWindowThread ());
   }
 
-  BasePainter& GetPainter()
+  WindowThread *GetWindowThread ()
   {
-    NThread *thread = GetThreadApplication();
-    return NUX_STATIC_CAST (WindowThread *, thread)->GetPainter();
+    NThread *thread = static_cast<NThread *> (inlGetThreadLocalStorage (ThreadLocal_InalogicAppImpl) );
+    return NUX_STATIC_CAST (WindowThread *, thread);
   }
 
-  UXTheme& GetTheme() 
+  BasePainter& GetPainter ()
   {
-    NThread *thread = GetThreadApplication();
-    return NUX_STATIC_CAST (WindowThread *, thread)->GetTheme();
+    NThread *thread = GetWindowThread ();
+    return NUX_STATIC_CAST (WindowThread *, thread)->GetPainter ();
   }
 
-  TimerHandler& GetTimer()
+  UXTheme& GetTheme () 
   {
-    NThread *thread = GetThreadApplication();
-    return NUX_STATIC_CAST (WindowThread *, thread)->GetTimerHandler();
+    NThread *thread = GetWindowThread ();
+    return NUX_STATIC_CAST (WindowThread *, thread)->GetTheme ();
   }
 
-  GraphicsDisplay& GetWindow()
+  TimerHandler& GetTimer ()
   {
-    NThread *thread = GetThreadApplication();
-    return NUX_STATIC_CAST (WindowThread *, thread)->GetWindow();
+    NThread *thread = GetWindowThread ();
+    return NUX_STATIC_CAST (WindowThread *, thread)->GetTimerHandler ();
+  }
+
+  GraphicsDisplay& GetWindow ()
+  {
+    NThread *thread = GetWindowThread ();
+    return NUX_STATIC_CAST (WindowThread *, thread)->GetWindow ();
   }
 
   GraphicsEngine& GetGraphicsEngine ()
   {
-    NThread *thread = GetThreadApplication ();
+    NThread *thread = GetWindowThread ();
     return NUX_STATIC_CAST (WindowThread *, thread)->GetGraphicsEngine ();
   }
 

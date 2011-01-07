@@ -36,7 +36,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     MainVLayout->AddView(text_box_edit, 0, nux::eCenter, nux::eFull);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
     
-    nux::GetGraphicsThread()->SetLayout(MainVLayout);
+    nux::GetWindowThread ()->SetLayout(MainVLayout);
     nux::ColorLayer background(nux::Color(0xFF4D4D4D));
     static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
 }

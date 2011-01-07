@@ -57,7 +57,7 @@ namespace nux
     float m_minX, m_minY, m_maxX, m_maxY;
     FunctionCallback m_FunctionCallback;
 
-    IntrusiveSP<IOpenGLBaseTexture> Texture;
+    ObjectPtr<IOpenGLBaseTexture> Texture;
     TextureLayer *m_BackgroundLayer;
     GLSh_DrawFunction *m_DrawFunctionShader;
   };

@@ -74,7 +74,7 @@ namespace nux
     m_Style                         = WINDOWSTYLE_NORMAL;
     m_PauseGraphicsRendering        = false;
 
-    inlSetThreadLocalStorage (ThreadLocal_GLWindowImpl, this);
+    inlSetThreadLocalStorage (_TLS_GraphicsDisplay, this);
 
     m_X11LastEvent.type = -1;
     m_X11RepeatKey = true;
@@ -100,7 +100,7 @@ namespace nux
     DestroyOpenGLWindow();
     NUX_SAFE_DELETE ( m_pEvent );
 
-    inlSetThreadLocalStorage (ThreadLocal_GLWindowImpl, 0);
+    inlSetThreadLocalStorage (_TLS_GraphicsDisplay, 0);
   }
 
   NString GraphicsDisplay::FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
@@ -692,12 +692,12 @@ namespace nux
     XFlush (m_X11Display);
   }
 
-  unsigned int GraphicsDisplay::GetWindowWidth()
+  int GraphicsDisplay::GetWindowWidth()
   {
     return m_WindowSize.GetWidth();
   }
 
-  unsigned int GraphicsDisplay::GetWindowHeight()
+  int GraphicsDisplay::GetWindowHeight()
   {
     return m_WindowSize.GetHeight();
   }
@@ -1478,14 +1478,13 @@ namespace nux
         m_pEvent->e_keysym = inlKeysym;
         m_pEvent->e_event = NUX_KEYDOWN;
 
-        static XComposeStatus ComposeStatus;
-        static char buffer[16];
-        m_pEvent->e_text[0] = 0;
+        char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
+        Memset (m_pEvent->e_text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
 
-        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: Keysym: %d - %x."), keysym, keysym);
-        if (XLookupString (&xevent.xkey, buffer, sizeof (buffer), NULL, &ComposeStatus) )
+        int num_char_stored = XLookupString (&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->e_keysym, NULL);
+        if (num_char_stored)
         {
-          m_pEvent->e_text[0] = buffer[0];
+          Memcpy (m_pEvent->e_text, buffer, num_char_stored);
         }
 
         break;
@@ -1580,8 +1579,6 @@ namespace nux
   {
     switch (Keysym)
     {
-      case XK_Cancel:
-        return NUX_VK_CANCEL;
       case XK_BackSpace:
         return NUX_VK_BACKSPACE;
       case XK_Tab:
@@ -1620,8 +1617,6 @@ namespace nux
         return NUX_VK_RIGHT;
       case XK_Down:
         return NUX_VK_DOWN;
-      case XK_Select:
-        return NUX_VK_SELECT;
       case XK_Print:
         return NUX_VK_PRINT;
       case XK_Execute:
@@ -1630,8 +1625,6 @@ namespace nux
         return NUX_VK_INSERT;
       case XK_Delete:
         return NUX_VK_DELETE;
-      case XK_Help:
-        return NUX_VK_HELP;
       case XK_0:
         return NUX_VK_0;
       case XK_1:
@@ -1805,12 +1798,24 @@ namespace nux
 
   void GraphicsDisplay::ShowWindow()
   {
-    XMapWindow (m_X11Display, m_X11Window);
+    XMapRaised (m_X11Display, m_X11Window);
   }
 
   void GraphicsDisplay::HideWindow()
   {
     XUnmapWindow (m_X11Display, m_X11Window);
+  }
+
+  bool GraphicsDisplay::IsWindowVisible ()
+  {
+    XWindowAttributes window_attributes_return;
+    XGetWindowAttributes (m_X11Display, m_X11Window, &window_attributes_return);
+
+    if (window_attributes_return.map_state == IsViewable)
+    {
+      return true;
+    }
+    return false;
   }
 
   void GraphicsDisplay::EnterMaximizeWindow()
@@ -1830,7 +1835,7 @@ namespace nux
 
   bool GraphicsDisplay::HasVSyncSwapControl () const
   {
-    return GetThreadGLDeviceFactory ()->GetGpuInfo().Support_EXT_Swap_Control ();
+    return GetGpuDevice ()->GetGpuInfo().Support_EXT_Swap_Control ();
   }
 
   void GraphicsDisplay::EnableVSyncSwapControl ()

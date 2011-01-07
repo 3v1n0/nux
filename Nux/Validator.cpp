@@ -28,7 +28,7 @@ namespace nux
 
   Validator::Validator()
   {
-
+    _regexp = 0;
   }
 
   Validator::~Validator()
@@ -36,5 +36,46 @@ namespace nux
 
   }
 
+  bool Validator::InitRegExp ()
+  {
+    const char *error;
+    int   erroffset;
+    _regexp = pcre_compile (
+      _regexp_str.GetTCharPtr (),    /* the pattern */
+      PCRE_MULTILINE,
+      &error,         /* for error message */
+      &erroffset,     /* for error offset */
+      0);             /* use default character tables */
+
+    if (!_regexp)
+    {
+      nuxDebugMsg (TEXT("[IntegerValidator::IntegerValidator] Invalid regular expression: %s"), _regexp_str.GetTCharPtr ());
+      return false;
+    }    
+    return true;
+  }
+
+  Validator::State Validator::Validate (const TCHAR *str) const
+  {
+    if (_regexp == 0)
+      return Validator::Invalid;
+
+    int out_vector [10];
+    unsigned int offset = 0;
+    int len = (int) strlen (str);
+
+    // See the "PCRE DISCUSSION OF STACK USAGE" and why it maybe necessary to limit the stack usage.
+    pcre_extra extra;
+    extra.flags = PCRE_EXTRA_MATCH_LIMIT_RECURSION;
+    extra.match_limit_recursion = 2000; 
+
+    int rc = pcre_exec(_regexp, &extra, str, len, offset, 0, out_vector, 10);
+    if (rc <= -1)
+    {
+      return Validator::Invalid;
+    }
+
+    return Validator::Acceptable;
+  }
 
 }

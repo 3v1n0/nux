@@ -47,7 +47,7 @@ namespace nux
   Layout::~Layout()
   {
     // It is possible that this layout object is in the refresh list. Remove it here before it is deleted.
-    GetGraphicsThread()->RemoveObjectFromRefreshList (this);
+    GetWindowThread ()->RemoveObjectFromRefreshList (this);
 
     std::list<Area *>::iterator it;
 
@@ -95,7 +95,7 @@ namespace nux
 // If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
 // and the children will take their natural size by expending WidgetLayout.
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-  void Layout::AddLayout (Layout *layout, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
+  void Layout::AddLayout (Layout *layout, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage)
   {
     nuxAssertMsg (layout != 0, TEXT ("[Layout::AddView] Invalid parameter.") );
     NUX_RETURN_IF_TRUE (layout == 0);
@@ -145,7 +145,7 @@ namespace nux
       The minor_position parameter controls how the layout will place the object within itself. A vertical layout object controls the horizontal positioning
       of its children baseobjects, While an horizontal layout object controls the vertical positioning of its children baseobjects.
 
-      The minor_size parameter controls how much size the baseobject minor dimension gets from the layout minor dimension. See eMinorSize.
+      The minor_size parameter controls how much size the baseobject minor dimension gets from the layout minor dimension. See MinorDimensionSize.
 
       /param baseobject The object that is being added.
       /param stretchFactor This value controls how the layout object share space between its children baseobject.
@@ -154,7 +154,7 @@ namespace nux
       /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
   */
 
-  void Layout::AddView (Area *bo, unsigned int stretchFactor, eMinorPosition minor_position, eMinorSize minor_size, float percentage)
+  void Layout::AddView (Area *bo, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage)
   {
     nuxAssertMsg (bo != 0, TEXT ("[Layout::AddView] Invalid parameter.") );
     NUX_RETURN_IF_TRUE (bo == 0);

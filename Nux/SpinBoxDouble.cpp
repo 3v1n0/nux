@@ -34,9 +34,10 @@ namespace nux
   const Color SPINBOX_DOUBLE_BUTTON_COLOR = Color (0xFF4D4D4D);
   const Color SPINBOX_DOUBLE_BUTTON_MOUSEOVER_COLOR = Color (0xFF222222);
 
-  SpinBoxDouble::SpinBoxDouble (double Value, double Step, double MinValue, double MaxValue)
-    :   m_DoubleValidator (MinValue, MaxValue)
-    ,   m_Step (Step)
+  SpinBoxDouble::SpinBoxDouble (double Value, double Step, double MinValue, double MaxValue, NUX_FILE_LINE_DECL)
+    : SpinBox_Logic (NUX_FILE_LINE_PARAM)
+    , m_DoubleValidator (MinValue, MaxValue)
+    , m_Step (Step)
   {
     InitializeLayout();
     InitializeWidgets();
@@ -154,12 +155,12 @@ namespace nux
 
   void SpinBoxDouble::SetValue (double value)
   {
-    m_Value = m_DoubleValidator.Validate (value);
+    m_Value = m_DoubleValidator.GetClampedValue (value);
 //    if(m_Value < m_DoubleValidator.GetMinimum())
 //        m_Value = m_DoubleValidator.GetMinimum();
 //    if(m_Value > m_DoubleValidator.GetMaximum())
 //        m_Value = m_DoubleValidator.GetMaximum();
-    m_EditLine->SetText (NString::Printf ("%.3f", m_Value) );
+    m_EditLine->SetText (NString::Printf ("%.3f", m_Value));
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
     NeedRedraw();
@@ -199,7 +200,7 @@ namespace nux
   {
     m_DoubleValidator.SetMinimum (MinValue);
     m_DoubleValidator.SetMaximum (Maxvalue);
-    m_Value = m_DoubleValidator.Validate (m_Value);
+    m_Value = m_DoubleValidator.GetClampedValue (m_Value);
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
     NeedRedraw();
@@ -248,7 +249,7 @@ namespace nux
     double ret = 0;
     ret = CharToDouble (m_EditLine->GetCleanText().GetTCharPtr() );
     {
-      m_Value = m_DoubleValidator.Validate (ret);
+      m_Value = m_DoubleValidator.GetClampedValue (ret);
       m_EditLine->SetText (NString::Printf ("%.3f", m_Value) );
       sigValueChanged.emit (this);
       sigValue.emit (m_Value);

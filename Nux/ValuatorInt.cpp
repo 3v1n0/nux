@@ -50,7 +50,7 @@ namespace nux
     // This is use by TextLineEditPropertyItem::GetItemBestHeight
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    m_hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_hlayout = new HLayout (NUX_TRACKER_LOCATION);
     m_hlayout->AddView (m_MouseControlledButton, 0);
     m_hlayout->AddView (m_EditLine, 1);
     m_hlayout->SetHorizontalInternalMargin (4);
@@ -137,7 +137,7 @@ namespace nux
 
   void ValuatorInt::SetValue (int value)
   {
-    m_iValue = m_IntValidator.Validate (value);
+    m_iValue = m_IntValidator.GetClampedValue (value);
     m_EditLine->SetText (NString::Printf ("%d", m_iValue) );
     sigValueChanged.emit (this);
     sigValue.emit (m_iValue);
@@ -178,7 +178,7 @@ namespace nux
   {
     m_IntValidator.SetMinimum (MinValue);
     m_IntValidator.SetMaximum (Maxvalue);
-    m_iValue = m_IntValidator.Validate (m_iValue);
+    m_iValue = m_IntValidator.GetClampedValue (m_iValue);
     sigValueChanged.emit (this);
     sigValue.emit (m_iValue);
     NeedRedraw();
@@ -217,7 +217,7 @@ namespace nux
     double ret = 0;
     ret = CharToDouble (m_EditLine->GetCleanText().GetTCharPtr() );
     {
-      m_iValue = m_IntValidator.Validate (ret);
+      m_iValue = m_IntValidator.GetClampedValue (ret);
       m_EditLine->SetText (NString::Printf ("%d", m_iValue) );
       sigValueChanged.emit (this);
       sigValue.emit (m_iValue);

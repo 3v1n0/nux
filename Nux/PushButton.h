@@ -28,6 +28,7 @@ namespace nux
 {
   class HLayout;
 
+  //! A Button control that performs and action when clicked.
   class PushButton: public AbstractButton
   {
   public:

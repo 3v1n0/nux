@@ -182,7 +182,7 @@ namespace nux
       Addmillisecs(&timer_object->when, timer_object->Period);
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-        timer_object->glibid = GetGraphicsThread()->AddGLibTimeout (timer_object->Period);
+        timer_object->glibid = GetWindowThread ()->AddGLibTimeout (timer_object->Period);
 #endif
     }
 
@@ -212,7 +212,7 @@ namespace nux
       if (window_thread)
         timer_object->glibid = window_thread->AddGLibTimeout (Period);
       else
-        timer_object->glibid = GetGraphicsThread()->AddGLibTimeout (Period);
+        timer_object->glibid = GetWindowThread ()->AddGLibTimeout (Period);
       
       if (timer_object->glibid == 0)
       {
@@ -245,7 +245,7 @@ namespace nux
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
-      timer_object->glibid = GetGraphicsThread()->AddGLibTimeout (Period);
+      timer_object->glibid = GetWindowThread ()->AddGLibTimeout (Period);
 
       if (timer_object->glibid == 0)
       {
@@ -278,7 +278,7 @@ namespace nux
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
-      timer_object->glibid = GetGraphicsThread()->AddGLibTimeout (Period);
+      timer_object->glibid = GetWindowThread ()->AddGLibTimeout (Period);
 
       if (timer_object->glibid == 0)
       {
@@ -554,7 +554,7 @@ namespace nux
 //         // How long (in milliseconds) between now and the moment the timeout expires?
 //         t_u32 time_difference = TimeDiff(now, m_timer_object_queue->when);
 //
-//         m_timer_object_queue->glibid = GetGraphicsThread()->AddGLibTimeout(time_difference);
+//         m_timer_object_queue->glibid = GetWindowThread ()->AddGLibTimeout(time_difference);
 //         //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Adding Timeout ID: %d"), m_timer_object_queue->glibid);
 //     }
 

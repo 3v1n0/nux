@@ -20,35 +20,59 @@
 
 #include "Nux/Nux.h"
 #include "Nux/VLayout.h"
-#include "Nux/HLayout.h"
 #include "Nux/WindowThread.h"
-#include "Nux/Button.h"
+#include "Nux/PushButton.h"
 
 
-void ThreadWidgetInit(nux::NThread* thread, void* InitData)
+void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
 {
-    nux::VLayout* MainVLayout = new nux::VLayout(TEXT(""), NUX_TRACKER_LOCATION);
+  // Create a vertical Layout
+  nux::VLayout* layout = new nux::VLayout(NUX_TRACKER_LOCATION);
+  
+  //Create a button of type PushButton
+  nux::PushButton* button = new nux::PushButton(
+    TEXT ("Hello World!"),
+    NUX_TRACKER_LOCATION);
 
-    nux::Button* button = new nux::Button(TEXT("Hello World!"), NUX_TRACKER_LOCATION);
+  // Set the button maximum width/height
+  button->SetMaximumWidth (80);
+  button->SetMaximumHeight (40);
 
-    button->SetMaximumWidth(80);
-    button->SetMaximumHeight(60);
+  // Add the button to the layout
+  layout->AddView (
+    button,
+    1,
+    nux::MINOR_POSITION_CENTER,
+    nux::MINOR_SIZE_FULL);
 
-    
-    MainVLayout->AddView(button, 1, nux::eCenter, nux::eFull);
-    MainVLayout->SetContentDistribution(nux::eStackCenter);
-    
-    nux::GetGraphicsThread()->SetLayout(MainVLayout);
-    nux::ColorLayer background(nux::Color(0xFF4D4D4D));
-    static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
+  // Control the position of elements inside the layout
+  layout->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
+
+  // Set the layout as the container of the window thread
+  nux::GetWindowThread ()->SetLayout (layout);
+
+  // Set the background color of the window
+  nux::ColorLayer background (nux::Color (0xFF2D2D2D));
+  static_cast<nux::WindowThread*> (thread)->SetWindowBackgroundPaintLayer(&background);
 }
 
 int main(int argc, char **argv)
 {
-    nux::NuxInitialize(0);
-    nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Edit Text Box"), 400, 300, 0, &ThreadWidgetInit, 0);
-    wt->Run(NULL);
+  // Initialize Nux subsystem
+  nux::NuxInitialize (0);
 
-    delete wt;
-    return 0;
+  // Create a Window thread
+  nux::WindowThread* wt = nux::CreateGUIThread(
+    TEXT("Push Button"),
+    200,
+    150,
+    0,
+    &UserInterfaceInitialization,
+    0);
+
+  // Start the main loop
+  wt->Run (0);
+
+  delete wt;
+  return 0;
 }

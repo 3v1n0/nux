@@ -29,17 +29,17 @@ namespace nux
 
   static void SystemStart()
   {
-    static t_u8 StaticBuffer[sizeof (GlobalSingletonInitializer) ];
+    static t_u8 StaticBuffer [sizeof (GlobalSingletonInitializer)];
     // Placement new in our reserved buffer.
-    GGlobalInitializer =  new (StaticBuffer) GlobalSingletonInitializer();
+    GGlobalInitializer =  new (StaticBuffer) GlobalSingletonInitializer ();
 
 #if defined (NUX_OS_WINDOWS)
-    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (LogFileOutput));
-    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (VisualOutputConsole));
-    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (PrintfOutputConsole));
+    GLogDevice.AddOutputDevice (&NUX_GLOBAL_OBJECT_INSTANCE (LogFileOutput));
+    GLogDevice.AddOutputDevice (&NUX_GLOBAL_OBJECT_INSTANCE (VisualOutputConsole));
+    GLogDevice.AddOutputDevice (&NUX_GLOBAL_OBJECT_INSTANCE (PrintfOutputConsole));
 #else
-    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (LogFileOutput));
-    GLogDevice.AddOutputDevice ( &NUX_GLOBAL_OBJECT_INSTANCE (PrintfOutputConsole));
+    GLogDevice.AddOutputDevice (&NUX_GLOBAL_OBJECT_INSTANCE (LogFileOutput));
+    GLogDevice.AddOutputDevice (&NUX_GLOBAL_OBJECT_INSTANCE (PrintfOutputConsole));
 #endif
   }
 
@@ -54,7 +54,7 @@ namespace nux
   }
 
   bool GlobalSingletonInitializer::m_bGlobalObjectsReady = false;
-  GlobalSingletonInitializer::GlobalSingletonInitializer()
+  GlobalSingletonInitializer::GlobalSingletonInitializer ()
   {
     m_bGlobalObjectsReady = true;
   }

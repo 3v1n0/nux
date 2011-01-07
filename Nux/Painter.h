@@ -162,7 +162,7 @@ namespace nux
                                         int offset = 0,
                                         int selection_start = 0, int selection_end = 0) const;
 
-    virtual int PaintTextLineStatic (GraphicsEngine &GfxContext, IntrusiveSP<FontTexture> Font, const Geometry &g,
+    virtual int PaintTextLineStatic (GraphicsEngine &GfxContext, ObjectPtr<FontTexture> Font, const Geometry &g,
                                      const NString &Str,
                                      const Color &color = Color (0.0f, 0.0f, 0.0f, 1.0f),
                                      bool WriteAlphaChannel = true,
@@ -260,7 +260,7 @@ namespace nux
                                       const ROPConfig &ROP = ROPConfig::Default);
 
     void PushTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
-                           IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
+                           ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
                            TexCoordXForm texxform,
                            const Color &color,
                            bool WriteAlpha = false,
@@ -286,7 +286,7 @@ namespace nux
                                           const ROPConfig &ROP = ROPConfig::Default);
 
     void PushDrawTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
-                               IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
+                               ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
                                TexCoordXForm texxform,
                                const Color &color,
                                bool WriteAlpha = false,

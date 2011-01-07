@@ -101,16 +101,16 @@ namespace nux
     :   _ScreenOffsetX (0)
     ,   _ScreenOffsetY (0)
   {
-    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
-      sprog = GetThreadGLDeviceFactory()->CreateShaderProgram();
+      sprog = GetGpuDevice()->CreateShaderProgram();
       sprog->LoadVertexShader (VtxShader.GetTCharPtr(), NULL);
       sprog->LoadPixelShader (FrgShader.GetTCharPtr(), NULL);
       sprog->Link();
     }
     else
     {
-      m_AsmProg = GetThreadGLDeviceFactory()->CreateAsmShaderProgram();
+      m_AsmProg = GetGpuDevice()->CreateAsmShaderProgram();
       m_AsmProg->LoadVertexShader (AsmVtxShader.GetTCharPtr() );
       m_AsmProg->LoadPixelShader (AsmFrgShader.GetTCharPtr() );
       m_AsmProg->Link();
@@ -119,7 +119,7 @@ namespace nux
 
   GLSh_DrawFunction::~GLSh_DrawFunction()
   {
-    sprog = IntrusiveSP<IOpenGLShaderProgram> (0);
+    sprog = ObjectPtr<IOpenGLShaderProgram> (0);
   }
 
   void GLSh_DrawFunction::SetBackgroundColor (float R, float G, float B, float A)
@@ -148,7 +148,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f,
     };
 
-    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
       CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
@@ -181,12 +181,13 @@ namespace nux
       CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 16, VtxBuffer) );
 
-      CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+      CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
       CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
       sprog->End();
     }
+#ifndef NUX_OPENGLES_20
     else
     {
       CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -211,12 +212,13 @@ namespace nux
       CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 16, VtxBuffer) );
 
-      CHECKGL ( glDrawArrays (GL_QUADS, 0, 4) );
+      CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
 
       CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
 
       m_AsmProg->End();
     }
+#endif
   }
 
   void GLSh_DrawFunction::CacheShader()
@@ -225,7 +227,7 @@ namespace nux
 //    GLProgramObject::LoadCombinedShaderFile(TEXT("..//Shaders//DrawFunction.glsl"), TEXT("main"), TEXT("main"), Definitions);
   }
 
-  void GLSh_DrawFunction::SetTextureFunction (IntrusiveSP<IOpenGLBaseTexture> device_texture)
+  void GLSh_DrawFunction::SetTextureFunction (ObjectPtr<IOpenGLBaseTexture> device_texture)
   {
     m_device_texture = device_texture;
   }

@@ -140,12 +140,12 @@ namespace nux
 #undef NUX_DEFINE_RESOURCE_UPDATER
   }
 
-  IntrusiveSP<CachedResourceData> NResourceCache::GetCachedResource (ResourceData *Source)
+  ObjectPtr<CachedResourceData> NResourceCache::GetCachedResource (ResourceData *Source)
   {
-    NUX_RETURN_VALUE_IF_NULL (Source, IntrusiveSP<CachedResourceData>(0));
+    NUX_RETURN_VALUE_IF_NULL (Source, ObjectPtr<CachedResourceData>(0));
     
     // check to see if it already exists
-    IntrusiveSP<CachedResourceData> CachedResource = TResourceCache<int, CachedResourceData>::FindCachedResourceById (Source->GetResourceIndex());
+    ObjectPtr<CachedResourceData> CachedResource = TResourceCache<int, CachedResourceData>::FindCachedResourceById (Source->GetResourceIndex());
 
     if (CachedResource.IsNull() )
     {
@@ -159,7 +159,7 @@ namespace nux
         {
           // cache the device resource
           CachedResourceData* ptr = ResourceFactory->BuildResource (this, Source);
-          CachedResource = IntrusiveSP<CachedResourceData> (ptr);
+          CachedResource = ObjectPtr<CachedResourceData> (ptr);
           ptr->UnReference();
           break;
         }
@@ -184,7 +184,7 @@ namespace nux
 
   bool NResourceCache::IsCachedResource (ResourceData *Source)
   {
-    IntrusiveSP<CachedResourceData> CachedResource = TResourceCache< int, CachedResourceData >::FindCachedResourceById (Source->GetResourceIndex() );
+    ObjectPtr<CachedResourceData> CachedResource = TResourceCache< int, CachedResourceData >::FindCachedResourceById (Source->GetResourceIndex() );
     return (CachedResource.IsValid() );
   }
 

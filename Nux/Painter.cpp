@@ -203,7 +203,7 @@ namespace nux
   }
 
   int BasePainter::PaintTextLineStatic (GraphicsEngine &GfxContext,
-                                        IntrusiveSP<FontTexture> Font,
+                                        ObjectPtr<FontTexture> Font,
                                         const Geometry &g,
                                         const NString &Str,
                                         const Color &color,
@@ -227,7 +227,7 @@ namespace nux
     tex_h = (float) texture->GetHeight();
 
     TexCoordXForm texxform;
-    GfxContext.QRP_GLSL_1Tex (x, y, tex_w, tex_h, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (x, y, tex_w, tex_h, texture->GetDeviceTexture(), texxform, Color::White);
   }
 
   void BasePainter::Draw2DTextureAligned (GraphicsEngine &GfxContext, BaseTexture *texture, const Geometry &g, TextureAlignmentStyle tex_align) const
@@ -284,23 +284,23 @@ namespace nux
 
   void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0) const
   {
-    GfxContext.QRP_GLSL_Color (g.x, g.y, g.GetWidth(), g.GetHeight(), c0);
+    GfxContext.QRP_Color (g.x, g.y, g.GetWidth(), g.GetHeight(), c0);
   }
 
   void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const
   {
-    GfxContext.QRP_GLSL_Color (g.x, g.y, g.GetWidth(), g.GetHeight(), c0_top_left, c1_bottom_left, c2_bottom_right, c3_top_right);
+    GfxContext.QRP_Color (g.x, g.y, g.GetWidth(), g.GetHeight(), c0_top_left, c1_bottom_left, c2_bottom_right, c3_top_right);
   }
 
   void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0) const
   {
-    GfxContext.QRP_GLSL_Color (x, y, width, height, c0);
+    GfxContext.QRP_Color (x, y, width, height, c0);
   }
 
 
   void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const
   {
-    GfxContext.QRP_GLSL_Color (x, y, width, height, c0_top_left, c1_bottom_left, c2_bottom_right, c3_top_right);
+    GfxContext.QRP_Color (x, y, width, height, c0_top_left, c1_bottom_left, c2_bottom_right, c3_top_right);
   }
 
   void BasePainter::Paint2DQuadVGradient (GraphicsEngine &GfxContext, const Geometry &g, Color TopColor, Color BottomColor) const
@@ -319,32 +319,32 @@ namespace nux
 /////////////////////////////
   void BasePainter::Paint2DQuadWireframe (GraphicsEngine &GfxContext, const Geometry &g, Color c0) const
   {
-    GfxContext.QRP_GLSL_QuadWireframe (g.x, g.y, g.GetWidth(), g.GetHeight(), c0, c0, c0, c0);
+    GfxContext.QRP_QuadWireframe (g.x, g.y, g.GetWidth(), g.GetHeight(), c0, c0, c0, c0);
   }
 
 // void BasePainter::Paint2DQuadWireframe(GraphicsEngine& GfxContext, const Geometry &g, Color c0_left, Color c1_right) const
 // {
-//     GfxContext.QRP_GLSL_QuadWireframe(g.x, g.y, g.GetWidth(), g.GetHeight(), c0_left, c0_left, c1_right, c1_right);
+//     GfxContext.QRP_QuadWireframe(g.x, g.y, g.GetWidth(), g.GetHeight(), c0_left, c0_left, c1_right, c1_right);
 // }
 
   void BasePainter::Paint2DQuadWireframe (GraphicsEngine &GfxContext, const Geometry &g, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const
   {
-    GfxContext.QRP_GLSL_QuadWireframe (g.x, g.y, g.GetWidth(), g.GetHeight(), c_top_left, c_bottom_left, c_bottom_right, c_top_right);
+    GfxContext.QRP_QuadWireframe (g.x, g.y, g.GetWidth(), g.GetHeight(), c_top_left, c_bottom_left, c_bottom_right, c_top_right);
   }
 
   void BasePainter::Paint2DQuadWireframe (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0) const
   {
-    GfxContext.QRP_GLSL_QuadWireframe (x, y, width, height, c0, c0, c0, c0);
+    GfxContext.QRP_QuadWireframe (x, y, width, height, c0, c0, c0, c0);
   }
 
 // void BasePainter::Paint2DQuadWireframe(GraphicsEngine& GfxContext, int x, int y, int width, int height, Color c0_left, Color c1_right) const
 // {
-//     GfxContext.QRP_GLSL_QuadWireframe(x, y, width, height, c0_left, c0_left, c1_right, c1_right);
+//     GfxContext.QRP_QuadWireframe(x, y, width, height, c0_left, c0_left, c1_right, c1_right);
 // }
 
   void BasePainter::Paint2DQuadWireframe (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const
   {
-    GfxContext.QRP_GLSL_QuadWireframe (x, y, width, height, c_top_left, c_bottom_left, c_bottom_right, c_top_right);
+    GfxContext.QRP_QuadWireframe (x, y, width, height, c_top_left, c_bottom_left, c_bottom_right, c_top_right);
   }
 
 //////////////////////
@@ -355,7 +355,7 @@ namespace nux
                                          int x2, int y2,
                                          Color c0)
   {
-    GfxContext.QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0);
+    GfxContext.QRP_Triangle (x0, y0, x1, y1, x2, y2, c0);
   }
 
   void BasePainter::Draw2DTriangleColor (GraphicsEngine &GfxContext, int x0, int y0,
@@ -363,7 +363,7 @@ namespace nux
                                          int x2, int y2,
                                          Color c0, Color c1, Color c2)
   {
-    GfxContext.QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
+    GfxContext.QRP_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
   }
 
 //////////////////////
@@ -372,12 +372,12 @@ namespace nux
   void BasePainter::Draw2DLine (GraphicsEngine &GfxContext, int x0, int y0,
                                 int x1, int y1, Color c0) const
   {
-    GfxContext.QRP_GLSL_Line (x0, y0, x1, y1, c0);
+    GfxContext.QRP_Line (x0, y0, x1, y1, c0);
   }
   void BasePainter::Draw2DLine (GraphicsEngine &GfxContext, int x0, int y0,
                                 int x1, int y1, Color c0, Color c1) const
   {
-    GfxContext.QRP_GLSL_Line (x0, y0, x1, y1, c0, c1);
+    GfxContext.QRP_Line (x0, y0, x1, y1, c0, c1);
   }
 
 ////////////////////
@@ -456,11 +456,11 @@ namespace nux
       texxform.v0 = 0;
       texxform.u1 = border_left;
       texxform.v1 = border_top;
-      GfxContext.QRP_GLSL_ColorModTexAlpha (r_x, r_y, border_left, border_top, texture->GetDeviceTexture(), texxform, c0);
+      GfxContext.QRP_ColorModTexAlpha (r_x, r_y, border_left, border_top, texture->GetDeviceTexture(), texxform, c0);
     }
     else
     {
-      GfxContext.QRP_GLSL_Color (r_x, r_y, border_left, border_top, c0);
+      GfxContext.QRP_Color (r_x, r_y, border_left, border_top, c0);
     }
 
     // Draw TOP-RIGHT CORNER
@@ -470,11 +470,11 @@ namespace nux
       texxform.v0 = 0;
       texxform.u1 = tex_w;
       texxform.v1 = border_top;
-      GfxContext.QRP_GLSL_ColorModTexAlpha (r_x + r_w - border_right, r_y, border_right, border_top, texture->GetDeviceTexture(), texxform, c0);
+      GfxContext.QRP_ColorModTexAlpha (r_x + r_w - border_right, r_y, border_right, border_top, texture->GetDeviceTexture(), texxform, c0);
     }
     else
     {
-      GfxContext.QRP_GLSL_Color (r_x + r_w - border_right, r_y, border_right, border_top, c0);
+      GfxContext.QRP_Color (r_x + r_w - border_right, r_y, border_right, border_top, c0);
     }
 
     // Draw BOTTOM-LEFT CORNER
@@ -484,11 +484,11 @@ namespace nux
       texxform.v0 = tex_h - border_bottom;
       texxform.u1 = border_left;
       texxform.v1 = tex_h;
-      GfxContext.QRP_GLSL_ColorModTexAlpha (r_x, r_y + r_h - border_bottom, border_left, border_bottom, texture->GetDeviceTexture(), texxform, c0);
+      GfxContext.QRP_ColorModTexAlpha (r_x, r_y + r_h - border_bottom, border_left, border_bottom, texture->GetDeviceTexture(), texxform, c0);
     }
     else
     {
-      GfxContext.QRP_GLSL_Color (r_x, r_y + r_h - border_bottom, border_left, border_bottom, c0);
+      GfxContext.QRP_Color (r_x, r_y + r_h - border_bottom, border_left, border_bottom, c0);
     }
 
     // Draw BOTTOM-RIGHT CORNER
@@ -498,36 +498,36 @@ namespace nux
       texxform.v0 = tex_h - border_bottom;
       texxform.u1 = tex_w;
       texxform.v1 = tex_h;
-      GfxContext.QRP_GLSL_ColorModTexAlpha (r_x + r_w - border_right, r_y + r_h - border_bottom, border_right, border_bottom, texture->GetDeviceTexture(), texxform, c0);
+      GfxContext.QRP_ColorModTexAlpha (r_x + r_w - border_right, r_y + r_h - border_bottom, border_right, border_bottom, texture->GetDeviceTexture(), texxform, c0);
     }
     else
     {
-      GfxContext.QRP_GLSL_Color (r_x + r_w - border_right, r_y + r_h - border_bottom, border_right, border_bottom, c0);
+      GfxContext.QRP_Color (r_x + r_w - border_right, r_y + r_h - border_bottom, border_right, border_bottom, c0);
     }
 
     texxform.u0 = border_left;
     texxform.v0 = 0;
     texxform.u1 = tex_w - border_right;
     texxform.v1 = border_top;
-    GfxContext.QRP_GLSL_ColorModTexAlpha (r_x + border_left, r_y, r_w - border_left - border_right, border_top, texture->GetDeviceTexture(), texxform, c0);
+    GfxContext.QRP_ColorModTexAlpha (r_x + border_left, r_y, r_w - border_left - border_right, border_top, texture->GetDeviceTexture(), texxform, c0);
     // Draw BOTTOM BORDER
     texxform.u0 = border_left;
     texxform.v0 = tex_h - border_bottom;
     texxform.u1 = tex_w - border_right;
     texxform.v1 = tex_h;
-    GfxContext.QRP_GLSL_ColorModTexAlpha (r_x + border_left, r_y + r_h - border_bottom, r_w - border_left - border_right, border_bottom, texture->GetDeviceTexture(), texxform, c0);
+    GfxContext.QRP_ColorModTexAlpha (r_x + border_left, r_y + r_h - border_bottom, r_w - border_left - border_right, border_bottom, texture->GetDeviceTexture(), texxform, c0);
     // Draw LEFT BORDER
     texxform.u0 = 0;
     texxform.v0 = border_top;
     texxform.u1 = border_left;
     texxform.v1 = tex_h - border_bottom;
-    GfxContext.QRP_GLSL_ColorModTexAlpha (r_x, r_y + border_top, border_left, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, c0);
+    GfxContext.QRP_ColorModTexAlpha (r_x, r_y + border_top, border_left, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, c0);
     // Draw RIGHT BORDER
     texxform.u0 = tex_w - border_right;
     texxform.v0 = border_top;
     texxform.u1 = tex_w;
     texxform.v1 = tex_h - border_bottom;
-    GfxContext.QRP_GLSL_ColorModTexAlpha (r_x + r_w - border_right, r_y + border_top, border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, c0);
+    GfxContext.QRP_ColorModTexAlpha (r_x + r_w - border_right, r_y + border_top, border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, c0);
 
     // Draw CENTER
     if (draw_borders_only == false)
@@ -536,7 +536,7 @@ namespace nux
       texxform.v0 = border_top;
       texxform.u1 = tex_w - border_right;
       texxform.v1 = tex_h - border_bottom;
-      GfxContext.QRP_GLSL_ColorModTexAlpha (r_x + border_left, r_y + border_top, r_w - border_left - border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, c0);
+      GfxContext.QRP_ColorModTexAlpha (r_x + border_left, r_y + border_top, r_w - border_left - border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, c0);
     }
 
     GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -595,49 +595,49 @@ namespace nux
     texxform.v0 = 0;
     texxform.u1 = border_left;
     texxform.v1 = border_top;
-    GfxContext.QRP_GLSL_1Tex (r_x, r_y, border_left, border_top, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x, r_y, border_left, border_top, texture->GetDeviceTexture(), texxform, Color::White);
     // Draw TOP-RIGHT CORNER
     texxform.u0 = tex_w - border_right;
     texxform.v0 = 0;
     texxform.u1 = tex_w;
     texxform.v1 = border_top;
-    GfxContext.QRP_GLSL_1Tex (r_x + r_w - border_right, r_y, border_right, border_top, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + r_w - border_right, r_y, border_right, border_top, texture->GetDeviceTexture(), texxform, Color::White);
     // Draw BOTTOM-LEFT CORNER
     texxform.u0 = 0;
     texxform.v0 = tex_h - border_bottom;
     texxform.u1 = border_left;
     texxform.v1 = tex_h;
-    GfxContext.QRP_GLSL_1Tex (r_x, r_y + r_h - border_bottom, border_left, border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x, r_y + r_h - border_bottom, border_left, border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
     // Draw BOTTOM-RIGHT CORNER
     texxform.u0 = tex_w - border_right;
     texxform.v0 = tex_h - border_bottom;
     texxform.u1 = tex_w;
     texxform.v1 = tex_h;
-    GfxContext.QRP_GLSL_1Tex (r_x + r_w - border_right, r_y + r_h - border_bottom, border_right, border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + r_w - border_right, r_y + r_h - border_bottom, border_right, border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
     // Draw TOP BORDER
     texxform.u0 = border_left;
     texxform.v0 = 0;
     texxform.u1 = tex_w - border_right;
     texxform.v1 = border_top;
-    GfxContext.QRP_GLSL_1Tex (r_x + border_left, r_y, r_w - border_left - border_right, border_top, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + border_left, r_y, r_w - border_left - border_right, border_top, texture->GetDeviceTexture(), texxform, Color::White);
     // Draw BOTTOM BORDER
     texxform.u0 = border_left;
     texxform.v0 = tex_h - border_bottom;
     texxform.u1 = tex_w - border_right;
     texxform.v1 = tex_h;
-    GfxContext.QRP_GLSL_1Tex (r_x + border_left, r_y + r_h - border_bottom, r_w - border_left - border_right, border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + border_left, r_y + r_h - border_bottom, r_w - border_left - border_right, border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
     // Draw LEFT BORDER
     texxform.u0 = 0;
     texxform.v0 = border_top;
     texxform.u1 = border_left;
     texxform.v1 = tex_h - border_bottom;
-    GfxContext.QRP_GLSL_1Tex (r_x, r_y + border_top, border_left, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x, r_y + border_top, border_left, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
     // Draw RIGHT BORDER
     texxform.u0 = tex_w - border_right;
     texxform.v0 = border_top;
     texxform.u1 = tex_w;
     texxform.v1 = tex_h - border_bottom;
-    GfxContext.QRP_GLSL_1Tex (r_x + r_w - border_right, r_y + border_top, border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + r_w - border_right, r_y + border_top, border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
 
     // Draw CENTER
     if (draw_borders_only == false)
@@ -646,7 +646,7 @@ namespace nux
       texxform.v0 = border_top;
       texxform.u1 = tex_w - border_right;
       texxform.v1 = tex_h - border_bottom;
-      GfxContext.QRP_GLSL_1Tex (r_x + border_left, r_y + border_top, r_w - border_left - border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+      GfxContext.QRP_1Tex (r_x + border_left, r_y + border_top, r_w - border_left - border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
     }
 
     GfxContext.GetRenderStates().SetBlend (FALSE);
@@ -882,7 +882,7 @@ namespace nux
   }
 
   void BasePainter::PushTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
-                                      IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
+                                      ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
                                       TexCoordXForm texxform,
                                       const Color &color,
                                       bool WriteAlpha,
@@ -894,7 +894,7 @@ namespace nux
   }
 
   void BasePainter::PushDrawTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
-                                          IntrusiveSP<IOpenGLBaseTexture> DeviceTexture,
+                                          ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
                                           TexCoordXForm texxform,
                                           const Color &color,
                                           bool WriteAlpha,

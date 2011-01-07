@@ -34,10 +34,10 @@ namespace nux
     virtual ~IOpenGLFrameBufferObject();
 
     int FormatFrameBufferObject (int Width, int Height, BitmapFormat PixelFormat);
-    int SetRenderTarget (int ColorAttachmentIndex, IntrusiveSP<IOpenGLSurface> pRenderTargetSurface);
-    int SetDepthSurface (IntrusiveSP<IOpenGLSurface> pDepthSurface);
-    IntrusiveSP<IOpenGLSurface> GetRenderTarget (int ColorAttachmentIndex);
-    IntrusiveSP<IOpenGLSurface> GetDepthRenderTarget();
+    int SetRenderTarget (int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface);
+    int SetDepthSurface (ObjectPtr<IOpenGLSurface> pDepthSurface);
+    ObjectPtr<IOpenGLSurface> GetRenderTarget (int ColorAttachmentIndex);
+    ObjectPtr<IOpenGLSurface> GetDepthRenderTarget();
 
     int Clear (DWORD Flags, FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT Z, DWORD Stencil);
 
@@ -76,9 +76,9 @@ namespace nux
     BitmapFormat    _PixelFormat;
     bool            _IsActive;
 
-    IntrusiveSP<IOpenGLSurface>     _Depth_Attachment;
-    IntrusiveSP<IOpenGLSurface>     _Stencil_Attachment;
-    std::vector< IntrusiveSP<IOpenGLSurface> > _Color_AttachmentArray;
+    ObjectPtr<IOpenGLSurface>     _Depth_Attachment;
+    ObjectPtr<IOpenGLSurface>     _Stencil_Attachment;
+    std::vector< ObjectPtr<IOpenGLSurface> > _Color_AttachmentArray;
 
     GLFramebufferObject _Fbo;   // The framebuffer object used for rendering to the texture
     GLRenderbuffer      _Rbo;

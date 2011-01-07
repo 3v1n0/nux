@@ -36,7 +36,7 @@ namespace nux
   FileSelector::FileSelector (NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
   {
-    m_hlayout           = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_hlayout           = new HLayout (NUX_TRACKER_LOCATION);
     m_OpenButton        = new Button (TEXT (""), NUX_TRACKER_LOCATION);
     m_FileEditTextBox   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
 
@@ -54,7 +54,7 @@ namespace nux
     SetCompositionLayout (m_hlayout);
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Icons/Folder-16x16.png") );
-    m_Texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    m_Texture = GetGpuDevice()->CreateSystemCapableTexture ();
     m_Texture->Update (Path.GetTCharPtr() );
   }
 
@@ -98,7 +98,7 @@ namespace nux
     GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE);
 
     nux::TexCoordXForm texxform;
-    GfxContext.QRP_GLSL_1Tex (GeoPo.x, GeoPo.y, GeoPo.width, GeoPo.height, m_Texture->GetDeviceTexture(), texxform, nux::Color::White);
+    GfxContext.QRP_1Tex (GeoPo.x, GeoPo.y, GeoPo.width, GeoPo.height, m_Texture->GetDeviceTexture(), texxform, nux::Color::White);
 
     GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
     GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);

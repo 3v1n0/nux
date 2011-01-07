@@ -63,7 +63,7 @@ namespace nux
   {
     m_CurrentMenu = NULL;
     m_MenuBarWindow = NULL;
-    m_hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_hlayout = new HLayout (NUX_TRACKER_LOCATION);
     m_hlayout->SetHorizontalInternalMargin (4);
     m_hlayout->SetHorizontalExternalMargin (2);
 
@@ -174,7 +174,7 @@ namespace nux
         }
         else
         {
-          GetPainter().PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic (GfxContext, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
         }
       }
       else
@@ -191,7 +191,7 @@ namespace nux
         }
         else
         {
-          GetPainter().PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic (GfxContext, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
         }
       }
     }
@@ -214,7 +214,7 @@ namespace nux
       }
       else
       {
-        GetPainter().PaintTextLineStatic (GfxContext, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+        GetPainter().PaintTextLineStatic (GfxContext, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
       }
     }
 
@@ -260,7 +260,7 @@ namespace nux
     //menubar_item->area->SetMinimumSize(DEFAULT_WIDGET_WIDTH, 40);
     if (!icon)
     {
-      menubar_item->area->SetMinimumSize (Max (MENU_MINIMUM_WIDTH, (t_u32) (10 + GetFont()->GetStringWidth (MenuLabel) ) ), Max (MENU_MINIMUM_WIDTH, (t_u32) 16) );
+      menubar_item->area->SetMinimumSize (Max (MENU_MINIMUM_WIDTH, (t_u32) (10 + GetFont ()->GetStringWidth (MenuLabel) ) ), Max (MENU_MINIMUM_WIDTH, (t_u32) 16) );
     }
     else
     {
@@ -279,7 +279,7 @@ namespace nux
     menubar_item->menu->sigMouseDownOutsideMenuCascade.connect (sigc::mem_fun (this, &MenuBar::RecvSigMouseDownOutsideMenuCascade) );
 
     m_hlayout->AddView (menubar_item->area, 0, eCenter);
-    GetGraphicsThread()->ComputeElementLayout (m_hlayout);
+    GetWindowThread ()->ComputeElementLayout (m_hlayout);
   }
 
   void MenuBar::EmitItemMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)

@@ -38,6 +38,8 @@ namespace nux
     m_ScrollTimerHandler    = 0;
     m_BlinkTimerFunctor     = 0;
     m_WriteAlpha            = true;
+    m_Prefix                = TEXT("");
+    m_Suffix                = TEXT("");
 
     SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -61,7 +63,7 @@ namespace nux
     m_CursorColor = Color (0xFFDDDDDD);
 
 
-    hlayout = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    hlayout = new HLayout (NUX_TRACKER_LOCATION);
     SetCompositionLayout (hlayout);
 
     m_BlinkTimerFunctor = new TimerFunctor();
@@ -174,7 +176,7 @@ namespace nux
       }
       else
       {
-        GetPainter().PaintTextLineStatic (GfxContext, GetFont(), GetGeometry(),
+        GetPainter().PaintTextLineStatic (GfxContext, GetFont (), GetGeometry(),
                                       m_KeyboardHandler.GetTextLine(),
                                       GetTextColor() );
       }
@@ -216,10 +218,10 @@ namespace nux
     s.RemovePrefix (m_Prefix);
     s.RemoveSuffix (m_Suffix);
 
-    if (ValidateKeyboardEntry (s.GetTCharPtr() ) )
+    if (ValidateKeyboardEntry (s.GetTCharPtr ()))
     {
       m_Text = (m_Prefix + s) + m_Suffix;
-      m_KeyboardHandler.SetText (m_Text.GetTStringRef() );
+      m_KeyboardHandler.SetText (m_Text.GetTStringRef ());
       m_temporary_caption = m_Text;
       sigSetText.emit (this);
     }
@@ -363,15 +365,15 @@ namespace nux
     {
       if (m_Validator->Validate (text) == Validator::Acceptable)
       {
-        return TRUE;
+        return true;
       }
       else
       {
-        return FALSE;
+        return false;
       }
     }
 
-    return TRUE;
+    return true;
   }
 
   void EditTextBox::EscapeKeyboardFocus()
