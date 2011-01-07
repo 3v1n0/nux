@@ -1,0 +1,89 @@
+Source: nux
+Priority: optional
+Maintainer: Didier Roche <didrocks@ubuntu.com>
+Build-Depends: debhelper (>= 7.0.50~),
+               autotools-dev,
+               doxygen,
+               libglib2.0-dev (>= 2.25.14),
+               libgdk-pixbuf2.0-dev,
+               libcairo2-dev (>= 1.9.14),
+               libpng12-dev (>= 1.2.44),
+               libglew1.5-dev,               
+               libglewmx1.5-dev,
+               libxxf86vm-dev,
+               libgl1-mesa-dev (>= 7.9~git20100924-0ubuntu3),
+               libsigc++-2.0-dev,
+               libpango1.0-dev,
+               libx11-dev,
+Standards-Version: 3.9.1
+Section: libs
+Homepage: http://launchpad.net/nux
+Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/nux/ubuntu
+
+Package: libnux-0.9-0
+Section: libs
+Architecture: any
+Depends: libnux-0.9-common (= ${source:Version}),
+         ${shlibs:Depends},
+         ${misc:Depends}
+Description: Visual rendering toolkit for real-time applications - shared lib
+ Nux is a graphical user interface toolkit for applications that mixes opengl
+ hardware acceleration with high quality visual rendering.
+ .
+ This package contains shared libraries to be used by applications.
+
+Package: nux-tools
+Section: x11
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Description: Visual rendering toolkit for real-time applications - tools
+ Nux is a graphical user interface toolkit for applications that mixes opengl
+ hardware acceleration with high quality visual rendering.
+ .
+ This package contains various tools for nux
+
+Package: libnux-0.9-dev
+Section: libdevel
+Architecture: any
+Depends: libnux-0.9-0 (= ${binary:Version}),
+         libglib2.0-dev (>= 2.25.14),
+         libgdk-pixbuf2.0-dev,
+         libcairo2-dev (>= 1.9.14),
+         libpng12-dev (>= 1.2.44),
+         libglew1.5-dev,
+         libglewmx1.5-dev,
+         libxxf86vm-dev,
+         libgl1-mesa-dev,
+         libsigc++-2.0-dev,
+         libpango1.0-dev,
+         ${misc:Depends}
+Description: Visual rendering toolkit for real-time applications - dev files
+ Nux is a graphical user interface toolkit for applications that mixes opengl
+ hardware acceleration with high quality visual rendering.
+ .
+ This package contains files that are needed to build applications.
+
+Package: libnux-0.9-common
+Section: libs
+Architecture: all
+Depends: ${misc:Depends}
+Description: Visual rendering toolkit for real-time applications - common files
+ Nux is a graphical user interface toolkit for applications that mixes opengl
+ hardware acceleration with high quality visual rendering.
+ .
+ This package contains common architecture files used by the library.
+
+Package: libnux-0.9-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends},
+         ${misc:Depends}
+Suggests: libnux-0.9-dev,
+          doxygen
+Description: Visual rendering toolkit for real-time applications - documentation
+ Nux is a graphical user interface toolkit for applications that mixes opengl
+ hardware acceleration with high quality visual rendering.
+ .
+ This package contains the documentation and some examples to try the toolkit.
+

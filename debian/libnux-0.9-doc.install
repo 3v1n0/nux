@@ -1,0 +1,3 @@
+doc/* usr/share/libnux-0.9-doc/html
+debian/tmp/usr/share/nux/examples usr/share/libnux-0.9-doc/
+debian/tmp/usr/share/nux/gputests usr/share/libnux-0.9-doc/
