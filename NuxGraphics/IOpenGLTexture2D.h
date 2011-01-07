@@ -33,8 +33,8 @@ namespace nux
   public:
     virtual ~IOpenGLTexture2D();
 
-    void GetSurfaceLevel (int Level, IntrusiveSP<IOpenGLSurface>& surface);
-    IntrusiveSP<IOpenGLSurface> GetSurfaceLevel (int Level);
+    void GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface);
+    ObjectPtr<IOpenGLSurface> GetSurfaceLevel (int Level);
 
 
     int LockRect (
@@ -86,7 +86,7 @@ namespace nux
 
     //    unsigned int        _Width;
     //    unsigned int        _Height;
-    std::vector< IntrusiveSP<IOpenGLSurface> > _SurfaceArray;
+    std::vector< ObjectPtr<IOpenGLSurface> > _SurfaceArray;
     friend class GpuDevice;
     friend class IOpenGLSurface;
   };

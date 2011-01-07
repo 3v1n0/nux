@@ -155,7 +155,7 @@ namespace nux
     }
 
     if (label)
-      GetPainter().PaintTextLineStatic (GfxContext, GetFont(), text_geo, std::string (label), textcolor, eAlignTextLeft);
+      GetPainter().PaintTextLineStatic (GfxContext, GetFont (), text_geo, std::string (label), textcolor, eAlignTextLeft);
   }
 
   MenuSeparator::MenuSeparator (NUX_FILE_LINE_DECL)
@@ -214,7 +214,7 @@ namespace nux
     m_NextMouseUpMeanStop = false;
     m_SubMenuAction = 0;
 
-    vlayout = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    vlayout = new VLayout (NUX_TRACKER_LOCATION);
     // No Need to set a composition layout.
     // The MenuPage is floating above everything else.
     SetCompositionLayout (vlayout);
@@ -363,7 +363,7 @@ namespace nux
     m_MenuItemVector.push_back (pMenuItem);
     pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    int new_item_width = GetFont()->GetStringWidth (pMenuItem->GetActionItem()->GetLabel() );
+    int new_item_width = GetFont ()->GetStringWidth (pMenuItem->GetActionItem()->GetLabel() );
 
     if (new_item_width < m_item_width)
     {
@@ -439,7 +439,7 @@ namespace nux
 //    m_MenuItemVector.push_back(pMenuItem);
 //    pMenuItem->SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 //
-//    int new_item_width = GetFont()->GetStringWidth(actionItem->GetLabel());
+//    int new_item_width = GetFont ()->GetStringWidth(actionItem->GetLabel());
 //    if(new_item_width < m_item_width)
 //    {
 //        if(ShowItemIcon())
@@ -509,7 +509,7 @@ namespace nux
     m_MenuItemVector.push_back (pMenuItem);
     pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    int new_item_width = GetFont()->GetStringWidth (label);
+    int new_item_width = GetFont ()->GetStringWidth (label);
 
     if (new_item_width < m_item_width)
     {
@@ -582,7 +582,7 @@ namespace nux
     m_MenuItemVector.push_back (pMenuItem);
     pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    int new_item_width = GetFont()->GetStringWidth (label);
+    int new_item_width = GetFont ()->GetStringWidth (label);
 
     if (new_item_width < m_item_width)
     {

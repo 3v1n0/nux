@@ -394,8 +394,8 @@ namespace nux
     NString PixelShaderSource;
     ExtractShaderString3 (TEXT ("[Fragment Shader]"), ShaderCode, PixelShaderSource, NString (FrgShaderPreprocessorDefines) );
 
-    IntrusiveSP<IOpenGLVertexShader> vs = GetThreadGLDeviceFactory()->CreateVertexShader(); //new IOpenGLVertexShader;
-    IntrusiveSP<IOpenGLPixelShader> ps = GetThreadGLDeviceFactory()->CreatePixelShader(); //new IOpenGLPixelShader;
+    ObjectPtr<IOpenGLVertexShader> vs = GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
+    ObjectPtr<IOpenGLPixelShader> ps = GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     vs->SetShaderCode (&VertexShaderSource[0]);
     ps->SetShaderCode (&PixelShaderSource[0]);
@@ -412,7 +412,7 @@ namespace nux
   {
     nuxAssertMsg (glslshader, TEXT ("[IOpenGLShaderProgram::LoadVertexShader] Invalid shader code.") );
     NUX_RETURN_IF_NULL (glslshader);
-    IntrusiveSP<IOpenGLVertexShader> vs = GetThreadGLDeviceFactory()->CreateVertexShader(); //new IOpenGLVertexShader;
+    ObjectPtr<IOpenGLVertexShader> vs = GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
 
     NString ProcessedShaderSource;
     NString Defines (VtxShaderPreprocessorDefines);
@@ -427,7 +427,7 @@ namespace nux
   {
     nuxAssertMsg (glslshader, TEXT ("[IOpenGLShaderProgram::LoadPixelShader] Invalid shader code.") );
     NUX_RETURN_IF_NULL (glslshader);
-    IntrusiveSP<IOpenGLPixelShader> ps = GetThreadGLDeviceFactory()->CreatePixelShader(); //new IOpenGLPixelShader;
+    ObjectPtr<IOpenGLPixelShader> ps = GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     NString ProcessedShaderSource;
     NString Defines (FrgShaderPreprocessorDefines);
@@ -438,7 +438,7 @@ namespace nux
     AddShaderObject (ps);
   }
 
-  void IOpenGLShaderProgram::AddShaderObject (IntrusiveSP<IOpenGLShader> ShaderObject)
+  void IOpenGLShaderProgram::AddShaderObject (ObjectPtr<IOpenGLShader> ShaderObject)
   {
     ShaderObjectList.push_back (ShaderObject);
   }
@@ -452,9 +452,9 @@ namespace nux
     CheckUniformLocation();
   }
 
-  void IOpenGLShaderProgram::RemoveShaderObject (IntrusiveSP<IOpenGLShader> ShaderObject)
+  void IOpenGLShaderProgram::RemoveShaderObject (ObjectPtr<IOpenGLShader> ShaderObject)
   {
-    std::vector< IntrusiveSP<IOpenGLShader> >::iterator it = find (ShaderObjectList.begin(), ShaderObjectList.end(), ShaderObject);
+    std::vector< ObjectPtr<IOpenGLShader> >::iterator it = find (ShaderObjectList.begin(), ShaderObjectList.end(), ShaderObject);
 
     if (it != ShaderObjectList.end() )
     {

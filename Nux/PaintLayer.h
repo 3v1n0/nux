@@ -80,12 +80,12 @@ namespace nux
   class TextureLayer: public AbstractPaintLayer
   {
   public:
-    TextureLayer (IntrusiveSP< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
+    TextureLayer (ObjectPtr< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
     virtual void Renderlayer (GraphicsEngine &GfxContext);
     virtual AbstractPaintLayer *Clone() const;
 
   private:
-    IntrusiveSP< IOpenGLBaseTexture > m_device_texture;
+    ObjectPtr< IOpenGLBaseTexture > m_device_texture;
     Color m_color;
     bool m_write_alpha;
     ROPConfig m_rop;

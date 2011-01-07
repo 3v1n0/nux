@@ -22,7 +22,7 @@
 
 #include "NuxCore.h"
 #include "InitiallyUnownedObject.h"
-#include "SmartPtr/IntrusiveSP.h"
+#include "ObjectPtr.h"
 
 namespace nux
 {

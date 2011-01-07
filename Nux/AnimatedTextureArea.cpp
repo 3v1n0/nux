@@ -68,7 +68,7 @@ namespace nux
       GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       nux::Geometry base = GetGeometry();
       nux::TexCoordXForm texxform;
-      GfxContext.QRP_GLSL_1Tex (base.x, base.y, base.width, base.height, m_UserTexture->GetDeviceTexture(), texxform, nux::Color::White);
+      GfxContext.QRP_1Tex (base.x, base.y, base.width, base.height, m_UserTexture->GetDeviceTexture(), texxform, nux::Color::White);
 
       GfxContext.GetRenderStates().SetBlend (false);
     }
@@ -89,9 +89,9 @@ namespace nux
 
     if (m_UserTexture)
     {
-      IntrusiveSP< CachedTextureFrameAnimation > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
-      IntrusiveSP<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
-      IntrusiveSP<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      ObjectPtr< CachedTextureFrameAnimation > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
+      ObjectPtr<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      ObjectPtr<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
       AnimatedTexture->SetFiltering (GL_LINEAR, GL_LINEAR);
       AnimatedTexture->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -135,9 +135,9 @@ namespace nux
   {
     if (m_UserTexture)
     {
-      IntrusiveSP< CachedTextureFrameAnimation > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
-      IntrusiveSP<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
-      IntrusiveSP<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      ObjectPtr< CachedTextureFrameAnimation > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
+      ObjectPtr<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
+      ObjectPtr<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
       AnimatedTexture->PresentNextFrame();
       m_TimerHandler = GetTimer().AddTimerHandler (41, m_TimerFunctor, 0);

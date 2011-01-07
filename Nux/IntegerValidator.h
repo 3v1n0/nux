@@ -37,8 +37,11 @@ namespace nux
 
     virtual Validator *Clone()  const; //Virtual Constructor Idiom
 
-    int Validate (int i) const;
-    virtual Validator::State Validate (const TCHAR *str) const;
+    /*!
+        @return The input value clamped to the range [m_Minimum, m_Maximum].
+    */
+    int GetClampedValue (int i) const;
+
     virtual void Alternative (const TCHAR *str);
 
     void SetMinimum (int value);
@@ -52,7 +55,6 @@ namespace nux
   private:
     int m_Minimum;
     int m_Maximum;
-    GRegex *m_reg_exp;
   };
 }
 

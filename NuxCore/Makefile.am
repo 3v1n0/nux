@@ -26,7 +26,7 @@ libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
 
 source_cpp = \
   $(srcdir)/TextString.cpp \
-  $(srcdir)/NTime.cpp \
+  $(srcdir)/TimeFunctions.cpp \
   $(srcdir)/Template.cpp \
   $(srcdir)/FilePath.cpp \
   $(srcdir)/TinyXML/tinyxmlparser.cpp \
@@ -46,7 +46,7 @@ source_cpp = \
   $(srcdir)/Character/NUnicode.cpp \
   $(srcdir)/Color.cpp \
   $(srcdir)/FileName.cpp \
-  $(srcdir)/NThreadGNU.cpp \
+  $(srcdir)/ThreadGNU.cpp \
   $(srcdir)/Parsing.cpp \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
@@ -124,8 +124,7 @@ source_tiny_xml_h = \
   $(srcdir)/TinyXML/tinyxml.h
 
 source_smart_ptr_h = \
-  $(srcdir)/SmartPtr/GenericSmartPointer.h \
-  $(srcdir)/SmartPtr/IntrusiveSP.h
+  $(srcdir)/SmartPtr/GenericSmartPointer.h
 
 source_datastruct_h = \
   $(srcdir)/DataStruct/NList.h
@@ -153,15 +152,16 @@ source_h = \
   $(srcdir)/OutputDevice.h \
   $(srcdir)/Process.h \
   $(srcdir)/ObjectType.h \
+  $(srcdir)/ObjectPtr.h \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/Object.h \
   $(srcdir)/ColorFunctions.h \
   $(srcdir)/Size.h \
   $(srcdir)/Exception.h \
-  $(srcdir)/NTime.h \
+  $(srcdir)/TimeFunctions.h \
   $(srcdir)/CRC32.h \
   $(srcdir)/Macros.h \
-  $(srcdir)/NThreadGNU.h \
+  $(srcdir)/ThreadGNU.h \
   $(srcdir)/TextString.h \
   $(srcdir)/Template.h \
   $(srcdir)/NUniqueIndex.h \

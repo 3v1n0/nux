@@ -58,7 +58,7 @@ namespace nux
 
   void VToolBar::InitializeLayout()
   {
-    m_vlayout = new VLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_vlayout = new VLayout (NUX_TRACKER_LOCATION);
   }
 
   void VToolBar::DestroyLayout()
@@ -93,7 +93,7 @@ namespace nux
   {
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle (base);
-    GfxContext.QRP_GLSL_Color (base.x, base.y, base.GetWidth(), base.GetHeight(), COLOR_BACKGROUND_PRIMARY);
+    GfxContext.QRP_Color (base.x, base.y, base.GetWidth(), base.GetHeight(), COLOR_BACKGROUND_PRIMARY);
 
     GfxContext.PopClippingRectangle();
   }

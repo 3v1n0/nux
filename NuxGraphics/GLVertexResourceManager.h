@@ -105,7 +105,7 @@ namespace nux
     NGLVertexBuffer (NResourceSet *ResourceManager, NVertexBuffer *VertexData);
     ~NGLVertexBuffer ();
 
-    IntrusiveSP<IOpenGLVertexBuffer>	m_VtxBuffer;
+    ObjectPtr<IOpenGLVertexBuffer>	m_VtxBuffer;
 
     bool UpdateResource (ResourceData *Resource);
   private:
@@ -121,7 +121,7 @@ namespace nux
     NGLIndexBuffer (NResourceSet *ResourceManager, NIndexBuffer *Resource);
     ~NGLIndexBuffer();
 
-    IntrusiveSP<IOpenGLIndexBuffer>	m_IdxBuffer;
+    ObjectPtr<IOpenGLIndexBuffer>	m_IdxBuffer;
 
     bool UpdateResource (ResourceData *Resource);
   private:
@@ -138,7 +138,7 @@ namespace nux
     ~NGLVertexDeclaration();
 
     bool UpdateResource (ResourceData *Resource);
-    IntrusiveSP< IOpenGLVertexDeclaration > m_VtxDeclaration;
+    ObjectPtr< IOpenGLVertexDeclaration > m_VtxDeclaration;
   };
 
   class NMeshComponent
@@ -146,7 +146,7 @@ namespace nux
   public:
     NMeshComponent();
     NMeshComponent (const NMeshComponent &);
-    NMeshComponent (int StreamIndex/*IntrusiveSP<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type);
+    NMeshComponent (int StreamIndex/*ObjectPtr<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type);
 
     NMeshComponent &operator = (const NMeshComponent &);
 
@@ -191,9 +191,9 @@ namespace nux
     ~NGLStaticMesh ();
     bool UpdateResource (ResourceData *Resource);
 
-    std::vector< IntrusiveSP<NGLVertexBuffer> > m_VertexBufferArray;
-    IntrusiveSP<NGLIndexBuffer> m_Index;
-    IntrusiveSP<NGLVertexDeclaration> m_VertexDeclaration;
+    std::vector< ObjectPtr<NGLVertexBuffer> > m_VertexBufferArray;
+    ObjectPtr<NGLIndexBuffer> m_Index;
+    ObjectPtr<NGLVertexDeclaration> m_VertexDeclaration;
   };
 
 }

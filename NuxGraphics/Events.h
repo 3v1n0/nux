@@ -196,6 +196,8 @@ namespace nux
   unsigned long GetEventButton(unsigned long button_state);
   bool GetButtonState(unsigned long button_state, int button);
     
+  #define NUX_EVENT_TEXT_BUFFER_SIZE 16
+
   class IEvent
   {
   public:
@@ -263,7 +265,7 @@ namespace nux
     int e_keysym;
     int e_wheeldelta;
 
-    TCHAR           e_text[4];
+    TCHAR           e_text [NUX_EVENT_TEXT_BUFFER_SIZE];
     unsigned long   e_key_modifiers;   // key modifiers
     unsigned long   e_mouse_state;
     unsigned short  e_key_repeat_count; // number of time a key is repeated;    

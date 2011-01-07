@@ -99,9 +99,20 @@ namespace nux
       return m_UseStyleDrawing;
     };
 
-    void DisableWidget();
-    void EnableWidget();
-    bool IsWidgetEnabled();
+    /*!
+        Activate the View. The view cannot receive events. Its rendering is grayed (NUXTODO).
+    */
+    void DeactivateView ();
+
+    /*!
+        Activate the View. It can process them. The rendering of the View is normal.
+    */
+    void ActivateView ();
+
+    /*!
+        @return True if the view is active.
+    */
+    bool IsViewActive () const;
 
   protected:
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
@@ -115,17 +126,16 @@ namespace nux
 
   private:
     bool m_UseStyleDrawing;
-    bool m_IsEnabled;
+    bool _is_view_active;
 
   public:
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
-    //! Causes a redraw. The widget parameter m_NeedRedraw is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
+    //! Causes a redraw. The widget parameter _need_redraw is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
     virtual void NeedRedraw();
-    //! Causes a soft redraw. The widget parameter m_NeedRedraw is set to false. The widget DrawContent() and PostDraw() are called.
+    //! Causes a soft redraw. The widget parameter _need_redraw is set to false. The widget DrawContent() and PostDraw() are called.
     virtual void NeedSoftRedraw();
     virtual bool IsRedrawNeeded();
     virtual void DoneRedraw();
-    virtual void DrawLayout();
 
     virtual void OverlayDrawing (GraphicsEngine &GfxContext) {}
 
@@ -153,46 +163,39 @@ namespace nux
       return false;
     }
 
-    //! Set the font to be used by the widget. If Font is null then use the default system font.
-    /*!
-        Set the font to be used by the widget. If Font is null then use the default system font.
-        @param Font The font to use when rendering text.
-    */
-    virtual void SetFont (IntrusiveSP<FontTexture> Font);
-
-    //! Get the font used for rendering text.
-    /*!
-        Get the font used for rendering text.
-        @return The font to use when rendering text.
-    */
-    IntrusiveSP<FontTexture> GetFont();
-
     virtual void SetTextColor (const Color &color);
     virtual Color GetTextColor();
 
+    void SetFont (ObjectPtr<FontTexture> font);
+    ObjectPtr<FontTexture> GetFont ();
+
   protected:
-    IntrusiveSP<FontTexture> m_font;
     Color m_TextColor;
+    ObjectPtr<FontTexture> _font;
+
     virtual Layout *GetCompositionLayout() const;
     virtual void SetCompositionLayout (Layout *lyt);
     void RemoveCompositionLayout();
-    bool IsFullRedraw() const
-    {
-      return m_IsFullRedraw;
-    }
+
+    /*!
+        Accessed inside ContentDraw () to help determine if some parts needs to be rendered.
+        Do not use it elsewhere.
+        @return True if Draw () was called before ContentDraw ().
+        
+    */
+    bool IsFullRedraw() const;
+
     
     virtual void GeometryChangePending () { NeedRedraw (); }
     virtual void GeometryChanged () { NeedRedraw (); }
 
-  protected:
     Layout *m_CompositionLayout;
 
-    bool m_NeedRedraw;
+    bool _need_redraw; //<! The rendering of the view needs to be refreshed.
 
-    //! This parameter is set to true is Draw is Called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
-    bool m_IsFullRedraw;
-  public:
+    bool _full_redraw; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
+    bool _is_active; //!< True if the view is enabled (it can receive events and process them).
 
     friend class Layout;
     friend class Area;

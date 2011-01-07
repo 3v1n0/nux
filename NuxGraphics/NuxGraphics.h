@@ -28,14 +28,16 @@ namespace nux
   class GpuDevice;
   class GraphicsEngine;
 
-  GraphicsDisplay *GetThreadGLWindow();
-  GpuDevice *GetThreadGLDeviceFactory();
+  GraphicsDisplay *GetThreadGLWindow (); // Deprecated use GetDisplayDevice
+  GraphicsDisplay *GetDisplayDevice ();
+  GpuDevice *GetThreadGLDeviceFactory (); // Deprecated use GetGpuDevice
+  GpuDevice *GetGpuDevice ();
   GraphicsEngine *GetThreadGraphicsContext();
 
   #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
   #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
 
-  inlDeclareThreadLocalStorage (GraphicsDisplay *, 1, ThreadLocal_GLWindowImpl);
+  inlDeclareThreadLocalStorage (GraphicsDisplay *, 1, _TLS_GraphicsDisplay);
   inlDeclareThreadLocalStorage (GpuDevice *, 2, _TLS_GpuDevice_);
 
   void NuxGraphicsInitialize();

@@ -63,7 +63,7 @@ namespace nux
     m_SizeGrip          = new CoreArea (NUX_TRACKER_LOCATION);
     m_TitleBar          = new CoreArea (NUX_TRACKER_LOCATION);
     m_WindowTitleBar    = new StaticTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_TitleBarLayout    = new HLayout (TEXT (""), NUX_TRACKER_LOCATION);
+    m_TitleBarLayout    = new HLayout (NUX_TRACKER_LOCATION);
 
     m_MinimizeButton->SetMinMaxSize (20, 20);
     m_MinimizeButton->SetGeometry (0, 0, 20, 20);
@@ -96,10 +96,10 @@ namespace nux
     SetGeometry (Geometry (100, 100, 320, 200) );
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/AddButton.png") );
-    MinimizeIcon = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    MinimizeIcon = GetGpuDevice()->CreateSystemCapableTexture ();
     MinimizeIcon->Update (Path.GetTCharPtr() );
     Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/CancelButton.png") );
-    CloseIcon = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    CloseIcon = GetGpuDevice()->CreateSystemCapableTexture ();
     CloseIcon->Update (Path.GetTCharPtr() );
 
     SetWindowTitle (WindowName);
@@ -406,7 +406,7 @@ namespace nux
 
     // Title Bar
     m_TitleBarLayout->SetGeometry (m_TitleBar->GetGeometry() );
-    GetGraphicsThread()->ComputeElementLayout (m_TitleBarLayout);
+    GetWindowThread ()->ComputeElementLayout (m_TitleBarLayout);
 
     // A FloatingWindow must kill the result of the management and pass it to the parent Layout.
     return (eCompliantHeight | eCompliantWidth);
@@ -434,7 +434,7 @@ namespace nux
 
     // Title Bar
     m_TitleBarLayout->SetGeometry (m_TitleBar->GetGeometry() );
-    GetGraphicsThread()->ComputeElementLayout (m_TitleBarLayout);
+    GetWindowThread ()->ComputeElementLayout (m_TitleBarLayout);
 
   }
 
@@ -446,7 +446,7 @@ namespace nux
     m_TitleBar->SetGeometry (0, 0, base.GetWidth(), TitleBarHeight);
 
     m_TitleBarLayout->SetGeometry (m_TitleBar->GetGeometry() );
-    GetGraphicsThread()->ComputeElementLayout (m_TitleBarLayout);
+    GetWindowThread ()->ComputeElementLayout (m_TitleBarLayout);
 
     // Size grip Geometry
     Geometry temp (base.GetWidth() - SizeGripWidth, base.GetHeight() - SizeGripHeight,

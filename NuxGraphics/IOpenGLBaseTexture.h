@@ -129,8 +129,8 @@ namespace nux
     int BindTexture();
     int BindTextureToUnit (int TextureUnitIndex);
 
-    virtual void GetSurfaceLevel (int Level, IntrusiveSP<IOpenGLSurface>& surface);
-    virtual IntrusiveSP<IOpenGLSurface> GetSurfaceLevel (int Level);
+    virtual void GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface);
+    virtual ObjectPtr<IOpenGLSurface> GetSurfaceLevel (int Level);
     virtual int LockRect (
       int Level,
       SURFACE_LOCKED_RECT *pLockedRect,

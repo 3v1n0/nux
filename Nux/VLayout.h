@@ -34,14 +34,12 @@ namespace nux
   public:
     VLayout (NUX_FILE_LINE_PROTO);
     VLayout (NString name, NUX_FILE_LINE_PROTO);
-    ~VLayout();
+    ~VLayout ();
 
     virtual long ComputeLayout2();
     virtual void ComputePosition2 (float offsetX, float offsetY);
     virtual void VLayoutManagement (t_s32 width, t_s32 height);
     virtual t_u32 getMaxStretchFactor();
-
-    virtual void Draw();
 
     virtual void GetCompositeList (std::list<Area *> *ViewList);
 
@@ -53,7 +51,6 @@ namespace nux
     */
     void ComputeStacking (t_s32 length, t_s32 &offset_space, t_s32 &element_margin);
   };
-
 }
 
 #endif // VLAYOUT_H

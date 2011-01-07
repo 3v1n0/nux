@@ -28,7 +28,7 @@
 #include "Layout.h"
 #include "HLayout.h"
 #include "VLayout.h"
-#include "Button.h"
+#include "PushButton.h"
 #include "TimerProc.h"
 
 namespace nux
@@ -37,6 +37,7 @@ namespace nux
   class Matrix4Editor;
   class Matrix4Preview;
 
+  //! A 4x4 matrix editor dialog.
   class Matrix4DialogProxy
   {
   public:
@@ -156,10 +157,10 @@ namespace nux
 
     EditTextBox *m_MtxInput[4][4];
 
-    Button *m_IdentityMtxBtn;
-    Button *m_ZeroMtxBtn;
-    Button *m_InverseMtxBtn;
-    Button *m_NegateMtxBtn;
+    PushButton *m_IdentityMtxBtn;
+    PushButton *m_ZeroMtxBtn;
+    PushButton *m_InverseMtxBtn;
+    PushButton *m_NegateMtxBtn;
     HLayout *m_MtxFunctionLayout;
 
 
@@ -171,10 +172,10 @@ namespace nux
 //
 //     EditTextBox m_MtxInput[4][4];
 //
-//     Button m_IdentityMtxBtn;
-//     Button m_ZeroMtxBtn;
-//     Button m_InverseMtxBtn;
-//     Button m_NegateMtxBtn;
+//     PushButton m_IdentityMtxBtn;
+//     PushButton m_ZeroMtxBtn;
+//     PushButton m_InverseMtxBtn;
+//     PushButton m_NegateMtxBtn;
 //     HLayout m_MtxFunctionLayout;
 
     Matrix4 m_Matrix;

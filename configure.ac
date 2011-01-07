@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [0])
 m4_define([nux_minor_version], [9])
-m4_define([nux_micro_version], [12])
+m4_define([nux_micro_version], [13])
 
 # Bump this when we break ABI
 m4_define([nux_api_version], [0.9])
@@ -115,7 +115,7 @@ AC_SUBST(NUX_CORE_LIBS)
 
 PKG_CHECK_MODULES(NUX_IMAGE,
                   glib-2.0 >= 2.25.14
-		  gdk-pixbuf-2.0
+                  gdk-pixbuf-2.0
                   cairo >= 1.9.14
                   libpng >= 1.2.44
                   )
@@ -152,6 +152,7 @@ PKG_CHECK_MODULES(NUX,
                   sigc++-2.0
                   pango
                   pangocairo
+                  libpcre
                   )
 AC_SUBST(NUX_CFLAGS)
 AC_SUBST(NUX_LIBS)
@@ -215,6 +216,19 @@ AS_IF([test "x$enable_debug" = "xyes"],
 
 AC_SUBST(MAINTAINER_CFLAGS)
 
+# Enable opengl es 20 code path
+AC_ARG_ENABLE([opengles_20],
+              [AC_HELP_STRING([--enable-opengles-20=@<:@no/yes@:>@],
+              [Enable OpenGL ES 20 code path @<:@default=no@:>@])],
+              [],
+              [enable_opengles_20=no])
+AS_IF([test "x$enable_opengles_20" = "xyes"],
+      [
+         MAINTAINER_CFLAGS+=" -DNUX_OPENGL_ES_20"
+      ]
+)
+
+AC_SUBST(MAINTAINER_CFLAGS)
 
 # this enables lots of useful debugging output in Nux
 AC_ARG_ENABLE([examples],

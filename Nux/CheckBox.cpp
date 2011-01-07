@@ -135,7 +135,7 @@ namespace nux
     Geometry base = GetGeometry();
 
     GetPainter().PaintBackground (GfxContext, base);
-    GetPainter().PaintTextLineStatic (GfxContext, GetFont(), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
     InteractState is;
     is.is_on = _state;
     is.is_focus = m_TextArea->HasMouseFocus() ||
@@ -168,7 +168,7 @@ namespace nux
     else
       m_TextArea->SetBaseString (caption);
 
-    m_TextArea->SetMinimumWidth (4 + GetFont()->GetStringWidth (m_TextArea->GetBaseString().GetTCharPtr() ) );
+    m_TextArea->SetMinimumWidth (4 + GetFont ()->GetStringWidth (m_TextArea->GetBaseString().GetTCharPtr() ) );
   }
 
   const NString &CheckBox::GetCaption() const

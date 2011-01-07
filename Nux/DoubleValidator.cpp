@@ -31,7 +31,9 @@ namespace nux
     ,   m_Maximum (Maximum)
     ,   m_Decimals (3)
   {
-    m_reg_exp = g_regex_new ("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?", G_REGEX_CASELESS, G_REGEX_MATCH_ANCHORED, NULL);
+    _regexp_str = "^[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?$";
+
+    InitRegExp ();
 
     if (m_Minimum > m_Maximum)
     {
@@ -45,8 +47,8 @@ namespace nux
   {
     m_Minimum   = copy.m_Minimum;
     m_Minimum   = copy.m_Maximum;
-    m_reg_exp    = copy.m_reg_exp;
-    g_regex_ref (m_reg_exp);
+    _regexp_str = copy._regexp_str;
+    InitRegExp ();
   }
 
   DoubleValidator &DoubleValidator::operator= (const DoubleValidator &rhs)
@@ -55,8 +57,8 @@ namespace nux
     {
       m_Minimum   = rhs.m_Minimum;
       m_Minimum   = rhs.m_Maximum;
-      m_reg_exp    = rhs.m_reg_exp;
-      g_regex_ref (m_reg_exp);
+      _regexp_str = rhs._regexp_str;
+      InitRegExp ();
     }
 
     return *this;
@@ -64,7 +66,6 @@ namespace nux
 
   DoubleValidator::~DoubleValidator()
   {
-    g_regex_unref (m_reg_exp);
   }
 
   Validator *DoubleValidator::Clone()  const
@@ -106,7 +107,7 @@ namespace nux
     return m_Maximum;
   }
 
-  double DoubleValidator::Validate (double d) const
+  double DoubleValidator::GetClampedValue (double d) const
   {
     if (d < m_Minimum)
       return m_Minimum;
@@ -115,19 +116,6 @@ namespace nux
       return m_Maximum;
 
     return d;
-  }
-
-
-  Validator::State DoubleValidator::Validate (const TCHAR *str) const
-  {
-    GMatchInfo *match_info;
-
-    if (!g_regex_match (m_reg_exp, str, G_REGEX_MATCH_ANCHORED, &match_info) )
-    {
-      return Validator::Invalid;
-    }
-
-    return Validator::Acceptable;
   }
 
   void DoubleValidator::Alternative (const TCHAR *str)

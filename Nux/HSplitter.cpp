@@ -421,7 +421,7 @@ namespace nux
         ic->SetGeometry (Geometry (x, accheight, w, splitter_geo.y - accheight) );
         // if we are already computing the layout from the main window down, we need to call
         // ComputeElementLayout to force the computing of this element layout.
-        GetGraphicsThread()->ComputeElementLayout (ic);
+        GetWindowThread ()->ComputeElementLayout (ic);
       }
       else if (m_InterfaceObject[i]->Type().IsObjectType (InputArea::StaticObjectType) )
       {
@@ -434,7 +434,7 @@ namespace nux
         layout->SetGeometry (Geometry (x, accheight, w, splitter_geo.y - accheight) );
         // if we are already computing the layout from the main window down, we need to call
         // ComputeElementLayout to force the computing of this element layout.
-        GetGraphicsThread()->ComputeElementLayout (layout);
+        GetWindowThread ()->ComputeElementLayout (layout);
       }
 
       accheight += splitter_geo.y - accheight + HSPLITTERHEIGHT;
@@ -508,7 +508,7 @@ namespace nux
 
 
     // Hint for the window to initiate a redraw
-    GetGraphicsThread()->RequestRedraw();
+    GetWindowThread ()->RequestRedraw();
   }
 
   void HSplitter::OnSplitterMouseUp (t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
@@ -538,7 +538,7 @@ namespace nux
     // End overlay drawing;
     GetWindowCompositor().SetWidgetDrawingOverlay (0, GetWindowCompositor().GetProcessingTopView() );
     // Hint for the window to initiate a redraw
-    GetGraphicsThread()->RequestRedraw();
+    GetWindowThread ()->RequestRedraw();
   }
 
   void HSplitter::OnSplitterMouseDrag (t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
@@ -570,7 +570,7 @@ namespace nux
     }
 
     // Hint for the window to initiate a redraw
-    GetGraphicsThread()->RequestRedraw();
+    GetWindowThread ()->RequestRedraw();
   }
 
   void HSplitter::ResizeSplitter (t_s32 header_pos)

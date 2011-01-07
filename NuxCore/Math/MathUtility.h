@@ -34,49 +34,39 @@
 
 namespace nux
 {
-  template< class T > inline T Max3 ( const T A, const T B, const T C )
-  {
-    return Max ( Max ( A, B ), C );
-  }
-
-  template< class T > inline T Min3 ( const T A, const T B, const T C )
-  {
-    return Min ( Min ( A, B ), C );
-  }
-
-  template< class T > inline T Square ( const T A )
+  template<typename T> inline T Square (const T A)
   {
     return A * A;
   }
-  template< class T > inline T Clamp ( const T X, const T Min, const T Max )
+  template<typename T> inline T Clamp (const T X, const T min_value, const T max_value)
   {
-    return X < Min ? Min : X < Max ? X : Max;
+    return X < min_value ? min_value : X < max_value ? X : max_value;
   }
 
-  template< class T > inline T ClampUp ( const T X, const T Min, const T Max )
+  template<typename T> inline T ClampUp (const T X, const T min_value)
   {
-    return X < Min ? Min : X;
+    return X < min_value ? min_value : X;
   }
 
-  template< class T > inline T ClampDown ( const T X, const T Max )
+  template<typename T> inline T ClampDown (const T X, const T max_value)
   {
-    return X > Max ? Max : X;
+    return X > max_value ? max_value : X;
   }
 
-  template< class T > inline T Align ( const T Ptr, int Alignment )
+  template<typename T> inline T Align (const T Ptr, int Alignment)
   {
-    return (T) ( ( (NUX_POINTER) Ptr + Alignment - 1) & ~ (Alignment - 1) );
+    return (T) (((NUX_POINTER) Ptr + Alignment - 1) & ~ (Alignment - 1));
   }
 
   //Bitwise rotation on the left.
   template<typename T> inline const T Rol (const T &a, const unsigned int n = 1)
   {
-    return (a << n) | (a >> ( (sizeof (T) << 3) - n) );
+    return (a << n) | (a >> ((sizeof (T) << 3) - n));
   }
   //Bitwise rotation on the right.
   template<typename T> inline const T Ror (const T &a, const unsigned int n = 1)
   {
-    return (a >> n) | (a << ( (sizeof (T) << 3) - n) );
+    return (a >> n) | (a << ((sizeof (T) << 3) - n));
   }
 
   // Exchange the values of variables a and b
@@ -125,12 +115,12 @@ namespace nux
   //! Return the minimum between a, b and c.
   template<typename T> inline const T &Min (const T &a, const T &b, const T &c)
   {
-    return min (min (a, b), c);
+    return Min<T> (Min<T> (a, b), c);
   }
   //! Return the minimum between a, b, c and d.
   template<typename T> inline const T &Min (const T &a, const T &b, const T &c, const T &d)
   {
-    return min (min (min (a, b), c), d);
+    return Min<T> (Min<T> (Min<T> (a, b), c), d);
   }
   //! Return the maximum between a and b.
   template<typename T> inline const T &Max (const T &a, const T &b)
@@ -140,13 +130,24 @@ namespace nux
   //! Return the maximum between a, b and c.
   template<typename T> inline const T &Max (const T &a, const T &b, const T &c)
   {
-    return max (max (a, b), c);
+    return Max<T> (Max<T> (a, b), c);
   }
   //! Return the maximum between a,b,c and d.
   template<typename T> inline const T &Max (const T &a, const T &b, const T &c, const T &d)
   {
-    return max (max (a, b, c), d);
+    return Max<T> (Max<T> (a, b, c), d);
   }
+  
+  template<typename T> inline T Max3 (const T A, const T B, const T C)
+  {
+    return Max<T> (Max<T> (A, B), C);
+  }
+
+  template<typename T> inline T Min3 (const T A, const T B, const T C)
+  {
+    return Min<T> (Min<T> (A, B), C);
+  }
+  
   //! Return the sign of x.
   template<typename T> inline T Sign (const T &x)
   {
@@ -156,7 +157,7 @@ namespace nux
 
   template<typename T> inline T Modulo (const T &x, const T &m)
   {
-    return x - m * (T) std::floor ( (double) x / m);
+    return x - m * (T) std::floor ((double) x / m);
   }
 
   inline int ModuloInt (const int x, const int m)
@@ -166,7 +167,7 @@ namespace nux
 
   template<typename T> inline T MinMod (const T &a, const T &b)
   {
-    return a * b <= 0 ? 0 : (a > 0 ? (a < b ? a : b) : (a < b ? b : a) );
+    return a * b <= 0 ? 0 : (a > 0 ? (a < b ? a : b) : (a < b ? b : a));
   }
 
   //! Return a random variable between [0,1[ (uniform distribution).
@@ -193,7 +194,7 @@ namespace nux
   */
   inline double RandomGaussian()
   {
-    return std::sqrt (-2 * std::log ( (double) (1e-10 + (1 - 2e-10) * std::rand() ) ) ) * std::cos ( (double) (2 * 3.14f/*Const::pi*/*std::rand() ) );
+    return std::sqrt (-2 * std::log ((double) (1e-10 + (1 - 2e-10) * std::rand()))) * std::cos ((double) (2 * 3.14f/*Const::pi*/*std::rand()));
   }
 
   inline unsigned int RandomUInt()
@@ -208,18 +209,18 @@ namespace nux
 
   inline t_size DiffPointer (void *Ptr0, void *Ptr1)
   {
-    if ( (t_size) Ptr0 >= (t_size) Ptr1) return (t_size) ( (t_size) Ptr0 - (t_size) Ptr1);
+    if ((t_size) Ptr0 >= (t_size) Ptr1) return (t_size) ((t_size) Ptr0 - (t_size) Ptr1);
 
-    return (t_size) ( (t_size) Ptr1 - (t_size) Ptr0);
+    return (t_size) ((t_size) Ptr1 - (t_size) Ptr0);
   }
   // Dangerous to use!
   template<typename T> inline T SubstractPointer (void *Ptr, t_size Value)
   {
-    return (T) ( ( (t_size) Ptr) - Value);
+    return (T) (((t_size) Ptr) - Value);
   }
   template<typename T> inline T AddPointer (void *Ptr, t_size Value)
   {
-    return (T) ( ( (t_size) Ptr) + Value);
+    return (T) (((t_size) Ptr) + Value);
   }
 
   //! Round up to the nearest multiple of Alignment that is greater or equal to Value
@@ -228,7 +229,7 @@ namespace nux
   */
   template<typename T> inline T RoundUp (T Value, int Alignment)
   {
-    return (Value + (Alignment - 1) ) & ~ (Alignment - 1);
+    return (Value + (Alignment - 1)) & ~ (Alignment - 1);
   }
 
   //! Round down to the nearest multiple of Alignment that is smaller or equal to Value
@@ -237,7 +238,7 @@ namespace nux
   */
   template<typename T> inline T RoundDown (T Value, int Alignment)
   {
-    return ( (Value) & ~ (Alignment - 1) );
+    return ((Value) & ~ (Alignment - 1));
   }
 
   //! Return true is Value is aligned on Alignment
@@ -246,7 +247,7 @@ namespace nux
   */
   template<typename T> inline bool IsAligned (T Value, int Alignment)
   {
-    return ( ( (Value) & ~ (Alignment - 1) ) == 0);
+    return (((Value) & ~ (Alignment - 1)) == 0);
   }
 
   /*!
@@ -312,7 +313,7 @@ namespace nux
   inline bool IsPowerOf2 (unsigned int n)
   {
     // The algorithm does not 0 consider 0 a power of two. (this is right)
-    return ! (n & (n - 1) ) && n;
+    return ! (n & (n - 1)) && n;
   }
 
   // Compute the next highest power of 2 of 32-bit v
@@ -393,7 +394,7 @@ namespace nux
   inline bool Hak32_CPULittleEndian()
   {
     const int x = 1;
-    return ( (unsigned char *) &x) [0] ? true : false;
+    return ((unsigned char *) &x) [0] ? true : false;
   }
 
   // http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious
@@ -457,25 +458,25 @@ namespace nux
     {
       c = 1;
 
-      if ( (v & 0xffff) == 0)
+      if ((v & 0xffff) == 0)
       {
         v >>= 16;
         c += 16;
       }
 
-      if ( (v & 0xff) == 0)
+      if ((v & 0xff) == 0)
       {
         v >>= 8;
         c += 8;
       }
 
-      if ( (v & 0xf) == 0)
+      if ((v & 0xf) == 0)
       {
         v >>= 4;
         c += 4;
       }
 
-      if ( (v & 0x3) == 0)
+      if ((v & 0x3) == 0)
       {
         v >>= 2;
         c += 2;

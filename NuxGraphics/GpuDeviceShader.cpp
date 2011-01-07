@@ -33,11 +33,11 @@
 
 namespace nux
 {
-  IntrusiveSP<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
+  ObjectPtr<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
   {
     IOpenGLShaderProgram *ptr;
     CreateShaderProgram ( (IOpenGLShaderProgram **) &ptr);
-    IntrusiveSP<IOpenGLShaderProgram> h = IntrusiveSP<IOpenGLShaderProgram> (ptr);
+    ObjectPtr<IOpenGLShaderProgram> h = ObjectPtr<IOpenGLShaderProgram> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -49,11 +49,11 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLVertexShader> GpuDevice::CreateVertexShader()
+  ObjectPtr<IOpenGLVertexShader> GpuDevice::CreateVertexShader()
   {
     IOpenGLVertexShader *ptr;
     CreateVertexShader ( (IOpenGLVertexShader **) &ptr);
-    IntrusiveSP<IOpenGLVertexShader> h = IntrusiveSP<IOpenGLVertexShader> (ptr);
+    ObjectPtr<IOpenGLVertexShader> h = ObjectPtr<IOpenGLVertexShader> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -65,11 +65,11 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLPixelShader> GpuDevice::CreatePixelShader()
+  ObjectPtr<IOpenGLPixelShader> GpuDevice::CreatePixelShader()
   {
     IOpenGLPixelShader *ptr;
     CreatePixelShader ( (IOpenGLPixelShader **) &ptr);
-    IntrusiveSP<IOpenGLPixelShader> h = IntrusiveSP<IOpenGLPixelShader> (ptr);
+    ObjectPtr<IOpenGLPixelShader> h = ObjectPtr<IOpenGLPixelShader> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -81,11 +81,11 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLAsmShaderProgram> GpuDevice::CreateAsmShaderProgram()
+  ObjectPtr<IOpenGLAsmShaderProgram> GpuDevice::CreateAsmShaderProgram()
   {
     IOpenGLAsmShaderProgram *ptr;
     CreateAsmShaderProgram ( (IOpenGLAsmShaderProgram **) &ptr);
-    IntrusiveSP<IOpenGLAsmShaderProgram> h = IntrusiveSP<IOpenGLAsmShaderProgram> (ptr);
+    ObjectPtr<IOpenGLAsmShaderProgram> h = ObjectPtr<IOpenGLAsmShaderProgram> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -97,11 +97,11 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLAsmVertexShader> GpuDevice::CreateAsmVertexShader()
+  ObjectPtr<IOpenGLAsmVertexShader> GpuDevice::CreateAsmVertexShader()
   {
     IOpenGLAsmVertexShader *ptr;
     CreateAsmVertexShader ( (IOpenGLAsmVertexShader **) &ptr);
-    IntrusiveSP<IOpenGLAsmVertexShader> h = IntrusiveSP<IOpenGLAsmVertexShader> (ptr);
+    ObjectPtr<IOpenGLAsmVertexShader> h = ObjectPtr<IOpenGLAsmVertexShader> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -113,11 +113,11 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<IOpenGLAsmPixelShader> GpuDevice::CreateAsmPixelShader()
+  ObjectPtr<IOpenGLAsmPixelShader> GpuDevice::CreateAsmPixelShader()
   {
     IOpenGLAsmPixelShader *ptr;
     CreateAsmPixelShader ( (IOpenGLAsmPixelShader **) &ptr);
-    IntrusiveSP<IOpenGLAsmPixelShader> h = IntrusiveSP<IOpenGLAsmPixelShader> (ptr);
+    ObjectPtr<IOpenGLAsmPixelShader> h = ObjectPtr<IOpenGLAsmPixelShader> (ptr);
     ptr->UnReference ();
     return h;
   }
@@ -131,11 +131,11 @@ namespace nux
 
 #if (NUX_ENABLE_CG_SHADERS)
 
-  IntrusiveSP<ICgVertexShader> GpuDevice::CreateCGVertexShader()
+  ObjectPtr<ICgVertexShader> GpuDevice::CreateCGVertexShader()
   {
     ICgVertexShader *ptr;
     CreateCGVertexShader ( (ICgVertexShader **) &ptr);
-    IntrusiveSP<ICgVertexShader> h = ptr;
+    ObjectPtr<ICgVertexShader> h = ptr;
     ptr->UnReference ();
     return h;
   }
@@ -147,11 +147,11 @@ namespace nux
     return OGL_OK;
   }
 
-  IntrusiveSP<ICgPixelShader> GpuDevice::CreateCGPixelShader()
+  ObjectPtr<ICgPixelShader> GpuDevice::CreateCGPixelShader()
   {
     ICgPixelShader *ptr;
     CreateCGPixelShader ( (ICgPixelShader **) &ptr);
-    IntrusiveSP<ICgPixelShader> h = ptr;
+    ObjectPtr<ICgPixelShader> h = ptr;
     ptr->UnReference ();
     return h;
   }

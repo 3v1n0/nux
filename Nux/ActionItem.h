@@ -57,7 +57,7 @@ namespace nux
 //    void SetMenu(MenuPage* menu);
 //    MenuPage* GetMenu() const;
 
-    void SetFont (IntrusiveSP<FontTexture> font);
+    void SetFont (ObjectPtr<FontTexture> font);
     void SetIcon (const BaseTexture* icon);
     const BaseTexture* GetIcon();
 

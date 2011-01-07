@@ -46,7 +46,7 @@ namespace nux
 
       if (Dummy == false) surface->InitializeLevel();
 
-      _SurfaceArray.push_back (IntrusiveSP<IOpenGLSurface> (surface));
+      _SurfaceArray.push_back (ObjectPtr<IOpenGLSurface> (surface));
       surface->UnReference ();
     }
 
@@ -61,7 +61,7 @@ namespace nux
   {
     for (int l = 0; l < _NumMipLevel; l++)
     {
-      _SurfaceArray[l] = IntrusiveSP<IOpenGLSurface> (0);;
+      _SurfaceArray[l] = ObjectPtr<IOpenGLSurface> (0);;
     }
 
     _SurfaceArray.clear();
@@ -72,7 +72,7 @@ namespace nux
 
   }
 
-  IntrusiveSP<IOpenGLSurface> IOpenGLTexture2D::GetSurfaceLevel (int Level)
+  ObjectPtr<IOpenGLSurface> IOpenGLTexture2D::GetSurfaceLevel (int Level)
   {
     if ( (Level >= 0) && (Level < _NumMipLevel) )
     {
@@ -83,10 +83,10 @@ namespace nux
       nuxAssertMsg (0, TEXT ("[IOpenGLTexture2D::GetSurfaceLevel] Invalid surface level") );
     }
 
-    return IntrusiveSP<IOpenGLSurface> (0);
+    return ObjectPtr<IOpenGLSurface> (0);
   }
 
-  void IOpenGLTexture2D::GetSurfaceLevel (int Level, IntrusiveSP<IOpenGLSurface>& surface)
+  void IOpenGLTexture2D::GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface)
   {
     surface = GetSurfaceLevel (Level);
   }
@@ -102,7 +102,7 @@ namespace nux
 
     if (Level < _NumMipLevel)
     {
-      IntrusiveSP<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
+      ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
       return pSurfaceLevel->LockRect (pLockedRect, pRect);
     }
     else
@@ -123,7 +123,7 @@ namespace nux
 
     if (Level < _NumMipLevel)
     {
-      IntrusiveSP<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
+      ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
       return pSurfaceLevel->UnlockRect();
     }
     else

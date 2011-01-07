@@ -23,7 +23,8 @@
 #include <Nux/Nux.h>
 #include <glib-object.h>
 
-void test_Object_suite ();
+void TestObjectSuite ();
+void TestSystemSuite ();
 
 void test_timeline_create_suite ();
 
@@ -35,7 +36,8 @@ main (gint argc, gchar *argv[])
   nux::NuxInitialize(0);
 
   /* First the Nux specific tests */
-  test_Object_suite ();
+  TestObjectSuite ();
+  TestSystemSuite ();
 
   /* Please keep this alphabetically ordered */
   test_timeline_create_suite ();

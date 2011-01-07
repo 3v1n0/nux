@@ -332,7 +332,7 @@ namespace nux
 
   void Area::InitiateResizeLayout (Area *child)
   {
-    if (GetGraphicsThread()->IsComputingLayout() )
+    if (GetWindowThread ()->IsComputingLayout() )
     {
       // there is no need to do the following while we are already computing the layout.
       // If we do, we will end up in an infinite loop.
@@ -358,18 +358,18 @@ namespace nux
         {
           // If this element is a Splitter, then we submit its child to the refresh list. We don't want to submit the
           // splitter because this will cause a redraw of all parts of the splitter (costly and unnecessary).
-          GetGraphicsThread()->AddObjectToRefreshList (child);
+          GetWindowThread ()->AddObjectToRefreshList (child);
         }
         else
         {
-          GetGraphicsThread()->AddObjectToRefreshList (ic);
+          GetWindowThread ()->AddObjectToRefreshList (ic);
         }
       }
       else if (ic->m_ParentObject)
         ic->m_ParentObject->InitiateResizeLayout (this);
       else
       {
-        GetGraphicsThread()->AddObjectToRefreshList (ic);
+        GetWindowThread ()->AddObjectToRefreshList (ic);
       }
     }
     else if (this->Type().IsDerivedFromType (Layout::StaticObjectType) )
@@ -396,11 +396,11 @@ namespace nux
             {
               // If the parent of this element is a splitter, then we submit its child to the refresh list. We don't want to submit the
               // splitter because this will cause a redraw of all parts of the splitter (costly and unnecessary).
-              GetGraphicsThread()->AddObjectToRefreshList (this);
+              GetWindowThread ()->AddObjectToRefreshList (this);
             }
             else
             {
-              GetGraphicsThread()->AddObjectToRefreshList (ic);
+              GetWindowThread ()->AddObjectToRefreshList (ic);
             }
           }
           else
@@ -417,7 +417,7 @@ namespace nux
       else
       {
         // This is possibly the Main layout or the layout of a floating object (popup for example) unless the layout is not part of the object tree.
-        GetGraphicsThread()->AddObjectToRefreshList (layout);
+        GetWindowThread ()->AddObjectToRefreshList (layout);
       }
     }
     else

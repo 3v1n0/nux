@@ -162,25 +162,25 @@ namespace nux
     _Box.Front   = 0;
     _Box.Back    = ImageSurface::GetLevelDim (texture->_PixelFormat, texture->GetDepth(), _SMipLevel);
 
-    if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+    if (GetGpuDevice()->UsePixelBufferObjects() )
     {
-      GetThreadGLDeviceFactory()->AllocateUnpackPixelBufferIndex (&_AllocatedUnpackBuffer);
+      GetGpuDevice()->AllocateUnpackPixelBufferIndex (&_AllocatedUnpackBuffer);
     }
 
     if (pBox == 0)
     {
       _CompressedDataSize = GetDepth() * surface_size;
 
-      if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+      if (GetGpuDevice()->UsePixelBufferObjects() )
       {
         // Mapping the entire area of the surface
         if (1)
         {
-          _LockedBox.pBits = GetThreadGLDeviceFactory()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, _CompressedDataSize);
+          _LockedBox.pBits = GetGpuDevice()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, _CompressedDataSize);
         }
         else
         {
-          GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
+          GetGpuDevice()->BindUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
           CHECKGL ( glBufferDataARB (GL_PIXEL_UNPACK_BUFFER_ARB, _CompressedDataSize, NULL, GL_STREAM_DRAW_ARB) );
           _LockedBox.pBits = glMapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
           CHECKGL_MSG (glMapBufferARB );
@@ -228,11 +228,11 @@ namespace nux
 
       _CompressedDataSize = NumSlice * RectSize;
 
-      if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+      if (GetGpuDevice()->UsePixelBufferObjects() )
       {
-        _LockedBox.pBits = GetThreadGLDeviceFactory()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, NumSlice * RectSize);
+        _LockedBox.pBits = GetGpuDevice()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, NumSlice * RectSize);
 
-//             GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex(_AllocatedUnpackBuffer);
+//             GetGpuDevice()->BindUnpackPixelBufferIndex(_AllocatedUnpackBuffer);
 //             CHECKGL( glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, NumSlice * RectSize, NULL, GL_STATIC_DRAW_ARB) );
 //             _LockedBox.pBits = glMapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY);
 //             CHECKGL_MSG(glMapBufferARB );
@@ -279,10 +279,10 @@ namespace nux
     {
       CHECKGL ( glBindTexture (_STextureTarget, _VolumeTexture->_OpenGLID) );
 
-      if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+      if (GetGpuDevice()->UsePixelBufferObjects() )
       {
         // Unmap the texture image buffer
-        GetThreadGLDeviceFactory()->BindUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
+        GetGpuDevice()->BindUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
         CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
         DataPtr = NUX_BUFFER_OFFSET (0);
       }
@@ -357,10 +357,10 @@ namespace nux
       nuxAssertMsg (0, TEXT ("Incorrect Texture Target.") );
     }
 
-    if (GetThreadGLDeviceFactory()->UsePixelBufferObjects() )
+    if (GetGpuDevice()->UsePixelBufferObjects() )
     {
       CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
-      GetThreadGLDeviceFactory()->FreeUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
+      GetGpuDevice()->FreeUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
     }
     else
     {
@@ -371,7 +371,7 @@ namespace nux
       }
     }
 
-    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetThreadGLDeviceFactory()->GetPixelStoreAlignment() ) );
+    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetGpuDevice()->GetPixelStoreAlignment() ) );
 
     _LockedBox.pBits = 0;
     _LockedBox.RowPitch = 0;
@@ -463,7 +463,7 @@ namespace nux
     //        delete [] color_array;
     //    }
 
-    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetThreadGLDeviceFactory()->GetPixelStoreAlignment() ) );
+    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetGpuDevice()->GetPixelStoreAlignment() ) );
 
     _Initialized = true;
     return OGL_OK;

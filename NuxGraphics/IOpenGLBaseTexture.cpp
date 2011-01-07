@@ -222,14 +222,14 @@ namespace nux
     return OGL_OK;
   }
 
-  void IOpenGLBaseTexture::GetSurfaceLevel (int Level, IntrusiveSP<IOpenGLSurface>& surface)
+  void IOpenGLBaseTexture::GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface)
   {
 
   }
 
-  IntrusiveSP<IOpenGLSurface> IOpenGLBaseTexture::GetSurfaceLevel (int Level)
+  ObjectPtr<IOpenGLSurface> IOpenGLBaseTexture::GetSurfaceLevel (int Level)
   {
-    return IntrusiveSP<IOpenGLSurface> (0);
+    return ObjectPtr<IOpenGLSurface> (0);
   }
 
   int IOpenGLBaseTexture::LockRect (int Level, SURFACE_LOCKED_RECT *pLockedRect, const SURFACE_RECT *pRect)

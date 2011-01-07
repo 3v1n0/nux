@@ -373,7 +373,7 @@ namespace nux
     if (HasKeyboardFocus() && (ievent.e_event == NUX_KEYDOWN || ievent.e_event == NUX_KEYUP) )
     {
       OnKeyEvent.emit (
-        GetGraphicsThread()->GetGraphicsEngine(),
+        GetWindowThread ()->GetGraphicsEngine(),
         ievent.e_event,
         ievent.GetKeySym(),
         ievent.GetKeyState(),

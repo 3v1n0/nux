@@ -65,7 +65,7 @@ namespace nux
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetGpuDevice()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -81,7 +81,7 @@ namespace nux
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetGpuDevice()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -115,7 +115,7 @@ namespace nux
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetThreadGLDeviceFactory()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetGpuDevice()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -152,13 +152,13 @@ namespace nux
 
   }
 
-  IntrusiveSP < IOpenGLBaseTexture > BaseTexture::GetDeviceTexture()
+  ObjectPtr < IOpenGLBaseTexture > BaseTexture::GetDeviceTexture()
   {
-    IntrusiveSP<CachedBaseTexture> CachedTexture = GetThreadGraphicsContext()->CacheResource (this);
+    ObjectPtr<CachedBaseTexture> CachedTexture = GetThreadGraphicsContext()->CacheResource (this);
     return CachedTexture->m_Texture;
   }
 
-  IntrusiveSP<CachedBaseTexture> BaseTexture::GetCachedTexture()
+  ObjectPtr<CachedBaseTexture> BaseTexture::GetCachedTexture()
   {
     return GetThreadGraphicsContext()->CacheResource (this);
   }
@@ -288,11 +288,11 @@ namespace nux
   {
     if (SourceTexture->IsNull())
     {
-      m_Texture = IntrusiveSP <IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr <IOpenGLBaseTexture> (0);
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
                 SourceTexture->GetFormat());
@@ -312,7 +312,7 @@ namespace nux
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = IntrusiveSP <IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr <IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -324,7 +324,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
@@ -346,7 +346,7 @@ namespace nux
   void CachedTexture2D::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT LockedRect;
-    IntrusiveSP < IOpenGLTexture2D > Texture2D = m_Texture; //m_Texture.CastRef<IOpenGLTexture2D>();
+    ObjectPtr < IOpenGLTexture2D > Texture2D = m_Texture; //m_Texture.CastRef<IOpenGLTexture2D>();
 
     OGL_CALL ( Texture2D->LockRect ( MipLevel, &LockedRect, NULL) );
     SourceTexture->GetData ( LockedRect.pBits, MipLevel, LockedRect.Pitch );
@@ -442,11 +442,11 @@ namespace nux
   {
     if (SourceTexture->IsNull() )
     {
-      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateRectangleTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
                 SourceTexture->GetFormat() );
@@ -466,7 +466,7 @@ namespace nux
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -478,7 +478,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateRectangleTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
@@ -500,7 +500,7 @@ namespace nux
   void CachedTextureRectangle::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT		        LockedRect;
-    IntrusiveSP <IOpenGLRectangleTexture>	TextureRectangle = m_Texture; //m_Texture.CastRef<IOpenGLRectangleTexture>();
+    ObjectPtr <IOpenGLRectangleTexture>	TextureRectangle = m_Texture; //m_Texture.CastRef<IOpenGLRectangleTexture>();
 
     OGL_CALL (TextureRectangle->LockRect ( MipLevel, &LockedRect, NULL) );
     SourceTexture->GetData ( LockedRect.pBits, MipLevel, LockedRect.Pitch );
@@ -591,11 +591,11 @@ namespace nux
   {
     if (SourceTexture->IsNull() )
     {
-      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateCubeTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetNumMipLevel(),
                 SourceTexture->GetFormat() );
 
@@ -614,7 +614,7 @@ namespace nux
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -626,7 +626,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateCubeTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
 
@@ -647,7 +647,7 @@ namespace nux
   void CachedTextureCube::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT		LockedRect;
-    IntrusiveSP <IOpenGLCubeTexture> CubemapTexture = m_Texture; //m_Texture.CastRef<IOpenGLCubeTexture>();
+    ObjectPtr <IOpenGLCubeTexture> CubemapTexture = m_Texture; //m_Texture.CastRef<IOpenGLCubeTexture>();
 
     for (int face = CUBEMAP_FACE_POSITIVE_X; face < GL_TEXTURE_CUBE_MAP_NEGATIVE_Z + 1; face++)
     {
@@ -762,11 +762,11 @@ namespace nux
   {
     if (SourceTexture->IsNull() )
     {
-      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateVolumeTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetDepth(),
                 SourceTexture->GetNumMipLevel(),
@@ -787,7 +787,7 @@ namespace nux
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -799,7 +799,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateVolumeTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
                   SourceTexture->GetNumMipLevel(),
@@ -822,7 +822,7 @@ namespace nux
   void CachedTextureVolume::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     VOLUME_LOCKED_BOX       LockedBox;
-    IntrusiveSP <IOpenGLVolumeTexture> VolumeTexture = m_Texture; //m_Texture.CastRef<IOpenGLVolumeTexture>();
+    ObjectPtr <IOpenGLVolumeTexture> VolumeTexture = m_Texture; //m_Texture.CastRef<IOpenGLVolumeTexture>();
     //TextureVolume*     Source          = UpCastResource<TextureVolume, BaseTexture>(SourceTexture);
 
     //for(int slice = 0; slice < ImageSurface::GetLevelDim(Source->GetFormat(), Source->GetDepth(), MipLevel); slice++)
@@ -933,11 +933,11 @@ namespace nux
   {
     if (SourceTexture->IsNull() )
     {
-      m_Texture = IntrusiveSP<IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    m_Texture = GetThreadGLDeviceFactory()->CreateAnimatedTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetDepth(),
                 SourceTexture->GetFormat() );
@@ -957,7 +957,7 @@ namespace nux
   {
     if ( (SourceTexture == 0) || SourceTexture->IsNull() )
     {
-      m_Texture = IntrusiveSP <IOpenGLBaseTexture> (0);
+      m_Texture = ObjectPtr <IOpenGLBaseTexture> (0);
       return;
     }
 
@@ -969,7 +969,7 @@ namespace nux
 
     if (RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetThreadGLDeviceFactory()->CreateAnimatedTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
                   SourceTexture->GetFormat() );
@@ -991,7 +991,7 @@ namespace nux
   void CachedTextureFrameAnimation::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT       LockedRect;
-    IntrusiveSP <IOpenGLAnimatedTexture> AnimatedTexture = m_Texture; //m_Texture.CastRef<IOpenGLAnimatedTexture>();
+    ObjectPtr <IOpenGLAnimatedTexture> AnimatedTexture = m_Texture; //m_Texture.CastRef<IOpenGLAnimatedTexture>();
     TextureFrameAnimation     *Source          = UpCastResource<TextureFrameAnimation, BaseTexture> (SourceTexture);
 
     for (int frame = 0; frame < Source->GetDepth(); frame++)

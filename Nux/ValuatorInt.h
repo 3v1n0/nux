@@ -31,7 +31,7 @@
 
 namespace nux
 {
-
+  // NUXTODO: Rename to IntegerSpinner
   class ValuatorInt: public Valuator
   {
   public:

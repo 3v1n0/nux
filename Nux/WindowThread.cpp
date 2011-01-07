@@ -194,6 +194,8 @@ namespace nux
 
   void WindowThread::InitGlibLoop()
   {
+    static bool main_context_created = false;
+
     GSource *source;
 
     if (!IsEmbeddedWindow ())
@@ -205,14 +207,24 @@ namespace nux
 
       gthread_initialized = true;
 
-      if ( (m_GLibContext == 0) || (m_GLibLoop == 0) )
+      if (((m_GLibContext == 0) || (m_GLibLoop == 0)) && (main_context_created == false))
       {
         //create a context
         m_GLibContext = g_main_context_default ();
         //create a main loop with context
         m_GLibLoop = g_main_loop_new (m_GLibContext, TRUE);
       }
+      else
+      {
+        // Secondary physical windows goes in here
+        //create a context
+        m_GLibContext = g_main_context_new();
+        //create a main loop with context
+        m_GLibLoop = g_main_loop_new (m_GLibContext, TRUE);
+      }
     }
+
+    main_context_created = true;
 
     gLibEventMutex = 0; //g_mutex_new();
 
@@ -808,7 +820,7 @@ namespace nux
       return 0;
     }
 
-    WindowThread *Application = GetGraphicsThread();
+    WindowThread *Application = GetWindowThread ();
 
 #if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
     while (KeepRunning)
@@ -1038,7 +1050,7 @@ namespace nux
         if (IsEmbeddedWindow () && !m_RedrawRequested && RequestRequired)
           RequestRedraw ();
 
-        GetGraphicsThread()->GetGraphicsEngine().ResetStats();
+        GetWindowThread ()->GetGraphicsEngine().ResetStats();
         m_size_configuration_event = false;
       }
     }
@@ -1520,7 +1532,7 @@ namespace nux
     Area* parent = area->GetParentObject();
     if (parent)
     {
-      if (parent == GetGraphicsThread ()->GetMainLayout ())
+      if (parent == GetWindowThread ()->GetMainLayout ())
       {
         return parent;
       }
@@ -1748,10 +1760,10 @@ namespace nux
 
     // Set Nux opengl states. The other plugin in compiz have changed the GPU opengl states.
     // Nux keep tracks of its own opengl states and restore them before doing any drawing.
-    GetGraphicsThread()->GetGraphicsEngine().GetRenderStates().SubmitChangeStates();
+    GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SubmitChangeStates();
 
-    GetGraphicsThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, GetGraphicsThread()->GetGraphicsEngine().GetWindowWidth(),
-        GetGraphicsThread()->GetGraphicsEngine().GetWindowHeight() );
+    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
+        GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
 
     if (GetWindow().IsPauseThreadGraphicsRendering() == false)
     {
@@ -1761,7 +1773,7 @@ namespace nux
       // When rendering in embedded mode, nux does not attempt to mesure the frame rate...
 
       // Cleanup
-      GetGraphicsThread()->GetGraphicsEngine().ResetStats();
+      GetWindowThread ()->GetGraphicsEngine().ResetStats();
       ClearRedrawFlag();
 
       m_size_configuration_event = false;
@@ -1781,11 +1793,11 @@ namespace nux
     CHECKGL ( glUseProgramObjectARB (0) );
 #endif
 
-    GetThreadGLDeviceFactory()->DeactivateFrameBuffer();
-    /*GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
-    GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
-    GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);
-    GetGraphicsThread()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE3, GL_TEXTURE_RECTANGLE);*/
+    GetGpuDevice()->DeactivateFrameBuffer();
+    /*GetWindowThread ()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
+    GetWindowThread ()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
+    GetWindowThread ()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);
+    GetWindowThread ()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE3, GL_TEXTURE_RECTANGLE);*/
 
   }
 

@@ -90,7 +90,7 @@ namespace nux
         m_Z->IsRedrawNeeded() )
     {
       t_u32 nBackground = table->PushItemBackground (GfxContext, this);
-      Painter.PaintTextLineStatic (GfxContext, GetSysBoldFont() /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
+      Painter.PaintTextLineStatic (GfxContext, GetSysBoldFont() /*GetFont ()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
 
       if (m_ItemGeometryVector.size() >= 2)
       {
@@ -106,7 +106,7 @@ namespace nux
         else
           Painter.Paint2DQuadColor (GfxContext, prop_geo, ItemBackgroundColor);
 
-        Painter.PaintTextLineStatic (GfxContext, GetSysBoldFont() /*GetFont()*/, prop_geo, buffer, GetItemTextColor() );
+        Painter.PaintTextLineStatic (GfxContext, GetSysBoldFont() /*GetFont ()*/, prop_geo, buffer, GetItemTextColor() );
       }
 
       table->PopItemBackground (GfxContext, nBackground);

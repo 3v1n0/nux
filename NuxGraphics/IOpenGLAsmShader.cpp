@@ -176,8 +176,8 @@ namespace nux
     ,   _ShaderProgramName (ShaderProgramName)
   {
     _OpenGLID = 0;
-    m_AsmVertexProgram = GetThreadGLDeviceFactory()->CreateAsmVertexShader();
-    m_AsmFragmentProgram = GetThreadGLDeviceFactory()->CreateAsmPixelShader();
+    m_AsmVertexProgram = GetGpuDevice()->CreateAsmVertexShader();
+    m_AsmFragmentProgram = GetGpuDevice()->CreateAsmPixelShader();
   }
 
   IOpenGLAsmShaderProgram::~IOpenGLAsmShaderProgram()

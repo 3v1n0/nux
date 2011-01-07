@@ -31,7 +31,7 @@
 //   class GraphicsEngine;
 // 
 //   GraphicsDisplay *GetThreadGLWindow();
-//   GpuDevice *GetThreadGLDeviceFactory();
+//   GpuDevice *GetGpuDevice();
 //   GraphicsEngine *GetThreadGraphicsContext();
 // 
 // #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
