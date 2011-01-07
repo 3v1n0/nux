@@ -142,33 +142,39 @@ namespace nux
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
-      float sigma);
+      float sigma = 1.0f, int num_pass = 1);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GetAlphaTexture (
-      int x, int y,
-      int buffer_width, int buffer_height,
+      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GetColorMatrixTexture (
-      int x, int y,
-      int buffer_width, int buffer_height,
+      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       Matrix4 color_matrix, Vector4 offset);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GetComponentExponentiation (
-      int x, int y,
-      int buffer_width, int buffer_height,
+      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       Vector4 exponent);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GetLQBlur (
-      int x, int y,
-      int buffer_width, int buffer_height,
+      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
+
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetHQBlur (
+      int x, int y, int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0, float sigma = 1.0f, int num_pass = 1);
+
+    void QRP_DisturbedTexture (
+      int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
+      ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
 
     // ASM
     void QRP_ASM_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
@@ -212,37 +218,42 @@ namespace nux
         @param buffer_height  Height of result texture.
     */
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetBlurTexture (
-      int x, int y,
-      int buffer_width, int buffer_height,
+      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
-      float sigma = 1.0f);
+      float sigma = 1.0f, int num_pass = 1);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetAlphaTexture (
-      int x, int y,
-      int buffer_width, int buffer_height,
+      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetColorMatrixTexture (
-      int x, int y,
-      int buffer_width, int buffer_height,
+      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       Matrix4 color_matrix, Vector4 offset);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetComponentExponentiation (
-      int x, int y,
-      int buffer_width, int buffer_height,
+      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       Vector4 exponent);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetLQBlur (
-      int x, int y,
-      int buffer_width, int buffer_height,
+      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
+
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetHQBlur (
+      int x, int y, int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0, float sigma = 1.0f, int num_pass = 1);
+
+    void QRP_ASM_DisturbedTexture (
+      int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
+      ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
 
     // GLSL
 
@@ -278,6 +289,8 @@ namespace nux
     void QRP_GLSL_AlphaReplicate  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
     void QRP_GLSL_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_GLSL_VerticalGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
+    void QRP_GLSL_HorizontalHQGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
+    void QRP_GLSL_VerticalHQGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_GLSL_ColorMatrix     (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Matrix4 color_matrix, Vector4 offset);
 
     /*!
@@ -293,7 +306,7 @@ namespace nux
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
-      float sigma = 1.0f);
+      float sigma = 1.0f, int num_pass = 1);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetAlphaTexture (
       int x, int y,
@@ -320,6 +333,12 @@ namespace nux
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
+
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetHQBlur (
+      int x, int y,
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      const Color& c0, float sigma = 1.0f, int num_pass = 1);
 
     void QRP_GLSL_DisturbedTexture (
       int x, int y, int width, int height,
@@ -535,6 +554,9 @@ namespace nux
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_color_matrix_filter_prog;
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_color_matrix_filter_prog;
 
+    void InitAsm2TextureDepRead ();
+    ObjectPtr<IOpenGLAsmShaderProgram> m_ASM2TextureDepRead;
+    ObjectPtr<IOpenGLAsmShaderProgram> m_ASM2TextureRectDepRead;
 
     void InitAsmBlendModes();
 
@@ -600,6 +622,17 @@ namespace nux
     //! Gauss vertical filter.
     ObjectPtr<IOpenGLShaderProgram> _vertical_gauss_filter_prog;
     
+
+    void InitSLHorizontalHQGaussFilter ();
+    //! Gauss horizontal filter.
+    ObjectPtr<IOpenGLShaderProgram> _horizontal_hq_gauss_filter_prog;
+
+    void InitSLVerticalHQGaussFilter ();
+    //! Gauss vertical filter.
+    ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog;
+
+
+
     void InitSLColorMatrixFilter ();
     //! Color matrix filter.
     ObjectPtr<IOpenGLShaderProgram> _color_matrix_filter_prog;

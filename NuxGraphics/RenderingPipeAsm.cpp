@@ -275,6 +275,65 @@ namespace nux
     m_Asm2TextureRectAdd->Link();
   }
 
+  void GraphicsEngine::InitAsm2TextureDepRead ()
+  {
+    NString AsmVtx = TEXT (
+      "!!ARBvp1.0                                 \n\
+      ATTRIB iPos         = vertex.position;      \n\
+      OUTPUT oPos         = result.position;      \n\
+      OUTPUT oTexCoord0   = result.texcoord[0];   \n\
+      OUTPUT oTexCoord1   = result.texcoord[1];   \n\
+      # Transform the vertex to clip coordinates. \n\
+      DP4   oPos.x, state.matrix.mvp.row[0], vertex.position;      \n\
+      DP4   oPos.y, state.matrix.mvp.row[1], vertex.position;      \n\
+      DP4   oPos.z, state.matrix.mvp.row[2], vertex.position;      \n\
+      DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;      \n\
+      MOV   oTexCoord0, vertex.attrib[8];       \n\
+      MOV   oTexCoord1, vertex.attrib[9];       \n\
+      END");
+
+    NString AsmFrg = TEXT (
+      "!!ARBfp1.0                                         \n\
+      PARAM color0 = program.local[0];                    \n\
+      PARAM color1 = program.local[1];                    \n\
+      TEMP tex0;                                          \n\
+      TEMP tex1;                                          \n\
+      TEMP temp;                                          \n\
+      TEMP temp0;                                          \n\
+      TEMP temp1;                                          \n\
+      TEX tex0, fragment.texcoord[0], texture[0], 2D;     \n\
+      MAD temp, {2.0, 2.0, 2.0, 2.0}, tex0, {-1.0, -1.0, -1.0, -1.0}; \n\
+      MUL temp0, color0, temp;                             \n\
+      ADD temp1, texture[1];                         \n\
+      TEX tex1, fragment.texcoord[1], texture[1], 2D;           \n\
+      MUL result.color, color1, tex1;                     \n\
+      END");
+
+    NString AsmFrgRect = TEXT (
+      "!!ARBfp1.0                                         \n\
+      PARAM color0 = program.local[0];                    \n\
+      PARAM color1 = program.local[1];                    \n\
+      TEMP tex0;                                          \n\
+      TEMP tex1;                                          \n\
+      TEMP temp;                                          \n\
+      TEX tex0, fragment.texcoord[0], texture[0], RECT;   \n\
+      MAD temp, {2.0, 2.0, 2.0, 2.0}, tex0, {-1.0, -1.0, -1.0, -1.0}; \n\
+      MUL temp, color0, tex0;                             \n\
+      TEX tex1, fragment.texcoord[1], temp, RECT;         \n\
+      MUL result.color, color1, tex1;                     \n\
+      END");
+
+    m_ASM2TextureDepRead = GetGpuDevice ()->CreateAsmShaderProgram ();
+    m_ASM2TextureDepRead->LoadVertexShader (AsmVtx.GetTCharPtr ());
+    m_ASM2TextureDepRead->LoadPixelShader (AsmFrg.GetTCharPtr ());
+    m_ASM2TextureDepRead->Link ();
+
+    m_ASM2TextureRectDepRead = GetGpuDevice ()->CreateAsmShaderProgram ();
+    m_ASM2TextureRectDepRead->LoadVertexShader (AsmVtx.GetTCharPtr ());
+    m_ASM2TextureRectDepRead->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
+    m_ASM2TextureRectDepRead->Link ();
+  }
+
   void GraphicsEngine::InitAsm2TextureMod()
   {
     NString AsmVtx = TEXT (
@@ -717,6 +776,77 @@ namespace nux
 
     CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.R(), color0.G(), color0.B(), color0.A() ) );
     CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.R(), color1.G(), color1.B(), color1.A() ) );
+
+    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+
+    if (TextureCoord0Location != -1)
+    {
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+    }
+
+    if (TextureCoord1Location != -1)
+    {
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location) );
+      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+    }
+
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+
+    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+
+    if (TextureCoord0Location != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+
+    if (TextureCoord1Location != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord1Location) );
+
+    shader_program->End();
+  }
+
+  void GraphicsEngine::QRP_ASM_DisturbedTexture (
+    int x, int y, int width, int height,
+    ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
+    ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1)
+  {
+    QRP_Compute_Texture_Coord (width, height, distorsion_texture, texxform0);
+    QRP_Compute_Texture_Coord (width, height, src_device_texture, texxform1);
+
+    float VtxBuffer[] =
+    {
+      x,          y,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0.0f, 1.0f, texxform1.u0, texxform1.v0, 0.0f, 1.0f,
+      x,          y + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0.0f, 1.0f, texxform1.u0, texxform1.v1, 0.0f, 1.0f,
+      x + width,  y + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0.0f, 1.0f, texxform1.u1, texxform1.v1, 0.0f, 1.0f,
+      x + width,  y,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0.0f, 1.0f, texxform1.u1, texxform1.v0, 0.0f, 1.0f,
+    };
+
+    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_ASM2TextureDepRead;
+    if(src_device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    {
+      shader_program = m_ASM2TextureRectDepRead;
+    }
+    shader_program->Begin();
+
+    SetTexture (GL_TEXTURE0, distorsion_texture);
+    SetTexture (GL_TEXTURE1, src_device_texture);
+
+    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
+    CHECKGL ( glLoadIdentity() );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glMatrixMode (GL_PROJECTION) );
+    CHECKGL ( glLoadIdentity() );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+
+    int VertexLocation          = VTXATTRIB_POSITION;
+    int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
+    int TextureCoord1Location   = VTXATTRIB_TEXCOORD1;
+
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.R(), c0.G(), c0.B(), c0.A() ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, c1.R(), c1.G(), c1.B(), c1.A() ) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -1637,7 +1767,7 @@ namespace nux
     int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0,
-    float sigma)
+    float sigma, int num_pass)
   {
     //     _offscreen_color_rt0.Release ();
     //     _offscreen_color_rt1.Release ();
@@ -1646,6 +1776,8 @@ namespace nux
 
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
+
+    num_pass = Clamp<int> (num_pass, 1, 5);
 
     ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
@@ -1672,7 +1804,7 @@ namespace nux
 
     QRP_ASM_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Color::White);
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < num_pass; i++)
     {
       SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

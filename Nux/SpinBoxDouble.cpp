@@ -34,9 +34,10 @@ namespace nux
   const Color SPINBOX_DOUBLE_BUTTON_COLOR = Color (0xFF4D4D4D);
   const Color SPINBOX_DOUBLE_BUTTON_MOUSEOVER_COLOR = Color (0xFF222222);
 
-  SpinBoxDouble::SpinBoxDouble (double Value, double Step, double MinValue, double MaxValue)
-    :   m_DoubleValidator (MinValue, MaxValue)
-    ,   m_Step (Step)
+  SpinBoxDouble::SpinBoxDouble (double Value, double Step, double MinValue, double MaxValue, NUX_FILE_LINE_DECL)
+    : SpinBox_Logic (NUX_FILE_LINE_PARAM)
+    , m_DoubleValidator (MinValue, MaxValue)
+    , m_Step (Step)
   {
     InitializeLayout();
     InitializeWidgets();

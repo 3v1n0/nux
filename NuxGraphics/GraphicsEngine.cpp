@@ -102,6 +102,9 @@ namespace nux
       InitSLColorMatrixFilter ();
 
       InitSl2TextureDepRead ();
+
+      InitSLHorizontalHQGaussFilter ();
+      InitSLVerticalHQGaussFilter ();
     }
     else
     {
@@ -117,6 +120,8 @@ namespace nux
       InitAsmAlphaReplicate ();
       InitAsmSeparableGaussFilter ();
       InitAsmColorMatrixFilter ();
+
+      //InitAsm2TextureDepRead (); // NUXTODO: fix the shader
     }
 #else
     InitSlColorShader();
@@ -194,7 +199,7 @@ namespace nux
       _graphics_display.GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader() &&
       _graphics_display.GetGpuDevice ()->GetGPUBrand () ==  GPU_BRAND_NVIDIA)
     {
-      _use_glsl_shaders = true;
+      _use_glsl_shaders = false;
     }
     else
     {
@@ -1060,7 +1065,7 @@ namespace nux
         return ObjectPtr<IOpenGLBaseTexture> (0);
       }
       
-      // Inverse Y because of opengl upside-down nature
+      // Inverse Y because of OpenGL upside-down nature
       Y = fbo_height - Y - H;
     }
     else
@@ -1080,7 +1085,7 @@ namespace nux
         return ObjectPtr<IOpenGLBaseTexture> (0);
       }
 
-      // Inverse Y because of Opengl upside-down nature
+      // Inverse Y because of OpenGL upside-down nature
       Y = bb_height - Y - H;
     }
 
