@@ -78,11 +78,6 @@ namespace nux
     CoreArea       *m_ValueIcon;
     NString m_Title;
 
-    float m_arg0;
-    float m_arg1;
-    float m_arg2;
-    float m_arg3;
-
     enum
     {
       SHOW_GRAPH,
@@ -110,15 +105,8 @@ namespace nux
     unsigned int m_Option;
 
     std::vector<Graph> m_DynValueArray;
-    unsigned int m_DynValueCount;
-    bool m_DynValueReceived;
-
-    void GraphTimerInterrupt (void *v);
-    TimerFunctor *m_ScrollTimerFunctor;
-    TimerHandle m_ScrollTimerHandler;
 
     float m_minY, m_maxY;
-    FunctionCallback m_FunctionCallback;
 
     ObjectPtr<IOpenGLBaseTexture> Texture;
     TextureLayer *m_BackgroundLayer;
