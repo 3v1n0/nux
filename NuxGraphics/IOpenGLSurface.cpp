@@ -594,4 +594,33 @@ namespace nux
 #endif
     }
   }
+
+  void* IOpenGLSurface::GetSurfaceData (int &width, int &height, int &format)
+  {
+    width = 0;
+    height = 0;
+    format = BITFMT_UNKNOWN;
+
+    // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
+    int texwidth = ImageSurface::GetLevelWidth (_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
+    int texheight = ImageSurface::GetLevelHeight (_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
+
+    nuxAssert (texwidth > 0); // Should never happen
+    nuxAssert (texheight > 0); // Should never happen
+
+    CHECKGL (glBindTexture (_STextureTarget, _BaseTexture->_OpenGLID));
+
+    CHECKGL (glPixelStorei (GL_PACK_ALIGNMENT, 1));
+    int size = texwidth * texheight * 4; // assume a memory alignment of 1
+
+    unsigned char *img = new unsigned char [size];
+
+    CHECKGL (glGetTexImage (_STextureTarget, _SMipLevel, GL_RGBA, GL_UNSIGNED_BYTE, img));
+
+    width = _BaseTexture->_Width;
+    height = _BaseTexture->_Height;
+    format = BITFMT_R8G8B8A8;
+    return img;
+  }
+
 }
