@@ -262,7 +262,8 @@ namespace nux
     int e_clicks;
     int e_is_click;
 
-    int e_keysym;
+    int e_x11_keycode;  //!< X11 raw keycode.
+    int e_keysym;       //!< Key symbol.
     int e_wheeldelta;
 
     TCHAR           e_text [NUX_EVENT_TEXT_BUFFER_SIZE];

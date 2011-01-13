@@ -7,7 +7,7 @@ if BUILD_GPUTESTS
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual test, add it's binary name here
 
-noinst_PROGRAMS = texture_power_of_2 framebufferobject quad_2texmod texture_copy_blur texture_blur
+noinst_PROGRAMS = texture_power_of_2 framebufferobject quad_2texmod texture_copy_blur texture_blur texture_data
 
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile
@@ -45,6 +45,8 @@ texture_copy_blur_SOURCES = texture_copy_blur.cpp
 texture_copy_blur_LDADD = $(ALL_LIBS)
 texture_blur_SOURCES = texture_blur.cpp
 texture_blur_LDADD = $(ALL_LIBS)
+texture_data_SOURCES = texture_data.cpp
+texture_data_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
 sourcegputestsdir = "$(pkgdatadir)/gputests"
@@ -52,7 +54,8 @@ sourcegputests_DATA = $(texture_power_of_2_SOURCES) \
                       $(framebufferobject_SOURCES) \
                       $(quad_2texmod) \
                       $(texture_copy_blur_SOURCES) \
-                      $(texture_blur_SOURCES)
+                      $(texture_blur_SOURCES) \
+                      $(texture_data_SOURCES)
 
 endif
 

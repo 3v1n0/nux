@@ -74,7 +74,7 @@ namespace nux
 
   ObjectPtr<IOpenGLSurface> IOpenGLTexture2D::GetSurfaceLevel (int Level)
   {
-    if ( (Level >= 0) && (Level < _NumMipLevel) )
+    if ((Level >= 0) && (Level < _NumMipLevel))
     {
       return _SurfaceArray[Level];
     }
@@ -115,11 +115,10 @@ namespace nux
     return OGL_OK;
   }
 
-  int IOpenGLTexture2D::UnlockRect (
-    int Level)
+  int IOpenGLTexture2D::UnlockRect (int Level)
   {
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level."));
+    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level."));
 
     if (Level < _NumMipLevel)
     {
@@ -140,4 +139,24 @@ namespace nux
     return OGL_OK;
   }
 
+  void* IOpenGLTexture2D::GetSurfaceData (int level, int &width, int &height, int &format)
+  {
+    nuxAssertMsg (level >= 0, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg (level < _NumMipLevel, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level.") );
+
+    if (level < _NumMipLevel)
+    {
+      ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray [level];
+      return pSurfaceLevel->GetSurfaceData (width, height, format);
+    }
+    else
+    {
+      width = 0;
+      height = 0;
+      format = BITFMT_UNKNOWN;
+      return 0;
+    }
+  }
+
 }
+

@@ -1834,5 +1834,15 @@ namespace nux
     }
   }
 
+  int WindowCompositor::InstallEventInspector (EventInspector* function, void* data)
+  {
+    return 0;
+  }
+
+  bool WindowCompositor::RemoveEventInspector (int event_inspector_id)
+  {
+    return false;
+  }
+
 }
 

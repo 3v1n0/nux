@@ -81,6 +81,9 @@ namespace nux
       return;
     }
     
+    // emit OnEndFocus on the area that "had" the focus
+    // previous_focus_area->OnEndFocus ();
+
     OnStartFocus.emit();
     m_EventHandler.ForceMouseFocus (x, y, m_Geometry);
   }
@@ -428,7 +431,7 @@ namespace nux
 
   void InputArea::OnDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    GfxContext.QRP_GLSL_Color (m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight(), m_AreaColor);
+    GfxContext.QRP_Color (m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight(), m_AreaColor);
   }
 
   void InputArea::SetBaseString (const TCHAR *Caption)
