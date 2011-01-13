@@ -139,6 +139,8 @@ namespace nux
     bool InputWindowStrutsEnabled ();
     void GrabPointer ();
     void UnGrabPointer ();
+    void GrabKeyboard ();
+    void UnGrabKeyboard ();
     #endif
 
     //! Emit a signal when the BaseWindow becomes visible.

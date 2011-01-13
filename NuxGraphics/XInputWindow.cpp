@@ -233,6 +233,22 @@ namespace nux
     Display* d = GetThreadGLWindow()->GetX11Display();
     XUngrabPointer(d, CurrentTime);
   }
-    
+
+  void XInputWindow::GrabKeyboard ()
+  {
+    Display* d = GetThreadGLWindow()->GetX11Display();
+    XGrabKeyboard (d,
+                   _window,
+                   True,
+                   GrabModeAsync,
+                   GrabModeAsync,
+                   CurrentTime);
+  }
+
+  void XInputWindow::UnGrabKeyboard ()
+  {
+    Display* d = GetThreadGLWindow()->GetX11Display();
+    XUngrabKeyboard (d, CurrentTime);
+  } 
 }
 

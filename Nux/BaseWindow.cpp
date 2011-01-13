@@ -366,6 +366,19 @@ namespace nux
     if (m_input_window)
       m_input_window->UnGrabPointer ();    
   }
+
+  void BaseWindow::GrabKeyboard ()
+  {
+    if (m_input_window)
+      m_input_window->GrabKeyboard ();
+      
+  }
+  
+  void BaseWindow::UnGrabKeyboard ()
+  {
+    if (m_input_window)
+      m_input_window->UnGrabKeyboard ();    
+  }
   
   #endif
 
