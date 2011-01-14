@@ -1,9 +1,9 @@
-nux (0.9.14-0ubuntu1) UNRELEASED; urgency=low
+nux (0.9.14-0ubuntu1) natty; urgency=low
 
   * New upstream release.
   * New upstream release.
 
- -- Didier Roche <didrocks@ubuntu.com>  Fri, 14 Jan 2011 19:13:02 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 14 Jan 2011 19:13:24 +0100
 
 nux (0.9.12-0ubuntu1) natty; urgency=low
 
