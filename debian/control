@@ -58,6 +58,7 @@ Depends: libnux-0.9-0 (= ${binary:Version}),
          libgl1-mesa-dev,
          libsigc++-2.0-dev,
          libpango1.0-dev,
+         libpcre3-dev,
          ${misc:Depends}
 Description: Visual rendering toolkit for real-time applications - dev files
  Nux is a graphical user interface toolkit for applications that mixes opengl

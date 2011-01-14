@@ -8,4 +8,4 @@ Description: Nux OpenGL Toolkit
 Version: @VERSION@
 Libs: -L${libdir} -lnux-@NUX_API_VERSION@
 Cflags: -I${includedir}/Nux-@NUX_API_VERSION@
-Requires: glib-2.0 nux-core-@NUX_API_VERSION@ nux-image-@NUX_API_VERSION@ nux-mesh-@NUX_API_VERSION@ nux-graphics-@NUX_API_VERSION@ gl sigc++-2.0 glew glewmx
+Requires: glib-2.0 nux-core-@NUX_API_VERSION@ nux-image-@NUX_API_VERSION@ nux-mesh-@NUX_API_VERSION@ nux-graphics-@NUX_API_VERSION@ gl sigc++-2.0 glew glewmx libpcre
