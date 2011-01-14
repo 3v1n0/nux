@@ -76,6 +76,7 @@ namespace nux
     void AddWidget (View *ic);
     void AddWidget (View *ic, int stretchfactor);
     void AddWidget (std::list<View *> *ViewList);
+    Layout *GetLayout ();
     void SetLayout (Layout *layout);
 
     void PushHigher (BaseWindow* floating_view);

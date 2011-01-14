@@ -99,24 +99,12 @@ namespace nux
   {
     m_minY  = 0.0f;
     m_maxY  = 1.0f;
-    m_FunctionCallback = 0;
-    m_DynValueCount = 0;
-    m_DynValueReceived = false;
+
     m_Option = SHOW_GRAPH;
     m_Title = Title;
 
-    InitializeLayout();
-    InitializeWidgets();
-
-    m_arg0 = 0;
-    m_arg1 = 0;
-    m_arg2 = 0;
-    m_arg3 = 0;
-
-    AddGraph (Color (0xFF9AD61F), Color (0x50191919) );
-    AddGraph (Color (0xFF00FF00), Color (0x5000FF00) );
-    AddGraph (Color (0xFFFF0022), Color (0x50BB0022) );
-    //AddGraph(Color(0xFFFF0000), Color(0x99FF0000));
+    InitializeLayout ();
+    InitializeWidgets ();
   }
 
   TimeGraph::~TimeGraph()
@@ -142,10 +130,6 @@ namespace nux
 //     texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
 //     texxform.SetWrap(TEXWRAP_REPEAT, TEXWRAP_REPEAT);
 //     m_BackgroundLayer = new TextureLayer(BackgroundTexture.GetDeviceTexture(), texxform, Color::White);
-
-    m_ScrollTimerFunctor = new TimerFunctor();
-    m_ScrollTimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &TimeGraph::GraphTimerInterrupt) );
-    m_ScrollTimerHandler = GetTimer().AddTimerHandler (1000, m_ScrollTimerFunctor, this);
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
@@ -203,50 +187,8 @@ namespace nux
 
   void TimeGraph::DestroyLayout()
   {
-    GetTimer().RemoveTimerHandler (m_ScrollTimerHandler);
-    NUX_SAFE_DELETE (m_ScrollTimerFunctor);
     NUX_SAFE_DELETE (m_DrawFunctionShader);
     NUX_SAFE_DELETE (m_BackgroundLayer);
-  }
-
-  void TimeGraph::GraphTimerInterrupt (void *v)
-  {
-    m_arg0 += 0.001f;
-
-    for (t_u32 i = 0; i < m_DynValueArray.size(); i++)
-    {
-      if (m_DynValueArray[i].m_HasBeenUpdated == false)
-      {
-        if (m_DynValueArray[i].m_ValueList.size() != 0)
-        {
-          float prev = (*m_DynValueArray[i].m_ValueList.begin() );
-          prev /= 2.0f;
-
-          if (Abs (prev) < 0.2f)
-            prev = 0.0f;
-
-          if (i == 0)
-            m_DynValueArray[i].Update (GetWindowThread ()->GetFrameRate() );
-
-          if (i == 1)
-            m_DynValueArray[i].Update (RandomUInt (25) + 25);
-
-          if (i == 2)
-            m_DynValueArray[i].Update (30 * (std::sin (m_arg0) + 1) + RandomUInt (10) );
-
-          if (i == 3)
-            m_DynValueArray[i].Update (30 * (std::sin (m_arg0) + 1) + 5);
-        }
-        else
-        {
-          m_DynValueArray[i].Update (0.0f);
-        }
-      }
-    }
-
-    m_DynValueReceived = false;
-    m_ScrollTimerHandler = GetTimer().AddTimerHandler(100, m_ScrollTimerFunctor, this);
-    NeedRedraw();
   }
 
   void TimeGraph::RecvShowBarGraphics (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -335,7 +277,7 @@ namespace nux
     for (t_u32 index = 0; index < numGraph; index++)
     {
       GeometryPositioning gp (eHACenter, eVACenter);
-      Geometry GeoPo = ComputeGeometryPositioning (Geometry (X + W + 2, PosY, 8, 8), GetTheme().GetImageGeometry (eDOT6x6), gp);
+      Geometry GeoPo = ComputeGeometryPositioning (Geometry (X + W + 2, PosY, 8, 12), GetTheme().GetImageGeometry (eDOT6x6), gp);
       //GetPainter().Paint2DQuadColor(GfxContext, Geometry(X + W + 2, PosY, 8, 8), 0xFF000000);
       GetPainter().PaintShape (GfxContext, GeoPo, m_DynValueArray[index].m_PrimaryColor, eDOT6x6);
 
@@ -346,9 +288,9 @@ namespace nux
       else
         ValueString = NString::Printf (TEXT ("%.2f"), (*m_DynValueArray[index].m_ValueList.begin() ) );
 
-      GetPainter().PaintTextLineStatic (GfxContext, GetSysFont(), Geometry (X + W + 2 + 6, PosY, 40, 8), ValueString, Color (0xFFFFFFFF), true, eAlignTextCenter);
+      GetPainter().PaintTextLineStatic (GfxContext, GetSysFont(), Geometry (X + W + 2 + 6, PosY, 40, 12), ValueString, Color (0xFFFFFFFF), true, eAlignTextCenter);
 
-      PosY += 12;
+      PosY += 14;
     }
 
     if (m_Option == SHOW_GRAPH)
@@ -423,6 +365,7 @@ namespace nux
           Y0 = Y + H * ( 1 - (y0 - m_minY) / (m_maxY - m_minY) );
           X1 = x1; //X + W * (x1 - m_minX) / (m_maxX - m_minX);
           Y1 = Y + H * ( 1 - (y1 - m_minY) / (m_maxY - m_minY) );
+          // NUXTODO: use a vertex buffer instead of sending individual lines
           GetPainter().Draw2DLine (GfxContext, X0, Y0, X1, Y1, Color (m_DynValueArray[index].m_PrimaryColor) );
 
           x0 = x1;
@@ -517,12 +460,7 @@ namespace nux
 
   void TimeGraph::AddValue (float Value)
   {
-//     m_DynValueArray.push_front(Value);
-//     m_DynValueReceived = true;
-//     if(m_DynValueArray.size() >= 2048)
-//     {
-//         m_DynValueArray.pop_back();
-//     }
+
   }
 
   t_u32 TimeGraph::AddGraph (Color PrimaryColor, Color SecondaryColor)
@@ -544,6 +482,7 @@ namespace nux
       return;
 
     m_DynValueArray[index].Update (Value);
+    NeedRedraw();
   }
 
   void TimeGraph::ShowGraphStyle()

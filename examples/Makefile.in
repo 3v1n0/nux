@@ -38,7 +38,8 @@ host_triplet = @host@
 @BUILD_EXAMPLES_TRUE@noinst_PROGRAMS = combobox$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	cairo$(EXEEXT) textedit$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	button$(EXEEXT) checkbox$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	tooltip$(EXEEXT) timeline$(EXEEXT)
+@BUILD_EXAMPLES_TRUE@	tooltip$(EXEEXT) timeline$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	timegraph$(EXEEXT)
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -84,6 +85,10 @@ am__textedit_SOURCES_DIST = textedit.cpp
 @BUILD_EXAMPLES_TRUE@am_textedit_OBJECTS = textedit.$(OBJEXT)
 textedit_OBJECTS = $(am_textedit_OBJECTS)
 @BUILD_EXAMPLES_TRUE@textedit_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am__timegraph_SOURCES_DIST = timegraph.cpp
+@BUILD_EXAMPLES_TRUE@am_timegraph_OBJECTS = timegraph.$(OBJEXT)
+timegraph_OBJECTS = $(am_timegraph_OBJECTS)
+@BUILD_EXAMPLES_TRUE@timegraph_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am__timeline_SOURCES_DIST = timeline.cpp
 @BUILD_EXAMPLES_TRUE@am_timeline_OBJECTS = timeline.$(OBJEXT)
 timeline_OBJECTS = $(am_timeline_OBJECTS)
@@ -119,12 +124,12 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(button_SOURCES) $(cairo_SOURCES) $(checkbox_SOURCES) \
-	$(combobox_SOURCES) $(textedit_SOURCES) $(timeline_SOURCES) \
-	$(tooltip_SOURCES)
+	$(combobox_SOURCES) $(textedit_SOURCES) $(timegraph_SOURCES) \
+	$(timeline_SOURCES) $(tooltip_SOURCES)
 DIST_SOURCES = $(am__button_SOURCES_DIST) $(am__cairo_SOURCES_DIST) \
 	$(am__checkbox_SOURCES_DIST) $(am__combobox_SOURCES_DIST) \
-	$(am__textedit_SOURCES_DIST) $(am__timeline_SOURCES_DIST) \
-	$(am__tooltip_SOURCES_DIST)
+	$(am__textedit_SOURCES_DIST) $(am__timegraph_SOURCES_DIST) \
+	$(am__timeline_SOURCES_DIST) $(am__tooltip_SOURCES_DIST)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -363,6 +368,8 @@ EXTRA_DIST =
 @BUILD_EXAMPLES_TRUE@tooltip_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@timeline_SOURCES = timeline.cpp
 @BUILD_EXAMPLES_TRUE@timeline_LDADD = $(ALL_LIBS)
+@BUILD_EXAMPLES_TRUE@timegraph_SOURCES = timegraph.cpp
+@BUILD_EXAMPLES_TRUE@timegraph_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
 @BUILD_EXAMPLES_TRUE@sourceexampledir = "$(pkgdatadir)/examples"
@@ -371,7 +378,8 @@ EXTRA_DIST =
 @BUILD_EXAMPLES_TRUE@                     $(textedit_SOURCES) \
 @BUILD_EXAMPLES_TRUE@                     $(button_SOURCES) \
 @BUILD_EXAMPLES_TRUE@                     $(checkbox_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(tooltip_SOURCES)
+@BUILD_EXAMPLES_TRUE@                     $(tooltip_SOURCES) \
+@BUILD_EXAMPLES_TRUE@                     $(timegraph_SOURCES)
 
 all: all-am
 
@@ -431,6 +439,9 @@ combobox$(EXEEXT): $(combobox_OBJECTS) $(combobox_DEPENDENCIES)
 textedit$(EXEEXT): $(textedit_OBJECTS) $(textedit_DEPENDENCIES) 
 	@rm -f textedit$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(textedit_OBJECTS) $(textedit_LDADD) $(LIBS)
+timegraph$(EXEEXT): $(timegraph_OBJECTS) $(timegraph_DEPENDENCIES) 
+	@rm -f timegraph$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(timegraph_OBJECTS) $(timegraph_LDADD) $(LIBS)
 timeline$(EXEEXT): $(timeline_OBJECTS) $(timeline_DEPENDENCIES) 
 	@rm -f timeline$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(timeline_OBJECTS) $(timeline_LDADD) $(LIBS)
@@ -449,6 +460,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkbox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/combobox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textedit.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timegraph.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timeline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tooltip.Po@am__quote@
 

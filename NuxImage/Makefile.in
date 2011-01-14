@@ -88,7 +88,8 @@ am__objects_1 = libnux_image_@NUX_API_VERSION@_la-BitmapFormats.lo \
 	libnux_image_@NUX_API_VERSION@_la-NPng.lo \
 	libnux_image_@NUX_API_VERSION@_la-OpenEXR.lo \
 	libnux_image_@NUX_API_VERSION@_la-RGBE.lo \
-	libnux_image_@NUX_API_VERSION@_la-Tga.lo
+	libnux_image_@NUX_API_VERSION@_la-Tga.lo \
+	libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo
 am__objects_2 =
 am_libnux_image_@NUX_API_VERSION@_la_OBJECTS = $(am__objects_1) \
 	$(am__objects_2)
@@ -352,7 +353,8 @@ source_h = \
   $(srcdir)/NPng.h \
   $(srcdir)/OpenEXR.h \
   $(srcdir)/RGBE.h \
-  $(srcdir)/Tga.h
+  $(srcdir)/Tga.h \
+  $(srcdir)/GdkGraphics.h
 
 source_cpp = \
   $(srcdir)/BitmapFormats.cpp \
@@ -365,7 +367,8 @@ source_cpp = \
   $(srcdir)/NPng.cpp \
   $(srcdir)/OpenEXR.cpp \
   $(srcdir)/RGBE.cpp \
-  $(srcdir)/Tga.cpp
+  $(srcdir)/Tga.cpp \
+  $(srcdir)/GdkGraphics.cpp
 
 libnux_image_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
@@ -457,6 +460,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-Bmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-CairoGraphics.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-DDS.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-GdkGraphics.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-ImageSurface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NITX.Plo@am__quote@
@@ -576,6 +580,14 @@ libnux_image_@NUX_API_VERSION@_la-Tga.lo: $(srcdir)/Tga.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Tga.cpp' object='libnux_image_@NUX_API_VERSION@_la-Tga.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-Tga.lo `test -f '$(srcdir)/Tga.cpp' || echo '$(srcdir)/'`$(srcdir)/Tga.cpp
+
+libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo: $(srcdir)/GdkGraphics.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-GdkGraphics.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo `test -f '$(srcdir)/GdkGraphics.cpp' || echo '$(srcdir)/'`$(srcdir)/GdkGraphics.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-GdkGraphics.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-GdkGraphics.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GdkGraphics.cpp' object='libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo `test -f '$(srcdir)/GdkGraphics.cpp' || echo '$(srcdir)/'`$(srcdir)/GdkGraphics.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
