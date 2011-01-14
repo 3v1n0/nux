@@ -235,6 +235,11 @@ namespace nux
     }
   }
 
+  Layout *BaseWindow::GetLayout ()
+  {
+    return m_layout;
+  }
+
   void BaseWindow::SetLayout (Layout *layout)
   {
     if (layout == 0)
