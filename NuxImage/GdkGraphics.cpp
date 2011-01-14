@@ -94,8 +94,7 @@ namespace nux
   {
     unsigned int width = gdk_pixbuf_get_width (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
     unsigned int height = gdk_pixbuf_get_height (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
-    unsigned int row_bytes = gdk_pixbuf_get_rowstride (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
-
+    
     int channels = gdk_pixbuf_get_n_channels (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
     int src_pitch = gdk_pixbuf_get_rowstride (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
 

@@ -34,7 +34,8 @@ source_h = \
   $(srcdir)/NPng.h \
   $(srcdir)/OpenEXR.h \
   $(srcdir)/RGBE.h \
-  $(srcdir)/Tga.h
+  $(srcdir)/Tga.h \
+  $(srcdir)/GdkGraphics.h
 
 source_cpp = \
   $(srcdir)/BitmapFormats.cpp \
@@ -47,7 +48,8 @@ source_cpp = \
   $(srcdir)/NPng.cpp \
   $(srcdir)/OpenEXR.cpp \
   $(srcdir)/RGBE.cpp \
-  $(srcdir)/Tga.cpp
+  $(srcdir)/Tga.cpp \
+  $(srcdir)/GdkGraphics.cpp
 
 libnux_image_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
