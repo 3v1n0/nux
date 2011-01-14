@@ -15,6 +15,7 @@ Build-Depends: debhelper (>= 7.0.50~),
                libsigc++-2.0-dev,
                libpango1.0-dev,
                libx11-dev,
+               libpcre3-dev,
 Standards-Version: 3.9.1
 Section: libs
 Homepage: http://launchpad.net/nux
