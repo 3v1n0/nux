@@ -40,7 +40,6 @@ namespace nux
   WindowCompositor::WindowCompositor()
   {
     OverlayDrawingCommand       = NULL;
-    m_MouseFocusArea            = NULL;
     m_MouseOverArea             = NULL;
     m_PreviousMouseOverArea     = NULL;
     m_CurrentEvent              = NULL;

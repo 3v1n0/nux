@@ -47,7 +47,7 @@ namespace nux
 
   Area::~Area()
   {
-
+    OnDelete.emit (this);
   }
 
   const NString &Area::GetBaseString() const

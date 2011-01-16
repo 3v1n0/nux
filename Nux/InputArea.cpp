@@ -30,7 +30,7 @@
 #include "NuxGraphics/GraphicsEngine.h"
 #include "WindowCompositor.h"
 
-#define nuxEventDebugTrace(enable, str, ...)           { if(enable) nux::LogOutputDebugMessage(str, ##__VA_ARGS__);}
+#define nuxEventDebugTrace(enable, str, ...) { if(enable) nux::LogOutputDebugMessage(str, ##__VA_ARGS__);}
 
 namespace nux
 {
@@ -80,10 +80,15 @@ namespace nux
     {
       return;
     }
-    
-    // emit OnEndFocus on the area that "had" the focus
-    // previous_focus_area->OnEndFocus ();
+   
+    if (GetWindowCompositor().GetMouseFocusArea () == this)
+    {
+      // already has the focus
+      return;
+    }
 
+    // emit OnEndFocus on the area that "had" the focus
+    GetWindowCompositor().GetMouseFocusArea ()->OnEndFocus ();
     OnStartFocus.emit();
     m_EventHandler.ForceMouseFocus (x, y, m_Geometry);
   }
@@ -95,23 +100,20 @@ namespace nux
       return;
     }
 
-    OnEndFocus.emit();
+    if (GetWindowCompositor().GetMouseFocusArea () != this)
+    {
+      GetWindowCompositor().SetMouseFocusArea (0);
+      OnEndFocus.emit();
+      m_EventHandler.StopMouseFocus (x, y, m_Geometry);
+    }
+
+    /*OnEndFocus.emit();
     m_EventHandler.StopMouseFocus (x, y, m_Geometry);
-    
-//     if (GetWindowCompositor().m_PreviousMouseOverArea == this)
-//     {
-//       GetWindowCompositor().SetPreviousMouseOverArea (0);
-//     }
-    
-//     if (GetWindowCompositor().GetMouseOverArea () == this)
-//     {
-//       GetWindowCompositor().SetMouseOverArea (0);
-//     }
-    
+
     if (GetWindowCompositor().GetMouseFocusArea () == this)
     {
       GetWindowCompositor().SetMouseFocusArea (0);
-    }
+    }*/
   }
 
   long InputArea::OnEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -223,7 +225,7 @@ namespace nux
       unsigned int mouse_signals;
       mouse_signals = m_EventHandler.Process (ievent, m_Geometry, true);
 
-      if (HasMouseFocus () && (GetWindowCompositor().GetMouseFocusArea() == 0)) // never evince and object that has the mouse focus.
+      if (HasMouseFocus () && (GetWindowCompositor().GetMouseFocusArea() == 0)) // never override an object that has the mouse focus.
       {
         GetWindowCompositor ().SetMouseFocusArea (this);
         GetWindowCompositor ().SetAreaEventRoot (ievent.e_x_root, ievent.e_y_root);
@@ -511,3 +513,4 @@ namespace nux
   }
 
 }
+
