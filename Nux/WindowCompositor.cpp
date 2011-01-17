@@ -40,7 +40,6 @@ namespace nux
   WindowCompositor::WindowCompositor()
   {
     OverlayDrawingCommand       = NULL;
-    m_MouseFocusArea            = NULL;
     m_MouseOverArea             = NULL;
     m_PreviousMouseOverArea     = NULL;
     m_CurrentEvent              = NULL;
@@ -1832,6 +1831,16 @@ namespace nux
       GetWindowThread ()->GetGraphicsEngine ().Push2DWindow (buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine ().ApplyClippingRectangle ();
     }
+  }
+
+  int WindowCompositor::InstallEventInspector (EventInspector* function, void* data)
+  {
+    return 0;
+  }
+
+  bool WindowCompositor::RemoveEventInspector (int event_inspector_id)
+  {
+    return false;
   }
 
 }

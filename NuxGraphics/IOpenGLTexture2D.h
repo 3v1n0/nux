@@ -72,6 +72,10 @@ namespace nux
 
       return OGL_OK;
     }
+
+    //! Return the a pointer to the texture mip level data.
+    virtual void* GetSurfaceData (int level, int &width, int &height, int &format);
+
   private:
 
     // The Dummy boolean is used to create a skeletal frame for the default

@@ -255,8 +255,8 @@ namespace nux
     ComputeChildLayout();
   }
 
-// Get a change to do any work on an element.
-// Here we need to position the header by hand because it is not under the control of vlayout.
+  // Get a change to do any work on an element.
+  // Here we need to position the header by hand because it is not under the control of vlayout.
   void BaseWindow::PreLayoutManagement()
   {
     Geometry geo = GetGeometry();
@@ -529,3 +529,4 @@ namespace nux
     return _child_need_redraw;
   }
 }
+

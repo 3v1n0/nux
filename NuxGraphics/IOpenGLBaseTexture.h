@@ -140,6 +140,9 @@ namespace nux
       int Level
       );
 
+    //! Return the a pointer to the texture mip level data.
+    virtual void* GetSurfaceData (int level, int &width, int &height, int &format);
+
   protected:
     GLTextureStates _TextureStates;
     bool            _IsPOT;             // is power of two?
