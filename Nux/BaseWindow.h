@@ -142,6 +142,9 @@ namespace nux
     void UnGrabPointer ();
     #endif
 
+    //! Get the backup texture data of this BaseWindow,
+    void* GetBackupTextureData (int &width, int &height, int &format);
+
     //! Emit a signal when the BaseWindow becomes visible.
     sigc::signal<void, BaseWindow*> sigVisible;
     //! Emit a signal when the BaseWindow becomes hidden.

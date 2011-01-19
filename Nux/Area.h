@@ -374,7 +374,7 @@ namespace nux
       outofbound = b;
     }
 
-    sigc::signal<void, Area* area> OnDelete;  //!< Signal emitted when an area is destroyed.
+    sigc::signal<void, Area*> OnDelete;  //!< Signal emitted when an area is destroyed.
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
 
     unsigned int    m_stretchfactor;

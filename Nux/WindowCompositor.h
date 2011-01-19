@@ -38,12 +38,6 @@ namespace nux
   class PaintLayer;
   class Event;
 
-  //! Event Inspector function prototype.
-  /*!
-      If an event inspector return true, then the event is discarded.
-  */
-  typedef int (*EventInspector) (Area* area, Event* event, void* data);
-
   class WindowCompositor
   {
   public:
@@ -154,22 +148,8 @@ namespace nux
     */
     void RestoreRenderingSurface ();
 
-    //! Set Event inspector function.
-    /*!
-        Inspect all events and returns the action to be taken for the event (process or discard).
-
-        @param function Event inspector function callback.
-        @param data User defined data.
-        @return Unique id for the event inspector callback.
-    */
-    int InstallEventInspector (EventInspector* function, void* data);
-
-    //! Remove an event inspector
-    /*!
-        @param event_inspector_id Unique id for the event ispector.
-        @return True if the event inspector exists and has been removed.
-    */
-    bool RemoveEventInspector (int event_inspector_id);
+    //! Get the backup texture data of this BaseWindow,
+    void* GetBackupTextureData (BaseWindow *base_window, int &width, int &height, int &format);
 
   private:
     //! Render the interface.
@@ -269,6 +249,7 @@ namespace nux
       m_CurrentWindow = window;
     }
 
+    public:
     //! Get the top view that is being processed (event or rendering).
     /*!
         Get the active TopView during and event processing or rendering.
@@ -278,6 +259,7 @@ namespace nux
       return m_CurrentWindow.GetPointer ();
     }
 
+    private:
     void SetFocusAreaWindow (BaseWindow *window)
     {
       m_FocusAreaWindow = window;
@@ -412,7 +394,7 @@ namespace nux
     */
     ObjectWeakPtr<BaseWindow> m_SelectedWindow;
 
-    std::map< BaseWindow*, struct RenderTargetTextures > m_WindowToTextureMap;
+    std::map< BaseWindow*, struct RenderTargetTextures > _window_to_texture_map;
 
     ObjectWeakPtr<BaseWindow> m_ModalWindow;
     Point m_MouseLastPos;
@@ -437,13 +419,6 @@ namespace nux
 //     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip0;
 //     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip1;
 //     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip2;
-
-  //! list of events inspectors
-  /*!
-      Events inspectors get to examine events before they are processed.
-      They may also stop an event from being processed if they return true. 
-  */
-  std::list<EventInspector*> _event_inspectors_list; //!< list of events inspectors
 
   private:
     WindowCompositor (const WindowCompositor &);

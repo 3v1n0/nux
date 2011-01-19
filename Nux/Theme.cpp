@@ -266,19 +266,23 @@ namespace nux
 
       if (1)
       {
+        BaseTexture* device_texture;
         NBitmapData *uitexturedata = UITextureArchive.ExtractTextureStyle (style.GetTCharPtr());
-        BaseTexture* RectangleTexture = GetGpuDevice()->CreateSystemCapableTexture ();
 
         if (uitexturedata)
-          RectangleTexture->Update (uitexturedata);
+        {
+          device_texture = GetGpuDevice()->CreateSystemCapableTexture ();
+          device_texture->Update (uitexturedata);
+        }
         else
         {
+
           NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name")));
           NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (filename.GetTCharPtr());
-          RectangleTexture = Load2DTextureFile (texture_filename.GetTCharPtr());
+          device_texture = Load2DTextureFile (texture_filename.GetTCharPtr());
         }
 
-        pimage->texture = RectangleTexture;
+        pimage->texture = device_texture;
       }
       else
       {

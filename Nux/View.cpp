@@ -68,7 +68,7 @@ namespace nux
   {
     if (m_CompositionLayout)
     {
-      m_CompositionLayout->SetDirty (true);
+      //m_CompositionLayout->SetDirty (true);
 //        if(m_CompositionLayout->GetStretchFactor() != 0)
 //        {
 //            PreLayoutManagement();
@@ -233,17 +233,23 @@ namespace nux
 
   }
 
-  void View::NeedRedraw()
+  void View::QueueDraw ()
   {
     //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetWindowThread ();
     if(application)
     {
-        application->AddToDrawList(this);
-        application->RequestRedraw();
-        //GetWindowCompositor().AddToDrawList(this);
+      application->AddToDrawList(this);
+      application->RequestRedraw();
+      //GetWindowCompositor().AddToDrawList(this);
     }
     _need_redraw = true;
+    OnQueueDraw.emit (this);
+  }
+
+  void View::NeedRedraw()
+  {
+    QueueDraw ();
   }
 
   void View::NeedSoftRedraw()
@@ -377,4 +383,13 @@ namespace nux
     return _is_view_active;
   }
 
+  void View::GeometryChangePending ()
+  {
+    QueueDraw ();
+  }
+  
+  void View::GeometryChanged ()
+  {
+    QueueDraw ();
+  }
 }

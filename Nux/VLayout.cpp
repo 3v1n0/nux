@@ -69,7 +69,7 @@ namespace nux
   {
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ( (*it)->IsView() )
       {
@@ -97,16 +97,16 @@ namespace nux
 
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       // gather all the space used by elements
       total_used_space += (*it)->GetBaseHeight();
     }
 
-    if (m_LayoutElementList.size() != 0)
+    if (_layout_element_list.size() != 0)
     {
       // Compute the space available for each element
-      per_element_space = (remaining_height - total_used_space) / t_s32 (m_LayoutElementList.size() );
+      per_element_space = (remaining_height - total_used_space) / t_s32 (_layout_element_list.size() );
     }
 
     if (per_element_space < 0)
@@ -172,14 +172,14 @@ namespace nux
 
   long VLayout::ComputeLayout2()
   {
-    if (m_LayoutElementList.size() == 0)
+    if (_layout_element_list.size() == 0)
     {
       return eCompliantHeight | eCompliantWidth;
     }
 
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       (*it)->setOutofBound (false);
     }
@@ -219,7 +219,7 @@ namespace nux
 
     do
     {
-      t_size num_element = m_LayoutElementList.size();
+      t_size num_element = _layout_element_list.size();
       // Get layout Width and Height
       t_s32 width = GetBaseWidth();
       t_s32 height = GetBaseHeight();
@@ -242,7 +242,7 @@ namespace nux
       ComputeStacking (height, offset_space, space_after_element);
       current_y += offset_space;
 
-      for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
         current_y += space_after_element;
 
@@ -342,7 +342,7 @@ namespace nux
       // We check if that is the case and force a recompute.
       std::vector<t_s32> FullSizeUnadjusted;
 
-      for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
         bool largerHeight = false;
         bool smallerHeight = false;
@@ -355,7 +355,7 @@ namespace nux
           if ( (*it)->IsLayout() )
           {
             Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
-            layout->SetDirty (true);
+            //layout->SetDirty (true);
           }
 
           ret = (*it)->ComputeLayout2();
@@ -499,7 +499,6 @@ namespace nux
       size_compliance |= eCompliantHeight;
     }
 
-    SetDirty (false);
     return size_compliance;
   }
 
@@ -513,7 +512,7 @@ namespace nux
       t_u32 max_stretchfactor = getMaxStretchFactor();
       std::list<Area *>::iterator it;
 
-      for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
         if ( ( (*it)->GetStretchFactor() == 0) && ( (*it)->isOutofBound() != true) )
         {
@@ -527,7 +526,7 @@ namespace nux
         return;
       }
 
-      for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
         if ( (*it)->GetStretchFactor() == 0 || (*it)->isOutofBound() == true)
         {
@@ -537,7 +536,7 @@ namespace nux
 
       if (available_height <= 2)
       {
-        for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+        for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
         {
           if ( ( (*it)->GetStretchFactor() != 0) && (*it)->IsArea() )
           {
@@ -568,7 +567,7 @@ namespace nux
       Area *LastElementThatCanBeResized = 0;
       t_s32 total_distributed_size = 0;
 
-      for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
         if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->isOutofBound() == false) )
         {
@@ -595,7 +594,7 @@ namespace nux
       //
       need_recompute = false;;
 
-      for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end() && !need_recompute; it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end() && !need_recompute; it++)
       {
         if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->isOutofBound() == false) )
         {
@@ -688,7 +687,7 @@ namespace nux
     t_u32 sf;
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       // In the recursive process, make sure we get always the highest stretch factor
       // of an element that has not been bounded.
@@ -710,7 +709,7 @@ namespace nux
   {
     std::list<Area *>::iterator it;
     {
-      t_u32 num_element = (t_u32) m_LayoutElementList.size();
+      t_u32 num_element = (t_u32) _layout_element_list.size();
       // Get layout Width and Height
       t_s32 width = GetBaseWidth();
       t_s32 height = GetBaseHeight();
@@ -727,7 +726,7 @@ namespace nux
       ComputeStacking (height, offset_space, element_margin);
       current_y += offset_space;
 
-      for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
         current_y += element_margin;
 
@@ -774,7 +773,7 @@ namespace nux
       }
     }
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ( (*it)->Type().IsDerivedFromType (Layout::StaticObjectType) )
       {

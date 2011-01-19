@@ -33,7 +33,7 @@ namespace nux
     NODE_XML_CLASS_MEMBER (CheckBoxPropertyItem);
     NODE_SIG_RECEIVER (RecvPropertyChange, CheckBox *);
   public:
-    CheckBoxPropertyItem (const TCHAR *name, int On = 0);
+    CheckBoxPropertyItem (const TCHAR *name, bool on = false);
     virtual ~CheckBoxPropertyItem();
 
     virtual long ProcessPropertyEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

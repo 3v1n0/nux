@@ -198,10 +198,11 @@ namespace nux
     
   #define NUX_EVENT_TEXT_BUFFER_SIZE 16
 
-  class IEvent
+  //! Nux event class.
+  class Event
   {
   public:
-    IEvent();
+    Event ();
 
     // Because an event is save in e_event instead of calling immediately the handling function,
     // we must clear the previous event each time before we test for new event in Gfx_OpenGLImpl::get_event.
@@ -274,6 +275,7 @@ namespace nux
     unsigned long   e_event;
   };
 
+  typedef Event IEvent;
 }
 
 #endif // EVENTS_H

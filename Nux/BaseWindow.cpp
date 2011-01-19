@@ -59,7 +59,6 @@ namespace nux
     m_layout = 0;
     m_configure_notify_callback = NULL;
     m_configure_notify_callback_data = NULL;
-    m_blured_background = false;
     m_background_color = Color (0xFF707070);
     _entering_visible_status = false;
     _entering_hidden_status = false;
@@ -527,6 +526,11 @@ namespace nux
   bool BaseWindow::ChildNeedsRedraw ()
   {
     return _child_need_redraw;
+  }
+
+  void* BaseWindow::GetBackupTextureData (int &width, int &height, int &format)
+  {
+    return GetWindowCompositor ().GetBackupTextureData (this, width, height, format);
   }
 }
 

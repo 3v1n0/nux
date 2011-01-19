@@ -54,7 +54,7 @@ namespace nux
     return false;    
   }
   
-  IEvent::IEvent()
+  Event::Event()
   {
     Memset (e_text, 0, sizeof (e_text));
 
@@ -83,7 +83,7 @@ namespace nux
     //Application = 0;
   }
 
-  void IEvent::Reset()
+  void Event::Reset()
   {
     e_event = NUX_NO_EVENT;
     Memset (e_text, 0, sizeof (e_text));
@@ -92,42 +92,42 @@ namespace nux
     e_wheeldelta = 0;
   }
 
-  int IEvent::GetX() const
+  int Event::GetX() const
   {
     return e_x;
   }
-  int IEvent::GetY() const
+  int Event::GetY() const
   {
     return e_y;
   }
-  int IEvent::GetRootX() const
+  int Event::GetRootX() const
   {
     return e_x_root;
   }
-  int IEvent::GetRootY() const
+  int Event::GetRootY() const
   {
     return e_y_root;
   }
-  int IEvent::GetDeltaX() const
+  int Event::GetDeltaX() const
   {
     return e_dx;
   }
-  int IEvent::GetDeltaY() const
+  int Event::GetDeltaY() const
   {
     return e_dy;
   }
 
-  unsigned long IEvent::GetKeyState()	const
+  unsigned long Event::GetKeyState()	const
   {
     return e_key_modifiers;
   }
 
-  unsigned long IEvent::GetMouseState() const
+  unsigned long Event::GetMouseState() const
   {
     return e_mouse_state;
   }
 
-  unsigned long IEvent::GetEventButton() const
+  unsigned long Event::GetEventButton() const
   {
     if ((e_mouse_state & NUX_EVENT_BUTTON1_DOWN) || (e_mouse_state & NUX_EVENT_BUTTON1_UP))
       return 1;
@@ -141,7 +141,7 @@ namespace nux
     return 0;
   }
 
-  bool IEvent::GetButtonState(int button) const
+  bool Event::GetButtonState(int button) const
   {
     if (button == 1)
       return (e_mouse_state & NUX_STATE_BUTTON1_DOWN) ? true : false;
@@ -160,16 +160,16 @@ namespace nux
       Return virtual key code of the key that has triggered the last event.
       @return the virtual key code.
   */
-  unsigned long IEvent::GetKeySym() const
+  unsigned long Event::GetKeySym() const
   {
     return e_keysym;
   }
-  unsigned short IEvent::GetKeyRepeatCount() const
+  unsigned short Event::GetKeyRepeatCount() const
   {
     return e_key_repeat_count;
   }
 
-  TCHAR IEvent::GetChar() const
+  TCHAR Event::GetChar() const
   {
     return e_text[0];
   }
@@ -181,7 +181,7 @@ namespace nux
       @param VirtualKey virtual key code.
       @return 1 if the key is pressed, 0 if the key is released.
   */
-  unsigned long IEvent::GetVirtualKeyState (unsigned long VirtualKey) const
+  unsigned long Event::GetVirtualKeyState (unsigned long VirtualKey) const
   {
     if (VirtualKey >= NUX_MAX_VK)
       return 0;
