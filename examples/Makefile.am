@@ -6,7 +6,7 @@ if BUILD_EXAMPLES
 
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
-noinst_PROGRAMS = combobox cairo textedit button checkbox tooltip timeline timegraph
+noinst_PROGRAMS = combobox cairo textedit button checkbox tooltip timeline timegraph gridlayout
 
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile
@@ -50,6 +50,8 @@ timeline_SOURCES = timeline.cpp
 timeline_LDADD = $(ALL_LIBS)
 timegraph_SOURCES = timegraph.cpp
 timegraph_LDADD = $(ALL_LIBS)
+gridlayout_SOURCES = gridlayout.cpp
+gridlayout_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
 sourceexampledir = "$(pkgdatadir)/examples"
@@ -59,7 +61,8 @@ sourceexample_DATA = $(combobox_SOURCES) \
                      $(button_SOURCES) \
                      $(checkbox_SOURCES) \
                      $(tooltip_SOURCES) \
-                     $(timegraph_SOURCES)
+                     $(timegraph_SOURCES) \
+                     $(gridlayout_SOURCES)
 
 endif
 
