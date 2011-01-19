@@ -143,7 +143,6 @@ namespace nux
   {
     long ret = TraverseInfo;
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-
     return ret;
   }
 
@@ -325,14 +324,16 @@ namespace nux
   {
     m_KeyboardHandler.ProcessKey (eventType, keysym, state, character, GetGeometry() );
 
+
+    // When a key event happens, show the cursor.
+    StopBlinkCursor (false);
+    // Start a new blink cycle with the cursor originally visible.
+    StartBlinkCursor (false);
+
     if (character)
     {
       sigCharacter.emit (this, character);
       sigEditChange.emit (this);
-
-      // When a writable character is entered, no blinking of cursor
-      StopBlinkCursor (false);
-      StartBlinkCursor (false);
     }
 
     if (keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER)

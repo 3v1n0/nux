@@ -900,13 +900,13 @@ namespace nux
       }
 #endif
 
-      if(event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
+      if((event.e_event ==	NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
       {
           KeepRunning = false;
           return 0; //break;
       }
       
-      if (IsEmbeddedWindow () && event.e_event ==	NUX_SIZE_CONFIGURATION)
+      if (IsEmbeddedWindow () && (event.e_event == NUX_SIZE_CONFIGURATION))
         m_size_configuration_event = true;
 
       int w, h;
@@ -914,7 +914,7 @@ namespace nux
       // Otherwise, w and h may not be correct for the current frame if a resizing happened.
       GetWindow().GetWindowSize(w, h);
 
-      if(event.e_event == NUX_MOUSE_PRESSED ||
+      if((event.e_event == NUX_MOUSE_PRESSED) ||
           (event.e_event == NUX_MOUSE_RELEASED) ||
           (event.e_event == NUX_MOUSE_MOVE) ||
           (event.e_event == NUX_SIZE_CONFIGURATION) ||
@@ -1605,14 +1605,14 @@ namespace nux
       geo.x += pgeo.x;
       geo.y += pgeo.y;
 
-      if (parent->Type().IsObjectType (BaseWindow::StaticObjectType))
+      if (parent->Type().IsDerivedFromType (BaseWindow::StaticObjectType))
       {
         BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, parent);
         window->_child_need_redraw = true;
       }
     }
 
-    if (view->Type().IsObjectType (BaseWindow::StaticObjectType))
+    if (view->Type().IsDerivedFromType (BaseWindow::StaticObjectType))
     {
       // If the view is a BaseWindow, allow it to mark itself for redraw, as if it was its own  child.
       BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, view);
