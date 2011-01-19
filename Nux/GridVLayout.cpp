@@ -123,7 +123,6 @@ namespace nux
     }
 
     t_s32 original_width = GetBaseWidth();
-    bool unadjusted_layout = false;
 
     nux::Geometry base = GetGeometry();
     it = _layout_element_list.begin();
@@ -236,7 +235,6 @@ namespace nux
   void GridVLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     std::list<Area *>::iterator it = _layout_element_list.begin ();
-    int num_elements = (int) _layout_element_list.size ();
 
     Geometry base = GetGeometry ();
     GfxContext.PushClippingRectangle (base);

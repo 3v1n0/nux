@@ -128,8 +128,6 @@ namespace nux
     //  6   7   8   9   10  11
     //  12  13  ..  ..  ..  ..
     // This is a left to right fill going down. An option can be added the fill the grid from top to bottom and going toward the right.
-    
-    bool unadjusted_layout = false;
 
     nux::Geometry base = GetGeometry();
     it = _layout_element_list.begin();
@@ -248,7 +246,6 @@ namespace nux
   void GridHLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     std::list<Area *>::iterator it = _layout_element_list.begin ();
-    int num_elements = (int) _layout_element_list.size ();
 
     Geometry base = GetGeometry ();
     GfxContext.PushClippingRectangle (base);
