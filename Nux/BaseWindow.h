@@ -140,6 +140,8 @@ namespace nux
     bool InputWindowStrutsEnabled ();
     void GrabPointer ();
     void UnGrabPointer ();
+    void GrabKeyboard ();
+    void UnGrabKeyboard ();
     #endif
 
     //! Get the backup texture data of this BaseWindow,
