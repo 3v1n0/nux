@@ -234,7 +234,7 @@ namespace nux
     m_OpenGLEngine.PushClippingRectangle (Rect (pageSize.xmin, pageSize.ymin, pageSize.xmax - pageSize.xmin, pageSize.ymax - pageSize.ymin) );
 
     if (substring_width > 0)
-      m_OpenGLEngine.QRP_GLSL_Color (pageSize.xmin + offset + substring_pos, pageSize.ymin, substring_width, pageSize.ymax - pageSize.ymin, SelectedTextBackgroundColor);
+      m_OpenGLEngine.QRP_Color (pageSize.xmin + offset + substring_pos, pageSize.ymin, substring_width, pageSize.ymax - pageSize.ymin, SelectedTextBackgroundColor);
 
     m_OpenGLEngine.PopClippingRectangle();
 
