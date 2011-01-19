@@ -39,12 +39,19 @@ namespace nux
   class UXTheme;
   class TimerHandler;
   class Timeline;
+  class Event;
   struct ClientAreaDraw;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
   gboolean nux_event_dispatch (GSource *source, GSourceFunc callback, gpointer user_data);
   gboolean nux_timeout_dispatch (gpointer user_data);
 #endif
+
+  //! Event Inspector function prototype.
+  /*!
+      If an event inspector return true, then the event is discarded.
+  */
+  typedef int (*EventInspector) (Area* area, Event* event, void* data);
 
   class WindowThread: public AbstractThread
   {
@@ -53,18 +60,22 @@ namespace nux
     WindowThread (const TCHAR *WindowTitle, unsigned int width, unsigned int height, AbstractThread *Parent, bool Modal);
     ~WindowThread();
 
-    //! Set the main layout for this window user interface.
+    //! Set the layout for this window thread.
     /*!
         @param layout The layout of the user interface.
     */
     void SetLayout (Layout *layout);
 
-    //! Compute the layout of this window.
+    void QueueMainLayout ();
+
+  private:
+    //! Compute the layout of this window thread.
     /*!
         Reconfigure the layout of this window. Start by setting the size of the layout to the size of this window.
     */
     void ReconfigureLayout();
 
+  public:
     void TerminateThread();
 
     //! Start running the user interface
@@ -72,7 +83,9 @@ namespace nux
 
     // Event, Drawing
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+
     void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
+
     void SetWindowTitle (const TCHAR *WindowTitle)
     {
       m_WindowTitle = WindowTitle;
@@ -80,20 +93,24 @@ namespace nux
 
     GraphicsDisplay &GetWindow() const
     {
-      return *m_GLWindow;
+      return *_graphics_display;
     }
+
     GraphicsEngine &GetGraphicsEngine() const
     {
-      return *m_GLWindow->GetGraphicsEngine();
+      return *_graphics_display->GetGraphicsEngine();
     }
+    
     BasePainter &GetPainter() const
     {
       return *m_Painter;
     }
+    
     TimerHandler &GetTimerHandler() const
     {
       return *m_TimerHandler;
     }
+    
     UXTheme &GetTheme() const
     {
       return *m_Theme;
@@ -109,6 +126,7 @@ namespace nux
     {
       m_RedrawRequested = false;
     }
+
     bool IsRedrawNeeded() const
     {
       return m_RedrawRequested;
@@ -135,43 +153,59 @@ namespace nux
         @param area The object that will perform a size computation cycle.
         \sa RefreshLayout.
     */
-    void AddObjectToRefreshList (Area *area);
+    bool QueueObjectLayout (Area *area);
+    void AddObjectToRefreshList (Area *area); //!< Deprecated. Replace with QueueObjectLayout.
 
     //! Remove an area from the list of object whose size was scheduled to be computed before the rendering cycle.
     /*!
         @param area The object to remove form the list.
+        @return True if the object was in the _queued_layout_list and has been removed.
         \sa RefreshLayout, AddObjectToRefreshList.
     */
-    void RemoveObjectFromRefreshList (Area *area);
+    bool RemoveObjectFromRefreshList (Area *area);
 
     //! Empty the list that contains the layout that need to be recomputed following the resizing of one of the sub element.
     /*!
         Empty the list that contains the layout that need to be recomputed following the resizing of one of the sub element.
     */
-    void EmptyLayoutRefreshList();
+    void RemoveQueuedLayout ();
 
+  private:
     //! Execute the size computation cycle on objects.
     /*
         The objects whose size is to be computed are added to a list with a call to AddObjectToRefreshList.
         Size computation is performed just before the rendering cycle.
         \sa AddObjectToRefreshList
     */
-    void RefreshLayout();
+    void ComputeQueuedLayout ();
+    void RefreshLayout ();  //!< Deprecated. Replace with ComputeQueuedLayout.
 
-    //! Return true if we are computing any layout that is part of this window.
-    /*!
-        Return true if we are computing any layout that is part of this window.
-    */
+  public:
+    //! Deprecated. Replace with IsInsideLayoutCycle
     bool IsComputingLayout() const
     {
-      return m_IsComputingMainLayout;
-    }
-    void SetComputingLayout (bool b)
-    {
-      m_IsComputingMainLayout = b;
+      return IsInsideLayoutCycle ();
     }
 
-    bool IsMainLayoutDrawDirty() const;
+    //! Informs the system of the start of a layout cycle.
+    /*!
+        This call merely sets a flag to true or false. This flag is used to decided if some actions should be 
+        performed or not.
+    */
+    void StartLayoutCycle ();
+
+    //! Informs the system of the end of a layout cycle.
+    /*!
+        This call merely sets a flag to true or false. This flag is used to decided if some actions should be 
+        performed or not.
+    */
+    void StopLayoutCycle ();
+
+    //! Return true if the process is inside a layout cycle.
+    /*!
+        @return True if the process is inside a layout cycle.
+    */
+    bool IsInsideLayoutCycle () const;
 
     //! Compute the layout of a specific element
     void ComputeElementLayout(Area* bo, bool RecurseToTopLevelLayout = false);
@@ -218,7 +252,6 @@ namespace nux
 
     void RenderInterfaceFromForeignCmd();
 
-  public:
     virtual unsigned int Run (void *);
 
     /*!
@@ -375,6 +408,45 @@ namespace nux
     TimerFunctor *_fake_event_call_back;
     TimerHandle _fake_event_timer;
 
+    //! Set an event inspector function.
+    /*!
+       Inspect all events and returns the action to be taken for the event (process or discard).
+
+       If \a function as already been added, return its unique id.\n
+       If \a function is null, return 0.\n
+
+       @param function Event inspector function callback.
+       @param data     User defined data.
+       @return         Unique id for the event inspector callback.
+    */
+    int InstallEventInspector (EventInspector* function, void* data);
+
+    //! Remove an event inspector.
+    /*!
+       Remove the event inspector identified by the provided unique id.
+
+       @param event_inspector_id Unique id for the event inspector.
+       @return True              If the event inspector exists and has been removed.
+    */
+    bool RemoveEventInspector (int event_inspector_id);
+
+    //! Remove an event inspector.
+    /*!
+       Remove the event inspector identified by the provided function.
+
+       @param function Event inspector function callback.
+       @return True    If the event inspector exists and has been removed.
+    */
+    bool RemoveEventInspector (EventInspector* function);
+
+    //! Call event inspectors.
+    /*!
+        Call event inspectors to have a look at the event.
+
+        @return True if the event should be discarded.
+    */
+    bool CallEventInspectors (Event* event);
+
   protected:
     
     void AsyncWakeUpCallback (void*);
@@ -433,11 +505,14 @@ namespace nux
     /*!
         This list contains the layout that need to be recomputed following the resizing of one of the sub element.
     */
-    std::list<Area *> m_LayoutRefreshList;
+    std::list<Area *> _queued_layout_list;
     std::vector<Geometry> m_dirty_areas;
 
     //! This variable is true while we are computing the layout the starting from the outmost layout (the Main Layout);
-    bool m_IsComputingMainLayout;
+    bool _inside_layout_cycle;
+
+    //! Set to true to schedule a compute cycle on the main layout.
+    bool _queue_main_layout;
 
   private:
     float m_FrameRate;
@@ -453,13 +528,13 @@ namespace nux
     NString m_WindowTitle;
 
     bool m_RedrawRequested;
-    Layout *m_AppLayout;
+    Layout *_main_layout;
 
     UXTheme         *m_Theme;
     BasePainter     *m_Painter;
     TimerHandler    *m_TimerHandler;
 
-    GraphicsDisplay *m_GLWindow;
+    GraphicsDisplay *_graphics_display;
     GraphicsEngine *m_GraphicsContext;
     WindowCompositor *m_window_compositor;
     std::list<NThread *> m_ThreadList;
@@ -480,6 +555,26 @@ namespace nux
     bool m_size_configuration_event;
 
     bool m_force_redraw;
+
+    typedef struct _EventInspectorStorage
+    {
+      _EventInspectorStorage ()
+      {
+        _function = 0;
+        _data = 0;
+        _uid = 0;
+      }
+      EventInspector* _function;
+      void*           _data;
+      int             _uid;
+    } EventInspectorStorage;
+    
+  //! Map of events inspectors
+  /*!
+      Events inspectors get to examine events before they are processed.
+      They may also stop an event from being processed if they return true.
+  */
+  std::map<int, EventInspectorStorage> _event_inspectors_map; //!< map of events inspectors
 
     friend class BasePainter;
     friend class SystemThread;

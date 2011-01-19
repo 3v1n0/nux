@@ -59,7 +59,6 @@ namespace nux
     m_layout = 0;
     m_configure_notify_callback = NULL;
     m_configure_notify_callback_data = NULL;
-    m_blured_background = false;
     m_background_color = Color (0xFF707070);
     _entering_visible_status = false;
     _entering_hidden_status = false;
@@ -255,8 +254,8 @@ namespace nux
     ComputeChildLayout();
   }
 
-// Get a change to do any work on an element.
-// Here we need to position the header by hand because it is not under the control of vlayout.
+  // Get a change to do any work on an element.
+  // Here we need to position the header by hand because it is not under the control of vlayout.
   void BaseWindow::PreLayoutManagement()
   {
     Geometry geo = GetGeometry();
@@ -528,4 +527,10 @@ namespace nux
   {
     return _child_need_redraw;
   }
+
+  void* BaseWindow::GetBackupTextureData (int &width, int &height, int &format)
+  {
+    return GetWindowCompositor ().GetBackupTextureData (this, width, height, format);
+  }
 }
+

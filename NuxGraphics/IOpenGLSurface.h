@@ -90,7 +90,11 @@ namespace nux
       return OGL_OK;
     }
 
+    //! Copy the render target into the texture mip level. 
     void CopyRenderTarget (int x, int y, int width, int height);
+
+    //! Return the a pointer to the texture mip level data.
+    void* GetSurfaceData (int &width, int &height, int &format);
 
   private:
     virtual ~IOpenGLSurface();
@@ -171,3 +175,4 @@ namespace nux
 }
 
 #endif // IOPENGLSURFACE_H
+

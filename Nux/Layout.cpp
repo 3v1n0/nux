@@ -42,6 +42,7 @@ namespace nux
     m_contentWidth      = 0;
     m_contentHeight     = 0;
     m_ContentStacking   = eStackExpand;
+    _queued_draw        = false;
   }
 
   Layout::~Layout()
@@ -51,24 +52,24 @@ namespace nux
 
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       (*it)->UnParentObject();
     }
 
-    m_LayoutElementList.clear();
+    _layout_element_list.clear();
   }
 
 
   void Layout::RemoveChildObject (Area *bo)
   {
     std::list<Area *>::iterator it;
-    it = std::find (m_LayoutElementList.begin(), m_LayoutElementList.end(), bo);
+    it = std::find (_layout_element_list.begin(), _layout_element_list.end(), bo);
 
-    if (it != m_LayoutElementList.end())
+    if (it != _layout_element_list.end())
     {
       bo->UnParentObject();
-      m_LayoutElementList.erase (it);
+      _layout_element_list.erase (it);
     }
   }
 
@@ -76,7 +77,7 @@ namespace nux
   {
     std::list<Area *>::const_iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ( (*it) == WidgetObject)
       {
@@ -89,7 +90,7 @@ namespace nux
 
   bool Layout::IsEmpty() const
   {
-    return (m_LayoutElementList.size() == 0);
+    return (_layout_element_list.size() == 0);
   }
 
 // If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
@@ -125,7 +126,7 @@ namespace nux
     }
 
     layout->SetParentObject (this);
-    m_LayoutElementList.push_back (layout);
+    _layout_element_list.push_back (layout);
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
   }
@@ -182,7 +183,7 @@ namespace nux
 
     bo->SetParentObject (this);
 
-    m_LayoutElementList.push_back (bo);
+    _layout_element_list.push_back (bo);
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
   }
@@ -196,19 +197,19 @@ namespace nux
   {
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       (*it)->UnParentObject();
     }
 
-    m_LayoutElementList.clear();
+    _layout_element_list.clear();
   }
 
   bool Layout::SearchInAllSubNodes (Area *bo)
   {
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ( (*it) == bo)
       {
@@ -232,7 +233,7 @@ namespace nux
   {
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ( (*it) == bo)
       {
@@ -249,7 +250,7 @@ namespace nux
     unsigned int sf;
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       sf = (*it)->GetStretchFactor();
 
@@ -268,7 +269,7 @@ namespace nux
     unsigned int sf;
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       sf = (*it)->GetStretchFactor();
 
@@ -286,7 +287,7 @@ namespace nux
     unsigned int count = 0;
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ( (*it)->GetStretchFactor() == sf)
       {
@@ -301,7 +302,7 @@ namespace nux
   {
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ( (*it)->IsView() )
       {
@@ -316,7 +317,7 @@ namespace nux
     long ret = TraverseInfo;
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ( (*it)->IsArea() )
       {
@@ -340,10 +341,9 @@ namespace nux
 
   void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    //GfxContext.Push2DModelViewMatrix(m_Matrix);
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ( (*it)->IsArea() )
       {
@@ -362,30 +362,49 @@ namespace nux
       }
     }
 
-    SetDrawDirty (false);
+    _queued_draw = false;
   }
 
-  void Layout::NeedRedraw()
+  void Layout::QueueDraw ()
   {
+    if (_queued_draw)
+    {
+      // A draw has already been scheduled.
+      return;
+    }
+
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutElementList.begin(); it != m_LayoutElementList.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it)->IsArea() )
+      if ((*it)->IsArea ())
       {
         // Does not have the flag for need redraw.
       }
-      else if ( (*it)->IsView() )
+      else if ((*it)->IsView ())
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
-        ic->NeedRedraw();
+        View *ic = NUX_STATIC_CAST (View *, (*it));
+        ic->NeedRedraw ();
       }
-      else if ( (*it)->IsLayout() )
+      else if ((*it)->IsLayout ())
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
-        layout->NeedRedraw();
+        Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
+        layout->NeedRedraw ();
       }
     }
+
+    _queued_draw = true;
+    OnQueueDraw.emit (this);
+  }
+
+  void Layout::NeedRedraw ()
+  {
+    QueueDraw ();
+  }
+
+  bool Layout::IsQueuedForDraw ()
+  {
+    return _queued_draw;
   }
 
   void Layout::SetContentDistribution (LayoutContentDistribution stacking)
@@ -401,12 +420,6 @@ namespace nux
   void Layout::RequestBottomUpLayoutComputation (Area *bo_initiator)
   {
 
-  }
-
-  void Layout::Translate (int x, int y)
-  {
-    m_Matrix.Identity();
-    m_Matrix.Translate (x, y, 0);
   }
 
 }

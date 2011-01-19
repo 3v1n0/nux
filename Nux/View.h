@@ -114,24 +114,15 @@ namespace nux
     */
     bool IsViewActive () const;
 
-  protected:
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
-
-  private:
-    bool m_UseStyleDrawing;
-    bool _is_view_active;
-
   public:
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
     //! Causes a redraw. The widget parameter _need_redraw is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
-    virtual void NeedRedraw();
+    /*!
+        Emits the signal \i OnQueueDraw.
+    */
+    virtual void QueueDraw ();
+    virtual void NeedRedraw (); //!< Deprecated. Use QueueDraw.
+
     //! Causes a soft redraw. The widget parameter _need_redraw is set to false. The widget DrawContent() and PostDraw() are called.
     virtual void NeedSoftRedraw();
     virtual bool IsRedrawNeeded();
@@ -169,7 +160,18 @@ namespace nux
     void SetFont (ObjectPtr<FontTexture> font);
     ObjectPtr<FontTexture> GetFont ();
 
+    sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
+
   protected:
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+
+    void InitializeWidgets();
+    void InitializeLayout();
+    void DestroyLayout();
+
     Color m_TextColor;
     ObjectPtr<FontTexture> _font;
 
@@ -185,9 +187,8 @@ namespace nux
     */
     bool IsFullRedraw() const;
 
-    
-    virtual void GeometryChangePending () { NeedRedraw (); }
-    virtual void GeometryChanged () { NeedRedraw (); }
+    virtual void GeometryChangePending ();
+    virtual void GeometryChanged ();
 
     Layout *m_CompositionLayout;
 
@@ -196,6 +197,10 @@ namespace nux
     bool _full_redraw; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
     bool _is_active; //!< True if the view is enabled (it can receive events and process them).
+
+  private:
+    bool m_UseStyleDrawing;
+    bool _is_view_active;
 
     friend class Layout;
     friend class Area;

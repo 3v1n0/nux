@@ -45,9 +45,9 @@ namespace nux
     void SetWidth (t_int32 w);
     void SetHeight (t_int32 h);
 
-  private:
-    t_int32 width_;
-    t_int32 height_;
+  public:
+    t_int32 width;
+    t_int32 height;
   };
 
 }

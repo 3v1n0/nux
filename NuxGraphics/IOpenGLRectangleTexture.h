@@ -52,26 +52,30 @@ namespace nux
       SURFACE_DESC *pDesc
     )
     {
-      nuxAssert (Level >= 0 );
+      nuxAssert (Level >= 0);
       nuxAssert (Level < _NumMipLevel);
 
-      if ( (Level < 0) || (Level > _NumMipLevel) )
+      if ((Level < 0) || (Level > _NumMipLevel))
       {
         pDesc->Width    = 0;
         pDesc->Height   = 0;
-        pDesc->PixelFormat   = BITFMT_UNKNOWN;
+        pDesc->PixelFormat = BITFMT_UNKNOWN;
         pDesc->Type     = _ResourceType;
       }
       else
       {
         pDesc->Width    = Max<unsigned int> (1, _Width >> Level);
         pDesc->Height   = Max<unsigned int> (1, _Height >> Level);
-        pDesc->PixelFormat   = _PixelFormat;
+        pDesc->PixelFormat = _PixelFormat;
         pDesc->Type     = _ResourceType;
       }
 
       return OGL_OK;;
     }
+
+    //! Return the a pointer to the texture mip level data.
+    virtual void* GetSurfaceData (int level, int &width, int &height, int &format);
+
   private:
 
     // The Dummy boolean is used to create a skeletal frame for the default

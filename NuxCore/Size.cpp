@@ -28,8 +28,8 @@ namespace nux
 
   Size::Size (t_int32 w, t_int32 h)
   {
-    width_  = w;
-    height_ = h;
+    width  = w;
+    height = h;
   }
 
   Size::~Size()
@@ -39,20 +39,20 @@ namespace nux
 
   Size::Size (const Size &s)
   {
-    width_ = s.width_;
-    height_ = s.height_;
+    width = s.width;
+    height = s.height;
   }
 
   Size &Size::operator = (const Size &s)
   {
-    width_ = s.width_;
-    height_ = s.height_;
+    width = s.width;
+    height = s.height;
     return *this;
   }
 
   t_bool Size::operator== (const Size &s) const
   {
-    if ( (width_ == s.width_) && (height_ == s.height_) )
+    if ( (width == s.width) && (height == s.height) )
     {
       return true;
     }
@@ -62,7 +62,7 @@ namespace nux
 
   t_bool Size::operator!= (const Size &s) const
   {
-    if ( (width_ == s.width_) && (height_ == s.height_) )
+    if ( (width == s.width) && (height == s.height) )
     {
       return false;
     }
@@ -73,36 +73,36 @@ namespace nux
   Size Size::operator+ (const Size &s) const
   {
     Size size;
-    size.width_ = width_ + size.width_;
-    size.height_ = height_ + size.height_;
+    size.width = width + size.width;
+    size.height = height + size.height;
     return size;
   }
 
   Size Size::operator- (const Size &s) const
   {
     Size size;
-    size.width_ = width_ - size.width_;
-    size.height_ = height_ - size.height_;
+    size.width = width - size.width;
+    size.height = height - size.height;
     return size;
   }
 
   t_int32 Size::GetWidth() const
   {
-    return width_;
+    return width;
   }
 
   t_int32 Size::GetHeight() const
   {
-    return height_;
+    return height;
   }
 
   void Size::SetWidth (t_int32 w)
   {
-    width_ = w;
+    width = w;
   }
 
   void Size::SetHeight (t_int32 h)
   {
-    height_ = h;
+    height = h;
   }
 }

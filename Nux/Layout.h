@@ -173,8 +173,16 @@ namespace nux
     /*!
         Mark all element in the layout as dirty. This will also mark all sub elements as dirty.
         InputArea element are not marked as dirty (they don't have the flags).
+        Emits the signal \i OnQueueDraw.
     */
-    virtual void NeedRedraw();
+    virtual void QueueDraw ();
+    virtual void NeedRedraw (); //!< deprecated
+
+    //! Return true if a draw has been scheduled for this layout
+    /*!
+        @return True if a draw has been scheduled for this layout.
+    */
+    bool IsQueuedForDraw ();
 
     //! Define how elements are spread out inside the layout.
     /*!
@@ -204,39 +212,14 @@ namespace nux
 
     std::list<Area *>& GetChildren ()
     {
-      return m_LayoutElementList;
+      return _layout_element_list;
     }
 
-    //! Set dirty flag
-    void SetDirty (bool b)
-    {
-      m_bIsDirty = b;
-    }
-    //! Return true if the layout is dirty.
-    bool IsDirty() const
-    {
-      return m_bIsDirty;
-    }
-
-    //! Set draw dirty flag
-    void SetDrawDirty (bool b)
-    {
-      m_bIsDrawDirty = b;
-    }
-    //! Return true if the children of the layout need to be redrawn.
-    bool IsDrawDirty() const
-    {
-      return m_bIsDrawDirty;
-    }
-
-    void Translate (int x, int y);
+    sigc::signal<void, Layout*> OnQueueDraw;  //!< Signal emitted when a layout is scheduled for a draw.
 
   protected:
-    bool m_bIsDirty;
-    bool m_bIsDrawDirty;
+    bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
 
-  protected:
-    Matrix4x4<float> m_Matrix;
 
     Size m_ContentSize;
     int m_contentWidth;
@@ -251,7 +234,7 @@ namespace nux
     int m_v_in_margin;
     int m_v_out_margin;
 
-    std::list<Area *> m_LayoutElementList;
+    std::list<Area *> _layout_element_list;
 
     NString m_name;
 
