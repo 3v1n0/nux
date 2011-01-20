@@ -649,7 +649,7 @@ namespace nux
       _gpu_brand = GPU_BRAND_INTEL;
     }
 
-    if (NUX_USE_PBO)
+    if (0)
     {
       if (GetGPUBrand() == GPU_BRAND_AMD)
         _UsePixelBufferObject = false;

@@ -242,10 +242,11 @@ namespace nux
       return;
     }
 
-    if ( (IsVisibleSizeGrip() == true) && (IsSizeMatchContent() == false) )
+    if ((IsVisibleSizeGrip () == true) && (IsSizeMatchContent () == false))
     {
       // Do not draw the size grip if the window is constrained by the size of the container layout.
-      GetPainter().PaintShape (GfxContext, m_SizeGrip->GetGeometry(), Color (0xFF999999), eWINDOW_SIZEGRIP);
+      Geometry geo = m_SizeGrip->GetGeometry ();
+      GfxContext.QRP_Triangle (geo.x + geo.width, geo.y, geo.x, geo.y + geo.height, geo.x + geo.width, geo.y + geo.height, Color (0xFF009999));
     }
   }
 

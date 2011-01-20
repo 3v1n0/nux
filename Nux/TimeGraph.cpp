@@ -293,7 +293,7 @@ namespace nux
       PosY += 14;
     }
 
-    if (m_Option == SHOW_GRAPH)
+    if ((m_Option == SHOW_GRAPH) && m_DynValueArray.size())
     {
       GfxContext.PushClippingRectangle (m_GraphArea->GetGeometry() );
       t_s32 numGraph = (t_s32) m_DynValueArray.size();
@@ -379,7 +379,7 @@ namespace nux
       GfxContext.PopClippingRectangle();
     }
 
-    if (m_Option == SHOW_COLUMN)
+    if ((m_Option == SHOW_COLUMN) && m_DynValueArray.size ())
     {
       t_u32 BarWidth = W / (t_u32) m_DynValueArray.size();
 

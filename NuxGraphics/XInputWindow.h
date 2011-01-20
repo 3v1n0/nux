@@ -65,6 +65,9 @@ namespace nux
     void GrabPointer ();
     void UnGrabPointer ();
     
+    void GrabKeyboard ();
+    void UnGrabKeyboard ();
+
   private:
   
     void SetStruts ();

@@ -40,7 +40,6 @@ namespace nux
   WindowCompositor::WindowCompositor()
   {
     OverlayDrawingCommand       = NULL;
-    m_MouseFocusArea            = NULL;
     m_MouseOverArea             = NULL;
     m_PreviousMouseOverArea     = NULL;
     m_CurrentEvent              = NULL;
@@ -92,7 +91,7 @@ namespace nux
 
   WindowCompositor::~WindowCompositor()
   {
-    m_WindowToTextureMap.clear();
+    _window_to_texture_map.clear();
     m_FrameBufferObject.Release ();
     m_MainColorRT.Release ();
     m_MainDepthRT.Release ();
@@ -139,9 +138,9 @@ namespace nux
   {
     RenderTargetTextures invalid;
     RenderTargetTextures &ret = invalid;
-    std::map< BaseWindow*, RenderTargetTextures >::iterator it = m_WindowToTextureMap.find (window);
+    std::map< BaseWindow*, RenderTargetTextures >::iterator it = _window_to_texture_map.find (window);
 
-    if (it != m_WindowToTextureMap.end())
+    if (it != _window_to_texture_map.end())
     {
       return (*it).second;
     }
@@ -172,7 +171,7 @@ namespace nux
         rt.depth_rt = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
       }
 
-      m_WindowToTextureMap.insert ( std::map< BaseWindow*, RenderTargetTextures >::value_type ( window, rt) );
+      _window_to_texture_map.insert ( std::map< BaseWindow*, RenderTargetTextures >::value_type ( window, rt) );
     }
   }
 
@@ -190,13 +189,13 @@ namespace nux
       if (m_WindowList.size ())
         m_SelectedWindow = (*m_WindowList.begin ());
 
-      std::map< BaseWindow*, RenderTargetTextures >::iterator it2 = m_WindowToTextureMap.find (window);
+      std::map< BaseWindow*, RenderTargetTextures >::iterator it2 = _window_to_texture_map.find (window);
 
-      if (it2 != m_WindowToTextureMap.end ())
+      if (it2 != _window_to_texture_map.end ())
       {
         (*it2).second.color_rt = ObjectPtr<IOpenGLBaseTexture> (0);
         (*it2).second.depth_rt = ObjectPtr<IOpenGLBaseTexture> (0);
-        m_WindowToTextureMap.erase (it2);
+        _window_to_texture_map.erase (it2);
       }
     }
   }
@@ -1834,5 +1833,27 @@ namespace nux
     }
   }
 
+  void* WindowCompositor::GetBackupTextureData (BaseWindow *base_window, int &width, int &height, int &format)
+  {
+    width = height = format = 0;
+
+    NUX_RETURN_VALUE_IF_NULL (base_window, 0);
+
+    std::map< BaseWindow*, struct RenderTargetTextures >::iterator it;
+
+    it = _window_to_texture_map.find (base_window);
+
+    if (it == _window_to_texture_map.end ())
+    {
+      return 0;
+    }
+
+    if ((*it).second.color_rt.IsNull ())
+    {
+      return 0;
+    }
+
+    return (*it).second.color_rt->GetSurfaceData (0, width, height, format);
+  }
 }
 

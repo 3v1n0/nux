@@ -29,11 +29,11 @@
 namespace nux
 {
 
-  CheckBoxPropertyItem::CheckBoxPropertyItem (const TCHAR *name, int On)
+  CheckBoxPropertyItem::CheckBoxPropertyItem (const TCHAR *name, bool on)
     :   SectionProperty (name, NODE_TYPE_CHECKBOX)
-    ,   CheckBox (TEXT (""), On)
+    ,   CheckBox (TEXT (""), on)
   {
-    SetState (On ? true : false);
+    SetState (on);
     SetUsingStyleDrawing (false);
     NODE_SIG_CONNECT (sigStateToggled, CheckBoxPropertyItem, RecvPropertyChange);
   }
@@ -104,7 +104,7 @@ namespace nux
   {
     int check = 0;
     QueryNodeXMLIntAttribute (elementxml, "Check",       &check,     id);
-    CheckBoxPropertyItem *node = new CheckBoxPropertyItem (Name, check);
+    CheckBoxPropertyItem *node = new CheckBoxPropertyItem (Name, check ? true : false);
     node->SetID (id);
     return node;
   }

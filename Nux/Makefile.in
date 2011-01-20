@@ -134,6 +134,8 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-FloatingWindow.lo \
 	libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo \
 	libnux_@NUX_API_VERSION@_la-FunctionGraph.lo \
+	libnux_@NUX_API_VERSION@_la-GridHLayout.lo \
+	libnux_@NUX_API_VERSION@_la-GridVLayout.lo \
 	libnux_@NUX_API_VERSION@_la-GroupBox.lo \
 	libnux_@NUX_API_VERSION@_la-GroupBox2.lo \
 	libnux_@NUX_API_VERSION@_la-HexRegExpValidator.lo \
@@ -516,6 +518,8 @@ source_cpp = \
   $(srcdir)/FloatingWindow.cpp \
   $(srcdir)/FolderTreeItem.cpp \
   $(srcdir)/FunctionGraph.cpp \
+  $(srcdir)/GridHLayout.cpp \
+  $(srcdir)/GridVLayout.cpp \
   $(srcdir)/GroupBox.cpp \
   $(srcdir)/GroupBox2.cpp \
   $(srcdir)/HexRegExpValidator.cpp \
@@ -647,6 +651,8 @@ source_h = \
   $(srcdir)/FloatingWindow.h \
   $(srcdir)/FolderTreeItem.h \
   $(srcdir)/FunctionGraph.h \
+  $(srcdir)/GridHLayout.h \
+  $(srcdir)/GridVLayout.h \
   $(srcdir)/GroupBox.h \
   $(srcdir)/GroupBox2.h \
   $(srcdir)/HexRegExpValidator.h \
@@ -847,6 +853,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FloatingWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FolderTreeItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FunctionGraph.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridVLayout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GroupBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GroupBox2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HLayout.Plo@am__quote@
@@ -1376,6 +1384,22 @@ libnux_@NUX_API_VERSION@_la-FunctionGraph.lo: $(srcdir)/FunctionGraph.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/FunctionGraph.cpp' object='libnux_@NUX_API_VERSION@_la-FunctionGraph.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-FunctionGraph.lo `test -f '$(srcdir)/FunctionGraph.cpp' || echo '$(srcdir)/'`$(srcdir)/FunctionGraph.cpp
+
+libnux_@NUX_API_VERSION@_la-GridHLayout.lo: $(srcdir)/GridHLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-GridHLayout.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Tpo -c -o libnux_@NUX_API_VERSION@_la-GridHLayout.lo `test -f '$(srcdir)/GridHLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/GridHLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GridHLayout.cpp' object='libnux_@NUX_API_VERSION@_la-GridHLayout.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-GridHLayout.lo `test -f '$(srcdir)/GridHLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/GridHLayout.cpp
+
+libnux_@NUX_API_VERSION@_la-GridVLayout.lo: $(srcdir)/GridVLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-GridVLayout.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridVLayout.Tpo -c -o libnux_@NUX_API_VERSION@_la-GridVLayout.lo `test -f '$(srcdir)/GridVLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/GridVLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridVLayout.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridVLayout.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GridVLayout.cpp' object='libnux_@NUX_API_VERSION@_la-GridVLayout.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-GridVLayout.lo `test -f '$(srcdir)/GridVLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/GridVLayout.cpp
 
 libnux_@NUX_API_VERSION@_la-GroupBox.lo: $(srcdir)/GroupBox.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-GroupBox.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GroupBox.Tpo -c -o libnux_@NUX_API_VERSION@_la-GroupBox.lo `test -f '$(srcdir)/GroupBox.cpp' || echo '$(srcdir)/'`$(srcdir)/GroupBox.cpp

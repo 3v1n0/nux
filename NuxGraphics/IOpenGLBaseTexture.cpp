@@ -242,6 +242,15 @@ namespace nux
     return 0;
   }
 
+  void* IOpenGLBaseTexture::GetSurfaceData (int level, int &width, int &height, int &format)
+  {
+    width = 0;
+    height = 0;
+    format = BITFMT_UNKNOWN;
+    return 0;
+  }
+
+
   t_s32 GetTextureSize (IOpenGLBaseTexture *pTexture)
   {
     GLint unpack_alignment = GPixelFormats[pTexture->_PixelFormat].RowMemoryAlignment;
@@ -376,5 +385,6 @@ namespace nux
       pDesc->SlicePitch = ( ( (pDesc->Width * BytePerPixel + (unpack_alignment - 1) ) >> (halfUnpack) ) << (halfUnpack) ) * pDesc->Height;
     }
   }
+
 
 }
