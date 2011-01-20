@@ -367,7 +367,7 @@ namespace nux
       texxform0.uwrap = TEXWRAP_CLAMP;
       texxform0.vwrap = TEXWRAP_CLAMP;
       texxform0.FlipVCoord (true);
-      GetThreadGraphicsContext()->QRP_GLSL_1Tex (x, y, w, h, texture, texxform0, Color::White);
+      GetThreadGraphicsContext()->QRP_1Tex (x, y, w, h, texture, texxform0, Color::White);
     }
   }
 

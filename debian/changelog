@@ -1,3 +1,9 @@
+nux (0.9.16-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 20 Jan 2011 17:57:58 +0100
+
 nux (0.9.14-0ubuntu2) natty; urgency=low
 
   * debian/control:

@@ -79,6 +79,8 @@ source_cpp = \
   $(srcdir)/FloatingWindow.cpp \
   $(srcdir)/FolderTreeItem.cpp \
   $(srcdir)/FunctionGraph.cpp \
+  $(srcdir)/GridHLayout.cpp \
+  $(srcdir)/GridVLayout.cpp \
   $(srcdir)/GroupBox.cpp \
   $(srcdir)/GroupBox2.cpp \
   $(srcdir)/HexRegExpValidator.cpp \
@@ -210,6 +212,8 @@ source_h = \
   $(srcdir)/FloatingWindow.h \
   $(srcdir)/FolderTreeItem.h \
   $(srcdir)/FunctionGraph.h \
+  $(srcdir)/GridHLayout.h \
+  $(srcdir)/GridVLayout.h \
   $(srcdir)/GroupBox.h \
   $(srcdir)/GroupBox2.h \
   $(srcdir)/HexRegExpValidator.h \

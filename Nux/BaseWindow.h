@@ -140,7 +140,12 @@ namespace nux
     bool InputWindowStrutsEnabled ();
     void GrabPointer ();
     void UnGrabPointer ();
+    void GrabKeyboard ();
+    void UnGrabKeyboard ();
     #endif
+
+    //! Get the backup texture data of this BaseWindow,
+    void* GetBackupTextureData (int &width, int &height, int &format);
 
     //! Emit a signal when the BaseWindow becomes visible.
     sigc::signal<void, BaseWindow*> sigVisible;
@@ -192,6 +197,8 @@ namespace nux
     bool _entering_visible_status;  //!< the window is about to be made visible during event processing
     bool _entering_hidden_status;   //!< the window is about to be made hidden during event processing
     
+    bool ChildNeedsRedraw ();
+
   private:
     //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
     ObjectPtr<BaseTexture> _background_texture;
@@ -208,7 +215,6 @@ namespace nux
     std::list<View *> m_InterfaceObject;
     HLayout *m_TitleBarLayout;
 
-    bool ChildNeedsRedraw ();
     bool _child_need_redraw;   //!<True is there is a child of the BaseWindow that needs to be redrawn;
     friend class PopUpWindow;
 

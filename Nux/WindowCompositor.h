@@ -36,6 +36,7 @@ namespace nux
   class Area;
   class BaseWindow;
   class PaintLayer;
+  class Event;
 
   class WindowCompositor
   {
@@ -147,6 +148,9 @@ namespace nux
     */
     void RestoreRenderingSurface ();
 
+    //! Get the backup texture data of this BaseWindow,
+    void* GetBackupTextureData (BaseWindow *base_window, int &width, int &height, int &format);
+
   private:
     //! Render the interface.
     void Draw (bool SizeConfigurationEvent, bool force_draw);
@@ -245,6 +249,7 @@ namespace nux
       m_CurrentWindow = window;
     }
 
+    public:
     //! Get the top view that is being processed (event or rendering).
     /*!
         Get the active TopView during and event processing or rendering.
@@ -254,6 +259,7 @@ namespace nux
       return m_CurrentWindow.GetPointer ();
     }
 
+    private:
     void SetFocusAreaWindow (BaseWindow *window)
     {
       m_FocusAreaWindow = window;
@@ -388,7 +394,7 @@ namespace nux
     */
     ObjectWeakPtr<BaseWindow> m_SelectedWindow;
 
-    std::map< BaseWindow*, struct RenderTargetTextures > m_WindowToTextureMap;
+    std::map< BaseWindow*, struct RenderTargetTextures > _window_to_texture_map;
 
     ObjectWeakPtr<BaseWindow> m_ModalWindow;
     Point m_MouseLastPos;

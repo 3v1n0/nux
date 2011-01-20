@@ -36,9 +36,6 @@
 
 namespace nux
 {
-
-  unsigned int gVirtualKeycodeState[NUX_MAX_VK];
-
   // Compute the frame rate every FRAME_RATE_PERIODE;
   #define FRAME_RATE_PERIODE    10
 
@@ -1469,13 +1466,11 @@ namespace nux
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym (m_X11Display, keycode, 0);
-        unsigned int inlKeysym = GraphicsDisplay::X11KeySymToINL (keysym);
-        m_pEvent->VirtualKeycodeState[inlKeysym] = 1;
 
         m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
-
         m_pEvent->e_key_repeat_count = 0;
-        m_pEvent->e_keysym = inlKeysym;
+        m_pEvent->e_keysym = keysym;
+        m_pEvent->e_x11_keycode = xevent.xkey.keycode;
         m_pEvent->e_event = NUX_KEYDOWN;
 
         char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
@@ -1496,13 +1491,11 @@ namespace nux
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym (m_X11Display, keycode, 0);
-        unsigned int inlKeysym = GraphicsDisplay::X11KeySymToINL (keysym);
-        m_pEvent->VirtualKeycodeState[inlKeysym] = 0;
 
         m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
-
         m_pEvent->e_key_repeat_count = 0;
-        m_pEvent->e_keysym = inlKeysym;
+        m_pEvent->e_keysym = keysym;
+        m_pEvent->e_x11_keycode = xevent.xkey.keycode;
         m_pEvent->e_event = NUX_KEYUP;
         break;
       }

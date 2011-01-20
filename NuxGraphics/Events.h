@@ -198,10 +198,11 @@ namespace nux
     
   #define NUX_EVENT_TEXT_BUFFER_SIZE 16
 
-  class IEvent
+  //! Nux event class.
+  class Event
   {
   public:
-    IEvent();
+    Event ();
 
     // Because an event is save in e_event instead of calling immediately the handling function,
     // we must clear the previous event each time before we test for new event in Gfx_OpenGLImpl::get_event.
@@ -262,7 +263,8 @@ namespace nux
     int e_clicks;
     int e_is_click;
 
-    int e_keysym;
+    int e_x11_keycode;  //!< X11 raw keycode.
+    int e_keysym;       //!< Key symbol.
     int e_wheeldelta;
 
     TCHAR           e_text [NUX_EVENT_TEXT_BUFFER_SIZE];
@@ -273,6 +275,7 @@ namespace nux
     unsigned long   e_event;
   };
 
+  typedef Event IEvent;
 }
 
 #endif // EVENTS_H

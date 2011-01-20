@@ -39,7 +39,8 @@ host_triplet = @host@
 @BUILD_GPUTESTS_TRUE@	framebufferobject$(EXEEXT) \
 @BUILD_GPUTESTS_TRUE@	quad_2texmod$(EXEEXT) \
 @BUILD_GPUTESTS_TRUE@	texture_copy_blur$(EXEEXT) \
-@BUILD_GPUTESTS_TRUE@	texture_blur$(EXEEXT)
+@BUILD_GPUTESTS_TRUE@	texture_blur$(EXEEXT) \
+@BUILD_GPUTESTS_TRUE@	texture_data$(EXEEXT)
 subdir = gputests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -87,6 +88,11 @@ am__texture_copy_blur_SOURCES_DIST = texture_copy_blur.cpp
 texture_copy_blur_OBJECTS = $(am_texture_copy_blur_OBJECTS)
 @BUILD_GPUTESTS_TRUE@texture_copy_blur_DEPENDENCIES =  \
 @BUILD_GPUTESTS_TRUE@	$(am__DEPENDENCIES_2)
+am__texture_data_SOURCES_DIST = texture_data.cpp
+@BUILD_GPUTESTS_TRUE@am_texture_data_OBJECTS = texture_data.$(OBJEXT)
+texture_data_OBJECTS = $(am_texture_data_OBJECTS)
+@BUILD_GPUTESTS_TRUE@texture_data_DEPENDENCIES =  \
+@BUILD_GPUTESTS_TRUE@	$(am__DEPENDENCIES_2)
 am__texture_power_of_2_SOURCES_DIST = texture_power_of_2.cpp
 @BUILD_GPUTESTS_TRUE@am_texture_power_of_2_OBJECTS =  \
 @BUILD_GPUTESTS_TRUE@	texture_power_of_2.$(OBJEXT)
@@ -121,11 +127,12 @@ am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(framebufferobject_SOURCES) $(quad_2texmod_SOURCES) \
 	$(texture_blur_SOURCES) $(texture_copy_blur_SOURCES) \
-	$(texture_power_of_2_SOURCES)
+	$(texture_data_SOURCES) $(texture_power_of_2_SOURCES)
 DIST_SOURCES = $(am__framebufferobject_SOURCES_DIST) \
 	$(am__quad_2texmod_SOURCES_DIST) \
 	$(am__texture_blur_SOURCES_DIST) \
 	$(am__texture_copy_blur_SOURCES_DIST) \
+	$(am__texture_data_SOURCES_DIST) \
 	$(am__texture_power_of_2_SOURCES_DIST)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -361,6 +368,8 @@ EXTRA_DIST =
 @BUILD_GPUTESTS_TRUE@texture_copy_blur_LDADD = $(ALL_LIBS)
 @BUILD_GPUTESTS_TRUE@texture_blur_SOURCES = texture_blur.cpp
 @BUILD_GPUTESTS_TRUE@texture_blur_LDADD = $(ALL_LIBS)
+@BUILD_GPUTESTS_TRUE@texture_data_SOURCES = texture_data.cpp
+@BUILD_GPUTESTS_TRUE@texture_data_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
 @BUILD_GPUTESTS_TRUE@sourcegputestsdir = "$(pkgdatadir)/gputests"
@@ -368,7 +377,8 @@ EXTRA_DIST =
 @BUILD_GPUTESTS_TRUE@                      $(framebufferobject_SOURCES) \
 @BUILD_GPUTESTS_TRUE@                      $(quad_2texmod) \
 @BUILD_GPUTESTS_TRUE@                      $(texture_copy_blur_SOURCES) \
-@BUILD_GPUTESTS_TRUE@                      $(texture_blur_SOURCES)
+@BUILD_GPUTESTS_TRUE@                      $(texture_blur_SOURCES) \
+@BUILD_GPUTESTS_TRUE@                      $(texture_data_SOURCES)
 
 all: all-am
 
@@ -425,6 +435,9 @@ texture_blur$(EXEEXT): $(texture_blur_OBJECTS) $(texture_blur_DEPENDENCIES)
 texture_copy_blur$(EXEEXT): $(texture_copy_blur_OBJECTS) $(texture_copy_blur_DEPENDENCIES) 
 	@rm -f texture_copy_blur$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(texture_copy_blur_OBJECTS) $(texture_copy_blur_LDADD) $(LIBS)
+texture_data$(EXEEXT): $(texture_data_OBJECTS) $(texture_data_DEPENDENCIES) 
+	@rm -f texture_data$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(texture_data_OBJECTS) $(texture_data_LDADD) $(LIBS)
 texture_power_of_2$(EXEEXT): $(texture_power_of_2_OBJECTS) $(texture_power_of_2_DEPENDENCIES) 
 	@rm -f texture_power_of_2$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(texture_power_of_2_OBJECTS) $(texture_power_of_2_LDADD) $(LIBS)
@@ -439,6 +452,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quad_2texmod.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/texture_blur.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/texture_copy_blur.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/texture_data.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/texture_power_of_2.Po@am__quote@
 
 .cpp.o:

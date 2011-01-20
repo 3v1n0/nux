@@ -26,7 +26,6 @@
 #include "ClientArea.h"
 #include "WindowCompositor.h"
 #include "TimerProc.h"
-#include "WindowCompositor.h"
 #include "SystemThread.h"
 #include "FloatingWindow.h"
 
@@ -320,7 +319,7 @@ namespace nux
     TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
 
     dd->window_thread->_inside_timer_loop = true;
-    repeat = GetTimer().ExecTimerHandler(dd->id);
+    repeat = GetTimer().ExecTimerHandler(dd->id)? true : false;
     dd->window_thread->_inside_timer_loop = false;
 
     if(dd->window_thread->IsEmbeddedWindow())
@@ -389,12 +388,13 @@ namespace nux
     ,   m_force_redraw (false)
   {
     // Thread specific objects
-    m_GLWindow      = 0;
+    _graphics_display      = 0;
     m_window_compositor  = 0;
     m_Painter       = 0;
     m_TimerHandler  = 0;
     m_Theme         = 0;
-    m_AppLayout     = 0;
+    _main_layout     = 0;
+    _queue_main_layout = false;
     // Protection for ThreadCtor and ThreadDtor;
     m_ThreadCtorCalled = false;
     m_ThreadDtorCalled = false;
@@ -404,7 +404,7 @@ namespace nux
     m_ModalWindowThread     = 0;
     m_bIsModal              = Modal;
 
-    m_IsComputingMainLayout = 0;
+    _inside_layout_cycle = 0;
     m_RedrawRequested       = false;
     m_bFirstDrawPass        = true;
 
@@ -525,45 +525,6 @@ namespace nux
     _processing_fake_event = true;
   }
   
-  void WindowThread::SetLayout (Layout *layout)
-  {
-    m_AppLayout = layout;
-
-    if (m_AppLayout)
-    {
-      int w = m_GLWindow->GetGraphicsEngine()->GetContextWidth();
-      int h = m_GLWindow->GetGraphicsEngine()->GetContextHeight();
-
-      m_AppLayout->Reference();
-      m_AppLayout->SetStretchFactor (1);
-
-      SetComputingLayout (true);
-      m_AppLayout->SetGeometry (0, 0, w, h);
-      m_AppLayout->ComputeLayout2();
-      m_AppLayout->ComputePosition2 (0, 0);
-      SetComputingLayout (false);
-
-      EmptyLayoutRefreshList();
-    }
-  }
-
-  void WindowThread::ReconfigureLayout()
-  {
-    int w = m_GLWindow->GetGraphicsEngine()->GetWindowWidth();
-    int h = m_GLWindow->GetGraphicsEngine()->GetWindowHeight();
-
-    if (m_AppLayout)
-    {
-      SetComputingLayout (true);
-      m_AppLayout->SetGeometry (0, 0, w, h);
-      m_AppLayout->ComputeLayout2();
-      m_AppLayout->ComputePosition2 (0, 0);
-      SetComputingLayout (false);
-
-      EmptyLayoutRefreshList();
-    }
-  }
-
   long WindowThread::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     if (m_bWaitForModalWindow)
@@ -571,17 +532,17 @@ namespace nux
 
     long ret = TraverseInfo;
 
-    if (m_AppLayout)
-      ret = m_AppLayout->ProcessEvent (ievent, ret, ProcessEventInfo);
+    if (_main_layout)
+      ret = _main_layout->ProcessEvent (ievent, ret, ProcessEventInfo);
 
     return ret;
   }
 
   void WindowThread::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    if (m_AppLayout)
+    if (_main_layout)
     {
-      bool dirty = m_AppLayout->IsDrawDirty();
+      bool dirty = _main_layout->IsQueuedForDraw ();
 
       if (dirty)
       {
@@ -592,7 +553,7 @@ namespace nux
         GetPainter().PaintBackground (GfxContext, Geometry (0, 0, buffer_width, buffer_height) );
       }
 
-      m_AppLayout->ProcessDraw (GfxContext, force_draw || dirty);
+      _main_layout->ProcessDraw (GfxContext, force_draw || dirty);
     }
   }
 
@@ -611,112 +572,180 @@ namespace nux
     }
   }
   
-  // NUXTODO: rename to ComputeLayoutBeforeRendering
-  void WindowThread::AddObjectToRefreshList (Area *bo)
+  Layout* WindowThread::GetMainLayout()
   {
-    nuxAssert (bo != 0);
+    return _main_layout;
+  }
 
-    if (bo == 0)
-      return;
+  void WindowThread::SetLayout (Layout *layout)
+  {
+    _main_layout = layout;
 
-    std::list<Area *>::iterator it;
-    it = find (m_LayoutRefreshList.begin(), m_LayoutRefreshList.end(), bo);
-
-    if (it == m_LayoutRefreshList.end() )
+    if (_main_layout)
     {
-      m_LayoutRefreshList.push_back (bo);
+      int w = _graphics_display->GetGraphicsEngine()->GetContextWidth();
+      int h = _graphics_display->GetGraphicsEngine()->GetContextHeight();
+
+      _main_layout->Reference();
+      _main_layout->SetStretchFactor (1);
+
+      StartLayoutCycle ();
+      _main_layout->SetGeometry (0, 0, w, h);
+      _main_layout->ComputeLayout2();
+      _main_layout->ComputePosition2 (0, 0);
+      StopLayoutCycle ();
+
+      RemoveQueuedLayout ();
     }
   }
 
-  void WindowThread::RemoveObjectFromRefreshList (Area *bo)
+  void WindowThread::QueueMainLayout ()
   {
-    std::list<Area *>::iterator it;
-    it = find (m_LayoutRefreshList.begin(), m_LayoutRefreshList.end(), bo);
+    _queue_main_layout = true;
+  }
 
-    if (it != m_LayoutRefreshList.end() )
+  void WindowThread::ReconfigureLayout ()
+  {
+    int w = _graphics_display->GetGraphicsEngine()->GetWindowWidth();
+    int h = _graphics_display->GetGraphicsEngine()->GetWindowHeight();
+
+    if (_main_layout)
     {
-      m_LayoutRefreshList.erase (it);
+      StartLayoutCycle ();
+      _main_layout->SetGeometry (0, 0, w, h);
+      _main_layout->ComputeLayout2();
+      _main_layout->ComputePosition2 (0, 0);
+      StopLayoutCycle ();
     }
+
+    RemoveQueuedLayout ();
+    _queue_main_layout = false;
   }
 
-  void WindowThread::EmptyLayoutRefreshList()
+  bool WindowThread::QueueObjectLayout (Area *area)
   {
-    m_LayoutRefreshList.clear();
-  }
+    NUX_RETURN_VALUE_IF_NULL (area, false);
 
-  bool WindowThread::IsMainLayoutDrawDirty() const
-  {
-    if (m_AppLayout && m_AppLayout->IsDrawDirty() )
+    std::list<Area *>::iterator it;
+    it = find (_queued_layout_list.begin(), _queued_layout_list.end(), area);
+    if (it == _queued_layout_list.end() )
     {
+      _queued_layout_list.push_back (area);
+    }
+
+    return true;
+  }
+
+  void WindowThread::AddObjectToRefreshList (Area *area)
+  {
+    QueueObjectLayout (area);
+  }
+
+  bool WindowThread::RemoveObjectFromRefreshList (Area *area)
+  {
+    NUX_RETURN_VALUE_IF_NULL (area, false);
+
+    std::list<Area *>::iterator it;
+    it = find (_queued_layout_list.begin(), _queued_layout_list.end(), area);
+
+    if (it != _queued_layout_list.end() )
+    {
+      _queued_layout_list.erase (it);
       return true;
     }
-
     return false;
   }
 
-  Layout* WindowThread::GetMainLayout()
+  void WindowThread::RemoveQueuedLayout()
   {
-    return m_AppLayout;
+    _queued_layout_list.clear();
   }
 
-  void WindowThread::RefreshLayout()
+  void WindowThread::ComputeQueuedLayout ()
   {
-    SetComputingLayout (true);
+    StartLayoutCycle ();
     std::list<Area *>::iterator it;
 
-    for (it = m_LayoutRefreshList.begin(); it != m_LayoutRefreshList.end(); it++)
+    for (it = _queued_layout_list.begin(); it != _queued_layout_list.end(); it++)
     {
-      Area *bo = *it;
+      Area *area = *it;
 
-      if (bo->Type().IsDerivedFromType (View::StaticObjectType) )
+      if (area->Type().IsDerivedFromType (View::StaticObjectType) )
       {
-        View *ic  = NUX_STATIC_CAST (View *, bo);
+        View *view  = NUX_STATIC_CAST (View *, area);
 
-        if (!ic->CanBreakLayout() )
-          ic->NeedRedraw();
+        if (!view->CanBreakLayout ())
+          view->QueueDraw ();
       }
-      else if (bo->Type().IsDerivedFromType (Layout::StaticObjectType) )
+      else if (area->Type().IsDerivedFromType (Layout::StaticObjectType) )
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, bo);
-        layout->SetDrawDirty (true);
-        layout->SetDirty (true);
+        Layout *layout = NUX_STATIC_CAST (Layout *, area);
+        layout->QueueDraw ();
+      }
+      else
+      {
+        continue;
       }
 
       (*it)->ComputeLayout2();
     }
 
-    SetComputingLayout (false);
-    EmptyLayoutRefreshList();
+    StopLayoutCycle ();
+    
+    RemoveQueuedLayout ();
   }
 
-  void WindowThread::ComputeElementLayout (Area *bo, bool RecurseToTopLevelLayout)
+  void WindowThread::RefreshLayout()
   {
-    nuxAssert (bo != 0);
+    ComputeQueuedLayout ();
+  }
 
-    if (bo == 0)
-      return;
+  void WindowThread::StartLayoutCycle ()
+  {
+    _inside_layout_cycle = true;
+  }
+
+  void WindowThread::StopLayoutCycle ()
+  {
+    _inside_layout_cycle = false;
+  }
+
+
+  bool WindowThread::IsInsideLayoutCycle () const
+  {
+    return _inside_layout_cycle;
+  }
+
+  void WindowThread::ComputeElementLayout (Area *area, bool RecurseToTopLevelLayout)
+  {
+    NUX_RETURN_IF_NULL (area);
 
     bool alreadyComputingLayout = IsComputingLayout();
 
-    if ( (!alreadyComputingLayout) && (!RecurseToTopLevelLayout) )
-      SetComputingLayout (true);
-
-    if (bo->Type().IsDerivedFromType (View::StaticObjectType) )
+    if ((!alreadyComputingLayout) && (!RecurseToTopLevelLayout))
     {
-      View *ic = NUX_STATIC_CAST (View *, bo);
-      ic->NeedRedraw();
-    }
-    else if (bo->Type().IsDerivedFromType (Layout::StaticObjectType) )
-    {
-      Layout *layout = NUX_STATIC_CAST (Layout *, bo);
-      layout->SetDrawDirty (true);
-      layout->SetDirty (true);
+      // When computing the layout, setting the size of widgets may cause the system to recurse 
+      // upward an look for the up most container which size is affected by its this area.
+      // This happens in Area::InitiateResizeLayout ();
+      // The search upward is not done if we are already in a layout cycle.
+      StartLayoutCycle ();
     }
 
-    bo->ComputeLayout2();
+    if (area->Type().IsDerivedFromType (View::StaticObjectType))
+    {
+      View *ic = NUX_STATIC_CAST (View *, area);
+      ic->QueueDraw ();
+    }
+    else if (area->Type().IsDerivedFromType (Layout::StaticObjectType))
+    {
+      Layout *layout = NUX_STATIC_CAST (Layout *, area);
+      layout->QueueDraw ();
+    }
+
+    area->ComputeLayout2();
 
     if (!alreadyComputingLayout)
-      SetComputingLayout (false);
+      StopLayoutCycle ();
   }
 
   void WindowThread::AddTimeline (Timeline *timeline)
@@ -752,17 +781,17 @@ namespace nux
   {
     if (IsEmbeddedWindow ())
     {
-      m_window_compositor->FormatRenderTargets (m_GLWindow->GetWindowWidth(), m_GLWindow->GetWindowHeight() );
+      m_window_compositor->FormatRenderTargets (_graphics_display->GetWindowWidth(), _graphics_display->GetWindowHeight() );
       InitGlibLoop ();
       return;
     }
     else
     {
-      m_GLWindow->ShowWindow();
+      _graphics_display->ShowWindow();
     }
     // Called the first time so we can initialize the size of the render targets
     // At this stage, the size of the window is known.
-    m_window_compositor->FormatRenderTargets (m_GLWindow->GetWindowWidth(), m_GLWindow->GetWindowHeight() );
+    m_window_compositor->FormatRenderTargets (_graphics_display->GetWindowWidth(), _graphics_display->GetWindowHeight() );
 
     while (GetThreadState() != THREADSTOP)
     {
@@ -840,6 +869,9 @@ namespace nux
       memset(&event, 0, sizeof(IEvent));
       GetWindow().GetSystemEvent(&event);
       
+      // Call event inspectors.
+      CallEventInspectors (&event);
+
 #if defined(NUX_OS_LINUX)
       // Automation and fake event inputs
       if (_fake_event_mode && _processing_fake_event)
@@ -868,13 +900,13 @@ namespace nux
       }
 #endif
 
-      if(event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
+      if((event.e_event ==	NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
       {
           KeepRunning = false;
           return 0; //break;
       }
       
-      if (IsEmbeddedWindow () && event.e_event ==	NUX_SIZE_CONFIGURATION)
+      if (IsEmbeddedWindow () && (event.e_event == NUX_SIZE_CONFIGURATION))
         m_size_configuration_event = true;
 
       int w, h;
@@ -882,7 +914,7 @@ namespace nux
       // Otherwise, w and h may not be correct for the current frame if a resizing happened.
       GetWindow().GetWindowSize(w, h);
 
-      if(event.e_event == NUX_MOUSE_PRESSED ||
+      if((event.e_event == NUX_MOUSE_PRESSED) ||
           (event.e_event == NUX_MOUSE_RELEASED) ||
           (event.e_event == NUX_MOUSE_MOVE) ||
           (event.e_event == NUX_SIZE_CONFIGURATION) ||
@@ -913,7 +945,7 @@ namespace nux
           if(!GetWindow().isWindowMinimized())
           {
               GetWindow().SetViewPort(0, 0, event.width, event.height);
-              ReconfigureLayout();
+              ReconfigureLayout ();
               m_window_compositor->FormatRenderTargets(event.width, event.height);
           }
           m_window_compositor->FloatingAreaConfigureNotify(event.width, event.height);
@@ -924,8 +956,15 @@ namespace nux
       // Process them here before the Draw section.
       if(!GetWindow().isWindowMinimized())
       {
-          // Process the layouts that requested a recompute.
-          RefreshLayout();
+        if (_queue_main_layout)
+        {
+          ReconfigureLayout ();
+        }
+        else 
+        {
+          // Compute the layouts that have been queued.
+          ComputeQueuedLayout ();
+        }
       }
       
       _inside_main_loop = false;
@@ -1165,10 +1204,10 @@ namespace nux
 //                 {
 //                     static_cast<WindowThread*>(*it)->m_bWaitForModalWindow = true;
 //                     // WIN32: Disable Mouse and Keyboard inputs for all windows child of this window
-//                     ::EnableWindow(static_cast<WindowThread*>(*it)->m_GLWindow->GetWindowHandle(), FALSE);
+//                     ::EnableWindow(static_cast<WindowThread*>(*it)->_graphics_display->GetWindowHandle(), FALSE);
 //                 }
 //                 // WIN32
-//                 ::EnableWindow(m_GLWindow->GetWindowHandle(), FALSE);
+//                 ::EnableWindow(_graphics_display->GetWindowHandle(), FALSE);
 //                 m_bWaitForModalWindow = true;
         }
 
@@ -1204,13 +1243,13 @@ namespace nux
 //             static_cast<WindowThread*>(*it)->m_bWaitForModalWindow = false;
 //
 //             // WIN32
-//             ::EnableWindow(static_cast<WindowThread*>(*it)->m_GLWindow->GetWindowHandle(), TRUE);
+//             ::EnableWindow(static_cast<WindowThread*>(*it)->_graphics_display->GetWindowHandle(), TRUE);
 //         }
     }
 
     // WIN32
 #if defined(NUX_OS_WINDOWS)
-    ::EnableWindow (m_GLWindow->GetWindowHandle(), TRUE);
+    ::EnableWindow (_graphics_display->GetWindowHandle(), TRUE);
 #elif defined(NUX_OS_LINUX)
 
 #endif
@@ -1275,7 +1314,7 @@ namespace nux
 
     // WIN32: Enable Mouse and Keyboard inputs for all windows child of this window
 #if defined(NUX_OS_WINDOWS)
-    ::EnableWindow (m_GLWindow->GetWindowHandle(), TRUE);
+    ::EnableWindow (_graphics_display->GetWindowHandle(), TRUE);
 #elif defined(NUX_OS_LINUX)
 
 #endif
@@ -1296,7 +1335,7 @@ namespace nux
 
     // WIN32: Disable Mouse and Keyboard inputs for all windows child of this window
 #if defined(NUX_OS_WINDOWS)
-    ::EnableWindow (m_GLWindow->GetWindowHandle(), FALSE);
+    ::EnableWindow (_graphics_display->GetWindowHandle(), FALSE);
 #elif defined(NUX_OS_LINUX)
 
 #endif
@@ -1335,9 +1374,9 @@ namespace nux
       ParentWindow = 0;
     }
 
-    m_GLWindow = gGLWindowManager.CreateGLWindow (m_WindowTitle.GetTCharPtr(), m_StartupWidth, m_StartupHeight, m_WindowStyle, ParentWindow, false);
+    _graphics_display = gGLWindowManager.CreateGLWindow (m_WindowTitle.GetTCharPtr(), m_StartupWidth, m_StartupHeight, m_WindowStyle, ParentWindow, false);
 
-    if (m_GLWindow == 0)
+    if (_graphics_display == 0)
     {
       nuxDebugMsg (TEXT ("[WindowThread::ThreadCtor] Failed to create the window.") );
       return false;
@@ -1388,9 +1427,9 @@ namespace nux
       ParentWindow = 0;
     }
 
-    m_GLWindow = gGLWindowManager.CreateFromForeignWindow (WindowHandle, WindowDCHandle, OpenGLRenderingContext);
+    _graphics_display = gGLWindowManager.CreateFromForeignWindow (WindowHandle, WindowDCHandle, OpenGLRenderingContext);
 
-    if (m_GLWindow == 0)
+    if (_graphics_display == 0)
     {
       nuxDebugMsg (TEXT ("[WindowThread::ThreadCtor] Failed to create the window.") );
       return false;
@@ -1411,10 +1450,10 @@ namespace nux
     m_ThreadCtorCalled = true;
 
     // Set initial states
-    int w = m_GLWindow->GetWindowWidth();
-    int h = m_GLWindow->GetWindowHeight();
+    int w = _graphics_display->GetWindowWidth();
+    int h = _graphics_display->GetWindowHeight();
 
-    m_GLWindow->SetViewPort (0, 0, w, h);
+    _graphics_display->SetViewPort (0, 0, w, h);
     m_window_compositor->FormatRenderTargets (w, h);
     m_window_compositor->FloatingAreaConfigureNotify (w, h);
 
@@ -1444,9 +1483,9 @@ namespace nux
       ParentWindow = 0;
     }
 
-    m_GLWindow = gGLWindowManager.CreateFromForeignWindow (X11Display, X11Window, OpenGLContext);
+    _graphics_display = gGLWindowManager.CreateFromForeignWindow (X11Display, X11Window, OpenGLContext);
 
-    if (m_GLWindow == 0)
+    if (_graphics_display == 0)
     {
       nuxDebugMsg (TEXT ("[WindowThread::ThreadCtor] Failed to create the window.") );
       return false;
@@ -1467,10 +1506,10 @@ namespace nux
     m_ThreadCtorCalled = true;
 
     // Set initial states
-    int w = m_GLWindow->GetWindowWidth();
-    int h = m_GLWindow->GetWindowHeight();
+    int w = _graphics_display->GetWindowWidth();
+    int h = _graphics_display->GetWindowHeight();
 
-    m_GLWindow->SetViewPort (0, 0, w, h);
+    _graphics_display->SetViewPort (0, 0, w, h);
     m_window_compositor->FormatRenderTargets (w, h);
     m_window_compositor->FloatingAreaConfigureNotify (w, h);
 
@@ -1483,18 +1522,18 @@ namespace nux
     NUX_RETURN_VALUE_IF_TRUE (m_ThreadDtorCalled, true);
 
     // Cleanup
-    EmptyLayoutRefreshList();
+    RemoveQueuedLayout ();
 
-    if (m_AppLayout)
+    if (_main_layout)
     {
-      m_AppLayout->UnReference();
+      _main_layout->UnReference();
     }
 
     NUX_SAFE_DELETE (m_window_compositor);
     NUX_SAFE_DELETE (m_TimerHandler);
     NUX_SAFE_DELETE (m_Painter);
     NUX_SAFE_DELETE (m_Theme);
-    NUX_SAFE_DELETE (m_GLWindow);
+    NUX_SAFE_DELETE (_graphics_display);
 
 #if defined(NUX_OS_WINDOWS)
     PostThreadMessage (NUX_GLOBAL_OBJECT_INSTANCE (NProcess).GetMainThreadID(),
@@ -1515,8 +1554,8 @@ namespace nux
 
   void WindowThread::SetWindowSize (int width, int height)
   {
-    if (m_GLWindow)
-      m_GLWindow->SetWindowSize (width, height);
+    if (_graphics_display)
+      _graphics_display->SetWindowSize (width, height);
   }
 
   void WindowThread::SetWindowBackgroundPaintLayer (AbstractPaintLayer *bkg)
@@ -1566,14 +1605,14 @@ namespace nux
       geo.x += pgeo.x;
       geo.y += pgeo.y;
 
-      if (parent->Type().IsObjectType (BaseWindow::StaticObjectType))
+      if (parent->Type().IsDerivedFromType (BaseWindow::StaticObjectType))
       {
         BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, parent);
         window->_child_need_redraw = true;
       }
     }
 
-    if (view->Type().IsObjectType (BaseWindow::StaticObjectType))
+    if (view->Type().IsDerivedFromType (BaseWindow::StaticObjectType))
     {
       // If the view is a BaseWindow, allow it to mark itself for redraw, as if it was its own  child.
       BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, view);
@@ -1627,9 +1666,9 @@ namespace nux
     IEvent nux_event;
     memset (&nux_event, 0, sizeof (IEvent) );
 #if defined(NUX_OS_WINDOWS)
-    m_GLWindow->ProcessForeignWin32Event (hWnd, msg, wParam, lParam, &nux_event);
+    _graphics_display->ProcessForeignWin32Event (hWnd, msg, wParam, lParam, &nux_event);
 #elif defined(NUX_OS_LINUX)
-    m_GLWindow->ProcessForeignX11Event (xevent, &nux_event);
+    _graphics_display->ProcessForeignX11Event (xevent, &nux_event);
 #endif
 
     if (nux_event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP) )
@@ -1676,7 +1715,7 @@ namespace nux
         if(!GetWindow().isWindowMinimized())
         {
             GetWindow().SetViewPort(0, 0, nux_event.width, nux_event.height);
-            ReconfigureLayout();
+            ReconfigureLayout ();
             m_window_compositor->FormatRenderTargets(nux_event.width, nux_event.height);
         }
         m_window_compositor->FloatingAreaConfigureNotify(nux_event.width, nux_event.height);
@@ -1687,8 +1726,15 @@ namespace nux
     // Process them here before the Draw section.
     if (!GetWindow().isWindowMinimized() )
     {
-      // Process the layouts that requested a recompute.
-      RefreshLayout();
+      if (_queue_main_layout)
+      {
+        ReconfigureLayout ();
+      }
+      else 
+      {
+        // Compute the layouts that have been queued.
+        ComputeQueuedLayout ();
+      }
     }
 
     bool RequestRequired = false;
@@ -1801,5 +1847,92 @@ namespace nux
 
   }
 
+  int WindowThread::InstallEventInspector (EventInspector* function, void* data)
+  {
+    NUX_RETURN_VALUE_IF_NULL (function, 0);
+
+    std::map < int, EventInspectorStorage >::iterator it;
+
+    for (it = _event_inspectors_map.begin (); it != _event_inspectors_map.end (); it++)
+    {
+      if ((*it).second._function == function)
+      {
+        // The inspector has already been added. Return its unique id
+        return (*it).second._uid;
+      }
+    }
+
+    // This is a new Event Inspector
+    EventInspectorStorage new_inspector;
+    new_inspector._function = function;
+    new_inspector._data = data;
+    new_inspector._uid = NUX_GLOBAL_OBJECT_INSTANCE (UniqueIndex).GetUniqueIndex ();
+
+    _event_inspectors_map [new_inspector._uid] = new_inspector;
+    return new_inspector._uid;
+  }
+
+  bool WindowThread::RemoveEventInspector (int event_inspector_id)
+  {
+    NUX_RETURN_VALUE_IF_NULL (event_inspector_id, false);
+
+    std::map < int, EventInspectorStorage >::iterator it;
+
+    for (it = _event_inspectors_map.begin (); it != _event_inspectors_map.end (); it++)
+    {
+      if ((*it).second._uid == event_inspector_id)
+      {
+        _event_inspectors_map.erase (it);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool WindowThread::RemoveEventInspector (EventInspector* function)
+  {
+    NUX_RETURN_VALUE_IF_NULL (function, false);
+
+    std::map < int, EventInspectorStorage >::iterator it;
+
+    for (it = _event_inspectors_map.begin (); it != _event_inspectors_map.end (); it++)
+    {
+      if ((*it).second._function == function)
+      {
+        _event_inspectors_map.erase (it);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool WindowThread::CallEventInspectors (Event* event)
+  {
+    int n = _event_inspectors_map.size();
+    if (n == 0)
+    {
+      // No event inspector installed.
+      return false;
+    }
+
+    bool discard_event = false;
+    std::map < int, EventInspectorStorage >::iterator it;
+
+    for (it = _event_inspectors_map.begin (); it != _event_inspectors_map.end (); it++)
+    {
+      EventInspector *callback = (*it).second._function;
+
+      if (callback == 0)
+        continue;
+
+      int ret = (*callback) (0, event, (*it).second._data);
+      if (ret)
+      {
+        discard_event = true;
+      }
+    }
+
+    return discard_event;
+  }
 }
 

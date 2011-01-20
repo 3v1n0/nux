@@ -141,4 +141,22 @@ namespace nux
     return OGL_OK;
   }
 
+  void* IOpenGLRectangleTexture::GetSurfaceData (int level, int &width, int &height, int &format)
+  {
+    nuxAssertMsg (level >= 0, TEXT ("[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg (level < _NumMipLevel, TEXT ("[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.") );
+
+    if (level < _NumMipLevel)
+    {
+      ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray [level];
+      return pSurfaceLevel->GetSurfaceData (width, height, format);
+    }
+    else
+    {
+      width = 0;
+      height = 0;
+      format = BITFMT_UNKNOWN;
+      return 0;
+    }
+  }
 }

@@ -48,8 +48,15 @@ namespace nux
 
   FolderTreeItem::~FolderTreeItem()
   {
-    NUX_SAFE_DELETE (FolderOpenIcon);
-    NUX_SAFE_DELETE (FolderClosedIcon);
+    if (FolderOpenIcon->OwnsTheReference())
+      FolderOpenIcon->UnReference ();
+    else
+      FolderOpenIcon->Dispose ();
+
+    if (FolderClosedIcon->OwnsTheReference())
+      FolderClosedIcon->UnReference ();
+    else
+      FolderClosedIcon->Dispose ();
   }
 
   void FolderTreeItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter, RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor)
