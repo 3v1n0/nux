@@ -398,8 +398,8 @@ namespace nux
       {
         // Reset the preemptive hidden/visible status of all base windows.
         ObjectWeakPtr<BaseWindow> window = (*it); //NUX_STATIC_CAST (BaseWindow *, (*it));
-        window->_entering_visible_status = false;
-        window->_entering_hidden_status = false;
+        window->_entering_visible_state = false;
+        window->_entering_hidden_state = false;
       }
 
       if (m_ModalWindowList.size () > 0)
@@ -420,7 +420,7 @@ namespace nux
 
         for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
         {
-          if ((*it)->IsVisible () && ((*it)->_entering_visible_status == false))
+          if ((*it)->IsVisible () && ((*it)->_entering_visible_state == false))
           {
             // Traverse the window from the top of the visibility stack to the bottom.
             if ((*it).GetPointer ())
@@ -450,6 +450,28 @@ namespace nux
       }
 
       SetCurrentEvent (0);
+    }
+
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
+    for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
+    {
+      ObjectWeakPtr<BaseWindow> window = (*it); //NUX_STATIC_CAST (BaseWindow *, (*it));
+
+      // The view window cannot have both _entering_visible_state and _entering_hidden_state being true at the same time
+      nuxAssert (!(window->_entering_visible_state && window->_entering_hidden_state));
+
+      if (window->_entering_visible_state)
+      {
+        sigVisibleViewWindow.emit (window.GetPointer ());
+      }
+
+      if (window->_entering_hidden_state)
+      {
+        sigHiddenViewWindow.emit (window.GetPointer ());
+      }
+
+      window->_entering_visible_state = false;
+      window->_entering_hidden_state = false;
     }
 
     // Event processing cycle has ended.

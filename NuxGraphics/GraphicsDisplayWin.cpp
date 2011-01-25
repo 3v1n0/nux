@@ -927,12 +927,20 @@ namespace nux
         if (m_pEvent->e_is_click)
         {
           m_pEvent->e_clicks++;
-          goto J1;
+          // The SetCapture function sets the mouse capture to the specified window belonging to
+          // the current thread. SetCapture captures mouse input either when the mouse is over the
+          // capturing window, or when the mouse button was pressed while the mouse was over the
+          // capturing window and the button is still down. Only one window at a time can capture the mouse.
+          SetCapture (window);
+          m_pEvent->e_is_click = 1;
+          px = pmx = m_pEvent->e_x;
+          py = pmy = m_pEvent->e_y;
+          m_pEvent->e_event = NUX_MOUSE_DOUBLECLICK;
+          return 1;
         }
 
       case 0: // single-click
         m_pEvent->e_clicks = 0;
-J1:
         // The SetCapture function sets the mouse capture to the specified window belonging to
         // the current thread. SetCapture captures mouse input either when the mouse is over the
         // capturing window, or when the mouse button was pressed while the mouse was over the
