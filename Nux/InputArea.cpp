@@ -203,7 +203,7 @@ namespace nux
           OnEndFocus.emit();
         }
 
-        if (m_CaptureMouseDownAnyWhereElse)
+        if (m_CaptureMouseDownAnyWhereElse && (!GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root)))
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse down outside of area. Emit OnMouseDownOutsideArea."));
           OnMouseDownOutsideArea.emit (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root, ievent.GetMouseState(), ievent.GetKeyState() );
@@ -535,6 +535,16 @@ namespace nux
   {
     m_EventHandler.m_mouse_positionx = x;
     m_EventHandler.m_mouse_positiony = y;
+  }
+  
+  void InputArea::EnableEventDebugTrace (bool enable)
+  {
+    _print_event_debug_trace = enable;
+  }
+  
+  bool InputArea::GetEventDebugTrace () const
+  {
+    return _print_event_debug_trace;
   }
 
 }

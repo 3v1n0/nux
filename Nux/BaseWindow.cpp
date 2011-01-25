@@ -131,20 +131,8 @@ namespace nux
     base.SetY (0);
     GfxContext.PushClippingRectangle (base);
 
-    if (UseBlurredBackground() )
-    {
-//       TexCoordXForm texxform;
-//       texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
-//       texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
-//       texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-// 
-//       GetPainter().PushDrawTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
-    }
-    else
-    {
-      //nuxDebugMsg(TEXT("[BaseWindow::Draw]"));
-      GetPainter().PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
-    }
+    GetPainter().PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
+
 
     GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
@@ -158,22 +146,8 @@ namespace nux
     base.SetX (0);
     base.SetY (0);
 
-    if (UseBlurredBackground() )
-    {
-//       TexCoordXForm texxform;
-//       texxform.uoffset = (float) x / (float) GetWindowCompositor().GetScreenBlurTexture()->GetWidth();
-//       texxform.voffset = (float) y / (float) GetWindowCompositor().GetScreenBlurTexture()->GetHeight();
-//       texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-// 
-//       GetPainter().PushTextureLayer (GfxContext, base, GetWindowCompositor().GetScreenBlurTexture(), texxform, Color::White, true);
-    }
-    else
-    {
-      //nuxDebugMsg(TEXT("[BaseWindow::DrawContent]"));
-      GetPainter().PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
-      //GfxContext.QRP_Color(base.x, base.y, base.width, base.height, Color(1.0f, 0.0f, 0.0f, 1.0f));
-      //GfxContext.QRP_Color(base.x, base.y, base.width, base.height, Color(1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 1.0f / (float) (std::rand () % 100), 0.5f));
-    }
+
+    GetPainter().PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
 
     if (m_layout)
     {

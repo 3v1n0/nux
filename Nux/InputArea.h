@@ -84,6 +84,23 @@ namespace nux
     void CaptureMouseDownAnyWhereElse (bool b);
     bool IsCaptureMouseDownAnyWhereElse() const;
 
+    /*!
+        In debug mode, print the processing steps of events for this widget.
+        On linux, this works only if nux has been compiled with --enable-debug
+        \sa _print_event_debug_trace
+        
+        @param enable If True, print the event processing deug info to the console.
+    */
+    void EnableEventDebugTrace (bool enable);
+
+    /*!
+        Return True if event processing debuigh information as been activated for this widget.
+        \sa _print_event_debug_trace
+        
+        @return True, if event processing debug information for this widget has been activated.
+    */    
+    bool GetEventDebugTrace () const;
+    
   private:
     //bool m_EnableKeyboardInput;
   public:
