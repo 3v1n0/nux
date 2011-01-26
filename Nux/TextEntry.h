@@ -118,6 +118,13 @@ namespace nux
 
     void FocusInx ();
     void FocusOutx ();
+
+    //! Text changed signal
+    /*!
+        This signal is emitted when the text has changed.
+    */
+    sigc::signal <void, TextEntry*> sigTextChanged;
+
 //     void SetWidth(int width);
 //     int GetWidth();
 //     void SetHeight(int height);
