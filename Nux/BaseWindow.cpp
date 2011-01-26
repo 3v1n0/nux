@@ -49,9 +49,9 @@ namespace nux
     _child_need_redraw = true;
     m_TopBorder = 0;
     m_Border = 0;
-    m_bSizeMatchLayout = false;
-    m_bIsVisible = false;
-    m_bIsModal = false;
+    _size_match_layout = false;
+    _is_visible = false;
+    _is_modal = false;
 #if defined(NUX_OS_LINUX)
     m_input_window_enabled = false;
     m_input_window = 0;
@@ -60,8 +60,8 @@ namespace nux
     m_configure_notify_callback = NULL;
     m_configure_notify_callback_data = NULL;
     m_background_color = Color (0xFF707070);
-    _entering_visible_status = false;
-    _entering_hidden_status = false;
+    _entering_visible_state = false;
+    _entering_hidden_state = false;
 
     // Should be at the end of the constructor
     GetWindowCompositor().RegisterWindow (this);
@@ -377,7 +377,6 @@ namespace nux
     // Define the geometry of some of the component of the window. Otherwise, if the composition layout is not set,
     // then the component won't be correctly placed after a SetGeometry. This can be redondant if the composition layout is set.
     Geometry base = GetGeometry();
-    //GetWindowThread ()->ComputeElementLayout(m_TitleBarLayout);
   }
 
   void BaseWindow::SetBorder (int border)
@@ -408,7 +407,7 @@ namespace nux
 
   void BaseWindow::ShowWindow (bool visible, bool StartModal /*  = false */)
   {
-    if (visible == m_bIsVisible)
+    if (visible == _is_visible)
       return;
 
     if (m_layout)
@@ -416,23 +415,23 @@ namespace nux
       m_layout->SetGeometry (GetGeometry() );
     }
 
-    m_bIsVisible = visible;
-    m_bIsModal = StartModal;
+    _is_visible = visible;
+    _is_modal = StartModal;
 
-    if (m_bIsVisible)
+    if (_is_visible)
     {
-      _entering_visible_status = true;
+      _entering_visible_state = true;
       sigVisible.emit (this);
     }
     else
     {
-      _entering_hidden_status = true;
+      _entering_hidden_state = true;
       sigHidden.emit (this);
     }
     
     ComputeChildLayout();
 
-    if (m_bIsModal)
+    if (_is_modal)
       GetWindowCompositor().StartModalWindow (ObjectWeakPtr<BaseWindow> (this));
 
     // Whether this view is added or removed, call NeedRedraw. in the case where this view is removed, this is a signal 
@@ -442,20 +441,20 @@ namespace nux
 
   bool BaseWindow::IsVisible() const
   {
-    return m_bIsVisible;
+    return _is_visible;
   }
 
   void BaseWindow::StopModal()
   {
-    m_bIsVisible = false;
-    m_bIsModal = false;
+    _is_visible = false;
+    _is_modal = false;
     //ShowWindow(false);
     GetWindowCompositor().StopModalWindow (ObjectWeakPtr<BaseWindow> (this));
   }
 
   bool BaseWindow::IsModal() const
   {
-    return m_bIsModal;
+    return _is_modal;
   }
 
   void BaseWindow::NotifyConfigurationChange (int Width, int Height)

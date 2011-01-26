@@ -27,8 +27,11 @@
 #include "BitmapFormats.h"
 #include "ImageSurface.h"
 
+#include <stack>
+
 namespace nux
 {
+
 
 //! A cairo graphics container
   /*!
@@ -42,6 +45,7 @@ namespace nux
 
     //! Return a cairo context to the encapsulated surface.
     /*!
+        Return the cairo context of this object. Call cairo_destroy to destroy the context when you are done with it.
         @return A cairo context.
     */
     cairo_t *GetContext();
@@ -54,13 +58,80 @@ namespace nux
     */
     NBitmapData *GetBitmap();
 
+    int GetWidth () const;
+    int GetHeight () const;
+
+    bool PushState ();
+    bool PopState ();
+
+    bool ClearCanvas();
+
+    bool ClearRect(double x, double y, double w, double h);
+
+    bool DrawLine(double x0, double y0, double x1, double y1, double width, const Color &c);
+
+    bool DrawFilledRect(double x, double y, double w, double h, const Color &c);
+
+    bool DrawCanvas(double x, double y, CairoGraphics *cg);
+
+    bool IntersectRectClipRegion(double x, double y, double w, double h);
+
+    bool IntersectGeneralClipRegion(std::list<Rect> &region);
+
+  /**
+   * Enum used to specify horizontal alignment.
+   */
+  enum Alignment {
+    ALIGN_LEFT,
+    ALIGN_CENTER,
+    ALIGN_RIGHT,
+    ALIGN_JUSTIFY
+  };
+
+  /**
+   * Enum used to specify vertical alignment.
+   */
+  enum VAlignment {
+    VALIGN_TOP,
+    VALIGN_MIDDLE,
+    VALIGN_BOTTOM
+  };
+
+  /**
+   * Enum used to specify trimming type.
+   */
+  enum Trimming {
+    TRIMMING_NONE,
+    TRIMMING_CHARACTER,
+    TRIMMING_WORD,
+    TRIMMING_CHARACTER_ELLIPSIS,
+    TRIMMING_WORD_ELLIPSIS,
+    TRIMMING_PATH_ELLIPSIS
+  };
+
+  /**
+   * Enum used to specify text flags.
+   */
+  enum TextFlag {
+    TEXT_FLAGS_NONE = 0,
+    TEXT_FLAGS_UNDERLINE = 1,
+    TEXT_FLAGS_STRIKEOUT = 2,
+    TEXT_FLAGS_WORDWRAP = 4
+  };
+
   private:
     //! Cairo surface format
     cairo_format_t m_surface_format;
     //! Cairo surface
-    cairo_surface_t *m_cairo_surface;
-    int m_width; //!< Surface width.
-    int m_height; //!< Surface height.
+    cairo_surface_t *_cairo_surface;
+
+    cairo_t * _cr;
+    int _width; //!< Surface width.
+    int _height; //!< Surface height.
+
+    double _zoom;
+    float _opacity;
+    std::stack<float> _opacity_stack;
   };
 
 }
