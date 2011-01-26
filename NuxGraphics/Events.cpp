@@ -169,9 +169,9 @@ namespace nux
     return e_key_repeat_count;
   }
 
-  TCHAR Event::GetChar() const
+  const TCHAR* Event::GetText() const
   {
-    return e_text[0];
+    return e_text;
   }
 
 

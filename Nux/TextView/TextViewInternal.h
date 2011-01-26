@@ -127,7 +127,7 @@ namespace nux
       t_u32    eventType  , /*event type*/
       t_u32    keysym     , /*event keysym*/
       t_u32    state      , /*event state*/
-      TCHAR    character  , /*character*/
+      const TCHAR*   character  , /*character*/
       unsigned short   keyCount     /*key repeat count*/
     );
 

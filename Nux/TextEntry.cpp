@@ -196,7 +196,7 @@ namespace nux
     return ret;
   }
 
-  void TextEntry::MouseEventCommon (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::ProcessMouseEvent (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     if (GetEventButton (button_flags) != 1)
       return;
@@ -248,24 +248,165 @@ namespace nux
     //return EVENT_RESULT_HANDLED;
   }
 
+  void TextEntry::ProcessKeyEvent (
+    unsigned long    event_type  ,   /*event type*/
+    unsigned long    keysym     ,   /*event keysym*/
+    unsigned long    state      ,   /*event state*/
+    const TCHAR*     character  ,   /*character*/
+    unsigned short   keyCount       /*key repeat count*/)
+  {
+//     GdkEventKey *gdk_event = static_cast<GdkEventKey *>(event.GetOriginalEvent());
+//     ASSERT(gdk_event);
+// 
+//     Event::Type type = event.GetType();
+    // Cause the cursor to stop blinking for a while.
+    cursor_blink_status_ = 4;
+
+//     if (!readonly_ /*&& im_context_*/ && type != Event::EVENT_KEY_PRESS && 0/*&& gtk_im_context_filter_keypress(im_context_, gdk_event)*/)
+//     {
+//         need_im_reset_ = true;
+//         QueueRefresh(false, true);
+//         return EVENT_RESULT_HANDLED;
+//     }
+
+    if (event_type == NUX_KEYUP)
+      return;
+
+    if (character != 0 && (strlen (character) != 0))
+    {
+      EnterText(character);
+      QueueTextDraw();
+      return;
+    }
+
+    unsigned int keyval = keysym;
+    bool shift = (state & NUX_STATE_SHIFT);
+    bool ctrl = (state & NUX_STATE_CTRL);
+
+    // DLOG("TextEntry::OnKeyEvent(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
+
+    if (event_type == NUX_KEYDOWN)
+    {
+      if (keyval == NUX_VK_LEFT)
+      {
+        if (!ctrl)
+          MoveCursor(VISUALLY, -1, shift);
+        else
+          MoveCursor(WORDS, -1, shift);
+      }
+      else if (keyval == NUX_VK_RIGHT)
+      {
+        if (!ctrl)
+          MoveCursor(VISUALLY, 1, shift);
+        else
+          MoveCursor(WORDS, 1, shift);
+      }
+      else if (keyval == NUX_VK_UP)
+      {
+        MoveCursor(DISPLAY_LINES, -1, shift);
+      }
+      else if (keyval == NUX_VK_DOWN)
+      {
+        MoveCursor(DISPLAY_LINES, 1, shift);
+      }
+      else if (keyval == NUX_VK_HOME)
+      {
+        if (!ctrl)
+          MoveCursor(DISPLAY_LINE_ENDS, -1, shift);
+        else
+          MoveCursor(BUFFER, -1, shift);
+      }
+      else if (keyval == NUX_VK_END)
+      {
+        if (!ctrl)
+          MoveCursor(DISPLAY_LINE_ENDS, 1, shift);
+        else
+          MoveCursor(BUFFER, 1, shift);
+      }
+      else if (keyval == NUX_VK_PAGE_UP)
+      {
+        if (!ctrl)
+          MoveCursor(PAGES, -1, shift);
+        else
+          MoveCursor(BUFFER, -1, shift);
+      }
+      else if (keyval == NUX_VK_PAGE_DOWN)
+      {
+        if (!ctrl)
+          MoveCursor(PAGES, 1, shift);
+        else
+          MoveCursor(BUFFER, 1, shift);
+      }
+//       else if ((keyval == GDK_x && ctrl && !shift) ||
+//         (keyval == GDK_Delete && shift && !ctrl))
+//       {
+//           CutClipboard();
+//       }
+//       else if ((keyval == GDK_c && ctrl && !shift) ||
+//         (keyval == GDK_Insert && ctrl && !shift))
+//       {
+//           CopyClipboard();
+//       }
+//       else if ((keyval == GDK_v && ctrl && !shift) ||
+//         (keyval == GDK_Insert && shift && !ctrl))
+//       {
+//           PasteClipboard();
+//       }
+      else if (keyval == NUX_VK_BACKSPACE)
+      {
+        BackSpace();
+      }
+      else if (keyval == NUX_VK_DELETE && !shift)
+      {
+        Delete();
+      }
+      else if (keyval == NUX_VK_INSERT && !shift && !ctrl)
+      {
+        ToggleOverwrite();
+      }
+//       else
+//       {
+//         return EVENT_RESULT_UNHANDLED;
+//       }
+    }
+    else
+    { // EVENT_KEY_PRESS
+//       if (keyval == GDK_Return || keyval == GDK_KP_Enter)
+//       {
+//         // If multiline_ is unset, just ignore new_line.
+//         if (multiline_)
+//           EnterText("\n");
+//         else
+//           return;
+//       }
+//       else
+//       {
+//         return;
+//       }
+    }
+
+    QueueRefresh(false, true);
+    return;
+  }
+
   void TextEntry::RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    MouseEventCommon(NUX_MOUSE_DOUBLECLICK, x, y, 0, 0, button_flags, key_flags);
+    ProcessMouseEvent(NUX_MOUSE_DOUBLECLICK, x, y, 0, 0, button_flags, key_flags);
   }
 
   void TextEntry::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    MouseEventCommon(NUX_MOUSE_RELEASED, x, y, 0, 0, button_flags, key_flags);
+    ProcessMouseEvent(NUX_MOUSE_RELEASED, x, y, 0, 0, button_flags, key_flags);
   }
 
   void TextEntry::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    MouseEventCommon(NUX_MOUSE_PRESSED, x, y, 0, 0, button_flags, key_flags);
+    ProcessMouseEvent(NUX_MOUSE_PRESSED, x, y, 0, 0, button_flags, key_flags);
   }
 
   void TextEntry::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    MouseEventCommon(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
+    ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
   }
 
   void TextEntry::RecvKeyEvent (
@@ -273,10 +414,10 @@ namespace nux
     unsigned long    eventType  ,   /*event type*/
     unsigned long    keysym     ,   /*event keysym*/
     unsigned long    state      ,   /*event state*/
-    const TCHAR      character  ,   /*character*/
+    const TCHAR*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
-
+    ProcessKeyEvent(eventType, keysym, state, character, keyCount);
   }
 
   void TextEntry::RecvStartKeyFocus()
@@ -569,16 +710,16 @@ namespace nux
 
     if (redraw_text)
     {
-      cairo_set_source_rgb(canvas->GetContext(),
+      cairo_set_source_rgb(canvas->GetInternalContext(),
         _text_color.R(),
         _text_color.G(),
         _text_color.B());
 
-      cairo_move_to(canvas->GetContext(),
+      cairo_move_to(canvas->GetInternalContext(),
         scroll_offset_x_ + kInnerBorderX,
         scroll_offset_y_ + kInnerBorderY);
 
-      pango_cairo_show_layout(canvas->GetContext(), layout);
+      pango_cairo_show_layout(canvas->GetInternalContext(), layout);
 
       canvas->PopState();
     }
@@ -596,20 +737,20 @@ namespace nux
       Color selection_color = GetSelectionBackgroundColor();
       Color text_color = GetSelectionTextColor();
 
-      cairo_set_source_rgb(canvas->GetContext(),
+      cairo_set_source_rgb(canvas->GetInternalContext(),
         selection_color.R(),
         selection_color.G(),
         selection_color.B());
-      cairo_paint(canvas->GetContext());
+      cairo_paint(canvas->GetInternalContext());
 
-      cairo_move_to(canvas->GetContext(),
+      cairo_move_to(canvas->GetInternalContext(),
         scroll_offset_x_ + kInnerBorderX,
         scroll_offset_y_ + kInnerBorderY);
-      cairo_set_source_rgb(canvas->GetContext(),
+      cairo_set_source_rgb(canvas->GetInternalContext(),
         text_color.R(),
         text_color.G(),
         text_color.B());
-      pango_cairo_show_layout(canvas->GetContext(), layout);
+      pango_cairo_show_layout(canvas->GetInternalContext(), layout);
       canvas->PopState();
     }
   }
@@ -835,7 +976,7 @@ namespace nux
   {
     // Creates the pango layout with a temporary canvas that is not zoomed.
     CairoGraphics *canvas = new CairoGraphics(CAIRO_FORMAT_ARGB32, 1, 1);
-    PangoLayout *layout = pango_cairo_create_layout(canvas->GetContext());
+    PangoLayout *layout = pango_cairo_create_layout(canvas->GetInternalContext());
     delete canvas;
     PangoAttrList *tmp_attrs = pango_attr_list_new();
     std::string tmp_string;
@@ -1200,6 +1341,86 @@ namespace nux
     int start, end;
     if (GetSelectionBounds(&start, &end))
       DeleteText(start, end);
+  }
+
+  void TextEntry::CopyClipboard()
+  {
+//     int start, end;
+//     if (GetSelectionBounds(&start, &end))
+//     {
+//       GtkWidget *widget = GetWidgetAndCursorLocation(NULL);
+//       if (widget)
+//       {
+//         if (visible_)
+//         {
+//           gtk_clipboard_set_text(
+//             gtk_widget_get_clipboard(widget, GDK_SELECTION_CLIPBOARD),
+//             text_.c_str() + start, end - start);
+//         }
+//         else
+//         {
+//           // Don't copy real content if it's in invisible.
+//           std::string content;
+//           int nchars = static_cast<int>(
+//             g_utf8_strlen(text_.c_str() + start, end - start));
+//           for (int i = 0; i < nchars; ++i)
+//             content.append(password_char_);
+//           gtk_clipboard_set_text(
+//             gtk_widget_get_clipboard(widget, GDK_SELECTION_CLIPBOARD),
+//             content.c_str(), static_cast<int>(content.length()));
+//         }
+//       }
+//     }
+  }
+
+  void TextEntry::CutClipboard()
+  {
+    CopyClipboard();
+    DeleteSelection();
+  }
+
+  void TextEntry::PasteClipboard()
+  {
+//     GtkWidget *widget = GetWidgetAndCursorLocation(NULL);
+//     if (widget)
+//     {
+//       gtk_clipboard_request_text(
+//         gtk_widget_get_clipboard(widget, GDK_SELECTION_CLIPBOARD),
+//         PasteCallback, this);
+//     }
+  }
+
+  void TextEntry::BackSpace()
+  {
+    if (GetSelectionBounds(NULL, NULL))
+    {
+      DeleteSelection();
+    }
+    else
+    {
+      if (cursor_ == 0)
+        return;
+      DeleteText(cursor_ - GetPrevCharLength(cursor_), cursor_);
+    }
+  }
+
+  void TextEntry::Delete()
+  {
+    if (GetSelectionBounds(NULL, NULL))
+    {
+      DeleteSelection();
+    }
+    else
+    {
+      if (cursor_ == static_cast<int>(_text.length()))
+        return;
+      DeleteText(cursor_, cursor_ + GetCharLength(cursor_));
+    }
+  }
+
+  void TextEntry::ToggleOverwrite()
+  {
+    overwrite_ = !overwrite_;
   }
 
   void TextEntry::UpdateSelectionRegion()

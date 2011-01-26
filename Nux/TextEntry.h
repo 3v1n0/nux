@@ -88,7 +88,6 @@ namespace nux
     long PostLayoutManagement (long layoutResult);
 
     //  Receivers
-    void MouseEventCommon (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
     void RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -99,7 +98,7 @@ namespace nux
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
       unsigned long    state      ,   /*event state*/
-      const TCHAR      character  ,   /*character*/
+      const TCHAR*     character  ,   /*character*/
       unsigned short   keyCount       /*key repeat count*/);
 
     void RecvStartKeyFocus();
@@ -109,8 +108,14 @@ namespace nux
     BaseTexture *_texture2D;
 
     void MainDraw ();
-//     EventResult OnMouseEvent(const MouseEvent &event);
-//     EventResult OnKeyEvent(const KeyboardEvent &event);
+    void ProcessMouseEvent (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void ProcessKeyEvent   (
+      unsigned long    eventType  ,   /*event type*/
+      unsigned long    keysym     ,   /*event keysym*/
+      unsigned long    state      ,   /*event state*/
+      const TCHAR*     character  ,   /*character*/
+      unsigned short   keyCount       /*key repeat count*/);
+
     void FocusIn();
     void FocusOut();
 //     void SetWidth(int width);
@@ -265,18 +270,18 @@ namespace nux
     /** Delete the text that is currently selected */
     void DeleteSelection();
 
-//     /** Cut the current selected text to the clipboard */
-//     void CutClipboard();
-//     /** Copy the current selected text to the clipboard */
-//     void CopyClipboard();
-//     /** Paste the text in the clipboard to current offset */
-//     void PasteClipboard();
-//     /** Delete a character before the offset of the cursor */
-//     void BackSpace();
-//     /** Delete a character at the offset of the cursor */
-//     void Delete();
-//     /** Switch between the overwrite mode and the insert mode*/
-//     void ToggleOverwrite();
+    /** Cut the current selected text to the clipboard */
+    void CutClipboard();
+    /** Copy the current selected text to the clipboard */
+    void CopyClipboard();
+    /** Paste the text in the clipboard to current offset */
+    void PasteClipboard();
+    /** Delete a character before the offset of the cursor */
+    void BackSpace();
+    /** Delete a character at the offset of the cursor */
+    void Delete();
+    /** Switch between the overwrite mode and the insert mode*/
+    void ToggleOverwrite();
 // 
     /** Gets the color of selection background. */
     Color GetSelectionBackgroundColor();

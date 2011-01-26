@@ -199,7 +199,7 @@ namespace nux
          unsigned long       ,   /*event type*/
          unsigned long       ,   /*event keysym*/
          unsigned long       ,   /*event state*/
-         TCHAR               ,   /*character*/
+         const TCHAR*        ,   /*character*/
          unsigned short          /*key repeat count*/
          > OnKeyEvent;
 
