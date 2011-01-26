@@ -145,6 +145,7 @@ namespace nux
     void UnGrabPointer ();
     void GrabKeyboard ();
     void UnGrabKeyboard ();
+    Window GetInputWindowId ();
     #endif
 
     //! Get the backup texture data of this BaseWindow,
