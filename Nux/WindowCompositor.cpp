@@ -456,9 +456,12 @@ namespace nux
     for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
     {
       ObjectWeakPtr<BaseWindow> window = (*it); //NUX_STATIC_CAST (BaseWindow *, (*it));
-
+      
+      if (window.IsNull ())
+        continue;
+      
       // The view window cannot have both _entering_visible_state and _entering_hidden_state being true at the same time
-      nuxAssert (!(window->_entering_visible_state && window->_entering_hidden_state));
+      //nuxAssert (!(window->_entering_visible_state && window->_entering_hidden_state));
 
       if (window->_entering_visible_state)
       {

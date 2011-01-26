@@ -45,6 +45,7 @@ namespace nux
 
     //! Return a cairo context to the encapsulated surface.
     /*!
+        Return the cairo context of this object. Call cairo_destroy to destroy the context when you are done with it.
         @return A cairo context.
     */
     cairo_t *GetContext();

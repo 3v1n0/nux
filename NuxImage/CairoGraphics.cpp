@@ -44,8 +44,6 @@ namespace nux
     if (_height <= 0)
       _height = 1;
 
-    _zoom = 1.0;
-
     _cairo_surface = cairo_image_surface_create (format, _width, _height);
     m_surface_format = format;
 
@@ -56,16 +54,23 @@ namespace nux
     }
 
     _opacity = 1.0f;
+    _zoom = 1.0;
   }
 
   CairoGraphics::~CairoGraphics()
   {
+    cairo_destroy (_cr);
     cairo_surface_destroy (_cairo_surface);
   }
 
   cairo_t *CairoGraphics::GetContext()
-  {
-    return _cr;
+  { 
+    cairo_t *cr = cairo_create (_cairo_surface);
+    if (cairo_status (cr) == CAIRO_STATUS_NO_MEMORY)
+    {
+      nuxAssertMsg (0, TEXT ("[CairoGraphics::GetContext] Cairo context error.") );
+    }
+    return cr;
   }
 
   cairo_surface_t* CairoGraphics::GetSurface ()
