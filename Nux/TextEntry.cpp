@@ -476,11 +476,25 @@ namespace nux
 
   void TextEntry::SetText (const char *text)
   {
-    if (_text != text)
-    {
-      _text = text;
+    const char *end = NULL;
+    g_utf8_validate(text, -1, &end);
 
-    }
+    std::string txt((text && *text && end > text) ? std::string(text, end) : "");
+    if (txt == _text)
+      return; // prevent some redraws
+
+    _text = multiline_ ? txt : CleanupLineBreaks(txt.c_str());
+    cursor_ = 0;
+    selection_bound_ = 0;
+    need_im_reset_ = true;
+    //ResetImContext();
+    QueueRefresh(true, true);
+    sigTextChanged.emit (this);
+  }
+
+  std::string TextEntry::GetText ()
+  {
+    return _text;
   }
 
   void TextEntry::SetTextColor (const Color &text_color)
@@ -649,8 +663,8 @@ namespace nux
       content_modified_ = true;
   }
 
-  void TextEntry::QueueRefresh(bool relayout, bool adjust_scroll) {
-    // DLOG("TextEntry::QueueRefresh(%d,%d)", relayout, adjust_scroll);
+  void TextEntry::QueueRefresh(bool relayout, bool adjust_scroll)
+  {
     if (relayout)
       ResetLayout();
 
@@ -1259,7 +1273,7 @@ namespace nux
     }
 
     ResetLayout();
-    //todo: owner_->FireOnChangeEvent();
+    sigTextChanged.emit (this);
   }
 
   void TextEntry::DeleteText(int start, int end)
@@ -1290,7 +1304,7 @@ namespace nux
       selection_bound_ -= (end - start);
 
     ResetLayout();
-    //todo: owner_->FireOnChangeEvent();
+    sigTextChanged.emit (this);
   }
 
   void TextEntry::SelectWord()
