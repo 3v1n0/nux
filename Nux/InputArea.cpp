@@ -407,7 +407,7 @@ namespace nux
         ievent.e_event,
         ievent.GetKeySym(),
         ievent.GetKeyState(),
-        ievent.GetChar(),
+        ievent.GetText(),
         ievent.GetKeyRepeatCount() );
     }
 

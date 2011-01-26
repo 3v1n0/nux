@@ -48,7 +48,14 @@ namespace nux
         Return the cairo context of this object. Call cairo_destroy to destroy the context when you are done with it.
         @return A cairo context.
     */
-    cairo_t *GetContext();
+    cairo_t *GetContext ();
+
+    //! Return an internal cairo context to the encapsulated surface. Should not be destroyed.
+    /*!
+        Return the cairo context of this object. This cairo context should not be destroyed with cairo_destroy.
+        @return A cairo context.
+    */
+    cairo_t *GetInternalContext ();
 
     cairo_surface_t* GetSurface ();
     //! Create a NBitmapData pointer to a 2D texture data.

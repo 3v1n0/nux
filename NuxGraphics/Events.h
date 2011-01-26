@@ -240,7 +240,7 @@ namespace nux
     */
     unsigned long GetKeySym() const;
     unsigned short GetKeyRepeatCount() const;
-    TCHAR GetChar() const;
+    const TCHAR* GetText() const;
 
     //! Return the state of the Virtual key
     /*!

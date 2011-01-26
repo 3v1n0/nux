@@ -1387,6 +1387,14 @@ namespace nux
         }
 
 
+        if ((wParam == '\b') || // backspace
+          (wParam == '\t') || // tab
+          (wParam == '\n') || // linefeed
+          (wParam == '\r')) // carriage return
+        {
+          return 0;
+        }
+
         t_UTF16 *utf16_str = new t_UTF16 [4];
         Memset (utf16_str, 0, sizeof (t_UTF16) * 4);
         Memcpy (utf16_str, (int*) &wParam, sizeof (wParam));

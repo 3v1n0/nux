@@ -319,10 +319,10 @@ namespace nux
     unsigned long   eventType  , /*event type*/
     unsigned long   keysym     , /*event keysym*/
     unsigned long   state      , /*event state*/
-    TCHAR           character  , /*character*/
+    const TCHAR*    character  , /*character*/
     unsigned short  keyCount     /*key repeat count*/)
   {
-    m_KeyboardHandler.ProcessKey (eventType, keysym, state, character, GetGeometry() );
+    m_KeyboardHandler.ProcessKey (eventType, keysym, state, character[0], GetGeometry() );
 
 
     // When a key event happens, show the cursor.
@@ -332,7 +332,7 @@ namespace nux
 
     if (character)
     {
-      sigCharacter.emit (this, character);
+      sigCharacter.emit (this, character[0]);
       sigEditChange.emit (this);
     }
 

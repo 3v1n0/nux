@@ -73,6 +73,11 @@ namespace nux
     return cr;
   }
 
+  cairo_t *CairoGraphics::GetInternalContext()
+  { 
+    return _cr;
+  }
+
   cairo_surface_t* CairoGraphics::GetSurface ()
   {
     return _cairo_surface;
