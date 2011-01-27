@@ -40,6 +40,9 @@
 namespace nux
 {
 
+  class BaseWindow;
+  typedef BaseWindow ViewWindow;
+
   class HLayout;
   class PopUpWindow;
 
@@ -93,7 +96,7 @@ namespace nux
     */
     virtual void SetWindowSizeMatchLayout (bool b)
     {
-      m_bSizeMatchLayout = b;
+      _size_match_layout = b;
     }
     //! Check if the window size is constrained to the layout container size.
     /*!
@@ -102,7 +105,7 @@ namespace nux
     */
     bool IsSizeMatchContent() const
     {
-      return m_bSizeMatchLayout;
+      return _size_match_layout;
     }
 
     virtual void ShowWindow (bool b, bool StartModal = false);
@@ -194,8 +197,8 @@ namespace nux
 
     bool m_blured_background;
     
-    bool _entering_visible_status;  //!< the window is about to be made visible during event processing
-    bool _entering_hidden_status;   //!< the window is about to be made hidden during event processing
+    bool _entering_visible_state;  //!< the window is about to be made visible during event processing
+    bool _entering_hidden_state;   //!< the window is about to be made hidden during event processing
     
     bool ChildNeedsRedraw ();
 
@@ -208,12 +211,11 @@ namespace nux
     XInputWindow *m_input_window;
     #endif
     
-    bool m_bSizeMatchLayout;
-    bool m_bIsVisible;
-    bool m_bIsModal;
+    bool _size_match_layout;
+    bool _is_visible;
+    bool _is_modal;
 
     std::list<View *> m_InterfaceObject;
-    HLayout *m_TitleBarLayout;
 
     bool _child_need_redraw;   //!<True is there is a child of the BaseWindow that needs to be redrawn;
     friend class PopUpWindow;

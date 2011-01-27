@@ -256,32 +256,15 @@ namespace nux
     NString temp = Str.GetSubString (0, CursorPosition);
     int w = Font->GetStringWidth (temp.GetTCharPtr() );
 
-    glDisable (GL_TEXTURE_2D);
 
     if (ShowCursor)
     {
-      glColor4f (CursorColor.R(), CursorColor.G(), CursorColor.B(), CursorColor.A() );
-      //     glBegin(GL_LINES);
-      //     {
-      //         // make sure the isn't drawn outside of the area.
-      //         int x = pageSize.xmin + w + offset + CURSOR_OFFSET;
-      //         x = (x >= pageSize.xmax) ? pageSize.xmax - 1 : x;
-      //         glVertex3i(x, pageSize.ymin, 1);
-      //         glVertex3i(x, pageSize.ymax, 1);
-      //     }
-
       int x = pageSize.xmin + w + offset + CURSOR_OFFSET;
       x = (x >= pageSize.xmax) ? pageSize.xmax - 1 : x;
       m_OpenGLEngine.PushClippingRectangle (Rect (x, pageSize.ymin, CURSOR_SIZE, pageSize.ymax - pageSize.ymin) );
-      glBegin (GL_QUADS);
-      {
-        // make sure the isn't drawn outside of the area.
-        glVertex3i (x, pageSize.ymin, 1);
-        glVertex3i (x, pageSize.ymax, 1);
-        glVertex3i (x + CURSOR_SIZE, pageSize.ymax, 1);
-        glVertex3i (x + CURSOR_SIZE, pageSize.ymin, 1);
-      }
-      glEnd();
+
+      m_OpenGLEngine.QRP_Color (x, pageSize.ymin, CURSOR_SIZE, pageSize.ymax - pageSize.ymin, CursorColor);
+      
       DrawColorString (Font, stringBBox.x + offset, stringBBox.y, Str, TextBlinkColor, WriteAlphaChannel, CursorPosition, 1);
       m_OpenGLEngine.PopClippingRectangle();
     }

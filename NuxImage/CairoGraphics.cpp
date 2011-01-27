@@ -21,6 +21,7 @@
 
 
 #include "NuxCore/NuxCore.h"
+#include "NuxCore/Rect.h"
 #include "BitmapFormats.h"
 #include "CairoGraphics.h"
 
@@ -28,56 +29,69 @@ namespace nux
 {
 
   CairoGraphics::CairoGraphics (cairo_format_t format, int width, int height)
-    :   m_width (0)
-    ,   m_height (0)
+    :   _width (0)
+    ,   _height (0)
   {
     nuxAssert (width >= 0);
     nuxAssert (height >= 0);
 
-    m_width = width;
-    m_height = height;
+    _width = width;
+    _height = height;
 
-    if (m_width <= 0)
-      m_width = 1;
+    if (_width <= 0)
+      _width = 1;
 
-    if (m_height <= 0)
-      m_height = 1;
+    if (_height <= 0)
+      _height = 1;
 
-    m_cairo_surface = cairo_image_surface_create (format, m_width, m_height);
+    _cairo_surface = cairo_image_surface_create (format, _width, _height);
     m_surface_format = format;
-  }
 
-  CairoGraphics::~CairoGraphics()
-  {
-    cairo_surface_destroy (m_cairo_surface);
-  }
-
-  cairo_t *CairoGraphics::GetContext()
-  {
-    cairo_t *cr = cairo_create (m_cairo_surface);
-
-    if (cairo_status (cr) == CAIRO_STATUS_NO_MEMORY)
+    _cr = cairo_create (_cairo_surface);
+    if (cairo_status (_cr) == CAIRO_STATUS_NO_MEMORY)
     {
       nuxAssertMsg (0, TEXT ("[CairoGraphics::GetContext] Cairo context error.") );
     }
 
+    _opacity = 1.0f;
+    _zoom = 1.0;
+  }
+
+  CairoGraphics::~CairoGraphics()
+  {
+    cairo_destroy (_cr);
+    cairo_surface_destroy (_cairo_surface);
+  }
+
+  cairo_t *CairoGraphics::GetContext()
+  { 
+    cairo_t *cr = cairo_create (_cairo_surface);
+    if (cairo_status (cr) == CAIRO_STATUS_NO_MEMORY)
+    {
+      nuxAssertMsg (0, TEXT ("[CairoGraphics::GetContext] Cairo context error.") );
+    }
     return cr;
+  }
+
+  cairo_t *CairoGraphics::GetInternalContext()
+  { 
+    return _cr;
   }
 
   cairo_surface_t* CairoGraphics::GetSurface ()
   {
-    return m_cairo_surface;
+    return _cairo_surface;
   }
 
   NBitmapData *CairoGraphics::GetBitmap()
   {
-    if ( (m_width <= 0) || (m_height <= 0) )
+    if ( (_width <= 0) || (_height <= 0) )
     {
       nuxDebugMsg (TEXT ("[CairoGraphics::GetBitmap] Invalid surface.") );
     }
 
-    NUX_RETURN_VALUE_IF_NULL (m_width, 0);
-    NUX_RETURN_VALUE_IF_NULL (m_height, 0);
+    NUX_RETURN_VALUE_IF_NULL (_width, 0);
+    NUX_RETURN_VALUE_IF_NULL (_height, 0);
 
     BitmapFormat bitmap_format = BITFMT_UNKNOWN;
 
@@ -105,17 +119,17 @@ namespace nux
     if (m_surface_format == CAIRO_FORMAT_A1)
       bitmap_format = BITFMT_A8;
 
-    NTextureData *bitmap_data = new NTextureData (bitmap_format, m_width, m_height, 1);
-    t_u8 *ptr = cairo_image_surface_get_data (m_cairo_surface);
-    int stride = cairo_image_surface_get_stride (m_cairo_surface);
+    NTextureData *bitmap_data = new NTextureData (bitmap_format, _width, _height, 1);
+    t_u8 *ptr = cairo_image_surface_get_data (_cairo_surface);
+    int stride = cairo_image_surface_get_stride (_cairo_surface);
 
     if (m_surface_format == CAIRO_FORMAT_A1)
     {
       t_u8 *temp = new t_u8[bitmap_data->GetSurface (0).GetPitch() ];
 
-      for (int j = 0; j < m_height; j++)
+      for (int j = 0; j < _height; j++)
       {
-        for (int i = 0; i < m_width; i++)
+        for (int i = 0; i < _width; i++)
         {
           // Get the byte
           int a = ptr[j * stride + i/8];
@@ -129,20 +143,159 @@ namespace nux
 
         Memcpy ( bitmap_data->GetSurface (0).GetPtrRawData() + j * bitmap_data->GetSurface (0).GetPitch(),
                  (const void *) (&temp[0]),
-                 m_width);
+                 _width);
       }
     }
     else
     {
-      for (int j = 0; j < m_height; j++)
+      for (int j = 0; j < _height; j++)
       {
         Memcpy (bitmap_data->GetSurface (0).GetPtrRawData() + j * bitmap_data->GetSurface (0).GetPitch(),
                 (const void *) (&ptr[j * stride]),
-                m_width * GPixelFormats[bitmap_format].NumComponents);
+                _width * GPixelFormats[bitmap_format].NumComponents);
       }
     }
 
     return bitmap_data;
   }
+
+  int CairoGraphics::GetWidth () const
+  {
+    return _width;
+  }
+
+  int CairoGraphics::GetHeight () const
+  {
+    return _height;
+  }
+
+  bool CairoGraphics::PushState ()
+  {
+    return true;
+  }
+
+  bool CairoGraphics::PopState ()
+  {
+    return true;
+  }
+
+  bool CairoGraphics::ClearCanvas ()
+  {
+    // Clear the surface.
+    nuxAssert(_cr);
+    cairo_operator_t op = cairo_get_operator(_cr);
+    cairo_set_operator(_cr, CAIRO_OPERATOR_CLEAR);
+    cairo_paint(_cr);
+    cairo_set_operator(_cr, op);
+
+    // Set the clip region to an infinitely large shape containing the target.
+    cairo_reset_clip(_cr);
+
+    _opacity = 1.0f;
+    _opacity_stack = std::stack<float>();
+
+    //cairo_restore(_cr);
+    //cairo_save(_cr);
+
+    return true;
+  }
+
+  bool CairoGraphics::ClearRect(double x, double y, double w, double h)
+  {
+    nuxAssert(_cr);
+    cairo_rectangle(_cr, x, y, w, h);
+    cairo_operator_t op = cairo_get_operator(_cr);
+    cairo_set_operator(_cr, CAIRO_OPERATOR_CLEAR);
+    cairo_fill(_cr);
+    cairo_set_operator(_cr, op);
+    return true;
+  }
+
+  bool CairoGraphics::DrawLine(double x0, double y0, double x1, double y1, double width, const Color &c)
+  {
+    nuxAssert(_cr);
+    if (width < 0.0)
+    {
+      return false;
+    }
+
+    cairo_set_line_width(_cr, width);
+    cairo_set_source_rgba(_cr, c.R(), c.G(), c.B(), _opacity);
+    cairo_move_to(_cr, x0, y0);
+    cairo_line_to(_cr, x1, y1);
+    cairo_stroke(_cr);
+
+    return true;
+  }
+
+  bool CairoGraphics::DrawFilledRect(double x, double y, double w, double h, const Color &c)
+  {
+    nuxAssert(_cr);
+    if (w <= 0.0 || h <= 0.0) {
+      return false;
+    }
+
+    cairo_set_source_rgba(_cr, c.R(), c.G(), c.B(), _opacity);
+    cairo_rectangle(_cr, x, y, w, h);
+    cairo_fill(_cr);
+    return true;
+  }
+
+  bool CairoGraphics::DrawCanvas(double x, double y, CairoGraphics *cg)
+  {
+    if (cg == 0) return false;
+
+    cairo_surface_t *s = cg->GetSurface();
+    double src_zoom = cg->_zoom;
+    double inv_zoom = 1.0 / src_zoom;
+
+    cairo_save(_cr);
+
+    IntersectRectClipRegion(x, y, cg->GetWidth(), cg->GetHeight());
+
+    cairo_scale(_cr, inv_zoom, inv_zoom);
+    cairo_set_source_surface(_cr, s, x * src_zoom, y * src_zoom);
+
+    cairo_pattern_set_extend(cairo_get_source(_cr), CAIRO_EXTEND_PAD);
+
+    cairo_paint_with_alpha(_cr, _opacity);
+    cairo_restore(_cr);
+
+    return true;
+  }
+
+  bool CairoGraphics::IntersectRectClipRegion(double x, double y, double w, double h)
+  {
+    if (w <= 0.0 || h <= 0.0) {
+      return false;
+    }
+
+    cairo_antialias_t pre = cairo_get_antialias(_cr);
+    cairo_set_antialias(_cr, CAIRO_ANTIALIAS_NONE);
+    cairo_rectangle(_cr, x, y, w, h);
+    cairo_clip(_cr);
+    cairo_set_antialias(_cr, pre);
+    return true;
+  }
+
+  bool CairoGraphics::IntersectGeneralClipRegion(std::list<Rect> &region)
+  {
+    cairo_antialias_t pre = cairo_get_antialias(_cr);
+    cairo_set_antialias(_cr, CAIRO_ANTIALIAS_NONE);
+    
+    std::list<Rect>::iterator it;
+    for (it = region.begin(); it != region.end(); it++)
+    {
+      float x = (*it).x;
+      float y = (*it).y;
+      float w = (*it).width;
+      float h = (*it).height;
+
+      cairo_rectangle(_cr, x, y, w, h);
+    }
+    cairo_set_antialias(_cr, pre);
+    return true;
+  }
+
 
 }

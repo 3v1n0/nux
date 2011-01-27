@@ -104,7 +104,7 @@ namespace nux
       unsigned long    eventType  , /*event type*/
       unsigned long    keysym     , /*event keysym*/
       unsigned long    state      , /*event state*/
-      TCHAR            character  , /*character*/
+      const TCHAR*     character  , /*character*/
       unsigned short   keyCount     /*key repeat count*/
     );
 

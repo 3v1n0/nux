@@ -1,0 +1,467 @@
+#ifndef TEXTENTRY_H
+#define TEXTENTRY_H
+
+
+
+// Heavily inspired from google gadget code
+/*
+  Copyright 2008 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+
+#include "cairo/cairo.h"
+#include "pango/pango.h"
+#include "pango/pangocairo.h"
+#include "NuxImage/CairoGraphics.h"
+
+namespace nux
+{
+  class CairoGraphics;
+
+  class CairoFont
+  {
+  public:
+    enum Style {
+      STYLE_NORMAL,
+      STYLE_ITALIC
+    };
+
+    /**
+     * Enum used to specify font weight.
+     */
+    enum Weight {
+      WEIGHT_NORMAL,
+      WEIGHT_BOLD
+    };
+
+    /**
+     * Constructor for CairoFont. Takes a PangoFontDescription object and its
+     * ownership. Will free the PangoFontDescription object on destruction.
+     */
+    CairoFont(const std::string &family,
+      /*PangoFontDescription *font,*/
+      double size,
+      Style style,
+      Weight weight);
+
+    virtual ~CairoFont();
+
+    virtual Style GetStyle() const {return style_;}
+    virtual Weight GetWeight() const {return weight_;}
+    virtual double GetPointSize() const {return size_;}
+
+    virtual void Destroy() {delete this;}
+
+    const PangoFontDescription *GetFontDescription() const {return font_;}
+
+  private:
+    PangoFontDescription *font_;
+    double size_;
+    Style style_;
+    Weight weight_;
+  };
+
+  class TextEntry: public View
+  {
+  public:
+    TextEntry (const TCHAR* text, NUX_FILE_LINE_PROTO);
+    ~TextEntry ();
+
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+
+    void PreLayoutManagement ();
+    long PostLayoutManagement (long layoutResult);
+
+    //  Receivers
+
+    void RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvKeyEvent (
+      GraphicsEngine &GfxContext ,   /*Graphics Context for text operation*/
+      unsigned long    eventType  ,   /*event type*/
+      unsigned long    keysym     ,   /*event keysym*/
+      unsigned long    state      ,   /*event state*/
+      const TCHAR*     character  ,   /*character*/
+      unsigned short   keyCount       /*key repeat count*/);
+
+    void RecvStartKeyFocus();
+    void RecvEndKeyFocus();
+
+    bool _size_match_text;
+    BaseTexture *_texture2D;
+
+    void MainDraw ();
+    void ProcessMouseEvent (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void ProcessKeyEvent   (
+      unsigned long    eventType  ,   /*event type*/
+      unsigned long    keysym     ,   /*event keysym*/
+      unsigned long    state      ,   /*event state*/
+      const TCHAR*     character  ,   /*character*/
+      unsigned short   keyCount       /*key repeat count*/);
+
+    void FocusInx ();
+    void FocusOutx ();
+
+    //! Text changed signal
+    /*!
+        This signal is emitted when the text has changed.
+    */
+    sigc::signal <void, TextEntry*> sigTextChanged;
+
+//     void SetWidth(int width);
+//     int GetWidth();
+//     void SetHeight(int height);
+//     int GetHeight();
+//     void GetSizeRequest(int *width, int *height);
+//     void SetBold(bool bold);
+//     bool IsBold();
+//     void SetItalic(bool italic);
+//     bool IsItalic();
+//     void SetStrikeout(bool strikeout);
+//     bool IsStrikeout();
+//     void SetUnderline(bool underline);
+//     bool IsUnderline();
+//     void SetMultiline(bool multiline);
+//     bool IsMultiline();
+//     void SetWordWrap(bool wrap);
+//     bool IsWordWrap();
+//     void SetReadOnly(bool readonly);
+//     bool IsReadOnly();
+    void SetText(const char *text);
+    std::string GetText();
+//     void SetBackground(Texture *background);
+//     const Texture *GetBackground();
+    void SetTextColor(const Color &color);
+    Color GetTextColor() const;
+//     void SetFontFamily(const char *font);
+//     std::string GetFontFamily();
+//     void OnFontSizeChange();
+//     void SetPasswordChar(const char *c);
+//     std::string GetPasswordChar();
+//     bool IsScrollBarRequired();
+//     void GetScrollBarInfo(int *range, int *line_step,
+//                           int *page_step, int *cur_pos);
+//     void ScrollTo(int position);
+//     void MarkRedraw();
+    /** Select text between start and end. */
+    void Select(int start, int end);
+    /** Select all text */
+    void SelectAll();
+
+    CairoGraphics::Alignment GetAlign() const;
+    void SetAlign(CairoGraphics::Alignment align);
+  
+    private:
+    /**
+     * Enum used to specify different motion types.
+     */
+    enum MovementStep {
+      VISUALLY,
+      WORDS,
+      DISPLAY_LINES,
+      DISPLAY_LINE_ENDS,
+      PAGES,
+      BUFFER
+    };
+
+    void QueueTextDraw ();
+    /** Remove the cached layout. */
+    void ResetLayout();
+    /**
+     * Create pango layout on-demand. If the layout is not changed, return the
+     * cached one.
+     */
+    PangoLayout* EnsureLayout();
+    /** Create a new layout containning current edit content */
+    PangoLayout* CreateLayout();
+    /** Create cairo canvas on-demand. */
+    CairoGraphics* EnsureCanvas();
+    /** Adjust the scroll information */
+    void AdjustScroll();
+    /**
+     * Send out a request to refresh all informations of the edit control
+     * and queue a draw request.
+     * If @c relayout is true then the layout will be regenerated.
+     * */
+    void QueueRefresh(bool relayout, bool adjust_scroll);
+    /** Reset the input method context */
+    void ResetImContext();
+    /** Reset preedit text */
+    void ResetPreedit();
+//     /** Create a new im context according to current visibility setting */
+//     void InitImContext();
+//     /** Set the visibility of the edit control */
+//     void SetVisibility(bool visible);
+// 
+//     /** Check if the cursor should be blinking */
+//     bool IsCursorBlinking();
+//     /** Send out a request to blink the cursor if necessary */
+//     void QueueCursorBlink();
+//     /** Timer callback to blink the cursor */
+//     bool CursorBlinkCallback(int timer_id);
+    void ShowCursor();
+    void HideCursor();
+
+    /** Draw the Cursor to the canvas */
+    void DrawCursor(CairoGraphics *canvas);
+    /** Draw the text to the canvas */
+    void DrawText(CairoGraphics *canvas);
+
+    void GetCursorRects(Rect *strong, Rect *weak);
+
+    void UpdateCursorRegion();
+
+    void UpdateSelectionRegion();
+
+    /** Move cursor */
+    void MoveCursor(MovementStep step, int count, bool extend_selection);
+    /** Move cursor visually, meaning left or right */
+    int MoveVisually(int current_pos, int count);
+    /** Move cursor in words */
+    int MoveWords(int current_pos, int count);
+    /** Move cursor in display lines */
+    int MoveDisplayLines(int current_pos, int count);
+    /** Move cursor in pages */
+    int MovePages(int current_pos, int count);
+    /** Move cursor to the beginning or end of a display line */
+    int MoveLineEnds(int current_pos, int count);
+
+    /** Set the current cursor offset, in number of characters. */
+    void SetCursor(int cursor);
+    /** Get the most reasonable character offset according to the pixel
+     * coordinate in the layout */
+    int XYToTextIndex(int x, int y);
+    /** Get the offset range that is currently selected,in number of characters.*/
+    bool GetSelectionBounds(int *start, int *end);
+    /** Set the offest range that should be selected, in number of characters. */
+    void SetSelectionBounds(int selection_bound, int cursor);
+
+    /** Convert index in text_ into index in layout text. */
+    int TextIndexToLayoutIndex(int text_index, bool consider_preedit_cursor);
+
+    /** Convert index in layout text into index in text_. */
+    int LayoutIndexToTextIndex(int layout_index);
+
+    /** Get char length at index, in number of bytes. */
+    int GetCharLength(int index);
+
+    /** Get previous char length before index, in number of bytes. */
+    int GetPrevCharLength(int index);
+
+    /** Insert text at current caret position */
+    void EnterText(const char *str);
+    /** Delete text in a specified range, in number of characters. */
+    void DeleteText(int start, int end);
+
+    /** Select the current word under cursor */
+    void SelectWord();
+    /** Select the current display line under cursor */
+    void SelectLine();
+    /** Delete the text that is currently selected */
+    void DeleteSelection();
+
+    /** Cut the current selected text to the clipboard */
+    void CutClipboard();
+    /** Copy the current selected text to the clipboard */
+    void CopyClipboard();
+    /** Paste the text in the clipboard to current offset */
+    void PasteClipboard();
+    /** Delete a character before the offset of the cursor */
+    void BackSpace();
+    /** Delete a character at the offset of the cursor */
+    void Delete();
+    /** Switch between the overwrite mode and the insert mode*/
+    void ToggleOverwrite();
+// 
+    /** Gets the color of selection background. */
+    Color GetSelectionBackgroundColor();
+    /** Gets the color of selection text. */
+    Color GetSelectionTextColor();
+// 
+//     /**
+//      * Gets the gtk widget used by the gadget host and the cursor location
+//      * for gtk im context. relative to the widget coordinate.
+//      */
+//     GtkWidget *GetWidgetAndCursorLocation(GdkRectangle *cur);
+// 
+    /**
+     * Gets the cursor location in pango layout. The unit is pixel.
+     */
+    void GetCursorLocationInLayout(int *strong_x, int *strong_y, int *strong_height,
+                                   int *weak_x, int *weak_y, int *weak_height);
+
+//     /**
+//      * Updates the cursor location of input method context.
+//      */
+//     void UpdateIMCursorLocation();
+// 
+//     /** Callback function for IM "commit" signal */
+//     static void CommitCallback(GtkIMContext *context,
+//                                const char *str, void *gg);
+//     /** Callback function for IM "retrieve-surrounding" signal */
+//     static gboolean RetrieveSurroundingCallback(GtkIMContext *context,
+//                                                 void *gg);
+//     /** Callback function for IM "delete-surrounding" signal */
+//     static gboolean DeleteSurroundingCallback(GtkIMContext *context, int offset,
+//                                               int n_chars, void *gg);
+//     /** Callback function for IM "preedit-start" signal */
+//     static void PreeditStartCallback(GtkIMContext *context, void *gg);
+//     /** Callback function for IM "preedit-changed" signal */
+//     static void PreeditChangedCallback(GtkIMContext *context, void *gg);
+//     /** Callback function for IM "preedit-end" signal */
+//     static void PreeditEndCallback(GtkIMContext *context, void *gg);
+//     /**
+//      * Callback for gtk_clipboard_request_text function.
+//      * This function performs real paste.
+//      */
+//     static void PasteCallback(GtkClipboard *clipboard,
+//                               const gchar *str, void *gg);
+// 
+//    private:
+//     /** Owner of this gtk edit implementation object. */
+//     GtkEditElement *owner_;
+//     /** Main loop object */
+//     MainLoopInterface *main_loop_;
+//     /** Graphics object, must be CairoGraphics */
+//     const GraphicsInterface *graphics_;
+// 
+    /** The CairoCanvas which hold cairo_t inside */
+    CairoGraphics *canvas_;
+
+//     /** Gtk InputMethod Context */
+//     GtkIMContext *im_context_;
+
+    /** The cached Pango Layout */
+    PangoLayout *cached_layout_;
+
+    /** The text content of the edit control */
+    std::string _text;
+    /** The preedit text of the edit control */
+    std::string _preedit;
+    /** Attribute list of the preedit text */
+    PangoAttrList *preedit_attrs_;
+    /**
+     *  The character that should be displayed in invisible mode.
+     *  If this is empty, then the edit control is visible
+     */
+    std::string password_char_;
+
+    /** Last time of mouse double click event. */
+    t_u64 last_dblclick_time_;
+// 
+//     /** Canvas width */
+//     int width_;
+//     /** Canvas height */
+//     int height_;
+// 
+    /** The current cursor position in number of bytes. */
+    int cursor_;
+    /**
+     * The preedit cursor position within the preedit string,
+     * in number of bytes.
+     */
+    int preedit_cursor_;
+    /**
+     * The current selection bound in number of bytes,
+     * range between cursor_ and selection_bound_ are selected.
+     */
+    int selection_bound_;
+
+    /** X offset of current scroll, in pixels */
+    int scroll_offset_x_;
+    /** Y offset of current scroll, in pixels */
+    int scroll_offset_y_;
+    /** Timer id of cursor blink callback */
+    int cursor_blink_timer_;
+    /**
+     * Indicates the status of cursor blinking,
+     * 0 means hide cursor
+     * otherwise means show cursor.
+     * The maximum value would be 2, and decrased by one in each cursor blink
+     * callback, then there would be 2/3 visible time and 1/3 invisible time.
+     */
+    int cursor_blink_status_;
+
+    /** Whether the text is visible, decided by password_char_ */
+    bool visible_;
+    /** Whether the edit control is focused */
+    bool focused_;
+    /** Whether the input method should be reset */
+    bool need_im_reset_;
+    /** Whether the keyboard in overwrite mode */
+    bool overwrite_;
+    /** Whether the button click should select words */
+    bool select_words_;
+    /** Whether the button click should select lines */
+    bool select_lines_;
+    /** Whether the left button is pressed */
+    bool button_;
+    /** Whether the text should be bold */
+    bool bold_;
+    /** Whether the text should be underlined */
+    bool underline_;
+    /** Whether the text should be struck-out */
+    bool strikeout_;
+    /** Whether the text should be italic */
+    bool italic_;
+    /** Whether the text could be shown in multilines */
+    bool multiline_;
+    /** Whether the text should be wrapped */
+    bool wrap_;
+    /** whether the cursor should be displayed */
+    bool cursor_visible_;
+    /** whether the edit control is readonly */
+    bool readonly_;
+    /**
+     * Indicates if the content of the edit control has been modified
+     * since last draw
+     */
+    bool content_modified_;
+
+    /** Indicates if the selection region has been changed since last draw. */
+    bool selection_changed_;
+
+    /** Indicates if the cursor position has been moved since last draw. */
+    bool cursor_moved_;
+
+    /** Indicates if the canvas cache needs updating. */
+    bool update_canvas_;
+
+    /** The font family of the text */
+    std::string font_family_;
+    /** The font size of the text */
+    double font_size_;
+
+//     /** The background texture of the edit control */
+//     Texture *background_;
+
+    /** The text color of the edit control */
+    Color _text_color;
+
+    CairoGraphics::Alignment align_;
+
+    std::list<Rect> last_selection_region_;
+    std::list<Rect> selection_region_;
+    std::list<Rect> last_cursor_region_;
+    std::list<Rect> cursor_region_;
+  };
+}
+
+#endif // TEXTENTRY_H

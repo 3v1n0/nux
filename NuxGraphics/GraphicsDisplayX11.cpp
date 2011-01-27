@@ -1476,8 +1476,16 @@ namespace nux
         char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
         Memset (m_pEvent->e_text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
 
+        bool skip = false;
+        if ((keysym == NUX_VK_BACKSPACE) ||
+          (keysym == NUX_VK_DELETE))
+        {
+          //temporary fix for TextEntry widget: filter some keys
+         skip = true; 
+        }
+        
         int num_char_stored = XLookupString (&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->e_keysym, NULL);
-        if (num_char_stored)
+        if (num_char_stored && (!skip))
         {
           Memcpy (m_pEvent->e_text, buffer, num_char_stored);
         }
