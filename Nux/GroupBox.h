@@ -44,7 +44,7 @@ namespace nux
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
-    void SetLayout (Layout *layout);
+    virtual bool SetLayout (Layout *layout);
     void SetCaption (const TCHAR *Caption);
 
   private:

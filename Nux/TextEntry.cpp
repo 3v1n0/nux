@@ -142,6 +142,7 @@ namespace nux
     update_canvas_ = false;
     //background_(new Texture(kDefaultBackgroundColor, 1)),
     _text_color = kDefaultTextColor;
+    align_ = CairoGraphics::ALIGN_LEFT;
 
     _size_match_text = true;
     _text_color  = Color::White;

@@ -208,24 +208,28 @@ namespace nux
     }
   }
 
-  Layout *BaseWindow::GetLayout ()
+  Layout* BaseWindow::GetLayout ()
   {
     return m_layout;
   }
 
-  void BaseWindow::SetLayout (Layout *layout)
+  bool BaseWindow::SetLayout (Layout *layout)
   {
-    if (layout == 0)
-      return;
+    if (View::SetLayout (layout) == false)
+      return false;
 
     m_layout = layout;
-    SetCompositionLayout (m_layout);
-
     Geometry geo = GetGeometry();
     Geometry layout_geo = Geometry (geo.x + m_Border, geo.y + m_TopBorder,
                                     geo.GetWidth() - 2 * m_Border, geo.GetHeight() - m_Border - m_TopBorder);
     m_layout->SetGeometry (layout_geo);
-    ComputeChildLayout();
+
+    // When this call returns the layout computation is done.
+    //ComputeChildLayout();
+    // or use
+    GetWindowThread()->QueueObjectLayout(m_layout);
+
+    return true;
   }
 
   // Get a change to do any work on an element.
