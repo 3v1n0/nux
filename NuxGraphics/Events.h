@@ -179,6 +179,7 @@ namespace nux
     NUX_NO_EVENT         = 0,
     NUX_MOUSE_PRESSED,
     NUX_MOUSE_RELEASED,
+    NUX_MOUSE_DOUBLECLICK,
     NUX_KEYDOWN,
     NUX_KEYUP,
     NUX_MOUSE_MOVE,
@@ -239,7 +240,7 @@ namespace nux
     */
     unsigned long GetKeySym() const;
     unsigned short GetKeyRepeatCount() const;
-    TCHAR GetChar() const;
+    const TCHAR* GetText() const;
 
     //! Return the state of the Virtual key
     /*!

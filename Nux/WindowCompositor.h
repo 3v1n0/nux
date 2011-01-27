@@ -241,7 +241,7 @@ namespace nux
 
     //! Set the top view that is about to be processed (event or rendering).
     /*!
-        Before event processing or rendering, this should be called to set the TopView that is about 
+        Before event processing or rendering, this should be called to set the ViewWindow that is about 
         to be processed. This function is used internally by the system.
     */
     void SetProcessingTopView (BaseWindow* window)
@@ -252,7 +252,7 @@ namespace nux
     public:
     //! Get the top view that is being processed (event or rendering).
     /*!
-        Get the active TopView during and event processing or rendering.
+        Get the active ViewWindow during and event processing or rendering.
     */
     BaseWindow *GetProcessingTopView()
     {
@@ -305,7 +305,7 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> m_MainDepthRT;
     ObjectPtr<IOpenGLBaseTexture> m_CompositionRT;
 
-    //! Return the RenderTargetTextures structure of a TopView.
+    //! Return the RenderTargetTextures structure of a ViewWindow.
     RenderTargetTextures &GetWindowBuffer (BaseWindow* window);
 
     ObjectWeakPtr<BaseWindow> m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
@@ -369,6 +369,18 @@ namespace nux
 
     //! True while rendering is being done.
     bool _inside_rendering_cycle;
+
+    //! Signal emitted when a BaseWindow becomes visible.
+    /*!
+        This signal is emitted after the BaseWindow has emitted it own sigVisible signal. 
+    */
+    sigc::signal<void, BaseWindow* > sigVisibleViewWindow;    //!< Signal emitted when the BaseWindow becomes visible.
+
+    //! Signal emitted when a BaseWindow becomes hidden.
+    /*!
+        This signal is emitted after the BaseWindow has emitted it own sigHidden signal. 
+    */
+    sigc::signal<void, BaseWindow* > sigHiddenViewWindow;    //!< Signal emitted when the BaseWindow becomes hidden.
 
     InputArea* OverlayDrawingCommand;
     ObjectWeakPtr<BaseWindow> m_OverlayWindow;            //!< The window that owns the overlay;

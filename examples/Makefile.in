@@ -39,7 +39,8 @@ host_triplet = @host@
 @BUILD_EXAMPLES_TRUE@	cairo$(EXEEXT) textedit$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	button$(EXEEXT) checkbox$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	tooltip$(EXEEXT) timeline$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	timegraph$(EXEEXT) gridlayout$(EXEEXT)
+@BUILD_EXAMPLES_TRUE@	timegraph$(EXEEXT) gridlayout$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	pangotextedit$(EXEEXT)
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -85,6 +86,12 @@ am__gridlayout_SOURCES_DIST = gridlayout.cpp
 @BUILD_EXAMPLES_TRUE@am_gridlayout_OBJECTS = gridlayout.$(OBJEXT)
 gridlayout_OBJECTS = $(am_gridlayout_OBJECTS)
 @BUILD_EXAMPLES_TRUE@gridlayout_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am__pangotextedit_SOURCES_DIST = pangotextedit.cpp
+@BUILD_EXAMPLES_TRUE@am_pangotextedit_OBJECTS =  \
+@BUILD_EXAMPLES_TRUE@	pangotextedit.$(OBJEXT)
+pangotextedit_OBJECTS = $(am_pangotextedit_OBJECTS)
+@BUILD_EXAMPLES_TRUE@pangotextedit_DEPENDENCIES =  \
+@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
 am__textedit_SOURCES_DIST = textedit.cpp
 @BUILD_EXAMPLES_TRUE@am_textedit_OBJECTS = textedit.$(OBJEXT)
 textedit_OBJECTS = $(am_textedit_OBJECTS)
@@ -128,11 +135,13 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(button_SOURCES) $(cairo_SOURCES) $(checkbox_SOURCES) \
-	$(combobox_SOURCES) $(gridlayout_SOURCES) $(textedit_SOURCES) \
+	$(combobox_SOURCES) $(gridlayout_SOURCES) \
+	$(pangotextedit_SOURCES) $(textedit_SOURCES) \
 	$(timegraph_SOURCES) $(timeline_SOURCES) $(tooltip_SOURCES)
 DIST_SOURCES = $(am__button_SOURCES_DIST) $(am__cairo_SOURCES_DIST) \
 	$(am__checkbox_SOURCES_DIST) $(am__combobox_SOURCES_DIST) \
-	$(am__gridlayout_SOURCES_DIST) $(am__textedit_SOURCES_DIST) \
+	$(am__gridlayout_SOURCES_DIST) \
+	$(am__pangotextedit_SOURCES_DIST) $(am__textedit_SOURCES_DIST) \
 	$(am__timegraph_SOURCES_DIST) $(am__timeline_SOURCES_DIST) \
 	$(am__tooltip_SOURCES_DIST)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -377,6 +386,8 @@ EXTRA_DIST =
 @BUILD_EXAMPLES_TRUE@timegraph_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@gridlayout_SOURCES = gridlayout.cpp
 @BUILD_EXAMPLES_TRUE@gridlayout_LDADD = $(ALL_LIBS)
+@BUILD_EXAMPLES_TRUE@pangotextedit_SOURCES = pangotextedit.cpp
+@BUILD_EXAMPLES_TRUE@pangotextedit_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
 @BUILD_EXAMPLES_TRUE@sourceexampledir = "$(pkgdatadir)/examples"
@@ -387,7 +398,8 @@ EXTRA_DIST =
 @BUILD_EXAMPLES_TRUE@                     $(checkbox_SOURCES) \
 @BUILD_EXAMPLES_TRUE@                     $(tooltip_SOURCES) \
 @BUILD_EXAMPLES_TRUE@                     $(timegraph_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(gridlayout_SOURCES)
+@BUILD_EXAMPLES_TRUE@                     $(gridlayout_SOURCES) \
+@BUILD_EXAMPLES_TRUE@                     $(pangotextedit_SOURCES)
 
 all: all-am
 
@@ -447,6 +459,9 @@ combobox$(EXEEXT): $(combobox_OBJECTS) $(combobox_DEPENDENCIES)
 gridlayout$(EXEEXT): $(gridlayout_OBJECTS) $(gridlayout_DEPENDENCIES) 
 	@rm -f gridlayout$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(gridlayout_OBJECTS) $(gridlayout_LDADD) $(LIBS)
+pangotextedit$(EXEEXT): $(pangotextedit_OBJECTS) $(pangotextedit_DEPENDENCIES) 
+	@rm -f pangotextedit$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(pangotextedit_OBJECTS) $(pangotextedit_LDADD) $(LIBS)
 textedit$(EXEEXT): $(textedit_OBJECTS) $(textedit_DEPENDENCIES) 
 	@rm -f textedit$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(textedit_OBJECTS) $(textedit_LDADD) $(LIBS)
@@ -471,6 +486,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkbox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/combobox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gridlayout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pangotextedit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textedit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timegraph.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timeline.Po@am__quote@

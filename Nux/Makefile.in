@@ -186,6 +186,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-TableCtrl.lo \
 	libnux_@NUX_API_VERSION@_la-TableItem.lo \
 	libnux_@NUX_API_VERSION@_la-TabView.lo \
+	libnux_@NUX_API_VERSION@_la-TextEntry.lo \
 	libnux_@NUX_API_VERSION@_la-TextureArea.lo \
 	libnux_@NUX_API_VERSION@_la-TimeGraph.lo \
 	libnux_@NUX_API_VERSION@_la-Timeline.lo \
@@ -570,6 +571,7 @@ source_cpp = \
   $(srcdir)/TableCtrl.cpp \
   $(srcdir)/TableItem.cpp \
   $(srcdir)/TabView.cpp \
+  $(srcdir)/TextEntry.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/TimeGraph.cpp \
   $(srcdir)/Timeline.cpp \
@@ -704,6 +706,7 @@ source_h = \
   $(srcdir)/TableCtrl.h \
   $(srcdir)/TableItem.h \
   $(srcdir)/TabView.h \
+  $(srcdir)/TextEntry.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/TimeGraph.h \
   $(srcdir)/Timeline.h \
@@ -916,6 +919,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TabView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableCtrl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableItem.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextEntry.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextureArea.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Theme.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimeGraph.Plo@am__quote@
@@ -1800,6 +1804,14 @@ libnux_@NUX_API_VERSION@_la-TabView.lo: $(srcdir)/TabView.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TabView.cpp' object='libnux_@NUX_API_VERSION@_la-TabView.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TabView.lo `test -f '$(srcdir)/TabView.cpp' || echo '$(srcdir)/'`$(srcdir)/TabView.cpp
+
+libnux_@NUX_API_VERSION@_la-TextEntry.lo: $(srcdir)/TextEntry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TextEntry.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextEntry.Tpo -c -o libnux_@NUX_API_VERSION@_la-TextEntry.lo `test -f '$(srcdir)/TextEntry.cpp' || echo '$(srcdir)/'`$(srcdir)/TextEntry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextEntry.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextEntry.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TextEntry.cpp' object='libnux_@NUX_API_VERSION@_la-TextEntry.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TextEntry.lo `test -f '$(srcdir)/TextEntry.cpp' || echo '$(srcdir)/'`$(srcdir)/TextEntry.cpp
 
 libnux_@NUX_API_VERSION@_la-TextureArea.lo: $(srcdir)/TextureArea.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TextureArea.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextureArea.Tpo -c -o libnux_@NUX_API_VERSION@_la-TextureArea.lo `test -f '$(srcdir)/TextureArea.cpp' || echo '$(srcdir)/'`$(srcdir)/TextureArea.cpp

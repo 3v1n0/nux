@@ -131,6 +131,7 @@ source_cpp = \
   $(srcdir)/TableCtrl.cpp \
   $(srcdir)/TableItem.cpp \
   $(srcdir)/TabView.cpp \
+  $(srcdir)/TextEntry.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/TimeGraph.cpp \
   $(srcdir)/Timeline.cpp \
@@ -265,6 +266,7 @@ source_h = \
   $(srcdir)/TableCtrl.h \
   $(srcdir)/TableItem.h \
   $(srcdir)/TabView.h \
+  $(srcdir)/TextEntry.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/TimeGraph.h \
   $(srcdir)/Timeline.h \
