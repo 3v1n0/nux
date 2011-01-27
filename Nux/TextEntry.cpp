@@ -275,7 +275,7 @@ namespace nux
     if (character != 0 && (strlen (character) != 0))
     {
       EnterText(character);
-      QueueTextDraw();
+      QueueRefresh(false, true);
       return;
     }
 
