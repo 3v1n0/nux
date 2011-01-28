@@ -45,7 +45,7 @@ namespace nux
   class InputArea;
   typedef InputArea CoreArea;
 
-  class InputArea : public Area //public sigc::trackable
+  class InputArea : public Area
   {
   public:
     NUX_DECLARE_OBJECT_TYPE (InputArea, Area);

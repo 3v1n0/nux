@@ -28,6 +28,7 @@ static void TestObjectReference (void);
 static void TestObjectPtr (void);
 static void TestObjectPtr1 (void);
 static void TestObjectPtr2 (void);
+static void TestObjectSignal (void);
 
 void
 TestObjectSuite (void)
@@ -39,6 +40,7 @@ TestObjectSuite (void)
   g_test_add_func (TESTDOMAIN"/TestObjectPtr",        TestObjectPtr);
   g_test_add_func (TESTDOMAIN"/TestObjectPtr1",       TestObjectPtr1);
   g_test_add_func (TESTDOMAIN"/TestObjectPtr2",       TestObjectPtr2);
+  g_test_add_func (TESTDOMAIN"/TestObjectSignal",     TestObjectSignal);
 }
 
 static const int ARRAY_SIZE = 1000;
@@ -224,4 +226,20 @@ TestObjectPtr2 (void)
 
   g_assert (object_ptr2.GetWeakReferenceCount () == 1);
   g_assert (object_ptr2.Release () == true);
+}
+
+static bool g_signal_called = false;
+
+static void on_destroyed_cb () {
+  g_signal_called = true;
+}
+
+static void
+TestObjectSignal (void)
+{
+  nux::Object *obj = new nux::Object ();
+  obj->OnDestroyed.connect (sigc::ptr_fun (on_destroyed_cb));
+  g_assert (g_signal_called == false);
+  obj->UnReference ();
+  g_assert (g_signal_called == true);
 }

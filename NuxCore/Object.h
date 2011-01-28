@@ -23,6 +23,9 @@
 #ifndef NUXOBJECT_H
 #define NUXOBJECT_H
 
+#include <sigc++/trackable.h>
+#include <sigc++/signal.h>
+
 namespace nux
 {
 
@@ -66,7 +69,7 @@ namespace nux
       Trackable does not implement reference counting. It only defines the API. It is up
       to the class that inherit from Trackable to implement the reference counting.
   */
-  class Trackable
+  class Trackable : public sigc::trackable
   {
   public:
     NUX_DECLARE_ROOT_OBJECT_TYPE (Trackable);
@@ -87,6 +90,9 @@ namespace nux
         @return True if the object was allocated dynamically.
     */
     bool IsDynamic() const;
+
+    //! Signal emitted immediately before the object is destroyed.
+    sigc::signal<void> OnDestroyed;
 
     //! Increase the reference count.
     /*
