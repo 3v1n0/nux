@@ -358,18 +358,18 @@ namespace nux
         {
           // If this element is a Splitter, then we submit its child to the refresh list. We don't want to submit the
           // splitter because this will cause a redraw of all parts of the splitter (costly and unnecessary).
-          GetWindowThread ()->AddObjectToRefreshList (child);
+          GetWindowThread ()->QueueObjectLayout (child);
         }
         else
         {
-          GetWindowThread ()->AddObjectToRefreshList (ic);
+          GetWindowThread ()->QueueObjectLayout (ic);
         }
       }
       else if (ic->m_ParentObject)
         ic->m_ParentObject->InitiateResizeLayout (this);
       else
       {
-        GetWindowThread ()->AddObjectToRefreshList (ic);
+        GetWindowThread ()->QueueObjectLayout (ic);
       }
     }
     else if (this->Type().IsDerivedFromType (Layout::StaticObjectType) )
@@ -396,11 +396,11 @@ namespace nux
             {
               // If the parent of this element is a splitter, then we submit its child to the refresh list. We don't want to submit the
               // splitter because this will cause a redraw of all parts of the splitter (costly and unnecessary).
-              GetWindowThread ()->AddObjectToRefreshList (this);
+              GetWindowThread ()->QueueObjectLayout (this);
             }
             else
             {
-              GetWindowThread ()->AddObjectToRefreshList (ic);
+              GetWindowThread ()->QueueObjectLayout (ic);
             }
           }
           else
@@ -417,7 +417,7 @@ namespace nux
       else
       {
         // This is possibly the Main layout or the layout of a floating object (popup for example) unless the layout is not part of the object tree.
-        GetWindowThread ()->AddObjectToRefreshList (layout);
+        GetWindowThread ()->QueueObjectLayout (layout);
       }
     }
     else

@@ -122,13 +122,16 @@ namespace nux
 
   }
 
-  void GroupBox2::SetLayout (Layout *layout)
+  bool GroupBox2::SetLayout (Layout *layout)
   {
-    if (layout == 0)
-      return;
+    if(View::SetLayout(layout) == false)
+    {
+      return false;
+    }
 
     m_layout = layout;
-    SetCompositionLayout (m_layout);
+
+    return true;
   }
 
   void GroupBox2::PreLayoutManagement()

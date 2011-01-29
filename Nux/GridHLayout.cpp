@@ -89,6 +89,16 @@ namespace nux
     return _num_row;
   }
 
+  void GridHLayout::SetHeightMatchContent (bool match_content)
+  {
+    _height_match_content = match_content;
+  }
+
+  bool GridHLayout::GetHeightMatchContent () const
+  {
+    return _height_match_content;
+  }
+
   void GridHLayout::GetCompositeList (std::list<Area *> *ViewList)
   {
     std::list<Area *>::iterator it;
@@ -195,8 +205,12 @@ namespace nux
     _num_row = num_row;
     _num_column = num_column;
 
-    if (GetStretchFactor() == 0)
-      SetBaseHeight (num_row * _children_size.height + 2 * m_v_out_margin + (num_row - 1) * m_v_in_margin);
+    if ((GetStretchFactor() == 0) && _height_match_content)
+    {
+      int h = num_row * _children_size.height + 2 * m_v_out_margin + (num_row - 1) * m_v_in_margin;
+      SetMinimumHeight(h);
+      SetBaseHeight(h);
+    }
 
     long size_compliance = 0L;
     {
