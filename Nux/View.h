@@ -54,16 +54,10 @@ namespace nux
     virtual void PositionChildLayout (float offsetX, float offsetY);
 
     // NUXTODO: Find better name
-    virtual long ComputeLayout2()
-    {
-      return ComputeChildLayout();
-    };
+    virtual long ComputeLayout2();
 
     // NUXTODO: Find better name
-    virtual void ComputePosition2 (float offsetX, float offsetY)
-    {
-      PositionChildLayout (offsetX, offsetY);
-    };
+    virtual void ComputePosition2 (float offsetX, float offsetY);
 
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement (long LayoutResult);
@@ -154,11 +148,11 @@ namespace nux
       return false;
     }
 
-    virtual void SetTextColor (const Color &color);
+    virtual void SetTextColor(const Color &color);
     virtual Color GetTextColor();
 
-    void SetFont (ObjectPtr<FontTexture> font);
-    ObjectPtr<FontTexture> GetFont ();
+    void SetFont(ObjectPtr<FontTexture> font);
+    ObjectPtr<FontTexture> GetFont();
 
     sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
 
@@ -175,8 +169,21 @@ namespace nux
     Color m_TextColor;
     ObjectPtr<FontTexture> _font;
 
-    virtual Layout *GetCompositionLayout() const;
-    virtual void SetCompositionLayout (Layout *lyt);
+    //! Get the default layout of this view.
+    /*!
+        Get the default layout of this view.
+        @return The default layout of this view.
+    */
+    virtual Layout* GetLayout();
+    virtual Layout* GetCompositionLayout();
+
+    //! Set the default layout for this view.
+    /*!
+        Set the default layout for this view.
+        @param layout A Layout object.
+    */
+    virtual bool SetLayout (Layout *layout);
+    virtual bool SetCompositionLayout (Layout *layout);
     void RemoveCompositionLayout();
 
     /*!

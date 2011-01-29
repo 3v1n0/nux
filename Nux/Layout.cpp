@@ -48,7 +48,7 @@ namespace nux
   Layout::~Layout()
   {
     // It is possible that this layout object is in the refresh list. Remove it here before it is deleted.
-    GetWindowThread ()->RemoveObjectFromRefreshList (this);
+    GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
     std::list<Area *>::iterator it;
 
