@@ -61,7 +61,12 @@ namespace nux
     XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_WINDOW_TYPE", 0),
                      XA_ATOM, 32, PropModeReplace,
                      (unsigned char *) type, 1);
-    
+
+    const char *title = "nux input window";
+    XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_NAME", 0),
+                     XInternAtom (d, "UTF8_STRING", 0), 8, PropModeReplace,
+                     (unsigned char*) title, strlen (title));
+
     XMapRaised (d, _window);
     EnsureInputs ();
   }
