@@ -37,7 +37,13 @@ namespace nux
     inlRegisterThreadLocalIndex (1, _TLS_GraphicsDisplay, NULL);
     inlRegisterThreadLocalIndex (2, _TLS_GpuDevice_, NULL);
 
+#if defined(NUX_OS_LINUX)
+    // Necessary in order to use gdk
+    g_type_init();
+#endif
+    
     GNuxGraphicsResources.InitializeResources();
+    
   }
 
   GraphicsDisplay *GetThreadGLWindow()
