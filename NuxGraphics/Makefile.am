@@ -20,7 +20,6 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
 libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxMesh/libnux-mesh-@NUX_API_VERSION@.la \
   $(NUX_GRAPHICS_LIBS)
 
 libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \

@@ -48,10 +48,6 @@
 #include "NuxCore/Math/MathFunctions.h"
 
 #include "NuxImage/ImageSurface.h"
-#include "NuxImage/Tga.h"
-#include "NuxImage/Bmp.h"
-#include "NuxImage/NPng.h"
-
 
 namespace nux
 {

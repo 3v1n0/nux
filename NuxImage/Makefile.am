@@ -25,30 +25,14 @@ libnux_image_@NUX_API_VERSION@_la_LDFLAGS = \
 
 source_h = \
   $(srcdir)/BitmapFormats.h \
-  $(srcdir)/Bmp.h \
   $(srcdir)/CairoGraphics.h \
-  $(srcdir)/DDS.h \
   $(srcdir)/ImageSurface.h \
-  $(srcdir)/NAnimatedTexture.h \
-  $(srcdir)/NITX.h \
-  $(srcdir)/NPng.h \
-  $(srcdir)/OpenEXR.h \
-  $(srcdir)/RGBE.h \
-  $(srcdir)/Tga.h \
   $(srcdir)/GdkGraphics.h
 
 source_cpp = \
   $(srcdir)/BitmapFormats.cpp \
-  $(srcdir)/Bmp.cpp \
   $(srcdir)/CairoGraphics.cpp \
-  $(srcdir)/DDS.cpp \
   $(srcdir)/ImageSurface.cpp \
-  $(srcdir)/NAnimatedTexture.cpp \
-  $(srcdir)/NITX.cpp \
-  $(srcdir)/NPng.cpp \
-  $(srcdir)/OpenEXR.cpp \
-  $(srcdir)/RGBE.cpp \
-  $(srcdir)/Tga.cpp \
   $(srcdir)/GdkGraphics.cpp
 
 libnux_image_@NUX_API_VERSION@_la_SOURCES = \

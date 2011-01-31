@@ -26,14 +26,6 @@
 #include "BitmapFormats.h"
 #include "NuxCore/Math/MathFunctions.h"
 
-#include "Tga.h"
-#include "Bmp.h"
-#include "NPng.h"
-#include "DDS.h"
-#include "RGBE.h"
-#include "OpenEXR.h"
-#include "NITX.h"
-#include "NAnimatedTexture.h"
 #include "GdkGraphics.h"
 
 #if defined (NUX_OS_WINDOWS)
@@ -119,35 +111,34 @@ namespace nux
 //     if (BitmapData) return BitmapData;
 
 #elif defined(NUX_OS_LINUX)
-//     GdkGraphics *gdkgraphics = new GdkGraphics ();
-//     if (gdkgraphics->LoadImage (filename))
-//     {
-//       return gdkgraphics->GetBitmap ();
-//     }
-
-    BitmapData = read_tga_file (filename);
+    GdkGraphics gdkgraphics;
+    gdkgraphics.LoadImage (filename);
+    BitmapData = gdkgraphics.GetBitmap();
     if (BitmapData) return BitmapData;
-
-    BitmapData = read_bmp_file (filename);
-    if (BitmapData) return BitmapData;
-
-    BitmapData = read_png_rgba (filename);
-    if (BitmapData) return BitmapData;
-
-    BitmapData = read_png_rgb (filename);
-    if (BitmapData) return BitmapData;
-
-    BitmapData = Load_DDS_File (filename);
-    if (BitmapData) return BitmapData;
-
-    BitmapData = LoadRGBE (filename);
-    if (BitmapData) return BitmapData;
-
-    BitmapData = LoadAnimatedTextureFile (filename);
-    if (BitmapData) return BitmapData;
-
-    BitmapData = LoadITXFile (filename);
-    if (BitmapData) return BitmapData;
+    
+//     BitmapData = read_tga_file (filename);
+//     if (BitmapData) return BitmapData;
+//
+//     BitmapData = read_bmp_file (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = read_png_rgba (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = read_png_rgb (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = Load_DDS_File (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = LoadRGBE (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = LoadAnimatedTextureFile (filename);
+//     if (BitmapData) return BitmapData;
+// 
+//     BitmapData = LoadITXFile (filename);
+//     if (BitmapData) return BitmapData;
 
 #endif
 

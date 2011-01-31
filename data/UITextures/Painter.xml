@@ -24,9 +24,6 @@
 	<Image Name="ScrollBarTriangleDown.tga" type="Shape" style="eSCROLLBAR_TRIANGLE_DOWN"    border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
 	<Image Name="ScrollBarTriangleLeft.tga" type="Shape" style="eSCROLLBAR_TRIANGLE_LEFT"    border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
 	<Image Name="ScrollBarTriangleRight.tga" type="Shape" style="eSCROLLBAR_TRIANGLE_RIGHT"  border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-
-	<Image Name="WindowSizeGrip2.tga" type="Shape" style="eWINDOW_SIZEGRIP"	border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-
 	<Image Name="CheckBoxNormalOn.tga" type="Shape" style="eCHECKBOX_NORMAL_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
 	<Image Name="CheckBoxNormalOff.tga" type="Shape" style="eCHECKBOX_NORMAL_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
 	<Image Name="CheckBoxMouseDownOn.tga" type="Shape" style="eCHECKBOX_FOCUS_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
@@ -69,9 +66,7 @@
   
 	<Image Name="Matrix3Preview.tga" type="Shape" style="eMATRIX3PREVIEW" border_left="0" border_right="10" border_top="0" border_bottom="0" border_only="false" />
 	<Image Name="Matrix4Preview.tga" type="Shape" style="eMATRIX4PREVIEW" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-
 	<Image Name="Dot-6x6.tga" type="Shape" style="eDOT6x6" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-
 	<Image Name="GraphIcon.tga" type="Shape" style="eGraphIcon" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
 	<Image Name="GraphBarIcon.tga" type="Shape" style="eGraphBarIcon" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
 	
