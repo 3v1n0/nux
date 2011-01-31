@@ -1424,9 +1424,6 @@ namespace nux
 
       case FocusIn:
       {
-        if (foreign)
-          break;
-        
         m_pEvent->e_event = NUX_WINDOW_ENTER_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
@@ -1444,9 +1441,6 @@ namespace nux
 
       case FocusOut:
       {
-        if (foreign)
-          break;
-        
         m_pEvent->e_event = NUX_WINDOW_EXIT_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
