@@ -357,7 +357,15 @@ namespace nux
     if (m_input_window)
       m_input_window->UnGrabKeyboard ();    
   }
-  
+
+  Window BaseWindow::GetInputWindowId ()
+  {
+    if (m_input_window)
+      return m_input_window->GetWindow ();
+    else
+      return 0;
+  }
+
   #endif
 
   void BaseWindow::SetGeometry (const Geometry &geo)

@@ -249,6 +249,14 @@ namespace nux
           OnEndFocus.emit ();
         }
       }
+      else if (ievent.e_event == NUX_WINDOW_ENTER_FOCUS)
+      {
+        if (!HasKeyboardFocus ())
+        {
+          SetKeyboardFocus (true);
+          OnStartFocus.emit ();
+        }
+      }
 
       // Imagine a Toolbar. When a MouseDown happens on the toolbar, it gets the mouse focus. While the mouse
       // is being pressed, we can move it above a widget that is inside the toolbar. That widget should not claim that it has
@@ -398,17 +406,36 @@ namespace nux
       }
     }
 
-    if (HasKeyboardFocus() && (ievent.e_event == NUX_KEYDOWN || ievent.e_event == NUX_KEYUP) )
+    if (HasKeyboardFocus ())
     {
-      nuxEventDebugTrace (_print_event_debug_trace, TEXT("key down or up and has focus. Emit OnKeyEvent"));
-      nuxEventDebugTrace (_print_event_debug_trace, TEXT("key down or up and has focus. String: %s"), ievent.e_text);
-      OnKeyEvent.emit (
-        GetWindowThread ()->GetGraphicsEngine(),
-        ievent.e_event,
-        ievent.GetKeySym(),
-        ievent.GetKeyState(),
-        ievent.GetText(),
-        ievent.GetKeyRepeatCount() );
+      if (ievent.e_event == NUX_KEYDOWN)
+      {
+        nuxEventDebugTrace (_print_event_debug_trace,
+                            TEXT("Emit OnKeyPressed"));
+        OnKeyPressed.emit (ievent.GetKeySym(), ievent.e_x11_keycode,
+                            ievent.GetKeyState());
+
+        nuxEventDebugTrace (_print_event_debug_trace,
+                            TEXT("Emit OnKeyEvent. String: %s"), ievent.e_text);
+        OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
+                         ievent.e_event, ievent.GetKeySym(),
+                         ievent.GetKeyState(), ievent.GetText(),
+                         ievent.GetKeyRepeatCount());
+      }
+      else if (ievent.e_event == NUX_KEYUP)
+      {
+        nuxEventDebugTrace (_print_event_debug_trace,
+                            TEXT("Emit OnKeyReleased"));
+        OnKeyReleased.emit (ievent.GetKeySym(), ievent.e_x11_keycode,
+                            ievent.GetKeyState());
+
+        nuxEventDebugTrace (_print_event_debug_trace,
+                            TEXT("Emit OnKeyEvent. String: %s"), ievent.e_text);
+        OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
+                         ievent.e_event, ievent.GetKeySym(),
+                         ievent.GetKeyState(), ievent.GetText(),
+                         ievent.GetKeyRepeatCount());
+      }
     }
 
     GetWindowCompositor().m_PreviousMouseOverArea = PreviousMouseOverArea;
