@@ -305,6 +305,13 @@ namespace nux
 
     SetGeometry (geo);
 
+#if defined(NUX_OS_LINUX)
+    if (m_input_window != 0)
+    {
+      //nuxDebugMsg (TEXT("Resize Input window: %d, %d, %d, %d"), geo.x, geo.y, geo.width, geo.height);
+      m_input_window->SetGeometry (GetGeometry());
+    }
+#endif    
     NeedRedraw();
   }
 
@@ -325,6 +332,14 @@ namespace nux
     // No need to compute the layout [ComputeChildLayout()]. It hasn't changed.
 
     m_TitleBar->SetGeometry (0, 0, geo.GetWidth(), TitleBarHeight);
+
+#if defined(NUX_OS_LINUX)
+    if (m_input_window != 0)
+    {
+      //nuxDebugMsg (TEXT("Resize Input window: %d, %d, %d, %d"), geo.x, geo.y, geo.width, geo.height);
+      m_input_window->SetGeometry (GetGeometry());
+    }
+#endif
 
     NeedRedraw();
   }

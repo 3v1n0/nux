@@ -202,15 +202,15 @@ namespace nux
     
     bool ChildNeedsRedraw ();
 
-  private:
-    //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
-    ObjectPtr<BaseTexture> _background_texture;
-
     #if defined(NUX_OS_LINUX)
     bool m_input_window_enabled;
     XInputWindow *m_input_window;
     #endif
     
+  private:
+    //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
+    ObjectPtr<BaseTexture> _background_texture;
+   
     bool _size_match_layout;
     bool _is_visible;
     bool _is_modal;
