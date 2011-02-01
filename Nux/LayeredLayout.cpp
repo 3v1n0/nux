@@ -46,6 +46,9 @@ namespace nux
 
   void LayeredLayout::GetCompositeList (std::list<Area *> *ViewList)
   {
+    if (m_active_area)
+      ViewList->push_back (m_active_area);
+    return;
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -79,36 +82,80 @@ namespace nux
 
   void LayeredLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    std::list<Area *>::iterator it;
-
     Geometry base = GetGeometry ();
     GfxContext.PushClippingRectangle (base);
 
-    _layout_element_list.reverse ();
-
-    for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
+    if (m_active_area)
     {
-      if ((*it)->IsArea ())
+      if (m_active_area->IsArea ())
       {
-        CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it));
+        CoreArea *area = NUX_STATIC_CAST (CoreArea *, m_active_area);
         area->OnDraw (GfxContext, force_draw);
       }
-      else if ((*it)->IsView ())
+      else if (m_active_area->IsView ())
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = NUX_STATIC_CAST (View *, m_active_area);
         ic->ProcessDraw (GfxContext, force_draw);
       }
-      else if ((*it)->IsLayout ())
+      else if (m_active_area->IsLayout ())
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
+        Layout *layout = NUX_STATIC_CAST (Layout *, m_active_area);
         layout->ProcessDraw (GfxContext, force_draw);
       }
     }
-
-    _layout_element_list.reverse ();
 
     GfxContext.PopClippingRectangle ();
     _queued_draw = false;
   }
 
+  long LayeredLayout::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    long ret = TraverseInfo;
+    
+    if (m_active_area)
+    {
+      if ( m_active_area->IsArea())
+      {
+        CoreArea *area = NUX_STATIC_CAST (CoreArea *, m_active_area);
+        ret = area->OnEvent (ievent, ret, ProcessEventInfo);
+      }
+      else if (m_active_area->IsView())
+      {
+        View *ic = NUX_STATIC_CAST (View *, m_active_area);
+        ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
+      }
+      else if (m_active_area->IsLayout())
+      {
+        Layout *layout = NUX_STATIC_CAST (Layout *, m_active_area);
+        ret = layout->ProcessEvent (ievent, ret, ProcessEventInfo);
+      }
+    }
+
+    return ret;
+  }
+
+  void LayeredLayout::SetActiveLayer (t_uint32 index_)
+  {
+    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    t_uint32 i = 0;
+
+    g_return_if_fail (index_ < _layout_element_list.size ());
+
+    if (index_ == m_active_index)
+      return;
+
+    m_active_index = index_;
+    m_active_area = NULL;
+
+    for (it = _layout_element_list.begin (); it != eit; ++it)
+    {
+      if (i == m_active_index)
+      {
+        m_active_area = static_cast<Area *> (*it);
+        break;
+      }
+      i++;
+    }
+    NeedRedraw ();
+  }
 }

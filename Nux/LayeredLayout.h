@@ -40,13 +40,17 @@ namespace nux
     LayeredLayout (NUX_FILE_LINE_PROTO);
     ~LayeredLayout ();
 
+    // LayeredLayout methods
+    void SetActiveLayer (t_uint32 index_);
+
     virtual long ComputeLayout2 ();
     virtual void GetCompositeList (std::list<Area *> *ViewList);
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
-
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+  
   private:
-    int   m_active_index;
-    Area *m_active_area;
+    t_uint32  m_active_index;
+    Area     *m_active_area;
   };
 }
 
