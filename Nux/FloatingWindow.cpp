@@ -346,6 +346,11 @@ namespace nux
 
   void FloatingWindow::RecvCloseButtonClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+#if defined(NUX_OS_LINUX)
+    // Disable the input window if there is one.
+    EnableInputWindow(false);
+#endif
+    
     StopModal();
   }
 
