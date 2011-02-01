@@ -26,6 +26,7 @@
 #include "Nux/HLayout.h"
 #include "Nux/VLayout.h"
 #include "Nux/LayeredLayout.h"
+#include "Nux/PushButton.h"
 
 
 void LayeredLayoutInit(nux::NThread* thread, void* InitData)
@@ -33,24 +34,21 @@ void LayeredLayoutInit(nux::NThread* thread, void* InitData)
   nux::HLayout *main_layout((new nux::HLayout(NUX_TRACKER_LOCATION)));
 
   nux::LayeredLayout *layered_layout ((new nux::LayeredLayout (NUX_TRACKER_LOCATION)));
-  for (int i = 0; i < 60; i++)
+  for (int i = 0; i < 10; i++)
   {
-    nux::ColorLayer color (nux::Color::RandomColor ());
-    nux::TextureArea* texture_area = new nux::TextureArea ();
-    texture_area->SetPaintLayer (&color);
+    gchar *text = g_strdup_printf ("Button %d", i);
+    nux::PushButton* button = new nux::PushButton (text, NUX_TRACKER_LOCATION);
 
-    layered_layout->AddView (texture_area, 1, nux::eLeft, nux::eFull);
+    //nux::Color c = nux::Color::RandomColor ();
+    //c.SetAlpha (0.5f);
+    //nux::ColorLayer color (c);
+    //nux::TextureArea* texture_area = new nux::TextureArea ();
+    //texture_area->SetPaintLayer (&color);
+
+    layered_layout->AddView (button, 1, nux::eLeft, nux::eFull);
+
+    g_free (text);
   }
-
-  layered_layout->ForceChildrenSize (true);
-  layered_layout->SetChildrenSize (64, 42);
-  layered_layout->EnablePartialVisibility (false);
-
-  layered_layout->SetVerticalExternalMargin (4);
-  layered_layout->SetHorizontalExternalMargin (4);
-  layered_layout->SetVerticalInternalMargin (4);
-  layered_layout->SetHorizontalInternalMargin (4);
-
 
   main_layout->AddLayout (layered_layout, 1);
   
