@@ -23,11 +23,6 @@
 #ifndef BASEOBJECT_H
 #define BASEOBJECT_H
 
-#include <sigc++/trackable.h>
-#include <sigc++/signal.h>
-#include <sigc++/functors/ptr_fun.h>
-#include <sigc++/functors/mem_fun.h>
-
 #include "NuxCore/InitiallyUnownedObject.h"
 
 #include "Utils.h"
@@ -125,7 +120,7 @@ namespace nux
   class Area;
 
 
-  class Area: public InitiallyUnownedObject, public sigc::trackable
+  class Area: public InitiallyUnownedObject
   {
   public:
     NUX_DECLARE_OBJECT_TYPE (Area, InitiallyUnownedObject);
@@ -374,7 +369,6 @@ namespace nux
       outofbound = b;
     }
 
-    sigc::signal<void, Area*> OnDelete;  //!< Signal emitted when an area is destroyed.
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
 
     unsigned int    m_stretchfactor;
