@@ -27,12 +27,30 @@
 #include "Nux/VLayout.h"
 #include "Nux/LayeredLayout.h"
 #include "Nux/PushButton.h"
+#include "Nux/ComboBoxSimple.h"
 
+class Foo
+{
+public:
+  Foo () {};
+  ~Foo () {};
+
+  void OnComboChangedFoRealz (nux::ComboBoxSimple *simple)
+  {
+    g_debug ("Active: %d", simple->GetSelectionIndex ());
+  }
+};
 
 void LayeredLayoutInit(nux::NThread* thread, void* InitData)
 {
-  nux::HLayout *main_layout((new nux::HLayout(NUX_TRACKER_LOCATION)));
+  Foo *foo  = new Foo ();
+  nux::VLayout *main_layout((new nux::VLayout(NUX_TRACKER_LOCATION)));
+  nux::ComboBoxSimple *combo = new nux::ComboBoxSimple (NUX_TRACKER_LOCATION);
 
+  combo->SetMinimumWidth (150);
+  combo->sigTriggered.connect (sigc::mem_fun (foo, &Foo::OnComboChangedFoRealz));
+  main_layout->AddView (combo, 0, nux::eCenter, nux::eFix);
+  
   nux::LayeredLayout *layered_layout ((new nux::LayeredLayout (NUX_TRACKER_LOCATION)));
   for (int i = 0; i < 10; i++)
   {
@@ -46,6 +64,7 @@ void LayeredLayoutInit(nux::NThread* thread, void* InitData)
     //texture_area->SetPaintLayer (&color);
 
     layered_layout->AddView (button, 1, nux::eLeft, nux::eFull);
+    combo->AddItem (text);
 
     g_free (text);
   }

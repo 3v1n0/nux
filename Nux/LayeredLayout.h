@@ -45,6 +45,8 @@ namespace nux
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
 
   private:
+    int   m_active_index;
+    Area *m_active_area;
   };
 }
 

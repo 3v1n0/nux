@@ -31,7 +31,10 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE (LayeredLayout);
 
   LayeredLayout::LayeredLayout (NUX_FILE_LINE_DECL)
-    :   Layout (NUX_FILE_LINE_PARAM)
+  : Layout (NUX_FILE_LINE_PARAM),
+    m_active_index (0),
+    m_active_area (NULL)
+
   {
     m_ContentStacking = eStackLeft;
   }
