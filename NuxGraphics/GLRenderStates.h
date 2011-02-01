@@ -184,7 +184,7 @@ namespace nux
                                   t_u32 SrcFactorAlpha_   /*= GL_ONE*/,
                                   t_u32 DestFactorAlpha_  /*= GL_ZERO*/);
 
-    inline void SetPremultipliedBlend (bool enable, PorterDuffOperator op);
+    inline void SetPremultipliedBlend (PorterDuffOperator op);
 
     inline void SetBlendOp (
       t_u32 BlendOp       = GL_FUNC_ADD);
@@ -462,8 +462,7 @@ namespace nux
 //     }
   }
 
-  inline void GpuRenderStates::SetPremultipliedBlend (bool enable,
-                                                      PorterDuffOperator op)
+  inline void GpuRenderStates::SetPremultipliedBlend (PorterDuffOperator op)
   {
     static const struct
     {
@@ -485,8 +484,6 @@ namespace nux
       { GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA }, // XOR
       { GL_ONE,                 GL_ONE                 }  // PLUS
     };
-
-    SetBlend (enable);
 
     if ((RS_VALUE (m_RenderStateChanges[GFXRS_SRCBLEND]) !=
          factor[op].src_blend) ||
