@@ -48,3 +48,4 @@ examples/layeredlayout
 tests/test-nux
 tests/test-nux-results.xml
 
+gputests/arb_programs_limits

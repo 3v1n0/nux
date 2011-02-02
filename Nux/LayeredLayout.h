@@ -81,14 +81,14 @@ namespace nux
   private:
     void PaintOne (Area *area, GraphicsEngine &GfxContext, bool force_draw);
     long ProcessOne (Area *_area, IEvent &ievent, long traverse_info, long process_event_info);
-    void OnViewQueueRedraw (View *view);
-    void OnLayoutQueueRedraw (Layout *layout);
+    void ChildQueueDraw (Area *area);
 
   private:
     int                      m_active_index;
     Area                    *m_active_area;
     bool                     m_paint_all;
     LayeredLayout::InputMode m_input_mode;
+    bool                     m_child_draw_queued;
   };
 }
 

@@ -35,15 +35,15 @@ namespace nux
     m_active_index (0),
     m_active_area (NULL),
     m_paint_all (false),
-    m_input_mode (INPUT_MODE_ACTIVE)
-
+    m_input_mode (INPUT_MODE_ACTIVE),
+    m_child_draw_queued (false)
   {
     m_ContentStacking = eStackLeft;
+    OnChildQueueDraw.connect (sigc::mem_fun (this, &LayeredLayout::ChildQueueDraw));
   }
 
   LayeredLayout::~LayeredLayout()
   {
-
   }
 
   void LayeredLayout::GetCompositeList (std::list<Area *> *ViewList)
@@ -111,7 +111,9 @@ namespace nux
       std::list<Area *>::iterator it, eit = _layout_element_list.end ();
 
       for (it = _layout_element_list.begin (); it != eit; ++it)
-        PaintOne (static_cast<Area *> (*it), gfx_context, force_draw);
+        PaintOne (static_cast<Area *> (*it), gfx_context, m_child_draw_queued ? true : force_draw);
+
+      m_child_draw_queued = false;
     }
     else if (m_active_area)
     {
@@ -185,8 +187,6 @@ namespace nux
       m_active_area = layout;
       NeedRedraw ();
     }
-
-    layout->OnQueueDraw.connect (sigc::mem_fun (this, &LayeredLayout::OnLayoutQueueRedraw));
     Layout::AddLayout (layout, stretch_factor, positioning, extend, percentage);
   }
   
@@ -201,13 +201,6 @@ namespace nux
       m_active_area = view;
       NeedRedraw ();
     }
-    
-    if (view->IsView ())
-    {
-      View *v = static_cast<View *> (view);
-      v->OnQueueDraw.connect (sigc::mem_fun (this, &LayeredLayout::OnViewQueueRedraw));
-    }
-    
     Layout::AddView (view, stretch_factor, positioning, extend, percentage);
   }
 
@@ -243,14 +236,9 @@ namespace nux
     Layout::Clear ();
   }
 
-  void LayeredLayout::OnViewQueueRedraw (View *view)
+  void LayeredLayout::ChildQueueDraw (Area *area)
   {
-    QueueDraw ();
-  }
-
-  void LayeredLayout::OnLayoutQueueRedraw (Layout *layout)
-  {
-    QueueDraw ();
+    m_child_draw_queued = true;
   }
 
   //
@@ -336,4 +324,5 @@ namespace nux
   {
     return m_input_mode;
   }
+
 }
