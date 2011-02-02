@@ -45,15 +45,26 @@ public:
     for (int i = 0; i < 10; i++)
     {
       gchar *text = g_strdup_printf ("Button %d", i);
+      nux::LayeredLayout *layered = new nux::LayeredLayout (NUX_TRACKER_LOCATION);
+
+      nux::Color c (nux::Color::RandomColor ());
+      c.SetAlpha (0.5);
+      nux::ColorLayer color (c, true);
+      nux::TextureArea* texture_area = new nux::TextureArea ();
+      texture_area->SetPaintLayer (&color);      
+
+      nux::HLayout *hori = new nux::HLayout (NUX_TRACKER_LOCATION);
       nux::PushButton* button = new nux::PushButton (text, NUX_TRACKER_LOCATION);
+      button->SetMinMaxSize (100, 50);
+      hori->AddView (button, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
+      hori->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
 
-      //nux::Color c = nux::Color::RandomColor ();
-      //c.SetAlpha (0.5f);
-      //nux::ColorLayer color (c);
-      //nux::TextureArea* texture_area = new nux::TextureArea ();
-      //texture_area->SetPaintLayer (&color);
-
-      layered_layout->AddView (button, 1, nux::eLeft, nux::eFull);
+      layered->AddView (texture_area);
+      layered->AddLayout (hori);
+      
+      layered->SetPaintAll (true);
+     
+      layered_layout->AddLayout (layered);
       combo->AddItem (text);
 
       g_free (text);

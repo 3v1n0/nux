@@ -43,6 +43,8 @@ namespace nux
     // LayeredLayout methods
     void SetActiveLayer (t_uint32 index_);
 
+    void SetPaintAll (bool paint_all);
+
     // Overrides
     long ComputeLayout2 ();
     void GetCompositeList (std::list<Area *> *ViewList);
@@ -60,10 +62,14 @@ namespace nux
                   float                  percentage     = 100.0f);
     void RemoveChildObject (Area *area);
     void Clear ();
+
+  private:
+    void PaintOne (Area *area, GraphicsEngine &GfxContext, bool force_draw);
   
   private:
     t_uint32  m_active_index;
     Area     *m_active_area;
+    bool      m_paint_all;
   };
 }
 

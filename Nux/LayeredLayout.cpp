@@ -33,7 +33,8 @@ namespace nux
   LayeredLayout::LayeredLayout (NUX_FILE_LINE_DECL)
   : Layout (NUX_FILE_LINE_PARAM),
     m_active_index (0),
-    m_active_area (NULL)
+    m_active_area (NULL),
+    m_paint_all (false)
 
   {
     m_ContentStacking = eStackLeft;
@@ -80,30 +81,42 @@ namespace nux
     return eCompliantHeight | eCompliantWidth;
   }
 
+  void LayeredLayout::PaintOne (Area *_area, GraphicsEngine &GfxContext, bool force_draw)
+  {
+    if (_area->IsArea ())
+    {
+      CoreArea *area = NUX_STATIC_CAST (CoreArea *, _area);
+      area->OnDraw (GfxContext, force_draw);
+    }
+    else if (_area->IsView ())
+    {
+      View *ic = NUX_STATIC_CAST (View *, _area);
+      ic->ProcessDraw (GfxContext, force_draw);
+    }
+    else if (_area->IsLayout ())
+    {
+      Layout *layout = NUX_STATIC_CAST (Layout *, _area);
+      layout->ProcessDraw (GfxContext, force_draw);
+    }
+  }
+
   void LayeredLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry ();
     GfxContext.PushClippingRectangle (base);
-
-    if (m_active_area)
+    
+    if (m_paint_all)
     {
-      if (m_active_area->IsArea ())
-      {
-        CoreArea *area = NUX_STATIC_CAST (CoreArea *, m_active_area);
-        area->OnDraw (GfxContext, force_draw);
-      }
-      else if (m_active_area->IsView ())
-      {
-        View *ic = NUX_STATIC_CAST (View *, m_active_area);
-        ic->ProcessDraw (GfxContext, force_draw);
-      }
-      else if (m_active_area->IsLayout ())
-      {
-        Layout *layout = NUX_STATIC_CAST (Layout *, m_active_area);
-        layout->ProcessDraw (GfxContext, force_draw);
-      }
-    }
+      std::list<Area *>::iterator it, eit = _layout_element_list.end ();
 
+      for (it = _layout_element_list.begin (); it != eit; ++it)
+        PaintOne (static_cast<Area *> (*it), GfxContext, force_draw);
+    }
+    else if (m_active_area)
+    {
+      PaintOne (m_active_area, GfxContext, force_draw);
+    }
+        
     GfxContext.PopClippingRectangle ();
     _queued_draw = false;
   }
@@ -221,6 +234,15 @@ namespace nux
       }
       i++;
     }
+    NeedRedraw ();
+  }
+
+  void LayeredLayout::SetPaintAll (bool paint_all)
+  {
+    if (m_paint_all == paint_all)
+      return;
+
+    m_paint_all = paint_all;
     NeedRedraw ();
   }
 }
