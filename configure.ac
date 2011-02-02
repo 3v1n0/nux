@@ -244,7 +244,7 @@ AC_ARG_ENABLE([examples],
 AM_CONDITIONAL(BUILD_EXAMPLES, [test "x$enable_examples" = "xyes"])
 AM_COND_IF([BUILD_EXAMPLES],
       [
-          PKG_CHECK_MODULES(NUX_EXAMPLES, x11)
+          PKG_CHECK_MODULES(NUX_EXAMPLES, x11 glu)
           AC_SUBST(NUX_EXAMPLES_CFLAGS)
           AC_SUBST(NUX_EXAMPLES_LIBS)
       ],
