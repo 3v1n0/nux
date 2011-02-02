@@ -50,14 +50,20 @@ public:
       nux::ColorLayer color (nux::Color::RandomColor ());
       nux::TextureArea* texture_area = new nux::TextureArea ();
       texture_area->SetPaintLayer (&color);      
+      layered->AddView (texture_area);
 
       nux::HLayout *hori = new nux::HLayout (NUX_TRACKER_LOCATION);
-      nux::PushButton* button = new nux::PushButton (text, NUX_TRACKER_LOCATION);
+      nux::PushButton* button = new nux::PushButton ("Big Button", NUX_TRACKER_LOCATION);
+      button->SetMinMaxSize (200, 100);
+      hori->AddView (button, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
+      hori->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
+      layered->AddLayout (hori);
+
+      hori = new nux::HLayout (NUX_TRACKER_LOCATION);
+      button = new nux::PushButton (text, NUX_TRACKER_LOCATION);
       button->SetMinMaxSize (100, 50);
       hori->AddView (button, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
       hori->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
-
-      layered->AddView (texture_area);
       layered->AddLayout (hori);
       
       layered->SetPaintAll (true);

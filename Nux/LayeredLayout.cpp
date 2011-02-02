@@ -151,12 +151,22 @@ namespace nux
   long LayeredLayout::ProcessEvent (IEvent &ievent, long traverse_info, long process_event_info)
   {
     long ret = traverse_info;
-    
-    if (m_active_area)
-    {
-      ProcessOne (m_active_area, ievent, traverse_info, process_event_info);
-    }
 
+    if (m_input_mode == INPUT_MODE_ACTIVE)
+    {
+      if (m_active_area)
+        ret = ProcessOne (m_active_area, ievent, traverse_info, process_event_info);
+    }
+    else
+    {
+      std::list<Area *>::reverse_iterator it, eit = _layout_element_list.rend ();
+
+      for (it = _layout_element_list.rbegin (); it != eit; ++it)
+      {
+        Area *area = static_cast<Area *> (*it);
+        ProcessOne (area, ievent, traverse_info, process_event_info);
+      }
+    }
     return ret;
   }
 
