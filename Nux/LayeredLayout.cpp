@@ -34,7 +34,8 @@ namespace nux
   : Layout (NUX_FILE_LINE_PARAM),
     m_active_index (0),
     m_active_area (NULL),
-    m_paint_all (false)
+    m_paint_all (false),
+    m_input_mode (INPUT_MODE_ACTIVE)
 
   {
     m_ContentStacking = eStackLeft;
@@ -182,7 +183,7 @@ namespace nux
     if (m_active_area == area)
     {
       std::list<Area *>::iterator it, eit = _layout_element_list.end ();
-      t_uint32 i = 0;
+      int i = 0;
 
       m_active_index = 0;
       m_active_area = NULL;
@@ -212,12 +213,12 @@ namespace nux
   //
   // LayeredLayout Methods
   //
-  void LayeredLayout::SetActiveLayer (t_uint32 index_)
+  void LayeredLayout::SetActiveLayer (int index_)
   {
     std::list<Area *>::iterator it, eit = _layout_element_list.end ();
-    t_uint32 i = 0;
+    int i = 0;
 
-    g_return_if_fail (index_ < _layout_element_list.size ());
+    g_return_if_fail ((t_uint32)index_ < _layout_element_list.size ());
 
     if (index_ == m_active_index)
       return;
@@ -237,7 +238,7 @@ namespace nux
     NeedRedraw ();
   }
 
-  t_uint32 LayeredLayout::GetActiveLayer ()
+  int LayeredLayout::GetActiveLayer ()
   {
     return m_active_index;
   }
@@ -245,7 +246,7 @@ namespace nux
   void LayeredLayout::SetActiveArea  (Area *area)
   {
     std::list<Area *>::iterator it, eit = _layout_element_list.end ();
-    t_uint32 i = 0;
+    int i = 0;
 
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
@@ -258,7 +259,6 @@ namespace nux
       }
       i++;
     }
-
     g_warning ("%s: Area (%p) is not a child of LayeredLayout (%p)", G_STRFUNC, area, this);
   }
 
@@ -274,5 +274,23 @@ namespace nux
 
     m_paint_all = paint_all;
     NeedRedraw ();
+  }
+
+  bool LayeredLayout::GetPaintAll ()
+  {
+    return m_paint_all;
+  }
+
+  void LayeredLayout::SetInputMode (LayeredLayout::InputMode input_mode)
+  {
+    if (m_input_mode == input_mode)
+      return;
+
+    m_input_mode = input_mode;
+  }
+
+  LayeredLayout::InputMode LayeredLayout::GetInputMode ()
+  {
+    return m_input_mode;
   }
 }

@@ -37,16 +37,28 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE (LayeredLayout, Layout);
 
   public:
+
+    typedef enum
+    {
+      INPUT_MODE_ACTIVE = 0,
+      INPUT_MODE_COMPOSITE
+
+    } InputMode;
+
     LayeredLayout (NUX_FILE_LINE_PROTO);
     ~LayeredLayout ();
 
     // LayeredLayout methods
-    void     SetActiveLayer (t_uint32 index_);
-    t_uint32 GetActiveLayer ();
-    void     SetActiveArea  (Area *area);
-    Area    *GetActiveArea  ();
+    void   SetActiveLayer (int index_);
+    int    GetActiveLayer ();
+    void   SetActiveArea  (Area *area);
+    Area * GetActiveArea  ();
 
     void SetPaintAll (bool paint_all);
+    bool GetPaintAll ();
+
+    void                     SetInputMode (LayeredLayout::InputMode input_mode);
+    LayeredLayout::InputMode GetInputMode ();
 
     // Overrides
     long ComputeLayout2 ();
@@ -70,9 +82,10 @@ namespace nux
     void PaintOne (Area *area, GraphicsEngine &GfxContext, bool force_draw);
   
   private:
-    t_uint32  m_active_index;
-    Area     *m_active_area;
-    bool      m_paint_all;
+    int                      m_active_index;
+    Area                    *m_active_area;
+    bool                     m_paint_all;
+    LayeredLayout::InputMode m_input_mode;
   };
 }
 

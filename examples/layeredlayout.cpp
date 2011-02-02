@@ -63,6 +63,7 @@ public:
       layered->AddLayout (hori);
       
       layered->SetPaintAll (true);
+      layered->SetInputMode (nux::LayeredLayout::INPUT_MODE_COMPOSITE);
           
       layered_layout->AddLayout (layered);
       combo->AddItem (text);
