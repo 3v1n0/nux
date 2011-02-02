@@ -30,6 +30,7 @@ namespace nux
 
   class StaticTextBox : public View //public CoreArea
   {
+    NUX_DECLARE_OBJECT_TYPE (StaticTextBox, View);
   public:
     StaticTextBox (const TCHAR *Caption, NUX_FILE_LINE_PROTO);
     ~StaticTextBox();

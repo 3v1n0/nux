@@ -106,6 +106,8 @@ namespace nux
     font_ = NULL;
   }
 
+  NUX_IMPLEMENT_OBJECT_TYPE (TextEntry);
+
   TextEntry::TextEntry (const TCHAR* text, NUX_FILE_LINE_DECL)
     : View (NUX_FILE_LINE_PARAM)
   {
@@ -142,6 +144,7 @@ namespace nux
     update_canvas_ = false;
     //background_(new Texture(kDefaultBackgroundColor, 1)),
     _text_color = kDefaultTextColor;
+    align_ = CairoGraphics::ALIGN_LEFT;
 
     _size_match_text = true;
     _text_color  = Color::White;

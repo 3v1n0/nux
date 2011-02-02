@@ -352,12 +352,6 @@ namespace nux
 
         if ( ( (*it)->IsLayout() || (*it)->IsView() ) /*&& ((*it)->isOutofBound() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
         {
-          if ( (*it)->IsLayout() )
-          {
-            Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
-            //layout->SetDirty (true);
-          }
-
           ret = (*it)->ComputeLayout2();
 
           largerHeight = (ret & eLargerHeight) ? true : false;

@@ -57,45 +57,53 @@ namespace nux
     MINOR_SIZE_PERCENTAGE,
     MINOR_SIZE_FIX,
     MINOR_SIZE_MATCHCONTENT,
-    eFull = MINOR_SIZE_FULL,  //deprecated
-    ePercentage = MINOR_SIZE_PERCENTAGE,  //deprecated
-    eFix  = MINOR_SIZE_FIX,  //deprecated
-    eMatchContent = MINOR_SIZE_MATCHCONTENT,  //deprecated
+    eFull = MINOR_SIZE_FULL,                  //!< Deprecated.
+    ePercentage = MINOR_SIZE_PERCENTAGE,      //!< Deprecated.
+    eFix  = MINOR_SIZE_FIX,                   //!< Deprecated.
+    eMatchContent = MINOR_SIZE_MATCHCONTENT,  //!< Deprecated.
   } MinorDimensionSize;
 
 //! Policy for and element position in the minor dimension of a layout.
   typedef enum
   {
-    MINOR_POSITION_TOP,         //!< Place the element on the top side of the layout (Hlayout)
-    MINOR_POSITION_BOTTOM,         //!< Place the element on the bottom side of the layout (Hlayout)
+    MINOR_POSITION_TOP,           //!< Place the element on the top side of the layout (Hlayout)
+    MINOR_POSITION_BOTTOM,        //!< Place the element on the bottom side of the layout (Hlayout)
     MINOR_POSITION_LEFT,          //!< Place the element on the left side of the layout (Vlayout)
     MINOR_POSITION_RIGHT,         //!< Place the element on the right side of the layout (Hlayout)
     MINOR_POSITION_CENTER,        //!< Place the element at the center of the layout (Hlayout and VLayout)
-    eAbove = MINOR_POSITION_TOP,  //deprecated
-    eBelow = MINOR_POSITION_BOTTOM,  //deprecated
-    eLeft = MINOR_POSITION_LEFT,    //deprecated
-    eRight = MINOR_POSITION_RIGHT,  //deprecated
-    eCenter = MINOR_POSITION_CENTER,  //deprecated
+    eAbove = MINOR_POSITION_TOP,      //!< Deprecated.
+    eBelow = MINOR_POSITION_BOTTOM,   //!< Deprecated.
+    eLeft = MINOR_POSITION_LEFT,      //!< Deprecated.
+    eRight = MINOR_POSITION_RIGHT,    //!< Deprecated.
+    eCenter = MINOR_POSITION_CENTER,  //!< Deprecated.
   } MinorDimensionPosition;
 
-//! Stacking order inside a layout.
+  //! Control how a layout distribute its children position.
+  /*!
+      Applies to layouts that have more space than their children can use.
+      These options control how a layouts places its children inside of itself.
+  */
   typedef enum
   {
-    MAJOR_POSITION_TOP,      //!< Stack elements at the top (VLayout)
-    MAJOR_POSITION_BOTTOM,   //!< Stack elements at the bottom (VLayout)
-    MAJOR_POSITION_LEFT,     //!< Stack elements at the left (HLayout)
-    MAJOR_POSITION_RIGHT,    //!< Stack elements at the right (HLayout)
-    MAJOR_POSITION_CENTER,   //!< Stack elements in the center of the layout (HLayout and VLayout)
-    MAJOR_POSITION_EXPAND,   //!< Spread elements evenly inside the layout (HLayout and VLayout)
+    MAJOR_POSITION_TOP,      //!< Stack elements at the top (for VLayout only).
+    MAJOR_POSITION_BOTTOM,   //!< Stack elements at the bottom (for VLayout only).
+    MAJOR_POSITION_LEFT,     //!< Stack elements at the left (for HLayout only).
+    MAJOR_POSITION_RIGHT,    //!< Stack elements at the right (for HLayout only).
+    MAJOR_POSITION_CENTER,   //!< Stack elements in the center of the layout (for HLayout and VLayout).
+    MAJOR_POSITION_EXPAND,   //!< Spread elements evenly inside the layout (for HLayout and VLayout).
 
-    eStackTop = MAJOR_POSITION_TOP,       //deprecated
-    eStackBottom = MAJOR_POSITION_BOTTOM,    //deprecated
-    eStackLeft = MAJOR_POSITION_LEFT,      //deprecated
-    eStackRight = MAJOR_POSITION_RIGHT,     //deprecated
-    eStackCenter = MAJOR_POSITION_CENTER,    //deprecated
-    eStackExpand = MAJOR_POSITION_EXPAND,    //deprecated
+    eStackTop = MAJOR_POSITION_TOP,         //!< Deprecated.
+    eStackBottom = MAJOR_POSITION_BOTTOM,   //!< Deprecated.
+    eStackLeft = MAJOR_POSITION_LEFT,       //!< Deprecated.
+    eStackRight = MAJOR_POSITION_RIGHT,     //!< Deprecated.
+    eStackCenter = MAJOR_POSITION_CENTER,   //!< Deprecated.
+    eStackExpand = MAJOR_POSITION_EXPAND,   //!< Deprecated.
   }  LayoutContentDistribution;
 
+  //! For internal use only.
+  /*!
+      For internal use only.
+  */
   typedef enum
   {
     SIZE_EQUAL_WIDTH     = (1L),
@@ -106,13 +114,13 @@ namespace nux
     SIZE_LARGER_HEIGHT   = (1L) << 5,
     SIZE_FORCE_COMPLY    = (1L) << 6,
 
-    eCompliantWidth     = SIZE_EQUAL_WIDTH, //deprecated
-    eCompliantHeight    = SIZE_EQUAL_HEIGHT, //deprecated
-    eSmallerWidth       = SIZE_SMALLER_WIDTH, //deprecated
-    eSmallerHeight      = SIZE_SMALLER_HEIGHT, //deprecated
-    eLargerWidth        = SIZE_LARGER_WIDTH, //deprecated
-    eLargerHeight       = SIZE_LARGER_HEIGHT, //deprecated
-    eForceComply        = SIZE_FORCE_COMPLY, //deprecated
+    eCompliantWidth     = SIZE_EQUAL_WIDTH,     //!< Deprecated.
+    eCompliantHeight    = SIZE_EQUAL_HEIGHT,    //!< Deprecated.
+    eSmallerWidth       = SIZE_SMALLER_WIDTH,   //!< Deprecated.
+    eSmallerHeight      = SIZE_SMALLER_HEIGHT,  //!< Deprecated.
+    eLargerWidth        = SIZE_LARGER_WIDTH,    //!< Deprecated.
+    eLargerHeight       = SIZE_LARGER_HEIGHT,   //!< Deprecated.
+    eForceComply        = SIZE_FORCE_COMPLY,    //!< Deprecated.
   } SizeCompliance;
 
   class Layout;

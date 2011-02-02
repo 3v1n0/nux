@@ -26,6 +26,7 @@
 
 namespace nux
 {
+  NUX_IMPLEMENT_OBJECT_TYPE (Button);
 
   Button::Button (const TCHAR *Caption, NUX_FILE_LINE_DECL)
     :   AbstractButton (Caption, NUX_FILE_LINE_PARAM)

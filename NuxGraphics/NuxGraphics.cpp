@@ -37,6 +37,7 @@ namespace nux
     inlRegisterThreadLocalIndex (1, _TLS_GraphicsDisplay, NULL);
     inlRegisterThreadLocalIndex (2, _TLS_GpuDevice_, NULL);
 
+    g_type_init();
     GNuxGraphicsResources.InitializeResources();
   }
 

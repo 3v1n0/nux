@@ -45,7 +45,7 @@ namespace nux
     //void AddWidget(View* ic);
     void AddWidget (View *ic, int stretchfactor = 1);
     void AddWidget (std::list<View *> *ViewList);
-    void SetLayout (Layout *layout);
+    virtual bool SetLayout (Layout *layout);
     void clearContent();
 
     // Get a change to do any work on an element.

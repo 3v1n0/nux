@@ -219,7 +219,7 @@ namespace nux
       return;
     }
 
-    NUITextureArchiver UITextureArchive (NUX_FIND_RESOURCE_LOCATION_NOFAIL (TEXT ("UITextures/UIArchive.iar")));
+    //NUITextureArchiver UITextureArchive (NUX_FIND_RESOURCE_LOCATION_NOFAIL (TEXT ("UITextures/UIArchive.iar")));
 
     TiXmlDocument doc (painter_filename.GetTCharPtr() );
     doc.LoadFile();
@@ -267,14 +267,14 @@ namespace nux
       if (1)
       {
         BaseTexture* device_texture;
-        NBitmapData *uitexturedata = UITextureArchive.ExtractTextureStyle (style.GetTCharPtr());
-
-        if (uitexturedata)
-        {
-          device_texture = GetGpuDevice()->CreateSystemCapableTexture ();
-          device_texture->Update (uitexturedata);
-        }
-        else
+//         NBitmapData *uitexturedata = UITextureArchive.ExtractTextureStyle (style.GetTCharPtr());
+// 
+//         if (uitexturedata)
+//         {
+//           device_texture = GetGpuDevice()->CreateSystemCapableTexture ();
+//           device_texture->Update (uitexturedata);
+//         }
+//         else
         {
 
           NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name")));

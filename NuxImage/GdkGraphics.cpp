@@ -61,11 +61,11 @@ namespace nux
 
     if (_gdkpixbuf_ptr == 0)
     {
-      if (error->domain == G_FILE_ERROR)
+      if (error && (error->domain == G_FILE_ERROR))
       {
         nuxDebugMsg (TEXT ("[GdkGraphics::GdkGraphics] File error: %d: %s"), error->code, error->message);
       }
-      else if (error->domain == GDK_PIXBUF_ERROR)
+      else if (error && (error->domain == GDK_PIXBUF_ERROR))
       {
         nuxDebugMsg (TEXT ("[GdkGraphics::GdkGraphics] GDK Pixbuf error: %d: %s"), error->code, error->message);
       }

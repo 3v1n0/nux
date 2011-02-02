@@ -29,6 +29,8 @@
 
 namespace nux
 {
+  NUX_IMPLEMENT_OBJECT_TYPE (StaticTextBox);
+
   StaticTextBox::StaticTextBox (const TCHAR *Caption, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
     ,   m_TextAlignment (eAlignTextLeft)
