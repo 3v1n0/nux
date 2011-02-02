@@ -63,7 +63,7 @@ public:
       layered->AddLayout (hori);
       
       layered->SetPaintAll (true);
-     
+          
       layered_layout->AddLayout (layered);
       combo->AddItem (text);
 

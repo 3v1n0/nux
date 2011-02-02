@@ -41,7 +41,10 @@ namespace nux
     ~LayeredLayout ();
 
     // LayeredLayout methods
-    void SetActiveLayer (t_uint32 index_);
+    void     SetActiveLayer (t_uint32 index_);
+    t_uint32 GetActiveLayer ();
+    void     SetActiveArea  (Area *area);
+    Area    *GetActiveArea  ();
 
     void SetPaintAll (bool paint_all);
 
