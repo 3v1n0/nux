@@ -47,9 +47,7 @@ public:
       gchar *text = g_strdup_printf ("Button %d", i);
       nux::LayeredLayout *layered = new nux::LayeredLayout (NUX_TRACKER_LOCATION);
 
-      nux::Color c (nux::Color::RandomColor ());
-      c.SetAlpha (0.5);
-      nux::ColorLayer color (c, true);
+      nux::ColorLayer color (nux::Color::RandomColor ());
       nux::TextureArea* texture_area = new nux::TextureArea ();
       texture_area->SetPaintLayer (&color);      
 
@@ -64,6 +62,7 @@ public:
       
       layered->SetPaintAll (true);
       layered->SetInputMode (nux::LayeredLayout::INPUT_MODE_COMPOSITE);
+      //layered->SetActiveArea (hori);
           
       layered_layout->AddLayout (layered);
       combo->AddItem (text);

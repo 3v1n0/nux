@@ -82,67 +82,79 @@ namespace nux
     return eCompliantHeight | eCompliantWidth;
   }
 
-  void LayeredLayout::PaintOne (Area *_area, GraphicsEngine &GfxContext, bool force_draw)
+  void LayeredLayout::PaintOne (Area *_area, GraphicsEngine &gfx_context, bool force_draw)
   {
     if (_area->IsArea ())
     {
       CoreArea *area = NUX_STATIC_CAST (CoreArea *, _area);
-      area->OnDraw (GfxContext, force_draw);
+      area->OnDraw (gfx_context, force_draw);
     }
     else if (_area->IsView ())
     {
       View *ic = NUX_STATIC_CAST (View *, _area);
-      ic->ProcessDraw (GfxContext, force_draw);
+      ic->ProcessDraw (gfx_context, force_draw);
     }
     else if (_area->IsLayout ())
     {
       Layout *layout = NUX_STATIC_CAST (Layout *, _area);
-      layout->ProcessDraw (GfxContext, force_draw);
+      layout->ProcessDraw (gfx_context, force_draw);
     }
   }
 
-  void LayeredLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void LayeredLayout::ProcessDraw (GraphicsEngine &gfx_context, bool force_draw)
   {
     Geometry base = GetGeometry ();
-    GfxContext.PushClippingRectangle (base);
+    gfx_context.PushClippingRectangle (base);
     
     if (m_paint_all)
     {
       std::list<Area *>::iterator it, eit = _layout_element_list.end ();
 
       for (it = _layout_element_list.begin (); it != eit; ++it)
-        PaintOne (static_cast<Area *> (*it), GfxContext, force_draw);
+        PaintOne (static_cast<Area *> (*it), gfx_context, force_draw);
     }
     else if (m_active_area)
     {
-      PaintOne (m_active_area, GfxContext, force_draw);
+      PaintOne (m_active_area, gfx_context, force_draw);
     }
         
-    GfxContext.PopClippingRectangle ();
+    gfx_context.PopClippingRectangle ();
     _queued_draw = false;
   }
 
-  long LayeredLayout::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  long LayeredLayout::ProcessOne (Area   *_area,
+                                  IEvent &ievent,
+                                  long    traverse_info,
+                                  long    process_event_info)
   {
-    long ret = TraverseInfo;
+    long ret = traverse_info;
+
+    if (_area->IsArea())
+    {
+      CoreArea *area = NUX_STATIC_CAST (CoreArea *, _area);
+      ret = area->OnEvent (ievent, ret, process_event_info);
+    }
+    else if (_area->IsView())
+    {
+      View *ic = NUX_STATIC_CAST (View *, _area);
+      ret = ic->ProcessEvent (ievent, ret, process_event_info);
+    }
+    else if (_area->IsLayout())
+    {
+      Layout *layout = NUX_STATIC_CAST (Layout *, _area);
+      ret = layout->ProcessEvent (ievent, ret, process_event_info);
+    }
+
+    return ret;
+  }
+
+  long LayeredLayout::ProcessEvent (IEvent &ievent, long traverse_info, long process_event_info)
+  {
+    long ret = traverse_info;
     
     if (m_active_area)
     {
-      if ( m_active_area->IsArea())
-      {
-        CoreArea *area = NUX_STATIC_CAST (CoreArea *, m_active_area);
-        ret = area->OnEvent (ievent, ret, ProcessEventInfo);
-      }
-      else if (m_active_area->IsView())
-      {
-        View *ic = NUX_STATIC_CAST (View *, m_active_area);
-        ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-      else if (m_active_area->IsLayout())
-      {
-        Layout *layout = NUX_STATIC_CAST (Layout *, m_active_area);
-        ret = layout->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
+      ProcessOne (m_active_area, ievent, traverse_info, process_event_info);
     }
 
     return ret;

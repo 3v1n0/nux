@@ -63,8 +63,8 @@ namespace nux
     // Overrides
     long ComputeLayout2 ();
     void GetCompositeList (std::list<Area *> *ViewList);
-    void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
-    long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    void ProcessDraw (GraphicsEngine &gfx_context, bool force_draw);
+    long ProcessEvent (IEvent &ievent, long traverse_info, long process_event_info);
     void AddLayout (Layout                *layouy,
                     unsigned int           stretch_factor = 1,
                     MinorDimensionPosition position       = eAbove,
@@ -80,7 +80,8 @@ namespace nux
 
   private:
     void PaintOne (Area *area, GraphicsEngine &GfxContext, bool force_draw);
-  
+    long ProcessOne (Area *_area, IEvent &ievent, long traverse_info, long process_event_info);
+
   private:
     int                      m_active_index;
     Area                    *m_active_area;
