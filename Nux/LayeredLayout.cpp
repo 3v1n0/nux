@@ -155,7 +155,7 @@ namespace nux
     if (m_input_mode == INPUT_MODE_ACTIVE)
     {
       if (m_active_area)
-        ret = ProcessOne (m_active_area, ievent, traverse_info, process_event_info);
+        ret = ProcessOne (m_active_area, ievent, ret, process_event_info);
     }
     else
     {
@@ -164,7 +164,11 @@ namespace nux
       for (it = _layout_element_list.rbegin (); it != eit; ++it)
       {
         Area *area = static_cast<Area *> (*it);
-        ProcessOne (area, ievent, traverse_info, process_event_info);
+
+        if (area->GetGeometry ().IsPointInside (ievent.e_x, ievent.e_y) && true)
+        {
+          ret = ProcessOne (area, ievent, ret, process_event_info);
+        }
       }
     }
     return ret;
@@ -182,6 +186,7 @@ namespace nux
       NeedRedraw ();
     }
 
+    layout->OnQueueDraw.connect (sigc::mem_fun (this, &LayeredLayout::OnLayoutQueueRedraw));
     Layout::AddLayout (layout, stretch_factor, positioning, extend, percentage);
   }
   
@@ -196,7 +201,13 @@ namespace nux
       m_active_area = view;
       NeedRedraw ();
     }
-
+    
+    if (view->IsView ())
+    {
+      View *v = static_cast<View *> (view);
+      v->OnQueueDraw.connect (sigc::mem_fun (this, &LayeredLayout::OnViewQueueRedraw));
+    }
+    
     Layout::AddView (view, stretch_factor, positioning, extend, percentage);
   }
 
@@ -230,6 +241,16 @@ namespace nux
     m_active_area = NULL;
 
     Layout::Clear ();
+  }
+
+  void LayeredLayout::OnViewQueueRedraw (View *view)
+  {
+    QueueDraw ();
+  }
+
+  void LayeredLayout::OnLayoutQueueRedraw (Layout *layout)
+  {
+    QueueDraw ();
   }
 
   //
