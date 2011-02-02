@@ -1538,46 +1538,46 @@ namespace nux
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
       OUTPUT oTexCoord0   = result.texcoord[0];   \n\
+      OUTPUT oTexCoord1   = result.texcoord[1];   \n\
+      OUTPUT oTexCoord2   = result.texcoord[2];   \n\
+      OUTPUT oTexCoord3   = result.texcoord[3];   \n\
+      OUTPUT oTexCoord4   = result.texcoord[4];   \n\
+      OUTPUT oTexCoord5   = result.texcoord[5];   \n\
+      OUTPUT oTexCoord6   = result.texcoord[6];   \n\
       # Transform the vertex to clip coordinates. \n\
       DP4   oPos.x, state.matrix.mvp.row[0], vertex.position;      \n\
       DP4   oPos.y, state.matrix.mvp.row[1], vertex.position;      \n\
       DP4   oPos.z, state.matrix.mvp.row[2], vertex.position;      \n\
       DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;      \n\
-      MOV   oTexCoord0, vertex.attrib[8];       \n\
+      MOV   oTexCoord0, vertex.attrib[8];         \n\
+      MOV   oTexCoord1, vertex.attrib[9];         \n\
+      MOV   oTexCoord2, vertex.attrib[10];        \n\
+      MOV   oTexCoord3, vertex.attrib[11];        \n\
+      MOV   oTexCoord4, vertex.attrib[12];        \n\
+      MOV   oTexCoord5, vertex.attrib[13];        \n\
+      MOV   oTexCoord6, vertex.attrib[14];        \n\
       END");
 
 
     NString AsmFrg = TEXT (
       "!!ARBfp1.0                                                   \n\
       TEMP tex0;                                                    \n\
-      TEMP texcoord;                                                \n\
       TEMP final;                                                   \n\
       MOV final, {0, 0, 0, 0};                                      \n\
-      MOV texcoord, {0, 0, 0, 0};                                   \n\
-      ADD texcoord, program.local[0], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], 2D;                           \n\
-      MAD final, tex0, program.local[7], final;                     \n\
-      ADD texcoord, program.local[1], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], 2D;                           \n\
-      MAD final, tex0, program.local[8], final;                     \n\
-      ADD texcoord, program.local[2], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], 2D;                           \n\
-      MAD final, tex0, program.local[9], final;                     \n\
-      ADD texcoord, program.local[3], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], 2D;                           \n\
-      MAD final, tex0, program.local[10], final;                    \n\
-      ADD texcoord, program.local[4], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], 2D;                           \n\
-      MAD final, tex0, program.local[11], final;                    \n\
-      ADD texcoord, program.local[5], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], 2D;                           \n\
-      MAD final, tex0, program.local[12], final;                    \n\
-      ADD texcoord, program.local[6], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], 2D;                           \n\
-      MAD final, tex0, program.local[13], final;                    \n\
-      ADD texcoord, program.local[7], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], 2D;                           \n\
-      MAD final, tex0, program.local[14], final;                    \n\
+      TEX tex0, fragment.texcoord[0], texture[0], 2D;               \n\
+      MAD final, tex0, program.local[0], final;                     \n\
+      TEX tex0, fragment.texcoord[1], texture[0], 2D;               \n\
+      MAD final, tex0, program.local[1], final;                     \n\
+      TEX tex0, fragment.texcoord[2], texture[0], 2D;               \n\
+      MAD final, tex0, program.local[2], final;                     \n\
+      TEX tex0, fragment.texcoord[3], texture[0], 2D;               \n\
+      MAD final, tex0, program.local[3], final;                     \n\
+      TEX tex0, fragment.texcoord[4], texture[0], 2D;               \n\
+      MAD final, tex0, program.local[4], final;                     \n\
+      TEX tex0, fragment.texcoord[5], texture[0], 2D;               \n\
+      MAD final, tex0, program.local[5], final;                     \n\
+      TEX tex0, fragment.texcoord[6], texture[0], 2D;               \n\
+      MAD final, tex0, program.local[6], final;                     \n\
       MOV result.color, final;                                      \n\
       END");
 
@@ -1585,31 +1585,22 @@ namespace nux
     NString AsmFrgRect = TEXT (
       "!!ARBfp1.0                                                   \n\
       TEMP tex0;                                                    \n\
-      TEMP texcoord;                                                \n\
       TEMP final;                                                   \n\
       MOV final, {0, 0, 0, 0};                                      \n\
-      MOV texcoord, {0, 0, 0, 0};                                   \n\
-      ADD texcoord, program.local[0], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], RECT;                           \n\
-      MAD final, tex0, program.local[7], final;                     \n\
-      ADD texcoord, program.local[1], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], RECT;                           \n\
-      MAD final, tex0, program.local[8], final;                     \n\
-      ADD texcoord, program.local[2], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], RECT;                           \n\
-      MAD final, tex0, program.local[9], final;                     \n\
-      ADD texcoord, program.local[3], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], RECT;                           \n\
-      MAD final, tex0, program.local[10], final;                    \n\
-      ADD texcoord, program.local[4], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], RECT;                           \n\
-      MAD final, tex0, program.local[11], final;                    \n\
-      ADD texcoord, program.local[5], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], RECT;                           \n\
-      MAD final, tex0, program.local[12], final;                    \n\
-      ADD texcoord, program.local[6], fragment.texcoord[0];         \n\
-      TEX tex0, texcoord, texture[0], RECT;                           \n\
-      MAD final, tex0, program.local[13], final;                    \n\
+      TEX tex0, fragment.texcoord[0], texture[0], RECT;             \n\
+      MAD final, tex0, program.local[0], final;                     \n\
+      TEX tex0, fragment.texcoord[1], texture[0], RECT;             \n\
+      MAD final, tex0, program.local[1], final;                     \n\
+      TEX tex0, fragment.texcoord[2], texture[0], RECT;             \n\
+      MAD final, tex0, program.local[2], final;                     \n\
+      TEX tex0, fragment.texcoord[3], texture[0], RECT;             \n\
+      MAD final, tex0, program.local[3], final;                     \n\
+      TEX tex0, fragment.texcoord[4], texture[0], RECT;             \n\
+      MAD final, tex0, program.local[4], final;                     \n\
+      TEX tex0, fragment.texcoord[5], texture[0], RECT;             \n\
+      MAD final, tex0, program.local[5], final;                     \n\
+      TEX tex0, fragment.texcoord[6], texture[0], RECT;             \n\
+      MAD final, tex0, program.local[6], final;                     \n\
       MOV result.color, final;                                      \n\
       END");
 
@@ -1627,12 +1618,43 @@ namespace nux
   void GraphicsEngine::QRP_ASM_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+
+    float delta = 1.0f / device_texture->GetWidth();
+
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f,
-      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f,
-      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f,
-      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f,
+      x,          y,          0.0f, 1.0f, 
+      texxform.u0 - 3.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u0 - 2.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u0 - 1.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u0 + 0.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u0 + 1.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u0 + 2.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u0 + 3.0f * delta, texxform.v0, 0, 1.0f,
+      x,          y + height, 0.0f, 1.0f,
+      texxform.u0 - 3.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u0 - 2.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u0 - 1.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u0 + 0.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u0 + 1.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u0 + 2.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u0 + 3.0f * delta, texxform.v1, 0, 1.0f,
+      x + width,  y + height, 0.0f, 1.0f,
+      texxform.u1 - 3.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u1 - 2.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u1 - 1.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u1 + 0.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u1 + 1.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u1 + 2.0f * delta, texxform.v1, 0, 1.0f,
+      texxform.u1 + 3.0f * delta, texxform.v1, 0, 1.0f,
+      x + width,  y,          0.0f, 1.0f,
+      texxform.u1 - 3.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u1 - 2.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u1 - 1.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u1 + 0.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u1 + 1.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u1 + 2.0f * delta, texxform.v0, 0, 1.0f,
+      texxform.u1 + 3.0f * delta, texxform.v0, 0, 1.0f,
     };
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -1652,13 +1674,9 @@ namespace nux
       float *W;
       GaussianWeights(&W, 1, 7);
 
-      float delta = 1.0f / (float)device_texture->GetWidth ();
-      float ucoord = -((7 - 1) / 2.0f) / (float)device_texture->GetWidth ();
       for(int i = 0; i < 7; i++)
       {
-        CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, i, ucoord, 0, 0, 0));
-        CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, i+7, W[i], W[i], W[i], W[i]));
-        ucoord += delta;
+        CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, i, W[i], W[i], W[i], W[i]));
       }
       delete(W);
     }
@@ -1673,14 +1691,33 @@ namespace nux
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
+    int TextureCoord1Location   = VTXATTRIB_TEXCOORD1;
+    int TextureCoord2Location   = VTXATTRIB_TEXCOORD2;
+    int TextureCoord3Location   = VTXATTRIB_TEXCOORD3;
+    int TextureCoord4Location   = VTXATTRIB_TEXCOORD4;
+    int TextureCoord5Location   = VTXATTRIB_TEXCOORD5;
+    int TextureCoord6Location   = VTXATTRIB_TEXCOORD6;
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation));
-    CHECKGL ( glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
+    CHECKGL ( glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer));
 
-    if (TextureCoord0Location != -1)
+    //if (TextureCoord0Location != -1)
     {
       CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord2Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord3Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord4Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord5Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord6Location));
+
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 4));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 8));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord2Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 12));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord3Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 16));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord4Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 20));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord5Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 24));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord6Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 28));
     }
 
     CHECKGL (glDrawArrays (GL_TRIANGLE_FAN, 0, 4));
@@ -1689,6 +1726,18 @@ namespace nux
 
     if (TextureCoord0Location != -1)
       CHECKGL (glDisableVertexAttribArrayARB (TextureCoord0Location));
+    if (TextureCoord1Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord1Location));
+    if (TextureCoord2Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord2Location));
+    if (TextureCoord3Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord3Location));
+    if (TextureCoord4Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord4Location));
+    if (TextureCoord5Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord5Location));
+    if (TextureCoord6Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord6Location));
 
     shader_program->End();
   }
@@ -1696,12 +1745,43 @@ namespace nux
   void GraphicsEngine::QRP_ASM_VerticalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
   {
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+
+    float delta = 1.0f / device_texture->GetHeight();
+
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f,
-      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f,
-      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f,
-      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f,
+      x,          y,          0.0f, 1.0f,
+      texxform.u0, texxform.v0 - 3.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v0 - 2.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v0 - 1.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v0 + 0.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v0 + 1.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v0 + 2.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v0 + 3.0f * delta, 0, 1.0f,
+      x,          y + height, 0.0f, 1.0f,
+      texxform.u0, texxform.v1 - 3.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v1 - 2.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v1 - 1.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v1 + 0.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v1 + 1.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v1 + 2.0f * delta, 0, 1.0f,
+      texxform.u0, texxform.v1 + 3.0f * delta, 0, 1.0f,
+      x + width,  y + height, 0.0f, 1.0f,
+      texxform.u1, texxform.v1 - 3.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v1 - 2.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v1 - 1.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v1 + 0.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v1 + 1.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v1 + 2.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v1 + 3.0f * delta, 0, 1.0f,
+      x + width,  y,          0.0f, 1.0f,
+      texxform.u1, texxform.v0 - 3.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v0 - 2.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v0 - 1.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v0 + 0.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v0 + 1.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v0 + 2.0f * delta, 0, 1.0f,
+      texxform.u1, texxform.v0 + 3.0f * delta, 0, 1.0f,
     };
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -1721,13 +1801,9 @@ namespace nux
       float *W;
       GaussianWeights(&W, 1, 7);
 
-      float delta = 1.0f / (float)device_texture->GetHeight();
-      float vcoord = -((7 - 1) / 2.0f) / (float)device_texture->GetHeight ();
       for(int i = 0; i < 7; i++)
       {
-        CHECKGL (glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, i,   0,  vcoord, 0, 0));
-        CHECKGL (glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, i+7, W[i], W[i], W[i], W[i]));
-        vcoord += delta;
+        CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, i, W[i], W[i], W[i], W[i]));
       }
       delete(W);
     }
@@ -1742,14 +1818,34 @@ namespace nux
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
+    int TextureCoord1Location   = VTXATTRIB_TEXCOORD1;
+    int TextureCoord2Location   = VTXATTRIB_TEXCOORD2;
+    int TextureCoord3Location   = VTXATTRIB_TEXCOORD3;
+    int TextureCoord4Location   = VTXATTRIB_TEXCOORD4;
+    int TextureCoord5Location   = VTXATTRIB_TEXCOORD5;
+    int TextureCoord6Location   = VTXATTRIB_TEXCOORD6;
+    int TextureCoord7Location   = VTXATTRIB_TEXCOORD7;
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation));
-    CHECKGL ( glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
+    CHECKGL ( glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer));
 
-    if (TextureCoord0Location != -1)
+    //if (TextureCoord0Location != -1)
     {
       CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord2Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord3Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord4Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord5Location));
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord6Location));
+
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 4));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 8));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord2Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 12));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord3Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 16));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord4Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 20));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord5Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 24));
+      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord6Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 28));
     }
 
     CHECKGL (glDrawArrays (GL_TRIANGLE_FAN, 0, 4));
@@ -1758,6 +1854,18 @@ namespace nux
 
     if (TextureCoord0Location != -1)
       CHECKGL (glDisableVertexAttribArrayARB (TextureCoord0Location));
+    if (TextureCoord1Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord1Location));
+    if (TextureCoord2Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord2Location));
+    if (TextureCoord3Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord3Location));
+    if (TextureCoord4Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord4Location));
+    if (TextureCoord5Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord5Location));
+    if (TextureCoord6Location != -1)
+      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord6Location));
 
     shader_program->End();
   }

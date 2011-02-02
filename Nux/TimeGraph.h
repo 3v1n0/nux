@@ -41,6 +41,7 @@ namespace nux
 
   class TimeGraph : public View
   {
+    NUX_DECLARE_OBJECT_TYPE (TimeGraph, View);
   public:
     TimeGraph (const TCHAR *Title, NUX_FILE_LINE_PROTO);
     ~TimeGraph();
@@ -70,7 +71,6 @@ namespace nux
     VLayout        *m_vlayout;
     HLayout        *m_hlayout;
     HLayout        *m_hlayout2;
-    Button         *m_button;
     StaticTextBox  *m_GraphTitle;
     CoreArea       *m_GraphArea;
     CoreArea       *m_GraphIcon;

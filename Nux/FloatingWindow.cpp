@@ -59,12 +59,16 @@ namespace nux
     //GetWindowCompositor().RegisterWindow(this);
 
     m_MinimizeButton    = new CoreArea (NUX_TRACKER_LOCATION);
+    m_MinimizeButton->Reference();
     m_CloseButton       = new CoreArea (NUX_TRACKER_LOCATION);
     m_SizeGrip          = new CoreArea (NUX_TRACKER_LOCATION);
+    m_SizeGrip->Reference();
     m_TitleBar          = new CoreArea (NUX_TRACKER_LOCATION);
+    m_TitleBar->Reference();
     m_WindowTitleBar    = new StaticTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     m_TitleBarLayout    = new HLayout (NUX_TRACKER_LOCATION);
-
+    m_TitleBarLayout->Reference();
+    
     m_MinimizeButton->SetMinMaxSize (20, 20);
     m_MinimizeButton->SetGeometry (0, 0, 20, 20);
     m_CloseButton->SetMinimumSize (20, 20);
@@ -82,7 +86,6 @@ namespace nux
     m_WindowTitle = Strdup (TEXT ("") );
     m_WindowTitleBar->SetBaseString (TEXT ("Window Title") );
     m_TitleBarLayout->AddView ( (m_WindowTitleBar), 1, eCenter, eFix);
-    //m_TitleBarLayout->AddView((&m_MinimizeButton), 0, eCenter, eFix);
     m_TitleBarLayout->AddView ( (m_CloseButton), 0, eCenter, eFix);
 
     if (HasTitleBar() )
@@ -110,8 +113,12 @@ namespace nux
     m_InterfaceObject.clear();
     NUX_SAFE_DELETE_ARRAY (m_WindowTitle);
 
+    m_SizeGrip->UnReference();
+    m_TitleBar->UnReference();
+    m_MinimizeButton->UnReference();
     CloseIcon->UnReference();
     MinimizeIcon->UnReference();
+    m_TitleBarLayout->UnReference();
   }
 
   long FloatingWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

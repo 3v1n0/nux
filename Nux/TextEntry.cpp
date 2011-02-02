@@ -106,6 +106,8 @@ namespace nux
     font_ = NULL;
   }
 
+  NUX_IMPLEMENT_OBJECT_TYPE (TextEntry);
+
   TextEntry::TextEntry (const TCHAR* text, NUX_FILE_LINE_DECL)
     : View (NUX_FILE_LINE_PARAM)
   {

@@ -333,7 +333,7 @@ namespace nux
     layout->SetParentObject (this);
     m_CompositionLayout = layout;
 
-    //GetWindowThread()->QueueObjectLayout (this);
+    GetWindowThread()->QueueObjectLayout (this);
     return true;
   }
 
