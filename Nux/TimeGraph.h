@@ -80,7 +80,7 @@ namespace nux
 
     enum
     {
-      SHOW_GRAPH,
+      SHOW_GRAPH = 0,
       SHOW_COLUMN,
       SHOW_VALUE
     };
