@@ -80,7 +80,6 @@ namespace nux
 
   Trackable::~Trackable()
   {
-
   }
 
   bool Trackable::Reference()
@@ -420,6 +419,7 @@ namespace nux
       //nuxDebugMsg (TEXT("[Object::Destroy] There are weak references pending on this object. This is OK!"));
     }
 
+    OnDestroyed.emit ();
     delete this;
   }
 

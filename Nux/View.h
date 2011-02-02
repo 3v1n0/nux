@@ -38,7 +38,7 @@ namespace nux
     ePopupBox
   };
 
-  class View: public InputArea //Area //public sigc::trackable
+  class View: public InputArea //Area
   {
     NUX_DECLARE_OBJECT_TYPE (View, InputArea);
   public:

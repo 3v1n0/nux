@@ -45,3 +45,6 @@ gputests/texture_copy_blur
 gputests/texture_data
 gputests/texture_power_of_2
 examples/layeredlayout
+tests/test-nux
+tests/test-nux-results.xml
+

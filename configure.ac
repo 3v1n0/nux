@@ -109,7 +109,7 @@ PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
 
-PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0)
+PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0)
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 
@@ -118,6 +118,7 @@ PKG_CHECK_MODULES(NUX_IMAGE,
                   gdk-pixbuf-2.0
                   cairo >= 1.9.14
                   libpng >= 1.2.44
+                  sigc++-2.0
                   )
 AC_SUBST(NUX_IMAGE_CFLAGS)
 AC_SUBST(NUX_IMAGE_LIBS)
@@ -127,6 +128,7 @@ PKG_CHECK_MODULES(NUX_MESH,
                   gdk-pixbuf-2.0
                   glew
                   glewmx
+                  sigc++-2.0
                   )
 AC_SUBST(NUX_MESH_CFLAGS)
 AC_SUBST(NUX_MESH_LIBS)
@@ -135,9 +137,11 @@ PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
                   gl
+                  glu
                   glew
                   glewmx
                   xxf86vm
+                  sigc++-2.0
                   )
 AC_SUBST(NUX_GRAPHICS_CFLAGS)
 AC_SUBST(NUX_GRAPHICS_LIBS)
@@ -240,7 +244,7 @@ AC_ARG_ENABLE([examples],
 AM_CONDITIONAL(BUILD_EXAMPLES, [test "x$enable_examples" = "xyes"])
 AM_COND_IF([BUILD_EXAMPLES],
       [
-          PKG_CHECK_MODULES(NUX_EXAMPLES, x11)
+          PKG_CHECK_MODULES(NUX_EXAMPLES, x11 glu)
           AC_SUBST(NUX_EXAMPLES_CFLAGS)
           AC_SUBST(NUX_EXAMPLES_LIBS)
       ],
