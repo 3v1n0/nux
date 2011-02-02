@@ -134,6 +134,71 @@ namespace nux
     return ret;
   }
 
+  void LayeredLayout::AddLayout (Layout                *layout,
+                                 unsigned int           stretch_factor,
+                                 MinorDimensionPosition positioning,
+                                 MinorDimensionSize     extend,
+                                 float                  percentage)
+  {
+    if (!m_active_area)
+    {
+      m_active_area = layout;
+      NeedRedraw ();
+    }
+
+    Layout::AddLayout (layout, stretch_factor, positioning, extend, percentage);
+  }
+  
+  void LayeredLayout::AddView (Area                  *view,
+                               unsigned int           stretch_factor,
+                               MinorDimensionPosition positioning,
+                               MinorDimensionSize     extend,
+                               float                  percentage)
+  {
+    if (!m_active_area)
+    {
+      m_active_area = view;
+      NeedRedraw ();
+    }
+
+    Layout::AddView (view, stretch_factor, positioning, extend, percentage);
+  }
+
+  void LayeredLayout::RemoveChildObject (Area *area)
+  {
+    if (m_active_area == area)
+    {
+      std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+      int i = 0;
+
+      m_active_index = 0;
+      m_active_area = NULL;
+      for (it = _layout_element_list.begin (); it != eit; ++it)
+      {
+        if (*it != area)
+        {
+          m_active_area = static_cast<Area *> (*it);
+          m_active_index = i;
+          break;
+        }
+        i++;
+      }
+    }
+
+    Layout::RemoveChildObject (area);
+  }
+
+  void LayeredLayout::Clear ()
+  {
+    m_active_index = 0;
+    m_active_area = NULL;
+
+    Layout::Clear ();
+  }
+
+  //
+  // LayeredLayout Methods
+  //
   void LayeredLayout::SetActiveLayer (t_uint32 index_)
   {
     std::list<Area *>::iterator it, eit = _layout_element_list.end ();

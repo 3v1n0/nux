@@ -43,10 +43,23 @@ namespace nux
     // LayeredLayout methods
     void SetActiveLayer (t_uint32 index_);
 
-    virtual long ComputeLayout2 ();
-    virtual void GetCompositeList (std::list<Area *> *ViewList);
-    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    // Overrides
+    long ComputeLayout2 ();
+    void GetCompositeList (std::list<Area *> *ViewList);
+    void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
+    long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    void AddLayout (Layout                *layouy,
+                    unsigned int           stretch_factor = 1,
+                    MinorDimensionPosition position       = eAbove,
+                    MinorDimensionSize     extend         = eFull,
+                    float                  percentage     = 100.0f);
+    void AddView (Area                  *view,
+                  unsigned int           stretch_factor = 1,
+                  MinorDimensionPosition positioning    = eAbove,
+                  MinorDimensionSize     extend         = eFull,
+                  float                  percentage     = 100.0f);
+    void RemoveChildObject (Area *area);
+    void Clear ();
   
   private:
     t_uint32  m_active_index;
