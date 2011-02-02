@@ -109,9 +109,15 @@ namespace nux
     if (m_paint_all)
     {
       std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+      t_u32 alpha = 0, src = 0, dest = 0;
+
+      gfx_context.GetRenderStates ().GetBlend (alpha, src, dest);
+      gfx_context.GetRenderStates ().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       for (it = _layout_element_list.begin (); it != eit; ++it)
         PaintOne (static_cast<Area *> (*it), gfx_context, m_child_draw_queued ? true : force_draw);
+
+      gfx_context.GetRenderStates ().SetBlend (alpha, src, dest);
 
       m_child_draw_queued = false;
     }

@@ -65,11 +65,20 @@ public:
       hori->AddView (button, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
       hori->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
       layered->AddLayout (hori);
+
+      nux::ROPConfig rop; 
+      rop.Blend = true;
+      rop.SrcBlend = GL_ONE;
+      rop.DstBlend = GL_ONE_MINUS_SRC_ALPHA;
+      nux::Color col (0x33333333);
+      nux::ColorLayer c (col, true, rop);
+      texture_area = new nux::TextureArea ();
+      texture_area->SetPaintLayer (&c);
+      layered->AddView (texture_area);
       
       layered->SetPaintAll (true);
       layered->SetInputMode (nux::LayeredLayout::INPUT_MODE_COMPOSITE);
-      //layered->SetActiveArea (hori);
-          
+                
       layered_layout->AddLayout (layered);
       combo->AddItem (text);
 
@@ -105,7 +114,7 @@ int main(int argc, char **argv)
 
   nux::NuxInitialize(0);
 
-  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Layered Layout"), 400, 200, 0, &LayeredLayoutInit, 0);
+  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Layered Layout"), 600, 400, 0, &LayeredLayoutInit, 0);
   foo = new Foo ();
 
   wt->Run(NULL);
