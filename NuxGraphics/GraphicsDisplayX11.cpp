@@ -1472,7 +1472,8 @@ namespace nux
 
         bool skip = false;
         if ((keysym == NUX_VK_BACKSPACE) ||
-          (keysym == NUX_VK_DELETE))
+            (keysym == NUX_VK_DELETE) ||
+            (keysym == NUX_VK_ESCAPE))
         {
           //temporary fix for TextEntry widget: filter some keys
          skip = true; 
