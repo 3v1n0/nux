@@ -99,7 +99,7 @@ public:
   void OnComboChangedFoRealz (nux::ComboBoxSimple *simple)
   {
     g_debug ("Active: %d", simple->GetSelectionIndex ());
-    layered_layout->SetActiveLayer (simple->GetSelectionIndex ());
+    layered_layout->SetActiveLayerN (simple->GetSelectionIndex ());
   }
 
   nux::LayeredLayout *layered_layout;

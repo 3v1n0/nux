@@ -250,7 +250,22 @@ namespace nux
   //
   // LayeredLayout Methods
   //
-  void LayeredLayout::SetActiveLayer (int index_)
+  void LayeredLayout::AddLayer (Area *area, bool expand, int x, int y, int width, int height)
+  {
+
+  }
+
+  void LayeredLayout::UpdateLayer (Area *area, bool expand, int x, int y, int width, int height)
+  {
+
+  }
+
+  void LayeredLayout::RemoveLayer (Area *area)
+  {
+
+  }
+
+  void LayeredLayout::SetActiveLayerN (int index_)
   {
     std::list<Area *>::iterator it, eit = _layout_element_list.end ();
     int i = 0;
@@ -275,12 +290,12 @@ namespace nux
     NeedRedraw ();
   }
 
-  int LayeredLayout::GetActiveLayer ()
+  int LayeredLayout::GetActiveLayerN ()
   {
     return m_active_index;
   }
 
-  void LayeredLayout::SetActiveArea  (Area *area)
+  void LayeredLayout::SetActiveLayer  (Area *area)
   {
     std::list<Area *>::iterator it, eit = _layout_element_list.end ();
     int i = 0;
@@ -291,7 +306,7 @@ namespace nux
 
       if (area == a)
       {
-        SetActiveLayer (i);
+        SetActiveLayerN (i);
         return;
       }
       i++;
@@ -299,7 +314,7 @@ namespace nux
     g_warning ("%s: Area (%p) is not a child of LayeredLayout (%p)", G_STRFUNC, area, this);
   }
 
-  Area * LayeredLayout::GetActiveArea ()
+  Area * LayeredLayout::GetActiveLayer ()
   {
     return m_active_area;
   }

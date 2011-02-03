@@ -48,16 +48,98 @@ namespace nux
     LayeredLayout (NUX_FILE_LINE_PROTO);
     ~LayeredLayout ();
 
-    // LayeredLayout methods
-    void   SetActiveLayer (int index_);
-    int    GetActiveLayer ();
-    void   SetActiveArea  (Area *area);
-    Area * GetActiveArea  ();
+    //! Add a layer to the layout
+    /*!
+    This method will add the layer with layout specific options
+    \param area   the Area, Layout or View
+    \param expand area should be expanded to all the available space of the layout. If this is set to false, all the following parameters must be set
+    \param x      the horizontal position of the layer, expand must be false
+    \param y      the vertical position of the layer, expand must be false
+    \param width  the width of the layer inside the layout, expand must be false
+    \param height the height of the layer inside the layout, expand must be false
+    */
+    void AddLayer    (Area *area, bool expand=true, int x=0, int y=0, int width=0, int height=0);
 
+    //! Update properties of a layer in the layout
+    /*!
+    Allows updating properties of a layer after it has been added to the layout
+    \param area   the Area, Layout or View to update
+    \param expand area should be expanded to all the available space of the layout. If this is set to false, all the following parameters must be set
+    \param x      the horizontal position of the layer, expand must be false
+    \param y      the vertical position of the layer, expand must be false
+    \param width  the width of the layer inside the layout, expand must be false
+    \param height the height of the layer inside the layout, expand must be false
+    */
+    void UpdateLayer (Area *area, bool expand=true, int x=0, int y=0, int width=0, int height=0);
+
+    //! Remove a layer
+    /*!
+    This method will remove a layer from the layout. It is here for completeness.
+    \param area   the Area, Layout or View to remove
+    */
+    void RemoveLayer (Area *area);
+
+    //! Set the active layer of the layout
+    /*!
+    The active layer will receives input in the input mode is INPUT_MODE_ACTIVE.
+    \param index_ The index of the layer to make active
+    */
+    void   SetActiveLayerN (int index_);
+
+    //! Get the active layer of the layout
+    /*!
+    Returns the index of the active layer of the layout. This is only useful if input mode is INPUT_MODE_ACTIVE.
+    \return the index of the active layer
+    */
+    int    GetActiveLayerN ();
+
+    //! Set the active layer of the layout
+    /*!
+    The active layer will receives input in the input mode is INPUT_MODE_ACTIVE.
+    \param area The area of the layer to make active
+    */
+    void   SetActiveLayer (Area *area);
+
+    //! Get the active layer of the layout
+    /*!
+    Returns the the active layer of the layout. This is only useful if input mode is INPUT_MODE_ACTIVE.
+    \return the active layer
+    */
+    Area * GetActiveLayer  ();
+
+    //! Set whether the layout will paint all the layers it contains. Default is false.
+    /*!
+    Normally, the layout will only paint the active layer. However, if you are using the layout in INPUT_COMPOSITE,
+    or have just sized and positioned the layers that you'd like them to be painted so that they they are composited
+    inside the layout, this should be set to true.
+    \param paint_all whether to paint all the layers in the layout
+    */
     void SetPaintAll (bool paint_all);
+
+    //! Get whether the layout is painting all the layers it contains
+    /*!
+    Returns whether the layout is painting all the layers it contains. See SetPaintAll.
+    \return whether the layout is painting all the layers
+    */
     bool GetPaintAll ();
 
+    //! Sets the input mode of the layout
+    /*!
+    The layout is able to operate in two modes. INPUT_MODE_ACTIVE means that the layout will send events only to the
+    active layout. In INPUT_MODE_COMPOSITE, the layout sends events to all the layouts it contains, starting from the
+    topmost down to the bottom. A layer can stop propagation by returning the appropriate value in ProcessEvent.
+    This can be mixed and matched with SetPaintAll depending on what you want to achieve. For instance, having
+    paint all set to true but input_mode set to INPUT_MODE_ACTIVE allows you to create a composite view with one or
+    many backgrounds, but with only one active view.
+    \param input_mode the input mode
+    */
     void                     SetInputMode (LayeredLayout::InputMode input_mode);
+
+    //! Get which input mode is set on the layout
+    /*!
+    Returns the current input mode on the layout.
+    \return the current input mode on the layout
+    */
     LayeredLayout::InputMode GetInputMode ();
 
     // Overrides
