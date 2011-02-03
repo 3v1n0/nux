@@ -75,23 +75,9 @@ namespace nux
 
     for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
     {
-      Area *area = *it;
-
-      if (area->GetStretchFactor () == 0) // Fixed positioning & sizing
-      {
-        Geometry child (base);
-
-        child.SetWidth (area->GetBaseWidth ());
-        child.SetHeight (area->GetBaseHeight ());
-
-        area->SetGeometry (child);
-      }
-      else // bin-style sizing
-      {
-        area->SetMinimumSize (base.width, base.height);
-        area->SetGeometry (base);
-      }
-      area->ComputeLayout2 ();
+      (*it)->SetMinimumSize (base.width, base.height);
+      (*it)->SetGeometry (base);
+      (*it)->ComputeLayout2 ();
     }
     return eCompliantHeight | eCompliantWidth;
   }
