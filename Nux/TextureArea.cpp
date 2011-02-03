@@ -51,7 +51,11 @@ namespace nux
 
   void TextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    GetPainter().PaintBackground (GfxContext, GetGeometry() );
+    // TextureArea should not render the accumulated background before rendering itself.
+    // The caller should be responsigle for rendering the accumulated background if it is necessary.
+    // This change could cause a few issues here and there but nothing that can't be fixed.
+    
+    // GetPainter().PaintBackground (GfxContext, GetGeometry() );
 
     if (m_PaintLayer)
     {

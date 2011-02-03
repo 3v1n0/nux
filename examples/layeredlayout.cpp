@@ -70,7 +70,7 @@ public:
       rop.Blend = true;
       rop.SrcBlend = GL_ONE;
       rop.DstBlend = GL_ONE_MINUS_SRC_ALPHA;
-      nux::Color col (0x55000000);
+      nux::Color col (0x55025000);
       nux::ColorLayer c (col, true, rop);
       texture_area = new nux::TextureArea ();
       texture_area->SetPaintLayer (&c);
