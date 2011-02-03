@@ -211,7 +211,7 @@ namespace nux
 
     friend class Layout;
     friend class Area;
-
+    friend class LayeredLayout;
   };
 
 }
