@@ -26,18 +26,6 @@
 namespace nux
 {
 
-#ifdef _WIN32
-#define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement
-#define NUX_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement
-#define NUX_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange
-#define NUX_ATOMOP_ITERLOCKED_VALUE
-#elif _WIN64
-#define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement64
-#define NUX_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement64
-#define NUX_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange64
-#define NUX_ATOMOP_ITERLOCKED_VALUE
-#endif
-
   t_int NThreadSafeCounter::Increment()
   {
     return __sync_add_and_fetch (&m_Counter, 1);
