@@ -164,13 +164,16 @@ namespace nux
       gfx_context.GetRenderStates ().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       for (it = _layout_element_list.begin (); it != eit; ++it)
-        PaintOne (static_cast<Area *> (*it), gfx_context, m_child_draw_queued ? true : force_draw);
+      {
+        if ((*it)->IsVisible ())
+          PaintOne (static_cast<Area *> (*it), gfx_context, m_child_draw_queued ? true : force_draw);
+      }
 
       gfx_context.GetRenderStates ().SetBlend (alpha, src, dest);
 
       m_child_draw_queued = false;
     }
-    else if (m_active_area)
+    else if (m_active_area && m_active_area->IsVisible ())
     {
       PaintOne (m_active_area, gfx_context, force_draw);
     }
@@ -211,7 +214,7 @@ namespace nux
 
     if (m_input_mode == INPUT_MODE_ACTIVE)
     {
-      if (m_active_area)
+      if (m_active_area && m_active_area->IsVisible ())
         ret = ProcessOne (m_active_area, ievent, ret, process_event_info);
     }
     else
@@ -222,7 +225,7 @@ namespace nux
       {
         Area *area = static_cast<Area *> (*it);
 
-        if (area->GetGeometry ().IsPointInside (ievent.e_x, ievent.e_y) && true)
+        if (area->IsVisible ())
         {
           ret = ProcessOne (area, ievent, ret, process_event_info);
         }

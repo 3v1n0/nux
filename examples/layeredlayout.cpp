@@ -78,12 +78,16 @@ public:
       texture_area = new nux::TextureArea ();
       texture_area->SetPaintLayer (&c);
       layered->AddLayer (texture_area, false, 0, 100, 600, 200);
-      
+
+      button = new nux::PushButton ("YOU CANT SEE ME!!!!!", NUX_TRACKER_LOCATION);
+      layered->AddLayer (button, true);
+      button->SetVisible (false);
+     
       layered->SetPaintAll (true);
       layered->SetInputMode (nux::LayeredLayout::INPUT_MODE_COMPOSITE);
 
-      layered->RaiseTop (hori);
-                
+      layered->Raise (hori, texture_area);
+                      
       layered_layout->AddLayout (layered);
       combo->AddItem (text);
 

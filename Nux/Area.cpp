@@ -37,6 +37,7 @@ namespace nux
     ,   m_IsSizeDirty (true)
     ,   m_ParentObject (0)
     ,   m_layout_properties (NULL)
+    ,   m_visible (true)
     ,   m_Application (0)
     ,   m_Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
     ,   m_minSize (BASEOBJECT_MINWIDTH, BASEOBJECT_MINHEIGHT)
@@ -459,5 +460,20 @@ namespace nux
   Area::LayoutProperties * Area::GetLayoutProperties ()
   {
     return m_layout_properties;
+  }
+
+  void Area::SetVisible (bool visible)
+  {
+    if (m_visible == visible)
+      return;
+
+    m_visible = visible;
+
+    OnVisibilityChanged.emit (this, m_visible);
+  }
+
+  bool Area::IsVisible ()
+  {
+    return m_visible;
   }
 }

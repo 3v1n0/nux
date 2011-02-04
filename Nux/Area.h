@@ -293,7 +293,22 @@ namespace nux
     \return LayoutProperties sub-class associated with this area.
     */
     LayoutProperties * GetLayoutProperties ();
+
     Area * GetParentObject();
+
+    //! Set visibility of the area
+    /*!
+    If visible, an area will be painted and receive events. Default: true.
+    /param visible if the area is visible to the user
+    */
+    void SetVisible  (bool visible);
+
+    //! Get the visibility of the area
+    /*!
+    Gets whether the area is visible to the user and will be painted and receive input events
+    /return whether the area is visible
+    */
+    bool IsVisible ();
 
   protected:
 
@@ -344,6 +359,7 @@ namespace nux
     Area *m_ParentObject;
 
     LayoutProperties *m_layout_properties;
+    bool              m_visible;
 
   private:
     WindowThread *m_Application;
@@ -404,6 +420,7 @@ namespace nux
     }
 
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
+    sigc::signal<void, Area *, bool> OnVisibilityChanged;
 
     unsigned int    m_stretchfactor;
     MinorDimensionPosition    positioning;
