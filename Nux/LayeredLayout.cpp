@@ -28,7 +28,7 @@
 
 namespace nux
 {
-  class LayeredChildProperties : Area::LayoutProperties
+  class LayeredChildProperties : public Area::LayoutProperties
   {
     public:
 
@@ -44,6 +44,15 @@ namespace nux
 
     ~LayeredChildProperties ()
     {
+    }
+
+    void Update (bool expand, int x, int y, int width, int height)
+    {
+      m_expand = expand;
+      m_x = x;
+      m_y = y;
+      m_width = width;
+      m_height = height;
     }
 
     bool m_expand;
@@ -213,15 +222,7 @@ namespace nux
                                  MinorDimensionSize     extend,
                                  float                  percentage)
   {
-    g_return_if_fail (layout);
-    g_return_if_fail (layout->GetParentObject () == NULL);
-
-    if (!m_active_area)
-    {
-      m_active_area = layout;
-      NeedRedraw ();
-    }
-    Layout::AddLayout (layout, stretch_factor, positioning, extend, percentage);
+    AddLayer (layout);
   }
   
   void LayeredLayout::AddView (Area                  *view,
@@ -230,39 +231,12 @@ namespace nux
                                MinorDimensionSize     extend,
                                float                  percentage)
   {
-    g_return_if_fail (view);
-    g_return_if_fail (view->GetParentObject () == NULL);
-
-    if (!m_active_area)
-    {
-      m_active_area = view;
-      NeedRedraw ();
-    }
-    Layout::AddView (view, stretch_factor, positioning, extend, percentage);
+    AddLayer (view);
   }
 
   void LayeredLayout::RemoveChildObject (Area *area)
   {
-    if (m_active_area == area)
-    {
-      std::list<Area *>::iterator it, eit = _layout_element_list.end ();
-      int i = 0;
-
-      m_active_index = 0;
-      m_active_area = NULL;
-      for (it = _layout_element_list.begin (); it != eit; ++it)
-      {
-        if (*it != area)
-        {
-          m_active_area = static_cast<Area *> (*it);
-          m_active_index = i;
-          break;
-        }
-        i++;
-      }
-    }
-
-    Layout::RemoveChildObject (area);
+    RemoveLayer (area);
   }
 
   void LayeredLayout::Clear ()
@@ -283,17 +257,67 @@ namespace nux
   //
   void LayeredLayout::AddLayer (Area *area, bool expand, int x, int y, int width, int height)
   {
+    LayeredChildProperties *props;
+
     g_return_if_fail (area);
+    g_return_if_fail (area->GetParentObject () == NULL);
+
+    props = new LayeredChildProperties (expand, x, y, width, height);
+    area->SetLayoutProperties (props);
+
+    if (!m_active_area)
+    {
+      m_active_area = area;
+    }
+
+    if (area->IsLayout ())
+      Layout::AddLayout (static_cast<Layout *> (area));
+    else
+      Layout::AddView (area);
+
+      QueueDraw ();
   }
 
   void LayeredLayout::UpdateLayer (Area *area, bool expand, int x, int y, int width, int height)
   {
+    LayeredChildProperties *props;
+
     g_return_if_fail (area);
+    
+    props = dynamic_cast<LayeredChildProperties *>(area->GetLayoutProperties ());
+    g_return_if_fail (props);
+
+    props->Update (expand, x, y, width, height);
+
+    QueueDraw ();
   }
 
   void LayeredLayout::RemoveLayer (Area *area)
   {
     g_return_if_fail (area);
+
+    area->SetLayoutProperties (NULL);
+
+    if (m_active_area == area)
+    {
+      std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+      int i = 0;
+
+      m_active_index = 0;
+      m_active_area = NULL;
+      for (it = _layout_element_list.begin (); it != eit; ++it)
+      {
+        if (*it != area)
+        {
+          m_active_area = static_cast<Area *> (*it);
+          m_active_index = i;
+          break;
+        }
+        i++;
+      }
+    }
+
+    Layout::RemoveChildObject (area);
   }
 
   void LayeredLayout::SetActiveLayerN (int index_)
@@ -318,7 +342,7 @@ namespace nux
       }
       i++;
     }
-    NeedRedraw ();
+    QueueDraw ();
   }
 
   int LayeredLayout::GetActiveLayerN ()
@@ -356,7 +380,7 @@ namespace nux
       return;
 
     m_paint_all = paint_all;
-    NeedRedraw ();
+    QueueDraw ();
   }
 
   bool LayeredLayout::GetPaintAll ()

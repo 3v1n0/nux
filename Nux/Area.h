@@ -137,7 +137,10 @@ namespace nux
     class LayoutProperties
     {
       public:
-      virtual ~LayoutProperties ();
+      virtual ~LayoutProperties ()
+      {
+
+      }
     };
 
   public:
