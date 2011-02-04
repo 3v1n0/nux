@@ -23,8 +23,6 @@
 #include "Nux.h"
 #include "View.h"
 #include "LayeredLayout.h"
-#include "HLayout.h"
-#include "VLayout.h"
 
 namespace nux
 {
@@ -420,21 +418,111 @@ namespace nux
 
   void LayeredLayout::Raise (Area *area, Area *above)
   {
+    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator area_it = eit;
+    std::list<Area *>::iterator above_it = eit;
 
+    g_return_if_fail (area);
+    g_return_if_fail (above);
+
+    for (it = _layout_element_list.begin (); it != eit; ++it)
+    {
+      if (above == (*it))
+        above_it = it;
+      else if (area == (*it))
+        area_it = it;
+    }
+
+    if (area_it == eit)
+    {
+      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, area);
+      return;
+    }
+    if (above_it == eit)
+    {
+      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, above);
+      return;
+    }
+
+    _layout_element_list.erase (area_it);
+    _layout_element_list.insert (++above_it, area);
   }
 
   void LayeredLayout::Lower (Area *area, Area *below)
   {
+    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator area_it = eit;
+    std::list<Area *>::iterator below_it = eit;
 
+    g_return_if_fail (area);
+    g_return_if_fail (below);
+
+    for (it = _layout_element_list.begin (); it != eit; ++it)
+    {
+      if (below == (*it))
+        below_it = it;
+      else if (area == (*it))
+        area_it = it;
+    }
+
+    if (area_it == eit)
+    {
+      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, area);
+      return;
+    }
+    if (below_it == eit)
+    {
+      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, below);
+      return;
+    }
+
+    _layout_element_list.erase (area_it);
+    _layout_element_list.insert (below_it, area);
   }
 
   void LayeredLayout::RaiseTop (Area *area)
   {
+    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator area_it = eit;
 
+    g_return_if_fail (area);
+
+    for (it = _layout_element_list.begin (); it != eit; ++it)
+    {
+      if (area == (*it))
+        area_it = it;
+    }
+
+    if (area_it == eit)
+    {
+      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, area);
+      return;
+    }
+
+    _layout_element_list.erase (area_it);
+    _layout_element_list.insert (eit, area);
   }
 
   void LayeredLayout::LowerBottom (Area *area)
   {
+    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator area_it = eit;
 
+    g_return_if_fail (area);
+
+    for (it = _layout_element_list.begin (); it != eit; ++it)
+    {
+      if (area == (*it))
+        area_it = it;
+    }
+
+    if (area_it == eit)
+    {
+      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, area);
+      return;
+    }
+
+    _layout_element_list.erase (area_it);
+    _layout_element_list.insert (_layout_element_list.begin (), area);
   }
 }

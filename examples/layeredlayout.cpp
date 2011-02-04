@@ -73,14 +73,16 @@ public:
       rop.Blend = true;
       rop.SrcBlend = GL_ONE;
       rop.DstBlend = GL_ONE_MINUS_SRC_ALPHA;
-      nux::Color col (0x55000000);
+      nux::Color col (0x55005500);
       nux::ColorLayer c (col, true, rop);
       texture_area = new nux::TextureArea ();
       texture_area->SetPaintLayer (&c);
-      layered->AddLayer (texture_area, false, 0, 300, 600, 100);
+      layered->AddLayer (texture_area, false, 0, 100, 600, 200);
       
       layered->SetPaintAll (true);
       layered->SetInputMode (nux::LayeredLayout::INPUT_MODE_COMPOSITE);
+
+      layered->RaiseTop (hori);
                 
       layered_layout->AddLayout (layered);
       combo->AddItem (text);
