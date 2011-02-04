@@ -23,6 +23,8 @@
 #include "GraphicsDisplayX11.h"
 #include "GLThread.h"
 
+#define xdnd_version 5
+
 namespace nux
 {
 
@@ -31,6 +33,7 @@ namespace nux
   XInputWindow::XInputWindow(int override_redirect)
   {
     Display* d = GetThreadGLWindow()->GetX11Display();
+    _display = d;
     XSetWindowAttributes attrib;
     
     _x = 0;
@@ -69,29 +72,29 @@ namespace nux
 
     XMapRaised (d, _window);
     EnsureInputs ();
+    
+    EnableDnd ();
   }
-  
+
   XInputWindow::~XInputWindow()
   {
     _native_windows.remove (_window);
-    Display* d = GetThreadGLWindow()->GetX11Display();
-    XDestroyWindow (d, _window);
+    XDestroyWindow (_display, _window);
   }
-  
+
   /* static */
   std::list<Window> XInputWindow::NativeHandleList()
   {
     return _native_windows;
   }
-  
+
   void XInputWindow::SetStruts()
   {
     int screenHeight, screenWidth;
     long int data[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    Display* d = GetThreadGLWindow()->GetX11Display();
     
-    screenHeight = XDisplayHeight (d, 0);
-    screenWidth = XDisplayWidth (d, 0);    
+    screenHeight = XDisplayHeight (_display, 0);
+    screenWidth = XDisplayWidth (_display, 0);    
     
     if (_width > _height)
     {
@@ -128,26 +131,25 @@ namespace nux
       }
     }
     
-    XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_STRUT_PARTIAL", 0),
+    XChangeProperty (_display, _window, XInternAtom (_display, "_NET_WM_STRUT_PARTIAL", 0),
                      XA_CARDINAL, 32, PropModeReplace,
                      (unsigned char *) data, 12);
   }
-  
+
   void XInputWindow::UnsetStruts()
   {
     int i;
-    Display* d = GetThreadGLWindow()->GetX11Display();
     
     int data[12];
     
     for (i = 0; i < 12; i++)
       data[i] = 0;
     
-    XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_STRUT_PARTIAL", 0),
+    XChangeProperty (_display, _window, XInternAtom (_display, "_NET_WM_STRUT_PARTIAL", 0),
                      XA_CARDINAL, 32, PropModeReplace,
                      (unsigned char *) data, 12);
   }
-  
+
   void XInputWindow::EnableStruts(bool enable)
   {
     if (_strutsEnabled == enable)
@@ -159,17 +161,15 @@ namespace nux
     else
       UnsetStruts();
   }
-  
+
   bool XInputWindow::StrutsEnabled()
   {
     return _strutsEnabled;
   }
-  
+
   void XInputWindow::EnsureInputs()
   {
-    Display* d = GetThreadGLWindow()->GetX11Display();
-    
-    XSelectInput (d, _window,
+    XSelectInput (_display, _window,
                   KeyPressMask       |
                   KeyReleaseMask     |
                   ButtonPressMask    |
@@ -183,6 +183,18 @@ namespace nux
     
   }
 
+  void XInputWindow::EnableDnd ()
+  {
+    int version = 5;
+    XChangeProperty (_display, _window, XInternAtom (_display, "XdndAware", false),
+                     XA_ATOM, 32, PropModeReplace, (unsigned char *) &version, 1);
+  }
+  
+  void XInputWindow::DisableDnd ()
+  {
+    XDeleteProperty (_display, _window, XInternAtom (_display, "XdndAware", false));
+  }
+
   //! Set the position and size of the window
   void XInputWindow::SetGeometry(const Rect& geo)
   {
@@ -192,14 +204,12 @@ namespace nux
   //! Set the position and size of the window
   void XInputWindow::SetGeometry(int x, int y, int width, int height)
   {
-    Display* d = GetThreadGLWindow()->GetX11Display();
-    
     _x = x;
     _y = y;
     _width = width;
     _height = height;
     
-    XMoveResizeWindow (d, _window, x, y, width, height);
+    XMoveResizeWindow (_display, _window, x, y, width, height);
     EnsureInputs ();
     
     if (_strutsEnabled)
@@ -213,16 +223,15 @@ namespace nux
     
     return r;
   }
-  
+
   Window XInputWindow::GetWindow ()
   {
     return _window;
   }
-  
+
   void XInputWindow::GrabPointer ()
   {
-    Display* d = GetThreadGLWindow()->GetX11Display();
-    XGrabPointer(d,
+    XGrabPointer(_display,
                  _window,
                  True,
                  ButtonPressMask|ButtonReleaseMask,
@@ -232,17 +241,15 @@ namespace nux
                  None,
                  CurrentTime);    
   }
-  
+
   void XInputWindow::UnGrabPointer ()
   {
-    Display* d = GetThreadGLWindow()->GetX11Display();
-    XUngrabPointer(d, CurrentTime);
+    XUngrabPointer(_display, CurrentTime);
   }
 
   void XInputWindow::GrabKeyboard ()
   {
-    Display* d = GetThreadGLWindow()->GetX11Display();
-    XGrabKeyboard (d,
+    XGrabKeyboard (_display,
                    _window,
                    True,
                    GrabModeAsync,
@@ -252,8 +259,7 @@ namespace nux
 
   void XInputWindow::UnGrabKeyboard ()
   {
-    Display* d = GetThreadGLWindow()->GetX11Display();
-    XUngrabKeyboard (d, CurrentTime);
+    XUngrabKeyboard (_display, CurrentTime);
   } 
 }
 
