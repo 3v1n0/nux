@@ -38,8 +38,7 @@ namespace nux
 
   t_int NThreadSafeCounter::Set (t_int i)
   {
-    m_Counter = i;
-    return m_Counter;
+    return __sync_lock_test_and_set (&m_Counter, i);
   }
 
   t_int NThreadSafeCounter::GetValue() const
