@@ -1309,6 +1309,15 @@ namespace nux
   {
     return XPending (m_X11Display) ? true : false;
   }
+  
+  void GraphicsDisplay::RecalcXYPosition (int x_root, int y_root, int &x_recalc, int &y_recalc)
+  {
+    int main_window_x = m_WindowPosition.x;
+    int main_window_y = m_WindowPosition.y;
+  
+    x_reclac = x_root - main_window_x;
+    y_recalc = y_root - main_window_y;
+  }
 
   void GraphicsDisplay::RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x_recalc, int &y_recalc)
   {

@@ -256,6 +256,7 @@ namespace nux
     void ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event);
     void ProcessXEvent (XEvent xevent, bool foreign);
     void RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x, int &y);
+    void RecalcXYPosition (int x_root, int y_root, int &x_recalc, int &y_recalc);
 
   private:
     void HandleXDndPosition (XEvent event);
