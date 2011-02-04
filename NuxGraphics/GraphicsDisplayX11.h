@@ -268,6 +268,8 @@ namespace nux
     
     void SendXDndStatus (Display *display, Window source, Window target, bool accept, Atom action, Rect box);
     bool GetXDndSelectionEvent (Display *display, Window target, Atom property, long time, XEvent *result, int attempts);
+    void SendXDndFinished (Display *display, Window source, Window target, bool result, Atom action);
+    char * GetXDndData (Display *display, Window requestor, long time);
   
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
