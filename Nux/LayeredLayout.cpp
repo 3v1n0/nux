@@ -58,6 +58,8 @@ namespace nux
     int  m_y;
     int  m_width;
     int  m_height;
+
+    sigc::signal<void, Area *, bool>::iterator m_vis_it;
   };
 
   NUX_IMPLEMENT_OBJECT_TYPE (LayeredLayout);
@@ -270,6 +272,11 @@ namespace nux
     m_child_draw_queued = true;
   }
 
+  void LayeredLayout::ChildVisibilityChanged (Area *area, bool visible)
+  {
+    QueueDraw ();
+  }
+
   //
   // LayeredLayout Methods
   //
@@ -288,12 +295,14 @@ namespace nux
       m_active_area = area;
     }
 
+    props->m_vis_it = area->OnVisibilityChanged.connect (sigc::mem_fun (this, &LayeredLayout::ChildVisibilityChanged));
+
     if (area->IsLayout ())
       Layout::AddLayout (static_cast<Layout *> (area));
     else
       Layout::AddView (area);
 
-      QueueDraw ();
+    QueueDraw ();
   }
 
   void LayeredLayout::UpdateLayer (Area *area, bool expand, int x, int y, int width, int height)
@@ -312,9 +321,16 @@ namespace nux
 
   void LayeredLayout::RemoveLayer (Area *area)
   {
-    g_return_if_fail (area);
+    LayeredChildProperties *props;
 
+    g_return_if_fail (area);
+    
+    props = dynamic_cast<LayeredChildProperties *>(area->GetLayoutProperties ());
+    g_return_if_fail (props);
+
+    (*props->m_vis_it).disconnect ();
     area->SetLayoutProperties (NULL);
+  
 
     if (m_active_area == area)
     {

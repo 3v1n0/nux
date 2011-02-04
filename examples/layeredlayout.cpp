@@ -87,7 +87,11 @@ public:
       layered->SetInputMode (nux::LayeredLayout::INPUT_MODE_COMPOSITE);
 
       layered->Raise (hori, texture_area);
-                      
+
+      button = new nux::PushButton ("YOU CANT SEE ME!!!!!", NUX_TRACKER_LOCATION);
+      layered->AddLayer (button, true);
+      layered->RemoveLayer (button);
+
       layered_layout->AddLayout (layered);
       combo->AddItem (text);
 

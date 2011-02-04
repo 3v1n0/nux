@@ -194,6 +194,7 @@ namespace nux
     void PaintOne (Area *area, GraphicsEngine &GfxContext, bool force_draw);
     long ProcessOne (Area *_area, IEvent &ievent, long traverse_info, long process_event_info);
     void ChildQueueDraw (Area *area);
+    void ChildVisibilityChanged (Area *area, bool visible);
 
   private:
     int                      m_active_index;
