@@ -264,6 +264,9 @@ namespace nux
     void HandleXDndLeave    (XEvent event);
     void HandleXDndDrop     (XEvent event);
     void HandleXDndFinished (XEvent event);
+    
+    void SendXDndStatus (Display *display, Window source, Window target, bool accept, Atom action, Rect box);
+    bool GetXDndSelectionEvent (Display *display, Window target, Atom property, long time, XEvent *result, int attempts);
   
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
@@ -276,7 +279,6 @@ namespace nux
 
     long _current_dnd_xid;
     Atom _xdnd_types[_xdnd_max_type + 1];
-    bool _is_uri_list; //hacky hack hack
   public:
     ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()

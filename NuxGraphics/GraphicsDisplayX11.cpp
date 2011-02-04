@@ -1596,28 +1596,22 @@ namespace nux
     }
   }
   
-  void GraphicsDisplay::HandleXDndPosition (XEvent event)
+  void GraphicsDisplay::SendXDndStatus (Display *display, Window source, Window target, bool accept, Atom action, Rect box)
   {
-    const unsigned long *l = (const unsigned long *)event.xclient.data.l;
-  
-    int x = (l[2] & 0xffff0000) >> 16;
-    int y = l[2] & 0x0000ffff;
-    
-    // much evil
     XClientMessageEvent response;
-    response.window = _current_dnd_xid;
+    response.window = target;
     response.format = 32;
     response.type = ClientMessage;
 
-    response.message_type = XInternAtom (event.xany.display, "XdndStatus", false);
-    response.data.l[0] = event.xany.window;
+    response.message_type = XInternAtom (display, "XdndStatus", false);
+    response.data.l[0] = source;
     response.data.l[1] = 0; // flags
-    response.data.l[2] = l[2]; // x, y
-    response.data.l[3] = (1 << 16) + 1; // w, h
+    response.data.l[2] = (box.x << 16) | box.y; // x, y
+    response.data.l[3] = (box.width << 16) | box.height; // w, h
     
-    if (_is_uri_list)
+    if (accept)
     {
-      response.data.l[4] = XInternAtom (event.xany.display, "XdndActionCopy", false); // action
+      response.data.l[4] = action;
       response.data.l[1] |= 1 << 0;
     }
     else
@@ -1625,15 +1619,46 @@ namespace nux
       response.data.l[4] = None;
     }
     
-    XSendEvent (event.xany.display, _current_dnd_xid, False, NoEventMask, (XEvent *) &response);
+    XSendEvent (display, target, False, NoEventMask, (XEvent *) &response);
+  }
+  
+  void GraphicsDisplay::HandleXDndPosition (XEvent event)
+  {
+    const unsigned long *l = (const unsigned long *)event.xclient.data.l;
+  
+    int x = (l[2] & 0xffff0000) >> 16;
+    int y = l[2] & 0x0000ffff;
+    
+    // Adopt me to query the correct widget and throttle so we dont flood with accept/deny
+    bool accept = false;
+    
+    int i = 0;
+    Atom a = _xdnd_types[i];
+    
+    while (a)
+    {
+      if (a == XInternAtom (event.xany.display, "text/uri-list", false))
+      {
+        accept = true;
+        break;
+      }
+      
+      i++;
+      a = _xdnd_types[i];
+    }
+    
+    SendXDndStatus (event.xany.display, 
+                    event.xany.window, 
+                    _current_dnd_xid, 
+                    accept, 
+                    XInternAtom (event.xany.display, "XdndActionCopy", false),
+                    Rect (x, y, 1, 1));
   }
   
   void GraphicsDisplay::HandleXDndEnter (XEvent event)
   {
     const long *l = event.xclient.data.l;
     int version = (int)(((unsigned long)(l[1])) >> 24);
-    
-    _is_uri_list = false;
     
     if (version > xdnd_version)
       return;
@@ -1655,13 +1680,7 @@ namespace nux
       {
         Atom *data = (Atom *)retval;
         for (; j < _xdnd_max_type && j < (int)n; j++)
-        {
           _xdnd_types[j] = data[j];
-          
-          // hardcoded URI list, evil
-          if (data[j] == XInternAtom (event.xany.display, "text/uri-list", false))
-            _is_uri_list = true;
-        }
         
         XFree((uchar*)data);
       }
@@ -1673,8 +1692,6 @@ namespace nux
       for(i = 2; i < 5; i++) 
       {
         _xdnd_types[j++] = l[i];
-        if (l[i] == XInternAtom (event.xany.display, "text/uri-list", false))
-          _is_uri_list = true;
       }
     }
     
@@ -1687,37 +1704,31 @@ namespace nux
   
   void GraphicsDisplay::HandleXDndLeave (XEvent event)
   {
+    // reset the key things
     _xdnd_types[0] = 0;
     _current_dnd_xid = 0;
   }
   
-  void GraphicsDisplay::HandleXDndDrop (XEvent event)
+  bool GraphicsDisplay::GetXDndSelectionEvent (Display *display, Window target, Atom property, long time, XEvent *result, int attempts)
   {
-    XEvent xevent;
+    // request the selection
+    XConvertSelection (display,
+                       XInternAtom (display, "XdndSelection", false),
+                       property,
+                       XInternAtom (display, "XdndSelection", false),
+                       target,
+                       time);
+    XFlush (display);
+    
     int i;
-    bool can_has = false;
-    
-    const long *l = event.xclient.data.l;
-    
-    XConvertSelection (event.xany.display,
-                       XInternAtom (event.xany.display, "XdndSelection", false),
-                       XInternAtom (event.xany.display, "text/uri-list", false),
-                       XInternAtom (event.xany.display, "XdndSelection", false),
-                       event.xany.window,
-                       l[2]);
-                       
-    XFlush (event.xany.display);
-    
-    
-    for (i = 0; i < 50; i++)
+    for (i = 0; i < attempts; i++)
     {
-      if (XCheckTypedWindowEvent (event.xany.display, event.xany.window, SelectionNotify, &event))
+      if (XCheckTypedWindowEvent (display, target, SelectionNotify, result))
       {
-        can_has = true;
-        break;
+        return true;
       }
       
-      XFlush (event.xany.display);
+      XFlush (display);
       
       struct timeval usleep_tv;
       usleep_tv.tv_sec = 0;
@@ -1725,9 +1736,16 @@ namespace nux
       select(0, 0, 0, 0, &usleep_tv);
     }
     
-    if (can_has) 
+    return false;
+  }
+  
+  void GraphicsDisplay::HandleXDndDrop (XEvent event)
+  {
+    XEvent xevent;
+    const long *l = event.xclient.data.l;
+    
+    if (GetXDndSelectionEvent (event.xany.display, event.xany.window, XInternAtom (event.xany.display, "text/uri-list", false), l[2], &event, 50))
     {
-      printf ("found that shit\n");
       unsigned char *buffer = NULL;
       Atom type;
 
