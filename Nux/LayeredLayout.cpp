@@ -109,8 +109,25 @@ namespace nux
 
     for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
     {
-      (*it)->SetMinimumSize (base.width, base.height);
-      (*it)->SetGeometry (base);
+      Area                   *area = *it;
+      LayeredChildProperties *props;
+      Geometry                geo;
+      
+      props = dynamic_cast<LayeredChildProperties *> (area->GetLayoutProperties ());
+
+      if (props->m_expand)
+      {
+        geo = base;
+      }
+      else
+      {
+        geo.x = props->m_x;
+        geo.y = props->m_y;
+        geo.width = props->m_width;
+        geo.height = props->m_height;
+      }
+      (*it)->SetMinimumSize (geo.width, geo.height);
+      (*it)->SetGeometry (geo);
       (*it)->ComputeLayout2 ();
     }
     return eCompliantHeight | eCompliantWidth;
