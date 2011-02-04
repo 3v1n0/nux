@@ -191,7 +191,9 @@ namespace nux
     NUX_WINDOW_MOUSELEAVE,
     NUX_MOUSEWHEEL,
     NUX_DESTROY_WINDOW,
-    NUX_TERMINATE_APP
+    NUX_TERMINATE_APP,
+    NUX_DRAG_MOVE,
+    NUX_DRAG_DROP,
   };
 
   unsigned long GetEventButton(unsigned long button_state);

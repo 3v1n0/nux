@@ -60,6 +60,9 @@ namespace nux
 #define NUX_THREADMSG_CHILD_WINDOW_TERMINATED   (WM_APP+2)  // General failure - Wait Connection failed
 #define NUX_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
 
+#define _xdnd_max_type 100
+#define xdnd_version 5
+
 // This will become GLWindow
   class GraphicsDisplay : public GraphicSystem
   {
@@ -255,6 +258,13 @@ namespace nux
     void RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x, int &y);
 
   private:
+    void HandleXDndPosition (XEvent event);
+    void HandleXDndEnter    (XEvent event);
+    void HandleXDndStatus   (XEvent event);
+    void HandleXDndLeave    (XEvent event);
+    void HandleXDndDrop     (XEvent event);
+    void HandleXDndFinished (XEvent event);
+  
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
     float m_FrameTime;
@@ -262,6 +272,11 @@ namespace nux
     GraphicsEngine *m_GraphicsContext;
     WindowStyle m_Style;
 
+    
+
+    long _current_dnd_xid;
+    Atom _xdnd_types[_xdnd_max_type + 1];
+    bool _is_uri_list; //hacky hack hack
   public:
     ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
