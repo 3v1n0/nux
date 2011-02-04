@@ -66,6 +66,9 @@ public:
       hori->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
       layered->AddLayout (hori);
 
+      button = new nux::PushButton ("This button has x, y, w, h set", NUX_TRACKER_LOCATION);
+      layered->AddLayer (button, false, 400, 10, 180, 40);
+
       nux::ROPConfig rop; 
       rop.Blend = true;
       rop.SrcBlend = GL_ONE;

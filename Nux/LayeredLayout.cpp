@@ -121,8 +121,8 @@ namespace nux
       }
       else
       {
-        geo.x = props->m_x;
-        geo.y = props->m_y;
+        geo.x = base.x + props->m_x;
+        geo.y = base.y + props->m_y;
         geo.width = props->m_width;
         geo.height = props->m_height;
       }
@@ -418,4 +418,23 @@ namespace nux
     return m_input_mode;
   }
 
+  void LayeredLayout::Raise (Area *area, Area *above)
+  {
+
+  }
+
+  void LayeredLayout::Lower (Area *area, Area *below)
+  {
+
+  }
+
+  void LayeredLayout::RaiseTop (Area *area)
+  {
+
+  }
+
+  void LayeredLayout::LowerBottom (Area *area)
+  {
+
+  }
 }

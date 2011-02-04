@@ -84,21 +84,21 @@ namespace nux
     The active layer will receives input in the input mode is INPUT_MODE_ACTIVE.
     \param index_ The index of the layer to make active
     */
-    void   SetActiveLayerN (int index_);
+    void SetActiveLayerN (int index_);
 
     //! Get the active layer of the layout
     /*!
     Returns the index of the active layer of the layout. This is only useful if input mode is INPUT_MODE_ACTIVE.
     \return the index of the active layer
     */
-    int    GetActiveLayerN ();
+    int GetActiveLayerN ();
 
     //! Set the active layer of the layout
     /*!
     The active layer will receives input in the input mode is INPUT_MODE_ACTIVE.
     \param area The area of the layer to make active
     */
-    void   SetActiveLayer (Area *area);
+    void SetActiveLayer (Area *area);
 
     //! Get the active layer of the layout
     /*!
@@ -133,7 +133,37 @@ namespace nux
     many backgrounds, but with only one active view.
     \param input_mode the input mode
     */
-    void                     SetInputMode (LayeredLayout::InputMode input_mode);
+    void SetInputMode (LayeredLayout::InputMode input_mode);
+
+    //! Raise the paint and input depth of an area
+    /*!
+    Raises the paint and input depth of the area in the layout
+    \param area area to raise
+    \param above area to raise above
+    */
+    void Raise (Area *area, Area *above);
+
+    //! Lower the paint and input depth of an area
+    /*!
+    Lowers the paint and input depth of the area in the layout
+    \param area area to raise
+    \param below area to lower below
+    */
+    void Lower (Area *area, Area *below);
+
+    //! Raises the paint and input depth of area to the top of the layout
+    /*!
+    Area will be painted above all other layers and will be the first receive events  
+    \param area area to raise
+    */
+    void RaiseTop (Area *area);
+
+    //! Lowers the paint and input depth of area to the bottom of the layout
+    /*!
+    Area will be painted below all other layers and will be the last receive events
+    \param area area to lower
+    */
+    void LowerBottom (Area *area);
 
     //! Get which input mode is set on the layout
     /*!
