@@ -36,6 +36,7 @@ namespace nux
     :   InitiallyUnownedObject (NUX_FILE_LINE_PARAM)
     ,   m_IsSizeDirty (true)
     ,   m_ParentObject (0)
+    ,   m_layout_properties (NULL)
     ,   m_Application (0)
     ,   m_Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
     ,   m_minSize (BASEOBJECT_MINWIDTH, BASEOBJECT_MINHEIGHT)
@@ -47,6 +48,8 @@ namespace nux
 
   Area::~Area()
   {
+    if (m_layout_properties)
+      delete m_layout_properties;
   }
 
   const NString &Area::GetBaseString() const
@@ -443,5 +446,18 @@ namespace nux
     {
       m_ParentObject->RequestBottomUpLayoutComputation (bo_initiator);
     }
+  }
+
+  void Area::SetLayoutProperties (LayoutProperties *properties)
+  {
+    if (m_layout_properties)
+      delete m_layout_properties;
+
+    m_layout_properties = properties;
+  }
+
+  Area::LayoutProperties * Area::GetLayoutProperties ()
+  {
+    return m_layout_properties;
   }
 }

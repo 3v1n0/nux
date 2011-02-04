@@ -28,6 +28,31 @@
 
 namespace nux
 {
+  class LayeredChildProperties : Area::LayoutProperties
+  {
+    public:
+
+    LayeredChildProperties (bool expand, int x, int y, int width, int height)
+    : m_expand (expand),
+      m_x (x),
+      m_y (y),
+      m_width (width),
+      m_height (height)
+    {
+
+    }
+
+    ~LayeredChildProperties ()
+    {
+    }
+
+    bool m_expand;
+    int  m_x;
+    int  m_y;
+    int  m_width;
+    int  m_height;
+  };
+
   NUX_IMPLEMENT_OBJECT_TYPE (LayeredLayout);
 
   LayeredLayout::LayeredLayout (NUX_FILE_LINE_DECL)
@@ -188,6 +213,9 @@ namespace nux
                                  MinorDimensionSize     extend,
                                  float                  percentage)
   {
+    g_return_if_fail (layout);
+    g_return_if_fail (layout->GetParentObject () == NULL);
+
     if (!m_active_area)
     {
       m_active_area = layout;
@@ -202,6 +230,9 @@ namespace nux
                                MinorDimensionSize     extend,
                                float                  percentage)
   {
+    g_return_if_fail (view);
+    g_return_if_fail (view->GetParentObject () == NULL);
+
     if (!m_active_area)
     {
       m_active_area = view;
@@ -252,17 +283,17 @@ namespace nux
   //
   void LayeredLayout::AddLayer (Area *area, bool expand, int x, int y, int width, int height)
   {
-
+    g_return_if_fail (area);
   }
 
   void LayeredLayout::UpdateLayer (Area *area, bool expand, int x, int y, int width, int height)
   {
-
+    g_return_if_fail (area);
   }
 
   void LayeredLayout::RemoveLayer (Area *area)
   {
-
+    g_return_if_fail (area);
   }
 
   void LayeredLayout::SetActiveLayerN (int index_)

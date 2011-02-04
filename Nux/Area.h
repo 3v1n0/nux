@@ -127,13 +127,18 @@ namespace nux
   class View;
   class Area;
 
-
   class Area: public InitiallyUnownedObject
   {
   public:
     NUX_DECLARE_OBJECT_TYPE (Area, InitiallyUnownedObject);
     //static NObjectType StaticObjectType;
     //virtual NObjectType* Type() { return &StaticObjectType; }
+
+    class LayoutProperties
+    {
+      public:
+      virtual ~LayoutProperties ();
+    };
 
   public:
     Area (NUX_FILE_LINE_DECL);
@@ -269,6 +274,24 @@ namespace nux
       return false;
     }
 
+    //! Set the layout properties for this area
+    /*!
+    Allows the Layout managing this area to store the properties specifc to this area. Layouts
+    should create a sub-class of LayoutProperties. The LayoutProperties of an area will
+    be deleted upon destruction.
+    \parent properties the LayoutProperties sub-class  associated with this area. Can be NULL to
+     unset.
+    */
+    void               SetLayoutProperties (LayoutProperties *properties);
+
+    //! Get the layout properties for this area
+    /*!
+    Retrieves the LayoutProperties sub-class with this area. See SetLayoutProperties
+    \return LayoutProperties sub-class associated with this area.
+    */
+    LayoutProperties * GetLayoutProperties ();
+    Area * GetParentObject();
+
   protected:
 
     /*
@@ -291,8 +314,6 @@ namespace nux
     
     virtual void GeometryChangePending () {}
     virtual void GeometryChanged () {}
-
-    Area *GetParentObject();
 
     //! Request a Layout recompute after a change of size
     /*
@@ -318,6 +339,8 @@ namespace nux
         A Area cannot have children (that may change later).
     */
     Area *m_ParentObject;
+
+    LayoutProperties *m_layout_properties;
 
   private:
     WindowThread *m_Application;
