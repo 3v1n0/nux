@@ -216,7 +216,7 @@ namespace nux
 
     if (m_input_mode == INPUT_MODE_ACTIVE)
     {
-      if (m_active_area && m_active_area->IsVisible ())
+      if (m_active_area && m_active_area->IsVisible () && m_active_area->IsSensitive ())
         ret = ProcessOne (m_active_area, ievent, ret, process_event_info);
     }
     else
@@ -227,7 +227,7 @@ namespace nux
       {
         Area *area = static_cast<Area *> (*it);
 
-        if (area->IsVisible ())
+        if (area->IsVisible () && area->IsSensitive ())
         {
           ret = ProcessOne (area, ievent, ret, process_event_info);
         }

@@ -488,7 +488,7 @@ namespace nux
     SensitiveChanged.emit (this, m_sensitive);
   }
 
-  bool IsSensitive ()
+  bool Area::IsSensitive ()
   {
     return m_sensitive;
   }
