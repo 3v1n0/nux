@@ -145,18 +145,18 @@ namespace nux
             if (current_dnd_area != 0)
             {
               // There is a current dnd area.
-              current_dnd_area->ProcessDnDLeave();
+              current_dnd_area->ProcessDndLeave();
             }
             
             GetWindowCompositor().SetDnDArea(this);
-            ProcessDnDEnter();
-            ProcessDnDMove();
+            ProcessDndEnter();
+            HandleDndMove(ievent);
 
             return eMouseEventSolved;
           }
           else
           {
-            ProcessDnDMove();
+            HandleDndMove(ievent);
             return eMouseEventSolved;
           }
         }
@@ -166,7 +166,7 @@ namespace nux
           {
             // we are going out of this area
             GetWindowCompositor().SetDnDArea(NULL);
-            ProcessDnDLeave();
+            ProcessDndLeave();
           }
         }
       }
@@ -176,7 +176,7 @@ namespace nux
         InputArea *current_dnd_area = GetWindowCompositor().GetDnDArea();
         if ((current_dnd_area == this) && GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {
-          ProcessDnDDrop();
+          HandleDndDrop(ievent);
           return eMouseEventSolved;
         }
       }
@@ -636,23 +636,50 @@ namespace nux
   {
     return _print_event_debug_trace;
   }
-
-  void InputArea::ProcessDnDMove ()
+  
+  void InputArea::HandleDndMove (IEvent &event)
   {
-    // must learn to deal with x/y offsets
-    GetWindow ().SendDndStatus (false, DNDACTION_NONE, Rect (GetGeometry ().x, GetGeometry ().y, 1, 1));
+    std::list<char *> mimes;
+    
+    mimes = GetWindow ().GetDndMimeTypes ();
+    std::list<char *>::iterator it;
+    ProcessDndMove (event.e_x, event.e_y, mimes);
+    
+    for (it = mimes.begin (); it != mimes.end (); it++)
+      g_free (*it);
   }
   
-  void InputArea::ProcessDnDDrop ()
+  void InputArea::HandleDndDrop (IEvent &event)
   {
-    GetWindow ().SendDndFinished (false, DNDACTION_NONE);
+    ProcessDndDrop (event.e_x, event.e_y);  
+  }
+  
+  void InputArea::SendDndStatus (bool accept, DndAction action, Geometry region)
+  {
+    GetWindow ().SendDndStatus (accept, action, Rect (region.x, region.y, region.width, region.height));
+  }
+  
+  void InputArea::SendDndFinished (bool accepted, DndAction action)
+  {
+    GetWindow ().SendDndFinished (accepted, action);
   }
 
-  void InputArea::ProcessDnDEnter ()
+  void InputArea::ProcessDndMove (int x, int y, std::list<char *>mimes)
+  {
+    // must learn to deal with x/y offsets
+    SendDndStatus (false, DNDACTION_NONE, Geometry (GetGeometry ().x, GetGeometry ().y, 1, 1));
+  }
+  
+  void InputArea::ProcessDndDrop (int x, int y)
+  {
+    SendDndFinished (false, DNDACTION_NONE);
+  }
+
+  void InputArea::ProcessDndEnter ()
   {
   }
 
-  void InputArea::ProcessDnDLeave ()
+  void InputArea::ProcessDndLeave ()
   {
   }
 }

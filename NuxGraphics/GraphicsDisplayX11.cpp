@@ -1580,12 +1580,10 @@ namespace nux
         
         if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndPosition", false))
         {
-          printf ("Handle Position\n");
           HandleXDndPosition (xevent, m_pEvent);
         }
         else if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndEnter", false))
         {
-          printf ("Handle Enter\n");
           HandleXDndEnter (xevent);
           m_pEvent->e_event = NUX_DND_ENTER_WINDOW;
         }
@@ -1596,13 +1594,11 @@ namespace nux
         }
         else if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndLeave", false))
         {
-          printf ("Handle Leave\n");
           HandleXDndLeave (xevent);
           m_pEvent->e_event = NUX_DND_LEAVE_WINDOW;
         }
         else if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndDrop", false))
         {
-          printf ("Handle Drop\n");
           HandleXDndDrop (xevent, m_pEvent);
         }
         else if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndFinished", false))
@@ -1667,7 +1663,23 @@ namespace nux
   std::list<char *> GraphicsDisplay::GetDndMimeTypes ()
   {
     std::list<char *> result;
-    // fixme
+    
+    if (!_drag_display)
+      return result;
+    
+    Atom a;
+    int i;
+    for (i = 0; i <= _xdnd_max_type; i++)
+    {
+      a = _xdnd_types[i];
+      
+      if (!a)
+        break;
+      
+      char *name = XGetAtomName (_drag_display, a);
+      result.push_back (g_strdup (name));
+      XFree (name);
+    }
     return result;
   }
   
@@ -1760,9 +1772,7 @@ namespace nux
       // xdnd supports up to 3 types without using XdndTypelist
       int i;
       for(i = 2; i < 5; i++) 
-      {
         _xdnd_types[j++] = l[i];
-      }
     }
     
     _xdnd_types[j] = 0;
