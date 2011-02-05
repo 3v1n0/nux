@@ -256,18 +256,23 @@ namespace nux
     void ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event);
     void ProcessXEvent (XEvent xevent, bool foreign);
     void RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x, int &y);
+    void RecalcXYPosition (int x_root, int y_root, int &x_recalc, int &y_recalc);
 
   private:
-    void HandleXDndPosition (XEvent event);
+    void HandleXDndPosition (XEvent event, Event* nux_event);
     void HandleXDndEnter    (XEvent event);
     void HandleXDndStatus   (XEvent event);
     void HandleXDndLeave    (XEvent event);
-    void HandleXDndDrop     (XEvent event);
+    void HandleXDndDrop     (XEvent event, Event* nux_event);
     void HandleXDndFinished (XEvent event);
     
     void SendXDndStatus (Display *display, Window source, Window target, bool accept, Atom action, Rect box);
     bool GetXDndSelectionEvent (Display *display, Window target, Atom property, long time, XEvent *result, int attempts);
+    void SendXDndFinished (Display *display, Window source, Window target, bool result, Atom action);
+    char * GetXDndData (Display *display, Window requestor, long time);
   
+    Point _last_dnd_position;
+
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
     float m_FrameTime;

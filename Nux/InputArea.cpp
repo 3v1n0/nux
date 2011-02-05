@@ -122,6 +122,68 @@ namespace nux
 
   long InputArea::OnEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
+    // Mouse event processing.
+    if ((ievent.e_event >= NUX_DND_MOVE) && (ievent.e_event <= NUX_DND_LEAVE_WINDOW))
+    {
+      if (TraverseInfo & eMouseEventSolved) // It is not mouse event but let use this enum for now.
+      {
+        return eMouseEventSolved;
+      }
+
+      // We are in the range of DND events
+
+      if (ievent.e_event == NUX_DND_MOVE)
+      {
+        InputArea *current_dnd_area = GetWindowCompositor().GetDnDArea();
+        if (GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
+        {
+          if (current_dnd_area != this)
+          {
+            // We just entered this area.
+            
+            // Exit the current dnd area if any.
+            if (current_dnd_area != 0)
+            {
+              // There is a current dnd area.
+              current_dnd_area->ProcessDnDLeave();
+            }
+            
+            GetWindowCompositor().SetDnDArea(this);
+            ProcessDnDEnter();
+            ProcessDnDMove();
+
+            return eMouseEventSolved;
+          }
+          else
+          {
+            ProcessDnDMove();
+            return eMouseEventSolved;
+          }
+        }
+        else
+        {
+          if (GetWindowCompositor().GetDnDArea() == this)
+          {
+            // we are going out of this area
+            GetWindowCompositor().SetDnDArea(NULL);
+            ProcessDnDLeave();
+          }
+        }
+      }
+
+      if (ievent.e_event == NUX_DND_DROP)
+      {
+        InputArea *current_dnd_area = GetWindowCompositor().GetDnDArea();
+        if ((current_dnd_area != this) && GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
+        {
+          ProcessDnDDrop();
+          return eMouseEventSolved;
+        }
+      }
+      return TraverseInfo;
+    }
+
+    // Regular event processing.
     if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
     {
       // Skip the area that has the exclusivity on events
@@ -133,6 +195,7 @@ namespace nux
       // Bypass the regular processing and use a simplified processing of events.
       return ProcessEventInExclusiveMode (ievent, TraverseInfo, ProcessEventInfo);
     }
+
 
     InputArea *PreviousMouseOverArea = (GetWindowCompositor().m_PreviousMouseOverArea);
     InputArea *CurrentMouseOverArea = (GetWindowCompositor().m_MouseOverArea);
@@ -574,5 +637,24 @@ namespace nux
     return _print_event_debug_trace;
   }
 
+  void InputArea::ProcessDnDMove ()
+  {
+    // Do nothing
+  }
+  
+  void InputArea::ProcessDnDDrop ()
+  {
+    // Do nothing
+  }
+
+  void InputArea::ProcessDnDEnter ()
+  {
+    // Do nothing
+  }
+
+  void InputArea::ProcessDnDLeave ()
+  {
+    // Do nothing
+  }
 }
 

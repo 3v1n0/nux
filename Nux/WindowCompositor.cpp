@@ -70,6 +70,8 @@ namespace nux
     _in_exclusive_input_mode    = false;
     _pending_exclusive_input_mode_action = false;
 
+    _dnd_area                   = NULL;
+
     if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
     {
       m_FrameBufferObject = GetGpuDevice()->CreateFrameBufferObject();
@@ -1879,6 +1881,22 @@ namespace nux
     }
 
     return (*it).second.color_rt->GetSurfaceData (0, width, height, format);
+  }
+
+
+  void WindowCompositor::ResetDnDArea()
+  {
+    _dnd_area = NULL;
+  }
+
+  void WindowCompositor::SetDnDArea (InputArea* area)
+  {
+    _dnd_area = area;
+  }
+
+  InputArea* WindowCompositor::GetDnDArea ()
+  {
+    return _dnd_area;
   }
 }
 

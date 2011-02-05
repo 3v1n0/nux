@@ -889,6 +889,13 @@ namespace nux
       memset(&event, 0, sizeof(IEvent));
       GetWindow().GetSystemEvent(&event);
       
+
+      if ((event.e_event == NUX_DND_ENTER_WINDOW) ||
+        (event.e_event == NUX_DND_LEAVE_WINDOW))
+      {
+        GetWindowCompositor().ResetDnDArea();
+      }
+
       // Call event inspectors.
       CallEventInspectors (&event);
 

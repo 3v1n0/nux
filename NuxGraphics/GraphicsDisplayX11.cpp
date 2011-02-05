@@ -87,6 +87,9 @@ namespace nux
     _has_glx_13 = false;
     _glx_major = 0;
     _glx_minor = 0;
+
+    // DND
+    _last_dnd_position.Set(0, 0);
   }
 
   GraphicsDisplay::~GraphicsDisplay()
@@ -1309,6 +1312,15 @@ namespace nux
   {
     return XPending (m_X11Display) ? true : false;
   }
+  
+  void GraphicsDisplay::RecalcXYPosition (int x_root, int y_root, int &x_recalc, int &y_recalc)
+  {
+    int main_window_x = m_WindowPosition.x;
+    int main_window_y = m_WindowPosition.y;
+  
+    x_recalc = x_root - main_window_x;
+    y_recalc = y_root - main_window_y;
+  }
 
   void GraphicsDisplay::RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x_recalc, int &y_recalc)
   {
@@ -1568,27 +1580,31 @@ namespace nux
         
         if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndPosition", false))
         {
-          HandleXDndPosition (xevent);
+          HandleXDndPosition (xevent, m_pEvent);
         }
         else if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndEnter", false))
         {
           HandleXDndEnter (xevent);
+          m_pEvent->e_event = NUX_DND_ENTER_WINDOW;
         }
         else if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndStatus", false))
         {
           HandleXDndStatus (xevent);
+          m_pEvent->e_event = NUX_NO_EVENT;
         }
         else if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndLeave", false))
         {
           HandleXDndLeave (xevent);
+          m_pEvent->e_event = NUX_DND_LEAVE_WINDOW;
         }
         else if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndDrop", false))
         {
-          HandleXDndDrop (xevent);
+          HandleXDndDrop (xevent, m_pEvent);
         }
         else if (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "XdndFinished", false))
         {
           HandleXDndFinished (xevent);
+          m_pEvent->e_event = NUX_NO_EVENT;
         }
         
         break;
@@ -1622,37 +1638,49 @@ namespace nux
     XSendEvent (display, target, False, NoEventMask, (XEvent *) &response);
   }
   
-  void GraphicsDisplay::HandleXDndPosition (XEvent event)
+  void GraphicsDisplay::HandleXDndPosition (XEvent event, Event* nux_event)
   {
     const unsigned long *l = (const unsigned long *)event.xclient.data.l;
   
     int x = (l[2] & 0xffff0000) >> 16;
     int y = l[2] & 0x0000ffff;
     
-    // Adopt me to query the correct widget and throttle so we dont flood with accept/deny
-    bool accept = false;
-    
-    int i = 0;
-    Atom a = _xdnd_types[i];
-    
-    while (a)
-    {
-      if (a == XInternAtom (event.xany.display, "text/uri-list", false))
-      {
-        accept = true;
-        break;
-      }
-      
-      i++;
-      a = _xdnd_types[i];
-    }
-    
-    SendXDndStatus (event.xany.display, 
-                    event.xany.window, 
-                    _current_dnd_xid, 
-                    accept, 
-                    XInternAtom (event.xany.display, "XdndActionCopy", false),
-                    Rect (x, y, 1, 1));
+    int x_recalc = 0;
+    int y_recalc = 0;
+
+    RecalcXYPosition(x, y, x_recalc, y_recalc);
+
+    nux_event->e_event = NUX_DND_MOVE;
+    nux_event->e_x = x_recalc;
+    nux_event->e_y = y_recalc;
+
+    // Store the last DND position;
+    _last_dnd_position.Set(x_recalc, y_recalc);
+
+//     // Adopt me to query the correct widget and throttle so we don't flood with accept/deny
+//     bool accept = false;
+//     
+//     int i = 0;
+//     Atom a = _xdnd_types[i];
+//     
+//     while (a)
+//     {
+//       if (a == XInternAtom (event.xany.display, "text/uri-list", false))
+//       {
+//         accept = true;
+//         break;
+//       }
+//       
+//       i++;
+//       a = _xdnd_types[i];
+//     }
+//     
+//     SendXDndStatus (event.xany.display, 
+//                     event.xany.window, 
+//                     _current_dnd_xid, 
+//                     accept, 
+//                     XInternAtom (event.xany.display, "XdndActionCopy", false),
+//                     Rect (x, y, 1, 1));
   }
   
   void GraphicsDisplay::HandleXDndEnter (XEvent event)
@@ -1739,12 +1767,25 @@ namespace nux
     return false;
   }
   
-  void GraphicsDisplay::HandleXDndDrop (XEvent event)
+  void GraphicsDisplay::SendXDndFinished (Display *display, Window source, Window target, bool result, Atom action)
+  {
+    XClientMessageEvent response;
+    response.window = target;
+    response.format = 32;
+    response.type = ClientMessage;
+
+    response.message_type = XInternAtom (display, "XdndFinished", false);
+    response.data.l[0] = source;
+    response.data.l[1] = result ? 1 : 0; // flags
+    response.data.l[2] = action; // action
+    
+    XSendEvent (display, target, False, NoEventMask, (XEvent *) &response);
+  }
+  
+  char * GraphicsDisplay::GetXDndData (Display *display, Window requestor, long time)
   {
     XEvent xevent;
-    const long *l = event.xclient.data.l;
-    
-    if (GetXDndSelectionEvent (event.xany.display, event.xany.window, XInternAtom (event.xany.display, "text/uri-list", false), l[2], &event, 50))
+    if (GetXDndSelectionEvent (display, requestor, XInternAtom (display, "text/uri-list", false), time, &xevent, 50))
     {
       unsigned char *buffer = NULL;
       Atom type;
@@ -1753,9 +1794,9 @@ namespace nux
       unsigned long  length;     // nitems
       int   format;
       
-      if (XGetWindowProperty(event.xany.display, 
-                             event.xany.window, 
-                             XInternAtom (event.xany.display, "XdndSelection", false), 
+      if (XGetWindowProperty(display, 
+                             requestor, 
+                             XInternAtom (display, "XdndSelection", false), 
                              0, 
                              10000,
                              False, 
@@ -1766,23 +1807,32 @@ namespace nux
                              &bytes_left, 
                              &buffer) == Success)
       {
-        printf ("Someone Dropped: %s\n", buffer);
-        printf ("bytes remaining: %i\n", (int) bytes_left);
+        return (char *) buffer;
       }
     }
     
-    // send the finished message back
-    XClientMessageEvent response;
-    response.window = _current_dnd_xid;
-    response.format = 32;
-    response.type = ClientMessage;
-
-    response.message_type = XInternAtom (event.xany.display, "XdndFinished", false);
-    response.data.l[0] = event.xany.window;
-    response.data.l[1] = 1; // flags
-    response.data.l[2] = XInternAtom (event.xany.display, "XdndActionCopy", false); // action
+    return 0;
+  }
+  
+  void GraphicsDisplay::HandleXDndDrop (XEvent event, Event *nux_event)
+  {
+    XEvent xevent;
+    const long *l = event.xclient.data.l;
+    char *data = GetXDndData (event.xany.display, event.xany.window, l[2]);
     
-    XSendEvent (event.xany.display, _current_dnd_xid, False, NoEventMask, (XEvent *) &response);
+    nux_event->e_event = NUX_DND_MOVE;
+
+    // The drop does not provide (x, y) coordinates of the location of the drop. Use the last DND position.
+    nux_event->e_x = _last_dnd_position.x;
+    nux_event->e_y = _last_dnd_position.y;
+
+    if (data)
+    {
+      printf ("Someone dropped: %s\n", data);
+    }
+    
+    // send the finished message back
+    SendXDndFinished (event.xany.display, event.xany.window, _current_dnd_xid, true, XInternAtom (event.xany.display, "XdndActionCopy", false));
   }
   
   void GraphicsDisplay::HandleXDndFinished (XEvent event)

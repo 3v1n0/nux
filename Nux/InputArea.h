@@ -161,6 +161,15 @@ namespace nux
 
     bool _print_event_debug_trace;
 
+    // DnD support
+    // Rather than being implemented with signals, DND support is implemented with protected virtual function.
+    // This ensure that a class and it subclass don't process the same event more than once!
+
+    virtual void ProcessDnDMove ();
+    virtual void ProcessDnDDrop ();
+    virtual void ProcessDnDEnter ();
+    virtual void ProcessDnDLeave ();
+
   public:
     sigc::signal<void, int, int, int, int, unsigned long, unsigned long> OnMouseMove;  // send the current position inside the area
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDown;
