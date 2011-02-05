@@ -27,10 +27,16 @@
 
 namespace nux
 {
-  //! An layered bin layout.
+  //! An layered layout.
   /*!
-      All children are the size of the view this layout is attached to. Only one active child,
-      which is painted and receives the events
+  LayeredLayout works either as a bin layout, showing only one layer at a time, or it works
+  as a composite layout, drawing all children in order (and you are able to modify the order).
+  
+  The layout also allows two modes of input. In INPUT_MODE_ACTIVE, the layout will only send
+  events to the active layer, even if in composite drawing mode. In INPUT_MODE_COMPOSITE, the
+  layout will send events to all the layers, in the stacking order from top to bottom. This
+  allows creation of complex widgets more easily than implementing the drawing and input modes
+  manually.
   */
   class LayeredLayout: public Layout
   {
@@ -110,16 +116,16 @@ namespace nux
     //! Set whether the layout will paint all the layers it contains. Default is false.
     /*!
     Normally, the layout will only paint the active layer. However, if you are using the layout in INPUT_COMPOSITE,
-    or have just sized and positioned the layers that you'd like them to be painted so that they they are composited
+    or have just sized and positioned the layers that you'd like them to be drawn so that they they are composited
     inside the layout, this should be set to true.
     \param paint_all whether to paint all the layers in the layout
     */
     void SetPaintAll (bool paint_all);
 
-    //! Get whether the layout is painting all the layers it contains
+    //! Get whether the layout is drawing all the layers it contains
     /*!
-    Returns whether the layout is painting all the layers it contains. See SetPaintAll.
-    \return whether the layout is painting all the layers
+    Returns whether the layout is drawing all the layers it contains. See SetPaintAll.
+    \return whether the layout is drawing all the layers
     */
     bool GetPaintAll ();
 
@@ -153,14 +159,14 @@ namespace nux
 
     //! Raises the paint and input depth of area to the top of the layout
     /*!
-    Area will be painted above all other layers and will be the first receive events  
+    Area will be drawn above all other layers and will be the first receive events  
     \param area area to raise
     */
     void RaiseTop (Area *area);
 
     //! Lowers the paint and input depth of area to the bottom of the layout
     /*!
-    Area will be painted below all other layers and will be the last receive events
+    Area will be drawn below all other layers and will be the last receive events
     \param area area to lower
     */
     void LowerBottom (Area *area);
