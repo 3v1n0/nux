@@ -951,6 +951,10 @@ namespace nux
           (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
           (event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
           (event.e_event == NUX_WINDOW_MOUSELEAVE) ||
+          (event.e_event == NUX_DND_MOVE) ||
+          (event.e_event == NUX_DND_DROP) ||
+          (event.e_event == NUX_DND_ENTER) ||
+          (event.e_event == NUX_DND_LEAVE) ||
           (event.e_event == NUX_MOUSEWHEEL))
       {
           if((event.e_event == NUX_SIZE_CONFIGURATION) ||

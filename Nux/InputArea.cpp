@@ -174,7 +174,7 @@ namespace nux
       if (ievent.e_event == NUX_DND_DROP)
       {
         InputArea *current_dnd_area = GetWindowCompositor().GetDnDArea();
-        if ((current_dnd_area != this) && GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
+        if ((current_dnd_area == this) && GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
         {
           ProcessDnDDrop();
           return eMouseEventSolved;
@@ -639,22 +639,21 @@ namespace nux
 
   void InputArea::ProcessDnDMove ()
   {
-    // Do nothing
+    // must learn to deal with x/y offsets
+    GetWindow ().SendDndStatus (false, DNDACTION_NONE, Rect (GetGeometry ().x, GetGeometry ().y, 1, 1));
   }
   
   void InputArea::ProcessDnDDrop ()
   {
-    // Do nothing
+    GetWindow ().SendDndFinished (false, DNDACTION_NONE);
   }
 
   void InputArea::ProcessDnDEnter ()
   {
-    // Do nothing
   }
 
   void InputArea::ProcessDnDLeave ()
   {
-    // Do nothing
   }
 }
 

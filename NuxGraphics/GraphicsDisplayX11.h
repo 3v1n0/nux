@@ -54,6 +54,15 @@ namespace nux
     WINDOWSTYLE_TOOL,
     WINDOWSTYLE_NOBORDER,
   };
+  
+  enum DndAction
+  {
+    DNDACTION_COPY,
+    DNDACTION_MOVE,
+    DNDACTION_PRIVATE,
+    
+    DNDACTION_NONE,
+  };
 
 #define NUX_THREADMSG                           (WM_APP+0)
 #define NUX_THREADMSG_START_RENDERING           (WM_APP+1)  // Connection established // start at WM_APP
@@ -257,7 +266,12 @@ namespace nux
     void ProcessXEvent (XEvent xevent, bool foreign);
     void RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x, int &y);
     void RecalcXYPosition (int x_root, int y_root, int &x_recalc, int &y_recalc);
-
+    
+    void              SendDndStatus   (bool accept, DndAction action, Rect region);
+    void              SendDndFinished (bool accepted, DndAction performed_action);
+    std::list<char *> GetDndMimeTypes ();
+    char *            GetDndData      (char *property);
+    
   private:
     void HandleXDndPosition (XEvent event, Event* nux_event);
     void HandleXDndEnter    (XEvent event);
@@ -269,7 +283,7 @@ namespace nux
     void SendXDndStatus (Display *display, Window source, Window target, bool accept, Atom action, Rect box);
     bool GetXDndSelectionEvent (Display *display, Window target, Atom property, long time, XEvent *result, int attempts);
     void SendXDndFinished (Display *display, Window source, Window target, bool result, Atom action);
-    char * GetXDndData (Display *display, Window requestor, long time);
+    char * GetXDndData (Display *display, Window requestor, Atom property, long time);
   
     Point _last_dnd_position;
 
@@ -282,8 +296,11 @@ namespace nux
 
     
 
-    long _current_dnd_xid;
     Atom _xdnd_types[_xdnd_max_type + 1];
+    Display *_drag_display;
+    Window _drag_window;
+    Window _drag_source;
+    long _drag_drop_timestamp;
   public:
     ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
