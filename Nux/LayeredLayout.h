@@ -172,7 +172,9 @@ namespace nux
     */
     LayeredLayout::InputMode GetInputMode ();
 
+    //
     // Overrides
+    //
     long ComputeLayout2 ();
     void GetCompositeList (std::list<Area *> *ViewList);
     void ProcessDraw (GraphicsEngine &gfx_context, bool force_draw);

@@ -295,7 +295,7 @@ namespace nux
       m_active_area = area;
     }
 
-    props->m_vis_it = area->OnVisibilityChanged.connect (sigc::mem_fun (this, &LayeredLayout::ChildVisibilityChanged));
+    props->m_vis_it = area->VisibleChanged.connect (sigc::mem_fun (this, &LayeredLayout::ChildVisibilityChanged));
 
     if (area->IsLayout ())
       Layout::AddLayout (static_cast<Layout *> (area));

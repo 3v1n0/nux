@@ -305,10 +305,24 @@ namespace nux
 
     //! Get the visibility of the area
     /*!
-    Gets whether the area is visible to the user and will be painted and receive input events
+    Gets whether the area is visible to the user and will be visible to the user. Default is true.
     /return whether the area is visible
     */
     bool IsVisible ();
+
+    //! Set sensitivity of the area
+    /*!
+    If sensitive, an area will receive input events. Default is true.
+    /param  if the area should receive input events
+    */
+    void SetSensitive  (bool sensitive);
+
+    //! Get whether the area is sensitive
+    /*!
+    Gets whether the area is sensitive to input events
+    /return whether the area is visible
+    */
+    bool IsSensitive ();
 
   protected:
 
@@ -360,6 +374,7 @@ namespace nux
 
     LayoutProperties *m_layout_properties;
     bool              m_visible;
+    bool              m_sensitive;
 
   private:
     WindowThread *m_Application;
@@ -420,7 +435,8 @@ namespace nux
     }
 
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
-    sigc::signal<void, Area *, bool> OnVisibilityChanged;
+    sigc::signal<void, Area *, bool> VisibleChanged;
+    sigc::signal<void, Area *, bool> SensitiveChanged;
 
     unsigned int    m_stretchfactor;
     MinorDimensionPosition    positioning;

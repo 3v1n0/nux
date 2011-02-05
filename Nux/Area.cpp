@@ -38,6 +38,7 @@ namespace nux
     ,   m_ParentObject (0)
     ,   m_layout_properties (NULL)
     ,   m_visible (true)
+    ,   m_sensitive (true)
     ,   m_Application (0)
     ,   m_Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
     ,   m_minSize (BASEOBJECT_MINWIDTH, BASEOBJECT_MINHEIGHT)
@@ -469,11 +470,26 @@ namespace nux
 
     m_visible = visible;
 
-    OnVisibilityChanged.emit (this, m_visible);
+    VisibleChanged.emit (this, m_visible);
   }
 
   bool Area::IsVisible ()
   {
     return m_visible;
+  }
+
+  void Area::SetSensitive (bool sensitive)
+  {
+    if (m_sensitive == sensitive)
+      return;
+
+    m_sensitive = sensitive;
+
+    SensitiveChanged.emit (this, m_sensitive);
+  }
+
+  bool IsSensitive ()
+  {
+    return m_sensitive;
   }
 }
