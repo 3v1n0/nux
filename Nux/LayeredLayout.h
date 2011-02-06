@@ -20,8 +20,8 @@
  */
 
 
-#ifndef GRIDHLAYOUT_H
-#define GRIDHLAYOUT_H
+#ifndef LAYERED_LAYOUT_H
+#define LAYERED_LAYOUT_H
 
 #include "Layout.h"
 
@@ -181,6 +181,7 @@ namespace nux
     //
     // Overrides
     //
+  protected:
     long ComputeLayout2 ();
     void GetCompositeList (std::list<Area *> *ViewList);
     void ProcessDraw (GraphicsEngine &gfx_context, bool force_draw);
@@ -213,4 +214,4 @@ namespace nux
   };
 }
 
-#endif // GRIDHLAYOUT_H
+#endif // LAYERED_LAYOUT_H
