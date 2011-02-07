@@ -37,41 +37,67 @@ namespace nux
   {
     m_header_area = new InputArea (NUX_TRACKER_LOCATION);
     m_header_area->SinkReference();
+    _fix_width = false;
+    _fix_width_value = 80;
   }
 
-//   ColumnHeader::ColumnHeader(const ColumnHeader& Other)
-//   {
-//     m_header_area = Other.m_header_area;
-//     m_header_area->Reference();
-//   }
+  ColumnHeader::ColumnHeader(const ColumnHeader& Other)
+  {
+    m_header_area = 0;
+    if (Other.m_header_area)
+    {
+      m_header_area = Other.m_header_area;
+      m_header_area->Reference();
+      _fix_width = Other._fix_width;
+      _fix_width_value = Other._fix_width_value;
+    }
+  }
 
   ColumnHeader::~ColumnHeader()
   {
-//     m_header_area->UnReference();
-//     m_header_area = 0;
+    if (m_header_area)
+      m_header_area->UnReference();
+    m_header_area = 0;
   }
 
-//   ColumnHeader& ColumnHeader::operator = (const ColumnHeader& Other)
-//   {
-//     if (m_header_area)
-//       m_header_area->UnReference();
-// 
-//     if (Other.m_header_area)
-//     {
-//       m_header_area = Other.m_header_area;
-//       m_header_area->Reference();
-//     }
-//     return *this;
-//   }
+  ColumnHeader& ColumnHeader::operator = (const ColumnHeader& Other)
+  {
+    if (m_header_area)
+    {
+      m_header_area->UnReference();
+      m_header_area = 0;
+    }
+
+    if (Other.m_header_area)
+    {
+      m_header_area = Other.m_header_area;
+      m_header_area->Reference();
+      _fix_width = Other._fix_width;
+      _fix_width_value = Other._fix_width_value;
+    }
+    return *this;
+  }
 
   RowHeader::RowHeader()
   {
-    m_item = 0;
+    _table_item = 0;
+  }
+
+  RowHeader::RowHeader(const RowHeader& Other)
+  {
+    _table_item = 0;
   }
 
   RowHeader::~RowHeader()
   {
-    NUX_SAFE_DELETE (m_item);
+    //NUX_SAFE_DELETE (_table_item);
+    _table_item = 0;
+  }
+
+  RowHeader& RowHeader::operator = (const RowHeader& Other)
+  {
+
+    return *this;
   }
 
   TableItem::TableItem (const TCHAR *name, NodeParameterType type)
@@ -88,13 +114,13 @@ namespace nux
     m_isOpen = false;
     m_bParentOpen = false;
     m_bDirty = true;
-    m_row_header = new CoreArea (NUX_TRACKER_LOCATION);
-    m_row_header->Reference();
+    _row_header_area = new CoreArea (NUX_TRACKER_LOCATION);
+    _row_header_area->Reference();
   }
 
   TableItem::~TableItem()
   {
-    m_row_header->UnReference();
+    _row_header_area->UnReference();
     NUX_SAFE_DELETE (m_PropertyTextColor);
   }
 
@@ -239,9 +265,9 @@ namespace nux
         nBackground = table->PushItemBackground (GfxContext, this, false);
       }
 
-      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), geo, row->m_item->GetName(), Color (0xFF000000) /*m_item[r].c_str()*/);
-      table->PopItemBackground (GfxContext, nBackground);
-      setDirtyItem (false);
+      Painter.PaintTextLineStatic(GfxContext, GetSysFont(), geo, row->_table_item->GetName(), Color (0xFF000000));
+      table->PopItemBackground(GfxContext, nBackground);
+      setDirtyItem(false);
     }
   }
 

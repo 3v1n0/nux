@@ -98,7 +98,7 @@ namespace nux
           GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
           GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
         }
-        Painter.PaintTextLineStatic (GfxContext, GetSysFont(), TextGeometry, row->m_item->GetName(), GetItemTextColor() );
+        Painter.PaintTextLineStatic (GfxContext, GetSysFont(), TextGeometry, row->_table_item->GetName(), GetItemTextColor() );
       }
       GfxContext.PopClippingRectangle();
       table->PopItemBackground (GfxContext, nBackground);

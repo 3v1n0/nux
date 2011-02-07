@@ -74,11 +74,6 @@ namespace nux
     sigc::signal<void, int> sigIntValueChanged;
 
   protected:
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
-
-  protected:
     EditTextBox    *m_EditLine;
     CoreArea       *m_SpinnerUpBtn;
     CoreArea       *m_SpinnerDownBtn;

@@ -64,7 +64,7 @@ namespace nux
         m_TextEntry->IsRedrawNeeded() )
     {
       t_u32 nBackground = table->PushItemBackground (GfxContext, this);
-      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
+      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), m_FirstColumnUsableGeometry, row->_table_item->GetName(), GetItemTextColor() );
 
       if (m_ItemGeometryVector.size() >= 2)
       {

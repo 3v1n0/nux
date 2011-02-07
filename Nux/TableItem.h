@@ -42,26 +42,29 @@ namespace nux
   {
   public:
     ColumnHeader();
-    //ColumnHeader(const ColumnHeader& Other);
+    ColumnHeader(const ColumnHeader& Other);
     ~ColumnHeader();
 
-    //ColumnHeader& operator = (const ColumnHeader& Other);
+    ColumnHeader& operator = (const ColumnHeader& Other);
 
     InputArea *m_header_area;
-    bool bFixWidth;
-    int FixWidthValue;
+    bool _fix_width;
+    int _fix_width_value;
   };
 
   class RowHeader
   {
   public:
     RowHeader();
+    RowHeader(const RowHeader& Other);
     ~RowHeader();
+
+    RowHeader& operator = (const RowHeader& Other);
 
     //void SetItem(TableItem* item);
     //TableItem* GetItem();
 
-    TableItem *m_item;
+    TableItem *_table_item;
   };
 
   class TableItem: public NodeNetCom
@@ -217,7 +220,7 @@ namespace nux
     bool  m_AlwaysShowOpeningButton;
 
     //! Geometry of the header of the row. Located at the left of the row.
-    CoreArea *m_row_header;
+    CoreArea *_row_header_area;
     //! Array of geometries of the column inside the row.
     std::vector<Geometry> m_ItemGeometryVector;
     //Geometry m_FirstColumnInRowGeometry;

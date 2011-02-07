@@ -505,7 +505,7 @@ namespace nux
   {
     NodeItem *child = FirstChildNode();
 
-    while (child && !SkipChild() )
+    while (child && (!SkipChild()))
     {
       child->DeleteTree();
       child->Unlink();

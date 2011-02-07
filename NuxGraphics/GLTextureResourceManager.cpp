@@ -60,9 +60,9 @@ namespace nux
 
   BaseTexture *CreateTexture2DFromPixbuf (GdkPixbuf *pixbuf, bool premultiply)
   {
-    const uint32_t rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-    const uint32_t width = gdk_pixbuf_get_width (pixbuf);
-    const uint32_t height = gdk_pixbuf_get_height (pixbuf);
+    const unsigned int  rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+    const unsigned int  width = gdk_pixbuf_get_width (pixbuf);
+    const unsigned int  height = gdk_pixbuf_get_height (pixbuf);
 
     // Put the RGB or RGBA pixels in a RGBA texture data object taking care
     // of alpha premultiplication if requested.
@@ -80,27 +80,27 @@ namespace nux
     ImageSurface &surface = data->GetSurface (0);
     if (gdk_pixbuf_get_has_alpha (pixbuf) == TRUE)
     {
-      uint32_t *pixels =
-          reinterpret_cast<uint32_t*> (gdk_pixbuf_get_pixels (pixbuf));
-      const uint32_t rowstride_u32 = rowstride / 4;
+      unsigned int  *pixels =
+          reinterpret_cast<unsigned int *> (gdk_pixbuf_get_pixels (pixbuf));
+      const unsigned int  rowstride_u32 = rowstride / 4;
 
       if (premultiply == true)
       {
         // Copy from pixbuf (RGBA) to surface (premultiplied RGBA).
-        for (uint32_t i = 0; i < height; i++)
+        for (unsigned int  i = 0; i < height; i++)
         {
-          for (uint32_t j = 0; j < width; j++)
+          for (unsigned int  j = 0; j < width; j++)
           {
-            const uint32_t pixel = pixels[j];
-            const uint32_t a = pixel >> 24;
+            const unsigned int  pixel = pixels[j];
+            const unsigned int  a = pixel >> 24;
             if (a == 0)
               surface.Write32b (j, i, 0);
             else
             {
-              const uint32_t b = (((pixel >> 16) & 0xff) * a) / 255;
-              const uint32_t g = (((pixel >> 8) & 0xff) * a) / 255;
-              const uint32_t r = ((pixel & 0xff) * a) / 255;
-              const uint32_t p = a << 24 | b << 16 | g << 8 | r;
+              const unsigned int  b = (((pixel >> 16) & 0xff) * a) / 255;
+              const unsigned int  g = (((pixel >> 8) & 0xff) * a) / 255;
+              const unsigned int  r = ((pixel & 0xff) * a) / 255;
+              const unsigned int  p = a << 24 | b << 16 | g << 8 | r;
               surface.Write32b (j, i, p);
             }
           }
@@ -110,9 +110,9 @@ namespace nux
       else
       {
         // Copy from pixbuf (RGBA) to surface (RGBA).
-        for (uint32_t i = 0; i < height; i++)
+        for (unsigned int  i = 0; i < height; i++)
         {
-          for (uint32_t j = 0; j < width; j++)
+          for (unsigned int  j = 0; j < width; j++)
             surface.Write32b (j, i, pixels[j]);
           pixels += rowstride_u32;
         }
@@ -121,14 +121,14 @@ namespace nux
     else
     {
       // Copy from pixbuf (RGB) to surface (RGBA).
-      uint8_t *pixels = gdk_pixbuf_get_pixels (pixbuf);
-      for (uint32_t i = 0; i < height; i++)
+      unsigned char *pixels = gdk_pixbuf_get_pixels (pixbuf);
+      for (unsigned int  i = 0; i < height; i++)
       {
-        for (uint32_t j = 0; j < width; j++)
+        for (unsigned int  j = 0; j < width; j++)
         {
-          const uint8_t b = pixels[j*3];
-          const uint8_t g = pixels[j*3+1];
-          const uint8_t r = pixels[j*3+2];
+          const unsigned char b = pixels[j*3];
+          const unsigned char g = pixels[j*3+1];
+          const unsigned char r = pixels[j*3+2];
           surface.Write (j, i, r, g, b, 0xff);
         }
         pixels += rowstride;
@@ -141,7 +141,7 @@ namespace nux
     return texture;
   }
 
-  BaseTexture *CreateTexture2DFromFile (const TCHAR *filename, int32_t max_size,
+  BaseTexture *CreateTexture2DFromFile (const TCHAR *filename, int max_size,
                                         bool premultiply)
   {
     GError *error = NULL;

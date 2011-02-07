@@ -184,6 +184,8 @@ namespace nux
     */
     virtual bool SetLayout (Layout *layout);
     virtual bool SetCompositionLayout (Layout *layout);
+
+    void RemoveLayout();
     void RemoveCompositionLayout();
 
     /*!

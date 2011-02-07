@@ -62,7 +62,7 @@ namespace nux
         nBackground = table->PushItemBackground (GfxContext, this, false);
       }
 
-      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), geo, row->m_item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/);
+      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), geo, row->_table_item->GetName(), GetItemTextColor());
       table->PopItemBackground (GfxContext, nBackground);
     }
   }
@@ -110,8 +110,8 @@ namespace nux
       int sx, sy, sw, sh;
       sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
       sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
-      sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
-      sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
+      sy = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseY();
+      sh = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseHeight();
 
       m_selectedGeometry = Geometry (sx, sy, sw, sh);
       //        sigItemSelected.emit(m_selectedRow, m_selectedColumn);
@@ -125,26 +125,26 @@ namespace nux
         return;
 
 
-      if (!m_row_header[m_selectedRow]->m_item->isOpen() && (m_row_header[m_selectedRow]->m_item->FirstChildNode() || m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton() ) )
+      if (!m_row_header[m_selectedRow]->_table_item->isOpen() && (m_row_header[m_selectedRow]->_table_item->FirstChildNode() || m_row_header[m_selectedRow]->_table_item->AlwaysShowOpeningButton() ) )
       {
         // If it is not open, then open it.
-        OpOpenItem (m_row_header[m_selectedRow]->m_item);
+        OpOpenItem (m_row_header[m_selectedRow]->_table_item);
         //if(m_selectedTableItem /*(m_selectedRow != -1) && (m_selectedColumn != -1)*/)
       }
       else
       {
-        if (m_row_header[m_selectedRow]->m_item->FirstChildNode() /*|| m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton()*/)
+        if (m_row_header[m_selectedRow]->_table_item->FirstChildNode() /*|| m_row_header[m_selectedRow]->_table_item->AlwaysShowOpeningButton()*/)
         {
-          Geometry geo = m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0];
-          geo.SetX ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->m_item->m_depth);
-          geo.SetY (m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY() );
+          Geometry geo = m_row_header[m_selectedRow]->_table_item->m_ItemGeometryVector[0];
+          geo.SetX ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->_table_item->m_depth);
+          geo.SetY (m_row_header[m_selectedRow]->_table_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY() );
           geo.SetWidth (OPENCLOSE_BTN_WIDTH);
 
           if (geo.IsPointInside (x, y) )
           {
-            if (m_row_header[m_selectedRow]->m_item->isOpen() )
+            if (m_row_header[m_selectedRow]->_table_item->isOpen() )
             {
-              OpCloseItem (m_row_header[m_selectedRow]->m_item);
+              OpCloseItem (m_row_header[m_selectedRow]->_table_item);
 
               if (IsSizeMatchContent() )
               {
@@ -159,7 +159,7 @@ namespace nux
             }
             else
             {
-              OpOpenItem (m_row_header[m_selectedRow]->m_item);
+              OpOpenItem (m_row_header[m_selectedRow]->_table_item);
             }
           }
           else
@@ -174,11 +174,11 @@ namespace nux
       ComputeChildLayout();
     }
 
-    if ( (previous_click_row >= 0) && (previous_click_row != m_selectedRow) && (m_row_header[previous_click_row]->m_item->FirstChildNode() == 0) )
-      OpCloseItem (m_row_header[previous_click_row]->m_item);
+    if ( (previous_click_row >= 0) && (previous_click_row != m_selectedRow) && (m_row_header[previous_click_row]->_table_item->FirstChildNode() == 0) )
+      OpCloseItem (m_row_header[previous_click_row]->_table_item);
 
-    //else if((previous_click_row >= 0) && (m_row_header[previous_click_row]->m_item->FirstChildNode() == 0))
-    //  OpCloseItem(m_row_header[previous_click_row]->m_item);
+    //else if((previous_click_row >= 0) && (m_row_header[previous_click_row]->_table_item->FirstChildNode() == 0))
+    //  OpCloseItem(m_row_header[previous_click_row]->_table_item);
 
 
     {
@@ -223,20 +223,20 @@ namespace nux
       int sx, sy, sw, sh;
       sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
       sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
-      sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
-      sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
+      sy = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseY();
+      sh = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseHeight();
 
       m_selectedGeometry = Geometry (sx, sy, sw, sh);
-      // we couldsend a signal meaning a double click has happened on an item.
-      //sigItemDoubleClick.emit(m_row_header[m_selectedRow]->m_item);
+      // we could send a signal meaning a double click has happened on an item.
+      //sigItemDoubleClick.emit(m_row_header[m_selectedRow]->_table_item);
     }
 
     // Check if item as a child node. If not, there is no point in opening/closing it.
-    if (m_row_header[m_selectedRow]->m_item->FirstChildNode() /*|| m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton()*/)
+    if (m_row_header[m_selectedRow]->_table_item->FirstChildNode() /*|| m_row_header[m_selectedRow]->_table_item->AlwaysShowOpeningButton()*/)
     {
-      Geometry geo = m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0];
-      geo.SetX ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->m_item->m_depth);
-      geo.SetY (m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY() );
+      Geometry geo = m_row_header[m_selectedRow]->_table_item->m_ItemGeometryVector[0];
+      geo.SetX ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->_table_item->m_depth);
+      geo.SetY (m_row_header[m_selectedRow]->_table_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY() );
       geo.SetWidth (OPENCLOSE_BTN_WIDTH);
 
       if (geo.IsPointInside (x, y) )
@@ -245,9 +245,9 @@ namespace nux
       }
       else
       {
-        //            if(m_row_header[m_selectedRow]->m_item->isOpen())
+        //            if(m_row_header[m_selectedRow]->_table_item->isOpen())
         //            {
-        //                OpCloseItem(m_row_header[m_selectedRow]->m_item);
+        //                OpCloseItem(m_row_header[m_selectedRow]->_table_item);
         //                if(IsSizeMatchContent())
         //                {
         //                    // when closing and item, the Table gets shorter and might leave a dirty area filled with part of the Table content.
@@ -261,7 +261,7 @@ namespace nux
         //            }
         //            else
         //            {
-        //                OpOpenItem(m_row_header[m_selectedRow]->m_item);
+        //                OpOpenItem(m_row_header[m_selectedRow]->_table_item);
         //            }
       }
     }

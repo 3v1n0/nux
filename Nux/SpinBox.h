@@ -59,7 +59,6 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   private:
     HLayout *hlayout;
