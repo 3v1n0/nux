@@ -72,11 +72,15 @@ namespace nux
   
     void SetStruts ();
     void UnsetStruts ();
+    
+    void EnableDnd ();
+    void DisableDnd ();
   
     static std::list<Window> _native_windows;
   
     bool _strutsEnabled;
     Window _window;
+    Display *_display;
     int _x;
     int _y;
     int _width;

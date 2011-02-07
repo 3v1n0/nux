@@ -151,6 +151,17 @@ namespace nux
     //! Get the backup texture data of this BaseWindow,
     void* GetBackupTextureData (BaseWindow *base_window, int &width, int &height, int &format);
 
+    //! Reset the DND focus area
+    /*!
+        Set the DND focus area to NULL.
+        \sa _dnd_area;
+    */
+    void ResetDnDArea();
+
+    // SetDnDArea is declared as private.
+    //void SetDnDArea (InputArea* area);
+    InputArea* GetDnDArea ();
+
   private:
     //! Render the interface.
     void Draw (bool SizeConfigurationEvent, bool force_draw);
@@ -322,6 +333,12 @@ namespace nux
     InputArea* m_MouseFocusArea;     
     InputArea* m_MouseOverArea;      //!< The base area that has the mouse directly over itself.
     InputArea* m_PreviousMouseOverArea;
+
+    
+    void SetDnDArea (InputArea* area);
+
+    // DnD support
+    InputArea* _dnd_area;   //!< the area where the mouse is located during a DND action.
 
     //! Set the exclusive input area according to _pending_exclusive_input_mode_action.
     /*!
