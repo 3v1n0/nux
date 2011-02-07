@@ -30,6 +30,7 @@ namespace nux
 
   class TextureArea : public View
   {
+    NUX_DECLARE_OBJECT_TYPE (TextureArea, View);
   public:
     TextureArea (NUX_FILE_LINE_PROTO);
     virtual ~TextureArea();

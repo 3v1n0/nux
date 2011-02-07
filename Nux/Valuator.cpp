@@ -33,7 +33,9 @@ namespace nux
     ,   m_Mouse (0)
   {
     m_MouseControlledButton = new CoreArea (NUX_TRACKER_LOCATION);
+    //m_MouseControlledButton->Reference();
     m_EditLine              = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+    //m_EditLine->Reference();
     // Set Original State
     m_EditLine->SetSuffix (TEXT ("") );
     m_EditLine->SetPrefix (TEXT ("") );
@@ -58,6 +60,21 @@ namespace nux
 
   Valuator::~Valuator()
   {
+//     if (m_EditLine)
+//     {
+//       if (m_EditLine->OwnsTheReference())
+//         m_EditLine->UnReference();
+//       else
+//         m_EditLine->Dispose();
+//     }
+// 
+//     if (m_MouseControlledButton)
+//     {
+//       if (m_MouseControlledButton->OwnsTheReference())
+//         m_MouseControlledButton->UnReference();
+//       else
+//         m_MouseControlledButton->Dispose();
+//     }
   }
 
   void Valuator::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)

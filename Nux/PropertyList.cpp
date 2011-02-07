@@ -69,14 +69,14 @@ namespace nux
         nBackground = table->PushItemBackground (GfxContext, this, false);
       }
 
-      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), geo, row->m_item->GetName(), GetItemTextColor() /*m_item[r].c_str()*/);
+      Painter.PaintTextLineStatic (GfxContext, GetSysFont(), geo, row->_table_item->GetName(), GetItemTextColor());
 
       if (m_ItemGeometryVector.size() >= 2)
       {
         Geometry prop_geo = m_ItemGeometryVector[1];
         prop_geo.Expand (-PROPERTY_BORDER_X, -PROPERTY_BORDER_Y);
         GfxContext.PushClippingRectangle (prop_geo);
-        Painter.PaintTextLineStatic (GfxContext, GetSysFont(), prop_geo, m_String.GetTCharPtr(), GetItemTextColor() /*m_item[r].c_str()*/);
+        Painter.PaintTextLineStatic (GfxContext, GetSysFont(), prop_geo, m_String.GetTCharPtr(), GetItemTextColor());
         GfxContext.PopClippingRectangle();
       }
 

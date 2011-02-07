@@ -32,17 +32,10 @@ namespace nux
     ,   m_UpTimerHandler (0)
     ,   m_DownTimerHandler (0)
   {
-    InitializeLayout();
-    InitializeWidgets();
-  }
+    m_SpinnerUpBtn      = new CoreArea (NUX_TRACKER_LOCATION);
+    m_SpinnerDownBtn    = new CoreArea (NUX_TRACKER_LOCATION);
+    m_EditLine          = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
 
-  SpinBox_Logic::~SpinBox_Logic()
-  {
-    DestroyLayout();
-  }
-
-  void SpinBox_Logic::InitializeWidgets()
-  {
     // Set Original State
     m_EditLine->SetSuffix (TEXT ("") );
     m_EditLine->SetPrefix (TEXT ("") );
@@ -76,15 +69,11 @@ namespace nux
     m_DownTimerCallback->OnTimerExpired.connect (sigc::mem_fun (this, &SpinBox_Logic::TimerSpinDownBtn) );
   }
 
-  void SpinBox_Logic::InitializeLayout()
+  SpinBox_Logic::~SpinBox_Logic()
   {
-    m_SpinnerUpBtn      = new CoreArea (NUX_TRACKER_LOCATION);
-    m_SpinnerDownBtn    = new CoreArea (NUX_TRACKER_LOCATION);
-    m_EditLine          = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-  }
-
-  void SpinBox_Logic::DestroyLayout()
-  {
+//     m_SpinnerUpBtn->Dispose();
+//     m_SpinnerDownBtn->Dispose();
+//     m_EditLine->Dispose();
   }
 
   void SpinBox_Logic::RecvIncrement (int x, int y, unsigned long button_flags, unsigned long key_flags)

@@ -83,7 +83,7 @@ namespace nux
     void RecvTitleBarMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
     void SetWindowTitle (const char *title);
-    const TCHAR *GetWindowTitle();
+    NString GetWindowTitle();
 
     //! Return true if this object can break the layout.
     /*
@@ -113,13 +113,17 @@ namespace nux
     int m_SizeGripDragPositionY;
 
   private:
-    CoreArea *m_SizeGrip;
-    CoreArea *m_TitleBar;
-    Point m_TitleBarMouseDown;
+    int _resize_handle_width;
+    int _resize_handle_height;
+    int _title_bar_height;
 
-    CoreArea *m_MinimizeButton;
-    CoreArea *m_CloseButton;
-    StaticTextBox *m_WindowTitleBar;
+    CoreArea *_resize_handle;
+    CoreArea *_title_bar;
+    Point _title_bar_mouse_down_location;
+
+    CoreArea *_minimize_button;
+    CoreArea *_close_button;
+    StaticTextBox *_window_title_bar;
     bool m_hasTitleBar;
 
     bool m_bIsVisible;
@@ -133,9 +137,9 @@ namespace nux
     BaseTexture* MinimizeIcon;
 
     std::list<View *> m_InterfaceObject;
-    HLayout *m_TitleBarLayout;
+    HLayout *_title_bar_layout;
 
-    TCHAR *m_WindowTitle;
+    NString _window_title;
 
     friend class PopUpWindow;
     friend class ComboBox_Logic_WindowView;

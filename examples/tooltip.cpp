@@ -700,7 +700,7 @@ namespace nux
     gPainter.PushDrawShapeLayer (gfxContext,
                                  base,
                                  eSHAPE_CORNER_ROUND10,
-                                 m_background_color, eAllCorners, true);
+                                 nux::Color(0xFF707070), eAllCorners, true);
 
     TexCoordXForm texxform;
     texxform.SetWrap(TEXWRAP_REPEAT, TEXWRAP_REPEAT);

@@ -47,7 +47,7 @@ namespace nux
 
   GroupBox2::~GroupBox2()
   {
-
+    m_CaptionArea->Dispose();
   }
 
   long GroupBox2::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

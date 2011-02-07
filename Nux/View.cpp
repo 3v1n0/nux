@@ -49,8 +49,7 @@ namespace nux
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
     GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
-    if (m_CompositionLayout)
-      m_CompositionLayout->UnParentObject();
+    RemoveLayout();
   }
 
   long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -342,12 +341,19 @@ namespace nux
     return SetLayout (layout);
   }
 
-  void View::RemoveCompositionLayout()
+  void View::RemoveLayout()
   {
+    NUX_RETURN_IF_NULL(m_CompositionLayout);
+
     if (m_CompositionLayout)
       m_CompositionLayout->UnParentObject();
 
     m_CompositionLayout = 0;
+  }
+
+  void View::RemoveCompositionLayout()
+  {
+    RemoveLayout();
   }
 
   bool View::SearchInAllSubNodes (Area *bo)

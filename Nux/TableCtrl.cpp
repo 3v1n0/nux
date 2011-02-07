@@ -155,6 +155,9 @@ namespace nux
 //    {
 //        delete (*it1);
 //    }
+
+    EmptyTable();
+
     for (it2 = m_row_header.begin(); it2 != m_row_header.end(); it2++)
     {
       delete (*it2);
@@ -216,7 +219,7 @@ namespace nux
 
       for (row_iterator = m_row_header.begin(), it = m_row_sizehandler.begin(); it != m_row_sizehandler.end(); it++, row_iterator++)
       {
-        if ( (*row_iterator)->m_item->IsParentOpen() == true)
+        if ( (*row_iterator)->_table_item->IsParentOpen() == true)
         {
           ret = (*it)->OnEvent (ievent, ret, ProcEvInfo);
         }
@@ -231,9 +234,9 @@ namespace nux
 
       for (row_iterator = m_row_header.begin(), it = m_row_sizehandler.begin(); it != m_row_sizehandler.end(); it++, row_iterator++)
       {
-        if ( (*row_iterator)->m_item->IsParentOpen() == true)
+        if ( (*row_iterator)->_table_item->IsParentOpen() == true)
         {
-          ret = (*row_iterator)->m_item->ProcessPropertyEvent (ievent, ret, ProcEvInfo);
+          ret = (*row_iterator)->_table_item->ProcessPropertyEvent (ievent, ret, ProcEvInfo);
 
           if (ret & eMouseEventSolved)
             ItemSolvedEvent = true;
@@ -241,7 +244,7 @@ namespace nux
           // Pure TableItem elements do not inherit from View. Therefore, they cannot call NeedRedraw() on themselves.
           // The TableCtrl that holds them must know that they need to be redrawn. Since Pure TableItem do not trap events, the event
           // will go to TableCtrl (like OnMouseDown) who will found out the cell where the event happened and set the dirty flag of the TableItem.
-          //if((*row_iterator)->m_item->isDirtyItem())
+          //if((*row_iterator)->_table_item->isDirtyItem())
           //    DirtyItem = true;
         }
       }
@@ -429,28 +432,28 @@ namespace nux
 
       for (int r = 0; r < num_row; r++)
       {
-        if (m_row_header[r]->m_item->IsParentOpen() )
+        if (m_row_header[r]->_table_item->IsParentOpen() )
         {
-          Geometry geo = m_row_header[r]->m_item->m_row_header->GetGeometry();
+          Geometry geo = m_row_header[r]->_table_item->_row_header_area->GetGeometry();
 
-          if (m_row_header[r]->m_item->FirstChildNode() != 0)
+          if (m_row_header[r]->_table_item->FirstChildNode() != 0)
           {
-            geo.SetX (m_TableArea->GetBaseX() + (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[r]->m_item->m_depth + OPENCLOSE_BTN_WIDTH);
+            geo.SetX (m_TableArea->GetBaseX() + (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[r]->_table_item->m_depth + OPENCLOSE_BTN_WIDTH);
             geo.SetY (m_TableArea->GetBaseY() + ItemOffsetY);
-            geo.SetWidth (m_column_header[0].m_header_area->GetBaseWidth() - ITEM_DEPTH_MARGIN * m_row_header[r]->m_item->m_depth - OPENCLOSE_BTN_WIDTH);
+            geo.SetWidth (m_column_header[0].m_header_area->GetBaseWidth() - ITEM_DEPTH_MARGIN * m_row_header[r]->_table_item->m_depth - OPENCLOSE_BTN_WIDTH);
           }
           else
           {
-            geo.SetX (m_TableArea->GetBaseX() + (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[r]->m_item->m_depth);
+            geo.SetX (m_TableArea->GetBaseX() + (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[r]->_table_item->m_depth);
             geo.SetY (m_TableArea->GetBaseY() + ItemOffsetY);
-            geo.SetWidth (m_column_header[0].m_header_area->GetBaseWidth() - ITEM_DEPTH_MARGIN * m_row_header[r]->m_item->m_depth);
+            geo.SetWidth (m_column_header[0].m_header_area->GetBaseWidth() - ITEM_DEPTH_MARGIN * m_row_header[r]->_table_item->m_depth);
           }
 
           // Draw content of a row
           {
-            m_row_header[r]->m_item->DrawProperty (GfxContext, this, force_draw, geo, GetPainter(), m_row_header[r], m_column_header, odd_or_even ? GetRowColorEven() : GetRowColorOdd() );
+            m_row_header[r]->_table_item->DrawProperty (GfxContext, this, force_draw, geo, GetPainter(), m_row_header[r], m_column_header, odd_or_even ? GetRowColorEven() : GetRowColorOdd() );
           }
-          ItemOffsetY += m_row_header[r]->m_item->m_row_header->GetBaseHeight();
+          ItemOffsetY += m_row_header[r]->_table_item->_row_header_area->GetBaseHeight();
         }
 
         odd_or_even = !odd_or_even;
@@ -484,10 +487,10 @@ namespace nux
 
       for (row_iterator = m_row_header.begin(); row_iterator != m_row_header.end(); row_iterator++)
       {
-        if ( (*row_iterator)->m_item->IsParentOpen() == true)
+        if ( (*row_iterator)->_table_item->IsParentOpen() == true)
         {
           // Mark all visible items as not dirty
-          (*row_iterator)->m_item->setDirtyItem (false);
+          (*row_iterator)->_table_item->setDirtyItem (false);
         }
       }
     }
@@ -754,12 +757,12 @@ namespace nux
 
       for (row_iterator = m_row_header.begin(); row_iterator != m_row_header.end(); row_iterator++)
       {
-        if ( (*row_iterator)->m_item->IsParentOpen() == true)
+        if ( (*row_iterator)->_table_item->IsParentOpen() == true)
         {
-          Geometry row_geometry = (*row_iterator)->m_item->m_TotalGeometry;
+          Geometry row_geometry = (*row_iterator)->_table_item->m_TotalGeometry;
 
           // Mark all visible items as dirty
-          (*row_iterator)->m_item->setDirtyItem (true);
+          (*row_iterator)->_table_item->setDirtyItem (true);
         }
 
         every_two++;
@@ -778,17 +781,17 @@ namespace nux
            row_iterator != m_row_header.end();
            row_iterator++, row_sizehandler_iterator++)
       {
-        if ( (*row_iterator)->m_item->IsParentOpen() == true)
+        if ( (*row_iterator)->_table_item->IsParentOpen() == true)
         {
           // elements in m_column_header are relative to m_TableArea-> Get their absolute position in geo.
-          Geometry geo = (*row_iterator)->m_item->m_row_header->GetGeometry();
+          Geometry geo = (*row_iterator)->_table_item->_row_header_area->GetGeometry();
           geo.OffsetPosition (m_TableArea->GetBaseX(), m_TableArea->GetBaseY() /* - ItemOffsetY*/);
 
           // Paint the number of the row
           //GetPainter().PaintTextLineStatic(geo, (*row_iterator)->header.GetBaseString());
 
           // Paint row horizontal separation line.
-          yl += (*row_iterator)->m_item->m_row_header->GetGeometry().GetHeight();
+          yl += (*row_iterator)->_table_item->_row_header_area->GetGeometry().GetHeight();
           GetPainter().Draw2DLine (GfxContext, xl, yl, xl + m_ContentGeometry.GetWidth(), yl, GetHorizontalSeparationLineColor() );
 
           // Draw the row size handler on the separation line.
@@ -796,7 +799,7 @@ namespace nux
         }
         else
         {
-          ItemOffsetY += (*row_iterator)->m_item->m_row_header->GetBaseHeight();
+          ItemOffsetY += (*row_iterator)->_table_item->_row_header_area->GetBaseHeight();
         }
       }
     }
@@ -823,9 +826,9 @@ namespace nux
 
     for (t_u32 r = 0; r < num_row; r++)
     {
-      if (m_row_header[r]->m_item->IsParentOpen() )
+      if (m_row_header[r]->_table_item->IsParentOpen() )
       {
-        ItemOffsetY += m_row_header[r]->m_item->m_row_header->GetBaseHeight();
+        ItemOffsetY += m_row_header[r]->_table_item->_row_header_area->GetBaseHeight();
       }
     }
 
@@ -833,8 +836,8 @@ namespace nux
 
     for (row_iterator = m_row_header.begin(); row_iterator != m_row_header.end(); row_iterator++)
     {
-      if ( (*row_iterator)->m_item->IsParentOpen() )
-        row_height += (*row_iterator)->m_item->m_row_header->GetBaseHeight();
+      if ( (*row_iterator)->_table_item->IsParentOpen() )
+        row_height += (*row_iterator)->_table_item->_row_header_area->GetBaseHeight();
     }
 
     ////////////////////////////
@@ -965,10 +968,10 @@ namespace nux
 
     for (row_iterator = m_row_header.begin(); row_iterator != m_row_header.end(); row_iterator++)
     {
-      if ( (*row_iterator)->m_item->IsParentOpen() )
+      if ( (*row_iterator)->_table_item->IsParentOpen() )
       {
-        row_height += (*row_iterator)->m_item->m_row_header->GetBaseHeight();
-        TotalHeight += (*row_iterator)->m_item->m_row_header->GetBaseHeight();
+        row_height += (*row_iterator)->_table_item->_row_header_area->GetBaseHeight();
+        TotalHeight += (*row_iterator)->_table_item->_row_header_area->GetBaseHeight();
       }
     }
 
@@ -1074,15 +1077,15 @@ namespace nux
 
     for (it = m_column_header.begin(); it != m_column_header.end(); it++)
     {
-      if ( (*it).bFixWidth)
+      if ( (*it)._fix_width)
       {
         // First do a little correction in case the fix width is less than MIN_COLUMN_WIDTH.
-        if ( (*it).FixWidthValue < MIN_COLUMN_WIDTH)
+        if ( (*it)._fix_width_value < MIN_COLUMN_WIDTH)
         {
-          (*it).FixWidthValue = MIN_COLUMN_WIDTH;
+          (*it)._fix_width_value = MIN_COLUMN_WIDTH;
         }
 
-        space_to_share -= (*it).FixWidthValue;
+        space_to_share -= (*it)._fix_width_value;
       }
       else
       {
@@ -1096,15 +1099,15 @@ namespace nux
 
     for (it = m_column_header.begin(); it != m_column_header.end(); it++)
     {
-      if ( (*it).bFixWidth)
+      if ( (*it)._fix_width)
       {
-        RemainingSpace -= (*it).FixWidthValue;
+        RemainingSpace -= (*it)._fix_width_value;
       }
     }
 
     for (it = m_column_header.begin(); it != m_column_header.end(); it++)
     {
-      if (! (*it).bFixWidth)
+      if (! (*it)._fix_width)
       {
         int w = (*it).m_header_area->GetBaseWidth();
         int nw = w + space_to_share * (float (w) / float (total_non_fix_width) );
@@ -1142,15 +1145,15 @@ namespace nux
 
     for (it = m_column_header.begin(); it != m_column_header.end(); it++)
     {
-      if ( (*it).bFixWidth)
+      if ( (*it)._fix_width)
       {
         // First do a little correction in case the fix width is less than MIN_COLUMN_WIDTH.
-        if ( (*it).FixWidthValue < MIN_COLUMN_WIDTH)
+        if ( (*it)._fix_width_value < MIN_COLUMN_WIDTH)
         {
-          (*it).FixWidthValue = MIN_COLUMN_WIDTH;
+          (*it)._fix_width_value = MIN_COLUMN_WIDTH;
         }
 
-        total_non_fix_column_width -= (*it).FixWidthValue;
+        total_non_fix_column_width -= (*it)._fix_width_value;
         num_non_fix_column--;
       }
     }
@@ -1169,9 +1172,9 @@ namespace nux
 
     for (it = m_column_header.begin(); it != m_column_header.end(); it++)
     {
-      if ( (*it).bFixWidth)
+      if ( (*it)._fix_width)
       {
-        (*it).m_header_area->SetBaseWidth ( (*it).FixWidthValue);
+        (*it).m_header_area->SetBaseWidth ( (*it)._fix_width_value);
       }
       else
       {
@@ -1208,8 +1211,8 @@ namespace nux
       h2.m_header_area->SetBaseY (0);
       h2.m_header_area->SetBaseWidth (ITEMDEFAULTWIDTH);
       h2.m_header_area->SetBaseHeight ( (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) );
-      h2.bFixWidth = fixed_width;
-      h2.FixWidthValue = column_width;
+      h2._fix_width = fixed_width;
+      h2._fix_width_value = column_width;
       m_column_header.push_back (h2);
     }
     else
@@ -1221,8 +1224,8 @@ namespace nux
       h2.m_header_area->SetBaseY (0);
       h2.m_header_area->SetBaseWidth (ITEMDEFAULTWIDTH);
       h2.m_header_area->SetBaseHeight ( (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) );
-      h2.bFixWidth = fixed_width;
-      h2.FixWidthValue = column_width;
+      h2._fix_width = fixed_width;
+      h2._fix_width_value = column_width;
       m_column_header.push_back (h2);
     }
 
@@ -1285,16 +1288,16 @@ namespace nux
     std::vector<ColumnHeader>::iterator it3;
     std::vector<RowHeader *>::iterator it4;
 
-    // position the visible parts of m_row_header and m_row_sizehandler only according to m_row_header[i]->m_item->IsParentOpen()
+    // position the visible parts of m_row_header and m_row_sizehandler only according to m_row_header[i]->_table_item->IsParentOpen()
     for (it4 = m_row_header.begin(), it2 = m_row_sizehandler.begin(), i = 0; it4 != m_row_header.end(); it4++, it2++, i++)
     {
-      if (m_row_header[i]->m_item->IsParentOpen() == true)
+      if (m_row_header[i]->_table_item->IsParentOpen() == true)
       {
         //--->
         int ItemBestHeight = ITEMDEFAULTHEIGHT;
 
         if ( (m_bEnableRowResizing == false) && (m_bEnableItemBestHeight == true) )
-          ItemBestHeight = m_row_header[i]->m_item->GetItemBestHeight();
+          ItemBestHeight = m_row_header[i]->_table_item->GetItemBestHeight();
 
         //<---
 
@@ -1302,28 +1305,28 @@ namespace nux
         if (FirstVisibleItem)
         {
           FirstVisibleItem = false;
-          m_row_header[i]->m_item->m_bIsFirstVisibleItem = true;
+          m_row_header[i]->_table_item->m_bIsFirstVisibleItem = true;
         }
 
-        LastVisibleItem = m_row_header[i]->m_item;
-        m_row_header[i]->m_item->m_bIsLastVisibleItem = false;
+        LastVisibleItem = m_row_header[i]->_table_item;
+        m_row_header[i]->_table_item->m_bIsLastVisibleItem = false;
 
-        m_row_header[i]->m_item->m_row_header->SetBaseX (x - m_TableArea->GetBaseX() );
-        m_row_header[i]->m_item->m_row_header->SetBaseY (y - m_TableArea->GetBaseY() + (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) );
-        m_row_header[i]->m_item->m_row_header->SetBaseWidth ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) );
-        m_row_header[i]->m_item->m_row_header->SetBaseHeight (ItemBestHeight);
+        m_row_header[i]->_table_item->_row_header_area->SetBaseX (x - m_TableArea->GetBaseX() );
+        m_row_header[i]->_table_item->_row_header_area->SetBaseY (y - m_TableArea->GetBaseY() + (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) );
+        m_row_header[i]->_table_item->_row_header_area->SetBaseWidth ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) );
+        m_row_header[i]->_table_item->_row_header_area->SetBaseHeight (ItemBestHeight);
 
         if (m_bShowRowHeader)
         {
-          m_row_header[i]->m_item->m_RowHeaderGeometry = Geometry (x, y + (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0),
-              ROWHEADERWIDTH, m_row_header[i]->m_item->m_row_header->GetBaseHeight() );
+          m_row_header[i]->_table_item->m_RowHeaderGeometry = Geometry (x, y + (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0),
+              ROWHEADERWIDTH, m_row_header[i]->_table_item->_row_header_area->GetBaseHeight() );
         }
         else
         {
-          m_row_header[i]->m_item->m_RowHeaderGeometry = Geometry (0, 0, 0, 0);
+          m_row_header[i]->_table_item->m_RowHeaderGeometry = Geometry (0, 0, 0, 0);
         }
 
-        int h = (*it4)->m_item->m_row_header->GetBaseHeight();
+        int h = (*it4)->_table_item->_row_header_area->GetBaseHeight();
 
         y += h;
         totalHeight += h;
@@ -1331,7 +1334,7 @@ namespace nux
         (*it2)->SetBaseXY (x, y + (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) - HANDLERSIZE / 2);
 
 
-        m_row_header[i]->m_item->m_ItemGeometryVector.clear();
+        m_row_header[i]->_table_item->m_ItemGeometryVector.clear();
 
         for (t_u32 j = 0; j < (t_u32) m_column_header.size(); j++)
         {
@@ -1343,50 +1346,50 @@ namespace nux
           if (j == 0)
           {
             // geometry of the first column of the row (minus the open/close bitmap decoration geometry).
-            if (m_row_header[i]->m_item->FirstChildNode() != 0)
+            if (m_row_header[i]->_table_item->FirstChildNode() != 0)
             {
               x_column = m_TableArea->GetBaseX() + m_column_header[j].m_header_area->GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/ +
-                         ITEM_DEPTH_MARGIN * m_row_header[i]->m_item->m_depth + OPENCLOSE_BTN_WIDTH;
-              y_row    = m_TableArea->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseY();
+                         ITEM_DEPTH_MARGIN * m_row_header[i]->_table_item->m_depth + OPENCLOSE_BTN_WIDTH;
+              y_row    = m_TableArea->GetBaseY() + m_row_header[i]->_table_item->_row_header_area->GetBaseY();
               column_width = m_column_header[j].m_header_area->GetBaseWidth() -
-                             (ITEM_DEPTH_MARGIN * m_row_header[i]->m_item->m_depth + OPENCLOSE_BTN_WIDTH);
-              row_height = m_row_header[i]->m_item->m_row_header->GetBaseHeight();
+                             (ITEM_DEPTH_MARGIN * m_row_header[i]->_table_item->m_depth + OPENCLOSE_BTN_WIDTH);
+              row_height = m_row_header[i]->_table_item->_row_header_area->GetBaseHeight();
 
-              m_row_header[i]->m_item->m_FirstColumnUsableGeometry = Geometry (x_column, y_row, column_width, row_height);
+              m_row_header[i]->_table_item->m_FirstColumnUsableGeometry = Geometry (x_column, y_row, column_width, row_height);
             }
             else
             {
               x_column = m_TableArea->GetBaseX() + m_column_header[j].m_header_area->GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/ +
-                         ITEM_DEPTH_MARGIN * m_row_header[i]->m_item->m_depth;
-              y_row    = m_TableArea->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseY();
+                         ITEM_DEPTH_MARGIN * m_row_header[i]->_table_item->m_depth;
+              y_row    = m_TableArea->GetBaseY() + m_row_header[i]->_table_item->_row_header_area->GetBaseY();
               column_width = m_column_header[j].m_header_area->GetBaseWidth() -
-                             (ITEM_DEPTH_MARGIN * m_row_header[i]->m_item->m_depth);
-              row_height = m_row_header[i]->m_item->m_row_header->GetBaseHeight();
+                             (ITEM_DEPTH_MARGIN * m_row_header[i]->_table_item->m_depth);
+              row_height = m_row_header[i]->_table_item->_row_header_area->GetBaseHeight();
 
-              m_row_header[i]->m_item->m_FirstColumnUsableGeometry = Geometry (x_column, y_row, column_width, row_height);
+              m_row_header[i]->_table_item->m_FirstColumnUsableGeometry = Geometry (x_column, y_row, column_width, row_height);
             }
           }
 
           // geometry of the column of the row.
           x_column = m_TableArea->GetBaseX() + m_column_header[j].m_header_area->GetBaseX() /*+ (m_bShowRowHeader? ROWHEADERWIDTH : 0)*/;
-          y_row    = m_TableArea->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseY();
+          y_row    = m_TableArea->GetBaseY() + m_row_header[i]->_table_item->_row_header_area->GetBaseY();
           column_width = m_column_header[j].m_header_area->GetBaseWidth();
-          row_height = m_row_header[i]->m_item->m_row_header->GetBaseHeight();
+          row_height = m_row_header[i]->_table_item->_row_header_area->GetBaseHeight();
 
           Geometry geo (x_column, y_row, column_width, row_height);
 
-          m_row_header[i]->m_item->m_ItemGeometryVector.push_back (geo);
+          m_row_header[i]->_table_item->m_ItemGeometryVector.push_back (geo);
         }
 
-        m_row_header[i]->m_item->ComputePropertyLayout (m_TableArea->GetBaseX(),
+        m_row_header[i]->_table_item->ComputePropertyLayout (m_TableArea->GetBaseX(),
             m_TableArea->GetBaseY(),
             m_row_header[i], m_column_header);
       }
 
-      m_row_header[i]->m_item->m_TotalGeometry = Geometry (m_TableArea->GetBaseX() /* + m_column_header[0].m_header_area->x*/,
-          m_TableArea->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseY(),
+      m_row_header[i]->_table_item->m_TotalGeometry = Geometry (m_TableArea->GetBaseX() /* + m_column_header[0].m_header_area->x*/,
+          m_TableArea->GetBaseY() + m_row_header[i]->_table_item->_row_header_area->GetBaseY(),
           m_TableArea->GetBaseWidth() /* - m_column_header[0].m_header_area->x*/,
-          m_row_header[i]->m_item->m_row_header->GetBaseHeight() );
+          m_row_header[i]->_table_item->_row_header_area->GetBaseHeight() );
     }
 
     if (LastVisibleItem)
@@ -1396,8 +1399,8 @@ namespace nux
 
     if ( (m_selectedRow != -1) && (m_selectedColumn != -1) )
     {
-      m_selectedGeometry = Geometry (m_column_header[m_selectedColumn].m_header_area->GetBaseX(), m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY(),
-                                     m_column_header[m_selectedColumn].m_header_area->GetBaseWidth(), m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight() );
+      m_selectedGeometry = Geometry (m_column_header[m_selectedColumn].m_header_area->GetBaseX(), m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseY(),
+                                     m_column_header[m_selectedColumn].m_header_area->GetBaseWidth(), m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseHeight() );
     }
 
     // Setting the minimum size of m_TableArea forces the composition layout fit match the size of the m_TableArea (+/- margins). If the layout is too large, then
@@ -1456,7 +1459,7 @@ namespace nux
       m_row_sizehandler.push_back (row_sizehandler);
 
 
-      //m_item.push_back(item->GetName());
+      //_table_item.push_back(item->GetName());
       m_tableNumRow += 1;
 
       t_u32 num_row = (t_u32) m_row_header.size();
@@ -1466,27 +1469,27 @@ namespace nux
         RowHeader *h2 = new RowHeader;
         Color ItemBackgroundColor = ( (num_row - 1) & 0x1) ? GetRowColorOdd() : GetRowColorEven();
         element->SetBackgroundColor (ItemBackgroundColor);
-        h2->m_item = element;
+        h2->_table_item = element;
         //h2->header.setCaption(num_row);
-        h2->m_item->m_row_header->SetBaseX (0);
-        h2->m_item->m_row_header->SetBaseY (ITEMDEFAULTHEIGHT);
-        h2->m_item->m_row_header->SetBaseWidth ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) );
-        h2->m_item->m_row_header->SetBaseHeight (ITEMDEFAULTHEIGHT);
+        h2->_table_item->_row_header_area->SetBaseX (0);
+        h2->_table_item->_row_header_area->SetBaseY (ITEMDEFAULTHEIGHT);
+        h2->_table_item->_row_header_area->SetBaseWidth ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) );
+        h2->_table_item->_row_header_area->SetBaseHeight (ITEMDEFAULTHEIGHT);
         m_row_header.push_back (h2);
       }
       else
       {
-        Geometry g = m_row_header[num_row-1]->m_item->m_row_header->GetGeometry();
+        Geometry g = m_row_header[num_row-1]->_table_item->_row_header_area->GetGeometry();
         RowHeader *h2 = new RowHeader;
 
         Color ItemBackgroundColor = ( (num_row - 1) & 0x1) ? GetRowColorOdd() : GetRowColorEven();
         element->SetBackgroundColor (ItemBackgroundColor);
-        h2->m_item = element;
+        h2->_table_item = element;
         //h2->header.setCaption(num_row);
-        h2->m_item->m_row_header->SetBaseX (0);
-        h2->m_item->m_row_header->SetBaseY (g.y + g.GetHeight() );
-        h2->m_item->m_row_header->SetBaseWidth ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) );
-        h2->m_item->m_row_header->SetBaseHeight (ITEMDEFAULTHEIGHT);
+        h2->_table_item->_row_header_area->SetBaseX(0);
+        h2->_table_item->_row_header_area->SetBaseY(g.y + g.GetHeight());
+        h2->_table_item->_row_header_area->SetBaseWidth ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) );
+        h2->_table_item->_row_header_area->SetBaseHeight (ITEMDEFAULTHEIGHT);
         m_row_header.push_back (h2);
       }
 
@@ -1503,11 +1506,11 @@ namespace nux
   {
     std::vector<RowHeader *>::iterator it;
 
-    // position the visible parts of m_row_header and m_row_sizehandler only according to m_row_header[i]->m_item->IsParentOpen()
+    // position the visible parts of m_row_header and m_row_sizehandler only according to m_row_header[i]->_table_item->IsParentOpen()
     for (it = m_row_header.begin(); it != m_row_header.end(); it++)
     {
-      (*it)->m_item->setDirtyItem (false);
-      (*it)->m_item->m_bIsMouseInside = false;
+      (*it)->_table_item->setDirtyItem (false);
+      (*it)->_table_item->m_bIsMouseInside = false;
 
     }
 
@@ -1693,17 +1696,17 @@ namespace nux
     row = -1;
     t_u32 num_row = (t_u32) m_row_header.size();
 
-    // test the visible parts of m_row_header only according to m_row_header[i]->m_item->IsParentOpen()
+    // test the visible parts of m_row_header only according to m_row_header[i]->_table_item->IsParentOpen()
     for (t_u32 i = 0; i < num_row; i++)
     {
-      if (m_row_header[i]->m_item->IsParentOpen() )
+      if (m_row_header[i]->_table_item->IsParentOpen() )
       {
-        if ( (m_row_header[i]->m_item->m_row_header->GetBaseY()  <= y) &&
-             (m_row_header[i]->m_item->m_row_header->GetBaseY() + m_row_header[i]->m_item->m_row_header->GetBaseHeight() > y) )
+        if ( (m_row_header[i]->_table_item->_row_header_area->GetBaseY()  <= y) &&
+             (m_row_header[i]->_table_item->_row_header_area->GetBaseY() + m_row_header[i]->_table_item->_row_header_area->GetBaseHeight() > y) )
         {
           row = i;
-          sy = m_row_header[i]->m_item->m_row_header->GetBaseY();
-          sh = m_row_header[i]->m_item->m_row_header->GetBaseHeight();
+          sy = m_row_header[i]->_table_item->_row_header_area->GetBaseY();
+          sh = m_row_header[i]->_table_item->_row_header_area->GetBaseHeight();
           break;
         }
       }
@@ -1727,7 +1730,7 @@ namespace nux
 
     if ( (row != -1) && (column != -1) )
     {
-      *ppItem = m_row_header[row]->m_item;
+      *ppItem = m_row_header[row]->_table_item;
     }
   }
 
@@ -1755,8 +1758,8 @@ namespace nux
       int sx, sy, sw, sh;
       sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
       sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
-      sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
-      sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
+      sy = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseY();
+      sh = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseHeight();
 
       m_selectedGeometry = Geometry (sx, sy, sw, sh);
       sigItemSelected.emit (m_selectedRow, m_selectedColumn);
@@ -1773,19 +1776,19 @@ namespace nux
 
     bool Reorganize = false;
 
-    if (m_row_header[m_selectedRow]->m_item->FirstChildNode() || m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton() )
+    if (m_row_header[m_selectedRow]->_table_item->FirstChildNode() || m_row_header[m_selectedRow]->_table_item->AlwaysShowOpeningButton() )
     {
-      Geometry geo = m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0];
-      geo.SetX ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->m_item->m_depth);
-      geo.SetY (m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY() );
+      Geometry geo = m_row_header[m_selectedRow]->_table_item->m_ItemGeometryVector[0];
+      geo.SetX ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->_table_item->m_depth);
+      geo.SetY (m_row_header[m_selectedRow]->_table_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY() );
       geo.SetWidth (OPENCLOSE_BTN_WIDTH);
 
       if (geo.IsPointInside (x, y) )
       {
-        if (m_row_header[m_selectedRow]->m_item->isOpen() )
+        if (m_row_header[m_selectedRow]->_table_item->isOpen() )
         {
           Reorganize = true;
-          OpCloseItem (m_row_header[m_selectedRow]->m_item);
+          OpCloseItem (m_row_header[m_selectedRow]->_table_item);
 
           if (IsSizeMatchContent() )
           {
@@ -1801,7 +1804,7 @@ namespace nux
         else
         {
           Reorganize = true;
-          OpOpenItem (m_row_header[m_selectedRow]->m_item);
+          OpOpenItem (m_row_header[m_selectedRow]->_table_item);
         }
       }
       else
@@ -1870,22 +1873,22 @@ namespace nux
       int sx, sy, sw, sh;
       sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
       sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
-      sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
-      sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
+      sy = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseY();
+      sh = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseHeight();
 
       m_selectedGeometry = Geometry (sx, sy, sw, sh);
       // we couldsend a signal meaning a double click has happened on an item.
-      //sigItemDoubleClick.emit(m_row_header[m_selectedRow]->m_item);
+      //sigItemDoubleClick.emit(m_row_header[m_selectedRow]->_table_item);
     }
 
     bool Reorganize = false;
 
     // Check if item as a child node. If not, there is no point in opening/closing it.
-    if (m_row_header[m_selectedRow]->m_item->FirstChildNode() || m_row_header[m_selectedRow]->m_item->AlwaysShowOpeningButton() )
+    if (m_row_header[m_selectedRow]->_table_item->FirstChildNode() || m_row_header[m_selectedRow]->_table_item->AlwaysShowOpeningButton() )
     {
-      Geometry geo = m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0];
-      geo.SetX ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->m_item->m_depth);
-      geo.SetY (m_row_header[m_selectedRow]->m_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY() );
+      Geometry geo = m_row_header[m_selectedRow]->_table_item->m_ItemGeometryVector[0];
+      geo.SetX ( (m_bShowRowHeader ? ROWHEADERWIDTH : 0) + ITEM_DEPTH_MARGIN * m_row_header[m_selectedRow]->_table_item->m_depth);
+      geo.SetY (m_row_header[m_selectedRow]->_table_item->m_ItemGeometryVector[0].y - m_TableArea->GetBaseY() );
       geo.SetWidth (OPENCLOSE_BTN_WIDTH);
 
       if (geo.IsPointInside (x, y) )
@@ -1895,10 +1898,10 @@ namespace nux
       }
       else
       {
-        if (m_row_header[m_selectedRow]->m_item->isOpen() )
+        if (m_row_header[m_selectedRow]->_table_item->isOpen() )
         {
           Reorganize = true;
-          OpCloseItem (m_row_header[m_selectedRow]->m_item);
+          OpCloseItem (m_row_header[m_selectedRow]->_table_item);
 
           if (IsSizeMatchContent() )
           {
@@ -1914,7 +1917,7 @@ namespace nux
         else
         {
           Reorganize = true;
-          OpOpenItem (m_row_header[m_selectedRow]->m_item);
+          OpOpenItem (m_row_header[m_selectedRow]->_table_item);
         }
       }
     }
@@ -1944,8 +1947,8 @@ namespace nux
       int sx, sy, sw, sh;
       sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
       sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
-      sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
-      sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
+      sy = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseY();
+      sh = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseHeight();
 
       m_selectedGeometry = Geometry (sx, sy, sw, sh);
       // These signals are called at the mouse down on an item. Do not call them here.
@@ -1970,8 +1973,8 @@ namespace nux
       int sx, sy, sw, sh;
       sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
       sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
-      sy = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseY();
-      sh = m_row_header[m_selectedRow]->m_item->m_row_header->GetBaseHeight();
+      sy = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseY();
+      sh = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseHeight();
 
       m_selectedTableItem->setDirtyItem (true);
     }
@@ -2062,13 +2065,13 @@ namespace nux
       int element_pos;
       int deltax = x - m_point0.x;
 
-      if (m_column_header[header_pos].bFixWidth == true)
+      if (m_column_header[header_pos]._fix_width == true)
       {
         bool found = false;
 
         for (int i = header_pos - 1; i >= 0; i--)
         {
-          if (m_column_header[i].bFixWidth == false)
+          if (m_column_header[i]._fix_width == false)
           {
             header_pos = i;
             found = true;
@@ -2086,7 +2089,7 @@ namespace nux
       {
         t_s32 element_width = (t_s32) m_column_header[i].m_header_area->GetBaseWidth();
 
-        if ( (m_column_header[i].bFixWidth == false) /*&& (element_width > 10)*/)
+        if ( (m_column_header[i]._fix_width == false) /*&& (element_width > 10)*/)
         {
           findElement = true;
           element_pos = i;
@@ -2183,7 +2186,7 @@ namespace nux
   void TableCtrl::OnResizeRowMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
   {
     bool recompute = false;
-    Geometry geo = m_row_header[header_pos]->m_item->m_row_header->GetGeometry();
+    Geometry geo = m_row_header[header_pos]->_table_item->_row_header_area->GetGeometry();
 
     if ( (dy > 0) && (y > m_point1.y) )
     {
@@ -2197,11 +2200,11 @@ namespace nux
       recompute = true;
     }
 
-    m_row_header[header_pos]->m_item->m_row_header->SetGeometry (geo);
+    m_row_header[header_pos]->_table_item->_row_header_area->SetGeometry (geo);
 
-    if (m_row_header[header_pos]->m_item->m_row_header->GetBaseHeight() < MIN_COLUMN_WIDTH)
+    if (m_row_header[header_pos]->_table_item->_row_header_area->GetBaseHeight() < MIN_COLUMN_WIDTH)
     {
-      m_row_header[header_pos]->m_item->m_row_header->SetBaseHeight (MIN_COLUMN_WIDTH);
+      m_row_header[header_pos]->_table_item->_row_header_area->SetBaseHeight (MIN_COLUMN_WIDTH);
     }
 
     if (recompute == true)
