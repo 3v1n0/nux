@@ -282,10 +282,10 @@ namespace nux
     Allows the Layout managing this area to store the properties specifc to this area. Layouts
     should create a sub-class of LayoutProperties. The LayoutProperties of an area will
     be deleted upon destruction.
-    \parent properties the LayoutProperties sub-class  associated with this area. Can be NULL to
+    \param properties the LayoutProperties sub-class  associated with this area. Can be NULL to
      unset.
     */
-    void               SetLayoutProperties (LayoutProperties *properties);
+    void SetLayoutProperties (LayoutProperties *properties);
 
     //! Get the layout properties for this area
     /*!
@@ -298,7 +298,7 @@ namespace nux
 
     //! Set visibility of the area
     /*!
-    If visible, an area will be painted and receive events. Default: true.
+    If visible, an area will be drawn. Default: true.
     /param visible if the area is visible to the user
     */
     void SetVisible  (bool visible);
