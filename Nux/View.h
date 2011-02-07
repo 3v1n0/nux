@@ -23,6 +23,8 @@
 #ifndef ABSTRACTOBJECTBASE_H
 #define ABSTRACTOBJECTBASE_H
 
+#include "Nux/Nux.h"
+
 namespace nux
 {
 
