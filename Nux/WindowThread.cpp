@@ -1605,7 +1605,7 @@ namespace nux
     geo = view->GetGeometry();
     parent = view->GetToplevel ();
     
-    if (parent)
+    if (parent && view != parent)
     {
       pgeo = parent->GetGeometry();
       geo.x += pgeo.x;
