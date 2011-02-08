@@ -31,6 +31,7 @@ source_h = \
   $(srcdir)/FontTexture.h \
   $(srcdir)/FontRenderer.h \
   $(srcdir)/GraphicsDisplayX11.h \
+  $(srcdir)/GraphicsDisplayWin.h \
   $(srcdir)/Gfx_Interface.h \
   $(srcdir)/GpuDevice.h \
   $(srcdir)/GLDeviceFrameBufferObject.h \
@@ -104,6 +105,7 @@ source_cpp = \
   $(srcdir)/GLTextureResourceManager.cpp \
   $(srcdir)/GLTextureStates.cpp \
   $(srcdir)/GraphicsDisplayX11.cpp \
+  $(srcdir)/GraphicsDisplayWin.cpp \
   $(srcdir)/GLSh_ColorPicker.cpp \
   $(srcdir)/GLSh_DrawFunction.cpp \
   $(srcdir)/GLSh_Fill.cpp \
