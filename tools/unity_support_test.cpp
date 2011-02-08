@@ -142,7 +142,7 @@ bool UnitySupportTest ()
   nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("Graphics device info ..."));
   nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("------------------------"));
 
-  nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 100, 100, nux::WINDOWSTYLE_NORMAL, 0, false);
+  nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 100, 100, nux::WINDOWSTYLE_NORMAL, 0, false, false);
   nux::GpuDevice* gpu_device = graphics_display->GetGpuDevice();
 
   

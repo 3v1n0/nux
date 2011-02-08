@@ -116,7 +116,7 @@ namespace nux
 
   void RadioButton::InitializeLayout()
   {
-    m_hlayout   = new HLayout ("RadioButton");
+    m_hlayout   = new HLayout (NUX_TRACKER_LOCATION);
     m_CheckArea = new CoreArea();
     m_TextArea  = new CoreArea();
   }

@@ -106,9 +106,9 @@ namespace nux
 
   void CheckBox::InitializeLayout()
   {
-    m_hlayout   = new HLayout ("CheckBox");
-    m_CheckArea = new CoreArea();
-    m_TextArea  = new CoreArea();
+    m_hlayout   = new HLayout (NUX_TRACKER_LOCATION);
+    m_CheckArea = new CoreArea(NUX_TRACKER_LOCATION);
+    m_TextArea  = new CoreArea(NUX_TRACKER_LOCATION);
   }
 
   void CheckBox::DestroyLayout()

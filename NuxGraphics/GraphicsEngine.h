@@ -73,11 +73,15 @@ namespace nux
 
   } OpenGLContext;
 
+  //! Rendering engine class
   class GraphicsEngine
   {
   public:
-
-    GraphicsEngine (GraphicsDisplay &GlWindow);
+    /*!
+      @param GlWindow The graphics window for this rendering engine.
+      @param create_rendering_data If true, then in GraphicsEngine, the system creates the OpenGL shaders and the font textures for the rendering.
+    */
+    GraphicsEngine (GraphicsDisplay &GlWindow, bool create_rendering_data = true);
     ~GraphicsEngine();
 
     void SetContext (int x, int y, int width, int height);
@@ -672,7 +676,7 @@ namespace nux
     int m_ScissorX, m_ScissorY;
     int m_ScissorXOffset, m_ScissorYOffset;
 
-    FontRenderer *m_font_renderer;
+    FontRenderer *_font_renderer;
 
     //static long ID;
 

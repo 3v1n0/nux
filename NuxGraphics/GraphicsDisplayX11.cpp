@@ -179,7 +179,8 @@ namespace nux
                                          unsigned int WindowHeight,
                                          WindowStyle Style,
                                          const GraphicsDisplay *Parent,
-                                         bool FullscreenFlag)
+                                         bool FullscreenFlag,
+                                         bool create_rendering_data)
   {
     NScopeLock Scope (&CreateOpenGLWindow_CriticalSection);
 

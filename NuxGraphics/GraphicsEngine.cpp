@@ -54,14 +54,14 @@ namespace nux
   }
 
 
-  GraphicsEngine::GraphicsEngine (GraphicsDisplay &GlWindow)
+  GraphicsEngine::GraphicsEngine (GraphicsDisplay &GlWindow, bool create_rendering_data)
     :   _graphics_display (GlWindow)
   {
     m_ScissorX = 0;
     m_ScissorY = 0;
     m_ScissorXOffset = 0;
     m_ScissorYOffset = 0;
-    m_font_renderer = 0;
+    _font_renderer = 0;
 
     _use_glsl_shaders = false;
     // Evaluate the features provided by the GPU.
@@ -85,9 +85,50 @@ namespace nux
     SetScissorOffset (0, 0);
     EnableScissoring (true);
 
-#ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
+    if (create_rendering_data)
     {
+#ifndef NUX_OPENGLES_20
+      if (UsingGLSLCodePath () &&
+        GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
+        GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader())
+      {
+        InitSlColorShader();
+        InitSlTextureShader();
+        InitSlColorModTexMaskAlpha ();
+        InitSl2TextureAdd();
+        InitSl2TextureMod();
+        InitSl4TextureAdd();
+
+        InitSLComponentExponentiation ();
+        InitSLAlphaReplicate ();
+        InitSLHorizontalGaussFilter ();
+        InitSLVerticalGaussFilter ();
+        InitSLColorMatrixFilter ();
+
+        InitSl2TextureDepRead ();
+
+        InitSLHorizontalHQGaussFilter ();
+        InitSLVerticalHQGaussFilter ();
+      }
+      else if (GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
+        GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Program())
+      {
+        InitAsmColorShader();
+        InitAsmTextureShader();
+        InitAsmColorModTexMaskAlpha();
+        InitAsm2TextureAdd();
+        InitAsm2TextureMod();
+        InitAsm4TextureAdd();
+        InitAsmBlendModes();
+
+        InitAsmComponentExponentiation ();
+        InitAsmAlphaReplicate ();
+        InitAsmSeparableGaussFilter ();
+        InitAsmColorMatrixFilter ();
+
+        //InitAsm2TextureDepRead (); // NUXTODO: fix the shader
+      }
+#else
       InitSlColorShader();
       InitSlTextureShader();
       InitSlColorModTexMaskAlpha ();
@@ -100,85 +141,45 @@ namespace nux
       InitSLHorizontalGaussFilter ();
       InitSLVerticalGaussFilter ();
       InitSLColorMatrixFilter ();
-
-      InitSl2TextureDepRead ();
-
-      InitSLHorizontalHQGaussFilter ();
-      InitSLVerticalHQGaussFilter ();
-    }
-    else
-    {
-      InitAsmColorShader();
-      InitAsmTextureShader();
-      InitAsmColorModTexMaskAlpha();
-      InitAsm2TextureAdd();
-      InitAsm2TextureMod();
-      InitAsm4TextureAdd();
-      InitAsmBlendModes();
-
-      InitAsmComponentExponentiation ();
-      InitAsmAlphaReplicate ();
-      InitAsmSeparableGaussFilter ();
-      InitAsmColorMatrixFilter ();
-
-      //InitAsm2TextureDepRead (); // NUXTODO: fix the shader
-    }
-#else
-    InitSlColorShader();
-    InitSlTextureShader();
-    InitSlColorModTexMaskAlpha ();
-    InitSl2TextureAdd();
-    InitSl2TextureMod();
-    InitSl4TextureAdd();
-
-    InitSLComponentExponentiation ();
-    InitSLAlphaReplicate ();
-    InitSLHorizontalGaussFilter ();
-    InitSLVerticalGaussFilter ();
-    InitSLColorMatrixFilter ();
 #endif
-
-    //GNuxGraphicsResources.CacheFontTextures (ResourceCache);
-
-    _offscreen_fbo        = GetGpuDevice()->CreateFrameBufferObject ();
-    _offscreen_color_rt0  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-    //_offscreen_depth_rt0  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8);
-    _offscreen_color_rt1  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-    //_offscreen_depth_rt1  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8);
-    _offscreen_color_rt2  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-    _offscreen_color_rt3  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
 
 #if defined (NUX_OS_WINDOWS)
-    if (_normal_font == 0)
-    {
-      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      _normal_font = ObjectPtr<FontTexture> (fnt);
-      fnt->UnReference ();
-    }
+      if (_normal_font == 0)
+      {
+        FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _normal_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference ();
+      }
 
-    if (_bold_font == 0)
-    {
-      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      _bold_font = ObjectPtr<FontTexture> (fnt);
-      fnt->UnReference ();
-    }
+      if (_bold_font == 0)
+      {
+        FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _bold_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference ();
+      }
 #else
-    if (_normal_font == 0)
-    {
-      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      _normal_font = ObjectPtr<FontTexture> (fnt);
-      fnt->UnReference ();
-    }
+      if (_normal_font == 0)
+      {
+        FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _normal_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference ();
+      }
 
-    if (_bold_font == 0)
-    {
-      FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-      _bold_font = ObjectPtr<FontTexture> (fnt);
-      fnt->UnReference ();
-    }
+      if (_bold_font == 0)
+      {
+        FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _bold_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference ();
+      }
 #endif
+      _font_renderer = new FontRenderer (*this);
 
-    m_font_renderer = new FontRenderer (*this);
+      _offscreen_fbo        = GetGpuDevice()->CreateFrameBufferObject ();
+      _offscreen_color_rt0  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+      _offscreen_color_rt1  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+      _offscreen_color_rt2  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+      _offscreen_color_rt3  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+    }
   }
 
   GraphicsEngine::~GraphicsEngine()
@@ -190,7 +191,7 @@ namespace nux
     _offscreen_fbo.Release ();
 
     ResourceCache.Flush();
-    NUX_SAFE_DELETE (m_font_renderer);
+    NUX_SAFE_DELETE (_font_renderer);
   }
 
   void GraphicsEngine::EvaluateGpuCaps ()
@@ -199,7 +200,7 @@ namespace nux
       _graphics_display.GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader() &&
       _graphics_display.GetGpuDevice ()->GetGPUBrand () ==  GPU_BRAND_NVIDIA)
     {
-      _use_glsl_shaders = false;
+      _use_glsl_shaders = true;
     }
     else
     {
@@ -299,8 +300,8 @@ namespace nux
                                         bool WriteAlphaChannel,
                                         int NumCharacter)
   {
-    if (m_font_renderer)
-      return m_font_renderer->RenderColorText (Font, x, y, Str, TextColor, WriteAlphaChannel, NumCharacter);
+    if (_font_renderer)
+      return _font_renderer->RenderColorText (Font, x, y, Str, TextColor, WriteAlphaChannel, NumCharacter);
 
     return 0;
   }
@@ -310,8 +311,8 @@ namespace nux
       bool WriteAlphaChannel,
       TextAlignment alignment)
   {
-    if (m_font_renderer)
-      return m_font_renderer->RenderColorTextLineStatic (Font, pageSize, Str, TextColor, WriteAlphaChannel, alignment);
+    if (_font_renderer)
+      return _font_renderer->RenderColorTextLineStatic (Font, pageSize, Str, TextColor, WriteAlphaChannel, alignment);
 
     return 0;
   }
@@ -325,8 +326,8 @@ namespace nux
       const Color &CursorColor,
       bool ShowCursor, unsigned int CursorPosition, int offset, int selection_start, int selection_end)
   {
-    if (m_font_renderer)
-      return m_font_renderer->RenderColorTextLineEdit (Font, pageSize, Str,
+    if (_font_renderer)
+      return _font_renderer->RenderColorTextLineEdit (Font, pageSize, Str,
              TextColor,
              WriteAlphaChannel,
              SelectedTextColor,

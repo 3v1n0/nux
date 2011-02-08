@@ -562,6 +562,8 @@ namespace nux
 
   void GraphicsEngine::QRP_ASM_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
   {
+    NUX_RETURN_IF_FALSE (m_AsmColor.IsValid());
+
     float VtxBuffer[] =
     {
       x,          y,          0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
@@ -609,6 +611,9 @@ namespace nux
 
   void GraphicsEngine::QRP_ASM_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
   {
+    NUX_RETURN_IF_FALSE (m_AsmTextureModColor.IsValid());
+    NUX_RETURN_IF_FALSE (m_AsmTextureRectModColor.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
     {
@@ -673,6 +678,9 @@ namespace nux
   void GraphicsEngine::QRP_ASM_ColorModTexAlpha (int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
   {
+    NUX_RETURN_IF_FALSE (m_AsmColorModTexMaskAlpha.IsValid());
+    NUX_RETURN_IF_FALSE (m_AsmColorModTexRectMaskAlpha.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
 
     float VtxBuffer[] =
@@ -739,6 +747,9 @@ namespace nux
                                   ObjectPtr<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
                                   ObjectPtr<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
   {
+    NUX_RETURN_IF_FALSE (m_Asm2TextureAdd.IsValid());
+    NUX_RETURN_IF_FALSE (m_Asm2TextureRectAdd.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
 
@@ -810,6 +821,9 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
     ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1)
   {
+    NUX_RETURN_IF_FALSE (m_ASM2TextureDepRead.IsValid());
+    NUX_RETURN_IF_FALSE (m_ASM2TextureRectDepRead.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, distorsion_texture, texxform0);
     QRP_Compute_Texture_Coord (width, height, src_device_texture, texxform1);
 
@@ -880,6 +894,9 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
   {
+    NUX_RETURN_IF_FALSE (m_Asm2TextureMod.IsValid());
+    NUX_RETURN_IF_FALSE (m_Asm2TextureRectMod.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
 
@@ -952,6 +969,9 @@ namespace nux
                                   ObjectPtr<IOpenGLBaseTexture> device_texture2, TexCoordXForm &texxform2, const Color &color2,
                                   ObjectPtr<IOpenGLBaseTexture> device_texture3, TexCoordXForm &texxform3, const Color &color3)
   {
+    NUX_RETURN_IF_FALSE (m_Asm4TextureAdd.IsValid());
+    NUX_RETURN_IF_FALSE (m_Asm4TextureRectAdd.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
     QRP_Compute_Texture_Coord (width, height, device_texture2, texxform1);
@@ -1058,6 +1078,8 @@ namespace nux
                                       int x2, int y2,
                                       Color c0, Color c1, Color c2)
   {
+    NUX_RETURN_IF_FALSE (m_AsmColor.IsValid());
+
     float VtxBuffer[] =
     {
       x0, y0, 0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
@@ -1109,6 +1131,7 @@ namespace nux
   void GraphicsEngine::QRP_ASM_Line (int x0, int y0,
                                   int x1, int y1, Color c0, Color c1)
   {
+    NUX_RETURN_IF_FALSE (m_AsmColor.IsValid());
 
     float VtxBuffer[] =
     {
@@ -1160,6 +1183,8 @@ namespace nux
       Color c2,
       Color c3)
   {
+    NUX_RETURN_IF_FALSE (m_AsmColor.IsValid());
+
     float VtxBuffer[] =
     {
       x0, y0,                             0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
@@ -1258,6 +1283,9 @@ namespace nux
 
   void GraphicsEngine::QRP_ASM_Exponentiation  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent)
   {
+    NUX_RETURN_IF_FALSE (_asm_tex_component_exponentiation_prog.IsValid());
+    NUX_RETURN_IF_FALSE (_asm_texrect_component_exponentiation_prog.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
     {
@@ -1354,6 +1382,9 @@ namespace nux
   void GraphicsEngine::QRP_ASM_AlphaReplicate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color &c0)
   {
+    NUX_RETURN_IF_FALSE (_asm_tex_alpha_replicate_prog.IsValid());
+    NUX_RETURN_IF_FALSE (_asm_texrect_alpha_replicate_prog.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
     {
@@ -1473,6 +1504,9 @@ namespace nux
   void GraphicsEngine::QRP_ASM_ColorMatrix  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color &c0, Matrix4 color_matrix, Vector4 offset)
   {
+    NUX_RETURN_IF_FALSE (_asm_tex_color_matrix_filter_prog.IsValid());
+    NUX_RETURN_IF_FALSE (_asm_texrect_color_matrix_filter_prog.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
     {
@@ -1617,6 +1651,9 @@ namespace nux
 
   void GraphicsEngine::QRP_ASM_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
   {
+    NUX_RETURN_IF_FALSE (_asm_tex_separable_gauss_filter_prog.IsValid());
+    NUX_RETURN_IF_FALSE (_asm_texrect_separable_gauss_filter_prog.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
 
     float delta = 1.0f / device_texture->GetWidth();
@@ -1744,6 +1781,9 @@ namespace nux
 
   void GraphicsEngine::QRP_ASM_VerticalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
   {
+    NUX_RETURN_IF_FALSE (_asm_tex_separable_gauss_filter_prog.IsValid());
+    NUX_RETURN_IF_FALSE (_asm_texrect_separable_gauss_filter_prog.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
 
     float delta = 1.0f / device_texture->GetHeight();

@@ -62,10 +62,10 @@ namespace nux
   extern const Color COLOR_LIGHT_0;
 
 
-  extern const int   BASEOBJECT_MINWIDTH;
-  extern const int   BASEOBJECT_MAXWIDTH;
-  extern const int   BASEOBJECT_MINHEIGHT;
-  extern const int   BASEOBJECT_MAXHEIGHT;
+  extern const int   AREA_MIN_WIDTH;
+  extern const int   AREA_MAX_WIDTH;
+  extern const int   AREA_MIN_HEIGHT;
+  extern const int   AREA_MAX_HEIGHT;
 
   extern const int   DEFAULT_WIDGET_HEIGHT;
   extern const int   PRACTICAL_WIDGET_HEIGHT;
