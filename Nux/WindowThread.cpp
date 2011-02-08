@@ -1597,40 +1597,13 @@ namespace nux
       m_window_compositor->SetBackgroundPaintLayer (bkg);
   }
   
-  Area* WindowThread::GetTopRenderingParent(Area* area)
-  {
-    NUX_RETURN_VALUE_IF_NULL(area, NULL);
-
-    Area* parent = area->GetParentObject();
-    if (parent)
-    {
-      if (parent == GetWindowThread ()->GetMainLayout ())
-      {
-        return parent;
-      }
-      else if (parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
-      {
-        return parent;
-      }
-      else 
-      {
-        return GetTopRenderingParent (parent);
-      }
-    }
-    else
-    {
-      return 0;
-    }
-  }
-  
   void WindowThread::AddToDrawList (View *view)
   {
     Area *parent;
     Geometry geo, pgeo;
     
     geo = view->GetGeometry();
-    
-    parent = GetTopRenderingParent (view);
+    parent = view->GetToplevel ();
     
     if (parent)
     {

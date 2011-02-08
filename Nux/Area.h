@@ -240,6 +240,8 @@ namespace nux
 
     void SetBaseString (const TCHAR *Caption);
     const NString &GetBaseString() const;
+    
+    Area * GetToplevel ();
 
     virtual long ComputeChildLayout()
     {

@@ -657,7 +657,15 @@ namespace nux
   void InputArea::ProcessDndMove (int x, int y, std::list<char *>mimes)
   {
     // must learn to deal with x/y offsets
-    SendDndStatus (false, DNDACTION_NONE, Geometry (GetGeometry ().x, GetGeometry ().y, 1, 1));
+    Area *parent = GetToplevel ();
+    
+    if (parent)
+    {
+      x += parent->GetGeometry ().x;
+      y += parent->GetGeometry ().y;
+    }
+    
+    SendDndStatus (false, DNDACTION_NONE, Geometry (x, y, GetGeometry ().width, GetGeometry ().height));
   }
   
   void InputArea::ProcessDndDrop (int x, int y)

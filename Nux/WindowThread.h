@@ -116,13 +116,6 @@ namespace nux
 
     bool IsRedrawNeeded() const;
 
-    /*!
-      Returns the main layout, a BaseWindow object or 0 as the parent of the area.
-      A BaseWindow has no parent so 0 is returned. Also for objects that have not been
-      added to the rendering tree, 0 is returned.
-    */
-    Area* GetTopRenderingParent(Area* area);
-
     void AddToDrawList (View *view);
 
     void ClearDrawList ();

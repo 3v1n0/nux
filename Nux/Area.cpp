@@ -26,6 +26,7 @@
 #include "Layout.h"
 #include "VSplitter.h"
 #include "HSplitter.h"
+#include "BaseWindow.h"
 
 namespace nux
 {
@@ -459,5 +460,16 @@ namespace nux
     {
       m_ParentObject->RequestBottomUpLayoutComputation (bo_initiator);
     }
+  }
+  
+  Area * Area::GetToplevel ()
+  {
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
+      return this;
+
+    Area * parent = GetParentObject ();
+    if (!parent) //we didn't find a way to salvation!
+      return 0;
+    return parent->GetToplevel ();
   }
 }
