@@ -120,7 +120,8 @@ namespace nux
       unsigned int WindowHeight,
       WindowStyle Style,
       const GraphicsDisplay *Parent,
-      bool FullscreenFlag = false);
+      bool FullscreenFlag = false,
+      bool create_rendering_data = true);
 
     //! Create a GLWindow from a window and device context.
     /*!

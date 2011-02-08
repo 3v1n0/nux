@@ -38,8 +38,8 @@ namespace nux
     ,   m_ParentObject (0)
     ,   m_Application (0)
     ,   m_Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
-    ,   m_minSize (BASEOBJECT_MINWIDTH, BASEOBJECT_MINHEIGHT)
-    ,   m_maxSize (BASEOBJECT_MAXWIDTH, BASEOBJECT_MAXHEIGHT)
+    ,   m_minSize (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
+    ,   m_maxSize (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
     ,   m_stretchfactor (1)
   {
   }
@@ -61,17 +61,25 @@ namespace nux
 
   void Area::CheckMinSize()
   {
-    if (m_minSize.GetWidth() > m_maxSize.GetWidth() )
+    int w = m_minSize.GetWidth();
+    w = Max<int>(AREA_MIN_WIDTH, w);
+    int h = m_minSize.GetHeight();
+    h = Max<int>(AREA_MIN_HEIGHT, h);
+
+    m_minSize.SetWidth(w);
+    m_minSize.SetHeight(h);
+
+    if (m_minSize.GetWidth() > m_maxSize.GetWidth())
     {
       //temp = m_maxSize.GetWidth();
-      m_maxSize.SetWidth (m_minSize.GetWidth() );
+      m_maxSize.SetWidth (m_minSize.GetWidth());
       //m_minSize.SetWidth(temp);
     }
 
-    if (m_minSize.GetHeight() > m_maxSize.GetHeight() )
+    if (m_minSize.GetHeight() > m_maxSize.GetHeight())
     {
       //temp = m_maxSize.GetBaseHeight();
-      m_maxSize.SetHeight (m_minSize.GetHeight() );
+      m_maxSize.SetHeight (m_minSize.GetHeight());
       //m_minSize.SetHeight(temp);
     }
 
@@ -88,6 +96,14 @@ namespace nux
 
   void Area::CheckMaxSize()
   {
+    int w = m_maxSize.GetWidth();
+    w = Min<int>(AREA_MAX_WIDTH, w);
+    int h = m_maxSize.GetHeight();
+    h = Min<int>(AREA_MAX_HEIGHT, h);
+
+    m_maxSize.SetWidth(w);
+    m_maxSize.SetHeight(h);
+
     if (m_minSize.GetWidth() > m_maxSize.GetWidth() )
     {
       //temp = m_maxSize.GetWidth();

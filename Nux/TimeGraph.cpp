@@ -154,16 +154,16 @@ namespace nux
     m_ValueIcon->OnMouseClick.connect (sigc::mem_fun (this, &TimeGraph::RecvShowValue) );
 
     m_GraphTitle->SetFont (GetSysBoldFont() );
-    m_hlayout->AddView (new SpaceLayout (40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
+    m_hlayout->AddView (new SpaceLayout (40, 40, 0, AREA_MAX_HEIGHT), 1);
     m_hlayout->AddView (m_GraphTitle, 1);
     m_hlayout->AddView (m_ValueIcon, 0);
     m_hlayout->AddView (m_GraphBarIcon, 0);
     m_hlayout->AddView (m_GraphIcon, 0);
     m_hlayout->SetHorizontalInternalMargin (4);
 
-    m_hlayout2->AddLayout (new SpaceLayout (40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
+    m_hlayout2->AddLayout (new SpaceLayout (40, 40, 0, AREA_MAX_HEIGHT), 1);
     m_hlayout2->AddView (m_GraphArea, 1);
-    m_hlayout2->AddLayout (new SpaceLayout (50, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
+    m_hlayout2->AddLayout (new SpaceLayout (50, 40, 0, AREA_MAX_HEIGHT), 1);
 
     m_vlayout->AddLayout (m_hlayout, 0);
     m_vlayout->AddLayout (m_hlayout2, 1);

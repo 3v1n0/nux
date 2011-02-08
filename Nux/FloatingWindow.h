@@ -23,15 +23,10 @@
 #ifndef FLOATINGWINDOW_H
 #define FLOATINGWINDOW_H
 
+#include "NuxGraphics/Events.h"
+
 #include "ScrollView.h"
 #include "BaseWindow.h"
-
-#if defined(NUX_OS_WINDOWS)
-#include "NuxGraphics/Events.h"
-#elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/Events.h"
-#endif
-
 #include "InputArea.h"
 #include "MouseHandler.h"
 #include "Layout.h"

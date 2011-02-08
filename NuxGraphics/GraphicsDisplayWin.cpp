@@ -159,12 +159,13 @@ namespace nux
 
 //---------------------------------------------------------------------------------------------------------
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
-  bool GraphicsDisplay::CreateOpenGLWindow (const TCHAR *WindowTitle,
+  bool GraphicsDisplay::CreateOpenGLWindow(const TCHAR *WindowTitle,
                                          unsigned int WindowWidth,
                                          unsigned int WindowHeight,
                                          WindowStyle Style,
                                          const GraphicsDisplay *Parent,
-                                         bool FullscreenFlag)
+                                         bool FullscreenFlag,
+                                         bool create_rendering_data)
   {
     NScopeLock Scope (&CreateOpenGLWindow_CriticalSection);
 
@@ -492,7 +493,7 @@ namespace nux
       _opengl_rendering_context = new_opengl_rendering_context;
     }
 
-    m_GraphicsContext = new GraphicsEngine (*this);
+    m_GraphicsContext = new GraphicsEngine (*this, create_rendering_data);
 
     //EnableVSyncSwapControl();
     DisableVSyncSwapControl();

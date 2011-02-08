@@ -96,7 +96,7 @@ namespace nux
     return *m_pInstance;
   }
 
-  GraphicsDisplay *DisplayAccessController::CreateGLWindow (const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style, GraphicsDisplay *GLWindow, bool FullscreenFlag/* = FALSE*/)
+  GraphicsDisplay *DisplayAccessController::CreateGLWindow(const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style, GraphicsDisplay *GLWindow, bool FullscreenFlag, bool create_rendering_data)
   {
     if (GetDisplayDevice () )
     {

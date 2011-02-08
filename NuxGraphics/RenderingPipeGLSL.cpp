@@ -883,6 +883,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
   {
+    NUX_RETURN_IF_FALSE (m_SlColor.IsValid());
+
     m_quad_tex_stats++;
 
     float VtxBuffer[] =
@@ -926,6 +928,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
   {
+    NUX_RETURN_IF_FALSE (m_SlTextureModColor.IsValid());
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, DeviceTexture, texxform0);
     float VtxBuffer[] =
@@ -996,6 +1000,8 @@ namespace nux
   void GraphicsEngine::QRP_GLSL_ColorModTexAlpha (int x, int y, int width, int height,
       ObjectPtr< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
   {
+    NUX_RETURN_IF_FALSE (m_SlColorModTexMaskAlpha.IsValid());
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, DeviceTexture, texxform);
 
@@ -1079,21 +1085,10 @@ namespace nux
                                        ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                                        ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
-    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
-//     if(SrcTexture0->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
-//        SrcTexture1->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType))
-    {
-      ShaderProg = m_Sl2TextureAdd;
-    }
+    NUX_RETURN_IF_FALSE (m_Sl2TextureAdd.IsValid());
 
-//     if((SrcTexture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType) &&
-//         SrcTexture1->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType)) /*||
-//         (SrcTexture0->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType) &&
-//         SrcTexture1->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType)*/)
-//     {
-//         bRectangleTexture = true;
-//         ShaderProg = m_2TexBlendRectProg;
-//     }
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
+    ShaderProg = m_Sl2TextureAdd;
 
     QRP_Compute_Texture_Coord (width, height, DeviceTexture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, DeviceTexture1, texxform1);
@@ -1165,6 +1160,8 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
     ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1)
   {
+    NUX_RETURN_IF_FALSE (m_Sl2TextureDepRead.IsValid());
+
     ObjectPtr<IOpenGLShaderProgram> ShaderProg;
     {
       ShaderProg = m_Sl2TextureDepRead;
@@ -1239,6 +1236,8 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
+    NUX_RETURN_IF_FALSE (m_Sl2TextureMod.IsValid());
+
     ObjectPtr<IOpenGLShaderProgram> ShaderProg;
     {
       ShaderProg = m_Sl2TextureMod;
@@ -1315,32 +1314,15 @@ namespace nux
                                        ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
                                        ObjectPtr<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3)
   {
+    NUX_RETURN_IF_FALSE (m_Sl4TextureAdd.IsValid());
+
     QRP_Compute_Texture_Coord (width, height, DeviceTexture0, texxform0);
     QRP_Compute_Texture_Coord (width, height, DeviceTexture1, texxform1);
     QRP_Compute_Texture_Coord (width, height, DeviceTexture2, texxform2);
     QRP_Compute_Texture_Coord (width, height, DeviceTexture3, texxform3);
 
     ObjectPtr<IOpenGLShaderProgram> ShaderProg;
-//     if(SrcTexture0->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
-//        SrcTexture1->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
-//        SrcTexture2->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType) &&
-//        SrcTexture3->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType))
-    {
-      ShaderProg = m_Sl4TextureAdd;
-    }
-
-//     if((SrcTexture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType) &&
-//         SrcTexture1->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType) &&
-//         SrcTexture2->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType) &&
-//         SrcTexture3->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType)) /*||
-//         (SrcTexture0->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType) &&
-//         SrcTexture1->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType) &&
-//         SrcTexture2->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType) &&
-//         SrcTexture3->Type().IsDerivedFromType(TextureFrameAnimation::StaticObjectType))*/)
-//     {
-//         bRectangleTexture = true;
-//         ShaderProg = m_4TexBlendRectProg;
-//     }
+    ShaderProg = m_Sl4TextureAdd;
 
     float VtxBuffer[] =
     {
@@ -1446,6 +1428,8 @@ namespace nux
       int x2, int y2,
       Color c0, Color c1, Color c2)
   {
+    NUX_RETURN_IF_FALSE (m_SlColor.IsValid());
+
     float VtxBuffer[] =
     {
       x0, y0, 0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
@@ -1491,6 +1475,8 @@ namespace nux
   void GraphicsEngine::QRP_GLSL_Line (int x0, int y0,
                                        int x1, int y1, Color c0, Color c1)
   {
+    NUX_RETURN_IF_FALSE (m_SlColor.IsValid());
+
     float VtxBuffer[] =
     {
       x0, y0, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.R(), c0.G(), c0.B(), c0.A(),
@@ -1551,6 +1537,8 @@ namespace nux
       Color c2,
       Color c3)
   {
+    NUX_RETURN_IF_FALSE (m_SlColor.IsValid());
+
     float VtxBuffer[] =
     {
       x0, y0,                             0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.R(), c0.G(), c0.B(), c0.A(),
@@ -1610,6 +1598,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_Exponentiation (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, Vector4 exponent)
   {
+    NUX_RETURN_IF_FALSE (_component_exponentiation_prog.IsValid());
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
     float VtxBuffer[] =
@@ -1672,6 +1662,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_AlphaReplicate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0)
   {
+    NUX_RETURN_IF_FALSE (_alpha_replicate_prog.IsValid());
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
     float VtxBuffer[] =
@@ -1731,6 +1723,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
+    NUX_RETURN_IF_FALSE (_horizontal_gauss_filter_prog.IsValid());
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
     float VtxBuffer[] =
@@ -1798,6 +1792,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_VerticalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
+    NUX_RETURN_IF_FALSE (_vertical_gauss_filter_prog.IsValid());
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
     float VtxBuffer[] =
@@ -1867,6 +1863,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_HorizontalHQGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
+    NUX_RETURN_IF_FALSE (_horizontal_hq_gauss_filter_prog.IsValid());
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
     float VtxBuffer[] =
@@ -1934,6 +1932,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_VerticalHQGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
+    NUX_RETURN_IF_FALSE (_vertical_hq_gauss_filter_prog.IsValid());
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
     float VtxBuffer[] =
@@ -2001,29 +2001,13 @@ namespace nux
     ShaderProg->End();
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   void GraphicsEngine::QRP_GLSL_ColorMatrix (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0,
     const Color &c0,
     Matrix4 color_matrix,
     Vector4 offset)
   {
+    NUX_RETURN_IF_FALSE (_color_matrix_filter_prog.IsValid());
+
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
     float VtxBuffer[] =
@@ -2102,11 +2086,6 @@ namespace nux
     const Color& c0,
     float sigma, int num_pass)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
-
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -2174,11 +2153,6 @@ namespace nux
     const Color & c0,
     Vector4 exponent)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
-
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -2235,11 +2209,6 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color & c0)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
-
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -2297,11 +2266,6 @@ namespace nux
     const Color & c0,
     Matrix4 color_matrix, Vector4 offset)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
-
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -2358,11 +2322,6 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
-
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -2430,11 +2389,6 @@ namespace nux
     const Color& c0,
     float sigma, int num_pass)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
-
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -2494,7 +2448,5 @@ namespace nux
 
     return _offscreen_color_rt0;
   }
-
-
 }
 

@@ -58,8 +58,8 @@ namespace nux
     m_SlideBar      = new CoreArea (NUX_TRACKER_LOCATION);
 
     // Set Original State
-    SetMinimumSize (VSCROLLBAR_WIDTH, BASEOBJECT_MINHEIGHT);
-    SetMaximumSize (VSCROLLBAR_WIDTH, BASEOBJECT_MAXHEIGHT);
+    SetMinimumSize (VSCROLLBAR_WIDTH, AREA_MIN_HEIGHT);
+    SetMaximumSize (VSCROLLBAR_WIDTH, AREA_MAX_HEIGHT);
 
     // Set Signals
     m_BottomThumb->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollDown) );
@@ -100,12 +100,13 @@ namespace nux
     trackdown_callback = new TimerFunctor;
     trackdown_callback->OnTimerExpired.connect (sigc::mem_fun (this, &VScrollBar::TrackDown) );
 
-    SetCompositionLayout (vlayout);
+    SetLayout(vlayout);
   }
 
 
   VScrollBar::~VScrollBar()
   {
+    m_SlideBar->Dispose();
     delete callback;
     delete up_callback;
     delete trackup_callback;

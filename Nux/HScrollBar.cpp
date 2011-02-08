@@ -58,8 +58,8 @@ namespace nux
     m_SlideBar = new CoreArea (NUX_TRACKER_LOCATION);
 
     // Set Original State
-    SetMinimumSize (BASEOBJECT_MINWIDTH, HSCROLLBAR_HEIGHT);
-    SetMaximumSize (BASEOBJECT_MAXWIDTH, HSCROLLBAR_HEIGHT);
+    SetMinimumSize (AREA_MIN_WIDTH, HSCROLLBAR_HEIGHT);
+    SetMaximumSize (AREA_MAX_WIDTH, HSCROLLBAR_HEIGHT);
     // Set Signals
     m_RightThumb->OnMouseDown.connect ( sigc::mem_fun (this, &HScrollBar::RecvStartScrollRight) );
     m_RightThumb->OnMouseUp.connect ( sigc::mem_fun (this, &HScrollBar::RecvEndScrollRight) );
@@ -98,11 +98,12 @@ namespace nux
     trackright_callback = new TimerFunctor;
     trackright_callback->OnTimerExpired.connect (sigc::mem_fun (this, &HScrollBar::TrackRight) );
 
-    SetCompositionLayout (hlayout);
+    SetLayout(hlayout);
   }
 
   HScrollBar::~HScrollBar()
   {
+    m_SlideBar->Dispose();
     delete callback;
     delete left_callback;
     delete trackleft_callback;
