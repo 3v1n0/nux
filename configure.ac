@@ -137,7 +137,6 @@ PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
                   gl
-                  glu
                   glew
                   glewmx
                   xxf86vm
@@ -244,7 +243,7 @@ AC_ARG_ENABLE([examples],
 AM_CONDITIONAL(BUILD_EXAMPLES, [test "x$enable_examples" = "xyes"])
 AM_COND_IF([BUILD_EXAMPLES],
       [
-          PKG_CHECK_MODULES(NUX_EXAMPLES, x11 glu)
+          PKG_CHECK_MODULES(NUX_EXAMPLES, x11)
           AC_SUBST(NUX_EXAMPLES_CFLAGS)
           AC_SUBST(NUX_EXAMPLES_LIBS)
       ],
