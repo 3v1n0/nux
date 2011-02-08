@@ -1886,12 +1886,20 @@ namespace nux
 
   void WindowCompositor::ResetDnDArea()
   {
+    if (_dnd_area)
+      _dnd_area->HandleDndLeave ();
     _dnd_area = NULL;
   }
 
   void WindowCompositor::SetDnDArea (InputArea* area)
   {
+    if (_dnd_area)
+      _dnd_area->HandleDndLeave ();
+  
     _dnd_area = area;
+    
+    if (_dnd_area)
+      _dnd_area->HandleDndEnter ();
   }
 
   InputArea* WindowCompositor::GetDnDArea ()

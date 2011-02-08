@@ -140,16 +140,7 @@ namespace nux
           if (current_dnd_area != this)
           {
             // We just entered this area.
-            
-            // Exit the current dnd area if any.
-            if (current_dnd_area != 0)
-            {
-              // There is a current dnd area.
-              current_dnd_area->ProcessDndLeave();
-            }
-            
             GetWindowCompositor().SetDnDArea(this);
-            ProcessDndEnter();
             HandleDndMove(ievent);
 
             return eMouseEventSolved;
@@ -166,7 +157,6 @@ namespace nux
           {
             // we are going out of this area
             GetWindowCompositor().SetDnDArea(NULL);
-            ProcessDndLeave();
           }
         }
       }

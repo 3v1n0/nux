@@ -136,6 +136,8 @@ namespace nux
     // when the area position is reffered to (x_root, y_root) instead of being the system window coordinates (0, 0).
     void SetAreaMousePosition (int x, int y);
 
+    void HandleDndEnter () { ProcessDndEnter (); }
+    void HandleDndLeave () { ProcessDndLeave (); }
   private:
 
     //! Event processing in exclusive mode.
@@ -144,8 +146,8 @@ namespace nux
     */
     long ProcessEventInExclusiveMode (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     
-    void HandleDndMove (IEvent &event);
-    void HandleDndDrop (IEvent &event);
+    void HandleDndMove  (IEvent &event);
+    void HandleDndDrop  (IEvent &event);
 
     //! Color of the CoreArea
     /*
