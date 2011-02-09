@@ -943,6 +943,7 @@ namespace nux
 
       if((event.e_event == NUX_MOUSE_PRESSED) ||
           (event.e_event == NUX_MOUSE_RELEASED) ||
+          (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
           (event.e_event == NUX_MOUSE_MOVE) ||
           (event.e_event == NUX_SIZE_CONFIGURATION) ||
           (event.e_event == NUX_KEYDOWN) ||
@@ -1031,6 +1032,7 @@ namespace nux
         {
           bool b = (event.e_event == NUX_MOUSE_PRESSED) ||
                    (event.e_event == NUX_MOUSE_RELEASED) ||
+                   (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
                    //(event.e_event == NUX_MOUSE_MOVE) ||
                    (event.e_event == NUX_SIZE_CONFIGURATION) ||
                    (event.e_event == NUX_KEYDOWN) ||
@@ -1719,6 +1721,7 @@ namespace nux
 
     if (nux_event.e_event == NUX_MOUSE_PRESSED ||
         (nux_event.e_event == NUX_MOUSE_RELEASED) ||
+        (nux_event.e_event == NUX_MOUSE_DOUBLECLICK) ||
         (nux_event.e_event == NUX_MOUSE_MOVE) ||
         (nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
         (nux_event.e_event == NUX_KEYDOWN) ||
@@ -1784,6 +1787,7 @@ namespace nux
     {
       bool b = (nux_event.e_event == NUX_MOUSE_PRESSED) ||
                (nux_event.e_event == NUX_MOUSE_RELEASED) ||
+               (nux_event.e_event == NUX_MOUSE_DOUBLECLICK) ||
                //(event.e_event == NUX_MOUSE_MOVE) ||
                (nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
                (nux_event.e_event == NUX_KEYDOWN) ||

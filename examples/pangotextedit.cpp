@@ -28,7 +28,14 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 {
     nux::VLayout* MainVLayout = new nux::VLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
-    nux::TextEntry* text_entry = new nux::TextEntry(TEXT("Hello World! gjyqp"), NUX_TRACKER_LOCATION);
+//     nux::TextEntry* text_entry = new nux::TextEntry(TEXT("Lorem ipsum dolor sit amet, consectetur adipiscing elit."\
+//                                                          "Nulla eget orci augue. Quisque condimentum, nisi gravida condimentum pretium,"\
+//                                                          "tellus nulla congue nisi, vel tincidunt est mi ut tortor. Nullam id sem elit."\
+//                                                          "Nam faucibus ornare lacus a tincidunt. Cras aliquet mollis dictum."\
+//                                                          "Vivamus in velit lacus, ac pellentesque arcu. Sed vitae feugiat odio"), NUX_TRACKER_LOCATION);
+// 
+
+    nux::TextEntry* text_entry = new nux::TextEntry(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
 
     text_entry->SetMaximumWidth(300);
     text_entry->SetMinimumHeight (20);

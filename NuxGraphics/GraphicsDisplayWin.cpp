@@ -889,11 +889,23 @@ namespace nux
       {
         // double click
         if (button == 1)
+        {
           _mouse_state |= NUX_EVENT_BUTTON1_DBLCLICK;
+          _mouse_state |= NUX_STATE_BUTTON1_DOWN;
+          _mouse_state |= NUX_EVENT_BUTTON1_DOWN;
+        }
         else if (button == 2)
+        {
           _mouse_state |= NUX_EVENT_BUTTON2_DBLCLICK;
+          _mouse_state |= NUX_STATE_BUTTON2_DOWN;
+          _mouse_state |= NUX_EVENT_BUTTON2_DOWN;
+        }
         else if (button == 3)
+        {
           _mouse_state |= NUX_EVENT_BUTTON3_DBLCLICK;
+          _mouse_state |= NUX_STATE_BUTTON3_DOWN;
+          _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
+        }
       }
       break;
 

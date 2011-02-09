@@ -171,11 +171,23 @@ namespace nux
 
   bool CairoGraphics::PushState ()
   {
+    nuxAssert(_cr);
+    _opacity_stack.push(_opacity);
+    cairo_save(_cr);
     return true;
   }
 
   bool CairoGraphics::PopState ()
   {
+    nuxAssert(_cr);
+    if (_opacity_stack.empty())
+    {
+      return false;
+    }
+
+    _opacity = _opacity_stack.top();
+    _opacity_stack.pop();
+    cairo_restore(_cr);
     return true;
   }
 
@@ -194,8 +206,8 @@ namespace nux
     _opacity = 1.0f;
     _opacity_stack = std::stack<float>();
 
-    //cairo_restore(_cr);
-    //cairo_save(_cr);
+    cairo_restore(_cr);
+    cairo_save(_cr);
 
     return true;
   }
@@ -280,22 +292,33 @@ namespace nux
 
   bool CairoGraphics::IntersectGeneralClipRegion(std::list<Rect> &region)
   {
+    bool do_clip = false;
     cairo_antialias_t pre = cairo_get_antialias(_cr);
     cairo_set_antialias(_cr, CAIRO_ANTIALIAS_NONE);
     
     std::list<Rect>::iterator it;
     for (it = region.begin(); it != region.end(); it++)
     {
+      Rect rect = (*it);
       float x = (*it).x;
       float y = (*it).y;
       float w = (*it).width;
       float h = (*it).height;
 
-      cairo_rectangle(_cr, x, y, w, h);
+      if (!rect.IsNull())
+      {
+        cairo_rectangle(_cr, rect.x, rect.y, rect.width, rect.height);
+        do_clip = true;
+      }
     }
+
+    if (do_clip)
+    {
+      cairo_clip(_cr);
+    }
+
     cairo_set_antialias(_cr, pre);
     return true;
   }
-
-
 }
+
