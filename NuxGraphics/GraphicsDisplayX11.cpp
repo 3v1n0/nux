@@ -53,7 +53,8 @@ namespace nux
     {NUX_WINDOW_EXIT_FOCUS,      TEXT ("NUX_WINDOW_EXIT_FOCUS") },
     {NUX_WINDOW_DIRTY,           TEXT ("NUX_WINDOW_DIRTY") },
     {NUX_WINDOW_MOUSELEAVE,      TEXT ("NUX_WINDOW_MOUSELEAVE") },
-    {NUX_TERMINATE_APP,          TEXT ("NUX_TERMINATE_APP") }
+    {NUX_TERMINATE_APP,          TEXT ("NUX_TERMINATE_APP") },
+    {NUX_TAKE_FOCUS,             TEXT ("NUX_TAKE_FOCUS") }
   };
 
   GraphicsDisplay::GraphicsDisplay()
@@ -1572,7 +1573,16 @@ namespace nux
       {
         //if (foreign)
         //  break;
-        
+
+        if ((xevent.xclient.format       == 32) &&
+            (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "WM_PROTOCOLS", false)) &&
+            (xevent.xclient.data.l[0]    == XInternAtom (xevent.xany.display, "WM_TAKE_FOCUS", false)))
+        {
+          m_pEvent->e_event = NUX_TAKE_FOCUS;
+          m_pEvent->e_x11_timestamp = (Time) xevent.xclient.data.l[1];
+	  std::cout << "GraphicsDisplay::ProcessXEvent() - got WM_TAKE_FOCUS ClientMessage" << std::endl;
+        }
+
         if ( (xevent.xclient.format == 32) && ( (xevent.xclient.data.l[0]) == static_cast<long> (m_WMDeleteWindow) ) )
         {
           m_pEvent->e_event = NUX_TERMINATE_APP;

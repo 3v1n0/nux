@@ -192,6 +192,7 @@ namespace nux
     NUX_MOUSEWHEEL,
     NUX_DESTROY_WINDOW,
     NUX_TERMINATE_APP,
+    NUX_TAKE_FOCUS, // ClientMessage for window with WM_TAKE_FOCUS protocol-atom set
     NUX_DND_MOVE,
     NUX_DND_DROP,
     NUX_DND_ENTER,  //!< Synthetic event generated when the dnd action enters an InputArea. This is not the event sent when the dnd action enters the window.
@@ -269,6 +270,7 @@ namespace nux
     int e_dy;
     int e_clicks;
     int e_is_click;
+    Time e_x11_timestamp;
 
     int e_x11_keycode;  //!< X11 raw keycode.
     int e_keysym;       //!< Key symbol.

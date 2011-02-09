@@ -310,6 +310,11 @@ namespace nux
           OnStartFocus.emit ();
         }
       }
+      else if (ievent.e_event == NUX_TAKE_FOCUS)
+      {
+        OnTakeFocus.emit (ievent.e_x11_timestamp);
+	std::cout << "InputArea::OnEvent() - emitting take_focus" << std::endl;
+      }
 
       // Imagine a Toolbar. When a MouseDown happens on the toolbar, it gets the mouse focus. While the mouse
       // is being pressed, we can move it above a widget that is inside the toolbar. That widget should not claim that it has
