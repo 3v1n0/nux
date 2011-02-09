@@ -43,13 +43,13 @@ namespace nux
     t_u32 current_dest_blend_factor;
 
     // Get the current blend states. They will be restored later.
-    GfxContext.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    
+    GfxContext.GetRenderStates().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
+    GfxContext.QRP_Color (m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_color);
 
-    GfxContext.GetRenderStates().SetBlend(m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
-    GfxContext.QRP_Color(m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_color);
-
-    // restore the blend states
-    GfxContext.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    // Restore the blend state
+    GfxContext.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 
   AbstractPaintLayer *ColorLayer::Clone() const
@@ -76,10 +76,8 @@ namespace nux
 
     // Get the current blend states. They will be restored later.
     GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
-
     GetPainter().PaintShapeCornerROP (GfxContext, m_geometry, m_color, m_image_style, m_corners, m_write_alpha, m_rop);
 
-    // restore the blend states
     GfxContext.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 

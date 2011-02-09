@@ -37,6 +37,9 @@ namespace nux
     :   InitiallyUnownedObject (NUX_FILE_LINE_PARAM)
     ,   m_IsSizeDirty (true)
     ,   m_ParentObject (0)
+    ,   m_layout_properties (NULL)
+    ,   m_visible (true)
+    ,   m_sensitive (true)
     ,   m_Application (0)
     ,   m_Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
     ,   m_minSize (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
@@ -48,6 +51,8 @@ namespace nux
 
   Area::~Area()
   {
+    if (m_layout_properties)
+      delete m_layout_properties;
   }
 
   const NString &Area::GetBaseString() const
@@ -471,5 +476,48 @@ namespace nux
     if (!parent) //we didn't find a way to salvation!
       return 0;
     return parent->GetToplevel ();
+  }
+
+  void Area::SetLayoutProperties (LayoutProperties *properties)
+  {
+    if (m_layout_properties)
+      delete m_layout_properties;
+
+    m_layout_properties = properties;
+  }
+
+  Area::LayoutProperties * Area::GetLayoutProperties ()
+  {
+    return m_layout_properties;
+  }
+
+  void Area::SetVisible (bool visible)
+  {
+    if (m_visible == visible)
+      return;
+
+    m_visible = visible;
+
+    VisibleChanged.emit (this, m_visible);
+  }
+
+  bool Area::IsVisible ()
+  {
+    return m_visible;
+  }
+
+  void Area::SetSensitive (bool sensitive)
+  {
+    if (m_sensitive == sensitive)
+      return;
+
+    m_sensitive = sensitive;
+
+    SensitiveChanged.emit (this, m_sensitive);
+  }
+
+  bool Area::IsSensitive ()
+  {
+    return m_sensitive;
   }
 }
