@@ -303,6 +303,18 @@ namespace nux
         m_input_window->SetGeometry (GetGeometry());
       }
       m_input_window_enabled = true;
+
+      Display*  dpy         = nux::GetWindow ().GetX11Display ();
+      Window    win         = this->GetInputWindowId ();
+      Atom      wmTakeFocus = XInternAtom (dpy, "WM_TAKE_FOCUS", False);
+      XWMHints* wmHints     = NULL;
+      wmHints = (XWMHints*) g_malloc0 (sizeof (XWMHints));
+      wmHints->flags |= InputHint;
+      wmHints->input = False;
+      XSetWMHints (dpy, win, wmHints);
+      g_free (wmHints);
+      XSetWMProtocols (dpy, win, &wmTakeFocus, 1);
+
     }
     else
     {

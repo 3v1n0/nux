@@ -79,6 +79,7 @@ namespace nux
     e_keysym = 0;
     e_wheeldelta = 0;
     e_x11_keycode = 0;
+    e_x11_timestamp = 0;
 
     //Application = 0;
   }
