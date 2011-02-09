@@ -80,9 +80,8 @@ namespace nux
     ImageSurface &surface = data->GetSurface (0);
     if (gdk_pixbuf_get_has_alpha (pixbuf) == TRUE)
     {
-      unsigned int *pixels =
-          reinterpret_cast<unsigned int *> (gdk_pixbuf_get_pixels (pixbuf));
-      const unsigned int rowstride_u32 = rowstride / 4;
+      unsigned char *pixels_u8 = gdk_pixbuf_get_pixels (pixbuf);
+      unsigned int *pixels_u32 = reinterpret_cast<unsigned int *> (pixels_u8);
 
       if (premultiply == true)
       {
@@ -91,7 +90,7 @@ namespace nux
         {
           for (unsigned int j = 0; j < width; j++)
           {
-            const unsigned int pixel = pixels[j];
+            const unsigned int pixel = pixels_u32[j];
             const unsigned int a = pixel >> 24;
             if (a == 0)
               surface.Write32b (j, i, 0);
@@ -104,7 +103,8 @@ namespace nux
               surface.Write32b (j, i, p);
             }
           }
-          pixels += rowstride_u32;
+          pixels_u8 += rowstride;
+          pixels_u32 = reinterpret_cast<unsigned int *> (pixels_u8);
         }
       }
       else
@@ -113,8 +113,9 @@ namespace nux
         for (unsigned int i = 0; i < height; i++)
         {
           for (unsigned int j = 0; j < width; j++)
-            surface.Write32b (j, i, pixels[j]);
-          pixels += rowstride_u32;
+            surface.Write32b (j, i, pixels_u32[j]);
+          pixels_u8 += rowstride;
+          pixels_u32 = reinterpret_cast<unsigned int *> (pixels_u8);
         }
       }
     }
