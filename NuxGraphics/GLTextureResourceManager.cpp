@@ -126,9 +126,9 @@ namespace nux
       {
         for (unsigned int  j = 0; j < width; j++)
         {
-          const unsigned char b = pixels[j*3];
+          const unsigned char r = pixels[j*3];
           const unsigned char g = pixels[j*3+1];
-          const unsigned char r = pixels[j*3+2];
+          const unsigned char b = pixels[j*3+2];
           surface.Write (j, i, r, g, b, 0xff);
         }
         pixels += rowstride;
