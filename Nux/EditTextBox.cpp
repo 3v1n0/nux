@@ -64,7 +64,7 @@ namespace nux
 
 
     hlayout = new HLayout (NUX_TRACKER_LOCATION);
-    SetCompositionLayout (hlayout);
+    SetLayout(hlayout);
 
     m_BlinkTimerFunctor = new TimerFunctor();
     m_BlinkTimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &EditTextBox::BlinkCursorTimerInterrupt) );

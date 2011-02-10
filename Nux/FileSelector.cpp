@@ -51,7 +51,7 @@ namespace nux
     m_OpenButton->OnMouseClick.connect (sigc::mem_fun (this, &FileSelector::RecvOpenButtonClick) );
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    SetCompositionLayout (m_hlayout);
+    SetLayout(m_hlayout);
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Icons/Folder-16x16.png") );
     m_Texture = GetGpuDevice()->CreateSystemCapableTexture ();

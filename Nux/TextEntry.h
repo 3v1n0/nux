@@ -75,6 +75,7 @@ namespace nux
 
   class TextEntry: public View
   {
+    NUX_DECLARE_OBJECT_TYPE (TextEntry, View);
   public:
     TextEntry (const TCHAR* text, NUX_FILE_LINE_PROTO);
     ~TextEntry ();

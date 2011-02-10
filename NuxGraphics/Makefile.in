@@ -366,7 +366,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 CLEANFILES = nux-graphics-@NUX_API_VERSION@.pc
 DISTCLEANFILES = nux-graphics.pc
-EXTRA_DIST = nux-graphics.pc.in
+EXTRA_DIST = $(srcdir)/GraphicsDisplayWin.cpp \
+	$(srcdir)/GraphicsDisplayWin.h nux-graphics.pc.in
 lib_LTLIBRARIES = \
   libnux-graphics-@NUX_API_VERSION@.la
 

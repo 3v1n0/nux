@@ -122,6 +122,58 @@ namespace nux
 
   long InputArea::OnEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
+    // Mouse event processing.
+    if ((ievent.e_event >= NUX_DND_MOVE) && (ievent.e_event <= NUX_DND_LEAVE_WINDOW))
+    {
+      if (TraverseInfo & eMouseEventSolved) // It is not mouse event but let use this enum for now.
+      {
+        return eMouseEventSolved;
+      }
+
+      // We are in the range of DND events
+
+      if (ievent.e_event == NUX_DND_MOVE)
+      {
+        InputArea *current_dnd_area = GetWindowCompositor().GetDnDArea();
+        if (GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
+        {
+          if (current_dnd_area != this)
+          {
+            // We just entered this area.
+            GetWindowCompositor().SetDnDArea(this);
+            HandleDndMove(ievent);
+
+            return eMouseEventSolved;
+          }
+          else
+          {
+            HandleDndMove(ievent);
+            return eMouseEventSolved;
+          }
+        }
+        else
+        {
+          if (GetWindowCompositor().GetDnDArea() == this)
+          {
+            // we are going out of this area
+            GetWindowCompositor().SetDnDArea(NULL);
+          }
+        }
+      }
+
+      if (ievent.e_event == NUX_DND_DROP)
+      {
+        InputArea *current_dnd_area = GetWindowCompositor().GetDnDArea();
+        if ((current_dnd_area == this) && GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root))
+        {
+          HandleDndDrop(ievent);
+          return eMouseEventSolved;
+        }
+      }
+      return TraverseInfo;
+    }
+
+    // Regular event processing.
     if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
     {
       // Skip the area that has the exclusivity on events
@@ -133,6 +185,7 @@ namespace nux
       // Bypass the regular processing and use a simplified processing of events.
       return ProcessEventInExclusiveMode (ievent, TraverseInfo, ProcessEventInfo);
     }
+
 
     InputArea *PreviousMouseOverArea = (GetWindowCompositor().m_PreviousMouseOverArea);
     InputArea *CurrentMouseOverArea = (GetWindowCompositor().m_MouseOverArea);
@@ -247,6 +300,14 @@ namespace nux
         {
           SetKeyboardFocus (false);
           OnEndFocus.emit ();
+        }
+      }
+      else if (ievent.e_event == NUX_WINDOW_ENTER_FOCUS)
+      {
+        if (!HasKeyboardFocus ())
+        {
+          SetKeyboardFocus (true);
+          OnStartFocus.emit ();
         }
       }
 
@@ -398,17 +459,36 @@ namespace nux
       }
     }
 
-    if (HasKeyboardFocus() && (ievent.e_event == NUX_KEYDOWN || ievent.e_event == NUX_KEYUP) )
+    if (HasKeyboardFocus ())
     {
-      nuxEventDebugTrace (_print_event_debug_trace, TEXT("key down or up and has focus. Emit OnKeyEvent"));
-      nuxEventDebugTrace (_print_event_debug_trace, TEXT("key down or up and has focus. String: %s"), ievent.e_text);
-      OnKeyEvent.emit (
-        GetWindowThread ()->GetGraphicsEngine(),
-        ievent.e_event,
-        ievent.GetKeySym(),
-        ievent.GetKeyState(),
-        ievent.GetText(),
-        ievent.GetKeyRepeatCount() );
+      if (ievent.e_event == NUX_KEYDOWN)
+      {
+        nuxEventDebugTrace (_print_event_debug_trace,
+                            TEXT("Emit OnKeyPressed"));
+        OnKeyPressed.emit (ievent.GetKeySym(), ievent.e_x11_keycode,
+                            ievent.GetKeyState());
+
+        nuxEventDebugTrace (_print_event_debug_trace,
+                            TEXT("Emit OnKeyEvent. String: %s"), ievent.e_text);
+        OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
+                         ievent.e_event, ievent.GetKeySym(),
+                         ievent.GetKeyState(), ievent.GetText(),
+                         ievent.GetKeyRepeatCount());
+      }
+      else if (ievent.e_event == NUX_KEYUP)
+      {
+        nuxEventDebugTrace (_print_event_debug_trace,
+                            TEXT("Emit OnKeyReleased"));
+        OnKeyReleased.emit (ievent.GetKeySym(), ievent.e_x11_keycode,
+                            ievent.GetKeyState());
+
+        nuxEventDebugTrace (_print_event_debug_trace,
+                            TEXT("Emit OnKeyEvent. String: %s"), ievent.e_text);
+        OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
+                         ievent.e_event, ievent.GetKeySym(),
+                         ievent.GetKeyState(), ievent.GetText(),
+                         ievent.GetKeyRepeatCount());
+      }
     }
 
     GetWindowCompositor().m_PreviousMouseOverArea = PreviousMouseOverArea;
@@ -546,6 +626,59 @@ namespace nux
   {
     return _print_event_debug_trace;
   }
+  
+  void InputArea::HandleDndMove (IEvent &event)
+  {
+    std::list<char *> mimes;
+    
+    mimes = GetWindow ().GetDndMimeTypes ();
+    std::list<char *>::iterator it;
+    ProcessDndMove (event.e_x, event.e_y, mimes);
+    
+    for (it = mimes.begin (); it != mimes.end (); it++)
+      g_free (*it);
+  }
+  
+  void InputArea::HandleDndDrop (IEvent &event)
+  {
+    ProcessDndDrop (event.e_x, event.e_y);  
+  }
+  
+  void InputArea::SendDndStatus (bool accept, DndAction action, Geometry region)
+  {
+    GetWindow ().SendDndStatus (accept, action, Rect (region.x, region.y, region.width, region.height));
+  }
+  
+  void InputArea::SendDndFinished (bool accepted, DndAction action)
+  {
+    GetWindow ().SendDndFinished (accepted, action);
+  }
 
+  void InputArea::ProcessDndMove (int x, int y, std::list<char *>mimes)
+  {
+    // must learn to deal with x/y offsets
+    Area *parent = GetToplevel ();
+    
+    if (parent)
+    {
+      x += parent->GetGeometry ().x;
+      y += parent->GetGeometry ().y;
+    }
+    
+    SendDndStatus (false, DNDACTION_NONE, Geometry (x, y, GetGeometry ().width, GetGeometry ().height));
+  }
+  
+  void InputArea::ProcessDndDrop (int x, int y)
+  {
+    SendDndFinished (false, DNDACTION_NONE);
+  }
+
+  void InputArea::ProcessDndEnter ()
+  {
+  }
+
+  void InputArea::ProcessDndLeave ()
+  {
+  }
 }
 

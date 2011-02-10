@@ -32,6 +32,7 @@ namespace nux
   //! A Button control that represents a state.
   class Button: public AbstractButton
   {
+    NUX_DECLARE_OBJECT_TYPE (Button, View);
   public:
     Button (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
     ~Button();

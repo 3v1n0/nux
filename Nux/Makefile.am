@@ -94,6 +94,7 @@ source_cpp = \
   $(srcdir)/IntegerValidator.cpp \
   $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
+  $(srcdir)/LayeredLayout.cpp \
   $(srcdir)/Layout.cpp \
   $(srcdir)/ListControl.cpp \
   $(srcdir)/Matrix3Editor.cpp \
@@ -228,6 +229,7 @@ source_h = \
   $(srcdir)/IntegerValidator.h \
   $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
+  $(srcdir)/LayeredLayout.h \
   $(srcdir)/Layout.h \
   $(srcdir)/ListControl.h \
   $(srcdir)/Matrix3Editor.h \

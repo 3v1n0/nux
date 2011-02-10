@@ -68,7 +68,7 @@ namespace nux
     m_hlayout->SetHorizontalExternalMargin (2);
 
     SetMinimumSize (24, 24);
-    SetMaximumSize (BASEOBJECT_MAXWIDTH, 24);
+    SetMaximumSize (AREA_MAX_WIDTH, 24);
     SetGeometry (Geometry (0, 0, 200, 20) );
 
     m_hlayout->SetHorizontalInternalMargin (4);

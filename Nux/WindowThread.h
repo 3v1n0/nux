@@ -66,16 +66,6 @@ namespace nux
     */
     void SetLayout (Layout *layout);
 
-    void QueueMainLayout ();
-
-  private:
-    //! Compute the layout of this window thread.
-    /*!
-        Reconfigure the layout of this window. Start by setting the size of the layout to the size of this window.
-    */
-    void ReconfigureLayout();
-
-  public:
     void TerminateThread();
 
     //! Start running the user interface
@@ -122,22 +112,9 @@ namespace nux
 
     void RequestRedraw();
 
-    void ClearRedrawFlag()
-    {
-      m_RedrawRequested = false;
-    }
+    void ClearRedrawFlag();
 
-    bool IsRedrawNeeded() const
-    {
-      return m_RedrawRequested;
-    }
-
-    /*!
-      Returns the main layout, a BaseWindow object or 0 as the parent of the area.
-      A BaseWindow has no parent so 0 is returned. Also for objects that have not been
-      added to the rendering tree, 0 is returned.
-    */
-    Area* GetTopRenderingParent(Area* area);
+    bool IsRedrawNeeded() const;
 
     void AddToDrawList (View *view);
 
@@ -146,6 +123,12 @@ namespace nux
     std::vector<Geometry> GetDrawList ();
 
     // Layout
+
+    //! Causes the Main layout to be recomputed.
+    /*!
+        Causes the main layout to be recomputed. This will happen just before the next draw cycle.
+    */
+    void QueueMainLayout ();
 
     //! Schedule a size computation cycle on an area before the rendering is performed.
     /*!
@@ -160,46 +143,24 @@ namespace nux
     /*!
         @param area The object to remove form the list.
         @return True if the object was in the _queued_layout_list and has been removed.
-        \sa RefreshLayout, AddObjectToRefreshList.
+        \sa RefreshLayout, QueueObjectLayout.
     */
+    bool RemoveObjectFromLayoutQueue (Area *area);
+
+    //! Deprecated. Use RemoveObjectFromLayoutQueue.
     bool RemoveObjectFromRefreshList (Area *area);
 
-    //! Empty the list that contains the layout that need to be recomputed following the resizing of one of the sub element.
+    //! Empty the queue of objects set for layout computation.
     /*!
-        Empty the list that contains the layout that need to be recomputed following the resizing of one of the sub element.
+        The queue was filled with calls to QueueObjectLayout.
     */
     void RemoveQueuedLayout ();
 
-  private:
-    //! Execute the size computation cycle on objects.
-    /*
-        The objects whose size is to be computed are added to a list with a call to AddObjectToRefreshList.
-        Size computation is performed just before the rendering cycle.
-        \sa AddObjectToRefreshList
-    */
-    void ComputeQueuedLayout ();
-    void RefreshLayout ();  //!< Deprecated. Replace with ComputeQueuedLayout.
-
-  public:
-    //! Deprecated. Replace with IsInsideLayoutCycle
-    bool IsComputingLayout() const
-    {
-      return IsInsideLayoutCycle ();
-    }
-
-    //! Informs the system of the start of a layout cycle.
+    //! Compute the layout of a specific element
     /*!
-        This call merely sets a flag to true or false. This flag is used to decided if some actions should be 
-        performed or not.
+        Immediate size negotiation for a View or a layout.
     */
-    void StartLayoutCycle ();
-
-    //! Informs the system of the end of a layout cycle.
-    /*!
-        This call merely sets a flag to true or false. This flag is used to decided if some actions should be 
-        performed or not.
-    */
-    void StopLayoutCycle ();
+    void ComputeElementLayout(Area* bo, bool recurse_to_top_level_layout = false);
 
     //! Return true if the process is inside a layout cycle.
     /*!
@@ -207,8 +168,11 @@ namespace nux
     */
     bool IsInsideLayoutCycle () const;
 
-    //! Compute the layout of a specific element
-    void ComputeElementLayout(Area* bo, bool RecurseToTopLevelLayout = false);
+    //! Deprecated. Replace with IsInsideLayoutCycle.
+    bool IsComputingLayout() const
+    {
+      return IsInsideLayoutCycle ();
+    }
 
     bool IsWaitingforModalWindow()
     {
@@ -448,7 +412,14 @@ namespace nux
     bool CallEventInspectors (Event* event);
 
   protected:
-    
+    //! Compute the layout of this window thread.
+    /*!
+        Reconfigure the layout of this window. Start by setting the size of the layout to the size of this window.
+        ReconfigureLayout is executed following an event of type NUX_SIZE_CONFIGURATION or a call to QueueMainLayout.
+        \sa QueueMainLayout.
+    */
+    void ReconfigureLayout();
+
     void AsyncWakeUpCallback (void*);
 
     //void SetModalWindow(bool b) {m_bIsModal = b;}
@@ -491,6 +462,28 @@ namespace nux
     std::list< ThreadInfo * > m_ChildThreadInfo;
 
   private:
+    //! Informs the system of the start of a layout cycle.
+    /*!
+        This call merely sets a flag to true or false. This flag is used to decided if some actions should be 
+        performed or not. Used by the system only.
+    */
+    void StartLayoutCycle ();
+
+    //! Informs the system of the end of a layout cycle.
+    /*!
+        This call merely sets a flag to true or false. This flag is used to decided if some actions should be 
+        performed or not. Used by the system only.
+    */
+    void StopLayoutCycle ();
+
+    //! Execute the size computation cycle on objects.
+    /*
+        The objects whose size is to be computed are added to a list with a call to AddObjectToRefreshList.
+        Size computation is performed just before the rendering cycle.
+        \sa AddObjectToRefreshList
+    */
+    void ComputeQueuedLayout ();
+    void RefreshLayout ();  //!< Deprecated. Replace with ComputeQueuedLayout.
 
     GSource *_MasterClock;
 
@@ -500,7 +493,6 @@ namespace nux
     // Declare operator address-of as private
     WindowThread *operator &();
 
-  private:
     //! This list contains the layout that need to be recomputed following the resizing of one of the sub element.
     /*!
         This list contains the layout that need to be recomputed following the resizing of one of the sub element.
@@ -514,7 +506,6 @@ namespace nux
     //! Set to true to schedule a compute cycle on the main layout.
     bool _queue_main_layout;
 
-  private:
     float m_FrameRate;
     t_u32 m_FrameCounter;
     t_u32 m_FramePeriodeCounter;
@@ -527,7 +518,7 @@ namespace nux
     unsigned int m_StartupHeight;
     NString m_WindowTitle;
 
-    bool m_RedrawRequested;
+    bool _draw_requested_to_host_wm;  //!< Flags signaling that a draw cycle has been requested to the host window manager.
     Layout *_main_layout;
 
     UXTheme         *m_Theme;

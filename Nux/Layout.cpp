@@ -48,7 +48,7 @@ namespace nux
   Layout::~Layout()
   {
     // It is possible that this layout object is in the refresh list. Remove it here before it is deleted.
-    GetWindowThread ()->RemoveObjectFromRefreshList (this);
+    GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
     std::list<Area *>::iterator it;
 
@@ -126,6 +126,10 @@ namespace nux
     }
 
     layout->SetParentObject (this);
+
+    layout->OnChildQueueDraw.connect (sigc::mem_fun (this, &Layout::ChildLayoutChildQueuedDraw));
+    layout->OnQueueDraw.connect (sigc::mem_fun (this, &Layout::ChildLayoutQueuedDraw));
+
     _layout_element_list.push_back (layout);
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
@@ -182,6 +186,9 @@ namespace nux
     }
 
     bo->SetParentObject (this);
+
+    if (bo->IsView ())
+      static_cast<View *> (bo)->OnQueueDraw.connect (sigc::mem_fun (this, &Layout::ChildViewQueuedDraw));
 
     _layout_element_list.push_back (bo);
 
@@ -422,4 +429,18 @@ namespace nux
 
   }
 
+  void Layout::ChildViewQueuedDraw (View *view)
+  {
+    OnChildQueueDraw.emit (view);
+  }
+
+  void Layout::ChildLayoutQueuedDraw (Layout *layout)
+  {
+    OnChildQueueDraw.emit (layout);
+  }
+
+  void Layout::ChildLayoutChildQueuedDraw (Area *area)
+  {
+    OnChildQueueDraw.emit (area);
+  }
 }

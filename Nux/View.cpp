@@ -47,10 +47,9 @@ namespace nux
   View::~View()
   {
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
-    GetWindowThread ()->RemoveObjectFromRefreshList (this);
+    GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
-    if (m_CompositionLayout)
-      m_CompositionLayout->UnParentObject();
+    RemoveLayout();
   }
 
   long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -62,6 +61,18 @@ namespace nux
     }
 
     return ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
+  }
+
+  // NUXTODO: Find better name
+  long View::ComputeLayout2()
+  {
+    return ComputeChildLayout();
+  }
+
+  // NUXTODO: Find better name
+  void View::ComputePosition2 (float offsetX, float offsetY)
+  {
+    PositionChildLayout (offsetX, offsetY);
   }
 
   long View::ComputeChildLayout()
@@ -284,17 +295,22 @@ namespace nux
     }
   }
 
-  Layout *View::GetCompositionLayout() const
+  Layout* View::GetLayout()
   {
     return m_CompositionLayout;
   }
 
-  void View::SetCompositionLayout (Layout *layout)
+  Layout *View::GetCompositionLayout()
+  {
+    return GetLayout ();
+  }
+
+  bool View::SetLayout (Layout *layout)
   {
     if (layout == 0)
     {
-      nuxAssertMsg (0, TEXT ("[View::SetCompositionLayout] Invalid parent obejct.") );
-      return;
+      nuxAssertMsg (0, TEXT ("[View::SetCompositionLayout] Invalid parent object.") );
+      return false;
     }
 
     Area *parent = layout->GetParentObject();
@@ -302,12 +318,12 @@ namespace nux
     if (parent == this)
     {
       nuxAssert (m_CompositionLayout == layout);
-      return;
+      return false;
     }
     else if (parent != 0)
     {
       nuxAssertMsg (0, TEXT ("[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again.") );
-      return;
+      return false;
     }
 
     if (m_CompositionLayout)
@@ -315,14 +331,29 @@ namespace nux
 
     layout->SetParentObject (this);
     m_CompositionLayout = layout;
+
+    GetWindowThread()->QueueObjectLayout (this);
+    return true;
   }
 
-  void View::RemoveCompositionLayout()
+  bool View::SetCompositionLayout (Layout *layout)
   {
+    return SetLayout (layout);
+  }
+
+  void View::RemoveLayout()
+  {
+    NUX_RETURN_IF_NULL(m_CompositionLayout);
+
     if (m_CompositionLayout)
       m_CompositionLayout->UnParentObject();
 
     m_CompositionLayout = 0;
+  }
+
+  void View::RemoveCompositionLayout()
+  {
+    RemoveLayout();
   }
 
   bool View::SearchInAllSubNodes (Area *bo)

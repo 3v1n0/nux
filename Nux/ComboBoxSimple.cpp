@@ -36,17 +36,8 @@ namespace nux
     m_SelectedAction    = 0;
     m_CurrentMenu       = 0;
 
-    InitializeLayout();
-    InitializeWidgets();
-  }
-
-  ComboBoxSimple::~ComboBoxSimple()
-  {
-    DestroyLayout();
-  }
-
-  void ComboBoxSimple::InitializeWidgets()
-  {
+    m_CurrentMenu = new MenuPage (TEXT (""), NUX_TRACKER_LOCATION);
+    
     // Set Signals
     m_Button->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown) );
     m_Button->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp) );
@@ -69,13 +60,9 @@ namespace nux
     m_CurrentMenu->sigTerminateMenuCascade.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigTerminateMenuCascade) );
   }
 
-  void ComboBoxSimple::InitializeLayout()
+  ComboBoxSimple::~ComboBoxSimple()
   {
-    m_CurrentMenu = new MenuPage (TEXT (""), NUX_TRACKER_LOCATION);
-  }
-
-  void ComboBoxSimple::DestroyLayout()
-  {
+    m_CurrentMenu->Dispose();
   }
 
   long ComboBoxSimple::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

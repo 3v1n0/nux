@@ -96,48 +96,6 @@ namespace nux
     m_TabPositionOffset = 0;
     m_DrawBackgroundOnPreviousGeometry = false;
 
-    InitializeLayout();
-    InitializeWidgets();
-
-//     m_TabLayout = new HLayout();
-//     m_TabControlLayout = new HLayout();
-//
-//     m_IncrTab = new CoreArea();
-//     m_DecrTab = new CoreArea();
-//
-//     m_IncrTab->SetMinimumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
-//     m_DecrTab->SetMinimumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
-//     m_IncrTab->SetMaximumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
-//     m_DecrTab->SetMaximumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
-//
-//     m_IncrTab->OnMouseEnter.connect(sigc::mem_fun(this, &TabView::RecvMouseEnter));
-//     m_IncrTab->OnMouseLeave.connect(sigc::mem_fun(this, &TabView::RecvMouseLeave));
-//     m_DecrTab->OnMouseEnter.connect(sigc::mem_fun(this, &TabView::RecvMouseEnter));
-//     m_DecrTab->OnMouseLeave.connect(sigc::mem_fun(this, &TabView::RecvMouseLeave));
-//
-//     m_IncrTab->OnMouseDown.connect(sigc::mem_fun(this, &TabView::RecvTabRightMouseDown));
-//     m_DecrTab->OnMouseDown.connect(sigc::mem_fun(this, &TabView::RecvTabLeftMouseDown));
-//     m_IncrTab->OnMouseUp.connect(sigc::mem_fun(this, &TabView::RecvTabButtonMouseUp));
-//     m_DecrTab->OnMouseUp.connect(sigc::mem_fun(this, &TabView::RecvTabButtonMouseUp));
-//
-//     m_TabControlLayout->AddView(m_DecrTab, 1, eCenter);
-//     m_TabControlLayout->AddView(m_IncrTab, 1, eCenter);
-
-    tabright_callback = new TimerFunctor;
-    tabright_callback->OnTimerExpired.connect (sigc::mem_fun (this, &TabView::RecvTabRightTimerExpired) );
-    tableft_callback = new TimerFunctor;
-    tableft_callback->OnTimerExpired.connect (sigc::mem_fun (this, &TabView::RecvTabLeftTimerExpired) );
-  }
-
-  TabView::~TabView()
-  {
-    delete (tabright_callback);
-    delete (tableft_callback);
-    DestroyLayout();
-  }
-
-  void TabView::InitializeWidgets()
-  {
     m_TabLayout         = new HLayout (NUX_TRACKER_LOCATION);
     m_TabControlLayout  = new HLayout (NUX_TRACKER_LOCATION);
     m_IncrTab           = new CoreArea (NUX_TRACKER_LOCATION);
@@ -161,18 +119,21 @@ namespace nux
     m_TabControlLayout->AddView (m_DecrTab, 1, eCenter);
     m_TabControlLayout->AddView (m_IncrTab, 1, eCenter);
 
+
+    tabright_callback = new TimerFunctor;
+    tabright_callback->OnTimerExpired.connect (sigc::mem_fun (this, &TabView::RecvTabRightTimerExpired) );
+    tableft_callback = new TimerFunctor;
+    tableft_callback->OnTimerExpired.connect (sigc::mem_fun (this, &TabView::RecvTabLeftTimerExpired) );
   }
 
-  void TabView::InitializeLayout()
+  TabView::~TabView()
   {
-    m_TabLayout         = new HLayout (NUX_TRACKER_LOCATION);
-    m_TabControlLayout  = new HLayout (NUX_TRACKER_LOCATION);
-    m_IncrTab           = new CoreArea (NUX_TRACKER_LOCATION);
-    m_DecrTab           = new CoreArea (NUX_TRACKER_LOCATION);
-  }
-
-  void TabView::DestroyLayout()
-  {
+    m_TabLayout->Dispose();
+    m_TabControlLayout->Dispose();
+    RemoveCompositionLayout();
+    delete (tabright_callback);
+    delete (tableft_callback);
+    
     std::vector<TabElement *>::iterator it;
 
     for (it = m_TabVector.begin(); it != m_TabVector.end(); it++)

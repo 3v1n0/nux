@@ -44,9 +44,9 @@ namespace nux
     m_Z = Z;
 
     m_hlayout   = new HLayout (NUX_TRACKER_LOCATION);
-    m_XEdit     = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_YEdit     = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_ZEdit     = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+//     m_XEdit     = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+//     m_YEdit     = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+//     m_ZEdit     = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
 
     m_DoubleValidator.SetDecimals (3);
     m_XEdit->SetValidator (&m_DoubleValidator);

@@ -100,7 +100,7 @@ namespace nux
 
   void ComboBoxComplex::InitializeLayout()
   {
-    m_Layout        = new HLayout();
+    m_Layout        = new HLayout(NUX_TRACKER_LOCATION);
     m_ListBox       = new ListControl(false);
     m_PopupWindow   = new PopUpWindow();
   }

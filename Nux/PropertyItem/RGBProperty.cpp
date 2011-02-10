@@ -37,10 +37,10 @@ namespace nux
     m_green = new ColorGradientPropertyItem (TEXT ("Green") );
     m_blue = new ColorGradientPropertyItem (TEXT ("Blue") );
 
-    m_ColorModel = new Button (TEXT ("RGB"), NUX_TRACKER_LOCATION);
+    m_ColorModel = new PushButton (TEXT ("RGB"), NUX_TRACKER_LOCATION);
     m_ColorModel->SetMinMaxSize (32, 14);
     m_ColorModel->SetFont (GetSysBoldFont() );
-    m_ColorFormat = new Button (TEXT ("float"), NUX_TRACKER_LOCATION);
+    m_ColorFormat = new PushButton (TEXT ("float"), NUX_TRACKER_LOCATION);
     m_ColorFormat->SetMinMaxSize (32, 14);
     m_ColorFormat->SetFont (GetSysBoldFont() );
 
@@ -185,7 +185,7 @@ namespace nux
         m_blue->IsRedrawNeeded() )
     {
       t_u32 nBackground = table->PushItemBackground (GfxContext, this);
-      Painter.PaintTextLineStatic (GfxContext, GetSysBoldFont() /*GetFont ()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
+      Painter.PaintTextLineStatic (GfxContext, GetSysBoldFont() /*GetFont ()*/, m_FirstColumnUsableGeometry, row->_table_item->GetName(), GetItemTextColor() );
 
       if (m_ItemGeometryVector.size() >= 2)
       {

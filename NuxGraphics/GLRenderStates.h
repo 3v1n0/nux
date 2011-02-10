@@ -120,6 +120,23 @@ namespace nux
     GPU_BRAND_INTEL,
   } GpuBrand;
 
+  typedef enum
+  {
+    CLEAR = 0,
+    SRC,
+    DST,
+    SRC_OVER,
+    DST_OVER,
+    SRC_IN,
+    DST_IN,
+    SRC_OUT,
+    DST_OUT,
+    SRC_ATOP,
+    DST_ATOP,
+    XOR,
+    PLUS
+  } PorterDuffOperator;
+
   struct RenderStateMap
   {
     t_u32   Checked;
@@ -166,6 +183,8 @@ namespace nux
                                   t_u32 DestBlendFactor_  /*= GL_ZERO*/,
                                   t_u32 SrcFactorAlpha_   /*= GL_ONE*/,
                                   t_u32 DestFactorAlpha_  /*= GL_ZERO*/);
+
+    inline void SetPremultipliedBlend (PorterDuffOperator op);
 
     inline void SetBlendOp (
       t_u32 BlendOp       = GL_FUNC_ADD);
@@ -441,6 +460,40 @@ namespace nux
 //             SrcBlendFactorAlpha_,
 //             DestBlendFactorAlpha_);
 //     }
+  }
+
+  inline void GpuRenderStates::SetPremultipliedBlend (PorterDuffOperator op)
+  {
+    static const struct
+    {
+      const t_u32 src_blend;
+      const t_u32 dst_blend;
+    } factor[13] =
+    {
+      { GL_ZERO,                GL_ZERO                }, // CLEAR
+      { GL_ONE,                 GL_ZERO                }, // SRC
+      { GL_ZERO,                GL_ONE                 }, // DST
+      { GL_ONE,                 GL_ONE_MINUS_SRC_ALPHA }, // SRC_OVER
+      { GL_ONE_MINUS_DST_ALPHA, GL_ONE                 }, // DST_OVER
+      { GL_DST_ALPHA,           GL_ZERO                }, // SRC_IN
+      { GL_ZERO,                GL_SRC_ALPHA           }, // DST_IN
+      { GL_ONE_MINUS_DST_ALPHA, GL_ZERO                }, // SRC_OUT
+      { GL_ZERO,                GL_ONE_MINUS_SRC_ALPHA }, // DST_OUT
+      { GL_DST_ALPHA,           GL_ONE_MINUS_SRC_ALPHA }, // SRC_ATOP
+      { GL_ONE_MINUS_DST_ALPHA, GL_SRC_ALPHA           }, // DST_ATOP
+      { GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA }, // XOR
+      { GL_ONE,                 GL_ONE                 }  // PLUS
+    };
+
+    if ((RS_VALUE (m_RenderStateChanges[GFXRS_SRCBLEND]) !=
+         factor[op].src_blend) ||
+        (RS_VALUE (m_RenderStateChanges[GFXRS_DESTBLEND]) !=
+         factor[op].dst_blend))
+    {
+      HW__SetSeparateAlphaBlendFactors
+        (factor[op].src_blend, factor[op].dst_blend,
+         factor[op].src_blend, factor[op].dst_blend);
+    }
   }
 
   inline void GpuRenderStates::SetBlendOp (t_u32 BlendOp)

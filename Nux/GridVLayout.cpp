@@ -90,6 +90,16 @@ namespace nux
     return _num_row;
   }
 
+  void GridVLayout::SetWidthMatchContent (bool match_content)
+  {
+    _width_match_content = match_content;
+  }
+
+  bool GridVLayout::GetWidthMatchContent () const
+  {
+    return _width_match_content;
+  }
+
   void GridVLayout::GetCompositeList (std::list<Area *> *ViewList)
   {
     std::list<Area *>::iterator it;
@@ -190,8 +200,12 @@ namespace nux
     _num_row = num_row;
     _num_column = num_column;
 
-    if (GetStretchFactor() == 0)
-      SetBaseWidth (num_column * _children_size.width + 2 * m_h_out_margin + (num_column - 1) * m_h_in_margin);
+    if ((GetStretchFactor() == 0) || _width_match_content)
+    {
+      int w = num_column * _children_size.width + 2 * m_h_out_margin + (num_column - 1) * m_h_in_margin;
+      SetMinimumWidth (w);
+      SetBaseWidth (w);
+    }
 
     long size_compliance = 0L;
 

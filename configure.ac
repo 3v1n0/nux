@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [0])
 m4_define([nux_minor_version], [9])
-m4_define([nux_micro_version], [18])
+m4_define([nux_micro_version], [22])
 
 # Bump this when we break ABI
 m4_define([nux_api_version], [0.9])
@@ -109,7 +109,7 @@ PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
 
-PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0)
+PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0)
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 
@@ -118,6 +118,7 @@ PKG_CHECK_MODULES(NUX_IMAGE,
                   gdk-pixbuf-2.0
                   cairo >= 1.9.14
                   libpng >= 1.2.44
+                  sigc++-2.0
                   )
 AC_SUBST(NUX_IMAGE_CFLAGS)
 AC_SUBST(NUX_IMAGE_LIBS)
@@ -127,6 +128,7 @@ PKG_CHECK_MODULES(NUX_MESH,
                   gdk-pixbuf-2.0
                   glew
                   glewmx
+                  sigc++-2.0
                   )
 AC_SUBST(NUX_MESH_CFLAGS)
 AC_SUBST(NUX_MESH_LIBS)
@@ -138,6 +140,7 @@ PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glew
                   glewmx
                   xxf86vm
+                  sigc++-2.0
                   )
 AC_SUBST(NUX_GRAPHICS_CFLAGS)
 AC_SUBST(NUX_GRAPHICS_LIBS)

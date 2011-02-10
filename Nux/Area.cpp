@@ -26,6 +26,7 @@
 #include "Layout.h"
 #include "VSplitter.h"
 #include "HSplitter.h"
+#include "BaseWindow.h"
 
 namespace nux
 {
@@ -36,10 +37,13 @@ namespace nux
     :   InitiallyUnownedObject (NUX_FILE_LINE_PARAM)
     ,   m_IsSizeDirty (true)
     ,   m_ParentObject (0)
+    ,   m_layout_properties (NULL)
+    ,   m_visible (true)
+    ,   m_sensitive (true)
     ,   m_Application (0)
     ,   m_Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
-    ,   m_minSize (BASEOBJECT_MINWIDTH, BASEOBJECT_MINHEIGHT)
-    ,   m_maxSize (BASEOBJECT_MAXWIDTH, BASEOBJECT_MAXHEIGHT)
+    ,   m_minSize (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
+    ,   m_maxSize (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
     ,   m_stretchfactor (1)
   {
   }
@@ -47,7 +51,8 @@ namespace nux
 
   Area::~Area()
   {
-    OnDelete.emit (this);
+    if (m_layout_properties)
+      delete m_layout_properties;
   }
 
   const NString &Area::GetBaseString() const
@@ -62,17 +67,25 @@ namespace nux
 
   void Area::CheckMinSize()
   {
-    if (m_minSize.GetWidth() > m_maxSize.GetWidth() )
+    int w = m_minSize.GetWidth();
+    w = Max<int>(AREA_MIN_WIDTH, w);
+    int h = m_minSize.GetHeight();
+    h = Max<int>(AREA_MIN_HEIGHT, h);
+
+    m_minSize.SetWidth(w);
+    m_minSize.SetHeight(h);
+
+    if (m_minSize.GetWidth() > m_maxSize.GetWidth())
     {
       //temp = m_maxSize.GetWidth();
-      m_maxSize.SetWidth (m_minSize.GetWidth() );
+      m_maxSize.SetWidth (m_minSize.GetWidth());
       //m_minSize.SetWidth(temp);
     }
 
-    if (m_minSize.GetHeight() > m_maxSize.GetHeight() )
+    if (m_minSize.GetHeight() > m_maxSize.GetHeight())
     {
       //temp = m_maxSize.GetBaseHeight();
-      m_maxSize.SetHeight (m_minSize.GetHeight() );
+      m_maxSize.SetHeight (m_minSize.GetHeight());
       //m_minSize.SetHeight(temp);
     }
 
@@ -89,6 +102,14 @@ namespace nux
 
   void Area::CheckMaxSize()
   {
+    int w = m_maxSize.GetWidth();
+    w = Min<int>(AREA_MAX_WIDTH, w);
+    int h = m_maxSize.GetHeight();
+    h = Min<int>(AREA_MAX_HEIGHT, h);
+
+    m_maxSize.SetWidth(w);
+    m_maxSize.SetHeight(h);
+
     if (m_minSize.GetWidth() > m_maxSize.GetWidth() )
     {
       //temp = m_maxSize.GetWidth();
@@ -358,18 +379,18 @@ namespace nux
         {
           // If this element is a Splitter, then we submit its child to the refresh list. We don't want to submit the
           // splitter because this will cause a redraw of all parts of the splitter (costly and unnecessary).
-          GetWindowThread ()->AddObjectToRefreshList (child);
+          GetWindowThread ()->QueueObjectLayout (child);
         }
         else
         {
-          GetWindowThread ()->AddObjectToRefreshList (ic);
+          GetWindowThread ()->QueueObjectLayout (ic);
         }
       }
       else if (ic->m_ParentObject)
         ic->m_ParentObject->InitiateResizeLayout (this);
       else
       {
-        GetWindowThread ()->AddObjectToRefreshList (ic);
+        GetWindowThread ()->QueueObjectLayout (ic);
       }
     }
     else if (this->Type().IsDerivedFromType (Layout::StaticObjectType) )
@@ -396,11 +417,11 @@ namespace nux
             {
               // If the parent of this element is a splitter, then we submit its child to the refresh list. We don't want to submit the
               // splitter because this will cause a redraw of all parts of the splitter (costly and unnecessary).
-              GetWindowThread ()->AddObjectToRefreshList (this);
+              GetWindowThread ()->QueueObjectLayout (this);
             }
             else
             {
-              GetWindowThread ()->AddObjectToRefreshList (ic);
+              GetWindowThread ()->QueueObjectLayout (ic);
             }
           }
           else
@@ -417,7 +438,7 @@ namespace nux
       else
       {
         // This is possibly the Main layout or the layout of a floating object (popup for example) unless the layout is not part of the object tree.
-        GetWindowThread ()->AddObjectToRefreshList (layout);
+        GetWindowThread ()->QueueObjectLayout (layout);
       }
     }
     else
@@ -444,5 +465,59 @@ namespace nux
     {
       m_ParentObject->RequestBottomUpLayoutComputation (bo_initiator);
     }
+  }
+  
+  Area * Area::GetToplevel ()
+  {
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
+      return this;
+
+    Area * parent = GetParentObject ();
+    if (!parent) //we didn't find a way to salvation!
+      return 0;
+    return parent->GetToplevel ();
+  }
+
+  void Area::SetLayoutProperties (LayoutProperties *properties)
+  {
+    if (m_layout_properties)
+      delete m_layout_properties;
+
+    m_layout_properties = properties;
+  }
+
+  Area::LayoutProperties * Area::GetLayoutProperties ()
+  {
+    return m_layout_properties;
+  }
+
+  void Area::SetVisible (bool visible)
+  {
+    if (m_visible == visible)
+      return;
+
+    m_visible = visible;
+
+    VisibleChanged.emit (this, m_visible);
+  }
+
+  bool Area::IsVisible ()
+  {
+    return m_visible;
+  }
+
+  void Area::SetSensitive (bool sensitive)
+  {
+    if (m_sensitive == sensitive)
+      return;
+
+    m_sensitive = sensitive;
+
+    SensitiveChanged.emit (this, m_sensitive);
+  }
+
+  bool Area::IsSensitive ()
+  {
+    return m_sensitive;
   }
 }

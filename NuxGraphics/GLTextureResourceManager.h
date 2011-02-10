@@ -35,7 +35,38 @@ namespace nux
   class BaseTexture;
   class CachedBaseTexture;
 
+  /*!
+   * Create and load a 2D texture filled with RGBA pixels loaded from the image
+   * file pointed by filename. The loading uses the GdkPixbuf library which
+   * implies that the supported formats depend on the GdkPixbuf loaders
+   * installed on the client system.
+   *
+   * @max_size Specifies the maximal required size for the image to be loaded,
+   * if the width or height exceeds that value, the image is scaled down
+   * respecting the aspect ratio. A value of -1 means that no maximal value is
+   * required.
+   * @premultiply Specifies if the R, G and B color channels must be
+   * premultiplied by the alpha channel before being uploaded to the texture.
+   * Note that if there's no alpha channel, the argument is ignored.
+   * @return The resulting texture.
+   */
+  BaseTexture *CreateTexture2DFromFile (const char *filename, int max_size,
+                                        bool premultiply);
+
+  /*!
+   * Create and load a 2D texture filled with RGBA pixels loaded from the
+   * GdkPixbuf pointed by pixbuf.
+   *
+   * @premultiply Specifies if the R, G and B color channels must be
+   * premultiplied by the alpha channel before being uploaded to the texture.
+   * Note that if there's no alpha channel, the argument is ignored.
+   * @return The resulting texture.
+   */
+  BaseTexture *CreateTexture2DFromPixbuf (GdkPixbuf *pixbuf, bool premultiply);
+
+  // FIXME(loicm) Should be deprecated.
   BaseTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf);
+
   BaseTexture *CreateTextureFromFile (const TCHAR *TextureFilename);
   BaseTexture *CreateTextureFromBitmapData (const NBitmapData *BitmapData);
 

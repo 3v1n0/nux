@@ -57,7 +57,110 @@ namespace nux
 
     return (T *) Src;
   }
-  
+
+  BaseTexture *CreateTexture2DFromPixbuf (GdkPixbuf *pixbuf, bool premultiply)
+  {
+    const unsigned int rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+    const unsigned int width = gdk_pixbuf_get_width (pixbuf);
+    const unsigned int height = gdk_pixbuf_get_height (pixbuf);
+
+    // Put the RGB or RGBA pixels in a RGBA texture data object taking care
+    // of alpha premultiplication if requested.
+    // FIXME(loicm) Implies a useless copy. NTextureData should be able to
+    //     take ownership of pre-allocated memory.
+    // FIXME(loicm) Add support for big-endian systems. For performance
+    //     reasons, pixels are loaded by block of 4 bytes with the color
+    //     components bit-shifted considering little-endian ordering. Nux
+    //     doesn't seem to be big-endian aware anyway.
+    // FIXME(loicm) Surface::Write32b does branching, splits the 32-bit value
+    //     as four 8-bit values (using bit-shifts) that are then stored
+    //     separately, that's slow considering it's meant to be used a lot in
+    //     deep loops.
+    NTextureData *data = new NTextureData (BITFMT_R8G8B8A8, width, height, 1);
+    ImageSurface &surface = data->GetSurface (0);
+    if (gdk_pixbuf_get_has_alpha (pixbuf) == TRUE)
+    {
+      unsigned char *pixels_u8 = gdk_pixbuf_get_pixels (pixbuf);
+      unsigned int *pixels_u32 = reinterpret_cast<unsigned int *> (pixels_u8);
+
+      if (premultiply == true)
+      {
+        // Copy from pixbuf (RGBA) to surface (premultiplied RGBA).
+        for (unsigned int i = 0; i < height; i++)
+        {
+          for (unsigned int j = 0; j < width; j++)
+          {
+            const unsigned int pixel = pixels_u32[j];
+            const unsigned int a = pixel >> 24;
+            if (a == 0)
+              surface.Write32b (j, i, 0);
+            else
+            {
+              const unsigned int b = (((pixel >> 16) & 0xff) * a) / 255;
+              const unsigned int g = (((pixel >> 8) & 0xff) * a) / 255;
+              const unsigned int r = ((pixel & 0xff) * a) / 255;
+              const unsigned int p = a << 24 | b << 16 | g << 8 | r;
+              surface.Write32b (j, i, p);
+            }
+          }
+          pixels_u8 += rowstride;
+          pixels_u32 = reinterpret_cast<unsigned int *> (pixels_u8);
+        }
+      }
+      else
+      {
+        // Copy from pixbuf (RGBA) to surface (RGBA).
+        for (unsigned int i = 0; i < height; i++)
+        {
+          for (unsigned int j = 0; j < width; j++)
+            surface.Write32b (j, i, pixels_u32[j]);
+          pixels_u8 += rowstride;
+          pixels_u32 = reinterpret_cast<unsigned int *> (pixels_u8);
+        }
+      }
+    }
+    else
+    {
+      // Copy from pixbuf (RGB) to surface (RGBA).
+      unsigned char *pixels = gdk_pixbuf_get_pixels (pixbuf);
+      for (unsigned int i = 0; i < height; i++)
+      {
+        for (unsigned int j = 0; j < width; j++)
+        {
+          const unsigned char r = pixels[j*3];
+          const unsigned char g = pixels[j*3+1];
+          const unsigned char b = pixels[j*3+2];
+          surface.Write (j, i, r, g, b, 0xff);
+        }
+        pixels += rowstride;
+      }
+    }
+
+    // Create a 2D texture and upload the pixels.
+    BaseTexture *texture = GetGpuDevice ()->CreateSystemCapableTexture ();
+    texture->Update (data);
+    return texture;
+  }
+
+  BaseTexture *CreateTexture2DFromFile (const TCHAR *filename, int max_size,
+                                        bool premultiply)
+  {
+    GError *error = NULL;
+    GdkPixbuf *pixbuf =
+      gdk_pixbuf_new_from_file_at_size (filename, max_size, max_size, &error);
+    if (error == NULL)
+    {
+      BaseTexture *texture = CreateTexture2DFromPixbuf (pixbuf, premultiply);
+      g_object_unref (pixbuf);
+      return texture;
+    }
+    else
+    {
+      nuxDebugMsg ("%s", error->message);
+      return NULL;
+    }
+  }
+
   BaseTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf)
   {
     NBitmapData *BitmapData = LoadGdkPixbuf (pixbuf);
@@ -72,7 +175,6 @@ namespace nux
     
     return 0;
   }
-
 
   BaseTexture *CreateTextureFromFile (const TCHAR *TextureFilename)
   {

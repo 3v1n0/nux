@@ -1,6 +1,7 @@
 CLEANFILES = 
 DISTCLEANFILES =
-EXTRA_DIST =
+EXTRA_DIST = $(srcdir)/GraphicsDisplayWin.cpp \
+             $(srcdir)/GraphicsDisplayWin.h
 
 lib_LTLIBRARIES = \
   libnux-graphics-@NUX_API_VERSION@.la

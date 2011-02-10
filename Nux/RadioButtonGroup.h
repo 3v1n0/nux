@@ -32,7 +32,7 @@ namespace nux
   /*!
       RadioButtonGroup does not hold reference on radio buttons.
   */
-  class RadioButtonGroup: public Object, public sigc::trackable
+  class RadioButtonGroup: public Object
   {
   public:
     RadioButtonGroup (NUX_FILE_LINE_PROTO);
