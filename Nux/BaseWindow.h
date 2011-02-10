@@ -70,7 +70,6 @@ namespace nux
     BaseWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
     virtual ~BaseWindow();
 
-
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
@@ -129,6 +128,7 @@ namespace nux
 
     #if defined(NUX_OS_LINUX)
     void EnableInputWindow (bool b, bool override_redirect = 0);
+    void EnableTakeFocus ();
     bool InputWindowEnabled ();
     void InputWindowEnableStruts (bool enable);
     bool InputWindowStrutsEnabled ();

@@ -173,6 +173,13 @@ namespace nux
       return TraverseInfo;
     }
 
+    if (ievent.e_event == NUX_TAKE_FOCUS)
+    {
+      OnTakeFocus.emit (ievent.e_x11_timestamp);
+      std::cout << "InputArea::OnEvent() - emitting take_focus" << std::endl;
+      return 0;
+    }
+
     // Regular event processing.
     if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
     {
@@ -309,11 +316,6 @@ namespace nux
           SetKeyboardFocus (true);
           OnStartFocus.emit ();
         }
-      }
-      else if (ievent.e_event == NUX_TAKE_FOCUS)
-      {
-        OnTakeFocus.emit (ievent.e_x11_timestamp);
-	std::cout << "InputArea::OnEvent() - emitting take_focus" << std::endl;
       }
 
       // Imagine a Toolbar. When a MouseDown happens on the toolbar, it gets the mouse focus. While the mouse

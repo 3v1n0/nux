@@ -1580,7 +1580,8 @@ namespace nux
         {
           m_pEvent->e_event = NUX_TAKE_FOCUS;
           m_pEvent->e_x11_timestamp = (Time) xevent.xclient.data.l[1];
-	  std::cout << "GraphicsDisplay::ProcessXEvent() - got WM_TAKE_FOCUS ClientMessage" << std::endl;
+	  std::cout << "GraphicsDisplay::ProcessXEvent() - got WM_TAKE_FOCUS ClientMessage for window (0x"
+                    << std::hex << xevent.xany.window << ")" << std::endl;
         }
 
         if ( (xevent.xclient.format == 32) && ( (xevent.xclient.data.l[0]) == static_cast<long> (m_WMDeleteWindow) ) )
