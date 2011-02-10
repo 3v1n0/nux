@@ -54,11 +54,23 @@ namespace nux
     WINDOWSTYLE_TOOL,
     WINDOWSTYLE_NOBORDER,
   };
+  
+  enum DndAction
+  {
+    DNDACTION_COPY,
+    DNDACTION_MOVE,
+    DNDACTION_PRIVATE,
+    
+    DNDACTION_NONE,
+  };
 
 #define NUX_THREADMSG                           (WM_APP+0)
 #define NUX_THREADMSG_START_RENDERING           (WM_APP+1)  // Connection established // start at WM_APP
 #define NUX_THREADMSG_CHILD_WINDOW_TERMINATED   (WM_APP+2)  // General failure - Wait Connection failed
 #define NUX_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
+
+#define _xdnd_max_type 100
+#define xdnd_version 5
 
 // This will become GLWindow
   class GraphicsDisplay : public GraphicSystem
@@ -147,7 +159,8 @@ namespace nux
       unsigned int WindowHeight,
       WindowStyle Style,
       const GraphicsDisplay *Parent,
-      bool FullscreenFlag = false);
+      bool FullscreenFlag = false,
+      bool create_rendering_data = true);
 
     //! Create a GLWindow from a display and window created externally.
     /*!
@@ -253,8 +266,28 @@ namespace nux
     void ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event);
     void ProcessXEvent (XEvent xevent, bool foreign);
     void RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x, int &y);
-
+    void RecalcXYPosition (int x_root, int y_root, int &x_recalc, int &y_recalc);
+    
+    void              SendDndStatus   (bool accept, DndAction action, Rect region);
+    void              SendDndFinished (bool accepted, DndAction performed_action);
+    std::list<char *> GetDndMimeTypes ();
+    char *            GetDndData      (char *property);
+    
   private:
+    void HandleXDndPosition (XEvent event, Event* nux_event);
+    void HandleXDndEnter    (XEvent event);
+    void HandleXDndStatus   (XEvent event);
+    void HandleXDndLeave    (XEvent event);
+    void HandleXDndDrop     (XEvent event, Event* nux_event);
+    void HandleXDndFinished (XEvent event);
+    
+    void SendXDndStatus (Display *display, Window source, Window target, bool accept, Atom action, Rect box);
+    bool GetXDndSelectionEvent (Display *display, Window target, Atom property, long time, XEvent *result, int attempts);
+    void SendXDndFinished (Display *display, Window source, Window target, bool result, Atom action);
+    char * GetXDndData (Display *display, Window requestor, Atom property, long time);
+  
+    Point _last_dnd_position;
+
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
     float m_FrameTime;
@@ -262,6 +295,13 @@ namespace nux
     GraphicsEngine *m_GraphicsContext;
     WindowStyle m_Style;
 
+    
+
+    Atom _xdnd_types[_xdnd_max_type + 1];
+    Display *_drag_display;
+    Window _drag_window;
+    Window _drag_source;
+    long _drag_drop_timestamp;
   public:
     ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()

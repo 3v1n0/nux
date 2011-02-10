@@ -37,18 +37,9 @@ namespace nux
     , m_IntValidator (MinValue, MaxValue)
     , m_Step (Step)
   {
-    InitializeLayout();
-    InitializeWidgets();
-    SetValue (Value);
-  }
+    hlayout = new HLayout (NUX_TRACKER_LOCATION);
+    vlayout = new VLayout (NUX_TRACKER_LOCATION);
 
-  SpinBox::~SpinBox()
-  {
-    DestroyLayout();
-  }
-
-  void SpinBox::InitializeWidgets()
-  {
     m_EditLine->SetValidator (&m_IntValidator);
     m_EditLine->SetSuffix (TEXT ("") );
     m_EditLine->SetPrefix (TEXT ("") );
@@ -73,20 +64,25 @@ namespace nux
 
     hlayout->AddView (m_EditLine, 1);
 
-    vlayout->AddView (m_SpinnerUpBtn, 1);
-    vlayout->AddView (m_SpinnerDownBtn, 1);
-    hlayout->AddLayout (vlayout, 0);
+    vlayout->AddView(m_SpinnerUpBtn, 1);
+    vlayout->AddView(m_SpinnerDownBtn, 1);
+    hlayout->AddLayout(vlayout, 0);
 
-    SetCompositionLayout (hlayout);
+    SetLayout(hlayout);
+
+    SetValue (Value);
+  }
+
+  SpinBox::~SpinBox()
+  {
+
+  }
+
+  void SpinBox::InitializeWidgets()
+  {
   }
 
   void SpinBox::InitializeLayout()
-  {
-    hlayout = new HLayout (NUX_TRACKER_LOCATION);
-    vlayout = new VLayout (NUX_TRACKER_LOCATION);
-  }
-
-  void SpinBox::DestroyLayout()
   {
   }
 

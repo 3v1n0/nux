@@ -215,7 +215,12 @@ namespace nux
       return _layout_element_list;
     }
 
+    virtual void ChildViewQueuedDraw (View *view);
+    virtual void ChildLayoutQueuedDraw (Layout *layout);
+    virtual void ChildLayoutChildQueuedDraw (Area *area);
+
     sigc::signal<void, Layout*> OnQueueDraw;  //!< Signal emitted when a layout is scheduled for a draw.
+    sigc::signal<void, Area*>   OnChildQueueDraw;
 
   protected:
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.

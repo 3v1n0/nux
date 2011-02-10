@@ -35,6 +35,7 @@
 
 namespace nux
 {
+  NUX_IMPLEMENT_OBJECT_TYPE (TimeGraph);
 
   TimeGraph::Graph::Graph (Color PrimaryColor, Color SecondaryColor)
     :   m_HasBeenUpdated (false)
@@ -153,16 +154,16 @@ namespace nux
     m_ValueIcon->OnMouseClick.connect (sigc::mem_fun (this, &TimeGraph::RecvShowValue) );
 
     m_GraphTitle->SetFont (GetSysBoldFont() );
-    m_hlayout->AddView (new SpaceLayout (40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
+    m_hlayout->AddView (new SpaceLayout (40, 40, 0, AREA_MAX_HEIGHT), 1);
     m_hlayout->AddView (m_GraphTitle, 1);
     m_hlayout->AddView (m_ValueIcon, 0);
     m_hlayout->AddView (m_GraphBarIcon, 0);
     m_hlayout->AddView (m_GraphIcon, 0);
     m_hlayout->SetHorizontalInternalMargin (4);
 
-    m_hlayout2->AddLayout (new SpaceLayout (40, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
+    m_hlayout2->AddLayout (new SpaceLayout (40, 40, 0, AREA_MAX_HEIGHT), 1);
     m_hlayout2->AddView (m_GraphArea, 1);
-    m_hlayout2->AddLayout (new SpaceLayout (50, 40, 0, BASEOBJECT_MAXHEIGHT), 1);
+    m_hlayout2->AddLayout (new SpaceLayout (50, 40, 0, AREA_MAX_HEIGHT), 1);
 
     m_vlayout->AddLayout (m_hlayout, 0);
     m_vlayout->AddLayout (m_hlayout2, 1);
@@ -177,7 +178,6 @@ namespace nux
     m_vlayout       = new VLayout (NUX_TRACKER_LOCATION);
     m_hlayout       = new HLayout (NUX_TRACKER_LOCATION);
     m_hlayout2      = new HLayout (TEXT ("QWERTY"), NUX_TRACKER_LOCATION);
-    m_button        = new Button (TEXT ("Value"), NUX_TRACKER_LOCATION);
     m_GraphTitle    = new StaticTextBox (TEXT ("Time Graph"), NUX_TRACKER_LOCATION);
     m_GraphArea     = new CoreArea (NUX_TRACKER_LOCATION);
     m_GraphBarIcon  = new CoreArea (NUX_TRACKER_LOCATION);
@@ -212,8 +212,7 @@ namespace nux
 
   long TimeGraph::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    long ret = m_button->BaseProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
-    ret = m_GraphBarIcon->OnEvent (ievent, ret, ProcessEventInfo);
+    long ret = m_GraphBarIcon->OnEvent (ievent, TraverseInfo, ProcessEventInfo);
     ret = m_GraphIcon->OnEvent (ievent, ret, ProcessEventInfo);
     ret = m_ValueIcon->OnEvent (ievent, ret, ProcessEventInfo);
     return ret;
@@ -437,18 +436,10 @@ namespace nux
 
   void TimeGraph::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
-    Geometry base = GetGeometry();
-    GfxContext.PushClippingRectangle (base);
-
-    //m_button->ProcessDraw(GfxContext, force_draw);
-    //m_GraphTitle->ProcessDraw(GfxContext, force_draw);
-
-    GfxContext.PopClippingRectangle();
   }
 
   void TimeGraph::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
-
   }
 
   void TimeGraph::SetYAxisBounds (float minY, float maxY)

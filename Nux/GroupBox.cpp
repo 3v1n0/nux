@@ -120,13 +120,16 @@ namespace nux
 
   }
 
-  void GroupBox::SetLayout (Layout *layout)
+  bool GroupBox::SetLayout (Layout *layout)
   {
-    if (layout == 0)
-      return;
+    if(View::SetLayout(layout) == false)
+    {
+      return false;
+    }
 
     m_layout = layout;
-    SetCompositionLayout (m_layout);
+
+    return true;
 
 //    Geometry geo = GetGeometry();
 //    Geometry layout_geo = Geometry(geo.x + m_border, geo.y + m_top_border,

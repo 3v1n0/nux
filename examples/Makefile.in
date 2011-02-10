@@ -15,7 +15,6 @@
 
 @SET_MAKE@
 
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -40,7 +39,9 @@ host_triplet = @host@
 @BUILD_EXAMPLES_TRUE@	button$(EXEEXT) checkbox$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	tooltip$(EXEEXT) timeline$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	timegraph$(EXEEXT) gridlayout$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	pangotextedit$(EXEEXT)
+@BUILD_EXAMPLES_TRUE@	pangotextedit$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	moveable_view$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	layeredlayout$(EXEEXT)
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -86,6 +87,18 @@ am__gridlayout_SOURCES_DIST = gridlayout.cpp
 @BUILD_EXAMPLES_TRUE@am_gridlayout_OBJECTS = gridlayout.$(OBJEXT)
 gridlayout_OBJECTS = $(am_gridlayout_OBJECTS)
 @BUILD_EXAMPLES_TRUE@gridlayout_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am__layeredlayout_SOURCES_DIST = layeredlayout.cpp
+@BUILD_EXAMPLES_TRUE@am_layeredlayout_OBJECTS =  \
+@BUILD_EXAMPLES_TRUE@	layeredlayout.$(OBJEXT)
+layeredlayout_OBJECTS = $(am_layeredlayout_OBJECTS)
+@BUILD_EXAMPLES_TRUE@layeredlayout_DEPENDENCIES =  \
+@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
+am__moveable_view_SOURCES_DIST = moveable_view.cpp
+@BUILD_EXAMPLES_TRUE@am_moveable_view_OBJECTS =  \
+@BUILD_EXAMPLES_TRUE@	moveable_view.$(OBJEXT)
+moveable_view_OBJECTS = $(am_moveable_view_OBJECTS)
+@BUILD_EXAMPLES_TRUE@moveable_view_DEPENDENCIES =  \
+@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
 am__pangotextedit_SOURCES_DIST = pangotextedit.cpp
 @BUILD_EXAMPLES_TRUE@am_pangotextedit_OBJECTS =  \
 @BUILD_EXAMPLES_TRUE@	pangotextedit.$(OBJEXT)
@@ -136,37 +149,17 @@ am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(button_SOURCES) $(cairo_SOURCES) $(checkbox_SOURCES) \
 	$(combobox_SOURCES) $(gridlayout_SOURCES) \
+	$(layeredlayout_SOURCES) $(moveable_view_SOURCES) \
 	$(pangotextedit_SOURCES) $(textedit_SOURCES) \
 	$(timegraph_SOURCES) $(timeline_SOURCES) $(tooltip_SOURCES)
 DIST_SOURCES = $(am__button_SOURCES_DIST) $(am__cairo_SOURCES_DIST) \
 	$(am__checkbox_SOURCES_DIST) $(am__combobox_SOURCES_DIST) \
 	$(am__gridlayout_SOURCES_DIST) \
+	$(am__layeredlayout_SOURCES_DIST) \
+	$(am__moveable_view_SOURCES_DIST) \
 	$(am__pangotextedit_SOURCES_DIST) $(am__textedit_SOURCES_DIST) \
 	$(am__timegraph_SOURCES_DIST) $(am__timeline_SOURCES_DIST) \
 	$(am__tooltip_SOURCES_DIST)
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(sourceexampledir)"
-DATA = $(sourceexample_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -388,19 +381,10 @@ EXTRA_DIST =
 @BUILD_EXAMPLES_TRUE@gridlayout_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@pangotextedit_SOURCES = pangotextedit.cpp
 @BUILD_EXAMPLES_TRUE@pangotextedit_LDADD = $(ALL_LIBS)
-
-# distribute source along to the documentation
-@BUILD_EXAMPLES_TRUE@sourceexampledir = "$(pkgdatadir)/examples"
-@BUILD_EXAMPLES_TRUE@sourceexample_DATA = $(combobox_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(cairo_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(textedit_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(button_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(checkbox_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(tooltip_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(timegraph_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(gridlayout_SOURCES) \
-@BUILD_EXAMPLES_TRUE@                     $(pangotextedit_SOURCES)
-
+@BUILD_EXAMPLES_TRUE@moveable_view_SOURCES = moveable_view.cpp
+@BUILD_EXAMPLES_TRUE@moveable_view_LDADD = $(ALL_LIBS)
+@BUILD_EXAMPLES_TRUE@layeredlayout_SOURCES = layeredlayout.cpp
+@BUILD_EXAMPLES_TRUE@layeredlayout_LDADD = $(ALL_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -459,6 +443,12 @@ combobox$(EXEEXT): $(combobox_OBJECTS) $(combobox_DEPENDENCIES)
 gridlayout$(EXEEXT): $(gridlayout_OBJECTS) $(gridlayout_DEPENDENCIES) 
 	@rm -f gridlayout$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(gridlayout_OBJECTS) $(gridlayout_LDADD) $(LIBS)
+layeredlayout$(EXEEXT): $(layeredlayout_OBJECTS) $(layeredlayout_DEPENDENCIES) 
+	@rm -f layeredlayout$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(layeredlayout_OBJECTS) $(layeredlayout_LDADD) $(LIBS)
+moveable_view$(EXEEXT): $(moveable_view_OBJECTS) $(moveable_view_DEPENDENCIES) 
+	@rm -f moveable_view$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(moveable_view_OBJECTS) $(moveable_view_LDADD) $(LIBS)
 pangotextedit$(EXEEXT): $(pangotextedit_OBJECTS) $(pangotextedit_DEPENDENCIES) 
 	@rm -f pangotextedit$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(pangotextedit_OBJECTS) $(pangotextedit_LDADD) $(LIBS)
@@ -486,6 +476,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkbox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/combobox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gridlayout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/layeredlayout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/moveable_view.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pangotextedit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textedit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timegraph.Po@am__quote@
@@ -521,26 +513,6 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-sourceexampleDATA: $(sourceexample_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(sourceexampledir)" || $(MKDIR_P) "$(DESTDIR)$(sourceexampledir)"
-	@list='$(sourceexample_DATA)'; test -n "$(sourceexampledir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(sourceexampledir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(sourceexampledir)" || exit $$?; \
-	done
-
-uninstall-sourceexampleDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(sourceexample_DATA)'; test -n "$(sourceexampledir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(sourceexampledir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(sourceexampledir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -626,11 +598,8 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(DATA)
+all-am: Makefile $(PROGRAMS)
 installdirs:
-	for dir in "$(DESTDIR)$(sourceexampledir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -681,7 +650,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-sourceexampleDATA
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -727,7 +696,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-sourceexampleDATA
+uninstall-am:
 
 .MAKE: install-am install-strip
 
@@ -739,12 +708,24 @@ uninstall-am: uninstall-sourceexampleDATA
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
-	install-sourceexampleDATA install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-sourceexampleDATA
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
+
+# distribute source along to the documentation
+#sourceexampledir = "$(pkgdatadir)/examples"
+#sourceexample_DATA = $(combobox_SOURCES) \
+#                     $(cairo_SOURCES) \
+#                     $(textedit_SOURCES) \
+#                     $(button_SOURCES) \
+#                     $(checkbox_SOURCES) \
+#                     $(tooltip_SOURCES) \
+#                     $(timegraph_SOURCES) \
+#                     $(gridlayout_SOURCES) \
+#                     $(pangotextedit_SOURCES) \
+#                     $(moveable_view_SOURCES)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

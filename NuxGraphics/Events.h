@@ -191,7 +191,13 @@ namespace nux
     NUX_WINDOW_MOUSELEAVE,
     NUX_MOUSEWHEEL,
     NUX_DESTROY_WINDOW,
-    NUX_TERMINATE_APP
+    NUX_TERMINATE_APP,
+    NUX_DND_MOVE,
+    NUX_DND_DROP,
+    NUX_DND_ENTER,  //!< Synthetic event generated when the dnd action enters an InputArea. This is not the event sent when the dnd action enters the window.
+    NUX_DND_LEAVE,  //!< Synthetic event generated when the dnd action leaves an InputArea. This is not the event sent when the dnd action leaves the window.
+    NUX_DND_ENTER_WINDOW,  //!< Emitted when the DND action goes inside (XdndLeave) a window.
+    NUX_DND_LEAVE_WINDOW,   //!< Emitted when the DND action goes outside (XdndEnter) a window.
   };
 
   unsigned long GetEventButton(unsigned long button_state);

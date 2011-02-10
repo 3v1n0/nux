@@ -59,7 +59,6 @@ namespace nux
     m_layout = 0;
     m_configure_notify_callback = NULL;
     m_configure_notify_callback_data = NULL;
-    m_background_color = Color (0xFF707070);
     _entering_visible_state = false;
     _entering_hidden_state = false;
 
@@ -67,9 +66,9 @@ namespace nux
     GetWindowCompositor().RegisterWindow (this);
 
     SetMinimumSize (1, 1);
-    SetGeometry (Geometry (100, 100, 320, 200) );
+    SetGeometry(Geometry(100, 100, 320, 200));
 
-    m_PaintLayer = new ColorLayer (Color (0xFFFF7070));
+    _paint_layer = new ColorLayer(Color(0xFF707070));
     //_background_texture = GetWindow ()->GetGpuDevice ()->CreateSystemCapableDeviceTexture(1, 1, 1, BITFMT_R8G8B8A8);
   }
 
@@ -85,10 +84,9 @@ namespace nux
     // At this stage, the reference count of this object is 0 and while the weak reference count is > 0.
     // The weak reference count is probably 2: one reference in m_WindowList and another in m_WindowToTextureMap.
     // Reference the object here to avoid it being destroy when the call from UnRegisterWindow returns;
-
     GetWindowCompositor().UnRegisterWindow (this);
-    NUX_SAFE_DELETE (m_PaintLayer);
 
+    NUX_SAFE_DELETE (_paint_layer);
   }
 
   long BaseWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -131,8 +129,7 @@ namespace nux
     base.SetY (0);
     GfxContext.PushClippingRectangle (base);
 
-    GetPainter().PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
-
+    GetPainter().PushDrawLayer(GfxContext, base, _paint_layer);
 
     GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
@@ -147,7 +144,7 @@ namespace nux
     base.SetY (0);
 
 
-    GetPainter().PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, m_background_color, eAllCorners, true);
+    GetPainter().PushLayer(GfxContext, base, _paint_layer);
 
     if (m_layout)
     {
@@ -208,24 +205,28 @@ namespace nux
     }
   }
 
-  Layout *BaseWindow::GetLayout ()
+  Layout* BaseWindow::GetLayout ()
   {
     return m_layout;
   }
 
-  void BaseWindow::SetLayout (Layout *layout)
+  bool BaseWindow::SetLayout (Layout *layout)
   {
-    if (layout == 0)
-      return;
+    if (View::SetLayout (layout) == false)
+      return false;
 
     m_layout = layout;
-    SetCompositionLayout (m_layout);
-
     Geometry geo = GetGeometry();
     Geometry layout_geo = Geometry (geo.x + m_Border, geo.y + m_TopBorder,
                                     geo.GetWidth() - 2 * m_Border, geo.GetHeight() - m_Border - m_TopBorder);
     m_layout->SetGeometry (layout_geo);
+
+    // When this call returns the layout computation is done.
     ComputeChildLayout();
+    // or use
+    //GetWindowThread()->QueueObjectLayout(m_layout);
+
+    return true;
   }
 
   // Get a change to do any work on an element.
@@ -493,13 +494,17 @@ namespace nux
 
   void BaseWindow::SetBackgroundLayer (AbstractPaintLayer *layer)
   {
-    NUX_SAFE_DELETE (m_PaintLayer);
-    m_PaintLayer = layer->Clone();
+    NUX_RETURN_IF_NULL (layer);
+    NUX_SAFE_DELETE (_paint_layer);
+    _paint_layer = layer->Clone();
   }
 
   void BaseWindow::SetBackgroundColor (const Color &color)
   {
-    m_background_color = color;
+    if (_paint_layer)
+      NUX_SAFE_DELETE(_paint_layer);
+
+    _paint_layer = new ColorLayer(color);
   }
 
   void BaseWindow::PushHigher (BaseWindow* floating_view)

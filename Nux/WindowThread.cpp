@@ -405,7 +405,7 @@ namespace nux
     m_bIsModal              = Modal;
 
     _inside_layout_cycle = 0;
-    m_RedrawRequested       = false;
+    _draw_requested_to_host_wm       = false;
     m_bFirstDrawPass        = true;
 
     // The layout of the window is null.
@@ -559,11 +559,15 @@ namespace nux
 
   void WindowThread::RequestRedraw()
   {
-    m_RedrawRequested = true;
+    _draw_requested_to_host_wm = true;
     RedrawRequested.emit();
     
     if (!IsEmbeddedWindow())
     {
+      // If the system is not in embedded mode and an asynchronous request for a Draw is made,
+      // and the system is not in a timer processing cycle (always followed by a draw cycle) 
+      // or not in the event processing cycle (also followed by a draw cycle), then we set a 0 delay 
+      // timer that will wake up the system and initiate a draw cycle.
       if ((_inside_main_loop == false) && (_inside_timer_loop == false) && (_pending_wake_up_timer == false))
       {
         _pending_wake_up_timer = true;
@@ -571,7 +575,17 @@ namespace nux
       }
     }
   }
-  
+
+  void WindowThread::ClearRedrawFlag()
+  {
+    _draw_requested_to_host_wm = false;
+  }
+
+  bool WindowThread::IsRedrawNeeded() const
+  {
+    return _draw_requested_to_host_wm;
+  }
+
   Layout* WindowThread::GetMainLayout()
   {
     return _main_layout;
@@ -602,6 +616,7 @@ namespace nux
   void WindowThread::QueueMainLayout ()
   {
     _queue_main_layout = true;
+    RequestRedraw ();
   }
 
   void WindowThread::ReconfigureLayout ()
@@ -641,7 +656,7 @@ namespace nux
     QueueObjectLayout (area);
   }
 
-  bool WindowThread::RemoveObjectFromRefreshList (Area *area)
+  bool WindowThread::RemoveObjectFromLayoutQueue (Area *area)
   {
     NUX_RETURN_VALUE_IF_NULL (area, false);
 
@@ -654,6 +669,11 @@ namespace nux
       return true;
     }
     return false;
+  }
+
+  bool WindowThread::RemoveObjectFromRefreshList (Area *area)
+  {
+    return RemoveObjectFromLayoutQueue (area);
   }
 
   void WindowThread::RemoveQueuedLayout()
@@ -716,13 +736,13 @@ namespace nux
     return _inside_layout_cycle;
   }
 
-  void WindowThread::ComputeElementLayout (Area *area, bool RecurseToTopLevelLayout)
+  void WindowThread::ComputeElementLayout (Area *area, bool recurse_to_top_level_layout)
   {
     NUX_RETURN_IF_NULL (area);
 
-    bool alreadyComputingLayout = IsComputingLayout();
+    bool alreadyComputingLayout = IsInsideLayoutCycle();
 
-    if ((!alreadyComputingLayout) && (!RecurseToTopLevelLayout))
+    if ((!alreadyComputingLayout) && (!recurse_to_top_level_layout))
     {
       // When computing the layout, setting the size of widgets may cause the system to recurse 
       // upward an look for the up most container which size is affected by its this area.
@@ -869,6 +889,13 @@ namespace nux
       memset(&event, 0, sizeof(IEvent));
       GetWindow().GetSystemEvent(&event);
       
+
+      if ((event.e_event == NUX_DND_ENTER_WINDOW) ||
+        (event.e_event == NUX_DND_LEAVE_WINDOW))
+      {
+        GetWindowCompositor().ResetDnDArea();
+      }
+
       // Call event inspectors.
       CallEventInspectors (&event);
 
@@ -924,6 +951,10 @@ namespace nux
           (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
           (event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
           (event.e_event == NUX_WINDOW_MOUSELEAVE) ||
+          (event.e_event == NUX_DND_MOVE) ||
+          (event.e_event == NUX_DND_DROP) ||
+          (event.e_event == NUX_DND_ENTER) ||
+          (event.e_event == NUX_DND_LEAVE) ||
           (event.e_event == NUX_MOUSEWHEEL))
       {
           if((event.e_event == NUX_SIZE_CONFIGURATION) ||
@@ -980,13 +1011,14 @@ namespace nux
       {
         bool SwapGLBuffer = false;
         
-        bool RequestRequired = false;
+        // Warn the host window manager to initiate a draw cycle.
+        bool request_draw_cycle_to_host_wm = false;
 
         if (Application->m_bFirstDrawPass)
         {
           if (IsEmbeddedWindow ())
           {
-            RequestRequired = true;
+            request_draw_cycle_to_host_wm = true;
             m_force_redraw = true;
           }
           else
@@ -1024,10 +1056,9 @@ namespace nux
 
           if (b || IsRedrawNeeded())
           {
-            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
             if (IsEmbeddedWindow ())
             {
-              RequestRequired = true;
+              request_draw_cycle_to_host_wm = true;
             }
             else
             {
@@ -1037,10 +1068,9 @@ namespace nux
           }
           else if (m_window_compositor->GetWidgetDrawingOverlay() != 0)
           {
-            //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
             if (IsEmbeddedWindow ())
             {
-              RequestRequired = true;
+              request_draw_cycle_to_host_wm = true;
             }
             else
             {
@@ -1085,11 +1115,14 @@ namespace nux
             m_PeriodeTime = 0.0f;
             m_FramePeriodeCounter = 0;
           }
-        }
-        if (IsEmbeddedWindow () && !m_RedrawRequested && RequestRequired)
-          RequestRedraw ();
 
-        GetWindowThread ()->GetGraphicsEngine().ResetStats();
+          ClearRedrawFlag ();
+          GetWindowThread ()->GetGraphicsEngine().ResetStats();
+        }
+        else if (IsEmbeddedWindow () && (_draw_requested_to_host_wm == false) && request_draw_cycle_to_host_wm)
+        {
+          RequestRedraw ();
+        }
         m_size_configuration_event = false;
       }
     }
@@ -1564,42 +1597,15 @@ namespace nux
       m_window_compositor->SetBackgroundPaintLayer (bkg);
   }
   
-  Area* WindowThread::GetTopRenderingParent(Area* area)
-  {
-    NUX_RETURN_VALUE_IF_NULL(area, NULL);
-
-    Area* parent = area->GetParentObject();
-    if (parent)
-    {
-      if (parent == GetWindowThread ()->GetMainLayout ())
-      {
-        return parent;
-      }
-      else if (parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
-      {
-        return parent;
-      }
-      else 
-      {
-        return GetTopRenderingParent (parent);
-      }
-    }
-    else
-    {
-      return 0;
-    }
-  }
-  
   void WindowThread::AddToDrawList (View *view)
   {
     Area *parent;
     Geometry geo, pgeo;
     
     geo = view->GetGeometry();
+    parent = view->GetToplevel ();
     
-    parent = GetTopRenderingParent (view);
-    
-    if (parent)
+    if (parent && view != parent)
     {
       pgeo = parent->GetGeometry();
       geo.x += pgeo.x;
@@ -1737,13 +1743,12 @@ namespace nux
       }
     }
 
-    bool RequestRequired = false;
-
-    bool SwapGLBuffer = false;
+    // Warn the host window manager to initiate a draw cycle.
+    bool request_draw_cycle_to_host_wm = false;
 
     if (this->m_bFirstDrawPass)
     {
-      RequestRequired = true;
+      request_draw_cycle_to_host_wm = true;
       m_force_redraw = true;
       //m_window_compositor->Draw(m_size_configuration_event, true);
       this->m_bFirstDrawPass = false;
@@ -1777,24 +1782,18 @@ namespace nux
 
       if (b || IsRedrawNeeded() )
       {
-        //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRequired = true;
-        //m_window_compositor->Draw(event, false);
-        SwapGLBuffer = true;
+        request_draw_cycle_to_host_wm = true;
       }
       else if (m_window_compositor->GetWidgetDrawingOverlay() != 0)
       {
-        //nuxDebugMsg("Event: %s", (const TCHAR*)EventToName[event.e_event].EventName);
-        RequestRequired = true;
-        //m_window_compositor->Draw(event, false);
-        SwapGLBuffer = false;
+        request_draw_cycle_to_host_wm = true;
       }
     }
 
-    if (!m_RedrawRequested && RequestRequired)
+    if (!_draw_requested_to_host_wm && request_draw_cycle_to_host_wm)
       RequestRedraw ();
-    // ?
-    return RequestRequired;
+
+    return request_draw_cycle_to_host_wm;
   }
 
   void WindowThread::RenderInterfaceFromForeignCmd()
@@ -1816,7 +1815,7 @@ namespace nux
       RefreshLayout ();
       m_window_compositor->Draw (m_size_configuration_event, m_force_redraw);
 
-      // When rendering in embedded mode, nux does not attempt to mesure the frame rate...
+      // When rendering in embedded mode, nux does not attempt to measure the frame rate...
 
       // Cleanup
       GetWindowThread ()->GetGraphicsEngine().ResetStats();
@@ -1840,11 +1839,6 @@ namespace nux
 #endif
 
     GetGpuDevice()->DeactivateFrameBuffer();
-    /*GetWindowThread ()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE0, GL_TEXTURE_RECTANGLE);
-    GetWindowThread ()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE1, GL_TEXTURE_RECTANGLE);
-    GetWindowThread ()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE2, GL_TEXTURE_RECTANGLE);
-    GetWindowThread ()->GetGraphicsEngine().EnableTextureMode(GL_TEXTURE3, GL_TEXTURE_RECTANGLE);*/
-
   }
 
   int WindowThread::InstallEventInspector (EventInspector* function, void* data)

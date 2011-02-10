@@ -85,11 +85,6 @@ namespace nux
     void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-  protected:
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
-
   private:
 
     void RecvTabRightTimerExpired (void *v);

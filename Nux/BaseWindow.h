@@ -79,8 +79,9 @@ namespace nux
     void AddWidget (View *ic);
     void AddWidget (View *ic, int stretchfactor);
     void AddWidget (std::list<View *> *ViewList);
-    Layout *GetLayout ();
-    void SetLayout (Layout *layout);
+    
+    virtual Layout* GetLayout();
+    virtual bool SetLayout(Layout *layout);
 
     void PushHigher (BaseWindow* floating_view);
     void PushLower (BaseWindow* floating_view);
@@ -126,16 +127,6 @@ namespace nux
     void SetBackgroundLayer (AbstractPaintLayer *layer);
     void SetBackgroundColor (const Color &color);
 
-    void SetBlurredBackground (bool b)
-    {
-      m_blured_background = b;
-    }
-
-    bool UseBlurredBackground()
-    {
-      return m_blured_background;
-    }
-    
     #if defined(NUX_OS_LINUX)
     void EnableInputWindow (bool b, bool override_redirect = 0);
     bool InputWindowEnabled ();
@@ -193,25 +184,22 @@ namespace nux
     void SetTopBorder (int border);
     int m_TopBorder;
     int m_Border;
-    Color m_background_color;   //!< Background color of the floating area.
-    AbstractPaintLayer *m_PaintLayer;
+    AbstractPaintLayer *_paint_layer;
 
-    bool m_blured_background;
-    
     bool _entering_visible_state;  //!< the window is about to be made visible during event processing
     bool _entering_hidden_state;   //!< the window is about to be made hidden during event processing
     
     bool ChildNeedsRedraw ();
-
-  private:
-    //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
-    ObjectPtr<BaseTexture> _background_texture;
 
     #if defined(NUX_OS_LINUX)
     bool m_input_window_enabled;
     XInputWindow *m_input_window;
     #endif
     
+  private:
+    //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
+    ObjectPtr<BaseTexture> _background_texture;
+   
     bool _size_match_layout;
     bool _is_visible;
     bool _is_modal;

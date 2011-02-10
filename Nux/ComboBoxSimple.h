@@ -74,11 +74,6 @@ namespace nux
     sigc::signal<void, ActionItem *> sigActionTriggered;
 
   protected:
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
-
-  protected:
     MenuPage   *m_CurrentMenu;
     ActionItem *m_SelectedAction;
 

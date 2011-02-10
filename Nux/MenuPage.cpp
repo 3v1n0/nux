@@ -72,7 +72,8 @@ namespace nux
   void MenuItem::SetChildMenu (MenuPage *menu)
   {
     nuxAssert(menu);
-    NUX_RETURN_IF_NULL (menu)
+    NUX_RETURN_IF_NULL (menu);
+
     if (_child_menu)
       _child_menu->UnReference ();
     _child_menu = menu;
@@ -94,6 +95,7 @@ namespace nux
     if (_action_item)
       _action_item->UnReference ();
     _action_item = action;
+    _action_item->Reference();
   }
 
   ActionItem *MenuItem::GetActionItem() const
@@ -217,15 +219,22 @@ namespace nux
     vlayout = new VLayout (NUX_TRACKER_LOCATION);
     // No Need to set a composition layout.
     // The MenuPage is floating above everything else.
-    SetCompositionLayout (vlayout);
+    SetLayout (vlayout);
 
     SetTextColor (Color::Black);
   }
 
   MenuPage::~MenuPage()
   {
+//     std::vector <MenuItem*>::iterator it;
+// 
+//     for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
+//     {
+//       (*it)->UnReference();
+//     }
     m_MenuItemVector.clear();
     m_MenuSeparatorVector.clear();
+    RemoveLayout();
   }
 
 //void MenuPage::SetName(const TCHAR* name)

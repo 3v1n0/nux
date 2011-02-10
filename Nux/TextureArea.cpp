@@ -26,6 +26,7 @@
 
 namespace nux
 {
+  NUX_IMPLEMENT_OBJECT_TYPE (TextureArea);
 
   TextureArea::TextureArea (NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
@@ -51,7 +52,10 @@ namespace nux
 
   void TextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    GetPainter().PaintBackground (GfxContext, GetGeometry() );
+
+    // The TextureArea should not render the accumulated background. That is left to the caller.
+
+    // GetPainter().PaintBackground (GfxContext, GetGeometry() );
 
     if (m_PaintLayer)
     {

@@ -40,7 +40,8 @@ host_triplet = @host@
 @BUILD_GPUTESTS_TRUE@	quad_2texmod$(EXEEXT) \
 @BUILD_GPUTESTS_TRUE@	texture_copy_blur$(EXEEXT) \
 @BUILD_GPUTESTS_TRUE@	texture_blur$(EXEEXT) \
-@BUILD_GPUTESTS_TRUE@	texture_data$(EXEEXT)
+@BUILD_GPUTESTS_TRUE@	texture_data$(EXEEXT) \
+@BUILD_GPUTESTS_TRUE@	arb_programs_limits$(EXEEXT)
 subdir = gputests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -55,10 +56,10 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am__framebufferobject_SOURCES_DIST = framebufferobject.cpp
-@BUILD_GPUTESTS_TRUE@am_framebufferobject_OBJECTS =  \
-@BUILD_GPUTESTS_TRUE@	framebufferobject.$(OBJEXT)
-framebufferobject_OBJECTS = $(am_framebufferobject_OBJECTS)
+am__arb_programs_limits_SOURCES_DIST = arb_programs_limits.cpp
+@BUILD_GPUTESTS_TRUE@am_arb_programs_limits_OBJECTS =  \
+@BUILD_GPUTESTS_TRUE@	arb_programs_limits.$(OBJEXT)
+arb_programs_limits_OBJECTS = $(am_arb_programs_limits_OBJECTS)
 am__DEPENDENCIES_1 =
 @BUILD_GPUTESTS_TRUE@am__DEPENDENCIES_2 = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
@@ -67,11 +68,17 @@ am__DEPENDENCIES_1 =
 @BUILD_GPUTESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@	$(am__DEPENDENCIES_1) \
 @BUILD_GPUTESTS_TRUE@	$(am__DEPENDENCIES_1)
-@BUILD_GPUTESTS_TRUE@framebufferobject_DEPENDENCIES =  \
+@BUILD_GPUTESTS_TRUE@arb_programs_limits_DEPENDENCIES =  \
 @BUILD_GPUTESTS_TRUE@	$(am__DEPENDENCIES_2)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
+am__framebufferobject_SOURCES_DIST = framebufferobject.cpp
+@BUILD_GPUTESTS_TRUE@am_framebufferobject_OBJECTS =  \
+@BUILD_GPUTESTS_TRUE@	framebufferobject.$(OBJEXT)
+framebufferobject_OBJECTS = $(am_framebufferobject_OBJECTS)
+@BUILD_GPUTESTS_TRUE@framebufferobject_DEPENDENCIES =  \
+@BUILD_GPUTESTS_TRUE@	$(am__DEPENDENCIES_2)
 am__quad_2texmod_SOURCES_DIST = quad_2texmod.cpp
 @BUILD_GPUTESTS_TRUE@am_quad_2texmod_OBJECTS = quad_2texmod.$(OBJEXT)
 quad_2texmod_OBJECTS = $(am_quad_2texmod_OBJECTS)
@@ -125,10 +132,12 @@ am__v_CXXLD_0 = @echo "  CXXLD " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(framebufferobject_SOURCES) $(quad_2texmod_SOURCES) \
-	$(texture_blur_SOURCES) $(texture_copy_blur_SOURCES) \
-	$(texture_data_SOURCES) $(texture_power_of_2_SOURCES)
-DIST_SOURCES = $(am__framebufferobject_SOURCES_DIST) \
+SOURCES = $(arb_programs_limits_SOURCES) $(framebufferobject_SOURCES) \
+	$(quad_2texmod_SOURCES) $(texture_blur_SOURCES) \
+	$(texture_copy_blur_SOURCES) $(texture_data_SOURCES) \
+	$(texture_power_of_2_SOURCES)
+DIST_SOURCES = $(am__arb_programs_limits_SOURCES_DIST) \
+	$(am__framebufferobject_SOURCES_DIST) \
 	$(am__quad_2texmod_SOURCES_DIST) \
 	$(am__texture_blur_SOURCES_DIST) \
 	$(am__texture_copy_blur_SOURCES_DIST) \
@@ -370,6 +379,8 @@ EXTRA_DIST =
 @BUILD_GPUTESTS_TRUE@texture_blur_LDADD = $(ALL_LIBS)
 @BUILD_GPUTESTS_TRUE@texture_data_SOURCES = texture_data.cpp
 @BUILD_GPUTESTS_TRUE@texture_data_LDADD = $(ALL_LIBS)
+@BUILD_GPUTESTS_TRUE@arb_programs_limits_SOURCES = arb_programs_limits.cpp
+@BUILD_GPUTESTS_TRUE@arb_programs_limits_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
 @BUILD_GPUTESTS_TRUE@sourcegputestsdir = "$(pkgdatadir)/gputests"
@@ -378,7 +389,8 @@ EXTRA_DIST =
 @BUILD_GPUTESTS_TRUE@                      $(quad_2texmod) \
 @BUILD_GPUTESTS_TRUE@                      $(texture_copy_blur_SOURCES) \
 @BUILD_GPUTESTS_TRUE@                      $(texture_blur_SOURCES) \
-@BUILD_GPUTESTS_TRUE@                      $(texture_data_SOURCES)
+@BUILD_GPUTESTS_TRUE@                      $(texture_data_SOURCES) \
+@BUILD_GPUTESTS_TRUE@                      $(arb_programs_limits_SOURCES)
 
 all: all-am
 
@@ -423,6 +435,9 @@ clean-noinstPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+arb_programs_limits$(EXEEXT): $(arb_programs_limits_OBJECTS) $(arb_programs_limits_DEPENDENCIES) 
+	@rm -f arb_programs_limits$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(arb_programs_limits_OBJECTS) $(arb_programs_limits_LDADD) $(LIBS)
 framebufferobject$(EXEEXT): $(framebufferobject_OBJECTS) $(framebufferobject_DEPENDENCIES) 
 	@rm -f framebufferobject$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(framebufferobject_OBJECTS) $(framebufferobject_LDADD) $(LIBS)
@@ -448,6 +463,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arb_programs_limits.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/framebufferobject.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quad_2texmod.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/texture_blur.Po@am__quote@

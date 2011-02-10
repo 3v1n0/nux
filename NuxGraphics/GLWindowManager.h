@@ -42,7 +42,20 @@ namespace nux
   class DisplayAccessController
   {
   public:
-    GraphicsDisplay *CreateGLWindow (const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style, GraphicsDisplay *GLWindow, bool FullscreenFlag = FALSE);
+    //! Create a graphics window capable of doing OpenGL rendering.
+    /*!
+      @param WindowTitle The title name of the window.
+      @param WindowWidth Window width.
+      @param WindowHeight Window height.
+      @param Style Window style.
+      @param parent The parent window.
+      @param FullscreenFlag True to create a full screen window.
+      @param create_rendering_data If true, then in GraphicsEngine, the system creates the OpenGL shaders and the font textures for the rendering.
+    */
+    GraphicsDisplay *CreateGLWindow (const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style,
+      GraphicsDisplay *parent,
+      bool FullscreenFlag = false,
+      bool create_rendering_data = true);
 
 #if defined(NUX_OS_WINDOWS)
     HINSTANCE GetInstance()

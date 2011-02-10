@@ -32,6 +32,8 @@
 #include "NuxGraphics/Events.h"
 #endif
 
+#include "NuxGraphics/GraphicsDisplay.h"
+
 
 #define FOCUSNONE -1
 
@@ -45,7 +47,7 @@ namespace nux
   class InputArea;
   typedef InputArea CoreArea;
 
-  class InputArea : public Area //public sigc::trackable
+  class InputArea : public Area
   {
   public:
     NUX_DECLARE_OBJECT_TYPE (InputArea, Area);
@@ -134,6 +136,8 @@ namespace nux
     // when the area position is reffered to (x_root, y_root) instead of being the system window coordinates (0, 0).
     void SetAreaMousePosition (int x, int y);
 
+    void HandleDndEnter () { ProcessDndEnter (); }
+    void HandleDndLeave () { ProcessDndLeave (); }
   private:
 
     //! Event processing in exclusive mode.
@@ -141,6 +145,9 @@ namespace nux
         Bypass OnEvent and performs a simplified event processing mechanism.
     */
     long ProcessEventInExclusiveMode (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    
+    void HandleDndMove  (IEvent &event);
+    void HandleDndDrop  (IEvent &event);
 
     //! Color of the CoreArea
     /*
@@ -161,6 +168,17 @@ namespace nux
 
     bool _print_event_debug_trace;
 
+    // DnD support
+    // Rather than being implemented with signals, DND support is implemented with protected virtual function.
+    // This ensure that a class and it subclass don't process the same event more than once!
+
+    virtual void ProcessDndMove  (int x, int y, std::list<char *>mimes);
+    virtual void ProcessDndDrop  (int x, int y);
+    virtual void ProcessDndEnter ();
+    virtual void ProcessDndLeave ();
+
+    void SendDndStatus (bool accept, DndAction action, Geometry region);
+    void SendDndFinished (bool accepted, DndAction action);
   public:
     sigc::signal<void, int, int, int, int, unsigned long, unsigned long> OnMouseMove;  // send the current position inside the area
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDown;

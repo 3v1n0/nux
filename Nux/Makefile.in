@@ -149,6 +149,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-IntegerValidator.lo \
 	libnux_@NUX_API_VERSION@_la-View.lo \
 	libnux_@NUX_API_VERSION@_la-KeyboardHandler.lo \
+	libnux_@NUX_API_VERSION@_la-LayeredLayout.lo \
 	libnux_@NUX_API_VERSION@_la-Layout.lo \
 	libnux_@NUX_API_VERSION@_la-ListControl.lo \
 	libnux_@NUX_API_VERSION@_la-Matrix3Editor.lo \
@@ -534,6 +535,7 @@ source_cpp = \
   $(srcdir)/IntegerValidator.cpp \
   $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
+  $(srcdir)/LayeredLayout.cpp \
   $(srcdir)/Layout.cpp \
   $(srcdir)/ListControl.cpp \
   $(srcdir)/Matrix3Editor.cpp \
@@ -668,6 +670,7 @@ source_h = \
   $(srcdir)/IntegerValidator.h \
   $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
+  $(srcdir)/LayeredLayout.h \
   $(srcdir)/Layout.h \
   $(srcdir)/ListControl.h \
   $(srcdir)/Matrix3Editor.h \
@@ -872,6 +875,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-IntegerValidator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-KeyboardHandler.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-LayeredLayout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Layout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ListControl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3Editor.Plo@am__quote@
@@ -1508,6 +1512,14 @@ libnux_@NUX_API_VERSION@_la-KeyboardHandler.lo: $(srcdir)/KeyboardHandler.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/KeyboardHandler.cpp' object='libnux_@NUX_API_VERSION@_la-KeyboardHandler.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-KeyboardHandler.lo `test -f '$(srcdir)/KeyboardHandler.cpp' || echo '$(srcdir)/'`$(srcdir)/KeyboardHandler.cpp
+
+libnux_@NUX_API_VERSION@_la-LayeredLayout.lo: $(srcdir)/LayeredLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-LayeredLayout.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-LayeredLayout.Tpo -c -o libnux_@NUX_API_VERSION@_la-LayeredLayout.lo `test -f '$(srcdir)/LayeredLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/LayeredLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-LayeredLayout.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-LayeredLayout.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/LayeredLayout.cpp' object='libnux_@NUX_API_VERSION@_la-LayeredLayout.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-LayeredLayout.lo `test -f '$(srcdir)/LayeredLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/LayeredLayout.cpp
 
 libnux_@NUX_API_VERSION@_la-Layout.lo: $(srcdir)/Layout.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Layout.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Layout.Tpo -c -o libnux_@NUX_API_VERSION@_la-Layout.lo `test -f '$(srcdir)/Layout.cpp' || echo '$(srcdir)/'`$(srcdir)/Layout.cpp

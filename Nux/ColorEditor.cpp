@@ -317,17 +317,17 @@ namespace nux
     ctrllayout->SetHorizontalExternalMargin (2);
     ctrllayout->SetVerticalInternalMargin (2);
 
-    //ctrllayout->AddView(new SpaceLayout(20,20,20,40), 1);
-    OkButton = new PushButton (TEXT ("OK"), NUX_TRACKER_LOCATION);
-    OkButton->SetMinimumWidth (60);
-    OkButton->SetMinimumHeight (20);
-
-    CancelButton = new PushButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION);
-    CancelButton->SetMinimumWidth (60);
-    CancelButton->SetMinimumHeight (20);
-
-//    ctrllayout->AddView(OkButton, 1);
-//    ctrllayout->AddView(CancelButton, 1);
+//     //ctrllayout->AddView(new SpaceLayout(20,20,20,40), 1);
+//     OkButton = new PushButton (TEXT ("OK"), NUX_TRACKER_LOCATION);
+//     OkButton->SetMinimumWidth (60);
+//     OkButton->SetMinimumHeight (20);
+// 
+//     CancelButton = new PushButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION);
+//     CancelButton->SetMinimumWidth (60);
+//     CancelButton->SetMinimumHeight (20);
+// 
+// //    ctrllayout->AddView(OkButton, 1);
+// //    ctrllayout->AddView(CancelButton, 1);
 
     m_hlayout->AddLayout (ctrllayout, 0);
 
@@ -398,8 +398,8 @@ namespace nux
       ret = valuetext->OnEvent (ievent, ret, ProcessEventInfo);
     }
 
-    OkButton->OnEvent (ievent, ret, ProcessEventInfo);
-    CancelButton->OnEvent (ievent, ret, ProcessEventInfo);
+//     OkButton->OnEvent (ievent, ret, ProcessEventInfo);
+//     CancelButton->OnEvent (ievent, ret, ProcessEventInfo);
 
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
 
@@ -450,8 +450,8 @@ namespace nux
     valuecheck->NeedRedraw();
     valuetext->NeedRedraw();
 
-    OkButton->NeedRedraw();
-    CancelButton->NeedRedraw();
+//     OkButton->NeedRedraw();
+//     CancelButton->NeedRedraw();
 
     GfxContext.PopClippingRectangle();
   }

@@ -83,6 +83,16 @@ namespace nux
     //! Get the number of rows in the grid.
     int GetNumRow () const;
 
+    //! Make the grid width match the size of its content.
+    /*!
+        @param match_content If True, force the height of the layout to match the height of the content. This can also be achieve 
+        if the stretch factor of this layout is set to 0;
+    */
+    void SetHeightMatchContent (bool match_content);
+
+    //! Return True if the grid width match the size of its content.
+    bool GetHeightMatchContent () const;
+
     //! Draw Element
     /*!
       Draw all elements inside the layout.
@@ -99,6 +109,8 @@ namespace nux
     bool _dynamic_column;
     bool _force_children_size;
     bool _partial_visibility;
+    bool _height_match_content; //!< If True, for the height of the layout to match the height of the content.
+
     int _num_row;
     int _num_column;
 

@@ -173,20 +173,20 @@ namespace nux
     }
   }
 
-  void Panel::SetLayout (Layout *layout)
+  bool Panel::SetLayout (Layout *layout)
   {
-    if (layout == 0)
-      return;
-
-    std::list<Area *> *ViewList = new std::list<Area *>;
+    if(View::SetLayout(layout) == false)
+    {
+      return false;
+    }
 
     m_layout = layout;
-
+    
     SetCompositionLayout (m_layout);
 
     FormatContent();
 
-    delete ViewList;
+    return true;
   }
 
   void Panel::clearContent()
