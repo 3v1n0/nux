@@ -1472,7 +1472,7 @@ namespace nux
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: KeyPress event."));
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym (m_X11Display, keycode, 0);
+        keysym = XKeycodeToKeysym (xevent.xany.display, keycode, 0);
 
         m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         m_pEvent->e_key_repeat_count = 0;
@@ -1506,7 +1506,7 @@ namespace nux
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: KeyRelease event."));
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym (m_X11Display, keycode, 0);
+        keysym = XKeycodeToKeysym (xevent.xany.display, keycode, 0);
 
         m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         m_pEvent->e_key_repeat_count = 0;
