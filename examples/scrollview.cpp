@@ -23,25 +23,42 @@
 #include "Nux/HLayout.h"
 #include "Nux/WindowThread.h"
 #include "Nux/TextEntry.h"
+#include "Nux/ScrollView.h"
+#include "Nux/GridHLayout.h"
+#include "Nux/GridVLayout.h"
+#include "Nux/TextureArea.h"
+#include "Nux/Panel.h"
 
 void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 {
     nux::VLayout* MainVLayout = new nux::VLayout(NUX_TRACKER_LOCATION);
 
-//     nux::TextEntry* text_entry = new nux::TextEntry(TEXT("Lorem ipsum dolor sit amet, consectetur adipiscing elit."\
-//                                                          "Nulla eget orci augue. Quisque condimentum, nisi gravida condimentum pretium,"\
-//                                                          "tellus nulla congue nisi, vel tincidunt est mi ut tortor. Nullam id sem elit."\
-//                                                          "Nam faucibus ornare lacus a tincidunt. Cras aliquet mollis dictum."\
-//                                                          "Vivamus in velit lacus, ac pellentesque arcu. Sed vitae feugiat odio"), NUX_TRACKER_LOCATION);
-// 
+    nux::GridVLayout *grid_h_layout ((new nux::GridVLayout (NUX_TRACKER_LOCATION)));
+    for (int i = 0; i < 60; i++)
+    {
+      nux::ColorLayer color (nux::Color::RandomColor ());
+      nux::TextureArea* texture_area = new nux::TextureArea ();
+      texture_area->SetPaintLayer (&color);
 
-    nux::TextEntry* text_entry = new nux::TextEntry(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
+      grid_h_layout->AddView (texture_area, 1, nux::eLeft, nux::eFull);
+    }
 
-    text_entry->SetMaximumWidth(300);
-    text_entry->SetMinimumHeight (20);
+    grid_h_layout->ForceChildrenSize (true);
+    grid_h_layout->SetChildrenSize (64, 42);
+    grid_h_layout->EnablePartialVisibility (true);
 
+    grid_h_layout->SetVerticalExternalMargin (4);
+    grid_h_layout->SetHorizontalExternalMargin (4);
+    grid_h_layout->SetVerticalInternalMargin (4);
+    grid_h_layout->SetHorizontalInternalMargin (4);
+
+
+    nux::Panel *scroll_view = new nux::Panel(NUX_TRACKER_LOCATION);
     
-    MainVLayout->AddView(text_entry, 0, nux::eCenter, nux::eFull);
+    grid_h_layout->SetStretchFactor(1);
+    scroll_view->SetLayout(grid_h_layout);
+    
+    MainVLayout->AddView(scroll_view, 1, nux::eCenter, nux::eFull);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
     
     nux::GetWindowThread ()->SetLayout(MainVLayout);
@@ -52,7 +69,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 int main(int argc, char **argv)
 {
     nux::NuxInitialize(0);
-    nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Text Entry"), 400, 300, 0, &ThreadWidgetInit, 0);
+    nux::WindowThread* wt = nux::CreateGUIThread(TEXT("ScrollView"), 400, 300, 0, &ThreadWidgetInit, 0);
     wt->Run(NULL);
 
     delete wt;

@@ -26,12 +26,12 @@
 namespace nux
 {
 // Store time from [Midnight(00:00:00), January 1, 1970 UTC] up to [23:59:59, December 31, 3000 UTC]  or [03:14:07 January 19, 2038 UTC]
-  class NTimeStamp
+  class TimeStamp
   {
   public:
 
-    NTimeStamp();
-    ~NTimeStamp();
+    TimeStamp();
+    ~TimeStamp();
     // Time is in UTC
     unsigned int     m_Year;           /* year                             */
     unsigned int     m_Month;          /* months since January - [0,11]    */
@@ -46,34 +46,17 @@ namespace nux
     t_s64  GetJulianDayNumber()             const;
     t_f64  GetJulianDate()                  const;
     unsigned int    GetSecondOfDay()                 const;
-    bool   operator== ( NTimeStamp &Other )  const;
-    bool   operator!= ( NTimeStamp &Other )  const;
-    bool   operator< ( NTimeStamp &Other )  const;
-    bool   operator> ( NTimeStamp &Other )  const;
-    bool   operator>= ( NTimeStamp &Other )  const;
-    bool   operator<= ( NTimeStamp &Other )  const;
+    bool   operator== ( TimeStamp &Other )  const;
+    bool   operator!= ( TimeStamp &Other )  const;
+    bool   operator< ( TimeStamp &Other )  const;
+    bool   operator> ( TimeStamp &Other )  const;
+    bool   operator>= ( TimeStamp &Other )  const;
+    bool   operator<= ( TimeStamp &Other )  const;
 
     void GetTime();
   };
 
-//! Returns the number of cycles that have passed. The origin is unknown.
-  /*!
-      Returns the number of cycles that have passed. The origin is unknown.
-
-      @return current value of high resolution cycle counter.
-  */
-  DWORD inlCycles();
-
-#if STATS
-#define inl_clock(Timer)   {Timer -= inlCycles();}
-#define inl_unclock(Timer) {Timer += inlCycles();}
-#else
-#define inl_clock(Timer)
-#define inl_unclock(Timer)
-#endif
-
-
-//! Returns the time that has passed in seconds. The origin is unknown.
+  //! Returns the time that has passed in seconds. The origin is unknown.
   /*!
       Returns the time that has passed in seconds. The origin is unknown.
 
@@ -81,7 +64,7 @@ namespace nux
   */
   double Seconds();
 
-//! Returns the time that has passed in milliseconds. The origin is unknown.
+  //! Returns the time that has passed in milliseconds. The origin is unknown.
   /*!
       Returns the time that has passed in milliseconds. The origin is unknown.
 
@@ -89,7 +72,7 @@ namespace nux
   */
   double MilliSeconds();
 
-// Retrieves the current local date and time.
+  // Retrieves the current local date and time.
   void GetLocalTime (unsigned int &Year,
                      unsigned int &Month,
                      unsigned int &Day,
@@ -98,7 +81,7 @@ namespace nux
                      unsigned int &Sec,
                      unsigned int &MicroSec);
 
-// Retrieves the current system date and time. The system time is expressed in Coordinated Universal Time (UTC).
+  // Retrieves the current system date and time. The system time is expressed in Coordinated Universal Time (UTC).
   void GetUTCTime (unsigned int &Year,
                    unsigned int &Month,
                    unsigned int &Day,
@@ -107,31 +90,12 @@ namespace nux
                    unsigned int &Sec,
                    unsigned int &MicroSec);
 
-//! Returns the time formatted in a string
+  
+  //! Returns the time formatted in a string
   /*!
-      Returns the time formatted in a string.
+      @return The time formatted in a string.
   */
-  const TCHAR *GetFormattedLocalTime();
-
-//! Sleep the thread for Seconds.
-  /*!
-      Sleep the thread for Seconds.
-      A value of zero causes the thread to relinquish the remainder of its time slice to any other thread of equal priority that is ready to run.
-  */
-  void SleepSeconds ( float Seconds );
-
-//! Sleep the thread for MilliSeconds.
-  /*!
-      Sleep the thread for MilliSeconds.
-      A value of zero causes the thread to relinquish the remainder of its time slice to any other thread of equal priority that is ready to run.
-  */
-  void SleepMilliSeconds ( float MilliSeconds );
-
-//! Get the time zone in hours.
-  /*!
-      Get the time zone in hours. Estern North American time zone is -5 hours.
-  */
-  t_long GetTimeZone();
+  NString GetFormattedLocalTime();
 
   /*!
       Suspend thread execution for an interval measured in microseconds.

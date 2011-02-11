@@ -1345,63 +1345,29 @@ namespace nux
       GetGpuDevice()->DeactivateFrameBuffer();
     }
 
-    GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
-    GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
-    GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
-    GetWindowThread ()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
-
+    GetWindowThread()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
+    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
+    GetWindowThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
+    GetWindowThread()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
+    GetWindowThread()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
 
     // Render the MAINFBO
     {
-      //-->GetWindowThread ()->GetGraphicsEngine().DrawQuadTexture
-
-      GetWindowThread ()->GetGraphicsEngine().EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_RECTANGLE_ARB);
-      HWTexture->BindTextureToUnit (GL_TEXTURE0);
-
       int src_width, src_height;
       src_width = HWTexture->GetWidth();
       src_height = HWTexture->GetHeight();
 
-      if (1 /*!BluredBackground*/)
-      {
-        TexCoordXForm texxform0;
-        texxform0.FlipVCoord (true);
+      TexCoordXForm texxform0;
+      texxform0.FlipVCoord (true);
 
-        if (GetWindowThread ()->IsEmbeddedWindow() )
-        {
-          // Compose Nux's main texture onto another surface (a texture or the back buffer) with blending.
-          GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
-
-        GetThreadGraphicsContext()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color::White);
-        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
-      }
-      else
+      if (GetWindowThread()->IsEmbeddedWindow())
       {
-//         HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
-//         HWTexture->BindTextureToUnit (GL_TEXTURE0);
-// 
-//         m_BlurTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
-//         m_BlurTexture->BindTextureToUnit (GL_TEXTURE1);
-// 
-//         TexCoordXForm texxform0;
-//         texxform0.SetFilter (TEXFILTER_NEAREST, TEXFILTER_NEAREST);
-//         texxform0.FlipVCoord (true);
-//         TexCoordXForm texxform1;
-//         texxform1.SetFilter (TEXFILTER_NEAREST, TEXFILTER_NEAREST);
-//         texxform1.FlipVCoord (true);
-//         texxform1.uoffset = (float) x / (float) src_width;
-//         texxform1.voffset = (float) y / (float) src_height;
-//         texxform1.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-// 
-//         GetWindowThread ()->GetGraphicsEngine().QRP_2Tex (x, y, src_width, src_height,
-//             HWTexture, texxform0, Color::White,
-//             m_BlurTexture, texxform1, Color::White);
+        // Compose Nux's main texture onto another surface (a texture or the back buffer) with blending.
+        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       }
 
-      //GetWindowThread ()->GetGraphicsEngine().DisableAllTextureMode(GL_TEXTURE1);
-      //GetWindowThread ()->GetGraphicsEngine().SetEnvModeSelectColor(GL_TEXTURE0);
+      GetThreadGraphicsContext()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color::White);
+      GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
     }
   }
 
@@ -1658,156 +1624,6 @@ namespace nux
 //     m_FullSceneMip2 = GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width / 8, 1), Max (buffer_height / 8, 1), 1, BITFMT_R8G8B8A8);
   }
 
-//   void WindowCompositor::UpdatePostProcessRT()
-//   {
-//     int buffer_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-//     int buffer_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-// 
-//     nuxAssert (buffer_width >= 1);
-//     nuxAssert (buffer_height >= 1);
-// 
-//     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-// 
-//     int src_width, src_height;
-//     int dst_width, dst_height;
-//     {
-//       src_width = buffer_width;
-//       src_height = buffer_height;
-//       dst_width = Max (buffer_width / 2, 1);
-//       dst_height = Max (buffer_height / 2, 1);
-// 
-//       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
-//       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip0->GetSurfaceLevel (0) );
-//       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
-//       m_FrameBufferObject->Activate();
-// 
-//       GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
-//       GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
-//       GetWindowThread ()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
-// 
-//       m_CompositionRT->SetFiltering (GL_LINEAR, GL_LINEAR);
-// 
-//       TexCoordXForm texxform0;
-//       texxform0.uwrap = TEXWRAP_CLAMP;
-//       texxform0.vwrap = TEXWRAP_CLAMP;
-//       texxform0.FlipVCoord (true);
-//       GetThreadGraphicsContext()->QRP_1Tex (0, 0, dst_width, dst_height, m_CompositionRT, texxform0, Color::White);
-//     }
-// 
-//     {
-//       src_width = Max (buffer_width / 2, 1);
-//       src_height = Max (buffer_height / 2, 1);
-//       dst_width = Max (buffer_width / 4, 1);
-//       dst_height = Max (buffer_height / 4, 1);
-// 
-//       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
-//       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip1->GetSurfaceLevel (0) );
-//       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
-//       m_FrameBufferObject->Activate();
-// 
-//       GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
-//       GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
-//       GetWindowThread ()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
-// 
-// 
-//       m_FullSceneMip0->SetFiltering (GL_LINEAR, GL_LINEAR);
-//       TexCoordXForm texxform0;
-//       texxform0.uwrap = TEXWRAP_CLAMP;
-//       texxform0.vwrap = TEXWRAP_CLAMP;
-//       texxform0.FlipVCoord (true);
-//       GetThreadGraphicsContext()->QRP_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip0, texxform0, Color::White);
-//     }
-// 
-//     {
-//       src_width = Max (buffer_width / 4, 1);
-//       src_height = Max (buffer_height / 4, 1);
-//       dst_width = Max (buffer_width / 8, 1);
-//       dst_height = Max (buffer_height / 8, 1);
-// 
-//       m_FrameBufferObject->FormatFrameBufferObject (dst_width, dst_height, BITFMT_R8G8B8A8);
-//       m_FrameBufferObject->SetRenderTarget ( 0, m_FullSceneMip2->GetSurfaceLevel (0) );
-//       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
-//       m_FrameBufferObject->Activate();
-// 
-//       GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
-//       GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
-//       GetWindowThread ()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
-// 
-// 
-//       m_FullSceneMip1->SetFiltering (GL_LINEAR, GL_LINEAR);
-//       TexCoordXForm texxform0;
-//       texxform0.uwrap = TEXWRAP_CLAMP;
-//       texxform0.vwrap = TEXWRAP_CLAMP;
-//       texxform0.FlipVCoord (true);
-//       GetThreadGraphicsContext()->QRP_1Tex (0, 0, dst_width, dst_height, m_FullSceneMip1, texxform0, Color::White);
-//     }
-// 
-//     {
-//       src_width = buffer_width;
-//       src_height = buffer_height;
-//       dst_width = buffer_width;
-//       dst_height = buffer_height;
-// 
-//       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-//       m_FrameBufferObject->SetRenderTarget ( 0, m_BlurTexture->GetSurfaceLevel (0) );
-//       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
-//       m_FrameBufferObject->Activate();
-// 
-//       GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, dst_width, dst_height);
-//       GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, dst_width, dst_height);
-//       GetWindowThread ()->GetGraphicsEngine().Push2DWindow (dst_width, dst_height);
-// 
-//       m_CompositionRT->SetFiltering (GL_LINEAR, GL_LINEAR);
-//       m_CompositionRT->BindTextureToUnit (GL_TEXTURE0);
-// 
-//       m_FullSceneMip0->SetFiltering (GL_LINEAR, GL_LINEAR);
-//       m_FullSceneMip0->BindTextureToUnit (GL_TEXTURE1);
-// 
-//       m_FullSceneMip1->SetFiltering (GL_LINEAR, GL_LINEAR);
-//       m_FullSceneMip1->BindTextureToUnit (GL_TEXTURE2);
-// 
-//       m_FullSceneMip2->SetFiltering (GL_LINEAR, GL_LINEAR);
-//       m_FullSceneMip2->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
-//       m_FullSceneMip2->BindTextureToUnit (GL_TEXTURE3);
-// 
-//       TexCoordXForm texxform0;
-//       texxform0.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
-//       TexCoordXForm texxform1;
-//       texxform1.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
-//       TexCoordXForm texxform2;
-//       texxform2.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
-//       TexCoordXForm texxform3;
-//       texxform3.SetFilter (TEXFILTER_LINEAR, TEXFILTER_LINEAR);
-// 
-//       GetWindowThread ()->GetGraphicsEngine().QRP_4Tex (0, 0, dst_width, dst_height,
-//           m_CompositionRT, texxform0, Color::White,
-//           m_FullSceneMip0, texxform1, Color::White,
-//           m_FullSceneMip1, texxform2, Color::White,
-//           m_FullSceneMip2, texxform3, Color::White);
-//     }
-// 
-//     GetWindowThread ()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE1);
-//     GetWindowThread ()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE2);
-//     GetWindowThread ()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE3);
-//     m_FrameBufferObject->Deactivate();
-//     m_CompositionRT->SetFiltering (GL_NEAREST, GL_NEAREST);
-// 
-//     // Restore Main Frame Buffer
-//     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-//     m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0) );
-//     m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
-//     m_FrameBufferObject->Activate();
-// 
-//     GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
-//     GetWindowThread ()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
-//   }
-// 
-//   ObjectPtr< IOpenGLBaseTexture > WindowCompositor::GetScreenBlurTexture()
-//   {
-//     return m_BlurTexture;
-//   }
-
-
   void WindowCompositor::RestoreRenderingSurface ()
   {
     BaseWindow *top_view = GetProcessingTopView ();
@@ -1886,13 +1702,16 @@ namespace nux
 
   void WindowCompositor::ResetDnDArea()
   {
+#if defined (NUX_OS_LINUX)
     if (_dnd_area)
       _dnd_area->HandleDndLeave ();
     _dnd_area = NULL;
+#endif
   }
 
   void WindowCompositor::SetDnDArea (InputArea* area)
   {
+#if defined (NUX_OS_LINUX)
     if (_dnd_area)
       _dnd_area->HandleDndLeave ();
   
@@ -1900,6 +1719,7 @@ namespace nux
     
     if (_dnd_area)
       _dnd_area->HandleDndEnter ();
+#endif
   }
 
   InputArea* WindowCompositor::GetDnDArea ()

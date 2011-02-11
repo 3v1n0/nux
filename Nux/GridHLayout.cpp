@@ -43,15 +43,17 @@ namespace nux
 
     _children_size = Size (64, 64);
     _force_children_size = true;
-    _partial_visibility = false;
+    _partial_visibility = true;
     _num_row = 1;
     _num_column = 1;
     _dynamic_column = true;
+    _height_match_content = true;
 
     // Start packing the elements from the top. Is the layout has more space than the elements can use,
     // leave that space at the bottom of the GridHLayout.
     m_ContentStacking = eStackLeft;
 
+    SetMinimumSize(32, 32);
   }
 
   GridHLayout::~GridHLayout()
@@ -120,6 +122,11 @@ namespace nux
 
   long GridHLayout::ComputeLayout2()
   {
+    if (m_stretchfactor == 0)
+    {
+      ApplyMinWidth();
+    }
+
     if (_layout_element_list.size() == 0)
     {
       return eCompliantHeight | eCompliantWidth;
@@ -205,7 +212,7 @@ namespace nux
     _num_row = num_row;
     _num_column = num_column;
 
-    if ((GetStretchFactor() == 0) && _height_match_content)
+    if ((GetStretchFactor() == 0) || _height_match_content)
     {
       int h = num_row * _children_size.height + 2 * m_v_out_margin + (num_row - 1) * m_v_in_margin;
       SetMinimumHeight(h);
