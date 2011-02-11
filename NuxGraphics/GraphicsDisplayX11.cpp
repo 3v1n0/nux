@@ -49,6 +49,8 @@ namespace nux
     {NUX_MOUSE_MOVE,             TEXT ("NUX_MOUSE_MOVE") },
     {NUX_SIZE_CONFIGURATION,     TEXT ("NUX_SIZE_CONFIGURATION") },
     {NUX_WINDOW_CONFIGURATION,   TEXT ("NUX_WINDOW_CONFIGURATION") },
+    {NUX_WINDOW_MAP,             TEXT ("NUX_WINDOW_MAP") },
+    {NUX_WINDOW_UNMAP,           TEXT ("NUX_WINDOW_UNMAP") },
     {NUX_WINDOW_ENTER_FOCUS,     TEXT ("NUX_WINDOW_ENTER_FOCUS") },
     {NUX_WINDOW_EXIT_FOCUS,      TEXT ("NUX_WINDOW_EXIT_FOCUS") },
     {NUX_WINDOW_DIRTY,           TEXT ("NUX_WINDOW_DIRTY") },
@@ -1183,6 +1185,22 @@ namespace nux
         }
       }
 
+      if (xevent.type == MapNotify)
+      {
+        std::cout << "GraphicsDisplay::GetSystemEvent() - got MapNotify on window 0x"
+                  << std::hex
+                  << xevent.xany.window
+                  << std::endl;
+      }
+
+      if (xevent.type == UnmapNotify)
+      {
+        std::cout << "GraphicsDisplay::GetSystemEvent() - got UnmapNotify on window 0x"
+                  << std::hex
+                  << xevent.xany.window
+                  << std::endl;
+      }
+
       if (xevent.type == MotionNotify)
       {
         while (XCheckTypedEvent (m_X11Display, MotionNotify, &xevent) );
@@ -1569,6 +1587,28 @@ namespace nux
         break;
       }
 
+      case MapNotify:
+      {
+        m_pEvent->e_event = NUX_WINDOW_MAP;
+	m_pEvent->e_x11_window = xevent.xany.window;
+        std::cout << "GraphicsDisplay::ProcessXEvent() - got MapNotify on window 0x"
+                  << std::hex
+                  << xevent.xany.window
+                  << std::endl;
+      }
+      break;
+
+      case UnmapNotify:
+      {
+        m_pEvent->e_event = NUX_WINDOW_UNMAP;
+	m_pEvent->e_x11_window = xevent.xany.window;
+        std::cout << "GraphicsDisplay::ProcessXEvent() - got UnmapNotify on window 0x"
+                  << std::hex
+                  << xevent.xany.window
+                  << std::endl;
+      }
+      break;
+
       case ClientMessage:
       {
         //if (foreign)
@@ -1582,9 +1622,13 @@ namespace nux
           m_pEvent->e_x11_timestamp = (Time) xevent.xclient.data.l[1];
 	  std::cout << "GraphicsDisplay::ProcessXEvent() - got WM_TAKE_FOCUS ClientMessage for window (0x"
                     << std::hex << xevent.xany.window << ")" << std::endl;
-
-          XSetInputFocus (xevent.xany.display, xevent.xany.window, RevertToPointerRoot, m_pEvent->e_x11_timestamp);
-          //XAllowEvents (xevent.xany.display, AyncKeyboard, CurrentTime);
+          XWindowAttributes attribs;
+	  if (XGetWindowAttributes (xevent.xany.display, xevent.xany.window, &attribs) &&
+	      attribs.map_state == IsViewable)
+          {
+            std::cout << "GraphicsDisplay::ProcessXEvent() - window 0x" << std::hex << xevent.xany.window << " is viewable... trying to set focus" << std::endl;
+            XSetInputFocus (xevent.xany.display, xevent.xany.window, RevertToParent, m_pEvent->e_x11_timestamp);
+	  }
         }
 
         if ( (xevent.xclient.format == 32) && ( (xevent.xclient.data.l[0]) == static_cast<long> (m_WMDeleteWindow) ) )

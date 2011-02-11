@@ -184,6 +184,8 @@ namespace nux
     NUX_KEYUP,
     NUX_MOUSE_MOVE,
     NUX_SIZE_CONFIGURATION,
+    NUX_WINDOW_MAP,
+    NUX_WINDOW_UNMAP,
     NUX_WINDOW_CONFIGURATION,
     NUX_WINDOW_ENTER_FOCUS,
     NUX_WINDOW_EXIT_FOCUS,
@@ -271,6 +273,7 @@ namespace nux
     int e_clicks;
     int e_is_click;
     Time e_x11_timestamp;
+    int e_x11_window;
 
     int e_x11_keycode;  //!< X11 raw keycode.
     int e_keysym;       //!< Key symbol.
