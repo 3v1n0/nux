@@ -33,6 +33,7 @@ namespace nux
 // Rename it to ScrollArea or ScrollWindow
   class ScrollView: public View
   {
+    NUX_DECLARE_OBJECT_TYPE(ScrollView, View);
   public:
     ScrollView (NUX_FILE_LINE_PROTO);
     virtual ~ScrollView();

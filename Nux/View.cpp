@@ -309,7 +309,7 @@ namespace nux
   {
     if (layout == 0)
     {
-      nuxAssertMsg (0, TEXT ("[View::SetCompositionLayout] Invalid parent object.") );
+      nuxDebugMsg (TEXT("[View::SetCompositionLayout] Trying to set the same layout in a View."));
       return false;
     }
 
@@ -317,12 +317,12 @@ namespace nux
 
     if (parent == this)
     {
-      nuxAssert (m_CompositionLayout == layout);
+      nuxDebugMsg (TEXT ("[View::SetCompositionLayout] Invalid parent object."));
       return false;
     }
     else if (parent != 0)
     {
-      nuxAssertMsg (0, TEXT ("[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again.") );
+      nuxDebugMsg (0, TEXT ("[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again.") );
       return false;
     }
 
