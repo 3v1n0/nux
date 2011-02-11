@@ -1093,12 +1093,12 @@ namespace nux
   {
     if(GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
-      return new Texture2D ();
+      return new Texture2D (NUX_TRACKER_LOCATION);
     }
 
     if(GetGpuInfo().Support_EXT_Texture_Rectangle () || GetGpuInfo().Support_ARB_Texture_Rectangle ())
     {
-      return new TextureRectangle ();
+      return new TextureRectangle (NUX_TRACKER_LOCATION);
     }
 
     nuxAssertMsg(0, TEXT("[NuxGraphicsResources::CreateSystemCapableTexture] No support for non power of two textures or rectangle textures"));

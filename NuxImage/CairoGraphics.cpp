@@ -300,10 +300,6 @@ namespace nux
     for (it = region.begin(); it != region.end(); it++)
     {
       Rect rect = (*it);
-      float x = (*it).x;
-      float y = (*it).y;
-      float w = (*it).width;
-      float h = (*it).height;
 
       if (!rect.IsNull())
       {
