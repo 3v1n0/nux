@@ -40,7 +40,7 @@ namespace nux
   class XInputWindow
   {
   public:
-    XInputWindow(int override_redirect = 0);
+    XInputWindow(const char* title, int override_redirect = 0);
     ~XInputWindow();
     
     static std::list<Window> NativeHandleList();
