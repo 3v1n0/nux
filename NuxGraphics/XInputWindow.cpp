@@ -30,7 +30,9 @@ namespace nux
 
   std::list<Window> XInputWindow::_native_windows;
 
-  XInputWindow::XInputWindow(int override_redirect)
+  XInputWindow::XInputWindow(const char* title,
+                             bool        take_focus,
+                             int         override_redirect)
   {
     Display* d = GetThreadGLWindow()->GetX11Display();
     _display = d;
@@ -43,9 +45,21 @@ namespace nux
     _strutsEnabled = false;
     
     attrib.override_redirect = override_redirect;
+    attrib.event_mask = KeyPressMask        |
+                        KeyReleaseMask      |
+                        ButtonPressMask     |
+                        ButtonReleaseMask   |
+                        EnterWindowMask     |
+                        LeaveWindowMask     |
+                        PointerMotionMask   |
+                        ButtonMotionMask    |
+                        StructureNotifyMask |
+                        PropertyChangeMask  |
+                        FocusChangeMask;
+
     _window = XCreateWindow (d, XDefaultRootWindow (d), _x, _y, _width, _height, 0,
                              CopyFromParent, InputOutput, CopyFromParent,
-                             CWOverrideRedirect, &attrib);
+                             CWOverrideRedirect | CWEventMask , &attrib);
     
     _native_windows.push_front (_window);
     
@@ -65,14 +79,14 @@ namespace nux
                      XA_ATOM, 32, PropModeReplace,
                      (unsigned char *) type, 1);
 
-    const char *title = "nux input window";
-    XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_NAME", 0),
-                     XInternAtom (d, "UTF8_STRING", 0), 8, PropModeReplace,
-                     (unsigned char*) title, strlen (title));
+    XStoreName (d, _window, title);
 
     XMapRaised (d, _window);
     EnsureInputs ();
-    
+
+    if (take_focus)
+      EnableTakeFocus ();
+
     EnableDnd ();
   }
 
@@ -178,9 +192,23 @@ namespace nux
                   LeaveWindowMask    |
                   PointerMotionMask  |
                   ButtonMotionMask   |
+                  StructureNotifyMask |
                   PropertyChangeMask |
                   FocusChangeMask);
     
+  }
+
+  void XInputWindow::EnableTakeFocus ()
+  {
+    Atom      wmTakeFocus = XInternAtom (_display, "WM_TAKE_FOCUS", False);
+    XWMHints* wmHints     = NULL;
+
+    wmHints = (XWMHints*) calloc (1, sizeof (XWMHints));
+    wmHints->flags |= InputHint;
+    wmHints->input = False;
+    XSetWMHints (_display, _window, wmHints);
+    free (wmHints);
+    XSetWMProtocols (_display, _window, &wmTakeFocus, 1);
   }
 
   void XInputWindow::EnableDnd ()

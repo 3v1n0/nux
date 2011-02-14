@@ -305,13 +305,16 @@ namespace nux
   }
   
   #if defined(NUX_OS_LINUX)
-  void BaseWindow::EnableInputWindow (bool b, bool override_redirect)
+  void BaseWindow::EnableInputWindow (bool        b,
+                                      const char* title,
+                                      bool        take_focus,
+                                      bool        override_redirect)
   {
     if (b)
     {
       if (m_input_window == 0)
       {
-        m_input_window = new XInputWindow (override_redirect);
+        m_input_window = new XInputWindow (title, take_focus, override_redirect);
         m_input_window->SetGeometry (GetGeometry());
       }
       m_input_window_enabled = true;
@@ -325,20 +328,6 @@ namespace nux
       }
       m_input_window_enabled = false;
     }
-  }
-
-  void BaseWindow::EnableTakeFocus ()
-  {
-    Display*  dpy         = nux::GetWindow ().GetX11Display ();
-    Window    win         = this->GetInputWindowId ();
-    Atom      wmTakeFocus = XInternAtom (dpy, "WM_TAKE_FOCUS", False);
-    XWMHints* wmHints     = NULL;
-    wmHints = (XWMHints*) g_malloc0 (sizeof (XWMHints));
-    wmHints->flags |= InputHint;
-    wmHints->input = False;
-    XSetWMHints (dpy, win, wmHints);
-    g_free (wmHints);
-    XSetWMProtocols (dpy, win, &wmTakeFocus, 1);
   }
 
   bool BaseWindow::InputWindowEnabled ()
