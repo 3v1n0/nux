@@ -128,7 +128,9 @@ namespace nux
     void SetBackgroundColor (const Color &color);
 
     #if defined(NUX_OS_LINUX)
-    void EnableInputWindow (bool b, bool override_redirect = 0);
+    void EnableInputWindow (bool        b,
+                            const char* title = "nux input window",
+                            bool        override_redirect = 0);
     bool InputWindowEnabled ();
     void InputWindowEnableStruts (bool enable);
     bool InputWindowStrutsEnabled ();
