@@ -1397,16 +1397,11 @@ namespace nux
 
     XFetchName (dpy, win, &wmName);
 
-    std::cout << funcName
-              << "() - got "
-              << evName
-              << " on window \""
-              << wmName
-              << "\" (0x"
-              << std::hex
-              << win
-              << ")"
-              << std::endl;
+    nuxDebugMsg ("%s() - got %s on window \"%s\" (0x%X)\n",
+                 funcName,
+                 evName,
+                 wmName,
+                 win);
 
     free (wmName);
   }
@@ -1415,7 +1410,7 @@ namespace nux
   {
     int x_recalc = 0;
     int y_recalc = 0;
-    
+
     RecalcXYPosition (m_X11Window, xevent, x_recalc, y_recalc);
     
     foreign = foreign || xevent.xany.window != m_X11Window;

@@ -275,6 +275,13 @@ namespace nux
     XUngrabPointer(_display, CurrentTime);
   }
 
+  void XInputWindow::ForceInputFocus ()
+  {
+    std::cout << "XInputWindow::ForceInputFocus() called on "
+              << "0x" << std::hex << _window << "" << std::endl;
+    XSetInputFocus (_display, _window, RevertToParent, CurrentTime);
+  }
+
   void XInputWindow::GrabKeyboard ()
   {
     XGrabKeyboard (_display,
