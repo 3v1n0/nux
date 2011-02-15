@@ -1395,6 +1395,9 @@ namespace nux
     foreign = foreign || xevent.xany.window != m_X11Window;
 
     m_pEvent->e_event = NUX_NO_EVENT;
+#if defined(NUX_OS_LINUX)
+    m_pEvent->e_x11_window = xevent.xany.window;
+#endif
 
     switch (xevent.type)
     {

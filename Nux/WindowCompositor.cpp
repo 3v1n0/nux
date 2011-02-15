@@ -427,6 +427,13 @@ namespace nux
             // Traverse the window from the top of the visibility stack to the bottom.
             if ((*it).GetPointer ())
             {
+#if defined(NUX_OS_LINUX)
+              // Base window without the keyboard focus must not process the event.
+              if (ievent.e_event == NUX_KEYDOWN || ievent.e_event == NUX_KEYUP)
+                if ((*it)->GetInputWindowId () != ievent.e_x11_window)
+                  continue;
+#endif
+
               SetProcessingTopView ((*it).GetPointer ());
               ret = (*it)->ProcessEvent (ievent, ret, ProcessEventInfo);
               SetProcessingTopView (NULL);
