@@ -87,6 +87,12 @@ namespace nux
     _has_glx_13 = false;
     _glx_major = 0;
     _glx_minor = 0;
+    
+    _dnd_is_drag_source = false;
+    _dnd_source_funcs.get_drag_image = 0;
+    _dnd_source_funcs.get_drag_types = 0;
+    _dnd_source_funcs.get_data_for_type = 0;
+    _dnd_source_funcs.drag_finished = 0;
 
     // DND
     _last_dnd_position.Set(0, 0);
@@ -1395,7 +1401,7 @@ namespace nux
     foreign = foreign || xevent.xany.window != m_X11Window;
 
     m_pEvent->e_event = NUX_NO_EVENT;
-
+    
     switch (xevent.type)
     {
       case DestroyNotify:
@@ -1518,6 +1524,12 @@ namespace nux
 
       case ButtonPress:
       {
+        if (_dnd_is_drag_source)
+        {
+          HandleDndDragSourceEvent (xevent);
+          break;
+        }
+        
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
@@ -1529,6 +1541,12 @@ namespace nux
 
       case ButtonRelease:
       {
+        if (_dnd_is_drag_source)
+        {
+          HandleDndDragSourceEvent (xevent);
+          break;
+        }
+      
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
@@ -1540,6 +1558,12 @@ namespace nux
 
       case MotionNotify:
       {
+        if (_dnd_is_drag_source)
+        {
+          HandleDndDragSourceEvent (xevent);
+          break;
+        }
+      
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
@@ -1611,6 +1635,60 @@ namespace nux
         break;
       }
     }
+  }
+  
+  void GraphicsDisplay::HandleDndDragSourceEvent (XEvent xevent)
+  {
+    switch (xevent.type)
+    {
+      case ButtonPress:
+        printf ("Button Press \n");
+        break;
+
+      case ButtonRelease:
+        (*(_dnd_source_funcs.drag_finished)) (DNDACTION_NONE, _dnd_source_data);
+        _dnd_is_drag_source = false;
+        printf ("Button Release \n");
+        break;
+
+      case MotionNotify:
+        printf ("Motion Notify \n");
+        break;
+    }
+  }
+  
+  void GraphicsDisplay::StartDndDrag (const DndSourceFuncs &funcs, void *user_data)
+  {
+    Display *display = GetX11Display ();
+    
+    if (!display)
+    {
+      if (funcs.drag_finished)
+      (*(funcs.drag_finished)) (DNDACTION_NONE, user_data);
+      return;
+    }
+  
+    _dnd_source_funcs = funcs;
+    _dnd_source_data = user_data;
+    
+    Window root = DefaultRootWindow (display);
+    
+    // make a window which will serve two purposes:
+    // First this window will be used to display feedback to the user
+    // Second this window will grab and own the XdndSelection Selection
+    _dnd_source_window = XCreateSimpleWindow (display, root, 100, 100, 100, 100, 0, 0, 0);
+    XMapRaised (display, _dnd_source_window);
+    XFlush (display);
+    
+    GrabDndSelection (display, _dnd_source_window); 
+    
+    _dnd_is_drag_source = true;
+  }
+  
+  bool GraphicsDisplay::GrabDndSelection (Display *display, Window window)
+  {
+    XSetSelectionOwner (display, window, XInternAtom (display, "XdndSelection", false), CurrentTime);
+    return true;
   }
   
   void GraphicsDisplay::SendDndStatus (bool accept, DndAction action, Rect region)

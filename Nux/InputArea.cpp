@@ -54,6 +54,10 @@ namespace nux
     m_EnableUserKeyboardProcessing = false;
 
     _print_event_debug_trace = false;
+    _dnd_enabled_as_source = true;
+    _dnd_enabled_as_target = false;
+    _dnd_safety_x = 0;
+    _dnd_safety_y = 0;
   }
 
   InputArea::~InputArea()
@@ -416,6 +420,8 @@ namespace nux
 //         }
 //         else
         {
+          _dnd_safety_x = 0;
+          _dnd_safety_y = 0;
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse pressed inside the area. Emit OnMouseDown"));
           OnMouseDown.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x,
                             m_EventHandler.m_mouse_positiony - m_Geometry.y,
@@ -454,10 +460,27 @@ namespace nux
       }
       else if ((mouse_signals & AREA_MOUSE_STATUS_MOVE) && m_EventHandler.HasMouseFocus())
       {
-        nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse move and has mouse focus. Emit OnMouseDrag"));
-        OnMouseDrag.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y,
-                          m_EventHandler.m_mouse_deltax, m_EventHandler.m_mouse_deltay,
-                          ievent.GetMouseState(), ievent.GetKeyState() );
+        int delta_x = m_EventHandler.m_mouse_deltax;
+        int delta_y = m_EventHandler.m_mouse_deltay;
+        int x = m_EventHandler.m_mouse_positionx - m_Geometry.x;
+        int y = m_EventHandler.m_mouse_positiony - m_Geometry.y;
+        
+        if (_dnd_enabled_as_source)
+        {
+          _dnd_safety_x += delta_x;
+          _dnd_safety_y += delta_y;
+          
+          if (abs (_dnd_safety_x) > 30 || abs (_dnd_safety_y) > 30)
+          {
+            ForceStopFocus (x, y);
+            StartDragAsSource ();
+          }
+        }
+        else
+        {
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse move and has mouse focus. Emit OnMouseDrag"));
+          OnMouseDrag.emit (x, y, delta_x, delta_y, ievent.GetMouseState(), ievent.GetKeyState() );
+        }
       }
       else if (mouse_signals & AREA_MOUSE_STATUS_MOVE && (!m_EventHandler.HasMouseFocus()))
       {
@@ -693,6 +716,49 @@ namespace nux
 
   void InputArea::ProcessDndLeave ()
   {
+  }
+  
+  void InputArea::SetDndEnabled (bool as_source, bool as_target)
+  {
+    _dnd_enabled_as_source = as_source;
+    _dnd_enabled_as_target = as_target;
+  }
+  
+  NBitmapData * InputArea::DndSourceGetDragImage ()
+  {
+    return 0;
+  }
+  
+  std::list<const char *> InputArea::DndSourceGetDragTypes ()
+  {
+    std::list<const char *> types;
+    types.push_back ("text/plain");
+    return types;
+  }
+    
+  const char * InputArea::DndSourceGetDataForType (const char *type)
+  {
+    if (g_str_equal (type, "text/plain"))
+      return 0;
+      
+    return "this is just a test\n";
+  }
+  
+  void InputArea::DndSourceDragFinished (DndAction result)
+  {
+  
+  }
+  
+  void InputArea::StartDragAsSource ()
+  {
+    GraphicsDisplay::DndSourceFuncs funcs;
+    
+    funcs.get_drag_image = &InputArea::InnerDndSourceGetDragImage;
+    funcs.get_drag_types = &InputArea::InnerDndSourceGetDragTypes;
+    funcs.get_data_for_type = &InputArea::InnerDndSourceGetDataForType;
+    funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
+    
+    GetWindow ().StartDndDrag (funcs, this);
   }
 #endif
 }

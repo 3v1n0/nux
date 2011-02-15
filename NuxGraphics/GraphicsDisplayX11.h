@@ -273,6 +273,16 @@ namespace nux
     std::list<char *> GetDndMimeTypes ();
     char *            GetDndData      (char *property);
     
+    typedef struct _DndSourceFuncs
+    {
+      nux::NBitmapData *       (*get_drag_image)    (void * data);
+      std::list<const char *>  (*get_drag_types)    (void * data);
+      const char *             (*get_data_for_type) (const char * type, void * data);
+      void                     (*drag_finished)     (DndAction result, void * data);
+    } DndSourceFuncs;
+
+    void StartDndDrag     (const DndSourceFuncs &funcs, void *user_data);
+    
   private:
     void HandleXDndPosition (XEvent event, Event* nux_event);
     void HandleXDndEnter    (XEvent event);
@@ -285,6 +295,9 @@ namespace nux
     bool GetXDndSelectionEvent (Display *display, Window target, Atom property, long time, XEvent *result, int attempts);
     void SendXDndFinished (Display *display, Window source, Window target, bool result, Atom action);
     char * GetXDndData (Display *display, Window requestor, Atom property, long time);
+
+    bool GrabDndSelection (Display *display, Window window);
+    void HandleDndDragSourceEvent (XEvent event);
   
     Point _last_dnd_position;
 
@@ -302,6 +315,11 @@ namespace nux
     Window _drag_window;
     Window _drag_source;
     long _drag_drop_timestamp;
+    
+    bool _dnd_is_drag_source;
+    void * _dnd_source_data;
+    DndSourceFuncs _dnd_source_funcs;
+    Window _dnd_source_window;
   public:
     ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
