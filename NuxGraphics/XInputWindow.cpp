@@ -277,9 +277,14 @@ namespace nux
 
   void XInputWindow::ForceInputFocus ()
   {
+    Window win      = None;
+    int    revertTo = 0;
+
     std::cout << "XInputWindow::ForceInputFocus() called on "
               << "0x" << std::hex << _window << "" << std::endl;
     XSetInputFocus (_display, _window, RevertToParent, CurrentTime);
+    XGetInputFocus (_display, &win, &revertTo);
+    std::cout << "window 0x" << std::hex << win << " has the input-focus" << std::endl;
   }
 
   void XInputWindow::GrabKeyboard ()
