@@ -422,31 +422,31 @@ namespace nux
 
         for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
         {
-          if ((*it)->IsVisible () && ((*it)->_entering_visible_state == false))
-          {
-            // Traverse the window from the top of the visibility stack to the bottom.
-            if ((*it).GetPointer ())
-            {
 #if defined(NUX_OS_LINUX)
-              // Base window without the keyboard focus must not process the event.
-              if (ievent.e_event == NUX_KEYDOWN || ievent.e_event == NUX_KEYUP)
-                if ((*it)->GetInputWindowId () != ievent.e_x11_window)
-                  continue;
+          if ((*it)->GetInputWindowId () == ievent.e_x11_window)
+          {
 #endif
-
-              SetProcessingTopView ((*it).GetPointer ());
-              ret = (*it)->ProcessEvent (ievent, ret, ProcessEventInfo);
-              SetProcessingTopView (NULL);
-
-              if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
+            if ((*it)->IsVisible () && (*it)->_entering_visible_state == false)
+            {
+              // Traverse the window from the top of the visibility stack to the bottom.
+              if ((*it).GetPointer ())
               {
-                // The mouse event was solved in the window pointed by the iterator.
-                // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
-                base_window_reshuffling = true;
-                m_SelectedWindow = (*it);
+                SetProcessingTopView ((*it).GetPointer ());
+                ret = (*it)->ProcessEvent (ievent, ret, ProcessEventInfo);
+                SetProcessingTopView (NULL);
+
+                if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
+                {
+                  // The mouse event was solved in the window pointed by the iterator.
+                  // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
+                  base_window_reshuffling = true;
+                  m_SelectedWindow = (*it);
+                }
               }
             }
+#if defined(NUX_OS_LINUX)
           }
+#endif
         }
         
         // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
