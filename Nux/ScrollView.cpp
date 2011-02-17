@@ -29,6 +29,7 @@
 
 namespace nux
 {
+  NUX_IMPLEMENT_OBJECT_TYPE(ScrollView);
 
   ScrollView::ScrollView (NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)

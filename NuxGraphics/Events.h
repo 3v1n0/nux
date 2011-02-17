@@ -270,6 +270,10 @@ namespace nux
     int e_clicks;
     int e_is_click;
 
+#if defined(NUX_OS_LINUX)
+    Window e_x11_window; //!< X11 window.
+#endif
+
     int e_x11_keycode;  //!< X11 raw keycode.
     int e_keysym;       //!< Key symbol.
     int e_wheeldelta;

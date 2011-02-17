@@ -25,12 +25,12 @@
 namespace nux
 {
 
-  NTimeStamp::NTimeStamp()
+  TimeStamp::TimeStamp()
   {
-
+    GetTime();
   }
 
-  NTimeStamp::~NTimeStamp()
+  TimeStamp::~TimeStamp()
   {
     m_Year          = 1970;
     m_Month         = 1;
@@ -42,7 +42,7 @@ namespace nux
   }
 
 
-  t_s64 NTimeStamp::GetJulianDayNumber (void) const
+  t_s64 TimeStamp::GetJulianDayNumber (void) const
   {
     t_s64 JDN =  m_Day - 32075L +
                  1461L * (m_Year  + 4800L + (m_Month  - 14L) / 12L) / 4L +
@@ -51,18 +51,18 @@ namespace nux
     return JDN;
   }
 
-  t_f64 NTimeStamp::GetJulianDate() const
+  t_f64 TimeStamp::GetJulianDate() const
   {
     t_f64 JD = GetJulianDayNumber() + (m_Hour - 12) / 1440.0f + m_Minute / 1440.0f + m_Second / 86400.0f;
     return JD;
   }
 
-  unsigned int NTimeStamp::GetSecondOfDay (void) const
+  unsigned int TimeStamp::GetSecondOfDay (void) const
   {
     return m_Hour * 60 * 60 + m_Minute * 60 + m_Second;
   }
 
-  bool NTimeStamp::operator == (NTimeStamp &Other) const
+  bool TimeStamp::operator == (TimeStamp &Other) const
   {
     bool b = (m_Year  ==  Other.m_Year)       &&
              (m_Day        ==  Other.m_Day)      &&
@@ -73,7 +73,7 @@ namespace nux
     return b;
   }
 
-  bool NTimeStamp::operator != (NTimeStamp &Other) const
+  bool TimeStamp::operator != (TimeStamp &Other) const
   {
     if (*this == Other)
       return false;
@@ -81,7 +81,7 @@ namespace nux
     return true;
   }
 
-  bool NTimeStamp::operator < (NTimeStamp &Other) const
+  bool TimeStamp::operator < (TimeStamp &Other) const
   {
     t_f64 JD = GetJulianDate();
 
@@ -91,7 +91,7 @@ namespace nux
     return false;
   }
 
-  bool NTimeStamp::operator >  (NTimeStamp &Other) const
+  bool TimeStamp::operator >  (TimeStamp &Other) const
   {
     t_f64 JD = GetJulianDate();
 
@@ -101,7 +101,7 @@ namespace nux
     return false;
   }
 
-  bool NTimeStamp::operator >= (NTimeStamp &Other) const
+  bool TimeStamp::operator >= (TimeStamp &Other) const
   {
     t_f64 JD = GetJulianDate();
 
@@ -111,7 +111,7 @@ namespace nux
     return false;
   }
 
-  bool NTimeStamp::operator <= (NTimeStamp &Other) const
+  bool TimeStamp::operator <= (TimeStamp &Other) const
   {
     t_f64 JD = GetJulianDate();
 
@@ -121,18 +121,16 @@ namespace nux
     return false;
   }
 
-  void NTimeStamp::GetTime()
+  void TimeStamp::GetTime()
   {
     GetLocalTime (m_Year, m_Month, m_Day, m_Hour, m_Minute, m_Second, m_MicroSecond);
   }
 
-  /*!
-      Returns the time formatted in a string.
-  */
-  const TCHAR *GetFormattedLocalTime()
+
+  NString GetFormattedLocalTime()
   {
-    static TCHAR Result[1024];
-    *Result = 0;
+    TCHAR buffer[1024];
+    Memset(buffer, 0, 1024);
 
     unsigned int Year;
     unsigned int Month;
@@ -144,31 +142,16 @@ namespace nux
 
     GetLocalTime (Year, Month, Day, Hour, Minute, Second, MicroSec);
 #ifdef _WIN32
-    _stprintf_s (Result, 1024, TEXT ("%d:%d:%d: %d/%d/%d"), Hour, Minute, Second, Day, Month, Year);
+    _stprintf_s (buffer, 1024 - 1, TEXT ("%d:%d:%d: %d/%d/%d"), Hour, Minute, Second, Day, Month, Year);
+    NString result = buffer;
 #else
-    _stprintf (Result, TEXT ("%d:%d:%d: %d/%d/%d"), Hour, Minute, Second, Day, Month, Year);
+    _stprintf (buffer, TEXT ("%d:%d:%d: %d/%d/%d"), Hour, Minute, Second, Day, Month, Year);
+    NString result = buffer;
 #endif
 
-    return Result;
+    return result;
   }
 
-  void SleepSeconds (float Seconds)
-  {
-#if (defined _WIN32)
-    ::Sleep ( (DWORD) (Seconds * 1000.0) );
-#endif
-  }
-
-  void SleepMilliSeconds (float MilliSeconds)
-  {
-#if (defined _WIN32)
-    ::Sleep ( (DWORD) (MilliSeconds) );
-#endif
-  }
-
-//
-// Return the system time.
-//
   void GetLocalTime (unsigned int &Year,
                      unsigned int &Month,
                      unsigned int &Day,
