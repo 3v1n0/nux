@@ -91,8 +91,6 @@ namespace nux
     */
     bool IsDynamic() const;
 
-    //! Signal emitted immediately before the object is destroyed.
-    sigc::signal<void> OnDestroyed;
 
     //! Increase the reference count.
     /*
@@ -229,6 +227,9 @@ namespace nux
         @return The weak reference count of this object.
     */
     int GetWeakReferenceCount () const;
+
+    //! Signal emitted immediately before the object is destroyed.
+    sigc::signal <void, Object *> OnDestroyed;
 
   protected:
     NThreadSafeCounter *_reference_count; //!< Reference count.

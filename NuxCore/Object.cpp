@@ -426,7 +426,7 @@ namespace nux
       //nuxDebugMsg (TEXT("[Object::Destroy] There are weak references pending on this object. This is OK!"));
     }
 
-    OnDestroyed.emit ();
+    OnDestroyed.emit (this);
     delete this;
   }
 
