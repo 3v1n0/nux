@@ -1,6 +1,8 @@
 nux (0.9.26-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+    - unity_support_test crashed with SIGSEGV in
+      nux::IOpenGLAsmVertexShader::IOpenGLAsmVertexShader() (LP: #711021)
   * debian/rules:
     - bump shlib
 
