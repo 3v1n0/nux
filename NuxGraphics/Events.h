@@ -272,10 +272,9 @@ namespace nux
     int e_dy;
     int e_clicks;
     int e_is_click;
-    Time e_x11_timestamp;
-    int e_x11_window;
 
 #if defined(NUX_OS_LINUX)
+    Time e_x11_timestamp; //! X11 timestamp
     Window e_x11_window; //!< X11 window.
 #endif
 
