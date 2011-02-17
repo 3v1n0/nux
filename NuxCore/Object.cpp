@@ -232,8 +232,15 @@ namespace nux
       // If the object has properly been UnReference, it should have gone through Destroy(). if that is the case then
       // _reference_count should be NULL or its value (returned by GetValue ()) should be equal to 0;
       // We can use this to detect when delete is called directly on an object.
-      nuxAssertMsg((_reference_count == 0) || (_reference_count && (_reference_count->GetValue () == 0)), TEXT("[Object::~Object] Invalid object destruction. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object."));
-      nuxAssertMsg((_weak_reference_count == 0) || (_weak_reference_count && (_weak_reference_count->GetValue () > 0)), TEXT("[Object::~Object] Invalid value of the weak reference count pointer. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object."));
+      nuxAssertMsg((_reference_count == 0) || (_reference_count && (_reference_count->GetValue () == 0)),
+                   TEXT("[Object::~Object] Invalid object destruction. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object.\nObject allocated at: %s [%d]"),
+                   _allocation_file_name.GetTCharPtr (),
+                   _allocation_line_number);
+      
+      nuxAssertMsg((_weak_reference_count == 0) || (_weak_reference_count && (_weak_reference_count->GetValue () > 0)),
+                   TEXT("[Object::~Object] Invalid value of the weak reference count pointer. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object.\nObject allocated at: %s [%d]"),
+                   _allocation_file_name.GetTCharPtr (),
+                   _allocation_line_number);
 
       if ((_reference_count == 0) && (_weak_reference_count == 0))
       {

@@ -469,7 +469,7 @@ namespace nux
 
   void TextEntry::DrawContent (GraphicsEngine& gfxContext, bool forceDraw)
   {
-    MainDraw ();
+    //MainDraw ();
   }
 
   void TextEntry::PostDraw (GraphicsEngine& gfxContext, bool forceDraw)
@@ -520,7 +520,9 @@ namespace nux
 
     if (update_canvas_ || !last_selection_region_.empty() || !selection_region_.empty())
     {
-        DrawText (edit_canvas);
+      edit_canvas->PushState();
+      DrawText(edit_canvas);
+      edit_canvas->PopState();
     }
 
 //     if (background_)
@@ -705,9 +707,6 @@ namespace nux
   void TextEntry::DrawText(CairoGraphics *canvas)
   {
     PangoLayout *layout = EnsureLayout();
-
-    int width, height;
-    pango_layout_get_pixel_size (layout, &width, &height);
 
     bool redraw_text = false;
     if (update_canvas_)
@@ -1490,7 +1489,8 @@ namespace nux
     }
   }
 
-  void TextEntry::MoveCursor(MovementStep step, int count, bool extend_selection) {
+  void TextEntry::MoveCursor(MovementStep step, int count, bool extend_selection)
+  {
     ResetImContext();
     int new_cursor = 0;
     // Clear selection first if not extend it.
@@ -1498,7 +1498,8 @@ namespace nux
       SetCursor(cursor_);
 
     // Calculate the new offset after motion.
-    switch(step) {
+    switch(step)
+    {
     case VISUALLY:
       new_cursor = MoveVisually(cursor_, count);
       break;
@@ -1528,7 +1529,8 @@ namespace nux
     QueueRefresh(false, true);
   }
 
-  int TextEntry::MoveVisually(int current_index, int count) {
+  int TextEntry::MoveVisually(int current_index, int count)
+  {
     nuxAssert(current_index >= 0 &&
       current_index <= static_cast<int>(_text.length()));
     nuxAssert(count);
@@ -1539,12 +1541,16 @@ namespace nux
     int index = TextIndexToLayoutIndex(current_index, false);
     int new_index = 0;
     int new_trailing = 0;
-    while (count != 0) {
-      if (count > 0) {
+    while (count != 0)
+    {
+      if (count > 0)
+      {
         --count;
         pango_layout_move_cursor_visually(layout, true, index, 0, 1,
           &new_index, &new_trailing);
-      } else if (count < 0) {
+      }
+      else if (count < 0)
+      {
         ++count;
         pango_layout_move_cursor_visually(layout, true, index, 0, -1,
           &new_index, &new_trailing);
@@ -1552,19 +1558,20 @@ namespace nux
       index = new_index;
       if (index < 0 || index == G_MAXINT)
         return current_index;
-      index = static_cast<int>(
-        g_utf8_offset_to_pointer(text + index, new_trailing) - text);
+      index = static_cast<int>(g_utf8_offset_to_pointer(text + index, new_trailing) - text);
     }
     return LayoutIndexToTextIndex(index);
   }
 
-  int TextEntry::MoveWords(int current_index, int count) {
+  int TextEntry::MoveWords(int current_index, int count)
+  {
     nuxAssert(current_index >= 0 &&
       current_index <= static_cast<int>(_text.length()));
     nuxAssert(count);
     nuxAssert(_preedit.length() == 0);
 
-    if (!visible_) {
+    if (!visible_)
+    {
       return static_cast<int>(count > 0 ? _text.length() : 0);
     }
 
@@ -1581,7 +1588,8 @@ namespace nux
 
     // Weird bug: line_index here may be >= than line count?
     int line_count = pango_layout_get_line_count(layout);
-    if (line_index >= line_count) {
+    if (line_index >= line_count)
+    {
       line_index = line_count - 1;
     }
 
@@ -1593,36 +1601,49 @@ namespace nux
     bool rtl = (line->resolved_dir == PANGO_DIRECTION_RTL);
     const char *ptr = text + index;
     int offset = static_cast<int>(g_utf8_pointer_to_offset(text, ptr));
-    while (count != 0) {
-      if (((rtl && count < 0) || (!rtl && count > 0)) && *ptr) {
-        while (ptr && *ptr) {
+    while (count != 0)
+    {
+      if (((rtl && count < 0) || (!rtl && count > 0)) && *ptr)
+      {
+        while (ptr && *ptr)
+        {
           ptr = g_utf8_find_next_char(ptr, NULL);
           ++offset;
           if (log_attrs[offset].is_word_start || log_attrs[offset].is_word_end)
             break;
         }
-        if (!ptr) {
+        if (!ptr)
+        {
           ptr = text;
           while (*ptr) ++ptr;
         }
-      } else if (((rtl && count > 0) || (!rtl && count < 0)) && ptr > text) {
-        while (ptr && *ptr) {
+      }
+      else if (((rtl && count > 0) || (!rtl && count < 0)) && (ptr > text))
+      {
+        while (ptr /*&& *ptr*/) //fix: when at the end of the string, allow ctrl+left arrow to move backward to the start/end of the previous word.
+        {
           ptr = g_utf8_find_prev_char(text, ptr);
           --offset;
           if (log_attrs[offset].is_word_start || log_attrs[offset].is_word_end)
             break;
         }
-        if (!ptr) ptr = text;
-      } else {
+        if (!ptr)
+          ptr = text;
+      }
+      else
+      {
         break;
       }
-      if (count > 0) --count;
-      else ++count;
+      if (count > 0)
+        --count;
+      else
+        ++count;
     }
     return LayoutIndexToTextIndex(static_cast<int>(ptr - text));
   }
 
-  int TextEntry::MoveDisplayLines(int current_index, int count) {
+  int TextEntry::MoveDisplayLines(int current_index, int count)
+  {
     nuxAssert(current_index >= 0 &&
       current_index <= static_cast<int>(_text.length()));
     nuxAssert(count);
@@ -1640,7 +1661,8 @@ namespace nux
     pango_layout_index_to_line_x(layout, index, FALSE, &line_index, &x_off);
 
     // Weird bug: line_index here may be >= than line count?
-    if (line_index >= n_lines) {
+    if (line_index >= n_lines)
+    {
       line_index = n_lines - 1;
     }
 
@@ -1649,9 +1671,12 @@ namespace nux
 
     line_index += count;
 
-    if (line_index < 0) {
+    if (line_index < 0)
+    {
       return 0;
-    } else if (line_index >= n_lines) {
+    }
+    else if (line_index >= n_lines)
+    {
       return static_cast<int>(_text.length());
     }
 
@@ -1662,10 +1687,13 @@ namespace nux
     PangoLayoutLine *line = pango_layout_get_line(layout, line_index);
 #endif
     // Find out the cursor x offset related to the new line position.
-    if (line->resolved_dir == PANGO_DIRECTION_RTL) {
+    if (line->resolved_dir == PANGO_DIRECTION_RTL)
+    {
       pango_layout_get_cursor_pos(layout, line->start_index + line->length,
         &rect, NULL);
-    } else {
+    }
+    else
+    {
       pango_layout_get_cursor_pos(layout, line->start_index, &rect, NULL);
     }
 
@@ -1674,8 +1702,7 @@ namespace nux
     if (x_off < 0) x_off = 0;
     pango_layout_line_x_to_index(line, x_off, &index, &trailing);
 
-    index = static_cast<int>(
-      g_utf8_offset_to_pointer(text + index, trailing) - text);
+    index = static_cast<int>(g_utf8_offset_to_pointer(text + index, trailing) - text);
     return LayoutIndexToTextIndex(index);
   }
 
@@ -1738,8 +1765,10 @@ namespace nux
     return LayoutIndexToTextIndex(index);
   }
 
-  void TextEntry::SetCursor(int cursor) {
-    if (cursor != cursor_) {
+  void TextEntry::SetCursor(int cursor)
+  {
+    if (cursor != cursor_)
+    {
       ResetImContext();
       // If there was a selection range, then the selection range will be cleared.
       // Then content_modified_ shall be set to true to force redrawing the text.
@@ -1758,9 +1787,12 @@ namespace nux
     const char *text = pango_layout_get_text(layout);
     pango_layout_get_pixel_size(layout, &width, &height);
 
-    if (y < 0) {
+    if (y < 0)
+    {
       return 0;
-    } else if (y >= height) {
+    }
+    else if (y >= height)
+    {
       return static_cast<int>(_text.length());
     }
 
@@ -1776,7 +1808,8 @@ namespace nux
     // Adjust the offset if preedit is not empty and if the offset is after
     // current cursor.
     int preedit_length = static_cast<int>(_preedit.length());
-    if (preedit_length && index > cursor_) {
+    if (preedit_length && index > cursor_)
+    {
       if (index >= cursor_ + preedit_length)
         index -= preedit_length;
       else

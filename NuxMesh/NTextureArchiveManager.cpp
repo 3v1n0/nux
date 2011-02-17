@@ -420,8 +420,8 @@ namespace nux
     unsigned int ArchiveTag = TEXTUREARCHIVETAG;
     unsigned int ArchiveFormatVersion = TEXTUREARCHIVEVERSION;
     m_NumberOfTextures = 0;
-    NTimeStamp TimeStamp;
-    TimeStamp.GetTime();
+    TimeStamp time_stamp;
+    time_stamp.GetTime();
 
     m_FileStream->Serialize ( (char *) &ArchiveTag,            sizeof (ArchiveTag) );
     CHECK_ITX_WRITE_ERROR;
@@ -429,35 +429,35 @@ namespace nux
     CHECK_ITX_WRITE_ERROR;
 
     // Date Created
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
     CHECK_ITX_WRITE_ERROR;
 
     // Date Modified
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
     CHECK_ITX_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
     CHECK_ITX_WRITE_ERROR;
 
     // Number of Textures in the archives
@@ -502,17 +502,17 @@ namespace nux
     // Update the "last modified" date and the number of textures in the archive.
     m_FileStream->Seek (TEXTUREACHIVEHEADER_SIZE, NSerializer::SeekStart);
 
-    NTimeStamp TimeStamp;
-    TimeStamp.GetTime();
+    TimeStamp time_stamp;
+    time_stamp.GetTime();
 
     // Date Modified
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
 
     // Number of Textures in the archives
     m_FileStream->Serialize ( (char *) &m_NumberOfTextures,        sizeof (m_NumberOfTextures) );
@@ -547,7 +547,7 @@ namespace nux
     unsigned int ArchiveTag = 0;
     unsigned int ArchiveFormatVersion = 0;
     //unsigned int NumTextures = 0;
-    NTimeStamp TimeStamp;
+    TimeStamp time_stamp;
 
 
     m_FileStream->Serialize ( (char *) &ArchiveTag,            sizeof (ArchiveTag) ); // should be 0x20787469
@@ -564,24 +564,24 @@ namespace nux
                  (ArchiveFormatVersion & 0xFF000000) >> 24);
 
     // Date Created
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
-    nuxDebugMsg (TEXT ("File created on:  %d/%d/%d at %d:%d:%d"), TimeStamp.m_Year, TimeStamp.m_Month, TimeStamp.m_Day, TimeStamp.m_Hour, TimeStamp.m_Minute, TimeStamp.m_Second);
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
+    nuxDebugMsg (TEXT ("File created on:  %d/%d/%d at %d:%d:%d"), time_stamp.m_Year, time_stamp.m_Month, time_stamp.m_Day, time_stamp.m_Hour, time_stamp.m_Minute, time_stamp.m_Second);
 
     // Date Modified
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
-    nuxDebugMsg (TEXT ("Last modified on: %d/%d/%d at %d:%d:%d"), TimeStamp.m_Year, TimeStamp.m_Month, TimeStamp.m_Day, TimeStamp.m_Hour, TimeStamp.m_Minute, TimeStamp.m_Second);
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
+    nuxDebugMsg (TEXT ("Last modified on: %d/%d/%d at %d:%d:%d"), time_stamp.m_Year, time_stamp.m_Month, time_stamp.m_Day, time_stamp.m_Hour, time_stamp.m_Minute, time_stamp.m_Second);
 
     // Number of Textures in the archives
     m_FileStream->Serialize ( (char *) &m_NumberOfTextures,        sizeof (m_NumberOfTextures) );

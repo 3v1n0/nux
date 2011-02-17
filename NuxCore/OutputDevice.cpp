@@ -169,7 +169,7 @@ namespace nux
 #if UNICODE && !NUX_LOG_FILE_ANSI
       m_LogSerializer->Serialize ( (void *) &NUX_UTF16_BE[1], NUX_UTF16_BE[0] /*size*/ );
 #endif
-      LogFunction (NUX_MSG_SEVERITY_NONE, TEXT ("Log file open, %s"), GetFormattedLocalTime() );
+      LogFunction (NUX_MSG_SEVERITY_NONE, TEXT ("Log file open, %s"), GetFormattedLocalTime().GetTCharPtr());
     }
     else
     {
@@ -193,7 +193,7 @@ namespace nux
   {
     if (m_LogSerializer)
     {
-      LogFunction (NUX_MSG_SEVERITY_NONE, TEXT ("Log file closed, %s"), GetFormattedLocalTime() );
+      LogFunction (NUX_MSG_SEVERITY_NONE, TEXT ("Log file closed, %s"), GetFormattedLocalTime().GetTCharPtr());
       Flush();
       delete m_LogSerializer;
       m_LogSerializer = NULL;

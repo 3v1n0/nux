@@ -275,6 +275,10 @@ namespace nux
     Time e_x11_timestamp;
     int e_x11_window;
 
+#if defined(NUX_OS_LINUX)
+    Window e_x11_window; //!< X11 window.
+#endif
+
     int e_x11_keycode;  //!< X11 raw keycode.
     int e_keysym;       //!< Key symbol.
     int e_wheeldelta;

@@ -180,10 +180,8 @@ namespace nux
       return false;
     }
 
-    m_layout = layout;
+    m_layout = m_CompositionLayout;
     
-    SetCompositionLayout (m_layout);
-
     FormatContent();
 
     return true;

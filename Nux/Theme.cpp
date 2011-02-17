@@ -219,8 +219,6 @@ namespace nux
       return;
     }
 
-    //NUITextureArchiver UITextureArchive (NUX_FIND_RESOURCE_LOCATION_NOFAIL (TEXT ("UITextures/UIArchive.iar")));
-
     TiXmlDocument doc (painter_filename.GetTCharPtr() );
     doc.LoadFile();
 
@@ -267,20 +265,10 @@ namespace nux
       if (1)
       {
         BaseTexture* device_texture;
-//         NBitmapData *uitexturedata = UITextureArchive.ExtractTextureStyle (style.GetTCharPtr());
-// 
-//         if (uitexturedata)
-//         {
-//           device_texture = GetGpuDevice()->CreateSystemCapableTexture ();
-//           device_texture->Update (uitexturedata);
-//         }
-//         else
-        {
 
-          NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name")));
-          NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (filename.GetTCharPtr());
-          device_texture = Load2DTextureFile (texture_filename.GetTCharPtr());
-        }
+        NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name")));
+        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (filename.GetTCharPtr());
+        device_texture = Load2DTextureFile (texture_filename.GetTCharPtr());
 
         pimage->texture = device_texture;
       }
@@ -338,18 +326,6 @@ namespace nux
 
     return texture2D;
   }
-
-//   BaseTexture *UXTheme::Load2DRectangleTextureFile (const char *filename)
-//   {
-//     TextureRectangle *RectangleTexture = new TextureRectangle();
-//     NBitmapData *BitmapData = LoadImageFile (filename);
-// 
-//     if (BitmapData)
-//       RectangleTexture->Update (BitmapData);
-// 
-// 
-//     return RectangleTexture;
-//   }
 
   BaseTexture *UXTheme::Load2DTextureFileGenerateAlpha (const char *filename, int red, int green, int blue)
   {

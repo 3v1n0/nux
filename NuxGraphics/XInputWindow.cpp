@@ -53,13 +53,13 @@ namespace nux
                         LeaveWindowMask     |
                         PointerMotionMask   |
                         ButtonMotionMask    |
-                        StructureNotifyMask |
                         PropertyChangeMask  |
+                        StructureNotifyMask |
                         FocusChangeMask;
 
     _window = XCreateWindow (d, XDefaultRootWindow (d), _x, _y, _width, _height, 0,
                              CopyFromParent, InputOutput, CopyFromParent,
-                             CWOverrideRedirect | CWEventMask , &attrib);
+                             CWOverrideRedirect | CWEventMask, &attrib);
     
     _native_windows.push_front (_window);
     
@@ -184,16 +184,16 @@ namespace nux
   void XInputWindow::EnsureInputs()
   {
     XSelectInput (_display, _window,
-                  KeyPressMask       |
-                  KeyReleaseMask     |
-                  ButtonPressMask    |
-                  ButtonReleaseMask  |
-                  EnterWindowMask    |
-                  LeaveWindowMask    |
-                  PointerMotionMask  |
-                  ButtonMotionMask   |
+                  KeyPressMask        |
+                  KeyReleaseMask      |
+                  ButtonPressMask     |
+                  ButtonReleaseMask   |
+                  EnterWindowMask     |
+                  LeaveWindowMask     |
+                  PointerMotionMask   |
+                  ButtonMotionMask    |
+                  PropertyChangeMask  |
                   StructureNotifyMask |
-                  PropertyChangeMask |
                   FocusChangeMask);
     
   }
