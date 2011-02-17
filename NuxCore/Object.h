@@ -83,7 +83,7 @@ namespace nux
     /*
         @return True if the object was allocated dynamically.
     */
-    bool IsHeapAllocated() ;
+    bool IsHeapAllocated();
 
     //! Test if object was allocated dynamically.
     /*

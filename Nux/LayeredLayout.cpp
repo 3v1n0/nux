@@ -369,11 +369,16 @@ namespace nux
 
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
-      if (i == m_active_index)
+      if (i == m_active_index && !m_active_area)
       {
         m_active_area = static_cast<Area *> (*it);
-        break;
       }
+
+      if ((*it)->IsView ())
+        static_cast<View *> (*it)->QueueDraw ();
+      else if ((*it)->IsLayout ())
+        static_cast<Layout *> (*it)->QueueDraw ();
+
       i++;
     }
     QueueDraw ();
