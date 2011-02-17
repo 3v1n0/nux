@@ -65,7 +65,7 @@ namespace nux
 
 //     // A is obtained from GfxContext. So A dimension's are in relative window coordinates.
 //     Rect A = GetThreadGraphicsContext()->GetClippingRegion();
-//     Rect B = Rect(m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight());
+//     Rect B = Rect(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight());
 //     Rect C = A.intersect(B);
 //     if((ievent.e_event == NUX_MOUSE_MOVE) && !HasMouseFocus())
 //     {
@@ -83,16 +83,16 @@ namespace nux
 
     if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
     {
-      int buffer_width = m_Geometry.GetWidth();
-      int buffer_height = m_Geometry.GetHeight();
+      int buffer_width = GetBaseWidth();
+      int buffer_height = GetBaseHeight();
       int window_width, window_height;
       window_width = GfxContext.GetContextWidth();
       window_height = GfxContext.GetContextHeight();
 
-      m_ctx.x = m_Geometry.x;
-      m_ctx.y = m_Geometry.y;
-      m_ctx.width  = m_Geometry.GetWidth();
-      m_ctx.height = m_Geometry.GetHeight();
+      m_ctx.x = GetBaseX();
+      m_ctx.y = GetBaseY();
+      m_ctx.width  = GetBaseWidth();
+      m_ctx.height = GetBaseHeight();
 
       // A is obtained from GfxContext. So A dimension's are in relative window coordinates.
       Rect A = GfxContext.GetClippingRegion();
@@ -157,10 +157,10 @@ namespace nux
       int y = GfxContext.GetContextY();
 
       // The clientarea is in absolute window coordinates. It needs to be offset so that it is in relative window coordinates.
-      m_ctx.x = m_Geometry.x + x;
-      m_ctx.y = m_Geometry.y + y;
-      m_ctx.width  = m_Geometry.GetWidth();
-      m_ctx.height = m_Geometry.GetHeight();
+      m_ctx.x = GetBaseX() + x;
+      m_ctx.y = GetBaseY() + y;
+      m_ctx.width  = GetBaseWidth();
+      m_ctx.height = GetBaseHeight();
 
       // A is obtained from GfxContext. So A dimension's are in relative window coordinates.
       Rect A = GfxContext.GetClippingRegion();
@@ -253,8 +253,8 @@ namespace nux
     window_height = GfxContext.GetContextHeight();
 
     //Restore 2D ViewPort
-    GfxContext.SetViewport (0, 0, m_Geometry.GetWidth(), m_Geometry.GetHeight() );
-    GfxContext.Push2DWindow (m_Geometry.GetWidth(), m_Geometry.GetHeight() );
+    GfxContext.SetViewport (0, 0, GetBaseWidth(), GetBaseHeight() );
+    GfxContext.Push2DWindow (GetBaseWidth(), GetBaseHeight() );
 
   }
 

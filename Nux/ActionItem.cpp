@@ -47,7 +47,7 @@ namespace nux
       m_Icon->UnReference();
   }
 
-  void ActionItem::DrawAsMenuItem (GraphicsEngine &GfxContext, CoreArea &area, bool is_highlighted, bool draw_icone)
+  void ActionItem::DrawAsMenuItem (GraphicsEngine &GfxContext, InputArea &area, bool is_highlighted, bool draw_icone)
   {
     Geometry geo = area.GetGeometry();
     Geometry icon_geo (0, 0, 20, 20);
@@ -72,7 +72,7 @@ namespace nux
     GetPainter().PaintTextLineStatic (GfxContext, GetSysFont(), text_geo, std::string (label), Color (0xFF000000), eAlignTextLeft);
   }
 
-  void ActionItem::DrawAsToolButton (GraphicsEngine &GfxContext, CoreArea &area)
+  void ActionItem::DrawAsToolButton (GraphicsEngine &GfxContext, InputArea &area)
   {
     Geometry base = area.GetGeometry();
 

@@ -128,9 +128,7 @@ namespace nux
     void SetBackgroundColor (const Color &color);
 
     #if defined(NUX_OS_LINUX)
-    void EnableInputWindow (bool        b,
-                            const char* title = "nux input window",
-                            bool        override_redirect = 0);
+    void EnableInputWindow (bool b, bool override_redirect = 0);
     bool InputWindowEnabled ();
     void InputWindowEnableStruts (bool enable);
     bool InputWindowStrutsEnabled ();
@@ -179,6 +177,17 @@ namespace nux
         @param Height   New height of the window.
     */
     virtual void NotifyConfigurationChange (int Width, int Height);
+
+    //! Process special events.
+    /*!
+        Some events are not meant to be processed by all views. These events only make sense 
+        for ViewWindow. NUX_WINDOW_ENTER_FOCUS, NUX_WINDOW_EXIT_FOCUS are such events.
+
+        @param event The event to inspect.
+        @return True if this BaseWindow has claimed the event. If so, then other BaseWindow should not be given
+        a chance to process the event.
+    */
+    virtual bool ProcessSpecialEvent(Event event);
 
     int GetBorder() const;
     int GetTopBorder() const;

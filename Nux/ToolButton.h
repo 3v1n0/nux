@@ -59,7 +59,7 @@ namespace nux
 
   private:
     HLayout    *hlayout;
-    CoreArea   *m_IconArea;
+    InputArea   *m_IconArea;
     ActionItem *m_ActionItem;
     BaseTexture   *m_Texture;
 

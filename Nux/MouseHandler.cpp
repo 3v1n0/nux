@@ -25,9 +25,9 @@
 namespace nux
 {
 //extern bool gMouseOwned;
-  BaseMouseHandler *gFocusMouseHandler = 0; // put this is the GfxServer class
+  AreaEventProcessor *gFocusMouseHandler = 0; // put this is the GfxServer class
 
-// static void SetMouseFocusOwner(BaseMouseHandler* ptr)
+// static void SetMouseFocusOwner(AreaEventProcessor* ptr)
 // {
 //     gFocusMouseHandler = ptr;
 //     if(ptr)
@@ -36,31 +36,37 @@ namespace nux
 //         gMouseOwned = false;
 // }
 //
-// static BaseMouseHandler* GetMouseFocusOwner()
+// static AreaEventProcessor* GetMouseFocusOwner()
 // {
 //     return gFocusMouseHandler;
 // }
 
-  BaseMouseHandler::BaseMouseHandler()
+  AreaEventProcessor::AreaEventProcessor()
   {
     m_first_time        = true;
     _has_mouse_focus    = false;
     _current_mouse_in   = false;
     _previous_mouse_in  = false;
-    _geometric_mouse_status = 0;
+    _state = 0;
   }
 
-  BaseMouseHandler::~BaseMouseHandler()
+  AreaEventProcessor::~AreaEventProcessor()
   {
 
   }
 
-  unsigned int BaseMouseHandler::Process (IEvent &ievent, const Geometry &geo, bool process_mouse_focus)
+  unsigned int AreaEventProcessor::Process (Event &event, const Geometry &geo, bool process_mouse_focus)
   {
-    _geometric_mouse_status = AREA_MOUSE_STATUS_NONE;
+    // preserve mouse focus state.
+    bool has_mouse_focus = _state & AREA_MOUSE_STATUS_FOCUS;
 
-    if (ievent.e_event == NUX_NO_EVENT)
-      return _geometric_mouse_status;
+    _state = AREA_MOUSE_STATUS_NONE;
+
+    if (has_mouse_focus)
+      _state |= AREA_MOUSE_STATUS_FOCUS;
+
+    if (event.e_event == NUX_NO_EVENT)
+      return _state;
 
     _previous_mouse_in = _current_mouse_in;
 
@@ -69,15 +75,15 @@ namespace nux
     // that refers to the top-left corner of the window.
     // If (e_x_root, e_y_root) is equal to the top left corner of this area in the window,
     // then (x, y) represent the coordinate of the mouse based on the top-left corner of this area.
-    x = ievent.e_x - ievent.e_x_root;
-    y = ievent.e_y - ievent.e_y_root;
+    x = event.e_x - event.e_x_root;
+    y = event.e_y - event.e_y_root;
 
     lo_x = geo.x;
     hi_x = geo.x + geo.GetWidth() - 1;
     lo_y = geo.y;
     hi_y = geo.y + geo.GetHeight() - 1;
 
-    if ((ievent.e_x == -1) && (ievent.e_y == -1))
+    if ((event.e_x == -1) && (event.e_y == -1))
     {
       // e_x == -1 and e_y == -1 are associated with some specific window events that have the mouse outside of any widget.
       // See WM_SETFOCUS, WM_KILLFOCUS, NUX_WINDOW_MOUSELEAVE
@@ -97,12 +103,12 @@ namespace nux
     {
       if ( (_previous_mouse_in == true) && (_current_mouse_in == false) )
       {
-        _geometric_mouse_status |= AREA_MOUSE_STATUS_LEAVE;
+        _state |= AREA_MOUSE_STATUS_LEAVE;
       }
 
       if ( (_previous_mouse_in == false) && (_current_mouse_in == true) )
       {
-        _geometric_mouse_status |= AREA_MOUSE_STATUS_ENTER;
+        _state |= AREA_MOUSE_STATUS_ENTER;
       }
     }
 
@@ -111,85 +117,80 @@ namespace nux
     m_mouse_positionx = x;
     m_mouse_positiony = y;
 
-    if ((_current_mouse_in == false) && (HasMouseFocus () == false))
+    if ((_current_mouse_in == false) && !(_state & AREA_MOUSE_STATUS_FOCUS))
     {
-      return _geometric_mouse_status;
+      return _state;
     }
 
     if (process_mouse_focus == false)
     {
-      return _geometric_mouse_status;
+      return _state;
     }
 
-    switch (ievent.e_event)
+    switch (event.e_event)
     {
       case NUX_MOUSE_PRESSED:
+      case NUX_MOUSE_DOUBLECLICK:
       {
         if (_current_mouse_in)
         {
-          _geometric_mouse_status |= AREA_MOUSE_STATUS_DOWN;
-          SetMouseFocus (true);
+          _state |= AREA_MOUSE_STATUS_DOWN;
+          _state |= AREA_MOUSE_STATUS_FOCUS;
+          //SetMouseFocus (true);
         }
       }
       break;
 
       case NUX_MOUSE_RELEASED:
       {
-        if (HasMouseFocus ())
+        if (_state & AREA_MOUSE_STATUS_FOCUS)
         {
-          _geometric_mouse_status |= AREA_MOUSE_STATUS_UP;
-          SetMouseFocus (false);
+          _state |= AREA_MOUSE_STATUS_UP;
+          _state &= ~AREA_MOUSE_STATUS_FOCUS;
+          //SetMouseFocus (false);
         }
       }
       break;
 
       case NUX_MOUSE_MOVE:
       {
-        _geometric_mouse_status |= AREA_MOUSE_STATUS_MOVE;
+        _state |= AREA_MOUSE_STATUS_MOVE;
       }
       break;
     }
 
-    return _geometric_mouse_status;
+    return _state;
   }
 
-  void BaseMouseHandler::SetMouseFocus (bool focus)
-  {
-    if (focus)
-    {
-      _has_mouse_focus = true;
-      //_current_mouse_in = true;
-    }
-    else
-    {
-      _has_mouse_focus = false;
-//       // If the mouse is released do not change the MouseIn status.
-//       if (!(_geometric_mouse_status & AREA_MOUSE_STATUS_UP))
-//         _current_mouse_in = false;
-//       else
-//       {
-//         int i = 4;
-//       }
-    }
-  }
+//   void AreaEventProcessor::SetMouseFocus (bool focus)
+//   {
+//     if (focus)
+//     {
+//       _has_mouse_focus = true;
+//     }
+//     else
+//     {
+//       _has_mouse_focus = false;
+//     }
+//   }
 
-  bool BaseMouseHandler::ReleaseMouseFocus()
-  {
-    SetMouseFocus (false);
-    return true;
-  }
+//   bool AreaEventProcessor::ReleaseMouseFocus()
+//   {
+//     SetMouseFocus (false);
+//     return true;
+//   }
 
-  bool BaseMouseHandler::HasMouseFocus()
-  {
-    return _has_mouse_focus;
-  }
+//   bool AreaEventProcessor::HasMouseFocus()
+//   {
+//     return _has_mouse_focus;
+//   }
 
-  bool BaseMouseHandler::MouseIn()
+  bool AreaEventProcessor::MouseIn()
   {
     return _current_mouse_in;
   }
 
-  void BaseMouseHandler::ForceMouseFocus (int x, int y, const Geometry &g)
+  void AreaEventProcessor::ForceMouseFocus (int x, int y, const Geometry &g)
   {
     int lo_x, hi_x, lo_y, hi_y;
     lo_x = g.x;
@@ -208,10 +209,11 @@ namespace nux
       _previous_mouse_in = _current_mouse_in = false;
     }
 
+    _state |= AREA_MOUSE_STATUS_DOWN;
     _has_mouse_focus = true;
   }
 
-  void BaseMouseHandler::StopMouseFocus (int x, int y, const Geometry &g)
+  void AreaEventProcessor::StopMouseFocus (int x, int y, const Geometry &g)
   {
     _has_mouse_focus = false;
   }

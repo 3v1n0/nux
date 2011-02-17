@@ -53,7 +53,7 @@ namespace nux
     virtual void PositionChildLayout (float offsetX, float offsetY);
 
     bool bCaptionAvailable;
-    CoreArea m_CaptionArea;
+    InputArea m_CaptionArea;
     Layout *m_layout;
   };
 }

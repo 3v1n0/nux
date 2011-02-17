@@ -977,26 +977,25 @@ namespace nux
           if(!GetWindow().isWindowMinimized())
           {
               GetWindow().SetViewPort(0, 0, event.width, event.height);
-              ReconfigureLayout();
+              ReconfigureLayout ();
               m_window_compositor->FormatRenderTargets(event.width, event.height);
           }
           m_window_compositor->FloatingAreaConfigureNotify(event.width, event.height);
           m_size_configuration_event = true;
       }
 
-      // Actions may have caused layouts and areas to request a recompute. 
+      // Some action may have caused layouts and areas to request a recompute. 
       // Process them here before the Draw section.
-      // In embedded mode, we don't do a layout cycle here. It will be done when RenderInterfaceFromForeignCmd is called.
-      if(!GetWindow().isWindowMinimized() && (!IsEmbeddedWindow()))
+      if(!GetWindow().isWindowMinimized())
       {
         if (_queue_main_layout)
         {
-          ReconfigureLayout();
+          ReconfigureLayout ();
         }
         else 
         {
           // Compute the layouts that have been queued.
-          ComputeQueuedLayout();
+          ComputeQueuedLayout ();
         }
       }
       

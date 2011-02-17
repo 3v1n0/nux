@@ -114,7 +114,7 @@ namespace nux
     m_isOpen = false;
     m_bParentOpen = false;
     m_bDirty = true;
-    _row_header_area = new CoreArea (NUX_TRACKER_LOCATION);
+    _row_header_area = new InputArea (NUX_TRACKER_LOCATION);
     _row_header_area->Reference();
   }
 

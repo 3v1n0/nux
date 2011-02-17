@@ -28,7 +28,7 @@ namespace nux
 
   class Validator;
 
-  class StaticTextBox : public View //public CoreArea
+  class StaticTextBox : public View //public InputArea
   {
     NUX_DECLARE_OBJECT_TYPE (StaticTextBox, View);
   public:

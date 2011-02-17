@@ -41,7 +41,7 @@ namespace nux
   class TableCtrl;
   class TableItem;
 
-  typedef CoreArea sizehandler2;
+  typedef InputArea sizehandler2;
 
   class TableCtrl: public ScrollView
   {
@@ -490,7 +490,7 @@ namespace nux
 
 
   protected:
-    CoreArea   *m_TableArea;
+    InputArea   *m_TableArea;
     VLayout    *m_VLayout;
 
     int m_tableNumRow;

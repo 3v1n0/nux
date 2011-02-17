@@ -112,12 +112,12 @@ namespace nux
     int _resize_handle_height;
     int _title_bar_height;
 
-    CoreArea *_resize_handle;
-    CoreArea *_title_bar;
+    InputArea *_resize_handle;
+    InputArea *_title_bar;
     Point _title_bar_mouse_down_location;
 
-    CoreArea *_minimize_button;
-    CoreArea *_close_button;
+    InputArea *_minimize_button;
+    InputArea *_close_button;
     StaticTextBox *_window_title_bar;
     bool m_hasTitleBar;
 

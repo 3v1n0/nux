@@ -90,7 +90,7 @@ namespace nux
     m_TableItemHead->Open();
     m_TableItemHead->Show();
 
-    m_TableArea = new CoreArea (NUX_TRACKER_LOCATION);
+    m_TableArea = new InputArea (NUX_TRACKER_LOCATION);
     m_TableArea->OnMouseDown.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDown) );
     m_TableArea->OnMouseDoubleClick.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDoubleClick) );
     m_TableArea->OnMouseUp.connect (sigc::mem_fun (this, &TableCtrl::OnMouseUp) );

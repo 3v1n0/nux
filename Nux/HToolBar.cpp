@@ -38,33 +38,19 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
     ,   m_hlayout (0)
   {
-    InitializeLayout();
-    InitializeWidgets();
+	  m_hlayout = new HLayout (NUX_TRACKER_LOCATION);
+
+	  m_hlayout->SetHorizontalInternalMargin (2);
+	  m_hlayout->SetHorizontalExternalMargin (0);
+	  m_hlayout->SetVerticalExternalMargin (0);
+	  m_hlayout->SetContentDistribution (eStackLeft);
+	  SetMinimumSize (200, 32);
+	  SetMaximumHeight (32);
+	  SetGeometry (Geometry (0, 0, 200, 20) );
+	  SetCompositionLayout (m_hlayout);
   }
 
   HToolBar::~HToolBar()
-  {
-    DestroyLayout();
-  }
-
-  void HToolBar::InitializeWidgets()
-  {
-    m_hlayout->SetHorizontalInternalMargin (2);
-    m_hlayout->SetHorizontalExternalMargin (0);
-    m_hlayout->SetVerticalExternalMargin (0);
-    m_hlayout->SetContentDistribution (eStackLeft);
-    SetMinimumSize (200, 32);
-    SetMaximumHeight (32);
-    SetGeometry (Geometry (0, 0, 200, 20) );
-    SetCompositionLayout (m_hlayout);
-  }
-
-  void HToolBar::InitializeLayout()
-  {
-    m_hlayout = new HLayout (NUX_TRACKER_LOCATION);
-  }
-
-  void HToolBar::DestroyLayout()
   {
   }
 

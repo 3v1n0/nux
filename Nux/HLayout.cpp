@@ -174,7 +174,7 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      (*it)->setOutofBound (false);
+      (*it)->SetLayoutDone (false);
     }
 
     t_s32 original_height = GetBaseHeight();
@@ -241,7 +241,7 @@ namespace nux
         (*it)->SetBaseY (current_y);
 
         MinorDimensionSize extend = (*it)->GetExtend();
-        MinorDimensionPosition positioning = (*it)->getPositioning();
+        MinorDimensionPosition positioning = (*it)->GetPositioning();
         float percentage = (*it)->GetPercentage();
 
         // Compute the size of an ellement in the minor dimension (vertical)
@@ -341,7 +341,7 @@ namespace nux
         bool smallerWidth = false;
         t_s32 ret = 0;
 
-        if ( ( (*it)->IsLayout()  || (*it)->IsView() ) /*&& ((*it)->isOutofBound() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
+        if ( ( (*it)->IsLayout()  || (*it)->IsView() ) /*&& ((*it)->IsLayoutDone() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
         {
           ret = (*it)->ComputeLayout2();
 
@@ -350,20 +350,20 @@ namespace nux
           largerHeight = (ret & eLargerHeight) ? true : false;
           smallerHeight = (ret & eSmallerHeight) ? true : false;
 
-          if ( (largerWidth || smallerWidth) && ( (*it)->isOutofBound() == false) )
+          if ( (largerWidth || smallerWidth) && ( (*it)->IsLayoutDone() == false) )
           {
             // Stop computing the size of this layout. Its size was not convenient to its children. So the children size take priority
             // over the layout. In ComputeLayout2, the dimension of the layout has been set so it encompasses its children (and the margins).
-            // Now the parent layout cannot be touched again: outofbound = true. In VLayoutManagement, it is as if the stretchfactor
+            // Now the parent layout cannot be touched again: _layout_done = true. In VLayoutManagement, it is as if the stretchfactor
             // of this layout is now 0.
-            // This is the only place where a layout can have outofbound set to "true".
+            // This is the only place where a layout can have _layout_done set to "true".
 
             // If (smallerWidth == true) the layout takes less space than anticipated.
             // Set unadjusted_layout = true, so another pass will allow its sibling to claim more space.
 
             {
               unadjusted_layout = true;
-              (*it)->setOutofBound (true);
+              (*it)->SetLayoutDone (true);
             }
           }
 
@@ -373,7 +373,7 @@ namespace nux
             // recompute the layout if necessary.
             // For layout elements, make sure that the stretch factor is not 0. If it is, it means it will not use the
             // size provided by the parent layout. Its size will be adjusted to the minimum size of the layout content.
-            if (! ( (*it)->IsLayout() && (*it)->m_stretchfactor == 0) )
+            if (! ( (*it)->IsLayout() && (*it)->GetStretchFactor() == 0) )
               FullSizeUnadjusted.push_back ( (*it)->GetBaseHeight() );
           }
 
@@ -502,7 +502,7 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
-        if ( ( (*it)->GetStretchFactor() == 0) && ( (*it)->isOutofBound() != true) )
+        if ( ( (*it)->GetStretchFactor() == 0) && ( (*it)->IsLayoutDone() != true) )
         {
           (*it)->ApplyMinWidth();
         }
@@ -516,7 +516,7 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
-        if ( (*it)->GetStretchFactor() == 0 || (*it)->isOutofBound() == true)
+        if ( (*it)->GetStretchFactor() == 0 || (*it)->IsLayoutDone() == true)
         {
           available_width -= (*it)->GetBaseWidth();
         }
@@ -528,21 +528,21 @@ namespace nux
         {
           if ( ( (*it)->GetStretchFactor() != 0) && (*it)->IsArea() )
           {
-            // If it is not an object of type eInputArea, do not set outofbound to true,
+            // If it is not an object of type eInputArea, do not set _layout_done to true,
             // so, the layout management function will later be called on the object.
             (*it)->ApplyMinWidth();
-            (*it)->setOutofBound (true);
+            (*it)->SetLayoutDone (true);
           }
-          else if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->IsLayout() ) && ( (*it)->isOutofBound() == false) ) // layout and not fixed by child
+          else if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->IsLayout() ) && ( (*it)->IsLayoutDone() == false) ) // layout and not fixed by child
           {
             // The out of bound must be reset to false.
             (*it)->ApplyMinWidth();
-            (*it)->setOutofBound (false);
+            (*it)->SetLayoutDone (false);
           }
-          else if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->isOutofBound() == false) ) // layout and not fixed
+          else if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->IsLayoutDone() == false) ) // layout and not fixed
           {
             (*it)->ApplyMinWidth();
-            // A layout must never have outofbound set to true "here" because it must continue
+            // A layout must never have _layout_done set to true "here" because it must continue
             // doing the layout of its children and finally resize itself to fit them.
             // The same way, A layout size factor should never be set to 0.
           }
@@ -557,7 +557,7 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
-        if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->isOutofBound() == false) )
+        if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->IsLayoutDone() == false) )
         {
           float sf = (float) (*it)->GetStretchFactor();
           cumul += sf / max_stretchfactor;
@@ -583,7 +583,7 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end() && !need_recompute; it++)
       {
-        if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->isOutofBound() == false) )
+        if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->IsLayoutDone() == false) )
         {
           t_u32 sf = (*it)->GetStretchFactor();
           t_u32 new_width;
@@ -615,7 +615,7 @@ namespace nux
           t_u32 elemt_max_width = (*it)->GetMaximumSize().GetWidth();
           t_u32 elemt_min_width = (*it)->GetMinimumSize().GetWidth();
 
-          // A layout must never have outofbound set to true "here" because it must continue
+          // A layout must never have _layout_done set to true "here" because it must continue
           // doing the layout of its children and finally resize itself to fit them.
           // The same way, A layout size factor should never be set to 0.
           // Q: How about SpaceLayout? Should we treat them the same as layout or widget in this particular case?
@@ -628,7 +628,7 @@ namespace nux
 
             if ( (*it)->IsLayout() == false || (*it)->IsSpaceLayout() )
             {
-              (*it)->setOutofBound (true);
+              (*it)->SetLayoutDone (true);
               need_recompute = true;
             }
           }
@@ -639,7 +639,7 @@ namespace nux
 
             if ( (*it)->IsLayout() == false || (*it)->IsSpaceLayout() )
             {
-              (*it)->setOutofBound (true);
+              (*it)->SetLayoutDone (true);
               need_recompute = true;
             }
 
@@ -679,7 +679,7 @@ namespace nux
     {
       // In the recursive process, make sure we get always the highest stretch factor
       // of an element that has not been bounded.
-      if ( (*it)->isOutofBound() == false)
+      if ( (*it)->IsLayoutDone() == false)
       {
         sf = (*it)->GetStretchFactor();
 
@@ -722,7 +722,7 @@ namespace nux
         (*it)->SetBaseY (current_y);
 
         MinorDimensionSize extend = (*it)->GetExtend();
-        MinorDimensionPosition positioning = (*it)->getPositioning();
+        MinorDimensionPosition positioning = (*it)->GetPositioning();
 
         if ( (extend != eFull) || ( (*it)->GetBaseHeight() < height) )
         {

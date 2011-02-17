@@ -42,8 +42,8 @@ namespace nux
     void Activate (bool b);
     void Trigger() const;
 
-    void DrawAsMenuItem (GraphicsEngine &GfxContext, CoreArea &area, bool is_highlighted, bool draw_icone);
-    void DrawAsToolButton (GraphicsEngine &GfxContext, CoreArea &area);
+    void DrawAsMenuItem (GraphicsEngine &GfxContext, InputArea &area, bool is_highlighted, bool draw_icone);
+    void DrawAsToolButton (GraphicsEngine &GfxContext, InputArea &area);
     void Enable (bool b);
     bool isEnabled() const;
 

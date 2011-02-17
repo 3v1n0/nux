@@ -60,11 +60,6 @@ namespace nux
     void RecvMouseLeaveIcon (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDragOnIcon (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-  protected:
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
-
   private:
     HLayout *m_hlayout;
   };

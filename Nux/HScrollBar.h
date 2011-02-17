@@ -101,10 +101,10 @@ namespace nux
     bool AtMaximum();
 
     HLayout *hlayout;
-    CoreArea *m_SlideBar;
-    CoreArea *m_LeftThumb;
-    CoreArea *m_RightThumb;
-    CoreArea *m_Track;
+    InputArea *m_SlideBar;
+    InputArea *m_LeftThumb;
+    InputArea *m_RightThumb;
+    InputArea *m_Track;
 
     int m_contentWidth;
     int m_contentHeight;

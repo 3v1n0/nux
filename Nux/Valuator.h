@@ -74,7 +74,7 @@ namespace nux
 
   protected:
     EditTextBox    *m_EditLine;
-    CoreArea       *m_MouseControlledButton;
+    InputArea       *m_MouseControlledButton;
     int m_Mouse;
 
   };

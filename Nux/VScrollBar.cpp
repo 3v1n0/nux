@@ -52,10 +52,10 @@ namespace nux
     m_DownTimerHandler  = 0;
 
     vlayout         = new VLayout (NUX_TRACKER_LOCATION);
-    m_TopThumb      = new CoreArea (NUX_TRACKER_LOCATION);
-    m_Track         = new CoreArea (NUX_TRACKER_LOCATION);
-    m_BottomThumb   = new CoreArea (NUX_TRACKER_LOCATION);
-    m_SlideBar      = new CoreArea (NUX_TRACKER_LOCATION);
+    m_TopThumb      = new InputArea (NUX_TRACKER_LOCATION);
+    m_Track         = new InputArea (NUX_TRACKER_LOCATION);
+    m_BottomThumb   = new InputArea (NUX_TRACKER_LOCATION);
+    m_SlideBar      = new InputArea (NUX_TRACKER_LOCATION);
 
     // Set Original State
     SetMinimumSize (VSCROLLBAR_WIDTH, AREA_MIN_HEIGHT);

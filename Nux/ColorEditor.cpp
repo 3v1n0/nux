@@ -209,9 +209,9 @@ namespace nux
     m_Validator.SetMaximum (1.0);
     m_Validator.SetDecimals (2);
 
-    m_PickerArea        = new CoreArea (NUX_TRACKER_LOCATION);
-    m_BaseChannelArea   = new CoreArea (NUX_TRACKER_LOCATION);
-    m_ColorSquare       = new CoreArea (NUX_TRACKER_LOCATION);
+    m_PickerArea        = new InputArea (NUX_TRACKER_LOCATION);
+    m_BaseChannelArea   = new InputArea (NUX_TRACKER_LOCATION);
+    m_ColorSquare       = new InputArea (NUX_TRACKER_LOCATION);
     m_hlayout           = new HLayout (NUX_TRACKER_LOCATION);
 
     m_BaseChannelArea->OnMouseDown.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseDown) );

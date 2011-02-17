@@ -87,7 +87,7 @@ namespace nux
   void ColorGradient::InitializeLayout()
   {
     hlayout         = new HLayout (NUX_TRACKER_LOCATION);
-    m_Percentage    = new CoreArea (NUX_TRACKER_LOCATION);
+    m_Percentage    = new InputArea (NUX_TRACKER_LOCATION);
     m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
   }
 

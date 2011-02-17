@@ -84,7 +84,7 @@ namespace nux
     EditTextBox    *m_XEdit;
     EditTextBox    *m_YEdit;
     EditTextBox    *m_ZEdit;
-    CoreArea       *m_MouseControlledButton;
+    InputArea       *m_MouseControlledButton;
     int m_Mouse;
 
   };

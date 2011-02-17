@@ -69,12 +69,6 @@ namespace nux
     virtual void SetState (bool State);
     virtual void SetState (bool State, bool EmitSignal);
     virtual bool GetState() const;
-    //---
-
-  protected:
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
 
   private:
     void SetRadioGroupSelector (RadioButtonGroup *RadioSelector);
@@ -85,8 +79,8 @@ namespace nux
 
 
     HLayout    *m_hlayout;
-    CoreArea   *m_TextArea;
-    CoreArea   *m_CheckArea;
+    InputArea   *m_TextArea;
+    InputArea   *m_CheckArea;
     bool        m_State;
 
     RadioButtonGroup *m_Group;

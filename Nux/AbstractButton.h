@@ -25,15 +25,7 @@
 
 namespace nux
 {
-  typedef enum
-  {
-    BUTTON_TYPE_UNKNOWN = 0,
-    BUTTON_TYPE_NORMAL,
-    BUTTON_TYPE_PUSH,
-    BUTTON_TYPE_CHECK,
-    BUTTON_TYPE_RADIO,
-  } ButtonType;
-
+  //! The base class of Button, CheckBox, RadioButton and PushButton.
   class AbstractButton : public View
   {
   public:
@@ -49,11 +41,7 @@ namespace nux
 
   protected:
     bool _state;
-    ButtonType _type;
-
-
   };
-
 }
 
 #endif // ABSTRACTBUTTON_H

@@ -23,7 +23,7 @@
 #ifndef SCROLLVIEW_H
 #define SCROLLVIEW_H
 
-#include "Nux/Nux.h"
+#include "Nux.h"
 
 namespace nux
 {

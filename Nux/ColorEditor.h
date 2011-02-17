@@ -128,9 +128,9 @@ namespace nux
 
     eColorChannel   m_ColorChannel;
     eColorModel     m_ColorModel;
-    CoreArea       *m_PickerArea;
-    CoreArea       *m_BaseChannelArea;
-    CoreArea       *m_ColorSquare;
+    InputArea       *m_PickerArea;
+    InputArea       *m_BaseChannelArea;
+    InputArea       *m_ColorSquare;
     HLayout        *m_hlayout;
     VLayout        *ctrllayout;
 

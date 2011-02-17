@@ -179,10 +179,10 @@ namespace nux
     m_hlayout       = new HLayout (NUX_TRACKER_LOCATION);
     m_hlayout2      = new HLayout (TEXT ("QWERTY"), NUX_TRACKER_LOCATION);
     m_GraphTitle    = new StaticTextBox (TEXT ("Time Graph"), NUX_TRACKER_LOCATION);
-    m_GraphArea     = new CoreArea (NUX_TRACKER_LOCATION);
-    m_GraphBarIcon  = new CoreArea (NUX_TRACKER_LOCATION);
-    m_GraphIcon     = new CoreArea (NUX_TRACKER_LOCATION);
-    m_ValueIcon     = new CoreArea (NUX_TRACKER_LOCATION);
+    m_GraphArea     = new InputArea (NUX_TRACKER_LOCATION);
+    m_GraphBarIcon  = new InputArea (NUX_TRACKER_LOCATION);
+    m_GraphIcon     = new InputArea (NUX_TRACKER_LOCATION);
+    m_ValueIcon     = new InputArea (NUX_TRACKER_LOCATION);
   }
 
   void TimeGraph::DestroyLayout()
