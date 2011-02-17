@@ -66,7 +66,7 @@ namespace nux
     //! Get X11 the Window.
     Window GetWindow ();
 
-    void ForceInputFocus ();
+    void SetInputFocus ();
 
     void GrabPointer ();
     void UnGrabPointer ();

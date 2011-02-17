@@ -138,7 +138,7 @@ namespace nux
     void UnGrabPointer ();
     void GrabKeyboard ();
     void UnGrabKeyboard ();
-    void ForceInputFocus ();
+    void SetInputFocus ();
     Window GetInputWindowId ();
     #endif
 

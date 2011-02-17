@@ -361,10 +361,10 @@ namespace nux
       m_input_window->UnGrabPointer ();    
   }
 
-  void BaseWindow::ForceInputFocus ()
+  void BaseWindow::SetInputFocus ()
   {
     if (m_input_window)
-      m_input_window->ForceInputFocus ();
+      m_input_window->SetInputFocus ();
   }
 
   void BaseWindow::GrabKeyboard ()

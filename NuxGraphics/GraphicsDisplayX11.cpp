@@ -1388,24 +1388,6 @@ namespace nux
     }
   }
 
-  void GraphicsDisplay::SpitOut (Display*    dpy,
-                                 Window      win,
-                                 const char* funcName,
-                                 const char* evName)
-  {
-    char* wmName = NULL;
-
-    XFetchName (dpy, win, &wmName);
-
-    nuxDebugMsg ("%s() - got %s on window \"%s\" (0x%X)\n",
-                 funcName,
-                 evName,
-                 wmName,
-                 win);
-
-    free (wmName);
-  }
-
   void GraphicsDisplay::ProcessXEvent (XEvent xevent, bool foreign)
   {
     int x_recalc = 0;
@@ -1458,11 +1440,6 @@ namespace nux
 
       case FocusIn:
       {
-	SpitOut (xevent.xany.display,
-                 xevent.xany.window,
-                 "GraphicsDisplay::ProcessXEvent",
-                 "FocusIn");
-
         m_pEvent->e_event = NUX_WINDOW_ENTER_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
@@ -1480,11 +1457,6 @@ namespace nux
 
       case FocusOut:
       {
-	SpitOut (xevent.xany.display,
-                 xevent.xany.window,
-                 "GraphicsDisplay::ProcessXEvent",
-                 "FocusOut");
-
         m_pEvent->e_event = NUX_WINDOW_EXIT_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
@@ -1601,11 +1573,6 @@ namespace nux
 
       case MapNotify:
       {
-	SpitOut (xevent.xany.display,
-                 xevent.xany.window,
-                 "GraphicsDisplay::ProcessXEvent",
-                 "MapNotify");
-
         m_pEvent->e_event = NUX_WINDOW_MAP;
 	m_pEvent->e_x11_window = xevent.xany.window;
 
@@ -1613,16 +1580,12 @@ namespace nux
                         xevent.xany.window,
                         RevertToParent,
                         CurrentTime);
+
         break;
       }
 
       case UnmapNotify:
       {
-	SpitOut (xevent.xany.display,
-                 xevent.xany.window,
-                 "GraphicsDisplay::ProcessXEvent",
-                 "UnmapNotify");
-
         m_pEvent->e_event = NUX_WINDOW_UNMAP;
 	m_pEvent->e_x11_window = xevent.xany.window;
 
@@ -1633,23 +1596,6 @@ namespace nux
       {
         //if (foreign)
         //  break;
-
-        if ((xevent.xclient.format       == 32) &&
-            (xevent.xclient.message_type == XInternAtom (xevent.xany.display, "WM_PROTOCOLS", false)) &&
-            (xevent.xclient.data.l[0]    == XInternAtom (xevent.xany.display, "WM_TAKE_FOCUS", false)))
-        {
-          m_pEvent->e_event = NUX_TAKE_FOCUS;
-          m_pEvent->e_x11_timestamp = (Time) xevent.xclient.data.l[1];
-          std::cout << "GraphicsDisplay::ProcessXEvent() - got WM_TAKE_FOCUS ClientMessage for window (0x"
-                    << std::hex << xevent.xany.window << ")" << std::endl;
-          XWindowAttributes attribs;
-          if (XGetWindowAttributes (xevent.xany.display, xevent.xany.window, &attribs) &&
-              attribs.map_state == IsViewable)
-          {
-            std::cout << "GraphicsDisplay::ProcessXEvent() - window 0x" << std::hex << xevent.xany.window << " is viewable... trying to set focus" << std::endl;
-            XSetInputFocus (xevent.xany.display, xevent.xany.window, RevertToParent, m_pEvent->e_x11_timestamp);
-          }
-        }
 
         if ( (xevent.xclient.format == 32) && ( (xevent.xclient.data.l[0]) == static_cast<long> (m_WMDeleteWindow) ) )
         {
