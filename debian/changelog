@@ -1,3 +1,10 @@
+nux (0.9.22-0ubuntu2) UNRELEASED; urgency=low
+
+  * debian/rules:
+    - bump shlib
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 17 Feb 2011 19:27:32 +0100
+
 nux (0.9.22-0ubuntu1) natty; urgency=low
 
   * New upstream release.
