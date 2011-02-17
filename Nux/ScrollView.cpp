@@ -693,14 +693,17 @@ namespace nux
       {
         m_ContentOffsetY = 0;
         m_CompositionLayout->SetBaseY (m_ViewY + m_ContentOffsetY);
+        //m_CompositionLayout->m_Geometry.y = m_ViewY + m_ContentOffsetY;
 
       }
       else
       {
         m_CompositionLayout->SetBaseY (m_ViewY + m_ContentOffsetY);
+        //m_CompositionLayout->m_Geometry.y = m_ViewY + m_ContentOffsetY;
       }
 
-      m_CompositionLayout->ComputePosition2 (0, 0);
+      //m_CompositionLayout->ComputePosition2 (0, 0);
+      GetWindowThread()->QueueObjectLayout(m_CompositionLayout);
       //m_CompositionLayout->Translate(m_ContentOffsetX, m_ContentOffsetY);
       vscrollbar->SetContentOffset (m_ContentOffsetX, m_ContentOffsetY);
     }

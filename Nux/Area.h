@@ -147,35 +147,15 @@ namespace nux
     Area (NUX_FILE_LINE_DECL);
     virtual ~Area();
 
-    int GetBaseX     () const
-    {
-      return m_Geometry.x;
-    }
-    
-    int GetBaseY     () const
-    {
-      return m_Geometry.y;
-    }
-    
-    int GetBaseWidth    () const
-    {
-      return m_Geometry.GetWidth();
-    }
-    
-    int GetBaseHeight   () const
-    {
-      return m_Geometry.GetHeight();
-    }
-
-    void SetBaseX    (int x);
-    
-    void SetBaseY    (int y);
-    
-    void SetBaseXY    (int x, int y);
-    
-    void SetBaseWidth (int w);
-
-    void SetBaseHeight (int h);
+    int GetBaseX() const;
+    int GetBaseY() const;
+    int GetBaseWidth() const;
+    int GetBaseHeight() const;
+    void SetBaseX(int x);
+    void SetBaseY(int y);
+    void SetBaseXY(int x, int y);
+    void SetBaseWidth(int w);
+    void SetBaseHeight(int h);
 
     //! Set the size of the object.
     /*
@@ -185,14 +165,14 @@ namespace nux
     */
     void SetBaseSize (int w, int h);
 
-    void SetMinimumSize (int w, int h);
-    void SetMaximumSize (int w, int h);
-    void SetMinMaxSize (int w, int h);
+    void SetMinimumSize(int w, int h);
+    void SetMaximumSize(int w, int h);
+    void SetMinMaxSize(int w, int h);
 
-    void SetMinimumWidth (int w);
-    void SetMaximumWidth (int w);
-    void SetMinimumHeight (int h);
-    void SetMaximumHeight (int h);
+    void SetMinimumWidth(int w);
+    void SetMaximumWidth(int w);
+    void SetMinimumHeight(int h);
+    void SetMaximumHeight(int h);
 
     int GetMinimumWidth() const;
     int GetMaximumWidth() const;
@@ -212,10 +192,7 @@ namespace nux
         @return The Geometry of the object.
         @sa GetBaseWidth(), GetBaseHeight(), GetBaseX(), GetBaseY().
     */
-    Geometry GetGeometry() const
-    {
-      return m_Geometry;
-    }
+    Geometry GetGeometry() const;
 
     //! Set the geometry of the object.
     /*!
@@ -238,46 +215,23 @@ namespace nux
     */
     void SetGeometry (const Geometry &geo);
 
-    void IncreaseSize (int x, int y)
-    {
-      //m_Geometry.Width     += x;
-      //m_Geometry.Height    += y;
-      m_Geometry.OffsetPosition (x, y);
-      OnResize.emit (m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight() );
-    }
+    void IncreaseSize (int x, int y);
 
     void SetBaseString (const TCHAR *Caption);
     const NString &GetBaseString() const;
     
     Area * GetToplevel ();
 
-    virtual long ComputeChildLayout()
-    {
-      return 0;
-    }
-    virtual void PositionChildLayout (float offsetX, float offsetY) {}
-
-    virtual long ComputeLayout2()
-    {
-      return (eCompliantWidth | eCompliantHeight);
-    };
-    virtual void ComputePosition2 (float offsetX, float offsetY) {};
-    virtual bool IsLayout() const
-    {
-      return false;
-    }
-    virtual bool IsSpaceLayout() const
-    {
-      return false;
-    }
-    virtual bool IsArea() const
-    {
-      return false;
-    }
-    virtual bool IsView() const
-    {
-      return false;
-    }
+    virtual long ComputeChildLayout();
+    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual long ComputeLayout2();
+    virtual void ComputePosition2 (float offsetX, float offsetY);
+    
+    virtual bool IsArea() const;
+    virtual bool IsInputArea() const;
+    virtual bool IsView() const;
+    virtual bool IsLayout() const;
+    virtual bool IsSpaceLayout() const;
 
     //! Set the layout properties for this area
     /*!
@@ -300,33 +254,53 @@ namespace nux
 
     //! Set visibility of the area
     /*!
-    If visible, an area will be drawn. Default: true.
-    /param visible if the area is visible to the user
+        If visible, an area will be drawn. Default: true.
+        @param visible if the area is visible to the user
     */
     void SetVisible  (bool visible);
 
     //! Get the visibility of the area
     /*!
-    Gets whether the area is visible to the user and will be visible to the user. Default is true.
-    /return whether the area is visible
+        Gets whether the area is visible to the user and will be visible to the user. Default is true.
+        @return whether the area is visible
     */
     bool IsVisible ();
 
     //! Set sensitivity of the area
     /*!
-    If sensitive, an area will receive input events. Default is true.
-    /param  if the area should receive input events
+        If sensitive, an area will receive input events. Default is true.
+        @param  if the area should receive input events
     */
     void SetSensitive  (bool sensitive);
 
     //! Get whether the area is sensitive
     /*!
-    Gets whether the area is sensitive to input events
-    /return whether the area is visible
+        Gets whether the area is sensitive to input events
+        @return whether the area is visible
     */
     bool IsSensitive ();
 
+    virtual unsigned int GetStretchFactor();
+    virtual void SetStretchFactor (unsigned int sf);
+
+    virtual MinorDimensionPosition GetPositioning();
+    virtual void SetPositioning (MinorDimensionPosition p);
+
+    virtual MinorDimensionSize GetExtend();
+    virtual void SetExtend (MinorDimensionSize ext);
+
+    virtual float GetPercentage();
+    virtual void SetPercentage (float f);
+    virtual bool IsLayoutDone();
+    virtual void SetLayoutDone (bool b);
+
+    sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
+    sigc::signal<void, Area *, bool> OnVisibleChanged;
+    sigc::signal<void, Area *, bool> OnSensitiveChanged;
+
   protected:
+    
+    //unsigned int m_StretchFactor;
 
     /*
         This function is reimplemented in Layout as it need to perform some special operations.
@@ -357,13 +331,12 @@ namespace nux
     virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
 
   private:
-    //! Flags that set an object as dirty with regard to is size.
-    /*
-        Every time an object is resized (through SetGeometry, SetHeight or SetWidth), it become dirty.
-        This flag is set to true in InitiateResizeLayout when the object request a parent layout to recompute itself.
-        When a layout is computed, it resets the flag to false.
-    */
-    bool m_IsSizeDirty;
+    void InitiateResizeLayout (Area *child = 0);
+    void CheckMinSize();
+    void CheckMaxSize();
+
+
+    Geometry                _geometry;        //!< The area geometry.
 
     //! Define a parent child structure
     /*
@@ -372,79 +345,22 @@ namespace nux
         An object of the class Layout may have a parent of the class Layout or View as parent.
         A Area cannot have children (that may change later).
     */
-    Area *m_ParentObject;
+    Area                    *_parent_area;
 
-    LayoutProperties *m_layout_properties;
-    bool              m_visible;
-    bool              m_sensitive;
+    LayoutProperties        *_layout_properties;
+    bool                    m_visible;
+    bool                    m_sensitive;
 
-  private:
-    WindowThread *m_Application;
+    NString                 _base_string;     //!< A text string property for this area.
 
-  private:
+    Size                    _min_size;        //!< A text string property for this area.
+    Size                    _max_size;        //!< A text string property for this area.
 
-    void InitiateResizeLayout (Area *child = 0);
-    void CheckMinSize();
-    void CheckMaxSize();
-
-  protected:
-    Geometry m_Geometry;
-    NString m_BaseString;
-
-    Size m_minSize;
-    Size m_maxSize;
-    //unsigned int m_StretchFactor;
-
-  public:
-
-    virtual unsigned int GetStretchFactor();
-    virtual void SetStretchFactor (unsigned int sf);
-
-    virtual MinorDimensionPosition getPositioning()
-    {
-      return positioning;
-    }
-    virtual void setPositioning (MinorDimensionPosition p)
-    {
-      positioning = p;
-    }
-
-    virtual MinorDimensionSize GetExtend()
-    {
-      return extend;
-    }
-    virtual void SetExtend (MinorDimensionSize ext)
-    {
-      extend = ext;
-    }
-
-    virtual float GetPercentage()
-    {
-      return percentage;
-    }
-    virtual void SetPercentage (float f)
-    {
-      percentage = f;
-    }
-
-    virtual bool isOutofBound()
-    {
-      return outofbound;
-    }
-    virtual void setOutofBound (bool b)
-    {
-      outofbound = b;
-    }
-
-    sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
-    sigc::signal<void, Area *, bool> VisibleChanged;
-    sigc::signal<void, Area *, bool> SensitiveChanged;
-
-    unsigned int    m_stretchfactor;
-    MinorDimensionPosition    positioning;
-    MinorDimensionSize         extend;
-    float           percentage;
-    bool            outofbound;
+    unsigned int            _stretch_factor;  //!< Factor for element expansion.
+    MinorDimensionPosition  _positioning;     //!< Area position hint
+    MinorDimensionSize      _extend;          //!< Area dimension hint
+    float                   _percentage;      //!< Area size percentage value.
+    bool                    _layout_done;     //!< Area layout status flag.
 
     friend class Layout;
     friend class View;

@@ -531,5 +531,10 @@ namespace nux
   {
     return GetWindowCompositor ().GetBackupTextureData (this, width, height, format);
   }
+
+  bool BaseWindow::ProcessSpecialEvent(Event event)
+  {
+    return false;
+  }
 }
 

@@ -54,10 +54,6 @@ namespace nux
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
-
     void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);

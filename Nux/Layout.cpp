@@ -107,7 +107,7 @@ namespace nux
     NUX_RETURN_IF_TRUE (parent != 0);
 
     layout->SetStretchFactor (stretchFactor);
-    layout->setPositioning (minor_position);
+    layout->SetPositioning (minor_position);
     layout->SetExtend (minor_size);
 
     if (percentage < 1.0f)
@@ -167,7 +167,7 @@ namespace nux
     NUX_RETURN_IF_TRUE (parent != 0);
 
     bo->SetStretchFactor (stretchFactor);
-    bo->setPositioning (minor_position);
+    bo->SetPositioning (minor_position);
     bo->SetExtend (minor_size);
 
     if (percentage < 1.0f)
@@ -324,20 +324,21 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it)->IsArea() )
+      if ((*it)->IsView())
       {
-        CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
-        ret = area->OnEvent (ievent, ret, ProcessEventInfo);
-      }
-      else if ( (*it)->IsView() )
-      {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = NUX_STATIC_CAST (View*, (*it));
         ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
       }
       else if ( (*it)->IsLayout() )
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+        Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
         ret = layout->ProcessEvent (ievent, ret, ProcessEventInfo);
+      }
+      // InputArea should be tested last
+      else if ((*it)->IsInputArea())
+      {
+        InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
+        ret = input_area->OnEvent (ievent, ret, ProcessEventInfo);
       }
     }
 
@@ -350,20 +351,21 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it)->IsArea() )
+      if ((*it)->IsView())
       {
-        CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
-        area->OnDraw (GfxContext, force_draw);
-      }
-      else if ( (*it)->IsView() )
-      {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = NUX_STATIC_CAST (View*, (*it));
         ic->ProcessDraw (GfxContext, force_draw);
       }
-      else if ( (*it)->IsLayout() )
+      else if ((*it)->IsLayout())
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+        Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
         layout->ProcessDraw (GfxContext, force_draw);
+      }
+      // InputArea should be tested last
+      else if ((*it)->IsInputArea())
+      {
+        InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
+        input_area->OnDraw (GfxContext, force_draw);
       }
     }
 

@@ -123,7 +123,7 @@ namespace nux
 
   long GridVLayout::ComputeLayout2()
   {
-    if (m_stretchfactor == 0)
+    if (GetStretchFactor() == 0)
     {
       ApplyMinHeight();
     }
@@ -136,7 +136,7 @@ namespace nux
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      (*it)->setOutofBound (false);
+      (*it)->SetLayoutDone (false);
     }
 
     t_s32 original_width = GetBaseWidth();
@@ -274,7 +274,7 @@ namespace nux
 
         if ((*it)->IsArea ())
         {
-          CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it));
+          InputArea *area = NUX_STATIC_CAST (InputArea *, (*it));
           area->OnDraw (GfxContext, force_draw);
         }
         else if ((*it)->IsView ())

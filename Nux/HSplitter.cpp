@@ -82,7 +82,7 @@ namespace nux
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
-      if (!m_Geometry.IsPointInside (ievent.e_x, ievent.e_y) )
+      if (!_geometry.IsPointInside (ievent.e_x, ievent.e_y) )
       {
         ProcEvInfo |= eDoNotProcess;
         //return TraverseInfo;
