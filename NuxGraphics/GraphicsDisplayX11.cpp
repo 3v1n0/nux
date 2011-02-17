@@ -1591,6 +1591,53 @@ namespace nux
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: EnterNotify event."));
         break;
       }
+      
+      case SelectionRequest:
+      {
+        printf ("Received generic selection request\n");
+        if (xevent.xselectionrequest.selection == XInternAtom (xevent.xany.display, "XdndSelection", false))
+           HandleDndSelectionRequest (xevent);
+        break;
+      }
+      
+      case MapNotify:
+      {
+        if (xevent.xmap.window == _dnd_source_window)
+        {
+          int result = XGrabPointer(xevent.xany.display, 
+                                    _dnd_source_window, 
+                                    True, 
+                                             ButtonPressMask | 
+                                             ButtonReleaseMask | 
+                                             PointerMotionMask | 
+                                             ButtonMotionMask , 
+                                    GrabModeAsync,
+                                    GrabModeAsync, 
+                                    None,
+                                    None, 
+                                    CurrentTime);
+                                    
+          switch (result)
+          {
+            case GrabSuccess:
+              printf ("We have grabbed the mouse\n");
+              break;
+            case GrabNotViewable:
+              printf ("Grab not viewable\n");
+              break;
+            case AlreadyGrabbed:
+              printf ("Already grabbed\n");
+              break;
+            case GrabFrozen:
+              printf ("Grab is frozen\n");
+              break;  
+            case GrabInvalidTime:
+              printf ("Invalid grab time\n");
+              break;  
+          }
+        }
+        break;
+      }
 
       case ClientMessage:
       {
@@ -1637,24 +1684,236 @@ namespace nux
     }
   }
   
+  void GraphicsDisplay::HandleDndSelectionRequest (XEvent xevent)
+  {
+    printf ("Got Selection Request\n");
+    XEvent result;
+    result.xselection.type = SelectionNotify;
+    result.xselection.display = xevent.xany.display;
+    result.xselection.requestor = xevent.xselectionrequest.requestor;
+    result.xselection.selection = xevent.xselectionrequest.selection;
+    result.xselection.target = xevent.xselectionrequest.target;
+    result.xselection.property = xevent.xselectionrequest.property;
+    result.xselection.time = xevent.xselectionrequest.time;
+
+    int format, size;
+    char *type = XGetAtomName (xevent.xany.display, xevent.xselectionrequest.target);
+    const unsigned char *data = (const unsigned char *) (*(_dnd_source_funcs.get_data_for_type)) (type, &size, &format, _dnd_source_data);
+    
+    XFree (type);
+    
+    XChangeProperty (xevent.xany.display,  
+                     xevent.xselectionrequest.requestor, 
+                     xevent.xselectionrequest.property,
+                     xevent.xselectionrequest.target, 
+                     format, 
+                     PropModeReplace, 
+                     data,
+                     size);
+    XSendEvent(xevent.xany.display, xevent.xselectionrequest.requestor, False, 0, &result);
+  }
+  
   void GraphicsDisplay::HandleDndDragSourceEvent (XEvent xevent)
   {
+    
     switch (xevent.type)
     {
       case ButtonPress:
-        printf ("Button Press \n");
+        printf ("Button Press During XDND???\n");
         break;
 
       case ButtonRelease:
-        (*(_dnd_source_funcs.drag_finished)) (DNDACTION_NONE, _dnd_source_data);
-        _dnd_is_drag_source = false;
-        printf ("Button Release \n");
+        if (!_dnd_source_target_window || !_dnd_source_target_accepts_drop)
+        {
+          SetDndSourceTargetWindow (None);
+          EndDndDrag (DNDACTION_NONE);
+        }
+        else
+        {
+          SendDndSourceDrop (_dnd_source_target_window, xevent.xbutton.time);
+          _dnd_is_drag_source = false;
+          XUngrabPointer (GetX11Display (), CurrentTime);
+        }
         break;
 
       case MotionNotify:
-        printf ("Motion Notify \n");
+        //GrabDndSelection (GetX11Display (), _dnd_source_window, xevent.xmotion.time); 
+        Window target = GetDndTargetWindowForPos (xevent.xmotion.x_root, xevent.xmotion.y_root);
+        
+        if (target != _dnd_source_target_window)
+          SetDndSourceTargetWindow (target);
+        
+        if (_dnd_source_target_window)
+          SendDndSourcePosition (_dnd_source_target_window, xevent.xmotion.x_root, xevent.xmotion.y_root, xevent.xmotion.time);
+        
         break;
     }
+  }
+  
+  void GraphicsDisplay::SendDndSourceDrop (Window target, Time time)
+  {
+    XClientMessageEvent drop_message;
+    drop_message.window = target;
+    drop_message.format = 32;
+    drop_message.type = ClientMessage;
+
+    drop_message.message_type = XInternAtom (GetX11Display (), "XdndDrop", false);
+    drop_message.data.l[0] = _dnd_source_window;
+    drop_message.data.l[1] = 0;
+    drop_message.data.l[2] = time;
+    
+    XSendEvent (GetX11Display (), target, False, NoEventMask, (XEvent *) &drop_message);
+  }
+  
+  void GraphicsDisplay::SendDndSourcePosition (Window target, int x, int y, Time time)
+  {
+    XClientMessageEvent position_message;
+    position_message.window = target;
+    position_message.format = 32;
+    position_message.type = ClientMessage;
+
+    position_message.message_type = XInternAtom (GetX11Display (), "XdndPosition", false);
+    position_message.data.l[0] = _dnd_source_window;
+    position_message.data.l[1] = 0;
+    position_message.data.l[2] = (x << 16) + y;
+    position_message.data.l[3] = time;
+    position_message.data.l[4] = XInternAtom (GetX11Display (), "XdndActionCopy", false); //fixme
+    
+    XSendEvent (GetX11Display (), target, False, NoEventMask, (XEvent *) &position_message);
+  }
+  
+  void GraphicsDisplay::SendDndSourceEnter (Window target)
+  {
+    XClientMessageEvent enter_message;
+    enter_message.window = target;
+    enter_message.format = 32;
+    enter_message.type = ClientMessage;
+
+    enter_message.message_type = XInternAtom (GetX11Display (), "XdndEnter", false);
+    enter_message.data.l[0] = _dnd_source_window;
+    enter_message.data.l[1] = (((unsigned long) xdnd_version) << 24) + 1;
+    enter_message.data.l[2] = None;
+    enter_message.data.l[3] = None;
+    enter_message.data.l[4] = None;
+    
+    XSendEvent (GetX11Display (), target, False, NoEventMask, (XEvent *) &enter_message);
+  }
+  
+  void GraphicsDisplay::SendDndSourceLeave (Window target)
+  {
+    XClientMessageEvent leave_message;
+    leave_message.window = target;
+    leave_message.format = 32;
+    leave_message.type = ClientMessage;
+
+    leave_message.message_type = XInternAtom (GetX11Display (), "XdndLeave", false);
+    leave_message.data.l[0] = _dnd_source_window;
+    leave_message.data.l[1] = 0; // flags
+    
+    XSendEvent (GetX11Display (), target, False, NoEventMask, (XEvent *) &leave_message);
+  }
+  
+  void GraphicsDisplay::SetDndSourceTargetWindow (Window target)
+  {
+    if (target == _dnd_source_target_window)
+      return;
+    
+    
+    if (_dnd_source_target_window)
+      SendDndSourceLeave (_dnd_source_target_window);
+    
+    if (target)
+      SendDndSourceEnter (target);
+    
+    _dnd_source_target_accepts_drop = false;
+    _dnd_source_target_window = target;
+  }
+  
+  // This function hilariously inefficient
+  Window GraphicsDisplay::GetDndTargetWindowForPos (int pos_x, int pos_y)
+  {
+    Window result = 0;
+    
+    Window root_window = DefaultRootWindow (GetX11Display ());
+    
+    int cur_x, cur_y;
+    XTranslateCoordinates (GetX11Display (), root_window, root_window, pos_x, pos_y, &cur_x, &cur_y, &result);
+    
+    if (!result)
+      return result;
+      
+    Window src = root_window;
+    while (true)
+    {
+      // translate into result space
+      Window child;
+      int new_x, new_y;
+      XTranslateCoordinates (GetX11Display (), src, result, cur_x, cur_y, &new_x, &new_y, &child);
+      
+      cur_x = new_x;
+      cur_y = new_y;
+    
+      // Check if our current window is XdndAware
+      Atom type = 0;
+      int format;
+      unsigned long n, a;
+      unsigned char *data = 0;
+      if (XGetWindowProperty(GetX11Display (), result, XInternAtom (GetX11Display (), "XdndAware", false), 0, 0, False,
+                             AnyPropertyType, &type, &format, &n, &a, &data) == Success) 
+      {
+        int dnd_version = 0;
+        if (data)
+        {
+          dnd_version = *((int *)data);
+          XFree(data);
+        }
+
+        if (type) 
+        {
+          if (dnd_version < 5)
+          {
+            result = 0; // dont have v5? go away until I implement this :)
+          }
+          break; // result is the winner
+        }
+      }
+      
+      // Find child window if any and ignore translation
+      XTranslateCoordinates (GetX11Display (), result, result, cur_x, cur_y, &new_x, &new_y, &child);
+      
+      // there is no child window, stop
+      if (!child)
+      {
+        result = 0;
+        break;
+      }
+      
+      src = result;
+      result = child;
+    }
+    
+    return result;
+  }
+  
+  void GraphicsDisplay::EndDndDrag (DndAction action)
+  {
+    Display *display = GetX11Display ();
+    
+    (*(_dnd_source_funcs.drag_finished)) (action, _dnd_source_data);
+    _dnd_is_drag_source = false;
+    
+    if (_dnd_source_window)
+      XDestroyWindow (display, _dnd_source_window);
+    _dnd_source_window = 0;
+    
+    GrabDndSelection (display, None, CurrentTime);
+    
+    _dnd_source_funcs.get_drag_image = 0;
+    _dnd_source_funcs.get_drag_types = 0;
+    _dnd_source_funcs.get_data_for_type = 0;
+    _dnd_source_funcs.drag_finished = 0;
+    
+    _dnd_source_data = 0;
   }
   
   void GraphicsDisplay::StartDndDrag (const DndSourceFuncs &funcs, void *user_data)
@@ -1664,7 +1923,7 @@ namespace nux
     if (!display)
     {
       if (funcs.drag_finished)
-      (*(funcs.drag_finished)) (DNDACTION_NONE, user_data);
+        (*(funcs.drag_finished)) (DNDACTION_NONE, user_data);
       return;
     }
   
@@ -1677,17 +1936,40 @@ namespace nux
     // First this window will be used to display feedback to the user
     // Second this window will grab and own the XdndSelection Selection
     _dnd_source_window = XCreateSimpleWindow (display, root, 100, 100, 100, 100, 0, 0, 0);
+    XSelectInput (display, _dnd_source_window, StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PointerMotionMask);
+
+    GrabDndSelection (display, _dnd_source_window, CurrentTime); 
+
     XMapRaised (display, _dnd_source_window);
     XFlush (display);
     
-    GrabDndSelection (display, _dnd_source_window); 
-    
     _dnd_is_drag_source = true;
+    _dnd_source_target_window = 0;
+    
+    
+    std::list<const char *> types = _dnd_source_funcs.get_drag_types (_dnd_source_data);
+    std::list<const char *>::iterator it;
+    
+    Atom type_atoms[types.size ()];
+    
+    int i = 0;
+    for (it = types.begin (); it != types.end (); it++)
+    {
+      type_atoms[i] = XInternAtom (display, *it, false);
+      i++;
+    }
+    
+    XChangeProperty(display, _dnd_source_window, XInternAtom (display, "XdndTypeList", false),
+                    XA_ATOM, 32, PropModeReplace, (unsigned char *)type_atoms, i);
+
   }
   
-  bool GraphicsDisplay::GrabDndSelection (Display *display, Window window)
+  bool GraphicsDisplay::GrabDndSelection (Display *display, Window window, Time time)
   {
-    XSetSelectionOwner (display, window, XInternAtom (display, "XdndSelection", false), CurrentTime);
+    XSetSelectionOwner (display, window, XInternAtom (display, "XdndSelection", false), time);
+    Window owner = XGetSelectionOwner (display, XInternAtom (display, "XdndSelection", false));
+    if (owner != window)
+      printf ("WHAT THE FUCKING FUCK %u\n", owner);
     return true;
   }
   
@@ -1859,6 +2141,24 @@ namespace nux
   
   void GraphicsDisplay::HandleXDndStatus (XEvent event)
   {
+    const unsigned long *l = (const unsigned long *)event.xclient.data.l;
+    
+    // should protect against stray messages
+    if (l[1] & 1)
+    {
+      printf ("Target accepts drop\n");
+      _dnd_source_target_accepts_drop = true;
+    }
+    else
+    {
+      printf ("Target denies drop\n");
+      _dnd_source_target_accepts_drop = false;
+    }
+    
+    if (XGetSelectionOwner (event.xany.display, XInternAtom (event.xany.display, "XdndSelection", false)) == _dnd_source_window)
+      printf ("We own the fucking selection\n");
+    else
+      printf ("We dont own the fucking selection\n");
   }
   
   void GraphicsDisplay::HandleXDndLeave (XEvent event)
@@ -1964,6 +2264,14 @@ namespace nux
   
   void GraphicsDisplay::HandleXDndFinished (XEvent event)
   {
+    printf ("Received Finished\n");
+    const unsigned long *l = (const unsigned long *)event.xclient.data.l;
+    
+    if (l[0] != _dnd_source_target_window)
+      return;
+    
+    //fixme
+    EndDndDrag (DNDACTION_COPY);
   }
 
   int GraphicsDisplay::X11KeySymToINL (int Keysym)

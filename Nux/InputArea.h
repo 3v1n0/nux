@@ -192,15 +192,17 @@ namespace nux
     
     virtual NBitmapData *           DndSourceGetDragImage   ();
     virtual std::list<const char *> DndSourceGetDragTypes   ();
-    virtual const char *            DndSourceGetDataForType (const char *type);
+    virtual const char *            DndSourceGetDataForType (const char *type, int *size, int *format);
     virtual void                    DndSourceDragFinished   (DndAction result);
     
     void StartDragAsSource ();
     
-    static NBitmapData *           InnerDndSourceGetDragImage   (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragImage       ();       }
-    static std::list<const char *> InnerDndSourceGetDragTypes   (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragTypes       ();       }
-    static const char *            InnerDndSourceGetDataForType (const char *type, void *data) { return static_cast<InputArea *> (data)->DndSourceGetDataForType     (type);   }
-    static void                    InnerDndSourceDragFinished   (DndAction result, void *data) { return static_cast<InputArea *> (data)->DndSourceDragFinished       (result); }
+    static NBitmapData *           InnerDndSourceGetDragImage (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragImage ();       }
+    static std::list<const char *> InnerDndSourceGetDragTypes (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragTypes ();       }
+    static void                    InnerDndSourceDragFinished (DndAction result, void *data) { return static_cast<InputArea *> (data)->DndSourceDragFinished (result); }
+    
+    static const char * InnerDndSourceGetDataForType (const char *type, int *size, int *format, void *data) 
+      { return static_cast<InputArea *> (data)->DndSourceGetDataForType (type, size, format); }
 #endif
 
   public:

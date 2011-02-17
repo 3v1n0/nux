@@ -108,7 +108,7 @@ namespace nux
       return;
     }
 
-    if (GetWindowCompositor().GetMouseFocusArea () != this)
+    if (GetWindowCompositor().GetMouseFocusArea () == this)
     {
       GetWindowCompositor().SetMouseFocusArea (0);
       OnEndFocus.emit();
@@ -474,6 +474,9 @@ namespace nux
           {
             ForceStopFocus (x, y);
             StartDragAsSource ();
+            
+            _dnd_safety_x = 0;
+            _dnd_safety_y = 0;
           }
         }
         else
@@ -733,15 +736,23 @@ namespace nux
   {
     std::list<const char *> types;
     types.push_back ("text/plain");
+    types.push_back ("TEXT");
+    types.push_back ("STRING");
     return types;
   }
     
-  const char * InputArea::DndSourceGetDataForType (const char *type)
+  const char * InputArea::DndSourceGetDataForType (const char *type, int *size, int *format)
   {
-    if (g_str_equal (type, "text/plain"))
-      return 0;
-      
-    return "this is just a test\n";
+    *format = 8;
+
+    if (g_str_equal (type, "text/plain") || g_str_equal (type, "STRING") || g_str_equal (type, "TEXT"))
+    {
+      *size = (int) strlen ("this is just a test\n");
+      return "this is just a test\n";
+    }
+    
+    *size = 0;
+    return 0;
   }
   
   void InputArea::DndSourceDragFinished (DndAction result)

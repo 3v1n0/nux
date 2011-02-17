@@ -277,11 +277,11 @@ namespace nux
     {
       nux::NBitmapData *       (*get_drag_image)    (void * data);
       std::list<const char *>  (*get_drag_types)    (void * data);
-      const char *             (*get_data_for_type) (const char * type, void * data);
+      const char *             (*get_data_for_type) (const char * type, int *size, int *format, void * data);
       void                     (*drag_finished)     (DndAction result, void * data);
     } DndSourceFuncs;
 
-    void StartDndDrag     (const DndSourceFuncs &funcs, void *user_data);
+    void StartDndDrag (const DndSourceFuncs &funcs, void *user_data);
     
   private:
     void HandleXDndPosition (XEvent event, Event* nux_event);
@@ -296,8 +296,18 @@ namespace nux
     void SendXDndFinished (Display *display, Window source, Window target, bool result, Atom action);
     char * GetXDndData (Display *display, Window requestor, Atom property, long time);
 
-    bool GrabDndSelection (Display *display, Window window);
+    void EndDndDrag (DndAction action);
+    bool GrabDndSelection (Display *display, Window window, Time time);
     void HandleDndDragSourceEvent (XEvent event);
+    void HandleDndSelectionRequest (XEvent event);
+    Window GetDndTargetWindowForPos (int x, int y);
+    
+    void SendDndSourcePosition (Window target, int x, int y, Time time);
+    void SendDndSourceEnter (Window target);
+    void SendDndSourceLeave (Window target);
+    void SendDndSourceDrop (Window target, Time time);
+    void SetDndSourceTargetWindow (Window target);
+    
   
     Point _last_dnd_position;
 
@@ -320,6 +330,8 @@ namespace nux
     void * _dnd_source_data;
     DndSourceFuncs _dnd_source_funcs;
     Window _dnd_source_window;
+    Window _dnd_source_target_window;
+    bool _dnd_source_target_accepts_drop;
   public:
     ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
