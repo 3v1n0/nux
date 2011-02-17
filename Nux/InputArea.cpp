@@ -735,9 +735,8 @@ namespace nux
   std::list<const char *> InputArea::DndSourceGetDragTypes ()
   {
     std::list<const char *> types;
-    types.push_back ("text/plain");
-    types.push_back ("TEXT");
-    types.push_back ("STRING");
+    types.push_back ("text/plain;charset=utf-8");
+    types.push_back ("UTF8_STRING");
     return types;
   }
     
@@ -745,10 +744,10 @@ namespace nux
   {
     *format = 8;
 
-    if (g_str_equal (type, "text/plain") || g_str_equal (type, "STRING") || g_str_equal (type, "TEXT"))
+    if (g_str_equal (type, "text/plain;charset=utf-8") || g_str_equal (type, "UTF8_STRING"))
     {
-      *size = (int) strlen ("this is just a test\n");
-      return "this is just a test\n";
+      *size = (int) strlen ("this is just a test");
+      return "this is just a test";
     }
     
     *size = 0;

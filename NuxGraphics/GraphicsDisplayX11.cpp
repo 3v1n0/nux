@@ -1594,7 +1594,6 @@ namespace nux
       
       case SelectionRequest:
       {
-        printf ("Received generic selection request\n");
         if (xevent.xselectionrequest.selection == XInternAtom (xevent.xany.display, "XdndSelection", false))
            HandleDndSelectionRequest (xevent);
         break;
@@ -1604,7 +1603,7 @@ namespace nux
       {
         if (xevent.xmap.window == _dnd_source_window)
         {
-          int result = XGrabPointer(xevent.xany.display, 
+          int result = XGrabPointer(GetX11Display (), 
                                     _dnd_source_window, 
                                     True, 
                                              ButtonPressMask | 
@@ -1620,19 +1619,13 @@ namespace nux
           switch (result)
           {
             case GrabSuccess:
-              printf ("We have grabbed the mouse\n");
+              GrabDndSelection (GetX11Display (), _dnd_source_window, CurrentTime); 
               break;
             case GrabNotViewable:
-              printf ("Grab not viewable\n");
-              break;
             case AlreadyGrabbed:
-              printf ("Already grabbed\n");
-              break;
             case GrabFrozen:
-              printf ("Grab is frozen\n");
-              break;  
             case GrabInvalidTime:
-              printf ("Invalid grab time\n");
+              printf ("Grab failed\n");
               break;  
           }
         }
@@ -1686,7 +1679,6 @@ namespace nux
   
   void GraphicsDisplay::HandleDndSelectionRequest (XEvent xevent)
   {
-    printf ("Got Selection Request\n");
     XEvent result;
     result.xselection.type = SelectionNotify;
     result.xselection.display = xevent.xany.display;
@@ -1737,7 +1729,6 @@ namespace nux
         break;
 
       case MotionNotify:
-        //GrabDndSelection (GetX11Display (), _dnd_source_window, xevent.xmotion.time); 
         Window target = GetDndTargetWindowForPos (xevent.xmotion.x_root, xevent.xmotion.y_root);
         
         if (target != _dnd_source_target_window)
@@ -1938,8 +1929,6 @@ namespace nux
     _dnd_source_window = XCreateSimpleWindow (display, root, 100, 100, 100, 100, 0, 0, 0);
     XSelectInput (display, _dnd_source_window, StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PointerMotionMask);
 
-    GrabDndSelection (display, _dnd_source_window, CurrentTime); 
-
     XMapRaised (display, _dnd_source_window);
     XFlush (display);
     
@@ -1966,11 +1955,9 @@ namespace nux
   
   bool GraphicsDisplay::GrabDndSelection (Display *display, Window window, Time time)
   {
-    XSetSelectionOwner (display, window, XInternAtom (display, "XdndSelection", false), time);
+    XSetSelectionOwner (GetX11Display (), XInternAtom (display, "XdndSelection", false), window, time);
     Window owner = XGetSelectionOwner (display, XInternAtom (display, "XdndSelection", false));
-    if (owner != window)
-      printf ("WHAT THE FUCKING FUCK %u\n", owner);
-    return true;
+    return owner == window;
   }
   
   void GraphicsDisplay::SendDndStatus (bool accept, DndAction action, Rect region)
@@ -2145,20 +2132,9 @@ namespace nux
     
     // should protect against stray messages
     if (l[1] & 1)
-    {
-      printf ("Target accepts drop\n");
       _dnd_source_target_accepts_drop = true;
-    }
     else
-    {
-      printf ("Target denies drop\n");
       _dnd_source_target_accepts_drop = false;
-    }
-    
-    if (XGetSelectionOwner (event.xany.display, XInternAtom (event.xany.display, "XdndSelection", false)) == _dnd_source_window)
-      printf ("We own the fucking selection\n");
-    else
-      printf ("We dont own the fucking selection\n");
   }
   
   void GraphicsDisplay::HandleXDndLeave (XEvent event)
@@ -2264,11 +2240,16 @@ namespace nux
   
   void GraphicsDisplay::HandleXDndFinished (XEvent event)
   {
-    printf ("Received Finished\n");
     const unsigned long *l = (const unsigned long *)event.xclient.data.l;
     
     if (l[0] != _dnd_source_target_window)
       return;
+    
+    /*bool accepted = l[1] & 1;
+    if (accepted)
+      printf ("Drop accepted\n");
+    else
+      printf ("Drop denied\n");*/
     
     //fixme
     EndDndDrag (DNDACTION_COPY);
