@@ -986,7 +986,7 @@ namespace nux
 
       // Some action may have caused layouts and areas to request a recompute. 
       // Process them here before the Draw section.
-      if(!GetWindow().isWindowMinimized())
+      if(!GetWindow().isWindowMinimized() && !IsEmbeddedWindow ())
       {
         if (_queue_main_layout)
         {

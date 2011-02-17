@@ -30,7 +30,7 @@ namespace nux
 
   std::list<Window> XInputWindow::_native_windows;
 
-  XInputWindow::XInputWindow(int override_redirect)
+  XInputWindow::XInputWindow(const char* title, int override_redirect)
   {
     Display* d = GetThreadGLWindow()->GetX11Display();
     _display = d;
@@ -43,9 +43,21 @@ namespace nux
     _strutsEnabled = false;
     
     attrib.override_redirect = override_redirect;
+    attrib.event_mask = KeyPressMask        |
+                        KeyReleaseMask      |
+                        ButtonPressMask     |
+                        ButtonReleaseMask   |
+                        EnterWindowMask     |
+                        LeaveWindowMask     |
+                        PointerMotionMask   |
+                        ButtonMotionMask    |
+                        PropertyChangeMask  |
+                        StructureNotifyMask |
+                        FocusChangeMask;
+
     _window = XCreateWindow (d, XDefaultRootWindow (d), _x, _y, _width, _height, 0,
                              CopyFromParent, InputOutput, CopyFromParent,
-                             CWOverrideRedirect, &attrib);
+                             CWOverrideRedirect | CWEventMask, &attrib);
     
     _native_windows.push_front (_window);
     
@@ -65,10 +77,7 @@ namespace nux
                      XA_ATOM, 32, PropModeReplace,
                      (unsigned char *) type, 1);
 
-    const char *title = "nux input window";
-    XChangeProperty (d, _window, XInternAtom (d, "_NET_WM_NAME", 0),
-                     XInternAtom (d, "UTF8_STRING", 0), 8, PropModeReplace,
-                     (unsigned char*) title, strlen (title));
+    XStoreName (d, _window, title); 
 
     XMapRaised (d, _window);
     EnsureInputs ();
@@ -170,15 +179,16 @@ namespace nux
   void XInputWindow::EnsureInputs()
   {
     XSelectInput (_display, _window,
-                  KeyPressMask       |
-                  KeyReleaseMask     |
-                  ButtonPressMask    |
-                  ButtonReleaseMask  |
-                  EnterWindowMask    |
-                  LeaveWindowMask    |
-                  PointerMotionMask  |
-                  ButtonMotionMask   |
-                  PropertyChangeMask |
+                  KeyPressMask        |
+                  KeyReleaseMask      |
+                  ButtonPressMask     |
+                  ButtonReleaseMask   |
+                  EnterWindowMask     |
+                  LeaveWindowMask     |
+                  PointerMotionMask   |
+                  ButtonMotionMask    |
+                  PropertyChangeMask  |
+                  StructureNotifyMask |
                   FocusChangeMask);
     
   }
