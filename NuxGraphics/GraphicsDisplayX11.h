@@ -263,11 +263,6 @@ namespace nux
     void PauseThreadGraphicsRendering();
     bool IsPauseThreadGraphicsRendering() const;
 
-    void SpitOut (Display*    dpy,
-                  Window      win,
-                  const char* funcName,
-                  const char* evName);
-
     void ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event);
     void ProcessXEvent (XEvent xevent, bool foreign);
     void RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x, int &y);

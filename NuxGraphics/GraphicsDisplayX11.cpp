@@ -2138,19 +2138,11 @@ namespace nux
 
   void GraphicsDisplay::ShowWindow()
   {
-    std::cout << "GraphicsDisplay::ShowWindow() - mapping window 0x"
-              << std::hex
-              << m_X11Window
-              << std::endl;
     XMapRaised (m_X11Display, m_X11Window);
   }
 
   void GraphicsDisplay::HideWindow()
   {
-    std::cout << "GraphicsDisplay::HideWindow() - unmapping window 0x"
-              << std::hex
-              << m_X11Window
-              << std::endl; 
     XUnmapWindow (m_X11Display, m_X11Window);
   }
 

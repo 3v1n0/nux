@@ -122,18 +122,6 @@ namespace nux
 
   long InputArea::OnEvent (Event &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    if (ievent.e_event == NUX_WINDOW_MAP)
-        std::cout << "InputArea::OnEvent() - got MapNotify on window 0x"
-                  << std::hex
-                  << ievent.e_x11_window
-                  << std::endl;
-
-    if (ievent.e_event == NUX_WINDOW_UNMAP)
-        std::cout << "InputArea::OnEvent() - got UnmapNotify on window 0x"
-                  << std::hex
-                  << ievent.e_x11_window
-                  << std::endl;
-
     // Mouse event processing.
     if ((ievent.e_event >= NUX_DND_MOVE) && (ievent.e_event <= NUX_DND_LEAVE_WINDOW))
     {
@@ -183,13 +171,6 @@ namespace nux
         }
       }
       return TraverseInfo;
-    }
-
-    if (ievent.e_event == NUX_TAKE_FOCUS)
-    {
-      OnTakeFocus.emit (ievent.e_x11_timestamp);
-      std::cout << "InputArea::OnEvent() - emitting take_focus" << std::endl;
-      return 0;
     }
 
     // Regular event processing.
