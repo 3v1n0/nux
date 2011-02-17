@@ -274,8 +274,6 @@ AC_CONFIG_FILES([
   NuxCore/nux-core.pc
   NuxImage/Makefile
   NuxImage/nux-image.pc
-  NuxMesh/Makefile
-  NuxMesh/nux-mesh.pc
   NuxGraphics/Makefile
   NuxGraphics/nux-graphics.pc
   Nux/Makefile
