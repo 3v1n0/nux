@@ -63,7 +63,6 @@ arb_programs_limits_OBJECTS = $(am_arb_programs_limits_OBJECTS)
 am__DEPENDENCIES_1 =
 @BUILD_GPUTESTS_TRUE@am__DEPENDENCIES_2 = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-@BUILD_GPUTESTS_TRUE@	$(top_builddir)/NuxMesh/libnux-mesh-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@	$(am__DEPENDENCIES_1) \
@@ -358,7 +357,6 @@ EXTRA_DIST =
 @BUILD_GPUTESTS_TRUE@ALL_LIBS = \
 @BUILD_GPUTESTS_TRUE@  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-@BUILD_GPUTESTS_TRUE@  $(top_builddir)/NuxMesh/libnux-mesh-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_GPUTESTS_TRUE@  $(NUX_GPUTESTS_LIBS) \

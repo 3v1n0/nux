@@ -79,16 +79,8 @@ libnux_image_@NUX_API_VERSION@_la_DEPENDENCIES =  \
 	$(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 	$(am__DEPENDENCIES_1)
 am__objects_1 = libnux_image_@NUX_API_VERSION@_la-BitmapFormats.lo \
-	libnux_image_@NUX_API_VERSION@_la-Bmp.lo \
 	libnux_image_@NUX_API_VERSION@_la-CairoGraphics.lo \
-	libnux_image_@NUX_API_VERSION@_la-DDS.lo \
 	libnux_image_@NUX_API_VERSION@_la-ImageSurface.lo \
-	libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.lo \
-	libnux_image_@NUX_API_VERSION@_la-NITX.lo \
-	libnux_image_@NUX_API_VERSION@_la-NPng.lo \
-	libnux_image_@NUX_API_VERSION@_la-OpenEXR.lo \
-	libnux_image_@NUX_API_VERSION@_la-RGBE.lo \
-	libnux_image_@NUX_API_VERSION@_la-Tga.lo \
 	libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo
 am__objects_2 =
 am_libnux_image_@NUX_API_VERSION@_la_OBJECTS = $(am__objects_1) \
@@ -344,30 +336,14 @@ libnux_image_@NUX_API_VERSION@_la_LDFLAGS = \
 
 source_h = \
   $(srcdir)/BitmapFormats.h \
-  $(srcdir)/Bmp.h \
   $(srcdir)/CairoGraphics.h \
-  $(srcdir)/DDS.h \
   $(srcdir)/ImageSurface.h \
-  $(srcdir)/NAnimatedTexture.h \
-  $(srcdir)/NITX.h \
-  $(srcdir)/NPng.h \
-  $(srcdir)/OpenEXR.h \
-  $(srcdir)/RGBE.h \
-  $(srcdir)/Tga.h \
   $(srcdir)/GdkGraphics.h
 
 source_cpp = \
   $(srcdir)/BitmapFormats.cpp \
-  $(srcdir)/Bmp.cpp \
   $(srcdir)/CairoGraphics.cpp \
-  $(srcdir)/DDS.cpp \
   $(srcdir)/ImageSurface.cpp \
-  $(srcdir)/NAnimatedTexture.cpp \
-  $(srcdir)/NITX.cpp \
-  $(srcdir)/NPng.cpp \
-  $(srcdir)/OpenEXR.cpp \
-  $(srcdir)/RGBE.cpp \
-  $(srcdir)/Tga.cpp \
   $(srcdir)/GdkGraphics.cpp
 
 libnux_image_@NUX_API_VERSION@_la_SOURCES = \
@@ -457,17 +433,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-BitmapFormats.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-Bmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-CairoGraphics.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-DDS.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-GdkGraphics.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-ImageSurface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NITX.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NPng.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-OpenEXR.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-RGBE.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-Tga.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -501,14 +469,6 @@ libnux_image_@NUX_API_VERSION@_la-BitmapFormats.lo: $(srcdir)/BitmapFormats.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-BitmapFormats.lo `test -f '$(srcdir)/BitmapFormats.cpp' || echo '$(srcdir)/'`$(srcdir)/BitmapFormats.cpp
 
-libnux_image_@NUX_API_VERSION@_la-Bmp.lo: $(srcdir)/Bmp.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-Bmp.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-Bmp.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-Bmp.lo `test -f '$(srcdir)/Bmp.cpp' || echo '$(srcdir)/'`$(srcdir)/Bmp.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-Bmp.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-Bmp.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Bmp.cpp' object='libnux_image_@NUX_API_VERSION@_la-Bmp.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-Bmp.lo `test -f '$(srcdir)/Bmp.cpp' || echo '$(srcdir)/'`$(srcdir)/Bmp.cpp
-
 libnux_image_@NUX_API_VERSION@_la-CairoGraphics.lo: $(srcdir)/CairoGraphics.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-CairoGraphics.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-CairoGraphics.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-CairoGraphics.lo `test -f '$(srcdir)/CairoGraphics.cpp' || echo '$(srcdir)/'`$(srcdir)/CairoGraphics.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-CairoGraphics.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-CairoGraphics.Plo
@@ -517,14 +477,6 @@ libnux_image_@NUX_API_VERSION@_la-CairoGraphics.lo: $(srcdir)/CairoGraphics.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-CairoGraphics.lo `test -f '$(srcdir)/CairoGraphics.cpp' || echo '$(srcdir)/'`$(srcdir)/CairoGraphics.cpp
 
-libnux_image_@NUX_API_VERSION@_la-DDS.lo: $(srcdir)/DDS.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-DDS.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-DDS.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-DDS.lo `test -f '$(srcdir)/DDS.cpp' || echo '$(srcdir)/'`$(srcdir)/DDS.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-DDS.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-DDS.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/DDS.cpp' object='libnux_image_@NUX_API_VERSION@_la-DDS.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-DDS.lo `test -f '$(srcdir)/DDS.cpp' || echo '$(srcdir)/'`$(srcdir)/DDS.cpp
-
 libnux_image_@NUX_API_VERSION@_la-ImageSurface.lo: $(srcdir)/ImageSurface.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-ImageSurface.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-ImageSurface.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-ImageSurface.lo `test -f '$(srcdir)/ImageSurface.cpp' || echo '$(srcdir)/'`$(srcdir)/ImageSurface.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-ImageSurface.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-ImageSurface.Plo
@@ -532,54 +484,6 @@ libnux_image_@NUX_API_VERSION@_la-ImageSurface.lo: $(srcdir)/ImageSurface.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ImageSurface.cpp' object='libnux_image_@NUX_API_VERSION@_la-ImageSurface.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-ImageSurface.lo `test -f '$(srcdir)/ImageSurface.cpp' || echo '$(srcdir)/'`$(srcdir)/ImageSurface.cpp
-
-libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.lo: $(srcdir)/NAnimatedTexture.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.lo `test -f '$(srcdir)/NAnimatedTexture.cpp' || echo '$(srcdir)/'`$(srcdir)/NAnimatedTexture.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/NAnimatedTexture.cpp' object='libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-NAnimatedTexture.lo `test -f '$(srcdir)/NAnimatedTexture.cpp' || echo '$(srcdir)/'`$(srcdir)/NAnimatedTexture.cpp
-
-libnux_image_@NUX_API_VERSION@_la-NITX.lo: $(srcdir)/NITX.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-NITX.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NITX.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-NITX.lo `test -f '$(srcdir)/NITX.cpp' || echo '$(srcdir)/'`$(srcdir)/NITX.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NITX.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NITX.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/NITX.cpp' object='libnux_image_@NUX_API_VERSION@_la-NITX.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-NITX.lo `test -f '$(srcdir)/NITX.cpp' || echo '$(srcdir)/'`$(srcdir)/NITX.cpp
-
-libnux_image_@NUX_API_VERSION@_la-NPng.lo: $(srcdir)/NPng.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-NPng.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NPng.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-NPng.lo `test -f '$(srcdir)/NPng.cpp' || echo '$(srcdir)/'`$(srcdir)/NPng.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NPng.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-NPng.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/NPng.cpp' object='libnux_image_@NUX_API_VERSION@_la-NPng.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-NPng.lo `test -f '$(srcdir)/NPng.cpp' || echo '$(srcdir)/'`$(srcdir)/NPng.cpp
-
-libnux_image_@NUX_API_VERSION@_la-OpenEXR.lo: $(srcdir)/OpenEXR.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-OpenEXR.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-OpenEXR.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-OpenEXR.lo `test -f '$(srcdir)/OpenEXR.cpp' || echo '$(srcdir)/'`$(srcdir)/OpenEXR.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-OpenEXR.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-OpenEXR.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/OpenEXR.cpp' object='libnux_image_@NUX_API_VERSION@_la-OpenEXR.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-OpenEXR.lo `test -f '$(srcdir)/OpenEXR.cpp' || echo '$(srcdir)/'`$(srcdir)/OpenEXR.cpp
-
-libnux_image_@NUX_API_VERSION@_la-RGBE.lo: $(srcdir)/RGBE.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-RGBE.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-RGBE.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-RGBE.lo `test -f '$(srcdir)/RGBE.cpp' || echo '$(srcdir)/'`$(srcdir)/RGBE.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-RGBE.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-RGBE.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/RGBE.cpp' object='libnux_image_@NUX_API_VERSION@_la-RGBE.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-RGBE.lo `test -f '$(srcdir)/RGBE.cpp' || echo '$(srcdir)/'`$(srcdir)/RGBE.cpp
-
-libnux_image_@NUX_API_VERSION@_la-Tga.lo: $(srcdir)/Tga.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-Tga.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-Tga.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-Tga.lo `test -f '$(srcdir)/Tga.cpp' || echo '$(srcdir)/'`$(srcdir)/Tga.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-Tga.Tpo $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-Tga.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Tga.cpp' object='libnux_image_@NUX_API_VERSION@_la-Tga.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_image_@NUX_API_VERSION@_la-Tga.lo `test -f '$(srcdir)/Tga.cpp' || echo '$(srcdir)/'`$(srcdir)/Tga.cpp
 
 libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo: $(srcdir)/GdkGraphics.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_image_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo -MD -MP -MF $(DEPDIR)/libnux_image_@NUX_API_VERSION@_la-GdkGraphics.Tpo -c -o libnux_image_@NUX_API_VERSION@_la-GdkGraphics.lo `test -f '$(srcdir)/GdkGraphics.cpp' || echo '$(srcdir)/'`$(srcdir)/GdkGraphics.cpp

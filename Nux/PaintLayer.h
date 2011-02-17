@@ -84,6 +84,8 @@ namespace nux
     virtual void Renderlayer (GraphicsEngine &GfxContext);
     virtual AbstractPaintLayer *Clone() const;
 
+    virtual ObjectPtr< IOpenGLBaseTexture> GetDeviceTexture ();
+
   private:
     ObjectPtr< IOpenGLBaseTexture > m_device_texture;
     Color m_color;

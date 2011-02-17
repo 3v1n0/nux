@@ -148,5 +148,10 @@ namespace nux
     return new TextureLayer (*this);
   }
 
+  ObjectPtr< IOpenGLBaseTexture> TextureLayer::GetDeviceTexture ()
+  {
+    return m_device_texture;
+  }
+
 
 }

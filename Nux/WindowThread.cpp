@@ -943,6 +943,7 @@ namespace nux
 
       if((event.e_event == NUX_MOUSE_PRESSED) ||
           (event.e_event == NUX_MOUSE_RELEASED) ||
+          (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
           (event.e_event == NUX_MOUSE_MOVE) ||
           (event.e_event == NUX_SIZE_CONFIGURATION) ||
           (event.e_event == NUX_KEYDOWN) ||
@@ -976,25 +977,26 @@ namespace nux
           if(!GetWindow().isWindowMinimized())
           {
               GetWindow().SetViewPort(0, 0, event.width, event.height);
-              ReconfigureLayout ();
+              ReconfigureLayout();
               m_window_compositor->FormatRenderTargets(event.width, event.height);
           }
           m_window_compositor->FloatingAreaConfigureNotify(event.width, event.height);
           m_size_configuration_event = true;
       }
 
-      // Some action may have caused layouts and areas to request a recompute. 
+      // Actions may have caused layouts and areas to request a recompute. 
       // Process them here before the Draw section.
-      if(!GetWindow().isWindowMinimized())
+      // In embedded mode, we don't do a layout cycle here. It will be done when RenderInterfaceFromForeignCmd is called.
+      if(!GetWindow().isWindowMinimized() && (!IsEmbeddedWindow()))
       {
         if (_queue_main_layout)
         {
-          ReconfigureLayout ();
+          ReconfigureLayout();
         }
         else 
         {
           // Compute the layouts that have been queued.
-          ComputeQueuedLayout ();
+          ComputeQueuedLayout();
         }
       }
       
@@ -1031,6 +1033,7 @@ namespace nux
         {
           bool b = (event.e_event == NUX_MOUSE_PRESSED) ||
                    (event.e_event == NUX_MOUSE_RELEASED) ||
+                   (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
                    //(event.e_event == NUX_MOUSE_MOVE) ||
                    (event.e_event == NUX_SIZE_CONFIGURATION) ||
                    (event.e_event == NUX_KEYDOWN) ||
@@ -1692,6 +1695,7 @@ namespace nux
 
     if (nux_event.e_event == NUX_MOUSE_PRESSED ||
         (nux_event.e_event == NUX_MOUSE_RELEASED) ||
+        (nux_event.e_event == NUX_MOUSE_DOUBLECLICK) ||
         (nux_event.e_event == NUX_MOUSE_MOVE) ||
         (nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
         (nux_event.e_event == NUX_KEYDOWN) ||
@@ -1757,6 +1761,7 @@ namespace nux
     {
       bool b = (nux_event.e_event == NUX_MOUSE_PRESSED) ||
                (nux_event.e_event == NUX_MOUSE_RELEASED) ||
+               (nux_event.e_event == NUX_MOUSE_DOUBLECLICK) ||
                //(event.e_event == NUX_MOUSE_MOVE) ||
                (nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
                (nux_event.e_event == NUX_KEYDOWN) ||
