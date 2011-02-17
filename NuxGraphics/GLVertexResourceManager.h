@@ -27,7 +27,6 @@
 #include "IOpenGLVertexBuffer.h"
 #include "IOpenGLIndexBuffer.h"
 #include "IOpenGLVertexDeclaration.h"
-#include "NuxMesh/NMeshObject.h"
 
 namespace nux
 {

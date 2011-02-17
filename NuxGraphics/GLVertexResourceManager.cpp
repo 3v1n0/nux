@@ -26,7 +26,6 @@
 #include "GpuDevice.h"
 #include "GLVertexResourceManager.h"
 
-#include "NuxMesh/NMeshObject.h"
 #include "GraphicsEngine.h"
 
 namespace nux
