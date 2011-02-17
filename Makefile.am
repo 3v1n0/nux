@@ -1,4 +1,4 @@
-SUBDIRS = data NuxCore NuxImage NuxMesh NuxGraphics Nux examples gputests tests tools
+SUBDIRS = data NuxCore NuxImage NuxGraphics Nux examples gputests tests tools
 
 include doxygen-include.am
 
