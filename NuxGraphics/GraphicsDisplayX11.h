@@ -59,11 +59,13 @@ namespace nux
   {
     DNDACTION_COPY,
     DNDACTION_MOVE,
+    DNDACTION_LINK,
+    DNDACTION_ASK,
     DNDACTION_PRIVATE,
     
     DNDACTION_NONE,
   };
-
+  
 #define NUX_THREADMSG                           (WM_APP+0)
 #define NUX_THREADMSG_START_RENDERING           (WM_APP+1)  // Connection established // start at WM_APP
 #define NUX_THREADMSG_CHILD_WINDOW_TERMINATED   (WM_APP+2)  // General failure - Wait Connection failed
@@ -131,6 +133,14 @@ namespace nux
     static int X11KeySymToINL (int Keysym);
 
   public:
+    typedef struct _DndSourceFuncs
+    {
+      nux::NBitmapData *       (*get_drag_image)    (void * data);
+      std::list<const char *>  (*get_drag_types)    (void * data);
+      const char *             (*get_data_for_type) (const char * type, int *size, int *format, void * data);
+      void                     (*drag_finished)     (DndAction result, void * data);
+    } DndSourceFuncs;
+    
     bool HasXPendingEvent() const;
     Display *GetX11Display()
     {
@@ -272,14 +282,6 @@ namespace nux
     void              SendDndFinished (bool accepted, DndAction performed_action);
     std::list<char *> GetDndMimeTypes ();
     char *            GetDndData      (char *property);
-    
-    typedef struct _DndSourceFuncs
-    {
-      nux::NBitmapData *       (*get_drag_image)    (void * data);
-      std::list<const char *>  (*get_drag_types)    (void * data);
-      const char *             (*get_data_for_type) (const char * type, int *size, int *format, void * data);
-      void                     (*drag_finished)     (DndAction result, void * data);
-    } DndSourceFuncs;
 
     void StartDndDrag (const DndSourceFuncs &funcs, void *user_data);
     
@@ -326,12 +328,15 @@ namespace nux
     Window _drag_source;
     long _drag_drop_timestamp;
     
-    bool _dnd_is_drag_source;
     void * _dnd_source_data;
     DndSourceFuncs _dnd_source_funcs;
+
     Window _dnd_source_window;
     Window _dnd_source_target_window;
+
+    bool _dnd_is_drag_source;
     bool _dnd_source_target_accepts_drop;
+    bool _dnd_source_grab_active;
   public:
     ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
