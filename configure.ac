@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [0])
 m4_define([nux_minor_version], [9])
-m4_define([nux_micro_version], [22])
+m4_define([nux_micro_version], [26])
 
 # Bump this when we break ABI
 m4_define([nux_api_version], [0.9])
@@ -274,8 +274,6 @@ AC_CONFIG_FILES([
   NuxCore/nux-core.pc
   NuxImage/Makefile
   NuxImage/nux-image.pc
-  NuxMesh/Makefile
-  NuxMesh/nux-mesh.pc
   NuxGraphics/Makefile
   NuxGraphics/nux-graphics.pc
   Nux/Makefile

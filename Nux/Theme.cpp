@@ -21,7 +21,6 @@
 
 
 #include "Nux.h"
-#include "NuxMesh/NTextureArchiveManager.h"
 #include "NuxCore/TinyXML/tinyxml.h"
 #include "Theme.h"
 

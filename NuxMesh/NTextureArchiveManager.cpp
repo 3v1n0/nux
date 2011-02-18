@@ -23,7 +23,6 @@
 #include "NuxCore/NuxCore.h"
 
 #include "NuxCore/FilePath.h"
-#include "NuxImage/Tga.h"
 #include "NuxImage/ImageSurface.h"
 #include "NuxImage/NITX.h"
 #include "NTextureArchiveManager.h"
