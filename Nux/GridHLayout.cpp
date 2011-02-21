@@ -272,7 +272,6 @@ namespace nux
     return size_compliance;
   }
 
-#if 0
   void GridHLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     std::list<Area *> elements;
@@ -280,7 +279,7 @@ namespace nux
 
     for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
     {
-      if ((*it)-IsVisible ())
+      if ((*it)->IsVisible ())
         elements.push_back (*it);
     }
 
@@ -324,5 +323,4 @@ namespace nux
     GfxContext.PopClippingRectangle ();
     _queued_draw = false;
   }
-#endif
 }
