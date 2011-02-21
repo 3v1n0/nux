@@ -41,12 +41,7 @@ void GridLayoutInit(nux::NThread* thread, void* InitData)
     nux::ColorLayer color (nux::Color::RandomColor ());
     nux::TextureArea* texture_area = new nux::TextureArea ();
     texture_area->SetPaintLayer (&color);
-
-    if (a % 2)
-    {
-      texture_area->SetVisible (false);
-    }
-
+    texture_area->SetVisible (a % 2);
     grid_h_layout->AddView (texture_area, 1, nux::eLeft, nux::eFull);
 
     a++;
@@ -68,8 +63,10 @@ void GridLayoutInit(nux::NThread* thread, void* InitData)
     nux::ColorLayer color (nux::Color::RandomColor());
     nux::TextureArea* texture_area = new nux::TextureArea();
     texture_area->SetPaintLayer (&color);
-
+    texture_area->SetVisible (a % 2);
     grid_v_layout->AddView(texture_area, 1, nux::eLeft, nux::eFull);
+
+    a++;
   }
 
   grid_v_layout->ForceChildrenSize (true);
