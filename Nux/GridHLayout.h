@@ -102,7 +102,7 @@ namespace nux
       @param ProcessEventInfo
       @return The state of the Process Event.
     */
-    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
+//    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
 
   private:
     Size _children_size;
