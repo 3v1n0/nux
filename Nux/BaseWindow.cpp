@@ -419,18 +419,20 @@ namespace nux
     if (visible == _is_visible)
       return;
 
-    if (m_layout)
-    {
-      m_layout->SetGeometry (GetGeometry() );
-    }
-
     _is_visible = visible;
     _is_modal = StartModal;
 
     if (_is_visible)
     {
+      if (m_layout)
+      {
+        m_layout->SetGeometry (GetGeometry() );
+      }
       _entering_visible_state = true;
+
       sigVisible.emit (this);
+
+      ComputeChildLayout();
     }
     else
     {
@@ -438,8 +440,6 @@ namespace nux
       sigHidden.emit (this);
     }
     
-    ComputeChildLayout();
-
     if (_is_modal)
       GetWindowCompositor().StartModalWindow (ObjectWeakPtr<BaseWindow> (this));
 
