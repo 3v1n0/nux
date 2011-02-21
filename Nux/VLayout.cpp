@@ -108,7 +108,7 @@ namespace nux
       }
     }
 
-    if (_layout_element_list.size() != 0)
+    if (n_elements != 0)
     {
       // Compute the space available for each element
       per_element_space = (remaining_height - total_used_space) / t_s32 (n_elements);
