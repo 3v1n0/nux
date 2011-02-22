@@ -440,10 +440,6 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
-    gfxContext.GetRenderStates().SetBlend (true,
-      GL_ONE,
-      GL_ONE_MINUS_SRC_ALPHA);
- 
     Color col = Color::Black;
     col.SetAlpha (0.0f);
     gfxContext.QRP_Color (base.x,
@@ -462,8 +458,6 @@ namespace nux
       _texture2D->GetDeviceTexture(),
       texxform,
       _text_color);
-
-    gfxContext.GetRenderStates().SetBlend (false);
 
     gfxContext.PopClippingRectangle ();
   }
