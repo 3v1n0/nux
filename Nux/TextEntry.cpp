@@ -39,8 +39,8 @@ namespace nux
   static const double kStrongCursorBarWidth = 1.2;
   static const double kWeakCursorLineWidth = 3;
   static const double kWeakCursorBarWidth = 3;
-  static const Color kStrongCursorColor(1, 0, 0, 1.0f);
-  static const Color kWeakCursorColor(0.5, 0.5, 0.5, 1.0f);
+  static const Color kStrongCursorColor(1.0f, 1.0f, 1.0f, 1.0f);
+  static const Color kWeakCursorColor(1.0f, 1.0f, 1.0f, 0.5f);
   static const Color kDefaultTextColor(0, 0, 0, 1.0f);
   static const Color kDefaultBackgroundColor(1, 1, 1, 1.0f);
   static const Color kDefaultSelectionBackgroundColor(0.5, 0.5, 0.5, 1.0f);
@@ -440,20 +440,21 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
+    gfxContext.GetRenderStates().SetBlend (true,
+      GL_ONE,
+      GL_ONE_MINUS_SRC_ALPHA);
+ 
+    Color col = Color::Black;
+    col.SetAlpha (0.0f);
     gfxContext.QRP_Color (base.x,
       base.y,
       base.width,
       base.height,
-      Color::Black);
+      col);
 
     TexCoordXForm texxform;
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-
-    gfxContext.GetRenderStates().SetBlend (true,
-      GL_ONE,
-      GL_ONE_MINUS_SRC_ALPHA);
-
     gfxContext.QRP_1Tex (base.x,
       base.y,
       base.width,
