@@ -163,7 +163,7 @@ namespace nux
       t_u32 alpha = 0, src = 0, dest = 0;
 
       gfx_context.GetRenderStates ().GetBlend (alpha, src, dest);
-      gfx_context.GetRenderStates ().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      gfx_context.GetRenderStates ().SetBlend (true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
       for (it = _layout_element_list.begin (); it != eit; ++it)
       {
