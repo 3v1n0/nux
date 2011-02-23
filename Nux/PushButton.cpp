@@ -32,18 +32,6 @@ namespace nux
   {
     _state     = false;
 
-    InitializeLayout();
-    InitializeWidgets();
-    SetCaption (Caption);
-  }
-
-  PushButton::~PushButton()
-  {
-    DestroyLayout();
-  }
-
-  void PushButton::InitializeWidgets()
-  {
     // Set Signals
     OnMouseClick.connect (sigc::mem_fun (this, &PushButton::RecvClick) );
     OnMouseDown.connect (sigc::mem_fun (this, &PushButton::RecvMouseDown) );
@@ -56,13 +44,11 @@ namespace nux
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetTextColor (Color::Black);
+
+    SetCaption (Caption);
   }
 
-  void PushButton::InitializeLayout()
-  {
-  }
-
-  void PushButton::DestroyLayout()
+  PushButton::~PushButton()
   {
   }
 

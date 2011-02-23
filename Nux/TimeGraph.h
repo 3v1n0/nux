@@ -72,10 +72,10 @@ namespace nux
     HLayout        *m_hlayout;
     HLayout        *m_hlayout2;
     StaticTextBox  *m_GraphTitle;
-    CoreArea       *m_GraphArea;
-    CoreArea       *m_GraphIcon;
-    CoreArea       *m_GraphBarIcon;
-    CoreArea       *m_ValueIcon;
+    InputArea       *m_GraphArea;
+    InputArea       *m_GraphIcon;
+    InputArea       *m_GraphBarIcon;
+    InputArea       *m_ValueIcon;
     NString m_Title;
 
     enum

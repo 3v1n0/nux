@@ -40,36 +40,10 @@ namespace nux
     m_CheckArea = 0;
     m_TextArea  = 0;
 
-    InitializeLayout();
-    InitializeWidgets();
-    SetState (state);
-    SetCaption (Caption);
+    m_hlayout   = new HLayout (NUX_TRACKER_LOCATION);
+    m_CheckArea = new InputArea();
+    m_TextArea  = new InputArea();
 
-    if (Caption) m_TextArea->OnMouseClick.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
-
-    if (Caption) m_TextArea->OnMouseMove.connect (sigc::mem_fun (this, &RadioButton::RecvMouseMove) );
-
-    if (Caption) m_TextArea->OnMouseEnter.connect (sigc::mem_fun (this, &RadioButton::RecvMouseEnter) );
-
-    if (Caption) m_TextArea->OnMouseLeave.connect (sigc::mem_fun (this, &RadioButton::RecvMouseLeave) );
-
-    if (Caption) m_TextArea->OnMouseUp.connect (sigc::mem_fun (this, &RadioButton::RecvMouseUp) );
-
-    if (Caption) m_TextArea->OnMouseDown.connect (sigc::mem_fun (this, &RadioButton::RecvMouseDown) );
-  }
-
-  RadioButton::~RadioButton()
-  {
-    if (m_Group && m_GroupId != -1)
-    {
-      m_Group->DisconnectButton (this);
-      m_Group->UnReference();
-      m_Group = 0;
-    }
-  }
-
-  void RadioButton::InitializeWidgets()
-  {
     // Set Signals
     m_CheckArea->OnMouseClick.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
     OnMouseClick.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
@@ -111,18 +85,33 @@ namespace nux
       ApplyMinWidth();
       ApplyMinHeight();
     }
-    SetCompositionLayout (m_hlayout);
+
+    SetLayout(m_hlayout);
+
+    SetState (state);
+    SetCaption (Caption);
+
+    if (Caption) m_TextArea->OnMouseClick.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
+
+    if (Caption) m_TextArea->OnMouseMove.connect (sigc::mem_fun (this, &RadioButton::RecvMouseMove) );
+
+    if (Caption) m_TextArea->OnMouseEnter.connect (sigc::mem_fun (this, &RadioButton::RecvMouseEnter) );
+
+    if (Caption) m_TextArea->OnMouseLeave.connect (sigc::mem_fun (this, &RadioButton::RecvMouseLeave) );
+
+    if (Caption) m_TextArea->OnMouseUp.connect (sigc::mem_fun (this, &RadioButton::RecvMouseUp) );
+
+    if (Caption) m_TextArea->OnMouseDown.connect (sigc::mem_fun (this, &RadioButton::RecvMouseDown) );
   }
 
-  void RadioButton::InitializeLayout()
+  RadioButton::~RadioButton()
   {
-    m_hlayout   = new HLayout (NUX_TRACKER_LOCATION);
-    m_CheckArea = new CoreArea();
-    m_TextArea  = new CoreArea();
-  }
-
-  void RadioButton::DestroyLayout()
-  {
+    if (m_Group && m_GroupId != -1)
+    {
+      m_Group->DisconnectButton (this);
+      m_Group->UnReference();
+      m_Group = 0;
+    }
   }
 
   long RadioButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

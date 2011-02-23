@@ -67,7 +67,7 @@ namespace nux
 
     Color               m_Color;
     HLayout            *m_hlayout;
-    CoreArea           *m_ColorArea;
+    InputArea           *m_ColorArea;
     StaticTextBox      *m_ColorValue;
     ColorDialogProxy   *m_DialogThreadProxy;
   };

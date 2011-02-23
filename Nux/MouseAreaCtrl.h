@@ -65,7 +65,7 @@ namespace nux
 
   private:
     VLayout    *m_vlayout;
-    CoreArea   *m_Area;
+    InputArea   *m_Area;
 
   public:
     virtual void SetGeometry (const Geometry &geo)

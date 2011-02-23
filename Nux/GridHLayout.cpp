@@ -124,7 +124,7 @@ namespace nux
   {
     std::list<Area *> elements;
 
-    if (m_stretchfactor == 0)
+    if (GetStretchFactor() == 0)
     {
       ApplyMinWidth();
     }
@@ -141,10 +141,11 @@ namespace nux
     {
       if ((*it)->IsVisible ())
       {
-        (*it)->setOutofBound (false);
+        (*it)->SetLayoutDone (false);
         elements.push_back (*it);
         num_elements++;
       }
+      (*it)->SetLayoutDone (false);
     }
 
     t_s32 original_height = GetBaseHeight();
@@ -302,7 +303,7 @@ namespace nux
 
         if ((*it)->IsArea ())
         {
-          CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it));
+          InputArea *area = NUX_STATIC_CAST (InputArea *, (*it));
           area->OnDraw (GfxContext, force_draw);
         }
         else if ((*it)->IsView ())

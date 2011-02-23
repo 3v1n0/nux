@@ -181,6 +181,17 @@ namespace nux
     */
     virtual void NotifyConfigurationChange (int Width, int Height);
 
+    //! Process special events.
+    /*!
+        Some events are not meant to be processed by all views. These events only make sense 
+        for ViewWindow. NUX_WINDOW_ENTER_FOCUS, NUX_WINDOW_EXIT_FOCUS are such events.
+
+        @param event The event to inspect.
+        @return True if this BaseWindow has claimed the event. If so, then other BaseWindow should not be given
+        a chance to process the event.
+    */
+    virtual bool ProcessSpecialEvent(Event event);
+
     int GetBorder() const;
     int GetTopBorder() const;
     void SetBorder (int border);

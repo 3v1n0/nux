@@ -446,7 +446,7 @@ namespace nux
       /////////////////////////////////////////////////////////////////////////////////////////////////////
       m_ColorQuadShaderProg->Begin();
 
-      Matrix4 Quadmat = GetThreadGraphicsContext()->GetModelViewProjectionMatrix();
+      Matrix4 Quadmat = GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix();
 
       if (m_ViewProjectionMatrix1 != -1)
         m_ColorQuadShaderProg->SetUniformLocMatrix4fv (m_ViewProjectionMatrix1, 1, false, (float *) &Quadmat);
@@ -514,7 +514,7 @@ namespace nux
 
       m_ShaderProg->Begin();
 
-      Quadmat = GetThreadGraphicsContext()->GetModelViewProjectionMatrix();
+      Quadmat = GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix();
 
       if (m_ViewProjectionMatrix0 != -1)
         m_ShaderProg->SetUniformLocMatrix4fv (m_ViewProjectionMatrix0, 1, false, (float *) &Quadmat);

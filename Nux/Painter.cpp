@@ -798,9 +798,9 @@ namespace nux
     }
   }
 
-  void BasePainter::RenderSinglePaintLayer (GraphicsEngine &GfxContext, Geometry geo, AbstractPaintLayer *background)
+  void BasePainter::RenderSinglePaintLayer (GraphicsEngine &GfxContext, Geometry geo, AbstractPaintLayer *paint_layer)
   {
-    background->Renderlayer (GfxContext);
+    paint_layer->Renderlayer (GfxContext);
   }
 
   void BasePainter::PushLayer (GraphicsEngine &GfxContext, const Geometry &geo, AbstractPaintLayer *layer)

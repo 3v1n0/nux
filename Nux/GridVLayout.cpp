@@ -125,7 +125,7 @@ namespace nux
   {
     std::list<Area *> elements;
 
-    if (m_stretchfactor == 0)
+    if (GetStretchFactor() == 0)
     {
       ApplyMinHeight();
     }
@@ -142,7 +142,7 @@ namespace nux
     {
       if ((*it)->IsVisible ())
       {
-        (*it)->setOutofBound (false);
+        (*it)->SetLayoutDone (false);
         elements.push_back (*it);
         num_elements++;
       }
@@ -290,7 +290,7 @@ namespace nux
         GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
         if ((*it)->IsArea ())
         {
-          CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it));
+          InputArea *area = NUX_STATIC_CAST (InputArea *, (*it));
           area->OnDraw (GfxContext, force_draw);
         }
         else if ((*it)->IsView ())
