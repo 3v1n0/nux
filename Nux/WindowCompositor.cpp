@@ -386,7 +386,8 @@ namespace nux
           ObjectWeakPtr<BaseWindow> window = (*_modal_view_window_list.begin ());
           if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
           {
-            SetKeyboardFocusArea(window.GetPointer ());
+            window.GetPointer ()->ProcessEnterFocus (event);
+            //SetKeyboardFocusArea(window.GetPointer ());
           }
         }
         else
@@ -397,7 +398,9 @@ namespace nux
             ObjectWeakPtr<BaseWindow> window = (*_view_window_list.begin ());
             if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
             {
-              SetKeyboardFocusArea(window.GetPointer ());
+              nuxDebugMsg (TEXT("BaseWIndowName: %s"), window->_name.GetTCharPtr ());
+              window.GetPointer ()->ProcessEnterFocus (event);
+              //SetKeyboardFocusArea(window.GetPointer ());
             }
           }
         }
@@ -869,13 +872,9 @@ namespace nux
   void WindowCompositor::DrawMenu (bool force_draw)
   {
     ObjectWeakPtr<BaseWindow> window = m_MenuWindow;
-    int buffer_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-    int buffer_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
 
     if (window.IsValid ())
     {
-      int x = window->GetBaseX();
-      int y = window->GetBaseY();
       //GetWindowThread ()->GetGraphicsEngine().SetContext (x, y, buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
           GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
@@ -910,8 +909,6 @@ namespace nux
 
     if (window.IsValid ())
     {
-      int x = window->GetBaseX();
-      int y = window->GetBaseY();
       //GetWindowThread ()->GetGraphicsEngine().SetContext (x, y, buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
@@ -937,8 +934,6 @@ namespace nux
 
     if (window.IsValid ())
     {
-      int x = window->GetBaseX();
-      int y = window->GetBaseY();
       //GetWindowThread ()->GetGraphicsEngine().SetContext (x, y, buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
