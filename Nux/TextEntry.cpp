@@ -152,6 +152,15 @@ namespace nux
 
     font_family_ = "Ubuntu";
     font_size_ = 12;
+    
+    font_options_ = cairo_font_options_create ();
+    cairo_font_options_set_antialias (font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
+    cairo_font_options_set_hint_style (font_options_, CAIRO_HINT_STYLE_FULL);
+    cairo_font_options_set_hint_metrics (font_options_, CAIRO_HINT_METRICS_ON);
+    cairo_font_options_set_subpixel_order (font_options_, CAIRO_SUBPIXEL_ORDER_RGB);
+
+    font_dpi_ = 96.0;
+    
     update_canvas_ = true;
 
     OnMouseDown.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
@@ -173,6 +182,7 @@ namespace nux
 
   TextEntry::~TextEntry ()
   {
+    cairo_font_options_destroy (font_options_);
     if (_texture2D)
       _texture2D->UnReference ();
   }
@@ -993,6 +1003,11 @@ namespace nux
     std::string tmp_string;
 
     /* Set necessary parameters */
+    pango_cairo_context_set_font_options (pango_layout_get_context (layout),
+                                          font_options_);
+    pango_cairo_context_set_resolution (pango_layout_get_context (layout),
+                                        font_dpi_);
+
     if (wrap_)
     {
       pango_layout_set_width(layout, (GetBaseWidth() - kInnerBorderX * 2) * PANGO_SCALE);
@@ -1143,6 +1158,21 @@ namespace nux
     {
       pango_layout_set_justify(layout, FALSE);
       pango_layout_set_alignment(layout, PANGO_ALIGN_LEFT);
+    }
+
+    {
+      PangoRectangle log_rect;
+      gint           text_height;
+
+      // We do this to get correct height, don't hate me
+      if (tmp_string == "")
+        pango_layout_set_text (layout, "|", -1);
+
+      pango_layout_get_extents (layout, NULL, &log_rect);
+      pango_layout_set_text (layout, tmp_string.c_str (), -1);
+      text_height = log_rect.height / PANGO_SCALE;
+
+      SetMinimumHeight (text_height);
     }
 
     return layout;
@@ -1848,6 +1878,16 @@ namespace nux
   void TextEntry::SetFontSize (double font_size)
   {
     font_size_ = font_size;
+    QueueRefresh(true, true);
+  }
+
+  void TextEntry::SetFontOptions (const cairo_font_options_t *options)
+  {
+    g_return_if_fail (options);
+
+    cairo_font_options_destroy (font_options_);
+    font_options_ = cairo_font_options_copy (options);
+
     QueueRefresh(true, true);
   }
 }

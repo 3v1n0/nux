@@ -153,6 +153,8 @@ namespace nux
     Color GetTextColor() const;
     void SetFontFamily (const char *font);
     void SetFontSize (double font_size);
+    void SetFontOptions (const cairo_font_options_t *options);
+
 //     std::string GetFontFamily();
 //     void OnFontSizeChange();
 //     void SetPasswordChar(const char *c);
@@ -450,6 +452,9 @@ namespace nux
     std::string font_family_;
     /** The font size of the text */
     double font_size_;
+
+    cairo_font_options_t *font_options_;
+    double font_dpi_;
 
 //     /** The background texture of the edit control */
 //     Texture *background_;
