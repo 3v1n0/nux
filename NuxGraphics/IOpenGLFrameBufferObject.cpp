@@ -258,32 +258,32 @@ namespace nux
 
     Rect rect;
 
-    if (GetThreadGraphicsContext() )
-      rect = GetThreadGraphicsContext()->GetViewportRect();
+    if (GetThreadGraphicsContext ())
+      rect = GetThreadGraphicsContext ()->GetViewportRect ();
 
-    clip_rect.OffsetPosition (rect.x, _Height - (rect.y + rect.GetHeight() ) );
+    clip_rect.OffsetPosition (rect.x, _Height - (rect.y + rect.GetHeight ()));
 
     Rect Intersection = current_clip_rect.Intersect (clip_rect);
 
-    if (!Intersection.IsNull() )
+    if (!Intersection.IsNull ())
     {
       _ClippingRegionStack.push_back (Intersection);
 
-      SetClippingRegion (Intersection.x + GetThreadGraphicsContext()->GetContextX(),
-                         _Height - Intersection.y - Intersection.GetHeight() - GetThreadGraphicsContext()->GetContextY(),
-                         Intersection.GetWidth(), Intersection.GetHeight() );
+      SetClippingRegion (Intersection.x + GetThreadGraphicsContext ()->GetViewportX (),
+                         _Height - Intersection.y - Intersection.GetHeight () - GetThreadGraphicsContext()->GetViewportY (),
+                         Intersection.GetWidth (), Intersection.GetHeight ());
     }
     else
     {
-      _ClippingRegionStack.push_back (Rect (0, 0, 0, 0) );
+      _ClippingRegionStack.push_back (Rect (0, 0, 0, 0));
       SetClippingRegion (0, 0, 0, 0);
     }
   }
 
-  void IOpenGLFrameBufferObject::PopClippingRegion()
+  void IOpenGLFrameBufferObject::PopClippingRegion ()
   {
-    _ClippingRegionStack.pop_back();
-    int stacksize = (int) _ClippingRegionStack.size();
+    _ClippingRegionStack.pop_back ();
+    int stacksize = (int) _ClippingRegionStack.size ();
 
     if (stacksize == 0)
     {

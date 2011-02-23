@@ -37,13 +37,16 @@ namespace nux
     :   InitiallyUnownedObject (NUX_FILE_LINE_PARAM)
     ,   _parent_area (0)
     ,   _layout_properties (NULL)
-    ,   m_visible (true)
-    ,   m_sensitive (true)
+    ,   _visible (true)
+    ,   _sensitive (true)
     ,   _geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
     ,   _min_size (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
     ,   _max_size (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
     ,   _stretch_factor (1)
   {
+    _2d_xform.Identity ();
+    _3d_xform.Identity ();
+    _3d_area = false;
   }
 
 
@@ -542,32 +545,32 @@ namespace nux
 
   void Area::SetVisible (bool visible)
   {
-    if (m_visible == visible)
+    if (_visible == visible)
       return;
 
-    m_visible = visible;
+    _visible = visible;
 
-    OnVisibleChanged.emit (this, m_visible);
+    OnVisibleChanged.emit (this, _visible);
   }
 
   bool Area::IsVisible ()
   {
-    return m_visible;
+    return _visible;
   }
 
   void Area::SetSensitive (bool sensitive)
   {
-    if (m_sensitive == sensitive)
+    if (_sensitive == sensitive)
       return;
 
-    m_sensitive = sensitive;
+    _sensitive = sensitive;
 
-    OnSensitiveChanged.emit (this, m_sensitive);
+    OnSensitiveChanged.emit (this, _sensitive);
   }
 
   bool Area::IsSensitive ()
   {
-    return m_sensitive;
+    return _sensitive;
   }
 
   MinorDimensionPosition Area::GetPositioning()
@@ -635,4 +638,52 @@ namespace nux
     return this->Type().IsDerivedFromType(SpaceLayout::StaticObjectType);;
   }
 
+  Matrix4 Area::Get2DMatrix () const
+  {
+    return _2d_xform;
+  }
+
+  Matrix4 Area::Get3DMatrix () const
+  {
+    return _3d_xform;
+  }
+
+  bool Area::Is3DArea () const
+  {
+    return _3d_area;
+  }
+
+  Geometry Area::GetAbsoluteGeometry (const Geometry &geometry)
+  {
+    Vector4 in (geometry.x, geometry.y, 0, 1);
+    Vector4 out = _2d_xform * in;
+
+    Geometry new_geometry = Geometry (out.x, out.y, geometry.width, geometry.height);
+
+    if (this->Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    {
+      return Geometry (out.x, out.y, geometry.width, geometry.height);
+    }
+
+    Area *parent = GetParentObject ();
+    if (parent == 0)
+    {
+      nuxDebugMsg (TEXT("Cannot reach the top level parent .This area may not be correctly parented"));
+      return new_geometry;
+    }
+    
+    return parent->GetAbsoluteGeometry (new_geometry);
+  }
+
+  Geometry Area::GetAbsoluteGeometry ()
+  {
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
+    {
+      return _geometry;
+    }
+    else
+    {
+      return GetAbsoluteGeometry (_geometry);
+    }    
+  }
 }

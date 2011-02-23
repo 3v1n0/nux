@@ -294,6 +294,12 @@ namespace nux
     virtual bool IsLayoutDone();
     virtual void SetLayoutDone (bool b);
 
+    Matrix4 Get2DMatrix () const;
+    Matrix4 Get3DMatrix () const;
+    bool Is3DArea () const;
+
+    Geometry GetAbsoluteGeometry ();
+
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
     sigc::signal<void, Area *, bool> OnVisibleChanged;
     sigc::signal<void, Area *, bool> OnSensitiveChanged;
@@ -330,6 +336,9 @@ namespace nux
     */
     virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
 
+    //! Return the absolute geometry starting with a relative geometry passed as argument.
+    Geometry GetAbsoluteGeometry (const Geometry &geometry);
+
   private:
     void InitiateResizeLayout (Area *child = 0);
     void CheckMinSize();
@@ -348,8 +357,8 @@ namespace nux
     Area                    *_parent_area;
 
     LayoutProperties        *_layout_properties;
-    bool                    m_visible;
-    bool                    m_sensitive;
+    bool                    _visible;
+    bool                    _sensitive;
 
     NString                 _base_string;     //!< A text string property for this area.
 
@@ -361,6 +370,11 @@ namespace nux
     MinorDimensionSize      _extend;          //!< Area dimension hint
     float                   _percentage;      //!< Area size percentage value.
     bool                    _layout_done;     //!< Area layout status flag.
+
+
+    Matrix4                 _2d_xform;      //!< 2D transformation natrix for children coordinates.
+    Matrix4                 _3d_xform;      //!< 3D transformation matrix for the area in a perspective space.
+    bool                    _3d_area;     //!< True if the area is resides in a 3D space. 
 
     friend class Layout;
     friend class View;

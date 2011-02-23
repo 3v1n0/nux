@@ -55,7 +55,7 @@ namespace nux
           process_mouse_focus should be true only when the event has not been solved yet.
         @return A value of type AreaMouseStatus, reflecting the position of the mouse relatively to the area.
     */
-    unsigned int Process (Event &event, const Geometry &g, bool process_mouse_focus);
+    unsigned int EventProcessor (Event &event, const Geometry &g, bool process_mouse_focus);
 
     bool MouseIn();
 

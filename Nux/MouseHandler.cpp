@@ -55,7 +55,7 @@ namespace nux
 
   }
 
-  unsigned int AreaEventProcessor::Process (Event &event, const Geometry &geo, bool process_mouse_focus)
+  unsigned int AreaEventProcessor::EventProcessor (Event &event, const Geometry &geo, bool process_mouse_focus)
   {
     // preserve mouse focus state.
     bool has_mouse_focus = _state & AREA_MOUSE_STATUS_FOCUS;

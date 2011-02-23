@@ -206,7 +206,7 @@ namespace nux
     {
       nuxEventDebugTrace (_print_event_debug_trace, TEXT("The event flag info is eDoNotProcess."));
       unsigned int event_processor_state;
-      event_processor_state = _event_processor.Process (event, GetGeometry(), false);
+      event_processor_state = _event_processor.EventProcessor (event, GetGeometry(), false);
 
       if (event.e_event == NUX_MOUSE_PRESSED)
       {
@@ -248,7 +248,7 @@ namespace nux
     if (TraverseInfo & eMouseEventSolved)
     {
       unsigned int event_processor_state;
-      event_processor_state = _event_processor.Process (event, GetGeometry(), false);
+      event_processor_state = _event_processor.EventProcessor (event, GetGeometry(), false);
 
       nuxEventDebugTrace (_print_event_debug_trace, TEXT("The event flag info is eMouseEventSolved."));
       _event_processor._state &= ~AREA_MOUSE_STATUS_FOCUS;
@@ -302,7 +302,7 @@ namespace nux
 
       nuxEventDebugTrace (_print_event_debug_trace, TEXT("Event has not been solved."));
       unsigned int event_processor_state;
-      event_processor_state = _event_processor.Process (event, GetGeometry (), true);
+      event_processor_state = _event_processor.EventProcessor (event, GetGeometry (), true);
 
       if ((event_processor_state & AREA_MOUSE_STATUS_DOWN) && (mouse_focus_area == 0)) // never override an area that has the mouse focus.
       {
@@ -320,6 +320,23 @@ namespace nux
           GetWindowCompositor ().SetKeyboardFocusArea (this);
           keyboard_focus_area = this;
           keyboard_focus_area->OnStartFocus ();
+        }
+      }
+
+      if (event_type == NUX_WINDOW_EXIT_FOCUS)
+      {
+        if (mouse_focus_area == this)
+        {
+          GetWindowCompositor ().SetMouseOverArea (NULL);
+          mouse_focus_area = NULL;
+          OnEndMouseFocus.emit ();
+        }
+
+        if (keyboard_focus_area == this)
+        {
+          GetWindowCompositor ().SetKeyboardFocusArea (NULL);
+          keyboard_focus_area = NULL;
+          OnEndFocus.emit ();
         }
       }
 
@@ -544,7 +561,7 @@ namespace nux
   long InputArea::ProcessEventInExclusiveMode (Event &event, long TraverseInfo, long ProcessEventInfo)
   {
     unsigned int mouse_status;
-    mouse_status = _event_processor.Process (event, GetGeometry(), false);
+    mouse_status = _event_processor.EventProcessor (event, GetGeometry(), false);
 
     if (_event_processor.MouseIn () && (event.e_event == NUX_MOUSE_PRESSED))
     {

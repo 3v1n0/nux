@@ -40,22 +40,17 @@ namespace nux
       PaintLayer_ImageStyle,
     };
 
-    virtual ~AbstractPaintLayer() {};
-    virtual AbstractPaintLayer *Clone() const = 0; //Virtual Constructor Idiom
+    AbstractPaintLayer ();
+    virtual ~AbstractPaintLayer ();
+    virtual AbstractPaintLayer *Clone () const = 0; //Virtual Constructor Idiom
 
     virtual void Renderlayer (GraphicsEngine &GfxContext) = 0;
 
-    virtual void SetGeometry (const Geometry &geo)
-    {
-      m_geometry = geo;
-    }
-    Geometry GetGeometry() const
-    {
-      return m_geometry;
-    }
+    virtual void SetGeometry (const Geometry &geo);
+    Geometry GetGeometry() const;
 
   protected:
-    Geometry m_geometry;
+    Geometry _geometry;
   };
 
 }

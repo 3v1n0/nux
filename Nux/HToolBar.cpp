@@ -72,7 +72,7 @@ namespace nux
   {
     Geometry base = GetGeometry();
     GfxContext.PushClippingRectangle (base);
-    GfxContext.SetEnvModeSelectColor (GL_TEXTURE0);
+
     GfxContext.QRP_Color (base.x, base.y, base.GetWidth(), base.GetHeight(), COLOR_BACKGROUND_PRIMARY);
 
     GfxContext.PopClippingRectangle();

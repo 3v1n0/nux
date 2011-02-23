@@ -86,8 +86,8 @@ namespace nux
       int buffer_width = GetBaseWidth();
       int buffer_height = GetBaseHeight();
       int window_width, window_height;
-      window_width = GfxContext.GetContextWidth();
-      window_height = GfxContext.GetContextHeight();
+      window_width = GfxContext.GetViewportWidth ();
+      window_height = GfxContext.GetViewportHeight ();
 
       m_ctx.x = GetBaseX();
       m_ctx.y = GetBaseY();
@@ -143,9 +143,6 @@ namespace nux
         GetThreadGraphicsContext()->QRP_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (Color::White) );
       }
 
-      // After the client area is drawn reset the texture environment so that the color is used for next drawing.
-      GfxContext.SetEnvModeSelectColor (GL_TEXTURE0);
-
       // go back to 2D in case that was changed by the client.
       GfxContext.SetViewport (0, 0, window_width, window_height);
       GfxContext.ApplyClippingRectangle();
@@ -174,8 +171,8 @@ namespace nux
       m_ctx.height_clipregion = C.GetHeight();
 
       int window_width, window_height;
-      window_width = GfxContext.GetContextWidth();
-      window_height = GfxContext.GetContextHeight();
+      window_width = GfxContext.GetViewportWidth ();
+      window_height = GfxContext.GetViewportHeight ();
 
       SetClientViewport (GfxContext);
 //         GfxContext.SetViewport(
@@ -188,9 +185,6 @@ namespace nux
 //             m_ctx.height_clipregion);
 
       ClientDraw (GfxContext, m_ctx, force_draw);
-
-      // After the client area is drawn reset the texture environment so that the color is used for next drawing.
-      GfxContext.SetEnvModeSelectColor (GL_TEXTURE0);
 
       // go back to 2D in case that was changed by the client.
       GfxContext.SetViewport (0, 0, window_width, window_height);
@@ -232,8 +226,8 @@ namespace nux
     else
     {
       int window_width, window_height;
-      window_width = GfxContext.GetContextWidth();
-      window_height = GfxContext.GetContextHeight();
+      window_width = GfxContext.GetViewportWidth ();
+      window_height = GfxContext.GetViewportHeight ();
 
       GfxContext.SetViewport (
         m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);
@@ -249,8 +243,8 @@ namespace nux
   void ClientArea::Setup2DMode (GraphicsEngine &GfxContext)
   {
     int window_width, window_height;
-    window_width = GfxContext.GetContextWidth();
-    window_height = GfxContext.GetContextHeight();
+    window_width = GfxContext.GetViewportWidth ();
+    window_height = GfxContext.GetViewportHeight ();
 
     //Restore 2D ViewPort
     GfxContext.SetViewport (0, 0, GetBaseWidth(), GetBaseHeight() );
