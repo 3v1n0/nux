@@ -151,7 +151,8 @@ namespace nux
 //     const Texture *GetBackground();
     void SetTextColor(const Color &color);
     Color GetTextColor() const;
-//     void SetFontFamily(const char *font);
+    void SetFontFamily (const char *font);
+    void SetFontSize (double font_size);
 //     std::string GetFontFamily();
 //     void OnFontSizeChange();
 //     void SetPasswordChar(const char *c);

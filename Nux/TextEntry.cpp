@@ -1838,4 +1838,16 @@ namespace nux
       //ResetImContext();
     }
   }
+
+  void TextEntry::SetFontFamily (const char *font)
+  {
+    font_family_ = font;
+    QueueRefresh(true, true);
+  }
+  
+  void TextEntry::SetFontSize (double font_size)
+  {
+    font_size_ = font_size;
+    QueueRefresh(true, true);
+  }
 }
