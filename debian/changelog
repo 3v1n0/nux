@@ -2,6 +2,7 @@ nux (0.9.28-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release:
     - BaseWindow should notify change on the visible state (LP: #702702)
+  * Cherry-picked:
     - Unity FTBFS on armel due to Nux (LP: #721118)
   * debian/rules:
     - bump shlib
