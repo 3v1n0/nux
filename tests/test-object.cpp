@@ -20,7 +20,7 @@
  */
 
 
-#include <glib.h>
+//#include <glib.h>
 #include "Nux/Nux.h"
 
 static void TestObject (void);
@@ -146,7 +146,6 @@ static void
 TestObjectPtr (void)
 {
   OwnedObject *a = new OwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
-  UnOwnedObject *b = new UnOwnedObject (NUX_TRACKER_LOCATION); // ref count = 1, unowned
 
   nux::ObjectPtr<OwnedObject> object_ptr (a); // ref count = 2
 
@@ -168,7 +167,6 @@ static void
 TestObjectPtr1 (void)
 {
   ChildOwnedObject *c = new ChildOwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
-  ChildUnOwnedObject *d = new ChildUnOwnedObject (NUX_TRACKER_LOCATION); // ref count = 1, unowned
 
   nux::ObjectPtr<OwnedObject> object_ptr0 (c); // ref count = 2
 
@@ -197,7 +195,6 @@ static void
 TestObjectPtr2 (void)
 {
   ChildOwnedObject *c = new ChildOwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
-  ChildUnOwnedObject *d = new ChildUnOwnedObject (NUX_TRACKER_LOCATION); // ref count = 1, unowned
 
   nux::ObjectPtr<OwnedObject> object_ptr0 (c); // ref count = 2
 
@@ -230,7 +227,8 @@ TestObjectPtr2 (void)
 
 static bool g_signal_called = false;
 
-static void on_destroyed_cb () {
+static void on_destroyed_cb (nux::Object *obj)
+{
   g_signal_called = true;
 }
 

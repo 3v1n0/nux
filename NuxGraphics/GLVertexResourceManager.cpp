@@ -25,7 +25,6 @@
 #include "GLDeviceObjects.h"
 #include "GpuDevice.h"
 #include "GLVertexResourceManager.h"
-
 #include "GraphicsEngine.h"
 
 namespace nux

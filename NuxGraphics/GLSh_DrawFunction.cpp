@@ -157,7 +157,7 @@ namespace nux
       int VertexLocation = sprog->GetAttributeLocation ("AVertex");
 
       int VPMatrixLocation = sprog->GetUniformLocationARB ("ViewProjectionMatrix");
-      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetThreadGraphicsContext()->GetModelViewProjectionMatrix().m) );
+      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix().m) );
 
       GetThreadGraphicsContext()->SetTexture (GL_TEXTURE0, m_device_texture);
 

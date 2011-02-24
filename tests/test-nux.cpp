@@ -35,8 +35,12 @@ main (gint argc, gchar *argv[])
   g_test_init (&argc, &argv, NULL);
   nux::NuxInitialize(0);
 
+  // Do not print Nux log messages to the console.
+  GLogDevice.Disable ();
+
   /* First the Nux specific tests */
   TestObjectSuite ();
+
   TestSystemSuite ();
 
   /* Please keep this alphabetically ordered */

@@ -52,10 +52,10 @@ namespace nux
     m_RightTimerHandler = 0;
 
     hlayout = new HLayout (NUX_TRACKER_LOCATION);
-    m_LeftThumb = new CoreArea (NUX_TRACKER_LOCATION);
-    m_Track = new CoreArea (NUX_TRACKER_LOCATION);
-    m_RightThumb = new CoreArea (NUX_TRACKER_LOCATION);
-    m_SlideBar = new CoreArea (NUX_TRACKER_LOCATION);
+    m_LeftThumb = new InputArea (NUX_TRACKER_LOCATION);
+    m_Track = new InputArea (NUX_TRACKER_LOCATION);
+    m_RightThumb = new InputArea (NUX_TRACKER_LOCATION);
+    m_SlideBar = new InputArea (NUX_TRACKER_LOCATION);
 
     // Set Original State
     SetMinimumSize (AREA_MIN_WIDTH, HSCROLLBAR_HEIGHT);

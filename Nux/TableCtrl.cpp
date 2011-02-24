@@ -90,7 +90,7 @@ namespace nux
     m_TableItemHead->Open();
     m_TableItemHead->Show();
 
-    m_TableArea = new CoreArea (NUX_TRACKER_LOCATION);
+    m_TableArea = new InputArea (NUX_TRACKER_LOCATION);
     m_TableArea->OnMouseDown.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDown) );
     m_TableArea->OnMouseDoubleClick.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDoubleClick) );
     m_TableArea->OnMouseUp.connect (sigc::mem_fun (this, &TableCtrl::OnMouseUp) );
@@ -232,11 +232,17 @@ namespace nux
     {
       std::vector<RowHeader *>::iterator row_iterator;
 
+      // The ScrollView layout position is fixed. The ScrollView keeps track of the delta offset in x and y of the layout it manages.
+      // Modify the event to account for this offset;
+      Event mod_event = ievent;
+      mod_event.e_x -= _delta_x;
+      mod_event.e_y -= _delta_y;
+
       for (row_iterator = m_row_header.begin(), it = m_row_sizehandler.begin(); it != m_row_sizehandler.end(); it++, row_iterator++)
       {
         if ( (*row_iterator)->_table_item->IsParentOpen() == true)
         {
-          ret = (*row_iterator)->_table_item->ProcessPropertyEvent (ievent, ret, ProcEvInfo);
+          ret = (*row_iterator)->_table_item->ProcessPropertyEvent (mod_event, ret, ProcEvInfo);
 
           if (ret & eMouseEventSolved)
             ItemSolvedEvent = true;
@@ -274,14 +280,22 @@ namespace nux
     }
     else
     {
-      if (ievent.e_event == NUX_MOUSE_PRESSED && ItemSolvedEvent && ! (EventAlreadySolved) /*&& GetWindowCompositor().GetMouseFocusArea()*/)
+      // The ScrollView layout position is fixed. The ScrollView keeps track of the delta offset in x and y of the layout it manages.
+      // Modify the event to account for this offset;
+      Event mod_event = ievent;
+      mod_event.e_x -= _delta_x;
+      mod_event.e_y -= _delta_y;
+
+      if (mod_event.e_event == NUX_MOUSE_PRESSED && ItemSolvedEvent && ! (EventAlreadySolved) /*&& GetWindowCompositor().GetMouseFocusArea()*/)
       {
         // The mouse down event has already been captured. This call is going to find out if a cell was hit.
-        OnMouseDown (ievent.e_x - ievent.e_x_root - m_TableArea->GetBaseX(),
-                     ievent.e_y - ievent.e_y_root - m_TableArea->GetBaseY(), ievent.GetMouseState(), ievent.GetKeyState() );
+        OnMouseDown (mod_event.e_x - mod_event.e_x_root - m_TableArea->GetBaseX(),
+                     mod_event.e_y - mod_event.e_y_root - m_TableArea->GetBaseY(), mod_event.GetMouseState(), mod_event.GetKeyState() );
       }
       else
-        ret = m_TableArea->OnEvent (ievent, ret, ProcEvInfo);
+      {
+        ret = m_TableArea->OnEvent (mod_event, ret, ProcEvInfo);
+      }
     }
 
 
@@ -350,7 +364,6 @@ namespace nux
     t_u32 window_width, window_height;
     window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
     window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-    GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
@@ -358,10 +371,6 @@ namespace nux
 
     // Render the MAINFBO
     {
-      GetWindowThread ()->GetGraphicsEngine().EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_2D);
-      GetWindowThread ()->GetGraphicsEngine().SetEnvModeSelectTexture (GL_TEXTURE0);
-      texture->BindTextureToUnit (GL_TEXTURE0);
-
       t_u32 w, h;
       w = texture->GetWidth();
       h = texture->GetHeight();
@@ -427,7 +436,12 @@ namespace nux
 
     GfxContext.PushClippingRectangle (Geometry (m_ViewX, m_ViewY + (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0),
                                       m_ViewWidth, m_ViewHeight - (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) ) );
+
+    GfxContext.AddClipOffset (_delta_x, _delta_y);
+    GfxContext.Push2DTranslationModelViewMatrix (_delta_x, _delta_y, 0.0f);
+
     {
+
       int odd_or_even = 0;
 
       for (int r = 0; r < num_row; r++)
@@ -459,7 +473,12 @@ namespace nux
         odd_or_even = !odd_or_even;
       }
     }
+
+    GfxContext.PopModelViewMatrix ();
+    GfxContext.AddClipOffset (0, 0);
+
     GfxContext.PopClippingRectangle();
+   
 
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -2267,25 +2286,25 @@ namespace nux
   void TableCtrl::ScrollLeft (float stepx, int mousedx)
   {
     ScrollView::ScrollLeft (stepx, mousedx);
-    FormatTable();
+    //FormatTable();
   }
 
   void TableCtrl::ScrollRight (float stepx, int mousedx)
   {
     ScrollView::ScrollRight (stepx, mousedx);
-    FormatTable();
+    //FormatTable();
   }
 
   void TableCtrl::ScrollUp (float stepy, int mousedy)
   {
     ScrollView::ScrollUp (stepy, mousedy);
-    FormatTable();
+    //FormatTable();
   }
 
   void TableCtrl::ScrollDown (float stepy, int mousedy)
   {
     ScrollView::ScrollDown (stepy, mousedy);
-    FormatTable();
+    //FormatTable();
   }
 
   void TableCtrl::ShowRowHeader (bool b)

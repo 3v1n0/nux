@@ -581,10 +581,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -637,10 +637,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -705,10 +705,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -776,10 +776,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
@@ -850,10 +850,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
@@ -923,10 +923,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
@@ -1002,10 +1002,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
@@ -1096,10 +1096,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int VertexColorLocation     = VTXATTRIB_COLOR;
@@ -1148,10 +1148,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int VertexColorLocation     = VTXATTRIB_COLOR;
@@ -1202,10 +1202,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int VertexColorLocation     = VTXATTRIB_COLOR;
@@ -1312,10 +1312,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -1410,10 +1410,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -1537,10 +1537,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -1720,10 +1720,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetModelViewMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
     CHECKGL ( glMatrixMode (GL_PROJECTION) );
     CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m) );
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -1850,10 +1850,10 @@ namespace nux
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW));
     CHECKGL ( glLoadIdentity ());
-    CHECKGL ( glLoadMatrixf ((FLOAT *) GetModelViewMatrix().m));
+    CHECKGL ( glLoadMatrixf ((FLOAT *) GetOpenGLModelViewMatrix().m));
     CHECKGL ( glMatrixMode (GL_PROJECTION));
     CHECKGL ( glLoadIdentity ());
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetProjectionMatrix().m));
+    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m));
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -1967,15 +1967,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate (true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
 
     return _offscreen_color_rt0;
@@ -2029,15 +2025,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate (true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
 
     return _offscreen_color_rt1;
@@ -2090,15 +2082,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate (true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
 
     return _offscreen_color_rt1;
@@ -2152,15 +2140,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate (true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
 
     return _offscreen_color_rt1;
@@ -2229,15 +2213,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate (true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      Push2DWindow(previous_width, previous_height);
     }
     return _offscreen_color_rt3;
   }

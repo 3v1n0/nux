@@ -958,15 +958,6 @@ namespace nux
           (event.e_event == NUX_DND_LEAVE) ||
           (event.e_event == NUX_MOUSEWHEEL))
       {
-          if((event.e_event == NUX_SIZE_CONFIGURATION) ||
-              (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
-              (event.e_event == NUX_WINDOW_EXIT_FOCUS))
-          {
-              m_window_compositor->SetMouseFocusArea(NULL);
-              m_window_compositor->SetMouseOverArea(NULL);
-              m_window_compositor->SetPreviousMouseOverArea(NULL);
-          }
-
           //DISPATCH EVENT HERE
           //event.Application = Application;
           m_window_compositor->ProcessEvent(event);
@@ -977,26 +968,25 @@ namespace nux
           if(!GetWindow().isWindowMinimized())
           {
               GetWindow().SetViewPort(0, 0, event.width, event.height);
-              ReconfigureLayout();
+              ReconfigureLayout ();
               m_window_compositor->FormatRenderTargets(event.width, event.height);
           }
           m_window_compositor->FloatingAreaConfigureNotify(event.width, event.height);
           m_size_configuration_event = true;
       }
 
-      // Actions may have caused layouts and areas to request a recompute. 
+      // Some action may have caused layouts and areas to request a recompute. 
       // Process them here before the Draw section.
-      // In embedded mode, we don't do a layout cycle here. It will be done when RenderInterfaceFromForeignCmd is called.
-      if(!GetWindow().isWindowMinimized() && (!IsEmbeddedWindow()))
+      if(!GetWindow().isWindowMinimized() && !IsEmbeddedWindow ())
       {
         if (_queue_main_layout)
         {
-          ReconfigureLayout();
+          ReconfigureLayout ();
         }
         else 
         {
           // Compute the layouts that have been queued.
-          ComputeQueuedLayout();
+          ComputeQueuedLayout ();
         }
       }
       
@@ -1706,15 +1696,6 @@ namespace nux
         (nux_event.e_event == NUX_WINDOW_MOUSELEAVE) ||
         (nux_event.e_event == NUX_MOUSEWHEEL))
     {
-        if((nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
-            (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
-            (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS))
-        {
-            m_window_compositor->SetMouseFocusArea(NULL);
-            m_window_compositor->SetMouseOverArea(NULL);
-            m_window_compositor->SetPreviousMouseOverArea(NULL);
-        }
-
         //DISPATCH EVENT HERE
         //nux_event.Application = Application;
         m_window_compositor->ProcessEvent(nux_event);

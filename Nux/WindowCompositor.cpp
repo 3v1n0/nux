@@ -40,8 +40,7 @@ namespace nux
   WindowCompositor::WindowCompositor()
   {
     OverlayDrawingCommand       = NULL;
-    m_MouseOverArea             = NULL;
-    m_PreviousMouseOverArea     = NULL;
+    _previous_mouse_over_area     = NULL;
     m_CurrentEvent              = NULL;
     m_CurrentWindow             = NULL;
     m_FocusAreaWindow           = NULL;
@@ -60,9 +59,10 @@ namespace nux
     m_FocusAreaWindow           = NULL;
     m_MenuWindow                = NULL;
     m_CurrentEvent              = NULL;
-    m_MouseFocusArea            = NULL;
-    m_MouseOverArea             = NULL;
-    m_PreviousMouseOverArea     = NULL;
+    _mouse_focus_area           = NULL;
+    _mouse_over_area            = NULL;
+    _previous_mouse_over_area   = NULL;
+    _keyboard_focus_area        = NULL;
     _always_on_front_window     = NULL;
     _inside_event_processing    = false;
     _inside_rendering_cycle     = false;
@@ -100,17 +100,17 @@ namespace nux
     m_MenuList->clear();
 
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
-    for(it = m_WindowList.begin (); it != m_WindowList.end (); it++)
+    for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
     {
       //(*it)->UnReference();
     }
-    m_WindowList.clear ();
+    _view_window_list.clear ();
 
-    //for(it = m_ModalWindowList.begin (); it != m_ModalWindowList.end (); it++)
+    //for(it = _modal_view_window_list.begin (); it != _modal_view_window_list.end (); it++)
     //{
     //  (*it)->UnReference();
     //}
-    m_ModalWindowList.clear ();
+    _modal_view_window_list.clear ();
 
     NUX_SAFE_DELETE (m_MenuList);
     NUX_SAFE_DELETE (m_Background);
@@ -155,13 +155,13 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
 
-    if (it == m_WindowList.end() )
+    if (it == _view_window_list.end() )
     {
       // The BaseWindow is referenced by the WindowCompositor.
       //window->Reference();
-      m_WindowList.push_front (ObjectWeakPtr<BaseWindow> (window));
+      _view_window_list.push_front (ObjectWeakPtr<BaseWindow> (window));
       m_SelectedWindow = window;
 
       RenderTargetTextures rt;
@@ -182,14 +182,14 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end(), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
 
-    if (it != m_WindowList.end ())
+    if (it != _view_window_list.end ())
     {
-      m_WindowList.erase (it); // @see STL for note about list.erase(it++). It is valid for lists.
+      _view_window_list.erase (it); // @see STL for note about list.erase(it++). It is valid for lists.
 
-      if (m_WindowList.size ())
-        m_SelectedWindow = (*m_WindowList.begin ());
+      if (_view_window_list.size ())
+        m_SelectedWindow = (*_view_window_list.begin ());
 
       std::map< BaseWindow*, RenderTargetTextures >::iterator it2 = _window_to_texture_map.find (window);
 
@@ -202,37 +202,25 @@ namespace nux
     }
   }
 
-  long WindowCompositor::ProcessEventOnObject (IEvent &ievent, Area *object, long TraverseInfo, long ProcessEventInfo)
+  long WindowCompositor::ProcessEventOnObject (IEvent &event, Area *object, long TraverseInfo, long ProcessEventInfo)
   {
     if (object == 0)
       return 0;
 
     long ret = 0;
-//    if(GetFocusAreaWindow())
-//    {
-//        ievent.e_x_root = GetFocusAreaWindow()->GetBaseX();
-//        ievent.e_y_root = GetFocusAreaWindow()->GetBaseY();
-//    }
-//    else
-    {
-      ievent.e_x_root = m_EventRoot.x; //GetFocusAreaWindow()->GetBaseX();
-      ievent.e_y_root = m_EventRoot.y; //GetFocusAreaWindow()->GetBaseY();
-    }
 
-    if (object->Type().IsDerivedFromType (View::StaticObjectType))
-    {
-      View *ic = NUX_STATIC_CAST (View *, object);
-      ret = ic->BaseProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
-    }
-    else if (object->Type().IsObjectType (InputArea::StaticObjectType))
+    event.e_x_root = _event_root.x;
+    event.e_y_root = _event_root.y;
+
+    if (object->Type().IsDerivedFromType (InputArea::StaticObjectType))
     {
       InputArea *base_area = NUX_STATIC_CAST (InputArea *, object);
-      ret = base_area->OnEvent (ievent, TraverseInfo, ProcessEventInfo);
+      ret = base_area->OnEvent (event, TraverseInfo, ProcessEventInfo);
     }
     else if (object->Type().IsDerivedFromType (Layout::StaticObjectType))
     {
       Layout *layout = NUX_STATIC_CAST (Layout *, object);
-      ret = layout->ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
+      ret = layout->ProcessEvent (event, TraverseInfo, ProcessEventInfo);
     }
     else
     {
@@ -243,7 +231,7 @@ namespace nux
   }
 
   // NUXTODO: rename as EventCycle
-  void WindowCompositor::ProcessEvent (IEvent &ievent)
+  void WindowCompositor::ProcessEvent (Event &event)
   {
     // Event processing cycle begins.
     _inside_event_processing = true;
@@ -252,7 +240,7 @@ namespace nux
     long exclusive_event_cycle_report = 0;
     if (_in_exclusive_input_mode && _exclusive_input_area)
     {
-      exclusive_event_cycle_report = ProcessEventOnObject (ievent, _exclusive_input_area, 0, EVENT_CYCLE_EXCLUSIVE);
+      exclusive_event_cycle_report = ProcessEventOnObject (event, _exclusive_input_area, 0, EVENT_CYCLE_EXCLUSIVE);
     }
 
 
@@ -267,32 +255,30 @@ namespace nux
 
     std::list<MenuPage *>::iterator menu_it;
 
-    if (ievent.e_event == NUX_WINDOW_EXIT_FOCUS)
+    if((event.e_event == NUX_SIZE_CONFIGURATION) ||
+      (event.e_event == NUX_WINDOW_ENTER_FOCUS))
     {
-      SetCurrentEvent (&ievent);
-
-      if (GetMouseFocusArea ())
-        ProcessEventOnObject (ievent, GetMouseFocusArea(), 0, 0);
-
-      SetMouseFocusArea (0);
-      SetMouseOverArea (0);
-      SetCurrentEvent (0);
+      SetMouseFocusArea (NULL);
+      SetMouseOverArea (NULL);
+      SetPreviousMouseOverArea (NULL);
+      SetKeyboardFocusArea (NULL);
     }
 
-    if (GetMouseFocusArea() && (ievent.e_event != NUX_MOUSE_PRESSED) && (!InExclusiveInputMode ()))
-    {
-      SetCurrentEvent (&ievent);
-      SetProcessingTopView (GetFocusAreaWindow());
-      ProcessEventOnObject (ievent, GetMouseFocusArea(), 0, 0);
 
-      if (ievent.e_event == NUX_MOUSE_RELEASED)
+    if (GetMouseFocusArea() && (event.e_event != NUX_MOUSE_PRESSED) && (!InExclusiveInputMode ()))
+    {
+      SetCurrentEvent (&event);
+      SetProcessingTopView (GetFocusAreaWindow());
+      ProcessEventOnObject (event, GetMouseFocusArea(), 0, 0);
+
+      if (event.e_event == NUX_MOUSE_RELEASED)
       {
         SetMouseFocusArea (0);
         // No need to set SetMouseOverArea to NULL.
         //SetMouseOverArea(0);
       }
 
-      if ((ievent.e_event == NUX_MOUSE_RELEASED))
+      if ((event.e_event == NUX_MOUSE_RELEASED))
       {
         SetWidgetDrawingOverlay (NULL, NULL);
       }
@@ -302,51 +288,32 @@ namespace nux
       for (menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
       {
         // The deepest menu in the menu cascade is in the front of the list.
-        ret = (*menu_it)->ProcessEvent (ievent, ret, 0);
+        ret = (*menu_it)->ProcessEvent (event, ret, 0);
       }
 
-      // We cannot get in here.
-//         if((ievent.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size())
-//         {
-//             bool inside = false;
-//             for(menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
-//             {
-//                 Geometry geo = (*menu_it)->GetGeometry();
-//                 if(PT_IN_BOX( ievent.e_x-ievent.e_x_root, ievent.e_y-ievent.e_y_root, geo.x, geo.x + geo.width, geo.y, geo.y + geo.height ))
-//                 {
-//                     inside = true;
-//                     break;
-//                 }
-//             }
-//
-//             if(inside == false)
-//             {
-//                 (*m_MenuList->begin())->NotifyMouseDownOutsideMenuCascade(ievent.e_x-ievent.e_x_root, ievent.e_y-ievent.e_y_root);
-//             }
-//         }
       SetCurrentEvent (NULL);
       SetProcessingTopView (NULL);
     }
     else
     {
-      SetCurrentEvent (&ievent);
+      SetCurrentEvent (&event);
 
       if (!InExclusiveInputMode ()) // Menus are not enabled in exclusive mode
       {
         if (m_MenuWindow.IsValid())
         {
-          ievent.e_x_root = m_MenuWindow->GetBaseX();
-          ievent.e_y_root = m_MenuWindow->GetBaseY();
+          event.e_x_root = m_MenuWindow->GetBaseX();
+          event.e_y_root = m_MenuWindow->GetBaseY();
         }
 
         // Let all the menu area check the event first. Beside, they are on top of everything else.
         for (menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
         {
           // The deepest menu in the menu cascade is in the front of the list.
-          ret = (*menu_it)->ProcessEvent (ievent, ret, 0);
+          ret = (*menu_it)->ProcessEvent (event, ret, 0);
         }
 
-        if ( (ievent.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size() )
+        if ( (event.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size() )
         {
           bool inside = false;
 
@@ -354,7 +321,7 @@ namespace nux
           {
             Geometry geo = (*menu_it)->GetGeometry();
 
-            if (PT_IN_BOX ( ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root,
+            if (PT_IN_BOX ( event.e_x - event.e_x_root, event.e_y - event.e_y_root,
                             geo.x, geo.x + geo.width, geo.y, geo.y + geo.height ) )
             {
               inside = true;
@@ -364,22 +331,22 @@ namespace nux
 
           if (inside == false)
           {
-            (*m_MenuList->begin() )->NotifyMouseDownOutsideMenuCascade (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root);
+            (*m_MenuList->begin() )->NotifyMouseDownOutsideMenuCascade (event.e_x - event.e_x_root, event.e_y - event.e_y_root);
           }
         }
 
         if (m_MenuWindow.IsValid())
         {
-          ievent.e_x_root = 0;
-          ievent.e_y_root = 0;
+          event.e_x_root = 0;
+          event.e_y_root = 0;
         }
 
-        if ( (ievent.e_event == NUX_MOUSE_RELEASED) )
+        if ( (event.e_event == NUX_MOUSE_RELEASED) )
         {
           SetWidgetDrawingOverlay (NULL, NULL);
         }
 
-        if ( (ievent.e_event == NUX_SIZE_CONFIGURATION) && m_MenuList->size() )
+        if ( (event.e_event == NUX_SIZE_CONFIGURATION) && m_MenuList->size() )
         {
           (*m_MenuList->begin() )->NotifyTerminateMenuCascade();
         }
@@ -395,66 +362,90 @@ namespace nux
         MouseIsOverMenu = TRUE;
       }
 
+      /////////////////////////////////////////
+      // Start ViewWindow event processing.
+      /////////////////////////////////////////
       std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
-      for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
+      for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
       {
         // Reset the preemptive hidden/visible status of all base windows.
-        ObjectWeakPtr<BaseWindow> window = (*it); //NUX_STATIC_CAST (BaseWindow *, (*it));
+        ObjectWeakPtr<BaseWindow> window = (*it);
         window->_entering_visible_state = false;
         window->_entering_hidden_state = false;
       }
 
-      if (m_ModalWindowList.size () > 0)
+      // NUX_WINDOW_ENTER_FOCUS is processed here. This is a window level signal that should not be passed down to
+      // individual area. Instead, we make the top level BaseWindow get the keyboard focus.
+      // NUX_WINDOW_EXIT_FOCUS is passed down the area for processing. At the end of this function, also do
+      // reset some states if the event is NUX_WINDOW_EXIT_FOCUS.
+      if((event.e_event == NUX_WINDOW_ENTER_FOCUS))
       {
-        SetProcessingTopView ((*m_ModalWindowList.begin ()).GetPointer ());
-        ret = (*m_ModalWindowList.begin ())->ProcessEvent (ievent, ret, ProcessEventInfo);
-        SetProcessingTopView (NULL);
+        if(_modal_view_window_list.size () > 0)
+        {
+          // The top modal window gets the keyboard focus.
+          ObjectWeakPtr<BaseWindow> window = (*_modal_view_window_list.begin ());
+          if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
+          {
+            window.GetPointer ()->ProcessEnterFocus (event);
+          }
+        }
+        else
+        {
+          if (_view_window_list.size () != 0)
+          {
+            // The top window gets the keyboard focus.
+            ObjectWeakPtr<BaseWindow> window = (*_view_window_list.begin ());
+            if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
+            {
+              window.GetPointer ()->ProcessEnterFocus (event);
+            }
+          }
+        }
       }
       else
       {
-        if ((ievent.e_event == NUX_MOUSE_PRESSED) && (!InExclusiveInputMode ()))
+        if(_modal_view_window_list.size() > 0)
         {
-          // There is a possibility we might have to reorder the stack of windows.
-          // Cancel the currently selected window.
-          m_SelectedWindow = NULL;
-          base_window_reshuffling = true;
+          SetProcessingTopView((*_modal_view_window_list.begin()).GetPointer());
+          ret = (*_modal_view_window_list.begin())->ProcessEvent(event, ret, ProcessEventInfo);
+          SetProcessingTopView(NULL);
         }
-
-        for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
+        else
         {
-#if defined(NUX_OS_LINUX)
-          if ((*it)->GetInputWindowId () == ievent.e_x11_window)
+          if((event.e_event == NUX_MOUSE_PRESSED) && (!InExclusiveInputMode()))
           {
-#endif
-            if ((*it)->IsVisible () && (*it)->_entering_visible_state == false)
-            {
-              // Traverse the window from the top of the visibility stack to the bottom.
-              if ((*it).GetPointer ())
-              {
-                SetProcessingTopView ((*it).GetPointer ());
-                ret = (*it)->ProcessEvent (ievent, ret, ProcessEventInfo);
-                SetProcessingTopView (NULL);
+            // There is a possibility we might have to reorder the stack of windows.
+            // Cancel the currently selected window.
+            m_SelectedWindow = NULL;
+            base_window_reshuffling = true;
+          }
 
-                if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
-                {
-                  // The mouse event was solved in the window pointed by the iterator.
-                  // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
-                  base_window_reshuffling = true;
-                  m_SelectedWindow = (*it);
-                }
+          // Traverse the window from the top of the visibility stack to the bottom.
+          for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
+          {
+            if((*it).GetPointer () && (*it)->IsVisible () && ((*it)->_entering_visible_state == false))
+            {
+              SetProcessingTopView ((*it).GetPointer ());
+              ret = (*it)->ProcessEvent (event, ret, ProcessEventInfo);
+              SetProcessingTopView (NULL);
+
+              if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
+              {
+                // The mouse event was solved in the window pointed by the iterator.
+                // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
+                base_window_reshuffling = true;
+                m_SelectedWindow = (*it);
               }
             }
-#if defined(NUX_OS_LINUX)
           }
-#endif
-        }
-        
-        // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
-        // This avoid mouse in/out messages from widgets below the menu chain.
-        if (!MouseIsOverMenu)
-        {
-          // Let the main window analyze the event.
-          ret = GetWindowThread ()->ProcessEvent (ievent, ret, ProcessEventInfo) ;
+
+          // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
+          // This avoid mouse in/out messages from widgets below the menu chain.
+          if (!MouseIsOverMenu)
+          {
+            // Let the main window analyze the event.
+            ret = GetWindowThread ()->ProcessEvent (event, ret, ProcessEventInfo) ;
+          }
         }
       }
 
@@ -462,7 +453,7 @@ namespace nux
     }
 
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
-    for (it = m_WindowList.begin (); it != m_WindowList.end (); it++)
+    for (it = _view_window_list.begin (); it != _view_window_list.end (); it++)
     {
       ObjectWeakPtr<BaseWindow> window = (*it); //NUX_STATIC_CAST (BaseWindow *, (*it));
       
@@ -504,6 +495,20 @@ namespace nux
     ExecPendingExclusiveInputAreaAction ();
 
     CleanMenu ();
+
+    // Following the processing of NUX_WINDOW_EXIT_FOCUS, reset some states.
+    if (event.e_event == NUX_WINDOW_EXIT_FOCUS)
+    {
+      SetCurrentEvent (&event);
+
+      if (GetMouseFocusArea ())
+        ProcessEventOnObject (event, GetMouseFocusArea(), 0, 0);
+
+      SetMouseFocusArea (0);
+      SetMouseOverArea (0);
+      SetKeyboardFocusArea (0);
+      SetCurrentEvent (0);
+    }
   }
 
   void WindowCompositor::StartModalWindow (ObjectWeakPtr<BaseWindow> window)
@@ -511,20 +516,20 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_ModalWindowList.begin(), m_ModalWindowList.end(), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_modal_view_window_list.begin(), _modal_view_window_list.end(), window);
 
-    if (it == m_ModalWindowList.end() )
+    if (it == _modal_view_window_list.end() )
     {
-      m_ModalWindowList.push_front (window);
+      _modal_view_window_list.push_front (window);
     }
   }
 
   void WindowCompositor::StopModalWindow (ObjectWeakPtr<BaseWindow> window)
   {
-    if (m_ModalWindowList.size () > 0)
+    if (_modal_view_window_list.size () > 0)
     {
-      if (*m_ModalWindowList.begin () == window)
-        m_ModalWindowList.pop_front ();
+      if (*_modal_view_window_list.begin () == window)
+        _modal_view_window_list.pop_front ();
     }
   }
 
@@ -534,12 +539,12 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_WindowList.begin(), m_WindowList.end (), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end (), window);
 
-    if (it != m_WindowList.end () )
+    if (it != _view_window_list.end () )
     {
-      m_WindowList.erase (it);
-      m_WindowList.push_front (ObjectWeakPtr<BaseWindow> (window));
+      _view_window_list.erase (it);
+      _view_window_list.push_front (ObjectWeakPtr<BaseWindow> (window));
     }
 
     EnsureAlwaysOnFrontWindow ();
@@ -554,12 +559,12 @@ namespace nux
     if (window == _always_on_front_window)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (m_WindowList.begin (), m_WindowList.end (), window);
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin (), _view_window_list.end (), window);
 
-    if (it != m_WindowList.end() )
+    if (it != _view_window_list.end() )
     {
-      m_WindowList.erase (it);
-      m_WindowList.push_back (ObjectWeakPtr<BaseWindow> (window));
+      _view_window_list.erase (it);
+      _view_window_list.push_back (ObjectWeakPtr<BaseWindow> (window));
     }
 
     EnsureAlwaysOnFrontWindow ();
@@ -580,7 +585,7 @@ namespace nux
     int top_pos = -1;
     int bot_pos = -1;
 
-    for (it_top = m_WindowList.begin (), i = 0; it_top != m_WindowList.end (); it_top++, i++)
+    for (it_top = _view_window_list.begin (), i = 0; it_top != _view_window_list.end (); it_top++, i++)
     {
       if(*it == bottom_floating_view)
       {
@@ -598,15 +603,15 @@ namespace nux
         break;
     }
 
-    if ((it_top == m_WindowList.end ()) || (it_bot == m_WindowList.end ()))
+    if ((it_top == _view_window_list.end ()) || (it_bot == _view_window_list.end ()))
     {
       return;
     }
 
     if ((top_pos < bot_pos) && (strict == false))
     {
-      m_WindowList.erase (it_top);
-      m_WindowList.insert (it_bot, ObjectWeakPtr<BaseWindow> (top_floating_view));
+      _view_window_list.erase (it_top);
+      _view_window_list.insert (it_bot, ObjectWeakPtr<BaseWindow> (top_floating_view));
     }
 
     EnsureAlwaysOnFrontWindow ();
@@ -628,11 +633,11 @@ namespace nux
     if (_always_on_front_window == NULL)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator always_top_it = find (m_WindowList.begin(), m_WindowList.end(), _always_on_front_window);
-    if ((always_top_it != m_WindowList.end ()) && (always_top_it != m_WindowList.begin ()) && (_always_on_front_window != NULL))
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator always_top_it = find (_view_window_list.begin(), _view_window_list.end(), _always_on_front_window);
+    if ((always_top_it != _view_window_list.end ()) && (always_top_it != _view_window_list.begin ()) && (_always_on_front_window != NULL))
     {
-      m_WindowList.erase (always_top_it);
-      m_WindowList.push_back (_always_on_front_window);
+      _view_window_list.erase (always_top_it);
+      _view_window_list.push_back (_always_on_front_window);
     }
   }
 
@@ -752,10 +757,14 @@ namespace nux
     if (!GetWindowThread ()->GetWindow().isWindowMinimized())
     {
       //int w, h;
-      GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(), GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
       GetWindowThread ()->GetGraphicsEngine().GetContextSize (m_Width, m_Height);
       GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, m_Width, m_Height);
-      GetWindowThread ()->GetGraphicsEngine().Push2DWindow (m_Width, m_Height);
+      
+      // Reset the Model view Matrix and the projection matrix
+      GetWindowThread ()->GetGraphicsEngine().ResetProjectionMatrix ();
+      
+      GetWindowThread ()->GetGraphicsEngine().ResetModelViewMatrixStack ();
+      GetWindowThread ()->GetGraphicsEngine().Push2DTranslationModelViewMatrix (0.375f, 0.375f, 0.0f);
 
 
       if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
@@ -769,8 +778,8 @@ namespace nux
 
           if (1 /*GetGpuDevice()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
-            RenderTopViews (true, m_WindowList, false, true);
-            RenderTopViews (true, m_ModalWindowList, true, true);
+            RenderTopViews (true, _view_window_list, false, true);
+            RenderTopViews (true, _modal_view_window_list, true, true);
 
             DrawMenu (true);
             DrawTooltip (true);
@@ -786,8 +795,8 @@ namespace nux
 
           if (1 /*GetGpuDevice()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
-            RenderTopViews (false, m_WindowList, false, true);
-            RenderTopViews (false, m_ModalWindowList, true, true);
+            RenderTopViews (false, _view_window_list, false, true);
+            RenderTopViews (false, _modal_view_window_list, true, true);
 
             DrawMenu (true);
             DrawTooltip (true);
@@ -801,8 +810,8 @@ namespace nux
 
           if (1 /*GetGpuDevice()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
-            RenderTopViews (false, m_WindowList, false, true);
-            RenderTopViews (false, m_ModalWindowList, true, true);
+            RenderTopViews (false, _view_window_list, false, true);
+            RenderTopViews (false, _modal_view_window_list, true, true);
 
             DrawMenu (true);
             DrawTooltip (true);
@@ -817,8 +826,8 @@ namespace nux
           GetPainter().PushDrawColorLayer (GetWindowThread ()->GetGraphicsEngine(), Geometry (0, 0, m_Width, m_Height), Color (0xFF4D4D4D), true);
           RenderMainWindowComposition (true, false);
 
-          RenderTopViews (true, m_WindowList, false, false);
-          RenderTopViews (true, m_ModalWindowList, true, false);
+          RenderTopViews (true, _view_window_list, false, false);
+          RenderTopViews (true, _modal_view_window_list, true, false);
           DrawMenu (true);
           DrawOverlay (true);
           DrawTooltip (true);
@@ -829,8 +838,8 @@ namespace nux
           GetPainter().PushDrawColorLayer (GetWindowThread ()->GetGraphicsEngine(), Geometry (0, 0, m_Width, m_Height), Color (0xFF4D4D4D), true);
           RenderMainWindowComposition (true, false);
 
-          RenderTopViews (false, m_WindowList, false, false);
-          RenderTopViews (false, m_ModalWindowList, true, false);
+          RenderTopViews (false, _view_window_list, false, false);
+          RenderTopViews (false, _modal_view_window_list, true, false);
           DrawMenu (true);
           DrawOverlay (true);
           DrawTooltip (true);
@@ -839,8 +848,8 @@ namespace nux
         else
         {
           RenderMainWindowComposition (false, false);
-          RenderTopViews (true, m_WindowList, false, false);
-          RenderTopViews (true, m_ModalWindowList, true, false);
+          RenderTopViews (true, _view_window_list, false, false);
+          RenderTopViews (true, _modal_view_window_list, true, false);
           DrawMenu (true);
           DrawOverlay (true);
           DrawTooltip (true);
@@ -860,22 +869,17 @@ namespace nux
   void WindowCompositor::DrawMenu (bool force_draw)
   {
     ObjectWeakPtr<BaseWindow> window = m_MenuWindow;
-    int buffer_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-    int buffer_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
 
     if (window.IsValid ())
     {
-      int x = window->GetBaseX();
-      int y = window->GetBaseY();
-      GetWindowThread ()->GetGraphicsEngine().SetContext (x, y, buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine().Push2DWindow (GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
+      //GetWindowThread ()->GetGraphicsEngine().SetContext (x, y, buffer_width, buffer_height);
+      GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
           GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
       GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     }
     else
     {
-      GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine().Push2DWindow (GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
+      GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
           GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
       GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     }
@@ -889,9 +893,9 @@ namespace nux
       SetProcessingTopView (NULL);
     }
 
-    GetThreadGraphicsContext()->SetContext (0, 0,
-                                            GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
-                                            GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
+//     GetThreadGraphicsContext()->SetContext (0, 0,
+//                                             GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
+//                                             GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
   }
 
   void WindowCompositor::DrawOverlay (bool force_draw)
@@ -902,10 +906,8 @@ namespace nux
 
     if (window.IsValid ())
     {
-      int x = window->GetBaseX();
-      int y = window->GetBaseY();
-      GetWindowThread ()->GetGraphicsEngine().SetContext (x, y, buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
+      //GetWindowThread ()->GetGraphicsEngine().SetContext (x, y, buffer_width, buffer_height);
+      GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     }
     else
@@ -918,7 +920,7 @@ namespace nux
       SetProcessingTopView (NULL);
     }
 
-    GetThreadGraphicsContext()->SetContext (0, 0, buffer_width, buffer_height);
+    //GetThreadGraphicsContext()->SetContext (0, 0, buffer_width, buffer_height);
   }
 
   void WindowCompositor::DrawTooltip (bool force_draw)
@@ -929,10 +931,8 @@ namespace nux
 
     if (window.IsValid ())
     {
-      int x = window->GetBaseX();
-      int y = window->GetBaseY();
-      GetWindowThread ()->GetGraphicsEngine().SetContext (x, y, buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
+      //GetWindowThread ()->GetGraphicsEngine().SetContext (x, y, buffer_width, buffer_height);
+      GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     }
     else
@@ -946,7 +946,7 @@ namespace nux
         //SetProcessingTopView(NULL);
     }
 
-    GetThreadGraphicsContext()->SetContext (0, 0, buffer_width, buffer_height);
+    //GetThreadGraphicsContext()->SetContext (0, 0, buffer_width, buffer_height);
   }
 
   void WindowCompositor::RenderTopViewContent (BaseWindow *window, bool force_draw)
@@ -999,9 +999,8 @@ namespace nux
             m_FrameBufferObject->SetRenderTarget ( 0, rt.color_rt->GetSurfaceLevel (0) );
             m_FrameBufferObject->SetDepthSurface ( rt.depth_rt->GetSurfaceLevel (0) );
             m_FrameBufferObject->Activate();
-            GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
             GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
-            GetWindowThread ()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
+            GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
             GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
             GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
 
@@ -1015,8 +1014,7 @@ namespace nux
             int y = window->GetBaseY();
             Matrix4 mat;
             mat.Translate (x, y, 0);
-            //GetWindowThread ()->GetGraphicsEngine().SetContext(x, y, 0, 0);
-            GetWindowThread ()->GetGraphicsEngine().Push2DWindow (GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
+            GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
                 GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
 
             //GetWindowThread ()->GetGraphicsEngine().Push2DModelViewMatrix(mat);
@@ -1036,11 +1034,10 @@ namespace nux
             unsigned int window_width, window_height;
             window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
             window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-            GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
             GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
             GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
             GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
-            GetWindowThread ()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
+            GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
 
             Geometry shadow (window->GetBaseX(), window->GetBaseY(), window->GetBaseWidth(), window->GetBaseHeight() );
             //if(window->IsVisibleSizeGrip())
@@ -1080,7 +1077,7 @@ namespace nux
 //                int y = window->GetY();
 //                Matrix4 mat;
 //                mat.Translate(x, y, 0);
-          GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, 0, 0);
+          //GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, 0, 0);
           //GetWindowThread ()->GetGraphicsEngine().Pop2DModelViewMatrix();
         }
         
@@ -1106,11 +1103,10 @@ namespace nux
     unsigned int window_width, window_height;
     window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
     window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-    GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     //GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion(0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
-    GetWindowThread ()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
 
     PresentBufferToScreen (m_MainColorRT, 0, 0, false);
 
@@ -1130,7 +1126,7 @@ namespace nux
 //     GetWindowThread ()->GetGraphicsEngine().ResetStats();
 //     GetWindowThread ()->GetWindow().SwapBuffer();
 
-//    const std::list<BaseWindow*>& W = m_WindowList;
+//    const std::list<BaseWindow*>& W = _view_window_list;
 //    std::list<BaseWindow*>::const_reverse_iterator rev_it;
 //    for(rev_it = W.rbegin();
 //        rev_it != W.rend();
@@ -1188,11 +1184,10 @@ namespace nux
       buffer_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
     }
 
-    GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
     GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
-    GetWindowThread ()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     {
       CHECKGL ( glClear (/*GL_COLOR_BUFFER_BIT |*/ GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
       //Begin 2D Drawing
@@ -1223,6 +1218,7 @@ namespace nux
       // End 2D Drawing
     }
 
+    GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     if (UseFBO)
     {
       m_FrameBufferObject->Deactivate();
@@ -1231,11 +1227,10 @@ namespace nux
     unsigned int window_width, window_height;
     window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
     window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-    GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
-    GetWindowThread ()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
 
     // Render the Buffer on the screen
     if (UseFBO)
@@ -1260,8 +1255,7 @@ namespace nux
     m_FrameBufferObject->SetRenderTarget (0, m_MainColorRT->GetSurfaceLevel (0));
     m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
     m_FrameBufferObject->Activate();
-    GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
-    GetWindowThread ()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
   }
@@ -1301,8 +1295,7 @@ namespace nux
     m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0));
     m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
     m_FrameBufferObject->Activate();
-    GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, buffer_width, buffer_height);
-    GetWindowThread ()->GetGraphicsEngine().Push2DWindow (buffer_width, buffer_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion ();
     GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
   }
@@ -1352,11 +1345,10 @@ namespace nux
       GetGpuDevice()->DeactivateFrameBuffer();
     }
 
-    GetWindowThread()->GetGraphicsEngine().SetContext (0, 0, window_width, window_height);
     GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
     GetWindowThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
     GetWindowThread()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
-    GetWindowThread()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
+    GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
 
     // Render the MAINFBO
     {
@@ -1535,25 +1527,25 @@ namespace nux
 
   void WindowCompositor::SetMouseFocusArea (InputArea *area)
   {
-    m_MouseFocusArea = area;
+    _mouse_focus_area = area;
 
     if (area == 0)
     {
-      m_EventRoot.Set (0, 0);
+      _event_root.Set (0, 0);
     }
 
-    SetFocusAreaWindow (GetProcessingTopView() );
+    SetFocusAreaWindow (GetProcessingTopView());
   }
 
   InputArea *WindowCompositor::GetMouseFocusArea()
   {
-    return m_MouseFocusArea;
+    return _mouse_focus_area;
   }
 
   void WindowCompositor::SetMouseOverArea (InputArea *area)
   {
-    m_MouseOverArea = area;
-//     if(m_MouseOverArea)
+    _mouse_over_area = area;
+//     if(_mouse_over_area)
 //         nuxDebugMsg(TEXT("StackManager: Set MouseOver Area"));
 //     else
 //         nuxDebugMsg(TEXT("StackManager: Set MouseOver Area to 0"));
@@ -1561,12 +1553,12 @@ namespace nux
 
   InputArea *WindowCompositor::GetMouseOverArea()
   {
-    return m_MouseOverArea;
+    return _mouse_over_area;
   }
 
   void WindowCompositor::SetPreviousMouseOverArea (InputArea *area)
   {
-    m_PreviousMouseOverArea = area;
+    _previous_mouse_over_area = area;
 //     if(area)
 //         nuxDebugMsg(TEXT("StackManager: Set Previous MouseOver Area"));
 //     else
@@ -1575,7 +1567,17 @@ namespace nux
 
   InputArea *WindowCompositor::GetPreviousMouseOverArea()
   {
-    return m_PreviousMouseOverArea;
+    return _previous_mouse_over_area;
+  }
+
+  void WindowCompositor::SetKeyboardFocusArea (InputArea *area)
+  {
+    _keyboard_focus_area = area;
+  }
+
+  InputArea* WindowCompositor::GetKeyboardFocusArea ()
+  {
+    return _keyboard_focus_area;
   }
 
   void WindowCompositor::SetBackgroundPaintLayer (AbstractPaintLayer *bkg)
@@ -1588,7 +1590,7 @@ namespace nux
   {
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
 
-    for (it = m_WindowList.begin(); it != m_WindowList.end(); it++)
+    for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
     {
       if ( (*it)->IsVisible() )
       {
@@ -1658,9 +1660,8 @@ namespace nux
       m_FrameBufferObject->SetDepthSurface (rt.depth_rt->GetSurfaceLevel (0));
       m_FrameBufferObject->Activate ();
 
-      GetWindowThread ()->GetGraphicsEngine ().SetContext (0, 0, buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine ().SetViewport (0, 0, buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine ().Push2DWindow (buffer_width, buffer_height);
+      GetWindowThread ()->GetGraphicsEngine ().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine ().ApplyClippingRectangle ();
     }
     else
@@ -1676,9 +1677,8 @@ namespace nux
       m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
       m_FrameBufferObject->Activate ();
 
-      GetWindowThread ()->GetGraphicsEngine ().SetContext (0, 0, buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine ().SetViewport (0, 0, buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine ().Push2DWindow (buffer_width, buffer_height);
+      GetWindowThread ()->GetGraphicsEngine ().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
       GetWindowThread ()->GetGraphicsEngine ().ApplyClippingRectangle ();
     }
   }

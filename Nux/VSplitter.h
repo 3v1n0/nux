@@ -79,7 +79,7 @@ namespace nux
 
   private:
 
-    typedef CoreArea MySplitter;
+    typedef InputArea MySplitter;
     std::vector<Area *> m_InterfaceObject;
     std::vector<MySplitter *> m_SplitterObject;
     std::vector<float> m_SplitConfig;

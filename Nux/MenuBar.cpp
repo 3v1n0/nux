@@ -41,7 +41,7 @@ namespace nux
     :   Object (true, NUX_FILE_LINE_PARAM)
   {
     // This area is added to the layout of the MenuBar. The Menubar will will ref/unref it.
-    area = new CoreArea (NUX_TRACKER_LOCATION);
+    area = new InputArea (NUX_TRACKER_LOCATION);
     icon = 0;
   }
 
@@ -144,7 +144,7 @@ namespace nux
 
     for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
-      CoreArea *area = (*it)->area;
+      InputArea *area = (*it)->area;
       item_geometry = area->GetGeometry();
 
       if (area->IsMouseInside() )
@@ -198,7 +198,7 @@ namespace nux
 
     if (m_MenuIsActive)
     {
-      CoreArea *area = m_CurrentMenu->area;
+      InputArea *area = m_CurrentMenu->area;
       item_geometry = area->GetGeometry();
       GetPainter().PaintBackground (GfxContext, item_geometry);
       GetPainter().Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
@@ -389,7 +389,7 @@ namespace nux
 
         for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
         {
-          CoreArea *area = (*it)->area;
+          InputArea *area = (*it)->area;
           Geometry geometry = area->GetGeometry();
 
           if (geometry.IsPointInside (winx, winy) )
@@ -454,7 +454,7 @@ namespace nux
 
     for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
-      CoreArea *area = (*it)->area;
+      InputArea *area = (*it)->area;
       geometry = area->GetGeometry();
 
       if (geometry.IsPointInside (x, y) )

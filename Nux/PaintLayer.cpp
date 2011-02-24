@@ -46,7 +46,7 @@ namespace nux
     GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
     
     GfxContext.GetRenderStates().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
-    GfxContext.QRP_Color (m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_color);
+    GfxContext.QRP_Color (_geometry.x, _geometry.y, _geometry.GetWidth(), _geometry.GetHeight(), m_color);
 
     // Restore the blend state
     GfxContext.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
@@ -76,7 +76,7 @@ namespace nux
 
     // Get the current blend states. They will be restored later.
     GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
-    GetPainter().PaintShapeCornerROP (GfxContext, m_geometry, m_color, m_image_style, m_corners, m_write_alpha, m_rop);
+    GetPainter().PaintShapeCornerROP (GfxContext, _geometry, m_color, m_image_style, m_corners, m_write_alpha, m_rop);
 
     GfxContext.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
@@ -98,7 +98,7 @@ namespace nux
 
   void SliceScaledTextureLayer::Renderlayer (GraphicsEngine &GfxContext)
   {
-    GetPainter().PaintTextureShape (GfxContext, m_geometry, m_image_style);
+    GetPainter().PaintTextureShape (GfxContext, _geometry, m_image_style);
   }
 
   AbstractPaintLayer *SliceScaledTextureLayer::Clone() const
@@ -134,7 +134,7 @@ namespace nux
     GfxContext.GetRenderStates ().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, m_write_alpha ? GL_TRUE : GL_FALSE);
     GfxContext.GetRenderStates ().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
     
-    GfxContext.QRP_1Tex (m_geometry.x, m_geometry.y, m_geometry.GetWidth(), m_geometry.GetHeight(), m_device_texture,
+    GfxContext.QRP_1Tex (_geometry.x, _geometry.y, _geometry.GetWidth(), _geometry.GetHeight(), m_device_texture,
                               m_texxform, m_color);
     
     // Restore Color mask and blend states.
