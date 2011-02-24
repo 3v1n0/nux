@@ -94,19 +94,24 @@ namespace nux
   {
     t_s32 per_element_space = 0;
     t_s32 total_used_space = 0;
+    t_s32 n_elements = 0;
 
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       // gather all the space used by elements
-      total_used_space += (*it)->GetBaseHeight();
+      if ((*it)->IsVisible ())
+      {
+        total_used_space += (*it)->GetBaseHeight();
+        n_elements++;
+      }
     }
 
-    if (_layout_element_list.size() != 0)
+    if (n_elements != 0)
     {
       // Compute the space available for each element
-      per_element_space = (remaining_height - total_used_space) / t_s32 (_layout_element_list.size() );
+      per_element_space = (remaining_height - total_used_space) / t_s32 (n_elements);
     }
 
     if (per_element_space < 0)
@@ -216,10 +221,16 @@ namespace nux
     }
 
     bool unadjusted_layout = false;
+    t_size num_element = 0;
+
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    {
+      if ((*it)->IsVisible ())
+        num_element++;
+    }
 
     do
     {
-      t_size num_element = _layout_element_list.size();
       // Get layout Width and Height
       t_s32 width = GetBaseWidth();
       t_s32 height = GetBaseHeight();
@@ -244,6 +255,9 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
+        if (!(*it)->IsVisible ())
+          continue;
+
         current_y += space_after_element;
 
         (*it)->SetBaseX (current_x);
@@ -349,6 +363,9 @@ namespace nux
         bool largerWidth = false;
         bool smallerWidth = false;
         t_s32 ret = 0;
+
+        if (!(*it)->IsVisible ())
+          continue;
 
         if ( ( (*it)->IsLayout() || (*it)->IsView() ) /*&& ((*it)->isOutofBound() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
         {
@@ -508,6 +525,9 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
+        if (!(*it)->IsVisible ())
+          continue;
+
         if ( ( (*it)->GetStretchFactor() == 0) && ( (*it)->isOutofBound() != true) )
         {
           (*it)->ApplyMinHeight();
@@ -522,6 +542,9 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
+        if (!(*it)->IsVisible ())
+          continue;
+        
         if ( (*it)->GetStretchFactor() == 0 || (*it)->isOutofBound() == true)
         {
           available_height -= (*it)->GetBaseHeight();
@@ -532,6 +555,9 @@ namespace nux
       {
         for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
         {
+          if (!(*it)->IsVisible ())
+            continue;
+
           if ( ( (*it)->GetStretchFactor() != 0) && (*it)->IsArea() )
           {
             // If it is not an object of type eInputArea, do not set outofbound to true,
@@ -563,6 +589,9 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
+        if (!(*it)->IsVisible ())
+          continue;
+       
         if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->isOutofBound() == false) )
         {
           float sf = (float) (*it)->GetStretchFactor();
@@ -590,6 +619,9 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end() && !need_recompute; it++)
       {
+        if (!(*it)->IsVisible ())
+          continue;
+
         if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->isOutofBound() == false) )
         {
           t_u32 sf = (*it)->GetStretchFactor();
@@ -683,6 +715,9 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
+      if (!(*it)->IsVisible ())
+        continue;
+
       // In the recursive process, make sure we get always the highest stretch factor
       // of an element that has not been bounded.
       if ( (*it)->isOutofBound() == false)
@@ -703,7 +738,13 @@ namespace nux
   {
     std::list<Area *>::iterator it;
     {
-      t_u32 num_element = (t_u32) _layout_element_list.size();
+      t_u32 num_element = 0;
+
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+      {
+        if ((*it)->IsVisible ())
+          num_element++;
+      }
       // Get layout Width and Height
       t_s32 width = GetBaseWidth();
       t_s32 height = GetBaseHeight();
@@ -722,6 +763,8 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
+        if (!(*it)->IsVisible ())
+          continue;
         current_y += element_margin;
 
         (*it)->SetBaseX (current_x);
@@ -769,6 +812,9 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
+      if (!(*it)->IsVisible ())
+        continue;
+
       if ( (*it)->Type().IsDerivedFromType (Layout::StaticObjectType) )
       {
         (*it)->ComputePosition2 (offsetX, offsetY);
@@ -780,6 +826,4 @@ namespace nux
 
     }
   }
-
-
 }
