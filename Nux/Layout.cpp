@@ -390,11 +390,7 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ((*it)->IsArea ())
-      {
-        // Does not have the flag for need redraw.
-      }
-      else if ((*it)->IsView ())
+      if ((*it)->IsView ())
       {
         View *ic = NUX_STATIC_CAST (View *, (*it));
         ic->NeedRedraw ();

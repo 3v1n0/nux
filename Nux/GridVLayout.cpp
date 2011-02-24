@@ -287,13 +287,7 @@ namespace nux
         int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
         int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
 
-        GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
-        if ((*it)->IsArea ())
-        {
-          InputArea *area = NUX_STATIC_CAST (InputArea *, (*it));
-          area->OnDraw (GfxContext, force_draw);
-        }
-        else if ((*it)->IsView ())
+        if ((*it)->IsView ())
         {
           View *ic = NUX_STATIC_CAST (View *, (*it) );
           ic->ProcessDraw (GfxContext, force_draw);
@@ -303,6 +297,12 @@ namespace nux
           Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
           layout->ProcessDraw (GfxContext, force_draw);
         }
+        /*// InputArea should be tested last
+        else if ((*it)->IsInputArea())
+        {
+          InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
+          input_area->OnDraw (GfxContext, force_draw);
+        }*/
         GfxContext.PopClippingRectangle ();
 
         it++;
