@@ -164,12 +164,12 @@ namespace nux
     if (m_CompositionLayout)
     {
       GfxContext.AddClipOffset (_delta_x, _delta_y);
-      //GfxContext.PushClippingRectangle (m_CompositionLayout->GetGeometry ());
+      GfxContext.PushClippingRectangle (m_CompositionLayout->GetGeometry ());
       GfxContext.Push2DTranslationModelViewMatrix (_delta_x, _delta_y, 0.0f);
-      m_CompositionLayout->ProcessDraw (GfxContext, true);
+      m_CompositionLayout->ProcessDraw (GfxContext, force_draw);
       GfxContext.PopModelViewMatrix ();
 
-      //GfxContext.PopClippingRectangle ();
+      GfxContext.PopClippingRectangle ();
       GfxContext.AddClipOffset (0, 0);
     }
 

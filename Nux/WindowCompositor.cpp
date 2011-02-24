@@ -387,7 +387,6 @@ namespace nux
           if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
           {
             window.GetPointer ()->ProcessEnterFocus (event);
-            //SetKeyboardFocusArea(window.GetPointer ());
           }
         }
         else
@@ -398,9 +397,7 @@ namespace nux
             ObjectWeakPtr<BaseWindow> window = (*_view_window_list.begin ());
             if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
             {
-              nuxDebugMsg (TEXT("BaseWIndowName: %s"), window->_name.GetTCharPtr ());
               window.GetPointer ()->ProcessEnterFocus (event);
-              //SetKeyboardFocusArea(window.GetPointer ());
             }
           }
         }

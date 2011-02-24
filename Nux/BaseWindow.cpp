@@ -27,6 +27,7 @@
 #include "HLayout.h"
 #include "WindowCompositor.h"
 #include "BaseWindow.h"
+#include "TextEntry.h"
 
 namespace nux
 {
@@ -552,10 +553,17 @@ namespace nux
     if (event.e_event != NUX_WINDOW_ENTER_FOCUS)
       return false;
 
+    InputArea *current_focus_input_area = GetWindowCompositor ().GetKeyboardFocusArea ();
+
     if (_enter_focus_input_area)
     {
-      if (!_enter_focus_input_area->HasKeyboardFocus ())
+      if (_enter_focus_input_area != current_focus_input_area)
       {
+        GetWindowCompositor ().SetKeyboardFocusArea (NULL);
+
+        if (current_focus_input_area)
+          current_focus_input_area->OnEndFocus.emit ();
+
         GetWindowCompositor ().SetKeyboardFocusArea (_enter_focus_input_area);
         _enter_focus_input_area->OnStartFocus.emit ();
       }
@@ -563,8 +571,13 @@ namespace nux
     }
     else
     {
-      if (!HasKeyboardFocus ())
+      if (this != current_focus_input_area)
       {
+        GetWindowCompositor ().SetKeyboardFocusArea (NULL);
+
+        if (current_focus_input_area)
+          current_focus_input_area->OnEndFocus.emit ();
+
         // The base Window gets the keyboard focus
         GetWindowCompositor ().SetKeyboardFocusArea (this);
         OnStartFocus.emit ();
@@ -582,7 +595,8 @@ namespace nux
     }
 
     _enter_focus_input_area = input_area;
-    _enter_focus_input_area->Reference ();
+    if (_enter_focus_input_area)
+      _enter_focus_input_area->Reference ();
 
   }
 }

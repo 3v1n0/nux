@@ -423,12 +423,12 @@ namespace nux
     ProcessKeyEvent(eventType, keysym, state, character, keyCount);
   }
 
-  void TextEntry::RecvStartKeyFocus()
+  void TextEntry::RecvStartKeyFocus ()
   {
     FocusInx ();
   }
 
-  void TextEntry::RecvEndKeyFocus()
+  void TextEntry::RecvEndKeyFocus ()
   {
     FocusOutx ();
   }
