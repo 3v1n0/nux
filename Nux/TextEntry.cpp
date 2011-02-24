@@ -1164,12 +1164,7 @@ namespace nux
       PangoRectangle log_rect;
       gint           text_height;
 
-      // We do this to get correct height, don't hate me
-      if (tmp_string == "")
-        pango_layout_set_text (layout, "|", -1);
-
       pango_layout_get_extents (layout, NULL, &log_rect);
-      pango_layout_set_text (layout, tmp_string.c_str (), -1);
       text_height = log_rect.height / PANGO_SCALE;
 
       SetMinimumHeight (text_height);
