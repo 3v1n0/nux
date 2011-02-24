@@ -1,4 +1,4 @@
-nux (0.9.28-0ubuntu1) UNRELEASED; urgency=low
+nux (0.9.28-0ubuntu1) natty; urgency=low
 
   * New upstream release:
     - BaseWindow should notify change on the visible state (LP: #702702)
@@ -7,7 +7,7 @@ nux (0.9.28-0ubuntu1) UNRELEASED; urgency=low
   * debian/rules:
     - bump shlib
 
- -- Didier Roche <didrocks@ubuntu.com>  Thu, 24 Feb 2011 19:06:52 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 24 Feb 2011 20:16:04 +0100
 
 nux (0.9.26-0ubuntu1) natty; urgency=low
 
