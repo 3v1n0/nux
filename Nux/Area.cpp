@@ -520,4 +520,10 @@ namespace nux
   {
     return m_sensitive;
   }
+
+  void Area::QueueRelayout ()
+  {
+    nux::GetWindowThread ()->QueueObjectLayout (this);
+  }
+
 }

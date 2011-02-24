@@ -326,6 +326,13 @@ namespace nux
     */
     bool IsSensitive ();
 
+    //! Queue a relayout
+    /*!
+    Queues a relayout before the next paint cycle. This is safe to call multiple times within
+    a cycle.
+    */
+    void QueueRelayout ();
+
   protected:
 
     /*

@@ -58,7 +58,7 @@ public:
       hori->AddView (button, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
       hori->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
       layered->AddLayer (hori);
-
+      
       hori = new nux::HLayout (NUX_TRACKER_LOCATION);
       button = new nux::PushButton (text, NUX_TRACKER_LOCATION);
       button->SetMinMaxSize (100, 50);

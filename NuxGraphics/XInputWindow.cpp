@@ -30,7 +30,9 @@ namespace nux
 
   std::list<Window> XInputWindow::_native_windows;
 
-  XInputWindow::XInputWindow(const char* title, int override_redirect)
+  XInputWindow::XInputWindow(const char* title,
+                             bool        take_focus,
+                             int         override_redirect)
   {
     Display* d = GetThreadGLWindow()->GetX11Display();
     _display = d;
@@ -77,11 +79,14 @@ namespace nux
                      XA_ATOM, 32, PropModeReplace,
                      (unsigned char *) type, 1);
 
-    XStoreName (d, _window, title); 
+    XStoreName (d, _window, title);
 
     XMapRaised (d, _window);
     EnsureInputs ();
-    
+
+    if (take_focus)
+      EnableTakeFocus ();
+
     EnableDnd ();
   }
 
@@ -193,6 +198,19 @@ namespace nux
     
   }
 
+  void XInputWindow::EnableTakeFocus ()
+  {
+    Atom      wmTakeFocus = XInternAtom (_display, "WM_TAKE_FOCUS", False);
+    XWMHints* wmHints     = NULL;
+
+    wmHints = (XWMHints*) calloc (1, sizeof (XWMHints));
+    wmHints->flags |= InputHint;
+    wmHints->input = False;
+    XSetWMHints (_display, _window, wmHints);
+    free (wmHints);
+    XSetWMProtocols (_display, _window, &wmTakeFocus, 1);
+  }
+
   void XInputWindow::EnableDnd ()
   {
     int version = 5;
@@ -255,6 +273,11 @@ namespace nux
   void XInputWindow::UnGrabPointer ()
   {
     XUngrabPointer(_display, CurrentTime);
+  }
+
+  void XInputWindow::SetInputFocus ()
+  {
+    XSetInputFocus (_display, _window, RevertToParent, CurrentTime);
   }
 
   void XInputWindow::GrabKeyboard ()

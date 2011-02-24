@@ -31,16 +31,20 @@
 
 void GridLayoutInit(nux::NThread* thread, void* InitData)
 {
+  int a = 0;
+
   nux::HLayout *main_layout((new nux::HLayout(NUX_TRACKER_LOCATION)));
 
   nux::GridHLayout *grid_h_layout ((new nux::GridHLayout (NUX_TRACKER_LOCATION)));
-  for (int i = 0; i < 60; i++)
+  for (int i = 0; i < 30; i++)
   {
     nux::ColorLayer color (nux::Color::RandomColor ());
     nux::TextureArea* texture_area = new nux::TextureArea ();
     texture_area->SetPaintLayer (&color);
-
+    texture_area->SetVisible (a % 2);
     grid_h_layout->AddView (texture_area, 1, nux::eLeft, nux::eFull);
+
+    a++;
   }
 
   grid_h_layout->ForceChildrenSize (true);
@@ -54,13 +58,15 @@ void GridLayoutInit(nux::NThread* thread, void* InitData)
 
 
   nux::GridVLayout *grid_v_layout ((new nux::GridVLayout (NUX_TRACKER_LOCATION)));
-  for (int i = 0; i < 60; i++)
+  for (int i = 0; i < 30; i++)
   {
     nux::ColorLayer color (nux::Color::RandomColor());
     nux::TextureArea* texture_area = new nux::TextureArea();
     texture_area->SetPaintLayer (&color);
-
+    texture_area->SetVisible (a % 2);
     grid_v_layout->AddView(texture_area, 1, nux::eLeft, nux::eFull);
+
+    a++;
   }
 
   grid_v_layout->ForceChildrenSize (true);
@@ -83,7 +89,7 @@ int main(int argc, char **argv)
 {
   nux::NuxInitialize(0);
 
-  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Grid Layout"), 400, 200, 0, &GridLayoutInit, 0);
+  nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Grid Layout"), 1024, 600, 0, &GridLayoutInit, 0);
   wt->Run(NULL);
 
   delete wt;

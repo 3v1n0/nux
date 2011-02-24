@@ -122,6 +122,8 @@ namespace nux
 
   long GridHLayout::ComputeLayout2()
   {
+    std::list<Area *> elements;
+
     if (m_stretchfactor == 0)
     {
       ApplyMinWidth();
@@ -132,10 +134,17 @@ namespace nux
       return eCompliantHeight | eCompliantWidth;
     }
 
+    t_s32 num_elements = 0;
+
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      (*it)->setOutofBound (false);
+      if ((*it)->IsVisible ())
+      {
+        (*it)->setOutofBound (false);
+        elements.push_back (*it);
+        num_elements++;
+      }
     }
 
     t_s32 original_height = GetBaseHeight();
@@ -147,8 +156,7 @@ namespace nux
     // This is a left to right fill going down. An option can be added the fill the grid from top to bottom and going toward the right.
 
     nux::Geometry base = GetGeometry();
-    it = _layout_element_list.begin();
-    int num_elements = (int) _layout_element_list.size();
+    it = elements.begin();
     int num_row = 0;
     int num_column = 0;
 
@@ -266,7 +274,16 @@ namespace nux
 
   void GridHLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
+    std::list<Area *> elements;
     std::list<Area *>::iterator it = _layout_element_list.begin ();
+
+    for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
+    {
+      if ((*it)->IsVisible ())
+        elements.push_back (*it);
+    }
+
+    it = elements.begin ();
 
     Geometry base = GetGeometry ();
     GfxContext.PushClippingRectangle (base);
@@ -275,7 +292,7 @@ namespace nux
     {
       for (int i = 0; i < _num_column; i++)
       {
-        if (it == _layout_element_list.end ())
+        if (it == elements.end ())
           break;
 
         int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);

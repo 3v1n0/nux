@@ -39,8 +39,8 @@ namespace nux
   static const double kStrongCursorBarWidth = 1.2;
   static const double kWeakCursorLineWidth = 3;
   static const double kWeakCursorBarWidth = 3;
-  static const Color kStrongCursorColor(1, 0, 0, 1.0f);
-  static const Color kWeakCursorColor(0.5, 0.5, 0.5, 1.0f);
+  static const Color kStrongCursorColor(1.0f, 1.0f, 1.0f, 1.0f);
+  static const Color kWeakCursorColor(1.0f, 1.0f, 1.0f, 0.5f);
   static const Color kDefaultTextColor(0, 0, 0, 1.0f);
   static const Color kDefaultBackgroundColor(1, 1, 1, 1.0f);
   static const Color kDefaultSelectionBackgroundColor(0.5, 0.5, 0.5, 1.0f);
@@ -152,6 +152,15 @@ namespace nux
 
     font_family_ = "Ubuntu";
     font_size_ = 12;
+    
+    font_options_ = cairo_font_options_create ();
+    cairo_font_options_set_antialias (font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
+    cairo_font_options_set_hint_style (font_options_, CAIRO_HINT_STYLE_FULL);
+    cairo_font_options_set_hint_metrics (font_options_, CAIRO_HINT_METRICS_ON);
+    cairo_font_options_set_subpixel_order (font_options_, CAIRO_SUBPIXEL_ORDER_RGB);
+
+    font_dpi_ = 96.0;
+    
     update_canvas_ = true;
 
     OnMouseDown.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
@@ -173,6 +182,7 @@ namespace nux
 
   TextEntry::~TextEntry ()
   {
+    cairo_font_options_destroy (font_options_);
     if (_texture2D)
       _texture2D->UnReference ();
   }
@@ -440,20 +450,17 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
+    Color col = Color::Black;
+    col.SetAlpha (0.0f);
     gfxContext.QRP_Color (base.x,
       base.y,
       base.width,
       base.height,
-      Color::Black);
+      col);
 
     TexCoordXForm texxform;
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-
-    gfxContext.GetRenderStates().SetBlend (true,
-      GL_ONE,
-      GL_ONE_MINUS_SRC_ALPHA);
-
     gfxContext.QRP_1Tex (base.x,
       base.y,
       base.width,
@@ -461,8 +468,6 @@ namespace nux
       _texture2D->GetDeviceTexture(),
       texxform,
       _text_color);
-
-    gfxContext.GetRenderStates().SetBlend (false);
 
     gfxContext.PopClippingRectangle ();
   }
@@ -998,6 +1003,11 @@ namespace nux
     std::string tmp_string;
 
     /* Set necessary parameters */
+    pango_cairo_context_set_font_options (pango_layout_get_context (layout),
+                                          font_options_);
+    pango_cairo_context_set_resolution (pango_layout_get_context (layout),
+                                        font_dpi_);
+
     if (wrap_)
     {
       pango_layout_set_width(layout, (GetBaseWidth() - kInnerBorderX * 2) * PANGO_SCALE);
@@ -1148,6 +1158,16 @@ namespace nux
     {
       pango_layout_set_justify(layout, FALSE);
       pango_layout_set_alignment(layout, PANGO_ALIGN_LEFT);
+    }
+
+    {
+      PangoRectangle log_rect;
+      gint           text_height;
+
+      pango_layout_get_extents (layout, NULL, &log_rect);
+      text_height = log_rect.height / PANGO_SCALE;
+
+      SetMinimumHeight (text_height);
     }
 
     return layout;
@@ -1842,5 +1862,27 @@ namespace nux
       
       //ResetImContext();
     }
+  }
+
+  void TextEntry::SetFontFamily (const char *font)
+  {
+    font_family_ = font;
+    QueueRefresh(true, true);
+  }
+  
+  void TextEntry::SetFontSize (double font_size)
+  {
+    font_size_ = font_size;
+    QueueRefresh(true, true);
+  }
+
+  void TextEntry::SetFontOptions (const cairo_font_options_t *options)
+  {
+    g_return_if_fail (options);
+
+    cairo_font_options_destroy (font_options_);
+    font_options_ = cairo_font_options_copy (options);
+
+    QueueRefresh(true, true);
   }
 }

@@ -324,6 +324,9 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
+      if (!(*it)->IsVisible () || !(*it)->IsSensitive ())
+        continue;
+
       if ( (*it)->IsArea() )
       {
         CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
@@ -350,6 +353,9 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
+      if (!(*it)->IsVisible ())
+        continue;
+
       if ( (*it)->IsArea() )
       {
         CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
