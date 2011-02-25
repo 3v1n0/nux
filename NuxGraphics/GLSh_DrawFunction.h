@@ -43,10 +43,6 @@ namespace nux
     void SetBackgroundColor (float R, float G, float B, float A);
     void SetBackgroundColor (Color color);
     void SetTextureFunction (ObjectPtr<IOpenGLBaseTexture> device_texture);
-    void SetTransformMatrix (const Matrix4 &TransformMatrix)
-    {
-      m_TransformMatrix = TransformMatrix;
-    }
     void Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight);
     void SetScreenPositionOffset (float x, float y);
 
@@ -60,7 +56,6 @@ namespace nux
     UINT ViewPortY;
     UINT ViewPortWidth;
     UINT ViewPortHeight;
-    Matrix4 m_TransformMatrix;
     ObjectPtr<IOpenGLBaseTexture> m_device_texture;
 
   private:

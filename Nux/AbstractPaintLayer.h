@@ -47,10 +47,17 @@ namespace nux
     virtual void Renderlayer (GraphicsEngine &GfxContext) = 0;
 
     virtual void SetGeometry (const Geometry &geo);
+
+    //! Preserve the model view matrix at the moment layer is pushed on the paint layer stack. See Painter class.
+    void SetModelViewMatrix (const Matrix4 &mat);
+
+    Matrix4 GetModelViewMatrix ();
+
     Geometry GetGeometry() const;
 
   protected:
     Geometry _geometry;
+    Matrix4  _model_view_matrix;
   };
 
 }

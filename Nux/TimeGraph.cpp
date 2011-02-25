@@ -340,8 +340,6 @@ namespace nux
         Texture->UnlockRect (0);
         GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        m_DrawFunctionShader->SetTransformMatrix (GfxContext.GetProjectionMatrix() );
-
         m_DrawFunctionShader->SetTextureFunction (Texture);
         m_DrawFunctionShader->SetBackgroundColor (m_DynValueArray[index].m_SecondaryColor);
         m_DrawFunctionShader->Render (X, Y, 0, W, H, GfxContext.GetWindowWidth(), GfxContext.GetWindowHeight() );

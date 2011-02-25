@@ -23,4 +23,14 @@ namespace nux
   {
     return _geometry;
   }
+
+  void AbstractPaintLayer::SetModelViewMatrix (const Matrix4 &mat)
+  {
+    _model_view_matrix = mat;
+  }
+
+  Matrix4 AbstractPaintLayer::GetModelViewMatrix ()
+  {
+    return _model_view_matrix;
+  }
 }

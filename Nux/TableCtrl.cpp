@@ -365,7 +365,7 @@ namespace nux
     window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
     window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().Push2DWindow (window_width, window_height);
 
@@ -437,7 +437,7 @@ namespace nux
     GfxContext.PushClippingRectangle (Geometry (m_ViewX, m_ViewY + (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0),
                                       m_ViewWidth, m_ViewHeight - (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) ) );
 
-    GfxContext.AddClipOffset (_delta_x, _delta_y);
+    GfxContext.PushClipOffset (_delta_x, _delta_y);
     GfxContext.Push2DTranslationModelViewMatrix (_delta_x, _delta_y, 0.0f);
 
     {
@@ -475,7 +475,7 @@ namespace nux
     }
 
     GfxContext.PopModelViewMatrix ();
-    GfxContext.AddClipOffset (0, 0);
+    GfxContext.PopClipOffset ();
 
     GfxContext.PopClippingRectangle();
    

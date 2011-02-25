@@ -178,7 +178,7 @@ namespace nux
 //         GfxContext.SetViewport(
 //             m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);
 //
-//         GfxContext.SetDrawClippingRegion(
+//         GfxContext.SetOpenGLClippingRectangle(
 //             m_ctx.x_clipregion,
 //             window_height - m_ctx.y_clipregion - m_ctx.height_clipregion,
 //             m_ctx.width_clipregion,
@@ -232,7 +232,7 @@ namespace nux
       GfxContext.SetViewport (
         m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);
 
-      GfxContext.SetDrawClippingRegion (
+      GfxContext.SetOpenGLClippingRectangle (
         m_ctx.x_clipregion,
         window_height - m_ctx.y_clipregion - m_ctx.height_clipregion,
         m_ctx.width_clipregion,
