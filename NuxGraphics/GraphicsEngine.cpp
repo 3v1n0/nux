@@ -919,7 +919,7 @@ namespace nux
 
   Matrix4 GraphicsEngine::GetOpenGLProjectionMatrix ()
   {
-    Matrix4 mat = _projection_matrix;
+    Matrix4 mat = GetProjectionMatrix ();
     mat.Transpose ();
     return mat;
   }

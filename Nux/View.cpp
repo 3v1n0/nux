@@ -307,11 +307,8 @@ namespace nux
 
   bool View::SetLayout (Layout *layout)
   {
-    if (layout == 0)
-    {
-      nuxDebugMsg (TEXT ("[View::SetCompositionLayout] Invalid object."));
-      return false;
-    }
+    NUX_RETURN_VALUE_IF_NULL (layout, false);
+    NUX_RETURN_VALUE_IF_TRUE (m_CompositionLayout == layout, true);
 
     Area *parent = layout->GetParentObject();
 

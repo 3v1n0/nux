@@ -1595,16 +1595,16 @@ namespace nux
     Area *parent;
     Geometry geo, pgeo;
     
-    geo = view->GetGeometry();
+    geo = view->GetAbsoluteGeometry ();
     parent = view->GetToplevel ();
     
-    if (parent && view != parent)
+    if (parent && (view != parent))
     {
-      pgeo = parent->GetGeometry();
-      geo.x += pgeo.x;
-      geo.y += pgeo.y;
+//       pgeo = parent->GetGeometry();
+//       geo.x += pgeo.x;
+//       geo.y += pgeo.y;
 
-      if (parent->Type().IsDerivedFromType (BaseWindow::StaticObjectType))
+      if (parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
       {
         BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, parent);
         window->_child_need_redraw = true;

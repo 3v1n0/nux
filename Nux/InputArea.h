@@ -219,7 +219,7 @@ namespace nux
     sigc::signal<void> OnEndFocus;
 
     //! Signal emitted when the area receives an WM_TAKE_FOCUS ClientMessage
-    sigc::signal<void, Time> OnTakeFocus;
+    //sigc::signal<void, Time> OnTakeFocus;
 
     sigc::signal < void,
          GraphicsEngine &    ,   /*Graphics Context for text operation*/

@@ -220,7 +220,19 @@ namespace nux
     void SetBaseString (const TCHAR *Caption);
     const NString &GetBaseString() const;
     
+    //! Return the Top level parent of this area.
+    /*!
+        The top Level parent is either a BaseWindow or the main layout.
+         
+        @return The top level parent or Null.
+    */
     Area * GetToplevel ();
+
+    //! Return true is this area has a top level parent.
+    /*!
+        @return True if this area has a top level parent.
+    */
+    bool HasTopLevelParent ();
 
     virtual long ComputeChildLayout();
     virtual void PositionChildLayout (float offsetX, float offsetY);
@@ -305,7 +317,11 @@ namespace nux
     Matrix4 Get3DMatrix () const;
     bool Is3DArea () const;
 
+    //! Return the position of this object with regard to its top left corner of the physical window.
     Geometry GetAbsoluteGeometry ();
+
+    //! Return the position of this object with regard to its top level parent (the main layout or a BaseWindow).
+    Geometry GetRootGeometry ();
 
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
     sigc::signal<void, Area *, bool> OnVisibleChanged;
@@ -313,9 +329,6 @@ namespace nux
 
 
   protected:
-    
-    //unsigned int m_StretchFactor;
-
     /*
         This function is reimplemented in Layout as it need to perform some special operations.
         It does nothing for Area and View classes.
@@ -345,7 +358,19 @@ namespace nux
     virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
 
     //! Return the absolute geometry starting with a relative geometry passed as argument.
-    Geometry GetAbsoluteGeometry (const Geometry &geometry);
+    Geometry InnerGetAbsoluteGeometry (const Geometry &geometry);
+
+    //! Return the absolute geometry starting with a relative geometry passed as argument.
+    Geometry InnerGetRootGeometry (const Geometry &geometry);
+
+//     //! Add a "secondary" child to this Area. The 
+//     /*!
+//         @return True if the child has been added; False otherwise;
+//     */
+//     bool Secondary (Area *child);
+
+    void Set2DMatrix (const Matrix4 &mat);
+    void Set2DTranslation (float tx, float ty, float tz);
 
   private:
     void InitiateResizeLayout (Area *child = 0);
@@ -383,6 +408,8 @@ namespace nux
     Matrix4                 _2d_xform;      //!< 2D transformation natrix for children coordinates.
     Matrix4                 _3d_xform;      //!< 3D transformation matrix for the area in a perspective space.
     bool                    _3d_area;     //!< True if the area is resides in a 3D space. 
+
+    std::list<Area*>        _children_list;
 
     friend class Layout;
     friend class View;
