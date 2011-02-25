@@ -372,11 +372,24 @@ namespace nux
     void PushClippingRectangle (Rect rect);
     void PopClippingRectangle ();
     void EmptyClippingRegion ();
+    //! Set the clipping according to the clipping rectangle stack.
     void ApplyClippingRectangle ();
-    void SetDrawClippingRegion (int x, int y, unsigned int width, unsigned int height);
+
+    //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
+    /*!
+        You may restore the clipping rectangle stack with ApplyClippingRectangle.
+    */
+    void SetClippingRectangle (const Rect &rect);
+
+    //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
+    void SetOpenGLClippingRectangle (int x, int y, unsigned int width, unsigned int height);
+
     Rect GetClippingRegion () const;
     int GetNumberOfClippingRegions () const;
-    void AddClipOffset (int x, int y);
+    
+    void AddClipOffset (int x, int y);  //!< Deprecated. Use PushClipOffset.
+    void PushClipOffset (int x, int y);
+    void PopClipOffset ();
 
     void ClearAreaColorDepthStencil (int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil);
     void ClearAreaColor (int x, int y, int width, int height, Color clearcolor);
@@ -537,6 +550,24 @@ namespace nux
 
     //! Reset the model view matrix to identity.
     void ResetModelViewMatrixStack ();
+
+    //! Bypass the model view matrix stack and set a custom matrix.
+    /*!
+        You may restore the view matrix stack by calling ApplyModelViewMatrix.
+    */
+    void SetModelViewMatrix (const Matrix4 &matrix);
+
+    //! Set the model view matrix according to the model view matrix stack.
+    void ApplyModelViewMatrix ();
+
+    //! Transform a rectangle with the model view matrix.
+    /*!
+        This transformation is only good as long as the model view matrix only contains 2D translations.
+        The output rectangle width and height are the same as the input rectangle.
+
+        @param rect The rectangle to transform.
+    */
+    Rect ModelViewXFormRect (const Rect& rect);
 
     //! Return the depth of the model view matrix stack.
     /*!
@@ -789,6 +820,8 @@ namespace nux
     Rect _scissor;
     int _clip_offset_x;
     int _clip_offset_y;
+    Rect _clipping_rect;
+    std::list<Point> _clip_offset_stack;
 
 //     int m_ScissorXOffset, m_ScissorYOffset;
 

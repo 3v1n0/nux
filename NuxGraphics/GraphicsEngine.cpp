@@ -521,16 +521,18 @@ namespace nux
 
     if ( (x1 > x0) && (y1 > y0) )
     {
+      _clipping_rect = Rect (x0, y0, x1 - x0, y1 - y0);
       ClippingRect.push_back (Rect (x0, y0, x1 - x0, y1 - y0) );
 
       EnableScissoring (true);
-      SetDrawClippingRegion (x0, window_height - y0 - (y1 - y0), x1 - x0, y1 - y0);
+      SetOpenGLClippingRectangle (x0, window_height - y0 - (y1 - y0), x1 - x0, y1 - y0);
     }
     else
     {
-      ClippingRect.push_back (Rect (0, 0, 0, 0) );
+      _clipping_rect = Rect (0, 0, 0, 0);
+      ClippingRect.push_back (_clipping_rect);
       EnableScissoring (true);
-      SetDrawClippingRegion (0, 0, 0, 0);
+      SetOpenGLClippingRectangle (0, 0, 0, 0);
     }
   }
 
@@ -542,23 +544,21 @@ namespace nux
       return;
     }
 
-    int window_width, window_height;
-    window_width = _viewport.width;
-    window_height = _viewport.height;
-
     ClippingRect.pop_back();
     unsigned int stacksize = (unsigned int) ClippingRect.size();
 
     if (stacksize == 0)
     {
+      _clipping_rect = Rect (0, 0, _viewport.width, _viewport.height);
       EnableScissoring (true);
-      SetDrawClippingRegion (0, 0, window_width, window_height);
+      SetOpenGLClippingRectangle (0, 0, _viewport.width, _viewport.height);
     }
     else
     {
-      Rect B = ClippingRect[stacksize-1];
+      _clipping_rect = ClippingRect [stacksize-1];
+      Rect B = _clipping_rect;
       EnableScissoring (true);
-      SetDrawClippingRegion (B.x, window_height - B.y - B.GetHeight(), B.GetWidth(), B.GetHeight() );
+      SetOpenGLClippingRectangle (B.x, _viewport.height - B.y - B.GetHeight(), B.GetWidth(), B.GetHeight() );
     }
   }
 
@@ -570,22 +570,20 @@ namespace nux
       return;
     }
 
-    int window_width, window_height;
-    window_width = _viewport.width;
-    window_height = _viewport.height;
-
     unsigned int stacksize = (unsigned int) ClippingRect.size();
 
     if (stacksize == 0)
     {
+      _clipping_rect = Rect (0, 0, _viewport.width, _viewport.height);
       EnableScissoring (true);
-      SetDrawClippingRegion (0, 0, window_width, window_height);
+      SetOpenGLClippingRectangle (0, 0, _viewport.width, _viewport.height);
     }
     else
     {
-      Rect B = ClippingRect[stacksize-1];
+      _clipping_rect = ClippingRect[stacksize-1];
+      Rect B = _clipping_rect;
       EnableScissoring (true);
-      SetDrawClippingRegion (B.x, window_height - B.y - B.GetHeight(), B.GetWidth(), B.GetHeight() );
+      SetOpenGLClippingRectangle (B.x, _viewport.height - B.y - B.GetHeight(), B.GetWidth(), B.GetHeight() );
     }
   }
 
@@ -597,13 +595,11 @@ namespace nux
       return;
     }
 
-    int window_width, window_height;
-    window_width = _viewport.width;
-    window_height = _viewport.height;
     ClippingRect.clear();
     {
+      _clipping_rect = Rect (0, 0, _viewport.width, _viewport.height);
       EnableScissoring (true);
-      SetDrawClippingRegion (0, 0, window_width, window_height);
+      SetOpenGLClippingRectangle (0, 0, _viewport.width, _viewport.height);
     }
   }
 
@@ -615,17 +611,31 @@ namespace nux
       return r;      
     }
 
-    unsigned int stacksize = (unsigned int) ClippingRect.size();
+    return _clipping_rect;
 
-    if (stacksize == 0)
-    {
-      return Rect (0, 0, _viewport.width, _viewport.height);
-    }
-    else
-    {
-      Rect r = ClippingRect[stacksize-1];
-      return r;
-    }
+//     unsigned int stacksize = (unsigned int) ClippingRect.size();
+// 
+//     if (stacksize == 0)
+//     {
+//       return Rect (0, 0, _viewport.width, _viewport.height);
+//     }
+//     else
+//     {
+//       Rect r = ClippingRect[stacksize-1];
+//       return r;
+//     }
+  }
+
+  void GraphicsEngine::SetClippingRectangle (const Rect &rect)
+  {
+    _clipping_rect = rect;
+    SetScissor (rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
+  }
+
+  void GraphicsEngine::SetOpenGLClippingRectangle (int x, int y, unsigned int width, unsigned int height)
+  {
+    //_clipping_rect = Rect (x, y, width, height);
+    SetScissor (x, y, width, height);
   }
 
   int GraphicsEngine::GetNumberOfClippingRegions () const
@@ -639,15 +649,45 @@ namespace nux
     return (int) ClippingRect.size();
   }
 
-  void GraphicsEngine::SetDrawClippingRegion (int x, int y, unsigned int width, unsigned int height)
-  {
-    SetScissor (x, y, width, height);
-  }
-
   void GraphicsEngine::AddClipOffset (int x, int y)
   {
-    _clip_offset_x = x;
-    _clip_offset_y = y;
+    PushClipOffset (x, y);
+  }
+
+  void GraphicsEngine::PushClipOffset (int x, int y)
+  {
+    _clip_offset_stack.push_back (Point (x, y));
+
+    _clip_offset_x = 0;
+    _clip_offset_y = 0;
+
+    std::list<Point>::iterator it;
+    for (it = _clip_offset_stack.begin (); it != _clip_offset_stack.end (); it++)
+    {
+      _clip_offset_x += (*it).x;
+      _clip_offset_y += (*it).y;
+    }
+  }
+
+  void GraphicsEngine::PopClipOffset ()
+  {
+    if (_clip_offset_stack.size () == 0)
+    {
+      _clip_offset_x = 0;
+      _clip_offset_y = 0;
+    }
+
+    _clip_offset_stack.pop_back();
+
+    _clip_offset_x = 0;
+    _clip_offset_y = 0;
+
+    std::list<Point>::iterator it;
+    for (it = _clip_offset_stack.begin (); it != _clip_offset_stack.end (); it++)
+    {
+      _clip_offset_x += (*it).x;
+      _clip_offset_y += (*it).y;
+    }
   }
 
 ///////////////////
@@ -864,6 +904,30 @@ namespace nux
   {
     _model_view_stack.clear ();
     _model_view_matrix = Matrix4::IDENTITY ();
+  }
+
+  void GraphicsEngine::SetModelViewMatrix (const Matrix4 &matrix)
+  {
+    _model_view_matrix = matrix;
+  }
+
+  void GraphicsEngine::ApplyModelViewMatrix ()
+  {
+    _model_view_matrix = Matrix4::IDENTITY ();
+
+    std::list<Matrix4>::iterator it;
+    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    {
+      _model_view_matrix = (*it) * _model_view_matrix;
+    }
+  }
+
+  Rect GraphicsEngine::ModelViewXFormRect (const Rect& rect)
+  {
+    Vector4 v0 (rect.x, rect.y, 0.0f, 1.0f);
+    Vector4 v1 = _model_view_matrix * v0;
+    Rect r (v1.x, v1.y, rect.width, rect.height);
+    return r;
   }
 
   int GraphicsEngine::ModelViewStackDepth ()

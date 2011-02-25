@@ -911,7 +911,7 @@ namespace nux
       GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     }
     else
-      GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
+      GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
 
     if (OverlayDrawingCommand)
     {
@@ -936,7 +936,7 @@ namespace nux
       GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
     }
     else
-      GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
+      GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
 
     if(m_TooltipText.Size())
     {
@@ -1002,7 +1002,7 @@ namespace nux
             GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
             GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
             GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-            GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
+            GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
 
             CHECKGL ( glClearColor (0, 0, 0, 0) );
             GLuint clear_color_buffer_bit = (force_draw || window->IsRedrawNeeded() ) ? GL_COLOR_BUFFER_BIT : 0;
@@ -1035,7 +1035,7 @@ namespace nux
             window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
             window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
             GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-            GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
+            GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, window_width, window_height);
             GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
             GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
 
@@ -1104,7 +1104,7 @@ namespace nux
     window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
     window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-    //GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion(0, 0, window_width, window_height);
+    //GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
 
@@ -1185,7 +1185,7 @@ namespace nux
     }
 
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
     GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     {
@@ -1228,7 +1228,7 @@ namespace nux
     window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
     window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
 
@@ -1257,7 +1257,7 @@ namespace nux
     m_FrameBufferObject->Activate();
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
   }
 
   void WindowCompositor::CopyTextureToMainColorRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y)
@@ -1297,7 +1297,7 @@ namespace nux
     m_FrameBufferObject->Activate();
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion ();
-    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, buffer_width, buffer_height);
+    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
   }
 
   void WindowCompositor::CopyTextureToCompositionRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y)
@@ -1346,7 +1346,7 @@ namespace nux
     }
 
     GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, window_width, window_height);
+    GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, window_width, window_height);
     GetWindowThread()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
     GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
 

@@ -196,10 +196,10 @@ namespace nux
 
       CHECKGL ( glMatrixMode (GL_MODELVIEW) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetModelViewMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetOpenGLModelViewMatrix().m) );
       CHECKGL ( glMatrixMode (GL_PROJECTION) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetProjectionMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetOpenGLProjectionMatrix().m) );
 
       int VertexLocation          = VTXATTRIB_POSITION;
 

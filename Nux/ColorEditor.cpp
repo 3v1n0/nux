@@ -418,15 +418,6 @@ namespace nux
 
     GfxContext.PushClippingRectangle (base);
 
-
-    m_RedShader->SetTransformMatrix (GfxContext.GetOpenGLModelViewProjectionMatrix() );
-    m_GreenShader->SetTransformMatrix (GfxContext.GetOpenGLModelViewProjectionMatrix() );
-    m_BlueShader->SetTransformMatrix (GfxContext.GetOpenGLModelViewProjectionMatrix() );
-
-    m_HueShader->SetTransformMatrix (GfxContext.GetOpenGLModelViewProjectionMatrix() );
-    m_SaturationShader->SetTransformMatrix (GfxContext.GetOpenGLModelViewProjectionMatrix() );
-    m_ValueShader->SetTransformMatrix (GfxContext.GetOpenGLModelViewProjectionMatrix() );
-
     if (m_ColorModel == CM_RGB)
     {
       DrawRGB (GfxContext, force_draw);

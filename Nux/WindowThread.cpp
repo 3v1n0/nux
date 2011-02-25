@@ -1793,7 +1793,7 @@ namespace nux
     // Nux keep tracks of its own opengl states and restore them before doing any drawing.
     GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SubmitChangeStates();
 
-    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
+    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
         GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
 
     if (GetWindow().IsPauseThreadGraphicsRendering() == false)
