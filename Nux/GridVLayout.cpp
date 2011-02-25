@@ -287,6 +287,7 @@ namespace nux
         int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
         int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
 
+        GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
         if ((*it)->IsView ())
         {
           View *ic = NUX_STATIC_CAST (View *, (*it) );

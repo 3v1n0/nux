@@ -521,17 +521,6 @@ namespace nux
     }
   }
   
-  Area * Area::GetToplevel ()
-  {
-    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
-      return this;
-
-    Area * parent = GetParentObject ();
-    if (!parent) //we didn't find a way to salvation!
-      return 0;
-    return parent->GetToplevel ();
-  }
-
   void Area::SetLayoutProperties (LayoutProperties *properties)
   {
     if (_layout_properties)
@@ -640,6 +629,16 @@ namespace nux
     return this->Type().IsDerivedFromType(SpaceLayout::StaticObjectType);;
   }
 
+  void Area::Set2DMatrix (const Matrix4 &mat)
+  {
+    _2d_xform = mat;
+  }
+
+  void Area::Set2DTranslation (float tx, float ty, float tz)
+  {
+    _2d_xform.Translate (tx, ty, tz);
+  }
+
   Matrix4 Area::Get2DMatrix () const
   {
     return _2d_xform;
@@ -655,9 +654,57 @@ namespace nux
     return _3d_area;
   }
 
-  Geometry Area::GetAbsoluteGeometry (const Geometry &geometry)
+  Geometry Area::InnerGetAbsoluteGeometry (const Geometry &geometry)
   {
     Vector4 in (geometry.x, geometry.y, 0, 1);
+    // This is mean only for translation matrices. It will not work with matrices containing rotations or scalings.
+    Vector4 out = _2d_xform * in;
+
+    Geometry new_geometry = Geometry (out.x, out.y, geometry.width, geometry.height);
+
+    if (this->Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    {
+      new_geometry.OffsetPosition(_geometry.x, geometry.y);
+      return new_geometry;
+    }
+
+    Area *parent = GetParentObject ();
+    if (parent == 0)
+    {
+      //nuxDebugMsg (TEXT("[Area::InnerGetAbsoluteGeometry] Cannot reach the top level parent .This area may not be correctly parented"));
+      return new_geometry;
+    }
+    else
+    {
+      return parent->InnerGetAbsoluteGeometry (_geometry);
+    }
+  }
+
+  Geometry Area::GetAbsoluteGeometry ()
+  {
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
+    {
+      return _geometry;
+    }
+    else
+    {
+      Area *parent = GetParentObject ();
+      if (parent == 0)
+      {
+        //nuxDebugMsg (TEXT("[Area::GetAbsoluteGeometry] Cannot reach the top level parent .This area may not be correctly parented"));
+        return _geometry;
+      }
+      else
+      {
+        return parent->InnerGetAbsoluteGeometry(_geometry);
+      }
+    }    
+  }
+
+  Geometry Area::InnerGetRootGeometry (const Geometry &geometry)
+  {
+    Vector4 in (geometry.x, geometry.y, 0, 1);
+    // This is mean only for translation matrices. It will not work with matrices containing rotations or scalings.
     Vector4 out = _2d_xform * in;
 
     Geometry new_geometry = Geometry (out.x, out.y, geometry.width, geometry.height);
@@ -670,23 +717,58 @@ namespace nux
     Area *parent = GetParentObject ();
     if (parent == 0)
     {
-      nuxDebugMsg (TEXT("Cannot reach the top level parent .This area may not be correctly parented"));
+      //nuxDebugMsg (TEXT("[Area::InnerGetRootGeometry] Cannot reach the top level parent .This area may not be correctly parented"));
       return new_geometry;
-    }
-    
-    return parent->GetAbsoluteGeometry (new_geometry);
-  }
-
-  Geometry Area::GetAbsoluteGeometry ()
-  {
-    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
-    {
-      return _geometry;
     }
     else
     {
-      return GetAbsoluteGeometry (_geometry);
+      return parent->InnerGetRootGeometry (_geometry);
+    }
+  }
+
+  Geometry Area::GetRootGeometry ()
+  {
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
+    {
+      return Geometry (0, 0, _geometry.width, _geometry.height);
+    }
+    else
+    {
+      Area *parent = GetParentObject ();
+      if (parent == 0)
+      {
+        //nuxDebugMsg (TEXT("[Area::GetRootGeometry] Cannot reach the top level parent .This area may not be correctly parented"));
+        return _geometry;
+      }
+      else
+      {
+        return parent->InnerGetRootGeometry (_geometry);
+      }
     }    
+  }
+
+  Area * Area::GetToplevel ()
+  {
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    {
+      return this;
+    }
+
+    Area * parent = GetParentObject ();
+    if (!parent) //we didn't find a way to salvation!
+    {
+      return 0;
+    }
+    return parent->GetToplevel ();
+  }
+
+  bool Area::HasTopLevelParent ()
+  {
+    if (GetToplevel ())
+    {
+      return true;
+    }
+    return false;
   }
 
   void Area::QueueRelayout ()
@@ -694,4 +776,9 @@ namespace nux
     nux::GetWindowThread ()->QueueObjectLayout (this);
   }
 
+//   bool Area::AddSecondaryChild (Area *child)
+//   {
+//     NUX_RETURN_IF_NULL (child, false);
+//     
+//   }
 }

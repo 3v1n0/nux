@@ -692,18 +692,6 @@ namespace nux
     if (m_vertical_scrollbar_enable == true)
       ver_scrollbar_width = vscrollbar->GetBaseWidth();
 
-//    hscrollbar->SetContainerSize(GetX() + m_border, GetY() + m_top_border,
-//        GetWidth() - ver_scrollbar_width - 2*m_border, GetBaseHeight() - hor_scrollbar_height - m_top_border - m_border);
-//    if(m_CompositionLayout)
-//        hscrollbar->SetContentSize(m_CompositionLayout->GetX(), m_CompositionLayout->GetY(),
-//        m_CompositionLayout->GetWidth(), m_CompositionLayout->GetBaseHeight());
-
-//    vscrollbar->SetContainerSize(GetX() + m_border, GetY() + m_top_border,
-//        GetWidth() - ver_scrollbar_width - 2*m_border, GetBaseHeight() - hor_scrollbar_height - m_top_border - m_border);
-//    if(m_CompositionLayout)
-//        vscrollbar->SetContentSize(m_CompositionLayout->GetX(), m_CompositionLayout->GetY(),
-//        m_CompositionLayout->GetWidth(), m_CompositionLayout->GetBaseHeight());
-
     vscrollbar->SetContentOffset (_delta_x, _delta_y);
     hscrollbar->SetContentOffset (_delta_x, _delta_y);
 
@@ -724,12 +712,15 @@ namespace nux
       {
         _delta_x = 0;
       }
-
-      m_CompositionLayout->ComputePosition2 (0, 0);
-      hscrollbar->SetContentOffset (_delta_x, _delta_y);
     }
 
-    hscrollbar->NeedRedraw();
+    Set2DTranslation (_delta_x, _delta_y, 0);
+    if (m_CompositionLayout)
+    {
+      hscrollbar->SetContentOffset (_delta_x, _delta_y);
+      hscrollbar->NeedRedraw();
+    }
+
     NeedRedraw();
   }
 
@@ -743,11 +734,15 @@ namespace nux
       {
         _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
       }
-
-      hscrollbar->SetContentOffset (_delta_x, _delta_y);
     }
 
-    hscrollbar->NeedRedraw();
+    Set2DTranslation (_delta_x, _delta_y, 0);
+    if (m_CompositionLayout)
+    {
+      hscrollbar->SetContentOffset (_delta_x, _delta_y);
+      hscrollbar->NeedRedraw();
+    }
+
     NeedRedraw();
   }
 
@@ -761,11 +756,15 @@ namespace nux
       {
         _delta_y = 0;
       }
-
-      vscrollbar->SetContentOffset (_delta_x, _delta_y);
     }
 
-    vscrollbar->NeedRedraw();
+    Set2DTranslation (_delta_x, _delta_y, 0);
+    if (m_CompositionLayout)
+    {
+      vscrollbar->SetContentOffset (_delta_x, _delta_y);
+      vscrollbar->NeedRedraw();
+    }
+
     NeedRedraw();
   }
 
@@ -779,11 +778,15 @@ namespace nux
       {
         _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
       }
-
-      vscrollbar->SetContentOffset (_delta_x, _delta_y);
     }
 
-    vscrollbar->NeedRedraw();
+    Set2DTranslation (_delta_x, _delta_y, 0);
+    if (m_CompositionLayout)
+    {
+      vscrollbar->SetContentOffset (_delta_x, _delta_y);
+      vscrollbar->NeedRedraw();
+    }
+
     NeedRedraw();
   }
 
@@ -802,15 +805,12 @@ namespace nux
 
   void ScrollView::ResetScrollToLeft()
   {
-    if (m_CompositionLayout)
-    {
-      _delta_x = 0;
-      m_CompositionLayout->SetBaseX (m_ViewX);
-      m_CompositionLayout->ComputePosition2 (0, 0);
-      hscrollbar->SetContentOffset (_delta_x, _delta_y);
-    }
+    _delta_x = 0;
+    Set2DTranslation (_delta_x, _delta_y, 0);
 
+    hscrollbar->SetContentOffset (_delta_x, _delta_y);
     hscrollbar->NeedRedraw();
+
     NeedRedraw();
   }
 
@@ -819,26 +819,28 @@ namespace nux
     if (m_CompositionLayout)
     {
       _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
-      m_CompositionLayout->SetBaseX (m_ViewX);
-      m_CompositionLayout->ComputePosition2 (0, 0);
-      hscrollbar->SetContentOffset (_delta_x, _delta_y);
+    }
+    else
+    {
+      _delta_x = 0;
     }
 
+    Set2DTranslation (_delta_x, _delta_y, 0);
+
+    hscrollbar->SetContentOffset (_delta_x, _delta_y);
     hscrollbar->NeedRedraw();
+
     NeedRedraw();
   }
 
   void ScrollView::ResetScrollToUp()
   {
-    if (m_CompositionLayout)
-    {
-      _delta_y = 0;
-      m_CompositionLayout->SetBaseY (m_ViewY);
-      m_CompositionLayout->ComputePosition2 (0, 0);
-      vscrollbar->SetContentOffset (_delta_x, _delta_y);
-    }
+    _delta_y = 0;
+    Set2DTranslation (_delta_x, _delta_y, 0);
 
+    vscrollbar->SetContentOffset (_delta_x, _delta_y);
     vscrollbar->NeedRedraw();
+
     NeedRedraw();
   }
 
@@ -847,13 +849,17 @@ namespace nux
     if (m_CompositionLayout)
     {
       _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
-      m_CompositionLayout->SetBaseY (m_ViewY);
-      m_CompositionLayout->ComputePosition2 (0, 0);
-      vscrollbar->SetContentOffset (_delta_x, _delta_y);
+    }
+    else
+    {
+      _delta_y = 0;
     }
 
+    Set2DTranslation (_delta_x, _delta_y, 0);
+
+    vscrollbar->SetContentOffset (_delta_x, _delta_y);
     vscrollbar->NeedRedraw();
+
     NeedRedraw();
   }
-
 }

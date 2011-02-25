@@ -33,8 +33,8 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 {
     nux::VLayout* MainVLayout = new nux::VLayout(NUX_TRACKER_LOCATION);
 
-    nux::GridVLayout *grid_h_layout ((new nux::GridVLayout (NUX_TRACKER_LOCATION)));
-    for (int i = 0; i < 60; i++)
+    nux::GridHLayout *grid_h_layout ((new nux::GridHLayout (NUX_TRACKER_LOCATION)));
+    for (int i = 0; i < 360; i++)
     {
       nux::ColorLayer color (nux::Color::RandomColor ());
       nux::TextureArea* texture_area = new nux::TextureArea ();
@@ -53,11 +53,11 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     grid_h_layout->SetHorizontalInternalMargin (4);
 
 
-    nux::Panel *scroll_view = new nux::Panel(NUX_TRACKER_LOCATION);
+    nux::ScrollView *scroll_view = new nux::ScrollView(NUX_TRACKER_LOCATION);
     
     grid_h_layout->SetStretchFactor(1);
     scroll_view->SetLayout(grid_h_layout);
-    
+
     MainVLayout->AddView(scroll_view, 1, nux::eCenter, nux::eFull);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
     
