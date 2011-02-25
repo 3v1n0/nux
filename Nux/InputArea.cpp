@@ -360,11 +360,22 @@ namespace nux
       else
       {
         // The mouse is outside this widget. If the PreviousMouseOverArea == this, then call OnMouseLeave.
+        nuxEventDebugTrace (_print_event_debug_trace, TEXT("The mouse is outside the area."));
         if (PreviousMouseOverArea == this)
         {
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("The mouse was previously above this area."));
           // The mouse was previously over this area. We should also have CurrentMouseOverArea == this.
           if (CurrentMouseOverArea)
           {
+            if (CurrentMouseOverArea == this)
+            {
+              nuxEventDebugTrace (_print_event_debug_trace, TEXT("Send OnMouseLeave to this area."));
+            }
+            else
+            {
+              nuxEventDebugTrace (_print_event_debug_trace, TEXT("Send OnMouseLeave to the area that was directly below the mouse."));
+            }
+
             (CurrentMouseOverArea)->OnMouseLeave.emit (_event_processor.m_mouse_positionx - GetBaseX(), _event_processor.m_mouse_positiony - GetBaseY(), event.GetMouseState(), event.GetKeyState() );
           }
           CurrentMouseOverArea = NULL;
@@ -374,8 +385,11 @@ namespace nux
 
       if (PreviousMouseOverArea != CurrentMouseOverArea)
       {
+        nuxEventDebugTrace (_print_event_debug_trace, TEXT("The mouse has entered a new area and/or exited and area."));
         if (PreviousMouseOverArea)
         {
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("The mouse has exited and area."));
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("Send OnMouseLeave to the area that was directly below the mouse."));
           (PreviousMouseOverArea)->OnMouseLeave.emit (_event_processor.m_mouse_positionx - GetBaseX(), _event_processor.m_mouse_positiony - GetBaseY(), event.GetMouseState(), event.GetKeyState() );
           // When calling OnMouseLeave.emit on a widget, we have to set the following states to false
           (PreviousMouseOverArea)->_event_processor._current_mouse_in = false;
@@ -385,6 +399,8 @@ namespace nux
 
         if (CurrentMouseOverArea)
         {
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("The mouse has entered and area."));
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("Send OnMouseEnter to the area that the mouse has entered."));
           (CurrentMouseOverArea)->OnMouseEnter.emit (_event_processor.m_mouse_positionx - GetBaseX(), _event_processor.m_mouse_positiony - GetBaseY(), event.GetMouseState(), event.GetKeyState() );
           //nuxDebugMsg(TEXT("InputArea: Current MouseOver Enter"));
         }
