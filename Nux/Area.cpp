@@ -664,7 +664,7 @@ namespace nux
 
     if (this->Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
     {
-      new_geometry.OffsetPosition(_geometry.x, geometry.y);
+      new_geometry.OffsetPosition(_geometry.x, _geometry.y);
       return new_geometry;
     }
 
