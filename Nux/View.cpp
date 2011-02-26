@@ -206,6 +206,8 @@ namespace nux
   {
     _full_redraw = false;
 
+    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+
     if (force_draw)
     {
       _need_redraw = true;
@@ -229,6 +231,8 @@ namespace nux
         PostDraw (GfxContext, false);
       }
     }
+
+    GfxContext.PopModelViewMatrix ();
 
     _need_redraw = false;
     _full_redraw = false;
