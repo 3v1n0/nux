@@ -477,18 +477,19 @@ namespace nux
 //////////////////////
 // DRAW CLIPPING    //
 //////////////////////
-  void GraphicsEngine::PushClippingRectangle (Rect rect)
+  void GraphicsEngine::PushClippingRectangle (Rect A)
   {
     if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
     {
       // There is an active framebuffer set. Push the clipping rectangles to that fbo clipping stack.
-      _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->PushClippingRegion (rect);
+      A.OffsetPosition (_clip_offset_x, _clip_offset_y);
+      _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->PushClippingRegion (A);
       return;
     }
 
-    Rect r0 = ModelViewXFormRect(rect);
+    A.OffsetPosition (_clip_offset_x, _clip_offset_y);
 
-    Rect r1;
+    Rect B;
     unsigned int stacksize = (unsigned int) ClippingRect.size();
     int x0, y0, x1, y1;
 
@@ -498,11 +499,11 @@ namespace nux
 
     if (stacksize == 0)
     {
-      r1 = Rect (0, 0, window_width, window_height);
+      B = Rect (0, 0, window_width, window_height);
     }
     else
     {
-      r1 = ClippingRect[stacksize-1];
+      B = ClippingRect[stacksize-1];
     }
 
 //    http://www.codecomments.com/archive263-2004-12-350347.html
@@ -513,12 +514,10 @@ namespace nux
 //        intersect.Bottom = min(a.Bottom, b.Bottom);
 //    And the intersection is empty unless intersect.Right > intersect.Left && intersect.Bottom > intersect.Top
 
-    x0 = Max (r0.x, r1.x);
-    y0 = Max (r0.y, r1.y);
-    x1 = Min (r0.x + r0.width, r1.x + r1.width);
-    y1 = Min (r0.y + r0.height, r1.y + r1.height);
-
-    Rect r = r0.Intersect (r1);
+    x0 = Max (A.x, B.x);
+    y0 = Max (A.y, B.y);
+    x1 = Min (A.x + A.width, B.x + B.width);
+    y1 = Min (A.y + A.height, B.y + B.height);
 
     if ( (x1 > x0) && (y1 > y0) )
     {

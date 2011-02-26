@@ -262,7 +262,7 @@ namespace nux
     */
     LayoutProperties * GetLayoutProperties ();
 
-    Area * GetParentObject() const;
+    Area * GetParentObject();
 
     //! Set visibility of the area
     /*!
@@ -313,26 +313,15 @@ namespace nux
     virtual bool IsLayoutDone();
     virtual void SetLayoutDone (bool b);
 
-    void Set2DMatrix (const Matrix4 &mat);
-    void Set2DTranslation (float tx, float ty, float tz);
     Matrix4 Get2DMatrix () const;
-
     Matrix4 Get3DMatrix () const;
     bool Is3DArea () const;
 
     //! Return the position of this object with regard to its top left corner of the physical window.
-    Geometry GetAbsoluteGeometry () const;
-    int GetAbsoluteX () const;
-    int GetAbsoluteY () const;
-    int GetAbsoluteWidth () const;
-    int GetAbsoluteHeight () const;
+    Geometry GetAbsoluteGeometry ();
 
     //! Return the position of this object with regard to its top level parent (the main layout or a BaseWindow).
-    Geometry GetRootGeometry () const;
-    int GetRootX () const;
-    int GetRootY () const;
-    int GetRootWidth () const;
-    int GetRootHeight () const;
+    Geometry GetRootGeometry ();
 
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
     sigc::signal<void, Area *, bool> OnVisibleChanged;
@@ -380,6 +369,9 @@ namespace nux
 //     */
 //     bool Secondary (Area *child);
 
+    void Set2DMatrix (const Matrix4 &mat);
+    void Set2DTranslation (float tx, float ty, float tz);
+
   private:
     void InitiateResizeLayout (Area *child = 0);
     void CheckMinSize();
@@ -413,7 +405,7 @@ namespace nux
     bool                    _layout_done;     //!< Area layout status flag.
 
 
-    Matrix4                 _2d_xform;      //!< 2D transformation matrix for this area and its children.
+    Matrix4                 _2d_xform;      //!< 2D transformation natrix for children coordinates.
     Matrix4                 _3d_xform;      //!< 3D transformation matrix for the area in a perspective space.
     bool                    _3d_area;     //!< True if the area is resides in a 3D space. 
 

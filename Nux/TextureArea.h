@@ -59,9 +59,6 @@ namespace nux
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
     void RecvMouseDown (int x, int y, long button_flags, long key_flags);
     void RecvMouseUp (int x, int y, long button_flags, long key_flags);
-    void RecvMouseEnter (int x, int y, long button_flags, long key_flags);
-    void RecvMouseLeave (int x, int y, long button_flags, long key_flags);
-    void RecvMouseClick (int x, int y, long button_flags, long key_flags);
     void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
   private:

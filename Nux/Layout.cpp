@@ -352,10 +352,6 @@ namespace nux
   {
     std::list<Area *>::iterator it;
 
-    //GfxContext.PushClipOffset (_delta_x, _delta_y);
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
-    GfxContext.PushClippingRectangle (GetGeometry ());
-    
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if (!(*it)->IsVisible ())
@@ -378,11 +374,6 @@ namespace nux
         input_area->OnDraw (GfxContext, force_draw);
       }
     }
-
-    GfxContext.PopClippingRectangle ();
-    GfxContext.PopModelViewMatrix ();
-
-    //GfxContext.PopClipOffset ();
 
     _queued_draw = false;
   }

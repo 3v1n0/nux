@@ -77,13 +77,12 @@ namespace nux
     long ret = TraverseInfo;
     long ProcEvInfo = 0;
 
-    
     if (event.e_event == NUX_MOUSE_PRESSED)
     {
-      // Verify that the mouse down event falls inside the of the ScrollView.
-      if (!GetGeometry ().IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root))
+      if (!GetGeometry().IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root) )
       {
         ProcEvInfo = eDoNotProcess;
+        //return TraverseInfo;
       }
     }
 
@@ -111,8 +110,8 @@ namespace nux
       // The ScrollView layout position is fixed. The ScrollView keeps track of the delta offset in x and y of the layout it manages.
       // Modify the event to account for this offset;
       Event mod_event = event;
-//       mod_event.e_x -= _delta_x;
-//       mod_event.e_y -= _delta_y;
+      mod_event.e_x -= _delta_x;
+      mod_event.e_y -= _delta_y;
       ret = m_CompositionLayout->ProcessEvent (mod_event, ret, ProcEvInfo);
     }
 
@@ -164,13 +163,14 @@ namespace nux
 
     if (m_CompositionLayout)
     {
-//       GfxContext.PushClipOffset (_delta_x, _delta_y);
-//       GfxContext.PushClippingRectangle (m_CompositionLayout->GetGeometry ());
-//       GfxContext.Push2DTranslationModelViewMatrix (_delta_x, _delta_y, 0.0f);
+      GfxContext.PushClipOffset (_delta_x, _delta_y);
+      GfxContext.PushClippingRectangle (m_CompositionLayout->GetGeometry ());
+      GfxContext.Push2DTranslationModelViewMatrix (_delta_x, _delta_y, 0.0f);
       m_CompositionLayout->ProcessDraw (GfxContext, force_draw);
-//       GfxContext.PopModelViewMatrix ();
-//       GfxContext.PopClippingRectangle ();
-//       GfxContext.PopClipOffset ();
+      GfxContext.PopModelViewMatrix ();
+
+      GfxContext.PopClippingRectangle ();
+      GfxContext.PopClipOffset ();
     }
 
     GfxContext.PopClippingRectangle();
@@ -712,9 +712,9 @@ namespace nux
       {
         _delta_x = 0;
       }
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
     }
 
+    Set2DTranslation (_delta_x, _delta_y, 0);
     if (m_CompositionLayout)
     {
       hscrollbar->SetContentOffset (_delta_x, _delta_y);
@@ -734,9 +734,9 @@ namespace nux
       {
         _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
       }
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
     }
 
+    Set2DTranslation (_delta_x, _delta_y, 0);
     if (m_CompositionLayout)
     {
       hscrollbar->SetContentOffset (_delta_x, _delta_y);
@@ -756,9 +756,9 @@ namespace nux
       {
         _delta_y = 0;
       }
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
     }
 
+    Set2DTranslation (_delta_x, _delta_y, 0);
     if (m_CompositionLayout)
     {
       vscrollbar->SetContentOffset (_delta_x, _delta_y);
@@ -778,9 +778,9 @@ namespace nux
       {
         _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
       }
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
     }
 
+    Set2DTranslation (_delta_x, _delta_y, 0);
     if (m_CompositionLayout)
     {
       vscrollbar->SetContentOffset (_delta_x, _delta_y);
@@ -806,8 +806,7 @@ namespace nux
   void ScrollView::ResetScrollToLeft()
   {
     _delta_x = 0;
-    if (m_CompositionLayout)
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+    Set2DTranslation (_delta_x, _delta_y, 0);
 
     hscrollbar->SetContentOffset (_delta_x, _delta_y);
     hscrollbar->NeedRedraw();
@@ -820,14 +819,13 @@ namespace nux
     if (m_CompositionLayout)
     {
       _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
     }
     else
     {
       _delta_x = 0;
     }
 
-    
+    Set2DTranslation (_delta_x, _delta_y, 0);
 
     hscrollbar->SetContentOffset (_delta_x, _delta_y);
     hscrollbar->NeedRedraw();
@@ -838,8 +836,7 @@ namespace nux
   void ScrollView::ResetScrollToUp()
   {
     _delta_y = 0;
-    if (m_CompositionLayout)
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+    Set2DTranslation (_delta_x, _delta_y, 0);
 
     vscrollbar->SetContentOffset (_delta_x, _delta_y);
     vscrollbar->NeedRedraw();
@@ -852,12 +849,13 @@ namespace nux
     if (m_CompositionLayout)
     {
       _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
     }
     else
     {
       _delta_y = 0;
     }
+
+    Set2DTranslation (_delta_x, _delta_y, 0);
 
     vscrollbar->SetContentOffset (_delta_x, _delta_y);
     vscrollbar->NeedRedraw();
