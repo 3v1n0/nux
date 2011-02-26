@@ -240,9 +240,13 @@ namespace nux
     return 1;
   }
 
-  void IOpenGLFrameBufferObject::PushClippingRegion (Rect clip_rect)
+  void IOpenGLFrameBufferObject::PushClippingRegion (Rect rect)
   {
-    clip_rect.OffsetPosition (0, 0);
+    Rect r0;
+    if (GetThreadGraphicsContext ())
+    {
+      r0 = GetThreadGraphicsContext ()->ModelViewXFormRect (rect);
+    }
 
     Rect current_clip_rect;
     unsigned int stacksize = (unsigned int) _ClippingRegionStack.size();
@@ -256,14 +260,14 @@ namespace nux
       current_clip_rect = _ClippingRegionStack[stacksize-1];
     }
 
-    Rect rect;
+    Rect r1;
 
     if (GetThreadGraphicsContext ())
-      rect = GetThreadGraphicsContext ()->GetViewportRect ();
+      r1 = GetThreadGraphicsContext ()->GetViewportRect ();
 
-    clip_rect.OffsetPosition (rect.x, _Height - (rect.y + rect.GetHeight ()));
+    r0.OffsetPosition (r1.x, _Height - (r1.y + r1.GetHeight ()));
 
-    Rect Intersection = current_clip_rect.Intersect (clip_rect);
+    Rect Intersection = current_clip_rect.Intersect (r0);
 
     if (!Intersection.IsNull ())
     {

@@ -783,10 +783,9 @@ namespace nux
       AbstractPaintLayer *layer = (*rev_it);
       Geometry layer_geo = layer->GetGeometry ();
       Geometry xform_geo = GfxContext.ModelViewXFormRect (geo);
-    
-      //GfxContext.PushClippingRectangle (geo);
-      GfxContext.SetModelViewMatrix (layer->GetModelViewMatrix ());
+
       GfxContext.PushClippingRectangle (geo);
+      GfxContext.SetModelViewMatrix (layer->GetModelViewMatrix ());
 
       if (first)
       {
@@ -799,23 +798,6 @@ namespace nux
       // restore the model view matrix stack and the clipping rectangle stack.
       GfxContext.ApplyModelViewMatrix ();
       GfxContext.PopClippingRectangle ();
-      //GfxContext.ApplyClippingRectangle ();
-
-//       AbstractPaintLayer *background = (*rev_it);
-//       Geometry bg_geo = background->GetGeometry();
-// 
-//       GfxContext.PushClippingRectangle (geo);
-// 
-//       if (first)
-//       {
-//         Paint2DQuadColor (GfxContext, geo, Color (0x0) );
-//         first = false;
-//       }
-// 
-//       RenderSinglePaintLayer (GfxContext, background->GetGeometry(), background);
-// 
-//       GfxContext.PopClippingRectangle();
-
     }
   }
 

@@ -266,6 +266,8 @@ namespace nux
     std::list<Area *> elements;
     std::list<Area *>::iterator it = _layout_element_list.begin ();
 
+    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+
     for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
     {
       if ((*it)->IsVisible ())
@@ -309,7 +311,10 @@ namespace nux
         it++;
       }
     }
+
     GfxContext.PopClippingRectangle ();
+    GfxContext.PopModelViewMatrix ();
+
     _queued_draw = false;
   }
 
