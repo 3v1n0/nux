@@ -664,7 +664,7 @@ namespace nux
 
     if (this->Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
     {
-      new_geometry.OffsetPosition(_geometry.x, _geometry.y);
+      new_geometry.OffsetPosition(_geometry.x, geometry.y);
       return new_geometry;
     }
 
@@ -682,7 +682,7 @@ namespace nux
 
   Geometry Area::GetAbsoluteGeometry ()
   {
-    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
     {
       return _geometry;
     }
@@ -728,7 +728,7 @@ namespace nux
 
   Geometry Area::GetRootGeometry ()
   {
-    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
     {
       return Geometry (0, 0, _geometry.width, _geometry.height);
     }

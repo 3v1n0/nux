@@ -77,13 +77,12 @@ namespace nux
     long ret = TraverseInfo;
     long ProcEvInfo = 0;
 
-    
     if (event.e_event == NUX_MOUSE_PRESSED)
     {
-      // Verify that the mouse down event falls inside the of the ScrollView.
-      if (!GetGeometry ().IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root))
+      if (!GetGeometry().IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root) )
       {
         ProcEvInfo = eDoNotProcess;
+        //return TraverseInfo;
       }
     }
 
