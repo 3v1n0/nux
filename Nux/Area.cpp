@@ -730,8 +730,6 @@ namespace nux
 
   Geometry Area::InnerGetRootGeometry (const Geometry &geometry)
   {
-    Geometry new_geometry = geometry;
-
     if (this->Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
     {
       return geometry;
@@ -741,11 +739,11 @@ namespace nux
     if (parent == 0)
     {
       //nuxDebugMsg (TEXT("[Area::InnerGetRootGeometry] Cannot reach the top level parent .This area may not be correctly parented"));
-      return MatrixXFormGeometry (_2d_xform, new_geometry);
+      return MatrixXFormGeometry (_2d_xform, geometry);
     }
     else
     {
-      return parent->InnerGetRootGeometry (MatrixXFormGeometry (_2d_xform, new_geometry));
+      return parent->InnerGetRootGeometry (MatrixXFormGeometry (_2d_xform, geometry));
     }
   }
 
@@ -753,7 +751,7 @@ namespace nux
   {
     if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
     {
-      return Geometry (0, 0, _geometry.width, _geometry.height);
+      return MatrixXFormGeometry (_2d_xform, _geometry);
     }
     else
     {
