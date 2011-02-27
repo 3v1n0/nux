@@ -544,4 +544,11 @@ namespace nux
   void Area::ActivateFocus ()
   {
   }
+
+  void Area::QueueRelayout ()
+  {
+    nux::GetWindowThread ()->QueueObjectLayout (this);
+  }
+
+
 }

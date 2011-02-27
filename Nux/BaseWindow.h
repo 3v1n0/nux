@@ -70,7 +70,6 @@ namespace nux
     BaseWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
     virtual ~BaseWindow();
 
-
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
@@ -128,7 +127,10 @@ namespace nux
     void SetBackgroundColor (const Color &color);
 
     #if defined(NUX_OS_LINUX)
-    void EnableInputWindow (bool b, bool override_redirect = 0);
+    void EnableInputWindow (bool        b,
+                            const char* title = "nux input window",
+                            bool        take_focus = False,
+                            bool        override_redirect = False);
     bool InputWindowEnabled ();
     void InputWindowEnableStruts (bool enable);
     bool InputWindowStrutsEnabled ();
@@ -136,6 +138,7 @@ namespace nux
     void UnGrabPointer ();
     void GrabKeyboard ();
     void UnGrabKeyboard ();
+    void SetInputFocus ();
     Window GetInputWindowId ();
     #endif
 

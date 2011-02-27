@@ -63,7 +63,7 @@ namespace nux
     void ForceStartFocus (int x, int y);
     void ForceStopFocus (int x, int y);
 
-    virtual long OnEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long OnEvent (Event &ievent, long TraverseInfo, long ProcessEventInfo);
 
     //! Draw CoreArea.
     /*!
@@ -136,18 +136,20 @@ namespace nux
     // when the area position is reffered to (x_root, y_root) instead of being the system window coordinates (0, 0).
     void SetAreaMousePosition (int x, int y);
 
+#if defined (NUX_OS_LINUX)
     void HandleDndEnter () { ProcessDndEnter (); }
     void HandleDndLeave () { ProcessDndLeave (); }
+#endif
   private:
 
     //! Event processing in exclusive mode.
     /*!
         Bypass OnEvent and performs a simplified event processing mechanism.
     */
-    long ProcessEventInExclusiveMode (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    long ProcessEventInExclusiveMode (Event &ievent, long TraverseInfo, long ProcessEventInfo);
     
-    void HandleDndMove  (IEvent &event);
-    void HandleDndDrop  (IEvent &event);
+    void HandleDndMove  (Event &event);
+    void HandleDndDrop  (Event &event);
 
     //! Color of the CoreArea
     /*
@@ -168,6 +170,7 @@ namespace nux
 
     bool _print_event_debug_trace;
 
+#if defined (NUX_OS_LINUX)
     // DnD support
     // Rather than being implemented with signals, DND support is implemented with protected virtual function.
     // This ensure that a class and it subclass don't process the same event more than once!
@@ -179,6 +182,8 @@ namespace nux
 
     void SendDndStatus (bool accept, DndAction action, Geometry region);
     void SendDndFinished (bool accepted, DndAction action);
+#endif
+
   public:
     sigc::signal<void, int, int, int, int, unsigned long, unsigned long> OnMouseMove;  // send the current position inside the area
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDown;
@@ -211,6 +216,9 @@ namespace nux
     sigc::signal<void> OnStartFocus;
     //! Signal emitted when the area looses the keyboard focus.
     sigc::signal<void> OnEndFocus;
+
+    //! Signal emitted when the area receives an WM_TAKE_FOCUS ClientMessage
+    sigc::signal<void, Time> OnTakeFocus;
 
     sigc::signal < void,
          GraphicsEngine &    ,   /*Graphics Context for text operation*/

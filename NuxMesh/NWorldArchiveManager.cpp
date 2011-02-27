@@ -59,8 +59,8 @@ namespace nux
     unsigned int ArchiveTag = WORLDARCHIVE_TAG;
     unsigned int ArchiveFormatVersion = WORLDARCHIVE_VERSION;
     m_NumberOfObjects = 0;
-    nux::NTimeStamp TimeStamp;
-    TimeStamp.GetTime();
+    nux::TimeStamp time_stamp;
+    time_stamp.GetTime();
 
     m_FileStream->Serialize ( (char *) &ArchiveTag,            sizeof (ArchiveTag) );
     CHECK_WORLD_WRITE_ERROR;
@@ -68,35 +68,35 @@ namespace nux
     CHECK_WORLD_WRITE_ERROR;
 
     // Date Created
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
     CHECK_WORLD_WRITE_ERROR;
 
     // Date Modified
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
     CHECK_WORLD_WRITE_ERROR;
 
     // Number of Textures in the archives
@@ -137,7 +137,7 @@ namespace nux
     unsigned int ArchiveTag = 0;
     unsigned int ArchiveFormatVersion = 0;
     m_NumberOfObjects = 0;
-    nux::NTimeStamp TimeStamp;
+    nux::TimeStamp time_stamp;
 
     m_FileStream->Serialize ( (char *) &ArchiveTag,            sizeof (ArchiveTag) );
     CHECK_WORLD_READ_ERROR;
@@ -151,35 +151,35 @@ namespace nux
     }
 
     // Date Created
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
     CHECK_WORLD_READ_ERROR;
 
     // Date Modified
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
     CHECK_WORLD_READ_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
     CHECK_WORLD_READ_ERROR;
 
     // Number of Textures in the archives
@@ -237,8 +237,8 @@ namespace nux
     m_FileStream->Seek (0, nux::NSerializer::SeekStart);
     unsigned int ArchiveTag = STATICMESHARCHIVE_TAG;
     unsigned int ArchiveFormatVersion = STATICMESHARCHIVE_VERSION;
-    nux::NTimeStamp TimeStamp;
-    TimeStamp.GetTime();
+    nux::TimeStamp time_stamp;
+    time_stamp.GetTime();
 
     m_FileStream->Serialize ( (char *) &ArchiveTag,            sizeof (ArchiveTag) );
     CHECK_WORLD_WRITE_ERROR;
@@ -246,35 +246,35 @@ namespace nux
     CHECK_WORLD_WRITE_ERROR;
 
     // Date Created
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
     CHECK_WORLD_WRITE_ERROR;
 
     // Date Modified
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
     CHECK_WORLD_WRITE_ERROR;
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
     CHECK_WORLD_WRITE_ERROR;
 
 
@@ -305,7 +305,7 @@ namespace nux
     unsigned int ArchiveTag = 0;
     unsigned int ArchiveFormatVersion = 0;
     m_NumberOfObjects = 0;
-    nux::NTimeStamp TimeStamp;
+    nux::TimeStamp time_stamp;
 
     m_FileStream->Serialize ( (char *) &ArchiveTag,            sizeof (ArchiveTag) );
     m_FileStream->Serialize ( (char *) &ArchiveFormatVersion,  sizeof (ArchiveFormatVersion) );
@@ -317,22 +317,22 @@ namespace nux
     }
 
     // Date Created
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
 
     // Date Modified
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Year,   sizeof (TimeStamp.m_Year) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Month,  sizeof (TimeStamp.m_Month) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Day,    sizeof (TimeStamp.m_Day) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Hour,   sizeof (TimeStamp.m_Hour) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Minute, sizeof (TimeStamp.m_Minute) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_Second, sizeof (TimeStamp.m_Second) );
-    m_FileStream->Serialize ( (char *) &TimeStamp.m_MicroSecond, sizeof (TimeStamp.m_MicroSecond) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Year,   sizeof (time_stamp.m_Year) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Month,  sizeof (time_stamp.m_Month) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Day,    sizeof (time_stamp.m_Day) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Hour,   sizeof (time_stamp.m_Hour) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Minute, sizeof (time_stamp.m_Minute) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_Second, sizeof (time_stamp.m_Second) );
+    m_FileStream->Serialize ( (char *) &time_stamp.m_MicroSecond, sizeof (time_stamp.m_MicroSecond) );
 
     NMeshObject *Mesh = 0;
     ObjectType objecttype;

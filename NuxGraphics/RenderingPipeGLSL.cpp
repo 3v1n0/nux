@@ -22,9 +22,7 @@
 
 #include "NuxCore/NuxCore.h"
 
-#include "NuxImage/Tga.h"
 #include "NuxImage/ImageSurface.h"
-#include "NuxMesh/NTextureArchiveManager.h"
 
 #include "GpuDevice.h"
 #include "GLDeviceObjects.h"

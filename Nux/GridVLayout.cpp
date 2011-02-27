@@ -44,15 +44,17 @@ namespace nux
 
     _children_size = Size (64, 64);
     _force_children_size = true;
-    _partial_visibility = false;
+    _partial_visibility = true;
     _num_row = 1;
     _num_column = 1;
     _dynamic_column = true;
+    _width_match_content = true;
 
     // Start packing the elements from the top. Is the layout has more space than the elements can use,
     // leave that space at the bottom of the GridVLayout.
     m_ContentStacking = eStackLeft;
 
+    SetMinimumSize(32, 32);
   }
 
   GridVLayout::~GridVLayout()
@@ -121,22 +123,35 @@ namespace nux
 
   long GridVLayout::ComputeLayout2()
   {
+    std::list<Area *> elements;
+
+    if (m_stretchfactor == 0)
+    {
+      ApplyMinHeight();
+    }
+
     if (_layout_element_list.size() == 0)
     {
       return eCompliantHeight | eCompliantWidth;
     }
 
+    t_s32 num_elements = 0;
+
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      (*it)->setOutofBound (false);
+      if ((*it)->IsVisible ())
+      {
+        (*it)->setOutofBound (false);
+        elements.push_back (*it);
+        num_elements++;
+      }
     }
 
     t_s32 original_width = GetBaseWidth();
 
     nux::Geometry base = GetGeometry();
-    it = _layout_element_list.begin();
-    int num_elements = (int) _layout_element_list.size();
+    it = elements.begin();
     int num_row = 0;
     int num_column = 0;
 
@@ -248,7 +263,16 @@ namespace nux
 
   void GridVLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
+    std::list<Area *> elements;
     std::list<Area *>::iterator it = _layout_element_list.begin ();
+
+    for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
+    {
+      if ((*it)->IsVisible ())
+        elements.push_back (*it);
+    }
+
+    it = elements.begin ();
 
     Geometry base = GetGeometry ();
     GfxContext.PushClippingRectangle (base);
@@ -257,14 +281,13 @@ namespace nux
     {
       for (int j = 0; j < _num_row; j++)
       {
-        if (it == _layout_element_list.end ())
+        if (it == elements.end ())
           break;
 
         int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
         int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
 
         GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
-
         if ((*it)->IsArea ())
         {
           CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it));

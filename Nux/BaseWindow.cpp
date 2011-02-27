@@ -293,13 +293,16 @@ namespace nux
   }
   
   #if defined(NUX_OS_LINUX)
-  void BaseWindow::EnableInputWindow (bool b, bool override_redirect)
+  void BaseWindow::EnableInputWindow (bool        b,
+                                      const char* title,
+                                      bool        take_focus,
+                                      bool        override_redirect)
   {
     if (b)
     {
       if (m_input_window == 0)
       {
-        m_input_window = new XInputWindow (override_redirect);
+        m_input_window = new XInputWindow (title, take_focus, override_redirect);
         m_input_window->SetGeometry (GetGeometry());
       }
       m_input_window_enabled = true;
@@ -314,7 +317,7 @@ namespace nux
       m_input_window_enabled = false;
     }
   }
-  
+
   bool BaseWindow::InputWindowEnabled ()
   {
     return m_input_window_enabled;
@@ -346,11 +349,16 @@ namespace nux
       m_input_window->UnGrabPointer ();    
   }
 
+  void BaseWindow::SetInputFocus ()
+  {
+    if (m_input_window)
+      m_input_window->SetInputFocus ();
+  }
+
   void BaseWindow::GrabKeyboard ()
   {
     if (m_input_window)
       m_input_window->GrabKeyboard ();
-      
   }
   
   void BaseWindow::UnGrabKeyboard ()
@@ -419,18 +427,20 @@ namespace nux
     if (visible == _is_visible)
       return;
 
-    if (m_layout)
-    {
-      m_layout->SetGeometry (GetGeometry() );
-    }
-
     _is_visible = visible;
     _is_modal = StartModal;
 
     if (_is_visible)
     {
+      if (m_layout)
+      {
+        m_layout->SetGeometry (GetGeometry() );
+      }
       _entering_visible_state = true;
+
       sigVisible.emit (this);
+
+      ComputeChildLayout();
     }
     else
     {
@@ -438,8 +448,6 @@ namespace nux
       sigHidden.emit (this);
     }
     
-    ComputeChildLayout();
-
     if (_is_modal)
       GetWindowCompositor().StartModalWindow (ObjectWeakPtr<BaseWindow> (this));
 

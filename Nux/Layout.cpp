@@ -26,10 +26,6 @@
 
 namespace nux
 {
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Layout
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   NUX_IMPLEMENT_OBJECT_TYPE (Layout);
 
   Layout::Layout (NUX_FILE_LINE_DECL)
@@ -44,6 +40,8 @@ namespace nux
     m_ContentStacking   = eStackExpand;
     _has_focus_control  = false;
     _queued_draw        = false;
+
+    SetMinimumSize(1, 1);
   }
 
   Layout::~Layout()
@@ -596,6 +594,9 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
+      if (!(*it)->IsVisible () || !(*it)->IsSensitive ())
+        continue;
+
       if ( (*it)->IsArea() )
       {
         CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
@@ -625,6 +626,9 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
+      if (!(*it)->IsVisible ())
+        continue;
+
       if ( (*it)->IsArea() )
       {
         CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );

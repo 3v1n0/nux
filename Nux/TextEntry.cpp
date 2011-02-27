@@ -39,8 +39,8 @@ namespace nux
   static const double kStrongCursorBarWidth = 1.2;
   static const double kWeakCursorLineWidth = 3;
   static const double kWeakCursorBarWidth = 3;
-  static const Color kStrongCursorColor(1, 0, 0, 1.0f);
-  static const Color kWeakCursorColor(0.5, 0.5, 0.5, 1.0f);
+  static const Color kStrongCursorColor(1.0f, 1.0f, 1.0f, 1.0f);
+  static const Color kWeakCursorColor(1.0f, 1.0f, 1.0f, 0.5f);
   static const Color kDefaultTextColor(0, 0, 0, 1.0f);
   static const Color kDefaultBackgroundColor(1, 1, 1, 1.0f);
   static const Color kDefaultSelectionBackgroundColor(0.5, 0.5, 0.5, 1.0f);
@@ -152,6 +152,15 @@ namespace nux
 
     font_family_ = "Ubuntu";
     font_size_ = 12;
+    
+    font_options_ = cairo_font_options_create ();
+    cairo_font_options_set_antialias (font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
+    cairo_font_options_set_hint_style (font_options_, CAIRO_HINT_STYLE_FULL);
+    cairo_font_options_set_hint_metrics (font_options_, CAIRO_HINT_METRICS_ON);
+    cairo_font_options_set_subpixel_order (font_options_, CAIRO_SUBPIXEL_ORDER_RGB);
+
+    font_dpi_ = 96.0;
+    
     update_canvas_ = true;
 
     OnMouseDown.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
@@ -173,6 +182,7 @@ namespace nux
 
   TextEntry::~TextEntry ()
   {
+    cairo_font_options_destroy (font_options_);
     if (_texture2D)
       _texture2D->UnReference ();
   }
@@ -440,20 +450,17 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
+    Color col = Color::Black;
+    col.SetAlpha (0.0f);
     gfxContext.QRP_Color (base.x,
       base.y,
       base.width,
       base.height,
-      Color::Black);
+      col);
 
     TexCoordXForm texxform;
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-
-    gfxContext.GetRenderStates().SetBlend (true,
-      GL_ONE,
-      GL_ONE_MINUS_SRC_ALPHA);
-
     gfxContext.QRP_1Tex (base.x,
       base.y,
       base.width,
@@ -462,14 +469,12 @@ namespace nux
       texxform,
       _text_color);
 
-    gfxContext.GetRenderStates().SetBlend (false);
-
     gfxContext.PopClippingRectangle ();
   }
 
   void TextEntry::DrawContent (GraphicsEngine& gfxContext, bool forceDraw)
   {
-    MainDraw ();
+    //MainDraw ();
   }
 
   void TextEntry::PostDraw (GraphicsEngine& gfxContext, bool forceDraw)
@@ -520,7 +525,9 @@ namespace nux
 
     if (update_canvas_ || !last_selection_region_.empty() || !selection_region_.empty())
     {
-        DrawText (edit_canvas);
+      edit_canvas->PushState();
+      DrawText(edit_canvas);
+      edit_canvas->PopState();
     }
 
 //     if (background_)
@@ -705,9 +712,6 @@ namespace nux
   void TextEntry::DrawText(CairoGraphics *canvas)
   {
     PangoLayout *layout = EnsureLayout();
-
-    int width, height;
-    pango_layout_get_pixel_size (layout, &width, &height);
 
     bool redraw_text = false;
     if (update_canvas_)
@@ -999,6 +1003,11 @@ namespace nux
     std::string tmp_string;
 
     /* Set necessary parameters */
+    pango_cairo_context_set_font_options (pango_layout_get_context (layout),
+                                          font_options_);
+    pango_cairo_context_set_resolution (pango_layout_get_context (layout),
+                                        font_dpi_);
+
     if (wrap_)
     {
       pango_layout_set_width(layout, (GetBaseWidth() - kInnerBorderX * 2) * PANGO_SCALE);
@@ -1149,6 +1158,16 @@ namespace nux
     {
       pango_layout_set_justify(layout, FALSE);
       pango_layout_set_alignment(layout, PANGO_ALIGN_LEFT);
+    }
+
+    {
+      PangoRectangle log_rect;
+      gint           text_height;
+
+      pango_layout_get_extents (layout, NULL, &log_rect);
+      text_height = log_rect.height / PANGO_SCALE;
+
+      SetMinimumHeight (text_height);
     }
 
     return layout;
@@ -1490,7 +1509,8 @@ namespace nux
     }
   }
 
-  void TextEntry::MoveCursor(MovementStep step, int count, bool extend_selection) {
+  void TextEntry::MoveCursor(MovementStep step, int count, bool extend_selection)
+  {
     ResetImContext();
     int new_cursor = 0;
     // Clear selection first if not extend it.
@@ -1498,7 +1518,8 @@ namespace nux
       SetCursor(cursor_);
 
     // Calculate the new offset after motion.
-    switch(step) {
+    switch(step)
+    {
     case VISUALLY:
       new_cursor = MoveVisually(cursor_, count);
       break;
@@ -1528,7 +1549,8 @@ namespace nux
     QueueRefresh(false, true);
   }
 
-  int TextEntry::MoveVisually(int current_index, int count) {
+  int TextEntry::MoveVisually(int current_index, int count)
+  {
     nuxAssert(current_index >= 0 &&
       current_index <= static_cast<int>(_text.length()));
     nuxAssert(count);
@@ -1539,12 +1561,16 @@ namespace nux
     int index = TextIndexToLayoutIndex(current_index, false);
     int new_index = 0;
     int new_trailing = 0;
-    while (count != 0) {
-      if (count > 0) {
+    while (count != 0)
+    {
+      if (count > 0)
+      {
         --count;
         pango_layout_move_cursor_visually(layout, true, index, 0, 1,
           &new_index, &new_trailing);
-      } else if (count < 0) {
+      }
+      else if (count < 0)
+      {
         ++count;
         pango_layout_move_cursor_visually(layout, true, index, 0, -1,
           &new_index, &new_trailing);
@@ -1552,19 +1578,20 @@ namespace nux
       index = new_index;
       if (index < 0 || index == G_MAXINT)
         return current_index;
-      index = static_cast<int>(
-        g_utf8_offset_to_pointer(text + index, new_trailing) - text);
+      index = static_cast<int>(g_utf8_offset_to_pointer(text + index, new_trailing) - text);
     }
     return LayoutIndexToTextIndex(index);
   }
 
-  int TextEntry::MoveWords(int current_index, int count) {
+  int TextEntry::MoveWords(int current_index, int count)
+  {
     nuxAssert(current_index >= 0 &&
       current_index <= static_cast<int>(_text.length()));
     nuxAssert(count);
     nuxAssert(_preedit.length() == 0);
 
-    if (!visible_) {
+    if (!visible_)
+    {
       return static_cast<int>(count > 0 ? _text.length() : 0);
     }
 
@@ -1581,7 +1608,8 @@ namespace nux
 
     // Weird bug: line_index here may be >= than line count?
     int line_count = pango_layout_get_line_count(layout);
-    if (line_index >= line_count) {
+    if (line_index >= line_count)
+    {
       line_index = line_count - 1;
     }
 
@@ -1593,36 +1621,49 @@ namespace nux
     bool rtl = (line->resolved_dir == PANGO_DIRECTION_RTL);
     const char *ptr = text + index;
     int offset = static_cast<int>(g_utf8_pointer_to_offset(text, ptr));
-    while (count != 0) {
-      if (((rtl && count < 0) || (!rtl && count > 0)) && *ptr) {
-        while (ptr && *ptr) {
+    while (count != 0)
+    {
+      if (((rtl && count < 0) || (!rtl && count > 0)) && *ptr)
+      {
+        while (ptr && *ptr)
+        {
           ptr = g_utf8_find_next_char(ptr, NULL);
           ++offset;
           if (log_attrs[offset].is_word_start || log_attrs[offset].is_word_end)
             break;
         }
-        if (!ptr) {
+        if (!ptr)
+        {
           ptr = text;
           while (*ptr) ++ptr;
         }
-      } else if (((rtl && count > 0) || (!rtl && count < 0)) && ptr > text) {
-        while (ptr && *ptr) {
+      }
+      else if (((rtl && count > 0) || (!rtl && count < 0)) && (ptr > text))
+      {
+        while (ptr /*&& *ptr*/) //fix: when at the end of the string, allow ctrl+left arrow to move backward to the start/end of the previous word.
+        {
           ptr = g_utf8_find_prev_char(text, ptr);
           --offset;
           if (log_attrs[offset].is_word_start || log_attrs[offset].is_word_end)
             break;
         }
-        if (!ptr) ptr = text;
-      } else {
+        if (!ptr)
+          ptr = text;
+      }
+      else
+      {
         break;
       }
-      if (count > 0) --count;
-      else ++count;
+      if (count > 0)
+        --count;
+      else
+        ++count;
     }
     return LayoutIndexToTextIndex(static_cast<int>(ptr - text));
   }
 
-  int TextEntry::MoveDisplayLines(int current_index, int count) {
+  int TextEntry::MoveDisplayLines(int current_index, int count)
+  {
     nuxAssert(current_index >= 0 &&
       current_index <= static_cast<int>(_text.length()));
     nuxAssert(count);
@@ -1640,7 +1681,8 @@ namespace nux
     pango_layout_index_to_line_x(layout, index, FALSE, &line_index, &x_off);
 
     // Weird bug: line_index here may be >= than line count?
-    if (line_index >= n_lines) {
+    if (line_index >= n_lines)
+    {
       line_index = n_lines - 1;
     }
 
@@ -1649,9 +1691,12 @@ namespace nux
 
     line_index += count;
 
-    if (line_index < 0) {
+    if (line_index < 0)
+    {
       return 0;
-    } else if (line_index >= n_lines) {
+    }
+    else if (line_index >= n_lines)
+    {
       return static_cast<int>(_text.length());
     }
 
@@ -1662,10 +1707,13 @@ namespace nux
     PangoLayoutLine *line = pango_layout_get_line(layout, line_index);
 #endif
     // Find out the cursor x offset related to the new line position.
-    if (line->resolved_dir == PANGO_DIRECTION_RTL) {
+    if (line->resolved_dir == PANGO_DIRECTION_RTL)
+    {
       pango_layout_get_cursor_pos(layout, line->start_index + line->length,
         &rect, NULL);
-    } else {
+    }
+    else
+    {
       pango_layout_get_cursor_pos(layout, line->start_index, &rect, NULL);
     }
 
@@ -1674,8 +1722,7 @@ namespace nux
     if (x_off < 0) x_off = 0;
     pango_layout_line_x_to_index(line, x_off, &index, &trailing);
 
-    index = static_cast<int>(
-      g_utf8_offset_to_pointer(text + index, trailing) - text);
+    index = static_cast<int>(g_utf8_offset_to_pointer(text + index, trailing) - text);
     return LayoutIndexToTextIndex(index);
   }
 
@@ -1738,8 +1785,10 @@ namespace nux
     return LayoutIndexToTextIndex(index);
   }
 
-  void TextEntry::SetCursor(int cursor) {
-    if (cursor != cursor_) {
+  void TextEntry::SetCursor(int cursor)
+  {
+    if (cursor != cursor_)
+    {
       ResetImContext();
       // If there was a selection range, then the selection range will be cleared.
       // Then content_modified_ shall be set to true to force redrawing the text.
@@ -1758,9 +1807,12 @@ namespace nux
     const char *text = pango_layout_get_text(layout);
     pango_layout_get_pixel_size(layout, &width, &height);
 
-    if (y < 0) {
+    if (y < 0)
+    {
       return 0;
-    } else if (y >= height) {
+    }
+    else if (y >= height)
+    {
       return static_cast<int>(_text.length());
     }
 
@@ -1776,7 +1828,8 @@ namespace nux
     // Adjust the offset if preedit is not empty and if the offset is after
     // current cursor.
     int preedit_length = static_cast<int>(_preedit.length());
-    if (preedit_length && index > cursor_) {
+    if (preedit_length && index > cursor_)
+    {
       if (index >= cursor_ + preedit_length)
         index -= preedit_length;
       else
@@ -1809,5 +1862,27 @@ namespace nux
       
       //ResetImContext();
     }
+  }
+
+  void TextEntry::SetFontFamily (const char *font)
+  {
+    font_family_ = font;
+    QueueRefresh(true, true);
+  }
+  
+  void TextEntry::SetFontSize (double font_size)
+  {
+    font_size_ = font_size;
+    QueueRefresh(true, true);
+  }
+
+  void TextEntry::SetFontOptions (const cairo_font_options_t *options)
+  {
+    g_return_if_fail (options);
+
+    cairo_font_options_destroy (font_options_);
+    font_options_ = cairo_font_options_copy (options);
+
+    QueueRefresh(true, true);
   }
 }

@@ -120,7 +120,7 @@ namespace nux
     }*/
   }
 
-  long InputArea::OnEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  long InputArea::OnEvent (Event &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     // Mouse event processing.
     if ((ievent.e_event >= NUX_DND_MOVE) && (ievent.e_event <= NUX_DND_LEAVE_WINDOW))
@@ -384,7 +384,16 @@ namespace nux
         }
       }
 
-      if ((mouse_signals == AREA_MOUSE_STATUS_NONE) && (ievent.e_event == NUX_MOUSE_PRESSED) )
+      if ((ievent.e_event == NUX_MOUSE_DOUBLECLICK) && m_EnableDoubleClick)
+      {
+        if (ievent.e_mouse_state & NUX_EVENT_BUTTON1_DBLCLICK)
+        {
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse pressed inside the area. Emit OnMouseDoubleClick"));
+          // Double click
+          OnMouseDoubleClick.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
+        }
+      }
+      else if ((mouse_signals == AREA_MOUSE_STATUS_NONE) && (ievent.e_event == NUX_MOUSE_PRESSED) )
       {
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse pressed and outside the area."));
         if (HasKeyboardFocus() )
@@ -399,13 +408,13 @@ namespace nux
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse pressed inside the area. Emit OnStartMouseFocus"));
         OnStartMouseFocus.emit();
 
-        if (ievent.e_mouse_state & NUX_EVENT_BUTTON1_DBLCLICK)
-        {
-          nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse pressed inside the area. Emit OnMouseDoubleClick"));
-          // Double click
-          OnMouseDoubleClick.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
-        }
-        else
+//         if (ievent.e_mouse_state & NUX_EVENT_BUTTON1_DBLCLICK)
+//         {
+//           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse pressed inside the area. Emit OnMouseDoubleClick"));
+//           // Double click
+//           OnMouseDoubleClick.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x, m_EventHandler.m_mouse_positiony - m_Geometry.y, ievent.GetMouseState(), ievent.GetKeyState() );
+//         }
+//         else
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse pressed inside the area. Emit OnMouseDown"));
           OnMouseDown.emit (m_EventHandler.m_mouse_positionx - m_Geometry.x,
@@ -534,7 +543,7 @@ namespace nux
     return ret;
   }
 
-  long InputArea::ProcessEventInExclusiveMode (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  long InputArea::ProcessEventInExclusiveMode (Event &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     unsigned int mouse_status;
     mouse_status = m_EventHandler.Process (ievent, m_Geometry, false);
@@ -664,8 +673,9 @@ namespace nux
     return _print_event_debug_trace;
   }
 
-  void InputArea::HandleDndMove (IEvent &event)
+  void InputArea::HandleDndMove (Event &event)
   {
+#if defined (NUX_OS_LINUX)
     std::list<char *> mimes;
 
     mimes = GetWindow ().GetDndMimeTypes ();
@@ -674,13 +684,17 @@ namespace nux
 
     for (it = mimes.begin (); it != mimes.end (); it++)
       g_free (*it);
+#endif
   }
 
-  void InputArea::HandleDndDrop (IEvent &event)
+  void InputArea::HandleDndDrop (Event &event)
   {
+#if defined (NUX_OS_LINUX)
     ProcessDndDrop (event.e_x, event.e_y);
+#endif
   }
 
+#if defined (NUX_OS_LINUX)
   void InputArea::SendDndStatus (bool accept, DndAction action, Geometry region)
   {
     GetWindow ().SendDndStatus (accept, action, Rect (region.x, region.y, region.width, region.height));
@@ -717,11 +731,13 @@ namespace nux
   void InputArea::ProcessDndLeave ()
   {
   }
+#endif
 
   void InputArea::SetFocused (bool focused)
   {
     Area::SetFocused (focused);
     SetKeyboardFocus (focused);
   }
+
 }
 

@@ -332,6 +332,12 @@ namespace nux
     virtual void ActivateFocus ();
 
     sigc::signal <void, Area *> FocusChanged;
+    //! Queue a relayout
+    /*!
+    Queues a relayout before the next paint cycle. This is safe to call multiple times within
+    a cycle.
+    */
+    void QueueRelayout ();
 
   protected:
     bool _is_focused;

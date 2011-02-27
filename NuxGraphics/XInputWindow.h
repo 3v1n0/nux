@@ -40,7 +40,9 @@ namespace nux
   class XInputWindow
   {
   public:
-    XInputWindow(int override_redirect = 0);
+    XInputWindow(const char* title,
+                 bool        take_focus = False,
+                 int         override_redirect = 0);
     ~XInputWindow();
     
     static std::list<Window> NativeHandleList();
@@ -49,7 +51,9 @@ namespace nux
     bool StrutsEnabled();
     
     void EnsureInputs();
-    
+
+    void EnableTakeFocus ();
+
     //! Set the position and size of the window
     void SetGeometry(const Rect& geo);
 
@@ -61,7 +65,9 @@ namespace nux
     
     //! Get X11 the Window.
     Window GetWindow ();
-    
+
+    void SetInputFocus ();
+
     void GrabPointer ();
     void UnGrabPointer ();
     

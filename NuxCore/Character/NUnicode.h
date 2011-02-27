@@ -164,7 +164,7 @@ namespace nux
   */
   inline UNICHAR ConvertAnsiCharToUnicodeChar (ANSICHAR In)
   {
-    TCHAR output;
+    UNICHAR output;
     const t_UTF8 *source_start = reinterpret_cast<const t_UTF8 *> (&In);
     const t_UTF8 *source_end = source_start + 1;
     t_UTF16 *target_start = reinterpret_cast<t_UTF16 *> (&output);

@@ -154,6 +154,20 @@ namespace nux
     virtual void SetTextColor(const Color &color);
     virtual Color GetTextColor();
 
+    //! Get the default layout of this view.
+    /*!
+        Get the default layout of this view.
+        @return The default layout of this view.
+    */
+    virtual Layout* GetLayout();
+
+    //! Set the default layout for this view.
+    /*!
+        Set the default layout for this view.
+        @param layout A Layout object.
+    */
+    virtual bool SetLayout (Layout *layout);
+
     void SetFont(ObjectPtr<FontTexture> font);
     ObjectPtr<FontTexture> GetFont();
 
@@ -173,20 +187,10 @@ namespace nux
     Color m_TextColor;
     ObjectPtr<FontTexture> _font;
 
-    //! Get the default layout of this view.
-    /*!
-        Get the default layout of this view.
-        @return The default layout of this view.
-    */
-    virtual Layout* GetLayout();
+    //! Deprecated. Use GetLayout();
     virtual Layout* GetCompositionLayout();
 
-    //! Set the default layout for this view.
-    /*!
-        Set the default layout for this view.
-        @param layout A Layout object.
-    */
-    virtual bool SetLayout (Layout *layout);
+    //! Deprecated. Use SetLayout();
     virtual bool SetCompositionLayout (Layout *layout);
 
     void RemoveLayout();

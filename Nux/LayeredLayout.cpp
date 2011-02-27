@@ -24,6 +24,8 @@
 #include "View.h"
 #include "LayeredLayout.h"
 
+#include <math.h>
+
 namespace nux
 {
   class LayeredChildProperties : public Area::LayoutProperties
@@ -82,9 +84,6 @@ namespace nux
 
   void LayeredLayout::GetCompositeList (std::list<Area *> *ViewList)
   {
-    if (m_active_area)
-      ViewList->push_back (m_active_area);
-    return;
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -106,18 +105,32 @@ namespace nux
   {
     nux::Geometry base = GetGeometry();
     std::list<Area *>::iterator it;
+    int total_max_width = 0;
+    int total_max_height = 0;
+    int ret = 0;
 
     for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
     {
       Area                   *area = *it;
       LayeredChildProperties *props;
-      Geometry                geo;
+      Geometry                geo = base;
       
       props = dynamic_cast<LayeredChildProperties *> (area->GetLayoutProperties ());
 
       if (props->m_expand)
       {
-        geo = base;
+        int max_width, max_height;
+
+        // It wants to expand, however we need to check that it doesn't need at minimum more
+        // space than we have
+        max_width = MAX (base.width, area->GetMinimumWidth ());
+        max_height = MAX (base.height, area->GetMinimumHeight ());
+
+        geo.width = max_width;
+        geo.height = max_height;
+
+        total_max_width = MAX (total_max_width, max_width);
+        total_max_height = MAX (total_max_height, max_height);
       }
       else
       {
@@ -126,11 +139,24 @@ namespace nux
         geo.width = props->m_width;
         geo.height = props->m_height;
       }
-      (*it)->SetMinimumSize (geo.width, geo.height);
+
       (*it)->SetGeometry (geo);
       (*it)->ComputeLayout2 ();
     }
-    return eCompliantHeight | eCompliantWidth;
+
+    SetBaseSize (total_max_width, total_max_height);
+
+    if (base.width < total_max_width)
+      ret |= eLargerWidth;
+    else
+      ret |= eCompliantWidth; // We don't complain about getting more space
+
+    if (base.height < total_max_height)
+      ret |= eLargerHeight;
+    else
+      ret |= eCompliantHeight; // Don't complain about getting more space
+
+    return ret;
   }
 
   void LayeredLayout::PaintOne (Area *_area, GraphicsEngine &gfx_context, bool force_draw)
@@ -163,7 +189,7 @@ namespace nux
       t_u32 alpha = 0, src = 0, dest = 0;
 
       gfx_context.GetRenderStates ().GetBlend (alpha, src, dest);
-      gfx_context.GetRenderStates ().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      gfx_context.GetRenderStates ().SetBlend (true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
       for (it = _layout_element_list.begin (); it != eit; ++it)
       {
@@ -369,11 +395,16 @@ namespace nux
 
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
-      if (i == m_active_index)
+      if (i == m_active_index && !m_active_area)
       {
         m_active_area = static_cast<Area *> (*it);
-        break;
       }
+
+      if ((*it)->IsView ())
+        static_cast<View *> (*it)->QueueDraw ();
+      else if ((*it)->IsLayout ())
+        static_cast<Layout *> (*it)->QueueDraw ();
+
       i++;
     }
     QueueDraw ();

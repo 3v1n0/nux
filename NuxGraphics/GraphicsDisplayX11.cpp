@@ -49,11 +49,14 @@ namespace nux
     {NUX_MOUSE_MOVE,             TEXT ("NUX_MOUSE_MOVE") },
     {NUX_SIZE_CONFIGURATION,     TEXT ("NUX_SIZE_CONFIGURATION") },
     {NUX_WINDOW_CONFIGURATION,   TEXT ("NUX_WINDOW_CONFIGURATION") },
+    {NUX_WINDOW_MAP,             TEXT ("NUX_WINDOW_MAP") },
+    {NUX_WINDOW_UNMAP,           TEXT ("NUX_WINDOW_UNMAP") },
     {NUX_WINDOW_ENTER_FOCUS,     TEXT ("NUX_WINDOW_ENTER_FOCUS") },
     {NUX_WINDOW_EXIT_FOCUS,      TEXT ("NUX_WINDOW_EXIT_FOCUS") },
     {NUX_WINDOW_DIRTY,           TEXT ("NUX_WINDOW_DIRTY") },
     {NUX_WINDOW_MOUSELEAVE,      TEXT ("NUX_WINDOW_MOUSELEAVE") },
-    {NUX_TERMINATE_APP,          TEXT ("NUX_TERMINATE_APP") }
+    {NUX_TERMINATE_APP,          TEXT ("NUX_TERMINATE_APP") },
+    {NUX_TAKE_FOCUS,             TEXT ("NUX_TAKE_FOCUS") }
   };
 
   GraphicsDisplay::GraphicsDisplay()
@@ -1389,12 +1392,15 @@ namespace nux
   {
     int x_recalc = 0;
     int y_recalc = 0;
-    
+
     RecalcXYPosition (m_X11Window, xevent, x_recalc, y_recalc);
     
     foreign = foreign || xevent.xany.window != m_X11Window;
 
     m_pEvent->e_event = NUX_NO_EVENT;
+#if defined(NUX_OS_LINUX)
+    m_pEvent->e_x11_window = xevent.xany.window;
+#endif
 
     switch (xevent.type)
     {
@@ -1472,7 +1478,7 @@ namespace nux
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: KeyPress event."));
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym (m_X11Display, keycode, 0);
+        keysym = XKeycodeToKeysym (xevent.xany.display, keycode, 0);
 
         m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         m_pEvent->e_key_repeat_count = 0;
@@ -1506,7 +1512,7 @@ namespace nux
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: KeyRelease event."));
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym (m_X11Display, keycode, 0);
+        keysym = XKeycodeToKeysym (xevent.xany.display, keycode, 0);
 
         m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         m_pEvent->e_key_repeat_count = 0;
@@ -1568,11 +1574,32 @@ namespace nux
         break;
       }
 
+      case MapNotify:
+      {
+        m_pEvent->e_event = NUX_WINDOW_MAP;
+	m_pEvent->e_x11_window = xevent.xany.window;
+
+        XSetInputFocus (xevent.xany.display,
+                        xevent.xany.window,
+                        RevertToParent,
+                        CurrentTime);
+
+        break;
+      }
+
+      case UnmapNotify:
+      {
+        m_pEvent->e_event = NUX_WINDOW_UNMAP;
+	m_pEvent->e_x11_window = xevent.xany.window;
+
+	break;
+      }
+
       case ClientMessage:
       {
         //if (foreign)
         //  break;
-        
+
         if ( (xevent.xclient.format == 32) && ( (xevent.xclient.data.l[0]) == static_cast<long> (m_WMDeleteWindow) ) )
         {
           m_pEvent->e_event = NUX_TERMINATE_APP;
