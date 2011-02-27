@@ -7,7 +7,7 @@ if BUILD_EXAMPLES
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
 
-noinst_PROGRAMS = combobox cairo textedit button checkbox tooltip timeline timegraph gridlayout pangotextedit moveable_view layeredlayout
+noinst_PROGRAMS = combobox cairo textedit button checkbox focus tooltip timeline timegraph gridlayout pangotextedit moveable_view layeredlayout
 
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile
@@ -59,6 +59,8 @@ moveable_view_SOURCES = moveable_view.cpp
 moveable_view_LDADD = $(ALL_LIBS)
 layeredlayout_SOURCES = layeredlayout.cpp
 layeredlayout_LDADD = $(ALL_LIBS)
+focus_SOURCES = focus.cpp
+focus_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
 #sourceexampledir = "$(pkgdatadir)/examples"

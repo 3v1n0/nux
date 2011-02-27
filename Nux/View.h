@@ -24,6 +24,7 @@
 #define ABSTRACTOBJECTBASE_H
 
 #include "Nux/Nux.h"
+#include "Nux/Focusable.h"
 
 namespace nux
 {
@@ -159,6 +160,7 @@ namespace nux
     sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
 
   protected:
+
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
@@ -194,7 +196,7 @@ namespace nux
         Accessed inside ContentDraw () to help determine if some parts needs to be rendered.
         Do not use it elsewhere.
         @return True if Draw () was called before ContentDraw ().
-        
+
     */
     bool IsFullRedraw() const;
 

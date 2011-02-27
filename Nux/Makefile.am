@@ -77,6 +77,7 @@ source_cpp = \
   $(srcdir)/EditTextBox.cpp \
   $(srcdir)/FileSelector.cpp \
   $(srcdir)/FloatingWindow.cpp \
+  $(srcdir)/Focusable.cpp \
   $(srcdir)/FolderTreeItem.cpp \
   $(srcdir)/FunctionGraph.cpp \
   $(srcdir)/GridHLayout.cpp \
@@ -212,6 +213,7 @@ source_h = \
   $(srcdir)/EditTextBox.h \
   $(srcdir)/FileSelector.h \
   $(srcdir)/FloatingWindow.h \
+  $(srcdir)/Focusable.h \
   $(srcdir)/FolderTreeItem.h \
   $(srcdir)/FunctionGraph.h \
   $(srcdir)/GridHLayout.h \

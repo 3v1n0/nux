@@ -80,7 +80,7 @@ namespace nux
     {
       return;
     }
-   
+
     if (GetWindowCompositor().GetMouseFocusArea () == this)
     {
       // already has the focus
@@ -491,6 +491,43 @@ namespace nux
       }
     }
 
+    //~ if (GetFocused () && ievent.e_event == NUX_KEYUP)
+    //~ {
+      //~ FocusDirection direction;
+      //~ FocusEventType type;
+//~
+      //~ direction = FOCUS_DIRECTION_NONE;
+//~
+      //~ type = Focusable::GetFocusableEventType (ievent.e_event,
+                                               //~ ievent.GetKeySym(),
+                                               //~ ievent.GetText(),
+                                               //~ &direction);
+//~
+      //~ if (type == FOCUS_EVENT_ACTIVATE)
+      //~ {
+        //~ ActivateFocus ();
+      //~ }
+      //~ else
+      //~ {
+        //~ nux::Area *parent = GetParentObject ();
+        //~ if (parent->IsArea ())
+        //~ {
+          //~ CoreArea *area = NUX_STATIC_CAST (CoreArea *, parent );
+          //~ ret = area->OnEvent (ievent, ret, ProcessEventInfo);
+        //~ }
+        //~ else if (parent->IsView() )
+        //~ {
+          //~ View *ic = (View *) parent;
+          //~ ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
+        //~ }
+        //~ else if (parent->IsLayout() )
+        //~ {
+          //~ Layout *layout = (Layout *)parent; //NUX_STATIC_CAST (Layout *, parent );
+          //~ ret = layout->ProcessEvent (ievent, ret, ProcessEventInfo);
+        //~ }
+      //~ }
+    //~ }
+
     GetWindowCompositor().m_PreviousMouseOverArea = PreviousMouseOverArea;
     GetWindowCompositor().m_MouseOverArea = CurrentMouseOverArea;
 
@@ -616,39 +653,39 @@ namespace nux
     m_EventHandler.m_mouse_positionx = x;
     m_EventHandler.m_mouse_positiony = y;
   }
-  
+
   void InputArea::EnableEventDebugTrace (bool enable)
   {
     _print_event_debug_trace = enable;
   }
-  
+
   bool InputArea::GetEventDebugTrace () const
   {
     return _print_event_debug_trace;
   }
-  
+
   void InputArea::HandleDndMove (IEvent &event)
   {
     std::list<char *> mimes;
-    
+
     mimes = GetWindow ().GetDndMimeTypes ();
     std::list<char *>::iterator it;
     ProcessDndMove (event.e_x, event.e_y, mimes);
-    
+
     for (it = mimes.begin (); it != mimes.end (); it++)
       g_free (*it);
   }
-  
+
   void InputArea::HandleDndDrop (IEvent &event)
   {
-    ProcessDndDrop (event.e_x, event.e_y);  
+    ProcessDndDrop (event.e_x, event.e_y);
   }
-  
+
   void InputArea::SendDndStatus (bool accept, DndAction action, Geometry region)
   {
     GetWindow ().SendDndStatus (accept, action, Rect (region.x, region.y, region.width, region.height));
   }
-  
+
   void InputArea::SendDndFinished (bool accepted, DndAction action)
   {
     GetWindow ().SendDndFinished (accepted, action);
@@ -658,16 +695,16 @@ namespace nux
   {
     // must learn to deal with x/y offsets
     Area *parent = GetToplevel ();
-    
+
     if (parent)
     {
       x += parent->GetGeometry ().x;
       y += parent->GetGeometry ().y;
     }
-    
+
     SendDndStatus (false, DNDACTION_NONE, Geometry (x, y, GetGeometry ().width, GetGeometry ().height));
   }
-  
+
   void InputArea::ProcessDndDrop (int x, int y)
   {
     SendDndFinished (false, DNDACTION_NONE);
@@ -679,6 +716,12 @@ namespace nux
 
   void InputArea::ProcessDndLeave ()
   {
+  }
+
+  void InputArea::SetFocused (bool focused)
+  {
+    Area::SetFocused (focused);
+    SetKeyboardFocus (focused);
   }
 }
 

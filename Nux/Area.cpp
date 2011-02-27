@@ -45,6 +45,7 @@ namespace nux
     ,   m_minSize (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
     ,   m_maxSize (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
     ,   m_stretchfactor (1)
+    ,   _is_focused (0)
   {
   }
 
@@ -306,10 +307,10 @@ namespace nux
   {
     h = nux::Clamp<int> (h, m_minSize.GetHeight (), m_maxSize.GetHeight ());
     w = nux::Clamp<int> (w, m_minSize.GetWidth (), m_maxSize.GetWidth ());
-    
+
     if (m_Geometry.x == x && m_Geometry.y == y && m_Geometry.width == w && m_Geometry.height == h)
       return;
-    
+
     GeometryChangePending ();
     m_Geometry = nux::Geometry (x, y, w, h);
     InitiateResizeLayout();
@@ -320,17 +321,17 @@ namespace nux
   {
     SetGeometry (geo.x, geo.y, geo.width, geo.height);
   }
-  
+
   void Area::SetBaseX    (int x)
   {
     SetGeometry (x, m_Geometry.y, m_Geometry.width, m_Geometry.height);
   }
-  
+
   void Area::SetBaseY    (int y)
   {
     SetGeometry (m_Geometry.x, y, m_Geometry.width, m_Geometry.height);
   }
-  
+
   void Area::SetBaseXY    (int x, int y)
   {
     SetGeometry (x, y, m_Geometry.width, m_Geometry.height);
@@ -466,7 +467,7 @@ namespace nux
       m_ParentObject->RequestBottomUpLayoutComputation (bo_initiator);
     }
   }
-  
+
   Area * Area::GetToplevel ()
   {
     if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
@@ -519,5 +520,28 @@ namespace nux
   bool Area::IsSensitive ()
   {
     return m_sensitive;
+  }
+
+  /* handles our focusable code */
+  bool Area::GetFocused ()
+  {
+    return _is_focused;
+  }
+
+  /* Pretty much everything is going to have to override this */
+  void Area::SetFocused (bool focused)
+  {
+    _is_focused = focused;
+    FocusChanged (this);
+  }
+
+  bool Area::CanFocus ()
+  {
+    return true;
+  }
+
+  /* override me! */
+  void Area::ActivateFocus ()
+  {
   }
 }

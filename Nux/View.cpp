@@ -418,7 +418,7 @@ namespace nux
   {
     QueueDraw ();
   }
-  
+
   void View::GeometryChanged ()
   {
     QueueDraw ();

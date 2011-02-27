@@ -24,7 +24,7 @@
 #define BASEOBJECT_H
 
 #include "NuxCore/InitiallyUnownedObject.h"
-
+#include "Nux/Focusable.h"
 #include "Utils.h"
 #include "WidgetMetrics.h"
 #include "WidgetSmartPointer.h"
@@ -127,7 +127,7 @@ namespace nux
   class View;
   class Area;
 
-  class Area: public InitiallyUnownedObject
+  class Area: public InitiallyUnownedObject, public Focusable
   {
   public:
     NUX_DECLARE_OBJECT_TYPE (Area, InitiallyUnownedObject);
@@ -151,28 +151,28 @@ namespace nux
     {
       return m_Geometry.x;
     }
-    
+
     int GetBaseY     () const
     {
       return m_Geometry.y;
     }
-    
+
     int GetBaseWidth    () const
     {
       return m_Geometry.GetWidth();
     }
-    
+
     int GetBaseHeight   () const
     {
       return m_Geometry.GetHeight();
     }
 
     void SetBaseX    (int x);
-    
+
     void SetBaseY    (int y);
-    
+
     void SetBaseXY    (int x, int y);
-    
+
     void SetBaseWidth (int w);
 
     void SetBaseHeight (int h);
@@ -248,7 +248,7 @@ namespace nux
 
     void SetBaseString (const TCHAR *Caption);
     const NString &GetBaseString() const;
-    
+
     Area * GetToplevel ();
 
     virtual long ComputeChildLayout()
@@ -326,8 +326,15 @@ namespace nux
     */
     bool IsSensitive ();
 
-  protected:
+    virtual bool GetFocused ();
+    virtual void SetFocused (bool focused);
+    virtual bool CanFocus ();
+    virtual void ActivateFocus ();
 
+    sigc::signal <void, Area *> FocusChanged;
+
+  protected:
+    bool _is_focused;
     /*
         This function is reimplemented in Layout as it need to perform some special operations.
         It does nothing for Area and View classes.
@@ -345,7 +352,7 @@ namespace nux
     */
     virtual void SetParentObject (Area *);
     virtual void UnParentObject();
-    
+
     virtual void GeometryChangePending () {}
     virtual void GeometryChanged () {}
 

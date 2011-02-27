@@ -222,6 +222,8 @@ namespace nux
          > OnKeyEvent;
 
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDownOutsideArea;
+
+    void SetFocused (bool focus);
   };
 
 }
