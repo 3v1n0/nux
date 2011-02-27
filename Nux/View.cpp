@@ -258,6 +258,9 @@ namespace nux
       application->RequestRedraw();
       //GetWindowCompositor().AddToDrawList(this);
     }
+    if (m_CompositionLayout)
+      m_CompositionLayout->QueueDraw ();
+
     _need_redraw = true;
     OnQueueDraw.emit (this);
   }
