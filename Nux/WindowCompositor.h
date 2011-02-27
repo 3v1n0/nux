@@ -25,6 +25,8 @@
 
 #include "BaseWindow.h"
 
+#include <sigc++/connection.h>
+
 namespace nux
 {
 
@@ -297,13 +299,35 @@ namespace nux
 
     void SetMouseFocusArea (InputArea *area);
     InputArea* GetMouseFocusArea();
+    void OnMouseFocusAreaDestroyed (Object *area)
+    {
+      if (_mouse_focus_area == area)
+        SetMouseFocusArea (NULL);
+    }
+
     void SetMouseOverArea (InputArea *area);
     InputArea* GetMouseOverArea();
+    void OnMouseOverAreaDestroyed (Object *area)
+    {
+      if (_mouse_over_area == area)
+        SetMouseOverArea (NULL);
+    }
+
     void SetPreviousMouseOverArea (InputArea *area);
     InputArea* GetPreviousMouseOverArea();
+    void OnPrevousMouseOverAreaDestroyed (Object *area)
+    {
+      if (_previous_mouse_over_area == area)
+        SetPreviousMouseOverArea (NULL);
+    }
     
     void SetKeyboardFocusArea (InputArea *area);
     InputArea* GetKeyboardFocusArea ();
+    void OnKeyboardFocusAreaDestroyed (Object *area)
+    {
+      if (_keyboard_focus_area == area)
+        SetKeyboardFocusArea (NULL);
+    }
 
     void RegisterWindow (BaseWindow*);
     void UnRegisterWindow (BaseWindow*);
@@ -450,6 +474,11 @@ namespace nux
     InputArea *m_TooltipArea;
     int m_TooltipX;
     int m_TooltipY;
+
+    sigc::connection _previous_mouse_over_area_conn;
+    sigc::connection _keyboard_focus_area_conn;
+    sigc::connection _mouse_focus_area_conn;
+    sigc::connection _mouse_over_area_conn;
 
 //     bool m_FullSceneBlurUpdated;
 //     ObjectPtr<IOpenGLBaseTexture> m_BlurTexture;

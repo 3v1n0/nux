@@ -1596,6 +1596,11 @@ namespace nux
     {
       _event_root.Set (0, 0);
     }
+    else
+    {
+      _mouse_focus_area_conn.disconnect ();
+      _mouse_focus_area_conn = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseFocusAreaDestroyed));
+    }
 
     SetFocusAreaWindow (GetProcessingTopView());
   }
@@ -1608,6 +1613,10 @@ namespace nux
   void WindowCompositor::SetMouseOverArea (InputArea *area)
   {
     _mouse_over_area = area;
+
+    _mouse_over_area_conn.disconnect ();
+    if (area)
+      _mouse_over_area_conn = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseOverAreaDestroyed));
 //     if(_mouse_over_area)
 //         nuxDebugMsg(TEXT("StackManager: Set MouseOver Area"));
 //     else
@@ -1622,6 +1631,10 @@ namespace nux
   void WindowCompositor::SetPreviousMouseOverArea (InputArea *area)
   {
     _previous_mouse_over_area = area;
+
+    _previous_mouse_over_area_conn.disconnect ();
+    if (area)
+      _previous_mouse_over_area_conn = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnPrevousMouseOverAreaDestroyed));
 //     if(area)
 //         nuxDebugMsg(TEXT("StackManager: Set Previous MouseOver Area"));
 //     else
@@ -1636,6 +1649,10 @@ namespace nux
   void WindowCompositor::SetKeyboardFocusArea (InputArea *area)
   {
     _keyboard_focus_area = area;
+
+    _keyboard_focus_area_conn.disconnect ();
+    if (area)
+      _keyboard_focus_area_conn = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnKeyboardFocusAreaDestroyed));
   }
 
   InputArea* WindowCompositor::GetKeyboardFocusArea ()
