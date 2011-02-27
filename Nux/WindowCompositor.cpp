@@ -378,8 +378,35 @@ namespace nux
       // individual area. Instead, we make the top level BaseWindow get the keyboard focus.
       // NUX_WINDOW_EXIT_FOCUS is passed down the area for processing. At the end of this function, also do
       // reset some states if the event is NUX_WINDOW_EXIT_FOCUS.
-      if((event.e_event == NUX_WINDOW_ENTER_FOCUS))
+      if (event.e_event == NUX_WINDOW_ENTER_FOCUS)
       {
+#if defined (NUX_OS_LINUX)
+        if(_modal_view_window_list.size () > 0)
+        {
+          for (it = _modal_view_window_list.begin (); it != _modal_view_window_list.end (); it++)
+          {
+            if ((*it).GetPointer () && ((*it)->GetInputWindowId () == event.e_x11_window))
+            {
+              (*it)->ProcessEnterFocus (event);
+              break;
+            }
+          }
+        }
+        else
+        {
+          if (_view_window_list.size () != 0)
+          {
+            for (it = _view_window_list.begin (); it != _view_window_list.end (); it++)
+            {
+              if ((*it).GetPointer () && ((*it)->GetInputWindowId () == event.e_x11_window))
+              {
+                (*it)->ProcessEnterFocus (event);
+                break;
+              }
+            }
+          }
+        }
+#else        
         if(_modal_view_window_list.size () > 0)
         {
           // The top modal window gets the keyboard focus.
@@ -401,7 +428,41 @@ namespace nux
             }
           }
         }
+#endif
       }
+#if defined (NUX_OS_LINUX)
+      else if (event.e_event == NUX_WINDOW_EXIT_FOCUS)
+      {
+        InputArea* focus_area = GetKeyboardFocusArea ();
+
+        if (focus_area != 0)
+        {
+          Area* top_level = focus_area->GetToplevel ();
+          if (top_level && top_level->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
+          {
+            if (NUX_STATIC_CAST (BaseWindow*, top_level)->GetInputWindowId () == event.e_x11_window)
+            {
+              if (GetMouseFocusArea () == focus_area)
+              {
+                SetMouseFocusArea (NULL);
+                focus_area->OnEndMouseFocus.emit ();
+              }
+              SetKeyboardFocusArea (NULL);
+              focus_area->OnEndFocus.emit ();
+            }
+          }
+          else if (top_level)
+          {
+            // For area that are not parented to a BaseWindow, parented to the main layout or not parented at all,
+            // it is difficult to take action.
+            // The way X11 sends the FOCUS_IN/FOCUS_OUT events breaks with the way Nux works.
+            // In Nux NUX_WINDOW_ENTER_FOCUS/NUX_WINDOW_EXIT_FOCUS refer the physical window getting in and out of focus.
+            // It does not refer to individual BaseWindows that goes in in and out of focus.
+
+          }
+        }
+      }
+#endif
       else
       {
         if(_modal_view_window_list.size() > 0)
@@ -496,6 +557,7 @@ namespace nux
 
     CleanMenu ();
 
+#if defined (NUX_OS_WINDOWS)
     // Following the processing of NUX_WINDOW_EXIT_FOCUS, reset some states.
     if (event.e_event == NUX_WINDOW_EXIT_FOCUS)
     {
@@ -509,6 +571,7 @@ namespace nux
       SetKeyboardFocusArea (0);
       SetCurrentEvent (0);
     }
+#endif
   }
 
   void WindowCompositor::StartModalWindow (ObjectWeakPtr<BaseWindow> window)

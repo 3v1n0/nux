@@ -1398,6 +1398,8 @@ namespace nux
     foreign = foreign || xevent.xany.window != m_X11Window;
 
     m_pEvent->e_event = NUX_NO_EVENT;
+    m_pEvent->e_x11_window = xevent.xany.window;
+
 
     switch (xevent.type)
     {
@@ -1573,6 +1575,7 @@ namespace nux
 
       case MapNotify:
       {
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: MapNotify event."));
         m_pEvent->e_event = NUX_WINDOW_MAP;
 
         XSetInputFocus (xevent.xany.display,
@@ -1585,6 +1588,7 @@ namespace nux
 
       case UnmapNotify:
       {
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: UnmapNotify event."));
         m_pEvent->e_event = NUX_WINDOW_UNMAP;
         break;
       }

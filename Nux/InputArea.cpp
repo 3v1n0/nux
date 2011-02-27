@@ -327,7 +327,7 @@ namespace nux
       {
         if (mouse_focus_area == this)
         {
-          GetWindowCompositor ().SetMouseOverArea (NULL);
+          GetWindowCompositor ().SetMouseFocusArea (NULL);
           mouse_focus_area = NULL;
           OnEndMouseFocus.emit ();
         }
@@ -485,7 +485,7 @@ namespace nux
 
         ret |=  eMouseEventSolved;
       }
-      else if (event_processor_state & AREA_MOUSE_STATUS_MOVE && (!(event_processor_state & AREA_MOUSE_STATUS_FOCUS)))
+      else if ((event_processor_state & AREA_MOUSE_STATUS_MOVE) && (!(event_processor_state & AREA_MOUSE_STATUS_FOCUS)))
       {
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse move and no mouse focus. Emit OnMouseMove"));
         OnMouseMove.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(),
@@ -499,13 +499,11 @@ namespace nux
       {
         if (event_type == NUX_KEYDOWN)
         {
-          nuxEventDebugTrace (_print_event_debug_trace,
-            TEXT("Emit OnKeyPressed"));
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("Key down and has keyboard focus: Emit OnKeyPressed"));
           OnKeyPressed.emit (event.GetKeySym(), event.e_x11_keycode,
             event.GetKeyState());
 
-          nuxEventDebugTrace (_print_event_debug_trace,
-            TEXT("Emit OnKeyEvent. String: %s"), event.e_text);
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("Key down and has keyboard focus: Emit OnKeyEvent. String: %s"), event.e_text);
           OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
             event_type, event.GetKeySym(),
             event.GetKeyState(), event.GetText(),
@@ -515,13 +513,11 @@ namespace nux
         }
         else if (event_type == NUX_KEYUP)
         {
-          nuxEventDebugTrace (_print_event_debug_trace,
-            TEXT("Emit OnKeyReleased"));
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("Key up and has keyboard focus: Emit OnKeyReleased"));
           OnKeyReleased.emit (event.GetKeySym(), event.e_x11_keycode,
             event.GetKeyState());
 
-          nuxEventDebugTrace (_print_event_debug_trace,
-            TEXT("Emit OnKeyEvent. String: %s"), event.e_text);
+          nuxEventDebugTrace (_print_event_debug_trace, TEXT("Key up and has keyboard focus: Emit OnKeyEvent. String: %s"), event.e_text);
           OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
             event_type, event.GetKeySym(),
             event.GetKeyState(), event.GetText(),
@@ -529,6 +525,10 @@ namespace nux
 
           ret |=  eMouseEventSolved;
         }
+      }
+      else if ((event_type == NUX_KEYDOWN) || (event_type == NUX_KEYUP))
+      {
+        nuxEventDebugTrace (_print_event_debug_trace, TEXT("Key event but does not have the keyboard focus."));
       }
     }    
 

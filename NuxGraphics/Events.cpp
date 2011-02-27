@@ -81,6 +81,7 @@ namespace nux
     e_x11_keycode = 0;
 #if defined (NUX_OS_LINUX)
     e_x11_timestamp = 0;
+    e_x11_window = 0;
 #endif
 
     //Application = 0;

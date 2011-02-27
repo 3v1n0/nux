@@ -275,8 +275,9 @@ namespace nux
 
 #if defined(NUX_OS_LINUX)
     Time e_x11_timestamp; //! X11 timestamp
-    //Window e_x11_window; //!< X11 window.
+    Window e_x11_window; //!< X11 window.
 #endif
+
 
     int e_x11_keycode;  //!< X11 raw keycode.
     int e_keysym;       //!< Key symbol.
