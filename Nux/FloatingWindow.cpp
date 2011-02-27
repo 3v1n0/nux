@@ -55,12 +55,12 @@ namespace nux
     // Should be at the end of the constructor
     //GetWindowCompositor().RegisterWindow(this);
 
-    _minimize_button    = new CoreArea (NUX_TRACKER_LOCATION);
+    _minimize_button    = new InputArea (NUX_TRACKER_LOCATION);
     _minimize_button->Reference();
-    _close_button       = new CoreArea (NUX_TRACKER_LOCATION);
-    _resize_handle      = new CoreArea (NUX_TRACKER_LOCATION);
+    _close_button       = new InputArea (NUX_TRACKER_LOCATION);
+    _resize_handle      = new InputArea (NUX_TRACKER_LOCATION);
     _resize_handle->Reference();
-    _title_bar          = new CoreArea (NUX_TRACKER_LOCATION);
+    _title_bar          = new InputArea (NUX_TRACKER_LOCATION);
     _title_bar->Reference();
     _window_title_bar   = new StaticTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     _title_bar_layout   = new HLayout (NUX_TRACKER_LOCATION);
@@ -127,7 +127,7 @@ namespace nux
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
-      if (!m_Geometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
+      if (!GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
       {
         ProcEvInfo = eDoNotProcess;
         //return TraverseInfo;

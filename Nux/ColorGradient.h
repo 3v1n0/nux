@@ -399,7 +399,7 @@ namespace nux
 
     HLayout        *hlayout;
     EditTextBox    *m_ValueString;
-    CoreArea       *m_Percentage;
+    InputArea       *m_Percentage;
     Color m_BackgroundColor;
 
     Color::Format m_color_format;

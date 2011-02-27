@@ -104,9 +104,9 @@ namespace nux
 //     BitmapData = LoadRGBE (filename);
 //     if (BitmapData) return BitmapData;
 
-    BitmapData = LoadAnimatedTextureFile (filename);
-    if (BitmapData) return BitmapData;
-    
+//     BitmapData = LoadAnimatedTextureFile (filename);
+//     if (BitmapData) return BitmapData;
+//     
 //     BitmapData = LoadITXFile (filename);
 //     if (BitmapData) return BitmapData;
 

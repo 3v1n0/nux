@@ -79,8 +79,10 @@ namespace nux
     e_keysym = 0;
     e_wheeldelta = 0;
     e_x11_keycode = 0;
+#if defined (NUX_OS_LINUX)
     e_x11_timestamp = 0;
     e_x11_window = 0;
+#endif
 
     //Application = 0;
   }

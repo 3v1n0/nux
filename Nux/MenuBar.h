@@ -45,7 +45,7 @@ namespace nux
     MenuBarItem (NUX_FILE_LINE_PROTO);
     ~MenuBarItem();
   private:
-    CoreArea   *area;
+    InputArea   *area;
     MenuPage   *menu;
     BaseTexture   *icon; // should be 24x24
 

@@ -64,8 +64,8 @@ namespace nux
   void AbstractComboBox::InitializeLayout()
   {
     m_hlayout   = new HLayout(NUX_TRACKER_LOCATION);
-    m_ComboArea = new CoreArea(NUX_TRACKER_LOCATION);
-    m_Button    = new CoreArea(NUX_TRACKER_LOCATION);
+    m_ComboArea = new InputArea(NUX_TRACKER_LOCATION);
+    m_Button    = new InputArea(NUX_TRACKER_LOCATION);
   }
 
   void AbstractComboBox::DestroyLayout()

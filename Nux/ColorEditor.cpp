@@ -209,9 +209,9 @@ namespace nux
     m_Validator.SetMaximum (1.0);
     m_Validator.SetDecimals (2);
 
-    m_PickerArea        = new CoreArea (NUX_TRACKER_LOCATION);
-    m_BaseChannelArea   = new CoreArea (NUX_TRACKER_LOCATION);
-    m_ColorSquare       = new CoreArea (NUX_TRACKER_LOCATION);
+    m_PickerArea        = new InputArea (NUX_TRACKER_LOCATION);
+    m_BaseChannelArea   = new InputArea (NUX_TRACKER_LOCATION);
+    m_ColorSquare       = new InputArea (NUX_TRACKER_LOCATION);
     m_hlayout           = new HLayout (NUX_TRACKER_LOCATION);
 
     m_BaseChannelArea->OnMouseDown.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseDown) );
@@ -418,15 +418,6 @@ namespace nux
 
     GfxContext.PushClippingRectangle (base);
 
-
-    m_RedShader->SetTransformMatrix (GfxContext.GetModelViewProjectionMatrix() );
-    m_GreenShader->SetTransformMatrix (GfxContext.GetModelViewProjectionMatrix() );
-    m_BlueShader->SetTransformMatrix (GfxContext.GetModelViewProjectionMatrix() );
-
-    m_HueShader->SetTransformMatrix (GfxContext.GetModelViewProjectionMatrix() );
-    m_SaturationShader->SetTransformMatrix (GfxContext.GetModelViewProjectionMatrix() );
-    m_ValueShader->SetTransformMatrix (GfxContext.GetModelViewProjectionMatrix() );
-
     if (m_ColorModel == CM_RGB)
     {
       DrawRGB (GfxContext, force_draw);
@@ -502,7 +493,7 @@ namespace nux
         y = (1.0f - m_Green) * m_PickerArea->GetBaseHeight();
 
         m_RedShader->SetColor (m_Red, m_Green, m_Blue, 1.0f);
-        m_RedShader->SetScreenPositionOffset (GfxContext.GetContextX(), GfxContext.GetContextY() );
+        m_RedShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         BaseChannelTop = Color (1.0f, m_Green, m_Blue, 1.0f);
         BaseChannelBottom = Color (0.0f, m_Green, m_Blue, 1.0f);
         m_RedShader->Render (
@@ -511,7 +502,7 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetContextWidth(), GfxContext.GetContextHeight()
+          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
         );
       }
       else if (m_ColorChannel == CC_GREEN)
@@ -520,7 +511,7 @@ namespace nux
         y = (1.0f - m_Red) * m_PickerArea->GetBaseHeight();
 
         m_GreenShader->SetColor (m_Red, m_Green, m_Blue, 1.0f);
-        m_GreenShader->SetScreenPositionOffset (GfxContext.GetContextX(), GfxContext.GetContextY() );
+        m_GreenShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         BaseChannelTop = Color (m_Red, 1.0f, m_Blue, 1.0f);
         BaseChannelBottom = Color (m_Red, 0.0f, m_Blue, 1.0f);
         m_GreenShader->Render (
@@ -529,7 +520,7 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetContextWidth(), GfxContext.GetContextHeight()
+          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
         );
       }
       else if (m_ColorChannel == CC_BLUE)
@@ -538,7 +529,7 @@ namespace nux
         y = (1.0f - m_Green) * m_PickerArea->GetBaseHeight();
 
         m_BlueShader->SetColor (m_Red, m_Green, m_Blue, 1.0f);
-        m_BlueShader->SetScreenPositionOffset (GfxContext.GetContextX(), GfxContext.GetContextY() );
+        m_BlueShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         BaseChannelTop = Color (m_Red, m_Green, 1.0f, 1.0f);
         BaseChannelBottom = Color (m_Red, m_Green, 0.0f, 1.0f);
         m_BlueShader->Render (
@@ -547,7 +538,7 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetContextWidth(), GfxContext.GetContextHeight()
+          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
         );
       }
 
@@ -582,14 +573,14 @@ namespace nux
         y = (1.0f - m_Value) * m_PickerArea->GetBaseHeight();
 
         m_HueShader->SetColor (m_Hue, m_Saturation, m_Value, 1.0f);
-        m_HueShader->SetScreenPositionOffset (GfxContext.GetContextX(), GfxContext.GetContextY() );
+        m_HueShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         m_HueShader->Render (
           m_PickerArea->GetBaseX(),
           m_PickerArea->GetBaseY(),
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetContextWidth(), GfxContext.GetContextHeight()
+          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
         );
 
         Geometry P = m_BaseChannelArea->GetGeometry();
@@ -628,7 +619,7 @@ namespace nux
         if (v < 0.3f) v = 0.3f;
 
         m_SaturationShader->SetColor (m_Hue, m_Saturation, m_Value, 1.0f);
-        m_SaturationShader->SetScreenPositionOffset (GfxContext.GetContextX(), GfxContext.GetContextY() );
+        m_SaturationShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         HSVtoRGB (r, g, b, m_Hue, 1.0f, v);
         BaseChannelTop = Color (r, g, b, 1.0f);
         HSVtoRGB (r, g, b, m_Hue, 0.0f, m_Value);
@@ -639,7 +630,7 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetContextWidth(), GfxContext.GetContextHeight()
+          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
         );
 
         //Geometry pickermarker = Geometry(GetX() + x - 2, GetY() + y -2, 5, 5);
@@ -655,7 +646,7 @@ namespace nux
 
         float r, g, b;
         m_ValueShader->SetColor (m_Hue, m_Saturation, m_Value, 1.0f);
-        m_ValueShader->SetScreenPositionOffset (GfxContext.GetContextX(), GfxContext.GetContextY() );
+        m_ValueShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         HSVtoRGB (r, g, b, m_Hue, m_Saturation, 1.0f);
         BaseChannelTop = Color (r, g, b, 1.0f);
         HSVtoRGB (r, g, b, m_Hue, m_Saturation, 0.0f);
@@ -666,7 +657,7 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetContextWidth(), GfxContext.GetContextHeight()
+          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
         );
 
         //Geometry pickermarker = Geometry(GetX() + x - 2, GetY() + y -2, 5, 5);

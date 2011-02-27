@@ -40,22 +40,24 @@ namespace nux
       PaintLayer_ImageStyle,
     };
 
-    virtual ~AbstractPaintLayer() {};
-    virtual AbstractPaintLayer *Clone() const = 0; //Virtual Constructor Idiom
+    AbstractPaintLayer ();
+    virtual ~AbstractPaintLayer ();
+    virtual AbstractPaintLayer *Clone () const = 0; //Virtual Constructor Idiom
 
     virtual void Renderlayer (GraphicsEngine &GfxContext) = 0;
 
-    virtual void SetGeometry (const Geometry &geo)
-    {
-      m_geometry = geo;
-    }
-    Geometry GetGeometry() const
-    {
-      return m_geometry;
-    }
+    virtual void SetGeometry (const Geometry &geo);
+
+    //! Preserve the model view matrix at the moment layer is pushed on the paint layer stack. See Painter class.
+    void SetModelViewMatrix (const Matrix4 &mat);
+
+    Matrix4 GetModelViewMatrix ();
+
+    Geometry GetGeometry() const;
 
   protected:
-    Geometry m_geometry;
+    Geometry _geometry;
+    Matrix4  _model_view_matrix;
   };
 
 }

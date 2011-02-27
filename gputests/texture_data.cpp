@@ -109,7 +109,6 @@ void RenderTexturePowerOfTwo ()
       m_GraphicsContext->DisableAllTextureMode(1);
       m_GraphicsContext->DisableAllTextureMode(2);
       m_GraphicsContext->DisableAllTextureMode(3);
-      m_GraphicsContext->SetEnvModeSelectTexture(GL_TEXTURE0);
       m_GraphicsContext->GetWindowSize(w, h);
       m_GraphicsContext->SetViewport(0, 0, w, h);
       m_GraphicsContext->SetScissor(0, 0, w, h);

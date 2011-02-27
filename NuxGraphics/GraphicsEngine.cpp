@@ -40,6 +40,95 @@
 namespace nux
 {
 
+  BlendOperator::BlendOperator ()
+  {
+    _enable = true;
+    _src_blend = GL_ONE;
+    _dst_blend = GL_ONE_MINUS_SRC_ALPHA;
+  }
+
+  BlendOperator::~BlendOperator ()
+  {
+    _enable = true;
+    _src_blend = GL_ONE;
+    _dst_blend = GL_ONE_MINUS_SRC_ALPHA;
+  }
+
+  void BlendOperator::EnableBlending (bool enable)
+  {
+    _enable = enable;
+  }
+
+  void BlendOperator::SetPorterDuffOperator (PorterDuffOperator op)
+  {
+    switch (op)
+    {
+    case CLEAR:
+      _src_blend = GL_ZERO;
+      _dst_blend = GL_ZERO;
+      break;
+    case SRC:
+      _src_blend = GL_ONE;
+      _dst_blend = GL_ZERO;
+      break;
+    case DST:
+      _src_blend = GL_ZERO;
+      _dst_blend = GL_ONE;
+      break;
+    case SRC_OVER:
+      _src_blend = GL_ONE;
+      _dst_blend = GL_ONE_MINUS_SRC_ALPHA;
+      break;
+    case DST_OVER:
+      _src_blend = GL_ONE_MINUS_DST_ALPHA;
+      _dst_blend = GL_ONE;
+      break;
+    case SRC_IN:
+      _src_blend = GL_DST_ALPHA;
+      _dst_blend = GL_ZERO;
+      break;
+    case DST_IN:
+      _src_blend = GL_ZERO;
+      _dst_blend = GL_SRC_ALPHA;
+      break;
+    case SRC_OUT:
+      _src_blend = GL_ONE_MINUS_DST_ALPHA;
+      _dst_blend = GL_ZERO;
+      break;
+    case DST_OUT:
+      _src_blend = GL_ZERO;
+      _dst_blend = GL_ONE_MINUS_SRC_ALPHA;
+      break;
+    case SRC_ATOP:
+      _src_blend = GL_DST_ALPHA;
+      _dst_blend = GL_ONE_MINUS_SRC_ALPHA;
+      break;
+    case DST_ATOP:
+      _src_blend = GL_ONE_MINUS_DST_ALPHA;
+      _dst_blend = GL_SRC_ALPHA;
+      break;
+    case XOR:
+      _src_blend = GL_ONE_MINUS_DST_ALPHA;
+      _dst_blend = GL_ONE_MINUS_SRC_ALPHA;
+      break;
+    case PLUS:
+      _src_blend = GL_ONE;
+      _dst_blend = GL_ONE;
+      break;
+    default:
+      // Use SRC_OVER
+      _src_blend = GL_ONE;
+      _dst_blend = GL_ONE_MINUS_SRC_ALPHA;
+      break;
+    }
+  }
+
+  void BlendOperator::SetCustomBlendOperator (unsigned int src_blend, unsigned int dst_blend)
+  {
+
+  }
+
+
   ROPConfig ROPConfig::Default;
   ROPConfig::ROPConfig()
   {
@@ -55,10 +144,13 @@ namespace nux
   GraphicsEngine::GraphicsEngine (GraphicsDisplay &GlWindow, bool create_rendering_data)
     :   _graphics_display (GlWindow)
   {
-    m_ScissorX = 0;
-    m_ScissorY = 0;
-    m_ScissorXOffset = 0;
-    m_ScissorYOffset = 0;
+    _scissor.x = 0;
+    _scissor.y = 0;
+    _clip_offset_x = 0;
+    _clip_offset_y = 0;
+
+//     m_ScissorXOffset = 0;
+//     m_ScissorYOffset = 0;
     _font_renderer = 0;
 
     _use_glsl_shaders = false;
@@ -68,8 +160,8 @@ namespace nux
     GlWindow.m_GraphicsContext = this;
     ResetStats();
 
-    m_ProjectionMatrix.Identity();
-    m_ModelViewMatrix.Identity();
+    _projection_matrix.Identity();
+    _model_view_matrix.Identity();
 
     ResourceCache.InitializeResourceFactories();
 
@@ -80,15 +172,14 @@ namespace nux
 
     SetViewport (0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight() );
     SetScissor (0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight() );
-    SetScissorOffset (0, 0);
     EnableScissoring (true);
 
     if (create_rendering_data)
     {
 #ifndef NUX_OPENGLES_20
       if (UsingGLSLCodePath () &&
-        GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
-        GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader())
+        GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader () &&
+        GetGpuDevice ()->GetGpuInfo ().Support_ARB_Vertex_Shader ())
       {
         InitSlColorShader();
         InitSlTextureShader();
@@ -386,32 +477,32 @@ namespace nux
 //////////////////////
 // DRAW CLIPPING    //
 //////////////////////
-  void GraphicsEngine::PushClippingRectangle (Rect A)
+  void GraphicsEngine::PushClippingRectangle (Rect rect)
   {
     if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
     {
       // There is an active framebuffer set. Push the clipping rectangles to that fbo clipping stack.
-      _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->PushClippingRegion (A);
+      _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->PushClippingRegion (rect);
       return;
     }
 
-    A.OffsetPosition (m_CurrrentContext.x, m_CurrrentContext.y);
+    Rect r0 = ModelViewXFormRect(rect);
 
-    Rect B;
-    UINT stacksize = (UINT) ClippingRect.size();
-    INT x0, y0, x1, y1;
+    Rect r1;
+    unsigned int stacksize = (unsigned int) ClippingRect.size();
+    int x0, y0, x1, y1;
 
     int window_width, window_height;
-    window_width = m_ViewportWidth;
-    window_height = m_ViewportHeight;
+    window_width = _viewport.width;
+    window_height = _viewport.height;
 
     if (stacksize == 0)
     {
-      B = Rect (0, 0, window_width, window_height);
+      r1 = Rect (0, 0, window_width, window_height);
     }
     else
     {
-      B = ClippingRect[stacksize-1];
+      r1 = ClippingRect[stacksize-1];
     }
 
 //    http://www.codecomments.com/archive263-2004-12-350347.html
@@ -422,23 +513,27 @@ namespace nux
 //        intersect.Bottom = min(a.Bottom, b.Bottom);
 //    And the intersection is empty unless intersect.Right > intersect.Left && intersect.Bottom > intersect.Top
 
-    x0 = Max (A.x, B.x);
-    y0 = Max (A.y, B.y);
-    x1 = Min (A.x + A.width, B.x + B.width);
-    y1 = Min (A.y + A.height, B.y + B.height);
+    x0 = Max (r0.x, r1.x);
+    y0 = Max (r0.y, r1.y);
+    x1 = Min (r0.x + r0.width, r1.x + r1.width);
+    y1 = Min (r0.y + r0.height, r1.y + r1.height);
+
+    Rect r = r0.Intersect (r1);
 
     if ( (x1 > x0) && (y1 > y0) )
     {
+      _clipping_rect = Rect (x0, y0, x1 - x0, y1 - y0);
       ClippingRect.push_back (Rect (x0, y0, x1 - x0, y1 - y0) );
 
       EnableScissoring (true);
-      SetDrawClippingRegion (x0, window_height - y0 - (y1 - y0), x1 - x0, y1 - y0);
+      SetOpenGLClippingRectangle (x0, window_height - y0 - (y1 - y0), x1 - x0, y1 - y0);
     }
     else
     {
-      ClippingRect.push_back (Rect (0, 0, 0, 0) );
+      _clipping_rect = Rect (0, 0, 0, 0);
+      ClippingRect.push_back (_clipping_rect);
       EnableScissoring (true);
-      SetDrawClippingRegion (0, 0, 0, 0);
+      SetOpenGLClippingRectangle (0, 0, 0, 0);
     }
   }
 
@@ -450,23 +545,21 @@ namespace nux
       return;
     }
 
-    INT window_width, window_height;
-    window_width = m_ViewportWidth;
-    window_height = m_ViewportHeight;
-
     ClippingRect.pop_back();
-    UINT stacksize = (UINT) ClippingRect.size();
+    unsigned int stacksize = (unsigned int) ClippingRect.size();
 
     if (stacksize == 0)
     {
+      _clipping_rect = Rect (0, 0, _viewport.width, _viewport.height);
       EnableScissoring (true);
-      SetDrawClippingRegion (0, 0, window_width, window_height);
+      SetOpenGLClippingRectangle (0, 0, _viewport.width, _viewport.height);
     }
     else
     {
-      Rect B = ClippingRect[stacksize-1];
+      _clipping_rect = ClippingRect [stacksize-1];
+      Rect B = _clipping_rect;
       EnableScissoring (true);
-      SetDrawClippingRegion (B.x, window_height - B.y - B.GetHeight(), B.GetWidth(), B.GetHeight() );
+      SetOpenGLClippingRectangle (B.x, _viewport.height - B.y - B.GetHeight(), B.GetWidth(), B.GetHeight() );
     }
   }
 
@@ -478,22 +571,20 @@ namespace nux
       return;
     }
 
-    INT window_width, window_height;
-    window_width = m_ViewportWidth;
-    window_height = m_ViewportHeight;
-
-    UINT stacksize = (UINT) ClippingRect.size();
+    unsigned int stacksize = (unsigned int) ClippingRect.size();
 
     if (stacksize == 0)
     {
+      _clipping_rect = Rect (0, 0, _viewport.width, _viewport.height);
       EnableScissoring (true);
-      SetDrawClippingRegion (0, 0, window_width, window_height);
+      SetOpenGLClippingRectangle (0, 0, _viewport.width, _viewport.height);
     }
     else
     {
-      Rect B = ClippingRect[stacksize-1];
+      _clipping_rect = ClippingRect[stacksize-1];
+      Rect B = _clipping_rect;
       EnableScissoring (true);
-      SetDrawClippingRegion (B.x, window_height - B.y - B.GetHeight(), B.GetWidth(), B.GetHeight() );
+      SetOpenGLClippingRectangle (B.x, _viewport.height - B.y - B.GetHeight(), B.GetWidth(), B.GetHeight() );
     }
   }
 
@@ -505,13 +596,11 @@ namespace nux
       return;
     }
 
-    INT window_width, window_height;
-    window_width = m_ViewportWidth;
-    window_height = m_ViewportHeight;
     ClippingRect.clear();
     {
+      _clipping_rect = Rect (0, 0, _viewport.width, _viewport.height);
       EnableScissoring (true);
-      SetDrawClippingRegion (0, 0, window_width, window_height);
+      SetOpenGLClippingRectangle (0, 0, _viewport.width, _viewport.height);
     }
   }
 
@@ -523,17 +612,31 @@ namespace nux
       return r;      
     }
 
-    UINT stacksize = (UINT) ClippingRect.size();
+    return _clipping_rect;
 
-    if (stacksize == 0)
-    {
-      return Rect (0, 0, m_ViewportWidth, m_ViewportHeight);
-    }
-    else
-    {
-      Rect r = ClippingRect[stacksize-1];
-      return r;
-    }
+//     unsigned int stacksize = (unsigned int) ClippingRect.size();
+// 
+//     if (stacksize == 0)
+//     {
+//       return Rect (0, 0, _viewport.width, _viewport.height);
+//     }
+//     else
+//     {
+//       Rect r = ClippingRect[stacksize-1];
+//       return r;
+//     }
+  }
+
+  void GraphicsEngine::SetClippingRectangle (const Rect &rect)
+  {
+    _clipping_rect = rect;
+    SetScissor (rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
+  }
+
+  void GraphicsEngine::SetOpenGLClippingRectangle (int x, int y, unsigned int width, unsigned int height)
+  {
+    //_clipping_rect = Rect (x, y, width, height);
+    SetScissor (x, y, width, height);
   }
 
   int GraphicsEngine::GetNumberOfClippingRegions () const
@@ -547,9 +650,45 @@ namespace nux
     return (int) ClippingRect.size();
   }
 
-  void GraphicsEngine::SetDrawClippingRegion (int x, int y, unsigned int width, unsigned int height)
+  void GraphicsEngine::AddClipOffset (int x, int y)
   {
-    SetScissor (x, y, width, height);
+    PushClipOffset (x, y);
+  }
+
+  void GraphicsEngine::PushClipOffset (int x, int y)
+  {
+    _clip_offset_stack.push_back (Point (x, y));
+
+    _clip_offset_x = 0;
+    _clip_offset_y = 0;
+
+    std::list<Point>::iterator it;
+    for (it = _clip_offset_stack.begin (); it != _clip_offset_stack.end (); it++)
+    {
+      _clip_offset_x += (*it).x;
+      _clip_offset_y += (*it).y;
+    }
+  }
+
+  void GraphicsEngine::PopClipOffset ()
+  {
+    if (_clip_offset_stack.size () == 0)
+    {
+      _clip_offset_x = 0;
+      _clip_offset_y = 0;
+    }
+
+    _clip_offset_stack.pop_back();
+
+    _clip_offset_x = 0;
+    _clip_offset_y = 0;
+
+    std::list<Point>::iterator it;
+    for (it = _clip_offset_stack.begin (); it != _clip_offset_stack.end (); it++)
+    {
+      _clip_offset_x += (*it).x;
+      _clip_offset_y += (*it).y;
+    }
   }
 
 ///////////////////
@@ -590,51 +729,40 @@ namespace nux
   void GraphicsEngine::Push2DWindow (int w, int h)
   {
 #ifndef NUX_OPENGLES_20
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     {
-      m_ModelViewMatrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
+      _model_view_matrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
       for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
       {
-        temp = m_ModelViewMatrix;
-        m_ModelViewMatrix = temp * (*it);
+        temp = _model_view_matrix;
+        _model_view_matrix = temp * (*it);
       }
 
-      // m_ModelViewMatrix is row_major while opengl is column major. We need to transpose.
-      m_ModelViewMatrix.Transpose();
-      CHECKGL ( glLoadMatrixf ( (GLfloat *) (m_ModelViewMatrix.m) ) );
     }
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
+
     {
-      m_ProjectionMatrix.Orthographic (0, w, h, 0, -1.0f, 1.0f);
-      // m_ProjectionMatrix is row_major while opengl is column major. We need to transpose.
-      m_ProjectionMatrix.Transpose();
-      CHECKGL ( glLoadMatrixf ( (GLfloat *) (m_ProjectionMatrix.m) ) );
+      _projection_matrix.Orthographic (0, w, h, 0, -1.0f, 1.0f);
     }
 #else
     // ModelView
     {
-      m_ModelViewMatrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
+      _model_view_matrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
       for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
       {
-        temp = m_ModelViewMatrix;
-        m_ModelViewMatrix = temp * (*it);
+        temp = _model_view_matrix;
+        _model_view_matrix = temp * (*it);
       }
 
-      // m_ModelViewMatrix is row_major while opengl is column major. We need to transpose.
-      m_ModelViewMatrix.Transpose();
     }
 
     // Projection
     {
-      m_ProjectionMatrix.Orthographic (0, w, h, 0, -1.0f, 1.0f);
-      // m_ProjectionMatrix is row_major while opengl is column major. We need to transpose.
-      m_ProjectionMatrix.Transpose();
+      _projection_matrix.Orthographic (0, w, h, 0, -1.0f, 1.0f);
     }
 #endif
   }
@@ -661,20 +789,16 @@ namespace nux
   {
     m_2DModelViewMatricesStack.push_back (mat);
     {
-      CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-      m_ModelViewMatrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
+      _model_view_matrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
       for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
       {
-        temp = m_ModelViewMatrix;
-        m_ModelViewMatrix = (*it) * temp;
+        temp = _model_view_matrix;
+        _model_view_matrix = (*it) * temp;
       }
 
-      // m_ModelViewMatrix is row_major while opengl is column major. We need to transpose.
-      m_ModelViewMatrix.Transpose();
-      CHECKGL ( glLoadMatrixf ( (GLfloat *) (m_ModelViewMatrix.m) ) );
     }
   }
 
@@ -693,20 +817,15 @@ namespace nux
     m_2DModelViewMatricesStack.pop_back();
 
     {
-      CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-      m_ModelViewMatrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
+      _model_view_matrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
       for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
       {
-        temp = m_ModelViewMatrix;
-        m_ModelViewMatrix = temp * (*it);
+        temp = _model_view_matrix;
+        _model_view_matrix = temp * (*it);
       }
-
-      // m_ModelViewMatrix is row_major while opengl is column major. We need to transpose.
-      m_ModelViewMatrix.Transpose();
-      CHECKGL ( glLoadMatrixf ( (GLfloat *) (m_ModelViewMatrix.m) ) );
     }
     return Mat;
   }
@@ -716,111 +835,198 @@ namespace nux
     m_2DModelViewMatricesStack.clear();
 
     {
-      CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-      m_ModelViewMatrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
+      _model_view_matrix.Translate (m_CurrrentContext.x + RASTERIZATION_OFFSET, m_CurrrentContext.y + RASTERIZATION_OFFSET, 0);
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
       for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
       {
-        temp = m_ModelViewMatrix;
-        m_ModelViewMatrix = temp * (*it);
+        temp = _model_view_matrix;
+        _model_view_matrix = temp * (*it);
       }
-
-      // m_ModelViewMatrix is row_major while opengl is column major. We need to transpose.
-      m_ModelViewMatrix.Transpose();
-      CHECKGL ( glLoadMatrixf ( (GLfloat *) (m_ModelViewMatrix.m) ) );
     }
   }
 
-  Matrix4 GraphicsEngine::GetProjectionMatrix()
+  void GraphicsEngine::PushIdentityModelViewMatrix ()
   {
-    return m_ProjectionMatrix;
+    _model_view_stack.push_back (Matrix4::IDENTITY ());
+
+    _model_view_matrix = Matrix4::IDENTITY ();
+
+    std::list<Matrix4>::iterator it;
+    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    {
+      _model_view_matrix = (*it) * _model_view_matrix;
+    }
   }
 
-  Matrix4 GraphicsEngine::GetModelViewMatrix()
+  void GraphicsEngine::PushModelViewMatrix (const Matrix4 &matrix)
   {
-    return m_ModelViewMatrix;
+    _model_view_stack.push_back (matrix);
+
+    _model_view_matrix = Matrix4::IDENTITY ();
+    
+    std::list<Matrix4>::iterator it;
+    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    {
+      _model_view_matrix = (*it) * _model_view_matrix;
+    }
   }
 
-  Matrix4 GraphicsEngine::GetModelViewProjectionMatrix()
+  void GraphicsEngine::Push2DTranslationModelViewMatrix (float tx, float ty, float tz)
   {
-    return m_ModelViewMatrix * m_ProjectionMatrix;
+    Matrix4 temp;
+    temp.Translate (tx, ty, tz);
+
+    PushModelViewMatrix (temp);
   }
 
-  Matrix4 GraphicsEngine::GetOpenGLModelViewProjectionMatrix()
+  bool GraphicsEngine::PopModelViewMatrix ()
+  {
+    if (_model_view_stack.size () == 0)
+    {
+      _model_view_matrix = Matrix4::IDENTITY ();
+      return false;
+    }
+
+    _model_view_stack.pop_back();
+
+    _model_view_matrix = Matrix4::IDENTITY ();
+    std::list<Matrix4>::iterator it;
+    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    {
+      _model_view_matrix = (*it) * _model_view_matrix;
+    }
+
+    return true;
+  }
+
+  void GraphicsEngine::ResetModelViewMatrixStack ()
+  {
+    _model_view_stack.clear ();
+    _model_view_matrix = Matrix4::IDENTITY ();
+  }
+
+  void GraphicsEngine::SetModelViewMatrix (const Matrix4 &matrix)
+  {
+    _model_view_matrix = matrix;
+  }
+
+  void GraphicsEngine::ApplyModelViewMatrix ()
+  {
+    _model_view_matrix = Matrix4::IDENTITY ();
+
+    std::list<Matrix4>::iterator it;
+    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    {
+      _model_view_matrix = (*it) * _model_view_matrix;
+    }
+  }
+
+  Rect GraphicsEngine::ModelViewXFormRect (const Rect& rect)
+  {
+    Vector4 v0 (rect.x, rect.y, 0.0f, 1.0f);
+    Vector4 v1 = _model_view_matrix * v0;
+    Rect r (v1.x, v1.y, rect.width, rect.height);
+    return r;
+  }
+
+  int GraphicsEngine::ModelViewStackDepth ()
+  {
+    return (int)_model_view_stack.size ();
+  }
+
+  void GraphicsEngine::PushPorterDuffBlend (const PorterDuffOperator &porter_duff_op)
+  {
+    BlendOperator blend_op;
+    blend_op.SetPorterDuffOperator (porter_duff_op);
+
+    _blend_stack.push_front (blend_op);
+
+    GetRenderStates ().SetBlend (blend_op._enable, blend_op._src_blend, blend_op._dst_blend);
+  }
+
+  void GraphicsEngine::PushDisableBlend ()
+  {
+    BlendOperator blend_op;
+    blend_op.EnableBlending (false);
+
+    _blend_stack.push_front (blend_op);
+
+    GetRenderStates ().SetBlend (blend_op._enable);
+  }
+
+  bool GraphicsEngine::PopBlend ()
+  {
+    if (_blend_stack.size () == 0)
+    {
+      GetRenderStates ().SetBlend (false, GL_ONE, GL_ZERO);
+      return false;
+    }
+
+    _blend_stack.pop_front ();
+    
+    BlendOperator blend_op = (*_blend_stack.begin ());
+    GetRenderStates ().SetBlend (blend_op._enable, blend_op._src_blend, blend_op._dst_blend);
+
+    return true;
+  }
+
+  int GraphicsEngine::BlendStackDepth ()
+  {
+    return (int) _blend_stack.size ();
+  }
+
+  Matrix4 GraphicsEngine::GetProjectionMatrix ()
+  {
+    return _projection_matrix;
+  }
+
+  Matrix4 GraphicsEngine::GetOpenGLProjectionMatrix ()
+  {
+    Matrix4 mat = GetProjectionMatrix ();
+    mat.Transpose ();
+    return mat;
+  }
+
+  void GraphicsEngine::SetProjectionMatrix (const Matrix4 &matrix)
+  {
+    _projection_matrix = matrix;
+  }
+
+  void GraphicsEngine::SetOrthographicProjectionMatrix (int viewport_width, int viewport_height)
+  {
+    _projection_matrix.Orthographic (0, viewport_width, viewport_height, 0, -1.0f, 1.0f);
+  }
+
+  void GraphicsEngine::ResetProjectionMatrix ()
+  {
+    _projection_matrix = Matrix4::IDENTITY ();
+  }
+
+  Matrix4 GraphicsEngine::GetModelViewMatrix ()
+  {
+    return _model_view_matrix;
+  }
+
+  Matrix4 GraphicsEngine::GetOpenGLModelViewMatrix ()
+  {
+    Matrix4 mat = _model_view_matrix;
+    mat.Transpose ();
+    return mat;
+  }
+
+  Matrix4 GraphicsEngine::GetModelViewProjectionMatrix ()
+  {
+    return _projection_matrix * _model_view_matrix;
+  }
+
+  Matrix4 GraphicsEngine::GetOpenGLModelViewProjectionMatrix ()
   {
     // This matrix is the transposed version of GetModelViewProjectionMatrix.
-    return m_ModelViewMatrix * m_ProjectionMatrix;
-  }
-
-  void GraphicsEngine::SetEnvModeTextureAlphaBlend (int TextureUnit)
-  {
-    // Render RGBA bitmap texture and alpha blend with the background
-    // Make sure you call EnableBlending(bool b) before.
-    CHECKGL ( glActiveTextureARB (TextureUnit) );
-    //glEnable(GL_BLEND);
-    CHECKGL ( glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
-    // TextureEnvironment
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB) );
-    // RGB
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_REPLACE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_TEXTURE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR) );
-    // ALPHA
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_REPLACE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, GL_TEXTURE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA) );
-  }
-
-  void GraphicsEngine::SetEnvModeSelectTexture (int TextureUnit)
-  {
-    // Render RGBA bitmap texture.
-    CHECKGL ( glActiveTextureARB (TextureUnit) );
-    // TextureEnvironment
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB) );
-    // RGB
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_REPLACE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_TEXTURE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR) );
-    // ALPHA
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_REPLACE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, GL_TEXTURE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA) );
-  }
-
-  void GraphicsEngine::SetEnvModeSelectColor (int TextureUnit)
-  {
-    // Render the color;
-    CHECKGL ( glActiveTextureARB (TextureUnit) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB) );
-    // RGB
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_REPLACE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_PRIMARY_COLOR) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR) );
-    // ALPHA
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_REPLACE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, GL_PRIMARY_COLOR) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA) );
-  }
-
-  void GraphicsEngine::SetEnvModeModulateColorWithTexture (int TextureUnit)
-  {
-    // Render RGBA bitmat texture and alpha blend with the background
-    CHECKGL ( glActiveTextureARB (TextureUnit) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB) );
-    // RGB
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_PRIMARY_COLOR) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_TEXTURE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR) );
-    // ALPHA
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_TEXTURE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_TEXTURE) );
-    CHECKGL ( glTexEnvi (GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA) );
+    Matrix4 mat = _projection_matrix * _model_view_matrix;
+    mat.Transpose();
+    return mat;
   }
 
   void GraphicsEngine::SetViewport (int origin_x, int origin_y, int w, int h)
@@ -828,64 +1034,96 @@ namespace nux
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
 
-    m_ViewportX = origin_x;
-    m_ViewportY = origin_y;
-    m_ViewportWidth = w;
-    m_ViewportHeight = h;
+    _viewport.x = origin_x;
+    _viewport.y = origin_y;
+    _viewport.width = w;
+    _viewport.height = h;
 
-    if (m_ViewportWidth < 0)
+    if (_viewport.width < 0)
     {
       nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
-      m_ViewportWidth = 1;
+      _viewport.width = 1;
     }
 
-    if (m_ViewportHeight < 0)
+    if (_viewport.height < 0)
     {
       nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
-      m_ViewportHeight = 1;
+      _viewport.height = 1;
     }
 
-    CHECKGL ( glViewport (origin_x, origin_y, m_ViewportWidth, m_ViewportHeight) );
+    CHECKGL ( glViewport (origin_x, origin_y, _viewport.width, _viewport.height) );
   }
 
-  Rect GraphicsEngine::GetViewportRect()
+//   Rect GraphicsEngine::GetViewportRect()
+//   {
+//     return Rect (_viewport.x, _viewport.y, _viewport.width, _viewport.height);
+//   }
+  
+  Rect GraphicsEngine::GetViewportRect () const
   {
-    return Rect (m_ViewportX, m_ViewportY, m_ViewportWidth, m_ViewportHeight);
+    return _viewport;
+  }
+
+  int  GraphicsEngine::GetViewportWidth () const
+  {
+    return _viewport.width;
+  }
+
+  int  GraphicsEngine::GetViewportHeight () const
+  {
+    return _viewport.height;
+  }
+
+  int GraphicsEngine::GetViewportX () const
+  {
+    return _viewport.x;
+  }
+
+  int GraphicsEngine::GetViewportY () const
+  {
+    return _viewport.y;
+  }
+
+  void  GraphicsEngine::GetViewportSize (int &viewport_width, int &viewport_height) const
+  {
+    viewport_width = _viewport.width;
+    viewport_height = _viewport.height;
   }
 
   void GraphicsEngine::SetScissorOffset (int x, int y)
   {
-    m_ScissorXOffset = x;
-    m_ScissorYOffset = y;
+    nuxAssertMsg (0, TEXT("[GraphicsEngine::SetScissorOffset] SetScissorOffset is deprecated."));
+//     m_ScissorXOffset = x;
+//     m_ScissorYOffset = y;
   }
 
   void GraphicsEngine::SetScissor (int x, int y, int w, int h)
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
-    m_ScissorX = x;
-    m_ScissorY = y;
-    m_ScissorWidth = w;
-    m_ScissorHeight = h;
+    _scissor.x = x;
+    _scissor.y = y;
+    _scissor.width = w;
+    _scissor.height = h;
 
-    if (m_ScissorWidth < 0)
+    if (_scissor.width < 0)
     {
       nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
-      m_ScissorWidth = 1;
+      _scissor.width = 1;
     }
 
-    if (m_ScissorHeight < 0)
+    if (_scissor.height < 0)
     {
       nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
-      m_ScissorHeight = 1;
+      _scissor.height = 1;
     }
 
-    CHECKGL ( glScissor (m_ScissorX + m_ScissorXOffset, m_ScissorY + m_ScissorYOffset, m_ScissorWidth, m_ScissorHeight) );
+    CHECKGL ( glScissor (_scissor.x /*+ m_ScissorXOffset*/, _scissor.y /*+ m_ScissorYOffset*/, _scissor.width, _scissor.height) );
   }
 
   Rect GraphicsEngine::GetScissorRect()
   {
-    return Rect (m_ScissorX, m_ScissorY, m_ScissorWidth, m_ScissorHeight);
+    return Rect (_scissor.x, _scissor.y, _scissor.width, _scissor.height);
   }
 
   void GraphicsEngine::EnableScissoring (bool b)

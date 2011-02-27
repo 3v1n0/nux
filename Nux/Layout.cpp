@@ -65,10 +65,41 @@ namespace nux
     std::list<Area *>::iterator it;
     it = std::find (_layout_element_list.begin(), _layout_element_list.end(), bo);
 
+    if ((*it)->GetFocused ())
+    {
+      // the child was focused, oh dear. lets handle that gracefully
+      if (_layout_element_list.size() > 1)
+      {
+        if (it == _layout_element_list.end ())
+        {
+          FocusPreviousChild ((*it));
+        }
+        else
+        {
+          FocusNextChild ((*it));
+        }
+      }
+    }
+
     if (it != _layout_element_list.end())
     {
       bo->UnParentObject();
       _layout_element_list.erase (it);
+    }
+
+    if (IsEmpty ())
+    {
+      // we are now empty, so we need to handle our focus state
+      Area *area = GetParentObject ();
+      if (area == NULL)
+        return;
+
+
+      if (area->IsLayout ())
+      {
+        Layout *parent = (Layout *)area;
+        parent->SetFocused (true);
+      }
     }
   }
 
@@ -138,7 +169,7 @@ namespace nux
     NUX_RETURN_IF_TRUE (parent != 0);
 
     layout->SetStretchFactor (stretchFactor);
-    layout->setPositioning (minor_position);
+    layout->SetPositioning (minor_position);
     layout->SetExtend (minor_size);
 
     if (percentage < 1.0f)
@@ -204,7 +235,7 @@ namespace nux
     NUX_RETURN_IF_TRUE (parent != 0);
 
     bo->SetStretchFactor (stretchFactor);
-    bo->setPositioning (minor_position);
+    bo->SetPositioning (minor_position);
     bo->SetExtend (minor_size);
 
     if (percentage < 1.0f)
@@ -461,12 +492,7 @@ namespace nux
     g_debug ("PROPAGATING UP MO'FOs!!!");
 
     long ret = 0;
-    if ( area->IsArea() )
-    {
-      CoreArea *a = NUX_STATIC_CAST (CoreArea *, area );
-      ret = a->OnEvent (ievent, ret, ProcessEventInfo);
-    }
-    else if ( area->IsView() )
+    if ( area->IsView() )
     {
       View *ic = NUX_STATIC_CAST (View *, area );
       ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
@@ -597,20 +623,21 @@ namespace nux
       if (!(*it)->IsVisible () || !(*it)->IsSensitive ())
         continue;
 
-      if ( (*it)->IsArea() )
+      if ((*it)->IsView())
       {
-        CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
-        ret = area->OnEvent (ievent, ret, ProcessEventInfo);
-      }
-      else if ( (*it)->IsView() )
-      {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = NUX_STATIC_CAST (View*, (*it));
         ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
       }
       else if ( (*it)->IsLayout() )
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+        Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
         ret = layout->ProcessEvent (ievent, ret, ProcessEventInfo);
+      }
+      // InputArea should be tested last
+      else if ((*it)->IsInputArea())
+      {
+        InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
+        ret = input_area->OnEvent (ievent, ret, ProcessEventInfo);
       }
     }
 
@@ -624,27 +651,37 @@ namespace nux
   {
     std::list<Area *>::iterator it;
 
+    //GfxContext.PushClipOffset (_delta_x, _delta_y);
+    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+    GfxContext.PushClippingRectangle (GetGeometry ());
+
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if (!(*it)->IsVisible ())
         continue;
 
-      if ( (*it)->IsArea() )
+      if ((*it)->IsView())
       {
-        CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
-        area->OnDraw (GfxContext, force_draw);
-      }
-      else if ( (*it)->IsView() )
-      {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = NUX_STATIC_CAST (View*, (*it));
         ic->ProcessDraw (GfxContext, force_draw);
       }
-      else if ( (*it)->IsLayout() )
+      else if ((*it)->IsLayout())
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+        Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
         layout->ProcessDraw (GfxContext, force_draw);
       }
+      // InputArea should be tested last
+      else if ((*it)->IsInputArea())
+      {
+        InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
+        input_area->OnDraw (GfxContext, force_draw);
+      }
     }
+
+    GfxContext.PopClippingRectangle ();
+    GfxContext.PopModelViewMatrix ();
+
+    //GfxContext.PopClipOffset ();
 
     _queued_draw = false;
   }
@@ -661,11 +698,7 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ((*it)->IsArea ())
-      {
-        // Does not have the flag for need redraw.
-      }
-      else if ((*it)->IsView ())
+      if ((*it)->IsView ())
       {
         View *ic = NUX_STATIC_CAST (View *, (*it));
         ic->NeedRedraw ();
@@ -780,6 +813,7 @@ namespace nux
         Layout *parent_layout = (Layout *)parent;
         parent_layout->SetFocusControl (false);
       }
+      FocusFirstChild ();
     }
   }
 

@@ -35,104 +35,106 @@ namespace nux
 
   Area::Area (NUX_FILE_LINE_DECL)
     :   InitiallyUnownedObject (NUX_FILE_LINE_PARAM)
-    ,   m_IsSizeDirty (true)
-    ,   m_ParentObject (0)
-    ,   m_layout_properties (NULL)
-    ,   m_visible (true)
-    ,   m_sensitive (true)
-    ,   m_Application (0)
-    ,   m_Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
-    ,   m_minSize (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
-    ,   m_maxSize (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
-    ,   m_stretchfactor (1)
     ,   _is_focused (0)
+    ,   _geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
+    ,   _min_size (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
+    ,   _max_size (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
   {
+    _parent_area = NULL;
+    _stretch_factor = 1;
+    _layout_properties = NULL;
+    _visible = true;
+    _sensitive = true;
+
+    _2d_xform.Identity ();
+    _3d_xform.Identity ();
+    _3d_area = false;
   }
 
 
   Area::~Area()
   {
-    if (m_layout_properties)
-      delete m_layout_properties;
+    if (_layout_properties)
+      delete _layout_properties;
   }
 
   const NString &Area::GetBaseString() const
   {
-    return m_BaseString;
+    return _base_string;
   }
 
   void Area::SetBaseString (const TCHAR *Caption)
   {
-    m_BaseString = Caption;
+    _base_string = Caption;
   }
 
   void Area::CheckMinSize()
   {
-    int w = m_minSize.GetWidth();
+    int w = _min_size.GetWidth();
     w = Max<int>(AREA_MIN_WIDTH, w);
-    int h = m_minSize.GetHeight();
+    int h = _min_size.GetHeight();
     h = Max<int>(AREA_MIN_HEIGHT, h);
 
-    m_minSize.SetWidth(w);
-    m_minSize.SetHeight(h);
+    _min_size.SetWidth(w);
+    _min_size.SetHeight(h);
 
-    if (m_minSize.GetWidth() > m_maxSize.GetWidth())
+    if (_min_size.GetWidth() > _max_size.GetWidth())
     {
-      //temp = m_maxSize.GetWidth();
-      m_maxSize.SetWidth (m_minSize.GetWidth());
-      //m_minSize.SetWidth(temp);
+      //temp = _max_size.GetWidth();
+      _max_size.SetWidth (_min_size.GetWidth());
+      //_min_size.SetWidth(temp);
     }
 
-    if (m_minSize.GetHeight() > m_maxSize.GetHeight())
+    if (_min_size.GetHeight() > _max_size.GetHeight())
     {
-      //temp = m_maxSize.GetBaseHeight();
-      m_maxSize.SetHeight (m_minSize.GetHeight());
-      //m_minSize.SetHeight(temp);
+      //temp = _max_size.GetBaseHeight();
+      _max_size.SetHeight (_min_size.GetHeight());
+      //_min_size.SetHeight(temp);
     }
 
-    if (m_Geometry.GetWidth() < m_minSize.GetWidth() )
+    if (_geometry.GetWidth() < _min_size.GetWidth() )
     {
-      m_Geometry.SetWidth (m_minSize.GetWidth() );
+      _geometry.SetWidth (_min_size.GetWidth() );
     }
 
-    if (m_Geometry.GetHeight() < m_minSize.GetHeight() )
+    if (_geometry.GetHeight() < _min_size.GetHeight() )
     {
-      m_Geometry.SetHeight (m_minSize.GetHeight() );
+      _geometry.SetHeight (_min_size.GetHeight() );
     }
   }
 
   void Area::CheckMaxSize()
   {
-    int w = m_maxSize.GetWidth();
+    int w = _max_size.GetWidth();
     w = Min<int>(AREA_MAX_WIDTH, w);
-    int h = m_maxSize.GetHeight();
+    int h = _max_size.GetHeight();
     h = Min<int>(AREA_MAX_HEIGHT, h);
 
-    m_maxSize.SetWidth(w);
-    m_maxSize.SetHeight(h);
+    _max_size.SetWidth(w);
+    _max_size.SetHeight(h);
 
-    if (m_minSize.GetWidth() > m_maxSize.GetWidth() )
+    if (_min_size.GetWidth() > _max_size.GetWidth() )
     {
-      //temp = m_maxSize.GetWidth();
-      m_minSize.SetWidth (m_maxSize.GetWidth() );
-      //m_minSize.SetWidth(temp);
+      //temp = _max_size.GetWidth();
+      _min_size.SetWidth (_max_size.GetWidth() );
+      //_min_size.SetWidth(temp);
     }
 
-    if (m_minSize.GetHeight() > m_maxSize.GetHeight() )
+    if (_min_size.GetHeight() > _max_size.GetHeight() )
     {
-      //temp = m_maxSize.GetBaseHeight();
-      m_minSize.SetHeight (m_maxSize.GetHeight() );
-      //m_minSize.SetHeight(temp);
+      //temp = _max_size.GetBaseHeight();
+      _min_size.SetHeight (_max_size.GetHeight() );
+      //_min_size.SetHeight(temp);
     }
 
-    if (m_Geometry.GetWidth() > m_maxSize.GetWidth() )
+    if (_geometry.GetWidth() > _max_size.GetWidth() )
     {
-      m_Geometry.SetWidth (m_maxSize.GetWidth() );
+      _geometry.SetWidth (_max_size.GetWidth() );
     }
 
-    if (m_Geometry.GetHeight() > m_maxSize.GetHeight() )
+    if (_geometry.GetHeight() > _max_size.GetHeight() )
     {
-      m_Geometry.SetHeight (m_maxSize.GetHeight() );
+      _geometry.SetHeight (_max_size.GetHeight() );
     }
   }
 
@@ -140,8 +142,8 @@ namespace nux
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
-    m_minSize.SetWidth (w);
-    m_minSize.SetHeight (h);
+    _min_size.SetWidth (w);
+    _min_size.SetHeight (h);
 
     CheckMinSize();
 
@@ -152,8 +154,8 @@ namespace nux
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
-    m_maxSize.SetWidth (w);
-    m_maxSize.SetHeight (h);
+    _max_size.SetWidth (w);
+    _max_size.SetHeight (h);
 
     CheckMaxSize();
 
@@ -172,46 +174,46 @@ namespace nux
 
   void Area::ApplyMinWidth()
   {
-    m_Geometry.SetWidth (m_minSize.GetWidth() );
+    _geometry.SetWidth (_min_size.GetWidth() );
 
     InitiateResizeLayout();
   }
 
   void Area::ApplyMinHeight()
   {
-    m_Geometry.SetHeight (m_minSize.GetHeight() );
+    _geometry.SetHeight (_min_size.GetHeight() );
 
     InitiateResizeLayout();
   }
 
   void Area::ApplyMaxWidth()
   {
-    m_Geometry.SetWidth (m_maxSize.GetWidth() );
+    _geometry.SetWidth (_max_size.GetWidth() );
 
     InitiateResizeLayout();
   }
 
   void Area::ApplyMaxHeight()
   {
-    m_Geometry.SetHeight (m_maxSize.GetHeight() );
+    _geometry.SetHeight (_max_size.GetHeight() );
 
     InitiateResizeLayout();
   }
 
   Size Area::GetMinimumSize() const
   {
-    return m_minSize;
+    return _min_size;
   }
 
   Size Area::GetMaximumSize() const
   {
-    return m_maxSize;
+    return _max_size;
   }
 
   void Area::SetMinimumWidth (int w)
   {
     nuxAssert (w >= 0);
-    m_minSize.SetWidth (w);
+    _min_size.SetWidth (w);
     CheckMinSize();
     InitiateResizeLayout();
   }
@@ -219,7 +221,7 @@ namespace nux
   void Area::SetMaximumWidth (int w)
   {
     nuxAssert (w >= 0);
-    m_maxSize.SetWidth (w);
+    _max_size.SetWidth (w);
     CheckMaxSize();
     InitiateResizeLayout();
   }
@@ -227,7 +229,7 @@ namespace nux
   void Area::SetMinimumHeight (int h)
   {
     nuxAssert (h >= 0);
-    m_minSize.SetHeight (h);
+    _min_size.SetHeight (h);
     CheckMinSize();
     InitiateResizeLayout();
   }
@@ -235,40 +237,40 @@ namespace nux
   void Area::SetMaximumHeight (int h)
   {
     nuxAssert (h >= 0);
-    m_maxSize.SetHeight (h);
+    _max_size.SetHeight (h);
     CheckMaxSize();
     InitiateResizeLayout();
   }
 
   int Area::GetMinimumWidth() const
   {
-    return m_minSize.GetWidth();
+    return _min_size.GetWidth();
   }
 
   int Area::GetMaximumWidth() const
   {
-    return m_maxSize.GetWidth();
+    return _max_size.GetWidth();
   }
 
   int Area::GetMinimumHeight() const
   {
-    return m_minSize.GetHeight();
+    return _min_size.GetHeight();
   }
 
   int Area::GetMaximumHeight() const
   {
-    return m_maxSize.GetHeight();
+    return _max_size.GetHeight();
   }
 
   unsigned int Area::GetStretchFactor()
   {
-    return m_stretchfactor;
+    return _stretch_factor;
   }
 
   void Area::SetStretchFactor (unsigned int sf)
   {
     // re implemented by Layout
-    m_stretchfactor = sf;
+    _stretch_factor = sf;
   }
 
   void Area::SetParentObject (Area *bo)
@@ -279,40 +281,60 @@ namespace nux
       return;
     }
 
-    if (m_ParentObject)
+    if (_parent_area)
     {
       nuxAssertMsg (0, TEXT ("[Area::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again.") );
       return;
     }
 
-    m_ParentObject = bo;
+    _parent_area = bo;
     Reference();
   }
 
   void Area::UnParentObject()
   {
-    if (m_ParentObject)
+    if (_parent_area)
     {
-      m_ParentObject = 0;
+      _parent_area = 0;
       UnReference();
     }
   }
 
-  Area *Area::GetParentObject()
+  Area *Area::GetParentObject() const
   {
-    return m_ParentObject;
+    return _parent_area;
+  }
+
+  int Area::GetBaseX     () const
+  {
+    return _geometry.x;
+  }
+
+  int Area::GetBaseY     () const
+  {
+    return _geometry.y;
+  }
+
+  int Area::GetBaseWidth    () const
+  {
+    return _geometry.GetWidth();
+  }
+
+  int Area::GetBaseHeight   () const
+  {
+    return _geometry.GetHeight();
   }
 
   void Area::SetGeometry (int x, int y, int w, int h)
   {
-    h = nux::Clamp<int> (h, m_minSize.GetHeight (), m_maxSize.GetHeight ());
-    w = nux::Clamp<int> (w, m_minSize.GetWidth (), m_maxSize.GetWidth ());
+    h = nux::Clamp<int> (h, _min_size.GetHeight (), _max_size.GetHeight ());
+    w = nux::Clamp<int> (w, _min_size.GetWidth (), _max_size.GetWidth ());
 
-    if (m_Geometry.x == x && m_Geometry.y == y && m_Geometry.width == w && m_Geometry.height == h)
+    if (_geometry.x == x && _geometry.y == y && _geometry.width == w && _geometry.height == h)
       return;
 
     GeometryChangePending ();
-    m_Geometry = nux::Geometry (x, y, w, h);
+    _geometry = nux::Geometry (x, y, w, h);
     InitiateResizeLayout();
     GeometryChanged ();
   }
@@ -322,34 +344,65 @@ namespace nux
     SetGeometry (geo.x, geo.y, geo.width, geo.height);
   }
 
+  Geometry Area::GetGeometry() const
+  {
+    return _geometry;
+  }
+
   void Area::SetBaseX    (int x)
   {
-    SetGeometry (x, m_Geometry.y, m_Geometry.width, m_Geometry.height);
+    SetGeometry (x, _geometry.y, _geometry.width, _geometry.height);
   }
 
   void Area::SetBaseY    (int y)
   {
-    SetGeometry (m_Geometry.x, y, m_Geometry.width, m_Geometry.height);
+    SetGeometry (_geometry.x, y, _geometry.width, _geometry.height);
   }
 
   void Area::SetBaseXY    (int x, int y)
   {
-    SetGeometry (x, y, m_Geometry.width, m_Geometry.height);
+    SetGeometry (x, y, _geometry.width, _geometry.height);
   }
 
   void Area::SetBaseSize (int w, int h)
   {
-    SetGeometry (m_Geometry.x, m_Geometry.y, w, h);
+    SetGeometry (_geometry.x, _geometry.y, w, h);
   }
 
   void Area::SetBaseWidth (int w)
   {
-    SetGeometry (m_Geometry.x, m_Geometry.y, w, m_Geometry.height);
+    SetGeometry (_geometry.x, _geometry.y, w, _geometry.height);
   }
 
   void Area::SetBaseHeight (int h)
   {
-    SetGeometry (m_Geometry.x, m_Geometry.y, m_Geometry.width, h);
+    SetGeometry (_geometry.x, _geometry.y, _geometry.width, h);
+  }
+
+  void Area::IncreaseSize (int x, int y)
+  {
+    _geometry.OffsetPosition (x, y);
+    OnResize.emit (_geometry.x, _geometry.y, _geometry.GetWidth(), _geometry.GetHeight() );
+  }
+
+  long Area::ComputeChildLayout()
+  {
+    return 0;
+  }
+
+  void Area::PositionChildLayout (float offsetX, float offsetY)
+  {
+
+  }
+
+  long Area::ComputeLayout2()
+  {
+    return (eCompliantWidth | eCompliantHeight);
+  }
+
+  void Area::ComputePosition2 (float offsetX, float offsetY)
+  {
+
   }
 
   void Area::InitiateResizeLayout (Area *child)
@@ -387,8 +440,8 @@ namespace nux
           GetWindowThread ()->QueueObjectLayout (ic);
         }
       }
-      else if (ic->m_ParentObject)
-        ic->m_ParentObject->InitiateResizeLayout (this);
+      else if (ic->_parent_area)
+        ic->_parent_area->InitiateResizeLayout (this);
       else
       {
         GetWindowThread ()->QueueObjectLayout (ic);
@@ -405,11 +458,11 @@ namespace nux
 
       Layout *layout = NUX_STATIC_CAST (Layout *, this);
 
-      if (layout->m_ParentObject)
+      if (layout->_parent_area)
       {
-        if (layout->m_ParentObject->Type().IsDerivedFromType (View::StaticObjectType) )
+        if (layout->_parent_area->Type().IsDerivedFromType (View::StaticObjectType) )
         {
-          View *ic = (View *) (layout->m_ParentObject);
+          View *ic = (View *) (layout->_parent_area);
 
           if (ic->CanBreakLayout() )
           {
@@ -428,12 +481,12 @@ namespace nux
           else
           {
             // The parent object of an object of type View is a Layout object type.
-            layout->m_ParentObject->InitiateResizeLayout (this);
+            layout->_parent_area->InitiateResizeLayout (this);
           }
         }
         else
         {
-          layout->m_ParentObject->InitiateResizeLayout (this);
+          layout->_parent_area->InitiateResizeLayout (this);
         }
       }
       else
@@ -444,8 +497,8 @@ namespace nux
     }
     else
     {
-      // The object that is being resized is a CoreArea object.
-      if (this->m_ParentObject)
+      // The object that is being resized is a InputArea object.
+      if (this->_parent_area)
       {
         // The object that is being resized is a View object and it has a parent.
         if (this->OwnsTheReference() == false && this->GetParentObject())
@@ -454,72 +507,309 @@ namespace nux
           this->Reference();
         }
 
-        // The parent object of an object of type CoreArea is a Layout object type.
-        this->m_ParentObject->InitiateResizeLayout (this);
+        // The parent object of an object of type InputArea is a Layout object type.
+        this->_parent_area->InitiateResizeLayout (this);
       }
     }
   }
 
   void Area::RequestBottomUpLayoutComputation (Area *bo_initiator)
   {
-    if (m_ParentObject && m_ParentObject->IsLayout() )
+    if (_parent_area && _parent_area->IsLayout() )
     {
-      m_ParentObject->RequestBottomUpLayoutComputation (bo_initiator);
+      _parent_area->RequestBottomUpLayoutComputation (bo_initiator);
     }
-  }
-
-  Area * Area::GetToplevel ()
-  {
-    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || this == GetWindowThread ()->GetMainLayout ())
-      return this;
-
-    Area * parent = GetParentObject ();
-    if (!parent) //we didn't find a way to salvation!
-      return 0;
-    return parent->GetToplevel ();
   }
 
   void Area::SetLayoutProperties (LayoutProperties *properties)
   {
-    if (m_layout_properties)
-      delete m_layout_properties;
+    if (_layout_properties)
+      delete _layout_properties;
 
-    m_layout_properties = properties;
+    _layout_properties = properties;
   }
 
   Area::LayoutProperties * Area::GetLayoutProperties ()
   {
-    return m_layout_properties;
+    return _layout_properties;
   }
 
   void Area::SetVisible (bool visible)
   {
-    if (m_visible == visible)
+    if (_visible == visible)
       return;
 
-    m_visible = visible;
+    _visible = visible;
 
-    VisibleChanged.emit (this, m_visible);
+    OnVisibleChanged.emit (this, _visible);
   }
 
   bool Area::IsVisible ()
   {
-    return m_visible;
+    return _visible;
   }
 
   void Area::SetSensitive (bool sensitive)
   {
-    if (m_sensitive == sensitive)
+    if (_sensitive == sensitive)
       return;
 
-    m_sensitive = sensitive;
+    _sensitive = sensitive;
 
-    SensitiveChanged.emit (this, m_sensitive);
+    OnSensitiveChanged.emit (this, _sensitive);
   }
 
   bool Area::IsSensitive ()
   {
-    return m_sensitive;
+    return _sensitive;
+  }
+
+  MinorDimensionPosition Area::GetPositioning()
+  {
+    return _positioning;
+  }
+
+  void Area::SetPositioning (MinorDimensionPosition p)
+  {
+    _positioning = p;
+  }
+
+  MinorDimensionSize Area::GetExtend()
+  {
+    return _extend;
+  }
+
+  void Area::SetExtend (MinorDimensionSize ext)
+  {
+    _extend = ext;
+  }
+
+  float Area::GetPercentage()
+  {
+    return _percentage;
+  }
+
+  void Area::SetPercentage (float p)
+  {
+    _percentage = p;
+  }
+
+  bool Area::IsLayoutDone()
+  {
+    return _layout_done;
+  }
+
+  void Area::SetLayoutDone (bool b)
+  {
+    _layout_done = b;
+  }
+
+  bool Area::IsArea() const
+  {
+    return this->Type().IsDerivedFromType(Area::StaticObjectType);;
+  }
+
+  bool Area::IsInputArea() const
+  {
+    return this->Type().IsDerivedFromType(InputArea::StaticObjectType);;
+  }
+
+  bool Area::IsView() const
+  {
+    return this->Type().IsDerivedFromType(View::StaticObjectType);;
+  }
+
+  bool Area::IsLayout() const
+  {
+    return this->Type().IsDerivedFromType(Layout::StaticObjectType);
+  }
+
+  bool Area::IsSpaceLayout() const
+  {
+    return this->Type().IsDerivedFromType(SpaceLayout::StaticObjectType);;
+  }
+
+  void Area::Set2DMatrix (const Matrix4 &mat)
+  {
+    _2d_xform = mat;
+  }
+
+  void Area::Set2DTranslation (float tx, float ty, float tz)
+  {
+    _2d_xform.Translate (tx, ty, tz);
+  }
+
+  Matrix4 Area::Get2DMatrix () const
+  {
+    return _2d_xform;
+  }
+
+  Matrix4 Area::Get3DMatrix () const
+  {
+    return _3d_xform;
+  }
+
+  bool Area::Is3DArea () const
+  {
+    return _3d_area;
+  }
+
+  static Geometry MatrixXFormGeometry (const Matrix4 &matrix, Geometry geo)
+  {
+    Vector4 in (geo.x, geo.y, 0, 1);
+    // This is mean only for translation matrices. It will not work with matrices containing rotations or scalings.
+    Vector4 out = matrix * in;
+    Geometry new_geometry = Geometry (out.x, out.y, geo.width, geo.height);
+
+    return new_geometry;
+  }
+
+  Geometry Area::InnerGetAbsoluteGeometry (const Geometry &geometry)
+  {
+    Geometry new_geometry = geometry;
+
+    if (this->Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    {
+      new_geometry.OffsetPosition (_geometry.x, _geometry.y);
+      return new_geometry;
+    }
+
+    Area *parent = GetParentObject ();
+    if (parent == 0)
+    {
+      //nuxDebugMsg (TEXT("[Area::InnerGetAbsoluteGeometry] Cannot reach the top level parent .This area may not be correctly parented"));
+      return MatrixXFormGeometry (_2d_xform, new_geometry);
+    }
+    else
+    {
+      return parent->InnerGetAbsoluteGeometry (MatrixXFormGeometry (_2d_xform, new_geometry));
+    }
+  }
+
+  Geometry Area::GetAbsoluteGeometry () const
+  {
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    {
+      // Do not apply the _2D_xform matrix  to a BaseWindow or the main layout
+      return _geometry;
+    }
+    else
+    {
+      Area *parent = GetParentObject ();
+      if (parent == 0)
+      {
+        //nuxDebugMsg (TEXT("[Area::GetAbsoluteGeometry] Cannot reach the top level parent .This area may not be correctly parented"));
+        return MatrixXFormGeometry (_2d_xform, _geometry);
+      }
+      else
+      {
+        return parent->InnerGetAbsoluteGeometry (MatrixXFormGeometry (_2d_xform, _geometry));
+      }
+    }
+  }
+
+  int Area::GetAbsoluteX () const
+  {
+    return GetAbsoluteGeometry ().x;
+  }
+
+  int Area::GetAbsoluteY () const
+  {
+    return GetAbsoluteGeometry ().y;
+  }
+
+  int Area::GetAbsoluteWidth () const
+  {
+    return GetAbsoluteGeometry ().width;
+  }
+
+  int Area::GetAbsoluteHeight () const
+  {
+    return GetAbsoluteGeometry ().height;
+  }
+
+  Geometry Area::InnerGetRootGeometry (const Geometry &geometry)
+  {
+    if (this->Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    {
+      return geometry;
+    }
+
+    Area *parent = GetParentObject ();
+    if (parent == 0)
+    {
+      //nuxDebugMsg (TEXT("[Area::InnerGetRootGeometry] Cannot reach the top level parent .This area may not be correctly parented"));
+      return MatrixXFormGeometry (_2d_xform, geometry);
+    }
+    else
+    {
+      return parent->InnerGetRootGeometry (MatrixXFormGeometry (_2d_xform, geometry));
+    }
+  }
+
+  Geometry Area::GetRootGeometry () const
+  {
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    {
+      return MatrixXFormGeometry (_2d_xform, _geometry);
+    }
+    else
+    {
+      Area *parent = GetParentObject ();
+      if (parent == 0)
+      {
+        //nuxDebugMsg (TEXT("[Area::GetRootGeometry] Cannot reach the top level parent .This area may not be correctly parented"));
+        return MatrixXFormGeometry (_2d_xform, _geometry);
+      }
+      else
+      {
+        return parent->InnerGetRootGeometry (MatrixXFormGeometry (_2d_xform, _geometry));
+      }
+    }
+  }
+
+  int Area::GetRootX () const
+  {
+    return GetRootGeometry ().x;
+  }
+
+  int Area::GetRootY () const
+  {
+    return GetRootGeometry ().y;
+  }
+
+  int Area::GetRootWidth () const
+  {
+    return GetRootGeometry ().width;
+  }
+
+  int Area::GetRootHeight () const
+  {
+    return GetRootGeometry ().height;
+  }
+
+  Area * Area::GetToplevel ()
+  {
+    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    {
+      return this;
+    }
+
+    Area * parent = GetParentObject ();
+    if (!parent) //we didn't find a way to salvation!
+    {
+      return 0;
+    }
+    return parent->GetToplevel ();
+  }
+
+  bool Area::HasTopLevelParent ()
+  {
+    if (GetToplevel ())
+    {
+      return true;
+    }
+    return false;
   }
 
   /* handles our focusable code */
@@ -550,5 +840,9 @@ namespace nux
     nux::GetWindowThread ()->QueueObjectLayout (this);
   }
 
-
+//   bool Area::AddSecondaryChild (Area *child)
+//   {
+//     NUX_RETURN_IF_NULL (child, false);
+//
+//   }
 }

@@ -25,6 +25,8 @@
 
 #include "BaseWindow.h"
 
+#include <sigc++/connection.h>
+
 namespace nux
 {
 
@@ -98,7 +100,7 @@ namespace nux
 
     void SetAreaEventRoot (int x, int y)
     {
-      m_EventRoot.Set (x, y);
+      _event_root.Set (x, y);
     }
 
     const IEvent *GetCurrentEvent() const
@@ -296,11 +298,36 @@ namespace nux
     void FloatingAreaConfigureNotify(int Width, int Height);
 
     void SetMouseFocusArea (InputArea *area);
-    InputArea *GetMouseFocusArea();
+    InputArea* GetMouseFocusArea();
+    void OnMouseFocusAreaDestroyed (Object *area)
+    {
+      if (_mouse_focus_area == area)
+        SetMouseFocusArea (NULL);
+    }
+
     void SetMouseOverArea (InputArea *area);
-    InputArea *GetMouseOverArea();
+    InputArea* GetMouseOverArea();
+    void OnMouseOverAreaDestroyed (Object *area)
+    {
+      if (_mouse_over_area == area)
+        SetMouseOverArea (NULL);
+    }
+
     void SetPreviousMouseOverArea (InputArea *area);
-    InputArea *GetPreviousMouseOverArea();
+    InputArea* GetPreviousMouseOverArea();
+    void OnPrevousMouseOverAreaDestroyed (Object *area)
+    {
+      if (_previous_mouse_over_area == area)
+        SetPreviousMouseOverArea (NULL);
+    }
+    
+    void SetKeyboardFocusArea (InputArea *area);
+    InputArea* GetKeyboardFocusArea ();
+    void OnKeyboardFocusAreaDestroyed (Object *area)
+    {
+      if (_keyboard_focus_area == area)
+        SetKeyboardFocusArea (NULL);
+    }
 
     void RegisterWindow (BaseWindow*);
     void UnRegisterWindow (BaseWindow*);
@@ -320,7 +347,7 @@ namespace nux
     RenderTargetTextures &GetWindowBuffer (BaseWindow* window);
 
     ObjectWeakPtr<BaseWindow> m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
-    ObjectWeakPtr<BaseWindow> m_FocusAreaWindow;  //!< The BaseWindow that contains the m_MouseFocusArea.
+    ObjectWeakPtr<BaseWindow> m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
     ObjectWeakPtr<BaseWindow> m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
     IEvent* m_CurrentEvent; 
 
@@ -330,10 +357,15 @@ namespace nux
         Incidentally, when the mouse focus first occurs on an area, we set the keyboard focus over that area.
         The keyboard focus of an area stops when the mouse down happens over a different area.
     */
-    InputArea* m_MouseFocusArea;     
-    InputArea* m_MouseOverArea;      //!< The base area that has the mouse directly over itself.
-    InputArea* m_PreviousMouseOverArea;
-
+    InputArea* _mouse_focus_area;
+    InputArea* _mouse_over_area;      //!< The base area that has the mouse directly over itself.
+    InputArea* _previous_mouse_over_area;
+    //! The InputArea that has the keyboard focus.
+    /*!
+        The InputArea that has the mouse focus also has the keyboard focus. That is if _mouse_focus_area is not Null
+        then _mouse_focus_area is equal to _mouse_focus_area;
+    */
+    InputArea* _keyboard_focus_area;
     
     void SetDnDArea (InputArea* area);
 
@@ -405,13 +437,13 @@ namespace nux
     Geometry    _tooltip_geometry;              //!< The geometry of the entire tooltip It includes the decoration surrounding the text such as round corners.
     Geometry    _tooltip_mainwindow_geometry;   //!< Same as _tooltip_geometry but based on the entire physical window of the application.
     Geometry    _tooltip_text_geometry;         //!< The geometry of the text area of the tooltip.
-    Point m_EventRoot;
+    Point _event_root;
 
 
     AbstractPaintLayer *m_Background;
 
-    std::list< ObjectWeakPtr<BaseWindow> > m_WindowList;
-    std::list< ObjectWeakPtr<BaseWindow> > m_ModalWindowList;
+    std::list< ObjectWeakPtr<BaseWindow> > _view_window_list;
+    std::list< ObjectWeakPtr<BaseWindow> > _modal_view_window_list;
     ObjectWeakPtr<BaseWindow>            _always_on_front_window;  //!< Floating view that always remains on top.
 
     std::list<MenuPage *> *m_MenuList;
@@ -442,6 +474,11 @@ namespace nux
     InputArea *m_TooltipArea;
     int m_TooltipX;
     int m_TooltipY;
+
+    sigc::connection _previous_mouse_over_area_conn;
+    sigc::connection _keyboard_focus_area_conn;
+    sigc::connection _mouse_focus_area_conn;
+    sigc::connection _mouse_over_area_conn;
 
 //     bool m_FullSceneBlurUpdated;
 //     ObjectPtr<IOpenGLBaseTexture> m_BlurTexture;

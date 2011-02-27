@@ -41,10 +41,6 @@ namespace nux
 
     void SetColor (float R, float G, float B, float A);
     void SetScreenPositionOffset (float x, float y);
-    void SetTransformMatrix (const Matrix4 &TransformMatrix)
-    {
-      m_TransformMatrix = TransformMatrix;
-    }
     void Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight);
 
 
@@ -61,7 +57,6 @@ namespace nux
     UINT ViewPortY;
     UINT ViewPortWidth;
     UINT ViewPortHeight;
-    Matrix4 m_TransformMatrix;
   };
 
 }

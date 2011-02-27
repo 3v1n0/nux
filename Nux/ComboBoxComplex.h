@@ -84,8 +84,8 @@ namespace nux
     void DestroyLayout();
 
   protected:
-//    CoreArea m_ComboArea;
-//    CoreArea m_Button;
+//    InputArea m_ComboArea;
+//    InputArea m_Button;
 //    bool m_MenuIsActive;
     const TableItem *m_SelectedTreeNode;
 //     bool m_IsOpeningMenu;

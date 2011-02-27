@@ -262,7 +262,7 @@ namespace nux
     XGrabPointer(_display,
                  _window,
                  True,
-                 ButtonPressMask|ButtonReleaseMask,
+                 ButtonPressMask|ButtonReleaseMask|PointerMotionMask,
                  GrabModeAsync,
                  GrabModeAsync,
                  None,

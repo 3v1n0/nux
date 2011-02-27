@@ -107,7 +107,6 @@ void RenderTexturePowerOfTwo ()
       m_GraphicsContext->DisableAllTextureMode(1);
       m_GraphicsContext->DisableAllTextureMode(2);
       m_GraphicsContext->DisableAllTextureMode(3);
-      m_GraphicsContext->SetEnvModeSelectTexture(GL_TEXTURE0);
       m_GraphicsContext->GetWindowSize(w, h);
       m_GraphicsContext->SetViewport(0, 0, w, h);
       m_GraphicsContext->SetScissor(0, 0, w, h);
@@ -122,8 +121,6 @@ void RenderTexturePowerOfTwo ()
       m_GraphicsContext->SetTexture(GL_TEXTURE0, tex [i]);
       CHECKGL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST) );
       CHECKGL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST) );
-
-      m_GraphicsContext->SetEnvModeSelectTexture(GL_TEXTURE0);
 
       glEnable(GL_TEXTURE_2D);
       glDisable(GL_TEXTURE_3D);
