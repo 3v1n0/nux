@@ -37,14 +37,14 @@ namespace nux
 
     /*!
         Render this area with a Texture. The reference count of the device texture which is cached by \a texture is increased by 1.
-        It \a layer was allocated on the heap, it must be deleted later. 
+        It \a layer was allocated on the heap, it must be deleted later.
         @param layer A pointer to a BaseTexture class.
     */
     void SetTexture (BaseTexture *texture);
 
     /*!
         Set the paint layer of this area. The \a layer argument to this function is cloned by this object.
-        It \a layer was allocated on the heap, it must be deleted later. 
+        It \a layer was allocated on the heap, it must be deleted later.
         @param layer A pointer to a concrete class that inherit from AbstractPaintLayer.
     */
     void SetPaintLayer (AbstractPaintLayer *layer);

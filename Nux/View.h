@@ -176,6 +176,8 @@ namespace nux
     virtual long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void SetFocused (bool focused);
     bool CanFocus ();
+    void SetFocusControl (bool focus_control);
+    bool HasFocusControl ();
 
   protected:
 
@@ -183,6 +185,8 @@ namespace nux
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+
+    void DoMouseDownOutsideArea (int x, int y,unsigned long mousestate, unsigned long keystate);
 
     void InitializeWidgets();
     void InitializeLayout();

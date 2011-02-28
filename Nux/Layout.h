@@ -239,13 +239,12 @@ namespace nux
 
     // this should not be public, but has to be because of nux's object setup
     long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-
-  protected:
-    bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
-
     bool _has_focus_control;
     void SetFocusControl (bool focus_control);
     bool HasFocusControl ();
+
+  protected:
+    bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
 
     Size m_ContentSize;
     int m_contentWidth;

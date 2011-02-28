@@ -43,6 +43,7 @@ namespace nux
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    OnMouseDownOutsideArea.connect (sigc::mem_fun (this, &View::DoMouseDownOutsideArea));
   }
 
   View::~View()
@@ -51,6 +52,14 @@ namespace nux
     GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
     RemoveLayout();
+  }
+
+  void View::DoMouseDownOutsideArea (int x, int y,unsigned long mousestate, unsigned long keystate)
+  {
+    if (GetFocused ())
+    {
+      SetFocused (false);
+    }
   }
 
   long View::ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -68,6 +77,8 @@ namespace nux
       Layout *parent_layout = (Layout *)parent;
       return parent_layout->ProcessFocusEvent (ievent, TraverseInfo, ProcessEventInfo);
     }
+
+    return TraverseInfo;
   }
 
   long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -454,16 +465,34 @@ namespace nux
     if (_can_pass_focus_to_composite_layout)
     {
       Layout *layout = GetLayout ();
-      Area::SetFocused (focused);
+      InputArea::SetFocused (focused);
 
       if (layout != NULL)
       {
         layout->SetFocused (focused);
       }
+      else
+      {
+      }
     }
     else
     {
       InputArea::SetFocused (focused);
+    }
+
+    if (focused == false)
+    {
+      bool has_focused_entry = false;
+      Area *_parent = GetParentObject ();
+      if (_parent == NULL)
+        return;
+
+      if (_parent->IsLayout ())
+        has_focused_entry = (Layout *)(_parent)->GetFocused ();
+
+      if (has_focused_entry == false)
+        SetFocusControl (false);
+
     }
   }
 
@@ -480,4 +509,43 @@ namespace nux
 
     return true;
   }
+
+  void View::SetFocusControl (bool focus_control)
+  {
+    Area *_parent = GetParentObject ();
+    if (_parent == NULL)
+      return;
+
+    if (_parent->IsView ())
+    {
+      View *parent = (View*)_parent;
+      parent->SetFocusControl (focus_control);
+    }
+    else if (_parent->IsLayout ())
+    {
+      Layout *parent = (Layout *)_parent;
+      parent->SetFocusControl (focus_control);
+    }
+  }
+
+  bool View::HasFocusControl ()
+  {
+    Area *_parent = GetParentObject ();
+    if (_parent == NULL)
+      return false;
+
+    if (_parent->IsView ())
+    {
+      View *parent = (View*)_parent;
+      return parent->HasFocusControl ();
+    }
+    else if (_parent->IsLayout ())
+    {
+      Layout *parent = (Layout *)_parent;
+      return parent->HasFocusControl ();
+    }
+    return false;
+  }
+
+
 }

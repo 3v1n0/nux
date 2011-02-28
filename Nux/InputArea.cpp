@@ -718,6 +718,7 @@ namespace nux
   void InputArea::SetFocused (bool focused)
   {
     Area::SetFocused (focused);
+    CaptureMouseDownAnyWhereElse (focused);
     SetKeyboardFocus (focused);
   }
 

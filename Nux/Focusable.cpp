@@ -46,47 +46,38 @@ namespace nux
   {
     FocusEventType type = FOCUS_EVENT_NONE;
     *direction = FOCUS_DIRECTION_NONE;
-    g_debug ("get type");
     if (eventType == NUX_KEYDOWN)
     {
       switch (keysym)
       {
         case NUX_VK_ENTER:
-          g_debug ("EVENT_ACTIVATE");
           type = FOCUS_EVENT_ACTIVATE;
           break;
         case NUX_KP_UP:
-          g_debug ("EVENT_DIRECTION - UP");
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_UP;
           break;
         case NUX_KP_DOWN:
-          g_debug ("EVENT_DIRECTION - Down");
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_DOWN;
           break;
         case NUX_KP_LEFT:
-          g_debug ("EVENT_DIRECTION - LEFT");
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_LEFT;
           break;
         case NUX_KP_RIGHT:
-          g_debug ("EVENT_DIRECTION - RIGHT");
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_RIGHT;
           break;
         case NUX_VK_TAB:
-          g_debug ("EVENT_DIRECTION - NEXT");
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_NEXT;
           if (keysym & NUX_STATE_SHIFT)
           {
-            g_debug ("EVENT_DIRECTION - PREV");
             *direction = FOCUS_DIRECTION_PREV;
           }
           break;
         default:
-          g_debug ("FOCUS_EVENT_NONE, DIRECTION_NONE -DEFAULT");
           type = FOCUS_EVENT_NONE;
           *direction = FOCUS_DIRECTION_NONE;
           break;
