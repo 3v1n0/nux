@@ -93,7 +93,7 @@ namespace nux
         In debug mode, print the processing steps of events for this widget.
         On linux, this works only if nux has been compiled with --enable-debug
         \sa _print_event_debug_trace
-        
+
         @param enable If True, print the event processing deug info to the console.
     */
     void EnableEventDebugTrace (bool enable);
@@ -101,11 +101,11 @@ namespace nux
     /*!
         Return True if event processing debuigh information as been activated for this widget.
         \sa _print_event_debug_trace
-        
+
         @return True, if event processing debug information for this widget has been activated.
-    */    
+    */
     bool GetEventDebugTrace () const;
-    
+
   private:
     //bool m_EnableKeyboardInput;
   public:
@@ -153,7 +153,7 @@ namespace nux
         Bypass OnEvent and performs a simplified event processing mechanism.
     */
     long ProcessEventInExclusiveMode (Event &ievent, long TraverseInfo, long ProcessEventInfo);
-    
+
     void HandleDndMove  (Event &event);
     void HandleDndDrop  (Event &event);
 
@@ -232,7 +232,7 @@ namespace nux
 
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDownOutsideArea;
 
-    void SetFocused (bool focus);
+    void DoSetFocused (bool focus);
   };
 
 }

@@ -460,12 +460,12 @@ namespace nux
     QueueDraw ();
   }
 
-  void View::SetFocused (bool focused)
+  void View::DoSetFocused (bool focused)
   {
     if (_can_pass_focus_to_composite_layout)
     {
       Layout *layout = GetLayout ();
-      InputArea::SetFocused (focused);
+      InputArea::DoSetFocused (focused);
 
       if (layout != NULL)
       {
@@ -477,7 +477,7 @@ namespace nux
     }
     else
     {
-      InputArea::SetFocused (focused);
+      InputArea::DoSetFocused (focused);
     }
 
     if (focused == false)
@@ -496,7 +496,7 @@ namespace nux
     }
   }
 
-  bool View::CanFocus ()
+  bool View::DoCanFocus ()
   {
     if (_can_pass_focus_to_composite_layout)
     {

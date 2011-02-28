@@ -47,16 +47,21 @@ namespace nux
   class Focusable
   {
   public:
-    virtual bool GetFocused ();
-    virtual void SetFocused (bool focused);
-    virtual bool CanFocus ();
-    virtual void ActivateFocus ();
+    bool GetFocused ();
+    void SetFocused (bool focused);
+    bool CanFocus ();
+    void ActivateFocus ();
 
     static FocusEventType GetFocusableEventType (unsigned long    eventType,
                                                  unsigned long    keysym,
                                                  const char* character,
                                                  FocusDirection *direction
                                                 );
+  protected:
+    virtual bool DoGetFocused ();
+    virtual void DoSetFocused (bool focused);
+    virtual bool DoCanFocus ();
+    virtual void DoActivateFocus ();
   };
 
 

@@ -174,8 +174,8 @@ namespace nux
     sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
 
     virtual long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void SetFocused (bool focused);
-    bool CanFocus ();
+    virtual void DoSetFocused (bool focused);
+    virtual bool DoCanFocus ();
     void SetFocusControl (bool focus_control);
     bool HasFocusControl ();
 

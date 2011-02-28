@@ -813,25 +813,28 @@ namespace nux
   }
 
   /* handles our focusable code */
-  bool Area::GetFocused ()
+  bool Area::DoGetFocused ()
   {
     return _is_focused;
   }
 
   /* Pretty much everything is going to have to override this */
-  void Area::SetFocused (bool focused)
+  void Area::DoSetFocused (bool focused)
   {
+    if (_is_focused == focused)
+      return;
+
     _is_focused = focused;
     FocusChanged (this);
   }
 
-  bool Area::CanFocus ()
+  bool Area::DoCanFocus ()
   {
     return true;
   }
 
   /* override me! */
-  void Area::ActivateFocus ()
+  void Area::DoActivateFocus ()
   {
   }
 

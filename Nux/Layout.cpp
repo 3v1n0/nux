@@ -392,7 +392,7 @@ namespace nux
     }
   }
 
-  void Layout::ActivateFocus ()
+  void Layout::DoActivateFocus ()
   {
     std::list<Area *>::const_iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -763,7 +763,7 @@ namespace nux
   }
 
   /* Focusable Code */
-  bool Layout::GetFocused ()
+  bool Layout::DoGetFocused ()
   {
     if (_is_focused)
       return true;
@@ -780,7 +780,7 @@ namespace nux
     return focused;
   }
 
-  void Layout::SetFocused (bool focused)
+  void Layout::DoSetFocused (bool focused)
   {
     _is_focused = focused;
 
@@ -835,7 +835,7 @@ namespace nux
     }
   }
 
-  bool Layout::CanFocus ()
+  bool Layout::DoCanFocus ()
   {
     std::list<Area *>::iterator it;
 

@@ -26,17 +26,19 @@ namespace nux
 {
   bool Focusable::GetFocused ()
   {
-    return false;
+    return DoGetFocused ();
   }
   void Focusable::SetFocused (bool focused)
   {
+    DoSetFocused (focused);
   }
   bool Focusable::CanFocus ()
   {
-    return false;
+    return DoCanFocus ();
   }
   void Focusable::ActivateFocus ()
   {
+    DoActivateFocus ();
   }
 
   FocusEventType Focusable::GetFocusableEventType (unsigned long    eventType,
@@ -86,4 +88,23 @@ namespace nux
     }
     return type;
   }
+
+  bool Focusable::DoGetFocused ()
+  {
+    return false;
+  }
+
+  void Focusable::DoSetFocused (bool focused)
+  {
+  }
+
+  bool Focusable::DoCanFocus ()
+  {
+    return false;
+  }
+
+  void Focusable::DoActivateFocus ()
+  {
+  }
+
 };

@@ -224,10 +224,10 @@ namespace nux
     sigc::signal<void, Layout*> OnQueueDraw;  //!< Signal emitted when a layout is scheduled for a draw.
     sigc::signal<void, Area*>   OnChildQueueDraw;
 
-    virtual void SetFocused (bool focused);
-    virtual bool GetFocused ();
-    virtual bool CanFocus ();
-    virtual void ActivateFocus ();
+    virtual void DoSetFocused (bool focused);
+    virtual bool DoGetFocused ();
+    virtual bool DoCanFocus ();
+    virtual void DoActivateFocus ();
 
     bool FocusFirstChild ();
     bool FocusNextChild (Area *child);
