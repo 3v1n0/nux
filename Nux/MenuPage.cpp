@@ -175,7 +175,7 @@ namespace nux
           else
               GetPainter().Paint2DQuadColor(GfxContext, geo, COLOR_FOREGROUND_SECONDARY);
       */
-      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0xFF2D2D2D) /*COLOR_FOREGROUND_SECONDARY*/);
+      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0xAA000000) /*COLOR_FOREGROUND_SECONDARY*/);
     }
     else
     {
@@ -230,6 +230,7 @@ namespace nux
     m_MenuWindow = 0;
     m_Name = title;
     m_IsTopOfMenuChain = false;
+    _font_name = g_strdup ("Ubuntu 12");
 
     // Set Original State
 
@@ -403,10 +404,24 @@ namespace nux
 
   }
 
+  void MenuPage::SetFontName (char *font_name)
+  {
+    std::vector<MenuItem *>::iterator it;
+    
+    for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); ++it)
+    {
+      (*it)->GetStaticText ()->SetFontName (font_name);
+    }
+
+    g_free (_font_name);
+    _font_name = g_strdup (font_name);
+  }
+
   ActionItem *MenuPage::AddAction (const TCHAR *label, int UserValue)
   {
     // pMenuItem if added to the layout do not sink the Reference.
     MenuItem *pMenuItem (new MenuItem (label, UserValue, NUX_TRACKER_LOCATION) );
+    pMenuItem->GetStaticText ()->SetFontName (_font_name);
 
     m_MenuItemVector.push_back (pMenuItem);
     pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);

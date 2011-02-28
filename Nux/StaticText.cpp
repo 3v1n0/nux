@@ -19,6 +19,7 @@ namespace nux
     _size_match_text = true;
     _textColor  = Color::White;
     _texture2D  = 0;
+    _font_string = g_strdup ("Ubuntu 12");
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText (text);
@@ -31,6 +32,9 @@ namespace nux
 
     if (_texture2D == 0)
       delete (_texture2D);
+
+    if (_font_string)
+      g_free (_font_string);
   }
 
   void StaticText::PreLayoutManagement ()
@@ -156,6 +160,14 @@ namespace nux
     }
   }
 
+  void StaticText::SetFontName (const char *font_name)
+  {
+    g_free (_font_string);
+    _font_string = g_strdup (font_name);
+
+    QueueDraw ();
+  }
+
   void StaticText::GetTextSize (int &width, int &height)
   {
     GetTextSize (TEXT("Ubuntu"), _text.GetTCharPtr (), width, height);
@@ -237,7 +249,7 @@ namespace nux
     cairo_set_font_options (cr, font_options);
 
     layout = pango_cairo_create_layout (cr);
-    desc = pango_font_description_from_string (TEXT("Ubuntu"));
+    desc = pango_font_description_from_string (_font_string);
     pango_layout_set_font_description (layout, desc);
 
     pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);

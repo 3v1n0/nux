@@ -54,6 +54,11 @@ namespace nux
     int GetTextWidth ();
     int GetTextHeight ();
 
+    StaticText * GetStaticText ()
+    {
+      return _pango_static_text;
+    }
+
   private:
     void SetChildMenu (MenuPage *menu);
     MenuPage *GetChildMenu() const;
@@ -136,6 +141,8 @@ namespace nux
 
     */
     void StopMenu (int x = 0, int y = 0);
+
+    void SetFontName (char *font_name);
 
   public:
     void StopActionSubMenu();
@@ -242,6 +249,8 @@ namespace nux
 
     //! This parameter is True if this MenuPage is at the top of a menu chain attached to a MenuBar.
     bool m_IsTopOfMenuChain;
+
+    char *_font_name;
 
   public:
     ///////////////////////////////////////////////////////

@@ -42,6 +42,11 @@ namespace nux
     void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
+    StaticText * GetStaticText ()
+    {
+      return _pango_static_text;
+    }
+
   protected:
     HLayout    *m_hlayout;
     InputArea   *_combo_box_area;
