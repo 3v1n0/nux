@@ -138,7 +138,10 @@ namespace nux
       geo.SetX (_combo_box_area->GetBaseX() );
       geo.SetY (_combo_box_area->GetBaseY() + _combo_box_area->GetBaseHeight() );
       geo.SetWidth (_combo_box_area->GetBaseWidth() );
+      m_CurrentMenu->SetMinimumWidth (geo.width);
+      //m_CurrentMenu->SetMaximumWidth (geo.width);
       m_CurrentMenu->SetGeometry (geo);
+      m_CurrentMenu->ComputeChildLayout ();
       m_CurrentMenu->StartMenu (_combo_box_area->GetBaseX(),
                                 _combo_box_area->GetBaseY() + _combo_box_area->GetBaseHeight(),
                                 0, 0);

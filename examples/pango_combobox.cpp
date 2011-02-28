@@ -30,10 +30,15 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     nux::VLayout* MainVLayout = new nux::VLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
     nux::ComboBoxSimple* combobox = new nux::ComboBoxSimple(NUX_TRACKER_LOCATION);
-    combobox->AddItem (TEXT("Hello Unity Team"), 0);
-    combobox->AddItem (TEXT("Bonjour Unity Team"), 1);
+    combobox->AddItem (TEXT("Hello Unity Team0"), 0);
+    combobox->AddItem (TEXT("Hello Unity Team11"), 1);
+    combobox->AddItem (TEXT("Hello Unity Team222"), 2);
+    combobox->AddItem (TEXT("Hello Unity Team3333"), 3);
+    combobox->AddItem (TEXT("Hello Unity Team444cccccccccccccccccccccccccccccccccccccccccccccccccccc44"), 4);
+
+    /*combobox->AddItem (TEXT("Bonjour Unity Team"), 1);
     combobox->AddItem (TEXT("Hola Unity Team"), 2);
-    combobox->AddItem (TEXT("Guten Tag Unity Team"), 3);
+    combobox->AddItem (TEXT("Guten Tag Unity Team"), 3);*/
 
     //combobox->SetPopupWindowSize(120, 150);
     combobox->SetMaximumWidth(250);

@@ -111,6 +111,29 @@ namespace nux
     return _action_item;
   }
 
+  int MenuItem::GetTextWidth ()
+  {
+    if (_pango_static_text)
+    {
+      int w, h;
+      _pango_static_text->GetTextSize (w, h);
+      return w;
+    }
+    return 0;
+  }
+
+  int MenuItem::GetTextHeight ()
+  {
+    if (_pango_static_text)
+    {
+      int w, h;
+      _pango_static_text->GetTextSize (w, h);
+      return h;
+    }
+    return 0;
+  }
+
+
 //ActionItem* MenuItem::GetActionItem()
 //{
 //    return &_action_item;
@@ -338,6 +361,7 @@ namespace nux
       shadow.OffsetPosition (4, 4);
       //GetPainter().PaintShape(GfxContext, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
 
+      GfxContext.PushClippingRectangle (base);
       GfxContext.GetRenderStates().SetBlend (GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       GetPainter().Paint2DQuadColor (GfxContext, base, Color (0xA0404040) );
       GfxContext.GetRenderStates().SetBlend (GL_FALSE);
@@ -364,6 +388,8 @@ namespace nux
       {
         (*separator_iterator)->Draw (GfxContext, force_draw);
       }
+
+      GfxContext.PopClippingRectangle ();
     }
   }
 
@@ -385,7 +411,7 @@ namespace nux
     m_MenuItemVector.push_back (pMenuItem);
     pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    int new_item_width = GetFont ()->GetStringWidth (pMenuItem->GetActionItem()->GetLabel() );
+    int new_item_width = pMenuItem->GetTextWidth(); //GetFont ()->GetStringWidth (pMenuItem->GetActionItem()->GetLabel() );
 
     if (new_item_width < m_item_width)
     {
@@ -431,9 +457,9 @@ namespace nux
       }
 
       m_item_width = new_item_width;
-      SetBaseWidth (MENU_ITEM_ICON_TO_TEXT_MARGIN
-                    + m_item_width
-                    + MENU_ITEM_TEXT_TO_BORDER_MARGIN);
+//       SetBaseWidth (MENU_ITEM_ICON_TO_TEXT_MARGIN
+//                     + m_item_width
+//                     + MENU_ITEM_TEXT_TO_BORDER_MARGIN);
     }
 
     if (pMenuItem->GetChildMenu() != 0)
@@ -442,7 +468,7 @@ namespace nux
     }
 
     m_numItem = (int) m_MenuItemVector.size();
-    vlayout->AddView (pMenuItem, 0, eCenter, eFix);
+    vlayout->AddView (pMenuItem, 0, eLeft, eFix);
     ComputeChildLayout();
 
     return pMenuItem->GetActionItem();
@@ -516,7 +542,7 @@ namespace nux
 //    }
 //
 //    m_numItem = (int)m_MenuItemVector.size();
-//    vlayout->AddView(pMenuItem, 0, eCenter, eFix);
+//    vlayout->AddView(pMenuItem, 0, eLeft, eFix);
 //    ComputeChildLayout();
 //}
 
@@ -531,7 +557,7 @@ namespace nux
     m_MenuItemVector.push_back (pMenuItem);
     pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    int new_item_width = GetFont ()->GetStringWidth (label);
+    int new_item_width = pMenuItem->GetTextWidth(); //GetFont ()->GetStringWidth (label);
 
     if (new_item_width < m_item_width)
     {
@@ -588,7 +614,7 @@ namespace nux
     }
 
     m_numItem = (int) m_MenuItemVector.size();
-    vlayout->AddView (pMenuItem, 0, eCenter, eFix);
+    vlayout->AddView (pMenuItem, 0, eLeft, eFix);
     ComputeChildLayout();
 
     return pMenuItem->GetChildMenu();
@@ -604,7 +630,7 @@ namespace nux
     m_MenuItemVector.push_back (pMenuItem);
     pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    int new_item_width = GetFont ()->GetStringWidth (label);
+    int new_item_width = pMenuItem->GetTextWidth(); //GetFont ()->GetStringWidth (label);
 
     if (new_item_width < m_item_width)
     {
@@ -661,7 +687,7 @@ namespace nux
     }
 
     m_numItem = (int) m_MenuItemVector.size();
-    vlayout->AddView (pMenuItem, 0, eCenter, eFix);
+    vlayout->AddView (pMenuItem, 0, eLeft, eFix);
     ComputeChildLayout();
 
     return pMenuItem->GetActionItem();
@@ -689,7 +715,7 @@ namespace nux
                                      + MENU_ITEM_TEXT_TO_BORDER_MARGIN, 4);
     }
 
-    vlayout->AddView (pMenuSeparator, 0, eCenter, eFix);
+    vlayout->AddView (pMenuSeparator, 0, eLeft, eFix);
     ComputeChildLayout();
   }
 

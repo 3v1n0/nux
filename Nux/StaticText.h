@@ -25,6 +25,9 @@ namespace nux
     void SetText (NString text);
     void SetTextColor (Color textColor);
     
+    void GetTextSize (int &width, int &height);
+
+    static void GetTextSize (const TCHAR* font, const TCHAR *char_str, int& width, int& height);
 
     sigc::signal<void, StaticText*> sigTextChanged;
     sigc::signal<void, StaticText*> sigTextColorChanged;
@@ -38,8 +41,6 @@ namespace nux
     void DrawContent (GraphicsEngine& gfxContext, bool forceDraw);
     void PostDraw (GraphicsEngine& gfxContext, bool forceDraw);
 
-    void GetTextExtents (int &width, int &height);
-
     NString _text;
     Color _textColor;
 
@@ -51,7 +52,6 @@ namespace nux
 
     bool _size_match_text;
 
-    void GetTextExtents (const TCHAR* font, int& width, int& height);
     void DrawText (void* cairo_context, int width, int height, Color color);
 
     void UpdateTextRendering ();

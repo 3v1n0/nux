@@ -67,6 +67,8 @@ namespace nux
   void AbstractComboBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
+    
+    GfxContext.PushClippingRectangle (base);
     GetPainter().PaintBackground (GfxContext, base);
     GetPainter().PaintShape (GfxContext, base, m_sCOMBO_COLOR,  eSHAPE_CORNER_ROUND4);
 
@@ -94,13 +96,13 @@ namespace nux
     popup_geometry.SetY (_combo_box_area->GetBaseY() + _combo_box_area->GetBaseHeight() );
     popup_geometry.SetWidth (_combo_box_area->GetBaseWidth() );
     popup_geometry.SetHeight (_combo_box_area->GetBaseHeight() );
+
+    GfxContext.PopClippingRectangle ();
   }
 
   void AbstractComboBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
-    GfxContext.PushClippingRectangle (GetGeometry() );
 
-    GfxContext.PopClippingRectangle();
   }
 
   void AbstractComboBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)

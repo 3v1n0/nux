@@ -50,6 +50,9 @@ namespace nux
     //const ActionItem& GetItem() const {return m_ActionItem;}
     ActionItem *GetActionItem() const;
     //ActionItem* GetActionItem();
+    
+    int GetTextWidth ();
+    int GetTextHeight ();
 
   private:
     void SetChildMenu (MenuPage *menu);
