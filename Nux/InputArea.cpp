@@ -225,6 +225,17 @@ namespace nux
         }
       }
 
+      if (PreviousMouseOverArea == this)
+      {
+        GetWindowCompositor().SetPreviousMouseOverArea (NULL);
+      }
+
+      if (CurrentMouseOverArea == this)
+      {
+        GetWindowCompositor().SetMouseOverArea (NULL);
+      }
+
+
       nuxEventDebugTrace (_print_event_debug_trace, TEXT("Processing mouse Enter/Leave event."));
       // Even though the mouse event has been solved, the area can still respond respond to mouse Enter/Leave events.
       if (event_processor_state & AREA_MOUSE_STATUS_LEAVE)

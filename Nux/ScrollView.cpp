@@ -97,7 +97,9 @@ namespace nux
     Geometry viewGeometry = Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
     bool traverse = true;
 
-    if (event.e_event == NUX_MOUSE_PRESSED)
+    if ((event.e_event == NUX_MOUSE_PRESSED) ||
+     (event.e_event == NUX_MOUSE_RELEASED) ||
+     (event.e_event == NUX_MOUSE_MOVE))
     {
       if (!viewGeometry.IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root) )
       {
@@ -111,8 +113,6 @@ namespace nux
       // The ScrollView layout position is fixed. The ScrollView keeps track of the delta offset in x and y of the layout it manages.
       // Modify the event to account for this offset;
       Event mod_event = event;
-//       mod_event.e_x -= _delta_x;
-//       mod_event.e_y -= _delta_y;
       ret = m_CompositionLayout->ProcessEvent (mod_event, ret, ProcEvInfo);
     }
 
@@ -291,14 +291,20 @@ namespace nux
       nuxAssert (_delta_y <= 0);
     }
 
-    if (m_CompositionLayout && m_CompositionLayout->GetStretchFactor() != 0)
+    if (m_CompositionLayout)
     {
       // Set the composition layout to the size of the view area and offset it by (_delta_x, _delta_y)
-      m_CompositionLayout->SetGeometry (
-        m_ViewX,
-        m_ViewY,
-        m_ViewWidth,
-        m_ViewHeight);
+
+      if (m_CompositionLayout->GetStretchFactor () != 0)
+      {
+        m_CompositionLayout->SetGeometry (
+                m_ViewX,
+                m_ViewY,
+                m_ViewWidth,
+                m_ViewHeight);
+      }
+
+      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
     }
 
     // Horizontal scrollbar Geometry
