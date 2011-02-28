@@ -727,6 +727,56 @@ namespace nux
   void InputArea::ProcessDndLeave ()
   {
   }
+  
+  void InputArea::SetDndEnabled (bool as_source, bool as_target)
+  {
+    _dnd_enabled_as_source = as_source;
+    _dnd_enabled_as_target = as_target;
+  }
+  
+  NBitmapData * InputArea::DndSourceGetDragImage ()
+  {
+    return 0;
+  }
+  
+  std::list<const char *> InputArea::DndSourceGetDragTypes ()
+  {
+    std::list<const char *> types;
+    types.push_back ("text/plain;charset=utf-8");
+    types.push_back ("UTF8_STRING");
+    return types;
+  }
+    
+  const char * InputArea::DndSourceGetDataForType (const char *type, int *size, int *format)
+  {
+    *format = 8;
+
+    if (g_str_equal (type, "text/plain;charset=utf-8") || g_str_equal (type, "UTF8_STRING"))
+    {
+      *size = (int) strlen ("this is just a test");
+      return "this is just a test";
+    }
+    
+    *size = 0;
+    return 0;
+  }
+  
+  void InputArea::DndSourceDragFinished (DndAction result)
+  {
+  
+  }
+  
+  void InputArea::StartDragAsSource ()
+  {
+    GraphicsDisplay::DndSourceFuncs funcs;
+    
+    funcs.get_drag_image = &InputArea::InnerDndSourceGetDragImage;
+    funcs.get_drag_types = &InputArea::InnerDndSourceGetDragTypes;
+    funcs.get_data_for_type = &InputArea::InnerDndSourceGetDataForType;
+    funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
+    
+    GetWindow ().StartDndDrag (funcs, this);
+  }
 #endif
 
   void InputArea::DoSetFocused (bool focused)
