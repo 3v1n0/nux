@@ -237,6 +237,9 @@ namespace nux
 
     sigc::signal <void, Layout *, Area*> ChildFocusChanged;
 
+    // this should not be public, but has to be because of nux's object setup
+    long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+
   protected:
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
 
@@ -263,7 +266,6 @@ namespace nux
 
     LayoutContentDistribution m_ContentStacking;
 
-    long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     long SendEventToArea (Area *area, IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
   };
 

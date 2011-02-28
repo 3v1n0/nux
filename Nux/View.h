@@ -173,6 +173,10 @@ namespace nux
 
     sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
 
+    virtual long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual void SetFocused (bool focused);
+    bool CanFocus ();
+
   protected:
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
@@ -214,6 +218,8 @@ namespace nux
     bool _full_redraw; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
     bool _is_active; //!< True if the view is enabled (it can receive events and process them).
+
+    bool _can_pass_focus_to_composite_layout; //<! Enable this and keynav will pass focus to your composite layout
 
   private:
     bool m_UseStyleDrawing;

@@ -26,6 +26,7 @@
 
 #include "Nux/VLayout.h"
 #include "Nux/HLayout.h"
+#include "Nux/ScrollView.h"
 #include "Nux/PushButton.h"
 #include "Nux/TextureArea.h"
 
@@ -58,9 +59,13 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   // Create a vertical Layout
   nux::VLayout* layout = new nux::VLayout(NUX_TRACKER_LOCATION);
   nux::HLayout* layout_top = new nux::HLayout(NUX_TRACKER_LOCATION);
+
+  nux::ScrollView *layout_scroll = new nux::ScrollView (NUX_TRACKER_LOCATION);
   nux::HLayout* layout_bottom = new nux::HLayout(NUX_TRACKER_LOCATION);
   layout->AddLayout (layout_top, 0, nux::MINOR_POSITION_TOP);
-  layout->AddLayout (layout_bottom, 0, nux::MINOR_POSITION_TOP);
+
+  layout_scroll->SetLayout (layout_bottom);
+  layout->AddView (layout_scroll, 0, nux::MINOR_POSITION_TOP);
   layout->ChildFocusChanged.connect (sigc::ptr_fun(&OnFocusChildChanged));
 
   //~ //Create a button of type PushButton

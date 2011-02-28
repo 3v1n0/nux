@@ -395,11 +395,13 @@ namespace nux
   bool Layout::FocusFirstChild ()
   {
     std::list<Area *>::const_iterator it;
-
+    g_debug ("attempting to focus the first child");
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
+      g_debug ("itterating");
       if ((*it)->CanFocus ())
       {
+        g_debug ("focusing this child");
         (*it)->SetFocused (true);
         ChildFocusChanged (this, (*it));
         return true;
@@ -495,7 +497,7 @@ namespace nux
     if ( area->IsView() )
     {
       View *ic = NUX_STATIC_CAST (View *, area );
-      ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
+      ret = ic->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
     }
     else if ( area->IsLayout() )
     {
@@ -543,14 +545,21 @@ namespace nux
 
         if (focused_child == NULL)
         {
+          g_debug ("nothing is focused");
           bool have_focused_child = FocusFirstChild ();
           if (have_focused_child == false)
           {
             /* propagate up */
-            if (parent != NULL)
+            if (parent != NULL && parent->IsLayout ())
+            {
+              g_debug ("parent is layout so propagating up");
               ret |= SendEventToArea (parent, ievent, ret, ProcessEventInfo);
+            }
             else
+            {
+              g_debug ("focusing first child");
               FocusFirstChild ();
+            }
           }
         }
         else // we have a focused child
@@ -813,12 +822,27 @@ namespace nux
         Layout *parent_layout = (Layout *)parent;
         parent_layout->SetFocusControl (false);
       }
+      if (parent != NULL && parent->IsView ())
+      {
+        Layout *grandparent = (Layout *)(parent->GetParentObject ());
+        if (grandparent != NULL && parent->IsLayout ())
+        {
+          Layout *grandparent_layout = (Layout *)grandparent;
+          grandparent_layout->SetFocusControl (false);
+        }
+        else
+        {
+          // oh fuck, we are all screwed, RUN FOR YOUR LIFE
+          g_critical ("You have a layout that has a parent (view) that has a parent (view). you are doing nux wrong!!!");
+        }
+      }
       FocusFirstChild ();
     }
   }
 
   bool Layout::CanFocus ()
   {
+    g_debug ("can focus called on layout");
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)

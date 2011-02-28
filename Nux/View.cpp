@@ -39,6 +39,7 @@ namespace nux
     _need_redraw        = false;
     m_UseStyleDrawing   = true;
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
+    _can_pass_focus_to_composite_layout = true;
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -50,6 +51,23 @@ namespace nux
     GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
     RemoveLayout();
+  }
+
+  long View::ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    // we assume we were chained up to by our layout
+    if (GetLayout () == NULL)
+      return TraverseInfo;
+
+    Area *parent = GetParentObject ();
+    if (parent == NULL)
+      GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
+
+    if (parent != NULL && parent->IsLayout ())
+    {
+      Layout *parent_layout = (Layout *)parent;
+      return parent_layout->ProcessFocusEvent (ievent, TraverseInfo, ProcessEventInfo);
+    }
   }
 
   long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -426,5 +444,37 @@ namespace nux
   void View::GeometryChanged ()
   {
     QueueDraw ();
+  }
+
+  void View::SetFocused (bool focused)
+  {
+    if (_can_pass_focus_to_composite_layout)
+    {
+      Layout *layout = GetLayout ();
+      Area::SetFocused (focused);
+
+      if (layout != NULL)
+      {
+        layout->SetFocused (focused);
+      }
+    }
+    else
+    {
+      InputArea::SetFocused (focused);
+    }
+  }
+
+  bool View::CanFocus ()
+  {
+    if (_can_pass_focus_to_composite_layout)
+    {
+      if (GetLayout () != NULL)
+      {
+        return GetLayout ()->CanFocus ();
+      }
+      return true;
+    }
+
+    return true;
   }
 }
