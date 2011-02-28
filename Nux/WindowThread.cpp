@@ -33,9 +33,9 @@
 
 namespace nux
 {
-
+  
     TimerFunctor *m_ScrollTimerFunctor;
-    TimerHandle m_ScrollTimerHandler;
+    TimerHandle m_ScrollTimerHandler;  
 
 // Thread registration call. Hidden from the users. Implemented in Nux.cpp
   bool RegisterNuxThread (NThread *ThreadPtr);
@@ -245,7 +245,7 @@ namespace nux
     g_source_add_poll (source, &event_source->event_poll_fd);
     g_source_set_can_recurse (source, TRUE);
     g_source_set_callback (source, 0, this, 0);
-
+    
     if (IsEmbeddedWindow ())
       g_source_attach (source, NULL);
     else
@@ -330,7 +330,7 @@ namespace nux
     {
       dd->window_thread->ExecutionLoop(0);
     }
-
+    
     if(!repeat)
       delete dd;
 
@@ -425,7 +425,7 @@ namespace nux
     m_GLibLoop      = 0;
     m_GLibContext   = 0;
 #endif
-
+    
     _pending_wake_up_timer = false;
     _inside_main_loop = false;
     _inside_timer_loop = false;
@@ -448,7 +448,7 @@ namespace nux
     {
       (*li)->UnReference ();
     }
-
+    
     delete _Timelines;
     delete _async_wake_up_functor;
     delete _fake_event_call_back;
@@ -459,22 +459,22 @@ namespace nux
     GetTimer ().RemoveTimerHandler (_async_wake_up_timer);
     _pending_wake_up_timer = false;
   }
-
+  
   void WindowThread::SetFakeEventMode (bool enable)
   {
     _fake_event_mode = enable;
   }
-
+  
   bool WindowThread::InFakeEventMode () const
   {
     return _fake_event_mode;
   }
-
+  
   bool WindowThread::ReadyForNextFakeEvent () const
   {
     return _ready_for_next_fake_event;
   }
-
+  
 #if defined (NUX_OS_WINDOWS)
   bool WindowThread::PumpFakeEventIntoPipe (WindowThread* window_thread, INPUT *win_event)
   {
@@ -483,13 +483,13 @@ namespace nux
       nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled."));
       return false;
     }
-
+    
     if (!_ready_for_next_fake_event)
     {
       nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time."));
       return false;
     }
-
+    
     _ready_for_next_fake_event = false;
 //     _fake_event = *xevent;
 //     _fake_event.xany.window = this->GetWindow ().GetWindowHandle ();
@@ -524,7 +524,7 @@ namespace nux
     nuxDebugMsg (TEXT("[WindowThread::ReadyFakeEventProcessing] Ready to process fake event."));
     _processing_fake_event = true;
   }
-
+  
   long WindowThread::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     if (m_bWaitForModalWindow)
@@ -559,27 +559,19 @@ namespace nux
 
   void WindowThread::RequestRedraw()
   {
-    //_draw_requested_to_host_wm = true;
-    //RedrawRequested.emit();
-
+    _draw_requested_to_host_wm = true;
+    RedrawRequested.emit();
+    
     if (!IsEmbeddedWindow())
     {
       // If the system is not in embedded mode and an asynchronous request for a Draw is made,
-      // and the system is not in a timer processing cycle (always followed by a draw cycle)
-      // or not in the event processing cycle (also followed by a draw cycle), then we set a 0 delay
+      // and the system is not in a timer processing cycle (always followed by a draw cycle) 
+      // or not in the event processing cycle (also followed by a draw cycle), then we set a 0 delay 
       // timer that will wake up the system and initiate a draw cycle.
       if ((_inside_main_loop == false) && (_inside_timer_loop == false) && (_pending_wake_up_timer == false))
       {
         _pending_wake_up_timer = true;
         _async_wake_up_timer = GetTimer().AddTimerHandler (0, _async_wake_up_functor, this);
-      }
-    }
-    else
-    {
-      if (_draw_requested_to_host_wm == false)
-      {
-        AddGLibTimeout (0);
-        _draw_requested_to_host_wm = true;
       }
     }
   }
@@ -719,7 +711,7 @@ namespace nux
     }
 
     StopLayoutCycle ();
-
+    
     RemoveQueuedLayout ();
   }
 
@@ -752,7 +744,7 @@ namespace nux
 
     if ((!alreadyComputingLayout) && (!recurse_to_top_level_layout))
     {
-      // When computing the layout, setting the size of widgets may cause the system to recurse
+      // When computing the layout, setting the size of widgets may cause the system to recurse 
       // upward an look for the up most container which size is affected by its this area.
       // This happens in Area::InitiateResizeLayout ();
       // The search upward is not done if we are already in a layout cycle.
@@ -896,7 +888,7 @@ namespace nux
 
       memset(&event, 0, sizeof(IEvent));
       GetWindow().GetSystemEvent(&event);
-
+      
 
       if ((event.e_event == NUX_DND_ENTER_WINDOW) ||
         (event.e_event == NUX_DND_LEAVE_WINDOW))
@@ -913,9 +905,9 @@ namespace nux
       {
         // Cancel the real X event and inject the fake event instead. This is wrong and should be improved.
         memset(&event, 0, sizeof(IEvent));
-
+        
         GetWindow().InjectXEvent(&event, _fake_event);
-
+        
         if (event.e_event == NUX_MOUSE_PRESSED)
         {
           nuxDebugMsg (TEXT("[WindowThread::ExecutionLoop] Fake Event: Mouse Down."));
@@ -940,7 +932,7 @@ namespace nux
           KeepRunning = false;
           return 0; //break;
       }
-
+      
       if (IsEmbeddedWindow () && (event.e_event == NUX_SIZE_CONFIGURATION))
         m_size_configuration_event = true;
 
@@ -966,6 +958,15 @@ namespace nux
           (event.e_event == NUX_DND_LEAVE) ||
           (event.e_event == NUX_MOUSEWHEEL))
       {
+          if((event.e_event == NUX_SIZE_CONFIGURATION) ||
+              (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
+              (event.e_event == NUX_WINDOW_EXIT_FOCUS))
+          {
+              m_window_compositor->SetMouseFocusArea(NULL);
+              m_window_compositor->SetMouseOverArea(NULL);
+              m_window_compositor->SetPreviousMouseOverArea(NULL);
+          }
+
           //DISPATCH EVENT HERE
           //event.Application = Application;
           m_window_compositor->ProcessEvent(event);
@@ -976,28 +977,29 @@ namespace nux
           if(!GetWindow().isWindowMinimized())
           {
               GetWindow().SetViewPort(0, 0, event.width, event.height);
-              ReconfigureLayout ();
+              ReconfigureLayout();
               m_window_compositor->FormatRenderTargets(event.width, event.height);
           }
           m_window_compositor->FloatingAreaConfigureNotify(event.width, event.height);
           m_size_configuration_event = true;
       }
 
-      // Some action may have caused layouts and areas to request a recompute.
+      // Actions may have caused layouts and areas to request a recompute. 
       // Process them here before the Draw section.
-      if(!GetWindow().isWindowMinimized() && !IsEmbeddedWindow ())
+      // In embedded mode, we don't do a layout cycle here. It will be done when RenderInterfaceFromForeignCmd is called.
+      if(!GetWindow().isWindowMinimized() && (!IsEmbeddedWindow()))
       {
         if (_queue_main_layout)
         {
-          ReconfigureLayout ();
+          ReconfigureLayout();
         }
-        else
+        else 
         {
           // Compute the layouts that have been queued.
-          ComputeQueuedLayout ();
+          ComputeQueuedLayout();
         }
       }
-
+      
       _inside_main_loop = false;
 
 // #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -1010,7 +1012,7 @@ namespace nux
       if (!GetWindow().IsPauseThreadGraphicsRendering() || IsEmbeddedWindow ())
       {
         bool SwapGLBuffer = false;
-
+        
         // Warn the host window manager to initiate a draw cycle.
         bool request_draw_cycle_to_host_wm = false;
 
@@ -1597,21 +1599,22 @@ namespace nux
     if (m_window_compositor)
       m_window_compositor->SetBackgroundPaintLayer (bkg);
   }
-
+  
   void WindowThread::AddToDrawList (View *view)
   {
     Area *parent;
     Geometry geo, pgeo;
-    geo = view->GetAbsoluteGeometry ();
+    
+    geo = view->GetGeometry();
     parent = view->GetToplevel ();
-
-    if (parent && (view != parent))
+    
+    if (parent && view != parent)
     {
-//       pgeo = parent->GetGeometry();
-//       geo.x += pgeo.x;
-//       geo.y += pgeo.y;
+      pgeo = parent->GetGeometry();
+      geo.x += pgeo.x;
+      geo.y += pgeo.y;
 
-      if (parent->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
+      if (parent->Type().IsDerivedFromType (BaseWindow::StaticObjectType))
       {
         BaseWindow* window = NUX_STATIC_CAST (BaseWindow*, parent);
         window->_child_need_redraw = true;
@@ -1627,12 +1630,12 @@ namespace nux
 
     m_dirty_areas.push_back(geo);
   }
-
+  
   void WindowThread::ClearDrawList ()
   {
     m_dirty_areas.clear ();
   }
-
+  
   std::vector<Geometry> WindowThread::GetDrawList ()
   {
     return m_dirty_areas;
@@ -1703,6 +1706,15 @@ namespace nux
         (nux_event.e_event == NUX_WINDOW_MOUSELEAVE) ||
         (nux_event.e_event == NUX_MOUSEWHEEL))
     {
+        if((nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
+            (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
+            (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS))
+        {
+            m_window_compositor->SetMouseFocusArea(NULL);
+            m_window_compositor->SetMouseOverArea(NULL);
+            m_window_compositor->SetPreviousMouseOverArea(NULL);
+        }
+
         //DISPATCH EVENT HERE
         //nux_event.Application = Application;
         m_window_compositor->ProcessEvent(nux_event);
@@ -1720,7 +1732,7 @@ namespace nux
         m_size_configuration_event = true;
     }
 
-    // Some action may have caused layouts and areas to request a recompute.
+    // Some action may have caused layouts and areas to request a recompute. 
     // Process them here before the Draw section.
     if (!GetWindow().isWindowMinimized() )
     {
@@ -1728,7 +1740,7 @@ namespace nux
       {
         ReconfigureLayout ();
       }
-      else
+      else 
       {
         // Compute the layouts that have been queued.
         ComputeQueuedLayout ();
@@ -1800,7 +1812,7 @@ namespace nux
     // Nux keep tracks of its own opengl states and restore them before doing any drawing.
     GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SubmitChangeStates();
 
-    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
+    GetWindowThread ()->GetGraphicsEngine().SetDrawClippingRegion (0, 0, GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
         GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
 
     if (GetWindow().IsPauseThreadGraphicsRendering() == false)
