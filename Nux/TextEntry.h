@@ -171,7 +171,7 @@ namespace nux
 
     CairoGraphics::Alignment GetAlign() const;
     void SetAlign(CairoGraphics::Alignment align);
-  
+
     private:
     /**
      * Enum used to specify different motion types.
@@ -213,7 +213,7 @@ namespace nux
 //     void InitImContext();
 //     /** Set the visibility of the edit control */
 //     void SetVisibility(bool visible);
-// 
+//
 //     /** Check if the cursor should be blinking */
 //     bool IsCursorBlinking();
 //     /** Send out a request to blink the cursor if necessary */
@@ -293,18 +293,18 @@ namespace nux
     void Delete();
     /** Switch between the overwrite mode and the insert mode*/
     void ToggleOverwrite();
-// 
+//
     /** Gets the color of selection background. */
     Color GetSelectionBackgroundColor();
     /** Gets the color of selection text. */
     Color GetSelectionTextColor();
-// 
+//
 //     /**
 //      * Gets the gtk widget used by the gadget host and the cursor location
 //      * for gtk im context. relative to the widget coordinate.
 //      */
 //     GtkWidget *GetWidgetAndCursorLocation(GdkRectangle *cur);
-// 
+//
     /**
      * Gets the cursor location in pango layout. The unit is pixel.
      */
@@ -315,7 +315,7 @@ namespace nux
 //      * Updates the cursor location of input method context.
 //      */
 //     void UpdateIMCursorLocation();
-// 
+//
 //     /** Callback function for IM "commit" signal */
 //     static void CommitCallback(GtkIMContext *context,
 //                                const char *str, void *gg);
@@ -337,7 +337,7 @@ namespace nux
 //      */
 //     static void PasteCallback(GtkClipboard *clipboard,
 //                               const gchar *str, void *gg);
-// 
+//
 //    private:
 //     /** Owner of this gtk edit implementation object. */
 //     GtkEditElement *owner_;
@@ -345,7 +345,7 @@ namespace nux
 //     MainLoopInterface *main_loop_;
 //     /** Graphics object, must be CairoGraphics */
 //     const GraphicsInterface *graphics_;
-// 
+//
     /** The CairoCanvas which hold cairo_t inside */
     CairoGraphics *canvas_;
 
@@ -369,12 +369,12 @@ namespace nux
 
     /** Last time of mouse double click event. */
     t_u64 last_dblclick_time_;
-// 
+//
 //     /** Canvas width */
 //     int width_;
 //     /** Canvas height */
 //     int height_;
-// 
+//
     /** The current cursor position in number of bytes. */
     int cursor_;
     /**

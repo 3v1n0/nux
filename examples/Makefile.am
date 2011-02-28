@@ -11,6 +11,7 @@ noinst_PROGRAMS = button \
                   cairo \
                   checkbox \
                   combobox \
+                  focus \
                   gridlayout \
                   layeredlayout \
                   moveable_view \
@@ -71,6 +72,8 @@ moveable_view_SOURCES = moveable_view.cpp
 moveable_view_LDADD = $(ALL_LIBS)
 layeredlayout_SOURCES = layeredlayout.cpp
 layeredlayout_LDADD = $(ALL_LIBS)
+focus_SOURCES = focus.cpp
+focus_LDADD = $(ALL_LIBS)
 scrollview_SOURCES = scrollview.cpp
 scrollview_LDADD = $(ALL_LIBS)
 

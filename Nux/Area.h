@@ -24,7 +24,7 @@
 #define BASEOBJECT_H
 
 #include "NuxCore/InitiallyUnownedObject.h"
-
+#include "Nux/Focusable.h"
 #include "Utils.h"
 #include "WidgetMetrics.h"
 #include "WidgetSmartPointer.h"
@@ -127,7 +127,7 @@ namespace nux
   class View;
   class Area;
 
-  class Area: public InitiallyUnownedObject
+  class Area: public InitiallyUnownedObject, public Focusable
   {
   public:
     NUX_DECLARE_OBJECT_TYPE (Area, InitiallyUnownedObject);
@@ -219,11 +219,11 @@ namespace nux
 
     void SetBaseString (const TCHAR *Caption);
     const NString &GetBaseString() const;
-    
+
     //! Return the Top level parent of this area.
     /*!
         The top Level parent is either a BaseWindow or the main layout.
-         
+
         @return The top level parent or Null.
     */
     Area * GetToplevel ();
@@ -238,7 +238,7 @@ namespace nux
     virtual void PositionChildLayout (float offsetX, float offsetY);
     virtual long ComputeLayout2();
     virtual void ComputePosition2 (float offsetX, float offsetY);
-    
+
     virtual bool IsArea() const;
     virtual bool IsInputArea() const;
     virtual bool IsView() const;
@@ -292,6 +292,12 @@ namespace nux
     */
     bool IsSensitive ();
 
+    virtual bool DoGetFocused ();
+    virtual void DoSetFocused (bool focused);
+    virtual bool DoCanFocus ();
+    virtual void DoActivateFocus ();
+
+    sigc::signal <void, Area *> FocusChanged;
     //! Queue a relayout
     /*!
     Queues a relayout before the next paint cycle. This is safe to call multiple times within
@@ -341,6 +347,7 @@ namespace nux
 
 
   protected:
+    bool _is_focused;
     /*
         This function is reimplemented in Layout as it need to perform some special operations.
         It does nothing for Area and View classes.
@@ -358,7 +365,7 @@ namespace nux
     */
     virtual void SetParentObject (Area *);
     virtual void UnParentObject();
-    
+
     virtual void GeometryChangePending () {}
     virtual void GeometryChanged () {}
 
@@ -375,7 +382,7 @@ namespace nux
     //! Return the absolute geometry starting with a relative geometry passed as argument.
     Geometry InnerGetRootGeometry (const Geometry &geometry);
 
-//     //! Add a "secondary" child to this Area. The 
+//     //! Add a "secondary" child to this Area. The
 //     /*!
 //         @return True if the child has been added; False otherwise;
 //     */
@@ -416,7 +423,7 @@ namespace nux
 
     Matrix4                 _2d_xform;      //!< 2D transformation matrix for this area and its children.
     Matrix4                 _3d_xform;      //!< 3D transformation matrix for the area in a perspective space.
-    bool                    _3d_area;     //!< True if the area is resides in a 3D space. 
+    bool                    _3d_area;     //!< True if the area is resides in a 3D space.
 
     std::list<Area*>        _children_list;
 

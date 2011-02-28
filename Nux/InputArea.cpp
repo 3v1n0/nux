@@ -74,7 +74,7 @@ namespace nux
     {
       return false ;
     }
-   
+
     InputArea *keyboard_focus_area = GetWindowCompositor ().GetKeyboardFocusArea ();
     InputArea *mouse_focus_area = GetWindowCompositor ().GetMouseFocusArea ();
 
@@ -304,7 +304,7 @@ namespace nux
     else
     {
       unsigned long event_type = event.e_event;
-      // If double click is not enable for this area, transform it to a mouse press event. 
+      // If double click is not enable for this area, transform it to a mouse press event.
       if ((event_type == NUX_MOUSE_DOUBLECLICK) && (_double_click == false))
       {
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Double click received but signal not activated. Change double click to Mouse Press event."));
@@ -541,46 +541,7 @@ namespace nux
       {
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Key event but does not have the keyboard focus."));
       }
-    }    
-
-//     if (keyboard_focus_area == this)
-//     {
-//       if (event_type == NUX_KEYDOWN)
-//       {
-//         nuxEventDebugTrace (_print_event_debug_trace,
-//                             TEXT("Emit OnKeyPressed"));
-//         OnKeyPressed.emit (event.GetKeySym(), event.e_x11_keycode,
-//                             event.GetKeyState());
-// 
-//         nuxEventDebugTrace (_print_event_debug_trace,
-//                             TEXT("Emit OnKeyEvent. String: %s"), event.e_text);
-//         OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
-//                          event_type, event.GetKeySym(),
-//                          event.GetKeyState(), event.GetText(),
-//                          event.GetKeyRepeatCount());
-// 
-//         ret |=  eMouseEventSolved;
-//       }
-//       else if (event_type == NUX_KEYUP)
-//       {
-//         nuxEventDebugTrace (_print_event_debug_trace,
-//                             TEXT("Emit OnKeyReleased"));
-//         OnKeyReleased.emit (event.GetKeySym(), event.e_x11_keycode,
-//                             event.GetKeyState());
-// 
-//         nuxEventDebugTrace (_print_event_debug_trace,
-//                             TEXT("Emit OnKeyEvent. String: %s"), event.e_text);
-//         OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
-//                          event_type, event.GetKeySym(),
-//                          event.GetKeyState(), event.GetText(),
-//                          event.GetKeyRepeatCount());
-// 
-//         ret |=  eMouseEventSolved;
-//       }
-//     }
-
-    GetWindowCompositor().SetPreviousMouseOverArea (PreviousMouseOverArea);
-    GetWindowCompositor().SetMouseOverArea (CurrentMouseOverArea);
+    }
 
     return ret;
   }
@@ -694,35 +655,35 @@ namespace nux
     _event_processor.m_mouse_positionx = x;
     _event_processor.m_mouse_positiony = y;
   }
-  
+
   void InputArea::EnableEventDebugTrace (bool enable)
   {
     _print_event_debug_trace = enable;
   }
-  
+
   bool InputArea::GetEventDebugTrace () const
   {
     return _print_event_debug_trace;
   }
-  
+
   void InputArea::HandleDndMove (Event &event)
   {
 #if defined (NUX_OS_LINUX)
     std::list<char *> mimes;
-    
+
     mimes = GetWindow ().GetDndMimeTypes ();
     std::list<char *>::iterator it;
     ProcessDndMove (event.e_x, event.e_y, mimes);
-    
+
     for (it = mimes.begin (); it != mimes.end (); it++)
       g_free (*it);
 #endif
   }
-  
+
   void InputArea::HandleDndDrop (Event &event)
   {
 #if defined (NUX_OS_LINUX)
-    ProcessDndDrop (event.e_x, event.e_y);  
+    ProcessDndDrop (event.e_x, event.e_y);
 #endif
   }
 
@@ -731,7 +692,7 @@ namespace nux
   {
     GetWindow ().SendDndStatus (accept, action, Rect (region.x, region.y, region.width, region.height));
   }
-  
+
   void InputArea::SendDndFinished (bool accepted, DndAction action)
   {
     GetWindow ().SendDndFinished (accepted, action);
@@ -741,16 +702,16 @@ namespace nux
   {
     // must learn to deal with x/y offsets
     Area *parent = GetToplevel ();
-    
+
     if (parent)
     {
       x += parent->GetGeometry ().x;
       y += parent->GetGeometry ().y;
     }
-    
+
     SendDndStatus (false, DNDACTION_NONE, Geometry (x, y, GetGeometry ().width, GetGeometry ().height));
   }
-  
+
   void InputArea::ProcessDndDrop (int x, int y)
   {
     SendDndFinished (false, DNDACTION_NONE);
@@ -764,5 +725,13 @@ namespace nux
   {
   }
 #endif
+
+  void InputArea::DoSetFocused (bool focused)
+  {
+    Area::DoSetFocused (focused);
+    CaptureMouseDownAnyWhereElse (focused);
+    SetKeyboardFocus (focused);
+  }
+
 }
 

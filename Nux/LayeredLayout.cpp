@@ -114,7 +114,7 @@ namespace nux
       Area                   *area = *it;
       LayeredChildProperties *props;
       Geometry                geo = base;
-      
+
       props = dynamic_cast<LayeredChildProperties *> (area->GetLayoutProperties ());
 
       if (props->m_expand)
@@ -182,7 +182,7 @@ namespace nux
   {
     Geometry base = GetGeometry ();
     gfx_context.PushClippingRectangle (base);
-    
+
     if (m_paint_all)
     {
       std::list<Area *>::iterator it, eit = _layout_element_list.end ();
@@ -205,7 +205,7 @@ namespace nux
     {
       PaintOne (m_active_area, gfx_context, force_draw);
     }
-        
+
     gfx_context.PopClippingRectangle ();
     _queued_draw = false;
   }
@@ -270,7 +270,7 @@ namespace nux
   {
     AddLayer (layout);
   }
-  
+
   void LayeredLayout::AddView (Area                  *view,
                                unsigned int           stretch_factor,
                                MinorDimensionPosition positioning,
@@ -336,7 +336,7 @@ namespace nux
     LayeredChildProperties *props;
 
     g_return_if_fail (area);
-    
+
     props = dynamic_cast<LayeredChildProperties *>(area->GetLayoutProperties ());
     g_return_if_fail (props);
 
@@ -350,13 +350,13 @@ namespace nux
     LayeredChildProperties *props;
 
     g_return_if_fail (area);
-    
+
     props = dynamic_cast<LayeredChildProperties *>(area->GetLayoutProperties ());
     g_return_if_fail (props);
 
     (*props->m_vis_it).disconnect ();
     area->SetLayoutProperties (NULL);
-  
+
 
     if (m_active_area == area)
     {
@@ -393,6 +393,20 @@ namespace nux
     m_active_index = index_;
     m_active_area = NULL;
 
+    // first unset focused on all elements
+    for (it = _layout_element_list.begin (); it != eit; ++it)
+    {
+      if ((*it)->GetFocused ())
+      {
+        if ((*it)->IsView ())
+          static_cast<View *> (*it)->SetFocused (false);
+        else if ((*it)->IsLayout ())
+          static_cast<Layout *> (*it)->SetFocused (false);
+        else
+         (*it)->SetFocused (false);
+      }
+    }
+
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
       if (i == m_active_index && !m_active_area)
@@ -401,9 +415,15 @@ namespace nux
       }
 
       if ((*it)->IsView ())
+      {
         static_cast<View *> (*it)->QueueDraw ();
+        static_cast<View *> (*it)->SetFocused (true);
+      }
       else if ((*it)->IsLayout ())
+      {
         static_cast<Layout *> (*it)->QueueDraw ();
+        static_cast<Layout *> (*it)->SetFocused (true);
+      }
 
       i++;
     }

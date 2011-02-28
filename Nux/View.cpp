@@ -39,9 +39,11 @@ namespace nux
     _need_redraw        = false;
     m_UseStyleDrawing   = true;
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
+    _can_pass_focus_to_composite_layout = true;
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    OnMouseDownOutsideArea.connect (sigc::mem_fun (this, &View::DoMouseDownOutsideArea));
   }
 
   View::~View()
@@ -50,6 +52,33 @@ namespace nux
     GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
     RemoveLayout();
+  }
+
+  void View::DoMouseDownOutsideArea (int x, int y,unsigned long mousestate, unsigned long keystate)
+  {
+    if (GetFocused ())
+    {
+      SetFocused (false);
+    }
+  }
+
+  long View::ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    // we assume we were chained up to by our layout
+    if (GetLayout () == NULL)
+      return TraverseInfo;
+
+    Area *parent = GetParentObject ();
+    if (parent == NULL)
+      GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
+
+    if (parent != NULL && parent->IsLayout ())
+    {
+      Layout *parent_layout = (Layout *)parent;
+      return parent_layout->ProcessFocusEvent (ievent, TraverseInfo, ProcessEventInfo);
+    }
+
+    return TraverseInfo;
   }
 
   long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -337,6 +366,9 @@ namespace nux
     m_CompositionLayout = layout;
 
     GetWindowThread()->QueueObjectLayout (this);
+    if (GetFocused ())
+      layout->SetFocused (true);
+
     return true;
   }
 
@@ -422,9 +454,98 @@ namespace nux
   {
     QueueDraw ();
   }
-  
+
   void View::GeometryChanged ()
   {
     QueueDraw ();
   }
+
+  void View::DoSetFocused (bool focused)
+  {
+    if (_can_pass_focus_to_composite_layout)
+    {
+      Layout *layout = GetLayout ();
+      InputArea::DoSetFocused (focused);
+
+      if (layout != NULL)
+      {
+        layout->SetFocused (focused);
+      }
+      else
+      {
+      }
+    }
+    else
+    {
+      InputArea::DoSetFocused (focused);
+    }
+
+    if (focused == false)
+    {
+      bool has_focused_entry = false;
+      Area *_parent = GetParentObject ();
+      if (_parent == NULL)
+        return;
+
+      if (_parent->IsLayout ())
+        has_focused_entry = (Layout *)(_parent)->GetFocused ();
+
+      if (has_focused_entry == false)
+        SetFocusControl (false);
+
+    }
+  }
+
+  bool View::DoCanFocus ()
+  {
+    if (_can_pass_focus_to_composite_layout)
+    {
+      if (GetLayout () != NULL)
+      {
+        return GetLayout ()->CanFocus ();
+      }
+      return true;
+    }
+
+    return true;
+  }
+
+  void View::SetFocusControl (bool focus_control)
+  {
+    Area *_parent = GetParentObject ();
+    if (_parent == NULL)
+      return;
+
+    if (_parent->IsView ())
+    {
+      View *parent = (View*)_parent;
+      parent->SetFocusControl (focus_control);
+    }
+    else if (_parent->IsLayout ())
+    {
+      Layout *parent = (Layout *)_parent;
+      parent->SetFocusControl (focus_control);
+    }
+  }
+
+  bool View::HasFocusControl ()
+  {
+    Area *_parent = GetParentObject ();
+    if (_parent == NULL)
+      return false;
+
+    if (_parent->IsView ())
+    {
+      View *parent = (View*)_parent;
+      return parent->HasFocusControl ();
+    }
+    else if (_parent->IsLayout ())
+    {
+      Layout *parent = (Layout *)_parent;
+      return parent->HasFocusControl ();
+    }
+    return false;
+  }
+
+
 }

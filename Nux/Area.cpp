@@ -35,10 +35,10 @@ namespace nux
 
   Area::Area (NUX_FILE_LINE_DECL)
     :   InitiallyUnownedObject (NUX_FILE_LINE_PARAM)
+    ,   _is_focused (0)
     ,   _geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
     ,   _min_size (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
     ,   _max_size (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
-
   {
     _parent_area = NULL;
     _stretch_factor = 1;
@@ -329,10 +329,10 @@ namespace nux
   {
     h = nux::Clamp<int> (h, _min_size.GetHeight (), _max_size.GetHeight ());
     w = nux::Clamp<int> (w, _min_size.GetWidth (), _max_size.GetWidth ());
-    
+
     if (_geometry.x == x && _geometry.y == y && _geometry.width == w && _geometry.height == h)
       return;
-    
+
     GeometryChangePending ();
     _geometry = nux::Geometry (x, y, w, h);
     InitiateResizeLayout();
@@ -345,7 +345,7 @@ namespace nux
   {
     SetGeometry (geo.x, geo.y, geo.width, geo.height);
   }
-  
+
   Geometry Area::GetGeometry() const
   {
     return _geometry;
@@ -355,12 +355,12 @@ namespace nux
   {
     SetGeometry (x, _geometry.y, _geometry.width, _geometry.height);
   }
-  
+
   void Area::SetBaseY    (int y)
   {
     SetGeometry (_geometry.x, y, _geometry.width, _geometry.height);
   }
-  
+
   void Area::SetBaseXY    (int x, int y)
   {
     SetGeometry (x, y, _geometry.width, _geometry.height);
@@ -522,7 +522,7 @@ namespace nux
       _parent_area->RequestBottomUpLayoutComputation (bo_initiator);
     }
   }
-  
+
   void Area::SetLayoutProperties (LayoutProperties *properties)
   {
     if (_layout_properties)
@@ -580,7 +580,7 @@ namespace nux
   {
     return _extend;
   }
-  
+
   void Area::SetExtend (MinorDimensionSize ext)
   {
     _extend = ext;
@@ -590,7 +590,7 @@ namespace nux
   {
     return _percentage;
   }
-  
+
   void Area::SetPercentage (float p)
   {
     _percentage = p;
@@ -600,7 +600,7 @@ namespace nux
   {
     return _layout_done;
   }
-  
+
   void Area::SetLayoutDone (bool b)
   {
     _layout_done = b;
@@ -693,7 +693,7 @@ namespace nux
     if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
     {
       // Do not apply the _2D_xform matrix  to a BaseWindow or the main layout
-      return _geometry; 
+      return _geometry;
     }
     else
     {
@@ -707,7 +707,7 @@ namespace nux
       {
         return parent->InnerGetAbsoluteGeometry (MatrixXFormGeometry (_2d_xform, _geometry));
       }
-    }    
+    }
   }
 
   int Area::GetAbsoluteX () const
@@ -767,7 +767,7 @@ namespace nux
       {
         return parent->InnerGetRootGeometry (MatrixXFormGeometry (_2d_xform, _geometry));
       }
-    }    
+    }
   }
 
   int Area::GetRootX () const
@@ -814,6 +814,32 @@ namespace nux
     return false;
   }
 
+  /* handles our focusable code */
+  bool Area::DoGetFocused ()
+  {
+    return _is_focused;
+  }
+
+  /* Pretty much everything is going to have to override this */
+  void Area::DoSetFocused (bool focused)
+  {
+    if (_is_focused == focused)
+      return;
+
+    _is_focused = focused;
+    FocusChanged (this);
+  }
+
+  bool Area::DoCanFocus ()
+  {
+    return true;
+  }
+
+  /* override me! */
+  void Area::DoActivateFocus ()
+  {
+  }
+
   void Area::QueueRelayout ()
   {
     nux::GetWindowThread ()->QueueObjectLayout (this);
@@ -822,6 +848,6 @@ namespace nux
 //   bool Area::AddSecondaryChild (Area *child)
 //   {
 //     NUX_RETURN_IF_NULL (child, false);
-//     
+//
 //   }
 }
