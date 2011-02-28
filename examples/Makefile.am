@@ -15,6 +15,7 @@ noinst_PROGRAMS = button \
                   gridlayout \
                   layeredlayout \
                   moveable_view \
+                  pango_combobox \
                   pangotextedit \
                   scrollview \
                   textedit \
@@ -76,6 +77,9 @@ focus_SOURCES = focus.cpp
 focus_LDADD = $(ALL_LIBS)
 scrollview_SOURCES = scrollview.cpp
 scrollview_LDADD = $(ALL_LIBS)
+pango_combobox_SOURCES = pango_combobox.cpp
+pango_combobox_LDADD = $(ALL_LIBS)
+
 
 # distribute source along to the documentation
 #sourceexampledir = "$(pkgdatadir)/examples"

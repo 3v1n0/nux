@@ -23,6 +23,7 @@
 #include "Nux.h"
 #include "AbstractComboBox.h"
 #include "HLayout.h"
+#include "StaticText.h"
 
 namespace nux
 {
@@ -35,54 +36,53 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
     ,   m_MenuIsActive (false)
   {
-    InitializeLayout();
-    InitializeWidgets();
+    m_hlayout   = new HLayout(NUX_TRACKER_LOCATION);
+    _combo_box_area = new InputArea(NUX_TRACKER_LOCATION);
+    _combo_box_opening_area    = new InputArea(NUX_TRACKER_LOCATION);
+
+    m_hlayout->AddView (_combo_box_area, 1);
+    m_hlayout->AddView (_combo_box_opening_area, 0);
+    m_hlayout->SetHorizontalExternalMargin (0);
+    m_hlayout->SetVerticalExternalMargin (0);
+    SetLayout (m_hlayout);
+
+    _combo_box_area->OnMouseEnter.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseEnter) );
+    _combo_box_area->OnMouseLeave.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseLeave) );
+
+    _combo_box_opening_area->OnMouseEnter.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseEnter) );
+    _combo_box_opening_area->OnMouseLeave.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseLeave) );
+
+    SetTextColor (Color::Black);
+
+    _pango_static_text = new StaticText (TEXT(""), NUX_TRACKER_LOCATION);
   }
 
   AbstractComboBox::~AbstractComboBox()
   {
-    DestroyLayout();
-  }
-
-  void AbstractComboBox::InitializeWidgets()
-  {
-    m_hlayout->AddView (m_ComboArea, 1);
-    m_hlayout->AddView (m_Button, 0);
-    m_hlayout->SetHorizontalExternalMargin (0);
-    m_hlayout->SetVerticalExternalMargin (0);
-    SetCompositionLayout (m_hlayout);
-
-    m_ComboArea->OnMouseEnter.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseEnter) );
-    m_ComboArea->OnMouseLeave.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseLeave) );
-
-    m_Button->OnMouseEnter.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseEnter) );
-    m_Button->OnMouseLeave.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseLeave) );
-
-    SetTextColor (Color::Black);
-  }
-
-  void AbstractComboBox::InitializeLayout()
-  {
-    m_hlayout   = new HLayout(NUX_TRACKER_LOCATION);
-    m_ComboArea = new InputArea(NUX_TRACKER_LOCATION);
-    m_Button    = new InputArea(NUX_TRACKER_LOCATION);
-  }
-
-  void AbstractComboBox::DestroyLayout()
-  {
+    if (_pango_static_text)
+      _pango_static_text->Dispose ();
+    _pango_static_text = 0;
   }
 
   void AbstractComboBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
+    
+    GfxContext.PushClippingRectangle (base);
     GetPainter().PaintBackground (GfxContext, base);
     GetPainter().PaintShape (GfxContext, base, m_sCOMBO_COLOR,  eSHAPE_CORNER_ROUND4);
-    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), m_ComboArea->GetGeometry(), m_ComboArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
-    Geometry button_geo = m_Button->GetGeometry();
+
+    {
+      //GetPainter().PaintTextLineStatic (GfxContext, GetFont (), _combo_box_area->GetGeometry(), _combo_box_area->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+      _pango_static_text->SetGeometry (_combo_box_area->GetGeometry ());
+      _pango_static_text->ProcessDraw (GfxContext, true);
+    }
+    
+    Geometry button_geo = _combo_box_opening_area->GetGeometry();
     button_geo.OffsetSize (-5, -2);
     button_geo.OffsetPosition (+4, +1);
 
-    if (m_ComboArea->IsMouseInside() || m_Button->IsMouseInside() )
+    if (_combo_box_area->IsMouseInside() || _combo_box_opening_area->IsMouseInside() )
       GetPainter().PaintShape (GfxContext, button_geo, m_sCOMBO_MOUSEOVER_COLOR,  eSHAPE_CORNER_ROUND4);
     else
       GetPainter().PaintShape (GfxContext, button_geo, m_sCOMBO_BUTTON_COLOR,  eSHAPE_CORNER_ROUND4);
@@ -92,17 +92,17 @@ namespace nux
     GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eCOMBOBOX_OPEN_BUTTON);
 
     Geometry popup_geometry;
-    popup_geometry.SetX (m_ComboArea->GetBaseX() );
-    popup_geometry.SetY (m_ComboArea->GetBaseY() + m_ComboArea->GetBaseHeight() );
-    popup_geometry.SetWidth (m_ComboArea->GetBaseWidth() );
-    popup_geometry.SetHeight (m_ComboArea->GetBaseHeight() );
+    popup_geometry.SetX (_combo_box_area->GetBaseX() );
+    popup_geometry.SetY (_combo_box_area->GetBaseY() + _combo_box_area->GetBaseHeight() );
+    popup_geometry.SetWidth (_combo_box_area->GetBaseWidth() );
+    popup_geometry.SetHeight (_combo_box_area->GetBaseHeight() );
+
+    GfxContext.PopClippingRectangle ();
   }
 
   void AbstractComboBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
-    GfxContext.PushClippingRectangle (GetGeometry() );
 
-    GfxContext.PopClippingRectangle();
   }
 
   void AbstractComboBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)

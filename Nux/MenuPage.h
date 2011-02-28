@@ -28,7 +28,7 @@
 
 namespace nux
 {
-
+  class StaticText;
   class MenuPage;
   class VLayout;
   class MenuBar;
@@ -50,6 +50,9 @@ namespace nux
     //const ActionItem& GetItem() const {return m_ActionItem;}
     ActionItem *GetActionItem() const;
     //ActionItem* GetActionItem();
+    
+    int GetTextWidth ();
+    int GetTextHeight ();
 
   private:
     void SetChildMenu (MenuPage *menu);
@@ -58,6 +61,7 @@ namespace nux
 
     MenuPage    *_child_menu;
     ActionItem  *_action_item;
+    StaticText  *_pango_static_text;
     friend class MenuPage;
   };
 

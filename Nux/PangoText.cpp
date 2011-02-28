@@ -21,8 +21,6 @@ namespace nux
     _pango_layout     = pango_layout_new (_pango_context);
     _pango_font_desc  = pango_font_description_from_string ("Arial, 20");
 
-    
-
     _size_match_text = true;
     _textColor  = Color::White;
     _texture2D  = 0;
