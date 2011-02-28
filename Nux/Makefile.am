@@ -127,6 +127,7 @@ source_cpp = \
   $(srcdir)/SpinBox_Logic.cpp \
   $(srcdir)/SplineCurveEditor.cpp \
   $(srcdir)/SplineCurvePreview.cpp \
+  $(srcdir)/StaticText.cpp \
   $(srcdir)/StaticTextBox.cpp \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TableCtrl.cpp \
@@ -263,6 +264,7 @@ source_h = \
   $(srcdir)/SpinBox_Logic.h \
   $(srcdir)/SplineCurveEditor.h \
   $(srcdir)/SplineCurvePreview.h \
+  $(srcdir)/StaticText.h \
   $(srcdir)/StaticTextBox.h \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TableCtrl.h \
