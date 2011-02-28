@@ -542,6 +542,9 @@ namespace nux
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Key event but does not have the keyboard focus."));
       }
     }
+    
+    GetWindowCompositor().SetPreviousMouseOverArea (PreviousMouseOverArea);
+    GetWindowCompositor().SetMouseOverArea (CurrentMouseOverArea);
 
     return ret;
   }
