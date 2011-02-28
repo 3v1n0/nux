@@ -355,6 +355,9 @@ namespace nux
     m_CompositionLayout = layout;
 
     GetWindowThread()->QueueObjectLayout (this);
+    if (GetFocused ())
+      layout->SetFocused (true);
+
     return true;
   }
 
