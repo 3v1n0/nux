@@ -26,6 +26,7 @@
 #include "WindowCompositor.h"
 #include "ActionItem.h"
 #include "VLayout.h"
+#include "StaticText.h"
 
 namespace nux
 {
@@ -59,10 +60,14 @@ namespace nux
   {
     _child_menu     = 0;
     _action_item    = new ActionItem (label, UserValue, NUX_TRACKER_LOCATION);
+    
+    _pango_static_text = new StaticText (label, NUX_TRACKER_LOCATION);
   }
 
   MenuItem::~MenuItem()
   {
+    _pango_static_text->Dispose ();
+
     if (_action_item)
       _action_item->UnReference ();
     if (_child_menu)
@@ -92,10 +97,13 @@ namespace nux
     if (action == 0)
       return;
 
+    _pango_static_text->Dispose ();
     if (_action_item)
       _action_item->UnReference ();
     _action_item = action;
     _action_item->Reference();
+
+    _pango_static_text = new StaticText (_action_item->GetLabel (), NUX_TRACKER_LOCATION);
   }
 
   ActionItem *MenuItem::GetActionItem() const
@@ -157,7 +165,12 @@ namespace nux
     }
 
     if (label)
-      GetPainter().PaintTextLineStatic (GfxContext, GetFont (), text_geo, std::string (label), textcolor, eAlignTextLeft);
+    {
+      //GetPainter().PaintTextLineStatic (GfxContext, GetFont (), text_geo, std::string (label), textcolor, eAlignTextLeft);
+
+      _pango_static_text->SetGeometry (text_geo);
+      _pango_static_text->ProcessDraw (GfxContext, true);
+    }
   }
 
   MenuSeparator::MenuSeparator (NUX_FILE_LINE_DECL)

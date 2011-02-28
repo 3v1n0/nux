@@ -25,7 +25,7 @@
 
 namespace nux
 {
-
+  class StaticText;
   class HLayout;
 
   class AbstractComboBox: public View
@@ -43,14 +43,10 @@ namespace nux
     void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
   protected:
-    void InitializeWidgets();
-    void InitializeLayout();
-    void DestroyLayout();
-
-  protected:
     HLayout    *m_hlayout;
-    InputArea   *m_ComboArea;
-    InputArea   *m_Button;
+    InputArea   *_combo_box_area;
+    InputArea   *_combo_box_opening_area;
+    StaticText  *_pango_static_text;
     bool        m_MenuIsActive;
     bool        m_IsOpeningMenu;
 

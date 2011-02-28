@@ -28,7 +28,7 @@
 
 namespace nux
 {
-
+  class StaticText;
   class MenuPage;
   class VLayout;
   class MenuBar;
@@ -58,6 +58,7 @@ namespace nux
 
     MenuPage    *_child_menu;
     ActionItem  *_action_item;
+    StaticText  *_pango_static_text;
     friend class MenuPage;
   };
 

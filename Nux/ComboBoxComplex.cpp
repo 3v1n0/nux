@@ -53,20 +53,20 @@ namespace nux
   void ComboBoxComplex::InitializeWidgets()
   {
     // Set Signals
-    m_Button->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDown) );
-    m_Button->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseUp) );
-    m_Button->OnMouseDrag.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDrag) );
+    _combo_box_opening_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDown) );
+    _combo_box_opening_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseUp) );
+    _combo_box_opening_area->OnMouseDrag.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDrag) );
 
-    m_ComboArea->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDown) );
-    m_ComboArea->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseUp) );
-    m_ComboArea->OnMouseDrag.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDrag) );
+    _combo_box_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDown) );
+    _combo_box_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseUp) );
+    _combo_box_area->OnMouseDrag.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDrag) );
 
     // Set Geometry
-    m_Button->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT) );
-    m_Button->SetMinimumSize (20, DEFAULT_WIDGET_HEIGHT);
+    _combo_box_opening_area->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT) );
+    _combo_box_opening_area->SetMinimumSize (20, DEFAULT_WIDGET_HEIGHT);
 
-    m_ComboArea->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    m_ComboArea->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
+    _combo_box_area->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    _combo_box_area->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
 
     m_ListBox->UsedForComboBox (true);
 
@@ -114,12 +114,12 @@ namespace nux
   {
     long ret = TraverseInfo;
 
-    ret = m_Button->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ComboArea->OnEvent (ievent, ret, ProcessEventInfo);
+    ret = _combo_box_opening_area->OnEvent (ievent, ret, ProcessEventInfo);
+    ret = _combo_box_area->OnEvent (ievent, ret, ProcessEventInfo);
 
     if (ievent.e_event == NUX_MOUSE_RELEASED)
     {
-      // Cancel m_IsOpeningMenu in case it hasn't been changed in m_Button->OnEvent or m_ComboArea->OnEvent.
+      // Cancel m_IsOpeningMenu in case it hasn't been changed in _combo_box_opening_area->OnEvent or _combo_box_area->OnEvent.
       // This can happen if the table area of the m_ListBox get the NUX_MOUSE_RELEASED event first and sets
       // TraverseInfo to MouseEventSolved.
       if (m_IsOpeningMenu == true)
@@ -137,7 +137,7 @@ namespace nux
         // The menu is opened.
         // Did we hit the button (the one with the arrow pointing down) or did we hit the rest
         // of the Combo area?
-        if (m_Button->IsMouseInside() || m_ComboArea->IsMouseInside() )
+        if (_combo_box_opening_area->IsMouseInside() || _combo_box_area->IsMouseInside() )
           mouse_down_on_menu_item = true;
 
         if (mouse_down_on_menu_item == false)
@@ -179,7 +179,7 @@ namespace nux
       // The first element added is the element featured on the combobox when it is closed.
       m_ListBox->setTableItems (item);
       m_SelectedTreeNode = item;
-      m_ComboArea->SetBaseString (m_SelectedTreeNode->GetName() );
+      _combo_box_area->SetBaseString (m_SelectedTreeNode->GetName() );
     }
     else if (m_ListBox)
     {
@@ -205,7 +205,7 @@ namespace nux
       m_MenuIsActive = true;
       m_IsOpeningMenu = true;
 
-      m_PopupWindow->SetBaseXY (m_ComboArea->GetBaseX(), m_ComboArea->GetBaseY() + m_ComboArea->GetBaseHeight() );
+      m_PopupWindow->SetBaseXY (_combo_box_area->GetBaseX(), _combo_box_area->GetBaseY() + _combo_box_area->GetBaseHeight() );
       m_PopupWindow->Show();
 
       if (m_ListBox)
@@ -227,7 +227,7 @@ namespace nux
   {
     if (m_MenuIsActive)
     {
-      if (m_ComboArea->IsMouseInside() || m_Button->IsMouseInside() )
+      if (_combo_box_area->IsMouseInside() || _combo_box_opening_area->IsMouseInside() )
       {
         if (m_IsOpeningMenu == false)
         {
@@ -249,8 +249,8 @@ namespace nux
         TableItem *item = 0;
         m_ListBox->GetBaseX();
         m_ListBox->GetBaseY();
-        int X = x + m_ComboArea->GetBaseX() - m_PopupWindow->GetBaseX() - m_ListBox->GetBaseX();
-        int Y = y + m_ComboArea->GetBaseY() - m_PopupWindow->GetBaseY() - m_ListBox->GetBaseY();
+        int X = x + _combo_box_area->GetBaseX() - m_PopupWindow->GetBaseX() - m_ListBox->GetBaseX();
+        int Y = y + _combo_box_area->GetBaseY() - m_PopupWindow->GetBaseY() - m_ListBox->GetBaseY();
         m_ListBox->FindItemUnderPointer (X, Y, &item, row, column);
 
         if (item)
@@ -281,8 +281,8 @@ namespace nux
   {
 //    int row, column;
 //    TableItem* item = 0;
-//    int X = x + m_ComboArea->GetX() - m_PopupWindow->GetX() - m_ListBox->GetX();
-//    int Y = y + m_ComboArea->GetY() - m_PopupWindow->GetY() - m_ListBox->GetY();
+//    int X = x + _combo_box_area->GetX() - m_PopupWindow->GetX() - m_ListBox->GetX();
+//    int Y = y + _combo_box_area->GetY() - m_PopupWindow->GetY() - m_ListBox->GetY();
 //    m_ListBox->FindItemUnderPointer(X, Y, &item, row, column);
 //    m_ListBox->HighlightItem(row, column);
 
@@ -300,7 +300,7 @@ namespace nux
     m_IsOpeningMenu = false;
 
     m_SelectedTreeNode = &item;
-    m_ComboArea->SetBaseString (m_SelectedTreeNode->GetName() );
+    _combo_box_area->SetBaseString (m_SelectedTreeNode->GetName() );
     sigSelectedItem.emit (item);
 
     m_PopupWindow->Hide();
