@@ -337,6 +337,8 @@ namespace nux
     _geometry = nux::Geometry (x, y, w, h);
     InitiateResizeLayout();
     GeometryChanged ();
+
+    OnGeometryChanged.emit (this, _geometry);
   }
 
   void Area::SetGeometry (const Geometry &geo)

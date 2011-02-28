@@ -337,6 +337,7 @@ namespace nux
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
     sigc::signal<void, Area *, bool> OnVisibleChanged;
     sigc::signal<void, Area *, bool> OnSensitiveChanged;
+    sigc::signal<void, Area *, Geometry&> OnGeometryChanged;
 
 
   protected:
