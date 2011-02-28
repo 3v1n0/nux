@@ -154,7 +154,7 @@ namespace nux
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
-      if (!m_Geometry.IsPointInside (ievent.e_x, ievent.e_y) )
+      if (!GetGeometry().IsPointInside (ievent.e_x, ievent.e_y) )
       {
         //return TraverseInfo;
       }
@@ -250,7 +250,6 @@ namespace nux
 
         m_Texture->UnlockRect (0);
 
-        m_DrawFunctionShader->SetTransformMatrix (GfxContext.GetProjectionMatrix() );
         m_DrawFunctionShader->SetTextureFunction (m_Texture);
         m_DrawFunctionShader->SetBackgroundColor (0.1f, 0.1f, 0.1f, 0.6f);
         m_DrawFunctionShader->Render (X, Y, 0, W, H, GfxContext.GetWindowWidth(), GfxContext.GetWindowHeight() );

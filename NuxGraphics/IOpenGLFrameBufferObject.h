@@ -55,7 +55,14 @@ namespace nux
     void PopClippingRegion();
     void EmptyClippingRegion();
     void ApplyClippingRegion();
-    void SetClippingRegion (int x, int y, int width, int height);
+
+    //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
+    /*!
+        You may restore the clipping rectangle stack with ApplyClippingRectangle.
+    */
+    void SetClippingRectangle (const Rect &rect);
+
+    void SetOpenGLClippingRectangle (int x, int y, int width, int height);
     Rect GetClippingRegion();
     int GetNumberOfClippingRegions () const;
 
@@ -75,6 +82,7 @@ namespace nux
     int             _Height;
     BitmapFormat    _PixelFormat;
     bool            _IsActive;
+    Rect            _clipping_rect;
 
     ObjectPtr<IOpenGLSurface>     _Depth_Attachment;
     ObjectPtr<IOpenGLSurface>     _Stencil_Attachment;

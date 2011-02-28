@@ -64,6 +64,21 @@ namespace nux
     static ROPConfig Default;
   };
 
+  class BlendOperator
+  {
+  public:
+    BlendOperator ();
+    ~BlendOperator ();
+
+    void EnableBlending (bool enable);
+    void SetPorterDuffOperator (PorterDuffOperator op);
+    void SetCustomBlendOperator (unsigned int src_blend, unsigned int dst_blend);
+
+    bool  _enable;
+    unsigned int _src_blend;
+    unsigned int _dst_blend;
+  };
+
   typedef struct
   {
     int x;
@@ -357,16 +372,32 @@ namespace nux
     void PushClippingRectangle (Rect rect);
     void PopClippingRectangle ();
     void EmptyClippingRegion ();
+    //! Set the clipping according to the clipping rectangle stack.
     void ApplyClippingRectangle ();
-    void SetDrawClippingRegion (int x, int y, unsigned int width, unsigned int height);
+
+    //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
+    /*!
+        You may restore the clipping rectangle stack with ApplyClippingRectangle.
+    */
+    void SetClippingRectangle (const Rect &rect);
+
+    //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
+    void SetOpenGLClippingRectangle (int x, int y, unsigned int width, unsigned int height);
+
     Rect GetClippingRegion () const;
     int GetNumberOfClippingRegions () const;
+    
+    void AddClipOffset (int x, int y);  //!< Deprecated. Use PushClipOffset.
+    void PushClipOffset (int x, int y);
+    void PopClipOffset ();
 
     void ClearAreaColorDepthStencil (int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil);
     void ClearAreaColor (int x, int y, int width, int height, Color clearcolor);
     void ClearAreaDepthStencil (int x, int y, int width, int height, float cleardepth, int clearstencil);
 
     void Set3DView (int w, int h);
+
+    //! Push a screen aligned 2D matrix.
     void Push2DWindow (int w, int h);
     void Pop2DWindow ();
     void Push2DModelViewMatrix (Matrix4 mat);
@@ -374,14 +405,15 @@ namespace nux
     void Clear2DModelViewMatrix ();
     std::list<Matrix4> m_2DModelViewMatricesStack;
 
-    void SetEnvModeTextureAlphaBlend (int TextureUnit);
-    void SetEnvModeSelectTexture (int TextureUnit);
-    void SetEnvModeSelectColor (int TextureUnit);
-    void SetEnvModeModulateColorWithTexture (int TextureUnit);
-
-
     void SetViewport (int x, int y, int w, int h);
-    Rect GetViewportRect ();
+    Rect GetViewportRect () const;
+    int  GetViewportWidth () const;
+    int  GetViewportHeight () const;
+    int  GetViewportX () const;
+    int  GetViewportY () const;
+
+    void  GetViewportSize (int &viewport_width, int &viewport_height) const;
+
     void SetScissor (int x, int y, int w, int h);
 
     /*!
@@ -445,10 +477,30 @@ namespace nux
     bool IsResourceCached (ResourceData *Resource);
     NResourceCache ResourceCache;
 
-    Matrix4 GetProjectionMatrix();
-    Matrix4 GetModelViewMatrix();
-    Matrix4 GetModelViewProjectionMatrix();
-    Matrix4 GetOpenGLModelViewProjectionMatrix();
+    Matrix4 GetProjectionMatrix ();
+    //! Return the transpose version of GetProjectionMatrix ();
+    Matrix4 GetOpenGLProjectionMatrix ();
+    
+    void SetProjectionMatrix (const Matrix4 &matrix);
+    
+    //! Set orthographic projection matrix.
+    /*!
+        The default projection matrix used by nux.
+
+        @param viewport_width Viewport width.
+        @param viewport_height Viewport height.
+    */
+    void SetOrthographicProjectionMatrix (int viewport_width, int viewport_height);
+
+    //! Reset the projection matrix to identity.
+    void ResetProjectionMatrix ();
+
+    Matrix4 GetModelViewMatrix ();
+    //! Return the transpose version of GetModelViewMatrix ();
+    Matrix4 GetOpenGLModelViewMatrix ();
+
+    Matrix4 GetModelViewProjectionMatrix ();
+    Matrix4 GetOpenGLModelViewProjectionMatrix ();
 
     GpuRenderStates &GetRenderStates()
     {
@@ -477,6 +529,97 @@ namespace nux
         @return True is the system is using the ARB program code path.
     */
     bool UsingARBProgramCodePath ();
+
+    //! Push a model view matrix on the stack.
+    void PushModelViewMatrix (const Matrix4 &matrix);
+
+    //! Push an Identity model view matrix on the stack.
+    void PushIdentityModelViewMatrix ();
+
+    //! Push a 2D Translation model view matrix.
+    /*!
+        This is used by Nux to harmonize quads and lines pixel rendering in OpenGL.
+    */
+    void Push2DTranslationModelViewMatrix (float tx, float ty, float tz);
+
+    //! Pop a model view matrix off the stack.
+    /*!
+        Return True is a matrix was successfully popped. False if there was no matrix to pop.
+    */
+    bool PopModelViewMatrix ();
+
+    //! Reset the model view matrix to identity.
+    void ResetModelViewMatrixStack ();
+
+    //! Bypass the model view matrix stack and set a custom matrix.
+    /*!
+        You may restore the view matrix stack by calling ApplyModelViewMatrix.
+    */
+    void SetModelViewMatrix (const Matrix4 &matrix);
+
+    //! Set the model view matrix according to the model view matrix stack.
+    void ApplyModelViewMatrix ();
+
+    //! Transform a rectangle with the model view matrix.
+    /*!
+        This transformation is only good as long as the model view matrix only contains 2D translations.
+        The output rectangle width and height are the same as the input rectangle.
+
+        @param rect The rectangle to transform.
+    */
+    Rect ModelViewXFormRect (const Rect& rect);
+
+    //! Return the depth of the model view matrix stack.
+    /*!
+        @return The depth of the model view matrix stack.
+    */
+    int ModelViewStackDepth ();
+
+
+
+    //! Push a projection matrix on the stack.
+    void PushProjectionMatrix (const Matrix4 &matrix);
+
+    //! Pop a projection matrix off the stack.
+    /*!
+        Return True is a matrix was successfully popped. False if there was no matrix to pop.
+    */
+    bool PopProjectionMatrix ();
+
+    //! Return the depth of the projection matrix stack.
+    /*!
+        @return The depth of the projection matrix stack.
+    */
+    int ProjectionStackDepth ();
+
+
+
+
+
+    //! Push a raster operation configuration setting on the stack.
+    void PushPorterDuffBlend (const PorterDuffOperator &porter_duff_op);
+
+    //! Push a state that disables the blending.
+    void PushDisableBlend ();
+
+    //! Push a custom blend state.
+    /*!
+        @param src_blend OpenGL source blending mode.
+        @param dst_blend OpenGL destination blending mode.
+    */
+    void PushBlend (unsigned int src_blend, unsigned int dst_blend);
+
+    //! Pop a raster operation configuration setting off the stack.
+    /*!
+        Return True is a matrix was successfully popped. False if there was no matrix to pop.
+    */
+    bool PopBlend ();
+
+    //! Return the depth of the raster operation stack.
+    /*!
+        @return The depth of the raster operation stack.
+    */
+    int BlendStackDepth ();
 
   private:
 
@@ -664,24 +807,25 @@ namespace nux
     ObjectPtr<IOpenGLTexture2D> _offscreen_color_rt3;
     ObjectPtr<IOpenGLTexture2D> _offscreen_depth_rt3;
 
-    Matrix4 m_ProjectionMatrix;
-    Matrix4 m_ModelViewMatrix;
+    Matrix4 _projection_matrix;
+    Matrix4 _model_view_matrix;
+    
+    std::list<Matrix4>   _model_view_stack;
+    std::list<BlendOperator> _blend_stack;
 
     //! The system GraphicsDisplay object
     GraphicsDisplay &_graphics_display;
 
-    int m_ViewportWidth, m_ViewportHeight;
-    int m_ViewportX, m_ViewportY;
-    int m_ScissorWidth, m_ScissorHeight;
-    int m_ScissorX, m_ScissorY;
-    int m_ScissorXOffset, m_ScissorYOffset;
+    Rect _viewport;
+    Rect _scissor;
+    int _clip_offset_x;
+    int _clip_offset_y;
+    Rect _clipping_rect;
+    std::list<Point> _clip_offset_stack;
+
+//     int m_ScissorXOffset, m_ScissorYOffset;
 
     FontRenderer *_font_renderer;
-
-    //static long ID;
-
-    //FilePath
-    FilePath m_FilePath;
 
     //Statistics
     mutable long m_quad_stats;

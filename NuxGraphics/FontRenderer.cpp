@@ -430,7 +430,7 @@ namespace nux
     {
       m_ShaderProg->Begin();
       int ViewProjectionMatrix = m_ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-      Matrix4 mat = GetThreadGraphicsContext()->GetModelViewProjectionMatrix();
+      Matrix4 mat = GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix();
 
       m_ShaderProg->SetUniformLocMatrix4fv (ViewProjectionMatrix, 1, false, (float *) &mat);
 
@@ -463,12 +463,17 @@ namespace nux
       }
       shader_program->Begin();
 
-      CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-      CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (float *) GetThreadGraphicsContext()->GetModelViewMatrix().m) );
-      CHECKGL ( glMatrixMode (GL_PROJECTION) );
-      CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (float *) GetThreadGraphicsContext()->GetProjectionMatrix().m) );
+      CHECKGL (glMatrixMode (GL_MODELVIEW));
+      CHECKGL (glLoadIdentity ());
+      Matrix4 model_view_matrix = GetThreadGraphicsContext()->GetModelViewMatrix ();
+      model_view_matrix.Transpose ();
+      CHECKGL (glLoadMatrixf ((float *) model_view_matrix.m));
+
+      CHECKGL (glMatrixMode (GL_PROJECTION) );
+      CHECKGL (glLoadIdentity ());
+      Matrix4 projection_matrix = GetThreadGraphicsContext ()->GetProjectionMatrix ();
+      projection_matrix.Transpose ();
+      CHECKGL (glLoadMatrixf ((float *) projection_matrix.m));
 
       iPosition   = VTXATTRIB_POSITION;
       iTexUV      = VTXATTRIB_TEXCOORD0;

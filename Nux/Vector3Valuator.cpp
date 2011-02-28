@@ -35,7 +35,7 @@ namespace nux
     m_XEdit = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     m_YEdit = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     m_ZEdit = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_MouseControlledButton = new CoreArea (NUX_TRACKER_LOCATION);
+    m_MouseControlledButton = new InputArea (NUX_TRACKER_LOCATION);
 
     // Set Original State
     m_XEdit->SetSuffix (TEXT ("") );

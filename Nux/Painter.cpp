@@ -769,8 +769,7 @@ namespace nux
 
   void BasePainter::PaintBackground (GraphicsEngine &GfxContext, const Geometry &geo)
   {
-
-    if (m_BackgroundStack.begin() == m_BackgroundStack.end() )
+    if (m_BackgroundStack.begin () == m_BackgroundStack.end ())
     {
       return;
     }
@@ -779,33 +778,38 @@ namespace nux
 
     bool first = true;
 
-    for (rev_it = m_BackgroundStack.rbegin(); rev_it != m_BackgroundStack.rend(); rev_it++)
+    for (rev_it = m_BackgroundStack.rbegin (); rev_it != m_BackgroundStack.rend (); rev_it++)
     {
-      AbstractPaintLayer *background = (*rev_it);
-      Geometry bg_geo = background->GetGeometry();
+      AbstractPaintLayer *layer = (*rev_it);
+      Geometry layer_geo = layer->GetGeometry ();
+      Geometry xform_geo = GfxContext.ModelViewXFormRect (geo);
 
       GfxContext.PushClippingRectangle (geo);
+      GfxContext.SetModelViewMatrix (layer->GetModelViewMatrix ());
 
       if (first)
       {
-        Paint2DQuadColor (GfxContext, geo, Color (0x0) );
+        Paint2DQuadColor (GfxContext, layer_geo, Color (0x0));
         first = false;
       }
 
-      RenderSinglePaintLayer (GfxContext, background->GetGeometry(), background);
+      RenderSinglePaintLayer (GfxContext, layer_geo, layer);
 
-      GfxContext.PopClippingRectangle();
+      // restore the model view matrix stack and the clipping rectangle stack.
+      GfxContext.ApplyModelViewMatrix ();
+      GfxContext.PopClippingRectangle ();
     }
   }
 
-  void BasePainter::RenderSinglePaintLayer (GraphicsEngine &GfxContext, Geometry geo, AbstractPaintLayer *background)
+  void BasePainter::RenderSinglePaintLayer (GraphicsEngine &GfxContext, Geometry geo, AbstractPaintLayer *paint_layer)
   {
-    background->Renderlayer (GfxContext);
+    paint_layer->Renderlayer (GfxContext);
   }
 
   void BasePainter::PushLayer (GraphicsEngine &GfxContext, const Geometry &geo, AbstractPaintLayer *layer)
   {
     AbstractPaintLayer *l = layer->Clone();
+    l->SetModelViewMatrix (GetGraphicsEngine ().GetModelViewMatrix ());
     l->SetGeometry (geo);
     m_BackgroundStack.push_front (l);
   }
@@ -822,6 +826,7 @@ namespace nux
                                     const ROPConfig &ROP)
   {
     ColorLayer *cl = new ColorLayer (color, WriteAlpha, ROP);
+    cl->SetModelViewMatrix (GetGraphicsEngine ().GetModelViewMatrix ());
     cl->SetGeometry (geo);
     m_BackgroundStack.push_front (cl);
   }
@@ -843,6 +848,7 @@ namespace nux
                                     const ROPConfig &ROP)
   {
     ShapeLayer *sl = new ShapeLayer (imageStyle, color, Corners, WriteAlpha, ROP);
+    sl->SetModelViewMatrix (GetGraphicsEngine ().GetModelViewMatrix ());
     sl->SetGeometry (geo);
     m_BackgroundStack.push_front (sl);
   }
@@ -866,6 +872,7 @@ namespace nux
       const ROPConfig &ROP)
   {
     SliceScaledTextureLayer *sl = new SliceScaledTextureLayer (imageStyle, color, Corners, WriteAlpha, ROP);
+    sl->SetModelViewMatrix (GetGraphicsEngine ().GetModelViewMatrix ());
     sl->SetGeometry (geo);
     m_BackgroundStack.push_front (sl);
   }
@@ -889,6 +896,7 @@ namespace nux
                                       const ROPConfig &ROP)
   {
     TextureLayer *tl = new TextureLayer (DeviceTexture, texxform, color, WriteAlpha, ROP);
+    tl->SetModelViewMatrix (GetGraphicsEngine ().GetModelViewMatrix ());
     tl->SetGeometry (geo);
     m_BackgroundStack.push_front (tl);
   }

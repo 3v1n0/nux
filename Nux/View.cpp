@@ -206,6 +206,8 @@ namespace nux
   {
     _full_redraw = false;
 
+    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+
     if (force_draw)
     {
       _need_redraw = true;
@@ -229,6 +231,8 @@ namespace nux
         PostDraw (GfxContext, false);
       }
     }
+
+    GfxContext.PopModelViewMatrix ();
 
     _need_redraw = false;
     _full_redraw = false;
@@ -254,6 +258,9 @@ namespace nux
       application->RequestRedraw();
       //GetWindowCompositor().AddToDrawList(this);
     }
+    if (m_CompositionLayout)
+      m_CompositionLayout->QueueDraw ();
+
     _need_redraw = true;
     OnQueueDraw.emit (this);
   }
@@ -307,11 +314,8 @@ namespace nux
 
   bool View::SetLayout (Layout *layout)
   {
-    if (layout == 0)
-    {
-      nuxDebugMsg (TEXT ("[View::SetCompositionLayout] Invalid object."));
-      return false;
-    }
+    NUX_RETURN_VALUE_IF_NULL (layout, false);
+    NUX_RETURN_VALUE_IF_TRUE (m_CompositionLayout == layout, true);
 
     Area *parent = layout->GetParentObject();
 

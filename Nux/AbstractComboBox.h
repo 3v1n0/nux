@@ -49,8 +49,8 @@ namespace nux
 
   protected:
     HLayout    *m_hlayout;
-    CoreArea   *m_ComboArea;
-    CoreArea   *m_Button;
+    InputArea   *m_ComboArea;
+    InputArea   *m_Button;
     bool        m_MenuIsActive;
     bool        m_IsOpeningMenu;
 

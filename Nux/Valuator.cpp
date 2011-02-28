@@ -32,7 +32,7 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
     ,   m_Mouse (0)
   {
-    m_MouseControlledButton = new CoreArea (NUX_TRACKER_LOCATION);
+    m_MouseControlledButton = new InputArea (NUX_TRACKER_LOCATION);
     //m_MouseControlledButton->Reference();
     m_EditLine              = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     //m_EditLine->Reference();

@@ -240,9 +240,13 @@ namespace nux
     return 1;
   }
 
-  void IOpenGLFrameBufferObject::PushClippingRegion (Rect clip_rect)
+  void IOpenGLFrameBufferObject::PushClippingRegion (Rect rect)
   {
-    clip_rect.OffsetPosition (0, 0);
+    Rect r0;
+    if (GetThreadGraphicsContext ())
+    {
+      r0 = GetThreadGraphicsContext ()->ModelViewXFormRect (rect);
+    }
 
     Rect current_clip_rect;
     unsigned int stacksize = (unsigned int) _ClippingRegionStack.size();
@@ -256,43 +260,47 @@ namespace nux
       current_clip_rect = _ClippingRegionStack[stacksize-1];
     }
 
-    Rect rect;
+    Rect r1;
 
-    if (GetThreadGraphicsContext() )
-      rect = GetThreadGraphicsContext()->GetViewportRect();
+    if (GetThreadGraphicsContext ())
+      r1 = GetThreadGraphicsContext ()->GetViewportRect ();
 
-    clip_rect.OffsetPosition (rect.x, _Height - (rect.y + rect.GetHeight() ) );
+    r0.OffsetPosition (r1.x, _Height - (r1.y + r1.GetHeight ()));
 
-    Rect Intersection = current_clip_rect.Intersect (clip_rect);
+    Rect Intersection = current_clip_rect.Intersect (r0);
 
-    if (!Intersection.IsNull() )
+    if (!Intersection.IsNull ())
     {
+      _clipping_rect = Intersection;
       _ClippingRegionStack.push_back (Intersection);
 
-      SetClippingRegion (Intersection.x + GetThreadGraphicsContext()->GetContextX(),
-                         _Height - Intersection.y - Intersection.GetHeight() - GetThreadGraphicsContext()->GetContextY(),
-                         Intersection.GetWidth(), Intersection.GetHeight() );
+      SetOpenGLClippingRectangle (Intersection.x + GetThreadGraphicsContext ()->GetViewportX (),
+                         _Height - Intersection.y - Intersection.GetHeight () - GetThreadGraphicsContext()->GetViewportY (),
+                         Intersection.GetWidth (), Intersection.GetHeight ());
     }
     else
     {
-      _ClippingRegionStack.push_back (Rect (0, 0, 0, 0) );
-      SetClippingRegion (0, 0, 0, 0);
+      _clipping_rect = Rect (0, 0, 0, 0);
+      _ClippingRegionStack.push_back (Rect (0, 0, 0, 0));
+      SetOpenGLClippingRectangle (0, 0, 0, 0);
     }
   }
 
-  void IOpenGLFrameBufferObject::PopClippingRegion()
+  void IOpenGLFrameBufferObject::PopClippingRegion ()
   {
-    _ClippingRegionStack.pop_back();
-    int stacksize = (int) _ClippingRegionStack.size();
+    _ClippingRegionStack.pop_back ();
+    int stacksize = (int) _ClippingRegionStack.size ();
 
     if (stacksize == 0)
     {
-      SetClippingRegion (0, 0, _Width, _Height);
+      _clipping_rect = Rect (0, 0, _Width, _Height);
+      SetOpenGLClippingRectangle (0, 0, _Width, _Height);
     }
     else
     {
-      Rect current_clip_rect = _ClippingRegionStack[stacksize-1];
-      SetClippingRegion (current_clip_rect.x, _Height - current_clip_rect.y - current_clip_rect.GetHeight(), current_clip_rect.GetWidth(), current_clip_rect.GetHeight() );
+      _clipping_rect = _ClippingRegionStack [stacksize-1];
+      Rect current_clip_rect = _ClippingRegionStack [stacksize-1];
+      SetOpenGLClippingRectangle (current_clip_rect.x, _Height - current_clip_rect.y - current_clip_rect.GetHeight(), current_clip_rect.GetWidth(), current_clip_rect.GetHeight() );
     }
   }
 
@@ -300,7 +308,8 @@ namespace nux
   {
     _ClippingRegionStack.clear();
     {
-      SetClippingRegion (0, 0, _Width, _Height);
+      _clipping_rect = Rect (0, 0, _Width, _Height);
+      SetOpenGLClippingRectangle (0, 0, _Width, _Height);
     }
   }
 
@@ -310,34 +319,50 @@ namespace nux
 
     if (stacksize == 0)
     {
-      SetClippingRegion (0, 0, _Width, _Height);
+      _clipping_rect = Rect (0, 0, _Width, _Height);
+      SetOpenGLClippingRectangle (0, 0, _Width, _Height);
     }
     else
     {
-      Rect current_clip_rect = _ClippingRegionStack[stacksize-1];
-      SetClippingRegion (current_clip_rect.x, _Height - current_clip_rect.y - current_clip_rect.GetHeight(), current_clip_rect.GetWidth(), current_clip_rect.GetHeight() );
+      _clipping_rect = _ClippingRegionStack [stacksize-1];
+      Rect current_clip_rect = _ClippingRegionStack [stacksize-1];
+      SetOpenGLClippingRectangle (current_clip_rect.x, _Height - current_clip_rect.y - current_clip_rect.GetHeight(), current_clip_rect.GetWidth(), current_clip_rect.GetHeight() );
     }
   }
 
-  void IOpenGLFrameBufferObject::SetClippingRegion (int x, int y, int width, int height)
+  void IOpenGLFrameBufferObject::SetClippingRectangle (const Rect &rect)
   {
-    if (GetThreadGraphicsContext() )
-      GetThreadGraphicsContext()->SetScissor (x, y, width, height);
+    if (GetThreadGraphicsContext ())
+    {
+      _clipping_rect = rect;
+      GetThreadGraphicsContext ()->SetScissor (rect.x, _Height - rect.y - rect.height, rect.width, rect.height);
+    }
+  }
+
+  void IOpenGLFrameBufferObject::SetOpenGLClippingRectangle (int x, int y, int width, int height)
+  {
+    if (GetThreadGraphicsContext ())
+    {
+      _clipping_rect = Rect (x, y, width, height);
+      GetThreadGraphicsContext ()->SetScissor (x, y, width, height);
+    }
   }
 
   Rect IOpenGLFrameBufferObject::GetClippingRegion()
   {
-    unsigned int stacksize = (unsigned int) _ClippingRegionStack.size();
+    return _clipping_rect;
 
-    if (stacksize == 0)
-    {
-      return Rect (0, 0, _Width, _Height);
-    }
-    else
-    {
-      Rect r = _ClippingRegionStack [stacksize-1];
-      return r;
-    }
+//     unsigned int stacksize = (unsigned int) _ClippingRegionStack.size();
+// 
+//     if (stacksize == 0)
+//     {
+//       return Rect (0, 0, _Width, _Height);
+//     }
+//     else
+//     {
+//       Rect r = _ClippingRegionStack [stacksize-1];
+//       return r;
+//     }
   }
 
   int IOpenGLFrameBufferObject::GetNumberOfClippingRegions () const

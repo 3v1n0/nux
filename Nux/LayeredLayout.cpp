@@ -163,7 +163,7 @@ namespace nux
   {
     if (_area->IsArea ())
     {
-      CoreArea *area = NUX_STATIC_CAST (CoreArea *, _area);
+      InputArea *area = NUX_STATIC_CAST (InputArea *, _area);
       area->OnDraw (gfx_context, force_draw);
     }
     else if (_area->IsView ())
@@ -219,7 +219,7 @@ namespace nux
 
     if (_area->IsArea())
     {
-      CoreArea *area = NUX_STATIC_CAST (CoreArea *, _area);
+      InputArea *area = NUX_STATIC_CAST (InputArea *, _area);
       ret = area->OnEvent (ievent, ret, process_event_info);
     }
     else if (_area->IsView())
@@ -321,7 +321,7 @@ namespace nux
       m_active_area = area;
     }
 
-    props->m_vis_it = area->VisibleChanged.connect (sigc::mem_fun (this, &LayeredLayout::ChildVisibilityChanged));
+    props->m_vis_it = area->OnVisibleChanged.connect (sigc::mem_fun (this, &LayeredLayout::ChildVisibilityChanged));
 
     if (area->IsLayout ())
       Layout::AddLayout (static_cast<Layout *> (area));

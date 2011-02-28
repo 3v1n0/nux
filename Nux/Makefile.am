@@ -49,6 +49,7 @@ source_cpp = \
   $(srcdir)/PropertyItem/Vector4Property.cpp \
   $(srcdir)/AbstractButton.cpp \
   $(srcdir)/AbstractComboBox.cpp \
+  $(srcdir)/AbstractPaintLayer.cpp \
   $(srcdir)/AbstractSeparator.cpp \
   $(srcdir)/AbstractThread.cpp \
   $(srcdir)/ActionItem.cpp \

@@ -80,7 +80,6 @@ void RenderBlurredTexture ()
       graphics_engine->DisableAllTextureMode(1);
       graphics_engine->DisableAllTextureMode(2);
       graphics_engine->DisableAllTextureMode(3);
-      graphics_engine->SetEnvModeSelectTexture(GL_TEXTURE0);
       graphics_engine->GetWindowSize(w, h);
       graphics_engine->SetViewport(0, 0, w, h);
       graphics_engine->SetScissor(0, 0, w, h);
