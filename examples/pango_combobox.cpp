@@ -34,11 +34,10 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     combobox->AddItem (TEXT("Hello Unity Team11"), 1);
     combobox->AddItem (TEXT("Hello Unity Team222"), 2);
     combobox->AddItem (TEXT("Hello Unity Team3333"), 3);
-    combobox->AddItem (TEXT("Hello Unity Team444cccccccccccccccccccccccccccccccccccccccccccccccccccc44"), 4);
-
-    /*combobox->AddItem (TEXT("Bonjour Unity Team"), 1);
-    combobox->AddItem (TEXT("Hola Unity Team"), 2);
-    combobox->AddItem (TEXT("Guten Tag Unity Team"), 3);*/
+    combobox->AddItem (TEXT("Hello Unity Team44444"), 4);
+    combobox->AddItem (TEXT("Bonjour Unity Team"), 5);
+    combobox->AddItem (TEXT("Hola Unity Team"), 6);
+    combobox->AddItem (TEXT("Guten Tag Unity Team"), 7);
 
     //combobox->SetPopupWindowSize(120, 150);
     combobox->SetMaximumWidth(250);

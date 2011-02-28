@@ -175,7 +175,7 @@ namespace nux
           else
               GetPainter().Paint2DQuadColor(GfxContext, geo, COLOR_FOREGROUND_SECONDARY);
       */
-      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0xFF32DE01) /*COLOR_FOREGROUND_SECONDARY*/);
+      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0xFF2D2D2D) /*COLOR_FOREGROUND_SECONDARY*/);
     }
     else
     {
@@ -415,42 +415,45 @@ namespace nux
 
     if (new_item_width < m_item_width)
     {
-      if (ShowItemIcon() )
+      std::vector<MenuItem *>::iterator it;
+      for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
       {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
-                                  + MENU_ICONE_WIDTH
-                                  + MENU_ITEM_ICON_TO_TEXT_MARGIN
-                                  + m_item_width
-                                  + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
-      }
-      else
-      {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
-                                  + m_item_width
-                                  + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
+        if (ShowItemIcon() )
+        {
+          pMenuItem->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
+                                    + MENU_ICONE_WIDTH
+                                    + MENU_ITEM_ICON_TO_TEXT_MARGIN
+                                    + m_item_width
+                                    + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
+        }
+        else
+        {
+          pMenuItem->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+                                    + m_item_width
+                                    + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
+        }
       }
     }
     else
     {
-      if (ShowItemIcon() )
-      {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
-                                  + MENU_ICONE_WIDTH
-                                  + MENU_ITEM_ICON_TO_TEXT_MARGIN
-                                  + new_item_width
-                                  + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
-      }
-      else
-      {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
-                                  + new_item_width
-                                  + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
-      }
-
       std::vector<MenuItem *>::iterator it;
-
       for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
       {
+        if (ShowItemIcon() )
+        {
+          (*it)->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
+                                    + MENU_ICONE_WIDTH
+                                    + MENU_ITEM_ICON_TO_TEXT_MARGIN
+                                    + new_item_width
+                                    + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
+        }
+        else
+        {
+          (*it)->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+                                    + new_item_width
+                                    + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
+        }
+
         (*it)->SetBaseSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
                             + new_item_width
                             + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
