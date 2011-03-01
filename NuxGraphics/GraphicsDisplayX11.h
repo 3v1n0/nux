@@ -310,6 +310,7 @@ namespace nux
     void SendDndSourceDrop (Window target, Time time);
     void SetDndSourceTargetWindow (Window target);
     
+    static gboolean OnDragEndTimeout (gpointer data);
   
     Point _last_dnd_position;
 

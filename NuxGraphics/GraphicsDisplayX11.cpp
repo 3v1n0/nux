@@ -1634,20 +1634,19 @@ namespace nux
               EndDndDrag (DNDACTION_NONE);
               break;  
           }
+        } 
+        else
+        {
+          //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: MapNotify event."));
+          m_pEvent->e_event = NUX_WINDOW_MAP;
+
+          XSetInputFocus (xevent.xany.display,
+                          xevent.xany.window,
+                          RevertToParent,
+                          CurrentTime);
+
         }
-        break;
-      }
-
-      case MapNotify:
-      {
-        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: MapNotify event."));
-        m_pEvent->e_event = NUX_WINDOW_MAP;
-
-        XSetInputFocus (xevent.xany.display,
-                        xevent.xany.window,
-                        RevertToParent,
-                        CurrentTime);
-
+        
         break;
       }
 
@@ -1731,6 +1730,15 @@ namespace nux
     XSendEvent(xevent.xany.display, xevent.xselectionrequest.requestor, False, 0, &result);
   }
   
+  gboolean
+  GraphicsDisplay::OnDragEndTimeout (gpointer data)
+  {
+    printf ("timer\n");
+    static_cast<GraphicsDisplay*> (data)->EndDndDrag (DNDACTION_NONE);
+    
+    return false;
+  }
+  
   void GraphicsDisplay::HandleDndDragSourceEvent (XEvent xevent)
   {
     
@@ -1743,14 +1751,17 @@ namespace nux
       case ButtonRelease:
         if (!_dnd_source_target_window || !_dnd_source_target_accepts_drop)
         {
+          printf ("Button released without accepting drop\n");
           SetDndSourceTargetWindow (None);
           EndDndDrag (DNDACTION_NONE);
         }
         else
         {
+          printf ("Button released with accepting drop\n");
           SendDndSourceDrop (_dnd_source_target_window, xevent.xbutton.time);
           _dnd_is_drag_source = false;
           XUngrabPointer (GetX11Display (), CurrentTime);
+          g_timeout_add (1000, &GraphicsDisplay::OnDragEndTimeout, this);
         }
         break;
 
@@ -1913,9 +1924,11 @@ namespace nux
   
   void GraphicsDisplay::EndDndDrag (DndAction action)
   {
+    printf ("End Dnd Drag\n");
     Display *display = GetX11Display ();
     
-    (*(_dnd_source_funcs.drag_finished)) (action, _dnd_source_data);
+    if (_dnd_source_funcs.drag_finished)
+      (*(_dnd_source_funcs.drag_finished)) (action, _dnd_source_data);
     _dnd_is_drag_source = false;
     
     if (_dnd_source_window)
@@ -1934,6 +1947,7 @@ namespace nux
   
   void GraphicsDisplay::StartDndDrag (const DndSourceFuncs &funcs, void *user_data)
   {
+    printf ("Start Dnd Drag\n");
     Display *display = GetX11Display ();
     
     if (!display)
@@ -1996,6 +2010,7 @@ namespace nux
   
   bool GraphicsDisplay::GrabDndSelection (Display *display, Window window, Time time)
   {
+    printf ("Grab Dnd Selection\n");
     XSetSelectionOwner (GetX11Display (), XInternAtom (display, "XdndSelection", false), window, time);
     Window owner = XGetSelectionOwner (display, XInternAtom (display, "XdndSelection", false));
     return owner == window;
@@ -2293,6 +2308,7 @@ namespace nux
   
   void GraphicsDisplay::HandleXDndFinished (XEvent event)
   {
+    printf ("Handled Finsihed\n");
     const unsigned long *l = (const unsigned long *)event.xclient.data.l;
     
     if (l[0] != _dnd_source_target_window)
