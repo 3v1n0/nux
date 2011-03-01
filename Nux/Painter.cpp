@@ -422,7 +422,19 @@ namespace nux
     int border_top = pimage->border_top;
     int border_bottom = pimage->border_bottom;
     bool draw_borders_only = pimage->draw_borders_only;
+    t_u32 current_alpha_blend;
+    t_u32 current_src_blend_factor;
+    t_u32 current_dest_blend_factor;
+    t_u32 current_red_mask;
+    t_u32 current_green_mask;
+    t_u32 current_blue_mask;
+    t_u32 current_alpha_mask;
+    
+    // Get the current color mask and blend states. They will be restored later.
+    GfxContext.GetRenderStates ().GetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
+    GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
 
+    
     GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, WriteAlpha ? GL_TRUE : GL_FALSE);
     GfxContext.GetRenderStates().SetBlend (ROP.Blend, ROP.SrcBlend, ROP.DstBlend);
 
@@ -539,8 +551,9 @@ namespace nux
       GfxContext.QRP_ColorModTexAlpha (r_x + border_left, r_y + border_top, r_w - border_left - border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, c0);
     }
 
-    GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    GfxContext.GetRenderStates().SetBlend (FALSE);
+    // Restore Color mask and blend states.
+    GfxContext.GetRenderStates ().SetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
+    GfxContext.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 
   void BasePainter::PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, UXStyleImageRef style) const

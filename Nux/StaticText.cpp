@@ -113,10 +113,6 @@ namespace nux
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
 
-    gfxContext.GetRenderStates().SetBlend (true,
-      GL_ONE,
-      GL_ONE_MINUS_SRC_ALPHA);
-
     gfxContext.QRP_1Tex (base.x,
       base.y,
       base.width,
@@ -124,8 +120,6 @@ namespace nux
       _texture2D->GetDeviceTexture(),
       texxform,
       _textColor);
-
-    gfxContext.GetRenderStates().SetBlend (false);
 
     gfxContext.PopClippingRectangle ();
   }
