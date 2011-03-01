@@ -34,6 +34,8 @@
 
 #include "GraphicsDisplay.h"
 
+#include <X11/extensions/shape.h>
+
 namespace nux
 {
   // Compute the frame rate every FRAME_RATE_PERIODE;
@@ -1549,7 +1551,7 @@ namespace nux
         if (_dnd_is_drag_source)
         {
           HandleDndDragSourceEvent (xevent);
-          break;
+          // fall through on purpose
         }
       
         m_pEvent->e_x = x_recalc;
@@ -1733,7 +1735,6 @@ namespace nux
   gboolean
   GraphicsDisplay::OnDragEndTimeout (gpointer data)
   {
-    printf ("timer\n");
     static_cast<GraphicsDisplay*> (data)->EndDndDrag (DNDACTION_NONE);
     
     return false;
@@ -1745,21 +1746,17 @@ namespace nux
     switch (xevent.type)
     {
       case ButtonPress:
-        printf ("Button Press During XDND???\n");
         break;
 
       case ButtonRelease:
         if (!_dnd_source_target_window || !_dnd_source_target_accepts_drop)
         {
-          printf ("Button released without accepting drop\n");
           SetDndSourceTargetWindow (None);
           EndDndDrag (DNDACTION_NONE);
         }
         else
         {
-          printf ("Button released with accepting drop\n");
           SendDndSourceDrop (_dnd_source_target_window, xevent.xbutton.time);
-          _dnd_is_drag_source = false;
           XUngrabPointer (GetX11Display (), CurrentTime);
           g_timeout_add (1000, &GraphicsDisplay::OnDragEndTimeout, this);
         }
@@ -1767,6 +1764,9 @@ namespace nux
 
       case MotionNotify:
         Window target = GetDndTargetWindowForPos (xevent.xmotion.x_root, xevent.xmotion.y_root);
+        
+        if (_dnd_source_window)
+          XMoveWindow (GetX11Display (), _dnd_source_window, xevent.xmotion.x_root - 50, xevent.xmotion.y_root - 50);
         
         if (target != _dnd_source_target_window)
           SetDndSourceTargetWindow (target);
@@ -1924,7 +1924,6 @@ namespace nux
   
   void GraphicsDisplay::EndDndDrag (DndAction action)
   {
-    printf ("End Dnd Drag\n");
     Display *display = GetX11Display ();
     
     if (_dnd_source_funcs.drag_finished)
@@ -1947,7 +1946,6 @@ namespace nux
   
   void GraphicsDisplay::StartDndDrag (const DndSourceFuncs &funcs, void *user_data)
   {
-    printf ("Start Dnd Drag\n");
     Display *display = GetX11Display ();
     
     if (!display)
@@ -1984,7 +1982,19 @@ namespace nux
                                         
     XSelectInput (display, _dnd_source_window, StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PointerMotionMask);
     XMapRaised (display, _dnd_source_window);
+    
+    Atom atom_type[1];
+    atom_type[0] = XInternAtom (display, "_NET_WM_WINDOW_TYPE_DND", false);
+    XChangeProperty (display, _dnd_source_window, XInternAtom (display, "_NET_WM_WINDOW_TYPE", false), 
+                     XA_ATOM, 32, PropModeReplace, (unsigned char*) atom_type, 1);
 
+    Region region = XCreateRegion ();
+    if (region)
+    {
+      XShapeCombineRegion (display, _dnd_source_window, ShapeInput, 0, 0, region, ShapeSet);
+      XDestroyRegion (region);
+    }
+    
     XFlush (display);
     
     _dnd_is_drag_source = true;
@@ -2010,7 +2020,6 @@ namespace nux
   
   bool GraphicsDisplay::GrabDndSelection (Display *display, Window window, Time time)
   {
-    printf ("Grab Dnd Selection\n");
     XSetSelectionOwner (GetX11Display (), XInternAtom (display, "XdndSelection", false), window, time);
     Window owner = XGetSelectionOwner (display, XInternAtom (display, "XdndSelection", false));
     return owner == window;
@@ -2101,8 +2110,16 @@ namespace nux
   
   char * GraphicsDisplay::GetDndData (char *property)
   {
-    Atom a = XInternAtom (_drag_display, property, false);
-    return GetXDndData (_drag_display, _drag_window, a, _drag_drop_timestamp);
+    if (_dnd_is_drag_source)
+    {
+      int size, format;
+      return g_strdup ((*(_dnd_source_funcs.get_data_for_type)) (property, &size, &format, _dnd_source_data));
+    }
+    else
+    {
+      Atom a = XInternAtom (_drag_display, property, false);
+      return GetXDndData (_drag_display, _drag_window, a, _drag_drop_timestamp);
+    }
   }
   
   void GraphicsDisplay::SendXDndStatus (Display *display, Window source, Window target, bool accept, Atom action, Rect box)
@@ -2261,6 +2278,7 @@ namespace nux
   
   char * GraphicsDisplay::GetXDndData (Display *display, Window requestor, Atom property, long time)
   {
+    char *result = 0;
     XEvent xevent;
     if (GetXDndSelectionEvent (display, requestor, property, time, &xevent, 50))
     {
@@ -2284,14 +2302,12 @@ namespace nux
                              &bytes_left, 
                              &buffer) == Success)
       {
-        char *result = g_strdup ((char *) buffer);
+        result = g_strdup ((char *) buffer);
         XFree (buffer);
-        
-        return result;
       }
     }
     
-    return 0;
+    return result;
   }
   
   void GraphicsDisplay::HandleXDndDrop (XEvent event, Event *nux_event)
@@ -2308,7 +2324,6 @@ namespace nux
   
   void GraphicsDisplay::HandleXDndFinished (XEvent event)
   {
-    printf ("Handled Finsihed\n");
     const unsigned long *l = (const unsigned long *)event.xclient.data.l;
     
     if (l[0] != _dnd_source_target_window)
