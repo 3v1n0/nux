@@ -19,7 +19,7 @@ namespace nux
     _size_match_text = true;
     _textColor  = Color::White;
     _texture2D  = 0;
-    _font_string = g_strdup ("Ubuntu 12");
+    _font_string = g_strdup ("Ubuntu 10");
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText (text);
@@ -107,6 +107,12 @@ namespace nux
   {
     Geometry base = GetGeometry ();
 
+    // Get the current blend states. They will be restored later.
+    t_u32 alpha = 0, src = 0, dest = 0;
+    gfxContext.GetRenderStates ().GetBlend (alpha, src, dest);
+    
+    gfxContext.GetRenderStates ().SetBlend (true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    
     gfxContext.PushClippingRectangle (base);
 
     TexCoordXForm texxform;
@@ -120,6 +126,9 @@ namespace nux
       _texture2D->GetDeviceTexture(),
       texxform,
       _textColor);
+
+    gfxContext.GetRenderStates ().SetBlend (alpha, src, dest);
+
 
     gfxContext.PopClippingRectangle ();
   }
@@ -255,9 +264,6 @@ namespace nux
 
     pango_cairo_context_set_resolution (pangoCtx, dpi);
 
-    cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_rgba (cr, 0.0f, 0.0f, 0.0f, 0.0f);
-    cairo_paint (cr);
     cairo_set_source_rgba (cr, color.R (),color.G (), color.B (), color.A ());
 
     pango_layout_context_changed (layout);
@@ -283,6 +289,9 @@ namespace nux
 
     _cairoGraphics = new CairoGraphics (CAIRO_FORMAT_ARGB32, GetBaseWidth (), GetBaseHeight ());
     cairo_t *cr = _cairoGraphics->GetContext ();
+    cairo_set_operator (cr, CAIRO_OPERATOR_CLEAR);
+    cairo_paint (cr);
+    cairo_set_operator (cr, CAIRO_OPERATOR_OVER);
 
     DrawText (cr, GetBaseWidth (), GetBaseHeight (), _textColor);
 

@@ -62,6 +62,7 @@ namespace nux
     _action_item    = new ActionItem (label, UserValue, NUX_TRACKER_LOCATION);
     
     _pango_static_text = new StaticText (label, NUX_TRACKER_LOCATION);
+    _pango_static_text->SetTextColor (Color (0.0f, 0.0f, 0.0f, 1.0f));
   }
 
   MenuItem::~MenuItem()
@@ -175,10 +176,12 @@ namespace nux
           else
               GetPainter().Paint2DQuadColor(GfxContext, geo, COLOR_FOREGROUND_SECONDARY);
       */
-      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0xAA000000) /*COLOR_FOREGROUND_SECONDARY*/);
+      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0x44000000) /*COLOR_FOREGROUND_SECONDARY*/);
+      _pango_static_text->SetTextColor (Color (1.0f, 1.0f, 1.0f, 1.0f));
     }
     else
     {
+      _pango_static_text->SetTextColor (Color (0.0f, 0.0f, 0.0f, 1.0f));
       //GetPainter().Paint2DQuadColor(GfxContext, geo, Color(0xFF868686));
     }
 
@@ -368,7 +371,7 @@ namespace nux
 
       GfxContext.PushClippingRectangle (base);
       GfxContext.GetRenderStates().SetBlend (GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      GetPainter().Paint2DQuadColor (GfxContext, base, Color (0xA0404040) );
+      GetPainter().Paint2DQuadColor (GfxContext, base, Color (0xCCFFFFFF) );
       GfxContext.GetRenderStates().SetBlend (GL_FALSE);
 
       Geometry text_area;
