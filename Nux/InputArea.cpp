@@ -760,6 +760,11 @@ namespace nux
     _dnd_enabled_as_target = as_target;
   }
   
+  void InputArea::DndSourceDragBegin ()
+  {
+  
+  }
+  
   NBitmapData * InputArea::DndSourceGetDragImage ()
   {
     return 0;
@@ -802,6 +807,7 @@ namespace nux
     funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
     
     GetWindow ().StartDndDrag (funcs, this);
+    DndSourceDragBegin ();
   }
 #endif
 

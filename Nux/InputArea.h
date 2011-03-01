@@ -191,6 +191,7 @@ namespace nux
     
     void SetDndEnabled (bool as_source, bool as_target);
     
+    virtual void                    DndSourceDragBegin      ();
     virtual NBitmapData *           DndSourceGetDragImage   ();
     virtual std::list<const char *> DndSourceGetDragTypes   ();
     virtual const char *            DndSourceGetDataForType (const char *type, int *size, int *format);
