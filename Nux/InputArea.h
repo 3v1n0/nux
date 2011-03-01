@@ -107,6 +107,8 @@ namespace nux
     bool GetEventDebugTrace () const;
 
   private:
+    bool _dnd_enabled_as_source;
+    bool _dnd_enabled_as_target;
     //bool m_EnableKeyboardInput;
   public:
 //    void EnableKeyEntry(bool b)
@@ -162,6 +164,9 @@ namespace nux
         Color of the InputArea use to draw a colored quad when OnDraw() is called.
     */
     Color m_AreaColor;
+    
+    int _dnd_safety_x;
+    int _dnd_safety_y;
 
   protected:
     AreaEventProcessor _event_processor;
@@ -183,6 +188,23 @@ namespace nux
 
     void SendDndStatus (bool accept, DndAction action, Geometry region);
     void SendDndFinished (bool accepted, DndAction action);
+    
+    void SetDndEnabled (bool as_source, bool as_target);
+    
+    virtual void                    DndSourceDragBegin      ();
+    virtual NBitmapData *           DndSourceGetDragImage   ();
+    virtual std::list<const char *> DndSourceGetDragTypes   ();
+    virtual const char *            DndSourceGetDataForType (const char *type, int *size, int *format);
+    virtual void                    DndSourceDragFinished   (DndAction result);
+    
+    void StartDragAsSource ();
+    
+    static NBitmapData *           InnerDndSourceGetDragImage (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragImage ();       }
+    static std::list<const char *> InnerDndSourceGetDragTypes (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragTypes ();       }
+    static void                    InnerDndSourceDragFinished (DndAction result, void *data) { return static_cast<InputArea *> (data)->DndSourceDragFinished (result); }
+    
+    static const char * InnerDndSourceGetDataForType (const char *type, int *size, int *format, void *data) 
+      { return static_cast<InputArea *> (data)->DndSourceGetDataForType (type, size, format); }
 #endif
 
   public:
