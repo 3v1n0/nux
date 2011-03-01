@@ -1,6 +1,12 @@
 nux (0.9.30-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream release.
+  * New upstream release:
+    - compiz crashed with SIGSEGV in g_signal_connect_data@plt() (LP: #725827)
+    - compiz crashed with SIGSEGV in nux::View::PostProcessEvent2()
+      (LP: #726253)
+    - Unity FTBFS on armel due to Nux (LP: #721118)
+  * debian/rules:
+    - bump shlib
 
  -- Didier Roche <didrocks@ubuntu.com>  Tue, 01 Mar 2011 13:27:53 +0100
 
