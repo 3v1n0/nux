@@ -1742,13 +1742,16 @@ namespace nux
   
   void GraphicsDisplay::HandleDndDragSourceEvent (XEvent xevent)
   {
-    
+    if (_dnd_source_drop_sent)
+      return;
+
     switch (xevent.type)
     {
       case ButtonPress:
         break;
 
       case ButtonRelease:
+      
         if (!_dnd_source_target_window || !_dnd_source_target_accepts_drop)
         {
           SetDndSourceTargetWindow (None);
@@ -1756,6 +1759,7 @@ namespace nux
         }
         else
         {
+          _dnd_source_drop_sent = true;
           SendDndSourceDrop (_dnd_source_target_window, xevent.xbutton.time);
           XUngrabPointer (GetX11Display (), CurrentTime);
           g_timeout_add (1000, &GraphicsDisplay::OnDragEndTimeout, this);
@@ -1958,6 +1962,7 @@ namespace nux
     _dnd_source_funcs = funcs;
     _dnd_source_data = user_data;
     _dnd_source_grab_active = false;
+    _dnd_source_drop_sent = false;
     
     Window root = DefaultRootWindow (display);
     
@@ -1988,6 +1993,17 @@ namespace nux
     XChangeProperty (display, _dnd_source_window, XInternAtom (display, "_NET_WM_WINDOW_TYPE", false), 
                      XA_ATOM, 32, PropModeReplace, (unsigned char*) atom_type, 1);
 
+    Atom data[32];
+    int     i = 0;
+    data[i++] = XInternAtom (display, "_NET_WM_STATE_STICKY", false);
+    data[i++] = XInternAtom (display, "_NET_WM_STATE_SKIP_TASKBAR", false);
+    data[i++] = XInternAtom (display, "_NET_WM_STATE_SKIP_PAGER", false);
+    data[i++] = XInternAtom (display, "_NET_WM_STATE_ABOVE", false);
+
+    XChangeProperty (display, _dnd_source_window, XInternAtom (display, "_NET_WM_STATE", 0),
+                 XA_ATOM, 32, PropModeReplace,
+                 (unsigned char *) data, i);
+
     Region region = XCreateRegion ();
     if (region)
     {
@@ -2006,7 +2022,7 @@ namespace nux
     
     Atom type_atoms[types.size ()];
     
-    int i = 0;
+    i = 0;
     for (it = types.begin (); it != types.end (); it++)
     {
       type_atoms[i] = XInternAtom (display, *it, false);

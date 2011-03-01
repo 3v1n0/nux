@@ -338,6 +338,7 @@ namespace nux
     bool _dnd_is_drag_source;
     bool _dnd_source_target_accepts_drop;
     bool _dnd_source_grab_active;
+    bool _dnd_source_drop_sent;
   public:
     ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
