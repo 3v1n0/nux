@@ -293,58 +293,62 @@ namespace nux
   {
     long ret = TraverseInfo;
 
+    Event mod_event = ievent;
+    mod_event.e_x_root = 0;
+    mod_event.e_y_root = 0;
+
     if (m_IsActive)
     {
-      if (ievent.e_event == NUX_MOUSE_RELEASED)
+      if (mod_event.e_event == NUX_MOUSE_RELEASED)
       {
         Geometry geo = GetThreadGLWindow()->GetWindowGeometry();
         geo.SetX (0);
         geo.SetY (0);
 
-        if (!geo.IsPointInside (ievent.e_x, ievent.e_y) /*ievent.e_x < 0 || ievent.e_y < 0*/)
+        if (!geo.IsPointInside (mod_event.e_x, mod_event.e_y) /*mod_event.e_x < 0 || mod_event.e_y < 0*/)
         {
           // the event happened outside the window.
           NotifyTerminateMenuCascade();
         }
         else
         {
-          EmitMouseUp (ievent.e_x - GetBaseX(), ievent.e_y - GetBaseY(), ievent.GetMouseState(), ievent.GetKeyState() );
+          EmitMouseUp (mod_event.e_x - GetBaseX(), mod_event.e_y - GetBaseY(), mod_event.GetMouseState(), mod_event.GetKeyState() );
         }
       }
-      else if (ievent.e_event == NUX_MOUSE_PRESSED)
+      else if (mod_event.e_event == NUX_MOUSE_PRESSED)
       {
         Geometry geo = GetThreadGLWindow()->GetWindowGeometry();
         geo.SetX (0);
         geo.SetY (0);
 
-        if (!geo.IsPointInside (ievent.e_x, ievent.e_y) /*ievent.e_x < 0 || ievent.e_y < 0*/)
+        if (!geo.IsPointInside (mod_event.e_x, mod_event.e_y) /*mod_event.e_x < 0 || mod_event.e_y < 0*/)
         {
           // the event happened outside the window.
           NotifyTerminateMenuCascade();
         }
         else
         {
-          ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
+          ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
         }
       }
-      else if (ievent.e_event == NUX_WINDOW_CONFIGURATION)
+      else if (mod_event.e_event == NUX_WINDOW_CONFIGURATION)
       {
         NotifyTerminateMenuCascade();
       }
-      else if (ievent.e_event == NUX_WINDOW_EXIT_FOCUS)
+      else if (mod_event.e_event == NUX_WINDOW_EXIT_FOCUS)
       {
         NotifyTerminateMenuCascade();
       }
       else
       {
-        if (ievent.e_event == NUX_MOUSE_MOVE)
+        if (mod_event.e_event == NUX_MOUSE_MOVE)
           NeedRedraw();
 
-        ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
+        ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
       }
     }
 
-    if (GetGeometry().IsPointInside (ievent.GetX(), ievent.GetY() ) )
+    if (GetGeometry ().IsPointInside (mod_event.GetX (), mod_event.GetY ()))
     {
       ret |= eMouseEventSolved;
     }

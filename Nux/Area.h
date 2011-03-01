@@ -24,7 +24,7 @@
 #define BASEOBJECT_H
 
 #include "NuxCore/InitiallyUnownedObject.h"
-#include "Nux/Focusable.h"
+#include "Focusable.h"
 #include "Utils.h"
 #include "WidgetMetrics.h"
 #include "WidgetSmartPointer.h"
