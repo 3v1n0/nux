@@ -35,18 +35,6 @@
 
 namespace nux
 {
-
-//enum ObjectType
-//{
-//    eArea = (1L),
-//    eInputArea   = (1L) << 1,
-//    eComposite  = (1L) << 2,
-//    eLayout     = (1L) << 3,
-//    eHLayout    = (1L) << 4,
-//    eVLayout    = (1L) << 5,
-//    eSpace     = (1L) << 6,
-//};
-
   typedef enum
   {
     eSolveNone                      = (0L),
@@ -107,53 +95,7 @@ namespace nux
     eHARight,
   };
 
-  struct MouseEvent
-  {
-    int PosX;
-    int PosY;
-    bool MouseIn;
-    bool MouseMove;
-    bool MouseDown;
-    bool MouseUp;
-    bool mouseClicked;
-
-    int DeltaX;
-    int DeltaY;
-
-    bool m_HWMouseMove;
-    bool m_HWMouseDown;
-    bool m_HWMouseUp;
-    bool m_HWMouseLeave;
-    bool m_HWMouseEnter;
-  };
-
   typedef Rect Geometry;
-//struct Geometry: public Rect
-//{
-//    Geometry()
-//        :Rect(0, 0, 1, 1)
-//    {
-////        X = 0;
-////        Y = 0;
-////        Width = 1;
-////        Height = 1;
-//    }
-//    //~Geometry(){ }
-//    Geometry(int x, int y, int w, int h)
-//        :Rect(x, y, w, h)
-//    {
-////        X = x;
-////        Y = y;
-////        Width = w;
-////        Height = h;
-//    }
-
-//private:
-//    int X;
-//    int Y;
-//    int Width;
-//    int Height;
-//};
 
   typedef struct
   {

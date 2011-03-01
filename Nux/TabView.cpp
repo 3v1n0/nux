@@ -45,7 +45,7 @@ namespace nux
     _index = 0;
     _tab_name = TabName;
     _tab_layout = TabLayout;
-    _tab_area = new CoreArea (NUX_TRACKER_LOCATION);
+    _tab_area = new InputArea (NUX_TRACKER_LOCATION);
 
     _tab_layout->Reference();
     _tab_area->Reference();
@@ -98,8 +98,8 @@ namespace nux
 
     m_TabLayout         = new HLayout (NUX_TRACKER_LOCATION);
     m_TabControlLayout  = new HLayout (NUX_TRACKER_LOCATION);
-    m_IncrTab           = new CoreArea (NUX_TRACKER_LOCATION);
-    m_DecrTab           = new CoreArea (NUX_TRACKER_LOCATION);
+    m_IncrTab           = new InputArea (NUX_TRACKER_LOCATION);
+    m_DecrTab           = new InputArea (NUX_TRACKER_LOCATION);
 
     m_IncrTab->SetMinimumSize (TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
     m_DecrTab->SetMinimumSize (TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);

@@ -34,31 +34,10 @@ namespace nux
     m_hlayout = 0;
     m_TextArea = 0;
 
-    InitializeLayout();
-    InitializeWidgets();
-    SetState (state);
-    SetCaption (Caption);
+    m_hlayout   = new HLayout (NUX_TRACKER_LOCATION);
+    m_CheckArea = new InputArea(NUX_TRACKER_LOCATION);
+    m_TextArea  = new InputArea(NUX_TRACKER_LOCATION);
 
-    if (Caption) m_TextArea->OnMouseClick.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
-
-    if (Caption) m_TextArea->OnMouseMove.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
-
-    if (Caption) m_TextArea->OnMouseEnter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
-
-    if (Caption) m_TextArea->OnMouseLeave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
-
-    if (Caption) m_TextArea->OnMouseUp.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
-
-    if (Caption) m_TextArea->OnMouseDown.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
-  }
-
-  CheckBox::~CheckBox()
-  {
-    DestroyLayout();
-  }
-
-  void CheckBox::InitializeWidgets()
-  {
     // Set Signals
     m_CheckArea->OnMouseClick.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
     OnMouseClick.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
@@ -101,20 +80,27 @@ namespace nux
       ApplyMinHeight();
     }
 
-    SetCompositionLayout (m_hlayout);
+    SetLayout (m_hlayout);
+
+    SetState (state);
+    SetCaption (Caption);
+
+    if (Caption) m_TextArea->OnMouseClick.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
+
+    if (Caption) m_TextArea->OnMouseMove.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
+
+    if (Caption) m_TextArea->OnMouseEnter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
+
+    if (Caption) m_TextArea->OnMouseLeave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
+
+    if (Caption) m_TextArea->OnMouseUp.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
+
+    if (Caption) m_TextArea->OnMouseDown.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
   }
 
-  void CheckBox::InitializeLayout()
+  CheckBox::~CheckBox()
   {
-    m_hlayout   = new HLayout (NUX_TRACKER_LOCATION);
-    m_CheckArea = new CoreArea(NUX_TRACKER_LOCATION);
-    m_TextArea  = new CoreArea(NUX_TRACKER_LOCATION);
   }
-
-  void CheckBox::DestroyLayout()
-  {
-  }
-
 
   long CheckBox::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {

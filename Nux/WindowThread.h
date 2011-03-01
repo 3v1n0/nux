@@ -72,7 +72,7 @@ namespace nux
     void RunUserInterface();
 
     // Event, Drawing
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long ProcessEvent (IEvent &event, long TraverseInfo, long ProcessEventInfo);
 
     void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
 

@@ -278,6 +278,7 @@ namespace nux
     Window e_x11_window; //!< X11 window.
 #endif
 
+
     int e_x11_keycode;  //!< X11 raw keycode.
     int e_keysym;       //!< Key symbol.
     int e_wheeldelta;

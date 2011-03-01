@@ -33,8 +33,14 @@ namespace nux
   {
     //SetMinMaxSize(50, 50);
 
-    OnMouseDown.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDown) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDrag) );
+    OnMouseDown.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDown));
+    OnMouseUp.connect (sigc::mem_fun (this, &TextureArea::RecvMouseUp));
+    
+    OnMouseEnter.connect (sigc::mem_fun (this, &TextureArea::RecvMouseEnter));
+    OnMouseLeave.connect (sigc::mem_fun (this, &TextureArea::RecvMouseLeave));
+    OnMouseClick.connect (sigc::mem_fun (this, &TextureArea::RecvMouseClick));
+
+    OnMouseDrag.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDrag));
 
     m_PaintLayer = new ColorLayer (Color (0xFFFF40FF) );
   }
@@ -105,6 +111,27 @@ namespace nux
   void TextureArea::RecvMouseDown (int x, int y, long button_flags, long key_flags)
   {
     sigMouseDown.emit (x, y);
+    QueueDraw ();
+  }
+
+  void TextureArea::RecvMouseClick (int x, int y, long button_flags, long key_flags)
+  {
+
+  }
+
+  void TextureArea::RecvMouseUp (int x, int y, long button_flags, long key_flags)
+  {
+    QueueDraw ();
+  }
+
+  void TextureArea::RecvMouseEnter (int x, int y, long button_flags, long key_flags)
+  {
+
+  }
+
+  void TextureArea::RecvMouseLeave (int x, int y, long button_flags, long key_flags)
+  {
+
   }
 
   void TextureArea::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)

@@ -26,6 +26,7 @@
 #include "ActionItem.h"
 #include "TableItem.h"
 #include "TableCtrl.h"
+#include "StaticText.h"
 
 namespace nux
 {
@@ -39,20 +40,20 @@ namespace nux
     m_CurrentMenu = new MenuPage (TEXT (""), NUX_TRACKER_LOCATION);
     
     // Set Signals
-    m_Button->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown) );
-    m_Button->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp) );
-    m_ComboArea->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown) );
-    m_ComboArea->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp) );
+    _combo_box_opening_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown) );
+    _combo_box_opening_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp) );
+    _combo_box_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown) );
+    _combo_box_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp) );
 
     //m_Popup.sigPopupStop.connect(sigc::mem_fun(this, &ComboBox::OnPopupStop));
 
     // Set Geometry
-    m_Button->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT) );
-    //m_Button->SetMaximumSize(20, DEFAULT_WIDGET_HEIGHT);
-    m_Button->SetMinimumSize (20, DEFAULT_WIDGET_HEIGHT);
+    _combo_box_opening_area->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT) );
+    //_combo_box_opening_area->SetMaximumSize(20, DEFAULT_WIDGET_HEIGHT);
+    _combo_box_opening_area->SetMinimumSize (20, DEFAULT_WIDGET_HEIGHT);
 
-    m_ComboArea->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    m_ComboArea->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
+    _combo_box_area->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    _combo_box_area->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
 
     //m_CurrentMenu = new MenuPage;
     m_CurrentMenu->SetParentMenu (0);
@@ -70,8 +71,8 @@ namespace nux
     long ret = TraverseInfo;
 
     //ret = m_Popup.ProcessEvent(ievent, ret, ProcessEventInfo); // implement isVisible on InputArea. If invisible, no event processed.
-    ret = m_Button->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ComboArea->OnEvent (ievent, ret, ProcessEventInfo);
+    ret = _combo_box_opening_area->OnEvent (ievent, ret, ProcessEventInfo);
+    ret = _combo_box_area->OnEvent (ievent, ret, ProcessEventInfo);
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
@@ -79,7 +80,7 @@ namespace nux
 
       if (m_MenuIsActive == true)
       {
-        if (m_Button->IsMouseInside() || m_ComboArea->IsMouseInside() )
+        if (_combo_box_opening_area->IsMouseInside() || _combo_box_area->IsMouseInside() )
           mouse_down_on_menu_item = true;
 
         if (mouse_down_on_menu_item == false)
@@ -103,7 +104,10 @@ namespace nux
     {
       // The first element added is the element featured on the combo box when it is closed.
       m_SelectedAction = m_CurrentMenu->AddAction (label, Uservalue);
-      m_ComboArea->SetBaseString (m_SelectedAction->GetLabel() );
+      _combo_box_area->SetBaseString (m_SelectedAction->GetLabel ());
+
+      _pango_static_text->SetText (m_SelectedAction->GetLabel ());
+
       return m_SelectedAction;
     }
     else
@@ -131,12 +135,15 @@ namespace nux
       m_IsOpeningMenu = true;
 
       Geometry geo = m_CurrentMenu->GetGeometry();
-      geo.SetX (m_ComboArea->GetBaseX() );
-      geo.SetY (m_ComboArea->GetBaseY() + m_ComboArea->GetBaseHeight() );
-      geo.SetWidth (m_ComboArea->GetBaseWidth() );
+      geo.SetX (_combo_box_area->GetAbsoluteX() );
+      geo.SetY (_combo_box_area->GetAbsoluteY() + _combo_box_area->GetBaseHeight() );
+      geo.SetWidth (_combo_box_area->GetBaseWidth() );
+      //m_CurrentMenu->SetMinimumWidth (geo.width);
+      //m_CurrentMenu->SetMaximumWidth (geo.width);
       m_CurrentMenu->SetGeometry (geo);
-      m_CurrentMenu->StartMenu (m_ComboArea->GetBaseX(),
-                                m_ComboArea->GetBaseY() + m_ComboArea->GetBaseHeight(),
+      m_CurrentMenu->ComputeChildLayout ();
+      m_CurrentMenu->StartMenu (_combo_box_area->GetAbsoluteX(),
+                                _combo_box_area->GetAbsoluteY() + _combo_box_area->GetBaseHeight(),
                                 0, 0);
     }
     else
@@ -152,7 +159,7 @@ namespace nux
   {
     if (m_MenuIsActive)
     {
-      if (m_ComboArea->IsMouseInside() || m_Button->IsMouseInside() )
+      if (_combo_box_area->IsMouseInside() || _combo_box_opening_area->IsMouseInside() )
       {
         if (m_IsOpeningMenu == false)
         {
@@ -190,8 +197,10 @@ namespace nux
     m_CurrentMenu->StopMenu();
 
     m_SelectedAction = action;
-    m_ComboArea->SetBaseString (m_SelectedAction->GetLabel() );
+    _combo_box_area->SetBaseString (m_SelectedAction->GetLabel ());
     m_IsOpeningMenu = false;
+
+    _pango_static_text->SetText (m_SelectedAction->GetLabel ());
 
     sigTriggered.emit (this);
     sigActionTriggered.emit (m_SelectedAction);
@@ -253,17 +262,23 @@ namespace nux
 
   void ComboBoxSimple::SetSelectionIndex (int index)
   {
-    if ( (index >= 0) && (index < m_CurrentMenu->GetNumItem() ) )
+    if ((index >= 0) && (index < m_CurrentMenu->GetNumItem ()))
     {
       m_SelectedAction = m_CurrentMenu->GetActionItem (index);
-      m_ComboArea->SetBaseString (m_SelectedAction->GetLabel() );
-      NeedRedraw();
+      _combo_box_area->SetBaseString (m_SelectedAction->GetLabel ());
+
+      _pango_static_text->SetText (m_SelectedAction->GetLabel ());
+
+      NeedRedraw ();
     }
     else if (m_CurrentMenu->GetNumItem() > 0)
     {
       // index is negative
       m_SelectedAction = m_CurrentMenu->GetActionItem (0);
-      m_ComboArea->SetBaseString (m_SelectedAction->GetLabel() );
+      _combo_box_area->SetBaseString (m_SelectedAction->GetLabel ());
+
+      _pango_static_text->SetText (m_SelectedAction->GetLabel ());
+
       NeedRedraw();
     }
     else

@@ -31,7 +31,7 @@ namespace nux
   {
     // Set Original State
     m_vlayout   = new VLayout (NUX_TRACKER_LOCATION);
-    m_Area      = new CoreArea (NUX_TRACKER_LOCATION);
+    m_Area      = new InputArea (NUX_TRACKER_LOCATION);
 
     // Set Signals
     m_Area->OnMouseDown.connect (sigc::mem_fun (this, &MouseAreaCtrl::MouseDown) );
