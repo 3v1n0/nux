@@ -220,7 +220,7 @@ namespace nux
     bool  m_AlwaysShowOpeningButton;
 
     //! Geometry of the header of the row. Located at the left of the row.
-    CoreArea *_row_header_area;
+    InputArea *_row_header_area;
     //! Array of geometries of the column inside the row.
     std::vector<Geometry> m_ItemGeometryVector;
     //Geometry m_FirstColumnInRowGeometry;

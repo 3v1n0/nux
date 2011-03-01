@@ -51,7 +51,7 @@ namespace nux
 
   private:
     EditTextBox    *m_FileEditTextBox;
-    CoreArea       *m_OpenButton;
+    InputArea       *m_OpenButton;
     HLayout        *m_hlayout;
     BaseTexture       *m_Texture;
   };

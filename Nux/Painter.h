@@ -295,7 +295,11 @@ namespace nux
     void PushLayer (GraphicsEngine &GfxContext, const Geometry &geo, AbstractPaintLayer *layer);
     void PushDrawLayer (GraphicsEngine &GfxContext, const Geometry &geo, AbstractPaintLayer *layer);
 
-    void RenderSinglePaintLayer (GraphicsEngine &GfxContext, Geometry geo, AbstractPaintLayer *background);
+    //! Render a paint layer.
+    /*!
+        When calling this function make sure to assign a correct geometry to the paint layer parameter.
+    */
+    void RenderSinglePaintLayer (GraphicsEngine &GfxContext, Geometry geo, AbstractPaintLayer *paint_layer);
 
     //! Pop a number of levels off the painter background stack.
     /*!

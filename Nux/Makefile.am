@@ -49,6 +49,7 @@ source_cpp = \
   $(srcdir)/PropertyItem/Vector4Property.cpp \
   $(srcdir)/AbstractButton.cpp \
   $(srcdir)/AbstractComboBox.cpp \
+  $(srcdir)/AbstractPaintLayer.cpp \
   $(srcdir)/AbstractSeparator.cpp \
   $(srcdir)/AbstractThread.cpp \
   $(srcdir)/ActionItem.cpp \
@@ -76,6 +77,7 @@ source_cpp = \
   $(srcdir)/EditTextBox.cpp \
   $(srcdir)/FileSelector.cpp \
   $(srcdir)/FloatingWindow.cpp \
+  $(srcdir)/Focusable.cpp \
   $(srcdir)/FolderTreeItem.cpp \
   $(srcdir)/FunctionGraph.cpp \
   $(srcdir)/GridHLayout.cpp \
@@ -126,6 +128,7 @@ source_cpp = \
   $(srcdir)/SpinBox_Logic.cpp \
   $(srcdir)/SplineCurveEditor.cpp \
   $(srcdir)/SplineCurvePreview.cpp \
+  $(srcdir)/StaticText.cpp \
   $(srcdir)/StaticTextBox.cpp \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TableCtrl.cpp \
@@ -211,6 +214,7 @@ source_h = \
   $(srcdir)/EditTextBox.h \
   $(srcdir)/FileSelector.h \
   $(srcdir)/FloatingWindow.h \
+  $(srcdir)/Focusable.h \
   $(srcdir)/FolderTreeItem.h \
   $(srcdir)/FunctionGraph.h \
   $(srcdir)/GridHLayout.h \
@@ -262,6 +266,7 @@ source_h = \
   $(srcdir)/SpinBox_Logic.h \
   $(srcdir)/SplineCurveEditor.h \
   $(srcdir)/SplineCurvePreview.h \
+  $(srcdir)/StaticText.h \
   $(srcdir)/StaticTextBox.h \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TableCtrl.h \

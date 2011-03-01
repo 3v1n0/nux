@@ -104,6 +104,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-Vector4Property.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractComboBox.lo \
+	libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractThread.lo \
 	libnux_@NUX_API_VERSION@_la-ActionItem.lo \
@@ -131,6 +132,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-EditTextBox.lo \
 	libnux_@NUX_API_VERSION@_la-FileSelector.lo \
 	libnux_@NUX_API_VERSION@_la-FloatingWindow.lo \
+	libnux_@NUX_API_VERSION@_la-Focusable.lo \
 	libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo \
 	libnux_@NUX_API_VERSION@_la-FunctionGraph.lo \
 	libnux_@NUX_API_VERSION@_la-GridHLayout.lo \
@@ -181,6 +183,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-SpinBox_Logic.lo \
 	libnux_@NUX_API_VERSION@_la-SplineCurveEditor.lo \
 	libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo \
+	libnux_@NUX_API_VERSION@_la-StaticText.lo \
 	libnux_@NUX_API_VERSION@_la-StaticTextBox.lo \
 	libnux_@NUX_API_VERSION@_la-SystemThread.lo \
 	libnux_@NUX_API_VERSION@_la-TableCtrl.lo \
@@ -489,6 +492,7 @@ source_cpp = \
   $(srcdir)/PropertyItem/Vector4Property.cpp \
   $(srcdir)/AbstractButton.cpp \
   $(srcdir)/AbstractComboBox.cpp \
+  $(srcdir)/AbstractPaintLayer.cpp \
   $(srcdir)/AbstractSeparator.cpp \
   $(srcdir)/AbstractThread.cpp \
   $(srcdir)/ActionItem.cpp \
@@ -516,6 +520,7 @@ source_cpp = \
   $(srcdir)/EditTextBox.cpp \
   $(srcdir)/FileSelector.cpp \
   $(srcdir)/FloatingWindow.cpp \
+  $(srcdir)/Focusable.cpp \
   $(srcdir)/FolderTreeItem.cpp \
   $(srcdir)/FunctionGraph.cpp \
   $(srcdir)/GridHLayout.cpp \
@@ -566,6 +571,7 @@ source_cpp = \
   $(srcdir)/SpinBox_Logic.cpp \
   $(srcdir)/SplineCurveEditor.cpp \
   $(srcdir)/SplineCurvePreview.cpp \
+  $(srcdir)/StaticText.cpp \
   $(srcdir)/StaticTextBox.cpp \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TableCtrl.cpp \
@@ -651,6 +657,7 @@ source_h = \
   $(srcdir)/EditTextBox.h \
   $(srcdir)/FileSelector.h \
   $(srcdir)/FloatingWindow.h \
+  $(srcdir)/Focusable.h \
   $(srcdir)/FolderTreeItem.h \
   $(srcdir)/FunctionGraph.h \
   $(srcdir)/GridHLayout.h \
@@ -702,6 +709,7 @@ source_h = \
   $(srcdir)/SpinBox_Logic.h \
   $(srcdir)/SplineCurveEditor.h \
   $(srcdir)/SplineCurvePreview.h \
+  $(srcdir)/StaticText.h \
   $(srcdir)/StaticTextBox.h \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TableCtrl.h \
@@ -822,6 +830,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractComboBox.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractSeparator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractThread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ActionItem.Plo@am__quote@
@@ -855,6 +864,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FilePropertyItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FileSelector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FloatingWindow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Focusable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FolderTreeItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FunctionGraph.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Plo@am__quote@
@@ -916,6 +926,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurveEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticText.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticTextBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SystemThread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TabView.Plo@am__quote@
@@ -1159,6 +1170,14 @@ libnux_@NUX_API_VERSION@_la-AbstractComboBox.lo: $(srcdir)/AbstractComboBox.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-AbstractComboBox.lo `test -f '$(srcdir)/AbstractComboBox.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractComboBox.cpp
 
+libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo: $(srcdir)/AbstractPaintLayer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.Tpo -c -o libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo `test -f '$(srcdir)/AbstractPaintLayer.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractPaintLayer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/AbstractPaintLayer.cpp' object='libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo `test -f '$(srcdir)/AbstractPaintLayer.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractPaintLayer.cpp
+
 libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo: $(srcdir)/AbstractSeparator.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractSeparator.Tpo -c -o libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo `test -f '$(srcdir)/AbstractSeparator.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractSeparator.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractSeparator.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractSeparator.Plo
@@ -1374,6 +1393,14 @@ libnux_@NUX_API_VERSION@_la-FloatingWindow.lo: $(srcdir)/FloatingWindow.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/FloatingWindow.cpp' object='libnux_@NUX_API_VERSION@_la-FloatingWindow.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-FloatingWindow.lo `test -f '$(srcdir)/FloatingWindow.cpp' || echo '$(srcdir)/'`$(srcdir)/FloatingWindow.cpp
+
+libnux_@NUX_API_VERSION@_la-Focusable.lo: $(srcdir)/Focusable.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Focusable.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Focusable.Tpo -c -o libnux_@NUX_API_VERSION@_la-Focusable.lo `test -f '$(srcdir)/Focusable.cpp' || echo '$(srcdir)/'`$(srcdir)/Focusable.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Focusable.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Focusable.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Focusable.cpp' object='libnux_@NUX_API_VERSION@_la-Focusable.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Focusable.lo `test -f '$(srcdir)/Focusable.cpp' || echo '$(srcdir)/'`$(srcdir)/Focusable.cpp
 
 libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo: $(srcdir)/FolderTreeItem.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FolderTreeItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo `test -f '$(srcdir)/FolderTreeItem.cpp' || echo '$(srcdir)/'`$(srcdir)/FolderTreeItem.cpp
@@ -1774,6 +1801,14 @@ libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo: $(srcdir)/SplineCurvePreview.
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/SplineCurvePreview.cpp' object='libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo `test -f '$(srcdir)/SplineCurvePreview.cpp' || echo '$(srcdir)/'`$(srcdir)/SplineCurvePreview.cpp
+
+libnux_@NUX_API_VERSION@_la-StaticText.lo: $(srcdir)/StaticText.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-StaticText.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticText.Tpo -c -o libnux_@NUX_API_VERSION@_la-StaticText.lo `test -f '$(srcdir)/StaticText.cpp' || echo '$(srcdir)/'`$(srcdir)/StaticText.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticText.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticText.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/StaticText.cpp' object='libnux_@NUX_API_VERSION@_la-StaticText.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-StaticText.lo `test -f '$(srcdir)/StaticText.cpp' || echo '$(srcdir)/'`$(srcdir)/StaticText.cpp
 
 libnux_@NUX_API_VERSION@_la-StaticTextBox.lo: $(srcdir)/StaticTextBox.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-StaticTextBox.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticTextBox.Tpo -c -o libnux_@NUX_API_VERSION@_la-StaticTextBox.lo `test -f '$(srcdir)/StaticTextBox.cpp' || echo '$(srcdir)/'`$(srcdir)/StaticTextBox.cpp

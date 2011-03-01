@@ -36,9 +36,10 @@ build_triplet = @build@
 host_triplet = @host@
 @BUILD_EXAMPLES_TRUE@noinst_PROGRAMS = button$(EXEEXT) cairo$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	checkbox$(EXEEXT) combobox$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	gridlayout$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	focus$(EXEEXT) gridlayout$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	layeredlayout$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	moveable_view$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	pango_combobox$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	pangotextedit$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	scrollview$(EXEEXT) textedit$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	timegraph$(EXEEXT) timeline$(EXEEXT) \
@@ -83,6 +84,10 @@ am__combobox_SOURCES_DIST = combobox.cpp
 @BUILD_EXAMPLES_TRUE@am_combobox_OBJECTS = combobox.$(OBJEXT)
 combobox_OBJECTS = $(am_combobox_OBJECTS)
 @BUILD_EXAMPLES_TRUE@combobox_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am__focus_SOURCES_DIST = focus.cpp
+@BUILD_EXAMPLES_TRUE@am_focus_OBJECTS = focus.$(OBJEXT)
+focus_OBJECTS = $(am_focus_OBJECTS)
+@BUILD_EXAMPLES_TRUE@focus_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am__gridlayout_SOURCES_DIST = gridlayout.cpp
 @BUILD_EXAMPLES_TRUE@am_gridlayout_OBJECTS = gridlayout.$(OBJEXT)
 gridlayout_OBJECTS = $(am_gridlayout_OBJECTS)
@@ -98,6 +103,12 @@ am__moveable_view_SOURCES_DIST = moveable_view.cpp
 @BUILD_EXAMPLES_TRUE@	moveable_view.$(OBJEXT)
 moveable_view_OBJECTS = $(am_moveable_view_OBJECTS)
 @BUILD_EXAMPLES_TRUE@moveable_view_DEPENDENCIES =  \
+@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
+am__pango_combobox_SOURCES_DIST = pango_combobox.cpp
+@BUILD_EXAMPLES_TRUE@am_pango_combobox_OBJECTS =  \
+@BUILD_EXAMPLES_TRUE@	pango_combobox.$(OBJEXT)
+pango_combobox_OBJECTS = $(am_pango_combobox_OBJECTS)
+@BUILD_EXAMPLES_TRUE@pango_combobox_DEPENDENCIES =  \
 @BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
 am__pangotextedit_SOURCES_DIST = pangotextedit.cpp
 @BUILD_EXAMPLES_TRUE@am_pangotextedit_OBJECTS =  \
@@ -152,16 +163,17 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(button_SOURCES) $(cairo_SOURCES) $(checkbox_SOURCES) \
-	$(combobox_SOURCES) $(gridlayout_SOURCES) \
+	$(combobox_SOURCES) $(focus_SOURCES) $(gridlayout_SOURCES) \
 	$(layeredlayout_SOURCES) $(moveable_view_SOURCES) \
-	$(pangotextedit_SOURCES) $(scrollview_SOURCES) \
-	$(textedit_SOURCES) $(timegraph_SOURCES) $(timeline_SOURCES) \
-	$(tooltip_SOURCES)
+	$(pango_combobox_SOURCES) $(pangotextedit_SOURCES) \
+	$(scrollview_SOURCES) $(textedit_SOURCES) $(timegraph_SOURCES) \
+	$(timeline_SOURCES) $(tooltip_SOURCES)
 DIST_SOURCES = $(am__button_SOURCES_DIST) $(am__cairo_SOURCES_DIST) \
 	$(am__checkbox_SOURCES_DIST) $(am__combobox_SOURCES_DIST) \
-	$(am__gridlayout_SOURCES_DIST) \
+	$(am__focus_SOURCES_DIST) $(am__gridlayout_SOURCES_DIST) \
 	$(am__layeredlayout_SOURCES_DIST) \
 	$(am__moveable_view_SOURCES_DIST) \
+	$(am__pango_combobox_SOURCES_DIST) \
 	$(am__pangotextedit_SOURCES_DIST) \
 	$(am__scrollview_SOURCES_DIST) $(am__textedit_SOURCES_DIST) \
 	$(am__timegraph_SOURCES_DIST) $(am__timeline_SOURCES_DIST) \
@@ -390,8 +402,12 @@ EXTRA_DIST =
 @BUILD_EXAMPLES_TRUE@moveable_view_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@layeredlayout_SOURCES = layeredlayout.cpp
 @BUILD_EXAMPLES_TRUE@layeredlayout_LDADD = $(ALL_LIBS)
+@BUILD_EXAMPLES_TRUE@focus_SOURCES = focus.cpp
+@BUILD_EXAMPLES_TRUE@focus_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@scrollview_SOURCES = scrollview.cpp
 @BUILD_EXAMPLES_TRUE@scrollview_LDADD = $(ALL_LIBS)
+@BUILD_EXAMPLES_TRUE@pango_combobox_SOURCES = pango_combobox.cpp
+@BUILD_EXAMPLES_TRUE@pango_combobox_LDADD = $(ALL_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -447,6 +463,9 @@ checkbox$(EXEEXT): $(checkbox_OBJECTS) $(checkbox_DEPENDENCIES)
 combobox$(EXEEXT): $(combobox_OBJECTS) $(combobox_DEPENDENCIES) 
 	@rm -f combobox$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(combobox_OBJECTS) $(combobox_LDADD) $(LIBS)
+focus$(EXEEXT): $(focus_OBJECTS) $(focus_DEPENDENCIES) 
+	@rm -f focus$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(focus_OBJECTS) $(focus_LDADD) $(LIBS)
 gridlayout$(EXEEXT): $(gridlayout_OBJECTS) $(gridlayout_DEPENDENCIES) 
 	@rm -f gridlayout$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(gridlayout_OBJECTS) $(gridlayout_LDADD) $(LIBS)
@@ -456,6 +475,9 @@ layeredlayout$(EXEEXT): $(layeredlayout_OBJECTS) $(layeredlayout_DEPENDENCIES)
 moveable_view$(EXEEXT): $(moveable_view_OBJECTS) $(moveable_view_DEPENDENCIES) 
 	@rm -f moveable_view$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(moveable_view_OBJECTS) $(moveable_view_LDADD) $(LIBS)
+pango_combobox$(EXEEXT): $(pango_combobox_OBJECTS) $(pango_combobox_DEPENDENCIES) 
+	@rm -f pango_combobox$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(pango_combobox_OBJECTS) $(pango_combobox_LDADD) $(LIBS)
 pangotextedit$(EXEEXT): $(pangotextedit_OBJECTS) $(pangotextedit_DEPENDENCIES) 
 	@rm -f pangotextedit$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(pangotextedit_OBJECTS) $(pangotextedit_LDADD) $(LIBS)
@@ -485,9 +507,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkbox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/combobox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/focus.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gridlayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/layeredlayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/moveable_view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pango_combobox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pangotextedit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scrollview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textedit.Po@am__quote@

@@ -903,7 +903,7 @@ namespace nux
     int VertexColorLocation = ShaderProg->GetAttributeLocation ("VertexColor");
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer) );
@@ -964,7 +964,7 @@ namespace nux
     CHECKGL ( glUniform1iARB (TextureObjectLocation, 0) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -1040,7 +1040,7 @@ namespace nux
     }
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     if (VertexLocation != -1)
     {
@@ -1123,7 +1123,7 @@ namespace nux
     CHECKGL ( glUniform4fARB (TextureCoef1Location, color1.R(), color1.G(), color1.B(), color1.A() ) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -1200,7 +1200,7 @@ namespace nux
     CHECKGL ( glUniform4fARB (TextureCoef1Location, c1.R(), c1.G(), c1.B(), c1.A() ) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -1276,7 +1276,7 @@ namespace nux
     CHECKGL ( glUniform4fARB (TextureCoef1Location, color1.R(), color1.G(), color1.B(), color1.A() ) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -1365,7 +1365,7 @@ namespace nux
     CHECKGL ( glUniform4fARB (TextureCoef3Location, color3.R(), color3.G(), color3.B(), color3.A() ) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer) );
@@ -1444,7 +1444,7 @@ namespace nux
     int VertexColorLocation = m_SlColor->GetAttributeLocation ("VertexColor");
 
     int VPMatrixLocation = m_SlColor->GetUniformLocationARB ("ViewProjectionMatrix");
-    m_SlColor->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    m_SlColor->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer) );
@@ -1497,7 +1497,7 @@ namespace nux
     CHECKGL ( glUniform1iARB (TextureObjectLocation, 0) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -1562,7 +1562,7 @@ namespace nux
     CHECKGL ( glUniform1iARB (TextureObjectLocation, 0) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m) );
+    ShaderProg->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -1637,7 +1637,7 @@ namespace nux
     CHECKGL ( glUniform4fARB (Color0Location, c0.R (), c0.G (), c0.B (), c0.A ()));
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m));
+    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m));
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
@@ -1698,7 +1698,7 @@ namespace nux
     CHECKGL ( glUniform4fARB (Color0Location, c0.R (), c0.G (), c0.B (), c0.A ()));
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m));
+    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m));
 
     CHECKGL (glEnableVertexAttribArrayARB (VertexLocation));
     CHECKGL (glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
@@ -1767,7 +1767,7 @@ namespace nux
     CHECKGL( glUniform2fARB(TextureSizeLocation, width, height) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m));
+    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m));
 
     CHECKGL (glEnableVertexAttribArrayARB (VertexLocation));
     CHECKGL (glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
@@ -1838,7 +1838,7 @@ namespace nux
     CHECKGL( glUniform2fARB(TextureSizeLocation, width, height) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m));
+    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m));
 
     CHECKGL (glEnableVertexAttribArrayARB (VertexLocation));
     CHECKGL (glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
@@ -1907,7 +1907,7 @@ namespace nux
     CHECKGL( glUniform2fARB(TextureSizeLocation, width, height) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m));
+    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m));
 
     CHECKGL (glEnableVertexAttribArrayARB (VertexLocation));
     CHECKGL (glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
@@ -1978,7 +1978,7 @@ namespace nux
     CHECKGL( glUniform2fARB(TextureSizeLocation, width, height) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m));
+    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m));
 
     CHECKGL (glEnableVertexAttribArrayARB (VertexLocation));
     CHECKGL (glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
@@ -2056,7 +2056,7 @@ namespace nux
     CHECKGL (glUniform1fvARB (MatrixRow3Location, 5, v));
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetModelViewProjectionMatrix().m));
+    ShaderProg->SetUniformLocMatrix4fv ((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetOpenGLModelViewProjectionMatrix().m));
 
     CHECKGL (glEnableVertexAttribArrayARB (VertexLocation));
     CHECKGL (glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
@@ -2130,15 +2130,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate(true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
 
     return _offscreen_color_rt0;
@@ -2187,15 +2183,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate (true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
 
     return _offscreen_color_rt1;
@@ -2243,15 +2235,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate (true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
 
     return _offscreen_color_rt1;
@@ -2300,15 +2288,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate (true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
 
     return _offscreen_color_rt1;
@@ -2366,15 +2350,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate (true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
     return _offscreen_color_rt3;
   }
@@ -2433,15 +2413,11 @@ namespace nux
     if (prevFBO.IsValid ())
     {
       prevFBO->Activate(true);
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
     else
     {
-      SetContext(0, 0, previous_width, previous_height);
       SetViewport(0, 0, previous_width, previous_height);
-      //Push2DWindow(previous_width, previous_height);
     }
 
     return _offscreen_color_rt0;

@@ -55,17 +55,20 @@ namespace nux
     InputArea (NUX_FILE_LINE_PROTO);
     virtual ~InputArea();
 
-    void Deselect()
-    {
-      m_MouseEventCurrent.MouseIn = false;
-    }
-
-    void ForceStartFocus (int x, int y);
+    //! Simulate a mouse down state on an area
+    /*!
+        Simulate a mouse down event on an area at the provided relative coordinates. If the provided coordinates
+        do not fall inside the geometry of the area, return false.
+        @param x Coordinates of the mouse down event relative to the top left corner of the area.
+        @param y Coordinates of the mouse down event relative to the top left corner of the area.
+        @return True if the simulated action was successful.
+    */
+    bool ForceStartFocus (int x, int y);
     void ForceStopFocus (int x, int y);
 
     virtual long OnEvent (Event &ievent, long TraverseInfo, long ProcessEventInfo);
 
-    //! Draw CoreArea.
+    //! Draw InputArea.
     /*!
         Draw a colored quad using m_AreaColor.
         Override this function to define a custom drawing function.
@@ -90,7 +93,7 @@ namespace nux
         In debug mode, print the processing steps of events for this widget.
         On linux, this works only if nux has been compiled with --enable-debug
         \sa _print_event_debug_trace
-        
+
         @param enable If True, print the event processing deug info to the console.
     */
     void EnableEventDebugTrace (bool enable);
@@ -98,12 +101,14 @@ namespace nux
     /*!
         Return True if event processing debuigh information as been activated for this widget.
         \sa _print_event_debug_trace
-        
+
         @return True, if event processing debug information for this widget has been activated.
-    */    
+    */
     bool GetEventDebugTrace () const;
-    
+
   private:
+    bool _dnd_enabled_as_source;
+    bool _dnd_enabled_as_target;
     //bool m_EnableKeyboardInput;
   public:
 //    void EnableKeyEntry(bool b)
@@ -120,7 +125,10 @@ namespace nux
     // Here, we get a change to update the text of the keyboard handler.
     virtual void SetBaseString (const TCHAR *Caption);
 
+    //! Enable the double click signal on this InputArea.
     void EnableDoubleClick (bool b);
+
+    //! Return True if the double click signal is enable for this InputArea.
     bool IsDoubleClickEnabled();
     void EnableUserKeyboardProcessing (bool b);
     bool IsUserKeyboardProcessingEnabled();
@@ -147,27 +155,25 @@ namespace nux
         Bypass OnEvent and performs a simplified event processing mechanism.
     */
     long ProcessEventInExclusiveMode (Event &ievent, long TraverseInfo, long ProcessEventInfo);
-    
+
     void HandleDndMove  (Event &event);
     void HandleDndDrop  (Event &event);
 
-    //! Color of the CoreArea
+    //! Color of the InputArea
     /*
-        Color of the CoreArea use to draw a colored quad when OnDraw() is called.
+        Color of the InputArea use to draw a colored quad when OnDraw() is called.
     */
     Color m_AreaColor;
+    
+    int _dnd_safety_x;
+    int _dnd_safety_y;
 
   protected:
-    struct MouseEvent m_MouseEventPrevious;
-    struct MouseEvent m_MouseEventCurrent;
+    AreaEventProcessor _event_processor;
 
-    BaseMouseHandler m_EventHandler;
-
-    bool m_hasKeyboardFocus;
-    bool m_CaptureMouseDownAnyWhereElse;
-    bool m_EnableDoubleClick;
-    bool m_EnableUserKeyboardProcessing;
-
+    bool _has_keyboard_focus;
+    bool _capture_mouse_down_any_where_else;
+    bool _double_click;     //!< If True, this InputArea can emit the signal OnMouseDoubleClick. Default is false.
     bool _print_event_debug_trace;
 
 #if defined (NUX_OS_LINUX)
@@ -182,6 +188,23 @@ namespace nux
 
     void SendDndStatus (bool accept, DndAction action, Geometry region);
     void SendDndFinished (bool accepted, DndAction action);
+    
+    void SetDndEnabled (bool as_source, bool as_target);
+    
+    virtual void                    DndSourceDragBegin      ();
+    virtual NBitmapData *           DndSourceGetDragImage   ();
+    virtual std::list<const char *> DndSourceGetDragTypes   ();
+    virtual const char *            DndSourceGetDataForType (const char *type, int *size, int *format);
+    virtual void                    DndSourceDragFinished   (DndAction result);
+    
+    void StartDragAsSource ();
+    
+    static NBitmapData *           InnerDndSourceGetDragImage (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragImage ();       }
+    static std::list<const char *> InnerDndSourceGetDragTypes (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragTypes ();       }
+    static void                    InnerDndSourceDragFinished (DndAction result, void *data) { return static_cast<InputArea *> (data)->DndSourceDragFinished (result); }
+    
+    static const char * InnerDndSourceGetDataForType (const char *type, int *size, int *format, void *data) 
+      { return static_cast<InputArea *> (data)->DndSourceGetDataForType (type, size, format); }
 #endif
 
   public:
@@ -218,7 +241,7 @@ namespace nux
     sigc::signal<void> OnEndFocus;
 
     //! Signal emitted when the area receives an WM_TAKE_FOCUS ClientMessage
-    sigc::signal<void, Time> OnTakeFocus;
+    //sigc::signal<void, Time> OnTakeFocus;
 
     sigc::signal < void,
          GraphicsEngine &    ,   /*Graphics Context for text operation*/
@@ -230,6 +253,8 @@ namespace nux
          > OnKeyEvent;
 
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDownOutsideArea;
+
+    void DoSetFocused (bool focus);
   };
 
 }

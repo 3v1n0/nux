@@ -142,6 +142,14 @@ namespace nux
     Window GetInputWindowId ();
     #endif
 
+    //! Set an InputArea to receive the keyboard focus when the BaseWIndow receives the NUX_WINDOW_ENTER_FOCUS event.
+    /*!
+        \sa _enter_focus_input_area.
+        @param input_area An InputArea pointer object. Must be a child of this BaseWindow.
+    */
+    void SetEnterFocusInputArea (InputArea *input_area);
+
+
     //! Get the backup texture data of this BaseWindow,
     void* GetBackupTextureData (int &width, int &height, int &format);
 
@@ -181,6 +189,16 @@ namespace nux
     */
     virtual void NotifyConfigurationChange (int Width, int Height);
 
+    //! Process special events.
+    /*!
+        Some events are not meant to be processed by all views. These events only make sense 
+        for BaseWindow. NUX_WINDOW_ENTER_FOCUS, is such an event.
+
+        @param event The event to inspect.
+        @return True if this BaseWindow has claimed the event (sets the keyboard focus on self).
+    */
+    virtual bool ProcessEnterFocus (Event event);
+
     int GetBorder() const;
     int GetTopBorder() const;
     void SetBorder (int border);
@@ -203,9 +221,12 @@ namespace nux
     //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
     ObjectPtr<BaseTexture> _background_texture;
    
+    NString _name;
     bool _size_match_layout;
     bool _is_visible;
     bool _is_modal;
+
+    InputArea *_enter_focus_input_area;  //!< An input Area to set the keyboad focus on in response to NUX_WINDOW_ENTER_FOCUS.
 
     std::list<View *> m_InterfaceObject;
 

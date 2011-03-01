@@ -154,16 +154,16 @@ namespace nux
     EditTextBox *m_GreenCaption;
     EditTextBox *m_BlueCaption;
     EditTextBox *m_AlphaCaption;
-    CoreArea *m_RedValuator;
-    CoreArea *m_GreenValuator;
-    CoreArea *m_BlueValuator;
-    CoreArea *m_AlphaValuator;
-    CoreArea *m_ColorSquare;
+    InputArea *m_RedValuator;
+    InputArea *m_GreenValuator;
+    InputArea *m_BlueValuator;
+    InputArea *m_AlphaValuator;
+    InputArea *m_ColorSquare;
 
-    CoreArea *m_ComponentLabel0;
-    CoreArea *m_ComponentLabel1;
-    CoreArea *m_ComponentLabel2;
-    CoreArea *m_ComponentAlpha;
+    InputArea *m_ComponentLabel0;
+    InputArea *m_ComponentLabel1;
+    InputArea *m_ComponentLabel2;
+    InputArea *m_ComponentAlpha;
 
     TextureLayer *m_CheckboardLayer;
     float m_Red;

@@ -23,6 +23,8 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
+#include "Focusable.h"
+
 namespace nux
 {
 
@@ -222,9 +224,27 @@ namespace nux
     sigc::signal<void, Layout*> OnQueueDraw;  //!< Signal emitted when a layout is scheduled for a draw.
     sigc::signal<void, Area*>   OnChildQueueDraw;
 
+    virtual void DoSetFocused (bool focused);
+    virtual bool DoGetFocused ();
+    virtual bool DoCanFocus ();
+    virtual void DoActivateFocus ();
+
+    bool FocusFirstChild ();
+    bool FocusNextChild (Area *child);
+    bool FocusPreviousChild (Area *child);
+
+    bool HasFocusableEntries ();
+
+    sigc::signal <void, Layout *, Area*> ChildFocusChanged;
+
+    // this should not be public, but has to be because of nux's object setup
+    long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    bool _has_focus_control;
+    void SetFocusControl (bool focus_control);
+    bool HasFocusControl ();
+
   protected:
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
-
 
     Size m_ContentSize;
     int m_contentWidth;
@@ -244,6 +264,8 @@ namespace nux
     NString m_name;
 
     LayoutContentDistribution m_ContentStacking;
+
+    long SendEventToArea (Area *area, IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
   };
 
 
@@ -273,6 +295,7 @@ namespace nux
     {
       return true;
     }
+
     virtual bool IsSpaceLayout() const
     {
       return true;
@@ -291,6 +314,11 @@ namespace nux
     virtual void AddSpace (unsigned int width, unsigned int stretchFactor = 0)
     {
       // Do not allow a WidgetLayout to encapsulate an object of type layout
+    }
+
+    virtual bool CanFocus ()
+    {
+      return false;
     }
 
     // Begin: Abstract virtual function member (inherited from class Layout) that must be implemented

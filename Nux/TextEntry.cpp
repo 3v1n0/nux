@@ -85,7 +85,7 @@ namespace nux
     pango_font_description_set_family(font_, family.c_str());
     // Calculate pixel size based on the Windows DPI of 96 for compatibility
     // reasons.
-    
+
     size_ = pt_size * PANGO_SCALE * 96. / 72.;
     pango_font_description_set_absolute_size(font_, size_);
 
@@ -142,6 +142,7 @@ namespace nux
     //selection_changed_ = false;
     cursor_moved_ = false;
     update_canvas_ = false;
+    _can_pass_focus_to_composite_layout = false;
     //background_(new Texture(kDefaultBackgroundColor, 1)),
     _text_color = kDefaultTextColor;
     align_ = CairoGraphics::ALIGN_LEFT;
@@ -152,7 +153,7 @@ namespace nux
 
     font_family_ = "Ubuntu";
     font_size_ = 12;
-    
+
     font_options_ = cairo_font_options_create ();
     cairo_font_options_set_antialias (font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style (font_options_, CAIRO_HINT_STYLE_FULL);
@@ -160,7 +161,7 @@ namespace nux
     cairo_font_options_set_subpixel_order (font_options_, CAIRO_SUBPIXEL_ORDER_RGB);
 
     font_dpi_ = 96.0;
-    
+
     update_canvas_ = true;
 
     OnMouseDown.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
@@ -270,7 +271,7 @@ namespace nux
   {
 //     GdkEventKey *gdk_event = static_cast<GdkEventKey *>(event.GetOriginalEvent());
 //     ASSERT(gdk_event);
-// 
+//
 //     Event::Type type = event.GetType();
     // Cause the cursor to stop blinking for a while.
     cursor_blink_status_ = 4;
@@ -283,6 +284,10 @@ namespace nux
 //     }
 
     if (event_type == NUX_KEYUP)
+      return;
+
+    // we need to ignore some characters
+    if (keysym == NUX_VK_TAB)
       return;
 
     if (character != 0 && (strlen (character) != 0))
@@ -433,12 +438,12 @@ namespace nux
     ProcessKeyEvent(eventType, keysym, state, character, keyCount);
   }
 
-  void TextEntry::RecvStartKeyFocus()
+  void TextEntry::RecvStartKeyFocus ()
   {
     FocusInx ();
   }
 
-  void TextEntry::RecvEndKeyFocus()
+  void TextEntry::RecvEndKeyFocus ()
   {
     FocusOutx ();
   }
@@ -518,7 +523,7 @@ namespace nux
     return _text_color;
   }
 
-  
+
   void TextEntry::MainDraw ()
   {
     CairoGraphics *edit_canvas = EnsureCanvas();
@@ -1496,7 +1501,7 @@ namespace nux
           &ranges, &n_ranges);
         pango_layout_line_get_pixel_extents(line, NULL, &line_extents);
         pango_layout_index_to_pos(layout, line->start_index,  &pos);
-        for(int i = 0; i < n_ranges; ++i) 
+        for(int i = 0; i < n_ranges; ++i)
         {
           selection_region_.push_back(Rect(
             kInnerBorderX + scroll_offset_x_ + PANGO_PIXELS(ranges[i * 2]),
@@ -1859,7 +1864,7 @@ namespace nux
         cursor_ = cursor;
         cursor_moved_ = true;
       }
-      
+
       //ResetImContext();
     }
   }
@@ -1869,7 +1874,7 @@ namespace nux
     font_family_ = font;
     QueueRefresh(true, true);
   }
-  
+
   void TextEntry::SetFontSize (double font_size)
   {
     font_size_ = font_size;

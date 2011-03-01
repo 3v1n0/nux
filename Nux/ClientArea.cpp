@@ -65,7 +65,7 @@ namespace nux
 
 //     // A is obtained from GfxContext. So A dimension's are in relative window coordinates.
 //     Rect A = GetThreadGraphicsContext()->GetClippingRegion();
-//     Rect B = Rect(m_Geometry.x, m_Geometry.y, m_Geometry.GetWidth(), m_Geometry.GetHeight());
+//     Rect B = Rect(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight());
 //     Rect C = A.intersect(B);
 //     if((ievent.e_event == NUX_MOUSE_MOVE) && !HasMouseFocus())
 //     {
@@ -83,16 +83,16 @@ namespace nux
 
     if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
     {
-      int buffer_width = m_Geometry.GetWidth();
-      int buffer_height = m_Geometry.GetHeight();
+      int buffer_width = GetBaseWidth();
+      int buffer_height = GetBaseHeight();
       int window_width, window_height;
-      window_width = GfxContext.GetContextWidth();
-      window_height = GfxContext.GetContextHeight();
+      window_width = GfxContext.GetViewportWidth ();
+      window_height = GfxContext.GetViewportHeight ();
 
-      m_ctx.x = m_Geometry.x;
-      m_ctx.y = m_Geometry.y;
-      m_ctx.width  = m_Geometry.GetWidth();
-      m_ctx.height = m_Geometry.GetHeight();
+      m_ctx.x = GetBaseX();
+      m_ctx.y = GetBaseY();
+      m_ctx.width  = GetBaseWidth();
+      m_ctx.height = GetBaseHeight();
 
       // A is obtained from GfxContext. So A dimension's are in relative window coordinates.
       Rect A = GfxContext.GetClippingRegion();
@@ -143,9 +143,6 @@ namespace nux
         GetThreadGraphicsContext()->QRP_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (Color::White) );
       }
 
-      // After the client area is drawn reset the texture environment so that the color is used for next drawing.
-      GfxContext.SetEnvModeSelectColor (GL_TEXTURE0);
-
       // go back to 2D in case that was changed by the client.
       GfxContext.SetViewport (0, 0, window_width, window_height);
       GfxContext.ApplyClippingRectangle();
@@ -157,10 +154,10 @@ namespace nux
       int y = GfxContext.GetContextY();
 
       // The clientarea is in absolute window coordinates. It needs to be offset so that it is in relative window coordinates.
-      m_ctx.x = m_Geometry.x + x;
-      m_ctx.y = m_Geometry.y + y;
-      m_ctx.width  = m_Geometry.GetWidth();
-      m_ctx.height = m_Geometry.GetHeight();
+      m_ctx.x = GetBaseX() + x;
+      m_ctx.y = GetBaseY() + y;
+      m_ctx.width  = GetBaseWidth();
+      m_ctx.height = GetBaseHeight();
 
       // A is obtained from GfxContext. So A dimension's are in relative window coordinates.
       Rect A = GfxContext.GetClippingRegion();
@@ -174,23 +171,20 @@ namespace nux
       m_ctx.height_clipregion = C.GetHeight();
 
       int window_width, window_height;
-      window_width = GfxContext.GetContextWidth();
-      window_height = GfxContext.GetContextHeight();
+      window_width = GfxContext.GetViewportWidth ();
+      window_height = GfxContext.GetViewportHeight ();
 
       SetClientViewport (GfxContext);
 //         GfxContext.SetViewport(
 //             m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);
 //
-//         GfxContext.SetDrawClippingRegion(
+//         GfxContext.SetOpenGLClippingRectangle(
 //             m_ctx.x_clipregion,
 //             window_height - m_ctx.y_clipregion - m_ctx.height_clipregion,
 //             m_ctx.width_clipregion,
 //             m_ctx.height_clipregion);
 
       ClientDraw (GfxContext, m_ctx, force_draw);
-
-      // After the client area is drawn reset the texture environment so that the color is used for next drawing.
-      GfxContext.SetEnvModeSelectColor (GL_TEXTURE0);
 
       // go back to 2D in case that was changed by the client.
       GfxContext.SetViewport (0, 0, window_width, window_height);
@@ -232,13 +226,13 @@ namespace nux
     else
     {
       int window_width, window_height;
-      window_width = GfxContext.GetContextWidth();
-      window_height = GfxContext.GetContextHeight();
+      window_width = GfxContext.GetViewportWidth ();
+      window_height = GfxContext.GetViewportHeight ();
 
       GfxContext.SetViewport (
         m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);
 
-      GfxContext.SetDrawClippingRegion (
+      GfxContext.SetOpenGLClippingRectangle (
         m_ctx.x_clipregion,
         window_height - m_ctx.y_clipregion - m_ctx.height_clipregion,
         m_ctx.width_clipregion,
@@ -249,12 +243,12 @@ namespace nux
   void ClientArea::Setup2DMode (GraphicsEngine &GfxContext)
   {
     int window_width, window_height;
-    window_width = GfxContext.GetContextWidth();
-    window_height = GfxContext.GetContextHeight();
+    window_width = GfxContext.GetViewportWidth ();
+    window_height = GfxContext.GetViewportHeight ();
 
     //Restore 2D ViewPort
-    GfxContext.SetViewport (0, 0, m_Geometry.GetWidth(), m_Geometry.GetHeight() );
-    GfxContext.Push2DWindow (m_Geometry.GetWidth(), m_Geometry.GetHeight() );
+    GfxContext.SetViewport (0, 0, GetBaseWidth(), GetBaseHeight() );
+    GfxContext.Push2DWindow (GetBaseWidth(), GetBaseHeight() );
 
   }
 

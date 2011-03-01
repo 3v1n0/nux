@@ -122,16 +122,16 @@ namespace nux
     m_BlueCaption       = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     m_AlphaCaption      = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
 
-    m_RedValuator       = new CoreArea (NUX_TRACKER_LOCATION);
-    m_GreenValuator     = new CoreArea (NUX_TRACKER_LOCATION);
-    m_BlueValuator      = new CoreArea (NUX_TRACKER_LOCATION);
-    m_AlphaValuator     = new CoreArea (NUX_TRACKER_LOCATION);
-    m_ColorSquare       = new CoreArea (NUX_TRACKER_LOCATION);
+    m_RedValuator       = new InputArea (NUX_TRACKER_LOCATION);
+    m_GreenValuator     = new InputArea (NUX_TRACKER_LOCATION);
+    m_BlueValuator      = new InputArea (NUX_TRACKER_LOCATION);
+    m_AlphaValuator     = new InputArea (NUX_TRACKER_LOCATION);
+    m_ColorSquare       = new InputArea (NUX_TRACKER_LOCATION);
 
-    m_ComponentLabel0   = new CoreArea (NUX_TRACKER_LOCATION);
-    m_ComponentLabel1   = new CoreArea (NUX_TRACKER_LOCATION);
-    m_ComponentLabel2   = new CoreArea (NUX_TRACKER_LOCATION);
-    m_ComponentAlpha    = new CoreArea (NUX_TRACKER_LOCATION);
+    m_ComponentLabel0   = new InputArea (NUX_TRACKER_LOCATION);
+    m_ComponentLabel1   = new InputArea (NUX_TRACKER_LOCATION);
+    m_ComponentLabel2   = new InputArea (NUX_TRACKER_LOCATION);
+    m_ComponentAlpha    = new InputArea (NUX_TRACKER_LOCATION);
   }
 
   void RGBValuator::InitializeWidgets()

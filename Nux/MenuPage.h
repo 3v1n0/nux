@@ -28,7 +28,7 @@
 
 namespace nux
 {
-
+  class StaticText;
   class MenuPage;
   class VLayout;
   class MenuBar;
@@ -50,6 +50,14 @@ namespace nux
     //const ActionItem& GetItem() const {return m_ActionItem;}
     ActionItem *GetActionItem() const;
     //ActionItem* GetActionItem();
+    
+    int GetTextWidth ();
+    int GetTextHeight ();
+
+    StaticText * GetStaticText ()
+    {
+      return _pango_static_text;
+    }
 
   private:
     void SetChildMenu (MenuPage *menu);
@@ -58,6 +66,7 @@ namespace nux
 
     MenuPage    *_child_menu;
     ActionItem  *_action_item;
+    StaticText  *_pango_static_text;
     friend class MenuPage;
   };
 
@@ -132,6 +141,8 @@ namespace nux
 
     */
     void StopMenu (int x = 0, int y = 0);
+
+    void SetFontName (char *font_name);
 
   public:
     void StopActionSubMenu();
@@ -238,6 +249,8 @@ namespace nux
 
     //! This parameter is True if this MenuPage is at the top of a menu chain attached to a MenuBar.
     bool m_IsTopOfMenuChain;
+
+    char *_font_name;
 
   public:
     ///////////////////////////////////////////////////////

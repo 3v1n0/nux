@@ -23,7 +23,8 @@
 #ifndef ABSTRACTOBJECTBASE_H
 #define ABSTRACTOBJECTBASE_H
 
-#include "Nux/Nux.h"
+#include "Nux.h"
+#include "Focusable.h"
 
 namespace nux
 {
@@ -172,11 +173,20 @@ namespace nux
 
     sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
 
+    virtual long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual void DoSetFocused (bool focused);
+    virtual bool DoCanFocus ();
+    void SetFocusControl (bool focus_control);
+    bool HasFocusControl ();
+
   protected:
+
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+
+    void DoMouseDownOutsideArea (int x, int y,unsigned long mousestate, unsigned long keystate);
 
     void InitializeWidgets();
     void InitializeLayout();
@@ -198,7 +208,7 @@ namespace nux
         Accessed inside ContentDraw () to help determine if some parts needs to be rendered.
         Do not use it elsewhere.
         @return True if Draw () was called before ContentDraw ().
-        
+
     */
     bool IsFullRedraw() const;
 
@@ -212,6 +222,8 @@ namespace nux
     bool _full_redraw; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
     bool _is_active; //!< True if the view is enabled (it can receive events and process them).
+
+    bool _can_pass_focus_to_composite_layout; //<! Enable this and keynav will pass focus to your composite layout
 
   private:
     bool m_UseStyleDrawing;

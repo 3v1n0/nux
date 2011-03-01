@@ -27,6 +27,7 @@
 #include "HLayout.h"
 #include "WindowCompositor.h"
 #include "BaseWindow.h"
+#include "TextEntry.h"
 
 namespace nux
 {
@@ -46,6 +47,7 @@ namespace nux
   BaseWindow::BaseWindow (const TCHAR *WindowName, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
   {
+    _name = WindowName;
     _child_need_redraw = true;
     m_TopBorder = 0;
     m_Border = 0;
@@ -61,6 +63,7 @@ namespace nux
     m_configure_notify_callback_data = NULL;
     _entering_visible_state = false;
     _entering_hidden_state = false;
+    _enter_focus_input_area = NULL;
 
     // Should be at the end of the constructor
     GetWindowCompositor().RegisterWindow (this);
@@ -74,6 +77,11 @@ namespace nux
 
   BaseWindow::~BaseWindow()
   {
+    if (_enter_focus_input_area)
+    {
+      _enter_focus_input_area->UnReference ();
+    }
+
 #if defined(NUX_OS_LINUX)
     if (m_input_window)
     {
@@ -538,6 +546,58 @@ namespace nux
   void* BaseWindow::GetBackupTextureData (int &width, int &height, int &format)
   {
     return GetWindowCompositor ().GetBackupTextureData (this, width, height, format);
+  }
+
+  bool BaseWindow::ProcessEnterFocus(Event event)
+  {
+    if (event.e_event != NUX_WINDOW_ENTER_FOCUS)
+      return false;
+
+    InputArea *current_focus_input_area = GetWindowCompositor ().GetKeyboardFocusArea ();
+
+    if (_enter_focus_input_area)
+    {
+      if (_enter_focus_input_area != current_focus_input_area)
+      {
+        GetWindowCompositor ().SetKeyboardFocusArea (NULL);
+
+        if (current_focus_input_area)
+          current_focus_input_area->OnEndFocus.emit ();
+
+        GetWindowCompositor ().SetKeyboardFocusArea (_enter_focus_input_area);
+        _enter_focus_input_area->OnStartFocus.emit ();
+      }
+      return false;
+    }
+    else
+    {
+      if (this != current_focus_input_area)
+      {
+        GetWindowCompositor ().SetKeyboardFocusArea (NULL);
+
+        if (current_focus_input_area)
+          current_focus_input_area->OnEndFocus.emit ();
+
+        // The base Window gets the keyboard focus
+        GetWindowCompositor ().SetKeyboardFocusArea (this);
+        OnStartFocus.emit ();
+      }
+    }
+
+    return true;
+  }
+
+  void BaseWindow::SetEnterFocusInputArea (InputArea *input_area)
+  {
+    if (_enter_focus_input_area)
+    {
+      _enter_focus_input_area->UnReference ();
+    }
+
+    _enter_focus_input_area = input_area;
+    if (_enter_focus_input_area)
+      _enter_focus_input_area->Reference ();
+
   }
 }
 
