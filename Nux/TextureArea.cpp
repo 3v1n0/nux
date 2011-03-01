@@ -53,10 +53,6 @@ namespace nux
 
   long TextureArea::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    if (ievent.e_event == NUX_MOUSE_RELEASED)
-    {
-      int i = 4;
-    }
     return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
   }
 
