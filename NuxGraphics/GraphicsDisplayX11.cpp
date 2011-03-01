@@ -1610,6 +1610,7 @@ namespace nux
       {
         if (xevent.xmap.window == _dnd_source_window)
         {
+          DrawDndSourceWindow ();
           int result = XGrabPointer(GetX11Display (), 
                                     _dnd_source_window, 
                                     True, 
@@ -1850,6 +1851,18 @@ namespace nux
     if (target == _dnd_source_target_window || !_dnd_source_grab_active)
       return;
     
+    printf ("Setting target window from %i to %i\n", _dnd_source_target_window, target);
+    
+    
+    if (target)
+    {
+      Window rw;
+      int x, y;
+      unsigned int w, h, b, d;
+      XGetGeometry (GetX11Display (), target, &rw, &x, &y, &w, &h, &b, &d);
+      printf ("New target geometry %i,%i %ix%i\n", x, y, w, h);
+    }
+    
     if (_dnd_source_target_window)
       SendDndSourceLeave (_dnd_source_target_window);
     
@@ -1871,7 +1884,10 @@ namespace nux
     XTranslateCoordinates (GetX11Display (), root_window, root_window, pos_x, pos_y, &cur_x, &cur_y, &result);
     
     if (!result)
+    {
+      printf ("Fail at first translate\n");
       return result;
+    }
       
     Window src = root_window;
     while (true)
@@ -1892,19 +1908,18 @@ namespace nux
       if (XGetWindowProperty(GetX11Display (), result, XInternAtom (GetX11Display (), "XdndAware", false), 0, 0, False,
                              AnyPropertyType, &type, &format, &n, &a, &data) == Success) 
       {
-        int dnd_version = 0;
+        long dnd_version = 0;
         if (data)
         {
-          dnd_version = *((int *)data);
-          XFree(data);
-        }
+          dnd_version = (long) *((long *)data);
 
-        if (type) 
-        {
           if (dnd_version < 5)
           {
+            printf ("Fail because supported version was too low %i %i\n", result, dnd_version);
             result = 0; // dont have v5? go away until I implement this :)
           }
+
+          XFree(data);
           break; // result is the winner
         }
       }
@@ -1915,6 +1930,7 @@ namespace nux
       // there is no child window, stop
       if (!child)
       {
+        printf ("Fail because we just failed\n");
         result = 0;
         break;
       }
@@ -1948,6 +1964,48 @@ namespace nux
     _dnd_source_data = 0;
   }
   
+  void GraphicsDisplay::DrawDndSourceWindow ()
+  {
+    if (!_dnd_source_funcs.get_drag_image || !_dnd_source_data || !_dnd_source_window)
+      return;
+    
+    Display *display = GetX11Display ();
+    NBitmapData *data = (*(_dnd_source_funcs.get_drag_image)) (_dnd_source_data);
+    XImage *image;
+    
+    image = XGetImage (display, _dnd_source_window, 0, 0, data->GetWidth (), data->GetHeight (), AllPlanes, ZPixmap);
+    GC gc = XCreateGC (display, _dnd_source_window, 0, NULL);
+    
+    /* draw some shit */
+    if (data->IsTextureData())
+    {
+      ImageSurface surface = data->GetSurface (0);
+      
+      int x, y;
+      for (y = 0; y < data->GetHeight (); y++)
+      {
+        for (x = 0; x < data->GetWidth (); x++)
+        {
+          long pixel = (long) surface.Read (x, y);
+          
+          long a = ((pixel >> 24) & 0xff);
+          long r = (((pixel >> 16) & 0xff) * a) / 255;
+          long g = (((pixel >> 8)  & 0xff) * a) / 255;
+          long b = (((pixel >> 0)  & 0xff) * a) / 255;
+          
+          long result_pixel = (a << 24) | (b << 16) | (g << 8) | (r << 0);
+          
+          XPutPixel (image, x, y, result_pixel);
+        }
+      }
+    }
+    
+    /* upload */
+    XPutImage (display, _dnd_source_window, gc, image, 0, 0, 0, 0, data->GetWidth (), data->GetHeight ());
+    
+    XDestroyImage (image);
+  }
+  
   void GraphicsDisplay::StartDndDrag (const DndSourceFuncs &funcs, void *user_data)
   {
     Display *display = GetX11Display ();
@@ -1964,24 +2022,43 @@ namespace nux
     _dnd_source_grab_active = false;
     _dnd_source_drop_sent = false;
     
+    int width = 100, height = 100;
+    if (_dnd_source_funcs.get_drag_image)
+    {
+      NBitmapData *data = (*(_dnd_source_funcs.get_drag_image)) (_dnd_source_data);
+      width = data->GetWidth ();
+      height = data->GetHeight ();
+      
+      delete data;
+    }
+    
     Window root = DefaultRootWindow (display);
+    XVisualInfo vinfo;
+    if (!XMatchVisualInfo(display, XDefaultScreen(display), 32, TrueColor, &vinfo))
+    {
+      printf ("Could not match visual info\n");
+      EndDndDrag (DNDACTION_NONE);
+      return;
+    }
     
     XSetWindowAttributes attribs;
-    attribs.override_redirect = false;
+    attribs.override_redirect = true;
     attribs.background_pixel = 0;
+    attribs.border_pixel = 0;
+    attribs.colormap = XCreateColormap(display, root, vinfo.visual, AllocNone);
     
-    unsigned long attrib_mask = CWOverrideRedirect | CWBackPixel;
+    unsigned long attrib_mask = CWOverrideRedirect | CWBackPixel | CWBorderPixel | CWColormap;
     // make a window which will serve two purposes:
     // First this window will be used to display feedback to the user
     // Second this window will grab and own the XdndSelection Selection
     _dnd_source_window = XCreateWindow (display, 
                                         root, 
                                         100, 100, 
-                                        100, 100, 
+                                        width, height, 
                                         0,
-                                        CopyFromParent,
+                                        vinfo.depth,
                                         InputOutput,
-                                        CopyFromParent, 
+                                        vinfo.visual, 
                                         attrib_mask,
                                         &attribs);
                                         

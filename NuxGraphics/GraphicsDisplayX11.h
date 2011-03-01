@@ -304,6 +304,8 @@ namespace nux
     void HandleDndSelectionRequest (XEvent event);
     Window GetDndTargetWindowForPos (int x, int y);
     
+    void DrawDndSourceWindow ();
+    
     void SendDndSourcePosition (Window target, int x, int y, Time time);
     void SendDndSourceEnter (Window target);
     void SendDndSourceLeave (Window target);
