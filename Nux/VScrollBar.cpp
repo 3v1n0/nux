@@ -280,7 +280,7 @@ namespace nux
     base.OffsetPosition (0, VSCROLLBAR_HEIGHT);
     base.OffsetSize (0, -2 * VSCROLLBAR_HEIGHT);
     //GetPainter().PaintShape (GfxContext, base, Color (COLOR_SCROLLBAR_TRACK), eVSCROLLBAR, false);
-    GfxContext.QRP_Color (base.x, base.y, base.width, base.height, Color (COLOR_SCROLLBAR_TRACK));
+    //GfxContext.QRP_Color (base.x, base.y, base.width, base.height, Color (COLOR_SCROLLBAR_TRACK));
 
     //GetPainter().PaintShape (GfxContext, m_TopThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_UP);
     //GetPainter().PaintShape (GfxContext, m_BottomThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_DOWN);
@@ -289,9 +289,13 @@ namespace nux
                          Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f),
                          eVSCROLLBAR, true);*/
 
-    Geometry slider_geo = m_SlideBar->GetGeometry ();
-    GfxContext.QRP_Color (slider_geo.x, slider_geo.y, slider_geo.width, slider_geo.height,
-      Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f));
+    if (m_contentHeight > m_containerHeight)
+    {
+      Geometry slider_geo = m_SlideBar->GetGeometry ();
+      GfxContext.QRP_Color (slider_geo.x, slider_geo.y, slider_geo.width, slider_geo.height,
+          Color (1.0f, 1.0f, 1.0f, 0.8f));
+    }
+      //Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f));
   }
 
   void VScrollBar::SetContainerSize (int x, int y, int w, int h)
