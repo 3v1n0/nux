@@ -23,8 +23,8 @@
 #ifndef ABSTRACTOBJECTBASE_H
 #define ABSTRACTOBJECTBASE_H
 
-#include "Nux/Nux.h"
-#include "Nux/Focusable.h"
+#include "Nux.h"
+#include "Focusable.h"
 
 namespace nux
 {

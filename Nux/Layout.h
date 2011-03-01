@@ -23,7 +23,7 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
-#include "Nux/Focusable.h"
+#include "Focusable.h"
 
 namespace nux
 {
