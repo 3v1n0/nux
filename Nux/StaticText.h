@@ -24,6 +24,7 @@ namespace nux
 
     void SetText (NString text);
     void SetTextColor (Color textColor);
+    void SetFontName (const char *font_name);
     
     void GetTextSize (int &width, int &height);
 
@@ -56,6 +57,7 @@ namespace nux
 
     void UpdateTextRendering ();
 
+    char *_font_string;
   };
 
 }

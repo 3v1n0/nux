@@ -28,9 +28,9 @@
 namespace nux
 {
 
-  Color AbstractComboBox::m_sCOMBO_COLOR = Color (0xFF9F9F9F);
-  Color AbstractComboBox::m_sCOMBO_BUTTON_COLOR = Color (0xFF4D4D4D);
-  Color AbstractComboBox::m_sCOMBO_MOUSEOVER_COLOR = Color (0xFF222222);
+  Color AbstractComboBox::m_sCOMBO_COLOR = Color (0x009F9F00);
+  Color AbstractComboBox::m_sCOMBO_BUTTON_COLOR = Color (0x00FFFFFF);
+  Color AbstractComboBox::m_sCOMBO_MOUSEOVER_COLOR = Color (0x55FFFFFF);
 
   AbstractComboBox::AbstractComboBox (NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)

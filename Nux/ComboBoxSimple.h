@@ -70,6 +70,11 @@ namespace nux
     int GetSelectionIndex() const;
     void SetSelectionIndex (int index);
 
+    MenuPage * GetMenuPage ()
+    {
+      return m_CurrentMenu;
+    }
+
     sigc::signal<void, ComboBoxSimple *> sigTriggered;
     sigc::signal<void, ActionItem *> sigActionTriggered;
 
