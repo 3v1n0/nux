@@ -1,4 +1,4 @@
-nux (0.9.30-0ubuntu1) UNRELEASED; urgency=low
+nux (0.9.30-0ubuntu1) natty; urgency=low
 
   * New upstream release:
     - compiz crashed with SIGSEGV in g_signal_connect_data@plt() (LP: #725827)
@@ -8,7 +8,7 @@ nux (0.9.30-0ubuntu1) UNRELEASED; urgency=low
   * debian/rules:
     - bump shlib
 
- -- Didier Roche <didrocks@ubuntu.com>  Tue, 01 Mar 2011 13:27:53 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 01 Mar 2011 14:20:24 +0100
 
 nux (0.9.28-0ubuntu1) natty; urgency=low
 
