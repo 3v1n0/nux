@@ -133,6 +133,8 @@ namespace nux
     static int X11KeySymToINL (int Keysym);
 
   public:
+    typedef void (*GrabReleaseCallback) (bool replaced, void *user_data);
+  
     typedef struct _DndSourceFuncs
     {
       nux::NBitmapData *       (*get_drag_image)    (void * data);
@@ -285,7 +287,16 @@ namespace nux
 
     void StartDndDrag (const DndSourceFuncs &funcs, void *user_data);
     
+    bool GrabPointer   (GrabReleaseCallback callback, void *data, bool replace_existing);
+    bool UngrabPointer (void *data);
+    bool PointerIsGrabbed ();
+    
+    bool GrabKeyboard   (GrabReleaseCallback callback, void *data, bool replace_existing);
+    bool UngrabKeyboard (void *data);
+    bool KeyboardIsGrabbed ();
   private:
+    void InitGlobalGrabWindow ();
+  
     void HandleXDndPosition (XEvent event, Event* nux_event);
     void HandleXDndEnter    (XEvent event);
     void HandleXDndStatus   (XEvent event);
@@ -323,8 +334,6 @@ namespace nux
     GraphicsEngine *m_GraphicsContext;
     WindowStyle m_Style;
 
-    
-
     Atom _xdnd_types[_xdnd_max_type + 1];
     Display *_drag_display;
     Window _drag_window;
@@ -336,6 +345,16 @@ namespace nux
 
     Window _dnd_source_window;
     Window _dnd_source_target_window;
+    
+    Window              _global_grab_window;
+    
+    void               *_global_pointer_grab_data;
+    bool                _global_pointer_grab_active;
+    GrabReleaseCallback _global_pointer_grab_callback;
+
+    void               *_global_keyboard_grab_data;
+    bool                _global_keyboard_grab_active;
+    GrabReleaseCallback _global_keyboard_grab_callback;
 
     bool _dnd_is_drag_source;
     bool _dnd_source_target_accepts_drop;

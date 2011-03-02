@@ -94,6 +94,7 @@ namespace nux
     _glx_minor = 0;
     
     _dnd_is_drag_source = false;
+    _dnd_source_grab_active = false;
     _dnd_source_funcs.get_drag_image = 0;
     _dnd_source_funcs.get_drag_types = 0;
     _dnd_source_funcs.get_data_for_type = 0;
@@ -505,6 +506,8 @@ namespace nux
 
     //EnableVSyncSwapControl();
     //DisableVSyncSwapControl();
+    
+    InitGlobalGrabWindow ();
 
     return TRUE;
   }
@@ -543,6 +546,8 @@ namespace nux
         m_GLCtx,
         1, 0, false);
     m_GraphicsContext = new GraphicsEngine (*this);
+
+    InitGlobalGrabWindow ();
 
     return true;
   }
@@ -1611,32 +1616,6 @@ namespace nux
         if (xevent.xmap.window == _dnd_source_window)
         {
           DrawDndSourceWindow ();
-          int result = XGrabPointer(GetX11Display (), 
-                                    _dnd_source_window, 
-                                    True, 
-                                             ButtonPressMask | 
-                                             ButtonReleaseMask | 
-                                             PointerMotionMask | 
-                                             ButtonMotionMask , 
-                                    GrabModeAsync,
-                                    GrabModeAsync, 
-                                    None,
-                                    None, 
-                                    CurrentTime);
-                                    
-          switch (result)
-          {
-            case GrabSuccess:
-              GrabDndSelection (GetX11Display (), _dnd_source_window, CurrentTime); 
-              _dnd_source_grab_active = true;
-              break;
-            case GrabNotViewable:
-            case AlreadyGrabbed:
-            case GrabFrozen:
-            case GrabInvalidTime:
-              EndDndDrag (DNDACTION_NONE);
-              break;  
-          }
         } 
         else
         {
@@ -1760,9 +1739,12 @@ namespace nux
         }
         else
         {
-          _dnd_source_drop_sent = true;
           SendDndSourceDrop (_dnd_source_target_window, xevent.xbutton.time);
-          XUngrabPointer (GetX11Display (), CurrentTime);
+          _dnd_source_drop_sent = true;
+
+          UngrabPointer (this);
+          _dnd_source_grab_active = false;
+
           g_timeout_add (1000, &GraphicsDisplay::OnDragEndTimeout, this);
         }
         break;
@@ -1771,7 +1753,13 @@ namespace nux
         Window target = GetDndTargetWindowForPos (xevent.xmotion.x_root, xevent.xmotion.y_root);
         
         if (_dnd_source_window)
-          XMoveWindow (GetX11Display (), _dnd_source_window, xevent.xmotion.x_root - 50, xevent.xmotion.y_root - 50);
+        {
+          Window rw;
+          int x, y;
+          unsigned int w, h, b, d;
+          XGetGeometry (GetX11Display (), _dnd_source_window, &rw, &x, &y, &w, &h, &b, &d);
+          XMoveWindow (GetX11Display (), _dnd_source_window, xevent.xmotion.x_root - (w / 2), xevent.xmotion.y_root - (h / 2));
+        }
         
         if (target != _dnd_source_target_window)
           SetDndSourceTargetWindow (target);
@@ -1851,18 +1839,6 @@ namespace nux
     if (target == _dnd_source_target_window || !_dnd_source_grab_active)
       return;
     
-    printf ("Setting target window from %i to %i\n", _dnd_source_target_window, target);
-    
-    
-    if (target)
-    {
-      Window rw;
-      int x, y;
-      unsigned int w, h, b, d;
-      XGetGeometry (GetX11Display (), target, &rw, &x, &y, &w, &h, &b, &d);
-      printf ("New target geometry %i,%i %ix%i\n", x, y, w, h);
-    }
-    
     if (_dnd_source_target_window)
       SendDndSourceLeave (_dnd_source_target_window);
     
@@ -1884,10 +1860,7 @@ namespace nux
     XTranslateCoordinates (GetX11Display (), root_window, root_window, pos_x, pos_y, &cur_x, &cur_y, &result);
     
     if (!result)
-    {
-      printf ("Fail at first translate\n");
       return result;
-    }
       
     Window src = root_window;
     while (true)
@@ -1914,10 +1887,7 @@ namespace nux
           dnd_version = (long) *((long *)data);
 
           if (dnd_version < 5)
-          {
-            printf ("Fail because supported version was too low %i %i\n", result, dnd_version);
             result = 0; // dont have v5? go away until I implement this :)
-          }
 
           XFree(data);
           break; // result is the winner
@@ -1930,7 +1900,6 @@ namespace nux
       // there is no child window, stop
       if (!child)
       {
-        printf ("Fail because we just failed\n");
         result = 0;
         break;
       }
@@ -2010,7 +1979,7 @@ namespace nux
   {
     Display *display = GetX11Display ();
     
-    if (!display)
+    if (!display || !GrabPointer (NULL, this, true))
     {
       if (funcs.drag_finished)
         (*(funcs.drag_finished)) (DNDACTION_NONE, user_data);
@@ -2019,7 +1988,7 @@ namespace nux
   
     _dnd_source_funcs = funcs;
     _dnd_source_data = user_data;
-    _dnd_source_grab_active = false;
+    _dnd_source_grab_active = true;
     _dnd_source_drop_sent = false;
     
     int width = 100, height = 100;
@@ -2108,7 +2077,8 @@ namespace nux
     
     XChangeProperty(display, _dnd_source_window, XInternAtom (display, "XdndTypeList", false),
                     XA_ATOM, 32, PropModeReplace, (unsigned char *)type_atoms, i);
-
+    
+    GrabDndSelection (display, _dnd_source_window, CurrentTime);
   }
   
   bool GraphicsDisplay::GrabDndSelection (Display *display, Window window, Time time)
@@ -2440,6 +2410,135 @@ namespace nux
     }
     
     EndDndDrag (result);
+  }
+  
+  void GraphicsDisplay::InitGlobalGrabWindow ()
+  {
+    Display *display = GetX11Display ();
+    _global_grab_window = XCreateSimpleWindow (display, DefaultRootWindow (display), -100, -100, 1, 1, 0, 0, 0);
+    
+    XSelectInput (display, _global_grab_window, StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PointerMotionMask);
+    XMapRaised (display, _global_grab_window);
+    
+    Atom atom_type[1];
+    atom_type[0] = XInternAtom (display, "_NET_WM_WINDOW_TYPE_UTILITY", false);
+    XChangeProperty (display, _global_grab_window, XInternAtom (display, "_NET_WM_WINDOW_TYPE", false), 
+                     XA_ATOM, 32, PropModeReplace, (unsigned char*) atom_type, 1);
+
+    Atom data[32];
+    int     i = 0;
+    data[i++] = XInternAtom (display, "_NET_WM_STATE_STICKY", false);
+    data[i++] = XInternAtom (display, "_NET_WM_STATE_SKIP_TASKBAR", false);
+    data[i++] = XInternAtom (display, "_NET_WM_STATE_SKIP_PAGER", false);
+    data[i++] = XInternAtom (display, "_NET_WM_STATE_ABOVE", false);
+
+    XChangeProperty (display, _global_grab_window, XInternAtom (display, "_NET_WM_STATE", 0),
+                 XA_ATOM, 32, PropModeReplace,
+                 (unsigned char *) data, i);
+  }
+
+  bool GraphicsDisplay::GrabPointer (GrabReleaseCallback callback, void *data, bool replace_existing)
+  {
+    if (_global_pointer_grab_active)
+    {
+      if (!replace_existing || _dnd_source_grab_active) // prevent grabbing over DND grabs
+        return false;
+      
+      if (_global_pointer_grab_callback)
+        (*_global_pointer_grab_callback) (true, _global_pointer_grab_data);
+    }
+    
+    _global_pointer_grab_callback = callback;
+    _global_pointer_grab_data = data;
+    
+    if (!_global_pointer_grab_active)
+    {
+      int result = XGrabPointer(GetX11Display (), 
+                                _global_grab_window, 
+                                True, 
+                                   ButtonPressMask | 
+                                   ButtonReleaseMask | 
+                                   PointerMotionMask | 
+                                   ButtonMotionMask , 
+                                GrabModeAsync,
+                                GrabModeAsync, 
+                                None,
+                                None, 
+                                CurrentTime);
+                                      
+      if (result == GrabSuccess)
+        _global_pointer_grab_active = true;
+    }
+    
+    return _global_pointer_grab_active;
+  }
+  
+  bool GraphicsDisplay::UngrabPointer (void *data)
+  {
+    if (data != _global_pointer_grab_data || !_global_pointer_grab_active)
+      return false;
+    
+    _global_pointer_grab_active = false;
+    XUngrabPointer (GetX11Display (), CurrentTime);
+    
+    if (_global_pointer_grab_callback)
+      (*_global_pointer_grab_callback) (false, data);
+    
+    return true;
+  }
+  
+  bool GraphicsDisplay::PointerIsGrabbed ()
+  {
+    return _global_pointer_grab_active;  
+  }
+
+  bool GraphicsDisplay::GrabKeyboard (GrabReleaseCallback callback, void *data, bool replace_existing)
+  {
+    if (_global_keyboard_grab_active)
+    {
+      if (!replace_existing)
+        return false; // fail case
+      
+      if (_global_keyboard_grab_callback)
+        (*_global_keyboard_grab_callback) (true, _global_keyboard_grab_data);
+    }
+    
+    _global_keyboard_grab_callback = callback;
+    _global_keyboard_grab_data = data;
+    
+    if (!_global_keyboard_grab_active)
+    {
+      int result = XGrabKeyboard(GetX11Display (), 
+                                _global_grab_window, 
+                                True, 
+                                GrabModeAsync,
+                                GrabModeAsync, 
+                                CurrentTime);
+                                      
+      if (result == GrabSuccess)
+        _global_keyboard_grab_active = true;
+    }
+    
+    return _global_keyboard_grab_active;
+  }
+  
+  bool GraphicsDisplay::UngrabKeyboard (void *data)
+  {
+    if (data != _global_keyboard_grab_data || !_global_keyboard_grab_active)
+      return false;
+    
+    _global_keyboard_grab_active = false;
+    XUngrabKeyboard (GetX11Display (), CurrentTime);
+    
+    if (_global_keyboard_grab_callback)
+      (*_global_keyboard_grab_callback) (false, data);
+    
+    return true;
+  }
+  
+  bool GraphicsDisplay::KeyboardIsGrabbed ()
+  {
+    return _global_keyboard_grab_active;  
   }
 
   int GraphicsDisplay::X11KeySymToINL (int Keysym)

@@ -259,17 +259,7 @@ namespace nux
 
   void XInputWindow::GrabPointer ()
   {
-    int grab_result = XGrabPointer(_display,
-                                   _window,
-                                   True,
-                                   ButtonPressMask|ButtonReleaseMask|PointerMotionMask,
-                                   GrabModeAsync,
-                                   GrabModeAsync,
-                                   None,
-                                   None,
-                                   CurrentTime);    
-
-    if (grab_result != GrabSuccess)
+    if (GetThreadGLWindow()->GrabPointer (NULL, this, true))
     {
       nuxDebugMsg (TEXT("Pointer grab failed!\n"));
     }
@@ -277,7 +267,7 @@ namespace nux
 
   void XInputWindow::UnGrabPointer ()
   {
-    XUngrabPointer(_display, CurrentTime);
+    GetThreadGLWindow()->UngrabPointer (this);
   }
 
   void XInputWindow::SetInputFocus ()
@@ -287,14 +277,7 @@ namespace nux
 
   void XInputWindow::GrabKeyboard ()
   {
-    int grab_result = XGrabKeyboard (_display,
-                                     _window,
-                                     True,
-                                     GrabModeAsync,
-                                     GrabModeAsync,
-                                     CurrentTime);
-    
-    if (grab_result != GrabSuccess)
+    if (GetThreadGLWindow()->GrabKeyboard (NULL, this, true))
     {
       nuxDebugMsg (TEXT("Keyboard grab failed!\n"));
     }
@@ -302,7 +285,7 @@ namespace nux
 
   void XInputWindow::UnGrabKeyboard ()
   {
-    XUngrabKeyboard (_display, CurrentTime);
+    GetThreadGLWindow()->UngrabKeyboard (this);
   } 
 }
 
