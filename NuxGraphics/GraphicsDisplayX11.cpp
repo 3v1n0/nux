@@ -1924,6 +1924,7 @@ namespace nux
     _dnd_source_window = 0;
     
     GrabDndSelection (display, None, CurrentTime);
+    UngrabPointer (this);
     
     _dnd_source_funcs.get_drag_image = 0;
     _dnd_source_funcs.get_drag_types = 0;
