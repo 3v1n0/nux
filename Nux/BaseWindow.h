@@ -135,9 +135,11 @@ namespace nux
     void InputWindowEnableStruts (bool enable);
     bool InputWindowStrutsEnabled ();
     void GrabPointer ();
-    void UnGrabPointer ();
     void GrabKeyboard ();
+    void UnGrabPointer ();
     void UnGrabKeyboard ();
+    bool OwnsPointerGrab ();
+    bool OwnsKeyboardGrab ();
     void SetInputFocus ();
     Window GetInputWindowId ();
     #endif

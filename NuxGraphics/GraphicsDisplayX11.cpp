@@ -99,6 +99,9 @@ namespace nux
     _dnd_source_funcs.get_drag_types = 0;
     _dnd_source_funcs.get_data_for_type = 0;
     _dnd_source_funcs.drag_finished = 0;
+    
+    _global_keyboard_grab_data = 0;
+    _global_pointer_grab_data = 0;
 
     // DND
     _last_dnd_position.Set(0, 0);

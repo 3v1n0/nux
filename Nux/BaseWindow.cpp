@@ -346,15 +346,12 @@ namespace nux
   
   void BaseWindow::GrabPointer ()
   {
-    if (m_input_window)
-      m_input_window->GrabPointer ();
-      
+    GetThreadGLWindow()->GrabPointer (NULL, this, true);
   }
   
   void BaseWindow::UnGrabPointer ()
   {
-    if (m_input_window)
-      m_input_window->UnGrabPointer ();    
+    GetThreadGLWindow()->UngrabPointer (this);
   }
 
   void BaseWindow::SetInputFocus ()
@@ -365,14 +362,22 @@ namespace nux
 
   void BaseWindow::GrabKeyboard ()
   {
-    if (m_input_window)
-      m_input_window->GrabKeyboard ();
+    GetThreadGLWindow()->GrabKeyboard (NULL, this, true);
   }
   
   void BaseWindow::UnGrabKeyboard ()
   {
-    if (m_input_window)
-      m_input_window->UnGrabKeyboard ();    
+    GetThreadGLWindow()->UngrabKeyboard (this);
+  }
+  
+  bool BaseWindow::OwnsPointerGrab ()
+  {
+    return GetThreadGLWindow ()->PointerGrabData () == this;
+  }
+  
+  bool BaseWindow::OwnsKeyboardGrab ()
+  {
+    return GetThreadGLWindow ()->KeyboardGrabData () == this;
   }
 
   Window BaseWindow::GetInputWindowId ()

@@ -294,6 +294,9 @@ namespace nux
     bool GrabKeyboard   (GrabReleaseCallback callback, void *data, bool replace_existing);
     bool UngrabKeyboard (void *data);
     bool KeyboardIsGrabbed ();
+    
+    void * KeyboardGrabData () { return _global_keyboard_grab_data; }
+    void * PointerGrabData () { return _global_pointer_grab_data; }
   private:
     void InitGlobalGrabWindow ();
   

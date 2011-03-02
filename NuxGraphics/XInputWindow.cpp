@@ -257,35 +257,9 @@ namespace nux
     return _window;
   }
 
-  void XInputWindow::GrabPointer ()
-  {
-    if (GetThreadGLWindow()->GrabPointer (NULL, this, true))
-    {
-      nuxDebugMsg (TEXT("Pointer grab failed!\n"));
-    }
-  }
-
-  void XInputWindow::UnGrabPointer ()
-  {
-    GetThreadGLWindow()->UngrabPointer (this);
-  }
-
   void XInputWindow::SetInputFocus ()
   {
     XSetInputFocus (_display, _window, RevertToParent, CurrentTime);
   }
-
-  void XInputWindow::GrabKeyboard ()
-  {
-    if (GetThreadGLWindow()->GrabKeyboard (NULL, this, true))
-    {
-      nuxDebugMsg (TEXT("Keyboard grab failed!\n"));
-    }
-  }
-
-  void XInputWindow::UnGrabKeyboard ()
-  {
-    GetThreadGLWindow()->UngrabKeyboard (this);
-  } 
 }
 
