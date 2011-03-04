@@ -199,7 +199,6 @@ namespace nux
     //! Vertical scrollbar offsets.
     int _delta_y;
 
-
     void FormatContent ();
     virtual void PreLayoutManagement ();
     virtual long PostLayoutManagement (long LayoutResult);

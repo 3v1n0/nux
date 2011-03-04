@@ -79,7 +79,7 @@ namespace nux
   {
     long ret = TraverseInfo;
     long ProcEvInfo = 0;
-    g_debug ("got event");
+
     if (event.e_event == NUX_MOUSE_PRESSED)
     {
       // Verify that the mouse down event falls inside the of the ScrollView.
