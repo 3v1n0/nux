@@ -84,6 +84,8 @@ namespace nux
     virtual void ResetScrollToUp();
     virtual void ResetScrollToDown();
 
+    // amount to scroll by for each mouse wheel event
+    int m_MouseWheelScrollSize;
 
     // Geometry of the layout that encompass the child layouts.
     //! X Position of the content
