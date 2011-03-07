@@ -58,11 +58,14 @@ namespace nux
     setTopBorder (4);
     setBorder (4);
 
+    m_MouseWheelScrollSize = 32;
+
     m_ViewContentLeftMargin      = 0;
     m_ViewContentRightMargin     = 0;
     m_ViewContentTopMargin       = 0;
     m_ViewContentBottomMargin    = 0;
     FormatContent();
+
   }
 
   ScrollView::~ScrollView()
@@ -77,13 +80,26 @@ namespace nux
     long ret = TraverseInfo;
     long ProcEvInfo = 0;
 
-    
     if (event.e_event == NUX_MOUSE_PRESSED)
     {
       // Verify that the mouse down event falls inside the of the ScrollView.
       if (!GetGeometry ().IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root))
       {
         ProcEvInfo = eDoNotProcess;
+      }
+    }
+
+    if (event.e_event == NUX_MOUSEWHEEL)
+    {
+      // nux can't tell the difference between horizontal and vertical mouse wheel events
+      // so we are only going to support vertical
+      if (event.e_wheeldelta > 0)
+      {
+        ScrollDown (abs (event.e_wheeldelta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
+      }
+      else
+      {
+        ScrollUp (abs (event.e_wheeldelta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
       }
     }
 
@@ -115,6 +131,8 @@ namespace nux
       Event mod_event = event;
       ret = m_CompositionLayout->ProcessEvent (mod_event, ret, ProcEvInfo);
     }
+
+
 
     ret = PostProcessEvent2 (event, ret, 0);
     return ret;
@@ -833,7 +851,7 @@ namespace nux
       _delta_x = 0;
     }
 
-    
+
 
     hscrollbar->SetContentOffset (_delta_x, _delta_y);
     hscrollbar->NeedRedraw();
