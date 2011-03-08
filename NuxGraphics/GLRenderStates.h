@@ -612,7 +612,7 @@ namespace nux
   {
     if (
       (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILFUNC]) != func) ||
-      (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILREF]) != ref) ||
+      (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILREF]) != (t_u32)ref) ||
       (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILMASK]) != mask)
       )
     {
