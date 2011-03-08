@@ -283,20 +283,19 @@ namespace nux
 //         return EVENT_RESULT_HANDLED;
 //     }
 
-    if (event_type == NUX_VK_ENTER)
-    {
-      activated.emit ();
-      return;
-    }
-
-    g_debug ("%lu", event_type);
-
     if (event_type == NUX_KEYUP)
       return;
 
     // we need to ignore some characters
     if (keysym == NUX_VK_TAB)
       return;
+
+    if (keysym == NUX_VK_ENTER)
+    {
+      activated.emit ();
+      return;
+    }
+
 
     if (character != 0 && (strlen (character) != 0))
     {
