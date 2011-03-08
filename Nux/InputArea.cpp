@@ -507,8 +507,9 @@ namespace nux
           if (abs (_dnd_safety_x) > 30 || abs (_dnd_safety_y) > 30)
           {
             ForceStopFocus (x, y);
+#if defined (NUX_OS_LINUX)
             StartDragAsSource ();
-            
+#endif            
             _dnd_safety_x = 0;
             _dnd_safety_y = 0;
           }

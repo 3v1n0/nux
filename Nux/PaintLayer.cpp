@@ -31,7 +31,7 @@ namespace nux
 
   ColorLayer::ColorLayer (const Color &color, bool write_alpha, const ROPConfig &ROP)
   {
-    m_color = color;
+    _color = color;
     m_write_alpha = write_alpha;
     m_rop = ROP;
   }
@@ -46,7 +46,7 @@ namespace nux
     GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
     
     GfxContext.GetRenderStates().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
-    GfxContext.QRP_Color (_geometry.x, _geometry.y, _geometry.GetWidth(), _geometry.GetHeight(), m_color);
+    GfxContext.QRP_Color (_geometry.x, _geometry.y, _geometry.GetWidth(), _geometry.GetHeight(), _color);
 
     // Restore the blend state
     GfxContext.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
@@ -55,6 +55,16 @@ namespace nux
   AbstractPaintLayer *ColorLayer::Clone() const
   {
     return new ColorLayer(*this);
+  }
+
+  void ColorLayer::SetColor (const Color &color)
+  {
+    _color = color;
+  }
+
+  Color ColorLayer::GetColor() const
+  {
+    return _color;
   }
 
 /////////////////////////////////////////////////////
