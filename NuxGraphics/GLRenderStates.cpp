@@ -143,6 +143,16 @@ namespace nux
 
 
     HW__EnableStencil ( s_StateLUT.default_render_state[GFXRS_STENCILENABLE].iValue );
+    HW__SetStencilFunc (
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFUNC].iValue,
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILREF].iValue,
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILMASK].iValue);
+    HW__SetStencilOp (
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFAIL].iValue,
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZFAIL].iValue,
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZPASS].iValue);
+
+#if 0
     HW__EnableTwoSidedStencil ( s_StateLUT.default_render_state[GFXRS_TWOSIDEDSTENCILENABLE].iValue );
 
     HW__SetFrontFaceStencilFunc (
@@ -162,6 +172,7 @@ namespace nux
       s_StateLUT.default_render_state[GFXRS_BACK_STENCILFAIL].iValue,
       s_StateLUT.default_render_state[GFXRS_BACK_STENCILZFAIL].iValue,
       s_StateLUT.default_render_state[GFXRS_BACK_STENCILZPASS].iValue );
+#endif
 
     HW__EnableScissor ( s_StateLUT.default_render_state[GFXRS_SCISSORTESTENABLE].iValue );
 
@@ -191,6 +202,17 @@ namespace nux
 
 
     HW__EnableStencil ( m_RenderStateChanges[GFXRS_STENCILENABLE].iValue );
+
+    HW__SetStencilFunc (
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFUNC].iValue,
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILREF].iValue,
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILMASK].iValue);
+    HW__SetStencilOp (
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFAIL].iValue,
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZFAIL].iValue,
+      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZPASS].iValue);
+
+#if 0
     HW__EnableTwoSidedStencil ( s_StateLUT.default_render_state[GFXRS_TWOSIDEDSTENCILENABLE].iValue );
 
     HW__SetFrontFaceStencilFunc (
@@ -210,6 +232,7 @@ namespace nux
       m_RenderStateChanges[GFXRS_BACK_STENCILFAIL].iValue,
       m_RenderStateChanges[GFXRS_BACK_STENCILZFAIL].iValue,
       m_RenderStateChanges[GFXRS_BACK_STENCILZPASS].iValue );
+#endif
 
     HW__EnableScissor ( m_RenderStateChanges[GFXRS_SCISSORTESTENABLE].iValue );
 
@@ -282,6 +305,17 @@ namespace nux
           rs == GFXRS_BACK_STENCILWRITEMASK)
       {
         HW__EnableStencil (RS_VALUE (m_RenderStateChanges[GFXRS_STENCILENABLE]) );
+
+        HW__SetStencilFunc (
+          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFUNC].iValue,
+          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILREF].iValue,
+          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILMASK].iValue);
+        HW__SetStencilOp (
+          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFAIL].iValue,
+          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZFAIL].iValue,
+          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZPASS].iValue);
+
+#if 0
         HW__EnableTwoSidedStencil (RS_VALUE (m_RenderStateChanges[GFXRS_TWOSIDEDSTENCILENABLE]) );
 
         HW__SetFrontFaceStencilFunc (
@@ -305,6 +339,7 @@ namespace nux
           RS_VALUE (m_RenderStateChanges[GFXRS_BACK_STENCILZPASS]) );
         HW__SetStencilBackFaceWriteMask (
           RS_VALUE (m_RenderStateChanges[GFXRS_BACK_STENCILWRITEMASK]) );
+#endif
       }
 
       if (rs == GFXRS_ALPHABLENDENABLE   ||

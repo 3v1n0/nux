@@ -18,6 +18,7 @@ noinst_PROGRAMS = button \
                   pango_combobox \
                   pangotextedit \
                   scrollview \
+                  tab_view \
                   textedit \
                   timegraph \
                   timeline \
@@ -77,6 +78,8 @@ focus_SOURCES = focus.cpp
 focus_LDADD = $(ALL_LIBS)
 scrollview_SOURCES = scrollview.cpp
 scrollview_LDADD = $(ALL_LIBS)
+tab_view_SOURCES = tab_view.cpp
+tab_view_LDADD = $(ALL_LIBS)
 pango_combobox_SOURCES = pango_combobox.cpp
 pango_combobox_LDADD = $(ALL_LIBS)
 

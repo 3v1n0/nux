@@ -202,9 +202,15 @@ namespace nux
                               t_u32 DepthFunc_        = GL_LEQUAL);
 
     inline void SetDepthRange (
-      FLOAT zNear = 0.0f,
-      FLOAT zFar = 1.0f);
+      float zNear = 0.0f,
+      float zFar = 1.0f);
 
+
+    inline void SetStencil (bool enable_stencil);
+    inline void SetStencilFunc (t_u32 func, int ref, t_u32 mask);
+    inline void SetStencilOp (t_u32 stencil_fail, t_u32 stencil_pass_depth_fail, t_u32 stencil_pass_depth_pass);
+
+#if 0
     // If two sided stencil is not activated, the setting is also used for the back face.
     inline void SetStencilFrontFace (
       bool EnableStencil_,                            // GL_TRUE enable stencil test
@@ -230,7 +236,7 @@ namespace nux
 
     inline void SetBackFaceStencilWriteMask (
       t_u32 WriteMask_        = 0xffffffff);
-
+#endif
 
     inline void EnableLineSmooth (
       bool EnableLineSmooth = TRUE,
@@ -261,7 +267,7 @@ namespace nux
     inline void SetPolygonMode (t_u32 FrontMode = GL_FILL, t_u32 BackMode = GL_FILL);
 
     inline void SetPolygonOffset (t_u32 bEnable,
-                                  FLOAT Factor = 0.0f, FLOAT Units = 0.0f);
+                                  float Factor = 0.0f, float Units = 0.0f);
 
   private:
 
@@ -294,10 +300,14 @@ namespace nux
 
     inline void HW__SetEnableDepthTest (t_u32 b);
     inline void HW__SetDepthFunc (t_u32 Func);
-    inline void HW__SetDepthRange (FLOAT zNear, FLOAT zFar);
+    inline void HW__SetDepthRange (float zNear, float zFar);
 
 
     inline void HW__EnableStencil (t_u32 b);
+    inline void HW__SetStencilOp (t_u32 FailOp_, t_u32 ZFailOp_, t_u32 ZPassOp_);
+    inline void HW__SetStencilFunc (t_u32 func, int ref, t_u32 mask);
+
+#if 0
     inline void HW__EnableTwoSidedStencil (t_u32 b);
     inline void HW__SetStencilFrontFaceWriteMask (t_u32 WriteMask_);
     inline void HW__SetStencilBackFaceWriteMask (t_u32 WriteMask_);
@@ -320,6 +330,7 @@ namespace nux
       t_u32 FailOp_,
       t_u32 ZFailOp_,
       t_u32 ZPassOp_);
+#endif
 
     inline void HW__EnableLineSmooth (t_u32 EnableLineSmooth);
     inline void HW__SetLineWidth (t_u32 width, t_u32 HINT);
@@ -335,7 +346,7 @@ namespace nux
 
     inline void HW__SetPolygonMode (t_u32 FrontMode, t_u32 BackMode);
     inline void HW__EnablePolygonOffset (t_u32 EnablePolygonOffset);
-    inline void HW__SetPolygonOffset (FLOAT Factor, FLOAT Units);
+    inline void HW__SetPolygonOffset (float Factor, float Units);
 
   private:
     RenderStateMap *m_RenderStateChangeList;
@@ -573,7 +584,7 @@ namespace nux
     }
   }
 
-  inline void GpuRenderStates::SetDepthRange (FLOAT zNear, FLOAT zFar)
+  inline void GpuRenderStates::SetDepthRange (float zNear, float zFar)
   {
     if ( (RS_VALUE (m_RenderStateChanges[GFXRS_ZNEAR]) != static_cast<t_u32> (zNear) ) ||
          (RS_VALUE (m_RenderStateChanges[GFXRS_ZFAR]) != static_cast<t_u32> (zFar) ) )
@@ -582,6 +593,46 @@ namespace nux
     }
   }
 
+  void GpuRenderStates::SetStencil (bool enable_stencil)
+  {
+    if (enable_stencil)
+    {
+      if (!RS_VALUE (m_RenderStateChanges[GFXRS_STENCILENABLE]))
+      {
+        HW__EnableStencil (TRUE);
+      }
+    }
+    else
+    {
+      HW__EnableStencil (FALSE);
+    }
+  }
+
+  void GpuRenderStates::SetStencilFunc (t_u32 func, int ref, t_u32 mask)
+  {
+    if (
+      (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILFUNC]) != func) ||
+      (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILREF]) != ref) ||
+      (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILMASK]) != mask)
+      )
+    {
+      HW__SetStencilFunc (func, ref, mask);
+    }
+  }
+
+  void GpuRenderStates::SetStencilOp (t_u32 stencil_fail, t_u32 stencil_pass_depth_fail, t_u32 stencil_pass_depth_pass)
+  {
+    if (
+      (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILFAIL]) != stencil_fail) ||
+      (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILZFAIL]) != stencil_pass_depth_fail) ||
+      (RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILZPASS]) != stencil_pass_depth_pass)
+      )
+    {
+      HW__SetStencilOp (stencil_fail, stencil_pass_depth_fail, stencil_pass_depth_pass);
+    }
+  }
+
+#if 0
   inline void GpuRenderStates::SetStencilFrontFace (
     bool EnableStencil_,                            // GL_TRUE enable stencil test
     t_u32 Func_,
@@ -672,6 +723,7 @@ namespace nux
   {
     HW__SetStencilBackFaceWriteMask (WriteMask_);
   }
+#endif
 
   inline void GpuRenderStates::EnableLineSmooth (
     bool EnableLineSmooth,
@@ -785,7 +837,7 @@ namespace nux
   }
 
   inline void GpuRenderStates::SetPolygonOffset (t_u32 bEnable,
-      FLOAT Factor, FLOAT Units)
+      float Factor, float Units)
   {
     if (bEnable)
     {
@@ -836,7 +888,7 @@ namespace nux
       (AlphaTestFunc_ == GL_ALWAYS),
       TEXT ("Error(HW__SetAlphaTestFunc): Invalid Alpha Test Function RenderState") );
 
-    CHECKGL (glAlphaFunc (AlphaTestFunc_, (FLOAT) AlphaTestRef_ * (1.0f / 255.0f) ) );
+    CHECKGL (glAlphaFunc (AlphaTestFunc_, (float) AlphaTestRef_ * (1.0f / 255.0f) ) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTFUNC], AlphaTestFunc_);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTREF], AlphaTestRef_);
   }
@@ -959,7 +1011,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ZTESTENABLE], b ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GpuRenderStates::HW__SetDepthRange (FLOAT zNear, FLOAT zFar)
+  inline void GpuRenderStates::HW__SetDepthRange (float zNear, float zFar)
   {
     CHECKGL (glDepthRange (zNear, zFar) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ZNEAR], static_cast<t_u32> (Clamp (zNear, 0.0f, 1.0f) ) );
@@ -997,6 +1049,70 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_STENCILENABLE], b ? GL_TRUE : GL_FALSE);
   }
 
+  inline void GpuRenderStates::HW__SetStencilFunc (t_u32 func, int ref, t_u32 mask)
+  {
+    nuxAssertMsg (
+      (func == GL_NEVER) ||
+      (func == GL_LESS) ||
+      (func == GL_EQUAL) ||
+      (func == GL_LEQUAL) ||
+      (func == GL_GREATER) ||
+      (func == GL_NOTEQUAL) ||
+      (func == GL_GEQUAL) ||
+      (func == GL_ALWAYS),
+      TEXT ("Error(HW__SetFrontFaceStencilFunc): Invalid Stencil Function RenderState"));
+
+    CHECKGL (glStencilFunc (func, ref, mask));
+
+    SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILFUNC], func);
+    SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILREF], ref);
+    SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILMASK], mask);
+  }
+
+  inline void GpuRenderStates::HW__SetStencilOp (t_u32 stencil_fail, t_u32 stencil_pass_depth_fail, t_u32 stencil_pass_depth_pass)
+  {
+    nuxAssertMsg (
+      (stencil_fail == GL_KEEP) ||
+      (stencil_fail == GL_ZERO) ||
+      (stencil_fail == GL_REPLACE) ||
+      (stencil_fail == GL_INCR) ||
+      (stencil_fail == GL_INCR_WRAP) ||
+      (stencil_fail == GL_DECR) ||
+      (stencil_fail == GL_DECR_WRAP) ||
+      (stencil_fail == GL_INVERT),
+      TEXT ("Error(HW__SetFrontFaceStencilOp): Invalid FailOp RenderState"));
+
+    nuxAssertMsg (
+      (stencil_pass_depth_fail == GL_KEEP) ||
+      (stencil_pass_depth_fail == GL_ZERO) ||
+      (stencil_pass_depth_fail == GL_REPLACE) ||
+      (stencil_pass_depth_fail == GL_INCR) ||
+      (stencil_pass_depth_fail == GL_INCR_WRAP) ||
+      (stencil_pass_depth_fail == GL_DECR) ||
+      (stencil_pass_depth_fail == GL_DECR_WRAP) ||
+      (stencil_pass_depth_fail == GL_INVERT),
+      TEXT ("Error(HW__SetFrontFaceStencilOp): Invalid ZFailOp RenderState"));
+
+    nuxAssertMsg (
+      (stencil_pass_depth_pass == GL_KEEP) ||
+      (stencil_pass_depth_pass == GL_ZERO) ||
+      (stencil_pass_depth_pass == GL_REPLACE) ||
+      (stencil_pass_depth_pass == GL_INCR) ||
+      (stencil_pass_depth_pass == GL_INCR_WRAP) ||
+      (stencil_pass_depth_pass == GL_DECR) ||
+      (stencil_pass_depth_pass == GL_DECR_WRAP) ||
+      (stencil_pass_depth_pass == GL_INVERT),
+      TEXT ("Error(HW__SetFrontFaceStencilOp): Invalid ZPassOp RenderState"));
+
+    CHECKGL (glActiveStencilFaceEXT (GL_FRONT));
+    CHECKGL (glStencilOp (stencil_fail, stencil_pass_depth_fail, stencil_pass_depth_pass));
+
+    SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILFAIL], stencil_fail);
+    SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILZFAIL], stencil_pass_depth_fail);
+    SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILZPASS], stencil_pass_depth_pass);
+  }
+
+#if 0
   inline void GpuRenderStates::HW__EnableTwoSidedStencil (t_u32 b)
   {
     if (b)
@@ -1038,7 +1154,6 @@ namespace nux
     CHECKGL (glStencilMask (WriteMask_) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BACK_STENCILWRITEMASK], WriteMask_);
   }
-
 
   inline void GpuRenderStates::HW__SetFrontFaceStencilFunc (t_u32 Func_,
       t_u32 Ref_,
@@ -1199,6 +1314,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BACK_STENCILZFAIL], ZFailOp_);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BACK_STENCILZPASS], ZPassOp_);
   }
+#endif
 
   inline void GpuRenderStates::HW__EnableLineSmooth (t_u32 EnableLineSmooth)
   {
@@ -1338,7 +1454,7 @@ namespace nux
     SET_RS_VALUE (m_RenderStateChanges[GL_POLYGON_OFFSET_FILL], EnablePolygonOffset ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GpuRenderStates::HW__SetPolygonOffset (FLOAT Factor, FLOAT Units)
+  inline void GpuRenderStates::HW__SetPolygonOffset (float Factor, float Units)
   {
     CHECKGL (glPolygonOffset (Factor, Units) );
 
