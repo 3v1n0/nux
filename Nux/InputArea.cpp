@@ -502,7 +502,6 @@ namespace nux
         {
           _dnd_safety_x += delta_x;
           _dnd_safety_y += delta_y;
-          printf ("delta x: %i, delta y: %i\n", _dnd_safety_x, _dnd_safety_y);
           
           if (abs (_dnd_safety_x) > 30 || abs (_dnd_safety_y) > 30)
           {
