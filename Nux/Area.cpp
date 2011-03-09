@@ -838,6 +838,7 @@ namespace nux
   /* override me! */
   void Area::DoActivateFocus ()
   {
+    FocusActivated.emit (this);
   }
 
   void Area::QueueRelayout ()

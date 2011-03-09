@@ -296,7 +296,8 @@ namespace nux
     virtual void DoSetFocused (bool focused);
     virtual bool DoCanFocus ();
     virtual void DoActivateFocus ();
-
+    
+    sigc::signal <void, Area *> FocusActivated;
     sigc::signal <void, Area *> FocusChanged;
     //! Queue a relayout
     /*!

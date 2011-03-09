@@ -40,6 +40,7 @@ namespace nux
     m_UseStyleDrawing   = true;
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
     _can_pass_focus_to_composite_layout = true;
+    _can_focus          = true;
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -499,16 +500,27 @@ namespace nux
   bool View::DoCanFocus ()
   {
     g_debug ("got do can focus in view");
+    if (_can_focus == false)
+      return false;
+    
     if (_can_pass_focus_to_composite_layout)
     {
       if (GetLayout () != NULL)
       {
         return GetLayout ()->CanFocus ();
       }
-      return true;
     }
 
-    return true;
+    return _can_focus;
+  }
+
+  void View::SetCanFocus (bool can_focus)
+  {
+    _can_focus = can_focus;
+    if (_can_focus == False && GetFocused ())
+    {
+      SetFocused (false);
+    }
   }
 
   void View::SetFocusControl (bool focus_control)
