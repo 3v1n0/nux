@@ -508,7 +508,10 @@ namespace nux
   {
     // if parent is null return, thats a valid usecase so no warnings.
     if (area == NULL)
+    {
+      g_debug ("tried to send to parent, but no parent exists");
       return 0;
+    }
 
 
     long ret = 0;
@@ -530,10 +533,88 @@ namespace nux
     return ret;
   }
 
+  Area* Layout::GetFocusedChild ()
+  {
+    std::list<Area *>::iterator it;
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    {
+      if ((*it)->GetFocused ())
+      {
+        return (*it);
+      }
+    }
+
+    return NULL;
+  }
+
+  long Layout::DoFocusPrev (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    Area *focused_child = GetFocusedChild ();
+    if (focused_child == NULL) return ProcessEventInfo;
+    bool success = FocusPreviousChild (focused_child);
+    
+    if (success)
+    {
+      focused_child->SetFocused (false);
+      return ProcessEventInfo;
+    }
+    else
+    {
+      Area *parent = GetParentObject ();
+      if (parent != NULL)
+        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+      else
+        FocusFirstChild ();
+    }
+
+    return ProcessEventInfo;
+  }
+  
+  long Layout::DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    Area *focused_child = GetFocusedChild ();
+    if (focused_child == NULL) return ProcessEventInfo;
+    bool success = FocusNextChild(focused_child);
+    
+    if (success)
+    {
+      focused_child->SetFocused (false);
+      return ProcessEventInfo;
+    }
+    else
+    {
+      Area *parent = GetParentObject ();
+      if (parent != NULL)
+        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+      else
+        FocusFirstChild ();
+    }
+
+    return ProcessEventInfo;
+  }
+  
+  long Layout::DoFocusUp (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    return DoFocusPrev (ievent, TraverseInfo, ProcessEventInfo);
+  }
+  long Layout::DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    return DoFocusNext (ievent, TraverseInfo, ProcessEventInfo);
+  }
+  long Layout::DoFocusLeft (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    return DoFocusPrev (ievent, TraverseInfo, ProcessEventInfo);
+  }
+  long Layout::DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    return DoFocusNext (ievent, TraverseInfo, ProcessEventInfo);
+  }
+
+
   long Layout::ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
-    std::list<Area *>::iterator it;
+   
 
     if (GetFocused () && ievent.e_event == NUX_KEYDOWN)
     {
@@ -551,15 +632,8 @@ namespace nux
 
       if (type == FOCUS_EVENT_DIRECTION && direction != FOCUS_DIRECTION_NONE)
       {
-        for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-        {
-          if ((*it)->GetFocused ())
-          {
-            focused_child = (*it);
-            break;
-          }
-        }
-
+        focused_child = GetFocusedChild ();
+  
         /* if nothing is focused, focus the first child else send the event to the parent */
 
         if (focused_child == NULL)
@@ -616,17 +690,38 @@ namespace nux
             }
           }
 
+          switch (direction)
+          {
+            case FOCUS_DIRECTION_NEXT:
+              ret |= DoFocusNext (ievent, ret, ProcessEventInfo);
+              break;
+            case FOCUS_DIRECTION_PREV:
+              ret |= DoFocusPrev (ievent, ret, ProcessEventInfo);
+              break;
+            case FOCUS_DIRECTION_UP:
+              ret |= DoFocusUp (ievent, ret, ProcessEventInfo);
+              break;
+            case FOCUS_DIRECTION_DOWN:
+              ret |= DoFocusDown (ievent, ret, ProcessEventInfo);
+              break;
+            case FOCUS_DIRECTION_LEFT:
+              ret |= DoFocusLeft (ievent, ret, ProcessEventInfo);
+              break;
+            case FOCUS_DIRECTION_RIGHT:
+              ret |= DoFocusRight (ievent, ret, ProcessEventInfo);
+              break;
+            default:
+              break;
+          }
+
+          return ret;
+          
+
           if (direction == FOCUS_DIRECTION_NEXT // we don't support RTL yet, for shame!
             || direction == FOCUS_DIRECTION_RIGHT
             || direction == FOCUS_DIRECTION_DOWN)
           {
-            bool success = FocusNextChild(focused_child);
 
-            if (success)
-            {
-              focused_child->SetFocused (false);
-              return ret;
-            }
 
             //~ if (success == false)
               //~ // no next focused, thats weird. lets propagate up

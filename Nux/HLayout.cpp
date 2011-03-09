@@ -64,6 +64,24 @@ namespace nux
   {
   }
 
+  //up and down should pass event to parent
+  long HLayout::DoFocusUp (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    Area *parent = GetParentObject ();
+    if (parent != NULL)
+      return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+
+    return TraverseInfo;
+  }
+  long HLayout::DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    Area *parent = GetParentObject ();
+    if (parent != NULL)
+      return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+
+    return TraverseInfo;
+  }
+
   void HLayout::GetCompositeList (std::list<Area *> *ViewList)
   {
     std::list<Area *>::iterator it;

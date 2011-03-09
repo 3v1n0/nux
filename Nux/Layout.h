@@ -246,6 +246,15 @@ namespace nux
     bool _ignore_focus;
 
   protected:
+    Area*GetFocusedChild ();
+    virtual long DoFocusPrev  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusNext  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusUp    (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusDown  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    
+    
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
 
     Size m_ContentSize;
