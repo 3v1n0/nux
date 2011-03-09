@@ -34,6 +34,7 @@ namespace nux
   }
   bool Focusable::CanFocus ()
   {
+    g_debug ("Doing Do Can Focus in Focusable foo");
     return DoCanFocus ();
   }
   void Focusable::ActivateFocus ()
@@ -100,6 +101,7 @@ namespace nux
 
   bool Focusable::DoCanFocus ()
   {
+    g_debug ("Focusable DoCanFocus");
     return false;
   }
 

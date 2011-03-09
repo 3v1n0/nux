@@ -498,6 +498,7 @@ namespace nux
 
   bool View::DoCanFocus ()
   {
+    g_debug ("got do can focus in view");
     if (_can_pass_focus_to_composite_layout)
     {
       if (GetLayout () != NULL)

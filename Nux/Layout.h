@@ -230,6 +230,7 @@ namespace nux
     virtual void DoActivateFocus ();
 
     bool FocusFirstChild ();
+    bool FocusLastChild ();
     bool FocusNextChild (Area *child);
     bool FocusPreviousChild (Area *child);
 
@@ -242,6 +243,7 @@ namespace nux
     bool _has_focus_control;
     void SetFocusControl (bool focus_control);
     bool HasFocusControl ();
+    bool _ignore_focus;
 
   protected:
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
