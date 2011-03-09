@@ -482,7 +482,7 @@ namespace nux
           wglMakeCurrent (device_context, opengl_rendering_context);
         }
 #elif defined (NUX_OS_LINUX)
-        /*if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
+        if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
         {
           profile_mask  = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
           profile_value = GLX_CONTEXT_PROFILE_MASK_ARB;
@@ -516,7 +516,7 @@ namespace nux
         {
           opengl_rendering_context = new_opengl_rendering_context;
           glXMakeCurrent (display, window, opengl_rendering_context);
-        }*/
+        }
 #endif
       }
       else
@@ -620,13 +620,13 @@ namespace nux
     CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, _PixelStoreAlignment));
     CHECKGL (glPixelStorei (GL_PACK_ALIGNMENT, _PixelStoreAlignment));
 
-    _DeviceWidth = DeviceWidth;
-    _DeviceHeight = DeviceHeight;
-
-    _ViewportX = 0;
-    _ViewportY = 0;
-    _ViewportWidth = DeviceWidth;
-    _ViewportHeight = DeviceHeight;
+//     _DeviceWidth = DeviceWidth;
+//     _DeviceHeight = DeviceHeight;
+// 
+//     _ViewportX = 0;
+//     _ViewportY = 0;
+//     _ViewportWidth = DeviceWidth;
+//     _ViewportHeight = DeviceHeight;
 
     for (int i = 0; i < MAX_NUM_STREAM; i++)
     {
@@ -933,54 +933,54 @@ namespace nux
 
     _FrameBufferObject->Activate();
   }
-  void GpuDevice::Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil)
-  {
-    CHECKGL ( glClearColor (red, green, blue, alpha) );
-    CHECKGL ( glClearDepth (depth) );
-    CHECKGL ( glClearStencil (stencil) );
-    CHECKGL ( glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
-  }
+//   void GpuDevice::Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil)
+//   {
+//     CHECKGL ( glClearColor (red, green, blue, alpha) );
+//     CHECKGL ( glClearDepth (depth) );
+//     CHECKGL ( glClearStencil (stencil) );
+//     CHECKGL ( glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
+//   }
+// 
+//   void GpuDevice::ClearColorRT (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha)
+//   {
+//     CHECKGL ( glClearColor (red, green, blue, alpha) );
+//     CHECKGL ( glClear (GL_COLOR_BUFFER_BIT) );
+//   }
+// 
+//   void GpuDevice::ClearDepthRT (FLOAT depth)
+//   {
+//     CHECKGL ( glClearDepth (depth) );
+//     CHECKGL ( glClear (GL_DEPTH_BUFFER_BIT) );
+//   }
+//   void GpuDevice::ClearStencilRT (int stencil)
+//   {
+//     CHECKGL ( glClearStencil (stencil) );
+//     CHECKGL ( glClear (GL_STENCIL_BUFFER_BIT) );
+//   }
 
-  void GpuDevice::ClearColorRT (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha)
-  {
-    CHECKGL ( glClearColor (red, green, blue, alpha) );
-    CHECKGL ( glClear (GL_COLOR_BUFFER_BIT) );
-  }
-
-  void GpuDevice::ClearDepthRT (FLOAT depth)
-  {
-    CHECKGL ( glClearDepth (depth) );
-    CHECKGL ( glClear (GL_DEPTH_BUFFER_BIT) );
-  }
-  void GpuDevice::ClearStencilRT (int stencil)
-  {
-    CHECKGL ( glClearStencil (stencil) );
-    CHECKGL ( glClear (GL_STENCIL_BUFFER_BIT) );
-  }
-
-  void GpuDevice::ClearFloatingPointColorRT (int x, int y, int width, int height,
-      FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha) // use a Quad.
-  {
-    DrawQuad_FixPipe (x, y, width, height, red, green, blue, alpha);
-  }
-
-  void GpuDevice::ClearSurfaceWithColor (ObjectPtr<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
-  {
-    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::ClearSurfaceWithColor] No support for OpenGL framebuffer extension.") );
-    }
-
-    FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
-    SetColorRenderTargetSurface (0, s_);
-    SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> (0));
-    ActivateFrameBuffer();
-    ClearFloatingPointColorRT (rect_->left,
-                               rect_->top,
-                               rect_->right - rect_->left,
-                               rect_->bottom - rect_->top,
-                               r, g, b, a);
-  }
+//   void GpuDevice::ClearFloatingPointColorRT (int x, int y, int width, int height,
+//       FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha) // use a Quad.
+//   {
+//     DrawQuad_FixPipe (x, y, width, height, red, green, blue, alpha);
+//   }
+// 
+//   void GpuDevice::ClearSurfaceWithColor (ObjectPtr<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
+//   {
+//     if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
+//     {
+//       nuxDebugMsg (TEXT ("[GpuDevice::ClearSurfaceWithColor] No support for OpenGL framebuffer extension.") );
+//     }
+// 
+//     FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
+//     SetColorRenderTargetSurface (0, s_);
+//     SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> (0));
+//     ActivateFrameBuffer();
+//     ClearFloatingPointColorRT (rect_->left,
+//                                rect_->top,
+//                                rect_->right - rect_->left,
+//                                rect_->bottom - rect_->top,
+//                                r, g, b, a);
+//   }
 
   void GpuDevice::SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> fbo)
   {

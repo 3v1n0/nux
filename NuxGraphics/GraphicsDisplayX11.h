@@ -130,8 +130,6 @@ namespace nux
 
     bool m_is_window_minimized;
 
-    static int X11KeySymToINL (int Keysym);
-
   public:
     typedef struct _DndSourceFuncs
     {
@@ -182,9 +180,20 @@ namespace nux
     void DestroyOpenGLWindow();
 
     void SetWindowTitle (const TCHAR *Title);
+
+    //! Set the window size.
+    /*!
+        Actively set the window size to the provided parameters.
+        \sa ResetWindowSize
+    */
     void SetWindowSize (int width, int height);
+
+    //! Set the window position.
     void SetWindowPosition (int width, int height);
+    
+    //! Set the OpenGL Viewport.
     void SetViewPort (int x, int y, int width, int height);
+
     Point GetMouseScreenCoord();
     Point GetMouseWindowCoord();
     Point GetWindowCoord();
@@ -252,8 +261,16 @@ namespace nux
 
     void GetDesktopSize (int &w, int &h);
     void GetWindowSize (int &w, int &h);
-    int GetWindowWidth();
-    int GetWindowHeight();
+    int GetWindowWidth ();
+    int GetWindowHeight ();
+
+    //! Get the window size and reset the GraphicsEngine and GpuDevice accordingly.
+    /*!
+        This is a passive way to set the window size through out the NuxGraphics system. This call gets the 
+        current window size and sets its accordingly to all sub-system.
+        \sa SetWindowSize
+    */
+    void ResetWindowSize ();
 
     bool HasFrameBufferSupport();
     /*void SetWindowCursor(HCURSOR cursor);

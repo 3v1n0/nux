@@ -306,14 +306,14 @@ namespace nux
     int SetTexture (unsigned int TextureUnit, IOpenGLBaseTexture *texture);
 
 
-    void DrawQuad_FixPipe (int x, int y, int width, int height,
-                           FLOAT R, FLOAT G, FLOAT B, FLOAT A);
-
-    void DrawTextureQuad_FixPipe (ObjectPtr<IOpenGLTexture2D> texture, int x, int y, int width, int height,
-                                  FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1);
-
-    void DrawTextureQuad_FixPipe (ObjectPtr<IOpenGLSurface> surface, int x, int y, int width, int height,
-                                  FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1);
+//     void DrawQuad_FixPipe (int x, int y, int width, int height,
+//                            FLOAT R, FLOAT G, FLOAT B, FLOAT A);
+// 
+//     void DrawTextureQuad_FixPipe (ObjectPtr<IOpenGLTexture2D> texture, int x, int y, int width, int height,
+//                                   FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1);
+// 
+//     void DrawTextureQuad_FixPipe (ObjectPtr<IOpenGLSurface> surface, int x, int y, int width, int height,
+//                                   FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1);
 
     int DrawIndexedPrimitive (
       ObjectPtr<IOpenGLIndexBuffer> IndexBuffer,
@@ -372,14 +372,14 @@ namespace nux
     void UnlockUnpackPixelBufferIndex (const int index);
     void UnlockPackPixelBufferIndex (const int index);
 
-    // Operations on the current render target.
-    void Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil);
-    void ClearColorRT (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha);
-    void ClearDepthRT (FLOAT depth);
-    void ClearStencilRT (int stencil);
-    void ClearFloatingPointColorRT (int x, int y, int width, int height,
-                                    FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha); // use a Quad.
-    void ClearSurfaceWithColor (ObjectPtr<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a);
+//     // Operations on the current render target.
+//     void Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil);
+//     void ClearColorRT (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha);
+//     void ClearDepthRT (FLOAT depth);
+//     void ClearStencilRT (int stencil);
+//     void ClearFloatingPointColorRT (int x, int y, int width, int height,
+//                                     FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha); // use a Quad.
+//     void ClearSurfaceWithColor (ObjectPtr<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a);
 
     // All these operations are done on the default frame buffer object: _FrameBufferObject.
     int FormatFrameBufferObject (unsigned int Width, unsigned int Height, BitmapFormat PixelFormat);
@@ -415,12 +415,12 @@ namespace nux
     std::vector<PixelBufferObject> _PixelBufferArray;
 
   private:
-    int _DeviceWidth;
-    int _DeviceHeight;
-    int _ViewportX;
-    int _ViewportY;
-    int _ViewportWidth;
-    int _ViewportHeight;
+//     int _DeviceWidth;
+//     int _DeviceHeight;
+//     int _ViewportX;
+//     int _ViewportY;
+//     int _ViewportWidth;
+//     int _ViewportHeight;
 
   public:
 
