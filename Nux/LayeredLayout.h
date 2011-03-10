@@ -198,6 +198,12 @@ namespace nux
     void RemoveChildObject (Area *area);
     void Clear ();
 
+  protected:
+    virtual long DoFocusPrev  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual bool FocusFirstChild ();
+    virtual bool FocusLastChild ();
+    
   private:
     void PaintOne (Area *area, GraphicsEngine &GfxContext, bool force_draw);
     long ProcessOne (Area *_area, IEvent &ievent, long traverse_info, long process_event_info);

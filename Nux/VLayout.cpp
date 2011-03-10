@@ -71,6 +71,8 @@ namespace nux
     Area *parent = GetParentObject ();
     if (parent != NULL)
       return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+    else
+      FocusFirstChild ();
     
     return TraverseInfo;
   }
@@ -79,7 +81,8 @@ namespace nux
     Area *parent = GetParentObject ();
     if (parent != NULL)
       return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
-    
+    else
+      FocusLastChild ();
     return TraverseInfo;
   }
 

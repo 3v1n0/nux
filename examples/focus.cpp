@@ -71,6 +71,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   
   //nux::HLayout* layout_top = new nux::HLayout(NUX_TRACKER_LOCATION);
   nux::TextEntry* text_entry = new nux::TextEntry ("This is some text", NUX_TRACKER_LOCATION);
+  text_entry->SetTextColor (nux::Color (1.0, 1.0, 1.0, 1.0));
 
   //nux::ScrollView *layout_scroll = new nux::ScrollView (NUX_TRACKER_LOCATION);
   nux::VLayout* layout_scroll_container = new nux::VLayout (NUX_TRACKER_LOCATION);
@@ -89,7 +90,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   layout_scroll_2->AddLayout (layout_scroll_21, 0, nux::MINOR_POSITION_TOP);
   layout_scroll_2->AddLayout (layout_scroll_22, 1, nux::MINOR_POSITION_TOP);
   
-  //layout_content->AddView (text_entry, 0, nux::MINOR_POSITION_TOP);
+  layout_scroll_container->AddView (text_entry, 0, nux::MINOR_POSITION_TOP);
 
   //layout_scroll->SetLayout (layout_scroll_container);
   layout_scroll_container->AddLayout (layout_scroll_1, 1, nux::MINOR_POSITION_TOP);

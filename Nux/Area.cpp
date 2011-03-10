@@ -827,7 +827,13 @@ namespace nux
       return;
 
     _is_focused = focused;
-    FocusChanged (this);
+    FocusChanged.emit (this);
+
+    g_debug (focused ? "SET FOCUS ON VIEW AT: %i, %i - %ix%i" : "USSET FOCUS ON VIEW AT: %i, %i - %ix%i",
+             GetGeometry ().x,
+             GetGeometry ().y,
+             GetGeometry ().width,
+             GetGeometry ().height);
   }
 
   bool Area::DoCanFocus ()

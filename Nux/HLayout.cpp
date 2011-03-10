@@ -70,15 +70,20 @@ namespace nux
     Area *parent = GetParentObject ();
     if (parent != NULL)
       return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+    else
+      FocusFirstChild ();
 
     return TraverseInfo;
   }
   long HLayout::DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
+    g_debug ("got do focus down in hlayout, going up!");
+    
     Area *parent = GetParentObject ();
     if (parent != NULL)
       return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
-
+    else
+      FocusFirstChild ();
     return TraverseInfo;
   }
 

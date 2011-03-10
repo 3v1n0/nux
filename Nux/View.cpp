@@ -262,6 +262,17 @@ namespace nux
       }
     }
 
+    if (GetFocused () && _can_pass_focus_to_composite_layout == false)
+    {
+      GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (0.2, 1.0, 0.2, 1.0));
+    }
+
+//     if (GetFocused () && _can_pass_focus_to_composite_layout == true)
+//     {
+//       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (1.0, 0.2, 0.2, 1.0));
+//     }
+
+
     GfxContext.PopModelViewMatrix ();
 
     _need_redraw = false;
@@ -270,7 +281,7 @@ namespace nux
 
   void View::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
-
+    
   }
 
   void View::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
@@ -463,6 +474,7 @@ namespace nux
 
   void View::DoSetFocused (bool focused)
   {
+    QueueDraw ();
     if (_can_pass_focus_to_composite_layout)
     {
       Layout *layout = GetLayout ();
@@ -474,6 +486,7 @@ namespace nux
       }
       else
       {
+        InputArea::DoSetFocused (focused);
       }
     }
     else
@@ -495,11 +508,14 @@ namespace nux
         SetFocusControl (false);
 
     }
+    else
+    {
+      InputArea::DoSetFocused (focused);
+    }
   }
 
   bool View::DoCanFocus ()
   {
-    g_debug ("got do can focus in view");
     if (_can_focus == false)
       return false;
     

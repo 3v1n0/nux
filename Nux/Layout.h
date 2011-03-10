@@ -229,11 +229,6 @@ namespace nux
     virtual bool DoCanFocus ();
     virtual void DoActivateFocus ();
 
-    bool FocusFirstChild ();
-    bool FocusLastChild ();
-    bool FocusNextChild (Area *child);
-    bool FocusPreviousChild (Area *child);
-
     bool HasFocusableEntries ();
 
     sigc::signal <void, Layout *, Area*> ChildFocusChanged;
@@ -253,6 +248,11 @@ namespace nux
     virtual long DoFocusDown  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual bool FocusFirstChild ();
+    virtual bool FocusLastChild ();
+    virtual bool FocusNextChild (Area *child);
+    virtual bool FocusPreviousChild (Area *child);
+    
     
     
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.

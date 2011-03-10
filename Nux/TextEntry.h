@@ -172,6 +172,9 @@ namespace nux
     CairoGraphics::Alignment GetAlign() const;
     void SetAlign(CairoGraphics::Alignment align);
 
+    protected:
+    virtual void DoSetFocused (bool focused);
+    
     private:
     /**
      * Enum used to specify different motion types.

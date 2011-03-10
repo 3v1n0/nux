@@ -108,6 +108,7 @@ namespace nux
       Area *parent = GetParentObject ();
       if (parent != NULL)
         return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+
     }
     else
     {
@@ -130,7 +131,10 @@ namespace nux
     {
       Area *parent = GetParentObject ();
       if (parent != NULL)
+      {
+        g_debug ("down at the end of a layout. so going up");
         return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+      }
     }
     else
     {
