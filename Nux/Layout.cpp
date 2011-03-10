@@ -509,7 +509,6 @@ namespace nux
     // if parent is null return, thats a valid usecase so no warnings.
     if (area == NULL)
     {
-      g_debug ("tried to send to parent, but no parent exists");
       return 0;
     }
 
@@ -566,7 +565,6 @@ namespace nux
   
   long Layout::DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    g_debug ("doing focus next");
     Area *focused_child = GetFocusedChild ();
     if (focused_child == NULL) return ProcessEventInfo;
     bool success = FocusNextChild(focused_child);
@@ -574,7 +572,6 @@ namespace nux
 
     if (success == false)
     {
-      g_debug ("couldn't focus the next item so going up");
       Area *parent = GetParentObject ();
       if (parent != NULL)
         return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);

@@ -1581,7 +1581,19 @@ namespace nux
   void WindowThread::SetWindowSize (int width, int height)
   {
     if (_graphics_display)
-      _graphics_display->SetWindowSize (width, height);
+    {
+      if (IsEmbeddedWindow ())
+      {
+        // This is a passive way to set the window size through out the NuxGraphics system. This call gets the 
+        // current window size and sets its accordingly to all sub-system.
+        _graphics_display->ResetWindowSize ();
+      }
+      else
+      {
+        _graphics_display->SetWindowSize (width, height);
+        ReconfigureLayout ();
+      }
+    }
   }
 
   void WindowThread::SetWindowBackgroundPaintLayer (AbstractPaintLayer *bkg)

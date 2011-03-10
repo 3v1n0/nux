@@ -828,12 +828,6 @@ namespace nux
 
     _is_focused = focused;
     FocusChanged.emit (this);
-
-    g_debug (focused ? "SET FOCUS ON VIEW AT: %i, %i - %ix%i" : "USSET FOCUS ON VIEW AT: %i, %i - %ix%i",
-             GetGeometry ().x,
-             GetGeometry ().y,
-             GetGeometry ().width,
-             GetGeometry ().height);
   }
 
   bool Area::DoCanFocus ()
@@ -852,9 +846,4 @@ namespace nux
     nux::GetWindowThread ()->QueueObjectLayout (this);
   }
 
-//   bool Area::AddSecondaryChild (Area *child)
-//   {
-//     NUX_RETURN_IF_NULL (child, false);
-//
-//   }
 }

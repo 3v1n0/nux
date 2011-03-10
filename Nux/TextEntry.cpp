@@ -204,7 +204,6 @@ namespace nux
   {
    
     View::DoSetFocused (focused);
-    g_debug ("\n-------------SET FOCUSED %s\n-------------", focused ? "yes" : "no");
     if (focused == true)
     {
       SetCursor(0);
@@ -235,7 +234,6 @@ namespace nux
     /* must do focus processing after sending events to children */
     if (event.e_event == NUX_KEYDOWN && GetFocused ())
     {
-      g_debug ("handling focus");
       FocusDirection direction;
       FocusEventType type;
       
@@ -245,12 +243,7 @@ namespace nux
                                                event.GetKeySym(),
                                                event.GetText(),
                                                &direction);
-
-      if (type == FOCUS_EVENT_ACTIVATE)
-      {
-        FocusActivated.emit (this);
-      }
-      else if (type == FOCUS_EVENT_DIRECTION)
+      if (type == FOCUS_EVENT_DIRECTION)
       {
         if (direction == FOCUS_DIRECTION_PREV || direction == FOCUS_DIRECTION_NEXT ||
             direction == FOCUS_DIRECTION_UP || direction == FOCUS_DIRECTION_DOWN)
@@ -354,7 +347,6 @@ namespace nux
     const TCHAR*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
-    g_debug ("process key event");
 //     GdkEventKey *gdk_event = static_cast<GdkEventKey *>(event.GetOriginalEvent());
 //     ASSERT(gdk_event);
 //
@@ -375,6 +367,13 @@ namespace nux
     // we need to ignore some characters
     if (keysym == NUX_VK_TAB)
       return;
+
+    if (keysym == NUX_VK_ENTER)
+    {
+      activated.emit ();
+      return;
+    }
+
 
     if (character != 0 && (strlen (character) != 0))
     {
@@ -1382,7 +1381,6 @@ namespace nux
     {
       size_t len = end - str;
 
-      g_debug ("cursor = %i", cursor_);
       _text.insert(cursor_, str, len);
       cursor_ += static_cast<int>(len);
       selection_bound_ += static_cast<int>(len);

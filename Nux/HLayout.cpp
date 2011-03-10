@@ -77,7 +77,6 @@ namespace nux
   }
   long HLayout::DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    g_debug ("got do focus down in hlayout, going up!");
     
     Area *parent = GetParentObject ();
     if (parent != NULL)

@@ -1129,7 +1129,7 @@ namespace nux
           CHECKGL ( glDepthMask (GL_FALSE) );
           {
             //CopyTextureToCompositionRT(rt.color_rt, window->GetBaseX(), window->GetBaseY());
-            PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false);
+            PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity ());
           }
           CHECKGL ( glDepthMask (GL_TRUE) );
           GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
@@ -1382,7 +1382,7 @@ namespace nux
     GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
   }
 
-  void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground)
+  void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity)
   {
     nuxAssert (HWTexture.IsValid() );
 
@@ -1428,7 +1428,7 @@ namespace nux
         GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       }
 
-      GetThreadGraphicsContext()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color::White);
+      GetThreadGraphicsContext()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
       GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
     }
   }

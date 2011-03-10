@@ -560,12 +560,12 @@ namespace nux
       int             _uid;
     } EventInspectorStorage;
     
-  //! Map of events inspectors
-  /*!
-      Events inspectors get to examine events before they are processed.
-      They may also stop an event from being processed if they return true.
-  */
-  std::map<int, EventInspectorStorage> _event_inspectors_map; //!< map of events inspectors
+    //! Map of events inspectors
+    /*!
+        Events inspectors get to examine events before they are processed.
+        They may also stop an event from being processed if they return true.
+    */
+    std::map<int, EventInspectorStorage> _event_inspectors_map; //!< map of events inspectors
 
     friend class BasePainter;
     friend class SystemThread;
