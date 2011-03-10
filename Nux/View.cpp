@@ -516,6 +516,9 @@ namespace nux
 
   bool View::DoCanFocus ()
   {
+    if (IsVisible () == false)
+      return false;
+    
     if (_can_focus == false)
       return false;
     

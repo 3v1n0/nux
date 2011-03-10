@@ -55,6 +55,7 @@ namespace nux
       {
         case NUX_VK_ENTER:
           type = FOCUS_EVENT_ACTIVATE;
+          g_debug ("focus key activated");
           break;
         case NUX_KP_UP:
           type = FOCUS_EVENT_DIRECTION;
