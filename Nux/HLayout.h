@@ -50,6 +50,10 @@ namespace nux
         @param element_margin   The margin between elements.
     */
     void ComputeStacking (t_s32 remaining_width, t_s32 &offset_space, t_s32 &element_margin);
+
+  protected:
+    virtual long DoFocusUp  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
   };
 }
 
