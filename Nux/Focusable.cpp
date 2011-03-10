@@ -54,22 +54,27 @@ namespace nux
       {
         case NUX_VK_ENTER:
           type = FOCUS_EVENT_ACTIVATE;
+          //g_debug ("focus key activated");
           break;
         case NUX_KP_UP:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_UP;
+          //g_debug ("direction up");
           break;
         case NUX_KP_DOWN:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_DOWN;
+          //g_debug ("direction down");
           break;
         case NUX_KP_LEFT:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_LEFT;
+          //g_debug ("direction left");
           break;
         case NUX_KP_RIGHT:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_RIGHT;
+          //g_debug ("direction right");
           break;
         case NUX_VK_TAB:
           type = FOCUS_EVENT_DIRECTION;
@@ -77,6 +82,11 @@ namespace nux
           if (keysym & NUX_STATE_SHIFT)
           {
             *direction = FOCUS_DIRECTION_PREV;
+            //g_debug ("direction_prev");
+          }
+          else
+          {
+            //g_debug ("direction next");
           }
           break;
         default:
@@ -100,6 +110,7 @@ namespace nux
 
   bool Focusable::DoCanFocus ()
   {
+    g_debug ("Focusable DoCanFocus");
     return false;
   }
 

@@ -82,6 +82,37 @@ namespace nux
   {
   }
 
+  long LayeredLayout::DoFocusPrev (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    if (GetInputMode () == INPUT_MODE_ACTIVE)
+    {
+      Area *parent = GetParentObject ();
+      if (parent != NULL)
+        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+    }
+    else
+    {
+      return Layout::DoFocusPrev (ievent, TraverseInfo, ProcessEventInfo);
+    }
+
+    return TraverseInfo;
+  }
+
+  long LayeredLayout::DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    if (GetInputMode () == INPUT_MODE_ACTIVE)
+    {
+      Area *parent = GetParentObject ();
+      if (parent != NULL)
+        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+    }
+    else
+    {
+      return Layout::DoFocusNext (ievent, TraverseInfo, ProcessEventInfo);
+    }
+    
+    return TraverseInfo;
+  }
   void LayeredLayout::GetCompositeList (std::list<Area *> *ViewList)
   {
     std::list<Area *>::iterator it;
@@ -392,21 +423,25 @@ namespace nux
 
     m_active_index = index_;
     m_active_area = NULL;
+    bool is_focused = GetFocused ();
 
     // first unset focused on all elements
-    for (it = _layout_element_list.begin (); it != eit; ++it)
+    if (is_focused)
     {
-      if ((*it)->GetFocused ())
+      for (it = _layout_element_list.begin (); it != eit; ++it)
       {
-        if ((*it)->IsView ())
-          static_cast<View *> (*it)->SetFocused (false);
-        else if ((*it)->IsLayout ())
-          static_cast<Layout *> (*it)->SetFocused (false);
-        else
-         (*it)->SetFocused (false);
+        if ((*it)->GetFocused ())
+        {
+          if ((*it)->IsView ())
+            static_cast<View *> (*it)->SetFocused (false);
+          else if ((*it)->IsLayout ())
+            static_cast<Layout *> (*it)->SetFocused (false);
+          else
+          (*it)->SetFocused (false);
+        }
       }
     }
-
+    
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
       if (i == m_active_index && !m_active_area)
@@ -417,12 +452,14 @@ namespace nux
       if ((*it)->IsView ())
       {
         static_cast<View *> (*it)->QueueDraw ();
-        static_cast<View *> (*it)->SetFocused (true);
-      }
+        if (is_focused)
+          static_cast<View *> (*it)->SetFocused (true);
+      } 
       else if ((*it)->IsLayout ())
       {
         static_cast<Layout *> (*it)->QueueDraw ();
-        static_cast<Layout *> (*it)->SetFocused (true);
+        if (is_focused);
+          static_cast<Layout *> (*it)->SetFocused (true);
       }
 
       i++;
@@ -594,5 +631,27 @@ namespace nux
 
     _layout_element_list.erase (area_it);
     _layout_element_list.insert (_layout_element_list.begin (), area);
+  }
+
+  bool LayeredLayout::FocusFirstChild ()
+  {
+    if (m_input_mode == INPUT_MODE_ACTIVE)
+    {
+      m_active_area->SetFocused (true);
+      return true;
+    }
+    else
+      return Layout::FocusFirstChild ();
+  }
+ 
+  bool LayeredLayout::FocusLastChild ()
+  {
+    if (m_input_mode == INPUT_MODE_ACTIVE)
+    {
+      m_active_area->SetFocused (true);
+      return true;
+    }
+    else
+      return Layout::FocusLastChild ();
   }
 }

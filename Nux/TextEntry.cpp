@@ -200,13 +200,91 @@ namespace nux
     return result;
   }
 
+  void TextEntry::DoSetFocused (bool focused)
+  {
+   
+    View::DoSetFocused (focused);
+    if (focused == true)
+    {
+      SetCursor(0);
+      QueueRefresh(false, true);
+      
+      Area *_parent = GetParentObject();
+      if (_parent == NULL)
+        return;
+
+      if (_parent->IsView ())
+      {
+        View *parent = (View*)_parent;
+        parent->SetFocusControl (false);
+      }
+      else if (_parent->IsLayout ())
+      {
+        Layout *parent = (Layout *)_parent;
+        parent->SetFocusControl (false);
+      }
+    }
+  }
+
   long TextEntry::ProcessEvent (IEvent& event,
     long    traverseInfo,
     long    processEventInfo)
   {
     long ret = traverseInfo;
+    /* must do focus processing after sending events to children */
+    if (event.e_event == NUX_KEYDOWN && GetFocused ())
+    {
+      FocusDirection direction;
+      FocusEventType type;
+      
+      direction = FOCUS_DIRECTION_NONE;
+      
+      type = Focusable::GetFocusableEventType (event.e_event,
+                                               event.GetKeySym(),
+                                               event.GetText(),
+                                               &direction);
+      if (type == FOCUS_EVENT_DIRECTION)
+      {
+        if (direction == FOCUS_DIRECTION_PREV || direction == FOCUS_DIRECTION_NEXT ||
+            direction == FOCUS_DIRECTION_UP || direction == FOCUS_DIRECTION_DOWN)
+        {
+          Area *area = GetParentObject ();
+          // if parent is null return, thats a valid usecase so no warnings.
+          if (area)
+          {
+            long ret = 0;
+            if ( area->IsView() )
+            {
+              View *ic = NUX_STATIC_CAST (View *, area );
+              ret = ic->ProcessFocusEvent (event, ret, processEventInfo);
+            }
+            else if ( area->IsLayout() )
+            {
+              Layout *layout = NUX_STATIC_CAST (Layout *, area );
+              layout->SetFocusControl (true);   
+              ret = layout->ProcessFocusEvent (event, ret, processEventInfo);
+            }
+          }
+        }
+        else
+        {
+          OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
+                           event.e_event, event.GetKeySym(),
+                           event.GetKeyState(), event.GetText(),
+                           event.GetKeyRepeatCount());
+          //ret = PostProcessEvent2 (event, ret, processEventInfo);
+        }
+      }
+      else
+      {
+        OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
+                         event.e_event, event.GetKeySym(),
+                         event.GetKeyState(), event.GetText(),
+                         event.GetKeyRepeatCount());
+      }
+    }
 
-    ret = PostProcessEvent2 (event, ret, processEventInfo);
+
     return ret;
   }
 
@@ -289,6 +367,13 @@ namespace nux
     // we need to ignore some characters
     if (keysym == NUX_VK_TAB)
       return;
+
+    if (keysym == NUX_VK_ENTER)
+    {
+      activated.emit ();
+      return;
+    }
+
 
     if (character != 0 && (strlen (character) != 0))
     {
@@ -515,6 +600,7 @@ namespace nux
     if (_text_color != text_color)
     {
       _text_color = text_color;
+      QueueRefresh(true, true);
     }
   }
 
@@ -1294,6 +1380,7 @@ namespace nux
     if (end > str)
     {
       size_t len = end - str;
+
       _text.insert(cursor_, str, len);
       cursor_ += static_cast<int>(len);
       selection_bound_ += static_cast<int>(len);

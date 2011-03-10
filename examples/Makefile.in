@@ -41,9 +41,9 @@ host_triplet = @host@
 @BUILD_EXAMPLES_TRUE@	moveable_view$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	pango_combobox$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	pangotextedit$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	scrollview$(EXEEXT) textedit$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	timegraph$(EXEEXT) timeline$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	tooltip$(EXEEXT)
+@BUILD_EXAMPLES_TRUE@	scrollview$(EXEEXT) tab_view$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	textedit$(EXEEXT) timegraph$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	timeline$(EXEEXT) tooltip$(EXEEXT)
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -120,6 +120,10 @@ am__scrollview_SOURCES_DIST = scrollview.cpp
 @BUILD_EXAMPLES_TRUE@am_scrollview_OBJECTS = scrollview.$(OBJEXT)
 scrollview_OBJECTS = $(am_scrollview_OBJECTS)
 @BUILD_EXAMPLES_TRUE@scrollview_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am__tab_view_SOURCES_DIST = tab_view.cpp
+@BUILD_EXAMPLES_TRUE@am_tab_view_OBJECTS = tab_view.$(OBJEXT)
+tab_view_OBJECTS = $(am_tab_view_OBJECTS)
+@BUILD_EXAMPLES_TRUE@tab_view_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am__textedit_SOURCES_DIST = textedit.cpp
 @BUILD_EXAMPLES_TRUE@am_textedit_OBJECTS = textedit.$(OBJEXT)
 textedit_OBJECTS = $(am_textedit_OBJECTS)
@@ -166,8 +170,8 @@ SOURCES = $(button_SOURCES) $(cairo_SOURCES) $(checkbox_SOURCES) \
 	$(combobox_SOURCES) $(focus_SOURCES) $(gridlayout_SOURCES) \
 	$(layeredlayout_SOURCES) $(moveable_view_SOURCES) \
 	$(pango_combobox_SOURCES) $(pangotextedit_SOURCES) \
-	$(scrollview_SOURCES) $(textedit_SOURCES) $(timegraph_SOURCES) \
-	$(timeline_SOURCES) $(tooltip_SOURCES)
+	$(scrollview_SOURCES) $(tab_view_SOURCES) $(textedit_SOURCES) \
+	$(timegraph_SOURCES) $(timeline_SOURCES) $(tooltip_SOURCES)
 DIST_SOURCES = $(am__button_SOURCES_DIST) $(am__cairo_SOURCES_DIST) \
 	$(am__checkbox_SOURCES_DIST) $(am__combobox_SOURCES_DIST) \
 	$(am__focus_SOURCES_DIST) $(am__gridlayout_SOURCES_DIST) \
@@ -175,9 +179,9 @@ DIST_SOURCES = $(am__button_SOURCES_DIST) $(am__cairo_SOURCES_DIST) \
 	$(am__moveable_view_SOURCES_DIST) \
 	$(am__pango_combobox_SOURCES_DIST) \
 	$(am__pangotextedit_SOURCES_DIST) \
-	$(am__scrollview_SOURCES_DIST) $(am__textedit_SOURCES_DIST) \
-	$(am__timegraph_SOURCES_DIST) $(am__timeline_SOURCES_DIST) \
-	$(am__tooltip_SOURCES_DIST)
+	$(am__scrollview_SOURCES_DIST) $(am__tab_view_SOURCES_DIST) \
+	$(am__textedit_SOURCES_DIST) $(am__timegraph_SOURCES_DIST) \
+	$(am__timeline_SOURCES_DIST) $(am__tooltip_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -406,6 +410,8 @@ EXTRA_DIST =
 @BUILD_EXAMPLES_TRUE@focus_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@scrollview_SOURCES = scrollview.cpp
 @BUILD_EXAMPLES_TRUE@scrollview_LDADD = $(ALL_LIBS)
+@BUILD_EXAMPLES_TRUE@tab_view_SOURCES = tab_view.cpp
+@BUILD_EXAMPLES_TRUE@tab_view_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@pango_combobox_SOURCES = pango_combobox.cpp
 @BUILD_EXAMPLES_TRUE@pango_combobox_LDADD = $(ALL_LIBS)
 all: all-am
@@ -484,6 +490,9 @@ pangotextedit$(EXEEXT): $(pangotextedit_OBJECTS) $(pangotextedit_DEPENDENCIES)
 scrollview$(EXEEXT): $(scrollview_OBJECTS) $(scrollview_DEPENDENCIES) 
 	@rm -f scrollview$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(scrollview_OBJECTS) $(scrollview_LDADD) $(LIBS)
+tab_view$(EXEEXT): $(tab_view_OBJECTS) $(tab_view_DEPENDENCIES) 
+	@rm -f tab_view$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tab_view_OBJECTS) $(tab_view_LDADD) $(LIBS)
 textedit$(EXEEXT): $(textedit_OBJECTS) $(textedit_DEPENDENCIES) 
 	@rm -f textedit$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(textedit_OBJECTS) $(textedit_LDADD) $(LIBS)
@@ -514,6 +523,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pango_combobox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pangotextedit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scrollview.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tab_view.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textedit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timegraph.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timeline.Po@am__quote@

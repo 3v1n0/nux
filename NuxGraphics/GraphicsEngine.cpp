@@ -174,19 +174,29 @@ namespace nux
     SetScissor (0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight() );
     EnableScissoring (true);
 
+    bool opengl_14_support = true;
+
+    if ((_graphics_display.GetGpuDevice ()->GetOpenGLMajorVersion () == 1) &&
+      (_graphics_display.GetGpuDevice ()->GetOpenGLMinorVersion () < 4))
+    {
+      // OpenGL version is less than OpenGL 1.4
+      opengl_14_support = false;
+    }
+
     if (create_rendering_data)
     {
 #ifndef NUX_OPENGLES_20
       if (UsingGLSLCodePath () &&
         GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader () &&
-        GetGpuDevice ()->GetGpuInfo ().Support_ARB_Vertex_Shader ())
+        GetGpuDevice ()->GetGpuInfo ().Support_ARB_Vertex_Shader () &&
+        opengl_14_support)
       {
-        InitSlColorShader();
-        InitSlTextureShader();
+        InitSlColorShader ();
+        InitSlTextureShader ();
         InitSlColorModTexMaskAlpha ();
-        InitSl2TextureAdd();
-        InitSl2TextureMod();
-        InitSl4TextureAdd();
+        InitSl2TextureAdd ();
+        InitSl2TextureMod ();
+        InitSl4TextureAdd ();
 
         InitSLComponentExponentiation ();
         InitSLAlphaReplicate ();
@@ -199,16 +209,17 @@ namespace nux
         InitSLHorizontalHQGaussFilter ();
         InitSLVerticalHQGaussFilter ();
       }
-      else if (GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
-        GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Program())
+      else if (GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader () &&
+        GetGpuDevice ()->GetGpuInfo ().Support_ARB_Vertex_Program () &&
+        opengl_14_support)
       {
-        InitAsmColorShader();
-        InitAsmTextureShader();
-        InitAsmColorModTexMaskAlpha();
-        InitAsm2TextureAdd();
-        InitAsm2TextureMod();
-        InitAsm4TextureAdd();
-        InitAsmBlendModes();
+        InitAsmColorShader ();
+        InitAsmTextureShader ();
+        InitAsmColorModTexMaskAlpha ();
+        InitAsm2TextureAdd ();
+        InitAsm2TextureMod ();
+        InitAsm4TextureAdd ();
+        InitAsmBlendModes ();
 
         InitAsmComponentExponentiation ();
         InitAsmAlphaReplicate ();
@@ -218,12 +229,12 @@ namespace nux
         //InitAsm2TextureDepRead (); // NUXTODO: fix the shader
       }
 #else
-      InitSlColorShader();
-      InitSlTextureShader();
+      InitSlColorShader ();
+      InitSlTextureShader ();
       InitSlColorModTexMaskAlpha ();
-      InitSl2TextureAdd();
-      InitSl2TextureMod();
-      InitSl4TextureAdd();
+      InitSl2TextureAdd ();
+      InitSl2TextureMod ();
+      InitSl4TextureAdd ();
 
       InitSLComponentExponentiation ();
       InitSLAlphaReplicate ();

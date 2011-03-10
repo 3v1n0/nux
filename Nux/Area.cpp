@@ -827,7 +827,7 @@ namespace nux
       return;
 
     _is_focused = focused;
-    FocusChanged (this);
+    FocusChanged.emit (this);
   }
 
   bool Area::DoCanFocus ()
@@ -838,6 +838,7 @@ namespace nux
   /* override me! */
   void Area::DoActivateFocus ()
   {
+    FocusActivated.emit (this);
   }
 
   void Area::QueueRelayout ()
@@ -845,9 +846,4 @@ namespace nux
     nux::GetWindowThread ()->QueueObjectLayout (this);
   }
 
-//   bool Area::AddSecondaryChild (Area *child)
-//   {
-//     NUX_RETURN_IF_NULL (child, false);
-//
-//   }
 }

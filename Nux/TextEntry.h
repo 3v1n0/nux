@@ -125,6 +125,7 @@ namespace nux
         This signal is emitted when the text has changed.
     */
     sigc::signal <void, TextEntry*> sigTextChanged;
+    sigc::signal <void> activated;
 
 //     void SetWidth(int width);
 //     int GetWidth();
@@ -172,6 +173,9 @@ namespace nux
     CairoGraphics::Alignment GetAlign() const;
     void SetAlign(CairoGraphics::Alignment align);
 
+    protected:
+    virtual void DoSetFocused (bool focused);
+    
     private:
     /**
      * Enum used to specify different motion types.

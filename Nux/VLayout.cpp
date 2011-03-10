@@ -65,6 +65,27 @@ namespace nux
   {
   }
 
+  //left and right in a vlayout should pass event to parent
+  long VLayout::DoFocusLeft (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    Area *parent = GetParentObject ();
+    if (parent != NULL)
+      return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+    else
+      FocusFirstChild ();
+    
+    return TraverseInfo;
+  }
+  long VLayout::DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    Area *parent = GetParentObject ();
+    if (parent != NULL)
+      return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+    else
+      FocusLastChild ();
+    return TraverseInfo;
+  }
+
   void VLayout::GetCompositeList (std::list<Area *> *ViewList)
   {
     std::list<Area *>::iterator it;

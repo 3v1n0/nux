@@ -37,12 +37,12 @@ namespace nux
     ColorLayer (const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
 
     void SetColor (const Color &color);
-    Color GetColor() const;
+    Color GetColor () const;
     virtual void Renderlayer (GraphicsEngine &GfxContext);
-    virtual AbstractPaintLayer *Clone() const;
+    virtual AbstractPaintLayer *Clone () const;
 
   private:
-    Color m_color;
+    Color _color;
     bool m_write_alpha;
     ROPConfig m_rop;
   };
