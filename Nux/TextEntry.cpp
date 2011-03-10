@@ -374,14 +374,6 @@ namespace nux
       return;
     }
 
-
-    if (character != 0 && (strlen (character) != 0))
-    {
-      EnterText(character);
-      QueueRefresh(false, true);
-      return;
-    }
-
     unsigned int keyval = keysym;
     bool shift = (state & NUX_STATE_SHIFT);
     bool ctrl = (state & NUX_STATE_CTRL);
@@ -455,6 +447,14 @@ namespace nux
 //       {
 //           PasteClipboard();
 //       }
+      else if (keyval == 0x61 && ctrl) 
+      {
+        // Select all
+        int text_length = static_cast<int>(_text.length());
+        SetSelectionBounds(0, text_length);
+        QueueRefresh(false, true);
+        return;
+      }
       else if (keyval == NUX_VK_BACKSPACE)
       {
         BackSpace();
@@ -486,6 +486,11 @@ namespace nux
 //       {
 //         return;
 //       }
+    }
+
+    if (character != 0 && (strlen (character) != 0))
+    {
+      EnterText(character);
     }
 
     QueueRefresh(false, true);
