@@ -468,63 +468,6 @@ namespace nux
     return OGL_OK;
   }
 
-//   void GpuDevice::DrawQuad_FixPipe (int x, int y, int width, int height,
-//                                           FLOAT R, FLOAT G, FLOAT B, FLOAT A)
-//   {
-//     Matrix4 matrix;
-//     matrix.Identity();
-//     matrix.m[0][0] = 2.0f / (FLOAT) _ViewportWidth;
-//     matrix.m[0][3] = -1.0f;
-//     matrix.m[1][1] = - (2.0f / (FLOAT) _ViewportHeight);
-//     matrix.m[1][3] = 1.0f;
-// 
-//     matrix.Transpose();
-// 
-//     FLOAT Vertices[16] =
-//     {
-//       x,          y,          0.0f, 1.0f,
-//       x,          y + height,   0.0f, 1.0f,
-//       x + width,  y + height,   0.0f, 1.0f,
-//       x + width,  y,          0.0f, 1.0f
-//     };
-// 
-//     unsigned int Indices[] = {0, 1, 2, 0, 2, 3};
-// 
-//     FLOAT VertexColors[16] =
-//     {
-//       R,        G,        B,       A,
-//       R,        G,        B,       A,
-//       R,        G,        B,       A,
-//       R,        G,        B,       A
-//     };
-// 
-//     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-//     CHECKGL ( glLoadIdentity() );
-//     CHECKGL ( glLoadMatrixf ( (FLOAT *) matrix.m) );
-//     CHECKGL ( glMatrixMode (GL_PROJECTION) );
-//     CHECKGL ( glLoadIdentity() );
-//     CHECKGL ( glPolygonMode (GL_FRONT_AND_BACK, GL_FILL) );
-// 
-//     CHECKGL ( glUseProgramObjectARB (0) );
-//     InvalidateVertexBuffer();
-//     InvalidateIndexBuffer();
-//     InvalidateTextureUnit (GL_TEXTURE0);
-// 
-//     CHECKGL ( glEnableClientState (GL_VERTEX_ARRAY) );
-//     CHECKGL ( glVertexPointer ( 4, GL_FLOAT, 0,  (void *) (&Vertices) ) );
-// 
-//     CHECKGL ( glEnableClientState (GL_COLOR_ARRAY) );
-//     CHECKGL ( glColorPointer ( 4, GL_FLOAT, 0,  (void *) (&VertexColors) ) );
-// 
-//     CHECKGL ( glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void *) (&Indices) ) );
-// 
-//     CHECKGL ( glDisableClientState (GL_VERTEX_ARRAY) );
-//     CHECKGL ( glDisableClientState (GL_COLOR_ARRAY) );
-//   }
-// 
-//   void GpuDevice::DrawTextureQuad_FixPipe (ObjectPtr<IOpenGLTexture2D> texture, int x, int y, int width, int height,
-//       FLOAT u0, FLOAT v0, FLOAT u1, FLOAT v1)
-//   {
 // //    DirectX Matrix
 // //    |   2/W     0       0       -(W+1)/W    |
 // //    |   0       -2/H    0       (H+1)/H     |
@@ -557,60 +500,7 @@ namespace nux
 // //                                       -(Yn-1)/2 * H
 // //        Y: 0 ---> 1                       --->                0.0
 // //        Y: W ---> -1
-// 
-// 
-//     Matrix4 matrix;
-//     matrix.Identity();
-//     matrix.m[0][0] = 2.0f / 1280.0f;
-//     matrix.m[3][0] = - (1280.0f + 1.0f) / 1280.0f;
-//     matrix.m[1][1] = - (2.0f / 720.0f);
-//     matrix.m[3][1] = (720.0f + 1.0f) / 720.0f;
-// 
-// 
-//     matrix.Transpose();
-// 
-//     FLOAT Vertices[16] =
-//     {
-//       x,          y,          0.0f, 1.0f,
-//       x,          y + height,   0.0f, 1.0f,
-//       x + width,  y + height,   0.0f, 1.0f,
-//       x + width,  y,          0.0f, 1.0f
-//     };
-// 
-//     unsigned int Indices[] = {0, 1, 2, 0, 2, 3};
-// 
-//     FLOAT UV[8] =
-//     {
-//       u0,          v1,
-//       u0,          v0,
-//       u1,          v0,
-//       u1,          v1,
-//     };
-// 
-//     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-//     CHECKGL ( glLoadIdentity() );
-//     CHECKGL ( glLoadMatrixf ( (FLOAT *) matrix.m) );
-//     CHECKGL ( glMatrixMode (GL_PROJECTION) );
-//     CHECKGL ( glLoadIdentity() );
-//     CHECKGL ( glPolygonMode (GL_FRONT_AND_BACK, GL_FILL) );
-// 
-//     CHECKGL ( glUseProgramObjectARB (0) );
-//     InvalidateVertexBuffer();
-//     InvalidateIndexBuffer();
-// 
-//     CHECKGL ( glEnableClientState (GL_VERTEX_ARRAY) );
-//     CHECKGL ( glVertexPointer ( 4, GL_FLOAT, 0,  (void *) (&Vertices) ) );
-// 
-//     CHECKGL ( glClientActiveTextureARB (GL_TEXTURE0) );
-//     texture->BindTexture();
-//     CHECKGL ( glEnableClientState (GL_TEXTURE_COORD_ARRAY) );
-//     CHECKGL ( glTexCoordPointer ( 2, GL_FLOAT, 0,  (void *) (&UV) ) );
-// 
-//     CHECKGL ( glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void *) (&Indices) ) );
-// 
-//     CHECKGL ( glDisableClientState (GL_VERTEX_ARRAY) );
-//     CHECKGL ( glDisableClientState (GL_TEXTURE_COORD_ARRAY) );
-//   }
+
 
   int GpuDevice::SetStreamSource (
     unsigned int StreamNumber,
