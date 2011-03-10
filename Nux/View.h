@@ -176,10 +176,12 @@ namespace nux
     virtual long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void DoSetFocused (bool focused);
     virtual bool DoCanFocus ();
+    void SetCanFocus (bool can_focus);
     void SetFocusControl (bool focus_control);
     bool HasFocusControl ();
 
   protected:
+    bool _can_focus;
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;

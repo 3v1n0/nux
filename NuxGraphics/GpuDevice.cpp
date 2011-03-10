@@ -234,69 +234,6 @@ namespace nux
   }
 
   STREAMSOURCE GpuDevice::_StreamSource[MAX_NUM_STREAM];
-// ObjectPtr<IOpenGLIndexBuffer> GpuDevice::_CurrentIndexBuffer = 0;
-// ObjectPtr<IOpenGLVertexBuffer> GpuDevice::_CurrentVertexBuffer = 0;
-// ObjectPtr<IOpenGLVertexDeclaration> GpuDevice::_CurrentVertexDeclaration = 0;
-
-//void TestARBShaders()
-//{
-//    int OPENGL_PROGRAM_LENGTH_ARB;
-//    int OPENGL_PROGRAM_FORMAT_ARB;
-//    int OPENGL_PROGRAM_BINDING_ARB;
-//    int OPENGL_PROGRAM_INSTRUCTIONS_ARB;
-//    int OPENGL_MAX_PROGRAM_INSTRUCTIONS_ARB;
-//    int OPENGL_PROGRAM_NATIVE_INSTRUCTIONS_ARB;
-//    int OPENGL_MAX_PROGRAM_NATIVE_INSTRUCTIONS_ARB;
-//    int OPENGL_PROGRAM_TEMPORARIES_ARB;
-//    int OPENGL_MAX_PROGRAM_TEMPORARIES_ARB;
-//    int OPENGL_PROGRAM_NATIVE_TEMPORARIES_ARB;
-//    int OPENGL_MAX_PROGRAM_NATIVE_TEMPORARIES_ARB;
-//    int OPENGL_PROGRAM_PARAMETERS_ARB;
-//    int OPENGL_MAX_PROGRAM_PARAMETERS_ARB;
-//    int OPENGL_PROGRAM_NATIVE_PARAMETERS_ARB;
-//    int OPENGL_MAX_PROGRAM_NATIVE_PARAMETERS_ARB;
-//    int OPENGL_PROGRAM_ATTRIBS_ARB;
-//    int OPENGL_MAX_PROGRAM_ATTRIBS_ARB;
-//    int OPENGL_PROGRAM_NATIVE_ATTRIBS_ARB;
-//    int OPENGL_MAX_PROGRAM_NATIVE_ATTRIBS_ARB;
-//    int OPENGL_PROGRAM_ADDRESS_REGISTERS_ARB;
-//    int OPENGL_MAX_PROGRAM_ADDRESS_REGISTERS_ARB;
-//    int OPENGL_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB;
-//    int OPENGL_MAX_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB;
-//    int OPENGL_MAX_PROGRAM_LOCAL_PARAMETERS_ARB;
-//    int OPENGL_MAX_PROGRAM_ENV_PARAMETERS_ARB;
-//    int OPENGL_PROGRAM_UNDER_NATIVE_LIMITS_ARB;
-//
-//    // BEWARE glGetProgramiv != glGetProgramivARB (ARB fragment vertex program)
-//
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_LENGTH_ARB,                          &OPENGL_PROGRAM_LENGTH_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ARB,                          &OPENGL_PROGRAM_FORMAT_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_BINDING_ARB,                         &OPENGL_PROGRAM_BINDING_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_INSTRUCTIONS_ARB,                    &OPENGL_PROGRAM_INSTRUCTIONS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_INSTRUCTIONS_ARB,                &OPENGL_MAX_PROGRAM_INSTRUCTIONS_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_NATIVE_INSTRUCTIONS_ARB,             &OPENGL_PROGRAM_NATIVE_INSTRUCTIONS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_NATIVE_INSTRUCTIONS_ARB,         &OPENGL_MAX_PROGRAM_NATIVE_INSTRUCTIONS_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_TEMPORARIES_ARB,                     &OPENGL_PROGRAM_TEMPORARIES_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_TEMPORARIES_ARB,                 &OPENGL_MAX_PROGRAM_TEMPORARIES_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_NATIVE_TEMPORARIES_ARB,              &OPENGL_PROGRAM_NATIVE_TEMPORARIES_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_NATIVE_TEMPORARIES_ARB,          &OPENGL_MAX_PROGRAM_NATIVE_TEMPORARIES_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_PARAMETERS_ARB,                      &OPENGL_PROGRAM_PARAMETERS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_PARAMETERS_ARB,                  &OPENGL_MAX_PROGRAM_PARAMETERS_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_NATIVE_PARAMETERS_ARB,               &OPENGL_PROGRAM_NATIVE_PARAMETERS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_NATIVE_PARAMETERS_ARB,           &OPENGL_MAX_PROGRAM_NATIVE_PARAMETERS_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_ATTRIBS_ARB,                         &OPENGL_PROGRAM_ATTRIBS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_ATTRIBS_ARB,                     &OPENGL_MAX_PROGRAM_ATTRIBS_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_NATIVE_ATTRIBS_ARB,                  &OPENGL_PROGRAM_NATIVE_ATTRIBS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_NATIVE_ATTRIBS_ARB,              &OPENGL_MAX_PROGRAM_NATIVE_ATTRIBS_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_ADDRESS_REGISTERS_ARB,               &OPENGL_PROGRAM_ADDRESS_REGISTERS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_ADDRESS_REGISTERS_ARB,           &OPENGL_MAX_PROGRAM_ADDRESS_REGISTERS_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB,        &OPENGL_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB,    &OPENGL_MAX_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_LOCAL_PARAMETERS_ARB,            &OPENGL_MAX_PROGRAM_LOCAL_PARAMETERS_ARB) );
-//    CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_MAX_PROGRAM_ENV_PARAMETERS_ARB,              &OPENGL_MAX_PROGRAM_ENV_PARAMETERS_ARB) );
-//    //CHECKGL (glGetProgramivARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,             &OPENGL_PROGRAM_UNDER_NATIVE_LIMITS_ARB) );
-//}
-//
 
   GpuInfo::GpuInfo ()
   {
@@ -683,13 +620,13 @@ namespace nux
     CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, _PixelStoreAlignment));
     CHECKGL (glPixelStorei (GL_PACK_ALIGNMENT, _PixelStoreAlignment));
 
-    _DeviceWidth = DeviceWidth;
-    _DeviceHeight = DeviceHeight;
-
-    _ViewportX = 0;
-    _ViewportY = 0;
-    _ViewportWidth = DeviceWidth;
-    _ViewportHeight = DeviceHeight;
+//     _DeviceWidth = DeviceWidth;
+//     _DeviceHeight = DeviceHeight;
+// 
+//     _ViewportX = 0;
+//     _ViewportY = 0;
+//     _ViewportWidth = DeviceWidth;
+//     _ViewportHeight = DeviceHeight;
 
     for (int i = 0; i < MAX_NUM_STREAM; i++)
     {
@@ -995,54 +932,6 @@ namespace nux
     }
 
     _FrameBufferObject->Activate();
-  }
-  void GpuDevice::Clear (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT depth, int stencil)
-  {
-    CHECKGL ( glClearColor (red, green, blue, alpha) );
-    CHECKGL ( glClearDepth (depth) );
-    CHECKGL ( glClearStencil (stencil) );
-    CHECKGL ( glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
-  }
-
-  void GpuDevice::ClearColorRT (FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha)
-  {
-    CHECKGL ( glClearColor (red, green, blue, alpha) );
-    CHECKGL ( glClear (GL_COLOR_BUFFER_BIT) );
-  }
-
-  void GpuDevice::ClearDepthRT (FLOAT depth)
-  {
-    CHECKGL ( glClearDepth (depth) );
-    CHECKGL ( glClear (GL_DEPTH_BUFFER_BIT) );
-  }
-  void GpuDevice::ClearStencilRT (int stencil)
-  {
-    CHECKGL ( glClearStencil (stencil) );
-    CHECKGL ( glClear (GL_STENCIL_BUFFER_BIT) );
-  }
-
-  void GpuDevice::ClearFloatingPointColorRT (int x, int y, int width, int height,
-      FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha) // use a Quad.
-  {
-    DrawQuad_FixPipe (x, y, width, height, red, green, blue, alpha);
-  }
-
-  void GpuDevice::ClearSurfaceWithColor (ObjectPtr<IOpenGLSurface> s_, const SURFACE_RECT *rect_, float r, float g, float b, float a)
-  {
-    if (!GetGpuInfo ().Support_EXT_Framebuffer_Object ())
-    {
-      nuxDebugMsg (TEXT ("[GpuDevice::ClearSurfaceWithColor] No support for OpenGL framebuffer extension.") );
-    }
-
-    FormatFrameBufferObject (s_->GetWidth(), s_->GetHeight(), s_->GetPixelFormat() );
-    SetColorRenderTargetSurface (0, s_);
-    SetDepthRenderTargetSurface (ObjectPtr<IOpenGLSurface> (0));
-    ActivateFrameBuffer();
-    ClearFloatingPointColorRT (rect_->left,
-                               rect_->top,
-                               rect_->right - rect_->left,
-                               rect_->bottom - rect_->top,
-                               r, g, b, a);
   }
 
   void GpuDevice::SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> fbo)

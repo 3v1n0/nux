@@ -502,13 +502,13 @@ namespace nux
         {
           _dnd_safety_x += delta_x;
           _dnd_safety_y += delta_y;
-          printf ("delta x: %i, delta y: %i\n", _dnd_safety_x, _dnd_safety_y);
           
           if (abs (_dnd_safety_x) > 30 || abs (_dnd_safety_y) > 30)
           {
             ForceStopFocus (x, y);
+#if defined (NUX_OS_LINUX)
             StartDragAsSource ();
-            
+#endif            
             _dnd_safety_x = 0;
             _dnd_safety_y = 0;
           }
@@ -814,7 +814,6 @@ namespace nux
   void InputArea::DoSetFocused (bool focused)
   {
     Area::DoSetFocused (focused);
-    CaptureMouseDownAnyWhereElse (focused);
     SetKeyboardFocus (focused);
   }
 

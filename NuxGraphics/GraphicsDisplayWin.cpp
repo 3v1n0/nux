@@ -533,26 +533,34 @@ namespace nux
   // NUXTODO: remove this call. Make a direct access to GpuInfo via GpuDevice.
   bool GraphicsDisplay::HasFrameBufferSupport()
   {
-    return m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object ();
+    return m_DeviceFactory->GetGpuInfo ().Support_EXT_Framebuffer_Object ();
   }
 
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::GetWindowSize (int &w, int &h)
   {
-    w = m_WindowSize.GetWidth();
-    h = m_WindowSize.GetHeight();
+    w = m_WindowSize.GetWidth ();
+    h = m_WindowSize.GetHeight ();
   }
 
 //---------------------------------------------------------------------------------------------------------
-  int GraphicsDisplay::GetWindowWidth()
+  int GraphicsDisplay::GetWindowWidth ()
   {
-    return m_WindowSize.GetWidth();
+    return m_WindowSize.GetWidth ();
   }
 
 //---------------------------------------------------------------------------------------------------------
-  int GraphicsDisplay::GetWindowHeight()
+  int GraphicsDisplay::GetWindowHeight ()
   {
-    return m_WindowSize.GetHeight();
+    return m_WindowSize.GetHeight ();
+  }
+
+  void GraphicsDisplay::ResetWindowSize ()
+  {
+    RECT rect;
+    ::GetClientRect (m_hWnd, &rect);
+    m_WindowSize = Size (rect.right - rect.left, rect.bottom - rect.top);
+    m_ViewportSize = Size (rect.right - rect.left, rect.bottom - rect.top);
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -579,18 +587,18 @@ namespace nux
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::SetViewPort (int x, int y, int width, int height)
   {
-    if (IsGfxInterfaceCreated() )
+    if (IsGfxInterfaceCreated ())
     {
       //do not rely on m_ViewportSize: glViewport can be called directly
       m_ViewportSize.SetWidth (width);
       m_ViewportSize.SetHeight (height);
 
-      m_GraphicsContext->SetViewport (x, y, m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight() );
+      m_GraphicsContext->SetViewport (x, y, m_ViewportSize.GetWidth (), m_ViewportSize.GetHeight ());
       m_GraphicsContext->SetScissor (0, 0, width, height);
     }
   }
 
-  Point GraphicsDisplay::GetMouseScreenCoord()
+  Point GraphicsDisplay::GetMouseScreenCoord ()
   {
     POINT pt;
     ::GetCursorPos (&pt);
@@ -599,7 +607,7 @@ namespace nux
     return point;
   }
 
-  Point GraphicsDisplay::GetMouseWindowCoord()
+  Point GraphicsDisplay::GetMouseWindowCoord ()
   {
     POINT pt;
     ::GetCursorPos (&pt);
@@ -608,7 +616,7 @@ namespace nux
     return point;
   }
 
-  Point GraphicsDisplay::GetWindowCoord()
+  Point GraphicsDisplay::GetWindowCoord ()
   {
     RECT rect;
     ::GetWindowRect (m_hWnd, &rect);
@@ -616,7 +624,7 @@ namespace nux
     return point;
   }
 
-  Rect GraphicsDisplay::GetWindowGeometry()
+  Rect GraphicsDisplay::GetWindowGeometry ()
   {
     RECT rect;
     ::GetClientRect (m_hWnd, &rect);
@@ -624,7 +632,7 @@ namespace nux
     return geo;
   }
 
-  Rect GraphicsDisplay::GetNCWindowGeometry()
+  Rect GraphicsDisplay::GetNCWindowGeometry ()
   {
     RECT rect;
     ::GetWindowRect (m_hWnd, &rect);

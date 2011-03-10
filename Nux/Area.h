@@ -296,7 +296,8 @@ namespace nux
     virtual void DoSetFocused (bool focused);
     virtual bool DoCanFocus ();
     virtual void DoActivateFocus ();
-
+    
+    sigc::signal <void, Area *> FocusActivated;
     sigc::signal <void, Area *> FocusChanged;
     //! Queue a relayout
     /*!
@@ -345,6 +346,8 @@ namespace nux
     sigc::signal<void, Area *, bool> OnSensitiveChanged;
     sigc::signal<void, Area *, Geometry&> OnGeometryChanged;
 
+    virtual void SetParentObject (Area *);
+    virtual void UnParentObject();
 
   protected:
     bool _is_focused;
@@ -363,9 +366,6 @@ namespace nux
         A layout with a parent cannot be added to a widget or another layout for rendering. The layout has to be unparented first.
         In essence only View and Layouts should be calling SetParentObject/UnParentObject.
     */
-    virtual void SetParentObject (Area *);
-    virtual void UnParentObject();
-
     virtual void GeometryChangePending () {}
     virtual void GeometryChanged () {}
 
