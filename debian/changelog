@@ -1,4 +1,4 @@
-nux (0.9.32-0ubuntu1) UNRELEASED; urgency=low
+nux (0.9.32-0ubuntu1) natty; urgency=low
 
   * New upstream release.
     - compiz crashed with SIGSEGV in std::basic_string<char,
@@ -20,7 +20,7 @@ nux (0.9.32-0ubuntu1) UNRELEASED; urgency=low
   * debian/rules:
     - bump shlib
 
- -- Didier Roche <didrocks@ubuntu.com>  Thu, 10 Mar 2011 17:24:26 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 10 Mar 2011 19:51:23 +0100
 
 nux (0.9.30-0ubuntu1) natty; urgency=low
 
