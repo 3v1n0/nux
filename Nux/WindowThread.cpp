@@ -1794,7 +1794,7 @@ namespace nux
     return request_draw_cycle_to_host_wm;
   }
 
-  void WindowThread::RenderInterfaceFromForeignCmd()
+  void WindowThread::RenderInterfaceFromForeignCmd(Geometry *clip)
   {
     nuxAssertMsg (IsEmbeddedWindow() == true, TEXT ("[WindowThread::RenderInterfaceFromForeignCmd] You can only call RenderInterfaceFromForeignCmd if the window was created with CreateFromForeignWindow.") );
 
@@ -1811,8 +1811,14 @@ namespace nux
     if (GetWindow().IsPauseThreadGraphicsRendering() == false)
     {
       RefreshLayout ();
+      
+      if (clip)
+        GetWindowThread ()->GetGraphicsEngine().SetGlobalClippingRectangle (Rect (clip->x, clip->y, clip->width, clip->height));
+        
       m_window_compositor->Draw (m_size_configuration_event, m_force_redraw);
-
+      
+      if (clip)
+        GetWindowThread ()->GetGraphicsEngine().DisableGlobalClippingRectangle ();
       // When rendering in embedded mode, nux does not attempt to measure the frame rate...
 
       // Cleanup

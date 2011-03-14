@@ -1129,6 +1129,7 @@ namespace nux
           CHECKGL ( glDepthMask (GL_FALSE) );
           {
             //CopyTextureToCompositionRT(rt.color_rt, window->GetBaseX(), window->GetBaseY());
+            GetWindowThread ()->GetGraphicsEngine().ApplyClippingRectangle();
             PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity ());
           }
           CHECKGL ( glDepthMask (GL_TRUE) );
