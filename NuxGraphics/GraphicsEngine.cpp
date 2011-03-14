@@ -660,7 +660,6 @@ namespace nux
   {
     if (!_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
     {
-      printf ("Set: %i %i %i %i, Global: %i %i %i %i\n", x, y, width, height, _global_clipping_rect.x, _global_clipping_rect.y, _global_clipping_rect.width, _global_clipping_rect.height);
       Rect intersection = Rect (x, y, width, height).Intersect (_global_clipping_rect);
       SetScissor (intersection.x, intersection.y, intersection.width, intersection.height);
     }
