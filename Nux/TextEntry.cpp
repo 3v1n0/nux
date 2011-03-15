@@ -1187,6 +1187,7 @@ namespace nux
       attr->start_index = 0;
       attr->end_index = static_cast<unsigned int>(tmp_string.length());
       pango_attr_list_insert(tmp_attrs, attr);
+      pango_layout_set_font_description (layout, font->GetFontDescription ());
       font->Destroy();
     }
     pango_layout_set_attributes(layout, tmp_attrs);
@@ -1252,13 +1253,23 @@ namespace nux
     }
 
     {
-      PangoRectangle log_rect;
-      gint           text_height;
+      PangoContext *context;
+      PangoFontMetrics *metrics;
+      int ascent, descent;
 
-      pango_layout_get_extents (layout, NULL, &log_rect);
-      text_height = log_rect.height / PANGO_SCALE;
+      context = pango_layout_get_context (layout);
+      metrics = pango_context_get_metrics (context,
+                                           pango_layout_get_font_description (layout),
+                            				       pango_context_get_language (context));
 
-      SetMinimumHeight (text_height);
+      ascent = pango_font_metrics_get_ascent (metrics);
+      descent = pango_font_metrics_get_descent (metrics);
+
+      full_height_ = PANGO_PIXELS (ascent + descent) + (kInnerBorderY * 2);
+
+      SetMinimumHeight (full_height_);
+
+      pango_font_metrics_unref (metrics);
     }
 
     return layout;

@@ -461,6 +461,8 @@ namespace nux
     cairo_font_options_t *font_options_;
     double font_dpi_;
 
+    int full_height_;
+
 //     /** The background texture of the edit control */
 //     Texture *background_;
 
