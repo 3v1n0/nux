@@ -126,6 +126,7 @@ namespace nux
     */
     sigc::signal <void, TextEntry*> sigTextChanged;
     sigc::signal <void> activated;
+    sigc::signal <void, int> cursor_moved;
 
 //     void SetWidth(int width);
 //     int GetWidth();

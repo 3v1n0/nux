@@ -1889,6 +1889,8 @@ namespace nux
       cursor_ = cursor;
       selection_bound_ = cursor;
       cursor_moved_ = true;
+
+      cursor_moved.emit (cursor);
     }
   }
 
