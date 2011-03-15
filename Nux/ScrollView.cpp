@@ -68,6 +68,29 @@ namespace nux
 
   }
 
+  void
+  ScrollView::SetVScrollBar (VScrollBar* newVScrollBar)
+  {
+    if (vscrollbar)
+    {
+      // disconnect old vscrollbar
+      vscrollbar->OnScrollUp.connect (sigc::mem_fun (this,
+                                                     &ScrollView::ScrollUp));
+      vscrollbar->OnScrollDown.connect (sigc::mem_fun (this,
+                                                       &ScrollView::ScrollDown));
+      //vscrollbar->UnReference ();
+      vscrollbar->Dispose ();
+    }
+
+    vscrollbar = newVScrollBar;
+
+    // connect new vscrollbar
+    vscrollbar->OnScrollUp.connect (sigc::mem_fun (this,
+                                                   &ScrollView::ScrollUp));
+    vscrollbar->OnScrollDown.connect (sigc::mem_fun (this,
+                                                     &ScrollView::ScrollDown));
+  }
+
   ScrollView::~ScrollView()
   {
     // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters

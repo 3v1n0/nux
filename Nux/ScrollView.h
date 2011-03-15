@@ -42,6 +42,7 @@ namespace nux
     void EnableVerticalScrollBar (bool b);
     void EnableHorizontalScrollBar (bool b);
     virtual bool SetLayout (Layout *layout);
+    void SetVScrollBar (VScrollBar* newVScrollBar);
 
     /*!
         Set the table size to be such that all the content items of the table are visible .
