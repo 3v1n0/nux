@@ -1839,7 +1839,7 @@ namespace nux
     GetGpuDevice()->DeactivateFrameBuffer();
   }
 
-  int WindowThread::InstallEventInspector (EventInspector* function, void* data)
+  int WindowThread::InstallEventInspector (EventInspector function, void* data)
   {
     NUX_RETURN_VALUE_IF_NULL (function, 0);
 
@@ -1881,7 +1881,7 @@ namespace nux
     return false;
   }
 
-  bool WindowThread::RemoveEventInspector (EventInspector* function)
+  bool WindowThread::RemoveEventInspector (EventInspector function)
   {
     NUX_RETURN_VALUE_IF_NULL (function, false);
 
@@ -1912,12 +1912,13 @@ namespace nux
 
     for (it = _event_inspectors_map.begin (); it != _event_inspectors_map.end (); it++)
     {
-      EventInspector *callback = (*it).second._function;
+      EventInspector callback = (*it).second._function;
 
       if (callback == 0)
         continue;
 
-      int ret = (*callback) (0, event, (*it).second._data);
+      int ret = callback (0, event, (*it).second._data);
+
       if (ret)
       {
         discard_event = true;
