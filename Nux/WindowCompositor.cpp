@@ -155,8 +155,6 @@ namespace nux
     if (window == 0)
       return;
       
-    window->SinkReference ();
-
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
 
     if (it == _view_window_list.end() )
@@ -183,8 +181,6 @@ namespace nux
   {
     if (window == 0)
       return;
-      
-    window->UnReference ();
 
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
 
