@@ -383,7 +383,7 @@ namespace nux
        @param data     User defined data.
        @return         Unique id for the event inspector callback.
     */
-    int InstallEventInspector (EventInspector* function, void* data);
+    int InstallEventInspector (EventInspector function, void* data);
 
     //! Remove an event inspector.
     /*!
@@ -401,7 +401,7 @@ namespace nux
        @param function Event inspector function callback.
        @return True    If the event inspector exists and has been removed.
     */
-    bool RemoveEventInspector (EventInspector* function);
+    bool RemoveEventInspector (EventInspector function);
 
     //! Call event inspectors.
     /*!
@@ -555,7 +555,7 @@ namespace nux
         _data = 0;
         _uid = 0;
       }
-      EventInspector* _function;
+      EventInspector  _function;
       void*           _data;
       int             _uid;
     } EventInspectorStorage;

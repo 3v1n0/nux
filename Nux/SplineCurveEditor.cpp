@@ -67,7 +67,7 @@ namespace nux
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_Background = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
+    m_Background = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Colors::White);
 
     CheckboardPattern->UnReference ();;
 //     m_Background = PaintLayer(m_CheckboardPattern);

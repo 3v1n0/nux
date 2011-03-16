@@ -89,6 +89,32 @@ namespace nux
 #define     NUX_VK_X                                        XK_X                   //   X key
 #define     NUX_VK_Y                                        XK_Y                   //   Y key
 #define     NUX_VK_Z                                        XK_Z                   //   Z key
+#define     NUX_VK_a                                        XK_a
+#define     NUX_VK_b                                        XK_b
+#define     NUX_VK_c                                        XK_c
+#define     NUX_VK_d                                        XK_d
+#define     NUX_VK_e                                        XK_e
+#define     NUX_VK_f                                        XK_f
+#define     NUX_VK_g                                        XK_g
+#define     NUX_VK_h                                        XK_h
+#define     NUX_VK_i                                        XK_i
+#define     NUX_VK_j                                        XK_j
+#define     NUX_VK_k                                        XK_k
+#define     NUX_VK_l                                        XK_l
+#define     NUX_VK_m                                        XK_m
+#define     NUX_VK_n                                        XK_n
+#define     NUX_VK_o                                        XK_o
+#define     NUX_VK_p                                        XK_p
+#define     NUX_VK_q                                        XK_q
+#define     NUX_VK_r                                        XK_r
+#define     NUX_VK_s                                        XK_s
+#define     NUX_VK_t                                        XK_t
+#define     NUX_VK_u                                        XK_u
+#define     NUX_VK_v                                        XK_v
+#define     NUX_VK_w                                        XK_w
+#define     NUX_VK_x                                        XK_x
+#define     NUX_VK_y                                        XK_y
+#define     NUX_VK_z                                        XK_z
 #define     NUX_VK_LWIN                                     XK_Super_L                   //   Left Windows key (Microsoft Natural Keyboard)
 #define     NUX_VK_RWIN                                     XK_Super_R                   //   Right Windows key (Microsoft Natural Keyboard)
 #define     NUX_VK_NUMPAD0                                  XK_KP_0                   //   Numeric keypad 0 key

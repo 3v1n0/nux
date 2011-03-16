@@ -22,7 +22,7 @@ namespace nux
     _pango_font_desc  = pango_font_description_from_string ("Arial, 20");
 
     _size_match_text = true;
-    _textColor  = Color::White;
+    _textColor  = Colors::White;
     _texture2D  = 0;
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);

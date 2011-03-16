@@ -273,7 +273,7 @@ namespace nux
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_CheckboardLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
+    m_CheckboardLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Colors::White);
 
     CheckboardPattern->UnReference ();
   }

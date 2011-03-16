@@ -549,7 +549,7 @@ namespace nux
   void View::SetCanFocus (bool can_focus)
   {
     _can_focus = can_focus;
-    if (_can_focus == False && GetFocused ())
+    if ((_can_focus == false) && GetFocused ())
     {
       SetFocused (false);
     }

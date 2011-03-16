@@ -759,6 +759,7 @@ namespace nux
 #include "ObjectType.h"
 #include "FileName.h"
 #include "Color.h"
+#include "Colors.h"
 #include "Object.h"
 
 #ifdef NUX_OS_WINDOWS

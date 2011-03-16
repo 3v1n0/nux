@@ -161,7 +161,10 @@ namespace nux
     float _alpha;
 
   public:
-//X11 color names from:http://en.wikipedia.org/wiki/Web_colors
+
+    // These are now deprecated. Use colors defined in the name space nux::Colors instead. See Colors.h.
+
+    //X11 color names from:http://en.wikipedia.org/wiki/Web_colors
 
     //Red colors
     static const Color      IndianRed           ;//     CD 5C 5C 	205 92 92
