@@ -1,3 +1,11 @@
+nux (0.9.32-0ubuntu2) UNRELEASED; urgency=low
+
+  * debian/source_nux.py, debian/libnux-0.9-common.install:
+    - install an apport hook (mainly for the unity_support_test tool) reporting
+      xorg info
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 16 Mar 2011 19:32:59 +0100
+
 nux (0.9.32-0ubuntu1) natty; urgency=low
 
   * New upstream release.
