@@ -826,6 +826,9 @@ namespace nux
     if (_is_focused == focused)
       return;
 
+    if (focused)
+      g_debug ("focusing %i,%i -> %ix%i", GetGeometry ().x, GetGeometry ().y, GetGeometry ().width, GetGeometry ().height);
+    
     _is_focused = focused;
     FocusChanged.emit (this);
   }
