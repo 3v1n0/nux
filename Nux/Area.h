@@ -402,6 +402,13 @@ namespace nux
           \li GetAbsoluteGeometry ()
     */
     virtual void UnParentObject ();
+    
+    void GrabPointer ();
+    void GrabKeyboard ();
+    void UnGrabPointer ();
+    void UnGrabKeyboard ();
+    bool OwnsPointerGrab ();
+    bool OwnsKeyboardGrab ();
 
   protected:
     bool _is_focused;
