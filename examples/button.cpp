@@ -37,6 +37,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   // Set the button maximum width/height
   button->SetMaximumWidth (80);
   button->SetMaximumHeight (40);
+  button->SetTextColor (nux::Colors::Black);
 
   // Add the button to the layout
   layout->AddView (
@@ -52,7 +53,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   nux::GetWindowThread ()->SetLayout (layout);
 
   // Set the background color of the window
-  nux::ColorLayer background (nux::Color (0xFF2D2D2D));
+  nux::ColorLayer background (nux::Color (0xFF222222));
   static_cast<nux::WindowThread*> (thread)->SetWindowBackgroundPaintLayer(&background);
 }
 

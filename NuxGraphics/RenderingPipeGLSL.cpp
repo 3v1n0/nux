@@ -2112,7 +2112,7 @@ namespace nux
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Color::White);
+    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
 
     for (int i = 0; i < num_pass; i++)
     {
@@ -2172,7 +2172,7 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Color::White);
+    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2224,7 +2224,7 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Color::White);
+    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2277,7 +2277,7 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Color::White);
+    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2327,15 +2327,15 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width/2, quad_height/2);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex (0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, Color::White);
+    QRP_GLSL_1Tex (0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, Colors::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width/4, quad_height/4);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex (0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, Color::White);
+    QRP_GLSL_1Tex (0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, Colors::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt2, _offscreen_depth_rt2, quad_width/8, quad_height/8);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex (0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, Color::White);
+    QRP_GLSL_1Tex (0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, Colors::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt3, _offscreen_depth_rt3, quad_width, quad_height);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2395,7 +2395,7 @@ namespace nux
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Color::White);
+    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
 
     for (int i = 0; i < num_pass; i++)
     {

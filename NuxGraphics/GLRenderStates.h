@@ -1104,7 +1104,6 @@ namespace nux
       (stencil_pass_depth_pass == GL_INVERT),
       TEXT ("Error(HW__SetFrontFaceStencilOp): Invalid ZPassOp RenderState"));
 
-    CHECKGL (glActiveStencilFaceEXT (GL_FRONT));
     CHECKGL (glStencilOp (stencil_fail, stencil_pass_depth_fail, stencil_pass_depth_pass));
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_STENCILFAIL], stencil_fail);

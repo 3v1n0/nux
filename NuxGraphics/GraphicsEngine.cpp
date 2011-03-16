@@ -1183,7 +1183,7 @@ namespace nux
     //CHECKGL (glEnable(GL_DEPTH_TEST));
     //CHECKGL (glDepthFunc(GL_ALWAYS));
 
-    QRP_Color(x, y, width, height, Color::Black);
+    QRP_Color(x, y, width, height, Colors::Black);
 
     //CHECKGL( glDepthFunc(GL_LESS) );
     //CHECKGL( glDisable(GL_DEPTH_TEST) );
