@@ -214,7 +214,7 @@ namespace nux
     bool ProcessForeignEvent (XEvent *event, void *data);
 #endif
 
-    void RenderInterfaceFromForeignCmd();
+    void RenderInterfaceFromForeignCmd(nux::Geometry *clip);
 
     virtual unsigned int Run (void *);
 
