@@ -262,10 +262,10 @@ namespace nux
       }
     }
 
-     if (GetFocused () && _can_pass_focus_to_composite_layout == false)
-     {
-       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (0.2, 1.0, 0.2, 1.0));
-     }
+//      if (GetFocused () && _can_pass_focus_to_composite_layout == false)
+//      {
+//        GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (0.2, 1.0, 0.2, 1.0));
+//      }
 
 //     if (GetFocused () && _can_pass_focus_to_composite_layout == true)
 //     {

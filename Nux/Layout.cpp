@@ -80,6 +80,8 @@ namespace nux
           FocusNextChild ((*it));
         }
       }
+
+      (*it)->SetFocused (false);
     }
 
     sigc::connection onchildfocuscon = _connection_map[bo];
