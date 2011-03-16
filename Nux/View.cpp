@@ -71,8 +71,12 @@ namespace nux
 
     Area *parent = GetParentObject ();
     if (parent == NULL)
+    {
+      g_debug ("no parent");
+      GetLayout ()->SetFocused (false);
       GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
-
+    }
+    
     if (parent != NULL && parent->IsLayout ())
     {
       Layout *parent_layout = (Layout *)parent;
