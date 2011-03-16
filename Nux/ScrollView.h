@@ -25,6 +25,7 @@
 
 #include "Nux.h"
 
+
 namespace nux
 {
   class HScrollBar;
@@ -155,6 +156,9 @@ namespace nux
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
     virtual long ProcessEvent (Event &event, long TraverseInfo, long ProcessEventInfo);
+
+    void OnChildFocusChanged (Area *parent, Area *child);
+    
 
     // Backup texture to speed up scrolling
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;

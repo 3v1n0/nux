@@ -180,8 +180,16 @@ namespace nux
     void SetFocusControl (bool focus_control);
     bool HasFocusControl ();
 
+    /*
+        Returns true if the view has a layout and passes focus to that layout
+    */
+    bool HasPassiveFocus ();
+
   protected:
     bool _can_focus;
+
+    void OnChildFocusChanged (Area *parent, Area *child);
+    sigc::connection _on_focus_changed_handler;
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;

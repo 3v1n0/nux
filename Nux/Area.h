@@ -23,11 +23,13 @@
 #ifndef BASEOBJECT_H
 #define BASEOBJECT_H
 
+#include <sigc++/sigc++.h>
 #include "NuxCore/InitiallyUnownedObject.h"
 #include "Focusable.h"
 #include "Utils.h"
 #include "WidgetMetrics.h"
 #include "WidgetSmartPointer.h"
+
 
 
 
@@ -299,6 +301,8 @@ namespace nux
     
     sigc::signal <void, Area *> FocusActivated;
     sigc::signal <void, Area *> FocusChanged;
+    sigc::signal <void, Area*, Area*> ChildFocusChanged; // sends parent + child
+    
     //! Queue a relayout
     /*!
     Queues a relayout before the next paint cycle. This is safe to call multiple times within
