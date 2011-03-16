@@ -154,6 +154,8 @@ namespace nux
   {
     if (window == 0)
       return;
+      
+    window->SinkReference ();
 
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
 
@@ -181,6 +183,8 @@ namespace nux
   {
     if (window == 0)
       return;
+      
+    window->UnReference ();
 
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
 
@@ -1728,23 +1732,27 @@ namespace nux
 
   void WindowCompositor::ResetDnDArea()
   {
-#if defined (NUX_OS_LINUX)
-    if (_dnd_area)
-      _dnd_area->HandleDndLeave ();
-    _dnd_area = NULL;
-#endif
+    SetDnDArea (NULL);
   }
 
   void WindowCompositor::SetDnDArea (InputArea* area)
   {
 #if defined (NUX_OS_LINUX)
+    if (_dnd_area == area)
+      return;
+
     if (_dnd_area)
+    {
       _dnd_area->HandleDndLeave ();
-  
+      _dnd_area->UnReference ();
+    }
     _dnd_area = area;
     
     if (_dnd_area)
+    {
+      _dnd_area->Reference ();
       _dnd_area->HandleDndEnter ();
+    }
 #endif
   }
 
