@@ -52,7 +52,7 @@ namespace nux
     _combo_box_opening_area->OnMouseEnter.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseEnter) );
     _combo_box_opening_area->OnMouseLeave.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseLeave) );
 
-    SetTextColor (Color::Black);
+    SetTextColor (Colors::Black);
 
     _pango_static_text = new StaticText (TEXT(""), NUX_TRACKER_LOCATION);
   }

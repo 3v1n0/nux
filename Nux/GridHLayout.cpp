@@ -61,6 +61,99 @@ namespace nux
 
   }
 
+  int GridHLayout::GetChildPos (Area *child)
+  {
+    int position = 0;
+    std::list<Area *>::const_iterator it;
+    for (it = GetChildren ().begin(); it != GetChildren ().end(); it++)
+    {
+      if ((*it) == child)
+        break;
+      
+      if ((*it)->CanFocus ())
+      {
+        position++;
+      }
+    }
+
+    return position;
+  }
+
+  Area* GridHLayout::GetChildAtPosition (int pos)
+  {
+    int position = 0;
+    std::list<Area *>::const_iterator it;
+    for (it = GetChildren ().begin(); it != GetChildren ().end(); it++)
+    {
+      if (position == pos)
+        return (*it);
+      
+      if ((*it)->CanFocus ())
+      {
+        position++;
+      }
+    }   
+
+    return NULL;
+  }
+
+  //up and down should pass event to parent
+  long GridHLayout::DoFocusUp (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    Area* focused_child = GetFocusedChild ();
+    int position = GetChildPos (focused_child);
+    
+    if (focused_child == NULL || position < GetNumColumn ())
+    {
+      Area *parent = GetParentObject ();
+      if (parent != NULL)
+        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+
+    }
+    else
+    {
+      // so hacky, but its cheap!
+      // just focus the child position - numcolumns
+      focused_child->SetFocused (false);
+      focused_child = GetChildAtPosition (position - GetNumColumn ());
+      if (focused_child)
+        focused_child->SetFocused (true);
+    }
+
+    return TraverseInfo;
+  }
+  long GridHLayout::DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    Area* focused_child = GetFocusedChild ();
+    int position = GetChildPos (focused_child);
+    
+    if (focused_child == NULL || position > GetNumColumn () * (GetNumRow () - 1))
+    {
+      Area *parent = GetParentObject ();
+      if (parent != NULL)
+      {
+        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+      }
+    }
+    else
+    {
+      // so hacky, but its cheap!
+      // just focus the child position - numcolumns
+      focused_child->SetFocused (false);
+      focused_child = GetChildAtPosition (position + GetNumColumn ());
+      if (focused_child)
+      {
+        focused_child->SetFocused (true);
+      }
+      else
+      {
+        FocusLastChild ();
+      }
+    }
+
+    return TraverseInfo;
+  }
+
   void GridHLayout::EnablePartialVisibility (bool partial_visibility)
   {
     _partial_visibility = partial_visibility;

@@ -29,7 +29,7 @@
 namespace nux
 {
 
-  const int VSCROLLBAR_WIDTH = 10;
+  const int VSCROLLBAR_WIDTH = 5;
   const int VSCROLLBAR_HEIGHT = 10;
 
   VScrollBar::VScrollBar (NUX_FILE_LINE_DECL)
@@ -62,10 +62,10 @@ namespace nux
     SetMaximumSize (VSCROLLBAR_WIDTH, AREA_MAX_HEIGHT);
 
     // Set Signals
-    m_BottomThumb->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollDown) );
-    m_BottomThumb->OnMouseUp.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollDown) );
-    m_TopThumb->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollUp) );
-    m_TopThumb->OnMouseUp.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollUp) );
+    //m_BottomThumb->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollDown) );
+    //m_BottomThumb->OnMouseUp.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollDown) );
+    //m_TopThumb->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollUp) );
+    //m_TopThumb->OnMouseUp.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollUp) );
 
     m_SlideBar->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseDown) );
     m_SlideBar->OnMouseUp.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseUp) );
@@ -198,13 +198,13 @@ namespace nux
 
   void VScrollBar::RecvStartScrollUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (!AtMinimum() )
+    if (!AtMinimum ())
       ScrollUp (this);
   }
 
   void VScrollBar::RecvEndScrollUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (m_UpTimerHandler.IsValid() )
+    if (m_UpTimerHandler.IsValid ())
     {
       GetTimer().RemoveTimerHandler (m_UpTimerHandler);
       m_UpTimerHandler = 0;
@@ -213,13 +213,13 @@ namespace nux
 
   void VScrollBar::RecvStartScrollDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (!AtMaximum() )
+    if (!AtMaximum ())
       ScrollDown (this);
   }
 
   void VScrollBar::RecvEndScrollDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (m_DownTimerHandler.IsValid() )
+    if (m_DownTimerHandler.IsValid ())
     {
       GetTimer().RemoveTimerHandler (m_DownTimerHandler);
       m_DownTimerHandler = 0;
@@ -230,7 +230,7 @@ namespace nux
   {
     m_TrackMouseCoord = Point (x, y);
 
-    int Y = m_SlideBar->GetBaseY() - m_Track->GetBaseY();
+    int Y = m_SlideBar->GetBaseY () - m_Track->GetBaseY ();
 
     if (y < Y)
     {
@@ -246,11 +246,11 @@ namespace nux
 
   void VScrollBar::RecvTrackMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (m_TrackUpTimerHandler.IsValid() )
-      GetTimer().RemoveTimerHandler (m_TrackUpTimerHandler);
+    if (m_TrackUpTimerHandler.IsValid ())
+      GetTimer ().RemoveTimerHandler (m_TrackUpTimerHandler);
 
-    if (m_TrackDownTimerHandler.IsValid() )
-      GetTimer().RemoveTimerHandler (m_TrackDownTimerHandler);
+    if (m_TrackDownTimerHandler.IsValid ())
+      GetTimer ().RemoveTimerHandler (m_TrackDownTimerHandler);
 
     m_TrackUpTimerHandler = 0;
     m_TrackDownTimerHandler = 0;
@@ -279,15 +279,23 @@ namespace nux
 
     base.OffsetPosition (0, VSCROLLBAR_HEIGHT);
     base.OffsetSize (0, -2 * VSCROLLBAR_HEIGHT);
-    GetPainter().PaintShape (GfxContext, base,
-                         Color (COLOR_SCROLLBAR_TRACK), eVSCROLLBAR, false);
+    //GetPainter().PaintShape (GfxContext, base, Color (COLOR_SCROLLBAR_TRACK), eVSCROLLBAR, false);
+    //GfxContext.QRP_Color (base.x, base.y, base.width, base.height, Color (COLOR_SCROLLBAR_TRACK));
 
-    GetPainter().PaintShape (GfxContext, m_TopThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_UP);
-    GetPainter().PaintShape (GfxContext, m_BottomThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_DOWN);
+    //GetPainter().PaintShape (GfxContext, m_TopThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_UP);
+    //GetPainter().PaintShape (GfxContext, m_BottomThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_DOWN);
 
-    GetPainter().PaintShape (GfxContext, m_SlideBar->GetGeometry(),
+    /*GetPainter().PaintShape (GfxContext, m_SlideBar->GetGeometry(),
                          Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f),
-                         eVSCROLLBAR, true);
+                         eVSCROLLBAR, true);*/
+
+    if (m_contentHeight > m_containerHeight)
+    {
+      Geometry slider_geo = m_SlideBar->GetGeometry ();
+      GfxContext.QRP_Color (slider_geo.x, slider_geo.y, slider_geo.width, slider_geo.height,
+          Color (1.0f, 1.0f, 1.0f, 0.8f));
+    }
+      //Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f));
   }
 
   void VScrollBar::SetContainerSize (int x, int y, int w, int h)

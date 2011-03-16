@@ -46,6 +46,7 @@ namespace nux
 
   BaseWindow::BaseWindow (const TCHAR *WindowName, NUX_FILE_LINE_DECL)
     :   View (NUX_FILE_LINE_PARAM)
+    ,   _opacity (1.0f)
   {
     _name = WindowName;
     _child_need_redraw = true;
@@ -603,6 +604,23 @@ namespace nux
     if (_enter_focus_input_area)
       _enter_focus_input_area->Reference ();
 
+  }
+
+  void BaseWindow::SetOpacity (float opacity)
+  {
+    if (_opacity == opacity)
+      return;
+
+    _opacity = opacity;
+
+    _opacity = CLAMP (_opacity, 0.0f, 1.0f);
+
+    QueueDraw ();
+  }
+
+  float BaseWindow::GetOpacity ()
+  {
+    return _opacity;
   }
 }
 

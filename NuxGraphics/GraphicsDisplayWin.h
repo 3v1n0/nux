@@ -204,6 +204,13 @@ namespace nux
     int GetWindowWidth();
     int GetWindowHeight();
 
+    //! Get the window size and reset the GraphicsEngine and GpuDevice accordingly.
+    /*!
+        This is a passive way to set the window size through out the NuxGraphics system. This call gets the 
+        current window size and sets its accordingly to all sub-system.
+    */
+    void ResetWindowSize ();
+
     bool HasFrameBufferSupport();
     void SetWindowCursor (HCURSOR cursor);
     HCURSOR GetWindowCursor() const;

@@ -62,6 +62,7 @@ namespace nux
     _action_item    = new ActionItem (label, UserValue, NUX_TRACKER_LOCATION);
     
     _pango_static_text = new StaticText (label, NUX_TRACKER_LOCATION);
+    _pango_static_text->SetTextColor (Color (0.0f, 0.0f, 0.0f, 1.0f));
   }
 
   MenuItem::~MenuItem()
@@ -175,10 +176,12 @@ namespace nux
           else
               GetPainter().Paint2DQuadColor(GfxContext, geo, COLOR_FOREGROUND_SECONDARY);
       */
-      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0xAA000000) /*COLOR_FOREGROUND_SECONDARY*/);
+      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0x44000000) /*COLOR_FOREGROUND_SECONDARY*/);
+      _pango_static_text->SetTextColor (Color (1.0f, 1.0f, 1.0f, 1.0f));
     }
     else
     {
+      _pango_static_text->SetTextColor (Color (0.0f, 0.0f, 0.0f, 1.0f));
       //GetPainter().Paint2DQuadColor(GfxContext, geo, Color(0xFF868686));
     }
 
@@ -258,7 +261,7 @@ namespace nux
     // The MenuPage is floating above everything else.
     SetLayout (vlayout);
 
-    SetTextColor (Color::Black);
+    SetTextColor (Colors::Black);
   }
 
   MenuPage::~MenuPage()
@@ -293,58 +296,62 @@ namespace nux
   {
     long ret = TraverseInfo;
 
+    Event mod_event = ievent;
+    mod_event.e_x_root = 0;
+    mod_event.e_y_root = 0;
+
     if (m_IsActive)
     {
-      if (ievent.e_event == NUX_MOUSE_RELEASED)
+      if (mod_event.e_event == NUX_MOUSE_RELEASED)
       {
         Geometry geo = GetThreadGLWindow()->GetWindowGeometry();
         geo.SetX (0);
         geo.SetY (0);
 
-        if (!geo.IsPointInside (ievent.e_x, ievent.e_y) /*ievent.e_x < 0 || ievent.e_y < 0*/)
+        if (!geo.IsPointInside (mod_event.e_x, mod_event.e_y) /*mod_event.e_x < 0 || mod_event.e_y < 0*/)
         {
           // the event happened outside the window.
           NotifyTerminateMenuCascade();
         }
         else
         {
-          EmitMouseUp (ievent.e_x - GetBaseX(), ievent.e_y - GetBaseY(), ievent.GetMouseState(), ievent.GetKeyState() );
+          EmitMouseUp (mod_event.e_x - GetBaseX(), mod_event.e_y - GetBaseY(), mod_event.GetMouseState(), mod_event.GetKeyState() );
         }
       }
-      else if (ievent.e_event == NUX_MOUSE_PRESSED)
+      else if (mod_event.e_event == NUX_MOUSE_PRESSED)
       {
         Geometry geo = GetThreadGLWindow()->GetWindowGeometry();
         geo.SetX (0);
         geo.SetY (0);
 
-        if (!geo.IsPointInside (ievent.e_x, ievent.e_y) /*ievent.e_x < 0 || ievent.e_y < 0*/)
+        if (!geo.IsPointInside (mod_event.e_x, mod_event.e_y) /*mod_event.e_x < 0 || mod_event.e_y < 0*/)
         {
           // the event happened outside the window.
           NotifyTerminateMenuCascade();
         }
         else
         {
-          ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
+          ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
         }
       }
-      else if (ievent.e_event == NUX_WINDOW_CONFIGURATION)
+      else if (mod_event.e_event == NUX_WINDOW_CONFIGURATION)
       {
         NotifyTerminateMenuCascade();
       }
-      else if (ievent.e_event == NUX_WINDOW_EXIT_FOCUS)
+      else if (mod_event.e_event == NUX_WINDOW_EXIT_FOCUS)
       {
         NotifyTerminateMenuCascade();
       }
       else
       {
-        if (ievent.e_event == NUX_MOUSE_MOVE)
+        if (mod_event.e_event == NUX_MOUSE_MOVE)
           NeedRedraw();
 
-        ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
+        ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
       }
     }
 
-    if (GetGeometry().IsPointInside (ievent.GetX(), ievent.GetY() ) )
+    if (GetGeometry ().IsPointInside (mod_event.GetX (), mod_event.GetY ()))
     {
       ret |= eMouseEventSolved;
     }
@@ -364,7 +371,7 @@ namespace nux
 
       GfxContext.PushClippingRectangle (base);
       GfxContext.GetRenderStates().SetBlend (GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      GetPainter().Paint2DQuadColor (GfxContext, base, Color (0xA0404040) );
+      GetPainter().Paint2DQuadColor (GfxContext, base, Color (0xCCFFFFFF) );
       GfxContext.GetRenderStates().SetBlend (GL_FALSE);
 
       Geometry text_area;

@@ -148,7 +148,7 @@ namespace nux
     align_ = CairoGraphics::ALIGN_LEFT;
 
     _size_match_text = true;
-    _text_color  = Color::White;
+    _text_color  = Colors::White;
     _texture2D  = 0;
 
     font_family_ = "Ubuntu";
@@ -200,13 +200,91 @@ namespace nux
     return result;
   }
 
+  void TextEntry::DoSetFocused (bool focused)
+  {
+   
+    View::DoSetFocused (focused);
+    if (focused == true)
+    {
+      SetCursor(0);
+      QueueRefresh(false, true);
+      
+      Area *_parent = GetParentObject();
+      if (_parent == NULL)
+        return;
+
+      if (_parent->IsView ())
+      {
+        View *parent = (View*)_parent;
+        parent->SetFocusControl (false);
+      }
+      else if (_parent->IsLayout ())
+      {
+        Layout *parent = (Layout *)_parent;
+        parent->SetFocusControl (false);
+      }
+    }
+  }
+
   long TextEntry::ProcessEvent (IEvent& event,
     long    traverseInfo,
     long    processEventInfo)
   {
     long ret = traverseInfo;
+    /* must do focus processing after sending events to children */
+    if (event.e_event == NUX_KEYDOWN && GetFocused ())
+    {
+      FocusDirection direction;
+      FocusEventType type;
+      
+      direction = FOCUS_DIRECTION_NONE;
+      
+      type = Focusable::GetFocusableEventType (event.e_event,
+                                               event.GetKeySym(),
+                                               event.GetText(),
+                                               &direction);
+      if (type == FOCUS_EVENT_DIRECTION)
+      {
+        if (direction == FOCUS_DIRECTION_PREV || direction == FOCUS_DIRECTION_NEXT ||
+            direction == FOCUS_DIRECTION_UP || direction == FOCUS_DIRECTION_DOWN)
+        {
+          Area *area = GetParentObject ();
+          // if parent is null return, thats a valid usecase so no warnings.
+          if (area)
+          {
+            long ret = 0;
+            if ( area->IsView() )
+            {
+              View *ic = NUX_STATIC_CAST (View *, area );
+              ret = ic->ProcessFocusEvent (event, ret, processEventInfo);
+            }
+            else if ( area->IsLayout() )
+            {
+              Layout *layout = NUX_STATIC_CAST (Layout *, area );
+              layout->SetFocusControl (true);   
+              ret = layout->ProcessFocusEvent (event, ret, processEventInfo);
+            }
+          }
+        }
+        else
+        {
+          OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
+                           event.e_event, event.GetKeySym(),
+                           event.GetKeyState(), event.GetText(),
+                           event.GetKeyRepeatCount());
+          //ret = PostProcessEvent2 (event, ret, processEventInfo);
+        }
+      }
+      else
+      {
+        OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
+                         event.e_event, event.GetKeySym(),
+                         event.GetKeyState(), event.GetText(),
+                         event.GetKeyRepeatCount());
+      }
+    }
 
-    ret = PostProcessEvent2 (event, ret, processEventInfo);
+
     return ret;
   }
 
@@ -289,6 +367,13 @@ namespace nux
     // we need to ignore some characters
     if (keysym == NUX_VK_TAB)
       return;
+
+    if (keysym == NUX_VK_ENTER)
+    {
+      activated.emit ();
+      return;
+    }
+
 
     if (character != 0 && (strlen (character) != 0))
     {
@@ -455,7 +540,7 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
-    Color col = Color::Black;
+    Color col = Colors::Black;
     col.SetAlpha (0.0f);
     gfxContext.QRP_Color (base.x,
       base.y,
@@ -515,6 +600,7 @@ namespace nux
     if (_text_color != text_color)
     {
       _text_color = text_color;
+      QueueRefresh(true, true);
     }
   }
 
@@ -1101,6 +1187,7 @@ namespace nux
       attr->start_index = 0;
       attr->end_index = static_cast<unsigned int>(tmp_string.length());
       pango_attr_list_insert(tmp_attrs, attr);
+      pango_layout_set_font_description (layout, font->GetFontDescription ());
       font->Destroy();
     }
     pango_layout_set_attributes(layout, tmp_attrs);
@@ -1166,13 +1253,23 @@ namespace nux
     }
 
     {
-      PangoRectangle log_rect;
-      gint           text_height;
+      PangoContext *context;
+      PangoFontMetrics *metrics;
+      int ascent, descent;
 
-      pango_layout_get_extents (layout, NULL, &log_rect);
-      text_height = log_rect.height / PANGO_SCALE;
+      context = pango_layout_get_context (layout);
+      metrics = pango_context_get_metrics (context,
+                                           pango_layout_get_font_description (layout),
+                            				       pango_context_get_language (context));
 
-      SetMinimumHeight (text_height);
+      ascent = pango_font_metrics_get_ascent (metrics);
+      descent = pango_font_metrics_get_descent (metrics);
+
+      full_height_ = PANGO_PIXELS (ascent + descent) + (kInnerBorderY * 2);
+
+      SetMinimumHeight (full_height_);
+
+      pango_font_metrics_unref (metrics);
     }
 
     return layout;
@@ -1294,6 +1391,7 @@ namespace nux
     if (end > str)
     {
       size_t len = end - str;
+
       _text.insert(cursor_, str, len);
       cursor_ += static_cast<int>(len);
       selection_bound_ += static_cast<int>(len);
@@ -1802,6 +1900,8 @@ namespace nux
       cursor_ = cursor;
       selection_bound_ = cursor;
       cursor_moved_ = true;
+
+      cursor_moved.emit (cursor);
     }
   }
 

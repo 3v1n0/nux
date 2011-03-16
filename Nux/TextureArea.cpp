@@ -53,10 +53,6 @@ namespace nux
 
   long TextureArea::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    if (ievent.e_event == NUX_MOUSE_RELEASED)
-    {
-      int i = 4;
-    }
     return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
   }
 
@@ -92,7 +88,7 @@ namespace nux
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_PaintLayer = new TextureLayer (texture->GetDeviceTexture(), texxform, Color::White);
+    m_PaintLayer = new TextureLayer (texture->GetDeviceTexture(), texxform, Colors::White);
 
     NeedRedraw();
   }

@@ -736,6 +736,28 @@ namespace nux
     }
   }
 
+  void GraphicsDisplay::ResetWindowSize ()
+  {
+    Window root_return;
+    int x_return, y_return;
+    unsigned int width_return, height_return;
+    unsigned int border_width_return;
+    unsigned int depth_return;
+
+    XGetGeometry (m_X11Display,
+      m_X11Window,
+      &root_return,
+      &x_return,
+      &y_return,
+      &width_return,
+      &height_return,
+      &border_width_return,
+      &depth_return);
+
+    m_WindowSize = Size (width_return, height_return);
+    m_WindowPosition = Point (x_return, y_return);
+  }
+
   Point GraphicsDisplay::GetMouseScreenCoord()
   {
     Window root_return;
@@ -2544,227 +2566,6 @@ namespace nux
   {
     return _global_keyboard_grab_active;  
   }
-
-  int GraphicsDisplay::X11KeySymToINL (int Keysym)
-  {
-    switch (Keysym)
-    {
-      case XK_BackSpace:
-        return NUX_VK_BACKSPACE;
-      case XK_Tab:
-        return NUX_VK_TAB;
-      case XK_Clear:
-        return NUX_VK_CLEAR;
-      case XK_Return:
-        return NUX_VK_ENTER;
-      case XK_Shift_L:
-        return NUX_VK_SHIFT;
-      case XK_Control_L:
-        return NUX_VK_CONTROL;
-      case XK_Alt_L:
-        return NUX_VK_MENU;
-      case XK_Pause:
-        return NUX_VK_PAUSE;
-      case XK_Caps_Lock:
-        return NUX_VK_CAPITAL;
-      case XK_Escape:
-        return NUX_VK_ESCAPE;
-      case XK_space:
-        return NUX_VK_SPACE;
-      case XK_Page_Up:
-        return NUX_VK_PAGE_UP;
-      case XK_Page_Down:
-        return NUX_VK_PAGE_DOWN;
-      case XK_End:
-        return NUX_VK_END;
-      case XK_Home:
-        return NUX_VK_HOME;
-      case XK_Left:
-        return NUX_VK_LEFT;
-      case XK_Up:
-        return NUX_VK_UP;
-      case XK_Right:
-        return NUX_VK_RIGHT;
-      case XK_Down:
-        return NUX_VK_DOWN;
-      case XK_Print:
-        return NUX_VK_PRINT;
-      case XK_Execute:
-        return NUX_VK_EXECUTE;
-      case XK_Insert:
-        return NUX_VK_INSERT;
-      case XK_Delete:
-        return NUX_VK_DELETE;
-      case XK_0:
-        return NUX_VK_0;
-      case XK_1:
-        return NUX_VK_1;
-      case XK_2:
-        return NUX_VK_2;
-      case XK_3:
-        return NUX_VK_3;
-      case XK_4:
-        return NUX_VK_4;
-      case XK_5:
-        return NUX_VK_5;
-      case XK_6:
-        return NUX_VK_6;
-      case XK_7:
-        return NUX_VK_7;
-      case XK_8:
-        return NUX_VK_8;
-      case XK_9:
-        return NUX_VK_9;
-      case XK_A:
-        return NUX_VK_A;
-      case XK_B:
-        return NUX_VK_B;
-      case XK_C:
-        return NUX_VK_C;
-      case XK_D:
-        return NUX_VK_D;
-      case XK_E:
-        return NUX_VK_E;
-      case XK_F:
-        return NUX_VK_F;
-      case XK_G:
-        return NUX_VK_G;
-      case XK_H:
-        return NUX_VK_H;
-      case XK_I:
-        return NUX_VK_I;
-      case XK_J:
-        return NUX_VK_J;
-      case XK_K:
-        return NUX_VK_K;
-      case XK_L:
-        return NUX_VK_L;
-      case XK_M:
-        return NUX_VK_M;
-      case XK_N:
-        return NUX_VK_N;
-      case XK_O:
-        return NUX_VK_O;
-      case XK_P:
-        return NUX_VK_P;
-      case XK_Q:
-        return NUX_VK_Q;
-      case XK_R:
-        return NUX_VK_R;
-      case XK_S:
-        return NUX_VK_S;
-      case XK_T:
-        return NUX_VK_T;
-      case XK_U:
-        return NUX_VK_U;
-      case XK_V:
-        return NUX_VK_V;
-      case XK_W:
-        return NUX_VK_W;
-      case XK_X:
-        return NUX_VK_X;
-      case XK_Y:
-        return NUX_VK_Y;
-      case XK_Z:
-        return NUX_VK_Z;
-      case XK_Super_L:
-        return NUX_VK_LWIN;
-      case XK_Super_R:
-        return NUX_VK_RWIN;
-      case XK_KP_0:
-        return NUX_VK_NUMPAD0;
-      case XK_KP_1:
-        return NUX_VK_NUMPAD1;
-      case XK_KP_2:
-        return NUX_VK_NUMPAD2;
-      case XK_KP_3:
-        return NUX_VK_NUMPAD3;
-      case XK_KP_4:
-        return NUX_VK_NUMPAD4;
-      case XK_KP_5:
-        return NUX_VK_NUMPAD5;
-      case XK_KP_6:
-        return NUX_VK_NUMPAD6;
-      case XK_KP_7:
-        return NUX_VK_NUMPAD7;
-      case XK_KP_8:
-        return NUX_VK_NUMPAD8;
-      case XK_KP_9:
-        return NUX_VK_NUMPAD9;
-      case XK_KP_Multiply:
-        return NUX_VK_MULTIPLY;
-      case XK_KP_Add:
-        return NUX_VK_ADD;
-      case XK_KP_Separator:
-        return NUX_VK_SEPARATOR;
-      case XK_KP_Subtract:
-        return NUX_VK_SUBTRACT;
-      case XK_KP_Decimal:
-        return NUX_VK_DECIMAL;
-      case XK_KP_Divide:
-        return NUX_VK_DIVIDE;
-      case XK_F1:
-        return NUX_VK_F1;
-      case XK_F2:
-        return NUX_VK_F2;
-      case XK_F3:
-        return NUX_VK_F3;
-      case XK_F4:
-        return NUX_VK_F4;
-      case XK_F5:
-        return NUX_VK_F5;
-      case XK_F6:
-        return NUX_VK_F6;
-      case XK_F7:
-        return NUX_VK_F7;
-      case XK_F8:
-        return NUX_VK_F8;
-      case XK_F9:
-        return NUX_VK_F9;
-      case XK_F10:
-        return NUX_VK_F10;
-      case XK_F11:
-        return NUX_VK_F11;
-      case XK_F12:
-        return NUX_VK_F12;
-      case XK_F13:
-        return NUX_VK_F13;
-      case XK_F14:
-        return NUX_VK_F14;
-      case XK_F15:
-        return NUX_VK_F15;
-      case XK_F16:
-        return NUX_VK_F16;
-      case XK_F17:
-        return NUX_VK_F17;
-      case XK_F18:
-        return NUX_VK_F18;
-      case XK_F19:
-        return NUX_VK_F19;
-      case XK_F20:
-        return NUX_VK_F20;
-      case XK_F21:
-        return NUX_VK_F21;
-      case XK_F22:
-        return NUX_VK_F22;
-      case XK_F23:
-        return NUX_VK_F23;
-      case XK_F24:
-        return NUX_VK_F24;
-      case XK_Num_Lock:
-        return NUX_VK_NUMLOCK;
-      case XK_Scroll_Lock:
-        return NUX_VK_SCROLL;
-      case XK_Shift_R:
-        return NUX_VK_RSHIFT;
-      case XK_Control_R:
-        return NUX_VK_RCONTROL;
-      case XK_Alt_R:
-        return NUX_VK_RMENU;
-      default:
-        return 0x0;
-    }
-  };
 
   void GraphicsDisplay::ShowWindow()
   {

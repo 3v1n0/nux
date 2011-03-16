@@ -126,6 +126,9 @@ namespace nux
     void SetBackgroundLayer (AbstractPaintLayer *layer);
     void SetBackgroundColor (const Color &color);
 
+    void  SetOpacity (float opacity);
+    float GetOpacity ();
+
     #if defined(NUX_OS_LINUX)
     void EnableInputWindow (bool        b,
                             const char* title = "nux input window",
@@ -233,6 +236,8 @@ namespace nux
     std::list<View *> m_InterfaceObject;
 
     bool _child_need_redraw;   //!<True is there is a child of the BaseWindow that needs to be redrawn;
+    float _opacity;
+
     friend class PopUpWindow;
 
     friend class WindowThread;

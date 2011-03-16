@@ -227,7 +227,7 @@ namespace nux
     tex_h = (float) texture->GetHeight();
 
     TexCoordXForm texxform;
-    GfxContext.QRP_1Tex (x, y, tex_w, tex_h, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (x, y, tex_w, tex_h, texture->GetDeviceTexture(), texxform, Colors::White);
   }
 
   void BasePainter::Draw2DTextureAligned (GraphicsEngine &GfxContext, BaseTexture *texture, const Geometry &g, TextureAlignmentStyle tex_align) const
@@ -422,7 +422,19 @@ namespace nux
     int border_top = pimage->border_top;
     int border_bottom = pimage->border_bottom;
     bool draw_borders_only = pimage->draw_borders_only;
+    t_u32 current_alpha_blend;
+    t_u32 current_src_blend_factor;
+    t_u32 current_dest_blend_factor;
+    t_u32 current_red_mask;
+    t_u32 current_green_mask;
+    t_u32 current_blue_mask;
+    t_u32 current_alpha_mask;
+    
+    // Get the current color mask and blend states. They will be restored later.
+    GfxContext.GetRenderStates ().GetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
+    GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
 
+    
     GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, WriteAlpha ? GL_TRUE : GL_FALSE);
     GfxContext.GetRenderStates().SetBlend (ROP.Blend, ROP.SrcBlend, ROP.DstBlend);
 
@@ -539,8 +551,9 @@ namespace nux
       GfxContext.QRP_ColorModTexAlpha (r_x + border_left, r_y + border_top, r_w - border_left - border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, c0);
     }
 
-    GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    GfxContext.GetRenderStates().SetBlend (FALSE);
+    // Restore Color mask and blend states.
+    GfxContext.GetRenderStates ().SetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
+    GfxContext.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 
   void BasePainter::PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, UXStyleImageRef style) const
@@ -595,49 +608,49 @@ namespace nux
     texxform.v0 = 0;
     texxform.u1 = border_left;
     texxform.v1 = border_top;
-    GfxContext.QRP_1Tex (r_x, r_y, border_left, border_top, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x, r_y, border_left, border_top, texture->GetDeviceTexture(), texxform, Colors::White);
     // Draw TOP-RIGHT CORNER
     texxform.u0 = tex_w - border_right;
     texxform.v0 = 0;
     texxform.u1 = tex_w;
     texxform.v1 = border_top;
-    GfxContext.QRP_1Tex (r_x + r_w - border_right, r_y, border_right, border_top, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + r_w - border_right, r_y, border_right, border_top, texture->GetDeviceTexture(), texxform, Colors::White);
     // Draw BOTTOM-LEFT CORNER
     texxform.u0 = 0;
     texxform.v0 = tex_h - border_bottom;
     texxform.u1 = border_left;
     texxform.v1 = tex_h;
-    GfxContext.QRP_1Tex (r_x, r_y + r_h - border_bottom, border_left, border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x, r_y + r_h - border_bottom, border_left, border_bottom, texture->GetDeviceTexture(), texxform, Colors::White);
     // Draw BOTTOM-RIGHT CORNER
     texxform.u0 = tex_w - border_right;
     texxform.v0 = tex_h - border_bottom;
     texxform.u1 = tex_w;
     texxform.v1 = tex_h;
-    GfxContext.QRP_1Tex (r_x + r_w - border_right, r_y + r_h - border_bottom, border_right, border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + r_w - border_right, r_y + r_h - border_bottom, border_right, border_bottom, texture->GetDeviceTexture(), texxform, Colors::White);
     // Draw TOP BORDER
     texxform.u0 = border_left;
     texxform.v0 = 0;
     texxform.u1 = tex_w - border_right;
     texxform.v1 = border_top;
-    GfxContext.QRP_1Tex (r_x + border_left, r_y, r_w - border_left - border_right, border_top, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + border_left, r_y, r_w - border_left - border_right, border_top, texture->GetDeviceTexture(), texxform, Colors::White);
     // Draw BOTTOM BORDER
     texxform.u0 = border_left;
     texxform.v0 = tex_h - border_bottom;
     texxform.u1 = tex_w - border_right;
     texxform.v1 = tex_h;
-    GfxContext.QRP_1Tex (r_x + border_left, r_y + r_h - border_bottom, r_w - border_left - border_right, border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + border_left, r_y + r_h - border_bottom, r_w - border_left - border_right, border_bottom, texture->GetDeviceTexture(), texxform, Colors::White);
     // Draw LEFT BORDER
     texxform.u0 = 0;
     texxform.v0 = border_top;
     texxform.u1 = border_left;
     texxform.v1 = tex_h - border_bottom;
-    GfxContext.QRP_1Tex (r_x, r_y + border_top, border_left, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x, r_y + border_top, border_left, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Colors::White);
     // Draw RIGHT BORDER
     texxform.u0 = tex_w - border_right;
     texxform.v0 = border_top;
     texxform.u1 = tex_w;
     texxform.v1 = tex_h - border_bottom;
-    GfxContext.QRP_1Tex (r_x + r_w - border_right, r_y + border_top, border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+    GfxContext.QRP_1Tex (r_x + r_w - border_right, r_y + border_top, border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Colors::White);
 
     // Draw CENTER
     if (draw_borders_only == false)
@@ -646,7 +659,7 @@ namespace nux
       texxform.v0 = border_top;
       texxform.u1 = tex_w - border_right;
       texxform.v1 = tex_h - border_bottom;
-      GfxContext.QRP_1Tex (r_x + border_left, r_y + border_top, r_w - border_left - border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Color::White);
+      GfxContext.QRP_1Tex (r_x + border_left, r_y + border_top, r_w - border_left - border_right, r_h - border_top - border_bottom, texture->GetDeviceTexture(), texxform, Colors::White);
     }
 
     GfxContext.GetRenderStates().SetBlend (FALSE);

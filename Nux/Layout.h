@@ -23,7 +23,7 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
-#include "Nux/Focusable.h"
+#include "Focusable.h"
 
 namespace nux
 {
@@ -229,10 +229,6 @@ namespace nux
     virtual bool DoCanFocus ();
     virtual void DoActivateFocus ();
 
-    bool FocusFirstChild ();
-    bool FocusNextChild (Area *child);
-    bool FocusPreviousChild (Area *child);
-
     bool HasFocusableEntries ();
 
     sigc::signal <void, Layout *, Area*> ChildFocusChanged;
@@ -242,8 +238,23 @@ namespace nux
     bool _has_focus_control;
     void SetFocusControl (bool focus_control);
     bool HasFocusControl ();
+    bool _ignore_focus;
 
   protected:
+    Area*GetFocusedChild ();
+    virtual long DoFocusPrev  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusNext  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusUp    (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusDown  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual bool FocusFirstChild ();
+    virtual bool FocusLastChild ();
+    virtual bool FocusNextChild (Area *child);
+    virtual bool FocusPreviousChild (Area *child);
+    
+    
+    
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
 
     Size m_ContentSize;
