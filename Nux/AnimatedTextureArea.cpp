@@ -68,7 +68,7 @@ namespace nux
       GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       nux::Geometry base = GetGeometry();
       nux::TexCoordXForm texxform;
-      GfxContext.QRP_1Tex (base.x, base.y, base.width, base.height, m_UserTexture->GetDeviceTexture(), texxform, nux::Color::White);
+      GfxContext.QRP_1Tex (base.x, base.y, base.width, base.height, m_UserTexture->GetDeviceTexture(), texxform, nux::Colors::White);
 
       GfxContext.GetRenderStates().SetBlend (false);
     }

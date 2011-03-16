@@ -189,7 +189,7 @@ namespace nux
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Color::White);
+    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Colors::White);
 
     m_ChangeDetectionTimer = new TimerFunctor();
     m_ChangeDetectionTimer->OnTimerExpired.connect (sigc::mem_fun (this, &SplineCurvePreview::RecvTimer) );

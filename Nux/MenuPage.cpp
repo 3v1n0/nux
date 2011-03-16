@@ -261,7 +261,7 @@ namespace nux
     // The MenuPage is floating above everything else.
     SetLayout (vlayout);
 
-    SetTextColor (Color::Black);
+    SetTextColor (Colors::Black);
   }
 
   MenuPage::~MenuPage()

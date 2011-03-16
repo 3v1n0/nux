@@ -148,7 +148,7 @@ namespace nux
     align_ = CairoGraphics::ALIGN_LEFT;
 
     _size_match_text = true;
-    _text_color  = Color::White;
+    _text_color  = Colors::White;
     _texture2D  = 0;
 
     font_family_ = "Ubuntu";
@@ -540,7 +540,7 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
-    Color col = Color::Black;
+    Color col = Colors::Black;
     col.SetAlpha (0.0f);
     gfxContext.QRP_Color (base.x,
       base.y,
