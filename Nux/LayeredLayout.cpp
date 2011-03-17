@@ -425,23 +425,6 @@ namespace nux
     m_active_area = NULL;
     bool is_focused = GetFocused ();
 
-    // first unset focused on all elements
-    if (is_focused)
-    {
-      for (it = _layout_element_list.begin (); it != eit; ++it)
-      {
-        if ((*it)->GetFocused ())
-        {
-          if ((*it)->IsView ())
-            static_cast<View *> (*it)->SetFocused (false);
-          else if ((*it)->IsLayout ())
-            static_cast<Layout *> (*it)->SetFocused (false);
-          else
-          (*it)->SetFocused (false);
-        }
-      }
-    }
-    
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
       if (i == m_active_index && !m_active_area)
