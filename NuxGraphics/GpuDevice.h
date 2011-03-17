@@ -26,12 +26,24 @@
 #include "GLResource.h"
 #include "GLDeviceFrameBufferObject.h"
 #include "GLDeviceObjects.h"
-#include "GLRenderStates.h"
 #include "GLTextureStates.h"
 #include "GLTemplatePrimitiveBuffer.h"
 
+namespace nux {
+  class GpuRenderStates;
+}
+
 namespace nux
 {
+  //! Brand of GPUs.
+  typedef enum
+  {
+    GPU_VENDOR_UNKNOWN = 0,
+    GPU_BRAND_AMD,
+    GPU_BRAND_NVIDIA,
+    GPU_BRAND_INTEL,
+  } GpuBrand;
+
   template<typename T> class ObjectPtr;
 
   struct STREAMSOURCE
@@ -94,6 +106,7 @@ namespace nux
     bool Support_EXT_Texture_Rectangle ()         const    {return _support_ext_texture_rectangle;}
     bool Support_NV_Texture_Rectangle ()          const    {return _support_nv_texture_rectangle;}
     bool Support_ARB_Pixel_Buffer_Object ()       const    {return _support_arb_pixel_buffer_object;}
+    bool Support_EXT_Blend_Equation_Separate ()   const    {return _support_ext_blend_equation_separate;}
 
     int GetMaxFboAttachment () {return _opengl_max_fb_attachment;}
 
@@ -136,6 +149,7 @@ namespace nux
     bool _support_arb_texture_rectangle; //!< Promoted from GL_EXT_TEXTURE_RECTANGLE to ARB.
     bool _support_nv_texture_rectangle;
     bool _support_arb_pixel_buffer_object;
+    bool _support_ext_blend_equation_separate;
 
     friend class GpuDevice;
   };
