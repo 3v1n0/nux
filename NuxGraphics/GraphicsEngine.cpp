@@ -272,9 +272,18 @@ namespace nux
         fnt->UnReference ();
       }
 #endif
-      _font_renderer = new FontRenderer (*this);
 
-      _offscreen_fbo        = GetGpuDevice()->CreateFrameBufferObject ();
+      GpuInfo& gpu_info = _graphics_display.GetGpuDevice ()->GetGpuInfo ();
+
+      if ((gpu_info.Support_ARB_Vertex_Shader () && gpu_info.Support_ARB_Fragment_Shader ())
+          || (gpu_info.Support_ARB_Vertex_Shader () && gpu_info.Support_ARB_Fragment_Shader ()))
+      {
+        _font_renderer = new FontRenderer (*this);
+      }
+
+      if (gpu_info.Support_EXT_Framebuffer_Object ())
+        _offscreen_fbo = GetGpuDevice()->CreateFrameBufferObject ();
+
       _offscreen_color_rt0  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
       _offscreen_color_rt1  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
       _offscreen_color_rt2  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
