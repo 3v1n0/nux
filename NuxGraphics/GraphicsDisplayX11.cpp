@@ -2548,7 +2548,7 @@ namespace nux
         _global_keyboard_grab_active = true;
     }
     
-    if (_global_keyboard_grab_data)
+    if (_global_keyboard_grab_active)
     {
       _global_keyboard_grab_callback = callback;
       _global_keyboard_grab_data = data;
