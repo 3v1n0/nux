@@ -2474,9 +2474,6 @@ namespace nux
         (*_global_pointer_grab_callback) (true, _global_pointer_grab_data);
     }
     
-    _global_pointer_grab_callback = callback;
-    _global_pointer_grab_data = data;
-    
     if (!_global_pointer_grab_active)
     {
       int result = XGrabPointer(GetX11Display (), 
@@ -2494,6 +2491,12 @@ namespace nux
                                       
       if (result == GrabSuccess)
         _global_pointer_grab_active = true;
+    }
+    
+    if (_global_pointer_grab_active)
+    {
+      _global_pointer_grab_callback = callback;
+      _global_pointer_grab_data = data;
     }
     
     return _global_pointer_grab_active;
@@ -2532,9 +2535,6 @@ namespace nux
         (*_global_keyboard_grab_callback) (true, _global_keyboard_grab_data);
     }
     
-    _global_keyboard_grab_callback = callback;
-    _global_keyboard_grab_data = data;
-    
     if (!_global_keyboard_grab_active)
     {
       int result = XGrabKeyboard(GetX11Display (), 
@@ -2546,6 +2546,12 @@ namespace nux
                                       
       if (result == GrabSuccess)
         _global_keyboard_grab_active = true;
+    }
+    
+    if (_global_keyboard_grab_data)
+    {
+      _global_keyboard_grab_callback = callback;
+      _global_keyboard_grab_data = data;
     }
     
     return _global_keyboard_grab_active;

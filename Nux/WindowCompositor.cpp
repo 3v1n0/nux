@@ -1815,19 +1815,21 @@ namespace nux
   bool WindowCompositor::GrabPointerAdd (InputArea* area)
   {
     NUX_RETURN_VALUE_IF_NULL (area, false);
+    bool result = true;
 
     if (GetPointerGrabArea () == area)
     {
       nuxDebugMsg (TEXT ("[WindowCompositor::GrabPointerAdd] The area alread has the grab"));
-      return true;
+      return result;
     }
     
-    _pointer_grab_stack.push_front (area);
-    
     if (GetWindow ().PointerGrabData () != this)
-      GetWindow ().GrabPointer (NULL, this, true);
+      result = GetWindow ().GrabPointer (NULL, this, true);
 
-    return true;
+    if (result)
+      _pointer_grab_stack.push_front (area);
+
+    return result;
   }
 
   bool WindowCompositor::GrabPointerRemove (InputArea* area)
@@ -1875,22 +1877,27 @@ namespace nux
   bool WindowCompositor::GrabKeyboardAdd (InputArea* area)
   {
     NUX_RETURN_VALUE_IF_NULL (area, false);
+    bool result = true;
 
     if (GetKeyboardGrabArea () == area)
     {
       nuxDebugMsg (TEXT ("[WindowCompositor::GrabKeyboardAdd] The area alread has the grab"));
-      return true;
+      return result;
     }
 
-    _keyboard_grab_stack.push_front (area);
     
     if (GetWindow ().KeyboardGrabData () != this)
-      GetWindow ().GrabKeyboard (NULL, this, true);
+      result = GetWindow ().GrabKeyboard (NULL, this, true);
     
-    // Must be called only after the area has been added to the front of _keyboard_grab_stack.
-    SetKeyboardFocusArea (area);
-
-    return true;
+    if (result)
+    {
+      _keyboard_grab_stack.push_front (area);
+      
+      // Must be called only after the area has been added to the front of _keyboard_grab_stack.
+      SetKeyboardFocusArea (area);
+    }
+    
+    return result;
   }
 
   bool WindowCompositor::GrabKeyboardRemove (InputArea* area)
@@ -1906,7 +1913,6 @@ namespace nux
       return false;
 
     _keyboard_grab_stack.erase (it);
-    
     if (_keyboard_grab_stack.empty ())
       GetWindow ().UngrabKeyboard (this);
 
