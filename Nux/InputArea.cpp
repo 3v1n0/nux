@@ -225,7 +225,6 @@ namespace nux
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Area has keyboard focus. Disable keyboard focus on area. Emit OnEndFocus."));
           GetWindowCompositor ().SetKeyboardFocusArea (NULL);
-          OnEndFocus.emit ();
         }
       }
 
@@ -286,7 +285,6 @@ namespace nux
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Area has keyboard focus. Disable keyboard focus on area. Emit OnEndFocus."));
           GetWindowCompositor ().SetKeyboardFocusArea (NULL);
-          OnEndFocus.emit ();
         }
       }
 
@@ -334,7 +332,6 @@ namespace nux
         {
           GetWindowCompositor ().SetKeyboardFocusArea (this);
           keyboard_focus_area = this;
-          keyboard_focus_area->OnStartFocus ();
         }
       }
 
@@ -351,7 +348,6 @@ namespace nux
         {
           GetWindowCompositor ().SetKeyboardFocusArea (NULL);
           keyboard_focus_area = NULL;
-          OnEndFocus.emit ();
         }
       }
 
@@ -445,7 +441,6 @@ namespace nux
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Has the focus but mouse pressed and outside the area. Losing keyboard focus: Emit OnEndFocus."));
           GetWindowCompositor ().SetKeyboardFocusArea (NULL);
           keyboard_focus_area = NULL;
-          OnEndFocus.emit();
         }
       }
       else if ((event_type == NUX_MOUSE_DOUBLECLICK) && (event_processor_state & AREA_MOUSE_STATUS_DOWN))

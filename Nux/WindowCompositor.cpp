@@ -414,78 +414,48 @@ namespace nux
 
       std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
 
-      // NUX_WINDOW_ENTER_FOCUS is processed here. This is a window level signal that should not be passed down to
-      // individual area. Instead, we make the top level BaseWindow get the keyboard focus.
-      // NUX_WINDOW_EXIT_FOCUS is passed down the area for processing. At the end of this function, also do
-      // reset some states if the event is NUX_WINDOW_EXIT_FOCUS.
-      if (event.e_event == NUX_WINDOW_ENTER_FOCUS)
+
+      if(_modal_view_window_list.size() > 0)
       {
-        if(_modal_view_window_list.size () > 0)
-        {
-          // The top modal window gets the keyboard focus.
-          ObjectWeakPtr<BaseWindow> window = (*_modal_view_window_list.begin ());
-          if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
-          {
-            window.GetPointer ()->ProcessEnterFocus (event);
-          }
-        }
-        else
-        {
-          if (_view_window_list.size () != 0)
-          {
-            // The top window gets the keyboard focus.
-            ObjectWeakPtr<BaseWindow> window = (*_view_window_list.begin ());
-            if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
-            {
-              window.GetPointer ()->ProcessEnterFocus (event);
-            }
-          }
-        }
+        SetProcessingTopView((*_modal_view_window_list.begin()).GetPointer());
+        ret = (*_modal_view_window_list.begin())->ProcessEvent(event, ret, ProcessEventInfo);
+        SetProcessingTopView(NULL);
       }
       else
       {
-        if(_modal_view_window_list.size() > 0)
+        if((event.e_event == NUX_MOUSE_PRESSED) && (!InExclusiveInputMode()))
         {
-          SetProcessingTopView((*_modal_view_window_list.begin()).GetPointer());
-          ret = (*_modal_view_window_list.begin())->ProcessEvent(event, ret, ProcessEventInfo);
-          SetProcessingTopView(NULL);
+          // There is a possibility we might have to reorder the stack of windows.
+          // Cancel the currently selected window.
+          m_SelectedWindow = NULL;
+          base_window_reshuffling = true;
         }
-        else
+
+        // Traverse the window from the top of the visibility stack to the bottom.
+        for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
         {
-          if((event.e_event == NUX_MOUSE_PRESSED) && (!InExclusiveInputMode()))
+          if((*it).GetPointer () && (*it)->IsVisible () && ((*it)->_entering_visible_state == false))
           {
-            // There is a possibility we might have to reorder the stack of windows.
-            // Cancel the currently selected window.
-            m_SelectedWindow = NULL;
-            base_window_reshuffling = true;
-          }
+            SetProcessingTopView ((*it).GetPointer ());
+            ret = (*it)->ProcessEvent (event, ret, ProcessEventInfo);
+            SetProcessingTopView (NULL);
 
-          // Traverse the window from the top of the visibility stack to the bottom.
-          for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
-          {
-            if((*it).GetPointer () && (*it)->IsVisible () && ((*it)->_entering_visible_state == false))
+            if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
             {
-              SetProcessingTopView ((*it).GetPointer ());
-              ret = (*it)->ProcessEvent (event, ret, ProcessEventInfo);
-              SetProcessingTopView (NULL);
-
-              if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
-              {
-                // The mouse event was solved in the window pointed by the iterator.
-                // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
-                base_window_reshuffling = true;
-                m_SelectedWindow = (*it);
-              }
+              // The mouse event was solved in the window pointed by the iterator.
+              // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
+              base_window_reshuffling = true;
+              m_SelectedWindow = (*it);
             }
           }
+        }
 
-          // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
-          // This avoid mouse in/out messages from widgets below the menu chain.
-          if (!MouseIsOverMenu)
-          {
-            // Let the main window analyze the event.
-            ret = GetWindowThread ()->ProcessEvent (event, ret, ProcessEventInfo) ;
-          }
+        // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
+        // This avoid mouse in/out messages from widgets below the menu chain.
+        if (!MouseIsOverMenu)
+        {
+          // Let the main window analyze the event.
+          ret = GetWindowThread ()->ProcessEvent (event, ret, ProcessEventInfo) ;
         }
       }
 
@@ -495,22 +465,6 @@ namespace nux
     ViewWindowPostEventCycle ();
 
     CleanMenu ();
-
-#if defined (NUX_OS_WINDOWS)
-    // Following the processing of NUX_WINDOW_EXIT_FOCUS, reset some states.
-    if (event.e_event == NUX_WINDOW_EXIT_FOCUS)
-    {
-      SetCurrentEvent (&event);
-
-      if (GetMouseFocusArea ())
-        DispatchEventToArea (event, GetMouseFocusArea(), 0, 0);
-
-      SetMouseFocusArea (0);
-      SetMouseOverArea (0);
-      SetKeyboardFocusArea (0);
-      SetCurrentEvent (0);
-    }
-#endif
   }
 
   void WindowCompositor::ViewWindowPreEventCycle ()
@@ -1632,6 +1586,15 @@ namespace nux
     return _previous_mouse_over_area;
   }
 
+
+  void WindowCompositor::OnKeyboardFocusAreaDestroyed (Object* area)
+  {
+    if (_keyboard_focus_area == area)
+    {
+      _keyboard_focus_area = NULL;
+    }
+  }
+  
   void WindowCompositor::SetKeyboardFocusArea (InputArea *area)
   {
     InputArea* keyboard_grab_area = GetKeyboardGrabArea ();
@@ -1642,7 +1605,23 @@ namespace nux
       return;
     }
 
+    if (_keyboard_focus_area == area)
+    {
+        return;
+    }
+
+    if (_keyboard_focus_area)
+    {
+      _keyboard_focus_area->OnEndFocus.emit ();
+    }
+
     _keyboard_focus_area = area;
+
+    if (_keyboard_focus_area)
+    {
+      _keyboard_focus_area->OnStartFocus.emit ();
+    }
+
 
     _keyboard_focus_area_conn.disconnect ();
     if (area)

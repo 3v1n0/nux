@@ -392,11 +392,7 @@ namespace nux
 
     InputArea* GetKeyboardFocusArea ();
 
-    void OnKeyboardFocusAreaDestroyed (Object* area)
-    {
-      if (_keyboard_focus_area == area)
-        SetKeyboardFocusArea (NULL);
-    }
+    void OnKeyboardFocusAreaDestroyed (Object* area);
 
     void RegisterWindow (BaseWindow*);
 
