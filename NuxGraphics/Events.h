@@ -191,7 +191,8 @@ namespace nux
     NUX_WINDOW_EXIT_FOCUS,
     NUX_WINDOW_DIRTY,
     NUX_WINDOW_MOUSELEAVE,
-    NUX_MOUSEWHEEL,
+    NUX_MOUSE_WHEEL,
+    NUX_MOUSEWHEEL = NUX_MOUSE_WHEEL, //!< Deprecated. Use NUX_MOUSE_WHEEL.
     NUX_DESTROY_WINDOW,
     NUX_TERMINATE_APP,
     NUX_TAKE_FOCUS, // ClientMessage for window with WM_TAKE_FOCUS protocol-atom set

@@ -402,7 +402,7 @@ namespace nux
           \li GetAbsoluteGeometry ()
     */
     virtual void UnParentObject ();
-
+    
   protected:
     bool _is_focused;
     /*

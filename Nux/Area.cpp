@@ -845,5 +845,5 @@ namespace nux
   {
     nux::GetWindowThread ()->QueueObjectLayout (this);
   }
-
+  
 }
