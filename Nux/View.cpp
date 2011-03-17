@@ -49,6 +49,11 @@ namespace nux
 
   View::~View()
   {
+    if (GetFocused () && HasPassiveFocus() == false)
+    {
+      nux::GetWindowThread ()->SetFocusedArea (NULL);
+    }
+    
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
     GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
@@ -490,8 +495,19 @@ namespace nux
 
   void View::DoSetFocused (bool focused)
   {
-    QueueDraw ();
-    if (_can_pass_focus_to_composite_layout)
+    if (GetFocused () == focused)
+      return;
+    
+    g_debug ("setting focus %s", (focused) ? "yes" : "no");
+//     if (focused == false && GetFocused ())
+//     {
+//       g_debug ("unsetting focus on self");
+//       nux::GetWindowThread ()->SetFocusedArea (NULL);
+//     }
+
+    InputArea::DoSetFocused (focused);
+    
+    if (HasPassiveFocus ())
     {
       Layout *layout = GetLayout ();
       InputArea::DoSetFocused (focused);
@@ -500,14 +516,11 @@ namespace nux
       {
         layout->SetFocused (focused);
       }
-      else
-      {
-        InputArea::DoSetFocused (focused);
-      }
     }
-    else
+    else if (focused == true)
     {
-      InputArea::DoSetFocused (focused);
+      // we only set the focused area if we are not passing focus
+      nux::GetWindowThread ()->SetFocusedArea (this);
     }
 
     if (focused == false)
@@ -523,10 +536,6 @@ namespace nux
       if (has_focused_entry == false)
         SetFocusControl (false);
 
-    }
-    else
-    {
-      InputArea::DoSetFocused (focused);
     }
   }
 

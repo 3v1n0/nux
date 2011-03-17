@@ -458,10 +458,12 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
+      g_debug ("FocusNextChild - itterating over children");
       if (found_child)
       {
         if ((*it)->CanFocus ())
         {
+          g_debug ("found child to set focused");
           (*it)->SetFocused (true);
           ChildFocusChanged (this, (*it));
           return true;
@@ -560,7 +562,7 @@ namespace nux
     Area *focused_child = GetFocusedChild ();
     if (focused_child == NULL) return ProcessEventInfo;
     bool success = FocusPreviousChild (focused_child);
-    focused_child->SetFocused (false);
+    //focused_child->SetFocused (false);
     
     if (success == false)
     {
@@ -579,10 +581,11 @@ namespace nux
     Area *focused_child = GetFocusedChild ();
     if (focused_child == NULL) return ProcessEventInfo;
     bool success = FocusNextChild(focused_child);
-    focused_child->SetFocused (false);
+    //focused_child->SetFocused (false);
 
     if (success == false)
     {
+      g_debug ("LAYOUT::Send Event To Parent");
       Area *parent = GetParentObject ();
       if (parent != NULL)
         return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
@@ -607,6 +610,7 @@ namespace nux
   }
   long Layout::DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
+    g_debug ("LAYOUT:: DO FOCUS RIGHT");
     return DoFocusNext (ievent, TraverseInfo, ProcessEventInfo);
   }
 
@@ -666,8 +670,8 @@ namespace nux
               else
               {
                 bool success = FocusLastChild ();
-                if (success)
-                  focused_child->SetFocused (false);
+                //if (success)
+                //  focused_child->SetFocused (false);
               }
               return ret;
             }
@@ -683,8 +687,8 @@ namespace nux
               else
               {
                 bool success = FocusFirstChild ();
-                if (success)
-                  focused_child->SetFocused (false);
+                //if (success)
+                //  focused_child->SetFocused (false);
               }
               return ret;
             }
@@ -758,6 +762,8 @@ namespace nux
     long ret = TraverseInfo;
     std::list<Area *>::iterator it;
 
+    
+
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if (!(*it)->IsVisible () || !(*it)->IsSensitive ())
@@ -781,9 +787,13 @@ namespace nux
       }
     }
 
+    if (ievent.e_event == NUX_KEYDOWN)
+      g_debug ("LAYOUT:: Got Process Event");
+
     /* must do focus processing after sending events to children */
     if (ievent.e_event == NUX_KEYDOWN && HasFocusControl () && _ignore_focus == false)
     {
+      g_debug ("doing process focus event");
       ret |= ProcessFocusEvent (ievent, ret, ProcessEventInfo);
     }
 
@@ -950,7 +960,7 @@ namespace nux
       }
     }
 
-    else
+    if (focused == true)
     {
       SetFocusControl (true);
       bool has_focused_child = false;

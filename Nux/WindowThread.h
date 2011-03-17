@@ -40,6 +40,7 @@ namespace nux
   class TimerHandler;
   class Timeline;
   class Event;
+  class Area;
   struct ClientAreaDraw;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -411,6 +412,12 @@ namespace nux
     */
     bool CallEventInspectors (Event* event);
 
+    /*!
+     
+        Sets the focused item on the screen
+    */
+    void SetFocusedArea (Area *focused_area);
+    
   protected:
     //! Compute the layout of this window thread.
     /*!
@@ -462,6 +469,7 @@ namespace nux
     std::list< ThreadInfo * > m_ChildThreadInfo;
 
   private:
+    Area *_focused_area;
     //! Informs the system of the start of a layout cycle.
     /*!
         This call merely sets a flag to true or false. This flag is used to decided if some actions should be 

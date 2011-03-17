@@ -153,7 +153,7 @@ namespace nux
     {
       // so hacky, but its cheap!
       // just focus the child position - numcolumns
-      focused_child->SetFocused (false);
+      //focused_child->SetFocused (false);
       focused_child = GetChildAtPosition (position - GetNumColumn ());
       if (focused_child)
       {
@@ -188,7 +188,7 @@ namespace nux
     {
       // so hacky, but its cheap!
       // just focus the child position - numcolumns
-      focused_child->SetFocused (false);
+      //focused_child->SetFocused (false);
       focused_child = GetChildAtPosition (position + GetNumColumn ());
       if (focused_child)
       {

@@ -438,6 +438,7 @@ namespace nux
     _ready_for_next_fake_event = true;
     _fake_event_mode = false;
     _processing_fake_event = false;
+    _focused_area = NULL;
   }
 
   WindowThread::~WindowThread()
@@ -452,6 +453,17 @@ namespace nux
     delete _Timelines;
     delete _async_wake_up_functor;
     delete _fake_event_call_back;
+  }
+
+  void WindowThread::SetFocusedArea (Area *focused_area)
+  {
+    if (focused_area == _focused_area)
+      return; 
+    
+    if (_focused_area != NULL)
+      _focused_area->SetFocused (false);
+    
+    _focused_area = focused_area;
   }
 
   void WindowThread::AsyncWakeUpCallback (void* data)
