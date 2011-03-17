@@ -108,7 +108,9 @@ namespace nux
       return m_CurrentEvent;
     }
 
-    long DispatchEventToArea (IEvent &ievent, Area *object, long TraverseInfo, long ProcessEventInfo);
+    long DispatchEventToArea (Event &event, Area* area, long TraverseInfo, long ProcessEventInfo);
+
+    long DispatchEventToView (Event &event, View* view, long TraverseInfo, long ProcessEventInfo);
 
     void SetBackgroundPaintLayer (AbstractPaintLayer *bkg);
 

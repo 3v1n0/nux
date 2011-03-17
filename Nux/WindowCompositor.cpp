@@ -230,6 +230,29 @@ namespace nux
     return ret;
   }
 
+  long WindowCompositor::DispatchEventToView (Event &event, View *view, long TraverseInfo, long ProcessEventInfo)
+  {
+    if (view == 0)
+      return 0;
+
+    long ret = 0;
+
+    event.e_x_root = _event_root.x;
+    event.e_y_root = _event_root.y;
+
+    if (view->Type().IsDerivedFromType (InputArea::StaticObjectType))
+    {
+      //View *base_area = NUX_STATIC_CAST (View *, view);
+      ret = view->ProcessEvent (event, TraverseInfo, ProcessEventInfo);
+    }
+    else
+    {
+      nuxAssertMsg (0, TEXT ("This should not happen"));
+    }
+
+    return ret;    
+  }
+
   // NUXTODO: rename as EventCycle
   void WindowCompositor::ProcessEvent (Event &event)
   {
@@ -244,7 +267,7 @@ namespace nux
       {
         ViewWindowPreEventCycle ();
         
-        DispatchEventToArea (event, keyboard_grab_area, 0, 0);
+        DispatchEventToView (event, (View*) keyboard_grab_area, 0, 0);
         
         ViewWindowPostEventCycle ();
 
@@ -263,7 +286,7 @@ namespace nux
       {
         ViewWindowPreEventCycle ();
 
-        DispatchEventToArea (event, pointer_grab_area, 0, 0);
+        DispatchEventToView (event, (View*) pointer_grab_area, 0, 0);
 
         ViewWindowPostEventCycle ();
 
