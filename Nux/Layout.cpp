@@ -80,7 +80,12 @@ namespace nux
           FocusNextChild ((*it));
         }
       }
+
+      (*it)->SetFocused (false);
     }
+
+    sigc::connection onchildfocuscon = _connection_map[bo];
+    onchildfocuscon.disconnect ();
 
     if (it != _layout_element_list.end())
     {
@@ -154,6 +159,11 @@ namespace nux
     return false;
   }
 
+  void Layout::OnChildFocusChanged (Area *parent, Area *child)
+  {
+    ChildFocusChanged.emit (parent, child);
+  }
+
 // If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
 // and the children will take their natural size by expending WidgetLayout.
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
@@ -198,6 +208,7 @@ namespace nux
     }
 
     _layout_element_list.push_back (layout);
+    _connection_map[layout] = layout->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
   }
@@ -265,6 +276,7 @@ namespace nux
 
 
     _layout_element_list.push_back (bo);
+    _connection_map[bo] = bo->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
   }
@@ -511,7 +523,6 @@ namespace nux
     {
       return 0;
     }
-
 
     long ret = 0;
     if ( area->IsView() )
