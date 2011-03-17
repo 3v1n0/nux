@@ -493,17 +493,20 @@ namespace nux
     QueueDraw ();
   }
 
+  bool View::DoGetFocused ()
+  {
+    if (HasPassiveFocus ())
+      return GetLayout ()->GetFocused ();
+
+    return _is_focused;
+  }
+
   void View::DoSetFocused (bool focused)
   {
     if (GetFocused () == focused)
+    {
       return;
-    
-    g_debug ("setting focus %s", (focused) ? "yes" : "no");
-//     if (focused == false && GetFocused ())
-//     {
-//       g_debug ("unsetting focus on self");
-//       nux::GetWindowThread ()->SetFocusedArea (NULL);
-//     }
+    }
 
     InputArea::DoSetFocused (focused);
     

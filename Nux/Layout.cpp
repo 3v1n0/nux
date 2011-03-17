@@ -458,12 +458,10 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      g_debug ("FocusNextChild - itterating over children");
       if (found_child)
       {
         if ((*it)->CanFocus ())
         {
-          g_debug ("found child to set focused");
           (*it)->SetFocused (true);
           ChildFocusChanged (this, (*it));
           return true;
@@ -585,7 +583,6 @@ namespace nux
 
     if (success == false)
     {
-      g_debug ("LAYOUT::Send Event To Parent");
       Area *parent = GetParentObject ();
       if (parent != NULL)
         return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
@@ -610,7 +607,6 @@ namespace nux
   }
   long Layout::DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    g_debug ("LAYOUT:: DO FOCUS RIGHT");
     return DoFocusNext (ievent, TraverseInfo, ProcessEventInfo);
   }
 
@@ -669,9 +665,7 @@ namespace nux
               }
               else
               {
-                bool success = FocusLastChild ();
-                //if (success)
-                //  focused_child->SetFocused (false);
+                FocusLastChild ();
               }
               return ret;
             }
@@ -686,9 +680,7 @@ namespace nux
               }
               else
               {
-                bool success = FocusFirstChild ();
-                //if (success)
-                //  focused_child->SetFocused (false);
+                FocusFirstChild ();
               }
               return ret;
             }
@@ -719,32 +711,6 @@ namespace nux
           }
 
           return ret;
-          
-
-//           if (direction == FOCUS_DIRECTION_NEXT // we don't support RTL yet, for shame!
-//             || direction == FOCUS_DIRECTION_RIGHT
-//             || direction == FOCUS_DIRECTION_DOWN)
-//           {
-// 
-// 
-//             //~ if (success == false)
-//               //~ // no next focused, thats weird. lets propagate up
-//               //~ return SendEventToArea (parent, ievent, ret, ProcessEventInfo);
-//           }
-// 
-//           if (direction == FOCUS_DIRECTION_PREV // we don't support RTL yet, for shame!
-//             || direction == FOCUS_DIRECTION_LEFT
-//             || direction == FOCUS_DIRECTION_UP)
-//           {
-//             bool success = FocusPreviousChild(focused_child);
-// 
-//             if (success)
-//             {
-//               focused_child->SetFocused (false);
-//               return ret;
-//             }
-//           }
-
         }
       }
 
@@ -761,8 +727,6 @@ namespace nux
   {
     long ret = TraverseInfo;
     std::list<Area *>::iterator it;
-
-    
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
@@ -787,13 +751,9 @@ namespace nux
       }
     }
 
-    if (ievent.e_event == NUX_KEYDOWN)
-      g_debug ("LAYOUT:: Got Process Event");
-
     /* must do focus processing after sending events to children */
     if (ievent.e_event == NUX_KEYDOWN && HasFocusControl () && _ignore_focus == false)
     {
-      g_debug ("doing process focus event");
       ret |= ProcessFocusEvent (ievent, ret, ProcessEventInfo);
     }
 
@@ -806,8 +766,6 @@ namespace nux
   void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     std::list<Area *>::iterator it;
-
-    //GfxContext.PushClipOffset (_delta_x, _delta_y);
     GfxContext.PushModelViewMatrix (Get2DMatrix ());
     GfxContext.PushClippingRectangle (GetGeometry ());
 
@@ -913,9 +871,6 @@ namespace nux
   /* Focusable Code */
   bool Layout::DoGetFocused ()
   {
-    if (_is_focused)
-      return true;
-
     bool focused = false;
 
     std::list<Area *>::iterator it;
@@ -959,8 +914,7 @@ namespace nux
 
       }
     }
-
-    if (focused == true)
+    else
     {
       SetFocusControl (true);
       bool has_focused_child = false;
@@ -980,7 +934,9 @@ namespace nux
       // we need to chain up
       Area *_parent = GetParentObject();
       if (_parent == NULL)
+      {
         return;
+      }
 
       if (_parent->IsView ())
       {
