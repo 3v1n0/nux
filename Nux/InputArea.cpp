@@ -187,18 +187,18 @@ namespace nux
       return TraverseInfo;
     }
 
-    // Regular event processing.
-    if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
-    {
-      // Skip the area that has the exclusivity on events
-      return 0;
-    }
-
-    if (GetWindowCompositor ().InExclusiveInputMode ())
-    {
-      // Bypass the regular processing and use a simplified processing of events.
-      return ProcessEventInExclusiveMode (event, TraverseInfo, ProcessEventInfo);
-    }
+//     // Regular event processing.
+//     if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
+//     {
+//       // Skip the area that has the exclusivity on events
+//       return 0;
+//     }
+// 
+//     if (GetWindowCompositor ().InExclusiveInputMode ())
+//     {
+//       // Bypass the regular processing and use a simplified processing of events.
+//       return ProcessEventInExclusiveMode (event, TraverseInfo, ProcessEventInfo);
+//     }
 
 
     InputArea *PreviousMouseOverArea = GetWindowCompositor().GetPreviousMouseOverArea();
@@ -819,32 +819,32 @@ namespace nux
   
   void InputArea::GrabPointer ()
   {
-    GetThreadGLWindow()->GrabPointer (NULL, this, true);
+    GetWindowCompositor ().GrabPointerAdd (this);
   }
   
   void InputArea::UnGrabPointer ()
   {
-    GetThreadGLWindow()->UngrabPointer (this);
+    GetWindowCompositor ().GrabPointerRemove (this);
   }
 
   void InputArea::GrabKeyboard ()
   {
-    GetThreadGLWindow()->GrabKeyboard (NULL, this, true);
+    GetWindowCompositor ().GrabKeyboardAdd (this);
   }
   
   void InputArea::UnGrabKeyboard ()
   {
-    GetThreadGLWindow()->UngrabKeyboard (this);
+    GetWindowCompositor ().GrabKeyboardRemove (this);
   }
   
   bool InputArea::OwnsPointerGrab ()
   {
-    return GetThreadGLWindow ()->PointerGrabData () == this;
+    return GetWindowCompositor ().GetPointerGrabArea () == this;
   }
   
   bool InputArea::OwnsKeyboardGrab ()
   {
-    return GetThreadGLWindow ()->KeyboardGrabData () == this;
+    return GetWindowCompositor ().GetKeyboardGrabArea () == this;
   }
 
 }
