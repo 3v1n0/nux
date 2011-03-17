@@ -138,6 +138,9 @@ void GetPciId (int &device_id, int &vendor_id)
 
 bool UnitySupportTest ()
 {
+  int opengl_major;
+  int opengl_minor;
+
   nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("------------------------"));
   nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("Graphics device info ..."));
   nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("------------------------"));
@@ -145,9 +148,14 @@ bool UnitySupportTest ()
   nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 100, 100, nux::WINDOWSTYLE_NORMAL, 0, false, false);
   nux::GpuDevice* gpu_device = graphics_display->GetGpuDevice();
 
-  
-  int opengl_major = gpu_device->GetOpenGLMajorVersion ();
-  int opengl_minor = gpu_device->GetOpenGLMinorVersion ();
+  if (gpu_device == NULL)
+  {
+    nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_CRITICAL, "No GPU detected");
+    goto eval;
+  }
+
+  opengl_major = gpu_device->GetOpenGLMajorVersion ();
+  opengl_minor = gpu_device->GetOpenGLMinorVersion ();
 
   nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("------------------------"));
   nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("OpenGL version check ..."));
@@ -240,6 +248,7 @@ bool UnitySupportTest ()
     nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_ALERT, "Pixel Buffer Object: NO [Optional]");
   }
 
+eval:
   // Evaluation
   nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("---------------------------"));
   nux::LogOutputSeverityMessage (nux::NUX_MSG_SEVERITY_NONE, TEXT("Unity support assesment ..."));
