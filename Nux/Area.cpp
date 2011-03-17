@@ -846,34 +846,4 @@ namespace nux
     nux::GetWindowThread ()->QueueObjectLayout (this);
   }
   
-  void Area::GrabPointer ()
-  {
-    GetThreadGLWindow()->GrabPointer (NULL, this, true);
-  }
-  
-  void Area::UnGrabPointer ()
-  {
-    GetThreadGLWindow()->UngrabPointer (this);
-  }
-
-  void Area::GrabKeyboard ()
-  {
-    GetThreadGLWindow()->GrabKeyboard (NULL, this, true);
-  }
-  
-  void Area::UnGrabKeyboard ()
-  {
-    GetThreadGLWindow()->UngrabKeyboard (this);
-  }
-  
-  bool Area::OwnsPointerGrab ()
-  {
-    return GetThreadGLWindow ()->PointerGrabData () == this;
-  }
-  
-  bool Area::OwnsKeyboardGrab ()
-  {
-    return GetThreadGLWindow ()->KeyboardGrabData () == this;
-  }
-
 }

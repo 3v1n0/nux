@@ -816,6 +816,36 @@ namespace nux
     Area::DoSetFocused (focused);
     SetKeyboardFocus (focused);
   }
+  
+  void InputArea::GrabPointer ()
+  {
+    GetThreadGLWindow()->GrabPointer (NULL, this, true);
+  }
+  
+  void InputArea::UnGrabPointer ()
+  {
+    GetThreadGLWindow()->UngrabPointer (this);
+  }
+
+  void InputArea::GrabKeyboard ()
+  {
+    GetThreadGLWindow()->GrabKeyboard (NULL, this, true);
+  }
+  
+  void InputArea::UnGrabKeyboard ()
+  {
+    GetThreadGLWindow()->UngrabKeyboard (this);
+  }
+  
+  bool InputArea::OwnsPointerGrab ()
+  {
+    return GetThreadGLWindow ()->PointerGrabData () == this;
+  }
+  
+  bool InputArea::OwnsKeyboardGrab ()
+  {
+    return GetThreadGLWindow ()->KeyboardGrabData () == this;
+  }
 
 }
 
