@@ -231,6 +231,7 @@ namespace nux
     bool m_UseStyleDrawing;
     bool _is_view_active;
 
+    friend class WindowCompositor;
     friend class Layout;
     friend class Area;
     friend class LayeredLayout;
