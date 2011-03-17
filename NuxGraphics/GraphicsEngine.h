@@ -374,6 +374,9 @@ namespace nux
     void EmptyClippingRegion ();
     //! Set the clipping according to the clipping rectangle stack.
     void ApplyClippingRectangle ();
+    
+    void SetGlobalClippingRectangle (Rect rect);
+    void DisableGlobalClippingRectangle ();
 
     //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
     /*!
@@ -821,6 +824,7 @@ namespace nux
     int _clip_offset_x;
     int _clip_offset_y;
     Rect _clipping_rect;
+    Rect _global_clipping_rect;
     std::list<Point> _clip_offset_stack;
 
 //     int m_ScissorXOffset, m_ScissorYOffset;

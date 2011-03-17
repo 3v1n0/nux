@@ -109,8 +109,8 @@ namespace nux
     Area* GetChildAtPosition (int pos);
     virtual long DoFocusUp  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual long DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    //virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    //virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     
   private:
     Size _children_size;

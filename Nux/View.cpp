@@ -49,6 +49,11 @@ namespace nux
 
   View::~View()
   {
+    if (GetFocused () && HasPassiveFocus() == false)
+    {
+      nux::GetWindowThread ()->SetFocusedArea (NULL);
+    }
+    
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
     GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
@@ -71,8 +76,11 @@ namespace nux
 
     Area *parent = GetParentObject ();
     if (parent == NULL)
+    {
+      GetLayout ()->SetFocused (false);
       GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
-
+    }
+    
     if (parent != NULL && parent->IsLayout ())
     {
       Layout *parent_layout = (Layout *)parent;
@@ -262,6 +270,7 @@ namespace nux
       }
     }
 
+// just leave this here, its helpful for debugging focus issues :)
 //     if (GetFocused () && _can_pass_focus_to_composite_layout == false)
 //     {
 //       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (0.2, 1.0, 0.2, 1.0));
@@ -294,7 +303,7 @@ namespace nux
     //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetWindowThread ();
     if(application)
-    {
+    {       
       application->AddToDrawList(this);
       application->RequestRedraw();
       //GetWindowCompositor().AddToDrawList(this);
@@ -372,8 +381,13 @@ namespace nux
     }
 
     if (m_CompositionLayout)
-      m_CompositionLayout->UnParentObject();
+    {
+      if (GetFocused ())
+        m_CompositionLayout->SetFocused (false);
 
+      _on_focus_changed_handler.disconnect ();
+      m_CompositionLayout->UnParentObject();
+    }
     layout->SetParentObject (this);
     m_CompositionLayout = layout;
 
@@ -381,7 +395,14 @@ namespace nux
     if (GetFocused ())
       layout->SetFocused (true);
 
+    _on_focus_changed_handler = layout->ChildFocusChanged.connect (sigc::mem_fun (this, &View::OnChildFocusChanged));
     return true;
+  }
+
+  //propogate the signal 
+  void View::OnChildFocusChanged (Area *parent, Area *child)
+  {
+    ChildFocusChanged.emit (parent, child);
   }
 
   bool View::SetCompositionLayout (Layout *layout)
@@ -472,26 +493,38 @@ namespace nux
     QueueDraw ();
   }
 
+  bool View::DoGetFocused ()
+  {
+    if (HasPassiveFocus ())
+      return GetLayout ()->GetFocused ();
+
+    return _is_focused;
+  }
+
   void View::DoSetFocused (bool focused)
   {
-    QueueDraw ();
-    if (_can_pass_focus_to_composite_layout)
+    if (GetFocused () == focused)
+    {
+      return;
+    }
+
+    InputArea::DoSetFocused (focused);
+    
+    if (HasPassiveFocus ())
     {
       Layout *layout = GetLayout ();
+
       InputArea::DoSetFocused (focused);
 
       if (layout != NULL)
       {
         layout->SetFocused (focused);
       }
-      else
-      {
-        InputArea::DoSetFocused (focused);
-      }
     }
-    else
+    else if (focused == true)
     {
-      InputArea::DoSetFocused (focused);
+      // we only set the focused area if we are not passing focus
+      nux::GetWindowThread ()->SetFocusedArea (this);
     }
 
     if (focused == false)
@@ -502,15 +535,11 @@ namespace nux
         return;
 
       if (_parent->IsLayout ())
-        has_focused_entry = (Layout *)(_parent)->GetFocused ();
+        has_focused_entry = _parent->GetFocused ();
 
       if (has_focused_entry == false)
         SetFocusControl (false);
 
-    }
-    else
-    {
-      InputArea::DoSetFocused (focused);
     }
   }
 
@@ -536,10 +565,20 @@ namespace nux
   void View::SetCanFocus (bool can_focus)
   {
     _can_focus = can_focus;
-    if (_can_focus == False && GetFocused ())
+    if ((_can_focus == false) && GetFocused ())
     {
       SetFocused (false);
     }
+  }
+
+  // if we have a layout, returns true if we pass focus to it
+  // else returns false
+  bool View::HasPassiveFocus ()
+  {
+    if (_can_pass_focus_to_composite_layout && GetLayout () != NULL)
+      return true;
+
+    return false;
   }
 
   void View::SetFocusControl (bool focus_control)

@@ -104,12 +104,13 @@ am__objects_1 = libnux_core_@NUX_API_VERSION@_la-TextString.lo \
 	libnux_core_@NUX_API_VERSION@_la-NUni.lo \
 	libnux_core_@NUX_API_VERSION@_la-NUnicode.lo \
 	libnux_core_@NUX_API_VERSION@_la-Color.lo \
+	libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo \
+	libnux_core_@NUX_API_VERSION@_la-Colors.lo \
 	libnux_core_@NUX_API_VERSION@_la-FileName.lo \
 	libnux_core_@NUX_API_VERSION@_la-ThreadGNU.lo \
 	libnux_core_@NUX_API_VERSION@_la-Parsing.lo \
 	libnux_core_@NUX_API_VERSION@_la-CPU.lo \
 	libnux_core_@NUX_API_VERSION@_la-Error.lo \
-	libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo \
 	libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo \
 	libnux_core_@NUX_API_VERSION@_la-Point.lo \
 	libnux_core_@NUX_API_VERSION@_la-GlobalInitializer.lo \
@@ -422,12 +423,13 @@ source_cpp = \
   $(srcdir)/Character/NUni.cpp \
   $(srcdir)/Character/NUnicode.cpp \
   $(srcdir)/Color.cpp \
+  $(srcdir)/ColorFunctions.cpp \
+  $(srcdir)/Colors.cpp \
   $(srcdir)/FileName.cpp \
   $(srcdir)/ThreadGNU.cpp \
   $(srcdir)/Parsing.cpp \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
-  $(srcdir)/ColorFunctions.cpp \
   $(srcdir)/NUniqueIndex.cpp \
   $(srcdir)/Point.cpp \
   $(srcdir)/GlobalInitializer.cpp \
@@ -519,6 +521,8 @@ source_h = \
   $(srcdir)/Platform.h \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
+  $(srcdir)/ColorFunctions.h \
+  $(srcdir)/Colors.h \
   $(srcdir)/StreamBuffer.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
@@ -532,7 +536,6 @@ source_h = \
   $(srcdir)/ObjectPtr.h \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/Object.h \
-  $(srcdir)/ColorFunctions.h \
   $(srcdir)/Size.h \
   $(srcdir)/Exception.h \
   $(srcdir)/TimeFunctions.h \
@@ -657,6 +660,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Color.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Colors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Complex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Constants.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Error.Plo@am__quote@
@@ -895,6 +899,22 @@ libnux_core_@NUX_API_VERSION@_la-Color.lo: $(srcdir)/Color.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Color.lo `test -f '$(srcdir)/Color.cpp' || echo '$(srcdir)/'`$(srcdir)/Color.cpp
 
+libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo: $(srcdir)/ColorFunctions.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo `test -f '$(srcdir)/ColorFunctions.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorFunctions.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ColorFunctions.cpp' object='libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo `test -f '$(srcdir)/ColorFunctions.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorFunctions.cpp
+
+libnux_core_@NUX_API_VERSION@_la-Colors.lo: $(srcdir)/Colors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-Colors.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Colors.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-Colors.lo `test -f '$(srcdir)/Colors.cpp' || echo '$(srcdir)/'`$(srcdir)/Colors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Colors.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Colors.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Colors.cpp' object='libnux_core_@NUX_API_VERSION@_la-Colors.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Colors.lo `test -f '$(srcdir)/Colors.cpp' || echo '$(srcdir)/'`$(srcdir)/Colors.cpp
+
 libnux_core_@NUX_API_VERSION@_la-FileName.lo: $(srcdir)/FileName.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-FileName.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-FileName.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-FileName.lo `test -f '$(srcdir)/FileName.cpp' || echo '$(srcdir)/'`$(srcdir)/FileName.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-FileName.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-FileName.Plo
@@ -934,14 +954,6 @@ libnux_core_@NUX_API_VERSION@_la-Error.lo: $(srcdir)/Error.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Error.cpp' object='libnux_core_@NUX_API_VERSION@_la-Error.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Error.lo `test -f '$(srcdir)/Error.cpp' || echo '$(srcdir)/'`$(srcdir)/Error.cpp
-
-libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo: $(srcdir)/ColorFunctions.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo `test -f '$(srcdir)/ColorFunctions.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorFunctions.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ColorFunctions.cpp' object='libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo `test -f '$(srcdir)/ColorFunctions.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorFunctions.cpp
 
 libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo: $(srcdir)/NUniqueIndex.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo `test -f '$(srcdir)/NUniqueIndex.cpp' || echo '$(srcdir)/'`$(srcdir)/NUniqueIndex.cpp

@@ -323,9 +323,9 @@ namespace nux
       : m_painter (painter)
     {
       if (PushAndDraw)
-        m_painter.PushDrawShapeLayer (GfxContext, geo, image_style, Color::White, eAllCorners);
+        m_painter.PushDrawShapeLayer (GfxContext, geo, image_style, Colors::White, eAllCorners);
       else
-        m_painter.PushShapeLayer (GfxContext, geo, image_style, Color::White, eAllCorners);
+        m_painter.PushShapeLayer (GfxContext, geo, image_style, Colors::White, eAllCorners);
     }
 
     ~PushBackgroundScope()

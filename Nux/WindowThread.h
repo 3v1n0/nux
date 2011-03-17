@@ -40,6 +40,7 @@ namespace nux
   class TimerHandler;
   class Timeline;
   class Event;
+  class Area;
   struct ClientAreaDraw;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -214,7 +215,7 @@ namespace nux
     bool ProcessForeignEvent (XEvent *event, void *data);
 #endif
 
-    void RenderInterfaceFromForeignCmd();
+    void RenderInterfaceFromForeignCmd(nux::Geometry *clip);
 
     virtual unsigned int Run (void *);
 
@@ -383,7 +384,7 @@ namespace nux
        @param data     User defined data.
        @return         Unique id for the event inspector callback.
     */
-    int InstallEventInspector (EventInspector* function, void* data);
+    int InstallEventInspector (EventInspector function, void* data);
 
     //! Remove an event inspector.
     /*!
@@ -401,7 +402,7 @@ namespace nux
        @param function Event inspector function callback.
        @return True    If the event inspector exists and has been removed.
     */
-    bool RemoveEventInspector (EventInspector* function);
+    bool RemoveEventInspector (EventInspector function);
 
     //! Call event inspectors.
     /*!
@@ -411,6 +412,12 @@ namespace nux
     */
     bool CallEventInspectors (Event* event);
 
+    /*!
+     
+        Sets the focused item on the screen
+    */
+    void SetFocusedArea (Area *focused_area);
+    
   protected:
     //! Compute the layout of this window thread.
     /*!
@@ -462,6 +469,7 @@ namespace nux
     std::list< ThreadInfo * > m_ChildThreadInfo;
 
   private:
+    Area *_focused_area;
     //! Informs the system of the start of a layout cycle.
     /*!
         This call merely sets a flag to true or false. This flag is used to decided if some actions should be 
@@ -555,7 +563,7 @@ namespace nux
         _data = 0;
         _uid = 0;
       }
-      EventInspector* _function;
+      EventInspector  _function;
       void*           _data;
       int             _uid;
     } EventInspectorStorage;

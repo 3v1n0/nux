@@ -126,6 +126,7 @@ namespace nux
     */
     sigc::signal <void, TextEntry*> sigTextChanged;
     sigc::signal <void> activated;
+    sigc::signal <void, int> cursor_moved;
 
 //     void SetWidth(int width);
 //     int GetWidth();
@@ -459,6 +460,8 @@ namespace nux
 
     cairo_font_options_t *font_options_;
     double font_dpi_;
+
+    int full_height_;
 
 //     /** The background texture of the edit control */
 //     Texture *background_;

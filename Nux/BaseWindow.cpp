@@ -345,35 +345,10 @@ namespace nux
     return m_input_window_enabled && m_input_window->StrutsEnabled ();
   }
   
-  void BaseWindow::GrabPointer ()
-  {
-    if (m_input_window)
-      m_input_window->GrabPointer ();
-      
-  }
-  
-  void BaseWindow::UnGrabPointer ()
-  {
-    if (m_input_window)
-      m_input_window->UnGrabPointer ();    
-  }
-
   void BaseWindow::SetInputFocus ()
   {
     if (m_input_window)
       m_input_window->SetInputFocus ();
-  }
-
-  void BaseWindow::GrabKeyboard ()
-  {
-    if (m_input_window)
-      m_input_window->GrabKeyboard ();
-  }
-  
-  void BaseWindow::UnGrabKeyboard ()
-  {
-    if (m_input_window)
-      m_input_window->UnGrabKeyboard ();    
   }
 
   Window BaseWindow::GetInputWindowId ()
