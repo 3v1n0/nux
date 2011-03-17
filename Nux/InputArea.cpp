@@ -187,18 +187,18 @@ namespace nux
       return TraverseInfo;
     }
 
-    // Regular event processing.
-    if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
-    {
-      // Skip the area that has the exclusivity on events
-      return 0;
-    }
-
-    if (GetWindowCompositor ().InExclusiveInputMode ())
-    {
-      // Bypass the regular processing and use a simplified processing of events.
-      return ProcessEventInExclusiveMode (event, TraverseInfo, ProcessEventInfo);
-    }
+//     // Regular event processing.
+//     if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
+//     {
+//       // Skip the area that has the exclusivity on events
+//       return 0;
+//     }
+// 
+//     if (GetWindowCompositor ().InExclusiveInputMode ())
+//     {
+//       // Bypass the regular processing and use a simplified processing of events.
+//       return ProcessEventInExclusiveMode (event, TraverseInfo, ProcessEventInfo);
+//     }
 
 
     InputArea *PreviousMouseOverArea = GetWindowCompositor().GetPreviousMouseOverArea();

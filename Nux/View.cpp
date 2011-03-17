@@ -502,7 +502,7 @@ namespace nux
         return;
 
       if (_parent->IsLayout ())
-        has_focused_entry = (Layout *)(_parent)->GetFocused ();
+        has_focused_entry = _parent->GetFocused ();
 
       if (has_focused_entry == false)
         SetFocusControl (false);
