@@ -176,6 +176,7 @@ namespace nux
     virtual long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void DoSetFocused (bool focused);
     virtual bool DoCanFocus ();
+    virtual bool DoGetFocused ();
     void SetCanFocus (bool can_focus);
     void SetFocusControl (bool focus_control);
     bool HasFocusControl ();

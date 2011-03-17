@@ -560,7 +560,7 @@ namespace nux
     Area *focused_child = GetFocusedChild ();
     if (focused_child == NULL) return ProcessEventInfo;
     bool success = FocusPreviousChild (focused_child);
-    focused_child->SetFocused (false);
+    //focused_child->SetFocused (false);
     
     if (success == false)
     {
@@ -579,7 +579,7 @@ namespace nux
     Area *focused_child = GetFocusedChild ();
     if (focused_child == NULL) return ProcessEventInfo;
     bool success = FocusNextChild(focused_child);
-    focused_child->SetFocused (false);
+    //focused_child->SetFocused (false);
 
     if (success == false)
     {
@@ -665,9 +665,7 @@ namespace nux
               }
               else
               {
-                bool success = FocusLastChild ();
-                if (success)
-                  focused_child->SetFocused (false);
+                FocusLastChild ();
               }
               return ret;
             }
@@ -682,9 +680,7 @@ namespace nux
               }
               else
               {
-                bool success = FocusFirstChild ();
-                if (success)
-                  focused_child->SetFocused (false);
+                FocusFirstChild ();
               }
               return ret;
             }
@@ -715,32 +711,6 @@ namespace nux
           }
 
           return ret;
-          
-
-//           if (direction == FOCUS_DIRECTION_NEXT // we don't support RTL yet, for shame!
-//             || direction == FOCUS_DIRECTION_RIGHT
-//             || direction == FOCUS_DIRECTION_DOWN)
-//           {
-// 
-// 
-//             //~ if (success == false)
-//               //~ // no next focused, thats weird. lets propagate up
-//               //~ return SendEventToArea (parent, ievent, ret, ProcessEventInfo);
-//           }
-// 
-//           if (direction == FOCUS_DIRECTION_PREV // we don't support RTL yet, for shame!
-//             || direction == FOCUS_DIRECTION_LEFT
-//             || direction == FOCUS_DIRECTION_UP)
-//           {
-//             bool success = FocusPreviousChild(focused_child);
-// 
-//             if (success)
-//             {
-//               focused_child->SetFocused (false);
-//               return ret;
-//             }
-//           }
-
         }
       }
 
@@ -796,8 +766,6 @@ namespace nux
   void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     std::list<Area *>::iterator it;
-
-    //GfxContext.PushClipOffset (_delta_x, _delta_y);
     GfxContext.PushModelViewMatrix (Get2DMatrix ());
     GfxContext.PushClippingRectangle (GetGeometry ());
 
@@ -903,9 +871,6 @@ namespace nux
   /* Focusable Code */
   bool Layout::DoGetFocused ()
   {
-    if (_is_focused)
-      return true;
-
     bool focused = false;
 
     std::list<Area *>::iterator it;
@@ -949,7 +914,6 @@ namespace nux
 
       }
     }
-
     else
     {
       SetFocusControl (true);
@@ -970,7 +934,9 @@ namespace nux
       // we need to chain up
       Area *_parent = GetParentObject();
       if (_parent == NULL)
+      {
         return;
+      }
 
       if (_parent->IsView ())
       {

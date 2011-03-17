@@ -78,6 +78,7 @@ namespace nux
   }
   long VLayout::DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
+    g_debug ("VLAYOUT:: DO FOCUS RIGHT");
     Area *parent = GetParentObject ();
     if (parent != NULL)
       return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
