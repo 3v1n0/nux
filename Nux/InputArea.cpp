@@ -187,18 +187,18 @@ namespace nux
       return TraverseInfo;
     }
 
-    // Regular event processing.
-    if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
-    {
-      // Skip the area that has the exclusivity on events
-      return 0;
-    }
-
-    if (GetWindowCompositor ().InExclusiveInputMode ())
-    {
-      // Bypass the regular processing and use a simplified processing of events.
-      return ProcessEventInExclusiveMode (event, TraverseInfo, ProcessEventInfo);
-    }
+//     // Regular event processing.
+//     if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
+//     {
+//       // Skip the area that has the exclusivity on events
+//       return 0;
+//     }
+// 
+//     if (GetWindowCompositor ().InExclusiveInputMode ())
+//     {
+//       // Bypass the regular processing and use a simplified processing of events.
+//       return ProcessEventInExclusiveMode (event, TraverseInfo, ProcessEventInfo);
+//     }
 
 
     InputArea *PreviousMouseOverArea = GetWindowCompositor().GetPreviousMouseOverArea();
@@ -815,6 +815,36 @@ namespace nux
   {
     Area::DoSetFocused (focused);
     SetKeyboardFocus (focused);
+  }
+  
+  void InputArea::GrabPointer ()
+  {
+    GetWindowCompositor ().GrabPointerAdd (this);
+  }
+  
+  void InputArea::UnGrabPointer ()
+  {
+    GetWindowCompositor ().GrabPointerRemove (this);
+  }
+
+  void InputArea::GrabKeyboard ()
+  {
+    GetWindowCompositor ().GrabKeyboardAdd (this);
+  }
+  
+  void InputArea::UnGrabKeyboard ()
+  {
+    GetWindowCompositor ().GrabKeyboardRemove (this);
+  }
+  
+  bool InputArea::OwnsPointerGrab ()
+  {
+    return GetWindowCompositor ().GetPointerGrabArea () == this;
+  }
+  
+  bool InputArea::OwnsKeyboardGrab ()
+  {
+    return GetWindowCompositor ().GetKeyboardGrabArea () == this;
   }
 
 }

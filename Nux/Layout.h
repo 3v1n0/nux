@@ -231,8 +231,6 @@ namespace nux
 
     bool HasFocusableEntries ();
 
-    sigc::signal <void, Layout *, Area*> ChildFocusChanged;
-
     // this should not be public, but has to be because of nux's object setup
     long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     bool _has_focus_control;
@@ -252,8 +250,9 @@ namespace nux
     virtual bool FocusLastChild ();
     virtual bool FocusNextChild (Area *child);
     virtual bool FocusPreviousChild (Area *child);
+    void OnChildFocusChanged (Area *parent, Area *child);
     
-    
+    std::map<Area*, sigc::connection> _connection_map; // map our children to connections
     
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
 

@@ -23,11 +23,13 @@
 #ifndef BASEOBJECT_H
 #define BASEOBJECT_H
 
+#include <sigc++/sigc++.h>
 #include "NuxCore/InitiallyUnownedObject.h"
 #include "Focusable.h"
 #include "Utils.h"
 #include "WidgetMetrics.h"
 #include "WidgetSmartPointer.h"
+
 
 
 
@@ -46,7 +48,7 @@ namespace nux
 //        minor dimension inside the layout can be controlled with MinorDimensionPosition.
 // eFull = The minor dimension of the object will take the entire size that is offered by the parent layout.
 //         MinorDimensionPosition has no effect if MinorDimensionSize = eFull
-// eContent = The minor dimension of the object will be set to 1 by its parent and later on, the minor dimemsion will be
+// eContent = The minor dimension of the object will be set to 1 by its parent and later on, the minor dimension will be
 //         resized larger by the children of the element if necessary.
 //
 
@@ -129,11 +131,8 @@ namespace nux
 
   class Area: public InitiallyUnownedObject, public Focusable
   {
-  public:
     NUX_DECLARE_OBJECT_TYPE (Area, InitiallyUnownedObject);
-    //static NObjectType StaticObjectType;
-    //virtual NObjectType* Type() { return &StaticObjectType; }
-
+  public:
     class LayoutProperties
     {
       public:
@@ -197,10 +196,10 @@ namespace nux
     //! Set the geometry of the object.
     /*!
         Set the width, height, and x, y position of the object on the screen.
-        \param x Horizontal position.
-        \param y Vertical position.
-        \param w Width.
-        \param h Height.
+        @param x Horizontal position.
+        @param y Vertical position.
+        @param w Width.
+        @param h Height.
 
         \sa SetBaseWidth(), SetBaseHeight(), SetBaseX(), SetBaseY().
     */
@@ -210,7 +209,8 @@ namespace nux
     /*!
         This is an overloaded member function, provided for convenience.
         It behaves essentially like SetGeometry(int x, int y, int w, int h).
-        \param geo Geometry object.
+
+        @param geo Geometry object.
         \sa SetWidth(), SetHeight(), SetX(), SetY().
     */
     void SetGeometry (const Geometry &geo);
@@ -247,18 +247,18 @@ namespace nux
 
     //! Set the layout properties for this area
     /*!
-    Allows the Layout managing this area to store the properties specifc to this area. Layouts
-    should create a sub-class of LayoutProperties. The LayoutProperties of an area will
-    be deleted upon destruction.
-    \param properties the LayoutProperties sub-class  associated with this area. Can be NULL to
-     unset.
+        Allows the Layout managing this area to store the properties specifc to this area. Layouts
+        should create a sub-class of LayoutProperties. The LayoutProperties of an area will
+        be deleted upon destruction.
+        @param properties the LayoutProperties sub-class  associated with this area. Can be NULL to
+         unset.
     */
     void SetLayoutProperties (LayoutProperties *properties);
 
     //! Get the layout properties for this area
     /*!
-    Retrieves the LayoutProperties sub-class with this area. See SetLayoutProperties
-    \return LayoutProperties sub-class associated with this area.
+        Retrieves the LayoutProperties sub-class with this area. See SetLayoutProperties
+        @return LayoutProperties sub-class associated with this area.
     */
     LayoutProperties * GetLayoutProperties ();
 
@@ -299,10 +299,11 @@ namespace nux
     
     sigc::signal <void, Area *> FocusActivated;
     sigc::signal <void, Area *> FocusChanged;
+    sigc::signal <void, Area*, Area*> ChildFocusChanged; // sends parent + child
+
     //! Queue a relayout
     /*!
-    Queues a relayout before the next paint cycle. This is safe to call multiple times within
-    a cycle.
+        Queues a relayout before the next paint cycle. This is safe to call multiple times within a cycle.
     */
     void QueueRelayout ();
 
@@ -328,17 +329,56 @@ namespace nux
     bool Is3DArea () const;
 
     //! Return the position of this object with regard to its top left corner of the physical window.
+    /*!
+        Return the position of the Area inside the physical window.
+        For the main layout set in WindowThread, The following functions are equivalent:
+        \li GetGeometry ()
+        \li GetRootGeometry ()
+        \li GetAbsoluteGeometry ()
+    */
     Geometry GetAbsoluteGeometry () const;
+
+    //! Return the area absolute x coordinate.
     int GetAbsoluteX () const;
+    
+    //! Return the area absolute y coordinate.
     int GetAbsoluteY () const;
+    
+    //! Return the area absolute width.
+    /*!
+        As long as _2d_xform contains only translations, the absolute width is the same as value returned by GetBaseWidth ();
+    */
     int GetAbsoluteWidth () const;
+    
+    //! Return the area absolute height.
+    /*!
+        As long as _2d_xform contains only translations, the absolute height is the same as value returned by GetBaseHeight ();
+    */
     int GetAbsoluteHeight () const;
 
     //! Return the position of this object with regard to its top level parent (the main layout or a BaseWindow).
+    /*!
+        Return the position of the Area inside the physical window.
+        For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry () is equivalent to GetGeometry ().
+    */
     Geometry GetRootGeometry () const;
+
+    //! Return the area root x coordinate.
     int GetRootX () const;
+
+    //! Return the area root y coordinate.
     int GetRootY () const;
+
+    //! Return the area root width.
+    /*!
+        As long as _2d_xform contains only translations, the root width is the same as value returned by GetBaseWidth ();
+    */
     int GetRootWidth () const;
+
+    //! Return the area root height.
+    /*!
+        As long as _2d_xform contains only translations, the root width is the same as value returned by GetBaseWidth ();
+    */
     int GetRootHeight () const;
 
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
@@ -346,9 +386,26 @@ namespace nux
     sigc::signal<void, Area *, bool> OnSensitiveChanged;
     sigc::signal<void, Area *, Geometry&> OnGeometryChanged;
 
+    /*!
+        SetParentObject/UnParentObject are protected API. it is not meant to be used directly by users.
+        Users add widgets to layouts and layout have to be attached to a composition for objects to be rendered.
+        Setting a parent to and child widget does not mean that when the parent is rendered, the child is also rendered.
+        For instance, setting a button the be the child of a check-box means absolutely nothing is terms of rendering.
+        A widget with a parent cannot be added to a added to a layout for rendering. The widget has to be un-parented first.
+        A layout with a parent cannot be added to a widget or another layout for rendering. The layout has to be un-parented first.
+        In essence only View and Layouts should be calling SetParentObject/UnParentObject.
+    */
     virtual void SetParentObject (Area *);
-    virtual void UnParentObject();
 
+    //! Un-parent and area
+    /*!
+        For un-parented areas the following functions are equivalent:
+          \li GetGeometry ()
+          \li GetRootGeometry ()
+          \li GetAbsoluteGeometry ()
+    */
+    virtual void UnParentObject ();
+    
   protected:
     bool _is_focused;
     /*
@@ -357,15 +414,6 @@ namespace nux
     */
     //virtual void RemoveChildObject(smptr(Area));
 
-    /*
-        SetParentObject/UnParentObject are protected API. it is not meant to be used directly by users.
-        Users add widgets to layouts and layout have to be attached to a composition for objects to be rendered.
-        Setting a parent to and child widget does not mean that when the parent is rendered, the child is also rendered.
-        For instance, setting a button the be the child of a checkbox means absolutely nothing is terms of rendering.
-        A widget with a parent cannot be added to a added to a layout for rendering. The widget has to be unparented first.
-        A layout with a parent cannot be added to a widget or another layout for rendering. The layout has to be unparented first.
-        In essence only View and Layouts should be calling SetParentObject/UnParentObject.
-    */
     virtual void GeometryChangePending () {}
     virtual void GeometryChanged () {}
 
@@ -421,9 +469,9 @@ namespace nux
     bool                    _layout_done;     //!< Area layout status flag.
 
 
-    Matrix4                 _2d_xform;      //!< 2D transformation matrix for this area and its children.
-    Matrix4                 _3d_xform;      //!< 3D transformation matrix for the area in a perspective space.
-    bool                    _3d_area;     //!< True if the area is resides in a 3D space.
+    Matrix4                 _2d_xform;        //!< 2D transformation matrix for this area and its children. Contains only translations.
+    Matrix4                 _3d_xform;        //!< 3D transformation matrix for the area in a perspective space.
+    bool                    _3d_area;         //!< True if the area is resides in a 3D space.
 
     std::list<Area*>        _children_list;
 

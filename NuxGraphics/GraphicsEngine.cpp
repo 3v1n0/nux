@@ -614,6 +614,18 @@ namespace nux
       SetOpenGLClippingRectangle (0, 0, _viewport.width, _viewport.height);
     }
   }
+  
+  void GraphicsEngine::SetGlobalClippingRectangle (Rect rect)
+  {
+    _global_clipping_rect = Rect (rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
+    ApplyClippingRectangle ();
+  }
+  
+  void GraphicsEngine::DisableGlobalClippingRectangle ()
+  {
+    _global_clipping_rect = Rect (0, 0, _viewport.width, _viewport.height);
+    ApplyClippingRectangle ();
+  }
 
   Rect GraphicsEngine::GetClippingRegion () const
   {
@@ -641,13 +653,20 @@ namespace nux
   void GraphicsEngine::SetClippingRectangle (const Rect &rect)
   {
     _clipping_rect = rect;
-    SetScissor (rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
+    SetOpenGLClippingRectangle (rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
   }
 
   void GraphicsEngine::SetOpenGLClippingRectangle (int x, int y, unsigned int width, unsigned int height)
   {
-    //_clipping_rect = Rect (x, y, width, height);
-    SetScissor (x, y, width, height);
+    if (!_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
+    {
+      Rect intersection = Rect (x, y, width, height).Intersect (_global_clipping_rect);
+      SetScissor (intersection.x, intersection.y, intersection.width, intersection.height);
+    }
+    else
+    {
+      SetScissor (x, y, width, height);
+    }
   }
 
   int GraphicsEngine::GetNumberOfClippingRegions () const
@@ -1183,7 +1202,7 @@ namespace nux
     //CHECKGL (glEnable(GL_DEPTH_TEST));
     //CHECKGL (glDepthFunc(GL_ALWAYS));
 
-    QRP_Color(x, y, width, height, Color::Black);
+    QRP_Color(x, y, width, height, Colors::Black);
 
     //CHECKGL( glDepthFunc(GL_LESS) );
     //CHECKGL( glDisable(GL_DEPTH_TEST) );

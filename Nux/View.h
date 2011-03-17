@@ -176,12 +176,21 @@ namespace nux
     virtual long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void DoSetFocused (bool focused);
     virtual bool DoCanFocus ();
+    virtual bool DoGetFocused ();
     void SetCanFocus (bool can_focus);
     void SetFocusControl (bool focus_control);
     bool HasFocusControl ();
 
+    /*
+        Returns true if the view has a layout and passes focus to that layout
+    */
+    bool HasPassiveFocus ();
+
   protected:
     bool _can_focus;
+
+    void OnChildFocusChanged (Area *parent, Area *child);
+    sigc::connection _on_focus_changed_handler;
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
@@ -231,6 +240,7 @@ namespace nux
     bool m_UseStyleDrawing;
     bool _is_view_active;
 
+    friend class WindowCompositor;
     friend class Layout;
     friend class Area;
     friend class LayeredLayout;

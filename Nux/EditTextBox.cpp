@@ -55,7 +55,7 @@ namespace nux
     OnEndFocus.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
 
     SetText (Caption);
-    SetTextColor (Color::White);
+    SetTextColor (Colors::White);
     m_BackgroundColor = Color (0xFF343434); //COLOR_TEXTEDIT_BACKGROUNG;
     m_SelectedTextColor = Color (0xFFFAFAFA);
     m_SelectedTextBackgroundColor = Color (0xFF777777);

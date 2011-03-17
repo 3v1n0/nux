@@ -825,7 +825,7 @@ namespace nux
   {
     if (_is_focused == focused)
       return;
-
+    
     _is_focused = focused;
     FocusChanged.emit (this);
   }
@@ -845,5 +845,5 @@ namespace nux
   {
     nux::GetWindowThread ()->QueueObjectLayout (this);
   }
-
+  
 }

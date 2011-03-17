@@ -154,7 +154,7 @@ namespace nux
   {
     if (window == 0)
       return;
-
+      
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
 
     if (it == _view_window_list.end() )
@@ -202,7 +202,7 @@ namespace nux
     }
   }
 
-  long WindowCompositor::ProcessEventOnObject (IEvent &event, Area *object, long TraverseInfo, long ProcessEventInfo)
+  long WindowCompositor::DispatchEventToArea (IEvent &event, Area *object, long TraverseInfo, long ProcessEventInfo)
   {
     if (object == 0)
       return 0;
@@ -230,24 +230,68 @@ namespace nux
     return ret;
   }
 
+  long WindowCompositor::DispatchEventToView (Event &event, View *view, long TraverseInfo, long ProcessEventInfo)
+  {
+    if (view == 0)
+      return 0;
+
+    long ret = 0;
+
+    event.e_x_root = _event_root.x;
+    event.e_y_root = _event_root.y;
+
+    if (view->Type().IsDerivedFromType (InputArea::StaticObjectType))
+    {
+      //View *base_area = NUX_STATIC_CAST (View *, view);
+      ret = view->ProcessEvent (event, TraverseInfo, ProcessEventInfo);
+    }
+    else
+    {
+      nuxAssertMsg (0, TEXT ("This should not happen"));
+    }
+
+    return ret;    
+  }
+
   // NUXTODO: rename as EventCycle
   void WindowCompositor::ProcessEvent (Event &event)
   {
     // Event processing cycle begins.
     _inside_event_processing = true;
-    _pending_exclusive_input_mode_action = false;
 
-    long exclusive_event_cycle_report = 0;
-    if (_in_exclusive_input_mode && _exclusive_input_area)
+    if ((event.e_event == NUX_KEYDOWN) ||
+      (event.e_event == NUX_KEYUP))
     {
-      exclusive_event_cycle_report = ProcessEventOnObject (event, _exclusive_input_area, 0, EVENT_CYCLE_EXCLUSIVE);
+      Area *keyboard_grab_area = GetKeyboardGrabArea ();
+      if (keyboard_grab_area)
+      {
+        ViewWindowPreEventCycle ();
+        
+        DispatchEventToView (event, (View*) keyboard_grab_area, 0, 0);
+        
+        ViewWindowPostEventCycle ();
+
+        return;
+      }
     }
 
-
-    if (_in_exclusive_input_mode && (!(exclusive_event_cycle_report & EVENT_CYCLE_EXCLUSIVE_CONTINUE)))
+    if ((event.e_event == NUX_MOUSE_PRESSED) ||
+      (event.e_event == NUX_MOUSE_RELEASED) ||
+      (event.e_event == NUX_MOUSE_MOVE) ||
+      (event.e_event == NUX_MOUSE_WHEEL) ||
+      (event.e_event == NUX_MOUSE_DOUBLECLICK))
     {
-      _inside_event_processing = false;
-      return;
+      Area *pointer_grab_area = GetPointerGrabArea ();
+      if (pointer_grab_area)
+      {
+        ViewWindowPreEventCycle ();
+
+        DispatchEventToView (event, (View*) pointer_grab_area, 0, 0);
+
+        ViewWindowPostEventCycle ();
+
+        return;
+      }
     }
 
     long ret = 0;
@@ -269,7 +313,7 @@ namespace nux
     {
       SetCurrentEvent (&event);
       SetProcessingTopView (GetFocusAreaWindow());
-      ProcessEventOnObject (event, GetMouseFocusArea(), 0, 0);
+      DispatchEventToArea (event, GetMouseFocusArea(), 0, 0);
 
       if (event.e_event == NUX_MOUSE_RELEASED)
       {
@@ -365,14 +409,10 @@ namespace nux
       /////////////////////////////////////////
       // Start ViewWindow event processing.
       /////////////////////////////////////////
+
+      ViewWindowPreEventCycle ();
+
       std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
-      for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
-      {
-        // Reset the preemptive hidden/visible status of all base windows.
-        ObjectWeakPtr<BaseWindow> window = (*it);
-        window->_entering_visible_state = false;
-        window->_entering_hidden_state = false;
-      }
 
       // NUX_WINDOW_ENTER_FOCUS is processed here. This is a window level signal that should not be passed down to
       // individual area. Instead, we make the top level BaseWindow get the keyboard focus.
@@ -380,33 +420,6 @@ namespace nux
       // reset some states if the event is NUX_WINDOW_EXIT_FOCUS.
       if (event.e_event == NUX_WINDOW_ENTER_FOCUS)
       {
-#if defined (NUX_OS_LINUX)
-        if(_modal_view_window_list.size () > 0)
-        {
-          for (it = _modal_view_window_list.begin (); it != _modal_view_window_list.end (); it++)
-          {
-            if ((*it).GetPointer () && ((*it)->GetInputWindowId () == event.e_x11_window))
-            {
-              (*it)->ProcessEnterFocus (event);
-              break;
-            }
-          }
-        }
-        else
-        {
-          if (_view_window_list.size () != 0)
-          {
-            for (it = _view_window_list.begin (); it != _view_window_list.end (); it++)
-            {
-              if ((*it).GetPointer () && ((*it)->GetInputWindowId () == event.e_x11_window))
-              {
-                (*it)->ProcessEnterFocus (event);
-                break;
-              }
-            }
-          }
-        }
-#else        
         if(_modal_view_window_list.size () > 0)
         {
           // The top modal window gets the keyboard focus.
@@ -428,41 +441,7 @@ namespace nux
             }
           }
         }
-#endif
       }
-#if defined (NUX_OS_LINUX)
-      else if (event.e_event == NUX_WINDOW_EXIT_FOCUS)
-      {
-        InputArea* focus_area = GetKeyboardFocusArea ();
-
-        if (focus_area != 0)
-        {
-          Area* top_level = focus_area->GetToplevel ();
-          if (top_level && top_level->Type ().IsDerivedFromType (BaseWindow::StaticObjectType))
-          {
-            if (NUX_STATIC_CAST (BaseWindow*, top_level)->GetInputWindowId () == event.e_x11_window)
-            {
-              if (GetMouseFocusArea () == focus_area)
-              {
-                SetMouseFocusArea (NULL);
-                focus_area->OnEndMouseFocus.emit ();
-              }
-              SetKeyboardFocusArea (NULL);
-              focus_area->OnEndFocus.emit ();
-            }
-          }
-          else if (top_level)
-          {
-            // For area that are not parented to a BaseWindow, parented to the main layout or not parented at all,
-            // it is difficult to take action.
-            // The way X11 sends the FOCUS_IN/FOCUS_OUT events breaks with the way Nux works.
-            // In Nux NUX_WINDOW_ENTER_FOCUS/NUX_WINDOW_EXIT_FOCUS refer the physical window getting in and out of focus.
-            // It does not refer to individual BaseWindows that goes in in and out of focus.
-
-          }
-        }
-      }
-#endif
       else
       {
         if(_modal_view_window_list.size() > 0)
@@ -513,14 +492,49 @@ namespace nux
       SetCurrentEvent (0);
     }
 
+    ViewWindowPostEventCycle ();
+
+    CleanMenu ();
+
+#if defined (NUX_OS_WINDOWS)
+    // Following the processing of NUX_WINDOW_EXIT_FOCUS, reset some states.
+    if (event.e_event == NUX_WINDOW_EXIT_FOCUS)
+    {
+      SetCurrentEvent (&event);
+
+      if (GetMouseFocusArea ())
+        DispatchEventToArea (event, GetMouseFocusArea(), 0, 0);
+
+      SetMouseFocusArea (0);
+      SetMouseOverArea (0);
+      SetKeyboardFocusArea (0);
+      SetCurrentEvent (0);
+    }
+#endif
+  }
+
+  void WindowCompositor::ViewWindowPreEventCycle ()
+  {
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
+    for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
+    {
+      // Reset the preemptive hidden/visible status of all base windows.
+      ObjectWeakPtr<BaseWindow> window = (*it);
+      window->_entering_visible_state = false;
+      window->_entering_hidden_state = false;
+    }
+  }
+
+  void WindowCompositor::ViewWindowPostEventCycle ()
+  {
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
     for (it = _view_window_list.begin (); it != _view_window_list.end (); it++)
     {
-      ObjectWeakPtr<BaseWindow> window = (*it); //NUX_STATIC_CAST (BaseWindow *, (*it));
-      
+      ObjectWeakPtr<BaseWindow> window = (*it);
+
       if (window.IsNull ())
         continue;
-      
+
       // The view window cannot have both _entering_visible_state and _entering_hidden_state being true at the same time
       //nuxAssert (!(window->_entering_visible_state && window->_entering_hidden_state));
 
@@ -541,37 +555,8 @@ namespace nux
     // Event processing cycle has ended.
     _inside_event_processing = false;
 
-    if (!InExclusiveInputMode ())
-    {
-      if ((base_window_reshuffling == true) && (m_SelectedWindow != 0))
-      {
-        // Move the newly selected window at the top of the visibility stack.
-        PushToFront (m_SelectedWindow.GetPointer ());
-      }
-
-      // Make the designated BaseWindow always on top of the stack.
-      EnsureAlwaysOnFrontWindow ();
-    }
-
-    ExecPendingExclusiveInputAreaAction ();
-
-    CleanMenu ();
-
-#if defined (NUX_OS_WINDOWS)
-    // Following the processing of NUX_WINDOW_EXIT_FOCUS, reset some states.
-    if (event.e_event == NUX_WINDOW_EXIT_FOCUS)
-    {
-      SetCurrentEvent (&event);
-
-      if (GetMouseFocusArea ())
-        ProcessEventOnObject (event, GetMouseFocusArea(), 0, 0);
-
-      SetMouseFocusArea (0);
-      SetMouseOverArea (0);
-      SetKeyboardFocusArea (0);
-      SetCurrentEvent (0);
-    }
-#endif
+    // Make the designated BaseWindow always on top of the stack.
+    EnsureAlwaysOnFrontWindow ();
   }
 
   void WindowCompositor::StartModalWindow (ObjectWeakPtr<BaseWindow> window)
@@ -727,12 +712,12 @@ namespace nux
 //       return false;
 //     }
 
-    if (_inside_event_processing)
-    {
-      _pending_exclusive_input_mode_action = true;
-      _exclusive_input_area = input_area;
-    }
-    else
+//     if (_inside_event_processing)
+//     {
+//       _pending_exclusive_input_mode_action = true;
+//       _exclusive_input_area = input_area;
+//     }
+//     else
     {
       // Initiating exclusive mode
       SetMouseFocusArea (NULL);
@@ -1129,6 +1114,7 @@ namespace nux
           CHECKGL ( glDepthMask (GL_FALSE) );
           {
             //CopyTextureToCompositionRT(rt.color_rt, window->GetBaseX(), window->GetBaseY());
+            GetWindowThread ()->GetGraphicsEngine().ApplyClippingRectangle();
             PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity ());
           }
           CHECKGL ( glDepthMask (GL_TRUE) );
@@ -1339,7 +1325,7 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
+    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Colors::White);
   }
 
   void WindowCompositor::SetCompositionRT()
@@ -1379,7 +1365,7 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Color::White);
+    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Colors::White);
   }
 
   void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity)
@@ -1648,6 +1634,14 @@ namespace nux
 
   void WindowCompositor::SetKeyboardFocusArea (InputArea *area)
   {
+    InputArea* keyboard_grab_area = GetKeyboardGrabArea ();
+
+    if (keyboard_grab_area && (area != keyboard_grab_area))
+    {
+      // The area that has the keyboard grab has the priority. Disregard the keyboard focus area.
+      return;
+    }
+
     _keyboard_focus_area = area;
 
     _keyboard_focus_area_conn.disconnect ();
@@ -1789,29 +1783,174 @@ namespace nux
 
   void WindowCompositor::ResetDnDArea()
   {
-#if defined (NUX_OS_LINUX)
-    if (_dnd_area)
-      _dnd_area->HandleDndLeave ();
-    _dnd_area = NULL;
-#endif
+    SetDnDArea (NULL);
   }
 
   void WindowCompositor::SetDnDArea (InputArea* area)
   {
 #if defined (NUX_OS_LINUX)
+    if (_dnd_area == area)
+      return;
+
     if (_dnd_area)
+    {
       _dnd_area->HandleDndLeave ();
-  
+      _dnd_area->UnReference ();
+    }
     _dnd_area = area;
     
     if (_dnd_area)
+    {
+      _dnd_area->Reference ();
       _dnd_area->HandleDndEnter ();
+    }
 #endif
   }
 
   InputArea* WindowCompositor::GetDnDArea ()
   {
     return _dnd_area;
+  }
+
+
+  bool WindowCompositor::GrabPointerAdd (InputArea* area)
+  {
+    NUX_RETURN_VALUE_IF_NULL (area, false);
+    bool result = true;
+
+    if (GetPointerGrabArea () == area)
+    {
+      nuxDebugMsg (TEXT ("[WindowCompositor::GrabPointerAdd] The area alread has the grab"));
+      return result;
+    }
+    
+    if (GetWindow ().PointerGrabData () != this)
+      result = GetWindow ().GrabPointer (NULL, this, true);
+
+    if (result)
+      _pointer_grab_stack.push_front (area);
+
+    return result;
+  }
+
+  bool WindowCompositor::GrabPointerRemove (InputArea* area)
+  {
+    NUX_RETURN_VALUE_IF_NULL (area, false);
+
+    std::list<InputArea*>::iterator it;
+
+    // find the first instance of the area pointer in the stack
+    it = find (_pointer_grab_stack.begin(), _pointer_grab_stack.end(), area);
+
+    if (it == _pointer_grab_stack.end ())
+      return false;
+
+    _pointer_grab_stack.erase (it);
+    
+    if (_pointer_grab_stack.empty ())
+      GetWindow ().UngrabPointer (this);
+    
+    return true;
+  }
+
+  bool WindowCompositor::IsInPointerGrabStack (InputArea* area)
+  {
+    NUX_RETURN_VALUE_IF_NULL (area, false);
+
+    std::list<InputArea*>::iterator it;
+    it = find (_pointer_grab_stack.begin(), _pointer_grab_stack.end(), area);
+
+    if (it == _pointer_grab_stack.end ())
+      return false;
+
+    return true;
+  }
+
+  InputArea* WindowCompositor::GetPointerGrabArea ()
+  {
+    if (_pointer_grab_stack.empty ())
+      return NULL;
+
+    return (*_pointer_grab_stack.begin ());
+  }
+
+  //////////////////////////
+  bool WindowCompositor::GrabKeyboardAdd (InputArea* area)
+  {
+    NUX_RETURN_VALUE_IF_NULL (area, false);
+    bool result = true;
+
+    if (GetKeyboardGrabArea () == area)
+    {
+      nuxDebugMsg (TEXT ("[WindowCompositor::GrabKeyboardAdd] The area alread has the grab"));
+      return result;
+    }
+
+    
+    if (GetWindow ().KeyboardGrabData () != this)
+      result = GetWindow ().GrabKeyboard (NULL, this, true);
+    
+    if (result)
+    {
+      _keyboard_grab_stack.push_front (area);
+      
+      // Must be called only after the area has been added to the front of _keyboard_grab_stack.
+      SetKeyboardFocusArea (area);
+    }
+    
+    return result;
+  }
+
+  bool WindowCompositor::GrabKeyboardRemove (InputArea* area)
+  {
+    NUX_RETURN_VALUE_IF_NULL (area, false);
+
+    std::list<InputArea*>::iterator it;
+
+    // find the first instance of the area keyboard in the stack
+    it = find (_keyboard_grab_stack.begin(), _keyboard_grab_stack.end(), area);
+
+    if (it == _keyboard_grab_stack.end ())
+      return false;
+
+    _keyboard_grab_stack.erase (it);
+    if (_keyboard_grab_stack.empty ())
+      GetWindow ().UngrabKeyboard (this);
+
+    // Must be called only after the area has been added to the front of _keyboard_grab_stack.
+    if (_keyboard_grab_stack.empty ())
+    {
+      SetKeyboardFocusArea (NULL);
+    }
+    else
+    {
+      it = _keyboard_grab_stack.begin ();
+      SetKeyboardFocusArea (*it);
+    }
+
+    
+    return true;
+  }
+
+  bool WindowCompositor::IsInKeyboardGrabStack (InputArea* area)
+  {
+    NUX_RETURN_VALUE_IF_NULL (area, false);
+
+    std::list<InputArea*>::iterator it;
+    it = find (_keyboard_grab_stack.begin(), _keyboard_grab_stack.end(), area);
+
+    if (it == _keyboard_grab_stack.end ())
+      return false;
+
+    return true;
+  }
+
+  InputArea* WindowCompositor::GetKeyboardGrabArea ()
+  {
+    if (_keyboard_grab_stack.size () == 0)
+      return NULL;
+
+    return (*_keyboard_grab_stack.begin ());
   }
 }
 

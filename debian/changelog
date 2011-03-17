@@ -1,10 +1,17 @@
-nux (0.9.32-0ubuntu2) UNRELEASED; urgency=low
+nux (0.9.34-0ubuntu1) UNRELEASED; urgency=low
 
+  * New upstream release.
+    - compiz crashed with SIGSEGV in nux::WindowCompositor::ResetDnDArea()
+      (LP: #728785)
+    - unity_support_test crashed with SIGSEGV in
+      nux::GpuDevice::GetOpenGLMajorVersion() (LP: #709222)
   * debian/source_nux.py, debian/libnux-0.9-common.install:
     - install an apport hook (mainly for the unity_support_test tool) reporting
       xorg info
+  * debian/rules:
+    - bump shlibs
 
- -- Didier Roche <didrocks@ubuntu.com>  Wed, 16 Mar 2011 19:32:59 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 17 Mar 2011 16:23:27 +0100
 
 nux (0.9.32-0ubuntu1) natty; urgency=low
 
