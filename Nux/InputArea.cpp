@@ -792,6 +792,12 @@ namespace nux
     return 0;
   }
   
+  void InputArea::InnerDndSourceDragFinished (DndAction result, void *data) 
+  { 
+    InputArea *self = static_cast<InputArea *> (data);
+    self->DndSourceDragFinished (result);
+  }
+  
   void InputArea::DndSourceDragFinished (DndAction result)
   {
   
@@ -806,8 +812,8 @@ namespace nux
     funcs.get_data_for_type = &InputArea::InnerDndSourceGetDataForType;
     funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
     
-    GetWindow ().StartDndDrag (funcs, this);
     DndSourceDragBegin ();
+    GetWindow ().StartDndDrag (funcs, this);
   }
 #endif
 

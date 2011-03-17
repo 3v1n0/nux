@@ -1950,6 +1950,7 @@ namespace nux
     
     GrabDndSelection (display, None, CurrentTime);
     UngrabPointer (this);
+    _dnd_source_grab_active = false;
     
     _dnd_source_funcs.get_drag_image = 0;
     _dnd_source_funcs.get_drag_types = 0;

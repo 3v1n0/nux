@@ -206,9 +206,9 @@ namespace nux
     
     void StartDragAsSource ();
     
-    static NBitmapData *           InnerDndSourceGetDragImage (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragImage ();       }
-    static std::list<const char *> InnerDndSourceGetDragTypes (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragTypes ();       }
-    static void                    InnerDndSourceDragFinished (DndAction result, void *data) { return static_cast<InputArea *> (data)->DndSourceDragFinished (result); }
+    static NBitmapData *           InnerDndSourceGetDragImage (void *data) { return static_cast<InputArea *> (data)->DndSourceGetDragImage ();       }
+    static std::list<const char *> InnerDndSourceGetDragTypes (void *data) { return static_cast<InputArea *> (data)->DndSourceGetDragTypes ();       }
+    static void                    InnerDndSourceDragFinished (DndAction result, void *data);
     
     static const char * InnerDndSourceGetDataForType (const char *type, int *size, int *format, void *data) 
       { return static_cast<InputArea *> (data)->DndSourceGetDataForType (type, size, format); }
