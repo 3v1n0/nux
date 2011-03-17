@@ -1909,6 +1909,18 @@ namespace nux
     
     if (_keyboard_grab_stack.empty ())
       GetWindow ().UngrabKeyboard (this);
+
+    // Must be called only after the area has been added to the front of _keyboard_grab_stack.
+    if (_keyboard_grab_stack.empty ())
+    {
+      SetKeyboardFocusArea (NULL);
+    }
+    else
+    {
+      it = _keyboard_grab_stack.begin ();
+      SetKeyboardFocusArea (*it);
+    }
+
     
     return true;
   }
