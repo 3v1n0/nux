@@ -518,14 +518,11 @@ namespace nux
 
   long Layout::SendEventToArea (Area *area, IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    g_debug ("sending focus event up");
-    
     // if parent is null return, thats a valid usecase so no warnings.
     if (area == NULL)
     {
       return 0;
     }
-
 
     long ret = 0;
     if ( area->IsView() )

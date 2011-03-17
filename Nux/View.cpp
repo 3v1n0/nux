@@ -72,7 +72,6 @@ namespace nux
     Area *parent = GetParentObject ();
     if (parent == NULL)
     {
-      g_debug ("no parent");
       GetLayout ()->SetFocused (false);
       GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
     }
@@ -266,10 +265,11 @@ namespace nux
       }
     }
 
-     if (GetFocused () && _can_pass_focus_to_composite_layout == false)
-     {
-       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (0.2, 1.0, 0.2, 1.0));
-     }
+// just leave this here, its helpful for debugging focus issues :)
+//     if (GetFocused () && _can_pass_focus_to_composite_layout == false)
+//     {
+//       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (0.2, 1.0, 0.2, 1.0));
+//     }
 
 //     if (GetFocused () && _can_pass_focus_to_composite_layout == true)
 //     {
@@ -526,7 +526,6 @@ namespace nux
     }
     else
     {
-      g_debug ("focusing the geo: %i, %i -> %ix%i", GetGeometry ().x, GetGeometry ().y, GetGeometry ().width, GetGeometry ().height);
       InputArea::DoSetFocused (focused);
     }
   }
@@ -563,7 +562,6 @@ namespace nux
   // else returns false
   bool View::HasPassiveFocus ()
   {
-    g_debug ("has passive focus? %s", (_can_pass_focus_to_composite_layout && GetLayout () != NULL) ? "yes" : "no");
     if (_can_pass_focus_to_composite_layout && GetLayout () != NULL)
       return true;
 
