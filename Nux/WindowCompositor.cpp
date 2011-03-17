@@ -1899,7 +1899,7 @@ namespace nux
 
     std::list<InputArea*>::iterator it;
 
-    // find the first instance of the area pointer in the stack
+    // find the first instance of the area keyboard in the stack
     it = find (_keyboard_grab_stack.begin(), _keyboard_grab_stack.end(), area);
 
     if (it == _keyboard_grab_stack.end ())
