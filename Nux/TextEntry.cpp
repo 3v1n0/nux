@@ -203,7 +203,6 @@ namespace nux
   void TextEntry::DoSetFocused (bool focused)
   {
 
-    g_debug ("setting TextEntry focus %s", (focused) ? "yes" : "no");
     View::DoSetFocused (focused);
     if (focused == true)
     {
@@ -225,6 +224,7 @@ namespace nux
         parent->SetFocusControl (false);
       }
     }
+
   }
 
   long TextEntry::ProcessEvent (IEvent& event,

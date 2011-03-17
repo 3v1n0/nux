@@ -63,6 +63,7 @@ namespace nux
 
   void Layout::RemoveChildObject (Area *bo)
   {
+    bool was_focused = GetFocused ();
     std::list<Area *>::iterator it;
     it = std::find (_layout_element_list.begin(), _layout_element_list.end(), bo);
 
@@ -93,7 +94,7 @@ namespace nux
       _layout_element_list.erase (it);
     }
 
-    if (IsEmpty ())
+    if (IsEmpty () && was_focused)
     {
       // we are now empty, so we need to handle our focus state
       Area *area = GetParentObject ();
@@ -203,8 +204,8 @@ namespace nux
 
     if (HasFocusControl () && HasFocusableEntries () == false)
     {
-      layout->SetFocused (true);
-      ChildFocusChanged (this, layout);
+      //layout->SetFocused (true);
+      //ChildFocusChanged (this, layout);
     }
 
     _layout_element_list.push_back (layout);
@@ -268,11 +269,11 @@ namespace nux
     if (bo->IsView ())
       static_cast<View *> (bo)->OnQueueDraw.connect (sigc::mem_fun (this, &Layout::ChildViewQueuedDraw));
 
-    if (HasFocusControl () && HasFocusableEntries () == false)
-    {
-      bo->SetFocused (true);
-      ChildFocusChanged (this, bo);
-    }
+    //if (HasFocusControl () && HasFocusableEntries () == false)
+    //{
+      //bo->SetFocused (true);
+      //ChildFocusChanged (this, bo);
+    //}
 
 
     _layout_element_list.push_back (bo);
@@ -420,6 +421,9 @@ namespace nux
 
   bool Layout::FocusFirstChild ()
   {
+    if (_layout_element_list.empty ())
+      return false;
+    
     std::list<Area *>::const_iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
@@ -436,6 +440,9 @@ namespace nux
 
   bool Layout::FocusLastChild ()
   {
+    if (_layout_element_list.empty ())
+      return false;
+    
     std::list<Area *>::reverse_iterator it;
     for (it = _layout_element_list.rbegin(); it != _layout_element_list.rend(); it++)
     {
@@ -886,6 +893,8 @@ namespace nux
   void Layout::DoSetFocused (bool focused)
   {
     _is_focused = focused;
+    if (focused == GetFocused ())
+      return;
 
     if (focused == false)
     {
@@ -925,7 +934,7 @@ namespace nux
           has_focused_child = true;
       }
 
-      if (has_focused_child == false)
+      if (GetFocused () == false)
       {
         FocusFirstChild ();
         _ignore_focus = true;
@@ -941,7 +950,7 @@ namespace nux
       if (_parent->IsView ())
       {
         View *parent = (View*)_parent;
-        if (parent->GetFocused () == false)
+        if (parent->GetFocused () == false && parent->HasPassiveFocus () == false)
         {
           parent->SetFocused (true);
         }
@@ -950,10 +959,6 @@ namespace nux
       else if (_parent->IsLayout ())
       {
         Layout *parent = (Layout *)_parent;
-        if (parent->GetFocused () == false)
-        {
-          parent->SetFocused (true);
-        }
         parent->SetFocusControl (false);
       }
 
@@ -963,7 +968,9 @@ namespace nux
   bool Layout::DoCanFocus ()
   {
     std::list<Area *>::iterator it;
-
+    if (_layout_element_list.empty ())
+      return false;
+    
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       bool can_focus = false;

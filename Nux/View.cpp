@@ -513,6 +513,7 @@ namespace nux
     if (HasPassiveFocus ())
     {
       Layout *layout = GetLayout ();
+
       InputArea::DoSetFocused (focused);
 
       if (layout != NULL)
