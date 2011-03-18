@@ -42,7 +42,6 @@ namespace nux
     void EnableVerticalScrollBar (bool b);
     void EnableHorizontalScrollBar (bool b);
     virtual bool SetLayout (Layout *layout);
-    void SetVScrollBar (VScrollBar* newVScrollBar);
 
     /*!
         Set the table size to be such that all the content items of the table are visible .
@@ -156,6 +155,13 @@ namespace nux
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
     virtual long ProcessEvent (Event &event, long TraverseInfo, long ProcessEventInfo);
+
+    //! Change Vertical Scrollbar in the ScrollView.
+    /*!
+        For styling purpose, allow the classes that inherit fron ScrollView to
+        change the vertical scrollbar.
+    */ 
+    void SetVScrollBar (VScrollBar* newVScrollBar);
 
     // Backup texture to speed up scrolling
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
