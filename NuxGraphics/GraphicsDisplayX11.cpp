@@ -102,6 +102,7 @@ namespace nux
     
     _global_keyboard_grab_data = 0;
     _global_pointer_grab_data = 0;
+    _global_pointer_grab_callback = 0;
 
     // DND
     _last_dnd_position.Set(0, 0);
