@@ -20,8 +20,8 @@
  */
 
 
-#ifndef GFXSETUPX11_H
-#define GFXSETUPX11_H
+#ifndef GRAPHICSDISPLAYX11_H
+#define GRAPHICSDISPLAYX11_H
 
 #include "Gfx_Interface.h"
 #include "GLTimer.h"
@@ -427,4 +427,4 @@ namespace nux
 
 }
 
-#endif //GFXSETUPX11_H
+#endif //GRAPHICSDISPLAYX11_H
