@@ -149,11 +149,11 @@ namespace nux
     _clip_offset_x = 0;
     _clip_offset_y = 0;
 
-//     m_ScissorXOffset = 0;
-//     m_ScissorYOffset = 0;
     _font_renderer = 0;
 
     _use_glsl_shaders = false;
+    _global_clipping_enabled = false;
+
     // Evaluate the features provided by the GPU.
     EvaluateGpuCaps ();
 
@@ -173,6 +173,7 @@ namespace nux
     SetViewport (0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight() );
     SetScissor (0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight() );
     EnableScissoring (true);
+
 
     bool opengl_14_support = true;
 
@@ -617,12 +618,14 @@ namespace nux
   
   void GraphicsEngine::SetGlobalClippingRectangle (Rect rect)
   {
+    _global_clipping_enabled = true;
     _global_clipping_rect = Rect (rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
     ApplyClippingRectangle ();
   }
   
   void GraphicsEngine::DisableGlobalClippingRectangle ()
   {
+    _global_clipping_enabled = false;
     _global_clipping_rect = Rect (0, 0, _viewport.width, _viewport.height);
     ApplyClippingRectangle ();
   }
@@ -660,8 +663,15 @@ namespace nux
   {
     if (!_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
     {
-      Rect intersection = Rect (x, y, width, height).Intersect (_global_clipping_rect);
-      SetScissor (intersection.x, intersection.y, intersection.width, intersection.height);
+      if (_global_clipping_enabled)
+      {
+        Rect intersection = Rect (x, y, width, height).Intersect (_global_clipping_rect);
+        SetScissor (intersection.x, intersection.y, intersection.width, intersection.height);
+      }
+      else
+      {
+        SetScissor (x, y, width, height);
+      }
     }
     else
     {

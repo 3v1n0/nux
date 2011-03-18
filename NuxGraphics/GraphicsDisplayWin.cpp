@@ -134,6 +134,11 @@ namespace nux
 
     // A window never starts in a minimized state.
     m_is_window_minimized = false;
+
+    //_dnd_source_grab_active = false;
+    _global_keyboard_grab_data = 0;
+    _global_pointer_grab_data = 0;
+
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -496,7 +501,9 @@ namespace nux
     m_GraphicsContext = new GraphicsEngine (*this, create_rendering_data);
 
     //EnableVSyncSwapControl();
-    DisableVSyncSwapControl();
+    //DisableVSyncSwapControl();
+
+    InitGlobalGrabWindow ();
 
     return true;
   }
@@ -525,6 +532,8 @@ namespace nux
       _opengl_rendering_context);
 
     m_GraphicsContext = new GraphicsEngine (*this);
+
+    InitGlobalGrabWindow ();
 
     return true;
   }
@@ -1945,6 +1954,41 @@ namespace nux
       default:
         return 0x0;
     }
+  }
+
+  void GraphicsDisplay::InitGlobalGrabWindow ()
+  {
+
+  }
+
+  bool GraphicsDisplay::GrabPointer (GrabReleaseCallback callback, void *data, bool replace_existing)
+  {
+    return false;
+  }
+
+  bool GraphicsDisplay::UngrabPointer (void *data)
+  {
+    return true;
+  }
+
+  bool GraphicsDisplay::PointerIsGrabbed ()
+  {
+    return false;  
+  }
+
+  bool GraphicsDisplay::GrabKeyboard (GrabReleaseCallback callback, void *data, bool replace_existing)
+  {
+    return _global_keyboard_grab_active;
+  }
+
+  bool GraphicsDisplay::UngrabKeyboard (void *data)
+  {
+    return true;
+  }
+
+  bool GraphicsDisplay::KeyboardIsGrabbed ()
+  {
+    return _global_keyboard_grab_active;  
   }
 
 //---------------------------------------------------------------------------------------------------------
