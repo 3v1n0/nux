@@ -433,22 +433,19 @@ namespace nux
         else
           MoveCursor(BUFFER, 1, shift);
       }
-//       else if ((keyval == GDK_x && ctrl && !shift) ||
-//         (keyval == GDK_Delete && shift && !ctrl))
-//       {
-//           CutClipboard();
-//       }
-//       else if ((keyval == GDK_c && ctrl && !shift) ||
-//         (keyval == GDK_Insert && ctrl && !shift))
-//       {
-//           CopyClipboard();
-//       }
-//       else if ((keyval == GDK_v && ctrl && !shift) ||
-//         (keyval == GDK_Insert && shift && !ctrl))
-//       {
-//           PasteClipboard();
-//       }
-      else if ((keyval == NUX_VK_a) && ctrl) 
+      else if (((keyval == NUX_VK_x) && ctrl && !shift) || ((keyval == NUX_VK_DELETE) && shift && !ctrl))
+      {
+        CutClipboard ();
+      }
+      else if (((keyval == NUX_VK_c) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && ctrl && (!shift)))
+      {
+          CopyClipboard ();
+      }
+      else if (((keyval == NUX_VK_v) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && shift && (!ctrl)))
+      {
+          PasteClipboard ();
+      }
+      else if ((keyval == NUX_VK_a) && ctrl)
       {
         // Select all
         int text_length = static_cast<int>(_text.length());
@@ -460,11 +457,11 @@ namespace nux
       {
         BackSpace();
       }
-      else if (keyval == NUX_VK_DELETE && !shift)
+      else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
         Delete();
       }
-      else if (keyval == NUX_VK_INSERT && !shift && !ctrl)
+      else if ((keyval == NUX_VK_INSERT) && (!shift) && (!ctrl))
       {
         ToggleOverwrite();
       }
@@ -1520,8 +1517,8 @@ namespace nux
 
   void TextEntry::CutClipboard()
   {
-    CopyClipboard();
-    DeleteSelection();
+    CopyClipboard ();
+    DeleteSelection ();
   }
 
   void TextEntry::PasteClipboard()

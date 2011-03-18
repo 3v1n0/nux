@@ -28,10 +28,6 @@
 #include "Focusable.h"
 #include "Utils.h"
 #include "WidgetMetrics.h"
-#include "WidgetSmartPointer.h"
-
-
-
 
 namespace nux
 {
