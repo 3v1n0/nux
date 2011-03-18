@@ -81,7 +81,6 @@ namespace nux
 
     XStoreName (d, _window, title);
 
-    XMapRaised (d, _window);
     EnsureInputs ();
 
     if (take_focus)
@@ -152,16 +151,7 @@ namespace nux
 
   void XInputWindow::UnsetStruts()
   {
-    int i;
-    
-    int data[12];
-    
-    for (i = 0; i < 12; i++)
-      data[i] = 0;
-    
-    XChangeProperty (_display, _window, XInternAtom (_display, "_NET_WM_STRUT_PARTIAL", 0),
-                     XA_CARDINAL, 32, PropModeReplace,
-                     (unsigned char *) data, 12);
+    XDeleteProperty (_display, _window, XInternAtom (_display, "_NET_WM_STRUT_PARTIAL", 0));
   }
 
   void XInputWindow::EnableStruts(bool enable)
@@ -260,6 +250,16 @@ namespace nux
   void XInputWindow::SetInputFocus ()
   {
     XSetInputFocus (_display, _window, RevertToParent, CurrentTime);
+  }
+  
+  void XInputWindow::Hide ()
+  {
+    XUnmapWindow (_display, _window);
+  }
+  
+  void XInputWindow::Show ()
+  {
+    XMapRaised (_display, _window);
   }
 }
 

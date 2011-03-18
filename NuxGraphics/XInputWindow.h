@@ -67,6 +67,9 @@ namespace nux
     Window GetWindow ();
 
     void SetInputFocus ();
+    
+    void Hide ();
+    void Show ();
 
   private:
   
