@@ -29,12 +29,10 @@
 #include "GLTextureStates.h"
 #include "GLTemplatePrimitiveBuffer.h"
 
-namespace nux {
-  class GpuRenderStates;
-}
-
 namespace nux
 {
+  class GpuRenderStates;
+
   //! Brand of GPUs.
   typedef enum
   {
