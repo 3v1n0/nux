@@ -224,22 +224,29 @@ namespace nux
     */
     Area * GetToplevel ();
 
+    //! Return the Top level BaseWindow of this area.
+    /*!
+        @return The top level BaseWindow or NULL.
+    */
+    Area * GetTopLevelViewWindow ();
+
     //! Return true is this area has a top level parent.
     /*!
         @return True if this area has a top level parent.
     */
     bool HasTopLevelParent ();
 
-    virtual long ComputeChildLayout();
+    virtual long ComputeChildLayout ();
     virtual void PositionChildLayout (float offsetX, float offsetY);
-    virtual long ComputeLayout2();
+    virtual long ComputeLayout2 ();
     virtual void ComputePosition2 (float offsetX, float offsetY);
 
-    virtual bool IsArea() const;
-    virtual bool IsInputArea() const;
-    virtual bool IsView() const;
-    virtual bool IsLayout() const;
-    virtual bool IsSpaceLayout() const;
+    virtual bool IsArea () const;
+    virtual bool IsInputArea () const;
+    virtual bool IsView () const;
+    virtual bool IsLayout () const;
+    virtual bool IsSpaceLayout () const;
+    virtual bool IsViewWindow () const;
 
     //! Set the layout properties for this area
     /*!

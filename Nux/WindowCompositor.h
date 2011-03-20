@@ -404,6 +404,9 @@ namespace nux
     //! Performs a post-event cycle on ViewWindows.
     void ViewWindowPostEventCycle ();
 
+    //! Performs event cycle on menus.
+    long MenuEventCycle (Event &event, long TraverseInfo, long ProcessEventInfo);
+
     // We use Rectangle texture to attach to the frame-buffer because some GPU like the Geforce FX 5600 do not
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
     struct RenderTargetTextures
