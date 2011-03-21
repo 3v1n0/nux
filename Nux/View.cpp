@@ -386,6 +386,11 @@ namespace nux
         m_CompositionLayout->SetFocused (false);
 
       _on_focus_changed_handler.disconnect ();
+
+      /* we need to emit the signal before the unparent, just in case
+         one of the callbacks wanted to use this object */
+
+      LayoutRemoved.emit (this, m_CompositionLayout);
       m_CompositionLayout->UnParentObject();
     }
     layout->SetParentObject (this);
@@ -396,6 +401,9 @@ namespace nux
       layout->SetFocused (true);
 
     _on_focus_changed_handler = layout->ChildFocusChanged.connect (sigc::mem_fun (this, &View::OnChildFocusChanged));
+
+    LayoutAdded.emit (this, m_CompositionLayout);
+
     return true;
   }
 

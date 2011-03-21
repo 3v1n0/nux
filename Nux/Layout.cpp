@@ -90,6 +90,9 @@ namespace nux
 
     if (it != _layout_element_list.end())
     {
+      /* we need to emit the signal before the unparent, just in case
+         one of the callbacks wanted to use this object */
+      ViewRemoved.emit (this, bo);
       bo->UnParentObject();
       _layout_element_list.erase (it);
     }
@@ -279,6 +282,7 @@ namespace nux
     _layout_element_list.push_back (bo);
     _connection_map[bo] = bo->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
 
+    ViewAdded.emit (this, bo);
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
   }
 
