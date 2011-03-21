@@ -40,7 +40,7 @@ namespace nux
   WindowCompositor::WindowCompositor()
   {
     OverlayDrawingCommand       = NULL;
-    _previous_mouse_over_area     = NULL;
+    _previous_mouse_over_area   = NULL;
     m_CurrentEvent              = NULL;
     m_CurrentWindow             = NULL;
     m_FocusAreaWindow           = NULL;
@@ -56,7 +56,6 @@ namespace nux
     m_OverlayWindow             = NULL;
     OverlayDrawingCommand       = NULL;
     m_CurrentWindow             = NULL;
-    m_FocusAreaWindow           = NULL;
     m_MenuWindow                = NULL;
     m_CurrentEvent              = NULL;
     _mouse_focus_area           = NULL;
@@ -72,11 +71,11 @@ namespace nux
 
     _dnd_area                   = NULL;
 
-    if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
+    if (GetWindowThread ()->GetWindow ().HasFrameBufferSupport ())
     {
-      m_FrameBufferObject = GetGpuDevice()->CreateFrameBufferObject();
+      m_FrameBufferObject = GetGpuDevice ()->CreateFrameBufferObject ();
       // Do not leave the Fbo binded. Deactivate it.
-      m_FrameBufferObject->Deactivate();
+      m_FrameBufferObject->Deactivate ();
     }
 
     // At this stage, the size of the window may not be known yet.
@@ -84,16 +83,16 @@ namespace nux
     m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
     m_MainDepthRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
 
-    m_MenuList = new std::list<MenuPage *>;
+    m_MenuList = new std::list<MenuPage*>;
     m_PopupRemoved = false;
     m_MenuRemoved = false;
     m_ModalWindow = NULL;
-    m_Background = new ColorLayer (Color (0xFF4D4D4D) );
+    m_Background = new ColorLayer (Color (0xFF4D4D4D));
   }
 
-  WindowCompositor::~WindowCompositor()
+  WindowCompositor::~WindowCompositor ()
   {
-    _window_to_texture_map.clear();
+    _window_to_texture_map.clear ();
     m_FrameBufferObject.Release ();
     m_MainColorRT.Release ();
     m_MainDepthRT.Release ();
@@ -259,72 +258,100 @@ namespace nux
     // Event processing cycle begins.
     _inside_event_processing = true;
 
-    if ((event.e_event == NUX_MOUSE_PRESSED) ||
-      (event.e_event == NUX_MOUSE_RELEASED) ||
-      (event.e_event == NUX_MOUSE_MOVE) ||
-      (event.e_event == NUX_MOUSE_WHEEL) ||
-      (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
-      (event.e_event == NUX_KEYDOWN) ||
-      (event.e_event == NUX_KEYUP))
-    {
-      Area *pointer_grab_area = GetPointerGrabArea ();
-      Area *keyboard_grab_area = GetKeyboardGrabArea ();
+    Area *pointer_grab_area = GetPointerGrabArea ();
+    Area *keyboard_grab_area = GetKeyboardGrabArea ();
 
-      if (pointer_grab_area || keyboard_grab_area)
-      {
-        SetCurrentEvent (&event);
-
-        long ret = 0;
-        long ProcessEventInfo = 0;
-        bool MouseIsOverMenu = 0;
-
-        // Let the Menus process the event.
-        {
-          ret = MenuEventCycle (event, 0, 0);
-
-          CleanMenu ();
-
-          if (ret & eMouseEventSolved)
-          {
-            // If one menu processed the event, then stop all other element from processing it.
-            ProcessEventInfo = eDoNotProcess;
-            MouseIsOverMenu = TRUE;
-
-            SetCurrentEvent (NULL);
-            return;
-          }
-        }
-        
-        
-        ViewWindowPreEventCycle ();
-        SetProcessingTopView (NUX_STATIC_CAST (BaseWindow*, pointer_grab_area->GetTopLevelViewWindow ()));
-
-        if (pointer_grab_area &&
-            ((event.e_event == NUX_MOUSE_PRESSED) ||
+    // Event Cycle Step 0: pass the event to the pointer or keyboard grab.
+    //
+    // Go into pointer grab if:
+    //    - pointer_grab_area is not NULL
+    //    - the event is a mouse event (mouse up/down/move/wheel/doubleclick)
+    //    - there is no mouse focus or the area that has the mouse focus is also the pointer_grab_area
+    //
+    // Go into keyboard grab if:
+    //    - keyboard_grab_area is not NULL
+    //    - the event is a keyboard event (key up/down)
+    //    - there is no mouse focus or the area that has the mouse focus is also the pointer_grab_area    
+    if (
+        (
+          (
+            (GetMouseFocusArea () == 0) || (GetMouseFocusArea () == pointer_grab_area)
+          ) &&
+          pointer_grab_area &&
+          (
+            (event.e_event == NUX_MOUSE_PRESSED) ||
             (event.e_event == NUX_MOUSE_RELEASED) ||
             (event.e_event == NUX_MOUSE_MOVE) ||
             (event.e_event == NUX_MOUSE_WHEEL) ||
-            (event.e_event == NUX_MOUSE_DOUBLECLICK))
+            (event.e_event == NUX_MOUSE_DOUBLECLICK)
+          )
+        ) ||
+        (
+          keyboard_grab_area &&
+          (
+            (event.e_event == NUX_KEYDOWN) ||
+            (event.e_event == NUX_KEYUP)
+          )
         )
+       )
+    {
+      // Set a system-wide copy the event. Usefull for getting the a copy of the full event,
+      // for instance in the area's signal callbacks. Area's signal callbacks don't pass the full event as a parameter.
+      SetCurrentEvent (&event);
+
+      long ret = 0;
+
+      // If there is a menu open, process it. Menus or drop down menus (combo box) are modal user interface
+      // elements. They must be closed before event processing can resume normally.
+      {
+        ret = MenuEventCycle (event, 0, 0);
+
+        CleanMenu ();
+
+        if (ret & eMouseEventSolved)
         {
-          DispatchEventToView (event, (View*) pointer_grab_area, 0, 0);
+          // The menu has claimed the event.
+          SetCurrentEvent (NULL);
+          return;
         }
-
-        if (keyboard_grab_area &&
-            ((event.e_event == NUX_KEYDOWN) ||
-            (event.e_event == NUX_KEYUP))
-        )
-        {
-          ret = DispatchEventToView (event, NUX_STATIC_CAST (View*, keyboard_grab_area), ret, ProcessEventInfo);
-        }
-
-        SetProcessingTopView (NULL);
-        ViewWindowPostEventCycle ();
-        
-        SetCurrentEvent (NULL);
-
-        return;
       }
+      
+      // Update the state of view windows (aka BaseWindow) before processing.
+      ViewWindowPreEventCycle ();
+
+      if (pointer_grab_area &&
+          ((event.e_event == NUX_MOUSE_PRESSED) ||
+          (event.e_event == NUX_MOUSE_RELEASED) ||
+          (event.e_event == NUX_MOUSE_MOVE) ||
+          (event.e_event == NUX_MOUSE_WHEEL) ||
+          (event.e_event == NUX_MOUSE_DOUBLECLICK))
+      )
+      {
+        SetProcessingTopView (NUX_STATIC_CAST (BaseWindow*, pointer_grab_area->GetTopLevelViewWindow ()));
+        // call the public event cycle processing function of the pointer_grab_area.
+        ret = DispatchEventToView (event, NUX_STATIC_CAST (View*, pointer_grab_area), 0, 0);
+        SetProcessingTopView (NULL);
+      }
+
+      if (keyboard_grab_area &&
+          ((event.e_event == NUX_KEYDOWN) ||
+          (event.e_event == NUX_KEYUP))
+      )
+      {
+        SetProcessingTopView (NUX_STATIC_CAST (BaseWindow*, keyboard_grab_area->GetTopLevelViewWindow ()));
+        // call the public event cycle processing function of the keyboard_grab_area.
+        ret = DispatchEventToView (event, NUX_STATIC_CAST (View*, keyboard_grab_area), 0, 0);
+        SetProcessingTopView (NULL);
+      }
+
+      // Update the state of view windows (aka BaseWindow) after event processing.
+      ViewWindowPostEventCycle ();
+      
+      // Remove the system wide copy of the event.
+      SetCurrentEvent (NULL);
+
+      // End of grab event cycle.
+      return;
     }
 
     long ret = 0;
@@ -342,15 +369,28 @@ namespace nux
     }
 
 
-    if (GetMouseFocusArea() && (event.e_event != NUX_MOUSE_PRESSED))
+    // Event Cycle Step 1: pass the event to the area that has the keyboard focus provided the event is 
+    // not NUX_MOUSE_PRESSED, NUX_KEYDOWN or NUX_KEYUP.
+    // The area where the mouse is down processes the event by calling its private event cycle processing
+    // function directly. For instance, if this area has a layout, then the event will not be processed by
+    // the layout and its children. 
+    // The event processing goes into a modal type of interaction until the mouse button is released.
+    if (GetMouseFocusArea () && (event.e_event != NUX_MOUSE_PRESSED) &&
+          (event.e_event != NUX_KEYDOWN) &&
+          (event.e_event != NUX_KEYUP)
+       )
     {
+      // Set a system-wide copy the event.
       SetCurrentEvent (&event);
+
       SetProcessingTopView (GetFocusAreaWindow());
+
+      // call the private event cycle processing function of the keyboard_grab_area.
       DispatchEventToArea (event, GetMouseFocusArea(), 0, 0);
 
       if (event.e_event == NUX_MOUSE_RELEASED)
       {
-        SetMouseFocusArea (0);
+        SetMouseFocusArea (NULL);
         // No need to set SetMouseOverArea to NULL.
         //SetMouseOverArea(0);
       }
@@ -373,6 +413,8 @@ namespace nux
     }
     else
     {
+      // Event Cycle Step 2: Full processing of the event. There is no grab, or mouse focus area.
+      // This correspond to the action of moving the mouse or pressing a key.
       SetCurrentEvent (&event);
 
       // Let the Menus process the event.
@@ -1597,7 +1639,10 @@ namespace nux
       _mouse_focus_area_conn = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseFocusAreaDestroyed));
     }
 
-    SetFocusAreaWindow (GetProcessingTopView());
+    if (area)
+      SetFocusAreaWindow (GetProcessingTopView ());
+    else 
+      SetFocusAreaWindow (NULL);
   }
 
   InputArea *WindowCompositor::GetMouseFocusArea()
