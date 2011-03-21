@@ -277,23 +277,24 @@ namespace nux
   }
 
   bool
-  CairoGraphics::DrawRoundedRectangle (double aspect,
-                                       double x,
-                                       double y,
-                                       double cornerRadius,
-                                       double width,
-                                       double height)
+  CairoGraphics::DrawRoundedRectangle (cairo_t* cr,
+                                       double   aspect,
+                                       double   x,
+                                       double   y,
+                                       double   cornerRadius,
+                                       double   width,
+                                       double   height)
   {
     double radius = cornerRadius / aspect;
 
     // top-left, right of the corner
-    cairo_move_to (_cr, x + radius, y);
+    cairo_move_to (cr, x + radius, y);
 
     // top-right, left of the corner
-    cairo_line_to (_cr, x + width - radius, y);
+    cairo_line_to (cr, x + width - radius, y);
 
     // top-right, below the corner
-    cairo_arc (_cr,
+    cairo_arc (cr,
                x + width - radius,
                y + radius,
                radius,
@@ -301,10 +302,10 @@ namespace nux
                0.0f * G_PI / 180.0f);
 
     // bottom-right, above the corner
-    cairo_line_to (_cr, x + width, y + height - radius);
+    cairo_line_to (cr, x + width, y + height - radius);
 
     // bottom-right, left of the corner
-    cairo_arc (_cr,
+    cairo_arc (cr,
                x + width - radius,
                y + height - radius,
                radius,
@@ -312,10 +313,10 @@ namespace nux
                90.0f * G_PI / 180.0f);
 
     // bottom-left, right of the corner
-    cairo_line_to (_cr, x + radius, y + height);
+    cairo_line_to (cr, x + radius, y + height);
 
     // bottom-left, above the corner
-    cairo_arc (_cr,
+    cairo_arc (cr,
                x + radius,
                y + height - radius,
                radius,
@@ -323,7 +324,7 @@ namespace nux
                180.0f * G_PI / 180.0f);
 
     // top-left, right of the corner
-    cairo_arc (_cr,
+    cairo_arc (cr,
                x + radius,
                y + radius,
                radius,

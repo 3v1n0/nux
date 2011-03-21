@@ -81,12 +81,13 @@ namespace nux
 
     bool DrawCanvas(double x, double y, CairoGraphics *cg);
 
-    bool DrawRoundedRectangle (double aspect,
-                               double x,
-                               double y,
-                               double cornerRadius,
-                               double width,
-                               double height);
+    bool DrawRoundedRectangle (cairo_t* cr,
+                               double   aspect,
+                               double   x,
+                               double   y,
+                               double   cornerRadius,
+                               double   width,
+                               double   height);
 
     bool BlurCanvas (unsigned int radius);
 
