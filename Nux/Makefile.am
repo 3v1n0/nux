@@ -156,7 +156,6 @@ source_cpp = \
   $(srcdir)/VSplitter.cpp \
   $(srcdir)/VToolBar.cpp \
   $(srcdir)/WidgetMetrics.cpp \
-  $(srcdir)/WidgetSmartPointer.cpp \
   $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/WindowThread.cpp
 
@@ -294,7 +293,6 @@ source_h = \
   $(srcdir)/VSplitter.h \
   $(srcdir)/VToolBar.h \
   $(srcdir)/WidgetMetrics.h \
-  $(srcdir)/WidgetSmartPointer.h \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
 

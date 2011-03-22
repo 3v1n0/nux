@@ -130,7 +130,7 @@ namespace nux
 //     TexCoordXForm texxform;
 //     texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
 //     texxform.SetWrap(TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-//     m_BackgroundLayer = new TextureLayer(BackgroundTexture.GetDeviceTexture(), texxform, Color::White);
+//     m_BackgroundLayer = new TextureLayer(BackgroundTexture.GetDeviceTexture(), texxform, Colors::White);
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
@@ -140,7 +140,7 @@ namespace nux
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Color::White);
+    m_BackgroundLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Colors::White);
 
     CheckboardPattern->UnReference ();
 

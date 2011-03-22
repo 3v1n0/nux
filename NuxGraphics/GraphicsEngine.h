@@ -374,6 +374,9 @@ namespace nux
     void EmptyClippingRegion ();
     //! Set the clipping according to the clipping rectangle stack.
     void ApplyClippingRectangle ();
+    
+    void SetGlobalClippingRectangle (Rect rect);
+    void DisableGlobalClippingRectangle ();
 
     //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
     /*!
@@ -821,9 +824,20 @@ namespace nux
     int _clip_offset_x;
     int _clip_offset_y;
     Rect _clipping_rect;
-    std::list<Point> _clip_offset_stack;
 
-//     int m_ScissorXOffset, m_ScissorYOffset;
+
+    //! Set to \i true to enable the global clipping rectangle.
+    /*!
+        When rendering directly to the OpenGL back buffer, we may enable a global clipping
+        rectangle. This is mostly useful in embedded mode.
+        \sa _global_clipping_rect;
+    */
+    bool _global_clipping_enabled;
+
+    //! Define a global clipping rectangle.
+    Rect _global_clipping_rect;
+
+    std::list<Point> _clip_offset_stack;
 
     FontRenderer *_font_renderer;
 
@@ -836,9 +850,9 @@ namespace nux
 
     GraphicsEngine (const GraphicsEngine &);
     // Does not make sense for a singleton. This is a self assignment.
-    GraphicsEngine &operator= (const GraphicsEngine &);
+    GraphicsEngine& operator = (const GraphicsEngine &);
     // Declare operator address-of as private
-    GraphicsEngine *operator &();
+    GraphicsEngine* operator & ();
   };
 
 }

@@ -107,7 +107,10 @@ namespace nux
     {
       return m_CurrentEvent;
     }
-    long ProcessEventOnObject (IEvent &ievent, Area *object, long TraverseInfo, long ProcessEventInfo);
+
+    long DispatchEventToArea (Event &event, Area* area, long TraverseInfo, long ProcessEventInfo);
+
+    long DispatchEventToView (Event &event, View* view, long TraverseInfo, long ProcessEventInfo);
 
     void SetBackgroundPaintLayer (AbstractPaintLayer *bkg);
 
@@ -163,6 +166,73 @@ namespace nux
     // SetDnDArea is declared as private.
     //void SetDnDArea (InputArea* area);
     InputArea* GetDnDArea ();
+
+    //! Get the top view that is being processed (event or rendering).
+    /*!
+        Get the active ViewWindow during and event processing or rendering.
+    */
+    BaseWindow* GetProcessingTopView ()
+    {
+      return m_CurrentWindow.GetPointer ();
+    }
+
+    // Pointer Grab API
+
+    //! Add an area at the top of the pointer grab stack
+    /*!
+        Add an area at the top of the pointer grab stack. The area at the top of the pointer grab stack has the exclusivity on
+        the pointer events.
+        And area can be added multiple times to the stack but not successively.
+
+        @param area The area to put at the top of the pointer grab stack.
+        @return True if the Area was successfully added at the top of the pointer grab stack.
+    */
+    bool GrabPointerAdd (InputArea* area);
+
+    //! Remove an area from the pointer grab stack
+    /*!
+        If the Area was added multiple time to the pointer grab stack then the top most instance
+        of the parameter area is removed.
+
+        @param area The area to remove from the top of the pointer grab stack.
+        @return True if the Area was successfully removed.
+    */
+    bool GrabPointerRemove (InputArea* area);
+
+    //! Returns True if the area parameter is inside the pointer grab stack.
+    bool IsInPointerGrabStack (InputArea* area);
+
+    //! Returns the area at the top of the pointer grab stack.
+    InputArea* GetPointerGrabArea ();
+
+    // Keyboard Grab API
+
+    //! Add an area at the top of the keyboard grab stack
+    /*!
+        Add an area at the top of the keyboard grab stack. The area at the top of the keyboard grab stack has the exclusivity on
+        the keyboard events.
+        And area can be added multiple times to the stack but not successively.
+
+        @param area The area to put at the top of the keyboard grab stack.
+        @return True if the Area was successfully added at the top of the keyboard grab stack.
+    */
+    bool GrabKeyboardAdd (InputArea* area);
+
+    //! Remove an area from the keyboard grab stack
+    /*!
+        If the Area was added multiple time to the keyboard grab stack then the top most instance
+        of the parameter area is removed.
+
+        @param area The area to remove from the top of the keyboard grab stack.
+        @return True if the Area was successfully removed.
+    */
+    bool GrabKeyboardRemove (InputArea* area);
+
+    //! Returns True if the area parameter is inside the keyboard grab stack.
+    bool IsInKeyboardGrabStack (InputArea* area);
+
+    //! Returns the area at the top of the keyboard grab stack.
+    InputArea* GetKeyboardGrabArea ();
 
   private:
     //! Render the interface.
@@ -262,17 +332,8 @@ namespace nux
       m_CurrentWindow = window;
     }
 
-    public:
-    //! Get the top view that is being processed (event or rendering).
-    /*!
-        Get the active ViewWindow during and event processing or rendering.
-    */
-    BaseWindow *GetProcessingTopView()
-    {
-      return m_CurrentWindow.GetPointer ();
-    }
-
     private:
+
     void SetFocusAreaWindow (BaseWindow *window)
     {
       m_FocusAreaWindow = window;
@@ -295,44 +356,58 @@ namespace nux
         @param Width    New width of the window.
         @param Height   New height of the window.
     */
-    void FloatingAreaConfigureNotify(int Width, int Height);
+    void FloatingAreaConfigureNotify (int Width, int Height);
 
-    void SetMouseFocusArea (InputArea *area);
-    InputArea* GetMouseFocusArea();
-    void OnMouseFocusAreaDestroyed (Object *area)
+    void SetMouseFocusArea (InputArea* area);
+    
+    InputArea* GetMouseFocusArea ();
+    
+    void OnMouseFocusAreaDestroyed (Object* area)
     {
       if (_mouse_focus_area == area)
         SetMouseFocusArea (NULL);
     }
 
-    void SetMouseOverArea (InputArea *area);
-    InputArea* GetMouseOverArea();
-    void OnMouseOverAreaDestroyed (Object *area)
+    void SetMouseOverArea (InputArea* area);
+
+    InputArea* GetMouseOverArea ();
+
+    void OnMouseOverAreaDestroyed (Object* area)
     {
       if (_mouse_over_area == area)
         SetMouseOverArea (NULL);
     }
 
-    void SetPreviousMouseOverArea (InputArea *area);
-    InputArea* GetPreviousMouseOverArea();
-    void OnPreviousMouseOverAreaDestroyed (Object *area)
+    void SetPreviousMouseOverArea (InputArea* area);
+
+    InputArea* GetPreviousMouseOverArea ();
+
+    void OnPreviousMouseOverAreaDestroyed (Object* area)
     {
       if (_previous_mouse_over_area == area)
         SetPreviousMouseOverArea (NULL);
     }
     
-    void SetKeyboardFocusArea (InputArea *area);
+    void SetKeyboardFocusArea (InputArea* area);
+
     InputArea* GetKeyboardFocusArea ();
-    void OnKeyboardFocusAreaDestroyed (Object *area)
-    {
-      if (_keyboard_focus_area == area)
-        SetKeyboardFocusArea (NULL);
-    }
+
+    void OnKeyboardFocusAreaDestroyed (Object* area);
 
     void RegisterWindow (BaseWindow*);
+
     void UnRegisterWindow (BaseWindow*);
 
-    // We use Rectangle texture to attach to the framebuffer because some GPU like the Geforce FX 5600 do not
+    //! Performs a pre-event cycle on ViewWindows.
+    void ViewWindowPreEventCycle ();
+
+    //! Performs a post-event cycle on ViewWindows.
+    void ViewWindowPostEventCycle ();
+
+    //! Performs event cycle on menus.
+    long MenuEventCycle (Event &event, long TraverseInfo, long ProcessEventInfo);
+
+    // We use Rectangle texture to attach to the frame-buffer because some GPU like the Geforce FX 5600 do not
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
     struct RenderTargetTextures
     {
@@ -485,6 +560,23 @@ namespace nux
 //     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip0;
 //     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip1;
 //     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip2;
+
+
+    //! Pointer grab stack.
+    /*!
+        The head of the list is the top of the stack.
+        \sa GrabPointerAdd, GrabPointerRemove.
+
+    */
+    std::list<InputArea*> _pointer_grab_stack;
+
+    //! Keyboard grab stack.
+    /*!
+        The head of the list is the top of the stack.
+        \sa GrabKeyboardAdd, GrabKeyboardRemove.
+
+    */
+    std::list<InputArea*> _keyboard_grab_stack;
 
   private:
     WindowCompositor (const WindowCompositor &);

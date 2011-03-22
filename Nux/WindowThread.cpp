@@ -438,6 +438,7 @@ namespace nux
     _ready_for_next_fake_event = true;
     _fake_event_mode = false;
     _processing_fake_event = false;
+    _focused_area = NULL;
   }
 
   WindowThread::~WindowThread()
@@ -452,6 +453,17 @@ namespace nux
     delete _Timelines;
     delete _async_wake_up_functor;
     delete _fake_event_call_back;
+  }
+
+  void WindowThread::SetFocusedArea (Area *focused_area)
+  {
+    if (focused_area == _focused_area)
+      return; 
+    
+    if (_focused_area != NULL)
+      _focused_area->SetFocused (false);
+    
+    _focused_area = focused_area;
   }
 
   void WindowThread::AsyncWakeUpCallback (void* data)
@@ -1794,7 +1806,7 @@ namespace nux
     return request_draw_cycle_to_host_wm;
   }
 
-  void WindowThread::RenderInterfaceFromForeignCmd()
+  void WindowThread::RenderInterfaceFromForeignCmd(Geometry *clip)
   {
     nuxAssertMsg (IsEmbeddedWindow() == true, TEXT ("[WindowThread::RenderInterfaceFromForeignCmd] You can only call RenderInterfaceFromForeignCmd if the window was created with CreateFromForeignWindow.") );
 
@@ -1811,8 +1823,14 @@ namespace nux
     if (GetWindow().IsPauseThreadGraphicsRendering() == false)
     {
       RefreshLayout ();
+      
+      if (clip)
+        GetWindowThread ()->GetGraphicsEngine().SetGlobalClippingRectangle (Rect (clip->x, clip->y, clip->width, clip->height));
+        
       m_window_compositor->Draw (m_size_configuration_event, m_force_redraw);
-
+      
+      if (clip)
+        GetWindowThread ()->GetGraphicsEngine().DisableGlobalClippingRectangle ();
       // When rendering in embedded mode, nux does not attempt to measure the frame rate...
 
       // Cleanup
@@ -1825,21 +1843,10 @@ namespace nux
 
     CHECKGL ( glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
-#if 0
-    // NUXTODO: NOT supported by system without GLSL support
-    // Deactivate ARB shaders
-    CHECKGL ( glDisable (GL_VERTEX_PROGRAM_ARB) );
-    CHECKGL ( glBindProgramARB (GL_VERTEX_PROGRAM_ARB, 0) );
-    CHECKGL ( glDisable (GL_FRAGMENT_PROGRAM_ARB) );
-    CHECKGL ( glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, 0) );
-    // Deactivate GLSL shaders
-    CHECKGL ( glUseProgramObjectARB (0) );
-#endif
-
     GetGpuDevice()->DeactivateFrameBuffer();
   }
 
-  int WindowThread::InstallEventInspector (EventInspector* function, void* data)
+  int WindowThread::InstallEventInspector (EventInspector function, void* data)
   {
     NUX_RETURN_VALUE_IF_NULL (function, 0);
 
@@ -1881,7 +1888,7 @@ namespace nux
     return false;
   }
 
-  bool WindowThread::RemoveEventInspector (EventInspector* function)
+  bool WindowThread::RemoveEventInspector (EventInspector function)
   {
     NUX_RETURN_VALUE_IF_NULL (function, false);
 
@@ -1912,12 +1919,13 @@ namespace nux
 
     for (it = _event_inspectors_map.begin (); it != _event_inspectors_map.end (); it++)
     {
-      EventInspector *callback = (*it).second._function;
+      EventInspector callback = (*it).second._function;
 
       if (callback == 0)
         continue;
 
-      int ret = (*callback) (0, event, (*it).second._data);
+      int ret = callback (0, event, (*it).second._data);
+
       if (ret)
       {
         discard_event = true;

@@ -149,11 +149,11 @@ namespace nux
     _clip_offset_x = 0;
     _clip_offset_y = 0;
 
-//     m_ScissorXOffset = 0;
-//     m_ScissorYOffset = 0;
     _font_renderer = 0;
 
     _use_glsl_shaders = false;
+    _global_clipping_enabled = false;
+
     // Evaluate the features provided by the GPU.
     EvaluateGpuCaps ();
 
@@ -173,6 +173,7 @@ namespace nux
     SetViewport (0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight() );
     SetScissor (0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight() );
     EnableScissoring (true);
+
 
     bool opengl_14_support = true;
 
@@ -272,9 +273,18 @@ namespace nux
         fnt->UnReference ();
       }
 #endif
-      _font_renderer = new FontRenderer (*this);
 
-      _offscreen_fbo        = GetGpuDevice()->CreateFrameBufferObject ();
+      GpuInfo& gpu_info = _graphics_display.GetGpuDevice ()->GetGpuInfo ();
+
+      if ((gpu_info.Support_ARB_Vertex_Program () && gpu_info.Support_ARB_Fragment_Program ())
+          || (gpu_info.Support_ARB_Vertex_Shader () && gpu_info.Support_ARB_Fragment_Shader ()))
+      {
+        _font_renderer = new FontRenderer (*this);
+      }
+
+      if (gpu_info.Support_EXT_Framebuffer_Object ())
+        _offscreen_fbo = GetGpuDevice()->CreateFrameBufferObject ();
+
       _offscreen_color_rt0  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
       _offscreen_color_rt1  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
       _offscreen_color_rt2  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
@@ -614,6 +624,20 @@ namespace nux
       SetOpenGLClippingRectangle (0, 0, _viewport.width, _viewport.height);
     }
   }
+  
+  void GraphicsEngine::SetGlobalClippingRectangle (Rect rect)
+  {
+    _global_clipping_enabled = true;
+    _global_clipping_rect = Rect (rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
+    ApplyClippingRectangle ();
+  }
+  
+  void GraphicsEngine::DisableGlobalClippingRectangle ()
+  {
+    _global_clipping_enabled = false;
+    _global_clipping_rect = Rect (0, 0, _viewport.width, _viewport.height);
+    ApplyClippingRectangle ();
+  }
 
   Rect GraphicsEngine::GetClippingRegion () const
   {
@@ -641,13 +665,27 @@ namespace nux
   void GraphicsEngine::SetClippingRectangle (const Rect &rect)
   {
     _clipping_rect = rect;
-    SetScissor (rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
+    SetOpenGLClippingRectangle (rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
   }
 
   void GraphicsEngine::SetOpenGLClippingRectangle (int x, int y, unsigned int width, unsigned int height)
   {
-    //_clipping_rect = Rect (x, y, width, height);
-    SetScissor (x, y, width, height);
+    if (!_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
+    {
+      if (_global_clipping_enabled)
+      {
+        Rect intersection = Rect (x, y, width, height).Intersect (_global_clipping_rect);
+        SetScissor (intersection.x, intersection.y, intersection.width, intersection.height);
+      }
+      else
+      {
+        SetScissor (x, y, width, height);
+      }
+    }
+    else
+    {
+      SetScissor (x, y, width, height);
+    }
   }
 
   int GraphicsEngine::GetNumberOfClippingRegions () const
@@ -1183,7 +1221,7 @@ namespace nux
     //CHECKGL (glEnable(GL_DEPTH_TEST));
     //CHECKGL (glDepthFunc(GL_ALWAYS));
 
-    QRP_Color(x, y, width, height, Color::Black);
+    QRP_Color(x, y, width, height, Colors::Black);
 
     //CHECKGL( glDepthFunc(GL_LESS) );
     //CHECKGL( glDisable(GL_DEPTH_TEST) );

@@ -71,7 +71,7 @@ namespace nux
     if (parent != NULL)
       return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
     else
-      FocusFirstChild ();
+      FocusPreviousChild (GetFocusedChild ());
 
     return TraverseInfo;
   }
@@ -82,7 +82,7 @@ namespace nux
     if (parent != NULL)
       return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
     else
-      FocusFirstChild ();
+      FocusNextChild (GetFocusedChild ());
     return TraverseInfo;
   }
 

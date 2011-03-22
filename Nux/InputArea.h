@@ -144,6 +144,13 @@ namespace nux
     // when the area position is reffered to (x_root, y_root) instead of being the system window coordinates (0, 0).
     void SetAreaMousePosition (int x, int y);
 
+    void GrabPointer ();
+    void GrabKeyboard ();
+    void UnGrabPointer ();
+    void UnGrabKeyboard ();
+    bool OwnsPointerGrab ();
+    bool OwnsKeyboardGrab ();
+
 #if defined (NUX_OS_LINUX)
     void HandleDndEnter () { ProcessDndEnter (); }
     void HandleDndLeave () { ProcessDndLeave (); }
@@ -199,9 +206,9 @@ namespace nux
     
     void StartDragAsSource ();
     
-    static NBitmapData *           InnerDndSourceGetDragImage (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragImage ();       }
-    static std::list<const char *> InnerDndSourceGetDragTypes (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragTypes ();       }
-    static void                    InnerDndSourceDragFinished (DndAction result, void *data) { return static_cast<InputArea *> (data)->DndSourceDragFinished (result); }
+    static NBitmapData *           InnerDndSourceGetDragImage (void *data) { return static_cast<InputArea *> (data)->DndSourceGetDragImage ();       }
+    static std::list<const char *> InnerDndSourceGetDragTypes (void *data) { return static_cast<InputArea *> (data)->DndSourceGetDragTypes ();       }
+    static void                    InnerDndSourceDragFinished (DndAction result, void *data);
     
     static const char * InnerDndSourceGetDataForType (const char *type, int *size, int *format, void *data) 
       { return static_cast<InputArea *> (data)->DndSourceGetDataForType (type, size, format); }

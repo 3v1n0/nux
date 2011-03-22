@@ -88,7 +88,7 @@ namespace nux
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_PaintLayer = new TextureLayer (texture->GetDeviceTexture(), texxform, Color::White);
+    m_PaintLayer = new TextureLayer (texture->GetDeviceTexture(), texxform, Colors::White);
 
     NeedRedraw();
   }

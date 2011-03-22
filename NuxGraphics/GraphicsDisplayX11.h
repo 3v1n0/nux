@@ -20,8 +20,8 @@
  */
 
 
-#ifndef GFXSETUPX11_H
-#define GFXSETUPX11_H
+#ifndef GRAPHICSDISPLAYX11_H
+#define GRAPHICSDISPLAYX11_H
 
 #include "Gfx_Interface.h"
 #include "GLTimer.h"
@@ -131,6 +131,8 @@ namespace nux
     bool m_is_window_minimized;
 
   public:
+    typedef void (*GrabReleaseCallback) (bool replaced, void *user_data);
+  
     typedef struct _DndSourceFuncs
     {
       nux::NBitmapData *       (*get_drag_image)    (void * data);
@@ -302,7 +304,19 @@ namespace nux
 
     void StartDndDrag (const DndSourceFuncs &funcs, void *user_data);
     
+    bool GrabPointer   (GrabReleaseCallback callback, void *data, bool replace_existing);
+    bool UngrabPointer (void *data);
+    bool PointerIsGrabbed ();
+    
+    bool GrabKeyboard   (GrabReleaseCallback callback, void *data, bool replace_existing);
+    bool UngrabKeyboard (void *data);
+    bool KeyboardIsGrabbed ();
+    
+    void * KeyboardGrabData () { return _global_keyboard_grab_data; }
+    void * PointerGrabData () { return _global_pointer_grab_data; }
   private:
+    void InitGlobalGrabWindow ();
+  
     void HandleXDndPosition (XEvent event, Event* nux_event);
     void HandleXDndEnter    (XEvent event);
     void HandleXDndStatus   (XEvent event);
@@ -321,6 +335,8 @@ namespace nux
     void HandleDndSelectionRequest (XEvent event);
     Window GetDndTargetWindowForPos (int x, int y);
     
+    void DrawDndSourceWindow ();
+    
     void SendDndSourcePosition (Window target, int x, int y, Time time);
     void SendDndSourceEnter (Window target);
     void SendDndSourceLeave (Window target);
@@ -338,8 +354,6 @@ namespace nux
     GraphicsEngine *m_GraphicsContext;
     WindowStyle m_Style;
 
-    
-
     Atom _xdnd_types[_xdnd_max_type + 1];
     Display *_drag_display;
     Window _drag_window;
@@ -351,6 +365,16 @@ namespace nux
 
     Window _dnd_source_window;
     Window _dnd_source_target_window;
+    
+    Window              _global_grab_window;
+    
+    void               *_global_pointer_grab_data;
+    bool                _global_pointer_grab_active;
+    GrabReleaseCallback _global_pointer_grab_callback;
+
+    void               *_global_keyboard_grab_data;
+    bool                _global_keyboard_grab_active;
+    GrabReleaseCallback _global_keyboard_grab_callback;
 
     bool _dnd_is_drag_source;
     bool _dnd_source_target_accepts_drop;
@@ -403,4 +427,4 @@ namespace nux
 
 }
 
-#endif //GFXSETUPX11_H
+#endif //GRAPHICSDISPLAYX11_H

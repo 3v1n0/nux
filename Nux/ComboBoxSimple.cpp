@@ -40,30 +40,30 @@ namespace nux
     m_CurrentMenu = new MenuPage (TEXT (""), NUX_TRACKER_LOCATION);
     
     // Set Signals
-    _combo_box_opening_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown) );
-    _combo_box_opening_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp) );
-    _combo_box_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown) );
-    _combo_box_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp) );
+    _combo_box_opening_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
+    _combo_box_opening_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
+    _combo_box_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
+    _combo_box_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
 
     //m_Popup.sigPopupStop.connect(sigc::mem_fun(this, &ComboBox::OnPopupStop));
 
     // Set Geometry
-    _combo_box_opening_area->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT) );
+    _combo_box_opening_area->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT));
     //_combo_box_opening_area->SetMaximumSize(20, DEFAULT_WIDGET_HEIGHT);
     _combo_box_opening_area->SetMinimumSize (20, DEFAULT_WIDGET_HEIGHT);
 
     _combo_box_area->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    _combo_box_area->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
+    _combo_box_area->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
     //m_CurrentMenu = new MenuPage;
     m_CurrentMenu->SetParentMenu (0);
-    m_CurrentMenu->sigActionTriggered.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigActionTriggered) );
-    m_CurrentMenu->sigTerminateMenuCascade.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigTerminateMenuCascade) );
+    m_CurrentMenu->sigActionTriggered.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigActionTriggered));
+    m_CurrentMenu->sigTerminateMenuCascade.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigTerminateMenuCascade));
   }
 
-  ComboBoxSimple::~ComboBoxSimple()
+  ComboBoxSimple::~ComboBoxSimple ()
   {
-    m_CurrentMenu->Dispose();
+    m_CurrentMenu->Dispose ();
   }
 
   long ComboBoxSimple::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

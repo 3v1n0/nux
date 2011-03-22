@@ -187,18 +187,18 @@ namespace nux
       return TraverseInfo;
     }
 
-    // Regular event processing.
-    if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
-    {
-      // Skip the area that has the exclusivity on events
-      return 0;
-    }
-
-    if (GetWindowCompositor ().InExclusiveInputMode ())
-    {
-      // Bypass the regular processing and use a simplified processing of events.
-      return ProcessEventInExclusiveMode (event, TraverseInfo, ProcessEventInfo);
-    }
+//     // Regular event processing.
+//     if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
+//     {
+//       // Skip the area that has the exclusivity on events
+//       return 0;
+//     }
+// 
+//     if (GetWindowCompositor ().InExclusiveInputMode ())
+//     {
+//       // Bypass the regular processing and use a simplified processing of events.
+//       return ProcessEventInExclusiveMode (event, TraverseInfo, ProcessEventInfo);
+//     }
 
 
     InputArea *PreviousMouseOverArea = GetWindowCompositor().GetPreviousMouseOverArea();
@@ -225,7 +225,6 @@ namespace nux
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Area has keyboard focus. Disable keyboard focus on area. Emit OnEndFocus."));
           GetWindowCompositor ().SetKeyboardFocusArea (NULL);
-          OnEndFocus.emit ();
         }
       }
 
@@ -286,7 +285,6 @@ namespace nux
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Area has keyboard focus. Disable keyboard focus on area. Emit OnEndFocus."));
           GetWindowCompositor ().SetKeyboardFocusArea (NULL);
-          OnEndFocus.emit ();
         }
       }
 
@@ -334,7 +332,6 @@ namespace nux
         {
           GetWindowCompositor ().SetKeyboardFocusArea (this);
           keyboard_focus_area = this;
-          keyboard_focus_area->OnStartFocus ();
         }
       }
 
@@ -351,7 +348,6 @@ namespace nux
         {
           GetWindowCompositor ().SetKeyboardFocusArea (NULL);
           keyboard_focus_area = NULL;
-          OnEndFocus.emit ();
         }
       }
 
@@ -445,7 +441,6 @@ namespace nux
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Has the focus but mouse pressed and outside the area. Losing keyboard focus: Emit OnEndFocus."));
           GetWindowCompositor ().SetKeyboardFocusArea (NULL);
           keyboard_focus_area = NULL;
-          OnEndFocus.emit();
         }
       }
       else if ((event_type == NUX_MOUSE_DOUBLECLICK) && (event_processor_state & AREA_MOUSE_STATUS_DOWN))
@@ -792,6 +787,12 @@ namespace nux
     return 0;
   }
   
+  void InputArea::InnerDndSourceDragFinished (DndAction result, void *data) 
+  { 
+    InputArea *self = static_cast<InputArea *> (data);
+    self->DndSourceDragFinished (result);
+  }
+  
   void InputArea::DndSourceDragFinished (DndAction result)
   {
   
@@ -806,8 +807,8 @@ namespace nux
     funcs.get_data_for_type = &InputArea::InnerDndSourceGetDataForType;
     funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
     
-    GetWindow ().StartDndDrag (funcs, this);
     DndSourceDragBegin ();
+    GetWindow ().StartDndDrag (funcs, this);
   }
 #endif
 
@@ -815,6 +816,36 @@ namespace nux
   {
     Area::DoSetFocused (focused);
     SetKeyboardFocus (focused);
+  }
+  
+  void InputArea::GrabPointer ()
+  {
+    GetWindowCompositor ().GrabPointerAdd (this);
+  }
+  
+  void InputArea::UnGrabPointer ()
+  {
+    GetWindowCompositor ().GrabPointerRemove (this);
+  }
+
+  void InputArea::GrabKeyboard ()
+  {
+    GetWindowCompositor ().GrabKeyboardAdd (this);
+  }
+  
+  void InputArea::UnGrabKeyboard ()
+  {
+    GetWindowCompositor ().GrabKeyboardRemove (this);
+  }
+  
+  bool InputArea::OwnsPointerGrab ()
+  {
+    return GetWindowCompositor ().GetPointerGrabArea () == this;
+  }
+  
+  bool InputArea::OwnsKeyboardGrab ()
+  {
+    return GetWindowCompositor ().GetKeyboardGrabArea () == this;
   }
 
 }

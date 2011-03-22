@@ -37,7 +37,7 @@ float frand ()
   return ((float)rand ()) / RAND_MAX;
 }
 
-static void OnFocusChildChanged (nux::Layout *layout, nux::Area *view)
+static void OnFocusChildChanged (nux::Area *layout, nux::Area *view)
 {
   g_debug ("focus has changed, woo %i", rand ());
 }
@@ -77,11 +77,18 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   nux::VLayout* layout_scroll_container = new nux::VLayout (NUX_TRACKER_LOCATION);
   
   nux::VLayout* layout_scroll_1  = new nux::VLayout(NUX_TRACKER_LOCATION);
+
+
   nux::HLayout* layout_scroll_11 = new nux::HLayout(NUX_TRACKER_LOCATION);
-  nux::GridHLayout* layout_scroll_12 = new nux::GridHLayout (NUX_TRACKER_LOCATION);
+  nux::ScrollView *layout_scroll_12 = new nux::ScrollView (NUX_TRACKER_LOCATION);
+  nux::GridHLayout* layout_scroll_12_content = new nux::GridHLayout (NUX_TRACKER_LOCATION);
+  layout_scroll_12->EnableHorizontalScrollBar (false);
+  layout_scroll_12->EnableVerticalScrollBar (true);
+  layout_scroll_12->SetLayout (layout_scroll_12_content);
+  
 
   layout_scroll_1->AddLayout (layout_scroll_11, 0, nux::MINOR_POSITION_TOP);
-  layout_scroll_1->AddLayout (layout_scroll_12, 1, nux::MINOR_POSITION_TOP);
+  layout_scroll_1->AddView (layout_scroll_12, 1, nux::MINOR_POSITION_TOP);
   
   nux::VLayout* layout_scroll_2  = new nux::VLayout(NUX_TRACKER_LOCATION);
   nux::HLayout* layout_scroll_21 = new nux::HLayout(NUX_TRACKER_LOCATION);
@@ -124,14 +131,14 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
     layout_scroll_11->AddView (texture_area, 1, nux::eLeft, nux::eFull);
   }
 
-  for (int i = 0; i < 16; i++)
+  for (int i = 0; i < 128; i++)
   {
     nux::ColorLayer color (nux::Color (0.2, 0.2, 0.4+ frand ()*0.3, 1.0));
     nux::TextureArea* texture_area = new nux::TextureArea ();
     texture_area->SetPaintLayer (&color);
     texture_area->FocusChanged.connect (sigc::ptr_fun (&OnFocusChanged));
     //~ //~
-    layout_scroll_12->AddView (texture_area, 1, nux::eLeft, nux::eFull);
+    layout_scroll_12_content->AddView (texture_area, 1, nux::eLeft, nux::eFull);
   }
 
   for (int i = 0; i < 6; i++)

@@ -109,9 +109,10 @@ namespace nux
   } s_StateLUT;
 
 
-  GpuRenderStates::GpuRenderStates (GpuBrand board)
+  GpuRenderStates::GpuRenderStates (GpuBrand board, GpuInfo* info)
   {
     _gpu_brand = board;
+    _gpu_info = info;
     Memcpy (&m_RenderStateChanges, &s_StateLUT.default_render_state, sizeof (m_RenderStateChanges) );
   }
 

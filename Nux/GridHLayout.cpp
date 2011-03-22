@@ -97,27 +97,76 @@ namespace nux
     return NULL;
   }
 
+  long GridHLayout::DoFocusLeft (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    // if we are left on an edge, then send up
+    Area* focused_child = GetFocusedChild ();
+    int position = GetChildPos (focused_child);
+    Area *parent = GetParentObject ();
+
+    if (parent == NULL || position % GetNumColumn ())
+    {
+      return Layout::DoFocusLeft (ievent, TraverseInfo, ProcessEventInfo);
+    }
+    else
+    {
+      // left edge
+      return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+    }
+  }
+
+  long GridHLayout::DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    // if we are left on an edge, then send up
+    Area* focused_child = GetFocusedChild ();
+    int position = GetChildPos (focused_child);
+    Area *parent = GetParentObject ();
+
+    if (parent == NULL || (position + 1) % GetNumColumn ())
+    {
+      return Layout::DoFocusRight (ievent, TraverseInfo, ProcessEventInfo);
+    }
+    else
+    {
+      // Right Edge
+      return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+    }
+  }
+
   //up and down should pass event to parent
   long GridHLayout::DoFocusUp (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     Area* focused_child = GetFocusedChild ();
     int position = GetChildPos (focused_child);
+    Area *parent = GetParentObject ();
     
     if (focused_child == NULL || position < GetNumColumn ())
     {
-      Area *parent = GetParentObject ();
+      
       if (parent != NULL)
         return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+      else
+        FocusFirstChild ();
 
     }
     else
     {
       // so hacky, but its cheap!
       // just focus the child position - numcolumns
-      focused_child->SetFocused (false);
+      //focused_child->SetFocused (false);
       focused_child = GetChildAtPosition (position - GetNumColumn ());
       if (focused_child)
+      {
         focused_child->SetFocused (true);
+        ChildFocusChanged.emit (this, focused_child);
+      }
+      else
+      {
+        if (parent != NULL)
+          return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+        else
+          FocusFirstChild ();
+      }
     }
 
     return TraverseInfo;
@@ -126,28 +175,32 @@ namespace nux
   {
     Area* focused_child = GetFocusedChild ();
     int position = GetChildPos (focused_child);
+    Area *parent = GetParentObject ();
     
     if (focused_child == NULL || position > GetNumColumn () * (GetNumRow () - 1))
     {
-      Area *parent = GetParentObject ();
       if (parent != NULL)
-      {
         return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
-      }
+      else
+        FocusLastChild ();
     }
     else
     {
       // so hacky, but its cheap!
       // just focus the child position - numcolumns
-      focused_child->SetFocused (false);
+      //focused_child->SetFocused (false);
       focused_child = GetChildAtPosition (position + GetNumColumn ());
       if (focused_child)
       {
         focused_child->SetFocused (true);
+        ChildFocusChanged.emit (this, focused_child);
       }
       else
       {
-        FocusLastChild ();
+        if (parent != NULL)
+          return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
+        else
+          FocusLastChild ();
       }
     }
 

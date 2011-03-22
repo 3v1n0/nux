@@ -148,7 +148,7 @@ namespace nux
     align_ = CairoGraphics::ALIGN_LEFT;
 
     _size_match_text = true;
-    _text_color  = Color::White;
+    _text_color  = Colors::White;
     _texture2D  = 0;
 
     font_family_ = "Ubuntu";
@@ -202,7 +202,7 @@ namespace nux
 
   void TextEntry::DoSetFocused (bool focused)
   {
-   
+
     View::DoSetFocused (focused);
     if (focused == true)
     {
@@ -224,6 +224,7 @@ namespace nux
         parent->SetFocusControl (false);
       }
     }
+
   }
 
   long TextEntry::ProcessEvent (IEvent& event,
@@ -374,14 +375,6 @@ namespace nux
       return;
     }
 
-
-    if (character != 0 && (strlen (character) != 0))
-    {
-      EnterText(character);
-      QueueRefresh(false, true);
-      return;
-    }
-
     unsigned int keyval = keysym;
     bool shift = (state & NUX_STATE_SHIFT);
     bool ctrl = (state & NUX_STATE_CTRL);
@@ -440,30 +433,35 @@ namespace nux
         else
           MoveCursor(BUFFER, 1, shift);
       }
-//       else if ((keyval == GDK_x && ctrl && !shift) ||
-//         (keyval == GDK_Delete && shift && !ctrl))
-//       {
-//           CutClipboard();
-//       }
-//       else if ((keyval == GDK_c && ctrl && !shift) ||
-//         (keyval == GDK_Insert && ctrl && !shift))
-//       {
-//           CopyClipboard();
-//       }
-//       else if ((keyval == GDK_v && ctrl && !shift) ||
-//         (keyval == GDK_Insert && shift && !ctrl))
-//       {
-//           PasteClipboard();
-//       }
+      else if (((keyval == NUX_VK_x) && ctrl && !shift) || ((keyval == NUX_VK_DELETE) && shift && !ctrl))
+      {
+        CutClipboard ();
+      }
+      else if (((keyval == NUX_VK_c) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && ctrl && (!shift)))
+      {
+          CopyClipboard ();
+      }
+      else if (((keyval == NUX_VK_v) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && shift && (!ctrl)))
+      {
+          PasteClipboard ();
+      }
+      else if ((keyval == NUX_VK_a) && ctrl)
+      {
+        // Select all
+        int text_length = static_cast<int>(_text.length());
+        SetSelectionBounds(0, text_length);
+        QueueRefresh(false, true);
+        return;
+      }
       else if (keyval == NUX_VK_BACKSPACE)
       {
         BackSpace();
       }
-      else if (keyval == NUX_VK_DELETE && !shift)
+      else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
         Delete();
       }
-      else if (keyval == NUX_VK_INSERT && !shift && !ctrl)
+      else if ((keyval == NUX_VK_INSERT) && (!shift) && (!ctrl))
       {
         ToggleOverwrite();
       }
@@ -486,6 +484,11 @@ namespace nux
 //       {
 //         return;
 //       }
+    }
+
+    if (character != 0 && (strlen (character) != 0))
+    {
+      EnterText(character);
     }
 
     QueueRefresh(false, true);
@@ -540,7 +543,7 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
-    Color col = Color::Black;
+    Color col = Colors::Black;
     col.SetAlpha (0.0f);
     gfxContext.QRP_Color (base.x,
       base.y,
@@ -1187,6 +1190,7 @@ namespace nux
       attr->start_index = 0;
       attr->end_index = static_cast<unsigned int>(tmp_string.length());
       pango_attr_list_insert(tmp_attrs, attr);
+      pango_layout_set_font_description (layout, font->GetFontDescription ());
       font->Destroy();
     }
     pango_layout_set_attributes(layout, tmp_attrs);
@@ -1252,13 +1256,23 @@ namespace nux
     }
 
     {
-      PangoRectangle log_rect;
-      gint           text_height;
+      PangoContext *context;
+      PangoFontMetrics *metrics;
+      int ascent, descent;
 
-      pango_layout_get_extents (layout, NULL, &log_rect);
-      text_height = log_rect.height / PANGO_SCALE;
+      context = pango_layout_get_context (layout);
+      metrics = pango_context_get_metrics (context,
+                                           pango_layout_get_font_description (layout),
+                            				       pango_context_get_language (context));
 
-      SetMinimumHeight (text_height);
+      ascent = pango_font_metrics_get_ascent (metrics);
+      descent = pango_font_metrics_get_descent (metrics);
+
+      full_height_ = PANGO_PIXELS (ascent + descent) + (kInnerBorderY * 2);
+
+      SetMinimumHeight (full_height_);
+
+      pango_font_metrics_unref (metrics);
     }
 
     return layout;
@@ -1503,8 +1517,8 @@ namespace nux
 
   void TextEntry::CutClipboard()
   {
-    CopyClipboard();
-    DeleteSelection();
+    CopyClipboard ();
+    DeleteSelection ();
   }
 
   void TextEntry::PasteClipboard()
@@ -1889,6 +1903,8 @@ namespace nux
       cursor_ = cursor;
       selection_bound_ = cursor;
       cursor_moved_ = true;
+
+      cursor_moved.emit (cursor);
     }
   }
 

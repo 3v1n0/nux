@@ -301,6 +301,8 @@ namespace nux
     _support_arb_texture_rectangle            = GLEW_ARB_texture_rectangle ? true : false;
     _support_nv_texture_rectangle             = GLEW_NV_texture_rectangle ? true : false;
     _support_arb_pixel_buffer_object          = GLEW_ARB_pixel_buffer_object ? true : false;
+    _support_ext_blend_equation_separate      = GLEW_EXT_blend_equation_separate ? true : false;
+
   }
 
 #if defined (NUX_OS_WINDOWS)
@@ -598,9 +600,9 @@ namespace nux
       _UsePixelBufferObject = false;
     }
 
-    _gpu_render_states = new GpuRenderStates (_gpu_brand);
     _gpu_info = new GpuInfo ();
     _gpu_info->Setup ();
+    _gpu_render_states = new GpuRenderStates (_gpu_brand, _gpu_info);
 
 #if defined(NUX_OS_WINDOWS)
     OGL_EXT_SWAP_CONTROL                = WGLEW_EXT_swap_control ? true : false;

@@ -67,12 +67,9 @@ namespace nux
     Window GetWindow ();
 
     void SetInputFocus ();
-
-    void GrabPointer ();
-    void UnGrabPointer ();
     
-    void GrabKeyboard ();
-    void UnGrabKeyboard ();
+    void Hide ();
+    void Show ();
 
   private:
   
@@ -91,6 +88,8 @@ namespace nux
     int _y;
     int _width;
     int _height;
+    bool _shown;
+    bool _mapped;
     
   };
 }

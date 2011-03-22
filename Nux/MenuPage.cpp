@@ -152,7 +152,7 @@ namespace nux
 
   void MenuItem::DrawAsMenuItem (GraphicsEngine &GfxContext, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone)
   {
-    Geometry geo = GetGeometry();
+    Geometry geo = GetGeometry ();
     Geometry icon_geo (0, 0, 20, 20);
     Geometry text_geo = geo;
 
@@ -162,7 +162,7 @@ namespace nux
     icon_geo.SetX (geo.x + 2);
     icon_geo.SetY (geo.y + 0);
 
-    const TCHAR *label = _action_item->GetLabel();
+    const TCHAR *label = _action_item->GetLabel ();
 
     if (is_highlighted)
     {
@@ -205,7 +205,7 @@ namespace nux
 
   }
 
-  MenuSeparator::~MenuSeparator()
+  MenuSeparator::~MenuSeparator ()
   {
 
   }
@@ -217,10 +217,10 @@ namespace nux
 
   void MenuSeparator::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    Geometry base = GetGeometry();
-    int y0 = base.y + base.GetHeight() / 2;
-    GetPainter().Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, Color (0xFF222222) );
-    GetPainter().Draw2DLine (GfxContext, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color (0xFFAAAAAA) );
+    Geometry base = GetGeometry ();
+    int y0 = base.y + base.GetHeight () / 2;
+    GetPainter ().Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, Color (0xFF222222));
+    GetPainter ().Draw2DLine (GfxContext, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color (0xFFAAAAAA) );
   }
 
   MenuPage::MenuPage (const TCHAR *title, NUX_FILE_LINE_DECL)
@@ -238,15 +238,15 @@ namespace nux
     // Set Original State
 
     // Set Signals
-    OnMouseMove.connect (sigc::mem_fun (this, &MenuPage::EmitMouseMove) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDrag) );
-    OnMouseDown.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &MenuPage::EmitMouseUp) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &MenuPage::RecvMouseLeave) );
-    OnMouseDownOutsideArea.connect (sigc::mem_fun (this, &MenuPage::Terminate) );
+    OnMouseMove.connect (sigc::mem_fun (this, &MenuPage::EmitMouseMove));
+    OnMouseDrag.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDrag));
+    OnMouseDown.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDown));
+    OnMouseUp.connect (sigc::mem_fun (this, &MenuPage::EmitMouseUp));
+    OnMouseLeave.connect (sigc::mem_fun (this, &MenuPage::RecvMouseLeave));
+    OnMouseDownOutsideArea.connect (sigc::mem_fun (this, &MenuPage::Terminate));
 
     // Set Geometry
-    SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
+    SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     // Set layout
 
@@ -261,10 +261,10 @@ namespace nux
     // The MenuPage is floating above everything else.
     SetLayout (vlayout);
 
-    SetTextColor (Color::Black);
+    SetTextColor (Colors::Black);
   }
 
-  MenuPage::~MenuPage()
+  MenuPage::~MenuPage ()
   {
 //     std::vector <MenuItem*>::iterator it;
 // 
@@ -272,9 +272,9 @@ namespace nux
 //     {
 //       (*it)->UnReference();
 //     }
-    m_MenuItemVector.clear();
-    m_MenuSeparatorVector.clear();
-    RemoveLayout();
+    m_MenuItemVector.clear ();
+    m_MenuSeparatorVector.clear ();
+    RemoveLayout ();
   }
 
 //void MenuPage::SetName(const TCHAR* name)
@@ -282,9 +282,9 @@ namespace nux
 //    m_Name = name;
 //}
 //
-  const TCHAR *MenuPage::GetName() const
+  const TCHAR *MenuPage::GetName () const
   {
-    return m_Name.GetTCharPtr();
+    return m_Name.GetTCharPtr ();
   }
 
   bool MenuPage::CanClose() const
@@ -292,7 +292,7 @@ namespace nux
     return m_Action_Triggered;
   }
 
-  long MenuPage::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  long MenuPage::ProcessEvent (Event &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
 
@@ -345,7 +345,7 @@ namespace nux
       else
       {
         if (mod_event.e_event == NUX_MOUSE_MOVE)
-          NeedRedraw();
+          NeedRedraw ();
 
         ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
       }
@@ -363,36 +363,36 @@ namespace nux
   {
     if (m_IsActive)
     {
-      Geometry base = GetGeometry();
+      Geometry base = GetGeometry ();
       Geometry shadow;
       shadow = base;
       shadow.OffsetPosition (4, 4);
       //GetPainter().PaintShape(GfxContext, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
 
       GfxContext.PushClippingRectangle (base);
-      GfxContext.GetRenderStates().SetBlend (GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      GetPainter().Paint2DQuadColor (GfxContext, base, Color (0xCCFFFFFF) );
-      GfxContext.GetRenderStates().SetBlend (GL_FALSE);
+      GfxContext.GetRenderStates ().SetBlend (GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      GetPainter ().Paint2DQuadColor (GfxContext, base, Color (0xCCFFFFFF) );
+      GfxContext.GetRenderStates ().SetBlend (GL_FALSE);
 
       Geometry text_area;
       text_area.SetX (base.x);
       text_area.SetY (base.y);
-      text_area.SetWidth (base.GetWidth() );
+      text_area.SetWidth (base.GetWidth ());
       text_area.SetHeight (PRACTICAL_WIDGET_HEIGHT);
 
       int i;
       std::vector<MenuItem *>::iterator it;
-      int numItem = (int) m_MenuItemVector.size();
+      int numItem = (int) m_MenuItemVector.size ();
 
-      for (it = m_MenuItemVector.begin(), i = 0; it != m_MenuItemVector.end(); it++, i++)
+      for (it = m_MenuItemVector.begin (), i = 0; it != m_MenuItemVector.end (); it++, i++)
       {
         bool is_highlighted = (m_HighlightedItem == i);
         (*it)->DrawAsMenuItem (GfxContext, Color (0xFFFFFFFF) /*GetTextColor()*/, is_highlighted, i == 0, i == (numItem - 1), true);
       }
 
-      std::vector< MenuSeparator * >::iterator separator_iterator;
+      std::vector<MenuSeparator* >::iterator separator_iterator;
 
-      for (separator_iterator = m_MenuSeparatorVector.begin(); separator_iterator != m_MenuSeparatorVector.end(); separator_iterator++)
+      for (separator_iterator = m_MenuSeparatorVector.begin (); separator_iterator != m_MenuSeparatorVector.end (); separator_iterator++)
       {
         (*separator_iterator)->Draw (GfxContext, force_draw);
       }
@@ -758,7 +758,7 @@ namespace nux
 
   void MenuPage::EmitMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (IsMouseInside() )
+    if (IsMouseInside ())
     {
       m_NextMouseUpMeanStop = true;
       // Find on which item the mouse is
@@ -772,7 +772,7 @@ namespace nux
         int py = (*item_iterator)->GetBaseY() - MenuY;
         int height = (*item_iterator)->GetBaseHeight();
 
-        if ( (y >= py) && (y < py + height) )
+        if ((y >= py) && (y < py + height))
         {
           m_HighlightedItem = i;
           break;
@@ -953,10 +953,14 @@ namespace nux
       if (item->GetChildMenu() )
       {
         if (!item->GetChildMenu()->IsActive() )
+        {
           m_HighlightedItem = -1;
+        }
       }
       else
+      {
         m_HighlightedItem = -1;
+      }
     }
   }
 
@@ -1026,6 +1030,25 @@ namespace nux
     m_HighlightedItem = -1;
 
     StopActionSubMenu();
+
+    // The MenuPage does not need to be redrawn, but in embedded mode, this triggers a dirty Area on 
+    // the BaseWindow and it informs the system to update this egion of the screen
+    // (where the menu is about to disappear).
+    QueueDraw ();
+
+    /*Area *top_area = GetWindowCompositor().GetProcessingTopView ();
+    if (top_area)
+    {
+      if (top_area->IsView ())
+      {
+        NUX_STATIC_CAST (View*, top_area)->QueueDraw ();
+      }
+      
+      if (top_area->IsLayout ())
+      {
+        NUX_STATIC_CAST (Layout*, top_area)->QueueDraw ();
+      }
+    }*/
   }
 
 // Never call this function directly
