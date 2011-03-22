@@ -81,6 +81,17 @@ namespace nux
 
     bool DrawCanvas(double x, double y, CairoGraphics *cg);
 
+    bool DrawRoundedRectangle (cairo_t* cr,
+                               double   aspect,
+                               double   x,
+                               double   y,
+                               double   cornerRadius,
+                               double   width,
+                               double   height,
+                               bool     align = false);
+
+    bool BlurSurface (unsigned int radius, cairo_surface_t* surf = NULL);
+
     bool IntersectRectClipRegion(double x, double y, double w, double h);
 
     bool IntersectGeneralClipRegion(std::list<Rect> &region);
