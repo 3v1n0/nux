@@ -473,7 +473,9 @@ namespace nux
     return;
   }
 
-  bool CairoGraphics::BlurCanvas (unsigned int radius)
+  // if called like BlurSurface (radius) or BlurSurface (radius, NULL) it will
+  // try to blur the image-surface of the internal cairo-context
+  bool CairoGraphics::BlurSurface (unsigned int radius, cairo_surface_t* surf)
   {
     cairo_surface_t* surface;
     guchar*          pixels;
@@ -481,9 +483,13 @@ namespace nux
     guint            height;
     cairo_format_t   format;
 
+    if (surf)
+      surface = surf;
+    else
+      surface = cairo_get_target (_cr);
+
     // don't do anything if we're not dealing with an image-surface
-    surface = cairo_get_target (_cr);
-    if (cairo_surface_get_type (surface) != CAIRO_SURFACE_TYPE_IMAGE)
+      if (cairo_surface_get_type (surface) != CAIRO_SURFACE_TYPE_IMAGE)
       return false;
 
     // before we mess with the surface execute any pending drawing

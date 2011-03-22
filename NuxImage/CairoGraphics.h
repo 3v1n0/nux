@@ -89,7 +89,7 @@ namespace nux
                                double   width,
                                double   height);
 
-    bool BlurCanvas (unsigned int radius);
+    bool BlurSurface (unsigned int radius, cairo_surface_t* surf = NULL);
 
     bool IntersectRectClipRegion(double x, double y, double w, double h);
 
