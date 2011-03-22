@@ -276,6 +276,17 @@ namespace nux
     return true;
   }
 
+  static inline double
+  _align (double val)
+  {
+    double fract = val - (int) val;
+
+    if (fract != 0.5f)
+      return (double) ((int) val + 0.5f);
+    else
+      return val;
+  }
+
   bool
   CairoGraphics::DrawRoundedRectangle (cairo_t* cr,
                                        double   aspect,
@@ -283,53 +294,103 @@ namespace nux
                                        double   y,
                                        double   cornerRadius,
                                        double   width,
-                                       double   height)
+                                       double   height,
+                                       bool     align)
   {
     double radius = cornerRadius / aspect;
 
-    // top-left, right of the corner
-    cairo_move_to (cr, x + radius, y);
+    if (align)
+    {
+      // top-left, right of the corner
+      cairo_move_to (cr, _align (x + radius), _align (y));
 
-    // top-right, left of the corner
-    cairo_line_to (cr, x + width - radius, y);
+      // top-right, left of the corner
+      cairo_line_to (cr, _align (x + width - radius), _align (y));
 
-    // top-right, below the corner
-    cairo_arc (cr,
-               x + width - radius,
-               y + radius,
-               radius,
-               -90.0f * G_PI / 180.0f,
-               0.0f * G_PI / 180.0f);
+      // top-right, below the corner
+      cairo_arc (cr,
+                 _align (x + width - radius),
+                 _align (y + radius),
+                 radius,
+                 -90.0f * G_PI / 180.0f,
+                 0.0f * G_PI / 180.0f);
 
-    // bottom-right, above the corner
-    cairo_line_to (cr, x + width, y + height - radius);
+      // bottom-right, above the corner
+      cairo_line_to (cr, _align (x + width), _align (y + height - radius));
 
-    // bottom-right, left of the corner
-    cairo_arc (cr,
-               x + width - radius,
-               y + height - radius,
-               radius,
-               0.0f * G_PI / 180.0f,
-               90.0f * G_PI / 180.0f);
+      // bottom-right, left of the corner
+      cairo_arc (cr,
+                 _align (x + width - radius),
+                 _align (y + height - radius),
+                 radius,
+                 0.0f * G_PI / 180.0f,
+                 90.0f * G_PI / 180.0f);
 
-    // bottom-left, right of the corner
-    cairo_line_to (cr, x + radius, y + height);
+      // bottom-left, right of the corner
+      cairo_line_to (cr, _align (x + radius), _align (y + height));
 
-    // bottom-left, above the corner
-    cairo_arc (cr,
-               x + radius,
-               y + height - radius,
-               radius,
-               90.0f * G_PI / 180.0f,
-               180.0f * G_PI / 180.0f);
+      // bottom-left, above the corner
+      cairo_arc (cr,
+                 _align (x + radius),
+                 _align (y + height - radius),
+                 radius,
+                 90.0f * G_PI / 180.0f,
+                 180.0f * G_PI / 180.0f);
 
-    // top-left, right of the corner
-    cairo_arc (cr,
-               x + radius,
-               y + radius,
-               radius,
-               180.0f * G_PI / 180.0f,
-               270.0f * G_PI / 180.0f);
+      // top-left, right of the corner
+      cairo_arc (cr,
+                 _align (x + radius),
+                 _align (y + radius),
+                 radius,
+                 180.0f * G_PI / 180.0f,
+                 270.0f * G_PI / 180.0f);
+    }
+    else
+    {
+      // top-left, right of the corner
+      cairo_move_to (cr, x + radius, y);
+
+      // top-right, left of the corner
+      cairo_line_to (cr, x + width - radius, y);
+
+      // top-right, below the corner
+      cairo_arc (cr,
+                 x + width - radius,
+                 y + radius,
+                 radius,
+                 -90.0f * G_PI / 180.0f,
+                 0.0f * G_PI / 180.0f);
+
+      // bottom-right, above the corner
+      cairo_line_to (cr, x + width, y + height - radius);
+
+      // bottom-right, left of the corner
+      cairo_arc (cr,
+                 x + width - radius,
+                 y + height - radius,
+                 radius,
+                 0.0f * G_PI / 180.0f,
+                 90.0f * G_PI / 180.0f);
+
+      // bottom-left, right of the corner
+      cairo_line_to (cr, x + radius, y + height);
+
+      // bottom-left, above the corner
+      cairo_arc (cr,
+                 x + radius,
+                 y + height - radius,
+                 radius,
+                 90.0f * G_PI / 180.0f,
+                 180.0f * G_PI / 180.0f);
+
+      // top-left, right of the corner
+      cairo_arc (cr,
+                 x + radius,
+                 y + radius,
+                 radius,
+                 180.0f * G_PI / 180.0f,
+                 270.0f * G_PI / 180.0f);
+    }
 
     return true;
   }

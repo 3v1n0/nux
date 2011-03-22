@@ -87,7 +87,8 @@ namespace nux
                                double   y,
                                double   cornerRadius,
                                double   width,
-                               double   height);
+                               double   height,
+                               bool     align = false);
 
     bool BlurSurface (unsigned int radius, cairo_surface_t* surf = NULL);
 
