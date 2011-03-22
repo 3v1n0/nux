@@ -168,6 +168,9 @@ namespace nux
     */
     virtual bool SetLayout (Layout *layout);
 
+    sigc::signal<void, View*, Layout*> LayoutAdded;
+    sigc::signal<void, View*, Layout*> LayoutRemoved;
+
     void SetFont(ObjectPtr<FontTexture> font);
     ObjectPtr<FontTexture> GetFont();
 
