@@ -461,9 +461,27 @@ namespace nux
       return; 
     
     if (_focused_area != NULL)
+    {
       _focused_area->SetFocused (false);
+
+      if (_focused_area_destroyed_con.empty () == false)
+      {
+        _focused_area_destroyed_con.disconnect ();
+      }
+
+    }
     
     _focused_area = focused_area;
+    _focused_area_destroyed_con = focused_area->OnDestroyed.connect (sigc::mem_fun (this, &WindowThread::OnFocusedAreaDestroyed));
+    
+  }
+
+  void WindowThread::OnFocusedAreaDestroyed (Object *object)
+  {
+    if (object == _focused_area)
+    {
+      _focused_area = NULL;
+    }
   }
 
   void WindowThread::AsyncWakeUpCallback (void* data)

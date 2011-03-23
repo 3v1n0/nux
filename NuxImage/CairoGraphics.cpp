@@ -123,6 +123,13 @@ namespace nux
     t_u8 *ptr = cairo_image_surface_get_data (_cairo_surface);
     int stride = cairo_image_surface_get_stride (_cairo_surface);
 
+    if (ptr == NULL || stride == 0)
+    {
+      // _cairo_surface is not a valid surface
+      nuxError (TEXT ("[CairoGraphics::GetBitmap] Invalid surface"));
+      return bitmap_data; // just returns because we will segfault otherwise
+    }
+
     if (m_surface_format == CAIRO_FORMAT_A1)
     {
       t_u8 *temp = new t_u8[bitmap_data->GetSurface (0).GetPitch() ];
