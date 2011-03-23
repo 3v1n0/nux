@@ -71,6 +71,8 @@ namespace nux
 
     m_ScrollTimerFunctor = new TimerFunctor();
     m_ScrollTimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &EditTextBox::ScrollTimerInterrupt) );
+
+    EnableKeyboardFocusOnMouseDown (true);
   }
 
   EditTextBox::~EditTextBox()

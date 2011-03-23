@@ -160,7 +160,7 @@ namespace nux
       }
     }
 
-    CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_CONTROL);
+    CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_LCONTROL);
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
     return ret;
   }
@@ -593,7 +593,7 @@ namespace nux
       return;
     }
 
-    if ( (keysym == NUX_VK_DELETE) || (keysym == NUX_KP_DELETE) || (keysym == NUX_VK_BACKSPACE) )
+    if ( (keysym == NUX_VK_DELETE) || (keysym == NUX_VK_DELETE) || (keysym == NUX_VK_BACKSPACE) )
     {
 
       int kn = m_control_knot.GetNumSelectedKnot();

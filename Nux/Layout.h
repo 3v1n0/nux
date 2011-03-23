@@ -225,7 +225,7 @@ namespace nux
     sigc::signal<void, Area*>   OnChildQueueDraw;
     sigc::signal<void, Layout*, Area*> ViewAdded;
     sigc::signal<void, Layout*, Area*> ViewRemoved;
-
+    
     virtual void DoSetFocused (bool focused);
     virtual bool DoGetFocused ();
     virtual bool DoCanFocus ();

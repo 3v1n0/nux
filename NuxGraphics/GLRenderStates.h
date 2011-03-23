@@ -24,7 +24,7 @@
 #define GLRENDERSTATES_H
 
 #include "NuxCore/NuxCore.h"
-#include "NuxGraphics/GpuDevice.h"
+#include "GpuDevice.h"
 
 namespace nux
 {

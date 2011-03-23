@@ -130,6 +130,7 @@ namespace nux
 
     // Neutral
     void QRP_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
+    void QRP_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
     void QRP_Color (int x, int y, int width, int height, const Color &c0);
     void QRP_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
     void QRP_ColorModTexAlpha (int x, int y, int width, int height,
@@ -197,6 +198,8 @@ namespace nux
 
     // ASM
     void QRP_ASM_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
+    void QRP_ASM_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
+
     void QRP_ASM_Color (int x, int y, int width, int height, const Color &c0);
     void QRP_ASM_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
     void QRP_ASM_ColorModTexAlpha (int x, int y, int width, int height,
@@ -276,8 +279,9 @@ namespace nux
 
     // GLSL
 
-    void QRP_GLSL_1Tex (int x, int y, int width, int height,
-                        ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0);
+    void QRP_GLSL_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0);
+    void QRP_GLSL_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
+
     void QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0);
     void QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
     void QRP_GLSL_ColorModTexAlpha (int x, int y, int width, int height,
@@ -652,6 +656,12 @@ namespace nux
     //! Same as m_AsmTextureModColor for rectangle textures.
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmTextureRectModColor;
 
+    void InitAsmPixelateShader();
+    //! Render a pixelated texture over a polygon.
+    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmPixelate;
+    //! Render a pixelated texture rectangle over a polygon.
+    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmPixelateRect;
+
     void InitAsmColorModTexMaskAlpha();
     //! Render polygons with a color masked by the alpha provided sampling a texture.
     //! Requires: Enable GPU Alpha Blending
@@ -723,6 +733,10 @@ namespace nux
     void InitSlTextureShader();
     //! Render polygons with a texture modulated by a color.
     ObjectPtr<IOpenGLShaderProgram> m_SlTextureModColor;
+
+    void InitSlPixelateShader();
+    //! Render a pixelated texture over a polygon.
+    ObjectPtr<IOpenGLShaderProgram> m_SLPixelate;
 
     void InitSlColorModTexMaskAlpha();
     //! Render polygons with a color masked by the alpha provided sampling a texture.

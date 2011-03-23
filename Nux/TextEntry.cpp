@@ -177,7 +177,7 @@ namespace nux
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText (text);
 
-
+    EnableKeyboardFocusOnMouseDown (true);
     //MainDraw (canvas_);
   }
 

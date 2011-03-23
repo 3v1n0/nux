@@ -17,9 +17,11 @@ noinst_PROGRAMS = button \
                   moveable_view \
                   pango_combobox \
                   pangotextedit \
+                  rotate_texture_area \
                   scrollview \
                   tab_view \
                   textedit \
+                  text_entry_focus \
                   timegraph \
                   timeline \
                   tooltip
@@ -82,7 +84,10 @@ tab_view_SOURCES = tab_view.cpp
 tab_view_LDADD = $(ALL_LIBS)
 pango_combobox_SOURCES = pango_combobox.cpp
 pango_combobox_LDADD = $(ALL_LIBS)
-
+rotate_texture_area_SOURCES = rotate_texture_area.cpp
+rotate_texture_area_LDADD = $(ALL_LIBS)
+text_entry_focus_SOURCES = text_entry_focus.cpp
+text_entry_focus_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
 #sourceexampledir = "$(pkgdatadir)/examples"

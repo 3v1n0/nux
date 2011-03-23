@@ -52,6 +52,8 @@ namespace nux
     _dnd_enabled_as_target = false;
     _dnd_safety_x = 0;
     _dnd_safety_y = 0;
+
+    _enable_keyboard_focus_on_mouse_down = false;
   }
 
   InputArea::~InputArea()
@@ -187,24 +189,15 @@ namespace nux
       return TraverseInfo;
     }
 
-//     // Regular event processing.
-//     if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
-//     {
-//       // Skip the area that has the exclusivity on events
-//       return 0;
-//     }
-// 
-//     if (GetWindowCompositor ().InExclusiveInputMode ())
-//     {
-//       // Bypass the regular processing and use a simplified processing of events.
-//       return ProcessEventInExclusiveMode (event, TraverseInfo, ProcessEventInfo);
-//     }
-
-
     InputArea *PreviousMouseOverArea = GetWindowCompositor().GetPreviousMouseOverArea();
     InputArea *CurrentMouseOverArea = GetWindowCompositor().GetMouseOverArea();
     InputArea *keyboard_focus_area = GetWindowCompositor().GetKeyboardFocusArea();
     InputArea *mouse_focus_area = GetWindowCompositor().GetMouseFocusArea();
+
+    if (ProcessEventInfo & EVENT_CYCLE_RESET_AREA_STATE)
+    {
+      _event_processor.ResetState ();
+    }
 
     if (ProcessEventInfo & eDoNotProcess)
     {
@@ -244,13 +237,13 @@ namespace nux
       if (event_processor_state & AREA_MOUSE_STATUS_LEAVE)
       {
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse leave. Emit OnMouseLeave."));
-        OnMouseLeave.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+        OnMouseLeave.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
       }
 
       if (event_processor_state & AREA_MOUSE_STATUS_ENTER)
       {
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse enter. Emit OnMouseEnter."));
-        OnMouseEnter.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+        OnMouseEnter.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
       }
 
       nuxEventDebugTrace (_print_event_debug_trace, TEXT("Exit InputArea::OnEvent."));
@@ -292,13 +285,13 @@ namespace nux
       if (event_processor_state & AREA_MOUSE_STATUS_LEAVE)
       {
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse leave. Emit OnMouseLeave."));
-        OnMouseLeave.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+        OnMouseLeave.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
       }
 
       if (event_processor_state & AREA_MOUSE_STATUS_ENTER)
       {
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse enter. Emit OnMouseEnter."));
-        OnMouseEnter.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+        OnMouseEnter.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
       }
 
       ret |=  eMouseEventSolved;
@@ -326,7 +319,7 @@ namespace nux
         //InputArea *keyboard_focus_area = GetWindowCompositor().GetKeyboardFocusArea();
         if ((keyboard_focus_area != 0) && (keyboard_focus_area != this))
         {
-          keyboard_focus_area->OnEndFocus ();
+          keyboard_focus_area->OnEndFocus.emit ();
         }
         if(keyboard_focus_area != this)
         {
@@ -357,7 +350,7 @@ namespace nux
       // should be set in CurrentMouseOverArea.
       if (IsMouseInside () && (GetWindowCompositor ().GetMouseFocusArea () == 0))
       {
-        ret |=  eMouseEventSolved;
+        ret |= eMouseEventSolved;
       }
 
       if (IsMouseInside ())
@@ -387,7 +380,7 @@ namespace nux
               nuxEventDebugTrace (_print_event_debug_trace, TEXT("Send OnMouseLeave to the area that was directly below the mouse."));
             }
 
-            (CurrentMouseOverArea)->OnMouseLeave.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+            (CurrentMouseOverArea)->OnMouseLeave.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
           }
           CurrentMouseOverArea = NULL;
           PreviousMouseOverArea = NULL;
@@ -401,7 +394,7 @@ namespace nux
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("The mouse has exited and area."));
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Send OnMouseLeave to the area that was directly below the mouse."));
-          (PreviousMouseOverArea)->OnMouseLeave.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+          (PreviousMouseOverArea)->OnMouseLeave.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
           // When calling OnMouseLeave.emit on a widget, we have to set the following states to false
           (PreviousMouseOverArea)->_event_processor._current_mouse_in = false;
           (PreviousMouseOverArea)->_event_processor._previous_mouse_in = false;
@@ -412,7 +405,7 @@ namespace nux
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("The mouse has entered and area."));
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Send OnMouseEnter to the area that the mouse has entered."));
-          (CurrentMouseOverArea)->OnMouseEnter.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+          (CurrentMouseOverArea)->OnMouseEnter.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
           //nuxDebugMsg(TEXT("InputArea: Current MouseOver Enter"));
         }
 
@@ -449,7 +442,7 @@ namespace nux
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse pressed inside the area. Emit OnMouseDoubleClick"));
           // Double click
-          OnMouseDoubleClick.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+          OnMouseDoubleClick.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
         }
 
         ret |=  eMouseEventSolved;
@@ -460,8 +453,8 @@ namespace nux
         OnStartMouseFocus.emit();
 
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse pressed inside the area. Emit OnMouseDown"));
-        OnMouseDown.emit (_event_processor.m_mouse_positionx - GetRootX(),
-                          _event_processor.m_mouse_positiony - GetRootY(),
+        OnMouseDown.emit (_event_processor._mouse_positionx - GetRootX(),
+                          _event_processor._mouse_positiony - GetRootY(),
                           event.GetMouseState(), event.GetKeyState() );
 
         ret |=  eMouseEventSolved;
@@ -476,22 +469,22 @@ namespace nux
         if (_event_processor.MouseIn())
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse up and inside area. Emit OnMouseClick"));
-          OnMouseClick.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+          OnMouseClick.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
         }
 
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse up. Emit OnMouseUp"));
-        OnMouseUp.emit (_event_processor.m_mouse_positionx - GetRootX(),
-                        _event_processor.m_mouse_positiony - GetRootY(),
+        OnMouseUp.emit (_event_processor._mouse_positionx - GetRootX(),
+                        _event_processor._mouse_positiony - GetRootY(),
                         event.GetMouseState(), event.GetKeyState() );
 
         ret |=  eMouseEventSolved;
       }
       else if ((event_processor_state & AREA_MOUSE_STATUS_MOVE) && (event_processor_state & AREA_MOUSE_STATUS_FOCUS))
       {
-        int delta_x = _event_processor.m_mouse_deltax;
-        int delta_y = _event_processor.m_mouse_deltay;
-        int x = _event_processor.m_mouse_positionx - GetRootX ();
-        int y = _event_processor.m_mouse_positiony - GetRootY ();
+        int delta_x = _event_processor._mouse_deltax;
+        int delta_y = _event_processor._mouse_deltay;
+        int x = _event_processor._mouse_positionx - GetRootX ();
+        int y = _event_processor._mouse_positiony - GetRootY ();
         
         if (_dnd_enabled_as_source)
         {
@@ -511,8 +504,8 @@ namespace nux
         else
         {
           nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse move and has mouse focus. Emit OnMouseDrag"));
-          OnMouseDrag.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(),
-                            _event_processor.m_mouse_deltax, _event_processor.m_mouse_deltay,
+          OnMouseDrag.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(),
+                            _event_processor._mouse_deltax, _event_processor._mouse_deltay,
                             event.GetMouseState(), event.GetKeyState() );
         }
         ret |=  eMouseEventSolved;
@@ -520,8 +513,8 @@ namespace nux
       else if ((event_processor_state & AREA_MOUSE_STATUS_MOVE) && (!(event_processor_state & AREA_MOUSE_STATUS_FOCUS)))
       {
         nuxEventDebugTrace (_print_event_debug_trace, TEXT("Mouse move and no mouse focus. Emit OnMouseMove"));
-        OnMouseMove.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(),
-                          _event_processor.m_mouse_deltax, _event_processor.m_mouse_deltay,
+        OnMouseMove.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(),
+                          _event_processor._mouse_deltax, _event_processor._mouse_deltay,
                           event.GetMouseState(), event.GetKeyState() );
 
         ret |=  eMouseEventSolved;
@@ -570,45 +563,6 @@ namespace nux
     return ret;
   }
 
-  long InputArea::ProcessEventInExclusiveMode (Event &event, long TraverseInfo, long ProcessEventInfo)
-  {
-    unsigned int mouse_status;
-    mouse_status = _event_processor.EventProcessor (event, GetRootGeometry (), false);
-
-    if (_event_processor.MouseIn () && (event.e_event == NUX_MOUSE_PRESSED))
-    {
-      OnMouseDown.emit (_event_processor.m_mouse_positionx - GetRootX(),
-        _event_processor.m_mouse_positiony - GetRootY(),
-        event.GetMouseState(), event.GetKeyState() );
-    }
-
-    if (_event_processor.MouseIn () && (event.e_event == NUX_MOUSE_RELEASED))
-    {
-      OnMouseUp.emit (_event_processor.m_mouse_positionx - GetRootX(),
-        _event_processor.m_mouse_positiony - GetRootY(),
-        event.GetMouseState(), event.GetKeyState() );
-    }
-
-    if (_event_processor.MouseIn () && (event.e_event == NUX_MOUSE_MOVE))
-    {
-      OnMouseMove.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(),
-        _event_processor.m_mouse_deltax, _event_processor.m_mouse_deltay,
-        event.GetMouseState(), event.GetKeyState() );
-    }
-
-    if (mouse_status & AREA_MOUSE_STATUS_LEAVE)
-    {
-      OnMouseLeave.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
-    }
-
-    if (mouse_status & AREA_MOUSE_STATUS_ENTER)
-    {
-      OnMouseEnter.emit (_event_processor.m_mouse_positionx - GetRootX(), _event_processor.m_mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
-    }
-
-    return 0;
-  }
-
   void InputArea::OnDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     GfxContext.QRP_Color (GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), m_AreaColor);
@@ -631,12 +585,12 @@ namespace nux
 
   int InputArea::GetMouseX()
   {
-    return _event_processor.m_mouse_positionx - GetRootX();
+    return _event_processor._mouse_positionx - GetRootX();
   }
 
   int InputArea::GetMouseY()
   {
-    return _event_processor.m_mouse_positiony - GetRootY();
+    return _event_processor._mouse_positiony - GetRootY();
   }
 
   bool InputArea::IsMouseInside()
@@ -676,8 +630,8 @@ namespace nux
 
   void InputArea::SetAreaMousePosition (int x, int y)
   {
-    _event_processor.m_mouse_positionx = x;
-    _event_processor.m_mouse_positiony = y;
+    _event_processor._mouse_positionx = x;
+    _event_processor._mouse_positiony = y;
   }
 
   void InputArea::EnableEventDebugTrace (bool enable)
@@ -846,6 +800,16 @@ namespace nux
   bool InputArea::OwnsKeyboardGrab ()
   {
     return GetWindowCompositor ().GetKeyboardGrabArea () == this;
+  }
+
+  void InputArea::EnableKeyboardFocusOnMouseDown (bool enable)
+  {
+    _enable_keyboard_focus_on_mouse_down = enable;
+  }
+  
+  bool InputArea::GetKeyboardFocusOnMouseDown () const
+  {
+    return _enable_keyboard_focus_on_mouse_down;
   }
 
 }
