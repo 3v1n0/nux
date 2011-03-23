@@ -111,6 +111,7 @@ namespace nux
   TextEntry::TextEntry (const TCHAR* text, NUX_FILE_LINE_DECL)
     : View (NUX_FILE_LINE_PARAM)
   {
+    _block_focus = false;
     canvas_ = NULL;
     //im_context_ = NULL;
     cached_layout_ = NULL;
@@ -202,10 +203,11 @@ namespace nux
 
   void TextEntry::DoSetFocused (bool focused)
   {
-
+		
     View::DoSetFocused (focused);
     if (focused == true)
     {
+      _block_focus = true;
       SetCursor(0);
       QueueRefresh(false, true);
       
@@ -244,7 +246,7 @@ namespace nux
                                                event.GetKeySym(),
                                                event.GetText(),
                                                &direction);
-      if (type == FOCUS_EVENT_DIRECTION)
+      if (type == FOCUS_EVENT_DIRECTION && _block_focus == false)
       {
         if (direction == FOCUS_DIRECTION_PREV || direction == FOCUS_DIRECTION_NEXT ||
             direction == FOCUS_DIRECTION_UP || direction == FOCUS_DIRECTION_DOWN)
@@ -284,6 +286,9 @@ namespace nux
                          event.GetKeyRepeatCount());
       }
     }
+    
+    if (_block_focus)
+    	_block_focus = false;
 
 
     return ret;

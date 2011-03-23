@@ -32,25 +32,19 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 
     nux::TextEntry* text_entry_1 = new nux::TextEntry(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
 
-    text_entry_0->SetCanFocus (true);
-    text_entry_0->SetFocused (true);
-
     text_entry_0->SetMaximumWidth(300);
     text_entry_0->SetMinimumHeight (20);
 
-    text_entry_1->SetCanFocus (true);
     text_entry_1->SetMaximumWidth(300);
     text_entry_1->SetMinimumHeight (20);
 
-    MainVLayout->SetFocusControl (true);
-    MainVLayout->HasFocusControl ();
     MainVLayout->AddView(text_entry_0, 0, nux::eCenter, nux::eFull);
     MainVLayout->AddView(text_entry_1, 0, nux::eCenter, nux::eFull);
 
     MainVLayout->SetVerticalInternalMargin(10);
 
     MainVLayout->SetContentDistribution(nux::eStackCenter);
-    
+		MainVLayout->SetFocused (true);    
     nux::GetWindowThread ()->SetLayout(MainVLayout);
     nux::ColorLayer background(nux::Color(0xFF4D4D4D));
     static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
