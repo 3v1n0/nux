@@ -88,8 +88,6 @@ namespace nux
     int _y;
     int _width;
     int _height;
-    bool _shown;
-    bool _mapped;
     
   };
 }

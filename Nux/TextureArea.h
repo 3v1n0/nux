@@ -49,6 +49,14 @@ namespace nux
     */
     void SetPaintLayer (AbstractPaintLayer *layer);
 
+    //! Convenience function to set a 2D rotation when rendering the area.
+    /*!
+        The rotation is only used for rendering. It should not be used for something else.
+    */
+    void Set2DRotation (float angle);
+
+    Matrix4 Get2DRotation () const;
+
     sigc::signal<void, int, int> sigMouseDown;  //!< Signal emmitted when a mouse button is pressed over this area.
     sigc::signal<void, int, int> sigMouseDrag;  //!< Signal emmitted when the mouse is dragged over this area.
 
@@ -66,6 +74,8 @@ namespace nux
 
   private:
     AbstractPaintLayer *m_PaintLayer;
+
+    Matrix4 _2d_rotate;  //!< 2D rotation matrix for this area. Used for rendering only.
   };
 }
 

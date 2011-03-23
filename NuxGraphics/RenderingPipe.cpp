@@ -327,6 +327,18 @@ namespace nux
 #endif
   }
 
+  void GraphicsEngine::QRP_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size)
+  {
+#ifndef NUX_OPENGLES_20
+    if (UsingGLSLCodePath ())
+      QRP_GLSL_Pixelate (x, y, width, height, DeviceTexture, texxform, c0, pixel_size);
+    else
+      QRP_ASM_Pixelate (x, y, width, height, DeviceTexture, texxform, c0, pixel_size);
+#else
+    QRP_GLSL_Pixelate (x, y, width, height, DeviceTexture, texxform, c0, pixel_size);
+#endif
+  }
+
   // Render the texture alpha into RGB and modulated by a color.
   void GraphicsEngine::QRP_ColorModTexAlpha (int x, int y, int width, int height,
     ObjectPtr< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)

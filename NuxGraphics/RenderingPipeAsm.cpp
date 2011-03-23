@@ -2222,6 +2222,142 @@ namespace nux
     return _offscreen_color_rt3;
   }
 
+  void GraphicsEngine::InitAsmPixelateShader ()
+  {
+    NString AsmVtx = TEXT (
+      "!!ARBvp1.0                                 \n\
+      ATTRIB iPos         = vertex.position;      \n\
+      ATTRIB iColor       = vertex.attrib[3];     \n\
+      PARAM  mvp[4]       = {state.matrix.mvp};   \n\
+      OUTPUT oPos         = result.position;      \n\
+      OUTPUT oColor       = result.color;         \n\
+      OUTPUT oTexCoord0   = result.texcoord[0];   \n\
+      # Transform the vertex to clip coordinates. \n\
+      DP4   oPos.x, mvp[0], iPos;                     \n\
+      DP4   oPos.y, mvp[1], iPos;                     \n\
+      DP4   oPos.z, mvp[2], iPos;                     \n\
+      DP4   oPos.w, mvp[3], iPos;                     \n\
+      MOV   oColor, iColor;                           \n\
+      MOV   oTexCoord0, vertex.attrib[8];             \n\
+      END");
+
+    NString AsmFrg = TEXT (
+      "!!ARBfp1.0                                       \n\
+      TEMP tex0;                                        \n\
+      TEMP tex_coord;                                   \n\
+      PARAM pixel_size = program.local [0];             \n\
+      PARAM pixel_size_inv = program.local [1];         \n\
+      MUL tex_coord, fragment.texcoord[0], pixel_size_inv; \n\
+      FLR tex_coord, tex_coord;                         \n\
+      MUL tex_coord, tex_coord, pixel_size;  \n\
+      TEX tex0, tex_coord, texture[0], 2D;              \n\
+      MUL result.color, fragment.color, tex0;           \n\
+      END");
+
+    NString AsmFrgRect = TEXT (
+      "!!ARBfp1.0                                       \n\
+      TEMP tex0;                                        \n\
+      TEMP tex_coord;                                   \n\
+      PARAM pixel_size = program.local [0];             \n\
+      PARAM pixel_size_inv = program.local [1];         \n\
+      MUL tex_coord, fragment.texcoord[0], pixel_size_inv; \n\
+      FLR tex_coord, tex_coord;                         \n\
+      MUL tex_coord, tex_coord, pixel_size;  \n\
+      TEX tex0, tex_coord, texture[0], RECT;            \n\
+      MUL result.color, fragment.color, tex0;           \n\
+      END");
+
+    m_AsmPixelate = GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmPixelate->LoadVertexShader (AsmVtx.GetTCharPtr() );
+    m_AsmPixelate->LoadPixelShader (AsmFrg.GetTCharPtr() );
+    m_AsmPixelate->Link();
+
+    m_AsmPixelateRect = GetGpuDevice()->CreateAsmShaderProgram ();
+    m_AsmPixelateRect->LoadVertexShader (AsmVtx.GetTCharPtr ());
+    m_AsmPixelateRect->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
+    m_AsmPixelateRect->Link();
+  }
+
+  void GraphicsEngine::QRP_ASM_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color, int pixel_size)
+  {
+    NUX_RETURN_IF_FALSE (m_AsmPixelate.IsValid());
+    NUX_RETURN_IF_FALSE (m_AsmPixelateRect.IsValid());
+
+    QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+    float VtxBuffer[] =
+    {
+      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
+      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
+      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
+      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
+    };
+
+    float tex_width = device_texture->GetWidth ();
+    float tex_height = device_texture->GetHeight ();
+
+    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+
+    bool rectangle_texture = false;
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_AsmPixelate;
+    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    {
+      shader_program = m_AsmPixelateRect;
+      rectangle_texture = true;
+    }
+    shader_program->Begin();
+
+    SetTexture (GL_TEXTURE0, device_texture);
+
+    CHECKGL (glMatrixMode (GL_MODELVIEW));
+    CHECKGL (glLoadIdentity ());
+    CHECKGL (glLoadMatrixf ((FLOAT *) GetOpenGLModelViewMatrix ().m));
+    CHECKGL (glMatrixMode (GL_PROJECTION));
+    CHECKGL (glLoadIdentity ());
+    CHECKGL (glLoadMatrixf ((FLOAT *) GetOpenGLProjectionMatrix ().m));
+
+    int VertexLocation          = VTXATTRIB_POSITION;
+    int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
+    int VertexColorLocation     = VTXATTRIB_COLOR;
+
+    if (rectangle_texture == false)
+    {
+      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, (float)pixel_size/(float)tex_width, (float)pixel_size/(float)tex_height, 1.0f, 1.0f));
+      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, (float)tex_width/(float)pixel_size, (float)tex_height/(float)pixel_size, 1.0f, 1.0f));
+    }
+    else
+    {
+      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, pixel_size, pixel_size, 1.0f, 1.0f));
+      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, 1.0f/pixel_size, 1.0f/pixel_size, 1.0f, 1.0f));
+    }
+
+    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+
+    if (TextureCoord0Location != -1)
+    {
+      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+    }
+
+    if (VertexColorLocation != -1)
+    {
+      CHECKGL ( glEnableVertexAttribArrayARB (VertexColorLocation) );
+      CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+    }
+
+    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+
+    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+
+    if (TextureCoord0Location != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+
+    if (VertexColorLocation != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
+
+    shader_program->End();
+  }
 }
 #endif // NUX_OPENGLES_20
 

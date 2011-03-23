@@ -160,7 +160,7 @@ namespace nux
       }
     }
 
-    CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_CONTROL);
+    CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_LCONTROL);
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
     return ret;
   }

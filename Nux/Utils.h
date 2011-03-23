@@ -45,6 +45,7 @@ namespace nux
     EVENT_CYCLE_EXCLUSIVE_CONTINUE  = (1L) << 4,  //!< Return value of the cycle of the exclusive input area. If it is returned, allow other areas to process the event.
     EVENT_CYCLE_SOLVED              = (1L) << 5,
     EVENT_CYCLE_DO_NOT_PROCESS      = (1L) << 6,
+    EVENT_CYCLE_RESET_AREA_STATE    = (1L) << 7,  //!< Reset the mouse event processor of an InputArea.
   } EventCycleStatus;
 
   enum PositionPolicy

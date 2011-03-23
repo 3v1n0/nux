@@ -99,7 +99,7 @@ namespace nux
 
   long RangeValueInteger::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
-    m_CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_CONTROL);
+    m_CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_LCONTROL);
 
     long ret;
     ret = m_Percentage->OnEvent (ievent, TraverseInfo, ProcessEventInfo);

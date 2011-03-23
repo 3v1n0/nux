@@ -78,17 +78,17 @@ namespace nux
 #define NUX_EXT_Control_R   (0xff00 | NUX_VK_CONTROL)
 #define NUX_EXT_Alt_R       (0xff00 | NUX_VK_MENU)
 
-#define NUX_KP_PAGE_UP     (0xff00 | NUX_VK_PAGE_UP)
-#define NUX_KP_PAGE_DOWN   (0xff00 | NUX_VK_PAGE_DOWN)
-#define NUX_KP_END         (0xff00 | NUX_VK_END)
-#define NUX_KP_HOME        (0xff00 | NUX_VK_HOME)
-#define NUX_KP_LEFT        (0xff00 | NUX_VK_LEFT)
-#define NUX_KP_UP          (0xff00 | NUX_VK_UP)
-#define NUX_KP_RIGHT       (0xff00 | NUX_VK_RIGHT)
-#define NUX_KP_DOWN        (0xff00 | NUX_VK_DOWN)
-
-#define NUX_KP_INSERT      (0xff00 | NUX_VK_INSERT)
-#define NUX_KP_DELETE      (0xff00 | NUX_VK_DELETE)
+// #define NUX_KP_PAGE_UP     (0xff00 | NUX_VK_PAGE_UP)
+// #define NUX_KP_PAGE_DOWN   (0xff00 | NUX_VK_PAGE_DOWN)
+// #define NUX_KP_END         (0xff00 | NUX_VK_END)
+// #define NUX_KP_HOME        (0xff00 | NUX_VK_HOME)
+// #define NUX_KP_LEFT        (0xff00 | NUX_VK_LEFT)
+// #define NUX_KP_UP          (0xff00 | NUX_VK_UP)
+// #define NUX_KP_RIGHT       (0xff00 | NUX_VK_RIGHT)
+// #define NUX_KP_DOWN        (0xff00 | NUX_VK_DOWN)
+// 
+// #define NUX_KP_INSERT      (0xff00 | NUX_VK_INSERT)
+// #define NUX_KP_DELETE      (0xff00 | NUX_VK_DELETE)
 
 #define NUX_F1     NUX_VK_F1
 #define NUX_F2     NUX_VK_F2

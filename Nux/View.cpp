@@ -81,7 +81,7 @@ namespace nux
       GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
     }
     
-    if (parent != NULL && parent->IsLayout ())
+    if ((parent != NULL) && parent->IsLayout ())
     {
       Layout *parent_layout = (Layout *)parent;
       return parent_layout->ProcessFocusEvent (ievent, TraverseInfo, ProcessEventInfo);
@@ -281,7 +281,6 @@ namespace nux
 //       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (1.0, 0.2, 0.2, 1.0));
 //     }
 
-
     GfxContext.PopModelViewMatrix ();
 
     _need_redraw = false;
@@ -386,11 +385,6 @@ namespace nux
         m_CompositionLayout->SetFocused (false);
 
       _on_focus_changed_handler.disconnect ();
-
-      /* we need to emit the signal before the unparent, just in case
-         one of the callbacks wanted to use this object */
-
-      LayoutRemoved.emit (this, m_CompositionLayout);
       m_CompositionLayout->UnParentObject();
     }
     layout->SetParentObject (this);
@@ -401,9 +395,6 @@ namespace nux
       layout->SetFocused (true);
 
     _on_focus_changed_handler = layout->ChildFocusChanged.connect (sigc::mem_fun (this, &View::OnChildFocusChanged));
-
-    LayoutAdded.emit (this, m_CompositionLayout);
-
     return true;
   }
 

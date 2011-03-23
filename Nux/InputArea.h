@@ -121,6 +121,20 @@ namespace nux
 //        return m_EnableKeyboardInput; //m_KeyboardHandler.IsEnableKeyEntry();
 //    }
 
+    //! Enable keyboard focus on mouse down.
+    /*!
+        Widgets such as TextEntry enable the keyboard focus on mouse down.
+        @param enable If true, the area gets the keyboard focus when a mouse down occurs.
+        \sa _enable_keyboard_focus_on_mouse_down.
+    */
+    void EnableKeyboardFocusOnMouseDown (bool enable);
+    
+    //! Return the status of keyboard focus on mouse down.
+    /*!
+        @return Return true if the area gets the keyboard focus on mouse down.
+    */
+    bool GetKeyboardFocusOnMouseDown () const;
+
     // Override the virtual methods from Object Base
     // Here, we get a change to update the text of the keyboard handler.
     virtual void SetBaseString (const TCHAR *Caption);
@@ -182,6 +196,8 @@ namespace nux
     bool _capture_mouse_down_any_where_else;
     bool _double_click;     //!< If True, this InputArea can emit the signal OnMouseDoubleClick. Default is false.
     bool _print_event_debug_trace;
+
+    bool _enable_keyboard_focus_on_mouse_down;  //!< Get the keyboard focus when a mouse down occurs.
 
 #if defined (NUX_OS_LINUX)
     // DnD support

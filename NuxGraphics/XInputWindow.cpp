@@ -38,9 +38,6 @@ namespace nux
     _display = d;
     XSetWindowAttributes attrib;
     
-    _shown = false;
-    _mapped = false;
-    
     _x = 0;
     _y = 0;
     _width = 1;
@@ -230,8 +227,7 @@ namespace nux
     _width = width;
     _height = height;
     
-    if (_shown)
-      XMoveResizeWindow (_display, _window, x, y, width, height);
+    XMoveResizeWindow (_display, _window, x, y, width, height);
     EnsureInputs ();
     
     if (_strutsEnabled)
@@ -258,20 +254,12 @@ namespace nux
   
   void XInputWindow::Hide ()
   {
-    XMoveResizeWindow (_display, _window, -100 - _width, -100 - _height, _width, _height);
-    _shown = false;
+    XUnmapWindow (_display, _window);
   }
   
   void XInputWindow::Show ()
   {
-    _shown = true;
-    
-    if (!_mapped)
-    {
-      XMapRaised (_display, _window);
-      _mapped = true;
-    }
-    XMoveResizeWindow (_display, _window, _x, _y, _width, _height);
+    XMapRaised (_display, _window);
   }
 }
 

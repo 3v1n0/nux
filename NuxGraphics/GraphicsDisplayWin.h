@@ -94,6 +94,7 @@ namespace nux
     HCURSOR m_Cursor;
 
     static int Win32KeySymToINL (int Keysym);
+    static int Win32VKToNuxKey (int vk);
   public:
 
     // Device

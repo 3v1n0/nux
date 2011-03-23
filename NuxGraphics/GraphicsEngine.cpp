@@ -194,6 +194,7 @@ namespace nux
       {
         InitSlColorShader ();
         InitSlTextureShader ();
+        InitSlPixelateShader ();
         InitSlColorModTexMaskAlpha ();
         InitSl2TextureAdd ();
         InitSl2TextureMod ();
@@ -216,6 +217,7 @@ namespace nux
       {
         InitAsmColorShader ();
         InitAsmTextureShader ();
+        InitAsmPixelateShader ();
         InitAsmColorModTexMaskAlpha ();
         InitAsm2TextureAdd ();
         InitAsm2TextureMod ();
@@ -232,6 +234,7 @@ namespace nux
 #else
       InitSlColorShader ();
       InitSlTextureShader ();
+      InitSlPixelateShader ();
       InitSlColorModTexMaskAlpha ();
       InitSl2TextureAdd ();
       InitSl2TextureMod ();
