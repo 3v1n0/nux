@@ -63,21 +63,25 @@ namespace nux
     void StopMouseFocus (int x, int y, const Geometry &g);
 
   private:
+
+    //! Reset the state machine to its initial configuration.
+    void ResetState ();
+
     bool _has_mouse_focus;
     bool _previous_mouse_in;
     bool _current_mouse_in;
     unsigned int _state;
 
     //! Last know mouse X coordinate inside the area.
-    int m_mouse_positionx;
+    int _mouse_positionx;
     //! Last know mouse Y coordinate inside the area.
-    int m_mouse_positiony;
+    int _mouse_positiony;
     //! Mouse DeltaX coordinate inside the area.
-    int m_mouse_deltax;
+    int _mouse_deltax;
     //! Mouse DeltaY coordinate inside the area.
-    int m_mouse_deltay;
+    int _mouse_deltay;
 
-    bool m_first_time;
+    bool _initial_state;
 
     friend class InputArea;
   };

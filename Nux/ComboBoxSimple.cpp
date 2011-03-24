@@ -28,42 +28,71 @@
 #include "TableCtrl.h"
 #include "StaticText.h"
 
+
 namespace nux
 {
 
   ComboBoxSimple::ComboBoxSimple (NUX_FILE_LINE_DECL)
     :   AbstractComboBox (NUX_FILE_LINE_PARAM)
   {
+    m_block_focus       = false;
+    _can_pass_focus_to_composite_layout = false;
     m_SelectedAction    = 0;
     m_CurrentMenu       = 0;
 
     m_CurrentMenu = new MenuPage (TEXT (""), NUX_TRACKER_LOCATION);
     
     // Set Signals
-    _combo_box_opening_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown) );
-    _combo_box_opening_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp) );
-    _combo_box_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown) );
-    _combo_box_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp) );
+    _combo_box_opening_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
+    _combo_box_opening_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
+    _combo_box_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
+    _combo_box_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
 
     //m_Popup.sigPopupStop.connect(sigc::mem_fun(this, &ComboBox::OnPopupStop));
 
     // Set Geometry
-    _combo_box_opening_area->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT) );
+    _combo_box_opening_area->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT));
     //_combo_box_opening_area->SetMaximumSize(20, DEFAULT_WIDGET_HEIGHT);
     _combo_box_opening_area->SetMinimumSize (20, DEFAULT_WIDGET_HEIGHT);
 
     _combo_box_area->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    _combo_box_area->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
+    _combo_box_area->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
     //m_CurrentMenu = new MenuPage;
     m_CurrentMenu->SetParentMenu (0);
-    m_CurrentMenu->sigActionTriggered.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigActionTriggered) );
-    m_CurrentMenu->sigTerminateMenuCascade.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigTerminateMenuCascade) );
+    m_CurrentMenu->sigActionTriggered.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigActionTriggered));
+    m_CurrentMenu->sigTerminateMenuCascade.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigTerminateMenuCascade));
   }
 
-  ComboBoxSimple::~ComboBoxSimple()
+  ComboBoxSimple::~ComboBoxSimple ()
   {
-    m_CurrentMenu->Dispose();
+    m_CurrentMenu->Dispose ();
+  }
+
+  void ComboBoxSimple::DoSetFocused (bool focused)
+  {
+    View::DoSetFocused (focused);
+    if (focused == true)
+    {
+      m_block_focus = true;
+      // we need to grab focus control from our parent layout
+      // so that we can handle the key inputs ourself
+      Area *_parent = GetParentObject();
+      if (_parent == NULL)
+        return;
+
+      if (_parent->IsView ())
+      {
+        View *parent = (View*)_parent;
+        parent->SetFocusControl (false);
+      }
+      else if (_parent->IsLayout ())
+      {
+        Layout *parent = (Layout *)_parent;
+        parent->SetFocusControl (false);
+      }
+    }
+    NeedRedraw();
   }
 
   long ComboBoxSimple::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -94,8 +123,75 @@ namespace nux
       }
     }
 
+    /* must do focus processing after sending events to children */
+    if (ievent.e_event == NUX_KEYDOWN && GetFocused () && m_block_focus == false)
+    {
+      FocusDirection direction;
+      FocusEventType type;
+
+      direction = FOCUS_DIRECTION_NONE;
+
+      type = Focusable::GetFocusableEventType (ievent.e_event,
+                                               ievent.GetKeySym(),
+                                               ievent.GetText(),
+                                               &direction);
+      if (type == FOCUS_EVENT_DIRECTION)
+      {
+        if (direction == FOCUS_DIRECTION_PREV || direction == FOCUS_DIRECTION_NEXT ||
+          direction == FOCUS_DIRECTION_LEFT || direction == FOCUS_DIRECTION_RIGHT)
+        {
+          // not pressed UP or Down so send focus to our parent layout
+          Area *area = GetParentObject ();
+          // if parent is null return, thats a valid usecase so no warnings.
+          if (area)
+          {
+            long ret = 0;
+            if ( area->IsView() )
+            {
+              View *ic = NUX_STATIC_CAST (View *, area );
+              ic->SetFocusControl (true);
+              ret = ic->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
+            }
+            else if ( area->IsLayout() )
+            {
+              Layout *layout = NUX_STATIC_CAST (Layout *, area );
+              layout->SetFocusControl (true);
+              ret = layout->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
+            }
+          }
+        }
+        else if (direction == FOCUS_DIRECTION_UP)
+        {
+          MoveSelectionUp ();
+          sigTriggered.emit (this);
+          sigActionTriggered.emit (GetItem (GetSelectionIndex ()));
+        }
+        else if (direction == FOCUS_DIRECTION_DOWN)
+        {
+          MoveSelectionDown ();
+          sigTriggered.emit (this);
+          sigActionTriggered.emit (GetItem (GetSelectionIndex ()));
+        }
+      }
+    }
+
+    if (m_block_focus == true)
+      m_block_focus = false;
+
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
     return ret;
+  }
+
+  void ComboBoxSimple::MoveSelectionUp ()
+  {
+    int current_index = GetSelectionIndex ();
+    SetSelectionIndex (current_index - 1);
+  }
+
+  void ComboBoxSimple::MoveSelectionDown ()
+  {
+    int current_index = GetSelectionIndex ();
+    SetSelectionIndex (current_index + 1);
   }
 
   ActionItem *ComboBoxSimple::AddItem (const TCHAR *label, int Uservalue)

@@ -50,7 +50,7 @@ namespace nux
     ActionItem *AddItem (const TCHAR *label, int Uservalue = 0);
     void RemoveItem (ActionItem *item);
     void RemoveAllItem();
-
+    
     // emitters
     void OnMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void OnMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -70,6 +70,10 @@ namespace nux
     int GetSelectionIndex() const;
     void SetSelectionIndex (int index);
 
+    // moves the currently selected item up/down - just shorthand for SetSelectionIndex
+    void MoveSelectionUp ();
+    void MoveSelectionDown ();
+
     MenuPage * GetMenuPage ()
     {
       return m_CurrentMenu;
@@ -81,6 +85,9 @@ namespace nux
   protected:
     MenuPage   *m_CurrentMenu;
     ActionItem *m_SelectedAction;
+
+    virtual void DoSetFocused (bool focused);
+    bool        m_block_focus; // used to selectively ignore focus keyevents
 
   };
 

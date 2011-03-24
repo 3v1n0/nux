@@ -82,7 +82,7 @@ namespace nux
     button_geo.OffsetSize (-5, -2);
     button_geo.OffsetPosition (+4, +1);
 
-    if (_combo_box_area->IsMouseInside() || _combo_box_opening_area->IsMouseInside() )
+    if (_combo_box_area->IsMouseInside() || _combo_box_opening_area->IsMouseInside() || GetFocused ())
       GetPainter().PaintShape (GfxContext, button_geo, m_sCOMBO_MOUSEOVER_COLOR,  eSHAPE_CORNER_ROUND4);
     else
       GetPainter().PaintShape (GfxContext, button_geo, m_sCOMBO_BUTTON_COLOR,  eSHAPE_CORNER_ROUND4);

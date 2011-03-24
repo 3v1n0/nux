@@ -469,7 +469,9 @@ namespace nux
     std::list< ThreadInfo * > m_ChildThreadInfo;
 
   private:
+    void OnFocusedAreaDestroyed (Object *object);
     Area *_focused_area;
+    sigc::connection _focused_area_destroyed_con;
     //! Informs the system of the start of a layout cycle.
     /*!
         This call merely sets a flag to true or false. This flag is used to decided if some actions should be 

@@ -38,6 +38,9 @@ namespace nux
     _display = d;
     XSetWindowAttributes attrib;
     
+    _shown = false;
+    _mapped = false;
+    
     _x = 0;
     _y = 0;
     _width = 1;
@@ -81,7 +84,6 @@ namespace nux
 
     XStoreName (d, _window, title);
 
-    XMapRaised (d, _window);
     EnsureInputs ();
 
     if (take_focus)
@@ -152,16 +154,7 @@ namespace nux
 
   void XInputWindow::UnsetStruts()
   {
-    int i;
-    
-    int data[12];
-    
-    for (i = 0; i < 12; i++)
-      data[i] = 0;
-    
-    XChangeProperty (_display, _window, XInternAtom (_display, "_NET_WM_STRUT_PARTIAL", 0),
-                     XA_CARDINAL, 32, PropModeReplace,
-                     (unsigned char *) data, 12);
+    XDeleteProperty (_display, _window, XInternAtom (_display, "_NET_WM_STRUT_PARTIAL", 0));
   }
 
   void XInputWindow::EnableStruts(bool enable)
@@ -237,7 +230,8 @@ namespace nux
     _width = width;
     _height = height;
     
-    XMoveResizeWindow (_display, _window, x, y, width, height);
+    if (_shown)
+      XMoveResizeWindow (_display, _window, x, y, width, height);
     EnsureInputs ();
     
     if (_strutsEnabled)
@@ -260,6 +254,24 @@ namespace nux
   void XInputWindow::SetInputFocus ()
   {
     XSetInputFocus (_display, _window, RevertToParent, CurrentTime);
+  }
+  
+  void XInputWindow::Hide ()
+  {
+    XMoveResizeWindow (_display, _window, -100 - _width, -100 - _height, _width, _height);
+    _shown = false;
+  }
+  
+  void XInputWindow::Show ()
+  {
+    _shown = true;
+    
+    if (!_mapped)
+    {
+      XMapRaised (_display, _window);
+      _mapped = true;
+    }
+    XMoveResizeWindow (_display, _window, _x, _y, _width, _height);
   }
 }
 

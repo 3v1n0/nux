@@ -56,22 +56,22 @@ namespace nux
           type = FOCUS_EVENT_ACTIVATE;
           //g_debug ("focus key activated");
           break;
-        case NUX_KP_UP:
+        case NUX_VK_UP:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_UP;
           //g_debug ("direction up");
           break;
-        case NUX_KP_DOWN:
+        case NUX_VK_DOWN:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_DOWN;
           //g_debug ("direction down");
           break;
-        case NUX_KP_LEFT:
+        case NUX_VK_LEFT:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_LEFT;
           //g_debug ("direction left");
           break;
-        case NUX_KP_RIGHT:
+        case NUX_VK_RIGHT:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_RIGHT;
           //g_debug ("direction right");

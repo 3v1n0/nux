@@ -188,16 +188,6 @@ namespace nux
     */
     virtual void NotifyConfigurationChange (int Width, int Height);
 
-    //! Process special events.
-    /*!
-        Some events are not meant to be processed by all views. These events only make sense 
-        for BaseWindow. NUX_WINDOW_ENTER_FOCUS, is such an event.
-
-        @param event The event to inspect.
-        @return True if this BaseWindow has claimed the event (sets the keyboard focus on self).
-    */
-    virtual bool ProcessEnterFocus (Event event);
-
     int GetBorder() const;
     int GetTopBorder() const;
     void SetBorder (int border);

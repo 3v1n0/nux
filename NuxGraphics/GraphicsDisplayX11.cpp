@@ -102,6 +102,7 @@ namespace nux
     
     _global_keyboard_grab_data = 0;
     _global_pointer_grab_data = 0;
+    _global_pointer_grab_callback = 0;
 
     // DND
     _last_dnd_position.Set(0, 0);
@@ -1950,6 +1951,7 @@ namespace nux
     
     GrabDndSelection (display, None, CurrentTime);
     UngrabPointer (this);
+    _dnd_source_grab_active = false;
     
     _dnd_source_funcs.get_drag_image = 0;
     _dnd_source_funcs.get_drag_types = 0;

@@ -40,7 +40,7 @@ namespace nux
   WindowCompositor::WindowCompositor()
   {
     OverlayDrawingCommand       = NULL;
-    _previous_mouse_over_area     = NULL;
+    _previous_mouse_over_area   = NULL;
     m_CurrentEvent              = NULL;
     m_CurrentWindow             = NULL;
     m_FocusAreaWindow           = NULL;
@@ -56,7 +56,6 @@ namespace nux
     m_OverlayWindow             = NULL;
     OverlayDrawingCommand       = NULL;
     m_CurrentWindow             = NULL;
-    m_FocusAreaWindow           = NULL;
     m_MenuWindow                = NULL;
     m_CurrentEvent              = NULL;
     _mouse_focus_area           = NULL;
@@ -72,11 +71,11 @@ namespace nux
 
     _dnd_area                   = NULL;
 
-    if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
+    if (GetWindowThread ()->GetWindow ().HasFrameBufferSupport ())
     {
-      m_FrameBufferObject = GetGpuDevice()->CreateFrameBufferObject();
+      m_FrameBufferObject = GetGpuDevice ()->CreateFrameBufferObject ();
       // Do not leave the Fbo binded. Deactivate it.
-      m_FrameBufferObject->Deactivate();
+      m_FrameBufferObject->Deactivate ();
     }
 
     // At this stage, the size of the window may not be known yet.
@@ -84,16 +83,16 @@ namespace nux
     m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
     m_MainDepthRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
 
-    m_MenuList = new std::list<MenuPage *>;
+    m_MenuList = new std::list<MenuPage*>;
     m_PopupRemoved = false;
     m_MenuRemoved = false;
     m_ModalWindow = NULL;
-    m_Background = new ColorLayer (Color (0xFF4D4D4D) );
+    m_Background = new ColorLayer (Color (0xFF4D4D4D));
   }
 
-  WindowCompositor::~WindowCompositor()
+  WindowCompositor::~WindowCompositor ()
   {
-    _window_to_texture_map.clear();
+    _window_to_texture_map.clear ();
     m_FrameBufferObject.Release ();
     m_MainColorRT.Release ();
     m_MainDepthRT.Release ();
@@ -259,45 +258,106 @@ namespace nux
     // Event processing cycle begins.
     _inside_event_processing = true;
 
-    if ((event.e_event == NUX_KEYDOWN) ||
-      (event.e_event == NUX_KEYUP))
+    Area *pointer_grab_area = GetPointerGrabArea ();
+    Area *keyboard_grab_area = GetKeyboardGrabArea ();
+
+    // Event Cycle Step 0: pass the event to the pointer or keyboard grab.
+    //
+    // Go into pointer grab if:
+    //    - pointer_grab_area is not NULL
+    //    - the event is a mouse event (mouse up/down/move/wheel/doubleclick)
+    //    - there is no mouse focus or the area that has the mouse focus is also the pointer_grab_area
+    //
+    // Go into keyboard grab if:
+    //    - keyboard_grab_area is not NULL
+    //    - the event is a keyboard event (key up/down)
+    //    - there is no mouse focus or the area that has the mouse focus is also the pointer_grab_area    
+    if (
+        (
+          (
+            (GetMouseFocusArea () == 0) || (GetMouseFocusArea () == pointer_grab_area)
+          ) &&
+          pointer_grab_area &&
+          (
+            (event.e_event == NUX_MOUSE_PRESSED) ||
+            (event.e_event == NUX_MOUSE_RELEASED) ||
+            (event.e_event == NUX_MOUSE_MOVE) ||
+            (event.e_event == NUX_MOUSE_WHEEL) ||
+            (event.e_event == NUX_MOUSE_DOUBLECLICK)
+          )
+        ) ||
+        (
+          keyboard_grab_area &&
+          (
+            (event.e_event == NUX_KEYDOWN) ||
+            (event.e_event == NUX_KEYUP)
+          )
+        )
+       )
     {
-      Area *keyboard_grab_area = GetKeyboardGrabArea ();
-      if (keyboard_grab_area)
+      // Set a system-wide copy the event. Usefull for getting the a copy of the full event,
+      // for instance in the area's signal callbacks. Area's signal callbacks don't pass the full event as a parameter.
+      SetCurrentEvent (&event);
+
+      long ret = 0;
+
+      // If there is a menu open, process it. Menus or drop down menus (combo box) are modal user interface
+      // elements. They must be closed before event processing can resume normally.
       {
-        ViewWindowPreEventCycle ();
-        
-        DispatchEventToView (event, (View*) keyboard_grab_area, 0, 0);
-        
-        ViewWindowPostEventCycle ();
+        ret = MenuEventCycle (event, 0, 0);
 
-        return;
+        CleanMenu ();
+
+        if (ret & eMouseEventSolved)
+        {
+          // The menu has claimed the event.
+          SetCurrentEvent (NULL);
+          return;
+        }
       }
-    }
+      
+      // Update the state of view windows (aka BaseWindow) before processing.
+      ViewWindowPreEventCycle ();
 
-    if ((event.e_event == NUX_MOUSE_PRESSED) ||
-      (event.e_event == NUX_MOUSE_RELEASED) ||
-      (event.e_event == NUX_MOUSE_MOVE) ||
-      (event.e_event == NUX_MOUSE_WHEEL) ||
-      (event.e_event == NUX_MOUSE_DOUBLECLICK))
-    {
-      Area *pointer_grab_area = GetPointerGrabArea ();
-      if (pointer_grab_area)
+      if (pointer_grab_area &&
+          ((event.e_event == NUX_MOUSE_PRESSED) ||
+          (event.e_event == NUX_MOUSE_RELEASED) ||
+          (event.e_event == NUX_MOUSE_MOVE) ||
+          (event.e_event == NUX_MOUSE_WHEEL) ||
+          (event.e_event == NUX_MOUSE_DOUBLECLICK))
+      )
       {
-        ViewWindowPreEventCycle ();
-
-        DispatchEventToView (event, (View*) pointer_grab_area, 0, 0);
-
-        ViewWindowPostEventCycle ();
-
-        return;
+        SetProcessingTopView (NUX_STATIC_CAST (BaseWindow*, pointer_grab_area->GetTopLevelViewWindow ()));
+        // call the public event cycle processing function of the pointer_grab_area.
+        ret = DispatchEventToView (event, NUX_STATIC_CAST (View*, pointer_grab_area), 0, 0);
+        SetProcessingTopView (NULL);
       }
+
+      if (keyboard_grab_area &&
+          ((event.e_event == NUX_KEYDOWN) ||
+          (event.e_event == NUX_KEYUP))
+      )
+      {
+        SetProcessingTopView (NUX_STATIC_CAST (BaseWindow*, keyboard_grab_area->GetTopLevelViewWindow ()));
+        // call the public event cycle processing function of the keyboard_grab_area.
+        ret = DispatchEventToView (event, NUX_STATIC_CAST (View*, keyboard_grab_area), 0, 0);
+        SetProcessingTopView (NULL);
+      }
+
+      // Update the state of view windows (aka BaseWindow) after event processing.
+      ViewWindowPostEventCycle ();
+      
+      // Remove the system wide copy of the event.
+      SetCurrentEvent (NULL);
+
+      // End of grab event cycle.
+      return;
     }
 
     long ret = 0;
     bool base_window_reshuffling = false; // Will be set to true if the BaseWindow are reshuffled.
 
-    std::list<MenuPage *>::iterator menu_it;
+    //std::list<MenuPage*>::iterator menu_it;
 
     if((event.e_event == NUX_SIZE_CONFIGURATION) ||
       (event.e_event == NUX_WINDOW_ENTER_FOCUS))
@@ -309,15 +369,28 @@ namespace nux
     }
 
 
-    if (GetMouseFocusArea() && (event.e_event != NUX_MOUSE_PRESSED) && (!InExclusiveInputMode ()))
+    // Event Cycle Step 1: pass the event to the area that has the keyboard focus provided the event is 
+    // not NUX_MOUSE_PRESSED, NUX_KEYDOWN or NUX_KEYUP.
+    // The area where the mouse is down processes the event by calling its private event cycle processing
+    // function directly. For instance, if this area has a layout, then the event will not be processed by
+    // the layout and its children. 
+    // The event processing goes into a modal type of interaction until the mouse button is released.
+    if (GetMouseFocusArea () && (event.e_event != NUX_MOUSE_PRESSED) &&
+          (event.e_event != NUX_KEYDOWN) &&
+          (event.e_event != NUX_KEYUP)
+       )
     {
+      // Set a system-wide copy the event.
       SetCurrentEvent (&event);
+
       SetProcessingTopView (GetFocusAreaWindow());
+
+      // call the private event cycle processing function of the keyboard_grab_area.
       DispatchEventToArea (event, GetMouseFocusArea(), 0, 0);
 
       if (event.e_event == NUX_MOUSE_RELEASED)
       {
-        SetMouseFocusArea (0);
+        SetMouseFocusArea (NULL);
         // No need to set SetMouseOverArea to NULL.
         //SetMouseOverArea(0);
       }
@@ -327,8 +400,8 @@ namespace nux
         SetWidgetDrawingOverlay (NULL, NULL);
       }
 
-
-      // Let all the menu area check the event first. Beside, they are on top of everything else.
+      std::list<MenuPage*>::iterator menu_it;
+      // Let all the menu area check the event first.
       for (menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
       {
         // The deepest menu in the menu cascade is in the front of the list.
@@ -340,152 +413,72 @@ namespace nux
     }
     else
     {
+      // Event Cycle Step 2: Full processing of the event. There is no grab, or mouse focus area.
+      // This correspond to the action of moving the mouse or pressing a key.
       SetCurrentEvent (&event);
 
-      if (!InExclusiveInputMode ()) // Menus are not enabled in exclusive mode
-      {
-        if (m_MenuWindow.IsValid())
-        {
-          event.e_x_root = m_MenuWindow->GetBaseX();
-          event.e_y_root = m_MenuWindow->GetBaseY();
-        }
-
-        // Let all the menu area check the event first. Beside, they are on top of everything else.
-        for (menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
-        {
-          // The deepest menu in the menu cascade is in the front of the list.
-          ret = (*menu_it)->ProcessEvent (event, ret, 0);
-        }
-
-        if ( (event.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size() )
-        {
-          bool inside = false;
-
-          for (menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
-          {
-            Geometry geo = (*menu_it)->GetGeometry();
-
-            if (PT_IN_BOX ( event.e_x - event.e_x_root, event.e_y - event.e_y_root,
-                            geo.x, geo.x + geo.width, geo.y, geo.y + geo.height ) )
-            {
-              inside = true;
-              break;
-            }
-          }
-
-          if (inside == false)
-          {
-            (*m_MenuList->begin() )->NotifyMouseDownOutsideMenuCascade (event.e_x - event.e_x_root, event.e_y - event.e_y_root);
-          }
-        }
-
-        if (m_MenuWindow.IsValid())
-        {
-          event.e_x_root = 0;
-          event.e_y_root = 0;
-        }
-
-        if ( (event.e_event == NUX_MOUSE_RELEASED) )
-        {
-          SetWidgetDrawingOverlay (NULL, NULL);
-        }
-
-        if ( (event.e_event == NUX_SIZE_CONFIGURATION) && m_MenuList->size() )
-        {
-          (*m_MenuList->begin() )->NotifyTerminateMenuCascade();
-        }
-      }
-
+      // Let the Menus process the event.
+      long ret = 0;
       long ProcessEventInfo = 0;
       bool MouseIsOverMenu = 0;
-
-      if (ret & eMouseEventSolved)
       {
-        // If one menu processed the event, then stop all other element from processing it.
-        ProcessEventInfo = eDoNotProcess;
-        MouseIsOverMenu = TRUE;
+        MenuEventCycle (event, 0, 0);
+
+        if (ret & eMouseEventSolved)
+        {
+          // If one menu processed the event, then stop all other element from processing it.
+          ProcessEventInfo = eDoNotProcess;
+          MouseIsOverMenu = TRUE;
+        }
       }
 
-      /////////////////////////////////////////
-      // Start ViewWindow event processing.
-      /////////////////////////////////////////
-
+      // Let the ViewWindow process the event.
       ViewWindowPreEventCycle ();
 
       std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
 
-      // NUX_WINDOW_ENTER_FOCUS is processed here. This is a window level signal that should not be passed down to
-      // individual area. Instead, we make the top level BaseWindow get the keyboard focus.
-      // NUX_WINDOW_EXIT_FOCUS is passed down the area for processing. At the end of this function, also do
-      // reset some states if the event is NUX_WINDOW_EXIT_FOCUS.
-      if (event.e_event == NUX_WINDOW_ENTER_FOCUS)
+
+      if(_modal_view_window_list.size() > 0)
       {
-        if(_modal_view_window_list.size () > 0)
-        {
-          // The top modal window gets the keyboard focus.
-          ObjectWeakPtr<BaseWindow> window = (*_modal_view_window_list.begin ());
-          if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
-          {
-            window.GetPointer ()->ProcessEnterFocus (event);
-          }
-        }
-        else
-        {
-          if (_view_window_list.size () != 0)
-          {
-            // The top window gets the keyboard focus.
-            ObjectWeakPtr<BaseWindow> window = (*_view_window_list.begin ());
-            if (window.GetPointer () && (event.e_event == NUX_WINDOW_ENTER_FOCUS))
-            {
-              window.GetPointer ()->ProcessEnterFocus (event);
-            }
-          }
-        }
+        SetProcessingTopView((*_modal_view_window_list.begin()).GetPointer());
+        ret = (*_modal_view_window_list.begin())->ProcessEvent(event, ret, ProcessEventInfo);
+        SetProcessingTopView(NULL);
       }
       else
       {
-        if(_modal_view_window_list.size() > 0)
+        if((event.e_event == NUX_MOUSE_PRESSED) && (!InExclusiveInputMode()))
         {
-          SetProcessingTopView((*_modal_view_window_list.begin()).GetPointer());
-          ret = (*_modal_view_window_list.begin())->ProcessEvent(event, ret, ProcessEventInfo);
-          SetProcessingTopView(NULL);
+          // There is a possibility we might have to reorder the stack of windows.
+          // Cancel the currently selected window.
+          m_SelectedWindow = NULL;
+          base_window_reshuffling = true;
         }
-        else
+
+        // Traverse the window from the top of the visibility stack to the bottom.
+        for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
         {
-          if((event.e_event == NUX_MOUSE_PRESSED) && (!InExclusiveInputMode()))
+          if((*it).GetPointer () && (*it)->IsVisible () && ((*it)->_entering_visible_state == false))
           {
-            // There is a possibility we might have to reorder the stack of windows.
-            // Cancel the currently selected window.
-            m_SelectedWindow = NULL;
-            base_window_reshuffling = true;
-          }
+            SetProcessingTopView ((*it).GetPointer ());
+            ret = (*it)->ProcessEvent (event, ret, ProcessEventInfo);
+            SetProcessingTopView (NULL);
 
-          // Traverse the window from the top of the visibility stack to the bottom.
-          for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
-          {
-            if((*it).GetPointer () && (*it)->IsVisible () && ((*it)->_entering_visible_state == false))
+            if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
             {
-              SetProcessingTopView ((*it).GetPointer ());
-              ret = (*it)->ProcessEvent (event, ret, ProcessEventInfo);
-              SetProcessingTopView (NULL);
-
-              if ((ret & eMouseEventSolved) && (m_SelectedWindow == 0) && (!InExclusiveInputMode ()))
-              {
-                // The mouse event was solved in the window pointed by the iterator.
-                // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
-                base_window_reshuffling = true;
-                m_SelectedWindow = (*it);
-              }
+              // The mouse event was solved in the window pointed by the iterator.
+              // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
+              base_window_reshuffling = true;
+              m_SelectedWindow = (*it);
             }
           }
+        }
 
-          // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
-          // This avoid mouse in/out messages from widgets below the menu chain.
-          if (!MouseIsOverMenu)
-          {
-            // Let the main window analyze the event.
-            ret = GetWindowThread ()->ProcessEvent (event, ret, ProcessEventInfo) ;
-          }
+        // Check if the mouse is over a menu. If yes, do not let the main window analyze the event.
+        // This avoid mouse in/out messages from widgets below the menu chain.
+        if (!MouseIsOverMenu)
+        {
+          // Let the main window analyze the event.
+          ret = GetWindowThread ()->ProcessEvent (event, ret, ProcessEventInfo) ;
         }
       }
 
@@ -495,22 +488,6 @@ namespace nux
     ViewWindowPostEventCycle ();
 
     CleanMenu ();
-
-#if defined (NUX_OS_WINDOWS)
-    // Following the processing of NUX_WINDOW_EXIT_FOCUS, reset some states.
-    if (event.e_event == NUX_WINDOW_EXIT_FOCUS)
-    {
-      SetCurrentEvent (&event);
-
-      if (GetMouseFocusArea ())
-        DispatchEventToArea (event, GetMouseFocusArea(), 0, 0);
-
-      SetMouseFocusArea (0);
-      SetMouseOverArea (0);
-      SetKeyboardFocusArea (0);
-      SetCurrentEvent (0);
-    }
-#endif
   }
 
   void WindowCompositor::ViewWindowPreEventCycle ()
@@ -557,6 +534,65 @@ namespace nux
 
     // Make the designated BaseWindow always on top of the stack.
     EnsureAlwaysOnFrontWindow ();
+  }
+
+  long WindowCompositor::MenuEventCycle (Event &event, long TraverseInfo, long ProcessEventInfo)
+  {
+    long ret = TraverseInfo;
+    std::list<MenuPage*>::iterator menu_it;
+
+    if (m_MenuWindow.IsValid())
+    {
+      event.e_x_root = m_MenuWindow->GetBaseX ();
+      event.e_y_root = m_MenuWindow->GetBaseY ();
+    }
+
+    // Let all the menu area check the event first. Beside, they are on top of everything else.
+    for (menu_it = m_MenuList->begin (); menu_it != m_MenuList->end (); menu_it++)
+    {
+      // The deepest menu in the menu cascade is in the front of the list.
+      ret = (*menu_it)->ProcessEvent (event, ret, ProcessEventInfo);
+    }
+
+    if ((event.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size ())
+    {
+      bool inside = false;
+
+      for (menu_it = m_MenuList->begin (); menu_it != m_MenuList->end (); menu_it++)
+      {
+        Geometry geo = (*menu_it)->GetGeometry ();
+
+        if (PT_IN_BOX (event.e_x - event.e_x_root, event.e_y - event.e_y_root,
+                        geo.x, geo.x + geo.width, geo.y, geo.y + geo.height))
+        {
+          inside = true;
+          break;
+        }
+      }
+
+      if (inside == false)
+      {
+        (*m_MenuList->begin ())->NotifyMouseDownOutsideMenuCascade (event.e_x - event.e_x_root, event.e_y - event.e_y_root);
+      }
+    }
+
+    if (m_MenuWindow.IsValid ())
+    {
+      event.e_x_root = 0;
+      event.e_y_root = 0;
+    }
+
+    if ( (event.e_event == NUX_MOUSE_RELEASED) )
+    {
+      SetWidgetDrawingOverlay (NULL, NULL);
+    }
+
+    if ( (event.e_event == NUX_SIZE_CONFIGURATION) && m_MenuList->size() )
+    {
+      (*m_MenuList->begin() )->NotifyTerminateMenuCascade();
+    }
+
+    return ret;
   }
 
   void WindowCompositor::StartModalWindow (ObjectWeakPtr<BaseWindow> window)
@@ -1471,7 +1507,7 @@ namespace nux
       m_MenuWindow = NULL;
   }
 
-  void WindowCompositor::CleanMenu()
+  void WindowCompositor::CleanMenu ()
   {
     if (m_MenuList->size() == 0)
       return;
@@ -1482,11 +1518,26 @@ namespace nux
     {
       if ( (*menu_it)->IsActive() == false)
       {
+        if (GetMouseFocusArea () == (*menu_it))
+        {
+          SetMouseFocusArea (NULL);
+        }
+        if (GetMouseOverArea () == (*menu_it))
+        {
+          SetMouseOverArea (NULL);
+        }
+        if (GetPreviousMouseOverArea () == (*menu_it))
+        {
+          SetPreviousMouseOverArea (NULL);
+        }                
+ 
         menu_it = m_MenuList->erase (menu_it);
         m_MenuRemoved = true;
       }
       else
+      {
         menu_it++;
+      }
     }
 
     if (m_MenuList->size() == 0)
@@ -1588,7 +1639,10 @@ namespace nux
       _mouse_focus_area_conn = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseFocusAreaDestroyed));
     }
 
-    SetFocusAreaWindow (GetProcessingTopView());
+    if (area)
+      SetFocusAreaWindow (GetProcessingTopView ());
+    else 
+      SetFocusAreaWindow (NULL);
   }
 
   InputArea *WindowCompositor::GetMouseFocusArea()
@@ -1632,6 +1686,15 @@ namespace nux
     return _previous_mouse_over_area;
   }
 
+
+  void WindowCompositor::OnKeyboardFocusAreaDestroyed (Object* area)
+  {
+    if (_keyboard_focus_area == area)
+    {
+      _keyboard_focus_area = NULL;
+    }
+  }
+  
   void WindowCompositor::SetKeyboardFocusArea (InputArea *area)
   {
     InputArea* keyboard_grab_area = GetKeyboardGrabArea ();
@@ -1642,7 +1705,23 @@ namespace nux
       return;
     }
 
+    if (_keyboard_focus_area == area)
+    {
+        return;
+    }
+
+    if (_keyboard_focus_area)
+    {
+      _keyboard_focus_area->OnEndFocus.emit ();
+    }
+
     _keyboard_focus_area = area;
+
+    if (_keyboard_focus_area)
+    {
+      _keyboard_focus_area->OnStartFocus.emit ();
+    }
+
 
     _keyboard_focus_area_conn.disconnect ();
     if (area)
@@ -1820,7 +1899,7 @@ namespace nux
 
     if (GetPointerGrabArea () == area)
     {
-      nuxDebugMsg (TEXT ("[WindowCompositor::GrabPointerAdd] The area alread has the grab"));
+      nuxDebugMsg (TEXT ("[WindowCompositor::GrabPointerAdd] The area already has the grab"));
       return result;
     }
     
@@ -1882,7 +1961,7 @@ namespace nux
 
     if (GetKeyboardGrabArea () == area)
     {
-      nuxDebugMsg (TEXT ("[WindowCompositor::GrabKeyboardAdd] The area alread has the grab"));
+      nuxDebugMsg (TEXT ("[WindowCompositor::GrabKeyboardAdd] The area already has the grab"));
       return result;
     }
 

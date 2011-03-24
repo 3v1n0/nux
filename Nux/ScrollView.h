@@ -157,8 +157,14 @@ namespace nux
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
     virtual long ProcessEvent (Event &event, long TraverseInfo, long ProcessEventInfo);
 
+    //! Change Vertical Scrollbar in the ScrollView.
+    /*!
+        For styling purpose, allow the classes that inherit fron ScrollView to
+        change the vertical scrollbar.
+    */ 
+    void SetVScrollBar (VScrollBar* newVScrollBar);
+
     void OnChildFocusChanged (Area *parent, Area *child);
-    
 
     // Backup texture to speed up scrolling
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;

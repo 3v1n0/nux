@@ -121,6 +121,20 @@ namespace nux
 //        return m_EnableKeyboardInput; //m_KeyboardHandler.IsEnableKeyEntry();
 //    }
 
+    //! Enable keyboard focus on mouse down.
+    /*!
+        Widgets such as TextEntry enable the keyboard focus on mouse down.
+        @param enable If true, the area gets the keyboard focus when a mouse down occurs.
+        \sa _enable_keyboard_focus_on_mouse_down.
+    */
+    void EnableKeyboardFocusOnMouseDown (bool enable);
+    
+    //! Return the status of keyboard focus on mouse down.
+    /*!
+        @return Return true if the area gets the keyboard focus on mouse down.
+    */
+    bool GetKeyboardFocusOnMouseDown () const;
+
     // Override the virtual methods from Object Base
     // Here, we get a change to update the text of the keyboard handler.
     virtual void SetBaseString (const TCHAR *Caption);
@@ -183,6 +197,8 @@ namespace nux
     bool _double_click;     //!< If True, this InputArea can emit the signal OnMouseDoubleClick. Default is false.
     bool _print_event_debug_trace;
 
+    bool _enable_keyboard_focus_on_mouse_down;  //!< Get the keyboard focus when a mouse down occurs.
+
 #if defined (NUX_OS_LINUX)
     // DnD support
     // Rather than being implemented with signals, DND support is implemented with protected virtual function.
@@ -206,9 +222,9 @@ namespace nux
     
     void StartDragAsSource ();
     
-    static NBitmapData *           InnerDndSourceGetDragImage (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragImage ();       }
-    static std::list<const char *> InnerDndSourceGetDragTypes (void *data)                   { return static_cast<InputArea *> (data)->DndSourceGetDragTypes ();       }
-    static void                    InnerDndSourceDragFinished (DndAction result, void *data) { return static_cast<InputArea *> (data)->DndSourceDragFinished (result); }
+    static NBitmapData *           InnerDndSourceGetDragImage (void *data) { return static_cast<InputArea *> (data)->DndSourceGetDragImage ();       }
+    static std::list<const char *> InnerDndSourceGetDragTypes (void *data) { return static_cast<InputArea *> (data)->DndSourceGetDragTypes ();       }
+    static void                    InnerDndSourceDragFinished (DndAction result, void *data);
     
     static const char * InnerDndSourceGetDataForType (const char *type, int *size, int *format, void *data) 
       { return static_cast<InputArea *> (data)->DndSourceGetDataForType (type, size, format); }

@@ -85,9 +85,7 @@ namespace nux
 
 #if defined(NUX_OS_LINUX)
     if (m_input_window)
-    {
-      EnableInputWindow (false);
-    }
+      delete m_input_window;
 #endif
 
     // At this stage, the reference count of this object is 0 and while the weak reference count is > 0.
@@ -310,19 +308,16 @@ namespace nux
     if (b)
     {
       if (m_input_window == 0)
-      {
         m_input_window = new XInputWindow (title, take_focus, override_redirect);
-        m_input_window->SetGeometry (GetGeometry());
-      }
+        
+      m_input_window->Show ();
+      m_input_window->SetGeometry (GetGeometry());
       m_input_window_enabled = true;
     }
     else
     {
       if (m_input_window)
-      {
-        delete (m_input_window);
-        m_input_window = 0;
-      }
+        m_input_window->Hide ();
       m_input_window_enabled = false;
     }
   }
@@ -334,10 +329,8 @@ namespace nux
   
   void BaseWindow::InputWindowEnableStruts (bool enable)
   {
-    if (!m_input_window_enabled)
-      return;
-    
-    m_input_window->EnableStruts (enable);
+    if (m_input_window)
+      m_input_window->EnableStruts (enable);
   }
   
   bool BaseWindow::InputWindowStrutsEnabled ()
@@ -366,7 +359,7 @@ namespace nux
     Area::SetGeometry (geo);
     
     #if defined(NUX_OS_LINUX)
-    if (m_input_window_enabled)
+    if (m_input_window)
       m_input_window->SetGeometry (geo);
     #endif
     //LayoutWindowElements();
@@ -522,45 +515,6 @@ namespace nux
   void* BaseWindow::GetBackupTextureData (int &width, int &height, int &format)
   {
     return GetWindowCompositor ().GetBackupTextureData (this, width, height, format);
-  }
-
-  bool BaseWindow::ProcessEnterFocus(Event event)
-  {
-    if (event.e_event != NUX_WINDOW_ENTER_FOCUS)
-      return false;
-
-    InputArea *current_focus_input_area = GetWindowCompositor ().GetKeyboardFocusArea ();
-
-    if (_enter_focus_input_area)
-    {
-      if (_enter_focus_input_area != current_focus_input_area)
-      {
-        GetWindowCompositor ().SetKeyboardFocusArea (NULL);
-
-        if (current_focus_input_area)
-          current_focus_input_area->OnEndFocus.emit ();
-
-        GetWindowCompositor ().SetKeyboardFocusArea (_enter_focus_input_area);
-        _enter_focus_input_area->OnStartFocus.emit ();
-      }
-      return false;
-    }
-    else
-    {
-      if (this != current_focus_input_area)
-      {
-        GetWindowCompositor ().SetKeyboardFocusArea (NULL);
-
-        if (current_focus_input_area)
-          current_focus_input_area->OnEndFocus.emit ();
-
-        // The base Window gets the keyboard focus
-        GetWindowCompositor ().SetKeyboardFocusArea (this);
-        OnStartFocus.emit ();
-      }
-    }
-
-    return true;
   }
 
   void BaseWindow::SetEnterFocusInputArea (InputArea *input_area)

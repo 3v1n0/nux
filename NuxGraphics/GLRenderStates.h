@@ -24,6 +24,7 @@
 #define GLRENDERSTATES_H
 
 #include "NuxCore/NuxCore.h"
+#include "GpuDevice.h"
 
 namespace nux
 {
@@ -111,15 +112,6 @@ namespace nux
     GFXSS_MAX_SAMPLERSTATES,
   };
 
-  //! Brand of GPUs.
-  typedef enum
-  {
-    GPU_VENDOR_UNKNOWN = 0,
-    GPU_BRAND_AMD,
-    GPU_BRAND_NVIDIA,
-    GPU_BRAND_INTEL,
-  } GpuBrand;
-
   typedef enum
   {
     CLEAR = 0,
@@ -148,7 +140,7 @@ namespace nux
   class GpuRenderStates
   {
   public:
-    GpuRenderStates (GpuBrand board);
+    GpuRenderStates (GpuBrand board, GpuInfo* info);
     ~GpuRenderStates();
 
     void ResetDefault();
@@ -272,6 +264,7 @@ namespace nux
   private:
 
     GpuBrand _gpu_brand;
+    GpuInfo *_gpu_info;
 
     inline void HW__EnableAlphaTest (t_u32 b);
 
@@ -953,7 +946,18 @@ namespace nux
       (BlendOpAlpha_ == GL_MAX),
       TEXT ("Error(HW__SetAlphaBlendOp): Invalid Blend Equation RenderState") );
 
-    CHECKGL (glBlendEquationSeparateEXT (BlendOpRGB_, BlendOpAlpha_) );
+    if (_gpu_info->SupportOpenGL20 ())
+    {
+      CHECKGL (glBlendEquationSeparate (BlendOpRGB_, BlendOpAlpha_) );
+    }
+    else if (_gpu_info->Support_EXT_Blend_Equation_Separate ())
+    {
+      CHECKGL (glBlendEquationSeparateEXT (BlendOpRGB_, BlendOpAlpha_) );
+    }
+    else
+    {
+      CHECKGL (glBlendEquation (BlendOpRGB_) );
+    }
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BLENDOP], BlendOpRGB_);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BLENDOPALPHA], BlendOpAlpha_);

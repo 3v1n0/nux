@@ -606,24 +606,29 @@ namespace nux
     _layout_done = b;
   }
 
-  bool Area::IsArea() const
+  bool Area::IsArea () const
   {
-    return this->Type().IsDerivedFromType(Area::StaticObjectType);;
+    return this->Type ().IsDerivedFromType (Area::StaticObjectType);;
   }
 
-  bool Area::IsInputArea() const
+  bool Area::IsInputArea () const
   {
-    return this->Type().IsDerivedFromType(InputArea::StaticObjectType);;
+    return this->Type ().IsDerivedFromType (InputArea::StaticObjectType);;
   }
 
-  bool Area::IsView() const
+  bool Area::IsView () const
   {
-    return this->Type().IsDerivedFromType(View::StaticObjectType);;
+    return this->Type ().IsDerivedFromType (View::StaticObjectType);;
   }
 
-  bool Area::IsLayout() const
+  bool Area::IsLayout () const
   {
-    return this->Type().IsDerivedFromType(Layout::StaticObjectType);
+    return this->Type ().IsDerivedFromType (Layout::StaticObjectType);
+  }
+
+  bool Area::IsViewWindow () const
+  {
+    return this->Type ().IsDerivedFromType (BaseWindow::StaticObjectType);
   }
 
   bool Area::IsSpaceLayout() const
@@ -790,19 +795,29 @@ namespace nux
     return GetRootGeometry ().height;
   }
 
-  Area * Area::GetToplevel ()
+  Area* Area::GetToplevel ()
   {
     if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
     {
       return this;
     }
 
-    Area * parent = GetParentObject ();
+    Area* parent = GetParentObject ();
     if (!parent) //we didn't find a way to salvation!
     {
       return 0;
     }
     return parent->GetToplevel ();
+  }
+
+  Area* Area::GetTopLevelViewWindow ()
+  {
+    Area* area = GetToplevel ();
+
+    if (area->IsViewWindow ())
+      return area;
+
+    return NULL;
   }
 
   bool Area::HasTopLevelParent ()

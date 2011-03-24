@@ -111,6 +111,7 @@ namespace nux
   TextEntry::TextEntry (const TCHAR* text, NUX_FILE_LINE_DECL)
     : View (NUX_FILE_LINE_PARAM)
   {
+    _block_focus = false;
     canvas_ = NULL;
     //im_context_ = NULL;
     cached_layout_ = NULL;
@@ -177,7 +178,7 @@ namespace nux
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText (text);
 
-
+    EnableKeyboardFocusOnMouseDown (true);
     //MainDraw (canvas_);
   }
 
@@ -202,10 +203,11 @@ namespace nux
 
   void TextEntry::DoSetFocused (bool focused)
   {
-
+		
     View::DoSetFocused (focused);
     if (focused == true)
     {
+      _block_focus = true;
       SetCursor(0);
       QueueRefresh(false, true);
       
@@ -244,7 +246,7 @@ namespace nux
                                                event.GetKeySym(),
                                                event.GetText(),
                                                &direction);
-      if (type == FOCUS_EVENT_DIRECTION)
+      if (type == FOCUS_EVENT_DIRECTION && _block_focus == false)
       {
         if (direction == FOCUS_DIRECTION_PREV || direction == FOCUS_DIRECTION_NEXT ||
             direction == FOCUS_DIRECTION_UP || direction == FOCUS_DIRECTION_DOWN)
@@ -284,6 +286,9 @@ namespace nux
                          event.GetKeyRepeatCount());
       }
     }
+    
+    if (_block_focus)
+    	_block_focus = false;
 
 
     return ret;
@@ -375,14 +380,6 @@ namespace nux
       return;
     }
 
-
-    if (character != 0 && (strlen (character) != 0))
-    {
-      EnterText(character);
-      QueueRefresh(false, true);
-      return;
-    }
-
     unsigned int keyval = keysym;
     bool shift = (state & NUX_STATE_SHIFT);
     bool ctrl = (state & NUX_STATE_CTRL);
@@ -441,30 +438,35 @@ namespace nux
         else
           MoveCursor(BUFFER, 1, shift);
       }
-//       else if ((keyval == GDK_x && ctrl && !shift) ||
-//         (keyval == GDK_Delete && shift && !ctrl))
-//       {
-//           CutClipboard();
-//       }
-//       else if ((keyval == GDK_c && ctrl && !shift) ||
-//         (keyval == GDK_Insert && ctrl && !shift))
-//       {
-//           CopyClipboard();
-//       }
-//       else if ((keyval == GDK_v && ctrl && !shift) ||
-//         (keyval == GDK_Insert && shift && !ctrl))
-//       {
-//           PasteClipboard();
-//       }
+      else if (((keyval == NUX_VK_x) && ctrl && !shift) || ((keyval == NUX_VK_DELETE) && shift && !ctrl))
+      {
+        CutClipboard ();
+      }
+      else if (((keyval == NUX_VK_c) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && ctrl && (!shift)))
+      {
+          CopyClipboard ();
+      }
+      else if (((keyval == NUX_VK_v) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && shift && (!ctrl)))
+      {
+          PasteClipboard ();
+      }
+      else if ((keyval == NUX_VK_a) && ctrl)
+      {
+        // Select all
+        int text_length = static_cast<int>(_text.length());
+        SetSelectionBounds(0, text_length);
+        QueueRefresh(false, true);
+        return;
+      }
       else if (keyval == NUX_VK_BACKSPACE)
       {
         BackSpace();
       }
-      else if (keyval == NUX_VK_DELETE && !shift)
+      else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
         Delete();
       }
-      else if (keyval == NUX_VK_INSERT && !shift && !ctrl)
+      else if ((keyval == NUX_VK_INSERT) && (!shift) && (!ctrl))
       {
         ToggleOverwrite();
       }
@@ -487,6 +489,11 @@ namespace nux
 //       {
 //         return;
 //       }
+    }
+
+    if (character != 0 && (strlen (character) != 0))
+    {
+      EnterText(character);
     }
 
     QueueRefresh(false, true);
@@ -934,7 +941,7 @@ namespace nux
 
   void TextEntry::DrawCursor(CairoGraphics *canvas)
   {
-    if (!cursor_visible_ || !focused_)
+    if (!cursor_visible_)
       return;
 
     int strong_x, strong_y, strong_height;
@@ -1515,8 +1522,8 @@ namespace nux
 
   void TextEntry::CutClipboard()
   {
-    CopyClipboard();
-    DeleteSelection();
+    CopyClipboard ();
+    DeleteSelection ();
   }
 
   void TextEntry::PasteClipboard()
