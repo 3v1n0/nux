@@ -941,7 +941,7 @@ namespace nux
 
   void TextEntry::DrawCursor(CairoGraphics *canvas)
   {
-    if (!cursor_visible_ || !focused_)
+    if (!cursor_visible_)
       return;
 
     int strong_x, strong_y, strong_height;
