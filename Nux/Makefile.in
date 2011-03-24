@@ -211,7 +211,6 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-VSplitter.lo \
 	libnux_@NUX_API_VERSION@_la-VToolBar.lo \
 	libnux_@NUX_API_VERSION@_la-WidgetMetrics.lo \
-	libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.lo \
 	libnux_@NUX_API_VERSION@_la-WindowCompositor.lo \
 	libnux_@NUX_API_VERSION@_la-WindowThread.lo
 am__objects_2 =
@@ -599,7 +598,6 @@ source_cpp = \
   $(srcdir)/VSplitter.cpp \
   $(srcdir)/VToolBar.cpp \
   $(srcdir)/WidgetMetrics.cpp \
-  $(srcdir)/WidgetSmartPointer.cpp \
   $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/WindowThread.cpp
 
@@ -737,7 +735,6 @@ source_h = \
   $(srcdir)/VSplitter.h \
   $(srcdir)/VToolBar.h \
   $(srcdir)/WidgetMetrics.h \
-  $(srcdir)/WidgetSmartPointer.h \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
 
@@ -958,7 +955,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector4Property.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-View.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-WidgetMetrics.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-WindowCompositor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-WindowThread.Plo@am__quote@
 
@@ -2025,14 +2021,6 @@ libnux_@NUX_API_VERSION@_la-WidgetMetrics.lo: $(srcdir)/WidgetMetrics.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/WidgetMetrics.cpp' object='libnux_@NUX_API_VERSION@_la-WidgetMetrics.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-WidgetMetrics.lo `test -f '$(srcdir)/WidgetMetrics.cpp' || echo '$(srcdir)/'`$(srcdir)/WidgetMetrics.cpp
-
-libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.lo: $(srcdir)/WidgetSmartPointer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.Tpo -c -o libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.lo `test -f '$(srcdir)/WidgetSmartPointer.cpp' || echo '$(srcdir)/'`$(srcdir)/WidgetSmartPointer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/WidgetSmartPointer.cpp' object='libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-WidgetSmartPointer.lo `test -f '$(srcdir)/WidgetSmartPointer.cpp' || echo '$(srcdir)/'`$(srcdir)/WidgetSmartPointer.cpp
 
 libnux_@NUX_API_VERSION@_la-WindowCompositor.lo: $(srcdir)/WindowCompositor.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-WindowCompositor.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-WindowCompositor.Tpo -c -o libnux_@NUX_API_VERSION@_la-WindowCompositor.lo `test -f '$(srcdir)/WindowCompositor.cpp' || echo '$(srcdir)/'`$(srcdir)/WindowCompositor.cpp

@@ -90,6 +90,9 @@ namespace nux
 
     if (it != _layout_element_list.end())
     {
+      /* we need to emit the signal before the unparent, just in case
+         one of the callbacks wanted to use this object */
+      ViewRemoved.emit (this, bo);
       bo->UnParentObject();
       _layout_element_list.erase (it);
     }
@@ -279,6 +282,7 @@ namespace nux
     _layout_element_list.push_back (bo);
     _connection_map[bo] = bo->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
 
+    ViewAdded.emit (this, bo);
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
   }
 
@@ -623,7 +627,7 @@ namespace nux
     long ret = TraverseInfo;
    
 
-    if (GetFocused () && ievent.e_event == NUX_KEYDOWN)
+    if (GetFocused () && (ievent.e_event == NUX_KEYDOWN))
     {
       Area *focused_child = NULL;
       Area *parent = GetParentObject ();
@@ -637,7 +641,7 @@ namespace nux
                                                ievent.GetText(),
                                                &direction);
 
-      if (type == FOCUS_EVENT_DIRECTION && direction != FOCUS_DIRECTION_NONE)
+      if ((type == FOCUS_EVENT_DIRECTION) && (direction != FOCUS_DIRECTION_NONE))
       {
         focused_child = GetFocusedChild ();
   
@@ -649,7 +653,7 @@ namespace nux
           if (have_focused_child == false)
           {
             /* propagate up */
-            if (parent != NULL && parent->IsLayout ())
+            if ((parent != NULL) && parent->IsLayout ())
             {
               ret |= SendEventToArea (parent, ievent, ret, ProcessEventInfo);
             }
@@ -759,7 +763,7 @@ namespace nux
     }
 
     /* must do focus processing after sending events to children */
-    if (ievent.e_event == NUX_KEYDOWN && HasFocusControl () && _ignore_focus == false)
+    if ((ievent.e_event == NUX_KEYDOWN) && HasFocusControl () && (_ignore_focus == false))
     {
       ret |= ProcessFocusEvent (ievent, ret, ProcessEventInfo);
     }
@@ -781,18 +785,18 @@ namespace nux
       if (!(*it)->IsVisible ())
         continue;
 
-      if ((*it)->IsView())
+      if ((*it)->IsView ())
       {
         View *ic = NUX_STATIC_CAST (View*, (*it));
         ic->ProcessDraw (GfxContext, force_draw);
       }
-      else if ((*it)->IsLayout())
+      else if ((*it)->IsLayout ())
       {
         Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
         layout->ProcessDraw (GfxContext, force_draw);
       }
       // InputArea should be tested last
-      else if ((*it)->IsInputArea())
+      else if ((*it)->IsInputArea ())
       {
         InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
         input_area->OnDraw (GfxContext, force_draw);

@@ -461,9 +461,27 @@ namespace nux
       return; 
     
     if (_focused_area != NULL)
+    {
       _focused_area->SetFocused (false);
+
+      if (_focused_area_destroyed_con.empty () == false)
+      {
+        _focused_area_destroyed_con.disconnect ();
+      }
+
+    }
     
     _focused_area = focused_area;
+    _focused_area_destroyed_con = focused_area->OnDestroyed.connect (sigc::mem_fun (this, &WindowThread::OnFocusedAreaDestroyed));
+    
+  }
+
+  void WindowThread::OnFocusedAreaDestroyed (Object *object)
+  {
+    if (object == _focused_area)
+    {
+      _focused_area = NULL;
+    }
   }
 
   void WindowThread::AsyncWakeUpCallback (void* data)
@@ -1842,17 +1860,6 @@ namespace nux
     }
 
     CHECKGL ( glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
-
-#if 0
-    // NUXTODO: NOT supported by system without GLSL support
-    // Deactivate ARB shaders
-    CHECKGL ( glDisable (GL_VERTEX_PROGRAM_ARB) );
-    CHECKGL ( glBindProgramARB (GL_VERTEX_PROGRAM_ARB, 0) );
-    CHECKGL ( glDisable (GL_FRAGMENT_PROGRAM_ARB) );
-    CHECKGL ( glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, 0) );
-    // Deactivate GLSL shaders
-    CHECKGL ( glUseProgramObjectARB (0) );
-#endif
 
     GetGpuDevice()->DeactivateFrameBuffer();
   }

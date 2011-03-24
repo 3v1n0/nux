@@ -42,7 +42,8 @@ namespace nux
 
     OnMouseDrag.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDrag));
 
-    m_PaintLayer = new ColorLayer (Color (0xFFFF40FF) );
+    m_PaintLayer = new ColorLayer (Color (0xFFFF40FF));
+    _2d_rotate.Identity ();
   }
 
   TextureArea::~TextureArea()
@@ -58,16 +59,22 @@ namespace nux
 
   void TextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
+    GfxContext.PushModelViewMatrix (Matrix4::TRANSLATE(-GetBaseX () - GetBaseWidth () / 2, -GetBaseY () - GetBaseHeight () / 2, 0));
+    GfxContext.PushModelViewMatrix (Get2DRotation ());    
+    GfxContext.PushModelViewMatrix (Matrix4::TRANSLATE(GetBaseX () + GetBaseWidth () / 2, GetBaseY () + GetBaseHeight () / 2, 0));
 
     // The TextureArea should not render the accumulated background. That is left to the caller.
-
     // GetPainter().PaintBackground (GfxContext, GetGeometry() );
 
     if (m_PaintLayer)
     {
-      m_PaintLayer->SetGeometry (GetGeometry() );
-      GetPainter().RenderSinglePaintLayer (GfxContext, GetGeometry(), m_PaintLayer);
+      m_PaintLayer->SetGeometry (GetGeometry ());
+      GetPainter ().RenderSinglePaintLayer (GfxContext, GetGeometry (), m_PaintLayer);
     }
+
+    GfxContext.PopModelViewMatrix ();
+    GfxContext.PopModelViewMatrix ();
+    GfxContext.PopModelViewMatrix ();
   }
 
   void TextureArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -139,4 +146,14 @@ namespace nux
     sigMouseDrag.emit (x, y);
   }
 
+  void TextureArea::Set2DRotation (float angle)
+  {
+    _2d_rotate.Rotate_z (angle);
+    QueueDraw ();
+  }
+
+  Matrix4 TextureArea::Get2DRotation () const
+  {
+    return _2d_rotate;
+  }
 }

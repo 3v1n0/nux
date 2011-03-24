@@ -43,11 +43,7 @@ namespace nux
 
   AreaEventProcessor::AreaEventProcessor()
   {
-    m_first_time        = true;
-    _has_mouse_focus    = false;
-    _current_mouse_in   = false;
-    _previous_mouse_in  = false;
-    _state = 0;
+    ResetState ();
   }
 
   AreaEventProcessor::~AreaEventProcessor()
@@ -55,10 +51,19 @@ namespace nux
 
   }
 
+  void AreaEventProcessor::ResetState ()
+  {
+    _initial_state      = true;
+    _has_mouse_focus    = false;
+    _current_mouse_in   = false;
+    _previous_mouse_in  = false;
+    _state              = 0;
+  }
+
   unsigned int AreaEventProcessor::EventProcessor (Event &event, const Geometry &geo, bool process_mouse_focus)
   {
     // preserve mouse focus state.
-    bool has_mouse_focus = _state & AREA_MOUSE_STATUS_FOCUS;
+    bool has_mouse_focus = ((_state & AREA_MOUSE_STATUS_FOCUS) != 0) ? true : false;
 
     _state = AREA_MOUSE_STATUS_NONE;
 
@@ -95,9 +100,9 @@ namespace nux
     }
 
 
-    if (m_first_time)
+    if (_initial_state)
     {
-      m_first_time = false;
+      _initial_state = false;
     }
     else
     {
@@ -112,10 +117,10 @@ namespace nux
       }
     }
 
-    m_mouse_deltax = x - m_mouse_positionx;
-    m_mouse_deltay = y - m_mouse_positiony;
-    m_mouse_positionx = x;
-    m_mouse_positiony = y;
+    _mouse_deltax = x - _mouse_positionx;
+    _mouse_deltay = y - _mouse_positiony;
+    _mouse_positionx = x;
+    _mouse_positiony = y;
 
     if ((_current_mouse_in == false) && !(_state & AREA_MOUSE_STATUS_FOCUS))
     {

@@ -546,8 +546,7 @@ namespace nux
       UnselectAllText();
     }
 
-    if ( (virtual_code == NUX_VK_ENTER) ||
-         (virtual_code == NUX_KP_ENTER) )
+    if ( (virtual_code == NUX_VK_ENTER) )
     {
       SelectAllText();
     }
@@ -586,7 +585,7 @@ namespace nux
         }
       }
     }
-    else if (virtual_code == NUX_KP_LEFT || virtual_code == NUX_VK_LEFT)
+    else if (virtual_code == NUX_VK_LEFT)
     {
       if (IsTextSelected() && ( (state & NUX_STATE_SHIFT) == 0) )
       {
@@ -616,7 +615,7 @@ namespace nux
         }
       }
     }
-    else if (virtual_code == NUX_KP_RIGHT || virtual_code == NUX_VK_RIGHT)
+    else if (virtual_code == NUX_VK_RIGHT)
     {
       if (IsTextSelected() && ( (state & NUX_STATE_SHIFT) == 0) )
       {
@@ -643,7 +642,7 @@ namespace nux
         }
       }
     }
-    else if (virtual_code == NUX_KP_HOME || virtual_code == NUX_VK_HOME)
+    else if (virtual_code == NUX_VK_HOME)
     {
       if ( (state & NUX_STATE_SHIFT) == 0)
       {
@@ -657,7 +656,7 @@ namespace nux
         PlaceCaret (0 );
       }
     }
-    else if (virtual_code == NUX_KP_END || virtual_code == NUX_VK_END)
+    else if (virtual_code == NUX_VK_END)
     {
       if ( (state & NUX_STATE_SHIFT) == 0)
       {
@@ -675,7 +674,7 @@ namespace nux
     {
       return virtual_code;
     }
-    else if ( (virtual_code == NUX_VK_ENTER) || (virtual_code == NUX_KP_ENTER) )
+    else if ( (virtual_code == NUX_VK_ENTER))
     {
       return virtual_code;
     }
@@ -684,11 +683,11 @@ namespace nux
       m_need_redraw = false;
     }
 
-    if (virtual_code == NUX_KP_HOME)
+    if (virtual_code == NUX_VK_HOME)
     {
       m_text_positionx = 0;
     }
-    else if (virtual_code == NUX_KP_END)
+    else if (virtual_code == NUX_VK_END)
     {
       t_u32 str_width = GetFont ()->GetStringWidth (m_textline.GetTCharPtr() );
 

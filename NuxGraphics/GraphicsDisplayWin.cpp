@@ -134,6 +134,11 @@ namespace nux
 
     // A window never starts in a minimized state.
     m_is_window_minimized = false;
+
+    //_dnd_source_grab_active = false;
+    _global_keyboard_grab_data = 0;
+    _global_pointer_grab_data = 0;
+
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -496,7 +501,9 @@ namespace nux
     m_GraphicsContext = new GraphicsEngine (*this, create_rendering_data);
 
     //EnableVSyncSwapControl();
-    DisableVSyncSwapControl();
+    //DisableVSyncSwapControl();
+
+    InitGlobalGrabWindow ();
 
     return true;
   }
@@ -525,6 +532,8 @@ namespace nux
       _opengl_rendering_context);
 
     m_GraphicsContext = new GraphicsEngine (*this);
+
+    InitGlobalGrabWindow ();
 
     return true;
   }
@@ -1379,11 +1388,11 @@ namespace nux
         {
           if (lParam & (1 << 24) )
           {
-            m_pEvent->e_keysym = NUX_VK_RMENU;
+            m_pEvent->e_keysym = NUX_VK_RALT;
           }
           else
           {
-            m_pEvent->e_keysym = NUX_VK_LMENU;
+            m_pEvent->e_keysym = NUX_VK_LALT;
           }
         }
 
@@ -1714,9 +1723,9 @@ namespace nux
     return DefWindowProc (hWnd, uMsg, wParam, lParam);
   }
 
-  int GraphicsDisplay::Win32KeySymToINL (int Keysym)
+  int GraphicsDisplay::Win32VKToNuxKey (int vk)
   {
-    switch (Keysym)
+    switch (vk)
     {
       case VK_CANCEL:
         return NUX_VK_CANCEL;
@@ -1730,18 +1739,28 @@ namespace nux
         return NUX_VK_ENTER;
       case VK_SHIFT:
         return NUX_VK_SHIFT;
+      
       case VK_CONTROL:
-        return NUX_VK_CONTROL;
+        return NUX_VK_LCONTROL;
+      case VK_LCONTROL:
+        return NUX_VK_LCONTROL;
+      case VK_RCONTROL:
+        return NUX_VK_RCONTROL;
+
       case VK_MENU:
-        return NUX_VK_MENU; // ALT key
+        return NUX_VK_LALT;
+      case VK_LMENU:
+        return NUX_VK_LALT;
+      case VK_RMENU:
+        return NUX_VK_RALT;
+
       case VK_PAUSE:
         return NUX_VK_PAUSE;
       case VK_CAPITAL:
         return NUX_VK_CAPITAL;
       case VK_ESCAPE:
         return NUX_VK_ESCAPE;
-      case VK_SPACE:
-        return NUX_VK_SPACE;
+
       case VK_PRIOR:
         return NUX_VK_PAGE_UP;
       case VK_NEXT:
@@ -1758,18 +1777,12 @@ namespace nux
         return NUX_VK_RIGHT;
       case VK_DOWN:
         return NUX_VK_DOWN;
-      case VK_SELECT:
-        return NUX_VK_SELECT;
-      case VK_PRINT:
-        return NUX_VK_PRINT;
-      case VK_EXECUTE:
-        return NUX_VK_EXECUTE;
+
       case VK_INSERT:
         return NUX_VK_INSERT;
       case VK_DELETE:
         return NUX_VK_DELETE;
-      case VK_HELP:
-        return NUX_VK_HELP;
+
       case 0x30:
         return NUX_VK_0;
       case 0x31:
@@ -1842,42 +1855,55 @@ namespace nux
         return NUX_VK_Y;
       case 0x5A:
         return NUX_VK_Z;
+
       case VK_LWIN:
-        return NUX_VK_LWIN; // Windows key left
+        return NUX_VK_LSUPER; // Windows key left
       case VK_RWIN:
-        return NUX_VK_RWIN; // Windows key right
+        return NUX_VK_RSUPER; // Windows key right
+
+      case VK_NUMLOCK:
+        return NUX_VK_NUMLOCK;
+      case VK_SCROLL:
+        return NUX_VK_SCROLL;
+      case VK_LSHIFT:
+        return NUX_VK_LSHIFT;
+      case VK_RSHIFT:
+        return NUX_VK_RSHIFT;
+
       case VK_NUMPAD0:
-        return NUX_VK_NUMPAD0;
+        return NUX_KP_0;
       case VK_NUMPAD1:
-        return NUX_VK_NUMPAD1;
+        return NUX_KP_1;
       case VK_NUMPAD2:
-        return NUX_VK_NUMPAD2;
+        return NUX_KP_2;
       case VK_NUMPAD3:
-        return NUX_VK_NUMPAD3;
+        return NUX_KP_3;
       case VK_NUMPAD4:
-        return NUX_VK_NUMPAD4;
+        return NUX_KP_4;
       case VK_NUMPAD5:
-        return NUX_VK_NUMPAD5;
+        return NUX_KP_5;
       case VK_NUMPAD6:
-        return NUX_VK_NUMPAD6;
+        return NUX_KP_6;
       case VK_NUMPAD7:
-        return NUX_VK_NUMPAD7;
+        return NUX_KP_7;
       case VK_NUMPAD8:
-        return NUX_VK_NUMPAD8;
+        return NUX_KP_8;
       case VK_NUMPAD9:
-        return NUX_VK_NUMPAD9;
+        return NUX_KP_9;
+
       case VK_MULTIPLY:
-        return NUX_VK_MULTIPLY;
+        return NUX_KP_MULTIPLY;
       case VK_ADD:
-        return NUX_VK_ADD;
+        return NUX_KP_ADD;
       case VK_SEPARATOR:
-        return NUX_VK_SEPARATOR;
+        return NUX_KP_SEPARATOR;
       case VK_SUBTRACT:
         return NUX_VK_SUBTRACT;
       case VK_DECIMAL:
         return NUX_VK_DECIMAL;
       case VK_DIVIDE:
-        return NUX_VK_DIVIDE;
+        return NUX_VK_SLASH;
+
       case VK_F1:
         return NUX_VK_F1;
       case VK_F2:
@@ -1926,25 +1952,280 @@ namespace nux
         return NUX_VK_F23;
       case VK_F24:
         return NUX_VK_F24;
-      case VK_NUMLOCK:
-        return NUX_VK_NUMLOCK;
-      case VK_SCROLL:
-        return NUX_VK_SCROLL;
-      case VK_LSHIFT:
-        return NUX_VK_LSHIFT;
-      case VK_RSHIFT:
-        return NUX_VK_RSHIFT;
-      case VK_LCONTROL:
-        return NUX_VK_LCONTROL;
-      case VK_RCONTROL:
-        return NUX_VK_RCONTROL;
-      case VK_LMENU:
-        return NUX_VK_LMENU;
-      case VK_RMENU:
-        return NUX_VK_RMENU;
+
       default:
         return 0x0;
     }
+  }
+
+  int GraphicsDisplay::Win32KeySymToINL (int Keysym)
+  {
+    return Keysym;
+
+//     switch (Keysym)
+//     {
+//       case VK_CANCEL:
+//         return NUX_VK_CANCEL;
+//       case VK_BACK:
+//         return NUX_VK_BACKSPACE;
+//       case VK_TAB:
+//         return NUX_VK_TAB;
+//       case VK_CLEAR:
+//         return NUX_VK_CLEAR;
+//       case VK_RETURN:
+//         return NUX_VK_ENTER;
+//       case VK_SHIFT:
+//         return NUX_VK_SHIFT;
+//       case VK_CONTROL:
+//         return NUX_VK_CONTROL;
+//       case VK_MENU:
+//         return NUX_VK_MENU; // ALT key
+//       case VK_PAUSE:
+//         return NUX_VK_PAUSE;
+//       case VK_CAPITAL:
+//         return NUX_VK_CAPITAL;
+//       case VK_ESCAPE:
+//         return NUX_VK_ESCAPE;
+//       case VK_SPACE:
+//         return NUX_VK_SPACE;
+//       case VK_PRIOR:
+//         return NUX_VK_PAGE_UP;
+//       case VK_NEXT:
+//         return NUX_VK_PAGE_DOWN;
+//       case VK_END:
+//         return NUX_VK_END;
+//       case VK_HOME:
+//         return NUX_VK_HOME;
+//       case VK_LEFT:
+//         return NUX_VK_LEFT;
+//       case VK_UP:
+//         return NUX_VK_UP;
+//       case VK_RIGHT:
+//         return NUX_VK_RIGHT;
+//       case VK_DOWN:
+//         return NUX_VK_DOWN;
+//       case VK_SELECT:
+//         return NUX_VK_SELECT;
+//       case VK_PRINT:
+//         return NUX_VK_PRINT;
+//       case VK_EXECUTE:
+//         return NUX_VK_EXECUTE;
+//       case VK_INSERT:
+//         return NUX_VK_INSERT;
+//       case VK_DELETE:
+//         return NUX_VK_DELETE;
+//       case VK_HELP:
+//         return NUX_VK_HELP;
+//       case 0x30:
+//         return NUX_VK_0;
+//       case 0x31:
+//         return NUX_VK_1;
+//       case 0x32:
+//         return NUX_VK_2;
+//       case 0x33:
+//         return NUX_VK_3;
+//       case 0x34:
+//         return NUX_VK_4;
+//       case 0x35:
+//         return NUX_VK_5;
+//       case 0x36:
+//         return NUX_VK_6;
+//       case 0x37:
+//         return NUX_VK_7;
+//       case 0x38:
+//         return NUX_VK_8;
+//       case 0x39:
+//         return NUX_VK_9;
+//       case 0x41:
+//         return NUX_VK_A;
+//       case 0x42:
+//         return NUX_VK_B;
+//       case 0x43:
+//         return NUX_VK_C;
+//       case 0x44:
+//         return NUX_VK_D;
+//       case 0x45:
+//         return NUX_VK_E;
+//       case 0x46:
+//         return NUX_VK_F;
+//       case 0x47:
+//         return NUX_VK_G;
+//       case 0x48:
+//         return NUX_VK_H;
+//       case 0x49:
+//         return NUX_VK_I;
+//       case 0x4A:
+//         return NUX_VK_J;
+//       case 0x4B:
+//         return NUX_VK_K;
+//       case 0x4C:
+//         return NUX_VK_L;
+//       case 0x4D:
+//         return NUX_VK_M;
+//       case 0x4E:
+//         return NUX_VK_N;
+//       case 0x4F:
+//         return NUX_VK_O;
+//       case 0x50:
+//         return NUX_VK_P;
+//       case 0x51:
+//         return NUX_VK_Q;
+//       case 0x52:
+//         return NUX_VK_R;
+//       case 0x53:
+//         return NUX_VK_S;
+//       case 0x54:
+//         return NUX_VK_T;
+//       case 0x55:
+//         return NUX_VK_U;
+//       case 0x56:
+//         return NUX_VK_V;
+//       case 0x57:
+//         return NUX_VK_W;
+//       case 0x58:
+//         return NUX_VK_X;
+//       case 0x59:
+//         return NUX_VK_Y;
+//       case 0x5A:
+//         return NUX_VK_Z;
+//       case VK_LWIN:
+//         return NUX_VK_LWIN; // Windows key left
+//       case VK_RWIN:
+//         return NUX_VK_RWIN; // Windows key right
+//       case VK_NUMPAD0:
+//         return NUX_VK_NUMPAD0;
+//       case VK_NUMPAD1:
+//         return NUX_VK_NUMPAD1;
+//       case VK_NUMPAD2:
+//         return NUX_VK_NUMPAD2;
+//       case VK_NUMPAD3:
+//         return NUX_VK_NUMPAD3;
+//       case VK_NUMPAD4:
+//         return NUX_VK_NUMPAD4;
+//       case VK_NUMPAD5:
+//         return NUX_VK_NUMPAD5;
+//       case VK_NUMPAD6:
+//         return NUX_VK_NUMPAD6;
+//       case VK_NUMPAD7:
+//         return NUX_VK_NUMPAD7;
+//       case VK_NUMPAD8:
+//         return NUX_VK_NUMPAD8;
+//       case VK_NUMPAD9:
+//         return NUX_VK_NUMPAD9;
+//       case VK_MULTIPLY:
+//         return NUX_VK_MULTIPLY;
+//       case VK_ADD:
+//         return NUX_VK_ADD;
+//       case VK_SEPARATOR:
+//         return NUX_VK_SEPARATOR;
+//       case VK_SUBTRACT:
+//         return NUX_VK_SUBTRACT;
+//       case VK_DECIMAL:
+//         return NUX_VK_DECIMAL;
+//       case VK_DIVIDE:
+//         return NUX_VK_DIVIDE;
+//       case VK_F1:
+//         return NUX_VK_F1;
+//       case VK_F2:
+//         return NUX_VK_F2;
+//       case VK_F3:
+//         return NUX_VK_F3;
+//       case VK_F4:
+//         return NUX_VK_F4;
+//       case VK_F5:
+//         return NUX_VK_F5;
+//       case VK_F6:
+//         return NUX_VK_F6;
+//       case VK_F7:
+//         return NUX_VK_F7;
+//       case VK_F8:
+//         return NUX_VK_F8;
+//       case VK_F9:
+//         return NUX_VK_F9;
+//       case VK_F10:
+//         return NUX_VK_F10;
+//       case VK_F11:
+//         return NUX_VK_F11;
+//       case VK_F12:
+//         return NUX_VK_F12;
+//       case VK_F13:
+//         return NUX_VK_F13;
+//       case VK_F14:
+//         return NUX_VK_F14;
+//       case VK_F15:
+//         return NUX_VK_F15;
+//       case VK_F16:
+//         return NUX_VK_F16;
+//       case VK_F17:
+//         return NUX_VK_F17;
+//       case VK_F18:
+//         return NUX_VK_F18;
+//       case VK_F19:
+//         return NUX_VK_F19;
+//       case VK_F20:
+//         return NUX_VK_F20;
+//       case VK_F21:
+//         return NUX_VK_F21;
+//       case VK_F22:
+//         return NUX_VK_F22;
+//       case VK_F23:
+//         return NUX_VK_F23;
+//       case VK_F24:
+//         return NUX_VK_F24;
+//       case VK_NUMLOCK:
+//         return NUX_VK_NUMLOCK;
+//       case VK_SCROLL:
+//         return NUX_VK_SCROLL;
+//       case VK_LSHIFT:
+//         return NUX_VK_LSHIFT;
+//       case VK_RSHIFT:
+//         return NUX_VK_RSHIFT;
+//       case VK_LCONTROL:
+//         return NUX_VK_LCONTROL;
+//       case VK_RCONTROL:
+//         return NUX_VK_RCONTROL;
+//       case VK_LMENU:
+//         return NUX_VK_LMENU;
+//       case VK_RMENU:
+//         return NUX_VK_RMENU;
+//       default:
+//         return 0x0;
+//     }
+  }
+
+  void GraphicsDisplay::InitGlobalGrabWindow ()
+  {
+
+  }
+
+  bool GraphicsDisplay::GrabPointer (GrabReleaseCallback callback, void *data, bool replace_existing)
+  {
+    return false;
+  }
+
+  bool GraphicsDisplay::UngrabPointer (void *data)
+  {
+    return true;
+  }
+
+  bool GraphicsDisplay::PointerIsGrabbed ()
+  {
+    return false;  
+  }
+
+  bool GraphicsDisplay::GrabKeyboard (GrabReleaseCallback callback, void *data, bool replace_existing)
+  {
+    return _global_keyboard_grab_active;
+  }
+
+  bool GraphicsDisplay::UngrabKeyboard (void *data)
+  {
+    return true;
+  }
+
+  bool GraphicsDisplay::KeyboardIsGrabbed ()
+  {
+    return _global_keyboard_grab_active;  
   }
 
 //---------------------------------------------------------------------------------------------------------

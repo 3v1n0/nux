@@ -55,6 +55,12 @@ namespace nux
     vscrollbar->OnScrollUp.connect ( sigc::mem_fun (this, &ScrollView::ScrollUp) );
     vscrollbar->OnScrollDown.connect ( sigc::mem_fun (this, &ScrollView::ScrollDown) );
 
+    // hscrollbar and vscrollbar have to be parented so they are correctly
+    // rendered and so that GetRootGeometry/GetAbsoluteGeometry returns the
+    // correct Geometry. This is necessary in embedded mode.
+    hscrollbar->SetParentObject (this);
+    vscrollbar->SetParentObject (this);
+
     setTopBorder (4);
     setBorder (4);
 
@@ -70,11 +76,58 @@ namespace nux
 
   }
 
+  void
+  ScrollView::SetVScrollBar (VScrollBar* newVScrollBar)
+  {
+    if (vscrollbar)
+    {
+      // disconnect old vscrollbar
+      vscrollbar->OnScrollUp.connect (sigc::mem_fun (this,
+                                                     &ScrollView::ScrollUp));
+      vscrollbar->OnScrollDown.connect (sigc::mem_fun (this,
+                                                       &ScrollView::ScrollDown));
+      if (vscrollbar->OwnsTheReference ())
+      {
+        vscrollbar->UnReference ();
+      }
+      else
+      {
+        vscrollbar->Dispose ();
+      }
+    }
+
+    vscrollbar = newVScrollBar;
+
+    vscrollbar->Reference ();
+    vscrollbar->SetParentObject (this);
+
+    // connect new vscrollbar
+    vscrollbar->OnScrollUp.connect (sigc::mem_fun (this,
+                                                   &ScrollView::ScrollUp));
+    vscrollbar->OnScrollDown.connect (sigc::mem_fun (this,
+                                                     &ScrollView::ScrollDown));
+  }
+
   ScrollView::~ScrollView()
   {
     // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters
-    hscrollbar->Dispose ();
-    vscrollbar->Dispose ();
+    if (hscrollbar->OwnsTheReference ())
+    {
+      hscrollbar->UnReference ();
+    }
+    else
+    {
+      hscrollbar->Dispose ();
+    }
+
+    if (vscrollbar->OwnsTheReference ())
+    {
+      vscrollbar->UnReference ();
+    }
+    else
+    {
+      vscrollbar->Dispose ();
+    }
   }
 
   void ScrollView::OnChildFocusChanged (Area *parent, Area *child)

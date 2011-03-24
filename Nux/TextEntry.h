@@ -176,6 +176,7 @@ namespace nux
 
     protected:
     virtual void DoSetFocused (bool focused);
+    bool _block_focus; // used to selectively ignore focus keyevents
     
     private:
     /**

@@ -20,8 +20,8 @@
  */
 
 
-#ifndef OPENGL_GFX_H
-#define OPENGL_GFX_H
+#ifndef GRAPHICSDISPLAYWIN_H
+#define GRAPHICSDISPLAYWIN_H
 
 #include "Gfx_Interface.h"
 #include "GLTimer.h"
@@ -94,6 +94,7 @@ namespace nux
     HCURSOR m_Cursor;
 
     static int Win32KeySymToINL (int Keysym);
+    static int Win32VKToNuxKey (int vk);
   public:
 
     // Device
@@ -231,13 +232,40 @@ namespace nux
     void PauseThreadGraphicsRendering();
     bool IsPauseThreadGraphicsRendering() const;
 
+    // Pointer and keyboard grab API
+    typedef void (*GrabReleaseCallback) (bool replaced, void *user_data);
+
+    bool GrabPointer   (GrabReleaseCallback callback, void *data, bool replace_existing);
+    bool UngrabPointer (void *data);
+    bool PointerIsGrabbed ();
+
+    bool GrabKeyboard   (GrabReleaseCallback callback, void *data, bool replace_existing);
+    bool UngrabKeyboard (void *data);
+    bool KeyboardIsGrabbed ();
+
+    void * KeyboardGrabData () { return _global_keyboard_grab_data; }
+    void * PointerGrabData () { return _global_pointer_grab_data; }
+
   private:
+    void InitGlobalGrabWindow ();
+
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
     float m_FrameTime;
     GpuDevice *m_DeviceFactory;
     GraphicsEngine *m_GraphicsContext;
     WindowStyle m_Style;
+
+    HWND                _global_grab_window;
+
+    void               *_global_pointer_grab_data;
+    bool                _global_pointer_grab_active;
+    GrabReleaseCallback _global_pointer_grab_callback;
+
+    void               *_global_keyboard_grab_data;
+    bool                _global_keyboard_grab_active;
+    GrabReleaseCallback _global_keyboard_grab_callback;
+
 
   public:
     ~GraphicsDisplay();
@@ -269,5 +297,5 @@ namespace nux
 
 }
 
-#endif //OPENGL_GFX_H
+#endif //GRAPHICSDISPLAYWIN_H
 
