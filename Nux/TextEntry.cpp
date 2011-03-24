@@ -1736,6 +1736,22 @@ namespace nux
     {
       if (((rtl && count < 0) || (!rtl && count > 0)) && *ptr)
       {
+        if (log_attrs[offset].is_white)
+        {
+          while (ptr && *ptr && log_attrs[offset].is_white)
+          {
+            ptr = g_utf8_find_next_char(ptr, NULL);
+            ++offset;
+          }
+        }
+        else
+        {
+          if (ptr && *ptr)
+          {
+            ptr = g_utf8_find_next_char(ptr, NULL);
+            ++offset;
+          }
+        }
         while (ptr && *ptr)
         {
           ptr = g_utf8_find_next_char(ptr, NULL);
@@ -1751,6 +1767,22 @@ namespace nux
       }
       else if (((rtl && count > 0) || (!rtl && count < 0)) && (ptr > text))
       {
+        if (offset > 0 && log_attrs[offset - 1].is_white)
+        {
+          while (ptr && offset > 0 && log_attrs[offset - 1].is_white)
+          {
+            ptr = g_utf8_find_prev_char(text, ptr);
+            --offset;
+          }
+        }
+        else
+        {
+          if (ptr)
+          {
+            ptr = g_utf8_find_prev_char(text, ptr);
+            --offset;
+          }
+        }
         while (ptr /*&& *ptr*/) //fix: when at the end of the string, allow ctrl+left arrow to move backward to the start/end of the previous word.
         {
           ptr = g_utf8_find_prev_char(text, ptr);
