@@ -294,9 +294,9 @@ namespace nux
     /** Paste the text in the clipboard to current offset */
     void PasteClipboard();
     /** Delete a character before the offset of the cursor */
-    void BackSpace();
+    void BackSpace(MovementStep step);
     /** Delete a character at the offset of the cursor */
-    void Delete();
+    void Delete(MovementStep step);
     /** Switch between the overwrite mode and the insert mode*/
     void ToggleOverwrite();
 //

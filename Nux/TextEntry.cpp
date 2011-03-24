@@ -460,11 +460,17 @@ namespace nux
       }
       else if (keyval == NUX_VK_BACKSPACE)
       {
-        BackSpace();
+        if (!ctrl)
+          BackSpace(VISUALLY);
+        else
+          BackSpace(WORDS);
       }
       else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
-        Delete();
+        if (!ctrl)
+          Delete(VISUALLY);
+        else
+          Delete(WORDS);
       }
       else if ((keyval == NUX_VK_INSERT) && (!shift) && (!ctrl))
       {
@@ -1537,7 +1543,7 @@ namespace nux
 //     }
   }
 
-  void TextEntry::BackSpace()
+  void TextEntry::BackSpace(MovementStep step)
   {
     if (GetSelectionBounds(NULL, NULL))
     {
@@ -1547,11 +1553,20 @@ namespace nux
     {
       if (cursor_ == 0)
         return;
-      DeleteText(cursor_ - GetPrevCharLength(cursor_), cursor_);
+      if (step == VISUALLY)
+      {
+        DeleteText(cursor_ - GetPrevCharLength(cursor_), cursor_);
+      } 
+      else if (step == WORDS)
+      {
+        int new_cursor;
+        new_cursor = MoveWords(cursor_, -1);
+        DeleteText(new_cursor, cursor_);
+      }
     }
   }
 
-  void TextEntry::Delete()
+  void TextEntry::Delete(MovementStep step)
   {
     if (GetSelectionBounds(NULL, NULL))
     {
@@ -1561,7 +1576,16 @@ namespace nux
     {
       if (cursor_ == static_cast<int>(_text.length()))
         return;
-      DeleteText(cursor_, cursor_ + GetCharLength(cursor_));
+      if (step == VISUALLY)
+      {
+        DeleteText(cursor_, cursor_ + GetCharLength(cursor_));
+      }
+      else if (step == WORDS)
+      {
+        int new_cursor;
+        new_cursor = MoveWords(cursor_, 1);
+        DeleteText(cursor_, new_cursor);
+      }
     }
   }
 
