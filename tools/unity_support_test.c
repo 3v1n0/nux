@@ -65,7 +65,7 @@ enum {
 // PCI device identity.
 struct PciDevice {
   unsigned short vendor;
-  unsigned short id;
+  unsigned short device;
 };
 
 // Blacklists of GPUs for Compiz.
@@ -336,7 +336,7 @@ int main (int argc, char* argv[]) {
     pci_fill_info (dev, PCI_FILL_IDENT);
     for (int i = 0; i < gpu_blacklist_size; i++) {
       if (dev->vendor_id == gpu_blacklist[i].vendor &&
-          dev->device_id == gpu_blacklist[i].id) {
+          dev->device_id == gpu_blacklist[i].device) {
         flags |= FLAG_BLACKLISTED;
       }
     }
