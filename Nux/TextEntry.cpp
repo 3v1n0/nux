@@ -1971,6 +1971,7 @@ namespace nux
       {
         cursor_ = cursor;
         cursor_moved_ = true;
+        cursor_moved.emit (cursor);
       }
 
       //ResetImContext();
