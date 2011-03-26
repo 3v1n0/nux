@@ -781,7 +781,7 @@ namespace nux
       AdjustScroll();
 
     QueueTextDraw();
-    //todo: QueueCursorBlink();
+    QueueCursorBlink();
   }
 
   void TextEntry::ResetImContext()
@@ -873,6 +873,33 @@ namespace nux
       pango_cairo_show_layout(canvas->GetInternalContext(), layout);
       canvas->PopState();
     }
+  }
+  
+  gint cursor_blink_callback(gpointer data)
+  {
+    TextEntry* text_entry = static_cast<TextEntry*>(data);
+  
+    if (text_entry->cursor_blink_status_) {
+      text_entry->ShowCursor();
+      if (text_entry->cursor_blink_status_ == 2)
+        text_entry->QueueDraw();
+    }
+    else {
+      text_entry->HideCursor();
+      text_entry->QueueDraw();
+    }
+  
+    if (--text_entry->cursor_blink_status_ < 0)
+      text_entry->cursor_blink_status_ = 2;
+
+    return true;
+  }
+  
+  void TextEntry::QueueCursorBlink()
+  {
+    if (!cursor_blink_timer_)
+        cursor_blink_timer_ = g_timeout_add(nux::kCursorBlinkTimeout, 
+                                            cursor_blink_callback, this);
   }
 
   void TextEntry::ShowCursor()

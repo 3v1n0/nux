@@ -220,12 +220,12 @@ namespace nux
 //     /** Set the visibility of the edit control */
 //     void SetVisibility(bool visible);
 //
-//     /** Check if the cursor should be blinking */
-//     bool IsCursorBlinking();
-//     /** Send out a request to blink the cursor if necessary */
-//     void QueueCursorBlink();
-//     /** Timer callback to blink the cursor */
-//     bool CursorBlinkCallback(int timer_id);
+    /** Check if the cursor should be blinking */
+    bool IsCursorBlinking();
+    /** Send out a request to blink the cursor if necessary */
+    void QueueCursorBlink();
+    friend gint cursor_blink_callback(gpointer data);
+    
     void ShowCursor();
     void HideCursor();
 
