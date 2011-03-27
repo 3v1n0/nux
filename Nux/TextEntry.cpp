@@ -661,11 +661,9 @@ namespace nux
 
   void TextEntry::FocusInx()
   {
-    printf("FocusInx\n");
     if (!focused_)
     {
       focused_ = true;
-      printf("focused_\n");
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
@@ -681,7 +679,6 @@ namespace nux
 
   void TextEntry::FocusOutx()
   {
-    printf("FocusOutx\n");
     if (focused_)
     {
       focused_ = false;
@@ -897,7 +894,8 @@ namespace nux
   {
     if (!cursor_blink_timer_)
       cursor_blink_timer_ = g_timeout_add(kCursorBlinkTimeout, 
-                                          (GSourceFunc)&CursorBlinkCallback, this);
+                                          (GSourceFunc)&CursorBlinkCallback, 
+                                          this);
   }
 
   void TextEntry::ShowCursor()
