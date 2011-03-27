@@ -661,9 +661,11 @@ namespace nux
 
   void TextEntry::FocusInx()
   {
+    printf("FocusInx\n");
     if (!focused_)
     {
       focused_ = true;
+      printf("focused_\n");
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
@@ -679,6 +681,7 @@ namespace nux
 
   void TextEntry::FocusOutx()
   {
+    printf("FocusOutx\n");
     if (focused_)
     {
       focused_ = false;
@@ -875,22 +878,17 @@ namespace nux
     }
   }
   
-  gint cursor_blink_callback(gpointer data)
+  bool TextEntry::CursorBlinkCallback(TextEntry *self)
   {
-    TextEntry* text_entry = static_cast<TextEntry*>(data);
+    if (self->cursor_blink_status_)
+      self->ShowCursor();
+    else
+      self->HideCursor();
+    
+    self->QueueDraw();
   
-    if (text_entry->cursor_blink_status_) {
-      text_entry->ShowCursor();
-      if (text_entry->cursor_blink_status_ == 2)
-        text_entry->QueueDraw();
-    }
-    else {
-      text_entry->HideCursor();
-      text_entry->QueueDraw();
-    }
-  
-    if (--text_entry->cursor_blink_status_ < 0)
-      text_entry->cursor_blink_status_ = 2;
+    if (--self->cursor_blink_status_ < 0)
+      self->cursor_blink_status_ = 2;
 
     return true;
   }
@@ -898,8 +896,8 @@ namespace nux
   void TextEntry::QueueCursorBlink()
   {
     if (!cursor_blink_timer_)
-        cursor_blink_timer_ = g_timeout_add(nux::kCursorBlinkTimeout, 
-                                            cursor_blink_callback, this);
+      cursor_blink_timer_ = g_timeout_add(kCursorBlinkTimeout, 
+                                          (GSourceFunc)&CursorBlinkCallback, this);
   }
 
   void TextEntry::ShowCursor()

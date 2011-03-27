@@ -224,7 +224,7 @@ namespace nux
     bool IsCursorBlinking();
     /** Send out a request to blink the cursor if necessary */
     void QueueCursorBlink();
-    friend gint cursor_blink_callback(gpointer data);
+    static bool CursorBlinkCallback(TextEntry *data);
     
     void ShowCursor();
     void HideCursor();
