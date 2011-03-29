@@ -101,6 +101,7 @@ namespace nux
     _dnd_source_funcs.drag_finished = 0;
     
     _global_keyboard_grab_data = 0;
+    _global_keyboard_grab_callback = 0;
     _global_pointer_grab_data = 0;
     _global_pointer_grab_callback = 0;
 
