@@ -443,6 +443,8 @@ namespace nux
 
   WindowThread::~WindowThread()
   {
+    g_source_remove_by_funcs_user_data (&event_funcs, this);
+
     ThreadDtor();
     std::list<Timeline*>::iterator li;
     for (li=_Timelines->begin (); li!=_Timelines->end (); ++li)
