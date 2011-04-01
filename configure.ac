@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [0])
 m4_define([nux_minor_version], [9])
-m4_define([nux_micro_version], [36])
+m4_define([nux_micro_version], [38])
 
 # Bump this when we break ABI
 m4_define([nux_api_version], [0.9])
@@ -87,6 +87,7 @@ AC_CONFIG_MACRO_DIR([m4])
 dnl ===========================================================================
 
 # Checks for programs
+AC_PROG_CC_C99
 AC_PROG_CXX
 AM_PROG_CC_C_O
 
@@ -160,6 +161,13 @@ PKG_CHECK_MODULES(NUX,
 AC_SUBST(NUX_CFLAGS)
 AC_SUBST(NUX_LIBS)
 
+PKG_CHECK_MODULES(UNITY_SUPPORT_TEST,
+                  x11
+                  gl
+                  libpci
+                  )
+AC_SUBST(UNITY_SUPPORT_TEST_CFLAGS)
+AC_SUBST(UNITY_SUPPORT_TEST_LIBS)
 
 dnl ===========================================================================
 

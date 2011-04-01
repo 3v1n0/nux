@@ -1,9 +1,34 @@
-nux (0.9.36-0ubuntu2) UNRELEASED; urgency=low
+nux (0.9.38-0ubuntu1) UNRELEASED; urgency=low
 
+  * New upstream release.
+    - compiz crashed with SIGSEGV in std::_List_node_base::_M_hook()
+      (LP: #711916)
+    - compiz crashed with SIGSEGV in nux::View::PostProcessEvent2()
+      (LP: #712498)
+    - compiz crashed with SIGSEGV in sigc::internal::signal_emit0<void,
+      sigc::nil>::emit() (LP: #729715)
+    - compiz crashed with SIGSEGV in brw_validate_state() (LP: #730707)
+    - Finish Nux detection tool support (LP: #722089)
+    - compiz crashed with SIGABRT in raise() (LP: #741942)
+    - compiz crashed with SIGSEGV in PanelMenuView::ProcessEvent()
+      (LP: #742139)
+    - compiz crashed with SIGSEGV in operator->() (LP: #741961)
+    - Graphics hardware capability detection (LP: #685208)
+    - compiz crashed with SIGSEGV in nux::GraphicsDisplay::GrabPointer()
+      (LP: #740784)
+    - compiz crashed with SIGSEGV in nux::Area::InitiateResizeLayout()
+      (LP: #741977)
+    - compiz crashed with SIGSEGV in nux::GraphicsDisplay::GrabKeyboard()
+      (LP: #742233)
+    - Missing child addition signals on nux::Layout and nux::View
+      (LP: #734803)
+    - compiz crashed with SIGSEGV in
+      nux::GpuRenderStates::SubmitChangeStates() (LP: #735908)
+    - unity_support_test crashed with SIGSEGV (LP: #743848)
   * debian/control:
     - adding libpci-dev build-dep for the new lighter unity_support_tool
 
- -- Didier Roche <didrocks@ubuntu.com>  Fri, 25 Mar 2011 11:23:18 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 01 Apr 2011 09:15:08 +0200
 
 nux (0.9.36-0ubuntu1) natty; urgency=low
 
