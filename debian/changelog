@@ -1,4 +1,4 @@
-nux (0.9.38-0ubuntu1) UNRELEASED; urgency=low
+nux (0.9.38-0ubuntu1) natty; urgency=low
 
   * New upstream release.
     - compiz crashed with SIGSEGV in std::_List_node_base::_M_hook()
@@ -28,7 +28,7 @@ nux (0.9.38-0ubuntu1) UNRELEASED; urgency=low
   * debian/control:
     - adding libpci-dev build-dep for the new lighter unity_support_tool
 
- -- Didier Roche <didrocks@ubuntu.com>  Fri, 01 Apr 2011 09:15:08 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 01 Apr 2011 11:15:39 +0200
 
 nux (0.9.36-0ubuntu1) natty; urgency=low
 
