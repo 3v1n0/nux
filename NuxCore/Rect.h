@@ -43,7 +43,7 @@ namespace nux
 
     t_bool IsNull() const
     {
-      return ( (width == 0) && (height == 0) );
+      return ( (width == 0) || (height == 0) );
     }
     t_bool IsInside (const Point &p) const;
     Rect Intersect (const Rect &) const;
