@@ -20,6 +20,7 @@ namespace nux
     _textColor  = Colors::White;
     _texture2D  = 0;
     _font_string = g_strdup ("Ubuntu 10");
+    _clipping = 0;
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText (text);
@@ -42,7 +43,7 @@ namespace nux
     int          textWidth  = 0;
     int          textHeight = 0;
 
-    GetTextSize (textWidth, textHeight);
+    GetTextSize (textWidth, textHeight, _clipping);
 
     _pre_layout_width = GetBaseWidth ();
     _pre_layout_height = GetBaseHeight ();
@@ -101,6 +102,24 @@ namespace nux
   bool StaticText::GetSizeMatchText () const
   {
     return _size_match_text;
+  }
+
+  void StaticText::SetClipping (int clipping)
+  {
+    if (_clipping == clipping)
+      return;
+
+    _clipping = clipping;
+
+    if (_clipping < 0)
+      clipping = 0;
+
+    UpdateTextRendering ();
+  }
+
+  int StaticText::GetClipping () const
+  {
+    return _clipping;
   }
 
   void StaticText::Draw (GraphicsEngine& gfxContext, bool forceDraw)
@@ -171,12 +190,12 @@ namespace nux
     QueueDraw ();
   }
 
-  void StaticText::GetTextSize (int &width, int &height)
+  void StaticText::GetTextSize (int &width, int &height, int clipping)
   {
-    GetTextSize (TEXT("Ubuntu"), _text.GetTCharPtr (), width, height);
+    GetTextSize (TEXT("Ubuntu"), _text.GetTCharPtr (), width, height, clipping);
   }
 
-  void StaticText::GetTextSize (const TCHAR* font, const TCHAR *char_str, int& width, int& height)
+  void StaticText::GetTextSize (const TCHAR* font, const TCHAR *char_str, int& width, int& height, int clipping)
   {
     cairo_surface_t*      surface  = NULL;
     cairo_t*              cr       = NULL;
@@ -210,6 +229,9 @@ namespace nux
     pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
     pango_layout_set_markup (layout, char_str, -1);
 
+    if (clipping)
+      pango_layout_set_width (layout, clipping * PANGO_SCALE);
+
     pangoCtx = pango_layout_get_context (layout); // is not ref'ed
     pango_cairo_context_set_font_options (pangoCtx, font_options);
 
@@ -240,7 +262,7 @@ namespace nux
     PangoContext*         pangoCtx   = NULL;
     int                   dpi        = 0;
 
-    GetTextSize (textWidth, textHeight);
+    GetTextSize (textWidth, textHeight, _clipping);
 
     cairo_font_options_t* font_options = cairo_font_options_create();
 
@@ -258,6 +280,8 @@ namespace nux
     pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
     pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
     pango_layout_set_markup (layout, _text.GetTCharPtr(), -1);
+    if (_clipping)
+      pango_layout_set_width (layout, _clipping * PANGO_SCALE);
 
     pangoCtx = pango_layout_get_context (layout);
     pango_cairo_context_set_font_options (pangoCtx, font_options);
@@ -280,7 +304,7 @@ namespace nux
   {
     int width = 0;
     int height = 0;
-    GetTextSize(width, height);
+    GetTextSize(width, height, _clipping);
 
     if (GetSizeMatchText () && (width != 0) && (height != 0))
     {
