@@ -34,7 +34,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     nux::VLayout* MainVLayout = new nux::VLayout(NUX_TRACKER_LOCATION);
 
     nux::GridHLayout *grid_h_layout ((new nux::GridHLayout (NUX_TRACKER_LOCATION)));
-    for (int i = 0; i < 360; i++)
+    for (int i = 0; i < 5360; i++)
     {
       nux::ColorLayer color (nux::Color::RandomColor ());
       nux::TextureArea* texture_area = new nux::TextureArea ();
