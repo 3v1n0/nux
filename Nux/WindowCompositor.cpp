@@ -495,6 +495,8 @@ namespace nux
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
     for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
     {
+      if (!(*it).IsValid ())
+        continue;
       // Reset the preemptive hidden/visible status of all base windows.
       ObjectWeakPtr<BaseWindow> window = (*it);
       window->_entering_visible_state = false;
@@ -1054,6 +1056,9 @@ namespace nux
 
     for (rev_it = WindowList.rbegin (); rev_it != WindowList.rend (); rev_it++)
     {
+      if (!(*rev_it).IsValid ())
+        continue;
+        
       if ((drawModal == false) && (*rev_it)->IsModal ())
         continue;
 
@@ -1745,6 +1750,8 @@ namespace nux
 
     for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
     {
+      if (!(*it).IsValid ())
+        continue;
       if ( (*it)->IsVisible() )
       {
         (*it)->NotifyConfigurationChange (Width, Height);
