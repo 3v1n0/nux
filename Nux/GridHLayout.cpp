@@ -437,9 +437,9 @@ namespace nux
     Geometry base = GetGeometry ();
     Geometry parent_geometry = GetAbsoluteGeometry ();
     Geometry visibility_geometry = parent_geometry;
-    if (GetParentObject ())
+    if (GetToplevel ())
     {
-      parent_geometry = GetParentObject ()->GetAbsoluteGeometry ();
+      parent_geometry = GetToplevel ()->GetAbsoluteGeometry ();
     }
 
     visibility_geometry = parent_geometry.Intersect (GetAbsoluteGeometry ());
