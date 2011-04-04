@@ -156,7 +156,11 @@ namespace nux
     sigc::signal<void, BaseWindow*> sigVisible;
     //! Emit a signal when the BaseWindow becomes hidden.
     sigc::signal<void, BaseWindow*> sigHidden;
-    
+
+    NString GetWindowName ()
+    {
+      return _name;
+    }
   protected:
     
      //! Callback function to set the window position and size.
