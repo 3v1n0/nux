@@ -53,6 +53,7 @@ namespace nux
       switch (keysym)
       {
         case NUX_VK_ENTER:
+        case NUX_KP_ENTER:
           type = FOCUS_EVENT_ACTIVATE;
           //g_debug ("focus key activated");
           break;
