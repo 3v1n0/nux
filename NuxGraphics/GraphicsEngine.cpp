@@ -200,7 +200,7 @@ namespace nux
         InitSl2TextureMod ();
         InitSl4TextureAdd ();
 
-        InitSLComponentExponentiation ();
+        InitSLPower ();
         InitSLAlphaReplicate ();
         InitSLHorizontalGaussFilter ();
         InitSLVerticalGaussFilter ();
@@ -224,7 +224,7 @@ namespace nux
         InitAsm4TextureAdd ();
         InitAsmBlendModes ();
 
-        InitAsmComponentExponentiation ();
+        InitAsmPower ();
         InitAsmAlphaReplicate ();
         InitAsmSeparableGaussFilter ();
         InitAsmColorMatrixFilter ();
@@ -240,7 +240,7 @@ namespace nux
       InitSl2TextureMod ();
       InitSl4TextureAdd ();
 
-      InitSLComponentExponentiation ();
+      InitSLPower ();
       InitSLAlphaReplicate ();
       InitSLHorizontalGaussFilter ();
       InitSLVerticalGaussFilter ();

@@ -108,8 +108,10 @@ namespace nux
     sigc::signal<void, int> sigMouseUp;
     sigc::signal<void, int> sigMouseDrag;
     sigc::signal<void, int> sigSetTypedValue;
+    sigc::signal<void, int> sigValueChanged2;
     //sigc::signal<void, const char*> sigValidateKeyboarEntry;
 
+    void BroadcastValue ();
   protected:
     void InitializeWidgets();
     void InitializeLayout();

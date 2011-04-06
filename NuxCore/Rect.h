@@ -33,29 +33,29 @@ namespace nux
   {
   public:
     Rect();
-    Rect (t_int32 x_, t_int32 y_, t_int32 width_, t_int32 height_);
+    Rect (int x_, int y_, int width_, int height_);
     ~Rect();
     Rect (const Rect &r);
 
     Rect &operator = (const Rect &r);
-    t_bool operator == (const Rect &p) const;
-    t_bool operator != (const Rect &p) const;
+    bool operator == (const Rect &p) const;
+    bool operator != (const Rect &p) const;
 
-    t_bool IsNull() const
+    bool IsNull() const
     {
       return ( (width == 0) || (height == 0) );
     }
-    t_bool IsInside (const Point &p) const;
+    bool IsInside (const Point &p) const;
     Rect Intersect (const Rect &) const;
 
     // expand the width by factor_x and the height by factor_y
-    void Expand (t_int32 factor_x, t_int32 factor_y);
+    void Expand (int factor_x, int factor_y);
 
-    t_int32 GetWidth() const
+    int GetWidth() const
     {
       return width;
     }
-    t_int32 GetHeight() const
+    int GetHeight() const
     {
       return height;
     }
@@ -70,28 +70,28 @@ namespace nux
       return Point (x, y);
     }
 
-    void SetWidth (t_int32 w)
+    void SetWidth (int w)
     {
       width = w;
     }
-    void SetHeight (t_int32 h)
+    void SetHeight (int h)
     {
       height = h;
     }
-    void SetX (t_int32 px)
+    void SetX (int px)
     {
       x = px;
     }
-    void SetY (t_int32 py)
+    void SetY (int py)
     {
       y = py;
     }
 
-    void Set (t_int32 px, t_int32 py, t_int32 w, t_int32 h);
-    void SetPosition (t_int32 px, t_int32 py);
-    void SetSize (t_int32 px, t_int32 py);
+    void Set (int px, int py, int w, int h);
+    void SetPosition (int px, int py);
+    void SetSize (int px, int py);
 
-    void OffsetSize (t_int32 dw, t_int32 dh)
+    void OffsetSize (int dw, int dh)
     {
       width += dw;
       height += dh;
@@ -102,18 +102,17 @@ namespace nux
       if (height < 0)
         height = 0;
     }
-    void OffsetPosition (t_int32 dx, t_int32 dy)
+    void OffsetPosition (int dx, int dy)
     {
       x += dx;
       y += dy;
     }
 
-    t_bool IsPointInside (t_int32 dx, t_int32 dy) const;
-    Rect GetExpand (t_int32 dx, t_int32 dy) const;
+    bool IsPointInside (int dx, int dy) const;
+    Rect GetExpand (int dx, int dy) const;
 
-  public:
-    t_int32 x, y;
-    t_int32 width, height;
+    int x, y;
+    int width, height;
   };
 
 }

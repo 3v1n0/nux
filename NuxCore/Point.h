@@ -30,31 +30,31 @@ namespace nux
   {
   public:
     Point();
-    Point (t_int32 x, t_int32 y);
+    Point (int x, int y);
     ~Point();
     Point (const Point &p);
 
     Point &operator = (const Point &p);
-    t_bool operator == (const Point &p) const;
-    t_bool operator != (const Point &p) const;
+    bool operator == (const Point &p) const;
+    bool operator != (const Point &p) const;
     Point operator + (const Point &p) const;
     Point operator - (const Point &p) const;
     Point &operator += (const Point &p);
     Point &operator -= (const Point &p);
 
-    void Set (t_int32 x_, t_int32 y_)
+    void Set (int x_, int y_)
     {
       x = x_;
       y = y_;
     }
-    void Get (t_int32 &x_, t_int32 &y_)
+    void Get (int &x_, int &y_)
     {
       x_ = x;
       y_ = y;
     }
 
-    t_int32 x;
-    t_int32 y;
+    int x;
+    int y;
   };
 
 }
