@@ -31,7 +31,7 @@ namespace nux
   {
   }
 
-  Point::Point (t_int32 x_, t_int32 y_)
+  Point::Point (int x_, int y_)
     : x (x_), y (y_)
   {
   }
@@ -55,7 +55,7 @@ namespace nux
     return *this;
   }
 
-  t_bool Point::operator == (const Point &p) const
+  bool Point::operator == (const Point &p) const
   {
     if ( (x == p.x) && (y == p.y) )
     {
@@ -65,7 +65,7 @@ namespace nux
     return false;
   }
 
-  t_bool Point::operator != (const Point &p) const
+  bool Point::operator != (const Point &p) const
   {
     if ( (x == p.x) && (y == p.y) )
     {

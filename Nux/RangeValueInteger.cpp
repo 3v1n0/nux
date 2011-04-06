@@ -235,6 +235,7 @@ namespace nux
     m_ValueString->SetText (NString::Printf ("%d", m_Value) );
     sigValueChanged.emit (this);
     sigMouseDown.emit (m_Value);
+    sigValueChanged2.emit (m_Value);
 
     NeedRedraw();
   }
@@ -257,6 +258,7 @@ namespace nux
     m_ValueString->SetText (NString::Printf ("%d", m_Value) );
     sigValueChanged.emit (this);
     sigMouseUp.emit (m_Value);
+    sigValueChanged2.emit (m_Value);
 
     NeedRedraw();
   }
@@ -285,6 +287,7 @@ namespace nux
     m_ValueString->SetText (NString::Printf ("%d", m_Value) );
     sigValueChanged.emit (this);
     sigMouseDrag.emit (m_Value);
+    sigValueChanged2.emit (m_Value);
 
     NeedRedraw();
   }
@@ -306,7 +309,12 @@ namespace nux
     SetValue (i);
     sigValueChanged.emit (this);
     sigSetTypedValue.emit (i);
+    sigValueChanged2.emit (m_Value);
     NeedRedraw();
   }
 
+  void RangeValueInteger::BroadcastValue ()
+  {
+    sigValueChanged2.emit (m_Value);
+  }
 }

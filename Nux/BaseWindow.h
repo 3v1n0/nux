@@ -82,9 +82,31 @@ namespace nux
     virtual Layout* GetLayout();
     virtual bool SetLayout(Layout *layout);
 
+    //! Push the view one level up the ViewWindow stack.
+    /*!
+        Push this view one level up the ViewWindow stack. Does it even if the view is hidden.
+    */
     void PushHigher (BaseWindow* floating_view);
+
+    //! Push the view one level down the ViewWindow stack.
+    /*!
+        Push this view one level down the ViewWindow stack. Does it even if the view is hidden.
+    */
     void PushLower (BaseWindow* floating_view);
+
+    //! Push the view to the front of the ViewWindow stack.
+    /*!
+        Push this view to the top of the ViewWindow stack. Does it even if the view is hidden.
+        If a valid ViewWindow has been forced at the top of the stack with a call to WindowCompositor::SetAlwaysOnFrontWindow(),
+        then this view will be positioned one level below that view.
+        \sa SetAlwaysOnFrontWindow ();
+    */
     void PushToFront ();
+      
+    //! Push the view to the back of the ViewWindow stack.
+    /*!
+        Push this view to the back of the ViewWindow stack. Does it even if the view is hidden.
+    */
     void PushToBack ();
 
     //! Set the window size to respect the layout container.
@@ -109,9 +131,9 @@ namespace nux
     }
 
     virtual void ShowWindow (bool b, bool StartModal = false);
-    void StopModal();
-    bool IsModal() const;
-    bool IsVisible() const;
+    void StopModal ();
+    bool IsModal () const;
+    bool IsVisible () const;
 
     virtual void SetGeometry (const Geometry &geo);
 
