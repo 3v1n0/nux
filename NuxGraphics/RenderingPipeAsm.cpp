@@ -1,9 +1,10 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranties of
@@ -12,8 +13,7 @@
  * License for more details.
  *
  * You should have received a copy of both the GNU Lesser General Public
- * License version 3 along with this program.  If not, see
- * <http://www.gnu.org/licenses/>
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
@@ -1231,7 +1231,7 @@ namespace nux
     m_line_stats++;
   }
 
-  void GraphicsEngine::InitAsmComponentExponentiation ()
+  void GraphicsEngine::InitAsmPower ()
   {
     NString AsmVtx = TEXT (
       "!!ARBvp1.0                                 \n\
@@ -1281,7 +1281,7 @@ namespace nux
     _asm_tex_component_exponentiation_prog->Link();
   }
 
-  void GraphicsEngine::QRP_ASM_Exponentiation  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent)
+  void GraphicsEngine::QRP_ASM_Power  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent)
   {
     NUX_RETURN_IF_FALSE (_asm_tex_component_exponentiation_prog.IsValid());
     NUX_RETURN_IF_FALSE (_asm_texrect_component_exponentiation_prog.IsValid());
@@ -1977,18 +1977,9 @@ namespace nux
     return _offscreen_color_rt0;
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetComponentExponentiation (
-    int x, int y,
-    int buffer_width, int buffer_height,
-    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color & c0,
-    Vector4 exponent)
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetPower (
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color & c0, const Vector4 &exponent)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
-
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -2012,13 +2003,13 @@ namespace nux
     _offscreen_color_rt1->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     _offscreen_color_rt1->SetFiltering(GL_NEAREST, GL_NEAREST);
 
-    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_ASM_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, Colors::White);
 
-    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_Exponentiation(0, 0, buffer_width, buffer_height, _offscreen_color_rt0, texxform, c0, exponent);
+    QRP_ASM_Power(0, 0, quad_width, quad_height, _offscreen_color_rt0, texxform, c0, exponent);
 
     _offscreen_fbo->Deactivate();
 
@@ -2036,8 +2027,6 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetAlphaTexture (
-    int x, int y,
-    int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color & c0)
   {
@@ -2069,13 +2058,13 @@ namespace nux
     _offscreen_color_rt1->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     _offscreen_color_rt1->SetFiltering(GL_NEAREST, GL_NEAREST);
 
-    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_ASM_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, Colors::White);
 
-    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_AlphaReplicate(0, 0, buffer_width, buffer_height, _offscreen_color_rt0, texxform, c0);
+    QRP_ASM_AlphaReplicate(0, 0, quad_width, quad_height, _offscreen_color_rt0, texxform, c0);
 
     _offscreen_fbo->Deactivate();
 
@@ -2093,17 +2082,8 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetColorMatrixTexture (
-    int x, int y,
-    int buffer_width, int buffer_height,
-    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color & c0,
-    Matrix4 color_matrix, Vector4 offset)
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color & c0, Matrix4 color_matrix, Vector4 offset)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
-
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
@@ -2127,13 +2107,13 @@ namespace nux
     _offscreen_color_rt1->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     _offscreen_color_rt1->SetFiltering(GL_NEAREST, GL_NEAREST);
 
-    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_ASM_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, Colors::White);
 
-    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_ColorMatrix (0, 0, buffer_width, buffer_height, _offscreen_color_rt0, texxform, c0, color_matrix, offset);
+    QRP_ASM_ColorMatrix (0, 0, quad_width, quad_height, _offscreen_color_rt0, texxform, c0, color_matrix, offset);
 
     _offscreen_fbo->Deactivate();
 
@@ -2282,6 +2262,9 @@ namespace nux
   {
     NUX_RETURN_IF_FALSE (m_AsmPixelate.IsValid());
     NUX_RETURN_IF_FALSE (m_AsmPixelateRect.IsValid());
+    
+    if (pixel_size <= 0)
+      pixel_size = 1;
 
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
@@ -2357,6 +2340,45 @@ namespace nux
       CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
 
     shader_program->End();
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetPixelBlocks (
+	  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size)
+  {
+	  int quad_width = device_texture->GetWidth ();
+	  int quad_height = device_texture->GetHeight ();
+
+	  ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+	  int previous_width = 0;
+	  int previous_height = 0;
+	  if (prevFBO.IsValid ())
+	  {
+		  previous_width  = prevFBO->GetWidth ();
+		  previous_height = prevFBO->GetHeight ();
+	  }
+	  else
+	  {
+		  previous_width  = _graphics_display.GetWindowWidth ();
+		  previous_height = _graphics_display.GetWindowHeight ();
+	  }
+
+    CHECKGL (glClearColor (0, 0, 0, 0));
+	  SetFrameBufferHelper (_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
+	  CHECKGL (glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+	  QRP_ASM_Pixelate (0, 0, quad_width, quad_height, device_texture, texxform0, c0, pixel_size);
+
+	  _offscreen_fbo->Deactivate ();
+
+	  if (prevFBO.IsValid ())
+	  {
+		  prevFBO->Activate (true);
+		  SetViewport (0, 0, previous_width, previous_height);
+	  }
+	  else
+	  {
+		  SetViewport (0, 0, previous_width, previous_height);
+	  }
+	  return _offscreen_color_rt0;
   }
 }
 #endif // NUX_OPENGLES_20

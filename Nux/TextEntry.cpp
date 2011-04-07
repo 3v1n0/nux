@@ -35,11 +35,11 @@ namespace nux
   static const int kInnerBorderX = 2;
   static const int kInnerBorderY = 0; //1;
   static const int kCursorBlinkTimeout = 400;
-  static const double kStrongCursorLineWidth = 1.2;
-  static const double kStrongCursorBarWidth = 1.2;
+  static const double kStrongCursorLineWidth = 1;
+  static const double kStrongCursorBarWidth = 1;
   static const double kWeakCursorLineWidth = 3;
   static const double kWeakCursorBarWidth = 3;
-  static const Color kStrongCursorColor(1.0f, 1.0f, 1.0f, 1.0f);
+  static const Color kStrongCursorColor(0.9f, 0.9f, 0.9f, 1.0f);
   static const Color kWeakCursorColor(1.0f, 1.0f, 1.0f, 0.5f);
   static const Color kDefaultTextColor(0, 0, 0, 1.0f);
   static const Color kDefaultBackgroundColor(1, 1, 1, 1.0f);
@@ -374,7 +374,7 @@ namespace nux
     if (keysym == NUX_VK_TAB)
       return;
 
-    if (keysym == NUX_VK_ENTER)
+    if (keysym == NUX_VK_ENTER || NUX_KP_ENTER)
     {
       activated.emit ();
       return;
@@ -460,11 +460,17 @@ namespace nux
       }
       else if (keyval == NUX_VK_BACKSPACE)
       {
-        BackSpace();
+        if (!ctrl)
+          BackSpace(VISUALLY);
+        else
+          BackSpace(WORDS);
       }
       else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
-        Delete();
+        if (!ctrl)
+          Delete(VISUALLY);
+        else
+          Delete(WORDS);
       }
       else if ((keyval == NUX_VK_INSERT) && (!shift) && (!ctrl))
       {
@@ -950,11 +956,12 @@ namespace nux
       &weak_x, &weak_y, &weak_height);
 
     // Draw strong cursor.
-    canvas->DrawLine(strong_x + kInnerBorderX + scroll_offset_x_,
-      strong_y + kInnerBorderY + scroll_offset_y_,
-      strong_x + kInnerBorderX + scroll_offset_x_,
-      strong_y + strong_height + kInnerBorderY + scroll_offset_y_,
-      kStrongCursorLineWidth, kStrongCursorColor);
+    // 0.5 is for cairo drawing between the grid
+    canvas->DrawLine(strong_x + kInnerBorderX + scroll_offset_x_ + 0.5,
+                     strong_y + kInnerBorderY + scroll_offset_y_,
+                     strong_x + kInnerBorderX + scroll_offset_x_ + 0.5,
+                     strong_y + strong_height + kInnerBorderY + scroll_offset_y_,
+                     kStrongCursorLineWidth, kStrongCursorColor);
     // Draw a small arror towards weak cursor
     if (strong_x > weak_x)
     {
@@ -1537,7 +1544,7 @@ namespace nux
 //     }
   }
 
-  void TextEntry::BackSpace()
+  void TextEntry::BackSpace(MovementStep step)
   {
     if (GetSelectionBounds(NULL, NULL))
     {
@@ -1547,11 +1554,20 @@ namespace nux
     {
       if (cursor_ == 0)
         return;
-      DeleteText(cursor_ - GetPrevCharLength(cursor_), cursor_);
+      if (step == VISUALLY)
+      {
+        DeleteText(cursor_ - GetPrevCharLength(cursor_), cursor_);
+      } 
+      else if (step == WORDS)
+      {
+        int new_cursor;
+        new_cursor = MoveWords(cursor_, -1);
+        DeleteText(new_cursor, cursor_);
+      }
     }
   }
 
-  void TextEntry::Delete()
+  void TextEntry::Delete(MovementStep step)
   {
     if (GetSelectionBounds(NULL, NULL))
     {
@@ -1561,7 +1577,16 @@ namespace nux
     {
       if (cursor_ == static_cast<int>(_text.length()))
         return;
-      DeleteText(cursor_, cursor_ + GetCharLength(cursor_));
+      if (step == VISUALLY)
+      {
+        DeleteText(cursor_, cursor_ + GetCharLength(cursor_));
+      }
+      else if (step == WORDS)
+      {
+        int new_cursor;
+        new_cursor = MoveWords(cursor_, 1);
+        DeleteText(cursor_, new_cursor);
+      }
     }
   }
 
@@ -1736,6 +1761,22 @@ namespace nux
     {
       if (((rtl && count < 0) || (!rtl && count > 0)) && *ptr)
       {
+        if (log_attrs[offset].is_white)
+        {
+          while (ptr && *ptr && log_attrs[offset].is_white)
+          {
+            ptr = g_utf8_find_next_char(ptr, NULL);
+            ++offset;
+          }
+        }
+        else
+        {
+          if (ptr && *ptr)
+          {
+            ptr = g_utf8_find_next_char(ptr, NULL);
+            ++offset;
+          }
+        }
         while (ptr && *ptr)
         {
           ptr = g_utf8_find_next_char(ptr, NULL);
@@ -1751,6 +1792,22 @@ namespace nux
       }
       else if (((rtl && count > 0) || (!rtl && count < 0)) && (ptr > text))
       {
+        if (offset > 0 && log_attrs[offset - 1].is_white)
+        {
+          while (ptr && offset > 0 && log_attrs[offset - 1].is_white)
+          {
+            ptr = g_utf8_find_prev_char(text, ptr);
+            --offset;
+          }
+        }
+        else
+        {
+          if (ptr)
+          {
+            ptr = g_utf8_find_prev_char(text, ptr);
+            --offset;
+          }
+        }
         while (ptr /*&& *ptr*/) //fix: when at the end of the string, allow ctrl+left arrow to move backward to the start/end of the previous word.
         {
           ptr = g_utf8_find_prev_char(text, ptr);
@@ -1971,6 +2028,7 @@ namespace nux
       {
         cursor_ = cursor;
         cursor_moved_ = true;
+        cursor_moved.emit (cursor);
       }
 
       //ResetImContext();

@@ -1,9 +1,10 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranties of
@@ -12,8 +13,7 @@
  * License for more details.
  *
  * You should have received a copy of both the GNU Lesser General Public
- * License version 3 along with this program.  If not, see
- * <http://www.gnu.org/licenses/>
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
@@ -435,6 +435,15 @@ namespace nux
     it = elements.begin ();
 
     Geometry base = GetGeometry ();
+    Geometry parent_geometry = GetAbsoluteGeometry ();
+    Geometry visibility_geometry = parent_geometry;
+    if (GetToplevel ())
+    {
+      parent_geometry = GetToplevel ()->GetAbsoluteGeometry ();
+    }
+
+    visibility_geometry = parent_geometry.Intersect (GetAbsoluteGeometry ());
+
     GfxContext.PushClippingRectangle (base);
 
     for (int j = 0; j < _num_row; j++)
@@ -444,28 +453,29 @@ namespace nux
         if (it == elements.end ())
           break;
 
-        int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
-        int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
+        Geometry intersection = visibility_geometry.Intersect ((*it)->GetAbsoluteGeometry ());
 
-        GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
+        // Test if the element is inside the Grid before rendering.
+        if (!intersection.IsNull ())
+        {
+          int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
+          int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
 
-        if ((*it)->IsView ())
-        {
-          View *ic = NUX_STATIC_CAST (View *, (*it) );
-          ic->ProcessDraw (GfxContext, force_draw);
+          GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
+
+          if ((*it)->IsView ())
+          {
+            View *ic = NUX_STATIC_CAST (View *, (*it));
+            ic->ProcessDraw (GfxContext, force_draw);
+          }
+          else if ((*it)->IsLayout ())
+          {
+            Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
+            layout->ProcessDraw (GfxContext, force_draw);
+          }
+
+          GfxContext.PopClippingRectangle ();
         }
-        else if ((*it)->IsLayout ())
-        {
-          Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
-          layout->ProcessDraw (GfxContext, force_draw);
-        }
-        /*// InputArea should be tested last
-        else if ((*it)->IsInputArea())
-        {
-          InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
-          input_area->OnDraw (GfxContext, force_draw);
-        }*/
-        GfxContext.PopClippingRectangle ();
 
         it++;
       }

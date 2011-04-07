@@ -1,9 +1,10 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranties of
@@ -12,8 +13,7 @@
  * License for more details.
  *
  * You should have received a copy of both the GNU Lesser General Public
- * License version 3 along with this program.  If not, see
- * <http://www.gnu.org/licenses/>
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
@@ -39,11 +39,6 @@
 
 namespace nux
 {
-
-////////////////////////////////////////////////////////////////////////////
-// Base Area
-////////////////////////////////////////////////////////////////////////////
-
   class InputArea;
   typedef InputArea CoreArea;
 
@@ -231,15 +226,82 @@ namespace nux
 #endif
 
   public:
+    //! Signal emitted when the Mouse moves over the InputArea surface.
     sigc::signal<void, int, int, int, int, unsigned long, unsigned long> OnMouseMove;  // send the current position inside the area
+    
+    //! Signal emitted when the InputArea receives a mouse down event.
+    /*!
+        @param void Return type of the callback hooked to this signal.
+        @param int Mouse X position (1st parameter of the callback).
+        @param int Mouse Y position (2nd parameter of the callback).
+        @param unsigned long Mouse button states (3rd parameter of the callback).
+        @param unsigned long Keyboard special keys states (4th parameter of the callback).
+    */
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDown;
+    
+    //! Signal emitted when the InputArea receives a mouse up event.
+    /*!
+        @param void Return type of the callback hooked to this signal.
+        @param int Mouse X position (1st parameter of the callback).
+        @param int Mouse Y position (2nd parameter of the callback).
+        @param unsigned long Mouse button states (3rd parameter of the callback).
+        @param unsigned long Keyboard special keys states (4th parameter of the callback).
+    */
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseUp;
+    
+    //! Signal emitted when the InputArea receives a mouse enter event.
+    /*!
+        @param void Return type of the callback hooked to this signal.
+        @param int Mouse X position (1st parameter of the callback).
+        @param int Mouse Y position (2nd parameter of the callback).
+        @param unsigned long Mouse button states (3rd parameter of the callback).
+        @param unsigned long Keyboard special keys states (4th parameter of the callback).
+    */
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseEnter;
+    
+    //! Signal emitted when the InputArea receives a mouse leave event.
+    /*!
+        @param void Return type of the callback hooked to this signal.
+        @param int Mouse X position (1st parameter of the callback).
+        @param int Mouse Y position (2nd parameter of the callback).
+        @param unsigned long Mouse button states (3rd parameter of the callback).
+        @param unsigned long Keyboard special keys states (4th parameter of the callback).
+    */
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseLeave;
+    
+    //! Signal emitted when the InputArea receives a mouse down followed later by a mouse release over its surface.
+    /*!
+        @param void Return type of the callback hooked to this signal.
+        @param int Mouse X position (1st parameter of the callback).
+        @param int Mouse Y position (2nd parameter of the callback).
+        @param unsigned long Mouse button states (3rd parameter of the callback).
+        @param unsigned long Keyboard special keys states (4th parameter of the callback).
+    */
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseClick;
+    
+    //! Signal emitted when the InputArea receives a double click event.
+    /*!
+        @param void Return type of the callback hooked to this signal.
+        @param int Mouse X position (1st parameter of the callback).
+        @param int Mouse Y position (2nd parameter of the callback).
+        @param unsigned long Mouse button states (3rd parameter of the callback).
+        @param unsigned long Keyboard special keys states (4th parameter of the callback).
+    */
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDoubleClick;
+    
+    //! Signal emitted when the InputArea receives a mouse down event, followed later by a mouse move event (while the mouse is still pressed).
+    /*!
+        @param void Return type of the callback hooked to this signal.
+        @param int Mouse X position (1st parameter of the callback).
+        @param int Mouse Y position (2nd parameter of the callback).
+        @param int Mouse X delta (3thr parameter of the callback).
+        @param int Mouse Y delta (4th parameter of the callback).
+        @param unsigned long Mouse button states (5th parameter of the callback).
+        @param unsigned long Keyboard special keys states (6th parameter of the callback).
+    */
     sigc::signal<void, int, int, int, int, unsigned long, unsigned long> OnMouseDrag; // send (current X, current Y, delta X, delta Y)
 
+    //! Signal emitted when the InputArea receives a mouse wheel event.
     sigc::signal < void,
          int,            // window x
          int,            // window y
@@ -248,9 +310,11 @@ namespace nux
          unsigned long   // key state
          > OnMouseWheel; // send (current X, current Y, delta X, delta Y)
 
+    //! Signal emitted when the InputArea receives a key pressed event.
     sigc::signal<void, unsigned int, unsigned long, unsigned long> OnKeyPressed;
+    
+    //! Signal emitted when the InputArea receives a key release event.
     sigc::signal<void, unsigned int, unsigned long, unsigned long> OnKeyReleased;
-    sigc::signal<void> OnValidateKeyboardEntry;
 
     //! Signal emitted when the area gets the mouse focus. This is the result of a mouse down event.
     sigc::signal<void> OnStartMouseFocus;
@@ -275,6 +339,17 @@ namespace nux
          unsigned short          /*key repeat count*/
          > OnKeyEvent;
 
+    //! Signal emitted when a mouse down event occurs outside of this area
+    /*!
+        If this area is inside the main layout, then the position is relative to the top left corner of the window.
+        If this area is a BaseWindow, then the position is relative to the top left corner of the window.
+        If this area is inside a BaseWindow, then the position is relative to the top left corner of the BaseWIndow.
+
+        @param int    Position of the mouse down event.
+        @param int    Position of the mouse down event.
+        @param ulong  Mouse button states.
+        @param ulong  Keyboard modifiers states.
+    */
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDownOutsideArea;
 
     void DoSetFocused (bool focus);

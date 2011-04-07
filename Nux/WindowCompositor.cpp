@@ -1,9 +1,10 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranties of
@@ -12,8 +13,7 @@
  * License for more details.
  *
  * You should have received a copy of both the GNU Lesser General Public
- * License version 3 along with this program.  If not, see
- * <http://www.gnu.org/licenses/>
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
@@ -495,6 +495,8 @@ namespace nux
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
     for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
     {
+      if (!(*it).IsValid ())
+        continue;
       // Reset the preemptive hidden/visible status of all base windows.
       ObjectWeakPtr<BaseWindow> window = (*it);
       window->_entering_visible_state = false;
@@ -1054,6 +1056,9 @@ namespace nux
 
     for (rev_it = WindowList.rbegin (); rev_it != WindowList.rend (); rev_it++)
     {
+      if (!(*rev_it).IsValid ())
+        continue;
+        
       if ((drawModal == false) && (*rev_it)->IsModal ())
         continue;
 
@@ -1745,6 +1750,8 @@ namespace nux
 
     for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
     {
+      if (!(*it).IsValid ())
+        continue;
       if ( (*it)->IsVisible() )
       {
         (*it)->NotifyConfigurationChange (Width, Height);

@@ -1,9 +1,10 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranties of
@@ -12,8 +13,7 @@
  * License for more details.
  *
  * You should have received a copy of both the GNU Lesser General Public
- * License version 3 along with this program.  If not, see
- * <http://www.gnu.org/licenses/>
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
@@ -165,21 +165,16 @@ namespace nux
       float sigma = 1.0f, int num_pass = 1);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GetAlphaTexture (
-      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GetColorMatrixTexture (
-      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       Matrix4 color_matrix, Vector4 offset);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetComponentExponentiation (
-      int x, int y, int buffer_width, int buffer_height,
-      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Vector4 exponent);
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetPower (
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& c0, const Vector4 &exponent);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GetLQBlur (
       int x, int y, int buffer_width, int buffer_height,
@@ -195,6 +190,9 @@ namespace nux
       int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
       ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
+
+	  ObjectPtr<IOpenGLBaseTexture> QRP_GetPixelBlocks (
+		  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size);
 
     // ASM
     void QRP_ASM_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
@@ -225,12 +223,13 @@ namespace nux
     void QRP_ASM_Line (int x0, int y0, int x1, int y1, Color c0, Color c1);
     void QRP_ASM_QuadWireframe (int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
 
-    void QRP_ASM_Exponentiation  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent);
+    void QRP_ASM_Power  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent);
     void QRP_ASM_AlphaReplicate  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
     void QRP_ASM_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_ASM_VerticalGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_ASM_ColorMatrix     (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Matrix4 color_matrix, Vector4 offset);
 
+    //! Blur texture
     /*!
         @param device_texture The texture that is to be blurred.
         @param texxform       Texture transformation of device_texture.
@@ -238,44 +237,70 @@ namespace nux
         @param y              Position of the source texture in result buffer.
         @param buffer_width   Width of result texture.
         @param buffer_height  Height of result texture.
+        @param sigma          
     */
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetBlurTexture (
       int x, int y, int buffer_width, int buffer_height,
-      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      float sigma = 1.0f, int num_pass = 1);
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& color, float sigma = 1.0f, int num_pass = 1);
 
+    //! Replicate the alpha channel in all components of the texture.
+    /*!
+        @param device_texture Source texture.
+        @param texxform Texture transformation parameter.
+        @param color Modulation color.
+        @return Texture with all components set to the alpha value of the source.
+    */
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetAlphaTexture (
-      int x, int y, int buffer_width, int buffer_height,
-      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0);
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& color);
 
+    //! Color matrix filter.
+    /*!
+        @param device_texture Source texture.
+        @param texxform Texture transformation parameter.
+        @param c Modulation color.
+        @param color_matrix 4x4 section of the color matrix filter.
+        @param offset Last column of the color matrix filter.
+        @return Texture resulting from the processing of the source through a color matrix.
+    */
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetColorMatrixTexture (
-      int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Matrix4 color_matrix, Vector4 offset);
+      const Color& c, Matrix4 color_matrix, Vector4 offset);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetComponentExponentiation (
-      int x, int y, int buffer_width, int buffer_height,
-      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Vector4 exponent);
+    //! Texture components raised to a power.
+    /*!
+        Each component of the texture is raised to a power provided in the exponent parameter.
+        @param device_texture Source texture.
+        @param texxform Texture transformation parameter.
+        @param c Modulation color.
+        @param exponent Power values for each component.
+        @return A texture where the component of the source texture have been raised to a power.
+    */
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetPower (
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& c0, const Vector4 &exponent);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetLQBlur (
-      int x, int y, int buffer_width, int buffer_height,
-      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      int x, int y, int buffer_width, int buffer_height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetHQBlur (
-      int x, int y, int buffer_width, int buffer_height,
-      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+      int x, int y, int buffer_width, int buffer_height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0, float sigma = 1.0f, int num_pass = 1);
 
     void QRP_ASM_DisturbedTexture (
       int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
       ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
+
+    //! Pixel blocks.
+    /*!
+        @param device_texture Source texture.
+        @param texxform Texture transformation parameter.
+        @param color Modulation color.
+        @param pixel_size Size of pixel blocks.
+        @return A texture pixelated version of the source texture.
+    */
+    ObjectPtr<IOpenGLBaseTexture>  QRP_ASM_GetPixelBlocks (
+		  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& color, int pixel_size);
 
     // GLSL
 
@@ -308,7 +333,7 @@ namespace nux
     void QRP_GLSL_Line          (int x0, int y0, int x1, int y1, Color c0, Color c1);
     void QRP_GLSL_QuadWireframe (int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
 
-    void QRP_GLSL_Exponentiation  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent);
+    void QRP_GLSL_Power           (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent);
     void QRP_GLSL_AlphaReplicate  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
     void QRP_GLSL_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_GLSL_VerticalGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
@@ -332,24 +357,16 @@ namespace nux
       float sigma = 1.0f, int num_pass = 1);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetAlphaTexture (
-      int x, int y,
-      int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetColorMatrixTexture (
-      int x, int y,
-      int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       Matrix4 color_matrix, Vector4 offset);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetComponentExponentiation (
-      int x, int y,
-      int buffer_width, int buffer_height,
-      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-      const Color& c0,
-      Vector4 exponent);
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetPower (
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& c0, const Vector4 &exponent);
 
     ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetLQBlur (
       int x, int y,
@@ -367,6 +384,17 @@ namespace nux
       int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
       ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
+
+    //! Pixel blocks.
+    /*!
+        @param device_texture Source texture.
+        @param texxform Texture transformation parameter.
+        @param color Modulation color.
+        @param pixel_size Size of pixel blocks.
+        @return A texture pixelated version of the source texture.
+    */
+	  ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetPixelBlocks (
+		  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size);
 
     //////////////////////
     // DRAW CLIPPING    //
@@ -683,7 +711,7 @@ namespace nux
     ObjectPtr<IOpenGLAsmShaderProgram> m_Asm4TextureAdd;
     ObjectPtr<IOpenGLAsmShaderProgram> m_Asm4TextureRectAdd;
 
-    void InitAsmComponentExponentiation ();
+    void InitAsmPower ();
     //! Raise a texture component to a power.
     /*!
         result = color0 * (tex0)^(exponent) = (tex0.r^exponent.r, tex0.g^exponent.g, tex0.b^exponent.b, tex0.a^exponent.a);
@@ -764,7 +792,7 @@ namespace nux
     //! Render polygons with 4 textures, each modulated by a color, and added together.
     ObjectPtr<IOpenGLShaderProgram> m_Sl4TextureAdd;
 
-    void InitSLComponentExponentiation ();
+    void InitSLPower ();
     //! Raise a texture component to a power.
     /*!
         result = color0 * (tex0)^(exponent) = (tex0.r^exponent.r, tex0.g^exponent.g, tex0.b^exponent.b, tex0.a^exponent.a);
