@@ -1,9 +1,12 @@
-nux (0.9.38-0ubuntu2) UNRELEASED; urgency=low
+nux (0.9.38-0ubuntu3) UNRELEASED; urgency=low
 
   * debian/copyright:
     - licence is now LGPL2.1+
+  * ABI break, add Breaks: unity (<< 3.8.4)
+  * debian/rules:
+    - bump the shlib
 
- -- Didier Roche <didrocks@ubuntu.com>  Thu, 07 Apr 2011 13:25:47 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 07 Apr 2011 14:22:42 +0200
 
 nux (0.9.38-0ubuntu1) natty; urgency=low
 
