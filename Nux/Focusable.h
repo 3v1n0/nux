@@ -19,8 +19,6 @@
  *
  */
 
-
-
 #ifndef FOCUSABLE_H
 #define FOCUSABLE_H
 

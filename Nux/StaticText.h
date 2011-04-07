@@ -26,9 +26,12 @@ namespace nux
     void SetTextColor (Color textColor);
     void SetFontName (const char *font_name);
     
-    void GetTextSize (int &width, int &height);
+    void GetTextSize (int &width, int &height, int clipping = 0);
 
-    static void GetTextSize (const TCHAR* font, const TCHAR *char_str, int& width, int& height);
+    static void GetTextSize (const TCHAR* font, const TCHAR *char_str, int& width, int& height, int clipping = 0);
+
+    void SetClipping (int clipping);
+    int GetClipping () const;
 
     sigc::signal<void, StaticText*> sigTextChanged;
     sigc::signal<void, StaticText*> sigTextColorChanged;
@@ -58,6 +61,8 @@ namespace nux
     void UpdateTextRendering ();
 
     char *_font_string;
+
+    int _clipping;
   };
 
 }

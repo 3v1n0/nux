@@ -1,9 +1,10 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranties of
@@ -12,8 +13,7 @@
  * License for more details.
  *
  * You should have received a copy of both the GNU Lesser General Public
- * License version 3 along with this program.  If not, see
- * <http://www.gnu.org/licenses/>
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
@@ -82,9 +82,31 @@ namespace nux
     virtual Layout* GetLayout();
     virtual bool SetLayout(Layout *layout);
 
+    //! Push the view one level up the ViewWindow stack.
+    /*!
+        Push this view one level up the ViewWindow stack. Does it even if the view is hidden.
+    */
     void PushHigher (BaseWindow* floating_view);
+
+    //! Push the view one level down the ViewWindow stack.
+    /*!
+        Push this view one level down the ViewWindow stack. Does it even if the view is hidden.
+    */
     void PushLower (BaseWindow* floating_view);
+
+    //! Push the view to the front of the ViewWindow stack.
+    /*!
+        Push this view to the top of the ViewWindow stack. Does it even if the view is hidden.
+        If a valid ViewWindow has been forced at the top of the stack with a call to WindowCompositor::SetAlwaysOnFrontWindow(),
+        then this view will be positioned one level below that view.
+        \sa SetAlwaysOnFrontWindow ();
+    */
     void PushToFront ();
+      
+    //! Push the view to the back of the ViewWindow stack.
+    /*!
+        Push this view to the back of the ViewWindow stack. Does it even if the view is hidden.
+    */
     void PushToBack ();
 
     //! Set the window size to respect the layout container.
@@ -109,9 +131,9 @@ namespace nux
     }
 
     virtual void ShowWindow (bool b, bool StartModal = false);
-    void StopModal();
-    bool IsModal() const;
-    bool IsVisible() const;
+    void StopModal ();
+    bool IsModal () const;
+    bool IsVisible () const;
 
     virtual void SetGeometry (const Geometry &geo);
 
@@ -156,7 +178,11 @@ namespace nux
     sigc::signal<void, BaseWindow*> sigVisible;
     //! Emit a signal when the BaseWindow becomes hidden.
     sigc::signal<void, BaseWindow*> sigHidden;
-    
+
+    NString GetWindowName ()
+    {
+      return _name;
+    }
   protected:
     
      //! Callback function to set the window position and size.

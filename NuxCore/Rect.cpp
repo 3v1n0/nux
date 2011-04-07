@@ -1,9 +1,10 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranties of
@@ -12,8 +13,7 @@
  * License for more details.
  *
  * You should have received a copy of both the GNU Lesser General Public
- * License version 3 along with this program.  If not, see
- * <http://www.gnu.org/licenses/>
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
@@ -36,7 +36,7 @@ namespace nux
 
   }
 
-  Rect::Rect (t_int32 x_, t_int32 y_, t_int32 width_, t_int32 height_)
+  Rect::Rect (int x_, int y_, int width_, int height_)
   {
     x = x_;
     y = y_;
@@ -69,7 +69,7 @@ namespace nux
     return *this;
   }
 
-  t_bool Rect::operator == (const Rect &r) const
+  bool Rect::operator == (const Rect &r) const
   {
     if ( (x == r.x) && (y == r.y) && (width == r.width) && (height == r.height) )
     {
@@ -79,7 +79,7 @@ namespace nux
     return false;
   }
 
-  t_bool Rect::operator != (const Rect &r) const
+  bool Rect::operator != (const Rect &r) const
   {
     if ( (x == r.x) && (y == r.y) && (width == r.width) && (height == r.height) )
     {
@@ -89,7 +89,7 @@ namespace nux
     return true;
   }
 
-  void Rect::Set (t_int32 px, t_int32 py, t_int32 w, t_int32 h)
+  void Rect::Set (int px, int py, int w, int h)
   {
     x = px;
     y = py;
@@ -97,25 +97,25 @@ namespace nux
     height = h;
   }
 
-  void Rect::SetPosition (t_int32 px, t_int32 py)
+  void Rect::SetPosition (int px, int py)
   {
     x = px;
     y = py;
   }
 
-  void Rect::SetSize (t_int32 w, t_int32 h)
+  void Rect::SetSize (int w, int h)
   {
     width = w;
     height = h;
   }
 
-  t_bool Rect::IsInside (const Point &p) const
+  bool Rect::IsInside (const Point &p) const
   {
     return ( (x <= p.x) && (x + width > p.x) &&
              (y <= p.y) && (y + height > p.y) );
   }
 
-  t_bool Rect::IsPointInside (int x_, int y_) const
+  bool Rect::IsPointInside (int x_, int y_) const
   {
     return ( (x <= x_) && (x + width > x_) &&
              (y <= y_) && (y + height > y_) );
@@ -141,7 +141,7 @@ namespace nux
   }
 
   // expand the width by factor_x and the height by factor_y
-  void Rect::Expand (t_int32 dx, t_int32 dy)
+  void Rect::Expand (int dx, int dy)
   {
     if (!IsNull() )
     {
@@ -153,7 +153,7 @@ namespace nux
   }
 
   // expand the width by factor_x and the height by factor_y
-  Rect Rect::GetExpand (t_int32 dx, t_int32 dy) const
+  Rect Rect::GetExpand (int dx, int dy) const
   {
     Rect r = Rect (x - dx, y - dy, width + 2 * dx, height + 2 * dy);
 

@@ -53,6 +53,7 @@ namespace nux
       switch (keysym)
       {
         case NUX_VK_ENTER:
+        case NUX_KP_ENTER:
           type = FOCUS_EVENT_ACTIVATE;
           //g_debug ("focus key activated");
           break;
@@ -76,18 +77,13 @@ namespace nux
           *direction = FOCUS_DIRECTION_RIGHT;
           //g_debug ("direction right");
           break;
+	case NUX_VK_LEFT_TAB:
+	  type = FOCUS_EVENT_DIRECTION;
+	  *direction = FOCUS_DIRECTION_PREV;
+	  break;
         case NUX_VK_TAB:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_NEXT;
-          if (keysym & NUX_STATE_SHIFT)
-          {
-            *direction = FOCUS_DIRECTION_PREV;
-            //g_debug ("direction_prev");
-          }
-          else
-          {
-            //g_debug ("direction next");
-          }
           break;
         default:
           type = FOCUS_EVENT_NONE;

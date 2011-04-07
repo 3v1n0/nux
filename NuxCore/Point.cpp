@@ -1,9 +1,10 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License version 3, as
- * published by the  Free Software Foundation.
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranties of
@@ -12,8 +13,7 @@
  * License for more details.
  *
  * You should have received a copy of both the GNU Lesser General Public
- * License version 3 along with this program.  If not, see
- * <http://www.gnu.org/licenses/>
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
@@ -31,7 +31,7 @@ namespace nux
   {
   }
 
-  Point::Point (t_int32 x_, t_int32 y_)
+  Point::Point (int x_, int y_)
     : x (x_), y (y_)
   {
   }
@@ -55,7 +55,7 @@ namespace nux
     return *this;
   }
 
-  t_bool Point::operator == (const Point &p) const
+  bool Point::operator == (const Point &p) const
   {
     if ( (x == p.x) && (y == p.y) )
     {
@@ -65,7 +65,7 @@ namespace nux
     return false;
   }
 
-  t_bool Point::operator != (const Point &p) const
+  bool Point::operator != (const Point &p) const
   {
     if ( (x == p.x) && (y == p.y) )
     {
