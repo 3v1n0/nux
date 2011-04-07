@@ -62,6 +62,7 @@ namespace nux
     void RecvSigActionTriggered (MenuPage *, ActionItem *);
     void RecvSigActionTriggered2 (TableCtrl *table, TableItem *item, unsigned int row, unsigned int column);
     void RecvSigTerminateMenuCascade();
+    void RecvGeometryChanged(Area *area, Geometry &geo);
 
     const TCHAR *GetSelectionLabel() const;
     int GetSelectionUserValue() const;
