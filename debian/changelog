@@ -1,11 +1,26 @@
 nux (0.9.40-0ubuntu1) UNRELEASED; urgency=low
 
+  * New upstream release.
+    - [fglrx] compiz crashed with SIGSEGV in nux::IOpenGLSurface::UnlockRect()
+      (LP: #685682)
+    - compiz crashed with SIGSEGV in
+      nux::WindowCompositor::ViewWindowPreEventCycle() (LP: #741952)
+    - Missing icons in app launcher (LP: #728393)
+    - compiz crashed with SIGSEGV in malloc_consolidate() (LP: #743738)
+    - compiz crashed with SIGSEGV in nux::BaseWindow::IsModal() (LP: #749675)
+    - compiz crashed with SIGSEGV in
+      nux::GpuRenderStates::SubmitChangeStates() (LP: #722391)
+    - compiz crashed with SIGSEGV in nux::InputArea::StartDragAsSource()
+      (LP: #737519)
+    - unity_support_test crashed with SIGSEGV in
+      nux::IOpenGLAsmVertexShader::IOpenGLAsmVertexShader() (LP: #734519)
+    - compiz crashed with SIGSEGV in nux::WindowCompositor::RenderTopViews()
+      (LP: #747486)
   * debian/copyright:
     - licence is now LGPL2.1+
   * ABI break, add Breaks: unity (<< 3.8.4)
   * debian/rules:
     - bump the shlib
-  * New upstream release.
 
  -- Didier Roche <didrocks@ubuntu.com>  Thu, 07 Apr 2011 16:52:38 +0200
 
