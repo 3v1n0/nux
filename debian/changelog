@@ -1,4 +1,4 @@
-nux (0.9.40-0ubuntu1) UNRELEASED; urgency=low
+nux (0.9.40-0ubuntu1) natty; urgency=low
 
   * New upstream release.
     - [fglrx] compiz crashed with SIGSEGV in nux::IOpenGLSurface::UnlockRect()
@@ -22,7 +22,7 @@ nux (0.9.40-0ubuntu1) UNRELEASED; urgency=low
   * debian/rules:
     - bump the shlib
 
- -- Didier Roche <didrocks@ubuntu.com>  Thu, 07 Apr 2011 16:52:38 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 07 Apr 2011 18:26:13 +0200
 
 nux (0.9.38-0ubuntu1) natty; urgency=low
 
