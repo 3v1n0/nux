@@ -35,11 +35,11 @@ namespace nux
   static const int kInnerBorderX = 2;
   static const int kInnerBorderY = 0; //1;
   static const int kCursorBlinkTimeout = 400;
-  static const double kStrongCursorLineWidth = 1.2;
-  static const double kStrongCursorBarWidth = 1.2;
+  static const double kStrongCursorLineWidth = 1;
+  static const double kStrongCursorBarWidth = 1;
   static const double kWeakCursorLineWidth = 3;
   static const double kWeakCursorBarWidth = 3;
-  static const Color kStrongCursorColor(1.0f, 1.0f, 1.0f, 1.0f);
+  static const Color kStrongCursorColor(0.9f, 0.9f, 0.9f, 1.0f);
   static const Color kWeakCursorColor(1.0f, 1.0f, 1.0f, 0.5f);
   static const Color kDefaultTextColor(0, 0, 0, 1.0f);
   static const Color kDefaultBackgroundColor(1, 1, 1, 1.0f);
@@ -956,11 +956,12 @@ namespace nux
       &weak_x, &weak_y, &weak_height);
 
     // Draw strong cursor.
-    canvas->DrawLine(strong_x + kInnerBorderX + scroll_offset_x_,
-      strong_y + kInnerBorderY + scroll_offset_y_,
-      strong_x + kInnerBorderX + scroll_offset_x_,
-      strong_y + strong_height + kInnerBorderY + scroll_offset_y_,
-      kStrongCursorLineWidth, kStrongCursorColor);
+    // 0.5 is for cairo drawing between the grid
+    canvas->DrawLine(strong_x + kInnerBorderX + scroll_offset_x_ + 0.5,
+                     strong_y + kInnerBorderY + scroll_offset_y_,
+                     strong_x + kInnerBorderX + scroll_offset_x_ + 0.5,
+                     strong_y + strong_height + kInnerBorderY + scroll_offset_y_,
+                     kStrongCursorLineWidth, kStrongCursorColor);
     // Draw a small arror towards weak cursor
     if (strong_x > weak_x)
     {
