@@ -53,6 +53,11 @@ namespace nux
 #define     NUX_VK_EXECUTE                                  XK_Execute                   //   EXECUTE key
 #define     NUX_VK_INSERT                                   XK_Insert                   //   INS key
 #define     NUX_VK_DELETE                                   XK_Delete                   //   DEL key
+/*#define 	NUX_VK_Multiply        							XK_Multiply
+#define 	NUX_VK_Add             							XK_Aadd
+#define 	NUX_VK_Subtract        							XK_Substract
+#define 	NUX_VK_Decimal         							XK_Decimal
+#define 	NUX_VK_Divide          							XK_Divide*/
 #define     NUX_VK_0                                        XK_0                      //   0 key
 #define     NUX_VK_1                                        XK_1                      //   1 key
 #define     NUX_VK_2                                        XK_2                      //   2 key
@@ -127,12 +132,13 @@ namespace nux
 #define     NUX_VK_NUMPAD7                                  XK_KP_7                   //   Numeric keypad 7 key
 #define     NUX_VK_NUMPAD8                                  XK_KP_8                   //   Numeric keypad 8 key
 #define     NUX_VK_NUMPAD9                                  XK_KP_9                   //   Numeric keypad 9 key
-#define     NUX_VK_MULTIPLY                                 XK_KP_Multiply                   //   Multiply key
-#define     NUX_VK_ADD                                      XK_KP_Add                   //   Add key
-#define     NUX_VK_SEPARATOR                                XK_KP_Separator                   //   Separator key
-#define     NUX_VK_SUBTRACT                                 XK_KP_Subtract                   //   Subtract key
-#define     NUX_VK_DECIMAL                                  XK_KP_Decimal                   //   Decimal key
-#define     NUX_VK_DIVIDE                                   XK_KP_Divide                   //   Divide key
+#define     NUX_KP_MULTIPLY                                 XK_KP_Multiply                   //   Multiply key
+#define     NUX_KP_ADD                                      XK_KP_Add                   //   Add key
+#define     NUX_KP_SEPARATOR                                XK_KP_Separator                   //   Separator key
+#define     NUX_KP_SUBTRACT                                 XK_KP_Subtract                   //   Subtract key
+#define     NUX_KP_DECIMAL                                  XK_KP_Decimal                   //   Decimal key
+#define     NUX_KP_DIVIDE                                   XK_KP_Divide                   //   Divide key
+#define 	NUX_KP_ENTER   									XK_KP_Enter
 #define     NUX_VK_F1                                       XK_F1                   //   F1 key
 #define     NUX_VK_F2                                       XK_F2                   //   F2 key
 #define     NUX_VK_F3                                       XK_F3                   //   F3 key

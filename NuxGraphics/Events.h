@@ -73,7 +73,6 @@ namespace nux
   #define NUX_Numlock         NUX_VK_NUMLOCK
   #define NUX_Scroll          NUX_VK_SCROLL
 
-#define NUX_KP_ENTER        (0xff00 | NUX_VK_ENTER)
 #define NUX_EXT_Shift_R     (0xff00 | NUX_VK_SHIFT)
 #define NUX_EXT_Control_R   (0xff00 | NUX_VK_CONTROL)
 #define NUX_EXT_Alt_R       (0xff00 | NUX_VK_MENU)
