@@ -1,3 +1,10 @@
+nux (0.9.38-0ubuntu2) UNRELEASED; urgency=low
+
+  * debian/copyright:
+    - licence is now LGPL2.1+
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 07 Apr 2011 13:25:47 +0200
+
 nux (0.9.38-0ubuntu1) natty; urgency=low
 
   * New upstream release.
