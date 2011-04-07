@@ -32,6 +32,7 @@ namespace nux
 
 #define     NUX_VK_BACKSPACE                                XK_BackSpace                   //   BACKSPACE key
 #define     NUX_VK_TAB                                      XK_Tab                   //   TAB key
+#define     NUX_VK_LEFT_TAB                                 XK_ISO_Left_Tab          //   SHIFT TAB key
 #define     NUX_VK_CLEAR                                    XK_Clear                   //   CLEAR key
 #define     NUX_VK_ENTER                                    XK_Return                   //   ENTER key
 #define     NUX_VK_SHIFT                                    XK_Shift_L                   //   SHIFT key
