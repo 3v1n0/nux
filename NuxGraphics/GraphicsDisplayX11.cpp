@@ -1905,13 +1905,13 @@ namespace nux
       int format;
       unsigned long n, a;
       unsigned char *data = 0;
-      if (XGetWindowProperty(GetX11Display (), result, XInternAtom (GetX11Display (), "XdndAware", false), 0, 0, False,
-                             AnyPropertyType, &type, &format, &n, &a, &data) == Success) 
+      if (XGetWindowProperty(GetX11Display (), result, XInternAtom (GetX11Display (), "XdndAware", false), 0, 1, False,
+                             XA_ATOM, &type, &format, &n, &a, &data) == Success) 
       {
         long dnd_version = 0;
         if (data)
         {
-          dnd_version = (long) *((long *)data);
+          dnd_version = ((Atom *)data)[0];
 
           if (dnd_version < 5)
             result = 0; // dont have v5? go away until I implement this :)
