@@ -32,7 +32,7 @@ namespace nux
       delete (_cairoGraphics);
 
     if (_texture2D != 0)
-      delete (_texture2D);
+      _texture2D->UnReference ();
 
     if (_font_string)
       g_free (_font_string);
