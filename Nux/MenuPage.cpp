@@ -752,8 +752,14 @@ namespace nux
   {
     m_MenuSeparatorVector.clear();
     m_MenuItemVector.clear();
+    m_numItem = 0;
     vlayout->Clear();
     ComputeChildLayout();
+   
+    //FIXME - Hack to fix a bug with the menu height not being reset after removing items
+    Geometry base = GetGeometry ();
+    base.height = 0;
+    View::SetGeometry (base);
   }
 
   void MenuPage::EmitMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
