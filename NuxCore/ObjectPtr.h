@@ -649,8 +649,31 @@ namespace nux
 
     // Warning: We are not sure that other.ptr_ is valid.
     // Warning: Cannot call other.ptr_->Type().IsDerivedFromType (T::StaticObjectType)
-    /*template <typename O>
-    ObjectWeakPtr (const ObjectWeakPtr<O>& other)*/
+    //! Copy constructor
+    /*!
+        @param other Parameter with a type derived from T.
+    */
+    template <typename O>
+    ObjectWeakPtr (const ObjectWeakPtr<O>& other)
+      :   ptr_ (0)
+    {
+      _reference_count = 0;
+      _weak_reference_count = 0;
+      _destroyed = 0;
+
+      if (other.ptr_ && other.ptr_->Type ().IsDerivedFromType (T::StaticObjectType))
+      {
+        ptr_ = other.ptr_;
+        _reference_count = other._reference_count;
+        _weak_reference_count = other._weak_reference_count;
+        _destroyed = other._destroyed;
+
+        if (ptr_ != 0)
+        {
+          _weak_reference_count->Increment ();
+        }
+      }
+    }
 
     //! Construction from a smart pointer of type O that inherits from type T.
     /*!
@@ -720,8 +743,39 @@ namespace nux
 
     // Warning: We are not sure that other.ptr_ is valid.
     // Warning: Cannot call other.ptr_->Type().IsDerivedFromType (T::StaticObjectType)
-    /*template <typename O>
-    ObjectWeakPtr& operator = (const ObjectWeakPtr<O> &other)*/
+    //! Assignment of a weak smart pointer of Type O that inherits from type T.
+    /*!
+        @param other Weak smart pointer of type O.
+    */
+    template <typename O>
+    ObjectWeakPtr &operator = (const ObjectWeakPtr<O>& other)
+    {
+      if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
+      {
+        if (GetPointer () != other.GetPointer () ) // Avoid self assignment.
+        {
+          ReleaseReference ();
+
+          ptr_ = other.ptr_;
+          //refCounts_ = other.refCounts_;
+          _reference_count = other._reference_count;
+          _weak_reference_count = other._weak_reference_count;
+          _destroyed = other._destroyed;
+
+          if (ptr_ != 0)
+          {
+            //refCounts_->totalRefs_.Increment();
+            _weak_reference_count->Increment();
+          }
+        }
+      }
+      else
+      {
+        ReleaseReference();
+      }
+
+      return *this;
+    }
 
     //! Assignment of a smart pointer of Type T.
     /*!
