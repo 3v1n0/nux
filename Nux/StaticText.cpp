@@ -28,10 +28,10 @@ namespace nux
 
   StaticText::~StaticText ()
   {
-    if (_cairoGraphics == 0)
+    if (_cairoGraphics != 0)
       delete (_cairoGraphics);
 
-    if (_texture2D == 0)
+    if (_texture2D != 0)
       delete (_texture2D);
 
     if (_font_string)
