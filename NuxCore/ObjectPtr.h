@@ -575,7 +575,7 @@ namespace nux
 
       if (ptr != 0)
       {
-        if (WarnMissuse && (ptr->OwnsTheReference() == false) )
+        if (WarnMissuse && (ptr->OwnsTheReference () == false))
         {
           //nuxDebugMsg (TEXT ("[ObjectWeakPtr::ObjectWeakPtr] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
         }
@@ -584,7 +584,7 @@ namespace nux
         _reference_count = ptr->_reference_count;
         _weak_reference_count = ptr->_weak_reference_count;
         _destroyed = ptr->_destroyed;
-        ptr_->IncrementWeakCounter();
+        ptr_->IncrementWeakCounter ();
       }
     }
 
@@ -605,9 +605,9 @@ namespace nux
 
       if (ptr != 0)
       {
-        if (ptr->Type().IsDerivedFromType (T::StaticObjectType) )
+        if (ptr->Type ().IsDerivedFromType (T::StaticObjectType))
         {
-          if (WarnMissuse && (ptr->OwnsTheReference() == false) )
+          if (WarnMissuse && (ptr->OwnsTheReference () == false))
           {
             //nuxDebugMsg (TEXT ("[ObjectWeakPtr::ObjectWeakPtr] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
           }
@@ -616,7 +616,7 @@ namespace nux
           _reference_count = ptr->_reference_count;
           _weak_reference_count = ptr->_weak_reference_count;
           _destroyed = ptr->_destroyed;
-          ptr_->IncrementWeakCounter();
+          ptr_->IncrementWeakCounter ();
         }
       }
     }
@@ -625,19 +625,30 @@ namespace nux
     /*!
         @param other Parameter with type T.
     */
-    ObjectWeakPtr (const ObjectWeakPtr<T>& other)
+    ObjectWeakPtr (const ObjectWeakPtr<T> &other)
     {
       ptr_ = other.ptr_;
       _reference_count = other._reference_count;
       _weak_reference_count = other._weak_reference_count;
       _destroyed = other._destroyed;
 
-      if (ptr_ != 0)
+      // Warning: We cannot count on ptr_ to be valid.
+      // If _weak_reference_count is not null, then imcrement it.
+      if (_weak_reference_count)
       {
-        ptr_->IncrementWeakCounter();
+        _weak_reference_count->Increment ();
+      }
+      else
+      {
+        // Sanity checks
+        nuxAssert (_reference_count == 0);
+        nuxAssert (_weak_reference_count == 0);
+        nuxAssert (_destroyed == 0);
       }
     }
 
+    // Warning: We are not sure that other.ptr_ is valid.
+    // Warning: Cannot call other.ptr_->Type().IsDerivedFromType (T::StaticObjectType)
     //! Copy constructor
     /*!
         @param other Parameter with a type derived from T.
@@ -650,53 +661,42 @@ namespace nux
       _weak_reference_count = 0;
       _destroyed = 0;
 
-      if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
+      if (other.ptr_ && other.ptr_->Type ().IsDerivedFromType (T::StaticObjectType))
       {
         ptr_ = other.ptr_;
         _reference_count = other._reference_count;
         _weak_reference_count = other._weak_reference_count;
         _destroyed = other._destroyed;
 
-        if (ptr_ != 0)
+        // Warning: We cannot count on ptr_ to be valid.
+        // If _weak_reference_count is not null, then imcrement it.
+        if (_weak_reference_count)
         {
-          _weak_reference_count->Increment();
+          _weak_reference_count->Increment ();
         }
+        else
+        {
+          // Sanity checks
+          nuxAssert (_reference_count == 0);
+          nuxAssert (_weak_reference_count == 0);
+          nuxAssert (_destroyed == 0);
+        }        
       }
     }
-
-//     //! Construction from a smart pointer of type T.
-//     /*!
-//         @param other Maintains a weak smart pointer reference to this parameter.
-//     */
-//     ObjectWeakPtr (const ObjectPtr<T>& other)
-//         :   ptr_(0)
-//         ,   refCounts_(0)
-//     {
-//         if(other.ptr_)
-//         {
-//             ptr_ = other.ptr_;
-//             refCounts_ = other.refCounts_;
-//
-//             if (ptr_ != 0)
-//             {
-//                 refCounts_->totalRefs_.Increment();
-//             }
-//         }
-//     }
 
     //! Construction from a smart pointer of type O that inherits from type T.
     /*!
         @param other Maintains a weak smart pointer reference to this parameter.
     */
     template <typename O>
-    ObjectWeakPtr (const ObjectPtr<O>& other)
+    ObjectWeakPtr (const ObjectPtr<O> &other)
       :   ptr_ (0)
     {
       _reference_count = 0;
       _weak_reference_count = 0;
       _destroyed = 0;
 
-      if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
+      if (other.ptr_ && other.ptr_->Type ().IsDerivedFromType (T::StaticObjectType))
       {
         ptr_ = other.ptr_;
         _reference_count = other._reference_count;
@@ -705,7 +705,14 @@ namespace nux
 
         if (ptr_ != 0)
         {
-          _weak_reference_count->Increment();
+          _weak_reference_count->Increment ();
+        }
+        else
+        {
+          // Sanity checks
+          nuxAssert (_reference_count == 0);
+          nuxAssert (_weak_reference_count == 0);
+          nuxAssert (_destroyed == 0);
         }
       }
     }
@@ -714,28 +721,37 @@ namespace nux
     /*!
         @param other Weak smart pointer of type T.
     */
-    ObjectWeakPtr &operator = (const ObjectWeakPtr<T>& other)
+    ObjectWeakPtr& operator = (const ObjectWeakPtr<T> &other)
     {
       if (GetPointer () != other.GetPointer () ) // Avoid self assignment.
       {
         ReleaseReference ();
 
         ptr_ = other.ptr_;
-        //refCounts_ = other.refCounts_;
         _reference_count = other._reference_count;
         _weak_reference_count = other._weak_reference_count;
         _destroyed = other._destroyed;
 
-        if (ptr_ != 0)
+        // Warning: We cannot count on ptr_ to be valid.
+        // If _weak_reference_count is not null, then imcrement it.
+        if (_weak_reference_count)
         {
-          //refCounts_->totalRefs_.Increment();
-          _weak_reference_count->Increment();
+          _weak_reference_count->Increment ();
         }
+        else
+        {
+          // Sanity checks
+          nuxAssert (_reference_count == 0);
+          nuxAssert (_weak_reference_count == 0);
+          nuxAssert (_destroyed == 0);
+        }       
       }
 
       return *this;
     }
 
+    // Warning: We are not sure that other.ptr_ is valid.
+    // Warning: Cannot call other.ptr_->Type().IsDerivedFromType (T::StaticObjectType)
     //! Assignment of a weak smart pointer of Type O that inherits from type T.
     /*!
         @param other Weak smart pointer of type O.
@@ -755,10 +771,18 @@ namespace nux
           _weak_reference_count = other._weak_reference_count;
           _destroyed = other._destroyed;
 
-          if (ptr_ != 0)
+          // Warning: We cannot count on ptr_ to be valid.
+          // If _weak_reference_count is not null, then imcrement it.
+          if (_weak_reference_count)
           {
-            //refCounts_->totalRefs_.Increment();
-            _weak_reference_count->Increment();
+            _weak_reference_count->Increment ();
+          }
+          else
+          {
+            // Sanity checks
+            nuxAssert (_reference_count == 0);
+            nuxAssert (_weak_reference_count == 0);
+            nuxAssert (_destroyed == 0);
           }
         }
       }
@@ -769,6 +793,35 @@ namespace nux
 
       return *this;
     }
+
+    //! Assignment of a smart pointer of Type T.
+    /*!
+        @param other Maintains a smart pointer reference to this parameter.
+    */
+    /*ObjectWeakPtr& operator = (const ObjectPtr<T> &other)
+    {
+      if (GetPointer () != other.ptr_) // Avoid self assignment.
+      {
+        ReleaseReference ();
+
+        ptr_ = other.ptr_;
+        //refCounts_ = other.refCounts_;
+        _reference_count = other._reference_count;
+        _weak_reference_count = other._weak_reference_count;
+        _destroyed = other._destroyed;
+
+        if (ptr_ != 0)
+        {
+          _weak_reference_count->Increment ();
+        }
+      }
+      else
+      {
+        ReleaseReference ();
+      }
+
+      return *this;
+    }*/
 
     //! Assignment of a smart pointer of Type O that inherits from type T.
     /*!
@@ -811,7 +864,7 @@ namespace nux
         and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
         "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
     */
-    ObjectWeakPtr &operator = (T *ptr)
+    ObjectWeakPtr& operator = (T *ptr)
     {
       if (ptr_ && _reference_count && (_reference_count->GetValue() != 0) )
       {
@@ -1105,14 +1158,14 @@ namespace nux
         Caller of this function should Reference the pointer if they intend to keep it.
         @param Return the stored pointer.
     */
-    const T *GetPointer() const
+    const T* GetPointer () const
     {
-      if ((_weak_reference_count == 0) || (_weak_reference_count->GetValue() == 0))
+      if ((_weak_reference_count == 0) || (_weak_reference_count->GetValue () == 0))
       {
         return 0;
       }
 
-      if ((_reference_count == 0) || (_reference_count->GetValue() == 0))
+      if ((_reference_count == 0) || (_reference_count->GetValue () == 0))
       {
         return 0;
       }
@@ -1127,7 +1180,7 @@ namespace nux
     */
     T *GetPointer() 
     {
-      return NUX_CONST_CAST (T*, (const_cast< const ObjectWeakPtr* >(this))->GetPointer ());
+      return NUX_CONST_CAST (T*, (const_cast< const ObjectWeakPtr* > (this))->GetPointer ());
     }
 
     int GetReferenceCount ()
