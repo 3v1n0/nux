@@ -457,6 +457,9 @@ namespace nux
         // Traverse the window from the top of the visibility stack to the bottom.
         for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
         {
+          if (!((*it).IsValid ()))
+            continue;
+
           if((*it).GetPointer () && (*it)->IsVisible () && ((*it)->_entering_visible_state == false))
           {
             SetProcessingTopView ((*it).GetPointer ());

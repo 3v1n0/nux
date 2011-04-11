@@ -22,21 +22,24 @@
 #include "Nux/VLayout.h"
 #include "Nux/HLayout.h"
 #include "Nux/WindowThread.h"
-#include "Nux/ComboBoxComplex.h"
+#include "Nux/ComboBoxSimple.h"
 #include "Nux/TableCtrl.h"
 
 void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 {
     nux::VLayout* MainVLayout = new nux::VLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
-    nux::ComboBoxComplex* combobox = new nux::ComboBoxComplex(NUX_TRACKER_LOCATION);
-    combobox->AddItem((new nux::TableItem(TEXT("A"))));
-    combobox->AddItem((new nux::TableItem(TEXT("B"))));
-    combobox->AddItem((new nux::TableItem(TEXT("C"))));
-    combobox->AddItem((new nux::TableItem(TEXT("D"))));
-    combobox->AddItem((new nux::TableItem(TEXT("E"))));
-
-    combobox->SetPopupWindowSize(120, 150);
+    nux::ComboBoxSimple* combobox = new nux::ComboBoxSimple(NUX_TRACKER_LOCATION);
+    combobox->AddItem("A");
+    combobox->AddItem("B");
+    combobox->AddItem("C");
+    combobox->AddItem("D");
+    combobox->AddItem("E");
+    
+    combobox->RemoveAllItem ();
+    combobox->AddItem("N");
+    combobox->AddItem("U");
+    combobox->AddItem("X");
     combobox->SetMaximumWidth(150);
 
     

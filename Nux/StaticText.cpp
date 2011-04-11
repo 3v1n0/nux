@@ -28,11 +28,11 @@ namespace nux
 
   StaticText::~StaticText ()
   {
-    if (_cairoGraphics == 0)
+    if (_cairoGraphics != 0)
       delete (_cairoGraphics);
 
-    if (_texture2D == 0)
-      delete (_texture2D);
+    if (_texture2D != 0)
+      _texture2D->UnReference ();
 
     if (_font_string)
       g_free (_font_string);
