@@ -1,11 +1,17 @@
-nux (0.9.42-0ubuntu1) UNRELEASED; urgency=low
+nux (0.9.42-0ubuntu1) natty; urgency=low
 
   * New upstream release.
+    - compiz crashed with SIGSEGV in nux::XInputWindow::NativeHandleList()
+      (LP: #753110)
+    - compiz crashed with SIGSEGV in nux::WindowCompositor::ProcessEvent()
+      (LP: #753005)
+    - compiz crashed with SIGSEGV in nux::WindowCompositor::RenderTopViews()
+      (LP: #754461)
   * Breaks on current unity:
     - debian/control: update breaks statement
     - debian/rules: bump the shlib
 
- -- Didier Roche <didrocks@ubuntu.com>  Mon, 11 Apr 2011 11:22:24 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 11 Apr 2011 12:41:58 +0200
 
 nux (0.9.40-0ubuntu1) natty; urgency=low
 
