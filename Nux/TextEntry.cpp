@@ -374,7 +374,7 @@ namespace nux
     if (keysym == NUX_VK_TAB)
       return;
 
-    if (keysym == NUX_VK_ENTER || NUX_KP_ENTER)
+    if (keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER)
     {
       activated.emit ();
       return;
