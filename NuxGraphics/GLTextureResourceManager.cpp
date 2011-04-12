@@ -174,7 +174,7 @@ namespace nux
       texture->Update (BitmapData);
       return texture;
     }
-    delete BitMapData;
+    delete BitmapData;
     return 0;
   }
 
