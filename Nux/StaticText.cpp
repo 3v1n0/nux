@@ -187,6 +187,7 @@ namespace nux
     g_free (_font_string);
     _font_string = g_strdup (font_name);
 
+    UpdateTextRendering ();
     QueueDraw ();
   }
 
