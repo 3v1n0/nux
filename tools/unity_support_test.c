@@ -71,7 +71,8 @@ struct PciDevice {
 // Blacklists of GPUs for Compiz.
 struct PciDevice gpu_blacklist[] = {
   { 0x8086, 0x3577 },  // Intel : 82830M/MG
-  { 0x8086, 0x2562 }   // Intel : 82845G aka Poulsbo
+  { 0x8086, 0x2562 },  // Intel : 82845G aka Poulsbo
+  { 0x1002, 0x4c57 }   // ATI : Radeon Mobility 7500
 };
 
 // Checks whether an extension is supported by the GLX/OpenGL implementation
