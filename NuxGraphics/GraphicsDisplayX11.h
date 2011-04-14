@@ -85,6 +85,7 @@ namespace nux
     Window      m_X11Window;
     XVisualInfo *m_X11VisualInfo;
 
+    bool        m_CreatedFromForeignWindow;
     int         m_ParentWindow;
     GLXContext  m_GLCtx;
     GLXFBConfig _fb_config;

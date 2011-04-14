@@ -63,6 +63,7 @@ namespace nux
 
   GraphicsDisplay::GraphicsDisplay()
   {
+    m_CreatedFromForeignWindow      = false;
     m_ParentWindow                  = 0;
     m_GLCtx                         = 0;
     m_Fullscreen                    = false;
@@ -114,7 +115,9 @@ namespace nux
     NUX_SAFE_DELETE ( m_GraphicsContext );
     NUX_SAFE_DELETE ( m_DeviceFactory );
 
-    DestroyOpenGLWindow();
+    if (m_CreatedFromForeignWindow == false)
+      DestroyOpenGLWindow ();
+
     NUX_SAFE_DELETE ( m_pEvent );
 
     inlSetThreadLocalStorage (_TLS_GraphicsDisplay, 0);
@@ -553,6 +556,8 @@ namespace nux
     m_GraphicsContext = new GraphicsEngine (*this);
 
     InitGlobalGrabWindow ();
+
+    m_CreatedFromForeignWindow = true;
 
     return true;
   }
