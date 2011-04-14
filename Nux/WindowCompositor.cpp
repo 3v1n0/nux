@@ -726,7 +726,7 @@ namespace nux
     if ((always_top_it != _view_window_list.end ()) && (always_top_it != _view_window_list.begin ()) && (_always_on_front_window != NULL))
     {
       _view_window_list.erase (always_top_it);
-      _view_window_list.push_back (_always_on_front_window);
+      _view_window_list.push_front (_always_on_front_window);
     }
   }
 
