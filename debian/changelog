@@ -1,6 +1,12 @@
 nux (0.9.44-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+    - compiz crashed with SIGSEGV in nux::WindowCompositor::RenderTopViews()
+      (LP: #754461)
+    - compiz crashed with SIGSEGV in nux::Area::InitiateResizeLayout()
+      (LP: #757709)
+    - Add ATI Radeon Mobility 7500 to compiz blacklist (LP: #760687)
+    - Letters cut off at the end in the applications window  (LP: #753083)
 
  -- Didier Roche <didrocks@ubuntu.com>  Thu, 14 Apr 2011 21:19:13 +0200
 
