@@ -139,6 +139,8 @@ namespace nux
     // Create a 2D texture and upload the pixels.
     BaseTexture *texture = GetGpuDevice ()->CreateSystemCapableTexture ();
     texture->Update (data);
+    
+    delete data; // data is deleted as texture->Update () copies it.
     return texture;
   }
 
@@ -172,7 +174,7 @@ namespace nux
       texture->Update (BitmapData);
       return texture;
     }
-    
+    delete BitmapData;
     return 0;
   }
 
@@ -206,6 +208,7 @@ namespace nux
       return texture;
     }
 
+    delete BitmapData;
     nuxDebugMsg ("[CreateTextureFromFile] Invalid texture format type for file (%s)", TextureFilename);
     return 0;
   }
@@ -239,7 +242,6 @@ namespace nux
       texture->Update (BitmapData);
       return texture;
     }
-
     return 0;
   }
 
@@ -290,7 +292,6 @@ namespace nux
 
   Texture2D::~Texture2D()
   {
-
   }
 
   bool Texture2D::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
