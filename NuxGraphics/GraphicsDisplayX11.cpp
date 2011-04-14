@@ -88,8 +88,6 @@ namespace nux
     m_WindowSize.SetWidth (0);
     m_WindowSize.SetHeight (0);
 
-    // A window never starts in a minimized state.
-    m_is_window_minimized = false;
     _has_glx_13 = false;
     _glx_major = 0;
     _glx_minor = 0;

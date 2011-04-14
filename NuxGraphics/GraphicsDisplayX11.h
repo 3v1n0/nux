@@ -85,7 +85,6 @@ namespace nux
     Window      m_X11Window;
     XVisualInfo *m_X11VisualInfo;
 
-    bool        m_CreatedFromForeignWindow;
     int         m_ParentWindow;
     GLXContext  m_GLCtx;
     GLXFBConfig _fb_config;
@@ -129,7 +128,7 @@ namespace nux
     void GetDisplayInfo();
     int m_BestMode;
 
-    bool m_is_window_minimized;
+    bool m_CreatedFromForeignWindow;
 
   public:
     typedef void (*GrabReleaseCallback) (bool replaced, void *user_data);
@@ -218,9 +217,11 @@ namespace nux
     
     IEvent &GetCurrentEvent();
 
+    // That method is deprecated, it always returns false and still here in
+    // order to maintain API compatibility.
     bool isWindowMinimized() const
     {
-      return m_is_window_minimized;
+      return false;
     }
 
     void ShowWindow();
