@@ -426,9 +426,13 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
     class NThreadContext
     {
     public:
-      NThreadContext()
+      NThreadContext ()
+        : m_pUserData (NULL)
+        , m_pParent (NULL)
+        , m_dwExitCode (0)
       {
-        //memset(this, 0, sizeof(this));
+        memset (&m_ThreadAttribute, 0, sizeof (m_ThreadAttribute));
+        memset (&m_dwTID, 0, sizeof (m_dwTID));
       }
 
       /*
