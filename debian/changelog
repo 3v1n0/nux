@@ -1,4 +1,4 @@
-nux (0.9.44-0ubuntu1) UNRELEASED; urgency=low
+nux (0.9.44-0ubuntu1) natty; urgency=low
 
   * New upstream release.
     - compiz crashed with SIGSEGV in nux::WindowCompositor::RenderTopViews()
@@ -8,7 +8,7 @@ nux (0.9.44-0ubuntu1) UNRELEASED; urgency=low
     - Add ATI Radeon Mobility 7500 to compiz blacklist (LP: #760687)
     - Letters cut off at the end in the applications window  (LP: #753083)
 
- -- Didier Roche <didrocks@ubuntu.com>  Thu, 14 Apr 2011 21:19:13 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 14 Apr 2011 22:02:48 +0200
 
 nux (0.9.42-0ubuntu1) natty; urgency=low
 
