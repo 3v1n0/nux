@@ -128,7 +128,7 @@ namespace nux
     void GetDisplayInfo();
     int m_BestMode;
 
-    bool m_is_window_minimized;
+    bool m_CreatedFromForeignWindow;
 
   public:
     typedef void (*GrabReleaseCallback) (bool replaced, void *user_data);
@@ -217,9 +217,11 @@ namespace nux
     
     IEvent &GetCurrentEvent();
 
+    // That method is deprecated, it always returns false and still here in
+    // order to maintain API compatibility.
     bool isWindowMinimized() const
     {
-      return m_is_window_minimized;
+      return false;
     }
 
     void ShowWindow();
