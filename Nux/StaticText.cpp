@@ -330,7 +330,9 @@ namespace nux
 
     _texture2D = GetGpuDevice()->CreateSystemCapableTexture ();
     _texture2D->Update (bitmap);
-
+		
+		delete bitmap;
+		cairo_destroy (cr);
     delete _cairoGraphics;
     _cairoGraphics = 0;
   }
