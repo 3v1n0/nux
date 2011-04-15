@@ -1,3 +1,10 @@
+nux (0.9.44-0ubuntu2) UNRELEASED; urgency=low
+
+  * Cherry-pick a fix for black text is on a black background when item is
+    selected in dash search filter combobox (LP: #761201)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 15 Apr 2011 12:40:32 +0200
+
 nux (0.9.44-0ubuntu1) natty; urgency=low
 
   * New upstream release.
