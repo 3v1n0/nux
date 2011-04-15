@@ -289,7 +289,7 @@ namespace nux
 
     pango_cairo_context_set_resolution (pangoCtx, dpi);
 
-    cairo_set_source_rgba (cr, color.R (),color.G (), color.B (), color.A ());
+    cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
 
     pango_layout_context_changed (layout);
 
