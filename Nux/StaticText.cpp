@@ -193,7 +193,7 @@ namespace nux
 
   void StaticText::GetTextSize (int &width, int &height, int clipping)
   {
-    GetTextSize (TEXT("Ubuntu"), _text.GetTCharPtr (), width, height, clipping);
+    GetTextSize (_font_string, _text.GetTCharPtr (), width, height, clipping);
   }
 
   void StaticText::GetTextSize (const TCHAR* font, const TCHAR *char_str, int& width, int& height, int clipping)
@@ -289,7 +289,7 @@ namespace nux
 
     pango_cairo_context_set_resolution (pangoCtx, dpi);
 
-    cairo_set_source_rgba (cr, color.R (),color.G (), color.B (), color.A ());
+    cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
 
     pango_layout_context_changed (layout);
 
