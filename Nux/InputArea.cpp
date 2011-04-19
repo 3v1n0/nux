@@ -330,13 +330,6 @@ namespace nux
 
       if (event_type == NUX_WINDOW_EXIT_FOCUS)
       {
-        if (mouse_focus_area == this)
-        {
-          GetWindowCompositor ().SetMouseFocusArea (NULL);
-          mouse_focus_area = NULL;
-          OnEndMouseFocus.emit ();
-        }
-
         if (keyboard_focus_area == this)
         {
           GetWindowCompositor ().SetKeyboardFocusArea (NULL);

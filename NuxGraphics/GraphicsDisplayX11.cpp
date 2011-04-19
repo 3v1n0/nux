@@ -1037,9 +1037,18 @@ namespace nux
 
     m_pEvent->e_event = NUX_MOUSE_MOVE;
 
-    _mouse_state |= (xevent.xmotion.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
-    _mouse_state |= (xevent.xmotion.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
-    _mouse_state |= (xevent.xmotion.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
+    if (xevent.type == MotionNotify)
+    {
+      _mouse_state |= (xevent.xmotion.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
+      _mouse_state |= (xevent.xmotion.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
+      _mouse_state |= (xevent.xmotion.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
+    }
+    else if (xevent.type == LeaveNotify || xevent.type == EnterNotify)
+    {
+      _mouse_state |= (xevent.xcrossing.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
+      _mouse_state |= (xevent.xcrossing.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
+      _mouse_state |= (xevent.xcrossing.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
+    }
 
     m_pEvent->e_mouse_state = _mouse_state;
 
@@ -1627,9 +1636,11 @@ namespace nux
 
       case EnterNotify:
       {
-        m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
+        m_pEvent->e_x_root = 0;
+        m_pEvent->e_y_root = 0;
+        mouse_move (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: EnterNotify event."));
         break;
       }
