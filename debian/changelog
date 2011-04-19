@@ -1,10 +1,10 @@
-nux (0.9.46-0ubuntu1) UNRELEASED; urgency=low
+nux (0.9.46-0ubuntu1) natty; urgency=low
 
   * New upstream release.
     - ensure text entry size is updated with different font size
     - fix some missing nux events sent (LP: #763275, #750122)
 
- -- Didier Roche <didrocks@ubuntu.com>  Tue, 19 Apr 2011 18:46:05 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 19 Apr 2011 19:26:25 +0200
 
 nux (0.9.44-0ubuntu2) natty; urgency=low
 
