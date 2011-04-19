@@ -1627,9 +1627,11 @@ namespace nux
       // Note: there is no WM_MOUSEENTER. WM_MOUSEENTER is equivalent to WM_MOUSEMOVE after a WM_MOUSELEAVE.
       case LeaveNotify:
       {
-        m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
+        m_pEvent->e_x_root = 0;
+        m_pEvent->e_y_root = 0;
+        mouse_move (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event."));
         break;
       }

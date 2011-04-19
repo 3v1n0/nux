@@ -337,7 +337,7 @@ namespace nux
         }
       }
 
-      if (event_type == NUX_WINDOW_MOUSELEAVE)
+      /*if (event_type == NUX_WINDOW_MOUSELEAVE)
       {
         if (mouse_focus_area == this)
         {
@@ -345,7 +345,7 @@ namespace nux
           mouse_focus_area = NULL;
           OnEndMouseFocus.emit ();
         }
-      }
+      }*/
 
       // Imagine a Toolbar. When a MouseDown happens on the toolbar, it gets the mouse focus. While the mouse
       // is being pressed, we can move it above a widget that is inside the toolbar. That widget should not claim that it has
