@@ -1,3 +1,9 @@
+nux (0.9.46-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 19 Apr 2011 18:46:05 +0200
+
 nux (0.9.44-0ubuntu2) natty; urgency=low
 
   * Cherry-pick a fix for black text is on a black background when item is

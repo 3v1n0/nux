@@ -193,7 +193,7 @@ namespace nux
 
   void StaticText::GetTextSize (int &width, int &height, int clipping)
   {
-    GetTextSize (TEXT("Ubuntu"), _text.GetTCharPtr (), width, height, clipping);
+    GetTextSize (_font_string, _text.GetTCharPtr (), width, height, clipping);
   }
 
   void StaticText::GetTextSize (const TCHAR* font, const TCHAR *char_str, int& width, int& height, int clipping)
