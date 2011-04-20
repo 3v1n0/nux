@@ -1,3 +1,14 @@
+nux (0.9.46-0ubuntu3) UNRELEASED; urgency=low
+
+  * Cherry-pick blacklisting additional driver + UNITY_FORCE_START env variable
+    to bypass unity/compiz testing:
+    - Partial screen corruption and poor performance on GeForce 6150
+      (LP: #764379)
+    - [nvidia, 7300, 7400] display freeze when using unity desktop
+      (LP: #728745)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 20 Apr 2011 17:09:58 +0200
+
 nux (0.9.46-0ubuntu2) natty; urgency=low
 
   * Cherry-pick:
