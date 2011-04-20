@@ -1,7 +1,7 @@
 nux (0.9.46-0ubuntu4) UNRELEASED; urgency=low
 
   * Cherry-pick one fix to avoid wrong MouseMove event triggering false
-    wrong Launcher intellhide behavior
+    wrong Launcher intellhide behavior (LP: #767250)
 
  -- Didier Roche <didrocks@ubuntu.com>  Wed, 20 Apr 2011 19:33:01 +0200
 
