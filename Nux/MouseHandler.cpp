@@ -116,9 +116,18 @@ namespace nux
         _state |= AREA_MOUSE_STATUS_ENTER;
       }
     }
-
-    _mouse_deltax = x - _mouse_positionx;
-    _mouse_deltay = y - _mouse_positiony;
+    
+    if (_state & AREA_MOUSE_STATUS_ENTER)
+    {
+      _mouse_deltax = 0;
+      _mouse_deltay = 0;
+    }
+    else
+    {
+      _mouse_deltax = x - _mouse_positionx;
+      _mouse_deltay = y - _mouse_positiony;
+    }
+    
     _mouse_positionx = x;
     _mouse_positiony = y;
 
