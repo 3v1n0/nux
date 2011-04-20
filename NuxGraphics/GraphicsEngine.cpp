@@ -1153,24 +1153,46 @@ namespace nux
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
+
+    NUX_RETURN_IF_FALSE (w >= 0);
+    NUX_RETURN_IF_FALSE (h >= 0);
+
     _scissor.x = x;
     _scissor.y = y;
     _scissor.width = w;
     _scissor.height = h;
 
-    if (_scissor.width < 0)
+    if (_scissor.x < 0)
     {
-      nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
-      _scissor.width = 1;
+      _scissor.width += _scissor.x;
+      _scissor.x = 0;
+    }
+    
+    if (_scissor.y < 0)
+    {
+      _scissor.height += _scissor.y;
+      _scissor.y = 0;
     }
 
-    if (_scissor.height < 0)
+    if (_scissor.width <= 0)
     {
-      nuxAssertMsg (0, TEXT ("[GraphicsEngine::SetViewport] Incorrect context size.") );
-      _scissor.height = 1;
+      // jaytaoko: This is a hack for what looks like a bug (#726033) in the radeon opensource driver
+      // on R300/400/500. Rather than passing a null region to glScissor, we give the clip area a 1 pixel width.
+      //_scissor.width = 1;
+      CHECKGL (glScissor (0, 0, 1, 1));
+      return;
     }
 
-    CHECKGL ( glScissor (_scissor.x /*+ m_ScissorXOffset*/, _scissor.y /*+ m_ScissorYOffset*/, _scissor.width, _scissor.height) );
+    if (_scissor.height <= 0)
+    {
+      // jaytaoko: This is a hack for what looks like a bug (#726033) in the radeon opensource driver
+      // on R300/400/500. Rather than passing a null region to glScissor, we give the clip area a 1 pixel height.
+      //_scissor.height = 1;
+      CHECKGL (glScissor (0, 0, 1, 1));
+      return;
+    }
+
+    CHECKGL (glScissor (_scissor.x, _scissor.y, _scissor.width, _scissor.height));
   }
 
   Rect GraphicsEngine::GetScissorRect()
