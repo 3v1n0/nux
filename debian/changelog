@@ -1,3 +1,10 @@
+nux (0.9.46-0ubuntu4) UNRELEASED; urgency=low
+
+  * Cherry-pick one fix to avoid wrong MouseMove event triggering false
+    wrong Launcher intellhide behavior
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 20 Apr 2011 19:33:01 +0200
+
 nux (0.9.46-0ubuntu3) natty; urgency=low
 
   * Cherry-pick blacklisting additional driver + UNITY_FORCE_START env variable
