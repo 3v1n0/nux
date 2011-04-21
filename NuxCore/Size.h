@@ -23,6 +23,8 @@
 #ifndef SIZE_H
 #define SIZE_H
 
+#include "SystemTypes.h"
+
 namespace nux
 {
 
