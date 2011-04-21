@@ -313,6 +313,23 @@ namespace nux
       _graphics_display.GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader() &&
       _graphics_display.GetGpuDevice ()->GetGPUBrand () ==  GPU_BRAND_NVIDIA)
     {
+      NString renderer_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER)));
+      CHECKGL_MSG (glGetString (GL_RENDERER));
+
+      // Exclude Geforce FX from using GLSL
+      if (renderer_string.FindFirstOccurence (TEXT ("GeForce FX")) != tstring::npos)
+      {
+        _use_glsl_shaders = false;
+        return;
+      }
+
+      // Exclude Geforce FX Go from using GLSL: this case is not needed since it is detected by the one above.
+      if (renderer_string.FindFirstOccurence (TEXT ("GeForce FX Go")) != tstring::npos)
+      {
+        _use_glsl_shaders = false;
+        return;
+      }
+
       _use_glsl_shaders = true;
     }
     else
