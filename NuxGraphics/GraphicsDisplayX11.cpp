@@ -1447,6 +1447,7 @@ namespace nux
 
     RecalcXYPosition (m_X11Window, xevent, x_recalc, y_recalc);
     
+    bool local_from_server = !foreign;
     foreign = foreign || xevent.xany.window != m_X11Window;
 
     m_pEvent->e_event = NUX_NO_EVENT;
@@ -1627,6 +1628,9 @@ namespace nux
       // Note: there is no WM_MOUSEENTER. WM_MOUSEENTER is equivalent to WM_MOUSEMOVE after a WM_MOUSELEAVE.
       case LeaveNotify:
       {
+        if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
+          break;
+          
         m_pEvent->e_x = -1;
         m_pEvent->e_y = -1;
         m_pEvent->e_x_root = 0;
@@ -1638,6 +1642,9 @@ namespace nux
 
       case EnterNotify:
       {
+        if (xevent.xcrossing.mode != NotifyNormal)
+          break;
+          
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
