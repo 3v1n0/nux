@@ -337,13 +337,15 @@ namespace nux
         }
       }
 
-      /*if (event_type == NUX_WINDOW_MOUSELEAVE)
+      /*if (event_type == NUX_WINDOW_MOUSELEAVE && (!(event_processor_state & AREA_MOUSE_STATUS_FOCUS)))
       {
         if (mouse_focus_area == this)
         {
           GetWindowCompositor ().SetMouseFocusArea (NULL);
           mouse_focus_area = NULL;
-          OnEndMouseFocus.emit ();
+          OnMouseLeave.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+          _event_processor._current_mouse_in = false;
+          _event_processor._previous_mouse_in = false;
         }
       }*/
 
