@@ -331,6 +331,14 @@ int main (int argc, char* argv[]) {
     flags |= FLAG_SOFTWARE_RENDERING;
   }
 
+  // jaytaoko: Balcklist the Geforce FX cards
+  if (renderer != NULL) {
+    char* str = strstr (renderer, "GeForce FX");
+    if (str != NULL) {
+      flags |= FLAG_BLACKLISTED;
+    }
+  }
+
   // FIXME(loicm): Compiz does a last check to test whether there's a fbconfig
   //     available for the default depth or not.
 
