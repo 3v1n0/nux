@@ -1495,6 +1495,9 @@ namespace nux
 
       case FocusIn:
       {
+        if (!local_from_server)
+          break;
+          
         m_pEvent->e_event = NUX_WINDOW_ENTER_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
@@ -1512,6 +1515,9 @@ namespace nux
 
       case FocusOut:
       {
+        if (!local_from_server)
+          break;
+          
         m_pEvent->e_event = NUX_WINDOW_EXIT_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
@@ -1642,7 +1648,7 @@ namespace nux
 
       case EnterNotify:
       {
-        if (xevent.xcrossing.mode != NotifyNormal)
+        if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
           break;
           
         m_pEvent->e_x = x_recalc;
