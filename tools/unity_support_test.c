@@ -74,6 +74,7 @@ struct PciDevice gpu_blacklist[] = {
   { 0x8086, 0x2562 },  // Intel : 82845G aka Poulsbo
   { 0x1002, 0x4c57 },  // ATI : Radeon Mobility 7500
   { 0x10de, 0x0240 },  // nVidia: GeForce 6150
+  { 0x10de, 0x01d3 },  // nVidia: GeForce Go 7300 SE / 7200 GS
   { 0x10de, 0x01d7 },  // nVidia: GeForce Go 7300 / Quadro NVS 110M
   { 0x10de, 0x01d8 }   // nVidia: GeForce Go 7400
 };
