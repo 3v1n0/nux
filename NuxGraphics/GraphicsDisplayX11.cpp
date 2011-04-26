@@ -1501,11 +1501,6 @@ namespace nux
         m_pEvent->e_event = NUX_WINDOW_ENTER_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
-        // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process().
-        // Because WM_SETFOCUS can happen with the mouse outside of the client area, we set e_x and e_y so that the mouse will be
-        // outside of all widgets. A subsequent mouse down or mouse move event will set the correct values for e_x and e_y.
-        m_pEvent->e_x = 0xFFFFFFFF;
-        m_pEvent->e_y = 0xFFFFFFFF;
         m_pEvent->e_dx = 0;
         m_pEvent->e_dy = 0;
         m_pEvent->virtual_code = 0;
@@ -1521,9 +1516,6 @@ namespace nux
         m_pEvent->e_event = NUX_WINDOW_EXIT_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
-        // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process()
-        m_pEvent->e_x = 0xFFFFFFFF;
-        m_pEvent->e_y = 0xFFFFFFFF;
         m_pEvent->e_dx = 0;
         m_pEvent->e_dy = 0;
         m_pEvent->virtual_code = 0;
