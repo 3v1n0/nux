@@ -72,7 +72,11 @@ struct PciDevice {
 struct PciDevice gpu_blacklist[] = {
   { 0x8086, 0x3577 },  // Intel : 82830M/MG
   { 0x8086, 0x2562 },  // Intel : 82845G aka Poulsbo
-  { 0x1002, 0x4c57 }   // ATI : Radeon Mobility 7500
+  { 0x1002, 0x4c57 },  // ATI : Radeon Mobility 7500
+  { 0x10de, 0x0240 },  // nVidia: GeForce 6150
+  { 0x10de, 0x01d3 },  // nVidia: GeForce Go 7300 SE / 7200 GS
+  { 0x10de, 0x01d7 },  // nVidia: GeForce Go 7300 / Quadro NVS 110M
+  { 0x10de, 0x01d8 }   // nVidia: GeForce Go 7400
 };
 
 // Checks whether an extension is supported by the GLX/OpenGL implementation
@@ -184,6 +188,12 @@ int main (int argc, char* argv[]) {
   GLXContext context;
   char *vendor, *renderer, *version;
   int result, major, minor;
+
+  if (getenv ("UNITY_FORCE_START")) {
+    fprintf (stdout, "Warning: UNITY_FORCE_START enabled, no check for unity or compiz support.\n");
+    return 0;
+  }
+
 
   // Basic command-line parsing.
   for (int i = 1; i < argc; i++) {
@@ -320,6 +330,14 @@ int main (int argc, char* argv[]) {
       (strncmp (renderer, "Software Rasterizer", 19) == 0 ||
        strncmp (renderer, "Mesa X11", 8) == 0)) {
     flags |= FLAG_SOFTWARE_RENDERING;
+  }
+
+  // jaytaoko: Balcklist the Geforce FX cards
+  if (renderer != NULL) {
+    char* str = strstr (renderer, "GeForce FX");
+    if (str != NULL) {
+      flags |= FLAG_BLACKLISTED;
+    }
   }
 
   // FIXME(loicm): Compiz does a last check to test whether there's a fbconfig
