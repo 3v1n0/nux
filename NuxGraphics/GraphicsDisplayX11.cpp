@@ -1447,6 +1447,7 @@ namespace nux
 
     RecalcXYPosition (m_X11Window, xevent, x_recalc, y_recalc);
     
+    bool local_from_server = !foreign;
     foreign = foreign || xevent.xany.window != m_X11Window;
 
     m_pEvent->e_event = NUX_NO_EVENT;
@@ -1494,14 +1495,12 @@ namespace nux
 
       case FocusIn:
       {
+        if (!local_from_server)
+          break;
+          
         m_pEvent->e_event = NUX_WINDOW_ENTER_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
-        // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process().
-        // Because WM_SETFOCUS can happen with the mouse outside of the client area, we set e_x and e_y so that the mouse will be
-        // outside of all widgets. A subsequent mouse down or mouse move event will set the correct values for e_x and e_y.
-        m_pEvent->e_x = 0xFFFFFFFF;
-        m_pEvent->e_y = 0xFFFFFFFF;
         m_pEvent->e_dx = 0;
         m_pEvent->e_dy = 0;
         m_pEvent->virtual_code = 0;
@@ -1511,12 +1510,12 @@ namespace nux
 
       case FocusOut:
       {
+        if (!local_from_server)
+          break;
+          
         m_pEvent->e_event = NUX_WINDOW_EXIT_FOCUS;
         m_pEvent->e_mouse_state = 0;
 
-        // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process()
-        m_pEvent->e_x = 0xFFFFFFFF;
-        m_pEvent->e_y = 0xFFFFFFFF;
         m_pEvent->e_dx = 0;
         m_pEvent->e_dy = 0;
         m_pEvent->virtual_code = 0;
@@ -1627,17 +1626,23 @@ namespace nux
       // Note: there is no WM_MOUSEENTER. WM_MOUSEENTER is equivalent to WM_MOUSEMOVE after a WM_MOUSELEAVE.
       case LeaveNotify:
       {
-        m_pEvent->e_x = x_recalc;
-        m_pEvent->e_y = y_recalc;
+        if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
+          break;
+          
+        m_pEvent->e_x = -1;
+        m_pEvent->e_y = -1;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
-        mouse_move (xevent, m_pEvent);
+        m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event."));
         break;
       }
 
       case EnterNotify:
       {
+        if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
+          break;
+          
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
