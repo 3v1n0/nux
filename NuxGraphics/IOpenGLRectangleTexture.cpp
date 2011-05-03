@@ -19,6 +19,7 @@
  *
  */
 
+#ifndef NUX_OPENGLES_20
 
 #include "GLDeviceObjects.h"
 #include "IOpenGLRectangleTexture.h"
@@ -160,3 +161,6 @@ namespace nux
     }
   }
 }
+
+#endif // NUX_OPENGLES_20
+

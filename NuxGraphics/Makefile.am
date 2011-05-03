@@ -72,6 +72,7 @@ source_h = \
   $(srcdir)/IOpenGLVolume.h \
   $(srcdir)/IOpenGLVolumeTexture.h \
   $(srcdir)/OpenGLDefinitions.h \
+  $(srcdir)/OpenGLMapping.h \
   $(srcdir)/GraphicsEngine.h \
   $(srcdir)/UIColorTheme.h \
   $(srcdir)/VirtualKeyCodesX11.h \
