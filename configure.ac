@@ -235,9 +235,10 @@ AC_ARG_ENABLE([opengles_20],
               [enable_opengles_20=no])
 AS_IF([test "x$enable_opengles_20" = "xyes"],
       [
-         MAINTAINER_CFLAGS+=" -DNUX_OPENGL_ES_20"
+         MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
       ]
 )
+AM_CONDITIONAL(NUX_OPENGLES_20, [test "x$enable_opengles_20" = "xyes"])
 
 AC_SUBST(MAINTAINER_CFLAGS)
 
