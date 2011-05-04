@@ -24,6 +24,59 @@
 #ifndef OPENGLMAPPING_H
 #define OPENGLMAPPING_H
 
+#define GL_GLEXT_PROTOTYPES
+
+#define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
+#define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER
+#define GL_FRAMEBUFFER_COMPLETE_EXT GL_FRAMEBUFFER_COMPLETE
+#define GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+#define GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME
+#define GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
+#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS
+#define GL_FRAMEBUFFER_UNSUPPORTED_EXT GL_FRAMEBUFFER_UNSUPPORTED
+#define GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_EXT GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE
+#define GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_EXT GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL
+
+#define GL_RENDERBUFFER_EXT GL_RENDERBUFFER
+#define GL_RENDERBUFFER_BINDING_EXT GL_RENDERBUFFER_BINDING
+#define GL_MAX_RENDERBUFFER_SIZE_EXT GL_MAX_RENDERBUFFER_SIZE
+
+#define GL_ARRAY_BUFFER_ARB GL_ARRAY_BUFFER
+#define GL_ELEMENT_ARRAY_BUFFER_ARB GL_ELEMENT_ARRAY_BUFFER
+
+#define GL_CLAMP GL_CLAMP_TO_EDGE
+
+#define GL_WRITE_ONLY_ARB GL_WRITE_ONLY_OES
+
+
+#define glActiveTextureARB glActiveTexture
+
+#define glGenBuffersARB glGenBuffers
+#define glDeleteBuffersARB glDeleteBuffers
+#define glBindBufferARB glBindBuffer
+#define glBufferDataARB glBufferData
+#define glMapBufferARB glMapBufferOES
+#define glUnmapBufferARB glUnmapBufferOES
+
+#define glBindBufferARB glBindBuffer
+#define glEnableVertexAttribArrayARB glEnableVertexAttribArray
+#define glDisableVertexAttribArrayARB glDisableVertexAttribArray
+#define glVertexAttribPointerARB glVertexAttribPointer
+
+#define glDeleteFramebuffersEXT glDeleteFramebuffers
+#define glBindFramebufferEXT glBindFramebuffer
+#define glGenFramebuffersEXT glGenFramebuffers
+#define glFramebufferTexture2DEXT glFramebufferTexture2D
+#define glCheckFramebufferStatusEXT glCheckFramebufferStatus
+#define glGetFramebufferAttachmentParameterivEXT glGetFramebufferAttachmentParameteriv
+#define glFramebufferRenderbufferEXT glFramebufferRenderbuffer
+
+#define glBindRenderbufferEXT glBindRenderbuffer
+#define glRenderbufferStorageEXT glRenderbufferStorage
+#define glGenRenderbuffersEXT glGenRenderbuffers
+#define glDeleteRenderbuffersEXT glDeleteRenderbuffers
+
+
 #define glUniform1iARB glUniform1i
 
 #define glUniform1fARB glUniform1f
@@ -39,6 +92,8 @@
 #define glUniformMatrix2fvARB glUniformMatrix2fv
 #define glUniformMatrix3fvARB glUniformMatrix3fv
 #define glUniformMatrix4fvARB glUniformMatrix4fv
+
+#define glDepthRange glDepthRangef
 
 #endif // OPENGLMAPPING_H
 
