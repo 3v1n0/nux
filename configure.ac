@@ -206,7 +206,7 @@ AC_ARG_ENABLE([maintainer-mode],
               [],
               [enable_maintainer_mode=maintainer_mode_default])
 
-MAINTAINER_CFLAGS=""
+MAINTAINER_CFLAGS="-std=c++0x"
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
          MAINTAINER_CFLAGS+="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"

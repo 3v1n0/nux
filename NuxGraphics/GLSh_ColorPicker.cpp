@@ -359,12 +359,13 @@ namespace nux
 
   void GLSh_ColorPicker::Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight)
   {
+    float fx = x, fy = y;
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f,
-      x,          y + height, 0.0f, 1.0f,
-      x + width,  y + height, 0.0f, 1.0f,
-      x + width,  y,          0.0f, 1.0f,
+      fx,          fy,          0.0f, 1.0f,
+      fx,          fy + height, 0.0f, 1.0f,
+      fx + width,  fy + height, 0.0f, 1.0f,
+      fx + width,  fy,          0.0f, 1.0f,
     };
 
     if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
