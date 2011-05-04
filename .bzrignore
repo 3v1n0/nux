@@ -51,3 +51,8 @@ tests/test-nux
 tests/test-nux-results.xml
 
 gputests/arb_programs_limits
+examples/pango_combobox
+examples/rotate_texture_area
+examples/scrollview
+examples/tab_view
+examples/text_entry_focus
