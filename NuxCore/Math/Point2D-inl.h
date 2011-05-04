@@ -23,7 +23,7 @@ namespace nux
   }
 
   template<typename T>
-  bool operator !=(const Point2D<T>& lhs, const Point2D<T>& rhs);
+  bool operator !=(const Point2D<T>& lhs, const Point2D<T>& rhs)
   {
     return !(lhs == rhs);
   }

@@ -31,6 +31,8 @@ examples/cairo
 examples/checkbox
 examples/textedit
 examples/tooltip
+examples/focus
+examples/moveable_view
 m4
 m4/*
 examples/timeline

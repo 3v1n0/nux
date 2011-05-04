@@ -105,7 +105,7 @@ namespace nux
     _global_pointer_grab_callback = 0;
 
     // DND
-    _last_dnd_position.Set(0, 0);
+    _last_dnd_position = Point(0, 0);
   }
 
   GraphicsDisplay::~GraphicsDisplay()
@@ -1487,7 +1487,7 @@ namespace nux
         m_pEvent->height = xevent.xconfigure.height;
         m_WindowSize.SetWidth (xevent.xconfigure.width);
         m_WindowSize.SetHeight (xevent.xconfigure.height);
-        m_WindowPosition.Set (xevent.xconfigure.x, xevent.xconfigure.y);
+        m_WindowPosition = Point(xevent.xconfigure.x, xevent.xconfigure.y);
 
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ConfigureNotify event."));
         break;
@@ -2278,7 +2278,7 @@ namespace nux
     nux_event->e_y = y_recalc;
 
     // Store the last DND position;
-    _last_dnd_position.Set(x_recalc, y_recalc);
+    _last_dnd_position = Point(x_recalc, y_recalc);
   }
   
   void GraphicsDisplay::HandleXDndEnter (XEvent event)

@@ -53,7 +53,6 @@ source_cpp = \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
   $(srcdir)/NUniqueIndex.cpp \
-  $(srcdir)/Point.cpp \
   $(srcdir)/GlobalInitializer.cpp \
   $(srcdir)/ObjectType.cpp \
   $(srcdir)/Platform.cpp \
@@ -65,7 +64,6 @@ source_cpp = \
   $(srcdir)/Object.cpp \
   $(srcdir)/Math/Algo.cpp \
   $(srcdir)/Math/Constants.cpp \
-  $(srcdir)/Math/Point2D.cpp \
   $(srcdir)/Math/MathFunctions.cpp \
   $(srcdir)/Math/Line2D.cpp \
   $(srcdir)/Math/Bezier.cpp \
