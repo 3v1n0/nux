@@ -19,6 +19,7 @@
  *
  */
 
+#ifndef NUX_OPENGLES_20
 
 #include "GLDeviceObjects.h"
 #include "IOpenGLVolumeTexture.h"
@@ -177,3 +178,6 @@ namespace nux
   }
 
 }
+
+#endif // NUX_OPENGLES_20
+
