@@ -81,7 +81,6 @@ source_cpp = \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
   $(srcdir)/CRC32.cpp \
-  $(srcdir)/Size.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
 source_file_manager_h = \

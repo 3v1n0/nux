@@ -70,71 +70,61 @@ namespace nux
 
   void Area::CheckMinSize()
   {
-    int w = _min_size.GetWidth();
+    int w = _min_size.width;
     w = Max<int>(AREA_MIN_WIDTH, w);
-    int h = _min_size.GetHeight();
+    int h = _min_size.height;
     h = Max<int>(AREA_MIN_HEIGHT, h);
 
-    _min_size.SetWidth(w);
-    _min_size.SetHeight(h);
+    _min_size = Size(w, h);
 
-    if (_min_size.GetWidth() > _max_size.GetWidth())
+    if (_min_size.width > _max_size.width)
     {
-      //temp = _max_size.GetWidth();
-      _max_size.SetWidth (_min_size.GetWidth());
-      //_min_size.SetWidth(temp);
+      _max_size.width = _min_size.width;
     }
 
-    if (_min_size.GetHeight() > _max_size.GetHeight())
+    if (_min_size.height > _max_size.height)
     {
-      //temp = _max_size.GetBaseHeight();
-      _max_size.SetHeight (_min_size.GetHeight());
-      //_min_size.SetHeight(temp);
+      _max_size.height = _min_size.height;
     }
 
-    if (_geometry.GetWidth() < _min_size.GetWidth() )
+    if (_geometry.width < _min_size.width)
     {
-      _geometry.SetWidth (_min_size.GetWidth() );
+      _geometry.width = _min_size.width;
     }
 
-    if (_geometry.GetHeight() < _min_size.GetHeight() )
+    if (_geometry.height < _min_size.height )
     {
-      _geometry.SetHeight (_min_size.GetHeight() );
+      _geometry.height = _min_size.height;
     }
   }
 
   void Area::CheckMaxSize()
   {
-    int w = _max_size.GetWidth();
+    int w = _max_size.width;
     w = Min<int>(AREA_MAX_WIDTH, w);
-    int h = _max_size.GetHeight();
+    int h = _max_size.height;
     h = Min<int>(AREA_MAX_HEIGHT, h);
 
-    _max_size.SetWidth(w);
-    _max_size.SetHeight(h);
+    _max_size = Size(w, h);
 
-    if (_min_size.GetWidth() > _max_size.GetWidth() )
+    if (_min_size.width > _max_size.width)
     {
-      //temp = _max_size.GetWidth();
-      _min_size.SetWidth (_max_size.GetWidth() );
-      //_min_size.SetWidth(temp);
+      _min_size.width = _max_size.width;
     }
 
-    if (_min_size.GetHeight() > _max_size.GetHeight() )
+    if (_min_size.height > _max_size.height)
     {
-      //temp = _max_size.GetBaseHeight();
-      _min_size.SetHeight (_max_size.GetHeight() );
-      //_min_size.SetHeight(temp);
+      _min_size.height = _max_size.height;
     }
 
-    if (_geometry.GetWidth() > _max_size.GetWidth() )
+    if (_geometry.width > _max_size.width)
     {
-      _geometry.SetWidth (_max_size.GetWidth() );
+      _geometry.width = _max_size.width;
     }
 
-    if (_geometry.GetHeight() > _max_size.GetHeight() )
+    if (_geometry.height > _max_size.height)
     {
-      _geometry.SetHeight (_max_size.GetHeight() );
+      _geometry.height = _max_size.height;
     }
   }
 
@@ -142,8 +132,7 @@ namespace nux
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
-    _min_size.SetWidth (w);
-    _min_size.SetHeight (h);
+    _min_size = Size(w, h);
 
     CheckMinSize();
 
@@ -154,8 +143,7 @@ namespace nux
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
-    _max_size.SetWidth (w);
-    _max_size.SetHeight (h);
+    _max_size = Size(w, h);
 
     CheckMaxSize();
 
@@ -174,28 +162,28 @@ namespace nux
 
   void Area::ApplyMinWidth()
   {
-    _geometry.SetWidth (_min_size.GetWidth() );
+    _geometry.width = _min_size.width;
 
     InitiateResizeLayout();
   }
 
   void Area::ApplyMinHeight()
   {
-    _geometry.SetHeight (_min_size.GetHeight() );
+    _geometry.height = _min_size.height;
 
     InitiateResizeLayout();
   }
 
   void Area::ApplyMaxWidth()
   {
-    _geometry.SetWidth (_max_size.GetWidth() );
+    _geometry.width = _max_size.width;
 
     InitiateResizeLayout();
   }
 
   void Area::ApplyMaxHeight()
   {
-    _geometry.SetHeight (_max_size.GetHeight() );
+    _geometry.height = _max_size.height;
 
     InitiateResizeLayout();
   }
@@ -213,7 +201,7 @@ namespace nux
   void Area::SetMinimumWidth (int w)
   {
     nuxAssert (w >= 0);
-    _min_size.SetWidth (w);
+    _min_size.width = w;
     CheckMinSize();
     InitiateResizeLayout();
   }
@@ -221,7 +209,7 @@ namespace nux
   void Area::SetMaximumWidth (int w)
   {
     nuxAssert (w >= 0);
-    _max_size.SetWidth (w);
+    _max_size.width = w;
     CheckMaxSize();
     InitiateResizeLayout();
   }
@@ -229,7 +217,7 @@ namespace nux
   void Area::SetMinimumHeight (int h)
   {
     nuxAssert (h >= 0);
-    _min_size.SetHeight (h);
+    _min_size.height = h;
     CheckMinSize();
     InitiateResizeLayout();
   }
@@ -237,29 +225,29 @@ namespace nux
   void Area::SetMaximumHeight (int h)
   {
     nuxAssert (h >= 0);
-    _max_size.SetHeight (h);
+    _max_size.height = h;
     CheckMaxSize();
     InitiateResizeLayout();
   }
 
   int Area::GetMinimumWidth() const
   {
-    return _min_size.GetWidth();
+    return _min_size.width;
   }
 
   int Area::GetMaximumWidth() const
   {
-    return _max_size.GetWidth();
+    return _max_size.width;
   }
 
   int Area::GetMinimumHeight() const
   {
-    return _min_size.GetHeight();
+    return _min_size.height;
   }
 
   int Area::GetMaximumHeight() const
   {
-    return _max_size.GetHeight();
+    return _max_size.height;
   }
 
   unsigned int Area::GetStretchFactor()
@@ -317,24 +305,25 @@ namespace nux
 
   int Area::GetBaseWidth    () const
   {
-    return _geometry.GetWidth();
+    return _geometry.width;
   }
 
   int Area::GetBaseHeight   () const
   {
-    return _geometry.GetHeight();
+    return _geometry.height;
   }
 
   void Area::SetGeometry (int x, int y, int w, int h)
   {
-    h = nux::Clamp<int> (h, _min_size.GetHeight (), _max_size.GetHeight ());
-    w = nux::Clamp<int> (w, _min_size.GetWidth (), _max_size.GetWidth ());
+    h = nux::Clamp<int> (h, _min_size.height, _max_size.height);
+    w = nux::Clamp<int> (w, _min_size.width, _max_size.width);
 
-    if (_geometry.x == x && _geometry.y == y && _geometry.width == w && _geometry.height == h)
+    nux::Geometry geometry(x, y, w, h);
+    if (_geometry == geometry)
       return;
 
     GeometryChangePending ();
-    _geometry = nux::Geometry (x, y, w, h);
+    _geometry = geometry;
     InitiateResizeLayout();
     GeometryChanged ();
 
@@ -384,7 +373,7 @@ namespace nux
   void Area::IncreaseSize (int x, int y)
   {
     _geometry.OffsetPosition (x, y);
-    OnResize.emit (_geometry.x, _geometry.y, _geometry.GetWidth(), _geometry.GetHeight() );
+    OnResize.emit (_geometry.x, _geometry.y, _geometry.width, _geometry.height );
   }
 
   long Area::ComputeChildLayout()

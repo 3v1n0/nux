@@ -540,8 +540,8 @@ namespace nux
 
     do
     {
-      t_s32 available_height = height;
-      t_u32 max_stretchfactor = getMaxStretchFactor();
+      int available_height = height;
+      int max_stretchfactor = getMaxStretchFactor();
       std::list<Area *>::iterator it;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -633,7 +633,7 @@ namespace nux
       //                  --
       //                  all element with stretchfactor != 0
 
-      t_u32 ref_height = available_height / cumul;
+      int ref_height = available_height / cumul;
 
       //
       need_recompute = false;;
@@ -645,8 +645,8 @@ namespace nux
 
         if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->IsLayoutDone() == false) )
         {
-          t_u32 sf = (*it)->GetStretchFactor();
-          t_u32 new_height;
+          int sf = (*it)->GetStretchFactor();
+          int new_height;
 
           if (sf == max_stretchfactor)
           {
@@ -672,8 +672,8 @@ namespace nux
             }
           }
 
-          t_u32 elemt_max_height = (*it)->GetMaximumSize().GetHeight();
-          t_u32 elemt_min_height = (*it)->GetMinimumSize().GetHeight();
+          int elemt_max_height = (*it)->GetMaximumSize().height;
+          int elemt_min_height = (*it)->GetMinimumSize().height;
 
           // A layout must never have _layout_done set to true "here" because it must continue
           // doing the layout of its children and finally resize itself to fit them.
