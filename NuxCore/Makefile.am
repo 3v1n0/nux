@@ -45,7 +45,6 @@ source_cpp = \
   $(srcdir)/Character/NUni.cpp \
   $(srcdir)/Character/NUnicode.cpp \
   $(srcdir)/Color.cpp \
-  $(srcdir)/ColorFunctions.cpp \
   $(srcdir)/Colors.cpp \
   $(srcdir)/FileName.cpp \
   $(srcdir)/ThreadGNU.cpp \
@@ -140,7 +139,6 @@ source_h = \
   $(srcdir)/Platform.h \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
-  $(srcdir)/ColorFunctions.h \
   $(srcdir)/Colors.h \
   $(srcdir)/StreamBuffer.h \
   $(srcdir)/Memory.h \
