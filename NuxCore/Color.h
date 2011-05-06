@@ -160,27 +160,26 @@ struct HSV
 {
   HSV(Color const&);
   HSV(RGB const&);
-  HSV(HLS const&);
 
   float hue;
   float saturation;
   float value;
 };
+
 struct HLS
 {
   HLS(Color const&);
   HLS(RGB const&);
-  HLS(HSV const&);
 
   float hue;
   float lightness;
   float saturation;
 };
 
-  void RGBtoHSV ( float r, float g, float b, float &h, float &s, float &v );
-  void HSVtoRGB ( float &r, float &g, float &b, float h, float s, float v );
-  void HLStoRGB (float &r, float &g, float &b, float hue, float light, float satur);
-  void RGBtoHLS (float rr, float gg, float bb, float &hue, float &light, float &satur);
+//  void RGBtoHSV ( float r, float g, float b, float &h, float &s, float &v );
+//  void HSVtoRGB ( float &r, float &g, float &b, float h, float s, float v );
+//  void HLStoRGB (float &r, float &g, float &b, float hue, float light, float satur);
+//  void RGBtoHLS (float rr, float gg, float bb, float &hue, float &light, float &satur);
 
 }
   using color::Color;
