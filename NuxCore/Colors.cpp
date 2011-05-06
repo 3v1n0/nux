@@ -24,7 +24,7 @@
 
 namespace nux
 {
-  namespace Colors
+  namespace color
   {
     //Red colors
     const Color IndianRed(0xCD, 0x5C, 0x5C);

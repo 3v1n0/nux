@@ -102,7 +102,7 @@ void RenderToFrameBufferObject ()
     graphics_display->GetGpuDevice ()->DeactivateFrameBuffer ();
 
     nux::TexCoordXForm texxform;
-    graphics_engine->QRP_1Tex(0, 0, graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), texture_rt, texxform, nux::Colors::White);
+    graphics_engine->QRP_1Tex(0, 0, graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), texture_rt, texxform, nux::color::White);
 
     graphics_display->SwapBuffer();
   } while(event.e_event != nux::NUX_TERMINATE_APP);

@@ -26,7 +26,7 @@
 
 namespace nux
 {
-  namespace Colors
+  namespace color
   {
     // X11 color names from:http://en.wikipedia.org/wiki/Web_colors
 

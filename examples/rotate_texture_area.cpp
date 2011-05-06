@@ -60,7 +60,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   // Set the button maximum width/height
   texture_area->SetMaximumWidth (160);
   texture_area->SetMaximumHeight (80);
-  texture_area->SetTextColor (nux::Colors::Pink);
+  texture_area->SetTextColor (nux::color::Pink);
   texture_area->Set2DRotation (0.0);
 
   // Add the button to the layout

@@ -32,7 +32,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   
   nux::TabView* tabview(new nux::TabView());
   
-  nux::ColorLayer color_layer (nux::Colors::Black, true);
+  nux::ColorLayer color_layer (nux::color::Black, true);
   nux::VLayout *tab_view_layout = 0;
   nux::TextureArea *texture_area = 0;
 
