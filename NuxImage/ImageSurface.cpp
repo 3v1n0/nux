@@ -101,13 +101,14 @@ namespace nux
 #endif
   }
 
-  void MakeCheckBoardImage (ImageSurface &Image, t_s32 w, t_s32 h,
-                            Color color0,
-                            Color color1,
-                            t_s32 TileWidth,
-                            t_s32 TileHeight)
+  void MakeCheckBoardImage (ImageSurface &Image,
+                            int width, int height,
+                            Color const& dark,
+                            Color const& light,
+                            int TileWidth,
+                            int TileHeight)
   {
-    Image.Allocate (BITFMT_R8G8B8A8, w, h);
+    Image.Allocate (BITFMT_R8G8B8A8, width, height);
 
     if (TileWidth <= 0)
       TileWidth = 4;
@@ -115,23 +116,20 @@ namespace nux
     if (TileHeight <= 0)
       TileHeight = 4;
 
-    t_s32 i, j, c;
-
-    for (j = 0; j < h; j++)
+    for (int j = 0; j < height; ++j)
     {
-      for (i = 0; i < w; i++)
+      for (int i = 0; i < width; ++i)
       {
         /*every 8 bits, change color from black to white or vice versa */
-
-        c = ( ( ( i & TileWidth ) == 0 ) ^ ( ( j & TileHeight )  == 0 ) );
-        t_u32 a = ( ( ( i / TileWidth ) % 2) == 0 );
-        t_u32 b = ( ( ( j / TileHeight ) % 2) == 0 );
-        c = a ^ b;
-        t_u8 R = c ? color0.R() * 255 : color1.R() * 255;
-        t_u8 G = c ? color0.G() * 255 : color1.G() * 255;
-        t_u8 B = c ? color0.B() * 255 : color1.B() * 255;
-        t_u8 A = c ? color0.A() * 255 : color1.A() * 255;
-        Image.Write (i, j, R, G, B, A);
+        bool even_column = ((i / TileWidth) % 2) == 0;
+        bool even_row = ((j / TileHeight ) % 2) == 0;
+        bool is_dark = even_column ^ even_row;
+        Color const& c = is_dark ? dark : light;
+        Image.Write(i, j,
+                    c.red * 255,
+                    c.green * 255,
+                    c.blue * 255,
+                    c.alpha * 255);
       }
     }
 
