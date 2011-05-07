@@ -36,17 +36,17 @@ namespace nux
 {
 
   extern PixelFormatInfo GPixelFormats[];
-  
+
   NBitmapData *LoadGdkPixbuf (GdkPixbuf *pixbuf)
   {
     unsigned int width = gdk_pixbuf_get_width (pixbuf);
     unsigned int height = gdk_pixbuf_get_height (pixbuf);
     unsigned int row_bytes = gdk_pixbuf_get_rowstride (pixbuf);
-    
+
     NTextureData *Texture = new NTextureData (BITFMT_R8G8B8A8, width, height, 1);
-    
+
     guchar *img = gdk_pixbuf_get_pixels (pixbuf);
-    
+
     for (unsigned int i = 0; i < width; i++)
       for (unsigned int j = 0; j < height; j++)
       {
@@ -59,7 +59,7 @@ namespace nux
 
         Texture->GetSurface (0).Write32b (i, j, value); // = vec4ub(img + ((h-j-1)*row_bytes + i * 4));
       }
-    
+
     return Texture;
   }
 
@@ -91,22 +91,22 @@ namespace nux
 
 //     BitmapData = read_bmp_file (filename);
 //     if (BitmapData) return BitmapData;
-// 
+//
 //     BitmapData = read_png_rgba (filename);
 //     if (BitmapData) return BitmapData;
-// 
+//
 //     BitmapData = read_png_rgb (filename);
 //     if (BitmapData) return BitmapData;
-// 
+//
 //     BitmapData = Load_DDS_File (filename);
 //     if (BitmapData) return BitmapData;
-// 
+//
 //     BitmapData = LoadRGBE (filename);
 //     if (BitmapData) return BitmapData;
 
 //     BitmapData = LoadAnimatedTextureFile (filename);
 //     if (BitmapData) return BitmapData;
-//     
+//
 //     BitmapData = LoadITXFile (filename);
 //     if (BitmapData) return BitmapData;
 
