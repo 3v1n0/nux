@@ -32,6 +32,9 @@
 
 namespace nux
 {
+namespace color
+{
+
   Color::Color()
     : red(0)
     , green(0)
@@ -87,26 +90,10 @@ bool operator != (const Color &lhs, const Color &rhs)
 
 Color ClampVal(Color const& c)
 {
-  return Color(std::max(0, std::min(1, c.red)),
-               std::max(0, std::min(1, c.green)),
-               std::max(0, std::min(1, c.blue)),
-               std::max(0, std::min(1, c.alpha)));
-}
-
-Color Saturate(Color const& c)
-{
-  return Color(std::min(1, c.red),
-               std::min(1, c.green),
-               std::min(1, c.blue),
-               std::min(1, c.alpha));
-}
-
-Color Complement(Color const& c)
-{
-  return Color(1 - c.red,
-               1 - c.green,
-               1 - c.blue,
-               1 - c.alpha);
+  return Color(std::max(0.0f, std::min(1.0f, c.red)),
+               std::max(0.0f, std::min(1.0f, c.green)),
+               std::max(0.0f, std::min(1.0f, c.blue)),
+               std::max(0.0f, std::min(1.0f, c.alpha)));
 }
 
 Color Luminance(Color const& c)
@@ -192,7 +179,7 @@ Color operator * (float scalar, Color const& c)
 
 Color operator * (Color const& c, float scalar)
 {
-  return scalar * color;
+  return scalar * c;
 }
 
 // The Hue/Saturation/Value model was created by A. R. Smith in 1978. It is
@@ -213,8 +200,8 @@ Color operator * (Color const& c, float scalar)
   {
     float min, max, delta;
 
-    min = Min<float> ( Min<float> (r, g), b );
-    max = Max<float> ( Max<float> (r, g), b );
+    min = std::min(std::min(r, g), b);
+    max = std::max(std::max(r, g), b);
     v = max;				// v
 
     delta = max - min;
@@ -486,13 +473,4 @@ Color operator * (Color const& c, float scalar)
   }
 
 }
-
-namespace goo
-{
-  nux::Color foo;
-
-  color::WHITE;
-
-  nux::Color new_foo = Saturate(foo);
 }
-
