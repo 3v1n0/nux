@@ -57,7 +57,7 @@ namespace nux
           (* (pixels + 1) << 8)  |  // g
           * (pixels + 0);           // r
 
-        Texture->GetSurface (0).Write32b (i, j, value); // = vec4ub(img + ((h-j-1)*row_bytes + i * 4));
+        Texture->GetSurface (0).Write32b (i, j, value);
       }
 
     return Texture;
@@ -65,20 +65,11 @@ namespace nux
 
   NBitmapData *LoadImageFile (const TCHAR *filename)
   {
-//    if((filename == 0) || (filename == TEXT("")))
-//        return 0;
-
     if (!GFileManager.FileExist (filename) )
     {
       nuxAssertMsg (0, TEXT ("[LoadImageFile] Can't find file: %s"), filename);
       return 0;
     }
-
-//     GdkGraphics *gdkgraphics = new GdkGraphics ();
-//     if (gdkgraphics->LoadImage (filename))
-//     {
-//       return gdkgraphics->GetBitmap ();
-//     }
 
     NBitmapData *BitmapData = 0;
 
@@ -88,27 +79,6 @@ namespace nux
 
     BitmapData = read_tga_file (filename);
     if (BitmapData) return BitmapData;
-
-//     BitmapData = read_bmp_file (filename);
-//     if (BitmapData) return BitmapData;
-//
-//     BitmapData = read_png_rgba (filename);
-//     if (BitmapData) return BitmapData;
-//
-//     BitmapData = read_png_rgb (filename);
-//     if (BitmapData) return BitmapData;
-//
-//     BitmapData = Load_DDS_File (filename);
-//     if (BitmapData) return BitmapData;
-//
-//     BitmapData = LoadRGBE (filename);
-//     if (BitmapData) return BitmapData;
-
-//     BitmapData = LoadAnimatedTextureFile (filename);
-//     if (BitmapData) return BitmapData;
-//
-//     BitmapData = LoadITXFile (filename);
-//     if (BitmapData) return BitmapData;
 
 #elif defined(NUX_OS_LINUX)
     GdkGraphics gdkgraphics;
@@ -177,11 +147,9 @@ namespace nux
 
   NBitmapData::~NBitmapData()
   {
-//     delete [] data_;
   }
 
 
-///////////////////////////////////////////////////////////////////////////////////////
   ImageSurface::ImageSurface()
     :   width_ (0)
     ,   height_ (0)
@@ -208,7 +176,6 @@ namespace nux
     ,   Alignment_ (4)
     ,   RawData_ (0)
   {
-    //MakeCheckBoardImage(*this, width, height, 0xFFBBBBBB, 0xFF444444, 4, 4);
     Allocate (format, width, height);
   }
 
@@ -315,8 +282,9 @@ namespace nux
          (format_ == BITFMT_DXT4) ||
          (format_ == BITFMT_DXT5) )
     {
-      // For DXT, width and height are rounded up to a multiple of 4 in order to create 4x4 blocks of pixels;
-      // And in this context, byte alignment is 1 ie. data is densely packed.
+      // For DXT, width and height are rounded up to a multiple of 4 in order
+      // to create 4x4 blocks of pixels; And in this context, byte alignment
+      // is 1 ie. data is densely packed.
       t_u32 block = GPixelFormats[format].BlockSizeX;
       t_u32 shift = Log2 (GPixelFormats[format].BlockSizeX);
       m_Pitch = Align ( (bpe_ * ( (width_ + (block - 1) ) >> shift) ), Alignment_);
@@ -339,11 +307,13 @@ namespace nux
     Clear();
   }
 
-// This computes the correct pitch of a line. For instance if the unpack alignment is 4, the pitch must have
-// a number of pixel multiple of 4.
-// See Avoiding 16 Common OpenGL Pitfalls http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall/
+// This computes the correct pitch of a line. For instance if the unpack
+// alignment is 4, the pitch must have a number of pixel multiple of 4.  See
+// Avoiding 16 Common OpenGL Pitfalls
+// http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall/
 // 7. Watch Your Pixel Store Alignment
-  t_s32 ImageSurface::GetLevelPitch (BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel)
+  t_s32 ImageSurface::GetLevelPitch (BitmapFormat format, t_s32 width,
+                                     t_s32 height, t_s32 miplevel)
   {
     t_s32 levelwidth = ImageSurface::GetLevelDim (format, width, miplevel);
 
@@ -622,12 +592,6 @@ namespace nux
     if ( (format_ == BITFMT_DXT1) || (format_ == BITFMT_DXT2) || (format_ == BITFMT_DXT3) || (format_ == BITFMT_DXT4) || (format_ == BITFMT_DXT5) )
     {
       FlipDXTVertical();
-//        t_u32 h = (height_ + 3) >> 2;
-//        flip_data =  new t_u8[m_Pitch*h];
-//        for(j = 0; j < h; j++)
-//        {
-//            Memcpy(flip_data + (h-j-1)*m_Pitch, RawData_+j*m_Pitch, m_Pitch);
-//        }
     }
     else
     {
