@@ -104,9 +104,8 @@ enum Format {
     INT
 };
 
-class Color
+struct Color
 {
-public:
     Color();
     explicit Color (unsigned int c);
     Color(int r, int g, int b);
@@ -142,34 +141,34 @@ Color operator * (Color const&, float);
 Color RandomColor();
 unsigned int RandomColorINT();
 
-struct HSV;
-struct HLS;
+struct HueSaturationValue;
+struct HueLightnessSaturation;
 
-struct RGB
+struct RedGreenBlue
 {
-  RGB(Color const&);
-  RGB(HSV const&);
-  RGB(HLS const&);
+  RedGreenBlue(Color const&);
+  RedGreenBlue(HueSaturationValue const&);
+  RedGreenBlue(HueLightnessSaturation const&);
 
   float red;
   float green;
   float blue;
 };
 
-struct HSV
+struct HueSaturationValue
 {
-  HSV(Color const&);
-  HSV(RGB const&);
+  HueSaturationValue(Color const&);
+  HueSaturationValue(RedGreenBlue const&);
 
   float hue;
   float saturation;
   float value;
 };
 
-struct HLS
+struct HueLightnessSaturation
 {
-  HLS(Color const&);
-  HLS(RGB const&);
+  HueLightnessSaturation(Color const&);
+  HueLightnessSaturation(RedGreenBlue const&);
 
   float hue;
   float lightness;
