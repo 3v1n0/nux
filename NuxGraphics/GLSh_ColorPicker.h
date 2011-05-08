@@ -36,7 +36,7 @@ namespace nux
   class GLSh_ColorPicker
   {
   public:
-    GLSh_ColorPicker (eColorChannel cc);
+    GLSh_ColorPicker(color::Channel cc);
     ~GLSh_ColorPicker();
 
     void SetColor (float R, float G, float B, float A);
@@ -52,7 +52,7 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> sprog;
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmProg;
 
-    eColorChannel m_ColorChannel;
+    color::Channel m_ColorChannel;
     UINT ViewPortX;
     UINT ViewPortY;
     UINT ViewPortWidth;
