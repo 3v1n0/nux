@@ -29,16 +29,15 @@
 namespace nux
 {
 
-  ColorPreviewPropertyItem::ColorPreviewPropertyItem (const TCHAR *name, float red, float green, float blue, eColorModel colormodel)
-    :   SectionProperty (name, NODE_TYPE_COLORPREVIEW)
-    ,   ColorPreview (red, green, blue, colormodel)
+  ColorPreviewPropertyItem::ColorPreviewPropertyItem(const TCHAR *name, float red, float green, float blue, color::Model colormodel)
+    : SectionProperty(name, NODE_TYPE_COLORPREVIEW)
+    , ColorPreview(Color(red, green, blue), colormodel)
   {
     NODE_SIG_CONNECT (sigColorChanged, ColorPreviewPropertyItem, RecvPropertyChange);
   }
 
   ColorPreviewPropertyItem::~ColorPreviewPropertyItem()
   {
-
   }
 
   long ColorPreviewPropertyItem::ProcessPropertyEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -107,29 +106,20 @@ namespace nux
 
   ColorPreviewPropertyItem *ColorPreviewPropertyItem::CreateFromXML (const TiXmlElement *elementxml, NodeNetCom *parent, const char *Name, int id)
   {
-    ColorPreviewPropertyItem *node = new ColorPreviewPropertyItem (Name, 0, 0, 0, CM_RGB);
+    ColorPreviewPropertyItem *node = new ColorPreviewPropertyItem (Name, 0, 0, 0, color::RGB);
     double red, green, blue;
     tstring colormodel;
 
-
     const TiXmlElement *childxml = elementxml->FirstChildElement();
-    //    QueryNodeXMLStringAttribute(childxml, TEXT("ColorModel"), colormodel, -1);
-    //    childxml = childxml->NextSiblingElement();
     QueryNodeXMLDoubleAttribute (childxml, TEXT ("Red"),        &red,     -1);
     childxml = childxml->NextSiblingElement();
     QueryNodeXMLDoubleAttribute (childxml, TEXT ("Green"),      &green,     -1);
     childxml = childxml->NextSiblingElement();
     QueryNodeXMLDoubleAttribute (childxml, TEXT ("Blue"),       &blue,     -1);
 
-    //    if(NString(colormodel) == TEXT("HSV"))
-    //    {
-    //        node->SetHSV(red, green, blue);
-    //    }
-    //    else
-    {
-      node->SetRGB (red, green, blue);
-    }
-
+    node->SetColor(Color(static_cast<float>(red),
+                         static_cast<float>(green),
+                         static_cast<float>(blue)));
     node->SetID (id);
     return node;
   }
@@ -140,16 +130,13 @@ namespace nux
     TiXmlElement *childxml;
     Color color = GetRGBColor();
     childxml = new TiXmlElement (TEXT ("RGBComponent") );
-    //childxml->SetAttribute(TEXT("Name"), m_X->GetName());
-    childxml->SetDoubleAttribute (TEXT ("Red"), (double) color.R() );
+    childxml->SetDoubleAttribute (TEXT ("Red"), color.red );
     elementxml->LinkEndChild (childxml);
     childxml = new TiXmlElement (TEXT ("RGBComponent") );
-    //childxml->SetAttribute(TEXT("Name"), m_Y->GetName());
-    childxml->SetDoubleAttribute (TEXT ("Green"), (double) color.G() );
+    childxml->SetDoubleAttribute (TEXT ("Green"), color.green );
     elementxml->LinkEndChild (childxml);
     childxml = new TiXmlElement (TEXT ("RGBComponent") );
-    //childxml->SetAttribute(TEXT("Name"), m_Z->GetName());
-    childxml->SetDoubleAttribute (TEXT ("Blue"), (double) color.B() );
+    childxml->SetDoubleAttribute (TEXT ("Blue"), color.blue );
     elementxml->LinkEndChild (childxml);
 
     return elementxml;
@@ -161,16 +148,15 @@ namespace nux
     tstring NameX, NameY, NameZ, NameW;
     const TiXmlElement *childxml;
     childxml = elementxml->FirstChildElement();
-    //QueryNodeXMLStringAttribute(childxml, TEXT("Name"), NameX, GetID());
     QueryNodeXMLDoubleAttribute (childxml, TEXT ("Red"),       &red,     -1);
     childxml = childxml->NextSiblingElement();
-    //QueryNodeXMLStringAttribute(childxml, TEXT("Name"), NameY, GetID());
     QueryNodeXMLDoubleAttribute (childxml, TEXT ("Green"),       &green,     -1);
     childxml = childxml->NextSiblingElement();
-    //QueryNodeXMLStringAttribute(childxml, TEXT("Name"), NameZ, GetID());
     QueryNodeXMLDoubleAttribute (childxml, TEXT ("Blue"),       &blue,     -1);
 
-    SetRGB (red, green, blue);
+    SetColor(Color(static_cast<float>(red),
+                   static_cast<float>(green),
+                   static_cast<float>(blue)));
 
     return NodeNetCom::FromXML (elementxml);
   }

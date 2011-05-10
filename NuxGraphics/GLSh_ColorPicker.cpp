@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "NuxCore/NuxCore.h"
 #include "NuxCore/Math/Matrix4.h"
 #include "GLResource.h"
@@ -224,7 +223,7 @@ namespace nux
 
 
 
-  GLSh_ColorPicker::GLSh_ColorPicker (eColorChannel cc)
+GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
     :   _R (1.0)
     ,   _G (0.0)
     ,   _B (0.0)
@@ -233,38 +232,37 @@ namespace nux
     ,   _ScreenOffsetY (0)
   {
     NString FrgShaderCode;
-    m_ColorChannel = cc;
 
     if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
-      switch (m_ColorChannel)
+      switch (color_channel)
       {
-        case CC_RED:
+        case color::RED:
         {
           FrgShaderCode = RedFrgShader;
           break;
         }
-        case CC_GREEN:
+        case color::GREEN:
         {
           FrgShaderCode = GreenFrgShader;
           break;
         }
-        case CC_BLUE:
+        case color::BLUE:
         {
           FrgShaderCode = BlueFrgShader;
           break;
         }
-        case CC_HUE:
+        case color::HUE:
         {
           FrgShaderCode = HueFrgShader;
           break;
         }
-        case CC_SATURATION:
+        case color::SATURATION:
         {
           FrgShaderCode = SaturationFrgShader;
           break;
         }
-        case CC_VALUE:
+        case color::VALUE:
         {
           FrgShaderCode = ValueFrgShader;
           break;
@@ -289,34 +287,34 @@ namespace nux
     }
     else
     {
-      switch (m_ColorChannel)
+      switch (color_channel)
       {
-        case CC_RED:
+        case color::RED:
         {
           FrgShaderCode = AsmRedFrgShader;
           break;
         }
-        case CC_GREEN:
+        case color::GREEN:
         {
           FrgShaderCode = AsmGreenFrgShader;
           break;
         }
-        case CC_BLUE:
+        case color::BLUE:
         {
           FrgShaderCode = AsmBlueFrgShader;
           break;
         }
-        case CC_HUE:
+        case color::HUE:
         {
           FrgShaderCode = AsmHueFrgShader;
           break;
         }
-        case CC_SATURATION:
+        case color::SATURATION:
         {
           FrgShaderCode = AsmSaturationFrgShader;
           break;
         }
-        case CC_VALUE:
+        case color::VALUE:
         {
           FrgShaderCode = AsmValueFrgShader;
           break;

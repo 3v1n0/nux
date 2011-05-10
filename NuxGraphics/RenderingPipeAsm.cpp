@@ -566,10 +566,10 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
-      x,          y + height, 0.0f, 1.0f, c1.R(), c1.G(), c1.B(), c1.A(),
-      x + width,  y + height, 0.0f, 1.0f, c2.R(), c2.G(), c2.B(), c2.A(),
-      x + width,  y,          0.0f, 1.0f, c3.R(), c3.G(), c3.B(), c3.A(),
+      x,          y,          0.0f, 1.0f, c0.red, c0.green, c0.blue, c0.alpha,
+      x,          y + height, 0.0f, 1.0f, c1.red, c1.green, c1.blue, c1.alpha,
+      x + width,  y + height, 0.0f, 1.0f, c2.red, c2.green, c2.blue, c2.alpha,
+      x + width,  y,          0.0f, 1.0f, c3.red, c3.green, c3.blue, c3.alpha,
     };
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -617,10 +617,10 @@ namespace nux
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
-      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
-      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
-      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
+      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
     };
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -685,10 +685,10 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
-      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
-      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
-      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
+      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
     };
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -785,8 +785,8 @@ namespace nux
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
     int TextureCoord1Location   = VTXATTRIB_TEXCOORD1;
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.R(), color0.G(), color0.B(), color0.A() ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.R(), color1.G(), color1.B(), color1.A() ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.red, color0.green, color0.blue, color0.alpha ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.red, color1.green, color1.blue, color1.alpha ) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -859,8 +859,8 @@ namespace nux
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
     int TextureCoord1Location   = VTXATTRIB_TEXCOORD1;
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.R(), c0.G(), c0.B(), c0.A() ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, c1.R(), c1.G(), c1.B(), c1.A() ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, c1.red, c1.green, c1.blue, c1.alpha ) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -932,8 +932,8 @@ namespace nux
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
     int TextureCoord1Location   = VTXATTRIB_TEXCOORD1;
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.R(), color0.G(), color0.B(), color0.A() ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.R(), color1.G(), color1.B(), color1.A() ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.red, color0.green, color0.blue, color0.alpha ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.red, color1.green, color1.blue, color1.alpha ) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
@@ -1013,10 +1013,10 @@ namespace nux
     int TextureCoord2Location   = VTXATTRIB_TEXCOORD2;
     int TextureCoord3Location   = VTXATTRIB_TEXCOORD3;
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.R(), color0.G(), color0.B(), color0.A() ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.R(), color1.G(), color1.B(), color1.A() ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 2, color2.R(), color2.G(), color2.B(), color2.A() ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 3, color3.R(), color3.G(), color3.B(), color3.A() ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.red, color0.green, color0.blue, color0.alpha ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.red, color1.green, color1.blue, color1.alpha ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 2, color2.red, color2.green, color2.blue, color2.alpha ) );
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 3, color3.red, color3.green, color3.blue, color3.alpha ) );
 
     CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
     CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer) );
@@ -1082,9 +1082,9 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x0, y0, 0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
-      x1, y1, 0.0f, 1.0f, c1.R(), c1.G(), c1.B(), c1.A(),
-      x2, y2, 0.0f, 1.0f, c2.R(), c2.G(), c2.B(), c2.A(),
+      x0, y0, 0.0f, 1.0f, c0.red, c0.green, c0.blue, c0.alpha,
+      x1, y1, 0.0f, 1.0f, c1.red, c1.green, c1.blue, c1.alpha,
+      x2, y2, 0.0f, 1.0f, c2.red, c2.green, c2.blue, c2.alpha,
     };
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -1135,8 +1135,8 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x0, y0, 0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
-      x1, y1, 0.0f, 1.0f, c1.R(), c1.G(), c1.B(), c1.A(),
+      x0, y0, 0.0f, 1.0f, c0.red, c0.green, c0.blue, c0.alpha,
+      x1, y1, 0.0f, 1.0f, c1.red, c1.green, c1.blue, c1.alpha,
     };
 
     ObjectPtr<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
@@ -1187,11 +1187,11 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x0, y0,                             0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
-      x0, y0 + height - 1,                0.0f, 1.0f, c1.R(), c1.G(), c1.B(), c1.A(),
-      x0 + width - 1, y0 + height - 1,    0.0f, 1.0f, c2.R(), c2.G(), c2.B(), c2.A(),
-      x0 + width - 1, y0,                 0.0f, 1.0f, c3.R(), c3.G(), c3.B(), c3.A(),
-      x0, y0,                             0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
+      x0, y0,                             0.0f, 1.0f, c0.red, c0.green, c0.blue, c0.alpha,
+      x0, y0 + height - 1,                0.0f, 1.0f, c1.red, c1.green, c1.blue, c1.alpha,
+      x0 + width - 1, y0 + height - 1,    0.0f, 1.0f, c2.red, c2.green, c2.blue, c2.alpha,
+      x0 + width - 1, y0,                 0.0f, 1.0f, c3.red, c3.green, c3.blue, c3.alpha,
+      x0, y0,                             0.0f, 1.0f, c0.red, c0.green, c0.blue, c0.alpha,
     };
 
     ObjectPtr<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
@@ -1307,7 +1307,7 @@ namespace nux
 
     SetTexture (GL_TEXTURE0, device_texture);
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.R(), c0.G(), c0.B(), c0.A()));
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha));
     CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, exponent.x, exponent.y, exponent.z, exponent.w));
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
@@ -1406,7 +1406,7 @@ namespace nux
 
     SetTexture (GL_TEXTURE0, device_texture);
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.R(), c0.G(), c0.B(), c0.A()));
+    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha));
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
     CHECKGL ( glLoadIdentity() );
@@ -1528,7 +1528,7 @@ namespace nux
 
     SetTexture (GL_TEXTURE0, device_texture);
 
-    CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.R(), c0.G(), c0.B(), c0.A()));
+    CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha));
     CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color_matrix.m[0][0], color_matrix.m[0][1], color_matrix.m[0][2], color_matrix.m[0][3]));
     CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 2, color_matrix.m[1][0], color_matrix.m[1][1], color_matrix.m[1][2], color_matrix.m[1][3]));
     CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 3, color_matrix.m[2][0], color_matrix.m[2][1], color_matrix.m[2][2], color_matrix.m[2][3]));
@@ -1949,7 +1949,7 @@ namespace nux
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    QRP_ASM_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_ASM_1Tex(x, y, quad_width, quad_height, device_texture, texxform, color::White);
 
     for (int i = 0; i < num_pass; i++)
     {
@@ -2005,7 +2005,7 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_ASM_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2060,7 +2060,7 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_ASM_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2109,7 +2109,7 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_ASM_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2170,23 +2170,23 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width/2, quad_height/2);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex (0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, Colors::White);
+    QRP_ASM_1Tex (0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width/4, quad_height/4);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex (0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, Colors::White);
+    QRP_ASM_1Tex (0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt2, _offscreen_depth_rt2, quad_width/8, quad_height/8);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex (0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, Colors::White);
+    QRP_ASM_1Tex (0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt3, _offscreen_depth_rt3, quad_width, quad_height);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     QRP_ASM_4Tex (0, 0, quad_width, quad_height,
-      device_texture, texxform, Colors::White,
-      _offscreen_color_rt0, texxform, Colors::White,
-      _offscreen_color_rt1, texxform, Colors::White,
-      _offscreen_color_rt2, texxform, Colors::White);
+      device_texture, texxform, color::White,
+      _offscreen_color_rt0, texxform, color::White,
+      _offscreen_color_rt1, texxform, color::White,
+      _offscreen_color_rt2, texxform, color::White);
 
     _offscreen_fbo->Deactivate();
 
@@ -2269,10 +2269,10 @@ namespace nux
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
-      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
-      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
-      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.R(), color.G(), color.B(), color.A(),
+      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
     };
 
     float tex_width = device_texture->GetWidth ();
