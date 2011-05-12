@@ -43,6 +43,13 @@ namespace color
   {
   }
 
+Color::Color(RedGreenBlue const& rgb, float a)
+    : red(rgb.red)
+    , green(rgb.green)
+    , blue(rgb.blue)
+    , alpha(a)
+{}
+
   Color::Color (unsigned int c)
     : red(NUX_RGBA_GET_RED(c) / 255.f)
     , green(NUX_RGBA_GET_GREEN(c) / 255.f)
@@ -55,14 +62,6 @@ namespace color
     : red(r / 255.f)
     , green(g / 255.f)
     , blue(b / 255.f)
-    , alpha(1)
-  {
-  }
-
-  Color::Color (float r, float g, float b)
-    : red(r)
-    , green(g)
-    , blue(b)
     , alpha(1)
   {
   }
@@ -111,6 +110,11 @@ Color OneMinusLuminance(Color const& c)
 Color RandomColor()
 {
   return Color(RandomColorINT());
+}
+
+Color MakeOpaque(Color const& c)
+{
+  return Color(c.red, c.green, c.blue, 1.0f);
 }
 
 unsigned int RandomColorINT()
@@ -471,6 +475,32 @@ Color operator * (Color const& c, float scalar)
     l = (int) (light * 255);
     s = (int) (satur * 255);
   }
+
+
+RedGreenBlue::RedGreenBlue(float r, float g, float b)
+  : red(r)
+  , green(g)
+  , blue(b)
+{}
+
+RedGreenBlue::RedGreenBlue(HueSaturationValue const& hsv)
+{
+  HSVtoRGB(red, blue, green, hsv.hue, hsv.saturation, hsv.value);
+}
+
+HueSaturationValue::HueSaturationValue(float h, float s, float v)
+  : hue(h)
+  , saturation(s)
+  , value(v)
+{}
+
+HueLightnessSaturation::HueLightnessSaturation(float h, float l, float s)
+  : hue(h)
+  , lightness(l)
+  , saturation(s)
+{}
+
+
 
 }
 }

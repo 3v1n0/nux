@@ -104,13 +104,15 @@ enum Format {
     INT
 };
 
+struct RedGreenBlue;
+
 struct Color
 {
     Color();
     explicit Color (unsigned int c);
     Color(int r, int g, int b);
-    Color(float r, float g, float b);
-    Color(float r, float g, float b, float a);
+    Color(float r, float g, float b, float a = 1.0f);
+    Color(RedGreenBlue const& rgb, float a = 1.0f);
 
     float red;
     float green;
@@ -126,6 +128,7 @@ Color Saturate(Color const&);
 Color Complement(Color const&);
 Color Luminance(Color const&);
 Color OneMinusLuminance(Color const&);
+Color MakeOpaque(Color const&);
 
 Color operator + (Color const&, Color const&);
 Color operator + (float, Color const&);
@@ -146,7 +149,7 @@ struct HueLightnessSaturation;
 
 struct RedGreenBlue
 {
-  RedGreenBlue(Color const&);
+  RedGreenBlue(float r, float g, float b);
   RedGreenBlue(HueSaturationValue const&);
   RedGreenBlue(HueLightnessSaturation const&);
 
@@ -157,6 +160,7 @@ struct RedGreenBlue
 
 struct HueSaturationValue
 {
+  HueSaturationValue(float h, float s, float v);
   HueSaturationValue(Color const&);
   HueSaturationValue(RedGreenBlue const&);
 
@@ -167,6 +171,7 @@ struct HueSaturationValue
 
 struct HueLightnessSaturation
 {
+  HueLightnessSaturation(float h, float l, float s);
   HueLightnessSaturation(Color const&);
   HueLightnessSaturation(RedGreenBlue const&);
 

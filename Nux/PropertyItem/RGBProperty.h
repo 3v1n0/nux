@@ -23,12 +23,16 @@
 #ifndef RGBPROPERTY_H
 #define RGBPROPERTY_H
 
+#include "NuxCore/Color.h"
+
 namespace nux
 {
-
   class PushButton;
   class ColorGradientPropertyItem;
 
+  // TODO: Tim Penhey 2011-05-12
+  // Both this class and RGBAPropertyItem should share a base class
+  // as many of the color calculations are common to the two.
   class RGBPropertyItem: public SectionProperty
   {
     NODE_XML_CLASS_MEMBER (RGBPropertyItem);
@@ -62,15 +66,15 @@ namespace nux
 
     double GetRed()     const
     {
-      return m_Red;
+      return rgb_values_.red;
     }
     double GetGreen()   const
     {
-      return m_Green;
+      return rgb_values_.green;
     }
     double GetBlue()    const
     {
-      return m_Blue;
+      return rgb_values_.blue;
     }
 
     void SetColor (double red, double green, double blue)
@@ -84,8 +88,8 @@ namespace nux
     void OnChangeColorModel();
     void OnChangeColorFormat();
 
-    void SetColorModel (eColorModel cm);
-    void SetColorFormat (Color::Format cf);
+    void SetColorModel(color::Model cm);
+    void SetColorFormat(color::Format cf);
 
   private:
     void UpdateStartToEndColors();
@@ -99,11 +103,11 @@ namespace nux
     ColorGradientPropertyItem *m_green;
     ColorGradientPropertyItem *m_blue;
 
-    float m_Red, m_Green, m_Blue;
+    color::RedGreenBlue rgb_values_;
     PushButton *m_ColorModel;
     PushButton *m_ColorFormat;
-    enum eColorModel m_color_model;
-    Color::Format m_color_format;
+    color::Model color_model_;
+    color::Format color_format_;
   };
 
 }
