@@ -100,10 +100,8 @@ namespace nux
 
     void SetRGB (double r, double g, double b);
     void SetHSV (double h, double s, double v);
-    void SetRGB (Color rgb);
-    void SetHSV (Color hsv);
+    void SetRGB(Color const& rgb);
     Color GetRGBColor() const;
-    Color GetHSVColor() const;
 
     void SetColorModel (color::Model, color::Channel);
     color::Model GetColorModel() const;
