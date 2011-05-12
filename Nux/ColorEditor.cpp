@@ -89,8 +89,8 @@ namespace nux
     m_bDialogRunning    = false;
     m_ModalWindow       = ModalWindow;
     m_RGBColor          = Color (1.0f, 1.0f, 1.0f, 1.0f);
-    m_ColorModel        = CM_RGB;
-    m_ColorChannel      = CC_RED;
+    m_ColorModel        = color::RGB;
+    m_ColorChannel      = color::RED;
   }
 
   ColorDialogProxy::~ColorDialogProxy()
@@ -171,37 +171,33 @@ namespace nux
     return m_PreviousRGBColor;
   }
 
-  void ColorDialogProxy::SetColorModel (eColorModel color_model)
+  void ColorDialogProxy::SetColorModel (color::Model color_model)
   {
     m_ColorModel = color_model;
   }
 
-  eColorModel ColorDialogProxy::GetColorModel()
+  color::Model ColorDialogProxy::GetColorModel()
   {
     return m_ColorModel;
   }
 
-  void ColorDialogProxy::SetColorChannel (eColorChannel color_channel)
+  void ColorDialogProxy::SetColorChannel (color::Channel color_channel)
   {
     m_ColorChannel = color_channel;
   }
 
-  eColorChannel ColorDialogProxy::GetColorChannel()
+  color::Channel ColorDialogProxy::GetColorChannel()
   {
     return m_ColorChannel;
   }
 
   ColorEditor::ColorEditor (NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+    : View (NUX_FILE_LINE_PARAM)
+    , rgb_(1.0f, 1.0f, 0.0f)
+    , hsv_(rgb_)
   {
-    m_ColorModel = CM_RGB;
-    m_ColorChannel = CC_RED;
-    m_Red = 1.0f;
-    m_Green = 1.0f;
-    m_Blue = 0.0f;
-    m_Hue = 0.0f;
-    m_Saturation = 1.0f;
-    m_Value = 1.0f;
+    m_ColorModel = color::RGB;
+    m_ColorChannel = color::RED;
     m_MarkerPosition = Point (0, 0);
     m_VertMarkerPosition = Point (0, 0);
 
@@ -244,7 +240,7 @@ namespace nux
         redtext->SetMinimumWidth (36);
         redlayout->AddView (redcheck, 0);
         redlayout->AddView (redtext, 0);
-        redcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_RED), CM_RGB ) );
+        redcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::RED), color::RGB ) );
       }
       greenlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
@@ -254,7 +250,7 @@ namespace nux
         greentext->SetMinimumWidth (36);
         greenlayout->AddView (greencheck, 0);
         greenlayout->AddView (greentext, 0);
-        greencheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_GREEN), CM_RGB ) );
+        greencheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::GREEN), color::RGB ) );
 
       }
       bluelayout = new HLayout (NUX_TRACKER_LOCATION);
@@ -265,7 +261,7 @@ namespace nux
         bluetext->SetMinimumWidth (36);
         bluelayout->AddView (bluecheck, 0);
         bluelayout->AddView (bluetext, 0);
-        bluecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_BLUE), CM_RGB ) );
+        bluecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::BLUE), color::RGB ) );
 
       }
     }
@@ -280,7 +276,7 @@ namespace nux
         huetext->SetMinimumWidth (36);
         huelayout->AddView (huecheck, 0);
         huelayout->AddView (huetext, 0);
-        huecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_HUE), CM_HSV ) );
+        huecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::HUE), color::HSV ) );
       }
       saturationlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
@@ -290,7 +286,7 @@ namespace nux
         saturationtext->SetMinimumWidth (36);
         saturationlayout->AddView (saturationcheck, 0);
         saturationlayout->AddView (saturationtext, 0);
-        saturationcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_SATURATION), CM_HSV ) );
+        saturationcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::SATURATION), color::HSV ) );
       }
       valuelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
@@ -300,7 +296,7 @@ namespace nux
         valuetext->SetMinimumWidth (36);
         valuelayout->AddView (valuecheck, 0);
         valuelayout->AddView (valuetext, 0);
-        valuecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_VALUE), CM_HSV ) );
+        valuecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::VALUE), color::HSV ) );
       }
     }
 
@@ -339,16 +335,14 @@ namespace nux
     radiogroup->ConnectButton (saturationcheck);
     radiogroup->ConnectButton (valuecheck);
 
-    m_RedShader = new GLSh_ColorPicker (CC_RED);
-    m_GreenShader = new GLSh_ColorPicker (CC_GREEN);
-    m_BlueShader = new GLSh_ColorPicker (CC_BLUE);
-    m_HueShader = new GLSh_ColorPicker (CC_HUE);
-    m_SaturationShader = new GLSh_ColorPicker (CC_SATURATION);
-    m_ValueShader = new GLSh_ColorPicker (CC_VALUE);
+    m_RedShader = new GLSh_ColorPicker (color::RED);
+    m_GreenShader = new GLSh_ColorPicker (color::GREEN);
+    m_BlueShader = new GLSh_ColorPicker (color::BLUE);
+    m_HueShader = new GLSh_ColorPicker (color::HUE);
+    m_SaturationShader = new GLSh_ColorPicker (color::SATURATION);
+    m_ValueShader = new GLSh_ColorPicker (color::VALUE);
 
-
-    RGBtoHSV (m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
-    redtext->SetText (m_Validator.ToString (255 * m_Red) );
+    redtext->SetText (m_Validator.ToString (255 * rgb_.red) );
     greentext->SetText (m_Validator.ToString (255 * m_Green) );
     bluetext->SetText (m_Validator.ToString (255 * m_Blue) );
     huetext->SetText (m_Validator.ToString (360 * m_Hue) );
@@ -418,7 +412,7 @@ namespace nux
 
     GfxContext.PushClippingRectangle (base);
 
-    if (m_ColorModel == CM_RGB)
+    if (m_ColorModel == color::RGB)
     {
       DrawRGB (GfxContext, force_draw);
     }
@@ -481,13 +475,13 @@ namespace nux
   {
     int x, y;
 
-    if (m_ColorModel == CM_RGB)
+    if (m_ColorModel == color::RGB)
     {
       GetPainter().Paint2DQuadColor (GfxContext, m_ColorSquare->GetGeometry(), Color (m_Red, m_Green, m_Blue, 1.0f) );
       Color BaseChannelTop;
       Color BaseChannelBottom;
 
-      if (m_ColorChannel == CC_RED)
+      if (m_ColorChannel == color::RED)
       {
         x = m_Blue * m_PickerArea->GetBaseWidth();
         y = (1.0f - m_Green) * m_PickerArea->GetBaseHeight();
@@ -505,7 +499,7 @@ namespace nux
           GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
         );
       }
-      else if (m_ColorChannel == CC_GREEN)
+      else if (m_ColorChannel == color::GREEN)
       {
         x = m_Blue * m_PickerArea->GetBaseWidth();
         y = (1.0f - m_Red) * m_PickerArea->GetBaseHeight();
@@ -523,7 +517,7 @@ namespace nux
           GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
         );
       }
-      else if (m_ColorChannel == CC_BLUE)
+      else if (m_ColorChannel == color::BLUE)
       {
         x = m_Red * m_PickerArea->GetBaseWidth();
         y = (1.0f - m_Green) * m_PickerArea->GetBaseHeight();
@@ -558,7 +552,7 @@ namespace nux
   {
     int x, y;
 
-    if (m_ColorModel == CM_HSV)
+    if (m_ColorModel == color::HSV)
     {
       float r, g, b;
       HSVtoRGB (r, g, b, m_Hue, m_Saturation, m_Value);
@@ -567,7 +561,7 @@ namespace nux
       Color BaseChannelTop;
       Color BaseChannelBottom;
 
-      if (m_ColorChannel == CC_HUE)
+      if (m_ColorChannel == color::HUE)
       {
         x = m_Saturation * m_PickerArea->GetBaseWidth();
         y = (1.0f - m_Value) * m_PickerArea->GetBaseHeight();
@@ -608,7 +602,7 @@ namespace nux
         GetPainter().Paint2DQuadWireframe (GfxContext, pickermarker, color.OneMinusLuminance() );
 
       }
-      else if (m_ColorChannel == CC_SATURATION)
+      else if (m_ColorChannel == color::SATURATION)
       {
         x = m_Hue * m_PickerArea->GetBaseWidth();
         y = (1.0f - m_Value) * m_PickerArea->GetBaseHeight();
@@ -639,7 +633,7 @@ namespace nux
         GetPainter().Paint2DQuadWireframe (GfxContext, pickermarker, color.OneMinusLuminance() );
         GetPainter().Paint2DQuadColor (GfxContext, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       }
-      else if (m_ColorChannel == CC_VALUE)
+      else if (m_ColorChannel == color::VALUE)
       {
         x = m_Hue * m_PickerArea->GetBaseWidth();
         y = (1.0f - m_Saturation) * m_PickerArea->GetBaseHeight();
@@ -698,7 +692,7 @@ namespace nux
   {
     float BaseValue;
 
-    if (m_ColorModel == CM_RGB)
+    if (m_ColorModel == color::RGB)
     {
       if (y < 0)
         BaseValue = 1.0f;
@@ -707,17 +701,17 @@ namespace nux
       else
         BaseValue = 1.0f - (float) y / (float) m_BaseChannelArea->GetBaseHeight();
 
-      if (m_ColorChannel == CC_RED)
+      if (m_ColorChannel == color::RED)
         m_Red = BaseValue;
-      else if (m_ColorChannel == CC_GREEN)
+      else if (m_ColorChannel == color::GREEN)
         m_Green = BaseValue;
-      else if (m_ColorChannel == CC_BLUE)
+      else if (m_ColorChannel == color::BLUE)
         m_Blue = BaseValue;
 
       RGBtoHSV (m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
     }
 
-    if (m_ColorModel == CM_HSV)
+    if (m_ColorModel == color::HSV)
     {
       if (y < 0)
         BaseValue = 1.0f;
@@ -726,15 +720,15 @@ namespace nux
       else
         BaseValue = 1.0f - (float) y / (float) m_BaseChannelArea->GetBaseHeight();
 
-      if (m_ColorChannel == CC_HUE)
+      if (m_ColorChannel == color::HUE)
       {
         m_Hue = BaseValue;
 
         if (m_Hue >= 1.0f) m_Hue = 0.0f;
       }
-      else if (m_ColorChannel == CC_SATURATION)
+      else if (m_ColorChannel == color::SATURATION)
         m_Saturation = BaseValue;
-      else if (m_ColorChannel == CC_VALUE)
+      else if (m_ColorChannel == color::VALUE)
         m_Value = BaseValue;
 
       HSVtoRGB (m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
@@ -764,9 +758,9 @@ namespace nux
 
   void ColorEditor::RecvPickerMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (m_ColorModel == CM_RGB)
+    if (m_ColorModel == color::RGB)
     {
-      if (m_ColorChannel == CC_RED)
+      if (m_ColorChannel == color::RED)
       {
         if (y < 0)
           m_Green = 1.0f;
@@ -784,7 +778,7 @@ namespace nux
 
       }
 
-      if (m_ColorChannel == CC_GREEN)
+      if (m_ColorChannel == color::GREEN)
       {
         if (y < 0)
           m_Red = 1.0f;
@@ -802,7 +796,7 @@ namespace nux
 
       }
 
-      if (m_ColorChannel == CC_BLUE)
+      if (m_ColorChannel == color::BLUE)
       {
         if (x < 0)
           m_Red = 0.0f;
@@ -823,9 +817,9 @@ namespace nux
       m_MarkerPosition = Point (Clamp<int> (x, 0, m_PickerArea->GetBaseWidth() - 1), Clamp<int> (y, 0, m_PickerArea->GetBaseHeight() - 1) );
     }
 
-    if (m_ColorModel == CM_HSV)
+    if (m_ColorModel == color::HSV)
     {
-      if (m_ColorChannel == CC_HUE)
+      if (m_ColorChannel == color::HUE)
       {
         if (y < 0)
           m_Value = 1.0f;
@@ -843,7 +837,7 @@ namespace nux
 
       }
 
-      if (m_ColorChannel == CC_SATURATION)
+      if (m_ColorChannel == color::SATURATION)
       {
         if (y < 0)
           m_Value = 1.0f;
@@ -861,7 +855,7 @@ namespace nux
 
       }
 
-      if (m_ColorChannel == CC_VALUE)
+      if (m_ColorChannel == color::VALUE)
       {
         if (x < 0)
           m_Hue = 0.0f;
@@ -904,16 +898,16 @@ namespace nux
     RecvPickerMouseDown (x, y, button_flags, key_flags);
   }
 
-  void ColorEditor::RecvCheckColorModel (bool b, eColorModel ColorModel, eColorChannel ColorChannel)
+void ColorEditor::RecvCheckColorModel (bool b, color::Model ColorModel, color::Channel ColorChannel)
   {
     if (b)
     {
-      if ( (ColorModel == CM_HSV) && (m_ColorModel == CM_RGB) )
+      if ( (ColorModel == color::HSV) && (m_ColorModel == color::RGB) )
       {
         RGBtoHSV (m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
       }
 
-      if ( (ColorModel == CM_RGB) && (m_ColorModel == CM_HSV) )
+      if ( (ColorModel == color::RGB) && (m_ColorModel == color::HSV) )
       {
         HSVtoRGB ( m_Red, m_Green, m_Blue, m_Hue, m_Saturation, m_Value);
       }
@@ -922,27 +916,27 @@ namespace nux
       m_ColorChannel = ColorChannel;
     }
 
-    if (b && (ColorModel == CM_RGB) )
+    if (b && (ColorModel == color::RGB) )
     {
       int x = 0;
       int y = 0;
       int z = 1;
 
-      if (m_ColorChannel == CC_RED)
+      if (m_ColorChannel == color::RED)
       {
         z = (1.0f - m_Red) * m_PickerArea->GetBaseHeight();
         y = (1.0f - m_Green) * m_PickerArea->GetBaseHeight();
         x = m_Blue * m_PickerArea->GetBaseWidth();
       }
 
-      if (m_ColorChannel == CC_GREEN)
+      if (m_ColorChannel == color::GREEN)
       {
         z = (1.0f - m_Green) * m_PickerArea->GetBaseHeight();
         y = (1.0f - m_Red) * m_PickerArea->GetBaseHeight();
         x = m_Blue * m_PickerArea->GetBaseWidth();
       }
 
-      if (m_ColorChannel == CC_BLUE)
+      if (m_ColorChannel == color::BLUE)
       {
         z = (1.0f - m_Blue) * m_PickerArea->GetBaseHeight();
         y = (1.0f - m_Green) * m_PickerArea->GetBaseHeight();
@@ -957,27 +951,27 @@ namespace nux
       bluetext->SetText (m_Validator.ToString (255 * m_Blue) );
     }
 
-    if (b && (ColorModel == CM_HSV) )
+    if (b && (ColorModel == color::HSV) )
     {
       int x = 0;
       int y = 0;
       int z = 1;
 
-      if (m_ColorChannel == CC_HUE)
+      if (m_ColorChannel == color::HUE)
       {
         z = (1.0f - m_Hue) * m_PickerArea->GetBaseHeight();
         y = (1.0f - m_Value) * m_PickerArea->GetBaseHeight();
         x = m_Saturation * m_PickerArea->GetBaseWidth();
       }
 
-      if (m_ColorChannel == CC_SATURATION)
+      if (m_ColorChannel == color::SATURATION)
       {
         z = (1.0f - m_Saturation) * m_PickerArea->GetBaseHeight();
         y = (1.0f - m_Value) * m_PickerArea->GetBaseHeight();
         x = m_Hue * m_PickerArea->GetBaseWidth();
       }
 
-      if (m_ColorChannel == CC_VALUE)
+      if (m_ColorChannel == color::VALUE)
       {
         z = (1.0f - m_Value) * m_PickerArea->GetBaseHeight();
         y = (1.0f - m_Saturation) * m_PickerArea->GetBaseHeight();
@@ -1071,24 +1065,24 @@ namespace nux
     SetHSV (m_Hue, m_Saturation, m_Value);
   }
 
-  void ColorEditor::SetColorModel (eColorModel colormodel, eColorChannel colorchannel)
+  void ColorEditor::SetColorModel (color::Model colormodel, color::Channel colorchannel)
   {
-    if (colormodel == CM_HSV)
+    if (colormodel == color::HSV)
     {
-      if ( (colorchannel != CC_HUE) &&
-           (colorchannel != CC_SATURATION) &&
-           (colorchannel != CC_VALUE) )
+      if ( (colorchannel != color::HUE) &&
+           (colorchannel != color::SATURATION) &&
+           (colorchannel != color::VALUE) )
       {
         nuxDebugMsg (TEXT ("[ColorEditor::SetColorModel] The color model (HSV) and the color channel don't match.") );
         return;
       }
     }
 
-    if (colormodel == CM_RGB)
+    if (colormodel == color::RGB)
     {
-      if ( (colorchannel != CC_RED) &&
-           (colorchannel != CC_GREEN) &&
-           (colorchannel != CC_BLUE) )
+      if ( (colorchannel != color::RED) &&
+           (colorchannel != color::GREEN) &&
+           (colorchannel != color::BLUE) )
       {
         nuxDebugMsg (TEXT ("[ColorEditor::SetColorModel] The color model (RGB) and the color channel don't match.") );
         return;
@@ -1099,26 +1093,26 @@ namespace nux
     m_ColorChannel = colorchannel;
     RecvCheckColorModel (true, m_ColorModel, m_ColorChannel);
 
-    if (m_ColorChannel == CC_RED)
+    if (m_ColorChannel == color::RED)
       radiogroup->ActivateButton (redcheck);
-    else if (m_ColorChannel == CC_GREEN)
+    else if (m_ColorChannel == color::GREEN)
       radiogroup->ActivateButton (greencheck);
-    else if (m_ColorChannel == CC_BLUE)
+    else if (m_ColorChannel == color::BLUE)
       radiogroup->ActivateButton (bluecheck);
-    else if (m_ColorChannel == CC_HUE)
+    else if (m_ColorChannel == color::HUE)
       radiogroup->ActivateButton (huecheck);
-    else if (m_ColorChannel == CC_SATURATION)
+    else if (m_ColorChannel == color::SATURATION)
       radiogroup->ActivateButton (saturationcheck);
-    else if (m_ColorChannel == CC_VALUE)
+    else if (m_ColorChannel == color::VALUE)
       radiogroup->ActivateButton (valuecheck);
   }
 
-  eColorModel ColorEditor::GetColorModel() const
+  color::Model ColorEditor::GetColorModel() const
   {
     return m_ColorModel;
   }
 
-  eColorChannel ColorEditor::GetColorChannel() const
+  color::Channel ColorEditor::GetColorChannel() const
   {
     return m_ColorChannel;
   }

@@ -59,7 +59,7 @@ namespace nux
   void ColorPickerDialog::RecvOk()
   {
     m_Color = m_ColorEditor->GetRGBColor();
-    m_Color = Colors::Black;
+    m_Color = color::Black;
     ShowWindow (FALSE);
   }
 

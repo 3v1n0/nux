@@ -144,13 +144,8 @@ namespace nux
     Point m_MarkerPosition;
     Point m_VertMarkerPosition;
 
-    float m_Red;
-    float m_Green;
-    float m_Blue;
-    float m_Hue;
-    float m_Saturation;
-    float m_Value;
-
+    color::RedGreenBlue rgb_;
+    color::HueSaturationValue hsv_;
 
     HLayout *redlayout;
     HLayout *greenlayout;
