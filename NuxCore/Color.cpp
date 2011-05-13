@@ -488,11 +488,26 @@ RedGreenBlue::RedGreenBlue(HueSaturationValue const& hsv)
   HSVtoRGB(red, blue, green, hsv.hue, hsv.saturation, hsv.value);
 }
 
+RedGreenBlue::RedGreenBlue(HueLightnessSaturation const& hls)
+{
+  HLStoRGB(red, blue, green, hls.hue, hls.lightness, hls.saturation);
+}
+
 HueSaturationValue::HueSaturationValue(float h, float s, float v)
   : hue(h)
   , saturation(s)
   , value(v)
 {}
+
+HueSaturationValue::HueSaturationValue(RedGreenBlue const& rgb)
+{
+  RGBtoHSV(rgb.red, rgb.green, rgb.blue, hue, saturation, value);
+}
+
+HueSaturationValue::HueSaturationValue(Color const& c)
+{
+  RGBtoHSV(c.red, c.green, c.blue, hue, saturation, value);
+}
 
 HueLightnessSaturation::HueLightnessSaturation(float h, float l, float s)
   : hue(h)
@@ -500,6 +515,15 @@ HueLightnessSaturation::HueLightnessSaturation(float h, float l, float s)
   , saturation(s)
 {}
 
+HueLightnessSaturation::HueLightnessSaturation(RedGreenBlue const& rgb)
+{
+  RGBtoHLS(rgb.red, rgb.green, rgb.blue, hue, lightness, saturation);
+}
+
+HueLightnessSaturation::HueLightnessSaturation(Color const& c)
+{
+  RGBtoHLS(c.red, c.green, c.blue, hue, lightness, saturation);
+}
 
 
 }

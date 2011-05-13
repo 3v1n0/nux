@@ -43,7 +43,7 @@ void UpdateAngle (void *v)
     timer_handle = nux::GetTimer().AddTimerHandler (10, timer_functor, texture_area);
     if (angle == 0)
     {
-      nux::ColorLayer color_layer (nux::Color::RandomColor ());
+      nux::ColorLayer color_layer (nux::color::RandomColor ());
       texture_area->SetPaintLayer (&color_layer);
     }
   }

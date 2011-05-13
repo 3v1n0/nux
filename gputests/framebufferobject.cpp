@@ -97,7 +97,7 @@ void RenderToFrameBufferObject ()
       nux::RandomUInt(200),
       nux::RandomUInt(200));
 
-    graphics_engine->QRP_Color(geo.x, geo.y, geo.width, geo.height, nux::Color::RandomColor());
+    graphics_engine->QRP_Color(geo.x, geo.y, geo.width, geo.height, nux::color::RandomColor());
 
     graphics_display->GetGpuDevice ()->DeactivateFrameBuffer ();
 

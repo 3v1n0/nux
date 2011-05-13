@@ -40,7 +40,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   {
     tab_view_layout = new nux::VLayout ();
     texture_area = new nux::TextureArea ();
-    color_layer.SetColor (nux::Color::RandomColor ());
+    color_layer.SetColor (nux::color::RandomColor ());
     texture_area->SetPaintLayer (&color_layer);
 
     tab_view_layout->AddView (texture_area, 1);
