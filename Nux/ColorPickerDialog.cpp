@@ -50,7 +50,7 @@ namespace nux
 
   }
 
-  void ColorPickerDialog::StartDialog (Color &color, eColorModel ColorModel /*  = RGB */, bool StartModal /* = false */)
+  void ColorPickerDialog::StartDialog (Color &color, color::Model ColorModel, bool StartModal)
   {
     Dialog::Start (StartModal);
     m_Color = color;

@@ -41,7 +41,7 @@ namespace nux
   class ColorPreview : public View
   {
   public:
-    ColorPreview(Color const& c, color::Model colormodel = color::RGB, NUX_FILE_LINE_PROTO);
+    ColorPreview(Color const& c, NUX_FILE_LINE_PROTO);
     ~ColorPreview();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);

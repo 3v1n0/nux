@@ -31,7 +31,7 @@ namespace nux
 
   ColorPreviewPropertyItem::ColorPreviewPropertyItem(const TCHAR *name, float red, float green, float blue, color::Model colormodel)
     : SectionProperty(name, NODE_TYPE_COLORPREVIEW)
-    , ColorPreview(Color(red, green, blue), colormodel)
+    , ColorPreview(Color(red, green, blue))
   {
     NODE_SIG_CONNECT (sigColorChanged, ColorPreviewPropertyItem, RecvPropertyChange);
   }
