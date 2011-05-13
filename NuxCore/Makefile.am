@@ -112,6 +112,7 @@ source_math_h = \
   $(srcdir)/Math/Vector2.h \
   $(srcdir)/Math/Line2D.h \
   $(srcdir)/Math/Point2D.h \
+  $(srcdir)/Math/Point2D-inl.h \
   $(srcdir)/Math/Tweening.h \
   $(srcdir)/Math/Matrix4.h \
   $(srcdir)/Math/MathUtility.h
@@ -154,6 +155,7 @@ source_h = \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/Object.h \
   $(srcdir)/Size.h \
+  $(srcdir)/Size-inl.h \
   $(srcdir)/Exception.h \
   $(srcdir)/TimeFunctions.h \
   $(srcdir)/CRC32.h \
