@@ -29,6 +29,7 @@ namespace nux
   namespace color
   {
     // X11 color names from:http://en.wikipedia.org/wiki/Web_colors
+    extern const Color Transparent;
 
     // Red colors
     extern const Color IndianRed;
