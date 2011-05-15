@@ -54,12 +54,12 @@ public:
 
   sigc::signal<void, VALUE_TYPE const&> changed;
 
-  void freeze()
+  void disable_notifications()
   {
     notify_ = false;
   }
 
-  void thaw()
+  void enable_notifications()
   {
     notify_ = true;
   }
