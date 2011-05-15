@@ -29,6 +29,13 @@ examples/button
 examples/combobox
 examples/cairo
 examples/checkbox
+examples/focus
+examples/moveable_view
+examples/pango_combobox
+examples/rotate_texture_area
+examples/scrollview
+examples/tab_view
+examples/text_entry_focus
 examples/textedit
 examples/tooltip
 m4
@@ -45,6 +52,8 @@ gputests/texture_copy_blur
 gputests/texture_data
 gputests/texture_power_of_2
 examples/layeredlayout
+tests/Logs
+tests/gtest-nux-core
 tests/test-nux
 tests/test-nux-results.xml
 
