@@ -14,7 +14,7 @@ namespace nux {
 //  object serialisation
 
 template <typename VALUE_TYPE,
-          template <typename> class TRAITS = type::assignable>
+          template <typename> class TRAITS = type::Assignable>
 class ConnectableProperty
 {
 public:
@@ -95,14 +95,14 @@ public:
       // find the property and set the value...
       // make this nicer
       return properties_[name]->set_value(
-          type::serializable<T>::to_string(value));
+          type::Serializable<T>::to_string(value));
    }
 
   template <typename T>
   T get_property(std::string const& name, T* foo = 0)
     {
       std::string s = properties_[name]->get_serialized_value();
-      std::pair<T, bool> result = type::serializable<T>::from_string(s);
+      std::pair<T, bool> result = type::Serializable<T>::from_string(s);
       // assert(result.second); -- should never fail, but we don't want an assert.
       return result.first;
     }
@@ -122,7 +122,7 @@ private:
 
 
 
-template <typename T, typename TRAITS = type::assignable<T> >
+template <typename T, typename TRAITS = type::Assignable<T> >
 class property : public property_base
 {
 public:

@@ -14,7 +14,7 @@ namespace type {
  */
 
 template <typename T>
-struct assignable
+struct Assignable
 {
     /**
      * Expected content:
@@ -24,7 +24,7 @@ struct assignable
 };
 
 template <typename T>
-struct serializable
+struct Serializable
 {
     /**
      * Expected content:
@@ -42,13 +42,13 @@ struct serializable
 
 
 /**
- * The serializable_impl template has different signatures than the standard
- * serializable traits class to avoid the generalised template being used as a
+ * The Serializable_impl template has different signatures than the standard
+ * Serializable traits class to avoid the generalised template being used as a
  * traits type when we really don't want it being used in that way, but we do
  * want a generalized implementation for the types we do care about.
  */
 template <typename T>
-struct serializable_impl
+struct Serializable_impl
 {
   static std::string to_string_impl(T const& value)
   {
@@ -70,21 +70,21 @@ struct serializable_impl
 
 
 template <>
-struct serializable<int>
+struct Serializable<int>
 {
   static std::string to_string(int value)
   {
-      return serializable_impl<int>::to_string_impl(value);
+      return Serializable_impl<int>::to_string_impl(value);
   }
 
   static std::pair<int, bool> from_string(std::string const& serialized_form)
   {
-      return serializable_impl<int>::from_string_impl(serialized_form);
+      return Serializable_impl<int>::from_string_impl(serialized_form);
   }
 };
 
 template <>
-struct assignable<int> : serializable<int>
+struct Assignable<int> : Serializable<int>
 {
   static bool assign(int& var, int new_value)
   {
@@ -96,21 +96,21 @@ struct assignable<int> : serializable<int>
 
 
 template <>
-struct serializable<float>
+struct Serializable<float>
 {
   static std::string to_string(float value)
   {
-      return serializable_impl<float>::to_string_impl(value);
+      return Serializable_impl<float>::to_string_impl(value);
   }
 
   static std::pair<float, bool> from_string(std::string const& serialized_form)
   {
-      return serializable_impl<float>::from_string_impl(serialized_form);
+      return Serializable_impl<float>::from_string_impl(serialized_form);
   }
 };
 
 template <>
-struct assignable<float> : serializable<float>
+struct Assignable<float> : Serializable<float>
 {
   static bool assign(float& var, float new_value)
   {
@@ -121,21 +121,21 @@ struct assignable<float> : serializable<float>
 
 
 template <>
-struct serializable<double>
+struct Serializable<double>
 {
   static std::string to_string(double value)
   {
-      return serializable_impl<double>::to_string_impl(value);
+      return Serializable_impl<double>::to_string_impl(value);
   }
 
   static std::pair<double, bool> from_string(std::string const& serialized_form)
   {
-      return serializable_impl<double>::from_string_impl(serialized_form);
+      return Serializable_impl<double>::from_string_impl(serialized_form);
   }
 };
 
 template <>
-struct assignable<double> : serializable<double>
+struct Assignable<double> : Serializable<double>
 {
   static bool assign(double& var, double new_value)
   {
@@ -146,7 +146,7 @@ struct assignable<double> : serializable<double>
 
 
 template <>
-struct serializable<bool>
+struct Serializable<bool>
 {
   static std::string to_string(bool value)
   {
@@ -166,7 +166,7 @@ struct serializable<bool>
 };
 
 template <>
-struct assignable<bool> : serializable<bool>
+struct Assignable<bool> : Serializable<bool>
 {
   static bool assign(bool& var, bool new_value)
   {
@@ -177,7 +177,7 @@ struct assignable<bool> : serializable<bool>
 
 
 template <>
-struct serializable<std::string>
+struct Serializable<std::string>
 {
   static std::string to_string(std::string const& value)
     {
@@ -191,7 +191,7 @@ struct serializable<std::string>
 };
 
 template <>
-struct assignable<std::string> : serializable<std::string>
+struct Assignable<std::string> : Serializable<std::string>
 {
   static bool assign(std::string& var, std::string const& new_value)
   {

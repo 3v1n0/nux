@@ -11,8 +11,8 @@ namespace {
 template <typename T>
 T to_and_from_string(T const& value)
 {
-  std::string temp = nux::type::serializable<T>::to_string(value);
-  std::pair<T, bool> result = nux::type::serializable<T>::from_string(temp);
+  std::string temp = nux::type::Serializable<T>::to_string(value);
+  std::pair<T, bool> result = nux::type::Serializable<T>::from_string(temp);
   if (!result.second) {
     throw std::runtime_error("Failed to convert.");
   }
@@ -21,40 +21,40 @@ T to_and_from_string(T const& value)
 
 
 TEST(TestTypeTraits, TestSerialization) {
-  EXPECT_EQ("hello", nux::type::serializable<std::string>::to_string("hello"));
-  EXPECT_EQ("42", nux::type::serializable<int>::to_string(42));
-  EXPECT_EQ("true", nux::type::serializable<bool>::to_string(true));
-  EXPECT_EQ("false", nux::type::serializable<bool>::to_string(false));
-  EXPECT_EQ("0", nux::type::serializable<double>::to_string(0));
-  EXPECT_EQ("25.5", nux::type::serializable<double>::to_string(25.5));
+  EXPECT_EQ("hello", nux::type::Serializable<std::string>::to_string("hello"));
+  EXPECT_EQ("42", nux::type::Serializable<int>::to_string(42));
+  EXPECT_EQ("true", nux::type::Serializable<bool>::to_string(true));
+  EXPECT_EQ("false", nux::type::Serializable<bool>::to_string(false));
+  EXPECT_EQ("0", nux::type::Serializable<double>::to_string(0));
+  EXPECT_EQ("25.5", nux::type::Serializable<double>::to_string(25.5));
 }
 
 TEST(TestTypeTraits, TestDeserialization) {
-  std::pair<std::string, bool> sr = nux::type::serializable<std::string>::from_string("hello");
+  std::pair<std::string, bool> sr = nux::type::Serializable<std::string>::from_string("hello");
   EXPECT_EQ("hello", sr.first);
   EXPECT_TRUE(sr.second);
-  std::pair<int, bool> int_result = nux::type::serializable<int>::from_string("42");
+  std::pair<int, bool> int_result = nux::type::Serializable<int>::from_string("42");
   EXPECT_EQ(42, int_result.first);
   EXPECT_TRUE(int_result.second);
-  int_result = nux::type::serializable<int>::from_string("OMG!");
+  int_result = nux::type::Serializable<int>::from_string("OMG!");
   EXPECT_EQ(0, int_result.first);
   EXPECT_FALSE(int_result.second);
-  std::pair<bool, bool> bool_result = nux::type::serializable<bool>::from_string("true");
+  std::pair<bool, bool> bool_result = nux::type::Serializable<bool>::from_string("true");
   EXPECT_TRUE(bool_result.first);
   EXPECT_TRUE(bool_result.second);
-  bool_result = nux::type::serializable<bool>::from_string("false");
+  bool_result = nux::type::Serializable<bool>::from_string("false");
   EXPECT_FALSE(bool_result.first);
   EXPECT_TRUE(bool_result.second);
-  bool_result = nux::type::serializable<bool>::from_string("what?");
+  bool_result = nux::type::Serializable<bool>::from_string("what?");
   EXPECT_FALSE(bool_result.first);
   EXPECT_FALSE(bool_result.second);
-  std::pair<double, bool> double_result = nux::type::serializable<double>::from_string("25.5");
+  std::pair<double, bool> double_result = nux::type::Serializable<double>::from_string("25.5");
   EXPECT_EQ(25.5, double_result.first);
   EXPECT_TRUE(double_result.second);
-  double_result = nux::type::serializable<double>::from_string("2e6");
+  double_result = nux::type::Serializable<double>::from_string("2e6");
   EXPECT_EQ(2000000.0, double_result.first);
   EXPECT_TRUE(double_result.second);
-  double_result = nux::type::serializable<double>::from_string("what?");
+  double_result = nux::type::Serializable<double>::from_string("what?");
   EXPECT_EQ(0, double_result.first);
   EXPECT_FALSE(double_result.second);
 }
@@ -69,10 +69,10 @@ TEST(TestTypeTraits, TestConversionHolds) {
 TEST(TestTypeTraits, TestAssign) {
   std::string value;
   // std::string's can be assigned to with strings
-  nux::type::assignable<std::string>::assign(value, std::string("foo"));
+  nux::type::Assignable<std::string>::assign(value, std::string("foo"));
   EXPECT_EQ("foo", value);
   // or char const*
-  nux::type::assignable <std::string>::assign(value, "bar");
+  nux::type::Assignable <std::string>::assign(value, "bar");
   EXPECT_EQ("bar", value);
 }
 
