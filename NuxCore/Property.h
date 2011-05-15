@@ -15,17 +15,17 @@ namespace nux {
 
 template <typename VALUE_TYPE,
           template <typename> class TRAITS = type::assignable>
-class connectable_property
+class ConnectableProperty
 {
 public:
   typedef TRAITS<VALUE_TYPE> TraitsType;
 
-  connectable_property()
+  ConnectableProperty()
   : value_(VALUE_TYPE())
   , notify_(true)
   {}
 
-  connectable_property(VALUE_TYPE const& initial)
+  ConnectableProperty(VALUE_TYPE const& initial)
   : value_(initial)
   , notify_(true)
   {}

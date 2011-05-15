@@ -78,10 +78,10 @@ TEST(TestTypeTraits, TestAssign) {
 
 
 TEST(TestConnectableProperty, TestConstruction) {
-  nux::connectable_property<std::string> string_prop;
+  nux::ConnectableProperty<std::string> string_prop;
   EXPECT_EQ("", string_prop.value());
   EXPECT_EQ("", static_cast<std::string>(string_prop));
-  nux::connectable_property<std::string> string_prop_val("hello");
+  nux::ConnectableProperty<std::string> string_prop_val("hello");
   EXPECT_EQ("hello", string_prop_val.value());
   EXPECT_EQ("hello", static_cast<std::string>(string_prop_val));
 }
@@ -98,7 +98,7 @@ struct ChangeRecorder : sigc::trackable
 };
 
 TEST(TestConnectableProperty, TestAssignmentNotification) {
-  nux::connectable_property<std::string> string_prop;
+  nux::ConnectableProperty<std::string> string_prop;
   ChangeRecorder<std::string> recorder;
   string_prop.changed.connect(
     sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
@@ -111,7 +111,7 @@ TEST(TestConnectableProperty, TestAssignmentNotification) {
 }
 
 TEST(TestConnectableProperty, TestFreezeAndThaw) {
-  nux::connectable_property<std::string> string_prop;
+  nux::ConnectableProperty<std::string> string_prop;
   ChangeRecorder<std::string> recorder;
   string_prop.changed.connect(
     sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
