@@ -668,7 +668,7 @@ namespace nux
     }
 
     if (m_fHideCaret == false)
-      m_CaretPosition.Set (xpos + getBorder() + GetViewContentLeftMargin(), (lineno - m_nVScrollPos) * m_nLineHeight + getTopBorder() + GetViewContentTopMargin() );
+      m_CaretPosition = Point(xpos + getBorder() + GetViewContentLeftMargin(), (lineno - m_nVScrollPos) * m_nLineHeight + getTopBorder() + GetViewContentTopMargin());
 
     m_RedrawCaret = true;
   }
@@ -708,7 +708,7 @@ namespace nux
     // set caret position if within window viewport
     if (m_fHideCaret == false)
     {
-      m_CaretPosition.Set (xpos + getBorder() + GetViewContentLeftMargin(), (lineno - m_nVScrollPos) * m_nLineHeight + getTopBorder() + GetViewContentTopMargin() );
+      m_CaretPosition = Point(xpos + getBorder() + GetViewContentLeftMargin(), (lineno - m_nVScrollPos) * m_nLineHeight + getTopBorder() + GetViewContentTopMargin());
     }
 
     nuxDebugMsg (TEXT ("Caret x: %d"), xpos + getBorder() + GetViewContentLeftMargin() );
