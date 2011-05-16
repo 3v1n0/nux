@@ -45,7 +45,7 @@ void QuadRendering_2TexMod ()
   int size = 256;
 
   nux::NTextureData checkboard_texture_data;
-  MakeCheckBoardImage (checkboard_texture_data.GetSurface (0), size, size, nux::Color (0xff000000), nux::Colors::LightSeaGreen, 4, 4);
+  MakeCheckBoardImage (checkboard_texture_data.GetSurface (0), size, size, nux::Color (0xff000000), nux::color::LightSeaGreen, 4, 4);
   nux::BaseTexture* checkboard_texture = graphics_display->GetGpuDevice ()->CreateSystemCapableTexture ();
   checkboard_texture->Update (&checkboard_texture_data);
 
@@ -115,7 +115,7 @@ void QuadRendering_2TexMod ()
       size);
 
     // Paint a rectangular quad over the entire window
-    graphics_engine->QRP_Color(0, 0, graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::Colors::Aubergine);
+    graphics_engine->QRP_Color(0, 0, graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::color::Aubergine);
 
     // Enable blending
     graphics_display->GetGraphicsEngine()->GetRenderStates ().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -125,8 +125,8 @@ void QuadRendering_2TexMod ()
 
     // Modulate the checkboard and the gradient texture
     graphics_engine->QRP_2TexMod(geo.x, geo.y, geo.width, geo.height,
-      gradient_texture, texxform0, nux::Colors::White,
-      checkboard_texture->GetDeviceTexture (), texxform1, nux::Colors::White);
+      gradient_texture, texxform0, nux::color::White,
+      checkboard_texture->GetDeviceTexture (), texxform1, nux::color::White);
 
     graphics_display->GetGraphicsEngine()->GetRenderStates ().SetBlend(false);
 

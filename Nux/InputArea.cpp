@@ -39,7 +39,7 @@ namespace nux
 
   InputArea::InputArea (NUX_FILE_LINE_DECL)
     :   Area (NUX_FILE_LINE_PARAM)
-    ,   m_AreaColor (Colors::Green)
+    ,   m_AreaColor (color::Green)
   {
     SetGeometry(0, 0, 1, 1);
     _has_keyboard_focus = false;

@@ -25,28 +25,29 @@
 
 namespace nux
 {
-
-#define NUX_COLOR_RGB(r, g, b)
-
-#define NUX_COLOR_ARGB(a,r,g,b)   ((Color)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
-
+namespace color
+{
   // DirectX D3DFormat
-  //    All formats are listed from left to right, most significant bit (MSB) to least significant bit (LSB). For example,
-  //    D3DFORMAT_ARGB is ordered from the MSB channel A (alpha), to the LSB channel B (blue). When traversing surface data,
-  //    the data is stored in memory from LSB to MSB, which means that the channel order in memory is from LSB (blue) to MSB (alpha).
   //
-  //    The default value for formats that contain undefined channels (G16R16, A8, and so on) is 1. The only exception is the
-  //    A8 format, which is initialized to 000 for the three color channels.
+  // All formats are listed from left to right, most significant bit (MSB) to
+  // least significant bit (LSB). For example, D3DFORMAT_ARGB is ordered from
+  // the MSB channel A (alpha), to the LSB channel B (blue). When traversing
+  // surface data, the data is stored in memory from LSB to MSB, which means
+  // that the channel order in memory is from LSB (blue) to MSB (alpha).
   //
-  //    The order of the bits is from the most significant byte first, so D3DFMT_A8L8 indicates that the high byte of this 2-byte
-  //    format is alpha. D3DFMT_D16 indicates a 16-bit integer value and an application-lockable surface.
+  // The default value for formats that contain undefined channels (G16R16,
+  // A8, and so on) is 1. The only exception is the A8 format, which is
+  // initialized to 000 for the three color channels.
   //
-  //    Pixel formats have been chosen to enable the expression of hardware-vendor-defined extension formats, as well as to include
-  //    the well-established four-character code (FOURCC) method. The set of formats understood by the Microsoft Direct3D runtime
-  //    is defined by D3DFORMAT.
+  // The order of the bits is from the most significant byte first, so
+  // D3DFMT_A8L8 indicates that the high byte of this 2-byte format is
+  // alpha. D3DFMT_D16 indicates a 16-bit integer value and an
+  // application-lockable surface.
   //
-  //
-
+  // Pixel formats have been chosen to enable the expression of
+  // hardware-vendor-defined extension formats, as well as to include the
+  // well-established four-character code (FOURCC) method. The set of formats
+  // understood by the Microsoft Direct3D runtime is defined by D3DFORMAT.
 
   //Format of RGBA colors is
   //7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0 7 6 5 4 3 2 1 0
@@ -54,16 +55,6 @@ namespace nux
   //|    alpha        |      red    |     green      |     blue     |
   //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   //MSB 31                                                             0 LSB
-
-
-#define NUX_RGBA_GET_ALPHA(rgba)      ((rgba) >> 24)
-#define NUX_RGBA_GET_RED(rgba)        (((rgba) >> 16) & 0xff)
-#define NUX_RGBA_GET_GREEN(rgba)      (((rgba) >> 8) & 0xff)
-#define NUX_RGBA_GET_BLUE(rgba)       ((rgba) & 0xff)
-#define NUX_RGBA(r, g, b, a)          ((a << 24) | (r << 16) | (g << 8) | b)
-#define NUX_RGB(r, g, b)              ((r << 16) | (g << 8) | b)
-
-
 
 
   //Format of RGB colors is
@@ -90,77 +81,112 @@ namespace nux
   //|      blue      |      green    |     red      |     alpha     |
   //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
+enum Model {
+    RGB,
+    HSV,
+    HLS,
+    YUV
+};
 
-  enum eColorModel {CM_RGB, CM_HSV, CM_HLS, CM_YUV};
-  enum eColorChannel {CC_RED, CC_GREEN, CC_BLUE, CC_HUE, CC_SATURATION, CC_LIGHT , CC_VALUE};
+enum Channel {
+    RED,
+    GREEN,
+    BLUE,
+    HUE,
+    SATURATION,
+    LIGHT,
+    VALUE
+};
 
-  class Color
-  {
-  public:
-    enum Format
-    {
-      COLORFORMAT_FLOAT = 0,
-      COLORFORMAT_HEX,
-      COLORFORMAT_INT,
-    };
+enum Format {
+    FLOAT,
+    HEX,
+    INT
+};
 
+struct RedGreenBlue;
+
+struct Color
+{
     Color();
     explicit Color (unsigned int c);
     Color(int r, int g, int b);
-    Color(float r, float g, float b);
-    Color(float r, float g, float b, float a);
-    Color *Clone() const;
+    Color(float r, float g, float b, float a = 1.0f);
+    Color(RedGreenBlue const& rgb, float a = 1.0f);
 
-    bool operator == (const Color &) const;
-    bool operator != (const Color &) const;
+    float red;
+    float green;
+    float blue;
+    float alpha;
+};
 
-    void SetRGB (float r, float g, float b);
-    void SetRGBA (float r, float g, float b, float a);
+bool operator == (Color const& lhs, Color const& rhs);
+bool operator != (Color const& lhs, Color const& rhs);
 
-    void ClampVal();
-    void Saturate();
-    void Complement();
-    Color Luminance();
-    Color OneMinusLuminance();
+Color ClampVal(Color const&);
+Color Saturate(Color const&);
+Color Complement(Color const&);
+Color Luminance(Color const&);
+Color OneMinusLuminance(Color const&);
+Color MakeOpaque(Color const&);
 
-    float GetRed() const;
-    float GetGreen() const;
-    float GetBlue() const;
-    float GetAlpha() const;
-    float R() const;
-    float G() const;
-    float B() const;
-    float A() const;
-    void SetRed (float r);
-    void SetGreen (float g);
-    void SetBlue (float b);
-    void SetAlpha (float a);
+Color operator + (Color const&, Color const&);
+Color operator + (float, Color const&);
+Color operator + (Color const&, float);
 
+Color operator - (Color const&, Color const&);
+Color operator - (float, Color const&);
+Color operator - (Color const&, float);
 
-    static Color RandomColor();
-    static unsigned int RandomColorINT();
+Color operator * (float, Color const&);
+Color operator * (Color const&, float);
 
-    friend Color operator + (Color color0, Color color1);
-    friend Color operator - (Color color0, Color color1);
-    friend Color operator + (float, Color color);
-    friend Color operator + (Color color, float);
-    friend Color operator - (float, Color color);
-    friend Color operator - (Color color, float);
-    friend Color operator * (float, Color color);
-    friend Color operator * (Color color, float);
+Color RandomColor();
+unsigned int RandomColorINT();
 
-  private:
-    float _red;
-    float _green;
-    float _blue;
-    float _alpha;
-  };
+struct HueSaturationValue;
+struct HueLightnessSaturation;
 
-  void RGBtoHSV ( float r, float g, float b, float &h, float &s, float &v );
-  void HSVtoRGB ( float &r, float &g, float &b, float h, float s, float v );
-  void HLStoRGB (float &r, float &g, float &b, float hue, float light, float satur);
-  void RGBtoHLS (float rr, float gg, float bb, float &hue, float &light, float &satur);
+struct RedGreenBlue
+{
+  RedGreenBlue(float r, float g, float b);
+  RedGreenBlue(HueSaturationValue const&);
+  RedGreenBlue(HueLightnessSaturation const&);
 
+  float red;
+  float green;
+  float blue;
+};
+
+struct HueSaturationValue
+{
+  HueSaturationValue(float h, float s, float v);
+  HueSaturationValue(Color const&);
+  HueSaturationValue(RedGreenBlue const&);
+
+  float hue;
+  float saturation;
+  float value;
+};
+
+struct HueLightnessSaturation
+{
+  HueLightnessSaturation(float h, float l, float s);
+  HueLightnessSaturation(Color const&);
+  HueLightnessSaturation(RedGreenBlue const&);
+
+  float hue;
+  float lightness;
+  float saturation;
+};
+
+//  void RGBtoHSV ( float r, float g, float b, float &h, float &s, float &v );
+//  void HSVtoRGB ( float &r, float &g, float &b, float h, float s, float v );
+//  void HLStoRGB (float &r, float &g, float &b, float hue, float light, float satur);
+//  void RGBtoHLS (float rr, float gg, float bb, float &hue, float &light, float &satur);
+
+}
+  using color::Color;
 }
 
 #endif // COLOR_H

@@ -140,7 +140,7 @@ namespace nux
         texxform0.uwrap = TEXWRAP_CLAMP;
         texxform0.vwrap = TEXWRAP_CLAMP;
         texxform0.FlipVCoord (true);
-        GetThreadGraphicsContext()->QRP_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (Colors::White) );
+        GetThreadGraphicsContext()->QRP_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (color::White) );
       }
 
       // go back to 2D in case that was changed by the client.

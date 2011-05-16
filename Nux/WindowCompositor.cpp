@@ -1369,7 +1369,7 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Colors::White);
+    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, color::White);
   }
 
   void WindowCompositor::SetCompositionRT()
@@ -1409,7 +1409,7 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Colors::White);
+    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, color::White);
   }
 
   void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity)

@@ -23,6 +23,7 @@
 #ifndef COLORPREVIEW_H
 #define COLORPREVIEW_H
 
+#include "NuxCore/Color.h"
 #include "NuxGraphics/GpuDevice.h"
 #include "NuxGraphics/GLDeviceObjects.h"
 #include "TimerProc.h"
@@ -40,7 +41,7 @@ namespace nux
   class ColorPreview : public View
   {
   public:
-    ColorPreview (float red = 0.0f, float green = 0.0f, float blue = 0.0f,  eColorModel colormodel = CM_RGB, NUX_FILE_LINE_PROTO);
+    ColorPreview(Color const& c, NUX_FILE_LINE_PROTO);
     ~ColorPreview();
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
@@ -49,14 +50,8 @@ namespace nux
 
     sigc::signal< void, ColorEditor * > sigColorChanged;
 
-    void SetRed (double r);
-    void SetGreen (double g);
-    void SetBlue (double b);
-
-    void SetRGB (double r, double g, double b);
-    void SetRGBA (double r, double g, double b, double a);
-    void SetColor (Color rgb);
-    Color GetRGBColor() const;
+    void SetColor(Color const& rgb);
+    Color const& GetRGBColor() const;
 
   private:
     void RecvTimer (void *v);

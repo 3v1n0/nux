@@ -38,7 +38,7 @@ void GridLayoutInit(nux::NThread* thread, void* InitData)
   nux::GridHLayout *grid_h_layout ((new nux::GridHLayout (NUX_TRACKER_LOCATION)));
   for (int i = 0; i < 30; i++)
   {
-    nux::ColorLayer color (nux::Color::RandomColor ());
+    nux::ColorLayer color (nux::color::RandomColor ());
     nux::TextureArea* texture_area = new nux::TextureArea ();
     texture_area->SetPaintLayer (&color);
     texture_area->SetVisible (a % 2);
@@ -60,7 +60,7 @@ void GridLayoutInit(nux::NThread* thread, void* InitData)
   nux::GridVLayout *grid_v_layout ((new nux::GridVLayout (NUX_TRACKER_LOCATION)));
   for (int i = 0; i < 30; i++)
   {
-    nux::ColorLayer color (nux::Color::RandomColor());
+    nux::ColorLayer color (nux::color::RandomColor());
     nux::TextureArea* texture_area = new nux::TextureArea();
     texture_area->SetPaintLayer (&color);
     texture_area->SetVisible (a % 2);

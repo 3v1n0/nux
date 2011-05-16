@@ -19,289 +19,183 @@
  *
  */
 
-
-#include "NuxCore.h"
-#include "Math/MathUtility.h"
-#include <cmath>
-#include "SystemTypes.h"
 #include "Color.h"
 
+#include <cmath>
+#include <cstdlib>
+#include <algorithm>
+
+
+#define NUX_RGBA_GET_ALPHA(rgba)      ((rgba) >> 24)
+#define NUX_RGBA_GET_RED(rgba)        (((rgba) >> 16) & 0xff)
+#define NUX_RGBA_GET_GREEN(rgba)      (((rgba) >> 8) & 0xff)
+#define NUX_RGBA_GET_BLUE(rgba)       ((rgba) & 0xff)
 
 namespace nux
 {
+namespace color
+{
+
   Color::Color()
-    : _red (0.0), _green (0.0), _blue (0.0f), _alpha (1.0f)
+    : red(0)
+    , green(0)
+    , blue(0)
+    , alpha(1)
   {
   }
 
+Color::Color(RedGreenBlue const& rgb, float a)
+    : red(rgb.red)
+    , green(rgb.green)
+    , blue(rgb.blue)
+    , alpha(a)
+{}
+
   Color::Color (unsigned int c)
+    : red(NUX_RGBA_GET_RED(c) / 255.f)
+    , green(NUX_RGBA_GET_GREEN(c) / 255.f)
+    , blue(NUX_RGBA_GET_BLUE(c) / 255.f)
+    , alpha(NUX_RGBA_GET_ALPHA(c) / 255.f)
   {
-    _red   = (float) (NUX_RGBA_GET_RED (c) ) * (1.f / 255.f);
-    _green = (float) (NUX_RGBA_GET_GREEN (c) ) * (1.f / 255.f);
-    _blue  = (float) (NUX_RGBA_GET_BLUE (c) ) * (1.f / 255.f);
-    _alpha = (float) (NUX_RGBA_GET_ALPHA (c) ) * (1.f / 255.f);
   }
 
   Color::Color(int r, int g, int b)
-    : _red(r / 255.f)
-    , _green(g / 255.f)
-    , _blue(b / 255.f)
-    , _alpha(1)
+    : red(r / 255.f)
+    , green(g / 255.f)
+    , blue(b / 255.f)
+    , alpha(1)
   {
-  }
-
-  Color::Color (float r, float g, float b)
-  {
-    _red = r;
-    _green = g;
-    _blue = b;
-    _alpha = 1.0f;
   }
 
   Color::Color (float r, float g, float b, float a)
+    : red(r)
+    , green(g)
+    , blue(b)
+    , alpha(a)
   {
-    _red = r;
-    _green = g;
-    _blue = b;
-    _alpha = a;
   }
 
-  Color *Color::Clone() const
-  {
-    return new Color (*this);
-  }
+bool operator == (const Color &lhs, const Color &rhs)
+{
+  return (lhs.red == rhs.red &&
+          lhs.green == rhs.green &&
+          lhs.blue == rhs.blue &&
+          lhs.alpha == rhs.alpha);
+}
 
-  float Color::GetRed() const
-  {
-    return _red;
-  };
+bool operator != (const Color &lhs, const Color &rhs)
+{
+  return !(lhs == rhs);
+}
 
-  float Color::GetGreen() const
-  {
-    return _green;
-  };
+Color ClampVal(Color const& c)
+{
+  return Color(std::max(0.0f, std::min(1.0f, c.red)),
+               std::max(0.0f, std::min(1.0f, c.green)),
+               std::max(0.0f, std::min(1.0f, c.blue)),
+               std::max(0.0f, std::min(1.0f, c.alpha)));
+}
 
-  float Color::GetBlue() const
-  {
-    return _blue;
-  };
+Color Luminance(Color const& c)
+{
+  float L = 0.30 * c.red + 0.59 * c.green + 0.11 * c.blue;
+  return Color(L, L, L);
+}
 
-  float Color::GetAlpha() const
-  {
-    return _alpha;
-  };
+Color OneMinusLuminance(Color const& c)
+{
+  float L = 1.0f - (0.30 * c.red + 0.59 * c.green + 0.11 * c.blue);
+  return Color(L, L, L);
+}
 
-  float Color::R() const
-  {
-    return _red;
-  };
+Color RandomColor()
+{
+  return Color(RandomColorINT());
+}
 
-  float Color::G() const
-  {
-    return _green;
-  };
+Color MakeOpaque(Color const& c)
+{
+  return Color(c.red, c.green, c.blue, 1.0f);
+}
 
-  float Color::B() const
-  {
-    return _blue;
-  };
+unsigned int RandomColorINT()
+{
+  // std::rand isn't defined to be more random than 2^15, so we need
+  // to generate the full unsigned in chunks.
+  return (((std::rand() % 255) << 24) |
+          ((std::rand() % 255) << 16) |
+          ((std::rand() % 255) << 8) |
+          (std::rand() % 255));
+}
 
-  float Color::A() const
-  {
-    return _alpha;
-  };
+Color operator + (Color const& lhs, Color const& rhs)
+{
+  return Color(lhs.red + rhs.red,
+               lhs.green + rhs.green,
+               lhs.blue + rhs.blue,
+               lhs.alpha + rhs.alpha);
+}
 
-  void Color::SetRed (float r)
-  {
-    _red = r;
-  };
-  void Color::SetGreen (float g)
-  {
-    _green = g;
-  };
-  void Color::SetBlue (float b)
-  {
-    _blue = b;
-  };
-  void Color::SetAlpha (float a)
-  {
-    _alpha = a;
-  };
+Color operator - (Color const& lhs, Color const& rhs)
+{
+  return Color(lhs.red - rhs.red,
+               lhs.green - rhs.green,
+               lhs.blue - rhs.blue,
+               lhs.alpha - rhs.alpha);
+}
 
-  bool Color::operator == (const Color &color) const
-  {
-    if ( (_red == color.R() )
-         && (_green == color.G() )
-         && (_blue == color.B() )
-         && (_alpha == color.A() )
-       )
-    {
-      return true;
-    }
+Color operator + (float scalar, Color const& c)
+{
+  return Color(c.red + scalar,
+               c.green + scalar,
+               c.blue + scalar,
+               c.alpha + scalar);
+}
 
-    return false;
-  }
+Color operator + (Color const& c, float scalar)
+{
+  return scalar + c;
+}
 
-  bool Color::operator!= (const Color &color) const
-  {
-    if ( (_red == color.R() )
-         && (_green == color.G() )
-         && (_blue == color.B() )
-         && (_alpha == color.A() )
-       )
-    {
-      return false;
-    }
-
-    return true;
-  }
-
-  void Color::SetRGB (float r, float g, float b)
-  {
-    _red   = r;
-    _green = g;
-    _blue  = b;
-    _alpha = 1.0f;
-  }
-
-  void Color::SetRGBA (float r, float g, float b, float a)
-  {
-    _red   = r;
-    _green = g;
-    _blue  = b;
-    _alpha = a;
-  }
-
-  /*void Color::set_rgba(t_uint32 val)
-  {
-    _red   = (float)RGBA_GET_RED(   val )*(1.f/255.f);
-    _green = (float)RGBA_GET_GREEN( val )*(1.f/255.f);
-    _blue  = (float)RGBA_GET_BLUE(  val )*(1.f/255.f);
-    _alpha = (float)RGBA_GET_ALPHA( val )*(1.f/255.f);
-  }*/
-
-  void Color::ClampVal()
-  {
-    _red = Max<float> (0.f, Min (1.f, _red) );
-    _green = Max<float> (0.f, Min (1.f, _green) );
-    _blue  = Max<float> (0.f, Min (1.f, _blue) );
-    _alpha = Max<float> (0.f, Min (1.f, _alpha) );
-  }
-
-  void Color::Saturate()
-  {
-    _red   = Min<float> (1.f, _red);
-    _green = Min<float> (1.f, _green);
-    _blue  = Min<float> (1.f, _blue);
-    _alpha = Min<float> (1.f, _alpha);
-  }
-
-  void Color::Complement()
-  {
-    _red   = 1.0f - _red;
-    _green = 1.0f - _green;
-    _blue  = 1.0f - _blue;
-    _alpha = 1.0f - _alpha;
-  }
-
-  Color Color::Luminance()
-  {
-    float L = 0.30 * _red + 0.59 * _green + 0.11 * _blue;
-    return Color (L, L, L, 1.0f);
-  }
-
-  Color Color::OneMinusLuminance()
-  {
-    float L = 1.0f - (0.30 * _red + 0.59 * _green + 0.11 * _blue);
-    return Color (L, L, L, 1.0f);
-  }
-
-  Color Color::RandomColor()
-  {
-    return Color (RandomUInt (255) / 255.0f, RandomUInt (255) / 255.0f, RandomUInt (255) / 255.0f, RandomUInt (255) / 255.0f);
-  }
-
-  unsigned int Color::RandomColorINT()
-  {
-    return (RandomUInt (255) << 24) | (RandomUInt (255) << 16) | (RandomUInt (255) << 8) | RandomUInt (255);
-  }
-
-  Color operator + (Color color0, Color color1)
-  {
-    Color result;
-    result.SetRed   (color0.R() + color1.R() );
-    result.SetGreen (color0.G() + color1.G() );
-    result.SetBlue  (color0.B() + color1.B() );
-    result.SetAlpha (color0.A() + color1.A() );
-    return result;
-  }
-
-  Color operator - (Color color0, Color color1)
-  {
-    Color result;
-    result.SetRed   (color0.R() - color1.R() );
-    result.SetGreen (color0.G() - color1.G() );
-    result.SetBlue  (color0.B() - color1.B() );
-    result.SetRed   (color0.A() - color1.A() );
-    return result;
-  }
-
-  Color operator + (float v, Color color)
-  {
-    Color result;
-    result.SetRed   (v + color.R() );
-    result.SetGreen (v + color.G() );
-    result.SetBlue  (v + color.B() );
-    result.SetAlpha (v + color.A() );
-    return result;
-  }
-
-  Color operator + (Color color, float v)
-  {
-    return v + color;
-  }
-
-  Color operator - (float v, Color color)
-  {
-    Color result;
-    result.SetRed   (v - color.R() );
-    result.SetGreen (v - color.G() );
-    result.SetBlue  (v - color.B() );
-    result.SetAlpha (v - color.A() );
-    return result;
-  }
-
-  Color operator - (Color color, float v)
-  {
-    Color result;
-    result.SetRed   (color.R() - v);
-    result.SetGreen (color.G() - v);
-    result.SetBlue  (color.B() - v);
-    result.SetAlpha (color.A() - v);
-    return result;
-  }
-
-  Color operator * (float v, Color color)
-  {
-    Color result;
-    result.SetRed   (v * color.R() );
-    result.SetGreen (v * color.G() );
-    result.SetBlue  (v * color.B() );
-    result.SetAlpha (v * color.A() );
-    return result;
-  }
-
-  Color operator * (Color color, float v)
-  {
-    return v * color;
-  }
+Color operator - (float scalar, Color const& c)
+{
+  return Color(scalar - c.red,
+               scalar - c.green,
+               scalar - c.blue,
+               scalar - c.alpha);
+}
 
 
-// The Hue/Saturation/Value model was created by A. R. Smith in 1978. It is based on such intuitive color characteristics as tint,
-// shade and tone (or family, purety and intensity). The coordinate system is cylindrical, and the colors are defined inside a hexcone.
-// The hue value H runs from 0 to 360º. The saturation S is the degree of strength or purity and is from 0 to 1. Purity is how much white
-// is added to the color, so S=1 makes the purest color (no white). Brightness V also ranges from 0 to 1, where 0 is the black.
-// There is no transformation matrix for RGB/HSV conversion, but the algorithm follows:
+Color operator - (Color const& c, float scalar)
+{
+  return Color(c.red - scalar,
+               c.green - scalar,
+               c.blue - scalar,
+               c.alpha - scalar);
+}
+
+Color operator * (float scalar, Color const& c)
+{
+  return Color(c.red * scalar,
+               c.green * scalar,
+               c.blue * scalar,
+               c.alpha * scalar);
+}
+
+Color operator * (Color const& c, float scalar)
+{
+  return scalar * c;
+}
+
+// The Hue/Saturation/Value model was created by A. R. Smith in 1978. It is
+// based on such intuitive color characteristics as tint, shade and tone (or
+// family, purety and intensity). The coordinate system is cylindrical, and
+// the colors are defined inside a hexcone.  The hue value H runs from 0 to
+// 360º. The saturation S is the degree of strength or purity and is from 0 to
+// 1. Purity is how much white is added to the color, so S=1 makes the purest
+// color (no white). Brightness V also ranges from 0 to 1, where 0 is the
+// black.  There is no transformation matrix for RGB/HSV conversion, but the
+// algorithm follows:
 
 // r,g,b values are from 0 to 1
 // h = [0,360], s = [0,1], v = [0,1]
@@ -311,8 +205,8 @@ namespace nux
   {
     float min, max, delta;
 
-    min = Min<float> ( Min<float> (r, g), b );
-    max = Max<float> ( Max<float> (r, g), b );
+    min = std::min(std::min(r, g), b);
+    max = std::max(std::max(r, g), b);
     v = max;				// v
 
     delta = max - min;
@@ -583,4 +477,55 @@ namespace nux
     s = (int) (satur * 255);
   }
 
+
+RedGreenBlue::RedGreenBlue(float r, float g, float b)
+  : red(r)
+  , green(g)
+  , blue(b)
+{}
+
+RedGreenBlue::RedGreenBlue(HueSaturationValue const& hsv)
+{
+  HSVtoRGB(red, blue, green, hsv.hue, hsv.saturation, hsv.value);
+}
+
+RedGreenBlue::RedGreenBlue(HueLightnessSaturation const& hls)
+{
+  HLStoRGB(red, blue, green, hls.hue, hls.lightness, hls.saturation);
+}
+
+HueSaturationValue::HueSaturationValue(float h, float s, float v)
+  : hue(h)
+  , saturation(s)
+  , value(v)
+{}
+
+HueSaturationValue::HueSaturationValue(RedGreenBlue const& rgb)
+{
+  RGBtoHSV(rgb.red, rgb.green, rgb.blue, hue, saturation, value);
+}
+
+HueSaturationValue::HueSaturationValue(Color const& c)
+{
+  RGBtoHSV(c.red, c.green, c.blue, hue, saturation, value);
+}
+
+HueLightnessSaturation::HueLightnessSaturation(float h, float l, float s)
+  : hue(h)
+  , lightness(l)
+  , saturation(s)
+{}
+
+HueLightnessSaturation::HueLightnessSaturation(RedGreenBlue const& rgb)
+{
+  RGBtoHLS(rgb.red, rgb.green, rgb.blue, hue, lightness, saturation);
+}
+
+HueLightnessSaturation::HueLightnessSaturation(Color const& c)
+{
+  RGBtoHLS(c.red, c.green, c.blue, hue, lightness, saturation);
+}
+
+
+}
 }
