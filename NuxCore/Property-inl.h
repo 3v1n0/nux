@@ -85,17 +85,23 @@ inline void Introspectable::add_property(std::string const& name,
 inline bool Introspectable::set_property(std::string const& name,
                                          const char* value)
 {
-    return properties_[name]->set_value(value);
+    PropertyContainer::iterator i = properties_.find(name);
+    if (i == properties_.end())
+        return false;
+    else
+        return i->second->set_value(value);
 }
 
 template <typename T>
 bool Introspectable::set_property(std::string const& name, T const& value)
 {
-    // TODO: use boost::serialisation for a binary format?
-    // TODO: use an iterator to check the property exists.
-    // find the property and set the value...
-    // make this nicer
-    return properties_[name]->set_value(type::PropertyTrait<T>::to_string(value));
+    PropertyContainer::iterator i = properties_.find(name);
+    if (i == properties_.end())
+        return false;
+    else
+    {
+        return i->second->set_value(type::PropertyTrait<T>::to_string(value));
+    }
 }
 
 template <typename T>
@@ -149,7 +155,7 @@ template <typename T>
 typename Property<T>::ValueType const& Property<T>::operator=(typename Property<T>::ValueType const& value)
 {
     set(value);
-    // there are no arguments to ‘get’ that depend on a template parameter,
+    // There are no arguments to ‘get’ that depend on a template parameter,
     // so we explicitly specify Base.
     return Base::get();
 }

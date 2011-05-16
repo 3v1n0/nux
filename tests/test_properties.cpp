@@ -192,6 +192,10 @@ TEST(TestIntrospectableProperty, TestPropertyAccessByName) {
   EXPECT_EQ(42, props.index());
   EXPECT_EQ("42", props.get_property<std::string>("index"));
   EXPECT_EQ(42, props.get_property<int>("index"));
+
+  assigned = props.set_property("non-existant", "hello");
+  EXPECT_FALSE(assigned);
+
 }
 
 
