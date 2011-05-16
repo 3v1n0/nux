@@ -2013,7 +2013,7 @@ namespace nux
   void TableCtrl::OnResizeHeaderMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
   {
     //m_column_header_preview = m_column_header;
-    m_point0.Set (x, y);
+    m_point0 = Point(x, y);
   }
 
   void TableCtrl::OnResizeHeaderMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
@@ -2195,7 +2195,7 @@ namespace nux
 
   void TableCtrl::OnResizeRowMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
   {
-    m_point1.Set (x, y);
+    m_point1 = Point(x, y);
 
     char s[42];
     sprintf (s, "%d ", header_pos);

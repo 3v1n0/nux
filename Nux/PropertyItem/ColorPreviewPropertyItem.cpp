@@ -102,7 +102,7 @@ namespace nux
   int ColorPreviewPropertyItem::GetItemBestHeight()
   {
     Size sz = GetMinimumSize();
-    return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
+    return sz.height + 2 * PROPERTY_BORDER_Y;
   }
 
   ColorPreviewPropertyItem *ColorPreviewPropertyItem::CreateFromXML (const TiXmlElement *elementxml, NodeNetCom *parent, const char *Name, int id)
