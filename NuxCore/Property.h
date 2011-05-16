@@ -30,8 +30,7 @@ public:
   , notify_(true)
   {}
 
-  template <typename T2>
-  VALUE_TYPE& operator=(const T2& value)
+  VALUE_TYPE& operator=(VALUE_TYPE const& value)
   {
       bool is_changed = false;
       if (value != value_) {
@@ -70,9 +69,7 @@ private:
 };
 
 
-
-
-class property_base
+class PropertyBase
 {
 public:
   virtual bool set_value(std::string const& serialized_form) = 0;
@@ -107,7 +104,7 @@ public:
       return result.first;
     }
 
-  void add_property(std::string const& name, property_base* property)
+  void add_property(std::string const& name, PropertyBase* property)
     {
       // check to see if it exists and if it does barf horribly as we can't
       // have two properties with the same name;
@@ -115,7 +112,7 @@ public:
     }
 
 private:
-  typedef std::map<std::string, property_base*> PropertyContainer;
+  typedef std::map<std::string, PropertyBase*> PropertyContainer;
   PropertyContainer properties_;
 };
 
@@ -123,7 +120,7 @@ private:
 
 
 template <typename T, typename TRAITS = type::Assignable<T> >
-class property : public property_base
+class property : public PropertyBase
 {
 public:
   property(introspectable* owner, std::string const& name) : name_(name), value_(T())

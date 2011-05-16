@@ -110,7 +110,7 @@ TEST(TestConnectableProperty, TestAssignmentNotification) {
   EXPECT_EQ(1, recorder.changed_values.size());
 }
 
-TEST(TestConnectableProperty, TestFreezeAndThaw) {
+TEST(TestConnectableProperty, TestEnableAndDisableNotification) {
   nux::ConnectableProperty<std::string> string_prop;
   ChangeRecorder<std::string> recorder;
   string_prop.changed.connect(
