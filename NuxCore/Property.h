@@ -29,7 +29,7 @@ public:
   , notify_(true)
   {}
 
-  ValueType& operator=(ValueType const& value)
+  ValueType const& operator=(ValueType const& value)
   {
       set(value);
       return value_;
@@ -78,6 +78,11 @@ public:
         }
       }
   }
+
+private:
+  // Properties themselves are not copyable.
+  ConnectableProperty(ConnectableProperty const&);
+  ConnectableProperty& operator=(ConnectableProperty const&);
 
 private:
   ValueType value_;
@@ -138,6 +143,7 @@ class Property : public ConnectableProperty<T>, public PropertyBase
 {
 public:
     typedef ConnectableProperty<T> Base;
+    typedef typename Base::ValueType ValueType;
     typedef typename Base::TraitType TraitType;
 
   Property(Introspectable* owner, std::string const& name)
@@ -156,7 +162,7 @@ public:
 
   virtual bool set_value(std::string const& serialized_form)
     {
-        std::pair<T, bool> result = TraitType::from_string(serialized_form);
+        std::pair<ValueType, bool> result = TraitType::from_string(serialized_form);
         if (result.second) {
           set(result.first);
         }
@@ -166,6 +172,15 @@ public:
     {
       return TraitType::to_string(Base::get());
     }
+
+  // Operator assignment is not inherited nicely, so redeclare it here.
+  ValueType const& operator=(ValueType const& value)
+  {
+      set(value);
+      // there are no arguments to ‘get’ that depend on a template parameter,
+      // so we explicitly specify Base.
+      return Base::get();
+  }
 
 private:
   std::string name_;

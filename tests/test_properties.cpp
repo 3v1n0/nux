@@ -120,4 +120,37 @@ TEST(TestConnectableProperty, TestEnableAndDisableNotification) {
   EXPECT_EQ("New value", recorder.changed_values[0]);
 }
 
+struct TestProperties : nux::Introspectable
+{
+  TestProperties()
+    : name(this, "name")
+    , index(this, "index")
+    {}
+
+  nux::Property<std::string> name;
+  nux::Property<int> index;
+};
+
+TEST(TestIntrospectableProperty, TestSimplePropertyAccess) {
+  TestProperties props;
+  ChangeRecorder<std::string> recorder;
+  props.name.changed.connect(
+    sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
+  EXPECT_EQ("", props.name());
+  EXPECT_EQ(0, props.index());
+  props.name = "Testing";
+  props.index = 5;
+  EXPECT_EQ("Testing", props.name());
+  props.name("New Value");
+  EXPECT_EQ("New Value", props.name());
+  props.name.set("Another");
+  EXPECT_EQ("Another", props.name());
+
+  EXPECT_EQ(3, recorder.changed_values.size());
+  EXPECT_EQ("Testing", recorder.changed_values[0]);
+  EXPECT_EQ("New Value", recorder.changed_values[1]);
+  EXPECT_EQ("Another", recorder.changed_values[2]);
+
+}
+
 }
