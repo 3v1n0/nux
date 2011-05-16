@@ -137,7 +137,6 @@ if(WIN32)
     NMacros.h
     NMemory.cpp
     NMemory.h
-    NNamespace.h
     NObjectType.cpp
     NObjectType.h
     NOutputDevice.cpp
@@ -283,7 +282,6 @@ elseif(UNIX)
     NMacros.h
     NMemory.cpp
     NMemory.h
-    NNamespace.h
     NObjectType.cpp
     NObjectType.h
     NOutputDevice.cpp

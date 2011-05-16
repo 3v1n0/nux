@@ -144,7 +144,6 @@ source_h = \
   $(srcdir)/StreamBuffer.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
-  $(srcdir)/Namespace.h \
   $(srcdir)/SystemGNU.h \
   $(srcdir)/NuxCore.h \
   $(srcdir)/FileName.h \
