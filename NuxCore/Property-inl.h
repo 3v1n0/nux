@@ -107,7 +107,11 @@ bool Introspectable::set_property(std::string const& name, T const& value)
 template <typename T>
 T Introspectable::get_property(std::string const& name, T* foo)
 {
-    std::string s = properties_[name]->get_serialized_value();
+    PropertyContainer::iterator i = properties_.find(name);
+    if (i == properties_.end())
+        return T();
+
+    std::string s = i->second->get_serialized_value();
     std::pair<T, bool> result = type::PropertyTrait<T>::from_string(s);
     // If this is called with a template type that the property does not
     // support nice conversion to, you'll get no error, but will get

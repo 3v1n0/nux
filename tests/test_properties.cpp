@@ -193,6 +193,12 @@ TEST(TestIntrospectableProperty, TestPropertyAccessByName) {
   EXPECT_EQ("42", props.get_property<std::string>("index"));
   EXPECT_EQ(42, props.get_property<int>("index"));
 
+  // Gettin a non-existant property returns a default constructed instance.
+  std::string surname = props.get_property<std::string>("surname");
+  EXPECT_EQ("", surname);
+  int foo = props.get_property<int>("foo");
+  EXPECT_EQ(0, foo);
+
   assigned = props.set_property("non-existant", "hello");
   EXPECT_FALSE(assigned);
 
