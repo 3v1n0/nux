@@ -19,65 +19,24 @@ public:
   typedef typename type::PropertyTrait<VALUE_TYPE> TraitType;
   typedef typename TraitType::ValueType ValueType;
 
-  ConnectableProperty()
-  : value_(ValueType())
-  , notify_(true)
-  {}
+  ConnectableProperty();
+  ConnectableProperty(VALUE_TYPE const& initial);
 
-  ConnectableProperty(ValueType const& initial)
-  : value_(initial)
-  , notify_(true)
-  {}
-
-  ValueType const& operator=(ValueType const& value)
-  {
-      set(value);
-      return value_;
-  }
-
-  operator ValueType const & () const {
-    return value_;
-  }
+  VALUE_TYPE const& operator=(VALUE_TYPE const& value);
+  operator VALUE_TYPE const & () const;
 
   // function call access
-  ValueType const& operator()() const
-  {
-    return value_;
-  }
-
-  // function call access
-  void operator()(ValueType const& value)
-  {
-      set(value);
-  }
-
-  sigc::signal<void, ValueType const&> changed;
-
-  void disable_notifications()
-  {
-    notify_ = false;
-  }
-
-  void enable_notifications()
-  {
-    notify_ = true;
-  }
+  VALUE_TYPE const& operator()() const;
+  void operator()(VALUE_TYPE const& value);
 
   // get and set access
-  ValueType const& get() const
-  {
-      return value_;
-  }
+  VALUE_TYPE const& get() const;
+  void set(VALUE_TYPE const& value);
 
-  void set(ValueType const& value)
-  {
-      if (value != value_) {
-        value_ = value;
-        if (notify_) {
-          changed.emit(value_);
-        }
-      }
-  }
+  sigc::signal<void, VALUE_TYPE const&> changed;
+
+  void disable_notifications();
+  void enable_notifications();
 
 private:
   // Properties themselves are not copyable.
@@ -85,7 +44,7 @@ private:
   ConnectableProperty& operator=(ConnectableProperty const&);
 
 private:
-  ValueType value_;
+  VALUE_TYPE value_;
   bool notify_;
 };
 
@@ -94,50 +53,32 @@ class PropertyBase
 {
 public:
   virtual bool set_value(std::string const& serialized_form) = 0;
-  virtual std::string get_serialized_value() = 0;
+  virtual std::string get_serialized_value() const = 0;
 };
 
 
 class Introspectable
 {
 public:
+  Introspectable();
   // Needs to have a container of properties
 
   /// If the property was not able to be set with the value, the method
   /// returns false.
-  bool set_property(std::string const& name, const char* value)
-  {
-    return properties_[name]->set_value(value);
-  }
+  bool set_property(std::string const& name, const char* value);
 
   template <typename T>
-  bool set_property(std::string const& name, T const& value)
-    {
-      // TODO: use boost::serialisation for a binary format?
-      // TODO: use an iterator to check the property exists.
-      // find the property and set the value...
-      // make this nicer
-      return properties_[name]->set_value(
-          type::PropertyTrait<T>::to_string(value));
-   }
+  bool set_property(std::string const& name, T const& value);
 
   template <typename T>
-  T get_property(std::string const& name, T* foo = 0)
-    {
-      std::string s = properties_[name]->get_serialized_value();
-      std::pair<T, bool> result = type::PropertyTrait<T>::from_string(s);
-      // If this is called with a template type that the property does not
-      // support nice conversion to, you'll get no error, but will get
-      // a default constructed T.  We could use an exception here.
-      return result.first;
-    }
+  T get_property(std::string const& name, T* foo = 0);
 
-  void add_property(std::string const& name, PropertyBase* property)
-    {
-      // check to see if it exists and if it does barf horribly as we can't
-      // have two properties with the same name;
-      properties_[name] = property;
-    }
+  void add_property(std::string const& name, PropertyBase* property);
+
+private:
+  // Introspectable objects are not copyable.
+  Introspectable(Introspectable const&);
+  Introspectable& operator=(Introspectable const&);
 
 private:
   typedef std::map<std::string, PropertyBase*> PropertyContainer;
@@ -149,45 +90,18 @@ template <typename T>
 class Property : public ConnectableProperty<T>, public PropertyBase
 {
 public:
-    typedef ConnectableProperty<T> Base;
-    typedef typename Base::ValueType ValueType;
-    typedef typename Base::TraitType TraitType;
+  typedef ConnectableProperty<T> Base;
+  typedef typename Base::ValueType ValueType;
+  typedef typename Base::TraitType TraitType;
 
-  Property(Introspectable* owner, std::string const& name)
-    : Base()
-    , name_(name)
-    {
-      owner->add_property(name, this);
-    }
+  Property(Introspectable* owner, std::string const& name);
+  Property(Introspectable* owner, std::string const& name, T const& initial);
 
-  Property(Introspectable* owner, std::string const& name, T const& initial)
-    : Base(initial)
-    , name_(name)
-    {
-        owner->add_property(name, this);
-    }
-
-  virtual bool set_value(std::string const& serialized_form)
-    {
-        std::pair<ValueType, bool> result = TraitType::from_string(serialized_form);
-        if (result.second) {
-          set(result.first);
-        }
-        return result.second;
-    }
-  virtual std::string get_serialized_value()
-    {
-      return TraitType::to_string(Base::get());
-    }
+  virtual bool set_value(std::string const& serialized_form);
+  virtual std::string get_serialized_value() const;
 
   // Operator assignment is not inherited nicely, so redeclare it here.
-  ValueType const& operator=(ValueType const& value)
-  {
-      set(value);
-      // there are no arguments to ‘get’ that depend on a template parameter,
-      // so we explicitly specify Base.
-      return Base::get();
-  }
+  ValueType const& operator=(ValueType const& value);
 
 private:
   std::string name_;
@@ -196,5 +110,7 @@ private:
 
 
 }
+
+#include "Property-inl.h"
 
 #endif
