@@ -52,7 +52,7 @@ gtest_nux_core_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_LDFLAGS = \
-  -lpthread -lgtest
+  -lpthread -lgtest -lgtest_main
 
 
 #run make test as part of make check

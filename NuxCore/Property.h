@@ -63,6 +63,7 @@ public:
     notify_ = true;
   }
 
+  // get and set access
   ValueType const& get() const
   {
       return value_;
