@@ -24,7 +24,6 @@
 #include "Math/MathUtility.h"
 #include <cmath>
 #include "SystemTypes.h"
-#include "ColorFunctions.h"
 #include "Color.h"
 
 

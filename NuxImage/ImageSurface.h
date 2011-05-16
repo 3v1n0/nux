@@ -151,8 +151,6 @@ namespace nux
     */
     Color AverageColor();
 
-    void GaussianBlur (int radius);
-
   private:
     void FlipDXTVertical();
     void SwapBlocks (void *byte1, void *byte2, t_s32 size);
