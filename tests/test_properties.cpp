@@ -102,7 +102,7 @@ TEST(TestConnectableProperty, TestAssignmentNotification) {
   ChangeRecorder<std::string> recorder;
   string_prop.changed.connect(
     sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
-  string_prop = std::string("Hello world");
+  string_prop = "Hello world" ;
   EXPECT_EQ(1, recorder.changed_values.size());
   EXPECT_EQ("Hello world", recorder.changed_values[0]);
   // No notification if not changed.
@@ -116,14 +116,14 @@ TEST(TestConnectableProperty, TestEnableAndDisableNotification) {
   string_prop.changed.connect(
     sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
   string_prop.disable_notifications();
-  string_prop = std::string("Hello world");
+  string_prop = "Hello world" ;
   EXPECT_EQ(0, recorder.changed_values.size());
   string_prop.enable_notifications();
   // No notification if not changed.
-  string_prop = std::string("Hello world");
+  string_prop = "Hello world" ;
   EXPECT_EQ(0, recorder.changed_values.size());
 
-  string_prop = std::string("New value");
+  string_prop = "New value" ;
   EXPECT_EQ(1, recorder.changed_values.size());
   EXPECT_EQ("New value", recorder.changed_values[0]);
 }
