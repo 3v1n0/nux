@@ -150,7 +150,49 @@ TEST(TestIntrospectableProperty, TestSimplePropertyAccess) {
   EXPECT_EQ("Testing", recorder.changed_values[0]);
   EXPECT_EQ("New Value", recorder.changed_values[1]);
   EXPECT_EQ("Another", recorder.changed_values[2]);
-
 }
+
+TEST(TestIntrospectableProperty, TestPropertyAccessByName) {
+  TestProperties props;
+  ChangeRecorder<std::string> name_recorder;
+  ChangeRecorder<int> index_recorder;
+  props.name.changed.connect(
+    sigc::mem_fun(name_recorder, &ChangeRecorder<std::string>::value_changed));
+  props.index.changed.connect(
+    sigc::mem_fun(index_recorder, &ChangeRecorder<int>::value_changed));
+
+  props.name = "Testing";
+  props.index = 5;
+  EXPECT_EQ("Testing", props.get_property<std::string>("name"));
+  EXPECT_EQ("5", props.get_property<std::string>("index"));
+  EXPECT_EQ(5, props.get_property<int>("index"));
+
+  bool assigned = props.set_property("name", "New value");
+  EXPECT_TRUE(assigned);
+  EXPECT_EQ("New value", props.name());
+  EXPECT_EQ("New value", props.get_property<std::string>("name"));
+  // A little dangreous, but legal.
+  EXPECT_EQ(0, props.get_property<int>("name"));
+
+  assigned = props.set_property("name", 42);
+  EXPECT_TRUE(assigned);
+  EXPECT_EQ("42", props.name());
+  EXPECT_EQ("42", props.get_property<std::string>("name"));
+  // A little dangreous, but legal.
+  EXPECT_EQ(42, props.get_property<int>("name"));
+
+  assigned = props.set_property("index", 42);
+  EXPECT_TRUE(assigned);
+  EXPECT_EQ(42, props.index());
+  EXPECT_EQ("42", props.get_property<std::string>("index"));
+  EXPECT_EQ(42, props.get_property<int>("index"));
+
+  assigned = props.set_property("index", "hello");
+  EXPECT_FALSE(assigned);
+  EXPECT_EQ(42, props.index());
+  EXPECT_EQ("42", props.get_property<std::string>("index"));
+  EXPECT_EQ(42, props.get_property<int>("index"));
+}
+
 
 }

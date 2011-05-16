@@ -105,6 +105,11 @@ public:
 
   /// If the property was not able to be set with the value, the method
   /// returns false.
+  bool set_property(std::string const& name, const char* value)
+  {
+    return properties_[name]->set_value(value);
+  }
+
   template <typename T>
   bool set_property(std::string const& name, T const& value)
     {
@@ -121,7 +126,9 @@ public:
     {
       std::string s = properties_[name]->get_serialized_value();
       std::pair<T, bool> result = type::PropertyTrait<T>::from_string(s);
-      // assert(result.second); -- should never fail, but we don't want an assert.
+      // If this is called with a template type that the property does not
+      // support nice conversion to, you'll get no error, but will get
+      // a default constructed T.  We could use an exception here.
       return result.first;
     }
 
