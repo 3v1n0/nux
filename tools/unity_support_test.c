@@ -17,11 +17,13 @@
 // are based on what's done in Compiz (core/plugins/opengl/src/screen.cpp).
 //
 // $ gcc -std=c99 unity_support_test.c -o unity_support_test `pkg-config
-// > --cflags --libs gl x11 libpci`
+// > --cflags --libs gl x11 libpci xcomposite xdamage`
 
 #include <pci/pci.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/extensions/Xcomposite.h>
+#include <X11/extensions/Xdamage.h>
 #include <GL/gl.h>
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>
@@ -183,9 +185,9 @@ int main (int argc, char* argv[]) {
   char* display_name = NULL;
   int screen;
   Window root;
-  XVisualInfo *vinfos;
-  Display* display;
-  GLXContext context;
+  XVisualInfo *vinfos = NULL;
+  Display* display = NULL;
+  GLXContext context = NULL;
   char *vendor, *renderer, *version;
   int result, major, minor;
 
@@ -245,6 +247,40 @@ int main (int argc, char* argv[]) {
   vinfos = XGetVisualInfo (display, VisualIDMask, &vinfo_template, &nr_vinfos);
   if (nr_vinfos == 0) {
     error = "unable to get visual informations for default visual";
+    result = 1;
+    goto abort;
+  }
+
+  // Check for XComposite
+  int composite_major, composite_minor;
+  unsigned int composite_tmp;
+
+  if (!XQueryExtension (display, COMPOSITE_NAME, &composite_tmp, &composite_tmp, &composite_tmp))
+  {
+    error = "no composite extension";
+    result = 1;
+    goto abort;
+  }
+
+  XCompositeQueryVersion (display, &composite_major, &composite_minor);
+
+  if (composite_major == 0 && composite_minor < 2)
+  {
+    error = "old composite extension";
+    result = 1;
+    goto abort;
+  }
+
+  if (!XDamageQueryExtension (display, &composite_tmp, &composite_tmp))
+  {
+    error = "no damage extension";
+    result = 1;
+    goto abort;
+  }
+
+  if (!XFixesQueryExtension (display, &composite_tmp, &composite_tmp))
+  {
+    error = "no fixes extension";
     result = 1;
     goto abort;
   }
