@@ -10,48 +10,48 @@
 namespace nux {
 
 // TODO:
-//  range type trait checks
 //  object serialisation
 
-template <typename VALUE_TYPE,
-          template <typename> class TRAITS = type::Assignable>
+template <typename VALUE_TYPE>
 class ConnectableProperty
 {
 public:
-  typedef TRAITS<VALUE_TYPE> TraitsType;
+  typedef typename type::PropertyTrait<VALUE_TYPE> TraitType;
+  typedef typename TraitType::ValueType ValueType;
 
   ConnectableProperty()
-  : value_(VALUE_TYPE())
+  : value_(ValueType())
   , notify_(true)
   {}
 
-  ConnectableProperty(VALUE_TYPE const& initial)
+  ConnectableProperty(ValueType const& initial)
   : value_(initial)
   , notify_(true)
   {}
 
-  VALUE_TYPE& operator=(VALUE_TYPE const& value)
+  ValueType& operator=(ValueType const& value)
   {
-      bool is_changed = false;
-      if (value != value_) {
-        is_changed = TraitsType::assign(value_, value);
-      }
-      if (is_changed && notify_) {
-        changed.emit(value_);
-      }
+      set(value);
       return value_;
   }
 
-  operator VALUE_TYPE const & () const {
+  operator ValueType const & () const {
     return value_;
   }
 
-  VALUE_TYPE const& value() const
+  // function call access
+  ValueType const& operator()() const
   {
     return value_;
   }
 
-  sigc::signal<void, VALUE_TYPE const&> changed;
+  // function call access
+  void operator()(ValueType const& value)
+  {
+      set(value);
+  }
+
+  sigc::signal<void, ValueType const&> changed;
 
   void disable_notifications()
   {
@@ -63,8 +63,23 @@ public:
     notify_ = true;
   }
 
+  ValueType const& get() const
+  {
+      return value_;
+  }
+
+  void set(ValueType const& value)
+  {
+      if (value != value_) {
+        value_ = value;
+        if (notify_) {
+          changed.emit(value_);
+        }
+      }
+  }
+
 private:
-  VALUE_TYPE value_;
+  ValueType value_;
   bool notify_;
 };
 
@@ -77,7 +92,7 @@ public:
 };
 
 
-class introspectable
+class Introspectable
 {
 public:
   // Needs to have a container of properties
@@ -92,14 +107,14 @@ public:
       // find the property and set the value...
       // make this nicer
       return properties_[name]->set_value(
-          type::Serializable<T>::to_string(value));
+          type::PropertyTrait<T>::to_string(value));
    }
 
   template <typename T>
   T get_property(std::string const& name, T* foo = 0)
     {
       std::string s = properties_[name]->get_serialized_value();
-      std::pair<T, bool> result = type::Serializable<T>::from_string(s);
+      std::pair<T, bool> result = type::PropertyTrait<T>::from_string(s);
       // assert(result.second); -- should never fail, but we don't want an assert.
       return result.first;
     }
@@ -117,57 +132,42 @@ private:
 };
 
 
-
-
-template <typename T, typename TRAITS = type::Assignable<T> >
-class property : public PropertyBase
+template <typename T>
+class Property : public ConnectableProperty<T>, public PropertyBase
 {
 public:
-  property(introspectable* owner, std::string const& name) : name_(name), value_(T())
+    typedef ConnectableProperty<T> Base;
+    typedef typename Base::TraitType TraitType;
+
+  Property(Introspectable* owner, std::string const& name)
+    : Base()
+    , name_(name)
     {
       owner->add_property(name, this);
     }
-  property(introspectable* owner, std::string const& name, T const& initial) : name_(name), value_(initial)
+
+  Property(Introspectable* owner, std::string const& name, T const& initial)
+    : Base(initial)
+    , name_(name)
     {
-      owner->add_property(name, this);
+        owner->add_property(name, this);
     }
-
-  T & operator = (const T &i) {
-    return value_ = i;
-  }
-
-  // Think about a traits type that is used for assignment to allow
-  // the specialisation for std::string to get assignment from char*
-  // but disallow the general case.
-
-  // This template class member function template serves the purpose to make
-  // typing more strict. Assignment to this is only possible with exact identical
-  // types.
-  template <typename T2> T2 & operator = (const T2 &i) {
-    T2 &guard = value_;
-    throw guard; // Never reached.
-  }
-
-  operator T const & () const {
-    return value_;
-  }
 
   virtual bool set_value(std::string const& serialized_form)
     {
-        std::pair<T, bool> result = TRAITS::from_string(serialized_form);
+        std::pair<T, bool> result = TraitType::from_string(serialized_form);
         if (result.second) {
-          value_ = result.first;
+          set(result.first);
         }
         return result.second;
     }
   virtual std::string get_serialized_value()
     {
-      return TRAITS::to_string(value_);
+      return TraitType::to_string(Base::get());
     }
 
 private:
   std::string name_;
-  T value_;
 };
 
 
