@@ -83,8 +83,8 @@ namespace nux
     {
       Color color0 = m_Color;
       Color color1 = m_Color;
-      color0.SetAlpha (m_Alpha0);
-      color1.SetAlpha (m_Alpha1);
+      color0.alpha = m_Alpha0;
+      color1.alpha = m_Alpha1;
       GetPainter().Draw2DLine (GfxContext, base.x, y0, base.x + m_BorderSize, y0, color0, color1);
       GetPainter().Draw2DLine (GfxContext, base.x + m_BorderSize, y0, base.x + base.GetWidth() - m_BorderSize, y0, color1, color1);
       GetPainter().Draw2DLine (GfxContext, base.x + base.GetWidth() - m_BorderSize, y0, base.x + base.GetWidth(), y0, color1, color0);
@@ -92,7 +92,7 @@ namespace nux
     else
     {
       Color color1 = m_Color;
-      color1.SetAlpha (m_Alpha1);
+      color1.alpha = m_Alpha1;
       GetPainter().Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, color1, color1);
     }
 

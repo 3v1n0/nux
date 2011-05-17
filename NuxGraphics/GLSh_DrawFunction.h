@@ -25,6 +25,7 @@
 
 #include "GLShader.h"
 #include "GLShaderParameter.h"
+#include "NuxCore/Color.h"
 #include "NuxCore/Math/Matrix4.h"
 #include "GLDeviceObjects.h"
 
@@ -39,15 +40,13 @@ namespace nux
     GLSh_DrawFunction();
     ~GLSh_DrawFunction();
 
-    void CacheShader();
-    void SetBackgroundColor (float R, float G, float B, float A);
-    void SetBackgroundColor (Color color);
+    void SetBackgroundColor(Color const& color);
     void SetTextureFunction (ObjectPtr<IOpenGLBaseTexture> device_texture);
     void Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight);
     void SetScreenPositionOffset (float x, float y);
 
   private:
-    float _R, _G, _B, _A;
+    Color background_color_;
     ObjectPtr<IOpenGLShaderProgram> sprog;
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmProg;
 

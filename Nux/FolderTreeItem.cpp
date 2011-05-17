@@ -88,11 +88,11 @@ namespace nux
 
           if (isOpen() )
           {
-            GfxContext.QRP_1Tex (IconGeometry.x, IconGeometry.y, IconGeometry.width, IconGeometry.height, FolderOpenIcon->GetDeviceTexture(), texxform, nux::Colors::White);
+            GfxContext.QRP_1Tex (IconGeometry.x, IconGeometry.y, IconGeometry.width, IconGeometry.height, FolderOpenIcon->GetDeviceTexture(), texxform, nux::color::White);
           }
           else
           {
-            GfxContext.QRP_1Tex (IconGeometry.x, IconGeometry.y, IconGeometry.width, IconGeometry.height, FolderClosedIcon->GetDeviceTexture(), texxform, nux::Colors::White);
+            GfxContext.QRP_1Tex (IconGeometry.x, IconGeometry.y, IconGeometry.width, IconGeometry.height, FolderClosedIcon->GetDeviceTexture(), texxform, nux::color::White);
           }
 
           GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);

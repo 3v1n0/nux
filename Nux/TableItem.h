@@ -79,37 +79,21 @@ namespace nux
     virtual int GetItemBestHeight();
     virtual void SetPropertyItemWidth();
 
-    void SetItemTextColor (const Color &color)
+    void SetItemTextColor (Color const& color)
     {
-      m_PropertyTextColor = color.Clone();
+      m_PropertyTextColor = color;
     }
 
-    void SetItemTextColor (const Color *color)
+    Color const& GetItemTextColor() const
     {
-      if (color == 0)
-      {
-        NUX_SAFE_DELETE (m_PropertyTextColor);
-      }
-      else
-      {
-        NUX_SAFE_DELETE (m_PropertyTextColor);
-        m_PropertyTextColor = color->Clone();
-      }
+      return m_PropertyTextColor;
     }
 
-    const Color &GetItemTextColor()
-    {
-      if (m_PropertyTextColor)
-        return *m_PropertyTextColor;
-      else
-        return GPropertyItemTextColor0;
-    }
-
-    virtual void SetBackgroundColor (Color c)
+    virtual void SetBackgroundColor(Color const& c)
     {
       m_ItemBackgroundColor = c;
     }
-    Color GetBackgroundColor() const
+    Color const& GetBackgroundColor() const
     {
       return m_ItemBackgroundColor;
     }
@@ -215,7 +199,7 @@ namespace nux
 
     bool m_PropertyRedraw;
     Color m_ItemBackgroundColor;
-    Color *m_PropertyTextColor;
+    Color m_PropertyTextColor;
 
     bool  m_AlwaysShowOpeningButton;
 

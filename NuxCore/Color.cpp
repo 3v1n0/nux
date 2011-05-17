@@ -19,471 +19,182 @@
  *
  */
 
-
-#include "NuxCore.h"
-#include "Math/MathUtility.h"
-#include <cmath>
-#include "SystemTypes.h"
-#include "ColorFunctions.h"
 #include "Color.h"
 
+#include <cmath>
+#include <cstdlib>
+#include <algorithm>
+
+#define NUX_RGBA_GET_ALPHA(rgba)      ((rgba) >> 24)
+#define NUX_RGBA_GET_RED(rgba)        (((rgba) >> 16) & 0xff)
+#define NUX_RGBA_GET_GREEN(rgba)      (((rgba) >> 8) & 0xff)
+#define NUX_RGBA_GET_BLUE(rgba)       ((rgba) & 0xff)
 
 namespace nux
 {
-
-//Red colors
-  const Color Color::IndianRed           (0xCD / 255.0f, 0x5C / 255.0f, 0x5C / 255.0f); // 	205     92      92
-  const Color Color::LightCoral          (0xF0 / 255.0f, 0x80 / 255.0f, 0x80 / 255.0f); // 	240     128     128
-  const Color Color::Salmon              (0xFA / 255.0f, 0x80 / 255.0f, 0x72 / 255.0f); // 	250     128     114
-  const Color Color::DarkSalmon          (0xE9 / 255.0f, 0x96 / 255.0f, 0x7A / 255.0f); // 	233     150     122
-  const Color Color::LightSalmon         (0xFF / 255.0f, 0xA0 / 255.0f, 0x7A / 255.0f); // 	255     160     122
-  const Color Color::Crimson             (0xDC / 255.0f, 0x14 / 255.0f, 0x3C / 255.0f); // 	220     20      60
-  const Color Color::Red                 (0xFF / 255.0f, 0x00 / 255.0f, 0x00 / 255.0f); // 	255     0       0
-  const Color Color::FireBrick           (0xB2 / 255.0f, 0x22 / 255.0f, 0x22 / 255.0f); // 	178     34      34
-  const Color Color::DarkRed             (0x8B / 255.0f, 0x00 / 255.0f, 0x00 / 255.0f); // 	139     0       0
-
-//Pink colors
-  const Color Color::Pink                (0xFF / 255.0f, 0xC0 / 255.0f, 0xCB / 255.0f); // 	255     192     203
-  const Color Color::LightPink           (0xFF / 255.0f, 0xB6 / 255.0f, 0xC1 / 255.0f); // 	255     182     193
-  const Color Color::HotPink             (0xFF / 255.0f, 0x69 / 255.0f, 0xB4 / 255.0f); // 	255     105     180
-  const Color Color::DeepPink            (0xFF / 255.0f, 0x14 / 255.0f, 0x93 / 255.0f); // 	255     20      147
-  const Color Color::MediumVioletRed     (0xC7 / 255.0f, 0x15 / 255.0f, 0x85 / 255.0f); // 	199     21      133
-  const Color Color::PaleVioletRed       (0xDB / 255.0f, 0x70 / 255.0f, 0x93 / 255.0f); //    219     112     147
-
-//Orange colors
-//const Color Color::LightSalmon       (0xFF/255.0f, 0xA0/255.0f, 0x7A/255.0f);// 	255     160     122
-  const Color Color::Coral               (0xFF / 255.0f, 0x7F / 255.0f, 0x50 / 255.0f); //    255     127     80
-  const Color Color::Tomato              (0xFF / 255.0f, 0x63 / 255.0f, 0x47 / 255.0f); //    255     99      71
-  const Color Color::OrangeRed           (0xFF / 255.0f, 0x45 / 255.0f, 0x00 / 255.0f); //    255     69      0
-  const Color Color::DarkOrange          (0xFF / 255.0f, 0x8C / 255.0f, 0x00 / 255.0f); //    255     140     0
-  const Color Color::Orange              (0xFF / 255.0f, 0xA5 / 255.0f, 0x00 / 255.0f); //    255     165     0
-
-//Yellow colors
-  const Color Color::Gold                (0xFF / 255.0f, 0xD7 / 255.0f, 0x00 / 255.0f); // 	255     215     0
-  const Color Color::Yellow              (0xFF / 255.0f, 0xFF / 255.0f, 0x00 / 255.0f); // 	255     255     0
-  const Color Color::LightYellow         (0xFF / 255.0f, 0xFF / 255.0f, 0xE0 / 255.0f); // 	255     255     224
-  const Color Color::LemonChiffon        (0xFF / 255.0f, 0xFA / 255.0f, 0xCD / 255.0f); // 	255     250     205
-  const Color Color::LightGoldenrodYellow (0xFA / 255.0f, 0xFA / 255.0f, 0xD2 / 255.0f); // 	250     250     210
-  const Color Color::PapayaWhip          (0xFF / 255.0f, 0xEF / 255.0f, 0xD5 / 255.0f); // 	255     239     213
-  const Color Color::Moccasin            (0xFF / 255.0f, 0xE4 / 255.0f, 0xB5 / 255.0f); // 	255     228     181
-  const Color Color::PeachPuff           (0xFF / 255.0f, 0xDA / 255.0f, 0xB9 / 255.0f); // 	255     218     185
-  const Color Color::PaleGoldenrod       (0xEE / 255.0f, 0xE8 / 255.0f, 0xAA / 255.0f); // 	238     232     170
-  const Color Color::Khaki               (0xF0 / 255.0f, 0xE6 / 255.0f, 0x8C / 255.0f); // 	240     230     140
-  const Color Color::DarkKhaki           (0xBD / 255.0f, 0xB7 / 255.0f, 0x6B / 255.0f); // 	189     183     107
-
-//Purple colors
-  const Color Color::Lavender            (0xE6 / 255.0f, 0xE6 / 255.0f, 0xFA / 255.0f); // 	230     230     250
-  const Color Color::Thistle             (0xD8 / 255.0f, 0xBF / 255.0f, 0xD8 / 255.0f); // 	216     191     216
-  const Color Color::Plum                (0xDD / 255.0f, 0xA0 / 255.0f, 0xDD / 255.0f); // 	221     160     221
-  const Color Color::Violet              (0xEE / 255.0f, 0x82 / 255.0f, 0xEE / 255.0f); // 	238     130     238
-  const Color Color::Orchid              (0xDA / 255.0f, 0x70 / 255.0f, 0xD6 / 255.0f); // 	218     112     214
-  const Color Color::Fuchsia             (0xFF / 255.0f, 0x00 / 255.0f, 0xFF / 255.0f); // 	255     0       255
-  const Color Color::Magenta             (0xFF / 255.0f, 0x00 / 255.0f, 0xFF / 255.0f); // 	255     0       255
-  const Color Color::MediumOrchid        (0xBA / 255.0f, 0x55 / 255.0f, 0xD3 / 255.0f); // 	186     85      211
-  const Color Color::MediumPurple        (0x93 / 255.0f, 0x70 / 255.0f, 0xDB / 255.0f); // 	147     112     219
-  const Color Color::BlueViolet          (0x8A / 255.0f, 0x2B / 255.0f, 0xE2 / 255.0f); // 	138     43      226
-  const Color Color::DarkViolet          (0x94 / 255.0f, 0x00 / 255.0f, 0xD3 / 255.0f); // 	148     0       211
-  const Color Color::DarkOrchid          (0x99 / 255.0f, 0x32 / 255.0f, 0xCC / 255.0f); // 	153     50      204
-  const Color Color::DarkMagenta         (0x8B / 255.0f, 0x00 / 255.0f, 0x8B / 255.0f); // 	139     0       139
-  const Color Color::Purple              (0x80 / 255.0f, 0x00 / 255.0f, 0x80 / 255.0f); // 	128     0       128
-  const Color Color::Indigo              (0x4B / 255.0f, 0x00 / 255.0f, 0x82 / 255.0f); // 	75      0       130
-  const Color Color::SlateBlue           (0x6A / 255.0f, 0x5A / 255.0f, 0xCD / 255.0f); // 	106     90      205
-  const Color Color::DarkSlateBlue       (0x48 / 255.0f, 0x3D / 255.0f, 0x8B / 255.0f); // 	72      61      139
-
-//Green colors
-  const Color Color::GreenYellow         (0xAD / 255.0f, 0xFF / 255.0f, 0x2F / 255.0f); // 	173     255     47
-  const Color Color::Chartreuse          (0x7F / 255.0f, 0xFF / 255.0f, 0x00 / 255.0f); // 	127     255     0
-  const Color Color::LawnGreen           (0x7C / 255.0f, 0xFC / 255.0f, 0x00 / 255.0f); // 	124     252     0
-  const Color Color::Lime                (0x00 / 255.0f, 0xFF / 255.0f, 0x00 / 255.0f); // 	0       255     0
-  const Color Color::LimeGreen           (0x32 / 255.0f, 0xCD / 255.0f, 0x32 / 255.0f); // 	50      205     50
-  const Color Color::PaleGreen           (0x98 / 255.0f, 0xFB / 255.0f, 0x98 / 255.0f); // 	152     251     152
-  const Color Color::LightGreen          (0x90 / 255.0f, 0xEE / 255.0f, 0x90 / 255.0f); // 	144     238     144
-  const Color Color::MediumSpringGreen   (0x00 / 255.0f, 0xFA / 255.0f, 0x9A / 255.0f); // 	0       250     154
-  const Color Color::SpringGreen         (0x00 / 255.0f, 0xFF / 255.0f, 0x7F / 255.0f); // 	0       255     127
-  const Color Color::MediumSeaGreen      (0x3C / 255.0f, 0xB3 / 255.0f, 0x71 / 255.0f); // 	60      179     113
-  const Color Color::SeaGreen            (0x2E / 255.0f, 0x8B / 255.0f, 0x57 / 255.0f); // 	46      139     87
-  const Color Color::ForestGreen         (0x22 / 255.0f, 0x8B / 255.0f, 0x22 / 255.0f); // 	34      139     34
-  const Color Color::Green               (0x00 / 255.0f, 0x80 / 255.0f, 0x00 / 255.0f); // 	0       128     0
-  const Color Color::DarkGreen           (0x00 / 255.0f, 0x64 / 255.0f, 0x00 / 255.0f); // 	0       100     0
-  const Color Color::YellowGreen         (0x9A / 255.0f, 0xCD / 255.0f, 0x32 / 255.0f); // 	154     205     50
-  const Color Color::OliveDrab           (0x6B / 255.0f, 0x8E / 255.0f, 0x23 / 255.0f); // 	107     142     35
-  const Color Color::Olive               (0x80 / 255.0f, 0x80 / 255.0f, 0x00 / 255.0f); // 	128     128     0
-  const Color Color::DarkOliveGreen      (0x55 / 255.0f, 0x6B / 255.0f, 0x2F / 255.0f); // 	85      107     47
-  const Color Color::MediumAquamarine    (0x66 / 255.0f, 0xCD / 255.0f, 0xAA / 255.0f); // 	102     205     170
-  const Color Color::DarkSeaGreen        (0x8F / 255.0f, 0xBC / 255.0f, 0x8F / 255.0f); // 	143     188     143     // in .Net this is (0x8F, 0xBC, 0x8B)
-  const Color Color::LightSeaGreen       (0x20 / 255.0f, 0xB2 / 255.0f, 0xAA / 255.0f); // 	32      178     170
-  const Color Color::DarkCyan            (0x00 / 255.0f, 0x8B / 255.0f, 0x8B / 255.0f); // 	0       139     139
-  const Color Color::Teal                (0x00 / 255.0f, 0x80 / 255.0f, 0x80 / 255.0f); // 	0       128     128
-
-//Blue colors
-  const Color Color::Aqua                (0x00 / 255.0f, 0xFF / 255.0f, 0xFF / 255.0f); // 	0       255     255
-  const Color Color::Cyan                (0x00 / 255.0f, 0xFF / 255.0f, 0xFF / 255.0f); // 	0       255     255
-  const Color Color::LightCyan           (0xE0 / 255.0f, 0xFF / 255.0f, 0xFF / 255.0f); // 	224     255     255
-  const Color Color::PaleTurquoise       (0xAF / 255.0f, 0xEE / 255.0f, 0xEE / 255.0f); // 	175     238     238
-  const Color Color::Aquamarine          (0x7F / 255.0f, 0xFF / 255.0f, 0xD4 / 255.0f); // 	127     255     212
-  const Color Color::Turquoise           (0x40 / 255.0f, 0xE0 / 255.0f, 0xD0 / 255.0f); // 	64      224     208
-  const Color Color::MediumTurquoise     (0x48 / 255.0f, 0xD1 / 255.0f, 0xCC / 255.0f); // 	72      209     204
-  const Color Color::DarkTurquoise       (0x00 / 255.0f, 0xCE / 255.0f, 0xD1 / 255.0f); // 	0       206     209
-  const Color Color::CadetBlue           (0x5F / 255.0f, 0x9E / 255.0f, 0xA0 / 255.0f); // 	95      158     160
-  const Color Color::SteelBlue           (0x46 / 255.0f, 0x82 / 255.0f, 0xB4 / 255.0f); // 	70      130     180
-  const Color Color::LightSteelBlue      (0xB0 / 255.0f, 0xC4 / 255.0f, 0xDE / 255.0f); // 	176     196     222
-  const Color Color::PowderBlue          (0xB0 / 255.0f, 0xE0 / 255.0f, 0xE6 / 255.0f); // 	176     224     230
-  const Color Color::LightBlue           (0xAD / 255.0f, 0xD8 / 255.0f, 0xE6 / 255.0f); // 	173     216     230
-  const Color Color::SkyBlue             (0x87 / 255.0f, 0xCE / 255.0f, 0xEB / 255.0f); // 	135     206     235
-  const Color Color::LightSkyBlue        (0x87 / 255.0f, 0xCE / 255.0f, 0xFA / 255.0f); // 	135     206     250
-  const Color Color::DeepSkyBlue         (0x00 / 255.0f, 0xBF / 255.0f, 0xFF / 255.0f); // 	0       191     255
-  const Color Color::DodgerBlue          (0x1E / 255.0f, 0x90 / 255.0f, 0xFF / 255.0f); // 	30      144     255
-  const Color Color::CornflowerBlue      (0x64 / 255.0f, 0x95 / 255.0f, 0xED / 255.0f); // 	100     149     237
-  const Color Color::MediumSlateBlue     (0x7B / 255.0f, 0x68 / 255.0f, 0xEE / 255.0f); // 	123     104     238
-  const Color Color::RoyalBlue           (0x41 / 255.0f, 0x69 / 255.0f, 0xE1 / 255.0f); // 	65      105     225
-  const Color Color::Blue                (0x00 / 255.0f, 0x00 / 255.0f, 0xFF / 255.0f); // 	0       0       255
-  const Color Color::MediumBlue          (0x00 / 255.0f, 0x00 / 255.0f, 0xCD / 255.0f); // 	0       0       205
-  const Color Color::DarkBlue            (0x00 / 255.0f, 0x00 / 255.0f, 0x8B / 255.0f); // 	0       0       139
-  const Color Color::Navy                (0x00 / 255.0f, 0x00 / 255.0f, 0x80 / 255.0f); // 	0       0       128
-  const Color Color::MidnightBlue        (0x19 / 255.0f, 0x19 / 255.0f, 0x70 / 255.0f); // 	25      25      112
-
-//Brown colors
-  const Color Color::Cornsilk            (0xFF / 255.0f, 0xF8 / 255.0f, 0xDC / 255.0f); // 	255     248     220
-  const Color Color::BlanchedAlmond      (0xFF / 255.0f, 0xEB / 255.0f, 0xCD / 255.0f); // 	255     235     205
-  const Color Color::Bisque              (0xFF / 255.0f, 0xE4 / 255.0f, 0xC4 / 255.0f); // 	255     228     196
-  const Color Color::NavajoWhite         (0xFF / 255.0f, 0xDE / 255.0f, 0xAD / 255.0f); // 	255     222     173
-  const Color Color::Wheat               (0xF5 / 255.0f, 0xDE / 255.0f, 0xB3 / 255.0f); // 	245     222     179
-  const Color Color::BurlyWood           (0xDE / 255.0f, 0xB8 / 255.0f, 0x87 / 255.0f); // 	222     184     135
-  const Color Color::Tan                 (0xD2 / 255.0f, 0xB4 / 255.0f, 0x8C / 255.0f); // 	210     180     140
-  const Color Color::RosyBrown           (0xBC / 255.0f, 0x8F / 255.0f, 0x8F / 255.0f); // 	188     143     143
-  const Color Color::SandyBrown          (0xF4 / 255.0f, 0xA4 / 255.0f, 0x60 / 255.0f); // 	244     164     96
-  const Color Color::Goldenrod           (0xDA / 255.0f, 0xA5 / 255.0f, 0x20 / 255.0f); // 	218     165     32
-  const Color Color::DarkGoldenrod       (0xB8 / 255.0f, 0x86 / 255.0f, 0x0B / 255.0f); // 	184     134     11
-  const Color Color::Peru                (0xCD / 255.0f, 0x85 / 255.0f, 0x3F / 255.0f); // 	205     133     63
-  const Color Color::Chocolate           (0xD2 / 255.0f, 0x69 / 255.0f, 0x1E / 255.0f); // 	210     105     30
-  const Color Color::SaddleBrown         (0x8B / 255.0f, 0x45 / 255.0f, 0x13 / 255.0f); // 	139     69      19
-  const Color Color::Sienna              (0xA0 / 255.0f, 0x52 / 255.0f, 0x2D / 255.0f); // 	160     82      45
-  const Color Color::Brown               (0xA5 / 255.0f, 0x2A / 255.0f, 0x2A / 255.0f); // 	165     42      42
-  const Color Color::Maroon              (0x80 / 255.0f, 0x00 / 255.0f, 0x00 / 255.0f); // 	128     0       0
-
-//White colors
-  const Color Color::White               (0xFF / 255.0f, 0xFF / 255.0f, 0xFF / 255.0f); // 	255     255     255
-  const Color Color::Snow                (0xFF / 255.0f, 0xFA / 255.0f, 0xFA / 255.0f); // 	255     250     250
-  const Color Color::Honeydew            (0xF0 / 255.0f, 0xFF / 255.0f, 0xF0 / 255.0f); // 	240     255     240
-  const Color Color::MintCream           (0xF5 / 255.0f, 0xFF / 255.0f, 0xFA / 255.0f); // 	245     255     250
-  const Color Color::Azure               (0xF0 / 255.0f, 0xFF / 255.0f, 0xFF / 255.0f); // 	240     255     255
-  const Color Color::AliceBlue           (0xF0 / 255.0f, 0xF8 / 255.0f, 0xFF / 255.0f); // 	240     248     255
-  const Color Color::GhostWhite          (0xF8 / 255.0f, 0xF8 / 255.0f, 0xFF / 255.0f); // 	248     248     255
-  const Color Color::WhiteSmoke          (0xF5 / 255.0f, 0xF5 / 255.0f, 0xF5 / 255.0f); // 	245     245     245
-  const Color Color::Seashell            (0xFF / 255.0f, 0xF5 / 255.0f, 0xEE / 255.0f); // 	255     245     238
-  const Color Color::Beige               (0xF5 / 255.0f, 0xF5 / 255.0f, 0xDC / 255.0f); // 	245     245     220
-  const Color Color::OldLace             (0xFD / 255.0f, 0xF5 / 255.0f, 0xE6 / 255.0f); // 	253     245     230
-  const Color Color::FloralWhite         (0xFF / 255.0f, 0xFA / 255.0f, 0xF0 / 255.0f); // 	255     250     240
-  const Color Color::Ivory               (0xFF / 255.0f, 0xFF / 255.0f, 0xF0 / 255.0f); // 	255     255     240
-  const Color Color::AntiqueWhite        (0xFA / 255.0f, 0xEB / 255.0f, 0xD7 / 255.0f); // 	250     235     215
-  const Color Color::Linen               (0xFA / 255.0f, 0xF0 / 255.0f, 0xE6 / 255.0f); // 	250     240     230
-  const Color Color::LavenderBlush       (0xFF / 255.0f, 0xF0 / 255.0f, 0xF5 / 255.0f); // 	255     240     245
-  const Color Color::MistyRose           (0xFF / 255.0f, 0xE4 / 255.0f, 0xE1 / 255.0f); // 	255     228     225
-
-//Grey colors
-  const Color Color::Gainsboro           (0xDC / 255.0f, 0xDC / 255.0f, 0xDC / 255.0f); // 	220     220     220
-  const Color Color::LightGrey           (0xD3 / 255.0f, 0xD3 / 255.0f, 0xD3 / 255.0f); // 	211     211     211
-  const Color Color::Silver              (0xC0 / 255.0f, 0xC0 / 255.0f, 0xC0 / 255.0f); // 	192     192     192
-  const Color Color::DarkGray            (0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f); // 	169     169     169
-  const Color Color::Gray                (0x80 / 255.0f, 0x80 / 255.0f, 0x80 / 255.0f); // 	128     128     128
-  const Color Color::DimGray             (0x69 / 255.0f, 0x69 / 255.0f, 0x69 / 255.0f); // 	105     105     105
-  const Color Color::LightSlateGray      (0x77 / 255.0f, 0x88 / 255.0f, 0x99 / 255.0f); // 	119     136     153
-  const Color Color::SlateGray           (0x70 / 255.0f, 0x80 / 255.0f, 0x90 / 255.0f); // 	112     128     144
-  const Color Color::DarkSlateGray       (0x2F / 255.0f, 0x4F / 255.0f, 0x4F / 255.0f); // 	47      79      79
-  const Color Color::Black               (0x00 / 255.0f, 0x00 / 255.0f, 0x00 / 255.0f); // 	0       0       0
-
-  // More Colors
-  const Color Color::Aubergine           (0x2B / 255.0f, 0x0B / 255.0f, 0x30 / 255.0f); //  43      11      48
-
-  Color Color::Dummy = Color::Black;
+namespace color
+{
 
   Color::Color()
-    : _red (0.0), _green (0.0), _blue (0.0f), _alpha (1.0f)
+    : red(0)
+    , green(0)
+    , blue(0)
+    , alpha(1)
   {
   }
 
-  Color::~Color()
-  {
-  }
-
-  Color::Color (const Color &color)
-  {
-    _red   = color.R();
-    _green = color.G();
-    _blue  = color.B();
-    _alpha = color.A();
-  }
+Color::Color(RedGreenBlue const& rgb, float a)
+    : red(rgb.red)
+    , green(rgb.green)
+    , blue(rgb.blue)
+    , alpha(a)
+{}
 
   Color::Color (unsigned int c)
+    : red(NUX_RGBA_GET_RED(c) / 255.f)
+    , green(NUX_RGBA_GET_GREEN(c) / 255.f)
+    , blue(NUX_RGBA_GET_BLUE(c) / 255.f)
+    , alpha(NUX_RGBA_GET_ALPHA(c) / 255.f)
   {
-    _red   = (float) (NUX_RGBA_GET_RED (c) ) * (1.f / 255.f);
-    _green = (float) (NUX_RGBA_GET_GREEN (c) ) * (1.f / 255.f);
-    _blue  = (float) (NUX_RGBA_GET_BLUE (c) ) * (1.f / 255.f);
-    _alpha = (float) (NUX_RGBA_GET_ALPHA (c) ) * (1.f / 255.f);
   }
 
-  Color::Color (float r, float g, float b)
+  Color::Color(int r, int g, int b)
+    : red(r / 255.f)
+    , green(g / 255.f)
+    , blue(b / 255.f)
+    , alpha(1)
   {
-    _red = r;
-    _green = g;
-    _blue = b;
-    _alpha = 1.0f;
   }
 
   Color::Color (float r, float g, float b, float a)
+    : red(r)
+    , green(g)
+    , blue(b)
+    , alpha(a)
   {
-    _red = r;
-    _green = g;
-    _blue = b;
-    _alpha = a;
   }
 
-  Color *Color::Clone() const
-  {
-    return new Color (*this);
-  }
+bool operator == (const Color &lhs, const Color &rhs)
+{
+  return (lhs.red == rhs.red &&
+          lhs.green == rhs.green &&
+          lhs.blue == rhs.blue &&
+          lhs.alpha == rhs.alpha);
+}
 
-  float Color::GetRed() const
-  {
-    return _red;
-  };
+bool operator != (const Color &lhs, const Color &rhs)
+{
+  return !(lhs == rhs);
+}
 
-  float Color::GetGreen() const
-  {
-    return _green;
-  };
+Color ClampVal(Color const& c)
+{
+  return Color(std::max(0.0f, std::min(1.0f, c.red)),
+               std::max(0.0f, std::min(1.0f, c.green)),
+               std::max(0.0f, std::min(1.0f, c.blue)),
+               std::max(0.0f, std::min(1.0f, c.alpha)));
+}
 
-  float Color::GetBlue() const
-  {
-    return _blue;
-  };
+Color Luminance(Color const& c)
+{
+  float L = 0.30 * c.red + 0.59 * c.green + 0.11 * c.blue;
+  return Color(L, L, L);
+}
 
-  float Color::GetAlpha() const
-  {
-    return _alpha;
-  };
+Color OneMinusLuminance(Color const& c)
+{
+  float L = 1.0f - (0.30 * c.red + 0.59 * c.green + 0.11 * c.blue);
+  return Color(L, L, L);
+}
 
-  float Color::R() const
-  {
-    return _red;
-  };
+Color RandomColor()
+{
+  return Color(RandomColorINT());
+}
 
-  float Color::G() const
-  {
-    return _green;
-  };
+Color MakeOpaque(Color const& c)
+{
+  return Color(c.red, c.green, c.blue, 1.0f);
+}
 
-  float Color::B() const
-  {
-    return _blue;
-  };
+unsigned int RandomColorINT()
+{
+  // std::rand isn't defined to be more random than 2^15, so we need
+  // to generate the full unsigned in chunks.
+  return (((std::rand() % 255) << 24) |
+          ((std::rand() % 255) << 16) |
+          ((std::rand() % 255) << 8) |
+          (std::rand() % 255));
+}
 
-  float Color::A() const
-  {
-    return _alpha;
-  };
+Color operator + (Color const& lhs, Color const& rhs)
+{
+  return Color(lhs.red + rhs.red,
+               lhs.green + rhs.green,
+               lhs.blue + rhs.blue,
+               lhs.alpha + rhs.alpha);
+}
 
-  void Color::SetRed (float r)
-  {
-    _red = r;
-  };
-  void Color::SetGreen (float g)
-  {
-    _green = g;
-  };
-  void Color::SetBlue (float b)
-  {
-    _blue = b;
-  };
-  void Color::SetAlpha (float a)
-  {
-    _alpha = a;
-  };
+Color operator - (Color const& lhs, Color const& rhs)
+{
+  return Color(lhs.red - rhs.red,
+               lhs.green - rhs.green,
+               lhs.blue - rhs.blue,
+               lhs.alpha - rhs.alpha);
+}
 
-  Color &Color::operator= (const Color &color)
-  {
-    _red   = color.R();
-    _green = color.G();
-    _blue  = color.B();
-    _alpha = color.A();
+Color operator + (float scalar, Color const& c)
+{
+  return Color(c.red + scalar,
+               c.green + scalar,
+               c.blue + scalar,
+               c.alpha + scalar);
+}
 
-    return *this;
-  }
+Color operator + (Color const& c, float scalar)
+{
+  return scalar + c;
+}
 
-  bool Color::operator == (const Color &color) const
-  {
-    if ( (_red == color.R() )
-         && (_green == color.G() )
-         && (_blue == color.B() )
-         && (_alpha == color.A() )
-       )
-    {
-      return true;
-    }
-
-    return false;
-  }
-
-  bool Color::operator!= (const Color &color) const
-  {
-    if ( (_red == color.R() )
-         && (_green == color.G() )
-         && (_blue == color.B() )
-         && (_alpha == color.A() )
-       )
-    {
-      return false;
-    }
-
-    return true;
-  }
-
-  void Color::SetRGB (float r, float g, float b)
-  {
-    _red   = r;
-    _green = g;
-    _blue  = b;
-    _alpha = 1.0f;
-  }
-
-  void Color::SetRGBA (float r, float g, float b, float a)
-  {
-    _red   = r;
-    _green = g;
-    _blue  = b;
-    _alpha = a;
-  }
-
-  /*void Color::set_rgba(t_uint32 val)
-  {
-    _red   = (float)RGBA_GET_RED(   val )*(1.f/255.f);
-    _green = (float)RGBA_GET_GREEN( val )*(1.f/255.f);
-    _blue  = (float)RGBA_GET_BLUE(  val )*(1.f/255.f);
-    _alpha = (float)RGBA_GET_ALPHA( val )*(1.f/255.f);
-  }*/
-
-  void Color::ClampVal()
-  {
-    _red = Max<float> (0.f, Min (1.f, _red) );
-    _green = Max<float> (0.f, Min (1.f, _green) );
-    _blue  = Max<float> (0.f, Min (1.f, _blue) );
-    _alpha = Max<float> (0.f, Min (1.f, _alpha) );
-  }
-
-  void Color::Saturate()
-  {
-    _red   = Min<float> (1.f, _red);
-    _green = Min<float> (1.f, _green);
-    _blue  = Min<float> (1.f, _blue);
-    _alpha = Min<float> (1.f, _alpha);
-  }
-
-  void Color::Complement()
-  {
-    _red   = 1.0f - _red;
-    _green = 1.0f - _green;
-    _blue  = 1.0f - _blue;
-    _alpha = 1.0f - _alpha;
-  }
-
-  Color Color::Luminance()
-  {
-    float L = 0.30 * _red + 0.59 * _green + 0.11 * _blue;
-    return Color (L, L, L, 1.0f);
-  }
-
-  Color Color::OneMinusLuminance()
-  {
-    float L = 1.0f - (0.30 * _red + 0.59 * _green + 0.11 * _blue);
-    return Color (L, L, L, 1.0f);
-  }
-
-  Color Color::RandomColor()
-  {
-    return Color (RandomUInt (255) / 255.0f, RandomUInt (255) / 255.0f, RandomUInt (255) / 255.0f, RandomUInt (255) / 255.0f);
-  }
-
-  unsigned int Color::RandomColorINT()
-  {
-    return (RandomUInt (255) << 24) | (RandomUInt (255) << 16) | (RandomUInt (255) << 8) | RandomUInt (255);
-  }
-
-  Color operator + (Color color0, Color color1)
-  {
-    Color result;
-    result.SetRed   (color0.R() + color1.R() );
-    result.SetGreen (color0.G() + color1.G() );
-    result.SetBlue  (color0.B() + color1.B() );
-    result.SetAlpha (color0.A() + color1.A() );
-    return result;
-  }
-
-  Color operator - (Color color0, Color color1)
-  {
-    Color result;
-    result.SetRed   (color0.R() - color1.R() );
-    result.SetGreen (color0.G() - color1.G() );
-    result.SetBlue  (color0.B() - color1.B() );
-    result.SetRed   (color0.A() - color1.A() );
-    return result;
-  }
-
-  Color operator + (float v, Color color)
-  {
-    Color result;
-    result.SetRed   (v + color.R() );
-    result.SetGreen (v + color.G() );
-    result.SetBlue  (v + color.B() );
-    result.SetAlpha (v + color.A() );
-    return result;
-  }
-
-  Color operator + (Color color, float v)
-  {
-    return v + color;
-  }
-
-  Color operator - (float v, Color color)
-  {
-    Color result;
-    result.SetRed   (v - color.R() );
-    result.SetGreen (v - color.G() );
-    result.SetBlue  (v - color.B() );
-    result.SetAlpha (v - color.A() );
-    return result;
-  }
-
-  Color operator - (Color color, float v)
-  {
-    Color result;
-    result.SetRed   (color.R() - v);
-    result.SetGreen (color.G() - v);
-    result.SetBlue  (color.B() - v);
-    result.SetAlpha (color.A() - v);
-    return result;
-  }
-
-  Color operator * (float v, Color color)
-  {
-    Color result;
-    result.SetRed   (v * color.R() );
-    result.SetGreen (v * color.G() );
-    result.SetBlue  (v * color.B() );
-    result.SetAlpha (v * color.A() );
-    return result;
-  }
-
-  Color operator * (Color color, float v)
-  {
-    return v * color;
-  }
+Color operator - (float scalar, Color const& c)
+{
+  return Color(scalar - c.red,
+               scalar - c.green,
+               scalar - c.blue,
+               scalar - c.alpha);
+}
 
 
-// The Hue/Saturation/Value model was created by A. R. Smith in 1978. It is based on such intuitive color characteristics as tint,
-// shade and tone (or family, purety and intensity). The coordinate system is cylindrical, and the colors are defined inside a hexcone.
-// The hue value H runs from 0 to 360º. The saturation S is the degree of strength or purity and is from 0 to 1. Purity is how much white
-// is added to the color, so S=1 makes the purest color (no white). Brightness V also ranges from 0 to 1, where 0 is the black.
-// There is no transformation matrix for RGB/HSV conversion, but the algorithm follows:
+Color operator - (Color const& c, float scalar)
+{
+  return Color(c.red - scalar,
+               c.green - scalar,
+               c.blue - scalar,
+               c.alpha - scalar);
+}
+
+Color operator * (float scalar, Color const& c)
+{
+  return Color(c.red * scalar,
+               c.green * scalar,
+               c.blue * scalar,
+               c.alpha * scalar);
+}
+
+Color operator * (Color const& c, float scalar)
+{
+  return scalar * c;
+}
+
+// The Hue/Saturation/Value model was created by A. R. Smith in 1978. It is
+// based on such intuitive color characteristics as tint, shade and tone (or
+// family, purety and intensity). The coordinate system is cylindrical, and
+// the colors are defined inside a hexcone.  The hue value H runs from 0 to
+// 360º. The saturation S is the degree of strength or purity and is from 0 to
+// 1. Purity is how much white is added to the color, so S=1 makes the purest
+// color (no white). Brightness V also ranges from 0 to 1, where 0 is the
+// black.  There is no transformation matrix for RGB/HSV conversion, but the
+// algorithm follows:
 
 // r,g,b values are from 0 to 1
 // h = [0,360], s = [0,1], v = [0,1]
@@ -493,8 +204,8 @@ namespace nux
   {
     float min, max, delta;
 
-    min = Min<float> ( Min<float> (r, g), b );
-    max = Max<float> ( Max<float> (r, g), b );
+    min = std::min(std::min(r, g), b);
+    max = std::max(std::max(r, g), b);
     v = max;				// v
 
     delta = max - min;
@@ -765,4 +476,55 @@ namespace nux
     s = (int) (satur * 255);
   }
 
+
+RedGreenBlue::RedGreenBlue(float r, float g, float b)
+  : red(r)
+  , green(g)
+  , blue(b)
+{}
+
+RedGreenBlue::RedGreenBlue(HueSaturationValue const& hsv)
+{
+  HSVtoRGB(red, green, blue, hsv.hue, hsv.saturation, hsv.value);
+}
+
+RedGreenBlue::RedGreenBlue(HueLightnessSaturation const& hls)
+{
+  HLStoRGB(red, green, blue, hls.hue, hls.lightness, hls.saturation);
+}
+
+HueSaturationValue::HueSaturationValue(float h, float s, float v)
+  : hue(h)
+  , saturation(s)
+  , value(v)
+{}
+
+HueSaturationValue::HueSaturationValue(RedGreenBlue const& rgb)
+{
+  RGBtoHSV(rgb.red, rgb.green, rgb.blue, hue, saturation, value);
+}
+
+HueSaturationValue::HueSaturationValue(Color const& c)
+{
+  RGBtoHSV(c.red, c.green, c.blue, hue, saturation, value);
+}
+
+HueLightnessSaturation::HueLightnessSaturation(float h, float l, float s)
+  : hue(h)
+  , lightness(l)
+  , saturation(s)
+{}
+
+HueLightnessSaturation::HueLightnessSaturation(RedGreenBlue const& rgb)
+{
+  RGBtoHLS(rgb.red, rgb.green, rgb.blue, hue, lightness, saturation);
+}
+
+HueLightnessSaturation::HueLightnessSaturation(Color const& c)
+{
+  RGBtoHLS(c.red, c.green, c.blue, hue, lightness, saturation);
+}
+
+
+}
 }

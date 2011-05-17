@@ -98,9 +98,9 @@ namespace nux
     bool IsTooltipActive();
     void CancelTooltip();
 
-    void SetAreaEventRoot (int x, int y)
+    void SetAreaEventRoot(int x, int y)
     {
-      _event_root.Set (x, y);
+      _event_root = Point(x, y);
     }
 
     const IEvent *GetCurrentEvent() const

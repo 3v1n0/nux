@@ -32,9 +32,9 @@ namespace nux
 
   static const int GRAPH_MARGIN = 1;
 
-  ColorPreview::ColorPreview (float red, float green, float blue, eColorModel colormodel, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
-    ,   m_Color (1.0f, 1.0f, 1.0f, 1.0f)
+  ColorPreview::ColorPreview(Color const& c, NUX_FILE_LINE_DECL)
+    : View(NUX_FILE_LINE_PARAM)
+    , m_Color(c)
   {
     //setSize(200, 100);
     m_hlayout           = new HLayout(NUX_TRACKER_LOCATION);
@@ -50,24 +50,10 @@ namespace nux
     m_ColorValue->SetFont (GetSysBoldFont() );
     m_ColorValue->SetMinimumWidth (128);
 
-    if (colormodel == CM_HSV)
-    {
-//         m_ColorEditor->SetHSV(red, green, blue);
-//         m_ColorEditor->SetColorModel(CM_HSV, CC_HUE);
-    }
-    else //(colormodel == RGB)
-    {
-//         m_ColorEditor->SetRGB(red, green, blue);
-//         m_ColorEditor->SetColorModel(CM_RGB, CC_RED);
-    }
-
-    NString text = NString::Printf (TEXT ("[ R:%d, G:%d, B:%d ]"), (int) (m_Color.R() * 255), (int) (m_Color.G() * 255), (int) (m_Color.B() * 255) );
+    NString text = NString::Printf (TEXT ("[ R:%d, G:%d, B:%d ]"), (int) (m_Color.red * 255), (int) (m_Color.green * 255), (int) (m_Color.blue * 255) );
     m_ColorValue->SetText (text);
 
-
     m_ColorArea->OnMouseClick.connect (sigc::mem_fun (this, &ColorPreview::RecvClick) );
-    //m_ColorValue->OnMouseClick.connect(sigc::mem_fun(this, &ColorPreview::RecvClick));
-    //OnMouseClick.connect(sigc::mem_fun(this, &ColorPreview::RecvClick));
 
     m_hlayout->AddView (m_ColorArea, 0);
     m_hlayout->AddView (m_ColorValue, 1);
@@ -147,37 +133,12 @@ namespace nux
     }
   }
 
-  Color ColorPreview::GetRGBColor() const
+  Color const& ColorPreview::GetRGBColor() const
   {
     return m_Color;
   }
 
-  void ColorPreview::SetRed (double r)
-  {
-    m_Color.SetRed (r);
-  }
-
-  void ColorPreview::SetGreen (double g)
-  {
-    m_Color.SetGreen (g);
-  }
-
-  void ColorPreview::SetBlue (double b)
-  {
-    m_Color.SetBlue (b);
-  }
-
-  void ColorPreview::SetRGB (double r, double g, double b)
-  {
-    m_Color.SetRGB (r, g, b);
-  }
-
-  void ColorPreview::SetRGBA (double r, double g, double b, double a)
-  {
-    m_Color.SetRGBA (r, g, b, a);
-  }
-
-  void ColorPreview::SetColor (Color color)
+  void ColorPreview::SetColor (Color const& color)
   {
     m_Color = color;
   }

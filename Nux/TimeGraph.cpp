@@ -123,14 +123,6 @@ namespace nux
 
     Texture = GetGpuDevice()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
-//     NString Path = NUX_FINDRESOURCELOCATION(TEXT("UITextures/FunctionGraphBackground.tga"));
-//     TextureRectangle BackgroundTexture;
-//     BackgroundTexture.Update(Path.GetTCharPtr());
-//
-//     TexCoordXForm texxform;
-//     texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
-//     texxform.SetWrap(TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-//     m_BackgroundLayer = new TextureLayer(BackgroundTexture.GetDeviceTexture(), texxform, Colors::White);
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
@@ -140,7 +132,7 @@ namespace nux
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Colors::White);
+    m_BackgroundLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, color::White);
 
     CheckboardPattern->UnReference ();
 
