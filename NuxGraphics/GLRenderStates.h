@@ -256,7 +256,11 @@ namespace nux
 
     inline void EnableScissor (t_u32 bScissor = FALSE);
     inline void EnableFog (t_u32 bFog = FALSE);
+#ifndef NUX_OPENGLES_20
     inline void SetPolygonMode (t_u32 FrontMode = GL_FILL, t_u32 BackMode = GL_FILL);
+#else
+    inline void SetPolygonMode (t_u32 FrontMode, t_u32 BackMode);
+#endif
 
     inline void SetPolygonOffset (t_u32 bEnable,
                                   float Factor = 0.0f, float Units = 0.0f);
@@ -855,6 +859,9 @@ namespace nux
 //////////////////////////////////////
   inline void GpuRenderStates::HW__EnableAlphaTest (t_u32 b)
   {
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implemented
+#else
     if (b)
     {
       CHECKGL (glEnable (GL_ALPHA_TEST) );
@@ -863,6 +870,7 @@ namespace nux
     {
       CHECKGL (glDisable (GL_ALPHA_TEST) );
     }
+#endif
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTENABLE], b ? GL_TRUE : GL_FALSE);
   }
@@ -870,6 +878,9 @@ namespace nux
   inline void GpuRenderStates::HW__SetAlphaTestFunc (t_u32 AlphaTestFunc_,
       BYTE  AlphaTestRef_)
   {
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implemented
+#else
     nuxAssertMsg (
       (AlphaTestFunc_ == GL_NEVER) ||
       (AlphaTestFunc_ == GL_LESS) ||
@@ -882,6 +893,8 @@ namespace nux
       TEXT ("Error(HW__SetAlphaTestFunc): Invalid Alpha Test Function RenderState") );
 
     CHECKGL (glAlphaFunc (AlphaTestFunc_, (float) AlphaTestRef_ * (1.0f / 255.0f) ) );
+#endif
+
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTFUNC], AlphaTestFunc_);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTREF], AlphaTestRef_);
   }
@@ -946,6 +959,9 @@ namespace nux
       (BlendOpAlpha_ == GL_MAX),
       TEXT ("Error(HW__SetAlphaBlendOp): Invalid Blend Equation RenderState") );
 
+#ifdef NUX_OPENGLES_20
+    CHECKGL (glBlendEquationSeparate (BlendOpRGB_, BlendOpAlpha_) );
+#else
     if (_gpu_info->SupportOpenGL20 ())
     {
       CHECKGL (glBlendEquationSeparate (BlendOpRGB_, BlendOpAlpha_) );
@@ -958,6 +974,7 @@ namespace nux
     {
       CHECKGL (glBlendEquation (BlendOpRGB_) );
     }
+#endif
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BLENDOP], BlendOpRGB_);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BLENDOPALPHA], BlendOpAlpha_);
@@ -1321,6 +1338,9 @@ namespace nux
 
   inline void GpuRenderStates::HW__EnableLineSmooth (t_u32 EnableLineSmooth)
   {
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implemented
+#else
     if (EnableLineSmooth)
     {
       CHECKGL (glEnable (GL_LINE_SMOOTH) );
@@ -1329,6 +1349,7 @@ namespace nux
     {
       CHECKGL (glDisable (GL_LINE_SMOOTH) );
     }
+#endif
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_LINESMOOTHENABLE], EnableLineSmooth ? GL_TRUE : GL_FALSE);
   }
@@ -1342,13 +1363,21 @@ namespace nux
       TEXT ("Error(HW__SetLineWidth): Invalid Line Hint RenderState") );
 
     CHECKGL (glLineWidth (width) );
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implemented
+#else
     CHECKGL (glHint (GL_LINE_SMOOTH_HINT, Hint) );
+#endif
+
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_LINEWIDTH], width);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_LINEHINT], Hint);
   }
 
   inline void GpuRenderStates::HW__EnablePointSmooth (t_u32 EnablePointSmooth)
   {
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implemented
+#else
     if (EnablePointSmooth)
     {
       CHECKGL (glEnable (GL_POINT_SMOOTH) );
@@ -1357,6 +1386,7 @@ namespace nux
     {
       CHECKGL (glDisable (GL_POINT_SMOOTH) );
     }
+#endif
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_POINTSMOOTHENABLE], EnablePointSmooth ? GL_TRUE : GL_FALSE);
   }
@@ -1369,8 +1399,13 @@ namespace nux
       (Hint == GL_DONT_CARE),
       TEXT ("Error(HW__SetPointSize): Invalid Point Hint RenderState") );
 
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implemented
+#else
     CHECKGL (glPointSize (size) );
     CHECKGL (glHint (GL_POINT_SMOOTH_HINT, Hint);)
+#endif
+
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_POINTSIZE], size);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_POINTHINT], Hint);
   }
@@ -1410,6 +1445,9 @@ namespace nux
 
   inline void GpuRenderStates::HW__EnableFog (t_u32 bFog)
   {
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implemented
+#else
     if (bFog)
     {
       CHECKGL (glEnable (GL_FOG) );
@@ -1418,6 +1456,7 @@ namespace nux
     {
       CHECKGL (glDisable (GL_FOG) );
     }
+#endif
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FOGENABLE], bFog ? GL_TRUE : GL_FALSE);
   }
@@ -1436,8 +1475,12 @@ namespace nux
       (BackMode == GL_POINT),
       TEXT ("Error(HW__SetPolygonMode): Invalid Point Hint RenderState") );
 
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implemented
+#else
     CHECKGL (glPolygonMode (GL_FRONT, FrontMode) );
     CHECKGL (glPolygonMode (GL_BACK, BackMode) );
+#endif
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_POLYGONMODE], FrontMode);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BACK_POLYGONMODE], BackMode);

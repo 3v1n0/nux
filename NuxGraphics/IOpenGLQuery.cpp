@@ -19,6 +19,7 @@
  *
  */
 
+#ifndef NUX_OPENGLES_20
 
 #include "GLResource.h"
 #include "GpuDevice.h"
@@ -140,3 +141,6 @@ namespace nux
   }
 
 }
+
+#endif // NUX_OPENGLES_20
+

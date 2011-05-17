@@ -456,6 +456,7 @@ namespace nux
     }
     else
     {
+#ifndef NUX_OPENGLES_20
       shader_program = m_AsmShaderProg;
       if(glTexture->m_Texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
       {
@@ -483,6 +484,7 @@ namespace nux
       CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color.R(), color.G(), color.B(), color.A() ) );
 
       GetThreadGraphicsContext()->SetTexture (GL_TEXTURE0, glTexture->m_Texture);
+#endif
     }
 
     if (iOffset != -1)
@@ -510,7 +512,11 @@ namespace nux
     }
 
     if (NumCharToDraw > 0)
+#ifdef NUX_OPENGLES_20
+      #warning FIXME this needs to use GL_TRIANGLES (but is it even used anymore?)
+#else
       CHECKGL ( glDrawArrays ( GL_QUADS, 0, NumCharToDraw * 4 ) );
+#endif
 
     if (iPosition != -1)
       CHECKGL ( glDisableVertexAttribArrayARB (iPosition) );

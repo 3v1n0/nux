@@ -170,6 +170,7 @@ namespace nux
         break;
       }
 
+#ifndef NUX_OPENGLES_20
       case ATTRIB_DECLTYPE_FLOAT16_2:
       {
         NumComponent = 2;
@@ -182,6 +183,7 @@ namespace nux
         ComponentType = ATTRIB_CT_HALF_FLOAT;
         break;
       }
+#endif
 
       case ATTRIB_DECLTYPE_UNUSED:
       default:
@@ -211,10 +213,12 @@ namespace nux
       case ATTRIB_CT_UNSIGNED_INT:
       case ATTRIB_CT_FLOAT:
         return 4 * NumComponent;
+#ifndef NUX_OPENGLES_20
       case ATTRIB_CT_HALF_FLOAT:
         return 2 * NumComponent;
       case ATTRIB_CT_DOUBLE:
         return 8 * NumComponent;
+#endif
       case ATTRIB_CT_UNKNOWN:
       default:
         nuxAssert (TEXT ("Unknown Component Type") );
@@ -262,10 +266,12 @@ namespace nux
         return InPrimitiveCount + 2;
       case PRIMITIVE_TYPE_TRIANGLEFAN:
         return InPrimitiveCount;
+#ifndef NUX_OPENGLES_20
       case PRIMITIVE_TYPE_QUADLIST:
         return InPrimitiveCount * 4;
       case PRIMITIVE_TYPE_QUADSTRIP:
         return InPrimitiveCount * 2 + 2;
+#endif
       default:
         return 0;
     }

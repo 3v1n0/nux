@@ -131,7 +131,11 @@ namespace nux
     return glwindow;
   }
 #elif defined(NUX_OS_LINUX)
+#ifdef NUX_OPENGLES_20
+  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, EGLContext OpenGLContext)
+#else
   GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
+#endif
   {
     if (GetDisplayDevice () )
     {
@@ -148,17 +152,19 @@ namespace nux
 #endif
 }
 
+#ifndef NUX_OPENGLES_20
 GLEWContext *glewGetContext()
 {
   return nux::GetDisplayDevice ()->GetGLEWContext();
 }
+#endif
 
 #if defined(NUX_OS_WINDOWS)
 WGLEWContext *wglewGetContext()
 {
   return nux::GetDisplayDevice ()->GetWGLEWContext();
 }
-#elif defined(NUX_OS_LINUX)
+#elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
 GLXEWContext *glxewGetContext()
 {
   return nux::GetDisplayDevice ()->GetGLXEWContext();

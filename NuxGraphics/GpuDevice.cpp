@@ -254,6 +254,7 @@ namespace nux
 
   void GpuInfo::Setup()
   {
+#ifndef NUX_OPENGLES_20
     _support_opengl_version_11 = GLEW_VERSION_1_1 ? true : false;
     _support_opengl_version_12 = GLEW_VERSION_1_2 ? true : false;
     _support_opengl_version_13 = GLEW_VERSION_1_3 ? true : false;
@@ -264,6 +265,7 @@ namespace nux
     _support_opengl_version_30 = GLEW_VERSION_3_0 ? true : false;
     _support_opengl_version_31 = GLEW_VERSION_3_1 ? true : false;
     _support_opengl_version_32 = GLEW_VERSION_3_2 ? true : false;
+#endif
 //     _support_opengl_version_33 = GLEW_VERSION_3_3 ? true : false;
 //     _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
 //     _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
@@ -282,11 +284,26 @@ namespace nux
 
 #if defined(NUX_OS_WINDOWS)
     _support_ext_swap_control                 = WGLEW_EXT_swap_control ? true : false;
-#elif defined(NUX_OS_LINUX)
-    _support_ext_swap_control                 = GLXEW_SGI_swap_control ? true : false;
-#elif defined(NUX_OS_LINUX)
+#elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
     _support_ext_swap_control                 = GLXEW_SGI_swap_control ? true : false;
 #endif
+#ifdef NUX_OPENGLES_20
+    _support_arb_vertex_program               = false;
+    _support_arb_fragment_program             = false;
+    _support_arb_shader_objects               = true;
+    _support_arb_vertex_shader                = true;
+    _support_arb_fragment_shader              = true;
+    _support_arb_vertex_buffer_object         = true;
+    _support_arb_texture_non_power_of_two     = true;
+    _support_ext_framebuffer_object           = true;
+    _support_ext_draw_range_elements          = false;
+    _support_ext_stencil_two_side             = false;
+    _support_ext_texture_rectangle            = false;
+    _support_arb_texture_rectangle            = false;
+    _support_nv_texture_rectangle             = false;
+    _support_arb_pixel_buffer_object          = false;
+    _support_ext_blend_equation_separate      = true;
+#else
     _support_arb_vertex_program               = GLEW_ARB_vertex_program ? true : false;
     _support_arb_fragment_program             = GLEW_ARB_fragment_program ? true : false;
     _support_arb_shader_objects               = GLEW_ARB_shader_objects ? true : false;
@@ -302,6 +319,7 @@ namespace nux
     _support_nv_texture_rectangle             = GLEW_NV_texture_rectangle ? true : false;
     _support_arb_pixel_buffer_object          = GLEW_ARB_pixel_buffer_object ? true : false;
     _support_ext_blend_equation_separate      = GLEW_EXT_blend_equation_separate ? true : false;
+#endif
 
   }
 
@@ -313,6 +331,17 @@ namespace nux
     int req_opengl_minor,
     bool opengl_es_20)
 #elif defined (NUX_OS_LINUX)
+#ifdef NUX_OPENGLES_20
+  GpuDevice::GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+    Display *display,
+    Window window,
+    bool has_glx_13_support,
+    EGLConfig fb_config,
+    EGLContext &opengl_rendering_context,
+    int req_opengl_major,
+    int req_opengl_minor,
+    bool opengl_es_20)
+#else
   GpuDevice::GpuDevice (t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
     Display *display,
     Window window,
@@ -322,6 +351,7 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
+#endif
 #endif
   {
     inlSetThreadLocalStorage (_TLS_GpuDevice_, this);
@@ -333,6 +363,7 @@ namespace nux
     
     // OpenGL extension initialization
     GLenum Glew_Ok = 0;
+#ifndef NUX_OPENGLES_20
 #ifdef GLEW_MX
     Glew_Ok = glewContextInit (glewGetContext() );
     nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] GL Extensions failed to initialize."));
@@ -347,6 +378,7 @@ namespace nux
     nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] OpenGL Extensions failed to initialize."));
 #else
     Glew_Ok = glewInit();
+#endif
 #endif
 
 #ifndef NUX_OPENGLES_20
@@ -423,7 +455,7 @@ namespace nux
           opengl_es_context_created = true;
         }
 #elif defined (NUX_OS_LINUX)
-        int attribs[] =
+/*        int attribs[] =
         {
           GLX_CONTEXT_MAJOR_VERSION_ARB,  2,
           GLX_CONTEXT_MINOR_VERSION_ARB,  0,
@@ -442,7 +474,7 @@ namespace nux
           opengl_rendering_context = new_opengl_rendering_context;
           glXMakeCurrent (display, window, opengl_rendering_context);
           opengl_es_context_created = true;
-        }
+        }*/
 #endif
       }
       else if (requested_profile_is_supported)
@@ -483,7 +515,7 @@ namespace nux
           opengl_rendering_context = new_opengl_rendering_context;
           wglMakeCurrent (device_context, opengl_rendering_context);
         }
-#elif defined (NUX_OS_LINUX)
+#elif defined (NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
         if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
         {
           profile_mask  = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
@@ -537,7 +569,11 @@ namespace nux
     CHECKGL_MSG (glGetString (GL_RENDERER) );
     _openGL_version_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VERSION) ) );
     CHECKGL_MSG (glGetString (GL_VERSION) );
+#ifdef NUX_OPENGLES_20
+    if (1)
+#else
     if (GLEW_VERSION_2_0)
+#endif
     {
       _glsl_version_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_SHADING_LANGUAGE_VERSION) ) );
       CHECKGL_MSG (glGetString (GL_SHADING_LANGUAGE_VERSION) );
@@ -554,24 +590,18 @@ namespace nux
     nuxDebugMsg (TEXT ("Gpu OpenGL Version: %s"), _openGL_version_string.GetTCharPtr() );
     nuxDebugMsg (TEXT ("Gpu GLSL Version: %s"), _glsl_version_string.GetTCharPtr() );
 
+#ifndef NUX_OPENGLES_20
     // Get the version supported by the context that was set.
+    int new_opengl_major;
+    int new_opengl_minor;
+    CHECKGL (glGetIntegerv (GL_MAJOR_VERSION, &new_opengl_major));
+    CHECKGL (glGetIntegerv (GL_MINOR_VERSION, &new_opengl_minor));
 
-    if (opengl_es_20 && opengl_es_context_created)
+    if ((new_opengl_major != _opengl_major) || (new_opengl_minor != _opengl_minor))
     {
-      
+      nuxDebugMsg (TEXT ("The Gpu supports OpenGL %d.%d but version %d.%d has been requested."), _opengl_major, _opengl_minor, new_opengl_major, new_opengl_minor);
     }
-    else
-    {
-      int new_opengl_major;
-      int new_opengl_minor;
-      CHECKGL (glGetIntegerv (GL_MAJOR_VERSION, &new_opengl_major));
-      CHECKGL (glGetIntegerv (GL_MINOR_VERSION, &new_opengl_minor));
-
-      if ((new_opengl_major != _opengl_major) || (new_opengl_minor != _opengl_minor))
-      {
-        nuxDebugMsg (TEXT ("The Gpu supports OpenGL %d.%d but version %d.%d has been requested."), _opengl_major, _opengl_minor, new_opengl_major, new_opengl_minor);
-      }
-    }
+#endif
 
     NString TempStr = (const TCHAR *) TCharToUpperCase (_board_vendor_string.GetTCharPtr() );
 
@@ -606,9 +636,7 @@ namespace nux
 
 #if defined(NUX_OS_WINDOWS)
     OGL_EXT_SWAP_CONTROL                = WGLEW_EXT_swap_control ? true : false;
-#elif defined(NUX_OS_LINUX)
-    OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
-#elif defined(NUX_OS_LINUX)
+#elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
     OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
 #endif
 
@@ -730,11 +758,13 @@ namespace nux
   {
     CHECKGL (glActiveTextureARB (TextureUnitIndex) );
 
-    CHECKGL (glBindTexture (GL_TEXTURE_1D, 0) );
     CHECKGL (glBindTexture (GL_TEXTURE_2D, 0) );
+#ifndef NUX_OPENGLES_20
+    CHECKGL (glBindTexture (GL_TEXTURE_1D, 0) );
     CHECKGL (glBindTexture (GL_TEXTURE_CUBE_MAP, 0) );
     CHECKGL (glBindTexture (GL_TEXTURE_3D, 0) );
     CHECKGL (glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0) );
+#endif
 
     // From lowest priority to highest priority:
     //      GL_TEXTURE_1D,
@@ -743,11 +773,13 @@ namespace nux
     //      GL_TEXTURE_3D,
     //      GL_TEXTURE_CUBE_MAP.
 
-    CHECKGL (glDisable (GL_TEXTURE_1D) );
     CHECKGL (glDisable (GL_TEXTURE_2D) );
+#ifndef NUX_OPENGLES_20
+    CHECKGL (glDisable (GL_TEXTURE_1D) );
     CHECKGL (glDisable (GL_TEXTURE_RECTANGLE_ARB) );
     CHECKGL (glDisable (GL_TEXTURE_3D) );
     CHECKGL (glDisable (GL_TEXTURE_CUBE_MAP) );
+#endif
   }
 
   int GpuDevice::AllocateUnpackPixelBufferIndex (int *index)
@@ -794,6 +826,7 @@ namespace nux
     return OGL_OK;
   }
 
+#ifndef NUX_OPENGLES_20
   void *GpuDevice::LockUnpackPixelBufferIndex (const int index, int Size)
   {
     GetGpuDevice()->BindUnpackPixelBufferIndex (index);
@@ -827,6 +860,7 @@ namespace nux
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
   }
+#endif
 
   int GpuDevice::BindUnpackPixelBufferIndex (const int index)
   {

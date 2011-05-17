@@ -251,6 +251,67 @@ namespace nux
       }
     }
 
+#ifdef NUX_OPENGLES_20
+    EGLDisplay  dpy;
+    EGLConfig   config;
+    XVisualInfo visual_info;
+    EGLint      count, visualid;
+    EGLint      major, minor;
+
+    const EGLint config_attribs[] =
+    {
+      EGL_SURFACE_TYPE,         EGL_WINDOW_BIT,
+      EGL_RED_SIZE,             8,
+      EGL_GREEN_SIZE,           8,
+      EGL_BLUE_SIZE,            8,
+      EGL_ALPHA_SIZE,           8,
+      EGL_DEPTH_SIZE,           24,
+      EGL_RENDERABLE_TYPE,      EGL_OPENGL_ES2_BIT,
+      EGL_CONFIG_CAVEAT,        EGL_NONE,
+      EGL_NONE,
+    };
+
+    const EGLint context_attribs[] =
+    {
+      EGL_CONTEXT_CLIENT_VERSION, 2,
+      EGL_NONE
+    };
+
+    dpy = eglGetDisplay ((EGLNativeDisplayType)m_X11Display);
+    if (!eglInitialize (dpy, &major, &minor))
+    {
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot initialize EGL."));
+      return false;
+    }
+
+    eglBindAPI (EGL_OPENGL_ES_API);
+
+    if (!eglChooseConfig (dpy, config_attribs, &config, 1, &count))
+    {
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get EGL config."));
+      return false;
+    }
+
+    if (!eglGetConfigAttrib(dpy, config, EGL_NATIVE_VISUAL_ID, &visualid))
+    {
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] eglGetConfigAttrib() failed"));
+      return false;
+    }
+
+    // the X window visual must match the EGL config
+    visual_info.visualid = visualid;
+    m_X11VisualInfo = XGetVisualInfo (m_X11Display, VisualIDMask, &visual_info, &count);
+    if (!m_X11VisualInfo)
+    {
+      nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get appropriate visual."));
+      return false;
+    }
+
+    m_X11Colormap = XCreateColormap (m_X11Display,
+                                     RootWindow (m_X11Display, m_X11VisualInfo->screen),
+                                     m_X11VisualInfo->visual,
+                                     AllocNone);
+#else
     // Check support for GLX
     int dummy0, dummy1;
     if (!glXQueryExtension(m_X11Display, &dummy0, &dummy1))
@@ -370,6 +431,7 @@ namespace nux
           m_X11VisualInfo->visual,
           AllocNone);
     }
+#endif
 
     m_X11Attr.background_pixmap = 0;
     m_X11Attr.border_pixel      = 0;
@@ -472,6 +534,21 @@ namespace nux
       //XMapRaised (m_X11Display, m_X11Window);
     }
 
+#ifdef NUX_OPENGLES_20
+    m_GLSurface = eglCreateWindowSurface (dpy, config, m_X11Window, 0);
+    if (!m_GLSurface)
+    {
+      nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Failed to create surface."));
+      return false;
+    }
+
+    m_GLCtx = eglCreateContext (dpy, config, EGL_NO_CONTEXT, context_attribs);
+    if (m_GLCtx == EGL_NO_CONTEXT)
+    {
+      nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Failed to create EGL context."));
+      return false;
+    }
+#else
     if (0 /*_has_glx_13*/)
     {
       XFree (m_X11VisualInfo);
@@ -492,6 +569,7 @@ namespace nux
       /* Bind the GLX context to the Window */
       glXMakeContextCurrent (m_X11Display, glxWin, glxWin, m_GLCtx);
     }
+#endif
 
     MakeGLContextCurrent();
     glClearColor (0.0, 0.0, 0.0, 0.0);
@@ -518,7 +596,11 @@ namespace nux
     return TRUE;
   }
 
+#ifdef NUX_OPENGLES_20
+  bool GraphicsDisplay::CreateFromOpenGLWindow (Display *X11Display, Window X11Window, EGLContext OpenGLContext)
+#else
   bool GraphicsDisplay::CreateFromOpenGLWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
+#endif
   {
     // Do not make the opengl context current
     // Do not swap the framebuffer
@@ -856,7 +938,13 @@ namespace nux
 
   void GraphicsDisplay::MakeGLContextCurrent()
   {
+#ifdef NUX_OPENGLES_20
+    EGLDisplay dpy = eglGetDisplay ((EGLNativeDisplayType)m_X11Display);
+
+    if (!eglMakeCurrent (dpy, m_GLSurface, m_GLSurface, m_GLCtx))
+#else
     if (!glXMakeCurrent (m_X11Display, m_X11Window, m_GLCtx) )
+#endif
     {
       DestroyOpenGLWindow();
     }
@@ -891,7 +979,11 @@ namespace nux
 
     if (glswap)
     {
+#ifdef NUX_OPENGLES_20
+      eglSwapBuffers (eglGetDisplay (m_X11Display), m_GLSurface);
+#else
       glXSwapBuffers (m_X11Display, m_X11Window);
+#endif
     }
 
     m_FrameTime = m_Timer.PassedMilliseconds();
@@ -922,12 +1014,26 @@ namespace nux
     {
       if (m_GLCtx)
       {
+#ifdef NUX_OPENGLES_20
+        EGLDisplay dpy = eglGetDisplay (m_X11Display);
+
+        if (!eglMakeCurrent (dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
+        {
+          nuxAssert (TEXT ("[GraphicsDisplay::DestroyOpenGLWindow] eglMakeCurrent failed.") );
+        }
+
+        eglDestroyContext (dpy, m_GLCtx);
+        eglDestroySurface (dpy, m_GLSurface);
+        eglTerminate (dpy);
+        eglReleaseThread ();
+#else
         if (!glXMakeCurrent (m_X11Display, None, NULL) )
         {
           nuxAssert (TEXT ("[GraphicsDisplay::DestroyOpenGLWindow] glXMakeCurrent failed.") );
         }
 
         glXDestroyContext (m_X11Display, m_GLCtx);
+#endif
         m_GLCtx = NULL;
       }
 
@@ -2647,20 +2753,24 @@ namespace nux
 
   void GraphicsDisplay::EnableVSyncSwapControl ()
   {
+#ifndef NUX_OPENGLES_20
     if (GetGpuDevice ()->GetGpuInfo ().Support_EXT_Swap_Control ())
     {
       GLXDrawable drawable = glXGetCurrentDrawable();
       glXSwapIntervalEXT(m_X11Display, drawable, 1);
     }
+#endif
   }
 
   void GraphicsDisplay::DisableVSyncSwapControl ()
   {
+#ifndef NUX_OPENGLES_20
     if (GetGpuDevice ()->GetGpuInfo ().Support_EXT_Swap_Control ())
     {
       GLXDrawable drawable = glXGetCurrentDrawable ();
       glXSwapIntervalEXT (m_X11Display, drawable, 0);
     }
+#endif
   }
 
   float GraphicsDisplay::GetFrameTime () const

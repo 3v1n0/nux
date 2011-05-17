@@ -86,8 +86,14 @@ namespace nux
     XVisualInfo *m_X11VisualInfo;
 
     int         m_ParentWindow;
+#ifdef NUX_OPENGLES_20
+    EGLContext  m_GLCtx;
+    EGLSurface  m_GLSurface;
+    EGLConfig   _fb_config;
+#else
     GLXContext  m_GLCtx;
     GLXFBConfig _fb_config;
+#endif
     XSetWindowAttributes m_X11Attr;
 
     int m_NumVideoModes;
@@ -177,7 +183,11 @@ namespace nux
         @param X11Display   Provided display.
         @param X11Window    Provided window.
     */
+#ifdef NUX_OPENGLES_20
+    bool CreateFromOpenGLWindow (Display *X11Display, Window X11Window, EGLContext OpenGLContext);
+#else
     bool CreateFromOpenGLWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext);
+#endif
 
     void DestroyOpenGLWindow();
 
@@ -384,6 +394,7 @@ namespace nux
     bool _dnd_source_drop_sent;
   public:
     ~GraphicsDisplay();
+#ifndef NUX_OPENGLES_20
     GLEWContext *GetGLEWContext()
     {
       return &m_GLEWContext;
@@ -392,6 +403,7 @@ namespace nux
     {
       return &m_GLXEWContext;
     }
+#endif
 
     NString FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
     NString FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
@@ -422,8 +434,10 @@ namespace nux
     // Does not make sense for a singleton. This is a self assignment.
     GraphicsDisplay &operator= (const GraphicsDisplay &);
 
+#ifndef NUX_OPENGLES_20
     GLEWContext m_GLEWContext;
     GLXEWContext m_GLXEWContext;
+#endif
     friend class DisplayAccessController;
   };
 

@@ -257,6 +257,7 @@ namespace nux
   }
 
 
+#ifndef NUX_OPENGLES_20 // this don't appear to even be used...
 // Draw Primitive without index buffer
   int GpuDevice::DrawPrimitive (ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
                                       PRIMITIVE_TYPE PrimitiveType,
@@ -467,6 +468,7 @@ namespace nux
     //    }
     return OGL_OK;
   }
+#endif
 
 // //    DirectX Matrix
 // //    |   2/W     0       0       -(W+1)/W    |

@@ -26,6 +26,8 @@
 
 #define GL_GLEXT_PROTOTYPES
 
+#define GLcharARB GLchar
+
 #define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
 #define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER
 #define GL_FRAMEBUFFER_COMPLETE_EXT GL_FRAMEBUFFER_COMPLETE
@@ -44,7 +46,10 @@
 #define GL_ARRAY_BUFFER_ARB GL_ARRAY_BUFFER
 #define GL_ELEMENT_ARRAY_BUFFER_ARB GL_ELEMENT_ARRAY_BUFFER
 
+// not sure if this will work in all cases
 #define GL_CLAMP GL_CLAMP_TO_EDGE
+// needs extra shader code but otherwise is equivalent
+#define GL_CLAMP_TO_BORDER GL_CLAMP_TO_EDGE
 
 #define GL_WRITE_ONLY_ARB GL_WRITE_ONLY_OES
 
@@ -78,6 +83,14 @@
 
 
 #define glUniform1iARB glUniform1i
+#define glUniform2iARB glUniform2i
+#define glUniform3iARB glUniform3i
+#define glUniform4iARB glUniform4i
+
+#define glUniform1ivARB glUniform1iv
+#define glUniform2ivARB glUniform2iv
+#define glUniform3ivARB glUniform3iv
+#define glUniform4ivARB glUniform4iv
 
 #define glUniform1fARB glUniform1f
 #define glUniform2fARB glUniform2f
@@ -89,9 +102,17 @@
 #define glUniform3fvARB glUniform3fv
 #define glUniform4fvARB glUniform4fv
 
+#define glGetUniformfvARB glGetUniformfv
+#define glGetUniformivARB glGetUniformiv
+
 #define glUniformMatrix2fvARB glUniformMatrix2fv
 #define glUniformMatrix3fvARB glUniformMatrix3fv
 #define glUniformMatrix4fvARB glUniformMatrix4fv
+
+#define glGetActiveAttribARB glGetActiveAttrib
+#define glGetActiveUniformARB glGetActiveUniform
+#define glGetObjectParameterivARB glGetObjectParameteriv
+#define glGetUniformLocationARB glGetUniformLocation
 
 #define glDepthRange glDepthRangef
 

@@ -59,6 +59,7 @@ namespace nux
     if (_ResourceType == RTTEXTURE)
       _TextureStates.SetType (GL_TEXTURE_2D);
 
+#ifndef NUX_OPENGLES_20
     if (_ResourceType == RTTEXTURERECTANGLE)
       _TextureStates.SetType (GL_TEXTURE_RECTANGLE_ARB);
 
@@ -70,6 +71,7 @@ namespace nux
 
     if (_ResourceType == RTANIMATEDTEXTURE)
       _TextureStates.SetType (GL_TEXTURE_RECTANGLE_ARB);
+#endif
 
     _RowMemoryAlignment = ImageSurface::GetMemAlignment (PixelFormat);
 
@@ -90,6 +92,7 @@ namespace nux
     {
       CHECKGL ( glBindTexture (GL_TEXTURE_2D, _OpenGLID) );
     }
+#ifndef NUX_OPENGLES_20
     else if (_ResourceType == RTTEXTURERECTANGLE)
     {
       CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
@@ -106,6 +109,7 @@ namespace nux
     {
       CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
     }
+#endif
     else
     {
       nuxError (TEXT ("[IOpenGLBaseTexture::SetRenderStates] Incorrect texture resource type.") );
@@ -149,6 +153,7 @@ namespace nux
     {
       CHECKGL ( glBindTexture (GL_TEXTURE_2D, _OpenGLID) );
     }
+#ifndef NUX_OPENGLES_20
     else if (_ResourceType == RTTEXTURERECTANGLE)
     {
       CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
@@ -165,6 +170,7 @@ namespace nux
     {
       CHECKGL (glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
     }
+#endif
     else
     {
       nuxError (TEXT ("[GpuDevice::BindTexture] Unknown texture type.") );
@@ -179,19 +185,22 @@ namespace nux
   {
     CHECKGL ( glActiveTextureARB (TextureUnitIndex) );
     CHECKGL ( glBindTexture (GL_TEXTURE_2D, 0) );
+    CHECKGL ( glDisable (GL_TEXTURE_2D) );
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glBindTexture (GL_TEXTURE_3D, 0) );
     CHECKGL ( glBindTexture (GL_TEXTURE_CUBE_MAP, 0) );
     CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0) );
-    CHECKGL ( glDisable (GL_TEXTURE_2D) );
     CHECKGL ( glDisable (GL_TEXTURE_3D) );
     CHECKGL ( glDisable (GL_TEXTURE_RECTANGLE_ARB) );
     CHECKGL ( glDisable (GL_TEXTURE_CUBE_MAP) );
+#endif
 
     if (_ResourceType == RTTEXTURE)
     {
       CHECKGL (glBindTexture (GL_TEXTURE_2D, _OpenGLID) );
       CHECKGL (glEnable (GL_TEXTURE_2D) );
     }
+#ifndef NUX_OPENGLES_20
     else if (_ResourceType == RTTEXTURERECTANGLE)
     {
       CHECKGL (glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
@@ -212,6 +221,7 @@ namespace nux
       CHECKGL (glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
       CHECKGL (glEnable (GL_TEXTURE_RECTANGLE_ARB) );
     }
+#endif
     else
     {
       nuxError (TEXT ("[IOpenGLBaseTexture::BindTexture] unknown texture type.") );

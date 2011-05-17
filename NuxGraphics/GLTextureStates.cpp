@@ -130,7 +130,9 @@ namespace nux
     {
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_WRAP_S,       m_TextureStateChanges[GFXTS_ADDRESSU].iValue) );
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_WRAP_T,       m_TextureStateChanges[GFXTS_ADDRESSV].iValue) );
+#ifndef NUX_OPENGLES_20 //afaik this is only for 3D textures which we don't have anyway
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_WRAP_R,       m_TextureStateChanges[GFXTS_ADDRESSW].iValue) );
+#endif
       m_TextureStateChanges[GFXTS_ADDRESSU].Dirty = false;
       m_TextureStateChanges[GFXTS_ADDRESSV].Dirty = false;
       m_TextureStateChanges[GFXTS_ADDRESSW].Dirty = false;
@@ -139,6 +141,7 @@ namespace nux
 
   void GLTextureStates::HW_SetLOD()
   {
+#ifndef NUX_OPENGLES_20
     if (m_Type == GL_TEXTURE_RECTANGLE_ARB)
     {
       // No support for mip LOP on rectangle texture.
@@ -148,11 +151,16 @@ namespace nux
       m_TextureStateChanges[GFXTS_MAX_LOD].Dirty = false;
       return;
     }
+#endif
 
     if (m_TextureStateChanges[GFXTS_MIN_LOD].Dirty || m_TextureStateChanges[GFXTS_MAX_LOD].Dirty)
     {
+#ifdef NUX_OPENGLES_20
+      #warning FIXME not implemented
+#else
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MIN_LOD,  m_TextureStateChanges[GFXTS_MIN_LOD].fValue) );
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MAX_LOD,  m_TextureStateChanges[GFXTS_MAX_LOD].fValue) );
+#endif
       m_TextureStateChanges[GFXTS_MIN_LOD].Dirty = false;
       m_TextureStateChanges[GFXTS_MAX_LOD].Dirty = false;
     }
@@ -162,8 +170,12 @@ namespace nux
   {
     if (m_TextureStateChanges[GFXTS_MIN_LOD].Dirty || m_TextureStateChanges[GFXTS_MAX_LOD].Dirty)
     {
+#ifdef NUX_OPENGLES_20
+      #warning FIXME not implemented
+#else
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MIN_LOD,  m_TextureStateChanges[GFXTS_MIN_LOD].fValue) );
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MAX_LOD,  m_TextureStateChanges[GFXTS_MAX_LOD].fValue) );
+#endif
       m_TextureStateChanges[GFXTS_MIN_LOD].Dirty = false;
       m_TextureStateChanges[GFXTS_MAX_LOD].Dirty = false;
     }
@@ -198,6 +210,10 @@ namespace nux
     //        (MIP == GL_NEAREST),
     //        TEXT("Error[GLTextureStates::SetFiltering]: Invalid Mipmap Filter State"));
 
+#ifdef NUX_OPENGLES_20
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
+#else
     if (m_Type == GL_TEXTURE_RECTANGLE_ARB)
     {
       if ( (MinFilter != GL_NEAREST) && (MinFilter != GL_LINEAR) )
@@ -225,6 +241,7 @@ namespace nux
       SET_TS_VALUE (m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
       SET_TS_VALUE (m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
     }
+#endif
 
     //SET_TS_VALUE(m_TextureStateChanges[GFXTS_MIPFILTER], MIP);
   }
@@ -266,6 +283,11 @@ namespace nux
       (W == GL_REPEAT),
       TEXT ("Error[GLTextureStates::SetWrap]: Invalid W Wrap State") );
 
+#ifdef NUX_OPENGLES_20
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSU], U);
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], V);
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSW], W);
+#else
     if (m_Type == GL_TEXTURE_RECTANGLE_ARB)
     {
       if ( (U != GL_CLAMP) && (U != GL_CLAMP_TO_BORDER) && (U != GL_CLAMP_TO_EDGE) )
@@ -304,6 +326,7 @@ namespace nux
       SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], V);
       SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSW], W);
     }
+#endif
   }
 
   void GLTextureStates::SetLOD (float MinLod,
