@@ -486,12 +486,12 @@ RedGreenBlue::RedGreenBlue(float r, float g, float b)
 
 RedGreenBlue::RedGreenBlue(HueSaturationValue const& hsv)
 {
-  HSVtoRGB(red, blue, green, hsv.hue, hsv.saturation, hsv.value);
+  HSVtoRGB(red, green, blue, hsv.hue, hsv.saturation, hsv.value);
 }
 
 RedGreenBlue::RedGreenBlue(HueLightnessSaturation const& hls)
 {
-  HLStoRGB(red, blue, green, hls.hue, hls.lightness, hls.saturation);
+  HLStoRGB(red, green, blue, hls.hue, hls.lightness, hls.saturation);
 }
 
 HueSaturationValue::HueSaturationValue(float h, float s, float v)
