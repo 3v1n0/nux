@@ -59,10 +59,6 @@ namespace nux
       return 0;
     }
 
-//    NUnZip UZ(TEXT("..\\inalogic.pak"));
-//    NStreamBuffer *Stream = UZ.UnzipFileToStream(file_name);
-//    std::istream fileStream(Stream);
-
     fileStream.open (file_name, std::ifstream::binary);       // open as binary
 
     if (!fileStream.is_open() )
