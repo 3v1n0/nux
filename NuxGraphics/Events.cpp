@@ -68,8 +68,8 @@ namespace nux
     e_key_modifiers = 0;
     e_key_repeat_count = 0;
     e_mouse_state = 0;
-    e_x = 0;
-    e_y = 0;
+    e_x = -1;
+    e_y = -1;
     e_x_root = 0;
     e_y_root = 0;
     e_dx = 0;
