@@ -23,8 +23,6 @@
 #include "RGBE.h"
 
 
-#include "NuxCore/StreamBuffer.h"
-
 #include "RGBE.h"
 #include "BitmapFormats.h"
 #include "ImageSurface.h"
