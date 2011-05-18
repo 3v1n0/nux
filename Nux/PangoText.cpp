@@ -257,7 +257,7 @@ namespace nux
     cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
     cairo_set_source_rgba (cr, 0.0f, 0.0f, 0.0f, 0.0f);
     cairo_paint (cr);
-    cairo_set_source_rgba (cr, color.R (),color.G (), color.B (), color.A ());
+    cairo_set_source_rgba (cr, color.red, color.green, color.blue, color.alpha);
 
     pango_layout_context_changed (layout);
 

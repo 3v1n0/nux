@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <algorithm>
 
+
 #define NUX_RGBA_GET_ALPHA(rgba)      ((rgba) >> 24)
 #define NUX_RGBA_GET_RED(rgba)        (((rgba) >> 16) & 0xff)
 #define NUX_RGBA_GET_GREEN(rgba)      (((rgba) >> 8) & 0xff)
