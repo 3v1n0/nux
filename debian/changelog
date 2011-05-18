@@ -1,11 +1,11 @@
-nux (0.9.48-0ubuntu2) UNRELEASED; urgency=low
+nux (0.9.48-0ubuntu2) oneiric; urgency=low
 
   * debian/patches/01_build_with_gcc46.patch:
     - Fix Fails to compile with GCC 4.6 (thanks Adam Williamson) (LP: #745392)
   * debian/control, rules, patches/series:
     - add quilt infrastructure
 
- -- Didier Roche <didrocks@ubuntu.com>  Wed, 18 May 2011 13:12:02 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 18 May 2011 13:13:49 +0200
 
 nux (0.9.48-0ubuntu1) natty-proposed; urgency=low
 
