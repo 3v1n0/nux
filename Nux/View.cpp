@@ -41,6 +41,7 @@ namespace nux
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
     _can_pass_focus_to_composite_layout = true;
     _can_focus          = true;
+    state               = NUX_STATE_NORMAL;
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
