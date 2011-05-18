@@ -31,23 +31,10 @@ namespace nux
   Button::Button (const TCHAR *Caption, NUX_FILE_LINE_DECL)
     :   AbstractButton (Caption, NUX_FILE_LINE_PARAM)
   {
-    _state     = false;
-
-    // Set Signals
-    OnMouseClick.connect (sigc::mem_fun (this, &Button::RecvClick) );
-    OnMouseDown.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &Button::RecvMouseUp) );
-    OnMouseMove.connect (sigc::mem_fun (this, &Button::RecvMouseMove) );
-    OnMouseEnter.connect (sigc::mem_fun (this, &Button::RecvMouseEnter) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &Button::RecvMouseLeave) );
-
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
     SetTextColor (Colors::Black);
-
-    SetCaption (Caption);
   }
 
   Button::~Button()
@@ -70,7 +57,7 @@ namespace nux
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Colors::White, eAllCorners);
       GetPainter().PopBackground();
     }
-    else if (this->state == NUX_)
+    else if (this->state == NUX_STATE_PRELIGHT)
     {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, Colors::White, eAllCorners);
       GetPainter().PopBackground();

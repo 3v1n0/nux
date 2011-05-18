@@ -25,11 +25,20 @@
 
 #include "Nux.h"
 #include "Focusable.h"
+#include "NuxCore/Property.h"
 
 namespace nux
 {
 
   class Layout;
+
+  enum State
+  {
+    NUX_STATE_ACTIVE,
+    NUX_STATE_PRELIGHT,
+    NUX_STATE_SELECTED,
+    NUX_STATE_INSENSITIVE
+  };
 
   enum eControlType
   {
@@ -188,6 +197,9 @@ namespace nux
         Returns true if the view has a layout and passes focus to that layout
     */
     bool HasPassiveFocus ();
+
+    /* the current state of the widget. useful to lookup quickly */
+    nux::Property<State> state;
 
   protected:
     bool _can_focus;
