@@ -3,6 +3,7 @@ Priority: optional
 Maintainer: Didier Roche <didrocks@ubuntu.com>
 Build-Depends: debhelper (>= 7.0.50~),
                autotools-dev,
+               quilt,
                doxygen,
                libglib2.0-dev (>= 2.25.14),
                libgdk-pixbuf2.0-dev,
