@@ -64,17 +64,13 @@ namespace nux
   void Button::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
-    InteractState is;
-    is.is_on = _state;
-    is.is_focus = HasMouseFocus();
-    is.is_prelight = IsMouseInside();
 
-    if (is.is_focus || is.is_on)
+    if (GetFocused ())
     {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Colors::White, eAllCorners);
       GetPainter().PopBackground();
     }
-    else if (is.is_prelight)
+    else if (this->state == NUX_)
     {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, Colors::White, eAllCorners);
       GetPainter().PopBackground();
@@ -85,17 +81,8 @@ namespace nux
       GetPainter().PopBackground();
     }
 
-    //if (_state)
-    //{
-    //  GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Colors::White, eAllCorners);
-    //  GetPainter().PopBackground();
-    //}
-    //else
-    //{
-    //  GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Colors::White, eAllCorners);
-    //  GetPainter().PopBackground();
-    //}
-    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), base, GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+    NString nstring_label = NString(this->label.c_str());
+    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), base, nstring_label, GetTextColor(), true, eAlignTextCenter);
   }
 
   void Button::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -108,80 +95,10 @@ namespace nux
 
   }
 
-  void Button::SetCaption (const TCHAR *Caption)
-  {
-    if (Caption == 0 || (StringLength (Caption) == 0) )
-    {
-      SetBaseString (TEXT ("") );
-    }
-    else
-      SetBaseString (Caption);
-  }
-
-  const NString &Button::GetCaption() const
-  {
-    return GetBaseString();
-  }
-
   void Button::SetState (bool b)
   {
     _state = b;
     NeedRedraw();
   }
-
-  void Button::SetState (bool State, bool EmitSignal)
-  {
-    _state = State;
-
-    if (EmitSignal)
-    {
-      sigClick.emit();
-      sigToggled.emit();
-      sigStateChanged.emit (_state);
-
-    }
-
-    NeedRedraw();
-  }
-
-  bool Button::GetState() const
-  {
-    return _state;
-  }
-
-  void Button::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    _state = !_state;
-    sigClick.emit();
-    NeedRedraw();
-  }
-
-  void Button::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    NeedRedraw();
-  }
-
-  void Button::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    NeedRedraw();
-  }
-
-  void Button::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
-  {
-
-  }
-
-  void Button::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    NeedRedraw();
-  }
-
-  void Button::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    NeedRedraw();
-  }
-
-
-
 
 }

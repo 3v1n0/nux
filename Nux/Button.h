@@ -29,38 +29,18 @@ namespace nux
 
   class HLayout;
 
-  //! A Button control that represents a state.
   class Button: public AbstractButton
   {
     NUX_DECLARE_OBJECT_TYPE (Button, View);
   public:
-    Button (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
+    Button (BaseTexture *image_, NUX_FILE_FILE_PROTO);
+    Button (const std::string label_, NUX_FILE_LINE_PROTO);
+    Button (const std::string label_, BaseTexture *image, NUX_FILE_LINE_PROTO);
+    Button (NUX_FILE_LINE_PROTO);
     ~Button();
 
-    virtual void SetCaption (const TCHAR *Caption);
-    virtual const NString &GetCaption() const;
-
-    virtual void SetState (bool State);
-    virtual void SetState (bool State, bool EmitSignal);
-    virtual bool GetState() const;
-
-    sigc::signal<void> sigClick;
-    sigc::signal<void> sigToggled;
-    sigc::signal<void, bool> sigStateChanged;
-
-  protected:
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
-
+    property<BaseTexture *> image;
+    property<std::string>   label;
   };
 }
 
