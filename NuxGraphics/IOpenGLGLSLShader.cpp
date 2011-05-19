@@ -1321,10 +1321,12 @@ namespace nux
   void IOpenGLShaderProgram::GetObjectParameterfvARB (GLenum pname,
       GLfloat *params)
   {
+#ifndef NUX_OPENGLES_20
     glGetObjectParameterfvARB (_OpenGLID,
                                pname,
                                params);
     CHECKGL_MSG (glGetObjectParameterfvARB);
+#endif
   }
 
 //-----------------------------------------------------------------------------

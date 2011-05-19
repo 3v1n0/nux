@@ -561,7 +561,7 @@ namespace nux
     else
       return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #else
-    return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+    return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #endif
   }
 
@@ -592,7 +592,7 @@ namespace nux
     else
       return QRP_ASM_GetPixelBlocks (device_texture, texxform, color, pixel_size);
 #else
-    return QRP_ASM_GetPixelBlocks (device_texture, texxform, color, pixel_size);
+    return QRP_GLSL_GetPixelBlocks (device_texture, texxform, color, pixel_size);
 #endif
   }
 }

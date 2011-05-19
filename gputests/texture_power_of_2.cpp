@@ -122,6 +122,7 @@ void RenderTexturePowerOfTwo ()
       CHECKGL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST) );
       CHECKGL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST) );
 
+#ifndef NUX_OPENGLES_20
       glEnable(GL_TEXTURE_2D);
       glDisable(GL_TEXTURE_3D);
       glDisable(GL_TEXTURE_CUBE_MAP);
@@ -144,6 +145,9 @@ void RenderTexturePowerOfTwo ()
         glVertex3f(x + width,  y, 0);
       }
       glEnd();
+#else
+#warning FIXME not implemented yet
+#endif
     }
 
     m_GLWindow->SwapBuffer();
