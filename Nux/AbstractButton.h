@@ -33,9 +33,14 @@ namespace nux
     AbstractButton (NUX_FILE_LINE_PROTO);
     ~AbstractButton();
 
-    property<bool>          togglable;
-    property<bool>          active;
+    /* FIXME - read only property - don't know how to set that... */
+    Property<bool>          togglable;
+    Property<bool>          active;
 
+    /* NOTSURE - do we need an activated signal? technically you get that with active,
+     * this is just a simpler way of convaying the same information
+     * as the active property can be true/false
+     */
     sigc::signal<void, View*> Activated;
 
   protected:

@@ -28,19 +28,36 @@ namespace nux
 {
 
   class HLayout;
+  class VLayout;
+  class TextureArea;
+
+  enum Position {
+    NUX_POSITION_LEFT,
+    NUX_POSITION_RIGHT,
+    NUX_POSITION_TOP,
+    NUX_POSITION_BOTTOM
+  };
 
   class Button: public AbstractButton
   {
     NUX_DECLARE_OBJECT_TYPE (Button, View);
   public:
-    Button (BaseTexture *image_, NUX_FILE_FILE_PROTO);
-    Button (const std::string label_, NUX_FILE_LINE_PROTO);
-    Button (const std::string label_, BaseTexture *image, NUX_FILE_LINE_PROTO);
+    Button (TextureArea *image, NUX_FILE_FILE_PROTO);
+    Button (const std::string label, NUX_FILE_LINE_PROTO);
+    Button (const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
     Button (NUX_FILE_LINE_PROTO);
     ~Button();
 
-    property<BaseTexture *> image;
-    property<std::string>   label;
+    Property<Texturearea *> image;
+    Property<std::string>   label;
+    Property<Position>      image_position;
+
+  private:
+    void OnStateChanged ();
+    void OnLabelChanged ();
+    void OnImageChanged ();
+    void OnImagePositionChanged ();
+    void RebuildLayout ();
   };
 }
 

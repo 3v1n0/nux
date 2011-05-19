@@ -45,8 +45,19 @@ namespace nux
 
   void AbstractButton::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    if (togglable) {
+      active = !active;
+    } else {
+      active = true;
+    }
+
     Activated.emit (this);
+
+    if (togglable == false)
+      active = false;
+
     NeedRedraw();
+
   }
 
   void AbstractButton::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags) {

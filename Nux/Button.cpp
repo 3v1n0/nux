@@ -23,69 +23,116 @@
 #include "Nux.h"
 #include "Button.h"
 #include "HLayout.h"
+#include "TextureArea.h"
 
 namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE (Button);
 
-  Button::Button (const TCHAR *Caption, NUX_FILE_LINE_DECL)
-    :   AbstractButton (Caption, NUX_FILE_LINE_PARAM)
-  {
+  Button::Button (TextureArea *image, NUX_FILE_FILE_PROTO)
+      : AbstractButton (NUX_FILE_LINE_PARAM) {
+    Init();
+    this->image = image;
+  }
+
+  Button::Button (const std::string label, NUX_FILE_LINE_PROTO)
+      : AbstractButton (NUX_FILE_LINE_PARAM) {
+    Init();
+    this->label = label;
+  }
+
+  Button::Button (const std::string label, BaseTexture *image, NUX_FILE_LINE_PROTO)
+      : AbstractButton (NUX_FILE_LINE_PARAM) {
+    Init();
+    this->label = label;
+    this->image = image;
+  }
+
+  Button::Button (NUX_FILE_LINE_PROTO)
+      : AbstractButton (NUX_FILE_LINE_PARAM) {
+    Init();
+  }
+
+  Button::~Button() {
+  }
+
+  void Button::Init () {
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-
     SetTextColor (Colors::Black);
+    state.changed.connect (sigc::mem_fun(this, &OnStateChanged));
+
+    // connect up to the imag/label signals
+    label.changed.connect (sigc::mem_fun(this, &OnLabelChanged));
+    image.changed.connect (sigc::mem_fun(this, &OnImageChanged));
+    image_position.changed.connect (sigc::mem_fun(this, &OnImagePositionChanged));
+
+    Layout *layout = new HLayout (NUX_TRACKER_LOCATION);
+    SetLayout (layout);
+    image_position = NUX_POS_LEFT;
   }
 
-  Button::~Button()
-  {
+  void Button::OnStateChanged () {
+    NeedRedraw();
   }
 
-  long Button::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
+  void Button::OnLabelChanged () {
+    RebuildLayout ();
+  }
+
+  void Button::OnImageChanged () {
+    RebuildLayout ();
+  }
+
+  void Button::OnImagePositionChanged () {
+    RebuildLayout ();
+  }
+
+  void Button::RebuildLayout () {
+    Layout *layout;
+
+    if (image_position == NUX_POSITION_LEFT || image_position == NUX_POSITION_RIGHT) {
+      layout = new HLayout (NUX_TRACKER_LOCATION);
+    } else {
+      layout = new VLayout (NUX_TRACKER_LOCATION);
+    }
+
+    PangoText *text = new PangoText(label.c_str());
+
+    if (image_position == NUX_POSITION_LEFT || image_position == NUX_POSITION_TOP) {
+      layout->AddView(image, 1, nux::MINOR_POSITION_LEFT, nux::MINOR_SIZE_MATCHCONTENT,);
+      layout->AddView(text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT,);
+    } else {
+      layout->AddView(text, 1, nux::MINOR_POSITION_LEFT, nux::MINOR_SIZE_MATCHCONTENT,);
+      layout->AddView(image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT,);
+    }
+
+    // NOTE - setting the layout here, unreferences the previous one, should cause all the memory
+    // to be freed
+    SetLayout (layout);
+
+    NeedsRedraw();
+  }
+  long Button::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {
     long ret = TraverseInfo;
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
     return ret;
   }
 
-  void Button::Draw (GraphicsEngine &GfxContext, bool force_draw)
-  {
+  void Button::Draw (GraphicsEngine &GfxContext, bool force_draw) {
     Geometry base = GetGeometry();
 
-    if (GetFocused ())
-    {
+    //FIXME - nux button theming only supports a few states - low priority really.
+    if (active || HasMouseFocus()) {
+      //FIXME - this uses eBUTTON_FOCUS but that's badly named, focus really means "mouse down" or "activated"
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Colors::White, eAllCorners);
       GetPainter().PopBackground();
-    }
-    else if (this->state == NUX_STATE_PRELIGHT)
-    {
+    } else if (state == NUX_STATE_PRELIGHT) {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, Colors::White, eAllCorners);
       GetPainter().PopBackground();
-    }
-    else
-    {
+    } else {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Colors::White, eAllCorners);
       GetPainter().PopBackground();
     }
-
-    NString nstring_label = NString(this->label.c_str());
-    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), base, nstring_label, GetTextColor(), true, eAlignTextCenter);
   }
-
-  void Button::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
-  {
-
-  }
-
-  void Button::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-
-  }
-
-  void Button::SetState (bool b)
-  {
-    _state = b;
-    NeedRedraw();
-  }
-
 }

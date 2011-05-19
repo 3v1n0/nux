@@ -16,27 +16,41 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *              Gordon Allott <gord.allott@canonical.com>
  *
  */
 
 
-#ifndef CHECKBOX_H
-#define CHECKBOX_H
-
+#include "Nux.h"
 #include "ToggleButton.h"
+#include "HLayout.h"
 
 namespace nux
 {
-  class CheckBox: public ToggleButton
-  {
-  public:
-    CheckBox (std::string label, NUX_FILE_LINE_PROTO);
-    ~CheckBox();
+  ToggleButton::ToggleButton (TextureArea *image, NUX_FILE_FILE_PROTO)
+  : AbstractButton (NUX_FILE_LINE_PARAM) {
+    Init();
+    this->image = image;
+  }
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+  ToggleButton::ToggleButton (const std::string label, NUX_FILE_LINE_PROTO)
+  : AbstractButton (NUX_FILE_LINE_PARAM) {
+    Init();
+    this->label = label;
+  }
 
-  private:
-  };
+  ToggleButton::ToggleButton (const std::string label, BaseTexture *image, NUX_FILE_LINE_PROTO)
+  : AbstractButton (NUX_FILE_LINE_PARAM) {
+    Init();
+    this->label = label;
+    this->image = image;
+  }
+
+  ToggleButton:ToggleButton (NUX_FILE_LINE_DECL)
+      : Button (Caption, NUX_FILE_LINE_PARAM) {
+    togglable = true;
+  }
+
+  ToggleButton::~ToggleButton() {
+  }
 }
-
-#endif // CHECKBOX_H

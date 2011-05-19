@@ -20,23 +20,24 @@
  */
 
 
-#ifndef CHECKBOX_H
-#define CHECKBOX_H
-
-#include "ToggleButton.h"
+#ifndef PUSHBUTTON_H
+#define PUSHBUTTON_H
+#include "Button.h"
 
 namespace nux
 {
-  class CheckBox: public ToggleButton
+  class HLayout;
+
+  //! A Button control that performs and action when clicked.
+  class ToggleButton: public Button
   {
   public:
-    CheckBox (std::string label, NUX_FILE_LINE_PROTO);
-    ~CheckBox();
-
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-
-  private:
+    ToggleButton (TextureArea *image, NUX_FILE_FILE_PROTO);
+    ToggleButton (const std::string label, NUX_FILE_LINE_PROTO);
+    ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
+    ToggleButton (NUX_FILE_LINE_PROTO);
   };
+
 }
 
-#endif // CHECKBOX_H
+#endif // PUSHBUTTON_H
