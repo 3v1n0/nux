@@ -1518,7 +1518,7 @@ namespace nux
     return true;
   }
 #elif defined(NUX_OS_LINUX)
-  bool WindowThread::ThreadCtor (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
+  bool WindowThread::ThreadCtor (Display *X11Display, Window X11Window, void *OpenGLContext)
   {
     nuxAssertMsg (m_ThreadCtorCalled == false, TEXT ("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.") );
     NUX_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
