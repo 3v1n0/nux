@@ -19,7 +19,6 @@
  *
  */
 
-#ifndef NUX_OPENGLES_20
 
 #include "GLResource.h"
 #include "GpuDevice.h"
@@ -39,7 +38,9 @@ namespace nux
     , _Type (Type)
     , _QueryStarted (false)
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glGenQueriesARB (1, &_OpenGLID) ) ;
+#endif
   }
 
 // The return type identifies the query state (see Queries).
@@ -51,6 +52,7 @@ namespace nux
     t_u32 GetDataFlags
   )
   {
+#ifndef NUX_OPENGLES_20
     unsigned int ResultReady = 0;
     glGetQueryObjectuivARB (_OpenGLID, GL_QUERY_RESULT_AVAILABLE_ARB, &ResultReady);
     CHECKGL_MSG ( glGetQueryObjectuivARB );
@@ -61,10 +63,8 @@ namespace nux
       CHECKGL_MSG ( glGetQueryObjectuivARB );
       return 1;
     }
-    else
-    {
-      return 0;
-    }
+#endif
+    return 0;
   }
 
   t_u32 IOpenGLQuery::GetDataSize()
@@ -87,6 +87,7 @@ namespace nux
     t_u32 IssueFlags
   )
   {
+#ifndef NUX_OPENGLES_20
     if (IssueFlags == (t_u32) ISSUE_BEGIN)
     {
       nuxAssert (_CurrentlyActiveQuery == 0);
@@ -117,6 +118,7 @@ namespace nux
         _CurrentlyActiveQuery = 0;
       }
     }
+#endif
   }
 
 // Return True is the result is available. That is glGetQueryObjectuivARB won't block
@@ -124,9 +126,10 @@ namespace nux
   bool IOpenGLQuery::IsResultAvailable()
   {
     unsigned int ResultReady = 0;
+#ifndef NUX_OPENGLES_20
     glGetQueryObjectuivARB (_OpenGLID, GL_QUERY_RESULT_AVAILABLE_ARB, &ResultReady);
     CHECKGL_MSG ( glGetQueryObjectuivARB );
-
+#endif
     return ResultReady != 0;
   }
 // Return the result of the query. Make sure IsResultAvailable returned TRUE before calling this function.
@@ -134,13 +137,13 @@ namespace nux
   unsigned int IOpenGLQuery::GetResult()
   {
     unsigned int SamplesPassed = 0;
+#ifndef NUX_OPENGLES_20
     glGetQueryObjectuivARB (_OpenGLID, GL_QUERY_RESULT_ARB, &SamplesPassed);
     CHECKGL_MSG ( glGetQueryObjectuivARB );
+#endif
 
     return SamplesPassed;
   }
 
 }
-
-#endif // NUX_OPENGLES_20
 
