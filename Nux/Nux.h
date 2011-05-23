@@ -96,7 +96,7 @@ namespace nux
                                          void *InitData);
 #elif defined(NUX_OS_LINUX)
   //! Create a main graphics thread. This thread has a window and no parent window.
-  WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
+  WindowThread *CreateFromForeignWindow (Window X11Window, void *OpenGLContext,
                                          ThreadUserInitFunc UserInitFunc,
                                          void *InitData);
 #endif

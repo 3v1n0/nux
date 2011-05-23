@@ -19,7 +19,6 @@
  *
  */
 
-#ifndef NUX_OPENGLES_20
 
 #include "GLDeviceObjects.h"
 #include "IOpenGLVolume.h"
@@ -49,6 +48,7 @@ namespace nux
     const VOLUME_BOX *pBox)
 
   {
+#ifndef NUX_OPENGLES_20
     // If _LockedRect.pBits or _LockedRect.Pitch are not equal to zero, then we have already Locked the buffer
     // Unlock it before locking again.
     nuxAssert (_LockedBox.pBits == 0);
@@ -259,12 +259,14 @@ namespace nux
       _Box.Front  = pBox->Front;
       _Box.Back   = pBox->Back;
     }
+#endif
 
     return OGL_OK;
   }
 
   int IOpenGLVolume::UnlockBox()
   {
+#ifndef NUX_OPENGLES_20
     if (_LockedBox.pBits == 0)
     {
       return OGL_INVALID_UNLOCK;
@@ -377,12 +379,14 @@ namespace nux
     _LockedBox.pBits = 0;
     _LockedBox.RowPitch = 0;
     _CompressedDataSize = 0;
+#endif
 
     return OGL_OK;
   }
 
   int IOpenGLVolume::InitializeLevel()
   {
+#ifndef NUX_OPENGLES_20
     // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
     int volwidth = ImageSurface::GetLevelDim (_VolumeTexture->_PixelFormat, _VolumeTexture->_Width, _SMipLevel);
     int volheight = ImageSurface::GetLevelDim (_VolumeTexture->_PixelFormat, _VolumeTexture->_Height, _SMipLevel);
@@ -467,6 +471,7 @@ namespace nux
     CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetGpuDevice()->GetPixelStoreAlignment() ) );
 
     _Initialized = true;
+#endif
     return OGL_OK;
   }
 
@@ -506,6 +511,3 @@ namespace nux
   }
 
 }
-
-#endif // NUX_OPENGLES_20
-

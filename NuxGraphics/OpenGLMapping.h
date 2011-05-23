@@ -53,6 +53,9 @@
 
 #define GL_WRITE_ONLY_ARB GL_WRITE_ONLY_OES
 
+#define GL_VERTEX_SHADER_ARB GL_VERTEX_SHADER
+#define GL_FRAGMENT_SHADER_ARB GL_FRAGMENT_SHADER
+#define GL_OBJECT_ACTIVE_ATTRIBUTES_ARB GL_ACTIVE_ATTRIBUTES
 
 #define glActiveTextureARB glActiveTexture
 
@@ -81,6 +84,8 @@
 #define glGenRenderbuffersEXT glGenRenderbuffers
 #define glDeleteRenderbuffersEXT glDeleteRenderbuffers
 
+#define glUseProgramObjectARB glUseProgram
+#define glGetObjectParameteriv glGetProgramiv
 
 #define glUniform1iARB glUniform1i
 #define glUniform2iARB glUniform2i
@@ -115,6 +120,7 @@
 #define glGetUniformLocationARB glGetUniformLocation
 
 #define glDepthRange glDepthRangef
+#define glClearDepth glClearDepthf
 
 #endif // OPENGLMAPPING_H
 

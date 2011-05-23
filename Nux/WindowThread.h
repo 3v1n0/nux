@@ -264,7 +264,7 @@ namespace nux
 
 
     */
-    virtual bool ThreadCtor (Display *X11Display, Window X11Window, GLXContext OpenGLContext);
+    virtual bool ThreadCtor (Display *X11Display, Window X11Window, void *OpenGLContext);
 #endif
 
     /*!
@@ -619,7 +619,7 @@ namespace nux
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
 #elif defined(NUX_OS_LINUX)
-    friend WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
+    friend WindowThread *CreateFromForeignWindow (Window X11Window, void *OpenGLContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
 #endif

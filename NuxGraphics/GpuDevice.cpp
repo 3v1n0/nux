@@ -826,41 +826,51 @@ namespace nux
     return OGL_OK;
   }
 
-#ifndef NUX_OPENGLES_20
   void *GpuDevice::LockUnpackPixelBufferIndex (const int index, int Size)
   {
+#ifndef NUX_OPENGLES_20
     GetGpuDevice()->BindUnpackPixelBufferIndex (index);
     CHECKGL ( glBufferDataARB (GL_PIXEL_UNPACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
     void *pBits = glMapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
     CHECKGL_MSG (glMapBufferARB );
     CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
     return pBits;
+#else
+	return NULL;
+#endif
   }
 
   void *GpuDevice::LockPackPixelBufferIndex (const int index, int Size)
   {
+#ifndef NUX_OPENGLES_20
     GetGpuDevice()->BindPackPixelBufferIndex (index);
     CHECKGL ( glBufferDataARB (GL_PIXEL_PACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
     void *pBits = glMapBufferARB (GL_PIXEL_PACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
     CHECKGL_MSG (glMapBufferARB );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
     return pBits;
+#else
+	return NULL;
+#endif
   }
 
   void GpuDevice::UnlockUnpackPixelBufferIndex (const int index)
   {
+#ifndef NUX_OPENGLES_20
     GetGpuDevice()->BindUnpackPixelBufferIndex (index);
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
+#endif
   }
 
   void GpuDevice::UnlockPackPixelBufferIndex (const int index)
   {
+#ifndef NUX_OPENGLES_20
     GetGpuDevice()->BindPackPixelBufferIndex (index);
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
-  }
 #endif
+  }
 
   int GpuDevice::BindUnpackPixelBufferIndex (const int index)
   {

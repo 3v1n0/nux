@@ -124,7 +124,7 @@ namespace nux
   }
 
 #elif defined(NUX_OS_LINUX)
-  WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
+  WindowThread *CreateFromForeignWindow (Window X11Window, void *OpenGLContext,
                                          ThreadUserInitFunc UserInitFunc,
                                          void *InitData)
   {
