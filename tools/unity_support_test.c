@@ -81,6 +81,15 @@ struct PciDevice gpu_blacklist[] = {
   { 0x10de, 0x01d8 }   // nVidia: GeForce Go 7400
 };
 
+typedef struct _TestResults {
+  char *vendor, *renderer, *version;
+  int result, major, minor;
+  int indirect;
+  int compiz;
+  unsigned int flags;
+  char	       *error;
+} TestResults;
+
 // Checks whether an extension is supported by the GLX/OpenGL implementation
 // given the extension name and the list of supported extensions.
 static int is_extension_supported (const char* extensions,
@@ -102,6 +111,14 @@ static int is_extension_supported (const char* extensions,
 // Gets the OpenGL version number given the string.
 static void get_opengl_version (const char *version, int* major, int* minor) {
   int tmp = 0, i;
+
+  if (!version)
+  {
+    *major = 0;
+    *minor = 0;
+    return;
+  }
+
   for (i = 0; isdigit (version[i]); i++)
     tmp = tmp * 10 + (version[i] - 48);
   if (version[i++] == '.') {
@@ -178,172 +195,173 @@ static void print_report (const char* vendor, const char* renderer,
   }
 }
 
-int main (int argc, char* argv[]) {
-  int indirect = 0, print = 0, compiz = 0;
-  char* error = NULL;
-  unsigned int flags = 0;
-  char* display_name = NULL;
-  int screen;
-  Window root;
-  XVisualInfo *vinfos = NULL;
-  Display* display = NULL;
-  GLXContext context = NULL;
-  char *vendor, *renderer, *version;
-  int result, major, minor;
-
-  if (getenv ("UNITY_FORCE_START")) {
-    fprintf (stdout, "Warning: UNITY_FORCE_START enabled, no check for unity or compiz support.\n");
-    return 0;
-  }
-
-
-  // Basic command-line parsing.
-  for (int i = 1; i < argc; i++) {
-    if (((strncmp (argv[i], "-d", 2) == 0) ||
-         (strncmp (argv[i], "--display", 9) == 0)) &&
-        (i + 1 < argc)) {
-      display_name = argv[i + 1];
-      i++;
-    } else if ((strncmp (argv[i], "-i", 2) == 0) ||
-               (strncmp (argv[i], "--indirect", 10) == 0)) {
-      indirect = 1;
-    } else if ((strncmp (argv[i], "-p", 2) == 0) ||
-               (strncmp (argv[i], "--print", 7) == 0)) {
-      print = 1;
-    } else if ((strncmp (argv[i], "-c", 2) == 0) ||
-               (strncmp (argv[i], "--compiz", 8) == 0)) {
-      compiz = 1;
-    } else if ((strncmp (argv[i], "-h", 2) == 0) ||
-               (strncmp (argv[i], "--help", 6) == 0)) {
-      print_help ();
-      return 2;
-    } else {
-      fprintf (stderr, "Error: unknown command-line option `%s'\n\n", argv[i]);
-      print_help ();
-      return 2;
-    }
-  }
-
-  // Open a X11 connection and get the root window.
-  display = XOpenDisplay (display_name);
-  if (display == NULL) {
-    error = "unable to open display";
-    result = 1;
-    goto abort;
-  }
-  screen = DefaultScreen (display);
-  root = XRootWindow (display, screen);
-
+static int check_root_visual (Display     *display,
+			      unsigned int screen,
+			      Window      root,
+			      GLXContext  *context,
+			      XVisualInfo **vinfos,
+			      TestResults  *results)
+{
   // Retrieve root window visual.
   XWindowAttributes attr;
   XVisualInfo vinfo_template;
   int nr_vinfos;
   if (XGetWindowAttributes (display, root, &attr) == 0) {
-    error = "unable to get root window attributes";
-    result = 1;
-    goto abort;
+    results->error = strdup ("unable to get root window attributes");
+    results->result = 1;
+    return 0;
   }
   vinfo_template.visualid = XVisualIDFromVisual (attr.visual);
-  vinfos = XGetVisualInfo (display, VisualIDMask, &vinfo_template, &nr_vinfos);
+  *vinfos = XGetVisualInfo (display, VisualIDMask, &vinfo_template, &nr_vinfos);
   if (nr_vinfos == 0) {
-    error = "unable to get visual informations for default visual";
-    result = 1;
-    goto abort;
+    results->error = strdup ("unable to get visual informations for default visual");
+    results->result = 1;
+    return 0;
   }
 
-  // Check for XComposite
+  return 1;
+}
+
+static int check_xcomposite (Display     *display,
+			      unsigned int screen,
+			      Window      root,
+			      GLXContext  *context,
+			      XVisualInfo **vinfos,
+			      TestResults  *results)
+{
+// Check for XComposite
   int composite_major, composite_minor;
   unsigned int composite_tmp;
 
   if (!XQueryExtension (display, COMPOSITE_NAME, &composite_tmp, &composite_tmp, &composite_tmp))
   {
-    error = "no composite extension";
-    result = 1;
-    goto abort;
+    results->error = strdup ("no composite extension");
+    results->result = 1;
+    return 0;
   }
 
   XCompositeQueryVersion (display, &composite_major, &composite_minor);
 
   if (composite_major == 0 && composite_minor < 2)
   {
-    error = "old composite extension";
-    result = 1;
-    goto abort;
+    results->error = strdup ("old composite extension");
+    results->result = 1;
+    return 0;
   }
 
-  if (!XDamageQueryExtension (display, &composite_tmp, &composite_tmp))
+  return 1;
+}
+
+static int check_damage_extension (Display     *display,
+			            unsigned int screen,
+				    Window      root,
+				    GLXContext  *context,
+			   	    XVisualInfo **vinfos,
+			   	    TestResults  *results)
+{
+  int damage_tmp;
+
+  if (!XDamageQueryExtension (display, &damage_tmp, &damage_tmp))
   {
-    error = "no damage extension";
-    result = 1;
-    goto abort;
+    results->error = strdup ("no damage extension");
+    results->result = 1;
+    return 0;
   }
 
-  if (!XFixesQueryExtension (display, &composite_tmp, &composite_tmp))
+  return 1;
+}
+
+static int check_fixes_extension (Display     *display,
+			           unsigned int screen,
+			     	   Window      root,
+			      	   GLXContext  *context,
+				   XVisualInfo **vinfos,
+				   TestResults  *results)
+{
+  int fixes_tmp;
+
+  if (!XFixesQueryExtension (display, &fixes_tmp, &fixes_tmp))
   {
-    error = "no fixes extension";
-    result = 1;
-    goto abort;
+    results->error = strdup ("no fixes extension");
+    results->result = 1;
+    return 0;
   }
 
+  return 1;
+}
+
+static int check_glx_config (Display     *display,
+			      unsigned int screen,
+			      Window      root,
+			      GLXContext  *context,
+			      XVisualInfo **vinfos,
+			      TestResults  *results)
+{
   // Check root window visual capabilities.
   int value;
-  glXGetConfig (display, vinfos, GLX_USE_GL, &value);
+  glXGetConfig (display, *vinfos, GLX_USE_GL, &value);
   if (value == 0) {
-    error = "OpenGL rendering is not supported by the root visual";
-    result = 1;
-    goto abort;
-  }
-  glXGetConfig (display, vinfos, GLX_DOUBLEBUFFER, &value);
-  if (value == 0) {
-    error = "color buffers of the root visual are not double-buffered";
-    result = 1;
-    goto abort;
+    results->error = strdup ("OpenGL rendering is not supported by the root visual");
+    results->result = 1;
+    return 0;
   }
 
+  return 1;
+}
+
+static int check_colorbuffers (Display     *display,
+			        unsigned int screen,
+				Window      root,
+				GLXContext  *context,
+				XVisualInfo **vinfos,
+				TestResults  *results)
+{
+  int value;
+  glXGetConfig (display,*vinfos, GLX_DOUBLEBUFFER, &value);
+  if (value == 0) {
+    results->error = strdup ("color buffers of the root visual are not double-buffered");
+    results->result = 1;
+    return 0;
+  }
+
+  return 1;
+}
+
+static int check_context (Display     *display,
+			   unsigned int screen,
+			   Window      root,
+			   GLXContext  *context,
+			   XVisualInfo **vinfos,
+			   TestResults  *results)
+{
   // Create and map the OpenGL context to the root window and get the strings.
-  context = glXCreateContext (display, vinfos, NULL, !indirect);
-  if (context == NULL) {
-    error = "unable to create the OpenGL context";
-    result = 1;
-    goto abort;
+  *context = glXCreateContext (display, *vinfos, NULL, !results->indirect);
+  if (*context == NULL) {
+    results->error = strdup ("unable to create the OpenGL context");
+    results->result = 1;
+    return 0;
   }
-  glXMakeCurrent (display, root, context);
-  vendor = (char*) glGetString (GL_VENDOR);
-  renderer = (char*) glGetString (GL_RENDERER);
-  version = (char*) glGetString (GL_VERSION);
+  glXMakeCurrent (display, root, *context);
+  results->vendor = (char*) glGetString (GL_VENDOR);
+  results->renderer = (char*) glGetString (GL_RENDERER);
+  results->version = (char*) glGetString (GL_VERSION);
 
-  // Fill flags with the supported GLX extensions.
-  const char* glx_extensions = glXQueryExtensionsString (display, screen);
-  const struct { const char* name; const unsigned int flag; } glx_extension[] = {
-    { "GLX_SGIX_fbconfig", FLAG_GLX_SGIX_FBCONFIG },
-    { "GLX_EXT_texture_from_pixmap", FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP },
-    { NULL, 0 }
-  };
-  for (int i = 0; glx_extension[i].name != NULL; i++)
-    if (is_extension_supported (glx_extensions, glx_extension[i].name) == 1)
-      flags |= glx_extension[i].flag;
-  if (flags & FLAG_GLX_SGIX_FBCONFIG) {
-    if (glXGetProcAddressARB ("glXQueryDrawable") == NULL ||
-        glXGetProcAddressARB ("glXGetFBConfigs") == NULL ||
-        glXGetProcAddressARB ("glXGetFBConfigAttrib") == NULL ||
-        glXGetProcAddressARB ("glXCreatePixmap") == NULL ||
-        glXGetProcAddressARB ("glXDestroyPixmap") == NULL) {
-      flags &= ~FLAG_GLX_SGIX_FBCONFIG;
-    }
-  }
-  if (flags & FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP) {
-    if (glXGetProcAddressARB ("glXBindTexImageEXT") == NULL ||
-        glXGetProcAddressARB ("glXReleaseTexImageEXT") == NULL) {
-      flags &= ~FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP;
-    }
-  }
+  return 1;
+}
 
+static int check_extensions (Display     *display,
+			     unsigned int screen,
+			     Window      root,
+			     GLXContext  *context,
+			     XVisualInfo **vinfos,
+			     TestResults  *results)
+{
   // Fill flags with the supported OpenGL extensions.
   const char* gl_extensions = glGetString (GL_EXTENSIONS);
   if (gl_extensions == NULL) {
-    error = "invalid OpenGL extensions string";
-    result = 1;
-    goto abort;
+    results->error = strdup ("invalid OpenGL extensions string");
+    results->result = 1;
+    return 0;
   }
   const struct { const char* name; const unsigned int flag; } gl_extension[] = {
     { "GL_ARB_texture_non_power_of_two", FLAG_GL_ARB_NON_POWER_OF_TWO },
@@ -359,20 +377,56 @@ int main (int argc, char* argv[]) {
   };
   for (int i = 0; gl_extension[i].name != NULL; i++)
     if (is_extension_supported (gl_extensions, gl_extension[i].name) == 1)
-      flags |= gl_extension[i].flag;
+      results->flags |= gl_extension[i].flag;
 
+  // Fill results->flags with the supported GLX extensions.
+  const char* glx_extensions = glXQueryExtensionsString (display, screen);
+  const struct { const char* name; const unsigned int flag; } glx_extension[] = {
+    { "GLX_SGIX_fbconfig", FLAG_GLX_SGIX_FBCONFIG },
+    { "GLX_EXT_texture_from_pixmap", FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP },
+    { NULL, 0 }
+  };
+  for (int i = 0; glx_extension[i].name != NULL; i++)
+    if (is_extension_supported (glx_extensions, glx_extension[i].name) == 1)
+      results->flags |= glx_extension[i].flag;
+  if (results->flags & FLAG_GLX_SGIX_FBCONFIG) {
+    if (glXGetProcAddressARB ("glXQueryDrawable") == NULL ||
+        glXGetProcAddressARB ("glXGetFBConfigs") == NULL ||
+        glXGetProcAddressARB ("glXGetFBConfigAttrib") == NULL ||
+        glXGetProcAddressARB ("glXCreatePixmap") == NULL ||
+        glXGetProcAddressARB ("glXDestroyPixmap") == NULL) {
+      results->flags &= ~FLAG_GLX_SGIX_FBCONFIG;
+    }
+  }
+  if (results->flags & FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP) {
+    if (glXGetProcAddressARB ("glXBindTexImageEXT") == NULL ||
+        glXGetProcAddressARB ("glXReleaseTexImageEXT") == NULL) {
+      results->flags &= ~FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP;
+    }
+  }
+
+  return 1;
+}
+
+static int check_blacklist (Display     *display,
+			    unsigned int screen,
+			    Window      root,
+			    GLXContext  *context,
+			    XVisualInfo **vinfos,
+			    TestResults  *results)
+{
   // Check for software rendering.
-  if (renderer != NULL &&
-      (strncmp (renderer, "Software Rasterizer", 19) == 0 ||
-       strncmp (renderer, "Mesa X11", 8) == 0)) {
-    flags |= FLAG_SOFTWARE_RENDERING;
+  if (results->renderer != NULL &&
+      (strncmp (results->renderer, "Software Rasterizer", 19) == 0 ||
+       strncmp (results->renderer, "Mesa X11", 8) == 0)) {
+    results->flags |= FLAG_SOFTWARE_RENDERING;
   }
 
   // jaytaoko: Balcklist the Geforce FX cards
-  if (renderer != NULL) {
-    char* str = strstr (renderer, "GeForce FX");
+  if (results->renderer != NULL) {
+    char* str = strstr (results->renderer, "GeForce FX");
     if (str != NULL) {
-      flags |= FLAG_BLACKLISTED;
+      results->flags |= FLAG_BLACKLISTED;
     }
   }
 
@@ -392,48 +446,136 @@ int main (int argc, char* argv[]) {
     for (int i = 0; i < gpu_blacklist_size; i++) {
       if (dev->vendor_id == gpu_blacklist[i].vendor &&
           dev->device_id == gpu_blacklist[i].device) {
-        flags |= FLAG_BLACKLISTED;
+        results->flags |= FLAG_BLACKLISTED;
       }
     }
     dev = dev->next;
   }
   pci_cleanup (access);
 
-  if (compiz == 0) {
-    // Unity compatibility checks.
-    get_opengl_version (version, &major, &minor);
-    if ((major >= 2 || (major == 1 && minor >= 4)) &&
-        (flags & FLAG_GLX_SGIX_FBCONFIG) &&
-        (flags & FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP) &&
-        (flags & MASK_GL_NON_POWER_OF_TWO) &&
-        (flags & FLAG_GL_ARB_VERTEX_PROGRAM) &&
-        (flags & FLAG_GL_ARB_FRAGMENT_PROGRAM) &&
-        (flags & FLAG_GL_ARB_VERTEX_BUFFER_OBJECT) &&
-        (flags & MASK_GL_FRAMEBUFFER_OBJECT) &&
-        (~flags & FLAG_SOFTWARE_RENDERING) &&
-        (~flags & FLAG_BLACKLISTED)) {
-      result = 0;
+  return 1;
+}
+
+int (*tests[]) (Display     *display,
+		      unsigned int screen,
+		      Window      root,
+		      GLXContext  *context,
+		      XVisualInfo **vinfos,
+		      TestResults  *results) = {
+  check_root_visual,
+  check_xcomposite,
+  check_damage_extension,
+  check_fixes_extension,
+  check_glx_config,
+  check_colorbuffers,
+  check_context,
+  check_extensions,
+  check_blacklist
+};
+
+const unsigned int c_num_tests = 9;
+
+int main (int argc, char* argv[]) {
+  char         *display_name = NULL;
+  int          screen;
+  unsigned int print = 0;
+  Window       root;
+  XVisualInfo  *vinfos = NULL;
+  Display      *display = NULL;
+  GLXContext   context = NULL;
+  TestResults  results;
+
+  results.indirect = 0;
+  results.compiz = 0;
+  results.flags = 0;
+  results.error = NULL;
+  results.flags = 0;
+
+  if (getenv ("UNITY_FORCE_START")) {
+    fprintf (stdout, "Warning: UNITY_FORCE_START enabled, no check for unity or compiz support.\n");
+    return 0;
+  }
+
+  // Basic command-line parsing.
+  for (int i = 1; i < argc; i++) {
+    if (((strncmp (argv[i], "-d", 2) == 0) ||
+         (strncmp (argv[i], "--display", 9) == 0)) &&
+        (i + 1 < argc)) {
+      display_name = argv[i + 1];
+      i++;
+    } else if ((strncmp (argv[i], "-i", 2) == 0) ||
+               (strncmp (argv[i], "--indirect", 10) == 0)) {
+      results.indirect = 1;
+    } else if ((strncmp (argv[i], "-p", 2) == 0) ||
+               (strncmp (argv[i], "--print", 7) == 0)) {
+      print = 1;
+    } else if ((strncmp (argv[i], "-c", 2) == 0) ||
+               (strncmp (argv[i], "--compiz", 8) == 0)) {
+      results.compiz = 1;
+    } else if ((strncmp (argv[i], "-h", 2) == 0) ||
+               (strncmp (argv[i], "--help", 6) == 0)) {
+      print_help ();
+      return 2;
     } else {
-      result = 1;
-    }
-  } else {
-    // Compiz compatibility checks.
-    if ((flags & FLAG_GLX_SGIX_FBCONFIG) &&
-        (flags & FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP) &&
-        (flags & MASK_GL_NON_POWER_OF_TWO) &&
-        (~flags & FLAG_SOFTWARE_RENDERING) &&
-        (~flags & FLAG_BLACKLISTED)) {
-      result = 0;
-    } else {
-      result = 1;
+      fprintf (stderr, "Error: unknown command-line option `%s'\n\n", argv[i]);
+      print_help ();
+      return 2;
     }
   }
 
-abort:
+  // Open a X11 connection and get the root window.
+  display = XOpenDisplay (display_name);
+  if (display == NULL) {
+    results.error = strdup ("unable to open display");
+    results.result = 1;
+  }
+  else
+  {
+    screen = DefaultScreen (display);
+    root = XRootWindow (display, screen);
+
+    // Do the tests, if one of them fails break out of the loop
+
+    for (unsigned int i = 0; i < c_num_tests; i++)
+      if (!(*tests[i]) (display, screen, root, &context, &vinfos, &results))
+        break;
+
+    if (results.compiz == 0) {
+      // Unity compatibility checks.
+      get_opengl_version (results.version, &results.major, &results.minor);
+      if ((results.major >= 2 || (results.major == 1 && results.minor >= 4)) &&
+          (results.flags & FLAG_GLX_SGIX_FBCONFIG) &&
+          (results.flags & FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP) &&
+          (results.flags & MASK_GL_NON_POWER_OF_TWO) &&
+          (results.flags & FLAG_GL_ARB_VERTEX_PROGRAM) &&
+          (results.flags & FLAG_GL_ARB_FRAGMENT_PROGRAM) &&
+          (results.flags & FLAG_GL_ARB_VERTEX_BUFFER_OBJECT) &&
+          (results.flags & MASK_GL_FRAMEBUFFER_OBJECT) &&
+          (~results.flags & FLAG_SOFTWARE_RENDERING) &&
+          (~results.flags & FLAG_BLACKLISTED)) {
+        results.result = 0;
+      } else {
+        results.result = 1;
+      }
+    } else {
+      // Compiz compatibility checks.
+      if ((results.flags & FLAG_GLX_SGIX_FBCONFIG) &&
+          (results.flags & FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP) &&
+          (results.flags & MASK_GL_NON_POWER_OF_TWO) &&
+          (~results.flags & FLAG_SOFTWARE_RENDERING) &&
+          (~results.flags & FLAG_BLACKLISTED)) {
+        results.result = 0;
+      } else {
+        results.result = 1;
+      }
+    }
+  }
 
   if (print == 1) {
-    print_report (vendor, renderer, version, major, minor, flags, compiz,
-                  result, error);
+    print_report (results.vendor,  results.renderer,
+		  results.version, results.major,
+		  results.minor,   results.flags,
+		  results.compiz,  results.result, results.error);
   }
 
   if (vinfos != NULL)
@@ -442,6 +584,8 @@ abort:
     glXDestroyContext (display, context);
   if (display != NULL)
     XCloseDisplay (display);
+  if (results.error != NULL)
+    free (results.error);
 
-  return result;
+  return results.result;
 }
