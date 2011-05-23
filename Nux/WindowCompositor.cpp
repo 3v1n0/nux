@@ -1369,7 +1369,7 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Colors::White);
+    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, color::White);
   }
 
   void WindowCompositor::SetCompositionRT()
@@ -1409,7 +1409,7 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Colors::White);
+    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, color::White);
   }
 
   void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity)
@@ -1624,7 +1624,7 @@ namespace nux
     Geometry geo = m_TooltipArea->GetGeometry();
     geo.OffsetPosition(_tooltip_window->GetBaseX(), _tooltip_window->GetBaseY());
 
-    return geo.IsPointInside(x, y);    
+    return geo.IsPointInside(x, y);
   }
 
   bool WindowCompositor::IsTooltipActive()
@@ -1639,7 +1639,7 @@ namespace nux
 
     if (area == 0)
     {
-      _event_root.Set (0, 0);
+      _event_root = Point(0, 0);
     }
     else
     {
@@ -1649,7 +1649,7 @@ namespace nux
 
     if (area)
       SetFocusAreaWindow (GetProcessingTopView ());
-    else 
+    else
       SetFocusAreaWindow (NULL);
   }
 

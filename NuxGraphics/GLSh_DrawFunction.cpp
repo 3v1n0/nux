@@ -122,20 +122,9 @@ namespace nux
     sprog = ObjectPtr<IOpenGLShaderProgram> (0);
   }
 
-  void GLSh_DrawFunction::SetBackgroundColor (float R, float G, float B, float A)
+  void GLSh_DrawFunction::SetBackgroundColor(Color const& color)
   {
-    _R = R;
-    _G = G;
-    _B = B;
-    _A = A;
-  }
-
-  void GLSh_DrawFunction::SetBackgroundColor (Color color)
-  {
-    _R = color.R();
-    _G = color.G();
-    _B = color.B();
-    _A = color.A();
+    background_color_ = color;
   }
 
   void GLSh_DrawFunction::Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight)
@@ -167,7 +156,7 @@ namespace nux
       int TextureFunction = sprog->GetUniformLocationARB ("TextureFunction");
 
       if (ColorBase != -1)
-        CHECKGL ( glUniform4fARB (ColorBase, _R, _G, _B, _A) );
+        CHECKGL ( glUniform4fARB (ColorBase, background_color_.red, background_color_.green, background_color_.blue, background_color_.alpha) );
 
       if (RectPosition != -1)
         CHECKGL ( glUniform4fARB (RectPosition, x + _ScreenOffsetX, WindowHeight - y - height - _ScreenOffsetY, z, 0.0f) );
@@ -207,7 +196,7 @@ namespace nux
 
       CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, x + _ScreenOffsetX, WindowHeight - y - height - _ScreenOffsetY, z, 0.0f) );
       CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, width, height, 0.0f, 0.0f) );
-      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 2, _R, _G, _B, _A) );
+      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 2, background_color_.red, background_color_.green, background_color_.blue, background_color_.alpha) );
 
       CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
       CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 16, VtxBuffer) );
@@ -219,12 +208,6 @@ namespace nux
       m_AsmProg->End();
     }
 #endif
-  }
-
-  void GLSh_DrawFunction::CacheShader()
-  {
-//    std::vector<ShaderDefinition> Definitions;
-//    GLProgramObject::LoadCombinedShaderFile(TEXT("..//Shaders//DrawFunction.glsl"), TEXT("main"), TEXT("main"), Definitions);
   }
 
   void GLSh_DrawFunction::SetTextureFunction (ObjectPtr<IOpenGLBaseTexture> device_texture)

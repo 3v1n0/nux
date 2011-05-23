@@ -25,18 +25,14 @@
 
 #include "IOpenGLGLSLShader.h"
 #include "GLShaderParameter.h"
-#include "NuxCore/Math/Matrix4.h"
 #include "GLDeviceObjects.h"
 
 namespace nux
 {
-
-  class TemplateQuadBuffer;
-
   class GLSh_ColorPicker
   {
   public:
-    GLSh_ColorPicker (eColorChannel cc);
+    GLSh_ColorPicker(color::Channel cc);
     ~GLSh_ColorPicker();
 
     void SetColor (float R, float G, float B, float A);
@@ -52,7 +48,6 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> sprog;
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmProg;
 
-    eColorChannel m_ColorChannel;
     UINT ViewPortX;
     UINT ViewPortY;
     UINT ViewPortWidth;

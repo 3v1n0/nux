@@ -324,7 +324,7 @@ namespace nux
 
   void FloatingWindow::RecvTitleBarMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    _title_bar_mouse_down_location.Set (x, y);
+    _title_bar_mouse_down_location = Point(x, y);
   }
 
   void FloatingWindow::RecvTitleBarMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)

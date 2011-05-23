@@ -112,8 +112,6 @@ if(WIN32)
     BitmapFormats.h
     Color.cpp
     Color.h
-    ColorFunctions.cpp
-    ColorFunctions.h
     CppReadme.txt
     Error.cpp
     Error.h
@@ -260,8 +258,6 @@ elseif(UNIX)
     BitmapFormats.h
     Color.cpp
     Color.h
-    ColorFunctions.cpp
-    ColorFunctions.h
     CppReadme.txt
     Error.cpp
     Error.h

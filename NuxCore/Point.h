@@ -23,39 +23,11 @@
 #ifndef POINT_H
 #define POINT_H
 
+#include "Math/Point2D.h"
+
 namespace nux
 {
-
-  class Point
-  {
-  public:
-    Point();
-    Point (int x, int y);
-    ~Point();
-    Point (const Point &p);
-
-    Point &operator = (const Point &p);
-    bool operator == (const Point &p) const;
-    bool operator != (const Point &p) const;
-    Point operator + (const Point &p) const;
-    Point operator - (const Point &p) const;
-    Point &operator += (const Point &p);
-    Point &operator -= (const Point &p);
-
-    void Set (int x_, int y_)
-    {
-      x = x_;
-      y = y_;
-    }
-    void Get (int &x_, int &y_)
-    {
-      x_ = x;
-      y_ = y;
-    }
-
-    int x;
-    int y;
-  };
+    typedef Point2D<int> Point;
 
 }
 #endif // POINT_H
