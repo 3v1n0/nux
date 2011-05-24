@@ -321,7 +321,11 @@ namespace nux
     NBitmapData *BitmapData = LoadImageFile (filename);
 
     if (BitmapData)
+    {
       texture2D->Update (BitmapData);
+      delete BitmapData;
+    }
+
 
     return texture2D;
   }
