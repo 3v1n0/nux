@@ -75,6 +75,11 @@ namespace nux
 
   void GLTextureStates::SetType (GLuint Type)
   {
+#ifdef NUX_OPENGLES_20
+    nuxAssertMsg (
+      (Type == GL_TEXTURE_2D),
+      TEXT ("Error[GLTextureStates::GLTextureStates]: Invalid texture type.") );
+#else
     nuxAssertMsg (
       (Type == GL_TEXTURE_1D) ||
       (Type == GL_TEXTURE_2D) ||
@@ -82,6 +87,7 @@ namespace nux
       (Type == GL_TEXTURE_3D) ||
       (Type == GL_TEXTURE_CUBE_MAP_ARB),
       TEXT ("Error[GLTextureStates::GLTextureStates]: Invalid texture type.") );
+#endif
 
     m_Type = Type;
   }
@@ -251,6 +257,28 @@ namespace nux
     unsigned int V,
     unsigned int W)
   {
+#ifdef NUX_OPENGLES_20
+    nuxAssertMsg (
+      (U == GL_CLAMP) ||
+      (U == GL_CLAMP_TO_EDGE) ||
+      (U == GL_CLAMP_TO_BORDER) ||
+      (U == GL_MIRRORED_REPEAT) ||
+      (U == GL_REPEAT),
+      TEXT ("Error[GLTextureStates::SetWrap]: Invalid U Wrap State") );
+
+    nuxAssertMsg (
+      (V == GL_CLAMP) ||
+      (V == GL_CLAMP_TO_EDGE) ||
+      (V == GL_CLAMP_TO_BORDER) ||
+      (V == GL_MIRRORED_REPEAT) ||
+      (V == GL_REPEAT),
+      TEXT ("Error[GLTextureStates::SetWrap]: Invalid V Wrap State") );
+
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSU], U);
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], V);
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSW], W);
+
+#else
     nuxAssertMsg (
       (U == GL_CLAMP) ||
       (U == GL_CLAMP_TO_EDGE) ||
@@ -283,11 +311,6 @@ namespace nux
       (W == GL_REPEAT),
       TEXT ("Error[GLTextureStates::SetWrap]: Invalid W Wrap State") );
 
-#ifdef NUX_OPENGLES_20
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSU], U);
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], V);
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSW], W);
-#else
     if (m_Type == GL_TEXTURE_RECTANGLE_ARB)
     {
       if ( (U != GL_CLAMP) && (U != GL_CLAMP_TO_BORDER) && (U != GL_CLAMP_TO_EDGE) )

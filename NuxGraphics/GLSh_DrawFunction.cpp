@@ -34,7 +34,7 @@ namespace nux
 
   extern bool USE_ARB_SHADERS;
 
-  static NString VtxShader = TEXT ("#version 110   \n\
+  static NString VtxShader = TEXT ("#version 100   \n\
         uniform mat4 ViewProjectionMatrix;      \n\
         attribute vec4 AVertex;                 \n\
         attribute vec4 VertexColor;             \n\
@@ -43,7 +43,7 @@ namespace nux
             gl_Position = ViewProjectionMatrix * AVertex;   \n\
         }");
 
-  static NString FrgShader = TEXT ("#version 110           \n\
+  static NString FrgShader = TEXT ("#version 100           \n\
         uniform sampler2D TextureFunction;              \n\
         uniform vec4 RectPosition;                      \n\
         uniform vec4 RectDimension;                     \n\

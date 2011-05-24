@@ -56,22 +56,24 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 110   \n\
+    VSString =  TEXT ("#version 100   \n\
                      uniform mat4 ViewProjectionMatrix;                 \n\
                      attribute vec4 AVertex;                            \n\
                      attribute vec4 VertexColor;                        \n\
+                     varying vec4 vColor;                               \n\
                      void main()                                        \n\
                      {                                                  \n\
                          gl_Position = ViewProjectionMatrix * AVertex;  \n\
-                         gl_FrontColor = VertexColor;                   \n\
+                         vColor = VertexColor;                          \n\
                      }");
 
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
 
-    PSString =  TEXT ("#version 110                  \n\
+    PSString =  TEXT ("#version 100                 \n\
+                     varying vec4 vColor;           \n\
                      void main()                    \n\
                      {                              \n\
-                         gl_FragColor = gl_Color;   \n\
+                         gl_FragColor = vColor;     \n\
                      }");
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString) );
 
@@ -89,7 +91,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 110   \n\
+    VSString =  TEXT ("#version 100   \n\
                      attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
@@ -103,7 +105,7 @@ namespace nux
                      varyVertexColor = VertexColor;                          \n\
                      }");
 
-    PSString =  TEXT ("#version 110                                               \n\
+    PSString =  TEXT ("#version 100                                               \n\
                      #extension GL_ARB_texture_rectangle : enable                \n\
                      varying vec4 varyTexCoord0;                                 \n\
                      varying vec4 varyVertexColor;                               \n\
@@ -145,7 +147,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 110   \n\
+    VSString =  TEXT ("#version 100   \n\
                      attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
@@ -159,7 +161,7 @@ namespace nux
                      varyVertexColor = VertexColor;                          \n\
                      }");
 
-    PSString =  TEXT ("#version 110                                                      \n\
+    PSString =  TEXT ("#version 100                                                      \n\
                      #extension GL_ARB_texture_rectangle : enable                       \n\
                      varying vec4 varyTexCoord0;                                        \n\
                      varying vec4 varyVertexColor;                                      \n\
@@ -216,7 +218,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (  "#version 110                                           \n\
+    VSString =  TEXT (  "#version 100                                           \n\
                         uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -230,7 +232,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (  "#version 110                                               \n\
+    PSString =  TEXT (  "#version 100                                               \n\
                         #extension GL_ARB_texture_rectangle : enable                \n\
                         varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
@@ -280,7 +282,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (  "#version 110                                           \n\
+    VSString =  TEXT (  "#version 100                                           \n\
                         uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -294,7 +296,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (  "#version 110                                               \n\
+    PSString =  TEXT (  "#version 100                                               \n\
                         varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
                         uniform vec4 color0;                                        \n\
@@ -335,7 +337,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (   "#version 110                                           \n\
+    VSString =  TEXT (   "#version 100                                           \n\
                          uniform mat4 ViewProjectionMatrix;                      \n\
                          attribute vec4 AVertex;                                 \n\
                          attribute vec4 MyTextureCoord0;                         \n\
@@ -349,7 +351,7 @@ namespace nux
                          gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                          }");
 
-    PSString =  TEXT (   "#version 110                                               \n\
+    PSString =  TEXT (   "#version 100                                               \n\
                          #extension GL_ARB_texture_rectangle : enable                \n\
                          varying vec4 varyTexCoord0;                                 \n\
                          varying vec4 varyTexCoord1;                                 \n\
@@ -399,7 +401,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (   "#version 110                                          \n\
+    VSString =  TEXT (   "#version 100                                          \n\
                         uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -419,7 +421,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (   "#version 110                                              \n\
+    PSString =  TEXT (   "#version 100                                              \n\
                         #extension GL_ARB_texture_rectangle : enable                \n\
                         varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
@@ -477,7 +479,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 110                         \n\
+    VSString =  TEXT ("#version 100                         \n\
         uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -488,7 +490,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
-    PSString =  TEXT ("#version 110                                                                           \n\
+    PSString =  TEXT ("#version 100                                                                           \n\
         varying vec4 varyTexCoord0;                                                                           \n\
         uniform sampler2D TextureObject0;                                                                     \n\
         uniform vec2 TextureSize0;                                                                            \n\
@@ -526,7 +528,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("#version 110                          \n\
+    VSString = TEXT ("#version 100                          \n\
         uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -537,7 +539,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
-    PSString = TEXT ("#version 110                                    \n\
+    PSString = TEXT ("#version 100                                    \n\
         varying vec4 varyTexCoord0;                                   \n\
         uniform sampler2D TextureObject0;                             \n\
         uniform vec4 color0;                                          \n\
@@ -639,7 +641,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString = TEXT ("#version 110          \n\
+    VSString = TEXT ("#version 100          \n\
         uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -768,7 +770,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString = TEXT ("#version 110                        \n\
+    VSString = TEXT ("#version 100                        \n\
                      uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
@@ -828,7 +830,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("#version 110          \n\
+    VSString = TEXT ("#version 100          \n\
         uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -839,7 +841,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
-    PSString = TEXT ("#version 110                                  \n\
+    PSString = TEXT ("#version 100                                  \n\
         #extension GL_ARB_texture_rectangle : enable                \n\
         varying vec4 varyTexCoord0;                                 \n\
         uniform sampler2D TextureObject0;                           \n\
@@ -2437,7 +2439,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 110   \n\
+    VSString =  TEXT ("#version 100   \n\
                       attribute vec4 AVertex;                                 \n\
                       attribute vec4 MyTextureCoord0;                         \n\
                       attribute vec4 VertexColor;                             \n\
@@ -2451,7 +2453,7 @@ namespace nux
                       varyVertexColor = VertexColor;                          \n\
                       }");
 
-    PSString =  TEXT ("#version 110                                               \n\
+    PSString =  TEXT ("#version 100                                               \n\
                       #extension GL_ARB_texture_rectangle : enable                \n\
                       varying vec4 varyTexCoord0;                                 \n\
                       varying vec4 varyVertexColor;                               \n\

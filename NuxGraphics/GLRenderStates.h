@@ -944,6 +944,21 @@ namespace nux
     t_u32 BlendOpRGB_,
     t_u32 BlendOpAlpha_)
   {
+#ifdef NUX_OPENGLES_20
+    nuxAssertMsg (
+      (BlendOpRGB_ == GL_FUNC_ADD) ||
+      (BlendOpRGB_ == GL_FUNC_SUBTRACT) ||
+      (BlendOpRGB_ == GL_FUNC_REVERSE_SUBTRACT),
+      TEXT ("Error(HW__SetAlphaBlendOp): Invalid Blend Equation RenderState") );
+    nuxAssertMsg (
+      (BlendOpAlpha_ == GL_FUNC_ADD) ||
+      (BlendOpAlpha_ == GL_FUNC_SUBTRACT) ||
+      (BlendOpAlpha_ == GL_FUNC_REVERSE_SUBTRACT),
+      TEXT ("Error(HW__SetAlphaBlendOp): Invalid Blend Equation RenderState") );
+
+    CHECKGL (glBlendEquationSeparate (BlendOpRGB_, BlendOpAlpha_) );
+
+#else
     nuxAssertMsg (
       (BlendOpRGB_ == GL_FUNC_ADD) ||
       (BlendOpRGB_ == GL_FUNC_SUBTRACT) ||
@@ -959,9 +974,6 @@ namespace nux
       (BlendOpAlpha_ == GL_MAX),
       TEXT ("Error(HW__SetAlphaBlendOp): Invalid Blend Equation RenderState") );
 
-#ifdef NUX_OPENGLES_20
-    CHECKGL (glBlendEquationSeparate (BlendOpRGB_, BlendOpAlpha_) );
-#else
     if (_gpu_info->SupportOpenGL20 ())
     {
       CHECKGL (glBlendEquationSeparate (BlendOpRGB_, BlendOpAlpha_) );
@@ -1463,6 +1475,9 @@ namespace nux
 
   inline void GpuRenderStates::HW__SetPolygonMode (t_u32 FrontMode, t_u32 BackMode)
   {
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implemented
+#else
     nuxAssertMsg (
       (FrontMode == GL_FILL) ||
       (FrontMode == GL_LINE) ||
@@ -1475,9 +1490,6 @@ namespace nux
       (BackMode == GL_POINT),
       TEXT ("Error(HW__SetPolygonMode): Invalid Point Hint RenderState") );
 
-#ifdef NUX_OPENGLES_20
-    #warning FIXME not implemented
-#else
     CHECKGL (glPolygonMode (GL_FRONT, FrontMode) );
     CHECKGL (glPolygonMode (GL_BACK, BackMode) );
 #endif

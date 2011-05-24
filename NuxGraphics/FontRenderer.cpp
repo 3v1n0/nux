@@ -39,7 +39,7 @@ namespace nux
   const int CURSOR_OFFSET = 0;
   static int CURSOR_SIZE = 2;
 
-  NString gFontVtxShader = TEXT ("#version 110                                     \n\
+  NString gFontVtxShader = TEXT ("#version 100                                     \n\
                              attribute vec4 iOffset;                            \n\
                              attribute vec4 iPosition;                          \n\
                              attribute vec4 iScale;                             \n\
@@ -53,7 +53,7 @@ namespace nux
                              gl_Position  = ViewProjectionMatrix * myvertex;    \n\
                              }");
 
-  NString gFontFragShader = TEXT ("#version 110                                            \n\
+  NString gFontFragShader = TEXT ("#version 100                                            \n\
                               #extension GL_ARB_texture_rectangle : enable              \n\
                               uniform sampler2D FontTexture;                            \n\
                               uniform vec4 TextColor;                                   \n\
