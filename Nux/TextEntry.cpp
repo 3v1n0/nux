@@ -229,6 +229,14 @@ namespace nux
 
   }
 
+  void TextEntry::GeometryChanged ()
+  {
+
+      update_canvas_ = true;
+      View::GeometryChanged();
+
+  }
+
   long TextEntry::ProcessEvent (IEvent& event,
     long    traverseInfo,
     long    processEventInfo)
