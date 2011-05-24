@@ -622,6 +622,11 @@ namespace nux
     height = 0;
     format = BITFMT_UNKNOWN;
 
+#ifdef NUX_OPENGLES_20
+    #warning FIXME not implmented, need to render to framebuffer and use glReadPixels (but not actually used right now)
+    return NULL;
+#else
+
     // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
     int texwidth = ImageSurface::GetLevelWidth (_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
     int texheight = ImageSurface::GetLevelHeight (_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
@@ -636,16 +641,13 @@ namespace nux
 
     unsigned char *img = new unsigned char [size];
 
-#ifdef NUX_OPENGLES_20
-    #warning FIXME not implemented, need to render to framebuffer and use glReadPixels
-#else
     CHECKGL (glGetTexImage (_STextureTarget, _SMipLevel, GL_RGBA, GL_UNSIGNED_BYTE, img));
-#endif
 
     width = _BaseTexture->_Width;
     height = _BaseTexture->_Height;
     format = BITFMT_R8G8B8A8;
     return img;
+#endif
   }
 
 }
