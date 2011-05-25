@@ -185,8 +185,8 @@ namespace nux
   {
     CHECKGL ( glActiveTextureARB (TextureUnitIndex) );
     CHECKGL ( glBindTexture (GL_TEXTURE_2D, 0) );
-    CHECKGL ( glDisable (GL_TEXTURE_2D) );
 #ifndef NUX_OPENGLES_20
+    CHECKGL ( glDisable (GL_TEXTURE_2D) );
     CHECKGL ( glBindTexture (GL_TEXTURE_3D, 0) );
     CHECKGL ( glBindTexture (GL_TEXTURE_CUBE_MAP, 0) );
     CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0) );
@@ -198,7 +198,9 @@ namespace nux
     if (_ResourceType == RTTEXTURE)
     {
       CHECKGL (glBindTexture (GL_TEXTURE_2D, _OpenGLID) );
+#ifndef NUX_OPENGLES_20
       CHECKGL (glEnable (GL_TEXTURE_2D) );
+#endif
     }
 #ifndef NUX_OPENGLES_20
     else if (_ResourceType == RTTEXTURERECTANGLE)
