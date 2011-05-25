@@ -101,19 +101,18 @@ namespace nux
   }
 
   TableItem::TableItem (const TCHAR *name, NodeParameterType type)
-    :   NodeNetCom (name, type)
+    : NodeNetCom (name, type)
+    , m_Table(0)
+    , m_isOpen(false)
+    , m_bParentOpen(false)
+    , m_bDirty(true)
+    , m_PropertyRedraw(false)
+    , m_PropertyTextColor(GPropertyItemTextColor0)
+    , m_AlwaysShowOpeningButton(false)
+    , m_bIsMouseInside(false)
+    , m_bIsFirstVisibleItem(false)
+    , m_bIsLastVisibleItem(false)
   {
-    m_PropertyRedraw = false;
-    m_bIsMouseInside = false;
-    m_bIsFirstVisibleItem = false;
-    m_bIsLastVisibleItem = false;
-    m_Table = 0;
-    m_PropertyTextColor = 0;
-    m_AlwaysShowOpeningButton = false;
-
-    m_isOpen = false;
-    m_bParentOpen = false;
-    m_bDirty = true;
     _row_header_area = new InputArea (NUX_TRACKER_LOCATION);
     _row_header_area->Reference();
   }
@@ -121,7 +120,6 @@ namespace nux
   TableItem::~TableItem()
   {
     _row_header_area->UnReference();
-    NUX_SAFE_DELETE (m_PropertyTextColor);
   }
 
   void TableItem::PushChildFront ( NodeItem *child )

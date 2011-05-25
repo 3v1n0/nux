@@ -97,7 +97,7 @@ namespace nux
   int CheckBoxPropertyItem::GetItemBestHeight()
   {
     Size sz = GetMinimumSize();
-    return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
+    return sz.height + 2 * PROPERTY_BORDER_Y;
   }
 
   CheckBoxPropertyItem *CheckBoxPropertyItem::CreateFromXML (const TiXmlElement *elementxml, NodeNetCom *parent, const char *Name, int id)

@@ -230,7 +230,8 @@ namespace nux
     return true;
   }
 
-  bool CairoGraphics::DrawLine(double x0, double y0, double x1, double y1, double width, const Color &c)
+  bool CairoGraphics::DrawLine(double x0, double y0, double x1, double y1,
+                               double width, const Color &c)
   {
     nuxAssert(_cr);
     if (width < 0.0)
@@ -239,7 +240,7 @@ namespace nux
     }
 
     cairo_set_line_width(_cr, width);
-    cairo_set_source_rgba(_cr, c.R(), c.G(), c.B(), _opacity);
+    cairo_set_source_rgba(_cr, c.red, c.green, c.blue, _opacity);
     cairo_move_to(_cr, x0, y0);
     cairo_line_to(_cr, x1, y1);
     cairo_stroke(_cr);
@@ -247,14 +248,15 @@ namespace nux
     return true;
   }
 
-  bool CairoGraphics::DrawFilledRect(double x, double y, double w, double h, const Color &c)
+  bool CairoGraphics::DrawFilledRect(double x, double y, double w, double h,
+                                     const Color &c)
   {
     nuxAssert(_cr);
     if (w <= 0.0 || h <= 0.0) {
       return false;
     }
 
-    cairo_set_source_rgba(_cr, c.R(), c.G(), c.B(), _opacity);
+    cairo_set_source_rgba(_cr, c.red, c.green, c.blue, _opacity);
     cairo_rectangle(_cr, x, y, w, h);
     cairo_fill(_cr);
     return true;

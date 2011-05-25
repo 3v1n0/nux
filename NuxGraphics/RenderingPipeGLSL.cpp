@@ -46,7 +46,6 @@ namespace nux
 // and attribute location. One has to make sure that the vertex attribute get index 0. So use the vertex attribute first. All of this does not make any sense.
 // Need more info from driver developers.
 
-#define USE_ARB 1
   bool USE_ARB_SHADERS = true;
 
   void GraphicsEngine::InitSlColorShader()
@@ -889,10 +888,10 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
-      x,          y + height, 0.0f, 1.0f, c1.R(), c1.G(), c1.B(), c1.A(),
-      x + width,  y + height, 0.0f, 1.0f, c2.R(), c2.G(), c2.B(), c2.A(),
-      x + width,  y,          0.0f, 1.0f, c3.R(), c3.G(), c3.B(), c3.A(),
+      x,          y,          0.0f, 1.0f, c0.red, c0.green, c0.blue, c0.alpha,
+      x,          y + height, 0.0f, 1.0f, c1.red, c1.green, c1.blue, c1.alpha,
+      x + width,  y + height, 0.0f, 1.0f, c2.red, c2.green, c2.blue, c2.alpha,
+      x + width,  y,          0.0f, 1.0f, c3.red, c3.green, c3.blue, c3.alpha,
     };
 
     ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_SlColor;
@@ -935,10 +934,10 @@ namespace nux
     QRP_Compute_Texture_Coord (width, height, DeviceTexture, texxform0);
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
-      x,          y + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
-      x + width,  y + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
-      x + width,  y,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
+      x,          y,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      x,          y + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      x + width,  y + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      x + width,  y,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
     };
 
     ObjectPtr<IOpenGLShaderProgram> ShaderProg;
@@ -1009,10 +1008,10 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.R(), color.G(), color.B(), color.A(),
-      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, color.R(), color.G(), color.B(), color.A(),
-      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, color.R(), color.G(), color.B(), color.A(),
-      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.R(), color.G(), color.B(), color.A(),
+      x,          y,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
+      x,          y + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
+      x + width,  y + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
+      x + width,  y,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
     };
 
     ObjectPtr<IOpenGLShaderProgram> ShaderProg;
@@ -1124,8 +1123,8 @@ namespace nux
     CHECKGL ( glUniform1iARB (TextureObjectLocation0, 0) );
     CHECKGL ( glUniform1iARB (TextureObjectLocation1, 1) );
 
-    CHECKGL ( glUniform4fARB (TextureCoef0Location, color0.R(), color0.G(), color0.B(), color0.A() ) );
-    CHECKGL ( glUniform4fARB (TextureCoef1Location, color1.R(), color1.G(), color1.B(), color1.A() ) );
+    CHECKGL ( glUniform4fARB (TextureCoef0Location, color0.red, color0.green, color0.blue, color0.alpha ) );
+    CHECKGL ( glUniform4fARB (TextureCoef1Location, color1.red, color1.green, color1.blue, color1.alpha ) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
     GLfloat *matrix = (GLfloat *) GetOpenGLModelViewProjectionMatrix().m;
@@ -1202,8 +1201,8 @@ namespace nux
     CHECKGL ( glUniform1iARB (TextureObjectLocation0, 0) );
     CHECKGL ( glUniform1iARB (TextureObjectLocation1, 1) );
 
-    CHECKGL ( glUniform4fARB (TextureCoef0Location, c0.R(), c0.G(), c0.B(), c0.A() ) );
-    CHECKGL ( glUniform4fARB (TextureCoef1Location, c1.R(), c1.G(), c1.B(), c1.A() ) );
+    CHECKGL ( glUniform4fARB (TextureCoef0Location, c0.red, c0.green, c0.blue, c0.alpha ) );
+    CHECKGL ( glUniform4fARB (TextureCoef1Location, c1.red, c1.green, c1.blue, c1.alpha ) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
     GLfloat *matrix = (GLfloat *) GetOpenGLModelViewProjectionMatrix().m;
@@ -1279,8 +1278,8 @@ namespace nux
     CHECKGL ( glUniform1iARB (TextureObjectLocation0, 0) );
     CHECKGL ( glUniform1iARB (TextureObjectLocation1, 1) );
 
-    CHECKGL ( glUniform4fARB (TextureCoef0Location, color0.R(), color0.G(), color0.B(), color0.A() ) );
-    CHECKGL ( glUniform4fARB (TextureCoef1Location, color1.R(), color1.G(), color1.B(), color1.A() ) );
+    CHECKGL ( glUniform4fARB (TextureCoef0Location, color0.red, color0.green, color0.blue, color0.alpha ) );
+    CHECKGL ( glUniform4fARB (TextureCoef1Location, color1.red, color1.green, color1.blue, color1.alpha ) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
     GLfloat *matrix = (GLfloat *) GetOpenGLModelViewProjectionMatrix().m;
@@ -1367,10 +1366,10 @@ namespace nux
     CHECKGL ( glUniform1iARB (TextureObjectLocation2, 2) );
     CHECKGL ( glUniform1iARB (TextureObjectLocation3, 3) );
 
-    CHECKGL ( glUniform4fARB (TextureCoef0Location, color0.R(), color0.G(), color0.B(), color0.A() ) );
-    CHECKGL ( glUniform4fARB (TextureCoef1Location, color1.R(), color1.G(), color1.B(), color1.A() ) );
-    CHECKGL ( glUniform4fARB (TextureCoef2Location, color2.R(), color2.G(), color2.B(), color2.A() ) );
-    CHECKGL ( glUniform4fARB (TextureCoef3Location, color3.R(), color3.G(), color3.B(), color3.A() ) );
+    CHECKGL ( glUniform4fARB (TextureCoef0Location, color0.red, color0.green, color0.blue, color0.alpha ) );
+    CHECKGL ( glUniform4fARB (TextureCoef1Location, color1.red, color1.green, color1.blue, color1.alpha ) );
+    CHECKGL ( glUniform4fARB (TextureCoef2Location, color2.red, color2.green, color2.blue, color2.alpha ) );
+    CHECKGL ( glUniform4fARB (TextureCoef3Location, color3.red, color3.green, color3.blue, color3.alpha ) );
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
     GLfloat *matrix = (GLfloat *) GetOpenGLModelViewProjectionMatrix().m;
@@ -1439,9 +1438,9 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x0, y0, 0.0f, 1.0f, c0.R(), c0.G(), c0.B(), c0.A(),
-      x1, y1, 0.0f, 1.0f, c1.R(), c1.G(), c1.B(), c1.A(),
-      x2, y2, 0.0f, 1.0f, c2.R(), c2.G(), c2.B(), c2.A(),
+      x0, y0, 0.0f, 1.0f, c0.red, c0.green, c0.blue, c0.alpha,
+      x1, y1, 0.0f, 1.0f, c1.red, c1.green, c1.blue, c1.alpha,
+      x2, y2, 0.0f, 1.0f, c2.red, c2.green, c2.blue, c2.alpha,
     };
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
@@ -1487,8 +1486,8 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x0, y0, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.R(), c0.G(), c0.B(), c0.A(),
-      x1, y1, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c1.R(), c1.G(), c1.B(), c1.A(),
+      x0, y0, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.red, c0.green, c0.blue, c0.alpha,
+      x1, y1, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c1.red, c1.green, c1.blue, c1.alpha,
     };
 
     ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_SlColor;
@@ -1550,11 +1549,11 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      x0, y0,                             0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.R(), c0.G(), c0.B(), c0.A(),
-      x0, y0 + height - 1,                0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c1.R(), c1.G(), c1.B(), c1.A(),
-      x0 + width - 1, y0 + height - 1,    0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c2.R(), c2.G(), c2.B(), c2.A(),
-      x0 + width - 1, y0,                 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c3.R(), c3.G(), c3.B(), c3.A(),
-      x0, y0,                             0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.R(), c0.G(), c0.B(), c0.A(),
+      x0, y0,                             0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.red, c0.green, c0.blue, c0.alpha,
+      x0, y0 + height - 1,                0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c1.red, c1.green, c1.blue, c1.alpha,
+      x0 + width - 1, y0 + height - 1,    0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c2.red, c2.green, c2.blue, c2.alpha,
+      x0 + width - 1, y0,                 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c3.red, c3.green, c3.blue, c3.alpha,
+      x0, y0,                             0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c0.red, c0.green, c0.blue, c0.alpha,
     };
 
     ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_SlColor;
@@ -1646,7 +1645,7 @@ namespace nux
 
     CHECKGL ( glUniform4fARB (ExponentLocation, exponent.x, exponent.y, exponent.z, exponent.w ));
 
-    CHECKGL ( glUniform4fARB (Color0Location, c0.R (), c0.G (), c0.B (), c0.A ()));
+    CHECKGL ( glUniform4fARB (Color0Location, c0.red, c0.green, c0.blue, c0.alpha));
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
     GLfloat *matrix = (GLfloat *) GetOpenGLModelViewProjectionMatrix().m;
@@ -1708,7 +1707,7 @@ namespace nux
 
     CHECKGL (glUniform1iARB (TextureObjectLocation, 0));
 
-    CHECKGL ( glUniform4fARB (Color0Location, c0.R (), c0.G (), c0.B (), c0.A ()));
+    CHECKGL ( glUniform4fARB (Color0Location, c0.red, c0.green, c0.blue, c0.alpha));
 
     int VPMatrixLocation = ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
     GLfloat *matrix = (GLfloat *) GetOpenGLModelViewProjectionMatrix().m;
@@ -2061,7 +2060,7 @@ namespace nux
 
     CHECKGL (glUniform1iARB (TextureObjectLocation, 0));
 
-    CHECKGL ( glUniform4fARB (Color0Location, c0.R (), c0.G (), c0.B (), c0.A ()));
+    CHECKGL ( glUniform4fARB (Color0Location, c0.red, c0.green, c0.blue, c0.alpha));
 
     float v[5];
     v[0] = color_matrix.m[0][0]; v[1] = color_matrix.m[0][1]; v[2] = color_matrix.m[0][2]; v[3] = color_matrix.m[0][3]; v[4] = offset.x;
@@ -2131,7 +2130,7 @@ namespace nux
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, color::White);
 
     for (int i = 0; i < num_pass; i++)
     {
@@ -2187,7 +2186,7 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_GLSL_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2236,7 +2235,7 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_GLSL_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2286,7 +2285,7 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_GLSL_1Tex(0, 0, quad_width, quad_height, device_texture, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2336,15 +2335,15 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width/2, quad_height/2);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex (0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, Colors::White);
+    QRP_GLSL_1Tex (0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width/4, quad_height/4);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex (0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, Colors::White);
+    QRP_GLSL_1Tex (0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt2, _offscreen_depth_rt2, quad_width/8, quad_height/8);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_GLSL_1Tex (0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, Colors::White);
+    QRP_GLSL_1Tex (0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt3, _offscreen_depth_rt3, quad_width, quad_height);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2404,7 +2403,7 @@ namespace nux
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, Colors::White);
+    QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, color::White);
 
     for (int i = 0; i < num_pass; i++)
     {
@@ -2499,10 +2498,10 @@ namespace nux
     QRP_Compute_Texture_Coord (width, height, DeviceTexture, texxform0);
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
-      x,          y + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
-      x + width,  y + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
-      x + width,  y,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0, color0.R(), color0.G(), color0.B(), color0.A(),
+      x,          y,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      x,          y + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      x + width,  y + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      x + width,  y,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
     };
 
     float tex_width = DeviceTexture->GetWidth ();
@@ -2583,7 +2582,7 @@ namespace nux
     CHECKGL (glClearColor (0, 0, 0, 0));
     SetFrameBufferHelper (_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
     CHECKGL (glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-    QRP_GLSL_Pixelate (0, 0, quad_width, quad_height, device_texture, texxform0, Colors::White, pixel_size);
+    QRP_GLSL_Pixelate (0, 0, quad_width, quad_height, device_texture, texxform0, color::White, pixel_size);
 
     _offscreen_fbo->Deactivate ();
 

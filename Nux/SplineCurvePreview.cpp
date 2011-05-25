@@ -189,7 +189,7 @@ namespace nux
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Colors::White);
+    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, color::White);
 
     m_ChangeDetectionTimer = new TimerFunctor();
     m_ChangeDetectionTimer->OnTimerExpired.connect (sigc::mem_fun (this, &SplineCurvePreview::RecvTimer) );
@@ -274,7 +274,7 @@ namespace nux
     GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_DrawFunctionShader->SetTextureFunction (Texture);
-    m_DrawFunctionShader->SetBackgroundColor (0.1f, 0.1f, 0.1f, 0.6f);
+    m_DrawFunctionShader->SetBackgroundColor (Color(0.1f, 0.1f, 0.1f, 0.6f));
     m_DrawFunctionShader->Render (X, Y, 0, W, H, GfxContext.GetWindowWidth(), GfxContext.GetWindowHeight() );
 
     GfxContext.GetRenderStates().EnableLineSmooth (TRUE, 1, GL_FASTEST);   //You need this blending formula to get anti-aliased lines

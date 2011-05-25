@@ -151,8 +151,6 @@ namespace nux
     */
     Color AverageColor();
 
-    void GaussianBlur (int radius);
-
   private:
     void FlipDXTVertical();
     void SwapBlocks (void *byte1, void *byte2, t_s32 size);
@@ -520,7 +518,10 @@ namespace nux
     std::string  format;            // Additional image format information
   };
 
-  void MakeCheckBoardImage (ImageSurface &Image, t_s32 w, t_s32 h, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
+  void MakeCheckBoardImage(ImageSurface& Image,
+                           int width, int height,
+                           Color const& dark, Color const& light,
+                           int TileWidth = 4, int TileHeight = 4);
 
   bool HasOpenEXRSupport();
 

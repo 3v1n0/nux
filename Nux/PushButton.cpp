@@ -43,7 +43,7 @@ namespace nux
 
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    SetTextColor (Colors::Black);
+    SetTextColor (color::Black);
 
     SetCaption (Caption);
   }
@@ -71,17 +71,17 @@ namespace nux
 
     if (is.is_focus)
     {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Colors::White, eAllCorners);
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, color::White, eAllCorners);
       GetPainter().PopBackground();
     }
     else if (is.is_prelight)
     {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, Colors::White, eAllCorners);
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, color::White, eAllCorners);
       GetPainter().PopBackground();
     }
     else
     {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Colors::White, eAllCorners);
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, color::White, eAllCorners);
       GetPainter().PopBackground();
     }
     GetPainter().PaintTextLineStatic (GfxContext, GetFont (), base, GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);

@@ -149,7 +149,7 @@ namespace nux
     align_ = CairoGraphics::ALIGN_LEFT;
 
     _size_match_text = true;
-    _text_color  = Colors::White;
+    _text_color  = color::White;
     _texture2D  = 0;
 
     font_family_ = "Ubuntu";
@@ -226,6 +226,14 @@ namespace nux
         parent->SetFocusControl (false);
       }
     }
+
+  }
+
+  void TextEntry::GeometryChanged ()
+  {
+
+      update_canvas_ = true;
+      View::GeometryChanged();
 
   }
 
@@ -554,8 +562,8 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
-    Color col = Colors::Black;
-    col.SetAlpha (0.0f);
+    Color col = color::Black;
+    col.alpha = 0;
     gfxContext.QRP_Color (base.x,
       base.y,
       base.width,
@@ -837,9 +845,9 @@ namespace nux
     if (redraw_text)
     {
       cairo_set_source_rgb(canvas->GetInternalContext(),
-        _text_color.R(),
-        _text_color.G(),
-        _text_color.B());
+        _text_color.red,
+        _text_color.green,
+        _text_color.blue);
 
       cairo_move_to(canvas->GetInternalContext(),
         scroll_offset_x_ + kInnerBorderX,
@@ -864,18 +872,18 @@ namespace nux
       Color text_color = GetSelectionTextColor();
 
       cairo_set_source_rgb(canvas->GetInternalContext(),
-        selection_color.R(),
-        selection_color.G(),
-        selection_color.B());
+        selection_color.red,
+        selection_color.green,
+        selection_color.blue);
       cairo_paint(canvas->GetInternalContext());
 
       cairo_move_to(canvas->GetInternalContext(),
         scroll_offset_x_ + kInnerBorderX,
         scroll_offset_y_ + kInnerBorderY);
       cairo_set_source_rgb(canvas->GetInternalContext(),
-        text_color.R(),
-        text_color.G(),
-        text_color.B());
+        text_color.red,
+        text_color.green,
+        text_color.blue);
       pango_cairo_show_layout(canvas->GetInternalContext(), layout);
       canvas->PopState();
     }

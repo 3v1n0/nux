@@ -17,7 +17,7 @@ namespace nux
     : View (NUX_FILE_LINE_PARAM)
   {
     _size_match_text = true;
-    _textColor  = Colors::White;
+    _textColor  = color::White;
     _texture2D  = 0;
     _font_string = g_strdup ("Ubuntu 10");
     _clipping = 0;

@@ -45,7 +45,6 @@ source_cpp = \
   $(srcdir)/Character/NUni.cpp \
   $(srcdir)/Character/NUnicode.cpp \
   $(srcdir)/Color.cpp \
-  $(srcdir)/ColorFunctions.cpp \
   $(srcdir)/Colors.cpp \
   $(srcdir)/FileName.cpp \
   $(srcdir)/ThreadGNU.cpp \
@@ -53,7 +52,6 @@ source_cpp = \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
   $(srcdir)/NUniqueIndex.cpp \
-  $(srcdir)/Point.cpp \
   $(srcdir)/GlobalInitializer.cpp \
   $(srcdir)/ObjectType.cpp \
   $(srcdir)/Platform.cpp \
@@ -65,7 +63,6 @@ source_cpp = \
   $(srcdir)/Object.cpp \
   $(srcdir)/Math/Algo.cpp \
   $(srcdir)/Math/Constants.cpp \
-  $(srcdir)/Math/Point2D.cpp \
   $(srcdir)/Math/MathFunctions.cpp \
   $(srcdir)/Math/Line2D.cpp \
   $(srcdir)/Math/Bezier.cpp \
@@ -83,7 +80,6 @@ source_cpp = \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
   $(srcdir)/CRC32.cpp \
-  $(srcdir)/Size.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
 source_file_manager_h = \
@@ -116,6 +112,7 @@ source_math_h = \
   $(srcdir)/Math/Vector2.h \
   $(srcdir)/Math/Line2D.h \
   $(srcdir)/Math/Point2D.h \
+  $(srcdir)/Math/Point2D-inl.h \
   $(srcdir)/Math/Tweening.h \
   $(srcdir)/Math/Matrix4.h \
   $(srcdir)/Math/MathUtility.h
@@ -143,7 +140,6 @@ source_h = \
   $(srcdir)/Platform.h \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
-  $(srcdir)/ColorFunctions.h \
   $(srcdir)/Colors.h \
   $(srcdir)/StreamBuffer.h \
   $(srcdir)/Memory.h \
@@ -159,6 +155,7 @@ source_h = \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/Object.h \
   $(srcdir)/Size.h \
+  $(srcdir)/Size-inl.h \
   $(srcdir)/Exception.h \
   $(srcdir)/TimeFunctions.h \
   $(srcdir)/CRC32.h \
@@ -169,6 +166,9 @@ source_h = \
   $(srcdir)/NUniqueIndex.h \
   $(srcdir)/FileIO.h \
   $(srcdir)/InitiallyUnownedObject.h \
+  $(srcdir)/Property.h \
+  $(srcdir)/Property-inl.h \
+  $(srcdir)/PropertyTraits.h \
   $(srcdir)/Win32Dialogs/NWin32Clipboard.h
 
 libnux_core_@NUX_API_VERSION@_la_SOURCES = \

@@ -451,7 +451,7 @@ namespace nux
 
       if (TextColor != -1)
       {
-        CHECKGL ( glUniform4fARB (TextColor, color.R(), color.G(), color.B(), color.A() ) );
+        CHECKGL ( glUniform4fARB (TextColor, color.red, color.green, color.blue, color.alpha ) );
       }
     }
     else
@@ -481,7 +481,7 @@ namespace nux
       iScale      = VTXATTRIB_TEXCOORD1;
       iOffset     = VTXATTRIB_TEXCOORD2;
 
-      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color.R(), color.G(), color.B(), color.A() ) );
+      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color.red, color.green, color.blue, color.alpha ) );
 
       GetThreadGraphicsContext()->SetTexture (GL_TEXTURE0, glTexture->m_Texture);
 #endif
@@ -610,10 +610,10 @@ namespace nux
       Position[i*12 + 1].z = 0.0f;
       Position[i*12 + 1].w = 1.0f;
       // color
-      Position[i*12 + 2].x = color.R();
-      Position[i*12 + 2].y = color.G();
-      Position[i*12 + 2].z = color.B();
-      Position[i*12 + 2].w = color.A();
+      Position[i*12 + 2].x = color.red;
+      Position[i*12 + 2].y = color.green;
+      Position[i*12 + 2].z = color.blue;
+      Position[i*12 + 2].w = color.alpha;
 
       // Position lower left
       Position[i*12 + 9].x = 0.0f  * Width     + (CurX + abcA);    // x
@@ -626,10 +626,10 @@ namespace nux
       Position[i*12 + 10].z = 0.0f;
       Position[i*12 + 10].w = 1.0f;
       // color
-      Position[i*12 + 11].x = color.R();
-      Position[i*12 + 11].y = color.G();
-      Position[i*12 + 11].z = color.B();
-      Position[i*12 + 11].w = color.A();
+      Position[i*12 + 11].x = color.red;
+      Position[i*12 + 11].y = color.green;
+      Position[i*12 + 11].z = color.blue;
+      Position[i*12 + 11].w = color.alpha;
 
       // Position lower right
       Position[i*12 + 6].x = 1.0f  * Width     + (CurX + abcA);    // x
@@ -642,10 +642,10 @@ namespace nux
       Position[i*12 + 7].z = 0.0f;
       Position[i*12 + 7].w = 1.0f;
       // color
-      Position[i*12 + 8].x = color.R();
-      Position[i*12 + 8].y = color.G();
-      Position[i*12 + 8].z = color.B();
-      Position[i*12 + 8].w = color.A();
+      Position[i*12 + 8].x = color.red;
+      Position[i*12 + 8].y = color.green;
+      Position[i*12 + 8].z = color.blue;
+      Position[i*12 + 8].w = color.alpha;
 
       // Position upper right
       Position[i*12 + 3].x = 1.0f  * Width     + (CurX + abcA);    // x
@@ -658,10 +658,10 @@ namespace nux
       Position[i*12 + 4].z = 0.0f;
       Position[i*12 + 4].w = 1.0f;
       // color
-      Position[i*12 + 5].x = color.R();
-      Position[i*12 + 5].y = color.G();
-      Position[i*12 + 5].z = color.B();
-      Position[i*12 + 5].w = color.A();
+      Position[i*12 + 5].x = color.red;
+      Position[i*12 + 5].y = color.green;
+      Position[i*12 + 5].z = color.blue;
+      Position[i*12 + 5].w = color.alpha;
 
       CurX += abcA + abcB + abcC;
     }

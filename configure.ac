@@ -179,6 +179,8 @@ AC_SUBST(NUX_LIBS)
 PKG_CHECK_MODULES(UNITY_SUPPORT_TEST,
                   x11
                   $GL_PKGS
+                  xcomposite
+                  xdamage
                   libpci
                   )
 AC_SUBST(UNITY_SUPPORT_TEST_CFLAGS)
