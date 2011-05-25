@@ -201,9 +201,9 @@ namespace nux
     GPixelFormats[ BITFMT_RGBA32F		].type	          = GL_NONE;
 
     // Note: Using GL_DEPTH_COMPONENT24 or GL_DEPTH_COMPONENT for PlatformFormat generate error GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT.
-    GPixelFormats[ BITFMT_D24S8		].PlatformFormat	  = GL_NONE;
-    GPixelFormats[ BITFMT_D24S8		].Format	          = GL_NONE;     // or GL_DEPTH_STENCIL_NV;
-    GPixelFormats[ BITFMT_D24S8		].type	            = GL_NONE; // or GL_UNSIGNED_INT_24_8_NV;
+    GPixelFormats[ BITFMT_D24S8		].PlatformFormat	  = GL_DEPTH_STENCIL_OES;
+    GPixelFormats[ BITFMT_D24S8		].Format	          = GL_DEPTH_STENCIL_OES;
+    GPixelFormats[ BITFMT_D24S8		].type	            = GL_UNSIGNED_INT_24_8_OES;
 
     GPixelFormats[ BITFMT_DXT1			].PlatformFormat	= GL_NONE;
     GPixelFormats[ BITFMT_DXT2			].PlatformFormat	= GL_NONE;
