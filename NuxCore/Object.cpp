@@ -397,7 +397,7 @@ namespace nux
 
     nuxAssert (_reference_count->GetValue() == 0);
 
-    if ( (_reference_count->GetValue() == 0) && (_weak_reference_count->GetValue() == 0) )
+    if ((_reference_count->GetValue() == 0) && (_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
     {
       delete _reference_count;
       delete _weak_reference_count;
@@ -408,7 +408,7 @@ namespace nux
     }
     else
     {
-      if (_weak_reference_count == NULL)
+      if((_weak_reference_count == NULL) && (_objectptr_count->GetValue() == 0))
       {
         nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
         , _allocation_file_name.GetTCharPtr ()
@@ -416,7 +416,7 @@ namespace nux
         nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid pointer for the weak reference count."));
       }
 
-      if (_weak_reference_count->GetValue() == 0)
+      if((_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
       {
         nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
           , _allocation_file_name.GetTCharPtr ()
