@@ -572,7 +572,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("#version 120          \n\
+    VSString = TEXT ("#version 100          \n\
         uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -587,7 +587,7 @@ namespace nux
         }");
 
 
-    PSString = TEXT ("#version 120                                    \n\
+    PSString = TEXT ("#version 100                                    \n\
         varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -603,7 +603,7 @@ namespace nux
           vec4 sum   = vec4 (0.0, 0.0, 0.0, 0.0);                     \n\
           vec2 delta = vec2 (1.0 / TextureSize0.x, 0.0);              \n\
           vec2 texCoord = vec2 (varyTexCoord0.s, varyTexCoord0.t);    \n\
-          texCoord.x -= ((NUM_SAMPLES - 1) / 2) / TextureSize0.x;     \n\
+          texCoord.x -= float ((NUM_SAMPLES - 1) / 2) / TextureSize0.x; \n\
           texCoord.y += 0.0 / TextureSize0.y;                         \n\
           sum += SampleTexture (TextureObject0, texCoord) * W[0];     \n\
           texCoord += delta;                                          \n\
@@ -652,11 +652,11 @@ namespace nux
         {                                   \n\
           varyTexCoord0 = MyTextureCoord0;  \n\
           varyVertexColor = VertexColor;    \n\
-        gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
+          gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
 
-    PSString = TEXT ("#version 120                                    \n\
+    PSString = TEXT ("#version 100                                    \n\
         varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -673,7 +673,7 @@ namespace nux
           vec2 delta = vec2 (0.0, 1.0 / TextureSize0.y);              \n\
           vec2 texCoord = vec2 (varyTexCoord0.s, varyTexCoord0.t);    \n\
           texCoord.x += 0.0 / TextureSize0.x;                         \n\
-          texCoord.y -= ((NUM_SAMPLES - 1) / 2) / TextureSize0.y;     \n\
+          texCoord.y -= float ((NUM_SAMPLES - 1) / 2) / TextureSize0.y;     \n\
           sum += SampleTexture (TextureObject0, texCoord) * W[0];     \n\
           texCoord += delta;                                          \n\
           sum += SampleTexture (TextureObject0, texCoord) * W[1];     \n\
@@ -710,7 +710,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("#version 120                        \n\
+    VSString = TEXT ("#version 100                        \n\
                      uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
@@ -725,7 +725,7 @@ namespace nux
                      }");
 
 
-    PSString = TEXT ("#version 120                                                \n\
+    PSString = TEXT ("#version 100                                                \n\
                      varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
@@ -785,7 +785,7 @@ namespace nux
                      }");
 
 
-    PSString = TEXT ("#version 120                                                \n\
+    PSString = TEXT ("#version 100                                                \n\
                      varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
