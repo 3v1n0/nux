@@ -46,7 +46,11 @@ namespace nux
 // and attribute location. One has to make sure that the vertex attribute get index 0. So use the vertex attribute first. All of this does not make any sense.
 // Need more info from driver developers.
 
+#ifndef NUX_OPENGLES_20
   bool USE_ARB_SHADERS = true;
+#else
+  bool USE_ARB_SHADERS = false;
+#endif
 
   void GraphicsEngine::InitSlColorShader()
   {
