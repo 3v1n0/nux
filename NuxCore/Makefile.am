@@ -40,7 +40,6 @@ source_cpp = \
   $(srcdir)/OutputDevice.cpp \
   $(srcdir)/Exception.cpp \
   $(srcdir)/Memory.cpp \
-  $(srcdir)/StreamBuffer.cpp \
   $(srcdir)/Character/NUTF.cpp \
   $(srcdir)/Character/NUni.cpp \
   $(srcdir)/Character/NUnicode.cpp \
@@ -141,7 +140,6 @@ source_h = \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
   $(srcdir)/Colors.h \
-  $(srcdir)/StreamBuffer.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
   $(srcdir)/SystemGNU.h \

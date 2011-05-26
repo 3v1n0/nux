@@ -149,8 +149,6 @@ if(WIN32)
     NPrintf.h
     NProcess.cpp
     NProcess.h
-    NStreamBuffer.cpp
-    NStreamBuffer.h
     NString.cpp
     NString.h
     NStringConversion.h
@@ -294,8 +292,6 @@ elseif(UNIX)
     NPrintf.h
     NProcess.cpp
     NProcess.h
-    NStreamBuffer.cpp
-    NStreamBuffer.h
     NString.cpp
     NString.h
     NStringConversion.h
