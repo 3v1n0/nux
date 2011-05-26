@@ -23,8 +23,6 @@
 #ifndef SYSTEMTYPES_H
 #define SYSTEMTYPES_H
 
-#include "Namespace.h"
-
 namespace nux
 {
 // Note: do not use long: long is 64 bits in LP64 while it remains 32 bits on LLP64
