@@ -534,7 +534,7 @@ namespace nux
     }
 
 #ifdef NUX_OPENGLES_20
-    m_GLSurface = eglCreateWindowSurface (dpy, config, m_X11Window, 0);
+    m_GLSurface = eglCreateWindowSurface (dpy, config, (EGLNativeWindowType)m_X11Window, 0);
     if (!m_GLSurface)
     {
       nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Failed to create surface."));
@@ -977,7 +977,7 @@ namespace nux
     if (glswap)
     {
 #ifdef NUX_OPENGLES_20
-      eglSwapBuffers (eglGetDisplay (m_X11Display), m_GLSurface);
+      eglSwapBuffers (eglGetDisplay ((EGLNativeDisplayType)m_X11Display), m_GLSurface);
 #else
       glXSwapBuffers (m_X11Display, m_X11Window);
 #endif
@@ -1012,7 +1012,7 @@ namespace nux
       if (m_GLCtx)
       {
 #ifdef NUX_OPENGLES_20
-        EGLDisplay dpy = eglGetDisplay (m_X11Display);
+        EGLDisplay dpy = eglGetDisplay ((EGLNativeDisplayType)m_X11Display);
 
         if (!eglMakeCurrent (dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
         {
