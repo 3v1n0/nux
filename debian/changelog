@@ -1,4 +1,4 @@
-nux (0.9.48-0ubuntu3) UNRELEASED; urgency=low
+nux (0.9.48-0ubuntu3) oneiric; urgency=low
 
   * Cherry-pick fix for launcher sometimes doesn't hide when there are
     windows beneath it (LP: #772185)
