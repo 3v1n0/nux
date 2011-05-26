@@ -52,6 +52,9 @@ namespace nux
         }");
 
   static NString RedFrgShader = TEXT ("#version 100                            \n\
+        #ifdef GL_ES                            \n\
+        precision mediump float;                \n\
+        #endif                                  \n\
         uniform vec4 RectPosition;              \n\
         uniform vec4 RectDimension;             \n\
         uniform vec4 Color;                     \n\
@@ -63,6 +66,9 @@ namespace nux
         }");
 
   static NString GreenFrgShader = TEXT ("#version 100                            \n\
+        #ifdef GL_ES                            \n\
+        precision mediump float;                \n\
+        #endif                                  \n\
         uniform vec4 RectPosition;              \n\
         uniform vec4 RectDimension;             \n\
         uniform vec4 Color;                     \n\
@@ -74,6 +80,9 @@ namespace nux
         }");
 
   static NString BlueFrgShader = TEXT ("#version 100                            \n\
+        #ifdef GL_ES                            \n\
+        precision mediump float;                \n\
+        #endif                                  \n\
         uniform vec4 RectPosition;              \n\
         uniform vec4 RectDimension;             \n\
         uniform vec4 Color;                     \n\
@@ -85,6 +94,9 @@ namespace nux
         }");
 
   static NString HueFrgShader = TEXT ("#version 100        \n\
+        #ifdef GL_ES                                    \n\
+        precision mediump float;                        \n\
+        #endif                                          \n\
         vec3 HSV_To_RGB(vec3 HSV);                      \n\
         uniform vec4 RectPosition;                      \n\
         uniform vec4 RectDimension;                     \n\
@@ -98,6 +110,9 @@ namespace nux
         }");
 
   static NString SaturationFrgShader = TEXT ("#version 100     \n\
+        #ifdef GL_ES                                        \n\
+        precision mediump float;                            \n\
+        #endif                                              \n\
         vec3 HSV_To_RGB(vec3 HSV);                          \n\
         uniform vec4 RectPosition;                          \n\
         uniform vec4 RectDimension;                         \n\
@@ -111,6 +126,9 @@ namespace nux
         }");
 
   static NString ValueFrgShader = TEXT ("#version 100  \n\
+        #ifdef GL_ES                                \n\
+        precision mediump float;                    \n\
+        #endif                                      \n\
         vec3 HSV_To_RGB(vec3 HSV);                  \n\
         uniform vec4 RectPosition;                  \n\
         uniform vec4 RectDimension;                 \n\
@@ -124,6 +142,9 @@ namespace nux
         }");
 
   static NString HSV_To_RGBFrgShader = TEXT ("#version 100  \n\
+        #ifdef GL_ES                                                            \n\
+        precision mediump float;                                                \n\
+        #endif                                                                  \n\
         vec3 HSV_To_RGB(vec3 HSV)                                               \n\
         {                                                                       \n\
             vec3 RGB = vec3(HSV.z);                                             \n\

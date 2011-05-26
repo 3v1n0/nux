@@ -44,6 +44,9 @@ namespace nux
         }");
 
   static NString FrgShader = TEXT ("#version 100           \n\
+        #ifdef GL_ES                                    \n\
+        precision mediump float;                        \n\
+        #endif                                          \n\
         uniform sampler2D TextureFunction;              \n\
         uniform vec4 RectPosition;                      \n\
         uniform vec4 RectDimension;                     \n\

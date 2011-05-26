@@ -73,6 +73,9 @@ namespace nux
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
 
     PSString =  TEXT ("#version 100                 \n\
+                     #ifdef GL_ES                   \n\
+                     precision mediump float;       \n\
+                     #endif                         \n\
                      varying vec4 vColor;           \n\
                      void main()                    \n\
                      {                              \n\
@@ -110,6 +113,9 @@ namespace nux
 
     PSString =  TEXT ("#version 100                                               \n\
                      #extension GL_ARB_texture_rectangle : enable                \n\
+                     #ifdef GL_ES                                                \n\
+                     precision mediump float;                                    \n\
+                     #endif                                                      \n\
                      varying vec4 varyTexCoord0;                                 \n\
                      varying vec4 varyVertexColor;                               \n\
                      #ifdef SAMPLERTEX2D                                         \n\
@@ -166,6 +172,9 @@ namespace nux
 
     PSString =  TEXT ("#version 100                                                      \n\
                      #extension GL_ARB_texture_rectangle : enable                       \n\
+                     #ifdef GL_ES                                                       \n\
+                     precision mediump float;                                           \n\
+                     #endif                                                             \n\
                      varying vec4 varyTexCoord0;                                        \n\
                      varying vec4 varyVertexColor;                                      \n\
                      #ifdef SAMPLERTEX2D                                                \n\
@@ -198,6 +207,7 @@ namespace nux
     CHECKGL ( glBindAttribLocation (m_SlColorModTexMaskAlpha->GetOpenGLID(), 2, "VectexColor") );
     m_SlColorModTexMaskAlpha->Link();
 
+#ifndef NUX_OPENGLES_20
     m_SlColorModTexRectMaskAlpha = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
     PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2DRECT") );
@@ -208,6 +218,7 @@ namespace nux
     CHECKGL ( glBindAttribLocation (m_SlColorModTexRectMaskAlpha->GetOpenGLID(), 1, "MyTextureCoord0") );
     CHECKGL ( glBindAttribLocation (m_SlColorModTexRectMaskAlpha->GetOpenGLID(), 2, "VectexColor") );
     m_SlColorModTexRectMaskAlpha->Link();
+#endif
   }
 
   void GraphicsEngine::InitSl2TextureAdd()
@@ -237,6 +248,9 @@ namespace nux
 
     PSString =  TEXT (  "#version 100                                               \n\
                         #extension GL_ARB_texture_rectangle : enable                \n\
+                        #ifdef GL_ES                                                \n\
+                        precision mediump float;                                    \n\
+                        #endif                                                      \n\
                         varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
                         uniform vec4 color0;                                        \n\
@@ -300,6 +314,9 @@ namespace nux
                         }");
 
     PSString =  TEXT (  "#version 100                                               \n\
+                        #ifdef GL_ES                                                \n\
+                        precision mediump float;                                    \n\
+                        #endif                                                      \n\
                         varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
                         uniform vec4 color0;                                        \n\
@@ -356,6 +373,9 @@ namespace nux
 
     PSString =  TEXT (   "#version 100                                               \n\
                          #extension GL_ARB_texture_rectangle : enable                \n\
+                         #ifdef GL_ES                                                \n\
+                         precision mediump float;                                    \n\
+                         #endif                                                      \n\
                          varying vec4 varyTexCoord0;                                 \n\
                          varying vec4 varyTexCoord1;                                 \n\
                          uniform vec4 color0;                                        \n\
@@ -426,6 +446,9 @@ namespace nux
 
     PSString =  TEXT (   "#version 100                                              \n\
                         #extension GL_ARB_texture_rectangle : enable                \n\
+                        #ifdef GL_ES                                                \n\
+                        precision mediump float;                                    \n\
+                        #endif                                                      \n\
                         varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
                         varying vec4 varyTexCoord2;                                 \n\
@@ -494,6 +517,9 @@ namespace nux
         }");
 
     PSString =  TEXT ("#version 100                                                                           \n\
+        #ifdef GL_ES                                                                                          \n\
+        precision mediump float;                                                                              \n\
+        #endif                                                                                                \n\
         varying vec4 varyTexCoord0;                                                                           \n\
         uniform sampler2D TextureObject0;                                                                     \n\
         uniform vec2 TextureSize0;                                                                            \n\
@@ -543,6 +569,9 @@ namespace nux
         }");
 
     PSString = TEXT ("#version 100                                    \n\
+        #ifdef GL_ES                                                  \n\
+        precision mediump float;                                      \n\
+        #endif                                                        \n\
         varying vec4 varyTexCoord0;                                   \n\
         uniform sampler2D TextureObject0;                             \n\
         uniform vec4 color0;                                          \n\
@@ -591,6 +620,9 @@ namespace nux
 
 
     PSString = TEXT ("#version 100                                    \n\
+        #ifdef GL_ES                                                  \n\
+        precision mediump float;                                      \n\
+        #endif                                                        \n\
         varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -660,6 +692,9 @@ namespace nux
 
 
     PSString = TEXT ("#version 100                                    \n\
+        #ifdef GL_ES                                                  \n\
+        precision mediump float;                                      \n\
+        #endif                                                        \n\
         varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -729,6 +764,9 @@ namespace nux
 
 
     PSString = TEXT ("#version 100                                                \n\
+                     #ifdef GL_ES                                                 \n\
+                     precision mediump float;                                     \n\
+                     #endif                                                       \n\
                      varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
@@ -789,6 +827,9 @@ namespace nux
 
 
     PSString = TEXT ("#version 100                                                \n\
+                     #ifdef GL_ES                                                 \n\
+                     precision mediump float;                                     \n\
+                     #endif                                                       \n\
                      varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
@@ -846,6 +887,9 @@ namespace nux
 
     PSString = TEXT ("#version 100                                  \n\
         #extension GL_ARB_texture_rectangle : enable                \n\
+        #ifdef GL_ES                                                \n\
+        precision mediump float;                                    \n\
+        #endif                                                      \n\
         varying vec4 varyTexCoord0;                                 \n\
         uniform sampler2D TextureObject0;                           \n\
         uniform vec4 color0;                                        \n\
@@ -2458,6 +2502,9 @@ namespace nux
 
     PSString =  TEXT ("#version 100                                               \n\
                       #extension GL_ARB_texture_rectangle : enable                \n\
+                      #ifdef GL_ES                                                \n\
+                      precision mediump float;                                    \n\
+                      #endif                                                      \n\
                       varying vec4 varyTexCoord0;                                 \n\
                       varying vec4 varyVertexColor;                               \n\
                       uniform vec4 pixel_size;                                    \n\
