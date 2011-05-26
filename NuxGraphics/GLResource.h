@@ -97,6 +97,10 @@ namespace nux
     #include "EGL/egl.h"
     #include "GLES2/gl2.h"
     #include "GLES2/gl2ext.h"
+    // Explicitly include X11 headers as many EGL implementations don't
+    // do it for us.
+    #include <X11/Xlib.h>
+    #include <X11/Xutil.h>
   #else
     #define GLEW_MX
     #include "GL/glew.h"
