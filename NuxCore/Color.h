@@ -186,7 +186,7 @@ struct HueLightnessSaturation
 //  void RGBtoHLS (float rr, float gg, float bb, float &hue, float &light, float &satur);
 
 }
-  using color::Color;
+using color::Color;
 }
 
 #endif // COLOR_H

@@ -142,7 +142,7 @@ namespace nux
 
   protected:
     NResourceSet       *Set;
-    bool                Cached;
+    bool                _cached;
     unsigned int        NumRefs;
     NObjectType        *ResourceType;
 
@@ -191,7 +191,7 @@ namespace nux
     NObjectType *m_ResourceType;
   };
 
-  template <class T, class D>
+  template <typename T, typename U>
   class TGLResourceFactory : public NResourceFactory
   {
   public:
@@ -212,9 +212,9 @@ namespace nux
         @param  Resource        Resource to build and cache.
         @return The built resource.
     */
-    virtual CachedResourceData *BuildResource (NResourceSet *ResourceManager, ResourceData *Resource)
+    virtual CachedResourceData *BuildResource(NResourceSet *ResourceManager, ResourceData *Resource)
     {
-      return new D (ResourceManager, (T *) Resource);
+      return new U(ResourceManager, (T *)Resource);
     }
   };
 
@@ -277,9 +277,9 @@ namespace nux
       for (It = ResourceMap.begin(); It != ResourceMap.end(); It++)
       {
 //         ObjectPtr< ResourceType >	CachedResource = (*It).second;
-//         CachedResource->Cached = 0;
+//         CachedResource->_cached = 0;
 //         CachedResource.Release();
-        (*It).second->Cached = 0;
+        (*It).second->_cached = 0;
         (*It).second.Release();
       }
 
@@ -291,7 +291,7 @@ namespace nux
     {
       typedef std::map< IdType, ObjectPtr< ResourceType > >  MapType;
       ResourceMap.insert (typename MapType::value_type (Id, Resource) );
-      Resource->Cached = 1;
+      Resource->_cached = 1;
     }
 
     ObjectPtr<ResourceType> FindCachedResourceById (const IdType &Id)
@@ -305,20 +305,24 @@ namespace nux
       return ObjectPtr<ResourceType> (0);
     }
 
-    void FlushResourceId (const IdType &Id)
+    /*!
+        Remove a cached resource from the cache. The cached resource may still have references to it.
+        The resource internal flag "_cached" is set to false.
+    */
+    void FlushResourceId(const IdType &Id)
     {
-      ObjectPtr< ResourceType >	CachedResource (0);
+      ObjectPtr<ResourceType>	CachedResource(0);
 
-      typedef std::map< IdType, ObjectPtr< ResourceType > >  MapType;
-      typename MapType::iterator it = ResourceMap.find (Id);
+      typedef std::map<IdType, ObjectPtr<ResourceType> >  MapType;
+      typename MapType::iterator it = ResourceMap.find(Id);
 
-      if (it != ResourceMap.end() )
+      if(it != ResourceMap.end())
         CachedResource = (*it).second;
 
-      if (CachedResource.IsValid() )
+      if(CachedResource.IsValid())
       {
-        ResourceMap.erase (it);
-        CachedResource->Cached = 0; // Make sure that if the following line deletes the resource, it doesn't try to remove itself from the TDynamicMap we're iterating over.
+        ResourceMap.erase(it);
+        CachedResource->_cached = false;
       }
     }
 
@@ -334,7 +338,7 @@ namespace nux
         if (CachedResource == Resource)
         {
           ResourceMap.erase (it);
-          CachedResource->Cached = 0; // Make sure that if the following line deletes the resource, it doesn't try to remove itself from the TDynamicMap we're iterating over.
+          CachedResource->_cached = 0; // Make sure that if the following line deletes the resource, it doesn't try to remove itself from the TDynamicMap we're iterating over.
           return;
         }
       }
@@ -364,10 +368,10 @@ namespace nux
     bool         IsCachedResource (ResourceData *Source);
 
     virtual void InitializeResourceFactories();
-    virtual void FreeResource (ResourceData *Resource)
-    {
-      FlushResourceId (Resource->GetResourceIndex() );
-    }
+//     virtual void FreeResource (ResourceData *Resource)
+//     {
+//       FlushResourceId(Resource->GetResourceIndex());
+//     }
   };
 
 

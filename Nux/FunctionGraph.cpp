@@ -49,11 +49,11 @@ namespace nux
     SetMinimumSize (200, 100);
     SetBaseSize (200, 100);
 
-    Texture = GetGpuDevice()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
+    Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/FunctionGraphBackground.tga") );
-    BaseTexture* BackgroundTexture = GetGpuDevice()->CreateSystemCapableTexture ();
+    BaseTexture* BackgroundTexture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     BackgroundTexture->Update (Path.GetTCharPtr() );
 
     TexCoordXForm texxform;

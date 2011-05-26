@@ -125,10 +125,6 @@ namespace nux
   int GpuDevice::DrawIndexedPrimitive (ObjectPtr<IOpenGLIndexBuffer> IndexBuffer,
       ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
       PRIMITIVE_TYPE PrimitiveType,
-      int BaseVertexIndex,
-      int MinIndex,
-      int NumVertices,
-      int StartIndex,
       int PrimitiveCount)
   {
     //    glDisable(GL_CULL_FACE);
@@ -167,23 +163,25 @@ namespace nux
     int decl = 0;
 
     for (int i = 0; i < 16; i++)
-      VertexDeclaration->ValideVertexInput[i] = 0;
-
-    while (VertexDeclaration->_DeclarationsArray[decl]->Stream != 0xFF)
     {
-      VERTEXELEMENT vtxelement = *VertexDeclaration->_DeclarationsArray[decl];
+      VertexDeclaration->_valid_vertex_input[i] = 0;
+    }
+
+    while (VertexDeclaration->_declarations_array[decl].Stream != 0xFF)
+    {
+      VERTEXELEMENT vtxelement = VertexDeclaration->_declarations_array[decl];
       int vtxInput = sVertexInputMap[vtxelement.Usage + vtxelement.UsageIndex];
-      glEnableVertexAttribArrayARB ( vtxInput );
+      glEnableVertexAttribArrayARB(vtxInput);
 
       _StreamSource[vtxelement.Stream].VertexBuffer->BindVertexBuffer();
-      CHECKGL ( glVertexAttribPointer (vtxInput,
+      CHECKGL(glVertexAttribPointer (vtxInput,
                                        vtxelement.NumComponent,
                                        vtxelement.Type,
                                        GL_FALSE,
                                        _StreamSource[vtxelement.Stream].StreamStride,
-                                       (GLvoid *) (&_StreamSource[vtxelement.Stream].StreamOffset + vtxelement.Offset) ) );
+                                       (void*)(_StreamSource[vtxelement.Stream].StreamOffset + vtxelement.Offset)));
 
-      VertexDeclaration->ValideVertexInput[sVertexInputMap[vtxelement.Usage + vtxelement.UsageIndex]] = 1;
+      VertexDeclaration->_valid_vertex_input[sVertexInputMap[vtxelement.Usage + vtxelement.UsageIndex]] = 1;
       decl++;
     }
 
@@ -225,18 +223,17 @@ namespace nux
           nuxAssertMsg (0, TEXT ("[GpuDevice::DrawIndexedPrimitive] Unknown Primitive Type.") );
       }
 
-      t_size ptr = StartIndex * IndexBuffer->GetStride();
-      CHECKGL ( glDrawElements (primitive,
+      CHECKGL(glDrawElements (primitive,
                                 ElementCount,
                                 index_format,
-                                (GLvoid *) &ptr) );
+                                0));
     }
 
     {
-      for (int index = 0; index < 16; index++)
+      for(int index = 0; index < 16; index++)
       {
-        if (VertexDeclaration->ValideVertexInput[index])
-          glDisableVertexAttribArrayARB ( index );
+        if(VertexDeclaration->_valid_vertex_input[index])
+          glDisableVertexAttribArrayARB(index);
       }
 
       InvalidateVertexBuffer();
@@ -301,11 +298,11 @@ namespace nux
     int decl = 0;
 
     for (int i = 0; i < 16; i++)
-      VertexDeclaration->ValideVertexInput[i] = 0;
+      VertexDeclaration->_valid_vertex_input[i] = 0;
 
-    while (VertexDeclaration->_DeclarationsArray[decl]->Stream != 0xFF)
+    while (VertexDeclaration->_declarations_array[decl].Stream != 0xFF)
     {
-      VERTEXELEMENT vtxelement = *VertexDeclaration->_DeclarationsArray[decl];
+      VERTEXELEMENT vtxelement = VertexDeclaration->_declarations_array[decl];
       int vtxInput = sVertexInputMap[vtxelement.Usage + vtxelement.UsageIndex];
 
       nuxAssert (vtxInput < GetGpuInfo().GetMaxFboAttachment());
@@ -321,7 +318,7 @@ namespace nux
                                        _StreamSource[vtxelement.Stream].StreamStride,
                                        (GLvoid *) (&_StreamSource[vtxelement.Stream].StreamOffset + vtxelement.Offset) ) );
 
-      VertexDeclaration->ValideVertexInput[sVertexInputMap[vtxelement.Usage + vtxelement.UsageIndex]] = 1;
+      VertexDeclaration->_valid_vertex_input[sVertexInputMap[vtxelement.Usage + vtxelement.UsageIndex]] = 1;
       decl++;
     }
 
@@ -367,7 +364,7 @@ namespace nux
     {
       for (int index = 0; index < 16; index++)
       {
-        if (VertexDeclaration->ValideVertexInput[index])
+        if (VertexDeclaration->_valid_vertex_input[index])
           glDisableVertexAttribArrayARB ( index );
       }
 

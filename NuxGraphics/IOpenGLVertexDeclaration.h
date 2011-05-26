@@ -29,24 +29,24 @@ namespace nux
   class IOpenGLResource;
   class IOpenGLVertexDeclaration: public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLVertexDeclaration, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVertexDeclaration, IOpenGLResource);
 
   public:
     virtual ~IOpenGLVertexDeclaration();
 
-    int GetDeclaration (
-      VERTEXELEMENT *pDecl,
-      unsigned int *pNumElements);
+//     int GetDeclaration(
+//       VERTEXELEMENT *pDecl,
+//       unsigned int *pNumElements);
 
-    VERTEXELEMENT GetUsage (ATTRIB_USAGE_DECL usage);
+    VERTEXELEMENT GetUsage(ATTRIB_USAGE_DECL usage);
     bool IsUsingMoreThanStreamZero();
 
   private:
     IOpenGLVertexDeclaration (const VERTEXELEMENT *pVertexElements);
 
-    int Stride[8]; // Stride for each stream
-    int ValideVertexInput[16]; // Vertex Input valid for this vertex declaration
-    std::vector<VERTEXELEMENT *> _DeclarationsArray;
+    int _stride[8]; //!< Stride for each stream
+    int _valid_vertex_input[16]; // Vertex Input valid for this vertex declaration
+    std::vector<VERTEXELEMENT> _declarations_array;
     friend class GpuDevice;
   };
 

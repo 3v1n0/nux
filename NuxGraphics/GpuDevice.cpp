@@ -302,7 +302,12 @@ namespace nux
     _support_nv_texture_rectangle             = GLEW_NV_texture_rectangle ? true : false;
     _support_arb_pixel_buffer_object          = GLEW_ARB_pixel_buffer_object ? true : false;
     _support_ext_blend_equation_separate      = GLEW_EXT_blend_equation_separate ? true : false;
-
+#ifndef NUX_OPENGLES_20
+    _support_ext_texture_srgb                 = GLEW_EXT_texture_sRGB ? true : false;
+    _support_ext_texture_srgb_decode          = GLEW_EXT_texture_sRGB_decode ? true : false;
+    _support_ext_framebuffer_srgb             = GLEW_EXT_framebuffer_sRGB ? true : false;
+    _support_arb_framebuffer_srgb             = GLEW_ARB_framebuffer_sRGB ? true : false;
+#endif
   }
 
 #if defined (NUX_OS_WINDOWS)
@@ -324,8 +329,6 @@ namespace nux
     bool opengl_es_20)
 #endif
   {
-    inlSetThreadLocalStorage (_TLS_GpuDevice_, this);
-    
     _PixelStoreAlignment  = 4;
     _UsePixelBufferObject = false;
     _gpu_info             = NULL;
@@ -667,12 +670,15 @@ namespace nux
 
     _PixelBufferArray.clear ();
 
+    for (int i = 0; i < MAX_NUM_STREAM; i++)
+    {
+      _StreamSource[i].ResetStreamSource();
+    }
     // NVidia CG
 #if (NUX_ENABLE_CG_SHADERS)
     cgDestroyContext (m_Cgcontext);
 #endif
 
-    inlSetThreadLocalStorage (_TLS_GpuDevice_, 0);
   }
 
   ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::CreateFrameBufferObject()
@@ -796,7 +802,7 @@ namespace nux
 
   void *GpuDevice::LockUnpackPixelBufferIndex (const int index, int Size)
   {
-    GetGpuDevice()->BindUnpackPixelBufferIndex (index);
+    BindUnpackPixelBufferIndex (index);
     CHECKGL ( glBufferDataARB (GL_PIXEL_UNPACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
     void *pBits = glMapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
     CHECKGL_MSG (glMapBufferARB );
@@ -804,9 +810,9 @@ namespace nux
     return pBits;
   }
 
-  void *GpuDevice::LockPackPixelBufferIndex (const int index, int Size)
+  void* GpuDevice::LockPackPixelBufferIndex (const int index, int Size)
   {
-    GetGpuDevice()->BindPackPixelBufferIndex (index);
+    BindPackPixelBufferIndex (index);
     CHECKGL ( glBufferDataARB (GL_PIXEL_PACK_BUFFER_ARB, Size, NULL, GL_STREAM_DRAW) );
     void *pBits = glMapBufferARB (GL_PIXEL_PACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
     CHECKGL_MSG (glMapBufferARB );
@@ -816,14 +822,14 @@ namespace nux
 
   void GpuDevice::UnlockUnpackPixelBufferIndex (const int index)
   {
-    GetGpuDevice()->BindUnpackPixelBufferIndex (index);
+    BindUnpackPixelBufferIndex (index);
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
   }
 
   void GpuDevice::UnlockPackPixelBufferIndex (const int index)
   {
-    GetGpuDevice()->BindPackPixelBufferIndex (index);
+    BindPackPixelBufferIndex (index);
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
   }
@@ -967,12 +973,12 @@ namespace nux
   {
     if(GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
-      return GetGpuDevice ()->CreateTexture (Width, Height, Levels, PixelFormat);
+      return CreateTexture (Width, Height, Levels, PixelFormat);
     }
 
     if(GetGpuInfo().Support_EXT_Texture_Rectangle () || GetGpuInfo().Support_ARB_Texture_Rectangle ())
     {
-      return GetGpuDevice ()->CreateRectangleTexture (Width, Height, Levels, PixelFormat);
+      return CreateRectangleTexture (Width, Height, Levels, PixelFormat);
     }
 
     nuxAssertMsg(0, TEXT("[NuxGraphicsResources::CreateSystemCapableDeviceTexture] No support for non power of two textures or rectangle textures"));

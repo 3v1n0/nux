@@ -34,7 +34,7 @@ namespace nux
                              bool        take_focus,
                              int         override_redirect)
   {
-    Display* d = GetThreadGLWindow()->GetX11Display();
+    Display* d = GetGraphicsDisplay()->GetX11Display();
     _display = d;
     XSetWindowAttributes attrib;
     

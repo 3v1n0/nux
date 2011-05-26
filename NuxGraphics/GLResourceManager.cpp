@@ -46,7 +46,7 @@ namespace nux
 
   ResourceData::~ResourceData ()
   {
-    GetThreadGraphicsContext()->FlushCachedResourceData (this);
+    GetGraphicsDisplay()->GetGraphicsEngine()->FlushCachedResourceData(this);
   }
 
   int ResourceData::GetResourceIndex() const
@@ -65,7 +65,7 @@ namespace nux
 
   CachedResourceData::CachedResourceData (NResourceSet *ResourceManager)
     :   Set (ResourceManager)
-    ,   Cached (0)
+    ,   _cached (0)
     ,   NumRefs (0)
     ,   ResourceType (NULL)
     ,   Size (0)
@@ -97,9 +97,10 @@ namespace nux
       NextResource->PrevResource = PrevResource;
     }
 
-    if (Cached)
+    if (_cached)
     {
       Set->FlushResource (this);
+      _cached = false;
     }
   }
 
@@ -115,10 +116,10 @@ namespace nux
     NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureCube, CachedTextureCube);
     NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureVolume, CachedTextureVolume);
     NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureFrameAnimation, CachedTextureFrameAnimation);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NVertexBuffer, NGLVertexBuffer);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NIndexBuffer, NGLIndexBuffer);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NVertexDeclaration, NGLVertexDeclaration);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (NStaticMesh, NGLStaticMesh);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (VertexBuffer, CachedVertexBuffer);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (IndexBuffer, CachedIndexBuffer);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (VertexDeclaration, CachedVertexDeclaration);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR (MeshBuffer, CachedMeshBuffer);
 
 #undef NUX_DEFINE_RESOURCE_FACTORY_PAIR
 
@@ -132,10 +133,10 @@ namespace nux
     NUX_DEFINE_RESOURCE_UPDATER (TextureCube);
     NUX_DEFINE_RESOURCE_UPDATER (TextureVolume);
     NUX_DEFINE_RESOURCE_UPDATER (TextureFrameAnimation);
-    NUX_DEFINE_RESOURCE_UPDATER (NVertexBuffer);
-    NUX_DEFINE_RESOURCE_UPDATER (NIndexBuffer);
-    NUX_DEFINE_RESOURCE_UPDATER (NVertexDeclaration);
-    NUX_DEFINE_RESOURCE_UPDATER (NStaticMesh);
+    NUX_DEFINE_RESOURCE_UPDATER (VertexBuffer);
+    NUX_DEFINE_RESOURCE_UPDATER (IndexBuffer);
+    NUX_DEFINE_RESOURCE_UPDATER (VertexDeclaration);
+    NUX_DEFINE_RESOURCE_UPDATER (MeshBuffer);
 
 #undef NUX_DEFINE_RESOURCE_UPDATER
   }

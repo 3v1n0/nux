@@ -538,6 +538,16 @@ namespace nux
     return true;
   }
 
+  GraphicsEngine* GraphicsDisplay::GetGraphicsEngine() const
+  {
+    return m_GraphicsContext;
+  }
+  
+  GpuDevice* GraphicsDisplay::GetGpuDevice () const
+  {
+    return m_DeviceFactory;
+  }
+
 //---------------------------------------------------------------------------------------------------------
   // NUXTODO: remove this call. Make a direct access to GpuInfo via GpuDevice.
   bool GraphicsDisplay::HasFrameBufferSupport()
