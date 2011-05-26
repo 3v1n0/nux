@@ -1,3 +1,10 @@
+nux (0.9.48-0ubuntu3) UNRELEASED; urgency=low
+
+  * Cherry-pick fix for launcher sometimes doesn't hide when there are
+    windows beneath it (LP: #772185)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 26 May 2011 15:11:53 +0200
+
 nux (0.9.48-0ubuntu2) oneiric; urgency=low
 
   * debian/patches/01_build_with_gcc46.patch:
