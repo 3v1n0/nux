@@ -831,10 +831,14 @@ namespace nux
 
     void InitSlBlendModes();
 
-    ObjectPtr<IOpenGLShaderProgram> m_SlPSBNormal;
-    ObjectPtr<IOpenGLShaderProgram> m_SlPSBLighten;
-    ObjectPtr<IOpenGLShaderProgram> m_SlPSBDarken;
-    ObjectPtr<IOpenGLShaderProgram> m_SlPSBMultiply;
+    void InitBlendModeNormal();
+    void InitBlendModeLighten();
+    void InitBlendModeDarken();
+
+    ObjectPtr<IOpenGLShaderProgram> _shader_layer_blend_normal;
+    ObjectPtr<IOpenGLShaderProgram> _shader_layer_blend_lighten;
+    ObjectPtr<IOpenGLShaderProgram> _shader_layer_blend_darken;
+    ObjectPtr<IOpenGLShaderProgram> _shader_layer_blend_multiply;
 
 
     //! Test the gpu features and set variables such as \e _use_glsl_shaders.

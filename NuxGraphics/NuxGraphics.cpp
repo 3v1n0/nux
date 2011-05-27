@@ -22,7 +22,6 @@
 #include "GLResource.h"
 #include "FontTexture.h"
 #include "NuxGraphics.h"
-#include "IniFile.h"
 #include "GLResourceManager.h"
 #if defined(NUX_OS_WINDOWS)
   #include "GraphicsDisplay.h"
@@ -35,7 +34,6 @@ namespace nux
   void NuxGraphicsInitialize()
   {
     inlRegisterThreadLocalIndex (1, _TLS_GraphicsDisplay, NULL);
-    inlRegisterThreadLocalIndex (2, _TLS_GpuDevice_, NULL);
 
 #if defined(NUX_OS_LINUX)
     // Necessary in order to use gdk
@@ -45,30 +43,8 @@ namespace nux
     GNuxGraphicsResources.InitializeResources();
   }
 
-  GraphicsDisplay *GetThreadGLWindow()
-  {
-    return GetDisplayDevice ();
-  }
-
-  GraphicsDisplay *GetDisplayDevice ()
+  GraphicsDisplay* GetGraphicsDisplay()
   {
     return (GraphicsDisplay *) inlGetThreadLocalStorage (_TLS_GraphicsDisplay);
   }
-
-  GpuDevice *GetThreadGLDeviceFactory () // Deprecated
-  {
-    return GetGpuDevice ();
-  }
-
-  GpuDevice *GetGpuDevice ()
-  {
-    return (GpuDevice *) inlGetThreadLocalStorage (_TLS_GpuDevice_);
-  }
-
-  GraphicsEngine *GetThreadGraphicsContext ()
-  {
-    GraphicsDisplay *glwindow = (GraphicsDisplay *) inlGetThreadLocalStorage (_TLS_GraphicsDisplay);
-    return glwindow->GetGraphicsEngine ();
-  }
-
 }

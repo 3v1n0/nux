@@ -187,14 +187,10 @@ namespace nux
     float GetFrameTime() const;
     void ResetFrameTime();
 
-    GraphicsEngine *GetGraphicsEngine() const
-    {
-      return m_GraphicsContext;
-    }
-    GpuDevice *GetGpuDevice () const
-    {
-      return m_DeviceFactory;
-    }
+    GraphicsEngine *GetGraphicsEngine() const;
+    
+    GpuDevice *GetGpuDevice () const;
+
     // Dialog
     bool StartOpenFileDialog (FileDialogOption &fdo);
     bool StartSaveFileDialog (FileDialogOption &fdo);

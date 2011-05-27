@@ -22,13 +22,10 @@
 
 #include "NuxCore/NuxCore.h"
 #include "NuxCore/FilePath.h"
+#include "NuxCore/TinyXML/tinyxml.h"
 
 #include "ImageSurface.h"
 #include "NITX.h"
-//#include "NTextureArchiveManager.h"
-
-#include "NuxCore/TinyXML/tinyxml.h"
-
 #include "NAnimatedTexture.h"
 
 namespace nux

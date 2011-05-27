@@ -667,7 +667,7 @@ namespace nux
     if (_texture2D)
       _texture2D->UnReference ();
 
-    _texture2D = GetGpuDevice ()->CreateSystemCapableTexture ();
+    _texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     _texture2D->Update (bitmap);
 
     delete bitmap;

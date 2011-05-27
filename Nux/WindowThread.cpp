@@ -76,7 +76,7 @@ namespace nux
     MSG msg;
     retval = PeekMessageW (&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
 #elif defined(NUX_OS_LINUX)
-    retval = GetThreadGLWindow()->HasXPendingEvent () ? TRUE : FALSE;
+    retval = GetGraphicsDisplay()->HasXPendingEvent () ? TRUE : FALSE;
 #else
 #error Not implemented.
 #endif
@@ -99,7 +99,7 @@ namespace nux
       MSG msg;
       retval = PeekMessageW (&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
 #elif defined(NUX_OS_LINUX)
-      retval = GetThreadGLWindow()->HasXPendingEvent () ? TRUE : FALSE;
+      retval = GetGraphicsDisplay()->HasXPendingEvent () ? TRUE : FALSE;
 #else
 #error Not implemented.
 #endif
@@ -235,7 +235,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     event_source->event_poll_fd.fd = G_WIN32_MSG_HANDLE;
 #elif defined(NUX_OS_LINUX)
-    event_source->event_poll_fd.fd = ConnectionNumber (GetThreadGLWindow()->GetX11Display() );
+    event_source->event_poll_fd.fd = ConnectionNumber (GetGraphicsDisplay()->GetX11Display() );
 #else
 #error Not implemented.
 #endif
@@ -1863,7 +1863,7 @@ namespace nux
 
     CHECKGL ( glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
-    GetGpuDevice()->DeactivateFrameBuffer();
+    GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
   }
 
   int WindowThread::InstallEventInspector (EventInspector function, void* data)

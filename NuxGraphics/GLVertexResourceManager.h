@@ -27,174 +27,209 @@
 #include "IOpenGLVertexBuffer.h"
 #include "IOpenGLIndexBuffer.h"
 #include "IOpenGLVertexDeclaration.h"
+#include "MeshData.h"
 
 namespace nux
 {
-
-  class NMeshObject;
-
-  class NVertexBuffer: public ResourceData
+  class VertexBuffer: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NVertexBuffer, ResourceData);
+    NUX_DECLARE_OBJECT_TYPE (VertexBuffer, ResourceData);
 
   public:
-    NVertexBuffer();
-    virtual ~NVertexBuffer();
-    NVertexBuffer (int Size, int Stride);
+    VertexBuffer();
+    virtual ~VertexBuffer();
+    VertexBuffer (int Size, int Stride);
     //! Copy constructor
-    NVertexBuffer (const NVertexBuffer &);
+    VertexBuffer (const VertexBuffer &);
     //! Assignment constructor
-    NVertexBuffer &operator = (const NVertexBuffer &);
+    VertexBuffer &operator = (const VertexBuffer &);
 
-    void Allocate (int Size, int Stride);
+    //! Allocate space for a "num_element", each of size "size".
+    /*!
+        @param num_element Number of elements.
+        @param size Number of byte for every element.
+    */
+    void Allocate(int num_element, int size);
     int GetSize() const;
     int GetStride() const;
     int GetNumElement() const;
-    const t_u8 *GetPtrRawData() const;
-    t_u8 *GetPtrRawData();
+    const void* GetPtrRawData() const;
+    void* GetPtrRawData();
 
   public:
-    std::vector<t_u8> _Data;
+    std::vector<unsigned char> _Data;
     int _Stride;
   };
 
-  class NIndexBuffer: public ResourceData
+  class IndexBuffer: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NIndexBuffer, ResourceData);
+    NUX_DECLARE_OBJECT_TYPE (IndexBuffer, ResourceData);
 
-    // NIndexBuffer is very similar to NVertexBuffer except that vertex indices
+    // IndexBuffer is very similar to MeshBuffer except that vertex indices
     // are not inter-mixed with other vertex data. So the Stride here should be 2 bytes or 4 bytes.
   public:
-    NIndexBuffer();
-    virtual ~NIndexBuffer();
-    NIndexBuffer (int Size, int Stride);
+    IndexBuffer();
+    virtual ~IndexBuffer();
+    IndexBuffer (int Size, int Stride);
     //! Copy constructor
-    NIndexBuffer (const NIndexBuffer &);
+    IndexBuffer (const IndexBuffer &);
     //! Assignment constructor
-    NIndexBuffer &operator = (const NIndexBuffer &);
+    IndexBuffer &operator = (const IndexBuffer &);
 
     void Allocate (int Size, int Stride);
     int GetSize() const;
     int GetStride() const;
     int GetNumElement() const;
-    const t_u8 *GetPtrRawData() const;
-    t_u8 *GetPtrRawData();
+    const void* GetPtrRawData() const;
+    void* GetPtrRawData();
 
   public:
-    std::vector<t_u8> _Data;
+    std::vector<int> _Data;
     int _Stride;
   };
 
-  class NVertexDeclaration: public ResourceData
+  class VertexDeclaration: public ResourceData
   {
     NUX_DECLARE_OBJECT_TYPE (NVertexDeclaration, ResourceData);
 
   public:
-    NVertexDeclaration();
-    ~NVertexDeclaration();
-    void AddVertexComponent (VERTEXELEMENT);
-    std::vector<VERTEXELEMENT> m_Declaration;
+    VertexDeclaration();
+    ~VertexDeclaration();
+    void AddVertexComponent(VERTEXELEMENT);
+    std::vector<VERTEXELEMENT> _declaration;
   };
 
-  class NGLVertexBuffer: public CachedResourceData
+  class CachedVertexBuffer: public CachedResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLVertexBuffer, CachedResourceData);
-
+    NUX_DECLARE_OBJECT_TYPE(CachedVertexBuffer, CachedResourceData);
   public:
-    NGLVertexBuffer (NResourceSet *ResourceManager, NVertexBuffer *VertexData);
-    ~NGLVertexBuffer ();
+    CachedVertexBuffer(NResourceSet* ResourceManager, VertexBuffer* resource);
+    ~CachedVertexBuffer();
 
-    ObjectPtr<IOpenGLVertexBuffer>	m_VtxBuffer;
+    ObjectPtr<IOpenGLVertexBuffer>	_vertex_buffer;
 
-    bool UpdateResource (ResourceData *Resource);
+    bool UpdateResource(ResourceData* Resource);
   private:
-    void LoadVertexData (NVertexBuffer *VertexData);
+    void LoadVertexData(VertexBuffer* vertex_buffer);
     int _Size;
     int _Stride;
   };
 
-  class NGLIndexBuffer: public CachedResourceData
+  class CachedIndexBuffer: public CachedResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLIndexBuffer, CachedResourceData);
+    NUX_DECLARE_OBJECT_TYPE(CachedIndexBuffer, CachedResourceData);
   public:
-    NGLIndexBuffer (NResourceSet *ResourceManager, NIndexBuffer *Resource);
-    ~NGLIndexBuffer();
+    CachedIndexBuffer(NResourceSet* ResourceManager, IndexBuffer* resource);
+    ~CachedIndexBuffer();
 
-    ObjectPtr<IOpenGLIndexBuffer>	m_IdxBuffer;
+    ObjectPtr<IOpenGLIndexBuffer>	_index_buffer;
 
-    bool UpdateResource (ResourceData *Resource);
+    bool UpdateResource(ResourceData* Resource);
   private:
-    void LoadIndexData (NIndexBuffer *VertexData);
+    void LoadIndexData(IndexBuffer* index_buffer);
     int _Size;
     int _Stride;
   };
 
-  class NGLVertexDeclaration: public CachedResourceData
+  class CachedVertexDeclaration: public CachedResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLVertexDeclaration, CachedResourceData);
+    NUX_DECLARE_OBJECT_TYPE(CachedVertexDeclaration, CachedResourceData);
   public:
-    NGLVertexDeclaration (NResourceSet *ResourceManager, NVertexDeclaration *Resource);
-    ~NGLVertexDeclaration();
+    CachedVertexDeclaration(NResourceSet* ResourceManager, VertexDeclaration* Resource);
+    ~CachedVertexDeclaration();
 
-    bool UpdateResource (ResourceData *Resource);
-    ObjectPtr< IOpenGLVertexDeclaration > m_VtxDeclaration;
+    bool UpdateResource(ResourceData* Resource);
+    ObjectPtr<IOpenGLVertexDeclaration> _declaration;
   };
 
-  class NMeshComponent
+//   class NMeshComponent
+//   {
+//   public:
+//     NMeshComponent();
+//     NMeshComponent (const NMeshComponent &);
+//     NMeshComponent (int StreamIndex/*ObjectPtr<BaseMeshBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type);
+// 
+//     NMeshComponent &operator = (const NMeshComponent &);
+// 
+//     virtual ~NMeshComponent();
+// 
+//     int GetStreamIndex() const;
+// //     int GetStride();
+//     int GetOffset();
+//   private:
+//     ATTRIB_DECL_TYPE _Type;
+//     int _StreamIndex;
+//     int _Offset;
+//   };
+// 
+//   class NMesh: public ResourceData
+//   {
+//     NUX_DECLARE_OBJECT_TYPE (NStaticMesh, ResourceData);
+// 
+//     NMesh();
+//     virtual ~NMesh();
+//   };
+// 
+//   class NStaticMesh: public NMesh
+//   {
+//     NUX_DECLARE_OBJECT_TYPE (NStaticMesh, NMesh);
+//   public:
+//     NStaticMesh(NMeshObject *Object);
+//     ~NStaticMesh();
+// 
+//     int GetNumStreams() const;
+// 
+//     std::vector<BaseMeshBuffer*> m_pVertexStreamArray; // up to 8 stream of buffers on most GPU
+//     NIndexBuffer *m_pIndex;
+//     NVertexDeclaration *m_pVertexDeclaration;
+//   };
+// 
+//   class NGLStaticMesh: public CachedResourceData
+//   {
+//     NUX_DECLARE_OBJECT_TYPE(NGLStaticMesh, CachedResourceData);
+//   public:
+//     NGLStaticMesh(NResourceSet *ResourceManager, NStaticMesh *);
+//     ~NGLStaticMesh();
+//     bool UpdateResource(ResourceData *Resource);
+// 
+//     std::vector<ObjectPtr<CachedVertexBuffer> > m_VertexBufferArray;
+//     ObjectPtr<CachedIndexBuffer> m_Index;
+//     ObjectPtr<CachedVertexDeclaration> m_VertexDeclaration;
+//   };
+
+
+  class CachedMeshBuffer;
+
+  class MeshBuffer: public ResourceData
   {
+    NUX_DECLARE_OBJECT_TYPE(MeshBuffer, ResourceData);
   public:
-    NMeshComponent();
-    NMeshComponent (const NMeshComponent &);
-    NMeshComponent (int StreamIndex/*ObjectPtr<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type);
+    MeshBuffer(NUX_FILE_LINE_PROTO);
+    virtual ~MeshBuffer();
 
-    NMeshComponent &operator = (const NMeshComponent &);
+    bool Update(const MeshData* mesh_data);
 
-    virtual ~NMeshComponent();
+    //ObjectPtr <CachedMeshBuffer> GetCachedMeshBuffer();
 
-    int GetStreamIndex() const;
-//     int GetStride();
-    int GetOffset();
-  private:
-    ATTRIB_DECL_TYPE _Type;
-    int _StreamIndex;
-    int _Offset;
-  };
-
-  class NMesh: public ResourceData
-  {
-    NUX_DECLARE_OBJECT_TYPE (NStaticMesh, ResourceData);
-
-    NMesh();
-    virtual ~NMesh();
-  };
-
-  class NStaticMesh: public NMesh
-  {
-    NUX_DECLARE_OBJECT_TYPE (NStaticMesh, NMesh);
   public:
-    NStaticMesh (NMeshObject *Object);
-    ~NStaticMesh();
-
-    int GetNumStreams() const;
-
-    std::vector< NVertexBuffer * > m_pVertexStreamArray; // up to 8 stream of buffers on most GPU
-    NIndexBuffer *m_pIndex;
-    NVertexDeclaration *m_pVertexDeclaration;
+    VertexBuffer      *_vertex_buffer;
+    IndexBuffer       *_index_buffer;
+    VertexDeclaration *_vertex_declaration;
   };
 
-  class NGLStaticMesh: public CachedResourceData
+  class CachedMeshBuffer: public CachedResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NGLStaticMesh, CachedResourceData);
+    NUX_DECLARE_OBJECT_TYPE(CachedMeshBuffer, CachedResourceData);
   public:
-    NGLStaticMesh (NResourceSet *ResourceManager, NStaticMesh *);
-    ~NGLStaticMesh ();
-    bool UpdateResource (ResourceData *Resource);
+    ObjectPtr<CachedVertexBuffer> _cached_vertex_buffer;
+    ObjectPtr<CachedVertexDeclaration> _cached_vertex_declaration;
+    ObjectPtr<CachedIndexBuffer> _cached_index_buffer;
 
-    std::vector< ObjectPtr<NGLVertexBuffer> > m_VertexBufferArray;
-    ObjectPtr<NGLIndexBuffer> m_Index;
-    ObjectPtr<NGLVertexDeclaration> m_VertexDeclaration;
+    CachedMeshBuffer(NResourceSet* ResourceManager, MeshBuffer* resource);
+    ~CachedMeshBuffer();
+
+    bool UpdateResource(ResourceData* Resource);
   };
-
 }
 
 #endif // GLVERTEXRESOURCEMANAGER_H

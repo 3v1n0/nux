@@ -149,7 +149,7 @@ namespace nux
         Sum up all the image elements and divide by the number of elements.
         @return The average color of the image.
     */
-    Color AverageColor();
+    struct Color AverageColor();
 
   private:
     void FlipDXTVertical();
@@ -525,8 +525,19 @@ namespace nux
 
   bool HasOpenEXRSupport();
 
-  NBitmapData *LoadGdkPixbuf (GdkPixbuf *pixbuf);
-  NBitmapData *LoadImageFile (const TCHAR *Filename);
+  /*!
+      Return and object that has to be destroyed with delete.
+
+      @return A bitmap source. Destroy it with delete.
+  */
+  NBitmapData* LoadGdkPixbuf(GdkPixbuf *pixbuf);
+
+  /*!
+      Return and object that has to be destroyed with delete.
+
+      @return A bitmap source. Destroy it with delete.
+  */
+  NBitmapData* LoadImageFile(const TCHAR *Filename);
 
 }
 

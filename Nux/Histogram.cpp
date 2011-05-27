@@ -44,7 +44,7 @@ namespace nux
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Data/UITextures/FunctionGraphBackground.tga"));
-    BaseTexture* BackgroundTexture = GetGpuDevice()->CreateSystemCapableTexture ();
+    BaseTexture* BackgroundTexture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     BackgroundTexture->Update (Path.GetTCharPtr());
 
     TexCoordXForm texxform;
@@ -90,7 +90,7 @@ namespace nux
     GfxContext.PushClippingRectangle (base);
 
     if (Texture.IsNull() || (Texture->GetWidth() != (t_s32) m_HistogramData.size() ) )
-      Texture = GetGpuDevice()->CreateSystemCapableDeviceTexture ( (t_s32) m_HistogramData.size(), 1, 0, BITFMT_A8);
+      Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture ( (t_s32) m_HistogramData.size(), 1, 0, BITFMT_A8);
 
     float tex_dx = (m_maxX - m_minX) / Texture->GetWidth();
 
@@ -174,7 +174,7 @@ namespace nux
     //m_minX = minX;
     //m_maxX = maxX;
 
-    //Texture = GetGpuDevice()->CreateSystemCapableDeviceTexture(m_maxX - m_minX, 4, 0, BITFMT_R8G8B8A8);
+    //Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(m_maxX - m_minX, 4, 0, BITFMT_R8G8B8A8);
     NeedRedraw();
   }
 

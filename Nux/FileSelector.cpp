@@ -54,7 +54,7 @@ namespace nux
     SetLayout(m_hlayout);
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Icons/Folder-16x16.png") );
-    m_Texture = GetGpuDevice()->CreateSystemCapableTexture ();
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     m_Texture->Update (Path.GetTCharPtr() );
   }
 
@@ -94,14 +94,14 @@ namespace nux
     Geometry TextureGeo = Geometry (0, 0, m_Texture->GetWidth(), m_Texture->GetHeight() );
     Geometry GeoPo = ComputeGeometryPositioning (m_OpenButton->GetGeometry(), TextureGeo, gp);
 
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE);
 
     nux::TexCoordXForm texxform;
     GfxContext.QRP_1Tex (GeoPo.x, GeoPo.y, GeoPo.width, GeoPo.height, m_Texture->GetDeviceTexture(), texxform, nux::color::White);
 
-    GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (FALSE);
 
     m_FileEditTextBox->NeedRedraw();
   }
