@@ -425,6 +425,10 @@ namespace nux
     m_GLibLoop      = 0;
     m_GLibContext   = 0;
 #endif
+#if defined(NUX_OS_LINUX)
+    _x11display = NULL;
+    _ownx11display = false;
+#endif
     
     _pending_wake_up_timer = false;
     _inside_main_loop = false;
@@ -455,6 +459,13 @@ namespace nux
     delete _Timelines;
     delete _async_wake_up_functor;
     delete _fake_event_call_back;
+
+#if defined(NUX_OS_LINUX)
+    if (_x11display && _ownx11display)
+    {
+      XCloseDisplay(_x11display);
+    }
+#endif
   }
 
   void WindowThread::SetFocusedArea (Area *focused_area)
@@ -1541,7 +1552,18 @@ namespace nux
       ParentWindow = 0;
     }
 
-    _graphics_display = gGLWindowManager.CreateFromForeignWindow (X11Display, X11Window, OpenGLContext);
+    if (X11Display)
+    {
+      _x11display = X11Display;
+      _ownx11display = false;
+    }
+    else
+    {
+      _x11display = XOpenDisplay(NULL);
+      _ownx11display = true;
+    }
+      
+    _graphics_display = gGLWindowManager.CreateFromForeignWindow (_x11display, X11Window, OpenGLContext);
 
     if (_graphics_display == 0)
     {
