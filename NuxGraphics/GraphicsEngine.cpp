@@ -33,8 +33,6 @@
 
 #include "FontTexture.h"
 #include "FontRenderer.h"
-#include "UIColorTheme.h"
-
 #include "GraphicsEngine.h"
 
 namespace nux

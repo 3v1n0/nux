@@ -289,12 +289,12 @@ namespace nux
 #endif
     _support_arb_vertex_program               = GLEW_ARB_vertex_program ? true : false;
     _support_arb_fragment_program             = GLEW_ARB_fragment_program ? true : false;
+    _support_ext_framebuffer_object           = GLEW_EXT_framebuffer_object ? true : false;
     _support_arb_shader_objects               = GLEW_ARB_shader_objects ? true : false;
     _support_arb_vertex_shader                = GLEW_ARB_vertex_shader ? true : false;
     _support_arb_fragment_shader              = GLEW_ARB_fragment_shader ? true : false;
     _support_arb_vertex_buffer_object         = GLEW_ARB_vertex_buffer_object ? true : false;
     _support_arb_texture_non_power_of_two     = GLEW_ARB_texture_non_power_of_two ? true : false;
-    _support_ext_framebuffer_object           = GLEW_EXT_framebuffer_object ? true : false;
     _support_ext_draw_range_elements          = GLEW_EXT_draw_range_elements ? true : false;
     _support_ext_stencil_two_side             = GLEW_EXT_stencil_two_side ? true : false;
     _support_ext_texture_rectangle            = GLEW_EXT_texture_rectangle ? true : false;
@@ -304,7 +304,7 @@ namespace nux
     _support_ext_blend_equation_separate      = GLEW_EXT_blend_equation_separate ? true : false;
 #ifndef NUX_OPENGLES_20
     _support_ext_texture_srgb                 = GLEW_EXT_texture_sRGB ? true : false;
-    _support_ext_texture_srgb_decode          = GLEW_EXT_texture_sRGB_decode ? true : false;
+    _support_ext_texture_srgb_decode          = false; //GLEW_EXT_texture_sRGB_decode ? true : false;
     _support_ext_framebuffer_srgb             = GLEW_EXT_framebuffer_sRGB ? true : false;
     _support_arb_framebuffer_srgb             = GLEW_ARB_framebuffer_sRGB ? true : false;
 #endif

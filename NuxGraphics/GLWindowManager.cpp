@@ -133,7 +133,7 @@ namespace nux
 #elif defined(NUX_OS_LINUX)
   GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
   {
-    if (GetDisplayDevice () )
+    if (GetGraphicsDisplay())
     {
       // A GlWindow already exist for this thread.
       nuxAssertMsg (0, TEXT ("Only one GLWindow per thread is allowed") );
@@ -161,6 +161,6 @@ WGLEWContext *wglewGetContext()
 #elif defined(NUX_OS_LINUX)
 GLXEWContext *glxewGetContext()
 {
-  return nux::GetDisplayDevice ()->GetGLXEWContext();
+  return nux::GetGraphicsDisplay()->GetGLXEWContext();
 }
 #endif

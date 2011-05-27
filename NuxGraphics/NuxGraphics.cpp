@@ -22,7 +22,6 @@
 #include "GLResource.h"
 #include "FontTexture.h"
 #include "NuxGraphics.h"
-#include "IniFile.h"
 #include "GLResourceManager.h"
 #if defined(NUX_OS_WINDOWS)
   #include "GraphicsDisplay.h"
