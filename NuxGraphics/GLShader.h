@@ -31,15 +31,7 @@
 
 namespace nux
 {
-// struct ShaderDefinition
-// {
-//     NString	    Name;
-//     NString     Value;
-// };
-//
-// void AddShaderDefinition(std::vector<ShaderDefinition>& Definitions,const TCHAR* Name,const TCHAR* Format,...);
-//
-// void InsertPreProcessorDefinitions(const NString &ShaderSource, NString &RetSource, NString& ShaderPreprocessorDefines = NString(TEXT("")));
+
 }
 
 #endif //GLSHADER_H

@@ -744,7 +744,7 @@ namespace nux
 
     BaseTexture *texture = pimage->texture;
 
-//     CachedBaseTexture* glr = (CachedBaseTexture*)GetThreadGraphicsContext()->ResourceCache.GetCachedResource(texture);
+//     CachedBaseTexture* glr = (CachedBaseTexture*)GetGraphicsDisplay()->GetGraphicsEngine()->ResourceCache.GetCachedResource(texture);
 //     glr->m_Texture->SetFiltering(GL_LINEAR, GL_LINEAR);
 
     Geometry content_geo (0, 0, texture->GetWidth(), texture->GetHeight() ) ;

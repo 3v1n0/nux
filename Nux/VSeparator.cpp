@@ -74,7 +74,7 @@ namespace nux
     int x0 = base.x + base.GetWidth() / 2;
     base.OffsetPosition (0, 3);
     base.OffsetSize (0, -6);
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (base.GetHeight() - 2 * m_BorderSize > 0)
     {
@@ -96,6 +96,6 @@ namespace nux
       GetPainter().Draw2DLine (GfxContext, x0, base.y, x0, base.y + base.GetHeight(), color1);
     }
 
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (FALSE);
   }
 }

@@ -59,7 +59,7 @@ namespace nux
   class TextureVolume;
   class TextureFrameAnimation;
 
-  class NVertexBuffer;
+  class BaseMeshBuffer;
   class NIndexBuffer;
 
   class CachedTexture2D;
@@ -498,7 +498,7 @@ namespace nux
       Method = 0;
     }
 
-    VERTEXELEMENT (WORD stream, WORD offset, ATTRIB_COMPONENT_TYPE type, BYTE numcomponents, ATTRIB_USAGE_DECL usage, BYTE usageindex, BYTE method = 0)
+    VERTEXELEMENT (int stream, int offset, ATTRIB_COMPONENT_TYPE type, BYTE numcomponents, ATTRIB_USAGE_DECL usage, BYTE usageindex, BYTE method = 0)
     {
       Stream = stream;
       Offset = offset;
@@ -509,8 +509,8 @@ namespace nux
       Method = method;
     }
 
-    WORD Stream;
-    WORD Offset;
+    int Stream;
+    int Offset;
 
     // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE ...
     ATTRIB_COMPONENT_TYPE Type;
@@ -548,333 +548,16 @@ namespace nux
 
   void DecomposeTypeDeclaraction (ATTRIB_DECL_TYPE Type, BYTE &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType);
 
-  void AddVertexElement (std::vector<VERTEXELEMENT>& Elements,
-                         WORD Stream,
-                         WORD Offset,
-                         //ubiS16 Stride,
-                         ATTRIB_DECL_TYPE Type,
-                         ATTRIB_USAGE_DECL Usage,
-                         BYTE UsageIndex);
+//   void AddVertexElement (std::vector<VERTEXELEMENT>& Elements,
+//                          WORD Stream,
+//                          WORD Offset,
+//                          //ubiS16 Stride,
+//                          ATTRIB_DECL_TYPE Type,
+//                          ATTRIB_USAGE_DECL Usage,
+//                          BYTE UsageIndex);
 
-  GLenum GetGLPrimitiveType (PRIMITIVE_TYPE InPrimitiveType);
-  unsigned int   GetGLElementCount (PRIMITIVE_TYPE InPrimitiveType,
-                                    unsigned int        InPrimitiveCount);
-
-//   template<typename T> class ObjectPtr
-//   {
-//   public:
-//     T	*Handle;
-// 
-//   private:
-//     void CheckReferenceObject()
-//     {
-//       if (Handle)
-//       {
-//         if (Handle->GetValue() == 0)
-//         {
-//           delete Handle;
-//           //GetGpuDevice()->DestroyDeviceResource<T>(Handle);
-//         }
-//       }
-// 
-//       Handle = 0;
-//     }
-// 
-//     //     // Do not allow access to the managed pointer. This also avoid compiler confusion between
-//     //     //  int BindTexture(IOpenGLBaseTexture* texture);
-//     //     // and
-//     //     //  int BindTexture(ObjectPtr<IOpenGLBaseTexture> texture);
-//     //
-//     //     // Access operators.
-//     //     typedef	T*	PtrT;
-//     //     operator T*()
-//     //     {
-//     //         return Handle;
-//     //     }
-// 
-//   public:
-//     T *operator -> ()
-//     {
-//       nuxAssert (Handle);
-//       return Handle;
-//     }
-// 
-//     const T *operator -> () const
-//     {
-//       nuxAssert (Handle);
-//       return Handle;
-//     }
-// 
-//     T &operator*()
-//     {
-//       nuxAssert (Handle);
-//       return *Handle;
-//     }
-// 
-//     const T &operator *() const
-//     {
-//       nuxAssert (Handle);
-//       return *Handle;
-//     }
-// 
-//     // Constructor/destructor.
-//     ObjectPtr (T *InHandle = 0)
-//       :   Handle (InHandle)
-//     {
-//       if (Handle)
-//         Handle->Increment();
-//     }
-// 
-//     template <typename U>
-//     ObjectPtr (U *InHandle)
-//       :   Handle (0)
-//     {
-//       if (InHandle == 0)
-//         return;
-// 
-//       if (InHandle->Type().IsDerivedFromType (T::StaticObjectType) )
-//       {
-//         Handle = (T *) InHandle;
-//       }
-// 
-//       if (Handle)
-//         Handle->Increment();
-//     }
-// 
-//     ObjectPtr (const ObjectPtr<T>& Copy)
-//       :   Handle (0)
-//     {
-//       Handle = Copy.Handle;
-// 
-//       if (Handle)
-//         Handle->Increment();
-//     }
-// 
-//     template <typename U>
-//     ObjectPtr (const ObjectPtr<U>& Copy)
-//       :   Handle (0)
-//     {
-//       // Check if type U is derived from type T
-//       // Type() is virtual. Even if we have a ObjectPtr<IOpenGLBaseTexture> but its internal pointer is a IOpenGLCubeTexture,
-//       // Type() returns the static object type inside IOpenGLCubeTexture.
-//       // This make this possible
-//       //
-//       //      ObjectPtr<IOpenGLBaseTexture> basetex;            // IOpenGLBaseTexture is an abstract base class for IOpenGLTexture2D
-//       //      basetex = gGLDeviceFactory->CreateTexture(.....);
-//       //      ObjectPtr<IOpenGLVertexBuffer> vtx(basetex);   // vtx Handle will be null
-//       //      ObjectPtr<IOpenGLTexture2D> tex(basetex);      // tex Handle will be the same as basetex
-//       //
-// 
-//       if (Copy.Handle->Type().IsDerivedFromType (T::StaticObjectType) )
-//       {
-//         Handle = (T *) Copy.Handle;
-//       }
-// 
-//       if (Handle)
-//         Handle->Increment();
-//     }
-// 
-//     ~ObjectPtr()
-//     {
-//       if (Handle)
-//       {
-//         Handle->Decrement();
-//         CheckReferenceObject();
-//       }
-//     }
-// 
-//     // Assignment operator.
-// 
-//     ObjectPtr<T>& operator = (T *InHandle)
-//     {
-//       if (Handle != InHandle)
-//       {
-//         if (Handle)
-//         {
-//           Handle->Decrement();
-//           CheckReferenceObject();
-//         }
-// 
-//         Handle = InHandle;
-// 
-//         if (Handle)
-//           Handle->Increment();
-//       }
-// 
-//       return *this;
-//     }
-// 
-//     ObjectPtr<T>& operator = (const ObjectPtr<T>& Other)
-//     {
-//       // Avoid self assignment
-//       if (Handle == Other.Handle)
-//       {
-//         return *this;
-//       }
-// 
-//       if (Handle)
-//       {
-//         Handle->Decrement();
-//         CheckReferenceObject();
-//       }
-// 
-//       Handle = Other.Handle;
-// 
-//       if (Handle)
-//         Handle->Increment();
-// 
-//       return *this;
-//     }
-// 
-//     bool operator == (const ObjectPtr<T>& Other) const
-//     {
-//       if (Handle == Other.Handle)
-//       {
-//         return true;
-//       }
-// 
-//       return false;
-//     }
-// 
-//     bool operator == (const T *Ptr) const
-//     {
-//       if (Handle == Ptr)
-//       {
-//         return true;
-//       }
-// 
-//       return false;
-//     }
-// 
-//     template <typename U>
-//     bool operator == (const U *Ptr) const
-//     {
-//       if (Handle == Ptr)
-//       {
-//         return true;
-//       }
-// 
-//       return false;
-//     }
-// 
-//     template <typename U>
-//     bool operator == (ObjectPtr<U>& Other) const
-//     {
-//       if (Handle == Other.Handle)
-//       {
-//         return true;
-//       }
-// 
-//       return false;
-//     }
-// 
-//     bool operator != (const ObjectPtr<T>& Other) const
-//     {
-//       if (Handle != Other.Handle)
-//       {
-//         return true;
-//       }
-// 
-//       return false;
-//     }
-// 
-//     bool operator != (const T *Ptr) const
-//     {
-//       if (Handle != Ptr)
-//       {
-//         return true;
-//       }
-// 
-//       return false;
-//     }
-// 
-//     template <typename U>
-//     bool operator != (const U *Ptr) const
-//     {
-//       if (Handle != Ptr)
-//       {
-//         return true;
-//       }
-// 
-//       return false;
-//     }
-// 
-//     template <typename U>
-//     bool operator != (ObjectPtr<U>& Other) const
-//     {
-//       if (Handle != Other.Handle)
-//       {
-//         return true;
-//       }
-// 
-//       return false;
-//     }
-// 
-//     //    // This isn't safe. An assignment like the following is wrong, but it will no flag an error at compile time.
-//     //    // ObjectPtr<IOpenGLVertexBuffer> vtx;
-//     //    // ObjectPtr<IOpenGLTexture2D> tex;
-//     //    // vtx = tex;         // WRONG
-//     //
-//     //    template<typename U>
-//     //        ObjectPtr<T>& operator=(const ObjectPtr<U>& Other)
-//     //    {
-//     //        Handle = (T*)(Other.Handle);
-//     //        return *this;
-//     //    }
-// 
-//     // Doing vtx = tex.Castref<IOpenGLVertexBuffer> will return a ObjectPtr<IOpenGLVertexBuffer> with a null Handle.
-//     template<typename U>
-//     ObjectPtr<U> CastRef()
-//     {
-//       ObjectPtr<U> t;
-// 
-//       // Check if type U is derived from type T
-//       if (U::StaticObjectType.IsDerivedFromType (T::StaticObjectType) )
-//       {
-//         t = (U *) Handle;
-//       }
-// 
-//       return t;
-//     }
-// 
-//     void Release()
-//     {
-//       if (Handle)
-//       {
-//         Handle->Decrement();
-//         CheckReferenceObject();
-//       }
-// 
-//       Handle = 0;
-//     }
-//   private:
-//     T &GetHandle()
-//     {
-//       return *Handle;
-//     }
-// 
-//   public:
-//     bool IsValid()
-//     {
-//       if (Handle)
-//       {
-//         return true;
-//       }
-// 
-//       return false;
-//     }
-// 
-//     bool IsNull()
-//     {
-//       if (Handle)
-//       {
-//         return false;
-//       }
-// 
-//       return true;
-//     }
-//   };
-
+  GLenum GetGLPrimitiveType(PRIMITIVE_TYPE InPrimitiveType);
+  unsigned int GetGLElementCount(PRIMITIVE_TYPE InPrimitiveType, unsigned int InPrimitiveCount);
 }
 
 #endif // GLRESOURCE_H

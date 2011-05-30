@@ -88,7 +88,7 @@ namespace nux
   void EditTextBox::ScrollTimerInterrupt (void *v)
   {
     Geometry base = GetGeometry();
-    IEvent &ievent = GetThreadGLWindow()->GetCurrentEvent();
+    IEvent &ievent = GetGraphicsDisplay()->GetCurrentEvent();
 
     int X = ievent.e_x;
     m_KeyboardHandler.CaretAutoScroll (ievent.e_x, ievent.e_y, base);

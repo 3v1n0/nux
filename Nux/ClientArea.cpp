@@ -49,9 +49,9 @@ namespace nux
 
     if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
     {
-      m_FrameBufferObject = GetGpuDevice()->CreateFrameBufferObject();
-      m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
-      m_MainDepthRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
+      m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
+      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
+      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
     }
   }
 
@@ -64,7 +64,7 @@ namespace nux
     long ret = TraverseInfo;
 
 //     // A is obtained from GfxContext. So A dimension's are in relative window coordinates.
-//     Rect A = GetThreadGraphicsContext()->GetClippingRegion();
+//     Rect A = GetGraphicsDisplay()->GetGraphicsEngine()->GetClippingRegion();
 //     Rect B = Rect(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight());
 //     Rect C = A.intersect(B);
 //     if((ievent.e_event == NUX_MOUSE_MOVE) && !HasMouseFocus())
@@ -104,13 +104,13 @@ namespace nux
       m_ctx.width_clipregion  = C.GetWidth();
       m_ctx.height_clipregion = C.GetHeight();
 
-      ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice()->GetCurrentFrameBufferObject();
+      ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
 
       if ( (m_FrameBufferObject->GetWidth() != buffer_width) || (m_FrameBufferObject->GetHeight() != buffer_height) )
       {
         m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-        m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        m_MainDepthRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
       }
 
       m_FrameBufferObject->SetRenderTarget (0, m_MainColorRT->GetSurfaceLevel (0) );
@@ -140,7 +140,7 @@ namespace nux
         texxform0.uwrap = TEXWRAP_CLAMP;
         texxform0.vwrap = TEXWRAP_CLAMP;
         texxform0.FlipVCoord (true);
-        GetThreadGraphicsContext()->QRP_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (color::White) );
+        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, w, h, m_MainColorRT, texxform0, Color (color::White) );
       }
 
       // go back to 2D in case that was changed by the client.

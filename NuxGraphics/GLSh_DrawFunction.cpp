@@ -32,8 +32,6 @@
 namespace nux
 {
 
-  extern bool USE_ARB_SHADERS;
-
   static NString VtxShader = TEXT ("#version 110   \n\
         uniform mat4 ViewProjectionMatrix;      \n\
         attribute vec4 AVertex;                 \n\
@@ -101,16 +99,16 @@ namespace nux
     :   _ScreenOffsetX (0)
     ,   _ScreenOffsetY (0)
   {
-    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
-      sprog = GetGpuDevice()->CreateShaderProgram();
+      sprog = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
       sprog->LoadVertexShader (VtxShader.GetTCharPtr(), NULL);
       sprog->LoadPixelShader (FrgShader.GetTCharPtr(), NULL);
       sprog->Link();
     }
     else
     {
-      m_AsmProg = GetGpuDevice()->CreateAsmShaderProgram();
+      m_AsmProg = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
       m_AsmProg->LoadVertexShader (AsmVtxShader.GetTCharPtr() );
       m_AsmProg->LoadPixelShader (AsmFrgShader.GetTCharPtr() );
       m_AsmProg->Link();
@@ -137,7 +135,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f,
     };
 
-    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
       CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
@@ -146,9 +144,9 @@ namespace nux
       int VertexLocation = sprog->GetAttributeLocation ("AVertex");
 
       int VPMatrixLocation = sprog->GetUniformLocationARB ("ViewProjectionMatrix");
-      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix().m) );
+      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewProjectionMatrix().m) );
 
-      GetThreadGraphicsContext()->SetTexture (GL_TEXTURE0, m_device_texture);
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetTexture (GL_TEXTURE0, m_device_texture);
 
       int ColorBase       = sprog->GetUniformLocationARB ("Color");
       int RectPosition    = sprog->GetUniformLocationARB ("RectPosition");
@@ -185,14 +183,14 @@ namespace nux
 
       CHECKGL ( glMatrixMode (GL_MODELVIEW) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetOpenGLModelViewMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewMatrix().m) );
       CHECKGL ( glMatrixMode (GL_PROJECTION) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetOpenGLProjectionMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLProjectionMatrix().m) );
 
       int VertexLocation          = VTXATTRIB_POSITION;
 
-      GetThreadGraphicsContext()->SetTexture (GL_TEXTURE0, m_device_texture);
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetTexture (GL_TEXTURE0, m_device_texture);
 
       CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, x + _ScreenOffsetX, WindowHeight - y - height - _ScreenOffsetY, z, 0.0f) );
       CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, width, height, 0.0f, 0.0f) );

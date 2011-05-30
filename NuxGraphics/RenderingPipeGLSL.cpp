@@ -46,8 +46,6 @@ namespace nux
 // and attribute location. One has to make sure that the vertex attribute get index 0. So use the vertex attribute first. All of this does not make any sense.
 // Need more info from driver developers.
 
-  bool USE_ARB_SHADERS = true;
-
   void GraphicsEngine::InitSlColorShader()
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
@@ -2088,28 +2086,28 @@ namespace nux
 
     num_pass = Clamp<int> (num_pass, 1, 50);
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
     {
-      previous_width = prevFBO->GetWidth ();
-      previous_height = prevFBO->GetHeight ();
+      previous_width = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
     }
     else
     {
-      previous_width = _graphics_display.GetWindowWidth ();
-      previous_height = _graphics_display.GetWindowHeight ();
+      previous_width = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
     }
 
-    CHECKGL (glClearColor (0, 0, 0, 0));
+    CHECKGL (glClearColor(0, 0, 0, 0));
     _offscreen_color_rt0->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     _offscreen_color_rt0->SetFiltering(GL_NEAREST, GL_NEAREST);
     _offscreen_color_rt1->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     _offscreen_color_rt1->SetFiltering(GL_NEAREST, GL_NEAREST);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     QRP_GLSL_1Tex(x, y, quad_width, quad_height, device_texture, texxform, color::White);
 
@@ -2145,7 +2143,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2194,7 +2192,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2244,7 +2242,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2296,7 +2294,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2361,7 +2359,7 @@ namespace nux
 
     num_pass = Clamp<int> (num_pass, 1, 50);
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2545,7 +2543,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())

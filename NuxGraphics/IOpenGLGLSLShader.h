@@ -177,7 +177,7 @@ namespace nux
     //        Returns the requested object parameter
     //
     void GetObjectParameterfvARB (GLenum pname, GLfloat *params);
-    BOOL SetSampler (char *name, int exture_unit);
+    bool SetSampler (char *name, int exture_unit);
 
     GLShaderParameter *_FirstParameter;
     void CheckAttributeLocation();

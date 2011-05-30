@@ -89,7 +89,7 @@ namespace nux
 
     if (m_UserTexture)
     {
-      ObjectPtr< CachedTextureFrameAnimation > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
+      ObjectPtr< CachedTextureFrameAnimation > Texture = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (m_UserTexture);
       ObjectPtr<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
       ObjectPtr<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
@@ -135,7 +135,7 @@ namespace nux
   {
     if (m_UserTexture)
     {
-      ObjectPtr< CachedTextureFrameAnimation > Texture = GetThreadGraphicsContext()->CacheResource (m_UserTexture);
+      ObjectPtr< CachedTextureFrameAnimation > Texture = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (m_UserTexture);
       ObjectPtr<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
       ObjectPtr<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 

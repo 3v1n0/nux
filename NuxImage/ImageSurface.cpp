@@ -21,16 +21,16 @@
 
 
 #include "NuxCore/NuxCore.h"
-#include "NuxCore/Color.h"
-#include "ImageSurface.h"
-#include "BitmapFormats.h"
 #include "NuxCore/Math/MathFunctions.h"
 
+#include "BitmapFormats.h"
 #include "GdkGraphics.h"
 
 #if defined (NUX_OS_WINDOWS)
   #include "GdiImageLoader.h"
 #endif
+
+#include "ImageSurface.h"
 
 namespace nux
 {
