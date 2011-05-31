@@ -26,6 +26,8 @@
 #include "GLDeviceObjects.h"
 #include "IOpenGLFrameBufferObject.h"
 #include "GraphicsEngine.h"
+#include <fstream>
+#include <sstream>
 
 namespace nux
 {
@@ -369,5 +371,23 @@ namespace nux
   int IOpenGLFrameBufferObject::GetNumberOfClippingRegions () const
   {
     return _ClippingRegionStack.size ();
+  }
+
+  void IOpenGLFrameBufferObject::WriteToFile(char *name)
+  {
+    if (!_IsActive)
+      return;
+    char *pixels = new char[4 * _Width * _Height];
+    
+    glReadPixels(0, 0, _Width, _Height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+    std::stringstream ss;
+    ss << "fb_pixels_" << time(NULL) << "_" << name;
+
+    std::ofstream output (ss.str().c_str(), std::ios::out | std::ios::binary);
+    output.write(pixels, 4 * _Width * _Height);
+
+    delete [] pixels;
+
   }
 }
