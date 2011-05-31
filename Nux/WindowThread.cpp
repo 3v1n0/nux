@@ -1563,7 +1563,7 @@ namespace nux
       _ownx11display = true;
     }
       
-    _graphics_display = gGLWindowManager.CreateFromForeignWindow (_x11display, X11Window, OpenGLContext);
+    _graphics_display = gGLWindowManager.CreateFromForeignWindow (_x11display, X11Window, (void *)OpenGLContext);
 
     if (_graphics_display == 0)
     {

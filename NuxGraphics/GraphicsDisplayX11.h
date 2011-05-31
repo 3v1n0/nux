@@ -183,11 +183,7 @@ namespace nux
         @param X11Display   Provided display.
         @param X11Window    Provided window.
     */
-#ifdef NUX_OPENGLES_20
-    bool CreateFromOpenGLWindow (Display *X11Display, Window X11Window, EGLContext OpenGLContext);
-#else
-    bool CreateFromOpenGLWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext);
-#endif
+    bool CreateFromOpenGLWindow (Display *X11Display, Window X11Window, void *OpenGLContext);
 
     void DestroyOpenGLWindow();
 

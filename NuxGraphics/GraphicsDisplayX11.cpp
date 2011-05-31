@@ -594,11 +594,7 @@ namespace nux
     return TRUE;
   }
 
-#ifdef NUX_OPENGLES_20
-  bool GraphicsDisplay::CreateFromOpenGLWindow (Display *X11Display, Window X11Window, EGLContext OpenGLContext)
-#else
-  bool GraphicsDisplay::CreateFromOpenGLWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
-#endif
+  bool GraphicsDisplay::CreateFromOpenGLWindow (Display *X11Display, Window X11Window, void *OpenGLContext)
   {
     // Do not make the opengl context current
     // Do not swap the framebuffer
@@ -607,7 +603,11 @@ namespace nux
 
     m_X11Display = X11Display;
     m_X11Window = X11Window;
-    m_GLCtx = OpenGLContext;
+#ifdef NUX_OPENGLES_20
+    m_GLCtx = (EGLContext) OpenGLContext;
+#else
+    m_GLCtx = (GLXContext) OpenGLContext;
+#endif
 
     Window root_return;
     int x_return, y_return;
