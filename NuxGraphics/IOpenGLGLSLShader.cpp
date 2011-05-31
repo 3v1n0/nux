@@ -618,7 +618,8 @@ namespace nux
                             &type,
                             active_attribute_name);
       CHECKGL_MSG ( glGetActiveAttribARB );
-      m_ProgramAttributeDefinition[index].attribute_index = index;
+      m_ProgramAttributeDefinition[index].attribute_index = glGetAttribLocationARB(_OpenGLID, active_attribute_name);
+      CHECKGL_MSG ( glGetAttribLocationARB );
       m_ProgramAttributeDefinition[index].attribute_name = active_attribute_name;
       m_ProgramAttributeDefinition[index].valid = true;
 

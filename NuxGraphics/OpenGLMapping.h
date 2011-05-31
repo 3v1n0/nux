@@ -118,6 +118,7 @@
 #define glGetActiveUniformARB glGetActiveUniform
 #define glGetObjectParameterivARB glGetObjectParameteriv
 #define glGetUniformLocationARB glGetUniformLocation
+#define glGetAttribLocationARB glGetAttribLocation
 
 #define glDepthRange glDepthRangef
 #define glClearDepth glClearDepthf
