@@ -76,7 +76,7 @@ namespace nux
     MSG msg;
     retval = PeekMessageW (&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
 #elif defined(NUX_OS_LINUX)
-    retval = GetThreadGLWindow()->HasXPendingEvent () ? TRUE : FALSE;
+    retval = GetGraphicsDisplay()->HasXPendingEvent () ? TRUE : FALSE;
 #else
 #error Not implemented.
 #endif
@@ -99,7 +99,7 @@ namespace nux
       MSG msg;
       retval = PeekMessageW (&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
 #elif defined(NUX_OS_LINUX)
-      retval = GetThreadGLWindow()->HasXPendingEvent () ? TRUE : FALSE;
+      retval = GetGraphicsDisplay()->HasXPendingEvent () ? TRUE : FALSE;
 #else
 #error Not implemented.
 #endif
@@ -235,7 +235,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     event_source->event_poll_fd.fd = G_WIN32_MSG_HANDLE;
 #elif defined(NUX_OS_LINUX)
-    event_source->event_poll_fd.fd = ConnectionNumber (GetThreadGLWindow()->GetX11Display() );
+    event_source->event_poll_fd.fd = ConnectionNumber (GetGraphicsDisplay()->GetX11Display() );
 #else
 #error Not implemented.
 #endif
@@ -425,6 +425,10 @@ namespace nux
     m_GLibLoop      = 0;
     m_GLibContext   = 0;
 #endif
+#if defined(NUX_OS_LINUX)
+    _x11display = NULL;
+    _ownx11display = false;
+#endif
     
     _pending_wake_up_timer = false;
     _inside_main_loop = false;
@@ -455,6 +459,13 @@ namespace nux
     delete _Timelines;
     delete _async_wake_up_functor;
     delete _fake_event_call_back;
+
+#if defined(NUX_OS_LINUX)
+    if (_x11display && _ownx11display)
+    {
+      XCloseDisplay(_x11display);
+    }
+#endif
   }
 
   void WindowThread::SetFocusedArea (Area *focused_area)
@@ -1541,7 +1552,18 @@ namespace nux
       ParentWindow = 0;
     }
 
-    _graphics_display = gGLWindowManager.CreateFromForeignWindow (X11Display, X11Window, OpenGLContext);
+    if (X11Display)
+    {
+      _x11display = X11Display;
+      _ownx11display = false;
+    }
+    else
+    {
+      _x11display = XOpenDisplay(NULL);
+      _ownx11display = true;
+    }
+      
+    _graphics_display = gGLWindowManager.CreateFromForeignWindow (_x11display, X11Window, OpenGLContext);
 
     if (_graphics_display == 0)
     {
@@ -1863,7 +1885,7 @@ namespace nux
 
     CHECKGL ( glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
-    GetGpuDevice()->DeactivateFrameBuffer();
+    GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
   }
 
   int WindowThread::InstallEventInspector (EventInspector function, void* data)

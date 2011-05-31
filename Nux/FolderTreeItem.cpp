@@ -37,10 +37,10 @@ namespace nux
     TableItem::SetAlwaysShowOpeningButton (true);
 
     NString IconPath = NUX_FINDRESOURCELOCATION (TEXT ("Icons/FolderOpen-16x16.png") );
-    FolderOpenIcon = GetGpuDevice()->CreateSystemCapableTexture ();
+    FolderOpenIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     FolderOpenIcon->Update (IconPath.GetTCharPtr() );
     IconPath = NUX_FINDRESOURCELOCATION (TEXT ("Icons/FolderClose-16x16.png") );
-    FolderClosedIcon = GetGpuDevice()->CreateSystemCapableTexture ();
+    FolderClosedIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     FolderClosedIcon->Update (IconPath.GetTCharPtr() );
     //FolderOpenIcon.Update(TEXT("../Media/Icons/FolderOpenGrey-16x16.png"));
     //FolderClosedIcon.Update(TEXT("../Media/Icons/FolderClosedGrey-16x16.png"));
@@ -82,8 +82,8 @@ namespace nux
         Geometry TextGeometry (geo);
         TextGeometry.OffsetPosition (18, 0);
         {
-          GetThreadGraphicsContext()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-          GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE);
+          GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+          GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE);
           nux::TexCoordXForm texxform;
 
           if (isOpen() )
@@ -95,8 +95,8 @@ namespace nux
             GfxContext.QRP_1Tex (IconGeometry.x, IconGeometry.y, IconGeometry.width, IconGeometry.height, FolderClosedIcon->GetDeviceTexture(), texxform, nux::color::White);
           }
 
-          GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
-          GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
+          GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
+          GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (FALSE);
         }
         Painter.PaintTextLineStatic (GfxContext, GetSysFont(), TextGeometry, row->_table_item->GetName(), GetItemTextColor() );
       }

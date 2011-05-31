@@ -94,10 +94,10 @@ namespace nux
     SetGeometry (Geometry (100, 100, 320, 200) );
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/AddButton.png") );
-    MinimizeIcon = GetGpuDevice()->CreateSystemCapableTexture ();
+    MinimizeIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     MinimizeIcon->Update (Path.GetTCharPtr() );
     Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/CancelButton.png") );
-    CloseIcon = GetGpuDevice()->CreateSystemCapableTexture ();
+    CloseIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     CloseIcon->Update (Path.GetTCharPtr() );
 
     SetWindowTitle (WindowName);
@@ -369,7 +369,7 @@ namespace nux
 
     if (m_configure_notify_callback)
     {
-      (*m_configure_notify_callback) (GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
+      (*m_configure_notify_callback) (GetGraphicsDisplay()->GetWindowWidth(), GetGraphicsDisplay()->GetWindowHeight(), geo, m_configure_notify_callback_data);
 
       if (geo.IsNull() )
       {

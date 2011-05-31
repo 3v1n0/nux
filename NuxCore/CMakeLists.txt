@@ -137,7 +137,6 @@ if(WIN32)
     NMacros.h
     NMemory.cpp
     NMemory.h
-    NNamespace.h
     NObjectType.cpp
     NObjectType.h
     NOutputDevice.cpp
@@ -150,8 +149,6 @@ if(WIN32)
     NPrintf.h
     NProcess.cpp
     NProcess.h
-    NStreamBuffer.cpp
-    NStreamBuffer.h
     NString.cpp
     NString.h
     NStringConversion.h
@@ -283,7 +280,6 @@ elseif(UNIX)
     NMacros.h
     NMemory.cpp
     NMemory.h
-    NNamespace.h
     NObjectType.cpp
     NObjectType.h
     NOutputDevice.cpp
@@ -296,8 +292,6 @@ elseif(UNIX)
     NPrintf.h
     NProcess.cpp
     NProcess.h
-    NStreamBuffer.cpp
-    NStreamBuffer.h
     NString.cpp
     NString.h
     NStringConversion.h

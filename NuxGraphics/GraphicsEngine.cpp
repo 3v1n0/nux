@@ -33,8 +33,6 @@
 
 #include "FontTexture.h"
 #include "FontRenderer.h"
-#include "UIColorTheme.h"
-
 #include "GraphicsEngine.h"
 
 namespace nux
@@ -177,8 +175,8 @@ namespace nux
 
     bool opengl_14_support = true;
 
-    if ((_graphics_display.GetGpuDevice ()->GetOpenGLMajorVersion () == 1) &&
-      (_graphics_display.GetGpuDevice ()->GetOpenGLMinorVersion () < 4))
+    if ((_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion () == 1) &&
+      (_graphics_display.GetGpuDevice()->GetOpenGLMinorVersion () < 4))
     {
       // OpenGL version is less than OpenGL 1.4
       opengl_14_support = false;
@@ -188,8 +186,8 @@ namespace nux
     {
 #ifndef NUX_OPENGLES_20
       if (UsingGLSLCodePath () &&
-        GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader () &&
-        GetGpuDevice ()->GetGpuInfo ().Support_ARB_Vertex_Shader () &&
+        _graphics_display.GetGpuDevice()->GetGpuInfo ().Support_ARB_Fragment_Shader () &&
+        _graphics_display.GetGpuDevice()->GetGpuInfo ().Support_ARB_Vertex_Shader () &&
         opengl_14_support)
       {
         InitSlColorShader ();
@@ -211,8 +209,8 @@ namespace nux
         InitSLHorizontalHQGaussFilter ();
         InitSLVerticalHQGaussFilter ();
       }
-      else if (GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader () &&
-        GetGpuDevice ()->GetGpuInfo ().Support_ARB_Vertex_Program () &&
+      else if (_graphics_display.GetGpuDevice()->GetGpuInfo ().Support_ARB_Fragment_Shader () &&
+        _graphics_display.GetGpuDevice()->GetGpuInfo ().Support_ARB_Vertex_Program () &&
         opengl_14_support)
       {
         InitAsmColorShader ();
@@ -286,12 +284,12 @@ namespace nux
       }
 
       if (gpu_info.Support_EXT_Framebuffer_Object ())
-        _offscreen_fbo = GetGpuDevice()->CreateFrameBufferObject ();
+        _offscreen_fbo = _graphics_display.GetGpuDevice()->CreateFrameBufferObject ();
 
-      _offscreen_color_rt0  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      _offscreen_color_rt1  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      _offscreen_color_rt2  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      _offscreen_color_rt3  = GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+      _offscreen_color_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+      _offscreen_color_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+      _offscreen_color_rt2  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+      _offscreen_color_rt3  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
     }
   }
 
@@ -312,9 +310,9 @@ namespace nux
 #ifdef NUX_OPENGLES_20
     _use_glsl_shaders = true;
 #else
-    if (_graphics_display.GetGpuDevice ()->GetGpuInfo ().Support_ARB_Vertex_Shader() &&
-      _graphics_display.GetGpuDevice ()->GetGpuInfo ().Support_ARB_Fragment_Shader() &&
-      _graphics_display.GetGpuDevice ()->GetGPUBrand () ==  GPU_BRAND_NVIDIA)
+    if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader() &&
+      _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
+      _graphics_display.GetGpuDevice()->GetGPUBrand() ==  GPU_BRAND_NVIDIA)
     {
       NString renderer_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER)));
       CHECKGL_MSG (glGetString (GL_RENDERER));
@@ -513,18 +511,18 @@ namespace nux
 
   void GraphicsEngine::DisableAllTextureMode (int TextureUnit)
   {
-    if ( (TextureUnit < GL_TEXTURE0) || (TextureUnit > GL_TEXTURE31) )
+    if ((TextureUnit < GL_TEXTURE0) || (TextureUnit > GL_TEXTURE31))
       return;
 
-    GetGpuDevice()->InvalidateTextureUnit (TextureUnit);
+    _graphics_display.GetGpuDevice()->InvalidateTextureUnit(TextureUnit);
   }
 
 //////////////////////
 // DRAW CLIPPING    //
 //////////////////////
-  void GraphicsEngine::PushClippingRectangle (Rect rect)
+  void GraphicsEngine::PushClippingRectangle(Rect rect)
   {
-    if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid() )
+    if(_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
     {
       // There is an active framebuffer set. Push the clipping rectangles to that fbo clipping stack.
       _graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject()->PushClippingRegion (rect);
@@ -1293,11 +1291,10 @@ namespace nux
 
   bool GraphicsEngine::FlushCachedResourceData (ResourceData *Resource)
   {
-    bool cached = IsResourceCached (Resource);
-    if (cached == false)
+    if (!IsResourceCached(Resource))
       return false;
 
-    ResourceCache.FlushResourceId (Resource->GetResourceIndex ());
+    ResourceCache.FlushResourceId (Resource->GetResourceIndex());
     return true;
   }
 
@@ -1337,18 +1334,18 @@ namespace nux
   {
     //if ((colorbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
     {
-      colorbuffer = GetGpuDevice ()->CreateTexture (width, height, 1, BITFMT_R8G8B8A8);
-      depthbuffer = GetGpuDevice ()->CreateTexture (width, height, 1, BITFMT_D24S8);
+      colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8);
+      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8);
     }
 
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
-    fbo->SetRenderTarget (0, colorbuffer->GetSurfaceLevel (0));
-    fbo->SetDepthSurface (depthbuffer->GetSurfaceLevel (0));
-    fbo->Activate ();
-    fbo->EmptyClippingRegion ();
-    SetContext (0, 0, width, height);
-    SetViewport (0, 0, width, height);
-    Push2DWindow (width, height);
+    fbo->SetRenderTarget(0, colorbuffer->GetSurfaceLevel(0));
+    fbo->SetDepthSurface(depthbuffer->GetSurfaceLevel(0));
+    fbo->Activate();
+    fbo->EmptyClippingRegion();
+    SetContext(0, 0, width, height);
+    SetViewport(0, 0, width, height);
+    Push2DWindow(width, height);
   }
 
   void GraphicsEngine::GaussianWeights(float **weights, float sigma, unsigned int num_tap)

@@ -36,8 +36,6 @@
 namespace nux
 {
 
-  extern bool USE_ARB_SHADERS;
-
 // The GLSL shaders may contain branches. Intel GPU so far fails on these shaders.
 // Use assembly shaders for Intel GPUs: ARB_fragment_program does not have the required
 // instruction to implement the HSV to RGB color conversion.
@@ -254,7 +252,7 @@ GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
   {
     NString FrgShaderCode;
 
-    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       switch (color_channel)
       {
@@ -296,8 +294,8 @@ GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
         }
       }
 
-      GlobalPixelShader = GetGpuDevice()->CreatePixelShader();
-      sprog = GetGpuDevice()->CreateShaderProgram();
+      GlobalPixelShader = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader();
+      sprog = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
 
       GlobalPixelShader->SetShaderCode (HSV_To_RGBFrgShader.GetTCharPtr() );
 
@@ -348,7 +346,7 @@ GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
         }
       }
 
-      m_AsmProg = GetGpuDevice()->CreateAsmShaderProgram();
+      m_AsmProg = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
       m_AsmProg->LoadVertexShader (AsmVtxShader.GetTCharPtr() );
       m_AsmProg->LoadPixelShader (FrgShaderCode.GetTCharPtr() );
       m_AsmProg->Link();
@@ -386,7 +384,7 @@ GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
       x + width,  y,          0.0f, 1.0f,
     };
 
-    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
       CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
@@ -395,8 +393,7 @@ GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
       int VertexLocation = sprog->GetAttributeLocation ("AVertex");
 
       int VPMatrixLocation = sprog->GetUniformLocationARB ("ViewProjectionMatrix");
-      GLfloat *matrix = (GLfloat *) GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix().m;
-      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, matrix );
+      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewProjectionMatrix().m) );
 
       int ColorBase    = sprog->GetUniformLocationARB ("Color");
       int RectPosition    = sprog->GetUniformLocationARB ("RectPosition");
@@ -429,10 +426,10 @@ GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
 
       CHECKGL ( glMatrixMode (GL_MODELVIEW) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetOpenGLModelViewMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewMatrix().m) );
       CHECKGL ( glMatrixMode (GL_PROJECTION) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetOpenGLProjectionMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLProjectionMatrix().m) );
 
       int VertexLocation          = VTXATTRIB_POSITION;
 

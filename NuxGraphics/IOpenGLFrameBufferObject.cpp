@@ -21,6 +21,7 @@
 
 
 #include "GLResource.h"
+#include "GraphicsDisplay.h"
 #include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "IOpenGLFrameBufferObject.h"
@@ -39,7 +40,7 @@ namespace nux
     _PixelFormat = BITFMT_R8G8B8A8;
     _IsActive = false;
 
-    for (int i = 0; i < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); i++)
+    for (int i = 0; i < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/; i++)
     {
       _Color_AttachmentArray.push_back (ObjectPtr<IOpenGLSurface> (0) );
     }
@@ -60,7 +61,7 @@ namespace nux
   {
     Deactivate();
 
-    for (int i = 0; i < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); i++)
+    for (int i = 0; i < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/; i++)
     {
       _Color_AttachmentArray[i] = ObjectPtr<IOpenGLSurface> (0);
     }
@@ -86,7 +87,7 @@ namespace nux
 
   int IOpenGLFrameBufferObject::SetRenderTarget (int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
   {
-    nuxAssert (ColorAttachmentIndex < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment());
+    nuxAssert (ColorAttachmentIndex < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/);
 
     if (pRenderTargetSurface.IsNull() )
     {
@@ -151,7 +152,7 @@ namespace nux
 
   ObjectPtr<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget (int ColorAttachmentIndex)
   {
-    nuxAssert (ColorAttachmentIndex < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment());
+    nuxAssert (ColorAttachmentIndex < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/);
     return _Color_AttachmentArray[ColorAttachmentIndex];
   }
 
@@ -165,10 +166,10 @@ namespace nux
     GLuint NumBuffers = 0;
     _Fbo.Bind();
 
-    if (GetGpuDevice() )
-      GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (this));
+    if (GetGraphicsDisplay()->GetGpuDevice() )
+      GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (this));
 
-    for (int i = 0; i < GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); i++)
+    for (int i = 0; i < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/; i++)
     {
       if (_Color_AttachmentArray[i].IsValid() )
       {
@@ -211,8 +212,8 @@ namespace nux
 
     nuxAssert ( _Fbo.IsValid() == true );
 
-    if (GetThreadGraphicsContext() )
-      GetThreadGraphicsContext()->SetViewport (0, 0, _Width, _Height);
+    if (GetGraphicsDisplay()->GetGraphicsEngine())
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetViewport (0, 0, _Width, _Height);
 
     if (WithClippingStack)
       ApplyClippingRegion();
@@ -230,22 +231,22 @@ namespace nux
     CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
 #endif
 
-    if (GetGpuDevice() )
-      GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (0));
+    if(GetGraphicsDisplay()->GetGpuDevice())
+      GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (0));
 
-    if (GetThreadGraphicsContext() )
-      GetThreadGraphicsContext()->SetScissor (0, 0, _Width, _Height);
+    if(GetGraphicsDisplay()->GetGraphicsEngine())
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor (0, 0, _Width, _Height);
 
     _IsActive = false;
     return 1;
   }
 
-  void IOpenGLFrameBufferObject::PushClippingRegion (Rect rect)
+  void IOpenGLFrameBufferObject::PushClippingRegion(Rect rect)
   {
     Rect r0;
-    if (GetThreadGraphicsContext ())
+    if(GetGraphicsDisplay()->GetGraphicsEngine())
     {
-      r0 = GetThreadGraphicsContext ()->ModelViewXFormRect (rect);
+      r0 = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(rect);
     }
 
     Rect current_clip_rect;
@@ -262,20 +263,20 @@ namespace nux
 
     Rect r1;
 
-    if (GetThreadGraphicsContext ())
-      r1 = GetThreadGraphicsContext ()->GetViewportRect ();
+    if (GetGraphicsDisplay()->GetGraphicsEngine())
+      r1 = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect ();
 
     r0.OffsetPosition (r1.x, _Height - (r1.y + r1.GetHeight ()));
 
-    Rect Intersection = current_clip_rect.Intersect (r0);
+    Rect Intersection = current_clip_rect.Intersect(r0);
 
     if (!Intersection.IsNull ())
     {
       _clipping_rect = Intersection;
       _ClippingRegionStack.push_back (Intersection);
 
-      SetOpenGLClippingRectangle (Intersection.x + GetThreadGraphicsContext ()->GetViewportX (),
-                         _Height - Intersection.y - Intersection.GetHeight () - GetThreadGraphicsContext()->GetViewportY (),
+      SetOpenGLClippingRectangle (Intersection.x + GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportX (),
+                         _Height - Intersection.y - Intersection.GetHeight () - GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportY (),
                          Intersection.GetWidth (), Intersection.GetHeight ());
     }
     else
@@ -332,19 +333,19 @@ namespace nux
 
   void IOpenGLFrameBufferObject::SetClippingRectangle (const Rect &rect)
   {
-    if (GetThreadGraphicsContext ())
+    if (GetGraphicsDisplay()->GetGraphicsEngine())
     {
       _clipping_rect = rect;
-      GetThreadGraphicsContext ()->SetScissor (rect.x, _Height - rect.y - rect.height, rect.width, rect.height);
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor (rect.x, _Height - rect.y - rect.height, rect.width, rect.height);
     }
   }
 
   void IOpenGLFrameBufferObject::SetOpenGLClippingRectangle (int x, int y, int width, int height)
   {
-    if (GetThreadGraphicsContext ())
+    if (GetGraphicsDisplay()->GetGraphicsEngine())
     {
       _clipping_rect = Rect (x, y, width, height);
-      GetThreadGraphicsContext ()->SetScissor (x, y, width, height);
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor (x, y, width, height);
     }
   }
 

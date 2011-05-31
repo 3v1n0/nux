@@ -122,7 +122,7 @@ namespace nux
         MOV result.color, fragment.color;               \n\
         END");
 
-    m_AsmColor = GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_AsmColor->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmColor->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_AsmColor->Link();
@@ -161,12 +161,12 @@ namespace nux
       MUL result.color, fragment.color, tex0;           \n\
       END");
 
-    m_AsmTextureModColor = GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmTextureModColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_AsmTextureModColor->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmTextureModColor->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_AsmTextureModColor->Link();
 
-    m_AsmTextureRectModColor = GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmTextureRectModColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_AsmTextureRectModColor->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmTextureRectModColor->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
     m_AsmTextureRectModColor->Link();
@@ -208,12 +208,12 @@ namespace nux
       MOV result.color, temp;                             \n\
       END");
 
-    m_AsmColorModTexMaskAlpha = GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmColorModTexMaskAlpha = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_AsmColorModTexMaskAlpha->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmColorModTexMaskAlpha->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_AsmColorModTexMaskAlpha->Link();
 
-    m_AsmColorModTexRectMaskAlpha = GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmColorModTexRectMaskAlpha = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_AsmColorModTexRectMaskAlpha->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmColorModTexRectMaskAlpha->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
     m_AsmColorModTexRectMaskAlpha->Link();
@@ -264,12 +264,12 @@ namespace nux
       MOV result.color, temp;                             \n\
       END");
 
-    m_Asm2TextureAdd = GetGpuDevice()->CreateAsmShaderProgram();
+    m_Asm2TextureAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_Asm2TextureAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_Asm2TextureAdd->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_Asm2TextureAdd->Link();
 
-    m_Asm2TextureRectAdd = GetGpuDevice()->CreateAsmShaderProgram();
+    m_Asm2TextureRectAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_Asm2TextureRectAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_Asm2TextureRectAdd->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
     m_Asm2TextureRectAdd->Link();
@@ -323,12 +323,12 @@ namespace nux
       MUL result.color, color1, tex1;                     \n\
       END");
 
-    m_ASM2TextureDepRead = GetGpuDevice ()->CreateAsmShaderProgram ();
+    m_ASM2TextureDepRead = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     m_ASM2TextureDepRead->LoadVertexShader (AsmVtx.GetTCharPtr ());
     m_ASM2TextureDepRead->LoadPixelShader (AsmFrg.GetTCharPtr ());
     m_ASM2TextureDepRead->Link ();
 
-    m_ASM2TextureRectDepRead = GetGpuDevice ()->CreateAsmShaderProgram ();
+    m_ASM2TextureRectDepRead = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     m_ASM2TextureRectDepRead->LoadVertexShader (AsmVtx.GetTCharPtr ());
     m_ASM2TextureRectDepRead->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
     m_ASM2TextureRectDepRead->Link ();
@@ -381,12 +381,12 @@ namespace nux
       MUL result.color, temp0, temp1;                     \n\
       END");
 
-    m_Asm2TextureMod = GetGpuDevice()->CreateAsmShaderProgram();
+    m_Asm2TextureMod = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_Asm2TextureMod->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_Asm2TextureMod->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_Asm2TextureMod->Link();
 
-    m_Asm2TextureRectMod = GetGpuDevice()->CreateAsmShaderProgram();
+    m_Asm2TextureRectMod = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_Asm2TextureRectMod->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_Asm2TextureRectMod->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
     m_Asm2TextureRectMod->Link();
@@ -457,12 +457,12 @@ namespace nux
       MOV result.color, temp;                             \n\
       END");
 
-    m_Asm4TextureAdd = GetGpuDevice()->CreateAsmShaderProgram();
+    m_Asm4TextureAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_Asm4TextureAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_Asm4TextureAdd->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_Asm4TextureAdd->Link();
 
-    m_Asm4TextureRectAdd = GetGpuDevice()->CreateAsmShaderProgram();
+    m_Asm4TextureRectAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_Asm4TextureRectAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_Asm4TextureRectAdd->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
     m_Asm4TextureRectAdd->Link();
@@ -493,7 +493,7 @@ namespace nux
         MOV result.color, tex0;                             \n\
         END");
 
-    m_AsmPSBNormal = GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmPSBNormal = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_AsmPSBNormal->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmPSBNormal->LoadPixelShader (AsmPSBNormal.GetTCharPtr() );
     m_AsmPSBNormal->Link();
@@ -512,7 +512,7 @@ namespace nux
         MOV result.color, temp;                             \n\
         END");
 
-    m_AsmPSBLighten = GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmPSBLighten = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_AsmPSBLighten->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmPSBLighten->LoadPixelShader (AsmPSBLighten.GetTCharPtr() );
     m_AsmPSBLighten->Link();
@@ -531,7 +531,7 @@ namespace nux
         MOV result.color, temp;                             \n\
         END");
 
-    m_AsmPSBDarken = GetGpuDevice ()->CreateAsmShaderProgram ();
+    m_AsmPSBDarken = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     m_AsmPSBDarken->LoadVertexShader (AsmVtx.GetTCharPtr ());
     m_AsmPSBDarken->LoadPixelShader (AsmPSBDarken.GetTCharPtr ());
     m_AsmPSBDarken->Link ();
@@ -547,7 +547,7 @@ namespace nux
         MUL result.color, tex0, tex1;                       \n\
         END");
 
-    m_AsmPSBMultiply = GetGpuDevice ()->CreateAsmShaderProgram();
+    m_AsmPSBMultiply = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_AsmPSBMultiply->LoadVertexShader (AsmVtx.GetTCharPtr ());
     m_AsmPSBMultiply->LoadPixelShader (AsmPSBMultiply.GetTCharPtr ());
     m_AsmPSBMultiply->Link ();
@@ -1275,7 +1275,7 @@ namespace nux
       MUL result.color, color0, final;             \n\
       END");
 
-    _asm_tex_component_exponentiation_prog = GetGpuDevice ()->CreateAsmShaderProgram ();
+    _asm_tex_component_exponentiation_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     _asm_tex_component_exponentiation_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
     _asm_tex_component_exponentiation_prog->LoadPixelShader (AsmFrg.GetTCharPtr ());
     _asm_tex_component_exponentiation_prog->Link();
@@ -1372,7 +1372,7 @@ namespace nux
       MUL result.color, color0, tex0.aaaa;              \n\
       END");
 
-    _asm_tex_alpha_replicate_prog = GetGpuDevice ()->CreateAsmShaderProgram ();
+    _asm_tex_alpha_replicate_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     _asm_tex_alpha_replicate_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
     _asm_tex_alpha_replicate_prog->LoadPixelShader (AsmFrg.GetTCharPtr ());
     _asm_tex_alpha_replicate_prog->Link ();
@@ -1490,12 +1490,12 @@ namespace nux
       MUL result.color, color0, final;                \n\
       END");
 
-    _asm_tex_color_matrix_filter_prog = GetGpuDevice ()->CreateAsmShaderProgram ();
+    _asm_tex_color_matrix_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     _asm_tex_color_matrix_filter_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
     _asm_tex_color_matrix_filter_prog->LoadPixelShader (AsmFrg.GetTCharPtr ());
     _asm_tex_color_matrix_filter_prog->Link ();
 
-    _asm_texrect_color_matrix_filter_prog = GetGpuDevice ()->CreateAsmShaderProgram ();
+    _asm_texrect_color_matrix_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     _asm_texrect_color_matrix_filter_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
     _asm_texrect_color_matrix_filter_prog->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
     _asm_texrect_color_matrix_filter_prog->Link ();
@@ -1638,12 +1638,12 @@ namespace nux
       MOV result.color, final;                                      \n\
       END");
 
-    _asm_tex_separable_gauss_filter_prog = GetGpuDevice ()->CreateAsmShaderProgram ();
+    _asm_tex_separable_gauss_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     _asm_tex_separable_gauss_filter_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
     _asm_tex_separable_gauss_filter_prog->LoadPixelShader (AsmFrg.GetTCharPtr ());
     _asm_tex_separable_gauss_filter_prog->Link ();
 
-    _asm_texrect_separable_gauss_filter_prog = GetGpuDevice ()->CreateAsmShaderProgram ();
+    _asm_texrect_separable_gauss_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     _asm_texrect_separable_gauss_filter_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
     _asm_texrect_separable_gauss_filter_prog->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
     _asm_texrect_separable_gauss_filter_prog->Link ();
@@ -1926,7 +1926,7 @@ namespace nux
 
     num_pass = Clamp<int> (num_pass, 1, 5);
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -1983,7 +1983,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2038,7 +2038,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2087,7 +2087,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2144,7 +2144,7 @@ namespace nux
     int quad_width = device_texture->GetWidth ();
     int quad_height = device_texture->GetHeight ();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
     int previous_width = 0;
     int previous_height = 0;
     if (prevFBO.IsValid ())
@@ -2247,12 +2247,12 @@ namespace nux
       MUL result.color, fragment.color, tex0;           \n\
       END");
 
-    m_AsmPixelate = GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmPixelate = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
     m_AsmPixelate->LoadVertexShader (AsmVtx.GetTCharPtr() );
     m_AsmPixelate->LoadPixelShader (AsmFrg.GetTCharPtr() );
     m_AsmPixelate->Link();
 
-    m_AsmPixelateRect = GetGpuDevice()->CreateAsmShaderProgram ();
+    m_AsmPixelateRect = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
     m_AsmPixelateRect->LoadVertexShader (AsmVtx.GetTCharPtr ());
     m_AsmPixelateRect->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
     m_AsmPixelateRect->Link();
@@ -2348,7 +2348,7 @@ namespace nux
 	  int quad_width = device_texture->GetWidth ();
 	  int quad_height = device_texture->GetHeight ();
 
-	  ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGpuDevice ()->GetCurrentFrameBufferObject ();
+	  ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
 	  int previous_width = 0;
 	  int previous_height = 0;
 	  if (prevFBO.IsValid ())

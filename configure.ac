@@ -243,7 +243,6 @@ AS_IF([test "x$enable_debug" = "xyes"],
 
 AC_SUBST(MAINTAINER_CFLAGS)
 
-
 # this enables lots of useful debugging output in Nux
 AC_ARG_ENABLE([examples],
               [AC_HELP_STRING([--enable-examples=@<:@no/yes@:>@],

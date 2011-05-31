@@ -265,6 +265,8 @@ namespace nux
 
     */
     virtual bool ThreadCtor (Display *X11Display, Window X11Window, void *OpenGLContext);
+    Display *_x11display;
+    bool     _ownx11display;
 #endif
 
     /*!

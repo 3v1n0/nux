@@ -20,6 +20,8 @@
  */
 
 
+#include "GLResource.h"
+#include "GraphicsDisplay.h"
 #include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "IOpenGLAsmShader.h"
@@ -188,8 +190,8 @@ namespace nux
     ,   _ShaderProgramName (ShaderProgramName)
   {
     _OpenGLID = 0;
-    m_AsmVertexProgram = GetGpuDevice()->CreateAsmVertexShader();
-    m_AsmFragmentProgram = GetGpuDevice()->CreateAsmPixelShader();
+    m_AsmVertexProgram = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmVertexShader();
+    m_AsmFragmentProgram = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmPixelShader();
   }
 
   IOpenGLAsmShaderProgram::~IOpenGLAsmShaderProgram()

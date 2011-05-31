@@ -137,7 +137,7 @@ namespace nux
     }
 
     // Create a 2D texture and upload the pixels.
-    BaseTexture *texture = GetGpuDevice ()->CreateSystemCapableTexture ();
+    BaseTexture *texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     texture->Update (data);
     
     delete data; // data is deleted as texture->Update () copies it.
@@ -170,7 +170,7 @@ namespace nux
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetGpuDevice()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -185,7 +185,7 @@ namespace nux
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetGpuDevice()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -220,7 +220,7 @@ namespace nux
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetGpuDevice()->CreateSystemCapableTexture();
+      BaseTexture *texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
       texture->Update (BitmapData);
       return texture;
     }
@@ -258,13 +258,13 @@ namespace nux
 
   ObjectPtr < IOpenGLBaseTexture > BaseTexture::GetDeviceTexture()
   {
-    ObjectPtr<CachedBaseTexture> CachedTexture = GetThreadGraphicsContext()->CacheResource (this);
+    ObjectPtr<CachedBaseTexture> CachedTexture = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (this);
     return CachedTexture->m_Texture;
   }
 
   ObjectPtr<CachedBaseTexture> BaseTexture::GetCachedTexture()
   {
-    return GetThreadGraphicsContext()->CacheResource (this);
+    return GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(this);
   }
 
   Texture2D::Texture2D(NUX_FILE_LINE_DECL)
@@ -310,7 +310,7 @@ namespace nux
     if (UpdateAndCacheResource)
     {
       // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetThreadGraphicsContext()->UpdateResource (this);
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
     }
 
     return true;
@@ -395,7 +395,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
                 SourceTexture->GetFormat());
@@ -427,7 +427,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
@@ -455,8 +455,6 @@ namespace nux
     SourceTexture->GetData ( LockedRect.pBits, MipLevel, LockedRect.Pitch );
     OGL_CALL ( Texture2D->UnlockRect ( MipLevel ) );
   }
-
-//////////////////////////////////////////////////////////////////////
 
   TextureRectangle::TextureRectangle (NUX_FILE_LINE_DECL)
     : BaseTexture (NUX_FILE_LINE_PARAM)
@@ -503,7 +501,7 @@ namespace nux
     if (UpdateAndCacheResource)
     {
       // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetThreadGraphicsContext()->UpdateResource (this);
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
     }
     return true;
   }
@@ -549,7 +547,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
                 SourceTexture->GetFormat() );
@@ -581,7 +579,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
@@ -609,8 +607,6 @@ namespace nux
     SourceTexture->GetData ( LockedRect.pBits, MipLevel, LockedRect.Pitch );
     OGL_CALL (TextureRectangle->UnlockRect ( MipLevel ) );
   }
-
-//////////////////////////////////////////////////////////////////////////
 
   TextureCube::TextureCube(NUX_FILE_LINE_DECL)
     : BaseTexture (NUX_FILE_LINE_PARAM)
@@ -652,7 +648,7 @@ namespace nux
     if (UpdateAndCacheResource)
     {
       // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetThreadGraphicsContext()->UpdateResource (this);
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
     }
 
     return true;
@@ -698,7 +694,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetNumMipLevel(),
                 SourceTexture->GetFormat() );
 
@@ -729,7 +725,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetNumMipLevel(),
                   SourceTexture->GetFormat() );
 
@@ -759,8 +755,6 @@ namespace nux
       OGL_CALL ( CubemapTexture->UnlockRect (eCUBEMAP_FACES (face), MipLevel ) );
     }
   }
-
-//////////////////////////////////////////////////////////////////////////
 
   TextureVolume::TextureVolume(NUX_FILE_LINE_DECL)
     : BaseTexture (NUX_FILE_LINE_PARAM)
@@ -802,7 +796,7 @@ namespace nux
     if (UpdateAndCacheResource)
     {
       // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetThreadGraphicsContext()->UpdateResource (this);
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
     }
 
     return true;
@@ -869,7 +863,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetDepth(),
                 SourceTexture->GetNumMipLevel(),
@@ -902,7 +896,7 @@ namespace nux
 
     if ( RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
                   SourceTexture->GetNumMipLevel(),
@@ -943,7 +937,6 @@ namespace nux
 //     }
   }
 
-//////////////////////////////////////////////////////////////////////////
   TextureFrameAnimation::TextureFrameAnimation(NUX_FILE_LINE_DECL)
     : BaseTexture (NUX_FILE_LINE_PARAM)
   {
@@ -984,7 +977,7 @@ namespace nux
     if (UpdateAndCacheResource)
     {
       // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetThreadGraphicsContext()->UpdateResource (this);
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
     }
 
     return true;
@@ -1040,7 +1033,7 @@ namespace nux
       return;
     }
 
-    m_Texture = GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetDepth(),
                 SourceTexture->GetFormat() );
@@ -1072,7 +1065,7 @@ namespace nux
 
     if (RecreateTexture (SourceTexture) )
     {
-      m_Texture = GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
                   SourceTexture->GetFormat() );

@@ -34,107 +34,101 @@
 namespace nux
 {
 
-  extern bool USE_ARB_SHADERS;
-
   const int CURSOR_OFFSET = 0;
   static int CURSOR_SIZE = 2;
 
-  NString gFontVtxShader = TEXT ("#version 100                                     \n\
-                             attribute vec4 iOffset;                            \n\
-                             attribute vec4 iPosition;                          \n\
-                             attribute vec4 iScale;                             \n\
-                             attribute vec4 iTexUV;                             \n\
-                             uniform mat4 ViewProjectionMatrix;                 \n\
-                             varying vec4 oTexCoord0;                           \n\
-                             void main()                                        \n\
-                             {                                                  \n\
-                             oTexCoord0   = iTexUV;                             \n\
-                             vec4 myvertex = iPosition * iScale + iOffset;      \n\
-                             gl_Position  = ViewProjectionMatrix * myvertex;    \n\
-                             }");
+  // On NVidia system:
+  //  - declare the vertex attribute name before any other attribute.
+  //  - Give the vertex attribute a name that comes before any other attribute name. For instance prefix the vertex attribute name with "_".
 
-  NString gFontFragShader = TEXT ("#version 100                                            \n\
-                              #extension GL_ARB_texture_rectangle : enable              \n\
-                              #ifdef GL_ES                                              \n\
-                              precision mediump float;                                  \n\
-                              #endif                                                    \n\
-                              uniform sampler2D FontTexture;                            \n\
-                              uniform vec4 TextColor;                                   \n\
-                              varying vec4 oTexCoord0;                                  \n\
-                              void main()                                               \n\
-                              {                                                         \n\
-                              vec4 diffuse = texture2D(FontTexture, oTexCoord0.st);     \n\
-                              gl_FragColor = vec4(TextColor.x, TextColor.y, TextColor.z, TextColor.w*diffuse.w);  \n\
-                              }");
+  NString gFontVtxShader = TEXT ("#version 100      \n\
+  attribute vec4 _Position;                         \n\
+  attribute vec4 iOffset;                           \n\
+  attribute vec4 iScale;                            \n\
+  attribute vec4 iTexUV;                            \n\
+  uniform mat4 ViewProjectionMatrix;                \n\
+  varying vec4 oTexCoord0;                          \n\
+  void main()                                       \n\
+  {                                                 \n\
+  oTexCoord0   = iTexUV;                            \n\
+  vec4 myvertex = _Position * iScale + iOffset;     \n\
+  gl_Position  = ViewProjectionMatrix * myvertex;   \n\
+  }");
 
-  NString FontAsmVtx = TEXT (
-                         "!!ARBvp1.0                                     \n\
-                        ATTRIB iScale       = vertex.attrib[9];         \n\
-                        ATTRIB iOffset      = vertex.attrib[10];        \n\
-                        OUTPUT oPos         = result.position;          \n\
-                        OUTPUT oTexCoord0   = result.texcoord[0];       \n\
-                        # Transform the vertex to clip coordinates.     \n\
-                        TEMP temp;                                      \n\
-                        MAD   temp, vertex.position, iScale, iOffset;   \n\
-                        DP4   oPos.x, state.matrix.mvp.row[0], temp;    \n\
-                        DP4   oPos.y, state.matrix.mvp.row[1], temp;    \n\
-                        DP4   oPos.z, state.matrix.mvp.row[2], temp;    \n\
-                        DP4   oPos.w, state.matrix.mvp.row[3], temp;    \n\
-                        MOV   oTexCoord0, vertex.attrib[8];             \n\
-                        END");
+  NString gFontFragShader = TEXT ("#version 100                             \n\
+  #extension GL_ARB_texture_rectangle : enable                              \n\
+  uniform sampler2DRect FontTexture;                                        \n\
+  uniform vec4 TextColor;                                                   \n\
+  varying vec4 oTexCoord0;                                                  \n\
+  void main()                                                               \n\
+  {                                                                         \n\
+    vec4 diffuse = texture2DRect(FontTexture, oTexCoord0.st);               \n\
+    gl_FragColor = vec4(TextColor.x, TextColor.y, TextColor.z, diffuse.w);  \n\
+  }");
 
-  NString FontAsmFrg = TEXT (
-                         "!!ARBfp1.0                                       \n\
-                        PARAM color = program.local[0];                   \n\
-                        TEMP temp;                                        \n\
-                        TEMP tex0;                                        \n\
-                        TEX tex0, fragment.texcoord[0], texture[0], 2D;   \n\
-                        MOV temp, color;                                  \n\
-                        MUL temp.w, color, tex0;                          \n\
-                        MOV result.color, temp;                           \n\
-                        END");
+  NString FontAsmVtx = TEXT ("!!ARBvp1.0          \n\
+  ATTRIB iScale       = vertex.attrib[9];         \n\
+  ATTRIB iOffset      = vertex.attrib[10];        \n\
+  OUTPUT oPos         = result.position;          \n\
+  OUTPUT oTexCoord0   = result.texcoord[0];       \n\
+  # Transform the vertex to clip coordinates.     \n\
+  TEMP temp;                                      \n\
+  MAD   temp, vertex.position, iScale, iOffset;   \n\
+  DP4   oPos.x, state.matrix.mvp.row[0], temp;    \n\
+  DP4   oPos.y, state.matrix.mvp.row[1], temp;    \n\
+  DP4   oPos.z, state.matrix.mvp.row[2], temp;    \n\
+  DP4   oPos.w, state.matrix.mvp.row[3], temp;    \n\
+  MOV   oTexCoord0, vertex.attrib[8];             \n\
+  END");
 
-  NString FontAsmFrgRect = TEXT (
-    "!!ARBfp1.0                                       \n\
-    PARAM color = program.local[0];                   \n\
-    TEMP temp;                                        \n\
-    TEMP tex0;                                        \n\
-    TEX tex0, fragment.texcoord[0], texture[0], RECT; \n\
-    MOV temp, color;                                  \n\
-    MUL temp.w, color, tex0;                          \n\
-    MOV result.color, temp;                           \n\
-    END");
+  NString FontAsmFrg = TEXT ("!!ARBfp1.0            \n\
+  PARAM color = program.local[0];                   \n\
+  TEMP temp;                                        \n\
+  TEMP tex0;                                        \n\
+  TEX tex0, fragment.texcoord[0], texture[0], 2D;   \n\
+  MOV temp, color;                                  \n\
+  MUL temp.w, color, tex0;                          \n\
+  MOV result.color, temp;                           \n\
+  END");
+
+  NString FontAsmFrgRect = TEXT ("!!ARBfp1.0        \n\
+  PARAM color = program.local[0];                   \n\
+  TEMP temp;                                        \n\
+  TEMP tex0;                                        \n\
+  TEX tex0, fragment.texcoord[0], texture[0], RECT; \n\
+  MOV temp, color;                                  \n\
+  MUL temp.w, color, tex0;                          \n\
+  MOV result.color, temp;                           \n\
+  END");
 
 
-  FontRenderer::FontRenderer (GraphicsEngine &OpenGLEngine)
-    :   m_OpenGLEngine (OpenGLEngine)
+  FontRenderer::FontRenderer (GraphicsEngine &graphics_engine)
+    :   _graphics_engine (graphics_engine)
   {
-    //m_QuadBuffer = new TemplateQuadBuffer(GetGpuDevice(), SHADER_TYPE_GLSL);
-    if (!USE_ARB_SHADERS)
+    if(_graphics_engine.UsingGLSLCodePath())
     {
-      m_PixelShaderProg   = GetGpuDevice()->CreatePixelShader();
-      m_VertexShaderProg  = GetGpuDevice()->CreateVertexShader();
-      m_ShaderProg        = GetGpuDevice()->CreateShaderProgram();
+      _pixel_shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader();
+      _vertex_shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader();
+      _shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
 
-      m_VertexShaderProg->SetShaderCode (TCHAR_TO_ANSI (*gFontVtxShader) );
-      m_PixelShaderProg->SetShaderCode (TCHAR_TO_ANSI (*gFontFragShader) );
+      _vertex_shader_prog->SetShaderCode (TCHAR_TO_ANSI (*gFontVtxShader) );
+      _pixel_shader_prog->SetShaderCode (TCHAR_TO_ANSI (*gFontFragShader) );
 
-      m_ShaderProg->ClearShaderObjects();
-      m_ShaderProg->AddShaderObject (m_VertexShaderProg);
-      m_ShaderProg->AddShaderObject (m_PixelShaderProg);
-      m_ShaderProg->Link();
+      _shader_prog->ClearShaderObjects();
+      _shader_prog->AddShaderObject (_vertex_shader_prog);
+      _shader_prog->AddShaderObject (_pixel_shader_prog);
+      //CHECKGL (glBindAttribLocation(_shader_prog->GetOpenGLID(), 0, "_Position"));
+      _shader_prog->Link();
     }
     else
     {
-      //m_AsmVertexShaderProg  = GetGpuDevice()->CreateAsmVertexShader();
-      //m_AsmPixelShaderProg   = GetGpuDevice()->CreateAsmPixelShader();
-      m_AsmShaderProg        = GetGpuDevice()->CreateAsmShaderProgram();
+      _asm_shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
 
-      m_AsmShaderProg->LoadVertexShader (TCHAR_TO_ANSI (*FontAsmVtx) );
-      m_AsmShaderProg->LoadPixelShader (TCHAR_TO_ANSI (*FontAsmFrg) );
-      m_AsmShaderProg->Link();
+      _asm_shader_prog->LoadVertexShader (TCHAR_TO_ANSI (*FontAsmVtx) );
+      _asm_shader_prog->LoadPixelShader (TCHAR_TO_ANSI (*FontAsmFrg) );
+      _asm_shader_prog->Link();
 
-      _asm_font_texture_rect_prog = GetGpuDevice()->CreateAsmShaderProgram();
+      _asm_font_texture_rect_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
       _asm_font_texture_rect_prog->LoadVertexShader (TCHAR_TO_ANSI (*FontAsmVtx) );
       _asm_font_texture_rect_prog->LoadPixelShader (TCHAR_TO_ANSI (*FontAsmFrgRect) );
       _asm_font_texture_rect_prog->Link();
@@ -143,7 +137,6 @@ namespace nux
 
   FontRenderer::~FontRenderer()
   {
-    //delete m_QuadBuffer;
   }
 
   int FontRenderer::DrawColorString (ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int SkipFirstNCharacters, int NumCharacter)
@@ -165,9 +158,9 @@ namespace nux
     if (NumCharacter == 0)
       NumChar = str.Size();
     else
-      NumChar = Min ( (int) str.Size(), NumCharacter);
+      NumChar = Min ((int) str.Size(), NumCharacter);
 
-    strBBox.width = Font->GetStringWidth (str, NumChar);
+    strBBox.width = Font->GetStringWidth(str, NumChar);
     strBBox.height = Font->GetLineHeight();
 
     switch (alignment)
@@ -210,11 +203,11 @@ namespace nux
   {
     StringBBox stringBBox;
 
-    m_OpenGLEngine.PushClippingRectangle (Rect (pageSize.xmin, pageSize.ymin, pageSize.xmax - pageSize.xmin, pageSize.ymax - pageSize.ymin) );
+    _graphics_engine.PushClippingRectangle (Rect (pageSize.xmin, pageSize.ymin, pageSize.xmax - pageSize.xmin, pageSize.ymax - pageSize.ymin) );
     PositionString (Font, Str, pageSize, stringBBox, alignment);
     int off = DrawColorString (Font, stringBBox.x, stringBBox.y, Str, color, WriteAlphaChannel, 0, Str.Size() );
 
-    m_OpenGLEngine.PopClippingRectangle();
+    _graphics_engine.PopClippingRectangle();
     return off;
   }
 
@@ -234,14 +227,14 @@ namespace nux
     unsigned int substring_width = Font->GetStringWidth (substring);
     int substring_pos = Font->GetStringWidth (Str, selection_start);
 
-    m_OpenGLEngine.PushClippingRectangle (Rect (pageSize.xmin, pageSize.ymin, pageSize.xmax - pageSize.xmin, pageSize.ymax - pageSize.ymin) );
+    _graphics_engine.PushClippingRectangle (Rect (pageSize.xmin, pageSize.ymin, pageSize.xmax - pageSize.xmin, pageSize.ymax - pageSize.ymin) );
 
     if (substring_width > 0)
-      m_OpenGLEngine.QRP_Color (pageSize.xmin + offset + substring_pos, pageSize.ymin, substring_width, pageSize.ymax - pageSize.ymin, SelectedTextBackgroundColor);
+      _graphics_engine.QRP_Color (pageSize.xmin + offset + substring_pos, pageSize.ymin, substring_width, pageSize.ymax - pageSize.ymin, SelectedTextBackgroundColor);
 
-    m_OpenGLEngine.PopClippingRectangle();
+    _graphics_engine.PopClippingRectangle();
 
-    m_OpenGLEngine.PushClippingRectangle (Rect (pageSize.xmin, pageSize.ymin, pageSize.xmax - pageSize.xmin, pageSize.ymax - pageSize.ymin) );
+    _graphics_engine.PushClippingRectangle (Rect (pageSize.xmin, pageSize.ymin, pageSize.xmax - pageSize.xmin, pageSize.ymax - pageSize.ymin) );
 
     PositionString (Font, Str, pageSize, stringBBox, eAlignTextLeft);
     //ComputeGlyphString(stringBBox.x + offset, stringBBox.y, Str.c_str());
@@ -253,7 +246,7 @@ namespace nux
     // Part after selected text
     off = DrawColorString (Font, stringBBox.x + offset, stringBBox.y, Str, TextColor, WriteAlphaChannel, selection_end, Str.Size() - selection_end);
 
-    m_OpenGLEngine.PopClippingRectangle();
+    _graphics_engine.PopClippingRectangle();
 
     // Render Cursor
     NString temp = Str.GetSubString (0, CursorPosition);
@@ -264,12 +257,12 @@ namespace nux
     {
       int x = pageSize.xmin + w + offset + CURSOR_OFFSET;
       x = (x >= pageSize.xmax) ? pageSize.xmax - 1 : x;
-      m_OpenGLEngine.PushClippingRectangle (Rect (x, pageSize.ymin, CURSOR_SIZE, pageSize.ymax - pageSize.ymin) );
+      _graphics_engine.PushClippingRectangle (Rect (x, pageSize.ymin, CURSOR_SIZE, pageSize.ymax - pageSize.ymin) );
 
-      m_OpenGLEngine.QRP_Color (x, pageSize.ymin, CURSOR_SIZE, pageSize.ymax - pageSize.ymin, CursorColor);
+      _graphics_engine.QRP_Color (x, pageSize.ymin, CURSOR_SIZE, pageSize.ymax - pageSize.ymin, CursorColor);
       
       DrawColorString (Font, stringBBox.x + offset, stringBBox.y, Str, TextBlinkColor, WriteAlphaChannel, CursorPosition, 1);
-      m_OpenGLEngine.PopClippingRectangle();
+      _graphics_engine.PopClippingRectangle();
     }
 
     return off;
@@ -300,15 +293,15 @@ namespace nux
     CHECKGL ( glDisable (GL_CULL_FACE) );
     int CurX = x;
     int CurY = y;
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, WriteAlphaChannel); // Do not write the alpha of characters
+    _graphics_engine.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    _graphics_engine.GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, WriteAlphaChannel); // Do not write the alpha of characters
 
     Vector4 *Position = new Vector4[StrLength*4];
     Vector4 *UV = new Vector4[StrLength*4];
     Vector4 *Offset = new Vector4[StrLength*4];
     Vector4 *Scale = new Vector4[StrLength*4];
 
-    ObjectPtr<CachedBaseTexture> glTexture = m_OpenGLEngine.ResourceCache.GetCachedResource (Font->TextureArray[0]);
+    ObjectPtr<CachedBaseTexture> glTexture = _graphics_engine.ResourceCache.GetCachedResource (Font->TextureArray[0]);
 
     float tex_width = (float) glTexture->m_Texture->GetWidth();
     float tex_height = (float) glTexture->m_Texture->GetHeight();
@@ -423,95 +416,95 @@ namespace nux
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
-    int iPosition = 0;
-    int iTexUV = 0;
-    int iScale = 0;
-    int iOffset = 0;
+    int in_attrib_position = 0;
+    int in_attrib_tex_uv = 0;
+    int in_attrib_scale = 0;
+    int in_attrib_offset = 0;
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program;
-    if (!USE_ARB_SHADERS)
+    if(_graphics_engine.UsingGLSLCodePath())
     {
-      m_ShaderProg->Begin();
-      int ViewProjectionMatrix = m_ShaderProg->GetUniformLocationARB ("ViewProjectionMatrix");
-      Matrix4 mat = GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix();
+      _shader_prog->Begin();
+      int ViewProjectionMatrix = _shader_prog->GetUniformLocationARB ("ViewProjectionMatrix");
+      Matrix4 mat = _graphics_engine.GetOpenGLModelViewProjectionMatrix();
 
-      m_ShaderProg->SetUniformLocMatrix4fv (ViewProjectionMatrix, 1, false, (float *) &mat);
+      _shader_prog->SetUniformLocMatrix4fv (ViewProjectionMatrix, 1, false, (float *) &mat);
 
-      iPosition       = m_ShaderProg->GetAttributeLocation ("iPosition");
-      iTexUV          = m_ShaderProg->GetAttributeLocation ("iTexUV");
-      iScale          = m_ShaderProg->GetAttributeLocation ("iScale");
-      iOffset         = m_ShaderProg->GetAttributeLocation ("iOffset");
+      in_attrib_position = _shader_prog->GetAttributeLocation("_Position");
+      in_attrib_tex_uv   = _shader_prog->GetAttributeLocation("iTexUV");
+      in_attrib_scale    = _shader_prog->GetAttributeLocation("iScale");
+      in_attrib_offset   = _shader_prog->GetAttributeLocation("iOffset");
 
-      int FontTexture     = m_ShaderProg->GetUniformLocationARB ("FontTexture");
-      int TextColor       = m_ShaderProg->GetUniformLocationARB ("TextColor");
+      int FontTexture    = _shader_prog->GetUniformLocationARB("FontTexture");
+      int TextColor      = _shader_prog->GetUniformLocationARB("TextColor");
 
-      GetThreadGraphicsContext()->SetTexture (GL_TEXTURE0, glTexture->m_Texture);
+      _graphics_engine.SetTexture(GL_TEXTURE0, glTexture->m_Texture);
 
-      if (FontTexture != -1)
+      if(FontTexture != -1)
       {
-        CHECKGL ( glUniform1iARB (FontTexture, 0) );
+        CHECKGL(glUniform1iARB(FontTexture, 0));
       }
 
-      if (TextColor != -1)
+      if(TextColor != -1)
       {
-        CHECKGL ( glUniform4fARB (TextColor, color.red, color.green, color.blue, color.alpha ) );
+        CHECKGL(glUniform4fARB(TextColor, color.red, color.green, color.blue, color.alpha));
       }
     }
     else
     {
 #ifndef NUX_OPENGLES_20
-      shader_program = m_AsmShaderProg;
+      shader_program = _asm_shader_prog;
       if(glTexture->m_Texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
       {
         shader_program = _asm_font_texture_rect_prog;
       }
       shader_program->Begin();
 
-      CHECKGL (glMatrixMode (GL_MODELVIEW));
-      CHECKGL (glLoadIdentity ());
-      Matrix4 model_view_matrix = GetThreadGraphicsContext()->GetModelViewMatrix ();
-      model_view_matrix.Transpose ();
-      CHECKGL (glLoadMatrixf ((float *) model_view_matrix.m));
+      CHECKGL (glMatrixMode(GL_MODELVIEW));
+      CHECKGL (glLoadIdentity());
+      Matrix4 model_view_matrix = _graphics_engine.GetModelViewMatrix ();
+      model_view_matrix.Transpose();
+      CHECKGL (glLoadMatrixf((float *) model_view_matrix.m));
 
-      CHECKGL (glMatrixMode (GL_PROJECTION) );
-      CHECKGL (glLoadIdentity ());
-      Matrix4 projection_matrix = GetThreadGraphicsContext ()->GetProjectionMatrix ();
+      CHECKGL (glMatrixMode(GL_PROJECTION));
+      CHECKGL (glLoadIdentity());
+      Matrix4 projection_matrix = GetGraphicsDisplay()->GetGraphicsEngine()->GetProjectionMatrix ();
       projection_matrix.Transpose ();
       CHECKGL (glLoadMatrixf ((float *) projection_matrix.m));
 
-      iPosition   = VTXATTRIB_POSITION;
-      iTexUV      = VTXATTRIB_TEXCOORD0;
-      iScale      = VTXATTRIB_TEXCOORD1;
-      iOffset     = VTXATTRIB_TEXCOORD2;
+      in_attrib_position   = VTXATTRIB_POSITION;
+      in_attrib_tex_uv      = VTXATTRIB_TEXCOORD0;
+      in_attrib_scale      = VTXATTRIB_TEXCOORD1;
+      in_attrib_offset     = VTXATTRIB_TEXCOORD2;
 
       CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color.red, color.green, color.blue, color.alpha ) );
 
-      GetThreadGraphicsContext()->SetTexture (GL_TEXTURE0, glTexture->m_Texture);
+      _graphics_engine.SetTexture (GL_TEXTURE0, glTexture->m_Texture);
 #endif
     }
 
-    if (iOffset != -1)
+    if (in_attrib_offset != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (iOffset) );
-      CHECKGL ( glVertexAttribPointerARB (iOffset, 4, GL_FLOAT, GL_FALSE, 16, Offset) );
+      CHECKGL ( glEnableVertexAttribArrayARB (in_attrib_offset) );
+      CHECKGL ( glVertexAttribPointerARB (in_attrib_offset, 4, GL_FLOAT, GL_FALSE, 16, Offset) );
     }
 
-    if (iPosition != -1)
+    if (in_attrib_position != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (iPosition) );
-      CHECKGL ( glVertexAttribPointerARB (iPosition, 4, GL_FLOAT, GL_FALSE, 16, Position) );
+      CHECKGL ( glEnableVertexAttribArrayARB (in_attrib_position) );
+      CHECKGL ( glVertexAttribPointerARB (in_attrib_position, 4, GL_FLOAT, GL_FALSE, 16, Position) );
     }
 
-    if (iScale != -1)
+    if (in_attrib_scale != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (iScale) );
-      CHECKGL ( glVertexAttribPointerARB (iScale, 4, GL_FLOAT, GL_FALSE, 16, Scale) );
+      CHECKGL ( glEnableVertexAttribArrayARB (in_attrib_scale) );
+      CHECKGL ( glVertexAttribPointerARB (in_attrib_scale, 4, GL_FLOAT, GL_FALSE, 16, Scale) );
     }
 
-    if (iTexUV != -1)
+    if (in_attrib_tex_uv != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (iTexUV) );
-      CHECKGL ( glVertexAttribPointerARB (iTexUV, 4, GL_FLOAT, GL_FALSE, 16, UV) );
+      CHECKGL ( glEnableVertexAttribArrayARB (in_attrib_tex_uv) );
+      CHECKGL ( glVertexAttribPointerARB (in_attrib_tex_uv, 4, GL_FLOAT, GL_FALSE, 16, UV) );
     }
 
     if (NumCharToDraw > 0)
@@ -521,29 +514,29 @@ namespace nux
       CHECKGL ( glDrawArrays ( GL_QUADS, 0, NumCharToDraw * 4 ) );
 #endif
 
-    if (iPosition != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (iPosition) );
+    if (in_attrib_position != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (in_attrib_position) );
 
-    if (iOffset != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (iOffset) );
+    if (in_attrib_offset != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (in_attrib_offset) );
 
-    if (iScale != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (iScale) );
+    if (in_attrib_scale != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (in_attrib_scale) );
 
-    if (iTexUV != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (iTexUV) );
+    if (in_attrib_tex_uv != -1)
+      CHECKGL ( glDisableVertexAttribArrayARB (in_attrib_tex_uv) );
 
-    if (!USE_ARB_SHADERS)
+    if(_graphics_engine.UsingGLSLCodePath())
     {
-      m_ShaderProg->End();
+      _shader_prog->End();
     }
     else
     {
       shader_program->End();
     }
 
-    GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
+    _graphics_engine.GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
+    _graphics_engine.GetRenderStates().SetBlend (FALSE);
 
     CurX -= x + CURSOR_OFFSET;
 

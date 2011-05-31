@@ -58,16 +58,16 @@ void RenderTexturePowerOfTwo ()
 
   for (int i = 0; i < 9; i++)
   {
-    nux::NBitmapData *bitmap = nux::LoadImageFile (texture_list[i]);
-    nux::ImageSurface surface = bitmap->GetSurface (0);
+    nux::NBitmapData *bitmap = nux::LoadImageFile(texture_list[i]);
+    nux::ImageSurface surface = bitmap->GetSurface(0);
 
-    surface.GetFormat ();
+    surface.GetFormat();
 
-    tex[i] = nux::GetThreadGLDeviceFactory()->CreateTexture (
+    tex[i] = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(
       surface.GetWidth(),
-      surface.GetHeight (),
+      surface.GetHeight(),
       1,
-      surface.GetFormat ());
+      surface.GetFormat());
 
     nux::SURFACE_LOCKED_RECT lockrect;
     tex[i]->LockRect(0, &lockrect, 0);

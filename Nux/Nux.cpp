@@ -151,7 +151,7 @@ namespace nux
     w->m_ExitData = 0;
     w->SetWindowStyle (WINDOWSTYLE_NORMAL);
     w->m_embedded_window = true;
-    w->ThreadCtor (XOpenDisplay (NULL), X11Window, OpenGLContext);
+    w->ThreadCtor (NULL, X11Window, OpenGLContext);
     return w;
   }
 #endif

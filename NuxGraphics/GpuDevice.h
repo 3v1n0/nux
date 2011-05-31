@@ -106,6 +106,13 @@ namespace nux
     bool Support_ARB_Pixel_Buffer_Object ()       const    {return _support_arb_pixel_buffer_object;}
     bool Support_EXT_Blend_Equation_Separate ()   const    {return _support_ext_blend_equation_separate;}
 
+#ifndef NUX_OPENGLES_20
+    bool Support_EXT_Texture_sRGB ()              const    {return _support_ext_texture_srgb;}
+    bool Support_EXT_Texture_Decode ()            const    {return _support_ext_texture_srgb_decode;}
+    bool Support_EXT_Framebuffer_sRGB ()          const    {return _support_ext_framebuffer_srgb;}
+    bool Support_ARB_Framebuffer_sRGB ()          const    {return _support_arb_framebuffer_srgb;}
+#endif
+
     int GetMaxFboAttachment () {return _opengl_max_fb_attachment;}
 
 
@@ -148,6 +155,13 @@ namespace nux
     bool _support_nv_texture_rectangle;
     bool _support_arb_pixel_buffer_object;
     bool _support_ext_blend_equation_separate;
+
+#ifndef NUX_OPENGLES_20
+    bool _support_ext_texture_srgb;
+    bool _support_ext_texture_srgb_decode;
+    bool _support_ext_framebuffer_srgb;
+    bool _support_arb_framebuffer_srgb;
+#endif
 
     friend class GpuDevice;
   };
@@ -321,10 +335,6 @@ namespace nux
       ObjectPtr<IOpenGLIndexBuffer> IndexBuffer,
       ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
       PRIMITIVE_TYPE PrimitiveType,
-      int BaseVertexIndex,
-      int MinIndex,
-      int NumVertices,
-      int StartIndex,
       int PrimitiveCount
     );
 
