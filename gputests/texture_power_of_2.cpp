@@ -54,7 +54,7 @@ void RenderTexturePowerOfTwo ()
     TEXT("./data/mipmap1x1.png")
   };
 
-  nux::IntrusiveSP<nux::IOpenGLTexture2D> tex [9];
+  nux::ObjectPtr<nux::IOpenGLTexture2D> tex [9];
 
   for (int i = 0; i < 9; i++)
   {
@@ -119,13 +119,6 @@ void RenderTexturePowerOfTwo ()
     for (int i = 0; i < 9; i++)
     {
       m_GraphicsContext->SetTexture(GL_TEXTURE0, tex [i]);
-      CHECKGL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST) );
-      CHECKGL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST) );
-
-#ifndef NUX_OPENGLES_20
-      glEnable(GL_TEXTURE_2D);
-      glDisable(GL_TEXTURE_3D);
-      glDisable(GL_TEXTURE_CUBE_MAP);
 
       if (i > 0)
         x += tex[i-1]->GetWidth () + 5;
@@ -133,21 +126,8 @@ void RenderTexturePowerOfTwo ()
       int width = tex[i]->GetWidth ();
       int height = tex[i]->GetHeight ();
 
-      glBegin(GL_QUADS);
-      {
-        glMultiTexCoord2fARB(GL_TEXTURE0, 0.0f, 0.0f);
-        glVertex3f(x,  y, 0);
-        glMultiTexCoord2fARB(GL_TEXTURE0, 0.0f, 1.0);
-        glVertex3f(x,  y + height, 0);
-        glMultiTexCoord2fARB(GL_TEXTURE0, 1.0f, 1.0);
-        glVertex3f(x + width,  y + height, 0);
-        glMultiTexCoord2fARB(GL_TEXTURE0, 1.0f, 0.0);
-        glVertex3f(x + width,  y, 0);
-      }
-      glEnd();
-#else
-#warning FIXME not implemented yet
-#endif
+      nux::TexCoordXForm texxform;
+      m_GraphicsContext->QRP_GLSL_1Tex(x, y, width, height, tex[i], texxform, nux::color::White);
     }
 
     m_GLWindow->SwapBuffer();
