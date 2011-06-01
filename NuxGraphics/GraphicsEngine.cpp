@@ -307,12 +307,8 @@ namespace nux
 
   void GraphicsEngine::EvaluateGpuCaps ()
   {
-#ifdef NUX_OPENGLES_20
-    _use_glsl_shaders = true;
-#else
     if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader() &&
-      _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
-      _graphics_display.GetGpuDevice()->GetGPUBrand() ==  GPU_BRAND_NVIDIA)
+      _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader())
     {
       NString renderer_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER)));
       CHECKGL_MSG (glGetString (GL_RENDERER));
@@ -337,7 +333,6 @@ namespace nux
     {
       _use_glsl_shaders = false;
     }
-#endif
   }
 
   bool GraphicsEngine::UsingGLSLCodePath ()

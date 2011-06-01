@@ -40,7 +40,7 @@ namespace nux
 // Use assembly shaders for Intel GPUs: ARB_fragment_program does not have the required
 // instruction to implement the HSV to RGB color conversion.
 
-  static NString VtxShader = TEXT ("#version 100   \n\
+  static NString VtxShader = TEXT ("            \n\
         uniform mat4 ViewProjectionMatrix;      \n\
         attribute vec4 AVertex;                 \n\
         attribute vec4 VertexColor;             \n\
@@ -49,7 +49,7 @@ namespace nux
             gl_Position = ViewProjectionMatrix * AVertex;   \n\
         }");
 
-  static NString RedFrgShader = TEXT ("#version 100                            \n\
+  static NString RedFrgShader = TEXT ("         \n\
         #ifdef GL_ES                            \n\
         precision mediump float;                \n\
         #endif                                  \n\
@@ -63,7 +63,7 @@ namespace nux
             gl_FragColor = vec4(Color.r, y, x, 1.0);                        \n\
         }");
 
-  static NString GreenFrgShader = TEXT ("#version 100                            \n\
+  static NString GreenFrgShader = TEXT ("       \n\
         #ifdef GL_ES                            \n\
         precision mediump float;                \n\
         #endif                                  \n\
@@ -77,7 +77,7 @@ namespace nux
             gl_FragColor = vec4(y, Color.g, x, 1.0);                        \n\
         }");
 
-  static NString BlueFrgShader = TEXT ("#version 100                            \n\
+  static NString BlueFrgShader = TEXT ("        \n\
         #ifdef GL_ES                            \n\
         precision mediump float;                \n\
         #endif                                  \n\
@@ -91,7 +91,7 @@ namespace nux
             gl_FragColor = vec4(x, y, Color.b, 1.0);                        \n\
         }");
 
-  static NString HueFrgShader = TEXT ("#version 100        \n\
+  static NString HueFrgShader = TEXT ("                 \n\
         #ifdef GL_ES                                    \n\
         precision mediump float;                        \n\
         #endif                                          \n\
@@ -107,7 +107,7 @@ namespace nux
             gl_FragColor = vec4(rgb, 1.0);                      \n\
         }");
 
-  static NString SaturationFrgShader = TEXT ("#version 100     \n\
+  static NString SaturationFrgShader = TEXT ("              \n\
         #ifdef GL_ES                                        \n\
         precision mediump float;                            \n\
         #endif                                              \n\
@@ -123,7 +123,7 @@ namespace nux
             gl_FragColor = vec4(rgb, 1.0);                      \n\
         }");
 
-  static NString ValueFrgShader = TEXT ("#version 100  \n\
+  static NString ValueFrgShader = TEXT ("           \n\
         #ifdef GL_ES                                \n\
         precision mediump float;                    \n\
         #endif                                      \n\
@@ -139,7 +139,7 @@ namespace nux
             gl_FragColor = vec4(rgb, 1.0);                                  \n\
         }");
 
-  static NString HSV_To_RGBFrgShader = TEXT ("#version 100  \n\
+  static NString HSV_To_RGBFrgShader = TEXT ("                                  \n\
         #ifdef GL_ES                                                            \n\
         precision mediump float;                                                \n\
         #endif                                                                  \n\

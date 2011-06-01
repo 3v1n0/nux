@@ -32,7 +32,7 @@
 namespace nux
 {
 
-  static NString VtxShader = TEXT ("#version 100   \n\
+  static NString VtxShader = TEXT ("            \n\
         uniform mat4 ViewProjectionMatrix;      \n\
         attribute vec4 AVertex;                 \n\
         attribute vec4 VertexColor;             \n\
@@ -41,7 +41,7 @@ namespace nux
             gl_Position = ViewProjectionMatrix * AVertex;   \n\
         }");
 
-  static NString FrgShader = TEXT ("#version 100           \n\
+  static NString FrgShader = TEXT ("                    \n\
         #ifdef GL_ES                                    \n\
         precision mediump float;                        \n\
         #endif                                          \n\

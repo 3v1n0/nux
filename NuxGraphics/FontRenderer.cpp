@@ -41,7 +41,7 @@ namespace nux
   //  - declare the vertex attribute name before any other attribute.
   //  - Give the vertex attribute a name that comes before any other attribute name. For instance prefix the vertex attribute name with "_".
 
-  NString gFontVtxShader = TEXT ("#version 100      \n\
+  NString gFontVtxShader = TEXT ("                  \n\
   attribute vec4 _Position;                         \n\
   attribute vec4 iOffset;                           \n\
   attribute vec4 iScale;                            \n\
@@ -55,7 +55,7 @@ namespace nux
   gl_Position  = ViewProjectionMatrix * myvertex;   \n\
   }");
 
-  NString gFontFragShader = TEXT ("#version 100                             \n\
+  NString gFontFragShader = TEXT ("                                         \n\
   #extension GL_ARB_texture_rectangle : enable                              \n\
   uniform sampler2DRect FontTexture;                                        \n\
   uniform vec4 TextColor;                                                   \n\

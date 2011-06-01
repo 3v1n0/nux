@@ -53,7 +53,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 100   \n\
+    VSString =  TEXT ("               \n\
                      uniform mat4 ViewProjectionMatrix;                 \n\
                      attribute vec4 AVertex;                            \n\
                      attribute vec4 VertexColor;                        \n\
@@ -66,7 +66,7 @@ namespace nux
 
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
 
-    PSString =  TEXT ("#version 100                 \n\
+    PSString =  TEXT ("                             \n\
                      #ifdef GL_ES                   \n\
                      precision mediump float;       \n\
                      #endif                         \n\
@@ -91,7 +91,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 100   \n\
+    VSString =  TEXT ("               \n\
                      attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
@@ -105,7 +105,7 @@ namespace nux
                      varyVertexColor = VertexColor;                          \n\
                      }");
 
-    PSString =  TEXT ("#version 100                                               \n\
+    PSString =  TEXT ("                                                          \n\
                      #extension GL_ARB_texture_rectangle : enable                \n\
                      #ifdef GL_ES                                                \n\
                      precision mediump float;                                    \n\
@@ -150,7 +150,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 100   \n\
+    VSString =  TEXT ("               \n\
                      attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
@@ -164,7 +164,7 @@ namespace nux
                      varyVertexColor = VertexColor;                          \n\
                      }");
 
-    PSString =  TEXT ("#version 100                                                      \n\
+    PSString =  TEXT ("                                                                 \n\
                      #extension GL_ARB_texture_rectangle : enable                       \n\
                      #ifdef GL_ES                                                       \n\
                      precision mediump float;                                           \n\
@@ -226,7 +226,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (  "#version 100                                           \n\
+    VSString =  TEXT (  "                                                       \n\
                         uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -240,7 +240,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (  "#version 100                                               \n\
+    PSString =  TEXT (  "                                                           \n\
                         #extension GL_ARB_texture_rectangle : enable                \n\
                         #ifdef GL_ES                                                \n\
                         precision mediump float;                                    \n\
@@ -293,7 +293,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (  "#version 100                                           \n\
+    VSString =  TEXT (  "                                                       \n\
                         uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -307,7 +307,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (  "#version 100                                               \n\
+    PSString =  TEXT (  "                                                           \n\
                         #ifdef GL_ES                                                \n\
                         precision mediump float;                                    \n\
                         #endif                                                      \n\
@@ -351,7 +351,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (   "#version 100                                           \n\
+    VSString =  TEXT (   "                                                       \n\
                          uniform mat4 ViewProjectionMatrix;                      \n\
                          attribute vec4 AVertex;                                 \n\
                          attribute vec4 MyTextureCoord0;                         \n\
@@ -365,7 +365,7 @@ namespace nux
                          gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                          }");
 
-    PSString =  TEXT (   "#version 100                                               \n\
+    PSString =  TEXT (   "                                                           \n\
                          #extension GL_ARB_texture_rectangle : enable                \n\
                          #ifdef GL_ES                                                \n\
                          precision mediump float;                                    \n\
@@ -418,7 +418,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (   "#version 100                                          \n\
+    VSString =  TEXT (   "                                                      \n\
                         uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -438,7 +438,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (   "#version 100                                              \n\
+    PSString =  TEXT (   "                                                          \n\
                         #extension GL_ARB_texture_rectangle : enable                \n\
                         #ifdef GL_ES                                                \n\
                         precision mediump float;                                    \n\
@@ -499,7 +499,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 100                         \n\
+    VSString =  TEXT ("                                     \n\
         uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -510,7 +510,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
-    PSString =  TEXT ("#version 100                                                                           \n\
+    PSString =  TEXT ("                                                                                       \n\
         #ifdef GL_ES                                                                                          \n\
         precision mediump float;                                                                              \n\
         #endif                                                                                                \n\
@@ -551,7 +551,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("#version 100                          \n\
+    VSString = TEXT ("                                      \n\
         uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -562,7 +562,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
-    PSString = TEXT ("#version 100                                    \n\
+    PSString = TEXT ("                                                \n\
         #ifdef GL_ES                                                  \n\
         precision mediump float;                                      \n\
         #endif                                                        \n\
@@ -598,7 +598,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("#version 100          \n\
+    VSString = TEXT ("                      \n\
         uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -613,7 +613,7 @@ namespace nux
         }");
 
 
-    PSString = TEXT ("#version 100                                    \n\
+    PSString = TEXT ("                                                \n\
         #ifdef GL_ES                                                  \n\
         precision mediump float;                                      \n\
         #endif                                                        \n\
@@ -670,7 +670,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString = TEXT ("#version 100          \n\
+    VSString = TEXT ("                      \n\
         uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -685,7 +685,7 @@ namespace nux
         }");
 
 
-    PSString = TEXT ("#version 100                                    \n\
+    PSString = TEXT ("                                                \n\
         #ifdef GL_ES                                                  \n\
         precision mediump float;                                      \n\
         #endif                                                        \n\
@@ -742,7 +742,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("#version 100                        \n\
+    VSString = TEXT ("                                    \n\
                      uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
@@ -757,7 +757,7 @@ namespace nux
                      }");
 
 
-    PSString = TEXT ("#version 100                                                \n\
+    PSString = TEXT ("                                                            \n\
                      #ifdef GL_ES                                                 \n\
                      precision mediump float;                                     \n\
                      #endif                                                       \n\
@@ -776,7 +776,7 @@ namespace nux
                      vec4 sum   = vec4 (0.0, 0.0, 0.0, 0.0);                      \n\
                      vec2 delta = vec2 (1.0 / TextureSize0.x, 0.0);               \n\
                      vec2 texCoord = vec2 (varyTexCoord0.s, varyTexCoord0.t);     \n\
-                     texCoord.x -= ((NUM_SAMPLES - 1) / 2) / TextureSize0.x;      \n\
+                     texCoord.x -= float ((NUM_SAMPLES - 1) / 2) / TextureSize0.x;      \n\
                      texCoord.y += 0.0 / TextureSize0.y;                          \n\
                      for (int i = 0; i < NUM_SAMPLES; i++)                        \n\
                      {                                                            \n\
@@ -805,7 +805,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString = TEXT ("#version 100                        \n\
+    VSString = TEXT ("                                    \n\
                      uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
@@ -820,7 +820,7 @@ namespace nux
                      }");
 
 
-    PSString = TEXT ("#version 100                                                \n\
+    PSString = TEXT ("                                                            \n\
                      #ifdef GL_ES                                                 \n\
                      precision mediump float;                                     \n\
                      #endif                                                       \n\
@@ -840,7 +840,7 @@ namespace nux
                      vec2 delta = vec2 (0.0, 1.0 / TextureSize0.y);               \n\
                      vec2 texCoord = vec2 (varyTexCoord0.s, varyTexCoord0.t);     \n\
                      texCoord.x += 0.0 / TextureSize0.x;                          \n\
-                     texCoord.y -= ((NUM_SAMPLES - 1) / 2) / TextureSize0.y;      \n\
+                     texCoord.y -= float ((NUM_SAMPLES - 1) / 2) / TextureSize0.y;      \n\
                      for (int i = 0; i < NUM_SAMPLES; ++i)                        \n\
                      {                                                            \n\
                      sum += SampleTexture (TextureObject0, texCoord) * W[i];      \n\
@@ -868,7 +868,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("#version 100          \n\
+    VSString = TEXT ("                      \n\
         uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -879,7 +879,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
-    PSString = TEXT ("#version 100                                  \n\
+    PSString = TEXT ("                                              \n\
         #extension GL_ARB_texture_rectangle : enable                \n\
         #ifdef GL_ES                                                \n\
         precision mediump float;                                    \n\
@@ -2480,7 +2480,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("#version 100   \n\
+    VSString =  TEXT ("               \n\
                       attribute vec4 AVertex;                                 \n\
                       attribute vec4 MyTextureCoord0;                         \n\
                       attribute vec4 VertexColor;                             \n\
@@ -2494,7 +2494,7 @@ namespace nux
                       varyVertexColor = VertexColor;                          \n\
                       }");
 
-    PSString =  TEXT ("#version 100                                               \n\
+    PSString =  TEXT ("                                                           \n\
                       #extension GL_ARB_texture_rectangle : enable                \n\
                       #ifdef GL_ES                                                \n\
                       precision mediump float;                                    \n\
