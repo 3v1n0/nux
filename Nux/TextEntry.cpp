@@ -895,8 +895,6 @@ namespace nux
       self->ShowCursor();
     else
       self->HideCursor();
-    
-    self->QueueDraw();
   
     if (--self->cursor_blink_status_ < 0)
       self->cursor_blink_status_ = 2;
@@ -920,7 +918,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueTextDraw();
+        QueueRefresh(true, false);
       }
     }
   }
@@ -933,7 +931,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueTextDraw();
+        QueueRefresh(true, false);
       }
     }
   }
