@@ -777,8 +777,8 @@ namespace nux
     //      GL_TEXTURE_3D,
     //      GL_TEXTURE_CUBE_MAP.
 
-    CHECKGL (glDisable (GL_TEXTURE_2D) );
 #ifndef NUX_OPENGLES_20
+    CHECKGL (glDisable (GL_TEXTURE_2D) );
     CHECKGL (glDisable (GL_TEXTURE_1D) );
     CHECKGL (glDisable (GL_TEXTURE_RECTANGLE_ARB) );
     CHECKGL (glDisable (GL_TEXTURE_3D) );
