@@ -222,8 +222,8 @@ namespace nux
 //     /** Set the visibility of the edit control */
 //     void SetVisibility(bool visible);
 //
-    /** Check if the cursor should be blinking */
-    bool IsCursorBlinking();
+//  /** Check if the cursor should be blinking */
+//  bool IsCursorBlinking();
     /** Send out a request to blink the cursor if necessary */
     void QueueCursorBlink();
     static bool CursorBlinkCallback(TextEntry *data);
