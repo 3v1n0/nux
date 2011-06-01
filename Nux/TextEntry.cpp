@@ -203,7 +203,7 @@ namespace nux
 
   void TextEntry::DoSetFocused (bool focused)
   {
-		
+    focused_ = focused;	
     View::DoSetFocused (focused);
     if (focused == true)
     {
