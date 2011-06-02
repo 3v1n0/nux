@@ -139,7 +139,6 @@ namespace nux
     m_SlTextureModColor->ClearShaderObjects();
     m_SlTextureModColor->AddShaderObject (VS);
     m_SlTextureModColor->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (m_SlTextureModColor->GetOpenGLID(), 0, "AVertex") );
     m_SlTextureModColor->Link();
   }
 
@@ -196,9 +195,6 @@ namespace nux
     m_SlColorModTexMaskAlpha->ClearShaderObjects();
     m_SlColorModTexMaskAlpha->AddShaderObject (VS);
     m_SlColorModTexMaskAlpha->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (m_SlColorModTexMaskAlpha->GetOpenGLID(), 0, "AVertex") );
-    CHECKGL ( glBindAttribLocation (m_SlColorModTexMaskAlpha->GetOpenGLID(), 1, "MyTextureCoord0") );
-    CHECKGL ( glBindAttribLocation (m_SlColorModTexMaskAlpha->GetOpenGLID(), 2, "VectexColor") );
     m_SlColorModTexMaskAlpha->Link();
 
 #ifndef NUX_OPENGLES_20
@@ -208,9 +204,6 @@ namespace nux
     m_SlColorModTexRectMaskAlpha->ClearShaderObjects();
     m_SlColorModTexRectMaskAlpha->AddShaderObject (VS);
     m_SlColorModTexRectMaskAlpha->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (m_SlColorModTexRectMaskAlpha->GetOpenGLID(), 0, "AVertex") );
-    CHECKGL ( glBindAttribLocation (m_SlColorModTexRectMaskAlpha->GetOpenGLID(), 1, "MyTextureCoord0") );
-    CHECKGL ( glBindAttribLocation (m_SlColorModTexRectMaskAlpha->GetOpenGLID(), 2, "VectexColor") );
     m_SlColorModTexRectMaskAlpha->Link();
 #endif
   }
@@ -278,7 +271,6 @@ namespace nux
     m_Sl2TextureAdd->ClearShaderObjects();
     m_Sl2TextureAdd->AddShaderObject (VS);
     m_Sl2TextureAdd->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (m_Sl2TextureAdd->GetOpenGLID(), 0, "AVertex") );
     m_Sl2TextureAdd->Link();
   }
 
@@ -336,7 +328,6 @@ namespace nux
     m_Sl2TextureDepRead->ClearShaderObjects();
     m_Sl2TextureDepRead->AddShaderObject (VS);
     m_Sl2TextureDepRead->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (m_Sl2TextureDepRead->GetOpenGLID(), 0, "AVertex") );
     m_Sl2TextureDepRead->Link();
   }
 
@@ -403,7 +394,6 @@ namespace nux
     m_Sl2TextureMod->ClearShaderObjects();
     m_Sl2TextureMod->AddShaderObject (VS);
     m_Sl2TextureMod->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (m_Sl2TextureMod->GetOpenGLID(), 0, "AVertex") );
     m_Sl2TextureMod->Link();
   }
 
@@ -478,7 +468,6 @@ namespace nux
     m_Sl4TextureAdd->ClearShaderObjects();
     m_Sl4TextureAdd->AddShaderObject (VS);
     m_Sl4TextureAdd->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (m_Sl4TextureAdd->GetOpenGLID(), 0, "AVertex") );
     m_Sl4TextureAdd->Link();
 
 //     // Textured Rect Primitive Shader
@@ -538,7 +527,6 @@ namespace nux
     _component_exponentiation_prog->ClearShaderObjects();
     _component_exponentiation_prog->AddShaderObject (VS);
     _component_exponentiation_prog->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (_component_exponentiation_prog->GetOpenGLID(), 0, "AVertex") );
     _component_exponentiation_prog->Link();
 
   }
@@ -586,7 +574,6 @@ namespace nux
     _alpha_replicate_prog->ClearShaderObjects ();
     _alpha_replicate_prog->AddShaderObject (VS);
     _alpha_replicate_prog->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (_alpha_replicate_prog->GetOpenGLID(), 0, "AVertex"));
     _alpha_replicate_prog->Link();
   }
 
@@ -658,7 +645,6 @@ namespace nux
     _horizontal_gauss_filter_prog->ClearShaderObjects();
     _horizontal_gauss_filter_prog->AddShaderObject (VS);
     _horizontal_gauss_filter_prog->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (_horizontal_gauss_filter_prog->GetOpenGLID(), 0, "AVertex") );
     _horizontal_gauss_filter_prog->Link();
 
   }
@@ -730,7 +716,6 @@ namespace nux
     _vertical_gauss_filter_prog->ClearShaderObjects();
     _vertical_gauss_filter_prog->AddShaderObject (VS);
     _vertical_gauss_filter_prog->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (_vertical_gauss_filter_prog->GetOpenGLID(), 0, "AVertex") );
     _vertical_gauss_filter_prog->Link();
   }
   
@@ -793,7 +778,6 @@ namespace nux
     _horizontal_hq_gauss_filter_prog->ClearShaderObjects();
     _horizontal_hq_gauss_filter_prog->AddShaderObject (VS);
     _horizontal_hq_gauss_filter_prog->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (_horizontal_hq_gauss_filter_prog->GetOpenGLID(), 0, "AVertex") );
     _horizontal_hq_gauss_filter_prog->Link();
 
   }
@@ -856,7 +840,6 @@ namespace nux
     _vertical_hq_gauss_filter_prog->ClearShaderObjects();
     _vertical_hq_gauss_filter_prog->AddShaderObject (VS);
     _vertical_hq_gauss_filter_prog->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (_vertical_hq_gauss_filter_prog->GetOpenGLID(), 0, "AVertex") );
     _vertical_hq_gauss_filter_prog->Link();
   }
 
@@ -913,7 +896,6 @@ namespace nux
     _color_matrix_filter_prog->ClearShaderObjects();
     _color_matrix_filter_prog->AddShaderObject (VS);
     _color_matrix_filter_prog->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (_color_matrix_filter_prog->GetOpenGLID(), 0, "AVertex") );
     _color_matrix_filter_prog->Link();
   }
 
@@ -2531,7 +2513,6 @@ namespace nux
     m_SLPixelate->ClearShaderObjects();
     m_SLPixelate->AddShaderObject (VS);
     m_SLPixelate->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (m_SLPixelate->GetOpenGLID(), 0, "AVertex") );
     m_SLPixelate->Link();
   }
 
