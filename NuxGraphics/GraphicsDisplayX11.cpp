@@ -250,20 +250,22 @@ namespace nux
     }
 
 #ifdef NUX_OPENGLES_20
-    EGLDisplay  dpy;
-    EGLConfig   config;
-    XVisualInfo visual_info;
-    EGLint      count, visualid;
-    EGLint      major, minor;
+    EGLDisplay        dpy;
+    EGLConfig         config;
+    EGLConfig         configs[1024];
+    XWindowAttributes attr;
+    XVisualInfo       visual_info;
+    EGLint            count, visualid;
+    EGLint            major, minor;
 
     const EGLint config_attribs[] =
     {
       EGL_SURFACE_TYPE,         EGL_WINDOW_BIT,
-      EGL_RED_SIZE,             8,
-      EGL_GREEN_SIZE,           8,
-      EGL_BLUE_SIZE,            8,
-      EGL_ALPHA_SIZE,           8,
-      EGL_DEPTH_SIZE,           24,
+      EGL_RED_SIZE,             1,
+      EGL_GREEN_SIZE,           1,
+      EGL_BLUE_SIZE,            1,
+      EGL_ALPHA_SIZE,           1,
+      EGL_DEPTH_SIZE,           1,
       EGL_RENDERABLE_TYPE,      EGL_OPENGL_ES2_BIT,
       EGL_CONFIG_CAVEAT,        EGL_NONE,
       EGL_NONE,
@@ -284,19 +286,31 @@ namespace nux
 
     eglBindAPI (EGL_OPENGL_ES_API);
 
-    if (!eglChooseConfig (dpy, config_attribs, &config, 1, &count))
+    if (!eglChooseConfig (dpy, config_attribs, configs, 1024, &count))
     {
       nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get EGL config."));
       return false;
     }
 
-    if (!eglGetConfigAttrib(dpy, config, EGL_NATIVE_VISUAL_ID, &visualid))
+    if (!XGetWindowAttributes (m_X11Display, DefaultRootWindow (m_X11Display), &attr))
     {
-      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] eglGetConfigAttrib() failed"));
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get Window attributes."));
       return false;
     }
 
-    // the X window visual must match the EGL config
+    visualid = XVisualIDFromVisual (attr.visual);
+    config = configs[0];
+    for (int i = 0; i < count; i++)
+    {
+      EGLint val;
+      eglGetConfigAttrib (dpy, configs[i], EGL_NATIVE_VISUAL_ID, &val);
+      if (visualid == val)
+      {
+        config = configs[i];
+        break;
+      }
+    }
+
     visual_info.visualid = visualid;
     m_X11VisualInfo = XGetVisualInfo (m_X11Display, VisualIDMask, &visual_info, &count);
     if (!m_X11VisualInfo)
