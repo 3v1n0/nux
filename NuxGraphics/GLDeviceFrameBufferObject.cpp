@@ -177,7 +177,13 @@ namespace nux
       CHECKGL ( glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_fboId) );
     }
 #else
-    CHECKGL ( glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_fboId) );
+    // Only binds if m_fboId is different than the currently bound FBO
+    CHECKGL ( glGetIntegerv ( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ) );
+
+    if (m_fboId != m_savedFboId)
+    {
+      CHECKGL ( glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId) );
+    }
 #endif
   }
 
