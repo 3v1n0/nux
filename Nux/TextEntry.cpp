@@ -184,6 +184,9 @@ namespace nux
 
   TextEntry::~TextEntry ()
   {
+    if(cursor_blink_timer_)
+      g_source_remove(cursor_blink_timer_);
+
     cairo_font_options_destroy (font_options_);
     if (_texture2D)
       _texture2D->UnReference ();
