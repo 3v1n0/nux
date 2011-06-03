@@ -23,31 +23,43 @@ TEST(TestLogger, TestModuleName) {
 
 TEST(TestLogger, TestSetLevel) {
   Logger logger("testing");
+  EXPECT_EQ(logger.GetLogLevel(), NOT_SPECIFIED);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), WARNING);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_TRUE(logger.IsWarningEnabled());
   EXPECT_FALSE(logger.IsInfoEnabled());
   EXPECT_FALSE(logger.IsDebugEnabled());
   logger.SetLogLevel(DEBUG);
+  EXPECT_EQ(logger.GetLogLevel(), DEBUG);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), DEBUG);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_TRUE(logger.IsWarningEnabled());
   EXPECT_TRUE(logger.IsInfoEnabled());
   EXPECT_TRUE(logger.IsDebugEnabled());
   logger.SetLogLevel(INFO);
+  EXPECT_EQ(logger.GetLogLevel(), INFO);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), INFO);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_TRUE(logger.IsWarningEnabled());
   EXPECT_TRUE(logger.IsInfoEnabled());
   EXPECT_FALSE(logger.IsDebugEnabled());
   logger.SetLogLevel(WARNING);
+  EXPECT_EQ(logger.GetLogLevel(), WARNING);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), WARNING);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_TRUE(logger.IsWarningEnabled());
   EXPECT_FALSE(logger.IsInfoEnabled());
   EXPECT_FALSE(logger.IsDebugEnabled());
   logger.SetLogLevel(ERROR);
+  EXPECT_EQ(logger.GetLogLevel(), ERROR);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), ERROR);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_FALSE(logger.IsWarningEnabled());
   EXPECT_FALSE(logger.IsInfoEnabled());
   EXPECT_FALSE(logger.IsDebugEnabled());
-
+  logger.SetLogLevel(NOT_SPECIFIED);
+  EXPECT_EQ(logger.GetLogLevel(), NOT_SPECIFIED);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), WARNING);
 }
 
 TEST(TestLogger, TestLevelsSharedForSameModule) {
