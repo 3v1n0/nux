@@ -57,6 +57,9 @@ namespace nux
 
   NString gFontFragShader = TEXT ("                                         \n\
   #extension GL_ARB_texture_rectangle : enable                              \n\
+  #ifdef GL_ES                                                              \n\
+  precision mediump float;                                                  \n\
+  #endif                                                                    \n\
   uniform vec4 TextColor;                                                   \n\
   varying vec4 oTexCoord0;                                                  \n\
   #ifdef SAMPLERTEX2D                                                       \n\
