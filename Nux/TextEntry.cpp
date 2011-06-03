@@ -212,7 +212,7 @@ namespace nux
     if (focused == true)
     {
       _block_focus = true;
-      SetCursor(0);
+      SetCursor(cursor_);
       QueueRefresh(true, true);
       
       Area *_parent = GetParentObject();
