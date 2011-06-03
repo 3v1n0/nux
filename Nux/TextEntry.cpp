@@ -137,7 +137,7 @@ namespace nux
     italic_ = false;
     multiline_ = false;
     wrap_ = false;
-    cursor_visible_ = true;
+    cursor_visible_ = false;
     readonly_ = false;
     content_modified_ = false;
     //selection_changed_ = false;
@@ -204,12 +204,13 @@ namespace nux
   void TextEntry::DoSetFocused (bool focused)
   {
     focused_ = focused;	
+    cursor_visible_ = focused; // visibilty of cursor depends on focus
     View::DoSetFocused (focused);
     if (focused == true)
     {
       _block_focus = true;
       SetCursor(0);
-      QueueRefresh(false, true);
+      QueueRefresh(true, true);
       
       Area *_parent = GetParentObject();
       if (_parent == NULL)
@@ -226,7 +227,10 @@ namespace nux
         parent->SetFocusControl (false);
       }
     }
-
+    else
+    {
+      QueueRefresh(true, false); // needed to hide cursor
+    }
   }
 
   void TextEntry::GeometryChanged ()
@@ -684,10 +688,11 @@ namespace nux
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
       }
+      cursor_visible_ = true; // show cursor when getting focus
       selection_changed_ = true;
       cursor_moved_ = true;
       // Don't adjust scroll.
-      QueueRefresh(false, false);
+      QueueRefresh(true, false);
     }
   }
 
@@ -701,10 +706,11 @@ namespace nux
         need_im_reset_ = true;
         //gtk_im_context_focus_out(im_context_);
       }
+      cursor_visible_ = false; // hide cursor when losing focus
       selection_changed_ = true;
       cursor_moved_ = true;
       // Don't adjust scroll.
-      QueueRefresh(false, false);
+      QueueRefresh(true, false);
     }
   }
 
