@@ -287,7 +287,7 @@ namespace nux
 
     EGLConfig config = configs[0];
     EGLint visualid = 0;
-    if (!eglGetConfigAttrib(dpy, configs[0], EGL_NATIVE_VISUAL_ID, &visualid))
+    if (!eglGetConfigAttrib(dpy, config, EGL_NATIVE_VISUAL_ID, &visualid))
     {
       nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get native visual ID from EGL config."));
       return false;
