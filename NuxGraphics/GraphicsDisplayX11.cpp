@@ -250,13 +250,20 @@ namespace nux
     }
 
 #ifdef NUX_OPENGLES_20
-    EGLDisplay        dpy;
-    EGLConfig         config;
-    EGLConfig         configs[1024];
-    XWindowAttributes attr;
-    XVisualInfo       visual_info;
-    EGLint            count, visualid;
+    EGLDisplay dpy = eglGetDisplay (static_cast<EGLNativeDisplayType>(m_X11Display));
+    if (dpy == EGL_NO_DISPLAY)
+    {
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get EGL display."));
+      return false;
+    }
     EGLint            major, minor;
+    if (!eglInitialize (dpy, &major, &minor))
+    {
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot initialize EGL."));
+      return false;
+    }
+
+    eglBindAPI (EGL_OPENGL_ES_API);
 
     const EGLint config_attribs[] =
     {
@@ -270,47 +277,23 @@ namespace nux
       EGL_CONFIG_CAVEAT,        EGL_NONE,
       EGL_NONE,
     };
-
-    const EGLint context_attribs[] =
-    {
-      EGL_CONTEXT_CLIENT_VERSION, 2,
-      EGL_NONE
-    };
-
-    dpy = eglGetDisplay ((EGLNativeDisplayType)m_X11Display);
-    if (!eglInitialize (dpy, &major, &minor))
-    {
-      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot initialize EGL."));
-      return false;
-    }
-
-    eglBindAPI (EGL_OPENGL_ES_API);
-
+    EGLConfig         configs[1024];
+    EGLint            count;
     if (!eglChooseConfig (dpy, config_attribs, configs, 1024, &count))
     {
       nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get EGL config."));
       return false;
     }
 
-    if (!XGetWindowAttributes (m_X11Display, DefaultRootWindow (m_X11Display), &attr))
+    EGLConfig config = configs[0];
+    EGLint visualid = 0;
+    if (!eglGetConfigAttrib(dpy, configs[0], EGL_NATIVE_VISUAL_ID, &visualid))
     {
-      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get Window attributes."));
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get native visual ID from EGL config."));
       return false;
     }
 
-    visualid = XVisualIDFromVisual (attr.visual);
-    config = configs[0];
-    for (int i = 0; i < count; i++)
-    {
-      EGLint val;
-      eglGetConfigAttrib (dpy, configs[i], EGL_NATIVE_VISUAL_ID, &val);
-      if (visualid == val)
-      {
-        config = configs[i];
-        break;
-      }
-    }
-
+    XVisualInfo       visual_info = {0};
     visual_info.visualid = visualid;
     m_X11VisualInfo = XGetVisualInfo (m_X11Display, VisualIDMask, &visual_info, &count);
     if (!m_X11VisualInfo)
@@ -554,6 +537,11 @@ namespace nux
       return false;
     }
 
+    const EGLint context_attribs[] =
+    {
+      EGL_CONTEXT_CLIENT_VERSION, 2,
+      EGL_NONE
+    };
     m_GLCtx = eglCreateContext (dpy, config, EGL_NO_CONTEXT, context_attribs);
     if (m_GLCtx == EGL_NO_CONTEXT)
     {
