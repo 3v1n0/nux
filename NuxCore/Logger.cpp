@@ -51,29 +51,29 @@ private:
 
 Logger::Impl::Impl(std::string const& module)
   : module_(module)
-  , level_(NOT_SPECIFIED)
+  , level_(WARNING)
 {
 
 }
 
 bool Logger::Impl::IsErrorEnabled() const
 {
-  return true;
+  return level_ <= ERROR;
 }
 
 bool Logger::Impl::IsWarningEnabled() const
 {
-  return true;
+  return level_ <= WARNING;
 }
 
 bool Logger::Impl::IsInfoEnabled() const
 {
-  return false;
+  return level_ <= INFO;
 }
 
 bool Logger::Impl::IsDebugEnabled() const
 {
-  return false;
+  return level_ <= DEBUG;
 }
 
 void Logger::Impl::SetLogLevel(Level level)
