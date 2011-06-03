@@ -34,6 +34,7 @@ enum Level
   DEBUG,
   INFO,
   WARNING,
+  ERROR,
   CRITICAL,
 };
 
