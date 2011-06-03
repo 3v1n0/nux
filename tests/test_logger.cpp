@@ -50,5 +50,13 @@ TEST(TestLogger, TestSetLevel) {
 
 }
 
+TEST(TestLogger, TestLevelsSharedForSameModule) {
+  Logger logger1("testing.module");
+  Logger logger2("testing.module");
 
+  logger1.SetLogLevel(INFO);
+  EXPECT_TRUE(logger1.IsInfoEnabled());
+  EXPECT_TRUE(logger2.IsInfoEnabled());
 }
+
+} // anon namespace
