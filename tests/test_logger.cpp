@@ -3,13 +3,13 @@
 #include <gtest/gtest.h>
 
 
-using nux::logging;
+using namespace nux::logging;
 
 namespace {
 
 TEST(TestLogger, TestDefaultConstruction) {
 
-  Logger logger;
+  Logger logger("");
 
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_TRUE(logger.IsWarningEnabled());
