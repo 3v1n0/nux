@@ -21,7 +21,7 @@
  */
 
 #include "Logger.h"
-
+#include "LoggerModules.h"
 
 namespace nux {
 namespace logging {
@@ -29,58 +29,52 @@ namespace logging {
 class Logger::Impl
 {
 public:
-  Impl(std::string const& module);
+  Impl(std::string const& module)
+    : module_(internal::LoggerModules::Instance().GetModule(module))
+    {}
 
   std::string const& module() const
     {
-      return module_;
+      return module_.module();
     }
 
-  bool IsErrorEnabled() const;
-  bool IsWarningEnabled() const;
-  bool IsInfoEnabled() const;
-  bool IsDebugEnabled() const;
+  bool IsErrorEnabled() const
+    {
+      return module_.IsErrorEnabled();
+    }
 
-  void SetLogLevel(Level level);
+  bool IsWarningEnabled() const
+    {
+      return module_.IsWarningEnabled();
+    }
+
+  bool IsInfoEnabled() const
+    {
+      return module_.IsInfoEnabled();
+    }
+
+  bool IsDebugEnabled() const
+    {
+      return module_.IsDebugEnabled();
+    }
+
+  void SetLogLevel(Level level)
+    {
+      module_.SetLogLevel(level);
+    }
+
+  Level GetLogLevel() const
+    {
+      return module_.GetLogLevel();
+    }
+  Level GetEffectiveLogLevel() const
+    {
+      return module_.GetEffectiveLogLevel();
+    }
 
 private:
-  std::string module_;
-  Level level_;
+  internal::LoggerModule& module_;
 };
-
-
-Logger::Impl::Impl(std::string const& module)
-  : module_(module)
-  , level_(WARNING)
-{
-
-}
-
-bool Logger::Impl::IsErrorEnabled() const
-{
-  return level_ <= ERROR;
-}
-
-bool Logger::Impl::IsWarningEnabled() const
-{
-  return level_ <= WARNING;
-}
-
-bool Logger::Impl::IsInfoEnabled() const
-{
-  return level_ <= INFO;
-}
-
-bool Logger::Impl::IsDebugEnabled() const
-{
-  return level_ <= DEBUG;
-}
-
-void Logger::Impl::SetLogLevel(Level level)
-{
-  level_ = level;
-}
-
 
 
 Logger::Logger(std::string const& component)
@@ -122,6 +116,17 @@ void Logger::SetLogLevel(Level level)
 {
   pimpl->SetLogLevel(level);
 }
+
+Level Logger::GetLogLevel() const
+{
+  return pimpl->GetLogLevel();
+}
+
+Level Logger::GetEffectiveLogLevel() const
+{
+  return pimpl->GetEffectiveLogLevel();
+}
+
 
 } // namespace logging
 } // namespace nux

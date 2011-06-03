@@ -59,4 +59,43 @@ TEST(TestLogger, TestLevelsSharedForSameModule) {
   EXPECT_TRUE(logger2.IsInfoEnabled());
 }
 
+TEST(TestLogger, TestLevelsInherited) {
+  Logger root("");
+  Logger first("first");
+  Logger second("first.second");
+
+  root.SetLogLevel(ERROR);
+  EXPECT_EQ(root.GetLogLevel(), ERROR);
+  EXPECT_EQ(root.GetEffectiveLogLevel(), ERROR);
+  EXPECT_EQ(first.GetLogLevel(), NOT_SPECIFIED);
+  EXPECT_EQ(first.GetEffectiveLogLevel(), ERROR);
+  EXPECT_EQ(second.GetLogLevel(), NOT_SPECIFIED);
+  EXPECT_EQ(second.GetEffectiveLogLevel(), ERROR);
+
+  first.SetLogLevel(DEBUG);
+  EXPECT_EQ(root.GetLogLevel(), ERROR);
+  EXPECT_EQ(root.GetEffectiveLogLevel(), ERROR);
+  EXPECT_EQ(first.GetLogLevel(), DEBUG);
+  EXPECT_EQ(first.GetEffectiveLogLevel(), DEBUG);
+  EXPECT_EQ(second.GetLogLevel(), NOT_SPECIFIED);
+  EXPECT_EQ(second.GetEffectiveLogLevel(), DEBUG);
+
+  second.SetLogLevel(INFO);
+  EXPECT_EQ(root.GetLogLevel(), ERROR);
+  EXPECT_EQ(root.GetEffectiveLogLevel(), ERROR);
+  EXPECT_EQ(first.GetLogLevel(), DEBUG);
+  EXPECT_EQ(first.GetEffectiveLogLevel(), DEBUG);
+  EXPECT_EQ(second.GetLogLevel(), INFO);
+  EXPECT_EQ(second.GetEffectiveLogLevel(), INFO);
+
+  first.SetLogLevel(NOT_SPECIFIED);
+  EXPECT_EQ(root.GetLogLevel(), ERROR);
+  EXPECT_EQ(root.GetEffectiveLogLevel(), ERROR);
+  EXPECT_EQ(first.GetLogLevel(), NOT_SPECIFIED);
+  EXPECT_EQ(first.GetEffectiveLogLevel(), ERROR);
+  EXPECT_EQ(second.GetLogLevel(), INFO);
+  EXPECT_EQ(second.GetEffectiveLogLevel(), INFO);
+
+}
+
 } // anon namespace

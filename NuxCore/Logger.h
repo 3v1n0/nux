@@ -52,6 +52,8 @@ public:
   bool IsDebugEnabled() const;
 
   void SetLogLevel(Level level);
+  Level GetLogLevel() const;
+  Level GetEffectiveLogLevel() const;
 
 private:
   class Impl;
