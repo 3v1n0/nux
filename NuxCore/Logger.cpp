@@ -29,21 +29,29 @@ namespace logging {
 class Logger::Impl
 {
 public:
-  Impl(std::string const& component);
+  Impl(std::string const& module);
+
+  std::string const& module() const
+    {
+      return module_;
+    }
 
   bool IsErrorEnabled() const;
   bool IsWarningEnabled() const;
   bool IsInfoEnabled() const;
   bool IsDebugEnabled() const;
 
-private:
-  std::string component_;
+  void SetLogLevel(Level level);
 
+private:
+  std::string module_;
+  Level level_;
 };
 
 
-Logger::Impl::Impl(std::string const& component)
-  : component_(component)
+Logger::Impl::Impl(std::string const& module)
+  : module_(module)
+  , level_(NOT_SPECIFIED)
 {
 
 }
@@ -68,6 +76,11 @@ bool Logger::Impl::IsDebugEnabled() const
   return false;
 }
 
+void Logger::Impl::SetLogLevel(Level level)
+{
+  level_ = level;
+}
+
 
 
 Logger::Logger(std::string const& component)
@@ -78,6 +91,11 @@ Logger::Logger(std::string const& component)
 Logger::~Logger()
 {
   delete pimpl;
+}
+
+std::string const& Logger::module() const
+{
+  return pimpl->module();
 }
 
 bool Logger::IsErrorEnabled() const
@@ -100,6 +118,10 @@ bool Logger::IsDebugEnabled() const
   return pimpl->IsDebugEnabled();
 }
 
+void Logger::SetLogLevel(Level level)
+{
+  pimpl->SetLogLevel(level);
+}
 
 } // namespace logging
 } // namespace nux

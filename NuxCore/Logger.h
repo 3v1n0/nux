@@ -27,16 +27,30 @@
 namespace nux {
 namespace logging {
 
+enum Level
+{
+  NOT_SPECIFIED,
+  TRACE,
+  DEBUG,
+  INFO,
+  WARNING,
+  CRITICAL,
+};
+
 class Logger
 {
 public:
   Logger(std::string const& component);
   ~Logger();
 
+  std::string const& module() const;
+
   bool IsErrorEnabled() const;
   bool IsWarningEnabled() const;
   bool IsInfoEnabled() const;
   bool IsDebugEnabled() const;
+
+  void SetLogLevel(Level level);
 
 private:
   class Impl;
