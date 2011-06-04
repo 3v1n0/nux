@@ -372,7 +372,9 @@ GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
       int VertexLocation = sprog->GetAttributeLocation ("AVertex");
 
       int VPMatrixLocation = sprog->GetUniformLocationARB ("ViewProjectionMatrix");
-      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewProjectionMatrix().m) );
+      Matrix4 MVPMatrix = GetGraphicsDisplay()->GetGraphicsEngine ()->GetOpenGLModelViewProjectionMatrix ();
+
+      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (MVPMatrix.m) );
 
       int ColorBase    = sprog->GetUniformLocationARB ("Color");
       int RectPosition    = sprog->GetUniformLocationARB ("RectPosition");
