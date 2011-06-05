@@ -38,10 +38,10 @@ namespace nux
     m_blue = new ColorGradientPropertyItem (TEXT ("Blue") );
     m_alpha = new ColorGradientPropertyItem (TEXT ("Alpha") );
 
-    m_ColorModel = new PushButton (TEXT ("RGB"), NUX_TRACKER_LOCATION);
+    m_ColorModel = new ToggleButton ("RGB", NUX_TRACKER_LOCATION);
     m_ColorModel->SetMinMaxSize (32, 14);
     m_ColorModel->SetFont (GetSysBoldFont () );
-    m_ColorFormat = new PushButton (TEXT ("float"), NUX_TRACKER_LOCATION);
+    m_ColorFormat = new ToggleButton ("float", NUX_TRACKER_LOCATION);
     m_ColorFormat->SetMinMaxSize (32, 14);
     m_ColorFormat->SetFont (GetSysBoldFont () );
 
@@ -86,8 +86,8 @@ namespace nux
     m_blue->sigValueChanged.connect ( sigc::mem_fun (this, &RGBAPropertyItem::BlueChange) );
     m_alpha->sigValueChanged.connect ( sigc::mem_fun (this, &RGBAPropertyItem::AlphaChange) );
 
-    m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBAPropertyItem::OnChangeColorModel) );
-    m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBAPropertyItem::OnChangeColorFormat) );
+    //FIXME - m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBAPropertyItem::OnChangeColorModel) );
+    //FIXME - m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBAPropertyItem::OnChangeColorFormat) );
 
     NODE_SIG_CONNECT (m_red->sigValueChanged, RGBAPropertyItem, RecvPropertyChange);
     NODE_SIG_CONNECT (m_green->sigValueChanged, RGBAPropertyItem, RecvPropertyChange);
@@ -271,7 +271,7 @@ namespace nux
     if (cm == CM_RGB)
     {
       m_color_model = CM_RGB;
-      m_ColorModel->SetCaption (TEXT ("RGB") );
+      //FIXME - m_ColorModel->SetCaption (TEXT ("RGB") );
 
       m_red->SetName (TEXT ("Red") );
       m_green->SetName (TEXT ("Green") );
@@ -282,7 +282,7 @@ namespace nux
     if (cm == CM_HSV)
     {
       m_color_model = CM_HSV;
-      m_ColorModel->SetCaption (TEXT ("HSV") );
+      //FIXME - m_ColorModel->SetCaption (TEXT ("HSV") );
 
       m_red->SetName (TEXT ("Hue") );
       m_green->SetName (TEXT ("Saturation") );
@@ -293,7 +293,7 @@ namespace nux
     if (cm == CM_HLS)
     {
       m_color_model = CM_HLS;
-      m_ColorModel->SetCaption (TEXT ("HLS") );
+      //FIXME - m_ColorModel->SetCaption (TEXT ("HLS") );
 
       m_red->SetName (TEXT ("Hue") );
       m_green->SetName (TEXT ("Light") );
@@ -304,7 +304,7 @@ namespace nux
     if (cm == CM_YUV)
     {
       m_color_model = CM_YUV;
-      m_ColorModel->SetBaseString (TEXT ("YUV") );
+      //FIXME - m_ColorModel->SetBaseString (TEXT ("YUV") );
 
 //         m_ComponentLabel0->SetBaseString(TEXT("Y"));
 //         m_ComponentLabel1->SetBaseString(TEXT("U"));
@@ -319,17 +319,17 @@ namespace nux
     if (m_color_format == Color::COLORFORMAT_FLOAT)
     {
       m_color_format = Color::COLORFORMAT_INT;
-      m_ColorFormat->SetCaption (TEXT ("int") );
+      //FIXME - m_ColorFormat->SetCaption (TEXT ("int") );
     }
     else if (m_color_format == Color::COLORFORMAT_INT)
     {
       m_color_format = Color::COLORFORMAT_HEX;
-      m_ColorFormat->SetCaption (TEXT ("hex") );
+      //FIXME - m_ColorFormat->SetCaption (TEXT ("hex") );
     }
     else if (m_color_format == Color::COLORFORMAT_HEX)
     {
       m_color_format = Color::COLORFORMAT_FLOAT;
-      m_ColorFormat->SetCaption (TEXT ("float") );
+      //FIXME - m_ColorFormat->SetCaption (TEXT ("float") );
     }
 
     m_red->SetColorFormat (m_color_format);

@@ -22,19 +22,20 @@
 
 #ifndef ABSTRACTBUTTON_H
 #define ABSTRACTBUTTON_H
+#include "View.h"
 
 namespace nux
 {
 
   //! The base class of Button
-  class AbstractButton : public View
+  class AbstractButton : public View, virtual public Introspectable
   {
   public:
     AbstractButton (NUX_FILE_LINE_PROTO);
     ~AbstractButton();
 
     /* FIXME - read only property - don't know how to set that... */
-    Property<bool>          togglable;
+    Property<bool>    togglable;
     Property<bool>          active;
 
     /* NOTSURE - do we need an activated signal? technically you get that with active,
@@ -45,16 +46,12 @@ namespace nux
 
   protected:
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseUp          (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDown        (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseMove        (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseEnter       (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseLeave       (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvClick            (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
   private:
     void Init ();

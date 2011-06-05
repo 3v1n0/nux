@@ -37,9 +37,8 @@ namespace nux
   class VLayout;
   class EditTextBox;
   class CheckBox;
-  class RadioButton;
-  class RadioButtonGroup;
-  class PushButton;
+  class ToggleButton;
+  class Button;
 
   class ColorEditor;
   class ColorPreview;
@@ -157,27 +156,27 @@ namespace nux
     HLayout *greenlayout;
     HLayout *bluelayout;
 
-    RadioButton *redcheck;
+    Button *redcheck;
     EditTextBox *redtext;
-    RadioButton *greencheck;
+    Button *greencheck;
     EditTextBox *greentext;
-    RadioButton *bluecheck;
+    Button *bluecheck;
     EditTextBox *bluetext;
 
     HLayout *huelayout;
     HLayout *saturationlayout;
     HLayout *valuelayout;
 
-    RadioButton *huecheck;
+    Button *huecheck;
     EditTextBox *huetext;
-    RadioButton *saturationcheck;
+    Button *saturationcheck;
     EditTextBox *saturationtext;
-    RadioButton *valuecheck;
+    Button *valuecheck;
     EditTextBox *valuetext;
 
-    PushButton *OkButton;
-    PushButton *CancelButton;
-    RadioButtonGroup *radiogroup;
+    ToggleButton *OkButton;
+    ToggleButton *CancelButton;
+    //RadioButtonGroup *radiogroup;
 
     DoubleValidator m_Validator;
 

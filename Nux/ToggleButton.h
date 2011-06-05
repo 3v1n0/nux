@@ -20,8 +20,8 @@
  */
 
 
-#ifndef PUSHBUTTON_H
-#define PUSHBUTTON_H
+#ifndef TOGGLEBUTTON_H
+#define TOGGLEBUTTON_H
 #include "Button.h"
 
 namespace nux
@@ -32,12 +32,13 @@ namespace nux
   class ToggleButton: public Button
   {
   public:
-    ToggleButton (TextureArea *image, NUX_FILE_FILE_PROTO);
+    ToggleButton (TextureArea *image, NUX_FILE_LINE_PROTO);
     ToggleButton (const std::string label, NUX_FILE_LINE_PROTO);
     ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
     ToggleButton (NUX_FILE_LINE_PROTO);
+    ~ToggleButton ();
   };
 
 }
 
-#endif // PUSHBUTTON_H
+#endif // TOGGLEBUTTON_H

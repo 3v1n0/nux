@@ -41,18 +41,18 @@ namespace nux
 
     HLayout *ButtonLayout (new HLayout (TEXT ("Dialog Buttons") ) );
 
-    PushButton *OkButton (new PushButton (TEXT ("OK") ) );
+    ToggleButton *OkButton (new ToggleButton ("OK"));
     OkButton->SetMinimumWidth (60);
     OkButton->SetMinimumHeight (20);
 
-    PushButton *CancelButton (new PushButton (TEXT ("Cancel") ) );
+    ToggleButton *CancelButton (new ToggleButton ("Cancel"));
     CancelButton->SetMinimumWidth (60);
     CancelButton->SetMinimumHeight (20);
 
-    OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
-    OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix4DialogProxy::RecvDialogOk), matrixeditor) );
-    CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix4DialogProxy::RecvDialogCancel), matrixeditor) );
-    CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix4DialogProxy::RecvDialogOk), matrixeditor) );
+    //FIXME - CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix4DialogProxy::RecvDialogCancel), matrixeditor) );
+    //FIXME - CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
 
     ButtonLayout->SetHorizontalInternalMargin (6);
     ButtonLayout->SetVerticalExternalMargin (2);
@@ -150,20 +150,20 @@ namespace nux
     mtx_row_layout[2]   = new HLayout (NUX_TRACKER_LOCATION);
     mtx_row_layout[3]   = new HLayout (NUX_TRACKER_LOCATION);
 
-    m_IdentityMtxBtn    = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_ZeroMtxBtn        = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_InverseMtxBtn     = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_NegateMtxBtn      = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_IdentityMtxBtn    = new ToggleButton ("", NUX_TRACKER_LOCATION);
+    m_ZeroMtxBtn        = new ToggleButton ("", NUX_TRACKER_LOCATION);
+    m_InverseMtxBtn     = new ToggleButton ("", NUX_TRACKER_LOCATION);
+    m_NegateMtxBtn      = new ToggleButton ("", NUX_TRACKER_LOCATION);
 
     m_IdentityMtxBtn->EnableDoubleClick(false);
     m_ZeroMtxBtn->EnableDoubleClick(false);
     m_InverseMtxBtn->EnableDoubleClick(false);
     m_NegateMtxBtn->EnableDoubleClick(false);
 
-    m_IdentityMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvIdentityMatrixCmd) );
-    m_ZeroMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvZeroMatrixCmd) );
-    m_InverseMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvInverseMatrixCmd) );
-    m_NegateMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvNegateMatrixCmd) );
+    //FIXME - m_IdentityMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvIdentityMatrixCmd) );
+    //FIXME - m_ZeroMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvZeroMatrixCmd) );
+    //FIXME - m_InverseMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvInverseMatrixCmd) );
+    //FIXME - m_NegateMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvNegateMatrixCmd) );
 
     for (int i = 0; i < 4; i++)
     {
@@ -201,10 +201,10 @@ namespace nux
 
     mtx_layout->SetContentDistribution (eStackExpand);
 
-    m_IdentityMtxBtn->SetCaption (TEXT ("Id") );
-    m_ZeroMtxBtn->SetCaption (TEXT ("Zero") );
-    m_InverseMtxBtn->SetCaption (TEXT ("Inv") );
-    m_NegateMtxBtn->SetCaption (TEXT ("+/-") );
+    //FIXME - m_IdentityMtxBtn->SetCaption (TEXT ("Id") );
+    //FIXME - m_ZeroMtxBtn->SetCaption (TEXT ("Zero") );
+    //FIXME - m_InverseMtxBtn->SetCaption (TEXT ("Inv") );
+    //FIXME - m_NegateMtxBtn->SetCaption (TEXT ("+/-") );
 
     m_MtxFunctionLayout->AddView (m_IdentityMtxBtn, 0);
     m_MtxFunctionLayout->AddView (m_ZeroMtxBtn, 0);

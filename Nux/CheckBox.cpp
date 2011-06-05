@@ -33,10 +33,10 @@ namespace nux
   {
 
     // Set Geometry
-    m_CheckArea->SetMinimumSize (14, 14);
-    m_CheckArea->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
+    //m_CheckArea->SetMinimumSize (14, 14);
+    //m_CheckArea->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
 
-    m_TextArea->SetMinimumSize (14, 14);
+    //m_TextArea->SetMinimumSize (14, 14);
 
   }
 
@@ -49,18 +49,18 @@ namespace nux
     Geometry base = GetGeometry();
 
     GetPainter().PaintBackground (GfxContext, base);
-    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
-    InteractState is;
-    is.is_on = _state;
-    is.is_focus = m_TextArea->HasMouseFocus() ||
-                  HasMouseFocus() ||
-                  m_CheckArea->HasMouseFocus();
+    //GetPainter().PaintTextLineStatic (GfxContext, GetFont (), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+//     InteractState is;
+//     is.is_on = _state;
+//     is.is_focus = m_TextArea->HasMouseFocus() ||
+//                   HasMouseFocus() ||
+//                   m_CheckArea->HasMouseFocus();
+//
+//     is.is_prelight = m_TextArea->IsMouseInside()
+//                      || IsMouseInside() ||
+//                      m_CheckArea->IsMouseInside();
 
-    is.is_prelight = m_TextArea->IsMouseInside()
-                     || IsMouseInside() ||
-                     m_CheckArea->IsMouseInside();
-
-    GetPainter().PaintCheckBox (GfxContext, m_CheckArea->GetGeometry(), is, Color (0xff000000) );
+    //GetPainter().PaintCheckBox (GfxContext, GetGeometry(), is, Color (0xff000000) );
   }
 
 }

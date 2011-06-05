@@ -26,7 +26,7 @@
 namespace nux
 {
 
-  class PushButton;
+  class ToggleButton;
   class ColorGradientPropertyItem;
 
   class RGBAPropertyItem: public SectionProperty
@@ -110,8 +110,8 @@ namespace nux
     ColorGradientPropertyItem *m_alpha;
 
     float m_Red, m_Green, m_Blue, m_Alpha;
-    PushButton *m_ColorModel;
-    PushButton *m_ColorFormat;
+    ToggleButton *m_ColorModel;
+    ToggleButton *m_ColorFormat;
     enum eColorModel m_color_model;
     Color::Format m_color_format;
   };

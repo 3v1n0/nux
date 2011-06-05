@@ -25,7 +25,7 @@
 #include "HLayout.h"
 #include "VLayout.h"
 #include "EditTextBox.h"
-#include "PushButton.h"
+#include "ToggleButton.h"
 #include "HexRegExpValidator.h"
 #include "IntegerValidator.h"
 #include "DoubleValidator.h"
@@ -114,8 +114,8 @@ namespace nux
     vlayout             = new VLayout (TEXT ("RGBVLayout"), NUX_TRACKER_LOCATION);
     colormodel_layout   = new VLayout (TEXT ("ColorModel"), NUX_TRACKER_LOCATION);
 
-    m_ColorModel        = new PushButton();
-    m_ColorFormat       = new PushButton();
+    m_ColorModel        = new ToggleButton();
+    m_ColorFormat       = new ToggleButton();
 
     m_RedCaption        = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
     m_GreenCaption      = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
@@ -152,8 +152,8 @@ namespace nux
     m_GreenValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Green) );
     m_BlueValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Blue) );
     m_AlphaValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Alpha) );
-    m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorModel) );
-    m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorFormat) );
+    //FIXME - m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorModel) );
+    //FIXME - m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorFormat) );
 //    m_ColorModel->OnMouseDown.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->OnMouseUp.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->OnMouseEnter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
@@ -1376,7 +1376,7 @@ namespace nux
     if (cm == CM_RGB)
     {
       m_color_model = CM_RGB;
-      m_ColorModel->SetCaption (TEXT ("RGB") );
+      //FIXME - m_ColorModel->SetCaption (TEXT ("RGB") );
 
       m_ComponentLabel0->SetBaseString (TEXT ("R") );
       m_ComponentLabel1->SetBaseString (TEXT ("G") );
@@ -1388,7 +1388,7 @@ namespace nux
     if (cm == CM_HSV)
     {
       m_color_model = CM_HSV;
-      m_ColorModel->SetCaption (TEXT ("HSV") );
+      //FIXME - m_ColorModel->SetCaption (TEXT ("HSV") );
 
       m_ComponentLabel0->SetBaseString (TEXT ("H") );
       m_ComponentLabel1->SetBaseString (TEXT ("S") );
@@ -1399,7 +1399,7 @@ namespace nux
     if (cm == CM_HLS)
     {
       m_color_model = CM_HLS;
-      m_ColorModel->SetCaption (TEXT ("HLS") );
+      //FIXME - m_ColorModel->SetCaption (TEXT ("HLS") );
 
       m_ComponentLabel0->SetBaseString (TEXT ("H") );
       m_ComponentLabel1->SetBaseString (TEXT ("L") );

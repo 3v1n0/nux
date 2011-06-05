@@ -33,13 +33,14 @@ namespace nux
   {
     m_hlayout = new HLayout();
     m_TextEntry = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_OpenButton = new Button (TEXT (""), NUX_TRACKER_LOCATION);
+    m_OpenButton = new Button ("", NUX_TRACKER_LOCATION);
     m_hlayout->AddView (m_TextEntry, 1, eCenter);
     m_hlayout->AddView (m_OpenButton, 0, eCenter);
     m_hlayout->SetHorizontalInternalMargin (2);
     GetWindowThread ()->ComputeElementLayout (m_hlayout);
 
-    m_OpenButton->SetCaption (TEXT ("...") );
+    // FIXME - needs to be updated to the latest button codebase
+    //m_OpenButton->SetCaption (TEXT ("...") );
     m_OpenButton->SetMinimumSize (32, DEFAULT_WIDGET_HEIGHT);
   }
 

@@ -429,12 +429,12 @@ namespace nux
     t_u32 current_green_mask;
     t_u32 current_blue_mask;
     t_u32 current_alpha_mask;
-    
+
     // Get the current color mask and blend states. They will be restored later.
     GfxContext.GetRenderStates ().GetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
     GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
 
-    
+
     GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, WriteAlpha ? GL_TRUE : GL_FALSE);
     GfxContext.GetRenderStates().SetBlend (ROP.Blend, ROP.SrcBlend, ROP.DstBlend);
 

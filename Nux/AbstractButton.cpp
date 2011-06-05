@@ -29,17 +29,17 @@
 namespace nux
 {
 
-  AbstractButton::AbstractButton(NUX_FILE_LINE_PROTO)
-      : View (NUX_FILE_LINE_PARAM) {
+  AbstractButton::AbstractButton(NUX_FILE_LINE_DECL)
+      : View(NUX_FILE_LINE_PARAM)
+      , togglable(this, "togglable")
+      , active(this, "active") {
     Init();
   }
 
-  AbstractButton::~AbstractButton()
-      : View (NUX_FILE_LINE_PARAM) {
-    Init();
+  AbstractButton::~AbstractButton() {
   }
 
-  AbstractButton::Init () {
+  void AbstractButton::Init () {
     EnableDoubleClick (false);
   }
 
@@ -60,11 +60,20 @@ namespace nux
 
   }
 
+  long AbstractButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
+  }
+
   void AbstractButton::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags) {
+    state = NUX_STATE_PRELIGHT;
+    //state = 1;
     NeedRedraw();
   }
 
   void AbstractButton::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags) {
+    state = NUX_STATE_ACTIVE;
+    //state = 0;
     NeedRedraw();
   }
 
@@ -73,10 +82,14 @@ namespace nux
   }
 
   void AbstractButton::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags) {
+    state = NUX_STATE_PRELIGHT;
+    //state = 1;
     NeedRedraw();
   }
 
   void AbstractButton::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags) {
+    state = NUX_STATE_NORMAL;
+    //state = 3;
     NeedRedraw();
   }
 }

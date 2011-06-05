@@ -31,7 +31,8 @@ test_nux_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_SOURCES = \
-  test_properties.cpp
+  test_properties.cpp \
+  test_abstract_button.cpp
 
 gtest_nux_core_CPPFLAGS = \
   -I$(srcdir) \

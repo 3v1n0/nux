@@ -22,34 +22,44 @@
 
 #include "Nux.h"
 #include "Button.h"
+#include "PangoText.h"
 #include "HLayout.h"
+#include "VLayout.h"
 #include "TextureArea.h"
 
 namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE (Button);
 
-  Button::Button (TextureArea *image, NUX_FILE_FILE_PROTO)
-      : AbstractButton (NUX_FILE_LINE_PARAM) {
-    Init();
+  Button::Button (TextureArea *image, NUX_FILE_LINE_DECL)
+      : AbstractButton (NUX_FILE_LINE_PARAM)
+      , label (this, "label")
+      , image_position (this, "image_position") {
     this->image = image;
+    Init();
   }
 
-  Button::Button (const std::string label, NUX_FILE_LINE_PROTO)
-      : AbstractButton (NUX_FILE_LINE_PARAM) {
-    Init();
+Button::Button (const std::string label, NUX_FILE_LINE_DECL)
+      : AbstractButton (NUX_FILE_LINE_PARAM)
+      , label (this, "label")
+      , image_position (this, "image_position") {
     this->label = label;
+    Init();
   }
 
-  Button::Button (const std::string label, BaseTexture *image, NUX_FILE_LINE_PROTO)
-      : AbstractButton (NUX_FILE_LINE_PARAM) {
-    Init();
+Button::Button (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
+      : AbstractButton (NUX_FILE_LINE_PARAM)
+      , label (this, "label")
+      , image_position (this, "image_position") {
     this->label = label;
     this->image = image;
+    Init();
   }
 
-  Button::Button (NUX_FILE_LINE_PROTO)
-      : AbstractButton (NUX_FILE_LINE_PARAM) {
+Button::Button (NUX_FILE_LINE_DECL)
+      : AbstractButton (NUX_FILE_LINE_PARAM)
+      , label (this, "label")
+      , image_position (this, "image_position") {
     Init();
   }
 
@@ -60,31 +70,44 @@ namespace nux
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetTextColor (Colors::Black);
-    state.changed.connect (sigc::mem_fun(this, &OnStateChanged));
+    state.changed.connect (sigc::mem_fun(this, &Button::OnStateChanged));
 
     // connect up to the imag/label signals
-    label.changed.connect (sigc::mem_fun(this, &OnLabelChanged));
-    image.changed.connect (sigc::mem_fun(this, &OnImageChanged));
-    image_position.changed.connect (sigc::mem_fun(this, &OnImagePositionChanged));
+    label.changed.connect (sigc::mem_fun(this, &Button::OnLabelChanged));
+
+    //FIXME - enable this once properties work.
+    //image.changed.connect (sigc::mem_fun(this, &Button::OnImageChanged));
+    image_position.changed.connect (sigc::mem_fun(this, &Button::OnImagePositionChanged));
 
     Layout *layout = new HLayout (NUX_TRACKER_LOCATION);
     SetLayout (layout);
-    image_position = NUX_POS_LEFT;
+    image_position = NUX_POSITION_LEFT;
+
+    RebuildLayout();
   }
 
-  void Button::OnStateChanged () {
+  void Button::SetImage (TextureArea *image) {
+    this->image = image;
+    OnImageChanged (this->image);
+  }
+
+  TextureArea *Button::GetImage () {
+    return this->image;
+  }
+
+  void Button::OnStateChanged (int value) {
     NeedRedraw();
   }
 
-  void Button::OnLabelChanged () {
+  void Button::OnLabelChanged (std::string value) {
     RebuildLayout ();
   }
 
-  void Button::OnImageChanged () {
+  void Button::OnImageChanged (TextureArea *value) {
     RebuildLayout ();
   }
 
-  void Button::OnImagePositionChanged () {
+  void Button::OnImagePositionChanged (int value) {
     RebuildLayout ();
   }
 
@@ -97,42 +120,49 @@ namespace nux
       layout = new VLayout (NUX_TRACKER_LOCATION);
     }
 
-    PangoText *text = new PangoText(label.c_str());
+    PangoText *text = new PangoText(TEXT (label().c_str()));
 
     if (image_position == NUX_POSITION_LEFT || image_position == NUX_POSITION_TOP) {
-      layout->AddView(image, 1, nux::MINOR_POSITION_LEFT, nux::MINOR_SIZE_MATCHCONTENT,);
-      layout->AddView(text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT,);
+      layout->AddView(image, 1, nux::MINOR_POSITION_LEFT, nux::MINOR_SIZE_MATCHCONTENT);
+      layout->AddView(text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
     } else {
-      layout->AddView(text, 1, nux::MINOR_POSITION_LEFT, nux::MINOR_SIZE_MATCHCONTENT,);
-      layout->AddView(image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT,);
+      layout->AddView(text, 1, nux::MINOR_POSITION_LEFT, nux::MINOR_SIZE_MATCHCONTENT);
+      layout->AddView(image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
     }
 
     // NOTE - setting the layout here, unreferences the previous one, should cause all the memory
     // to be freed
     SetLayout (layout);
 
-    NeedsRedraw();
-  }
-  long Button::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {
-    long ret = TraverseInfo;
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
+    NeedRedraw();
   }
 
   void Button::Draw (GraphicsEngine &GfxContext, bool force_draw) {
     Geometry base = GetGeometry();
 
     //FIXME - nux button theming only supports a few states - low priority really.
-    if (active || HasMouseFocus()) {
+    //if (state == NUX_STATE_ACTIVE) {
+    if (state == 0) {
       //FIXME - this uses eBUTTON_FOCUS but that's badly named, focus really means "mouse down" or "activated"
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Colors::White, eAllCorners);
       GetPainter().PopBackground();
-    } else if (state == NUX_STATE_PRELIGHT) {
+    //} else if (state == NUX_STATE_PRELIGHT) {
+    } else if (state == 1) {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, Colors::White, eAllCorners);
       GetPainter().PopBackground();
     } else {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Colors::White, eAllCorners);
       GetPainter().PopBackground();
     }
+  }
+
+  void Button::DrawContent (GraphicsEngine &GfxContent, bool force_draw) {
+    nux::Geometry base = GetGeometry ();
+    GfxContent.PushClippingRectangle (base);
+
+    if (GetCompositionLayout ())
+      GetCompositionLayout ()->ProcessDraw (GfxContent, force_draw);
+
+    GfxContent.PopClippingRectangle();
   }
 }

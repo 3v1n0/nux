@@ -32,6 +32,7 @@ namespace nux
 
   View::View (NUX_FILE_LINE_DECL)
     :   InputArea (NUX_FILE_LINE_PARAM)
+    ,   state (this, "state")
   {
     _font = GetSysFont ();
     _is_view_active     = true; // The view is active by default
@@ -41,7 +42,7 @@ namespace nux
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
     _can_pass_focus_to_composite_layout = true;
     _can_focus          = true;
-    state               = NUX_STATE_NORMAL;
+    //state               = NUX_STATE_NORMAL;
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -54,7 +55,7 @@ namespace nux
     {
       nux::GetWindowThread ()->SetFocusedArea (NULL);
     }
-    
+
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
     GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
@@ -81,7 +82,7 @@ namespace nux
       GetLayout ()->SetFocused (false);
       GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
     }
-    
+
     if (parent != NULL && parent->IsLayout ())
     {
       Layout *parent_layout = (Layout *)parent;
@@ -291,7 +292,7 @@ namespace nux
 
   void View::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
-    
+
   }
 
   void View::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
@@ -304,7 +305,7 @@ namespace nux
     //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetWindowThread ();
     if(application)
-    {       
+    {
       application->AddToDrawList(this);
       application->RequestRedraw();
       //GetWindowCompositor().AddToDrawList(this);
@@ -408,7 +409,7 @@ namespace nux
     return true;
   }
 
-  //propogate the signal 
+  //propogate the signal
   void View::OnChildFocusChanged (Area *parent, Area *child)
   {
     ChildFocusChanged.emit (parent, child);
@@ -518,7 +519,7 @@ namespace nux
     }
 
     InputArea::DoSetFocused (focused);
-    
+
     if (HasPassiveFocus ())
     {
       Layout *layout = GetLayout ();
@@ -556,10 +557,10 @@ namespace nux
   {
     if (IsVisible () == false)
       return false;
-    
+
     if (_can_focus == false)
       return false;
-    
+
     if (_can_pass_focus_to_composite_layout)
     {
       if (GetLayout () != NULL)

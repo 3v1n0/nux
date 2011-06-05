@@ -32,12 +32,14 @@ namespace nux
 
   class Layout;
 
+  /* FIXME - this needs to be somewhere more obvious */
   enum State
   {
-    NUX_STATE_ACTIVE,
-    NUX_STATE_PRELIGHT,
-    NUX_STATE_SELECTED,
-    NUX_STATE_INSENSITIVE
+    NUX_STATE_ACTIVE = 0,
+    NUX_STATE_NORMAL = 1,
+    NUX_STATE_PRELIGHT = 2,
+    NUX_STATE_SELECTED = 3,
+    NUX_STATE_INSENSITIVE = 4
   };
 
   enum eControlType
@@ -50,7 +52,7 @@ namespace nux
     ePopupBox
   };
 
-  class View: public InputArea //Area
+  class View: public InputArea, virtual public Introspectable
   {
     NUX_DECLARE_OBJECT_TYPE (View, InputArea);
   public:
@@ -199,7 +201,8 @@ namespace nux
     bool HasPassiveFocus ();
 
     /* the current state of the widget. useful to lookup quickly */
-    nux::Property<State> state;
+    // FIXME - oh god, why is this a uint, oh god, make this an enum. tim save me!
+    nux::Property<int> state;
 
   protected:
     bool _can_focus;

@@ -38,26 +38,41 @@ namespace nux
     NUX_POSITION_BOTTOM
   };
 
-  class Button: public AbstractButton
+  class Button: public AbstractButton, virtual public Introspectable
   {
     NUX_DECLARE_OBJECT_TYPE (Button, View);
   public:
-    Button (TextureArea *image, NUX_FILE_FILE_PROTO);
+    Button (TextureArea *image, NUX_FILE_LINE_PROTO);
     Button (const std::string label, NUX_FILE_LINE_PROTO);
     Button (const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
     Button (NUX_FILE_LINE_PROTO);
     ~Button();
 
-    Property<Texturearea *> image;
+    // FIXME - property system doesn't allow objects.. soo yeah,
+    //Property<TextureArea *> image;
+    void SetImage (TextureArea *image);
+    TextureArea *GetImage ();
+
+
     Property<std::string>   label;
-    Property<Position>      image_position;
+    // FIXME - this should be the Position enum set above, can't do that because tim hates me
+    Property<int>           image_position;
 
   private:
-    void OnStateChanged ();
-    void OnLabelChanged ();
-    void OnImageChanged ();
-    void OnImagePositionChanged ();
+    void Init ();
+
+    void OnStateChanged (int value);
+    void OnLabelChanged (std::string value);
+    void OnImageChanged (TextureArea *value);
+    void OnImagePositionChanged (int value);
     void RebuildLayout ();
+
+    TextureArea *image;
+
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    //virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+
   };
 }
 

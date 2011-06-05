@@ -27,30 +27,26 @@
 
 namespace nux
 {
-  ToggleButton::ToggleButton (TextureArea *image, NUX_FILE_FILE_PROTO)
-  : AbstractButton (NUX_FILE_LINE_PARAM) {
-    Init();
-    this->image = image;
-  }
-
-  ToggleButton::ToggleButton (const std::string label, NUX_FILE_LINE_PROTO)
-  : AbstractButton (NUX_FILE_LINE_PARAM) {
-    Init();
-    this->label = label;
-  }
-
-  ToggleButton::ToggleButton (const std::string label, BaseTexture *image, NUX_FILE_LINE_PROTO)
-  : AbstractButton (NUX_FILE_LINE_PARAM) {
-    Init();
-    this->label = label;
-    this->image = image;
-  }
-
-  ToggleButton:ToggleButton (NUX_FILE_LINE_DECL)
-      : Button (Caption, NUX_FILE_LINE_PARAM) {
+ToggleButton::ToggleButton (TextureArea *image, NUX_FILE_LINE_DECL)
+  : Button (image, NUX_FILE_LINE_PARAM) {
     togglable = true;
   }
 
-  ToggleButton::~ToggleButton() {
+ToggleButton::ToggleButton (const std::string label, NUX_FILE_LINE_DECL)
+  : Button (label, NUX_FILE_LINE_PARAM) {
+    togglable = true;
+  }
+
+ToggleButton::ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
+  : Button (label,  image, NUX_FILE_LINE_PARAM) {
+    togglable = true;
+  }
+
+ToggleButton::ToggleButton (NUX_FILE_LINE_DECL)
+  : Button (NUX_FILE_LINE_PARAM) {
+    togglable = true;
+  }
+
+ToggleButton::~ToggleButton() {
   }
 }
