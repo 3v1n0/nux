@@ -250,7 +250,7 @@ namespace nux
     }
 
 #ifdef NUX_OPENGLES_20
-    EGLDisplay dpy = eglGetDisplay (static_cast<EGLNativeDisplayType>(m_X11Display));
+    EGLDisplay dpy = eglGetDisplay ((EGLNativeDisplayType)m_X11Display);
     if (dpy == EGL_NO_DISPLAY)
     {
       nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get EGL display."));
