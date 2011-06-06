@@ -21,7 +21,9 @@
  */
 
 #include "Logger.h"
-#include "LoggerModules.h"
+
+#include <map>
+#include <boost/utility.hpp>
 
 namespace nux {
 namespace logging {
