@@ -23,6 +23,7 @@
 #define NUX_CORE_LOGGER_H
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 namespace nux {
 namespace logging {
@@ -38,11 +39,13 @@ enum Level
   CRITICAL,
 };
 
+class LoggerModule;
+typedef boost::shared_ptr<LoggerModule> LoggerModulePtr;
+
 class Logger
 {
 public:
-  Logger(std::string const& component);
-  ~Logger();
+  Logger(std::string const& module);
 
   std::string const& module() const;
 
@@ -56,8 +59,7 @@ public:
   Level GetEffectiveLogLevel() const;
 
 private:
-  class Impl;
-  Impl* pimpl;
+  LoggerModulePtr pimpl;
 };
 
 }

@@ -26,65 +26,95 @@
 namespace nux {
 namespace logging {
 
-class Logger::Impl
+class LoggerModule
 {
 public:
-  Impl(std::string const& module)
-    : module_(internal::LoggerModules::Instance().GetModule(module))
-    {}
+  LoggerModule(std::string const& module, LoggerModulePtr const& parent);
 
-  std::string const& module() const
-    {
-      return module_.module();
-    }
+  std::string const& module() const;
 
-  bool IsErrorEnabled() const
-    {
-      return module_.IsErrorEnabled();
-    }
+  bool IsErrorEnabled() const;
+  bool IsWarningEnabled() const;
+  bool IsInfoEnabled() const;
+  bool IsDebugEnabled() const;
 
-  bool IsWarningEnabled() const
-    {
-      return module_.IsWarningEnabled();
-    }
-
-  bool IsInfoEnabled() const
-    {
-      return module_.IsInfoEnabled();
-    }
-
-  bool IsDebugEnabled() const
-    {
-      return module_.IsDebugEnabled();
-    }
-
-  void SetLogLevel(Level level)
-    {
-      module_.SetLogLevel(level);
-    }
-
-  Level GetLogLevel() const
-    {
-      return module_.GetLogLevel();
-    }
-  Level GetEffectiveLogLevel() const
-    {
-      return module_.GetEffectiveLogLevel();
-    }
+  void SetLogLevel(Level level);
+  Level GetLogLevel() const;
+  Level GetEffectiveLogLevel() const;
 
 private:
-  internal::LoggerModule& module_;
+  std::string module_;
+  Level level_;
+  LoggerModulePtr parent_;
+};
+
+class LoggerModules : boost::noncopyable
+{
+public:
+  static LoggerModules& Instance();
+
+  LoggerModulePtr const& GetModule(std::string const& module);
+
+private:
+  LoggerModules();
+
+private:
+  typedef std::map<std::string, LoggerModulePtr> ModuleMap;
+  ModuleMap modules_;
+  LoggerModulePtr root_;
 };
 
 
-Logger::Logger(std::string const& component)
-  : pimpl(new Impl(component))
+inline std::string const& LoggerModule::module() const
 {
+  return module_;
 }
 
-Logger::~Logger()
+inline bool LoggerModule::IsErrorEnabled() const
 {
-  delete pimpl;
+  return GetEffectiveLogLevel() <= ERROR;
+}
+
+inline bool LoggerModule::IsWarningEnabled() const
+{
+  return GetEffectiveLogLevel() <= WARNING;
+}
+
+inline bool LoggerModule::IsInfoEnabled() const
+{
+  return GetEffectiveLogLevel() <= INFO;
+}
+
+inline bool LoggerModule::IsDebugEnabled() const
+{
+  return GetEffectiveLogLevel() <= DEBUG;
+}
+
+inline void LoggerModule::SetLogLevel(Level level)
+{
+  // The root module can't be unspecified.
+  if (module_ == "" && level == NOT_SPECIFIED)
+    level = WARNING;
+  level_ = level;
+}
+
+inline Level LoggerModule::GetLogLevel() const
+{
+  return level_;
+}
+
+inline Level LoggerModule::GetEffectiveLogLevel() const
+{
+  if (level_ == NOT_SPECIFIED && parent_)
+    return parent_->GetEffectiveLogLevel();
+  else
+    return level_;
+}
+
+
+Logger::Logger(std::string const& module)
+  : pimpl(LoggerModules::Instance().GetModule(module))
+{
 }
 
 std::string const& Logger::module() const
@@ -127,6 +157,49 @@ Level Logger::GetEffectiveLogLevel() const
   return pimpl->GetEffectiveLogLevel();
 }
 
+
+
+LoggerModule::LoggerModule(std::string const& module,
+                           LoggerModulePtr const& parent)
+  : module_(module)
+  , level_(NOT_SPECIFIED)
+  , parent_(parent)
+{
+}
+
+LoggerModules::LoggerModules()
+  : root_(new LoggerModule("", LoggerModulePtr()))
+{
+  // Make sure we have the root logger available.
+  root_->SetLogLevel(WARNING);
+  modules_.insert(ModuleMap::value_type("", root_));
+}
+
+LoggerModules& LoggerModules::Instance()
+{
+  static LoggerModules instance;
+  return instance;
+}
+
+LoggerModulePtr const& LoggerModules::GetModule(std::string const& module)
+{
+  ModuleMap::iterator i = modules_.find(module);
+  if (i != modules_.end())
+    return i->second;
+
+  // Make the new LoggerModule and its parents.
+  // Split on '.'
+  std::string::size_type idx = module.rfind(".");
+  LoggerModulePtr parent = root_;
+  if (idx != std::string::npos) {
+    parent = GetModule(module.substr(0, idx));
+  }
+  LoggerModulePtr logger(new LoggerModule(module, parent));
+  // std::map insert method returns a pair<iterator, bool> which seems
+  // overly annoying to make a temporary of, so just return the const
+  // reference pointed to by the interator.
+  return modules_.insert(ModuleMap::value_type(module, logger)).first->second;
+}
 
 } // namespace logging
 } // namespace nux

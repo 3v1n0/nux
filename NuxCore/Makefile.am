@@ -51,7 +51,6 @@ source_cpp = \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
   $(srcdir)/Logger.cpp \
-  $(srcdir)/LoggerModules.cpp \
   $(srcdir)/NUniqueIndex.cpp \
   $(srcdir)/GlobalInitializer.cpp \
   $(srcdir)/ObjectType.cpp \
