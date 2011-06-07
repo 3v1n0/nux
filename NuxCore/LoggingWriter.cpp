@@ -54,6 +54,8 @@ const char* severity_string(Level severity)
     return "INFO ";
   case DEBUG:
     return "DEBUG";
+  case TRACE:
+    return "TRACE";
   default:
     // We technically shouldn't get this.
     return "     ";
@@ -79,6 +81,7 @@ public:
   Impl();
 
   void WriteMessage(Level severity,
+                    std::string const& module,
                     std::string const& filename,
                     int line_number,
                     std::time_t timestamp,
@@ -103,6 +106,7 @@ void Writer::Impl::SetOutputStream(std::ostream& out)
 }
 
 void Writer::Impl::WriteMessage(Level severity,
+                                std::string const& module,
                                 std::string const& filename,
                                 int line_number,
                                 std::time_t timestamp,
@@ -113,6 +117,7 @@ void Writer::Impl::WriteMessage(Level severity,
   // output stream.
   std::stringstream sout;
   sout << severity_string(severity)
+       << " " << module
        << " " << timestamp_string(timestamp)
        << " " << filename << ":" << line_number
        << " " << message;
@@ -141,12 +146,14 @@ Writer& Writer::Instance()
 }
 
 void Writer::WriteMessage(Level severity,
+                          std::string const& module,
                           std::string const& filename,
                           int line_number,
                           std::time_t timestamp,
                           std::string const& message)
 {
-  pimpl->WriteMessage(severity, filename, line_number, timestamp, message);
+  pimpl->WriteMessage(severity, module, filename, line_number,
+                      timestamp, message);
 }
 
 void Writer::SetOutputStream(std::ostream& out)

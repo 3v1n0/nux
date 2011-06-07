@@ -21,8 +21,10 @@
  */
 
 #include "Logger.h"
+#include "LoggingWriter.h"
 
 #include <map>
+#include <sstream>
 #include <boost/utility.hpp>
 
 namespace nux {
@@ -201,6 +203,65 @@ LoggerModulePtr const& LoggerModules::GetModule(std::string const& module)
   // overly annoying to make a temporary of, so just return the const
   // reference pointed to by the interator.
   return modules_.insert(ModuleMap::value_type(module, logger)).first->second;
+}
+
+
+class LogStreamBuffer : public std::stringbuf
+{
+public:
+  LogStreamBuffer(Level severity,
+                  std::string const& module,
+                  std::string const& filename,
+                  int line_number);
+protected:
+  virtual int sync();
+private:
+  Level severity_;
+  std::string module_;
+  std::string filename_;
+  int line_number_;
+  std::time_t timestamp_;
+};
+
+LogStream::LogStream(Level severity,
+                     std::string const& module,
+                     std::string const& filename,
+                     int line_number)
+  : std::ostream(0)
+{
+  // Set the buffer with a dynamically created LogStreamBuffer.
+  LogStreamBuffer* buff = new LogStreamBuffer(severity, module,
+                                              filename, line_number);
+  rdbuf(buff);
+}
+
+LogStream::~LogStream()
+{
+  std::streambuf* buff = rdbuf(0);
+  delete buff;
+}
+
+
+LogStreamBuffer::LogStreamBuffer(Level severity,
+                                 std::string const& module,
+                                 std::string const& filename,
+                                 int line_number)
+  : severity_(severity)
+  , module_(module)
+  , filename_(filename)
+  , line_number_(line_number)
+  , timestamp_(std::time(0))
+{
+}
+
+int LogStreamBuffer::sync()
+{
+  std::string message = str();
+  // reset the stream
+  str("");
+  Writer::Instance().WriteMessage(severity_, module_, filename_, line_number_,
+                                  timestamp_, message);
+  return 0; // success
 }
 
 } // namespace logging

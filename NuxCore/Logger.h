@@ -22,6 +22,7 @@
 #ifndef NUX_CORE_LOGGER_H
 #define NUX_CORE_LOGGER_H
 
+#include <ostream>
 #include <string>
 #include <boost/shared_ptr.hpp>
 
@@ -38,6 +39,18 @@ enum Level
   ERROR,
   CRITICAL,
 };
+
+
+class LogStream : public std::ostream
+{
+public:
+  LogStream(Level severity,
+            std::string const& module,
+            std::string const& filename,
+            int line_number);
+  ~LogStream();
+};
+
 
 class LoggerModule;
 typedef boost::shared_ptr<LoggerModule> LoggerModulePtr;

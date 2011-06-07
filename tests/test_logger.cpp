@@ -118,10 +118,10 @@ TEST(TestLoggingWriter, TestWriteMessage) {
   Writer& writer = Writer::Instance();
   writer.SetOutputStream(out);
   std::time_t now = std::time(0);
-  writer.WriteMessage(ERROR, "testfile.cpp", 1234, now, "my message");
+  writer.WriteMessage(ERROR, "test.module", "testfile.cpp", 1234, now, "my message");
   std::string result = out.str();
 
-  EXPECT_THAT(result, StartsWith("ERROR"));
+  EXPECT_THAT(result, StartsWith("ERROR test.module"));
   EXPECT_THAT(result, HasSubstr("testfile.cpp:1234"));
   EXPECT_THAT(result, EndsWith("my message\n"));
 

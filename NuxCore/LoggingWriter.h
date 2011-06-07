@@ -48,6 +48,7 @@ public:
   static Writer& Instance();
 
   void WriteMessage(Level severity,
+                    std::string const& module,
                     std::string const& filename,
                     int line_number,
                     std::time_t timestamp,
