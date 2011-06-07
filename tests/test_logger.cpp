@@ -1,9 +1,12 @@
 #include "NuxCore/Logger.h"
+#include "NuxCore/LoggingWriter.h"
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 
 using namespace nux::logging;
+using namespace testing;
 
 namespace {
 
@@ -107,6 +110,20 @@ TEST(TestLogger, TestLevelsInherited) {
   EXPECT_EQ(first.GetEffectiveLogLevel(), ERROR);
   EXPECT_EQ(second.GetLogLevel(), INFO);
   EXPECT_EQ(second.GetEffectiveLogLevel(), INFO);
+}
+
+
+TEST(TestLoggingWriter, TestWriteMessage) {
+  std::stringstream out;
+  Writer& writer = Writer::Instance();
+  writer.SetOutputStream(out);
+  std::time_t now = std::time(0);
+  writer.WriteMessage(ERROR, "testfile.cpp", 1234, now, "my message");
+  std::string result = out.str();
+
+  EXPECT_THAT(result, StartsWith("ERROR"));
+  EXPECT_THAT(result, HasSubstr("testfile.cpp:1234"));
+  EXPECT_THAT(result, EndsWith("my message\n"));
 
 }
 
