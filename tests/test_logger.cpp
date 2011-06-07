@@ -146,5 +146,19 @@ TEST(TestLogStream, TestOutput) {
   EXPECT_THAT(result, EndsWith("testing message\n"));
 }
 
+TEST(TestLogStream, TestTemporary) {
+  // First test is to make sure a LogStream can be constructed and destructed.
+  std::stringstream out;
+  Writer::Instance().SetOutputStream(out);
+
+  LogStream(DEBUG, "module", "filename", 42).stream() << "testing message";
+
+  std::string result = out.str();
+
+  EXPECT_THAT(result, StartsWith("DEBUG module"));
+  EXPECT_THAT(result, HasSubstr("filename:42"));
+  EXPECT_THAT(result, EndsWith("testing message\n"));
+}
+
 
 } // anon namespace

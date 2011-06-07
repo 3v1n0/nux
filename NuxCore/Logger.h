@@ -49,6 +49,8 @@ public:
             std::string const& filename,
             int line_number);
   ~LogStream();
+
+  std::ostream& stream() { return *this; }
 };
 
 
