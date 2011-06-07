@@ -26,6 +26,10 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
+#define LOG_DEBUG(logger) \
+  if (!logger.IsDebugEnabled()) {} \
+  else LogStream(DEBUG, logger.module(), __FILE__, __LINE__).stream()
+
 namespace nux {
 namespace logging {
 

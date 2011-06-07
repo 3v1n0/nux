@@ -117,12 +117,15 @@ TEST(TestLoggingWriter, TestWriteMessage) {
   std::stringstream out;
   Writer& writer = Writer::Instance();
   writer.SetOutputStream(out);
-  std::time_t now = std::time(0);
-  writer.WriteMessage(ERROR, "test.module", "testfile.cpp", 1234, now, "my message");
+  // This time is known to be: 2010-09-10 12:34:45
+  std::time_t when = 1284078885;
+  writer.WriteMessage(ERROR, "test.module", "testfile.cpp",
+                      1234, when, "my message");
   std::string result = out.str();
 
   EXPECT_THAT(result, StartsWith("ERROR test.module"));
   EXPECT_THAT(result, HasSubstr("testfile.cpp:1234"));
+  EXPECT_THAT(result, HasSubstr("2010-09-10 12:34:45"));
   EXPECT_THAT(result, EndsWith("my message\n"));
 }
 
@@ -158,6 +161,29 @@ TEST(TestLogStream, TestTemporary) {
   EXPECT_THAT(result, StartsWith("DEBUG module"));
   EXPECT_THAT(result, HasSubstr("filename:42"));
   EXPECT_THAT(result, EndsWith("testing message\n"));
+}
+
+TEST(TestLogStream, TestDebugMacro) {
+  // First test is to make sure a LogStream can be constructed and destructed.
+  std::stringstream out;
+  Writer::Instance().SetOutputStream(out);
+  int counter = 0;
+
+  Logger logger("test.module");
+
+  LOG_DEBUG(logger) << ++counter << "Not output, as not debug.";
+
+  logger.SetLogLevel(DEBUG);
+
+  LOG_DEBUG(logger) << ++counter << " Is output now.";
+
+  std::string result = out.str();
+
+  EXPECT_THAT(result, StartsWith("DEBUG test.module"));
+  EXPECT_THAT(result, HasSubstr("test_logger.cpp"));
+  EXPECT_THAT(result, EndsWith("1 Is output now.\n"));
+  // Also only one line.
+  EXPECT_THAT(counter, Eq(1));
 }
 
 

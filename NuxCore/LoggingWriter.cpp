@@ -117,8 +117,8 @@ void Writer::Impl::WriteMessage(Level severity,
   // output stream.
   std::stringstream sout;
   sout << severity_string(severity)
-       << " " << module
        << " " << timestamp_string(timestamp)
+       << " " << module
        << " " << filename << ":" << line_number
        << " " << message;
   for (OutputStreams::iterator i = output_streams_.begin(), end = output_streams_.end();

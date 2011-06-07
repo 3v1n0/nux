@@ -162,7 +162,6 @@ Level Logger::GetEffectiveLogLevel() const
 }
 
 
-
 LoggerModule::LoggerModule(std::string const& module,
                            LoggerModulePtr const& parent)
   : module_(module)
