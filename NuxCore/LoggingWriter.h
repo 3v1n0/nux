@@ -32,7 +32,7 @@
  * logging message go.  For testing purposes it is able to define the logging
  * stream, normally a std::stringstream.
  *
- * The default behaviour is to output to std::cerr.
+ * The default behaviour is to output to std::cout.
  *
  * As far as logging the timestamp goes, we only go to second precision in the
  * logging format itself.  If a high performance timer is needed it should be

@@ -96,7 +96,7 @@ private:
 
 Writer::Impl::Impl()
 {
-  output_streams_.push_back(StreamWrapper::Ptr(new StreamWrapper(std::cerr)));
+  output_streams_.push_back(StreamWrapper::Ptr(new StreamWrapper(std::cout)));
 }
 
 void Writer::Impl::SetOutputStream(std::ostream& out)

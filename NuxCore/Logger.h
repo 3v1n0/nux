@@ -28,7 +28,17 @@
 
 #define LOG_DEBUG(logger) \
   if (!logger.IsDebugEnabled()) {} \
-  else LogStream(DEBUG, logger.module(), __FILE__, __LINE__).stream()
+  else ::nux::logging::LogStream(::nux::logging::DEBUG, logger.module(), __FILE__, __LINE__).stream()
+#define LOG_INFO(logger) \
+  if (!logger.IsInfoEnabled()) {} \
+  else ::nux::logging::LogStream(::nux::logging::INFO, logger.module(), __FILE__, __LINE__).stream()
+#define LOG_WARN(logger) LOG_WARNING(logger)
+#define LOG_WARNING(logger) \
+  if (!logger.IsWarningEnabled()) {} \
+  else ::nux::logging::LogStream(::nux::logging::WARNING, logger.module(), __FILE__, __LINE__).stream()
+#define LOG_ERROR(logger) \
+  if (!logger.IsErrorEnabled()) {} \
+  else ::nux::logging::LogStream(::nux::logging::ERROR, logger.module(), __FILE__, __LINE__).stream()
 
 namespace nux {
 namespace logging {
