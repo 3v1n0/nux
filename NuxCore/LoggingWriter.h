@@ -22,6 +22,7 @@
 #ifndef NUX_CORE_LOGGING_WRITER_H
 #define NUX_CORE_LOGGING_WRITER_H
 
+#include <iosfwd>
 #include <ctime>
 #include <boost/utility.hpp>
 
@@ -56,6 +57,7 @@ public:
 
 private:
   Writer();
+  ~Writer();
 
 private:
   class Impl;
