@@ -124,7 +124,27 @@ TEST(TestLoggingWriter, TestWriteMessage) {
   EXPECT_THAT(result, StartsWith("ERROR test.module"));
   EXPECT_THAT(result, HasSubstr("testfile.cpp:1234"));
   EXPECT_THAT(result, EndsWith("my message\n"));
-
 }
+
+TEST(TestLogStream, TestSimpleConstruction) {
+  // First test is to make sure a LogStream can be constructed and destructed.
+  LogStream test(DEBUG, "module", "filename", 42);
+}
+
+TEST(TestLogStream, TestOutput) {
+  // First test is to make sure a LogStream can be constructed and destructed.
+  std::stringstream out;
+  Writer::Instance().SetOutputStream(out);
+
+  LogStream test(DEBUG, "module", "filename", 42);
+  test << "testing message" << std::flush;
+
+  std::string result = out.str();
+
+  EXPECT_THAT(result, StartsWith("DEBUG module"));
+  EXPECT_THAT(result, HasSubstr("filename:42"));
+  EXPECT_THAT(result, EndsWith("testing message\n"));
+}
+
 
 } // anon namespace

@@ -237,6 +237,7 @@ LogStream::LogStream(Level severity,
 
 LogStream::~LogStream()
 {
+  rdbuf()->pubsync();
   std::streambuf* buff = rdbuf(0);
   delete buff;
 }
@@ -246,7 +247,8 @@ LogStreamBuffer::LogStreamBuffer(Level severity,
                                  std::string const& module,
                                  std::string const& filename,
                                  int line_number)
-  : severity_(severity)
+  : std::stringbuf(std::ios_base::out)
+  , severity_(severity)
   , module_(module)
   , filename_(filename)
   , line_number_(line_number)
@@ -259,8 +261,11 @@ int LogStreamBuffer::sync()
   std::string message = str();
   // reset the stream
   str("");
-  Writer::Instance().WriteMessage(severity_, module_, filename_, line_number_,
-                                  timestamp_, message);
+  // Only log the message if there is something there.
+  if (!message.empty())
+    Writer::Instance().WriteMessage(severity_, module_,
+                                    filename_, line_number_,
+                                    timestamp_, message);
   return 0; // success
 }
 
