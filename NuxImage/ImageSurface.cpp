@@ -162,7 +162,7 @@ namespace nux
 
   ImageSurface::~ImageSurface()
   {
-    NUX_SAFE_DELETE (RawData_);
+    NUX_SAFE_DELETE_ARRAY (RawData_);
   }
 
   ImageSurface::ImageSurface (BitmapFormat format, t_u32 width, t_u32 height)

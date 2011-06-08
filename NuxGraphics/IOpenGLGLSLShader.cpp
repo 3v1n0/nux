@@ -224,7 +224,7 @@ namespace nux
     Memcpy (ShaderSource, _ShaderCode.GetTCharPtr(), CodeSize);
 
     CHECKGL ( glShaderSource (_OpenGLID, 1, (const GLcharARB **) &ShaderSource, NULL) );
-    delete ShaderSource;
+    delete[] ShaderSource;
 
     // compile vertex shader object
     CHECKGL ( glCompileShader (_OpenGLID) );
@@ -250,7 +250,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLVertexShader::Compile] glCompileShader: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
     }
 
     return (m_CompiledAndReady ? true : false);
@@ -303,7 +303,7 @@ namespace nux
     Memset (ShaderSource, 0, CodeSize + 1);
     Memcpy (ShaderSource, _ShaderCode.m_string.c_str(), CodeSize);
     CHECKGL ( glShaderSource (_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize) );
-    delete ShaderSource;
+    delete[] ShaderSource;
 
     // compile pixel shader object
     CHECKGL ( glCompileShader (_OpenGLID) );
@@ -329,7 +329,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLPixelShader::Compile] glCompileShader: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
     }
 
     return (m_CompiledAndReady ? true : false);
@@ -471,7 +471,7 @@ namespace nux
 
     if (NumAttachedShaders)
     {
-      delete ShaderObjects;
+      delete[] ShaderObjects;
     }
 
     for (int i = 0; i < (int) ShaderObjectList.size(); i++)
@@ -509,7 +509,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLShaderProgram::Link] glLinkProgram: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
       m_CompiledAndReady = false;
       return m_CompiledAndReady;
     }
@@ -536,7 +536,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLShaderProgram::Link] glValidateProgram: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
     }
 
     m_CompiledAndReady = true;
