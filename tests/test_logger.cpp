@@ -123,10 +123,7 @@ TEST(TestLoggingWriter, TestWriteMessage) {
                       1234, when, "my message");
   std::string result = out.str();
 
-  EXPECT_THAT(result, StartsWith("ERROR test.module"));
-  EXPECT_THAT(result, HasSubstr("testfile.cpp:1234"));
-  EXPECT_THAT(result, HasSubstr("2010-09-10 12:34:45"));
-  EXPECT_THAT(result, EndsWith("my message\n"));
+  EXPECT_THAT(result, Eq("ERROR 2010-09-10 12:34:45 test.module testfile.cpp:1234 my message\n"));
 }
 
 TEST(TestLogStream, TestSimpleConstruction) {
@@ -144,8 +141,8 @@ TEST(TestLogStream, TestOutput) {
 
   std::string result = out.str();
 
-  EXPECT_THAT(result, StartsWith("DEBUG module"));
-  EXPECT_THAT(result, HasSubstr("filename:42"));
+  EXPECT_THAT(result, StartsWith("DEBUG"));
+  EXPECT_THAT(result, HasSubstr("module filename:42"));
   EXPECT_THAT(result, EndsWith("testing message\n"));
 }
 
@@ -158,8 +155,8 @@ TEST(TestLogStream, TestTemporary) {
 
   std::string result = out.str();
 
-  EXPECT_THAT(result, StartsWith("DEBUG module"));
-  EXPECT_THAT(result, HasSubstr("filename:42"));
+  EXPECT_THAT(result, StartsWith("DEBUG"));
+  EXPECT_THAT(result, HasSubstr(" module filename:42"));
   EXPECT_THAT(result, EndsWith("testing message\n"));
 }
 
@@ -179,8 +176,8 @@ TEST(TestLogStream, TestDebugMacro) {
 
   std::string result = out.str();
 
-  EXPECT_THAT(result, StartsWith("DEBUG test.module"));
-  EXPECT_THAT(result, HasSubstr("test_logger.cpp"));
+  EXPECT_THAT(result, StartsWith("DEBUG"));
+  EXPECT_THAT(result, HasSubstr(" test.module test_logger.cpp"));
   EXPECT_THAT(result, EndsWith("1 Is output now.\n"));
   // Also only one line.
   EXPECT_THAT(counter, Eq(1));
