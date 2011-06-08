@@ -999,7 +999,7 @@ namespace nux
           (event.e_event == NUX_DND_DROP) ||
           (event.e_event == NUX_DND_ENTER) ||
           (event.e_event == NUX_DND_LEAVE) ||
-          (event.e_event == NUX_MOUSEWHEEL))
+          (event.e_event == NUX_MOUSE_WHEEL))
       {
           //DISPATCH EVENT HERE
           //event.Application = Application;
@@ -1760,7 +1760,7 @@ namespace nux
         (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
         (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
         (nux_event.e_event == NUX_WINDOW_MOUSELEAVE) ||
-        (nux_event.e_event == NUX_MOUSEWHEEL))
+        (nux_event.e_event == NUX_MOUSE_WHEEL))
     {
         //DISPATCH EVENT HERE
         //nux_event.Application = Application;

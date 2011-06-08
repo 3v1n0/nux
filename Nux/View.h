@@ -189,6 +189,8 @@ namespace nux
     */
     bool HasPassiveFocus ();
 
+    void IsHitDetectionSkipingChildren(bool skip_children);
+
   protected:
     bool _can_focus;
 
@@ -228,6 +230,8 @@ namespace nux
 
     virtual void GeometryChangePending ();
     virtual void GeometryChanged ();
+
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
     Layout *m_CompositionLayout;
 

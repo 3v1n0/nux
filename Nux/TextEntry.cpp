@@ -172,14 +172,14 @@ namespace nux
 
     OnKeyEvent.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
 
-    OnStartFocus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
-    OnEndFocus.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
+    OnStartKeyboardReceiver.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
+    OnStopKeyboardReceiver.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText (text);
 
-    EnableKeyboardFocusOnMouseDown (true);
-    //MainDraw (canvas_);
+    SetAcceptKeyboardEvent(true);
+    SetEnableDoubleClickEnable(true);
   }
 
   TextEntry::~TextEntry ()

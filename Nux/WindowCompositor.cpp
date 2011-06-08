@@ -61,7 +61,7 @@ namespace nux
     _mouse_focus_area           = NULL;
     _mouse_over_area            = NULL;
     _previous_mouse_over_area   = NULL;
-    _keyboard_focus_area        = NULL;
+    _keyboard_event_receiver    = NULL;
     _always_on_front_window     = NULL;
     _inside_event_processing    = false;
     _inside_rendering_cycle     = false;
@@ -70,6 +70,9 @@ namespace nux
     _pending_exclusive_input_mode_action = false;
 
     _dnd_area                   = NULL;
+    _mouse_over_view            = NULL;
+    _mouse_owner_view           = NULL;
+    _enable_mouse_event_cycle   = true;
 
     if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
     {
@@ -201,6 +204,212 @@ namespace nux
     }
   }
 
+
+
+  Area* WindowCompositor::GetMouseOwner()
+  {
+    return _mouse_owner_view;
+  }
+
+  //! Get Mouse position relative to the top left corner of the window.
+  Point WindowCompositor::GetMousePosition()
+  {
+    return _mouse_position;
+  }
+
+  void WindowCompositor::MouseEventCycle(Event &event)
+  {
+    // _mouse_owner_view: the view that has the mouse down
+    // _mouse_over_view: the view that is directly below the mouse pointer
+    
+    _mouse_position = Point(event.e_x, event.e_y);
+
+    if(_mouse_owner_view == NULL)
+    {
+      // We should never get here for a NUX_MOUSE_RELEASED event
+      if(event.e_event == NUX_MOUSE_PRESSED ||
+        (event.e_event == NUX_MOUSE_MOVE) ||
+        (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
+        (event.e_event == NUX_MOUSE_WHEEL))
+      {
+        // Find the view under the mouse
+        InputArea* hit_view = NUX_STATIC_CAST(InputArea*, GetWindowThread()->GetMainLayout()->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+
+        Geometry hit_view_geo;
+        int hit_view_x = 0;
+        int hit_view_y = 0;
+
+        if(hit_view)
+        {
+          hit_view_geo = hit_view->GetAbsoluteGeometry();
+          hit_view_x = event.e_x - hit_view_geo.x;
+          hit_view_y = event.e_y - hit_view_geo.y;
+        }
+
+        if(hit_view && (event.e_event == NUX_MOUSE_MOVE))
+        {
+          if(hit_view != _mouse_over_view)
+          {
+            if(_mouse_over_view != 0)
+            {
+              Geometry geo = _mouse_over_view->GetAbsoluteGeometry();
+              int x = event.e_x - geo.x;
+              int y = event.e_y - geo.y;
+
+              _mouse_over_view->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+            }
+
+            _mouse_over_view = hit_view;
+            _mouse_over_view->EmitMouseEnterSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          }
+
+          _mouse_over_view->EmitMouseMoveSignal(hit_view_x, hit_view_y, event.e_dx, event.e_dy, event.GetMouseState(), event.GetKeyState());
+        }
+        else if(hit_view && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
+        {
+          if(!hit_view->DoubleClickEnable())
+          {
+            event.e_event = NUX_MOUSE_PRESSED;
+          }
+
+          if(_mouse_over_view && (hit_view != _mouse_over_view))
+          {
+            Geometry geo = _mouse_over_view->GetAbsoluteGeometry();
+            int x = event.e_x - geo.x;
+            int y = event.e_y - geo.y;
+
+            _mouse_over_view->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+          }
+
+          _mouse_over_view = hit_view;
+          _mouse_owner_view = hit_view;
+          _mouse_position_on_owner = Point(hit_view_x, hit_view_y);
+
+          if(_mouse_over_view != GetKeyboardEventReceiver())
+          {
+            if(_mouse_over_view->AcceptKeyboardEvent())
+              SetKeyboardEventReceiver(_mouse_over_view);
+          }
+
+          _mouse_over_view->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+        }
+        else if(hit_view && (event.e_event == NUX_MOUSE_WHEEL))
+        {
+          hit_view->EmitMouseWheelSignal(hit_view_x, hit_view_y, event.e_wheeldelta, event.GetMouseState(), event.GetKeyState());
+        }
+        else if(hit_view == NULL)
+        {
+          if(_mouse_over_view)
+          {
+            Geometry geo = _mouse_over_view->GetAbsoluteGeometry();
+            int x = event.e_x - geo.x;
+            int y = event.e_y - geo.y;
+
+            _mouse_over_view->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+          }
+
+          if(GetKeyboardEventReceiver() && (event.e_event == NUX_MOUSE_PRESSED))
+          {
+            if(GetKeyboardEventReceiver()->KeyboardReceiverIgnoreMouseDownOutside() == false)
+            {
+              SetKeyboardEventReceiver(NULL);
+            }
+          }
+          _mouse_over_view = 0;
+        }
+      }
+    }
+    else
+    {
+      // We should never get here for a NUX_MOUSE_PRESSED event.
+      InputArea* hit_view = NUX_STATIC_CAST(InputArea*, GetWindowThread()->GetMainLayout()->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+
+      Geometry mouse_owner_geo = _mouse_owner_view->GetAbsoluteGeometry();
+      int mouse_owner_x = event.e_x - mouse_owner_geo.x;
+      int mouse_owner_y = event.e_y - mouse_owner_geo.y;
+
+      // the mouse is down over a view
+      if(event.e_event == NUX_MOUSE_MOVE)
+      {
+        int dx = mouse_owner_x - _mouse_position_on_owner.x;
+        int dy = mouse_owner_y - _mouse_position_on_owner.y;
+
+        _mouse_owner_view->EmitMouseDragSignal(mouse_owner_x, mouse_owner_y, dx, dy, event.GetMouseState(), event.GetKeyState());
+
+        if((_mouse_over_view == _mouse_owner_view) && (hit_view != _mouse_owner_view))
+        {
+          _mouse_owner_view->EmitMouseLeaveSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
+          _mouse_over_view = hit_view;
+        }
+        else if((_mouse_over_view != _mouse_owner_view) && (hit_view == _mouse_owner_view))
+        {
+          _mouse_owner_view->EmitMouseEnterSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
+          _mouse_over_view = _mouse_owner_view;
+        }
+
+        _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
+      }
+      else if(event.e_event == NUX_MOUSE_RELEASED)
+      {
+        _mouse_owner_view->EmitMouseUpSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
+
+        if(hit_view == _mouse_owner_view)
+        {
+          _mouse_owner_view->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
+          _mouse_over_view = _mouse_owner_view;
+        }
+        else
+        {
+          _mouse_over_view = hit_view;
+        }
+
+        _mouse_owner_view = NULL;
+        _mouse_position_on_owner = Point(0, 0);
+      }
+    }
+  }
+
+  void WindowCompositor::KeyboardEventCycle(Event &event)
+  {
+    InputArea* keyboard_event_grab_view = NUX_STATIC_CAST(InputArea*, GetKeyboardGrabArea());
+    InputArea* keyboard_event_receiver_view = NUX_STATIC_CAST(InputArea*, GetKeyboardEventReceiver());
+
+    if(keyboard_event_grab_view)
+    {      
+      if(event.e_event == NUX_KEYDOWN)
+      {
+        keyboard_event_grab_view->EmitKeyDownSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+      }
+      else if(event.e_event == NUX_KEYUP)
+      {
+        keyboard_event_grab_view->EmitKeyUpSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+      }
+
+      keyboard_event_grab_view->EmitKeyEventSignal(event.GetKeySym(),
+        event.GetKeySym(),
+        event.GetKeyState(),
+        event.GetText(),
+        event.GetKeyRepeatCount());
+    }
+    else if(keyboard_event_receiver_view)
+    {
+      if(event.e_event == NUX_KEYDOWN)
+      {
+        keyboard_event_receiver_view->EmitKeyDownSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+      }
+      else if(event.e_event == NUX_KEYUP)
+      {
+        keyboard_event_receiver_view->EmitKeyUpSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+      }
+
+      keyboard_event_receiver_view->EmitKeyEventSignal(event.e_event,
+        event.GetKeySym(),
+        event.GetKeyState(),
+        event.GetText(),
+        event.GetKeyRepeatCount());
+    }
+  }
+
   long WindowCompositor::DispatchEventToArea (IEvent &event, Area *object, long TraverseInfo, long ProcessEventInfo)
   {
     if (object == 0)
@@ -255,6 +464,21 @@ namespace nux
   // NUXTODO: rename as EventCycle
   void WindowCompositor::ProcessEvent (Event &event)
   {
+    if (_enable_mouse_event_cycle)
+    {
+      if((event.e_event >= NUX_MOUSE_PRESSED) && (event.e_event <= NUX_MOUSE_WHEEL))
+      {
+        MouseEventCycle(event);
+      }
+      
+      if((event.e_event >= NUX_KEYDOWN) && (event.e_event <= NUX_KEYUP))
+      {
+        KeyboardEventCycle(event);
+      }
+
+      return;
+    }
+
     // Event processing cycle begins.
     _inside_event_processing = true;
 
@@ -365,7 +589,7 @@ namespace nux
       SetMouseFocusArea (NULL);
       SetMouseOverArea (NULL);
       SetPreviousMouseOverArea (NULL);
-      SetKeyboardFocusArea (NULL);
+      SetKeyboardEventReceiver (NULL);
     }
 
 
@@ -481,7 +705,7 @@ namespace nux
         if (!MouseIsOverMenu)
         {
           // Let the main window analyze the event.
-          ret = GetWindowThread ()->ProcessEvent (event, ret, ProcessEventInfo) ;
+          ret = GetWindowThread()->ProcessEvent(event, ret, ProcessEventInfo);
         }
       }
 
@@ -1695,50 +1919,51 @@ namespace nux
   }
 
 
-  void WindowCompositor::OnKeyboardFocusAreaDestroyed (Object* area)
+  void WindowCompositor::OnKeyboardEventReceiverDestroyed (Object* area)
   {
-    if (_keyboard_focus_area == area)
+    if (_keyboard_event_receiver == area)
     {
-      _keyboard_focus_area = NULL;
+      _keyboard_event_receiver = NULL;
     }
   }
   
-  void WindowCompositor::SetKeyboardFocusArea (InputArea *area)
+  void WindowCompositor::SetKeyboardEventReceiver(InputArea *area)
   {
-    InputArea* keyboard_grab_area = GetKeyboardGrabArea ();
+    InputArea* keyboard_grab_area = GetKeyboardGrabArea();
 
     if (keyboard_grab_area && (area != keyboard_grab_area))
     {
       // The area that has the keyboard grab has the priority. Disregard the keyboard focus area.
+      nuxDebugMsg("[WindowCompositor::SetKeyboardEventReceiver] There is a keyboard grab pending. Cannot change the keyboard event receiver.")
       return;
     }
 
-    if (_keyboard_focus_area == area)
+    if (_keyboard_event_receiver == area)
     {
         return;
     }
 
-    if (_keyboard_focus_area)
+    if (_keyboard_event_receiver)
     {
-      _keyboard_focus_area->OnEndFocus.emit ();
+      _keyboard_event_receiver->OnStopKeyboardReceiver.emit ();
     }
 
-    _keyboard_focus_area = area;
+    _keyboard_event_receiver = area;
 
-    if (_keyboard_focus_area)
+    if (_keyboard_event_receiver)
     {
-      _keyboard_focus_area->OnStartFocus.emit ();
+      _keyboard_event_receiver->OnStartKeyboardReceiver.emit ();
     }
 
 
-    _keyboard_focus_area_conn.disconnect ();
+    _keyboard_event_receiver_conn.disconnect ();
     if (area)
-      _keyboard_focus_area_conn = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnKeyboardFocusAreaDestroyed));
+      _keyboard_event_receiver_conn = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnKeyboardEventReceiverDestroyed));
   }
 
-  InputArea* WindowCompositor::GetKeyboardFocusArea ()
+  InputArea* WindowCompositor::GetKeyboardEventReceiver ()
   {
-    return _keyboard_focus_area;
+    return _keyboard_event_receiver;
   }
 
   void WindowCompositor::SetBackgroundPaintLayer (AbstractPaintLayer *bkg)
@@ -1984,7 +2209,7 @@ namespace nux
       _keyboard_grab_stack.push_front (area);
       
       // Must be called only after the area has been added to the front of _keyboard_grab_stack.
-      SetKeyboardFocusArea (area);
+      SetKeyboardEventReceiver (area);
     }
     
     return result;
@@ -2009,12 +2234,12 @@ namespace nux
     // Must be called only after the area has been added to the front of _keyboard_grab_stack.
     if (_keyboard_grab_stack.empty ())
     {
-      SetKeyboardFocusArea (NULL);
+      SetKeyboardEventReceiver (NULL);
     }
     else
     {
       it = _keyboard_grab_stack.begin ();
-      SetKeyboardFocusArea (*it);
+      SetKeyboardEventReceiver (*it);
     }
 
     

@@ -155,11 +155,11 @@ namespace nux
     m_InverseMtxBtn     = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
     m_NegateMtxBtn      = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
 
-    m_IdentityMtxBtn->EnableDoubleClick(false);
-    m_ZeroMtxBtn->EnableDoubleClick(false);
-    m_InverseMtxBtn->EnableDoubleClick(false);
-    m_NegateMtxBtn->EnableDoubleClick(false);
-
+/*    m_IdentityMtxBtn->SetEnableDoubleClickEnable(false);
+    m_ZeroMtxBtn->SetEnableDoubleClickEnable(false);
+    m_InverseMtxBtn->SetEnableDoubleClickEnable(false);
+    m_NegateMtxBtn->SetEnableDoubleClickEnable(false);
+*/
     m_IdentityMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvIdentityMatrixCmd) );
     m_ZeroMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvZeroMatrixCmd) );
     m_InverseMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvInverseMatrixCmd) );
