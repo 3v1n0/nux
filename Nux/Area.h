@@ -187,7 +187,7 @@ namespace nux
         @return The Geometry of the object.
         @sa GetBaseWidth(), GetBaseHeight(), GetBaseX(), GetBaseY().
     */
-    Geometry GetGeometry() const;
+    Geometry const& GetGeometry() const;
 
     //! Set the geometry of the object.
     /*!

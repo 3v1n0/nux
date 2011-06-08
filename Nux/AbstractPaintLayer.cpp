@@ -19,7 +19,7 @@ namespace nux
     _geometry = geo;
   }
 
-  Geometry AbstractPaintLayer::GetGeometry () const
+  Geometry const& AbstractPaintLayer::GetGeometry () const
   {
     return _geometry;
   }
