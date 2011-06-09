@@ -66,10 +66,10 @@ std::string timestamp_string(std::time_t timestamp)
 {
   // return an ISO format string: YYYY-MM-DD HH:MM:SS
   static const char* format = "%Y-%m-%d %H:%M:%S";
-  // NOTE: this is not tread-safe as localtime uses a static buffer.
   const int buf_size = 20;
   char buffer[buf_size];
-  std::strftime(buffer, buf_size, format, std::localtime(&timestamp));
+  tm local_time;
+  std::strftime(buffer, buf_size, format, ::localtime_r(&timestamp, &local_time));
   return buffer;
 }
 
