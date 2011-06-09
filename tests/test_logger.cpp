@@ -1,6 +1,8 @@
 #include "NuxCore/Logger.h"
 #include "NuxCore/LoggingWriter.h"
 
+#include <cstdlib>
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -112,18 +114,48 @@ TEST(TestLogger, TestLevelsInherited) {
   EXPECT_EQ(second.GetEffectiveLogLevel(), INFO);
 }
 
+class UseTimezone
+{
+public:
+  UseTimezone(std::string const& tz)
+    {
+      char* old_tz = ::getenv("TZ");
+      if (old_tz) {
+        // std::strings don't like beeing assigned NULL
+        old_tz_ = old_tz;
+      }
+      ::setenv("TZ", tz.c_str(), true);
+      ::tzset();
+    }
+
+  ~UseTimezone()
+    {
+      if (old_tz_.empty()) {
+        ::unsetenv("TZ");
+      }
+      else {
+        ::setenv("TZ", old_tz_.c_str(), true);
+      }
+      ::tzset();
+    }
+private:
+  std::string old_tz_;
+};
 
 TEST(TestLoggingWriter, TestWriteMessage) {
   std::stringstream out;
   Writer& writer = Writer::Instance();
   writer.SetOutputStream(out);
-  // This time is known to be: 2010-09-10 12:34:45
+
+  // set a known timezone
+  UseTimezone timezone(":Antarctica/Vostok");
+  // This time is known to be: 2010-09-10 12:34:45 (UTC+12)
   std::time_t when = 1284078885;
   writer.WriteMessage(ERROR, "test.module", "testfile.cpp",
                       1234, when, "my message");
   std::string result = out.str();
-
-  EXPECT_THAT(result, Eq("ERROR 2010-09-10 12:34:45 test.module testfile.cpp:1234 my message\n"));
+  // Vostok is UTC+6
+  EXPECT_THAT(result, Eq("ERROR 2010-09-10 06:34:45 test.module testfile.cpp:1234 my message\n"));
 }
 
 TEST(TestLogStream, TestSimpleConstruction) {
