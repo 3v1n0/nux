@@ -69,7 +69,7 @@ namespace nux
       void SetIndex (int index);
       int GetIndex() const;
       void SetGeometry (const Geometry &geo);
-      Geometry GetGeometry() const;
+      Geometry const& GetGeometry() const;
       const NString &GetName() const;
 
       NString     _tab_name;
