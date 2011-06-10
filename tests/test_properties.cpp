@@ -23,6 +23,7 @@ T to_and_from_string(T const& value)
 TEST(TestTypeTraits, TestSerialization) {
   EXPECT_EQ("hello", nux::type::PropertyTrait<std::string>::to_string("hello"));
   EXPECT_EQ("42", nux::type::PropertyTrait<int>::to_string(42));
+  EXPECT_EQ("42", nux::type::PropertyTrait<unsigned>::to_string(42));
   EXPECT_EQ("true", nux::type::PropertyTrait<bool>::to_string(true));
   EXPECT_EQ("false", nux::type::PropertyTrait<bool>::to_string(false));
   EXPECT_EQ("0", nux::type::PropertyTrait<double>::to_string(0));
@@ -39,6 +40,14 @@ TEST(TestTypeTraits, TestDeserialization) {
   int_result = nux::type::PropertyTrait<int>::from_string("OMG!");
   EXPECT_EQ(0, int_result.first);
   EXPECT_FALSE(int_result.second);
+
+  std::pair<unsigned, bool> unsigned_result = nux::type::PropertyTrait<unsigned>::from_string("42");
+  EXPECT_EQ(42, unsigned_result.first);
+  EXPECT_TRUE(unsigned_result.second);
+  unsigned_result = nux::type::PropertyTrait<unsigned>::from_string("OMG!");
+  EXPECT_EQ(0, unsigned_result.first);
+  EXPECT_FALSE(unsigned_result.second);
+
   std::pair<bool, bool> bool_result = nux::type::PropertyTrait<bool>::from_string("true");
   EXPECT_TRUE(bool_result.first);
   EXPECT_TRUE(bool_result.second);
