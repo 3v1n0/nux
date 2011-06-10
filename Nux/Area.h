@@ -242,10 +242,12 @@ namespace nux
 
         @param p A 2D point.
         @param event_type The type of mouse event (a parameter of FindAreaUnderMouse).
+        @param filter_mouse_wheel_event If the event type is NUX_MOUSE_WHEEL and the mouse is over this area and this
+        area does not accept mouse wheel events, then return false.
 
         @return True if p is located inside the Area.
     */
-    bool TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type);
+    bool TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type, bool filter_mouse_wheel_event = true);
 
     virtual long ComputeChildLayout ();
     virtual void PositionChildLayout (float offsetX, float offsetY);

@@ -59,14 +59,16 @@ namespace nux
     bool MouseUp(Point pt);
 
     void ProcessEvent(Event &event);
-    
+
+    //====================================
     void MouseEventCycle(Event &event);
     bool _enable_mouse_event_cycle;
-    InputArea* _mouse_over_view;
+
 
     Area* GetMouseOwner();
 
     InputArea* _mouse_owner_view;
+    InputArea* _mouse_over_view;
     BaseWindow* _mouse_owner_base_window;
 
     Point _mouse_position_on_owner;
@@ -76,6 +78,14 @@ namespace nux
     Point GetMousePosition();
     
     void KeyboardEventCycle(Event &event);
+
+    void MenuEventCycle(Event &event);
+    MenuPage* _mouse_owner_menu_page;
+    MenuPage* _mouse_over_menu_page;
+    bool      _starting_menu_event_cycle;
+    bool      _menu_is_active;
+
+    //====================================
 
     ObjectPtr<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
@@ -537,7 +547,7 @@ namespace nux
     std::list< ObjectWeakPtr<BaseWindow> > _modal_view_window_list;
     ObjectWeakPtr<BaseWindow>            _always_on_front_window;  //!< Floating view that always remains on top.
 
-    std::list<MenuPage *> *m_MenuList;
+    std::list<MenuPage* > *_menu_chain;
 
     /*!
         The BaseWindow where the last mouse down event happened. 

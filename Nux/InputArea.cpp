@@ -939,7 +939,9 @@ namespace nux
   Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     if(TestMousePointerInclusion(mouse_position, event_type))
+    {
       return NUX_STATIC_CAST(Area*, this);
+    }
     return NULL;
   }
 

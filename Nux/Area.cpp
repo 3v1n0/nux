@@ -877,12 +877,12 @@ namespace nux
     return _accept_mouse_wheel_event;
   }
 
-  bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type)
+  bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type, bool filter_mouse_wheel_event)
   {
     bool mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
-    if(event_type == NUX_MOUSE_WHEEL)
+    if((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area && filter_mouse_wheel_event)
     {
-      if(mouse_pointer_inside_area && (_accept_mouse_wheel_event == false) && !IsLayout())
+      if(_accept_mouse_wheel_event == false)
         return NULL;
     }
     return mouse_pointer_inside_area;

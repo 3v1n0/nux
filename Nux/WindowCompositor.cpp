@@ -50,7 +50,7 @@ namespace nux
     m_TooltipArea               = NULL;
     m_ModalWindow               = NULL;
     m_SelectedWindow            = NULL;
-    m_MenuList                  = NULL;
+    _menu_chain                  = NULL;
     m_Background                = NULL;
     _tooltip_window             = NULL;
     m_OverlayWindow             = NULL;
@@ -72,6 +72,10 @@ namespace nux
     _dnd_area                   = NULL;
     _mouse_over_view            = NULL;
     _mouse_owner_view           = NULL;
+    _mouse_over_menu_page       = NULL;
+    _mouse_owner_menu_page      = NULL;
+    _starting_menu_event_cycle  = false;
+    _menu_is_active             = false;
     _enable_mouse_event_cycle   = true;
 
     if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
@@ -86,7 +90,7 @@ namespace nux
     m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
     m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
 
-    m_MenuList = new std::list<MenuPage*>;
+    _menu_chain = new std::list<MenuPage*>;
     m_PopupRemoved = false;
     m_MenuRemoved = false;
     m_ModalWindow = NULL;
@@ -99,7 +103,7 @@ namespace nux
     m_FrameBufferObject.Release ();
     m_MainColorRT.Release ();
     m_MainDepthRT.Release ();
-    m_MenuList->clear();
+    _menu_chain->clear();
 
     std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
     for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
@@ -114,7 +118,7 @@ namespace nux
     //}
     _modal_view_window_list.clear ();
 
-    NUX_SAFE_DELETE (m_MenuList);
+    NUX_SAFE_DELETE (_menu_chain);
     NUX_SAFE_DELETE (m_Background);
   }
 
@@ -267,7 +271,7 @@ namespace nux
         }
         else if(hit_view && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
         {
-          if(!hit_view->DoubleClickEnable())
+          if((event.e_event == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnable()))
           {
             event.e_event = NUX_MOUSE_PRESSED;
           }
@@ -369,6 +373,187 @@ namespace nux
     }
   }
 
+  void WindowCompositor::MenuEventCycle(Event& event)
+  {
+    // _mouse_owner_menu_page: the menu page that has the mouse down
+    // _mouse_over_menu_page: the menu page that is directly below the mouse pointer
+
+    _mouse_position = Point(event.e_x, event.e_y);
+
+    if(_mouse_owner_menu_page == NULL)
+    {
+      if((event.e_event == NUX_MOUSE_PRESSED) ||
+        (event.e_event == NUX_MOUSE_RELEASED) ||
+        (event.e_event == NUX_MOUSE_MOVE) ||
+        (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
+        (event.e_event == NUX_MOUSE_WHEEL))
+      {
+        // Find the MenuPage under the mouse
+        MenuPage* hit_menu_page = NULL;
+        std::list<MenuPage*>::iterator menu_it;
+        for(menu_it = _menu_chain->begin (); menu_it != _menu_chain->end (); menu_it++)
+        {
+          // The leaf of the menu chain is in the front of the list.
+          hit_menu_page = NUX_STATIC_CAST(MenuPage*, (*menu_it)->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+          if(hit_menu_page)
+          {
+            break;
+          }
+        }
+
+        Geometry hit_menu_page_geo;
+        int hit_menu_page_x = 0;
+        int hit_menu_page_y = 0;
+
+        if(hit_menu_page)
+        {
+          hit_menu_page_geo = hit_menu_page->GetAbsoluteGeometry();
+          hit_menu_page_x = event.e_x - hit_menu_page_geo.x;
+          hit_menu_page_y = event.e_y - hit_menu_page_geo.y;
+        }
+
+        if(hit_menu_page && (event.e_event == NUX_MOUSE_RELEASED))
+        {
+          hit_menu_page->EmitMouseUpSignal(hit_menu_page_x, hit_menu_page_y, event.GetMouseState(), event.GetKeyState());
+
+          (*_menu_chain->begin())->sigClosingMenu(*_menu_chain->begin());
+          (*_menu_chain->begin())->StopMenu();
+        }
+        else if(hit_menu_page && (event.e_event == NUX_MOUSE_MOVE))
+        {
+          if(hit_menu_page != _mouse_over_menu_page)
+          {
+            if(_mouse_over_menu_page != 0)
+            {
+              Geometry geo = _mouse_over_menu_page->GetAbsoluteGeometry();
+              int x = event.e_x - geo.x;
+              int y = event.e_y - geo.y;
+
+              _mouse_over_menu_page->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+            }
+
+            _mouse_over_menu_page = hit_menu_page;
+            _mouse_over_menu_page->EmitMouseEnterSignal(hit_menu_page_x, hit_menu_page_y, event.GetMouseState(), event.GetKeyState());
+          }
+
+          _mouse_over_menu_page->EmitMouseMoveSignal(hit_menu_page_x, hit_menu_page_y, event.e_dx, event.e_dy, event.GetMouseState(), event.GetKeyState());
+        }
+        else if(hit_menu_page && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
+        {
+          if(!hit_menu_page->DoubleClickEnable())
+          {
+
+          }
+
+          if(_mouse_over_menu_page && (hit_menu_page != _mouse_over_menu_page))
+          {
+            Geometry geo = _mouse_over_menu_page->GetAbsoluteGeometry();
+            int x = event.e_x - geo.x;
+            int y = event.e_y - geo.y;
+
+            _mouse_over_menu_page->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+          }
+
+          _mouse_over_menu_page = hit_menu_page;
+          _mouse_owner_menu_page = hit_menu_page;
+          _mouse_position_on_owner = Point(hit_menu_page_x, hit_menu_page_y);
+
+          if(_mouse_over_menu_page != GetKeyboardEventReceiver())
+          {
+            if(_mouse_over_menu_page->AcceptKeyboardEvent())
+              SetKeyboardEventReceiver(_mouse_over_menu_page);
+          }
+
+          _mouse_over_menu_page->EmitMouseDownSignal(hit_menu_page_x, hit_menu_page_y, event.GetMouseState(), event.GetKeyState());
+        }
+        else if(hit_menu_page && (event.e_event == NUX_MOUSE_WHEEL))
+        {
+          hit_menu_page->EmitMouseWheelSignal(hit_menu_page_x, hit_menu_page_y, event.e_wheeldelta, event.GetMouseState(), event.GetKeyState());
+        }
+        else if(hit_menu_page == NULL)
+        {
+          if(_mouse_over_menu_page)
+          {
+            Geometry geo = _mouse_over_menu_page->GetAbsoluteGeometry();
+            int x = event.e_x - geo.x;
+            int y = event.e_y - geo.y;
+
+            _mouse_over_menu_page->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+          }
+
+          if(event.e_event == NUX_MOUSE_PRESSED || event.e_event == NUX_MOUSE_DOUBLECLICK)
+          {
+            (*_menu_chain->begin())->sigClosingMenu(*_menu_chain->begin());
+            (*_menu_chain->begin())->StopMenu();
+          }
+
+          _mouse_over_menu_page = 0;
+        }
+      }
+    }
+    else
+    {
+      // We should never get here for a NUX_MOUSE_PRESSED event.
+      MenuPage* hit_menu_page = NULL;
+      std::list<MenuPage*>::iterator menu_it;
+      for(menu_it = _menu_chain->begin (); menu_it != _menu_chain->end (); menu_it++)
+      {
+        // The leaf of the menu chain is in the front of the list.
+        hit_menu_page = NUX_STATIC_CAST(MenuPage*, (*menu_it)->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+        if(hit_menu_page)
+        {
+          break;
+        }
+      }
+
+      Geometry mouse_owner_geo = _mouse_owner_menu_page->GetAbsoluteGeometry();
+      int mouse_owner_x = event.e_x - mouse_owner_geo.x;
+      int mouse_owner_y = event.e_y - mouse_owner_geo.y;
+
+      // the mouse is down over a view
+      if(event.e_event == NUX_MOUSE_MOVE)
+      {
+        int dx = mouse_owner_x - _mouse_position_on_owner.x;
+        int dy = mouse_owner_y - _mouse_position_on_owner.y;
+
+        _mouse_owner_menu_page->EmitMouseDragSignal(mouse_owner_x, mouse_owner_y, dx, dy, event.GetMouseState(), event.GetKeyState());
+
+        if((_mouse_over_menu_page == _mouse_owner_menu_page) && (hit_menu_page != _mouse_owner_menu_page))
+        {
+          _mouse_owner_menu_page->EmitMouseLeaveSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
+          _mouse_over_menu_page = hit_menu_page;
+        }
+        else if((_mouse_over_menu_page != _mouse_owner_menu_page) && (hit_menu_page == _mouse_owner_menu_page))
+        {
+          _mouse_owner_menu_page->EmitMouseEnterSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
+          _mouse_over_menu_page = _mouse_owner_menu_page;
+        }
+
+        _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
+      }
+      else if(event.e_event == NUX_MOUSE_RELEASED)
+      {
+        _mouse_owner_menu_page->EmitMouseUpSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
+
+        if(hit_menu_page == _mouse_owner_menu_page)
+        {
+          _mouse_owner_menu_page->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
+          _mouse_over_menu_page = _mouse_owner_menu_page;
+        }
+        else
+        {
+          _mouse_over_menu_page = hit_menu_page;
+        }
+
+        (*_menu_chain->begin())->sigClosingMenu(*_menu_chain->begin());
+        (*_menu_chain->begin())->StopMenu();
+
+        _mouse_owner_menu_page = NULL;
+        _mouse_position_on_owner = Point(0, 0);
+      }
+    }
+  }
+
   void WindowCompositor::KeyboardEventCycle(Event &event)
   {
     InputArea* keyboard_event_grab_view = NUX_STATIC_CAST(InputArea*, GetKeyboardGrabArea());
@@ -464,11 +649,25 @@ namespace nux
   // NUXTODO: rename as EventCycle
   void WindowCompositor::ProcessEvent (Event &event)
   {
-    if (_enable_mouse_event_cycle)
+    if(_enable_mouse_event_cycle)
     {
       if((event.e_event >= NUX_MOUSE_PRESSED) && (event.e_event <= NUX_MOUSE_WHEEL))
       {
-        MouseEventCycle(event);
+        if(_menu_chain->size())
+        {
+          MenuEventCycle(event);
+        }
+        else
+        {
+          MouseEventCycle(event);
+        }
+
+        if(_starting_menu_event_cycle)
+        {
+          _starting_menu_event_cycle = false;
+        }
+
+        CleanMenu();
       }
       
       if((event.e_event >= NUX_KEYDOWN) && (event.e_event <= NUX_KEYUP))
@@ -519,7 +718,7 @@ namespace nux
         )
        )
     {
-      // Set a system-wide copy the event. Usefull for getting the a copy of the full event,
+      // Set a system-wide copy the event. Useful for getting the a copy of the full event,
       // for instance in the area's signal callbacks. Area's signal callbacks don't pass the full event as a parameter.
       SetCurrentEvent (&event);
 
@@ -626,7 +825,7 @@ namespace nux
 
       std::list<MenuPage*>::iterator menu_it;
       // Let all the menu area check the event first.
-      for (menu_it = m_MenuList->begin(); menu_it != m_MenuList->end(); menu_it++)
+      for (menu_it = _menu_chain->begin(); menu_it != _menu_chain->end(); menu_it++)
       {
         // The deepest menu in the menu cascade is in the front of the list.
         ret = (*menu_it)->ProcessEvent (event, ret, 0);
@@ -777,17 +976,17 @@ namespace nux
     }
 
     // Let all the menu area check the event first. Beside, they are on top of everything else.
-    for (menu_it = m_MenuList->begin (); menu_it != m_MenuList->end (); menu_it++)
+    for (menu_it = _menu_chain->begin (); menu_it != _menu_chain->end (); menu_it++)
     {
       // The deepest menu in the menu cascade is in the front of the list.
       ret = (*menu_it)->ProcessEvent (event, ret, ProcessEventInfo);
     }
 
-    if ((event.e_event == NUX_MOUSE_PRESSED) && m_MenuList->size ())
+    if ((event.e_event == NUX_MOUSE_PRESSED) && _menu_chain->size ())
     {
       bool inside = false;
 
-      for (menu_it = m_MenuList->begin (); menu_it != m_MenuList->end (); menu_it++)
+      for (menu_it = _menu_chain->begin (); menu_it != _menu_chain->end (); menu_it++)
       {
         Geometry geo = (*menu_it)->GetGeometry ();
 
@@ -801,7 +1000,7 @@ namespace nux
 
       if (inside == false)
       {
-        (*m_MenuList->begin ())->NotifyMouseDownOutsideMenuCascade (event.e_x - event.e_x_root, event.e_y - event.e_y_root);
+        (*_menu_chain->begin ())->NotifyMouseDownOutsideMenuCascade (event.e_x - event.e_x_root, event.e_y - event.e_y_root);
       }
     }
 
@@ -816,9 +1015,9 @@ namespace nux
       SetWidgetDrawingOverlay (NULL, NULL);
     }
 
-    if ( (event.e_event == NUX_SIZE_CONFIGURATION) && m_MenuList->size() )
+    if ( (event.e_event == NUX_SIZE_CONFIGURATION) && _menu_chain->size() )
     {
-      (*m_MenuList->begin() )->NotifyTerminateMenuCascade();
+      (*_menu_chain->begin() )->NotifyTerminateMenuCascade();
     }
 
     return ret;
@@ -1199,7 +1398,7 @@ namespace nux
 
     std::list<MenuPage *>::reverse_iterator rev_it_menu;
 
-    for (rev_it_menu = m_MenuList->rbegin(); rev_it_menu != m_MenuList->rend( ); rev_it_menu++)
+    for (rev_it_menu = _menu_chain->rbegin(); rev_it_menu != _menu_chain->rend( ); rev_it_menu++)
     {
       SetProcessingTopView (m_MenuWindow.GetPointer ());
       (*rev_it_menu)->ProcessDraw (GetWindowThread ()->GetGraphicsEngine(), force_draw);
@@ -1689,24 +1888,31 @@ namespace nux
 
   void WindowCompositor::AddMenu(MenuPage *menu, BaseWindow *window, bool OverrideCurrentMenuChain)
   {
-    std::list<MenuPage*>::iterator it = find(m_MenuList->begin(), m_MenuList->end(), menu);
-    if(it == m_MenuList->end())
+    if(_menu_chain->size() == 0)
     {
-      // When adding a MenuPage, make sure that it is a child of the MenuPage in m_MenuList->begin().
-      if (m_MenuList->size() )
+      // A menu is opening.
+      _starting_menu_event_cycle = true;
+      _menu_is_active = true;
+    }
+
+    std::list<MenuPage*>::iterator it = find(_menu_chain->begin(), _menu_chain->end(), menu);
+    if(it == _menu_chain->end())
+    {
+      // When adding a MenuPage, make sure that it is a child of the MenuPage in _menu_chain->begin().
+      if (_menu_chain->size() )
       {
-        if (menu->GetParentMenu() != (*m_MenuList->begin() ) )
+        if (menu->GetParentMenu() != (*_menu_chain->begin() ) )
         {
           if (OverrideCurrentMenuChain)
           {
             // Remove the current menu chain
-            for (it = m_MenuList->begin(); it != m_MenuList->end(); it++)
+            for (it = _menu_chain->begin(); it != _menu_chain->end(); it++)
             {
               // Stop all pages
               (*it)->StopMenu();
             }
 
-            m_MenuList->clear();
+            _menu_chain->clear();
           }
           else
           {
@@ -1718,35 +1924,65 @@ namespace nux
 
       m_MenuWindow = window;
       // The deepest menu is added in front of the list and tested first for events.
-      m_MenuList->push_front (menu);
+      _menu_chain->push_front (menu);
     }
   }
 
-  // Be carefull never call this function while you are iterating through the elements of m_MenuList.
+  // Be careful never call this function while you are iterating through the elements of _menu_chain.
   void WindowCompositor::RemoveMenu (MenuPage *menu)
   {
-    std::list<MenuPage *>::iterator it = find (m_MenuList->begin(), m_MenuList->end(), menu);
+    std::list<MenuPage *>::iterator it = find (_menu_chain->begin(), _menu_chain->end(), menu);
 
-    if (it == m_MenuList->end() )
+    if (it == _menu_chain->end() )
     {
       return;
     }
 
-    m_MenuList->erase (it);
+    _menu_chain->erase (it);
     m_MenuRemoved = true;
 
-    if (m_MenuList->size() == 0)
+    if (_menu_is_active && (_menu_chain->size() == 0))
+    {
+      _menu_is_active = false;
+
+      if(_mouse_over_view)
+      {
+        if(!_mouse_over_view->TestMousePointerInclusion(_mouse_position, NUX_NO_EVENT))
+          _mouse_over_view->_event_processor._current_mouse_in = false;
+        _mouse_over_view = NULL;
+      }
+
+      if(_mouse_owner_view)
+      {
+        if(!_mouse_owner_view->TestMousePointerInclusion(_mouse_position, NUX_NO_EVENT))
+          _mouse_owner_view->_event_processor._current_mouse_in = false;
+        _mouse_owner_view = NULL;
+      }
+
+      if(_mouse_over_menu_page)
+      {
+        _mouse_over_menu_page->_event_processor._current_mouse_in = false;
+        _mouse_over_menu_page = NULL;
+      }
+
+      if(_mouse_owner_menu_page)
+      {
+        _mouse_owner_menu_page->_event_processor._current_mouse_in = false;
+        _mouse_owner_menu_page = NULL;
+      }
+
       m_MenuWindow = NULL;
+    }
   }
 
   void WindowCompositor::CleanMenu ()
   {
-    if (m_MenuList->size() == 0)
+    if (_menu_chain->size() == 0)
       return;
 
-    std::list<MenuPage *>::iterator menu_it = m_MenuList->begin();
+    std::list<MenuPage *>::iterator menu_it = _menu_chain->begin();
 
-    while (menu_it != m_MenuList->end() )
+    while (menu_it != _menu_chain->end() )
     {
       if ( (*menu_it)->IsActive() == false)
       {
@@ -1763,7 +1999,7 @@ namespace nux
           SetPreviousMouseOverArea (NULL);
         }                
  
-        menu_it = m_MenuList->erase (menu_it);
+        menu_it = _menu_chain->erase (menu_it);
         m_MenuRemoved = true;
       }
       else
@@ -1772,8 +2008,38 @@ namespace nux
       }
     }
 
-    if (m_MenuList->size() == 0)
+    if (_menu_is_active && (_menu_chain->size() == 0))
+    {
+      _menu_is_active = false;
+
+      if(_mouse_over_view)
+      {
+        if(!_mouse_over_view->TestMousePointerInclusion(_mouse_position, NUX_NO_EVENT))
+          _mouse_over_view->_event_processor._current_mouse_in = false;
+        _mouse_over_view = NULL;
+      }
+
+      if(_mouse_owner_view)
+      {
+        if(!_mouse_owner_view->TestMousePointerInclusion(_mouse_position, NUX_NO_EVENT))
+          _mouse_owner_view->_event_processor._current_mouse_in = false;
+        _mouse_owner_view = NULL;
+      }
+
+      if(_mouse_over_menu_page)
+      {
+        _mouse_over_menu_page->_event_processor._current_mouse_in = false;
+        _mouse_over_menu_page = NULL;
+      }
+
+      if(_mouse_owner_menu_page)
+      {
+        _mouse_owner_menu_page->_event_processor._current_mouse_in = false;
+        _mouse_owner_menu_page = NULL;
+      }
+
       m_MenuWindow = NULL;
+    }
   }
 
   void WindowCompositor::SetWidgetDrawingOverlay (InputArea *ic, BaseWindow* OverlayWindow)

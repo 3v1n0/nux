@@ -211,7 +211,7 @@ namespace nux
 
   Area* ScrollView::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type);
+    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type, false);
 
     if(mouse_inside == false)
       return NULL;
@@ -222,10 +222,7 @@ namespace nux
     found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
     NUX_RETURN_VALUE_IF_TRUE(found_area, found_area);
 
-    found_area = View::FindAreaUnderMouse(mouse_position, event_type);
-    NUX_RETURN_VALUE_IF_TRUE(found_area, found_area);
-
-    return this;
+    return View::FindAreaUnderMouse(mouse_position, event_type);
   }
 
   bool ScrollView::SetLayout (Layout *layout)

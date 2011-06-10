@@ -185,6 +185,8 @@ namespace nux
     void GetCompositeList (std::list<Area *> *ViewList);
     void ProcessDraw (GraphicsEngine &gfx_context, bool force_draw);
     long ProcessEvent (IEvent &ievent, long traverse_info, long process_event_info);
+    Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
     void AddLayout (Layout                *layouy,
                     unsigned int           stretch_factor = 1,
                     MinorDimensionPosition position       = eAbove,

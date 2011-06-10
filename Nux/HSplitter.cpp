@@ -643,7 +643,7 @@ namespace nux
 
   Area* HSplitter::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type);
+    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type, false);
 
     if(mouse_inside == false)
       return NULL;
@@ -665,6 +665,8 @@ namespace nux
         return found_area;
     }
 
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
     return this;
   }
 }

@@ -84,6 +84,7 @@ namespace nux
     bool _initial_state;
 
     friend class InputArea;
+    friend class WindowCompositor;
   };
 }
 

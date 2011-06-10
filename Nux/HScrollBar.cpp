@@ -269,7 +269,7 @@ namespace nux
 
   Area* HScrollBar::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type);
+    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type, false);
 
     if(mouse_inside == false)
       return NULL;
@@ -279,6 +279,8 @@ namespace nux
     NUX_RETURN_VALUE_IF_TRUE(_slider->TestMousePointerInclusion(mouse_position, event_type), _slider);
     NUX_RETURN_VALUE_IF_TRUE(_track->TestMousePointerInclusion(mouse_position, event_type), _track);
 
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
     return this;
   }
 

@@ -292,6 +292,36 @@ namespace nux
     }
     return ret;
   }
+  
+  Area* LayeredLayout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type, false);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    if(m_input_mode == INPUT_MODE_ACTIVE)
+    {
+      if (m_active_area && m_active_area->IsVisible () && m_active_area->IsSensitive ())
+        return m_active_area->FindAreaUnderMouse(mouse_position, event_type);
+    }
+    else
+    {
+      std::list<Area *>::reverse_iterator it, eit = _layout_element_list.rend ();
+
+      for (it = _layout_element_list.rbegin (); it != eit; ++it)
+      {
+        Area *area = static_cast<Area *> (*it);
+
+        if (area->IsVisible () && area->IsSensitive ())
+        {
+          return m_active_area->FindAreaUnderMouse(mouse_position, event_type);
+        }
+      }
+    }
+
+    return NULL;
+  }
 
   void LayeredLayout::AddLayout (Layout                *layout,
                                  unsigned int           stretch_factor,
