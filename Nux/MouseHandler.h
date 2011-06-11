@@ -62,7 +62,7 @@ namespace nux
     void ForceMouseFocus (int x, int y, const Geometry &g);
     void StopMouseFocus (int x, int y, const Geometry &g);
 
-  private:
+  public:
 
     //! Reset the state machine to its initial configuration.
     void ResetState ();

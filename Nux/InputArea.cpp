@@ -936,6 +936,17 @@ namespace nux
     OnMouseDoubleClick.emit(x, y, mouse_button_state, special_keys_state);
   }
 
+
+  void InputArea::EmitStartKeyboardFocus()
+  {
+    OnStartMouseFocus.emit();
+  }
+
+  void InputArea::EmitEndKeyboardFocus()
+  {
+    OnEndMouseFocus.emit();
+  }
+
   Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     if(TestMousePointerInclusion(mouse_position, event_type))

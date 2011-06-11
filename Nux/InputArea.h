@@ -171,6 +171,8 @@ namespace nux
     //! Return True if the double click signal is enable for this InputArea.
     bool DoubleClickEnable() const;
 
+    AreaEventProcessor _event_processor;
+
 #if defined (NUX_OS_LINUX)
     void HandleDndEnter () { ProcessDndEnter (); }
     void HandleDndLeave () { ProcessDndLeave (); }
@@ -196,7 +198,6 @@ namespace nux
     int _dnd_safety_y;
 
   protected:
-    AreaEventProcessor _event_processor;
 
     bool _has_keyboard_focus;
     bool _capture_mouse_down_any_where_else;
@@ -389,6 +390,9 @@ namespace nux
 
       virtual void EmitMouseClickSignal       (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
       virtual void EmitMouseDoubleClickSignal (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
+
+      virtual void EmitStartKeyboardFocus();
+      virtual void EmitEndKeyboardFocus();
 
       friend class WindowCompositor;
   };

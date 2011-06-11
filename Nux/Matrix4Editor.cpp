@@ -141,8 +141,8 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
     ,   m_Matrix (matrix)
   {
-    m_vlayout           = new VLayout (NUX_TRACKER_LOCATION);
-    mtx_layout          = new VLayout (NUX_TRACKER_LOCATION);
+    m_vlayout           = new VLayout ("Matrix4", NUX_TRACKER_LOCATION);
+    mtx_layout          = new VLayout ("MatrixEdit", NUX_TRACKER_LOCATION);
     m_MtxFunctionLayout = new HLayout (NUX_TRACKER_LOCATION);
 
     mtx_row_layout[0]   = new HLayout (NUX_TRACKER_LOCATION);
@@ -150,10 +150,10 @@ namespace nux
     mtx_row_layout[2]   = new HLayout (NUX_TRACKER_LOCATION);
     mtx_row_layout[3]   = new HLayout (NUX_TRACKER_LOCATION);
 
-    m_IdentityMtxBtn    = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_ZeroMtxBtn        = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_InverseMtxBtn     = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_NegateMtxBtn      = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_IdentityMtxBtn    = new PushButton (TEXT ("id"), NUX_TRACKER_LOCATION);
+    m_ZeroMtxBtn        = new PushButton (TEXT ("zero"), NUX_TRACKER_LOCATION);
+    m_InverseMtxBtn     = new PushButton (TEXT ("inv"), NUX_TRACKER_LOCATION);
+    m_NegateMtxBtn      = new PushButton (TEXT ("+/-"), NUX_TRACKER_LOCATION);
 
 /*    m_IdentityMtxBtn->SetEnableDoubleClickEnable(false);
     m_ZeroMtxBtn->SetEnableDoubleClickEnable(false);
@@ -181,8 +181,6 @@ namespace nux
     for (int i = 0; i < 4; i++)
     {
       mtx_row_layout[i]->SetHorizontalInternalMargin (4);
-      //mtx_row_layout[i]->SetHorizontalExternalMargin(4);
-      //mtx_row_layout[i]->SetVerticalExternalMargin(2);
       mtx_row_layout[i]->SetContentDistribution (eStackLeft);
     }
 
@@ -190,7 +188,7 @@ namespace nux
     {
       for (int j = 0; j < 4; j++)
       {
-        mtx_row_layout[i]->AddView (m_MtxInput[i][j], 0, eCenter, eFull);
+        mtx_row_layout[i]->AddView (m_MtxInput[i][j], 0, eCenter, eMatchContent);
       }
     }
 
@@ -199,12 +197,7 @@ namespace nux
       mtx_layout->AddLayout (mtx_row_layout[i], 0, eCenter);
     }
 
-    mtx_layout->SetContentDistribution (eStackExpand);
-
-    m_IdentityMtxBtn->SetCaption (TEXT ("Id") );
-    m_ZeroMtxBtn->SetCaption (TEXT ("Zero") );
-    m_InverseMtxBtn->SetCaption (TEXT ("Inv") );
-    m_NegateMtxBtn->SetCaption (TEXT ("+/-") );
+//    mtx_layout->SetContentDistribution (eStackExpand);
 
     m_MtxFunctionLayout->AddView (m_IdentityMtxBtn, 0);
     m_MtxFunctionLayout->AddView (m_ZeroMtxBtn, 0);
@@ -220,9 +213,9 @@ namespace nux
     mtx_layout->SetVerticalExternalMargin (4);
     mtx_layout->SetVerticalInternalMargin (4);
 
-    m_vlayout->AddLayout (mtx_layout, 0, eCenter, eMatchContent);
-    m_vlayout->AddLayout (m_MtxFunctionLayout, 0,  eCenter, eMatchContent);
-    m_vlayout->SetContentDistribution (eStackCenter);
+    m_vlayout->AddLayout(mtx_layout, 0, eCenter, eMatchContent);
+    m_vlayout->AddLayout(m_MtxFunctionLayout, 0, eCenter, eMatchContent);
+    m_vlayout->SetContentDistribution(MAJOR_POSITION_CENTER);
 
     SetCompositionLayout (m_vlayout);
     WriteMatrix();
@@ -293,6 +286,11 @@ namespace nux
 
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
     return ret;
+  }
+
+  Area* Matrix4Editor::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    return View::FindAreaUnderMouse(mouse_position, event_type);
   }
 
   void Matrix4Editor::Draw (GraphicsEngine &GfxContext, bool force_draw)
@@ -394,7 +392,7 @@ namespace nux
 
   void Matrix4Editor::RecvInverseMatrixCmd()
   {
-    m_Matrix.Zero();
+    m_Matrix.Inverse();
     WriteMatrix();
     sigMatrixChanged.emit (this);
 

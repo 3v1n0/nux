@@ -918,6 +918,11 @@ namespace nux
     while (KeepRunning)
 #endif
     {
+      if (this == NULL)
+      {
+        int i = 4;
+      }
+
       _inside_main_loop = true;
       if(Application->m_bFirstDrawPass)
       {
@@ -926,7 +931,7 @@ namespace nux
       }
       else
       {
-        ms = GetWindow().GetFrameTime();
+        ms = 16; //GetWindow().GetFrameTime();
       }
 
       memset(&event, 0, sizeof(IEvent));

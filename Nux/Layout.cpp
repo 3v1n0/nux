@@ -26,7 +26,8 @@
 
 namespace nux
 {
-  NUX_IMPLEMENT_OBJECT_TYPE (Layout);
+  NUX_IMPLEMENT_OBJECT_TYPE(Layout);
+  NUX_IMPLEMENT_OBJECT_TYPE(SpaceLayout);
 
   Layout::Layout (NUX_FILE_LINE_DECL)
     :   Area (NUX_FILE_LINE_PARAM)

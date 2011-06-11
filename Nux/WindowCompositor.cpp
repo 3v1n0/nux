@@ -74,6 +74,7 @@ namespace nux
     _mouse_owner_view           = NULL;
     _mouse_over_menu_page       = NULL;
     _mouse_owner_menu_page      = NULL;
+    _mouse_owner_base_window    = NULL;
     _starting_menu_event_cycle  = false;
     _menu_is_active             = false;
     _enable_mouse_event_cycle   = true;
@@ -221,6 +222,39 @@ namespace nux
     return _mouse_position;
   }
 
+  void WindowCompositor::ResetMousePointerAreas()
+  {
+    _mouse_over_view        = NULL;
+    _mouse_owner_view       = NULL;
+    _mouse_over_menu_page   = NULL;
+    _mouse_owner_menu_page  = NULL;
+  }
+
+  void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type, InputArea** area_under_mouse_pointer, BaseWindow** window)
+  {
+    // Go through the list of BaseWindo and find the first area over which the mouse pointer is.
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator window_it;
+    window_it = _view_window_list.begin();
+    while((*area_under_mouse_pointer == NULL) && (window_it != _view_window_list.end()) && (*window_it).IsValid() && (*window_it)->IsVisible())
+    {
+      *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, (*window_it)->FindAreaUnderMouse(mouse_position, event_type));
+      if(area_under_mouse_pointer)
+      {
+        // We have found an area. We are going to exit the while loop.
+        *window = (*window_it).GetPointer();
+      }
+      ++window_it;
+    }
+
+    // If area_under_mouse_pointer is NULL, then the mouse pointer is not over any of the BaseWindow. Try the main window layout.
+    if(*area_under_mouse_pointer == NULL)
+    {
+      Layout* main_window_layout = GetWindowThread()->GetMainLayout();
+      if(main_window_layout)
+        *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
+    }
+  }
+
   void WindowCompositor::MouseEventCycle(Event &event)
   {
     // _mouse_owner_view: the view that has the mouse down
@@ -230,14 +264,34 @@ namespace nux
 
     if(_mouse_owner_view == NULL)
     {
+      // Context: The left mouse button is not down over an area.
+      // We look for the area where the mouse pointer is located.
+
+      if(event.e_event == NUX_MOUSE_PRESSED)
+      {
+        int i = 4;
+      }
+
       // We should never get here for a NUX_MOUSE_RELEASED event
       if(event.e_event == NUX_MOUSE_PRESSED ||
         (event.e_event == NUX_MOUSE_MOVE) ||
         (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
         (event.e_event == NUX_MOUSE_WHEEL))
       {
-        // Find the view under the mouse
-        InputArea* hit_view = NUX_STATIC_CAST(InputArea*, GetWindowThread()->GetMainLayout()->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+        InputArea* hit_view = NULL;         // The view under the mouse
+        BaseWindow* hit_base_window = NULL; // The BaseWindow bellow the mouse pointer.
+
+        // Look for the area below the mouse pointer in the BaseWindow.
+        Area *pointer_grab_area = GetPointerGrabArea ();
+        if(pointer_grab_area)
+        {
+          // If there is a pending mouse pointer grab, test that area only
+          hit_view = NUX_STATIC_CAST(InputArea*, pointer_grab_area->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+        }
+        else
+        {
+          GetAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event, &hit_view, &hit_base_window);
+        }
 
         Geometry hit_view_geo;
         int hit_view_x = 0;
@@ -254,8 +308,11 @@ namespace nux
         {
           if(hit_view != _mouse_over_view)
           {
-            if(_mouse_over_view != 0)
+            
+            if(_mouse_over_view != NULL)
             {
+              // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
+              // The area from the previous cycle receive a "mouse leave signal".
               Geometry geo = _mouse_over_view->GetAbsoluteGeometry();
               int x = event.e_x - geo.x;
               int y = event.e_y - geo.y;
@@ -263,21 +320,29 @@ namespace nux
               _mouse_over_view->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             }
 
+            // The area we found under the mouse pointer receives a "mouse enter signal".
             _mouse_over_view = hit_view;
             _mouse_over_view->EmitMouseEnterSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
           }
 
+          // Send a "mouse mouse signal".
           _mouse_over_view->EmitMouseMoveSignal(hit_view_x, hit_view_y, event.e_dx, event.e_dy, event.GetMouseState(), event.GetKeyState());
         }
         else if(hit_view && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
         {
           if((event.e_event == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnable()))
           {
+            // If the area does not accept double click events, transform the event into a mouse pressed.
             event.e_event = NUX_MOUSE_PRESSED;
           }
 
           if(_mouse_over_view && (hit_view != _mouse_over_view))
           {
+            // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
+            // The area from the previous cycle receive a "mouse leave signal".
+            // This case should be rare. I would happen if the mouse is over an area and that area is removed and reveals
+            // a new area. If the next mouse event is a NUX_MOUSE_PRESSED, then the revealed area will be the one 
+            // that is returned by GetAreaUnderMouse.
             Geometry geo = _mouse_over_view->GetAbsoluteGeometry();
             int x = event.e_x - geo.x;
             int y = event.e_y - geo.y;
@@ -289,10 +354,23 @@ namespace nux
           _mouse_owner_view = hit_view;
           _mouse_position_on_owner = Point(hit_view_x, hit_view_y);
 
+          // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
+          // from the area returned by GetAreaUnderMouse, then stop that receiver from receiving anymore keyboard events and switch
+          // make the found area the new receiver (if it accept keyboard events).
           if(_mouse_over_view != GetKeyboardEventReceiver())
           {
+            if(GetKeyboardEventReceiver())
+              GetKeyboardEventReceiver()->EmitEndKeyboardFocus();
+
             if(_mouse_over_view->AcceptKeyboardEvent())
+            {
+              _mouse_over_view->EmitStartKeyboardFocus();
               SetKeyboardEventReceiver(_mouse_over_view);
+            }
+            else
+            {
+              SetKeyboardEventReceiver(NULL);
+            }
           }
 
           _mouse_over_view->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
@@ -325,8 +403,13 @@ namespace nux
     }
     else
     {
-      // We should never get here for a NUX_MOUSE_PRESSED event.
-      InputArea* hit_view = NUX_STATIC_CAST(InputArea*, GetWindowThread()->GetMainLayout()->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+      // Context: The left mouse button down over an area. All events goes to that area.
+      // But we still need to know where the mouse is.
+
+      InputArea* hit_view = NULL;         // The view under the mouse
+      BaseWindow* hit_base_window = NULL; // The BaseWindow bellow the mouse pointer.
+
+      GetAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event, &hit_view, &hit_base_window);
 
       Geometry mouse_owner_geo = _mouse_owner_view->GetAbsoluteGeometry();
       int mouse_owner_x = event.e_x - mouse_owner_geo.x;
@@ -350,8 +433,6 @@ namespace nux
           _mouse_owner_view->EmitMouseEnterSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
           _mouse_over_view = _mouse_owner_view;
         }
-
-        _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
       }
       else if(event.e_event == NUX_MOUSE_RELEASED)
       {
@@ -1931,9 +2012,9 @@ namespace nux
   // Be careful never call this function while you are iterating through the elements of _menu_chain.
   void WindowCompositor::RemoveMenu (MenuPage *menu)
   {
-    std::list<MenuPage *>::iterator it = find (_menu_chain->begin(), _menu_chain->end(), menu);
+    std::list<MenuPage *>::iterator it = find(_menu_chain->begin(), _menu_chain->end(), menu);
 
-    if (it == _menu_chain->end() )
+    if(it == _menu_chain->end())
     {
       return;
     }
@@ -1941,41 +2022,16 @@ namespace nux
     _menu_chain->erase (it);
     m_MenuRemoved = true;
 
-    if (_menu_is_active && (_menu_chain->size() == 0))
+    if(_menu_is_active && (_menu_chain->size() == 0))
     {
-      _menu_is_active = false;
-
-      if(_mouse_over_view)
-      {
-        if(!_mouse_over_view->TestMousePointerInclusion(_mouse_position, NUX_NO_EVENT))
-          _mouse_over_view->_event_processor._current_mouse_in = false;
-        _mouse_over_view = NULL;
-      }
-
-      if(_mouse_owner_view)
-      {
-        if(!_mouse_owner_view->TestMousePointerInclusion(_mouse_position, NUX_NO_EVENT))
-          _mouse_owner_view->_event_processor._current_mouse_in = false;
-        _mouse_owner_view = NULL;
-      }
-
-      if(_mouse_over_menu_page)
-      {
-        _mouse_over_menu_page->_event_processor._current_mouse_in = false;
-        _mouse_over_menu_page = NULL;
-      }
-
-      if(_mouse_owner_menu_page)
-      {
-        _mouse_owner_menu_page->_event_processor._current_mouse_in = false;
-        _mouse_owner_menu_page = NULL;
-      }
-
-      m_MenuWindow = NULL;
+      // The menu is closed
+      _menu_is_active         = false;
+      ResetMousePointerAreas();
+      m_MenuWindow            = NULL;
     }
   }
 
-  void WindowCompositor::CleanMenu ()
+  void WindowCompositor::CleanMenu()
   {
     if (_menu_chain->size() == 0)
       return;
@@ -2010,35 +2066,9 @@ namespace nux
 
     if (_menu_is_active && (_menu_chain->size() == 0))
     {
-      _menu_is_active = false;
-
-      if(_mouse_over_view)
-      {
-        if(!_mouse_over_view->TestMousePointerInclusion(_mouse_position, NUX_NO_EVENT))
-          _mouse_over_view->_event_processor._current_mouse_in = false;
-        _mouse_over_view = NULL;
-      }
-
-      if(_mouse_owner_view)
-      {
-        if(!_mouse_owner_view->TestMousePointerInclusion(_mouse_position, NUX_NO_EVENT))
-          _mouse_owner_view->_event_processor._current_mouse_in = false;
-        _mouse_owner_view = NULL;
-      }
-
-      if(_mouse_over_menu_page)
-      {
-        _mouse_over_menu_page->_event_processor._current_mouse_in = false;
-        _mouse_over_menu_page = NULL;
-      }
-
-      if(_mouse_owner_menu_page)
-      {
-        _mouse_owner_menu_page->_event_processor._current_mouse_in = false;
-        _mouse_owner_menu_page = NULL;
-      }
-
-      m_MenuWindow = NULL;
+      _menu_is_active         = false;
+      ResetMousePointerAreas();
+      m_MenuWindow            = NULL;
     }
   }
 
@@ -2410,6 +2440,9 @@ namespace nux
     if (result)
       _pointer_grab_stack.push_front (area);
 
+    // reset the mouse pointers areas.
+    ResetMousePointerAreas();
+
     return result;
   }
 
@@ -2430,6 +2463,9 @@ namespace nux
     if (_pointer_grab_stack.empty ())
       GetWindow ().UngrabPointer (this);
     
+    // reset the mouse pointers areas.
+    ResetMousePointerAreas();
+
     return true;
   }
 

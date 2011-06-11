@@ -85,8 +85,12 @@ namespace nux
     bool      _starting_menu_event_cycle;
     bool      _menu_is_active;
 
+  private:
+    void GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type, InputArea** area_under_mouse_pointer, BaseWindow** window);
+    void ResetMousePointerAreas();
     //====================================
-
+  
+  public:
     ObjectPtr<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
       return m_FrameBufferObject;

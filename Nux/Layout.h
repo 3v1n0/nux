@@ -276,6 +276,7 @@ namespace nux
 // The Space layout is a layout object that is used to create fixed or resizable empty space.
   class SpaceLayout: public Layout
   {
+    NUX_DECLARE_OBJECT_TYPE (SpaceLayout, Layout);
   public:
     SpaceLayout()
     {

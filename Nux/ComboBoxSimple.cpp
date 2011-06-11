@@ -31,7 +31,6 @@
 
 namespace nux
 {
-
   ComboBoxSimple::ComboBoxSimple (NUX_FILE_LINE_DECL)
     :   AbstractComboBox (NUX_FILE_LINE_PARAM)
   {
@@ -314,10 +313,10 @@ namespace nux
     m_CurrentMenu->StopMenu();
 
     m_SelectedAction = action;
-    _combo_box_area->SetBaseString (m_SelectedAction->GetLabel ());
+    _combo_box_area->SetBaseString(m_SelectedAction->GetLabel());
     m_IsOpeningMenu = false;
 
-    _pango_static_text->SetText (m_SelectedAction->GetLabel ());
+    _pango_static_text->SetText(m_SelectedAction->GetLabel());
 
     sigTriggered.emit (this);
     sigActionTriggered.emit (m_SelectedAction);
@@ -326,7 +325,7 @@ namespace nux
     // You can do something if you want with the menu* and the action*
   }
 
-  void ComboBoxSimple::RecvSigActionTriggered2 (TableCtrl *table, TableItem *item, unsigned int row, unsigned int column)
+  void ComboBoxSimple::RecvSigActionTriggered2(TableCtrl *table, TableItem *item, unsigned int row, unsigned int column)
   {
     m_MenuIsActive = false;
     m_CurrentMenu->StopMenu();
@@ -347,12 +346,25 @@ namespace nux
     nuxAssert(menu_page == m_CurrentMenu);
     m_IsOpeningMenu = false;
     m_MenuIsActive = false;
+
+    // When the menu is closing check if the mouse is still inside the combo box surface 
+    // and set the _current_mouse_in flag accordingly.  
+    if(!_combo_box_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
+    {
+      _combo_box_area->_event_processor._current_mouse_in = false;
+    }
+
+    if(!_combo_box_opening_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
+    {
+      _combo_box_opening_area->_event_processor._current_mouse_in = false;
+    }
+
     QueueDraw();
   }
 
   void ComboBoxSimple::RecvGeometryChanged(Area *area, Geometry &geo)
   {
-	_pango_static_text->SetClipping (geo.width);
+	  _pango_static_text->SetClipping (geo.width);
   }
 
 
