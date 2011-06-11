@@ -23,8 +23,6 @@
 #ifndef BASEWINDOW_H
 #define BASEWINDOW_H
 
-#include "ScrollView.h"
-
 #if defined(NUX_OS_WINDOWS)
 #include "NuxGraphics/Events.h"
 #elif defined(NUX_OS_LINUX)
@@ -34,7 +32,6 @@
 
 #include "InputArea.h"
 #include "MouseHandler.h"
-#include "StaticTextBox.h"
 #include "PaintLayer.h"
 
 namespace nux
