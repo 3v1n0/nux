@@ -128,6 +128,26 @@ namespace nux
     return ret;
   }
 
+  Area* BaseWindow::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type, false);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    if(m_layout)
+    {
+      nuxAssert(m_layout->IsLayout());
+      Area* found_area = m_layout->FindAreaUnderMouse(mouse_position, event_type);
+      if(found_area)
+        return found_area;
+    }
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
+  }
+
   void BaseWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();

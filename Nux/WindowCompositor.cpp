@@ -232,16 +232,21 @@ namespace nux
 
   void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type, InputArea** area_under_mouse_pointer, BaseWindow** window)
   {
+    *area_under_mouse_pointer = NULL;
+
     // Go through the list of BaseWindo and find the first area over which the mouse pointer is.
     std::list< ObjectWeakPtr<BaseWindow> >::iterator window_it;
     window_it = _view_window_list.begin();
-    while((*area_under_mouse_pointer == NULL) && (window_it != _view_window_list.end()) && (*window_it).IsValid() && (*window_it)->IsVisible())
+    while((*area_under_mouse_pointer == NULL) && (window_it != _view_window_list.end()))
     {
-      *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, (*window_it)->FindAreaUnderMouse(mouse_position, event_type));
-      if(area_under_mouse_pointer)
+      if((*window_it).IsValid() && (*window_it)->IsVisible())
       {
-        // We have found an area. We are going to exit the while loop.
-        *window = (*window_it).GetPointer();
+        *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, (*window_it)->FindAreaUnderMouse(mouse_position, event_type));
+        if(area_under_mouse_pointer)
+        {
+          // We have found an area. We are going to exit the while loop.
+          *window = (*window_it).GetPointer();
+        }
       }
       ++window_it;
     }

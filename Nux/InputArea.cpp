@@ -939,12 +939,12 @@ namespace nux
 
   void InputArea::EmitStartKeyboardFocus()
   {
-    OnStartMouseFocus.emit();
+    OnStartKeyboardReceiver.emit();
   }
 
   void InputArea::EmitEndKeyboardFocus()
   {
-    OnEndMouseFocus.emit();
+    OnStopKeyboardReceiver.emit();
   }
 
   Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)

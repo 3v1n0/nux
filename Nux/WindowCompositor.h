@@ -36,7 +36,6 @@ namespace nux
   class View;
   class InputArea;
   class Area;
-  class BaseWindow;
   class PaintLayer;
   class Event;
 
