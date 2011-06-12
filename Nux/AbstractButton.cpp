@@ -41,6 +41,13 @@ namespace nux
 
   void AbstractButton::Init () {
     EnableDoubleClick (false);
+    OnMouseClick.connect (sigc::mem_fun (this, &AbstractButton::RecvClick) );
+    OnMouseDown.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseDown) );
+    OnMouseDoubleClick.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseDown) );
+    OnMouseUp.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseUp) );
+    OnMouseMove.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseMove) );
+    OnMouseEnter.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseEnter) );
+    OnMouseLeave.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseLeave) );
   }
 
   void AbstractButton::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -57,7 +64,6 @@ namespace nux
       active = false;
 
     NeedRedraw();
-
   }
 
   long AbstractButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -73,7 +79,6 @@ namespace nux
 
   void AbstractButton::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags) {
     state = NUX_STATE_ACTIVE;
-    //state = 0;
     NeedRedraw();
   }
 
@@ -83,13 +88,11 @@ namespace nux
 
   void AbstractButton::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags) {
     state = NUX_STATE_PRELIGHT;
-    //state = 1;
     NeedRedraw();
   }
 
   void AbstractButton::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags) {
     state = NUX_STATE_NORMAL;
-    //state = 3;
     NeedRedraw();
   }
 }

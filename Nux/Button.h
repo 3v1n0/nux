@@ -53,7 +53,6 @@ namespace nux
     void SetImage (TextureArea *image);
     TextureArea *GetImage ();
 
-
     Property<std::string>   label;
     // FIXME - this should be the Position enum set above, can't do that because tim hates me
     Property<int>           image_position;

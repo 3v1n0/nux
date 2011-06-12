@@ -19,7 +19,7 @@ namespace nux
     _pango_font_map   = pango_ft2_font_map_new ();
     _pango_context    = pango_font_map_create_context (PANGO_FONT_MAP (_pango_font_map));
     _pango_layout     = pango_layout_new (_pango_context);
-    _pango_font_desc  = pango_font_description_from_string ("Arial, 20");
+    _pango_font_desc  = pango_font_description_from_string ("Sans, 20");
 
     _size_match_text = true;
     _textColor  = Colors::White;
@@ -289,7 +289,7 @@ namespace nux
 //         PangoLayout *layout;
 //         gint         start_index;            // start of line as byte index into layout->text.
 //         gint         length;		              // length of line in bytes.
-//         GSList      *runs;                   // a list containing the runs of the line in visual order. 
+//         GSList      *runs;                   // a list containing the runs of the line in visual order.
 //         guint        is_paragraph_start : 1; // TRUE if this is the first line of the paragraph.
 //         guint        resolved_dir : 3;       // Resolved direction of line.
 //       } PangoLayoutLine;
@@ -308,22 +308,22 @@ namespace nux
       while (curR)
       {
 //         typedef struct {
-//           PangoItem        *item;    // a PangoItem structure that provides information about a segment of text. 
-//           PangoGlyphString *glyphs;  // the glyphs obtained by shaping the text corresponding to item. 
+//           PangoItem        *item;    // a PangoItem structure that provides information about a segment of text.
+//           PangoGlyphString *glyphs;  // the glyphs obtained by shaping the text corresponding to item.
 //         } PangoLayoutRun, PangoGlyphItem;
-// 
+//
 //         typedef struct {
 //           gint offset;     // the offset of the segment from the beginning of the string in bytes.
-//           gint length;     // the length of the segment in bytes. 
-//           gint num_chars;  // the length of the segment in characters. 
-//           PangoAnalysis analysis;  // the properties of the segment. 
+//           gint length;     // the length of the segment in bytes.
+//           gint num_chars;  // the length of the segment in characters.
+//           PangoAnalysis analysis;  // the properties of the segment.
 //         } PangoItem;
 
 //         typedef struct {
 //           gint num_glyphs;
-// 
+//
 //           PangoGlyphInfo *glyphs;
-// 
+//
 //           /* This is a memory inefficient way of representing the information
 //            * here - each value gives the byte index within the text
 //            * corresponding to the glyph string of the start of the cluster to
@@ -418,7 +418,7 @@ namespace nux
       }
 
     } while ( pango_layout_iter_next_line(pIter) );
-   
+
     pango_layout_iter_free(pIter);
 
 

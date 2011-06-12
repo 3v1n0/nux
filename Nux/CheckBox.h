@@ -23,17 +23,27 @@
 #ifndef CHECKBOX_H
 #define CHECKBOX_H
 
-#include "ToggleButton.h"
+#include "AbstractButton.h"
 
 namespace nux
 {
-  class CheckBox: public ToggleButton
+  class CheckBox: public AbstractButton
   {
   public:
     CheckBox (std::string label, NUX_FILE_LINE_PROTO);
     ~CheckBox();
 
+    Property<std::string>   label;
+
+  private:
+    void Init ();
+
+    void OnStateChanged (int value);
+    void OnLabelChanged (std::string value);
+    void RebuildLayout ();
+
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
 
   private:
   };

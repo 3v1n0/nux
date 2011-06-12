@@ -111,6 +111,7 @@ source_cpp = \
   $(srcdir)/NumericValuator.cpp \
   $(srcdir)/Nux.cpp \
   $(srcdir)/NuxGlobalInitializer.cpp \
+  $(srcdir)/PangoText.cpp \
   $(srcdir)/Painter.cpp \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
@@ -247,6 +248,7 @@ source_h = \
   $(srcdir)/NuxGlobalInitializer.h \
   $(srcdir)/Painter.h \
   $(srcdir)/Panel.h \
+  $(srcdir)/PangoText.h \
   $(srcdir)/PopUpWindow.h \
   $(srcdir)/PropertyList.h \
   $(srcdir)/RangeValue.h \
