@@ -272,16 +272,12 @@ namespace nux
       // Context: The left mouse button is not down over an area.
       // We look for the area where the mouse pointer is located.
 
-      if(event.e_event == NUX_MOUSE_PRESSED)
-      {
-        int i = 4;
-      }
-
       // We should never get here for a NUX_MOUSE_RELEASED event
       if(event.e_event == NUX_MOUSE_PRESSED ||
         (event.e_event == NUX_MOUSE_MOVE) ||
         (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
-        (event.e_event == NUX_MOUSE_WHEEL))
+        (event.e_event == NUX_MOUSE_WHEEL) ||
+        (event.e_event == NUX_WINDOW_MOUSELEAVE))
       {
         InputArea* hit_view = NULL;         // The view under the mouse
         BaseWindow* hit_base_window = NULL; // The BaseWindow bellow the mouse pointer.
@@ -309,7 +305,21 @@ namespace nux
           hit_view_y = event.e_y - hit_view_geo.y;
         }
 
-        if(hit_view && (event.e_event == NUX_MOUSE_MOVE))
+        if(event.e_event == NUX_WINDOW_MOUSELEAVE)
+        {
+          if(_mouse_over_view != NULL)
+          {
+            // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
+            // The area from the previous cycle receive a "mouse leave signal".
+            Geometry geo = _mouse_over_view->GetAbsoluteGeometry();
+            int x = event.e_x - geo.x;
+            int y = event.e_y - geo.y;
+
+            _mouse_over_view->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+            _mouse_over_view = NULL;
+          }
+        }
+        else if(hit_view && (event.e_event == NUX_MOUSE_MOVE))
         {
           if(hit_view != _mouse_over_view)
           {
@@ -438,6 +448,8 @@ namespace nux
           _mouse_owner_view->EmitMouseEnterSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
           _mouse_over_view = _mouse_owner_view;
         }
+
+        _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
       }
       else if(event.e_event == NUX_MOUSE_RELEASED)
       {
@@ -737,7 +749,8 @@ namespace nux
   {
     if(_enable_mouse_event_cycle)
     {
-      if((event.e_event >= NUX_MOUSE_PRESSED) && (event.e_event <= NUX_MOUSE_WHEEL))
+      if(((event.e_event >= NUX_MOUSE_PRESSED) && (event.e_event <= NUX_MOUSE_WHEEL)) ||
+      (event.e_event == NUX_WINDOW_MOUSELEAVE))
       {
         if(_menu_chain->size())
         {

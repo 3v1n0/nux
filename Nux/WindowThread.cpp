@@ -918,11 +918,6 @@ namespace nux
     while (KeepRunning)
 #endif
     {
-      if (this == NULL)
-      {
-        int i = 4;
-      }
-
       _inside_main_loop = true;
       if(Application->m_bFirstDrawPass)
       {
