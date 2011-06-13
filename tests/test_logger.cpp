@@ -223,5 +223,24 @@ TEST(TestLogStream, TestDebugMacro) {
   EXPECT_THAT(counter, Eq(1));
 }
 
+TEST(TestLogHelpers, TestGetLoggingLevel) {
+  EXPECT_THAT(get_logging_level("trace"), Eq(TRACE));
+  EXPECT_THAT(get_logging_level("TrAce"), Eq(TRACE));
+  EXPECT_THAT(get_logging_level("TRACE"), Eq(TRACE));
+  EXPECT_THAT(get_logging_level("debug"), Eq(DEBUG));
+  EXPECT_THAT(get_logging_level("DEBUG"), Eq(DEBUG));
+  EXPECT_THAT(get_logging_level("info"), Eq(INFO));
+  EXPECT_THAT(get_logging_level("INFO"), Eq(INFO));
+  EXPECT_THAT(get_logging_level("warn"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("WARN"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("warning"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("WARNING"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("error"), Eq(ERROR));
+  EXPECT_THAT(get_logging_level("ERROR"), Eq(ERROR));
+  // Unknown levels result in WARNING
+  EXPECT_THAT(get_logging_level("critical"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("not_specified"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("other"), Eq(WARNING));
+}
 
 } // anon namespace

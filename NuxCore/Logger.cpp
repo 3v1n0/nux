@@ -270,5 +270,22 @@ int LogStreamBuffer::sync()
   return 0; // success
 }
 
+Level get_logging_level(std::string level)
+{
+  boost::to_upper(level);
+  if (level == "TRACE")
+    return TRACE;
+  if (level == "DEBUG")
+    return DEBUG;
+  if (level == "INFO")
+    return INFO;
+  if (level == "WARN" || level == "WARNING")
+    return WARNING;
+  if (level == "ERROR")
+    return ERROR;
+  return WARNING;
+}
+
+
 } // namespace logging
 } // namespace nux
