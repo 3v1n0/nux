@@ -47,6 +47,7 @@ public:
   bool IsWarningEnabled() const;
   bool IsInfoEnabled() const;
   bool IsDebugEnabled() const;
+  bool IsTraceEnabled() const;
 
   void SetLogLevel(Level level);
   Level GetLogLevel() const;
@@ -103,6 +104,11 @@ inline bool LoggerModule::IsDebugEnabled() const
   return GetEffectiveLogLevel() <= DEBUG;
 }
 
+inline bool LoggerModule::IsTraceEnabled() const
+{
+  return GetEffectiveLogLevel() <= TRACE;
+}
+
 inline void LoggerModule::SetLogLevel(Level level)
 {
   // The root module can't be unspecified.
@@ -153,6 +159,11 @@ bool Logger::IsInfoEnabled() const
 bool Logger::IsDebugEnabled() const
 {
   return pimpl->IsDebugEnabled();
+}
+
+bool Logger::IsTraceEnabled() const
+{
+  return pimpl->IsTraceEnabled();
 }
 
 void Logger::SetLogLevel(Level level)
