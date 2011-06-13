@@ -264,9 +264,35 @@ TEST(TestLogHelpers, TestResetLogging) {
 }
 
 
-TEST(TestLogHelpers, TestConfigureLogging) {
+TEST(TestLogHelpers, TestConfigureLoggingNull) {
 
+  reset_logging();
+  Logger("").SetLogLevel(DEBUG);
+  Logger("test.module").SetLogLevel(INFO);
+  // Configure passed a null pointer does nothing.
+  configure_logging(NULL);
+  std::string levels = dump_logging_levels();
 
+  EXPECT_THAT(levels, Eq("<root> DEBUG\n"
+                         "test.module INFO"));
+}
+
+TEST(TestLogHelpers, TestConfigureLoggingSingleModule) {
+  reset_logging();
+  configure_logging("test.module=debug");
+  std::string levels = dump_logging_levels();
+  EXPECT_THAT(levels, Eq("<root> WARNING\n"
+                         "test.module DEBUG"));
+}
+
+TEST(TestLogHelpers, TestConfigureLoggingMultipleModules) {
+  reset_logging();
+  configure_logging("module=info;sub.module=debug;other.module=warning");
+  std::string levels = dump_logging_levels();
+  EXPECT_THAT(levels, Eq("<root> WARNING\n"
+                         "module INFO\n"
+                         "other.module WARNING\n"
+                         "sub.module DEBUG"));
 }
 
 } // anon namespace

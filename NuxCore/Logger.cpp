@@ -326,6 +326,14 @@ std::string dump_logging_levels(std::string const& prefix)
   return LoggerModules::Instance().dump_logging_levels(prefix);
 }
 
+void configure_logging(const char* config_string)
+{
+  if (!config_string)
+    return;
+  
+}
+
+
 Level get_logging_level(std::string level)
 {
   boost::to_upper(level);

@@ -61,8 +61,8 @@ Level get_logging_level(std::string level);
  * Configure multiple logging modules.
  *
  * This function expects a string of the format:
- *   module=logging;sub.module=debug;other.module=warning
-
+ *   module=info;sub.module=debug;other.module=warning
+ *
  * The specified modules will have their logging level set to the specified
  * level as defined by the get_logging_level function.
  *
@@ -71,6 +71,7 @@ Level get_logging_level(std::string level);
  *   nux::logging::configure_logging(::getenv("MY_APP_LOGGING_CONFIG"));
  */
 void configure_logging(const char* config_string);
+
 std::string dump_logging_levels(std::string const& prefix = "");
 
 class LogStream : public std::ostream
