@@ -25,6 +25,7 @@
 
 #include <map>
 #include <sstream>
+#include <vector>
 #include <boost/algorithm/string.hpp>
 #include <boost/utility.hpp>
 
@@ -330,9 +331,23 @@ void configure_logging(const char* config_string)
 {
   if (!config_string)
     return;
-  
+  std::vector<std::string> values;
+  boost::split(values, config_string, boost::is_any_of(";:"));
+  for (std::vector<std::string>::iterator i = values.begin(), end = values.end();
+       i != end; ++i)
+  {
+    std::string& value = *i;
+    std::string::size_type pos = value.find("=");
+    if (pos != std::string::npos)
+    {
+      std::string name = value.substr(0, pos);
+      std::string level = value.substr(pos+1);
+      if (name == "<root>")
+        name = "";
+      Logger(name).SetLogLevel(get_logging_level(level));
+    }
+  }
 }
-
 
 Level get_logging_level(std::string level)
 {
