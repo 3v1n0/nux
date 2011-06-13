@@ -61,7 +61,7 @@ namespace nux
 
     //====================================
     void MouseEventCycle(Event &event);
-    bool _enable_mouse_event_cycle;
+    bool _enable_nux_new_event_architecture;
 
 
     Area* GetMouseOwner();

@@ -77,7 +77,7 @@ namespace nux
     _mouse_owner_base_window    = NULL;
     _starting_menu_event_cycle  = false;
     _menu_is_active             = false;
-    _enable_mouse_event_cycle   = true;
+    _enable_nux_new_event_architecture   = true;
 
     if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
     {
@@ -755,7 +755,7 @@ namespace nux
   // NUXTODO: rename as EventCycle
   void WindowCompositor::ProcessEvent (Event &event)
   {
-    if(_enable_mouse_event_cycle)
+    if(_enable_nux_new_event_architecture)
     {
       if(((event.e_event >= NUX_MOUSE_PRESSED) && (event.e_event <= NUX_MOUSE_WHEEL)) ||
       (event.e_event == NUX_WINDOW_MOUSELEAVE))
