@@ -367,19 +367,19 @@ Level get_logging_level(std::string level)
 
 BlockTracer::BlockTracer(Logger& logger,
                          Level level,
-                         std::string const& func,
-                         std::string const& file,
+                         std::string const& function_name,
+                         std::string const& filename,
                          int line_number)
   : logger_(logger)
   , level_(level)
-  , func_(func)
-  , file_(file)
+  , function_name_(function_name)
+  , filename_(filename)
   , line_number_(line_number)
 {
   if (logger_.GetEffectiveLogLevel() >= level_)
   {
-    LogStream(level_, logger_.module(), file_, line_number_).stream()
-      << "+" << func_;
+    LogStream(level_, logger_.module(), filename_, line_number_).stream()
+      << "+" << function_name_;
   }
 }
 
@@ -387,8 +387,8 @@ BlockTracer::~BlockTracer()
 {
   if (logger_.GetEffectiveLogLevel() >= level_)
   {
-    LogStream(level_, logger_.module(), file_, line_number_).stream()
-      << "-" << func_;
+    LogStream(level_, logger_.module(), filename_, line_number_).stream()
+      << "-" << function_name_;
   }
 }
 

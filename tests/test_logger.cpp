@@ -231,6 +231,23 @@ TEST(TestLogStream, TestDebugMacro) {
   EXPECT_THAT(counter, Eq(1));
 }
 
+TEST(TestLogStream, TestBlockTracer) {
+  std::stringstream out;
+  Writer::Instance().SetOutputStream(out);
+
+  Logger logger("test");
+  logger.SetLogLevel(DEBUG);
+  {
+    BlockTracer tracer(logger, DEBUG, "func_name", "file_name", 42);
+  }
+
+  std::string result = out.str();
+
+  EXPECT_THAT(result, MatchesRegex("DEBUG .+ test file_name:42 \\+func_name\n"
+                                   "DEBUG .+ test file_name:42 -func_name\n"));
+}
+
+
 TEST(TestLogHelpers, TestGetLoggingLevel) {
   EXPECT_THAT(get_logging_level("trace"), Eq(TRACE));
   EXPECT_THAT(get_logging_level("TrAce"), Eq(TRACE));

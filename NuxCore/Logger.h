@@ -143,15 +143,15 @@ class BlockTracer
 public:
   BlockTracer(Logger& logger,
               Level level,
-              std::string const& func,
-              std::string const& file,
+              std::string const& function_name,
+              std::string const& filename,
               int line_number);
   ~BlockTracer();
 private:
   Logger& logger_;
   Level level_;
-  std::string const& func_;
-  std::string const& file_;
+  std::string function_name_;
+  std::string filename_;
   int line_number_;
 };
 
