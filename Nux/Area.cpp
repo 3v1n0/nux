@@ -27,6 +27,7 @@
 #include "VSplitter.h"
 #include "HSplitter.h"
 #include "BaseWindow.h"
+#include "MenuPage.h"
 
 namespace nux
 {
@@ -400,10 +401,20 @@ namespace nux
 
   }
 
+  void Area::SetReconfigureParentLayoutOnGeometryChange(bool reconfigure_parent_layout)
+  {
+    _on_geometry_changeg_reconfigure_parent_layout = reconfigure_parent_layout;
+  }
+  
+  bool Area::ReconfigureParentLayoutOnGeometryChange()
+  {
+    return _on_geometry_changeg_reconfigure_parent_layout;
+  }
+
   void Area::ReconfigureParentLayout(Area *child)
   {
-    if(_on_geometry_changeg_reconfigure_parent_layout == false)
-      return;
+    /*if(_on_geometry_changeg_reconfigure_parent_layout == false)
+      return;*/
 
     if (GetWindowThread ()->IsComputingLayout() )
     {
@@ -691,7 +702,9 @@ namespace nux
 
   Geometry Area::GetAbsoluteGeometry () const
   {
-    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) ||
+      Type().IsDerivedFromType(MenuPage::StaticObjectType) ||
+      (this == GetWindowThread()->GetMainLayout()))
     {
       // Do not apply the _2D_xform matrix  to a BaseWindow or the main layout
       return _geometry;
@@ -879,7 +892,18 @@ namespace nux
 
   bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type, bool filter_mouse_wheel_event)
   {
-    bool mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
+    bool mouse_pointer_inside_area = false;
+
+    if(Type().IsDerivedFromType(MenuPage::StaticObjectType))
+    {
+      // A MenuPage geometry is already in absolute coordinates.
+      mouse_pointer_inside_area = _geometry.IsInside(mouse_position);
+    }
+    else
+    {
+      mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
+    }
+
     if((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area && filter_mouse_wheel_event)
     {
       if(_accept_mouse_wheel_event == false)

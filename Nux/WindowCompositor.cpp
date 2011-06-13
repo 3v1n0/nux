@@ -288,6 +288,14 @@ namespace nux
         {
           // If there is a pending mouse pointer grab, test that area only
           hit_view = NUX_STATIC_CAST(InputArea*, pointer_grab_area->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+          if((hit_view == NULL) && (event.e_event == NUX_MOUSE_PRESSED))
+          {
+            Geometry geo = pointer_grab_area->GetAbsoluteGeometry();
+            int x = event.e_x - geo.x;
+            int y = event.e_y - geo.y;
+
+            NUX_STATIC_CAST(InputArea*, pointer_grab_area)->EmitMouseDownOutsideArea(x, y, event.GetMouseState(), event.GetKeyState());
+          }
         }
         else
         {

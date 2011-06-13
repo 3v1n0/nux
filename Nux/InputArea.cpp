@@ -947,6 +947,11 @@ namespace nux
     OnStopKeyboardReceiver.emit();
   }
 
+  void InputArea::EmitMouseDownOutsideArea   (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    OnMouseDownOutsideArea.emit(x, y, mouse_button_state, special_keys_state);
+  }
+
   Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     if(TestMousePointerInclusion(mouse_position, event_type))

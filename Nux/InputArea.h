@@ -394,6 +394,8 @@ namespace nux
       virtual void EmitStartKeyboardFocus();
       virtual void EmitEndKeyboardFocus();
 
+      virtual void EmitMouseDownOutsideArea   (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
+
       friend class WindowCompositor;
   };
 

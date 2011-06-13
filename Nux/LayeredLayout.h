@@ -205,6 +205,8 @@ namespace nux
     virtual long DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual bool FocusFirstChild ();
     virtual bool FocusLastChild ();
+
+    void OnLayerGeometryChanged(Area* area, Geometry geo);
     
   private:
     void PaintOne (Area *area, GraphicsEngine &GfxContext, bool force_draw);

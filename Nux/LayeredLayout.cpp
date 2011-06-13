@@ -295,7 +295,10 @@ namespace nux
   
   Area* LayeredLayout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type, false);
+    if(m_active_area == NULL)
+    return NULL;
+    
+    bool mouse_inside = m_active_area->TestMousePointerInclusion(mouse_position, event_type, false);
 
     if(mouse_inside == false)
       return NULL;
@@ -477,6 +480,13 @@ namespace nux
 
       i++;
     }
+
+//     // Set the LayeredLayout to the same saize as the active layer;
+//     if(m_active_area)
+//     {
+//       SetGeometry(m_active_area->GetGeometry());
+//     }
+
     QueueDraw ();
   }
 
@@ -502,6 +512,15 @@ namespace nux
       i++;
     }
     g_warning ("%s: Area (%p) is not a child of LayeredLayout (%p)", G_STRFUNC, area, this);
+  }
+
+  void LayeredLayout::OnLayerGeometryChanged(Area* area, Geometry geo)
+  {
+    // Set the LayeredLayout to the same saize as the active layer;
+    if(area && (area == m_active_area))
+    {
+      SetGeometry(geo);
+    }
   }
 
   Area * LayeredLayout::GetActiveLayer ()
