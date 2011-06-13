@@ -31,6 +31,10 @@
 namespace nux {
 namespace logging {
 
+namespace {
+char const* str_level(Level severity);
+}
+
 class LoggerModule
 {
 public:
@@ -59,6 +63,9 @@ public:
   static LoggerModules& Instance();
 
   LoggerModulePtr const& GetModule(std::string const& module);
+
+  void reset();
+  std::string dump_logging_levels(std::string const& prefix);
 
 private:
   LoggerModules();
@@ -206,6 +213,39 @@ LoggerModulePtr const& LoggerModules::GetModule(std::string const& module)
   return modules_.insert(ModuleMap::value_type(lower_module, logger)).first->second;
 }
 
+void LoggerModules::reset()
+{
+  for (ModuleMap::iterator i = modules_.begin(), end = modules_.end(); i != end; ++i)
+  {
+    i->second->SetLogLevel(NOT_SPECIFIED);
+  }
+}
+
+std::string LoggerModules::dump_logging_levels(std::string const& prefix)
+{
+  std::ostringstream sout;
+  bool first = true;
+  for (ModuleMap::iterator i = modules_.begin(), end = modules_.end(); i != end; ++i)
+  {
+    std::string const& module_name = i->first;
+    LoggerModulePtr const& module = i->second;
+    Level severity = module->GetLogLevel();
+    if (severity == NOT_SPECIFIED)
+      continue; // Don't write out unspecified ones.
+    if (first)
+      first = false;
+    else
+      sout << "\n";
+    sout << prefix;
+    if (module_name == "")
+      sout << "<root>";
+    else
+      sout << module_name;
+    sout << " " << str_level(severity);
+  }
+  return sout.str();
+}
+
 
 class LogStreamBuffer : public std::stringbuf
 {
@@ -270,6 +310,22 @@ int LogStreamBuffer::sync()
   return 0; // success
 }
 
+/**
+ * A helper function for testing.  Not exported, but used in tests.
+ *
+ * Resets the root logger to warning, and sets all other modules to not
+ * specified.
+ */
+void reset_logging()
+{
+  LoggerModules::Instance().reset();
+}
+
+std::string dump_logging_levels(std::string const& prefix)
+{
+  return LoggerModules::Instance().dump_logging_levels(prefix);
+}
+
 Level get_logging_level(std::string level)
 {
   boost::to_upper(level);
@@ -286,6 +342,30 @@ Level get_logging_level(std::string level)
   return WARNING;
 }
 
+namespace {
+char const* str_level(Level severity)
+{
+  switch (severity)
+  {
+  case NOT_SPECIFIED:
+    return "NOT_SPECIFIED";
+  case TRACE:
+    return "TRACE";
+  case DEBUG:
+    return "DEBUG";
+  case INFO:
+    return "INFO";
+  case WARNING:
+    return "WARNING";
+  case ERROR:
+    return "ERROR";
+  case CRITICAL:
+    return "CRITICAL";
+  }
+  return "<unknown>";
+}
+
+}
 
 } // namespace logging
 } // namespace nux

@@ -57,6 +57,22 @@ enum Level
 // Convert a string representation of a logging level into the enum value.
 Level get_logging_level(std::string level);
 
+/**
+ * Configure multiple logging modules.
+ *
+ * This function expects a string of the format:
+ *   module=logging;sub.module=debug;other.module=warning
+
+ * The specified modules will have their logging level set to the specified
+ * level as defined by the get_logging_level function.
+ *
+ * It is expected that this method is called during application startup with
+ * the content of some environment variable.
+ *   nux::logging::configure_logging(::getenv("MY_APP_LOGGING_CONFIG"));
+ */
+void configure_logging(const char* config_string);
+std::string dump_logging_levels(std::string const& prefix = "");
+
 class LogStream : public std::ostream
 {
 public:

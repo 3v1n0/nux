@@ -10,6 +10,14 @@
 using namespace nux::logging;
 using namespace testing;
 
+namespace nux {
+namespace logging {
+// Declare the hidden function so we can call it.
+void reset_logging();
+}
+}
+
+
 namespace {
 
 TEST(TestLogger, TestSimpleConstruction) {
@@ -241,6 +249,24 @@ TEST(TestLogHelpers, TestGetLoggingLevel) {
   EXPECT_THAT(get_logging_level("critical"), Eq(WARNING));
   EXPECT_THAT(get_logging_level("not_specified"), Eq(WARNING));
   EXPECT_THAT(get_logging_level("other"), Eq(WARNING));
+}
+
+TEST(TestLogHelpers, TestResetLogging) {
+  // First set root and another.
+  Logger("").SetLogLevel(DEBUG);
+  Logger("test.module").SetLogLevel(INFO);
+
+  reset_logging();
+
+  std::string levels = dump_logging_levels();
+
+  EXPECT_THAT(levels, Eq("<root> WARNING"));
+}
+
+
+TEST(TestLogHelpers, TestConfigureLogging) {
+
+
 }
 
 } // anon namespace
