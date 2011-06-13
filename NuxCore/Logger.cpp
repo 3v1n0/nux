@@ -280,12 +280,9 @@ LogStream::LogStream(Level severity,
                      std::string const& module,
                      std::string const& filename,
                      int line_number)
-  : std::ostream(0)
+  : std::ostream(new LogStreamBuffer(severity, module,
+                                     filename, line_number))
 {
-  // Set the buffer with a dynamically created LogStreamBuffer.
-  LogStreamBuffer* buff = new LogStreamBuffer(severity, module,
-                                              filename, line_number);
-  rdbuf(buff);
 }
 
 LogStream::~LogStream()
