@@ -54,6 +54,8 @@ enum Level
   CRITICAL,
 };
 
+// Convert a string representation of a logging level into the enum value.
+Level get_logging_level(std::string level);
 
 class LogStream : public std::ostream
 {
@@ -74,7 +76,7 @@ typedef boost::shared_ptr<LoggerModule> LoggerModulePtr;
 class Logger
 {
 public:
-  Logger(std::string const& module);
+  explicit Logger(std::string const& module);
 
   std::string const& module() const;
 

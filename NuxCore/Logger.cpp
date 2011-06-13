@@ -25,6 +25,7 @@
 
 #include <map>
 #include <sstream>
+#include <boost/algorithm/string.hpp>
 #include <boost/utility.hpp>
 
 namespace nux {
@@ -186,22 +187,23 @@ LoggerModules& LoggerModules::Instance()
 
 LoggerModulePtr const& LoggerModules::GetModule(std::string const& module)
 {
-  ModuleMap::iterator i = modules_.find(module);
+  std::string lower_module = boost::to_lower_copy(module);
+  ModuleMap::iterator i = modules_.find(lower_module);
   if (i != modules_.end())
     return i->second;
 
   // Make the new LoggerModule and its parents.
   // Split on '.'
-  std::string::size_type idx = module.rfind(".");
+  std::string::size_type idx = lower_module.rfind(".");
   LoggerModulePtr parent = root_;
   if (idx != std::string::npos) {
-    parent = GetModule(module.substr(0, idx));
+    parent = GetModule(lower_module.substr(0, idx));
   }
-  LoggerModulePtr logger(new LoggerModule(module, parent));
+  LoggerModulePtr logger(new LoggerModule(lower_module, parent));
   // std::map insert method returns a pair<iterator, bool> which seems
   // overly annoying to make a temporary of, so just return the const
   // reference pointed to by the interator.
-  return modules_.insert(ModuleMap::value_type(module, logger)).first->second;
+  return modules_.insert(ModuleMap::value_type(lower_module, logger)).first->second;
 }
 
 

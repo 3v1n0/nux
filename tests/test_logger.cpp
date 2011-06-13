@@ -76,6 +76,14 @@ TEST(TestLogger, TestLevelsSharedForSameModule) {
   EXPECT_TRUE(logger2.IsInfoEnabled());
 }
 
+TEST(TestLogger, TestModuleLowered) {
+  Logger logger1("TESTING.MODULE");
+  Logger logger2("Testing");
+
+  EXPECT_THAT(logger1.module(), Eq("testing.module"));
+  EXPECT_THAT(logger2.module(), Eq("testing"));
+}
+
 TEST(TestLogger, TestLevelsInherited) {
   Logger root("");
   Logger first("first");
