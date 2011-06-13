@@ -277,6 +277,13 @@ TEST(TestLogHelpers, TestConfigureLoggingNull) {
                          "test.module INFO"));
 }
 
+TEST(TestLogHelpers, TestConfigureLoggingRoot) {
+  reset_logging();
+  configure_logging("<root>=debug");
+  std::string levels = dump_logging_levels();
+  EXPECT_THAT(levels, Eq("<root> DEBUG"));
+}
+
 TEST(TestLogHelpers, TestConfigureLoggingSingleModule) {
   reset_logging();
   configure_logging("test.module=debug");

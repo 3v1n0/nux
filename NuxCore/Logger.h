@@ -63,6 +63,10 @@ Level get_logging_level(std::string level);
  * This function expects a string of the format:
  *   module=info;sub.module=debug;other.module=warning
  *
+ *
+ * The root module can be specified by using the value "<root>", eg:
+ *   <root>=info;other.module=debug
+ *
  * The specified modules will have their logging level set to the specified
  * level as defined by the get_logging_level function.
  *
