@@ -24,7 +24,6 @@
 #define N3DWORLD_H
 
 #include "NuxCore/NuxCore.h"
-#include "NuxCore/Namespace.h"
 #include "NuxCore/Math/Matrix4.h"
 
 namespace nux

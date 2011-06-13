@@ -29,6 +29,9 @@ namespace nux
   class ToggleButton;
   class ColorGradientPropertyItem;
 
+  // TODO: Tim Penhey 2011-05-12
+  // Both this class and RGBPropertyItem should share a base class
+  // as many of the color calculations are common to the two.
   class RGBAPropertyItem: public SectionProperty
   {
     NODE_XML_CLASS_MEMBER (RGBAPropertyItem);
@@ -67,19 +70,19 @@ namespace nux
 
     double GetRed()     const
     {
-      return m_Red;
+      return color_.red;
     }
     double GetGreen()   const
     {
-      return m_Green;
+      return color_.green;
     }
     double GetBlue()    const
     {
-      return m_Blue;
+      return color_.blue;
     }
     double GetAlpha()   const
     {
-      return m_Alpha;
+      return color_.alpha;
     }
     void SetColor (double red, double green, double blue, double alpha)
     {
@@ -93,8 +96,8 @@ namespace nux
     void OnChangeColorModel();
     void OnChangeColorFormat();
 
-    void SetColorModel (eColorModel cm);
-    void SetColorFormat (Color::Format cf);
+    void SetColorModel (color::Model cm);
+    void SetColorFormat (color::Format cf);
 
   private:
     void UpdateStartToEndColors();
@@ -109,11 +112,11 @@ namespace nux
     ColorGradientPropertyItem *m_blue;
     ColorGradientPropertyItem *m_alpha;
 
-    float m_Red, m_Green, m_Blue, m_Alpha;
+    Color color_;
     ToggleButton *m_ColorModel;
     ToggleButton *m_ColorFormat;
-    enum eColorModel m_color_model;
-    Color::Format m_color_format;
+    color::Model color_model_;
+    color::Format color_format_;
   };
 
 }

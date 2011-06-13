@@ -99,7 +99,7 @@ namespace nux
   int FilePropertyItem::GetItemBestHeight()
   {
     Size sz = m_TextEntry->GetMinimumSize();
-    return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
+    return sz.height + 2 * PROPERTY_BORDER_Y;
   }
 
 }

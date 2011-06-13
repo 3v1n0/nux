@@ -36,7 +36,7 @@ namespace nux
   {
     for (t_u32 i = 0; i < NUX_COLOR_DIALOG_CUSTOM_COLOR; i++)
     {
-      m_CustomColors[i] = (COLORREF) NUX_RGB (255, 255, 255);
+      m_CustomColors[i] = (COLORREF) (0xFFFFFF);
     }
   }
 
@@ -54,7 +54,7 @@ namespace nux
   void ColorDialogOption::SetCustomColor (t_u32 index, BYTE R, BYTE G, BYTE B)
   {
     nuxAssert (index < NUX_COLOR_DIALOG_CUSTOM_COLOR);
-    m_CustomColors[index] = (COLORREF) NUX_RGB (R, G, B);
+    m_CustomColors[index] = (COLORREF) ((R<<16)|(G<<8)|B);
   }
 
 

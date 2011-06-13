@@ -97,11 +97,11 @@ namespace nux
     Geometry base = GetGeometry();
 
     if (state == NUX_STATE_ACTIVE) {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Colors::White, eAllCorners);
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, color::White, eAllCorners);
     } else if (state == NUX_STATE_PRELIGHT) {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, Colors::White, eAllCorners);
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, color::White, eAllCorners);
     } else {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Colors::White, eAllCorners);
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, color::White, eAllCorners);
     }
 
     InteractState is;

@@ -77,14 +77,14 @@ namespace nux
     //GetPainter().Draw2DLine(GfxContext, base.x, y0, base.x + base.GetWidth(), y0, 0xFF222222);
     //GetPainter().Draw2DLine(GfxContext, base.x, y0+1, base.x + base.GetWidth(), y0+1, 0xFFAAAAAA);
 
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (base.GetWidth() - 2 * m_BorderSize > 0)
     {
       Color color0 = m_Color;
       Color color1 = m_Color;
-      color0.SetAlpha (m_Alpha0);
-      color1.SetAlpha (m_Alpha1);
+      color0.alpha = m_Alpha0;
+      color1.alpha = m_Alpha1;
       GetPainter().Draw2DLine (GfxContext, base.x, y0, base.x + m_BorderSize, y0, color0, color1);
       GetPainter().Draw2DLine (GfxContext, base.x + m_BorderSize, y0, base.x + base.GetWidth() - m_BorderSize, y0, color1, color1);
       GetPainter().Draw2DLine (GfxContext, base.x + base.GetWidth() - m_BorderSize, y0, base.x + base.GetWidth(), y0, color1, color0);
@@ -92,10 +92,10 @@ namespace nux
     else
     {
       Color color1 = m_Color;
-      color1.SetAlpha (m_Alpha1);
+      color1.alpha = m_Alpha1;
       GetPainter().Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, color1, color1);
     }
 
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (FALSE);
   }
 }

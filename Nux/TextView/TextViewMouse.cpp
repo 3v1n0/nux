@@ -140,7 +140,7 @@ namespace nux
 
     UpdateLine (nLineNo);
 
-    SetCapture (GetThreadGLWindow()->GetWindowHandle() );
+    SetCapture (GetGraphicsDisplay()->GetWindowHandle() );
 
     StopBlinkCursor (false);
     StartBlinkCursor (false);
@@ -248,7 +248,7 @@ namespace nux
       if ( (m_nSelectionMode == SEL_MARGIN) && (mx > LeftMarginWidth() ) )
       {
         m_nSelectionMode = SEL_NORMAL;
-        GetThreadGLWindow()->SetWindowCursor (LoadCursor (0, IDC_IBEAM) );
+        GetGraphicsDisplay()->SetWindowCursor (LoadCursor (0, IDC_IBEAM) );
       }
 
       //
@@ -341,13 +341,13 @@ namespace nux
 
       if (mx >= 0 && mx < LeftMarginWidth() )
       {
-        GetThreadGLWindow()->SetWindowCursor (m_hMarginCursor);
+        GetGraphicsDisplay()->SetWindowCursor (m_hMarginCursor);
       }
       else if (rect.IsPointInside (mx + getBorder(), my + getTopBorder() ) )
-        GetThreadGLWindow()->SetWindowCursor (LoadCursor (0, IDC_IBEAM) );
+        GetGraphicsDisplay()->SetWindowCursor (LoadCursor (0, IDC_IBEAM) );
       else
       {
-        GetThreadGLWindow()->SetWindowCursor (LoadCursor (0, IDC_ARROW) );
+        GetGraphicsDisplay()->SetWindowCursor (LoadCursor (0, IDC_ARROW) );
       }
     }
   }
@@ -361,13 +361,13 @@ namespace nux
 
     if (x >= 0 && x < LeftMarginWidth() )
     {
-      GetThreadGLWindow()->SetWindowCursor (m_hMarginCursor);
+      GetGraphicsDisplay()->SetWindowCursor (m_hMarginCursor);
     }
     else if (rect.IsPointInside (x + getBorder(), y + getTopBorder() ) )
-      GetThreadGLWindow()->SetWindowCursor (LoadCursor (0, IDC_IBEAM) );
+      GetGraphicsDisplay()->SetWindowCursor (LoadCursor (0, IDC_IBEAM) );
     else
     {
-      GetThreadGLWindow()->SetWindowCursor (LoadCursor (0, IDC_ARROW) );
+      GetGraphicsDisplay()->SetWindowCursor (LoadCursor (0, IDC_ARROW) );
     }
   }
 
@@ -376,7 +376,7 @@ namespace nux
     x = x - getBorder() - GetViewContentLeftMargin();
     y = y - getTopBorder() - GetViewContentTopMargin();
 
-    GetThreadGLWindow()->SetWindowCursor (LoadCursor (0, IDC_ARROW) );
+    GetGraphicsDisplay()->SetWindowCursor (LoadCursor (0, IDC_ARROW) );
   }
 
 
@@ -396,7 +396,7 @@ namespace nux
     Geometry  rect;
 
     // get the mouse's client-coordinates
-    Point point = GetThreadGLWindow()->GetMouseWindowCoord();
+    Point point = GetGraphicsDisplay()->GetMouseWindowCoord();
 
     // find client area, but make it an even no. of lines
     rect = GetTextAreaGeometry();
@@ -668,7 +668,7 @@ namespace nux
     }
 
     if (m_fHideCaret == false)
-      m_CaretPosition.Set (xpos + getBorder() + GetViewContentLeftMargin(), (lineno - m_nVScrollPos) * m_nLineHeight + getTopBorder() + GetViewContentTopMargin() );
+      m_CaretPosition = Point(xpos + getBorder() + GetViewContentLeftMargin(), (lineno - m_nVScrollPos) * m_nLineHeight + getTopBorder() + GetViewContentTopMargin());
 
     m_RedrawCaret = true;
   }
@@ -688,7 +688,7 @@ namespace nux
     // only show caret if it is visible within viewport
     if (lineno >= m_nVScrollPos && lineno <= m_nVScrollPos + m_nWindowLines)
     {
-      if (xpos >= LeftMarginWidth() /* && (GetThreadGLWindow()->GetCurrentEvent().e_event != NUX_MOUSE_PRESSED)*/)
+      if (xpos >= LeftMarginWidth() /* && (GetGraphicsDisplay()->GetCurrentEvent().e_event != NUX_MOUSE_PRESSED)*/)
         visible = true;
     }
 
@@ -708,7 +708,7 @@ namespace nux
     // set caret position if within window viewport
     if (m_fHideCaret == false)
     {
-      m_CaretPosition.Set (xpos + getBorder() + GetViewContentLeftMargin(), (lineno - m_nVScrollPos) * m_nLineHeight + getTopBorder() + GetViewContentTopMargin() );
+      m_CaretPosition = Point(xpos + getBorder() + GetViewContentLeftMargin(), (lineno - m_nVScrollPos) * m_nLineHeight + getTopBorder() + GetViewContentTopMargin());
     }
 
     nuxDebugMsg (TEXT ("Caret x: %d"), xpos + getBorder() + GetViewContentLeftMargin() );

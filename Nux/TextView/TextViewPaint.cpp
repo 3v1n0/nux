@@ -779,10 +779,10 @@ namespace nux
       Position[0].z = 0.0f  * 1.0f      + 0.0f;             // z
       Position[0].w = 1.0f  * 1.0f      + 0.0f;             // w
       // color
-      Position[1].x = color.R();
-      Position[1].y = color.G();
-      Position[1].z = color.B();
-      Position[1].w = color.A();
+      Position[1].x = color.red;
+      Position[1].y = color.green;
+      Position[1].z = color.blue;
+      Position[1].w = color.alpha;
 
       // Position lower left
       Position[2].x = 0.0f  * geo.GetWidth()     + geo.x;    // x
@@ -790,10 +790,10 @@ namespace nux
       Position[2].z = 0.0f  * 1.0f      + 0.0f;             // z
       Position[2].w = 1.0f  * 1.0f      + 0.0f;             // w
       // color
-      Position[3].x = color.R();
-      Position[3].y = color.G();
-      Position[3].z = color.B();
-      Position[3].w = color.A();
+      Position[3].x = color.red;
+      Position[3].y = color.green;
+      Position[3].z = color.blue;
+      Position[3].w = color.alpha;
 
       // Position lower right
       Position[4].x = 1.0f  * geo.GetWidth()     + geo.x;    // x
@@ -801,10 +801,10 @@ namespace nux
       Position[4].z = 0.0f  * 1.0f      + 0.0f;             // z
       Position[4].w = 1.0f  * 1.0f      + 0.0f;             // w
       // color
-      Position[5].x = color.R();
-      Position[5].y = color.G();
-      Position[5].z = color.B();
-      Position[5].w = color.A();
+      Position[5].x = color.red;
+      Position[5].y = color.green;
+      Position[5].z = color.blue;
+      Position[5].w = color.alpha;
 
       // Position upper right
       Position[6].x = 1.0f  * geo.GetWidth()     + geo.x;    // x
@@ -812,10 +812,10 @@ namespace nux
       Position[6].z = 0.0f  * 1.0f      + 0.0f;             // z
       Position[6].w = 1.0f  * 1.0f      + 0.0f;             // w
       // color
-      Position[7].x = color.R();
-      Position[7].y = color.G();
-      Position[7].z = color.B();
-      Position[7].w = color.A();
+      Position[7].x = color.red;
+      Position[7].y = color.green;
+      Position[7].z = color.blue;
+      Position[7].w = color.alpha;
     }
   }
 

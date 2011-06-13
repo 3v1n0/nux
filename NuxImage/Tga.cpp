@@ -25,7 +25,6 @@
 #include <fstream>
 
 #include "NuxCore/NuxCore.h"
-#include "NuxCore/StreamBuffer.h"
 
 #include "Tga.h"
 #include "BitmapFormats.h"
@@ -58,10 +57,6 @@ namespace nux
       //nuxAssertMsg(0, TEXT("[read_tga_file] File not found: %s"), file_name);
       return 0;
     }
-
-//    NUnZip UZ(TEXT("..\\inalogic.pak"));
-//    NStreamBuffer *Stream = UZ.UnzipFileToStream(file_name);
-//    std::istream fileStream(Stream);
 
     fileStream.open (file_name, std::ifstream::binary);       // open as binary
 

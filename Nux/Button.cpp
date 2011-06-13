@@ -71,7 +71,6 @@ Button::Button (NUX_FILE_LINE_DECL)
   void Button::Init () {
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    SetTextColor (Colors::Black);
     image_position = NUX_POSITION_LEFT;
     state.changed.connect (sigc::mem_fun(this, &Button::OnStateChanged));
 
@@ -168,13 +167,13 @@ Button::Button (NUX_FILE_LINE_DECL)
     //FIXME - nux button theming only supports a few states - low priority really.
     if (state == NUX_STATE_ACTIVE) {
       //FIXME - this uses eBUTTON_FOCUS but that's badly named, focus really means "mouse down" or "activated"
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, Colors::White, eAllCorners);
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, color::White, eAllCorners);
       GetPainter().PopBackground();
     } else if (state == NUX_STATE_PRELIGHT) {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, Colors::White, eAllCorners);
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, color::White, eAllCorners);
       GetPainter().PopBackground();
     } else {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, Colors::White, eAllCorners);
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, color::White, eAllCorners);
       GetPainter().PopBackground();
     }
   }

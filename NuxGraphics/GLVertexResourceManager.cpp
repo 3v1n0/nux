@@ -29,56 +29,52 @@
 
 namespace nux
 {
+  NUX_IMPLEMENT_OBJECT_TYPE(VertexBuffer);
+  NUX_IMPLEMENT_OBJECT_TYPE(IndexBuffer);
+  NUX_IMPLEMENT_OBJECT_TYPE(VertexDeclaration);
+  NUX_IMPLEMENT_OBJECT_TYPE(MeshBuffer);
+  
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedVertexBuffer);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedIndexBuffer);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedVertexDeclaration);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedMeshBuffer);
 
-  NUX_IMPLEMENT_OBJECT_TYPE (NVertexBuffer);
-  NUX_IMPLEMENT_OBJECT_TYPE (NIndexBuffer);
-  NUX_IMPLEMENT_OBJECT_TYPE (NMesh);
-  NUX_IMPLEMENT_OBJECT_TYPE (NStaticMesh);
-  NUX_IMPLEMENT_OBJECT_TYPE (NVertexDeclaration);
-
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLVertexBuffer);
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLIndexBuffer);
-//NUX_IMPLEMENT_OBJECT_TYPE(NGLMesh);
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLStaticMesh);
-  NUX_IMPLEMENT_OBJECT_TYPE (NGLVertexDeclaration);
-
-
-  NVertexBuffer::NVertexBuffer()
+  VertexBuffer::VertexBuffer()
   {
     _Stride = 0;
   }
 
-  NVertexBuffer::~NVertexBuffer()
+  VertexBuffer::~VertexBuffer()
   {
     _Data.clear();
   }
 
-  NVertexBuffer::NVertexBuffer (int Size, int Stride)
+  VertexBuffer::VertexBuffer (int num_element, int size)
   {
-    Allocate (Size, Stride);
+    Allocate (num_element, size);
   }
 
-//! Copy constructor
-  NVertexBuffer::NVertexBuffer (const NVertexBuffer &Other)
+  //! Copy constructor
+  VertexBuffer::VertexBuffer (const VertexBuffer &Other)
   {
     _Data = Other._Data;
     _Stride = Other._Stride;
   }
 
-//! Assignment constructor
-  NVertexBuffer &NVertexBuffer::operator = (const NVertexBuffer &Other)
+  //! Assignment constructor
+  VertexBuffer &VertexBuffer::operator = (const VertexBuffer &Other)
   {
     _Data = Other._Data;
     _Stride = Other._Stride;
     return *this;
   }
 
-  void NVertexBuffer::Allocate (int Size, int Stride)
+  void VertexBuffer::Allocate(int num_element, int size)
   {
-    nuxAssert (Size > 0);
-    nuxAssert (Stride > 0);
+    nuxAssert(num_element > 0);
+    nuxAssert(size > 0);
 
-    if ( (Stride <= 0) || (Size <= 0) )
+    if((size <= 0) || (num_element <= 0))
     {
       _Data.clear();
       _Stride = 0;
@@ -86,81 +82,81 @@ namespace nux
     }
 
     // Make sure Size is a multiple of Stride
-    int sz = Align<int> (Size, Stride);
-    _Stride = Stride;
+    int sz = size * num_element;
+    _Stride = size;
 
     _Data.clear();
-    _Data.resize (sz);
+    _Data.resize(sz);
   }
 
-  int NVertexBuffer::GetSize() const
+  int VertexBuffer::GetSize() const
   {
     return _Data.size();
   }
 
-  int NVertexBuffer::GetStride() const
+  int VertexBuffer::GetStride() const
   {
     return _Stride;
   }
 
-  int NVertexBuffer::GetNumElement() const
+  int VertexBuffer::GetNumElement() const
   {
     return _Data.size() / _Stride;
   }
 
-  const t_u8 *NVertexBuffer::GetPtrRawData() const
+  const void* VertexBuffer::GetPtrRawData() const
   {
     if (_Data.size() == 0)
       return 0;
 
-    return NUX_STATIC_CAST (const t_u8 *, &_Data[0]);
+    return NUX_STATIC_CAST (const void*, &_Data[0]);
   }
 
-  t_u8 *NVertexBuffer::GetPtrRawData()
+  void* VertexBuffer::GetPtrRawData()
   {
     if (_Data.size() == 0)
       return 0;
 
-    return NUX_CONST_CAST (t_u8 *, ( (NUX_CONST_CAST (const NVertexBuffer *, this) )->GetPtrRawData() ) );
+    return NUX_CONST_CAST(void*, ((NUX_CONST_CAST (const VertexBuffer *, this))->GetPtrRawData()));
   }
 
-//////////////////////////////////////////////////////////////////////////
-  NIndexBuffer::NIndexBuffer()
+  IndexBuffer::IndexBuffer()
   {
     _Stride = 0;
   }
 
-  NIndexBuffer::~NIndexBuffer()
+  IndexBuffer::~IndexBuffer()
   {
     _Data.clear();
   }
 
-  NIndexBuffer::NIndexBuffer (int Size, int Stride)
+  IndexBuffer::IndexBuffer(int num_element, int size)
   {
-    Allocate (Size, Stride);
+    Allocate(num_element, size);
   }
 
-//! Copy constructor
-  NIndexBuffer::NIndexBuffer (const NIndexBuffer &Other)
+  //! Copy constructor
+  IndexBuffer::IndexBuffer(const IndexBuffer &Other)
   {
     _Data = Other._Data;
     _Stride = Other._Stride;
   }
 
-//! Assignment constructor
-  NIndexBuffer &NIndexBuffer::operator = (const NIndexBuffer &Other)
+  //! Assignment constructor
+  IndexBuffer &IndexBuffer::operator = (const IndexBuffer &Other)
   {
     _Data = Other._Data;
     _Stride = Other._Stride;
     return *this;
   }
 
-  void NIndexBuffer::Allocate (int Size, int Stride)
+  void IndexBuffer::Allocate(int num_element, int size)
   {
-    nuxAssert (Size > 0);
-    nuxAssert (Stride > 0);
+    nuxAssert(num_element > 0);
+    nuxAssert(size > 0);
+    nuxAssert((size == 2) || (size == 4));
 
-    if ( (Stride <= 0) || (Size <= 0) )
+    if((size <= 0) || (num_element <= 0))
     {
       _Data.clear();
       _Stride = 0;
@@ -168,215 +164,214 @@ namespace nux
     }
 
     // Make sure Size is a multiple of Stride
-    int sz = Align<int> (Size, Stride);
-    _Stride = Stride;
+    int sz = num_element * size;
+    _Stride = size;
 
     _Data.clear();
-    _Data.resize (sz);
+    _Data.resize(sz);
   }
 
-  int NIndexBuffer::GetSize() const
+  int IndexBuffer::GetSize() const
   {
     return _Data.size();
   }
 
-  int NIndexBuffer::GetStride() const
+  int IndexBuffer::GetStride() const
   {
     return _Stride;
   }
 
-  int NIndexBuffer::GetNumElement() const
+  int IndexBuffer::GetNumElement() const
   {
     return _Data.size() / _Stride;
   }
 
-  const t_u8 *NIndexBuffer::GetPtrRawData() const
+  const void* IndexBuffer::GetPtrRawData() const
   {
-    return NUX_STATIC_CAST (const t_u8 *, &_Data[0]);
+    return NUX_STATIC_CAST (const void*, &_Data[0]);
   }
 
-  t_u8 *NIndexBuffer::GetPtrRawData()
+  void* IndexBuffer::GetPtrRawData()
   {
-    return NUX_CONST_CAST (t_u8 *, ( (NUX_CONST_CAST (const NIndexBuffer *, this) )->GetPtrRawData() ) );
+    return NUX_CONST_CAST (void*, ((NUX_CONST_CAST (const IndexBuffer *, this) )->GetPtrRawData()));
   }
 
-//////////////////////////////////////////////////////////////////////////
-  NVertexDeclaration::NVertexDeclaration()
+  VertexDeclaration::VertexDeclaration()
   {
-    m_Declaration.clear();
+    _declaration.clear();
   }
 
-  NVertexDeclaration::~NVertexDeclaration()
+  VertexDeclaration::~VertexDeclaration()
   {
-    m_Declaration.clear();
+    _declaration.clear();
   }
 
-  void NVertexDeclaration::AddVertexComponent (VERTEXELEMENT Component)
+  void VertexDeclaration::AddVertexComponent(VERTEXELEMENT Component)
   {
-    m_Declaration.push_back (Component);
-  }
-//////////////////////////////////////////////////////////////////////////
-
-
-  NMeshComponent::NMeshComponent()
-    :   _Type (ATTRIB_DECLTYPE_UNKNOWN)
-    ,   _StreamIndex (-1)
-    ,   _Offset (0)
-  {
+    _declaration.push_back(Component);
   }
 
-  NMeshComponent::NMeshComponent (const NMeshComponent &Other)
-    :   _Type (ATTRIB_DECLTYPE_UNKNOWN)
-    ,   _StreamIndex (-1)
-    ,   _Offset (0)
-  {
-    _Type = Other._Type;
-    _Offset = Other._Offset;
-    _StreamIndex = Other._StreamIndex;
-  }
 
-  NMeshComponent::NMeshComponent (int StreamIndex/*ObjectPtr<NVertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type)
-  {
-    nuxAssert (Offset >= 0);
-    _Type = Type;
-    _Offset = Offset;
-    _StreamIndex = StreamIndex;
-  }
+//   NMeshComponent::NMeshComponent()
+//     :   _Type (ATTRIB_DECLTYPE_UNKNOWN)
+//     ,   _StreamIndex (-1)
+//     ,   _Offset (0)
+//   {
+//   }
+// 
+//   NMeshComponent::NMeshComponent (const NMeshComponent &Other)
+//     :   _Type (ATTRIB_DECLTYPE_UNKNOWN)
+//     ,   _StreamIndex (-1)
+//     ,   _Offset (0)
+//   {
+//     _Type = Other._Type;
+//     _Offset = Other._Offset;
+//     _StreamIndex = Other._StreamIndex;
+//   }
+// 
+//   NMeshComponent::NMeshComponent (int StreamIndex/*ObjectPtr<VertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type)
+//   {
+//     nuxAssert (Offset >= 0);
+//     _Type = Type;
+//     _Offset = Offset;
+//     _StreamIndex = StreamIndex;
+//   }
+// 
+//   NMeshComponent::~NMeshComponent()
+//   {
+//   }
+// 
+//   NMeshComponent &NMeshComponent::operator = (const NMeshComponent &Other)
+//   {
+//     _Type = Other._Type;
+//     _Offset = Other._Offset;
+//     _StreamIndex = Other._StreamIndex;
+//     return *this;
+//   }
+// 
+//   int NMeshComponent::GetStreamIndex() const
+//   {
+//     return _StreamIndex;
+//   }
+// 
+// // int NMeshComponent::GetStride()
+// // {
+// //     return _VtxBuffer->GetStride();
+// // }
+// 
+//   int NMeshComponent::GetOffset()
+//   {
+//     return _Offset;
+//   }
 
-  NMeshComponent::~NMeshComponent()
-  {
-  }
-
-  NMeshComponent &NMeshComponent::operator = (const NMeshComponent &Other)
-  {
-    _Type = Other._Type;
-    _Offset = Other._Offset;
-    _StreamIndex = Other._StreamIndex;
-    return *this;
-  }
-
-  int NMeshComponent::GetStreamIndex() const
-  {
-    return _StreamIndex;
-  }
-
-// int NMeshComponent::GetStride()
-// {
-//     return _VtxBuffer->GetStride();
-// }
-
-  int NMeshComponent::GetOffset()
-  {
-    return _Offset;
-  }
-
-//////////////////////////////////////////////////////////////////////////
-  NGLVertexBuffer::NGLVertexBuffer (NResourceSet *ResourceManager, NVertexBuffer *SourceVtxBuffer)
+  CachedVertexBuffer::CachedVertexBuffer (NResourceSet *ResourceManager, VertexBuffer *SourceVtxBuffer)
     :   CachedResourceData (ResourceManager)
     ,   _Size (0)
-    ,   _Stride (0)
+    ,   _Stride(0)
   {
-    UpdateResource (SourceVtxBuffer);
+    UpdateResource(SourceVtxBuffer);
   }
 
-  NGLVertexBuffer::~NGLVertexBuffer()
+  CachedVertexBuffer::~CachedVertexBuffer()
   {
     // Not necessary for a smart pointer but do it anyway to be clear;
-    m_VtxBuffer = ObjectPtr<IOpenGLVertexBuffer> (0);
+    _vertex_buffer = ObjectPtr<IOpenGLVertexBuffer> (0);
   }
 
-  bool NGLVertexBuffer::UpdateResource (ResourceData *Source)
+  bool CachedVertexBuffer::UpdateResource(ResourceData *Source)
   {
-    if (Source == 0)
+    if(Source == 0)
     {
       _Stride = 0;
-      m_VtxBuffer.Release();
+      _vertex_buffer.Release();
       return true;
     }
 
-    NVertexBuffer *SourceVtxBuffer = 0;
-    nuxAssert (Source->Type().IsDerivedFromType (NVertexBuffer::StaticObjectType) );
+    VertexBuffer *SourceVtxBuffer = 0;
+    nuxAssert(Source->Type().IsDerivedFromType(VertexBuffer::StaticObjectType));
 
-    if (Source->Type().IsDerivedFromType (NVertexBuffer::StaticObjectType) )
+    if(Source->Type().IsDerivedFromType(VertexBuffer::StaticObjectType))
     {
-      SourceVtxBuffer = NUX_STATIC_CAST (NVertexBuffer *, Source);
+      SourceVtxBuffer = NUX_STATIC_CAST(VertexBuffer *, Source);
     }
     else
     {
       return false;
     }
 
-    if ( (SourceVtxBuffer->GetSize() == 0) || (SourceVtxBuffer->GetStride() == 0) )
+    if((SourceVtxBuffer->GetSize() == 0) || (SourceVtxBuffer->GetStride() == 0))
     {
       _Stride = 0;
-      m_VtxBuffer.Release();
+      _vertex_buffer.Release();
       return true;
     }
 
-    if (_Size != SourceVtxBuffer->GetSize() )
+    if(_Size != SourceVtxBuffer->GetSize())
     {
+      // The current size of the cached buffer is not the same as the requested one.
+      // Delete the previously allocated buffer and create a new one.
       _Size = SourceVtxBuffer->GetSize();
       _Stride = SourceVtxBuffer->GetStride();
 
       //Release the previous vertex buffer if any.
-      m_VtxBuffer.Release();
-      m_VtxBuffer = GetGpuDevice()->CreateVertexBuffer (_Size, VBO_USAGE_DYNAMIC);
-      LoadVertexData (SourceVtxBuffer);
+      _vertex_buffer.Release();
+      _vertex_buffer = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexBuffer(_Size, VBO_USAGE_DYNAMIC);
+      LoadVertexData(SourceVtxBuffer);
     }
     else
     {
+      // The buffer size has changed. Delete the previously allocated buffer and create a new one.
       _Stride = SourceVtxBuffer->GetStride();
-      LoadVertexData (SourceVtxBuffer);
+      LoadVertexData(SourceVtxBuffer);
     }
 
     return true;
   }
 
-  void NGLVertexBuffer::LoadVertexData (NVertexBuffer *SourceVtxBuffer)
+  void CachedVertexBuffer::LoadVertexData(VertexBuffer *SourceVtxBuffer)
   {
-    if ( (SourceVtxBuffer == 0) || (SourceVtxBuffer->GetSize() == 0) || (SourceVtxBuffer->GetStride() == 0) )
+    if((SourceVtxBuffer == 0) || (SourceVtxBuffer->GetSize() == 0) || (SourceVtxBuffer->GetStride() == 0))
     {
       return;
     }
 
     t_byte *pData;
 
-    m_VtxBuffer->Lock (0, 0, (void **) &pData);
-    Memcpy (pData, SourceVtxBuffer->GetPtrRawData(), SourceVtxBuffer->GetSize() );
-    m_VtxBuffer->Unlock();
+    _vertex_buffer->Lock(0, 0, (void **) &pData);
+    Memcpy(pData, SourceVtxBuffer->GetPtrRawData(), SourceVtxBuffer->GetSize());
+    _vertex_buffer->Unlock();
   }
 
-//////////////////////////////////////////////////////////////////////////
-  NGLIndexBuffer::NGLIndexBuffer (NResourceSet *ResourceManager, NIndexBuffer *SourceIdxBuffer)
+  CachedIndexBuffer::CachedIndexBuffer (NResourceSet *ResourceManager, IndexBuffer *SourceIdxBuffer)
     :   CachedResourceData (ResourceManager)
-    ,   _Size (0)
-    ,   _Stride (0)
+    ,   _Size(0)
+    ,   _Stride(0)
   {
-    UpdateResource (SourceIdxBuffer);
+    UpdateResource(SourceIdxBuffer);
   }
 
-  NGLIndexBuffer::~NGLIndexBuffer()
+  CachedIndexBuffer::~CachedIndexBuffer()
   {
     // Not necessary for a smart pointer but do it anyway to be clear;
-    m_IdxBuffer = ObjectPtr<IOpenGLIndexBuffer> (0);
+    _index_buffer = ObjectPtr<IOpenGLIndexBuffer> (0);
   }
 
-  bool NGLIndexBuffer::UpdateResource (ResourceData *Source)
+  bool CachedIndexBuffer::UpdateResource (ResourceData *Source)
   {
     if (Source == 0)
     {
       _Size = 0;
       _Stride = 0;
-      m_IdxBuffer.Release();
+      _index_buffer.Release();
       return true;
     }
 
-    NIndexBuffer *SourceIdxBuffer = 0;
-    nuxAssert (Source->Type().IsDerivedFromType (NIndexBuffer::StaticObjectType) );
+    IndexBuffer *SourceIdxBuffer = 0;
+    nuxAssert (Source->Type().IsDerivedFromType (IndexBuffer::StaticObjectType) );
 
-    if (Source->Type().IsDerivedFromType (NIndexBuffer::StaticObjectType) )
+    if (Source->Type().IsDerivedFromType (IndexBuffer::StaticObjectType) )
     {
-      SourceIdxBuffer = NUX_STATIC_CAST (NIndexBuffer *, Source);
+      SourceIdxBuffer = NUX_STATIC_CAST (IndexBuffer *, Source);
     }
     else
     {
@@ -387,7 +382,7 @@ namespace nux
     {
       _Size = 0;
       _Stride = 0;
-      m_IdxBuffer.Release();
+      _index_buffer.Release();
       return true;
     }
 
@@ -397,8 +392,8 @@ namespace nux
       _Stride = SourceIdxBuffer->GetStride();
 
       //Release the previous vertex buffer if any.
-      m_IdxBuffer.Release();
-      m_IdxBuffer = GetGpuDevice()->CreateIndexBuffer (_Size, VBO_USAGE_DYNAMIC,
+      _index_buffer.Release();
+      _index_buffer = GetGraphicsDisplay()->GetGpuDevice()->CreateIndexBuffer (_Size, VBO_USAGE_DYNAMIC,
                     (SourceIdxBuffer->GetStride() == 2) ? INDEX_FORMAT_USHORT : INDEX_FORMAT_UINT);
       LoadIndexData (SourceIdxBuffer);
     }
@@ -411,7 +406,7 @@ namespace nux
     return true;
   }
 
-  void NGLIndexBuffer::LoadIndexData (NIndexBuffer *SourceIdxBuffer)
+  void CachedIndexBuffer::LoadIndexData (IndexBuffer *SourceIdxBuffer)
   {
     if ( (SourceIdxBuffer == 0) || (SourceIdxBuffer->GetSize() == 0) || (SourceIdxBuffer->GetStride() == 0) )
     {
@@ -419,36 +414,36 @@ namespace nux
     }
 
     t_byte *pData;
-    m_IdxBuffer->Lock (0, 0, (void **) &pData);
+    _index_buffer->Lock (0, 0, (void **) &pData);
     Memcpy (pData, SourceIdxBuffer->GetPtrRawData(), SourceIdxBuffer->GetSize() );
-    m_IdxBuffer->Unlock();
+    _index_buffer->Unlock();
   }
 
-  NGLVertexDeclaration::NGLVertexDeclaration (NResourceSet *ResourceManager, NVertexDeclaration *SourceVertexDeclaration)
+  CachedVertexDeclaration::CachedVertexDeclaration (NResourceSet *ResourceManager, VertexDeclaration *SourceVertexDeclaration)
     :   CachedResourceData (ResourceManager)
   {
     UpdateResource (SourceVertexDeclaration);
   }
 
-  NGLVertexDeclaration::~NGLVertexDeclaration()
+  CachedVertexDeclaration::~CachedVertexDeclaration()
   {
-    m_VtxDeclaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
+    _declaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
   }
 
-  bool NGLVertexDeclaration::UpdateResource (ResourceData *Source)
+  bool CachedVertexDeclaration::UpdateResource (ResourceData *Source)
   {
     if (Source == 0)
     {
-      m_VtxDeclaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
+      _declaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
       return true;
     }
 
-    NVertexDeclaration *SourceVertexDeclaration = 0;
-    nuxAssert (Source->Type().IsDerivedFromType (NVertexDeclaration::StaticObjectType) );
+    VertexDeclaration *SourceVertexDeclaration = 0;
+    nuxAssert (Source->Type().IsDerivedFromType (VertexDeclaration::StaticObjectType) );
 
-    if (Source->Type().IsDerivedFromType (NVertexDeclaration::StaticObjectType) )
+    if (Source->Type().IsDerivedFromType (VertexDeclaration::StaticObjectType) )
     {
-      SourceVertexDeclaration = NUX_STATIC_CAST (NVertexDeclaration *, Source);
+      SourceVertexDeclaration = NUX_STATIC_CAST (VertexDeclaration *, Source);
     }
     else
     {
@@ -457,105 +452,173 @@ namespace nux
 
     if (SourceVertexDeclaration == 0)
     {
-      m_VtxDeclaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
+      _declaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
       return true;
     }
 
-    m_VtxDeclaration = GetGpuDevice()->CreateVertexDeclaration (&SourceVertexDeclaration->m_Declaration[0]);
+    _declaration = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexDeclaration (&SourceVertexDeclaration->_declaration[0]);
     return true;
   }
 
-  NMesh::NMesh()
+  MeshBuffer::MeshBuffer(NUX_FILE_LINE_DECL)
   {
-
+    _vertex_buffer = 0;
+    _index_buffer = 0;
+    _vertex_declaration = 0;
   }
 
-  NMesh::~NMesh()
+  MeshBuffer::~MeshBuffer()
   {
-
+    if(_vertex_buffer)
+      _vertex_buffer->UnReference();
+    if(_index_buffer)
+      _index_buffer->UnReference();
+    if(_vertex_declaration)
+      _vertex_declaration->UnReference();
   }
 
-
-  NStaticMesh::NStaticMesh (NMeshObject *Object)
+  bool MeshBuffer::Update(const MeshData* mesh_data)
   {
-    if (Object == 0)
-      return;
-  }
+    int num_element = mesh_data->_num_element;
+    int element_size = mesh_data->_element_size;
 
-  NStaticMesh::~NStaticMesh()
-  {
-    delete m_pVertexDeclaration;
-    delete m_pIndex;
+    _vertex_buffer = new VertexBuffer();
+    _vertex_buffer->Allocate(num_element, element_size);
+    memcpy(_vertex_buffer->GetPtrRawData(), mesh_data->_vertex_data, num_element * element_size);
 
-    for (int i = 0; i < (int) m_pVertexStreamArray.size(); i++)
-    {
-      delete m_pVertexStreamArray[i];
-    }
-  }
+    int num_index = mesh_data->_num_index;
+    int index_size = mesh_data->_index_size;
 
-  int NStaticMesh::GetNumStreams() const
-  {
-    return (int) m_pVertexStreamArray.size();
-  }
+    _index_buffer = new IndexBuffer();
+    _index_buffer->Allocate(num_index, index_size);
+    memcpy(_index_buffer->GetPtrRawData(), mesh_data->_index_data, num_index * index_size);
 
-  NGLStaticMesh::NGLStaticMesh (NResourceSet *ResourceManager, NStaticMesh *StaticMesh)
-    :   CachedResourceData (ResourceManager)
-  {
-    int NumStreams = StaticMesh->GetNumStreams();
+    _vertex_declaration = new VertexDeclaration();
 
-    for (int s = 0; s < NumStreams; s++)
-    {
-      m_VertexBufferArray.push_back (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pVertexStreamArray[s]) );
-    }
+    VERTEXELEMENT ve(0, 0, ATTRIB_CT_FLOAT, 4,
+      ATTRIB_USAGE_DECL_POSITION,
+      0, 0);
+    _vertex_declaration->AddVertexComponent(ve);
+    _vertex_declaration->AddVertexComponent(DECL_END);
 
-    m_Index = ObjectPtr<NGLIndexBuffer> (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pIndex));
-    m_VertexDeclaration = ObjectPtr<NGLVertexDeclaration> (GetThreadGraphicsContext()->CacheResource (StaticMesh->m_pVertexDeclaration));
-  }
-
-  NGLStaticMesh::~NGLStaticMesh()
-  {
-
-  }
-
-  bool NGLStaticMesh::UpdateResource (ResourceData *Source)
-  {
-    if (Source == 0)
-    {
-      int NumStreams = m_VertexBufferArray.size();
-
-      for (int s = 0; s < NumStreams; s++)
-      {
-        m_VertexBufferArray[s]->UpdateResource (0);
-      }
-
-      m_Index->UpdateResource (0);
-      m_VertexDeclaration->UpdateResource (0);
-      return true;
-    }
-
-    NStaticMesh *StaticMesh = 0;
-    nuxAssert (Source->Type().IsDerivedFromType (NStaticMesh::StaticObjectType) );
-
-    if (Source->Type().IsDerivedFromType (NStaticMesh::StaticObjectType) )
-    {
-      StaticMesh = NUX_STATIC_CAST (NStaticMesh *, Source);
-    }
-    else
-    {
-      return false;
-    }
-
-    int NumStreams = StaticMesh->GetNumStreams();
-
-    for (int s = 0; s < NumStreams; s++)
-    {
-      GetThreadGraphicsContext()->UpdateResource (StaticMesh->m_pVertexStreamArray[s]);
-    }
-
-    GetThreadGraphicsContext()->UpdateResource (StaticMesh->m_pIndex);
-    GetThreadGraphicsContext()->UpdateResource (StaticMesh->m_pVertexDeclaration);
     return true;
   }
+
+  CachedMeshBuffer::CachedMeshBuffer(NResourceSet* ResourceManager, MeshBuffer* resource)
+  : CachedResourceData(ResourceManager)
+  {
+    UpdateResource(resource);
+  }
+
+  CachedMeshBuffer::~CachedMeshBuffer()
+  {
+  }
+
+  bool CachedMeshBuffer::UpdateResource(ResourceData* source)
+  {
+    nuxAssert(source->Type().IsDerivedFromType(MeshBuffer::StaticObjectType));
+
+    MeshBuffer* mesh_buffer = NUX_STATIC_CAST(MeshBuffer*, source);
+
+    _cached_vertex_buffer = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(mesh_buffer->_vertex_buffer);
+    _cached_index_buffer = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(mesh_buffer->_index_buffer);
+    _cached_vertex_declaration = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(mesh_buffer->_vertex_declaration);
+//       
+    return true;
+  }
+
+
+//   NMesh::NMesh()
+//   {
+// 
+//   }
+// 
+//   NMesh::~NMesh()
+//   {
+// 
+//   }
+// 
+// 
+//   NStaticMesh::NStaticMesh (NMeshObject *Object)
+//   {
+//     if (Object == 0)
+//       return;
+//   }
+// 
+//   NStaticMesh::~NStaticMesh()
+//   {
+//     delete m_pVertexDeclaration;
+//     delete m_pIndex;
+// 
+//     for (int i = 0; i < (int) m_pVertexStreamArray.size(); i++)
+//     {
+//       delete m_pVertexStreamArray[i];
+//     }
+//   }
+// 
+//   int NStaticMesh::GetNumStreams() const
+//   {
+//     return (int) m_pVertexStreamArray.size();
+//   }
+// 
+//   NGLStaticMesh::NGLStaticMesh (NResourceSet *ResourceManager, NStaticMesh *StaticMesh)
+//     :   CachedResourceData (ResourceManager)
+//   {
+//     int NumStreams = StaticMesh->GetNumStreams();
+// 
+//     for (int s = 0; s < NumStreams; s++)
+//     {
+//       m_VertexBufferArray.push_back (GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (StaticMesh->m_pVertexStreamArray[s]) );
+//     }
+// 
+//     m_Index = ObjectPtr<CachedIndexBuffer> (GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (StaticMesh->m_pIndex));
+//     m_VertexDeclaration = ObjectPtr<CachedVertexDeclaration> (GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (StaticMesh->m_pVertexDeclaration));
+//   }
+// 
+//   NGLStaticMesh::~NGLStaticMesh()
+//   {
+// 
+//   }
+// 
+//   bool NGLStaticMesh::UpdateResource (ResourceData *Source)
+//   {
+//     if (Source == 0)
+//     {
+//       int NumStreams = m_VertexBufferArray.size();
+// 
+//       for (int s = 0; s < NumStreams; s++)
+//       {
+//         m_VertexBufferArray[s]->UpdateResource (0);
+//       }
+// 
+//       m_Index->UpdateResource (0);
+//       m_VertexDeclaration->UpdateResource (0);
+//       return true;
+//     }
+// 
+//     NStaticMesh *StaticMesh = 0;
+//     nuxAssert (Source->Type().IsDerivedFromType (NStaticMesh::StaticObjectType) );
+// 
+//     if (Source->Type().IsDerivedFromType (NStaticMesh::StaticObjectType) )
+//     {
+//       StaticMesh = NUX_STATIC_CAST (NStaticMesh *, Source);
+//     }
+//     else
+//     {
+//       return false;
+//     }
+// 
+//     int NumStreams = StaticMesh->GetNumStreams();
+// 
+//     for (int s = 0; s < NumStreams; s++)
+//     {
+//       GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (StaticMesh->m_pVertexStreamArray[s]);
+//     }
+// 
+//     GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (StaticMesh->m_pIndex);
+//     GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (StaticMesh->m_pVertexDeclaration);
+//     return true;
+//   }
 
 
 // static void sWriteFloat(float** Ptr, float a, float b, float c, float d)

@@ -47,7 +47,7 @@ public:
       gchar *text = g_strdup_printf ("Button %d", i);
       nux::LayeredLayout *layered = new nux::LayeredLayout (NUX_TRACKER_LOCATION);
 
-      nux::ColorLayer color (nux::Color::RandomColor ());
+      nux::ColorLayer color (nux::color::RandomColor ());
       nux::TextureArea* texture_area = new nux::TextureArea ();
       texture_area->SetPaintLayer (&color);
       layered->AddLayer (texture_area);

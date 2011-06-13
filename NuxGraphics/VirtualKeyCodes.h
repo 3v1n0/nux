@@ -206,6 +206,9 @@ namespace nux
 #define NUX_KP_DECIMAL     0xFFAE
 #define NUX_KP_DIVIDE      0xFFAF
 
+#define NUX_KP_ENTER       0xAAAA // todo
+#define NUX_VK_LEFT_TAB    0xAAAB // todo
+
 #define NUX_VK_F1          0x70                   //   F1 key
 #define NUX_VK_F2          0x71                   //   F2 key
 #define NUX_VK_F3          0x72                   //   F3 key

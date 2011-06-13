@@ -49,17 +49,17 @@ namespace nux
     SetMinimumSize (200, 100);
     SetBaseSize (200, 100);
 
-    Texture = GetGpuDevice()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
+    Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/FunctionGraphBackground.tga") );
-    BaseTexture* BackgroundTexture = GetGpuDevice()->CreateSystemCapableTexture ();
+    BaseTexture* BackgroundTexture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     BackgroundTexture->Update (Path.GetTCharPtr() );
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Colors::White);
+    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, color::White);
 
     BackgroundTexture->UnReference ();
   }
@@ -132,7 +132,7 @@ namespace nux
     GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_DrawFunctionShader->SetTextureFunction (Texture);
-    m_DrawFunctionShader->SetBackgroundColor (0.1f, 0.1f, 0.1f, 0.6f);
+    m_DrawFunctionShader->SetBackgroundColor(Color(0.1f, 0.1f, 0.1f, 0.6f));
     m_DrawFunctionShader->Render (X, Y, 0, W, H, GfxContext.GetWindowWidth(), GfxContext.GetWindowHeight() );
 
     GfxContext.GetRenderStates().EnableLineSmooth (TRUE, 1, GL_FASTEST);   //You need this blending formula to get anti-aliased lines

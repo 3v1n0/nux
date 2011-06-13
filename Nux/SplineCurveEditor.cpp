@@ -56,18 +56,18 @@ namespace nux
     m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
 
 
-    m_Texture = GetGpuDevice()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (256, 4, 0, BITFMT_R8G8B8A8);
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
-    BaseTexture* CheckboardPattern = GetGpuDevice()->CreateSystemCapableTexture ();
+    BaseTexture* CheckboardPattern = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     CheckboardPattern->Update(&image);
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_Background = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, Colors::White);
+    m_Background = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, color::White);
 
     CheckboardPattern->UnReference ();;
 //     m_Background = PaintLayer(m_CheckboardPattern);
@@ -251,7 +251,7 @@ namespace nux
         m_Texture->UnlockRect (0);
 
         m_DrawFunctionShader->SetTextureFunction (m_Texture);
-        m_DrawFunctionShader->SetBackgroundColor (0.1f, 0.1f, 0.1f, 0.6f);
+        m_DrawFunctionShader->SetBackgroundColor (Color(0.1f, 0.1f, 0.1f, 0.6f));
         m_DrawFunctionShader->Render (X, Y, 0, W, H, GfxContext.GetWindowWidth(), GfxContext.GetWindowHeight() );
         //m_DrawFunctionShader->End();
 

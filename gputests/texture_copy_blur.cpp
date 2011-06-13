@@ -104,7 +104,7 @@ void RenderBlurredCopyOfRenderTarget ()
         nux::RandomUInt(200),
         nux::RandomUInt(200));
 
-      graphics_engine->QRP_Color(geo.x, geo.y, geo.width, geo.height, nux::Color::RandomColor());
+      graphics_engine->QRP_Color(geo.x, geo.y, geo.width, geo.height, nux::color::RandomColor());
     }
 
     nux::TexCoordXForm texxform;
@@ -117,10 +117,10 @@ void RenderBlurredCopyOfRenderTarget ()
     // Make a blurred version of the back buffer
     nux::ObjectPtr <nux::IOpenGLBaseTexture> tex_blur = graphics_engine->QRP_GetBlurTexture (
       0, 0, tex_copy->GetWidth (), tex_copy->GetHeight (),
-      tex_copy, texxform, nux::Colors::White, 1.0f);
+      tex_copy, texxform, nux::color::White, 1.0f);
 
     // Render the blurred texture
-    graphics_engine->QRP_1Tex(0, 0, tex_blur->GetWidth(), tex_blur->GetHeight(), tex_blur, texxform, nux::Colors::White);
+    graphics_engine->QRP_1Tex(0, 0, tex_blur->GetWidth(), tex_blur->GetHeight(), tex_blur, texxform, nux::color::White);
 
     sprintf(fps, "FPS: %3.2f", frame_rate);
     nux::PageBBox page;
@@ -130,7 +130,7 @@ void RenderBlurredCopyOfRenderTarget ()
     page.ymax = 20;
     page.x_margin = 0;
     page.y_margin = 0;
-    graphics_engine->RenderColorTextLineStatic(graphics_engine->GetBoldFont (), page, fps, nux::Colors::White, false, nux::eAlignTextLeft);    
+    graphics_engine->RenderColorTextLineStatic(graphics_engine->GetBoldFont (), page, fps, nux::color::White, false, nux::eAlignTextLeft);
 
     graphics_display->SwapBuffer();
 

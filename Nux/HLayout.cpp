@@ -667,8 +667,8 @@ namespace nux
             }
           }
 
-          t_u32 elemt_max_width = (*it)->GetMaximumSize().GetWidth();
-          t_u32 elemt_min_width = (*it)->GetMinimumSize().GetWidth();
+          int elemt_max_width = (*it)->GetMaximumSize().width;
+          int elemt_min_width = (*it)->GetMinimumSize().width;
 
           // A layout must never have _layout_done set to true "here" because it must continue
           // doing the layout of its children and finally resize itself to fit them.

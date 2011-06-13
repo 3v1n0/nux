@@ -30,7 +30,6 @@
 #include "GraphicsEngine.h"
 #include "GLWindowManager.h"
 #include "Events.h"
-#include "IniFile.h"
 
 #include "GraphicsDisplay.h"
 
@@ -85,8 +84,7 @@ namespace nux
     m_GfxInterfaceCreated = false;
     m_pEvent = new IEvent();
 
-    m_WindowSize.SetWidth (0);
-    m_WindowSize.SetHeight (0);
+    m_WindowSize = Size(0,0);
 
     _has_glx_13 = false;
     _glx_major = 0;
@@ -105,7 +103,7 @@ namespace nux
     _global_pointer_grab_callback = 0;
 
     // DND
-    _last_dnd_position.Set(0, 0);
+    _last_dnd_position = Point(0, 0);
   }
 
   GraphicsDisplay::~GraphicsDisplay()
@@ -191,6 +189,7 @@ namespace nux
     return (event->type == MapNotify) && (event->xmap.window == (Window) arg);
   }
 
+// TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
   bool GraphicsDisplay::CreateOpenGLWindow (const TCHAR *WindowTitle,
                                          unsigned int WindowWidth,
@@ -205,10 +204,9 @@ namespace nux
     m_GfxInterfaceCreated = false;
 
     // FIXME : put at the end
-    m_ViewportSize.SetWidth (WindowWidth);
-    m_ViewportSize.SetHeight (WindowHeight);
-    m_WindowSize.SetWidth (WindowWidth);
-    m_WindowSize.SetHeight (WindowHeight);
+    Size new_size(WindowWidth, WindowHeight);
+    m_ViewportSize = new_size;
+    m_WindowSize = new_size;
     // end of fixme
 
     m_Fullscreen = FullscreenFlag;  // Set The Global Fullscreen Flag
@@ -236,8 +234,8 @@ namespace nux
 
       for (int num_modes = 0 ; num_modes < m_NumVideoModes; num_modes++)
       {
-        if ( (m_X11VideoModes[num_modes]->hdisplay == m_ViewportSize.GetWidth() )
-          && (m_X11VideoModes[num_modes]->vdisplay == m_ViewportSize.GetHeight() ) )
+        if ( (m_X11VideoModes[num_modes]->hdisplay == m_ViewportSize.width )
+          && (m_X11VideoModes[num_modes]->vdisplay == m_ViewportSize.height ) )
         {
           mode_supported = true;
           m_BestMode = num_modes;
@@ -427,7 +425,7 @@ namespace nux
       m_X11Window = XCreateWindow (m_X11Display,
                                    RootWindow (m_X11Display, m_X11VisualInfo->screen),
                                    0, 0,                           // X, Y
-                                   m_WindowSize.GetWidth(), m_WindowSize.GetHeight(),
+                                   m_WindowSize.width, m_WindowSize.height,
                                    0,                              // Border
                                    m_X11VisualInfo->depth,         // Depth
                                    InputOutput,                    // Class
@@ -453,7 +451,7 @@ namespace nux
       m_X11Window = XCreateWindow (m_X11Display,
                                    RootWindow (m_X11Display, m_X11VisualInfo->screen),
                                    0, 0,
-                                   m_WindowSize.GetWidth(), m_WindowSize.GetHeight(),
+                                   m_WindowSize.width, m_WindowSize.height,
                                    0,
                                    m_X11VisualInfo->depth,
                                    InputOutput,
@@ -500,7 +498,7 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8,
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
         m_X11Display,
         m_X11Window,
         0,
@@ -544,7 +542,7 @@ namespace nux
     m_GfxInterfaceCreated = true;
 
     // m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8,
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
         m_X11Display,
         m_X11Window,
         false,
@@ -662,86 +660,94 @@ namespace nux
 //     return true;
 // }
 
-  int GraphicsDisplay::GetGlXMajor () const
+  GraphicsEngine* GraphicsDisplay::GetGraphicsEngine() const
+  {
+    return m_GraphicsContext;
+  }
+
+  GpuDevice* GraphicsDisplay::GetGpuDevice() const
+  {
+    return m_DeviceFactory;
+  }
+
+  int GraphicsDisplay::GetGlXMajor() const
   {
     return _glx_major;
   }
 
-  int GraphicsDisplay::GetGlXMinor () const
+  int GraphicsDisplay::GetGlXMinor() const
   {
     return _glx_minor;
   }
 
   bool GraphicsDisplay::HasFrameBufferSupport()
   {
-    return m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object ();
+    return m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object();
   }
 
-  void GraphicsDisplay::GetWindowSize (int &w, int &h)
+// TODO(thumper): Size const& GraphicsDisplay::GetWindowSize();
+  void GraphicsDisplay::GetWindowSize(int &w, int &h)
   {
-    w = m_WindowSize.GetWidth();
-    h = m_WindowSize.GetHeight();
+    w = m_WindowSize.width;
+    h = m_WindowSize.height;
   }
 
-  void GraphicsDisplay::GetDesktopSize (int &w, int &h)
+  void GraphicsDisplay::GetDesktopSize(int &w, int &h)
   {
     Window root;
     int x, y;
     unsigned int width, height, depth, border_width;
-    bool ret = XGetGeometry (m_X11Display, RootWindow (m_X11Display, m_X11Screen),
+    bool ret = XGetGeometry(m_X11Display, RootWindow (m_X11Display, m_X11Screen),
                              &root,
                              &x, &y,
                              &width, &height, &border_width, &depth);
 
-    if (ret == false)
+    if(ret == false)
     {
-      nuxAssert (TEXT ("[GetDesktopSize] Failed to get the desktop size") );
+      nuxAssert(TEXT("[GetDesktopSize] Failed to get the desktop size"));
       w = 0;
       h = 0;
     }
   }
 
-  void GraphicsDisplay::SetWindowSize (int width, int height)
+  void GraphicsDisplay::SetWindowSize(int width, int height)
   {
-    nuxDebugMsg (TEXT ("[GraphicsDisplay::SetWindowSize] Setting window size to %dx%d"), width, height);
+    nuxDebugMsg(TEXT("[GraphicsDisplay::SetWindowSize] Setting window size to %dx%d"), width, height);
     // Resize window client area
-    XResizeWindow (m_X11Display, m_X11Window, width, height);
-    XFlush (m_X11Display);
+    XResizeWindow(m_X11Display, m_X11Window, width, height);
+    XFlush(m_X11Display);
   }
 
-  void GraphicsDisplay::SetWindowPosition (int x, int y)
+  void GraphicsDisplay::SetWindowPosition(int x, int y)
   {
-    nuxDebugMsg (TEXT ("[GraphicsDisplay::SetWindowPosition] Setting window position to %dx%d"), x, y);
+    nuxDebugMsg(TEXT("[GraphicsDisplay::SetWindowPosition] Setting window position to %dx%d"), x, y);
     // Resize window client area
-    XMoveWindow (m_X11Display, m_X11Window, x, y);
-    XFlush (m_X11Display);
+    XMoveWindow(m_X11Display, m_X11Window, x, y);
+    XFlush(m_X11Display);
   }
 
   int GraphicsDisplay::GetWindowWidth()
   {
-    return m_WindowSize.GetWidth();
+    return m_WindowSize.width;
   }
 
   int GraphicsDisplay::GetWindowHeight()
   {
-    return m_WindowSize.GetHeight();
+    return m_WindowSize.height;
   }
 
-  void GraphicsDisplay::SetViewPort (int x, int y, int width, int height)
+  void GraphicsDisplay::SetViewPort(int x, int y, int width, int height)
   {
-
-    if (IsGfxInterfaceCreated() )
+    if(IsGfxInterfaceCreated())
     {
       //do not rely on m_ViewportSize: glViewport can be called directly
-      m_ViewportSize.SetWidth (width);
-      m_ViewportSize.SetHeight (height);
-
-      m_GraphicsContext->SetViewport (x, y, m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight() );
-      m_GraphicsContext->SetScissor (0, 0, width, height);
+      m_ViewportSize = Size(width, height);
+      m_GraphicsContext->SetViewport(x, y, width, height);
+      m_GraphicsContext->SetScissor(0, 0, width, height);
     }
   }
 
-  void GraphicsDisplay::ResetWindowSize ()
+  void GraphicsDisplay::ResetWindowSize()
   {
     Window root_return;
     int x_return, y_return;
@@ -749,7 +755,7 @@ namespace nux
     unsigned int border_width_return;
     unsigned int depth_return;
 
-    XGetGeometry (m_X11Display,
+    XGetGeometry(m_X11Display,
       m_X11Window,
       &root_return,
       &x_return,
@@ -759,8 +765,8 @@ namespace nux
       &border_width_return,
       &depth_return);
 
-    m_WindowSize = Size (width_return, height_return);
-    m_WindowPosition = Point (x_return, y_return);
+    m_WindowSize = Size(width_return, height_return);
+    m_WindowPosition = Point(x_return, y_return);
   }
 
   Point GraphicsDisplay::GetMouseScreenCoord()
@@ -774,8 +780,8 @@ namespace nux
     unsigned int mask_return;
 
 
-    XQueryPointer (m_X11Display,
-                   RootWindow (m_X11Display, m_X11Screen),
+    XQueryPointer(m_X11Display,
+                   RootWindow(m_X11Display, m_X11Screen),
                    &root_return,
                    &child_return,
                    &root_x_return,
@@ -1485,9 +1491,8 @@ namespace nux
         m_pEvent->e_event = NUX_SIZE_CONFIGURATION;
         m_pEvent->width =  xevent.xconfigure.width;
         m_pEvent->height = xevent.xconfigure.height;
-        m_WindowSize.SetWidth (xevent.xconfigure.width);
-        m_WindowSize.SetHeight (xevent.xconfigure.height);
-        m_WindowPosition.Set (xevent.xconfigure.x, xevent.xconfigure.y);
+        m_WindowSize = Size(xevent.xconfigure.width, xevent.xconfigure.height);
+        m_WindowPosition = Point(xevent.xconfigure.x, xevent.xconfigure.y);
 
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ConfigureNotify event."));
         break;
@@ -2278,7 +2283,7 @@ namespace nux
     nux_event->e_y = y_recalc;
 
     // Store the last DND position;
-    _last_dnd_position.Set(x_recalc, y_recalc);
+    _last_dnd_position = Point(x_recalc, y_recalc);
   }
   
   void GraphicsDisplay::HandleXDndEnter (XEvent event)

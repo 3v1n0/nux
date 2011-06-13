@@ -29,9 +29,10 @@ namespace nux
 {
 
   RGBPropertyItem::RGBPropertyItem (const TCHAR *name, float red /* = 1.0f*/, float green /* = 1.0f*/, float blue /* = 1.0f*/)
-    :   SectionProperty (name, NODE_TYPE_RGB)
-    ,   m_color_model (CM_RGB)
-    ,   m_color_format (Color::COLORFORMAT_FLOAT)
+    : SectionProperty (name, NODE_TYPE_RGB)
+    , rgb_values_(red, green, blue)
+    , color_model_(color::RGB)
+    , color_format_(color::FLOAT)
   {
     m_red = new ColorGradientPropertyItem (TEXT ("Red") );
     m_green = new ColorGradientPropertyItem (TEXT ("Green") );
@@ -43,7 +44,6 @@ namespace nux
     m_ColorFormat = new ToggleButton ("float", NUX_TRACKER_LOCATION);
     m_ColorFormat->SetMinMaxSize (32, 14);
     m_ColorFormat->SetFont (GetSysBoldFont() );
-
 
     PushChildBack (m_red);
     PushChildBack (m_green);
@@ -60,12 +60,10 @@ namespace nux
     m_blue->SetRange (0.0f, 1.0f);
     m_blue->SetValue (b);
 
-    m_red->SetColorFormat (m_color_format);
-    m_green->SetColorFormat (m_color_format);
-    m_blue->SetColorFormat (m_color_format);
+    m_red->SetColorFormat (color_format_);
+    m_green->SetColorFormat (color_format_);
+    m_blue->SetColorFormat (color_format_);
 
-    m_red->AddColorMark (0, Color (0.0f, g, b), false);
-    m_red->AddColorMark (1, Color (1.0f, g, b), false);
     m_red->AddColorMark (0, Color (0.0f, g, b), false);
     m_red->AddColorMark (1, Color (1.0f, g, b), false);
     m_green->AddColorMark (0, Color (r, 0.0f, b), false);
@@ -195,9 +193,9 @@ namespace nux
         prop_geo.OffsetSize ( - 2 - m_ColorFormat->GetBaseWidth() - 2 - m_ColorModel->GetBaseWidth() - 2, 0);
 
         // Draw the resulting color
-        Painter.Paint2DQuadColor (GfxContext, prop_geo, Color (m_Red, m_Green, m_Blue) );
+        Painter.Paint2DQuadColor (GfxContext, prop_geo, Color(rgb_values_) );
         // Draw black border around the color
-        Painter.Paint2DQuadWireframe (GfxContext, prop_geo, Color (0) );
+        Painter.Paint2DQuadWireframe (GfxContext, prop_geo, color::Black );
         m_ColorModel->ProcessDraw (GfxContext, true);
         m_ColorFormat->ProcessDraw (GfxContext, true);
       }
@@ -208,52 +206,33 @@ namespace nux
 
   void RGBPropertyItem::OnChangeColorModel()
   {
-    if (m_color_model == CM_RGB)
+    if (color_model_ == color::RGB)
     {
-      SetColorModel (CM_HLS);
-      float H, L, S;
-      RGBtoHLS (m_red->GetValue(), m_green->GetValue(), m_blue->GetValue(), H, L, S);
-      m_red->SetValue (H);
-      m_green->SetValue (L);
-      m_blue->SetValue (S);
+      SetColorModel(color::HLS);
+      color::HueLightnessSaturation hls(rgb_values_);
+      SetColor(hls.hue, hls.lightness, hls.saturation);
     }
-    else if (m_color_model == CM_HLS)
+    else if (color_model_ == color::HLS)
     {
-      SetColorModel (CM_HSV);
-      float H, S, V;
-      float R, G, B;
-      HLStoRGB (R, G, B, m_red->GetValue(), m_green->GetValue(), m_blue->GetValue() );
-      RGBtoHSV (R, G, B, H, S, V);
-      m_red->SetValue (H);
-      m_green->SetValue (S);
-      m_blue->SetValue (V);
-
-      if (H == -1.0f)
-      {
-        H = 0;
-      }
+      SetColorModel (color::HSV);
+      color::HueSaturationValue hsv(rgb_values_);
+      SetColor(hsv.hue, hsv.saturation, hsv.value);
     }
-    else if (m_color_model == CM_HSV)
+    else if (color_model_ == color::HSV)
     {
-      SetColorModel (CM_RGB);
-      float R, G, B;
-      HSVtoRGB (R, G, B, m_red->GetValue(), m_green->GetValue(), m_blue->GetValue() );
-      m_red->SetValue (R);
-      m_green->SetValue (G);
-      m_blue->SetValue (B);
-
+      SetColorModel (color::RGB);
+      SetColor(rgb_values_.red, rgb_values_.green, rgb_values_.blue);
     }
 
-    UpdateStartToEndColors();
     m_green->NeedRedraw();
     m_blue->NeedRedraw();
   }
 
-  void RGBPropertyItem::SetColorModel (eColorModel cm)
-  {
-    if (cm == CM_RGB)
+void RGBPropertyItem::SetColorModel(color::Model cm)
+{
+    color_model_ = cm;
+    if (cm == color::RGB)
     {
-      m_color_model = CM_RGB;
       //FIXME - m_ColorModel->SetCaption (TEXT ("RGB") );
 
       m_red->SetName (TEXT ("Red") );
@@ -261,9 +240,8 @@ namespace nux
       m_blue->SetName (TEXT ("Blue") );
     }
 
-    if (cm == CM_HSV)
+    if (cm == color::HSV)
     {
-      m_color_model = CM_HSV;
       //FIXME - m_ColorModel->SetCaption (TEXT ("HSV") );
 
       m_red->SetName (TEXT ("Hue") );
@@ -271,9 +249,8 @@ namespace nux
       m_blue->SetName (TEXT ("Value") );
     }
 
-    if (cm == CM_HLS)
+    if (cm == color::HLS)
     {
-      m_color_model = CM_HLS;
       //FIXME - m_ColorModel->SetCaption (TEXT ("HLS") );
 
       m_red->SetName (TEXT ("Hue") );
@@ -281,9 +258,8 @@ namespace nux
       m_blue->SetName (TEXT ("Saturation") );
     }
 
-    if (cm == CM_YUV)
+    if (cm == color::YUV)
     {
-      m_color_model = CM_YUV;
       //FIXME - m_ColorModel->SetBaseString (TEXT ("YUV") );
 
       //         m_ComponentLabel0->SetBaseString(TEXT("Y"));
@@ -296,25 +272,25 @@ namespace nux
 
   void RGBPropertyItem::OnChangeColorFormat()
   {
-    if (m_color_format == Color::COLORFORMAT_FLOAT)
+    if (color_format_ == color::FLOAT)
     {
-      m_color_format = Color::COLORFORMAT_INT;
+      color_format_ = color::INT;
       //FIXME - m_ColorFormat->SetCaption (TEXT ("int") );
     }
-    else if (m_color_format == Color::COLORFORMAT_INT)
+    else if (color_format_ == color::INT)
     {
-      m_color_format = Color::COLORFORMAT_HEX;
+      color_format_ = color::HEX;
       //FIXME - m_ColorFormat->SetCaption (TEXT ("hex") );
     }
-    else if (m_color_format == Color::COLORFORMAT_HEX)
+    else if (color_format_ == color::HEX)
     {
-      m_color_format = Color::COLORFORMAT_FLOAT;
+      color_format_ = color::FLOAT;
       //FIXME - m_ColorFormat->SetCaption (TEXT ("float") );
     }
 
-    m_red->SetColorFormat (m_color_format);
-    m_green->SetColorFormat (m_color_format);
-    m_blue->SetColorFormat (m_color_format);
+    m_red->SetColorFormat (color_format_);
+    m_green->SetColorFormat (color_format_);
+    m_blue->SetColorFormat (color_format_);
   }
 
   void RGBPropertyItem::UpdateStartToEndColors()
@@ -323,34 +299,27 @@ namespace nux
     m_green->Reset();
     m_blue->Reset();
 
-    if (m_color_model == CM_RGB)
+    if (color_model_ == color::RGB)
     {
-      float r, g, b;
-      r = m_red->GetValue();
-      g = m_green->GetValue();
-      b = m_blue->GetValue();
+      color::RedGreenBlue rgb(m_red->GetValue(),
+                              m_green->GetValue(),
+                              m_blue->GetValue());
 
-      m_red->AddColorMark (0, Color (0.0f, g, b), false);
-      m_red->AddColorMark (1, Color (1.0f, g, b), false);
-      m_green->AddColorMark (0, Color (r, 0.0f, b), false);
-      m_green->AddColorMark (1, Color (r, 1.0f, b), false);
-      m_blue->AddColorMark (0, Color (r, g, 0.0f), false);
-      m_blue->AddColorMark (1, Color (r, g, 1.0f), false);
+      m_red->AddColorMark (0, Color (0.0f, rgb.green, rgb.blue), false);
+      m_red->AddColorMark (1, Color (1.0f, rgb.green, rgb.blue), false);
+      m_green->AddColorMark (0, Color (rgb.red, 0.0f, rgb.blue), false);
+      m_green->AddColorMark (1, Color (rgb.red, 1.0f, rgb.blue), false);
+      m_blue->AddColorMark (0, Color (rgb.red, rgb.green, 0.0f), false);
+      m_blue->AddColorMark (1, Color (rgb.red, rgb.green, 1.0f), false);
 
-      m_Red = r;
-      m_Green = g;
-      m_Blue = b;
+      rgb_values_ = rgb;
     }
 
-    if (m_color_model == CM_HSV)
+    if (color_model_ == color::HSV)
     {
-      float r, g, b;
-      float h, s, v;
-      h = m_red->GetValue();
-      s = m_green->GetValue();
-      v = m_blue->GetValue();
-
-      HSVtoRGB (r, g, b, h, 1.0f, 1.0f);
+      color::HueSaturationValue hsv(m_red->GetValue(),
+                                    m_green->GetValue(),
+                                    m_blue->GetValue());
 
       m_red->AddColorMark (0.0f, Color (1.0f, 0.0, 0.0), false);
       m_red->AddColorMark (1.0f / 6.0f, Color (1.0f, 1.0, 0.0), false);
@@ -360,28 +329,34 @@ namespace nux
       m_red->AddColorMark (5.0f / 6.0f, Color (1.0f, 0.0, 1.0), false);
       m_red->AddColorMark (1.0f, Color (1.0f, 0.0, 0.0), false);
 
-      if (h == 1.0f)
-        h = 0.0f;
+      if (hsv.hue == 1.0f)
+        hsv.hue = 0.0f;
 
-      HSVtoRGB (r, g, b, h, 1.0f, 1.0f);
-      m_green->AddColorMark (0, Color (v, v, v), false);
-      m_green->AddColorMark (1.0f, Color (r * v, g * v, b * v), false);
+      // Save these hsv values as rgb values.
+      rgb_values_ = color::RedGreenBlue(hsv);
 
-      HSVtoRGB (r, g, b, h, s, 1.0f);
-      m_blue->AddColorMark (0, Color (0, 0, 0), false);
-      m_blue->AddColorMark (1.0f, Color (r, g, b), false);
+      // The green holds the saturation.
+      Color min_green(hsv.value, hsv.value, hsv.value);
 
-      HSVtoRGB (m_Red, m_Green, m_Blue, h, s, v);
+      // The blue slider handles full value.
+      hsv.value = 1.0f;
+      color::RedGreenBlue blue_slider(hsv);
+      m_blue->AddColorMark (0, color::Black, false);
+      m_blue->AddColorMark (1.0f, Color(blue_slider), false);
+
+      // Max green slider has full saturation and value
+      hsv.saturation = 1.0f;
+      color::RedGreenBlue green_slider(hsv);
+      Color max_green = Color(green_slider) * hsv.value;
+      m_green->AddColorMark (0, min_green, false);
+      m_green->AddColorMark (1.0f, max_green, false);
     }
 
-    if (m_color_model == CM_HLS)
+    if (color_model_ == color::HLS)
     {
-      float r, g, b;
-      float h, l, s;
-      h = m_red->GetValue();
-      l = m_green->GetValue();
-      s = m_blue->GetValue();
-
+      color::HueLightnessSaturation hls(m_red->GetValue(),
+                                        m_green->GetValue(),
+                                        m_blue->GetValue());
       m_red->AddColorMark (0.0f, Color (1.0f, 0.0, 0.0), false);
       m_red->AddColorMark (1.0f / 6.0f, Color (1.0f, 1.0, 0.0), false);
       m_red->AddColorMark (2.0f / 6.0f, Color (0.0f, 1.0, 0.0), false);
@@ -390,38 +365,38 @@ namespace nux
       m_red->AddColorMark (5.0f / 6.0f, Color (1.0f, 0.0, 1.0), false);
       m_red->AddColorMark (1.0f, Color (1.0f, 0.0, 0.0), false);
 
-      s = 1.0f - s;
+      // Save these hsv values as rgb values.
+      if (hls.hue == 1.0f)
+        hls.hue = 0.0f;
 
-      if (h == 1.0f)
-        h = 0.0f;
+      rgb_values_ = color::RedGreenBlue(hls);
+
+      float s = (1.0f - hls.saturation) * 0.5;
 
       // Need to use HSVtoRGB to compute the primary color
-      HSVtoRGB (r, g, b, h, 1.0f, 1.0f);
-      m_green->AddColorMark (0.0f, Color (0, 0, 0), false);
-      m_green->AddColorMark (0.5f, Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), false);
-      m_green->AddColorMark (1.0f, Color (1.0f, 1.0f, 1.0f), false);
+      color::HueSaturationValue primary_hsv(hls.hue, 1.0f, 1.0f);
+      color::RedGreenBlue primary_rgb(primary_hsv);
+      Color primary = Color(primary_rgb) * hls.saturation + s;
+      m_green->AddColorMark (0.0f, color::Black, false);
+      m_green->AddColorMark (0.5f, primary, false);
+      m_green->AddColorMark (1.0f, color::White, false);
 
-      float cr, cg, cb;
+      // Not sure on the name of this color...
+      Color secondary = Color(primary_rgb);
 
-      if (l > 0.5)
+      if (hls.lightness > 0.5)
       {
-        float factor = (l - 0.5f) / 0.5f;
-        cr = (1 - factor) * r * (1 - s) + 0.5 * s + factor * 1.0f;
-        cg = (1 - factor) * g * (1 - s) + 0.5 * s + factor * 1.0f;
-        cb = (1 - factor) * b * (1 - s) + 0.5 * s + factor * 1.0f;
+        float factor = (hls.lightness - 0.5f) / 0.5f;
+        secondary = secondary * ((1 - factor) * hls.saturation) + (s + factor);
       }
       else
       {
-        float factor = l / 0.5f;
-        cr = (factor) * r * (1 - s) + 0.5 * s;
-        cg = (factor) * g * (1 - s) + 0.5 * s;
-        cb = (factor) * b * (1 - s) + 0.5 * s;
+        float factor = hls.lightness / 0.5f * hls.saturation;
+        secondary = secondary * factor + s;
       }
 
-      m_blue->AddColorMark (0, Color (l, l, l), false);
-      m_blue->AddColorMark (1.0f, Color (cr, cg, cb), false);
-
-      HLStoRGB (m_Red, m_Green, m_Blue, h, l, 1.0f - s);
+      m_blue->AddColorMark (0, Color (hls.lightness, hls.lightness, hls.lightness), false);
+      m_blue->AddColorMark (1.0f, secondary, false);
     }
   }
 
@@ -451,15 +426,15 @@ namespace nux
     TiXmlElement *childxml;
     childxml = new TiXmlElement (TEXT ("RGBComponent") );
     //childxml->SetAttribute(TEXT("Name"), m_X->GetName());
-    childxml->SetDoubleAttribute (TEXT ("Red"), (double) m_Red);
+    childxml->SetDoubleAttribute (TEXT ("Red"), rgb_values_.red);
     elementxml->LinkEndChild (childxml);
     childxml = new TiXmlElement (TEXT ("RGBComponent") );
     //childxml->SetAttribute(TEXT("Name"), m_Y->GetName());
-    childxml->SetDoubleAttribute (TEXT ("Green"), (double) m_Green);
+    childxml->SetDoubleAttribute (TEXT ("Green"), rgb_values_.green);
     elementxml->LinkEndChild (childxml);
     childxml = new TiXmlElement (TEXT ("RGBComponent") );
     //childxml->SetAttribute(TEXT("Name"), m_Z->GetName());
-    childxml->SetDoubleAttribute (TEXT ("Blue"), (double) m_Blue);
+    childxml->SetDoubleAttribute (TEXT ("Blue"), rgb_values_.blue);
     elementxml->LinkEndChild (childxml);
 
     return elementxml;
