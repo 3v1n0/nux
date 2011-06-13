@@ -365,6 +365,34 @@ Level get_logging_level(std::string level)
   return WARNING;
 }
 
+BlockTracer::BlockTracer(Logger& logger,
+                         Level level,
+                         std::string const& func,
+                         std::string const& file,
+                         int line_number)
+  : logger_(logger)
+  , level_(level)
+  , func_(func)
+  , file_(file)
+  , line_number_(line_number)
+{
+  if (logger_.GetEffectiveLogLevel() >= level_)
+  {
+    LogStream(level_, logger_.module(), file_, line_number_).stream()
+      << "+" << func_;
+  }
+}
+
+BlockTracer::~BlockTracer()
+{
+  if (logger_.GetEffectiveLogLevel() >= level_)
+  {
+    LogStream(level_, logger_.module(), file_, line_number_).stream()
+      << "-" << func_;
+  }
+}
+
+
 namespace {
 char const* str_level(Level severity)
 {

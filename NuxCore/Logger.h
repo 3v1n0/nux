@@ -26,6 +26,9 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
+#define LOG_TRACE(logger) \
+  if (!logger.IsTraceEnabled()) {} \
+  else ::nux::logging::LogStream(::nux::logging::TRACE, logger.module(), __FILE__, __LINE__).stream()
 #define LOG_DEBUG(logger) \
   if (!logger.IsDebugEnabled()) {} \
   else ::nux::logging::LogStream(::nux::logging::DEBUG, logger.module(), __FILE__, __LINE__).stream()
@@ -39,6 +42,12 @@
 #define LOG_ERROR(logger) \
   if (!logger.IsErrorEnabled()) {} \
   else ::nux::logging::LogStream(::nux::logging::ERROR, logger.module(), __FILE__, __LINE__).stream()
+
+// We shouldn't really be logging block level information at anything higher
+// than debug.
+#define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ##  __LINE__ (logger, ::nux::logging::TRACE, __PRETTY_FUNC__, __FILE__, __LINE__)
+#define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::DEBUG, __PRETTY_FUNC__, __FILE__, __LINE__)
+
 
 namespace nux {
 namespace logging {
@@ -105,6 +114,7 @@ public:
   bool IsWarningEnabled() const;
   bool IsInfoEnabled() const;
   bool IsDebugEnabled() const;
+  bool IsTraceEnabled() const;
 
   void SetLogLevel(Level level);
   Level GetLogLevel() const;
@@ -112,6 +122,37 @@ public:
 
 private:
   LoggerModulePtr pimpl;
+};
+
+/**
+ * This class is used to log the entry and exit of a block.
+ *
+ * Entry is defined as where the object is created.  This is most likely going
+ * to be defined using the macros defined above. Exit is defined as object
+ * destruction, which is normally controlled through the end of scope killing
+ * the stack object.
+ *
+ * int some_func(params...)
+ * {
+ *     LOG_TRACE_BLOCK(logger);
+ *     ...
+ * }
+ */
+class BlockTracer
+{
+public:
+  BlockTracer(Logger& logger,
+              Level level,
+              std::string const& func,
+              std::string const& file,
+              int line_number);
+  ~BlockTracer();
+private:
+  Logger& logger_;
+  Level level_;
+  std::string const& func_;
+  std::string const& file_;
+  int line_number_;
 };
 
 }
