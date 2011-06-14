@@ -194,6 +194,19 @@ TEST(TestLogStream, TestOutput) {
   EXPECT_THAT(result, EndsWith("testing message\n"));
 }
 
+TEST(TestLogStream, TestShortenedFilename) {
+  // Filenames only show the last path segment.
+  std::stringstream out;
+  Writer::Instance().SetOutputStream(out);
+
+  LogStream test(DEBUG, "module", "/some/absolute/filename", 42);
+  test << "testing message" << std::flush;
+
+  std::string result = out.str();
+
+  EXPECT_THAT(result, HasSubstr("module filename:42"));
+}
+
 TEST(TestLogStream, TestTemporary) {
   // First test is to make sure a LogStream can be constructed and destructed.
   std::stringstream out;
