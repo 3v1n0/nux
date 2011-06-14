@@ -57,7 +57,7 @@ namespace nux
     // FIXME - this should be the Position enum set above, can't do that because tim hates me
     Property<int>           image_position;
 
-  private:
+  protected:
     void Init ();
 
     void OnStateChanged (int value);
