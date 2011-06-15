@@ -171,6 +171,19 @@ PKG_CHECK_MODULES(UNITY_SUPPORT_TEST,
 AC_SUBST(UNITY_SUPPORT_TEST_CFLAGS)
 AC_SUBST(UNITY_SUPPORT_TEST_LIBS)
 
+dnl ************************************
+dnl Check for googletest and googlemock
+dnl ************************************
+
+AC_LANG_PUSH([C++])
+AC_CHECK_HEADER([gtest/gtest.h],
+                [],
+                [AC_MSG_ERROR([you are missing google-test, apt-get install libgtest-dev])])
+AC_CHECK_HEADER([gmock/gmock.h],
+                [],
+                [AC_MSG_ERROR([you are missing google-mock, apt-get install google-mock])])
+AC_LANG_POP([C++])
+
 dnl ===========================================================================
 
 # sets up doxygen
