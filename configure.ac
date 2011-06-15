@@ -163,6 +163,8 @@ AC_SUBST(NUX_LIBS)
 
 PKG_CHECK_MODULES(UNITY_SUPPORT_TEST,
                   x11
+		  xcomposite
+		  xdamage
                   gl
                   libpci
                   )
@@ -235,7 +237,7 @@ AC_ARG_ENABLE([opengles_20],
               [enable_opengles_20=no])
 AS_IF([test "x$enable_opengles_20" = "xyes"],
       [
-         MAINTAINER_CFLAGS+=" -DNUX_OPENGL_ES_20"
+         MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
       ]
 )
 

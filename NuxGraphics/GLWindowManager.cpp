@@ -102,7 +102,7 @@ namespace nux
                                                            bool FullscreenFlag,
                                                            bool create_rendering_data)
   {
-    if (GetDisplayDevice () )
+    if(GetGraphicsDisplay())
     {
       // A GlWindow already exist for this thread.
       nuxAssertMsg (0, TEXT ("Only one GLWindow per thread is allowed") );
@@ -118,7 +118,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
   GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
   {
-    if (GetDisplayDevice () )
+    if(GetGraphicsDisplay())
     {
       // A GlWindow already exist for this thread.
       nuxAssertMsg (0, TEXT ("Only one GLWindow per thread is allowed") );
@@ -133,7 +133,7 @@ namespace nux
 #elif defined(NUX_OS_LINUX)
   GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
   {
-    if (GetDisplayDevice () )
+    if (GetGraphicsDisplay())
     {
       // A GlWindow already exist for this thread.
       nuxAssertMsg (0, TEXT ("Only one GLWindow per thread is allowed") );
@@ -150,17 +150,17 @@ namespace nux
 
 GLEWContext *glewGetContext()
 {
-  return nux::GetDisplayDevice ()->GetGLEWContext();
+  return nux::GetGraphicsDisplay()->GetGLEWContext();
 }
 
 #if defined(NUX_OS_WINDOWS)
 WGLEWContext *wglewGetContext()
 {
-  return nux::GetDisplayDevice ()->GetWGLEWContext();
+  return nux::GetGraphicsDisplay()->GetWGLEWContext();
 }
 #elif defined(NUX_OS_LINUX)
 GLXEWContext *glxewGetContext()
 {
-  return nux::GetDisplayDevice ()->GetGLXEWContext();
+  return nux::GetGraphicsDisplay()->GetGLXEWContext();
 }
 #endif

@@ -43,7 +43,7 @@ void UpdateAngle (void *v)
     timer_handle = nux::GetTimer().AddTimerHandler (10, timer_functor, texture_area);
     if (angle == 0)
     {
-      nux::ColorLayer color_layer (nux::Color::RandomColor ());
+      nux::ColorLayer color_layer (nux::color::RandomColor ());
       texture_area->SetPaintLayer (&color_layer);
     }
   }
@@ -60,7 +60,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   // Set the button maximum width/height
   texture_area->SetMaximumWidth (160);
   texture_area->SetMaximumHeight (80);
-  texture_area->SetTextColor (nux::Colors::Pink);
+  texture_area->SetTextColor (nux::color::Pink);
   texture_area->Set2DRotation (0.0);
 
   // Add the button to the layout

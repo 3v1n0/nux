@@ -501,7 +501,7 @@ namespace nux
 
   void HSplitter::OnSplitterMouseDown (t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
   {
-    m_point.Set (x, y);
+    m_point = Point(x, y);
 
     m_focus_splitter_index = header_pos;
     GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor ().GetProcessingTopView () );

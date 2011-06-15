@@ -102,7 +102,7 @@ namespace nux
   int Matrix4PreviewPropertyItem::GetItemBestHeight()
   {
     Size sz = GetMinimumSize();
-    return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
+    return sz.height + 2 * PROPERTY_BORDER_Y;
   }
 
   Matrix4PreviewPropertyItem *Matrix4PreviewPropertyItem::CreateFromXML (const TiXmlElement *elementxml, NodeNetCom *parent, const char *Name, int id)

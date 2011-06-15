@@ -95,7 +95,7 @@ namespace nux
   int Vector3ValuatorPropertyItem::GetItemBestHeight()
   {
     Size sz = GetMinimumSize();
-    return sz.GetHeight() + 2 * PROPERTY_BORDER_Y;
+    return sz.height + 2 * PROPERTY_BORDER_Y;
   }
 
   Vector3ValuatorPropertyItem *Vector3ValuatorPropertyItem::CreateFromXML (const TiXmlElement *elementxml, NodeNetCom *parent, const char *Name, int id)

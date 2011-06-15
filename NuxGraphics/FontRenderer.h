@@ -43,10 +43,7 @@ namespace nux
     FontRenderer (GraphicsEngine &OpenGLEngine);
     ~FontRenderer();
 
-    GraphicsEngine &m_OpenGLEngine;
-
     int DrawColorString (ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int NumCharacter = 0, int SkipFirstNCharacters = 0);
-
     void PositionString (ObjectPtr<FontTexture> Font, const NString &str, const PageBBox &, StringBBox &, TextAlignment align = eAlignTextCenter, int NumCharacter = 0);
     int RenderColorText (ObjectPtr<FontTexture> Font, int x, int y, const NString &Str, const Color &color, bool WriteAlphaChannel, int NumCharacter);
     int RenderColorTextLineStatic (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str, const Color &color,
@@ -67,14 +64,14 @@ namespace nux
       ObjectPtr<FontTexture> Font, Rect geo, const NString &str, const Color &color, TextAlignment alignment = eAlignTextCenter, int NumCharacter = 0);
 
   private:
-    TemplateQuadBuffer *m_QuadBuffer;
-    ObjectPtr<IOpenGLPixelShader> m_PixelShaderProg;
-    ObjectPtr<IOpenGLVertexShader> m_VertexShaderProg;
-    ObjectPtr<IOpenGLShaderProgram> m_ShaderProg;
+    GraphicsEngine& _graphics_engine;
+    ObjectPtr<IOpenGLPixelShader> _pixel_shader_prog;
+    ObjectPtr<IOpenGLVertexShader> _vertex_shader_prog;
+    ObjectPtr<IOpenGLShaderProgram> _shader_prog;
 
     //ObjectPtr<IOpenGLAsmPixelShader> m_AsmPixelShaderProg;
     //ObjectPtr<IOpenGLAsmVertexShader> m_AsmVertexShaderProg;
-    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmShaderProg;
+    ObjectPtr<IOpenGLAsmShaderProgram> _asm_shader_prog;
 
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_font_texture_rect_prog;
   };

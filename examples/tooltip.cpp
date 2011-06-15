@@ -817,7 +817,7 @@ namespace nux
 
     // Texture2D is the high level representation of an image that is backed by
     // an actual opengl texture.
-    _texture2D = GetThreadGLDeviceFactory()->CreateSystemCapableTexture ();
+    _texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     _texture2D->Update(bitmap);
     
     delete _cairo_graphics;

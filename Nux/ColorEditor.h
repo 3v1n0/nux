@@ -62,10 +62,10 @@ namespace nux
     Color GetColor();
     void SetPreviousColor (Color color);
     Color GetPreviousColor();
-    void SetColorModel (eColorModel color_model);
-    eColorModel GetColorModel();
-    void SetColorChannel (eColorChannel color_model);
-    eColorChannel GetColorChannel();
+    void SetColorModel (color::Model color_model);
+    color::Model GetColorModel();
+    void SetColorChannel (color::Channel color_model);
+    color::Channel GetColorChannel();
 
   private:
     bool m_bDialogChange;
@@ -73,8 +73,8 @@ namespace nux
     unsigned int m_DialogThreadID;
     Color m_RGBColor;
     Color m_PreviousRGBColor;
-    eColorModel m_ColorModel;
-    eColorChannel m_ColorChannel;
+    color::Model m_ColorModel;
+    color::Channel m_ColorChannel;
     bool m_ModalWindow;
     NThread *m_Thread;
 
@@ -91,7 +91,6 @@ namespace nux
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
-
     void SetRed (double r);
     void SetGreen (double g);
     void SetBlue (double b);
@@ -101,14 +100,12 @@ namespace nux
 
     void SetRGB (double r, double g, double b);
     void SetHSV (double h, double s, double v);
-    void SetRGB (Color rgb);
-    void SetHSV (Color hsv);
+    void SetRGB(Color const& rgb);
     Color GetRGBColor() const;
-    Color GetHSVColor() const;
 
-    void SetColorModel (eColorModel, eColorChannel);
-    eColorModel GetColorModel() const;
-    eColorChannel GetColorChannel() const;
+    void SetColorModel (color::Model, color::Channel);
+    color::Model GetColorModel() const;
+    color::Channel GetColorChannel() const;
 
     void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -118,7 +115,7 @@ namespace nux
     void RecvPickerMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvPickerMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-    void RecvCheckColorModel (bool, eColorModel, eColorChannel);
+    void RecvCheckColorModel (bool, color::Model, color::Channel);
 
     sigc::signal< void, ColorEditor * > sigChange;
   private:
@@ -126,8 +123,8 @@ namespace nux
     void DrawRGB (GraphicsEngine &GfxContext, bool force_draw);
     void DrawHSV (GraphicsEngine &GfxContext, bool force_draw);
 
-    eColorChannel   m_ColorChannel;
-    eColorModel     m_ColorModel;
+    color::Channel   m_ColorChannel;
+    color::Model     m_ColorModel;
     InputArea       *m_PickerArea;
     InputArea       *m_BaseChannelArea;
     InputArea       *m_ColorSquare;
@@ -145,13 +142,8 @@ namespace nux
     Point m_MarkerPosition;
     Point m_VertMarkerPosition;
 
-    float m_Red;
-    float m_Green;
-    float m_Blue;
-    float m_Hue;
-    float m_Saturation;
-    float m_Value;
-
+    color::RedGreenBlue rgb_;
+    color::HueSaturationValue hsv_;
 
     HLayout *redlayout;
     HLayout *greenlayout;

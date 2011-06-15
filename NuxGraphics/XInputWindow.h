@@ -44,12 +44,12 @@ namespace nux
                  bool        take_focus = False,
                  int         override_redirect = 0);
     ~XInputWindow();
-    
+
     static std::list<Window> NativeHandleList();
-    
+
     void EnableStruts(bool enable);
     bool StrutsEnabled();
-    
+
     void EnsureInputs();
 
     void EnableTakeFocus ();
@@ -59,38 +59,34 @@ namespace nux
 
     //! Set the position and size of the window
     void SetGeometry(int x, int y, int width, int height);
-    
+
     //! Get the window geometry.
-    Rect GetGeometry() const;
-    
+    Rect const& GetGeometry() const;
+
     //! Get X11 the Window.
     Window GetWindow ();
 
     void SetInputFocus ();
-    
+
     void Hide ();
     void Show ();
 
   private:
-  
+
     void SetStruts ();
     void UnsetStruts ();
-    
+
     void EnableDnd ();
     void DisableDnd ();
-  
-    static std::list<Window> _native_windows;
-  
-    bool _strutsEnabled;
-    Window _window;
-    Display *_display;
-    int _x;
-    int _y;
-    int _width;
-    int _height;
-    bool _shown;
-    bool _mapped;
-    
+
+    static std::list<Window> native_windows_;
+
+    bool strutsEnabled_;
+    Window window_;
+    Display *display_;
+    Rect geometry_;
+    bool shown_;
+    bool mapped_;
   };
 }
 

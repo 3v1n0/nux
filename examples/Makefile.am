@@ -89,18 +89,10 @@ rotate_texture_area_LDADD = $(ALL_LIBS)
 text_entry_focus_SOURCES = text_entry_focus.cpp
 text_entry_focus_LDADD = $(ALL_LIBS)
 
-# distribute source along to the documentation
+# To distribute source add the source code here
 #sourceexampledir = "$(pkgdatadir)/examples"
 #sourceexample_DATA = $(combobox_SOURCES) \
-#                     $(cairo_SOURCES) \
-#                     $(textedit_SOURCES) \
-#                     $(button_SOURCES) \
-#                     $(checkbox_SOURCES) \
-#                     $(tooltip_SOURCES) \
-#                     $(timegraph_SOURCES) \
-#                     $(gridlayout_SOURCES) \
-#                     $(pangotextedit_SOURCES) \
-#                     $(moveable_view_SOURCES)
+#                    
 
 endif
 

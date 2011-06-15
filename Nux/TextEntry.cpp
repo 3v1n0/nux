@@ -137,7 +137,7 @@ namespace nux
     italic_ = false;
     multiline_ = false;
     wrap_ = false;
-    cursor_visible_ = true;
+    cursor_visible_ = false;
     readonly_ = false;
     content_modified_ = false;
     //selection_changed_ = false;
@@ -149,7 +149,7 @@ namespace nux
     align_ = CairoGraphics::ALIGN_LEFT;
 
     _size_match_text = true;
-    _text_color  = Colors::White;
+    _text_color  = color::White;
     _texture2D  = 0;
 
     font_family_ = "Ubuntu";
@@ -184,6 +184,9 @@ namespace nux
 
   TextEntry::~TextEntry ()
   {
+    if(cursor_blink_timer_)
+      g_source_remove(cursor_blink_timer_);
+
     cairo_font_options_destroy (font_options_);
     if (_texture2D)
       _texture2D->UnReference ();
@@ -203,13 +206,14 @@ namespace nux
 
   void TextEntry::DoSetFocused (bool focused)
   {
-		
+    focused_ = focused;	
+    cursor_visible_ = focused; // visibilty of cursor depends on focus
     View::DoSetFocused (focused);
     if (focused == true)
     {
       _block_focus = true;
-      SetCursor(0);
-      QueueRefresh(false, true);
+      SetCursor(cursor_);
+      QueueRefresh(true, true);
       
       Area *_parent = GetParentObject();
       if (_parent == NULL)
@@ -226,6 +230,17 @@ namespace nux
         parent->SetFocusControl (false);
       }
     }
+    else
+    {
+      QueueRefresh(true, false); // needed to hide cursor
+    }
+  }
+
+  void TextEntry::GeometryChanged ()
+  {
+
+      update_canvas_ = true;
+      View::GeometryChanged();
 
   }
 
@@ -554,8 +569,8 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
-    Color col = Colors::Black;
-    col.SetAlpha (0.0f);
+    Color col = color::Black;
+    col.alpha = 0;
     gfxContext.QRP_Color (base.x,
       base.y,
       base.width,
@@ -659,7 +674,7 @@ namespace nux
     if (_texture2D)
       _texture2D->UnReference ();
 
-    _texture2D = GetGpuDevice ()->CreateSystemCapableTexture ();
+    _texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     _texture2D->Update (bitmap);
 
     delete bitmap;
@@ -676,10 +691,11 @@ namespace nux
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
       }
+      cursor_visible_ = true; // show cursor when getting focus
       selection_changed_ = true;
       cursor_moved_ = true;
       // Don't adjust scroll.
-      QueueRefresh(false, false);
+      QueueRefresh(true, false);
     }
   }
 
@@ -693,10 +709,11 @@ namespace nux
         need_im_reset_ = true;
         //gtk_im_context_focus_out(im_context_);
       }
+      cursor_visible_ = false; // hide cursor when losing focus
       selection_changed_ = true;
       cursor_moved_ = true;
       // Don't adjust scroll.
-      QueueRefresh(false, false);
+      QueueRefresh(true, false);
     }
   }
 
@@ -787,7 +804,7 @@ namespace nux
       AdjustScroll();
 
     QueueTextDraw();
-    //todo: QueueCursorBlink();
+    QueueCursorBlink();
   }
 
   void TextEntry::ResetImContext()
@@ -837,9 +854,9 @@ namespace nux
     if (redraw_text)
     {
       cairo_set_source_rgb(canvas->GetInternalContext(),
-        _text_color.R(),
-        _text_color.G(),
-        _text_color.B());
+        _text_color.red,
+        _text_color.green,
+        _text_color.blue);
 
       cairo_move_to(canvas->GetInternalContext(),
         scroll_offset_x_ + kInnerBorderX,
@@ -864,21 +881,42 @@ namespace nux
       Color text_color = GetSelectionTextColor();
 
       cairo_set_source_rgb(canvas->GetInternalContext(),
-        selection_color.R(),
-        selection_color.G(),
-        selection_color.B());
+        selection_color.red,
+        selection_color.green,
+        selection_color.blue);
       cairo_paint(canvas->GetInternalContext());
 
       cairo_move_to(canvas->GetInternalContext(),
         scroll_offset_x_ + kInnerBorderX,
         scroll_offset_y_ + kInnerBorderY);
       cairo_set_source_rgb(canvas->GetInternalContext(),
-        text_color.R(),
-        text_color.G(),
-        text_color.B());
+        text_color.red,
+        text_color.green,
+        text_color.blue);
       pango_cairo_show_layout(canvas->GetInternalContext(), layout);
       canvas->PopState();
     }
+  }
+  
+  bool TextEntry::CursorBlinkCallback(TextEntry *self)
+  {
+    if (self->cursor_blink_status_)
+      self->ShowCursor();
+    else
+      self->HideCursor();
+  
+    if (--self->cursor_blink_status_ < 0)
+      self->cursor_blink_status_ = 2;
+
+    return true;
+  }
+  
+  void TextEntry::QueueCursorBlink()
+  {
+    if (!cursor_blink_timer_)
+      cursor_blink_timer_ = g_timeout_add(kCursorBlinkTimeout, 
+                                          (GSourceFunc)&CursorBlinkCallback, 
+                                          this);
   }
 
   void TextEntry::ShowCursor()
@@ -889,7 +927,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueTextDraw();
+        QueueRefresh(true, false);
       }
     }
   }
@@ -902,7 +940,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueTextDraw();
+        QueueRefresh(true, false);
       }
     }
   }

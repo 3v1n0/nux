@@ -29,28 +29,27 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexDeclaration);
 
-  IOpenGLVertexDeclaration::IOpenGLVertexDeclaration (const VERTEXELEMENT *pVertexElements)
-    : IOpenGLResource (RTVERTEXDECLARATION)
+  IOpenGLVertexDeclaration::IOpenGLVertexDeclaration(const VERTEXELEMENT* pVertexElements)
+    : IOpenGLResource(RTVERTEXDECLARATION)
   {
-    for (int i = 0; i < 8; i++)
-      Stride[i] = 0;
+    for(int i = 0; i < 8; i++)
+      _stride[i] = 0;
 
     int index = 0;
-    _DeclarationsArray.clear();
+    _declarations_array.clear();
 
     while (pVertexElements[index].Stream != 0xFF)
     {
-      VERTEXELEMENT *pVtxElement = new VERTEXELEMENT;
-      *pVtxElement = pVertexElements[index];
-      _DeclarationsArray.push_back (pVtxElement);
-      Stride[pVertexElements[index].Stream] += GetVertexElementSize (*pVtxElement);
+      VERTEXELEMENT VtxElement = pVertexElements[index];
+      _declarations_array.push_back(VtxElement);
+      _stride[VtxElement.Stream] += GetVertexElementSize(VtxElement);
       ++index;
     }
 
     // Add in the invalid vertex element stream at the end.
-    VERTEXELEMENT *pVtxElement = new VERTEXELEMENT;
-    pVtxElement->Stream = 0xFF; // invalid stream
-    _DeclarationsArray.push_back (pVtxElement);
+    //VERTEXELEMENT *pVtxElement = new VERTEXELEMENT;
+    //pVtxElement->Stream = 0xFF; // invalid stream
+    _declarations_array.push_back (DECL_END);
   };
 
   IOpenGLVertexDeclaration::~IOpenGLVertexDeclaration()
@@ -59,15 +58,15 @@ namespace nux
     _OpenGLID = 0;
   }
 
-  int IOpenGLVertexDeclaration::GetDeclaration (
-    VERTEXELEMENT *pDecl,
-    unsigned int *pNumElements)
-  {
-    *pNumElements = (unsigned int) _DeclarationsArray.size();
-    pDecl = _DeclarationsArray[0];
-
-    return 1;
-  }
+//   int IOpenGLVertexDeclaration::GetDeclaration (
+//     VERTEXELEMENT& pDecl,
+//     unsigned int *pNumElements)
+//   {
+//     *pNumElements = (unsigned int) _declarations_array.size();
+//     pDecl = _declarations_array[0];
+// 
+//     return 1;
+//   }
 
 
   VERTEXELEMENT IOpenGLVertexDeclaration::GetUsage (ATTRIB_USAGE_DECL usage)
@@ -75,11 +74,11 @@ namespace nux
     VERTEXELEMENT vtxelt;
     vtxelt.Stream = 0xFF; // invalid stream;
 
-    for (unsigned int i = 0; _DeclarationsArray.size(); i++)
+    for (unsigned int i = 0; _declarations_array.size(); i++)
     {
-      if (_DeclarationsArray[i]->Usage == usage)
+      if (_declarations_array[i].Usage == usage)
       {
-        vtxelt = * (_DeclarationsArray[i]);
+        vtxelt = _declarations_array[i];
         return vtxelt;
       }
     }
@@ -90,9 +89,9 @@ namespace nux
 // This is a simple check to comply with the documentation of DrawPrimitiveUP in DirectX
   bool IOpenGLVertexDeclaration::IsUsingMoreThanStreamZero()
   {
-    for (unsigned int i = 0; i < _DeclarationsArray.size(); i++)
+    for (unsigned int i = 0; i < _declarations_array.size(); i++)
     {
-      if (_DeclarationsArray[i]->Stream != 0)
+      if (_declarations_array[i].Stream != 0)
       {
         return true;
       }

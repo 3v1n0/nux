@@ -23,7 +23,7 @@
 #ifndef SYSTEMTYPES_H
 #define SYSTEMTYPES_H
 
-#include "Namespace.h"
+#include <cstddef>
 
 namespace nux
 {

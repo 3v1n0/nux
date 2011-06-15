@@ -40,12 +40,10 @@ source_cpp = \
   $(srcdir)/OutputDevice.cpp \
   $(srcdir)/Exception.cpp \
   $(srcdir)/Memory.cpp \
-  $(srcdir)/StreamBuffer.cpp \
   $(srcdir)/Character/NUTF.cpp \
   $(srcdir)/Character/NUni.cpp \
   $(srcdir)/Character/NUnicode.cpp \
   $(srcdir)/Color.cpp \
-  $(srcdir)/ColorFunctions.cpp \
   $(srcdir)/Colors.cpp \
   $(srcdir)/FileName.cpp \
   $(srcdir)/ThreadGNU.cpp \
@@ -53,7 +51,6 @@ source_cpp = \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
   $(srcdir)/NUniqueIndex.cpp \
-  $(srcdir)/Point.cpp \
   $(srcdir)/GlobalInitializer.cpp \
   $(srcdir)/ObjectType.cpp \
   $(srcdir)/Platform.cpp \
@@ -65,7 +62,6 @@ source_cpp = \
   $(srcdir)/Object.cpp \
   $(srcdir)/Math/Algo.cpp \
   $(srcdir)/Math/Constants.cpp \
-  $(srcdir)/Math/Point2D.cpp \
   $(srcdir)/Math/MathFunctions.cpp \
   $(srcdir)/Math/Line2D.cpp \
   $(srcdir)/Math/Bezier.cpp \
@@ -83,7 +79,6 @@ source_cpp = \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
   $(srcdir)/CRC32.cpp \
-  $(srcdir)/Size.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
 source_file_manager_h = \
@@ -116,6 +111,7 @@ source_math_h = \
   $(srcdir)/Math/Vector2.h \
   $(srcdir)/Math/Line2D.h \
   $(srcdir)/Math/Point2D.h \
+  $(srcdir)/Math/Point2D-inl.h \
   $(srcdir)/Math/Tweening.h \
   $(srcdir)/Math/Matrix4.h \
   $(srcdir)/Math/MathUtility.h
@@ -126,9 +122,6 @@ source_tiny_xml_h = \
 
 source_smart_ptr_h = \
   $(srcdir)/SmartPtr/GenericSmartPointer.h
-
-source_datastruct_h = \
-  $(srcdir)/DataStruct/NList.h
 
 source_h = \
   $(srcdir)/SystemTypes.h \
@@ -143,12 +136,9 @@ source_h = \
   $(srcdir)/Platform.h \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
-  $(srcdir)/ColorFunctions.h \
   $(srcdir)/Colors.h \
-  $(srcdir)/StreamBuffer.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
-  $(srcdir)/Namespace.h \
   $(srcdir)/SystemGNU.h \
   $(srcdir)/NuxCore.h \
   $(srcdir)/FileName.h \
@@ -159,6 +149,7 @@ source_h = \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/Object.h \
   $(srcdir)/Size.h \
+  $(srcdir)/Size-inl.h \
   $(srcdir)/Exception.h \
   $(srcdir)/TimeFunctions.h \
   $(srcdir)/CRC32.h \
@@ -169,6 +160,9 @@ source_h = \
   $(srcdir)/NUniqueIndex.h \
   $(srcdir)/FileIO.h \
   $(srcdir)/InitiallyUnownedObject.h \
+  $(srcdir)/Property.h \
+  $(srcdir)/Property-inl.h \
+  $(srcdir)/PropertyTraits.h \
   $(srcdir)/Win32Dialogs/NWin32Clipboard.h
 
 libnux_core_@NUX_API_VERSION@_la_SOURCES = \
@@ -179,8 +173,7 @@ libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_math_h) \
   $(source_memory_h) \
   $(source_tiny_xml_h) \
-  $(source_smart_ptr_h) \
-  $(source_datastruct_h)
+  $(source_smart_ptr_h)
 
 nux_coredir = $(includedir)/Nux-@NUX_API_VERSION@/NuxCore
 nux_core_HEADERS = $(source_h)
@@ -202,9 +195,6 @@ nux_tiny_xml_HEADERS = $(source_tiny_xml_h)
 
 nux_smart_ptrdir = $(nux_coredir)/SmartPtr
 nux_smart_ptr_HEADERS = $(source_smart_ptr_h)
-
-nux_datastructdir = $(nux_coredir)/DataStruct
-nux_datastruct_HEADERS = $(source_datastruct_h)
 
 # pkg-config file
 nux-core-@NUX_API_VERSION@.pc: nux-core.pc

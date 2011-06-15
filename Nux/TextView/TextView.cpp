@@ -45,7 +45,7 @@ namespace nux
     ,   m_BlinkTimerHandler (0)
     ,   m_HasFocus (true)
   {
-    m_TextFontRenderer = new FontRenderer (*GetThreadGraphicsContext() );
+    m_TextFontRenderer = new FontRenderer (*GetGraphicsDisplay()->GetGraphicsEngine());
     m_VBSize0 = 256 * 1024;
     m_VBSize1 = 256 * 1024;
     m_TextVertexBuffer0.resize (m_VBSize0);
@@ -60,7 +60,7 @@ namespace nux
 
     b_RenderToVertexBuffer = false;
 
-    m_ShaderProg = GetGpuDevice()->CreateShaderProgram();
+    m_ShaderProg = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
     m_ShaderProg->LoadIShaderFile (NUX_FINDRESOURCELOCATION (TEXT ("Shaders/TextViewShader.glsl") ) );
     m_ShaderProg->Link();
 
@@ -71,7 +71,7 @@ namespace nux
     m_CgFontTexture         = m_ShaderProg->GetUniformLocationARB (TEXT ("FontTexture") );
     m_ViewProjectionMatrix0   = m_ShaderProg->GetUniformLocationARB (TEXT ("ViewProjectionMatrix") );
 
-    m_ColorQuadShaderProg = GetGpuDevice()->CreateShaderProgram();
+    m_ColorQuadShaderProg = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
     m_ColorQuadShaderProg->LoadIShaderFile (NUX_FINDRESOURCELOCATION (TEXT ("Shaders//TextViewColorQuadShader.glsl") ) );
     m_ColorQuadShaderProg->Link();
 
@@ -434,19 +434,19 @@ namespace nux
 
     if (b_RenderToVertexBuffer)
     {
-      GetThreadGraphicsContext()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE); // Do not write the alpha of characters
+      GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE); // Do not write the alpha of characters
 
       GfxContext.EnableTextureMode (GL_TEXTURE0, GL_TEXTURE_RECTANGLE_ARB);
 
       ObjectPtr< CachedTextureRectangle > glTexture = GfxContext.ResourceCache.GetCachedResource (m_TextFont->TextureArray[0]);
 
-      GetThreadGraphicsContext()->SetTexture (GL_TEXTURE0, glTexture->m_Texture);
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetTexture (GL_TEXTURE0, glTexture->m_Texture);
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////
       m_ColorQuadShaderProg->Begin();
 
-      Matrix4 Quadmat = GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix();
+      Matrix4 Quadmat = GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewProjectionMatrix();
 
       if (m_ViewProjectionMatrix1 != -1)
         m_ColorQuadShaderProg->SetUniformLocMatrix4fv (m_ViewProjectionMatrix1, 1, false, (float *) &Quadmat);
@@ -514,7 +514,7 @@ namespace nux
 
       m_ShaderProg->Begin();
 
-      Quadmat = GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix();
+      Quadmat = GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewProjectionMatrix();
 
       if (m_ViewProjectionMatrix0 != -1)
         m_ShaderProg->SetUniformLocMatrix4fv (m_ViewProjectionMatrix0, 1, false, (float *) &Quadmat);
@@ -603,8 +603,8 @@ namespace nux
 
       m_ShaderProg->End();
 
-      GetThreadGraphicsContext()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
-      GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
+      GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
+      GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (FALSE);
 
       CHECKGL ( glDisable (GL_TEXTURE_RECTANGLE_ARB) );
     }
@@ -900,7 +900,7 @@ namespace nux
 
   bool TextView::IsKeyPressed (t_u32 virtualkey)
   {
-    return GetThreadGLWindow()->GetCurrentEvent().GetVirtualKeyState (virtualkey);
+    return GetGraphicsDisplay()->GetCurrentEvent().GetVirtualKeyState (virtualkey);
   }
 
   void TextView::BlinkCursorTimerInterrupt (void *v)

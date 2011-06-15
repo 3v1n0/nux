@@ -244,7 +244,7 @@ namespace nux
 
     if (m_configure_notify_callback)
     {
-      (*m_configure_notify_callback) (GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
+      (*m_configure_notify_callback) (GetGraphicsDisplay()->GetWindowWidth(), GetGraphicsDisplay()->GetWindowHeight(), geo, m_configure_notify_callback_data);
 
       if (geo.IsNull() )
       {
@@ -457,7 +457,7 @@ namespace nux
 
     if (m_configure_notify_callback)
     {
-      (*m_configure_notify_callback) (GetThreadGLWindow()->GetWindowWidth(), GetThreadGLWindow()->GetWindowHeight(), geo, m_configure_notify_callback_data);
+      (*m_configure_notify_callback) (GetGraphicsDisplay()->GetWindowWidth(), GetGraphicsDisplay()->GetWindowHeight(), geo, m_configure_notify_callback_data);
 
       if (geo.IsNull() )
       {

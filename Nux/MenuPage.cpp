@@ -261,7 +261,7 @@ namespace nux
     // The MenuPage is floating above everything else.
     SetLayout (vlayout);
 
-    SetTextColor (Colors::Black);
+    SetTextColor (color::Black);
   }
 
   MenuPage::~MenuPage ()
@@ -304,7 +304,7 @@ namespace nux
     {
       if (mod_event.e_event == NUX_MOUSE_RELEASED)
       {
-        Geometry geo = GetThreadGLWindow()->GetWindowGeometry();
+        Geometry geo = GetGraphicsDisplay()->GetWindowGeometry();
         geo.SetX (0);
         geo.SetY (0);
 
@@ -320,7 +320,7 @@ namespace nux
       }
       else if (mod_event.e_event == NUX_MOUSE_PRESSED)
       {
-        Geometry geo = GetThreadGLWindow()->GetWindowGeometry();
+        Geometry geo = GetGraphicsDisplay()->GetWindowGeometry();
         geo.SetX (0);
         geo.SetY (0);
 
