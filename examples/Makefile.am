@@ -9,6 +9,7 @@ if BUILD_EXAMPLES
 
 noinst_PROGRAMS = button \
                   cairo \
+                  canvas \
                   checkbox \
                   combobox \
                   focus \
@@ -56,6 +57,8 @@ combobox_SOURCES = combobox.cpp
 combobox_LDADD = $(ALL_LIBS)
 cairo_SOURCES = cairo.cpp
 cairo_LDADD = $(ALL_LIBS)
+canvas_SOURCES = canvas.cpp
+canvas_LDADD = $(ALL_LIBS)
 textedit_SOURCES = textedit.cpp
 textedit_LDADD = $(ALL_LIBS)
 button_SOURCES = button.cpp
