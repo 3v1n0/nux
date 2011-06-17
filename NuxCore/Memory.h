@@ -36,11 +36,6 @@
                                                 (mem_array) = 0;        \
                                             }
 
-#define NUX_SAFE_FREE(mem)    if(mem)             \
-{                   \
-    std::free(mem);      \
-    (mem) = 0;      \
-}
 
 namespace nux
 {
