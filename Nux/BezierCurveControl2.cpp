@@ -75,9 +75,8 @@ namespace nux
 
   BezierCurveControl2::~BezierCurveControl2()
   {
-    NUX_SAFE_DELETE (m_Background);
+    delete m_Background;
   }
-
 
   long BezierCurveControl2::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {

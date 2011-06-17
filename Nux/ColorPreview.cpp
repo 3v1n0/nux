@@ -70,7 +70,7 @@ namespace nux
     if (m_ChangeTimerHandler.IsValid() )
       GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 
-    NUX_SAFE_DELETE (m_DialogThreadProxy);
+    delete m_DialogThreadProxy;
   }
 
   long ColorPreview::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

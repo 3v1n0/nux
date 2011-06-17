@@ -27,12 +27,12 @@
 
 #define NUX_SAFE_DELETE(mem)    if(mem)             \
                                 {                   \
-                                    INLDELETE (mem);   \
+                                    delete(mem);   \
                                     (mem) = 0;      \
                                 }
 #define NUX_SAFE_DELETE_ARRAY(mem_array)    if(mem_array)               \
                                             {                           \
-                                                INLDELETEARRAY (mem_array);  \
+                                                delete[](mem_array);  \
                                                 (mem_array) = 0;        \
                                             }
 

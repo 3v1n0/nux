@@ -108,8 +108,6 @@
 
 
 #define INLNEW new
-#define INLDELETE delete
-#define INLDELETEARRAY delete []
 
 #define NUX_RUNTIME_ERROR(str, ...)             LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
 #define NUX_ERROR_IF_NULL(test, str, ...)       if(test == 0)   LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);

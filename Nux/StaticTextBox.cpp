@@ -55,7 +55,7 @@ namespace nux
 
   StaticTextBox::~StaticTextBox()
   {
-    NUX_SAFE_DELETE (m_Background);
+    delete m_Background;
   }
 
   long StaticTextBox::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -157,7 +157,7 @@ namespace nux
 
   void StaticTextBox::SetBackground (AbstractPaintLayer *layer)
   {
-    NUX_SAFE_DELETE (m_Background);
+    delete m_Background;
     m_Background = layer->Clone();
   }
 
