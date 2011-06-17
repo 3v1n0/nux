@@ -42,22 +42,6 @@
     (mem) = 0;      \
 }
 
-#if defined(NUX_OS_WINDOWS)
-    #define NUX_SYS_MEMORY_MALLOC(size)                     malloc(size)
-    #define NUX_SYS_MEMORY_MEM_ALIGN(align, size)           NUX_SYS_MEMORY_MALLOC(size)
-    #define NUX_SYS_MEMORY_REALLOC(ptr, size)               realloc(ptr, size)
-    #define NUX_SYS_MEMORY_REALLOC_ALIGN(ptr, size, align)  realloc(ptr, size)
-    #define NUX_SYS_MEMORY_FREE(ptr)                        free(ptr)
-    #define NUX_SYS_MEMORY_PTR_SIZE(ptr)                    _msize(ptr)
-#elif defined(NUX_OS_LINUX)
-    #define NUX_SYS_MEMORY_MALLOC(size)                     malloc(size)
-    #define NUX_SYS_MEMORY_MEM_ALIGN(align, size)           NUX_SYS_MEMORY_MALLOC(size)
-    #define NUX_SYS_MEMORY_REALLOC(ptr, size)               realloc(ptr, size)
-    #define NUX_SYS_MEMORY_REALLOC_ALIGN(ptr, size, align)  realloc(ptr, size)
-    #define NUX_SYS_MEMORY_FREE(ptr)                        free(ptr)
-    #define NUX_SYS_MEMORY_PTR_SIZE(ptr)                    0
-#endif
-
 namespace nux
 {
 

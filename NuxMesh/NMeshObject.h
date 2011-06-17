@@ -87,7 +87,7 @@ namespace nux
     }
     ~Float2Set()
     {
-      NUX_SAFE_DELETE (Pool);
+      delete [] Pool;
     }
     nux::Vec2<float>* Pool;
     int Num;
@@ -103,7 +103,7 @@ namespace nux
     }
     ~AttributeIndexSet()
     {
-      NUX_SAFE_DELETE (IndexPool);
+      delete [] IndexPool;
     }
     Index3 *IndexPool;
     int Num;
