@@ -204,7 +204,6 @@ namespace nux
 
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
     Color m_TextColor;
     ObjectPtr<FontTexture> _font;
