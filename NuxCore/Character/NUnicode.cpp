@@ -43,7 +43,7 @@ namespace nux
 
     if (res != conversionOK)
     {
-      delete utf8string;
+      delete [] utf8string;
       utf8string = 0;
     }
 
