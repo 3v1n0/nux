@@ -50,6 +50,8 @@ source_cpp = \
   $(srcdir)/Parsing.cpp \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
+  $(srcdir)/Logger.cpp \
+  $(srcdir)/LoggingWriter.cpp \
   $(srcdir)/NUniqueIndex.cpp \
   $(srcdir)/GlobalInitializer.cpp \
   $(srcdir)/ObjectType.cpp \
@@ -137,6 +139,8 @@ source_h = \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
   $(srcdir)/Colors.h \
+  $(srcdir)/Logger.h \
+  $(srcdir)/LoggingWriter.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
   $(srcdir)/SystemGNU.h \
