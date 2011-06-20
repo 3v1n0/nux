@@ -73,6 +73,15 @@ std::string timestamp_string(std::time_t timestamp)
   return buffer;
 }
 
+std::string shortened_filename(std::string const& filename)
+{
+  std::string::size_type pos = filename.rfind('/');
+  if (pos == std::string::npos)
+    return filename;
+
+  return filename.substr(pos+1);
+}
+
 } // anon namespace
 
 class Writer::Impl
@@ -119,7 +128,8 @@ void Writer::Impl::WriteMessage(Level severity,
   sout << severity_string(severity)
        << " " << timestamp_string(timestamp)
        << " " << module
-       << " " << filename << ":" << line_number
+       << " " << shortened_filename(filename)
+       << ":" << line_number
        << " " << message;
   for (OutputStreams::iterator i = output_streams_.begin(), end = output_streams_.end();
        i != end; ++i)

@@ -84,23 +84,6 @@ namespace nux
     void CaptureMouseDownAnyWhereElse (bool b);
     bool IsCaptureMouseDownAnyWhereElse() const;
 
-    /*!
-        In debug mode, print the processing steps of events for this widget.
-        On linux, this works only if nux has been compiled with --enable-debug
-        \sa _print_event_debug_trace
-
-        @param enable If True, print the event processing deug info to the console.
-    */
-    void EnableEventDebugTrace (bool enable);
-
-    /*!
-        Return True if event processing debuigh information as been activated for this widget.
-        \sa _print_event_debug_trace
-
-        @return True, if event processing debug information for this widget has been activated.
-    */
-    bool GetEventDebugTrace () const;
-
   private:
     bool _dnd_enabled_as_source;
     bool _dnd_enabled_as_target;
@@ -190,7 +173,6 @@ namespace nux
     bool _has_keyboard_focus;
     bool _capture_mouse_down_any_where_else;
     bool _double_click;     //!< If True, this InputArea can emit the signal OnMouseDoubleClick. Default is false.
-    bool _print_event_debug_trace;
 
     bool _enable_keyboard_focus_on_mouse_down;  //!< Get the keyboard focus when a mouse down occurs.
 

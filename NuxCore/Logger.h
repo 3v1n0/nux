@@ -26,6 +26,9 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
+#define LOG_TRACE(logger) \
+  if (!logger.IsTraceEnabled()) {} \
+  else ::nux::logging::LogStream(::nux::logging::TRACE, logger.module(), __FILE__, __LINE__).stream()
 #define LOG_DEBUG(logger) \
   if (!logger.IsDebugEnabled()) {} \
   else ::nux::logging::LogStream(::nux::logging::DEBUG, logger.module(), __FILE__, __LINE__).stream()
@@ -39,6 +42,12 @@
 #define LOG_ERROR(logger) \
   if (!logger.IsErrorEnabled()) {} \
   else ::nux::logging::LogStream(::nux::logging::ERROR, logger.module(), __FILE__, __LINE__).stream()
+
+// We shouldn't really be logging block level information at anything higher
+// than debug.
+#define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::TRACE, __PRETTY_FUNC__, __FILE__, __LINE__)
+#define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::DEBUG, __PRETTY_FUNC__, __FILE__, __LINE__)
+
 
 namespace nux {
 namespace logging {
@@ -54,6 +63,29 @@ enum Level
   CRITICAL,
 };
 
+// Convert a string representation of a logging level into the enum value.
+Level get_logging_level(std::string level);
+
+/**
+ * Configure multiple logging modules.
+ *
+ * This function expects a string of the format:
+ *   module=info;sub.module=debug;other.module=warning
+ *
+ *
+ * The root module can be specified by using the value "<root>", eg:
+ *   <root>=info;other.module=debug
+ *
+ * The specified modules will have their logging level set to the specified
+ * level as defined by the get_logging_level function.
+ *
+ * It is expected that this method is called during application startup with
+ * the content of some environment variable.
+ *   nux::logging::configure_logging(::getenv("MY_APP_LOGGING_CONFIG"));
+ */
+void configure_logging(const char* config_string);
+
+std::string dump_logging_levels(std::string const& prefix = "");
 
 class LogStream : public std::ostream
 {
@@ -74,7 +106,7 @@ typedef boost::shared_ptr<LoggerModule> LoggerModulePtr;
 class Logger
 {
 public:
-  Logger(std::string const& module);
+  explicit Logger(std::string const& module);
 
   std::string const& module() const;
 
@@ -82,6 +114,7 @@ public:
   bool IsWarningEnabled() const;
   bool IsInfoEnabled() const;
   bool IsDebugEnabled() const;
+  bool IsTraceEnabled() const;
 
   void SetLogLevel(Level level);
   Level GetLogLevel() const;
@@ -89,6 +122,37 @@ public:
 
 private:
   LoggerModulePtr pimpl;
+};
+
+/**
+ * This class is used to log the entry and exit of a block.
+ *
+ * Entry is defined as where the object is created.  This is most likely going
+ * to be defined using the macros defined above. Exit is defined as object
+ * destruction, which is normally controlled through the end of scope killing
+ * the stack object.
+ *
+ * int some_func(params...)
+ * {
+ *     LOG_TRACE_BLOCK(logger);
+ *     ...
+ * }
+ */
+class BlockTracer
+{
+public:
+  BlockTracer(Logger& logger,
+              Level level,
+              std::string const& function_name,
+              std::string const& filename,
+              int line_number);
+  ~BlockTracer();
+private:
+  Logger& logger_;
+  Level level_;
+  std::string function_name_;
+  std::string filename_;
+  int line_number_;
 };
 
 }

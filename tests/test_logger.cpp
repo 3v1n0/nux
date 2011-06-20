@@ -10,6 +10,14 @@
 using namespace nux::logging;
 using namespace testing;
 
+namespace nux {
+namespace logging {
+// Declare the hidden function so we can call it.
+void reset_logging();
+}
+}
+
+
 namespace {
 
 TEST(TestLogger, TestSimpleConstruction) {
@@ -74,6 +82,14 @@ TEST(TestLogger, TestLevelsSharedForSameModule) {
   logger1.SetLogLevel(INFO);
   EXPECT_TRUE(logger1.IsInfoEnabled());
   EXPECT_TRUE(logger2.IsInfoEnabled());
+}
+
+TEST(TestLogger, TestModuleLowered) {
+  Logger logger1("TESTING.MODULE");
+  Logger logger2("Testing");
+
+  EXPECT_THAT(logger1.module(), Eq("testing.module"));
+  EXPECT_THAT(logger2.module(), Eq("testing"));
 }
 
 TEST(TestLogger, TestLevelsInherited) {
@@ -178,6 +194,19 @@ TEST(TestLogStream, TestOutput) {
   EXPECT_THAT(result, EndsWith("testing message\n"));
 }
 
+TEST(TestLogStream, TestShortenedFilename) {
+  // Filenames only show the last path segment.
+  std::stringstream out;
+  Writer::Instance().SetOutputStream(out);
+
+  LogStream test(DEBUG, "module", "/some/absolute/filename", 42);
+  test << "testing message" << std::flush;
+
+  std::string result = out.str();
+
+  EXPECT_THAT(result, HasSubstr("module filename:42"));
+}
+
 TEST(TestLogStream, TestTemporary) {
   // First test is to make sure a LogStream can be constructed and destructed.
   std::stringstream out;
@@ -215,5 +244,92 @@ TEST(TestLogStream, TestDebugMacro) {
   EXPECT_THAT(counter, Eq(1));
 }
 
+TEST(TestLogStream, TestBlockTracer) {
+  std::stringstream out;
+  Writer::Instance().SetOutputStream(out);
+
+  Logger logger("test");
+  logger.SetLogLevel(DEBUG);
+  {
+    BlockTracer tracer(logger, DEBUG, "func_name", "file_name", 42);
+  }
+
+  std::string result = out.str();
+
+  EXPECT_THAT(result, MatchesRegex("DEBUG .+ test file_name:42 \\+func_name\n"
+                                   "DEBUG .+ test file_name:42 -func_name\n"));
+}
+
+
+TEST(TestLogHelpers, TestGetLoggingLevel) {
+  EXPECT_THAT(get_logging_level("trace"), Eq(TRACE));
+  EXPECT_THAT(get_logging_level("TrAce"), Eq(TRACE));
+  EXPECT_THAT(get_logging_level("TRACE"), Eq(TRACE));
+  EXPECT_THAT(get_logging_level("debug"), Eq(DEBUG));
+  EXPECT_THAT(get_logging_level("DEBUG"), Eq(DEBUG));
+  EXPECT_THAT(get_logging_level("info"), Eq(INFO));
+  EXPECT_THAT(get_logging_level("INFO"), Eq(INFO));
+  EXPECT_THAT(get_logging_level("warn"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("WARN"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("warning"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("WARNING"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("error"), Eq(ERROR));
+  EXPECT_THAT(get_logging_level("ERROR"), Eq(ERROR));
+  // Unknown levels result in WARNING
+  EXPECT_THAT(get_logging_level("critical"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("not_specified"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("other"), Eq(WARNING));
+}
+
+TEST(TestLogHelpers, TestResetLogging) {
+  // First set root and another.
+  Logger("").SetLogLevel(DEBUG);
+  Logger("test.module").SetLogLevel(INFO);
+
+  reset_logging();
+
+  std::string levels = dump_logging_levels();
+
+  EXPECT_THAT(levels, Eq("<root> WARNING"));
+}
+
+
+TEST(TestLogHelpers, TestConfigureLoggingNull) {
+
+  reset_logging();
+  Logger("").SetLogLevel(DEBUG);
+  Logger("test.module").SetLogLevel(INFO);
+  // Configure passed a null pointer does nothing.
+  configure_logging(NULL);
+  std::string levels = dump_logging_levels();
+
+  EXPECT_THAT(levels, Eq("<root> DEBUG\n"
+                         "test.module INFO"));
+}
+
+TEST(TestLogHelpers, TestConfigureLoggingRoot) {
+  reset_logging();
+  configure_logging("<root>=debug");
+  std::string levels = dump_logging_levels();
+  EXPECT_THAT(levels, Eq("<root> DEBUG"));
+}
+
+TEST(TestLogHelpers, TestConfigureLoggingSingleModule) {
+  reset_logging();
+  configure_logging("test.module=debug");
+  std::string levels = dump_logging_levels();
+  EXPECT_THAT(levels, Eq("<root> WARNING\n"
+                         "test.module DEBUG"));
+}
+
+TEST(TestLogHelpers, TestConfigureLoggingMultipleModules) {
+  reset_logging();
+  configure_logging("module=info;sub.module=debug;other.module=warning");
+  std::string levels = dump_logging_levels();
+  EXPECT_THAT(levels, Eq("<root> WARNING\n"
+                         "module INFO\n"
+                         "other.module WARNING\n"
+                         "sub.module DEBUG"));
+}
 
 } // anon namespace
