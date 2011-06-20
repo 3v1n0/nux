@@ -41,7 +41,6 @@ namespace nux
 
   VToolBar::~VToolBar()
   {
-    DestroyLayout();
   }
 
   void VToolBar::InitializeWidgets()
@@ -59,10 +58,6 @@ namespace nux
   void VToolBar::InitializeLayout()
   {
     m_vlayout = new VLayout (NUX_TRACKER_LOCATION);
-  }
-
-  void VToolBar::DestroyLayout()
-  {
   }
 
   long VToolBar::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

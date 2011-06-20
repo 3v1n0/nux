@@ -47,7 +47,7 @@ namespace nux
 
   ComboBoxComplex::~ComboBoxComplex()
   {
-    DestroyLayout();
+    m_PopupWindow->Dispose ();
   }
 
   void ComboBoxComplex::InitializeWidgets()
@@ -103,11 +103,6 @@ namespace nux
     m_Layout        = new HLayout(NUX_TRACKER_LOCATION);
     m_ListBox       = new ListControl(false);
     m_PopupWindow   = new PopUpWindow();
-  }
-
-  void ComboBoxComplex::DestroyLayout()
-  {
-    m_PopupWindow->Dispose ();
   }
 
   long ComboBoxComplex::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

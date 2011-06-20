@@ -51,7 +51,6 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   private:
     float m_minX, m_minY, m_maxX, m_maxY;

@@ -42,7 +42,6 @@ namespace nux
 
   NumericValuator::~NumericValuator()
   {
-    DestroyLayout();
   }
 
   void NumericValuator::InitializeWidgets()
@@ -69,10 +68,6 @@ namespace nux
   void NumericValuator::InitializeLayout()
   {
     hlayout = new HLayout (NUX_TRACKER_LOCATION);
-  }
-
-  void NumericValuator::DestroyLayout()
-  {
   }
 
   long NumericValuator::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

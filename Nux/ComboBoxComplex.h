@@ -81,14 +81,9 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   protected:
-//    InputArea m_ComboArea;
-//    InputArea m_Button;
-//    bool m_MenuIsActive;
     const TableItem *m_SelectedTreeNode;
-//     bool m_IsOpeningMenu;
 
     PopUpWindow    *m_PopupWindow;
     ListControl    *m_ListBox;

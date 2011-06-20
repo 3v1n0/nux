@@ -45,7 +45,6 @@ namespace nux
 
   ColorGradient::~ColorGradient()
   {
-    DestroyLayout();
   }
 
   void ColorGradient::InitializeWidgets()
@@ -90,11 +89,6 @@ namespace nux
     m_Percentage    = new InputArea (NUX_TRACKER_LOCATION);
     m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
   }
-
-  void ColorGradient::DestroyLayout()
-  {
-  }
-
 
   long ColorGradient::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {

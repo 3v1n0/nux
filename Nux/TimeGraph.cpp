@@ -110,7 +110,8 @@ namespace nux
 
   TimeGraph::~TimeGraph()
   {
-    DestroyLayout();
+    NUX_SAFE_DELETE (m_DrawFunctionShader);
+    NUX_SAFE_DELETE (m_BackgroundLayer);
   }
 
   void TimeGraph::InitializeWidgets()
@@ -175,12 +176,6 @@ namespace nux
     m_GraphBarIcon  = new InputArea (NUX_TRACKER_LOCATION);
     m_GraphIcon     = new InputArea (NUX_TRACKER_LOCATION);
     m_ValueIcon     = new InputArea (NUX_TRACKER_LOCATION);
-  }
-
-  void TimeGraph::DestroyLayout()
-  {
-    NUX_SAFE_DELETE (m_DrawFunctionShader);
-    NUX_SAFE_DELETE (m_BackgroundLayer);
   }
 
   void TimeGraph::RecvShowBarGraphics (int x, int y, unsigned long button_flags, unsigned long key_flags)
