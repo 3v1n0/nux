@@ -4,6 +4,8 @@ nux (1.0.1-0ubuntu1) UNRELEASED; urgency=low
   * debian/control:
     - add new libxdamage-dev and libxcomposite-dev build-dep
   * remove debian/patches/01_build_with_gcc46.patch as upstream
+  * debian/rules:
+    - disable google code tests while building
 
  -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Jun 2011 18:29:56 +0200
 
