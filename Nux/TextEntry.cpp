@@ -302,6 +302,13 @@ namespace nux
     return ret;
   }
 
+  Area* TextEntry::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    Area* area = View::FindAreaUnderMouse(mouse_position, event_type);
+
+    return area;
+  }
+
   void TextEntry::ProcessMouseEvent (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     if (GetEventButton (button_flags) != 1)

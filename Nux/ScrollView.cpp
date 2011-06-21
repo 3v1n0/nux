@@ -219,7 +219,7 @@ namespace nux
     Area* found_area;
     found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
     NUX_RETURN_VALUE_IF_TRUE(found_area, found_area);
-    found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+    found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
     NUX_RETURN_VALUE_IF_TRUE(found_area, found_area);
 
     return View::FindAreaUnderMouse(mouse_position, event_type);

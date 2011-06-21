@@ -385,14 +385,30 @@ namespace nux
             if(GetKeyboardEventReceiver())
               GetKeyboardEventReceiver()->EmitEndKeyboardFocus();
 
-            if(_mouse_over_view->AcceptKeyboardEvent())
+            InputArea* grab_area = GetKeyboardGrabArea();
+            if(grab_area)
             {
-              _mouse_over_view->EmitStartKeyboardFocus();
-              SetKeyboardEventReceiver(_mouse_over_view);
+              if(_mouse_over_view->IsChildOf(grab_area) && _mouse_over_view->AcceptKeyboardEvent())
+              {
+                _mouse_over_view->EmitStartKeyboardFocus();
+                SetKeyboardEventReceiver(_mouse_over_view);
+              }
+              else
+              {
+                SetKeyboardEventReceiver(grab_area);
+              }
             }
             else
             {
-              SetKeyboardEventReceiver(NULL);
+              if(_mouse_over_view->AcceptKeyboardEvent())
+              {
+                _mouse_over_view->EmitStartKeyboardFocus();
+                SetKeyboardEventReceiver(_mouse_over_view);
+              }
+              else
+              {
+                SetKeyboardEventReceiver(NULL);
+              }
             }
           }
 
@@ -415,7 +431,13 @@ namespace nux
 
           if(GetKeyboardEventReceiver() && (event.e_event == NUX_MOUSE_PRESSED))
           {
-            if(GetKeyboardEventReceiver()->KeyboardReceiverIgnoreMouseDownOutside() == false)
+            InputArea* grab_area = GetKeyboardEventReceiver();
+
+            if(grab_area)
+            {
+              SetKeyboardEventReceiver(grab_area);
+            }
+            else
             {
               SetKeyboardEventReceiver(NULL);
             }
@@ -665,7 +687,24 @@ namespace nux
     InputArea* keyboard_event_grab_view = NUX_STATIC_CAST(InputArea*, GetKeyboardGrabArea());
     InputArea* keyboard_event_receiver_view = NUX_STATIC_CAST(InputArea*, GetKeyboardEventReceiver());
 
-    if(keyboard_event_grab_view)
+    if(keyboard_event_grab_view && keyboard_event_receiver_view)
+    {      
+      if(event.e_event == NUX_KEYDOWN)
+      {
+        keyboard_event_receiver_view->EmitKeyDownSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+      }
+      else if(event.e_event == NUX_KEYUP)
+      {
+        keyboard_event_receiver_view->EmitKeyUpSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+      }
+
+      keyboard_event_receiver_view->EmitKeyEventSignal(event.e_event,
+        event.GetKeySym(),
+        event.GetKeyState(),
+        event.GetText(),
+        event.GetKeyRepeatCount());
+    }
+    else if(keyboard_event_grab_view)
     {      
       if(event.e_event == NUX_KEYDOWN)
       {
@@ -676,7 +715,7 @@ namespace nux
         keyboard_event_grab_view->EmitKeyUpSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
       }
 
-      keyboard_event_grab_view->EmitKeyEventSignal(event.GetKeySym(),
+      keyboard_event_grab_view->EmitKeyEventSignal(event.e_event,
         event.GetKeySym(),
         event.GetKeyState(),
         event.GetText(),
@@ -2253,7 +2292,7 @@ namespace nux
   {
     InputArea* keyboard_grab_area = GetKeyboardGrabArea();
 
-    if (keyboard_grab_area && (area != keyboard_grab_area))
+    if(keyboard_grab_area  && area && (area != keyboard_grab_area) && (!area->IsChildOf(keyboard_grab_area)))
     {
       // The area that has the keyboard grab has the priority. Disregard the keyboard focus area.
       nuxDebugMsg("[WindowCompositor::SetKeyboardEventReceiver] There is a keyboard grab pending. Cannot change the keyboard event receiver.")
@@ -2262,25 +2301,29 @@ namespace nux
 
     if (_keyboard_event_receiver == area)
     {
+        nuxDebugMsg("[WindowCompositor::SetKeyboardEventReceiver] return");
         return;
     }
 
+    nuxDebugMsg("[WindowCompositor::SetKeyboardEventReceiver] Continue");
     if (_keyboard_event_receiver)
     {
-      _keyboard_event_receiver->OnStopKeyboardReceiver.emit ();
+      _keyboard_event_receiver->OnStopKeyboardReceiver.emit();
     }
 
     _keyboard_event_receiver = area;
 
-    if (_keyboard_event_receiver)
+    if(_keyboard_event_receiver)
     {
-      _keyboard_event_receiver->OnStartKeyboardReceiver.emit ();
+      _keyboard_event_receiver->OnStartKeyboardReceiver.emit();
     }
 
 
     _keyboard_event_receiver_conn.disconnect ();
     if (area)
+    {
       _keyboard_event_receiver_conn = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnKeyboardEventReceiverDestroyed));
+    }
   }
 
   InputArea* WindowCompositor::GetKeyboardEventReceiver ()

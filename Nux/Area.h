@@ -237,6 +237,13 @@ namespace nux
     */
     bool HasTopLevelParent ();
 
+    //! Return true is area is a child of the given parent in the widget tree.
+    /*!
+        @param parent Area to test if it is a parent of this area.
+        @return True if this area is area is a child of parent in the widget tree.
+    */
+    bool IsChildOf(Area* parent);
+
     /*!
         Test if a point is inside the Area.
 

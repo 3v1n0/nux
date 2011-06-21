@@ -838,6 +838,21 @@ namespace nux
     return false;
   }
 
+  bool Area::IsChildOf(Area* parent)
+  {
+    NUX_RETURN_VALUE_IF_NULL(parent, false);
+
+    if(this == parent)
+      return true;
+
+    if(_parent_area)
+    {
+      return _parent_area->IsChildOf(parent);
+    }
+  
+    return false;
+  }
+
   /* handles our focusable code */
   bool Area::DoGetFocused ()
   {
