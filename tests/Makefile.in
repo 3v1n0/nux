@@ -33,7 +33,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = test-nux$(EXEEXT) gtest-nux-core$(EXEEXT)
+@BUILD_TESTS_TRUE@check_PROGRAMS = test-nux$(EXEEXT) \
+@BUILD_TESTS_TRUE@	gtest-nux-core$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -47,13 +48,14 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_gtest_nux_core_OBJECTS = gtest_nux_core-test_logger.$(OBJEXT) \
-	gtest_nux_core-test_properties.$(OBJEXT)
+am__gtest_nux_core_SOURCES_DIST = test_logger.cpp test_properties.cpp
+@BUILD_TESTS_TRUE@am_gtest_nux_core_OBJECTS =  \
+@BUILD_TESTS_TRUE@	gtest_nux_core-test_logger.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux_core-test_properties.$(OBJEXT)
 gtest_nux_core_OBJECTS = $(am_gtest_nux_core_OBJECTS)
 am__DEPENDENCIES_1 =
-gtest_nux_core_DEPENDENCIES =  \
-	$(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-	$(am__DEPENDENCIES_1)
+@BUILD_TESTS_TRUE@gtest_nux_core_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -61,16 +63,18 @@ gtest_nux_core_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(AM_CXXFLAGS) $(CXXFLAGS) $(gtest_nux_core_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am_test_nux_OBJECTS = test_nux-test-nux.$(OBJEXT) \
-	test_nux-test-timeline.$(OBJEXT) \
-	test_nux-test-object.$(OBJEXT) test_nux-test-system.$(OBJEXT)
+am__test_nux_SOURCES_DIST = test-nux.cpp test-timeline.cpp \
+	test-object.cpp test-system.cpp
+@BUILD_TESTS_TRUE@am_test_nux_OBJECTS = test_nux-test-nux.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	test_nux-test-timeline.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	test_nux-test-object.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	test_nux-test-system.$(OBJEXT)
 test_nux_OBJECTS = $(am_test_nux_OBJECTS)
-test_nux_DEPENDENCIES =  \
-	$(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-	$(am__DEPENDENCIES_1)
+@BUILD_TESTS_TRUE@test_nux_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -98,7 +102,8 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(gtest_nux_core_SOURCES) $(test_nux_SOURCES)
-DIST_SOURCES = $(gtest_nux_core_SOURCES) $(test_nux_SOURCES)
+DIST_SOURCES = $(am__gtest_nux_core_SOURCES_DIST) \
+	$(am__test_nux_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -273,57 +278,57 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 # Please keep alphabetical
-test_nux_SOURCES = \
-  test-nux.cpp \
-  test-timeline.cpp \
-  test-object.cpp \
-  test-system.cpp
+@BUILD_TESTS_TRUE@test_nux_SOURCES = \
+@BUILD_TESTS_TRUE@  test-nux.cpp \
+@BUILD_TESTS_TRUE@  test-timeline.cpp \
+@BUILD_TESTS_TRUE@  test-object.cpp \
+@BUILD_TESTS_TRUE@  test-system.cpp
 
-test_nux_CPPFLAGS = \
-  -I$(srcdir) \
-  -I$(top_srcdir) \
-  -DPREFIX=\""$(prefix)"\" \
-	-DLIBDIR=\""$(libdir)"\" \
-  -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxTests\" \
-  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
-  $(NUX_CORE_CFLAGS) \
-  $(NUX_EXAMPLES_CFLAGS) \
-  $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+@BUILD_TESTS_TRUE@test_nux_CPPFLAGS = \
+@BUILD_TESTS_TRUE@  -I$(srcdir) \
+@BUILD_TESTS_TRUE@  -I$(top_srcdir) \
+@BUILD_TESTS_TRUE@  -DPREFIX=\""$(prefix)"\" \
+@BUILD_TESTS_TRUE@	-DLIBDIR=\""$(libdir)"\" \
+@BUILD_TESTS_TRUE@  -DDATADIR=\""$(datadir)"\" \
+@BUILD_TESTS_TRUE@  -DG_LOG_DOMAIN=\"NuxTests\" \
+@BUILD_TESTS_TRUE@  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+@BUILD_TESTS_TRUE@  $(GCC_FLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_CORE_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_EXAMPLES_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS)
 
-test_nux_LDADD = \
-  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+@BUILD_TESTS_TRUE@test_nux_LDADD = \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(NUX_LIBS)
 
-gtest_nux_core_SOURCES = \
-  test_logger.cpp \
-  test_properties.cpp
+@BUILD_TESTS_TRUE@gtest_nux_core_SOURCES = \
+@BUILD_TESTS_TRUE@  test_logger.cpp \
+@BUILD_TESTS_TRUE@  test_properties.cpp
 
-gtest_nux_core_CPPFLAGS = \
-  -I$(srcdir) \
-  -I$(top_srcdir) \
-  -DPREFIX=\""$(prefix)"\" \
-	-DLIBDIR=\""$(libdir)"\" \
-  -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxTests\" \
-  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
-  $(NUX_CORE_CFLAGS) \
-  $(NUX_EXAMPLES_CFLAGS) \
-  $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+@BUILD_TESTS_TRUE@gtest_nux_core_CPPFLAGS = \
+@BUILD_TESTS_TRUE@  -I$(srcdir) \
+@BUILD_TESTS_TRUE@  -I$(top_srcdir) \
+@BUILD_TESTS_TRUE@  -DPREFIX=\""$(prefix)"\" \
+@BUILD_TESTS_TRUE@	-DLIBDIR=\""$(libdir)"\" \
+@BUILD_TESTS_TRUE@  -DDATADIR=\""$(datadir)"\" \
+@BUILD_TESTS_TRUE@  -DG_LOG_DOMAIN=\"NuxTests\" \
+@BUILD_TESTS_TRUE@  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+@BUILD_TESTS_TRUE@  $(GCC_FLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_CORE_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_EXAMPLES_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS)
 
-gtest_nux_core_LDADD = \
-  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+@BUILD_TESTS_TRUE@gtest_nux_core_LDADD = \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(NUX_LIBS)
 
-gtest_nux_core_LDFLAGS = \
-  -lpthread -lgtest -lgtest_main -lgmock
+@BUILD_TESTS_TRUE@gtest_nux_core_LDFLAGS = \
+@BUILD_TESTS_TRUE@  -lpthread -lgtest -lgtest_main -lgmock
 
 all: all-am
 
@@ -596,6 +601,7 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+@BUILD_TESTS_FALSE@check-local:
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-local
@@ -617,6 +623,8 @@ install-strip:
 	  `test -z '$(STRIP)' || \
 	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
+
+@BUILD_TESTS_FALSE@clean-generic:
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -714,30 +722,30 @@ uninstall-am:
 
 
 #run make test as part of make check
-check-local: test gtest
-test:
-	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
+@BUILD_TESTS_TRUE@check-local: test gtest
+@BUILD_TESTS_TRUE@test:
+@BUILD_TESTS_TRUE@	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
 
-gtest: gtest-nux-core
-	./gtest-nux-core
+@BUILD_TESTS_TRUE@gtest: gtest-nux-core
+@BUILD_TESTS_TRUE@	./gtest-nux-core
 
-check-report:
-	@gtester -k -o=test-nux-results.xml -k ./test-nux \
-		&& ( gtester-report test-nux-results.xml \
-				| sed 's/GTester Unit Test Report</>GTester Unit Test Report (normal)</' \
-				> test-nux-results.html ) \
-		&& gnome-open ./test-nux-results.html
+@BUILD_TESTS_TRUE@check-report:
+@BUILD_TESTS_TRUE@	@gtester -k -o=test-nux-results.xml -k ./test-nux \
+@BUILD_TESTS_TRUE@		&& ( gtester-report test-nux-results.xml \
+@BUILD_TESTS_TRUE@				| sed 's/GTester Unit Test Report</>GTester Unit Test Report (normal)</' \
+@BUILD_TESTS_TRUE@				> test-nux-results.html ) \
+@BUILD_TESTS_TRUE@		&& gnome-open ./test-nux-results.html
 
-full-report:
-		@gtester -k -o=test-nux-results.xml -k -m=slow ./test-nux \
-	  && ( gtester-report test-nux-results.xml \
-	      | sed 's/>GTester Unit Test Report</>GTester Unit Test Report (normal)</' \
-	      > test-nux-results.html )
+@BUILD_TESTS_TRUE@full-report:
+@BUILD_TESTS_TRUE@		@gtester -k -o=test-nux-results.xml -k -m=slow ./test-nux \
+@BUILD_TESTS_TRUE@	  && ( gtester-report test-nux-results.xml \
+@BUILD_TESTS_TRUE@	      | sed 's/>GTester Unit Test Report</>GTester Unit Test Report (normal)</' \
+@BUILD_TESTS_TRUE@	      > test-nux-results.html )
 
-clean-generic:
-	rm -f test-nux-results.xml test-nux-results.html
+@BUILD_TESTS_TRUE@clean-generic:
+@BUILD_TESTS_TRUE@	rm -f test-nux-results.xml test-nux-results.html
 
-.PHONY: check-report full-report gtest test
+@BUILD_TESTS_TRUE@.PHONY: check-report full-report gtest test
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
