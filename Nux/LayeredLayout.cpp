@@ -441,7 +441,7 @@ namespace nux
       else if ((*it)->IsLayout ())
       {
         static_cast<Layout *> (*it)->QueueDraw ();
-        if (is_focused);
+        if (is_focused)
           static_cast<Layout *> (*it)->SetFocused (true);
       }
 

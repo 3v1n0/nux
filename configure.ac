@@ -13,12 +13,12 @@
 #   - Increase micro_version to the next odd number
 #   - Increase interface_version to the next odd number
 # 
-m4_define([nux_major_version], [0])
-m4_define([nux_minor_version], [9])
-m4_define([nux_micro_version], [48])
+m4_define([nux_major_version], [1])
+m4_define([nux_minor_version], [0])
+m4_define([nux_micro_version], [1])
 
 # Bump this when we break ABI
-m4_define([nux_api_version], [0.9])
+m4_define([nux_api_version], [1.0])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -41,7 +41,7 @@ m4_define([nux_version],
 #   nux 1.2.10 -> 100 * 2 + 10 = 210, interface age = 4 -> 206
 #   ...
 #
-m4_define([nux_interface_age], [4])
+m4_define([nux_interface_age], [0])
 m4_define([nux_binary_age],
           [m4_eval(100 * nux_minor_version + nux_micro_version)])
 
