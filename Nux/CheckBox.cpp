@@ -124,9 +124,9 @@ namespace nux
     GetPainter().PaintTextLineStatic (GfxContext, GetFont (), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
     InteractState is;
     is.is_on = _state;
-    is.is_focus = m_TextArea->HasMouseFocus() ||
-                  HasMouseFocus() ||
-                  m_CheckArea->HasMouseFocus();
+    is.is_focus = m_TextArea->IsMouseOwner() ||
+                  IsMouseOwner() ||
+                  m_CheckArea->IsMouseOwner();
 
     is.is_prelight = m_TextArea->IsMouseInside()
                      || IsMouseInside() ||

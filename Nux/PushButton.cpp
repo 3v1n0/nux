@@ -65,7 +65,7 @@ namespace nux
 
     InteractState is;
     is.is_on = _state;
-    is.is_focus = HasMouseFocus();
+    is.is_focus = IsMouseOwner();
 
     is.is_prelight = IsMouseInside();
 

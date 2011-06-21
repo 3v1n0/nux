@@ -172,16 +172,18 @@ namespace nux
     const TCHAR *EventName;
   };
 
-  enum
+  enum NuxEventType
   {
     // events
     NUX_NO_EVENT         = 0,
     NUX_MOUSE_PRESSED,
     NUX_MOUSE_RELEASED,
+    NUX_MOUSE_MOVE,
     NUX_MOUSE_DOUBLECLICK,
+    NUX_MOUSE_WHEEL,
+    NUX_MOUSEWHEEL = NUX_MOUSE_WHEEL, //!< Deprecated. Use NUX_MOUSE_WHEEL.
     NUX_KEYDOWN,
     NUX_KEYUP,
-    NUX_MOUSE_MOVE,
     NUX_SIZE_CONFIGURATION,
     NUX_WINDOW_MAP,
     NUX_WINDOW_UNMAP,
@@ -190,8 +192,6 @@ namespace nux
     NUX_WINDOW_EXIT_FOCUS,
     NUX_WINDOW_DIRTY,
     NUX_WINDOW_MOUSELEAVE,
-    NUX_MOUSE_WHEEL,
-    NUX_MOUSEWHEEL = NUX_MOUSE_WHEEL, //!< Deprecated. Use NUX_MOUSE_WHEEL.
     NUX_DESTROY_WINDOW,
     NUX_TERMINATE_APP,
     NUX_TAKE_FOCUS, // ClientMessage for window with WM_TAKE_FOCUS protocol-atom set
@@ -288,7 +288,7 @@ namespace nux
     unsigned long   e_mouse_state;
     unsigned short  e_key_repeat_count; // number of time a key is repeated;    
     int             e_length;
-    unsigned long   e_event;
+    NuxEventType    e_event;
   };
 
   typedef Event IEvent;

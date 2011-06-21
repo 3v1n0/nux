@@ -55,7 +55,7 @@ logging::Logger logger("nux.inputarea");
     _dnd_safety_x = 0;
     _dnd_safety_y = 0;
 
-    _enable_keyboard_focus_on_mouse_down = false;
+    _keyboard_receiver_ignore_mouse_down_outside = false;
   }
 
   InputArea::~InputArea()
@@ -83,7 +83,7 @@ logging::Logger logger("nux.inputarea");
       return false ;
     }
 
-    InputArea *keyboard_focus_area = GetWindowCompositor ().GetKeyboardFocusArea ();
+    InputArea *keyboard_focus_area = GetWindowCompositor ().GetKeyboardEventReceiver ();
     InputArea *mouse_focus_area = GetWindowCompositor ().GetMouseFocusArea ();
 
     if ((mouse_focus_area == this) && (keyboard_focus_area == this))
@@ -101,15 +101,15 @@ logging::Logger logger("nux.inputarea");
 
     if (mouse_focus_area != this)
     {
-      GetWindowCompositor ().GetMouseFocusArea ()->OnEndFocus ();
+      GetWindowCompositor ().GetMouseFocusArea ()->OnStopKeyboardReceiver ();
     }
 
     if (keyboard_focus_area != this)
     {
-      GetWindowCompositor ().GetMouseFocusArea ()->OnEndFocus ();
+      GetWindowCompositor ().GetMouseFocusArea ()->OnStopKeyboardReceiver ();
     }
 
-    OnStartFocus.emit ();
+    OnStartKeyboardReceiver.emit ();
     _event_processor.ForceMouseFocus (x, y, GetGeometry ());
 
     return true;
@@ -125,11 +125,11 @@ logging::Logger logger("nux.inputarea");
     if (GetWindowCompositor ().GetMouseFocusArea () == this)
     {
       GetWindowCompositor ().SetMouseFocusArea (0);
-      OnEndFocus.emit ();
+      OnStopKeyboardReceiver.emit ();
       _event_processor.StopMouseFocus (x, y, GetGeometry ());
     }
 
-    /*OnEndFocus.emit();
+    /*OnStopKeyboardReceiver.emit();
     _event_processor.StopMouseFocus (x, y, GetGeometry());
 
     if (GetWindowCompositor().GetMouseFocusArea () == this)
@@ -193,7 +193,7 @@ logging::Logger logger("nux.inputarea");
 
     InputArea *PreviousMouseOverArea = GetWindowCompositor().GetPreviousMouseOverArea();
     InputArea *CurrentMouseOverArea = GetWindowCompositor().GetMouseOverArea();
-    InputArea *keyboard_focus_area = GetWindowCompositor().GetKeyboardFocusArea();
+    InputArea *keyboard_focus_area = GetWindowCompositor().GetKeyboardEventReceiver();
     InputArea *mouse_focus_area = GetWindowCompositor().GetMouseFocusArea();
 
     if (ProcessEventInfo & EVENT_CYCLE_RESET_AREA_STATE)
@@ -220,7 +220,6 @@ logging::Logger logger("nux.inputarea");
         if (keyboard_focus_area == this)
         {
           LOG_TRACE(logger) << "Area has keyboard focus. Disable keyboard focus on area. Emit OnEndFocus.";
-          GetWindowCompositor ().SetKeyboardFocusArea (NULL);
         }
       }
 
@@ -279,7 +278,6 @@ logging::Logger logger("nux.inputarea");
         if (keyboard_focus_area == this)
         {
           LOG_TRACE(logger) << "Area has keyboard focus. Disable keyboard focus on area. Emit OnEndFocus.";
-          GetWindowCompositor ().SetKeyboardFocusArea (NULL);
         }
       }
 
@@ -290,13 +288,13 @@ logging::Logger logger("nux.inputarea");
         OnMouseLeave.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
       }
 
-      if (event_processor_state & AREA_MOUSE_STATUS_ENTER)
+      if(event_processor_state & AREA_MOUSE_STATUS_ENTER)
       {
         LOG_TRACE(logger) << "Mouse enter. Emit OnMouseEnter.";
         OnMouseEnter.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
       }
 
-      ret |=  eMouseEventSolved;
+      ret |= eMouseEventSolved;
     }
     else
     {
@@ -319,14 +317,14 @@ logging::Logger logger("nux.inputarea");
         GetWindowCompositor ().SetMouseFocusArea (this);
         GetWindowCompositor ().SetAreaEventRoot (event.e_x_root, event.e_y_root);
 
-        //InputArea *keyboard_focus_area = GetWindowCompositor().GetKeyboardFocusArea();
+        //InputArea *keyboard_focus_area = GetWindowCompositor().GetKeyboardEventReceiver();
         if ((keyboard_focus_area != 0) && (keyboard_focus_area != this))
         {
-          keyboard_focus_area->OnEndFocus.emit ();
+          keyboard_focus_area->OnStopKeyboardReceiver.emit ();
         }
         if(keyboard_focus_area != this)
         {
-          GetWindowCompositor ().SetKeyboardFocusArea (this);
+          GetWindowCompositor ().SetKeyboardEventReceiver (this);
           keyboard_focus_area = this;
         }
       }
@@ -335,7 +333,7 @@ logging::Logger logger("nux.inputarea");
       {
         if (keyboard_focus_area == this)
         {
-          GetWindowCompositor ().SetKeyboardFocusArea (NULL);
+          GetWindowCompositor ().SetKeyboardEventReceiver (NULL);
           keyboard_focus_area = NULL;
         }
       }
@@ -346,7 +344,11 @@ logging::Logger logger("nux.inputarea");
         {
           GetWindowCompositor ().SetMouseFocusArea (NULL);
           mouse_focus_area = NULL;
-          OnMouseLeave.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+          OnMouseLeave.emit(_event_processor._mouse_positionx - GetRootX(),
+          _event_processor._mouse_positiony - GetRootY(),
+          event.GetMouseState(),
+          event.GetKeyState() );
+
           _event_processor._current_mouse_in = false;
           _event_processor._previous_mouse_in = false;
         }
@@ -388,7 +390,10 @@ logging::Logger logger("nux.inputarea");
               LOG_TRACE(logger) << "Send OnMouseLeave to the area that was directly below the mouse.";
             }
 
-            (CurrentMouseOverArea)->OnMouseLeave.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+            (CurrentMouseOverArea)->OnMouseLeave.emit(_event_processor._mouse_positionx - GetRootX(),
+              _event_processor._mouse_positiony - GetRootY(),
+              event.GetMouseState(),
+              event.GetKeyState());
           }
           CurrentMouseOverArea = NULL;
           PreviousMouseOverArea = NULL;
@@ -420,7 +425,7 @@ logging::Logger logger("nux.inputarea");
         PreviousMouseOverArea = CurrentMouseOverArea;
       }
 
-      if ((event_type == NUX_MOUSEWHEEL) && _event_processor.MouseIn ())
+      if ((event_type == NUX_MOUSE_WHEEL) && _event_processor.MouseIn ())
       {
         OnMouseWheel.emit (event.e_x - event.e_x_root, event.e_y - event.e_y_root,
                            event.e_wheeldelta,
@@ -439,20 +444,19 @@ logging::Logger logger("nux.inputarea");
         if (keyboard_focus_area == this)
         {
           LOG_TRACE(logger) << "Has the focus but mouse pressed and outside the area. Losing keyboard focus: Emit OnEndFocus.";
-          GetWindowCompositor ().SetKeyboardFocusArea (NULL);
           keyboard_focus_area = NULL;
         }
       }
-      else if ((event_type == NUX_MOUSE_DOUBLECLICK) && (event_processor_state & AREA_MOUSE_STATUS_DOWN))
+      else if((event_type == NUX_MOUSE_DOUBLECLICK) && (event_processor_state & AREA_MOUSE_STATUS_DOWN))
       {
         if ((event.e_mouse_state & NUX_EVENT_BUTTON1_DBLCLICK))
         {
           LOG_TRACE(logger) << "Mouse pressed inside the area. Emit OnMouseDoubleClick";
           // Double click
-          OnMouseDoubleClick.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState() );
+          OnMouseDoubleClick.emit(_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(), event.GetMouseState(), event.GetKeyState());
         }
 
-        ret |=  eMouseEventSolved;
+        ret |= eMouseEventSolved;
       }
       else if (event_processor_state & AREA_MOUSE_STATUS_DOWN) // The mouse is down inside the area
       {
@@ -464,9 +468,9 @@ logging::Logger logger("nux.inputarea");
                           _event_processor._mouse_positiony - GetRootY(),
                           event.GetMouseState(), event.GetKeyState() );
 
-        ret |=  eMouseEventSolved;
+        ret |= eMouseEventSolved;
       }
-      else if (event_processor_state & AREA_MOUSE_STATUS_UP) // The mouse is up. This goes to the area that had the mouse focus.
+      else if(event_processor_state & AREA_MOUSE_STATUS_UP) // The mouse is up. This goes to the area that had the mouse focus.
       {
         LOG_TRACE(logger) << "Mouse up. Emit OnEndMouseFocus";
         OnEndMouseFocus.emit ();
@@ -476,6 +480,7 @@ logging::Logger logger("nux.inputarea");
         if (_event_processor.MouseIn())
         {
           LOG_TRACE(logger) << "Mouse up and inside area. Emit OnMouseClick";
+
           OnMouseClick.emit(_event_processor._mouse_positionx - GetRootX(),
                             _event_processor._mouse_positiony - GetRootY(),
                             event.GetMouseState(), event.GetKeyState() );
@@ -530,9 +535,9 @@ logging::Logger logger("nux.inputarea");
         ret |=  eMouseEventSolved;
       }
 
-      if (keyboard_focus_area == this)
+      if(keyboard_focus_area == this)
       {
-        if (event_type == NUX_KEYDOWN)
+        if(event_type == NUX_KEYDOWN)
         {
           LOG_TRACE(logger) << "Key down and has keyboard focus: Emit OnKeyPressed";
           OnKeyPressed.emit (event.GetKeySym(), event.e_x11_keycode,
@@ -540,6 +545,7 @@ logging::Logger logger("nux.inputarea");
 
           LOG_TRACE(logger) << "Key down and has keyboard focus: Emit OnKeyEvent. "
                             << "String: " << event.e_text;
+
           OnKeyEvent.emit(GetWindowThread()->GetGraphicsEngine(),
                           event_type, event.GetKeySym(),
                           event.GetKeyState(), event.GetText(),
@@ -547,7 +553,7 @@ logging::Logger logger("nux.inputarea");
 
           ret |=  eMouseEventSolved;
         }
-        else if (event_type == NUX_KEYUP)
+        else if(event_type == NUX_KEYUP)
         {
           LOG_TRACE(logger) << "Key up and has keyboard focus: Emit OnKeyReleased";
           OnKeyReleased.emit (event.GetKeySym(), event.e_x11_keycode,
@@ -587,7 +593,7 @@ logging::Logger logger("nux.inputarea");
 
   bool InputArea::HasKeyboardFocus()
   {
-    return GetWindowCompositor ().GetKeyboardFocusArea () == this;
+    return GetWindowCompositor ().GetKeyboardEventReceiver () == this;
   }
 
   void InputArea::SetKeyboardFocus (bool b)
@@ -630,14 +636,24 @@ logging::Logger logger("nux.inputarea");
     return _capture_mouse_down_any_where_else;
   }
 
-  void InputArea::EnableDoubleClick (bool b)
+  void InputArea::SetEnableDoubleClickEnable (bool double_click)
   {
-    _double_click = b;
+    _double_click = double_click;
   }
 
-  bool InputArea::IsDoubleClickEnabled()
+  bool InputArea::DoubleClickEnable() const
   {
     return _double_click;
+  }
+
+  void InputArea::SetKeyboardReceiverIgnoreMouseDownOutside(bool ignore_mouse_down_outside)
+  {
+    _keyboard_receiver_ignore_mouse_down_outside = ignore_mouse_down_outside;
+  }
+
+  bool InputArea::KeyboardReceiverIgnoreMouseDownOutside()
+  {
+    return _keyboard_receiver_ignore_mouse_down_outside;
   }
 
   void InputArea::SetAreaMousePosition (int x, int y)
@@ -804,14 +820,106 @@ logging::Logger logger("nux.inputarea");
     return GetWindowCompositor ().GetKeyboardGrabArea () == this;
   }
 
-  void InputArea::EnableKeyboardFocusOnMouseDown (bool enable)
+  bool InputArea::IsMouseOwner()
   {
-    _enable_keyboard_focus_on_mouse_down = enable;
+    return NUX_STATIC_CAST(InputArea*, GetWindowCompositor().GetMouseOwner()) == this;
   }
-  
-  bool InputArea::GetKeyboardFocusOnMouseDown () const
+
+  // == Signals with 1 to 1 mapping to input device ==
+  void InputArea::EmitMouseDownSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    return _enable_keyboard_focus_on_mouse_down;
+    OnMouseDown.emit(x, y, mouse_button_state, special_keys_state);
+  }
+
+  void InputArea::EmitMouseUpSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    OnMouseUp.emit(x, y, mouse_button_state, special_keys_state);
+  }
+
+  void InputArea::EmitMouseMoveSignal(int x, int y, int dx, int dy, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    OnMouseMove.emit(x, y, dx, dy, mouse_button_state, special_keys_state);
+  }
+
+  void InputArea::EmitMouseWheelSignal(int x, int y, int wheel_delta, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    OnMouseWheel.emit(x, y, wheel_delta, mouse_button_state, special_keys_state);
+  }
+
+  void InputArea::EmitKeyDownSignal(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
+  {
+    OnKeyPressed.emit(key_symbol, x11_key_code, special_keys_state);
+  }
+
+  void InputArea::EmitKeyUpSignal(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
+  {
+    OnKeyReleased.emit(key_symbol, x11_key_code, special_keys_state);
+  }
+
+  void InputArea::EmitKeyEventSignal(unsigned long event_type,
+    unsigned int key_sym,
+    unsigned long special_keys_state,
+    const char* text,
+    int key_repeat_count)
+  {
+    OnKeyEvent.emit(GetWindowThread()->GetGraphicsEngine(),
+      event_type,
+      key_sym,
+      special_keys_state,
+      text,
+      key_repeat_count);
+  }
+
+  void InputArea::EmitMouseDragSignal(int x, int y, int dx, int dy, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    OnMouseDrag.emit(x, y, dx, dy, mouse_button_state, special_keys_state);
+  }
+
+  void InputArea::EmitMouseEnterSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    _event_processor._current_mouse_in = true;
+    OnMouseEnter.emit(x, y, mouse_button_state, special_keys_state);
+  }
+
+  void InputArea::EmitMouseLeaveSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    _event_processor._current_mouse_in = false;
+    OnMouseLeave.emit(x, y, mouse_button_state, special_keys_state);
+  }
+
+  void InputArea::EmitMouseClickSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    OnMouseClick.emit(x, y, mouse_button_state, special_keys_state);
+  }
+
+  void InputArea::EmitMouseDoubleClickSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    OnMouseDoubleClick.emit(x, y, mouse_button_state, special_keys_state);
+  }
+
+
+  void InputArea::EmitStartKeyboardFocus()
+  {
+    OnStartKeyboardReceiver.emit();
+  }
+
+  void InputArea::EmitEndKeyboardFocus()
+  {
+    OnStopKeyboardReceiver.emit();
+  }
+
+  void InputArea::EmitMouseDownOutsideArea   (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
+  {
+    OnMouseDownOutsideArea.emit(x, y, mouse_button_state, special_keys_state);
+  }
+
+  Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    if(TestMousePointerInclusion(mouse_position, event_type))
+    {
+      return NUX_STATIC_CAST(Area*, this);
+    }
+    return NULL;
   }
 
 }

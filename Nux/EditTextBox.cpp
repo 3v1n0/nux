@@ -51,8 +51,8 @@ namespace nux
 
     OnKeyEvent.connect (sigc::mem_fun (this, &EditTextBox::RecvKeyEvent) );
 
-    OnStartFocus.connect (sigc::mem_fun (this, &EditTextBox::RecvStartKeyFocus) );
-    OnEndFocus.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
+    OnStartKeyboardReceiver.connect (sigc::mem_fun (this, &EditTextBox::RecvStartKeyFocus) );
+    OnStopKeyboardReceiver.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
 
     SetText (Caption);
     SetTextColor (color::White);
@@ -72,7 +72,8 @@ namespace nux
     m_ScrollTimerFunctor = new TimerFunctor();
     m_ScrollTimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &EditTextBox::ScrollTimerInterrupt) );
 
-    EnableKeyboardFocusOnMouseDown (true);
+    SetAcceptKeyboardEvent(true);
+    SetEnableDoubleClickEnable(true);
   }
 
   EditTextBox::~EditTextBox()

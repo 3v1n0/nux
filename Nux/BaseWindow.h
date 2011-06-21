@@ -23,8 +23,6 @@
 #ifndef BASEWINDOW_H
 #define BASEWINDOW_H
 
-#include "ScrollView.h"
-
 #if defined(NUX_OS_WINDOWS)
 #include "NuxGraphics/Events.h"
 #elif defined(NUX_OS_LINUX)
@@ -34,7 +32,6 @@
 
 #include "InputArea.h"
 #include "MouseHandler.h"
-#include "StaticTextBox.h"
 #include "PaintLayer.h"
 
 namespace nux
@@ -70,6 +67,7 @@ namespace nux
     BaseWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
     virtual ~BaseWindow();
 
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);

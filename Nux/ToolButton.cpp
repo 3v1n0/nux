@@ -72,12 +72,12 @@ namespace nux
   {
     Geometry base = GetGeometry();
 
-    if (IsMouseInside() && !HasMouseFocus() )
+    if (IsMouseInside() && !IsMouseOwner() )
     {
       GetPainter().PaintBackground (GfxContext, base);
       GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
     }
-    else if (HasMouseFocus() )
+    else if (IsMouseOwner() )
     {
       GetPainter().PaintBackground (GfxContext, base);
       GetPainter().PaintShape (GfxContext, base, Color (0xFF2A2A2A),  eSHAPE_CORNER_ROUND2);
@@ -120,7 +120,8 @@ namespace nux
   void ToolButton::EmitClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     sigClick.emit();
-    m_ActionItem->Trigger();
+    if(m_ActionItem)
+      m_ActionItem->Trigger();
   }
 
   void ToolButton::RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags)

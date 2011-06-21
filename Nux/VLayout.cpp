@@ -541,7 +541,7 @@ namespace nux
     do
     {
       int available_height = height;
-      int max_stretchfactor = getMaxStretchFactor();
+      int max_stretchfactor = GetMaxStretchFactor();
       std::list<Area *>::iterator it;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -728,7 +728,7 @@ namespace nux
     while (need_recompute);
   }
 
-  t_u32 VLayout::getMaxStretchFactor()
+  t_u32 VLayout::GetMaxStretchFactor()
   {
     t_u32 value = 0;
     t_u32 sf;

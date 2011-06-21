@@ -95,8 +95,8 @@ namespace nux
     m_TableArea->OnMouseDoubleClick.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDoubleClick) );
     m_TableArea->OnMouseUp.connect (sigc::mem_fun (this, &TableCtrl::OnMouseUp) );
     m_TableArea->OnMouseDrag.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDrag) );
-    m_TableArea->OnStartFocus.connect (sigc::mem_fun (this, &TableCtrl::OnKeyboardFocus) );
-    m_TableArea->OnEndFocus.connect (sigc::mem_fun (this, &TableCtrl::OnLostKeyboardFocus) );
+    m_TableArea->OnStartKeyboardReceiver.connect (sigc::mem_fun (this, &TableCtrl::OnKeyboardFocus) );
+    m_TableArea->OnStopKeyboardReceiver.connect (sigc::mem_fun (this, &TableCtrl::OnLostKeyboardFocus) );
 
 
 
@@ -139,7 +139,7 @@ namespace nux
     SetCompositionLayout (m_VLayout);
     FormatContent();
 
-    m_TableArea->EnableDoubleClick (false);
+    m_TableArea->SetEnableDoubleClickEnable (false);
 
     ShowRowHeader (true);
     ShowColumnHeader (true);
@@ -260,10 +260,10 @@ namespace nux
 //        NeedRedraw();
 
     if (m_vertical_scrollbar_enable)
-      ret = vscrollbar->ProcessEvent (ievent, ret, ProcEvInfo & (~eDoNotProcess) );
+      ret = _vscrollbar->ProcessEvent (ievent, ret, ProcEvInfo & (~eDoNotProcess) );
 
     if (m_horizontal_scrollbar_enable)
-      ret = hscrollbar->ProcessEvent (ievent, ret, ProcEvInfo & (~eDoNotProcess) );
+      ret = _hscrollbar->ProcessEvent (ievent, ret, ProcEvInfo & (~eDoNotProcess) );
 
     if (IsPartOfCombobox() && ievent.e_event == NUX_MOUSE_RELEASED)
     {
@@ -410,12 +410,12 @@ namespace nux
 
     if (m_vertical_scrollbar_enable)
     {
-      vscrollbar->NeedRedraw();
+      _vscrollbar->NeedRedraw();
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      hscrollbar->NeedRedraw();
+      _hscrollbar->NeedRedraw();
     }
 
     DrawTable (GfxContext);
@@ -485,12 +485,12 @@ namespace nux
 
     if (m_vertical_scrollbar_enable)
     {
-      vscrollbar->ProcessDraw (GfxContext, force_draw);
+      _vscrollbar->ProcessDraw (GfxContext, force_draw);
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      hscrollbar->ProcessDraw (GfxContext, force_draw);
+      _hscrollbar->ProcessDraw (GfxContext, force_draw);
     }
 
     GfxContext.PopClippingRectangle();

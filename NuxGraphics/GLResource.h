@@ -498,7 +498,13 @@ namespace nux
       Method = 0;
     }
 
-    VERTEXELEMENT (int stream, int offset, ATTRIB_COMPONENT_TYPE type, BYTE numcomponents, ATTRIB_USAGE_DECL usage, BYTE usageindex, BYTE method = 0)
+    VERTEXELEMENT (int stream,
+      int offset,
+      ATTRIB_COMPONENT_TYPE type,
+      BYTE numcomponents,
+      ATTRIB_USAGE_DECL usage,
+      BYTE usageindex,
+      BYTE method = 0)
     {
       Stream = stream;
       Offset = offset;
@@ -539,7 +545,15 @@ namespace nux
 //    }
   };
 
-#define DECL_END VERTEXELEMENT(0xFF/*Stream*/,0/*Offset*/,ATTRIB_CT_UNKNOWN/*Type*/,0/*NumComponent*/,ATTRIB_USAGE_DECL_POSITION/*Usage*/,0/*UsageIndex*/, 0 /*CgParameter*/)
+#define DECL_END VERTEXELEMENT( \
+  0xFF,                       \
+  0,                          \
+  ATTRIB_CT_UNKNOWN,          \
+  0,                          \
+  ATTRIB_USAGE_DECL_POSITION, \
+  0,                          \
+  0                           \
+  )
 
   unsigned int GetVertexElementSize (VERTEXELEMENT vtxelement);
 
