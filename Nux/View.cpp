@@ -364,6 +364,7 @@ namespace nux
 
   bool View::SetLayout (Layout *layout)
   {
+    nuxAssert(layout->IsLayout());
     NUX_RETURN_VALUE_IF_NULL (layout, false);
     NUX_RETURN_VALUE_IF_TRUE (m_CompositionLayout == layout, true);
 
@@ -626,5 +627,23 @@ namespace nux
     return false;
   }
 
+  Area* View::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type, false);
+    
+    if(mouse_inside == false)
+      return NULL;
 
+    if(m_CompositionLayout)
+    {
+      Area* view = m_CompositionLayout->FindAreaUnderMouse(mouse_position, event_type);
+
+      if(view)
+        return view;
+    }
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
+  }
 }

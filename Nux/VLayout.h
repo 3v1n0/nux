@@ -39,7 +39,7 @@ namespace nux
     virtual long ComputeLayout2();
     virtual void ComputePosition2 (float offsetX, float offsetY);
     virtual void VLayoutManagement (t_s32 width, t_s32 height);
-    virtual t_u32 getMaxStretchFactor();
+    virtual t_u32 GetMaxStretchFactor();
 
     virtual void GetCompositeList (std::list<Area *> *ViewList);
 

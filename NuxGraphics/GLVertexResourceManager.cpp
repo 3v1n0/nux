@@ -150,21 +150,22 @@ namespace nux
     return *this;
   }
 
-  void IndexBuffer::Allocate(int num_element, int size)
+  void IndexBuffer::Allocate(int num_index, int size)
   {
-    nuxAssert(num_element > 0);
+    nuxAssert(num_index > 0);
     nuxAssert(size > 0);
     nuxAssert((size == 2) || (size == 4));
 
-    if((size <= 0) || (num_element <= 0))
+    if((size <= 0) || (num_index <= 0))
     {
       _Data.clear();
       _Stride = 0;
       return;
     }
 
+    _num_index = num_index;
     // Make sure Size is a multiple of Stride
-    int sz = num_element * size;
+    int sz = _num_index * size;
     _Stride = size;
 
     _Data.clear();
@@ -181,9 +182,9 @@ namespace nux
     return _Stride;
   }
 
-  int IndexBuffer::GetNumElement() const
+  int IndexBuffer::GetNumIndex() const
   {
-    return _Data.size() / _Stride;
+    return _num_index;
   }
 
   const void* IndexBuffer::GetPtrRawData() const
@@ -342,6 +343,16 @@ namespace nux
     _vertex_buffer->Unlock();
   }
 
+  int CachedVertexBuffer::GetElementSize() const
+  {
+    return _Size;
+  }
+
+  int CachedVertexBuffer::GetBufferStride() const
+  {
+    return _Stride;
+  }
+
   CachedIndexBuffer::CachedIndexBuffer (NResourceSet *ResourceManager, IndexBuffer *SourceIdxBuffer)
     :   CachedResourceData (ResourceManager)
     ,   _Size(0)
@@ -403,6 +414,8 @@ namespace nux
       LoadIndexData (SourceIdxBuffer);
     }
 
+    _num_index = SourceIdxBuffer->GetNumIndex();
+
     return true;
   }
 
@@ -417,6 +430,21 @@ namespace nux
     _index_buffer->Lock (0, 0, (void **) &pData);
     Memcpy (pData, SourceIdxBuffer->GetPtrRawData(), SourceIdxBuffer->GetSize() );
     _index_buffer->Unlock();
+  }
+
+  int CachedIndexBuffer::GetElementSize() const
+  {
+    return _Size;
+  }
+
+  int CachedIndexBuffer::GetBufferStride() const
+  {
+    return _Stride;
+  }
+
+  int CachedIndexBuffer::GetNumIndex() const
+  {
+    return _num_index;
   }
 
   CachedVertexDeclaration::CachedVertexDeclaration (NResourceSet *ResourceManager, VertexDeclaration *SourceVertexDeclaration)
@@ -482,6 +510,8 @@ namespace nux
     int num_element = mesh_data->_num_element;
     int element_size = mesh_data->_element_size;
 
+    _mesh_primitive_type = mesh_data->_mesh_primitive_type;
+
     _vertex_buffer = new VertexBuffer();
     _vertex_buffer->Allocate(num_element, element_size);
     memcpy(_vertex_buffer->GetPtrRawData(), mesh_data->_vertex_data, num_element * element_size);
@@ -495,10 +525,16 @@ namespace nux
 
     _vertex_declaration = new VertexDeclaration();
 
-    VERTEXELEMENT ve(0, 0, ATTRIB_CT_FLOAT, 4,
+    VERTEXELEMENT ve_position(0, 0, ATTRIB_CT_FLOAT, 4,
       ATTRIB_USAGE_DECL_POSITION,
       0, 0);
-    _vertex_declaration->AddVertexComponent(ve);
+
+    VERTEXELEMENT ve_normal(0, 16, ATTRIB_CT_FLOAT, 3,
+      ATTRIB_USAGE_DECL_NORMAL,
+      0, 0);
+
+    _vertex_declaration->AddVertexComponent(ve_position);
+    _vertex_declaration->AddVertexComponent(ve_normal);
     _vertex_declaration->AddVertexComponent(DECL_END);
 
     return true;
@@ -523,6 +559,7 @@ namespace nux
     _cached_vertex_buffer = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(mesh_buffer->_vertex_buffer);
     _cached_index_buffer = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(mesh_buffer->_index_buffer);
     _cached_vertex_declaration = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(mesh_buffer->_vertex_declaration);
+    _mesh_primitive_type = mesh_buffer->_mesh_primitive_type;
 //       
     return true;
   }

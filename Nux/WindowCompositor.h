@@ -36,7 +36,6 @@ namespace nux
   class View;
   class InputArea;
   class Area;
-  class BaseWindow;
   class PaintLayer;
   class Event;
 
@@ -53,14 +52,44 @@ namespace nux
     //! Get the Geometry of the tooltip based on the MainWindow.
     Geometry GetTooltipMainWindowGeometry() const;
 
-    bool MouseDown (Point pt);
+    bool MouseDown(Point pt);
 
-    bool MouseMove (Point pt);
-    bool MouseUp (Point pt);
+    bool MouseMove(Point pt);
+    bool MouseUp(Point pt);
 
-    void ProcessEvent (IEvent &ievent);
+    void ProcessEvent(Event &event);
+
+    //====================================
+    void MouseEventCycle(Event &event);
+    bool _enable_nux_new_event_architecture;
 
 
+    Area* GetMouseOwner();
+
+    InputArea* _mouse_owner_view;
+    InputArea* _mouse_over_view;
+    BaseWindow* _mouse_owner_base_window;
+
+    Point _mouse_position_on_owner;
+    Point _mouse_position;
+
+    //! Get Mouse position relative to the top left corner of the window.
+    Point GetMousePosition();
+    
+    void KeyboardEventCycle(Event &event);
+
+    void MenuEventCycle(Event &event);
+    MenuPage* _mouse_owner_menu_page;
+    MenuPage* _mouse_over_menu_page;
+    bool      _starting_menu_event_cycle;
+    bool      _menu_is_active;
+
+  private:
+    void GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type, InputArea** area_under_mouse_pointer, BaseWindow** window);
+    void ResetMousePointerAreas();
+    //====================================
+  
+  public:
     ObjectPtr<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
       return m_FrameBufferObject;
@@ -388,11 +417,11 @@ namespace nux
         SetPreviousMouseOverArea (NULL);
     }
     
-    void SetKeyboardFocusArea (InputArea* area);
+    void SetKeyboardEventReceiver (InputArea* area);
 
-    InputArea* GetKeyboardFocusArea ();
+    InputArea* GetKeyboardEventReceiver ();
 
-    void OnKeyboardFocusAreaDestroyed (Object* area);
+    void OnKeyboardEventReceiverDestroyed (Object* area);
 
     void RegisterWindow (BaseWindow*);
 
@@ -440,7 +469,7 @@ namespace nux
         The InputArea that has the mouse focus also has the keyboard focus. That is if _mouse_focus_area is not Null
         then _mouse_focus_area is equal to _mouse_focus_area;
     */
-    InputArea* _keyboard_focus_area;
+    InputArea* _keyboard_event_receiver;
     
     void SetDnDArea (InputArea* area);
 
@@ -521,7 +550,7 @@ namespace nux
     std::list< ObjectWeakPtr<BaseWindow> > _modal_view_window_list;
     ObjectWeakPtr<BaseWindow>            _always_on_front_window;  //!< Floating view that always remains on top.
 
-    std::list<MenuPage *> *m_MenuList;
+    std::list<MenuPage* > *_menu_chain;
 
     /*!
         The BaseWindow where the last mouse down event happened. 
@@ -551,7 +580,7 @@ namespace nux
     int m_TooltipY;
 
     sigc::connection _previous_mouse_over_area_conn;
-    sigc::connection _keyboard_focus_area_conn;
+    sigc::connection _keyboard_event_receiver_conn;
     sigc::connection _mouse_focus_area_conn;
     sigc::connection _mouse_over_area_conn;
 

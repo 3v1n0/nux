@@ -136,23 +136,21 @@ namespace nux
     /*static*/ int sVertexInputMap[] =
     {
       0,   // ATTRIB_USAGE_DECL_POSITION
-      14,  // ATTRIB_USAGE_DECL_BLENDWEIGHT
-      15,  // ATTRIB_USAGE_DECL_BLENDINDICES
-      1,   // ATTRIB_USAGE_DECL_NORMAL
-      4,   // ATTRIB_USAGE_DECL_COLOR, ATTRIB_USAGE_DECL_COLOR0
-      5,   // ATTRIB_USAGE_DECL_COLOR1
-      6,   // ATTRIB_USAGE_DECL_FOGCOORD
-      7,   // ATTRIB_USAGE_DECL_PSIZE
+      1,   // ATTRIB_USAGE_DECL_BLENDWEIGHT
+      2,   // ATTRIB_USAGE_DECL_NORMAL
+      3,   // ATTRIB_USAGE_DECL_COLOR, ATTRIB_USAGE_DECL_COLOR0
+      4,   // ATTRIB_USAGE_DECL_COLOR1
+      5,   // ATTRIB_USAGE_DECL_FOGCOORD
+      6,   // ATTRIB_USAGE_DECL_PSIZE
+      7,   // ATTRIB_USAGE_DECL_BLENDINDICES
       8,   // ATTRIB_USAGE_DECL_TEXCOORD, ATTRIB_USAGE_DECL_TEXCOORD0
       9,   // ATTRIB_USAGE_DECL_TEXCOORD1
       10,  // ATTRIB_USAGE_DECL_TEXCOORD2
       11,  // ATTRIB_USAGE_DECL_TEXCOORD3
       12,  // ATTRIB_USAGE_DECL_TEXCOORD4
       13,  // ATTRIB_USAGE_DECL_TEXCOORD5
-      14,  // ATTRIB_USAGE_DECL_TEXCOORD6
-      15,  // ATTRIB_USAGE_DECL_TEXCOORD7
-      2,   // ATTRIB_USAGE_DECL_TANGENT
-      3,   // ATTRIB_USAGE_DECL_BINORMAL
+      14,  // ATTRIB_USAGE_DECL_TEXCOORD6, ATTRIB_USAGE_DECL_TANGENT
+      15,  // ATTRIB_USAGE_DECL_TEXCOORD7, ATTRIB_USAGE_DECL_BINORMAL
     };
 
     nuxAssert (VertexDeclaration.IsValid() );
@@ -503,9 +501,7 @@ namespace nux
     unsigned int StreamNumber,
     ObjectPtr<IOpenGLVertexBuffer> pStreamData,
     unsigned int OffsetInBytes,
-    unsigned int Stride,
-    unsigned int NumComponent,
-    unsigned int ComponentFormat)
+    unsigned int Stride)
   {
     nuxAssert (StreamNumber < MAX_NUM_STREAM);
 

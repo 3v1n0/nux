@@ -68,7 +68,7 @@ namespace nux
     std::vector< MySplitter* >::iterator it2;
     for (it2 = m_SplitterObject.begin(); it2 != m_SplitterObject.end(); it2++)
     {
-      (*it2)->UnReference();
+      (*it2)->UnParentObject();
     }
     m_SplitterObject.clear();
 
@@ -310,7 +310,9 @@ namespace nux
     if (ic)
     {
       MySplitter *splitter = new MySplitter;
-      splitter->SinkReference();
+      splitter->SetParentObject(this);
+      //splitter->SinkReference();
+
       t_u32 no = (t_u32) m_InterfaceObject.size();
       splitter->OnMouseDown.connect (sigc::bind ( sigc::mem_fun (this, &HSplitter::OnSplitterMouseDown), no) );
       splitter->OnMouseDrag.connect (sigc::bind ( sigc::mem_fun (this, &HSplitter::OnSplitterMouseDrag), no) );
@@ -624,19 +626,47 @@ namespace nux
   {
     std::vector<Area *>::iterator it;
 
-    for (it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
+    for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
     {
       //(*it)->DoneRedraw();
-      if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
+      if((*it)->Type().IsDerivedFromType (View::StaticObjectType))
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = NUX_STATIC_CAST(View *, (*it));
         ic->DoneRedraw();
       }
-      else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
+      else if((*it)->Type().IsObjectType (InputArea::StaticObjectType))
       {
         //InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
       }
     }
   }
 
+  Area* HSplitter::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type, false);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    std::vector<MySplitter*>::iterator splitter_it;
+    for (splitter_it = m_SplitterObject.begin(); splitter_it != m_SplitterObject.end(); splitter_it++)
+    {
+      Area* found_area = (*splitter_it)->FindAreaUnderMouse(mouse_position, event_type);
+      if(found_area)
+        return found_area;
+    }
+
+    std::vector<Area *>::iterator it;
+    for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
+    {
+      Area* found_area = (*it)->FindAreaUnderMouse(mouse_position, event_type);
+
+      if(found_area)
+        return found_area;
+    }
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
+  }
 }

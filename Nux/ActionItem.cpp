@@ -76,7 +76,7 @@ namespace nux
   {
     Geometry base = area.GetGeometry();
 
-    if (area.HasMouseFocus() )
+    if (area.IsMouseOwner() )
     {
       if (area.IsMouseInside() )
       {

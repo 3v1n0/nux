@@ -67,7 +67,7 @@ namespace nux
 //     Rect A = GetGraphicsDisplay()->GetGraphicsEngine()->GetClippingRegion();
 //     Rect B = Rect(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight());
 //     Rect C = A.intersect(B);
-//     if((ievent.e_event == NUX_MOUSE_MOVE) && !HasMouseFocus())
+//     if((ievent.e_event == NUX_MOUSE_MOVE) && !IsMouseOwner())
 //     {
 //         if(!C.IsPointInside(ievent.e_x, ievent.e_y))
 //             return ret;

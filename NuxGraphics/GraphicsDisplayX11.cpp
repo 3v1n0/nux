@@ -1101,7 +1101,7 @@ namespace nux
       if (xevent.xbutton.button == Button4)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSEWHEEL;
+        m_pEvent->e_event = NUX_MOUSE_WHEEL;
         m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
@@ -1109,7 +1109,7 @@ namespace nux
       if (xevent.xbutton.button == Button5)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSEWHEEL;
+        m_pEvent->e_event = NUX_MOUSE_WHEEL;
         m_pEvent->e_wheeldelta = +NUX_MOUSEWHEEL_DELTA;
         return 1;
       }

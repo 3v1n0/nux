@@ -37,6 +37,7 @@ namespace nux
     TabView (NUX_FILE_LINE_PROTO);
     ~TabView();
 
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
@@ -73,8 +74,8 @@ namespace nux
       const NString &GetName() const;
 
       NString     _tab_name;
-      Layout     *_tab_layout;
-      InputArea   *_tab_area;
+      Layout     *_tab_content_layout;
+      InputArea  *_tab_area;
       int         _index;
     };
 
@@ -101,12 +102,12 @@ namespace nux
     void TranslateRight (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void TranslateTabLayout (int offset);
 
-    InputArea   *m_IncrTab;
-    InputArea   *m_DecrTab;
+    InputArea   *_scroll_right;
+    InputArea   *_scroll_left;
 
-    Layout     *m_ClientLayout;
-    HLayout    *m_TabLayout;
-    HLayout    *m_TabControlLayout;
+    Layout     *_visible_tab_content_layout;
+    HLayout    *_tabview_heads_layout;
+    HLayout    *_tabview_scroll_button_layout;
 
     int m_TabPositionOffset;
     int m_FocusTabIndex;
@@ -116,7 +117,7 @@ namespace nux
     TimerHandle     m_TabRightTimerHandler;
     TimerHandle     m_TabLeftTimerHandler;
 
-    std::vector<TabElement *> m_TabVector;
+    std::vector<TabElement *> _tab_array;
 
     static Color TAB_HEADER_BACKGROUND_COLOR;
     static Color TAB_BACKGROUND_COLOR;

@@ -172,14 +172,14 @@ namespace nux
 
     OnKeyEvent.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
 
-    OnStartFocus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
-    OnEndFocus.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
+    OnStartKeyboardReceiver.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
+    OnStopKeyboardReceiver.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText (text);
 
-    EnableKeyboardFocusOnMouseDown (true);
-    //MainDraw (canvas_);
+    SetAcceptKeyboardEvent(true);
+    SetEnableDoubleClickEnable(true);
   }
 
   TextEntry::~TextEntry ()
@@ -307,6 +307,13 @@ namespace nux
 
 
     return ret;
+  }
+
+  Area* TextEntry::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    Area* area = View::FindAreaUnderMouse(mouse_position, event_type);
+
+    return area;
   }
 
   void TextEntry::ProcessMouseEvent (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)

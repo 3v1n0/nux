@@ -194,7 +194,7 @@ namespace nux
 //     return true;
 //   }
 
-//   bool AreaEventProcessor::HasMouseFocus()
+//   bool AreaEventProcessor::IsMouseOwner()
 //   {
 //     return _has_mouse_focus;
 //   }
