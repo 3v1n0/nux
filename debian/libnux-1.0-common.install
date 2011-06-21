@@ -1,2 +1,2 @@
-debian/tmp/usr/share/nux/0.9
+debian/tmp/usr/share/nux/1.0
 debian/source_nux.py usr/share/apport/package-hooks

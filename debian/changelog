@@ -8,6 +8,11 @@ nux (1.0.2-0ubuntu1) UNRELEASED; urgency=low
   * remove debian/patches/01_build_with_gcc46.patch as upstream
   * debian/rules:
     - disable google code tests while building
+  * debian/control, debian/rules, debian/libnux-1.0-common.install,
+    debian/libnux-1.0-dev.install, debian/libnux-1.0-doc.install,
+    debian/libnux-1.0-0.install:
+    - change, prepare next ABI breakage and remove no more needed Breaks: with
+      new soname bump
 
  -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Jun 2011 19:54:33 +0200
 
