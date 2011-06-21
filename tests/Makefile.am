@@ -1,3 +1,4 @@
+if BUILD_TESTS
 check_PROGRAMS = \
   test-nux \
   gtest-nux-core
@@ -81,3 +82,6 @@ clean-generic:
 	rm -f test-nux-results.xml test-nux-results.html
 
 .PHONY: check-report full-report gtest test
+
+endif
+
