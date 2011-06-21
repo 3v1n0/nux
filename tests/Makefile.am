@@ -32,7 +32,8 @@ test_nux_LDADD = \
 
 gtest_nux_core_SOURCES = \
   test_logger.cpp \
-  test_properties.cpp
+  test_properties.cpp \
+  test_rolling_file_appender.cpp
 
 gtest_nux_core_CPPFLAGS = \
   -I$(srcdir) \
@@ -53,7 +54,7 @@ gtest_nux_core_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_LDFLAGS = \
-  -lpthread -lgtest -lgtest_main -lgmock
+  -lpthread -lgtest -lgtest_main -lgmock -lboost_filesystem
 
 
 #run make test as part of make check

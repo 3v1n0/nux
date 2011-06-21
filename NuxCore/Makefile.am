@@ -80,6 +80,7 @@ source_cpp = \
   $(srcdir)/Math/Vector3.cpp \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
+  $(srcdir)/RollingFileAppender.cpp \
   $(srcdir)/CRC32.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
@@ -144,6 +145,7 @@ source_h = \
   $(srcdir)/Colors.h \
   $(srcdir)/Logger.h \
   $(srcdir)/LoggingWriter.h \
+  $(srcdir)/RollingFileAppender.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
   $(srcdir)/SystemGNU.h \
