@@ -1,6 +1,8 @@
 nux (1.0.1-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+  * debian/control:
+    - add new libxdamage-dev and libxcomposite-dev build-dep
 
  -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Jun 2011 18:29:56 +0200
 
