@@ -44,13 +44,13 @@ namespace nux
     m_DrawFunctionShader = new GLSh_DrawFunction();
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Data/UITextures/FunctionGraphBackground.tga"));
-    BaseTexture* BackgroundTexture = GetGpuDevice()->CreateSystemCapableTexture ();
+    BaseTexture* BackgroundTexture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     BackgroundTexture->Update (Path.GetTCharPtr());
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, Colors::White);
+    m_BackgroundLayer = new TextureLayer (BackgroundTexture->GetDeviceTexture(), texxform, color::White);
 
     BackgroundTexture->UnReference ();
   }
@@ -90,7 +90,7 @@ namespace nux
     GfxContext.PushClippingRectangle (base);
 
     if (Texture.IsNull() || (Texture->GetWidth() != (t_s32) m_HistogramData.size() ) )
-      Texture = GetGpuDevice()->CreateSystemCapableDeviceTexture ( (t_s32) m_HistogramData.size(), 1, 0, BITFMT_A8);
+      Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture ( (t_s32) m_HistogramData.size(), 1, 0, BITFMT_A8);
 
     float tex_dx = (m_maxX - m_minX) / Texture->GetWidth();
 
@@ -127,7 +127,7 @@ namespace nux
     GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_DrawFunctionShader->SetTextureFunction (Texture);
-    m_DrawFunctionShader->SetBackgroundColor (0.1f, 0.1f, 0.1f, 0.6f);
+    m_DrawFunctionShader->SetBackgroundColor (Color(0.1f, 0.1f, 0.1f, 0.6f));
     m_DrawFunctionShader->Render (X, Y, 0, W, H, GfxContext.GetWindowWidth(), GfxContext.GetWindowHeight() );
 
     GfxContext.GetRenderStates().EnableLineSmooth (TRUE, 1, GL_FASTEST);   //You need this blending formula to get anti-aliased lines
@@ -174,7 +174,7 @@ namespace nux
     //m_minX = minX;
     //m_maxX = maxX;
 
-    //Texture = GetGpuDevice()->CreateSystemCapableDeviceTexture(m_maxX - m_minX, 4, 0, BITFMT_R8G8B8A8);
+    //Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(m_maxX - m_minX, 4, 0, BITFMT_R8G8B8A8);
     NeedRedraw();
   }
 

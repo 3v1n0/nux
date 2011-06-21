@@ -62,7 +62,6 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   private:
     VLayout *m_vlayout;

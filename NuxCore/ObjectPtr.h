@@ -74,21 +74,21 @@ namespace nux
         @param other Parameter with a type derived from T.
     */
     template <typename O>
-    ObjectPtr (const ObjectPtr<O>& other)
-      :   ptr_ (0)
+    ObjectPtr(const ObjectPtr<O>& other)
+      :   ptr_(0)
     {
       _reference_count = 0;
       _weak_reference_count = 0;
       _objectptr_count = 0;
       _destroyed = 0;
 
-      if (other.ptr_ && other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) )
+      if (other.ptr_ && other.ptr_->Type().IsDerivedFromType(T::StaticObjectType))
       {
-        ptr_ = (T *) other.ptr_;
+        ptr_ = NUX_STATIC_CAST(T*, other.ptr_);
         _reference_count = other->_reference_count;
         _weak_reference_count = other->_weak_reference_count;
         _objectptr_count = other->_objectptr_count;
-        _objectptr_count->Increment ();
+        _objectptr_count->Increment();
         _destroyed = other->_destroyed;
         ptr_->Reference();
       }
@@ -101,17 +101,17 @@ namespace nux
         and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
         "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
     */
-    explicit ObjectPtr (T *ptr, bool WarnMissuse = false)
-      :   ptr_ (0)
+    explicit ObjectPtr(T *ptr, bool WarnMissuse = false)
+      :   ptr_(0)
     {
       _reference_count = 0;
       _weak_reference_count = 0;
       _objectptr_count = 0;
       _destroyed = 0;
 
-      if (ptr != 0)
+      if(ptr != 0)
       {
-        if (WarnMissuse && (ptr->OwnsTheReference() == false) )
+        if(WarnMissuse && (ptr->OwnsTheReference() == false))
         {
           nuxDebugMsg (TEXT ("[ObjectPtr::ObjectPtr] Warning: Constructing a smart pointer from an object with a floating reference.") );
         }
@@ -134,24 +134,24 @@ namespace nux
         "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
     */
     template <typename O>
-    explicit ObjectPtr (O *ptr, bool WarnMissuse = false)
-      :   ptr_ (0)
+    explicit ObjectPtr(O *ptr, bool WarnMissuse = false)
+      :   ptr_(0)
     {
       _reference_count = 0;
       _weak_reference_count = 0;
       _objectptr_count = 0;
       _destroyed = 0;
 
-      if (ptr != 0)
+      if(ptr != 0)
       {
-        if (ptr->Type().IsDerivedFromType (T::StaticObjectType) )
+        if(ptr->Type().IsDerivedFromType(T::StaticObjectType))
         {
-          if (WarnMissuse && (ptr->OwnsTheReference() == false) )
+          if(WarnMissuse && (ptr->OwnsTheReference() == false))
           {
             nuxDebugMsg (TEXT ("[ObjectPtr::ObjectPtr] Warning: Constructing a smart pointer from an object with a floating reference.") );
           }
 
-          ptr_ = (T *) ptr;
+          ptr_ = NUX_STATIC_CAST(T*, ptr);
           _reference_count = ptr->_reference_count;
           _weak_reference_count = ptr->_weak_reference_count;
           _objectptr_count = ptr->_objectptr_count;
@@ -201,7 +201,7 @@ namespace nux
         {
           ReleaseReference ();
 
-          ptr_ = other.ptr_;
+          ptr_ = NUX_STATIC_CAST(T*, other.ptr_);
 
           if (ptr_ != 0)
           {
@@ -612,7 +612,7 @@ namespace nux
             //nuxDebugMsg (TEXT ("[ObjectWeakPtr::ObjectWeakPtr] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
           }
 
-          ptr_ = (T *) ptr;
+          ptr_ = NUX_STATIC_CAST(T*, ptr);;
           _reference_count = ptr->_reference_count;
           _weak_reference_count = ptr->_weak_reference_count;
           _destroyed = ptr->_destroyed;
@@ -663,7 +663,7 @@ namespace nux
 
       if (other.ptr_ && other.ptr_->Type ().IsDerivedFromType (T::StaticObjectType))
       {
-        ptr_ = other.ptr_;
+        ptr_ = NUX_STATIC_CAST(T*, other.ptr_);
         _reference_count = other._reference_count;
         _weak_reference_count = other._weak_reference_count;
         _destroyed = other._destroyed;
@@ -698,7 +698,7 @@ namespace nux
 
       if (other.ptr_ && other.ptr_->Type ().IsDerivedFromType (T::StaticObjectType))
       {
-        ptr_ = other.ptr_;
+        ptr_ = NUX_STATIC_CAST(T*, other.ptr_);
         _reference_count = other._reference_count;
         _weak_reference_count = other._weak_reference_count;
         _destroyed = other._destroyed;
@@ -765,7 +765,7 @@ namespace nux
         {
           ReleaseReference ();
 
-          ptr_ = other.ptr_;
+          ptr_ = NUX_STATIC_CAST(T*, other.ptr_);
           //refCounts_ = other.refCounts_;
           _reference_count = other._reference_count;
           _weak_reference_count = other._weak_reference_count;
@@ -836,7 +836,7 @@ namespace nux
         {
           ReleaseReference ();
 
-          ptr_ = other.ptr_;
+          ptr_ = NUX_STATIC_CAST(T*, other.ptr_);
           //refCounts_ = other.refCounts_;
           _reference_count = other._reference_count;
           _weak_reference_count = other._weak_reference_count;
@@ -969,7 +969,7 @@ namespace nux
             //nuxDebugMsg (TEXT ("[ObjectWeakPtr::operator = ()] Warning: Constructing a weak smart pointer from an object with a floating reference.") );
           }
 
-          ptr_ = (T *) ptr;
+          ptr_ = NUX_STATIC_CAST(T*, ptr);
           _reference_count = ptr->_reference_count;
           _weak_reference_count = ptr->_weak_reference_count;
           _destroyed = ptr->_destroyed;

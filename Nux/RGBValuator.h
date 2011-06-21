@@ -23,6 +23,7 @@
 #ifndef RGBGEVALUATOR_H
 #define RGBGEVALUATOR_H
 
+#include "NuxCore/Color.h"
 #include "HexRegExpValidator.h"
 #include "IntegerValidator.h"
 #include "DoubleValidator.h"
@@ -38,25 +39,8 @@ namespace nux
   class RGBValuator : public View //public ValuatorAbstraction
   {
   public:
-
-    enum ColorFormat
-    {
-      COLORFORMAT_FLOAT = 0,
-      COLORFORMAT_HEX,
-      COLORFORMAT_INT,
-    };
-
-    RGBValuator (NUX_FILE_LINE_PROTO);
-    RGBValuator (Color color, NUX_FILE_LINE_PROTO);
-    /*!
-        Create an initialize the widget with the CM_RGB color model and value.
-
-        @param red
-        @param green
-        @param blue
-        @param alpha
-    */
-    RGBValuator (float red, float green, float blue, float alpha, NUX_FILE_LINE_PROTO);
+    RGBValuator(NUX_FILE_LINE_PROTO);
+    RGBValuator(Color const& color, NUX_FILE_LINE_PROTO);
     /*!
         Create an initialize the widget with the appropriate color model and value.
 
@@ -66,28 +50,24 @@ namespace nux
         @param z Blue if CM_RGB, Value if CM_HSV, Saturation if CM_HLS
         @param alpha
     */
-    RGBValuator (eColorModel colorModel, float x, float y, float z, float alpha, NUX_FILE_LINE_PROTO);
+    RGBValuator(color::Model colorModel, float x, float y, float z, float alpha, NUX_FILE_LINE_PROTO);
 
     ~RGBValuator();
 
     // API
-    void SetColorModel (eColorModel cm);
-    void SetColorFormat (ColorFormat cf);
-    Color GetColor();
-    float GetRed();
-    float GetGreen();
-    float GetBlue();
-    float GetAlpha();
+    void SetColorModel(color::Model cm);
+    void SetColorFormat(color::Format cf);
+    Color GetColor() const;
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
-    void SetRGB (Color color);
+    void SetRGB (Color const& color);
     void SetRGB (float r, float g, float b);
     void SetAlpha (float alpha);
-    void SetRGBA (Color color);
+    void SetRGBA (Color const& color);
     void SetRGBA (float r, float g, float b, float a);
 
     void SetHSV (float h, float s, float v);
@@ -130,7 +110,6 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   private:
     void DrawRedMarker (GraphicsEngine &GfxContext);
@@ -166,24 +145,17 @@ namespace nux
     InputArea *m_ComponentAlpha;
 
     TextureLayer *m_CheckboardLayer;
-    float m_Red;
-    float m_Green;
-    float m_Blue;
-    float m_Alpha;
 
-    float m_HSVHue;
-    float m_HSVSaturation;
-    float m_HSVValue;
-
-    float m_HLSHue;
-    float m_HLSLight;
-    float m_HLSSaturation;
+    color::RedGreenBlue rgb_;
+    color::HueSaturationValue hsv_;
+    color::HueLightnessSaturation hls_;
+    float alpha_;
 
     PushButton *m_ColorModel;
     PushButton *m_ColorFormat;
 
-    enum eColorModel m_color_model;
-    enum ColorFormat m_color_format;
+    color::Model m_color_model;
+    color::Format m_color_format;
 
     HexRegExpValidator m_HexRegExp;
     IntegerValidator m_IntRegExp;

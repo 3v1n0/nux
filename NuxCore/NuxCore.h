@@ -63,8 +63,6 @@
 #include <new>
 #include <set>
 
-
-#include "Namespace.h"
 #include "SystemTypes.h"
 
 
@@ -764,12 +762,9 @@ namespace nux
 
 #ifdef NUX_OS_WINDOWS
   #include "Win32Dialogs/NWin32CustomDialog.h"
-#endif
-
-#ifdef NUX_OS_WINDOWS
   #include "Win32Dialogs/NWin32Clipboard.h"
 #endif
-//#include "NSocket.h"
+
 
 #include "GlobalInitializer.h"
 

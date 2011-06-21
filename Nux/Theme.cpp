@@ -317,12 +317,14 @@ namespace nux
 
   BaseTexture *UXTheme::Load2DTextureFile (const char *filename)
   {
-    BaseTexture* texture2D = GetGpuDevice()->CreateSystemCapableTexture ();
+    BaseTexture* texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     NBitmapData *BitmapData = LoadImageFile (filename);
 
     if (BitmapData)
+    {
       texture2D->Update (BitmapData);
-
+      delete BitmapData;
+    }
     return texture2D;
   }
 

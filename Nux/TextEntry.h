@@ -177,6 +177,8 @@ namespace nux
     protected:
     virtual void DoSetFocused (bool focused);
     bool _block_focus; // used to selectively ignore focus keyevents
+
+    virtual void GeometryChanged ();
     
     private:
     /**
@@ -220,12 +222,12 @@ namespace nux
 //     /** Set the visibility of the edit control */
 //     void SetVisibility(bool visible);
 //
-//     /** Check if the cursor should be blinking */
-//     bool IsCursorBlinking();
-//     /** Send out a request to blink the cursor if necessary */
-//     void QueueCursorBlink();
-//     /** Timer callback to blink the cursor */
-//     bool CursorBlinkCallback(int timer_id);
+//  /** Check if the cursor should be blinking */
+//  bool IsCursorBlinking();
+    /** Send out a request to blink the cursor if necessary */
+    void QueueCursorBlink();
+    static bool CursorBlinkCallback(TextEntry *data);
+    
     void ShowCursor();
     void HideCursor();
 

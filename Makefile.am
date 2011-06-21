@@ -1,5 +1,7 @@
 SUBDIRS = data NuxCore NuxImage NuxGraphics Nux examples gputests tests tools
 
+CXXFLAGS += -fno-permissive
+
 include doxygen-include.am
 
 if BUILD_DOCUMENTATION

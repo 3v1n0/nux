@@ -55,7 +55,7 @@ namespace nux
     OnEndFocus.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
 
     SetText (Caption);
-    SetTextColor (Colors::White);
+    SetTextColor (color::White);
     m_BackgroundColor = Color (0xFF343434); //COLOR_TEXTEDIT_BACKGROUNG;
     m_SelectedTextColor = Color (0xFFFAFAFA);
     m_SelectedTextBackgroundColor = Color (0xFF777777);
@@ -88,7 +88,7 @@ namespace nux
   void EditTextBox::ScrollTimerInterrupt (void *v)
   {
     Geometry base = GetGeometry();
-    IEvent &ievent = GetThreadGLWindow()->GetCurrentEvent();
+    IEvent &ievent = GetGraphicsDisplay()->GetCurrentEvent();
 
     int X = ievent.e_x;
     m_KeyboardHandler.CaretAutoScroll (ievent.e_x, ievent.e_y, base);

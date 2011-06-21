@@ -35,7 +35,7 @@ namespace nux
     m_max               = MaxValue;
     m_BackgroundColor   = Color (0xff202020);
     m_CTRL_KEY          = 0;
-    m_color_format      = Color::COLORFORMAT_FLOAT;
+    m_color_format      = color::FLOAT;
 
     InitializeLayout();
     InitializeWidgets();
@@ -45,7 +45,6 @@ namespace nux
 
   ColorGradient::~ColorGradient()
   {
-    DestroyLayout();
   }
 
   void ColorGradient::InitializeWidgets()
@@ -90,11 +89,6 @@ namespace nux
     m_Percentage    = new InputArea (NUX_TRACKER_LOCATION);
     m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
   }
-
-  void ColorGradient::DestroyLayout()
-  {
-  }
-
 
   long ColorGradient::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
@@ -240,17 +234,17 @@ namespace nux
     else
       m_Value = value;
 
-    if (m_color_format == Color::COLORFORMAT_FLOAT)
+    if (m_color_format == color::FLOAT)
     {
       m_ValueString->SetText (NString::Printf ("%.3f", m_Value ) );
     }
 
-    if (m_color_format == Color::COLORFORMAT_INT)
+    if (m_color_format == color::INT)
     {
       m_ValueString->SetText (NString::Printf ("%d", (int) (m_Value * 255) ) );
     }
 
-    if (m_color_format == Color::COLORFORMAT_HEX)
+    if (m_color_format == color::HEX)
     {
       m_ValueString->SetText (NString::Printf ("%x", (int) (m_Value * 255) ) );
     }
@@ -336,11 +330,11 @@ namespace nux
   {
     float f = 0;
 
-    if ( (m_color_format == Color::COLORFORMAT_HEX) && (m_HexRegExp.Validate (text.GetTCharPtr() ) == Validator::Acceptable) )
+    if ( (m_color_format == color::HEX) && (m_HexRegExp.Validate (text.GetTCharPtr() ) == Validator::Acceptable) )
     {
       f = (float) m_HexRegExp.ToInteger (text.GetTCharPtr() ) / 255.0f;
     }
-    else if ( (m_color_format == Color::COLORFORMAT_INT) && (m_IntRegExp.Validate (text.GetTCharPtr() ) == Validator::Acceptable) )
+    else if ( (m_color_format == color::INT) && (m_IntRegExp.Validate (text.GetTCharPtr() ) == Validator::Acceptable) )
     {
       f = (float) m_IntRegExp.ToInteger (text.GetTCharPtr() ) / 255.0f;
     }
@@ -373,44 +367,26 @@ namespace nux
     m_ColorMarkGroup.Reset();
   }
 
-  void ColorGradient::SetColorFormat (Color::Format cf)
+  void ColorGradient::SetColorFormat (color::Format cf)
   {
-    if (cf == Color::COLORFORMAT_FLOAT)
+    m_color_format = cf;
+    if (cf == color::FLOAT)
     {
-      m_color_format = Color::COLORFORMAT_FLOAT;
       m_ValueString->SetKeyEntryType (BaseKeyboardHandler::eAlphaNumeric);
       m_ValueString->SetPrefix (TEXT ("") );
     }
-
-    if (cf == Color::COLORFORMAT_INT)
+    else if (cf == color::INT)
     {
-      m_color_format = Color::COLORFORMAT_INT;
       m_ValueString->SetKeyEntryType (BaseKeyboardHandler::eIntegerNumber);
       m_ValueString->SetPrefix (TEXT ("") );
     }
-
-    if (cf == Color::COLORFORMAT_HEX)
+    else if (cf == color::HEX)
     {
-      m_color_format = Color::COLORFORMAT_HEX;
       m_ValueString->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);
       m_ValueString->SetPrefix (TEXT ("0x") );
     }
 
     SetValue (m_Value);
-    //     if(m_color_model == CM_RGB)
-    //     {
-    //         SetRGBA(m_Red, m_Green, m_Blue, m_Alpha);
-    //     }
-    //     else if(m_color_model == CM_HLS)
-    //     {
-    //         SetHLS(m_HLSHue, m_HLSLight, m_HLSSaturation);
-    //         SetAlpha(m_Alpha);
-    //     }
-    //     else if(m_color_model == CM_HSV)
-    //     {
-    //         SetHSV(m_HSVHue, m_HSVSaturation, m_HSVValue);
-    //         SetAlpha(m_Alpha);
-    //     }
   }
 
 

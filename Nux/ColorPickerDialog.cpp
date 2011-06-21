@@ -50,7 +50,7 @@ namespace nux
 
   }
 
-  void ColorPickerDialog::StartDialog (Color &color, eColorModel ColorModel /*  = RGB */, bool StartModal /* = false */)
+  void ColorPickerDialog::StartDialog (Color &color, color::Model ColorModel, bool StartModal)
   {
     Dialog::Start (StartModal);
     m_Color = color;
@@ -59,7 +59,7 @@ namespace nux
   void ColorPickerDialog::RecvOk()
   {
     m_Color = m_ColorEditor->GetRGBColor();
-    m_Color = Colors::Black;
+    m_Color = color::Black;
     ShowWindow (FALSE);
   }
 

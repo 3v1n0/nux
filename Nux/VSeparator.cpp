@@ -58,11 +58,6 @@ namespace nux
 
   }
 
-  void VSeparator::DestroyLayout()
-  {
-
-  }
-
   long VSeparator::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     return TraverseInfo;
@@ -74,14 +69,17 @@ namespace nux
     int x0 = base.x + base.GetWidth() / 2;
     base.OffsetPosition (0, 3);
     base.OffsetSize (0, -6);
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (base.GetHeight() - 2 * m_BorderSize > 0)
     {
+      // TODO: Tim Penhey 2011-05-13
+      // This code is a copy of some other code somewhere... we should make sure there
+      // is only one implementation.
       Color color0 = m_Color;
       Color color1 = m_Color;
-      color0.SetAlpha (m_Alpha0);
-      color1.SetAlpha (m_Alpha1);
+      color0.alpha = m_Alpha0;
+      color1.alpha = m_Alpha1;
       GetPainter().Draw2DLine (GfxContext, x0, base.y, x0, base.y + m_BorderSize, color0, color1);
       GetPainter().Draw2DLine (GfxContext, x0, base.y + m_BorderSize, x0, base.y + base.GetHeight() - m_BorderSize, color1, color1);
       GetPainter().Draw2DLine (GfxContext, x0, base.y + base.GetHeight() - m_BorderSize, x0, base.y + base.GetHeight(), color1, color0);
@@ -89,10 +87,10 @@ namespace nux
     else
     {
       Color color1 = m_Color;
-      color1.SetAlpha (m_Alpha1);
+      color1.alpha = m_Alpha1;
       GetPainter().Draw2DLine (GfxContext, x0, base.y, x0, base.y + base.GetHeight(), color1);
     }
 
-    GetThreadGraphicsContext()->GetRenderStates().SetBlend (FALSE);
+    GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (FALSE);
   }
 }

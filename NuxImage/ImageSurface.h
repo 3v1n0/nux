@@ -149,9 +149,7 @@ namespace nux
         Sum up all the image elements and divide by the number of elements.
         @return The average color of the image.
     */
-    Color AverageColor();
-
-    void GaussianBlur (int radius);
+    struct Color AverageColor();
 
   private:
     void FlipDXTVertical();
@@ -520,12 +518,26 @@ namespace nux
     std::string  format;            // Additional image format information
   };
 
-  void MakeCheckBoardImage (ImageSurface &Image, t_s32 w, t_s32 h, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
+  void MakeCheckBoardImage(ImageSurface& Image,
+                           int width, int height,
+                           Color const& dark, Color const& light,
+                           int TileWidth = 4, int TileHeight = 4);
 
   bool HasOpenEXRSupport();
 
-  NBitmapData *LoadGdkPixbuf (GdkPixbuf *pixbuf);
-  NBitmapData *LoadImageFile (const TCHAR *Filename);
+  /*!
+      Return and object that has to be destroyed with delete.
+
+      @return A bitmap source. Destroy it with delete.
+  */
+  NBitmapData* LoadGdkPixbuf(GdkPixbuf *pixbuf);
+
+  /*!
+      Return and object that has to be destroyed with delete.
+
+      @return A bitmap source. Destroy it with delete.
+  */
+  NBitmapData* LoadImageFile(const TCHAR *Filename);
 
 }
 

@@ -357,7 +357,6 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   private:
     ObjectPtr<IOpenGLBaseTexture> m_Texture;

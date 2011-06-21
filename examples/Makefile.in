@@ -792,18 +792,10 @@ uninstall-am:
 	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
 
-# distribute source along to the documentation
+# To distribute source add the source code here
 #sourceexampledir = "$(pkgdatadir)/examples"
 #sourceexample_DATA = $(combobox_SOURCES) \
-#                     $(cairo_SOURCES) \
-#                     $(textedit_SOURCES) \
-#                     $(button_SOURCES) \
-#                     $(checkbox_SOURCES) \
-#                     $(tooltip_SOURCES) \
-#                     $(timegraph_SOURCES) \
-#                     $(gridlayout_SOURCES) \
-#                     $(pangotextedit_SOURCES) \
-#                     $(moveable_view_SOURCES)
+#                    
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

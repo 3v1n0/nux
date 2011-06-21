@@ -304,16 +304,6 @@ namespace nux
       return false;
     }
 
-    if (!OwnsTheReference() )
-    {
-      nuxDebugMsg (TEXT ("[Object::UnReference] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxAssertMsg (0, TEXT ("[Object::UnReference] Never call UnReference on an object with a floating reference. Call Dispose() instead."));
-
-      return false;
-    }
-
     if (_objectptr_count->GetValue() == _reference_count->GetValue())
     {
       // There are ObjectPtr's hosting this object. Release all of them to destroy this object.
@@ -360,28 +350,18 @@ namespace nux
 
   bool Object::Dispose()
   {
-    if (!IsHeapAllocated ())
-    {
-      nuxDebugMsg (TEXT ("[Object::Dispose] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxAssertMsg (0, TEXT("[Object::Dispose] Trying to dispose an object that was not heap allocated."));
-      return false;
-    }
+    // The intent of the Dispose call is to destroy objects with a float reference (reference count is equal to 1 and
+    // the '_owns_the_reference' flag is set to false). In Nux, only widgets object can have a floating reference.
+    // And widgets are only visible if added to the widget tree. 
+    // When an object with a floating reference is added to the widget tree, it becomes "owned'. It looses it
+    // floating reference status but it still has a reference count number of 1.
+    // In practice, since widgets must be added to the widget tree, there should never be a need to call Dispose
+    // (except in a few cases).
 
-    if (!OwnsTheReference() && (_reference_count->GetValue() == 1) )
-    {
-      _reference_count->Decrement ();
-      _weak_reference_count->Decrement ();
-      Destroy();
-      return true;
-    }
+    // Dispose() was designed to only destroy objects with floating references, while UnReference() destroys objects
+    // that are "owned" . That is now relaxed. Dispose() calls UnReference().
 
-    nuxDebugMsg (TEXT ("[Object::Dispose] Error on object allocated at %s [%d]:")
-      , _allocation_file_name.GetTCharPtr ()
-      , _allocation_line_number);
-    nuxAssertMsg (0, TEXT ("[Object::Dispose] Trying to destroy and object that is still referenced") );
-    return false;
+    return UnReference();
   }
 
   void Object::Destroy()
@@ -397,7 +377,7 @@ namespace nux
 
     nuxAssert (_reference_count->GetValue() == 0);
 
-    if ( (_reference_count->GetValue() == 0) && (_weak_reference_count->GetValue() == 0) )
+    if ((_reference_count->GetValue() == 0) && (_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
     {
       delete _reference_count;
       delete _weak_reference_count;
@@ -408,7 +388,7 @@ namespace nux
     }
     else
     {
-      if (_weak_reference_count == NULL)
+      if ((_weak_reference_count == NULL) && (_objectptr_count->GetValue() == 0))
       {
         nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
         , _allocation_file_name.GetTCharPtr ()
@@ -416,7 +396,7 @@ namespace nux
         nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid pointer for the weak reference count."));
       }
 
-      if (_weak_reference_count->GetValue() == 0)
+      if ((_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
       {
         nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
           , _allocation_file_name.GetTCharPtr ()

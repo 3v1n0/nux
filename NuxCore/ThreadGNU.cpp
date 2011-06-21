@@ -65,25 +65,26 @@ namespace nux
   BOOL NThreadLocalStorage::m_TLSUsed[NThreadLocalStorage::NbTLS];
   NThreadLocalStorage::TLS_ShutdownCallback  NThreadLocalStorage::m_TLSCallbacks[NThreadLocalStorage::NbTLS];
 
-  BOOL NThreadLocalStorage::RegisterTLS (t_u32 index, NThreadLocalStorage::TLS_ShutdownCallback shutdownCallback)
+  BOOL NThreadLocalStorage::RegisterTLS(t_u32 index, NThreadLocalStorage::TLS_ShutdownCallback shutdownCallback)
   {
-    nuxAssert (!m_TLSUsed[index]);
+    NUX_RETURN_VALUE_IF_FALSE(index < NThreadLocalStorage::NbTLS, FALSE);
+    NUX_RETURN_VALUE_IF_TRUE(m_TLSUsed[index], TRUE); // already registered
 
-    if (!m_TLSUsed[index])
-    {
-//         m_TLSIndex[index] = TlsAlloc();
-//         if(m_TLSIndex[index] == TLS_OUT_OF_INDEXES)
-//         {
-//             nuxAssertMsg(0, TEXT("[NThreadLocalStorage::RegisterTLS] Out of TLS index."));
-//         }
-      m_TLSUsed[index]  = TRUE;
-      m_TLSCallbacks[index] =  shutdownCallback;
-      return TRUE;
-    }
-    else
-    {
-      return FALSE;
-    }
+    m_TLSUsed[index]  = TRUE;
+    m_TLSCallbacks[index] =  shutdownCallback;
+    return TRUE;
+  }
+
+  BOOL NThreadLocalStorage::UnRegisterTLS (t_u32 index)
+  {
+    NUX_RETURN_VALUE_IF_FALSE(index < NThreadLocalStorage::NbTLS, FALSE);
+    NUX_RETURN_VALUE_IF_FALSE(m_TLSUsed[index], FALSE);
+
+    m_TLSUsed[index]  = FALSE;
+    m_TLSCallbacks[index] =  NULL;
+    m_TLSIndex[index]  = NULL;
+
+    return TRUE;
   }
 
   void NThreadLocalStorage::Initialize()

@@ -35,7 +35,7 @@ namespace nux
     ,   m_HLSLight (1.0f)
     ,   m_HSVSaturation (1.0f)
     ,   m_HSVValue (1.0f)
-    ,   m_Model (CM_HLS)
+    ,   m_Model (color::HLS)
   {
     InitializeLayout();
     InitializeWidgets();
@@ -43,7 +43,6 @@ namespace nux
 
   HueRangeValuator::~HueRangeValuator()
   {
-    DestroyLayout();
   }
 
   void HueRangeValuator::InitializeWidgets()
@@ -56,11 +55,6 @@ namespace nux
 
   }
 
-  void HueRangeValuator::DestroyLayout()
-  {
-
-  }
-
   void HueRangeValuator::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
@@ -69,7 +63,7 @@ namespace nux
 
     Geometry P = m_Percentage->GetGeometry();
 
-    if (m_Model == CM_HLS)
+    if (m_Model == color::HLS)
     {
       float s = 1.0f - m_HLSSaturation;
       float l = m_HLSLight;

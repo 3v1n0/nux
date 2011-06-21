@@ -40,16 +40,16 @@ public:
     combo->SetMinimumWidth (150);
     combo->sigTriggered.connect (sigc::mem_fun (this, &Foo::OnComboChangedFoRealz));
     main_layout->AddView (combo, 0, nux::eCenter, nux::eFix);
-    
+
     layered_layout = new nux::LayeredLayout (NUX_TRACKER_LOCATION);
     for (int i = 0; i < 10; i++)
     {
       gchar *text = g_strdup_printf ("Button %d", i);
       nux::LayeredLayout *layered = new nux::LayeredLayout (NUX_TRACKER_LOCATION);
 
-      nux::ColorLayer color (nux::Color::RandomColor ());
+      nux::ColorLayer color (nux::color::RandomColor ());
       nux::TextureArea* texture_area = new nux::TextureArea ();
-      texture_area->SetPaintLayer (&color);      
+      texture_area->SetPaintLayer (&color);
       layered->AddLayer (texture_area);
 
       nux::HLayout *hori = new nux::HLayout (NUX_TRACKER_LOCATION);
@@ -58,7 +58,7 @@ public:
       hori->AddView (button, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
       hori->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
       layered->AddLayer (hori);
-      
+
       hori = new nux::HLayout (NUX_TRACKER_LOCATION);
       button = new nux::PushButton (text, NUX_TRACKER_LOCATION);
       button->SetMinMaxSize (100, 50);

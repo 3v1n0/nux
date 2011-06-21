@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "NuxCore/NuxCore.h"
 #include "NuxCore/Math/Matrix4.h"
 #include "GLResource.h"
@@ -36,8 +35,6 @@
 
 namespace nux
 {
-
-  extern bool USE_ARB_SHADERS;
 
 // The GLSL shaders may contain branches. Intel GPU so far fails on these shaders.
 // Use assembly shaders for Intel GPUs: ARB_fragment_program does not have the required
@@ -224,7 +221,7 @@ namespace nux
 
 
 
-  GLSh_ColorPicker::GLSh_ColorPicker (eColorChannel cc)
+GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
     :   _R (1.0)
     ,   _G (0.0)
     ,   _B (0.0)
@@ -233,38 +230,37 @@ namespace nux
     ,   _ScreenOffsetY (0)
   {
     NString FrgShaderCode;
-    m_ColorChannel = cc;
 
-    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
-      switch (m_ColorChannel)
+      switch (color_channel)
       {
-        case CC_RED:
+        case color::RED:
         {
           FrgShaderCode = RedFrgShader;
           break;
         }
-        case CC_GREEN:
+        case color::GREEN:
         {
           FrgShaderCode = GreenFrgShader;
           break;
         }
-        case CC_BLUE:
+        case color::BLUE:
         {
           FrgShaderCode = BlueFrgShader;
           break;
         }
-        case CC_HUE:
+        case color::HUE:
         {
           FrgShaderCode = HueFrgShader;
           break;
         }
-        case CC_SATURATION:
+        case color::SATURATION:
         {
           FrgShaderCode = SaturationFrgShader;
           break;
         }
-        case CC_VALUE:
+        case color::VALUE:
         {
           FrgShaderCode = ValueFrgShader;
           break;
@@ -277,8 +273,8 @@ namespace nux
         }
       }
 
-      GlobalPixelShader = GetGpuDevice()->CreatePixelShader();
-      sprog = GetGpuDevice()->CreateShaderProgram();
+      GlobalPixelShader = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader();
+      sprog = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
 
       GlobalPixelShader->SetShaderCode (HSV_To_RGBFrgShader.GetTCharPtr() );
 
@@ -289,34 +285,34 @@ namespace nux
     }
     else
     {
-      switch (m_ColorChannel)
+      switch (color_channel)
       {
-        case CC_RED:
+        case color::RED:
         {
           FrgShaderCode = AsmRedFrgShader;
           break;
         }
-        case CC_GREEN:
+        case color::GREEN:
         {
           FrgShaderCode = AsmGreenFrgShader;
           break;
         }
-        case CC_BLUE:
+        case color::BLUE:
         {
           FrgShaderCode = AsmBlueFrgShader;
           break;
         }
-        case CC_HUE:
+        case color::HUE:
         {
           FrgShaderCode = AsmHueFrgShader;
           break;
         }
-        case CC_SATURATION:
+        case color::SATURATION:
         {
           FrgShaderCode = AsmSaturationFrgShader;
           break;
         }
-        case CC_VALUE:
+        case color::VALUE:
         {
           FrgShaderCode = AsmValueFrgShader;
           break;
@@ -329,7 +325,7 @@ namespace nux
         }
       }
 
-      m_AsmProg = GetGpuDevice()->CreateAsmShaderProgram();
+      m_AsmProg = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
       m_AsmProg->LoadVertexShader (AsmVtxShader.GetTCharPtr() );
       m_AsmProg->LoadPixelShader (FrgShaderCode.GetTCharPtr() );
       m_AsmProg->Link();
@@ -359,15 +355,16 @@ namespace nux
 
   void GLSh_ColorPicker::Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight)
   {
+    float fx = x, fy = y;
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f,
-      x,          y + height, 0.0f, 1.0f,
-      x + width,  y + height, 0.0f, 1.0f,
-      x + width,  y,          0.0f, 1.0f,
+      fx,          fy,          0.0f, 1.0f,
+      fx,          fy + height, 0.0f, 1.0f,
+      fx + width,  fy + height, 0.0f, 1.0f,
+      fx + width,  fy,          0.0f, 1.0f,
     };
 
-    if (!USE_ARB_SHADERS && (GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
+    if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
       CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
@@ -376,7 +373,7 @@ namespace nux
       int VertexLocation = sprog->GetAttributeLocation ("AVertex");
 
       int VPMatrixLocation = sprog->GetUniformLocationARB ("ViewProjectionMatrix");
-      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetThreadGraphicsContext()->GetOpenGLModelViewProjectionMatrix().m) );
+      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewProjectionMatrix().m) );
 
       int ColorBase    = sprog->GetUniformLocationARB ("Color");
       int RectPosition    = sprog->GetUniformLocationARB ("RectPosition");
@@ -409,10 +406,10 @@ namespace nux
 
       CHECKGL ( glMatrixMode (GL_MODELVIEW) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetOpenGLModelViewMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewMatrix().m) );
       CHECKGL ( glMatrixMode (GL_PROJECTION) );
       CHECKGL ( glLoadIdentity() );
-      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetThreadGraphicsContext()->GetOpenGLProjectionMatrix().m) );
+      CHECKGL ( glLoadMatrixf ( (FLOAT *) GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLProjectionMatrix().m) );
 
       int VertexLocation          = VTXATTRIB_POSITION;
 

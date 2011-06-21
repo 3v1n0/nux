@@ -386,12 +386,11 @@ namespace nux
     }
     void AddColorMark (DOUBLE x, Color color, bool selected = false);
 
-    void SetColorFormat (Color::Format cf);
+    void SetColorFormat(color::Format cf);
 
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   protected:
 
@@ -402,7 +401,7 @@ namespace nux
     InputArea       *m_Percentage;
     Color m_BackgroundColor;
 
-    Color::Format m_color_format;
+    color::Format m_color_format;
 
     long m_CTRL_KEY;
 
