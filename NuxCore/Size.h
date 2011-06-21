@@ -20,37 +20,28 @@
  */
 
 
-#ifndef SIZE_H
-#define SIZE_H
+#ifndef NUX_CORE_SIZE_H
+#define NUX_CORE_SIZE_H
 
 namespace nux
 {
 
-  class Size
-  {
-  public:
-    Size (t_int32 w = 0, t_int32 h = 0);
-    ~Size();
-    Size (const Size &s);
+class Size
+{
+public:
+    Size();
+    Size(int w, int h);
 
-    Size &operator = (const Size &s);
-    t_bool operator == (const Size &s) const;
-    t_bool operator != (const Size &s) const;
-    Size operator + (const Size &p) const;
-    Size operator - (const Size &p) const;
+    int width;
+    int height;
+};
 
-
-    t_int32 GetWidth() const;
-    t_int32 GetHeight() const;
-    void SetWidth (t_int32 w);
-    void SetHeight (t_int32 h);
-
-  public:
-    t_int32 width;
-    t_int32 height;
-  };
+bool operator == (const Size& lhs, const Size& rhs);
+bool operator != (const Size& lhs, const Size& rhs);
 
 }
+
+#include "Size-inl.h"
 
 #endif // SIZE_H
 

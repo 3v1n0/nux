@@ -65,7 +65,7 @@ void RenderTexturePowerOfTwo ()
 
     surface.GetFormat ();
 
-    tex[i] = nux::GetThreadGLDeviceFactory()->CreateTexture (
+    tex[i] = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture (
       surface.GetWidth(),
       surface.GetHeight (),
       1,

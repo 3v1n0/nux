@@ -129,8 +129,8 @@ namespace nux
     m_pEvent = new IEvent();
     GetDisplayInfo();
 
-    m_WindowSize.SetWidth (0);
-    m_WindowSize.SetHeight (0);
+    m_WindowSize.width = 0;
+    m_WindowSize.height = 0;
 
     // A window never starts in a minimized state.
     m_is_window_minimized = false;
@@ -179,17 +179,17 @@ namespace nux
     m_GfxInterfaceCreated = false;
 
     // FIXME : put at the end
-    m_ViewportSize.SetWidth (WindowWidth);
-    m_ViewportSize.SetHeight (WindowHeight);
-    m_WindowSize.SetWidth (WindowWidth);
-    m_WindowSize.SetHeight (WindowHeight);
+    m_ViewportSize.width = WindowWidth;
+    m_ViewportSize.height = WindowHeight;
+    m_WindowSize.width = WindowWidth;
+    m_WindowSize.height = WindowHeight;
 
     // end of fixme
 
     WindowRect.left     = (long) 0;
-    WindowRect.right    = (long) m_ViewportSize.GetWidth();
+    WindowRect.right    = (long) m_ViewportSize.width;
     WindowRect.top      = (long) 0;
-    WindowRect.bottom   = (long) m_ViewportSize.GetHeight();
+    WindowRect.bottom   = (long) m_ViewportSize.height;
 
     m_fullscreen = FullscreenFlag;								// Set The Global Fullscreen Flag
     m_index_of_current_mode = -1;								// assume -1 if the mode is not fullscreen
@@ -202,9 +202,9 @@ namespace nux
 
       for (int num_modes = 0 ; num_modes < m_num_gfx_device_modes; num_modes++)
       {
-        if ( (m_gfx_device_modes[num_modes].width == m_ViewportSize.GetWidth() )
-             && (m_gfx_device_modes[num_modes].height == m_ViewportSize.GetHeight() )
-             && (m_gfx_device_modes[num_modes].format == m_ScreenBitDepth) )
+        if ((m_gfx_device_modes[num_modes].width == m_ViewportSize.width)
+             && (m_gfx_device_modes[num_modes].height == m_ViewportSize.height)
+             && (m_gfx_device_modes[num_modes].format == m_ScreenBitDepth))
         {
           mode_supported = true;
           m_index_of_current_mode = num_modes;
@@ -222,10 +222,10 @@ namespace nux
       }
 
       DEVMODE dmScreenSettings;                                               // Device Mode
-      memset (&dmScreenSettings, 0, sizeof (dmScreenSettings) );	           // Makes Sure Memory's Cleared
+      memset (&dmScreenSettings, 0, sizeof (dmScreenSettings));	              // Makes Sure Memory's Cleared
       dmScreenSettings.dmSize = sizeof (dmScreenSettings);                    // Size Of The Devmode Structure
-      dmScreenSettings.dmPelsWidth	= m_ViewportSize.GetWidth();                 // Selected Screen Width
-      dmScreenSettings.dmPelsHeight	= m_ViewportSize.GetHeight();                // Selected Screen Height
+      dmScreenSettings.dmPelsWidth	= m_ViewportSize.width;                   // Selected Screen Width
+      dmScreenSettings.dmPelsHeight	= m_ViewportSize.height;                  // Selected Screen Height
       dmScreenSettings.dmBitsPerPel	= m_ScreenBitDepth;                              // Selected Bits Per Pixel
       dmScreenSettings.dmDisplayFrequency = 60;
       dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
@@ -488,7 +488,7 @@ namespace nux
     //m_WGLEWContext = new WGLEWContext();
 
     HGLRC new_opengl_rendering_context = _opengl_rendering_context;
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8,
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
       _device_context,
       new_opengl_rendering_context,
       1, 0, false);
@@ -527,7 +527,7 @@ namespace nux
     // The opengl context should be made current by an external entity.
 
     m_GfxInterfaceCreated = true;
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8,
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
       _device_context,
       _opengl_rendering_context);
 
@@ -536,6 +536,16 @@ namespace nux
     InitGlobalGrabWindow ();
 
     return true;
+  }
+
+  GraphicsEngine* GraphicsDisplay::GetGraphicsEngine() const
+  {
+    return m_GraphicsContext;
+  }
+  
+  GpuDevice* GraphicsDisplay::GetGpuDevice () const
+  {
+    return m_DeviceFactory;
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -548,20 +558,20 @@ namespace nux
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::GetWindowSize (int &w, int &h)
   {
-    w = m_WindowSize.GetWidth ();
-    h = m_WindowSize.GetHeight ();
+    w = m_WindowSize.width;
+    h = m_WindowSize.height;
   }
 
 //---------------------------------------------------------------------------------------------------------
   int GraphicsDisplay::GetWindowWidth ()
   {
-    return m_WindowSize.GetWidth ();
+    return m_WindowSize.width;
   }
 
 //---------------------------------------------------------------------------------------------------------
   int GraphicsDisplay::GetWindowHeight ()
   {
-    return m_WindowSize.GetHeight ();
+    return m_WindowSize.height;
   }
 
   void GraphicsDisplay::ResetWindowSize ()
@@ -599,10 +609,10 @@ namespace nux
     if (IsGfxInterfaceCreated ())
     {
       //do not rely on m_ViewportSize: glViewport can be called directly
-      m_ViewportSize.SetWidth (width);
-      m_ViewportSize.SetHeight (height);
+      m_ViewportSize.width = width;
+      m_ViewportSize.height = height;
 
-      m_GraphicsContext->SetViewport (x, y, m_ViewportSize.GetWidth (), m_ViewportSize.GetHeight ());
+      m_GraphicsContext->SetViewport (x, y, m_ViewportSize.width, m_ViewportSize.height);
       m_GraphicsContext->SetScissor (0, 0, width, height);
     }
   }
@@ -1253,10 +1263,10 @@ namespace nux
         m_pEvent->height =  clientrect.bottom - clientrect.top;
 
         //setViewPort(0, 0, clientrect.right - clientrect.left, clientrect.bottom - clientrect.top);
-        m_WindowSize.SetWidth (clientrect.right - clientrect.left);
-        m_WindowSize.SetHeight (clientrect.bottom - clientrect.top);
+        m_WindowSize.width = clientrect.right - clientrect.left;
+        m_WindowSize.height = clientrect.bottom - clientrect.top;
 
-        if ( (wParam == SIZE_MAXHIDE) || (wParam == SIZE_MINIMIZED) )
+        if ((wParam == SIZE_MAXHIDE) || (wParam == SIZE_MINIMIZED))
         {
           m_is_window_minimized = true;
         }
@@ -1265,7 +1275,7 @@ namespace nux
           m_is_window_minimized = false;
         }
 
-        if ( (wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED) )
+        if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED))
         {
           m_pEvent->e_event = NUX_SIZE_CONFIGURATION;
         }

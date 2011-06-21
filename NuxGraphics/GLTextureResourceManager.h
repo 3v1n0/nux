@@ -184,7 +184,7 @@ namespace nux
         @param BitmapData The texture data to update into the hardware resource.
         @param UpdateAndCacheResource if True, then the texture data is loaded into this object, and the caching into
         hardware data is done right away. If false, the caching is done latter by calling
-        GetThreadGraphicsContext()->CacheResource(this);
+        GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(this);
         @return True is there was not error.
     */
     virtual bool Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
@@ -194,7 +194,7 @@ namespace nux
         @param Filename File name of texture data to update into the hardware resource.
         @param UpdateAndCacheResource if True, then the texture data is loaded into this object, and the caching into
         hardware data is done right away. If false, the caching is done latter by calling
-        GetThreadGraphicsContext()->CacheResource(this);
+        GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(this);
         @return True is there was not error.
     */
     virtual bool Update (const TCHAR *Filename, bool UpdateAndCacheResource = true);

@@ -38,11 +38,10 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = NuxCore
 DIST_COMMON = $(nux_char_HEADERS) $(nux_core_HEADERS) \
-	$(nux_datastruct_HEADERS) $(nux_file_manager_HEADERS) \
-	$(nux_math_HEADERS) $(nux_memory_HEADERS) \
-	$(nux_smart_ptr_HEADERS) $(nux_tiny_xml_HEADERS) \
-	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(srcdir)/nux-core.pc.in
+	$(nux_file_manager_HEADERS) $(nux_math_HEADERS) \
+	$(nux_memory_HEADERS) $(nux_smart_ptr_HEADERS) \
+	$(nux_tiny_xml_HEADERS) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in $(srcdir)/nux-core.pc.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_doxygen.m4 \
 	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
@@ -77,7 +76,6 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
 	"$(DESTDIR)$(nux_chardir)" "$(DESTDIR)$(nux_coredir)" \
-	"$(DESTDIR)$(nux_datastructdir)" \
 	"$(DESTDIR)$(nux_file_managerdir)" "$(DESTDIR)$(nux_mathdir)" \
 	"$(DESTDIR)$(nux_memorydir)" "$(DESTDIR)$(nux_smart_ptrdir)" \
 	"$(DESTDIR)$(nux_tiny_xmldir)"
@@ -99,20 +97,19 @@ am__objects_1 = libnux_core_@NUX_API_VERSION@_la-TextString.lo \
 	libnux_core_@NUX_API_VERSION@_la-OutputDevice.lo \
 	libnux_core_@NUX_API_VERSION@_la-Exception.lo \
 	libnux_core_@NUX_API_VERSION@_la-Memory.lo \
-	libnux_core_@NUX_API_VERSION@_la-StreamBuffer.lo \
 	libnux_core_@NUX_API_VERSION@_la-NUTF.lo \
 	libnux_core_@NUX_API_VERSION@_la-NUni.lo \
 	libnux_core_@NUX_API_VERSION@_la-NUnicode.lo \
 	libnux_core_@NUX_API_VERSION@_la-Color.lo \
-	libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo \
 	libnux_core_@NUX_API_VERSION@_la-Colors.lo \
 	libnux_core_@NUX_API_VERSION@_la-FileName.lo \
 	libnux_core_@NUX_API_VERSION@_la-ThreadGNU.lo \
 	libnux_core_@NUX_API_VERSION@_la-Parsing.lo \
 	libnux_core_@NUX_API_VERSION@_la-CPU.lo \
 	libnux_core_@NUX_API_VERSION@_la-Error.lo \
+	libnux_core_@NUX_API_VERSION@_la-Logger.lo \
+	libnux_core_@NUX_API_VERSION@_la-LoggingWriter.lo \
 	libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo \
-	libnux_core_@NUX_API_VERSION@_la-Point.lo \
 	libnux_core_@NUX_API_VERSION@_la-GlobalInitializer.lo \
 	libnux_core_@NUX_API_VERSION@_la-ObjectType.lo \
 	libnux_core_@NUX_API_VERSION@_la-Platform.lo \
@@ -124,7 +121,6 @@ am__objects_1 = libnux_core_@NUX_API_VERSION@_la-TextString.lo \
 	libnux_core_@NUX_API_VERSION@_la-Object.lo \
 	libnux_core_@NUX_API_VERSION@_la-Algo.lo \
 	libnux_core_@NUX_API_VERSION@_la-Constants.lo \
-	libnux_core_@NUX_API_VERSION@_la-Point2D.lo \
 	libnux_core_@NUX_API_VERSION@_la-MathFunctions.lo \
 	libnux_core_@NUX_API_VERSION@_la-Line2D.lo \
 	libnux_core_@NUX_API_VERSION@_la-Bezier.lo \
@@ -142,13 +138,11 @@ am__objects_1 = libnux_core_@NUX_API_VERSION@_la-TextString.lo \
 	libnux_core_@NUX_API_VERSION@_la-Line3D.lo \
 	libnux_core_@NUX_API_VERSION@_la-Vector2.lo \
 	libnux_core_@NUX_API_VERSION@_la-CRC32.lo \
-	libnux_core_@NUX_API_VERSION@_la-Size.lo \
 	libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.lo
 am__objects_2 =
 am_libnux_core_@NUX_API_VERSION@_la_OBJECTS = $(am__objects_1) \
 	$(am__objects_2) $(am__objects_2) $(am__objects_2) \
-	$(am__objects_2) $(am__objects_2) $(am__objects_2) \
-	$(am__objects_2)
+	$(am__objects_2) $(am__objects_2) $(am__objects_2)
 libnux_core_@NUX_API_VERSION@_la_OBJECTS =  \
 	$(am_libnux_core_@NUX_API_VERSION@_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -204,9 +198,9 @@ SOURCES = $(libnux_core_@NUX_API_VERSION@_la_SOURCES)
 DIST_SOURCES = $(libnux_core_@NUX_API_VERSION@_la_SOURCES)
 DATA = $(pkgconfig_DATA)
 HEADERS = $(nux_char_HEADERS) $(nux_core_HEADERS) \
-	$(nux_datastruct_HEADERS) $(nux_file_manager_HEADERS) \
-	$(nux_math_HEADERS) $(nux_memory_HEADERS) \
-	$(nux_smart_ptr_HEADERS) $(nux_tiny_xml_HEADERS)
+	$(nux_file_manager_HEADERS) $(nux_math_HEADERS) \
+	$(nux_memory_HEADERS) $(nux_smart_ptr_HEADERS) \
+	$(nux_tiny_xml_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -420,20 +414,19 @@ source_cpp = \
   $(srcdir)/OutputDevice.cpp \
   $(srcdir)/Exception.cpp \
   $(srcdir)/Memory.cpp \
-  $(srcdir)/StreamBuffer.cpp \
   $(srcdir)/Character/NUTF.cpp \
   $(srcdir)/Character/NUni.cpp \
   $(srcdir)/Character/NUnicode.cpp \
   $(srcdir)/Color.cpp \
-  $(srcdir)/ColorFunctions.cpp \
   $(srcdir)/Colors.cpp \
   $(srcdir)/FileName.cpp \
   $(srcdir)/ThreadGNU.cpp \
   $(srcdir)/Parsing.cpp \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
+  $(srcdir)/Logger.cpp \
+  $(srcdir)/LoggingWriter.cpp \
   $(srcdir)/NUniqueIndex.cpp \
-  $(srcdir)/Point.cpp \
   $(srcdir)/GlobalInitializer.cpp \
   $(srcdir)/ObjectType.cpp \
   $(srcdir)/Platform.cpp \
@@ -445,7 +438,6 @@ source_cpp = \
   $(srcdir)/Object.cpp \
   $(srcdir)/Math/Algo.cpp \
   $(srcdir)/Math/Constants.cpp \
-  $(srcdir)/Math/Point2D.cpp \
   $(srcdir)/Math/MathFunctions.cpp \
   $(srcdir)/Math/Line2D.cpp \
   $(srcdir)/Math/Bezier.cpp \
@@ -463,7 +455,6 @@ source_cpp = \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
   $(srcdir)/CRC32.cpp \
-  $(srcdir)/Size.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
 source_file_manager_h = \
@@ -496,6 +487,7 @@ source_math_h = \
   $(srcdir)/Math/Vector2.h \
   $(srcdir)/Math/Line2D.h \
   $(srcdir)/Math/Point2D.h \
+  $(srcdir)/Math/Point2D-inl.h \
   $(srcdir)/Math/Tweening.h \
   $(srcdir)/Math/Matrix4.h \
   $(srcdir)/Math/MathUtility.h
@@ -506,9 +498,6 @@ source_tiny_xml_h = \
 
 source_smart_ptr_h = \
   $(srcdir)/SmartPtr/GenericSmartPointer.h
-
-source_datastruct_h = \
-  $(srcdir)/DataStruct/NList.h
 
 source_h = \
   $(srcdir)/SystemTypes.h \
@@ -523,12 +512,11 @@ source_h = \
   $(srcdir)/Platform.h \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
-  $(srcdir)/ColorFunctions.h \
   $(srcdir)/Colors.h \
-  $(srcdir)/StreamBuffer.h \
+  $(srcdir)/Logger.h \
+  $(srcdir)/LoggingWriter.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
-  $(srcdir)/Namespace.h \
   $(srcdir)/SystemGNU.h \
   $(srcdir)/NuxCore.h \
   $(srcdir)/FileName.h \
@@ -539,6 +527,7 @@ source_h = \
   $(srcdir)/NumberConversion.h \
   $(srcdir)/Object.h \
   $(srcdir)/Size.h \
+  $(srcdir)/Size-inl.h \
   $(srcdir)/Exception.h \
   $(srcdir)/TimeFunctions.h \
   $(srcdir)/CRC32.h \
@@ -549,6 +538,9 @@ source_h = \
   $(srcdir)/NUniqueIndex.h \
   $(srcdir)/FileIO.h \
   $(srcdir)/InitiallyUnownedObject.h \
+  $(srcdir)/Property.h \
+  $(srcdir)/Property-inl.h \
+  $(srcdir)/PropertyTraits.h \
   $(srcdir)/Win32Dialogs/NWin32Clipboard.h
 
 libnux_core_@NUX_API_VERSION@_la_SOURCES = \
@@ -559,8 +551,7 @@ libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_math_h) \
   $(source_memory_h) \
   $(source_tiny_xml_h) \
-  $(source_smart_ptr_h) \
-  $(source_datastruct_h)
+  $(source_smart_ptr_h)
 
 nux_coredir = $(includedir)/Nux-@NUX_API_VERSION@/NuxCore
 nux_core_HEADERS = $(source_h)
@@ -576,8 +567,6 @@ nux_tiny_xmldir = $(nux_coredir)/TinyXML
 nux_tiny_xml_HEADERS = $(source_tiny_xml_h)
 nux_smart_ptrdir = $(nux_coredir)/SmartPtr
 nux_smart_ptr_HEADERS = $(source_smart_ptr_h)
-nux_datastructdir = $(nux_coredir)/DataStruct
-nux_datastruct_HEADERS = $(source_datastruct_h)
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = nux-core-@NUX_API_VERSION@.pc
 all: all-am
@@ -661,7 +650,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CPU.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Color.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Colors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Complex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Constants.Plo@am__quote@
@@ -674,6 +662,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Line2D.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Line3D.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Logger.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-LoggingWriter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-MathFunctions.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Matrix2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Matrix3.Plo@am__quote@
@@ -693,15 +683,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-OutputDevice.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Parsing.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Platform.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Point.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Point2D.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Point3D.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Process.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Quaternion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Rect.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Size.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Spline.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-StreamBuffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-SystemGNU.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Template.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-TextString.Plo@am__quote@
@@ -861,14 +847,6 @@ libnux_core_@NUX_API_VERSION@_la-Memory.lo: $(srcdir)/Memory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Memory.lo `test -f '$(srcdir)/Memory.cpp' || echo '$(srcdir)/'`$(srcdir)/Memory.cpp
 
-libnux_core_@NUX_API_VERSION@_la-StreamBuffer.lo: $(srcdir)/StreamBuffer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-StreamBuffer.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-StreamBuffer.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-StreamBuffer.lo `test -f '$(srcdir)/StreamBuffer.cpp' || echo '$(srcdir)/'`$(srcdir)/StreamBuffer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-StreamBuffer.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-StreamBuffer.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/StreamBuffer.cpp' object='libnux_core_@NUX_API_VERSION@_la-StreamBuffer.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-StreamBuffer.lo `test -f '$(srcdir)/StreamBuffer.cpp' || echo '$(srcdir)/'`$(srcdir)/StreamBuffer.cpp
-
 libnux_core_@NUX_API_VERSION@_la-NUTF.lo: $(srcdir)/Character/NUTF.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-NUTF.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-NUTF.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-NUTF.lo `test -f '$(srcdir)/Character/NUTF.cpp' || echo '$(srcdir)/'`$(srcdir)/Character/NUTF.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-NUTF.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-NUTF.Plo
@@ -900,14 +878,6 @@ libnux_core_@NUX_API_VERSION@_la-Color.lo: $(srcdir)/Color.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Color.cpp' object='libnux_core_@NUX_API_VERSION@_la-Color.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Color.lo `test -f '$(srcdir)/Color.cpp' || echo '$(srcdir)/'`$(srcdir)/Color.cpp
-
-libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo: $(srcdir)/ColorFunctions.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo `test -f '$(srcdir)/ColorFunctions.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorFunctions.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-ColorFunctions.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ColorFunctions.cpp' object='libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-ColorFunctions.lo `test -f '$(srcdir)/ColorFunctions.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorFunctions.cpp
 
 libnux_core_@NUX_API_VERSION@_la-Colors.lo: $(srcdir)/Colors.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-Colors.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Colors.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-Colors.lo `test -f '$(srcdir)/Colors.cpp' || echo '$(srcdir)/'`$(srcdir)/Colors.cpp
@@ -957,6 +927,22 @@ libnux_core_@NUX_API_VERSION@_la-Error.lo: $(srcdir)/Error.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Error.lo `test -f '$(srcdir)/Error.cpp' || echo '$(srcdir)/'`$(srcdir)/Error.cpp
 
+libnux_core_@NUX_API_VERSION@_la-Logger.lo: $(srcdir)/Logger.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-Logger.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Logger.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-Logger.lo `test -f '$(srcdir)/Logger.cpp' || echo '$(srcdir)/'`$(srcdir)/Logger.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Logger.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Logger.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Logger.cpp' object='libnux_core_@NUX_API_VERSION@_la-Logger.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Logger.lo `test -f '$(srcdir)/Logger.cpp' || echo '$(srcdir)/'`$(srcdir)/Logger.cpp
+
+libnux_core_@NUX_API_VERSION@_la-LoggingWriter.lo: $(srcdir)/LoggingWriter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-LoggingWriter.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-LoggingWriter.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-LoggingWriter.lo `test -f '$(srcdir)/LoggingWriter.cpp' || echo '$(srcdir)/'`$(srcdir)/LoggingWriter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-LoggingWriter.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-LoggingWriter.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/LoggingWriter.cpp' object='libnux_core_@NUX_API_VERSION@_la-LoggingWriter.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-LoggingWriter.lo `test -f '$(srcdir)/LoggingWriter.cpp' || echo '$(srcdir)/'`$(srcdir)/LoggingWriter.cpp
+
 libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo: $(srcdir)/NUniqueIndex.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo `test -f '$(srcdir)/NUniqueIndex.cpp' || echo '$(srcdir)/'`$(srcdir)/NUniqueIndex.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.Plo
@@ -964,14 +950,6 @@ libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo: $(srcdir)/NUniqueIndex.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/NUniqueIndex.cpp' object='libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo `test -f '$(srcdir)/NUniqueIndex.cpp' || echo '$(srcdir)/'`$(srcdir)/NUniqueIndex.cpp
-
-libnux_core_@NUX_API_VERSION@_la-Point.lo: $(srcdir)/Point.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-Point.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Point.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-Point.lo `test -f '$(srcdir)/Point.cpp' || echo '$(srcdir)/'`$(srcdir)/Point.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Point.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Point.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Point.cpp' object='libnux_core_@NUX_API_VERSION@_la-Point.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Point.lo `test -f '$(srcdir)/Point.cpp' || echo '$(srcdir)/'`$(srcdir)/Point.cpp
 
 libnux_core_@NUX_API_VERSION@_la-GlobalInitializer.lo: $(srcdir)/GlobalInitializer.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-GlobalInitializer.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-GlobalInitializer.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-GlobalInitializer.lo `test -f '$(srcdir)/GlobalInitializer.cpp' || echo '$(srcdir)/'`$(srcdir)/GlobalInitializer.cpp
@@ -1060,14 +1038,6 @@ libnux_core_@NUX_API_VERSION@_la-Constants.lo: $(srcdir)/Math/Constants.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Math/Constants.cpp' object='libnux_core_@NUX_API_VERSION@_la-Constants.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Constants.lo `test -f '$(srcdir)/Math/Constants.cpp' || echo '$(srcdir)/'`$(srcdir)/Math/Constants.cpp
-
-libnux_core_@NUX_API_VERSION@_la-Point2D.lo: $(srcdir)/Math/Point2D.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-Point2D.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Point2D.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-Point2D.lo `test -f '$(srcdir)/Math/Point2D.cpp' || echo '$(srcdir)/'`$(srcdir)/Math/Point2D.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Point2D.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Point2D.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Math/Point2D.cpp' object='libnux_core_@NUX_API_VERSION@_la-Point2D.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Point2D.lo `test -f '$(srcdir)/Math/Point2D.cpp' || echo '$(srcdir)/'`$(srcdir)/Math/Point2D.cpp
 
 libnux_core_@NUX_API_VERSION@_la-MathFunctions.lo: $(srcdir)/Math/MathFunctions.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-MathFunctions.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-MathFunctions.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-MathFunctions.lo `test -f '$(srcdir)/Math/MathFunctions.cpp' || echo '$(srcdir)/'`$(srcdir)/Math/MathFunctions.cpp
@@ -1205,14 +1175,6 @@ libnux_core_@NUX_API_VERSION@_la-CRC32.lo: $(srcdir)/CRC32.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-CRC32.lo `test -f '$(srcdir)/CRC32.cpp' || echo '$(srcdir)/'`$(srcdir)/CRC32.cpp
 
-libnux_core_@NUX_API_VERSION@_la-Size.lo: $(srcdir)/Size.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-Size.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Size.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-Size.lo `test -f '$(srcdir)/Size.cpp' || echo '$(srcdir)/'`$(srcdir)/Size.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Size.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Size.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Size.cpp' object='libnux_core_@NUX_API_VERSION@_la-Size.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Size.lo `test -f '$(srcdir)/Size.cpp' || echo '$(srcdir)/'`$(srcdir)/Size.cpp
-
 libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.lo: $(srcdir)/InitiallyUnownedObject.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.lo `test -f '$(srcdir)/InitiallyUnownedObject.cpp' || echo '$(srcdir)/'`$(srcdir)/InitiallyUnownedObject.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.Plo
@@ -1286,26 +1248,6 @@ uninstall-nux_coreHEADERS:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(nux_coredir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(nux_coredir)" && rm -f $$files
-install-nux_datastructHEADERS: $(nux_datastruct_HEADERS)
-	@$(NORMAL_INSTALL)
-	test -z "$(nux_datastructdir)" || $(MKDIR_P) "$(DESTDIR)$(nux_datastructdir)"
-	@list='$(nux_datastruct_HEADERS)'; test -n "$(nux_datastructdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(nux_datastructdir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(nux_datastructdir)" || exit $$?; \
-	done
-
-uninstall-nux_datastructHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nux_datastruct_HEADERS)'; test -n "$(nux_datastructdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(nux_datastructdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(nux_datastructdir)" && rm -f $$files
 install-nux_file_managerHEADERS: $(nux_file_manager_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(nux_file_managerdir)" || $(MKDIR_P) "$(DESTDIR)$(nux_file_managerdir)"
@@ -1493,7 +1435,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(nux_chardir)" "$(DESTDIR)$(nux_coredir)" "$(DESTDIR)$(nux_datastructdir)" "$(DESTDIR)$(nux_file_managerdir)" "$(DESTDIR)$(nux_mathdir)" "$(DESTDIR)$(nux_memorydir)" "$(DESTDIR)$(nux_smart_ptrdir)" "$(DESTDIR)$(nux_tiny_xmldir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(nux_chardir)" "$(DESTDIR)$(nux_coredir)" "$(DESTDIR)$(nux_file_managerdir)" "$(DESTDIR)$(nux_mathdir)" "$(DESTDIR)$(nux_memorydir)" "$(DESTDIR)$(nux_smart_ptrdir)" "$(DESTDIR)$(nux_tiny_xmldir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -1547,10 +1489,9 @@ info: info-am
 info-am:
 
 install-data-am: install-nux_charHEADERS install-nux_coreHEADERS \
-	install-nux_datastructHEADERS install-nux_file_managerHEADERS \
-	install-nux_mathHEADERS install-nux_memoryHEADERS \
-	install-nux_smart_ptrHEADERS install-nux_tiny_xmlHEADERS \
-	install-pkgconfigDATA
+	install-nux_file_managerHEADERS install-nux_mathHEADERS \
+	install-nux_memoryHEADERS install-nux_smart_ptrHEADERS \
+	install-nux_tiny_xmlHEADERS install-pkgconfigDATA
 
 install-dvi: install-dvi-am
 
@@ -1597,10 +1538,10 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-libLTLIBRARIES uninstall-nux_charHEADERS \
-	uninstall-nux_coreHEADERS uninstall-nux_datastructHEADERS \
-	uninstall-nux_file_managerHEADERS uninstall-nux_mathHEADERS \
-	uninstall-nux_memoryHEADERS uninstall-nux_smart_ptrHEADERS \
-	uninstall-nux_tiny_xmlHEADERS uninstall-pkgconfigDATA
+	uninstall-nux_coreHEADERS uninstall-nux_file_managerHEADERS \
+	uninstall-nux_mathHEADERS uninstall-nux_memoryHEADERS \
+	uninstall-nux_smart_ptrHEADERS uninstall-nux_tiny_xmlHEADERS \
+	uninstall-pkgconfigDATA
 
 .MAKE: install-am install-strip
 
@@ -1612,17 +1553,16 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-nux_charHEADERS \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am \
 	install-libLTLIBRARIES install-man install-nux_charHEADERS \
-	install-nux_coreHEADERS install-nux_datastructHEADERS \
-	install-nux_file_managerHEADERS install-nux_mathHEADERS \
-	install-nux_memoryHEADERS install-nux_smart_ptrHEADERS \
-	install-nux_tiny_xmlHEADERS install-pdf install-pdf-am \
-	install-pkgconfigDATA install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-libLTLIBRARIES \
+	install-nux_coreHEADERS install-nux_file_managerHEADERS \
+	install-nux_mathHEADERS install-nux_memoryHEADERS \
+	install-nux_smart_ptrHEADERS install-nux_tiny_xmlHEADERS \
+	install-pdf install-pdf-am install-pkgconfigDATA install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-libLTLIBRARIES \
 	uninstall-nux_charHEADERS uninstall-nux_coreHEADERS \
-	uninstall-nux_datastructHEADERS \
 	uninstall-nux_file_managerHEADERS uninstall-nux_mathHEADERS \
 	uninstall-nux_memoryHEADERS uninstall-nux_smart_ptrHEADERS \
 	uninstall-nux_tiny_xmlHEADERS uninstall-pkgconfigDATA

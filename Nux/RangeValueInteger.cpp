@@ -48,7 +48,6 @@ namespace nux
 
   RangeValueInteger::~RangeValueInteger()
   {
-    DestroyLayout();
   }
 
   void RangeValueInteger::InitializeWidgets()
@@ -91,11 +90,6 @@ namespace nux
     m_Percentage    = new InputArea (NUX_TRACKER_LOCATION);
     m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
   }
-
-  void RangeValueInteger::DestroyLayout()
-  {
-  }
-
 
   long RangeValueInteger::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {

@@ -239,10 +239,10 @@ namespace nux
 
       Size s = GetMinimumSize();
 
-      if (s.GetWidth() < 2 * CAPTION_X_MARGIN + m_CaptionArea->GetBaseWidth() )
+      if (s.width < 2 * CAPTION_X_MARGIN + m_CaptionArea->GetBaseWidth() )
       {
-        SetMinimumSize (2 * CAPTION_X_MARGIN + m_CaptionArea->GetBaseWidth(), s.GetHeight() );
-        SetBaseSize (2 * CAPTION_X_MARGIN + m_CaptionArea->GetBaseWidth(), s.GetHeight() );
+        SetMinimumSize (2 * CAPTION_X_MARGIN + m_CaptionArea->GetBaseWidth(), s.height);
+        SetBaseSize (2 * CAPTION_X_MARGIN + m_CaptionArea->GetBaseWidth(), s.height);
       }
     }
   }

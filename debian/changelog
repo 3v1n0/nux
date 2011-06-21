@@ -1,3 +1,9 @@
+nux (1.0.1-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Jun 2011 18:29:56 +0200
+
 nux (0.9.48-0ubuntu4) oneiric; urgency=low
 
   * Cherry-pick more fixes:

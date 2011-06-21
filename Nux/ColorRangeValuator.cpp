@@ -40,7 +40,6 @@ namespace nux
 
   ColorRangeValuator::~ColorRangeValuator()
   {
-    DestroyLayout();
   }
 
   void ColorRangeValuator::InitializeWidgets()
@@ -49,11 +48,6 @@ namespace nux
   }
 
   void ColorRangeValuator::InitializeLayout()
-  {
-
-  }
-
-  void ColorRangeValuator::DestroyLayout()
   {
 
   }

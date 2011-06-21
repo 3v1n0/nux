@@ -196,6 +196,7 @@ namespace nux
     static void Initialize();
     static void Shutdown();
     static BOOL RegisterTLS (t_u32 index, TLS_ShutdownCallback shutdownCallback);
+    static BOOL UnRegisterTLS (unsigned int index);
     static void ThreadInit();
     static void ThreadShutdown();
 
@@ -244,6 +245,10 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
 #define inlRegisterThreadLocalIndex(index, name, shutdownCallback) \
     nuxVerifyExpr(index == ThreadLocalStorageDef##name::Index); \
     nuxVerifyExpr(nux::NThreadLocalStorage::RegisterTLS(index, shutdownCallback))
+
+#define inlUnRegisterThreadLocalIndex(name) \
+    nuxVerifyExpr(nux::NThreadLocalStorage::UnRegisterTLS(ThreadLocalStorageDef##name::Index))
+
 
 #define inlGetThreadLocalStorage(name)			GetTLS_##name()
 #define inlSetThreadLocalStorage(name, value)   SetTLS_##name(value)

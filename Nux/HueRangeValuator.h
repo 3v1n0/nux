@@ -61,13 +61,13 @@ namespace nux
     }
     void ModelHSV()
     {
-      m_Model = CM_HSV;
+      m_Model = color::HSV;
     }
     void ModelHLS()
     {
-      m_Model = CM_HLS;
+      m_Model = color::HLS;
     }
-    eColorModel GetModel() const
+    color::Model GetModel() const
     {
       return m_Model;
     }
@@ -75,7 +75,6 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   private:
     float m_HLSSaturation;
@@ -83,7 +82,7 @@ namespace nux
     float m_HSVSaturation;
     float m_HSVValue;
 
-    eColorModel m_Model;
+    color::Model m_Model;
   };
 
 }

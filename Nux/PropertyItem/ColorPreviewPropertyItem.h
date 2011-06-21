@@ -35,12 +35,23 @@ namespace nux
     NODE_SKIP_CHILD (true);
     NODE_SIG_RECEIVER2 (RecvPropertyChange, ColorEditor *);
   public:
-    ColorPreviewPropertyItem (const TCHAR *name, float red = 0.0f, float green = 0.0f, float blue = 0.0f,  eColorModel colormodel = CM_RGB);
+    ColorPreviewPropertyItem(const TCHAR *name, float red = 0.0f, float green = 0.0f, float blue = 0.0f,  color::Model colormodel = color::RGB);
     virtual ~ColorPreviewPropertyItem();
 
-    virtual long ProcessPropertyEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter, RowHeader *row, const std::vector<ColumnHeader>& column_vector, Color ItemBackgroundColor = Color (0x0) );
-    virtual void ComputePropertyLayout (int x, int y, RowHeader *row, const std::vector<ColumnHeader>& column_vector);
+    virtual long ProcessPropertyEvent(IEvent &ievent,
+                                      long TraverseInfo,
+                                      long ProcessEventInfo);
+    virtual void DrawProperty(GraphicsEngine &GfxContext,
+                              TableCtrl *table,
+                              bool force_draw,
+                              Geometry geo,
+                              const BasePainter &Painter,
+                              RowHeader *row,
+                              const std::vector<ColumnHeader>& column_vector,
+                              Color ItemBackgroundColor = Color (0x0) );
+    virtual void ComputePropertyLayout(int x, int y,
+                                       RowHeader *row,
+                                       const std::vector<ColumnHeader>& column_vector);
     virtual int GetItemBestHeight();
   };
 

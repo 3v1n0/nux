@@ -71,17 +71,17 @@ namespace nux
 
     _dnd_area                   = NULL;
 
-    if (GetWindowThread ()->GetWindow ().HasFrameBufferSupport ())
+    if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
     {
-      m_FrameBufferObject = GetGpuDevice ()->CreateFrameBufferObject ();
+      m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject ();
       // Do not leave the Fbo binded. Deactivate it.
       m_FrameBufferObject->Deactivate ();
     }
 
     // At this stage, the size of the window may not be known yet.
     // FormatRenderTargets will be called the first time runtime gets into WindowThread::ExecutionLoop
-    m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
-    m_MainDepthRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
+    m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
+    m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
 
     m_MenuList = new std::list<MenuPage*>;
     m_PopupRemoved = false;
@@ -168,8 +168,8 @@ namespace nux
       // Don't size the texture to the dimension of the window yet. this will be done later.
       if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
       {
-        rt.color_rt = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
-        rt.depth_rt = GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
+        rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
+        rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
       }
 
       _window_to_texture_map.insert ( std::map< BaseWindow*, RenderTargetTextures >::value_type ( window, rt) );
@@ -865,7 +865,7 @@ namespace nux
           if (!GetWindowThread ()->IsEmbeddedWindow() )
             RenderMainWindowComposition (true, true);
 
-          if (1 /*GetGpuDevice()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
+          if (1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
             RenderTopViews (true, _view_window_list, false, true);
             RenderTopViews (true, _modal_view_window_list, true, true);
@@ -882,7 +882,7 @@ namespace nux
           if (!GetWindowThread ()->IsEmbeddedWindow() )
             RenderMainWindowComposition (false, true);
 
-          if (1 /*GetGpuDevice()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
+          if (1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
             RenderTopViews (false, _view_window_list, false, true);
             RenderTopViews (false, _modal_view_window_list, true, true);
@@ -897,7 +897,7 @@ namespace nux
           if (!GetWindowThread ()->IsEmbeddedWindow() )
             RenderMainWindowComposition (false, true);
 
-          if (1 /*GetGpuDevice()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
+          if (1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGraphicsBoardVendor() != BOARD_INTEL*/)
           {
             RenderTopViews (false, _view_window_list, false, true);
             RenderTopViews (false, _modal_view_window_list, true, true);
@@ -982,7 +982,7 @@ namespace nux
       SetProcessingTopView (NULL);
     }
 
-//     GetThreadGraphicsContext()->SetContext (0, 0,
+//     GetGraphicsDisplay()->GetGraphicsEngine()->SetContext (0, 0,
 //                                             GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
 //                                             GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
   }
@@ -1009,7 +1009,7 @@ namespace nux
       SetProcessingTopView (NULL);
     }
 
-    //GetThreadGraphicsContext()->SetContext (0, 0, buffer_width, buffer_height);
+    //GetGraphicsDisplay()->GetGraphicsEngine()->SetContext (0, 0, buffer_width, buffer_height);
   }
 
   void WindowCompositor::DrawTooltip (bool force_draw)
@@ -1035,7 +1035,7 @@ namespace nux
         //SetProcessingTopView(NULL);
     }
 
-    //GetThreadGraphicsContext()->SetContext (0, 0, buffer_width, buffer_height);
+    //GetGraphicsDisplay()->GetGraphicsEngine()->SetContext (0, 0, buffer_width, buffer_height);
   }
 
   void WindowCompositor::RenderTopViewContent (BaseWindow *window, bool force_draw)
@@ -1083,8 +1083,8 @@ namespace nux
 
             if ( (rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height) )
             {
-              rt.color_rt = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-              rt.depth_rt = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+              rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+              rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
             }
 
             m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -1262,8 +1262,8 @@ namespace nux
 
       if ( (!m_MainColorRT.IsValid() ) || (!m_MainDepthRT.IsValid() ) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height) )
       {
-        m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        m_MainDepthRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
       }
 
       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -1340,7 +1340,7 @@ namespace nux
 
     if ( (!m_MainColorRT.IsValid() ) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height) )
     {
-      m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
     }
 
     // Setup the Composition Render Target
@@ -1369,7 +1369,7 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Colors::White);
+    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, color::White);
   }
 
   void WindowCompositor::SetCompositionRT()
@@ -1380,7 +1380,7 @@ namespace nux
 
     if ( (!m_CompositionRT.IsValid() ) || (m_CompositionRT->GetWidth() != buffer_width) || (m_CompositionRT->GetHeight() != buffer_height) )
     {
-      m_CompositionRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+      m_CompositionRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
     }
 
     // Setup the Composition Render Target
@@ -1409,7 +1409,7 @@ namespace nux
     texxform.vscale = 1.0f;
     texxform.uwrap = TEXWRAP_REPEAT;
     texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, Colors::White);
+    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, color::White);
   }
 
   void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity)
@@ -1435,7 +1435,7 @@ namespace nux
     }
     else
     {
-      GetGpuDevice()->DeactivateFrameBuffer();
+      GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
     }
 
     GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
@@ -1458,7 +1458,7 @@ namespace nux
         GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       }
 
-      GetThreadGraphicsContext()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
       GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
     }
   }
@@ -1624,7 +1624,7 @@ namespace nux
     Geometry geo = m_TooltipArea->GetGeometry();
     geo.OffsetPosition(_tooltip_window->GetBaseX(), _tooltip_window->GetBaseY());
 
-    return geo.IsPointInside(x, y);    
+    return geo.IsPointInside(x, y);
   }
 
   bool WindowCompositor::IsTooltipActive()
@@ -1639,7 +1639,7 @@ namespace nux
 
     if (area == 0)
     {
-      _event_root.Set (0, 0);
+      _event_root = Point(0, 0);
     }
     else
     {
@@ -1649,7 +1649,7 @@ namespace nux
 
     if (area)
       SetFocusAreaWindow (GetProcessingTopView ());
-    else 
+    else
       SetFocusAreaWindow (NULL);
   }
 
@@ -1770,9 +1770,9 @@ namespace nux
     nuxAssert (buffer_width >= 1);
     nuxAssert (buffer_height >= 1);
 
-    m_MainColorRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-    m_CompositionRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-    m_MainDepthRT = GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+    m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+    m_CompositionRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+    m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
 
     // Clear the buffer the first time...
     m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -1790,10 +1790,10 @@ namespace nux
     CHECKGL ( glClearStencil (0) );
     CHECKGL ( glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
 
-//     m_BlurTexture   = GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width, 1), Max (buffer_height, 1), 1, BITFMT_R8G8B8A8);
-//     m_FullSceneMip0 = GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width / 2, 1), Max (buffer_height / 2, 1), 1, BITFMT_R8G8B8A8);
-//     m_FullSceneMip1 = GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width / 4, 1), Max (buffer_height / 4, 1), 1, BITFMT_R8G8B8A8);
-//     m_FullSceneMip2 = GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width / 8, 1), Max (buffer_height / 8, 1), 1, BITFMT_R8G8B8A8);
+//     m_BlurTexture   = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width, 1), Max (buffer_height, 1), 1, BITFMT_R8G8B8A8);
+//     m_FullSceneMip0 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width / 2, 1), Max (buffer_height / 2, 1), 1, BITFMT_R8G8B8A8);
+//     m_FullSceneMip1 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width / 4, 1), Max (buffer_height / 4, 1), 1, BITFMT_R8G8B8A8);
+//     m_FullSceneMip2 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width / 8, 1), Max (buffer_height / 8, 1), 1, BITFMT_R8G8B8A8);
   }
 
   void WindowCompositor::RestoreRenderingSurface ()
@@ -1814,8 +1814,8 @@ namespace nux
 
       if ((rt.color_rt->GetWidth () != buffer_width) || (rt.color_rt->GetHeight () != buffer_height))
       {
-        rt.color_rt = GetGpuDevice ()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        rt.depth_rt = GetGpuDevice ()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+        rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+        rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
       }
 
       m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);

@@ -23,20 +23,5 @@
 #ifndef GLTHREAD_H
 #define GLTHREAD_H
 
-// namespace nux
-// {
-// 
-//   class GraphicsDisplay;
-//   class GpuDevice;
-//   class GraphicsEngine;
-// 
-//   GraphicsDisplay *GetThreadGLWindow();
-//   GpuDevice *GetGpuDevice();
-//   GraphicsEngine *GetThreadGraphicsContext();
-// 
-// #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
-// #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
-// 
-// }
 
 #endif // GLTHREAD_H

@@ -25,6 +25,7 @@
 
 namespace nux
 {
+  class NBitmapData;
   class GdkGraphics
   {
   public:

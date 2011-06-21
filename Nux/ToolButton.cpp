@@ -35,7 +35,7 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
     ,   m_ActionItem (0)
   {
-    m_Texture = GetGpuDevice()->CreateSystemCapableTexture();
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
 
     if (BitmapFilename)
       m_Texture->Update (BitmapFilename);

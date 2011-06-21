@@ -33,7 +33,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = test-nux$(EXEEXT)
+check_PROGRAMS = test-nux$(EXEEXT) gtest-nux-core$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -47,20 +47,30 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+am_gtest_nux_core_OBJECTS = gtest_nux_core-test_logger.$(OBJEXT) \
+	gtest_nux_core-test_properties.$(OBJEXT)
+gtest_nux_core_OBJECTS = $(am_gtest_nux_core_OBJECTS)
+am__DEPENDENCIES_1 =
+gtest_nux_core_DEPENDENCIES =  \
+	$(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+	$(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+gtest_nux_core_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(gtest_nux_core_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am_test_nux_OBJECTS = test_nux-test-nux.$(OBJEXT) \
 	test_nux-test-timeline.$(OBJEXT) \
 	test_nux-test-object.$(OBJEXT) test_nux-test-system.$(OBJEXT)
 test_nux_OBJECTS = $(am_test_nux_OBJECTS)
-am__DEPENDENCIES_1 =
 test_nux_DEPENDENCIES =  \
 	$(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 	$(am__DEPENDENCIES_1)
-AM_V_lt = $(am__v_lt_$(V))
-am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
-am__v_lt_0 = --silent
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -87,8 +97,8 @@ am__v_CXXLD_0 = @echo "  CXXLD " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(test_nux_SOURCES)
-DIST_SOURCES = $(test_nux_SOURCES)
+SOURCES = $(gtest_nux_core_SOURCES) $(test_nux_SOURCES)
+DIST_SOURCES = $(gtest_nux_core_SOURCES) $(test_nux_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -290,6 +300,31 @@ test_nux_LDADD = \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS)
 
+gtest_nux_core_SOURCES = \
+  test_logger.cpp \
+  test_properties.cpp
+
+gtest_nux_core_CPPFLAGS = \
+  -I$(srcdir) \
+  -I$(top_srcdir) \
+  -DPREFIX=\""$(prefix)"\" \
+	-DLIBDIR=\""$(libdir)"\" \
+  -DDATADIR=\""$(datadir)"\" \
+  -DG_LOG_DOMAIN=\"NuxTests\" \
+  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+  $(GCC_FLAGS) \
+  $(NUX_CORE_CFLAGS) \
+  $(NUX_EXAMPLES_CFLAGS) \
+  $(NUX_CFLAGS) \
+  $(MAINTAINER_CFLAGS)
+
+gtest_nux_core_LDADD = \
+  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+  $(NUX_LIBS)
+
+gtest_nux_core_LDFLAGS = \
+  -lpthread -lgtest -lgtest_main -lgmock
+
 all: all-am
 
 .SUFFIXES:
@@ -333,6 +368,9 @@ clean-checkPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+gtest-nux-core$(EXEEXT): $(gtest_nux_core_OBJECTS) $(gtest_nux_core_DEPENDENCIES) 
+	@rm -f gtest-nux-core$(EXEEXT)
+	$(AM_V_CXXLD)$(gtest_nux_core_LINK) $(gtest_nux_core_OBJECTS) $(gtest_nux_core_LDADD) $(LIBS)
 test-nux$(EXEEXT): $(test_nux_OBJECTS) $(test_nux_DEPENDENCIES) 
 	@rm -f test-nux$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_nux_OBJECTS) $(test_nux_LDADD) $(LIBS)
@@ -343,6 +381,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_logger.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_properties.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-nux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-object.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-system.Po@am__quote@
@@ -371,6 +411,38 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+gtest_nux_core-test_logger.o: test_logger.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_logger.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_logger.Tpo -c -o gtest_nux_core-test_logger.o `test -f 'test_logger.cpp' || echo '$(srcdir)/'`test_logger.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_logger.Tpo $(DEPDIR)/gtest_nux_core-test_logger.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_logger.cpp' object='gtest_nux_core-test_logger.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_logger.o `test -f 'test_logger.cpp' || echo '$(srcdir)/'`test_logger.cpp
+
+gtest_nux_core-test_logger.obj: test_logger.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_logger.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_logger.Tpo -c -o gtest_nux_core-test_logger.obj `if test -f 'test_logger.cpp'; then $(CYGPATH_W) 'test_logger.cpp'; else $(CYGPATH_W) '$(srcdir)/test_logger.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_logger.Tpo $(DEPDIR)/gtest_nux_core-test_logger.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_logger.cpp' object='gtest_nux_core-test_logger.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_logger.obj `if test -f 'test_logger.cpp'; then $(CYGPATH_W) 'test_logger.cpp'; else $(CYGPATH_W) '$(srcdir)/test_logger.cpp'; fi`
+
+gtest_nux_core-test_properties.o: test_properties.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_properties.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_properties.Tpo -c -o gtest_nux_core-test_properties.o `test -f 'test_properties.cpp' || echo '$(srcdir)/'`test_properties.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_properties.Tpo $(DEPDIR)/gtest_nux_core-test_properties.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_properties.cpp' object='gtest_nux_core-test_properties.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_properties.o `test -f 'test_properties.cpp' || echo '$(srcdir)/'`test_properties.cpp
+
+gtest_nux_core-test_properties.obj: test_properties.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_properties.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_properties.Tpo -c -o gtest_nux_core-test_properties.obj `if test -f 'test_properties.cpp'; then $(CYGPATH_W) 'test_properties.cpp'; else $(CYGPATH_W) '$(srcdir)/test_properties.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_properties.Tpo $(DEPDIR)/gtest_nux_core-test_properties.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_properties.cpp' object='gtest_nux_core-test_properties.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_properties.obj `if test -f 'test_properties.cpp'; then $(CYGPATH_W) 'test_properties.cpp'; else $(CYGPATH_W) '$(srcdir)/test_properties.cpp'; fi`
 
 test_nux-test-nux.o: test-nux.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-nux.o -MD -MP -MF $(DEPDIR)/test_nux-test-nux.Tpo -c -o test_nux-test-nux.o `test -f 'test-nux.cpp' || echo '$(srcdir)/'`test-nux.cpp
@@ -642,11 +714,13 @@ uninstall-am:
 
 
 #run make test as part of make check
-check-local: test
+check-local: test gtest
 test:
 	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
 
-.PHONY: check-report full-report
+gtest: gtest-nux-core
+	./gtest-nux-core
+
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \
 		&& ( gtester-report test-nux-results.xml \
@@ -662,6 +736,8 @@ full-report:
 
 clean-generic:
 	rm -f test-nux-results.xml test-nux-results.html
+
+.PHONY: check-report full-report gtest test
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

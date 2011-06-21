@@ -64,7 +64,6 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   private:
     static unsigned int sBufferSize;
