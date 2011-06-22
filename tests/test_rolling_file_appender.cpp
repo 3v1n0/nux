@@ -79,10 +79,10 @@ TEST_F(TestRollingFileAppender, TestLogFileRolls) {
   RollingFileAppender output(logfile, 5, max_log_size);
 
   output << "Testing the rolling of the logfile" << std::endl
-         << "Second line is in the primary logfile" << std::endl;
+         << "Next line" << std::endl;
 
   EXPECT_THAT(ReadFile(logfile),
-              Eq("Second line is in the primary logfile\n"));
+              Eq("Next line\n"));
   EXPECT_THAT(ReadFile(logfile + ".1"),
               Eq("Testing the rolling of the logfile\n"));
 }
