@@ -69,6 +69,12 @@ RollingFileStreamBuffer::RollingFileStreamBuffer(bf::path const& filename,
   , number_of_backup_files_(number_of_backup_files)
   , max_log_size_(max_log_size)
 {
+  // Firstly make sure that we have been given a full path.
+  bf::path parent = filename.parent_path();
+  if (parent.empty()) {
+    std::string error_msg = filename.string() + " needs to be a full path";
+    throw std::runtime_error(error_msg);
+  }
   // Looks to see if our filename exists.
   if (bf::exists(filename)) {
     // The filename needs to be a regular file.
@@ -79,12 +85,6 @@ RollingFileStreamBuffer::RollingFileStreamBuffer(bf::path const& filename,
     // Rotate the files.
     RotateFiles();
   } else {
-    // Firstly make sure that the directory for the filename exists.
-    bf::path parent = filename.parent_path();
-    if (parent.empty()) {
-      std::string error_msg = filename.string() + " needs to be a full path";
-      throw std::runtime_error(error_msg);
-    }
     bf::create_directories(parent);
   }
   // Now open the filename.
@@ -130,6 +130,11 @@ int RollingFileStreamBuffer::sync()
 }
 
 } // anon namespace
+
+RollingFileAppender::RollingFileAppender(std::string const& filename)
+  : std::ostream(new RollingFileStreamBuffer(filename, 5, 1e7))
+{
+}
 
 RollingFileAppender::RollingFileAppender(std::string const& filename,
                                          unsigned number_of_backup_files,

@@ -47,7 +47,7 @@ protected:
 TEST_F(TestRollingFileAppender, TestCreatesFile) {
 
   std::string logfile = TEST_ROOT + "/nux.log";
-  RollingFileAppender output(logfile, 5, 1e6);
+  RollingFileAppender output(logfile);
 
   EXPECT_TRUE(bf::exists(logfile));
   EXPECT_TRUE(bf::is_regular_file(logfile));
@@ -56,7 +56,7 @@ TEST_F(TestRollingFileAppender, TestCreatesFile) {
 TEST_F(TestRollingFileAppender, TestNestedDirectories) {
 
   std::string logfile = TEST_ROOT + "/nested/directories/nux.log";
-  RollingFileAppender output(logfile, 5, 1e6);
+  RollingFileAppender output(logfile);
 
   EXPECT_TRUE(bf::exists(logfile));
   EXPECT_TRUE(bf::is_regular_file(logfile));
@@ -65,7 +65,7 @@ TEST_F(TestRollingFileAppender, TestNestedDirectories) {
 TEST_F(TestRollingFileAppender, TestWritesToLogFile) {
 
   std::string logfile = TEST_ROOT + "/nux.log";
-  RollingFileAppender output(logfile, 5, 1e6);
+  RollingFileAppender output(logfile);
 
   output << "Testing writing" << std::flush;
 
@@ -105,6 +105,45 @@ TEST_F(TestRollingFileAppender, TestLogFileRollsAtFlush) {
               Eq("Long line greater than max_log_size\n"));
   EXPECT_THAT(ReadFile(logfile + ".2"),
               Eq("Testing the rolling of the logfile\n"));
+}
+
+TEST_F(TestRollingFileAppender, TestExistingLogFileMoved) {
+
+  std::string logfile = TEST_ROOT + "/nux.log";
+  {
+    // Due to operator<< weirdness, we can't put this on one line without a
+    // static_cast<ostream&>, which is slightly unintuitive.
+    RollingFileAppender output(logfile);
+    output << "Existing file.";
+  }
+  EXPECT_TRUE(bf::exists(logfile));
+
+  RollingFileAppender output(logfile);
+
+  EXPECT_THAT(ReadFile(logfile),
+              Eq(""));
+  EXPECT_THAT(ReadFile(logfile + ".1"),
+              Eq("Existing file."));
+}
+
+TEST_F(TestRollingFileAppender, TestDeletingOld) {
+
+  std::string logfile = TEST_ROOT + "/nux.log";
+  // Two backups, size 20 bytes.
+  RollingFileAppender output(logfile, 2, 20);
+
+  output << "Oldest line should be deleted." << std::endl
+         << "This line will be in the last backup." << std::endl
+         << "This is backup number 1." << std::endl
+         << "Current." << std::endl;
+
+  EXPECT_THAT(ReadFile(logfile),
+              Eq("Current.\n"));
+  EXPECT_THAT(ReadFile(logfile + ".1"),
+              Eq("This is backup number 1.\n"));
+  EXPECT_THAT(ReadFile(logfile + ".2"),
+              Eq("This line will be in the last backup.\n"));
+  EXPECT_FALSE(bf::exists(logfile + ".3"));
 }
 
 

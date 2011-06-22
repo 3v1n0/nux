@@ -31,6 +31,7 @@ namespace logging {
 class RollingFileAppender : public std::ostream
 {
 public:
+  RollingFileAppender(std::string const& filename);
   RollingFileAppender(std::string const& filename,
                       unsigned number_of_backup_files,
                       unsigned long long max_log_size);
