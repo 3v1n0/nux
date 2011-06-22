@@ -52,6 +52,17 @@ namespace nux
 
     SetFiltering (GL_NEAREST, GL_NEAREST);
     SetWrap (GL_REPEAT, GL_REPEAT, GL_REPEAT);
+
+#ifdef NUX_OPENGLES_20
+    // NPOT textures in GLES2 only support GL_CLAMP_TO_EDGE unless
+    // GL_OES_texture_npot is supported.
+    // TODO: Check for GL_OES_texture_npot
+    if (!_IsPOT)
+    {
+      SetWrap (GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+    }
+#endif
+
     SetRenderStates();
 
     GRunTimeStats.Register (this);
