@@ -87,5 +87,25 @@ TEST_F(TestRollingFileAppender, TestLogFileRolls) {
               Eq("Testing the rolling of the logfile\n"));
 }
 
+TEST_F(TestRollingFileAppender, TestLogFileRollsAtFlush) {
+
+  std::string logfile = TEST_ROOT + "/nux.log";
+  unsigned max_log_size = 20; // roll every 20 characters
+  RollingFileAppender output(logfile, 5, max_log_size);
+
+  output << "Testing the rolling of the logfile" << std::endl
+         << "Long line greater than max_log_size" << std::endl;
+
+  // Since the log files are rolled on flush, if the last thing written out
+  // takes the filesize greater than the max_log_size, the log files are
+  // rolled and the current file being appended to is now empty.
+  EXPECT_THAT(ReadFile(logfile),
+              Eq(""));
+  EXPECT_THAT(ReadFile(logfile + ".1"),
+              Eq("Long line greater than max_log_size\n"));
+  EXPECT_THAT(ReadFile(logfile + ".2"),
+              Eq("Testing the rolling of the logfile\n"));
+}
+
 
 } // anon namespace
