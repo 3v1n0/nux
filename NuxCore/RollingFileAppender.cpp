@@ -25,11 +25,24 @@
 #include <fstream>
 #include <stdexcept>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 
 namespace bf = boost::filesystem;
 
 namespace nux {
 namespace logging {
+
+namespace {
+
+bf::path backup_path(bf::path path, unsigned number)
+{
+  if (number == 0)
+    return path;
+
+  std::string extension = path.extension();
+  extension += "." + boost::lexical_cast<std::string>(number);
+  return path.replace_extension(extension);
+}
 
 class RollingFileStreamBuffer : public std::basic_filebuf<char>
 {
@@ -84,6 +97,23 @@ RollingFileStreamBuffer::RollingFileStreamBuffer(bf::path const& filename,
 
 void RollingFileStreamBuffer::RotateFiles()
 {
+  // If we aren't keeping backups, no rolling needed.
+  if (number_of_backup_files_ == 0)
+    return;
+
+  unsigned backup = number_of_backup_files_;
+  bf::path last_log(backup_path(filename_, backup));
+  if (bf::exists(last_log)) {
+    bf::remove(last_log);
+  }
+  // Move the previous files out.
+  while (backup > 0) {
+    bf::path prev_log(backup_path(filename_, --backup));
+    if (bf::exists(prev_log)) {
+      bf::rename(prev_log, last_log);
+    }
+    last_log = prev_log;
+  }
 }
 
 int RollingFileStreamBuffer::sync()
@@ -99,6 +129,7 @@ int RollingFileStreamBuffer::sync()
   return 0; // success
 }
 
+} // anon namespace
 
 RollingFileAppender::RollingFileAppender(std::string const& filename,
                                          unsigned number_of_backup_files,
