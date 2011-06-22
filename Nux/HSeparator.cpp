@@ -44,7 +44,6 @@ namespace nux
 
   HSeparator::~HSeparator()
   {
-    DestroyLayout();
   }
 
   void HSeparator::InitializeWidgets()
@@ -54,11 +53,6 @@ namespace nux
   }
 
   void HSeparator::InitializeLayout()
-  {
-
-  }
-
-  void HSeparator::DestroyLayout()
   {
 
   }

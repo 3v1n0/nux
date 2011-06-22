@@ -126,9 +126,6 @@ source_tiny_xml_h = \
 source_smart_ptr_h = \
   $(srcdir)/SmartPtr/GenericSmartPointer.h
 
-source_datastruct_h = \
-  $(srcdir)/DataStruct/NList.h
-
 source_h = \
   $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
@@ -182,8 +179,7 @@ libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_math_h) \
   $(source_memory_h) \
   $(source_tiny_xml_h) \
-  $(source_smart_ptr_h) \
-  $(source_datastruct_h)
+  $(source_smart_ptr_h)
 
 nux_coredir = $(includedir)/Nux-@NUX_API_VERSION@/NuxCore
 nux_core_HEADERS = $(source_h)
@@ -205,9 +201,6 @@ nux_tiny_xml_HEADERS = $(source_tiny_xml_h)
 
 nux_smart_ptrdir = $(nux_coredir)/SmartPtr
 nux_smart_ptr_HEADERS = $(source_smart_ptr_h)
-
-nux_datastructdir = $(nux_coredir)/DataStruct
-nux_datastruct_HEADERS = $(source_datastruct_h)
 
 # pkg-config file
 nux-core-@NUX_API_VERSION@.pc: nux-core.pc

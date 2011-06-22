@@ -43,7 +43,6 @@ namespace nux
 
   HueRangeValuator::~HueRangeValuator()
   {
-    DestroyLayout();
   }
 
   void HueRangeValuator::InitializeWidgets()
@@ -52,11 +51,6 @@ namespace nux
   }
 
   void HueRangeValuator::InitializeLayout()
-  {
-
-  }
-
-  void HueRangeValuator::DestroyLayout()
   {
 
   }

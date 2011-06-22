@@ -58,11 +58,6 @@ namespace nux
 
   }
 
-  void VSeparator::DestroyLayout()
-  {
-
-  }
-
   long VSeparator::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     return TraverseInfo;

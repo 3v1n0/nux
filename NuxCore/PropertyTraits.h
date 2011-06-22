@@ -79,6 +79,22 @@ struct PropertyTrait<int>
   }
 };
 
+template <>
+struct PropertyTrait<unsigned>
+{
+  typedef unsigned ValueType;
+
+  static std::string to_string(unsigned value)
+  {
+      return serializable_impl<unsigned>::to_string_impl(value);
+  }
+
+  static std::pair<unsigned, bool> from_string(std::string const& serialized_form)
+  {
+      return serializable_impl<unsigned>::from_string_impl(serialized_form);
+  }
+};
+
 
 template <>
 struct PropertyTrait<float>

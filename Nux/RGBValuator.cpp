@@ -275,14 +275,9 @@ namespace nux
     CheckboardPattern->UnReference ();
   }
 
-  void RGBValuator::DestroyLayout()
-  {
-  }
-
   RGBValuator::~RGBValuator()
   {
     NUX_SAFE_DELETE (m_CheckboardLayer);
-    DestroyLayout();
   }
 
   long RGBValuator::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

@@ -641,7 +641,7 @@ namespace nux
         if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->IsLayoutDone() == false) )
         {
           t_u32 sf = (*it)->GetStretchFactor();
-          t_u32 new_width;
+          int new_width;
 
           if (sf == max_stretchfactor)
           {

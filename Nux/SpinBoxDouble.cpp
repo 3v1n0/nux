@@ -46,7 +46,6 @@ namespace nux
 
   SpinBoxDouble::~SpinBoxDouble()
   {
-    DestroyLayout();
   }
 
   void SpinBoxDouble::InitializeWidgets()
@@ -86,10 +85,6 @@ namespace nux
   {
     m_hlayout = new HLayout (NUX_TRACKER_LOCATION);
     m_vlayout = new VLayout (NUX_TRACKER_LOCATION);
-  }
-
-  void SpinBoxDouble::DestroyLayout()
-  {
   }
 
   long SpinBoxDouble::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

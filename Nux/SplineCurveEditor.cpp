@@ -76,7 +76,6 @@ namespace nux
 
   SplineCurveEditor::~SplineCurveEditor()
   {
-    DestroyLayout();
     NUX_SAFE_DELETE (m_DrawFunctionShader);
     NUX_SAFE_DELETE (m_Background);
   }
@@ -93,10 +92,6 @@ namespace nux
     OnMouseUp.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvMouseUp) );
     OnMouseDrag.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvMouseDrag) );
     OnKeyEvent.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvKeyEvent) );
-  }
-
-  void SplineCurveEditor::DestroyLayout()
-  {
   }
 
   void SplineCurveEditor::SetControlPoints (const SplineKnot &splineKnot)

@@ -115,7 +115,6 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
   protected:
     HLayout        *hlayout;

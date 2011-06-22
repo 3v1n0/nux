@@ -73,7 +73,7 @@ namespace nux
     _tab_area->SetGeometry (geo);
   }
 
-  Geometry TabView::TabElement::GetGeometry() const
+  Geometry const& TabView::TabElement::GetGeometry() const
   {
     return _tab_area->GetGeometry();
   }

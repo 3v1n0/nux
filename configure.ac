@@ -13,12 +13,12 @@
 #   - Increase micro_version to the next odd number
 #   - Increase interface_version to the next odd number
 # 
-m4_define([nux_major_version], [0])
-m4_define([nux_minor_version], [9])
-m4_define([nux_micro_version], [48])
+m4_define([nux_major_version], [1])
+m4_define([nux_minor_version], [0])
+m4_define([nux_micro_version], [2])
 
 # Bump this when we break ABI
-m4_define([nux_api_version], [0.9])
+m4_define([nux_api_version], [1.0])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -41,7 +41,7 @@ m4_define([nux_version],
 #   nux 1.2.10 -> 100 * 2 + 10 = 210, interface age = 4 -> 206
 #   ...
 #
-m4_define([nux_interface_age], [4])
+m4_define([nux_interface_age], [0])
 m4_define([nux_binary_age],
           [m4_eval(100 * nux_minor_version + nux_micro_version)])
 
@@ -163,13 +163,38 @@ AC_SUBST(NUX_LIBS)
 
 PKG_CHECK_MODULES(UNITY_SUPPORT_TEST,
                   x11
-		  xcomposite
-		  xdamage
+                  xcomposite
+                  xdamage
                   gl
                   libpci
                   )
 AC_SUBST(UNITY_SUPPORT_TEST_CFLAGS)
 AC_SUBST(UNITY_SUPPORT_TEST_LIBS)
+
+dnl ************************************
+dnl Enable/disable tests
+dnl ************************************
+
+AC_ARG_ENABLE([tests],
+              [AC_HELP_STRING([--enable-tests=@<:@no/yes@:>@],
+              [Enable Nux Testing @<:@default=yes@:>@])],
+              [],
+              [enable_tests=yes])
+AS_IF([test "x$enable_tests" = "xyes"],
+      [
+       # Check for googletest and googlemock
+       AC_LANG_PUSH([C++])
+       AC_CHECK_HEADER([gtest/gtest.h],
+                       [],
+                       [AC_MSG_ERROR([you are missing google-test, apt-get install libgtest-dev])])
+       AC_CHECK_HEADER([gmock/gmock.h],
+                       [],
+                       [AC_MSG_ERROR([you are missing google-mock, apt-get install google-mock])])
+       AC_LANG_POP([C++])
+      ]
+)
+AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
+
 
 dnl ===========================================================================
 
@@ -321,6 +346,7 @@ echo -e "${RESET}"
 echo -e "${GREEN} • Misc Options:${RESET}"
 echo -e "        Build Examples    : ${BOLD_WHITE}${enable_examples}${RESET}"
 echo -e "        Build Gpu Tests   : ${BOLD_WHITE}${enable_gputests}${RESET}"
+echo -e "        Build Nux Tests   : ${BOLD_WHITE}${enable_tests}${RESET}"
 echo ""
 
 echo -e "${RESET}"

@@ -53,7 +53,7 @@ namespace nux
 
     Matrix4 GetModelViewMatrix ();
 
-    Geometry GetGeometry() const;
+    Geometry const& GetGeometry() const;
 
   protected:
     Geometry _geometry;

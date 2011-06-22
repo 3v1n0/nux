@@ -335,7 +335,7 @@ namespace nux
     SetGeometry (geo.x, geo.y, geo.width, geo.height);
   }
 
-  Geometry Area::GetGeometry() const
+  Geometry const& Area::GetGeometry() const
   {
     return _geometry;
   }

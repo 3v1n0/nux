@@ -69,39 +69,6 @@ namespace nux
     return (a >> n) | (a << ((sizeof (T) << 3) - n));
   }
 
-  // Exchange the values of variables a and b
-  template<typename T> inline void Swap (T &a, T &b)
-  {
-    const T t = a;
-    a = b;
-    b = t;
-  }
-  template<typename T> inline void Swap (T &a1, T &b1, T &a2, T &b2)
-  {
-    Swap (a1, b1);
-    Swap (a2, b2);
-  }
-  template<typename T> inline void Swap (T &a1, T &b1, T &a2, T &b2, T &a3, T &b3)
-  {
-    Swap (a1, b1, a2, b2);
-    Swap (a3, b3);
-  }
-  template<typename T> inline void Swap (T &a1, T &b1, T &a2, T &b2, T &a3, T &b3, T &a4, T &b4)
-  {
-    Swap (a1, b1, a2, b2, a3, b3);
-    Swap (a4, b4);
-  }
-  template<typename T> inline void Swap (T &a1, T &b1, T &a2, T &b2, T &a3, T &b3, T &a4, T &b4, T &a5, T &b5)
-  {
-    Swap (a1, b1, a2, b2, a3, b3, a4, b4);
-    Swap (a5, b5);
-  }
-  template<typename T> inline void Swap (T &a1, T &b1, T &a2, T &b2, T &a3, T &b3, T &a4, T &b4, T &a5, T &b5, T &a6, T &b6)
-  {
-    Swap (a1, b1, a2, b2, a3, b3, a4, b4, a5, b5);
-    Swap (a6, b6);
-  }
-
   //! Return the absolute value of a.
   template<typename T> inline const T Abs (const T &a)
   {
@@ -137,7 +104,7 @@ namespace nux
   {
     return Max<T> (Max<T> (a, b, c), d);
   }
-  
+
   template<typename T> inline T Max3 (const T A, const T B, const T C)
   {
     return Max<T> (Max<T> (A, B), C);
@@ -147,7 +114,7 @@ namespace nux
   {
     return Min<T> (Min<T> (A, B), C);
   }
-  
+
   //! Return the sign of x.
   template<typename T> inline T Sign (const T &x)
   {
