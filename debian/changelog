@@ -6,7 +6,7 @@ nux (1.0.2-0ubuntu1) oneiric; urgency=low
     - add new libxdamage-dev and libxcomposite-dev build-dep
     - add new libboost1.42-dev dep as well, should be transitionned to 1.46 once
       compiz is transitionned as well
-  * remove debian/patches/01_build_with_gcc46.patch as upstream
+  * remove debian/patches/01_build_with_gcc46.patch as included upstream
   * debian/rules:
     - disable google code tests while building
   * debian/control, debian/rules, debian/libnux-1.0-common.install,
