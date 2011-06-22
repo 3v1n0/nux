@@ -71,7 +71,7 @@ RollingFileStreamBuffer::RollingFileStreamBuffer(bf::path const& filename,
 {
   // Firstly make sure that we have been given a full path.
   bf::path parent = filename.parent_path();
-  if (parent.empty()) {
+  if (parent.empty() || parent.root_directory().empty()) {
     std::string error_msg = filename.string() + " needs to be a full path";
     throw std::runtime_error(error_msg);
   }

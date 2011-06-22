@@ -19,11 +19,6 @@ namespace {
 
 const std::string TEST_ROOT("/tmp/nux-test-cases");
 
-TEST(TestRootDir, NoTestRoot) {
-  // The test root should not exist.
-  EXPECT_FALSE(bf::exists(TEST_ROOT));
-}
-
 class TestRollingFileAppender : public ::testing::Test
 {
 protected:
@@ -43,6 +38,11 @@ protected:
                        std::istreambuf_iterator<char>());
   }
 };
+
+TEST_F(TestRollingFileAppender, NoTestRoot) {
+  // The test root should not exist.
+  EXPECT_FALSE(bf::exists(TEST_ROOT));
+}
 
 TEST_F(TestRollingFileAppender, TestCreatesFile) {
 
@@ -147,11 +147,24 @@ TEST_F(TestRollingFileAppender, TestDeletingOld) {
 }
 
 TEST_F(TestRollingFileAppender, TestFullPathNeeded) {
-  std::string logfile = "nux.log";
   // For some obscure reason, EXPECT_THROW won't accept:
   //  RollingFileAppender(logfile)
   // as its first arg.
-  EXPECT_THROW(RollingFileAppender appender(logfile), std::runtime_error);
+  EXPECT_THROW(RollingFileAppender appender("nux.log"), std::runtime_error);
+  EXPECT_THROW(RollingFileAppender appender("relative/nux.log"), std::runtime_error);
+}
+
+TEST_F(TestRollingFileAppender, TestFileNeeded) {
+  // For some obscure reason, EXPECT_THROW won't accept:
+  //  RollingFileAppender(logfile)
+  // as its first arg.
+  std::string directory_path = TEST_ROOT + "/somedir";
+  bf::create_directories(directory_path);
+  EXPECT_THROW(RollingFileAppender appender(directory_path), std::runtime_error);
+
+  std::string symlink_path = TEST_ROOT + "/somelink";
+  bf::create_symlink(directory_path, symlink_path);
+  EXPECT_THROW(RollingFileAppender appender(symlink_path), std::runtime_error);
 }
 
 
