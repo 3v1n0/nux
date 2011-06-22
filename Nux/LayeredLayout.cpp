@@ -298,7 +298,7 @@ namespace nux
     if(m_active_area == NULL)
     return NULL;
     
-    bool mouse_inside = m_active_area->TestMousePointerInclusion(mouse_position, event_type, false);
+    bool mouse_inside = m_active_area->TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
     if(mouse_inside == false)
       return NULL;

@@ -214,7 +214,7 @@ namespace nux
 
   Area* FloatingWindow::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    bool mouse_inside = TestMousePointerInclusion(mouse_position, event_type, false);
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
     if(mouse_inside == false)
       return NULL;

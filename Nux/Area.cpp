@@ -840,17 +840,13 @@ namespace nux
 
   bool Area::IsChildOf(Area* parent)
   {
-    NUX_RETURN_VALUE_IF_NULL(parent, false);
-
-    if(this == parent)
+    if (this == parent)
       return true;
 
-    if(_parent_area)
-    {
-      return _parent_area->IsChildOf(parent);
-    }
-  
-    return false;
+    if (!parent || !_parent_area)
+      return false;
+
+    return _parent_area->IsChildOf(parent);    
   }
 
   /* handles our focusable code */
@@ -905,7 +901,7 @@ namespace nux
     return _accept_mouse_wheel_event;
   }
 
-  bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type, bool filter_mouse_wheel_event)
+  bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_pointer_inside_area = false;
 
@@ -919,7 +915,24 @@ namespace nux
       mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
     }
 
-    if((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area && filter_mouse_wheel_event)
+    return mouse_pointer_inside_area;
+  }
+
+  bool Area::TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_pointer_inside_area = false;
+
+    if(Type().IsDerivedFromType(MenuPage::StaticObjectType))
+    {
+      // A MenuPage geometry is already in absolute coordinates.
+      mouse_pointer_inside_area = _geometry.IsInside(mouse_position);
+    }
+    else
+    {
+      mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
+    }
+
+    if((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
     {
       if(_accept_mouse_wheel_event == false)
         return NULL;

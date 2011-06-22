@@ -223,6 +223,23 @@ namespace nux
     */
     int GetActionItemIndex (ActionItem *action) const;
 
+    //! Return the position of this object with regard to its top left corner of the physical window.
+    /*!
+        Return the position of the Area inside the physical window.
+        For the main layout set in WindowThread, The following functions are equivalent:
+        \li GetGeometry ()
+        \li GetRootGeometry ()
+        \li GetAbsoluteGeometry ()
+    */
+    virtual Geometry GetAbsoluteGeometry () const;
+
+    //! Return the position of this object with regard to its top level parent (the main layout or a BaseWindow).
+    /*!
+        Return the position of the Area inside the physical window.
+        For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry () is equivalent to GetGeometry ().
+    */
+    virtual Geometry GetRootGeometry () const;
+    
   protected:
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) ;

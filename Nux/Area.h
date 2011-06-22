@@ -245,7 +245,17 @@ namespace nux
     bool IsChildOf(Area* parent);
 
     /*!
-        Test if a point is inside the Area.
+        Test if a point is inside the area.
+
+        @param p A 2D point.
+        @param event_type The type of mouse event (a parameter of FindAreaUnderMouse).
+
+        @return True if p is located inside the Area.
+    */
+    bool TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type);
+
+    /*!
+        Test if a point is inside the area and if the area accepts mouse wheel events.
 
         @param p A 2D point.
         @param event_type The type of mouse event (a parameter of FindAreaUnderMouse).
@@ -254,7 +264,7 @@ namespace nux
 
         @return True if p is located inside the Area.
     */
-    bool TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type, bool filter_mouse_wheel_event = true);
+    bool TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event);
 
     virtual long ComputeChildLayout ();
     virtual void PositionChildLayout (float offsetX, float offsetY);
@@ -359,7 +369,7 @@ namespace nux
         \li GetRootGeometry ()
         \li GetAbsoluteGeometry ()
     */
-    Geometry GetAbsoluteGeometry () const;
+    virtual Geometry GetAbsoluteGeometry () const;
 
     //! Return the area absolute x coordinate.
     int GetAbsoluteX () const;
@@ -384,7 +394,7 @@ namespace nux
         Return the position of the Area inside the physical window.
         For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry () is equivalent to GetGeometry ().
     */
-    Geometry GetRootGeometry () const;
+    virtual Geometry GetRootGeometry () const;
 
     //! Return the area root x coordinate.
     int GetRootX () const;
