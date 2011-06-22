@@ -1,4 +1,4 @@
-nux (1.0.2-0ubuntu1) UNRELEASED; urgency=low
+nux (1.0.2-0ubuntu1) oneiric; urgency=low
 
   * New upstream release.
   * Cherry-pick a fix for FTBFS with -fpermissive
@@ -16,7 +16,7 @@ nux (1.0.2-0ubuntu1) UNRELEASED; urgency=low
       new soname bump
   * libnux-1.0-common now replaces: libnux-0.9-common for the apport hook
 
- -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Jun 2011 19:54:33 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 22 Jun 2011 17:16:16 +0200
 
 nux (0.9.48-0ubuntu4) oneiric; urgency=low
 
