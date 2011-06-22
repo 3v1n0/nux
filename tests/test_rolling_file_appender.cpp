@@ -146,5 +146,13 @@ TEST_F(TestRollingFileAppender, TestDeletingOld) {
   EXPECT_FALSE(bf::exists(logfile + ".3"));
 }
 
+TEST_F(TestRollingFileAppender, TestFullPathNeeded) {
+  std::string logfile = "nux.log";
+  // For some obscure reason, EXPECT_THROW won't accept:
+  //  RollingFileAppender(logfile)
+  // as its first arg.
+  EXPECT_THROW(RollingFileAppender appender(logfile), std::runtime_error);
+}
+
 
 } // anon namespace
