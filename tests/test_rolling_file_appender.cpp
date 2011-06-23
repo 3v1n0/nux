@@ -147,11 +147,8 @@ TEST_F(TestRollingFileAppender, TestDeletingOld) {
 }
 
 TEST_F(TestRollingFileAppender, TestFullPathNeeded) {
-  // For some obscure reason, EXPECT_THROW won't accept:
-  //  RollingFileAppender(logfile)
-  // as its first arg.
-  EXPECT_THROW(RollingFileAppender appender("nux.log"), std::runtime_error);
-  EXPECT_THROW(RollingFileAppender appender("relative/nux.log"), std::runtime_error);
+  EXPECT_THROW(RollingFileAppender("nux.log"), std::runtime_error);
+  EXPECT_THROW(RollingFileAppender("relative/nux.log"), std::runtime_error);
 }
 
 TEST_F(TestRollingFileAppender, TestFileNeeded) {
