@@ -26,12 +26,14 @@ libnux_image_@NUX_API_VERSION@_la_LDFLAGS = \
 source_h = \
   $(srcdir)/BitmapFormats.h \
   $(srcdir)/CairoGraphics.h \
+  $(srcdir)/Canvas.h \
   $(srcdir)/ImageSurface.h \
   $(srcdir)/GdkGraphics.h
 
 source_cpp = \
   $(srcdir)/BitmapFormats.cpp \
   $(srcdir)/CairoGraphics.cpp \
+  $(srcdir)/Canvas.cpp \
   $(srcdir)/ImageSurface.cpp \
   $(srcdir)/GdkGraphics.cpp
 
