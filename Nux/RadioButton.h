@@ -71,7 +71,9 @@ namespace nux
     virtual bool GetState() const;
 
   private:
-    void SetRadioGroupSelector (RadioButtonGroup *RadioSelector);
+    void SetRadioGroupSelector(RadioButtonGroup *RadioSelector);
+    RadioButtonGroup* GetRadioGroupSelector();
+
     //! Intended for RadioButtonGroup only.
     void SetStatePrivate (bool State);
     //! Intended for RadioButtonGroup only.
@@ -83,7 +85,7 @@ namespace nux
     InputArea   *m_CheckArea;
     bool        m_State;
 
-    RadioButtonGroup *m_Group;
+    RadioButtonGroup *radio_button_group_;
     int m_GroupId;
 
     friend class RadioButtonGroup;

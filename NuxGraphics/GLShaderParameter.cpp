@@ -41,8 +41,7 @@ namespace nux
     ,   m_ShaderProgram2 (0)
     ,   m_NextParameter (0)
   {
-//    m_NextParameter = Shader->FirstParameter;
-//    Shader->FirstParameter = this;
+    m_Index = -1;
   }
 
 }

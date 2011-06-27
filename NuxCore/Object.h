@@ -25,6 +25,8 @@
 
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
+#include "Property.h"
+#include "PropertyTraits.h"
 
 namespace nux
 {
@@ -69,7 +71,7 @@ namespace nux
       Trackable does not implement reference counting. It only defines the API. It is up
       to the class that inherit from Trackable to implement the reference counting.
   */
-  class Trackable : public sigc::trackable
+  class Trackable: public nux::Introspectable, public sigc::trackable
   {
   public:
     NUX_DECLARE_ROOT_OBJECT_TYPE (Trackable);

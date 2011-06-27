@@ -493,67 +493,37 @@ namespace nux
       Offset = 0;
       Type = ATTRIB_CT_UNKNOWN;
       NumComponent = 0;
-      Usage = ATTRIB_USAGE_DECL_POSITION;
-      UsageIndex = 0;
-      Method = 0;
+      stride_ = 0;
     }
 
-    VERTEXELEMENT (int stream,
+    VERTEXELEMENT(
+      int stream,
       int offset,
       ATTRIB_COMPONENT_TYPE type,
       BYTE numcomponents,
-      ATTRIB_USAGE_DECL usage,
-      BYTE usageindex,
-      BYTE method = 0)
+      int stride)
     {
       Stream = stream;
       Offset = offset;
       Type = type;
       NumComponent = numcomponents;
-      Usage = usage;
-      UsageIndex = usageindex;
-      Method = method;
+      stride_ = stride;
     }
 
     int Stream;
     int Offset;
-
     // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE ...
     ATTRIB_COMPONENT_TYPE Type;
-    //DWORD Stride;
-
     // This can be 1, 2, 3 or 4; For a position (xyzw), it will be 4. For a texture coordinate (uv) it will be 2.
-    BYTE NumComponent;
-
-    ATTRIB_USAGE_DECL Usage;
-
-    // Use this index in association with TEXCOORD or COLOR to identify the texture
-    // coordinate set or the color set.
-    BYTE UsageIndex;
-
-    BYTE Method; // Should be always 0 for D3DDECLMETHOD_DEFAULT = 0
-
-    // The vertex attribute Cg parameter that will be bound to the vertex element;
-//    CGparameter CgParameter;
-//    VERTEXELEMENT()
-//    {
-//        CgParameter = 0;
-//    }
-//    void setCgParameter(CGparameter parameter)
-//    {
-//        cgParameter = parameter;
-//    }
+    int NumComponent;
+    int stride_;
   };
 
 #define DECL_END VERTEXELEMENT( \
   0xFF,                       \
   0,                          \
   ATTRIB_CT_UNKNOWN,          \
-  0,                          \
-  ATTRIB_USAGE_DECL_POSITION, \
-  0,                          \
-  0                           \
-  )
+  0, 0)
 
   unsigned int GetVertexElementSize (VERTEXELEMENT vtxelement);
 

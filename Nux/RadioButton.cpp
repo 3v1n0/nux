@@ -34,7 +34,7 @@ namespace nux
   RadioButton::RadioButton (const TCHAR *Caption, bool state, NUX_FILE_LINE_DECL)
     :   AbstractButton (Caption, NUX_FILE_LINE_PARAM)
   {
-    m_Group     = 0;
+    radio_button_group_     = 0;
     m_GroupId   = -1;
     m_hlayout   = 0;
     m_CheckArea = 0;
@@ -106,11 +106,11 @@ namespace nux
 
   RadioButton::~RadioButton()
   {
-    if (m_Group && m_GroupId != -1)
+    if (radio_button_group_ && m_GroupId != -1)
     {
-      m_Group->DisconnectButton (this);
-      m_Group->UnReference();
-      m_Group = 0;
+      radio_button_group_->DisconnectButton(this);
+      radio_button_group_->UnReference();
+      radio_button_group_ = 0;
     }
   }
 
@@ -181,12 +181,12 @@ namespace nux
 
   void RadioButton::SetState (bool State, bool EmitSignal)
   {
-    if (m_Group && State)
+    if (radio_button_group_ && State)
     {
-      m_Group->SetActiveButton (this, EmitSignal);
+      radio_button_group_->SetActiveButton (this, EmitSignal);
       return;
     }
-    else if (m_Group && !State)
+    else if (radio_button_group_ && !State)
     {
       nuxDebugMsg (TEXT ("[RadioButton::SetState] this radioButton is controlled by a RadioButtonGroup. You can't set its state to false directly.") );
       return;
@@ -197,20 +197,25 @@ namespace nux
 
   void RadioButton::SetRadioGroupSelector (RadioButtonGroup *RadioSelector)
   {
-    if (m_Group == RadioSelector)
+    if (radio_button_group_ == RadioSelector)
       return;
 
-    if (m_Group)
+    if(radio_button_group_)
     {
-      m_Group->UnReference();
-      m_Group = 0;
+      radio_button_group_->UnReference();
+      radio_button_group_ = 0;
     }
 
-    if (RadioSelector)
+    if(RadioSelector)
     {
-      m_Group = RadioSelector;
-      m_Group->Reference();
+      radio_button_group_ = RadioSelector;
+      radio_button_group_->Reference();
     }
+  }
+
+  RadioButtonGroup* RadioButton::GetRadioGroupSelector()
+  {
+    return radio_button_group_;
   }
 
   void RadioButton::SetStatePrivate (bool State)
@@ -239,9 +244,9 @@ namespace nux
 
   void RadioButton::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (m_Group)
+    if (radio_button_group_)
     {
-      m_Group->NotifyClick (this);
+      radio_button_group_->NotifyClick (this);
     }
     else
     {

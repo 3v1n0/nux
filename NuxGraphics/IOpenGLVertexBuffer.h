@@ -23,6 +23,7 @@
 #ifndef IOPENGLVERTEXBUFFER_H
 #define IOPENGLVERTEXBUFFER_H
 
+#include "IOpenGLResource.h"
 namespace nux
 {
 

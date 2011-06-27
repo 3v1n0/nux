@@ -525,16 +525,15 @@ namespace nux
 
     _vertex_declaration = new VertexDeclaration();
 
-    VERTEXELEMENT ve_position(0, 0, ATTRIB_CT_FLOAT, 4,
-      ATTRIB_USAGE_DECL_POSITION,
-      0, 0);
+    VERTEXELEMENT ve_position(0, 0, ATTRIB_CT_FLOAT, 4, 36);
 
-    VERTEXELEMENT ve_normal(0, 16, ATTRIB_CT_FLOAT, 3,
-      ATTRIB_USAGE_DECL_NORMAL,
-      0, 0);
+    VERTEXELEMENT ve_normal(0, 16, ATTRIB_CT_FLOAT, 3, 36);
+
+    VERTEXELEMENT ve_texcoord(0, 28, ATTRIB_CT_FLOAT, 2, 36);
 
     _vertex_declaration->AddVertexComponent(ve_position);
     _vertex_declaration->AddVertexComponent(ve_normal);
+    _vertex_declaration->AddVertexComponent(ve_texcoord);
     _vertex_declaration->AddVertexComponent(DECL_END);
 
     return true;
@@ -559,6 +558,10 @@ namespace nux
     _cached_vertex_buffer = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(mesh_buffer->_vertex_buffer);
     _cached_index_buffer = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(mesh_buffer->_index_buffer);
     _cached_vertex_declaration = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(mesh_buffer->_vertex_declaration);
+    _cached_vertex_declaration->_declaration->SetVertexBuffer(0, _cached_vertex_buffer->_vertex_buffer);
+    _cached_vertex_declaration->_declaration->SetVertexBuffer(1, _cached_vertex_buffer->_vertex_buffer);
+    _cached_vertex_declaration->_declaration->SetVertexBuffer(2, _cached_vertex_buffer->_vertex_buffer);
+
     _mesh_primitive_type = mesh_buffer->_mesh_primitive_type;
 //       
     return true;

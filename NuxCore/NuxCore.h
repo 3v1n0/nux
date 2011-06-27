@@ -120,6 +120,7 @@
 #define NUX_RETURN_IF_NOTNULL(test)               if(test != 0)   return;
 #define NUX_RETURN_IF_TRUE(test)                  if(test)        return;
 #define NUX_RETURN_IF_FALSE(test)                 if(!(test))     return;
+#define NUX_RETURN_IF_FAIL(test)                  if(!test)       return;
 
 #define NUX_RETURN_VALUE_IF_NULL(test, value)     if(test == 0)   return value;
 #define NUX_RETURN_VALUE_IF_NOTNULL(test, value)  if(test != 0)   return value;

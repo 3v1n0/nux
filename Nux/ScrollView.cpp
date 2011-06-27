@@ -211,17 +211,34 @@ namespace nux
 
   Area* ScrollView::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
+    // Test if the mouse is inside the ScrollView.
+    // The last parameter of TestMousePointerInclusion is a boolean used to test if the case
+    // of mouse wheel events. If that boolean value is true, then TestMousePointerInclusion 
+    // returns true only if the mouse pointer is over this area and the the area accepts
+    // mouse wheel events (see Area::SetAcceptMouseWheelEvent)
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
     if(mouse_inside == false)
+    {
+      // The mouse pointer is not over this Area. return NULL.
       return NULL;
+    }
 
     Area* found_area;
-    found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
-    NUX_RETURN_VALUE_IF_TRUE(found_area, found_area);
-    found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
-    NUX_RETURN_VALUE_IF_TRUE(found_area, found_area);
 
+    // Recursively go over the ui element that are managed by this ScrollView and look
+    // for the area that is below the mouse.
+
+    // Test the vertical scrollbar
+    found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+    NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+
+    // Test the horizontal scrollbar
+    found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+    NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+
+    // If the code gets here, it means that no area has been found yet.
+    // Test the layout of the ScrollView
     return View::FindAreaUnderMouse(mouse_position, event_type);
   }
 
