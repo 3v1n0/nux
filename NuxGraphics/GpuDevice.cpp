@@ -161,28 +161,28 @@ namespace nux
     GPixelFormats[ BITFMT_R8G8B8A8     ].type	          = GL_UNSIGNED_BYTE;
 
     // Data in PC system memory: A(LSB) B G R(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8
-    GPixelFormats[ BITFMT_A8B8G8R8     ].PlatformFormat	= GL_RGBA;
-    GPixelFormats[ BITFMT_A8B8G8R8     ].Format	        = GL_RGBA;
-    GPixelFormats[ BITFMT_A8B8G8R8     ].type	          = GL_UNSIGNED_BYTE;
+    GPixelFormats[ BITFMT_A8B8G8R8     ].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_A8B8G8R8     ].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_A8B8G8R8     ].type	          = GL_NONE;
 
     // Data in PC system memory: B(LSB) G R A(MSB) ---> GL Format:GL_BGRA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
-    GPixelFormats[ BITFMT_B8G8R8A8     ].PlatformFormat	= GL_RGBA;
-    GPixelFormats[ BITFMT_B8G8R8A8     ].Format	        = GL_RGBA;
+    GPixelFormats[ BITFMT_B8G8R8A8     ].PlatformFormat	= GL_BGRA_EXT;
+    GPixelFormats[ BITFMT_B8G8R8A8     ].Format	        = GL_BGRA_EXT;
     GPixelFormats[ BITFMT_B8G8R8A8     ].type	          = GL_UNSIGNED_BYTE;
 
     // Data in PC system memory: A(LSB) R G B(MSB) ---> GL Format:GL_BGRA - GL Type:GL_UNSIGNED_INT_8_8_8_8
-    GPixelFormats[ BITFMT_A8R8G8B8     ].PlatformFormat	= GL_RGBA;
-    GPixelFormats[ BITFMT_A8R8G8B8     ].Format	        = GL_RGBA;
-    GPixelFormats[ BITFMT_A8R8G8B8     ].type	          = GL_UNSIGNED_BYTE;
+    GPixelFormats[ BITFMT_A8R8G8B8     ].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_A8R8G8B8     ].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_A8R8G8B8     ].type	          = GL_NONE;
 
     // Data in PC system memory: R(LSB) G B(MSB) ---> GL Format:GL_RGB - GL Type:GL_UNSIGNED
     GPixelFormats[ BITFMT_R8G8B8		].PlatformFormat	= GL_RGB;
     GPixelFormats[ BITFMT_R8G8B8		].Format	        = GL_RGB;
     GPixelFormats[ BITFMT_R8G8B8		].type	          = GL_UNSIGNED_BYTE;
 
-    GPixelFormats[ BITFMT_B8G8R8		].PlatformFormat	= GL_RGB;
-    GPixelFormats[ BITFMT_B8G8R8		].Format	        = GL_RGB;
-    GPixelFormats[ BITFMT_B8G8R8		].type	          = GL_UNSIGNED_BYTE;
+    GPixelFormats[ BITFMT_B8G8R8		].PlatformFormat	= GL_NONE;
+    GPixelFormats[ BITFMT_B8G8R8		].Format	        = GL_NONE;
+    GPixelFormats[ BITFMT_B8G8R8		].type	          = GL_NONE;
 
     GPixelFormats[ BITFMT_R5G6B5       ].PlatformFormat	= GL_RGB;
     GPixelFormats[ BITFMT_R5G6B5       ].Format	        = GL_RGB;
