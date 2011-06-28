@@ -256,10 +256,10 @@ namespace nux
     m_NextMouseUpMeanStop = false;
     m_SubMenuAction = 0;
 
-    vlayout = new VLayout (NUX_TRACKER_LOCATION);
+    _vlayout = new VLayout (NUX_TRACKER_LOCATION);
     // No Need to set a composition layout.
     // The MenuPage is floating above everything else.
-    SetLayout (vlayout);
+    SetLayout(_vlayout);
 
     SetTextColor (color::Black);
   }
@@ -358,6 +358,18 @@ namespace nux
 
     return ret;
   };
+
+  Area* MenuPage::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
+  }
 
   void MenuPage::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
@@ -493,7 +505,7 @@ namespace nux
     }
 
     m_numItem = (int) m_MenuItemVector.size();
-    vlayout->AddView (pMenuItem, 0, eLeft, eFix);
+    _vlayout->AddView (pMenuItem, 0, eLeft, eFix);
     ComputeChildLayout();
 
     return pMenuItem->GetActionItem();
@@ -567,7 +579,7 @@ namespace nux
 //    }
 //
 //    m_numItem = (int)m_MenuItemVector.size();
-//    vlayout->AddView(pMenuItem, 0, eLeft, eFix);
+//    _vlayout->AddView(pMenuItem, 0, eLeft, eFix);
 //    ComputeChildLayout();
 //}
 
@@ -639,7 +651,7 @@ namespace nux
     }
 
     m_numItem = (int) m_MenuItemVector.size();
-    vlayout->AddView (pMenuItem, 0, eLeft, eFix);
+    _vlayout->AddView (pMenuItem, 0, eLeft, eFix);
     ComputeChildLayout();
 
     return pMenuItem->GetChildMenu();
@@ -712,7 +724,7 @@ namespace nux
     }
 
     m_numItem = (int) m_MenuItemVector.size();
-    vlayout->AddView (pMenuItem, 0, eLeft, eFix);
+    _vlayout->AddView (pMenuItem, 0, eLeft, eFix);
     ComputeChildLayout();
 
     return pMenuItem->GetActionItem();
@@ -740,7 +752,7 @@ namespace nux
                                      + MENU_ITEM_TEXT_TO_BORDER_MARGIN, 4);
     }
 
-    vlayout->AddView (pMenuSeparator, 0, eLeft, eFix);
+    _vlayout->AddView (pMenuSeparator, 0, eLeft, eFix);
     ComputeChildLayout();
   }
 
@@ -753,7 +765,7 @@ namespace nux
     m_MenuSeparatorVector.clear();
     m_MenuItemVector.clear();
     m_numItem = 0;
-    vlayout->Clear();
+    _vlayout->Clear();
     ComputeChildLayout();
    
     //FIXME - Hack to fix a bug with the menu height not being reset after removing items
@@ -781,20 +793,25 @@ namespace nux
         if ((y >= py) && (y < py + height))
         {
           m_HighlightedItem = i;
+          NeedRedraw();
           break;
         }
       }
     }
     else
     {
-      m_HighlightedItem = -1;
+      if(m_HighlightedItem != -1)
+      {
+        m_HighlightedItem = -1;
+        NeedRedraw();
+      }
     }
 
     if (m_HighlightedItem >= 0)
     {
       MenuItem *selected_action = m_MenuItemVector[m_HighlightedItem];
 
-      if ( (selected_action->GetChildMenu() != 0) && selected_action->GetActionItem()->isEnabled() )
+      if((selected_action->GetChildMenu() != 0) && selected_action->GetActionItem()->isEnabled())
       {
         // This MenuItem has a sub-MenuPage. Start it.
         Geometry geo = selected_action->GetGeometry();
@@ -802,7 +819,7 @@ namespace nux
         selected_action->GetChildMenu()->StartMenu (geo.x + geo.GetWidth() - 5, geo.y, 0, 0);
 
         // The current SubMenu is not the same as the new one...
-        if (m_SubMenuAction != selected_action)
+        if(m_SubMenuAction != selected_action)
         {
           // If m_SubMenuAction is not null then stop the sub menu
           StopActionSubMenu();
@@ -968,6 +985,8 @@ namespace nux
         m_HighlightedItem = -1;
       }
     }
+
+    QueueDraw();
   }
 
   void MenuPage::StartMenu (int MenuXPosition, int MenuYPosition, int x, int y, bool OverrideCurrentMenuChain)
@@ -1194,5 +1213,13 @@ namespace nux
     return -1;
   }
 
+  Geometry MenuPage::GetAbsoluteGeometry () const
+  {
+    return GetGeometry();  
+  }
 
+  Geometry MenuPage::GetRootGeometry () const
+  {
+    return GetGeometry();
+  }
 }

@@ -26,7 +26,8 @@
 
 namespace nux
 {
-  NUX_IMPLEMENT_OBJECT_TYPE (Layout);
+  NUX_IMPLEMENT_OBJECT_TYPE(Layout);
+  NUX_IMPLEMENT_OBJECT_TYPE(SpaceLayout);
 
   Layout::Layout (NUX_FILE_LINE_DECL)
     :   Area (NUX_FILE_LINE_PARAM)
@@ -774,6 +775,24 @@ namespace nux
     return ret;
   }
 
+  Area* Layout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    std::list<Area *>::iterator it;
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    {
+      Area* hit_view = NUX_STATIC_CAST(Area*, (*it)->FindAreaUnderMouse(mouse_position, event_type));
+      if(hit_view)
+        return hit_view;
+    }
+
+    return NULL;
+  }
+
   void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     std::list<Area *>::iterator it;
@@ -1000,5 +1019,4 @@ namespace nux
 
     return false;
   }
-
 }

@@ -358,9 +358,7 @@ namespace nux
       unsigned int StreamNumber,
       ObjectPtr<IOpenGLVertexBuffer> pStreamData,
       unsigned int OffsetInBytes,
-      unsigned int Stride,
-      unsigned int NumComponent = 0,
-      unsigned int ComponentFormat = 0);
+      unsigned int Stride);
 
     //! Setup a NULL vertex buffer
     void InvalidateVertexBuffer();

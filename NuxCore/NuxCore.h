@@ -111,18 +111,21 @@
 #define INLDELETE delete
 #define INLDELETEARRAY delete []
 
-#define NUX_RUNTIME_ERROR(str, ...)             LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
-#define NUX_ERROR_IF_NULL(test, str, ...)       if(test == 0)   LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
-#define NUX_ERROR_IF_TRUE(test, str, ...)       if(test)        LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
-#define NUX_ERROR_IF_FALSE(test, str, ...)      if(!(test))     LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_RUNTIME_ERROR(str, ...)               LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_ERROR_IF_NULL(test, str, ...)         if(test == 0)   LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_ERROR_IF_TRUE(test, str, ...)         if(test)        LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_ERROR_IF_FALSE(test, str, ...)        if(!(test))     LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
 
-#define NUX_RETURN_IF_NULL(test)                if(test == 0)   return;
-#define NUX_RETURN_IF_TRUE(test)                if(test)        return;
-#define NUX_RETURN_IF_FALSE(test)               if(!(test))     return;
+#define NUX_RETURN_IF_NULL(test)                  if(test == 0)   return;
+#define NUX_RETURN_IF_NOTNULL(test)               if(test != 0)   return;
+#define NUX_RETURN_IF_TRUE(test)                  if(test)        return;
+#define NUX_RETURN_IF_FALSE(test)                 if(!(test))     return;
+#define NUX_RETURN_IF_FAIL(test)                  if(!test)       return;
 
-#define NUX_RETURN_VALUE_IF_NULL(test, value)   if(test == 0)   return value;
-#define NUX_RETURN_VALUE_IF_TRUE(test, value)   if(test)        return value;
-#define NUX_RETURN_VALUE_IF_FALSE(test, value)  if(!(test))     return value;
+#define NUX_RETURN_VALUE_IF_NULL(test, value)     if(test == 0)   return value;
+#define NUX_RETURN_VALUE_IF_NOTNULL(test, value)  if(test != 0)   return value;
+#define NUX_RETURN_VALUE_IF_TRUE(test, value)     if(test)        return value;
+#define NUX_RETURN_VALUE_IF_FALSE(test, value)    if(!(test))     return value;
 
 
 // Structure Alignment

@@ -66,7 +66,7 @@ namespace nux
     Geometry base = GetGeometry();
     InteractState is;
     is.is_on = _state;
-    is.is_focus = HasMouseFocus();
+    is.is_focus = IsMouseOwner();
     is.is_prelight = IsMouseInside();
 
     if (is.is_focus || is.is_on)
