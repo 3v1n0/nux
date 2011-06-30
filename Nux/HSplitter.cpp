@@ -120,17 +120,17 @@ namespace nux
 
         if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
         {
-          View *ic = NUX_STATIC_CAST (View *, (*it) );
+          View *ic = static_cast<View *>(*it);
           ret = ic->BaseProcessEvent (ievent, ret, ProcEvInfo | DoNotProcess);
         }
         else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
         {
-          InputArea *base_area = NUX_STATIC_CAST (InputArea *, (*it) );
+          InputArea *base_area = static_cast<InputArea *>(*it);
           ret = base_area->OnEvent (ievent, ret, ProcEvInfo | DoNotProcess);
         }
         else if ( (*it)->Type().IsDerivedFromType (Layout::StaticObjectType) )
         {
-          Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+          Layout *layout = static_cast<Layout *>(*it);
           ret = layout->ProcessEvent (ievent, ret, ProcEvInfo | DoNotProcess);
         }
       }
@@ -206,22 +206,22 @@ namespace nux
       {
         if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
         {
-          View *ic = NUX_STATIC_CAST (View *, (*it) );
+          View *ic = static_cast<View *>(*it);
           ic->ProcessDraw (GfxContext, true);
         }
         else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
         {
-          InputArea *base_area = NUX_STATIC_CAST (InputArea *, (*it) );
+          InputArea *base_area = static_cast<InputArea *>(*it);
           base_area->OnDraw (GfxContext, true);
         }
         else if ( (*it)->Type().IsObjectType (HLayout::StaticObjectType) )
         {
-          HLayout *layout = NUX_STATIC_CAST (HLayout *, (*it) );
+          HLayout *layout = static_cast<HLayout *>(*it);
           layout->ProcessDraw (GfxContext, true);
         }
         else if ( (*it)->Type().IsObjectType (VLayout::StaticObjectType) )
         {
-          VLayout *layout = NUX_STATIC_CAST (VLayout *, (*it) );
+          VLayout *layout = static_cast<VLayout *>(*it);
           layout->ProcessDraw (GfxContext, true);
         }
       }
@@ -229,22 +229,22 @@ namespace nux
       {
         if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
         {
-          View *ic = NUX_STATIC_CAST (View *, (*it) );
+          View *ic = static_cast<View *>(*it);
           ic->ProcessDraw (GfxContext, false);
         }
         else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
         {
-          InputArea *base_area = NUX_STATIC_CAST (InputArea *, (*it) );
+          InputArea *base_area = static_cast<InputArea *>(*it);
           base_area->OnDraw (GfxContext, false);
         }
         else if ( (*it)->Type().IsObjectType (HLayout::StaticObjectType) )
         {
-          HLayout *layout = NUX_STATIC_CAST (HLayout *, (*it) );
+          HLayout *layout = static_cast<HLayout *>(*it);
           layout->ProcessDraw (GfxContext, false);
         }
         else if ( (*it)->Type().IsObjectType (VLayout::StaticObjectType) )
         {
-          VLayout *layout = NUX_STATIC_CAST (VLayout *, (*it) );
+          VLayout *layout = static_cast<VLayout *>(*it);
           layout->ProcessDraw (GfxContext, false);
         }
       }
@@ -417,7 +417,7 @@ namespace nux
 
       if (m_InterfaceObject[i]->Type().IsDerivedFromType (View::StaticObjectType) )
       {
-        View *ic = NUX_STATIC_CAST (View *, m_InterfaceObject[i]);
+        View *ic = static_cast<View *>(m_InterfaceObject[i]);
         ic->SetGeometry (Geometry (x, accheight, w, splitter_geo.y - accheight) );
         // if we are already computing the layout from the main window down, we need to call
         // ComputeElementLayout to force the computing of this element layout.
@@ -425,12 +425,12 @@ namespace nux
       }
       else if (m_InterfaceObject[i]->Type().IsObjectType (InputArea::StaticObjectType) )
       {
-        InputArea *base_area = NUX_STATIC_CAST (InputArea *, m_InterfaceObject[i]);
+        InputArea *base_area = static_cast<InputArea *>(m_InterfaceObject[i]);
         base_area->SetGeometry (Geometry (x, accheight, w, splitter_geo.y - accheight) );
       }
       else if (m_InterfaceObject[i]->Type().IsDerivedFromType (Layout::StaticObjectType) )
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, m_InterfaceObject[i]);
+        Layout *layout = static_cast<Layout *>(m_InterfaceObject[i]);
         layout->SetGeometry (Geometry (x, accheight, w, splitter_geo.y - accheight) );
         // if we are already computing the layout from the main window down, we need to call
         // ComputeElementLayout to force the computing of this element layout.
@@ -629,12 +629,8 @@ namespace nux
       //(*it)->DoneRedraw();
       if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = static_cast<View *>(*it);
         ic->DoneRedraw();
-      }
-      else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
-      {
-        //InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
       }
     }
   }
