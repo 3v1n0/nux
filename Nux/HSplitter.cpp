@@ -543,7 +543,6 @@ namespace nux
 
   void HSplitter::OnSplitterMouseDrag (t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
   {
-    bool recompute = false;
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
     t_s32 num_element = (t_s32) m_SplitterObject.size();
 
@@ -553,7 +552,6 @@ namespace nux
       return;
     }
 
-    recompute = true;
     mvt_dx = 0;
     mvt_dy = (y - m_point.y);
 
