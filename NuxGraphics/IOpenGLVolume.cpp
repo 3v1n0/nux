@@ -73,13 +73,8 @@ namespace nux
 
 
     IOpenGLVolumeTexture *texture = _VolumeTexture;
-    OpenGLResourceType ResourceType = RTBASETEXTURE;
 
-    if (_VolumeTexture->_ResourceType == RTVOLUMETEXTURE)
-    {
-      ResourceType = RTVOLUMETEXTURE;
-    }
-    else
+    if (_VolumeTexture->_ResourceType != RTVOLUMETEXTURE)
     {
       nuxAssertMsg (0, TEXT ("Unknown resource type") );
     }
