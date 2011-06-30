@@ -16,7 +16,7 @@
  * Authored by: Mirco Müller <mirco.mueller@canonical.com
  */
 
-#include "NuxImage/Canvas.h"
+#include "Nux/Canvas.h"
 
 #include <sigc++/trackable.h>
 

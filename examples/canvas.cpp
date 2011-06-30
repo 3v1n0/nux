@@ -17,11 +17,11 @@
  */
 
 #include "Nux/Nux.h"
+#include "Nux/Canvas.h"
 #include "Nux/View.h"
 #include "Nux/VLayout.h"
 #include "Nux/WindowThread.h"
 #include "NuxGraphics/GraphicsEngine.h"
-#include "NuxImage/Canvas.h"
 
 void
 DrawRoundedRectangle (cairo_t* cr,
