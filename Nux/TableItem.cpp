@@ -90,7 +90,6 @@ namespace nux
 
   RowHeader::~RowHeader()
   {
-    //NUX_SAFE_DELETE (_table_item);
     _table_item = 0;
   }
 

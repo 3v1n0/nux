@@ -352,12 +352,12 @@ namespace nux
 
   ColorEditor::~ColorEditor()
   {
-    NUX_SAFE_DELETE (m_RedShader);
-    NUX_SAFE_DELETE (m_GreenShader);
-    NUX_SAFE_DELETE (m_BlueShader);
-    NUX_SAFE_DELETE (m_HueShader);
-    NUX_SAFE_DELETE (m_SaturationShader);
-    NUX_SAFE_DELETE (m_ValueShader);
+    delete m_RedShader;
+    delete m_GreenShader;
+    delete m_BlueShader;
+    delete m_HueShader;
+    delete m_SaturationShader;
+    delete m_ValueShader;
   }
 
 
