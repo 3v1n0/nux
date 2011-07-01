@@ -18,15 +18,7 @@
 
 #include "Nux/Canvas.h"
 
-#include <sigc++/trackable.h>
-
-#include <gtest/gtest.h>
-#include <vector>
-#include <stdexcept>
-
-namespace {
-  TEST(TestTypeTraits, TestSerialization) {
-    nux::Canvas canvas = nux::Canvas ();
-
-  }
+void TestCancasSuite()
+{
+  nux::Canvas canvas(NUX_TRACKER_LOCATION);
 }
