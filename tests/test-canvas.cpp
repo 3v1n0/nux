@@ -20,5 +20,6 @@
 
 void TestCanvasSuite()
 {
-  nux::Canvas canvas(NUX_TRACKER_LOCATION);
+  nux::Canvas* canvas = new nux::Canvas(NUX_TRACKER_LOCATION);
+  canvas->Unreference();
 }
