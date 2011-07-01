@@ -40,9 +40,9 @@ main (gint argc, gchar *argv[])
   GLogDevice.Disable ();
 
   /* First the Nux specific tests */
-  TestObjectSuite ();
-
-  TestSystemSuite ();
+  TestObjectSuite();
+  TestSystemSuite();
+  TestCanvasSuite();
 
   /* Please keep this alphabetically ordered */
   test_timeline_create_suite ();
