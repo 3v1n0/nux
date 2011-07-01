@@ -23,8 +23,9 @@
 #include <Nux/Nux.h>
 #include <glib-object.h>
 
-void TestObjectSuite ();
-void TestSystemSuite ();
+void TestCanvasSuite();
+void TestObjectSuite();
+void TestSystemSuite();
 
 void test_timeline_create_suite ();
 
