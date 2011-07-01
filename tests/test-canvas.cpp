@@ -18,7 +18,7 @@
 
 #include "Nux/Canvas.h"
 
-void TestCancasSuite()
+void TestCanvasSuite()
 {
   nux::Canvas canvas(NUX_TRACKER_LOCATION);
 }
