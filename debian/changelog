@@ -1,10 +1,10 @@
-nux (1.0.4-0ubuntu1) UNRELEASED; urgency=low
+nux (1.0.4-0ubuntu1) oneiric; urgency=low
 
   * New upstream release.
   * debian/rules:
     - bump shlib
 
- -- Didier Roche <didrocks@ubuntu.com>  Mon, 04 Jul 2011 17:30:32 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 04 Jul 2011 18:34:48 +0200
 
 nux (1.0.2-0ubuntu1) oneiric; urgency=low
 
