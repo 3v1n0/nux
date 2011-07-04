@@ -130,7 +130,6 @@ namespace nux
 
   void ColorGradient::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    bool highlighted;
     Geometry base = GetGeometry();
 
     Geometry P = m_Percentage->GetGeometry();
@@ -182,12 +181,6 @@ namespace nux
     }
 
     m_ValueString->ProcessDraw (GfxContext, true);
-
-    if (m_ValueString->IsMouseInside() )
-      highlighted = true;
-    else
-      highlighted = false;
-
     DrawMarker (GfxContext);
   }
 

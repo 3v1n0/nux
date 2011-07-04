@@ -19,6 +19,18 @@ T to_and_from_string(T const& value)
   return result.first;
 }
 
+enum TestEnum
+{
+  FirstValue,
+  MiddleValue,
+  LastValue,
+};
+
+struct TestClass
+{
+  int value;
+};
+
 
 TEST(TestTypeTraits, TestSerialization) {
   EXPECT_EQ("hello", nux::type::PropertyTrait<std::string>::to_string("hello"));
@@ -28,6 +40,7 @@ TEST(TestTypeTraits, TestSerialization) {
   EXPECT_EQ("false", nux::type::PropertyTrait<bool>::to_string(false));
   EXPECT_EQ("0", nux::type::PropertyTrait<double>::to_string(0));
   EXPECT_EQ("25.5", nux::type::PropertyTrait<double>::to_string(25.5));
+  EXPECT_EQ("1", nux::type::PropertyTrait<TestEnum>::to_string(MiddleValue));
 }
 
 TEST(TestTypeTraits, TestDeserialization) {
@@ -66,6 +79,15 @@ TEST(TestTypeTraits, TestDeserialization) {
   double_result = nux::type::PropertyTrait<double>::from_string("what?");
   EXPECT_EQ(0, double_result.first);
   EXPECT_FALSE(double_result.second);
+
+  std::pair<TestEnum, bool> enum_result = nux::type::PropertyTrait<TestEnum>::from_string("0");
+  EXPECT_EQ(FirstValue, enum_result.first);
+  EXPECT_TRUE(enum_result.second);
+  // This is tested to show behaviour even though it is undesirable (as there
+  // isn't an enum value for 42).
+  enum_result = nux::type::PropertyTrait<TestEnum>::from_string("42");
+  EXPECT_EQ(42, enum_result.first);
+  EXPECT_TRUE(enum_result.second);
 }
 
 TEST(TestTypeTraits, TestConversionHolds) {
@@ -127,6 +149,10 @@ TEST(TestConnectableProperty, TestEnableAndDisableNotification) {
   string_prop = "New value" ;
   EXPECT_EQ(1, recorder.changed_values.size());
   EXPECT_EQ("New value", recorder.changed_values[0]);
+
+  nux::ConnectableProperty<TestEnum> enum_prop;
+  // This fails to compile.
+  // nux::ConnectableProperty<TestClass> class_prop;
 }
 
 struct TestProperties : nux::Introspectable

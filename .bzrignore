@@ -26,6 +26,7 @@ data/Makefile
 examples/Logs
 examples/button
 examples/cairo
+examples/canvas
 examples/checkbox
 examples/combobox
 examples/focus

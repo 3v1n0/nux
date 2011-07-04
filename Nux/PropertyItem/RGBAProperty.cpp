@@ -99,10 +99,10 @@ namespace nux
   {
     m_ColorModel->Dispose();
     m_ColorFormat->Dispose();
-    NUX_SAFE_DELETE (m_red);
-    NUX_SAFE_DELETE (m_green);
-    NUX_SAFE_DELETE (m_blue);
-    NUX_SAFE_DELETE (m_alpha);
+    delete m_red;
+    delete m_green;
+    delete m_blue;
+    delete m_alpha;
   }
 
   long RGBAPropertyItem::ProcessPropertyEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

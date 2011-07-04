@@ -352,12 +352,12 @@ namespace nux
 
   ColorEditor::~ColorEditor()
   {
-    NUX_SAFE_DELETE (m_RedShader);
-    NUX_SAFE_DELETE (m_GreenShader);
-    NUX_SAFE_DELETE (m_BlueShader);
-    NUX_SAFE_DELETE (m_HueShader);
-    NUX_SAFE_DELETE (m_SaturationShader);
-    NUX_SAFE_DELETE (m_ValueShader);
+    delete m_RedShader;
+    delete m_GreenShader;
+    delete m_BlueShader;
+    delete m_HueShader;
+    delete m_SaturationShader;
+    delete m_ValueShader;
   }
 
 
@@ -473,8 +473,6 @@ namespace nux
 
   void ColorEditor::DrawRGB (GraphicsEngine &GfxContext, bool force_draw)
   {
-    int x, y;
-
     if (m_ColorModel == color::RGB)
     {
       GetPainter().Paint2DQuadColor (GfxContext, m_ColorSquare->GetGeometry(), Color(rgb_) );
@@ -483,9 +481,6 @@ namespace nux
 
       if (m_ColorChannel == color::RED)
       {
-        x = rgb_.blue * m_PickerArea->GetBaseWidth();
-        y = (1.0f - rgb_.green) * m_PickerArea->GetBaseHeight();
-
         m_RedShader->SetColor (rgb_.red, rgb_.green, rgb_.blue, 1.0f);
         m_RedShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         BaseChannelTop = Color (1.0f, rgb_.green, rgb_.blue, 1.0f);
@@ -501,9 +496,6 @@ namespace nux
       }
       else if (m_ColorChannel == color::GREEN)
       {
-        x = rgb_.blue * m_PickerArea->GetBaseWidth();
-        y = (1.0f - rgb_.red) * m_PickerArea->GetBaseHeight();
-
         m_GreenShader->SetColor (rgb_.red, rgb_.green, rgb_.blue, 1.0f);
         m_GreenShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         BaseChannelTop = Color (rgb_.red, 1.0f, rgb_.blue, 1.0f);
@@ -519,9 +511,6 @@ namespace nux
       }
       else if (m_ColorChannel == color::BLUE)
       {
-        x = rgb_.red * m_PickerArea->GetBaseWidth();
-        y = (1.0f - rgb_.green) * m_PickerArea->GetBaseHeight();
-
         m_BlueShader->SetColor (rgb_.red, rgb_.green, rgb_.blue, 1.0f);
         m_BlueShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         BaseChannelTop = Color (rgb_.red, rgb_.green, 1.0f, 1.0f);
@@ -550,8 +539,6 @@ namespace nux
 
   void ColorEditor::DrawHSV (GraphicsEngine &GfxContext, bool force_draw)
   {
-    int x, y;
-
     if (m_ColorModel == color::HSV)
     {
       color::RedGreenBlue rgb(hsv_);
@@ -562,9 +549,6 @@ namespace nux
 
       if (m_ColorChannel == color::HUE)
       {
-        x = hsv_.saturation * m_PickerArea->GetBaseWidth();
-        y = (1.0f - hsv_.value) * m_PickerArea->GetBaseHeight();
-
         m_HueShader->SetColor (hsv_.hue, hsv_.saturation, hsv_.value, 1.0f);
         m_HueShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         m_HueShader->Render (
@@ -601,9 +585,6 @@ namespace nux
       }
       else if (m_ColorChannel == color::SATURATION)
       {
-        x = hsv_.hue * m_PickerArea->GetBaseWidth();
-        y = (1.0f - hsv_.value) * m_PickerArea->GetBaseHeight();
-
         float value = hsv_.value;
         if (value < 0.3f) value = 0.3f;
 
@@ -627,9 +608,6 @@ namespace nux
       }
       else if (m_ColorChannel == color::VALUE)
       {
-        x = hsv_.hue * m_PickerArea->GetBaseWidth();
-        y = (1.0f - hsv_.saturation) * m_PickerArea->GetBaseHeight();
-
         m_ValueShader->SetColor (hsv_.hue, hsv_.saturation, hsv_.value, 1.0f);
         m_ValueShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
         BaseChannelTop = Color(color::RedGreenBlue(color::HueSaturationValue(hsv_.hue, hsv_.saturation, 1.0f)));

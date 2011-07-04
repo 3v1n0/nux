@@ -77,7 +77,7 @@ namespace nux
 
   EditTextBox::~EditTextBox()
   {
-    NUX_SAFE_DELETE (m_Validator);
+    delete m_Validator;
 
     if (m_BlinkTimerHandler.IsValid() )
       GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
@@ -137,7 +137,7 @@ namespace nux
   void EditTextBox::SetValidator (const Validator *validator)
   {
     nuxAssert (validator != 0);
-    NUX_SAFE_DELETE (m_Validator);
+    delete m_Validator;
     m_Validator = validator->Clone();
   }
 

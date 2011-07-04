@@ -33,11 +33,6 @@ namespace nux
   {
     SetMinMaxSize (32, 32);
 
-//     NAnimatedTextureData texData;
-//     texData.AllocateCheckBoardTexture(16, 16, 1, 0xFF222222, 0xFF666666);
-//     m_DefaultTexture = new TextureRectangle();
-//     m_DefaultTexture->Update(&texData);
-
     OnMouseDown.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDown) );
     OnMouseDrag.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDrag) );
 
@@ -47,8 +42,6 @@ namespace nux
 
   AnimatedTextureArea::~AnimatedTextureArea()
   {
-    NUX_SAFE_DELETE (m_DefaultTexture);
-
     GetTimer().RemoveTimerHandler (m_TimerHandler);
     m_TimerHandler = 0;
     delete m_TimerFunctor;

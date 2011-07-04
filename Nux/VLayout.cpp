@@ -381,7 +381,6 @@ namespace nux
       {
         bool largerHeight = false;
         bool smallerHeight = false;
-        bool largerWidth = false;
         bool smallerWidth = false;
         t_s32 ret = 0;
 
@@ -394,7 +393,6 @@ namespace nux
 
           largerHeight = (ret & eLargerHeight) ? true : false;
           smallerHeight = (ret & eSmallerHeight) ? true : false;
-          largerWidth = (ret & eLargerWidth) ? true : false;
           smallerWidth = (ret & eSmallerWidth) ? true : false;
 
           if ( (largerHeight || smallerHeight) && ( (*it)->IsLayoutDone() == false) )

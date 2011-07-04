@@ -1,8 +1,30 @@
+// -*- Mode: C++; indent-tabs-mode: nil; tab-width: 2 -*-
+/*
+ * Copyright 2011 Inalogic® Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Tim Penhey <tim.penhey@canonical.com>
+ *
+ */
 #ifndef NUXCORE_PROPERTY_TRAITS_H
 #define NUXCORE_PROPERTY_TRAITS_H
 
 #include <string>
 #include <boost/lexical_cast.hpp>
+#include <boost/type_traits/is_enum.hpp>
 
 namespace nux {
 namespace type {
@@ -13,7 +35,7 @@ namespace type {
  * doesn't work properly.
  */
 
-template <typename T>
+template <typename T, bool = boost::is_enum<T>::value>
 struct PropertyTrait
 {
     /**
@@ -44,22 +66,43 @@ struct PropertyTrait
 template <typename T>
 struct serializable_impl
 {
+  typedef std::pair<T, bool> ResultType;
+
   static std::string to_string_impl(T const& value)
   {
     return boost::lexical_cast<std::string>(value);
   }
 
-  static std::pair<T, bool> from_string_impl(std::string const& serialized_form)
+  static ResultType from_string_impl(std::string const& serialized_form)
   {
     try {
-      return std::make_pair<T, bool>(
-          boost::lexical_cast<T>(serialized_form), true);
+      return ResultType(boost::lexical_cast<T>(serialized_form), true);
     }
     catch (boost::bad_lexical_cast const& e) {
-      return std::make_pair<T, bool>(T(), false);
+      return ResultType(T(), false);
     }
   }
 
+};
+
+
+template <typename ENUM>
+struct PropertyTrait<ENUM, true>
+{
+  typedef ENUM ValueType;
+  typedef serializable_impl<unsigned> Serialiser;
+  typedef std::pair<ENUM, bool> ResultType;
+
+  static std::string to_string(ENUM value)
+  {
+      return Serialiser::to_string_impl(value);
+  }
+
+  static std::pair<ENUM, bool> from_string(std::string const& serialized_form)
+  {
+    Serialiser::ResultType result = Serialiser::from_string_impl(serialized_form);
+    return ResultType(static_cast<ENUM>(result.first), result.second);
+  }
 };
 
 

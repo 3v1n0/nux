@@ -55,7 +55,6 @@ namespace nux
     TimerFunctor *m_TimerFunctor;
     TimerHandle m_TimerHandler;
 
-    TextureFrameAnimation *m_DefaultTexture;
     TextureFrameAnimation *m_UserTexture;
   };
 

@@ -87,9 +87,9 @@ namespace nux
 
   RGBPropertyItem::~RGBPropertyItem()
   {
-    NUX_SAFE_DELETE (m_red);
-    NUX_SAFE_DELETE (m_green);
-    NUX_SAFE_DELETE (m_blue);
+    delete m_red;
+    delete m_green;
+    delete m_blue;
   }
 
   long RGBPropertyItem::ProcessPropertyEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
