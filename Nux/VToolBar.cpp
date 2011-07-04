@@ -63,13 +63,11 @@ namespace nux
   long VToolBar::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
-    long ProcEvInfo = 0;
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
       if (!GetGeometry().IsPointInside (ievent.e_x, ievent.e_y) )
       {
-        ProcEvInfo = eDoNotProcess;
         return TraverseInfo;
       }
     }

@@ -316,17 +316,14 @@ namespace nux
       int Y = base.y + m_v_out_margin;
 
       bool first_element_of_row = true;
-      bool first_row = true;
 
-      for(int i = 0; i < num_elements; i++) 
+      for(int i = 0; i < num_elements; i++)
       {
         if (num_row == 1)
           num_column++;
 
         if(first_element_of_row)
         {
-          first_row = false;
-          
           first_element_of_row = false;
         }
 

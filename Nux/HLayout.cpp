@@ -375,7 +375,6 @@ namespace nux
       {
         if (!(*it)->IsVisible ())
           continue;
-        bool largerHeight = false;
         bool smallerHeight = false;
         bool largerWidth = false;
         bool smallerWidth = false;
@@ -387,7 +386,6 @@ namespace nux
 
           largerWidth = (ret & eLargerWidth) ? true : false;
           smallerWidth = (ret & eSmallerWidth) ? true : false;
-          largerHeight = (ret & eLargerHeight) ? true : false;
           smallerHeight = (ret & eSmallerHeight) ? true : false;
 
           if ( (largerWidth || smallerWidth) && ( (*it)->IsLayoutDone() == false) )

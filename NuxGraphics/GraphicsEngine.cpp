@@ -1297,7 +1297,6 @@ namespace nux
   void GraphicsEngine::UpdateResource (ResourceData *Resource)
   {
     ObjectPtr< CachedResourceData > GLResource = ResourceCache.FindCachedResourceById (Resource->GetResourceIndex() ); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
-    bool bUpdated = FALSE;
 
     if (GLResource.IsValid() )
     {
@@ -1310,7 +1309,6 @@ namespace nux
         // Check if the updater is valid for updating the resource.
         if ( ResourceUpdater->UpdatesThisResource (Resource) )
         {
-          bUpdated = ResourceUpdater->UpdateResource (GLResource, Resource);
           break;
         }
       }
