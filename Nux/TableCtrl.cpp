@@ -753,7 +753,7 @@ namespace nux
     ObjectPtr<IOpenGLFrameBufferObject> CurrentFrameBuffer = GetWindowCompositor().GetWindowFrameBufferObject();
 
     Geometry tableGeometry = m_TableArea->GetGeometry();
-    int xl, yl, wl, hl;
+    int xl, yl;
 
     //--->GetPainter().Paint2DQuadColor(tableGeometry, Color(HEADER_BACKGROUND_COLOR));
 
@@ -790,8 +790,6 @@ namespace nux
       // Render row name and horizontal separation
       xl = m_TableArea->GetGeometry().x;
       yl = m_TableArea->GetGeometry().y + (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0); // skip the Height of the Column header;
-      wl = m_TableArea->GetGeometry().GetWidth();
-      hl = m_TableArea->GetGeometry().GetHeight();
 
       // Paint the first horizontal separation line.
       GetPainter().Draw2DLine (GfxContext, xl, yl, xl + m_ContentGeometry.GetWidth(), yl, GetHorizontalSeparationLineColor() );
@@ -871,12 +869,10 @@ namespace nux
       //GetPainter().PaintShapeCorner(GfxContext, header_geo, 0xFF2f2f2f, eSHAPE_CORNER_ROUND10, eCornerTopLeft|eCornerTopRight);
     }
 
-    int xl, yl, wl, hl;
+    int xl, yl;
     // Render header name and vertical separations
     xl = m_TableArea->GetGeometry().x + (m_bShowRowHeader ? ROWHEADERWIDTH : 0); // skip the width of the Row header
     yl = m_TableArea->GetGeometry().y + (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0);
-    wl = m_TableArea->GetGeometry().GetWidth();
-    hl = m_TableArea->GetGeometry().GetHeight() - (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0);
 
     // Paint the first vertical separation line.
     if (m_bShowRowHeader == false)
@@ -1709,9 +1705,6 @@ namespace nux
   {
     std::vector<Geometry>::iterator it;
 
-    // selected item geometry
-    int sx, sy, sw, sh;
-
     row = -1;
     t_u32 num_row = (t_u32) m_row_header.size();
 
@@ -1724,8 +1717,6 @@ namespace nux
              (m_row_header[i]->_table_item->_row_header_area->GetBaseY() + m_row_header[i]->_table_item->_row_header_area->GetBaseHeight() > y) )
         {
           row = i;
-          sy = m_row_header[i]->_table_item->_row_header_area->GetBaseY();
-          sh = m_row_header[i]->_table_item->_row_header_area->GetBaseHeight();
           break;
         }
       }
@@ -1739,8 +1730,6 @@ namespace nux
       if ( (m_column_header[i].m_header_area->GetBaseX() <= x) && (m_column_header[i].m_header_area->GetBaseX() + m_column_header[i].m_header_area->GetBaseWidth() > x) )
       {
         column = i;
-        sx = m_column_header[i].m_header_area->GetBaseX();
-        sw = m_column_header[i].m_header_area->GetBaseWidth();
         break;
       }
     }
@@ -1988,13 +1977,6 @@ namespace nux
 
     if ( (m_selectedRow != -1) && (m_selectedColumn != -1) )
     {
-      // selected item geometry
-      int sx, sy, sw, sh;
-      sx = m_column_header[m_selectedColumn].m_header_area->GetBaseX();
-      sw = m_column_header[m_selectedColumn].m_header_area->GetBaseWidth();
-      sy = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseY();
-      sh = m_row_header[m_selectedRow]->_table_item->_row_header_area->GetBaseHeight();
-
       m_selectedTableItem->setDirtyItem (true);
     }
 
@@ -2080,7 +2062,6 @@ namespace nux
     if (isFloatingColumn() == false)
     {
       // Need to find the next element who can absorb the difference
-      bool findElement = false;
       int element_pos;
       int deltax = x - m_point0.x;
 
@@ -2110,7 +2091,6 @@ namespace nux
 
         if ( (m_column_header[i]._fix_width == false) /*&& (element_width > 10)*/)
         {
-          findElement = true;
           element_pos = i;
 
           if ( (dx > 0) && (x > m_point0.x) )

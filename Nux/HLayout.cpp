@@ -94,12 +94,12 @@ namespace nux
     {
       if ( (*it)->IsView() )
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = static_cast<View *>(*it);
         ViewList->push_back (ic);
       }
       else if ( (*it)->IsLayout() )
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+        Layout *layout = static_cast<Layout *>(*it);
         layout->GetCompositeList (ViewList);
       }
     }
@@ -375,7 +375,6 @@ namespace nux
       {
         if (!(*it)->IsVisible ())
           continue;
-        bool largerHeight = false;
         bool smallerHeight = false;
         bool largerWidth = false;
         bool smallerWidth = false;
@@ -387,7 +386,6 @@ namespace nux
 
           largerWidth = (ret & eLargerWidth) ? true : false;
           smallerWidth = (ret & eSmallerWidth) ? true : false;
-          largerHeight = (ret & eLargerHeight) ? true : false;
           smallerHeight = (ret & eSmallerHeight) ? true : false;
 
           if ( (largerWidth || smallerWidth) && ( (*it)->IsLayoutDone() == false) )

@@ -414,7 +414,7 @@ namespace nux
         this->Reference();
       }
 
-      View *ic = NUX_STATIC_CAST (View *, this);
+      View *ic = static_cast<View *>(this);
 
       if (ic->CanBreakLayout() )
       {
@@ -447,7 +447,7 @@ namespace nux
         this->Reference();
       }
 
-      Layout *layout = NUX_STATIC_CAST (Layout *, this);
+      Layout *layout = static_cast<Layout *>(this);
 
       if (layout->_parent_area)
       {

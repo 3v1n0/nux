@@ -930,13 +930,6 @@ namespace nux
     else
     {
       SetFocusControl (true);
-      bool has_focused_child = false;
-      std::list<Area *>::iterator it;
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-      {
-        if ((*it)->GetFocused ())
-          has_focused_child = true;
-      }
 
       if (GetFocused () == false)
       {

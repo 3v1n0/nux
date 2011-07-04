@@ -169,23 +169,15 @@ namespace nux
 
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
     Geometry viewGeometry = GetGeometry(); //Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-    bool traverse = true;
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
       if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
       {
         ProcEvInfo = eDoNotProcess;
-        traverse = false;
       }
     }
 
-//    {   std::list<View*>::iterator it;
-//        for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
-//        {
-//            ret = (*it)->ProcessEvent(ievent, ret, ProcEvInfo);
-//        }
-//    }
     if (m_layout)
       ret = m_layout->ProcessEvent (window_event, ret, ProcEvInfo);
 

@@ -200,10 +200,10 @@ namespace nux
 
   SplineCurvePreview::~SplineCurvePreview()
   {
-    NUX_SAFE_DELETE (m_BackgroundLayer);
-    NUX_SAFE_DELETE (m_DrawFunctionShader);
-    NUX_SAFE_DELETE (m_DialogThreadProxy);
-    NUX_SAFE_DELETE (m_ChangeDetectionTimer);
+    delete m_BackgroundLayer;
+    delete m_DrawFunctionShader;
+    delete m_DialogThreadProxy;
+    delete m_ChangeDetectionTimer;
   }
 
   long SplineCurvePreview::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

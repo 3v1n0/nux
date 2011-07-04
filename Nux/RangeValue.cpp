@@ -128,7 +128,6 @@ namespace nux
 
   void RangeValue::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    bool highlighted;
     Geometry base = GetGeometry();
 
     // Percentage
@@ -142,11 +141,6 @@ namespace nux
     }
 
     m_ValueString->ProcessDraw (GfxContext, true);
-
-    if (m_ValueString->IsMouseInside() )
-      highlighted = true;
-    else
-      highlighted = false;
 
     DrawMarker (GfxContext);
   }

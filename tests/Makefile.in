@@ -63,9 +63,11 @@ gtest_nux_core_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(AM_CXXFLAGS) $(CXXFLAGS) $(gtest_nux_core_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am__test_nux_SOURCES_DIST = test-nux.cpp test-timeline.cpp \
-	test-object.cpp test-system.cpp
-@BUILD_TESTS_TRUE@am_test_nux_OBJECTS = test_nux-test-nux.$(OBJEXT) \
+am__test_nux_SOURCES_DIST = test-canvas.cpp test-nux.cpp \
+	test-timeline.cpp test-object.cpp test-system.cpp
+@BUILD_TESTS_TRUE@am_test_nux_OBJECTS =  \
+@BUILD_TESTS_TRUE@	test_nux-test-canvas.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	test_nux-test-nux.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	test_nux-test-timeline.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	test_nux-test-object.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	test_nux-test-system.$(OBJEXT)
@@ -127,6 +129,7 @@ CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DLLTOOL = @DLLTOOL@
 DOXYGEN_PAPER_SIZE = @DOXYGEN_PAPER_SIZE@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -176,6 +179,7 @@ LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINTAINER_CFLAGS = @MAINTAINER_CFLAGS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
@@ -227,6 +231,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -260,7 +265,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -279,6 +283,7 @@ top_srcdir = @top_srcdir@
 
 # Please keep alphabetical
 @BUILD_TESTS_TRUE@test_nux_SOURCES = \
+@BUILD_TESTS_TRUE@  test-canvas.cpp \
 @BUILD_TESTS_TRUE@  test-nux.cpp \
 @BUILD_TESTS_TRUE@  test-timeline.cpp \
 @BUILD_TESTS_TRUE@  test-object.cpp \
@@ -388,6 +393,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_logger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_properties.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-canvas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-nux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-object.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-system.Po@am__quote@
@@ -448,6 +454,22 @@ gtest_nux_core-test_properties.obj: test_properties.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_properties.cpp' object='gtest_nux_core-test_properties.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_properties.obj `if test -f 'test_properties.cpp'; then $(CYGPATH_W) 'test_properties.cpp'; else $(CYGPATH_W) '$(srcdir)/test_properties.cpp'; fi`
+
+test_nux-test-canvas.o: test-canvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-canvas.o -MD -MP -MF $(DEPDIR)/test_nux-test-canvas.Tpo -c -o test_nux-test-canvas.o `test -f 'test-canvas.cpp' || echo '$(srcdir)/'`test-canvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-canvas.Tpo $(DEPDIR)/test_nux-test-canvas.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-canvas.cpp' object='test_nux-test-canvas.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-canvas.o `test -f 'test-canvas.cpp' || echo '$(srcdir)/'`test-canvas.cpp
+
+test_nux-test-canvas.obj: test-canvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-canvas.obj -MD -MP -MF $(DEPDIR)/test_nux-test-canvas.Tpo -c -o test_nux-test-canvas.obj `if test -f 'test-canvas.cpp'; then $(CYGPATH_W) 'test-canvas.cpp'; else $(CYGPATH_W) '$(srcdir)/test-canvas.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-canvas.Tpo $(DEPDIR)/test_nux-test-canvas.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-canvas.cpp' object='test_nux-test-canvas.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-canvas.obj `if test -f 'test-canvas.cpp'; then $(CYGPATH_W) 'test-canvas.cpp'; else $(CYGPATH_W) '$(srcdir)/test-canvas.cpp'; fi`
 
 test_nux-test-nux.o: test-nux.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-nux.o -MD -MP -MF $(DEPDIR)/test_nux-test-nux.Tpo -c -o test_nux-test-nux.o `test -f 'test-nux.cpp' || echo '$(srcdir)/'`test-nux.cpp
