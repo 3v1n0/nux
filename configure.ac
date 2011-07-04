@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [1])
 m4_define([nux_minor_version], [0])
-m4_define([nux_micro_version], [2])
+m4_define([nux_micro_version], [4])
 
 # Bump this when we break ABI
 m4_define([nux_api_version], [1.0])
