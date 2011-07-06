@@ -16,7 +16,7 @@
  * Authored by: Mirco Müller <mirco.mueller@canonical.com
  */
 
-#include "NuxImage/Canvas.h"
+#include "Canvas.h"
 
 namespace nux
 {

@@ -446,6 +446,15 @@ namespace nux
     */
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
+
+    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
+        unsigned long x11_key_code,
+        unsigned long special_keys_state);
+
+    void ResetDownwardPathToKeyFocusArea();
+    void ResetUpwardPathToKeyFocusArea();
+
+
     //! Set to True to initiate a layout reconfiguration when the geometry of this widget changes.
     /*!
         When the geometry of an area changes, the new geometry can be recursively propagated to all its 
@@ -455,7 +464,6 @@ namespace nux
 
         @param reconfigure_parent_layout Set it to True to reconfigure this area parent layouts.
     */
-
     void SetReconfigureParentLayoutOnGeometryChange(bool reconfigure_parent_layout);
 
     //! Return True if the the parent layouts of this area should be reconfigured on geometry changed.
@@ -520,8 +528,11 @@ namespace nux
    
     bool _on_geometry_changeg_reconfigure_parent_layout;
 
+    bool                    has_key_focus_;
+
+    Area                    *next_object_to_key_focus_area_;
   private:
-    void ReconfigureParentLayout (Area *child = 0);
+    void ReconfigureParentLayout(Area *child = 0);
     void CheckMinSize();
     void CheckMaxSize();
 
@@ -536,6 +547,7 @@ namespace nux
         A Area cannot have children (that may change later).
     */
     Area                    *_parent_area;
+    
 
     LayoutProperties        *_layout_properties;
     bool                    _visible;

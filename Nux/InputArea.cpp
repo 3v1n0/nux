@@ -737,7 +737,7 @@ logging::Logger logger("nux.inputarea");
     return 0;
   }
   
-  std::list<const char *> InputArea::DndSourceGetDragTypes ()
+  std::list<const char *> InputArea::DndSourceGetDragTypes()
   {
     std::list<const char *> types;
     types.push_back ("text/plain;charset=utf-8");
@@ -745,7 +745,7 @@ logging::Logger logger("nux.inputarea");
     return types;
   }
     
-  const char * InputArea::DndSourceGetDataForType (const char *type, int *size, int *format)
+  const char * InputArea::DndSourceGetDataForType(const char *type, int *size, int *format)
   {
     *format = 8;
 
@@ -759,18 +759,18 @@ logging::Logger logger("nux.inputarea");
     return 0;
   }
   
-  void InputArea::InnerDndSourceDragFinished (DndAction result, void *data) 
+  void InputArea::InnerDndSourceDragFinished(DndAction result, void *data) 
   { 
     InputArea *self = static_cast<InputArea *> (data);
     self->DndSourceDragFinished (result);
   }
   
-  void InputArea::DndSourceDragFinished (DndAction result)
+  void InputArea::DndSourceDragFinished(DndAction result)
   {
   
   }
   
-  void InputArea::StartDragAsSource ()
+  void InputArea::StartDragAsSource()
   {
     GraphicsDisplay::DndSourceFuncs funcs;
     
@@ -779,45 +779,45 @@ logging::Logger logger("nux.inputarea");
     funcs.get_data_for_type = &InputArea::InnerDndSourceGetDataForType;
     funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
     
-    DndSourceDragBegin ();
-    GetWindow ().StartDndDrag (funcs, this);
+    DndSourceDragBegin();
+    GetWindow().StartDndDrag(funcs, this);
   }
 #endif
 
-  void InputArea::DoSetFocused (bool focused)
+  void InputArea::DoSetFocused(bool focused)
   {
-    Area::DoSetFocused (focused);
-    SetKeyboardFocus (focused);
+    Area::DoSetFocused(focused);
+    SetKeyboardFocus(focused);
   }
   
-  void InputArea::GrabPointer ()
+  void InputArea::GrabPointer()
   {
-    GetWindowCompositor ().GrabPointerAdd (this);
+    GetWindowCompositor().GrabPointerAdd (this);
   }
   
-  void InputArea::UnGrabPointer ()
+  void InputArea::UnGrabPointer()
   {
     GetWindowCompositor ().GrabPointerRemove (this);
   }
 
-  void InputArea::GrabKeyboard ()
+  void InputArea::GrabKeyboard()
   {
-    GetWindowCompositor ().GrabKeyboardAdd (this);
+    GetWindowCompositor().GrabKeyboardAdd (this);
   }
   
-  void InputArea::UnGrabKeyboard ()
+  void InputArea::UnGrabKeyboard()
   {
-    GetWindowCompositor ().GrabKeyboardRemove (this);
+    GetWindowCompositor().GrabKeyboardRemove (this);
   }
   
-  bool InputArea::OwnsPointerGrab ()
+  bool InputArea::OwnsPointerGrab()
   {
-    return GetWindowCompositor ().GetPointerGrabArea () == this;
+    return GetWindowCompositor().GetPointerGrabArea() == this;
   }
   
   bool InputArea::OwnsKeyboardGrab ()
   {
-    return GetWindowCompositor ().GetKeyboardGrabArea () == this;
+    return GetWindowCompositor ().GetKeyboardGrabArea() == this;
   }
 
   bool InputArea::IsMouseOwner()
@@ -908,7 +908,7 @@ logging::Logger logger("nux.inputarea");
     OnStopKeyboardReceiver.emit();
   }
 
-  void InputArea::EmitMouseDownOutsideArea   (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
+  void InputArea::EmitMouseDownOutsideArea(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
     OnMouseDownOutsideArea.emit(x, y, mouse_button_state, special_keys_state);
   }
@@ -922,5 +922,19 @@ logging::Logger logger("nux.inputarea");
     return NULL;
   }
 
+  Area* InputArea::FindKeyFocusArea(unsigned int key_symbol,
+                          unsigned long x11_key_code,
+                          unsigned long special_keys_state)
+  {
+    if (has_key_focus_)
+    {
+      return this;
+    }
+    else if (next_object_to_key_focus_area_)
+    {
+      return next_object_to_key_focus_area_->FindKeyFocusArea(key_symbol, x11_key_code, special_keys_state);
+    }
+    return NULL;
+  }
 }
 

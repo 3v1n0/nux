@@ -73,8 +73,6 @@ namespace nux
 
 #define NUX_ENABLE_CG_SHADERS 0
 
-//#define NUX_OPENGLES_20
-
 #if defined(NUX_OS_WINDOWS)
   #include "GL/glew.h"
   #include "GL/wglew.h"
@@ -92,11 +90,15 @@ namespace nux
 #elif defined(NUX_OS_LINUX)
 
   #ifdef NUX_OPENGLES_20
-    #define GLEW_MX
+    #ifndef GLEW_MX
+      #define GLEW_MX
+    #endif
     #include "EGL/egl.h"
     #include "GLES2/gl2.h"
   #else
-    #define GLEW_MX
+    #ifndef GLEW_MX
+      #define GLEW_MX
+    #endif
     #include "GL/glew.h"
     #include "GL/glxew.h"
     

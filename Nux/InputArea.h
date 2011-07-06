@@ -87,6 +87,9 @@ namespace nux
     bool IsCaptureMouseDownAnyWhereElse() const;
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+    Area* FindKeyFocusArea(unsigned int key_symbol,
+                          unsigned long x11_key_code,
+                          unsigned long special_keys_state);
 
   private:
     bool _dnd_enabled_as_source;

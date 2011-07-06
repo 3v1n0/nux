@@ -42,6 +42,9 @@ namespace nux
     ,   _max_size (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
   {
     _parent_area = NULL;
+    next_object_to_key_focus_area_ = NULL;
+    has_key_focus_ = false;
+
     _stretch_factor = 1;
     _layout_properties = NULL;
     _visible = true;
@@ -905,7 +908,7 @@ namespace nux
   {
     bool mouse_pointer_inside_area = false;
 
-    if(Type().IsDerivedFromType(MenuPage::StaticObjectType))
+    if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
     {
       // A MenuPage geometry is already in absolute coordinates.
       mouse_pointer_inside_area = _geometry.IsInside(mouse_position);
@@ -922,7 +925,7 @@ namespace nux
   {
     bool mouse_pointer_inside_area = false;
 
-    if(Type().IsDerivedFromType(MenuPage::StaticObjectType))
+    if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
     {
       // A MenuPage geometry is already in absolute coordinates.
       mouse_pointer_inside_area = _geometry.IsInside(mouse_position);
@@ -932,9 +935,9 @@ namespace nux
       mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
     }
 
-    if((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
+    if ((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
     {
-      if(_accept_mouse_wheel_event == false)
+      if (_accept_mouse_wheel_event == false)
         return NULL;
     }
     return mouse_pointer_inside_area;
@@ -944,6 +947,41 @@ namespace nux
   {
     return NULL;
   }
-}
+  
+  Area* Area::FindKeyFocusArea(unsigned int key_symbol,
+   unsigned long x11_key_code,
+   unsigned long special_keys_state)
+  {
+    if (has_key_focus_)
+    {
+      return this;
+    }
+    else if (next_object_to_key_focus_area_)
+    {
+      return next_object_to_key_focus_area_->FindKeyFocusArea(key_symbol, x11_key_code, special_keys_state);
+    }
+    return NULL;
+  }
 
+  void Area::ResetDownwardPathToKeyFocusArea()
+  {
+    has_key_focus_ = false;
+    if (next_object_to_key_focus_area_)
+    {
+      next_object_to_key_focus_area_->ResetDownwardPathToKeyFocusArea();
+    }
+    next_object_to_key_focus_area_ = NULL;
+  }
+
+  void Area::ResetUpwardPathToKeyFocusArea()
+  {
+    has_key_focus_ = false;
+    if (_parent_area)
+    {
+      _parent_area->ResetUpwardPathToKeyFocusArea();
+    }
+    next_object_to_key_focus_area_ = NULL;
+  }
+
+}
 

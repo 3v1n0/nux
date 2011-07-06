@@ -21,7 +21,7 @@
 #include "Nux/VLayout.h"
 #include "Nux/WindowThread.h"
 #include "NuxGraphics/GraphicsEngine.h"
-#include "NuxImage/Canvas.h"
+#include "Nux/Canvas.h"
 
 void
 DrawRoundedRectangle (cairo_t* cr,

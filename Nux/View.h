@@ -232,6 +232,10 @@ namespace nux
 
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
+    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
+                          unsigned long x11_key_code,
+                          unsigned long special_keys_state);
+
     Layout *m_CompositionLayout;
 
     bool _need_redraw; //<! The rendering of the view needs to be refreshed.

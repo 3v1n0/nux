@@ -608,21 +608,21 @@ namespace nux
     }
   }
 
-  bool View::HasFocusControl ()
+  bool View::HasFocusControl()
   {
-    Area *_parent = GetParentObject ();
+    Area *_parent = GetParentObject();
     if (_parent == NULL)
       return false;
 
-    if (_parent->IsView ())
+    if (_parent->IsView())
     {
       View *parent = (View*)_parent;
-      return parent->HasFocusControl ();
+      return parent->HasFocusControl();
     }
-    else if (_parent->IsLayout ())
+    else if (_parent->IsLayout())
     {
       Layout *parent = (Layout *)_parent;
-      return parent->HasFocusControl ();
+      return parent->HasFocusControl();
     }
     return false;
   }
@@ -631,19 +631,34 @@ namespace nux
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
     
-    if(mouse_inside == false)
+    if (mouse_inside == false)
       return NULL;
 
-    if(m_CompositionLayout)
+    if (m_CompositionLayout)
     {
       Area* view = m_CompositionLayout->FindAreaUnderMouse(mouse_position, event_type);
 
-      if(view)
+      if (view)
         return view;
     }
 
-    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
       return NULL;
     return this;
+  }
+
+  Area* View::FindKeyFocusArea(unsigned int key_symbol,
+                      unsigned long x11_key_code,
+                      unsigned long special_keys_state)
+  {
+    if (has_key_focus_)
+    {
+      return this;
+    }
+    else if (next_object_to_key_focus_area_)
+    {
+      return next_object_to_key_focus_area_->FindKeyFocusArea(key_symbol, x11_key_code, special_keys_state);
+    }
+    return NULL;
   }
 }
