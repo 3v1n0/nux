@@ -23,76 +23,101 @@
 #include "RollingFileAppender.h"
 
 #include <fstream>
+#include <sstream>
 #include <stdexcept>
-#include <boost/filesystem.hpp>
+
+#include <gio/gio.h>
+
 #include <boost/lexical_cast.hpp>
 
-namespace bf = boost::filesystem;
 
 namespace nux {
 namespace logging {
 
 namespace {
 
-bf::path backup_path(bf::path path, unsigned number)
+std::string backup_path(std::string const& path, unsigned number)
 {
   if (number == 0)
     return path;
 
-  std::string extension = path.extension();
-  extension += "." + boost::lexical_cast<std::string>(number);
-  return path.replace_extension(extension);
+  std::ostringstream sout;
+  sout << path << "." << number;
+  return sout.str();
 }
 
+// Change the implementation to string buf
+// Have a GFile representing the file on disk
+// g_file_append gives a GFileOutputStream (subclass of GOutputStream)
+// g_output_stream_write_async (only have one in progress at a time)
+// g_output_stream_flush_async (probably don't want a pending async)
+// keep our own count of the written bytes.
+// Tests don't have a g_object main loop, so we have another way...
+// while (g_main_context_pending(g_main_context_get_thread_default())) {
+//   g_main_context_iteration(g_main_context_get_thread_default());
+// }
 class RollingFileStreamBuffer : public std::basic_filebuf<char>
 {
 public:
   typedef std::basic_filebuf<char> BaseFileBuf;
 
-  RollingFileStreamBuffer(bf::path const& filename,
+  RollingFileStreamBuffer(std::string const& filename,
                           unsigned number_of_backup_files,
                           unsigned long long max_log_size);
+  ~RollingFileStreamBuffer();
 protected:
   virtual int sync();
 private:
   void RotateFiles();
-
-  bf::path filename_;
+  GFile* log_file_;
+  std::string filename_;
   unsigned number_of_backup_files_;
   unsigned long long max_log_size_;
 };
 
-RollingFileStreamBuffer::RollingFileStreamBuffer(bf::path const& filename,
+RollingFileStreamBuffer::RollingFileStreamBuffer(std::string const& filename,
                                                  unsigned number_of_backup_files,
                                                  unsigned long long max_log_size)
   : filename_(filename)
   , number_of_backup_files_(number_of_backup_files)
   , max_log_size_(max_log_size)
 {
-  // Firstly make sure that we have been given a full path.
-  bf::path parent = filename.parent_path();
-  if (parent.empty() || parent.root_directory().empty()) {
-    std::string error_msg = filename.string() + " needs to be a full path";
-    throw std::runtime_error(error_msg);
-  }
   // Looks to see if our filename exists.
-  if (bf::exists(filename)) {
+  if (g_file_test(filename.c_str(), G_FILE_TEST_EXISTS)) {
     // The filename needs to be a regular file.
-    if (!bf::is_regular_file(filename)) {
-      std::string error_msg = filename.string() + " is not a regular file";
+    if (!g_file_test(filename.c_str(), G_FILE_TEST_IS_REGULAR)) {
+      std::string error_msg = filename + " is not a regular file";
       throw std::runtime_error(error_msg.c_str());
     }
     // Rotate the files.
     RotateFiles();
   } else {
-    bf::create_directories(parent);
+    GFile* log_file = g_file_new_for_path(filename.c_str());
+    GFile* log_dir = g_file_get_parent(log_file);
+    if (log_dir) {
+      g_file_make_directory_with_parents(log_dir, NULL, NULL);
+      g_object_unref(log_dir);
+      g_object_unref(log_file);
+    }
+    else {
+      g_object_unref(log_file);
+      std::string error_msg = "Can't get parent for " + filename;
+      throw std::runtime_error(error_msg.c_str());
+    }
   }
   // Now open the filename.
-  BaseFileBuf* buff = open(filename.string().c_str(), std::ios_base::out);
+  BaseFileBuf* buff = open(filename.c_str(), std::ios_base::out);
   if (!buff) {
-    std::string error_msg = "Failed to open " + filename.string() + " for writing";
+    std::string error_msg = "Failed to open " + filename + " for writing";
     throw std::runtime_error(error_msg);
   }
+
+  log_file_ = g_file_new_for_path(filename_.c_str());
+}
+
+RollingFileStreamBuffer::~RollingFileStreamBuffer()
+{
+  g_object_unref(log_file_);
 }
 
 void RollingFileStreamBuffer::RotateFiles()
@@ -102,15 +127,23 @@ void RollingFileStreamBuffer::RotateFiles()
     return;
 
   unsigned backup = number_of_backup_files_;
-  bf::path last_log(backup_path(filename_, backup));
-  if (bf::exists(last_log)) {
-    bf::remove(last_log);
+  std::string last_log(backup_path(filename_, backup));
+  if (g_file_test(last_log.c_str(), G_FILE_TEST_EXISTS)) {
+    // Attempt to remove it.
+    GFile* logfile = g_file_new_for_path(last_log.c_str());
+    g_file_delete(logfile, NULL, NULL);
+    g_object_unref(logfile);
   }
   // Move the previous files out.
   while (backup > 0) {
-    bf::path prev_log(backup_path(filename_, --backup));
-    if (bf::exists(prev_log)) {
-      bf::rename(prev_log, last_log);
+    std::string prev_log(backup_path(filename_, --backup));
+    if (g_file_test(prev_log.c_str(), G_FILE_TEST_EXISTS)) {
+      GFile* dest = g_file_new_for_path(last_log.c_str());
+      GFile* src = g_file_new_for_path(prev_log.c_str());
+      // We don't really care if there are errors for now.
+      g_file_move(src, dest, G_FILE_COPY_NONE, NULL, NULL, NULL, NULL);
+      g_object_unref(src);
+      g_object_unref(dest);
     }
     last_log = prev_log;
   }
@@ -121,10 +154,16 @@ int RollingFileStreamBuffer::sync()
   BaseFileBuf::sync();
   // Look at the size of the file, and if it is bigger than max_log_size then
   // we rotate the files.
-  if (bf::file_size(filename_) > max_log_size_) {
+  GFileInfo* file_info = g_file_query_info(log_file_,
+                                           G_FILE_ATTRIBUTE_STANDARD_SIZE,
+                                           G_FILE_QUERY_INFO_NONE,
+                                           NULL, NULL);
+  goffset file_size = g_file_info_get_size(file_info);
+  g_object_unref(file_info);
+  if (file_size > max_log_size_) {
     close();
     RotateFiles();
-    open(filename_.string().c_str(), std::ios_base::out);
+    open(filename_.c_str(), std::ios_base::out);
   }
   return 0; // success
 }

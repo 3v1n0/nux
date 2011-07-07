@@ -19,42 +19,19 @@
  * Authored by: Tim Penhey <tim.penhey@canonical.com>
  *
  */
-#ifndef NUXCORE_ASYNC_FILE_WRITER_H
-#define NUXCORE_ASYNC_FILE_WRITER_H
+#ifndef NUX_TESTS_FILE_HELPERS_H
+#define NUX_TESTS_FILE_HELPERS_H
 
 #include <string>
-#include <sigc++/sigc++.h>
 
 namespace nux
 {
-
-/**
- * Write to a file asynchronously.
- *
- * This uses the GIO async functions, and as such depend on the gobject main
- * loop.
- */
-class AsyncFileWriter
+namespace testing
 {
-public:
-  typedef sigc::slot<void> Callback;
 
-  AsyncFileWriter(std::string const& filename);
-  // Kill any pending async requests, and close the file synchronously if it
-  // is open.
-  ~AsyncFileWriter();
+std::string ReadFile(std::string const& filename);
 
-  // Queue the data for writing.  It'll happen some time.
-  void Write(std::string const& data);
-  // Close the file asynchronously.  When the file is closed, the callback is
-  // called.
-  void Close(Callback file_closed_callback);
-
-private:
-  class Impl;
-  Impl* pimpl;
-};
-
+}
 }
 
 #endif
