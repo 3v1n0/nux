@@ -48,7 +48,6 @@ namespace nux
 
   RangeValueInteger::~RangeValueInteger()
   {
-    DestroyLayout();
   }
 
   void RangeValueInteger::InitializeWidgets()
@@ -92,11 +91,6 @@ namespace nux
     m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
   }
 
-  void RangeValueInteger::DestroyLayout()
-  {
-  }
-
-
   long RangeValueInteger::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     m_CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_LCONTROL);
@@ -136,7 +130,6 @@ namespace nux
 
   void RangeValueInteger::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    bool highlighted;
     Geometry base = GetGeometry();
 
     // Percentage
@@ -148,12 +141,6 @@ namespace nux
       P.SetWidth ( (m_MarkerPosition - m_min) * (float) P.GetWidth() / (m_max - m_min) );
       GetPainter().Paint2DQuadColor (GfxContext, P, m_ProgressColor);
     }
-
-
-    if (m_ValueString->IsMouseInside() )
-      highlighted = true;
-    else
-      highlighted = false;
 
     DrawMarker (GfxContext);
   }

@@ -774,7 +774,6 @@ namespace nux
     m_iBitsPerComponent = 8;
     m_iNComponents = 0;
     bool bIsFloatBuffer = false;
-    bool bNeedAlpha = false;
 
     char *mode = strdup (modeString);
 
@@ -785,9 +784,6 @@ namespace nux
     {
       if (strstr (buf, "float") != NULL)
         bIsFloatBuffer = true;
-
-      if (strstr (buf, "alpha") != NULL)
-        bNeedAlpha = true;
 
       tokens.push_back (buf);
       buf = strtok (NULL, " ");
@@ -880,7 +876,6 @@ namespace nux
       if (token.find ("float") == 0)
       {
         m_iBitsPerComponent = getIntegerValue (token);
-        //bIsFloatBuffer = true; done previously
         pfAttribList->push_back (GLX_FLOAT_COMPONENTS_NV);
         pfAttribList->push_back (true);
         continue;

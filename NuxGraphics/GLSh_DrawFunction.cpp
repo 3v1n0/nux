@@ -130,12 +130,13 @@ namespace nux
 
   void GLSh_DrawFunction::Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight)
   {
+    float fx = x, fy = y;
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f,
-      x,          y + height, 0.0f, 1.0f,
-      x + width,  y + height, 0.0f, 1.0f,
-      x + width,  y,          0.0f, 1.0f,
+      fx,          fy,          0.0f, 1.0f,
+      fx,          fy + height, 0.0f, 1.0f,
+      fx + width,  fy + height, 0.0f, 1.0f,
+      fx + width,  fy,          0.0f, 1.0f,
     };
 
     if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
@@ -146,9 +147,9 @@ namespace nux
 
       int VertexLocation = sprog->GetAttributeLocation ("AVertex");
 
-      int VPMatrixLocation = sprog->GetUniformLocationARB ("ViewProjectionMatrix");
-      GLfloat *matrix = (GLfloat *) GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewProjectionMatrix().m;
-      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, matrix );
+      int     VPMatrixLocation = sprog->GetUniformLocationARB ("ViewProjectionMatrix");
+      Matrix4 MVPMatrix = GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewProjectionMatrix();
+      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (MVPMatrix.m) );
 
       GetGraphicsDisplay()->GetGraphicsEngine()->SetTexture (GL_TEXTURE0, m_device_texture);
 

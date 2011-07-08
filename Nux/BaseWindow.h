@@ -23,6 +23,8 @@
 #ifndef BASEWINDOW_H
 #define BASEWINDOW_H
 
+#include <boost/scoped_ptr.hpp>
+
 #include "ScrollView.h"
 
 #if defined(NUX_OS_WINDOWS)
@@ -220,7 +222,7 @@ namespace nux
     void SetTopBorder (int border);
     int m_TopBorder;
     int m_Border;
-    AbstractPaintLayer *_paint_layer;
+    boost::scoped_ptr<AbstractPaintLayer> _paint_layer;
 
     bool _entering_visible_state;  //!< the window is about to be made visible during event processing
     bool _entering_hidden_state;   //!< the window is about to be made hidden during event processing

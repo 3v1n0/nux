@@ -137,7 +137,7 @@ namespace nux
     italic_ = false;
     multiline_ = false;
     wrap_ = false;
-    cursor_visible_ = true;
+    cursor_visible_ = false;
     readonly_ = false;
     content_modified_ = false;
     //selection_changed_ = false;
@@ -184,6 +184,9 @@ namespace nux
 
   TextEntry::~TextEntry ()
   {
+    if(cursor_blink_timer_)
+      g_source_remove(cursor_blink_timer_);
+
     cairo_font_options_destroy (font_options_);
     if (_texture2D)
       _texture2D->UnReference ();
@@ -203,13 +206,14 @@ namespace nux
 
   void TextEntry::DoSetFocused (bool focused)
   {
-		
+    focused_ = focused;	
+    cursor_visible_ = focused; // visibilty of cursor depends on focus
     View::DoSetFocused (focused);
     if (focused == true)
     {
       _block_focus = true;
-      SetCursor(0);
-      QueueRefresh(false, true);
+      SetCursor(cursor_);
+      QueueRefresh(true, true);
       
       Area *_parent = GetParentObject();
       if (_parent == NULL)
@@ -226,7 +230,10 @@ namespace nux
         parent->SetFocusControl (false);
       }
     }
-
+    else
+    {
+      QueueRefresh(true, false); // needed to hide cursor
+    }
   }
 
   void TextEntry::GeometryChanged ()
@@ -684,10 +691,11 @@ namespace nux
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
       }
+      cursor_visible_ = true; // show cursor when getting focus
       selection_changed_ = true;
       cursor_moved_ = true;
       // Don't adjust scroll.
-      QueueRefresh(false, false);
+      QueueRefresh(true, false);
     }
   }
 
@@ -701,10 +709,11 @@ namespace nux
         need_im_reset_ = true;
         //gtk_im_context_focus_out(im_context_);
       }
+      cursor_visible_ = false; // hide cursor when losing focus
       selection_changed_ = true;
       cursor_moved_ = true;
       // Don't adjust scroll.
-      QueueRefresh(false, false);
+      QueueRefresh(true, false);
     }
   }
 
@@ -795,7 +804,7 @@ namespace nux
       AdjustScroll();
 
     QueueTextDraw();
-    //todo: QueueCursorBlink();
+    QueueCursorBlink();
   }
 
   void TextEntry::ResetImContext()
@@ -888,6 +897,27 @@ namespace nux
       canvas->PopState();
     }
   }
+  
+  bool TextEntry::CursorBlinkCallback(TextEntry *self)
+  {
+    if (self->cursor_blink_status_)
+      self->ShowCursor();
+    else
+      self->HideCursor();
+  
+    if (--self->cursor_blink_status_ < 0)
+      self->cursor_blink_status_ = 2;
+
+    return true;
+  }
+  
+  void TextEntry::QueueCursorBlink()
+  {
+    if (!cursor_blink_timer_)
+      cursor_blink_timer_ = g_timeout_add(kCursorBlinkTimeout, 
+                                          (GSourceFunc)&CursorBlinkCallback, 
+                                          this);
+  }
 
   void TextEntry::ShowCursor()
   {
@@ -897,7 +927,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueTextDraw();
+        QueueRefresh(true, false);
       }
     }
   }
@@ -910,7 +940,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueTextDraw();
+        QueueRefresh(true, false);
       }
     }
   }

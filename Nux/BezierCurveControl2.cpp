@@ -75,9 +75,8 @@ namespace nux
 
   BezierCurveControl2::~BezierCurveControl2()
   {
-    NUX_SAFE_DELETE (m_Background);
+    delete m_Background;
   }
-
 
   long BezierCurveControl2::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
@@ -1027,12 +1026,9 @@ namespace nux
 
   void BezierCurveControl2::ProcessZooming (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    float xp, yp;
-    int W = GetBaseWidth() - 2 * GRAPH_MARGIN;
     int H = GetBaseHeight() - 2 * GRAPH_MARGIN;
 
-    xp = /*m_minX +*/ dx * (m_maxX - m_minX) / W;
-    yp = /*m_minY +*/ dy * (m_maxY - m_minY) / H;
+    float yp = dy * (m_maxY - m_minY) / H;
 
     if ( (m_minX + yp >= m_maxX - yp) || (m_minY + yp >= m_maxY - yp) )
     {

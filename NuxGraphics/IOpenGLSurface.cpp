@@ -72,29 +72,12 @@ namespace nux
     unsigned int BytePerPixel = 0;
 
     IOpenGLBaseTexture *texture = _BaseTexture;
-    OpenGLResourceType ResourceType = RTBASETEXTURE;
 
-    if (_BaseTexture->_ResourceType == RTTEXTURE)
-    {
-      ResourceType = RTTEXTURE;
-    }
-    else if (_BaseTexture->_ResourceType == RTTEXTURERECTANGLE)
-    {
-      ResourceType = RTTEXTURERECTANGLE;
-    }
-    else if (_BaseTexture->_ResourceType == RTCUBETEXTURE)
-    {
-      ResourceType = RTCUBETEXTURE;
-    }
-    else if (_BaseTexture->_ResourceType == RTVOLUMETEXTURE)
-    {
-      ResourceType = RTVOLUMETEXTURE;
-    }
-    else if (_BaseTexture->_ResourceType == RTANIMATEDTEXTURE)
-    {
-      ResourceType = RTANIMATEDTEXTURE;
-    }
-    else
+    if (!((_BaseTexture->_ResourceType == RTTEXTURE) ||
+          (_BaseTexture->_ResourceType == RTTEXTURERECTANGLE) ||
+          (_BaseTexture->_ResourceType == RTCUBETEXTURE) ||
+          (_BaseTexture->_ResourceType == RTVOLUMETEXTURE) ||
+          (_BaseTexture->_ResourceType == RTANIMATEDTEXTURE)))
     {
       nuxAssertMsg (0, TEXT ("Unknown resource type") );
     }

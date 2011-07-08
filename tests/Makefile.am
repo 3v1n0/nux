@@ -1,9 +1,11 @@
+if BUILD_TESTS
 check_PROGRAMS = \
   test-nux \
   gtest-nux-core
 
 # Please keep alphabetical
 test_nux_SOURCES = \
+  test-canvas.cpp \
   test-nux.cpp \
   test-timeline.cpp \
   test-object.cpp \
@@ -31,6 +33,7 @@ test_nux_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_SOURCES = \
+  test_logger.cpp \
   test_properties.cpp
 
 gtest_nux_core_CPPFLAGS = \
@@ -52,7 +55,7 @@ gtest_nux_core_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_LDFLAGS = \
-  -lpthread -lgtest -lgtest_main
+  -lpthread -lgtest -lgtest_main -lgmock
 
 
 #run make test as part of make check
@@ -80,3 +83,6 @@ clean-generic:
 	rm -f test-nux-results.xml test-nux-results.html
 
 .PHONY: check-report full-report gtest test
+
+endif
+

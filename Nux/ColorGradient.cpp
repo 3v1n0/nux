@@ -45,7 +45,6 @@ namespace nux
 
   ColorGradient::~ColorGradient()
   {
-    DestroyLayout();
   }
 
   void ColorGradient::InitializeWidgets()
@@ -91,11 +90,6 @@ namespace nux
     m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
   }
 
-  void ColorGradient::DestroyLayout()
-  {
-  }
-
-
   long ColorGradient::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     m_CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_LCONTROL);
@@ -136,7 +130,6 @@ namespace nux
 
   void ColorGradient::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    bool highlighted;
     Geometry base = GetGeometry();
 
     Geometry P = m_Percentage->GetGeometry();
@@ -188,12 +181,6 @@ namespace nux
     }
 
     m_ValueString->ProcessDraw (GfxContext, true);
-
-    if (m_ValueString->IsMouseInside() )
-      highlighted = true;
-    else
-      highlighted = false;
-
     DrawMarker (GfxContext);
   }
 

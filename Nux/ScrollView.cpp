@@ -205,7 +205,6 @@ namespace nux
 
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
     Geometry viewGeometry = Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-    bool traverse = true;
 
     if ((event.e_event == NUX_MOUSE_PRESSED) ||
      (event.e_event == NUX_MOUSE_RELEASED) ||
@@ -214,7 +213,6 @@ namespace nux
       if (!viewGeometry.IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root) )
       {
         ProcEvInfo = eDoNotProcess;
-        traverse = false;
       }
     }
 
@@ -800,15 +798,6 @@ namespace nux
       m_ViewContentX = m_ViewX;
       m_ViewContentY = m_ViewY;
     }
-
-    int hor_scrollbar_height = 0;
-    int ver_scrollbar_width = 0;
-
-    if (m_horizontal_scrollbar_enable == true)
-      hor_scrollbar_height = hscrollbar->GetBaseHeight();
-
-    if (m_vertical_scrollbar_enable == true)
-      ver_scrollbar_width = vscrollbar->GetBaseWidth();
 
     vscrollbar->SetContentOffset (_delta_x, _delta_y);
     hscrollbar->SetContentOffset (_delta_x, _delta_y);

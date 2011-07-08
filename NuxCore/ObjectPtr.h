@@ -398,7 +398,8 @@ namespace nux
       }
 
       // Decrease the number of strong reference on the hosted pointer.
-      _objectptr_count->Decrement ();
+      if(_objectptr_count)
+        _objectptr_count->Decrement ();
 
       bool delete_warning = (_reference_count->GetValue() == 1) && (_weak_reference_count->GetValue() == 1);
 

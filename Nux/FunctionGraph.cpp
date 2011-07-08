@@ -41,7 +41,8 @@ namespace nux
 
   FunctionGraph::~FunctionGraph()
   {
-    DestroyLayout();
+    NUX_SAFE_DELETE (m_DrawFunctionShader);
+    NUX_SAFE_DELETE (m_BackgroundLayer);
   }
 
   void FunctionGraph::InitializeWidgets()
@@ -67,12 +68,6 @@ namespace nux
   void FunctionGraph::InitializeLayout()
   {
 
-  }
-
-  void FunctionGraph::DestroyLayout()
-  {
-    NUX_SAFE_DELETE (m_DrawFunctionShader);
-    NUX_SAFE_DELETE (m_BackgroundLayer);
   }
 
   long FunctionGraph::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
