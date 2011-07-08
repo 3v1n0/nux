@@ -473,7 +473,6 @@ static int check_colorbuffers (Display     *display,
 
   return 1;
 }
-
 #endif
 
 static int check_context (Display     *display,
@@ -636,11 +635,11 @@ int (*tests[]) (Display     *display,
   check_xcomposite,
   check_damage_extension,
   check_fixes_extension,
-#ifdef NUX_OPENGLES_20
-  check_egl_config,
-#else
+#ifndef NUX_OPENGLES_20
   check_glx_config,
   check_colorbuffers,
+#else
+  check_egl_config,
 #endif
   check_context,
   check_extensions,
@@ -717,6 +716,7 @@ int main (int argc, char* argv[]) {
 
 #ifndef NUX_OPENGLES_20
     // Do the tests, if one of them fails break out of the loop
+
     for (unsigned int i = 0; i < c_num_tests; i++)
       if (!(*tests[i]) (display, screen, root, &context, &vinfos, &results))
         break;

@@ -86,13 +86,13 @@ namespace nux
     XVisualInfo *m_X11VisualInfo;
 
     int         m_ParentWindow;
-#ifdef NUX_OPENGLES_20
+#ifndef NUX_OPENGLES_20
+    GLXContext  m_GLCtx;
+    GLXFBConfig _fb_config;
+#else
     EGLContext  m_GLCtx;
     EGLSurface  m_GLSurface;
     EGLConfig   _fb_config;
-#else
-    GLXContext  m_GLCtx;
-    GLXFBConfig _fb_config;
 #endif
     XSetWindowAttributes m_X11Attr;
 

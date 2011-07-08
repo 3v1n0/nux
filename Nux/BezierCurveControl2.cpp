@@ -143,13 +143,14 @@ namespace nux
 
       int X0, Y0, X1, Y1, X2, Y2;
 
-	  // GLES 2.0 doesn't support anti-aliased lines/points
 #ifndef NUX_OPENGLES_20
+      // GLES 2.0 doesn't support anti-aliased lines/points
       glEnable (GL_POINT_SMOOTH);
       glEnable (GL_LINE_SMOOTH);
       glHint (GL_POINT_SMOOTH_HINT, GL_NICEST);	// Make round points, not square points
       glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);		// Antialias the lines
 #endif
+
       glLineWidth (1);
       GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

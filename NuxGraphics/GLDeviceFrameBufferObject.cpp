@@ -37,7 +37,7 @@ namespace nux
   GLenum AttachmentBuffer[] =
   {
     GL_COLOR_ATTACHMENT0_EXT
-#ifndef NUX_OPENGLES_20
+#ifndef NUX_OPENGLES_20 // GLES 2.0 only supports one color attachment
     , GL_COLOR_ATTACHMENT1_EXT
     , GL_COLOR_ATTACHMENT2_EXT
     , GL_COLOR_ATTACHMENT3_EXT

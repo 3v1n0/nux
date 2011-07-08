@@ -64,7 +64,9 @@ namespace nux
           nuxWarningMsg (TEXT ("[CheckGLError] UNKNOWN ERROR in File %s at line: %d"), file, line);
       }
 
-//      nuxWarningMsg (TEXT ("[CheckGLError] OpenGL Error %d ( %s )  in File %s at line: %d \n"), glErr, ANSI_TO_TCHAR (gluErrorString (glErr) ), ANSI_TO_TCHAR (file), line);
+#ifndef NUX_OPENGLES_20
+      nuxWarningMsg (TEXT ("[CheckGLError] OpenGL Error %d ( %s )  in File %s at line: %d \n"), glErr, ANSI_TO_TCHAR (gluErrorString (glErr) ), ANSI_TO_TCHAR (file), line);
+#endif
       retCode = 1;
 
 #ifdef NUX_DEBUG

@@ -254,7 +254,7 @@ namespace nux
   }
 
 
-#ifndef NUX_OPENGLES_20 // this don't appear to even be used...
+#ifndef NUX_OPENGLES_20
 // Draw Primitive without index buffer
   int GpuDevice::DrawPrimitive (ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
                                       PRIMITIVE_TYPE PrimitiveType,

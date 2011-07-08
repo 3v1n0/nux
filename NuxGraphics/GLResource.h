@@ -157,47 +157,36 @@ namespace nux
 
 //if(Result!=OGL_OK) {nuxError(TEXT("OGL Object Error: Error # %d - %s"), Result, OGLDeviceErrorMessages[Result]);}
 
+#ifndef NUX_OPENGLES_20
   enum TEXTURE_FORMAT
   {
     TEXTURE_FMT_UNKNOWN              = 0,
     TEXTURE_FMT_ALPHA                = GL_ALPHA,
-#ifndef NUX_OPENGLES_20
     TEXTURE_FMT_ALPHA8               = GL_ALPHA8,
     TEXTURE_FMT_ALPHA16              = GL_ALPHA16,
-#endif
 
     TEXTURE_FMT_LUMINANCE            = GL_LUMINANCE,
-#ifndef NUX_OPENGLES_20
     TEXTURE_FMT_LUMINANCE8           = GL_LUMINANCE8,
     TEXTURE_FMT_LUMINANCE16          = GL_LUMINANCE16,
-#endif
 
     TEXTURE_FMT_LUMINANCE_ALPHA      = GL_LUMINANCE_ALPHA,
-#ifndef NUX_OPENGLES_20
     TEXTURE_FMT_LUMINANCE8_ALPHA8    = GL_LUMINANCE8_ALPHA8,
     TEXTURE_FMT_LUMINANCE16_ALPHA16  = GL_LUMINANCE16_ALPHA16,
 
     TEXTURE_FMT_INTENSITY            = GL_INTENSITY,
     TEXTURE_FMT_INTENSITY8           = GL_INTENSITY8,
     TEXTURE_FMT_INTENSITY16          = GL_INTENSITY16,
-#endif
 
     TEXTURE_FMT_GL_DEPTH_COMPONENT   = GL_DEPTH_COMPONENT,
-#ifndef NUX_OPENGLES_20
     TEXTURE_FMT_GL_DEPTH_COMPONENT24 = GL_DEPTH_COMPONENT24,
-#endif
 
     TEXTURE_FMT_RGBA                 = GL_RGBA,
-#ifndef NUX_OPENGLES_20
     TEXTURE_FMT_RGBA8                = GL_RGBA8,
     TEXTURE_FMT_RGBA16               = GL_RGBA16,
-
     TEXTURE_FMT_RGBA16F_ARB          = GL_RGBA16F_ARB,
     TEXTURE_FMT_RGBA32F_ARB          = GL_RGBA32F_ARB,
-#endif
 
     TEXTURE_FMT_RGB                  = GL_RGB,
-#ifndef NUX_OPENGLES_20
     TEXTURE_FMT_RGB8                 = GL_RGB8,
     TEXTURE_FMT_RGB16                = GL_RGB16,
     TEXTURE_FMT_RGB16F_ARB           = GL_RGB16F_ARB,
@@ -207,10 +196,26 @@ namespace nux
     TEXTURE_FMT_COMPRESSED_RGBA_S3TC_DXT1_EXT  = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
     TEXTURE_FMT_COMPRESSED_RGBA_S3TC_DXT3_EXT  = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
     TEXTURE_FMT_COMPRESSED_RGBA_S3TC_DXT5_EXT  = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,
-#endif
+    TEXTURE_FMT_FORCE_DWORD                    = 0x7fffffff /* force 32-bit size enum */
+  };
+#else
+
+  enum TEXTURE_FORMAT
+  {
+    TEXTURE_FMT_UNKNOWN              = 0,
+    TEXTURE_FMT_ALPHA                = GL_ALPHA,
+
+    TEXTURE_FMT_LUMINANCE            = GL_LUMINANCE,
+    TEXTURE_FMT_LUMINANCE_ALPHA      = GL_LUMINANCE_ALPHA,
+
+    TEXTURE_FMT_GL_DEPTH_COMPONENT   = GL_DEPTH_COMPONENT,
+
+    TEXTURE_FMT_RGBA                 = GL_RGBA,
+    TEXTURE_FMT_RGB                  = GL_RGB,
 
     TEXTURE_FMT_FORCE_DWORD                    = 0x7fffffff /* force 32-bit size enum */
   };
+#endif
 
   struct PixelFormatReadInfo
   {

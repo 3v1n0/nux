@@ -64,6 +64,7 @@ namespace nux
       return 1;
     }
 #endif
+
     return 0;
   }
 
@@ -130,6 +131,7 @@ namespace nux
     glGetQueryObjectuivARB (_OpenGLID, GL_QUERY_RESULT_AVAILABLE_ARB, &ResultReady);
     CHECKGL_MSG ( glGetQueryObjectuivARB );
 #endif
+
     return ResultReady != 0;
   }
 // Return the result of the query. Make sure IsResultAvailable returned TRUE before calling this function.

@@ -265,12 +265,10 @@ namespace nux
     _support_opengl_version_30 = GLEW_VERSION_3_0 ? true : false;
     _support_opengl_version_31 = GLEW_VERSION_3_1 ? true : false;
     _support_opengl_version_32 = GLEW_VERSION_3_2 ? true : false;
-#endif
 //     _support_opengl_version_33 = GLEW_VERSION_3_3 ? true : false;
 //     _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
 //     _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
 
-#ifndef NUX_OPENGLES_20
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
     CHECKGL (glGetIntegerv (GL_MAX_TEXTURE_UNITS, &_opengl_max_texture_units));
@@ -287,23 +285,8 @@ namespace nux
 #elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
     _support_ext_swap_control                 = GLXEW_SGI_swap_control ? true : false;
 #endif
-#ifdef NUX_OPENGLES_20
-    _support_arb_vertex_program               = false;
-    _support_arb_fragment_program             = false;
-    _support_arb_shader_objects               = true;
-    _support_arb_vertex_shader                = true;
-    _support_arb_fragment_shader              = true;
-    _support_arb_vertex_buffer_object         = true;
-    _support_arb_texture_non_power_of_two     = true;
-    _support_ext_framebuffer_object           = true;
-    _support_ext_draw_range_elements          = false;
-    _support_ext_stencil_two_side             = false;
-    _support_ext_texture_rectangle            = false;
-    _support_arb_texture_rectangle            = false;
-    _support_nv_texture_rectangle             = false;
-    _support_arb_pixel_buffer_object          = false;
-    _support_ext_blend_equation_separate      = true;
-#else
+
+#ifndef NUX_OPENGLES_20
     _support_arb_vertex_program               = GLEW_ARB_vertex_program ? true : false;
     _support_arb_fragment_program             = GLEW_ARB_fragment_program ? true : false;
     _support_ext_framebuffer_object           = GLEW_EXT_framebuffer_object ? true : false;
@@ -323,6 +306,22 @@ namespace nux
     _support_ext_texture_srgb_decode          = false; //GLEW_EXT_texture_sRGB_decode ? true : false;
     _support_ext_framebuffer_srgb             = GLEW_EXT_framebuffer_sRGB ? true : false;
     _support_arb_framebuffer_srgb             = GLEW_ARB_framebuffer_sRGB ? true : false;
+#else
+    _support_arb_vertex_program               = false;
+    _support_arb_fragment_program             = false;
+    _support_arb_shader_objects               = true;
+    _support_arb_vertex_shader                = true;
+    _support_arb_fragment_shader              = true;
+    _support_arb_vertex_buffer_object         = true;
+    _support_arb_texture_non_power_of_two     = true;
+    _support_ext_framebuffer_object           = true;
+    _support_ext_draw_range_elements          = false;
+    _support_ext_stencil_two_side             = false;
+    _support_ext_texture_rectangle            = false;
+    _support_arb_texture_rectangle            = false;
+    _support_nv_texture_rectangle             = false;
+    _support_arb_pixel_buffer_object          = false;
+    _support_ext_blend_equation_separate      = true;
 #endif
   }
 
@@ -361,10 +360,10 @@ namespace nux
     _UsePixelBufferObject = false;
     _gpu_info             = NULL;
     _gpu_brand            = GPU_VENDOR_UNKNOWN;
-    
+
+#ifndef NUX_OPENGLES_20    
     // OpenGL extension initialization
     GLenum Glew_Ok = 0;
-#ifndef NUX_OPENGLES_20
 #ifdef GLEW_MX
     Glew_Ok = glewContextInit (glewGetContext() );
     nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] GL Extensions failed to initialize."));
@@ -376,6 +375,7 @@ namespace nux
 #elif defined(NUX_OS_MACOSX)
     Glew_Ok = glxewContextInit (glxewGetContext() );
 #endif
+
     nuxAssertMsg (Glew_Ok == GLEW_OK, TEXT ("[GpuDevice::GpuDevice] OpenGL Extensions failed to initialize."));
 #else
     Glew_Ok = glewInit();
@@ -570,10 +570,10 @@ namespace nux
     CHECKGL_MSG (glGetString (GL_RENDERER) );
     _openGL_version_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_VERSION) ) );
     CHECKGL_MSG (glGetString (GL_VERSION) );
-#ifdef NUX_OPENGLES_20
-    if (1)
-#else
+#ifndef NUX_OPENGLES_20
     if (GLEW_VERSION_2_0)
+#else
+    if (1)
 #endif
     {
       _glsl_version_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_SHADING_LANGUAGE_VERSION) ) );

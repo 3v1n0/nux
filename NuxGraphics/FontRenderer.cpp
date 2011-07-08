@@ -127,11 +127,12 @@ namespace nux
       _shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
 
       _vertex_shader_prog->SetShaderCode (TCHAR_TO_ANSI (*gFontVtxShader) );
-#ifndef NUX_OPENGLES_20 
+#ifndef NUX_OPENGLES_20
       _pixel_shader_prog->SetShaderCode (TCHAR_TO_ANSI (*gFontFragShader), TEXT ("#define SAMPLERTEX2DRECT") );
 #else
       _pixel_shader_prog->SetShaderCode (TCHAR_TO_ANSI (*gFontFragShader), TEXT ("#define SAMPLERTEX2D") );
 #endif
+
       _shader_prog->ClearShaderObjects();
       _shader_prog->AddShaderObject (_vertex_shader_prog);
       _shader_prog->AddShaderObject (_pixel_shader_prog);
@@ -478,9 +479,9 @@ namespace nux
         CHECKGL(glUniform4fARB(TextColor, color.red, color.green, color.blue, color.alpha));
       }
     }
+#ifndef NUX_OPENGLES_20
     else
     {
-#ifndef NUX_OPENGLES_20
       shader_program = _asm_shader_prog;
       if(glTexture->m_Texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
       {
@@ -508,8 +509,8 @@ namespace nux
       CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color.red, color.green, color.blue, color.alpha ) );
 
       _graphics_engine.SetTexture (GL_TEXTURE0, glTexture->m_Texture);
-#endif
     }
+#endif
 
     if (in_attrib_offset != -1)
     {

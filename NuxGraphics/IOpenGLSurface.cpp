@@ -241,10 +241,10 @@ namespace nux
 
     BYTE *DataPtr = 0;
 
-#ifdef NUX_OPENGLES_20
-    if (_STextureTarget == GL_TEXTURE_2D)
-#else
+#ifndef NUX_OPENGLES_20
     if (_STextureTarget == GL_TEXTURE_2D || _STextureTarget == GL_TEXTURE_RECTANGLE_ARB || _STextureTarget == GL_TEXTURE_CUBE_MAP || _STextureTarget == GL_TEXTURE_3D)
+#else
+    if (_STextureTarget == GL_TEXTURE_2D)
 #endif
     {
       int w = _Rect.right - _Rect.left;
@@ -554,10 +554,10 @@ namespace nux
   {
     CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, _BaseTexture->GetFormatRowMemoryAlignment ()));
 
-#ifdef NUX_OPENGLES_20
-    if (_STextureTarget == GL_TEXTURE_2D)
-#else
+#ifndef NUX_OPENGLES_20
     if (_STextureTarget == GL_TEXTURE_2D || _STextureTarget == GL_TEXTURE_RECTANGLE_ARB || _STextureTarget == GL_TEXTURE_CUBE_MAP || _STextureTarget == GL_TEXTURE_3D)
+#else
+    if (_STextureTarget == GL_TEXTURE_2D)
 #endif
     {
       CHECKGL ( glBindTexture (_STextureTarget, _BaseTexture->_OpenGLID) );
@@ -606,11 +606,7 @@ namespace nux
     height = 0;
     format = BITFMT_UNKNOWN;
 
-#ifdef NUX_OPENGLES_20
-    #warning FIXME not implmented, need to render to framebuffer and use glReadPixels (but not actually used right now)
-    return NULL;
-#else
-
+#ifndef NUX_OPENGLES_20
     // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
     int texwidth = ImageSurface::GetLevelWidth (_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
     int texheight = ImageSurface::GetLevelHeight (_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
@@ -631,6 +627,9 @@ namespace nux
     height = _BaseTexture->_Height;
     format = BITFMT_R8G8B8A8;
     return img;
+#else
+//FIXME: need to render to framebuffer and use glReadPixels
+    return NULL;
 #endif
   }
 
