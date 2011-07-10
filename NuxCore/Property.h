@@ -27,11 +27,32 @@
 #include <map>
 #include <sigc++/signal.h>
 
-
+/**
+ * Much of this property work is based on the work by Lois Goldthwaite,
+ * SC22/WG21/N1615=04-0055 - C++ Properties -- a Library Solution
+ *
+ * The basic ideas were extended to add update notifications, and
+ * serialisation and introspection.
+ */
 namespace nux {
 
 // TODO:
 //  object serialisation
+
+template <typename VALUE_TYPE>
+class ChangedSignal
+{
+public:
+  sigc::signal<void, VALUE_TYPE const&> changed;
+
+  void DisableNotifications();
+  void EnableNotifications();
+
+private:
+  bool notify_;
+};
+
+
 
 template <typename VALUE_TYPE>
 class ConnectableProperty
@@ -54,19 +75,12 @@ public:
   VALUE_TYPE const& get() const;
   void set(VALUE_TYPE const& value);
 
-  sigc::signal<void, VALUE_TYPE const&> changed;
-
-  void disable_notifications();
-  void enable_notifications();
-
 private:
   // Properties themselves are not copyable.
   ConnectableProperty(ConnectableProperty const&);
   ConnectableProperty& operator=(ConnectableProperty const&);
 
 private:
-  VALUE_TYPE value_;
-  bool notify_;
 };
 
 
