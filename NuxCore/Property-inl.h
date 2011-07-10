@@ -24,16 +24,33 @@
 
 namespace nux {
 
+
+template <typename VALUE_TYPE>
+PropertyChangedSignal<VALUE_TYPE>::PropertyChangedSignal()
+  : notify_(true)
+{}
+
+template <typename VALUE_TYPE>
+void PropertyChangedSignal<VALUE_TYPE>::DisableNotifications()
+{
+  notify_ = false;
+}
+
+template <typename VALUE_TYPE>
+void PropertyChangedSignal<VALUE_TYPE>::EnableNotifications()
+{
+  notify_ = true;
+}
+
+
 template <typename VALUE_TYPE>
 ConnectableProperty<VALUE_TYPE>::ConnectableProperty()
   : value_(VALUE_TYPE())
-  , notify_(true)
 {}
 
 template <typename VALUE_TYPE>
 ConnectableProperty<VALUE_TYPE>::ConnectableProperty(VALUE_TYPE const& initial)
   : value_(initial)
-  , notify_(true)
 {}
 
 template <typename VALUE_TYPE>
@@ -61,18 +78,6 @@ void ConnectableProperty<VALUE_TYPE>::operator()(VALUE_TYPE const& value)
   set(value);
 }
 
-template <typename VALUE_TYPE>
-void ConnectableProperty<VALUE_TYPE>::disable_notifications()
-{
-  notify_ = false;
-}
-
-template <typename VALUE_TYPE>
-void ConnectableProperty<VALUE_TYPE>::enable_notifications()
-{
-  notify_ = true;
-}
-
   // get and set access
 template <typename VALUE_TYPE>
 VALUE_TYPE const& ConnectableProperty<VALUE_TYPE>::get() const
@@ -85,8 +90,8 @@ void ConnectableProperty<VALUE_TYPE>::set(VALUE_TYPE const& value)
 {
   if (value != value_) {
     value_ = value;
-    if (notify_) {
-      changed.emit(value_);
+    if (SignalBase::notify_) {
+      SignalBase::changed.emit(value_);
     }
   }
 }
@@ -142,7 +147,7 @@ T Introspectable::get_property(std::string const& name, T* foo)
 
 
 template <typename T>
-Property<T>::Property(Introspectable* owner,
+SerializableProperty<T>::SerializableProperty(Introspectable* owner,
                       std::string const& name)
 : Base()
 , name_(name)
@@ -151,7 +156,7 @@ Property<T>::Property(Introspectable* owner,
 }
 
 template <typename T>
-Property<T>::Property(Introspectable* owner,
+SerializableProperty<T>::SerializableProperty(Introspectable* owner,
                       std::string const& name,
                       T const& initial)
 : Base(initial)
@@ -161,7 +166,7 @@ Property<T>::Property(Introspectable* owner,
 }
 
 template <typename T>
-bool Property<T>::set_value(std::string const& serialized_form)
+bool SerializableProperty<T>::set_value(std::string const& serialized_form)
 {
     std::pair<ValueType, bool> result = TraitType::from_string(serialized_form);
     if (result.second) {
@@ -171,13 +176,13 @@ bool Property<T>::set_value(std::string const& serialized_form)
 }
 
 template <typename T>
-std::string Property<T>::get_serialized_value() const
+std::string SerializableProperty<T>::get_serialized_value() const
 {
     return TraitType::to_string(Base::get());
 }
 
 template <typename T>
-typename Property<T>::ValueType const& Property<T>::operator=(typename Property<T>::ValueType const& value)
+typename SerializableProperty<T>::ValueType const& SerializableProperty<T>::operator=(typename SerializableProperty<T>::ValueType const& value)
 {
     set(value);
     // There are no arguments to ‘get’ that depend on a template parameter,

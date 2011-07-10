@@ -138,10 +138,10 @@ TEST(TestConnectableProperty, TestEnableAndDisableNotification) {
   ChangeRecorder<std::string> recorder;
   string_prop.changed.connect(
     sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
-  string_prop.disable_notifications();
+  string_prop.DisableNotifications();
   string_prop = "Hello world" ;
   EXPECT_EQ(0, recorder.changed_values.size());
-  string_prop.enable_notifications();
+  string_prop.EnableNotifications();
   // No notification if not changed.
   string_prop = "Hello world" ;
   EXPECT_EQ(0, recorder.changed_values.size());
@@ -162,8 +162,8 @@ struct TestProperties : nux::Introspectable
     , index(this, "index")
     {}
 
-  nux::Property<std::string> name;
-  nux::Property<int> index;
+  nux::SerializableProperty<std::string> name;
+  nux::SerializableProperty<int> index;
 };
 
 TEST(TestIntrospectableProperty, TestSimplePropertyAccess) {

@@ -24,6 +24,7 @@
 
 #include "PropertyTraits.h"
 
+#include <string>
 #include <map>
 #include <sigc++/signal.h>
 
@@ -36,28 +37,46 @@
  */
 namespace nux {
 
-// TODO:
-//  object serialisation
 
 template <typename VALUE_TYPE>
-class ChangedSignal
+class PropertyChangedSignal
 {
 public:
+  PropertyChangedSignal();
+
   sigc::signal<void, VALUE_TYPE const&> changed;
 
   void DisableNotifications();
   void EnableNotifications();
 
-private:
+protected:
   bool notify_;
 };
 
 
-
 template <typename VALUE_TYPE>
-class ConnectableProperty
+class Property : public PropertyChangedSignal<VALUE_TYPE>
 {
 public:
+  typedef sigc::slot<bool, VALUE_TYPE&, VALUE_TYPE const&> SetterFunction;
+
+  Property();
+  explicit Property(VALUE_TYPE const& value);
+
+  
+private:
+  bool DefaultSetter(VALUE_TYPE& target, VALUE_TYPE const& value);
+
+  VALUE_TYPE value_;
+  SetterFunction setter_function_;
+};
+
+
+template <typename VALUE_TYPE>
+class ConnectableProperty : public PropertyChangedSignal<VALUE_TYPE>
+{
+public:
+  typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
   typedef typename type::PropertyTrait<VALUE_TYPE> TraitType;
   typedef typename TraitType::ValueType ValueType;
 
@@ -81,6 +100,7 @@ private:
   ConnectableProperty& operator=(ConnectableProperty const&);
 
 private:
+  VALUE_TYPE value_;
 };
 
 
@@ -122,15 +142,15 @@ private:
 
 
 template <typename T>
-class Property : public ConnectableProperty<T>, public PropertyBase
+class SerializableProperty : public ConnectableProperty<T>, public PropertyBase
 {
 public:
   typedef ConnectableProperty<T> Base;
   typedef typename Base::ValueType ValueType;
   typedef typename Base::TraitType TraitType;
 
-  Property(Introspectable* owner, std::string const& name);
-  Property(Introspectable* owner, std::string const& name, T const& initial);
+  SerializableProperty(Introspectable* owner, std::string const& name);
+  SerializableProperty(Introspectable* owner, std::string const& name, T const& initial);
 
   virtual bool set_value(std::string const& serialized_form);
   virtual std::string get_serialized_value() const;
