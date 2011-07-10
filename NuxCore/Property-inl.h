@@ -42,6 +42,76 @@ void PropertyChangedSignal<VALUE_TYPE>::EnableNotifications()
   notify_ = true;
 }
 
+template <typename VALUE_TYPE>
+void PropertyChangedSignal<VALUE_TYPE>::EmitChanged(VALUE_TYPE const& new_value)
+{
+  if (notify_)
+    changed.emit(new_value);
+}
+
+
+template <typename VALUE_TYPE>
+Property<VALUE_TYPE>::Property()
+  : value_(VALUE_TYPE())
+  , setter_function_(sigc::mem_fun(this, &Property<VALUE_TYPE>::DefaultSetter))
+{}
+
+template <typename VALUE_TYPE>
+Property<VALUE_TYPE>::Property(VALUE_TYPE const& initial)
+  : value_(initial)
+  , setter_function_(sigc::mem_fun(this, &Property<VALUE_TYPE>::DefaultSetter))
+{}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE Property<VALUE_TYPE>::operator=(VALUE_TYPE const& value)
+{
+  Set(value);
+  return value_;
+}
+
+template <typename VALUE_TYPE>
+Property<VALUE_TYPE>::operator VALUE_TYPE() const
+{
+  return value_;
+}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE Property<VALUE_TYPE>::operator()() const
+{
+  return value_;
+}
+
+template <typename VALUE_TYPE>
+void Property<VALUE_TYPE>::operator()(VALUE_TYPE const& value)
+{
+  Set(value);
+}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE Property<VALUE_TYPE>::Get() const
+{
+  return value_;
+}
+
+template <typename VALUE_TYPE>
+void Property<VALUE_TYPE>::Set(VALUE_TYPE const& value)
+{
+  if (setter_function_(value_, value))
+    SignalBase::EmitChanged(value_);
+}
+
+template <typename VALUE_TYPE>
+bool Property<VALUE_TYPE>::DefaultSetter(VALUE_TYPE& target,
+                                         VALUE_TYPE const& value)
+{
+  bool changed = false;
+  if (target != value) {
+    target = value;
+    changed = true;
+  }
+  return changed;
+}
+
 
 template <typename VALUE_TYPE>
 ConnectableProperty<VALUE_TYPE>::ConnectableProperty()
@@ -90,9 +160,7 @@ void ConnectableProperty<VALUE_TYPE>::set(VALUE_TYPE const& value)
 {
   if (value != value_) {
     value_ = value;
-    if (SignalBase::notify_) {
-      SignalBase::changed.emit(value_);
-    }
+    SignalBase::EmitChanged(value_);
   }
 }
 

@@ -50,6 +50,9 @@ public:
   void EnableNotifications();
 
 protected:
+  void EmitChanged(VALUE_TYPE const& new_value);
+
+private:
   bool notify_;
 };
 
@@ -58,15 +61,31 @@ template <typename VALUE_TYPE>
 class Property : public PropertyChangedSignal<VALUE_TYPE>
 {
 public:
+  typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
   typedef sigc::slot<bool, VALUE_TYPE&, VALUE_TYPE const&> SetterFunction;
 
   Property();
-  explicit Property(VALUE_TYPE const& value);
+  explicit Property(VALUE_TYPE const& initial);
 
-  
+  VALUE_TYPE operator=(VALUE_TYPE const& value);
+  operator VALUE_TYPE() const;
+
+  // function call access
+  VALUE_TYPE operator()() const;
+  void operator()(VALUE_TYPE const& value);
+
+  // get and set access
+  VALUE_TYPE Get() const;
+  void Set(VALUE_TYPE const& value);
+
 private:
+  // Properties themselves are not copyable.
+  Property(Property const&);
+  Property& operator=(Property const&);
+
   bool DefaultSetter(VALUE_TYPE& target, VALUE_TYPE const& value);
 
+private:
   VALUE_TYPE value_;
   SetterFunction setter_function_;
 };

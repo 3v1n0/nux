@@ -2,9 +2,11 @@
 
 #include <sigc++/trackable.h>
 
-#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <vector>
 #include <stdexcept>
+
+using namespace testing;
 
 namespace {
 
@@ -153,6 +155,83 @@ TEST(TestConnectableProperty, TestEnableAndDisableNotification) {
   nux::ConnectableProperty<TestEnum> enum_prop;
   // This fails to compile.
   // nux::ConnectableProperty<TestClass> class_prop;
+}
+
+TEST(TestProperty, TestDefaultConstructor) {
+  nux::Property<std::string> string_prop;
+  // Need either an assignment or static cast to check the operator VALUE_TYPE
+  // due to google-mock's template matching.
+  std::string value = string_prop;
+  EXPECT_THAT(value, Eq(""));
+  EXPECT_THAT(string_prop.Get(), Eq(""));
+  EXPECT_THAT(string_prop(), Eq(""));
+}
+
+TEST(TestProperty, TestExplicitConstructor) {
+  nux::Property<std::string> string_prop("Hello world!");
+  // Need either an assignment or static cast to check the operator VALUE_TYPE
+  // due to google-mock's template matching.
+  std::string value = string_prop;
+  EXPECT_THAT(value, Eq("Hello world!"));
+  EXPECT_THAT(string_prop.Get(), Eq("Hello world!"));
+  EXPECT_THAT(string_prop(), Eq("Hello world!"));
+}
+
+TEST(TestProperty, TestAssignment) {
+  nux::Property<std::string> string_prop;
+  // Need either an assignment or static cast to check the operator VALUE_TYPE
+  // due to google-mock's template matching.
+  string_prop = "Assignment operator";
+  std::string value = string_prop;
+  EXPECT_THAT(value, Eq("Assignment operator"));
+  EXPECT_THAT(string_prop.Get(), Eq("Assignment operator"));
+  EXPECT_THAT(string_prop(), Eq("Assignment operator"));
+
+  string_prop.Set("Set method");
+  value = string_prop;
+  EXPECT_THAT(value, Eq("Set method"));
+  EXPECT_THAT(string_prop.Get(), Eq("Set method"));
+  EXPECT_THAT(string_prop(), Eq("Set method"));
+
+  string_prop("Function call assignment");
+  value = string_prop;
+  EXPECT_THAT(value, Eq("Function call assignment"));
+  EXPECT_THAT(string_prop.Get(), Eq("Function call assignment"));
+  EXPECT_THAT(string_prop(), Eq("Function call assignment"));
+}
+
+TEST(TestProperty, TestChanged) {
+  nux::Property<std::string> string_prop;
+  ChangeRecorder<std::string> recorder;
+  string_prop.changed.connect(
+    sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
+
+  string_prop = "Hello world" ;
+  EXPECT_THAT(1, Eq(recorder.changed_values.size()));
+  EXPECT_THAT("Hello world", Eq(recorder.changed_values[0]));
+  // No notification if not changed.
+  string_prop = std::string("Hello world");
+  EXPECT_THAT(1, Eq(recorder.changed_values.size()));
+}
+
+TEST(TestProperty, TestEnableAndDisableNotifications) {
+  nux::Property<std::string> string_prop;
+  ChangeRecorder<std::string> recorder;
+  string_prop.changed.connect(
+    sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
+
+  string_prop.DisableNotifications();
+  string_prop = "Hello world" ;
+  EXPECT_THAT(0, Eq(recorder.changed_values.size()));
+
+  string_prop.EnableNotifications();
+  // No notification if not changed.
+  string_prop = "Hello world" ;
+  EXPECT_THAT(0, Eq(recorder.changed_values.size()));
+
+  string_prop = "New value" ;
+  EXPECT_THAT(1, Eq(recorder.changed_values.size()));
+  EXPECT_THAT("New value", Eq(recorder.changed_values[0]));
 }
 
 struct TestProperties : nux::Introspectable
