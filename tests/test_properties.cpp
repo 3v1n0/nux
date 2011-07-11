@@ -241,7 +241,7 @@ private:
 TEST(TestProperty, TestCustomSetterFunction) {
   nux::Property<float> float_prop;
   FloatClamp clamp(0, 1);
-  float_prop.CustomSetterFunction(sigc::mem_fun(&clamp, &FloatClamp::Set));
+  float_prop.SetSetterFunction(sigc::mem_fun(&clamp, &FloatClamp::Set));
   ChangeRecorder<float> recorder;
   float_prop.changed.connect(
     sigc::mem_fun(recorder, &ChangeRecorder<float>::value_changed));
@@ -303,7 +303,7 @@ private:
 TEST(TestROProperty, TestSetGetter) {
   nux::ROProperty<int> int_prop;
   Incrementer incrementer;
-  int_prop.CustomGetterFunction(sigc::mem_fun(&incrementer, &Incrementer::value));
+  int_prop.SetGetterFunction(sigc::mem_fun(&incrementer, &Incrementer::value));
 
   int value = int_prop;
   EXPECT_THAT(value, Eq(1));

@@ -84,7 +84,7 @@ public:
   VALUE_TYPE Get() const;
   void Set(VALUE_TYPE const& value);
 
-  void CustomSetterFunction(SetterFunction setter_function);
+  void SetSetterFunction(SetterFunction setter_function);
 
 private:
   // Properties themselves are not copyable.
@@ -121,7 +121,7 @@ public:
   VALUE_TYPE operator()() const;
   VALUE_TYPE Get() const;
 
-  void CustomGetterFunction(GetterFunction getter_function);
+  void SetGetterFunction(GetterFunction getter_function);
 
 private:
   // ROProperties themselves are not copyable.
@@ -132,6 +132,58 @@ private:
 
 private:
   GetterFunction getter_function_;
+};
+
+/**
+ * A read/write property that uses a functions to get and set the value.
+ *
+ * The value type is not stored in the propery, but maintained by the setter
+ * and getter functions.
+ *
+ * A changed signal is emitted if the setter function specifies that the value
+ * has changed.
+ *
+ * The default setter does nothing and emits no signal, and the default getter
+ * returns a default constructed VALUE_TYPE.  The default getter and setter
+ * should be overridden through either the constructor args or through the
+ * SetGetterFunction / SetSetterFunction.
+ */
+template <typename VALUE_TYPE>
+class RWProperty : public PropertyChangedSignal<VALUE_TYPE>
+{
+public:
+  typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
+  typedef sigc::slot<bool, VALUE_TYPE const&> SetterFunction;
+  typedef sigc::slot<VALUE_TYPE> GetterFunction;
+
+  RWProperty();
+  RWProperty(GetterFunction getter_function, SetterFunction setter_function);
+
+  VALUE_TYPE operator=(VALUE_TYPE const& value);
+  operator VALUE_TYPE() const;
+
+  // function call access
+  VALUE_TYPE operator()() const;
+  void operator()(VALUE_TYPE const& value);
+
+  // get and set access
+  VALUE_TYPE Get() const;
+  void Set(VALUE_TYPE const& value);
+
+  void SetGetterFunction(GetterFunction getter_function);
+  void SetSetterFunction(SetterFunction setter_function);
+
+private:
+  // RWProperties themselves are not copyable.
+  RWProperty(RWProperty const&);
+  RWProperty& operator=(RWProperty const&);
+
+  VALUE_TYPE DefaultGetter() const;
+  bool DefaultSetter(VALUE_TYPE const& value);
+
+private:
+  GetterFunction getter_function_;
+  SetterFunction setter_function_;
 };
 
 

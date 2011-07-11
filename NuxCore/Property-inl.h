@@ -120,7 +120,7 @@ bool Property<VALUE_TYPE>::DefaultSetter(VALUE_TYPE& target,
 }
 
 template <typename VALUE_TYPE>
-void Property<VALUE_TYPE>::CustomSetterFunction(SetterFunction setter_function)
+void Property<VALUE_TYPE>::SetSetterFunction(SetterFunction setter_function)
 {
   setter_function_ = setter_function;
 }
@@ -161,7 +161,83 @@ VALUE_TYPE ROProperty<VALUE_TYPE>::DefaultGetter() const
 }
 
 template <typename VALUE_TYPE>
-void ROProperty<VALUE_TYPE>::CustomGetterFunction(GetterFunction getter_function)
+void ROProperty<VALUE_TYPE>::SetGetterFunction(GetterFunction getter_function)
+{
+  getter_function_ = getter_function;
+}
+
+
+template <typename VALUE_TYPE>
+RWProperty<VALUE_TYPE>::RWProperty()
+  : getter_function_(sigc::mem_fun(this, &RWProperty<VALUE_TYPE>::DefaultGetter))
+  , setter_function_(sigc::mem_fun(this, &RWProperty<VALUE_TYPE>::DefaultSetter))
+{}
+
+template <typename VALUE_TYPE>
+RWProperty<VALUE_TYPE>::RWProperty(GetterFunction getter_function,
+                                   SetterFunction setter_function)
+  : getter_function_(getter_function)
+  , setter_function_(setter_function)
+{}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE RWProperty<VALUE_TYPE>::operator=(VALUE_TYPE const& value)
+{
+  Set(value);
+  return getter_function_();
+}
+
+template <typename VALUE_TYPE>
+RWProperty<VALUE_TYPE>::operator VALUE_TYPE() const
+{
+  return getter_function_();
+}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE RWProperty<VALUE_TYPE>::operator()() const
+{
+  return getter_function_();
+}
+
+template <typename VALUE_TYPE>
+void RWProperty<VALUE_TYPE>::operator()(VALUE_TYPE const& value)
+{
+  Set(value);
+}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE RWProperty<VALUE_TYPE>::Get() const
+{
+  return getter_function_();
+}
+
+template <typename VALUE_TYPE>
+void RWProperty<VALUE_TYPE>::Set(VALUE_TYPE const& value)
+{
+  if (setter_function_(value))
+    SignalBase::EmitChanged(getter_function_());
+}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE RWProperty<VALUE_TYPE>::DefaultGetter() const
+{
+  return VALUE_TYPE();
+}
+
+template <typename VALUE_TYPE>
+bool RWProperty<VALUE_TYPE>::DefaultSetter(VALUE_TYPE const& value)
+{
+  return false;
+}
+
+template <typename VALUE_TYPE>
+void RWProperty<VALUE_TYPE>::SetSetterFunction(SetterFunction setter_function)
+{
+  setter_function_ = setter_function;
+}
+
+template <typename VALUE_TYPE>
+void RWProperty<VALUE_TYPE>::SetGetterFunction(GetterFunction getter_function)
 {
   getter_function_ = getter_function;
 }
