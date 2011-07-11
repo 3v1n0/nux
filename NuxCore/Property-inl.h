@@ -223,94 +223,94 @@ void ConnectableProperty<VALUE_TYPE>::set(VALUE_TYPE const& value)
 inline Introspectable::Introspectable()
 {}
 
-inline void Introspectable::add_property(std::string const& name,
-                                         PropertyBase* property)
+inline void Introspectable::AddProperty(std::string const& name,
+                                        PropertyBase* property)
 {
-    // check to see if it exists and if it does barf horribly as we can't
-    // have two properties with the same name;
-    properties_[name] = property;
+  // check to see if it exists and if it does barf horribly as we can't
+  // have two properties with the same name;
+  properties_[name] = property;
 }
 
-inline bool Introspectable::set_property(std::string const& name,
-                                         const char* value)
+inline bool Introspectable::SetProperty(std::string const& name,
+                                        const char* value)
 {
-    PropertyContainer::iterator i = properties_.find(name);
-    if (i == properties_.end())
-        return false;
-    else
-        return i->second->set_value(value);
-}
-
-template <typename T>
-bool Introspectable::set_property(std::string const& name, T const& value)
-{
-    PropertyContainer::iterator i = properties_.find(name);
-    if (i == properties_.end())
-        return false;
-    else
-    {
-        return i->second->set_value(type::PropertyTrait<T>::to_string(value));
-    }
+  PropertyContainer::iterator i = properties_.find(name);
+  if (i == properties_.end())
+    return false;
+  else
+    return i->second->SetValue(value);
 }
 
 template <typename T>
-T Introspectable::get_property(std::string const& name, T* foo)
+bool Introspectable::SetProperty(std::string const& name, T const& value)
 {
-    PropertyContainer::iterator i = properties_.find(name);
-    if (i == properties_.end())
-        return T();
-
-    std::string s = i->second->get_serialized_value();
-    std::pair<T, bool> result = type::PropertyTrait<T>::from_string(s);
-    // If this is called with a template type that the property does not
-    // support nice conversion to, you'll get no error, but will get
-    // a default constructed T.  We could use an exception here.
-    return result.first;
+  PropertyContainer::iterator i = properties_.find(name);
+  if (i == properties_.end())
+    return false;
+  else
+  {
+    return i->second->SetValue(type::PropertyTrait<T>::to_string(value));
+  }
 }
-
 
 template <typename T>
-SerializableProperty<T>::SerializableProperty(Introspectable* owner,
-                      std::string const& name)
-: Base()
-, name_(name)
+T Introspectable::GetProperty(std::string const& name, T* foo)
 {
-    owner->add_property(name, this);
+  PropertyContainer::iterator i = properties_.find(name);
+  if (i == properties_.end())
+    return T();
+
+  std::string s = i->second->GetSerializedValue();
+  std::pair<T, bool> result = type::PropertyTrait<T>::from_string(s);
+  // If this is called with a template type that the property does not
+  // support nice conversion to, you'll get no error, but will get
+  // a default constructed T.  We could use an exception here.
+  return result.first;
 }
+
 
 template <typename T>
 SerializableProperty<T>::SerializableProperty(Introspectable* owner,
-                      std::string const& name,
-                      T const& initial)
-: Base(initial)
-, name_(name)
+                                              std::string const& name)
+  : Base()
+  , name_(name)
 {
-    owner->add_property(name, this);
+  owner->AddProperty(name, this);
 }
 
 template <typename T>
-bool SerializableProperty<T>::set_value(std::string const& serialized_form)
+SerializableProperty<T>::SerializableProperty(Introspectable* owner,
+                                              std::string const& name,
+                                              T const& initial)
+  : Base(initial)
+  , name_(name)
 {
-    std::pair<ValueType, bool> result = TraitType::from_string(serialized_form);
-    if (result.second) {
-      set(result.first);
-    }
-    return result.second;
+  owner->AddProperty(name, this);
 }
 
 template <typename T>
-std::string SerializableProperty<T>::get_serialized_value() const
+bool SerializableProperty<T>::SetValue(std::string const& serialized_form)
 {
-    return TraitType::to_string(Base::get());
+  std::pair<ValueType, bool> result = TraitType::from_string(serialized_form);
+  if (result.second) {
+    Base::Set(result.first);
+  }
+  return result.second;
 }
 
 template <typename T>
-typename SerializableProperty<T>::ValueType const& SerializableProperty<T>::operator=(typename SerializableProperty<T>::ValueType const& value)
+std::string SerializableProperty<T>::GetSerializedValue() const
 {
-    set(value);
-    // There are no arguments to ‘get’ that depend on a template parameter,
-    // so we explicitly specify Base.
-    return Base::get();
+  return TraitType::to_string(Base::Get());
+}
+
+template <typename T>
+T SerializableProperty<T>::operator=(T const& value)
+{
+  Base::Set(value);
+  // There are no arguments to ‘get’ that depend on a template parameter,
+  // so we explicitly specify Base.
+  return Base::Get();
 }
 
 

@@ -380,10 +380,10 @@ TEST(TestIntrospectableProperty, TestSimplePropertyAccess) {
   EXPECT_EQ("Testing", props.name());
   props.name("New Value");
   EXPECT_EQ("New Value", props.name());
-  props.name.set("Another");
+  props.name.Set("Another");
   EXPECT_EQ("Another", props.name());
 
-  EXPECT_EQ(3, recorder.changed_values.size());
+  EXPECT_EQ(3, recorder.size());
   EXPECT_EQ("Testing", recorder.changed_values[0]);
   EXPECT_EQ("New Value", recorder.changed_values[1]);
   EXPECT_EQ("Another", recorder.changed_values[2]);
@@ -400,45 +400,44 @@ TEST(TestIntrospectableProperty, TestPropertyAccessByName) {
 
   props.name = "Testing";
   props.index = 5;
-  EXPECT_EQ("Testing", props.get_property<std::string>("name"));
-  EXPECT_EQ("5", props.get_property<std::string>("index"));
-  EXPECT_EQ(5, props.get_property<int>("index"));
+  EXPECT_EQ("Testing", props.GetProperty<std::string>("name"));
+  EXPECT_EQ("5", props.GetProperty<std::string>("index"));
+  EXPECT_EQ(5, props.GetProperty<int>("index"));
 
-  bool assigned = props.set_property("name", "New value");
+  bool assigned = props.SetProperty("name", "New value");
   EXPECT_TRUE(assigned);
   EXPECT_EQ("New value", props.name());
-  EXPECT_EQ("New value", props.get_property<std::string>("name"));
+  EXPECT_EQ("New value", props.GetProperty<std::string>("name"));
   // A little dangreous, but legal.
-  EXPECT_EQ(0, props.get_property<int>("name"));
+  EXPECT_EQ(0, props.GetProperty<int>("name"));
 
-  assigned = props.set_property("name", 42);
+  assigned = props.SetProperty("name", 42);
   EXPECT_TRUE(assigned);
   EXPECT_EQ("42", props.name());
-  EXPECT_EQ("42", props.get_property<std::string>("name"));
+  EXPECT_EQ("42", props.GetProperty<std::string>("name"));
   // A little dangreous, but legal.
-  EXPECT_EQ(42, props.get_property<int>("name"));
+  EXPECT_EQ(42, props.GetProperty<int>("name"));
 
-  assigned = props.set_property("index", 42);
+  assigned = props.SetProperty("index", 42);
   EXPECT_TRUE(assigned);
   EXPECT_EQ(42, props.index());
-  EXPECT_EQ("42", props.get_property<std::string>("index"));
-  EXPECT_EQ(42, props.get_property<int>("index"));
+  EXPECT_EQ("42", props.GetProperty<std::string>("index"));
+  EXPECT_EQ(42, props.GetProperty<int>("index"));
 
-  assigned = props.set_property("index", "hello");
+  assigned = props.SetProperty("index", "hello");
   EXPECT_FALSE(assigned);
   EXPECT_EQ(42, props.index());
-  EXPECT_EQ("42", props.get_property<std::string>("index"));
-  EXPECT_EQ(42, props.get_property<int>("index"));
+  EXPECT_EQ("42", props.GetProperty<std::string>("index"));
+  EXPECT_EQ(42, props.GetProperty<int>("index"));
 
   // Gettin a non-existant property returns a default constructed instance.
-  std::string surname = props.get_property<std::string>("surname");
+  std::string surname = props.GetProperty<std::string>("surname");
   EXPECT_EQ("", surname);
-  int foo = props.get_property<int>("foo");
+  int foo = props.GetProperty<int>("foo");
   EXPECT_EQ(0, foo);
 
-  assigned = props.set_property("non-existant", "hello");
+  assigned = props.SetProperty("non-existant", "hello");
   EXPECT_FALSE(assigned);
-
 }
 
 

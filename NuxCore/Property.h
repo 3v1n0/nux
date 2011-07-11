@@ -172,8 +172,8 @@ private:
 class PropertyBase
 {
 public:
-  virtual bool set_value(std::string const& serialized_form) = 0;
-  virtual std::string get_serialized_value() const = 0;
+  virtual bool SetValue(std::string const& serialized_form) = 0;
+  virtual std::string GetSerializedValue() const = 0;
 };
 
 
@@ -185,15 +185,15 @@ public:
 
   /// If the property was not able to be set with the value, the method
   /// returns false.
-  bool set_property(std::string const& name, const char* value);
+  bool SetProperty(std::string const& name, const char* value);
 
   template <typename T>
-  bool set_property(std::string const& name, T const& value);
+  bool SetProperty(std::string const& name, T const& value);
 
   template <typename T>
-  T get_property(std::string const& name, T* foo = 0);
+  T GetProperty(std::string const& name, T* foo = 0);
 
-  void add_property(std::string const& name, PropertyBase* property);
+  void AddProperty(std::string const& name, PropertyBase* property);
 
 private:
   // Introspectable objects are not copyable.
@@ -206,22 +206,25 @@ private:
 };
 
 
-template <typename T>
-class SerializableProperty : public ConnectableProperty<T>, public PropertyBase
+template <typename VALUE_TYPE>
+class SerializableProperty : public Property<VALUE_TYPE>, public PropertyBase
 {
 public:
-  typedef ConnectableProperty<T> Base;
-  typedef typename Base::ValueType ValueType;
-  typedef typename Base::TraitType TraitType;
+  typedef Property<VALUE_TYPE> Base;
+  typedef typename type::PropertyTrait<VALUE_TYPE> TraitType;
+  typedef typename TraitType::ValueType ValueType;
 
-  SerializableProperty(Introspectable* owner, std::string const& name);
-  SerializableProperty(Introspectable* owner, std::string const& name, T const& initial);
+  SerializableProperty(Introspectable* owner,
+                       std::string const& name);
+  SerializableProperty(Introspectable* owner,
+                       std::string const& name,
+                       VALUE_TYPE const& initial);
 
-  virtual bool set_value(std::string const& serialized_form);
-  virtual std::string get_serialized_value() const;
+  virtual bool SetValue(std::string const& serialized_form);
+  virtual std::string GetSerializedValue() const;
 
   // Operator assignment is not inherited nicely, so redeclare it here.
-  ValueType const& operator=(ValueType const& value);
+  VALUE_TYPE operator=(VALUE_TYPE const& value);
 
 private:
   std::string name_;
