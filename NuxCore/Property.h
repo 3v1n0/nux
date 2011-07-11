@@ -98,6 +98,41 @@ private:
   SetterFunction setter_function_;
 };
 
+// We could easily add a Write Only Property if and when we need one.
+
+/**
+ * A read only property that uses a function to get the value.
+ *
+ * The read only property does not have a changed signal.
+ */
+template <typename VALUE_TYPE>
+class ROProperty
+{
+public:
+  typedef sigc::slot<VALUE_TYPE> GetterFunction;
+
+  Property();
+  explicit Property(GetterFunction getter_function);
+
+  operator VALUE_TYPE() const;
+  VALUE_TYPE operator()() const;
+  VALUE_TYPE Get() const;
+
+  void CustomGetterFunction(GetterFunction getter_function);
+
+private:
+  // ROProperties themselves are not copyable.
+  ROProperty(ROProperty const&);
+  ROProperty& operator=(ROProperty const&);
+
+  VALUE_TYPE DefaultGetter() const;
+
+private:
+  GetterFunction getter_function_;
+};
+
+
+
 
 template <typename VALUE_TYPE>
 class ConnectableProperty : public PropertyChangedSignal<VALUE_TYPE>
