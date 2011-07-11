@@ -1,5 +1,6 @@
 #include "NuxCore/Property.h"
 
+#include <boost/scoped_ptr.hpp>
 #include <sigc++/trackable.h>
 
 #include <gmock/gmock.h>
@@ -103,6 +104,13 @@ TEST(TestTypeTraits, TestConversionHolds) {
 template <typename T>
 struct ChangeRecorder : sigc::trackable
 {
+  typedef sigc::slot<void, T const&> Listener;
+
+  Listener listener()
+  {
+    return sigc::mem_fun(this, &ChangeRecorder<T>::value_changed);
+  }
+
   void value_changed(T const& value)
     {
       changed_values.push_back(value);
@@ -161,8 +169,7 @@ TEST(TestProperty, TestAssignment) {
 TEST(TestProperty, TestChanged) {
   nux::Property<std::string> string_prop;
   ChangeRecorder<std::string> recorder;
-  string_prop.changed.connect(
-    sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
+  string_prop.changed.connect(recorder.listener());
 
   string_prop = "Hello world" ;
   EXPECT_THAT(1, Eq(recorder.size()));
@@ -175,8 +182,7 @@ TEST(TestProperty, TestChanged) {
 TEST(TestProperty, TestEnableAndDisableNotifications) {
   nux::Property<std::string> string_prop;
   ChangeRecorder<std::string> recorder;
-  string_prop.changed.connect(
-    sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
+  string_prop.changed.connect(recorder.listener());
 
   string_prop.DisableNotifications();
   string_prop = "Hello world" ;
@@ -243,8 +249,7 @@ TEST(TestProperty, TestCustomSetterFunction) {
   FloatClamp clamp(0, 1);
   float_prop.SetSetterFunction(sigc::mem_fun(&clamp, &FloatClamp::Set));
   ChangeRecorder<float> recorder;
-  float_prop.changed.connect(
-    sigc::mem_fun(recorder, &ChangeRecorder<float>::value_changed));
+  float_prop.changed.connect(recorder.listener());
 
   // Since the default value for a float is zero, and we clamp at zero,
   // setting to a negative value will result in setting to zero, which will
@@ -315,8 +320,7 @@ TEST(TestROProperty, TestSetGetter) {
 TEST(TestRWProperty, TestDefaultConstructor) {
   nux::RWProperty<int> int_prop;
   ChangeRecorder<int> recorder;
-  int_prop.changed.connect(
-    sigc::mem_fun(recorder, &ChangeRecorder<int>::value_changed));
+  int_prop.changed.connect(recorder.listener());
 
   int_prop = 42;
   int value = int_prop;
@@ -339,8 +343,7 @@ TEST(TestRWProperty, TestFunctionConstructor) {
   nux::RWProperty<int> int_prop(sigc::mem_fun(&incrementer, &Incrementer::value),
                                 sigc::ptr_fun(&is_even));
   ChangeRecorder<int> recorder;
-  int_prop.changed.connect(
-    sigc::mem_fun(recorder, &ChangeRecorder<int>::value_changed));
+  int_prop.changed.connect(recorder.listener());
 
   int_prop = 42;
   EXPECT_THAT(recorder.size(), Eq(1));
@@ -358,6 +361,65 @@ TEST(TestRWProperty, TestFunctionConstructor) {
   EXPECT_THAT(int_prop.Get(), Eq(5));
 }
 
+// This bit would normally be in the header file.
+class HiddenImpl
+{
+public:
+  HiddenImpl();
+
+  nux::RWProperty<std::string> name;
+private:
+  class Impl;
+  boost::scoped_ptr<Impl> pimpl;
+};
+
+// This bit is in the implementation file.
+class HiddenImpl::Impl
+{
+public:
+  bool set_name(std::string const& name) {
+    bool changed = false;
+    std::string new_name("Impl::" + name);
+    if (name_ != new_name) {
+      name_ = new_name;
+      changed = true;
+    }
+    return changed;
+  }
+  std::string get_name() const {
+    return name_;
+  }
+
+private:
+  std::string name_;
+};
+
+HiddenImpl::HiddenImpl()
+  : pimpl(new Impl())
+{
+  name.SetSetterFunction(sigc::mem_fun(pimpl.get(), &HiddenImpl::Impl::set_name));
+  name.SetGetterFunction(sigc::mem_fun(pimpl.get(), &HiddenImpl::Impl::get_name));
+}
+
+
+TEST(TestRWProperty, TestPimplClassExample) {
+  HiddenImpl hidden;
+  ChangeRecorder<std::string> recorder;
+  hidden.name.changed.connect(recorder.listener());
+
+  hidden.name = "NewName";
+  EXPECT_THAT(recorder.size(), Eq(1));
+  EXPECT_THAT(recorder.last(), Eq("Impl::NewName"));
+
+  // Since the name is updated before comparison, no event emitted.
+  hidden.name = "NewName";
+  EXPECT_THAT(recorder.size(), Eq(1));
+
+  std::string value = hidden.name;
+  EXPECT_THAT(value, Eq("Impl::NewName"));
+  EXPECT_THAT(hidden.name(), Eq("Impl::NewName"));
+  EXPECT_THAT(hidden.name.Get(), Eq("Impl::NewName"));
+}
 
 
 
@@ -375,8 +437,7 @@ struct TestProperties : nux::Introspectable
 TEST(TestIntrospectableProperty, TestSimplePropertyAccess) {
   TestProperties props;
   ChangeRecorder<std::string> recorder;
-  props.name.changed.connect(
-    sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
+  props.name.changed.connect(recorder.listener());
   EXPECT_EQ("", props.name());
   EXPECT_EQ(0, props.index());
   props.name = "Testing";
@@ -397,10 +458,8 @@ TEST(TestIntrospectableProperty, TestPropertyAccessByName) {
   TestProperties props;
   ChangeRecorder<std::string> name_recorder;
   ChangeRecorder<int> index_recorder;
-  props.name.changed.connect(
-    sigc::mem_fun(name_recorder, &ChangeRecorder<std::string>::value_changed));
-  props.index.changed.connect(
-    sigc::mem_fun(index_recorder, &ChangeRecorder<int>::value_changed));
+  props.name.changed.connect(name_recorder.listener());
+  props.index.changed.connect(index_recorder.listener());
 
   props.name = "Testing";
   props.index = 5;
