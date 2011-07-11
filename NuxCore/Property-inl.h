@@ -63,6 +63,13 @@ Property<VALUE_TYPE>::Property(VALUE_TYPE const& initial)
 {}
 
 template <typename VALUE_TYPE>
+Property<VALUE_TYPE>::Property(VALUE_TYPE const& initial,
+                               Property<VALUE_TYPE>::SetterFunction setter_function)
+  : value_(initial)
+  , setter_function_(setter_function)
+{}
+
+template <typename VALUE_TYPE>
 VALUE_TYPE Property<VALUE_TYPE>::operator=(VALUE_TYPE const& value)
 {
   Set(value);
@@ -110,6 +117,12 @@ bool Property<VALUE_TYPE>::DefaultSetter(VALUE_TYPE& target,
     changed = true;
   }
   return changed;
+}
+
+template <typename VALUE_TYPE>
+void Property<VALUE_TYPE>::CustomSetterFunction(SetterFunction setter_function)
+{
+  setter_function_ = setter_function;
 }
 
 

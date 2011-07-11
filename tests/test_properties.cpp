@@ -120,6 +120,9 @@ struct ChangeRecorder : sigc::trackable
     }
   typedef std::vector<T> ChangedValues;
   ChangedValues changed_values;
+
+  int size() const { return changed_values.size(); }
+  T last() const { return *changed_values.rbegin(); }
 };
 
 TEST(TestConnectableProperty, TestAssignmentNotification) {
@@ -167,7 +170,7 @@ TEST(TestProperty, TestDefaultConstructor) {
   EXPECT_THAT(string_prop(), Eq(""));
 }
 
-TEST(TestProperty, TestExplicitConstructor) {
+TEST(TestProperty, TestValueExplicitConstructor) {
   nux::Property<std::string> string_prop("Hello world!");
   // Need either an assignment or static cast to check the operator VALUE_TYPE
   // due to google-mock's template matching.
@@ -207,11 +210,11 @@ TEST(TestProperty, TestChanged) {
     sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
 
   string_prop = "Hello world" ;
-  EXPECT_THAT(1, Eq(recorder.changed_values.size()));
-  EXPECT_THAT("Hello world", Eq(recorder.changed_values[0]));
+  EXPECT_THAT(1, Eq(recorder.size()));
+  EXPECT_THAT("Hello world", Eq(recorder.last()));
   // No notification if not changed.
   string_prop = std::string("Hello world");
-  EXPECT_THAT(1, Eq(recorder.changed_values.size()));
+  EXPECT_THAT(1, Eq(recorder.size()));
 }
 
 TEST(TestProperty, TestEnableAndDisableNotifications) {
@@ -222,17 +225,90 @@ TEST(TestProperty, TestEnableAndDisableNotifications) {
 
   string_prop.DisableNotifications();
   string_prop = "Hello world" ;
-  EXPECT_THAT(0, Eq(recorder.changed_values.size()));
+  EXPECT_THAT(0, Eq(recorder.size()));
 
   string_prop.EnableNotifications();
   // No notification if not changed.
   string_prop = "Hello world" ;
-  EXPECT_THAT(0, Eq(recorder.changed_values.size()));
+  EXPECT_THAT(0, Eq(recorder.size()));
 
   string_prop = "New value" ;
-  EXPECT_THAT(1, Eq(recorder.changed_values.size()));
-  EXPECT_THAT("New value", Eq(recorder.changed_values[0]));
+  EXPECT_THAT(1, Eq(recorder.size()));
+  EXPECT_THAT("New value", Eq(recorder.last()));
 }
+
+bool string_prefix(std::string& target, std::string const& value)
+{
+  bool changed = false;
+  std::string prefixed("prefix-" + value);
+  if (target != prefixed)
+  {
+    target = prefixed;
+    changed = true;
+  }
+  return changed;
+}
+
+TEST(TestProperty, TestSetterConstructor) {
+  nux::Property<std::string> string_prop("", sigc::ptr_fun(&string_prefix));
+
+  string_prop = "foo";
+  // Need either an assignment or static cast to check the operator VALUE_TYPE
+  // due to google-mock's template matching.
+  std::string value = string_prop;
+  EXPECT_THAT(value, Eq("prefix-foo"));
+  EXPECT_THAT(string_prop.Get(), Eq("prefix-foo"));
+  EXPECT_THAT(string_prop(), Eq("prefix-foo"));
+}
+
+class FloatClamp
+{
+public:
+  FloatClamp(float min, float max)
+    : min_(min), max_(max)
+    {
+    }
+  bool Set(float& target, float const& value)
+    {
+      bool changed = false;
+      float new_val = std::min(max_, std::max(min_, value));
+      if (target != new_val) {
+        target = new_val;
+        changed = true;
+      }
+      return changed;
+    }
+private:
+  float min_;
+  float max_;
+};
+
+TEST(TestProperty, TestCustomSetterFunction) {
+  nux::Property<float> float_prop;
+  FloatClamp clamp(0, 1);
+  float_prop.CustomSetterFunction(sigc::mem_fun(&clamp, &FloatClamp::Set));
+  ChangeRecorder<float> recorder;
+  float_prop.changed.connect(
+    sigc::mem_fun(recorder, &ChangeRecorder<float>::value_changed));
+
+  // Since the default value for a float is zero, and we clamp at zero,
+  // setting to a negative value will result in setting to zero, which will
+  // not signal a changed event.
+  float_prop = -2;
+  EXPECT_THAT(float_prop(), Eq(0));
+  EXPECT_THAT(0, Eq(recorder.size()));
+
+  float_prop = 0.5;
+  EXPECT_THAT(float_prop(), Eq(0.5));
+  EXPECT_THAT(1, Eq(recorder.size()));
+  EXPECT_THAT(0.5, Eq(recorder.last()));
+
+  float_prop = 4;
+  EXPECT_THAT(float_prop(), Eq(1));
+  EXPECT_THAT(2, Eq(recorder.size()));
+  EXPECT_THAT(1, Eq(recorder.last()));
+}
+
 
 struct TestProperties : nux::Introspectable
 {

@@ -49,14 +49,19 @@ public:
   void DisableNotifications();
   void EnableNotifications();
 
-protected:
   void EmitChanged(VALUE_TYPE const& new_value);
 
 private:
   bool notify_;
 };
 
-
+/**
+ * A read/write property that stores the value type.
+ *
+ * The default setter emits the changed event if and only if the value
+ * changes.  A custom setter can be provided by passing in a setter function
+ * using sigc::mem_fun or sigc::ptr_fun.
+ */
 template <typename VALUE_TYPE>
 class Property : public PropertyChangedSignal<VALUE_TYPE>
 {
@@ -66,6 +71,7 @@ public:
 
   Property();
   explicit Property(VALUE_TYPE const& initial);
+  Property(VALUE_TYPE const& initial, SetterFunction setter_function);
 
   VALUE_TYPE operator=(VALUE_TYPE const& value);
   operator VALUE_TYPE() const;
@@ -77,6 +83,8 @@ public:
   // get and set access
   VALUE_TYPE Get() const;
   void Set(VALUE_TYPE const& value);
+
+  void CustomSetterFunction(SetterFunction setter_function);
 
 private:
   // Properties themselves are not copyable.
