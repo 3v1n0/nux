@@ -64,7 +64,7 @@ Property<VALUE_TYPE>::Property(VALUE_TYPE const& initial)
 
 template <typename VALUE_TYPE>
 Property<VALUE_TYPE>::Property(VALUE_TYPE const& initial,
-                               Property<VALUE_TYPE>::SetterFunction setter_function)
+                               SetterFunction setter_function)
   : value_(initial)
   , setter_function_(setter_function)
 {}
@@ -132,7 +132,7 @@ ROProperty<VALUE_TYPE>::ROProperty()
 {}
 
 template <typename VALUE_TYPE>
-ROProperty<VALUE_TYPE>::ROProperty(ROProperty<VALUE_TYPE>::GetterFunction getter_function)
+ROProperty<VALUE_TYPE>::ROProperty(GetterFunction getter_function)
   : getter_function_(getter_function)
 {}
 

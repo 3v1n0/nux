@@ -309,6 +309,53 @@ TEST(TestProperty, TestCustomSetterFunction) {
   EXPECT_THAT(1, Eq(recorder.last()));
 }
 
+TEST(TestROProperty, TestDefaultConstructor) {
+  nux::ROProperty<int> int_prop;
+  int value = int_prop;
+  EXPECT_THAT(value, Eq(0));
+  EXPECT_THAT(int_prop(), Eq(0));
+  EXPECT_THAT(int_prop.Get(), Eq(0));
+
+  nux::ROProperty<std::string> string_prop;
+  std::string svalue = string_prop;
+  EXPECT_THAT(svalue, Eq(""));
+  EXPECT_THAT(string_prop(), Eq(""));
+  EXPECT_THAT(string_prop.Get(), Eq(""));
+}
+
+int simple_int_result()
+{
+  return 42;
+}
+
+TEST(TestROProperty, TestGetterConstructor) {
+  nux::ROProperty<int> int_prop(sigc::ptr_fun(&simple_int_result));
+  int value = int_prop;
+  EXPECT_THAT(value, Eq(42));
+  EXPECT_THAT(int_prop(), Eq(42));
+  EXPECT_THAT(int_prop.Get(), Eq(42));
+}
+
+class Incrementer
+{
+public:
+  Incrementer() : value_(0) {}
+  int value() { return ++value_; }
+private:
+  int value_;
+};
+
+TEST(TestROProperty, TestSetGetter) {
+  nux::ROProperty<int> int_prop;
+  Incrementer incrementer;
+  int_prop.CustomGetterFunction(sigc::mem_fun(&incrementer, &Incrementer::value));
+
+  int value = int_prop;
+  EXPECT_THAT(value, Eq(1));
+  EXPECT_THAT(int_prop(), Eq(2));
+  EXPECT_THAT(int_prop.Get(), Eq(3));
+}
+
 
 struct TestProperties : nux::Introspectable
 {
