@@ -78,11 +78,11 @@ public:
 
   // function call access
   VALUE_TYPE operator()() const;
-  void operator()(VALUE_TYPE const& value);
+  VALUE_TYPE operator()(VALUE_TYPE const& value);
 
   // get and set access
   VALUE_TYPE Get() const;
-  void Set(VALUE_TYPE const& value);
+  VALUE_TYPE Set(VALUE_TYPE const& value);
 
   void SetSetterFunction(SetterFunction setter_function);
 
@@ -164,11 +164,11 @@ public:
 
   // function call access
   VALUE_TYPE operator()() const;
-  void operator()(VALUE_TYPE const& value);
+  VALUE_TYPE operator()(VALUE_TYPE const& value);
 
   // get and set access
   VALUE_TYPE Get() const;
-  void Set(VALUE_TYPE const& value);
+  VALUE_TYPE Set(VALUE_TYPE const& value);
 
   void SetGetterFunction(GetterFunction getter_function);
   void SetSetterFunction(SetterFunction setter_function);

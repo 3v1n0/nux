@@ -312,6 +312,55 @@ TEST(TestROProperty, TestSetGetter) {
 }
 
 
+TEST(TestRWProperty, TestDefaultConstructor) {
+  nux::RWProperty<int> int_prop;
+  ChangeRecorder<int> recorder;
+  int_prop.changed.connect(
+    sigc::mem_fun(recorder, &ChangeRecorder<int>::value_changed));
+
+  int_prop = 42;
+  int value = int_prop;
+  EXPECT_THAT(value, Eq(0));
+  EXPECT_THAT(int_prop(), Eq(0));
+  EXPECT_THAT(int_prop.Get(), Eq(0));
+  EXPECT_THAT(recorder.size(), Eq(0));
+}
+
+bool is_even(int const& value)
+{
+  return value % 2 == 0;
+}
+
+
+TEST(TestRWProperty, TestFunctionConstructor) {
+  // This is a somewhat convoluted example.  The setter emits if the value is
+  // even, but the value being emitted is controlled by the incrementer.
+  Incrementer incrementer;
+  nux::RWProperty<int> int_prop(sigc::mem_fun(&incrementer, &Incrementer::value),
+                                sigc::ptr_fun(&is_even));
+  ChangeRecorder<int> recorder;
+  int_prop.changed.connect(
+    sigc::mem_fun(recorder, &ChangeRecorder<int>::value_changed));
+
+  int_prop = 42;
+  EXPECT_THAT(recorder.size(), Eq(1));
+  EXPECT_THAT(recorder.last(), Eq(1));
+
+  // Catch the return value of the assignment.  The getter is called.
+  int assign_result = int_prop = 13;
+  EXPECT_THAT(recorder.size(), Eq(1));
+  EXPECT_THAT(assign_result, Eq(2));
+
+  // each access increments the value.
+  int value = int_prop;
+  EXPECT_THAT(value, Eq(3));
+  EXPECT_THAT(int_prop(), Eq(4));
+  EXPECT_THAT(int_prop.Get(), Eq(5));
+}
+
+
+
+
 struct TestProperties : nux::Introspectable
 {
   TestProperties()

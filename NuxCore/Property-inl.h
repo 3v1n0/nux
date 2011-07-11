@@ -72,8 +72,7 @@ Property<VALUE_TYPE>::Property(VALUE_TYPE const& initial,
 template <typename VALUE_TYPE>
 VALUE_TYPE Property<VALUE_TYPE>::operator=(VALUE_TYPE const& value)
 {
-  Set(value);
-  return value_;
+  return Set(value);
 }
 
 template <typename VALUE_TYPE>
@@ -89,9 +88,9 @@ VALUE_TYPE Property<VALUE_TYPE>::operator()() const
 }
 
 template <typename VALUE_TYPE>
-void Property<VALUE_TYPE>::operator()(VALUE_TYPE const& value)
+VALUE_TYPE Property<VALUE_TYPE>::operator()(VALUE_TYPE const& value)
 {
-  Set(value);
+  return Set(value);
 }
 
 template <typename VALUE_TYPE>
@@ -101,10 +100,11 @@ VALUE_TYPE Property<VALUE_TYPE>::Get() const
 }
 
 template <typename VALUE_TYPE>
-void Property<VALUE_TYPE>::Set(VALUE_TYPE const& value)
+VALUE_TYPE Property<VALUE_TYPE>::Set(VALUE_TYPE const& value)
 {
   if (setter_function_(value_, value))
     SignalBase::EmitChanged(value_);
+  return value_;
 }
 
 template <typename VALUE_TYPE>
@@ -183,8 +183,7 @@ RWProperty<VALUE_TYPE>::RWProperty(GetterFunction getter_function,
 template <typename VALUE_TYPE>
 VALUE_TYPE RWProperty<VALUE_TYPE>::operator=(VALUE_TYPE const& value)
 {
-  Set(value);
-  return getter_function_();
+  return Set(value);
 }
 
 template <typename VALUE_TYPE>
@@ -200,9 +199,9 @@ VALUE_TYPE RWProperty<VALUE_TYPE>::operator()() const
 }
 
 template <typename VALUE_TYPE>
-void RWProperty<VALUE_TYPE>::operator()(VALUE_TYPE const& value)
+VALUE_TYPE RWProperty<VALUE_TYPE>::operator()(VALUE_TYPE const& value)
 {
-  Set(value);
+  return Set(value);
 }
 
 template <typename VALUE_TYPE>
@@ -212,10 +211,15 @@ VALUE_TYPE RWProperty<VALUE_TYPE>::Get() const
 }
 
 template <typename VALUE_TYPE>
-void RWProperty<VALUE_TYPE>::Set(VALUE_TYPE const& value)
+VALUE_TYPE RWProperty<VALUE_TYPE>::Set(VALUE_TYPE const& value)
 {
   if (setter_function_(value))
-    SignalBase::EmitChanged(getter_function_());
+  {
+    VALUE_TYPE new_value = getter_function_();
+    SignalBase::EmitChanged(new_value);
+    return new_value;
+  }
+  return getter_function_();
 }
 
 template <typename VALUE_TYPE>
