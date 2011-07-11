@@ -82,6 +82,11 @@ RollingFileStreamBuffer::RollingFileStreamBuffer(std::string const& filename,
   , number_of_backup_files_(number_of_backup_files)
   , max_log_size_(max_log_size)
 {
+  // Make sure that the filename starts with a '/' for a full path.
+  if (filename.empty() || filename[0] != '/') {
+      std::string error_msg = "\"" + filename + "\" is not a full path";
+      throw std::runtime_error(error_msg.c_str());
+  }
   // Looks to see if our filename exists.
   if (g_file_test(filename.c_str(), G_FILE_TEST_EXISTS)) {
     // The filename needs to be a regular file.

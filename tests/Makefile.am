@@ -33,6 +33,7 @@ test_nux_LDADD = \
 
 gtest_nux_core_SOURCES = \
   FileHelpers.cpp \
+  test_main.cpp \
   test_async_file_writer.cpp \
   test_logger.cpp \
   test_properties.cpp \
@@ -57,8 +58,8 @@ gtest_nux_core_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_LDFLAGS = \
-  -lpthread -lgtest -lgtest_main -lgmock \
-  -lboost_filesystem -lboost_system `pkg-config --libs gio-2.0`
+  -lpthread -lgtest -lgmock \
+  -lboost_filesystem -lboost_system
 
 
 #run make test as part of make check
@@ -66,10 +67,7 @@ check-local: test gtest
 test:
 	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
 
-flat-echo:
-	echo NUX_LIBS  $(NUX_LIBS)
-
-gtest: flag-echo gtest-nux-core
+gtest: gtest-nux-core
 	./gtest-nux-core
 
 check-report:
