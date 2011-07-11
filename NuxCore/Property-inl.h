@@ -127,6 +127,48 @@ void Property<VALUE_TYPE>::CustomSetterFunction(SetterFunction setter_function)
 
 
 template <typename VALUE_TYPE>
+ROProperty<VALUE_TYPE>::ROProperty()
+  : getter_function_(sigc::mem_fun(this, &ROProperty<VALUE_TYPE>::DefaultGetter))
+{}
+
+template <typename VALUE_TYPE>
+ROProperty<VALUE_TYPE>::ROProperty(ROProperty<VALUE_TYPE>::GetterFunction getter_function)
+  : getter_function_(getter_function)
+{}
+
+template <typename VALUE_TYPE>
+ROProperty<VALUE_TYPE>::operator VALUE_TYPE() const
+{
+  return getter_function_();
+}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE ROProperty<VALUE_TYPE>::operator()() const
+{
+  return getter_function_();
+}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE ROProperty<VALUE_TYPE>::Get() const
+{
+  return getter_function_();
+}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE ROProperty<VALUE_TYPE>::DefaultGetter() const
+{
+  return VALUE_TYPE();
+}
+
+template <typename VALUE_TYPE>
+void ROProperty<VALUE_TYPE>::CustomGetterFunction(GetterFunction getter_function)
+{
+  getter_function_ = getter_function;
+}
+
+
+
+template <typename VALUE_TYPE>
 ConnectableProperty<VALUE_TYPE>::ConnectableProperty()
   : value_(VALUE_TYPE())
 {}

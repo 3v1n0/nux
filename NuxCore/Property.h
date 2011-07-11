@@ -111,8 +111,8 @@ class ROProperty
 public:
   typedef sigc::slot<VALUE_TYPE> GetterFunction;
 
-  Property();
-  explicit Property(GetterFunction getter_function);
+  ROProperty();
+  explicit ROProperty(GetterFunction getter_function);
 
   operator VALUE_TYPE() const;
   VALUE_TYPE operator()() const;
