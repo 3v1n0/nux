@@ -135,40 +135,6 @@ private:
 };
 
 
-
-
-template <typename VALUE_TYPE>
-class ConnectableProperty : public PropertyChangedSignal<VALUE_TYPE>
-{
-public:
-  typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
-  typedef typename type::PropertyTrait<VALUE_TYPE> TraitType;
-  typedef typename TraitType::ValueType ValueType;
-
-  ConnectableProperty();
-  ConnectableProperty(VALUE_TYPE const& initial);
-
-  VALUE_TYPE const& operator=(VALUE_TYPE const& value);
-  operator VALUE_TYPE const & () const;
-
-  // function call access
-  VALUE_TYPE const& operator()() const;
-  void operator()(VALUE_TYPE const& value);
-
-  // get and set access
-  VALUE_TYPE const& get() const;
-  void set(VALUE_TYPE const& value);
-
-private:
-  // Properties themselves are not copyable.
-  ConnectableProperty(ConnectableProperty const&);
-  ConnectableProperty& operator=(ConnectableProperty const&);
-
-private:
-  VALUE_TYPE value_;
-};
-
-
 class PropertyBase
 {
 public:

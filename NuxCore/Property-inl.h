@@ -167,58 +167,6 @@ void ROProperty<VALUE_TYPE>::CustomGetterFunction(GetterFunction getter_function
 }
 
 
-
-template <typename VALUE_TYPE>
-ConnectableProperty<VALUE_TYPE>::ConnectableProperty()
-  : value_(VALUE_TYPE())
-{}
-
-template <typename VALUE_TYPE>
-ConnectableProperty<VALUE_TYPE>::ConnectableProperty(VALUE_TYPE const& initial)
-  : value_(initial)
-{}
-
-template <typename VALUE_TYPE>
-VALUE_TYPE const& ConnectableProperty<VALUE_TYPE>::operator=(VALUE_TYPE const& value)
-{
-  set(value);
-  return value_;
-}
-
-template <typename VALUE_TYPE>
-ConnectableProperty<VALUE_TYPE>::operator VALUE_TYPE const&() const
-{
-  return value_;
-}
-
-template <typename VALUE_TYPE>
-VALUE_TYPE const& ConnectableProperty<VALUE_TYPE>::operator()() const
-{
-  return value_;
-}
-
-template <typename VALUE_TYPE>
-void ConnectableProperty<VALUE_TYPE>::operator()(VALUE_TYPE const& value)
-{
-  set(value);
-}
-
-  // get and set access
-template <typename VALUE_TYPE>
-VALUE_TYPE const& ConnectableProperty<VALUE_TYPE>::get() const
-{
-  return value_;
-}
-
-template <typename VALUE_TYPE>
-void ConnectableProperty<VALUE_TYPE>::set(VALUE_TYPE const& value)
-{
-  if (value != value_) {
-    value_ = value;
-    SignalBase::EmitChanged(value_);
-  }
-}
-
 // We need to provide a default constructor since we hide the copy ctor.
 inline Introspectable::Introspectable()
 {}

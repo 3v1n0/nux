@@ -100,17 +100,6 @@ TEST(TestTypeTraits, TestConversionHolds) {
 }
 
 
-TEST(TestConnectableProperty, TestConstruction) {
-  nux::ConnectableProperty<std::string> string_prop;
-  EXPECT_EQ("", string_prop());
-  EXPECT_EQ("", string_prop.get());
-  EXPECT_EQ("", static_cast<std::string>(string_prop));
-  nux::ConnectableProperty<std::string> string_prop_val("hello");
-  EXPECT_EQ("hello", string_prop_val());
-  EXPECT_EQ("hello", string_prop_val.get());
-  EXPECT_EQ("hello", static_cast<std::string>(string_prop_val));
-}
-
 template <typename T>
 struct ChangeRecorder : sigc::trackable
 {
@@ -125,40 +114,6 @@ struct ChangeRecorder : sigc::trackable
   T last() const { return *changed_values.rbegin(); }
 };
 
-TEST(TestConnectableProperty, TestAssignmentNotification) {
-  nux::ConnectableProperty<std::string> string_prop;
-  ChangeRecorder<std::string> recorder;
-  string_prop.changed.connect(
-    sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
-  string_prop = "Hello world" ;
-  EXPECT_EQ(1, recorder.changed_values.size());
-  EXPECT_EQ("Hello world", recorder.changed_values[0]);
-  // No notification if not changed.
-  string_prop = std::string("Hello world");
-  EXPECT_EQ(1, recorder.changed_values.size());
-}
-
-TEST(TestConnectableProperty, TestEnableAndDisableNotification) {
-  nux::ConnectableProperty<std::string> string_prop;
-  ChangeRecorder<std::string> recorder;
-  string_prop.changed.connect(
-    sigc::mem_fun(recorder, &ChangeRecorder<std::string>::value_changed));
-  string_prop.DisableNotifications();
-  string_prop = "Hello world" ;
-  EXPECT_EQ(0, recorder.changed_values.size());
-  string_prop.EnableNotifications();
-  // No notification if not changed.
-  string_prop = "Hello world" ;
-  EXPECT_EQ(0, recorder.changed_values.size());
-
-  string_prop = "New value" ;
-  EXPECT_EQ(1, recorder.changed_values.size());
-  EXPECT_EQ("New value", recorder.changed_values[0]);
-
-  nux::ConnectableProperty<TestEnum> enum_prop;
-  // This fails to compile.
-  // nux::ConnectableProperty<TestClass> class_prop;
-}
 
 TEST(TestProperty, TestDefaultConstructor) {
   nux::Property<std::string> string_prop;
