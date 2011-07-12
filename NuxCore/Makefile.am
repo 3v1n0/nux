@@ -25,6 +25,7 @@ libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_cpp = \
+  $(srcdir)/AsyncFileWriter.cpp \
   $(srcdir)/TextString.cpp \
   $(srcdir)/TimeFunctions.cpp \
   $(srcdir)/Template.cpp \
@@ -127,6 +128,7 @@ source_smart_ptr_h = \
   $(srcdir)/SmartPtr/GenericSmartPointer.h
 
 source_h = \
+  $(srcdir)/AsyncFileWriter.h \
   $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
   $(srcdir)/CPU.h \

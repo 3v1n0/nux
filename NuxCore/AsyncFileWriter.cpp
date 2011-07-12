@@ -19,42 +19,60 @@
  * Authored by: Tim Penhey <tim.penhey@canonical.com>
  *
  */
-#ifndef NUXCORE_ASYNC_FILE_WRITER_H
-#define NUXCORE_ASYNC_FILE_WRITER_H
 
-#include <string>
-#include <sigc++/sigc++.h>
+#include "AsyncFileWriter.h"
 
 namespace nux
 {
 
-/**
- * Write to a file asynchronously.
- *
- * This uses the GIO async functions, and as such depend on the gobject main
- * loop.
- */
-class AsyncFileWriter
+class AsyncFileWriter::Impl
 {
 public:
-  typedef sigc::slot<void> Callback;
+  Impl(std::string const& filename);
+  ~Impl();
 
-  AsyncFileWriter(std::string const& filename);
-  // Destructor kills any pending async requests, and close the file
-  // synchronously if it is open.
-  ~AsyncFileWriter();
-
-  // Queue the data for writing.  It'll happen some time.
   void Write(std::string const& data);
-  // Close the file asynchronously.  When the file is closed, the callback is
-  // called.
   void Close(Callback file_closed_callback);
-
 private:
-  class Impl;
-  Impl* pimpl;
+  std::string filename_;
 };
 
+
+AsyncFileWriter::Impl::Impl(std::string const& filename)
+{
 }
 
-#endif
+AsyncFileWriter::Impl::~Impl()
+{
+}
+
+void AsyncFileWriter::Impl::Write(std::string const& data)
+{
+}
+
+void AsyncFileWriter::Impl::Close(Callback file_closed_callback)
+{
+}
+
+AsyncFileWriter::AsyncFileWriter(std::string const& filename)
+  : pimpl(new Impl(filename))
+{}
+
+AsyncFileWriter::~AsyncFileWriter()
+{
+  delete pimpl;
+}
+
+void AsyncFileWriter::Write(std::string const& data)
+{
+  pimpl->Write(data);
+}
+
+void AsyncFileWriter::Close(Callback file_closed_callback)
+{
+  pimpl->Close(file_closed_callback);
+}
+
+
+
+} // namespace nux
