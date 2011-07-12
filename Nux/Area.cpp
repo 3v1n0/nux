@@ -963,6 +963,23 @@ namespace nux
     return NULL;
   }
 
+  void Area::SetPathToKeyFocusArea()
+  {
+    has_key_focus_ = true;
+    next_object_to_key_focus_area_ = NULL;
+
+    Area* child = this;
+    Area* parent = GetParentObject();
+
+    while (parent)
+    {
+      parent->next_object_to_key_focus_area_ = child;
+      parent->has_key_focus_ = false;
+      child = parent;
+      parent = parent->GetParentObject();
+    }
+  }
+
   void Area::ResetDownwardPathToKeyFocusArea()
   {
     has_key_focus_ = false;
@@ -983,5 +1000,26 @@ namespace nux
     next_object_to_key_focus_area_ = NULL;
   }
 
+  bool Area::InspectKeyEvent(unsigned int eventType,
+    unsigned int keysym,
+    const char* character)
+  {
+    return false;
+  }
+
+  bool Area::AcceptKeyNavFocus()
+  {
+    return true;
+  }
+
+  Area* Area::KeyNavIteration(KeyNavDirection direction)
+  {
+    return NULL;
+  }
+
+  bool Area::HasKeyFocus() const
+  {
+    return has_key_focus_;
+  }
 }
 

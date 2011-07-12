@@ -1006,4 +1006,9 @@ namespace nux
       ScrollUp (abs (wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
     }
   }
+
+  bool ScrollView::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

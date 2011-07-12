@@ -1090,4 +1090,8 @@ void ColorEditor::RecvCheckColorModel (bool b, color::Model ColorModel, color::C
     return m_ColorChannel;
   }
 
+  bool ColorEditor::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

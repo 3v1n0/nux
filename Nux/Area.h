@@ -122,6 +122,17 @@ namespace nux
     eForceComply        = SIZE_FORCE_COMPLY,    //!< Deprecated.
   } SizeCompliance;
 
+  enum KeyNavDirection
+  {
+    KEY_NAV_NONE,
+    KEY_NAV_UP,
+    KEY_NAV_DOWN,
+    KEY_NAV_RIGHT,
+    KEY_NAV_LEFT,
+    KEY_NAV_TAB_NEXT,
+    KEY_NAV_TAB_PREVIOUS,
+  };
+
   class Layout;
   class View;
   class Area;
@@ -451,9 +462,20 @@ namespace nux
         unsigned long x11_key_code,
         unsigned long special_keys_state);
 
+    void SetPathToKeyFocusArea();
     void ResetDownwardPathToKeyFocusArea();
     void ResetUpwardPathToKeyFocusArea();
 
+    //! Return True if the the area knows what to do with the key event.
+    virtual bool InspectKeyEvent(unsigned int eventType,
+      unsigned int keysym,
+      const char* character);
+
+    virtual bool AcceptKeyNavFocus();
+    
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
+
+    bool HasKeyFocus() const;
 
     //! Set to True to initiate a layout reconfiguration when the geometry of this widget changes.
     /*!

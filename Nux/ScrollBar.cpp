@@ -51,5 +51,9 @@ namespace nux
     return m_ScrollUnit;
   }
 
+  bool ScrollBar::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 
 }

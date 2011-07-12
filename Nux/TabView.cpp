@@ -553,4 +553,8 @@ namespace nux
     m_TabLeftTimerHandler = GetTimer().AddTimerHandler (10, tableft_callback, this);
   }
 
+  bool TabView::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

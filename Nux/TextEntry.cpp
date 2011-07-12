@@ -155,6 +155,9 @@ namespace nux
     font_family_ = "Ubuntu";
     font_size_ = 12;
 
+    key_nav_mode_           = false;
+    text_input_mode_        = false;
+
     font_options_ = cairo_font_options_create ();
     cairo_font_options_set_antialias (font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style (font_options_, CAIRO_HINT_STYLE_FULL);
@@ -375,6 +378,9 @@ namespace nux
     const TCHAR*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
+    if (event_type == NUX_KEYDOWN)
+      text_input_mode_ = true;
+
 //     GdkEventKey *gdk_event = static_cast<GdkEventKey *>(event.GetOriginalEvent());
 //     ASSERT(gdk_event);
 //
@@ -561,11 +567,17 @@ namespace nux
 
   void TextEntry::RecvStartKeyFocus ()
   {
+    key_nav_mode_           = true;
+    text_input_mode_        = false;
+
     FocusInx ();
   }
 
   void TextEntry::RecvEndKeyFocus ()
   {
+    key_nav_mode_     = false;
+    text_input_mode_  = false;
+
     FocusOutx ();
   }
 
@@ -2100,5 +2112,33 @@ namespace nux
     font_options_ = cairo_font_options_copy (options);
 
     QueueRefresh(true, true);
+  }
+
+  bool TextEntry::InspectKeyEvent(unsigned int eventType,
+    unsigned int keysym,
+    const char* character)
+  {
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false))
+    {
+      if (keysym == NUX_VK_ENTER ||
+        keysym == NUX_KP_ENTER ||
+        keysym == NUX_VK_UP ||
+        keysym == NUX_VK_DOWN ||
+        keysym == NUX_VK_LEFT ||
+        keysym == NUX_VK_RIGHT ||
+        keysym == NUX_VK_LEFT_TAB ||
+        keysym == NUX_VK_TAB)
+      {
+        return false;
+      }
+    }
+
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == false) && (text_input_mode_ == false))
+    {
+      return false;
+    }
+
+    nuxDebugMsg("[EditTextBox::InspectKeyEvent]");
+    return true;
   }
 }

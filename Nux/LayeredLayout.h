@@ -206,6 +206,7 @@ namespace nux
     virtual bool FocusFirstChild ();
     virtual bool FocusLastChild ();
 
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
     void OnLayerGeometryChanged(Area* area, Geometry geo);
     
   private:

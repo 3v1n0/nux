@@ -298,4 +298,8 @@ namespace nux
     _need_redraw = true;
   }
 
+  bool ClientArea::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

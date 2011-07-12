@@ -1019,4 +1019,9 @@ namespace nux
 
     return false;
   }
+
+  bool Layout::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

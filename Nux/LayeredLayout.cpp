@@ -686,4 +686,21 @@ namespace nux
     else
       return Layout::FocusLastChild ();
   }
+
+  Area* LayeredLayout::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (m_active_area == NULL)
+      return NULL;
+
+    if (next_object_to_key_focus_area_)
+    {
+      return NULL;
+    }
+    else
+    {
+      m_active_area->KeyNavIteration(direction);
+    }
+
+    return NULL;
+  }
 }

@@ -936,5 +936,10 @@ logging::Logger logger("nux.inputarea");
     }
     return NULL;
   }
+
+  bool InputArea::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }
 

@@ -678,4 +678,119 @@ namespace nux
       return NULL;
     return this;
   }
+
+  bool VSplitter::AcceptKeyNavFocus()
+  {
+    return false;
+  }
+
+  Area* VSplitter::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (m_InterfaceObject.size() == 0)
+      return NULL;
+
+    if (next_object_to_key_focus_area_)
+    {
+      if ((direction == KEY_NAV_UP) || (direction == KEY_NAV_DOWN))
+      {
+        // Don't know what to do with this
+        return NULL;
+      }
+      std::vector<Area*>::iterator it;
+      std::vector<Area*>::iterator it_next;
+      it = std::find (m_InterfaceObject.begin(), m_InterfaceObject.end(), next_object_to_key_focus_area_);
+
+      if (it == m_InterfaceObject.end())
+      {
+        // Should never happen
+        nuxAssert (0);
+        return NULL;
+      }
+
+      it_next = it;
+      ++it_next;
+
+      if ((direction == KEY_NAV_LEFT) && (it == m_InterfaceObject.begin()))
+      {
+        // can't go further
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_RIGHT) && (it_next == m_InterfaceObject.end()))
+      {
+        // can't go further
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_LEFT))
+      {
+        --it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          if (it == m_InterfaceObject.begin())
+            break;
+
+          --it;
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if ((direction == KEY_NAV_RIGHT))
+      {
+        ++it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == m_InterfaceObject.end())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+    }
+    else
+    {
+      Area* key_nav_focus = NULL;
+      
+      if (direction == KEY_NAV_LEFT)
+      {
+        std::vector<Area*>::reverse_iterator it = m_InterfaceObject.rbegin();
+        key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == m_InterfaceObject.rend())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+      }
+      else
+      {
+        std::vector<Area*>::iterator it = m_InterfaceObject.begin();
+        key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == m_InterfaceObject.end())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+      }
+      return key_nav_focus;
+    }
+
+    return NULL;
+  }
 }

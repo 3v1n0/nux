@@ -59,6 +59,8 @@ namespace nux
     int GetScrollUnit() const;
 
   protected:
+    virtual bool AcceptKeyNavFocus();
+
     int m_ScrollUnit;
     int m_visible;
   };

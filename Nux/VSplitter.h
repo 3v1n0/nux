@@ -79,6 +79,9 @@ namespace nux
       return m_ResizeOnSplitterRelease;
     }
 
+    virtual bool AcceptKeyNavFocus();
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
+
   private:
 
     typedef InputArea MySplitter;

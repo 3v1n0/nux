@@ -843,4 +843,115 @@ namespace nux
       }
     }
   }
+
+  Area* HLayout::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (_layout_element_list.size() == 0)
+      return NULL;
+
+    if (next_object_to_key_focus_area_)
+    {
+      if ((direction == KEY_NAV_UP) || (direction == KEY_NAV_DOWN))
+      {
+        // Don't know what to do with this
+        return NULL;
+      }
+      std::list<Area*>::iterator it;
+      std::list<Area*>::iterator it_next;
+      it = std::find (_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
+      
+      if (it == _layout_element_list.end())
+      {
+        // Should never happen
+        nuxAssert (0);
+        return NULL;
+      }
+
+      it_next = it;
+      ++it_next;
+
+      if ((direction == KEY_NAV_LEFT) && (it == _layout_element_list.begin()))
+      {
+        // can't go further
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_RIGHT) && (it_next == _layout_element_list.end()))
+      {
+        // can't go further
+        return NULL;
+      }
+
+      if (direction == KEY_NAV_LEFT)
+      {
+        --it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          if (it == _layout_element_list.begin())
+            break;
+
+          --it;
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if (direction == KEY_NAV_RIGHT)
+      {
+        ++it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == _layout_element_list.end())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+    }
+    else
+    {
+      Area* key_nav_focus = NULL;
+
+      if (direction == KEY_NAV_LEFT)
+      {
+        std::list<Area*>::reverse_iterator it = _layout_element_list.rbegin();
+        key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == _layout_element_list.rend())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+      }
+      else
+      {
+        std::list<Area*>::iterator it = _layout_element_list.begin();
+        key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == _layout_element_list.end())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+      }
+
+      return key_nav_focus;
+    }
+
+    return NULL;
+  }
 }

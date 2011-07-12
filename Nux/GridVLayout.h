@@ -103,6 +103,11 @@ namespace nux
     */
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
 
+  protected:
+    int GetChildPos (Area *child);
+    Area* GetChildAtPosition (int pos);
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
+
   private:
     Size _children_size;
     bool _dynamic_column;

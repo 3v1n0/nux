@@ -479,7 +479,15 @@ namespace nux
     std::list<Rect> selection_region_;
     std::list<Rect> last_cursor_region_;
     std::list<Rect> cursor_region_;
-  };
+
+  protected:
+    bool text_input_mode_;
+    bool key_nav_mode_;
+
+    virtual bool InspectKeyEvent(unsigned int eventType,
+      unsigned int keysym,
+      const char* character);
+};
 }
 
 #endif // TEXTENTRY_H

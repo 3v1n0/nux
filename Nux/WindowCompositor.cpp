@@ -261,41 +261,6 @@ namespace nux
     }
   }
 
-  void WindowCompositor::FindKeyFocusArea(unsigned int key_symbol,
-   unsigned long x11_key_code,
-   unsigned long special_keys_state,
-   InputArea** area_under_mouse_pointer,
-   BaseWindow** window)
-  {
-/*    *area_under_mouse_pointer = NULL;
-
-    // Go through the list of BaseWindo and find the first area over which the mouse pointer is.
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator window_it;
-    window_it = _view_window_list.begin();
-    while((*area_under_mouse_pointer == NULL) && (window_it != _view_window_list.end()))
-    {
-      if((*window_it).IsValid() && (*window_it)->IsVisible())
-      {
-        *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, (*window_it)->FindAreaUnderMouse(mouse_position, event_type));
-        if(area_under_mouse_pointer)
-        {
-          // We have found an area. We are going to exit the while loop.
-          *window = (*window_it).GetPointer();
-        }
-      }
-      ++window_it;
-    }
-
-    // If area_under_mouse_pointer is NULL, then the mouse pointer is not over any of the BaseWindow. Try the main window layout.
-    if(*area_under_mouse_pointer == NULL)
-    {
-      Layout* main_window_layout = GetWindowThread()->GetMainLayout();
-      if(main_window_layout)
-        *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
-    }
-*/
-  }
-
   void WindowCompositor::MouseEventCycle(Event &event)
   {
     // _mouse_owner_view: the view that has the mouse down
@@ -316,7 +281,7 @@ namespace nux
         (event.e_event == NUX_WINDOW_MOUSELEAVE))
       {
         InputArea* hit_view = NULL;         // The view under the mouse
-        BaseWindow* hit_base_window = NULL; // The BaseWindow bellow the mouse pointer.
+        BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
 
         // Look for the area below the mouse pointer in the BaseWindow.
         Area *pointer_grab_area = GetPointerGrabArea ();
@@ -418,15 +383,11 @@ namespace nux
           // make the found area the new receiver (if it accept keyboard events).
           if(_mouse_over_view != GetKeyboardEventReceiver())
           {
-            if(GetKeyboardEventReceiver())
-              GetKeyboardEventReceiver()->EmitEndKeyboardFocus();
-
             InputArea* grab_area = GetKeyboardGrabArea();
             if(grab_area)
             {
-              if(_mouse_over_view->IsChildOf(grab_area) && _mouse_over_view->AcceptKeyboardEvent())
+              if(_mouse_over_view->IsChildOf(grab_area) /*&& _mouse_over_view->AcceptKeyboardEvent()*/)
               {
-                _mouse_over_view->EmitStartKeyboardFocus();
                 SetKeyboardEventReceiver(_mouse_over_view);
               }
               else
@@ -436,15 +397,7 @@ namespace nux
             }
             else
             {
-              if(_mouse_over_view->AcceptKeyboardEvent())
-              {
-                _mouse_over_view->EmitStartKeyboardFocus();
-                SetKeyboardEventReceiver(_mouse_over_view);
-              }
-              else
-              {
-                SetKeyboardEventReceiver(NULL);
-              }
+              SetKeyboardEventReceiver(_mouse_over_view);
             }
           }
 
@@ -465,19 +418,19 @@ namespace nux
             _mouse_over_view->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
           }
 
-          if(GetKeyboardEventReceiver() && (event.e_event == NUX_MOUSE_PRESSED))
-          {
-            InputArea* grab_area = GetKeyboardEventReceiver();
-
-            if(grab_area)
-            {
-              SetKeyboardEventReceiver(grab_area);
-            }
-            else
-            {
-              SetKeyboardEventReceiver(NULL);
-            }
-          }
+//           if(GetKeyboardEventReceiver() && (event.e_event == NUX_MOUSE_PRESSED))
+//           {
+//             InputArea* grab_area = GetKeyboardEventReceiver();
+// 
+//             if(grab_area)
+//             {
+//               SetKeyboardEventReceiver(grab_area);
+//             }
+//             else
+//             {
+//               SetKeyboardEventReceiver(NULL);
+//             }
+//           }
           _mouse_over_view = 0;
         }
       }
@@ -488,7 +441,7 @@ namespace nux
       // But we still need to know where the mouse is.
 
       InputArea* hit_view = NULL;         // The view under the mouse
-      BaseWindow* hit_base_window = NULL; // The BaseWindow bellow the mouse pointer.
+      BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
 
       GetAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event, &hit_view, &hit_base_window);
 
@@ -718,93 +671,163 @@ namespace nux
     }
   }
 
+  void WindowCompositor::FindKeyFocusArea(NuxEventType event_type,
+    unsigned int key_symbol,
+    unsigned int special_keys_state,
+    InputArea** key_focus_area,
+    BaseWindow** window)
+  {
+    *key_focus_area = NULL;
+    *window = NULL;
+
+    // Go through the list of BaseWindos and find the first area over which the mouse pointer is.
+    std::list< ObjectWeakPtr<BaseWindow> >::iterator window_it;
+    window_it = _view_window_list.begin();
+    while((*key_focus_area == NULL) && (window_it != _view_window_list.end()))
+    {
+      if((*window_it).IsValid() && (*window_it)->IsVisible())
+      {
+        *key_focus_area = NUX_STATIC_CAST(InputArea*, (*window_it)->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+        if(key_focus_area)
+        {
+          // We have found an area. We are going to exit the while loop.
+          *window = (*window_it).GetPointer();
+        }
+      }
+      ++window_it;
+    }
+
+    // If key_focus_area is NULL, then try the main window layout.
+    if(*key_focus_area == NULL)
+    {
+      Layout* main_window_layout = GetWindowThread()->GetMainLayout();
+      if(main_window_layout)
+        *key_focus_area = NUX_STATIC_CAST(InputArea*, main_window_layout->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+    }
+  }
+
+  void WindowCompositor::FindKeyFocusAreaFrom(NuxEventType event_type,
+    unsigned int key_symbol,
+    unsigned int special_keys_state,
+    InputArea* root_search_area,
+    InputArea** key_focus_area,
+    BaseWindow** window)
+  {
+    *key_focus_area = NULL;
+    *window = NULL;
+
+    if (root_search_area == NULL)
+    {
+      return;
+    }
+
+    *key_focus_area = NUX_STATIC_CAST(InputArea*, root_search_area->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+    if (key_focus_area)
+    {
+      *window = NUX_STATIC_CAST(BaseWindow*, root_search_area->GetTopLevelViewWindow());
+    }
+  }
+
   void WindowCompositor::KeyboardEventCycle(Event &event)
   {
     InputArea* keyboard_event_grab_view = NUX_STATIC_CAST(InputArea*, GetKeyboardGrabArea());
-    InputArea* keyboard_event_receiver_view = NUX_STATIC_CAST(InputArea*, GetKeyboardEventReceiver());
 
-    if (keyboard_event_grab_view && keyboard_event_receiver_view)
+    InputArea* focus_area = NULL;   // The view under the mouse
+    BaseWindow* base_window = NULL; // The BaseWindow below the mouse pointer.
+
+    if(keyboard_event_grab_view)
     {
-      nuxAssert(keyboard_event_receiver_view == GetKeyboardNavigationFocusArea());
-
-      // Before the event is processed, check if the the keyboard event is an ESCAPE SEQUENCE.
-      // An ESCAPE SEQUENCE allows the keyboard event receiver to exit its keyboard input state 
-      // and get into key board navigation state. For instance, a text entry widgets receives 
-      // character inputs until the escape key is pressed. At that moment, the text entry 
-      // widgets advertise that it wants to stop processing input characters and get into keyboard
-      // navigation. In keyboard navigation, we navigate from one widget to another with the following
-      // keys: 
-      //    -left, right, up, down arrows
-      //    -TAB, SHIFT+TAB
-      //
-
-      if (0/*keyboard_event_receiver_view->IsEscapeSequence(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState())*/)
-      {
-        SetKeyboardEventReceiver(NULL);
-        SetKeyboardNavigationFocusArea(keyboard_event_receiver_view);
-      }
-      else
-      {
-        if (event.e_event == NUX_KEYDOWN)
-        {
-          keyboard_event_receiver_view->EmitKeyDownSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
-        }
-        else if (event.e_event == NUX_KEYUP)
-        {
-          keyboard_event_receiver_view->EmitKeyUpSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
-        }
-
-        keyboard_event_receiver_view->EmitKeyEventSignal(event.e_event,
-          event.GetKeySym(),
-          event.GetKeyState(),
-          event.GetText(),
-          event.GetKeyRepeatCount());
-      }
-    }
-    else if (keyboard_event_grab_view && keyboard_nav_focus_area_)
-    {      
-      // NavigateToNext item?
-    }
-    else if (keyboard_event_grab_view)
-    {
-      // Is it even possible to get here?
-      SetKeyboardNavigationFocusArea(keyboard_event_grab_view);
-    }
-    else if (keyboard_event_receiver_view)
-    {
-      nuxAssert(keyboard_event_receiver_view == GetKeyboardNavigationFocusArea());
+      // There is a keyboard grab.
+      // Find the key focus area, under the keyboard grab area. That is to say, the key focus area is in the widget tree 
+      // whose root is the keyboard grab area. This phase is known as the capture phase.
       
-      if (0/*keyboard_event_receiver_view->IsEscapeSequence(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState())*/)
-      {
-        SetKeyboardEventReceiver(NULL);
-        SetKeyboardNavigationFocusArea(keyboard_event_receiver_view);
-      }
-      else
-      {
-        if (event.e_event == NUX_KEYDOWN)
-        {
-          keyboard_event_receiver_view->EmitKeyDownSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
-        }
-        else if (event.e_event == NUX_KEYUP)
-        {
-          keyboard_event_receiver_view->EmitKeyUpSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
-        }
-
-        keyboard_event_receiver_view->EmitKeyEventSignal(event.e_event,
-          event.GetKeySym(),
-          event.GetKeyState(),
-          event.GetText(),
-          event.GetKeyRepeatCount());
-      }
-    }
-    else if (keyboard_nav_focus_area_)
-    {
-      // NavigateToNext item?
+      FindKeyFocusAreaFrom(event.e_event, event.GetKeySym(), event.GetKeyState(),
+        keyboard_event_grab_view,
+        &focus_area,
+        &base_window);
     }
     else
     {
-      // Find navigation first item. Start from the main layout or The base window that is on top of 
-      // the base window stack.
+      FindKeyFocusArea(event.e_event, event.GetKeySym(), event.GetKeyState(),
+        &focus_area,
+        &base_window);
+   }
+
+    if (focus_area)
+      SetKeyboardEventReceiver(focus_area);
+    else
+      SetKeyboardEventReceiver(NULL);
+
+    if (keyboard_event_receiver_)
+    {
+      if(keyboard_event_receiver_->InspectKeyEvent(event.e_event, event.GetKeySym(), event.GetText()))
+      {
+        if (event.e_event == NUX_KEYDOWN)
+        {
+          keyboard_event_receiver_->EmitKeyDownSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+
+          keyboard_event_receiver_->EmitKeyEventSignal(event.e_event,
+            event.GetKeySym(),
+            event.GetKeyState(),
+            event.GetText(),
+            event.GetKeyRepeatCount());
+        }
+        else if (event.e_event == NUX_KEYUP)
+        {
+          keyboard_event_receiver_->EmitKeyUpSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+        }
+
+      }
+      else if (event.e_event == NUX_KEYDOWN)
+      {        
+        KeyNavDirection direction = KEY_NAV_NONE;
+        switch (event.GetKeySym())
+        {
+        case NUX_VK_UP:
+          direction = KEY_NAV_UP;
+          break;
+        case NUX_VK_DOWN:
+          direction = KEY_NAV_DOWN;
+          break;
+        case NUX_VK_LEFT:
+          direction = KEY_NAV_LEFT;
+          break;
+        case NUX_VK_RIGHT:
+          direction = KEY_NAV_RIGHT;
+          break;
+        case NUX_VK_LEFT_TAB:
+          direction = KEY_NAV_TAB_NEXT;
+          break;
+        case NUX_VK_TAB:
+          direction = KEY_NAV_TAB_NEXT;
+          break;
+        default:
+          direction = KEY_NAV_NONE;
+          break;
+        }
+
+        InputArea* key_nav_focus = NULL;
+        Area* parent = keyboard_event_receiver_->GetParentObject();
+        
+        if (parent)
+          key_nav_focus = NUX_STATIC_CAST(InputArea*, parent->KeyNavIteration(direction));
+        
+        while (key_nav_focus == NULL && parent != NULL)
+        {
+          parent = parent->GetParentObject();
+          if (parent)
+            key_nav_focus = NUX_STATIC_CAST(InputArea*, parent->KeyNavIteration(direction));
+        }
+
+        if (key_nav_focus)
+        {
+          SetKeyboardEventReceiver(key_nav_focus);
+        }
+      }
+    }
+    else
+    {
+      // The event is for the Application itself
     }
   }
 
@@ -1948,6 +1971,13 @@ namespace nux
       // End 2D Drawing
     }
 
+    if (keyboard_event_receiver_)
+    {
+      Geometry geo= keyboard_event_receiver_->GetGeometry();
+
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
+    }
+
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     if (UseFBO)
     {
@@ -2373,14 +2403,20 @@ namespace nux
         return;
     }
 
+    if (area && (area->AcceptKeyNavFocus() == false))
+      return;
+
     if (keyboard_event_receiver_)
     {
-      keyboard_event_receiver_->OnStopKeyboardReceiver.emit();
+      keyboard_event_receiver_->EmitEndKeyboardFocus();
+      keyboard_event_receiver_->ResetUpwardPathToKeyFocusArea();
     }
 
-    if (area && area->AcceptKeyboardEvent())
+    if (area /*&& area->AcceptKeyboardEvent()*/)
     {
       keyboard_event_receiver_ = area;
+      keyboard_event_receiver_->SetPathToKeyFocusArea();
+      keyboard_event_receiver_->EmitStartKeyboardFocus();
     }
     else
     {

@@ -220,6 +220,8 @@ namespace nux
     virtual long PostLayoutManagement2 (long LayoutResult);
 
   private:
+
+    virtual bool AcceptKeyNavFocus();
     /**
         If True, the scrollbar size will be adjusted to match the size of the content.
         This is useful for the ComboBoxComplex widget.

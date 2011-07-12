@@ -242,4 +242,8 @@ namespace nux
     NeedRedraw();
   }
 
+  bool Panel::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

@@ -90,11 +90,18 @@ namespace nux
                            InputArea** area_under_mouse_pointer,
                            BaseWindow** window);
 
-    void FindKeyFocusArea(unsigned int key_symbol,
-                          unsigned long x11_key_code,
-                          unsigned long special_keys_state,
-                          InputArea** area_under_mouse_pointer,
+    void FindKeyFocusArea(NuxEventType event_type,
+                          unsigned int key_symbol,
+                          unsigned int special_keys_state,
+                          InputArea** key_focus_area,
                           BaseWindow** window);
+    
+    void FindKeyFocusAreaFrom(NuxEventType event_type,
+      unsigned int key_symbol,
+      unsigned int special_keys_state,
+      InputArea* root_search_area,
+      InputArea** key_focus_area,
+      BaseWindow** window);
 
     void ResetMousePointerAreas();
 

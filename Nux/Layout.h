@@ -246,6 +246,7 @@ namespace nux
     virtual bool FocusPreviousChild (Area *child);
     void OnChildFocusChanged (Area *parent, Area *child);
     
+    virtual bool AcceptKeyNavFocus();
     std::map<Area*, sigc::connection> _connection_map; // map our children to connections
     
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.

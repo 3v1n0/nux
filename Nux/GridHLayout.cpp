@@ -486,4 +486,132 @@ namespace nux
 
     _queued_draw = false;
   }
+
+  Area* GridHLayout::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (_layout_element_list.size() == 0)
+      return NULL;
+
+    if (next_object_to_key_focus_area_)
+    {
+      std::list<Area*>::iterator it;
+      std::list<Area*>::iterator it_next;
+      it = std::find (_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
+      it_next = it;
+      ++it_next;
+
+      if (it == _layout_element_list.end())
+      {
+        // Should never happen
+        nuxAssert (0);
+        return NULL;
+      }
+
+      int position = GetChildPos(*it); // note that (*it) == next_object_to_key_focus_area_
+      int nun_column = GetNumColumn();
+      int nun_row = GetNumRow();
+
+      if ((direction == KEY_NAV_LEFT) && (it == _layout_element_list.begin()))
+      {
+        // first item
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_RIGHT) && (it_next == _layout_element_list.end()))
+      {
+        // last item
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_LEFT) && ((position % nun_column) == 0))
+      {
+        // Left edge
+        return NULL;
+      }
+      
+      if ((direction == KEY_NAV_RIGHT) && (position == (position / nun_column) * nun_column + (nun_column -1)))
+      {
+        // right edge
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_UP) && ((position / nun_column) == 0))
+      {
+        // top edge
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_DOWN) && ((position / nun_column) == nun_row))
+      {
+        // bottom edge
+        return NULL;
+      }
+
+      //////
+      if (direction == KEY_NAV_LEFT)
+      {
+        --it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          int pos = GetChildPos(*it);
+          if (it == _layout_element_list.begin() || ((pos % nun_column) == 0))
+            break;
+
+          --it;
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if (direction == KEY_NAV_RIGHT)
+      {
+        ++it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          int pos = GetChildPos(*it);
+
+          if ((it == _layout_element_list.end()) || (pos == (pos / nun_column) * nun_column + (nun_column -1)))
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if (direction == KEY_NAV_UP)
+      {
+        for (int i = 0; i < nun_column; ++i)
+        {
+          --it;
+        }
+        return (*it);
+      }
+
+      if (direction == KEY_NAV_DOWN)
+      {
+        for (int i = 0; i < nun_column; ++i)
+        {
+          ++it;
+          if (it == _layout_element_list.end())
+            return NULL;
+        }
+        return (*it);
+      }
+    }
+    else
+    {
+      std::list<Area*>::iterator it;
+      it = _layout_element_list.begin();
+      return (*it)->KeyNavIteration(direction);
+    }
+
+    return NULL;
+  }
 }

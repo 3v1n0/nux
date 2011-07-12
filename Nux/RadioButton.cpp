@@ -128,6 +128,18 @@ namespace nux
     return ret;
   }
 
+  Area* RadioButton::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if (mouse_inside == false)
+      return NULL;
+
+    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
+  }
+
   void RadioButton::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
@@ -136,13 +148,9 @@ namespace nux
     GetPainter().PaintTextLineStatic (GfxContext, GetFont (), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
     InteractState is;
     is.is_on = _state;
-    is.is_focus = m_TextArea->IsMouseOwner() ||
-                  IsMouseOwner() ||
-                  m_CheckArea->IsMouseOwner();
+    is.is_focus = IsMouseOwner();
 
-    is.is_prelight = m_TextArea->IsMouseInside()
-                     || IsMouseInside() ||
-                     m_CheckArea->IsMouseInside();
+    is.is_prelight = IsMouseInside();
 
     GetPainter().PaintRadioButton (GfxContext, m_CheckArea->GetGeometry(), is, Color (0xff000000) );
   }

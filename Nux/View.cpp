@@ -661,4 +661,28 @@ namespace nux
     }
     return NULL;
   }
+
+  Area* View::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (next_object_to_key_focus_area_)
+    {
+      return NULL;
+    }
+
+    if (AcceptKeyNavFocus())
+    {
+      return this;
+    }
+    else if (m_CompositionLayout)
+    {
+      return m_CompositionLayout->KeyNavIteration(direction);
+    }
+    
+    return NULL;
+  }
+
+  bool View::AcceptKeyNavFocus()
+  {
+    return true;
+  }
 }

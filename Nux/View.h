@@ -189,6 +189,9 @@ namespace nux
     */
     bool HasPassiveFocus ();
 
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
+    virtual bool AcceptKeyNavFocus();
+
     void IsHitDetectionSkipingChildren(bool skip_children);
 
   protected:
