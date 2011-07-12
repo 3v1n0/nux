@@ -105,6 +105,9 @@ namespace nux
 
     void ResetMousePointerAreas();
 
+    void SetKeyboardEventReceiver(InputArea* area);
+    InputArea* GetKeyboardEventReceiver();
+
     void SetKeyboardNavigationFocusArea(InputArea* area);
     InputArea* GetKeyboardNavigationFocusArea();
 
@@ -451,10 +454,6 @@ namespace nux
         SetPreviousMouseOverArea(NULL);
     }
     
-    void SetKeyboardEventReceiver(InputArea* area);
-
-    InputArea* GetKeyboardEventReceiver();
-
     void OnKeyboardEventReceiverDestroyed(Object* area);
 
     void RegisterWindow(BaseWindow*);

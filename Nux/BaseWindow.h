@@ -183,6 +183,8 @@ namespace nux
     }
   protected:
     
+    virtual bool AcceptKeyNavFocus();
+
      //! Callback function to set the window position and size.
     ConfigureNotifyCallback m_configure_notify_callback;
     //! Callback data for ConfigureNotifyCallback.

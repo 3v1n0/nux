@@ -566,5 +566,10 @@ namespace nux
   {
     return _opacity;
   }
+
+  bool BaseWindow::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }
 
