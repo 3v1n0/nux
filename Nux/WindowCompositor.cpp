@@ -2408,6 +2408,11 @@ namespace nux
 
     if (keyboard_event_receiver_)
     {
+      if (keyboard_event_receiver_->Type().IsDerivedFromType(View::StaticObjectType))
+      {
+        static_cast<View*>(keyboard_event_receiver_)->QueueDraw();
+      }
+
       keyboard_event_receiver_->EmitEndKeyboardFocus();
       keyboard_event_receiver_->ResetUpwardPathToKeyFocusArea();
     }
@@ -2415,6 +2420,12 @@ namespace nux
     if (area /*&& area->AcceptKeyboardEvent()*/)
     {
       keyboard_event_receiver_ = area;
+
+      if (keyboard_event_receiver_->Type().IsDerivedFromType(View::StaticObjectType))
+      {
+        static_cast<View*>(keyboard_event_receiver_)->QueueDraw();
+      }
+
       keyboard_event_receiver_->SetPathToKeyFocusArea();
       keyboard_event_receiver_->EmitStartKeyboardFocus();
     }

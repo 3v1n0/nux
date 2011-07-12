@@ -591,7 +591,7 @@ namespace nux
         {
           --it;
         }
-        return (*it);
+        return (*it)->KeyNavIteration(direction);
       }
 
       if (direction == KEY_NAV_DOWN)
@@ -602,7 +602,7 @@ namespace nux
           if (it == _layout_element_list.end())
             return NULL;
         }
-        return (*it);
+        return (*it)->KeyNavIteration(direction);
       }
     }
     else

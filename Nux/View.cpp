@@ -671,6 +671,7 @@ namespace nux
 
     if (AcceptKeyNavFocus())
     {
+      QueueDraw();
       return this;
     }
     else if (m_CompositionLayout)
