@@ -2413,6 +2413,11 @@ namespace nux
         static_cast<View*>(keyboard_event_receiver_)->QueueDraw();
       }
 
+      if (keyboard_event_receiver_->Type().IsDerivedFromType(InputArea::StaticObjectType))
+      {
+        static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusChange.emit();
+      }
+
       keyboard_event_receiver_->EmitEndKeyboardFocus();
       keyboard_event_receiver_->ResetUpwardPathToKeyFocusArea();
     }
@@ -2424,6 +2429,11 @@ namespace nux
       if (keyboard_event_receiver_->Type().IsDerivedFromType(View::StaticObjectType))
       {
         static_cast<View*>(keyboard_event_receiver_)->QueueDraw();
+      }
+
+      if (keyboard_event_receiver_->Type().IsDerivedFromType(InputArea::StaticObjectType))
+      {
+        static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusChange.emit();
       }
 
       keyboard_event_receiver_->SetPathToKeyFocusArea();
