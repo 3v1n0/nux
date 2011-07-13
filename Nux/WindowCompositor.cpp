@@ -760,17 +760,23 @@ namespace nux
 
     if (keyboard_event_receiver_)
     {
-      if(keyboard_event_receiver_->InspectKeyEvent(event.e_event, event.GetKeySym(), event.GetText()))
+      if (keyboard_event_receiver_->InspectKeyEvent(event.e_event, event.GetKeySym(), event.GetText()))
       {
         if (event.e_event == NUX_KEYDOWN)
         {
+          Area* temp = keyboard_event_receiver_;
           keyboard_event_receiver_->EmitKeyDownSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
 
-          keyboard_event_receiver_->EmitKeyEventSignal(event.e_event,
-            event.GetKeySym(),
-            event.GetKeyState(),
-            event.GetText(),
-            event.GetKeyRepeatCount());
+          // It is possible that following a call to EmitKeyDownSignal that keyboard_event_receiver_ is null or
+          // has changed. We must detect those cases and pursue no further.
+          if (keyboard_event_receiver_ && (temp == keyboard_event_receiver_))
+          {
+            keyboard_event_receiver_->EmitKeyEventSignal(event.e_event,
+              event.GetKeySym(),
+              event.GetKeyState(),
+              event.GetText(),
+              event.GetKeyRepeatCount());
+          }
         }
         else if (event.e_event == NUX_KEYUP)
         {
