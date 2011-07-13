@@ -158,7 +158,7 @@ namespace nux
       if (focused_child)
       {
         focused_child->SetFocused (true);
-        ChildFocusChanged.emit (this, focused_child);
+        ChildFocusChanged.emit (/*this,*/ focused_child);
       }
       else
       {
@@ -193,7 +193,7 @@ namespace nux
       if (focused_child)
       {
         focused_child->SetFocused (true);
-        ChildFocusChanged.emit (this, focused_child);
+        ChildFocusChanged.emit (/*this,*/ focused_child);
       }
       else
       {

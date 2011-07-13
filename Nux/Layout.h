@@ -244,7 +244,7 @@ namespace nux
     virtual bool FocusLastChild ();
     virtual bool FocusNextChild (Area *child);
     virtual bool FocusPreviousChild (Area *child);
-    void OnChildFocusChanged (Area *parent, Area *child);
+    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
     
     virtual bool AcceptKeyNavFocus();
     std::map<Area*, sigc::connection> _connection_map; // map our children to connections

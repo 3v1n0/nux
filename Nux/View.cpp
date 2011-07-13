@@ -409,9 +409,9 @@ namespace nux
   }
 
   //propogate the signal 
-  void View::OnChildFocusChanged (Area *parent, Area *child)
+  void View::OnChildFocusChanged (/*Area *parent,*/ Area *child)
   {
-    ChildFocusChanged.emit (parent, child);
+    ChildFocusChanged.emit (/*parent,*/ child);
   }
 
   bool View::SetCompositionLayout (Layout *layout)

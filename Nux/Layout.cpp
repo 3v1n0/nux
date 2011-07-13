@@ -164,9 +164,9 @@ namespace nux
     return false;
   }
 
-  void Layout::OnChildFocusChanged (Area *parent, Area *child)
+  void Layout::OnChildFocusChanged (/*Area *parent,*/ Area *child)
   {
-    ChildFocusChanged.emit (parent, child);
+    ChildFocusChanged.emit (/*parent,*/ child);
   }
 
 // If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
@@ -435,7 +435,7 @@ namespace nux
       if ((*it)->CanFocus ())
       {
         (*it)->SetFocused (true);
-        ChildFocusChanged (this, (*it));
+        ChildFocusChanged (/*this,*/ (*it));
         return true;
       }
     }
@@ -454,7 +454,7 @@ namespace nux
       if ((*it)->CanFocus ())
       {
         (*it)->SetFocused (true);
-        ChildFocusChanged (this, (*it));
+        ChildFocusChanged (/*this,*/ (*it));
         return true;
       }
     }
@@ -475,7 +475,7 @@ namespace nux
         if ((*it)->CanFocus ())
         {
           (*it)->SetFocused (true);
-          ChildFocusChanged (this, (*it));
+          ChildFocusChanged (/*this,*/ (*it));
           return true;
         }
       }
@@ -502,7 +502,7 @@ namespace nux
         if ((*it)->CanFocus ())
         {
           (*it)->SetFocused (true);
-          ChildFocusChanged (this, (*it));
+          ChildFocusChanged (/*this,*/ (*it));
           return true;
         }
       }

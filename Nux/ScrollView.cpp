@@ -110,7 +110,7 @@ namespace nux
     _vscrollbar->UnReference ();
   }
 
-  void ScrollView::OnChildFocusChanged (Area *parent, Area *child)
+  void ScrollView::OnChildFocusChanged (/*Area *parent,*/ Area *child)
   {
     if (child->IsView ())
     {

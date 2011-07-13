@@ -1990,6 +1990,13 @@ namespace nux
       // End 2D Drawing
     }
 
+    if (keyboard_event_receiver_)
+    {
+      Geometry geo= keyboard_event_receiver_->GetRootGeometry();
+
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
+    }
+
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     if (UseFBO)
     {
@@ -2450,6 +2457,8 @@ namespace nux
       {
         static_cast<View*>(keyboard_event_receiver_)->QueueDraw();
       }
+
+      keyboard_event_receiver_->ChildFocusChanged.emit(keyboard_event_receiver_);
 
     }
     else

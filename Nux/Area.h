@@ -342,9 +342,17 @@ namespace nux
     virtual bool DoCanFocus ();
     virtual void DoActivateFocus ();
     
-    sigc::signal <void, Area *> FocusActivated;
-    sigc::signal <void, Area *> FocusChanged;
-    sigc::signal <void, Area*, Area*> ChildFocusChanged; // sends parent + child
+    sigc::signal<void, Area *> FocusActivated;
+    sigc::signal<void, Area *> FocusChanged;
+    sigc::signal<void, Area*> ChildFocusChanged; // sends parent + child
+
+    /*!
+        This signal is propagated upward so all parent of this area can reconfigure themselves.
+        For instance, scroll views will translate their content to make the focused object visible.
+    */
+    sigc::signal<void, Area*> OnKeyNavChangeReconfigure; 
+    sigc::signal<void, Area*> OnKeyNavFocusChange;
+    sigc::signal<void, Area*> OnKeyNavFocusActivate;
 
     //! Queue a relayout
     /*!

@@ -167,7 +167,7 @@ namespace nux
     */ 
     void SetVScrollBar (VScrollBar* newVScrollBar);
 
-    void OnChildFocusChanged (Area *parent, Area *child);
+    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
 
     // Backup texture to speed up scrolling
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;

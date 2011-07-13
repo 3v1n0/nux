@@ -918,6 +918,12 @@ namespace nux
       mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
     }
 
+    if ((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
+    {
+      if (_accept_mouse_wheel_event == false)
+        return NULL;
+    }
+
     return mouse_pointer_inside_area;
   }
 
@@ -935,11 +941,6 @@ namespace nux
       mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
     }
 
-    if ((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
-    {
-      if (_accept_mouse_wheel_event == false)
-        return NULL;
-    }
     return mouse_pointer_inside_area;
   }
 

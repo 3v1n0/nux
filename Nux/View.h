@@ -197,7 +197,7 @@ namespace nux
   protected:
     bool _can_focus;
 
-    void OnChildFocusChanged (Area *parent, Area *child);
+    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
