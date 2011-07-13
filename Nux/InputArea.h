@@ -351,8 +351,8 @@ namespace nux
 
     void DoSetFocused (bool focus);
 
-    sigc::signal<void> OnKeyNavFocusChange;
-    sigc::signal<void> OnKeyNavFocusActivate;
+    sigc::signal<void, Area*> OnKeyNavFocusChange;
+    sigc::signal<void, Area*> OnKeyNavFocusActivate;
 
     protected:
 

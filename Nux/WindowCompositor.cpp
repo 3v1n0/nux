@@ -751,7 +751,7 @@ namespace nux
       FindKeyFocusArea(event.e_event, event.GetKeySym(), event.GetKeyState(),
         &focus_area,
         &base_window);
-   }
+    }
 
     if (focus_area)
       SetKeyboardEventReceiver(focus_area);
@@ -813,7 +813,7 @@ namespace nux
         {
           if (keyboard_event_receiver_ && keyboard_event_receiver_->Type().IsDerivedFromType(InputArea::StaticObjectType))
           {
-            static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusActivate.emit();
+            static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusActivate.emit(keyboard_event_receiver_);
           }
         }
         else
@@ -2426,7 +2426,7 @@ namespace nux
 
       if (keyboard_event_receiver_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
-        static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusChange.emit();
+        static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusChange.emit(keyboard_event_receiver_);
       }
 
       if (keyboard_event_receiver_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2444,7 +2444,7 @@ namespace nux
 
       if (keyboard_event_receiver_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
-        static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusChange.emit();
+        static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusChange.emit(keyboard_event_receiver_);
       }
 
       if (keyboard_event_receiver_->Type().IsDerivedFromType(View::StaticObjectType))
