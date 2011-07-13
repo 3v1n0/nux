@@ -65,6 +65,7 @@ namespace nux
     _entering_visible_state = false;
     _entering_hidden_state = false;
     _enter_focus_input_area = NULL;
+    accept_key_nav_focus_ = false;
 
     // Should be at the end of the constructor
     GetWindowCompositor().RegisterWindow (this);
@@ -567,9 +568,14 @@ namespace nux
     return _opacity;
   }
 
+  void BaseWindow::SetAcceptkKeyNavFocus(bool accept)
+  {
+    accept_key_nav_focus_ = accept;
+  }
+
   bool BaseWindow::AcceptKeyNavFocus()
   {
-    return false;
+    return accept_key_nav_focus_;
   }
 }
 
