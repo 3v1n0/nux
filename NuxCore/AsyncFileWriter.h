@@ -37,8 +37,6 @@ namespace nux
 class AsyncFileWriter
 {
 public:
-  typedef sigc::slot<void> Callback;
-
   AsyncFileWriter(std::string const& filename);
   // Destructor kills any pending async requests, and close the file
   // synchronously if it is open.
@@ -46,9 +44,11 @@ public:
 
   // Queue the data for writing.  It'll happen some time.
   void Write(std::string const& data);
-  // Close the file asynchronously.  When the file is closed, the callback is
-  // called.
-  void Close(Callback file_closed_callback);
+  // Close the file asynchronously.  When the file is closed, the closed
+  // signal is emitted.
+  void Close();
+
+  sigc::signal<void> closed;
 
 private:
   class Impl;

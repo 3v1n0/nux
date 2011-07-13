@@ -1,7 +1,11 @@
 #include <string>
 #include <fstream>
 
+#include <iostream>
+
 #include <gmock/gmock.h>
+
+#include <glib.h>
 
 #include <boost/filesystem.hpp>
 
@@ -32,12 +36,30 @@ protected:
     return std::string((std::istreambuf_iterator<char>(input)),
                        std::istreambuf_iterator<char>());
   }
+
+  void PumpGObjectMainLoop() {
+    GMainContext* context(g_main_context_get_thread_default());
+    while (g_main_context_pending(context)) {
+      g_main_context_iteration(context, false);
+    }
+  }
 };
 
 TEST_F(TestAsyncfileWriter, TestConstructor) {
+  // If the async open isn't allowed to happen before the destructor occurs,
+  // the file doesn't exist.
   std::string filename(TEST_ROOT + "/empty-file");
   {
     nux::AsyncFileWriter writer(filename);
+  }
+  EXPECT_FALSE(bf::exists(filename));
+
+  // If the async open does occur before the destructor occurs, the file does
+  // exist.
+  {
+    nux::AsyncFileWriter writer(filename);
+    std::cerr << "Testing output\n";
+    PumpGObjectMainLoop();
   }
   EXPECT_TRUE(bf::exists(filename));
   EXPECT_THAT(ReadFile(filename), Eq(""));
