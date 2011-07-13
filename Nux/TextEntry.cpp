@@ -2148,7 +2148,6 @@ namespace nux
       return false;
     }
 
-    nuxDebugMsg("[EditTextBox::InspectKeyEvent]");
     return true;
   }
 }
