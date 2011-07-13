@@ -221,7 +221,7 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 dnl ==========================================================================
 
 if test "x$GCC" = "xyes"; then
-  GCC_FLAGS="-g -Wall"
+  GCC_FLAGS="-g -Wall -std=c++0x"
 fi
 AC_SUBST(GCC_FLAGS)
 
@@ -335,6 +335,7 @@ echo -e "        Prefix            : ${BOLD_WHITE}${prefix}"
 
 echo -e "${RESET}"
 echo -e "${GREEN} • Compiler Options:${RESET}"
+echo -e "        CFLAGS            : ${BOLD_WHITE}${CFLAGS} ${GCC_FLAGS}${RESET}" 
 echo -e "        Maintainer CFlags : ${BOLD_WHITE}${MAINTAINER_CFLAGS}${RESET}"
 echo -e "        Debug Mode        : ${BOLD_WHITE}${enable_debug}${RESET}"
 
