@@ -84,6 +84,9 @@ namespace nux
     bool      _starting_menu_event_cycle;
     bool      _menu_is_active;
 
+    void SetKeyboardEventReceiver(InputArea* area);
+    InputArea* GetKeyboardEventReceiver();
+
   private:
     void GetAreaUnderMouse(const Point& mouse_position,
                            NuxEventType event_type,
@@ -120,9 +123,6 @@ namespace nux
         The InputArea that has the keyboard navigation focus.
     */
     InputArea* keyboard_nav_focus_area_;
-
-    void SetKeyboardEventReceiver(InputArea* area);
-    InputArea* GetKeyboardEventReceiver();
 
     //====================================
   
