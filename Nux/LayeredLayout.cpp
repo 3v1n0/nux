@@ -698,7 +698,7 @@ namespace nux
     }
     else
     {
-      m_active_area->KeyNavIteration(direction);
+      return m_active_area->KeyNavIteration(direction);
     }
 
     return NULL;
