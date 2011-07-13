@@ -26,6 +26,7 @@
 
 #include <gio/gio.h>
 
+#include <iostream>
 
 namespace nux
 {
@@ -81,6 +82,7 @@ AsyncFileWriter::Impl::~Impl()
 {
   if (pending_async_call_)
   {
+    std::cerr << "Cancelling the pending async call\n";
     g_cancellable_cancel(cancel_);
   }
   // make sure the file is closed.
@@ -89,6 +91,7 @@ AsyncFileWriter::Impl::~Impl()
     // If we had an output stream, sync write any pending content.
     if (pending_content_.tellp())
     {
+      std::cerr << "Writing pending content\n";
       std::string data(pending_content_.str());
       gsize bytes_written;
       g_output_stream_write_all((GOutputStream*)output_stream_,
@@ -109,6 +112,7 @@ void AsyncFileWriter::Impl::AppendAsyncCallback(GFile* source,
                                                 GAsyncResult* res,
                                                 Impl* impl)
 {
+  std::cerr << "Append Async Callback: " << impl << "\n";
   impl->pending_async_call_ = false;
   impl->output_stream_ = g_file_append_to_finish(source, res, NULL);
   impl->ProcessAsync();

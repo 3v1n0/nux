@@ -40,6 +40,7 @@ protected:
   void PumpGObjectMainLoop() {
     GMainContext* context(g_main_context_get_thread_default());
     while (g_main_context_pending(context)) {
+      std::cerr << "Pump gobject\n";
       g_main_context_iteration(context, false);
     }
   }
@@ -58,7 +59,6 @@ TEST_F(TestAsyncfileWriter, TestConstructor) {
   // exist.
   {
     nux::AsyncFileWriter writer(filename);
-    std::cerr << "Testing output\n";
     PumpGObjectMainLoop();
   }
   EXPECT_TRUE(bf::exists(filename));
