@@ -131,6 +131,7 @@ namespace nux
     KEY_NAV_LEFT,
     KEY_NAV_TAB_NEXT,
     KEY_NAV_TAB_PREVIOUS,
+    KEY_NAV_ENTER,
   };
 
   class Layout;

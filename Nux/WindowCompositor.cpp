@@ -776,7 +776,6 @@ namespace nux
         {
           keyboard_event_receiver_->EmitKeyUpSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
         }
-
       }
       else if (event.e_event == NUX_KEYDOWN)
       {        
@@ -801,27 +800,41 @@ namespace nux
         case NUX_VK_TAB:
           direction = KEY_NAV_TAB_NEXT;
           break;
+        case NUX_VK_ENTER:
+        case NUX_KP_ENTER:
+          direction = KEY_NAV_ENTER;
+          break;
         default:
           direction = KEY_NAV_NONE;
           break;
         }
 
-        InputArea* key_nav_focus = NULL;
-        Area* parent = keyboard_event_receiver_->GetParentObject();
-        
-        if (parent)
-          key_nav_focus = NUX_STATIC_CAST(InputArea*, parent->KeyNavIteration(direction));
-        
-        while (key_nav_focus == NULL && parent != NULL)
+        if (direction == KEY_NAV_ENTER)
         {
-          parent = parent->GetParentObject();
+          if (keyboard_event_receiver_ && keyboard_event_receiver_->Type().IsDerivedFromType(InputArea::StaticObjectType))
+          {
+            static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusActivate.emit();
+          }
+        }
+        else
+        {
+          InputArea* key_nav_focus = NULL;
+          Area* parent = keyboard_event_receiver_->GetParentObject();
+          
           if (parent)
             key_nav_focus = NUX_STATIC_CAST(InputArea*, parent->KeyNavIteration(direction));
-        }
+          
+          while (key_nav_focus == NULL && parent != NULL)
+          {
+            parent = parent->GetParentObject();
+            if (parent)
+              key_nav_focus = NUX_STATIC_CAST(InputArea*, parent->KeyNavIteration(direction));
+          }
 
-        if (key_nav_focus)
-        {
-          SetKeyboardEventReceiver(key_nav_focus);
+          if (key_nav_focus)
+          {
+            SetKeyboardEventReceiver(key_nav_focus);
+          }
         }
       }
     }
@@ -2408,11 +2421,6 @@ namespace nux
 
     if (keyboard_event_receiver_)
     {
-      if (keyboard_event_receiver_->Type().IsDerivedFromType(View::StaticObjectType))
-      {
-        static_cast<View*>(keyboard_event_receiver_)->QueueDraw();
-      }
-
       keyboard_event_receiver_->EmitEndKeyboardFocus();
       keyboard_event_receiver_->ResetUpwardPathToKeyFocusArea();
 
@@ -2420,16 +2428,16 @@ namespace nux
       {
         static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusChange.emit();
       }
-    }
-
-    if (area /*&& area->AcceptKeyboardEvent()*/)
-    {
-      keyboard_event_receiver_ = area;
 
       if (keyboard_event_receiver_->Type().IsDerivedFromType(View::StaticObjectType))
       {
         static_cast<View*>(keyboard_event_receiver_)->QueueDraw();
       }
+    }
+
+    if (area /*&& area->AcceptKeyboardEvent()*/)
+    {
+      keyboard_event_receiver_ = area;
 
       keyboard_event_receiver_->SetPathToKeyFocusArea();
       keyboard_event_receiver_->EmitStartKeyboardFocus();
@@ -2437,6 +2445,11 @@ namespace nux
       if (keyboard_event_receiver_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
         static_cast<InputArea*>(keyboard_event_receiver_)->OnKeyNavFocusChange.emit();
+      }
+
+      if (keyboard_event_receiver_->Type().IsDerivedFromType(View::StaticObjectType))
+      {
+        static_cast<View*>(keyboard_event_receiver_)->QueueDraw();
       }
 
     }

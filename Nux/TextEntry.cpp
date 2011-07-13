@@ -2133,6 +2133,16 @@ namespace nux
       }
     }
 
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == true))
+    {
+      // Enable to exit the TextEntry when in write mode (hack for unity dash)
+      if (keysym == NUX_VK_UP ||
+      keysym == NUX_VK_DOWN)
+      {
+        return false;
+      }
+    }
+
     if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == false) && (text_input_mode_ == false))
     {
       return false;
