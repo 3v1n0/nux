@@ -1990,13 +1990,6 @@ namespace nux
       // End 2D Drawing
     }
 
-    if (keyboard_event_receiver_)
-    {
-      Geometry geo= keyboard_event_receiver_->GetGeometry();
-
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
-    }
-
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     if (UseFBO)
     {
