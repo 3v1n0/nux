@@ -105,9 +105,6 @@ namespace nux
 
     void ResetMousePointerAreas();
 
-    void SetKeyboardEventReceiver(InputArea* area);
-    InputArea* GetKeyboardEventReceiver();
-
     void SetKeyboardNavigationFocusArea(InputArea* area);
     InputArea* GetKeyboardNavigationFocusArea();
 
@@ -123,6 +120,9 @@ namespace nux
         The InputArea that has the keyboard navigation focus.
     */
     InputArea* keyboard_nav_focus_area_;
+
+    void SetKeyboardEventReceiver(InputArea* area);
+    InputArea* GetKeyboardEventReceiver();
 
     //====================================
   
