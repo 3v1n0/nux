@@ -261,18 +261,18 @@ namespace nux
     Geometry base = GetGeometry ();
 
     if (m_CompositionLayout)
-      m_CompositionLayout->NeedRedraw();
+      m_CompositionLayout->QueueDraw();
 
     GetPainter().PaintBackground (GfxContext, base);
 
     if (m_vertical_scrollbar_enable)
     {
-      _vscrollbar->NeedRedraw();
+      _vscrollbar->QueueDraw();
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      _hscrollbar->NeedRedraw();
+      _hscrollbar->QueueDraw();
     }
 
     GfxContext.PopClippingRectangle();
@@ -846,10 +846,10 @@ namespace nux
     if (m_CompositionLayout)
     {
       _hscrollbar->SetContentOffset (_delta_x, _delta_y);
-      _hscrollbar->NeedRedraw();
+      _hscrollbar->QueueDraw();
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ScrollView::ScrollRight (float stepx, int mousedx)
@@ -868,10 +868,10 @@ namespace nux
     if (m_CompositionLayout)
     {
       _hscrollbar->SetContentOffset (_delta_x, _delta_y);
-      _hscrollbar->NeedRedraw();
+      _hscrollbar->QueueDraw();
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ScrollView::ScrollUp (float stepy, int mousedy)
@@ -890,10 +890,10 @@ namespace nux
     if (m_CompositionLayout)
     {
       _vscrollbar->SetContentOffset (_delta_x, _delta_y);
-      _vscrollbar->NeedRedraw();
+      _vscrollbar->QueueDraw();
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ScrollView::ScrollDown (float stepy, int mousedy)
@@ -912,10 +912,10 @@ namespace nux
     if (m_CompositionLayout)
     {
       _vscrollbar->SetContentOffset (_delta_x, _delta_y);
-      _vscrollbar->NeedRedraw();
+      _vscrollbar->QueueDraw();
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ScrollView::SetSizeMatchContent (bool b)
@@ -938,9 +938,9 @@ namespace nux
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
 
     _hscrollbar->SetContentOffset (_delta_x, _delta_y);
-    _hscrollbar->NeedRedraw();
+    _hscrollbar->QueueDraw();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ScrollView::ResetScrollToRight()
@@ -958,9 +958,9 @@ namespace nux
 
 
     _hscrollbar->SetContentOffset (_delta_x, _delta_y);
-    _hscrollbar->NeedRedraw();
+    _hscrollbar->QueueDraw();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ScrollView::ResetScrollToUp()
@@ -970,9 +970,9 @@ namespace nux
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
 
     _vscrollbar->SetContentOffset (_delta_x, _delta_y);
-    _vscrollbar->NeedRedraw();
+    _vscrollbar->QueueDraw();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ScrollView::ResetScrollToDown()
@@ -988,9 +988,9 @@ namespace nux
     }
 
     _vscrollbar->SetContentOffset (_delta_x, _delta_y);
-    _vscrollbar->NeedRedraw();
+    _vscrollbar->QueueDraw();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ScrollView::RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags)
@@ -1005,6 +1005,7 @@ namespace nux
     {
       ScrollUp (abs (wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
     }
+    QueueDraw();
   }
 
   bool ScrollView::AcceptKeyNavFocus()

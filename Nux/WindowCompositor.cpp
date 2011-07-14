@@ -225,8 +225,8 @@ namespace nux
 
   void WindowCompositor::ResetMousePointerAreas()
   {
-    _mouse_over_view        = NULL;
-    _mouse_owner_view       = NULL;
+    SetMouseOverView(NULL);
+    SetMouseOwnerView(NULL);
     _mouse_over_menu_page   = NULL;
     _mouse_owner_menu_page  = NULL;
   }
@@ -261,6 +261,46 @@ namespace nux
     }
   }
 
+  void WindowCompositor::OnMouseOverViewDestroyed(Object* area)
+  {
+    if (_mouse_over_view == area)
+    {
+      _mouse_over_view = NULL;
+    }
+  }
+
+  void WindowCompositor::SetMouseOverView(Area* area)
+  {
+    _mouse_over_view = static_cast<InputArea*>(area);
+
+    mouse_over_view_conn_.disconnect();
+
+    if (_mouse_over_view)
+    {
+      mouse_over_view_conn_ = _mouse_over_view->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseOverViewDestroyed));
+    }
+  }
+
+  void WindowCompositor::OnMouseOwnerViewDestroyed(Object* area)
+  {
+    if (_mouse_owner_view == area)
+    {
+      _mouse_owner_view = NULL;
+    }
+  }
+
+  void WindowCompositor::SetMouseOwnerView(Area* area)
+  {
+    _mouse_owner_view = static_cast<InputArea*>(area);
+
+    mouse_owner_view_conn_.disconnect();
+
+    if (_mouse_owner_view)
+    {
+      mouse_owner_view_conn_ = _mouse_owner_view->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseOwnerViewDestroyed));
+    }
+  }
+
   void WindowCompositor::MouseEventCycle(Event &event)
   {
     // _mouse_owner_view: the view that has the mouse down
@@ -268,13 +308,13 @@ namespace nux
     
     _mouse_position = Point(event.e_x, event.e_y);
 
-    if(_mouse_owner_view == NULL)
+    if (_mouse_owner_view == NULL)
     {
       // Context: The left mouse button is not down over an area.
       // We look for the area where the mouse pointer is located.
 
       // We should never get here for a NUX_MOUSE_RELEASED event
-      if((event.e_event == NUX_MOUSE_PRESSED) ||
+      if ((event.e_event == NUX_MOUSE_PRESSED) ||
         (event.e_event == NUX_MOUSE_MOVE) ||
         (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
         (event.e_event == NUX_MOUSE_WHEEL) ||
@@ -285,11 +325,11 @@ namespace nux
 
         // Look for the area below the mouse pointer in the BaseWindow.
         Area *pointer_grab_area = GetPointerGrabArea ();
-        if(pointer_grab_area)
+        if (pointer_grab_area)
         {
           // If there is a pending mouse pointer grab, test that area only
           hit_view = NUX_STATIC_CAST(InputArea*, pointer_grab_area->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
-          if((hit_view == NULL) && (event.e_event == NUX_MOUSE_PRESSED))
+          if ((hit_view == NULL) && (event.e_event == NUX_MOUSE_PRESSED))
           {
             Geometry geo = pointer_grab_area->GetAbsoluteGeometry();
             int x = event.e_x - geo.x;
@@ -307,7 +347,7 @@ namespace nux
         int hit_view_x = 0;
         int hit_view_y = 0;
 
-        if(hit_view)
+        if (hit_view)
         {
           hit_view_geo = hit_view->GetAbsoluteGeometry();
           hit_view_x = event.e_x - hit_view_geo.x;
@@ -316,7 +356,7 @@ namespace nux
 
         if(event.e_event == NUX_WINDOW_MOUSELEAVE)
         {
-          if(_mouse_over_view != NULL)
+          if (_mouse_over_view != NULL)
           {
             // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
             // The area from the previous cycle receive a "mouse leave signal".
@@ -325,15 +365,14 @@ namespace nux
             int y = event.e_y - geo.y;
 
             _mouse_over_view->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
-            _mouse_over_view = NULL;
+            SetMouseOverView(NULL);
           }
         }
-        else if(hit_view && (event.e_event == NUX_MOUSE_MOVE))
+        else if (hit_view && (event.e_event == NUX_MOUSE_MOVE))
         {
-          if(hit_view != _mouse_over_view)
+          if (hit_view != _mouse_over_view)
           {
-            
-            if(_mouse_over_view != NULL)
+            if (_mouse_over_view != NULL)
             {
               // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
               // The area from the previous cycle receive a "mouse leave signal".
@@ -345,22 +384,22 @@ namespace nux
             }
 
             // The area we found under the mouse pointer receives a "mouse enter signal".
-            _mouse_over_view = hit_view;
+            SetMouseOverView(hit_view);
             _mouse_over_view->EmitMouseEnterSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
           }
 
           // Send a "mouse mouse signal".
           _mouse_over_view->EmitMouseMoveSignal(hit_view_x, hit_view_y, event.e_dx, event.e_dy, event.GetMouseState(), event.GetKeyState());
         }
-        else if(hit_view && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
+        else if (hit_view && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
         {
-          if((event.e_event == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnable()))
+          if ((event.e_event == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnable()))
           {
             // If the area does not accept double click events, transform the event into a mouse pressed.
             event.e_event = NUX_MOUSE_PRESSED;
           }
 
-          if(_mouse_over_view && (hit_view != _mouse_over_view))
+          if (_mouse_over_view && (hit_view != _mouse_over_view))
           {
             // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
             // The area from the previous cycle receive a "mouse leave signal".
@@ -374,19 +413,19 @@ namespace nux
             _mouse_over_view->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
           }
 
-          _mouse_over_view = hit_view;
-          _mouse_owner_view = hit_view;
+          SetMouseOverView(hit_view);
+          SetMouseOwnerView(hit_view);
           _mouse_position_on_owner = Point(hit_view_x, hit_view_y);
 
           // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
           // from the area returned by GetAreaUnderMouse, then stop that receiver from receiving anymore keyboard events and switch
           // make the found area the new receiver (if it accept keyboard events).
-          if(_mouse_over_view != GetKeyboardEventReceiver())
+          if (_mouse_over_view != GetKeyboardEventReceiver())
           {
             InputArea* grab_area = GetKeyboardGrabArea();
-            if(grab_area)
+            if (grab_area)
             {
-              if(_mouse_over_view->IsChildOf(grab_area) /*&& _mouse_over_view->AcceptKeyboardEvent()*/)
+              if (_mouse_over_view->IsChildOf(grab_area) /*&& _mouse_over_view->AcceptKeyboardEvent()*/)
               {
                 SetKeyboardEventReceiver(_mouse_over_view);
               }
@@ -403,13 +442,13 @@ namespace nux
 
           _mouse_over_view->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
         }
-        else if(hit_view && (event.e_event == NUX_MOUSE_WHEEL))
+        else if (hit_view && (event.e_event == NUX_MOUSE_WHEEL))
         {
           hit_view->EmitMouseWheelSignal(hit_view_x, hit_view_y, event.e_wheeldelta, event.GetMouseState(), event.GetKeyState());
         }
-        else if(hit_view == NULL)
+        else if (hit_view == NULL)
         {
-          if(_mouse_over_view)
+          if (_mouse_over_view)
           {
             Geometry geo = _mouse_over_view->GetAbsoluteGeometry();
             int x = event.e_x - geo.x;
@@ -431,7 +470,7 @@ namespace nux
 //               SetKeyboardEventReceiver(NULL);
 //             }
 //           }
-          _mouse_over_view = 0;
+          SetMouseOverView(NULL);
         }
       }
     }
@@ -460,12 +499,12 @@ namespace nux
         if((_mouse_over_view == _mouse_owner_view) && (hit_view != _mouse_owner_view))
         {
           _mouse_owner_view->EmitMouseLeaveSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
-          _mouse_over_view = hit_view;
+          SetMouseOverView(hit_view);
         }
         else if((_mouse_over_view != _mouse_owner_view) && (hit_view == _mouse_owner_view))
         {
           _mouse_owner_view->EmitMouseEnterSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
-          _mouse_over_view = _mouse_owner_view;
+          SetMouseOverView(_mouse_owner_view);
         }
 
         _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
@@ -477,14 +516,14 @@ namespace nux
         if(hit_view == _mouse_owner_view)
         {
           _mouse_owner_view->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
-          _mouse_over_view = _mouse_owner_view;
+          SetMouseOverView(_mouse_owner_view);
         }
         else
         {
-          _mouse_over_view = hit_view;
+          SetMouseOverView(hit_view);
         }
 
-        _mouse_owner_view = NULL;
+        SetMouseOwnerView(NULL);
         _mouse_position_on_owner = Point(0, 0);
       }
     }
@@ -2397,7 +2436,7 @@ namespace nux
   }
 
 
-  void WindowCompositor::OnKeyboardEventReceiverDestroyed(Object* area)
+  void WindowCompositor::OnKeyNavFocusDestroyed(Object* area)
   {
     if (keyboard_event_receiver_ == area)
     {
@@ -2413,7 +2452,7 @@ namespace nux
     {
       // There is a keyboard grab pending. Only an area that is a child of the area that has
       // the keyboard grab can be set to receive keyboard events.
-      nuxDebugMsg("[WindowCompositor::SetKeyboardEventReceiver] There is a keyboard grab pending. Cannot change the keyboard event receiver.")
+      nuxDebugMsg("[WindowCompositor::SetKeyboardEventReceiver] There is a keyboard grab pending. Cannot change the keyboard event receiver.");
       return;
     }
 
@@ -2479,7 +2518,7 @@ namespace nux
     keyboard_event_receiver_conn_.disconnect();
     if (area)
     {
-      keyboard_event_receiver_conn_ = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnKeyboardEventReceiverDestroyed));
+      keyboard_event_receiver_conn_ = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnKeyNavFocusDestroyed));
     }
   }
 

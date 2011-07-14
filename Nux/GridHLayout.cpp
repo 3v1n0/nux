@@ -424,40 +424,43 @@ namespace nux
     std::list<Area *> elements;
     std::list<Area *>::iterator it = _layout_element_list.begin ();
 
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+    GfxContext.PushModelViewMatrix(Get2DMatrix());
 
-    for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
     {
-      if ((*it)->IsVisible ())
-        elements.push_back (*it);
+      if ((*it)->IsVisible())
+        elements.push_back(*it);
     }
 
-    it = elements.begin ();
+    it = elements.begin();
 
-    Geometry base = GetGeometry ();
-    Geometry parent_geometry = GetAbsoluteGeometry ();
+    Geometry base = GetGeometry();
+    Geometry parent_geometry = GetAbsoluteGeometry();
     Geometry visibility_geometry = parent_geometry;
-    if (GetToplevel ())
+    if (GetToplevel())
     {
-      parent_geometry = GetToplevel ()->GetAbsoluteGeometry ();
+      parent_geometry = GetToplevel()->GetAbsoluteGeometry();
     }
 
-    visibility_geometry = parent_geometry.Intersect (GetAbsoluteGeometry ());
+    visibility_geometry = parent_geometry.Intersect(GetAbsoluteGeometry());
 
-    GfxContext.PushClippingRectangle (base);
-
+    GfxContext.PushClippingRectangle(base);
+  
+    bool first = false;
+    bool last = false;
     for (int j = 0; j < _num_row; j++)
     {
       for (int i = 0; i < _num_column; i++)
       {
-        if (it == elements.end ())
+        if (it == elements.end())
           break;
 
-        Geometry intersection = visibility_geometry.Intersect ((*it)->GetAbsoluteGeometry ());
+        Geometry intersection = visibility_geometry.Intersect((*it)->GetAbsoluteGeometry());
 
         // Test if the element is inside the Grid before rendering.
-        if (!intersection.IsNull ())
+        if (!intersection.IsNull())
         {
+          first = true;
           int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
           int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
 
@@ -476,9 +479,18 @@ namespace nux
 
           GfxContext.PopClippingRectangle ();
         }
+        else
+        {
+          if (first)
+            last = true;
+        }
 
+        if (first && last)
+          break;
         it++;
       }
+      if (first && last)
+        break;
     }
 
     GfxContext.PopClippingRectangle ();

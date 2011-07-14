@@ -124,6 +124,13 @@ namespace nux
     */
     InputArea* keyboard_nav_focus_area_;
 
+    void SetMouseOverView(Area* area);
+    void SetMouseOwnerView(Area* area);
+    void OnMouseOverViewDestroyed(Object* area);
+    void OnMouseOwnerViewDestroyed(Object* area);
+    sigc::connection mouse_over_view_conn_;
+    sigc::connection mouse_owner_view_conn_;
+
     //====================================
   
   public:
@@ -454,7 +461,7 @@ namespace nux
         SetPreviousMouseOverArea(NULL);
     }
     
-    void OnKeyboardEventReceiverDestroyed(Object* area);
+    void OnKeyNavFocusDestroyed(Object* area);
 
     void RegisterWindow(BaseWindow*);
 
