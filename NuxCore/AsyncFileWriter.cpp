@@ -59,6 +59,7 @@ private:
   bool pending_async_call_;
 
   std::stringstream pending_content_;
+  std::string data_to_write_;
 };
 
 
@@ -141,10 +142,10 @@ void AsyncFileWriter::Impl::ProcessAsync()
   if (pending_content_.tellp())
   {
     // TODO: lock the pending_content_ access
-    std::string data = pending_content_.str();
+    data_to_write_ = pending_content_.str();
     g_output_stream_write_async((GOutputStream*)output_stream_,
-                                data.c_str(),
-                                data.size(),
+                                data_to_write_.c_str(),
+                                data_to_write_.size(),
                                 G_PRIORITY_DEFAULT,
                                 cancel_,
                                 (GAsyncReadyCallback)&AsyncFileWriter::Impl::WriteAsyncCallback,

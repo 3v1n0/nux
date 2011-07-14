@@ -135,7 +135,7 @@ TEST_F(TestAsyncfileWriter, TestWrites) {
 TEST_F(TestAsyncfileWriter, TestWriteLots) {
   std::string filename(TEST_ROOT + "/lots-file");
   std::string data(200, 'x');
-  const int loop_count = 100;
+  const int loop_count = 1000;
   {
     nux::AsyncFileWriter writer(filename);
     for (int i = 0; i < loop_count; ++i) {
