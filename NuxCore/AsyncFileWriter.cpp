@@ -38,7 +38,7 @@ namespace nux
 class AsyncFileWriter::Impl
 {
 public:
-  Impl(sigc::signal<void>& closed, std::string const& filename);
+  Impl(AsyncFileWriter* owner, std::string const& filename);
   ~Impl();
 
   void Write(std::string const& data);
@@ -51,7 +51,7 @@ public:
   static void CloseAsyncCallback(GOutputStream* source, GAsyncResult* res, Impl* impl);
 
 private:
-  sigc::signal<void>& closed_;
+  AsyncFileWriter* owner_;
   GCancellable* cancel_;
   GFile* file_;
   GFileOutputStream* output_stream_;
@@ -62,8 +62,8 @@ private:
 };
 
 
-AsyncFileWriter::Impl::Impl(sigc::signal<void>& closed, std::string const& filename)
-  : closed_(closed)
+AsyncFileWriter::Impl::Impl(AsyncFileWriter* owner, std::string const& filename)
+  : owner_(owner)
   , cancel_(g_cancellable_new())
   , file_(g_file_new_for_path(filename.c_str()))
   , output_stream_(0)
@@ -82,7 +82,6 @@ AsyncFileWriter::Impl::~Impl()
 {
   if (pending_async_call_)
   {
-    std::cerr << "Cancelling the pending async call\n";
     g_cancellable_cancel(cancel_);
   }
   // make sure the file is closed.
@@ -91,7 +90,6 @@ AsyncFileWriter::Impl::~Impl()
     // If we had an output stream, sync write any pending content.
     if (pending_content_.tellp())
     {
-      std::cerr << "Writing pending content\n";
       std::string data(pending_content_.str());
       gsize bytes_written;
       g_output_stream_write_all((GOutputStream*)output_stream_,
@@ -100,7 +98,7 @@ AsyncFileWriter::Impl::~Impl()
                                 &bytes_written,
                                 NULL, NULL);
     }
-    closed_.emit();
+    owner_->closed.emit();
     g_object_unref(output_stream_);
   }
 
@@ -112,9 +110,19 @@ void AsyncFileWriter::Impl::AppendAsyncCallback(GFile* source,
                                                 GAsyncResult* res,
                                                 Impl* impl)
 {
-  std::cerr << "Append Async Callback: " << impl << "\n";
+  GError* error = NULL;
+  GFileOutputStream* stream = g_file_append_to_finish(source, res, &error);
+  if (error) {
+    // Cancelled callbacks call back, but have a cancelled error code.
+    if (error->code != G_IO_ERROR_CANCELLED) {
+      std::cerr << error->message << "\n";
+    }
+    g_error_free(error);
+    return;
+  }
+  impl->output_stream_ = stream;
   impl->pending_async_call_ = false;
-  impl->output_stream_ = g_file_append_to_finish(source, res, NULL);
+  impl->owner_->opened.emit();
   impl->ProcessAsync();
 }
 
@@ -158,8 +166,21 @@ void AsyncFileWriter::Impl::WriteAsyncCallback(GOutputStream* source,
                                                GAsyncResult* res,
                                                Impl* impl)
 {
+  GError* error = NULL;
+  gssize g_bytes_written = g_output_stream_write_finish(source, res, &error);
+  if (error) {
+    // Cancelled callbacks call back, but have a cancelled error code.
+    if (error->code != G_IO_ERROR_CANCELLED) {
+      std::cerr << error->message << "\n";
+    }
+    g_error_free(error);
+    return;
+  }
+  // g_bytes_written is signed from gio, but only negative if there is an error.
+  // The error should be set too if there was an error, so no negative bytes
+  // written get past here.
+  std::size_t bytes_written = g_bytes_written;
   impl->pending_async_call_ = false;
-  std::size_t bytes_written = g_output_stream_write_finish(source, res, NULL);
   // TODO: lock the pending_content_ access
   std::string data = impl->pending_content_.str();
   if (bytes_written >= data.size()) {
@@ -182,15 +203,23 @@ void AsyncFileWriter::Impl::CloseAsyncCallback(GOutputStream* source,
                                                GAsyncResult* res,
                                                Impl* impl)
 {
-  // No point actually checking to see if the file was closed properly as
-  // there is no other action we can take on it.
+  GError* error = NULL;
+  g_output_stream_close_finish(source, res, &error);
+  if (error) {
+    // Cancelled callbacks call back, but have a cancelled error code.
+    if (error->code != G_IO_ERROR_CANCELLED) {
+      std::cerr << error->message << "\n";
+    }
+    g_error_free(error);
+    return;
+  }
   g_object_unref(impl->output_stream_);
   impl->output_stream_ = 0;
-  impl->closed_.emit();
+  impl->owner_->closed.emit();
 }
 
 AsyncFileWriter::AsyncFileWriter(std::string const& filename)
-  : pimpl(new Impl(closed, filename))
+  : pimpl(new Impl(this, filename))
 {}
 
 AsyncFileWriter::~AsyncFileWriter()
