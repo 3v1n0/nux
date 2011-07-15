@@ -119,8 +119,6 @@ namespace nux
       return true;
     }
 
-    unsigned short getKeyState (int nVirtKey);
-
     // This method reset the mouse position inside the Area. This is necessary for areas that serve as Drag
     // when the area position is referred to (x_root, y_root) instead of being the system window coordinates (0, 0).
     void SetAreaMousePosition (int x, int y);

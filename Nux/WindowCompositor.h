@@ -52,10 +52,10 @@ namespace nux
     //! Get the Geometry of the tooltip based on the MainWindow.
     Geometry GetTooltipMainWindowGeometry() const;
 
-    bool MouseDown(Point pt);
-
-    bool MouseMove(Point pt);
-    bool MouseUp(Point pt);
+//     bool MouseDown(Point pt);
+// 
+//     bool MouseMove(Point pt);
+//     bool MouseUp(Point pt);
 
     void ProcessEvent(Event &event);
 
@@ -63,12 +63,6 @@ namespace nux
     void MouseEventCycle(Event &event);
     bool _enable_nux_new_event_architecture;
 
-
-    Area* GetMouseOwner();
-
-    InputArea* _mouse_owner_view;
-    InputArea* _mouse_over_view;
-    BaseWindow* _mouse_owner_base_window;
 
     Point _mouse_position_on_owner;
     Point _mouse_position;
@@ -84,21 +78,24 @@ namespace nux
     bool      _starting_menu_event_cycle;
     bool      _menu_is_active;
 
-    void SetKeyboardEventReceiver(InputArea* area);
-    InputArea* GetKeyboardEventReceiver();
+    void SetKeyFocusArea(InputArea* area);
 
   private:
+
+    //! Traverse the widget tree and found the area that is right below the mouse pointer.
     void GetAreaUnderMouse(const Point& mouse_position,
                            NuxEventType event_type,
                            InputArea** area_under_mouse_pointer,
                            BaseWindow** window);
 
+    //! Traverse the widget tree and found the area has the key focus.
     void FindKeyFocusArea(NuxEventType event_type,
                           unsigned int key_symbol,
                           unsigned int special_keys_state,
                           InputArea** key_focus_area,
                           BaseWindow** window);
     
+    //! Traverse the widget tree and found the area has the key focus, but start from a specified widget.
     void FindKeyFocusAreaFrom(NuxEventType event_type,
       unsigned int key_symbol,
       unsigned int special_keys_state,
@@ -108,28 +105,45 @@ namespace nux
 
     void ResetMousePointerAreas();
 
-    void SetKeyboardNavigationFocusArea(InputArea* area);
-    InputArea* GetKeyboardNavigationFocusArea();
+    //! Get the area upon which the mouse button is currently down.
+    Area* GetMouseOwnerArea();
+    //! Set the area upon which the mouse button is currently down.
+    void SetMouseOwnerArea(Area* area);
 
-    //! The InputArea that has the keyboard focus.
+    //! Set the area that is right below the mouse pointer.
+    void SetMouseOverArea(Area* area);
+    
+    InputArea* GetKeyNavFocusArea();
+
+    //! Set The BaseWindow of the area that is the mouse owner.
+    void SetMouseOwnerBaseWindow(BaseWindow* base_window);
+
+    //! Callback: called when mouse_over_area_ is destroyed.
+    void OnMouseOverViewDestroyed(Object* area);
+    
+    //! Callback: called when mouse_owner_area_ is destroyed.
+    void OnMouseOwnerViewDestroyed(Object* area);
+
+    //! Callback: called when key_focus_area_ is destroyed.
+    void OnKeyNavFocusDestroyed(Object* area);
+
+    //! Callback: called when mouse_owner_basewindow_connection_ is destroyed.
+    void OnMouseOwnerBaseWindowDestroyed(Object* area);
+
+    //! The InputArea that has the keyboard navigation focus.
     /*!
         The InputArea that has the mouse focus also has the keyboard focus. That is if _mouse_focus_area is not Null
         then _mouse_focus_area is equal to _mouse_focus_area;
     */
-    InputArea* keyboard_event_receiver_;
-    
-    //! The InputArea that has the keyboard navigation focus.
-    /*!
-        The InputArea that has the keyboard navigation focus.
-    */
-    InputArea* keyboard_nav_focus_area_;
+    InputArea* key_focus_area_;
+    InputArea* mouse_owner_area_;
+    InputArea* mouse_over_area_;
+    BaseWindow* mouse_owner_base_window_;
 
-    void SetMouseOverView(Area* area);
-    void SetMouseOwnerView(Area* area);
-    void OnMouseOverViewDestroyed(Object* area);
-    void OnMouseOwnerViewDestroyed(Object* area);
-    sigc::connection mouse_over_view_conn_;
-    sigc::connection mouse_owner_view_conn_;
+    sigc::connection mouse_over_view_connection_;
+    sigc::connection mouse_owner_view_connection_;
+    sigc::connection mouse_owner_basewindow_connection_;
+    sigc::connection key_focus_area_connection_;
 
     //====================================
   
@@ -176,14 +190,11 @@ namespace nux
       _event_root = Point(x, y);
     }
 
+    //TODO: DEPRECATED
     const IEvent *GetCurrentEvent() const
     {
-      return m_CurrentEvent;
+      return NULL;
     }
-
-    long DispatchEventToArea(Event &event, Area* area, long TraverseInfo, long ProcessEventInfo);
-
-    long DispatchEventToView(Event &event, View* view, long TraverseInfo, long ProcessEventInfo);
 
     void SetBackgroundPaintLayer(AbstractPaintLayer *bkg);
 
@@ -321,9 +332,8 @@ namespace nux
         @force_draw True if the entire surface of the backup rendering mush flushed.
         @WindowList The list of top views.
         @draw_modal True if the top view that is modal is to be rendered.
-        @use_fbo True if TopViews should be backed by an fbo.
     */
-    void RenderTopViews(bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool draw_modal, bool use_fbo);
+    void RenderTopViews(bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool draw_modal);
 
     //! Render the content of a top view.
     void RenderTopViewContent(BaseWindow *window, bool force_draw);
@@ -431,38 +441,6 @@ namespace nux
     */
     void FloatingAreaConfigureNotify(int Width, int Height);
 
-    void SetMouseFocusArea(InputArea* area);
-    
-    InputArea* GetMouseFocusArea();
-    
-    void OnMouseFocusAreaDestroyed(Object* area)
-    {
-      if (_mouse_focus_area == area)
-        SetMouseFocusArea(NULL);
-    }
-
-    void SetMouseOverArea(InputArea* area);
-
-    InputArea* GetMouseOverArea();
-
-    void OnMouseOverAreaDestroyed(Object* area)
-    {
-      if (_mouse_over_area == area)
-        SetMouseOverArea(NULL);
-    }
-
-    void SetPreviousMouseOverArea(InputArea* area);
-
-    InputArea* GetPreviousMouseOverArea();
-
-    void OnPreviousMouseOverAreaDestroyed(Object* area)
-    {
-      if (_previous_mouse_over_area == area)
-        SetPreviousMouseOverArea(NULL);
-    }
-    
-    void OnKeyNavFocusDestroyed(Object* area);
-
     void RegisterWindow(BaseWindow*);
 
     void UnRegisterWindow(BaseWindow*);
@@ -489,13 +467,6 @@ namespace nux
     ObjectWeakPtr<BaseWindow> m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
     IEvent* m_CurrentEvent; 
 
-    /*!
-        The area that has the mouse focus. Mouse focus happens when the mouse down is received on and area.
-        The mouse focus stops when the last mouse button is released.
-        Incidentally, when the mouse focus first occurs on an area, we set the keyboard focus over that area.
-        The keyboard focus of an area stops when the mouse down happens over a different area.
-    */
-    InputArea* _mouse_focus_area;
     InputArea* _mouse_over_area;      //!< The base area that has the mouse directly over itself.
     InputArea* _previous_mouse_over_area;
 
@@ -607,10 +578,7 @@ namespace nux
     int m_TooltipX;
     int m_TooltipY;
 
-    sigc::connection previous_mouse_over_area_conn_;
-    sigc::connection keyboard_event_receiver_conn_;
-    sigc::connection mouse_focus_area_conn_;
-    sigc::connection mouse_over_area_conn_;
+    
 
 //     bool m_FullSceneBlurUpdated;
 //     ObjectPtr<IOpenGLBaseTexture> m_BlurTexture;
