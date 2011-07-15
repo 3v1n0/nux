@@ -150,13 +150,13 @@ namespace nux
             long ret = 0;
             if ( area->IsView() )
             {
-              View *ic = NUX_STATIC_CAST (View *, area );
+              View *ic = static_cast<View *>(area);
               ic->SetFocusControl (true);
               ret = ic->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
             }
             else if ( area->IsLayout() )
             {
-              Layout *layout = NUX_STATIC_CAST (Layout *, area );
+              Layout *layout = static_cast<Layout *>(area);
               layout->SetFocusControl (true);
               ret = layout->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
             }

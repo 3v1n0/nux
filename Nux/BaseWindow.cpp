@@ -45,8 +45,9 @@ namespace nux
   */
 
   BaseWindow::BaseWindow (const TCHAR *WindowName, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
-    ,   _opacity (1.0f)
+    : View (NUX_FILE_LINE_PARAM)
+    , _paint_layer(new ColorLayer(Color(0xFF707070)))
+    , _opacity (1.0f)
   {
     _name = WindowName;
     _child_need_redraw = true;
@@ -71,9 +72,6 @@ namespace nux
 
     SetMinimumSize (1, 1);
     SetGeometry(Geometry(100, 100, 320, 200));
-
-    _paint_layer = new ColorLayer(Color(0xFF707070));
-    //_background_texture = GetWindow ()->GetGpuDevice ()->CreateSystemCapableDeviceTexture(1, 1, 1, BITFMT_R8G8B8A8);
   }
 
   BaseWindow::~BaseWindow()
@@ -92,8 +90,6 @@ namespace nux
     // The weak reference count is probably 2: one reference in m_WindowList and another in m_WindowToTextureMap.
     // Reference the object here to avoid it being destroy when the call from UnRegisterWindow returns;
     GetWindowCompositor().UnRegisterWindow (this);
-
-    NUX_SAFE_DELETE (_paint_layer);
   }
 
   long BaseWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -136,7 +132,7 @@ namespace nux
     base.SetY (0);
     GfxContext.PushClippingRectangle (base);
 
-    GetPainter().PushDrawLayer(GfxContext, base, _paint_layer);
+    GetPainter().PushDrawLayer(GfxContext, base, _paint_layer.get());
 
     GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
@@ -151,7 +147,7 @@ namespace nux
     base.SetY (0);
 
 
-    GetPainter().PushLayer(GfxContext, base, _paint_layer);
+    GetPainter().PushLayer(GfxContext, base, _paint_layer.get());
 
     if (m_layout)
     {
@@ -480,16 +476,12 @@ namespace nux
   void BaseWindow::SetBackgroundLayer (AbstractPaintLayer *layer)
   {
     NUX_RETURN_IF_NULL (layer);
-    NUX_SAFE_DELETE (_paint_layer);
-    _paint_layer = layer->Clone();
+    _paint_layer.reset(layer->Clone());
   }
 
   void BaseWindow::SetBackgroundColor (const Color &color)
   {
-    if (_paint_layer)
-      NUX_SAFE_DELETE(_paint_layer);
-
-    _paint_layer = new ColorLayer(color);
+    _paint_layer.reset(new ColorLayer(color));
   }
 
   void BaseWindow::PushHigher (BaseWindow* floating_view)

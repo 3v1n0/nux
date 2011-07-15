@@ -5,6 +5,7 @@ check_PROGRAMS = \
 
 # Please keep alphabetical
 test_nux_SOURCES = \
+  test-canvas.cpp \
   test-nux.cpp \
   test-timeline.cpp \
   test-object.cpp \

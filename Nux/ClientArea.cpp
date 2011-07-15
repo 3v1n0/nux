@@ -225,9 +225,7 @@ namespace nux
     }
     else
     {
-      int window_width, window_height;
-      window_width = GfxContext.GetViewportWidth ();
-      window_height = GfxContext.GetViewportHeight ();
+      int window_height = GfxContext.GetViewportHeight();
 
       GfxContext.SetViewport (
         m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);
@@ -242,10 +240,6 @@ namespace nux
 
   void ClientArea::Setup2DMode (GraphicsEngine &GfxContext)
   {
-    int window_width, window_height;
-    window_width = GfxContext.GetViewportWidth ();
-    window_height = GfxContext.GetViewportHeight ();
-
     //Restore 2D ViewPort
     GfxContext.SetViewport (0, 0, GetBaseWidth(), GetBaseHeight() );
     GfxContext.Push2DWindow (GetBaseWidth(), GetBaseHeight() );

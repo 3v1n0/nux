@@ -355,9 +355,6 @@ namespace nux
     }
 
     long ret = 0;
-    bool base_window_reshuffling = false; // Will be set to true if the BaseWindow are reshuffled.
-
-    //std::list<MenuPage*>::iterator menu_it;
 
     if((event.e_event == NUX_SIZE_CONFIGURATION) ||
       (event.e_event == NUX_WINDOW_ENTER_FOCUS))
@@ -451,7 +448,6 @@ namespace nux
           // There is a possibility we might have to reorder the stack of windows.
           // Cancel the currently selected window.
           m_SelectedWindow = NULL;
-          base_window_reshuffling = true;
         }
 
         // Traverse the window from the top of the visibility stack to the bottom.
@@ -470,7 +466,6 @@ namespace nux
             {
               // The mouse event was solved in the window pointed by the iterator.
               // There isn't a currently selected window. Make the window pointed by the iterator the selected window.
-              base_window_reshuffling = true;
               m_SelectedWindow = (*it);
             }
           }
@@ -1040,10 +1035,6 @@ namespace nux
 
   void WindowCompositor::RenderTopViewContent (BaseWindow *window, bool force_draw)
   {
-    unsigned int window_width, window_height;
-    window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-    window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-
     GetPainter().EmptyBackgroundStack();
     SetProcessingTopView (window);
     window->ProcessDraw (GetWindowThread ()->GetGraphicsEngine(), force_draw || window->IsRedrawNeeded() );
@@ -1065,13 +1056,10 @@ namespace nux
       if ((drawModal == false) && (*rev_it)->IsModal ())
         continue;
 
-      bool WindowNeedRedraw = false;
-
       if ((*rev_it)->IsVisible() )
       {
         RenderTargetTextures &rt = GetWindowBuffer ((*rev_it).GetPointer ());
         BaseWindow *window = (*rev_it).GetPointer ();
-        WindowNeedRedraw = window->IsRedrawNeeded();
 
         // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
         if(force_draw || window->IsRedrawNeeded() || window->ChildNeedsRedraw ())
@@ -1121,7 +1109,7 @@ namespace nux
           m_FrameBufferObject->Deactivate();
 
           // Enable this to render the drop shadow under windows: not perfect yet...
-          if (0/*force_draw || WindowNeedRedraw*/)
+          if (0)
           {
             unsigned int window_width, window_height;
             window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
@@ -1216,39 +1204,6 @@ namespace nux
     GetWindowThread ()->GetGraphicsEngine().RenderColorTextLineStatic (GetSysBoldFont(), page, FPS, Color (0xffff0000), true, eAlignTextLeft);
 
     GetWindowThread ()->GetGraphicsEngine().Pop2DWindow();
-//     GetWindowThread ()->GetGraphicsEngine().ResetStats();
-//     GetWindowThread ()->GetWindow().SwapBuffer();
-
-//    const std::list<BaseWindow*>& W = _view_window_list;
-//    std::list<BaseWindow*>::const_reverse_iterator rev_it;
-//    for(rev_it = W.rbegin();
-//        rev_it != W.rend();
-//        rev_it++)
-//    {
-////        if((drawModal==false) && (*rev_it)->IsModal())
-////            continue;
-//
-//        bool WindowNeedRedraw = false;
-//        if((*rev_it)->IsVisible())
-//        {
-//
-//            RenderTargetTextures& rt = GetWindowBuffer(*rev_it);
-//            BaseWindow* window = *rev_it;
-//            WindowNeedRedraw = window->IsRedrawNeeded();
-//
-//            if(rt.color_rt.IsValid())
-//            {
-//                CHECKGL( glEnable(GL_BLEND) );
-//                CHECKGL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
-//                CHECKGL( glDepthMask(GL_FALSE) );
-//                {
-//                    PresentBufferToScreen(rt.color_rt, window->GetX(), window->GetY());
-//                }
-//                CHECKGL( glDepthMask(GL_TRUE) );
-//                CHECKGL( glDisable(GL_BLEND) );
-//            }
-//        }
-//    }
   }
 
   void WindowCompositor::RenderMainWindowComposition (bool force_draw, bool UseFBO)

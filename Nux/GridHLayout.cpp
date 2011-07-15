@@ -255,12 +255,12 @@ namespace nux
     {
       if ( (*it)->IsView() )
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = static_cast<View *>(*it);
         ViewList->push_back (ic);
       }
       else if ( (*it)->IsLayout() )
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+        Layout *layout = static_cast<Layout *>(*it);
         layout->GetCompositeList (ViewList);
       }
     }
@@ -316,17 +316,14 @@ namespace nux
       int Y = base.y + m_v_out_margin;
 
       bool first_element_of_row = true;
-      bool first_row = true;
 
-      for(int i = 0; i < num_elements; i++) 
+      for(int i = 0; i < num_elements; i++)
       {
         if (num_row == 1)
           num_column++;
 
         if(first_element_of_row)
         {
-          first_row = false;
-          
           first_element_of_row = false;
         }
 
@@ -465,12 +462,12 @@ namespace nux
 
           if ((*it)->IsView ())
           {
-            View *ic = NUX_STATIC_CAST (View *, (*it));
+            View *ic = static_cast<View *>(*it);
             ic->ProcessDraw (GfxContext, force_draw);
           }
           else if ((*it)->IsLayout ())
           {
-            Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
+            Layout *layout = static_cast<Layout *>(*it);
             layout->ProcessDraw (GfxContext, force_draw);
           }
 
