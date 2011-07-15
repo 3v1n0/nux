@@ -57,5 +57,7 @@ tests/Makefile
 tests/gtest-nux-core
 tests/test-nux
 tests/test-nux-results.xml
-
-
+tests/relative
+Logs
+**/nux.log
+**/nux.log.*
