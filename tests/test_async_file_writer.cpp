@@ -5,52 +5,21 @@
 
 #include <gmock/gmock.h>
 
-#include <glib.h>
-
 #include <boost/filesystem.hpp>
+
+#include <glib.h>
 
 #include "NuxCore/AsyncFileWriter.h"
 
+#include "Helpers.h"
+
 namespace bf = boost::filesystem;
 using namespace testing;
+using namespace nux::testing;
 
 namespace {
 
 const std::string TEST_ROOT("/tmp/nux-test-cases");
-
-class TestCallback
-{
-public:
-  TestCallback() : happened(false) {}
-
-  sigc::slot<void> sigc_callback() {
-    return sigc::mem_fun(this, &TestCallback::callback);
-  }
-
-  static gboolean glib_callback(gpointer data) {
-    TestCallback* test = reinterpret_cast<TestCallback*>(data);
-    test->callback();
-    return FALSE;
-  }
-  void callback() {
-    happened = true;
-  }
-
-  bool happened;
-};
-
-gboolean gsource_bool_setter(gpointer data)
-{
-  bool* value = reinterpret_cast<bool*>(data);
-  *value = true;
-  return FALSE;
-}
-
-void sigc_bool_setter(bool& value)
-{
-  std::cerr << "sigc_bool_setter called\n";
-  value = true;
-}
 
 
 class TestAsyncfileWriter : public ::testing::Test
@@ -65,21 +34,6 @@ protected:
   virtual void TearDown() {
     // Delete the unity test directory
     bf::remove_all(TEST_ROOT);
-  }
-
-  std::string ReadFile(std::string const& filename) {
-    std::ifstream input(filename.c_str());
-    if (input.bad())
-      throw std::runtime_error("bad file");
-    return std::string((std::istreambuf_iterator<char>(input)),
-                       std::istreambuf_iterator<char>());
-  }
-
-  void PumpGObjectMainLoop() {
-    GMainContext* context(g_main_context_get_thread_default());
-    while (g_main_context_pending(context)) {
-      g_main_context_iteration(context, false);
-    }
   }
 
   bool WaitForOpen(nux::AsyncFileWriter& writer, unsigned timeout = 5) {

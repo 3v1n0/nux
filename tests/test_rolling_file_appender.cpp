@@ -9,13 +9,28 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include "NuxCore/RollingFileAppender.h"
+#include "Helpers.h"
 
 namespace bf = boost::filesystem;
 
 using namespace nux::logging;
+using namespace nux::testing;
 using namespace testing;
 
 namespace {
+
+/**
+ * Due to the asynchronous manner in which the rolling file appender writes
+ * the data to disk, it is incredibly hard to test in a simple unit test as
+ * the underlying file on the file system isn't created synchronously, nor is
+ * the output written synchronously.
+ *
+ * A files_rolled event exists on the RollingFileAppender so we can at least
+ * wait for that signal and check the underlying files on the file system at
+ * that stage.  This does mean that we aren't testing the smaller chunks of
+ * how it works, but more only the complete system, which I guess has to be
+ * good enough for this case.
+ */
 
 const std::string TEST_ROOT("/tmp/nux-test-cases");
 
@@ -32,59 +47,23 @@ protected:
     bf::remove_all(TEST_ROOT);
   }
 
-  std::string ReadFile(std::string const& filename) {
-    std::ifstream input(filename.c_str());
-    return std::string((std::istreambuf_iterator<char>(input)),
-                       std::istreambuf_iterator<char>());
+  bool WaitForRoll(RollingFileAppender& appender, unsigned timeout = 5) {
+    TestCallback rolled;
+    TestCallback timed_out;
+    g_timeout_add_seconds(timeout, &TestCallback::glib_callback, &timed_out);
+    appender.files_rolled.connect(rolled.sigc_callback());
+
+    while (!rolled.happened && !timed_out.happened) {
+      PumpGObjectMainLoop();
+    }
+    return rolled.happened;
   }
+
 };
 
 TEST_F(TestRollingFileAppender, NoTestRoot) {
   // The test root should not exist.
   EXPECT_FALSE(bf::exists(TEST_ROOT));
-}
-
-TEST_F(TestRollingFileAppender, TestCreatesFile) {
-
-  std::string logfile = TEST_ROOT + "/nux.log";
-  RollingFileAppender output(logfile);
-
-  EXPECT_TRUE(bf::exists(logfile));
-  EXPECT_TRUE(bf::is_regular_file(logfile));
-}
-
-TEST_F(TestRollingFileAppender, TestNestedDirectories) {
-
-  std::string logfile = TEST_ROOT + "/nested/directories/nux.log";
-  RollingFileAppender output(logfile);
-
-  EXPECT_TRUE(bf::exists(logfile));
-  EXPECT_TRUE(bf::is_regular_file(logfile));
-}
-
-TEST_F(TestRollingFileAppender, TestWritesToLogFile) {
-
-  std::string logfile = TEST_ROOT + "/nux.log";
-  RollingFileAppender output(logfile);
-
-  output << "Testing writing" << std::flush;
-
-  EXPECT_THAT(ReadFile(logfile), Eq("Testing writing"));
-}
-
-TEST_F(TestRollingFileAppender, TestLogFileRolls) {
-
-  std::string logfile = TEST_ROOT + "/nux.log";
-  unsigned max_log_size = 20; // roll every 20 characters
-  RollingFileAppender output(logfile, 5, max_log_size);
-
-  output << "Testing the rolling of the logfile" << std::endl
-         << "Next line" << std::endl;
-
-  EXPECT_THAT(ReadFile(logfile),
-              Eq("Next line\n"));
-  EXPECT_THAT(ReadFile(logfile + ".1"),
-              Eq("Testing the rolling of the logfile\n"));
 }
 
 TEST_F(TestRollingFileAppender, TestLogFileRollsAtFlush) {
@@ -93,14 +72,14 @@ TEST_F(TestRollingFileAppender, TestLogFileRollsAtFlush) {
   unsigned max_log_size = 20; // roll every 20 characters
   RollingFileAppender output(logfile, 5, max_log_size);
 
-  output << "Testing the rolling of the logfile" << std::endl
-         << "Long line greater than max_log_size" << std::endl;
+  output << "Testing the rolling of the logfile" << std::endl;
+  WaitForRoll(output);
+  output << "Long line greater than max_log_size" << std::endl;
+  WaitForRoll(output);
 
   // Since the log files are rolled on flush, if the last thing written out
   // takes the filesize greater than the max_log_size, the log files are
   // rolled and the current file being appended to is now empty.
-  EXPECT_THAT(ReadFile(logfile),
-              Eq(""));
   EXPECT_THAT(ReadFile(logfile + ".1"),
               Eq("Long line greater than max_log_size\n"));
   EXPECT_THAT(ReadFile(logfile + ".2"),
@@ -111,17 +90,14 @@ TEST_F(TestRollingFileAppender, TestExistingLogFileMoved) {
 
   std::string logfile = TEST_ROOT + "/nux.log";
   {
-    // Due to operator<< weirdness, we can't put this on one line without a
-    // static_cast<ostream&>, which is slightly unintuitive.
-    RollingFileAppender output(logfile);
+    bf::create_directories(bf::path(logfile).parent_path());
+    std::ofstream output(logfile);
     output << "Existing file.";
   }
   EXPECT_TRUE(bf::exists(logfile));
 
   RollingFileAppender output(logfile);
 
-  EXPECT_THAT(ReadFile(logfile),
-              Eq(""));
   EXPECT_THAT(ReadFile(logfile + ".1"),
               Eq("Existing file."));
 }
@@ -132,13 +108,16 @@ TEST_F(TestRollingFileAppender, TestDeletingOld) {
   // Two backups, size 20 bytes.
   RollingFileAppender output(logfile, 2, 20);
 
-  output << "Oldest line should be deleted." << std::endl
-         << "This line will be in the last backup." << std::endl
-         << "This is backup number 1." << std::endl
-         << "Current." << std::endl;
+  // Due to the asynchronous manner in which the output is sent to the
+  // underlying file, we explicitly wait for the roll here.  Otherwise we may
+  // just send all the logging lines to one file then it would roll.
+  output << "Oldest line should be deleted." << std::endl;
+  WaitForRoll(output);
+  output << "This line will be in the last backup." << std::endl;
+  WaitForRoll(output);
+  output << "This is backup number 1." << std::endl;
+  WaitForRoll(output);
 
-  EXPECT_THAT(ReadFile(logfile),
-              Eq("Current.\n"));
   EXPECT_THAT(ReadFile(logfile + ".1"),
               Eq("This is backup number 1.\n"));
   EXPECT_THAT(ReadFile(logfile + ".2"),

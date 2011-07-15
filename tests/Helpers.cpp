@@ -19,19 +19,34 @@
  * Authored by: Tim Penhey <tim.penhey@canonical.com>
  *
  */
-#ifndef NUX_TESTS_FILE_HELPERS_H
-#define NUX_TESTS_FILE_HELPERS_H
 
-#include <string>
+#include "Helpers.h"
+
+#include <fstream>
+#include <stdexcept>
 
 namespace nux
 {
 namespace testing
 {
 
-std::string ReadFile(std::string const& filename);
+std::string ReadFile(std::string const& filename)
+{
+  std::ifstream input(filename.c_str());
+  if (input.bad())
+    throw std::runtime_error("bad file");
+  return std::string((std::istreambuf_iterator<char>(input)),
+                     std::istreambuf_iterator<char>());
+}
+
+void PumpGObjectMainLoop()
+{
+  GMainContext* context(g_main_context_get_thread_default());
+  while (g_main_context_pending(context)) {
+    g_main_context_iteration(context, false);
+  }
+}
+
 
 }
 }
-
-#endif

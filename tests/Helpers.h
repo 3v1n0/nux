@@ -19,23 +19,45 @@
  * Authored by: Tim Penhey <tim.penhey@canonical.com>
  *
  */
+#ifndef NUX_TESTS_FILE_HELPERS_H
+#define NUX_TESTS_FILE_HELPERS_H
 
-#include "FileHelpers.h"
+#include <string>
+#include <glib.h>
+#include <sigc++/sigc++.h>
 
-#include <fstream>
 
 namespace nux
 {
 namespace testing
 {
 
-std::string ReadFile(std::string const& filename)
+std::string ReadFile(std::string const& filename);
+void PumpGObjectMainLoop();
+
+class TestCallback
 {
-  std::ifstream input(filename.c_str());
-  return std::string((std::istreambuf_iterator<char>(input)),
-                     std::istreambuf_iterator<char>());
-}
+public:
+  TestCallback() : happened(false) {}
+
+  sigc::slot<void> sigc_callback() {
+    return sigc::mem_fun(this, &TestCallback::callback);
+  }
+
+  static gboolean glib_callback(gpointer data) {
+    TestCallback* test = reinterpret_cast<TestCallback*>(data);
+    test->callback();
+    return FALSE;
+  }
+  void callback() {
+    happened = true;
+  }
+
+  bool happened;
+};
 
 
 }
 }
+
+#endif
