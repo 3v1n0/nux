@@ -48,6 +48,8 @@ public:
   // signal is emitted.
   void Close();
 
+  bool IsClosing() const;
+
   sigc::signal<void> opened;
   sigc::signal<void> closed;
 

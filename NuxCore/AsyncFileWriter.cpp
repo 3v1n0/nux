@@ -50,7 +50,6 @@ public:
   static void WriteAsyncCallback(GOutputStream* source, GAsyncResult* res, Impl* impl);
   static void CloseAsyncCallback(GOutputStream* source, GAsyncResult* res, Impl* impl);
 
-private:
   AsyncFileWriter* owner_;
   GCancellable* cancel_;
   GFile* file_;
@@ -236,6 +235,11 @@ void AsyncFileWriter::Write(std::string const& data)
 void AsyncFileWriter::Close()
 {
   pimpl->Close();
+}
+
+bool AsyncFileWriter::IsClosing() const
+{
+  return pimpl->close_pending_;
 }
 
 

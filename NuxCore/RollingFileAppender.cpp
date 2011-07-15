@@ -23,6 +23,7 @@
 #include "RollingFileAppender.h"
 
 #include <fstream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -30,6 +31,7 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "AsyncFileWriter.h"
 
 namespace nux {
 namespace logging {
@@ -56,11 +58,9 @@ std::string backup_path(std::string const& path, unsigned number)
 // while (g_main_context_pending(g_main_context_get_thread_default())) {
 //   g_main_context_iteration(g_main_context_get_thread_default());
 // }
-class RollingFileStreamBuffer : public std::basic_filebuf<char>
+class RollingFileStreamBuffer : public std::stringbuf
 {
 public:
-  typedef std::basic_filebuf<char> BaseFileBuf;
-
   RollingFileStreamBuffer(std::string const& filename,
                           unsigned number_of_backup_files,
                           unsigned long long max_log_size);
@@ -68,11 +68,16 @@ public:
 protected:
   virtual int sync();
 private:
+  void AsyncWriterClosed();
   void RotateFiles();
+
+  std::shared_ptr<AsyncFileWriter> writer_;
   GFile* log_file_;
   std::string filename_;
   unsigned number_of_backup_files_;
   unsigned long long max_log_size_;
+  unsigned long long bytes_written_;
+  sigc::connection writer_closed_;
 };
 
 RollingFileStreamBuffer::RollingFileStreamBuffer(std::string const& filename,
@@ -81,6 +86,7 @@ RollingFileStreamBuffer::RollingFileStreamBuffer(std::string const& filename,
   : filename_(filename)
   , number_of_backup_files_(number_of_backup_files)
   , max_log_size_(max_log_size)
+  , bytes_written_(0)
 {
   // Make sure that the filename starts with a '/' for a full path.
   if (filename.empty() || filename[0] != '/') {
@@ -111,17 +117,15 @@ RollingFileStreamBuffer::RollingFileStreamBuffer(std::string const& filename,
     }
   }
   // Now open the filename.
-  BaseFileBuf* buff = open(filename.c_str(), std::ios_base::out);
-  if (!buff) {
-    std::string error_msg = "Failed to open " + filename + " for writing";
-    throw std::runtime_error(error_msg);
-  }
-
+  writer_.reset(new AsyncFileWriter(filename));
   log_file_ = g_file_new_for_path(filename_.c_str());
 }
 
 RollingFileStreamBuffer::~RollingFileStreamBuffer()
 {
+  // We don't want notification when the writer closes now.
+  if (writer_closed_.connected())
+    writer_closed_.disconnect();
   g_object_unref(log_file_);
 }
 
@@ -154,21 +158,36 @@ void RollingFileStreamBuffer::RotateFiles()
   }
 }
 
+void RollingFileStreamBuffer::AsyncWriterClosed()
+{
+  // Rotate the files and open a new file writer.
+  RotateFiles();
+  writer_.reset(new AsyncFileWriter(filename_));
+  bytes_written_ = 0;
+}
+
 int RollingFileStreamBuffer::sync()
 {
-  BaseFileBuf::sync();
-  // Look at the size of the file, and if it is bigger than max_log_size then
-  // we rotate the files.
-  GFileInfo* file_info = g_file_query_info(log_file_,
-                                           G_FILE_ATTRIBUTE_STANDARD_SIZE,
-                                           G_FILE_QUERY_INFO_NONE,
-                                           NULL, NULL);
-  goffset file_size = g_file_info_get_size(file_info);
-  g_object_unref(file_info);
-  if (file_size > max_log_size_) {
-    close();
-    RotateFiles();
-    open(filename_.c_str(), std::ios_base::out);
+  // If the async file writer is in the middle of closing, there is nothing we can do.
+  if (writer_->IsClosing())
+    return 0;
+
+  std::string message = str();
+  // reset the stream
+  str("");
+
+  std::size_t message_size = message.size();
+  if (message_size > 0)
+  {
+    bytes_written_ += message_size;
+    writer_->Write(message);
+    if (bytes_written_ > max_log_size_)
+    {
+      // Close the writer and once it is closed, rotate the files and open a new file.
+      writer_closed_ = writer_->closed.connect(
+        sigc::mem_fun(this, &RollingFileStreamBuffer::AsyncWriterClosed));
+      writer_->Close();
+    }
   }
   return 0; // success
 }
