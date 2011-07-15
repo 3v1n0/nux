@@ -20,6 +20,7 @@
  *
  */
 
+#include "System.h"
 #include "LoggingWriter.h"
 
 #include <iostream>
@@ -62,18 +63,29 @@ const char* severity_string(Level severity)
   }
 }
 
-std::string timestamp_string(std::time_t timestamp)
+std::string TimestampString(std::time_t timestamp)
 {
   // return an ISO format string: YYYY-MM-DD HH:MM:SS
   static const char* format = "%Y-%m-%d %H:%M:%S";
   const int buf_size = 20;
   char buffer[buf_size];
   tm local_time;
+
+#if defined(NUX_OS_WINDOWS)
+  static const char* invalid_time_stamp = "invalid_time_stamp";
+
+  if (localtime_s(&local_time, &timestamp) == 0)
+    std::strftime(buffer, buf_size, format, &local_time);
+  else
+    memcpy_s(buffer, sizeof(buffer), invalid_time_stamp, strnlen(invalid_time_stamp, 30));
+#else
   std::strftime(buffer, buf_size, format, ::localtime_r(&timestamp, &local_time));
+#endif
+
   return buffer;
 }
 
-std::string shortened_filename(std::string const& filename)
+std::string ShortenedFilename(std::string const& filename)
 {
   std::string::size_type pos = filename.rfind('/');
   if (pos == std::string::npos)
@@ -126,9 +138,9 @@ void Writer::Impl::WriteMessage(Level severity,
   // output stream.
   std::stringstream sout;
   sout << severity_string(severity)
-       << " " << timestamp_string(timestamp)
+       << " " << TimestampString(timestamp)
        << " " << module
-       << " " << shortened_filename(filename)
+       << " " << ShortenedFilename(filename)
        << ":" << line_number
        << " " << message;
   for (OutputStreams::iterator i = output_streams_.begin(), end = output_streams_.end();

@@ -40,6 +40,7 @@ namespace nux
     ~VScrollBar();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     void DrawDownTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
     void DrawUpTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
 
@@ -100,10 +101,10 @@ namespace nux
     bool AtMaximum();
 
     VLayout *vlayout;
-    InputArea *m_SlideBar;
-    InputArea *m_TopThumb;
-    InputArea *m_BottomThumb;
-    InputArea *m_Track;
+    InputArea *_slider;
+    InputArea *_scroll_up_button;
+    InputArea *_scroll_down_button;
+    InputArea *_track;
 
     int m_contentWidth;
     int m_contentHeight;

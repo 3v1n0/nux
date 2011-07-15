@@ -424,10 +424,22 @@ namespace nux
     ShaderObjectList.push_back (ShaderObject);
   }
 
-  void IOpenGLShaderProgram::AddShaderParameter (GLShaderParameter *Parameter)
+  void IOpenGLShaderProgram::AddShaderParameter (GLShaderParameter* parameter)
   {
-    Parameter->m_NextParameter = _FirstParameter;
-    _FirstParameter = Parameter;
+    GLShaderParameter* temp = _FirstParameter;
+
+    while(temp)
+    {
+      if(temp == parameter)
+      {
+        // Parameter already added
+        return;
+      }
+      temp = temp->m_NextParameter;
+    }
+
+    parameter->m_NextParameter = _FirstParameter;
+    _FirstParameter = parameter;
 
     // If we add shader parameters after the program is linked, we need to call CheckUniformLocation().
     CheckUniformLocation();

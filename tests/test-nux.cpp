@@ -46,7 +46,7 @@ main (gint argc, gchar *argv[])
   // TestCanvasSuite();
 
   /* Please keep this alphabetically ordered */
-  test_timeline_create_suite ();
+  //test_timeline_create_suite ();
 
   return g_test_run ();
 }

@@ -80,6 +80,7 @@ namespace nux
     TextEntry (const TCHAR* text, NUX_FILE_LINE_PROTO);
     ~TextEntry ();
 
+    Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
@@ -478,7 +479,15 @@ namespace nux
     std::list<Rect> selection_region_;
     std::list<Rect> last_cursor_region_;
     std::list<Rect> cursor_region_;
-  };
+
+  protected:
+    bool text_input_mode_;
+    bool key_nav_mode_;
+
+    virtual bool InspectKeyEvent(unsigned int eventType,
+      unsigned int keysym,
+      const char* character);
+};
 }
 
 #endif // TEXTENTRY_H

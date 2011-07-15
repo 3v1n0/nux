@@ -31,7 +31,6 @@
 
 namespace nux
 {
-
   ComboBoxSimple::ComboBoxSimple (NUX_FILE_LINE_DECL)
     :   AbstractComboBox (NUX_FILE_LINE_PARAM)
   {
@@ -41,6 +40,8 @@ namespace nux
     m_CurrentMenu       = 0;
 
     m_CurrentMenu = new MenuPage (TEXT (""), NUX_TRACKER_LOCATION);
+    m_CurrentMenu->SinkReference();
+    m_CurrentMenu->SetParentObject(this);
     
     // Set Signals
     _combo_box_opening_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
@@ -61,14 +62,16 @@ namespace nux
     _combo_box_area->OnGeometryChanged.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvGeometryChanged));
 
     //m_CurrentMenu = new MenuPage;
-    m_CurrentMenu->SetParentMenu (0);
-    m_CurrentMenu->sigActionTriggered.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigActionTriggered));
-    m_CurrentMenu->sigTerminateMenuCascade.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvSigTerminateMenuCascade));
+    m_CurrentMenu->SetParentMenu(0);
+    m_CurrentMenu->sigActionTriggered.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvSigActionTriggered));
+    m_CurrentMenu->sigTerminateMenuCascade.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvSigTerminateMenuCascade));
+    m_CurrentMenu->sigClosingMenu.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvClosingMenuSignal));
   }
 
-  ComboBoxSimple::~ComboBoxSimple ()
+  ComboBoxSimple::~ComboBoxSimple()
   {
-    m_CurrentMenu->Dispose ();
+    m_CurrentMenu->UnParentObject();
+    m_CurrentMenu->UnReference();
   }
 
   void ComboBoxSimple::DoSetFocused (bool focused)
@@ -94,7 +97,7 @@ namespace nux
         parent->SetFocusControl (false);
       }
     }
-    NeedRedraw();
+    QueueDraw();
   }
 
   long ComboBoxSimple::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -184,6 +187,21 @@ namespace nux
     return ret;
   }
 
+  Area* ComboBoxSimple::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    NUX_RETURN_VALUE_IF_TRUE(_combo_box_opening_area->TestMousePointerInclusion(mouse_position, event_type), _combo_box_opening_area);
+    NUX_RETURN_VALUE_IF_TRUE(_combo_box_area->TestMousePointerInclusion(mouse_position, event_type), _combo_box_area);
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
+  }
+
   void ComboBoxSimple::MoveSelectionUp ()
   {
     int current_index = GetSelectionIndex ();
@@ -250,7 +268,7 @@ namespace nux
       m_IsOpeningMenu = false;
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ComboBoxSimple::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -286,7 +304,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ComboBoxSimple::RecvSigActionTriggered (MenuPage *menu, ActionItem *action)
@@ -295,24 +313,24 @@ namespace nux
     m_CurrentMenu->StopMenu();
 
     m_SelectedAction = action;
-    _combo_box_area->SetBaseString (m_SelectedAction->GetLabel ());
+    _combo_box_area->SetBaseString(m_SelectedAction->GetLabel());
     m_IsOpeningMenu = false;
 
-    _pango_static_text->SetText (m_SelectedAction->GetLabel ());
+    _pango_static_text->SetText(m_SelectedAction->GetLabel());
 
     sigTriggered.emit (this);
     sigActionTriggered.emit (m_SelectedAction);
 
-    NeedRedraw();
+    QueueDraw();
     // You can do something if you want with the menu* and the action*
   }
 
-  void ComboBoxSimple::RecvSigActionTriggered2 (TableCtrl *table, TableItem *item, unsigned int row, unsigned int column)
+  void ComboBoxSimple::RecvSigActionTriggered2(TableCtrl *table, TableItem *item, unsigned int row, unsigned int column)
   {
     m_MenuIsActive = false;
     m_CurrentMenu->StopMenu();
     m_IsOpeningMenu = false;
-    NeedRedraw();
+    QueueDraw();
     // You can do something if you want with the menu* and the action*
   }
 
@@ -323,9 +341,30 @@ namespace nux
     m_IsOpeningMenu = false;
   }
 
+  void ComboBoxSimple::RecvClosingMenuSignal(MenuPage* menu_page)
+  {
+    nuxAssert(menu_page == m_CurrentMenu);
+    m_IsOpeningMenu = false;
+    m_MenuIsActive = false;
+
+    // When the menu is closing check if the mouse is still inside the combo box surface 
+    // and set the _current_mouse_in flag accordingly.  
+    if(!_combo_box_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
+    {
+      _combo_box_area->_event_processor._current_mouse_in = false;
+    }
+
+    if(!_combo_box_opening_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
+    {
+      _combo_box_opening_area->_event_processor._current_mouse_in = false;
+    }
+
+    QueueDraw();
+  }
+
   void ComboBoxSimple::RecvGeometryChanged(Area *area, Geometry &geo)
   {
-	_pango_static_text->SetClipping (geo.width);
+	  _pango_static_text->SetClipping (geo.width);
   }
 
 
@@ -372,7 +411,7 @@ namespace nux
 
       _pango_static_text->SetText (m_SelectedAction->GetLabel ());
 
-      NeedRedraw ();
+      QueueDraw ();
     }
     else if (m_CurrentMenu->GetNumItem() > 0)
     {
@@ -382,7 +421,7 @@ namespace nux
 
       _pango_static_text->SetText (m_SelectedAction->GetLabel ());
 
-      NeedRedraw();
+      QueueDraw();
     }
     else
     {

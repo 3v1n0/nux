@@ -28,6 +28,7 @@
 
 #if defined (NUX_OS_WINDOWS)
   #include "GdiImageLoader.h"
+  #include "DDS.h"
 #endif
 
 #include "ImageSurface.h"
@@ -78,6 +79,9 @@ namespace nux
     if (BitmapData) return BitmapData;
 
     BitmapData = read_tga_file (filename);
+    if (BitmapData) return BitmapData;
+
+    BitmapData = LoadFileFormat_DDS(filename);
     if (BitmapData) return BitmapData;
 
 #elif defined(NUX_OS_LINUX)

@@ -39,7 +39,9 @@
 
 namespace nux
 {
+  class WindowCompositor;
   class InputArea;
+
   typedef InputArea CoreArea;
 
   class InputArea : public Area
@@ -78,11 +80,16 @@ namespace nux
     void SetKeyboardFocus (bool b);
     int GetMouseX();
     int GetMouseY();
-    bool IsMouseInside();
+    
     bool HasMouseFocus();
     bool MouseFocusOnOtherArea();
     void CaptureMouseDownAnyWhereElse (bool b);
     bool IsCaptureMouseDownAnyWhereElse() const;
+
+    Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+    Area* FindKeyFocusArea(unsigned int key_symbol,
+                          unsigned long x11_key_code,
+                          unsigned long special_keys_state);
 
   private:
     bool _dnd_enabled_as_source;
@@ -99,31 +106,13 @@ namespace nux
 //        return m_EnableKeyboardInput; //m_KeyboardHandler.IsEnableKeyEntry();
 //    }
 
-    //! Enable keyboard focus on mouse down.
-    /*!
-        Widgets such as TextEntry enable the keyboard focus on mouse down.
-        @param enable If true, the area gets the keyboard focus when a mouse down occurs.
-        \sa _enable_keyboard_focus_on_mouse_down.
-    */
-    void EnableKeyboardFocusOnMouseDown (bool enable);
-    
-    //! Return the status of keyboard focus on mouse down.
-    /*!
-        @return Return true if the area gets the keyboard focus on mouse down.
-    */
-    bool GetKeyboardFocusOnMouseDown () const;
-
     // Override the virtual methods from Object Base
     // Here, we get a change to update the text of the keyboard handler.
     virtual void SetBaseString (const TCHAR *Caption);
 
-    //! Enable the double click signal on this InputArea.
-    void EnableDoubleClick (bool b);
+    void SetKeyboardReceiverIgnoreMouseDownOutside(bool ignore_mouse_down_outside);
 
-    //! Return True if the double click signal is enable for this InputArea.
-    bool IsDoubleClickEnabled();
-    void EnableUserKeyboardProcessing (bool b);
-    bool IsUserKeyboardProcessingEnabled();
+    bool KeyboardReceiverIgnoreMouseDownOutside();
 
     virtual bool IsArea() const
     {
@@ -133,7 +122,7 @@ namespace nux
     unsigned short getKeyState (int nVirtKey);
 
     // This method reset the mouse position inside the Area. This is necessary for areas that serve as Drag
-    // when the area position is reffered to (x_root, y_root) instead of being the system window coordinates (0, 0).
+    // when the area position is referred to (x_root, y_root) instead of being the system window coordinates (0, 0).
     void SetAreaMousePosition (int x, int y);
 
     void GrabPointer ();
@@ -142,6 +131,33 @@ namespace nux
     void UnGrabKeyboard ();
     bool OwnsPointerGrab ();
     bool OwnsKeyboardGrab ();
+
+    //! Return true if this Area is the owner of the mouse pointer.
+    /*!
+        The owner of the mouse pointer is the Area that has received a Mouse down event and the 
+        mouse button responsible for the event is still pressed.
+        
+        @return True if this Area is the owner of the mouse pointer.
+    */
+    bool IsMouseOwner();
+
+    //! Return true if the mouse pointer is inside the Area.
+    /*!
+        Return true if during a call to FindAreaUnderMouse it the Area has been determined to be directly under the
+        mouse pointer. Note that is is true only for the first area that is found. there might be other areas that 
+        which have the mouse pointer inside of them.
+        
+        @return Return true if the mouse pointer is inside the Area.
+    */
+    bool IsMouseInside();
+
+    //! Enable the double click signal on this InputArea.
+    void SetEnableDoubleClickEnable(bool double_click);
+
+    //! Return True if the double click signal is enable for this InputArea.
+    bool DoubleClickEnable() const;
+
+    AreaEventProcessor _event_processor;
 
 #if defined (NUX_OS_LINUX)
     void HandleDndEnter () { ProcessDndEnter (); }
@@ -168,13 +184,12 @@ namespace nux
     int _dnd_safety_y;
 
   protected:
-    AreaEventProcessor _event_processor;
 
     bool _has_keyboard_focus;
     bool _capture_mouse_down_any_where_else;
     bool _double_click;     //!< If True, this InputArea can emit the signal OnMouseDoubleClick. Default is false.
 
-    bool _enable_keyboard_focus_on_mouse_down;  //!< Get the keyboard focus when a mouse down occurs.
+    bool _keyboard_receiver_ignore_mouse_down_outside;
 
 #if defined (NUX_OS_LINUX)
     // DnD support
@@ -305,9 +320,9 @@ namespace nux
     sigc::signal<void> OnEndMouseFocus;
 
     //! Signal emitted when the area gets the keyboard focus. The is a result of a mouse down event or a call to ForceStartFocus.
-    sigc::signal<void> OnStartFocus;
+    sigc::signal<void> OnStartKeyboardReceiver;
     //! Signal emitted when the area looses the keyboard focus.
-    sigc::signal<void> OnEndFocus;
+    sigc::signal<void> OnStopKeyboardReceiver;
 
     //! Signal emitted when the area receives an WM_TAKE_FOCUS ClientMessage
     //sigc::signal<void, Time> OnTakeFocus;
@@ -335,6 +350,40 @@ namespace nux
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDownOutsideArea;
 
     void DoSetFocused (bool focus);
+
+    protected:
+
+      virtual bool AcceptKeyNavFocus();
+
+      // == Signals with 1 to 1 mapping to input device ==
+      virtual void EmitMouseDownSignal        (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
+      virtual void EmitMouseUpSignal          (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
+      virtual void EmitMouseMoveSignal        (int x, int y, int dx, int dy, unsigned long mouse_button_state, unsigned long special_keys_state);
+      virtual void EmitMouseWheelSignal       (int x, int y, int wheel_delta, unsigned long mouse_button_state, unsigned long special_keys_state);
+      virtual void EmitKeyDownSignal          (unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state);
+      virtual void EmitKeyUpSignal            (unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state);
+      virtual void EmitKeyEventSignal         (unsigned long event_type,
+                                              unsigned int key_symbol,
+                                              unsigned long special_keys_state,
+                                              const char* text,
+                                              int key_repeat_count);
+
+      // == Interpreted signals ==
+
+      // Mouse down + mouse move on an area
+      virtual void EmitMouseDragSignal        (int x, int y, int dx, int dy, unsigned long mouse_button_state, unsigned long special_keys_state);
+      virtual void EmitMouseEnterSignal       (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
+      virtual void EmitMouseLeaveSignal       (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
+
+      virtual void EmitMouseClickSignal       (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
+      virtual void EmitMouseDoubleClickSignal (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
+
+      virtual void EmitStartKeyboardFocus();
+      virtual void EmitEndKeyboardFocus();
+
+      virtual void EmitMouseDownOutsideArea   (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
+
+      friend class WindowCompositor;
   };
 
 }

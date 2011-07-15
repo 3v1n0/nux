@@ -26,6 +26,9 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/type_traits/is_enum.hpp>
 
+#include "Color.h"
+
+
 namespace nux {
 namespace type {
 
@@ -79,7 +82,7 @@ struct serializable_impl
       return ResultType(boost::lexical_cast<T>(serialized_form), true);
     }
     catch (boost::bad_lexical_cast const& e) {
-      return ResultType(T(), false);
+      return std::make_pair<T, bool>(T(), false);
     }
   }
 
@@ -137,7 +140,6 @@ struct PropertyTrait<unsigned>
       return serializable_impl<unsigned>::from_string_impl(serialized_form);
   }
 };
-
 
 template <>
 struct PropertyTrait<float>
@@ -212,6 +214,30 @@ struct PropertyTrait<std::string>
   }
 };
 
+
+// template <>
+// struct PropertyTrait<Color>
+// {
+//   typedef Color ValueType;
+
+//   static std::string to_string(Color value)
+//   {
+//     std::string str = std::string("[") +
+//       serializable_impl<float>::to_string_impl(value.red) + std::string(" ") +
+//       serializable_impl<float>::to_string_impl(value.green) + std::string(" ") +
+//       serializable_impl<float>::to_string_impl(value.blue) + std::string(" ") +
+//       serializable_impl<float>::to_string_impl(value.alpha) + std::string(" ") +
+//       std::string("]");
+
+//     return str;
+//   }
+
+//   static std::pair<Color, bool> from_string(std::string const& serialized_form)
+//   {
+//     // todo
+//     return std::make_pair<Color, bool>(color::Red, true);
+//   }
+// };
 
 }
 }

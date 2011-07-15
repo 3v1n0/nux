@@ -41,6 +41,9 @@ namespace nux
     m_Prefix                = TEXT("");
     m_Suffix                = TEXT("");
 
+    key_nav_mode_           = false;
+    text_input_mode_        = false;
+
     SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
@@ -51,8 +54,8 @@ namespace nux
 
     OnKeyEvent.connect (sigc::mem_fun (this, &EditTextBox::RecvKeyEvent) );
 
-    OnStartFocus.connect (sigc::mem_fun (this, &EditTextBox::RecvStartKeyFocus) );
-    OnEndFocus.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
+    OnStartKeyboardReceiver.connect (sigc::mem_fun (this, &EditTextBox::RecvStartKeyFocus) );
+    OnStopKeyboardReceiver.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
 
     SetText (Caption);
     SetTextColor (color::White);
@@ -72,7 +75,8 @@ namespace nux
     m_ScrollTimerFunctor = new TimerFunctor();
     m_ScrollTimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &EditTextBox::ScrollTimerInterrupt) );
 
-    EnableKeyboardFocusOnMouseDown (true);
+    SetAcceptKeyboardEvent(true);
+    SetEnableDoubleClickEnable(true);
   }
 
   EditTextBox::~EditTextBox()
@@ -324,6 +328,10 @@ namespace nux
     const TCHAR*    character  , /*character*/
     unsigned short  keyCount     /*key repeat count*/)
   {
+    
+    if (eventType == NUX_KEYDOWN)
+      text_input_mode_ = true;
+
     m_KeyboardHandler.ProcessKey (eventType, keysym, state, character[0], GetGeometry() );
 
 
@@ -357,6 +365,11 @@ namespace nux
         m_KeyboardHandler.SetText (m_Text);
         m_KeyboardHandler.SelectAllText();
       }
+    }
+
+    if (keysym == NUX_VK_ESCAPE)
+    {
+      text_input_mode_ = false;
     }
 
     NeedRedraw();
@@ -428,12 +441,18 @@ namespace nux
 
   void EditTextBox::RecvStartKeyFocus()
   {
+    key_nav_mode_     = true;
+    text_input_mode_  = false;
+    
     EnteringKeyboardFocus();
     m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
   }
 
   void EditTextBox::RecvEndKeyFocus()
   {
+    key_nav_mode_     = false;
+    text_input_mode_  = false;
+
     QuitingKeyboardFocus();
     GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
@@ -471,4 +490,30 @@ namespace nux
     return false;
   }
 
+  bool EditTextBox::InspectKeyEvent(unsigned int eventType,
+    unsigned int keysym,
+    const char* character)
+  {
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false))
+    {
+      if (keysym == NUX_VK_ENTER ||
+        keysym == NUX_KP_ENTER ||
+        keysym == NUX_VK_UP ||
+        keysym == NUX_VK_DOWN ||
+        keysym == NUX_VK_LEFT ||
+        keysym == NUX_VK_RIGHT ||
+        keysym == NUX_VK_LEFT_TAB ||
+        keysym == NUX_VK_TAB)
+      {
+        return false;
+      }
+    }
+
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == false) && (text_input_mode_ == false))
+    {
+      return false;
+    }
+
+    return true;
+  }
 }

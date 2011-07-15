@@ -49,7 +49,7 @@ namespace nux
         @param num_element Number of elements.
         @param size Number of byte for every element.
     */
-    void Allocate(int num_element, int size);
+    void Allocate(int num_index, int size);
     int GetSize() const;
     int GetStride() const;
     int GetNumElement() const;
@@ -79,13 +79,14 @@ namespace nux
     void Allocate (int Size, int Stride);
     int GetSize() const;
     int GetStride() const;
-    int GetNumElement() const;
+    int GetNumIndex() const;
     const void* GetPtrRawData() const;
     void* GetPtrRawData();
 
   public:
     std::vector<int> _Data;
     int _Stride;
+    int _num_index;
   };
 
   class VertexDeclaration: public ResourceData
@@ -109,6 +110,9 @@ namespace nux
     ObjectPtr<IOpenGLVertexBuffer>	_vertex_buffer;
 
     bool UpdateResource(ResourceData* Resource);
+    int GetElementSize() const;
+    int GetBufferStride() const;
+
   private:
     void LoadVertexData(VertexBuffer* vertex_buffer);
     int _Size;
@@ -125,10 +129,15 @@ namespace nux
     ObjectPtr<IOpenGLIndexBuffer>	_index_buffer;
 
     bool UpdateResource(ResourceData* Resource);
+    int GetElementSize() const;
+    int GetBufferStride() const;
+    int GetNumIndex() const;
+
   private:
     void LoadIndexData(IndexBuffer* index_buffer);
     int _Size;
     int _Stride;
+    int _num_index;
   };
 
   class CachedVertexDeclaration: public CachedResourceData
@@ -215,6 +224,7 @@ namespace nux
     VertexBuffer      *_vertex_buffer;
     IndexBuffer       *_index_buffer;
     VertexDeclaration *_vertex_declaration;
+    NuxMeshPrimitiveType _mesh_primitive_type;
   };
 
   class CachedMeshBuffer: public CachedResourceData
@@ -224,6 +234,7 @@ namespace nux
     ObjectPtr<CachedVertexBuffer> _cached_vertex_buffer;
     ObjectPtr<CachedVertexDeclaration> _cached_vertex_declaration;
     ObjectPtr<CachedIndexBuffer> _cached_index_buffer;
+    NuxMeshPrimitiveType _mesh_primitive_type;
 
     CachedMeshBuffer(NResourceSet* ResourceManager, MeshBuffer* resource);
     ~CachedMeshBuffer();

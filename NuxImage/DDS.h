@@ -98,7 +98,7 @@ namespace nux
 #define DDSCAPS2_CUBEMAP_NEGATIVEZ	0x00008000
 #define DDSCAPS2_VOLUME	0x00200000
 
-  NBitmapData *Load_DDS_File (const TCHAR *filename);
+  NBitmapData* LoadFileFormat_DDS(const TCHAR *filename);
 
 }
 #endif // DDS_H
