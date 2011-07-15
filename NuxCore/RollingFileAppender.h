@@ -25,6 +25,8 @@
 #include <ostream>
 #include <string>
 
+#include <sigc++/sigc++.h>
+
 namespace nux {
 namespace logging {
 
@@ -36,6 +38,8 @@ public:
                       unsigned number_of_backup_files,
                       unsigned long long max_log_size);
   ~RollingFileAppender();
+
+  sigc::signal<void> files_rolled;
 };
 
 }

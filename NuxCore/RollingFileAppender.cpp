@@ -63,7 +63,8 @@ class RollingFileStreamBuffer : public std::stringbuf
 public:
   RollingFileStreamBuffer(std::string const& filename,
                           unsigned number_of_backup_files,
-                          unsigned long long max_log_size);
+                          unsigned long long max_log_size,
+                          sigc::signal<void>& files_rolled);
   ~RollingFileStreamBuffer();
 protected:
   virtual int sync();
@@ -78,15 +79,18 @@ private:
   unsigned long long max_log_size_;
   unsigned long long bytes_written_;
   sigc::connection writer_closed_;
+  sigc::signal<void>& files_rolled_;
 };
 
 RollingFileStreamBuffer::RollingFileStreamBuffer(std::string const& filename,
                                                  unsigned number_of_backup_files,
-                                                 unsigned long long max_log_size)
+                                                 unsigned long long max_log_size,
+                                                 sigc::signal<void>& files_rolled)
   : filename_(filename)
   , number_of_backup_files_(number_of_backup_files)
   , max_log_size_(max_log_size)
   , bytes_written_(0)
+  , files_rolled_(files_rolled)
 {
   // Make sure that the filename starts with a '/' for a full path.
   if (filename.empty() || filename[0] != '/') {
@@ -164,6 +168,12 @@ void RollingFileStreamBuffer::AsyncWriterClosed()
   RotateFiles();
   writer_.reset(new AsyncFileWriter(filename_));
   bytes_written_ = 0;
+  // We emit the files_rolled_ here and not in the RotateFiles method as the
+  // RotateFiles is called from the constructor, which has a reference to the
+  // files_rolled signal from the parent stream.  If this is emitted due
+  // rotating the files in the contructor, we get a seg fault due to trying to
+  // use the signal before it is constructed.
+  files_rolled_.emit();
 }
 
 int RollingFileStreamBuffer::sync()
@@ -195,7 +205,7 @@ int RollingFileStreamBuffer::sync()
 } // anon namespace
 
 RollingFileAppender::RollingFileAppender(std::string const& filename)
-  : std::ostream(new RollingFileStreamBuffer(filename, 5, 1e7))
+  : std::ostream(new RollingFileStreamBuffer(filename, 5, 1e7, files_rolled))
 {
 }
 
@@ -204,7 +214,8 @@ RollingFileAppender::RollingFileAppender(std::string const& filename,
                                          unsigned long long max_log_size)
   : std::ostream(new RollingFileStreamBuffer(filename,
                                              number_of_backup_files,
-                                             max_log_size))
+                                             max_log_size,
+                                             files_rolled))
 {
 }
 
