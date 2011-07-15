@@ -52,6 +52,9 @@ namespace nux
     _hscrollbar->SetParentObject (this);
     _vscrollbar->SetParentObject (this);
 
+    _hscrollbar->SetReconfigureParentLayoutOnGeometryChange(false);
+    _vscrollbar->SetReconfigureParentLayoutOnGeometryChange(false);
+
     SetMinimumSize (30, 30);
     SetGeometry (Geometry (0, 0, 400, 200) );
 
@@ -95,6 +98,7 @@ namespace nux
 
     _vscrollbar->Reference ();
     _vscrollbar->SetParentObject (this);
+    _vscrollbar->SetReconfigureParentLayoutOnGeometryChange(false);
 
     // connect new _vscrollbar
     _vscrollbar->OnScrollUp.connect (sigc::mem_fun (this,

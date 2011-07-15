@@ -467,12 +467,6 @@ namespace nux
 
     void UnRegisterWindow(BaseWindow*);
 
-    //! Performs a pre-event cycle on ViewWindows.
-    void ViewWindowPreEventCycle();
-
-    //! Performs a post-event cycle on ViewWindows.
-    void ViewWindowPostEventCycle();
-
     //! Performs event cycle on menus.
     long MenuEventCycle(Event &event, long TraverseInfo, long ProcessEventInfo);
 

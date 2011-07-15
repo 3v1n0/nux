@@ -50,7 +50,7 @@ namespace nux
     _visible = true;
     _sensitive = true;
 
-    _on_geometry_changeg_reconfigure_parent_layout = false;
+    _on_geometry_changeg_reconfigure_parent_layout = true;
     _accept_mouse_wheel_event = false;
     _accept_keyboard_event = false;
 
@@ -416,8 +416,8 @@ namespace nux
 
   void Area::ReconfigureParentLayout(Area *child)
   {
-    /*if(_on_geometry_changeg_reconfigure_parent_layout == false)
-      return;*/
+    if(_on_geometry_changeg_reconfigure_parent_layout == false)
+      return;
 
     if (GetWindowThread ()->IsComputingLayout() )
     {
