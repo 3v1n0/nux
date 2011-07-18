@@ -173,8 +173,8 @@ namespace nux
     OnMouseWheel.connect (sigc::mem_fun (this, &TextView::RecvMouseWheel) );
     OnKeyEvent.connect (sigc::mem_fun (this, &TextView::RecvKeyEvent) );
 
-    OnStartFocus.connect (sigc::mem_fun (this, &TextView::RecvStartFocus) );
-    OnEndFocus.connect (sigc::mem_fun (this, &TextView::RecvEndFocus) );
+    OnStartKeyboardReceiver.connect (sigc::mem_fun (this, &TextView::RecvStartFocus) );
+    OnStopKeyboardReceiver.connect (sigc::mem_fun (this, &TextView::RecvEndFocus) );
 
     MouseAutoScrollTimer = new TimerFunctor;
     MouseAutoScrollTimer->OnTimerExpired.connect (sigc::mem_fun (this, &TextView::RecvTimer) );

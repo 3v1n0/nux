@@ -377,41 +377,42 @@ namespace nux
 
   void MenuBar::RecvItemMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
   {
-    // Transition between one menu bar item to another
-    if (GetWindowCompositor().GetMouseFocusArea() == menubar_item->area)
-    {
-      if (!menubar_item->area->IsMouseInside() ) // can also test GetWindowCompositor().GetMouseOverArea() != &menubar_item->area
-      {
-        std::list< MenuBarItem * >::iterator it;
-        // compute window coordinates x and y;
-        int winx = menubar_item->area->GetBaseX() + x;
-        int winy = menubar_item->area->GetBaseY() + y;
-
-        for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
-        {
-          InputArea *area = (*it)->area;
-          Geometry geometry = area->GetGeometry();
-
-          if (geometry.IsPointInside (winx, winy) )
-          {
-            // Close the menu below menubar_item (the one that has the focus
-            menubar_item->area->ForceStopFocus (0, 0);
-
-            // EmitItemMouseEnter is going to open the menu below (*it)
-            {
-              EmitItemMouseEnter (winx, winy, button_flags, key_flags, (*it) );
-              m_IsOpeningMenu = true;
-              area->ForceStartFocus (0, 0);
-
-              GetWindowCompositor().SetMouseFocusArea (area);
-              GetWindowCompositor().SetMouseOverArea (area);
-            }
-
-            break;
-          }
-        }
-      }
-    }
+    // TODO: Port to new event architecture
+//     // Transition between one menu bar item to another
+//     if (GetWindowCompositor().GetMouseFocusArea() == menubar_item->area)
+//     {
+//       if (!menubar_item->area->IsMouseInside() ) // can also test GetWindowCompositor().GetMouseOverArea() != &menubar_item->area
+//       {
+//         std::list< MenuBarItem * >::iterator it;
+//         // compute window coordinates x and y;
+//         int winx = menubar_item->area->GetBaseX() + x;
+//         int winy = menubar_item->area->GetBaseY() + y;
+// 
+//         for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
+//         {
+//           InputArea *area = (*it)->area;
+//           Geometry geometry = area->GetGeometry();
+// 
+//           if (geometry.IsPointInside (winx, winy) )
+//           {
+//             // Close the menu below menubar_item (the one that has the focus
+//             menubar_item->area->ForceStopFocus (0, 0);
+// 
+//             // EmitItemMouseEnter is going to open the menu below (*it)
+//             {
+//               EmitItemMouseEnter (winx, winy, button_flags, key_flags, (*it) );
+//               m_IsOpeningMenu = true;
+//               area->ForceStartFocus (0, 0);
+// 
+//               GetWindowCompositor().SetMouseFocusArea (area);
+//               GetWindowCompositor().SetMouseOverArea (area);
+//             }
+// 
+//             break;
+//           }
+//         }
+//       }
+//     }
   }
 
   void MenuBar::RecvSigActionTriggered (MenuPage *menu, ActionItem *action)

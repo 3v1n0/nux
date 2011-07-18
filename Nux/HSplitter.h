@@ -63,6 +63,8 @@ namespace nux
       return true;
     }
 
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
   protected:
     virtual long ComputeChildLayout();
     virtual void DoneRedraw();
@@ -76,6 +78,9 @@ namespace nux
     {
       return m_ResizeOnSplitterRelease;
     }
+
+    virtual bool AcceptKeyNavFocus();
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
 
   private:
     typedef InputArea MySplitter;

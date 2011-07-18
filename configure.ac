@@ -138,6 +138,7 @@ PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
                   gl
+                  glu
                   glew
                   glewmx
                   xxf86vm
@@ -151,6 +152,7 @@ PKG_CHECK_MODULES(NUX,
                   gdk-pixbuf-2.0
                   gthread-2.0
                   gl
+                  glu
                   glew
                   glewmx
                   sigc++-2.0

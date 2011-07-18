@@ -34,20 +34,29 @@ namespace nux
   public:
     virtual ~IOpenGLVertexDeclaration();
 
-//     int GetDeclaration(
-//       VERTEXELEMENT *pDecl,
-//       unsigned int *pNumElements);
-
     VERTEXELEMENT GetUsage(ATTRIB_USAGE_DECL usage);
     bool IsUsingMoreThanStreamZero();
+    int GetStride(int vertex_input_number);
+
+    void SetVertexShaderAttributeLocation(int input_index, int shader_attribute_location);
+    int GetVertexShaderAttributeLocation(int input_index);
 
   private:
+    void SetVertexBuffer(int input_index, ObjectPtr<IOpenGLVertexBuffer> vertex_buffer);
+    ObjectPtr<IOpenGLVertexBuffer> GetVertexBuffer(int input_index);
+
     IOpenGLVertexDeclaration (const VERTEXELEMENT *pVertexElements);
 
     int _stride[8]; //!< Stride for each stream
     int _valid_vertex_input[16]; // Vertex Input valid for this vertex declaration
+
+    int shader_attribute_location_array[8];
+
+    std::vector<ObjectPtr<IOpenGLVertexBuffer> > vertex_buffer_array;
     std::vector<VERTEXELEMENT> _declarations_array;
+    
     friend class GpuDevice;
+    friend class CachedMeshBuffer;
   };
 
 }

@@ -105,9 +105,9 @@ namespace nux
   {
     hlayout             = new HLayout (TEXT ("RGBValuatorLayout"), NUX_TRACKER_LOCATION);
     redlayout           = new HLayout (TEXT ("RedLayout"), NUX_TRACKER_LOCATION);
-    greenlayout         = new HLayout (NUX_TRACKER_LOCATION);
-    bluelayout          = new HLayout (NUX_TRACKER_LOCATION);
-    alphalayout         = new HLayout (NUX_TRACKER_LOCATION);
+    greenlayout         = new HLayout (TEXT ("GreenLayout"), NUX_TRACKER_LOCATION);
+    bluelayout          = new HLayout (TEXT ("BlueLayout"), NUX_TRACKER_LOCATION);
+    alphalayout         = new HLayout (TEXT ("AlphaLayout"), NUX_TRACKER_LOCATION);
     vlayout             = new VLayout (TEXT ("RGBVLayout"), NUX_TRACKER_LOCATION);
     colormodel_layout   = new VLayout (TEXT ("ColorModel"), NUX_TRACKER_LOCATION);
 
@@ -1486,4 +1486,8 @@ namespace nux
     sigColorChanged.emit (rgb_.red, rgb_.green, rgb_.blue, alpha_);
   }
 
+  bool RGBValuator::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

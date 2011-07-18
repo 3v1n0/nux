@@ -241,4 +241,8 @@ namespace nux
     }
   }
 
+  bool GroupBox::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

@@ -189,10 +189,15 @@ namespace nux
     */
     bool HasPassiveFocus ();
 
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
+    virtual bool AcceptKeyNavFocus();
+
+    void IsHitDetectionSkipingChildren(bool skip_children);
+
   protected:
     bool _can_focus;
 
-    void OnChildFocusChanged (Area *parent, Area *child);
+    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
@@ -227,6 +232,12 @@ namespace nux
 
     virtual void GeometryChangePending ();
     virtual void GeometryChanged ();
+
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
+    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
+                          unsigned long x11_key_code,
+                          unsigned long special_keys_state);
 
     Layout *m_CompositionLayout;
 

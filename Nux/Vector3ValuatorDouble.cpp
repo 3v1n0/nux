@@ -146,7 +146,7 @@ namespace nux
     if (m_XEdit->IsMouseInside() ||
         m_YEdit->IsMouseInside() ||
         m_ZEdit->IsMouseInside() ||
-        m_MouseControlledButton->HasMouseFocus() || m_MouseControlledButton->IsMouseInside() )
+        m_MouseControlledButton->IsMouseOwner() || m_MouseControlledButton->IsMouseInside() )
     {
 
       GetPainter().PushDrawShapeLayer (GfxContext, geo, eSHAPE_CORNER_ROUND4, SPINBOX_BUTTON_MOUSEOVER_COLOR, eCornerTopLeft | eCornerBottomLeft);

@@ -39,7 +39,6 @@ namespace nux
   public:
     ComboBoxSimple (NUX_FILE_LINE_PROTO);
     ~ComboBoxSimple();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     // make the class abstract
 //    virtual void Draw(GraphicsEngine& GfxContext, bool force_draw);
@@ -84,6 +83,11 @@ namespace nux
     sigc::signal<void, ActionItem *> sigActionTriggered;
 
   protected:
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
+    void RecvClosingMenuSignal(MenuPage* menu_page);
+
     MenuPage   *m_CurrentMenu;
     ActionItem *m_SelectedAction;
 
