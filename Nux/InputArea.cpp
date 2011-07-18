@@ -406,7 +406,7 @@ logging::Logger logger("nux.inputarea");
 
   bool InputArea::IsMouseOwner()
   {
-    return NUX_STATIC_CAST(InputArea*, GetWindowCompositor().GetMouseOwnerArea()) == this;
+    return (GetWindowCompositor().GetMouseOwnerArea() == this);
   }
 
   // == Signals with 1 to 1 mapping to input device ==
@@ -501,7 +501,7 @@ logging::Logger logger("nux.inputarea");
   {
     if(TestMousePointerInclusion(mouse_position, event_type))
     {
-      return NUX_STATIC_CAST(Area*, this);
+      return this;
     }
     return NULL;
   }

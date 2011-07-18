@@ -776,7 +776,7 @@ namespace nux
 
   void WindowCompositor::KeyboardEventCycle(Event &event)
   {
-    InputArea* keyboard_event_grab_view = NUX_STATIC_CAST(InputArea*, GetKeyboardGrabArea());
+    InputArea* keyboard_event_grab_view = GetKeyboardGrabArea();
 
     InputArea* focus_area = NULL;   // The view under the mouse
     BaseWindow* base_window = NULL; // The BaseWindow below the mouse pointer.

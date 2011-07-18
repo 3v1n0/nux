@@ -282,7 +282,7 @@ namespace nux
 
       for (it = _layout_element_list.rbegin (); it != eit; ++it)
       {
-        Area *area = static_cast<Area *> (*it);
+        Area *area = (*it);
 
         if (area->IsVisible () && area->IsSensitive ())
         {
@@ -314,7 +314,7 @@ namespace nux
 
       for (it = _layout_element_list.rbegin (); it != eit; ++it)
       {
-        Area *area = static_cast<Area *> (*it);
+        Area *area = (*it);
 
         if (area->IsVisible () && area->IsSensitive ())
         {
