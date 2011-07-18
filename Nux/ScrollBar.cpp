@@ -31,6 +31,7 @@ namespace nux
   {
     m_visible   = 1;
     m_ScrollUnit = 5;
+    visibility_percentage_ = 0.0f;
   }
 
   ScrollBar::~ScrollBar()

@@ -692,6 +692,9 @@ namespace nux
     if (m_active_area == NULL)
       return NULL;
 
+    if (m_active_area->IsVisible() == false)
+      return NULL;
+
     if (next_object_to_key_focus_area_)
     {
       return NULL;

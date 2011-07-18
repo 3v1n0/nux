@@ -107,13 +107,13 @@ namespace nux
     InputArea *_scroll_right_button;
     InputArea *_track;
 
-    int m_contentWidth;
-    int m_contentHeight;
-    float m_contentOffsetX;
-    float m_contentOffsetY;
+    int content_width_;
+    int content_height_;
+    float content_offset_x_;
+    float content_offset_y_;
 
-    int m_containerWidth;
-    int m_containerHeight;
+    int container_width_;
+    int container_height_;
 
     int m_TrackWidth;
     int m_TrackHeight;

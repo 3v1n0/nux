@@ -35,16 +35,16 @@ namespace nux
   HScrollBar::HScrollBar (NUX_FILE_LINE_DECL)
     :   ScrollBar (NUX_FILE_LINE_PARAM)
   {
-    m_contentWidth      = 0;
-    m_contentHeight     = 0;
-    m_containerWidth    = 0;
-    m_containerHeight   = 0;
+    content_width_      = 0;
+    content_height_     = 0;
+    container_width_    = 0;
+    container_height_   = 0;
     m_TrackWidth        = 0;
     m_TrackHeight       = 0;
     m_SlideBarOffsetX   = 0;
     m_SlideBarOffsetY   = 0;
-    m_contentOffsetX    = 0;
-    m_contentOffsetY    = 0;
+    content_offset_x_    = 0;
+    content_offset_y_    = 0;
     b_MouseUpTimer      = false;
     b_MouseDownTimer    = false;
     m_color_factor      = 1.0f;
@@ -176,7 +176,7 @@ namespace nux
   {
     if (m_TrackMouseCoord.x < _slider->GetBaseX() - _track->GetBaseX() )
     {
-      OnScrollLeft.emit (m_containerWidth, 1);
+      OnScrollLeft.emit (container_width_, 1);
       m_TrackLeftTimerHandler  = GetTimer().AddTimerHandler (10, trackleft_callback, this);
       NeedRedraw();
     }
@@ -186,7 +186,7 @@ namespace nux
   {
     if (m_TrackMouseCoord.x > _slider->GetBaseX() + _slider->GetBaseWidth() - _track->GetBaseX() )
     {
-      OnScrollRight.emit (m_containerWidth, 1);
+      OnScrollRight.emit (container_width_, 1);
       m_TrackRightTimerHandler  = GetTimer().AddTimerHandler (10, trackright_callback, this);
       NeedRedraw();
     }
@@ -304,53 +304,41 @@ namespace nux
   void HScrollBar::SetContainerSize (int x, int y, int w, int h)
   {
     // x and y are not needed
-    m_containerWidth = w;
-    m_containerHeight = h;
+    container_width_ = w;
+    container_height_ = h;
     ComputeScrolling();
   }
 
   void HScrollBar::SetContentSize (int x, int y, int w, int h)
   {
     // x and y are not needed
-    m_contentWidth = w;
-    m_contentHeight = h;
+    content_width_ = w;
+    content_height_ = h;
     ComputeScrolling();
   }
 
   void HScrollBar::SetContentOffset (float dx, float dy)
   {
-    m_contentOffsetX = dx;
-    m_contentOffsetY = dy;
+    content_offset_x_ = dx;
+    content_offset_y_ = dy;
     ComputeScrolling();
   }
 
   void HScrollBar::ComputeScrolling()
   {
-    float percentage = 0;
-
-    if (m_contentWidth == 0)
+    if (content_width_ == 0)
     {
-      percentage = 100.0f;
+      visibility_percentage_ = 100.0f;
     }
     else
     {
-      percentage = 100.0f * (float) m_containerWidth / (float) m_contentWidth;
-    }
-
-    if (percentage > 100.0f)
-    {
-      percentage = 100.0f;
-    }
-
-    if (percentage < 0.0f)
-    {
-      percentage = 0.0f;
+      visibility_percentage_ = Clamp<float>(100.0f * (float) container_width_ / (float) content_width_, 0.0f, 100.0f);
     }
 
     m_TrackWidth = _track->GetBaseWidth();
 
     int slider_height = _scroll_left_button->GetBaseHeight();
-    int slider_width = m_TrackWidth * percentage / 100.0f;
+    int slider_width = m_TrackWidth * visibility_percentage_ / 100.0f;
 
     if (slider_width < 15)
     {
@@ -364,8 +352,8 @@ namespace nux
 
     float pct;
 
-    if (m_contentWidth - m_containerWidth > 0)
-      pct = - (float) m_contentOffsetX / (float) (m_contentWidth - m_containerWidth);
+    if (content_width_ - container_width_ > 0)
+      pct = - (float) content_offset_x_ / (float) (content_width_ - container_width_);
     else
       pct = 0;
 
@@ -412,7 +400,7 @@ namespace nux
   {
     if (_track->GetBaseWidth() - _slider->GetBaseWidth() > 0)
     {
-      stepX = (float) (m_contentWidth - m_containerWidth) / (float) (_track->GetBaseWidth() - _slider->GetBaseWidth() );
+      stepX = (float) (content_width_ - container_width_) / (float) (_track->GetBaseWidth() - _slider->GetBaseWidth() );
     }
     else
     {

@@ -373,6 +373,8 @@ namespace nux
 
   void ScrollView::PreLayoutManagement()
   {
+    // Reset the client view to the top left corner of the container.
+    _delta_x = _delta_y = 0;
     // Give the managed layout the same size and position as the Control.
 
     Geometry geo = GetGeometry();

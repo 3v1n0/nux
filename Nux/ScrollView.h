@@ -232,6 +232,8 @@ namespace nux
     int m_ViewContentRightMargin;
     int m_ViewContentTopMargin;
     int m_ViewContentBottomMargin;
+
+    int top_hidden_surface_;
   };
 }
 

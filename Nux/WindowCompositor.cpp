@@ -1517,9 +1517,10 @@ namespace nux
 
     if (key_focus_area_)
     {
+      // key focus test
       Geometry geo= key_focus_area_->GetRootGeometry();
 
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
+      //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
     }
 
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);

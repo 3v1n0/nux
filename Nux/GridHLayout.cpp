@@ -418,72 +418,88 @@ namespace nux
 
   void GridHLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
+    if (_layout_element_list.size() == 0)
+      return;
+
     std::list<Area *> elements;
     std::list<Area *>::iterator it = _layout_element_list.begin ();
 
     GfxContext.PushModelViewMatrix(Get2DMatrix());
 
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
-    {
-      if ((*it)->IsVisible())
-        elements.push_back(*it);
-    }
-
-    it = elements.begin();
-
     Geometry base = GetGeometry();
-    Geometry parent_geometry = GetAbsoluteGeometry();
-    Geometry visibility_geometry = parent_geometry;
+    Geometry absolute_geometry = GetAbsoluteGeometry();
+    Geometry parent_geometry = absolute_geometry;
+    Geometry visibility_geometry = absolute_geometry;
     if (GetToplevel())
     {
       parent_geometry = GetToplevel()->GetAbsoluteGeometry();
     }
 
-    visibility_geometry = parent_geometry.Intersect(GetAbsoluteGeometry());
+    visibility_geometry = parent_geometry.Intersect(absolute_geometry);
 
     GfxContext.PushClippingRectangle(base);
-  
+
+    it = _layout_element_list.begin();
+
     bool first = false;
     bool last = false;
     for (int j = 0; j < _num_row; j++)
     {
       for (int i = 0; i < _num_column; i++)
       {
-        if (it == elements.end())
+        if (it == _layout_element_list.end())
           break;
 
-        Geometry intersection = visibility_geometry.Intersect((*it)->GetAbsoluteGeometry());
+        if ((*it)->IsVisible() == false)
+        {
+          ++it;
+          continue;
+        }
+
+        Geometry it_geo = (*it)->GetAbsoluteGeometry();
+        Geometry intersection = visibility_geometry.Intersect(it_geo);
 
         // Test if the element is inside the Grid before rendering.
         if (!intersection.IsNull())
         {
-          first = true;
-          int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
-          int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
+          if (first == false)
+          {
+            first = true; // First invisible child.
+          }
 
-          GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
+          int x = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
+          int y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
 
-          if ((*it)->IsView ())
+          GfxContext.PushClippingRectangle(Geometry (x, y, _children_size.width, _children_size.height));
+
+          if ((*it)->IsView())
           {
             View *ic = static_cast<View *>(*it);
-            ic->ProcessDraw (GfxContext, force_draw);
+            ic->ProcessDraw(GfxContext, force_draw);
           }
-          else if ((*it)->IsLayout ())
+          else if ((*it)->IsLayout())
           {
             Layout *layout = static_cast<Layout *>(*it);
-            layout->ProcessDraw (GfxContext, force_draw);
+            layout->ProcessDraw(GfxContext, force_draw);
           }
 
-          GfxContext.PopClippingRectangle ();
+          GfxContext.PopClippingRectangle();
         }
         else
         {
           if (first)
+          {
+            // First invisible child. Exit!
             last = true;
+          }
         }
 
         if (first && last)
+        {
+          // Early exit
           break;
+        }
+
         it++;
       }
       if (first && last)
@@ -499,6 +515,9 @@ namespace nux
   Area* GridHLayout::KeyNavIteration(KeyNavDirection direction)
   {
     if (_layout_element_list.size() == 0)
+      return NULL;
+
+    if (IsVisible() == false)
       return NULL;
 
     if (next_object_to_key_focus_area_)

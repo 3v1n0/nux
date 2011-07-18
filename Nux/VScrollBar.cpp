@@ -35,16 +35,16 @@ namespace nux
   VScrollBar::VScrollBar (NUX_FILE_LINE_DECL)
     :   ScrollBar (NUX_FILE_LINE_PARAM)
   {
-    m_contentWidth      = 0;
-    m_contentHeight     = 0;
-    m_containerWidth    = 0;
-    m_containerHeight   = 0;
+    content_width_      = 0;
+    content_height_     = 0;
+    container_width_    = 0;
+    container_height_   = 0;
     m_TrackWidth        = 0;
     m_TrackHeight       = 0;
     m_SlideBarOffsetX   = 0;
     m_SlideBarOffsetY   = 0;
-    m_contentOffsetX    = 0;
-    m_contentOffsetY    = 0;
+    content_offset_x_    = 0;
+    content_offset_y_    = 0;
     b_MouseUpTimer      = false;
     b_MouseDownTimer    = false;
     m_color_factor      = 1.0f;
@@ -181,7 +181,7 @@ namespace nux
   {
     if (m_TrackMouseCoord.y < _slider->GetBaseY() - _track->GetBaseY() )
     {
-      OnScrollUp.emit (m_containerHeight, 1);
+      OnScrollUp.emit (container_height_, 1);
       m_TrackUpTimerHandler  = GetTimer().AddTimerHandler (10, trackup_callback, this);
       NeedRedraw();
     }
@@ -191,7 +191,7 @@ namespace nux
   {
     if (m_TrackMouseCoord.y > _slider->GetBaseY() + _slider->GetBaseHeight() - _track->GetBaseY() )
     {
-      OnScrollDown.emit (m_containerHeight, 1);
+      OnScrollDown.emit (container_height_, 1);
       m_TrackDownTimerHandler  = GetTimer().AddTimerHandler (10, trackdown_callback, this);
       NeedRedraw();
     }
@@ -307,7 +307,7 @@ namespace nux
                          Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f),
                          eVSCROLLBAR, true);*/
 
-    if (m_contentHeight > m_containerHeight)
+    if (content_height_ > container_height_)
     {
       Geometry slider_geo = _slider->GetGeometry ();
       GfxContext.QRP_Color (slider_geo.x, slider_geo.y, slider_geo.width, slider_geo.height,
@@ -318,53 +318,41 @@ namespace nux
 
   void VScrollBar::SetContainerSize (int x, int y, int w, int h)
   {
-    m_containerWidth = w;
-    m_containerHeight = h;
+    container_width_ = w;
+    container_height_ = h;
     ComputeScrolling();
   }
 
   void VScrollBar::SetContentSize (int x, int y, int w, int h)
   {
     // x and y are not needed
-    m_contentWidth = w;
-    m_contentHeight = h;
+    content_width_ = w;
+    content_height_ = h;
     ComputeScrolling();
   }
 
   void VScrollBar::SetContentOffset (float dx, float dy)
   {
-    m_contentOffsetX = dx;
-    m_contentOffsetY = dy;
+    content_offset_x_ = dx;
+    content_offset_y_ = dy;
     ComputeScrolling();
   }
 
   void VScrollBar::ComputeScrolling()
   {
-    float percentage = 0;
-
-    if (m_contentHeight == 0)
+    if (content_height_ == 0)
     {
-      percentage = 100.0f;
+      visibility_percentage_ = 100.0f;
     }
     else
     {
-      percentage = 100.0f * (float) m_containerHeight / (float) m_contentHeight;
-    }
-
-    if (percentage > 100.0f)
-    {
-      percentage = 100.0f;
-    }
-
-    if (percentage < 0.0f)
-    {
-      percentage = 0.0f;
+      visibility_percentage_ = Clamp<float>(100.0f * (float) container_height_ / (float) content_height_, 0.0f, 100.0f);
     }
 
     m_TrackHeight = _track->GetBaseHeight();
 
     int slider_width = _scroll_up_button->GetBaseWidth();
-    int slider_height = m_TrackHeight * percentage / 100.0f;
+    int slider_height = m_TrackHeight * visibility_percentage_ / 100.0f;
 
     if (slider_height < 15)
     {
@@ -377,8 +365,8 @@ namespace nux
 
     float pct;
 
-    if (m_contentHeight - m_containerHeight > 0)
-      pct = - (float) m_contentOffsetY / (float) (m_contentHeight - m_containerHeight);
+    if (content_height_ - container_height_ > 0)
+      pct = - (float) content_offset_y_ / (float) (content_height_ - container_height_);
     else
       pct = 0;
 
@@ -431,7 +419,7 @@ namespace nux
   {
     if (_track->GetBaseHeight() - _slider->GetBaseHeight() > 0)
     {
-      stepY = (float) (m_contentHeight - m_containerHeight) / (float) (_track->GetBaseHeight() - _slider->GetBaseHeight() );
+      stepY = (float) (content_height_ - container_height_) / (float) (_track->GetBaseHeight() - _slider->GetBaseHeight() );
     }
     else
     {

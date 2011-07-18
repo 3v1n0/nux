@@ -669,6 +669,9 @@ namespace nux
       return NULL;
     }
 
+    if (IsVisible() == false)
+      return NULL;
+
     if (AcceptKeyNavFocus())
     {
       QueueDraw();

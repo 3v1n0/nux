@@ -847,6 +847,9 @@ namespace nux
     if (_layout_element_list.size() == 0)
       return NULL;
 
+    if (IsVisible() == false)
+      return NULL;
+
     if (next_object_to_key_focus_area_)
     {
       if ((direction == KEY_NAV_UP) || (direction == KEY_NAV_DOWN))
