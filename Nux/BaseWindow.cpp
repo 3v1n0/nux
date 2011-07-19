@@ -560,7 +560,7 @@ namespace nux
     return _opacity;
   }
 
-  void BaseWindow::SetAcceptkKeyNavFocus(bool accept)
+  void BaseWindow::SetAcceptKeyNavFocus(bool accept)
   {
     accept_key_nav_focus_ = accept;
   }

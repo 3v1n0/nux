@@ -481,12 +481,6 @@ namespace nux
       i++;
     }
 
-//     // Set the LayeredLayout to the same saize as the active layer;
-//     if(m_active_area)
-//     {
-//       SetGeometry(m_active_area->GetGeometry());
-//     }
-
     QueueDraw ();
   }
 
