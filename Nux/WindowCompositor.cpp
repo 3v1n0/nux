@@ -263,7 +263,7 @@ namespace nux
 
     if (mouse_over_area_)
     {
-      mouse_over_view_connection_ = mouse_over_area_->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseOverViewDestroyed));
+      mouse_over_view_connection_ = mouse_over_area_->OnDestroyed.connect(sigc::mem_fun (this, &WindowCompositor::OnMouseOverViewDestroyed));
     }
   }
 
@@ -283,7 +283,7 @@ namespace nux
 
     if (mouse_owner_area_)
     {
-      mouse_owner_view_connection_ = mouse_owner_area_->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseOwnerViewDestroyed));
+      mouse_owner_view_connection_ = mouse_owner_area_->OnDestroyed.connect(sigc::mem_fun (this, &WindowCompositor::OnMouseOwnerViewDestroyed));
     }
   }
 
@@ -311,7 +311,10 @@ namespace nux
   {
     // mouse_owner_area_: the view that has the mouse down
     // mouse_over_area_: the view that is directly below the mouse pointer
-    
+
+    int dx = event.e_x - _mouse_position.x;
+    int dy = event.e_y - _mouse_position.y;
+
     _mouse_position = Point(event.e_x, event.e_y);
 
     if (mouse_owner_area_ == NULL)
@@ -396,7 +399,7 @@ namespace nux
           }
 
           // Send a "mouse mouse signal".
-          mouse_over_area_->EmitMouseMoveSignal(hit_view_x, hit_view_y, event.e_dx, event.e_dy, event.GetMouseState(), event.GetKeyState());
+          mouse_over_area_->EmitMouseMoveSignal(hit_view_x, hit_view_y, dx, dy, event.GetMouseState(), event.GetKeyState());
         }
         else if (hit_view && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
         {
@@ -427,7 +430,7 @@ namespace nux
           // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
           // from the area returned by GetAreaUnderMouse, then stop that receiver from receiving anymore keyboard events and switch
           // make the found area the new receiver (if it accept keyboard events).
-          if (mouse_over_area_ != GetKeyNavFocusArea())
+          if (mouse_over_area_ != GetKeyFocusArea())
           {
             InputArea* grab_area = GetKeyboardGrabArea();
             if (grab_area)
@@ -464,9 +467,9 @@ namespace nux
             mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
           }
 
-//           if(GetKeyNavFocusArea() && (event.e_event == NUX_MOUSE_PRESSED))
+//           if(GetKeyFocusArea() && (event.e_event == NUX_MOUSE_PRESSED))
 //           {
-//             InputArea* grab_area = GetKeyNavFocusArea();
+//             InputArea* grab_area = GetKeyFocusArea();
 // 
 //             if(grab_area)
 //             {
@@ -621,7 +624,7 @@ namespace nux
           _mouse_owner_menu_page = hit_menu_page;
           _mouse_position_on_owner = Point(hit_menu_page_x, hit_menu_page_y);
 
-          if(_mouse_over_menu_page != GetKeyNavFocusArea())
+          if(_mouse_over_menu_page != GetKeyFocusArea())
           {
             if(_mouse_over_menu_page->AcceptKeyboardEvent())
               SetKeyFocusArea(_mouse_over_menu_page);
@@ -1933,7 +1936,7 @@ namespace nux
     }
   }
 
-  InputArea* WindowCompositor::GetKeyNavFocusArea()
+  InputArea* WindowCompositor::GetKeyFocusArea()
   {
     return key_focus_area_;
   }
@@ -2069,10 +2072,10 @@ namespace nux
 
   void WindowCompositor::ResetDnDArea()
   {
-    SetDnDArea (NULL);
+    SetDnDArea(NULL);
   }
 
-  void WindowCompositor::SetDnDArea (InputArea* area)
+  void WindowCompositor::SetDnDArea(InputArea* area)
   {
 #if defined (NUX_OS_LINUX)
     if (_dnd_area == area)
@@ -2093,28 +2096,27 @@ namespace nux
 #endif
   }
 
-  InputArea* WindowCompositor::GetDnDArea ()
+  InputArea* WindowCompositor::GetDnDArea()
   {
     return _dnd_area;
   }
 
-
-  bool WindowCompositor::GrabPointerAdd (InputArea* area)
+  bool WindowCompositor::GrabPointerAdd(InputArea* area)
   {
-    NUX_RETURN_VALUE_IF_NULL (area, false);
+    NUX_RETURN_VALUE_IF_NULL(area, false);
     bool result = true;
 
-    if (GetPointerGrabArea () == area)
+    if (GetPointerGrabArea() == area)
     {
       nuxDebugMsg (TEXT ("[WindowCompositor::GrabPointerAdd] The area already has the grab"));
       return result;
     }
     
-    if (GetWindow ().PointerGrabData () != this)
-      result = GetWindow ().GrabPointer (NULL, this, true);
+    if (GetWindow().PointerGrabData() != this)
+      result = GetWindow().GrabPointer(NULL, this, true);
 
     if (result)
-      pointer_grab_stack_.push_front (area);
+      pointer_grab_stack_.push_front(area);
 
     // reset the mouse pointers areas.
     ResetMousePointerAreas();
@@ -2122,22 +2124,22 @@ namespace nux
     return result;
   }
 
-  bool WindowCompositor::GrabPointerRemove (InputArea* area)
+  bool WindowCompositor::GrabPointerRemove(InputArea* area)
   {
-    NUX_RETURN_VALUE_IF_NULL (area, false);
+    NUX_RETURN_VALUE_IF_NULL(area, false);
 
     std::list<InputArea*>::iterator it;
 
     // find the first instance of the area pointer in the stack
-    it = find (pointer_grab_stack_.begin(), pointer_grab_stack_.end(), area);
+    it = find(pointer_grab_stack_.begin(), pointer_grab_stack_.end(), area);
 
-    if (it == pointer_grab_stack_.end ())
+    if (it == pointer_grab_stack_.end())
       return false;
 
-    pointer_grab_stack_.erase (it);
+    pointer_grab_stack_.erase(it);
     
-    if (pointer_grab_stack_.empty ())
-      GetWindow ().UngrabPointer (this);
+    if (pointer_grab_stack_.empty())
+      GetWindow().UngrabPointer(this);
     
     // reset the mouse pointers areas.
     ResetMousePointerAreas();
@@ -2145,28 +2147,27 @@ namespace nux
     return true;
   }
 
-  bool WindowCompositor::IsInPointerGrabStack (InputArea* area)
+  bool WindowCompositor::IsInPointerGrabStack(InputArea* area)
   {
-    NUX_RETURN_VALUE_IF_NULL (area, false);
+    NUX_RETURN_VALUE_IF_NULL(area, false);
 
     std::list<InputArea*>::iterator it;
     it = find (pointer_grab_stack_.begin(), pointer_grab_stack_.end(), area);
 
-    if (it == pointer_grab_stack_.end ())
+    if (it == pointer_grab_stack_.end())
       return false;
 
     return true;
   }
 
-  InputArea* WindowCompositor::GetPointerGrabArea ()
+  InputArea* WindowCompositor::GetPointerGrabArea()
   {
-    if (pointer_grab_stack_.empty ())
+    if (pointer_grab_stack_.empty())
       return NULL;
 
-    return (*pointer_grab_stack_.begin ());
+    return (*pointer_grab_stack_.begin());
   }
 
-  //////////////////////////
   bool WindowCompositor::GrabKeyboardAdd(InputArea* area)
   {
     NUX_RETURN_VALUE_IF_NULL(area, false);
@@ -2178,16 +2179,23 @@ namespace nux
       return result;
     }
 
-    
     if (GetWindow().KeyboardGrabData() != this)
+    {
       result = GetWindow().GrabKeyboard(NULL, this, true);
+    }
     
     if (result)
     {
+      InputArea* current_keyboard_grab = GetKeyboardGrabArea();
+      if (current_keyboard_grab)
+        current_keyboard_grab->end_keyboard_grab.emit(current_keyboard_grab);
+
       keyboard_grab_stack_.push_front(area);
       
       // Must be called only after the area has been added to the front of keyboard_grab_stack_.
       SetKeyFocusArea(area);
+
+      area->start_keyboard_grab.emit(area);
     }
     
     return result;
@@ -2195,54 +2203,75 @@ namespace nux
 
   bool WindowCompositor::GrabKeyboardRemove(InputArea* area)
   {
-    NUX_RETURN_VALUE_IF_NULL (area, false);
+    NUX_RETURN_VALUE_IF_NULL(area, false);
 
     std::list<InputArea*>::iterator it;
 
     // find the first instance of the area keyboard in the stack
-    it = find (keyboard_grab_stack_.begin(), keyboard_grab_stack_.end(), area);
+    it = find(keyboard_grab_stack_.begin(), keyboard_grab_stack_.end(), area);
 
-    if (it == keyboard_grab_stack_.end ())
+    if (it == keyboard_grab_stack_.end())
       return false;
 
-    keyboard_grab_stack_.erase (it);
-    if (keyboard_grab_stack_.empty ())
-      GetWindow ().UngrabKeyboard (this);
+    InputArea* current_keyboard_grab = (*it);
+    bool has_grab = false;
+    
+    if (it == keyboard_grab_stack_.begin())
+    {
+      // At the top of the keyboard_grab_stack_. Means it has the keyboard grab.
+      has_grab = true;
+    }
+
+    // First remove the area from the grab list
+    keyboard_grab_stack_.erase(it);
+
+    // Then emit end_keyboard_grab if the area had the keyboard grab
+    if (has_grab && current_keyboard_grab)
+    {
+      current_keyboard_grab->end_keyboard_grab.emit(current_keyboard_grab);
+    }
+
+    if (keyboard_grab_stack_.empty())
+    {
+      GetWindow().UngrabKeyboard(this);
+    }
 
     // Must be called only after the area has been added to the front of keyboard_grab_stack_.
-    if (keyboard_grab_stack_.empty ())
+    if (keyboard_grab_stack_.empty())
     {
-      SetKeyFocusArea (NULL);
+      SetKeyFocusArea(NULL);
     }
     else
     {
-      it = keyboard_grab_stack_.begin ();
-      SetKeyFocusArea (*it);
-    }
+      it = keyboard_grab_stack_.begin();
+      SetKeyFocusArea(*it);
 
+      InputArea* new_keyboard_grab = (*it);
+      new_keyboard_grab->start_keyboard_grab.emit(new_keyboard_grab);
+    }
     
     return true;
   }
 
-  bool WindowCompositor::IsInKeyboardGrabStack (InputArea* area)
+  bool WindowCompositor::IsInKeyboardGrabStack(InputArea* area)
   {
     NUX_RETURN_VALUE_IF_NULL (area, false);
 
     std::list<InputArea*>::iterator it;
-    it = find (keyboard_grab_stack_.begin(), keyboard_grab_stack_.end(), area);
+    it = find(keyboard_grab_stack_.begin(), keyboard_grab_stack_.end(), area);
 
-    if (it == keyboard_grab_stack_.end ())
+    if (it == keyboard_grab_stack_.end())
       return false;
 
     return true;
   }
 
-  InputArea* WindowCompositor::GetKeyboardGrabArea ()
+  InputArea* WindowCompositor::GetKeyboardGrabArea()
   {
-    if (keyboard_grab_stack_.size () == 0)
+    if (keyboard_grab_stack_.size() == 0)
       return NULL;
 
-    return (*keyboard_grab_stack_.begin ());
+    return (*keyboard_grab_stack_.begin());
   }
 }
 

@@ -267,10 +267,16 @@ namespace nux
 
   public:
     ObjectPtr<IOpenGLTexture2D> CreateTexture (
-      int Width
-      , int Height
-      , int Levels
-      , BitmapFormat PixelFormat);
+      int Width,
+      int Height,
+      int Levels,
+      BitmapFormat PixelFormat);
+
+    ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(int id,
+      int Width,
+      int Height,
+      int Levels,
+      BitmapFormat PixelFormat);
 
     ObjectPtr<IOpenGLRectangleTexture> CreateRectangleTexture (
       int Width

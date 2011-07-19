@@ -176,7 +176,7 @@ logging::Logger logger("nux.inputarea");
 
   bool InputArea::HasKeyboardFocus()
   {
-    return GetWindowCompositor ().GetKeyNavFocusArea () == this;
+    return GetWindowCompositor ().GetKeyFocusArea () == this;
   }
 
   void InputArea::SetKeyboardFocus (bool b)

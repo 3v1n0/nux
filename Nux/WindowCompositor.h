@@ -79,6 +79,7 @@ namespace nux
     bool      _menu_is_active;
 
     void SetKeyFocusArea(InputArea* area);
+    InputArea* GetKeyFocusArea();
 
   private:
 
@@ -113,8 +114,6 @@ namespace nux
     //! Set the area that is right below the mouse pointer.
     void SetMouseOverArea(Area* area);
     
-    InputArea* GetKeyNavFocusArea();
-
     //! Set The BaseWindow of the area that is the mouse owner.
     void SetMouseOwnerBaseWindow(BaseWindow* base_window);
 

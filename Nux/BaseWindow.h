@@ -187,7 +187,7 @@ namespace nux
     }
   protected:
     
-    void SetAcceptkKeyNavFocus(bool accept);
+    void SetAcceptKeyNavFocus(bool accept);
     bool accept_key_nav_focus_;
     virtual bool AcceptKeyNavFocus();
 

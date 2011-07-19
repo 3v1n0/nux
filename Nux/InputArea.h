@@ -20,8 +20,8 @@
  */
 
 
-#ifndef BASEAREA_H
-#define BASEAREA_H
+#ifndef INPUTAREA_H
+#define INPUTAREA_H
 
 #include "Area.h"
 #include "MouseHandler.h"
@@ -347,6 +347,9 @@ namespace nux
     */
     sigc::signal<void, int, int, unsigned long, unsigned long> OnMouseDownOutsideArea;
 
+    sigc::signal<void, InputArea*> start_keyboard_grab;
+    sigc::signal<void, InputArea*> end_keyboard_grab;
+
     void DoSetFocused (bool focus);
 
     protected:
@@ -386,4 +389,4 @@ namespace nux
 
 }
 
-#endif // BASEAREA_H
+#endif // INPUTAREA_H
