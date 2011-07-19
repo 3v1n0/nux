@@ -263,7 +263,7 @@ namespace nux
 
     if (mouse_over_area_)
     {
-      mouse_over_view_connection_ = mouse_over_area_->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseOverViewDestroyed));
+      mouse_over_view_connection_ = mouse_over_area_->OnDestroyed.connect(sigc::mem_fun (this, &WindowCompositor::OnMouseOverViewDestroyed));
     }
   }
 
@@ -283,7 +283,7 @@ namespace nux
 
     if (mouse_owner_area_)
     {
-      mouse_owner_view_connection_ = mouse_owner_area_->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseOwnerViewDestroyed));
+      mouse_owner_view_connection_ = mouse_owner_area_->OnDestroyed.connect(sigc::mem_fun (this, &WindowCompositor::OnMouseOwnerViewDestroyed));
     }
   }
 
@@ -311,7 +311,10 @@ namespace nux
   {
     // mouse_owner_area_: the view that has the mouse down
     // mouse_over_area_: the view that is directly below the mouse pointer
-    
+
+    int dx = event.e_x - _mouse_position.x;
+    int dy = event.e_y - _mouse_position.y;
+
     _mouse_position = Point(event.e_x, event.e_y);
 
     if (mouse_owner_area_ == NULL)
@@ -396,7 +399,7 @@ namespace nux
           }
 
           // Send a "mouse mouse signal".
-          mouse_over_area_->EmitMouseMoveSignal(hit_view_x, hit_view_y, event.e_dx, event.e_dy, event.GetMouseState(), event.GetKeyState());
+          mouse_over_area_->EmitMouseMoveSignal(hit_view_x, hit_view_y, dx, dy, event.GetMouseState(), event.GetKeyState());
         }
         else if (hit_view && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
         {
@@ -2184,7 +2187,8 @@ namespace nux
     if (result)
     {
       InputArea* current_keyboard_grab = GetKeyboardGrabArea();
-      current_keyboard_grab->end_keyboard_grab.emit(current_keyboard_grab);
+      if (current_keyboard_grab)
+        current_keyboard_grab->end_keyboard_grab.emit(current_keyboard_grab);
 
       keyboard_grab_stack_.push_front(area);
       
@@ -2222,7 +2226,7 @@ namespace nux
     keyboard_grab_stack_.erase(it);
 
     // Then emit end_keyboard_grab if the area had the keyboard grab
-    if (has_grab)
+    if (has_grab && current_keyboard_grab)
     {
       current_keyboard_grab->end_keyboard_grab.emit(current_keyboard_grab);
     }
