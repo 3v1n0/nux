@@ -2209,15 +2209,28 @@ namespace nux
     if (it == keyboard_grab_stack_.end())
       return false;
 
+    InputArea* current_keyboard_grab = (*it);
+    bool has_grab = false;
+    
     if (it == keyboard_grab_stack_.begin())
     {
-      InputArea* current_keyboard_grab = (*it);
+      // At the top of the keyboard_grab_stack_. Means it has the keyboard grab.
+      has_grab = true;
+    }
+
+    // First remove the area from the grab list
+    keyboard_grab_stack_.erase(it);
+
+    // Then emit end_keyboard_grab if the area had the keyboard grab
+    if (has_grab)
+    {
       current_keyboard_grab->end_keyboard_grab.emit(current_keyboard_grab);
     }
 
-    keyboard_grab_stack_.erase(it);
     if (keyboard_grab_stack_.empty())
+    {
       GetWindow().UngrabKeyboard(this);
+    }
 
     // Must be called only after the area has been added to the front of keyboard_grab_stack_.
     if (keyboard_grab_stack_.empty())
