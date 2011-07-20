@@ -28,7 +28,7 @@
 
 namespace nux
 {
-  std::list<Window> XInputWindow::native_windows_;
+  std::vector<Window> XInputWindow::native_windows_;
 
   XInputWindow::XInputWindow(const char* title,
                              bool        take_focus,
@@ -60,7 +60,7 @@ namespace nux
                             CopyFromParent, InputOutput, CopyFromParent,
                             CWOverrideRedirect | CWEventMask, &attrib);
 
-    native_windows_.push_front(window_);
+    native_windows_.push_back(window_);
 
     Atom data[32];
     int     i = 0;
@@ -91,12 +91,12 @@ namespace nux
 
   XInputWindow::~XInputWindow()
   {
-    native_windows_.remove(window_);
+    native_windows_.erase(std::find (native_windows_.begin (), native_windows_.end (), window_));
     XDestroyWindow(display_, window_);
   }
 
   /* static */
-  std::list<Window> XInputWindow::NativeHandleList()
+  std::vector<Window> const& XInputWindow::NativeHandleList()
   {
     return native_windows_;
   }
