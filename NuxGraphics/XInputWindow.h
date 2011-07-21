@@ -45,7 +45,7 @@ namespace nux
                  int         override_redirect = 0);
     ~XInputWindow();
 
-    static std::list<Window> NativeHandleList();
+    static std::vector<Window> const& NativeHandleList();
 
     void EnableStruts(bool enable);
     bool StrutsEnabled();
@@ -79,7 +79,7 @@ namespace nux
     void EnableDnd ();
     void DisableDnd ();
 
-    static std::list<Window> native_windows_;
+    static std::vector<Window> native_windows_;
 
     bool strutsEnabled_;
     Window window_;

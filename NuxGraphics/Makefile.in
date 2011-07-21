@@ -108,6 +108,7 @@ am__objects_1 = libnux_graphics_@NUX_API_VERSION@_la-Events.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GraphicsEngine.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-MeshData.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAsmShader.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLBaseTexture.lo \
@@ -423,6 +424,7 @@ source_h = \
   $(srcdir)/GraphicsDisplay.h \
   $(srcdir)/GraphicsEngine.h \
   $(srcdir)/MeshData.h \
+  $(srcdir)/MeshFileLoader-OBJ.h \
   $(srcdir)/IOpenGLAnimatedTexture.h \
   $(srcdir)/IOpenGLAsmShader.h \
   $(srcdir)/IOpenGLBaseTexture.h \
@@ -481,6 +483,7 @@ source_cpp = \
   $(srcdir)/GraphicsDisplayX11.cpp \
   $(srcdir)/GraphicsEngine.cpp \
   $(srcdir)/MeshData.cpp \
+  $(srcdir)/MeshFileLoader-OBJ.cpp \
   $(srcdir)/IOpenGLAnimatedTexture.cpp \
   $(srcdir)/IOpenGLAsmShader.cpp \
   $(srcdir)/IOpenGLBaseTexture.cpp \
@@ -639,6 +642,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolume.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolumeTexture.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-MeshData.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-NuxGraphics.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-NuxGraphicsObject.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-NuxGraphicsResources.Plo@am__quote@
@@ -903,6 +907,14 @@ libnux_graphics_@NUX_API_VERSION@_la-MeshData.lo: $(srcdir)/MeshData.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/MeshData.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-MeshData.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-MeshData.lo `test -f '$(srcdir)/MeshData.cpp' || echo '$(srcdir)/'`$(srcdir)/MeshData.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.lo: $(srcdir)/MeshFileLoader-OBJ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.lo `test -f '$(srcdir)/MeshFileLoader-OBJ.cpp' || echo '$(srcdir)/'`$(srcdir)/MeshFileLoader-OBJ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/MeshFileLoader-OBJ.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-MeshFileLoader-OBJ.lo `test -f '$(srcdir)/MeshFileLoader-OBJ.cpp' || echo '$(srcdir)/'`$(srcdir)/MeshFileLoader-OBJ.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.lo: $(srcdir)/IOpenGLAnimatedTexture.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.lo `test -f '$(srcdir)/IOpenGLAnimatedTexture.cpp' || echo '$(srcdir)/'`$(srcdir)/IOpenGLAnimatedTexture.cpp

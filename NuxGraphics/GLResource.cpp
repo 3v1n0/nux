@@ -21,6 +21,7 @@
 
 
 #include "GLResource.h"
+#include "IOpenGLVertexBuffer.h"
 
 namespace nux
 {
@@ -87,7 +88,7 @@ namespace nux
 //    Elements.AddItem(Element);
 //}
 
-  void DecomposeTypeDeclaraction (ATTRIB_DECL_TYPE Type, BYTE &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType)
+  void DecomposeTypeDeclaraction (ATTRIB_DECL_TYPE Type, int &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType)
   {
     switch (Type)
     {
@@ -240,8 +241,8 @@ namespace nux
     // a vertex attribute and what is the format of each component.
     DecomposeTypeDeclaraction (Type, Element.NumComponent, Element.Type);
     //Element.Stride    = Stride;
-    Element.Usage       = Usage;
-    Element.UsageIndex  = UsageIndex;
+    //Element.Usage       = Usage;
+    //Element.UsageIndex  = UsageIndex;
     Elements.push_back (Element);
   }
 
@@ -273,5 +274,4 @@ namespace nux
     nuxAssertMsg (0, TEXT ("[GetGLElementCount] Invalid PRIMITIVE_TYPE") );
     return InPrimitiveCount;
   }
-
 }

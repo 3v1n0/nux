@@ -87,6 +87,7 @@ namespace nux
   public:
     Matrix4Editor (Matrix4 matrix = Matrix4::IDENTITY(), NUX_FILE_LINE_PROTO);
     ~Matrix4Editor();
+    Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);

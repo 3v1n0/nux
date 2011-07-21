@@ -33,7 +33,10 @@ namespace nux
     : IOpenGLResource(RTVERTEXDECLARATION)
   {
     for(int i = 0; i < 8; i++)
+    {
       _stride[i] = 0;
+      vertex_buffer_array.push_back(ObjectPtr<IOpenGLVertexBuffer>(NULL));
+    }
 
     int index = 0;
     _declarations_array.clear();
@@ -72,18 +75,19 @@ namespace nux
   VERTEXELEMENT IOpenGLVertexDeclaration::GetUsage (ATTRIB_USAGE_DECL usage)
   {
     VERTEXELEMENT vtxelt;
-    vtxelt.Stream = 0xFF; // invalid stream;
-
-    for (unsigned int i = 0; _declarations_array.size(); i++)
-    {
-      if (_declarations_array[i].Usage == usage)
-      {
-        vtxelt = _declarations_array[i];
-        return vtxelt;
-      }
-    }
-
     return vtxelt;
+//     vtxelt.Stream = 0xFF; // invalid stream;
+// 
+//     for (unsigned int i = 0; _declarations_array.size(); i++)
+//     {
+//       if (_declarations_array[i].Usage == usage)
+//       {
+//         vtxelt = _declarations_array[i];
+//         return vtxelt;
+//       }
+//     }
+// 
+//     return vtxelt;
   }
 
 // This is a simple check to comply with the documentation of DrawPrimitiveUP in DirectX
@@ -100,4 +104,44 @@ namespace nux
     return false;
   }
 
+  int IOpenGLVertexDeclaration::GetStride(int vertex_input_number)
+  {
+    NUX_RETURN_VALUE_IF_FALSE(vertex_input_number >= 0, 0);
+    NUX_RETURN_VALUE_IF_FALSE(vertex_input_number < 8, 0);
+
+    return _stride[vertex_input_number];
+  }
+
+
+  void IOpenGLVertexDeclaration::SetVertexBuffer(int input_index, ObjectPtr<IOpenGLVertexBuffer> vertex_buffer)
+  {
+    NUX_RETURN_IF_FALSE(input_index >= 0);
+    NUX_RETURN_IF_FALSE(input_index < 8);
+
+    vertex_buffer_array[input_index] = vertex_buffer;
+  }
+
+  ObjectPtr<IOpenGLVertexBuffer> IOpenGLVertexDeclaration::GetVertexBuffer(int input_index)
+  {
+    NUX_RETURN_VALUE_IF_FALSE(input_index >= 0, ObjectPtr<IOpenGLVertexBuffer>(NULL));
+    NUX_RETURN_VALUE_IF_FALSE(input_index < 8, ObjectPtr<IOpenGLVertexBuffer>(NULL));
+
+    return vertex_buffer_array[input_index];
+  }
+
+  void IOpenGLVertexDeclaration::SetVertexShaderAttributeLocation(int input_index, int shader_attribute_location)
+  {
+    NUX_RETURN_IF_FALSE(input_index >= 0);
+    NUX_RETURN_IF_FALSE(input_index < 8);
+
+    shader_attribute_location_array[input_index] = shader_attribute_location;
+  }
+
+  int IOpenGLVertexDeclaration::GetVertexShaderAttributeLocation(int input_index)
+  {
+    NUX_RETURN_VALUE_IF_FALSE(input_index >= 0, -1);
+    NUX_RETURN_VALUE_IF_FALSE(input_index < 8, -1);
+
+    return shader_attribute_location_array[input_index];
+  }
 }

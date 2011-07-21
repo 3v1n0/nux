@@ -129,22 +129,12 @@ namespace nux
 
   public:
 
-    virtual bool IsLayout() const
-    {
-      return true;
-    }
-    virtual bool IsSpaceLayout() const
-    {
-      return false;
-    }
-
     virtual void GetCompositeList (std::list<Area *> *ViewList)
     {
 
     }
     virtual void Draw() {}
 
-    void removeParentLayout();
     void DoneRedraw();
 
     bool SearchInAllSubNodes (Area *bo);
@@ -152,22 +142,24 @@ namespace nux
 
     //! Process Event
     /*!
-    Propagate event to all element contained in the layout.
-    \param ievent
-    \param TraverseInfo
-    \param ProcessEventInfo
-    \return The state of the Process Event.
+        Propagate event to all element contained in the layout.
+        \param ievent
+        \param TraverseInfo
+        \param ProcessEventInfo
+        \return The state of the Process Event.
     */
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
+    Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
     //! Draw Element
     /*!
-    Draw all elements inside the layout.
-    If force_draw is true then the system requests that all objects redraw themselves completely.
-    \param force_draw
-    \param TraverseInfo
-    \param ProcessEventInfo
-    \return The state of the Process Event.
+        Draw all elements inside the layout.
+        If force_draw is true then the system requests that all objects redraw themselves completely.
+        \param force_draw
+        \param TraverseInfo
+        \param ProcessEventInfo
+        \return The state of the Process Event.
     */
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
 
@@ -252,8 +244,9 @@ namespace nux
     virtual bool FocusLastChild ();
     virtual bool FocusNextChild (Area *child);
     virtual bool FocusPreviousChild (Area *child);
-    void OnChildFocusChanged (Area *parent, Area *child);
+    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
     
+    virtual bool AcceptKeyNavFocus();
     std::map<Area*, sigc::connection> _connection_map; // map our children to connections
     
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
@@ -284,6 +277,7 @@ namespace nux
 // The Space layout is a layout object that is used to create fixed or resizable empty space.
   class SpaceLayout: public Layout
   {
+    NUX_DECLARE_OBJECT_TYPE (SpaceLayout, Layout);
   public:
     SpaceLayout()
     {
@@ -308,10 +302,6 @@ namespace nux
       return true;
     }
 
-    virtual bool IsSpaceLayout() const
-    {
-      return true;
-    }
 
     virtual void AddLayout (Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition minor_position = eAbove, MinorDimensionSize minor_size = eFull, float percentage = 100.0f)
     {

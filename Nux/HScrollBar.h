@@ -40,6 +40,7 @@ namespace nux
     ~HScrollBar();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     void DrawLeftTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
     void DrawRightTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
 
@@ -101,18 +102,18 @@ namespace nux
     bool AtMaximum();
 
     HLayout *hlayout;
-    InputArea *m_SlideBar;
-    InputArea *m_LeftThumb;
-    InputArea *m_RightThumb;
-    InputArea *m_Track;
+    InputArea *_slider;
+    InputArea *_scroll_left_button;
+    InputArea *_scroll_right_button;
+    InputArea *_track;
 
-    int m_contentWidth;
-    int m_contentHeight;
-    float m_contentOffsetX;
-    float m_contentOffsetY;
+    int content_width_;
+    int content_height_;
+    float content_offset_x_;
+    float content_offset_y_;
 
-    int m_containerWidth;
-    int m_containerHeight;
+    int container_width_;
+    int container_height_;
 
     int m_TrackWidth;
     int m_TrackHeight;

@@ -24,7 +24,7 @@
 #define SCROLLVIEW_H
 
 #include "Nux.h"
-
+#include "View.h"
 
 namespace nux
 {
@@ -156,15 +156,18 @@ namespace nux
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
     virtual long ProcessEvent (Event &event, long TraverseInfo, long ProcessEventInfo);
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
+    void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
 
     //! Change Vertical Scrollbar in the ScrollView.
     /*!
-        For styling purpose, allow the classes that inherit fron ScrollView to
+        For styling purpose, allow the classes that inherit from ScrollView to
         change the vertical scrollbar.
     */ 
     void SetVScrollBar (VScrollBar* newVScrollBar);
 
-    void OnChildFocusChanged (Area *parent, Area *child);
+    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
 
     // Backup texture to speed up scrolling
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
@@ -185,8 +188,8 @@ namespace nux
     bool m_ReformatTexture;
 
     // ScrollBars
-    HScrollBar     *hscrollbar;
-    VScrollBar     *vscrollbar;
+    HScrollBar     *_hscrollbar;
+    VScrollBar     *_vscrollbar;
     bool m_horizontal_scrollbar_enable;
     bool m_vertical_scrollbar_enable;
 
@@ -217,6 +220,8 @@ namespace nux
     virtual long PostLayoutManagement2 (long LayoutResult);
 
   private:
+
+    virtual bool AcceptKeyNavFocus();
     /**
         If True, the scrollbar size will be adjusted to match the size of the content.
         This is useful for the ComboBoxComplex widget.
@@ -227,6 +232,8 @@ namespace nux
     int m_ViewContentRightMargin;
     int m_ViewContentTopMargin;
     int m_ViewContentBottomMargin;
+
+    int top_hidden_surface_;
   };
 }
 

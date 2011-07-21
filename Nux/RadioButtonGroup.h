@@ -32,7 +32,7 @@ namespace nux
   /*!
       RadioButtonGroup does not hold reference on radio buttons.
   */
-  class RadioButtonGroup: public Object
+  class RadioButtonGroup: public InitiallyUnownedObject
   {
   public:
     RadioButtonGroup (NUX_FILE_LINE_PROTO);
@@ -57,7 +57,7 @@ namespace nux
 
   private:
     void NotifyClick (RadioButton *radio);
-    std::vector<RadioButton *> m_RadioButtonArray;
+    std::vector<ObjectWeakPtr<RadioButton> > m_RadioButtonArray;
     int m_ActiveRadioButtonIndex;
 
     friend class RadioButton;

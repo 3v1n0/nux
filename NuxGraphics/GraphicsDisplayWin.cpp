@@ -876,7 +876,7 @@ namespace nux
     if (button == 4)
     {
       m_pEvent->e_mouse_state |= NUX_EVENT_MOUSEWHEEL;
-      m_pEvent->e_event = NUX_MOUSEWHEEL;
+      m_pEvent->e_event = NUX_MOUSE_WHEEL;
 
       int zDelta = GET_WHEEL_DELTA_WPARAM (wParam);
       int xPos = (int) (short) LOWORD (lParam) - WindowScreenPosition.x;

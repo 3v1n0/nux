@@ -25,7 +25,7 @@
 
 namespace nux
 {
-
+  class ScrollView;
   class ScrollBar : public View //public ValuatorAbstraction
   {
   public:
@@ -59,8 +59,13 @@ namespace nux
     int GetScrollUnit() const;
 
   protected:
+    virtual bool AcceptKeyNavFocus();
+
     int m_ScrollUnit;
     int m_visible;
+    float visibility_percentage_;
+
+    friend class ScrollView;
   };
 
 

@@ -31,7 +31,6 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
   {
     _state  = false;
-    EnableDoubleClick(false);
   }
 
   AbstractButton::~AbstractButton()

@@ -40,11 +40,6 @@ namespace nux
     MenuItem (const TCHAR *label, int UserValue, NUX_FILE_LINE_PROTO);
     ~MenuItem();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
-
     void DrawAsMenuItem (GraphicsEngine &GfxContext, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone);
 
     //const ActionItem& GetItem() const {return m_ActionItem;}
@@ -60,6 +55,11 @@ namespace nux
     }
 
   private:
+    virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
+
     void SetChildMenu (MenuPage *menu);
     MenuPage *GetChildMenu() const;
     void SetActionItem (ActionItem *menu);
@@ -92,12 +92,6 @@ namespace nux
   public:
     MenuPage (const TCHAR *title = TEXT (""), NUX_FILE_LINE_PROTO);
     ~MenuPage();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) ;
-
-
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
 //    void SetName(const TCHAR* name);
     const TCHAR *GetName() const;
@@ -196,6 +190,9 @@ namespace nux
     */
     sigc::signal<void, MenuPage *, int, int> sigMouseDownOutsideMenuCascade;
 
+    sigc::signal<void, MenuPage *> sigOpeningMenu;
+    sigc::signal<void, MenuPage *> sigClosingMenu;
+
     void SetActive (bool b)
     {
       m_IsActive = b;
@@ -225,11 +222,36 @@ namespace nux
         @return the index of the ActionItem in the menu. -1 if the Action Item is not found.
     */
     int GetActionItemIndex (ActionItem *action) const;
+
+    //! Return the position of this object with regard to its top left corner of the physical window.
+    /*!
+        Return the position of the Area inside the physical window.
+        For the main layout set in WindowThread, The following functions are equivalent:
+        \li GetGeometry ()
+        \li GetRootGeometry ()
+        \li GetAbsoluteGeometry ()
+    */
+    virtual Geometry GetAbsoluteGeometry () const;
+
+    //! Return the position of this object with regard to its top level parent (the main layout or a BaseWindow).
+    /*!
+        Return the position of the Area inside the physical window.
+        For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry () is equivalent to GetGeometry ().
+    */
+    virtual Geometry GetRootGeometry () const;
+    
+  protected:
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) ;
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+
   private:
     int m_numItem;
     int m_HighlightedItem;
     bool m_IsActive;
-    VLayout *vlayout;
+    VLayout* _vlayout;
     bool m_NextMouseUpMeanStop;
     MenuItem *m_SubMenuAction;
     NString m_Name;
@@ -261,6 +283,7 @@ namespace nux
     virtual void SetGeometry (const Geometry &geo);
 
     friend class MenuBar;
+    friend class WindowCompositor;
   };
 
 }

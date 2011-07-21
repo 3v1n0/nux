@@ -98,13 +98,13 @@ Color ClampVal(Color const& c)
 
 Color Luminance(Color const& c)
 {
-  float L = 0.30 * c.red + 0.59 * c.green + 0.11 * c.blue;
+  float L = 0.30f * c.red + 0.59f * c.green + 0.11f * c.blue;
   return Color(L, L, L);
 }
 
 Color OneMinusLuminance(Color const& c)
 {
-  float L = 1.0f - (0.30 * c.red + 0.59 * c.green + 0.11 * c.blue);
+  float L = 1.0f - (0.30f * c.red + 0.59f * c.green + 0.11f * c.blue);
   return Color(L, L, L);
 }
 

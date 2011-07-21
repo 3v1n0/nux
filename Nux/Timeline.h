@@ -51,6 +51,96 @@ namespace nux
   protected:
     unsigned long _ElapsedTime;
   };
+
+
+  // template <typename T>
+  // class PropertyAnimationContainer
+  // {
+
+  // };
+
+  // class AnimatedPropertyBase
+  // {
+  // public:
+  //   AnimatedPropertyBase(){};
+
+  //   virtual void Animate(float t){};
+
+  // };
+
+  // // Explicit specialization. The explicit type could be float, int, Color....
+  // template <>
+  // class PropertyAnimationContainer<float> : public AnimatedPropertyBase
+  // {
+  // public:
+  //   PropertyAnimationContainer(Property<float>& prop, float start_value, float end_value)
+  //     : prop_(prop)
+  //   {
+  //     start_value_ = start_value;
+  //     end_value_ = end_value;
+  //   }
+
+  //   virtual void Animate(float t)
+  //   {
+  //     float value = (1.0f - t) * start_value_ + t * end_value_;
+  //     prop_.set(value);
+  //   }
+
+  //   Property<float>& prop_;
+  //   float start_value_;
+  //   float end_value_;
+
+  // };
+
+  // template <>
+  // class PropertyAnimationContainer<Color> : public AnimatedPropertyBase
+  // {
+  // public:
+  //   PropertyAnimationContainer(Property<Color>& prop, Color start_value, Color end_value)
+  //     : prop_(prop)
+  //   {
+  //     start_value_ = start_value;
+  //     end_value_ = end_value;
+  //   }
+
+  //   virtual void Animate(float t)
+  //   {
+  //     Color value = (1.0f - t) * start_value_ + t * end_value_;
+  //     prop_.set(value);
+  //   }
+
+  //   Property<Color>& prop_;
+  //   Color start_value_;
+  //   Color end_value_;
+
+  // };
+
+  // class AnimationTimeline : public Object
+  // {
+  // public:
+  //   AnimationTimeline() {};
+
+  //   template <typename T>
+  //   void AddProperty(Property<T>& prop, T start_value, T end_value)
+  //   {
+  //     PropertyAnimationContainer<T>* a = new PropertyAnimationContainer<T> (prop, start_value, end_value);
+
+  //     animated_properties_.push_back(a);
+  //   }
+
+  //   void Animate(float t)
+  //   {
+  //     std::list<AnimatedPropertyBase*>::iterator it;
+
+  //     // Go through all the properties and update them.
+  //     for(it = animated_properties_.begin(); it != animated_properties_.end(); ++it)
+  //     {
+  //       (*it)->Animate(t);
+  //     }
+  //   }
+
+  //   std::list<AnimatedPropertyBase*> animated_properties_;
+  // };
 }
 
 #endif // TIMELINE_H

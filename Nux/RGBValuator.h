@@ -111,6 +111,8 @@ namespace nux
     void InitializeWidgets();
     void InitializeLayout();
 
+    virtual bool AcceptKeyNavFocus();
+
   private:
     void DrawRedMarker (GraphicsEngine &GfxContext);
     void DrawGreenMarker (GraphicsEngine &GfxContext);
