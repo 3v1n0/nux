@@ -3,6 +3,8 @@ nux (1.0.6-0ubuntu1) UNRELEASED; urgency=low
   * New upstream release.
   * debian/control:
     - dep on libglu1-mesa-dev
+  * debian/rules:
+    - bump shlib
 
  -- Didier Roche <didrocks@ubuntu.com>  Thu, 21 Jul 2011 17:16:02 +0200
 
