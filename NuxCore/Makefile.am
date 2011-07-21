@@ -163,6 +163,7 @@ source_h = \
   $(srcdir)/InitiallyUnownedObject.h \
   $(srcdir)/Property.h \
   $(srcdir)/Property-inl.h \
+  $(srcdir)/PropertyOperators.h \
   $(srcdir)/PropertyTraits.h \
   $(srcdir)/Win32Dialogs/NWin32Clipboard.h
 
