@@ -129,6 +129,13 @@ namespace nux
     //! Callback: called when mouse_owner_basewindow_connection_ is destroyed.
     void OnMouseOwnerBaseWindowDestroyed(Object* area);
 
+    void SendKeyEvent(InputArea* input_area, NuxEventType event_type,
+      unsigned int key_sym,
+      unsigned long x11_key_code,
+      unsigned long special_keys_state,
+      const char* text,
+      int key_repeat_count);
+
     //! The InputArea that has the keyboard navigation focus.
     /*!
         The InputArea that has the mouse focus also has the keyboard focus. That is if _mouse_focus_area is not Null

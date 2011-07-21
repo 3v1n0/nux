@@ -432,7 +432,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::EmitKeyDownSignal(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
   {
-    OnKeyPressed.emit(key_symbol, x11_key_code, special_keys_state);
+    //OnKeyPressed.emit(key_symbol, x11_key_code, special_keys_state);
   }
 
   void InputArea::EmitKeyUpSignal(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)

@@ -1102,7 +1102,7 @@ namespace nux
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
         m_pEvent->e_event = NUX_MOUSE_WHEEL;
-        m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
+        m_pEvent->e_wheeldelta = NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
 
@@ -1110,7 +1110,7 @@ namespace nux
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
         m_pEvent->e_event = NUX_MOUSE_WHEEL;
-        m_pEvent->e_wheeldelta = +NUX_MOUSEWHEEL_DELTA;
+        m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
 
