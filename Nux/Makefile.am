@@ -23,7 +23,7 @@ libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(NUX_LIBS)
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
-  $(NUX_LT_LDFLAGS) -lboost_filesystem
+  $(NUX_LT_LDFLAGS)
 
 source_cpp = \
   $(srcdir)/PropertyItem/CheckBoxProperty.cpp \
