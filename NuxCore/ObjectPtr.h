@@ -1249,38 +1249,11 @@ namespace nux
     template <typename O>
     friend class ObjectWeakPtr;
 
-    template <typename O>
-    friend class SmartPtr;
-
-    //     template<typename T, typename U>
-    //     friend bool operator == (const ObjectWeakPtr<T>& a, const ObjectWeakPtr<U>& b);
-
-    //     template<typename T, typename U>
-    //     friend bool operator != (const ObjectWeakPtr<T>& a, const ObjectWeakPtr<U>& b);
-
-    //     template<typename T>
-    //     friend bool operator == (const ObjectWeakPtr<T>& a, T*);
-
     template<typename U>
     friend bool operator == (U *, const ObjectWeakPtr<U>& a);
 
-    //     template<typename T>
-    //     friend bool operator != (const ObjectWeakPtr<T>& a, T*);
-
     template<typename U>
     friend bool operator != (U *, const ObjectWeakPtr<U>& a);
-
-    //     template<typename T, typename U>
-    //     friend bool operator == (const ObjectPtr<T>& a, const ObjectWeakPtr<U>& b);
-    //
-    //     template<typename T, typename U>
-    //     friend bool operator == (const ObjectWeakPtr<T>& a, const ObjectPtr<U>& b);
-    //
-    //     template<typename T, typename U>
-    //     friend bool operator != (const ObjectPtr<T>& a, const ObjectWeakPtr<U>& b);
-    //
-    //     template<typename T, typename U>
-    //     friend bool operator != (const ObjectWeakPtr<T>& a, const ObjectPtr<U>& b);
 
     template <typename U, typename F>
     friend ObjectWeakPtr<U> staticCast (const ObjectWeakPtr<F>& from);
