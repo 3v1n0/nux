@@ -112,6 +112,7 @@ namespace nux
     virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
   private:
     Size _children_size;
     bool _dynamic_column;

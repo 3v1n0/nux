@@ -7,7 +7,6 @@ check_PROGRAMS = \
 test_nux_SOURCES = \
   test-canvas.cpp \
   test-nux.cpp \
-  test-timeline.cpp \
   test-object.cpp \
   test-system.cpp
 

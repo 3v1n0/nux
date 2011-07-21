@@ -78,7 +78,7 @@ namespace nux
     GetPainter().PaintBackground (GfxContext, base);
 
     if (m_EditLine->IsMouseInside() ||
-        m_MouseControlledButton->HasMouseFocus() || m_MouseControlledButton->IsMouseInside() )
+        m_MouseControlledButton->IsMouseOwner() || m_MouseControlledButton->IsMouseInside() )
     {
 
       GetPainter().PaintShapeCorner (GfxContext, base, SPINBOX_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,

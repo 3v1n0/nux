@@ -77,10 +77,10 @@ namespace nux
           *direction = FOCUS_DIRECTION_RIGHT;
           //g_debug ("direction right");
           break;
-	case NUX_VK_LEFT_TAB:
-	  type = FOCUS_EVENT_DIRECTION;
-	  *direction = FOCUS_DIRECTION_PREV;
-	  break;
+	      case NUX_VK_LEFT_TAB:
+	        type = FOCUS_EVENT_DIRECTION;
+	        *direction = FOCUS_DIRECTION_PREV;
+	        break;
         case NUX_VK_TAB:
           type = FOCUS_EVENT_DIRECTION;
           *direction = FOCUS_DIRECTION_NEXT;

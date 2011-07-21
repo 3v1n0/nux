@@ -46,9 +46,9 @@ namespace nux
 
     // creates a Quaternion from an angle axis -- note that if angle > 2*PI the resulting
     // rotation is angle mod 2*PI
-    Quaternion (t_float axis_x, t_float axis_y, t_float axis_z, t_float angle_radian);
+    Quaternion (float axis_x, float axis_y, float axis_z, float angle_radian);
     // creates a Quaternion from an angle-around-XYZ euler triple using roll-pitch-yaw order
-    Quaternion (t_float euler_x, t_float euler_y, t_float euler_z);
+    Quaternion (float euler_x, float euler_y, float euler_z);
     ~Quaternion();
 
     Quaternion &operator = (const Quaternion &quat);
@@ -57,15 +57,15 @@ namespace nux
     Quaternion operator + (const Quaternion &quat) const;
     Quaternion operator - (const Quaternion &quat) const;
     Quaternion operator * (const Quaternion &quat) const;
-    Quaternion operator * (const t_float &f) const;
-    Quaternion operator / (const t_float &f) const;
+    Quaternion operator * (const float &f) const;
+    Quaternion operator / (const float &f) const;
 
     // assignment operators
     Quaternion &operator += (const Quaternion &quat);
     Quaternion &operator -= (const Quaternion &quat);
     Quaternion &operator *= (const Quaternion &quat);
-    Quaternion &operator *= (const t_float &f);
-    Quaternion &operator /= (const t_float &f);
+    Quaternion &operator *= (const float &f);
+    Quaternion &operator /= (const float &f);
 
     // unary operators
     Quaternion operator + () const;
@@ -79,23 +79,23 @@ namespace nux
     void Conjugate();
     void Inverse();
     void Normalize();
-    t_float DotProduct (const Quaternion &quat) const;
-    t_float Length() const;
+    float DotProduct (const Quaternion &quat) const;
+    float Length() const;
 
-    void GetAngleAxis (Vector3 &axis, t_float &angle_radian) const;        // fetches the angle/axis given by the quat
+    void GetAngleAxis (Vector3 &axis, float &angle_radian) const;        // fetches the angle/axis given by the quat
 
     // Fetches 4x4 homogeneous matrix given by the quat
     Matrix4 GetMatrix() const;
 
-    t_float x, y, z, w;
+    float x, y, z, w;
 
-    friend Quaternion operator * (t_float f, const Quaternion &quat);
+    friend Quaternion operator * (float f, const Quaternion &quat);
   private:
     // set the quaternion by angle-axis (see AA constructor)
-    void FromAngleAxis (t_float axis_x, t_float axis_y, t_float axis_z, t_float angle_radian);
+    void FromAngleAxis (float axis_x, float axis_y, float axis_z, float angle_radian);
 
     // set the quaternion by euler axis angles (see euler constructor)
-    void FromEulerZXY (t_float euler_x, t_float euler_y, t_float euler_z);
+    void FromEulerZXY (float euler_x, float euler_y, float euler_z);
   };
 
 }

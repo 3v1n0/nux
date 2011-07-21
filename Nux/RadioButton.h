@@ -70,8 +70,13 @@ namespace nux
     virtual void SetState (bool State, bool EmitSignal);
     virtual bool GetState() const;
 
+  protected:
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
   private:
-    void SetRadioGroupSelector (RadioButtonGroup *RadioSelector);
+    void SetRadioGroupSelector(RadioButtonGroup *RadioSelector);
+    RadioButtonGroup* GetRadioGroupSelector();
+
     //! Intended for RadioButtonGroup only.
     void SetStatePrivate (bool State);
     //! Intended for RadioButtonGroup only.
@@ -83,7 +88,7 @@ namespace nux
     InputArea   *m_CheckArea;
     bool        m_State;
 
-    RadioButtonGroup *m_Group;
+    RadioButtonGroup *radio_button_group_;
     int m_GroupId;
 
     friend class RadioButtonGroup;

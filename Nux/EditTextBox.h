@@ -46,6 +46,11 @@ namespace nux
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
+    //! Return True if the the area knows what to do with the key event.
+    virtual bool InspectKeyEvent(unsigned int eventType,
+      unsigned int keysym,
+      const char* character);
+
     void SetText (const TCHAR &Caption);
     void SetText (const TCHAR *Caption);
     void SetText (const tstring &Caption);
@@ -223,6 +228,9 @@ namespace nux
 
     //! If true, blend the characters alpha value with the destination and write the result to the destination buffer.
     bool m_WriteAlpha;
+
+    bool text_input_mode_;
+    bool key_nav_mode_;
 
     friend class RGBValuator;
   };

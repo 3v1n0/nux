@@ -46,7 +46,9 @@ namespace nux
 
     virtual bool SetLayout (Layout *layout);
     void SetCaption (const TCHAR *Caption);
-
+  
+  protected:
+    virtual bool AcceptKeyNavFocus();
   private:
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement (long LayoutResult);

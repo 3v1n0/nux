@@ -64,11 +64,10 @@ gtest_nux_core_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_CXXFLAGS) $(CXXFLAGS) $(gtest_nux_core_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am__test_nux_SOURCES_DIST = test-canvas.cpp test-nux.cpp \
-	test-timeline.cpp test-object.cpp test-system.cpp
+	test-object.cpp test-system.cpp
 @BUILD_TESTS_TRUE@am_test_nux_OBJECTS =  \
 @BUILD_TESTS_TRUE@	test_nux-test-canvas.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	test_nux-test-nux.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	test_nux-test-timeline.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	test_nux-test-object.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	test_nux-test-system.$(OBJEXT)
 test_nux_OBJECTS = $(am_test_nux_OBJECTS)
@@ -285,7 +284,6 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@test_nux_SOURCES = \
 @BUILD_TESTS_TRUE@  test-canvas.cpp \
 @BUILD_TESTS_TRUE@  test-nux.cpp \
-@BUILD_TESTS_TRUE@  test-timeline.cpp \
 @BUILD_TESTS_TRUE@  test-object.cpp \
 @BUILD_TESTS_TRUE@  test-system.cpp
 
@@ -397,7 +395,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-nux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-object.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-system.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-timeline.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -486,22 +483,6 @@ test_nux-test-nux.obj: test-nux.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-nux.cpp' object='test_nux-test-nux.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-nux.obj `if test -f 'test-nux.cpp'; then $(CYGPATH_W) 'test-nux.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux.cpp'; fi`
-
-test_nux-test-timeline.o: test-timeline.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-timeline.o -MD -MP -MF $(DEPDIR)/test_nux-test-timeline.Tpo -c -o test_nux-test-timeline.o `test -f 'test-timeline.cpp' || echo '$(srcdir)/'`test-timeline.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-timeline.Tpo $(DEPDIR)/test_nux-test-timeline.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-timeline.cpp' object='test_nux-test-timeline.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-timeline.o `test -f 'test-timeline.cpp' || echo '$(srcdir)/'`test-timeline.cpp
-
-test_nux-test-timeline.obj: test-timeline.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-timeline.obj -MD -MP -MF $(DEPDIR)/test_nux-test-timeline.Tpo -c -o test_nux-test-timeline.obj `if test -f 'test-timeline.cpp'; then $(CYGPATH_W) 'test-timeline.cpp'; else $(CYGPATH_W) '$(srcdir)/test-timeline.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-timeline.Tpo $(DEPDIR)/test_nux-test-timeline.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-timeline.cpp' object='test_nux-test-timeline.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-timeline.obj `if test -f 'test-timeline.cpp'; then $(CYGPATH_W) 'test-timeline.cpp'; else $(CYGPATH_W) '$(srcdir)/test-timeline.cpp'; fi`
 
 test_nux-test-object.o: test-object.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-object.o -MD -MP -MF $(DEPDIR)/test_nux-test-object.Tpo -c -o test_nux-test-object.o `test -f 'test-object.cpp' || echo '$(srcdir)/'`test-object.cpp

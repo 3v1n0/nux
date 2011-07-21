@@ -388,7 +388,7 @@ namespace nux
 
   void Matrix3Editor::RecvInverseMatrixCmd()
   {
-    m_Matrix.Zero();
+    m_Matrix.Inverse();
     WriteMatrix();
     sigMatrixChanged.emit (this);
 

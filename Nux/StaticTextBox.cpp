@@ -161,4 +161,8 @@ namespace nux
     m_Background = layer->Clone();
   }
 
+  bool StaticTextBox::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }
