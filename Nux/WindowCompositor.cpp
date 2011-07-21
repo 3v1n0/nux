@@ -777,6 +777,31 @@ namespace nux
     }
   }
 
+  void WindowCompositor::SendKeyEvent(InputArea* input_area,
+    NuxEventType event_type,
+    unsigned int key_sym,
+    unsigned long x11_key_code,
+    unsigned long special_keys_state,
+    const char* text,
+    int key_repeat_count)
+  {
+    if (input_area == NULL)
+      return;
+
+    if (event_type == NUX_KEYDOWN)
+    {
+      input_area->EmitKeyEventSignal(event_type,
+        key_sym,
+        special_keys_state,
+        text,
+        key_repeat_count);
+    }
+    else if (event_type == NUX_KEYUP)
+    {
+      input_area->EmitKeyUpSignal(key_sym, x11_key_code, special_keys_state);
+    }
+  }
+
   void WindowCompositor::KeyboardEventCycle(Event &event)
   {
     InputArea* keyboard_event_grab_view = GetKeyboardGrabArea();
@@ -807,63 +832,74 @@ namespace nux
     else
       SetKeyFocusArea(NULL);
 
+    KeyNavDirection direction = KEY_NAV_NONE;
+
+    switch (event.GetKeySym())
+    {
+    case NUX_VK_UP:
+      direction = KEY_NAV_UP;
+      break;
+    case NUX_VK_DOWN:
+      direction = KEY_NAV_DOWN;
+      break;
+    case NUX_VK_LEFT:
+      direction = KEY_NAV_LEFT;
+      break;
+    case NUX_VK_RIGHT:
+      direction = KEY_NAV_RIGHT;
+      break;
+    case NUX_VK_LEFT_TAB:
+      direction = KEY_NAV_TAB_NEXT;
+      break;
+    case NUX_VK_TAB:
+      direction = KEY_NAV_TAB_NEXT;
+      break;
+    case NUX_VK_ENTER:
+    case NUX_KP_ENTER:
+      // Not sure if Enter should be a navigation key
+      direction = KEY_NAV_ENTER;
+      break;
+    default:
+      direction = KEY_NAV_NONE;
+      break;
+    }
+
     if (key_focus_area_)
     {
       if (key_focus_area_->InspectKeyEvent(event.e_event, event.GetKeySym(), event.GetText()))
       {
-        if (event.e_event == NUX_KEYDOWN)
-        {
-          Area* temp = key_focus_area_;
-          key_focus_area_->EmitKeyDownSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+        SendKeyEvent(key_focus_area_,
+                    event.e_event,
+                    event.GetKeySym(),
+                    event.e_x11_keycode,
+                    event.GetKeyState(),
+                    event.GetText(),
+                    event.GetKeyRepeatCount());
+      }
+      else if (direction == KEY_NAV_NONE)
+      {
+        Area* child = key_focus_area_;
+        Area* parent = key_focus_area_->GetParentObject();
 
-          // It is possible that following a call to EmitKeyDownSignal that key_focus_area_ is null or
-          // has changed. We must detect those cases and pursue no further.
-          if (key_focus_area_ && (temp == key_focus_area_))
-          {
-            key_focus_area_->EmitKeyEventSignal(event.e_event,
-              event.GetKeySym(),
-              event.GetKeyState(),
-              event.GetText(),
-              event.GetKeyRepeatCount());
-          }
-        }
-        else if (event.e_event == NUX_KEYUP)
+        while (parent && !parent->InspectKeyEvent(event.e_event, event.GetKeySym(), event.GetText()))
         {
-          key_focus_area_->EmitKeyUpSignal(event.GetKeySym(), event.e_x11_keycode, event.GetKeyState());
+          child = parent;
+          parent = parent->GetParentObject();
+        }
+
+        if (parent)
+        {
+          SendKeyEvent(static_cast<InputArea*>(parent),
+            event.e_event,
+            event.GetKeySym(),
+            event.e_x11_keycode,
+            event.GetKeyState(),
+            event.GetText(),
+            event.GetKeyRepeatCount());
         }
       }
       else if (event.e_event == NUX_KEYDOWN)
       {        
-        KeyNavDirection direction = KEY_NAV_NONE;
-        switch (event.GetKeySym())
-        {
-        case NUX_VK_UP:
-          direction = KEY_NAV_UP;
-          break;
-        case NUX_VK_DOWN:
-          direction = KEY_NAV_DOWN;
-          break;
-        case NUX_VK_LEFT:
-          direction = KEY_NAV_LEFT;
-          break;
-        case NUX_VK_RIGHT:
-          direction = KEY_NAV_RIGHT;
-          break;
-        case NUX_VK_LEFT_TAB:
-          direction = KEY_NAV_TAB_NEXT;
-          break;
-        case NUX_VK_TAB:
-          direction = KEY_NAV_TAB_NEXT;
-          break;
-        case NUX_VK_ENTER:
-        case NUX_KP_ENTER:
-          direction = KEY_NAV_ENTER;
-          break;
-        default:
-          direction = KEY_NAV_NONE;
-          break;
-        }
-
         if (direction == KEY_NAV_ENTER)
         {
           if (key_focus_area_ && key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
@@ -1522,8 +1558,7 @@ namespace nux
     {
       // key focus test
       Geometry geo= key_focus_area_->GetRootGeometry();
-
-      //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
     }
 
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
