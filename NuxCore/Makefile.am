@@ -25,6 +25,7 @@ libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_cpp = \
+  $(srcdir)/AsyncFileWriter.cpp \
   $(srcdir)/TextString.cpp \
   $(srcdir)/TimeFunctions.cpp \
   $(srcdir)/Template.cpp \
@@ -80,6 +81,7 @@ source_cpp = \
   $(srcdir)/Math/Vector3.cpp \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
+  $(srcdir)/RollingFileAppender.cpp \
   $(srcdir)/CRC32.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
@@ -123,6 +125,7 @@ source_tiny_xml_h = \
   $(srcdir)/TinyXML/tinyxml.h
 
 source_h = \
+  $(srcdir)/AsyncFileWriter.h \
   $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
   $(srcdir)/CPU.h \
@@ -138,6 +141,7 @@ source_h = \
   $(srcdir)/Colors.h \
   $(srcdir)/Logger.h \
   $(srcdir)/LoggingWriter.h \
+  $(srcdir)/RollingFileAppender.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
   $(srcdir)/SystemGNU.h \
