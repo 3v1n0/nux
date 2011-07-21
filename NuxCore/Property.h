@@ -253,5 +253,6 @@ private:
 }
 
 #include "Property-inl.h"
+#include "PropertyOperators.h"
 
 #endif
