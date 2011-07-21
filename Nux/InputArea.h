@@ -306,7 +306,7 @@ namespace nux
          > OnMouseWheel; // send (current X, current Y, delta X, delta Y)
 
     //! Signal emitted when the InputArea receives a key pressed event.
-    sigc::signal<void, unsigned int, unsigned long, unsigned long> OnKeyPressed;
+    //sigc::signal<void, unsigned int, unsigned long, unsigned long> OnKeyPressed;
     
     //! Signal emitted when the InputArea receives a key release event.
     sigc::signal<void, unsigned int, unsigned long, unsigned long> OnKeyReleased;

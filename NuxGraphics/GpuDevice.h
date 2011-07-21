@@ -517,6 +517,8 @@ namespace nux
 
   public:
     
+    ObjectPtr<IOpenGLTexture2D> backup_texture0_;
+
 #if defined (NUX_OS_WINDOWS)
     GpuDevice (unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
       HDC device_context,

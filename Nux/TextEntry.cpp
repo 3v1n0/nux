@@ -2115,19 +2115,20 @@ namespace nux
   }
 
   bool TextEntry::InspectKeyEvent(unsigned int eventType,
-    unsigned int keysym,
+    unsigned int key_sym,
     const char* character)
   {
     if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false))
     {
-      if (keysym == NUX_VK_ENTER ||
-        keysym == NUX_KP_ENTER ||
-        keysym == NUX_VK_UP ||
-        keysym == NUX_VK_DOWN ||
-        keysym == NUX_VK_LEFT ||
-        keysym == NUX_VK_RIGHT ||
-        keysym == NUX_VK_LEFT_TAB ||
-        keysym == NUX_VK_TAB)
+      if (key_sym == NUX_VK_ENTER ||
+        key_sym == NUX_KP_ENTER ||
+        key_sym == NUX_VK_UP ||
+        key_sym == NUX_VK_DOWN ||
+        key_sym == NUX_VK_LEFT ||
+        key_sym == NUX_VK_RIGHT ||
+        key_sym == NUX_VK_LEFT_TAB ||
+        key_sym == NUX_VK_TAB ||
+        key_sym == NUX_VK_ESCAPE)
       {
         return false;
       }
@@ -2136,8 +2137,9 @@ namespace nux
     if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == true))
     {
       // Enable to exit the TextEntry when in write mode (hack for unity dash)
-      if (keysym == NUX_VK_UP ||
-      keysym == NUX_VK_DOWN)
+      if (key_sym == NUX_VK_UP ||
+      key_sym == NUX_VK_DOWN ||
+      key_sym == NUX_VK_ESCAPE)
       {
         return false;
       }

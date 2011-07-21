@@ -236,7 +236,7 @@ namespace nux
     NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
 
     // Test the horizontal scrollbar
-    found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+    found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
     NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
 
     // If the code gets here, it means that no area has been found yet.
@@ -814,15 +814,6 @@ namespace nux
       m_ViewContentX = m_ViewX;
       m_ViewContentY = m_ViewY;
     }
-
-    int hor_scrollbar_height = 0;
-    int ver_scrollbar_width = 0;
-
-    if (m_horizontal_scrollbar_enable == true)
-      hor_scrollbar_height = _hscrollbar->GetBaseHeight();
-
-    if (m_vertical_scrollbar_enable == true)
-      ver_scrollbar_width = _vscrollbar->GetBaseWidth();
 
     _vscrollbar->SetContentOffset (_delta_x, _delta_y);
     _hscrollbar->SetContentOffset (_delta_x, _delta_y);
