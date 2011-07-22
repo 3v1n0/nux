@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 #include "NuxCore/NuxCore.h"
 
@@ -190,7 +191,7 @@ namespace nux
     if (header.bpp == 32)
       bitmap_format = BITFMT_R8G8B8A8;
 
-    NTextureData *TextureObjectData = new NTextureData (bitmap_format, (header.width_hi << 8) | (header.width_lo), (header.height_hi << 8) | (header.height_lo), 1);
+    std::scoped_ptr<NTextureData> TextureObjectData(new NTextureData (bitmap_format, (header.width_hi << 8) | (header.width_lo), (header.height_hi << 8) | (header.height_lo), 1));
 
     // Allocate memory for a temporary buffer
     tga_buffer = new BYTE[datasize];
@@ -206,9 +207,7 @@ namespace nux
     if (!fileStream.good() )
     {
       fileStream.close();
-      delete tga_buffer;
-      //nuxAssertMsg(0, TEXT("[read_tga_file] Error while reading the TGA data: %s"), file_name);
-      NUX_SAFE_DELETE (TextureObjectData);
+      delete [] tga_buffer;
       return 0;
     }
 
