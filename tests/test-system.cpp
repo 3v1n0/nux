@@ -27,7 +27,7 @@
 #include "Nux/WindowThread.h"
 #include "Nux/Button.h"
 
-static void TestMainWindow(void);
+//static void TestMainWindow(void);
 //static void TestMainWindowStatus(void);
 //static void TestMainWindowSize(void);
 
@@ -35,11 +35,12 @@ void TestSystemSuite (void)
 {
 #define TESTDOMAIN "/System/"
 
-  g_test_add_func (TESTDOMAIN"/TestMainWindow",       TestMainWindow);
+//  g_test_add_func (TESTDOMAIN"/TestMainWindow",       TestMainWindow);
 //  g_test_add_func (TESTDOMAIN"/TestMainWindowStatus", TestMainWindowStatus);
 //  g_test_add_func (TESTDOMAIN"/TestMainWindowSize",   TestMainWindowSize);
 }
 
+/*
 static void TestMainWindow (void)
 {
   // Warning: on windows the window can not be physically smaller than ~120x100
@@ -51,7 +52,7 @@ static void TestMainWindow (void)
   delete wt;
 }
 
-/*
+
 static void TestMainWindowStatus (void)
 {
   // Warning: on windows the window can not be physically smaller than ~120x100
