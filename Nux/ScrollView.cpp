@@ -63,7 +63,8 @@ namespace nux
     _vscrollbar->OnScrollUp.connect ( sigc::mem_fun (this, &ScrollView::ScrollUp) );
     _vscrollbar->OnScrollDown.connect ( sigc::mem_fun (this, &ScrollView::ScrollDown) );
 
-    OnMouseWheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
+    mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
+    _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
 
     setTopBorder (4);
     setBorder (4);
@@ -988,7 +989,7 @@ namespace nux
     QueueDraw();
   }
 
-  void ScrollView::RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags)
+  void ScrollView::RecvMouseWheel(int x, int y, int wheel_delta, long button_flags, unsigned long key_flags)
   {
     // nux can't tell the difference between horizontal and vertical mouse wheel events
     // so we are only going to support vertical

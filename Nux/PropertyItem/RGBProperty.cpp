@@ -135,8 +135,8 @@ namespace nux
     }
 
     UpdateStartToEndColors();
-    m_green->NeedRedraw();
-    m_blue->NeedRedraw();
+    m_green->QueueDraw();
+    m_blue->QueueDraw();
   }
 
   void RGBPropertyItem::GreenChange (ColorGradient *slider)
@@ -148,8 +148,8 @@ namespace nux
     }
 
     UpdateStartToEndColors();
-    m_red->NeedRedraw();
-    m_blue->NeedRedraw();
+    m_red->QueueDraw();
+    m_blue->QueueDraw();
   }
 
   void RGBPropertyItem::BlueChange (ColorGradient *slider)
@@ -161,17 +161,17 @@ namespace nux
     }
 
     UpdateStartToEndColors();
-    m_red->NeedRedraw();
-    m_green->NeedRedraw();
+    m_red->QueueDraw();
+    m_green->QueueDraw();
   }
 
   void RGBPropertyItem::AlphaChange (ColorGradient *slider)
   {
     UpdateStartToEndColors();
 
-    m_red->NeedRedraw();
-    m_green->NeedRedraw();
-    m_blue->NeedRedraw();
+    m_red->QueueDraw();
+    m_green->QueueDraw();
+    m_blue->QueueDraw();
   }
 
   void RGBPropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
@@ -224,8 +224,8 @@ namespace nux
       SetColor(rgb_values_.red, rgb_values_.green, rgb_values_.blue);
     }
 
-    m_green->NeedRedraw();
-    m_blue->NeedRedraw();
+    m_green->QueueDraw();
+    m_blue->QueueDraw();
   }
 
 void RGBPropertyItem::SetColorModel(color::Model cm)

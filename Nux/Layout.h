@@ -170,7 +170,6 @@ namespace nux
         Emits the signal \i OnQueueDraw.
     */
     virtual void QueueDraw ();
-    virtual void NeedRedraw (); //!< deprecated
 
     //! Return true if a draw has been scheduled for this layout
     /*!

@@ -20,6 +20,7 @@
  *
  */
 
+#include "NuxCore.h"
 #include "RollingFileAppender.h"
 
 #include <fstream>
@@ -72,7 +73,12 @@ private:
   void AsyncWriterClosed();
   void RotateFiles();
 
+#ifndef NUX_VISUAL_STUDIO_2010
+  std::tr1::shared_ptr<AsyncFileWriter> writer_;
+#else
   std::shared_ptr<AsyncFileWriter> writer_;
+#endif
+
   GFile* log_file_;
   std::string filename_;
   unsigned number_of_backup_files_;
@@ -93,28 +99,35 @@ RollingFileStreamBuffer::RollingFileStreamBuffer(std::string const& filename,
   , files_rolled_(files_rolled)
 {
   // Make sure that the filename starts with a '/' for a full path.
-  if (filename.empty() || filename[0] != '/') {
+  if (filename.empty() || filename[0] != '/')
+  {
       std::string error_msg = "\"" + filename + "\" is not a full path";
       throw std::runtime_error(error_msg.c_str());
   }
   // Looks to see if our filename exists.
-  if (g_file_test(filename.c_str(), G_FILE_TEST_EXISTS)) {
+  if (g_file_test(filename.c_str(), G_FILE_TEST_EXISTS))
+  {
     // The filename needs to be a regular file.
-    if (!g_file_test(filename.c_str(), G_FILE_TEST_IS_REGULAR)) {
+    if (!g_file_test(filename.c_str(), G_FILE_TEST_IS_REGULAR))
+    {
       std::string error_msg = filename + " is not a regular file";
       throw std::runtime_error(error_msg.c_str());
     }
     // Rotate the files.
     RotateFiles();
-  } else {
+  }
+  else
+  {
     GFile* log_file = g_file_new_for_path(filename.c_str());
     GFile* log_dir = g_file_get_parent(log_file);
-    if (log_dir) {
+    if (log_dir)
+    {
       g_file_make_directory_with_parents(log_dir, NULL, NULL);
       g_object_unref(log_dir);
       g_object_unref(log_file);
     }
-    else {
+    else
+    {
       g_object_unref(log_file);
       std::string error_msg = "Can't get parent for " + filename;
       throw std::runtime_error(error_msg.c_str());
@@ -141,16 +154,19 @@ void RollingFileStreamBuffer::RotateFiles()
 
   unsigned backup = number_of_backup_files_;
   std::string last_log(backup_path(filename_, backup));
-  if (g_file_test(last_log.c_str(), G_FILE_TEST_EXISTS)) {
+  if (g_file_test(last_log.c_str(), G_FILE_TEST_EXISTS))
+  {
     // Attempt to remove it.
     GFile* logfile = g_file_new_for_path(last_log.c_str());
     g_file_delete(logfile, NULL, NULL);
     g_object_unref(logfile);
   }
   // Move the previous files out.
-  while (backup > 0) {
+  while (backup > 0)
+  {
     std::string prev_log(backup_path(filename_, --backup));
-    if (g_file_test(prev_log.c_str(), G_FILE_TEST_EXISTS)) {
+    if (g_file_test(prev_log.c_str(), G_FILE_TEST_EXISTS))
+    {
       GFile* dest = g_file_new_for_path(last_log.c_str());
       GFile* src = g_file_new_for_path(prev_log.c_str());
       // We don't really care if there are errors for now.

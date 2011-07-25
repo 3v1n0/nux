@@ -61,19 +61,20 @@ namespace nux
     // Set Original State
     SetMinimumSize (AREA_MIN_WIDTH, HSCROLLBAR_HEIGHT);
     SetMaximumSize (AREA_MAX_WIDTH, HSCROLLBAR_HEIGHT);
+
     // Set Signals
-    _scroll_right_button->OnMouseDown.connect ( sigc::mem_fun (this, &HScrollBar::RecvStartScrollRight) );
-    _scroll_right_button->OnMouseUp.connect ( sigc::mem_fun (this, &HScrollBar::RecvEndScrollRight) );
-    _scroll_left_button->OnMouseDown.connect ( sigc::mem_fun (this, &HScrollBar::RecvStartScrollLeft) );
-    _scroll_left_button->OnMouseUp.connect ( sigc::mem_fun (this, &HScrollBar::RecvEndScrollLeft) );
+    _scroll_right_button->mouse_down.connect ( sigc::mem_fun (this, &HScrollBar::RecvStartScrollRight) );
+    _scroll_right_button->mouse_up.connect ( sigc::mem_fun (this, &HScrollBar::RecvEndScrollRight) );
+    _scroll_left_button->mouse_down.connect ( sigc::mem_fun (this, &HScrollBar::RecvStartScrollLeft) );
+    _scroll_left_button->mouse_up.connect ( sigc::mem_fun (this, &HScrollBar::RecvEndScrollLeft) );
 
-    _slider->OnMouseDown.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseDown) );
-    _slider->OnMouseUp.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseUp) );
-    _slider->OnMouseDrag.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseDrag) );
+    _slider->mouse_down.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseDown) );
+    _slider->mouse_up.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseUp) );
+    _slider->mouse_drag.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseDrag) );
 
-    _track->OnMouseDown.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseDown) );
-    _track->OnMouseUp.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseUp) );
-    _track->OnMouseDrag.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseDrag) );
+    _track->mouse_down.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseDown) );
+    _track->mouse_up.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseUp) );
+    _track->mouse_drag.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseDrag) );
 
     // Set Geometry
     _scroll_right_button->SetMinimumSize (HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
@@ -100,6 +101,7 @@ namespace nux
     trackright_callback->OnTimerExpired.connect (sigc::mem_fun (this, &HScrollBar::TrackRight) );
 
     SetLayout(hlayout);
+    SetAcceptMouseWheelEvent(true);
   }
 
   HScrollBar::~HScrollBar()
@@ -126,7 +128,7 @@ namespace nux
       }
       else
       {
-        scrollbar->NeedRedraw();
+        scrollbar->QueueDraw();
         GetTimer().AddTimerHandler (10, callback, scrollbar);
       }
     }
@@ -142,7 +144,7 @@ namespace nux
       }
       else
       {
-        scrollbar->NeedRedraw();
+        scrollbar->QueueDraw();
         GetTimer().AddTimerHandler (10, callback, scrollbar);
       }
     }
@@ -152,12 +154,12 @@ namespace nux
   {
     OnScrollRight.emit (m_ScrollUnit, 1);
 
-    if (AtMaximum() )
+    if (AtMaximum())
       RecvEndScrollRight (0, 0, 0, 0);
     else
       m_RightTimerHandler = GetTimer().AddTimerHandler (10, right_callback, this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void HScrollBar::ScrollLeft (void *v)
@@ -169,7 +171,7 @@ namespace nux
     else
       m_LeftTimerHandler = GetTimer().AddTimerHandler (10, left_callback, this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void HScrollBar::TrackLeft (void *v)
@@ -178,7 +180,7 @@ namespace nux
     {
       OnScrollLeft.emit (container_width_, 1);
       m_TrackLeftTimerHandler  = GetTimer().AddTimerHandler (10, trackleft_callback, this);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
@@ -188,7 +190,7 @@ namespace nux
     {
       OnScrollRight.emit (container_width_, 1);
       m_TrackRightTimerHandler  = GetTimer().AddTimerHandler (10, trackright_callback, this);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 

@@ -52,9 +52,9 @@ namespace nux
     //////////////////
     // Set Signals  //
     //////////////////
-    m_Percentage->OnMouseDown.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseDown) );
-    m_Percentage->OnMouseUp.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseUp) );
-    m_Percentage->OnMouseDrag.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseDrag) );
+    m_Percentage->mouse_down.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseDown) );
+    m_Percentage->mouse_up.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseUp) );
+    m_Percentage->mouse_drag.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseDrag) );
 
     m_ValueString->sigValidateKeyboardEntry.connect (sigc::mem_fun (this, &ColorGradient::OnValidateKeyboardEntry) );
 
@@ -101,7 +101,7 @@ namespace nux
 
     if (m_ValueString->IsRedrawNeeded() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     return ret;
@@ -243,7 +243,7 @@ namespace nux
     }
 
     //m_ValueString->SetText(NString::Printf("%.3f", m_Value));
-    NeedRedraw();
+    QueueDraw();
   }
 
   float ColorGradient::GetValue() const
@@ -269,7 +269,7 @@ namespace nux
     sigFloatChanged.emit (m_Value);
     sigMouseDown.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::OnReceiveMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -288,7 +288,7 @@ namespace nux
     sigFloatChanged.emit (m_Value);
     sigMouseUp.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::OnReceiveMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -306,7 +306,7 @@ namespace nux
     sigFloatChanged.emit (m_Value);
     sigMouseDrag.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::OnKeyboardFocus()
@@ -341,7 +341,7 @@ namespace nux
     sigValueChanged.emit (this);
     sigFloatChanged.emit (m_Value);
     sigSetTypedValue.emit (f);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::EmitFloatChangedSignal()
@@ -352,7 +352,7 @@ namespace nux
   void ColorGradient::AddColorMark (DOUBLE x, Color color, bool selected)
   {
     m_ColorMarkGroup.AddColorMark (x, color, selected);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::Reset()

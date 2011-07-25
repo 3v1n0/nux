@@ -98,18 +98,18 @@ namespace nux
     Geometry base = GetGeometry();
 
     if (m_layout)
-      m_layout->NeedRedraw();
+      m_layout->QueueDraw();
 
     GetPainter().PaintBackground (GfxContext, base);
 
     if (m_vertical_scrollbar_enable)
     {
-      _vscrollbar->NeedRedraw();
+      _vscrollbar->QueueDraw();
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      _hscrollbar->NeedRedraw();
+      _hscrollbar->QueueDraw();
     }
 
     GfxContext.PopClippingRectangle();
@@ -216,28 +216,28 @@ namespace nux
   {
     ScrollView::ScrollLeft (stepx, mousedx);
     ComputeChildLayout();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Panel::ScrollRight (float stepx, int mousedx)
   {
     ScrollView::ScrollRight (stepx, mousedx);
     ComputeChildLayout();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Panel::ScrollUp (float stepy, int mousedy)
   {
     ScrollView::ScrollUp (stepy, mousedy);
     ComputeChildLayout();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Panel::ScrollDown (float stepy, int mousedy)
   {
     ScrollView::ScrollDown (stepy, mousedy);
     ComputeChildLayout();
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool Panel::AcceptKeyNavFocus()

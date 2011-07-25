@@ -135,7 +135,7 @@ namespace nux
     else
       GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
 
-    m_EditLine->NeedRedraw();
+    m_EditLine->QueueDraw();
   }
 
   void SpinBoxDouble::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -158,7 +158,7 @@ namespace nux
     m_EditLine->SetText (NString::Printf ("%.3f", m_Value));
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
-    NeedRedraw();
+    QueueDraw();
   }
 
   double SpinBoxDouble::GetValue() const
@@ -173,7 +173,7 @@ namespace nux
     if (m_Step <= 0)
       m_Step = 1.0;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   double SpinBoxDouble::GetStep() const
@@ -198,7 +198,7 @@ namespace nux
     m_Value = m_DoubleValidator.GetClampedValue (m_Value);
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBoxDouble::ImplementIncrementBtn()
@@ -212,7 +212,7 @@ namespace nux
       else
         m_UpTimerHandler = GetTimer().AddTimerHandler (800, m_UpTimerCallback, 0);
 
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);
@@ -231,7 +231,7 @@ namespace nux
       else
         m_DownTimerHandler = GetTimer().AddTimerHandler (800, m_DownTimerCallback, 0);
 
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);

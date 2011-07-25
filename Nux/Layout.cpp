@@ -845,22 +845,17 @@ namespace nux
       if ((*it)->IsView ())
       {
         View *ic = NUX_STATIC_CAST (View *, (*it));
-        ic->NeedRedraw ();
+        ic->QueueDraw ();
       }
       else if ((*it)->IsLayout ())
       {
         Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
-        layout->NeedRedraw ();
+        layout->QueueDraw ();
       }
     }
 
     _queued_draw = true;
     OnQueueDraw.emit (this);
-  }
-
-  void Layout::NeedRedraw ()
-  {
-    QueueDraw ();
   }
 
   bool Layout::IsQueuedForDraw ()
