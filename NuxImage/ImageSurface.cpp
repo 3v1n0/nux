@@ -21,6 +21,7 @@
 
 
 #include "NuxCore/NuxCore.h"
+#include "NuxCore/Logger.h"
 #include "NuxCore/Math/MathFunctions.h"
 
 #include "BitmapFormats.h"
@@ -35,6 +36,10 @@
 
 namespace nux
 {
+namespace
+{
+logging::Logger logger("nux.image");
+}
 
   extern PixelFormatInfo GPixelFormats[];
 
@@ -92,7 +97,7 @@ namespace nux
 #endif
 
     // Unsupported format
-    nuxDebugMsg (TEXT ("[LoadImageFile] Unknown file format: %s."), filename);
+    LOG_DEBUG(logger) << "Unknown file format: " << filename;
     return 0;
   }
 
