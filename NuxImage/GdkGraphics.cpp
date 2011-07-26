@@ -38,13 +38,18 @@ logging::Logger logger("nux.image");
   {
   }
 
+  GdkGraphics::GdkGraphics(GdkPixbuf* pixbuf)
+    : pixbuf_(pixbuf)
+  {
+  }
+
   GdkGraphics::GdkGraphics(const char* filename)
     : pixbuf_(0)
   {
     LoadImage(filename);
   }
 
-  GdkGraphics::~GdkGraphics ()
+  GdkGraphics::~GdkGraphics()
   {
     if (pixbuf_)
       g_object_unref(pixbuf_);
@@ -53,10 +58,7 @@ logging::Logger logger("nux.image");
   bool GdkGraphics::LoadImage(const char* filename)
   {
     if (pixbuf_)
-    {
       g_object_unref(pixbuf_);
-      pixbuf_ = 0;
-    }
 
     GError* error = 0;
     pixbuf_ = gdk_pixbuf_new_from_file(filename, &error);
@@ -73,6 +75,12 @@ logging::Logger logger("nux.image");
 
   NBitmapData* GdkGraphics::GetBitmap() const
   {
+    if (!pixbuf_)
+    {
+      LOG_WARN(logger) << "No pixbuf loaded";
+      return 0;
+    }
+
     unsigned int width = gdk_pixbuf_get_width(pixbuf_);
     unsigned int height = gdk_pixbuf_get_height(pixbuf_);
     int channels = gdk_pixbuf_get_n_channels(pixbuf_);

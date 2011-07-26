@@ -19,9 +19,8 @@
  *
  */
 
-
-#ifndef GDKGRAPHICS_H
-#define GDKGRAPHICS_H
+#ifndef NUXIMAGE_GDKGRAPHICS_H
+#define NUXIMAGE_GDKGRAPHICS_H
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -31,11 +30,14 @@ namespace nux
   class GdkGraphics
   {
   public:
-    GdkGraphics ();
-    GdkGraphics (const char* Filename);
-    ~GdkGraphics ();
+    GdkGraphics();
+    explicit GdkGraphics(const char* filename);
+    // Takes ownership of the GdkPixbuf.
+    explicit GdkGraphics(GdkPixbuf* pixbuf);
 
-    bool LoadImage (const char* Filename);
+    ~GdkGraphics();
+
+    bool LoadImage(const char* filename);
 
     NBitmapData* GetBitmap() const;
 
@@ -45,4 +47,4 @@ namespace nux
 
 }
 
-#endif // GDKGRAPHICS_H
+#endif // NUXIMAGE_GDKGRAPHICS_H
