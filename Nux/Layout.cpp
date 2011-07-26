@@ -172,7 +172,7 @@ namespace nux
 // If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
 // and the children will take their natural size by expending WidgetLayout.
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-  void Layout::AddLayout (Layout *layout, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage)
+  void Layout::AddLayout (Layout *layout, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
     nuxAssertMsg (layout != 0, TEXT ("[Layout::AddView] Invalid parameter.") );
     NUX_RETURN_IF_TRUE (layout == 0);
@@ -183,6 +183,8 @@ namespace nux
     Area *parent = layout->GetParentObject();
     nuxAssertMsg (parent == 0, TEXT ("[Layout::AddLayout] Trying to add an object that already has a parent.") );
     NUX_RETURN_IF_TRUE (parent != 0);
+
+    nuxDebugMsg (index >= 0, TEXT ("[Layout::AddLayout] Invalid index position. Adding at the beginning of the list..") );
 
     layout->SetStretchFactor (stretchFactor);
     layout->SetPositioning (minor_position);
@@ -212,7 +214,25 @@ namespace nux
       //ChildFocusChanged (this, layout);
     }
 
-    _layout_element_list.push_back (layout);
+    if (index < 0)
+      index = NUX_LAYOUT_BEGIN;
+
+    if (index == NUX_LAYOUT_END)
+    {
+      _layout_element_list.push_back (layout);
+    }
+    else
+    {
+      std::list<Area *>::iterator pos = _layout_element_list.begin();
+      int idx = index;
+      while (pos != _layout_element_list.end() && idx > 0)
+      {
+        idx--;
+        pos++;
+      }
+      _layout_element_list.insert(pos, layout);
+    }
+
     _connection_map[layout] = layout->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
@@ -240,9 +260,10 @@ namespace nux
       /param minor_position Controls how the layout position the object.
       /param minor_size Controls the object minor dimension size.
       /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
+      /param index Controls the object position in the layout children.
   */
 
-  void Layout::AddView (Area *bo, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage)
+  void Layout::AddView (Area *bo, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
     nuxAssertMsg (bo != 0, TEXT ("[Layout::AddView] Invalid parameter.") );
     NUX_RETURN_IF_TRUE (bo == 0);
@@ -250,6 +271,8 @@ namespace nux
     Area *parent = bo->GetParentObject();
     nuxAssertMsg (parent == 0, TEXT ("[Layout::AddView] Trying to add an object that already has a parent.") );
     NUX_RETURN_IF_TRUE (parent != 0);
+
+    nuxDebugMsg (index >= 0, TEXT ("[Layout::AddView] Invalid index position. Adding at the beginning of the list..") );
 
     bo->SetStretchFactor (stretchFactor);
     bo->SetPositioning (minor_position);
@@ -279,15 +302,32 @@ namespace nux
       //ChildFocusChanged (this, bo);
     //}
 
+    if (index < 0)
+      index = NUX_LAYOUT_BEGIN;
 
-    _layout_element_list.push_back (bo);
+    if (index == NUX_LAYOUT_END || index >= _layout_element_list.size())
+    {
+      _layout_element_list.push_back (bo);
+    }
+    else
+    {
+      std::list<Area *>::iterator pos = _layout_element_list.begin();
+      int idx = index;
+      while (pos != _layout_element_list.end() && idx > 0)
+      {
+        idx--;
+        pos++;
+      }
+      _layout_element_list.insert(pos, bo);
+    }
+
     _connection_map[bo] = bo->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
 
     ViewAdded.emit (this, bo);
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
   }
 
-  void Layout::AddSpace (unsigned int width, unsigned int stretchFactor)
+  void Layout::AddSpace (unsigned int width, unsigned int stretchFactor, LayoutPosition index)
   {
     AddLayout (new SpaceLayout(), stretchFactor);
   }
