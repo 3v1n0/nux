@@ -217,7 +217,7 @@ namespace nux
     if (index < 0)
       index = NUX_LAYOUT_BEGIN;
 
-    if (index == NUX_LAYOUT_END)
+    if (index == NUX_LAYOUT_END || index >= _layout_element_list.size())
     {
       _layout_element_list.push_back (layout);
     }
