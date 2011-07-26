@@ -375,7 +375,7 @@ namespace nux
     LayeredChildProperties *props;
 
     NUX_RETURN_IF_NULL(area);
-    NUX_RETURN_IF_FAIL(area->GetParentObject () == NULL);
+    NUX_RETURN_IF_NULL(area->GetParentObject ());
 
     props = new LayeredChildProperties (expand, x, y, width, height);
     area->SetLayoutProperties (props);
@@ -449,7 +449,7 @@ namespace nux
     std::list<Area *>::iterator it, eit = _layout_element_list.end ();
     int i = 0;
 
-    NUX_RETURN_IF_NULL((t_uint32)index_ < _layout_element_list.size ());
+    NUX_RETURN_IF_FALSE((t_uint32)index_ < _layout_element_list.size ());
 
     if (index_ == m_active_index)
       return;
