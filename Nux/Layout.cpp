@@ -223,7 +223,7 @@ namespace nux
     }
     else
     {
-      std::list<Area *>::iterator pos = _layout_element_list.begin();
+      auto pos = _layout_element_list.begin();
       int idx = index;
       while (pos != _layout_element_list.end() && idx > 0)
       {
@@ -311,7 +311,7 @@ namespace nux
     }
     else
     {
-      std::list<Area *>::iterator pos = _layout_element_list.begin();
+      auto pos = _layout_element_list.begin();
       int idx = index;
       while (pos != _layout_element_list.end() && idx > 0)
       {
