@@ -2359,11 +2359,19 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt3, _offscreen_depth_rt3, quad_width, quad_height);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    TexCoordXForm texxform0;
+    TexCoordXForm texxform1;
+    TexCoordXForm texxform2;
+    TexCoordXForm texxform3;
+
+    texxform0.flip_v_coord = true;
+    texxform2.flip_v_coord = true;
     QRP_GLSL_4Tex (0, 0, quad_width, quad_height,
-      device_texture, texxform, Color(0.25, 0.25, 0.25, 0.25),
-      _offscreen_color_rt0, texxform, Color(0.25, 0.25, 0.25, 0.25),
-      _offscreen_color_rt1, texxform, Color(0.25, 0.25, 0.25, 0.25),
-      _offscreen_color_rt2, texxform, Color(0.25, 0.25, 0.25, 0.25));
+      device_texture, texxform0, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt0, texxform1, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt1, texxform2, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt2, texxform3, Color(0.25, 0.25, 0.25, 0.25));
 
     _offscreen_fbo->Deactivate();
 

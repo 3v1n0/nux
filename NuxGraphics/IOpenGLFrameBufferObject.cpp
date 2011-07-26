@@ -202,13 +202,13 @@ namespace nux
 //         // On the PC you need to bing the same D24S8 surface to the depth and the stencil attachment.
 //     }
 
-#ifndef NUX_OPENGLES_20
-    _Rbo.Set (GL_DEPTH_COMPONENT, _Width, _Height);
-    CHECKGL ( glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
-                                            GL_DEPTH_ATTACHMENT_EXT,
-                                            GL_RENDERBUFFER_EXT,
-                                            _Rbo.GetId() ) );
-#endif
+// #ifndef NUX_OPENGLES_20
+//     _Rbo.Set (GL_DEPTH_COMPONENT, _Width, _Height);
+//     CHECKGL ( glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
+//                                             GL_DEPTH_ATTACHMENT_EXT,
+//                                             GL_RENDERBUFFER_EXT,
+//                                             _Rbo.GetId() ) );
+// #endif
 
     nuxAssert ( _Fbo.IsValid() == true );
 

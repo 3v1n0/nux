@@ -47,15 +47,15 @@ namespace nux
     SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
-    OnMouseDown.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseDown) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseDrag) );
-    OnMouseUp.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseUp) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseDoubleClick) );
+    mouse_down.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseDown) );
+    mouse_drag.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseDrag) );
+    mouse_up.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseUp) );
+    mouse_double_click.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseDoubleClick) );
 
-    OnKeyEvent.connect (sigc::mem_fun (this, &EditTextBox::RecvKeyEvent) );
+    key_down.connect (sigc::mem_fun (this, &EditTextBox::RecvKeyEvent) );
 
-    OnStartKeyboardReceiver.connect (sigc::mem_fun (this, &EditTextBox::RecvStartKeyFocus) );
-    OnStopKeyboardReceiver.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
+    start_key_focus.connect (sigc::mem_fun (this, &EditTextBox::RecvStartKeyFocus) );
+    end_key_focus.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
 
     SetText (Caption);
     SetTextColor (color::White);
@@ -112,7 +112,7 @@ namespace nux
     StopBlinkCursor (false);
     StartBlinkCursor (false);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::BlinkCursorTimerInterrupt (void *v)
@@ -120,7 +120,7 @@ namespace nux
     GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
     m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
     BlinkCursor = !BlinkCursor;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::StopBlinkCursor (bool BlinkState)
@@ -128,14 +128,14 @@ namespace nux
     GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
     BlinkCursor = BlinkState;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::StartBlinkCursor (bool BlinkState)
   {
     m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
     BlinkCursor = BlinkState;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::SetValidator (const Validator *validator)
@@ -231,7 +231,7 @@ namespace nux
       sigSetText.emit (this);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
 
@@ -252,7 +252,7 @@ namespace nux
   void EditTextBox::RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     m_KeyboardHandler.SelectAllText();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -265,7 +265,7 @@ namespace nux
       m_ScrollTimerHandler = 0;
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -286,7 +286,7 @@ namespace nux
       StartBlinkCursor (false);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -308,7 +308,7 @@ namespace nux
       StartBlinkCursor (false);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   long EditTextBox::PostLayoutManagement (long LayoutResult)
@@ -321,7 +321,6 @@ namespace nux
 
 
   void EditTextBox::RecvKeyEvent (
-    GraphicsEngine  &GfxContext, /*Graphics Context for text operation*/
     unsigned long   eventType  , /*event type*/
     unsigned long   keysym     , /*event keysym*/
     unsigned long   state      , /*event state*/
@@ -372,7 +371,7 @@ namespace nux
       text_input_mode_ = false;
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool EditTextBox::ValidateKeyboardEntry (const TCHAR *text) const
@@ -398,7 +397,7 @@ namespace nux
     // Revert back the caption text
     m_Text = m_temporary_caption;
     sigEscapeKeyboardFocus.emit (this);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::EnteringKeyboardFocus()
@@ -409,7 +408,7 @@ namespace nux
     // the previous caption text is restored
     m_temporary_caption = m_Text;
     sigStartKeyboardFocus.emit (this);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::QuitingKeyboardFocus()
@@ -436,7 +435,7 @@ namespace nux
       m_KeyboardHandler.SelectAllText();
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void EditTextBox::RecvStartKeyFocus()
@@ -472,7 +471,7 @@ namespace nux
   void EditTextBox::SetTextBackgroundColor (const Color &color)
   {
     m_BackgroundColor = color;
-    NeedRedraw();
+    QueueDraw();
   }
 
   Color EditTextBox::GetTextBackgroundColor() const

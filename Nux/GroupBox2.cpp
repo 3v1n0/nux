@@ -84,7 +84,7 @@ namespace nux
 
     if (m_layout != 0)
     {
-      m_layout->NeedRedraw();
+      m_layout->QueueDraw();
     }
 
     GetPainter().PopBackground();

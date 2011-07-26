@@ -168,15 +168,15 @@ namespace nux
 
     update_canvas_ = true;
 
-    OnMouseDown.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDrag) );
-    OnMouseUp.connect (sigc::mem_fun (this, &TextEntry::RecvMouseUp) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDoubleClick) );
+    mouse_down.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
+    mouse_drag.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDrag) );
+    mouse_up.connect (sigc::mem_fun (this, &TextEntry::RecvMouseUp) );
+    mouse_double_click.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDoubleClick) );
 
-    OnKeyEvent.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
+    key_down.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
 
-    OnStartKeyboardReceiver.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
-    OnStopKeyboardReceiver.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
+    start_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
+    end_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText (text);
@@ -289,8 +289,7 @@ namespace nux
         }
         else
         {
-          OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
-                           event.e_event, event.GetKeySym(),
+          key_down.emit (event.e_event, event.GetKeySym(),
                            event.GetKeyState(), event.GetText(),
                            event.GetKeyRepeatCount());
           //ret = PostProcessEvent2 (event, ret, processEventInfo);
@@ -298,8 +297,7 @@ namespace nux
       }
       else
       {
-        OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
-                         event.e_event, event.GetKeySym(),
+        key_down.emit (event.e_event, event.GetKeySym(),
                          event.GetKeyState(), event.GetText(),
                          event.GetKeyRepeatCount());
       }
@@ -412,7 +410,7 @@ namespace nux
     bool shift = (state & NUX_STATE_SHIFT);
     bool ctrl = (state & NUX_STATE_CTRL);
 
-    // DLOG("TextEntry::OnKeyEvent(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
+    // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
 
     if (event_type == NUX_KEYDOWN)
     {
@@ -555,7 +553,6 @@ namespace nux
   }
 
   void TextEntry::RecvKeyEvent (
-    GraphicsEngine &GfxContext ,   /*Graphics Context for text operation*/
     unsigned long    eventType  ,   /*event type*/
     unsigned long    keysym     ,   /*event keysym*/
     unsigned long    state      ,   /*event state*/

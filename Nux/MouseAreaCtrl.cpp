@@ -34,9 +34,9 @@ namespace nux
     m_Area      = new InputArea (NUX_TRACKER_LOCATION);
 
     // Set Signals
-    m_Area->OnMouseDown.connect (sigc::mem_fun (this, &MouseAreaCtrl::MouseDown) );
-    m_Area->OnMouseUp.connect (sigc::mem_fun (this, &MouseAreaCtrl::MouseUp) );
-    m_Area->OnMouseDrag.connect (sigc::mem_fun (this, &MouseAreaCtrl::MouseDrag) );
+    m_Area->mouse_down.connect (sigc::mem_fun (this, &MouseAreaCtrl::MouseDown) );
+    m_Area->mouse_up.connect (sigc::mem_fun (this, &MouseAreaCtrl::MouseUp) );
+    m_Area->mouse_drag.connect (sigc::mem_fun (this, &MouseAreaCtrl::MouseDrag) );
 
     // Set Geometry
     m_Area->SetMinimumSize (100, 100);
@@ -58,7 +58,7 @@ namespace nux
     ret = m_Area->OnEvent (ievent, ret, ProcessEventInfo);
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
 
-    NeedRedraw();
+    QueueDraw();
     return ret;
   }
 

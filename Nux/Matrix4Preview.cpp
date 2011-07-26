@@ -35,7 +35,7 @@ namespace nux
 
     SetMinMaxSize (30, 30);
 
-    OnMouseClick.connect (sigc::mem_fun (this, &Matrix4Preview::RecvClick) );
+    mouse_click.connect (sigc::mem_fun (this, &Matrix4Preview::RecvClick) );
 
     m_ChangeDetectionTimer = new TimerFunctor();
     m_ChangeDetectionTimer->OnTimerExpired.connect (sigc::mem_fun (this, &Matrix4Preview::RecvTimer) );

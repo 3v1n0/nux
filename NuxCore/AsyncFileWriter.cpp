@@ -20,6 +20,7 @@
  *
  */
 
+#include "NuxCore.h"
 #include "AsyncFileWriter.h"
 
 #include <sstream>

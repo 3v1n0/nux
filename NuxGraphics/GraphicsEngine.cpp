@@ -312,8 +312,8 @@ namespace nux
       _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader())
 #else
     if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader() &&
-      _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
-      _graphics_display.GetGpuDevice()->GetGPUBrand() ==  GPU_BRAND_NVIDIA)
+      _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() /*&&
+      _graphics_display.GetGpuDevice()->GetGPUBrand() ==  GPU_BRAND_NVIDIA*/)
 #endif
     {
       NString renderer_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER)));
@@ -1331,7 +1331,7 @@ namespace nux
     ObjectPtr<IOpenGLTexture2D>& depthbuffer,
     int width, int height)
   {
-    //if ((colorbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
+    if ((colorbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
     {
       colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8);
       depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8);

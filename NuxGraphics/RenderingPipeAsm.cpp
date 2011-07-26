@@ -1964,15 +1964,16 @@ namespace nux
 
     QRP_ASM_1Tex(x, y, quad_width, quad_height, device_texture, texxform, color::White);
 
+    TexCoordXForm texxform1;
     for (int i = 0; i < num_pass; i++)
     {
       SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-      QRP_ASM_HorizontalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt0, texxform, c0);
+      QRP_ASM_HorizontalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt0, texxform1, c0);
 
       SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-      QRP_ASM_VerticalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt1, texxform, c0);
+      QRP_ASM_VerticalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt1, texxform1, c0);
     }
 
     _offscreen_fbo->Deactivate();
@@ -2195,11 +2196,19 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt3, _offscreen_depth_rt3, quad_width, quad_height);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    TexCoordXForm texxform0;
+    TexCoordXForm texxform1;
+    TexCoordXForm texxform2;
+    TexCoordXForm texxform3;
+
+    texxform0.flip_v_coord = true;
+    texxform2.flip_v_coord = true;
     QRP_ASM_4Tex (0, 0, quad_width, quad_height,
-      device_texture, texxform, color::White,
-      _offscreen_color_rt0, texxform, color::White,
-      _offscreen_color_rt1, texxform, color::White,
-      _offscreen_color_rt2, texxform, color::White);
+      device_texture, texxform0, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt0, texxform1, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt1, texxform2, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt2, texxform3, Color(0.25, 0.25, 0.25, 0.25));
 
     _offscreen_fbo->Deactivate();
 
