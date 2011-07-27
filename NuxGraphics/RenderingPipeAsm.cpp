@@ -2403,6 +2403,60 @@ namespace nux
 	  }
 	  return _offscreen_color_rt0;
   }
+
+  void GraphicsEngine::QRP_ASM_GetCopyTexture(
+    int width, int height,
+    ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
+    ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
+    TexCoordXForm &texxform0, const Color& c0)
+  {
+    if (src_device_texture.IsValid() == false)
+    {
+      return;
+    }
+
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    int previous_width = 0;
+    int previous_height = 0;
+
+    if (prevFBO.IsValid())
+    {
+      previous_width = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
+    }
+    else
+    {
+      previous_width = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
+    }
+
+    if ((dst_device_texture.IsValid() == false) ||
+      (dst_device_texture->GetWidth() != width) ||
+      (dst_device_texture->GetHeight() != height) ||
+      (dst_device_texture->GetPixelFormat() != src_device_texture->GetPixelFormat()))
+    {
+      dst_device_texture = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, src_device_texture->GetPixelFormat());
+    }
+
+    CHECKGL(glClearColor(0, 0, 0, 0));
+    ObjectPtr<IOpenGLBaseTexture> depth_buffer(NULL);
+    SetFrameBufferHelper(_offscreen_fbo, dst_device_texture, depth_buffer, width, height);
+    CHECKGL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+
+    QRP_ASM_1Tex(0, 0, width, height, src_device_texture, texxform0, c0);
+
+    _offscreen_fbo->Deactivate();
+
+    if (prevFBO.IsValid())
+    {
+      prevFBO->Activate(true);
+      SetViewport(0, 0, previous_width, previous_height);
+    }
+    else
+    {
+      SetViewport(0, 0, previous_width, previous_height);
+    }
+  }
 }
 #endif // NUX_OPENGLES_20
 

@@ -206,8 +206,8 @@ namespace nux
 
         InitSl2TextureDepRead ();
 
-        InitSLHorizontalHQGaussFilter ();
-        InitSLVerticalHQGaussFilter ();
+        InitSLHorizontalHQGaussFilter (1);
+        InitSLVerticalHQGaussFilter (1);
       }
       else if (_graphics_display.GetGpuDevice()->GetGpuInfo ().Support_ARB_Fragment_Shader () &&
         _graphics_display.GetGpuDevice()->GetGpuInfo ().Support_ARB_Vertex_Program () &&
@@ -1327,19 +1327,28 @@ namespace nux
 
   void GraphicsEngine::SetFrameBufferHelper (
     ObjectPtr<IOpenGLFrameBufferObject>& fbo,
-    ObjectPtr<IOpenGLTexture2D>& colorbuffer,
-    ObjectPtr<IOpenGLTexture2D>& depthbuffer,
+    ObjectPtr<IOpenGLBaseTexture>& colorbuffer,
+    ObjectPtr<IOpenGLBaseTexture>& depthbuffer,
     int width, int height)
   {
-    if ((colorbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
+    if ((colorbuffer.IsValid() == false) || (colorbuffer->GetWidth() != width) || (colorbuffer->GetHeight() != height))
     {
       colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8);
+    }
+
+    if ((depthbuffer.IsValid() == false) || (depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
+    {
       depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8);
     }
 
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
     fbo->SetRenderTarget(0, colorbuffer->GetSurfaceLevel(0));
-    fbo->SetDepthSurface(depthbuffer->GetSurfaceLevel(0));
+    
+    if (depthbuffer.IsValid())
+      fbo->SetDepthSurface(depthbuffer->GetSurfaceLevel(0));
+    else
+      fbo->SetDepthSurface(ObjectPtr<IOpenGLSurface>(NULL));
+
     fbo->Activate();
     fbo->EmptyClippingRegion();
     SetContext(0, 0, width, height);

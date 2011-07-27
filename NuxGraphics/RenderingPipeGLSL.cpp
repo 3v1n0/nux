@@ -697,8 +697,15 @@ namespace nux
     _vertical_gauss_filter_prog->Link();
   }
   
-  void GraphicsEngine::InitSLHorizontalHQGaussFilter ()
+  void GraphicsEngine::InitSLHorizontalHQGaussFilter(int sigma)
   {
+    int k = Clamp<int>(sigma, 1, 9);
+    if (_horizontal_hq_gauss_filter_prog[k-1].IsValid())
+    {
+      // Shader program already compiled
+      return;
+    }
+
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
     NString VSString;
@@ -729,37 +736,48 @@ namespace nux
                      {                                                            \n\
                      return texture2D(TexObject, TexCoord.st);                    \n\
                      }                                                            \n\
-                     #define NUM_SAMPLES 55                                       \n\
+                     #define NUM_SAMPLES %d                                       \n\
                      uniform float W[NUM_SAMPLES];                                \n\
                      void main()                                                  \n\
                      {                                                            \n\
-                     vec4 sum   = vec4 (0.0, 0.0, 0.0, 0.0);                      \n\
-                     vec2 delta = vec2 (1.0 / TextureSize0.x, 0.0);               \n\
-                     vec2 texCoord = vec2 (varyTexCoord0.s, varyTexCoord0.t);     \n\
+                     vec4 sum   = vec4(0.0, 0.0, 0.0, 0.0);                       \n\
+                     vec2 delta = vec2(1.0 / TextureSize0.x, 0.0);                \n\
+                     vec2 texCoord = vec2(varyTexCoord0.s, varyTexCoord0.t);      \n\
                      texCoord.x -= ((NUM_SAMPLES - 1) / 2) / TextureSize0.x;      \n\
                      texCoord.y += 0.0 / TextureSize0.y;                          \n\
-                     for (int i = 0; i < NUM_SAMPLES; i++)                        \n\
+                     for(int i = 0; i < NUM_SAMPLES; i++)                         \n\
                      {                                                            \n\
-                     sum += SampleTexture (TextureObject0, texCoord) * W[i];      \n\
+                     sum += SampleTexture(TextureObject0, texCoord) * W[i];       \n\
                      texCoord += delta;                                           \n\
                      }                                                            \n\
-                     gl_FragColor = vec4 (sum.x, sum.y, sum.z, sum.w);            \n\
+                     gl_FragColor = vec4(sum.x, sum.y, sum.z, sum.w);             \n\
                      }");
 
-    _horizontal_hq_gauss_filter_prog = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
-    PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
+    int l = PSString.Size();
+    char* shader_prog = new char[l+10];
+    sprintf(shader_prog, PSString.GetTCharPtr(), 6 * k + 1);
 
-    _horizontal_hq_gauss_filter_prog->ClearShaderObjects();
-    _horizontal_hq_gauss_filter_prog->AddShaderObject (VS);
-    _horizontal_hq_gauss_filter_prog->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (_horizontal_hq_gauss_filter_prog->GetOpenGLID(), 0, "AVertex") );
-    _horizontal_hq_gauss_filter_prog->Link();
+    _horizontal_hq_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
+    PS->SetShaderCode(shader_prog, TEXT ("#define SAMPLERTEX2D"));
+
+    _horizontal_hq_gauss_filter_prog[k-1]->ClearShaderObjects();
+    _horizontal_hq_gauss_filter_prog[k-1]->AddShaderObject(VS);
+    _horizontal_hq_gauss_filter_prog[k-1]->AddShaderObject(PS);
+    CHECKGL(glBindAttribLocation(_horizontal_hq_gauss_filter_prog[k-1]->GetOpenGLID(), 0, "AVertex"));
+    _horizontal_hq_gauss_filter_prog[k-1]->Link();
 
   }
 
-  void GraphicsEngine::InitSLVerticalHQGaussFilter ()
+  void GraphicsEngine::InitSLVerticalHQGaussFilter(int sigma)
   {
+    int k = Clamp<int>(sigma, 1, 9);
+    if (_vertical_hq_gauss_filter_prog[k-1].IsValid())
+    {
+      // Shader program already compiled
+      return;
+    }
+
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
     NString VSString;
@@ -789,7 +807,7 @@ namespace nux
                      {                                                            \n\
                      return texture2D (TexObject, TexCoord.st);                   \n\
                      }                                                            \n\
-                     #define NUM_SAMPLES 55                                       \n\
+                     #define NUM_SAMPLES %d                                       \n\
                      uniform float W [NUM_SAMPLES];                               \n\
                      void main ()                                                 \n\
                      {                                                            \n\
@@ -806,15 +824,19 @@ namespace nux
                      gl_FragColor = vec4 (sum.x, sum.y, sum.z, sum.w);            \n\
                      }");
 
-    _vertical_hq_gauss_filter_prog = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
-    PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2D") );
+    int l = PSString.Size();
+    char* shader_prog = new char[l+10];
+    sprintf(shader_prog, PSString.GetTCharPtr(), 6 * k + 1);
 
-    _vertical_hq_gauss_filter_prog->ClearShaderObjects();
-    _vertical_hq_gauss_filter_prog->AddShaderObject (VS);
-    _vertical_hq_gauss_filter_prog->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (_vertical_hq_gauss_filter_prog->GetOpenGLID(), 0, "AVertex") );
-    _vertical_hq_gauss_filter_prog->Link();
+    _vertical_hq_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
+    PS->SetShaderCode (shader_prog, TEXT ("#define SAMPLERTEX2D") );
+
+    _vertical_hq_gauss_filter_prog[k-1]->ClearShaderObjects();
+    _vertical_hq_gauss_filter_prog[k-1]->AddShaderObject (VS);
+    _vertical_hq_gauss_filter_prog[k-1]->AddShaderObject (PS);
+    CHECKGL ( glBindAttribLocation (_vertical_hq_gauss_filter_prog[k-1]->GetOpenGLID(), 0, "AVertex") );
+    _vertical_hq_gauss_filter_prog[k-1]->Link();
   }
 
   void GraphicsEngine::InitSLColorMatrixFilter ()
@@ -1165,10 +1187,7 @@ namespace nux
   {
     NUX_RETURN_IF_FALSE (m_Sl2TextureDepRead.IsValid());
 
-    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
-    {
-      ShaderProg = m_Sl2TextureDepRead;
-    }
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_Sl2TextureDepRead;
 
     QRP_Compute_Texture_Coord (width, height, distorsion_texture, texxform0);
     QRP_Compute_Texture_Coord (width, height, src_device_texture, texxform1);
@@ -1884,7 +1903,14 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_HorizontalHQGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
-    NUX_RETURN_IF_FALSE (_horizontal_hq_gauss_filter_prog.IsValid());
+    sigma = Clamp<float>(sigma, 1.0f, 9.0f);
+
+    int k = sigma;
+
+    if (_horizontal_hq_gauss_filter_prog[k-1].IsValid() == false)
+    {
+      InitSLHorizontalHQGaussFilter(k);
+    }
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
@@ -1904,7 +1930,7 @@ namespace nux
       return;
     }
 
-    ShaderProg = _horizontal_hq_gauss_filter_prog;
+    ShaderProg = _horizontal_hq_gauss_filter_prog[k-1];
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0));
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
@@ -1923,8 +1949,8 @@ namespace nux
     // Set the Gaussian weights
     {
       float *W;
-      GaussianWeights(&W, sigma, 55);
-      CHECKGL( glUniform1fv(WeightsLocation, 55, W) );
+      GaussianWeights(&W, sigma, 6*k+1);
+      CHECKGL( glUniform1fv(WeightsLocation, 6*k+1, W) );
       delete(W);
     }
 
@@ -1955,7 +1981,14 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_VerticalHQGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
-    NUX_RETURN_IF_FALSE (_vertical_hq_gauss_filter_prog.IsValid());
+    sigma = Clamp<float>(sigma, 1.0f, 9.0f);
+
+    int k = sigma;
+
+    if (_vertical_hq_gauss_filter_prog[k-1].IsValid() == false)
+    {
+      InitSLVerticalHQGaussFilter(k);
+    }
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord (width, height, device_texture, texxform0);
@@ -1975,7 +2008,7 @@ namespace nux
       return;
     }
 
-    ShaderProg = _vertical_hq_gauss_filter_prog;
+    ShaderProg = _vertical_hq_gauss_filter_prog[k-1];
 
     CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0));
     CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
@@ -1996,8 +2029,8 @@ namespace nux
     // Set the Gaussian weights
     {
       float *W;
-      GaussianWeights(&W, sigma, 55);
-      CHECKGL( glUniform1fv(WeightsLocation, 55, W) );
+      GaussianWeights(&W, sigma, 6*k+1);
+      CHECKGL( glUniform1fv(WeightsLocation, 6*k+1, W) );
       delete(W);
     }
 
@@ -2452,6 +2485,48 @@ namespace nux
     return _offscreen_color_rt0;
   }
 
+    ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetDisturbedTexture (
+      int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
+      ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1)
+  {
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
+    int previous_width = 0;
+    int previous_height = 0;
+    if (prevFBO.IsValid ())
+    {
+      previous_width = prevFBO->GetWidth ();
+      previous_height = prevFBO->GetHeight ();
+    }
+    else
+    {
+      previous_width = _graphics_display.GetWindowWidth ();
+      previous_height = _graphics_display.GetWindowHeight ();
+    }
+
+    CHECKGL(glClearColor(0, 0, 0, 0));
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, width, height);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    QRP_GLSL_DisturbedTexture(x, y, width, height,
+      distorsion_texture, texxform0, c0,
+      src_device_texture, texxform1, c1);
+
+    _offscreen_fbo->Deactivate();
+
+    if (prevFBO.IsValid())
+    {
+      prevFBO->Activate(true);
+      SetViewport(0, 0, previous_width, previous_height);
+    }
+    else
+    {
+      SetViewport(0, 0, previous_width, previous_height);
+    }
+
+    return _offscreen_color_rt0;
+  }
+
   void GraphicsEngine::InitSlPixelateShader ()
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
@@ -2601,23 +2676,77 @@ namespace nux
       previous_height = _graphics_display.GetWindowHeight ();
     }
 
-    CHECKGL (glClearColor (0, 0, 0, 0));
-    SetFrameBufferHelper (_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
-    CHECKGL (glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-    QRP_GLSL_Pixelate (0, 0, quad_width, quad_height, device_texture, texxform0, color::White, pixel_size);
+    CHECKGL(glClearColor(0, 0, 0, 0));
+    SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
+    CHECKGL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+    QRP_GLSL_Pixelate(0, 0, quad_width, quad_height, device_texture, texxform0, color::White, pixel_size);
 
-    _offscreen_fbo->Deactivate ();
+    _offscreen_fbo->Deactivate();
 
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      prevFBO->Activate (true);
-      SetViewport (0, 0, previous_width, previous_height);
+      prevFBO->Activate(true);
+      SetViewport(0, 0, previous_width, previous_height);
     }
     else
     {
-      SetViewport (0, 0, previous_width, previous_height);
+      SetViewport(0, 0, previous_width, previous_height);
     }
     return _offscreen_color_rt0;
+  }
+
+  void GraphicsEngine::QRP_GLSL_GetCopyTexture(
+    int width, int height,
+    ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
+    ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
+    TexCoordXForm &texxform0, const Color& c0)
+  {
+    if (src_device_texture.IsValid() == false)
+    {
+      return;
+    }
+
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    int previous_width = 0;
+    int previous_height = 0;
+    
+    if (prevFBO.IsValid())
+    {
+      previous_width = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
+    }
+    else
+    {
+      previous_width = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
+    }
+
+    if ((dst_device_texture.IsValid() == false) ||
+      (dst_device_texture->GetWidth() != width) ||
+      (dst_device_texture->GetHeight() != height) ||
+      (dst_device_texture->GetPixelFormat() != src_device_texture->GetPixelFormat()))
+    {
+      dst_device_texture = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, src_device_texture->GetPixelFormat());
+    }
+
+    CHECKGL(glClearColor(0, 0, 0, 0));
+    ObjectPtr<IOpenGLBaseTexture> depth_buffer(NULL);
+    SetFrameBufferHelper(_offscreen_fbo, dst_device_texture, depth_buffer, width, height);
+    CHECKGL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+
+    QRP_GLSL_1Tex(0, 0, width, height, src_device_texture, texxform0, c0);
+
+    _offscreen_fbo->Deactivate();
+
+    if (prevFBO.IsValid())
+    {
+      prevFBO->Activate(true);
+      SetViewport(0, 0, previous_width, previous_height);
+    }
+    else
+    {
+      SetViewport(0, 0, previous_width, previous_height);
+    }
   }
 
 }
