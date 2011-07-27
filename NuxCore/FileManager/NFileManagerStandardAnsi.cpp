@@ -43,7 +43,7 @@ namespace nux
 
   NSerializeFileReader::~NSerializeFileReader()
   {
-    NUX_SAFE_DELETE (m_PreCacheBuffer);
+    delete [] m_PreCacheBuffer;
 
     if (m_File)
       Close();

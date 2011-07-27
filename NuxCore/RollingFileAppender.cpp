@@ -73,7 +73,7 @@ private:
   void AsyncWriterClosed();
   void RotateFiles();
 
-#ifndef NUX_VISUAL_STUDIO_2010
+#if defined(NUX_OS_WINDOWS) && (!defined(NUX_VISUAL_STUDIO_2010))
   std::tr1::shared_ptr<AsyncFileWriter> writer_;
 #else
   std::shared_ptr<AsyncFileWriter> writer_;
