@@ -168,8 +168,8 @@ namespace nux
           GetPainter().Paint2DQuadColor (GfxContext, X0 - KNOT_SIZE, Y0 - KNOT_SIZE, 2 * KNOT_SIZE, 2 * KNOT_SIZE, Color (0xFF777777) );
       }
 
-      delete xcon;
-      delete ycon;
+      delete[] xcon;
+      delete[] ycon;
     }
 
 //    for(int i = 1; i < GetWidth(); i++)

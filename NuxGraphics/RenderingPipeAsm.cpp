@@ -1727,7 +1727,7 @@ namespace nux
       {
         CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, i, W[i], W[i], W[i], W[i]));
       }
-      delete(W);
+      delete[] W;
     }
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW) );
@@ -1858,7 +1858,7 @@ namespace nux
       {
         CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, i, W[i], W[i], W[i], W[i]));
       }
-      delete(W);
+      delete[] W;
     }
 
     CHECKGL ( glMatrixMode (GL_MODELVIEW));

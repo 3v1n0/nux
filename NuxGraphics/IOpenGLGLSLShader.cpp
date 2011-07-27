@@ -250,7 +250,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLVertexShader::Compile] glCompileShader: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
     }
 
     return (m_CompiledAndReady ? true : false);
@@ -329,7 +329,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLPixelShader::Compile] glCompileShader: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
     }
 
     return (m_CompiledAndReady ? true : false);
@@ -521,7 +521,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLShaderProgram::Link] glLinkProgram: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
       m_CompiledAndReady = false;
       return m_CompiledAndReady;
     }

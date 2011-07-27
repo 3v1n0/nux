@@ -1781,7 +1781,7 @@ namespace nux
       float *W;
       GaussianWeights(&W, sigma, 7);
       CHECKGL( glUniform1fv(WeightsLocation, 7, W) );
-      delete(W);
+      delete[] W;
     }
 
     CHECKGL( glUniform2fARB(TextureSizeLocation, width, height) );
@@ -1854,7 +1854,7 @@ namespace nux
       float *W;
       GaussianWeights(&W, sigma, 7);
       CHECKGL( glUniform1fv(WeightsLocation, 7, W) );
-      delete(W);
+      delete[] W;
     }
 
     CHECKGL( glUniform2fARB(TextureSizeLocation, width, height) );
@@ -1925,7 +1925,7 @@ namespace nux
       float *W;
       GaussianWeights(&W, sigma, 55);
       CHECKGL( glUniform1fv(WeightsLocation, 55, W) );
-      delete(W);
+      delete[] W;
     }
 
     CHECKGL( glUniform2fARB(TextureSizeLocation, width, height) );
@@ -1998,7 +1998,7 @@ namespace nux
       float *W;
       GaussianWeights(&W, sigma, 55);
       CHECKGL( glUniform1fv(WeightsLocation, 55, W) );
-      delete(W);
+      delete[] W;
     }
 
     CHECKGL( glUniform2fARB(TextureSizeLocation, width, height) );

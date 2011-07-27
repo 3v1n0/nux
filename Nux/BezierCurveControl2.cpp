@@ -236,8 +236,8 @@ namespace nux
         }
       }
 
-      delete xcon;
-      delete ycon;
+      delete[] xcon;
+      delete[] ycon;
     }
 
     GetPainter().Paint2DQuadWireframe (GfxContext, base, Color (0xFF000000) );
