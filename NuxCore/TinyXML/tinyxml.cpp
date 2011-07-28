@@ -214,6 +214,7 @@ TiXmlNode *TiXmlNode::LinkEndChild ( TiXmlNode *node )
   if ( node->Type() == TiXmlNode::DOCUMENT )
   {
     delete node;
+    node = 0;
 
     if ( GetDocument() ) GetDocument()->SetError ( TIXML_ERROR_DOCUMENT_TOP_ONLY, 0, 0, TIXML_ENCODING_UNKNOWN );
 

@@ -834,6 +834,11 @@ const char *TiXmlDocument::Parse ( const char *p, TiXmlParsingData *prevData, Ti
     {
       p = node->Parse ( p, &data, encoding );
       LinkEndChild ( node );
+      
+      /* LinkEndChild may potentially free the node.
+	 If this happens we should break to avoid dereferencing it */
+      if ( !node )
+	break;
     }
     else
     {

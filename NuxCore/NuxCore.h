@@ -161,6 +161,7 @@ namespace nux
     va_list arg_list;                                           \
     va_start(arg_list, fmt);                                    \
     result = GetVariableArgs(msg, size, len, fmt, arg_list);    \
+    va_end(arg_list);                                           \
 }
 
 //////////////////////////////////////////////////////////////////////////
