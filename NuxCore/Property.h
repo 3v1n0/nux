@@ -104,13 +104,11 @@ private:
 /**
  * A read only property that uses a function to get the value.
  *
- * The read only property does not have a changed signal.
- *
  * The default constructor creates a read only property that always returns
  * the default constructed VALUE_TYPE.
  */
 template <typename VALUE_TYPE>
-class ROProperty
+class ROProperty : public PropertyChangedSignal<VALUE_TYPE>
 {
 public:
   typedef VALUE_TYPE ValueType;

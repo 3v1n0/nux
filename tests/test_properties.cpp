@@ -400,6 +400,19 @@ TEST(TestROProperty, TestSetGetter) {
   EXPECT_THAT(int_prop.Get(), Eq(3));
 }
 
+TEST(TestROProperty, TestChangedEvent) {
+  // RO Properties have a changed event, but it is up to the continer of the
+  // property to emit the events as nothing is done automatically.
+  nux::ROProperty<int> int_prop;
+
+  ChangeRecorder<int> recorder;
+  int_prop.changed.connect(recorder.listener());
+
+  int_prop.EmitChanged(42);
+  EXPECT_THAT(1, Eq(recorder.size()));
+  EXPECT_THAT(42, Eq(recorder.last()));
+}
+
 // A simple class that just has a reader functon.
 template <typename VALUE_TYPE>
 class ROPropHolder
