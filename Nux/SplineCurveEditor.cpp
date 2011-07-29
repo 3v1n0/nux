@@ -304,8 +304,8 @@ namespace nux
 
       GfxContext.PopClippingRectangle();
 
-      delete t;
-      delete y;
+      delete[] t;
+      delete[] y;
     }
 
     // We do some ajustment here because when a knot is at one of the border, we still want to see the entire knot and not have the wireframe

@@ -68,7 +68,7 @@ namespace nux
 
     if (res != conversionOK)
     {
-      delete utf16string;
+      delete[] utf16string;
       utf16string = 0;
     }
 
