@@ -41,20 +41,20 @@ namespace nux
     m_EditLine->SetPrefix (TEXT ("") );
 
     // Set Signals
-    m_MouseControlledButton->OnMouseDown.connect (sigc::mem_fun (this, &Valuator::RecvMouseDown) );
-    m_MouseControlledButton->OnMouseDoubleClick.connect (sigc::mem_fun (this, &Valuator::RecvMouseDown) );
-    m_MouseControlledButton->OnMouseUp.connect (sigc::mem_fun (this, &Valuator::RecvMouseUp) );
-    m_MouseControlledButton->OnMouseDrag.connect (sigc::mem_fun (this, &Valuator::RecvMouseDrag) );
-    m_MouseControlledButton->OnMouseEnter.connect (sigc::mem_fun (this, &Valuator::RecvMouseEnter) );
-    m_MouseControlledButton->OnMouseLeave.connect (sigc::mem_fun (this, &Valuator::RecvMouseLeave) );
+    m_MouseControlledButton->mouse_down.connect (sigc::mem_fun (this, &Valuator::RecvMouseDown) );
+    m_MouseControlledButton->mouse_double_click.connect (sigc::mem_fun (this, &Valuator::RecvMouseDown) );
+    m_MouseControlledButton->mouse_up.connect (sigc::mem_fun (this, &Valuator::RecvMouseUp) );
+    m_MouseControlledButton->mouse_drag.connect (sigc::mem_fun (this, &Valuator::RecvMouseDrag) );
+    m_MouseControlledButton->mouse_enter.connect (sigc::mem_fun (this, &Valuator::RecvMouseEnter) );
+    m_MouseControlledButton->mouse_leave.connect (sigc::mem_fun (this, &Valuator::RecvMouseLeave) );
 
     m_EditLine->sigValidateEntry.connect (sigc::mem_fun (this, &Valuator::RecvValidateEntry) );
     m_EditLine->sigStartKeyboardFocus.connect (sigc::mem_fun (this, &Valuator::RecvStartKeyboardFocus) );
     m_EditLine->sigEndKeyboardFocus.connect (sigc::mem_fun (this, &Valuator::RecvEndKeyboardFocus) );
     m_EditLine->sigEscapeKeyboardFocus.connect (sigc::mem_fun (this, &Valuator::RecvEscapeKeyboardFocus) );
     m_EditLine->sigEditChange.connect (sigc::mem_fun (this, &Valuator::RecvEditChange) );
-    m_EditLine->OnMouseEnter.connect (sigc::mem_fun (this, &Valuator::RecvMouseEnter) );
-    m_EditLine->OnMouseLeave.connect (sigc::mem_fun (this, &Valuator::RecvMouseLeave) );
+    m_EditLine->mouse_enter.connect (sigc::mem_fun (this, &Valuator::RecvMouseEnter) );
+    m_EditLine->mouse_leave.connect (sigc::mem_fun (this, &Valuator::RecvMouseLeave) );
 
   }
 
@@ -84,7 +84,7 @@ namespace nux
     else if (button_flags & NUX_EVENT_BUTTON3)
       m_Mouse = 3;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -94,7 +94,7 @@ namespace nux
     else if ( (m_Mouse == 3) && (button_flags & NUX_EVENT_BUTTON3) )
       m_Mouse = 0;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvDecrement (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -114,32 +114,32 @@ namespace nux
 
   void Valuator::RecvStartKeyboardFocus (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvEndKeyboardFocus (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvEscapeKeyboardFocus (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvMouseMove (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -162,12 +162,12 @@ namespace nux
         TimerSpinUpBtn (0);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvEditChange (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Valuator::RecvValidateEntry (EditTextBox *textbox)

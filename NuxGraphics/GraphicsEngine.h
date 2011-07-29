@@ -194,6 +194,12 @@ namespace nux
 	  ObjectPtr<IOpenGLBaseTexture> QRP_GetPixelBlocks (
 		  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size);
 
+    void QRP_GetCopyTexture (
+      int width, int height,
+      ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
+      ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
+      TexCoordXForm &texxform0, const Color& c0);
+
     // ASM
     void QRP_ASM_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
     void QRP_ASM_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
@@ -302,6 +308,12 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture>  QRP_ASM_GetPixelBlocks (
 		  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& color, int pixel_size);
 
+    void QRP_ASM_GetCopyTexture (
+      int width, int height,
+      ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
+      ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
+      TexCoordXForm &texxform0, const Color& c0);
+
     // GLSL
 
     void QRP_GLSL_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0);
@@ -385,6 +397,11 @@ namespace nux
       ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
       ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
 
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetDisturbedTexture(
+      int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
+      ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
+
     //! Pixel blocks.
     /*!
         @param device_texture Source texture.
@@ -395,6 +412,12 @@ namespace nux
     */
 	  ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetPixelBlocks (
 		  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size);
+
+    void QRP_GLSL_GetCopyTexture(
+      int width, int height,
+      ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
+      ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
+      TexCoordXForm &texxform0, const Color& c0);
 
     //////////////////////
     // DRAW CLIPPING    //
@@ -669,8 +692,8 @@ namespace nux
     //! Helper function to set an fbo
     void SetFrameBufferHelper(
       ObjectPtr<IOpenGLFrameBufferObject>& fbo,
-      ObjectPtr<IOpenGLTexture2D>& colorbuffer,
-      ObjectPtr<IOpenGLTexture2D>& depthbuffer,
+      ObjectPtr<IOpenGLBaseTexture>& colorbuffer,
+      ObjectPtr<IOpenGLBaseTexture>& depthbuffer,
       int width, int height);
 
 #ifndef NUX_OPENGLES_20
@@ -815,13 +838,13 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> _vertical_gauss_filter_prog;
     
 
-    void InitSLHorizontalHQGaussFilter ();
+    void InitSLHorizontalHQGaussFilter (int sigma);
     //! Gauss horizontal filter.
-    ObjectPtr<IOpenGLShaderProgram> _horizontal_hq_gauss_filter_prog;
+    ObjectPtr<IOpenGLShaderProgram> _horizontal_hq_gauss_filter_prog[9];
 
-    void InitSLVerticalHQGaussFilter ();
+    void InitSLVerticalHQGaussFilter (int sigma);
     //! Gauss vertical filter.
-    ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog;
+    ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog[9];
 
 
 
@@ -847,14 +870,14 @@ namespace nux
     bool _use_glsl_shaders; //!< True if the system is using the glsl code path.
 
     ObjectPtr<IOpenGLFrameBufferObject> _offscreen_fbo;
-    ObjectPtr<IOpenGLTexture2D> _offscreen_color_rt0;
-    ObjectPtr<IOpenGLTexture2D> _offscreen_depth_rt0;
-    ObjectPtr<IOpenGLTexture2D> _offscreen_color_rt1;
-    ObjectPtr<IOpenGLTexture2D> _offscreen_depth_rt1;
-    ObjectPtr<IOpenGLTexture2D> _offscreen_color_rt2;
-    ObjectPtr<IOpenGLTexture2D> _offscreen_depth_rt2;
-    ObjectPtr<IOpenGLTexture2D> _offscreen_color_rt3;
-    ObjectPtr<IOpenGLTexture2D> _offscreen_depth_rt3;
+    ObjectPtr<IOpenGLBaseTexture> _offscreen_color_rt0;
+    ObjectPtr<IOpenGLBaseTexture> _offscreen_depth_rt0;
+    ObjectPtr<IOpenGLBaseTexture> _offscreen_color_rt1;
+    ObjectPtr<IOpenGLBaseTexture> _offscreen_depth_rt1;
+    ObjectPtr<IOpenGLBaseTexture> _offscreen_color_rt2;
+    ObjectPtr<IOpenGLBaseTexture> _offscreen_depth_rt2;
+    ObjectPtr<IOpenGLBaseTexture> _offscreen_color_rt3;
+    ObjectPtr<IOpenGLBaseTexture> _offscreen_depth_rt3;
 
     Matrix4 _projection_matrix;
     Matrix4 _model_view_matrix;

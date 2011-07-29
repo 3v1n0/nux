@@ -175,14 +175,14 @@ namespace nux
     //m_maxX = maxX;
 
     //Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(m_maxX - m_minX, 4, 0, BITFMT_R8G8B8A8);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Histogram::setYAxisBounds (int minY, int maxY)
   {
     m_minY = minY;
     m_maxY = maxY;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Histogram::SetHistogram (std::vector<int>& HistogramData)
@@ -193,7 +193,7 @@ namespace nux
     m_HistogramData = HistogramData;
     m_minX = 0;
     m_maxX = (t_s32) m_HistogramData.size();
-    NeedRedraw();
+    QueueDraw();
   }
 
 

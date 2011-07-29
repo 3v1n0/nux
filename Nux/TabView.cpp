@@ -108,15 +108,15 @@ namespace nux
     _scroll_right->SetMaximumSize (TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
     _scroll_left->SetMaximumSize (TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
 
-    _scroll_right->OnMouseEnter.connect (sigc::mem_fun (this, &TabView::RecvMouseEnter) );
-    _scroll_right->OnMouseLeave.connect (sigc::mem_fun (this, &TabView::RecvMouseLeave) );
-    _scroll_left->OnMouseEnter.connect (sigc::mem_fun (this, &TabView::RecvMouseEnter) );
-    _scroll_left->OnMouseLeave.connect (sigc::mem_fun (this, &TabView::RecvMouseLeave) );
+    _scroll_right->mouse_enter.connect (sigc::mem_fun (this, &TabView::RecvMouseEnter) );
+    _scroll_right->mouse_leave.connect (sigc::mem_fun (this, &TabView::RecvMouseLeave) );
+    _scroll_left->mouse_enter.connect (sigc::mem_fun (this, &TabView::RecvMouseEnter) );
+    _scroll_left->mouse_leave.connect (sigc::mem_fun (this, &TabView::RecvMouseLeave) );
 
-    _scroll_right->OnMouseDown.connect (sigc::mem_fun (this, &TabView::RecvTabRightMouseDown) );
-    _scroll_left->OnMouseDown.connect (sigc::mem_fun (this, &TabView::RecvTabLeftMouseDown) );
-    _scroll_right->OnMouseUp.connect (sigc::mem_fun (this, &TabView::RecvTabButtonMouseUp) );
-    _scroll_left->OnMouseUp.connect (sigc::mem_fun (this, &TabView::RecvTabButtonMouseUp) );
+    _scroll_right->mouse_down.connect (sigc::mem_fun (this, &TabView::RecvTabRightMouseDown) );
+    _scroll_left->mouse_down.connect (sigc::mem_fun (this, &TabView::RecvTabLeftMouseDown) );
+    _scroll_right->mouse_up.connect (sigc::mem_fun (this, &TabView::RecvTabButtonMouseUp) );
+    _scroll_left->mouse_up.connect (sigc::mem_fun (this, &TabView::RecvTabButtonMouseUp) );
 
     _tabview_scroll_button_layout->AddView (_scroll_left, 1, eCenter);
     _tabview_scroll_button_layout->AddView (_scroll_right, 1, eCenter);
@@ -216,7 +216,7 @@ namespace nux
     GetPainter().PushDrawShapeLayer (GfxContext, Geometry (base.x, base.y, base.GetWidth(), TAB_HEIGHT), eSHAPE_CORNER_ROUND4, TAB_HEADER_BACKGROUND_COLOR, eCornerTopLeft | eCornerTopRight);
 
     if (_visible_tab_content_layout)
-      _visible_tab_content_layout->NeedRedraw();
+      _visible_tab_content_layout->QueueDraw();
 
     t_u32 vector_size = (t_u32) _tab_array.size();
 
@@ -346,7 +346,7 @@ namespace nux
     {
 //        _visible_tab_content_layout->SetGeometry(m_CompositionLayout->GetGeometry());
 //        GetWindowThread ()->ComputeElementLayout(_visible_tab_content_layout);
-      _visible_tab_content_layout->NeedRedraw();
+      _visible_tab_content_layout->QueueDraw();
     }
 
     return LayoutResult;
@@ -384,8 +384,8 @@ namespace nux
     Tab->_tab_area->SetMinimumSize (6 + GetSysBoldFont()->GetStringWidth (tab_name), PRACTICAL_WIDGET_HEIGHT);
     Tab->_tab_area->SetMaximumSize (6 + GetSysBoldFont()->GetStringWidth (tab_name), PRACTICAL_WIDGET_HEIGHT);
 
-    Tab->_tab_area->OnMouseDown.connect (sigc::bind ( sigc::mem_fun (this, &TabView::RecvTabMouseDown), Tab) );
-    Tab->_tab_area->OnMouseUp.connect (sigc::bind ( sigc::mem_fun (this, &TabView::RecvTabMouseUp), Tab) );
+    Tab->_tab_area->mouse_down.connect (sigc::bind ( sigc::mem_fun (this, &TabView::RecvTabMouseDown), Tab) );
+    Tab->_tab_area->mouse_up.connect (sigc::bind ( sigc::mem_fun (this, &TabView::RecvTabMouseUp), Tab) );
 
     _tabview_heads_layout->AddView (Tab->_tab_area, 1, eCenter);
     GetWindowThread ()->ComputeElementLayout (_tabview_heads_layout);
@@ -414,7 +414,7 @@ namespace nux
     sigTabChanged (this);
     sigTabIndexChanged (m_FocusTabIndex);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TabView::TranslateLeft (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -461,7 +461,7 @@ namespace nux
 
     _tabview_heads_layout->SetBaseX (lx);
     GetWindowThread ()->ComputeElementLayout (_tabview_heads_layout);
-    NeedRedraw();
+    QueueDraw();
 
   }
 
@@ -501,7 +501,7 @@ namespace nux
 
     sigTabChanged (this);
     sigTabIndexChanged (m_FocusTabIndex);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TabView::RecvTabMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags, TabElement *tab)
@@ -511,12 +511,12 @@ namespace nux
 
   void TabView::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TabView::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TabView::RecvTabRightMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)

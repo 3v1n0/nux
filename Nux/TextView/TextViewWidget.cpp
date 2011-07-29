@@ -664,8 +664,8 @@ namespace nux
 //         m_CompositionLayout->ComputePosition2(0, 0);
 //         hscrollbar->SetContentOffset(m_ContentOffsetX, m_ContentOffsetY);
 //     }
-//     hscrollbar->NeedRedraw();
-//     NeedRedraw();
+//     hscrollbar->QueueDraw();
+//     QueueDraw();
 // }
 //
 // void TextViewWidget::ScrollRight(float stepx, int mousedx)
@@ -685,8 +685,8 @@ namespace nux
 //         m_CompositionLayout->ComputePosition2(0, 0);
 //         hscrollbar->SetContentOffset(m_ContentOffsetX, m_ContentOffsetY);
 //     }
-//     hscrollbar->NeedRedraw();
-//     NeedRedraw();
+//     hscrollbar->QueueDraw();
+//     QueueDraw();
 // }
 //
 // void TextViewWidget::ScrollUp(float stepy, int mousedy)
@@ -709,8 +709,8 @@ namespace nux
 //         //m_CompositionLayout->Translate(m_ContentOffsetX, m_ContentOffsetY);
 //         vscrollbar->SetContentOffset(m_ContentOffsetX, m_ContentOffsetY);
 //     }
-//     vscrollbar->NeedRedraw();
-//     NeedRedraw();
+//     vscrollbar->QueueDraw();
+//     QueueDraw();
 // }
 //
 // void TextViewWidget::ScrollDown(float stepy, int mousedy)
@@ -732,8 +732,8 @@ namespace nux
 //         //m_CompositionLayout->Translate(m_ContentOffsetX, m_ContentOffsetY);
 //         vscrollbar->SetContentOffset(m_ContentOffsetX, m_ContentOffsetY);
 //     }
-//     vscrollbar->NeedRedraw();
-//     NeedRedraw();
+//     vscrollbar->QueueDraw();
+//     QueueDraw();
 // }
 
   void TextViewWidget::SetSizeMatchContent (bool b)
@@ -759,8 +759,8 @@ namespace nux
       hscrollbar->SetContentOffset (m_ContentOffsetX, m_ContentOffsetY);
     }
 
-    hscrollbar->NeedRedraw();
-    NeedRedraw();
+    hscrollbar->QueueDraw();
+    QueueDraw();
   }
 
   void TextViewWidget::ResetScrollToRight()
@@ -773,8 +773,8 @@ namespace nux
       hscrollbar->SetContentOffset (m_ContentOffsetX, m_ContentOffsetY);
     }
 
-    hscrollbar->NeedRedraw();
-    NeedRedraw();
+    hscrollbar->QueueDraw();
+    QueueDraw();
   }
 
   void TextViewWidget::ResetScrollToUp()
@@ -787,8 +787,8 @@ namespace nux
       vscrollbar->SetContentOffset (m_ContentOffsetX, m_ContentOffsetY);
     }
 
-    vscrollbar->NeedRedraw();
-    NeedRedraw();
+    vscrollbar->QueueDraw();
+    QueueDraw();
   }
 
   void TextViewWidget::ResetScrollToDown()
@@ -801,8 +801,8 @@ namespace nux
       vscrollbar->SetContentOffset (m_ContentOffsetX, m_ContentOffsetY);
     }
 
-    vscrollbar->NeedRedraw();
-    NeedRedraw();
+    vscrollbar->QueueDraw();
+    QueueDraw();
   }
 
 }

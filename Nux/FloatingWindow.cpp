@@ -80,12 +80,12 @@ namespace nux
     _resize_handle->SetMinimumSize(_resize_handle_width, _resize_handle_height);
     _resize_handle->SetGeometry(Geometry(0, 0, _resize_handle_width, _resize_handle_height));
 
-    _title_bar->OnMouseDown.connect(sigc::mem_fun(this, &FloatingWindow::RecvTitleBarMouseDown));
-    _title_bar->OnMouseDrag.connect(sigc::mem_fun(this, &FloatingWindow::RecvTitleBarMouseDrag));
-    _close_button->OnMouseClick.connect(sigc::mem_fun(this, &FloatingWindow::RecvCloseButtonClick));
+    _title_bar->mouse_down.connect(sigc::mem_fun(this, &FloatingWindow::RecvTitleBarMouseDown));
+    _title_bar->mouse_drag.connect(sigc::mem_fun(this, &FloatingWindow::RecvTitleBarMouseDrag));
+    _close_button->mouse_click.connect(sigc::mem_fun(this, &FloatingWindow::RecvCloseButtonClick));
 
-    _resize_handle->OnMouseDrag.connect(sigc::mem_fun(this, &FloatingWindow::OnSizeGrigMouseDrag));
-    _resize_handle->OnMouseDown.connect(sigc::mem_fun(this, &FloatingWindow::OnSizeGrigMouseDown));
+    _resize_handle->mouse_drag.connect(sigc::mem_fun(this, &FloatingWindow::OnSizeGrigMouseDrag));
+    _resize_handle->mouse_down.connect(sigc::mem_fun(this, &FloatingWindow::OnSizeGrigMouseDown));
 
     _title_bar_layout->AddView((_window_title_bar), 1, eCenter, eFix);
     _title_bar_layout->AddView((_close_button), 0, eCenter, eFix);
@@ -381,7 +381,7 @@ namespace nux
 #endif
 
     GetWindowThread()->AddObjectToRefreshList(this);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void FloatingWindow::RecvTitleBarMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -410,7 +410,7 @@ namespace nux
     }
 #endif
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void FloatingWindow::RecvCloseButtonClick (int x, int y, unsigned long button_flags, unsigned long key_flags)

@@ -214,12 +214,12 @@ namespace nux
 //    GetPainter().PaintShape(GfxContext, m_ZLabel->GetGeometry(), m_ZEdit->GetTextBackgroundColor(), eVECTORZLABEL);
 
 
-    m_XEdit->NeedRedraw();
-    m_YEdit->NeedRedraw();
-    m_ZEdit->NeedRedraw();
-    m_XLabel->NeedRedraw();
-    m_YLabel->NeedRedraw();
-    m_ZLabel->NeedRedraw();
+    m_XEdit->QueueDraw();
+    m_YEdit->QueueDraw();
+    m_ZEdit->QueueDraw();
+    m_XLabel->QueueDraw();
+    m_YLabel->QueueDraw();
+    m_ZLabel->QueueDraw();
   }
 
   void Vector3DoubleValuator::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -250,7 +250,7 @@ namespace nux
     m_XEdit->SetText (NString::Printf ("%.3f", m_X) );
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3DoubleValuator::SetVectorY (double value)
@@ -259,7 +259,7 @@ namespace nux
     m_YEdit->SetText (NString::Printf ("%.3f", m_Y) );
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3DoubleValuator::SetVectorZ (double value)
@@ -268,7 +268,7 @@ namespace nux
     m_ZEdit->SetText (NString::Printf ("%.3f", m_Z) );
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
-    NeedRedraw();
+    QueueDraw();
   }
 
   double Vector3DoubleValuator::GetVectorX() const
@@ -293,7 +293,7 @@ namespace nux
     if (m_Step <= 0)
       m_Step = 1;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   double Vector3DoubleValuator::GetStep() const
@@ -320,7 +320,7 @@ namespace nux
     m_Z = m_DoubleValidator.GetClampedValue (m_Z);
     sigValueChanged.emit (this);
     sigValue.emit (m_X, m_Y, m_Z);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3DoubleValuator::ImplementIncrementX()
@@ -329,7 +329,7 @@ namespace nux
 
     if (m_X < m_DoubleValidator.GetMaximum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);
@@ -343,7 +343,7 @@ namespace nux
 
     if (m_X > m_DoubleValidator.GetMinimum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);
@@ -357,7 +357,7 @@ namespace nux
 
     if (m_Y < m_DoubleValidator.GetMaximum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);
@@ -371,7 +371,7 @@ namespace nux
 
     if (m_Y > m_DoubleValidator.GetMinimum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);
@@ -385,7 +385,7 @@ namespace nux
 
     if (m_Z < m_DoubleValidator.GetMaximum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);
@@ -399,7 +399,7 @@ namespace nux
 
     if (m_Z > m_DoubleValidator.GetMinimum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);

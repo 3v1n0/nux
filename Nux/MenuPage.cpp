@@ -238,12 +238,12 @@ namespace nux
     // Set Original State
 
     // Set Signals
-    OnMouseMove.connect (sigc::mem_fun (this, &MenuPage::EmitMouseMove));
-    OnMouseDrag.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDrag));
-    OnMouseDown.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDown));
-    OnMouseUp.connect (sigc::mem_fun (this, &MenuPage::EmitMouseUp));
-    OnMouseLeave.connect (sigc::mem_fun (this, &MenuPage::RecvMouseLeave));
-    OnMouseDownOutsideArea.connect (sigc::mem_fun (this, &MenuPage::Terminate));
+    mouse_move.connect (sigc::mem_fun (this, &MenuPage::EmitMouseMove));
+    mouse_drag.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDrag));
+    mouse_down.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDown));
+    mouse_up.connect (sigc::mem_fun (this, &MenuPage::EmitMouseUp));
+    mouse_leave.connect (sigc::mem_fun (this, &MenuPage::RecvMouseLeave));
+    mouse_down_outside_pointer_grab_area.connect (sigc::mem_fun (this, &MenuPage::Terminate));
 
     // Set Geometry
     SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
@@ -345,7 +345,7 @@ namespace nux
       else
       {
         if (mod_event.e_event == NUX_MOUSE_MOVE)
-          NeedRedraw ();
+          QueueDraw ();
 
         ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
       }
@@ -793,7 +793,7 @@ namespace nux
         if ((y >= py) && (y < py + height))
         {
           m_HighlightedItem = i;
-          NeedRedraw();
+          QueueDraw();
           break;
         }
       }
@@ -803,7 +803,7 @@ namespace nux
       if(m_HighlightedItem != -1)
       {
         m_HighlightedItem = -1;
-        NeedRedraw();
+        QueueDraw();
       }
     }
 
