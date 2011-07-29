@@ -61,7 +61,7 @@ namespace nux
   void ColorArea::SetColor (Color color)
   {
     m_Color = color;
-    NeedRedraw();
+    QueueDraw();
   }
 
 

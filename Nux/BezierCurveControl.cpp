@@ -48,9 +48,9 @@ namespace nux
     m_control_knot.push_back (Knot (0.7f, 0.9f) );
     m_control_knot.push_back (Knot (1.0f, 1.0f) );
 
-    OnMouseDown.connect (sigc::mem_fun (this, &BezierCurveControl::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &BezierCurveControl::RecvMouseUp) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &BezierCurveControl::RecvMouseDrag) );
+    mouse_down.connect (sigc::mem_fun (this, &BezierCurveControl::RecvMouseDown) );
+    mouse_up.connect (sigc::mem_fun (this, &BezierCurveControl::RecvMouseUp) );
+    mouse_drag.connect (sigc::mem_fun (this, &BezierCurveControl::RecvMouseDrag) );
 
   }
 
@@ -209,20 +209,20 @@ namespace nux
   {
     m_minX = minX;
     m_maxX = maxX;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void BezierCurveControl::SetYAxisBounds (float minY, float maxY)
   {
     m_minY = minY;
     m_maxY = maxY;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void BezierCurveControl::SetFunctionCallback (FunctionCallback f)
   {
     m_FunctionCallback = f;
-    NeedRedraw();
+    QueueDraw();
   }
 
   float BezierCurveControl::EvalFunction (float x)
@@ -235,7 +235,7 @@ namespace nux
 
   void BezierCurveControl::UpdateGraph()
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
 
@@ -251,7 +251,7 @@ namespace nux
 
   void BezierCurveControl::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void BezierCurveControl::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -289,7 +289,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void BezierCurveControl::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -336,7 +336,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
 

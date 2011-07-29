@@ -46,9 +46,9 @@ namespace nux
     //m_OpenButton->setCaption(TEXT("..."));
     m_OpenButton->SetMinimumWidth (20);
 
-    m_OpenButton->OnMouseEnter.connect (sigc::mem_fun (this, &FileSelector::RecvMouseEnter) );
-    m_OpenButton->OnMouseLeave.connect (sigc::mem_fun (this, &FileSelector::RecvMouseLeave) );
-    m_OpenButton->OnMouseClick.connect (sigc::mem_fun (this, &FileSelector::RecvOpenButtonClick) );
+    m_OpenButton->mouse_enter.connect (sigc::mem_fun (this, &FileSelector::RecvMouseEnter) );
+    m_OpenButton->mouse_leave.connect (sigc::mem_fun (this, &FileSelector::RecvMouseLeave) );
+    m_OpenButton->mouse_click.connect (sigc::mem_fun (this, &FileSelector::RecvOpenButtonClick) );
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetLayout(m_hlayout);
@@ -103,7 +103,7 @@ namespace nux
     GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
     GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (FALSE);
 
-    m_FileEditTextBox->NeedRedraw();
+    m_FileEditTextBox->QueueDraw();
   }
 
   void FileSelector::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -120,18 +120,18 @@ namespace nux
 
   void FileSelector::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void FileSelector::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void FileSelector::RecvOpenButtonClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
     sigClick.emit();
   }
 

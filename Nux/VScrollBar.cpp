@@ -63,20 +63,20 @@ namespace nux
     SetMaximumSize (VSCROLLBAR_WIDTH, AREA_MAX_HEIGHT);
 
     // Set Signals
-    //_scroll_down_button->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollDown) );
-    //_scroll_down_button->OnMouseUp.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollDown) );
-    //_scroll_up_button->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollUp) );
-    //_scroll_up_button->OnMouseUp.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollUp) );
+    //_scroll_down_button->mouse_down.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollDown) );
+    //_scroll_down_button->mouse_up.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollDown) );
+    //_scroll_up_button->mouse_down.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollUp) );
+    //_scroll_up_button->mouse_up.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollUp) );
 
-    _slider->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseDown) );
-    _slider->OnMouseUp.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseUp) );
-    _slider->OnMouseDrag.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseDrag) );
+    _slider->mouse_down.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseDown) );
+    _slider->mouse_up.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseUp) );
+    _slider->mouse_drag.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseDrag) );
 
-    _track->OnMouseDown.connect ( sigc::mem_fun (this, &VScrollBar::RecvTrackMouseDown) );
-    _track->OnMouseUp.connect ( sigc::mem_fun (this, &VScrollBar::RecvTrackMouseUp) );
-    _track->OnMouseDrag.connect ( sigc::mem_fun (this, &VScrollBar::RecvTrackMouseDrag) );
+    _track->mouse_down.connect ( sigc::mem_fun (this, &VScrollBar::RecvTrackMouseDown) );
+    _track->mouse_up.connect ( sigc::mem_fun (this, &VScrollBar::RecvTrackMouseUp) );
+    _track->mouse_drag.connect ( sigc::mem_fun (this, &VScrollBar::RecvTrackMouseDrag) );
 
-    //_track->OnMouseDown.connect( sigc::mem_fun(this, &VScrollBar::OnSliderMouseDown));
+    //_track->mouse_down.connect( sigc::mem_fun(this, &VScrollBar::OnSliderMouseDown));
 
     // Set Geometry
     _scroll_down_button->SetMinimumSize (VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
@@ -102,6 +102,7 @@ namespace nux
     trackdown_callback->OnTimerExpired.connect (sigc::mem_fun (this, &VScrollBar::TrackDown) );
 
     SetLayout(vlayout);
+    SetAcceptMouseWheelEvent(true);
   }
 
 
@@ -129,7 +130,7 @@ namespace nux
       }
       else
       {
-        scrollbar->NeedRedraw();
+        scrollbar->QueueDraw();
         GetTimer().AddTimerHandler (10, callback, scrollbar);
       }
     }
@@ -145,12 +146,12 @@ namespace nux
       }
       else
       {
-        scrollbar->NeedRedraw();
+        scrollbar->QueueDraw();
         GetTimer().AddTimerHandler (10, callback, scrollbar);
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void VScrollBar::ScrollDown (void *v)
@@ -162,7 +163,7 @@ namespace nux
     else
       m_DownTimerHandler = GetTimer().AddTimerHandler (10, down_callback, this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void VScrollBar::ScrollUp (void *v)
@@ -174,7 +175,7 @@ namespace nux
     else
       m_UpTimerHandler = GetTimer().AddTimerHandler (10, up_callback, this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void VScrollBar::TrackUp (void *v)
@@ -183,7 +184,7 @@ namespace nux
     {
       OnScrollUp.emit (container_height_, 1);
       m_TrackUpTimerHandler  = GetTimer().AddTimerHandler (10, trackup_callback, this);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
@@ -193,7 +194,7 @@ namespace nux
     {
       OnScrollDown.emit (container_height_, 1);
       m_TrackDownTimerHandler  = GetTimer().AddTimerHandler (10, trackdown_callback, this);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
@@ -436,7 +437,7 @@ namespace nux
       OnScrollUp.emit (stepY, m_SliderDragPositionY - y);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool VScrollBar::AtMaximum()

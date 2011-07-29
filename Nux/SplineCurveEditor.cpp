@@ -88,10 +88,10 @@ namespace nux
   void SplineCurveEditor::InitializeLayout()
   {
     SetMinimumSize (200, 200);
-    OnMouseDown.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvMouseUp) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvMouseDrag) );
-    OnKeyEvent.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvKeyEvent) );
+    mouse_down.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvMouseDown) );
+    mouse_up.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvMouseUp) );
+    mouse_drag.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvMouseDrag) );
+    key_down.connect (sigc::mem_fun (this, &SplineCurveEditor::RecvKeyEvent) );
   }
 
   void SplineCurveEditor::SetControlPoints (const SplineKnot &splineKnot)
@@ -111,7 +111,7 @@ namespace nux
     m_control_knot.AddKnot (x, y, selected);
     m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
     sigCurveChange.emit (this);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SplineCurveEditor::Reset()
@@ -332,20 +332,20 @@ namespace nux
   {
     m_minX = minX;
     m_maxX = maxX;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SplineCurveEditor::SetYAxisBounds (float minY, float maxY)
   {
     m_minY = minY;
     m_maxY = maxY;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SplineCurveEditor::SetFunctionCallback (SplineFunctionCallback f)
   {
     m_FunctionCallback = f;
-    NeedRedraw();
+    QueueDraw();
   }
 
   float SplineCurveEditor::EvalFunction (float x)
@@ -358,7 +358,7 @@ namespace nux
 
   void SplineCurveEditor::UpdateGraph()
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
 
@@ -374,7 +374,7 @@ namespace nux
 
   void SplineCurveEditor::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
 
     if (m_control_knot.GetNumSelectedKnot() > 0)
       sigCurveChange.emit (this);
@@ -426,7 +426,7 @@ namespace nux
 
         m_control_knot.SelectKnot (i, TRUE);
         m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
-        NeedRedraw();
+        QueueDraw();
         return;
       }
     }
@@ -438,7 +438,7 @@ namespace nux
       m_control_knot.AddKnot (new_x, new_y, TRUE);
       m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
       sigCurveChange.emit (this);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
@@ -571,11 +571,10 @@ namespace nux
     }
 
     m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SplineCurveEditor::RecvKeyEvent (
-    GraphicsEngine  &GfxContext , /*Graphics Context for text operation*/
     unsigned long   eventType  , /*event type*/
     unsigned long   keysym     , /*event keysym*/
     unsigned long   state      , /*event state*/
@@ -599,7 +598,7 @@ namespace nux
       if (kn > 0)
         sigCurveChange.emit (this);
 
-      NeedRedraw();
+      QueueDraw();
     }
   }
 

@@ -33,13 +33,13 @@ namespace nux
     _state     = false;
 
     // Set Signals
-    OnMouseClick.connect (sigc::mem_fun (this, &PushButton::RecvClick) );
-    OnMouseDown.connect (sigc::mem_fun (this, &PushButton::RecvMouseDown) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &PushButton::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &PushButton::RecvMouseUp) );
-    OnMouseMove.connect (sigc::mem_fun (this, &PushButton::RecvMouseMove) );
-    OnMouseEnter.connect (sigc::mem_fun (this, &PushButton::RecvMouseEnter) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &PushButton::RecvMouseLeave) );
+    mouse_click.connect (sigc::mem_fun (this, &PushButton::RecvClick) );
+    mouse_down.connect (sigc::mem_fun (this, &PushButton::RecvMouseDown) );
+    mouse_double_click.connect (sigc::mem_fun (this, &PushButton::RecvMouseDown) );
+    mouse_up.connect (sigc::mem_fun (this, &PushButton::RecvMouseUp) );
+    mouse_move.connect (sigc::mem_fun (this, &PushButton::RecvMouseMove) );
+    mouse_enter.connect (sigc::mem_fun (this, &PushButton::RecvMouseEnter) );
+    mouse_leave.connect (sigc::mem_fun (this, &PushButton::RecvMouseLeave) );
 
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -130,17 +130,17 @@ namespace nux
   void PushButton::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     sigClick.emit();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void PushButton::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void PushButton::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void PushButton::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -150,11 +150,11 @@ namespace nux
 
   void PushButton::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void PushButton::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 }

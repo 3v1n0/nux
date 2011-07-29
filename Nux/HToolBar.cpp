@@ -174,31 +174,31 @@ namespace nux
 
   void HToolBar::RecvMouseDownOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void HToolBar::RecvMouseUpOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void HToolBar::RecvMouseMoveOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void HToolBar::RecvMouseDragOnIcon (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void HToolBar::RecvMouseEnterIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void HToolBar::RecvMouseLeaveIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 }

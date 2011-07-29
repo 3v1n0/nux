@@ -91,7 +91,7 @@ namespace nux
     GeoPo = ComputeGeometryPositioning (m_SpinnerDownBtn->GetGeometry(), GetTheme().GetImageGeometry (eTRIANGLE_LEFT), gp);
     GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_LEFT);
 
-    m_EditLine->NeedRedraw();
+    m_EditLine->QueueDraw();
   }
 
   void NumericValuator::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -142,7 +142,7 @@ namespace nux
     if (m_fValue < m_DoubleValidator.GetMaximum() )
     {
       m_UpTimerHandler = GetTimer().AddTimerHandler (100, m_UpTimerCallback, 0);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
@@ -155,7 +155,7 @@ namespace nux
     if (m_fValue > m_DoubleValidator.GetMinimum() )
     {
       m_DownTimerHandler = GetTimer().AddTimerHandler (100, m_DownTimerCallback, 0);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 

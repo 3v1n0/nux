@@ -139,20 +139,20 @@ namespace nux
   {
     m_minX = minX;
     m_maxX = maxX;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void CurveControl::SetYAxisBounds (float minY, float maxY)
   {
     m_minY = minY;
     m_maxY = maxY;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void CurveControl::SetFunctionCallback (FunctionCallback f)
   {
     m_FunctionCallback = f;
-    NeedRedraw();
+    QueueDraw();
   }
 
   float CurveControl::EvalFunction (float x)
@@ -165,7 +165,7 @@ namespace nux
 
   void CurveControl::UpdateGraph()
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
 

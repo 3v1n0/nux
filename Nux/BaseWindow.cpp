@@ -445,9 +445,9 @@ namespace nux
     if (_is_modal)
       GetWindowCompositor().StartModalWindow (ObjectWeakPtr<BaseWindow> (this));
 
-    // Whether this view is added or removed, call NeedRedraw. in the case where this view is removed, this is a signal 
+    // Whether this view is added or removed, call QueueDraw. in the case where this view is removed, this is a signal 
     // that the region below this view need to be redrawn.
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool BaseWindow::IsVisible() const

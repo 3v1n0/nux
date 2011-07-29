@@ -53,9 +53,9 @@ namespace nux
     //////////////////
     // Set Signals  //
     //////////////////
-    m_Percentage->OnMouseDown.connect ( sigc::mem_fun (this, &RangeValue::OnReceiveMouseDown) );
-    m_Percentage->OnMouseUp.connect ( sigc::mem_fun (this, &RangeValue::OnReceiveMouseUp) );
-    m_Percentage->OnMouseDrag.connect ( sigc::mem_fun (this, &RangeValue::OnReceiveMouseDrag) );
+    m_Percentage->mouse_down.connect ( sigc::mem_fun (this, &RangeValue::OnReceiveMouseDown) );
+    m_Percentage->mouse_up.connect ( sigc::mem_fun (this, &RangeValue::OnReceiveMouseUp) );
+    m_Percentage->mouse_drag.connect ( sigc::mem_fun (this, &RangeValue::OnReceiveMouseDrag) );
 
     m_ValueString->sigValidateKeyboardEntry.connect (sigc::mem_fun (this, &RangeValue::OnValidateKeyboardEntry) );
 
@@ -99,7 +99,7 @@ namespace nux
 
     if (m_ValueString->IsRedrawNeeded() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     return ret;
@@ -189,7 +189,7 @@ namespace nux
       m_Value = value;
 
     m_ValueString->SetText (NString::Printf ("%.3f", m_Value) );
-    NeedRedraw();
+    QueueDraw();
   }
 
   float RangeValue::GetValue() const
@@ -214,7 +214,7 @@ namespace nux
     sigFloatChanged.emit (m_Value);
     sigMouseDown.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RangeValue::OnReceiveMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -232,7 +232,7 @@ namespace nux
     sigFloatChanged.emit (m_Value);
     sigMouseUp.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RangeValue::OnReceiveMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -249,7 +249,7 @@ namespace nux
     sigFloatChanged.emit (m_Value);
     sigMouseDrag.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RangeValue::OnKeyboardFocus()
@@ -270,7 +270,7 @@ namespace nux
     sigValueChanged.emit (this);
     sigFloatChanged.emit (m_Value);
     sigSetTypedValue.emit (f);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RangeValue::EmitFloatChangedSignal()
