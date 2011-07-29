@@ -74,7 +74,7 @@ namespace nux
     {
       return m_caret;
     }
-    bool NeedRedraw() const
+    bool QueueDraw() const
     {
       return m_need_redraw;
     }

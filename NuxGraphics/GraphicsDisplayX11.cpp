@@ -509,7 +509,7 @@ namespace nux
     m_GraphicsContext = new GraphicsEngine (*this);
 
     //EnableVSyncSwapControl();
-    //DisableVSyncSwapControl();
+    DisableVSyncSwapControl();
     
     InitGlobalGrabWindow ();
 

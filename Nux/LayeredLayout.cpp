@@ -374,8 +374,10 @@ namespace nux
   {
     LayeredChildProperties *props;
 
+    // return if the area is NULL
     NUX_RETURN_IF_NULL(area);
-    NUX_RETURN_IF_NULL(area->GetParentObject ());
+    // Return if the area already has a parent
+    NUX_RETURN_IF_NOTNULL(area->GetParentObject ());
 
     props = new LayeredChildProperties (expand, x, y, width, height);
     area->SetLayoutProperties (props);

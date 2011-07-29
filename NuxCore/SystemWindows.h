@@ -42,7 +42,7 @@
 
 #include <io.h>
 #include <direct.h>
-
+#include <memory>
 // If NUX_LOG_FILE_ANSI is set to 1, log files will be written in ASCII characters even when in UNICODE.
 #define NUX_LOG_FILE_ANSI   1
 

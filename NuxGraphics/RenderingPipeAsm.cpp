@@ -1964,15 +1964,16 @@ namespace nux
 
     QRP_ASM_1Tex(x, y, quad_width, quad_height, device_texture, texxform, color::White);
 
+    TexCoordXForm texxform1;
     for (int i = 0; i < num_pass; i++)
     {
       SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, buffer_width, buffer_height);
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-      QRP_ASM_HorizontalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt0, texxform, c0);
+      QRP_ASM_HorizontalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt0, texxform1, c0);
 
       SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, buffer_width, buffer_height);
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-      QRP_ASM_VerticalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt1, texxform, c0);
+      QRP_ASM_VerticalGauss(0, 0, buffer_width, buffer_height, _offscreen_color_rt1, texxform1, c0);
     }
 
     _offscreen_fbo->Deactivate();
@@ -2195,11 +2196,19 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt3, _offscreen_depth_rt3, quad_width, quad_height);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    TexCoordXForm texxform0;
+    TexCoordXForm texxform1;
+    TexCoordXForm texxform2;
+    TexCoordXForm texxform3;
+
+    texxform0.flip_v_coord = true;
+    texxform2.flip_v_coord = true;
     QRP_ASM_4Tex (0, 0, quad_width, quad_height,
-      device_texture, texxform, color::White,
-      _offscreen_color_rt0, texxform, color::White,
-      _offscreen_color_rt1, texxform, color::White,
-      _offscreen_color_rt2, texxform, color::White);
+      device_texture, texxform0, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt0, texxform1, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt1, texxform2, Color(0.25, 0.25, 0.25, 0.25),
+      _offscreen_color_rt2, texxform3, Color(0.25, 0.25, 0.25, 0.25));
 
     _offscreen_fbo->Deactivate();
 
@@ -2393,6 +2402,60 @@ namespace nux
 		  SetViewport (0, 0, previous_width, previous_height);
 	  }
 	  return _offscreen_color_rt0;
+  }
+
+  void GraphicsEngine::QRP_ASM_GetCopyTexture(
+    int width, int height,
+    ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
+    ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
+    TexCoordXForm &texxform0, const Color& c0)
+  {
+    if (src_device_texture.IsValid() == false)
+    {
+      return;
+    }
+
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    int previous_width = 0;
+    int previous_height = 0;
+
+    if (prevFBO.IsValid())
+    {
+      previous_width = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
+    }
+    else
+    {
+      previous_width = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
+    }
+
+    if ((dst_device_texture.IsValid() == false) ||
+      (dst_device_texture->GetWidth() != width) ||
+      (dst_device_texture->GetHeight() != height) ||
+      (dst_device_texture->GetPixelFormat() != src_device_texture->GetPixelFormat()))
+    {
+      dst_device_texture = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, src_device_texture->GetPixelFormat());
+    }
+
+    CHECKGL(glClearColor(0, 0, 0, 0));
+    ObjectPtr<IOpenGLBaseTexture> depth_buffer(NULL);
+    SetFrameBufferHelper(_offscreen_fbo, dst_device_texture, depth_buffer, width, height);
+    CHECKGL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+
+    QRP_ASM_1Tex(0, 0, width, height, src_device_texture, texxform0, c0);
+
+    _offscreen_fbo->Deactivate();
+
+    if (prevFBO.IsValid())
+    {
+      prevFBO->Activate(true);
+      SetViewport(0, 0, previous_width, previous_height);
+    }
+    else
+    {
+      SetViewport(0, 0, previous_width, previous_height);
+    }
   }
 }
 #endif // NUX_OPENGLES_20

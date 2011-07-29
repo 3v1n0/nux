@@ -153,8 +153,8 @@ logging::Logger logger("nux.inputarea");
 //         }
 //         else
 //         {
-//           LOG_TRACE(logger) << "Mouse move and has mouse focus. Emit OnMouseDrag";
-//           OnMouseDrag.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(),
+//           LOG_TRACE(logger) << "Mouse move and has mouse focus. Emit mouse_drag";
+//           mouse_drag.emit (_event_processor._mouse_positionx - GetRootX(), _event_processor._mouse_positiony - GetRootY(),
 //                             _event_processor._mouse_deltax, _event_processor._mouse_deltay,
 //                             event.GetMouseState(), event.GetKeyState() );
 //         }
@@ -422,12 +422,12 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::EmitMouseMoveSignal(int x, int y, int dx, int dy, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    OnMouseMove.emit(x, y, dx, dy, mouse_button_state, special_keys_state);
+    mouse_move.emit(x, y, dx, dy, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitMouseWheelSignal(int x, int y, int wheel_delta, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    OnMouseWheel.emit(x, y, wheel_delta, mouse_button_state, special_keys_state);
+    mouse_wheel.emit(x, y, wheel_delta, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitKeyDownSignal(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
@@ -437,7 +437,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::EmitKeyUpSignal(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
   {
-    OnKeyReleased.emit(key_symbol, x11_key_code, special_keys_state);
+    key_up.emit(key_symbol, x11_key_code, special_keys_state);
   }
 
   void InputArea::EmitKeyEventSignal(unsigned long event_type,
@@ -446,7 +446,7 @@ logging::Logger logger("nux.inputarea");
     const char* text,
     int key_repeat_count)
   {
-    OnKeyEvent.emit(GetWindowThread()->GetGraphicsEngine(),
+    key_down.emit(
       event_type,
       key_sym,
       special_keys_state,
@@ -456,7 +456,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::EmitMouseDragSignal(int x, int y, int dx, int dy, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    OnMouseDrag.emit(x, y, dx, dy, mouse_button_state, special_keys_state);
+    mouse_drag.emit(x, y, dx, dy, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitMouseEnterSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
@@ -478,23 +478,23 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::EmitMouseDoubleClickSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    OnMouseDoubleClick.emit(x, y, mouse_button_state, special_keys_state);
+    mouse_double_click.emit(x, y, mouse_button_state, special_keys_state);
   }
 
 
   void InputArea::EmitStartKeyboardFocus()
   {
-    OnStartKeyboardReceiver.emit();
+    start_key_focus.emit();
   }
 
   void InputArea::EmitEndKeyboardFocus()
   {
-    OnStopKeyboardReceiver.emit();
+    end_key_focus.emit();
   }
 
   void InputArea::EmitMouseDownOutsideArea(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    OnMouseDownOutsideArea.emit(x, y, mouse_button_state, special_keys_state);
+    mouse_down_outside_pointer_grab_area.emit(x, y, mouse_button_state, special_keys_state);
   }
 
   Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)

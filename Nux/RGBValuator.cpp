@@ -141,26 +141,26 @@ namespace nux
     m_DoubleRegExp.SetMinimum (0);
 
     // Set Signals
-    m_RedValuator->OnMouseDown.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Red) );
-    m_GreenValuator->OnMouseDown.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Green) );
-    m_BlueValuator->OnMouseDown.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Blue) );
-    m_AlphaValuator->OnMouseDown.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Alpha) );
-    m_RedValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Red) );
-    m_GreenValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Green) );
-    m_BlueValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Blue) );
-    m_AlphaValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Alpha) );
+    m_RedValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Red) );
+    m_GreenValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Green) );
+    m_BlueValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Blue) );
+    m_AlphaValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Alpha) );
+    m_RedValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Red) );
+    m_GreenValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Green) );
+    m_BlueValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Blue) );
+    m_AlphaValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Alpha) );
     m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorModel) );
     m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorFormat) );
-//    m_ColorModel->OnMouseDown.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->OnMouseUp.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->OnMouseEnter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
+//    m_ColorModel->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
+//    m_ColorModel->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
+//    m_ColorModel->mouse_enter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 
     m_ColorModel->SetFont (GetSysBoldFont() );
     m_ColorFormat->SetFont (GetSysBoldFont() );
 
-    m_RedValuator->OnMouseUp.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseUp_Red) );
-    m_GreenValuator->OnMouseUp.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseUp_Green) );
-    m_BlueValuator->OnMouseUp.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseUp_Blue) );
+    m_RedValuator->mouse_up.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseUp_Red) );
+    m_GreenValuator->mouse_up.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseUp_Green) );
+    m_BlueValuator->mouse_up.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseUp_Blue) );
 
     m_RedCaption->sigValidateKeyboardEntry.connect (sigc::bind (sigc::mem_fun (this, &RGBValuator::OnComponentInput), 0) );
     m_GreenCaption->sigValidateKeyboardEntry.connect (sigc::bind (sigc::mem_fun (this, &RGBValuator::OnComponentInput), 1) );
@@ -442,12 +442,12 @@ namespace nux
     DrawBlueMarker (GfxContext);
     DrawAlphaMarker (GfxContext);
 
-    m_RedCaption->NeedRedraw();
-    m_GreenCaption->NeedRedraw();
-    m_BlueCaption->NeedRedraw();
-    m_AlphaCaption->NeedRedraw();
-    m_ColorModel->NeedRedraw();
-    m_ColorFormat->NeedRedraw();
+    m_RedCaption->QueueDraw();
+    m_GreenCaption->QueueDraw();
+    m_BlueCaption->QueueDraw();
+    m_AlphaCaption->QueueDraw();
+    m_ColorModel->QueueDraw();
+    m_ColorFormat->QueueDraw();
 
     GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
@@ -904,7 +904,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RGBValuator::OnReceiveMouseDown_Green (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -964,7 +964,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RGBValuator::OnReceiveMouseDown_Blue (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -1024,7 +1024,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RGBValuator::OnReceiveMouseDown_Alpha (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -1037,7 +1037,7 @@ namespace nux
       alpha_ = (float) x / (float) m_AlphaValuator->GetBaseWidth();
 
     SetAlpha (alpha_);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RGBValuator::OnReceiveMouseDrag_Red (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -1106,7 +1106,7 @@ namespace nux
       SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RGBValuator::OnReceiveMouseUp_Green     (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -1155,7 +1155,7 @@ namespace nux
       SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RGBValuator::OnReceiveMouseUp_Blue (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -1204,12 +1204,12 @@ namespace nux
       SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RGBValuator::RecvMouseDownColorModel (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RGBValuator::OnChangeColorModel()
@@ -1239,7 +1239,7 @@ namespace nux
       SetRGB (rgb_.red, rgb_.green, rgb_.blue);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RGBValuator::OnChangeColorFormat()
@@ -1359,7 +1359,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
 
