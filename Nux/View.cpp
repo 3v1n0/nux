@@ -32,7 +32,7 @@ namespace nux
 
   View::View (NUX_FILE_LINE_DECL)
     :   InputArea (NUX_FILE_LINE_PARAM)
-    ,   state (this, "state")
+    ,   state (NUX_STATE_NORMAL)
   {
     _font = GetSysFont ();
     _is_view_active     = true; // The view is active by default
@@ -42,7 +42,6 @@ namespace nux
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
     _can_pass_focus_to_composite_layout = true;
     _can_focus          = true;
-    //state               = NUX_STATE_NORMAL;
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);

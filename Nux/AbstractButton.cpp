@@ -19,8 +19,6 @@
  *              Gordon Allott <gord.allott@canonical.com>
  *
  */
-
-
 #include "Nux.h"
 
 #include "AbstractButton.h"
@@ -31,8 +29,11 @@ namespace nux
 
   AbstractButton::AbstractButton(NUX_FILE_LINE_DECL)
       : View(NUX_FILE_LINE_PARAM)
-      , togglable(this, "togglable")
-      , active(this, "active") {
+//      , togglable(false) - FIXME - property explodes if you do this
+//      , active(false);
+  {
+    active = false;
+    togglable = false;
     Init();
   }
 
@@ -40,7 +41,6 @@ namespace nux
   }
 
   void AbstractButton::Init () {
-    EnableDoubleClick (false);
     OnMouseClick.connect (sigc::mem_fun (this, &AbstractButton::RecvClick) );
     OnMouseDown.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseDown) );
     OnMouseDoubleClick.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseDown) );
@@ -48,6 +48,11 @@ namespace nux
     OnMouseMove.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseMove) );
     OnMouseEnter.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseEnter) );
     OnMouseLeave.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseLeave) );
+  }
+
+  long AbstractButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
   }
 
   void AbstractButton::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -64,11 +69,6 @@ namespace nux
       active = false;
 
     NeedRedraw();
-  }
-
-  long AbstractButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
   }
 
   void AbstractButton::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags) {

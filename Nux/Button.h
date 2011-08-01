@@ -38,7 +38,7 @@ namespace nux
     NUX_POSITION_BOTTOM
   };
 
-  class Button: public AbstractButton, virtual public Introspectable
+  class Button: public AbstractButton
   {
     NUX_DECLARE_OBJECT_TYPE (Button, View);
   public:
@@ -48,14 +48,13 @@ namespace nux
     Button (NUX_FILE_LINE_PROTO);
     ~Button();
 
-    // FIXME - property system doesn't allow objects.. soo yeah,
-    //Property<TextureArea *> image;
+    // This api sucks, it deviates from the property system api, but properties
+    // do not support nux objects
     void SetImage (TextureArea *image);
     TextureArea *GetImage ();
 
     Property<std::string>   label;
-    // FIXME - this should be the Position enum set above, can't do that because tim hates me
-    Property<int>           image_position;
+    Property<Position>      image_position;
 
   protected:
     void Init ();

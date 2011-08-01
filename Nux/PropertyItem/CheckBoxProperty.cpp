@@ -29,9 +29,9 @@
 namespace nux
 {
 
-  CheckBoxPropertyItem::CheckBoxPropertyItem (const TCHAR *name, bool on)
-    :   SectionProperty (name, NODE_TYPE_CHECKBOX)
-    ,   CheckBox ("")
+  CheckBoxPropertyItem::CheckBoxPropertyItem (std::string label, NUX_FILE_LINE_DECL)
+    :   SectionProperty (label.c_str(), NODE_TYPE_CHECKBOX)
+    ,   CheckBox (label, NUX_FILE_LINE_PARAM)
   {
     //FIXME - needs updating to the latest Button codebase
     //SetState (on);
@@ -106,7 +106,8 @@ namespace nux
   {
     int check = 0;
     QueryNodeXMLIntAttribute (elementxml, "Check",       &check,     id);
-    CheckBoxPropertyItem *node = new CheckBoxPropertyItem (Name, check ? true : false);
+    CheckBoxPropertyItem *node = new CheckBoxPropertyItem (Name);
+    node->active = check ? true : false;
     node->SetID (id);
     return node;
   }

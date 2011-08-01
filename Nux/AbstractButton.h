@@ -23,20 +23,21 @@
 #ifndef ABSTRACTBUTTON_H
 #define ABSTRACTBUTTON_H
 #include "View.h"
+#include "NuxCore/Property.h"
 
 namespace nux
 {
 
   //! The base class of Button
-  class AbstractButton : public View, virtual public Introspectable
+  class AbstractButton : public View
   {
   public:
     AbstractButton (NUX_FILE_LINE_PROTO);
     ~AbstractButton();
 
-    /* FIXME - read only property - don't know how to set that... */
-    Property<bool>    togglable;
-    Property<bool>          active;
+    // this should be an ROproperty but can't use that
+    Property<bool> togglable;
+    Property<bool> active;
 
     /* NOTSURE - do we need an activated signal? technically you get that with active,
      * this is just a simpler way of convaying the same information

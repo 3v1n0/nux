@@ -54,7 +54,7 @@ namespace nux
     ePopupBox
   };
 
-  class View: public InputArea, virtual public Introspectable
+  class View: public InputArea
   {
     NUX_DECLARE_OBJECT_TYPE (View, InputArea);
   public:

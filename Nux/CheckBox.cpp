@@ -31,11 +31,9 @@ namespace nux
 {
   CheckBox::CheckBox (std::string label, NUX_FILE_LINE_DECL)
         : AbstractButton (NUX_FILE_LINE_PARAM)
-        , label (this, "label") {
-
+        , label (label) {
     togglable = true;
     Init ();
-    this->label = label;
   }
 
   CheckBox::~CheckBox() {
@@ -92,7 +90,7 @@ namespace nux
     NeedRedraw();
   }
 
-  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw) {zz
+  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw) {
     Geometry base = GetGeometry();
 
     if (state == NUX_STATE_ACTIVE) {
