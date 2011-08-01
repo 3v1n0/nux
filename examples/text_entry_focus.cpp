@@ -32,14 +32,20 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 
     nux::TextEntry* text_entry_1 = new nux::TextEntry(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
 
+    nux::TextEntry* text_entry_2 = new nux::TextEntry(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
+
     text_entry_0->SetMaximumWidth(300);
     text_entry_0->SetMinimumHeight (20);
 
     text_entry_1->SetMaximumWidth(300);
     text_entry_1->SetMinimumHeight (20);
 
+    text_entry_2->SetMaximumWidth(300);
+    text_entry_2->SetMinimumHeight (20);
+
     MainVLayout->AddView(text_entry_0, 0, nux::eCenter, nux::eFull);
     MainVLayout->AddView(text_entry_1, 0, nux::eCenter, nux::eFull);
+    MainVLayout->AddView(text_entry_2, 0, nux::eCenter, nux::eFull, 1.0, nux::NUX_LAYOUT_BEGIN);
 
     MainVLayout->SetVerticalInternalMargin(10);
 
