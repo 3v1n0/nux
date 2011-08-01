@@ -47,19 +47,19 @@ namespace nux
 
   ComboBoxComplex::~ComboBoxComplex()
   {
-    DestroyLayout();
+    m_PopupWindow->Dispose ();
   }
 
   void ComboBoxComplex::InitializeWidgets()
   {
     // Set Signals
-    _combo_box_opening_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDown) );
-    _combo_box_opening_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseUp) );
-    _combo_box_opening_area->OnMouseDrag.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDrag) );
+    _combo_box_opening_area->mouse_down.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDown) );
+    _combo_box_opening_area->mouse_up.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseUp) );
+    _combo_box_opening_area->mouse_drag.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDrag) );
 
-    _combo_box_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDown) );
-    _combo_box_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseUp) );
-    _combo_box_area->OnMouseDrag.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDrag) );
+    _combo_box_area->mouse_down.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDown) );
+    _combo_box_area->mouse_up.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseUp) );
+    _combo_box_area->mouse_drag.connect (sigc::mem_fun (this, &ComboBoxComplex::RecvMouseDrag) );
 
     // Set Geometry
     _combo_box_opening_area->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT) );
@@ -103,11 +103,6 @@ namespace nux
     m_Layout        = new HLayout(NUX_TRACKER_LOCATION);
     m_ListBox       = new ListControl(false);
     m_PopupWindow   = new PopUpWindow();
-  }
-
-  void ComboBoxComplex::DestroyLayout()
-  {
-    m_PopupWindow->Dispose ();
   }
 
   long ComboBoxComplex::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -220,7 +215,7 @@ namespace nux
       m_IsOpeningMenu = false;
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ComboBoxComplex::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -274,7 +269,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ComboBoxComplex::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -304,7 +299,7 @@ namespace nux
     sigSelectedItem.emit (item);
 
     m_PopupWindow->Hide();
-    NeedRedraw();
+    QueueDraw();
     // You can do something if you want with the menu* and the action*
   }
 

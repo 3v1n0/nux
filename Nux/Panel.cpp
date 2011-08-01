@@ -68,21 +68,19 @@ namespace nux
     }
 
     if (m_vertical_scrollbar_enable)
-      ret = vscrollbar->ProcessEvent (ievent, ret, ProcEvInfo);
+      ret = _vscrollbar->ProcessEvent (ievent, ret, ProcEvInfo);
 
     if (m_horizontal_scrollbar_enable)
-      ret = hscrollbar->ProcessEvent (ievent, ret, ProcEvInfo);
+      ret = _hscrollbar->ProcessEvent (ievent, ret, ProcEvInfo);
 
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
     Geometry viewGeometry = Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-    bool traverse = true;
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
       if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
       {
         ProcEvInfo = eDoNotProcess;
-        traverse = false;
       }
     }
 
@@ -100,18 +98,18 @@ namespace nux
     Geometry base = GetGeometry();
 
     if (m_layout)
-      m_layout->NeedRedraw();
+      m_layout->QueueDraw();
 
     GetPainter().PaintBackground (GfxContext, base);
 
     if (m_vertical_scrollbar_enable)
     {
-      vscrollbar->NeedRedraw();
+      _vscrollbar->QueueDraw();
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      hscrollbar->NeedRedraw();
+      _hscrollbar->QueueDraw();
     }
 
     GfxContext.PopClippingRectangle();
@@ -134,12 +132,12 @@ namespace nux
 
     if (m_vertical_scrollbar_enable)
     {
-      vscrollbar->ProcessDraw (GfxContext, force_draw);
+      _vscrollbar->ProcessDraw (GfxContext, force_draw);
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      hscrollbar->ProcessDraw (GfxContext, force_draw);
+      _hscrollbar->ProcessDraw (GfxContext, force_draw);
     }
 
     GfxContext.PopClippingRectangle();
@@ -218,28 +216,32 @@ namespace nux
   {
     ScrollView::ScrollLeft (stepx, mousedx);
     ComputeChildLayout();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Panel::ScrollRight (float stepx, int mousedx)
   {
     ScrollView::ScrollRight (stepx, mousedx);
     ComputeChildLayout();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Panel::ScrollUp (float stepy, int mousedy)
   {
     ScrollView::ScrollUp (stepy, mousedy);
     ComputeChildLayout();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Panel::ScrollDown (float stepy, int mousedy)
   {
     ScrollView::ScrollDown (stepy, mousedy);
     ComputeChildLayout();
-    NeedRedraw();
+    QueueDraw();
   }
 
+  bool Panel::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

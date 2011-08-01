@@ -46,6 +46,11 @@ namespace nux
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
+    //! Return True if the the area knows what to do with the key event.
+    virtual bool InspectKeyEvent(unsigned int eventType,
+      unsigned int keysym,
+      const char* character);
+
     void SetText (const TCHAR &Caption);
     void SetText (const TCHAR *Caption);
     void SetText (const tstring &Caption);
@@ -114,7 +119,6 @@ namespace nux
     void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void RecvKeyEvent (
-      GraphicsEngine &GfxContext ,   /*Graphics Context for text operation*/
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
       unsigned long    state      ,   /*event state*/
@@ -223,6 +227,9 @@ namespace nux
 
     //! If true, blend the characters alpha value with the destination and write the result to the destination buffer.
     bool m_WriteAlpha;
+
+    bool text_input_mode_;
+    bool key_nav_mode_;
 
     friend class RGBValuator;
   };

@@ -35,16 +35,16 @@ namespace nux
   HScrollBar::HScrollBar (NUX_FILE_LINE_DECL)
     :   ScrollBar (NUX_FILE_LINE_PARAM)
   {
-    m_contentWidth      = 0;
-    m_contentHeight     = 0;
-    m_containerWidth    = 0;
-    m_containerHeight   = 0;
+    content_width_      = 0;
+    content_height_     = 0;
+    container_width_    = 0;
+    container_height_   = 0;
     m_TrackWidth        = 0;
     m_TrackHeight       = 0;
     m_SlideBarOffsetX   = 0;
     m_SlideBarOffsetY   = 0;
-    m_contentOffsetX    = 0;
-    m_contentOffsetY    = 0;
+    content_offset_x_    = 0;
+    content_offset_y_    = 0;
     b_MouseUpTimer      = false;
     b_MouseDownTimer    = false;
     m_color_factor      = 1.0f;
@@ -52,40 +52,42 @@ namespace nux
     m_RightTimerHandler = 0;
 
     hlayout = new HLayout (NUX_TRACKER_LOCATION);
-    m_LeftThumb = new InputArea (NUX_TRACKER_LOCATION);
-    m_Track = new InputArea (NUX_TRACKER_LOCATION);
-    m_RightThumb = new InputArea (NUX_TRACKER_LOCATION);
-    m_SlideBar = new InputArea (NUX_TRACKER_LOCATION);
+    _scroll_left_button = new InputArea (NUX_TRACKER_LOCATION);
+    _track = new InputArea (NUX_TRACKER_LOCATION);
+    _scroll_right_button = new InputArea (NUX_TRACKER_LOCATION);
+    _slider = new InputArea (NUX_TRACKER_LOCATION);
+    _slider->SetParentObject(this);
 
     // Set Original State
     SetMinimumSize (AREA_MIN_WIDTH, HSCROLLBAR_HEIGHT);
     SetMaximumSize (AREA_MAX_WIDTH, HSCROLLBAR_HEIGHT);
+
     // Set Signals
-    m_RightThumb->OnMouseDown.connect ( sigc::mem_fun (this, &HScrollBar::RecvStartScrollRight) );
-    m_RightThumb->OnMouseUp.connect ( sigc::mem_fun (this, &HScrollBar::RecvEndScrollRight) );
-    m_LeftThumb->OnMouseDown.connect ( sigc::mem_fun (this, &HScrollBar::RecvStartScrollLeft) );
-    m_LeftThumb->OnMouseUp.connect ( sigc::mem_fun (this, &HScrollBar::RecvEndScrollLeft) );
+    _scroll_right_button->mouse_down.connect ( sigc::mem_fun (this, &HScrollBar::RecvStartScrollRight) );
+    _scroll_right_button->mouse_up.connect ( sigc::mem_fun (this, &HScrollBar::RecvEndScrollRight) );
+    _scroll_left_button->mouse_down.connect ( sigc::mem_fun (this, &HScrollBar::RecvStartScrollLeft) );
+    _scroll_left_button->mouse_up.connect ( sigc::mem_fun (this, &HScrollBar::RecvEndScrollLeft) );
 
-    m_SlideBar->OnMouseDown.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseDown) );
-    m_SlideBar->OnMouseUp.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseUp) );
-    m_SlideBar->OnMouseDrag.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseDrag) );
+    _slider->mouse_down.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseDown) );
+    _slider->mouse_up.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseUp) );
+    _slider->mouse_drag.connect ( sigc::mem_fun (this, &HScrollBar::OnSliderMouseDrag) );
 
-    m_Track->OnMouseDown.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseDown) );
-    m_Track->OnMouseUp.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseUp) );
-    m_Track->OnMouseDrag.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseDrag) );
+    _track->mouse_down.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseDown) );
+    _track->mouse_up.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseUp) );
+    _track->mouse_drag.connect ( sigc::mem_fun (this, &HScrollBar::RecvTrackMouseDrag) );
 
     // Set Geometry
-    m_RightThumb->SetMinimumSize (HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
-    m_RightThumb->SetMaximumSize (HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
-    m_RightThumb->SetGeometry (Geometry (0, 0, HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT) );
-    m_LeftThumb->SetMinimumSize (HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
-    m_LeftThumb->SetMaximumSize (HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
-    m_LeftThumb->SetGeometry (Geometry (0, 0, HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT) );
+    _scroll_right_button->SetMinimumSize (HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
+    _scroll_right_button->SetMaximumSize (HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
+    _scroll_right_button->SetGeometry (Geometry (0, 0, HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT) );
+    _scroll_left_button->SetMinimumSize (HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
+    _scroll_left_button->SetMaximumSize (HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT);
+    _scroll_left_button->SetGeometry (Geometry (0, 0, HSCROLLBAR_WIDTH, HSCROLLBAR_HEIGHT) );
 
 
-    hlayout->AddView (m_LeftThumb, 0, eCenter, eFix);
-    hlayout->AddView (m_Track, 1, eCenter, eFull);
-    hlayout->AddView (m_RightThumb, 0, eCenter, eFix);
+    hlayout->AddView (_scroll_left_button, 0, eCenter, eFix);
+    hlayout->AddView (_track, 1, eCenter, eFull);
+    hlayout->AddView (_scroll_right_button, 0, eCenter, eFix);
 
     callback = new TimerFunctor;
     callback->OnTimerExpired.connect (sigc::mem_fun (this, &HScrollBar::HScrollBarHandler) );
@@ -99,11 +101,12 @@ namespace nux
     trackright_callback->OnTimerExpired.connect (sigc::mem_fun (this, &HScrollBar::TrackRight) );
 
     SetLayout(hlayout);
+    SetAcceptMouseWheelEvent(true);
   }
 
   HScrollBar::~HScrollBar()
   {
-    m_SlideBar->Dispose();
+    _slider->UnReference();
     delete callback;
     delete left_callback;
     delete trackleft_callback;
@@ -125,7 +128,7 @@ namespace nux
       }
       else
       {
-        scrollbar->NeedRedraw();
+        scrollbar->QueueDraw();
         GetTimer().AddTimerHandler (10, callback, scrollbar);
       }
     }
@@ -141,7 +144,7 @@ namespace nux
       }
       else
       {
-        scrollbar->NeedRedraw();
+        scrollbar->QueueDraw();
         GetTimer().AddTimerHandler (10, callback, scrollbar);
       }
     }
@@ -151,12 +154,12 @@ namespace nux
   {
     OnScrollRight.emit (m_ScrollUnit, 1);
 
-    if (AtMaximum() )
+    if (AtMaximum())
       RecvEndScrollRight (0, 0, 0, 0);
     else
       m_RightTimerHandler = GetTimer().AddTimerHandler (10, right_callback, this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void HScrollBar::ScrollLeft (void *v)
@@ -168,26 +171,26 @@ namespace nux
     else
       m_LeftTimerHandler = GetTimer().AddTimerHandler (10, left_callback, this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void HScrollBar::TrackLeft (void *v)
   {
-    if (m_TrackMouseCoord.x < m_SlideBar->GetBaseX() - m_Track->GetBaseX() )
+    if (m_TrackMouseCoord.x < _slider->GetBaseX() - _track->GetBaseX() )
     {
-      OnScrollLeft.emit (m_containerWidth, 1);
+      OnScrollLeft.emit (container_width_, 1);
       m_TrackLeftTimerHandler  = GetTimer().AddTimerHandler (10, trackleft_callback, this);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
   void HScrollBar::TrackRight (void *v)
   {
-    if (m_TrackMouseCoord.x > m_SlideBar->GetBaseX() + m_SlideBar->GetBaseWidth() - m_Track->GetBaseX() )
+    if (m_TrackMouseCoord.x > _slider->GetBaseX() + _slider->GetBaseWidth() - _track->GetBaseX() )
     {
-      OnScrollRight.emit (m_containerWidth, 1);
+      OnScrollRight.emit (container_width_, 1);
       m_TrackRightTimerHandler  = GetTimer().AddTimerHandler (10, trackright_callback, this);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
@@ -223,7 +226,7 @@ namespace nux
   {
     m_TrackMouseCoord = Point (x, y);
 
-    int X = m_SlideBar->GetBaseX() - m_Track->GetBaseX();
+    int X = _slider->GetBaseX() - _track->GetBaseX();
 
     if (x < X)
     {
@@ -257,13 +260,30 @@ namespace nux
   long HScrollBar::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
-    ret = m_RightThumb->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_LeftThumb->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_SlideBar->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_Track->OnEvent (ievent, ret, ProcessEventInfo);
+    ret = _scroll_right_button->OnEvent (ievent, ret, ProcessEventInfo);
+    ret = _scroll_left_button->OnEvent (ievent, ret, ProcessEventInfo);
+    ret = _slider->OnEvent (ievent, ret, ProcessEventInfo);
+    ret = _track->OnEvent (ievent, ret, ProcessEventInfo);
     ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
 
     return ret;
+  }
+
+  Area* HScrollBar::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    NUX_RETURN_VALUE_IF_TRUE(_scroll_right_button->TestMousePointerInclusion(mouse_position, event_type), _scroll_right_button);
+    NUX_RETURN_VALUE_IF_TRUE(_scroll_left_button->TestMousePointerInclusion(mouse_position, event_type), _scroll_left_button);
+    NUX_RETURN_VALUE_IF_TRUE(_slider->TestMousePointerInclusion(mouse_position, event_type), _slider);
+    NUX_RETURN_VALUE_IF_TRUE(_track->TestMousePointerInclusion(mouse_position, event_type), _track);
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
   }
 
   void HScrollBar::Draw (GraphicsEngine &GfxContext, bool force_draw)
@@ -275,10 +295,10 @@ namespace nux
     GetPainter().PaintShape (GfxContext, base,
                          Color (COLOR_SCROLLBAR_TRACK), eHSCROLLBAR, false);
 
-    GetPainter().PaintShape (GfxContext, m_LeftThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_LEFT);
-    GetPainter().PaintShape (GfxContext, m_RightThumb->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_RIGHT);
+    GetPainter().PaintShape (GfxContext, _scroll_left_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_LEFT);
+    GetPainter().PaintShape (GfxContext, _scroll_right_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_RIGHT);
 
-    GetPainter().PaintShape (GfxContext, m_SlideBar->GetGeometry(),
+    GetPainter().PaintShape (GfxContext, _slider->GetGeometry(),
                          Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f),
                          eHSCROLLBAR, true);
   };
@@ -286,73 +306,61 @@ namespace nux
   void HScrollBar::SetContainerSize (int x, int y, int w, int h)
   {
     // x and y are not needed
-    m_containerWidth = w;
-    m_containerHeight = h;
+    container_width_ = w;
+    container_height_ = h;
     ComputeScrolling();
   }
 
   void HScrollBar::SetContentSize (int x, int y, int w, int h)
   {
     // x and y are not needed
-    m_contentWidth = w;
-    m_contentHeight = h;
+    content_width_ = w;
+    content_height_ = h;
     ComputeScrolling();
   }
 
   void HScrollBar::SetContentOffset (float dx, float dy)
   {
-    m_contentOffsetX = dx;
-    m_contentOffsetY = dy;
+    content_offset_x_ = dx;
+    content_offset_y_ = dy;
     ComputeScrolling();
   }
 
   void HScrollBar::ComputeScrolling()
   {
-    float percentage = 0;
-
-    if (m_contentWidth == 0)
+    if (content_width_ == 0)
     {
-      percentage = 100.0f;
+      visibility_percentage_ = 100.0f;
     }
     else
     {
-      percentage = 100.0f * (float) m_containerWidth / (float) m_contentWidth;
+      visibility_percentage_ = Clamp<float>(100.0f * (float) container_width_ / (float) content_width_, 0.0f, 100.0f);
     }
 
-    if (percentage > 100.0f)
-    {
-      percentage = 100.0f;
-    }
+    m_TrackWidth = _track->GetBaseWidth();
 
-    if (percentage < 0.0f)
-    {
-      percentage = 0.0f;
-    }
-
-    m_TrackWidth = m_Track->GetBaseWidth();
-
-    int slider_height = m_LeftThumb->GetBaseHeight();
-    int slider_width = m_TrackWidth * percentage / 100.0f;
+    int slider_height = _scroll_left_button->GetBaseHeight();
+    int slider_width = m_TrackWidth * visibility_percentage_ / 100.0f;
 
     if (slider_width < 15)
     {
       slider_width = 15;
     }
 
-    m_SlideBar->SetBaseWidth (slider_width);
-    m_SlideBar->SetBaseHeight (slider_height);
-    m_SlideBar->SetBaseY (m_LeftThumb->GetBaseY() );
+    _slider->SetBaseWidth (slider_width);
+    _slider->SetBaseHeight (slider_height);
+    _slider->SetBaseY (_scroll_left_button->GetBaseY() );
 
 
     float pct;
 
-    if (m_contentWidth - m_containerWidth > 0)
-      pct = - (float) m_contentOffsetX / (float) (m_contentWidth - m_containerWidth);
+    if (content_width_ - container_width_ > 0)
+      pct = - (float) content_offset_x_ / (float) (content_width_ - container_width_);
     else
       pct = 0;
 
-    int x = m_Track->GetBaseX() + pct * (m_TrackWidth - slider_width);
-    m_SlideBar->SetBaseX (x);
+    int x = _track->GetBaseX() + pct * (m_TrackWidth - slider_width);
+    _slider->SetBaseX (x);
   }
 
 
@@ -392,9 +400,9 @@ namespace nux
 
   void HScrollBar::OnSliderMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (m_Track->GetBaseWidth() - m_SlideBar->GetBaseWidth() > 0)
+    if (_track->GetBaseWidth() - _slider->GetBaseWidth() > 0)
     {
-      stepX = (float) (m_contentWidth - m_containerWidth) / (float) (m_Track->GetBaseWidth() - m_SlideBar->GetBaseWidth() );
+      stepX = (float) (content_width_ - container_width_) / (float) (_track->GetBaseWidth() - _slider->GetBaseWidth() );
     }
     else
     {
@@ -414,7 +422,7 @@ namespace nux
 
   bool HScrollBar::AtMaximum()
   {
-    if (m_SlideBar->GetBaseX() + m_SlideBar->GetBaseWidth() == m_Track->GetBaseX() + m_Track->GetBaseWidth() )
+    if (_slider->GetBaseX() + _slider->GetBaseWidth() == _track->GetBaseX() + _track->GetBaseWidth() )
       return TRUE;
 
     return FALSE;
@@ -422,7 +430,7 @@ namespace nux
 
   bool HScrollBar::AtMinimum()
   {
-    if (m_SlideBar->GetBaseX() == m_Track->GetBaseX() )
+    if (_slider->GetBaseX() == _track->GetBaseX() )
       return TRUE;
 
     return FALSE;

@@ -41,7 +41,8 @@ namespace nux
 
   FunctionGraph::~FunctionGraph()
   {
-    DestroyLayout();
+    NUX_SAFE_DELETE (m_DrawFunctionShader);
+    NUX_SAFE_DELETE (m_BackgroundLayer);
   }
 
   void FunctionGraph::InitializeWidgets()
@@ -67,12 +68,6 @@ namespace nux
   void FunctionGraph::InitializeLayout()
   {
 
-  }
-
-  void FunctionGraph::DestroyLayout()
-  {
-    NUX_SAFE_DELETE (m_DrawFunctionShader);
-    NUX_SAFE_DELETE (m_BackgroundLayer);
   }
 
   long FunctionGraph::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -174,20 +169,20 @@ namespace nux
   {
     m_minX = minX;
     m_maxX = maxX;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void FunctionGraph::SetYAxisBounds (float minY, float maxY)
   {
     m_minY = minY;
     m_maxY = maxY;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void FunctionGraph::SetFunctionCallback (FunctionCallback f)
   {
     m_FunctionCallback = f;
-    NeedRedraw();
+    QueueDraw();
   }
 
   float FunctionGraph::EvalFunction (float x)
@@ -200,7 +195,7 @@ namespace nux
 
   void FunctionGraph::UpdateGraph()
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
 }

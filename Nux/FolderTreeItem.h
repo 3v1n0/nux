@@ -57,10 +57,14 @@ namespace nux
 
     void SetOpenIcon (const BaseTexture* Texture)
     {
+      if (FolderOpenIcon)
+        FolderOpenIcon->UnReference();
       FolderOpenIcon = Texture->Clone ();
     }
     void SetCloseIcon (const BaseTexture* Texture)
     {
+      if (FolderClosedIcon)
+        FolderClosedIcon->UnReference();
       FolderClosedIcon = Texture->Clone ();
     }
 

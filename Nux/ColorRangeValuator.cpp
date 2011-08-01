@@ -40,7 +40,6 @@ namespace nux
 
   ColorRangeValuator::~ColorRangeValuator()
   {
-    DestroyLayout();
   }
 
   void ColorRangeValuator::InitializeWidgets()
@@ -49,11 +48,6 @@ namespace nux
   }
 
   void ColorRangeValuator::InitializeLayout()
-  {
-
-  }
-
-  void ColorRangeValuator::DestroyLayout()
   {
 
   }
@@ -73,7 +67,7 @@ namespace nux
 
     GetPainter().Paint2DQuadColor (GfxContext, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
 
-    m_ValueString->NeedRedraw();
+    m_ValueString->QueueDraw();
     DrawMarker (GfxContext);
 
     GfxContext.PopClippingRectangle();

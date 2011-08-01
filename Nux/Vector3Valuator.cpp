@@ -46,36 +46,36 @@ namespace nux
     m_ZEdit->SetPrefix (TEXT ("") );
 
     // Set Signals
-    m_MouseControlledButton->OnMouseDown.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvMouseDown) );
-    m_MouseControlledButton->OnMouseDoubleClick.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvMouseDown) );
-    m_MouseControlledButton->OnMouseUp.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvMouseUp) );
-    m_MouseControlledButton->OnMouseDrag.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvMouseDrag) );
-    m_MouseControlledButton->OnMouseEnter.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseEnter) );
-    m_MouseControlledButton->OnMouseLeave.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseLeave) );
+    m_MouseControlledButton->mouse_down.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvMouseDown) );
+    m_MouseControlledButton->mouse_double_click.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvMouseDown) );
+    m_MouseControlledButton->mouse_up.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvMouseUp) );
+    m_MouseControlledButton->mouse_drag.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvMouseDrag) );
+    m_MouseControlledButton->mouse_enter.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseEnter) );
+    m_MouseControlledButton->mouse_leave.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseLeave) );
 
     m_XEdit->sigValidateEntry.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvValidateEntryX) );
     m_XEdit->sigStartKeyboardFocus.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvStartKeyboardFocus) );
     m_XEdit->sigEndKeyboardFocus.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvEndKeyboardFocus) );
     m_XEdit->sigEscapeKeyboardFocus.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvEscapeKeyboardFocus) );
     m_XEdit->sigEditChange.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvEditChange) );
-    m_XEdit->OnMouseEnter.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseEnter) );
-    m_XEdit->OnMouseLeave.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseLeave) );
+    m_XEdit->mouse_enter.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseEnter) );
+    m_XEdit->mouse_leave.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseLeave) );
 
     m_YEdit->sigValidateEntry.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvValidateEntryY) );
     m_YEdit->sigStartKeyboardFocus.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvStartKeyboardFocus) );
     m_YEdit->sigEndKeyboardFocus.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvEndKeyboardFocus) );
     m_YEdit->sigEscapeKeyboardFocus.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvEscapeKeyboardFocus) );
     m_YEdit->sigEditChange.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvEditChange) );
-    m_YEdit->OnMouseEnter.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseEnter) );
-    m_YEdit->OnMouseLeave.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseLeave) );
+    m_YEdit->mouse_enter.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseEnter) );
+    m_YEdit->mouse_leave.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseLeave) );
 
     m_ZEdit->sigValidateEntry.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvValidateEntryZ) );
     m_ZEdit->sigStartKeyboardFocus.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvStartKeyboardFocus) );
     m_ZEdit->sigEndKeyboardFocus.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvEndKeyboardFocus) );
     m_ZEdit->sigEscapeKeyboardFocus.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvEscapeKeyboardFocus) );
     m_ZEdit->sigEditChange.connect ( sigc::mem_fun (this, &Vector3Valuator::RecvEditChange) );
-    m_ZEdit->OnMouseEnter.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseEnter) );
-    m_ZEdit->OnMouseLeave.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseLeave) );
+    m_ZEdit->mouse_enter.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseEnter) );
+    m_ZEdit->mouse_leave.connect (sigc::mem_fun (this, &Vector3Valuator::RecvMouseLeave) );
   }
 
   Vector3Valuator::~Vector3Valuator()
@@ -92,7 +92,7 @@ namespace nux
     else if (button_flags & NUX_EVENT_BUTTON3)
       m_Mouse = 3;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -102,7 +102,7 @@ namespace nux
     else if ( (m_Mouse == 3) && (button_flags & NUX_EVENT_BUTTON3) )
       m_Mouse = 0;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvDecrement (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -120,32 +120,32 @@ namespace nux
 
   void Vector3Valuator::RecvStartKeyboardFocus (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvEndKeyboardFocus (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvEscapeKeyboardFocus (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvMouseMove (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -175,12 +175,12 @@ namespace nux
         ImplementIncrementY();
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvEditChange (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Vector3Valuator::RecvValidateEntryX (EditTextBox *textbox)

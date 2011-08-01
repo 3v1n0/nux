@@ -124,8 +124,6 @@ public:
   sigc::signal<void, int, int, int, int> sigResize;
 
 protected:
-  //SmartPtrGLTexture m_BackgroundTexture;
-
   // Backup texture to speed up scrolling
   TRefGL<IOpenGLFrameBufferObject> m_FrameBufferObject;
   TRefGL<IOpenGLTexture2D> m_TextureBuffer[2];

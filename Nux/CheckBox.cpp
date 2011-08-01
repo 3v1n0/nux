@@ -29,7 +29,6 @@
 
 namespace nux
 {
-
   CheckBox::CheckBox (std::string label, NUX_FILE_LINE_DECL)
         : AbstractButton (NUX_FILE_LINE_PARAM)
         , label (this, "label") {
@@ -93,7 +92,7 @@ namespace nux
     NeedRedraw();
   }
 
-  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw) {
+  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw) {zz
     Geometry base = GetGeometry();
 
     if (state == NUX_STATE_ACTIVE) {
@@ -115,6 +114,7 @@ namespace nux
 
     GetPainter().PaintCheckBox (GfxContext, base_state, is, Color (0xff000000) );
   }
+
   void CheckBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw) {
     nux::Geometry base = GetGeometry ();
     GfxContext.PushClippingRectangle (base);

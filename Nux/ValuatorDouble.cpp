@@ -81,7 +81,7 @@ namespace nux
     GetPainter().PaintBackground (GfxContext, base);
 
     if (m_EditLine->IsMouseInside() ||
-        m_MouseControlledButton->HasMouseFocus() || m_MouseControlledButton->IsMouseInside() )
+        m_MouseControlledButton->IsMouseOwner() || m_MouseControlledButton->IsMouseInside() )
     {
 
       GetPainter().PaintShapeCorner (GfxContext, base, SPINBOX_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
@@ -125,7 +125,7 @@ namespace nux
     GetPainter().PaintShapeCorner (GfxContext, geo, m_EditLine->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
                                eCornerTopLeft | eCornerBottomLeft, false);
 
-    m_EditLine->NeedRedraw();
+    m_EditLine->QueueDraw();
   }
 
   void ValuatorDouble::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -144,7 +144,7 @@ namespace nux
     m_EditLine->SetText (NString::Printf ("%.3f", m_Value) );
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
-    NeedRedraw();
+    QueueDraw();
   }
 
   double ValuatorDouble::GetValue() const
@@ -159,7 +159,7 @@ namespace nux
     if (m_Step <= 0)
       m_Step = 1;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   double ValuatorDouble::GetStep() const
@@ -184,7 +184,7 @@ namespace nux
     m_Value = m_DoubleValidator.GetClampedValue (m_Value);
     sigValueChanged.emit (this);
     sigValue.emit (m_Value);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ValuatorDouble::ImplementIncrementBtn()
@@ -193,7 +193,7 @@ namespace nux
 
     if (m_Value < m_DoubleValidator.GetMaximum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);
@@ -207,7 +207,7 @@ namespace nux
 
     if (m_Value > m_DoubleValidator.GetMinimum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);

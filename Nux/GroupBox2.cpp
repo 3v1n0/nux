@@ -84,7 +84,7 @@ namespace nux
 
     if (m_layout != 0)
     {
-      m_layout->NeedRedraw();
+      m_layout->QueueDraw();
     }
 
     GetPainter().PopBackground();
@@ -245,6 +245,11 @@ namespace nux
         SetBaseSize (2 * CAPTION_X_MARGIN + m_CaptionArea->GetBaseWidth(), s.height);
       }
     }
+  }
+
+  bool GroupBox2::AcceptKeyNavFocus()
+  {
+    return false;
   }
 
 }

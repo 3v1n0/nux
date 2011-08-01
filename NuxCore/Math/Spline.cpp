@@ -347,8 +347,6 @@ namespace nux
     int i;
     int ival;
     double yval;
-    double dyval;
-    double ddyval;
 
     //
     //  Determine the interval [ T(I), T(I+1) ] that contains TVAL.
@@ -387,13 +385,6 @@ namespace nux
 
     yval = y[ival] + dt * ( ( y[ival+1] - y[ival] ) / h  - ( ddy[ival+1] / 6.0 + ddy[ival] / 3.0 ) * h + dt * ( 0.5 * ddy[ival]
                             + dt * ( ( ddy[ival+1] - ddy[ival] ) / ( 6.0 * h ) ) ) );
-
-    // first derivative at tval
-    dyval = ( y[ival+1] - y[ival] ) / h - ( ddy[ival+1] / 6.0 + ddy[ival] / 3.0 ) * h  + dt * ( ddy[ival]
-            + dt * ( 0.5 * ( ddy[ival+1] - ddy[ival] ) / h ) );
-
-    // second derivative at tval
-    ddyval = ddy[ival] + dt * ( ddy[ival+1] - ddy[ival] ) / h;
 
     return yval;
   }

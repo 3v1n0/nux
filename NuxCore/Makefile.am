@@ -25,6 +25,7 @@ libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_cpp = \
+  $(srcdir)/AsyncFileWriter.cpp \
   $(srcdir)/TextString.cpp \
   $(srcdir)/TimeFunctions.cpp \
   $(srcdir)/Template.cpp \
@@ -50,6 +51,8 @@ source_cpp = \
   $(srcdir)/Parsing.cpp \
   $(srcdir)/CPU.cpp \
   $(srcdir)/Error.cpp \
+  $(srcdir)/Logger.cpp \
+  $(srcdir)/LoggingWriter.cpp \
   $(srcdir)/NUniqueIndex.cpp \
   $(srcdir)/GlobalInitializer.cpp \
   $(srcdir)/ObjectType.cpp \
@@ -78,6 +81,7 @@ source_cpp = \
   $(srcdir)/Math/Vector3.cpp \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
+  $(srcdir)/RollingFileAppender.cpp \
   $(srcdir)/CRC32.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
@@ -120,10 +124,8 @@ source_tiny_xml_h = \
   $(srcdir)/TinyXML/tinystr.h \
   $(srcdir)/TinyXML/tinyxml.h
 
-source_smart_ptr_h = \
-  $(srcdir)/SmartPtr/GenericSmartPointer.h
-
 source_h = \
+  $(srcdir)/AsyncFileWriter.h \
   $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
   $(srcdir)/CPU.h \
@@ -137,6 +139,9 @@ source_h = \
   $(srcdir)/Inalogic.h \
   $(srcdir)/Color.h \
   $(srcdir)/Colors.h \
+  $(srcdir)/Logger.h \
+  $(srcdir)/LoggingWriter.h \
+  $(srcdir)/RollingFileAppender.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
   $(srcdir)/SystemGNU.h \
@@ -162,6 +167,7 @@ source_h = \
   $(srcdir)/InitiallyUnownedObject.h \
   $(srcdir)/Property.h \
   $(srcdir)/Property-inl.h \
+  $(srcdir)/PropertyOperators.h \
   $(srcdir)/PropertyTraits.h \
   $(srcdir)/Win32Dialogs/NWin32Clipboard.h
 
@@ -172,8 +178,7 @@ libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_file_manager_h) \
   $(source_math_h) \
   $(source_memory_h) \
-  $(source_tiny_xml_h) \
-  $(source_smart_ptr_h)
+  $(source_tiny_xml_h)
 
 nux_coredir = $(includedir)/Nux-@NUX_API_VERSION@/NuxCore
 nux_core_HEADERS = $(source_h)
@@ -192,9 +197,6 @@ nux_memory_HEADERS = $(source_memory_h)
 
 nux_tiny_xmldir = $(nux_coredir)/TinyXML
 nux_tiny_xml_HEADERS = $(source_tiny_xml_h)
-
-nux_smart_ptrdir = $(nux_coredir)/SmartPtr
-nux_smart_ptr_HEADERS = $(source_smart_ptr_h)
 
 # pkg-config file
 nux-core-@NUX_API_VERSION@.pc: nux-core.pc

@@ -41,7 +41,6 @@ namespace nux
 
   VToolBar::~VToolBar()
   {
-    DestroyLayout();
   }
 
   void VToolBar::InitializeWidgets()
@@ -61,20 +60,14 @@ namespace nux
     m_vlayout = new VLayout (NUX_TRACKER_LOCATION);
   }
 
-  void VToolBar::DestroyLayout()
-  {
-  }
-
   long VToolBar::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
-    long ProcEvInfo = 0;
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
       if (!GetGeometry().IsPointInside (ievent.e_x, ievent.e_y) )
       {
-        ProcEvInfo = eDoNotProcess;
         return TraverseInfo;
       }
     }
@@ -166,31 +159,31 @@ namespace nux
 
   void VToolBar::RecvMouseDownOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void VToolBar::RecvMouseUpOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void VToolBar::RecvMouseMoveOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void VToolBar::RecvMouseDragOnIcon (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void VToolBar::RecvMouseEnterIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void VToolBar::RecvMouseLeaveIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 }

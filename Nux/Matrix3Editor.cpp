@@ -299,14 +299,14 @@ namespace nux
     {
       for (int j = 0; j < 3; j++)
       {
-        m_MtxInput[i][j]->NeedRedraw();
+        m_MtxInput[i][j]->QueueDraw();
       }
     }
 
-    m_IdentityMtxBtn->NeedRedraw();
-    m_ZeroMtxBtn->NeedRedraw();
-    m_InverseMtxBtn->NeedRedraw();
-    m_NegateMtxBtn->NeedRedraw();
+    m_IdentityMtxBtn->QueueDraw();
+    m_ZeroMtxBtn->QueueDraw();
+    m_InverseMtxBtn->QueueDraw();
+    m_NegateMtxBtn->QueueDraw();
     //GetPainter().PopBackground();
 
     //GetPainter().PopBackground();
@@ -343,7 +343,7 @@ namespace nux
 
   void Matrix3Editor::SetParameterName (const char *parameter_name)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
 /////////////////
@@ -374,7 +374,7 @@ namespace nux
     WriteMatrix();
     sigMatrixChanged.emit (this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Matrix3Editor::RecvZeroMatrixCmd()
@@ -383,16 +383,16 @@ namespace nux
     WriteMatrix();
     sigMatrixChanged.emit (this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Matrix3Editor::RecvInverseMatrixCmd()
   {
-    m_Matrix.Zero();
+    m_Matrix.Inverse();
     WriteMatrix();
     sigMatrixChanged.emit (this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Matrix3Editor::RecvNegateMatrixCmd()
@@ -401,7 +401,7 @@ namespace nux
     WriteMatrix();
     sigMatrixChanged.emit (this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
 

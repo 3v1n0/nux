@@ -179,7 +179,7 @@ namespace nux
 
     m_DialogThreadProxy = new SplineCurveDialogProxy (true);
 
-    OnMouseClick.connect (sigc::mem_fun (this, &SplineCurvePreview::RecvClick) );
+    mouse_click.connect (sigc::mem_fun (this, &SplineCurvePreview::RecvClick) );
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 4, 4);
@@ -200,10 +200,10 @@ namespace nux
 
   SplineCurvePreview::~SplineCurvePreview()
   {
-    NUX_SAFE_DELETE (m_BackgroundLayer);
-    NUX_SAFE_DELETE (m_DrawFunctionShader);
-    NUX_SAFE_DELETE (m_DialogThreadProxy);
-    NUX_SAFE_DELETE (m_ChangeDetectionTimer);
+    delete m_BackgroundLayer;
+    delete m_DrawFunctionShader;
+    delete m_DialogThreadProxy;
+    delete m_ChangeDetectionTimer;
   }
 
   long SplineCurvePreview::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -323,19 +323,19 @@ namespace nux
   {
     m_minX = minX;
     m_maxX = maxX;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SplineCurvePreview::SetYAxisBounds (float minY, float maxY)
   {
     m_minY = minY;
     m_maxY = maxY;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SplineCurvePreview::UpdateGraph()
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SplineCurvePreview::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -357,7 +357,7 @@ namespace nux
       }
 
       m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
-      NeedRedraw();
+      QueueDraw();
     }
 
     if (m_DialogThreadProxy->IsActive() )
@@ -380,14 +380,14 @@ namespace nux
 
       m_CubicSpline.Set (m_control_knot.GetNumKnot(), m_control_knot.GetXArray(), m_control_knot.GetYArray() );
 
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
   void SplineCurvePreview::RecvDialogChange (SplineCurveEditor *splinecurve)
   {
     //sigSplineChanged.emit(m_control_knot);
-    NeedRedraw();
+    QueueDraw();
   }
 
   int SplineCurvePreview::GetNumKnot() const

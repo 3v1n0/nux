@@ -45,8 +45,9 @@ namespace nux
   */
 
   BaseWindow::BaseWindow (const TCHAR *WindowName, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
-    ,   _opacity (1.0f)
+    : View (NUX_FILE_LINE_PARAM)
+    , _paint_layer(new ColorLayer(Color(0xFF707070)))
+    , _opacity (1.0f)
   {
     _name = WindowName;
     _child_need_redraw = true;
@@ -65,15 +66,13 @@ namespace nux
     _entering_visible_state = false;
     _entering_hidden_state = false;
     _enter_focus_input_area = NULL;
+    accept_key_nav_focus_ = false;
 
     // Should be at the end of the constructor
     GetWindowCompositor().RegisterWindow (this);
 
     SetMinimumSize (1, 1);
     SetGeometry(Geometry(100, 100, 320, 200));
-
-    _paint_layer = new ColorLayer(Color(0xFF707070));
-    //_background_texture = GetWindow ()->GetGpuDevice ()->CreateSystemCapableDeviceTexture(1, 1, 1, BITFMT_R8G8B8A8);
   }
 
   BaseWindow::~BaseWindow()
@@ -92,8 +91,6 @@ namespace nux
     // The weak reference count is probably 2: one reference in m_WindowList and another in m_WindowToTextureMap.
     // Reference the object here to avoid it being destroy when the call from UnRegisterWindow returns;
     GetWindowCompositor().UnRegisterWindow (this);
-
-    NUX_SAFE_DELETE (_paint_layer);
   }
 
   long BaseWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -128,6 +125,26 @@ namespace nux
     return ret;
   }
 
+  Area* BaseWindow::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    if(m_layout)
+    {
+      nuxAssert(m_layout->IsLayout());
+      Area* found_area = m_layout->FindAreaUnderMouse(mouse_position, event_type);
+      if(found_area)
+        return found_area;
+    }
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
+  }
+
   void BaseWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();
@@ -136,7 +153,7 @@ namespace nux
     base.SetY (0);
     GfxContext.PushClippingRectangle (base);
 
-    GetPainter().PushDrawLayer(GfxContext, base, _paint_layer);
+    GetPainter().PushDrawLayer(GfxContext, base, _paint_layer.get());
 
     GetPainter().PopBackground();
     GfxContext.PopClippingRectangle();
@@ -151,7 +168,7 @@ namespace nux
     base.SetY (0);
 
 
-    GetPainter().PushLayer(GfxContext, base, _paint_layer);
+    GetPainter().PushLayer(GfxContext, base, _paint_layer.get());
 
     if (m_layout)
     {
@@ -428,9 +445,9 @@ namespace nux
     if (_is_modal)
       GetWindowCompositor().StartModalWindow (ObjectWeakPtr<BaseWindow> (this));
 
-    // Whether this view is added or removed, call NeedRedraw. in the case where this view is removed, this is a signal 
+    // Whether this view is added or removed, call QueueDraw. in the case where this view is removed, this is a signal 
     // that the region below this view need to be redrawn.
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool BaseWindow::IsVisible() const
@@ -480,16 +497,12 @@ namespace nux
   void BaseWindow::SetBackgroundLayer (AbstractPaintLayer *layer)
   {
     NUX_RETURN_IF_NULL (layer);
-    NUX_SAFE_DELETE (_paint_layer);
-    _paint_layer = layer->Clone();
+    _paint_layer.reset(layer->Clone());
   }
 
   void BaseWindow::SetBackgroundColor (const Color &color)
   {
-    if (_paint_layer)
-      NUX_SAFE_DELETE(_paint_layer);
-
-    _paint_layer = new ColorLayer(color);
+    _paint_layer.reset(new ColorLayer(color));
   }
 
   void BaseWindow::PushHigher (BaseWindow* floating_view)
@@ -545,6 +558,16 @@ namespace nux
   float BaseWindow::GetOpacity ()
   {
     return _opacity;
+  }
+
+  void BaseWindow::SetAcceptKeyNavFocus(bool accept)
+  {
+    accept_key_nav_focus_ = accept;
+  }
+
+  bool BaseWindow::AcceptKeyNavFocus()
+  {
+    return accept_key_nav_focus_;
   }
 }
 

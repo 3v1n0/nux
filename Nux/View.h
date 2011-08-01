@@ -27,6 +27,8 @@
 #include "Focusable.h"
 #include "NuxCore/Property.h"
 
+#define NeedRedraw QueueDraw
+
 namespace nux
 {
 
@@ -129,7 +131,6 @@ namespace nux
         Emits the signal \i OnQueueDraw.
     */
     virtual void QueueDraw ();
-    virtual void NeedRedraw (); //!< Deprecated. Use QueueDraw.
 
     //! Causes a soft redraw. The widget parameter _need_redraw is set to false. The widget DrawContent() and PostDraw() are called.
     virtual void NeedSoftRedraw();
@@ -200,14 +201,20 @@ namespace nux
     */
     bool HasPassiveFocus ();
 
+
     /* the current state of the widget. useful to lookup quickly */
-    // FIXME - oh god, why is this a uint, oh god, make this an enum. tim save me!
-    nux::Property<int> state;
+    nux::Property<State> state;
+
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
+    virtual bool AcceptKeyNavFocus();
+
+    void IsHitDetectionSkipingChildren(bool skip_children);
+
 
   protected:
     bool _can_focus;
 
-    void OnChildFocusChanged (Area *parent, Area *child);
+    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
@@ -219,7 +226,6 @@ namespace nux
 
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
     Color m_TextColor;
     ObjectPtr<FontTexture> _font;
@@ -243,6 +249,12 @@ namespace nux
 
     virtual void GeometryChangePending ();
     virtual void GeometryChanged ();
+
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
+    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
+                          unsigned long x11_key_code,
+                          unsigned long special_keys_state);
 
     Layout *m_CompositionLayout;
 

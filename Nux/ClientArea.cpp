@@ -41,11 +41,11 @@ namespace nux
     m_IsClientAreaEnabled = false;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, 4 * PRACTICAL_WIDGET_HEIGHT);
 
-    OnMouseDown.connect (sigc::mem_fun (this, &ClientArea::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &ClientArea::RecvMouseUp) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &ClientArea::RecvMouseDrag) );
-    OnMouseMove.connect (sigc::mem_fun (this, &ClientArea::RecvMouseMove) );
-    OnKeyEvent.connect (sigc::mem_fun (this, &ClientArea::RecvKeyEvent) );
+    mouse_down.connect (sigc::mem_fun (this, &ClientArea::RecvMouseDown) );
+    mouse_up.connect (sigc::mem_fun (this, &ClientArea::RecvMouseUp) );
+    mouse_drag.connect (sigc::mem_fun (this, &ClientArea::RecvMouseDrag) );
+    mouse_move.connect (sigc::mem_fun (this, &ClientArea::RecvMouseMove) );
+    key_down.connect (sigc::mem_fun (this, &ClientArea::RecvKeyEvent) );
 
     if (GetWindowThread ()->GetWindow().HasFrameBufferSupport() )
     {
@@ -67,7 +67,7 @@ namespace nux
 //     Rect A = GetGraphicsDisplay()->GetGraphicsEngine()->GetClippingRegion();
 //     Rect B = Rect(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight());
 //     Rect C = A.intersect(B);
-//     if((ievent.e_event == NUX_MOUSE_MOVE) && !HasMouseFocus())
+//     if((ievent.e_event == NUX_MOUSE_MOVE) && !IsMouseOwner())
 //     {
 //         if(!C.IsPointInside(ievent.e_x, ievent.e_y))
 //             return ret;
@@ -225,9 +225,7 @@ namespace nux
     }
     else
     {
-      int window_width, window_height;
-      window_width = GfxContext.GetViewportWidth ();
-      window_height = GfxContext.GetViewportHeight ();
+      int window_height = GfxContext.GetViewportHeight();
 
       GfxContext.SetViewport (
         m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);
@@ -242,10 +240,6 @@ namespace nux
 
   void ClientArea::Setup2DMode (GraphicsEngine &GfxContext)
   {
-    int window_width, window_height;
-    window_width = GfxContext.GetViewportWidth ();
-    window_height = GfxContext.GetViewportHeight ();
-
     //Restore 2D ViewPort
     GfxContext.SetViewport (0, 0, GetBaseWidth(), GetBaseHeight() );
     GfxContext.Push2DWindow (GetBaseWidth(), GetBaseHeight() );
@@ -274,7 +268,6 @@ namespace nux
   }
 
   void ClientArea::RecvKeyEvent (
-    GraphicsEngine    &GfxContext,    /*Graphics Context for text operation*/
     unsigned long     event_type,    /*event type*/
     unsigned long     GetKeySym,    /*event keysym*/
     unsigned long     event_state,    /*event state*/
@@ -285,7 +278,7 @@ namespace nux
 
   }
 
-  void ClientArea::NeedRedraw()
+  void ClientArea::QueueDraw()
   {
     //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetWindowThread ();
@@ -298,4 +291,8 @@ namespace nux
     _need_redraw = true;
   }
 
+  bool ClientArea::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

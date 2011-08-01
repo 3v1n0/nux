@@ -903,8 +903,6 @@ namespace nux
 #endif
   {
     IEvent event;
-    float ms;
-    bool KeepRunning = true;
 
     if (!IsEmbeddedWindow() && GetWindow().IsPauseThreadGraphicsRendering() )
     {
@@ -915,23 +913,17 @@ namespace nux
     WindowThread *Application = GetWindowThread ();
 
 #if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
-    while (KeepRunning)
+    while (true)
 #endif
     {
       _inside_main_loop = true;
       if(Application->m_bFirstDrawPass)
       {
-        ms = 0.0f;
         GetTimer().StartEarlyTimerObjects ();
-      }
-      else
-      {
-        ms = GetWindow().GetFrameTime();
       }
 
       memset(&event, 0, sizeof(IEvent));
       GetWindow().GetSystemEvent(&event);
-      
 
       if ((event.e_event == NUX_DND_ENTER_WINDOW) ||
         (event.e_event == NUX_DND_LEAVE_WINDOW))
@@ -972,8 +964,7 @@ namespace nux
 
       if((event.e_event ==	NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
       {
-          KeepRunning = false;
-          return 0; //break;
+          return 0;
       }
       
       if (IsEmbeddedWindow () && (event.e_event == NUX_SIZE_CONFIGURATION))
@@ -999,7 +990,7 @@ namespace nux
           (event.e_event == NUX_DND_DROP) ||
           (event.e_event == NUX_DND_ENTER) ||
           (event.e_event == NUX_DND_LEAVE) ||
-          (event.e_event == NUX_MOUSEWHEEL))
+          (event.e_event == NUX_MOUSE_WHEEL))
       {
           //DISPATCH EVENT HERE
           //event.Application = Application;
@@ -1541,16 +1532,6 @@ namespace nux
     }
 
     inlSetThreadLocalStorage (ThreadLocal_InalogicAppImpl, this);
-    GraphicsDisplay *ParentWindow = 0;
-
-    if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType (WindowThread::StaticObjectType) )
-    {
-      ParentWindow = &static_cast<WindowThread *> (m_Parent)->GetWindow();
-    }
-    else
-    {
-      ParentWindow = 0;
-    }
 
     if (X11Display)
     {
@@ -1760,7 +1741,7 @@ namespace nux
         (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
         (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
         (nux_event.e_event == NUX_WINDOW_MOUSELEAVE) ||
-        (nux_event.e_event == NUX_MOUSEWHEEL))
+        (nux_event.e_event == NUX_MOUSE_WHEEL))
     {
         //DISPATCH EVENT HERE
         //nux_event.Application = Application;

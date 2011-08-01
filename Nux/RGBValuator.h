@@ -110,7 +110,8 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
+
+    virtual bool AcceptKeyNavFocus();
 
   private:
     void DrawRedMarker (GraphicsEngine &GfxContext);

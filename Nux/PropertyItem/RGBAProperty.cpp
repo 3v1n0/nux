@@ -99,10 +99,10 @@ namespace nux
   {
     m_ColorModel->Dispose();
     m_ColorFormat->Dispose();
-    NUX_SAFE_DELETE (m_red);
-    NUX_SAFE_DELETE (m_green);
-    NUX_SAFE_DELETE (m_blue);
-    NUX_SAFE_DELETE (m_alpha);
+    delete m_red;
+    delete m_green;
+    delete m_blue;
+    delete m_alpha;
   }
 
   long RGBAPropertyItem::ProcessPropertyEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -146,9 +146,9 @@ namespace nux
     }
 
     UpdateStartToEndColors();
-    m_green->NeedRedraw();
-    m_blue->NeedRedraw();
-    m_alpha->NeedRedraw();
+    m_green->QueueDraw();
+    m_blue->QueueDraw();
+    m_alpha->QueueDraw();
   }
 
   void RGBAPropertyItem::GreenChange (ColorGradient *slider)
@@ -160,9 +160,9 @@ namespace nux
     }
 
     UpdateStartToEndColors();
-    m_red->NeedRedraw();
-    m_blue->NeedRedraw();
-    m_alpha->NeedRedraw();
+    m_red->QueueDraw();
+    m_blue->QueueDraw();
+    m_alpha->QueueDraw();
   }
 
   void RGBAPropertyItem::BlueChange (ColorGradient *slider)
@@ -174,19 +174,19 @@ namespace nux
     }
 
     UpdateStartToEndColors();
-    m_red->NeedRedraw();
-    m_green->NeedRedraw();
-    m_alpha->NeedRedraw();
+    m_red->QueueDraw();
+    m_green->QueueDraw();
+    m_alpha->QueueDraw();
   }
 
   void RGBAPropertyItem::AlphaChange (ColorGradient *slider)
   {
     UpdateStartToEndColors();
 
-    m_red->NeedRedraw();
-    m_green->NeedRedraw();
-    m_blue->NeedRedraw();
-    m_alpha->NeedRedraw();
+    m_red->QueueDraw();
+    m_green->QueueDraw();
+    m_blue->QueueDraw();
+    m_alpha->QueueDraw();
   }
 
   void RGBAPropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
@@ -240,8 +240,8 @@ namespace nux
       SetColor(color_.red, color_.green, color_.blue, color_.alpha);
     }
 
-    m_green->NeedRedraw();
-    m_blue->NeedRedraw();
+    m_green->QueueDraw();
+    m_blue->QueueDraw();
   }
 
   void RGBAPropertyItem::SetColorModel(color::Model cm)

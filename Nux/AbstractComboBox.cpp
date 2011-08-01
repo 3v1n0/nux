@@ -46,11 +46,11 @@ namespace nux
     m_hlayout->SetVerticalExternalMargin (0);
     SetLayout (m_hlayout);
 
-    _combo_box_area->OnMouseEnter.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseEnter) );
-    _combo_box_area->OnMouseLeave.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseLeave) );
+    _combo_box_area->mouse_enter.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseEnter) );
+    _combo_box_area->mouse_leave.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseLeave) );
 
-    _combo_box_opening_area->OnMouseEnter.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseEnter) );
-    _combo_box_opening_area->OnMouseLeave.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseLeave) );
+    _combo_box_opening_area->mouse_enter.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseEnter) );
+    _combo_box_opening_area->mouse_leave.connect (sigc::mem_fun (this, &AbstractComboBox::RecvMouseLeave) );
 
     SetTextColor (color::Black);
 
@@ -112,12 +112,12 @@ namespace nux
 
   void AbstractComboBox::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void AbstractComboBox::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
 

@@ -9,9 +9,9 @@ if BUILD_EXAMPLES
 
 noinst_PROGRAMS = button \
                   cairo \
+                  canvas \
                   checkbox \
                   combobox \
-                  focus \
                   gridlayout \
                   layeredlayout \
                   moveable_view \
@@ -56,6 +56,8 @@ combobox_SOURCES = combobox.cpp
 combobox_LDADD = $(ALL_LIBS)
 cairo_SOURCES = cairo.cpp
 cairo_LDADD = $(ALL_LIBS)
+canvas_SOURCES = canvas.cpp
+canvas_LDADD = $(ALL_LIBS)
 textedit_SOURCES = textedit.cpp
 textedit_LDADD = $(ALL_LIBS)
 button_SOURCES = button.cpp
@@ -76,8 +78,6 @@ moveable_view_SOURCES = moveable_view.cpp
 moveable_view_LDADD = $(ALL_LIBS)
 layeredlayout_SOURCES = layeredlayout.cpp
 layeredlayout_LDADD = $(ALL_LIBS)
-focus_SOURCES = focus.cpp
-focus_LDADD = $(ALL_LIBS)
 scrollview_SOURCES = scrollview.cpp
 scrollview_LDADD = $(ALL_LIBS)
 tab_view_SOURCES = tab_view.cpp

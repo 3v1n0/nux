@@ -250,7 +250,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLVertexShader::Compile] glCompileShader: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
     }
 
     return (m_CompiledAndReady ? true : false);
@@ -329,7 +329,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLPixelShader::Compile] glCompileShader: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
     }
 
     return (m_CompiledAndReady ? true : false);
@@ -424,10 +424,22 @@ namespace nux
     ShaderObjectList.push_back (ShaderObject);
   }
 
-  void IOpenGLShaderProgram::AddShaderParameter (GLShaderParameter *Parameter)
+  void IOpenGLShaderProgram::AddShaderParameter (GLShaderParameter* parameter)
   {
-    Parameter->m_NextParameter = _FirstParameter;
-    _FirstParameter = Parameter;
+    GLShaderParameter* temp = _FirstParameter;
+
+    while(temp)
+    {
+      if(temp == parameter)
+      {
+        // Parameter already added
+        return;
+      }
+      temp = temp->m_NextParameter;
+    }
+
+    parameter->m_NextParameter = _FirstParameter;
+    _FirstParameter = parameter;
 
     // If we add shader parameters after the program is linked, we need to call CheckUniformLocation().
     CheckUniformLocation();
@@ -509,7 +521,7 @@ namespace nux
         nuxError (TEXT ("[IOpenGLShaderProgram::Link] glLinkProgram: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete[] InfoLogBuffer;
       m_CompiledAndReady = false;
       return m_CompiledAndReady;
     }

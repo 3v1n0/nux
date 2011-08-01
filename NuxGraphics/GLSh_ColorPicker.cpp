@@ -355,12 +355,13 @@ GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
 
   void GLSh_ColorPicker::Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight)
   {
+    float fx = x, fy = y;
     float VtxBuffer[] =
     {
-      x,          y,          0.0f, 1.0f,
-      x,          y + height, 0.0f, 1.0f,
-      x + width,  y + height, 0.0f, 1.0f,
-      x + width,  y,          0.0f, 1.0f,
+      fx,          fy,          0.0f, 1.0f,
+      fx,          fy + height, 0.0f, 1.0f,
+      fx + width,  fy + height, 0.0f, 1.0f,
+      fx + width,  fy,          0.0f, 1.0f,
     };
 
     if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL) )
@@ -372,7 +373,9 @@ GLSh_ColorPicker::GLSh_ColorPicker (color::Channel color_channel)
       int VertexLocation = sprog->GetAttributeLocation ("AVertex");
 
       int VPMatrixLocation = sprog->GetUniformLocationARB ("ViewProjectionMatrix");
-      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (GetGraphicsDisplay()->GetGraphicsEngine()->GetOpenGLModelViewProjectionMatrix().m) );
+      Matrix4 MVPMatrix = GetGraphicsDisplay()->GetGraphicsEngine ()->GetOpenGLModelViewProjectionMatrix ();
+
+      sprog->SetUniformLocMatrix4fv ( (GLint) VPMatrixLocation, 1, false, (GLfloat *) & (MVPMatrix.m) );
 
       int ColorBase    = sprog->GetUniformLocationARB ("Color");
       int RectPosition    = sprog->GetUniformLocationARB ("RectPosition");

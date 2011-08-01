@@ -55,43 +55,52 @@ namespace nux
     // Should be at the end of the constructor
     //GetWindowCompositor().RegisterWindow(this);
 
-    _minimize_button    = new InputArea (NUX_TRACKER_LOCATION);
+    _minimize_button    = new InputArea(NUX_TRACKER_LOCATION);
     _minimize_button->Reference();
-    _close_button       = new InputArea (NUX_TRACKER_LOCATION);
-    _resize_handle      = new InputArea (NUX_TRACKER_LOCATION);
-    _resize_handle->Reference();
-    _title_bar          = new InputArea (NUX_TRACKER_LOCATION);
-    _title_bar->Reference();
+    _minimize_button->SetParentObject(this);
+
+    _resize_handle      = new InputArea(NUX_TRACKER_LOCATION);
+    _resize_handle->SinkReference();
+    _resize_handle->SetParentObject(this);
+
+    _title_bar          = new InputArea(NUX_TRACKER_LOCATION);
+    _title_bar->SinkReference();
+    _title_bar->SetParentObject(this);
+
+    _close_button       = new InputArea(NUX_TRACKER_LOCATION);
     _window_title_bar   = new StaticTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+
     _title_bar_layout   = new HLayout (NUX_TRACKER_LOCATION);
     _title_bar_layout->Reference();
     
-    _minimize_button->SetMinMaxSize (20, 20);
-    _minimize_button->SetGeometry (0, 0, 20, 20);
-    _close_button->SetMinimumSize (20, 20);
-    _close_button->SetGeometry (0, 0, 20, 20);
-    _resize_handle->SetMinimumSize (_resize_handle_width, _resize_handle_height);
-    _resize_handle->SetGeometry (Geometry (0, 0, _resize_handle_width, _resize_handle_height) );
+    _minimize_button->SetMinMaxSize(20, 20);
+    _minimize_button->SetGeometry(0, 0, 20, 20);
+    _close_button->SetMinimumSize(20, 20);
+    _close_button->SetGeometry(0, 0, 20, 20);
+    _resize_handle->SetMinimumSize(_resize_handle_width, _resize_handle_height);
+    _resize_handle->SetGeometry(Geometry(0, 0, _resize_handle_width, _resize_handle_height));
 
-    _title_bar->OnMouseDown.connect ( sigc::mem_fun (this, &FloatingWindow::RecvTitleBarMouseDown) );
-    _title_bar->OnMouseDrag.connect ( sigc::mem_fun (this, &FloatingWindow::RecvTitleBarMouseDrag) );
-    _close_button->OnMouseClick.connect ( sigc::mem_fun (this, &FloatingWindow::RecvCloseButtonClick) );
+    _title_bar->mouse_down.connect(sigc::mem_fun(this, &FloatingWindow::RecvTitleBarMouseDown));
+    _title_bar->mouse_drag.connect(sigc::mem_fun(this, &FloatingWindow::RecvTitleBarMouseDrag));
+    _close_button->mouse_click.connect(sigc::mem_fun(this, &FloatingWindow::RecvCloseButtonClick));
 
-    _resize_handle->OnMouseDrag.connect ( sigc::mem_fun (this, &FloatingWindow::OnSizeGrigMouseDrag) );
-    _resize_handle->OnMouseDown.connect ( sigc::mem_fun (this, &FloatingWindow::OnSizeGrigMouseDown) );
+    _resize_handle->mouse_drag.connect(sigc::mem_fun(this, &FloatingWindow::OnSizeGrigMouseDrag));
+    _resize_handle->mouse_down.connect(sigc::mem_fun(this, &FloatingWindow::OnSizeGrigMouseDown));
 
-    _title_bar_layout->AddView ( (_window_title_bar), 1, eCenter, eFix);
-    _title_bar_layout->AddView ( (_close_button), 0, eCenter, eFix);
+    _title_bar_layout->AddView((_window_title_bar), 1, eCenter, eFix);
+    _title_bar_layout->AddView((_close_button), 0, eCenter, eFix);
+    _title_bar_layout->SetParentObject(this);
 
-    if (HasTitleBar() )
-      SetTopBorder (24);
+
+    if(HasTitleBar())
+      SetTopBorder(24);
     else
-      SetTopBorder (6);
+      SetTopBorder(6);
 
-    SetBorder (2);
+    SetBorder(2);
 
-    SetMinimumSize (32, 32);
-    SetGeometry (Geometry (100, 100, 320, 200) );
+    SetMinimumSize(32, 32);
+    SetGeometry(Geometry(100, 100, 320, 200));
 
     NString Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/AddButton.png") );
     MinimizeIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
@@ -107,11 +116,17 @@ namespace nux
   {
     m_InterfaceObject.clear();
 
+    _resize_handle->UnParentObject();
     _resize_handle->UnReference();
+
+    _title_bar->UnParentObject();
     _title_bar->UnReference();
+
     _minimize_button->UnReference();
     CloseIcon->UnReference();
     MinimizeIcon->UnReference();
+    
+    _title_bar_layout->UnParentObject();
     _title_bar_layout->UnReference();
   }
 
@@ -169,23 +184,15 @@ namespace nux
 
     // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
     Geometry viewGeometry = GetGeometry(); //Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-    bool traverse = true;
 
     if (ievent.e_event == NUX_MOUSE_PRESSED)
     {
       if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
       {
         ProcEvInfo = eDoNotProcess;
-        traverse = false;
       }
     }
 
-//    {   std::list<View*>::iterator it;
-//        for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
-//        {
-//            ret = (*it)->ProcessEvent(ievent, ret, ProcEvInfo);
-//        }
-//    }
     if (m_layout)
       ret = m_layout->ProcessEvent (window_event, ret, ProcEvInfo);
 
@@ -195,6 +202,42 @@ namespace nux
     // testing the event by itself.
     ret = PostProcessEvent2 (ievent, ret, 0);
     return ret;
+  }
+
+  Area* FloatingWindow::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    NUX_RETURN_VALUE_IF_TRUE(_resize_handle->TestMousePointerInclusion(mouse_position, event_type), _resize_handle);
+    NUX_RETURN_VALUE_IF_TRUE(_close_button->TestMousePointerInclusion(mouse_position, event_type), _close_button);
+
+    if(HasTitleBar())
+    {
+      NUX_RETURN_VALUE_IF_TRUE(_title_bar->TestMousePointerInclusion(mouse_position, event_type), _title_bar);
+    }
+
+//     if(_title_bar_layout)
+//     {
+//       nuxAssert(_title_bar_layout->IsLayout());
+//       Area* found_area = _title_bar_layout->FindAreaUnderMouse(mouse_position, event_type);
+//       if(found_area)
+//         return found_area;
+//     }
+
+    if(m_layout)
+    {
+      nuxAssert(m_layout->IsLayout());
+      Area* found_area = m_layout->FindAreaUnderMouse(mouse_position, event_type);
+      if(found_area)
+        return found_area;
+    }
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
   }
 
   void FloatingWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
@@ -270,6 +313,23 @@ namespace nux
 
   void FloatingWindow::OnSizeGrigMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    if(IsSizeMatchContent())
+    {
+      return;
+    }
+
+    // Do not let the _resize_handle test the event because the window is not displaying it;
+    int XGrip = x;
+    int YGrip = y;
+
+
+    // We want to false on one half of the size grip square to register a mouse down. This is meant to leave more room
+    // for the scrollbar buttons (if any) at the bottom right of the window.
+    if ((XGrip > 0) && (YGrip > 0) && (XGrip > _resize_handle_height - YGrip))
+    {
+       // has grip
+    }
+
     m_SizeGripDragPositionX = x;
     m_SizeGripDragPositionY = y;
     //GetWindowCompositor().SetMouseFocusArea(this);
@@ -277,7 +337,7 @@ namespace nux
 
   void FloatingWindow::OnSizeGrigMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (IsSizeMatchContent() )
+    if(IsSizeMatchContent())
     {
       return;
     }
@@ -288,29 +348,29 @@ namespace nux
     int ddx = 0;
     int ddy = 0;
 
-    if ( (dx > 0) && (x > m_SizeGripDragPositionX) )
+    if((dx > 0) && (x > m_SizeGripDragPositionX))
     {
       ddx = dx;
     }
 
-    if ( (dx < 0) && (x < m_SizeGripDragPositionX) )
+    if((dx < 0) && (x < m_SizeGripDragPositionX))
     {
       ddx = dx;
     }
 
-    if ( (dy > 0) && (y > m_SizeGripDragPositionY) )
+    if((dy > 0) && (y > m_SizeGripDragPositionY))
     {
       ddy = dy;
     }
 
-    if ( (dy < 0) && (y < m_SizeGripDragPositionY) )
+    if((dy < 0) && (y < m_SizeGripDragPositionY))
     {
       ddy = dy;
     }
 
-    geo.OffsetSize (ddx, ddy);
+    geo.OffsetSize(ddx, ddy);
 
-    SetGeometry (geo);
+    SetGeometry(geo);
 
 #if defined(NUX_OS_LINUX)
     if (m_input_window != 0)
@@ -318,8 +378,10 @@ namespace nux
       //nuxDebugMsg (TEXT("Resize Input window: %d, %d, %d, %d"), geo.x, geo.y, geo.width, geo.height);
       m_input_window->SetGeometry (GetGeometry());
     }
-#endif    
-    NeedRedraw();
+#endif
+
+    GetWindowThread()->AddObjectToRefreshList(this);
+    QueueDraw();
   }
 
   void FloatingWindow::RecvTitleBarMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -348,7 +410,7 @@ namespace nux
     }
 #endif
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void FloatingWindow::RecvCloseButtonClick (int x, int y, unsigned long button_flags, unsigned long key_flags)

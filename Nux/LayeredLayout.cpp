@@ -282,7 +282,7 @@ namespace nux
 
       for (it = _layout_element_list.rbegin (); it != eit; ++it)
       {
-        Area *area = static_cast<Area *> (*it);
+        Area *area = (*it);
 
         if (area->IsVisible () && area->IsSensitive ())
         {
@@ -291,6 +291,39 @@ namespace nux
       }
     }
     return ret;
+  }
+  
+  Area* LayeredLayout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    if(m_active_area == NULL)
+    return NULL;
+    
+    bool mouse_inside = m_active_area->TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    if(m_input_mode == INPUT_MODE_ACTIVE)
+    {
+      if (m_active_area && m_active_area->IsVisible () && m_active_area->IsSensitive ())
+        return m_active_area->FindAreaUnderMouse(mouse_position, event_type);
+    }
+    else
+    {
+      std::list<Area *>::reverse_iterator it, eit = _layout_element_list.rend ();
+
+      for (it = _layout_element_list.rbegin (); it != eit; ++it)
+      {
+        Area *area = (*it);
+
+        if (area->IsVisible () && area->IsSensitive ())
+        {
+          return m_active_area->FindAreaUnderMouse(mouse_position, event_type);
+        }
+      }
+    }
+
+    return NULL;
   }
 
   void LayeredLayout::AddLayout (Layout                *layout,
@@ -341,8 +374,10 @@ namespace nux
   {
     LayeredChildProperties *props;
 
-    g_return_if_fail (area);
-    g_return_if_fail (area->GetParentObject () == NULL);
+    // return if the area is NULL
+    NUX_RETURN_IF_NULL(area);
+    // Return if the area already has a parent
+    NUX_RETURN_IF_NOTNULL(area->GetParentObject ());
 
     props = new LayeredChildProperties (expand, x, y, width, height);
     area->SetLayoutProperties (props);
@@ -366,10 +401,10 @@ namespace nux
   {
     LayeredChildProperties *props;
 
-    g_return_if_fail (area);
+    NUX_RETURN_IF_NULL(area);
 
     props = dynamic_cast<LayeredChildProperties *>(area->GetLayoutProperties ());
-    g_return_if_fail (props);
+    NUX_RETURN_IF_NULL(props);
 
     props->Update (expand, x, y, width, height);
 
@@ -380,10 +415,10 @@ namespace nux
   {
     LayeredChildProperties *props;
 
-    g_return_if_fail (area);
+    NUX_RETURN_IF_NULL(area);
 
     props = dynamic_cast<LayeredChildProperties *>(area->GetLayoutProperties ());
-    g_return_if_fail (props);
+    NUX_RETURN_IF_NULL(props);
 
     (*props->m_vis_it).disconnect ();
     area->SetLayoutProperties (NULL);
@@ -416,7 +451,7 @@ namespace nux
     std::list<Area *>::iterator it, eit = _layout_element_list.end ();
     int i = 0;
 
-    g_return_if_fail ((t_uint32)index_ < _layout_element_list.size ());
+    NUX_RETURN_IF_FALSE((t_uint32)index_ < _layout_element_list.size ());
 
     if (index_ == m_active_index)
       return;
@@ -441,12 +476,13 @@ namespace nux
       else if ((*it)->IsLayout ())
       {
         static_cast<Layout *> (*it)->QueueDraw ();
-        if (is_focused);
+        if (is_focused)
           static_cast<Layout *> (*it)->SetFocused (true);
       }
 
       i++;
     }
+
     QueueDraw ();
   }
 
@@ -471,7 +507,16 @@ namespace nux
       }
       i++;
     }
-    g_warning ("%s: Area (%p) is not a child of LayeredLayout (%p)", G_STRFUNC, area, this);
+    nuxDebugMsg("[LayeredLayout::LowerBottom] Area (%p) is not a child of LayeredLayout (%p)", area, this);
+  }
+
+  void LayeredLayout::OnLayerGeometryChanged(Area* area, Geometry geo)
+  {
+    // Set the LayeredLayout to the same saize as the active layer;
+    if(area && (area == m_active_area))
+    {
+      SetGeometry(geo);
+    }
   }
 
   Area * LayeredLayout::GetActiveLayer ()
@@ -512,8 +557,8 @@ namespace nux
     std::list<Area *>::iterator area_it = eit;
     std::list<Area *>::iterator above_it = eit;
 
-    g_return_if_fail (area);
-    g_return_if_fail (above);
+    NUX_RETURN_IF_NULL(area);
+    NUX_RETURN_IF_NULL(above);
 
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
@@ -525,12 +570,12 @@ namespace nux
 
     if (area_it == eit)
     {
-      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, area);
+      nuxDebugMsg("[LayeredLayout::Raise] Area %p is not a valid layer", area);
       return;
     }
     if (above_it == eit)
     {
-      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, above);
+      nuxDebugMsg("[LayeredLayout::Raise] Area %p is not a valid layer", above);
       return;
     }
 
@@ -544,8 +589,8 @@ namespace nux
     std::list<Area *>::iterator area_it = eit;
     std::list<Area *>::iterator below_it = eit;
 
-    g_return_if_fail (area);
-    g_return_if_fail (below);
+    NUX_RETURN_IF_NULL(area);
+    NUX_RETURN_IF_NULL(below);
 
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
@@ -557,12 +602,12 @@ namespace nux
 
     if (area_it == eit)
     {
-      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, area);
+      nuxDebugMsg("[LayeredLayout::Lower] Area %p is not a valid layer", area);
       return;
     }
     if (below_it == eit)
     {
-      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, below);
+      nuxDebugMsg("[LayeredLayout::Lower] Area %p is not a valid layer", below);
       return;
     }
 
@@ -575,7 +620,7 @@ namespace nux
     std::list<Area *>::iterator it, eit = _layout_element_list.end ();
     std::list<Area *>::iterator area_it = eit;
 
-    g_return_if_fail (area);
+    NUX_RETURN_IF_NULL(area);
 
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
@@ -585,7 +630,7 @@ namespace nux
 
     if (area_it == eit)
     {
-      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, area);
+      nuxDebugMsg("[LayeredLayout::RaiseTop] Area %p is not a valid layer", area);
       return;
     }
 
@@ -598,7 +643,7 @@ namespace nux
     std::list<Area *>::iterator it, eit = _layout_element_list.end ();
     std::list<Area *>::iterator area_it = eit;
 
-    g_return_if_fail (area);
+    NUX_RETURN_IF_NULL(area);
 
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
@@ -608,7 +653,7 @@ namespace nux
 
     if (area_it == eit)
     {
-      g_warning ("%s: Area %p is not a valid layer", G_STRFUNC, area);
+      nuxDebugMsg("[LayeredLayout::LowerBottom] Area %p is not a valid layer", area);
       return;
     }
 
@@ -636,5 +681,25 @@ namespace nux
     }
     else
       return Layout::FocusLastChild ();
+  }
+
+  Area* LayeredLayout::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (m_active_area == NULL)
+      return NULL;
+
+    if (m_active_area->IsVisible() == false)
+      return NULL;
+
+    if (next_object_to_key_focus_area_)
+    {
+      return NULL;
+    }
+    else
+    {
+      return m_active_area->KeyNavIteration(direction);
+    }
+
+    return NULL;
   }
 }

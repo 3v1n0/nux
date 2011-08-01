@@ -98,6 +98,7 @@ namespace nux
 
     virtual void SetFont (ObjectPtr<FontTexture> Font);
   protected:
+    virtual bool AcceptKeyNavFocus();
     void AdjustMinWidthToMatchText();
 
     NString m_Text;

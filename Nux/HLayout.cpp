@@ -94,12 +94,12 @@ namespace nux
     {
       if ( (*it)->IsView() )
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = static_cast<View *>(*it);
         ViewList->push_back (ic);
       }
       else if ( (*it)->IsLayout() )
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+        Layout *layout = static_cast<Layout *>(*it);
         layout->GetCompositeList (ViewList);
       }
     }
@@ -375,7 +375,6 @@ namespace nux
       {
         if (!(*it)->IsVisible ())
           continue;
-        bool largerHeight = false;
         bool smallerHeight = false;
         bool largerWidth = false;
         bool smallerWidth = false;
@@ -387,7 +386,6 @@ namespace nux
 
           largerWidth = (ret & eLargerWidth) ? true : false;
           smallerWidth = (ret & eSmallerWidth) ? true : false;
-          largerHeight = (ret & eLargerHeight) ? true : false;
           smallerHeight = (ret & eSmallerHeight) ? true : false;
 
           if ( (largerWidth || smallerWidth) && ( (*it)->IsLayoutDone() == false) )
@@ -537,7 +535,7 @@ namespace nux
     {
       need_recompute = false;
       t_s32 available_width = width;
-      t_u32 max_stretchfactor = getMaxStretchFactor();
+      t_u32 max_stretchfactor = GetMaxStretchFactor();
       std::list<Area *>::iterator it;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -641,7 +639,7 @@ namespace nux
         if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->IsLayoutDone() == false) )
         {
           t_u32 sf = (*it)->GetStretchFactor();
-          t_u32 new_width;
+          int new_width;
 
           if (sf == max_stretchfactor)
           {
@@ -724,7 +722,7 @@ namespace nux
     while (need_recompute);
   }
 
-  t_u32 HLayout::getMaxStretchFactor()
+  t_u32 HLayout::GetMaxStretchFactor()
   {
     t_u32 value = 0;
     t_u32 sf;
@@ -844,5 +842,117 @@ namespace nux
     }
   }
 
+  Area* HLayout::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (_layout_element_list.size() == 0)
+      return NULL;
 
+    if (IsVisible() == false)
+      return NULL;
+
+    if (next_object_to_key_focus_area_)
+    {
+      if ((direction == KEY_NAV_UP) || (direction == KEY_NAV_DOWN))
+      {
+        // Don't know what to do with this
+        return NULL;
+      }
+      std::list<Area*>::iterator it;
+      std::list<Area*>::iterator it_next;
+      it = std::find (_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
+      
+      if (it == _layout_element_list.end())
+      {
+        // Should never happen
+        nuxAssert (0);
+        return NULL;
+      }
+
+      it_next = it;
+      ++it_next;
+
+      if ((direction == KEY_NAV_LEFT) && (it == _layout_element_list.begin()))
+      {
+        // can't go further
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_RIGHT) && (it_next == _layout_element_list.end()))
+      {
+        // can't go further
+        return NULL;
+      }
+
+      if (direction == KEY_NAV_LEFT)
+      {
+        --it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          if (it == _layout_element_list.begin())
+            break;
+
+          --it;
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if (direction == KEY_NAV_RIGHT)
+      {
+        ++it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == _layout_element_list.end())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+    }
+    else
+    {
+      Area* key_nav_focus = NULL;
+
+      if (direction == KEY_NAV_LEFT)
+      {
+        std::list<Area*>::reverse_iterator it = _layout_element_list.rbegin();
+        key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == _layout_element_list.rend())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+      }
+      else
+      {
+        std::list<Area*>::iterator it = _layout_element_list.begin();
+        key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == _layout_element_list.end())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+      }
+
+      return key_nav_focus;
+    }
+
+    return NULL;
+  }
 }
