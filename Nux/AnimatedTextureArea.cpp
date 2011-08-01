@@ -33,8 +33,8 @@ namespace nux
   {
     SetMinMaxSize (32, 32);
 
-    OnMouseDown.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDown) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDrag) );
+    mouse_down.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDown) );
+    mouse_drag.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDrag) );
 
     m_TimerFunctor = new TimerFunctor();
     m_TimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &AnimatedTextureArea::TimerNextFrame) );
@@ -90,7 +90,7 @@ namespace nux
       AnimatedTexture->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void AnimatedTextureArea::RecvMouseDown (int x, int y, long button_flags, long key_flags)
@@ -112,7 +112,7 @@ namespace nux
     }
 
     m_TimerHandler = GetTimer().AddTimerHandler (41, m_TimerFunctor, 0);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void AnimatedTextureArea::StopAnimation()
@@ -136,7 +136,7 @@ namespace nux
       m_TimerHandler = GetTimer().AddTimerHandler (41, m_TimerFunctor, 0);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
 }

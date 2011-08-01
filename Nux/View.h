@@ -26,6 +26,8 @@
 #include "Nux.h"
 #include "Focusable.h"
 
+#define NeedRedraw QueueDraw
+
 namespace nux
 {
 
@@ -118,7 +120,6 @@ namespace nux
         Emits the signal \i OnQueueDraw.
     */
     virtual void QueueDraw ();
-    virtual void NeedRedraw (); //!< Deprecated. Use QueueDraw.
 
     //! Causes a soft redraw. The widget parameter _need_redraw is set to false. The widget DrawContent() and PostDraw() are called.
     virtual void NeedSoftRedraw();

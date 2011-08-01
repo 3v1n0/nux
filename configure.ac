@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [1])
 m4_define([nux_minor_version], [0])
-m4_define([nux_micro_version], [6])
+m4_define([nux_micro_version], [8])
 
 # Bump this when we break ABI
 m4_define([nux_api_version], [1.0])
@@ -110,7 +110,7 @@ PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
 
-PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0)
+PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0 gio-2.0)
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 

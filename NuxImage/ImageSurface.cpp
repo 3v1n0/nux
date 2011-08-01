@@ -21,6 +21,7 @@
 
 
 #include "NuxCore/NuxCore.h"
+#include "NuxCore/Logger.h"
 #include "NuxCore/Math/MathFunctions.h"
 
 #include "BitmapFormats.h"
@@ -35,6 +36,10 @@
 
 namespace nux
 {
+namespace
+{
+logging::Logger logger("nux.image");
+}
 
   extern PixelFormatInfo GPixelFormats[];
 
@@ -92,7 +97,7 @@ namespace nux
 #endif
 
     // Unsupported format
-    nuxDebugMsg (TEXT ("[LoadImageFile] Unknown file format: %s."), filename);
+    LOG_DEBUG(logger) << "Unknown file format: " << filename;
     return 0;
   }
 
@@ -166,7 +171,7 @@ namespace nux
 
   ImageSurface::~ImageSurface()
   {
-    NUX_SAFE_DELETE (RawData_);
+    delete [] RawData_;
   }
 
   ImageSurface::ImageSurface (BitmapFormat format, t_u32 width, t_u32 height)
@@ -256,7 +261,7 @@ namespace nux
       return;
     }
 
-    NUX_SAFE_DELETE_ARRAY (RawData_);
+    delete [] RawData_;
 
     if ( (width == 0) || (height == 0) )
     {
@@ -1170,7 +1175,7 @@ namespace nux
       m_MipSurfaceArray[mip].clear();
     }
 
-    NUX_SAFE_DELETE_ARRAY (m_MipSurfaceArray);
+    delete [] m_MipSurfaceArray;
   }
 
 //! Copy constructor
@@ -1325,7 +1330,7 @@ namespace nux
     }
 
     m_FrameTimeArray.clear();
-    NUX_SAFE_DELETE_ARRAY (m_MipSurfaceArray);
+    delete [] m_MipSurfaceArray;
   }
 
 //! Copy constructor

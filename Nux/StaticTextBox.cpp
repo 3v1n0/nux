@@ -123,7 +123,7 @@ namespace nux
     if (GetMinWidthMatchText() )
       AdjustMinWidthToMatchText();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void StaticTextBox::SetMinWidthMatchText (bool b)

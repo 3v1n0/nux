@@ -269,6 +269,90 @@ TEST(TestProperty, TestCustomSetterFunction) {
   EXPECT_THAT(1, Eq(recorder.last()));
 }
 
+
+TEST(TestProperty, TestIntOperators) {
+  nux::Property<int> int_prop(42);
+
+  EXPECT_TRUE(int_prop == 42);
+  EXPECT_TRUE(42 == int_prop);
+  EXPECT_FALSE(int_prop != 42);
+  EXPECT_FALSE(42 != int_prop);
+
+  EXPECT_FALSE(int_prop == 5);
+  EXPECT_FALSE(5 == int_prop);
+  EXPECT_TRUE(int_prop != 5);
+  EXPECT_TRUE(5 != int_prop);
+
+  EXPECT_FALSE(int_prop < 5);
+  EXPECT_FALSE(int_prop <= 5);
+  EXPECT_TRUE(int_prop > 5);
+  EXPECT_TRUE(int_prop >= 5);
+
+  EXPECT_TRUE(5 < int_prop);
+  EXPECT_TRUE(5 <= int_prop);
+  EXPECT_FALSE(5 > int_prop);
+  EXPECT_FALSE(5 >= int_prop);
+
+  nux::Property<int> int_prop2(42);
+  EXPECT_TRUE(int_prop2 == int_prop);
+  EXPECT_FALSE(int_prop2 != int_prop);
+
+  int_prop2 = 5;
+
+  EXPECT_FALSE(int_prop2 == int_prop);
+  EXPECT_TRUE(int_prop2 != int_prop);
+
+  EXPECT_FALSE(int_prop < int_prop2);
+  EXPECT_FALSE(int_prop <= int_prop2);
+  EXPECT_TRUE(int_prop > int_prop2);
+  EXPECT_TRUE(int_prop >= int_prop2);
+}
+
+// Only testing strings and ints, to show that the template classes work with
+// both primitive types and classes.
+TEST(TestProperty, TestStringOperators) {
+  std::string value("Hello");
+  nux::Property<std::string> str_prop(value);
+
+  EXPECT_TRUE(str_prop == "Hello");
+  EXPECT_TRUE("Hello" == str_prop);
+  EXPECT_FALSE(str_prop != "Hello");
+  EXPECT_FALSE("Hello" != str_prop);
+  EXPECT_TRUE(str_prop == value);
+  EXPECT_TRUE(value == str_prop);
+  EXPECT_FALSE(str_prop != value);
+  EXPECT_FALSE(value != str_prop);
+
+  EXPECT_FALSE(str_prop == "World");
+  EXPECT_FALSE("World" == str_prop);
+  EXPECT_TRUE(str_prop != "World");
+  EXPECT_TRUE("World" != str_prop);
+
+  EXPECT_FALSE(str_prop < "Aardvark");
+  EXPECT_FALSE(str_prop <= "Aardvark");
+  EXPECT_TRUE(str_prop > "Aardvark");
+  EXPECT_TRUE(str_prop >= "Aardvark");
+
+  EXPECT_TRUE("Aardvark" < str_prop);
+  EXPECT_TRUE("Aardvark" <= str_prop);
+  EXPECT_FALSE("Aardvark" > str_prop);
+  EXPECT_FALSE("Aardvark" >= str_prop);
+
+  nux::Property<std::string> str_prop2(value);
+  EXPECT_TRUE(str_prop2 == str_prop);
+  EXPECT_FALSE(str_prop2 != str_prop);
+
+  str_prop2 = "Aardvark";
+
+  EXPECT_FALSE(str_prop2 == str_prop);
+  EXPECT_TRUE(str_prop2 != str_prop);
+
+  EXPECT_FALSE(str_prop < str_prop2);
+  EXPECT_FALSE(str_prop <= str_prop2);
+  EXPECT_TRUE(str_prop > str_prop2);
+  EXPECT_TRUE(str_prop >= str_prop2);
+}
+
 TEST(TestROProperty, TestDefaultConstructor) {
   nux::ROProperty<int> int_prop;
   int value = int_prop;
@@ -314,6 +398,118 @@ TEST(TestROProperty, TestSetGetter) {
   EXPECT_THAT(value, Eq(1));
   EXPECT_THAT(int_prop(), Eq(2));
   EXPECT_THAT(int_prop.Get(), Eq(3));
+}
+
+TEST(TestROProperty, TestChangedEvent) {
+  // RO Properties have a changed event, but it is up to the continer of the
+  // property to emit the events as nothing is done automatically.
+  nux::ROProperty<int> int_prop;
+
+  ChangeRecorder<int> recorder;
+  int_prop.changed.connect(recorder.listener());
+
+  int_prop.EmitChanged(42);
+  EXPECT_THAT(1, Eq(recorder.size()));
+  EXPECT_THAT(42, Eq(recorder.last()));
+}
+
+// A simple class that just has a reader functon.
+template <typename VALUE_TYPE>
+class ROPropHolder
+{
+public:
+  ROPropHolder(VALUE_TYPE const& initial)
+    : prop(sigc::mem_fun(this, &ROPropHolder<VALUE_TYPE>::get_prop))
+    , prop_(initial)
+    {}
+  nux::ROProperty<VALUE_TYPE> prop;
+
+  VALUE_TYPE get_prop() const { return prop_; }
+  VALUE_TYPE prop_;
+
+};
+
+TEST(TestROProperty, TestIntOperators) {
+  ROPropHolder<int> int_prop(42);
+
+  EXPECT_TRUE(int_prop.prop == 42);
+  EXPECT_TRUE(42 == int_prop.prop);
+  EXPECT_FALSE(int_prop.prop != 42);
+  EXPECT_FALSE(42 != int_prop.prop);
+
+  EXPECT_FALSE(int_prop.prop == 5);
+  EXPECT_FALSE(5 == int_prop.prop);
+  EXPECT_TRUE(int_prop.prop != 5);
+  EXPECT_TRUE(5 != int_prop.prop);
+
+  EXPECT_FALSE(int_prop.prop < 5);
+  EXPECT_FALSE(int_prop.prop <= 5);
+  EXPECT_TRUE(int_prop.prop > 5);
+  EXPECT_TRUE(int_prop.prop >= 5);
+
+  EXPECT_TRUE(5 < int_prop.prop);
+  EXPECT_TRUE(5 <= int_prop.prop);
+  EXPECT_FALSE(5 > int_prop.prop);
+  EXPECT_FALSE(5 >= int_prop.prop);
+
+  ROPropHolder<int> int_prop2(42);
+  EXPECT_TRUE(int_prop2.prop == int_prop.prop);
+  EXPECT_FALSE(int_prop2.prop != int_prop.prop);
+
+  int_prop2.prop_ = 5;
+
+  EXPECT_FALSE(int_prop2.prop == int_prop.prop);
+  EXPECT_TRUE(int_prop2.prop != int_prop.prop);
+
+  EXPECT_FALSE(int_prop.prop < int_prop2.prop);
+  EXPECT_FALSE(int_prop.prop <= int_prop2.prop);
+  EXPECT_TRUE(int_prop.prop > int_prop2.prop);
+  EXPECT_TRUE(int_prop.prop >= int_prop2.prop);
+}
+
+// Only testing strings and ints, to show that the template classes work with
+// both primitive types and classes.
+TEST(TestROProperty, TestStringOperators) {
+  std::string value("Hello");
+  ROPropHolder<std::string> str_prop(value);
+
+  EXPECT_TRUE(str_prop.prop == "Hello");
+  EXPECT_TRUE("Hello" == str_prop.prop);
+  EXPECT_FALSE(str_prop.prop != "Hello");
+  EXPECT_FALSE("Hello" != str_prop.prop);
+  EXPECT_TRUE(str_prop.prop == value);
+  EXPECT_TRUE(value == str_prop.prop);
+  EXPECT_FALSE(str_prop.prop != value);
+  EXPECT_FALSE(value != str_prop.prop);
+
+  EXPECT_FALSE(str_prop.prop == "World");
+  EXPECT_FALSE("World" == str_prop.prop);
+  EXPECT_TRUE(str_prop.prop != "World");
+  EXPECT_TRUE("World" != str_prop.prop);
+
+  EXPECT_FALSE(str_prop.prop < "Aardvark");
+  EXPECT_FALSE(str_prop.prop <= "Aardvark");
+  EXPECT_TRUE(str_prop.prop > "Aardvark");
+  EXPECT_TRUE(str_prop.prop >= "Aardvark");
+
+  EXPECT_TRUE("Aardvark" < str_prop.prop);
+  EXPECT_TRUE("Aardvark" <= str_prop.prop);
+  EXPECT_FALSE("Aardvark" > str_prop.prop);
+  EXPECT_FALSE("Aardvark" >= str_prop.prop);
+
+  ROPropHolder<std::string> str_prop2(value);
+  EXPECT_TRUE(str_prop2.prop == str_prop.prop);
+  EXPECT_FALSE(str_prop2.prop != str_prop.prop);
+
+  str_prop2.prop_ = "Aardvark";
+
+  EXPECT_FALSE(str_prop2.prop == str_prop.prop);
+  EXPECT_TRUE(str_prop2.prop != str_prop.prop);
+
+  EXPECT_FALSE(str_prop.prop < str_prop2.prop);
+  EXPECT_FALSE(str_prop.prop <= str_prop2.prop);
+  EXPECT_TRUE(str_prop.prop > str_prop2.prop);
+  EXPECT_TRUE(str_prop.prop >= str_prop2.prop);
 }
 
 
@@ -421,7 +617,108 @@ TEST(TestRWProperty, TestPimplClassExample) {
   EXPECT_THAT(hidden.name.Get(), Eq("Impl::NewName"));
 }
 
+// A simple class that just has a reader and writer functon.
+template <typename VALUE_TYPE>
+class RWPropHolder
+{
+public:
+  RWPropHolder(VALUE_TYPE const& initial)
+    : prop(sigc::mem_fun(this, &RWPropHolder<VALUE_TYPE>::get_prop),
+           sigc::mem_fun(this, &RWPropHolder<VALUE_TYPE>::set_prop))
+    , prop_(initial)
+    {}
+  nux::RWProperty<VALUE_TYPE> prop;
 
+private:
+  VALUE_TYPE get_prop() const { return prop_; }
+  bool set_prop(VALUE_TYPE const& prop) { prop_ = prop; return true; }
+
+  VALUE_TYPE prop_;
+
+};
+
+TEST(TestRWProperty, TestIntOperators) {
+  RWPropHolder<int> int_prop(42);
+
+  EXPECT_TRUE(int_prop.prop == 42);
+  EXPECT_TRUE(42 == int_prop.prop);
+  EXPECT_FALSE(int_prop.prop != 42);
+  EXPECT_FALSE(42 != int_prop.prop);
+
+  EXPECT_FALSE(int_prop.prop == 5);
+  EXPECT_FALSE(5 == int_prop.prop);
+  EXPECT_TRUE(int_prop.prop != 5);
+  EXPECT_TRUE(5 != int_prop.prop);
+
+  EXPECT_FALSE(int_prop.prop < 5);
+  EXPECT_FALSE(int_prop.prop <= 5);
+  EXPECT_TRUE(int_prop.prop > 5);
+  EXPECT_TRUE(int_prop.prop >= 5);
+
+  EXPECT_TRUE(5 < int_prop.prop);
+  EXPECT_TRUE(5 <= int_prop.prop);
+  EXPECT_FALSE(5 > int_prop.prop);
+  EXPECT_FALSE(5 >= int_prop.prop);
+
+  RWPropHolder<int> int_prop2(42);
+  EXPECT_TRUE(int_prop2.prop == int_prop.prop);
+  EXPECT_FALSE(int_prop2.prop != int_prop.prop);
+
+  int_prop2.prop = 5;
+
+  EXPECT_FALSE(int_prop2.prop == int_prop.prop);
+  EXPECT_TRUE(int_prop2.prop != int_prop.prop);
+
+  EXPECT_FALSE(int_prop.prop < int_prop2.prop);
+  EXPECT_FALSE(int_prop.prop <= int_prop2.prop);
+  EXPECT_TRUE(int_prop.prop > int_prop2.prop);
+  EXPECT_TRUE(int_prop.prop >= int_prop2.prop);
+}
+
+// Only testing strings and ints, to show that the template classes work with
+// both primitive types and classes.
+TEST(TestRWProperty, TestStringOperators) {
+  std::string value("Hello");
+  RWPropHolder<std::string> str_prop(value);
+
+  EXPECT_TRUE(str_prop.prop == "Hello");
+  EXPECT_TRUE("Hello" == str_prop.prop);
+  EXPECT_FALSE(str_prop.prop != "Hello");
+  EXPECT_FALSE("Hello" != str_prop.prop);
+  EXPECT_TRUE(str_prop.prop == value);
+  EXPECT_TRUE(value == str_prop.prop);
+  EXPECT_FALSE(str_prop.prop != value);
+  EXPECT_FALSE(value != str_prop.prop);
+
+  EXPECT_FALSE(str_prop.prop == "World");
+  EXPECT_FALSE("World" == str_prop.prop);
+  EXPECT_TRUE(str_prop.prop != "World");
+  EXPECT_TRUE("World" != str_prop.prop);
+
+  EXPECT_FALSE(str_prop.prop < "Aardvark");
+  EXPECT_FALSE(str_prop.prop <= "Aardvark");
+  EXPECT_TRUE(str_prop.prop > "Aardvark");
+  EXPECT_TRUE(str_prop.prop >= "Aardvark");
+
+  EXPECT_TRUE("Aardvark" < str_prop.prop);
+  EXPECT_TRUE("Aardvark" <= str_prop.prop);
+  EXPECT_FALSE("Aardvark" > str_prop.prop);
+  EXPECT_FALSE("Aardvark" >= str_prop.prop);
+
+  RWPropHolder<std::string> str_prop2(value);
+  EXPECT_TRUE(str_prop2.prop == str_prop.prop);
+  EXPECT_FALSE(str_prop2.prop != str_prop.prop);
+
+  str_prop2.prop = "Aardvark";
+
+  EXPECT_FALSE(str_prop2.prop == str_prop.prop);
+  EXPECT_TRUE(str_prop2.prop != str_prop.prop);
+
+  EXPECT_FALSE(str_prop.prop < str_prop2.prop);
+  EXPECT_FALSE(str_prop.prop <= str_prop2.prop);
+  EXPECT_TRUE(str_prop.prop > str_prop2.prop);
+  EXPECT_TRUE(str_prop.prop >= str_prop2.prop);
+}
 
 struct TestProperties : nux::Introspectable
 {

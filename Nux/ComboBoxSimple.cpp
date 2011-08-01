@@ -44,10 +44,10 @@ namespace nux
     m_CurrentMenu->SetParentObject(this);
     
     // Set Signals
-    _combo_box_opening_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
-    _combo_box_opening_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
-    _combo_box_area->OnMouseDown.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
-    _combo_box_area->OnMouseUp.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
+    _combo_box_opening_area->mouse_down.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
+    _combo_box_opening_area->mouse_up.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
+    _combo_box_area->mouse_down.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
+    _combo_box_area->mouse_up.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
 
     //m_Popup.sigPopupStop.connect(sigc::mem_fun(this, &ComboBox::OnPopupStop));
 
