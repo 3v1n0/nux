@@ -49,7 +49,7 @@ namespace nux
     virtual ~TreeControl();
 
     virtual void OnMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    virtual void OnMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void mouse_double_click (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     //sigc::signal<void, TableCtrl&, TableItem&, int, int> sigFolderItemSelected;
   };

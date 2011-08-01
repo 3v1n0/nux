@@ -39,23 +39,23 @@ namespace nux
     m_TextArea  = new InputArea(NUX_TRACKER_LOCATION);
 
     // Set Signals
-    m_CheckArea->OnMouseClick.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
-    OnMouseClick.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
+    m_CheckArea->mouse_click.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
+    mouse_click.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
 
-    m_CheckArea->OnMouseMove.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
-    OnMouseMove.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
+    m_CheckArea->mouse_move.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
+    mouse_move.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
 
-    m_CheckArea->OnMouseEnter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
-    OnMouseEnter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
+    m_CheckArea->mouse_enter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
+    mouse_enter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
 
-    m_CheckArea->OnMouseLeave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
+    m_CheckArea->mouse_leave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
+    mouse_leave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
 
-    m_CheckArea->OnMouseUp.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
-    OnMouseUp.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
+    m_CheckArea->mouse_up.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
+    mouse_up.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
 
-    m_CheckArea->OnMouseDown.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
-    OnMouseDown.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
+    m_CheckArea->mouse_down.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
+    mouse_down.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
 
     // Set Geometry
     m_CheckArea->SetMinimumSize (14, 14);
@@ -85,17 +85,17 @@ namespace nux
     SetState (state);
     SetCaption (Caption);
 
-    if (Caption) m_TextArea->OnMouseClick.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
+    if (Caption) m_TextArea->mouse_click.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
 
-    if (Caption) m_TextArea->OnMouseMove.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
+    if (Caption) m_TextArea->mouse_move.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
 
-    if (Caption) m_TextArea->OnMouseEnter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
+    if (Caption) m_TextArea->mouse_enter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
 
-    if (Caption) m_TextArea->OnMouseLeave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
+    if (Caption) m_TextArea->mouse_leave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
 
-    if (Caption) m_TextArea->OnMouseUp.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
+    if (Caption) m_TextArea->mouse_up.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
 
-    if (Caption) m_TextArea->OnMouseDown.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
+    if (Caption) m_TextArea->mouse_down.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
   }
 
   CheckBox::~CheckBox()
@@ -174,7 +174,7 @@ namespace nux
   void CheckBox::SetState (bool State)
   {
     _state = State;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void CheckBox::SetState (bool State, bool EmitSignal)
@@ -187,7 +187,7 @@ namespace nux
       sigStateChanged.emit (_state);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool CheckBox::GetState() const
@@ -200,32 +200,32 @@ namespace nux
     _state = !_state;
     sigStateToggled.emit (this);
     sigStateChanged.emit (_state);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void CheckBox::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void CheckBox::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void CheckBox::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void CheckBox::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void CheckBox::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void CheckBox::EmitStateSignal()

@@ -44,12 +44,12 @@ namespace nux
     SetBaseString (TEXT ("ToolButton") );
 
     // Set Signals
-    OnMouseClick.connect (sigc::mem_fun (this, &ToolButton::EmitClick) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &ToolButton::RecvMouseDoubleClick) );
-    OnMouseDown.connect (sigc::mem_fun (this, &ToolButton::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &ToolButton::RecvMouseUp) );
-    OnMouseEnter.connect (sigc::mem_fun (this, &ToolButton::RecvMouseEnter) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &ToolButton::RecvMouseLeave) );
+    mouse_click.connect (sigc::mem_fun (this, &ToolButton::EmitClick) );
+    mouse_double_click.connect (sigc::mem_fun (this, &ToolButton::RecvMouseDoubleClick) );
+    mouse_down.connect (sigc::mem_fun (this, &ToolButton::RecvMouseDown) );
+    mouse_up.connect (sigc::mem_fun (this, &ToolButton::RecvMouseUp) );
+    mouse_enter.connect (sigc::mem_fun (this, &ToolButton::RecvMouseEnter) );
+    mouse_leave.connect (sigc::mem_fun (this, &ToolButton::RecvMouseLeave) );
 
     SetMinimumSize (28, 28);
     SetGeometry (Geometry (0, 0, 24, 24) );
@@ -126,27 +126,27 @@ namespace nux
 
   void ToolButton::RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ToolButton::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ToolButton::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ToolButton::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ToolButton::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ToolButton::SetAction (ActionItem *action)

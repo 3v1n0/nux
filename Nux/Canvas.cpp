@@ -89,6 +89,8 @@ namespace nux
 
     if (ptr == NULL || stride == 0) {
       g_debug ("Invalid surface!");
+
+      delete bitmap_data;
       return NULL;
     }
 

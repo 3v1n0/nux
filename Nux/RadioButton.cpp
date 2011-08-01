@@ -45,23 +45,23 @@ namespace nux
     m_TextArea  = new InputArea();
 
     // Set Signals
-    m_CheckArea->OnMouseClick.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
-    OnMouseClick.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
+    m_CheckArea->mouse_click.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
+    mouse_click.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
 
-    m_CheckArea->OnMouseMove.connect (sigc::mem_fun (this, &RadioButton::RecvMouseMove) );
-    OnMouseMove.connect (sigc::mem_fun (this, &RadioButton::RecvMouseMove) );
+    m_CheckArea->mouse_move.connect (sigc::mem_fun (this, &RadioButton::RecvMouseMove) );
+    mouse_move.connect (sigc::mem_fun (this, &RadioButton::RecvMouseMove) );
 
-    m_CheckArea->OnMouseEnter.connect (sigc::mem_fun (this, &RadioButton::RecvMouseEnter) );
-    OnMouseEnter.connect (sigc::mem_fun (this, &RadioButton::RecvMouseEnter) );
+    m_CheckArea->mouse_enter.connect (sigc::mem_fun (this, &RadioButton::RecvMouseEnter) );
+    mouse_enter.connect (sigc::mem_fun (this, &RadioButton::RecvMouseEnter) );
 
-    m_CheckArea->OnMouseLeave.connect (sigc::mem_fun (this, &RadioButton::RecvMouseLeave) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &RadioButton::RecvMouseLeave) );
+    m_CheckArea->mouse_leave.connect (sigc::mem_fun (this, &RadioButton::RecvMouseLeave) );
+    mouse_leave.connect (sigc::mem_fun (this, &RadioButton::RecvMouseLeave) );
 
-    m_CheckArea->OnMouseUp.connect (sigc::mem_fun (this, &RadioButton::RecvMouseUp) );
-    OnMouseUp.connect (sigc::mem_fun (this, &RadioButton::RecvMouseUp) );
+    m_CheckArea->mouse_up.connect (sigc::mem_fun (this, &RadioButton::RecvMouseUp) );
+    mouse_up.connect (sigc::mem_fun (this, &RadioButton::RecvMouseUp) );
 
-    m_CheckArea->OnMouseDown.connect (sigc::mem_fun (this, &RadioButton::RecvMouseDown) );
-    OnMouseDown.connect (sigc::mem_fun (this, &RadioButton::RecvMouseDown) );
+    m_CheckArea->mouse_down.connect (sigc::mem_fun (this, &RadioButton::RecvMouseDown) );
+    mouse_down.connect (sigc::mem_fun (this, &RadioButton::RecvMouseDown) );
 
     // Set Geometry
     m_CheckArea->SetMinimumSize (14, 14);
@@ -91,17 +91,17 @@ namespace nux
     SetState (state);
     SetCaption (Caption);
 
-    if (Caption) m_TextArea->OnMouseClick.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
+    if (Caption) m_TextArea->mouse_click.connect (sigc::mem_fun (this, &RadioButton::RecvClick) );
 
-    if (Caption) m_TextArea->OnMouseMove.connect (sigc::mem_fun (this, &RadioButton::RecvMouseMove) );
+    if (Caption) m_TextArea->mouse_move.connect (sigc::mem_fun (this, &RadioButton::RecvMouseMove) );
 
-    if (Caption) m_TextArea->OnMouseEnter.connect (sigc::mem_fun (this, &RadioButton::RecvMouseEnter) );
+    if (Caption) m_TextArea->mouse_enter.connect (sigc::mem_fun (this, &RadioButton::RecvMouseEnter) );
 
-    if (Caption) m_TextArea->OnMouseLeave.connect (sigc::mem_fun (this, &RadioButton::RecvMouseLeave) );
+    if (Caption) m_TextArea->mouse_leave.connect (sigc::mem_fun (this, &RadioButton::RecvMouseLeave) );
 
-    if (Caption) m_TextArea->OnMouseUp.connect (sigc::mem_fun (this, &RadioButton::RecvMouseUp) );
+    if (Caption) m_TextArea->mouse_up.connect (sigc::mem_fun (this, &RadioButton::RecvMouseUp) );
 
-    if (Caption) m_TextArea->OnMouseDown.connect (sigc::mem_fun (this, &RadioButton::RecvMouseDown) );
+    if (Caption) m_TextArea->mouse_down.connect (sigc::mem_fun (this, &RadioButton::RecvMouseDown) );
   }
 
   RadioButton::~RadioButton()
@@ -229,7 +229,7 @@ namespace nux
   void RadioButton::SetStatePrivate (bool State)
   {
     _state = State;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RadioButton::SetStatePrivate (bool State, bool EmitSignal)
@@ -242,7 +242,7 @@ namespace nux
       sigStateChanged.emit (_state);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool RadioButton::GetState() const
@@ -264,32 +264,32 @@ namespace nux
       sigStateChanged.emit (_state);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RadioButton::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RadioButton::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RadioButton::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RadioButton::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RadioButton::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RadioButton::EmitStateChangedSignal()

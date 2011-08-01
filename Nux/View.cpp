@@ -44,7 +44,7 @@ namespace nux
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    OnMouseDownOutsideArea.connect (sigc::mem_fun (this, &View::DoMouseDownOutsideArea));
+    mouse_down_outside_pointer_grab_area.connect (sigc::mem_fun (this, &View::DoMouseDownOutsideArea));
   }
 
   View::~View()
@@ -313,11 +313,6 @@ namespace nux
 
     _need_redraw = true;
     OnQueueDraw.emit (this);
-  }
-
-  void View::NeedRedraw()
-  {
-    QueueDraw ();
   }
 
   void View::NeedSoftRedraw()

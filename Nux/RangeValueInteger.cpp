@@ -55,9 +55,9 @@ namespace nux
     //////////////////
     // Set Signals  //
     //////////////////
-    m_Percentage->OnMouseDown.connect ( sigc::mem_fun (this, &RangeValueInteger::OnReceiveMouseDown) );
-    m_Percentage->OnMouseUp.connect ( sigc::mem_fun (this, &RangeValueInteger::OnReceiveMouseUp) );
-    m_Percentage->OnMouseDrag.connect ( sigc::mem_fun (this, &RangeValueInteger::OnReceiveMouseDrag) );
+    m_Percentage->mouse_down.connect ( sigc::mem_fun (this, &RangeValueInteger::OnReceiveMouseDown) );
+    m_Percentage->mouse_up.connect ( sigc::mem_fun (this, &RangeValueInteger::OnReceiveMouseUp) );
+    m_Percentage->mouse_drag.connect ( sigc::mem_fun (this, &RangeValueInteger::OnReceiveMouseDrag) );
 
     m_ValueString->sigValidateKeyboardEntry.connect (sigc::mem_fun (this, &RangeValueInteger::OnValidateKeyboardEntry) );
 
@@ -102,7 +102,7 @@ namespace nux
 
     if (m_ValueString->IsRedrawNeeded() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     return ret;
@@ -187,7 +187,7 @@ namespace nux
 
     m_MarkerPosition = m_Value;
     m_ValueString->SetText (NString::Printf ("%d", m_Value) );
-    NeedRedraw();
+    QueueDraw();
   }
 
   int RangeValueInteger::GetValue() const
@@ -224,7 +224,7 @@ namespace nux
     sigMouseDown.emit (m_Value);
     sigValueChanged2.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RangeValueInteger::OnReceiveMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -247,7 +247,7 @@ namespace nux
     sigMouseUp.emit (m_Value);
     sigValueChanged2.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RangeValueInteger::OnReceiveMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -276,7 +276,7 @@ namespace nux
     sigMouseDrag.emit (m_Value);
     sigValueChanged2.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RangeValueInteger::OnKeyboardFocus()
@@ -297,7 +297,7 @@ namespace nux
     sigValueChanged.emit (this);
     sigSetTypedValue.emit (i);
     sigValueChanged2.emit (m_Value);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void RangeValueInteger::BroadcastValue ()

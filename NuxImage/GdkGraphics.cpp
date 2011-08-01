@@ -22,115 +22,102 @@
 
 #include "NuxCore/NuxCore.h"
 #include "ImageSurface.h"
-#include <gdk-pixbuf/gdk-pixbuf.h>
 #include "GdkGraphics.h"
+
+#include "NuxCore/Logger.h"
 
 namespace nux
 {
-  GdkGraphics::GdkGraphics ()
-  {
-    _gdkpixbuf_ptr = 0;
-  }
-  
-  GdkGraphics::GdkGraphics (const TCHAR* Filename)
-  {
-    _gdkpixbuf_ptr = 0;
-  }
+namespace
+{
+logging::Logger logger("nux.image");
+}
 
-  GdkGraphics::GdkGraphics (void* GdkPixbufPtr)
+  GdkGraphics::GdkGraphics()
+    : pixbuf_(0)
   {
-    _gdkpixbuf_ptr = 0;
-    LoadGdkPixbuf (GdkPixbufPtr);
   }
 
-  GdkGraphics::~GdkGraphics ()
+  GdkGraphics::GdkGraphics(GdkPixbuf* pixbuf)
+    : pixbuf_(pixbuf)
   {
-
   }
 
-  bool GdkGraphics::LoadImage (const TCHAR* Filename)
+  GdkGraphics::GdkGraphics(const char* filename)
+    : pixbuf_(0)
   {
-    if (_gdkpixbuf_ptr)
+    LoadImage(filename);
+  }
+
+  GdkGraphics::~GdkGraphics()
+  {
+    if (pixbuf_)
+      g_object_unref(pixbuf_);
+  }
+
+  bool GdkGraphics::LoadImage(const char* filename)
+  {
+    if (pixbuf_)
+      g_object_unref(pixbuf_);
+
+    GError* error = 0;
+    pixbuf_ = gdk_pixbuf_new_from_file(filename, &error);
+
+    if (error)
     {
-      g_object_unref (_gdkpixbuf_ptr);
-      _gdkpixbuf_ptr = 0;
-    }
-
-    GError *error = 0;
-    _gdkpixbuf_ptr = gdk_pixbuf_new_from_file (Filename, 0);
-
-    if (_gdkpixbuf_ptr == 0)
-    {
-      if (error && (error->domain == G_FILE_ERROR))
-      {
-        nuxDebugMsg (TEXT ("[GdkGraphics::GdkGraphics] File error: %d: %s"), error->code, error->message);
-      }
-      else if (error && (error->domain == GDK_PIXBUF_ERROR))
-      {
-        nuxDebugMsg (TEXT ("[GdkGraphics::GdkGraphics] GDK Pixbuf error: %d: %s"), error->code, error->message);
-      }
-      else
-      {
-        nuxDebugMsg (TEXT ("[GdkGraphics::GdkGraphics] Unknown error"));
-      }
+      LOG_ERROR(logger) << error->message;
+      g_error_free(error);
       return false;
     }
+
     return true;
   }
 
-  void GdkGraphics::LoadGdkPixbuf (void* GdkPixbufPtr)
+  NBitmapData* GdkGraphics::GetBitmap() const
   {
-    if (GdkPixbufPtr == 0)
+    if (!pixbuf_)
     {
-      g_object_unref (_gdkpixbuf_ptr);
-      _gdkpixbuf_ptr = 0;
-      return;
-    }
-
-    _gdkpixbuf_ptr = GdkPixbufPtr;
-  }
-
-  NBitmapData* GdkGraphics::GetBitmap()
-  {
-    unsigned int width = gdk_pixbuf_get_width (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
-    unsigned int height = gdk_pixbuf_get_height (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
-    
-    int channels = gdk_pixbuf_get_n_channels (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
-    int src_pitch = gdk_pixbuf_get_rowstride (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
-
-    NTextureData *Texture = NULL;
-
-    if (channels == 4)
-    {      
-      Texture = new NTextureData (BITFMT_R8G8B8A8, width, height, 1);
-    }
-    else if (channels == 3)
-    {
-      Texture = new NTextureData (BITFMT_R8G8B8, width, height, 1);
-    }
-    else if (channels == 1)
-    {
-      Texture = new NTextureData (BITFMT_A8, width, height, 1);
-    }
-    else
-    {
-      nuxDebugMsg (TEXT("[GdkGraphics::GetBitmap] Invalid number of channels."));
+      LOG_WARN(logger) << "No pixbuf loaded";
       return 0;
     }
 
-    ImageSurface &image_surface = Texture->GetSurface (0);
-    t_u8* dest = image_surface.GetPtrRawData ();
-    int dest_pitch = image_surface.GetPitch ();
+    unsigned int width = gdk_pixbuf_get_width(pixbuf_);
+    unsigned int height = gdk_pixbuf_get_height(pixbuf_);
+    int channels = gdk_pixbuf_get_n_channels(pixbuf_);
+    int src_pitch = gdk_pixbuf_get_rowstride(pixbuf_);
 
-    t_u8* dst = dest;
-    guchar *src = gdk_pixbuf_get_pixels (NUX_STATIC_CAST (GdkPixbuf *, _gdkpixbuf_ptr));
+    NTextureData* texture = NULL;
 
-    for (unsigned int i = 0; i < height; i++)
+    if (channels == 4)
     {
-      Memcpy (dst, src + i*src_pitch, width*channels);
-      dst += dest_pitch;
+      texture = new NTextureData(BITFMT_R8G8B8A8, width, height, 1);
     }
-    return Texture;
+    else if (channels == 3)
+    {
+      texture = new NTextureData(BITFMT_R8G8B8, width, height, 1);
+    }
+    else if (channels == 1)
+    {
+      texture = new NTextureData(BITFMT_A8, width, height, 1);
+    }
+    else
+    {
+      LOG_ERROR(logger) << __func__ << ": Invalid number of channels";
+      return 0;
+    }
+
+    ImageSurface& image_surface = texture->GetSurface(0);
+    t_u8* dest = image_surface.GetPtrRawData();
+    int dest_pitch = image_surface.GetPitch();
+
+    guchar* src = gdk_pixbuf_get_pixels(pixbuf_);
+
+    for (unsigned int i = 0; i < height; ++i)
+    {
+      Memcpy (dest, src + i*src_pitch, width*channels);
+      dest += dest_pitch;
+    }
+    return texture;
   }
 }
 

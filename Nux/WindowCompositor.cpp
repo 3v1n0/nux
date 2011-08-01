@@ -1958,7 +1958,7 @@ namespace nux
 
     if (key_focus_area_)
     {
-      key_focus_area_->OnStartKeyboardReceiver.emit();
+      key_focus_area_->start_key_focus.emit();
     }
 
 

@@ -39,9 +39,9 @@ host_triplet = @host@
 subdir = NuxCore
 DIST_COMMON = $(nux_char_HEADERS) $(nux_core_HEADERS) \
 	$(nux_file_manager_HEADERS) $(nux_math_HEADERS) \
-	$(nux_memory_HEADERS) $(nux_smart_ptr_HEADERS) \
-	$(nux_tiny_xml_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/nux-core.pc.in
+	$(nux_memory_HEADERS) $(nux_tiny_xml_HEADERS) \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/nux-core.pc.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_doxygen.m4 \
 	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
@@ -77,12 +77,12 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
 	"$(DESTDIR)$(nux_chardir)" "$(DESTDIR)$(nux_coredir)" \
 	"$(DESTDIR)$(nux_file_managerdir)" "$(DESTDIR)$(nux_mathdir)" \
-	"$(DESTDIR)$(nux_memorydir)" "$(DESTDIR)$(nux_smart_ptrdir)" \
-	"$(DESTDIR)$(nux_tiny_xmldir)"
+	"$(DESTDIR)$(nux_memorydir)" "$(DESTDIR)$(nux_tiny_xmldir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libnux_core_@NUX_API_VERSION@_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am__objects_1 = libnux_core_@NUX_API_VERSION@_la-TextString.lo \
+am__objects_1 = libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo \
+	libnux_core_@NUX_API_VERSION@_la-TextString.lo \
 	libnux_core_@NUX_API_VERSION@_la-TimeFunctions.lo \
 	libnux_core_@NUX_API_VERSION@_la-Template.lo \
 	libnux_core_@NUX_API_VERSION@_la-FilePath.lo \
@@ -137,12 +137,13 @@ am__objects_1 = libnux_core_@NUX_API_VERSION@_la-TextString.lo \
 	libnux_core_@NUX_API_VERSION@_la-Vector3.lo \
 	libnux_core_@NUX_API_VERSION@_la-Line3D.lo \
 	libnux_core_@NUX_API_VERSION@_la-Vector2.lo \
+	libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo \
 	libnux_core_@NUX_API_VERSION@_la-CRC32.lo \
 	libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.lo
 am__objects_2 =
 am_libnux_core_@NUX_API_VERSION@_la_OBJECTS = $(am__objects_1) \
 	$(am__objects_2) $(am__objects_2) $(am__objects_2) \
-	$(am__objects_2) $(am__objects_2) $(am__objects_2)
+	$(am__objects_2) $(am__objects_2)
 libnux_core_@NUX_API_VERSION@_la_OBJECTS =  \
 	$(am_libnux_core_@NUX_API_VERSION@_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -199,8 +200,7 @@ DIST_SOURCES = $(libnux_core_@NUX_API_VERSION@_la_SOURCES)
 DATA = $(pkgconfig_DATA)
 HEADERS = $(nux_char_HEADERS) $(nux_core_HEADERS) \
 	$(nux_file_manager_HEADERS) $(nux_math_HEADERS) \
-	$(nux_memory_HEADERS) $(nux_smart_ptr_HEADERS) \
-	$(nux_tiny_xml_HEADERS)
+	$(nux_memory_HEADERS) $(nux_tiny_xml_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -401,6 +401,7 @@ libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_cpp = \
+  $(srcdir)/AsyncFileWriter.cpp \
   $(srcdir)/TextString.cpp \
   $(srcdir)/TimeFunctions.cpp \
   $(srcdir)/Template.cpp \
@@ -456,6 +457,7 @@ source_cpp = \
   $(srcdir)/Math/Vector3.cpp \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
+  $(srcdir)/RollingFileAppender.cpp \
   $(srcdir)/CRC32.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
@@ -498,10 +500,8 @@ source_tiny_xml_h = \
   $(srcdir)/TinyXML/tinystr.h \
   $(srcdir)/TinyXML/tinyxml.h
 
-source_smart_ptr_h = \
-  $(srcdir)/SmartPtr/GenericSmartPointer.h
-
 source_h = \
+  $(srcdir)/AsyncFileWriter.h \
   $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
   $(srcdir)/CPU.h \
@@ -517,6 +517,7 @@ source_h = \
   $(srcdir)/Colors.h \
   $(srcdir)/Logger.h \
   $(srcdir)/LoggingWriter.h \
+  $(srcdir)/RollingFileAppender.h \
   $(srcdir)/Memory.h \
   $(srcdir)/Error.h \
   $(srcdir)/SystemGNU.h \
@@ -542,6 +543,7 @@ source_h = \
   $(srcdir)/InitiallyUnownedObject.h \
   $(srcdir)/Property.h \
   $(srcdir)/Property-inl.h \
+  $(srcdir)/PropertyOperators.h \
   $(srcdir)/PropertyTraits.h \
   $(srcdir)/Win32Dialogs/NWin32Clipboard.h
 
@@ -552,8 +554,7 @@ libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_file_manager_h) \
   $(source_math_h) \
   $(source_memory_h) \
-  $(source_tiny_xml_h) \
-  $(source_smart_ptr_h)
+  $(source_tiny_xml_h)
 
 nux_coredir = $(includedir)/Nux-@NUX_API_VERSION@/NuxCore
 nux_core_HEADERS = $(source_h)
@@ -567,8 +568,6 @@ nux_memorydir = $(nux_coredir)/Memory
 nux_memory_HEADERS = $(source_memory_h)
 nux_tiny_xmldir = $(nux_coredir)/TinyXML
 nux_tiny_xml_HEADERS = $(source_tiny_xml_h)
-nux_smart_ptrdir = $(nux_coredir)/SmartPtr
-nux_smart_ptr_HEADERS = $(source_smart_ptr_h)
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = nux-core-@NUX_API_VERSION@.pc
 all: all-am
@@ -648,6 +647,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Algo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Bezier.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CPU.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Plo@am__quote@
@@ -689,6 +689,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Process.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Quaternion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Rect.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Spline.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-SystemGNU.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Template.Plo@am__quote@
@@ -728,6 +729,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo: $(srcdir)/AsyncFileWriter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo `test -f '$(srcdir)/AsyncFileWriter.cpp' || echo '$(srcdir)/'`$(srcdir)/AsyncFileWriter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/AsyncFileWriter.cpp' object='libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo `test -f '$(srcdir)/AsyncFileWriter.cpp' || echo '$(srcdir)/'`$(srcdir)/AsyncFileWriter.cpp
 
 libnux_core_@NUX_API_VERSION@_la-TextString.lo: $(srcdir)/TextString.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-TextString.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-TextString.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-TextString.lo `test -f '$(srcdir)/TextString.cpp' || echo '$(srcdir)/'`$(srcdir)/TextString.cpp
@@ -1169,6 +1178,14 @@ libnux_core_@NUX_API_VERSION@_la-Vector2.lo: $(srcdir)/Math/Vector2.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Vector2.lo `test -f '$(srcdir)/Math/Vector2.cpp' || echo '$(srcdir)/'`$(srcdir)/Math/Vector2.cpp
 
+libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo: $(srcdir)/RollingFileAppender.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo `test -f '$(srcdir)/RollingFileAppender.cpp' || echo '$(srcdir)/'`$(srcdir)/RollingFileAppender.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/RollingFileAppender.cpp' object='libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo `test -f '$(srcdir)/RollingFileAppender.cpp' || echo '$(srcdir)/'`$(srcdir)/RollingFileAppender.cpp
+
 libnux_core_@NUX_API_VERSION@_la-CRC32.lo: $(srcdir)/CRC32.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-CRC32.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-CRC32.lo `test -f '$(srcdir)/CRC32.cpp' || echo '$(srcdir)/'`$(srcdir)/CRC32.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Plo
@@ -1310,26 +1327,6 @@ uninstall-nux_memoryHEADERS:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(nux_memorydir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(nux_memorydir)" && rm -f $$files
-install-nux_smart_ptrHEADERS: $(nux_smart_ptr_HEADERS)
-	@$(NORMAL_INSTALL)
-	test -z "$(nux_smart_ptrdir)" || $(MKDIR_P) "$(DESTDIR)$(nux_smart_ptrdir)"
-	@list='$(nux_smart_ptr_HEADERS)'; test -n "$(nux_smart_ptrdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(nux_smart_ptrdir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(nux_smart_ptrdir)" || exit $$?; \
-	done
-
-uninstall-nux_smart_ptrHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nux_smart_ptr_HEADERS)'; test -n "$(nux_smart_ptrdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(nux_smart_ptrdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(nux_smart_ptrdir)" && rm -f $$files
 install-nux_tiny_xmlHEADERS: $(nux_tiny_xml_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(nux_tiny_xmldir)" || $(MKDIR_P) "$(DESTDIR)$(nux_tiny_xmldir)"
@@ -1437,7 +1434,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(nux_chardir)" "$(DESTDIR)$(nux_coredir)" "$(DESTDIR)$(nux_file_managerdir)" "$(DESTDIR)$(nux_mathdir)" "$(DESTDIR)$(nux_memorydir)" "$(DESTDIR)$(nux_smart_ptrdir)" "$(DESTDIR)$(nux_tiny_xmldir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(nux_chardir)" "$(DESTDIR)$(nux_coredir)" "$(DESTDIR)$(nux_file_managerdir)" "$(DESTDIR)$(nux_mathdir)" "$(DESTDIR)$(nux_memorydir)" "$(DESTDIR)$(nux_tiny_xmldir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -1492,8 +1489,8 @@ info-am:
 
 install-data-am: install-nux_charHEADERS install-nux_coreHEADERS \
 	install-nux_file_managerHEADERS install-nux_mathHEADERS \
-	install-nux_memoryHEADERS install-nux_smart_ptrHEADERS \
-	install-nux_tiny_xmlHEADERS install-pkgconfigDATA
+	install-nux_memoryHEADERS install-nux_tiny_xmlHEADERS \
+	install-pkgconfigDATA
 
 install-dvi: install-dvi-am
 
@@ -1542,8 +1539,7 @@ ps-am:
 uninstall-am: uninstall-libLTLIBRARIES uninstall-nux_charHEADERS \
 	uninstall-nux_coreHEADERS uninstall-nux_file_managerHEADERS \
 	uninstall-nux_mathHEADERS uninstall-nux_memoryHEADERS \
-	uninstall-nux_smart_ptrHEADERS uninstall-nux_tiny_xmlHEADERS \
-	uninstall-pkgconfigDATA
+	uninstall-nux_tiny_xmlHEADERS uninstall-pkgconfigDATA
 
 .MAKE: install-am install-strip
 
@@ -1557,17 +1553,16 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-nux_charHEADERS \
 	install-libLTLIBRARIES install-man install-nux_charHEADERS \
 	install-nux_coreHEADERS install-nux_file_managerHEADERS \
 	install-nux_mathHEADERS install-nux_memoryHEADERS \
-	install-nux_smart_ptrHEADERS install-nux_tiny_xmlHEADERS \
-	install-pdf install-pdf-am install-pkgconfigDATA install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-libLTLIBRARIES \
+	install-nux_tiny_xmlHEADERS install-pdf install-pdf-am \
+	install-pkgconfigDATA install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-libLTLIBRARIES \
 	uninstall-nux_charHEADERS uninstall-nux_coreHEADERS \
 	uninstall-nux_file_managerHEADERS uninstall-nux_mathHEADERS \
-	uninstall-nux_memoryHEADERS uninstall-nux_smart_ptrHEADERS \
-	uninstall-nux_tiny_xmlHEADERS uninstall-pkgconfigDATA
+	uninstall-nux_memoryHEADERS uninstall-nux_tiny_xmlHEADERS \
+	uninstall-pkgconfigDATA
 
 
 # pkg-config file

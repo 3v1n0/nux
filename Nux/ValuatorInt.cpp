@@ -122,7 +122,7 @@ namespace nux
     GetPainter().PaintShapeCorner (GfxContext, geo, m_EditLine->GetTextBackgroundColor(), eSHAPE_CORNER_ROUND4,
                                eCornerTopLeft | eCornerBottomLeft, false);
 
-    m_EditLine->NeedRedraw();
+    m_EditLine->QueueDraw();
   }
 
   void ValuatorInt::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -141,7 +141,7 @@ namespace nux
     m_EditLine->SetText (NString::Printf ("%d", m_iValue) );
     sigValueChanged.emit (this);
     sigValue.emit (m_iValue);
-    NeedRedraw();
+    QueueDraw();
   }
 
   int ValuatorInt::GetValue() const
@@ -156,7 +156,7 @@ namespace nux
     if (m_Step <= 0)
       m_Step = 1;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   int ValuatorInt::GetStep() const
@@ -181,7 +181,7 @@ namespace nux
     m_iValue = m_IntValidator.GetClampedValue (m_iValue);
     sigValueChanged.emit (this);
     sigValue.emit (m_iValue);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ValuatorInt::ImplementIncrementBtn()
@@ -190,7 +190,7 @@ namespace nux
 
     if (m_iValue < m_IntValidator.GetMaximum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);
@@ -204,7 +204,7 @@ namespace nux
 
     if (m_iValue > m_IntValidator.GetMinimum() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);

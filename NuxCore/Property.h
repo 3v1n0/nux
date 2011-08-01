@@ -66,6 +66,7 @@ template <typename VALUE_TYPE>
 class Property : public PropertyChangedSignal<VALUE_TYPE>
 {
 public:
+  typedef VALUE_TYPE ValueType;
   typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
   typedef sigc::slot<bool, VALUE_TYPE&, VALUE_TYPE const&> SetterFunction;
 
@@ -103,15 +104,14 @@ private:
 /**
  * A read only property that uses a function to get the value.
  *
- * The read only property does not have a changed signal.
- *
  * The default constructor creates a read only property that always returns
  * the default constructed VALUE_TYPE.
  */
 template <typename VALUE_TYPE>
-class ROProperty
+class ROProperty : public PropertyChangedSignal<VALUE_TYPE>
 {
 public:
+  typedef VALUE_TYPE ValueType;
   typedef sigc::slot<VALUE_TYPE> GetterFunction;
 
   ROProperty();
@@ -152,6 +152,7 @@ template <typename VALUE_TYPE>
 class RWProperty : public PropertyChangedSignal<VALUE_TYPE>
 {
 public:
+  typedef VALUE_TYPE ValueType;
   typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
   typedef sigc::slot<bool, VALUE_TYPE const&> SetterFunction;
   typedef sigc::slot<VALUE_TYPE> GetterFunction;
@@ -253,5 +254,6 @@ private:
 }
 
 #include "Property-inl.h"
+#include "PropertyOperators.h"
 
 #endif

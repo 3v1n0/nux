@@ -323,9 +323,9 @@ namespace nux
       //splitter->SinkReference();
 
       t_u32 no = (t_u32) m_InterfaceObject.size();
-      splitter->OnMouseDown.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseDown), no) );
-      splitter->OnMouseUp.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseUp), no) );
-      splitter->OnMouseDrag.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseDrag), no) );
+      splitter->mouse_down.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseDown), no) );
+      splitter->mouse_up.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseUp), no) );
+      splitter->mouse_drag.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseDrag), no) );
 
       ic->SetParentObject (this);
       m_InterfaceObject.push_back (ic);
@@ -624,7 +624,7 @@ namespace nux
     m_initial_config = false;
     ComputeChildLayout();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
 // VSplitter need to re implement DoneRedraw because it does not

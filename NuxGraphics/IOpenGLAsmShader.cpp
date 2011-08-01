@@ -100,7 +100,7 @@ namespace nux
       return m_CompiledAndReady;
     }
 
-    delete ShaderSource;
+    delete[] ShaderSource;
 
     m_CompiledAndReady = true;
     return m_CompiledAndReady;
@@ -162,7 +162,7 @@ namespace nux
       nuxError (TEXT ("[IOpenGLAsmPixelShader::Compile] Error in fragment shader at position: %d\n%s\n"), errPos, ErrorString );
     }
 
-    delete ShaderSource;
+    delete[] ShaderSource;
 
     m_CompiledAndReady = true;
     return m_CompiledAndReady;

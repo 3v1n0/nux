@@ -34,7 +34,6 @@
 #include "NuxImage/BitmapFormats.h"
 #include "NuxCore/Parsing.h"
 #include "NuxCore/Object.h"
-#include "NuxCore/SmartPtr/GenericSmartPointer.h"
 #include "NuxCore/ObjectPtr.h"
 
 #include "NuxCore/Math/MathUtility.h"
