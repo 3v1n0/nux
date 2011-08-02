@@ -46,7 +46,7 @@ namespace nux
 
   Quaternion::Quaternion (const Vector3 &vec, float angle)
   {
-    FromAngleAxis (angle, vec.x, vec.y, vec.z);
+    FromAngleAxis (vec.x, vec.y, vec.z, angle);
   }
 
   Quaternion::Quaternion (const Vector4 &vec)
@@ -56,7 +56,7 @@ namespace nux
 
   Quaternion::Quaternion (float axis_x, float axis_y, float axis_z, float angle_radian)
   {
-    FromAngleAxis (angle_radian, axis_x, axis_y, axis_z);
+    FromAngleAxis (axis_x, axis_y, axis_z, angle_radian);
   }
 
   Quaternion::Quaternion (float euler_x, float euler_y, float euler_z)

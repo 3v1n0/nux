@@ -33,6 +33,7 @@
 
 namespace nux
 {
+  NUX_IMPLEMENT_OBJECT_TYPE(RGBValuator);
 
   RGBValuator::RGBValuator (NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)

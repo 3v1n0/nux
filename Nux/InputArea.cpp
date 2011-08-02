@@ -484,7 +484,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::EmitStartKeyboardFocus()
   {
-    start_key_focus.emit();
+    begin_key_focus.emit();
   }
 
   void InputArea::EmitEndKeyboardFocus()
