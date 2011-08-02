@@ -1,3 +1,11 @@
+nux (1.0.8-0ubuntu2) UNRELEASED; urgency=low
+
+  * Cherry-pick upstream:
+    - compiz crashed with SIGSEGV in nux::IOpenGLVertexShader
+      ::IOpenGLVertexShader() (LP: #819739)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 02 Aug 2011 16:47:04 +0200
+
 nux (1.0.8-0ubuntu1) oneiric; urgency=low
 
   * New upstream release.
