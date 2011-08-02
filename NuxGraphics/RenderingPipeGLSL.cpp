@@ -750,7 +750,7 @@ namespace nux
                      sum += SampleTexture(TextureObject0, texCoord) * W[i];       \n\
                      texCoord += delta;                                           \n\
                      }                                                            \n\
-                     gl_FragColor = vec4(sum.x, sum.y, sum.z, sum.w);             \n\
+                     gl_FragColor = vec4(sum.x, sum.y, sum.z, 1.0);             \n\
                      }");
 
     int l = PSString.Size();
@@ -821,7 +821,7 @@ namespace nux
                      sum += SampleTexture (TextureObject0, texCoord) * W[i];      \n\
                      texCoord += delta;                                           \n\
                      }                                                            \n\
-                     gl_FragColor = vec4 (sum.x, sum.y, sum.z, sum.w);            \n\
+                     gl_FragColor = vec4 (sum.x, sum.y, sum.z, 1.0);            \n\
                      }");
 
     int l = PSString.Size();
