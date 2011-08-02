@@ -312,8 +312,8 @@ namespace nux
       _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader())
 #else
     if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader() &&
-      _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() /*&&
-      _graphics_display.GetGpuDevice()->GetGPUBrand() ==  GPU_BRAND_NVIDIA*/)
+      _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
+      (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() >= 2))
 #endif
     {
       NString renderer_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER)));
