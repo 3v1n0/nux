@@ -263,7 +263,7 @@ namespace nux
 
     if (mouse_over_area_)
     {
-      mouse_over_view_connection_ = mouse_over_area_->OnDestroyed.connect(sigc::mem_fun (this, &WindowCompositor::OnMouseOverViewDestroyed));
+      mouse_over_view_connection_ = mouse_over_area_->object_destroyed.connect(sigc::mem_fun (this, &WindowCompositor::OnMouseOverViewDestroyed));
     }
   }
 
@@ -283,7 +283,7 @@ namespace nux
 
     if (mouse_owner_area_)
     {
-      mouse_owner_view_connection_ = mouse_owner_area_->OnDestroyed.connect(sigc::mem_fun (this, &WindowCompositor::OnMouseOwnerViewDestroyed));
+      mouse_owner_view_connection_ = mouse_owner_area_->object_destroyed.connect(sigc::mem_fun (this, &WindowCompositor::OnMouseOwnerViewDestroyed));
     }
   }
 
@@ -303,7 +303,7 @@ namespace nux
 
     if (mouse_owner_base_window_)
     {
-      mouse_owner_basewindow_connection_ = mouse_owner_base_window_->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseOwnerBaseWindowDestroyed));
+      mouse_owner_basewindow_connection_ = mouse_owner_base_window_->object_destroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnMouseOwnerBaseWindowDestroyed));
     }
   }
 
@@ -1958,14 +1958,14 @@ namespace nux
 
     if (key_focus_area_)
     {
-      key_focus_area_->start_key_focus.emit();
+      key_focus_area_->begin_key_focus.emit();
     }
 
 
     key_focus_area_connection_.disconnect();
     if (area)
     {
-      key_focus_area_connection_ = area->OnDestroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnKeyNavFocusDestroyed));
+      key_focus_area_connection_ = area->object_destroyed.connect (sigc::mem_fun (this, &WindowCompositor::OnKeyNavFocusDestroyed));
     }
   }
 
