@@ -52,7 +52,7 @@ namespace nux
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLVertexShader (NString ShaderName = NString ("VertexProgram") );
+    IOpenGLVertexShader (NString ShaderName = NString ("Vertex Shader") );
     int m_CompiledAndReady;
     friend class GpuDevice;
   };
@@ -66,11 +66,31 @@ namespace nux
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLPixelShader (NString ShaderName = NString ("PixelProgram") );
+    IOpenGLPixelShader (NString ShaderName = NString ("Fragment Shader") );
     int m_CompiledAndReady;
     friend class GpuDevice;
   };
 
+#ifndef NUX_OPENGLES_20
+  class IOpenGLGeometryShader: public IOpenGLShader
+  {
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLGeometryShader, IOpenGLShader);
+  public:
+    virtual ~IOpenGLGeometryShader();
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode, const TCHAR *GeometryShaderPreprocessorDefines = TEXT(""));
+    virtual bool Compile();
+    virtual bool IsValid();
+
+    void SetInputPrimitiveType(GLenum type);
+    void SetOutputPrimitiveType(GLenum type);
+    void SetMaxVertexOutput(int max_vertex_output);
+
+  private:
+    IOpenGLGeometryShader (NString ShaderName = NString ("Geometry Shader"));
+    int m_CompiledAndReady;
+    friend class GpuDevice;
+  };
+#endif
 
   class IOpenGLShaderProgram:  public IOpenGLResource
   {

@@ -247,7 +247,7 @@ namespace nux
     PRIMITIVE_TYPE_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
   } PRIMITIVE_TYPE;
 
-  typedef enum
+  enum OpenGLResourceType
   {
     RTINDEXBUFFER,
     RTVERTEXBUFFER,
@@ -264,11 +264,12 @@ namespace nux
     RTFRAMEBUFFEROBJECT,
     RT_GLSL_VERTEXSHADER,
     RT_GLSL_PIXELSHADER,
+    RT_GLSL_GEOMETRYSHADER,
     RT_GLSL_SHADERPROGRAM,
     RT_CG_VERTEXSHADER,
     RT_CG_PIXELSHADER,
     RT_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
-  } OpenGLResourceType;
+  };
 
   /* Multi-Sample buffer types */
   typedef enum

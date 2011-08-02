@@ -30,7 +30,9 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLShader);
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexShader);
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLPixelShader);
+  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLGeometryShader);
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLShaderProgram);
+
 
   bool ExtractShaderString3 (const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines)
   {
@@ -340,91 +342,188 @@ namespace nux
     return (m_CompiledAndReady ? true : false);
   }
 
-  IOpenGLShaderProgram::IOpenGLShaderProgram (NString ShaderProgramName)
-    :   IOpenGLResource (RT_GLSL_SHADERPROGRAM)
-    ,   _FirstParameter (0)
+#ifndef NUX_OPENGLES_20
+  IOpenGLGeometryShader::IOpenGLGeometryShader (NString ShaderName)
+    :   IOpenGLShader (ShaderName, RT_GLSL_GEOMETRYSHADER)
     ,   m_CompiledAndReady (false)
-    ,   _ShaderProgramName (ShaderProgramName)
+
   {
-    _OpenGLID = glCreateProgram();
-    CHECKGL_MSG ( glCreateProgram() );
+    _OpenGLID = glCreateShader(GL_GEOMETRY_SHADER);
+    CHECKGL_MSG(glCreateShader(GL_GEOMETRY_SHADER));
   }
 
-  IOpenGLShaderProgram::~IOpenGLShaderProgram()
+  IOpenGLGeometryShader::~IOpenGLGeometryShader()
   {
-    CHECKGL ( glDeleteProgram (_OpenGLID) );
+    CHECKGL(glDeleteShader(_OpenGLID));
     _OpenGLID = 0;
     m_CompiledAndReady = false;
   }
 
-  void IOpenGLShaderProgram::LoadIShaderFile (const TCHAR *ShaderFileName, const TCHAR *VtxShaderPreprocessorDefines, const TCHAR *FrgShaderPreprocessorDefines)
+  void IOpenGLGeometryShader::SetShaderCode (const TCHAR *ShaderCode, const TCHAR *GeometryShaderPreprocessorDefines)
   {
-    nuxAssertMsg (ShaderFileName, TEXT ("[IOpenGLShaderProgram::LoadIShaderFile] Invalid shader file name.") );
-    NUX_RETURN_IF_NULL (ShaderFileName);
-    NString SourceCode;
-    LoadFileToString (SourceCode, ShaderFileName);
-    LoadIShader (&SourceCode[0], VtxShaderPreprocessorDefines, FrgShaderPreprocessorDefines);
+    nuxAssertMsg (ShaderCode, TEXT("[IOpenGLGeometryShader::SetShaderCode] Invalid shader code.") );
+    NUX_RETURN_IF_NULL(ShaderCode);
+    NString ProcessedShaderSource;
+    NString Defines(GeometryShaderPreprocessorDefines);
+    InsertPreProcessorDefinitions(ShaderCode, ProcessedShaderSource, Defines);
+
+    m_CompiledAndReady = false;
+    _ShaderCode = ProcessedShaderSource;
   }
 
-  void IOpenGLShaderProgram::LoadIShader (const TCHAR *ShaderCode, const TCHAR *VtxShaderPreprocessorDefines, const TCHAR *FrgShaderPreprocessorDefines)
+  bool IOpenGLGeometryShader::Compile()
   {
-    nuxAssertMsg (ShaderCode, TEXT ("[IOpenGLShaderProgram::LoadIShader] Invalid shader code.") );
-    NUX_RETURN_IF_NULL (ShaderCode);
+
+    GLint CodeSize = (GLint) _ShaderCode.Size();
+
+    if (CodeSize == 0)
+    {
+      nuxDebugMsg(TEXT("[IOpenGLGeometryShader::Compile] Pixel shader source code is empty.") );
+    }
+
+    char *ShaderSource = new char[CodeSize+1];
+    Memset(ShaderSource, 0, CodeSize + 1);
+    Memcpy(ShaderSource, _ShaderCode.m_string.c_str(), CodeSize);
+    CHECKGL( glShaderSource(_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize) );
+    delete ShaderSource;
+
+    // compile pixel shader object
+    CHECKGL(glCompileShader(_OpenGLID) );
+
+    // check if shader compiled
+    m_CompiledAndReady = false;
+    CHECKGL( glGetShaderiv(_OpenGLID, GL_COMPILE_STATUS, &m_CompiledAndReady) );
+
+    if (!m_CompiledAndReady)
+    {
+      ANSICHAR *InfoLogBuffer = 0;
+      GLint InfoLogBufferSize = 0;
+      GLint InfoLogReturnSize = 0;
+      GLint iLog = 0;
+
+      glGetShaderiv(_OpenGLID, GL_INFO_LOG_LENGTH, &iLog);
+      InfoLogBuffer = new ANSICHAR[iLog+1];
+      InfoLogBufferSize = iLog + 1;
+      glGetShaderInfoLog(_OpenGLID, InfoLogBufferSize, &InfoLogReturnSize, InfoLogBuffer);
+
+      if (InfoLogReturnSize != 0)
+      {
+        nuxError(TEXT("[IOpenGLGeometryShader::Compile] glCompileShader: %s"), InfoLogBuffer);
+      }
+
+      delete InfoLogBuffer;
+    }
+
+    return (m_CompiledAndReady ? true : false);
+  }
+
+  bool IOpenGLGeometryShader::IsValid()
+  {
+    return (m_CompiledAndReady ? true : false);
+  }
+
+  void IOpenGLGeometryShader::SetInputPrimitiveType(GLenum type)
+  {
+    CHECKGL(glProgramParameteri(_OpenGLID, GL_GEOMETRY_INPUT_TYPE_EXT, type));
+  }
+
+  void IOpenGLGeometryShader::SetOutputPrimitiveType(GLenum type)
+  {
+    CHECKGL(glProgramParameteri(_OpenGLID, GL_GEOMETRY_OUTPUT_TYPE_EXT, type));
+  }
+
+  void IOpenGLGeometryShader::SetMaxVertexOutput(int max_vertex_output)
+  {
+    CHECKGL(glProgramParameteri(_OpenGLID, GL_GEOMETRY_VERTICES_OUT_EXT, max_vertex_output));
+  }
+
+#endif
+
+  IOpenGLShaderProgram::IOpenGLShaderProgram(NString ShaderProgramName)
+    :   IOpenGLResource(RT_GLSL_SHADERPROGRAM)
+    ,   _FirstParameter(0)
+    ,   m_CompiledAndReady(false)
+    ,   _ShaderProgramName(ShaderProgramName)
+  {
+    _OpenGLID = glCreateProgram();
+    CHECKGL_MSG( glCreateProgram() );
+  }
+
+  IOpenGLShaderProgram::~IOpenGLShaderProgram()
+  {
+    CHECKGL( glDeleteProgram(_OpenGLID) );
+    _OpenGLID = 0;
+    m_CompiledAndReady = false;
+  }
+
+  void IOpenGLShaderProgram::LoadIShaderFile(const TCHAR *ShaderFileName, const TCHAR *VtxShaderPreprocessorDefines, const TCHAR *FrgShaderPreprocessorDefines)
+  {
+    nuxAssertMsg(ShaderFileName, TEXT("[IOpenGLShaderProgram::LoadIShaderFile] Invalid shader file name.") );
+    NUX_RETURN_IF_NULL(ShaderFileName);
+    NString SourceCode;
+    LoadFileToString(SourceCode, ShaderFileName);
+    LoadIShader(&SourceCode[0], VtxShaderPreprocessorDefines, FrgShaderPreprocessorDefines);
+  }
+
+  void IOpenGLShaderProgram::LoadIShader(const TCHAR *ShaderCode, const TCHAR *VtxShaderPreprocessorDefines, const TCHAR *FrgShaderPreprocessorDefines)
+  {
+    nuxAssertMsg(ShaderCode, TEXT("[IOpenGLShaderProgram::LoadIShader] Invalid shader code.") );
+    NUX_RETURN_IF_NULL(ShaderCode);
     NString VertexShaderSource;
-    ExtractShaderString3 (TEXT ("[Vertex Shader]"), ShaderCode, VertexShaderSource, NString (VtxShaderPreprocessorDefines) );
+    ExtractShaderString3(TEXT("[Vertex Shader]"), ShaderCode, VertexShaderSource, NString(VtxShaderPreprocessorDefines) );
     NString PixelShaderSource;
-    ExtractShaderString3 (TEXT ("[Fragment Shader]"), ShaderCode, PixelShaderSource, NString (FrgShaderPreprocessorDefines) );
+    ExtractShaderString3(TEXT("[Fragment Shader]"), ShaderCode, PixelShaderSource, NString(FrgShaderPreprocessorDefines) );
 
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
-    vs->SetShaderCode (&VertexShaderSource[0]);
-    ps->SetShaderCode (&PixelShaderSource[0]);
+    vs->SetShaderCode(&VertexShaderSource[0]);
+    ps->SetShaderCode(&PixelShaderSource[0]);
     vs->Compile();
     ps->Compile();
 
     ShaderObjectList.clear();
 
-    AddShaderObject (vs);
-    AddShaderObject (ps);
+    AddShaderObject(vs);
+    AddShaderObject(ps);
   }
 
-  void IOpenGLShaderProgram::LoadVertexShader (const TCHAR *glslshader, const TCHAR *VtxShaderPreprocessorDefines)
+  void IOpenGLShaderProgram::LoadVertexShader(const TCHAR *glslshader, const TCHAR *VtxShaderPreprocessorDefines)
   {
-    nuxAssertMsg (glslshader, TEXT ("[IOpenGLShaderProgram::LoadVertexShader] Invalid shader code.") );
-    NUX_RETURN_IF_NULL (glslshader);
+    nuxAssertMsg(glslshader, TEXT("[IOpenGLShaderProgram::LoadVertexShader] Invalid shader code.") );
+    NUX_RETURN_IF_NULL(glslshader);
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
 
     NString ProcessedShaderSource;
-    NString Defines (VtxShaderPreprocessorDefines);
-    InsertPreProcessorDefinitions (glslshader, ProcessedShaderSource, Defines);
+    NString Defines(VtxShaderPreprocessorDefines);
+    InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
-    vs->SetShaderCode (glslshader);
+    vs->SetShaderCode(glslshader);
     vs->Compile();
-    AddShaderObject (vs);
+    AddShaderObject(vs);
   }
 
-  void IOpenGLShaderProgram::LoadPixelShader (const TCHAR *glslshader, const TCHAR *FrgShaderPreprocessorDefines)
+  void IOpenGLShaderProgram::LoadPixelShader(const TCHAR *glslshader, const TCHAR *FrgShaderPreprocessorDefines)
   {
-    nuxAssertMsg (glslshader, TEXT ("[IOpenGLShaderProgram::LoadPixelShader] Invalid shader code.") );
-    NUX_RETURN_IF_NULL (glslshader);
+    nuxAssertMsg(glslshader, TEXT("[IOpenGLShaderProgram::LoadPixelShader] Invalid shader code.") );
+    NUX_RETURN_IF_NULL(glslshader);
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     NString ProcessedShaderSource;
-    NString Defines (FrgShaderPreprocessorDefines);
-    InsertPreProcessorDefinitions (glslshader, ProcessedShaderSource, Defines);
+    NString Defines(FrgShaderPreprocessorDefines);
+    InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
-    ps->SetShaderCode (glslshader);
+    ps->SetShaderCode(glslshader);
     ps->Compile();
-    AddShaderObject (ps);
+    AddShaderObject(ps);
   }
 
-  void IOpenGLShaderProgram::AddShaderObject (ObjectPtr<IOpenGLShader> ShaderObject)
+  void IOpenGLShaderProgram::AddShaderObject(ObjectPtr<IOpenGLShader> ShaderObject)
   {
-    ShaderObjectList.push_back (ShaderObject);
+    ShaderObjectList.push_back(ShaderObject);
   }
 
-  void IOpenGLShaderProgram::AddShaderParameter (GLShaderParameter* parameter)
+  void IOpenGLShaderProgram::AddShaderParameter(GLShaderParameter* parameter)
   {
     GLShaderParameter* temp = _FirstParameter;
 
@@ -445,13 +544,13 @@ namespace nux
     CheckUniformLocation();
   }
 
-  void IOpenGLShaderProgram::RemoveShaderObject (ObjectPtr<IOpenGLShader> ShaderObject)
+  void IOpenGLShaderProgram::RemoveShaderObject(ObjectPtr<IOpenGLShader> ShaderObject)
   {
-    std::vector< ObjectPtr<IOpenGLShader> >::iterator it = find (ShaderObjectList.begin(), ShaderObjectList.end(), ShaderObject);
+    std::vector< ObjectPtr<IOpenGLShader> >::iterator it = find(ShaderObjectList.begin(), ShaderObjectList.end(), ShaderObject);
 
     if (it != ShaderObjectList.end() )
     {
-      ShaderObjectList.erase (it);
+      ShaderObjectList.erase(it);
     }
   }
 
@@ -464,7 +563,7 @@ namespace nux
   {
     // Get the number of attached shaders.
     GLint NumAttachedShaders;
-    CHECKGL ( glGetProgramiv (_OpenGLID, GL_ATTACHED_SHADERS, &NumAttachedShaders) );
+    CHECKGL( glGetProgramiv(_OpenGLID, GL_ATTACHED_SHADERS, &NumAttachedShaders) );
     GLuint *ShaderObjects = 0;
 
     if (NumAttachedShaders)
@@ -472,13 +571,13 @@ namespace nux
       ShaderObjects = new GLuint[NumAttachedShaders];
     }
 
-    CHECKGL ( glGetAttachedShaders (_OpenGLID, NumAttachedShaders, NULL, ShaderObjects) );
+    CHECKGL( glGetAttachedShaders(_OpenGLID, NumAttachedShaders, NULL, ShaderObjects) );
 
     // Detach everything first
     for (int i = 0; i < (int) NumAttachedShaders; i++)
     {
       unsigned int obj = ShaderObjects[i];
-      CHECKGL ( glDetachShader (_OpenGLID, obj) );
+      CHECKGL( glDetachShader(_OpenGLID, obj) );
     }
 
     if (NumAttachedShaders)
@@ -492,17 +591,17 @@ namespace nux
       {
         if (ShaderObjectList[i]->Compile() == false)
         {
-          nuxDebugMsg (TEXT ("[IOpenGLShaderProgram::Link] Attached shader %s does not compile with program: %s."), ShaderObjectList[i]->_ShaderName.GetTCharPtr(), _ShaderProgramName.GetTCharPtr() );
+          nuxDebugMsg(TEXT("[IOpenGLShaderProgram::Link] Attached shader %s does not compile with program: %s."), ShaderObjectList[i]->_ShaderName.GetTCharPtr(), _ShaderProgramName.GetTCharPtr() );
         }
       }
 
       unsigned int obj = ShaderObjectList[i]->GetOpenGLID();
-      CHECKGL ( glAttachShader (_OpenGLID, obj) );
+      CHECKGL( glAttachShader(_OpenGLID, obj) );
     }
 
     GLint linked;
-    CHECKGL ( glLinkProgram (_OpenGLID) );
-    CHECKGL ( glGetProgramiv (_OpenGLID, GL_LINK_STATUS, &linked) );
+    CHECKGL( glLinkProgram(_OpenGLID) );
+    CHECKGL( glGetProgramiv(_OpenGLID, GL_LINK_STATUS, &linked) );
 
     if (linked == GL_FALSE)
     {
@@ -510,15 +609,15 @@ namespace nux
       GLint InfoLogBufferSize = 0;
       GLint InfoLogReturnSize = 0;
       GLint iLog = 0;
-      glGetProgramiv (_OpenGLID, GL_INFO_LOG_LENGTH, &iLog);
+      glGetProgramiv(_OpenGLID, GL_INFO_LOG_LENGTH, &iLog);
       InfoLogBuffer = new ANSICHAR[iLog+1];
       InfoLogBufferSize = iLog + 1;
 
-      glGetProgramInfoLog (_OpenGLID, InfoLogBufferSize, &InfoLogReturnSize, InfoLogBuffer);
+      glGetProgramInfoLog(_OpenGLID, InfoLogBufferSize, &InfoLogReturnSize, InfoLogBuffer);
 
       if (InfoLogReturnSize != 0)
       {
-        nuxError (TEXT ("[IOpenGLShaderProgram::Link] glLinkProgram: %s"), InfoLogBuffer);
+        nuxError(TEXT("[IOpenGLShaderProgram::Link] glLinkProgram: %s"), InfoLogBuffer);
       }
 
       delete InfoLogBuffer;
@@ -528,8 +627,8 @@ namespace nux
 
     GLint validated;
     // glValidateProgram checks to see whether the executables contained in program can execute given the current OpenGL state.
-    CHECKGL ( glValidateProgram (_OpenGLID) );
-    CHECKGL ( glGetProgramiv (_OpenGLID, GL_VALIDATE_STATUS, &validated) );
+    CHECKGL( glValidateProgram(_OpenGLID) );
+    CHECKGL( glGetProgramiv(_OpenGLID, GL_VALIDATE_STATUS, &validated) );
 
     if (validated == GL_FALSE)
     {
@@ -537,15 +636,15 @@ namespace nux
       GLint InfoLogBufferSize = 0;
       GLint InfoLogReturnSize = 0;
       GLint iLog = 0;
-      glGetProgramiv (_OpenGLID, GL_INFO_LOG_LENGTH, &iLog);
+      glGetProgramiv(_OpenGLID, GL_INFO_LOG_LENGTH, &iLog);
       InfoLogBuffer = new ANSICHAR[iLog+1];
       InfoLogBufferSize = iLog + 1;
 
-      glGetProgramInfoLog (_OpenGLID, InfoLogBufferSize, &InfoLogReturnSize, InfoLogBuffer);
+      glGetProgramInfoLog(_OpenGLID, InfoLogBufferSize, &InfoLogReturnSize, InfoLogBuffer);
 
       if (InfoLogReturnSize != 0)
       {
-        nuxError (TEXT ("[IOpenGLShaderProgram::Link] glValidateProgram: %s"), InfoLogBuffer);
+        nuxError(TEXT("[IOpenGLShaderProgram::Link] glValidateProgram: %s"), InfoLogBuffer);
       }
 
       delete InfoLogBuffer;
@@ -562,14 +661,14 @@ namespace nux
     return m_CompiledAndReady;
   }
 
-  void IOpenGLShaderProgram::Begin (void)
+  void IOpenGLShaderProgram::Begin(void)
   {
-    CHECKGL ( glUseProgramObjectARB (_OpenGLID) );
+    CHECKGL( glUseProgramObjectARB(_OpenGLID) );
   }
 
-  void IOpenGLShaderProgram::End (void)
+  void IOpenGLShaderProgram::End(void)
   {
-    CHECKGL ( glUseProgramObjectARB (0) );
+    CHECKGL( glUseProgramObjectARB(0) );
   }
 
   void IOpenGLShaderProgram::CheckAttributeLocation()
@@ -589,7 +688,7 @@ namespace nux
     GLenum type;
 
     GLint num_active_attributes;
-    CHECKGL ( glGetObjectParameterivARB (_OpenGLID, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, &num_active_attributes) );
+    CHECKGL( glGetObjectParameterivARB(_OpenGLID, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, &num_active_attributes) );
 
 
     //         Vertex Attribute Aliasing
@@ -655,7 +754,7 @@ namespace nux
         case GL_FLOAT_MAT4:
         default:
           //todo
-          nuxAssert (0);
+          nuxAssert(0);
       }
     }
   }

@@ -86,34 +86,34 @@ inline std::string const& LoggerModule::module() const
 
 inline bool LoggerModule::IsErrorEnabled() const
 {
-  return GetEffectiveLogLevel() <= ERROR;
+  return GetEffectiveLogLevel() <= Error;
 }
 
 inline bool LoggerModule::IsWarningEnabled() const
 {
-  return GetEffectiveLogLevel() <= WARNING;
+  return GetEffectiveLogLevel() <= Warning;
 }
 
 inline bool LoggerModule::IsInfoEnabled() const
 {
-  return GetEffectiveLogLevel() <= INFO;
+  return GetEffectiveLogLevel() <= Info;
 }
 
 inline bool LoggerModule::IsDebugEnabled() const
 {
-  return GetEffectiveLogLevel() <= DEBUG;
+  return GetEffectiveLogLevel() <= Debug;
 }
 
 inline bool LoggerModule::IsTraceEnabled() const
 {
-  return GetEffectiveLogLevel() <= TRACE;
+  return GetEffectiveLogLevel() <= Trace;
 }
 
 inline void LoggerModule::SetLogLevel(Level level)
 {
   // The root module can't be unspecified.
   if (module_ == "" && level == NOT_SPECIFIED)
-    level = WARNING;
+    level = Warning;
   level_ = level;
 }
 
@@ -194,7 +194,7 @@ LoggerModules::LoggerModules()
   : root_(new LoggerModule("", LoggerModulePtr()))
 {
   // Make sure we have the root logger available.
-  root_->SetLogLevel(WARNING);
+  root_->SetLogLevel(Warning);
   modules_.insert(ModuleMap::value_type("", root_));
 }
 
@@ -361,16 +361,16 @@ Level get_logging_level(std::string level)
 {
   boost::to_upper(level);
   if (level == "TRACE")
-    return TRACE;
+    return Trace;
   if (level == "DEBUG")
-    return DEBUG;
+    return Debug;
   if (level == "INFO")
-    return INFO;
+    return Info;
   if (level == "WARN" || level == "WARNING")
-    return WARNING;
+    return Warning;
   if (level == "ERROR")
-    return ERROR;
-  return WARNING;
+    return Error;
+  return Warning;
 }
 
 BlockTracer::BlockTracer(Logger& logger,
@@ -408,17 +408,17 @@ char const* str_level(Level severity)
   {
   case NOT_SPECIFIED:
     return "NOT_SPECIFIED";
-  case TRACE:
+  case Trace:
     return "TRACE";
-  case DEBUG:
+  case Debug:
     return "DEBUG";
-  case INFO:
+  case Info:
     return "INFO";
-  case WARNING:
+  case Warning:
     return "WARNING";
-  case ERROR:
+  case Error:
     return "ERROR";
-  case CRITICAL:
+  case Critical:
     return "CRITICAL";
   }
   return "<unknown>";

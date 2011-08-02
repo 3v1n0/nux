@@ -175,7 +175,7 @@ namespace nux
 
     key_down.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
 
-    start_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
+    begin_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
     end_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);

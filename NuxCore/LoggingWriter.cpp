@@ -45,17 +45,17 @@ const char* severity_string(Level severity)
   // The return value is always padded out here.
   switch (severity)
   {
-  case CRITICAL:
+  case Critical:
     return "CRIT ";
-  case ERROR:
+  case Error:
     return "ERROR";
-  case WARNING:
+  case Warning:
     return "WARN ";
-  case INFO:
+  case Info:
     return "INFO ";
-  case DEBUG:
+  case Debug:
     return "DEBUG";
-  case TRACE:
+  case Trace:
     return "TRACE";
   default:
     // We technically shouldn't get this.
