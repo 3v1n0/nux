@@ -1336,8 +1336,9 @@ namespace nux
       colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8);
     }
 
-    if ((depthbuffer.IsValid() == false) || (depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
+    if ((depthbuffer.IsValid()) && ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
     {
+      // Generate a new depth texture only if a valid one was passed to this function.
       depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8);
     }
 
