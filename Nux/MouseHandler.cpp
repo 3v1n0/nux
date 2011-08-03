@@ -171,6 +171,9 @@ namespace nux
         _state |= AREA_MOUSE_STATUS_MOVE;
       }
       break;
+
+      default:
+      break;
     }
 
     return _state;
@@ -194,7 +197,7 @@ namespace nux
 //     return true;
 //   }
 
-//   bool AreaEventProcessor::HasMouseFocus()
+//   bool AreaEventProcessor::IsMouseOwner()
 //   {
 //     return _has_mouse_focus;
 //   }

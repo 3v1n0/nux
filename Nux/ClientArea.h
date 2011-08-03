@@ -52,7 +52,7 @@ namespace nux
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void NeedRedraw();
+    virtual void QueueDraw();
 
     void EnableClientDraw (bool b)
     {
@@ -69,7 +69,6 @@ namespace nux
     virtual void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvKeyEvent (
-      GraphicsEngine &    ,   /*Graphics Context for text operation*/
       unsigned long       ,   /*event type*/
       unsigned long       ,   /*event keysym*/
       unsigned long       ,   /*event state*/
@@ -90,6 +89,9 @@ namespace nux
       return m_FrameBufferObject;
     }
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
+
+  protected:
+    virtual bool AcceptKeyNavFocus();
 
   private:
     // We use Rectangle texture to attach to the framebuffer because some GPU like the Geforce FX 5600 do not

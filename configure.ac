@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [1])
 m4_define([nux_minor_version], [0])
-m4_define([nux_micro_version], [4])
+m4_define([nux_micro_version], [8])
 
 # Bump this when we break ABI
 m4_define([nux_api_version], [1.0])
@@ -109,7 +109,7 @@ AC_CHECK_FUNCS([memset munmap strcasecmp strdup])
 PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
-GL_PKGS="gl glew glewmx"
+GL_PKGS="gl glu glew glewmx"
 MAINTAINER_CFLAGS=""
 
 # Enable opengl es 20 code path
@@ -131,7 +131,7 @@ AC_SUBST(MAINTAINER_CFLAGS)
 
 dnl ===========================================================================
 
-PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0)
+PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0 gio-2.0)
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 
@@ -237,7 +237,7 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 dnl ==========================================================================
 
 if test "x$GCC" = "xyes"; then
-  GCC_FLAGS="-g -Wall"
+  GCC_FLAGS="-g -Wall -std=c++0x"
 fi
 AC_SUBST(GCC_FLAGS)
 
@@ -336,6 +336,7 @@ echo -e "        Prefix            : ${BOLD_WHITE}${prefix}"
 
 echo -e "${RESET}"
 echo -e "${GREEN} • Compiler Options:${RESET}"
+echo -e "        CFLAGS            : ${BOLD_WHITE}${CFLAGS} ${GCC_FLAGS}${RESET}" 
 echo -e "        Maintainer CFlags : ${BOLD_WHITE}${MAINTAINER_CFLAGS}${RESET}"
 echo -e "        Debug Mode        : ${BOLD_WHITE}${enable_debug}${RESET}"
 

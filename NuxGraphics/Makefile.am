@@ -56,6 +56,7 @@ source_h = \
   $(srcdir)/GraphicsDisplay.h \
   $(srcdir)/GraphicsEngine.h \
   $(srcdir)/MeshData.h \
+  $(srcdir)/MeshFileLoader-OBJ.h \
   $(srcdir)/IOpenGLAnimatedTexture.h \
   $(srcdir)/IOpenGLAsmShader.h \
   $(srcdir)/IOpenGLBaseTexture.h \
@@ -115,6 +116,7 @@ source_cpp = \
   $(srcdir)/GraphicsDisplayX11.cpp \
   $(srcdir)/GraphicsEngine.cpp \
   $(srcdir)/MeshData.cpp \
+  $(srcdir)/MeshFileLoader-OBJ.cpp \
   $(srcdir)/IOpenGLAnimatedTexture.cpp \
   $(srcdir)/IOpenGLAsmShader.cpp \
   $(srcdir)/IOpenGLBaseTexture.cpp \

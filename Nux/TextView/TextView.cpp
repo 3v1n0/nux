@@ -163,18 +163,18 @@ namespace nux
     vscrollbar->OnScrollUp.connect ( sigc::mem_fun (this, &TextView::ScrollUp) );
     vscrollbar->OnScrollDown.connect ( sigc::mem_fun (this, &TextView::ScrollDown) );
 
-    OnMouseDown.connect (sigc::mem_fun (this, &TextView::OnLButtonDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &TextView::OnLButtonUp) );
-    OnMouseMove.connect (sigc::mem_fun (this, &TextView::RecvMouseMove) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &TextView::RecvMouseMove) );
-    OnMouseEnter.connect (sigc::mem_fun (this, &TextView::RecvMouseEnter) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &TextView::RecvMouseLeave) );
+    mouse_down.connect (sigc::mem_fun (this, &TextView::OnLButtonDown) );
+    mouse_up.connect (sigc::mem_fun (this, &TextView::OnLButtonUp) );
+    mouse_move.connect (sigc::mem_fun (this, &TextView::RecvMouseMove) );
+    mouse_drag.connect (sigc::mem_fun (this, &TextView::RecvMouseMove) );
+    mouse_enter.connect (sigc::mem_fun (this, &TextView::RecvMouseEnter) );
+    mouse_leave.connect (sigc::mem_fun (this, &TextView::RecvMouseLeave) );
 
-    OnMouseWheel.connect (sigc::mem_fun (this, &TextView::RecvMouseWheel) );
-    OnKeyEvent.connect (sigc::mem_fun (this, &TextView::RecvKeyEvent) );
+    mouse_wheel.connect (sigc::mem_fun (this, &TextView::RecvMouseWheel) );
+    key_down.connect (sigc::mem_fun (this, &TextView::RecvKeyEvent) );
 
-    OnStartFocus.connect (sigc::mem_fun (this, &TextView::RecvStartFocus) );
-    OnEndFocus.connect (sigc::mem_fun (this, &TextView::RecvEndFocus) );
+    begin_key_focus.connect (sigc::mem_fun (this, &TextView::RecvStartFocus) );
+    end_key_focus.connect (sigc::mem_fun (this, &TextView::RecvEndFocus) );
 
     MouseAutoScrollTimer = new TimerFunctor;
     MouseAutoScrollTimer->OnTimerExpired.connect (sigc::mem_fun (this, &TextView::RecvTimer) );
@@ -724,9 +724,9 @@ namespace nux
       //nuxDebugMsg(TEXT("HScrollPos = %d"), m_nHScrollPos);
       hscrollbar->SetContentOffset (m_ContentOffsetX, m_ContentOffsetY);
     }
-    hscrollbar->NeedRedraw();
+    hscrollbar->QueueDraw();
     RepositionCaret();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TextView::ScrollRight (float stepx, int mousedx)
@@ -747,9 +747,9 @@ namespace nux
       //nuxDebugMsg(TEXT("HScrollPos = %d"), m_nHScrollPos);
       hscrollbar->SetContentOffset (m_ContentOffsetX, m_ContentOffsetY);
     }
-    hscrollbar->NeedRedraw();
+    hscrollbar->QueueDraw();
     RepositionCaret();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TextView::ScrollUp (float stepy, int mousedy)
@@ -770,9 +770,9 @@ namespace nux
       //nuxDebugMsg(TEXT("VScrollPos = %d"), m_nVScrollPos);
       vscrollbar->SetContentOffset (m_ContentOffsetX, m_ContentOffsetY);
     }
-    vscrollbar->NeedRedraw();
+    vscrollbar->QueueDraw();
     RepositionCaret();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TextView::ScrollDown (float stepy, int mousedy)
@@ -793,9 +793,9 @@ namespace nux
       //nuxDebugMsg(TEXT("VScrollPos = %d"), m_nVScrollPos);
       vscrollbar->SetContentOffset (m_ContentOffsetX, m_ContentOffsetY);
     }
-    vscrollbar->NeedRedraw();
+    vscrollbar->QueueDraw();
     RepositionCaret();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TextView::RecvMouseWheel (int x, int y, int delta, t_u32 button_flags, t_u32 key_flags)
@@ -815,9 +815,9 @@ namespace nux
           m_ContentOffsetY = 0;
 
         SetupScrollbars();
-        vscrollbar->NeedRedraw();
+        vscrollbar->QueueDraw();
         RepositionCaret();
-        NeedRedraw();
+        QueueDraw();
       }
     }
 
@@ -834,14 +834,13 @@ namespace nux
       }
 
       SetupScrollbars();
-      vscrollbar->NeedRedraw();
+      vscrollbar->QueueDraw();
       RepositionCaret();
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
   void TextView::RecvKeyEvent (
-    GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
     t_u32    eventType  , /*event type*/
     t_u32    keysym     , /*event keysym*/
     t_u32    state      , /*event state*/
@@ -857,9 +856,9 @@ namespace nux
         m_ContentOffsetY = 0;
 
       SetupScrollbars();
-      vscrollbar->NeedRedraw();
+      vscrollbar->QueueDraw();
       RepositionCaret();
-      NeedRedraw();
+      QueueDraw();
     }
 
     if (keyCount && ( (keysym == NUX_VK_PAGE_DOWN) || (keysym == NUX_KP_PAGE_DOWN) ) )
@@ -870,9 +869,9 @@ namespace nux
         m_ContentOffsetY = -m_nLineCount * m_nLineHeight;
 
       SetupScrollbars();
-      vscrollbar->NeedRedraw();
+      vscrollbar->QueueDraw();
       RepositionCaret();
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
@@ -881,7 +880,7 @@ namespace nux
     RepositionCaret();
     m_HasFocus = true;
     StartBlinkCursor (true);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TextView::RecvEndFocus()
@@ -895,7 +894,7 @@ namespace nux
 
     m_HasFocus = false;
     StopBlinkCursor (false);
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool TextView::IsKeyPressed (t_u32 virtualkey)
@@ -909,7 +908,7 @@ namespace nux
     m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
     BlinkCursor = !BlinkCursor;
     AddDirtyLine (m_nCurrentLine);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TextView::StopBlinkCursor (bool BlinkState)
@@ -918,7 +917,7 @@ namespace nux
     m_BlinkTimerHandler = 0;
     BlinkCursor = BlinkState;
     AddDirtyLine (m_nCurrentLine);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TextView::StartBlinkCursor (bool BlinkState)
@@ -926,7 +925,7 @@ namespace nux
     m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
     BlinkCursor = BlinkState;
     AddDirtyLine (m_nCurrentLine);
-    NeedRedraw();
+    QueueDraw();
   }
 
 }

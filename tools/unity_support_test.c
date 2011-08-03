@@ -194,7 +194,7 @@ static void print_report (const char* vendor, const char* renderer,
                "GL framebuffer object:    %s\n"
                "GL version is 1.4+:       %s\n"
                "\n"
-               "Unity supported:          %s\n",
+               "Unity 3D supported:       %s\n",
                flags & FLAG_GL_ARB_VERTEX_PROGRAM ? yes : no,
                flags & FLAG_GL_ARB_FRAGMENT_PROGRAM ? yes : no,
                flags & FLAG_GL_ARB_VERTEX_BUFFER_OBJECT ? yes : no,

@@ -118,6 +118,9 @@ namespace nux
     void RecvCheckColorModel (bool, color::Model, color::Channel);
 
     sigc::signal< void, ColorEditor * > sigChange;
+
+  protected:
+    virtual bool AcceptKeyNavFocus();
   private:
     void DrawBaseChannelMarker (GraphicsEngine &GfxContext);
     void DrawRGB (GraphicsEngine &GfxContext, bool force_draw);

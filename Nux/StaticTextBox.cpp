@@ -123,7 +123,7 @@ namespace nux
     if (GetMinWidthMatchText() )
       AdjustMinWidthToMatchText();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void StaticTextBox::SetMinWidthMatchText (bool b)
@@ -161,4 +161,8 @@ namespace nux
     m_Background = layer->Clone();
   }
 
+  bool StaticTextBox::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

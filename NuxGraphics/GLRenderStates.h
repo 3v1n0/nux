@@ -346,11 +346,8 @@ namespace nux
     inline void HW__SetPolygonOffset (float Factor, float Units);
 
   private:
-    RenderStateMap *m_RenderStateChangeList;
-    RenderStateMap *m_SamplerStateChangeList;
     RenderStateMap m_RenderStateChanges[GFXRS_MAX_RENDERSTATES];
     RenderStateMap m_SamplerStateChanges[4][GFXSS_MAX_SAMPLERSTATES];
-
   };
 
 

@@ -125,6 +125,7 @@ namespace nux
     friend class IOpenGLShader;
     friend class IOpenGLVertexShader;
     friend class IOpenGLPixelShader;
+    friend class IOpenGLGeometryShader;
     friend class IOpenGLShaderProgram;
     friend class IOpenGLAsmVertexShader;
     friend class IOpenGLAsmPixelShader;

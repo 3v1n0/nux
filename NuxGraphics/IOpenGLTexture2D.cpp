@@ -33,7 +33,8 @@ namespace nux
                                       , BitmapFormat PixelFormat, bool Dummy, NUX_FILE_LINE_DECL)
     :   IOpenGLBaseTexture (RTTEXTURE, Width, Height, 1, Levels, PixelFormat, NUX_FILE_LINE_PARAM)
   {
-    if (Dummy == false)
+    external_id_ = Dummy;
+    if (external_id_ == false)
     {
       glGenTextures (1, &_OpenGLID);
       CHECKGL ( glBindTexture (GL_TEXTURE_2D, _OpenGLID) );
@@ -77,7 +78,10 @@ namespace nux
 
     _SurfaceArray.clear();
 
-    CHECKGL ( glDeleteTextures (1, &_OpenGLID) );
+    if (external_id_ == false)
+    {
+      CHECKGL ( glDeleteTextures (1, &_OpenGLID) );
+    }
     GRunTimeStats.UnRegister (this);
     _OpenGLID = 0;
 
@@ -168,6 +172,4 @@ namespace nux
       return 0;
     }
   }
-
 }
-

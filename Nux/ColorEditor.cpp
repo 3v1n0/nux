@@ -210,13 +210,13 @@ namespace nux
     m_ColorSquare       = new InputArea (NUX_TRACKER_LOCATION);
     m_hlayout           = new HLayout (NUX_TRACKER_LOCATION);
 
-    m_BaseChannelArea->OnMouseDown.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseDown) );
-    m_BaseChannelArea->OnMouseUp.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseUp) );
-    m_BaseChannelArea->OnMouseDrag.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseDrag) );
+    m_BaseChannelArea->mouse_down.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseDown) );
+    m_BaseChannelArea->mouse_up.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseUp) );
+    m_BaseChannelArea->mouse_drag.connect (sigc::mem_fun (this, &ColorEditor::RecvMouseDrag) );
 
-    m_PickerArea->OnMouseDown.connect (sigc::mem_fun (this, &ColorEditor::RecvPickerMouseDown) );
-    m_PickerArea->OnMouseUp.connect (sigc::mem_fun (this, &ColorEditor::RecvPickerMouseUp) );
-    m_PickerArea->OnMouseDrag.connect (sigc::mem_fun (this, &ColorEditor::RecvPickerMouseDrag) );
+    m_PickerArea->mouse_down.connect (sigc::mem_fun (this, &ColorEditor::RecvPickerMouseDown) );
+    m_PickerArea->mouse_up.connect (sigc::mem_fun (this, &ColorEditor::RecvPickerMouseUp) );
+    m_PickerArea->mouse_drag.connect (sigc::mem_fun (this, &ColorEditor::RecvPickerMouseDrag) );
 
     m_ColorSquare->SetMinMaxSize (62, 32);
     m_PickerArea->SetMinimumSize (200, 200);
@@ -421,22 +421,22 @@ namespace nux
       DrawHSV (GfxContext, force_draw);
     }
 
-    redcheck->NeedRedraw();
-    redtext->NeedRedraw();
-    greencheck->NeedRedraw();
-    greentext->NeedRedraw();
-    bluecheck->NeedRedraw();
-    bluetext->NeedRedraw();
+    redcheck->QueueDraw();
+    redtext->QueueDraw();
+    greencheck->QueueDraw();
+    greentext->QueueDraw();
+    bluecheck->QueueDraw();
+    bluetext->QueueDraw();
 
-    huecheck->NeedRedraw();
-    huetext->NeedRedraw();
-    saturationcheck->NeedRedraw();
-    saturationtext->NeedRedraw();
-    valuecheck->NeedRedraw();
-    valuetext->NeedRedraw();
+    huecheck->QueueDraw();
+    huetext->QueueDraw();
+    saturationcheck->QueueDraw();
+    saturationtext->QueueDraw();
+    valuecheck->QueueDraw();
+    valuetext->QueueDraw();
 
-//     OkButton->NeedRedraw();
-//     CancelButton->NeedRedraw();
+//     OkButton->QueueDraw();
+//     CancelButton->QueueDraw();
 
     GfxContext.PopClippingRectangle();
   }
@@ -709,12 +709,12 @@ namespace nux
     m_VertMarkerPosition = Point (Clamp<int> (x, 0, m_BaseChannelArea->GetBaseWidth() - 1), Clamp<int> (y, 0, m_BaseChannelArea->GetBaseHeight() - 1) );
 
     sigChange.emit (this);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorEditor::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorEditor::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -851,12 +851,12 @@ namespace nux
     valuetext->SetText (m_Validator.ToString (100 * hsv_.value) );
 
     sigChange.emit (this);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorEditor::RecvPickerMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorEditor::RecvPickerMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -952,7 +952,7 @@ void ColorEditor::RecvCheckColorModel (bool b, color::Model ColorModel, color::C
       valuetext->SetText (m_Validator.ToString (100 * hsv_.value) );
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   Color ColorEditor::GetRGBColor() const
@@ -1068,4 +1068,8 @@ void ColorEditor::RecvCheckColorModel (bool b, color::Model ColorModel, color::C
     return m_ColorChannel;
   }
 
+  bool ColorEditor::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

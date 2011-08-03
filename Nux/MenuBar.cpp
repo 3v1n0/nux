@@ -267,11 +267,11 @@ namespace nux
       menubar_item->area->SetMinMaxSize (MENUBAR_ICON_WIDTH, MENUBAR_ICON_HEIGHT);
     }
 
-    menubar_item->area->OnMouseEnter.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::EmitItemMouseEnter), menubar_item) );
-    menubar_item->area->OnMouseLeave.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::EmitItemMouseLeave), menubar_item) );
-    menubar_item->area->OnMouseDown.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::EmitItemMouseDown), menubar_item) );
-    menubar_item->area->OnMouseDrag.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::RecvItemMouseDrag), menubar_item) );
-    menubar_item->area->OnMouseUp.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::EmitItemMouseUp), menubar_item) );
+    menubar_item->area->mouse_enter.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::EmitItemMouseEnter), menubar_item) );
+    menubar_item->area->mouse_leave.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::EmitItemMouseLeave), menubar_item) );
+    menubar_item->area->mouse_down.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::EmitItemMouseDown), menubar_item) );
+    menubar_item->area->mouse_drag.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::RecvItemMouseDrag), menubar_item) );
+    menubar_item->area->mouse_up.connect (sigc::bind ( sigc::mem_fun (this, &MenuBar::EmitItemMouseUp), menubar_item) );
 
     menubar_item->menu->SetParentMenu (0);
     menubar_item->menu->sigActionTriggered.connect (sigc::mem_fun (this, &MenuBar::RecvSigActionTriggered) );
@@ -299,12 +299,12 @@ namespace nux
       m_IsOpeningMenu = true;
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void MenuBar::EmitItemMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
   {
-    NeedRedraw();
+    QueueDraw();
   }
   void MenuBar::EmitItemMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
   {
@@ -335,7 +335,7 @@ namespace nux
       m_IsOpeningMenu = false;
     }
 
-    NeedRedraw ();
+    QueueDraw ();
   }
 
   void MenuBar::EmitItemMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
@@ -372,46 +372,47 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void MenuBar::RecvItemMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
   {
-    // Transition between one menu bar item to another
-    if (GetWindowCompositor().GetMouseFocusArea() == menubar_item->area)
-    {
-      if (!menubar_item->area->IsMouseInside() ) // can also test GetWindowCompositor().GetMouseOverArea() != &menubar_item->area
-      {
-        std::list< MenuBarItem * >::iterator it;
-        // compute window coordinates x and y;
-        int winx = menubar_item->area->GetBaseX() + x;
-        int winy = menubar_item->area->GetBaseY() + y;
-
-        for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
-        {
-          InputArea *area = (*it)->area;
-          Geometry geometry = area->GetGeometry();
-
-          if (geometry.IsPointInside (winx, winy) )
-          {
-            // Close the menu below menubar_item (the one that has the focus
-            menubar_item->area->ForceStopFocus (0, 0);
-
-            // EmitItemMouseEnter is going to open the menu below (*it)
-            {
-              EmitItemMouseEnter (winx, winy, button_flags, key_flags, (*it) );
-              m_IsOpeningMenu = true;
-              area->ForceStartFocus (0, 0);
-
-              GetWindowCompositor().SetMouseFocusArea (area);
-              GetWindowCompositor().SetMouseOverArea (area);
-            }
-
-            break;
-          }
-        }
-      }
-    }
+    // TODO: Port to new event architecture
+//     // Transition between one menu bar item to another
+//     if (GetWindowCompositor().GetMouseFocusArea() == menubar_item->area)
+//     {
+//       if (!menubar_item->area->IsMouseInside() ) // can also test GetWindowCompositor().GetMouseOverArea() != &menubar_item->area
+//       {
+//         std::list< MenuBarItem * >::iterator it;
+//         // compute window coordinates x and y;
+//         int winx = menubar_item->area->GetBaseX() + x;
+//         int winy = menubar_item->area->GetBaseY() + y;
+// 
+//         for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
+//         {
+//           InputArea *area = (*it)->area;
+//           Geometry geometry = area->GetGeometry();
+// 
+//           if (geometry.IsPointInside (winx, winy) )
+//           {
+//             // Close the menu below menubar_item (the one that has the focus
+//             menubar_item->area->ForceStopFocus (0, 0);
+// 
+//             // EmitItemMouseEnter is going to open the menu below (*it)
+//             {
+//               EmitItemMouseEnter (winx, winy, button_flags, key_flags, (*it) );
+//               m_IsOpeningMenu = true;
+//               area->ForceStartFocus (0, 0);
+// 
+//               GetWindowCompositor().SetMouseFocusArea (area);
+//               GetWindowCompositor().SetMouseOverArea (area);
+//             }
+// 
+//             break;
+//           }
+//         }
+//       }
+//     }
   }
 
   void MenuBar::RecvSigActionTriggered (MenuPage *menu, ActionItem *action)
@@ -421,7 +422,7 @@ namespace nux
     if (m_CurrentMenu)
     {
       m_CurrentMenu->menu->StopMenu();
-      NeedRedraw();
+      QueueDraw();
     }
 
     m_CurrentMenu = 0;
@@ -443,7 +444,7 @@ namespace nux
     m_CurrentMenu = 0;
     m_IsOpeningMenu = false;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void MenuBar::RecvSigMouseDownOutsideMenuCascade (MenuPage *menu, int x, int y)

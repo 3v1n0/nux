@@ -23,8 +23,8 @@
 #ifndef BASEWINDOW_H
 #define BASEWINDOW_H
 
-#include <boost/scoped_ptr.hpp>
 
+#include <boost/scoped_ptr.hpp>
 #include "ScrollView.h"
 
 #if defined(NUX_OS_WINDOWS)
@@ -36,7 +36,6 @@
 
 #include "InputArea.h"
 #include "MouseHandler.h"
-#include "StaticTextBox.h"
 #include "PaintLayer.h"
 
 namespace nux
@@ -72,6 +71,7 @@ namespace nux
     BaseWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
     virtual ~BaseWindow();
 
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
@@ -187,6 +187,10 @@ namespace nux
     }
   protected:
     
+    void SetAcceptKeyNavFocus(bool accept);
+    bool accept_key_nav_focus_;
+    virtual bool AcceptKeyNavFocus();
+
      //! Callback function to set the window position and size.
     ConfigureNotifyCallback m_configure_notify_callback;
     //! Callback data for ConfigureNotifyCallback.

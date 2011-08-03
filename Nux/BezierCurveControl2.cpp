@@ -54,11 +54,11 @@ namespace nux
     m_control_knot.push_back (Knot2 (0.7f, 0.9f) );
     m_control_knot.push_back (Knot2 (1.0f, 1.0f) );
 
-    OnMouseDown.connect (sigc::mem_fun (this, &BezierCurveControl2::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &BezierCurveControl2::RecvMouseUp) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &BezierCurveControl2::RecvMouseDrag) );
+    mouse_down.connect (sigc::mem_fun (this, &BezierCurveControl2::RecvMouseDown) );
+    mouse_up.connect (sigc::mem_fun (this, &BezierCurveControl2::RecvMouseUp) );
+    mouse_drag.connect (sigc::mem_fun (this, &BezierCurveControl2::RecvMouseDrag) );
 
-    OnKeyEvent.connect (sigc::mem_fun (this, &BezierCurveControl2::RecvKeyEvent) );
+    key_down.connect (sigc::mem_fun (this, &BezierCurveControl2::RecvKeyEvent) );
 
     NTextureData image;
     MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff323232), Color (0xff535353), 8, 8);
@@ -242,8 +242,8 @@ namespace nux
         }
       }
 
-      delete xcon;
-      delete ycon;
+      delete[] xcon;
+      delete[] ycon;
     }
 
     GetPainter().Paint2DQuadWireframe (GfxContext, base, Color (0xFF000000) );
@@ -587,20 +587,20 @@ namespace nux
   {
     m_minX = minX;
     m_maxX = maxX;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void BezierCurveControl2::SetYAxisBounds (float minY, float maxY)
   {
     m_minY = minY;
     m_maxY = maxY;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void BezierCurveControl2::SetFunctionCallback (FunctionCallback f)
   {
     m_FunctionCallback = f;
-    NeedRedraw();
+    QueueDraw();
   }
 
   float BezierCurveControl2::EvalFunction (float x)
@@ -613,7 +613,7 @@ namespace nux
 
   void BezierCurveControl2::UpdateGraph()
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
 
@@ -629,7 +629,7 @@ namespace nux
 
   void BezierCurveControl2::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void BezierCurveControl2::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -687,7 +687,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   int ClosestCubicBezierEndPoint (int i)
@@ -711,7 +711,6 @@ namespace nux
   }
 
   void BezierCurveControl2::RecvKeyEvent (
-    GraphicsEngine  &GfxContext , /*Graphics Context for text operation*/
     unsigned long   eventType  , /*event type*/
     unsigned long   keysym     , /*event keysym*/
     unsigned long   state      , /*event state*/
@@ -998,7 +997,7 @@ namespace nux
       }
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void BezierCurveControl2::ProcessPanning (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -1019,7 +1018,7 @@ namespace nux
         m_minY += yp;
         m_maxY += yp;
 
-        NeedRedraw();
+        QueueDraw();
         return;
       }
     }
@@ -1045,7 +1044,7 @@ namespace nux
         m_minY += yp;
         m_maxY -= yp;
 
-        NeedRedraw();
+        QueueDraw();
         return;
       }
     }

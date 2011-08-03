@@ -40,6 +40,7 @@ namespace nux
     ~VScrollBar();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     void DrawDownTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
     void DrawUpTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
 
@@ -87,12 +88,15 @@ namespace nux
     sigc::signal<void, float, int> OnScrollUp;
     sigc::signal<void, float, int> OnScrollDown;
     sigc::signal<void> sigVScrollBarSliderMouseDown;
+    
 
     bool b_MouseDownTimer;
     bool b_MouseUpTimer;
     float m_color_factor;
 
   protected:
+    void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
+
     // When the Scrollbar is used standalone, it is necessary to call ComputeScrolling at the end of the layout.
     virtual long PostLayoutManagement (long LayoutResult);
 
@@ -100,18 +104,18 @@ namespace nux
     bool AtMaximum();
 
     VLayout *vlayout;
-    InputArea *m_SlideBar;
-    InputArea *m_TopThumb;
-    InputArea *m_BottomThumb;
-    InputArea *m_Track;
+    InputArea *_slider;
+    InputArea *_scroll_up_button;
+    InputArea *_scroll_down_button;
+    InputArea *_track;
 
-    int m_contentWidth;
-    int m_contentHeight;
-    float m_contentOffsetX;
-    float m_contentOffsetY;
+    int content_width_;
+    int content_height_;
+    float content_offset_x_;
+    float content_offset_y_;
 
-    int m_containerWidth;
-    int m_containerHeight;
+    int container_width_;
+    int container_height_;
 
     int m_TrackWidth;
     int m_TrackHeight;

@@ -94,6 +94,8 @@ namespace nux
     SPRINTF_S (buffer, 64, "%.39f", d);
     NString str = buffer;
     str = str.TrimRight (TEXT ("0") );
+
+    delete[] buffer;
     return str;
   }
 

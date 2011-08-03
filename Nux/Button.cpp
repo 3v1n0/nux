@@ -34,13 +34,13 @@ namespace nux
     _state     = false;
 
     // Set Signals
-    OnMouseClick.connect (sigc::mem_fun (this, &Button::RecvClick) );
-    OnMouseDown.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &Button::RecvMouseUp) );
-    OnMouseMove.connect (sigc::mem_fun (this, &Button::RecvMouseMove) );
-    OnMouseEnter.connect (sigc::mem_fun (this, &Button::RecvMouseEnter) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &Button::RecvMouseLeave) );
+    mouse_click.connect (sigc::mem_fun (this, &Button::RecvClick) );
+    mouse_down.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
+    mouse_double_click.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
+    mouse_up.connect (sigc::mem_fun (this, &Button::RecvMouseUp) );
+    mouse_move.connect (sigc::mem_fun (this, &Button::RecvMouseMove) );
+    mouse_enter.connect (sigc::mem_fun (this, &Button::RecvMouseEnter) );
+    mouse_leave.connect (sigc::mem_fun (this, &Button::RecvMouseLeave) );
 
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -66,7 +66,7 @@ namespace nux
     Geometry base = GetGeometry();
     InteractState is;
     is.is_on = _state;
-    is.is_focus = HasMouseFocus();
+    is.is_focus = IsMouseOwner();
     is.is_prelight = IsMouseInside();
 
     if (is.is_focus || is.is_on)
@@ -116,7 +116,7 @@ namespace nux
   void Button::SetState (bool b)
   {
     _state = b;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Button::SetState (bool State, bool EmitSignal)
@@ -131,7 +131,7 @@ namespace nux
 
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool Button::GetState() const
@@ -143,17 +143,17 @@ namespace nux
   {
     _state = !_state;
     sigClick.emit();
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Button::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Button::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Button::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -163,12 +163,12 @@ namespace nux
 
   void Button::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Button::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
 

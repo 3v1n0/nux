@@ -155,6 +155,9 @@ namespace nux
     font_family_ = "Ubuntu";
     font_size_ = 12;
 
+    key_nav_mode_           = false;
+    text_input_mode_        = false;
+
     font_options_ = cairo_font_options_create ();
     cairo_font_options_set_antialias (font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style (font_options_, CAIRO_HINT_STYLE_FULL);
@@ -165,21 +168,21 @@ namespace nux
 
     update_canvas_ = true;
 
-    OnMouseDown.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDrag) );
-    OnMouseUp.connect (sigc::mem_fun (this, &TextEntry::RecvMouseUp) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDoubleClick) );
+    mouse_down.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
+    mouse_drag.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDrag) );
+    mouse_up.connect (sigc::mem_fun (this, &TextEntry::RecvMouseUp) );
+    mouse_double_click.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDoubleClick) );
 
-    OnKeyEvent.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
+    key_down.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
 
-    OnStartFocus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
-    OnEndFocus.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
+    begin_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
+    end_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText (text);
 
-    EnableKeyboardFocusOnMouseDown (true);
-    //MainDraw (canvas_);
+    SetAcceptKeyboardEvent(true);
+    SetEnableDoubleClickEnable(true);
   }
 
   TextEntry::~TextEntry ()
@@ -286,8 +289,7 @@ namespace nux
         }
         else
         {
-          OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
-                           event.e_event, event.GetKeySym(),
+          key_down.emit (event.e_event, event.GetKeySym(),
                            event.GetKeyState(), event.GetText(),
                            event.GetKeyRepeatCount());
           //ret = PostProcessEvent2 (event, ret, processEventInfo);
@@ -295,8 +297,7 @@ namespace nux
       }
       else
       {
-        OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
-                         event.e_event, event.GetKeySym(),
+        key_down.emit (event.e_event, event.GetKeySym(),
                          event.GetKeyState(), event.GetText(),
                          event.GetKeyRepeatCount());
       }
@@ -307,6 +308,13 @@ namespace nux
 
 
     return ret;
+  }
+
+  Area* TextEntry::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    Area* area = View::FindAreaUnderMouse(mouse_position, event_type);
+
+    return area;
   }
 
   void TextEntry::ProcessMouseEvent (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -368,6 +376,9 @@ namespace nux
     const TCHAR*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
+    if (event_type == NUX_KEYDOWN)
+      text_input_mode_ = true;
+
 //     GdkEventKey *gdk_event = static_cast<GdkEventKey *>(event.GetOriginalEvent());
 //     ASSERT(gdk_event);
 //
@@ -399,7 +410,7 @@ namespace nux
     bool shift = (state & NUX_STATE_SHIFT);
     bool ctrl = (state & NUX_STATE_CTRL);
 
-    // DLOG("TextEntry::OnKeyEvent(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
+    // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
 
     if (event_type == NUX_KEYDOWN)
     {
@@ -542,7 +553,6 @@ namespace nux
   }
 
   void TextEntry::RecvKeyEvent (
-    GraphicsEngine &GfxContext ,   /*Graphics Context for text operation*/
     unsigned long    eventType  ,   /*event type*/
     unsigned long    keysym     ,   /*event keysym*/
     unsigned long    state      ,   /*event state*/
@@ -554,11 +564,17 @@ namespace nux
 
   void TextEntry::RecvStartKeyFocus ()
   {
+    key_nav_mode_           = true;
+    text_input_mode_        = false;
+
     FocusInx ();
   }
 
   void TextEntry::RecvEndKeyFocus ()
   {
+    key_nav_mode_     = false;
+    text_input_mode_  = false;
+
     FocusOutx ();
   }
 
@@ -2093,5 +2109,44 @@ namespace nux
     font_options_ = cairo_font_options_copy (options);
 
     QueueRefresh(true, true);
+  }
+
+  bool TextEntry::InspectKeyEvent(unsigned int eventType,
+    unsigned int key_sym,
+    const char* character)
+  {
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false))
+    {
+      if (key_sym == NUX_VK_ENTER ||
+        key_sym == NUX_KP_ENTER ||
+        key_sym == NUX_VK_UP ||
+        key_sym == NUX_VK_DOWN ||
+        key_sym == NUX_VK_LEFT ||
+        key_sym == NUX_VK_RIGHT ||
+        key_sym == NUX_VK_LEFT_TAB ||
+        key_sym == NUX_VK_TAB ||
+        key_sym == NUX_VK_ESCAPE)
+      {
+        return false;
+      }
+    }
+
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == true))
+    {
+      // Enable to exit the TextEntry when in write mode (hack for unity dash)
+      if (key_sym == NUX_VK_UP ||
+      key_sym == NUX_VK_DOWN ||
+      key_sym == NUX_VK_ESCAPE)
+      {
+        return false;
+      }
+    }
+
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == false) && (text_input_mode_ == false))
+    {
+      return false;
+    }
+
+    return true;
   }
 }

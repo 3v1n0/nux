@@ -7,7 +7,6 @@ check_PROGRAMS = \
 test_nux_SOURCES = \
   test-canvas.cpp \
   test-nux.cpp \
-  test-timeline.cpp \
   test-object.cpp \
   test-system.cpp
 
@@ -33,8 +32,12 @@ test_nux_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_SOURCES = \
+  Helpers.cpp \
+  test_main.cpp \
+  test_async_file_writer.cpp \
   test_logger.cpp \
-  test_properties.cpp
+  test_properties.cpp \
+  test_rolling_file_appender.cpp
 
 gtest_nux_core_CPPFLAGS = \
   -I$(srcdir) \
@@ -55,7 +58,8 @@ gtest_nux_core_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_LDFLAGS = \
-  -lpthread -lgtest -lgtest_main -lgmock
+  -lpthread -lgtest -lgmock \
+  -lboost_filesystem -lboost_system
 
 
 #run make test as part of make check

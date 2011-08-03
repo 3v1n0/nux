@@ -16,7 +16,8 @@
  * Authored by: Mirco Müller <mirco.mueller@canonical.com
  */
 
-#include "Nux/Canvas.h"
+
+#include "Canvas.h"
 
 namespace nux
 {
@@ -88,6 +89,8 @@ namespace nux
 
     if (ptr == NULL || stride == 0) {
       g_debug ("Invalid surface!");
+
+      delete bitmap_data;
       return NULL;
     }
 

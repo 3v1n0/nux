@@ -591,7 +591,7 @@ namespace nux
     float sigma, int num_pass)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion () >= 3))
+    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion () >= 2))
       return QRP_GLSL_GetHQBlur (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
     else
       return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
@@ -622,12 +622,28 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& color, int pixel_size)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion () >= 3))
+    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion () >= 2))
       return QRP_GLSL_GetPixelBlocks (device_texture, texxform, color, pixel_size);
     else
       return QRP_ASM_GetPixelBlocks (device_texture, texxform, color, pixel_size);
 #else
     return QRP_GLSL_GetPixelBlocks (device_texture, texxform, color, pixel_size);
+#endif
+  }
+
+  void GraphicsEngine::QRP_GetCopyTexture (
+    int width, int height,
+    ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
+    ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
+    TexCoordXForm &texxform0, const Color& c0)
+  {
+#ifndef NUX_OPENGLES_20
+    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion () >= 2))
+      return QRP_GLSL_GetCopyTexture (width, height, dst_device_texture, src_device_texture, texxform0, c0);
+    else
+      return QRP_ASM_GetCopyTexture (width, height, dst_device_texture, src_device_texture, texxform0, c0);
+#else
+    return QRP_GLSL_GetCopyTexture (width, height, dst_device_texture, src_device_texture, texxform0, c0);
 #endif
   }
 }

@@ -91,12 +91,12 @@ namespace nux
     m_TableItemHead->Show();
 
     m_TableArea = new InputArea (NUX_TRACKER_LOCATION);
-    m_TableArea->OnMouseDown.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDown) );
-    m_TableArea->OnMouseDoubleClick.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDoubleClick) );
-    m_TableArea->OnMouseUp.connect (sigc::mem_fun (this, &TableCtrl::OnMouseUp) );
-    m_TableArea->OnMouseDrag.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDrag) );
-    m_TableArea->OnStartFocus.connect (sigc::mem_fun (this, &TableCtrl::OnKeyboardFocus) );
-    m_TableArea->OnEndFocus.connect (sigc::mem_fun (this, &TableCtrl::OnLostKeyboardFocus) );
+    m_TableArea->mouse_down.connect (sigc::mem_fun (this, &TableCtrl::OnMouseDown) );
+    m_TableArea->mouse_double_click.connect (sigc::mem_fun (this, &TableCtrl::mouse_double_click) );
+    m_TableArea->mouse_up.connect (sigc::mem_fun (this, &TableCtrl::OnMouseUp) );
+    m_TableArea->mouse_drag.connect (sigc::mem_fun (this, &TableCtrl::mouse_drag) );
+    m_TableArea->begin_key_focus.connect (sigc::mem_fun (this, &TableCtrl::OnKeyboardFocus) );
+    m_TableArea->end_key_focus.connect (sigc::mem_fun (this, &TableCtrl::OnLostKeyboardFocus) );
 
 
 
@@ -139,7 +139,7 @@ namespace nux
     SetCompositionLayout (m_VLayout);
     FormatContent();
 
-    m_TableArea->EnableDoubleClick (false);
+    m_TableArea->SetEnableDoubleClickEnable (false);
 
     ShowRowHeader (true);
     ShowColumnHeader (true);
@@ -247,7 +247,7 @@ namespace nux
           if (ret & eMouseEventSolved)
             ItemSolvedEvent = true;
 
-          // Pure TableItem elements do not inherit from View. Therefore, they cannot call NeedRedraw() on themselves.
+          // Pure TableItem elements do not inherit from View. Therefore, they cannot call QueueDraw() on themselves.
           // The TableCtrl that holds them must know that they need to be redrawn. Since Pure TableItem do not trap events, the event
           // will go to TableCtrl (like OnMouseDown) who will found out the cell where the event happened and set the dirty flag of the TableItem.
           //if((*row_iterator)->_table_item->isDirtyItem())
@@ -257,13 +257,13 @@ namespace nux
     }
 
 //    if(DirtyItem)
-//        NeedRedraw();
+//        QueueDraw();
 
     if (m_vertical_scrollbar_enable)
-      ret = vscrollbar->ProcessEvent (ievent, ret, ProcEvInfo & (~eDoNotProcess) );
+      ret = _vscrollbar->ProcessEvent (ievent, ret, ProcEvInfo & (~eDoNotProcess) );
 
     if (m_horizontal_scrollbar_enable)
-      ret = hscrollbar->ProcessEvent (ievent, ret, ProcEvInfo & (~eDoNotProcess) );
+      ret = _hscrollbar->ProcessEvent (ievent, ret, ProcEvInfo & (~eDoNotProcess) );
 
     if (IsPartOfCombobox() && ievent.e_event == NUX_MOUSE_RELEASED)
     {
@@ -335,7 +335,7 @@ namespace nux
         {
           m_selectedColumn = -1;
           m_selectedRow = -1;
-          NeedRedraw();
+          QueueDraw();
         }
       }
     }
@@ -345,7 +345,7 @@ namespace nux
       {
         m_selectedColumn = -1;
         m_selectedRow = -1;
-        NeedRedraw();
+        QueueDraw();
       }
     }
 
@@ -410,12 +410,12 @@ namespace nux
 
     if (m_vertical_scrollbar_enable)
     {
-      vscrollbar->NeedRedraw();
+      _vscrollbar->QueueDraw();
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      hscrollbar->NeedRedraw();
+      _hscrollbar->QueueDraw();
     }
 
     DrawTable (GfxContext);
@@ -485,12 +485,12 @@ namespace nux
 
     if (m_vertical_scrollbar_enable)
     {
-      vscrollbar->ProcessDraw (GfxContext, force_draw);
+      _vscrollbar->ProcessDraw (GfxContext, force_draw);
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      hscrollbar->ProcessDraw (GfxContext, force_draw);
+      _hscrollbar->ProcessDraw (GfxContext, force_draw);
     }
 
     GfxContext.PopClippingRectangle();
@@ -1209,9 +1209,9 @@ namespace nux
     column_sizehandler->SetBaseHeight ( (m_bShowColumnHeader ? COLUMNHEADERHEIGHT : 0) );
 
     t_u32 no = (t_u32) m_column_sizehandler.size();
-    column_sizehandler->OnMouseDown.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeHeaderMouseDown), no) );
-    column_sizehandler->OnMouseUp.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeHeaderMouseUp), no) );
-    column_sizehandler->OnMouseDrag.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeHeaderMouseDrag), no) );
+    column_sizehandler->mouse_down.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeHeaderMouseDown), no) );
+    column_sizehandler->mouse_up.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeHeaderMouseUp), no) );
+    column_sizehandler->mouse_drag.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeHeaderMouseDrag), no) );
     m_column_sizehandler.push_back (column_sizehandler);
 
 
@@ -1469,8 +1469,8 @@ namespace nux
       row_sizehandler->SetBaseHeight (HANDLERSIZE);
 
       t_u32 row_no = (t_u32) m_row_sizehandler.size();
-      row_sizehandler->OnMouseDown.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeRowMouseDown), row_no) );
-      row_sizehandler->OnMouseDrag.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeRowMouseDrag), row_no) );
+      row_sizehandler->mouse_down.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeRowMouseDown), row_no) );
+      row_sizehandler->mouse_drag.connect (sigc::bind ( sigc::mem_fun (this, &TableCtrl::OnResizeRowMouseDrag), row_no) );
       m_row_sizehandler.push_back (row_sizehandler);
 
 
@@ -1746,7 +1746,7 @@ namespace nux
   {
     if (m_selectedTableItem)
     {
-      // Dirty the previously selected item. No need to call NeedRedraw because this is a mouse down and the
+      // Dirty the previously selected item. No need to call QueueDraw because this is a mouse down and the
       // WindowThread will call Draw(event, false) on a NUX_MOUSE_PRESSED event.
       // When this item redraws, it will draw without the selection background color.
       m_selectedTableItem->setDirtyItem (true);
@@ -1773,7 +1773,7 @@ namespace nux
       sigItemSelected.emit (m_selectedRow, m_selectedColumn);
       sigTableItemSelected.emit (*this, *m_selectedTableItem, m_selectedRow, m_selectedColumn);
 
-      // Dirty the newly selected item. No need to call NeedRedraw because this is a mouse down and the
+      // Dirty the newly selected item. No need to call QueueDraw because this is a mouse down and the
       // WindowThread will call Draw(event, false) on a NUX_MOUSE_PRESSED event.
       // When this item redraws, it will draw with the selection background color.
       m_selectedTableItem->setDirtyItem (true);
@@ -1825,10 +1825,10 @@ namespace nux
     if (Reorganize == true)
     {
       // The TableCtrl is completely dirty.
-      // By calling NeedRedraw(), we make sure we go through TableCtrl::Draw() then TableCtrl::DrawContent() when drawing happens.
+      // By calling QueueDraw(), we make sure we go through TableCtrl::Draw() then TableCtrl::DrawContent() when drawing happens.
       ComputeChildLayout();
       PositionChildLayout (0, 0);
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
@@ -1846,7 +1846,7 @@ namespace nux
 //(5-12), and you should begin to notice that Windows is no longer ignoring as many double-clicks
 //as it did before.
 
-  void TableCtrl::OnMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TableCtrl::mouse_double_click (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if ( (m_selectedRow == -1) || (m_selectedColumn == -1) )
     {
@@ -1934,7 +1934,7 @@ namespace nux
     {
       FormatTable();
       ComputeChildLayout();
-      NeedRedraw();
+      QueueDraw();
     }
   }
 
@@ -1965,7 +1965,7 @@ namespace nux
     }
   }
 
-  void TableCtrl::OnMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void TableCtrl::mouse_drag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     return;
 
@@ -1980,7 +1980,7 @@ namespace nux
       m_selectedTableItem->setDirtyItem (true);
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TableCtrl::OnKeyboardFocus()
@@ -2010,7 +2010,7 @@ namespace nux
       //ComputeChildLayout();
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TableCtrl::OnResizeHeaderMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
@@ -2170,7 +2170,7 @@ namespace nux
       FormatHeader();
     }
 
-    //NeedRedraw();
+    //QueueDraw();
   }
 
   void TableCtrl::OnResizeRowMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos)
@@ -2212,7 +2212,7 @@ namespace nux
       ComputeChildLayout();
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TableCtrl::PreLayoutManagement()
@@ -2358,20 +2358,20 @@ namespace nux
   void TableCtrl::EmptyTable()
   {
     m_TableItemHead->DeleteTree();
-    NeedRedraw();
+    QueueDraw();
   }
 
-  void TableCtrl::NeedRedraw()
+  void TableCtrl::QueueDraw()
   {
     nuxAssertNoRecursion();
-    View::NeedRedraw();
+    View::QueueDraw();
   }
 
   void TableCtrl::HighlightItem (int row, int column)
   {
     m_selectedRow = row;
     m_selectedColumn = column;
-    NeedRedraw();
+    QueueDraw();
   }
 
 

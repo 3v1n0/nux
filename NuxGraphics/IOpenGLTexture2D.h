@@ -88,9 +88,8 @@ namespace nux
       , unsigned int Levels
       , BitmapFormat PixelFormat, bool Dummy = false, NUX_FILE_LINE_PROTO);
 
-    //    unsigned int        _Width;
-    //    unsigned int        _Height;
     std::vector< ObjectPtr<IOpenGLSurface> > _SurfaceArray;
+    bool external_id_;
     friend class GpuDevice;
     friend class IOpenGLSurface;
   };

@@ -63,6 +63,7 @@
 #include "View.h"
 #include "AbstractThread.h"
 #include "WindowThread.h"
+#include "WindowCompositor.h"
 #include "Timeline.h"
 #include "SystemThread.h"
 

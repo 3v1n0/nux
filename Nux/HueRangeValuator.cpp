@@ -120,7 +120,7 @@ namespace nux
                                  Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v) );
     }
 
-    m_ValueString->NeedRedraw();
+    m_ValueString->QueueDraw();
     DrawMarker (GfxContext);
 
     GfxContext.PopClippingRectangle();

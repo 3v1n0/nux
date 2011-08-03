@@ -123,7 +123,6 @@ namespace nux
     void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseWheel (int x, int y, int delta, t_u32 button_flags, t_u32 key_flags);
     void RecvKeyEvent (
-      GraphicsEngine &GfxContext , /*Graphics Context for text operation*/
       t_u32    eventType  , /*event type*/
       t_u32    keysym     , /*event keysym*/
       t_u32    state      , /*event state*/

@@ -33,14 +33,14 @@ namespace nux
   {
     //SetMinMaxSize(50, 50);
 
-    OnMouseDown.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDown));
-    OnMouseUp.connect (sigc::mem_fun (this, &TextureArea::RecvMouseUp));
+    mouse_down.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDown));
+    mouse_up.connect (sigc::mem_fun (this, &TextureArea::RecvMouseUp));
     
-    OnMouseEnter.connect (sigc::mem_fun (this, &TextureArea::RecvMouseEnter));
-    OnMouseLeave.connect (sigc::mem_fun (this, &TextureArea::RecvMouseLeave));
-    OnMouseClick.connect (sigc::mem_fun (this, &TextureArea::RecvMouseClick));
+    mouse_enter.connect (sigc::mem_fun (this, &TextureArea::RecvMouseEnter));
+    mouse_leave.connect (sigc::mem_fun (this, &TextureArea::RecvMouseLeave));
+    mouse_click.connect (sigc::mem_fun (this, &TextureArea::RecvMouseClick));
 
-    OnMouseDrag.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDrag));
+    mouse_drag.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDrag));
 
     m_PaintLayer = new ColorLayer (Color (0xFFFF40FF));
     _2d_rotate.Identity ();
@@ -97,7 +97,7 @@ namespace nux
     texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
     m_PaintLayer = new TextureLayer (texture->GetDeviceTexture(), texxform, color::White);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TextureArea::SetPaintLayer (AbstractPaintLayer *layer)
@@ -105,14 +105,14 @@ namespace nux
     NUX_SAFE_DELETE (m_PaintLayer);
     m_PaintLayer = layer->Clone();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
 // void TextureArea::SetTexture(const TCHAR* TextureFilename)
 // {
 //     // Who should delete the texture? This class or the user?
 //     m_UserTexture = CreateTextureFromFile(TextureFilename);
-//     NeedRedraw();
+//     QueueDraw();
 // }
 
   void TextureArea::RecvMouseDown (int x, int y, long button_flags, long key_flags)

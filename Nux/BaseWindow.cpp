@@ -66,6 +66,7 @@ namespace nux
     _entering_visible_state = false;
     _entering_hidden_state = false;
     _enter_focus_input_area = NULL;
+    accept_key_nav_focus_ = false;
 
     // Should be at the end of the constructor
     GetWindowCompositor().RegisterWindow (this);
@@ -122,6 +123,26 @@ namespace nux
     // testing the event by itself.
     ret = PostProcessEvent2 (ievent, ret, 0);
     return ret;
+  }
+
+  Area* BaseWindow::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    if(m_layout)
+    {
+      nuxAssert(m_layout->IsLayout());
+      Area* found_area = m_layout->FindAreaUnderMouse(mouse_position, event_type);
+      if(found_area)
+        return found_area;
+    }
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
   }
 
   void BaseWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
@@ -424,9 +445,9 @@ namespace nux
     if (_is_modal)
       GetWindowCompositor().StartModalWindow (ObjectWeakPtr<BaseWindow> (this));
 
-    // Whether this view is added or removed, call NeedRedraw. in the case where this view is removed, this is a signal 
+    // Whether this view is added or removed, call QueueDraw. in the case where this view is removed, this is a signal 
     // that the region below this view need to be redrawn.
-    NeedRedraw();
+    QueueDraw();
   }
 
   bool BaseWindow::IsVisible() const
@@ -537,6 +558,16 @@ namespace nux
   float BaseWindow::GetOpacity ()
   {
     return _opacity;
+  }
+
+  void BaseWindow::SetAcceptKeyNavFocus(bool accept)
+  {
+    accept_key_nav_focus_ = accept;
+  }
+
+  bool BaseWindow::AcceptKeyNavFocus()
+  {
+    return accept_key_nav_focus_;
   }
 }
 

@@ -74,9 +74,9 @@ namespace nux
     if ( (_Width == Width) && (_Height == Height) && (_PixelFormat == PixelFormat) )
       return 1;
 
-#ifndef NUX_OPENGLES_20
-    _Rbo.Set (GL_DEPTH_COMPONENT, Width, Height);
-#endif
+// #ifndef NUX_OPENGLES_20
+//     _Rbo.Set (GL_DEPTH_COMPONENT, Width, Height);
+// #endif
 
     // Clear clipping region stack
     _Width  = Width;
@@ -191,26 +191,26 @@ namespace nux
       }
     }
 
-//     if(_Depth_Attachment.IsValid())
-//     {
-//         GLenum target   = _Depth_Attachment->GetSurfaceTarget();
-//         GLenum glID     = _Depth_Attachment->GetOpenGLID();
-//         GLint level     = _Depth_Attachment->GetMipLevel();
-//         CHECKGL( glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, target, glID, level) );
-//     }
-//     else
-//     {
-//         CHECKGL( glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0) );
-//         // On the PC you need to bing the same D24S8 surface to the depth and the stencil attachment.
-//     }
+    if(_Depth_Attachment.IsValid())
+    {
+        GLenum target   = _Depth_Attachment->GetSurfaceTarget();
+        GLenum glID     = _Depth_Attachment->GetOpenGLID();
+        GLint level     = _Depth_Attachment->GetMipLevel();
+        CHECKGL( glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, target, glID, level) );
+    }
+    else
+    {
+        CHECKGL( glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0) );
+        // On the PC you need to bing the same D24S8 surface to the depth and the stencil attachment.
+    }
 
-#ifndef NUX_OPENGLES_20
-    _Rbo.Set (GL_DEPTH_COMPONENT, _Width, _Height);
-    CHECKGL ( glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
-                                            GL_DEPTH_ATTACHMENT_EXT,
-                                            GL_RENDERBUFFER_EXT,
-                                            _Rbo.GetId() ) );
-#endif
+// #ifndef NUX_OPENGLES_20
+//     _Rbo.Set (GL_DEPTH_COMPONENT, _Width, _Height);
+//     CHECKGL ( glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
+//                                             GL_DEPTH_ATTACHMENT_EXT,
+//                                             GL_RENDERBUFFER_EXT,
+//                                             _Rbo.GetId() ) );
+// #endif
 
     nuxAssert ( _Fbo.IsValid() == true );
 
