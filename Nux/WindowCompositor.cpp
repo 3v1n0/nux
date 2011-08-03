@@ -307,6 +307,41 @@ namespace nux
     }
   }
 
+  void WindowCompositor::DndEventCycle (Event &event)
+  {
+    if (event.e_event == NUX_DND_MOVE)
+    {
+      InputArea *hit_area = NULL;
+      BaseWindow *hit_base_window = NULL;
+
+      GetAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event, &hit_area, &hit_base_window);
+
+      if (hit_area)
+      {
+        SetDnDArea (hit_area);
+        hit_area->HandleDndMove(event);
+      }
+      else
+      {
+        ResetDnDArea ();
+      }
+    }
+    else if (event.e_event == NUX_DND_ENTER_WINDOW)
+    {
+      // do nothing for now
+    }
+    else if (event.e_event == NUX_DND_LEAVE_WINDOW)
+    {
+      ResetDnDArea ();
+    }
+    else if (event.e_event == NUX_DND_DROP)
+    {
+      InputArea *current_dnd_area = GetWindowCompositor().GetDnDArea();
+      if (current_dnd_area->GetGeometry().IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root))
+        current_dnd_area->HandleDndDrop(event);
+    }
+  }
+
   void WindowCompositor::MouseEventCycle(Event &event)
   {
     // mouse_owner_area_: the view that has the mouse down
@@ -957,10 +992,13 @@ namespace nux
 
         CleanMenu();
       }
-      
-      if((event.e_event >= NUX_KEYDOWN) && (event.e_event <= NUX_KEYUP))
+      else if((event.e_event >= NUX_KEYDOWN) && (event.e_event <= NUX_KEYUP))
       {
         KeyboardEventCycle(event);
+      }
+      else if ((event.e_event >= NUX_DND_MOVE) && (event.e_event <= NUX_DND_LEAVE_WINDOW))
+      {
+        DndEventCycle(event);
       }
 
       return;

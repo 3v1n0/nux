@@ -61,6 +61,7 @@ namespace nux
 
     //====================================
     void MouseEventCycle(Event &event);
+    void DndEventCycle(Event &event);
     bool _enable_nux_new_event_architecture;
 
 
