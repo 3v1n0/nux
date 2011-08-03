@@ -81,6 +81,18 @@ namespace nux
     void SetKeyFocusArea(InputArea* area);
     InputArea* GetKeyFocusArea();
 
+    //! Signal emitted when a BaseWindow becomes visible.
+    /*!
+        This signal is emitted after the BaseWindow has emitted it own sigVisible signal. 
+    */
+    sigc::signal<void, BaseWindow*> sigVisibleViewWindow;    //!< Signal emitted when the BaseWindow becomes visible.
+
+    //! Signal emitted when a BaseWindow becomes hidden.
+    /*!
+        This signal is emitted after the BaseWindow has emitted it own sigHidden signal. 
+    */
+    sigc::signal<void, BaseWindow*> sigHiddenViewWindow;    //!< Signal emitted when the BaseWindow becomes hidden.
+
   private:
 
     //! Traverse the widget tree and found the area that is right below the mouse pointer.
@@ -527,18 +539,6 @@ namespace nux
 
     //! True while rendering is being done.
     bool _inside_rendering_cycle;
-
-    //! Signal emitted when a BaseWindow becomes visible.
-    /*!
-        This signal is emitted after the BaseWindow has emitted it own sigVisible signal. 
-    */
-    sigc::signal<void, BaseWindow* > sigVisibleViewWindow;    //!< Signal emitted when the BaseWindow becomes visible.
-
-    //! Signal emitted when a BaseWindow becomes hidden.
-    /*!
-        This signal is emitted after the BaseWindow has emitted it own sigHidden signal. 
-    */
-    sigc::signal<void, BaseWindow* > sigHiddenViewWindow;    //!< Signal emitted when the BaseWindow becomes hidden.
 
     InputArea* OverlayDrawingCommand;
     ObjectWeakPtr<BaseWindow> m_OverlayWindow;            //!< The window that owns the overlay;
