@@ -147,6 +147,9 @@ namespace nux
     InputArea* mouse_over_area_;
     BaseWindow* mouse_owner_base_window_;
 
+    int dnd_safety_x_;
+    int dnd_safety_y_;
+
     sigc::connection mouse_over_view_connection_;
     sigc::connection mouse_owner_view_connection_;
     sigc::connection mouse_owner_basewindow_connection_;

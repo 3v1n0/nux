@@ -277,7 +277,12 @@ namespace nux
 
   void WindowCompositor::SetMouseOwnerArea(Area* area)
   {
+    if (mouse_owner_area_ == area)
+      return;
+
     mouse_owner_area_ = static_cast<InputArea*>(area);
+    dnd_safety_x_ = 0;
+    dnd_safety_y_ = 0;
 
     mouse_owner_view_connection_.disconnect();
 
@@ -539,7 +544,22 @@ namespace nux
         int dx = mouse_owner_x - _mouse_position_on_owner.x;
         int dy = mouse_owner_y - _mouse_position_on_owner.y;
 
-        mouse_owner_area_->EmitMouseDragSignal(mouse_owner_x, mouse_owner_y, dx, dy, event.GetMouseState(), event.GetKeyState());
+        if (mouse_owner_area_->_dnd_enabled_as_source)
+        {
+          dnd_safety_x_ += dx;
+          dnd_safety_y_ += dy;
+
+          if (abs (dnd_safety_y_) > 30 || abs (dnd_safety_x_) > 30)
+          {
+            mouse_owner_area_->StartDragAsSource ();
+            ResetMousePointerAreas ();
+            return;
+          }
+        }
+        else
+        {
+          mouse_owner_area_->EmitMouseDragSignal(mouse_owner_x, mouse_owner_y, dx, dy, event.GetMouseState(), event.GetKeyState());
+        }
 
         if((mouse_over_area_ == mouse_owner_area_) && (hit_view != mouse_owner_area_))
         {
