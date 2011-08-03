@@ -36,6 +36,7 @@ gtest_nux_core_SOURCES = \
   test_main.cpp \
   test_async_file_writer.cpp \
   test_logger.cpp \
+  test_cairo_wrapper.cpp \
   test_properties.cpp \
   test_rolling_file_appender.cpp
 
