@@ -58,7 +58,7 @@ namespace logging {
 
 enum Level
 {
-  NOT_SPECIFIED,
+  NotSpecified,
   Trace,
   Debug,
   Info,

@@ -112,7 +112,7 @@ inline bool LoggerModule::IsTraceEnabled() const
 inline void LoggerModule::SetLogLevel(Level level)
 {
   // The root module can't be unspecified.
-  if (module_ == "" && level == NOT_SPECIFIED)
+  if (module_ == "" && level == NotSpecified)
     level = Warning;
   level_ = level;
 }
@@ -124,7 +124,7 @@ inline Level LoggerModule::GetLogLevel() const
 
 inline Level LoggerModule::GetEffectiveLogLevel() const
 {
-  if (level_ == NOT_SPECIFIED && parent_)
+  if (level_ == NotSpecified && parent_)
     return parent_->GetEffectiveLogLevel();
   else
     return level_;
@@ -185,7 +185,7 @@ Level Logger::GetEffectiveLogLevel() const
 LoggerModule::LoggerModule(std::string const& module,
                            LoggerModulePtr const& parent)
   : module_(module)
-  , level_(NOT_SPECIFIED)
+  , level_(NotSpecified)
   , parent_(parent)
 {
 }
@@ -229,7 +229,7 @@ void LoggerModules::reset()
 {
   for (ModuleMap::iterator i = modules_.begin(), end = modules_.end(); i != end; ++i)
   {
-    i->second->SetLogLevel(NOT_SPECIFIED);
+    i->second->SetLogLevel(NotSpecified);
   }
 }
 
@@ -242,7 +242,7 @@ std::string LoggerModules::dump_logging_levels(std::string const& prefix)
     std::string const& module_name = i->first;
     LoggerModulePtr const& module = i->second;
     Level severity = module->GetLogLevel();
-    if (severity == NOT_SPECIFIED)
+    if (severity == NotSpecified)
       continue; // Don't write out unspecified ones.
     if (first)
       first = false;
@@ -406,7 +406,7 @@ char const* str_level(Level severity)
 {
   switch (severity)
   {
-  case NOT_SPECIFIED:
+  case NotSpecified:
     return "NOT_SPECIFIED";
   case Trace:
     return "TRACE";
