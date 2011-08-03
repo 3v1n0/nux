@@ -61,6 +61,7 @@ namespace nux
 
     //====================================
     void MouseEventCycle(Event &event);
+    void DndEventCycle(Event &event);
     bool _enable_nux_new_event_architecture;
 
 
@@ -157,6 +158,9 @@ namespace nux
     InputArea* mouse_owner_area_;
     InputArea* mouse_over_area_;
     BaseWindow* mouse_owner_base_window_;
+
+    int dnd_safety_x_;
+    int dnd_safety_y_;
 
     sigc::connection mouse_over_view_connection_;
     sigc::connection mouse_owner_view_connection_;
