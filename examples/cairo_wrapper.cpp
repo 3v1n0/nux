@@ -107,16 +107,20 @@ terminate (void* data)
   thread->TerminateThread ();
 }
 
-void ThreadWidgetInit (nux::NThread* thread, void* initData)
+void
+example (void* data)
 {
   nux::Geometry geom = {0, 0, 200, 150};
   g_canvas = new nux::CairoWrapper (geom, sigc::ptr_fun (callback));
-  std::string filename = "/tmp/canvas-test.png"; 
+  std::string filename = "/tmp/cairo-wrapper-example.png"; 
   g_canvas->DumpToFile (filename);
+}
 
+void ThreadWidgetInit (nux::NThread* thread, void* initData)
+{
   g_timer = new nux::TimerFunctor ();
-  g_timer->OnTimerExpired.connect (sigc::ptr_fun (&terminate));
-  g_handler = nux::GetTimer().AddTimerHandler (100,
+  g_timer->OnTimerExpired.connect (sigc::ptr_fun (&example));
+  g_handler = nux::GetTimer().AddTimerHandler (1000,
                                                g_timer,
                                                nux::GetWindowThread ());
 }
@@ -127,7 +131,7 @@ int main (int    argc,
   nux::NuxInitialize (0);
   nux::WindowThread* wt = NULL;
 
-  wt = nux::CreateGUIThread (TEXT ("Canvas Example"),
+  wt = nux::CreateGUIThread (TEXT ("Cairo-Wrapper Example"),
                              400,
                              400,
                              0,

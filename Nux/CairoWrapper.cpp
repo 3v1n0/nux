@@ -88,6 +88,9 @@ namespace nux
     if (texture_)
         texture_->UnReference ();
 
+	if (GetGraphicsDisplay()->GetGraphicsEngine() == NULL)
+	  return false;
+
     texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
     texture_->Update (bitmap);
 
