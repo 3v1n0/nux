@@ -33,7 +33,7 @@ namespace nux
 
   Button::Button (TextureArea *image, NUX_FILE_LINE_DECL)
       : AbstractButton (NUX_FILE_LINE_PARAM)
-      , label ("undefined")
+      , label ("")
       , image_position (NUX_POSITION_TOP) {
     this->image = image;
     Init();
@@ -57,7 +57,7 @@ Button::Button (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
 
 Button::Button (NUX_FILE_LINE_DECL)
       : AbstractButton (NUX_FILE_LINE_PARAM)
-      , label ("undefined")
+      , label ("")
       , image_position (NUX_POSITION_TOP) {
     this->image = NULL;
     Init();
