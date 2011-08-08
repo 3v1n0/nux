@@ -21,30 +21,67 @@
 #include "Nux/Nux.h"
 #include "Nux/VLayout.h"
 #include "Nux/WindowThread.h"
-#include "Nux/PushButton.h"
-
+#include "Nux/CheckBox.h"
+#include "Nux/ToggleButton.h"
+#include "Nux/Button.h"
+#include "Nux/TextureArea.h"
 
 void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
 {
   // Create a vertical Layout
   nux::VLayout* layout = new nux::VLayout(NUX_TRACKER_LOCATION);
-  
-  //Create a button of type PushButton
-  nux::PushButton* button = new nux::PushButton(
-    TEXT ("Hello World!"),
-    NUX_TRACKER_LOCATION);
 
-  // Set the button maximum width/height
-  button->SetMaximumWidth (80);
-  button->SetMaximumHeight (40);
-  button->SetTextColor (nux::color::Black);
+  //Create a button of type Button
+  nux::Button* button = new nux::Button ("Party on Garth", NUX_TRACKER_LOCATION);
 
   // Add the button to the layout
   layout->AddView (
     button,
-    1,
+    0,
     nux::MINOR_POSITION_CENTER,
-    nux::MINOR_SIZE_FULL);
+    nux::MINOR_SIZE_MATCHCONTENT);
+
+  // Create a button with an image
+  nux::ColorLayer color (nux::Color (0.6, 0.4, 0.7, 1.0));
+  nux::TextureArea* texture_area = new nux::TextureArea ();
+  texture_area->SetPaintLayer (&color);
+
+  nux::Button* button_with_image = new nux::Button("Party on Wayne", texture_area, NUX_TRACKER_LOCATION);
+  //button_with_image->image_position = nux::NUX_POSITION_BOTTOM;
+
+  // Add the button to the layout
+  layout->AddView (
+    button_with_image,
+    0,
+    nux::MINOR_POSITION_CENTER,
+    nux::MINOR_SIZE_MATCHCONTENT);
+
+  color = nux::Color (0.6, 0.4, 0.7, 1.0);
+  texture_area = new nux::TextureArea ();
+  texture_area->SetPaintLayer (&color);
+
+  nux::Button* button_without_image = new nux::Button(texture_area, NUX_TRACKER_LOCATION);
+
+  // Add the button to the layout
+  layout->AddView (
+    button_without_image,
+    0,
+    nux::MINOR_POSITION_CENTER,
+    nux::MINOR_SIZE_MATCHCONTENT);
+
+  nux::ToggleButton *toggle_button = new nux::ToggleButton ("This is a Toggle button, nux just doesn't have a theme for that", NUX_TRACKER_LOCATION);
+  layout->AddView (
+    toggle_button,
+    0,
+    nux::MINOR_POSITION_CENTER,
+    nux::MINOR_SIZE_MATCHCONTENT);
+
+  nux::CheckBox *check_button = new nux::CheckBox ("Check box widget? Check!", NUX_TRACKER_LOCATION);
+  layout->AddView (
+    check_button,
+    0,
+    nux::MINOR_POSITION_CENTER,
+    nux::MINOR_SIZE_MATCHCONTENT);
 
   // Control the position of elements inside the layout
   layout->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
@@ -64,9 +101,9 @@ int main(int argc, char **argv)
 
   // Create a Window thread
   nux::WindowThread* wt = nux::CreateGUIThread(
-    TEXT("Push Button"),
-    200,
-    150,
+    TEXT("Button"),
+    800,
+    600,
     0,
     &UserInterfaceInitialization,
     0);

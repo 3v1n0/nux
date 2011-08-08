@@ -26,7 +26,7 @@
 namespace nux
 {
 
-  class PushButton;
+  class ToggleButton;
   class ColorGradientPropertyItem;
 
   // TODO: Tim Penhey 2011-05-12
@@ -113,8 +113,8 @@ namespace nux
     ColorGradientPropertyItem *m_alpha;
 
     Color color_;
-    PushButton *m_ColorModel;
-    PushButton *m_ColorFormat;
+    ToggleButton *m_ColorModel;
+    ToggleButton *m_ColorFormat;
     color::Model color_model_;
     color::Format color_format_;
   };

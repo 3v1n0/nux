@@ -27,9 +27,9 @@
 #include "HLayout.h"
 #include "CheckBox.h"
 #include "EditTextBox.h"
-#include "RadioButton.h"
-#include "RadioButtonGroup.h"
-#include "PushButton.h"
+//#include "RadioButton.h"
+//#include "RadioButtonGroup.h"
+#include "ToggleButton.h"
 #include "Layout.h"
 #include "ColorEditor.h"
 
@@ -52,18 +52,18 @@ namespace nux
 
     HLayout *ButtonLayout (new HLayout (TEXT ("Dialog Buttons"), NUX_TRACKER_LOCATION) );
 
-    PushButton *OkButton (new PushButton (TEXT ("OK"), NUX_TRACKER_LOCATION) );
+    ToggleButton *OkButton (new ToggleButton ("OK", NUX_TRACKER_LOCATION) );
     OkButton->SetMinimumWidth (60);
     OkButton->SetMinimumHeight (20);
 
-    PushButton *CancelButton (new PushButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION) );
+    ToggleButton *CancelButton (new ToggleButton ("Cancel", NUX_TRACKER_LOCATION) );
     CancelButton->SetMinimumWidth (60);
     CancelButton->SetMinimumHeight (20);
 
-    OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
-    OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (coloreditorproxy, &ColorDialogProxy::RecvDialogOk), coloreditor) );
-    CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (coloreditorproxy, &ColorDialogProxy::RecvDialogCancel), coloreditor) );
-    CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (coloreditorproxy, &ColorDialogProxy::RecvDialogOk), coloreditor) );
+    //FIXME - CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (coloreditorproxy, &ColorDialogProxy::RecvDialogCancel), coloreditor) );
+    //FIXME - CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
 
     ButtonLayout->SetHorizontalInternalMargin (6);
     ButtonLayout->SetVerticalExternalMargin (2);
@@ -234,35 +234,37 @@ namespace nux
     {
       redlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
-        redcheck = new RadioButton (TEXT ("R:") );
+        //FIXME - change to radio button
+        redcheck = new Button ("R:" );
         redcheck->SetMinimumWidth (30);
         redtext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
         redtext->SetMinimumWidth (36);
         redlayout->AddView (redcheck, 0);
         redlayout->AddView (redtext, 0);
-        redcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::RED), color::RGB ) );
+        //FIXME - redcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_RED), CM_RGB ) );
       }
       greenlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
-        greencheck = new RadioButton (TEXT ("G:") );
+        //FIXME - Change to radio button
+        greencheck = new Button ("G:" );
         greencheck->SetMinimumWidth (30);
         greentext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
         greentext->SetMinimumWidth (36);
         greenlayout->AddView (greencheck, 0);
         greenlayout->AddView (greentext, 0);
-        greencheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::GREEN), color::RGB ) );
+        //FIXME - greencheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_GREEN), CM_RGB ) );
 
       }
       bluelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
-        bluecheck = new RadioButton (TEXT ("B:") );
+        //FIXME - change to radio button
+        bluecheck = new Button ("B:" );
         bluecheck->SetMinimumWidth (30);
         bluetext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
         bluetext->SetMinimumWidth (36);
         bluelayout->AddView (bluecheck, 0);
         bluelayout->AddView (bluetext, 0);
-        bluecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::BLUE), color::RGB ) );
-
+        //FIXME - change to radio button bluecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_BLUE), CM_RGB ) );
       }
     }
 
@@ -270,33 +272,36 @@ namespace nux
     {
       huelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
-        huecheck = new RadioButton (TEXT ("H:") );
+        //FIXME - change to radio button
+        huecheck = new Button ("H:" );
         huecheck->SetMinimumWidth (30);
         huetext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
         huetext->SetMinimumWidth (36);
         huelayout->AddView (huecheck, 0);
         huelayout->AddView (huetext, 0);
-        huecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::HUE), color::HSV ) );
+        //FIXME - huecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_HUE), CM_HSV ) );
       }
       saturationlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
-        saturationcheck = new RadioButton (TEXT ("S:") );
+        //FIXME - change to radio button
+        saturationcheck = new Button ("S:" );
         saturationcheck->SetMinimumWidth (30);
         saturationtext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
         saturationtext->SetMinimumWidth (36);
         saturationlayout->AddView (saturationcheck, 0);
         saturationlayout->AddView (saturationtext, 0);
-        saturationcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::SATURATION), color::HSV ) );
+        //FIXME - saturationcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_SATURATION), CM_HSV ) );
       }
       valuelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
-        valuecheck = new RadioButton (TEXT ("V:") );
+        //FIXME - change to radio button
+        valuecheck = new Button ("V:" );
         valuecheck->SetMinimumWidth (30);
         valuetext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
         valuetext->SetMinimumWidth (36);
         valuelayout->AddView (valuecheck, 0);
         valuelayout->AddView (valuetext, 0);
-        valuecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), color::VALUE), color::HSV ) );
+        //FIXME - valuecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_VALUE), CM_HSV ) );
       }
     }
 
@@ -314,26 +319,26 @@ namespace nux
     ctrllayout->SetVerticalInternalMargin (2);
 
 //     //ctrllayout->AddView(new SpaceLayout(20,20,20,40), 1);
-//     OkButton = new PushButton (TEXT ("OK"), NUX_TRACKER_LOCATION);
+//     OkButton = new ToggleButton (TEXT ("OK"), NUX_TRACKER_LOCATION);
 //     OkButton->SetMinimumWidth (60);
 //     OkButton->SetMinimumHeight (20);
-// 
-//     CancelButton = new PushButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION);
+//
+//     CancelButton = new ToggleButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION);
 //     CancelButton->SetMinimumWidth (60);
 //     CancelButton->SetMinimumHeight (20);
-// 
+//
 // //    ctrllayout->AddView(OkButton, 1);
 // //    ctrllayout->AddView(CancelButton, 1);
 
     m_hlayout->AddLayout (ctrllayout, 0);
 
-    radiogroup = new RadioButtonGroup (NUX_TRACKER_LOCATION);
-    radiogroup->ConnectButton (redcheck);
-    radiogroup->ConnectButton (greencheck);
-    radiogroup->ConnectButton (bluecheck);
-    radiogroup->ConnectButton (huecheck);
-    radiogroup->ConnectButton (saturationcheck);
-    radiogroup->ConnectButton (valuecheck);
+    //radiogroup = new RadioButtonGroup (NUX_TRACKER_LOCATION);
+    //radiogroup->ConnectButton (redcheck);
+    //radiogroup->ConnectButton (greencheck);
+    //radiogroup->ConnectButton (bluecheck);
+    //radiogroup->ConnectButton (huecheck);
+    //radiogroup->ConnectButton (saturationcheck);
+    //radiogroup->ConnectButton (valuecheck);
 
     m_RedShader = new GLSh_ColorPicker (color::RED);
     m_GreenShader = new GLSh_ColorPicker (color::GREEN);
@@ -1044,7 +1049,8 @@ void ColorEditor::RecvCheckColorModel (bool b, color::Model ColorModel, color::C
     m_ColorChannel = colorchannel;
     RecvCheckColorModel (true, m_ColorModel, m_ColorChannel);
 
-    if (m_ColorChannel == color::RED)
+    /*FIXME - disabled because we lost radiogroup 
+    if (m_ColorChannel == CC_RED)
       radiogroup->ActivateButton (redcheck);
     else if (m_ColorChannel == color::GREEN)
       radiogroup->ActivateButton (greencheck);
@@ -1056,6 +1062,8 @@ void ColorEditor::RecvCheckColorModel (bool b, color::Model ColorModel, color::C
       radiogroup->ActivateButton (saturationcheck);
     else if (m_ColorChannel == color::VALUE)
       radiogroup->ActivateButton (valuecheck);
+    */
+
   }
 
   color::Model ColorEditor::GetColorModel() const
