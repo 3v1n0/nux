@@ -25,6 +25,7 @@
 
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
+#include "ObjectType.h"
 #include "Property.h"
 #include "PropertyTraits.h"
 
