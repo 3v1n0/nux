@@ -485,7 +485,7 @@ namespace nux
     }
     
     _focused_area = focused_area;
-    _focused_area_destroyed_con = focused_area->OnDestroyed.connect (sigc::mem_fun (this, &WindowThread::OnFocusedAreaDestroyed));
+    _focused_area_destroyed_con = focused_area->object_destroyed.connect (sigc::mem_fun (this, &WindowThread::OnFocusedAreaDestroyed));
     
   }
 

@@ -38,6 +38,7 @@ namespace nux
 
   class RGBValuator : public View //public ValuatorAbstraction
   {
+    NUX_DECLARE_OBJECT_TYPE (RGBValuator, View);
   public:
     RGBValuator(NUX_FILE_LINE_PROTO);
     RGBValuator(Color const& color, NUX_FILE_LINE_PROTO);

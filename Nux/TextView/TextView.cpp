@@ -173,7 +173,7 @@ namespace nux
     mouse_wheel.connect (sigc::mem_fun (this, &TextView::RecvMouseWheel) );
     key_down.connect (sigc::mem_fun (this, &TextView::RecvKeyEvent) );
 
-    start_key_focus.connect (sigc::mem_fun (this, &TextView::RecvStartFocus) );
+    begin_key_focus.connect (sigc::mem_fun (this, &TextView::RecvStartFocus) );
     end_key_focus.connect (sigc::mem_fun (this, &TextView::RecvEndFocus) );
 
     MouseAutoScrollTimer = new TimerFunctor;

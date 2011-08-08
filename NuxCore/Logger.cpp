@@ -86,34 +86,34 @@ inline std::string const& LoggerModule::module() const
 
 inline bool LoggerModule::IsErrorEnabled() const
 {
-  return GetEffectiveLogLevel() <= ERROR;
+  return GetEffectiveLogLevel() <= Error;
 }
 
 inline bool LoggerModule::IsWarningEnabled() const
 {
-  return GetEffectiveLogLevel() <= WARNING;
+  return GetEffectiveLogLevel() <= Warning;
 }
 
 inline bool LoggerModule::IsInfoEnabled() const
 {
-  return GetEffectiveLogLevel() <= INFO;
+  return GetEffectiveLogLevel() <= Info;
 }
 
 inline bool LoggerModule::IsDebugEnabled() const
 {
-  return GetEffectiveLogLevel() <= DEBUG;
+  return GetEffectiveLogLevel() <= Debug;
 }
 
 inline bool LoggerModule::IsTraceEnabled() const
 {
-  return GetEffectiveLogLevel() <= TRACE;
+  return GetEffectiveLogLevel() <= Trace;
 }
 
 inline void LoggerModule::SetLogLevel(Level level)
 {
   // The root module can't be unspecified.
-  if (module_ == "" && level == NOT_SPECIFIED)
-    level = WARNING;
+  if (module_ == "" && level == NotSpecified)
+    level = Warning;
   level_ = level;
 }
 
@@ -124,7 +124,7 @@ inline Level LoggerModule::GetLogLevel() const
 
 inline Level LoggerModule::GetEffectiveLogLevel() const
 {
-  if (level_ == NOT_SPECIFIED && parent_)
+  if (level_ == NotSpecified && parent_)
     return parent_->GetEffectiveLogLevel();
   else
     return level_;
@@ -185,7 +185,7 @@ Level Logger::GetEffectiveLogLevel() const
 LoggerModule::LoggerModule(std::string const& module,
                            LoggerModulePtr const& parent)
   : module_(module)
-  , level_(NOT_SPECIFIED)
+  , level_(NotSpecified)
   , parent_(parent)
 {
 }
@@ -194,7 +194,7 @@ LoggerModules::LoggerModules()
   : root_(new LoggerModule("", LoggerModulePtr()))
 {
   // Make sure we have the root logger available.
-  root_->SetLogLevel(WARNING);
+  root_->SetLogLevel(Warning);
   modules_.insert(ModuleMap::value_type("", root_));
 }
 
@@ -229,7 +229,7 @@ void LoggerModules::reset()
 {
   for (ModuleMap::iterator i = modules_.begin(), end = modules_.end(); i != end; ++i)
   {
-    i->second->SetLogLevel(NOT_SPECIFIED);
+    i->second->SetLogLevel(NotSpecified);
   }
 }
 
@@ -242,7 +242,7 @@ std::string LoggerModules::dump_logging_levels(std::string const& prefix)
     std::string const& module_name = i->first;
     LoggerModulePtr const& module = i->second;
     Level severity = module->GetLogLevel();
-    if (severity == NOT_SPECIFIED)
+    if (severity == NotSpecified)
       continue; // Don't write out unspecified ones.
     if (first)
       first = false;
@@ -361,16 +361,16 @@ Level get_logging_level(std::string level)
 {
   boost::to_upper(level);
   if (level == "TRACE")
-    return TRACE;
+    return Trace;
   if (level == "DEBUG")
-    return DEBUG;
+    return Debug;
   if (level == "INFO")
-    return INFO;
+    return Info;
   if (level == "WARN" || level == "WARNING")
-    return WARNING;
+    return Warning;
   if (level == "ERROR")
-    return ERROR;
-  return WARNING;
+    return Error;
+  return Warning;
 }
 
 BlockTracer::BlockTracer(Logger& logger,
@@ -406,19 +406,19 @@ char const* str_level(Level severity)
 {
   switch (severity)
   {
-  case NOT_SPECIFIED:
+  case NotSpecified:
     return "NOT_SPECIFIED";
-  case TRACE:
+  case Trace:
     return "TRACE";
-  case DEBUG:
+  case Debug:
     return "DEBUG";
-  case INFO:
+  case Info:
     return "INFO";
-  case WARNING:
+  case Warning:
     return "WARNING";
-  case ERROR:
+  case Error:
     return "ERROR";
-  case CRITICAL:
+  case Critical:
     return "CRITICAL";
   }
   return "<unknown>";

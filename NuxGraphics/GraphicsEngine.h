@@ -42,6 +42,9 @@
   #include "GLWindowManager.h"
 #endif
 
+#define NUX_MAX_GAUSSIAN_SIGMA 11
+#define NUX_MIN_GAUSSIAN_SIGMA 1
+
 namespace nux
 {
 
@@ -840,11 +843,11 @@ namespace nux
 
     void InitSLHorizontalHQGaussFilter (int sigma);
     //! Gauss horizontal filter.
-    ObjectPtr<IOpenGLShaderProgram> _horizontal_hq_gauss_filter_prog[9];
+    ObjectPtr<IOpenGLShaderProgram> _horizontal_hq_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
 
     void InitSLVerticalHQGaussFilter (int sigma);
     //! Gauss vertical filter.
-    ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog[9];
+    ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
 
 
 
