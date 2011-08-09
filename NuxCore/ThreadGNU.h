@@ -64,7 +64,7 @@ namespace nux
     */
     NCriticalSection()
     {
-      pthread_mutex_init (&m_lock, &mut_attr);
+      pthread_mutex_init (&m_lock, 0);
     }
 
     //! Destroy critical section.
@@ -114,7 +114,6 @@ namespace nux
     */
     NCriticalSection &operator= (const NCriticalSection &);
 
-    pthread_mutexattr_t mut_attr;
     mutable pthread_mutex_t m_lock;
   };
 
