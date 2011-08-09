@@ -37,7 +37,6 @@ gtest_nux_core_SOURCES = \
   test_async_file_writer.cpp \
   test_logger.cpp \
   test_properties.cpp \
-  test_abstract_button.cpp \
   test_rolling_file_appender.cpp
 
 gtest_nux_core_CPPFLAGS = \
