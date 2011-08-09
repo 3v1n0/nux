@@ -31,7 +31,7 @@
 namespace nux
 {
 
-  class PushButton;
+  class ToggleButton;
   class VLayout;
   class HLayout;
   class EditTextBox;
@@ -154,8 +154,8 @@ namespace nux
     color::HueLightnessSaturation hls_;
     float alpha_;
 
-    PushButton *m_ColorModel;
-    PushButton *m_ColorFormat;
+    ToggleButton *m_ColorModel;
+    ToggleButton *m_ColorFormat;
 
     color::Model m_color_model;
     color::Format m_color_format;

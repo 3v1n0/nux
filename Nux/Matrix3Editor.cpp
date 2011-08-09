@@ -41,18 +41,18 @@ namespace nux
 
     HLayout *ButtonLayout (new HLayout (NUX_TRACKER_LOCATION) );
 
-    PushButton *OkButton (new PushButton (TEXT ("OK"), NUX_TRACKER_LOCATION) );
+    ToggleButton *OkButton (new ToggleButton ("OK", NUX_TRACKER_LOCATION) );
     OkButton->SetMinimumWidth (60);
     OkButton->SetMinimumHeight (20);
 
-    PushButton *CancelButton (new PushButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION) );
+    ToggleButton *CancelButton (new ToggleButton ("Cancel", NUX_TRACKER_LOCATION) );
     CancelButton->SetMinimumWidth (60);
     CancelButton->SetMinimumHeight (20);
 
-    OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
-    OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix3DialogProxy::RecvDialogOk), matrixeditor) );
-    CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix3DialogProxy::RecvDialogCancel), matrixeditor) );
-    CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix3DialogProxy::RecvDialogOk), matrixeditor) );
+    //FIXME - CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix3DialogProxy::RecvDialogCancel), matrixeditor) );
+    //FIXME - CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
 
     ButtonLayout->SetHorizontalInternalMargin (6);
     ButtonLayout->SetVerticalExternalMargin (2);
@@ -151,15 +151,15 @@ namespace nux
     mtx_row_layout[1]   = new HLayout (NUX_TRACKER_LOCATION);
     mtx_row_layout[2]   = new HLayout (NUX_TRACKER_LOCATION);
 
-    m_IdentityMtxBtn    = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_ZeroMtxBtn        = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_InverseMtxBtn     = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_NegateMtxBtn      = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_IdentityMtxBtn    = new ToggleButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_ZeroMtxBtn        = new ToggleButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_InverseMtxBtn     = new ToggleButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_NegateMtxBtn      = new ToggleButton (TEXT (""), NUX_TRACKER_LOCATION);
 
-    m_IdentityMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvIdentityMatrixCmd) );
-    m_ZeroMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvZeroMatrixCmd) );
-    m_InverseMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvInverseMatrixCmd) );
-    m_NegateMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvNegateMatrixCmd) );
+    //FIXME - m_IdentityMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvIdentityMatrixCmd) );
+    //FIXME - m_ZeroMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvZeroMatrixCmd) );
+    //FIXME - m_InverseMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvInverseMatrixCmd) );
+    //FIXME - m_NegateMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix3Editor::RecvNegateMatrixCmd) );
 
     for (int i = 0; i < 3; i++)
     {
@@ -197,10 +197,10 @@ namespace nux
 
     mtx_layout->SetContentDistribution (eStackExpand);
 
-    m_IdentityMtxBtn->SetCaption (TEXT ("Id") );
-    m_ZeroMtxBtn->SetCaption (TEXT ("Zero") );
-    m_InverseMtxBtn->SetCaption (TEXT ("Inv") );
-    m_NegateMtxBtn->SetCaption (TEXT ("+/-") );
+    //FIXME - m_IdentityMtxBtn->SetCaption (TEXT ("Id") );
+    //FIXME - m_ZeroMtxBtn->SetCaption (TEXT ("Zero") );
+    //FIXME - m_InverseMtxBtn->SetCaption (TEXT ("Inv") );
+    //FIXME - m_NegateMtxBtn->SetCaption (TEXT ("+/-") );
 
     m_MtxFunctionLayout->AddView (m_IdentityMtxBtn, 0, eAbove, eMatchContent);
     m_MtxFunctionLayout->AddView (m_ZeroMtxBtn, 0, eAbove, eMatchContent);

@@ -64,10 +64,10 @@ namespace nux
     CancelButton->SetMinimumWidth (60);
     CancelButton->SetMinimumHeight (20);
 
-    OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
-    OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (splinecurveproxy, &SplineCurveDialogProxy::RecvDialogOk), SplineControl) );
-    CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (splinecurveproxy, &SplineCurveDialogProxy::RecvDialogCancel), SplineControl) );
-    CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (splinecurveproxy, &SplineCurveDialogProxy::RecvDialogOk), SplineControl) );
+    //FIXME - CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (splinecurveproxy, &SplineCurveDialogProxy::RecvDialogCancel), SplineControl) );
+    //FIXME - CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
 
     ButtonLayout->SetHorizontalInternalMargin (6);
     ButtonLayout->SetVerticalExternalMargin (2);

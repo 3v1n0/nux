@@ -22,156 +22,167 @@
 
 #include "Nux.h"
 #include "Button.h"
+#include "StaticText.h"
 #include "HLayout.h"
+#include "VLayout.h"
+#include "TextureArea.h"
 
 namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE (Button);
 
-  Button::Button (const TCHAR *Caption, NUX_FILE_LINE_DECL)
-    :   AbstractButton (Caption, NUX_FILE_LINE_PARAM)
-  {
-    _state     = false;
+  Button::Button (TextureArea *image, NUX_FILE_LINE_DECL)
+      : AbstractButton (NUX_FILE_LINE_PARAM)
+      , label ("")
+      , image_position (NUX_POSITION_TOP) {
+    this->image = image;
+    Init();
+  }
 
-    // Set Signals
-    mouse_click.connect (sigc::mem_fun (this, &Button::RecvClick) );
-    mouse_down.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
-    mouse_double_click.connect (sigc::mem_fun (this, &Button::RecvMouseDown) );
-    mouse_up.connect (sigc::mem_fun (this, &Button::RecvMouseUp) );
-    mouse_move.connect (sigc::mem_fun (this, &Button::RecvMouseMove) );
-    mouse_enter.connect (sigc::mem_fun (this, &Button::RecvMouseEnter) );
-    mouse_leave.connect (sigc::mem_fun (this, &Button::RecvMouseLeave) );
+Button::Button (const std::string label, NUX_FILE_LINE_DECL)
+      : AbstractButton (NUX_FILE_LINE_PARAM)
+      , label (label)
+      , image_position (NUX_POSITION_TOP) {
+    this->image = NULL;
+    Init();
+  }
 
+Button::Button (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
+      : AbstractButton (NUX_FILE_LINE_PARAM)
+      , label (label)
+      , image_position (NUX_POSITION_TOP) {
+    this->image = image;
+    Init();
+  }
+
+Button::Button (NUX_FILE_LINE_DECL)
+      : AbstractButton (NUX_FILE_LINE_PARAM)
+      , label ("")
+      , image_position (NUX_POSITION_TOP) {
+    this->image = NULL;
+    Init();
+  }
+
+  Button::~Button() {
+  }
+
+  void Button::Init () {
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    image_position = NUX_POSITION_LEFT;
+    state.changed.connect (sigc::mem_fun(this, &Button::OnStateChanged));
 
-    SetTextColor (color::Black);
+    // connect up to the imag/label signals
+    label.changed.connect (sigc::mem_fun(this, &Button::OnLabelChanged));
 
-    SetCaption (Caption);
+    //FIXME - enable this once properties work.
+    //image.changed.connect (sigc::mem_fun(this, &Button::OnImageChanged));
+
+    image_position.changed.connect (sigc::mem_fun(this, &Button::OnImagePositionChanged));
+
+    Layout *layout = new VLayout (NUX_TRACKER_LOCATION);
+    SetLayout (layout);
+
+    RebuildLayout();
   }
 
-  Button::~Button()
-  {
+  void Button::SetImage (TextureArea *image) {
+    this->image = image;
+    OnImageChanged (this->image);
   }
 
-  long Button::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
+  TextureArea *Button::GetImage () {
+    return this->image;
   }
 
-  void Button::Draw (GraphicsEngine &GfxContext, bool force_draw)
-  {
+  void Button::OnStateChanged (int value) {
+    NeedRedraw();
+  }
+
+  void Button::OnLabelChanged (std::string value) {
+    RebuildLayout ();
+  }
+
+  void Button::OnImageChanged (TextureArea *value) {
+    RebuildLayout ();
+  }
+
+  void Button::OnImagePositionChanged (int value) {
+    RebuildLayout ();
+  }
+
+  void Button::RebuildLayout () {
+    Layout *layout;
+
+    if (image_position == NUX_POSITION_LEFT || image_position == NUX_POSITION_RIGHT) {
+      layout = new HLayout (NUX_TRACKER_LOCATION);
+    } else {
+      layout = new VLayout (NUX_TRACKER_LOCATION);
+    }
+
+    StaticText *text = NULL;
+    if (label().empty () == false) {
+      text = new StaticText(TEXT (label().c_str()));
+    }
+
+    if (image != NULL && text != NULL) {
+      if (image_position == NUX_POSITION_LEFT || image_position == NUX_POSITION_TOP) {
+        layout->AddView(image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->AddView(text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      } else {
+        layout->AddView(text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->AddView(image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      }
+    }
+    else if (image != NULL) {
+      layout->AddView (image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+    }
+    else if (text != NULL) {
+      layout->AddView (text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+    }
+
+    // add some padding to our button, have to do it the lame way :(
+    Layout *HPadding = new HLayout (NUX_TRACKER_LOCATION);
+    Layout *VPadding = new VLayout (NUX_TRACKER_LOCATION);
+
+    HPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
+    VPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
+    VPadding->AddLayout (layout, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+    VPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
+    HPadding->AddLayout (VPadding, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+    HPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
+
+    // NOTE - setting the layout here, unreferences the previous one, should cause all the memory
+    // to be freed
+    SetLayout (HPadding);
+
+    NeedRedraw();
+  }
+
+  void Button::Draw (GraphicsEngine &GfxContext, bool force_draw) {
     Geometry base = GetGeometry();
-    InteractState is;
-    is.is_on = _state;
-    is.is_focus = IsMouseOwner();
-    is.is_prelight = IsMouseInside();
 
-    if (is.is_focus || is.is_on)
-    {
+    //FIXME - nux button theming only supports a few states - low priority really.
+    if (state == NUX_STATE_ACTIVE) {
+      //FIXME - this uses eBUTTON_FOCUS but that's badly named, focus really means "mouse down" or "activated"
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, color::White, eAllCorners);
       GetPainter().PopBackground();
-    }
-    else if (is.is_prelight)
-    {
+    } else if (state == NUX_STATE_PRELIGHT) {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, color::White, eAllCorners);
       GetPainter().PopBackground();
-    }
-    else
-    {
+    } else {
       GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, color::White, eAllCorners);
       GetPainter().PopBackground();
     }
-
-    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), base, GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
   }
 
-  void Button::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
-  {
+  void Button::DrawContent (GraphicsEngine &GfxContent, bool force_draw) {
+    nux::Geometry base = GetGeometry ();
+    GfxContent.PushClippingRectangle (base);
 
+    if (GetCompositionLayout ())
+      GetCompositionLayout ()->ProcessDraw (GfxContent, force_draw);
+
+    GfxContent.PopClippingRectangle();
   }
-
-  void Button::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-
-  }
-
-  void Button::SetCaption (const TCHAR *Caption)
-  {
-    if (Caption == 0 || (StringLength (Caption) == 0) )
-    {
-      SetBaseString (TEXT ("") );
-    }
-    else
-      SetBaseString (Caption);
-  }
-
-  const NString &Button::GetCaption() const
-  {
-    return GetBaseString();
-  }
-
-  void Button::SetState (bool b)
-  {
-    _state = b;
-    QueueDraw();
-  }
-
-  void Button::SetState (bool State, bool EmitSignal)
-  {
-    _state = State;
-
-    if (EmitSignal)
-    {
-      sigClick.emit();
-      sigToggled.emit();
-      sigStateChanged.emit (_state);
-
-    }
-
-    QueueDraw();
-  }
-
-  bool Button::GetState() const
-  {
-    return _state;
-  }
-
-  void Button::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    _state = !_state;
-    sigClick.emit();
-    QueueDraw();
-  }
-
-  void Button::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-  void Button::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-  void Button::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
-  {
-
-  }
-
-  void Button::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-  void Button::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-
-
-
 }
