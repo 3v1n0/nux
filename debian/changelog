@@ -1,9 +1,9 @@
-nux (1.0.8-0ubuntu3) UNRELEASED; urgency=low
+nux (1.0.8-0ubuntu3) oneiric; urgency=low
 
   * debian/control:
     - transition to boost 1.46
 
- -- Didier Roche <didrocks@ubuntu.com>  Wed, 10 Aug 2011 10:31:55 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 10 Aug 2011 11:33:35 +0200
 
 nux (1.0.8-0ubuntu2) oneiric; urgency=low
 
