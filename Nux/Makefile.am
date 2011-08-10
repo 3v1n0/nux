@@ -198,6 +198,7 @@ source_h = \
   $(srcdir)/BezierCurveControl2.h \
   $(srcdir)/Button.h \
   $(srcdir)/Canvas.h \
+  $(srcdir)/CairoWrapper.h \
   $(srcdir)/CheckBox.h \
   $(srcdir)/ClientArea.h \
   $(srcdir)/ColorArea.h \
