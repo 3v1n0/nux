@@ -825,9 +825,12 @@ namespace nux
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      Area* hit_view = NUX_STATIC_CAST(Area*, (*it)->FindAreaUnderMouse(mouse_position, event_type));
-      if(hit_view)
-        return hit_view;
+      if ((*it)->IsVisible())
+      {
+        Area* hit_view = NUX_STATIC_CAST(Area*, (*it)->FindAreaUnderMouse(mouse_position, event_type));
+        if(hit_view)
+          return hit_view;
+      }
     }
 
     return NULL;
