@@ -62,6 +62,7 @@ source_cpp = \
   $(srcdir)/BezierCurveControl2.cpp \
   $(srcdir)/Button.cpp \
   $(srcdir)/Canvas.cpp \
+  $(srcdir)/CairoWrapper.cpp \
   $(srcdir)/CheckBox.cpp \
   $(srcdir)/ClientArea.cpp \
   $(srcdir)/ColorArea.cpp \
