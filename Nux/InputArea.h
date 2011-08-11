@@ -47,7 +47,7 @@
 #define OnMouseDownOutsideArea  mouse_down_outside_pointer_grab_area
 #define OnKeyEvent              key_down
 #define OnKeyReleased           key_up
-#define OnStartKeyboardReceiver start_key_focus
+#define OnStartKeyboardReceiver begin_key_focus
 #define OnStopKeyboardReceiver  end_key_focus
 
 namespace nux
@@ -322,7 +322,7 @@ namespace nux
     sigc::signal<void, unsigned int, unsigned long, unsigned long> key_up;
 
     //! Signal emitted when the area gets the keyboard focus. The is a result of a mouse down event or a call to ForceStartFocus.
-    sigc::signal<void> start_key_focus;
+    sigc::signal<void> begin_key_focus;
     //! Signal emitted when the area looses the keyboard focus.
     sigc::signal<void> end_key_focus;
 

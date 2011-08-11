@@ -35,8 +35,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @BUILD_EXAMPLES_TRUE@noinst_PROGRAMS = button$(EXEEXT) cairo$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	canvas$(EXEEXT) checkbox$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	combobox$(EXEEXT) gridlayout$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	cairo_wrapper$(EXEEXT) canvas$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	checkbox$(EXEEXT) combobox$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	gridlayout$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	layeredlayout$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	moveable_view$(EXEEXT) \
 @BUILD_EXAMPLES_TRUE@	pango_combobox$(EXEEXT) \
@@ -79,6 +80,12 @@ am__cairo_SOURCES_DIST = cairo.cpp
 @BUILD_EXAMPLES_TRUE@am_cairo_OBJECTS = cairo.$(OBJEXT)
 cairo_OBJECTS = $(am_cairo_OBJECTS)
 @BUILD_EXAMPLES_TRUE@cairo_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am__cairo_wrapper_SOURCES_DIST = cairo_wrapper.cpp
+@BUILD_EXAMPLES_TRUE@am_cairo_wrapper_OBJECTS =  \
+@BUILD_EXAMPLES_TRUE@	cairo_wrapper.$(OBJEXT)
+cairo_wrapper_OBJECTS = $(am_cairo_wrapper_OBJECTS)
+@BUILD_EXAMPLES_TRUE@cairo_wrapper_DEPENDENCIES =  \
+@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
 am__canvas_SOURCES_DIST = canvas.cpp
 @BUILD_EXAMPLES_TRUE@am_canvas_OBJECTS = canvas.$(OBJEXT)
 canvas_OBJECTS = $(am_canvas_OBJECTS)
@@ -181,17 +188,18 @@ am__v_CXXLD_0 = @echo "  CXXLD " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(button_SOURCES) $(cairo_SOURCES) $(canvas_SOURCES) \
-	$(checkbox_SOURCES) $(combobox_SOURCES) $(gridlayout_SOURCES) \
-	$(layeredlayout_SOURCES) $(moveable_view_SOURCES) \
-	$(pango_combobox_SOURCES) $(pangotextedit_SOURCES) \
-	$(rotate_texture_area_SOURCES) $(scrollview_SOURCES) \
-	$(tab_view_SOURCES) $(text_entry_focus_SOURCES) \
-	$(textedit_SOURCES) $(timegraph_SOURCES) $(timeline_SOURCES) \
-	$(tooltip_SOURCES)
+SOURCES = $(button_SOURCES) $(cairo_SOURCES) $(cairo_wrapper_SOURCES) \
+	$(canvas_SOURCES) $(checkbox_SOURCES) $(combobox_SOURCES) \
+	$(gridlayout_SOURCES) $(layeredlayout_SOURCES) \
+	$(moveable_view_SOURCES) $(pango_combobox_SOURCES) \
+	$(pangotextedit_SOURCES) $(rotate_texture_area_SOURCES) \
+	$(scrollview_SOURCES) $(tab_view_SOURCES) \
+	$(text_entry_focus_SOURCES) $(textedit_SOURCES) \
+	$(timegraph_SOURCES) $(timeline_SOURCES) $(tooltip_SOURCES)
 DIST_SOURCES = $(am__button_SOURCES_DIST) $(am__cairo_SOURCES_DIST) \
-	$(am__canvas_SOURCES_DIST) $(am__checkbox_SOURCES_DIST) \
-	$(am__combobox_SOURCES_DIST) $(am__gridlayout_SOURCES_DIST) \
+	$(am__cairo_wrapper_SOURCES_DIST) $(am__canvas_SOURCES_DIST) \
+	$(am__checkbox_SOURCES_DIST) $(am__combobox_SOURCES_DIST) \
+	$(am__gridlayout_SOURCES_DIST) \
 	$(am__layeredlayout_SOURCES_DIST) \
 	$(am__moveable_view_SOURCES_DIST) \
 	$(am__pango_combobox_SOURCES_DIST) \
@@ -409,6 +417,8 @@ EXTRA_DIST =
 @BUILD_EXAMPLES_TRUE@combobox_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@cairo_SOURCES = cairo.cpp
 @BUILD_EXAMPLES_TRUE@cairo_LDADD = $(ALL_LIBS)
+@BUILD_EXAMPLES_TRUE@cairo_wrapper_SOURCES = cairo_wrapper.cpp
+@BUILD_EXAMPLES_TRUE@cairo_wrapper_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@canvas_SOURCES = canvas.cpp
 @BUILD_EXAMPLES_TRUE@canvas_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@textedit_SOURCES = textedit.cpp
@@ -490,6 +500,9 @@ button$(EXEEXT): $(button_OBJECTS) $(button_DEPENDENCIES)
 cairo$(EXEEXT): $(cairo_OBJECTS) $(cairo_DEPENDENCIES) 
 	@rm -f cairo$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(cairo_OBJECTS) $(cairo_LDADD) $(LIBS)
+cairo_wrapper$(EXEEXT): $(cairo_wrapper_OBJECTS) $(cairo_wrapper_DEPENDENCIES) 
+	@rm -f cairo_wrapper$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(cairo_wrapper_OBJECTS) $(cairo_wrapper_LDADD) $(LIBS)
 canvas$(EXEEXT): $(canvas_OBJECTS) $(canvas_DEPENDENCIES) 
 	@rm -f canvas$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(canvas_OBJECTS) $(canvas_LDADD) $(LIBS)
@@ -547,6 +560,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/button.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cairo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cairo_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/canvas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkbox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/combobox.Po@am__quote@

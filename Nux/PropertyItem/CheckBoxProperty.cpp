@@ -29,13 +29,15 @@
 namespace nux
 {
 
-  CheckBoxPropertyItem::CheckBoxPropertyItem (const TCHAR *name, bool on)
-    :   SectionProperty (name, NODE_TYPE_CHECKBOX)
-    ,   CheckBox (TEXT (""), on)
+  CheckBoxPropertyItem::CheckBoxPropertyItem (std::string label, NUX_FILE_LINE_DECL)
+    :   SectionProperty (label.c_str(), NODE_TYPE_CHECKBOX)
+    ,   CheckBox (label, NUX_FILE_LINE_PARAM)
   {
-    SetState (on);
+    //FIXME - needs updating to the latest Button codebase
+    //SetState (on);
     SetUsingStyleDrawing (false);
-    NODE_SIG_CONNECT (sigStateToggled, CheckBoxPropertyItem, RecvPropertyChange);
+    //FIXME needs to be updated to the latest button codebase
+    //NODE_SIG_CONNECT (sigStateToggled, CheckBoxPropertyItem, RecvPropertyChange);
   }
 
   CheckBoxPropertyItem::~CheckBoxPropertyItem()
@@ -104,7 +106,8 @@ namespace nux
   {
     int check = 0;
     QueryNodeXMLIntAttribute (elementxml, "Check",       &check,     id);
-    CheckBoxPropertyItem *node = new CheckBoxPropertyItem (Name, check ? true : false);
+    CheckBoxPropertyItem *node = new CheckBoxPropertyItem (Name);
+    node->active = check ? true : false;
     node->SetID (id);
     return node;
   }
@@ -112,7 +115,8 @@ namespace nux
   TiXmlElement *CheckBoxPropertyItem::ToXML() const
   {
     TiXmlElement *elementxml = NodeNetCom::ToXML();
-    elementxml->SetAttribute ("Check", GetState() ? 1 : 0);
+    //FIXME needs to be updated to the latest button codebase
+    //elementxml->SetAttribute ("Check", GetState() ? 1 : 0);
     return elementxml;
   }
 
@@ -122,7 +126,8 @@ namespace nux
 
     if (QueryNodeXMLIntAttribute (elementxml, "Check", &check, GetID() ) )
     {
-      SetState (check ? true : false);
+      //FIXME needs to be updated to the latest button codebase
+      //SetState (check ? true : false);
       //nuxDebugMsg(TEXT("Updated Node %s - ID: %d - Type: %s"), GetName().c_str(), GetID(), ConvertTypeToString(GetParameterType()));
       return NodeNetCom::FromXML (elementxml);
     }

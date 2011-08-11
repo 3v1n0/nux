@@ -95,7 +95,7 @@ namespace nux
     m_TableArea->mouse_double_click.connect (sigc::mem_fun (this, &TableCtrl::mouse_double_click) );
     m_TableArea->mouse_up.connect (sigc::mem_fun (this, &TableCtrl::OnMouseUp) );
     m_TableArea->mouse_drag.connect (sigc::mem_fun (this, &TableCtrl::mouse_drag) );
-    m_TableArea->start_key_focus.connect (sigc::mem_fun (this, &TableCtrl::OnKeyboardFocus) );
+    m_TableArea->begin_key_focus.connect (sigc::mem_fun (this, &TableCtrl::OnKeyboardFocus) );
     m_TableArea->end_key_focus.connect (sigc::mem_fun (this, &TableCtrl::OnLostKeyboardFocus) );
 
 

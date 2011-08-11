@@ -48,19 +48,24 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__gtest_nux_core_SOURCES_DIST = Helpers.cpp test_main.cpp \
-	test_async_file_writer.cpp test_logger.cpp test_properties.cpp \
+am__gtest_nux_core_SOURCES_DIST = Helpers.h Helpers.cpp test_main.cpp \
+	test_async_file_writer.cpp test_logger.cpp \
+	test_cairo_wrapper.cpp test_properties.cpp \
 	test_rolling_file_appender.cpp
 @BUILD_TESTS_TRUE@am_gtest_nux_core_OBJECTS =  \
 @BUILD_TESTS_TRUE@	gtest_nux_core-Helpers.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nux_core-test_main.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nux_core-test_async_file_writer.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nux_core-test_logger.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux_core-test_cairo_wrapper.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nux_core-test_properties.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nux_core-test_rolling_file_appender.$(OBJEXT)
 gtest_nux_core_OBJECTS = $(am_gtest_nux_core_OBJECTS)
 am__DEPENDENCIES_1 =
 @BUILD_TESTS_TRUE@gtest_nux_core_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -105,6 +110,22 @@ CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD " $@;
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+CCLD = $(CC)
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
@@ -315,10 +336,12 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@  $(NUX_LIBS)
 
 @BUILD_TESTS_TRUE@gtest_nux_core_SOURCES = \
+@BUILD_TESTS_TRUE@  Helpers.h \
 @BUILD_TESTS_TRUE@  Helpers.cpp \
 @BUILD_TESTS_TRUE@  test_main.cpp \
 @BUILD_TESTS_TRUE@  test_async_file_writer.cpp \
 @BUILD_TESTS_TRUE@  test_logger.cpp \
+@BUILD_TESTS_TRUE@  test_cairo_wrapper.cpp \
 @BUILD_TESTS_TRUE@  test_properties.cpp \
 @BUILD_TESTS_TRUE@  test_rolling_file_appender.cpp
 
@@ -338,6 +361,9 @@ top_srcdir = @top_srcdir@
 
 @BUILD_TESTS_TRUE@gtest_nux_core_LDADD = \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(NUX_LIBS)
 
 @BUILD_TESTS_TRUE@gtest_nux_core_LDFLAGS = \
@@ -402,6 +428,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-Helpers.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_async_file_writer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_logger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_properties.Po@am__quote@
@@ -498,6 +525,22 @@ gtest_nux_core-test_logger.obj: test_logger.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_logger.cpp' object='gtest_nux_core-test_logger.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_logger.obj `if test -f 'test_logger.cpp'; then $(CYGPATH_W) 'test_logger.cpp'; else $(CYGPATH_W) '$(srcdir)/test_logger.cpp'; fi`
+
+gtest_nux_core-test_cairo_wrapper.o: test_cairo_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_cairo_wrapper.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Tpo -c -o gtest_nux_core-test_cairo_wrapper.o `test -f 'test_cairo_wrapper.cpp' || echo '$(srcdir)/'`test_cairo_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Tpo $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_cairo_wrapper.cpp' object='gtest_nux_core-test_cairo_wrapper.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_cairo_wrapper.o `test -f 'test_cairo_wrapper.cpp' || echo '$(srcdir)/'`test_cairo_wrapper.cpp
+
+gtest_nux_core-test_cairo_wrapper.obj: test_cairo_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_cairo_wrapper.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Tpo -c -o gtest_nux_core-test_cairo_wrapper.obj `if test -f 'test_cairo_wrapper.cpp'; then $(CYGPATH_W) 'test_cairo_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/test_cairo_wrapper.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Tpo $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_cairo_wrapper.cpp' object='gtest_nux_core-test_cairo_wrapper.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_cairo_wrapper.obj `if test -f 'test_cairo_wrapper.cpp'; then $(CYGPATH_W) 'test_cairo_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/test_cairo_wrapper.cpp'; fi`
 
 gtest_nux_core-test_properties.o: test_properties.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_properties.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_properties.Tpo -c -o gtest_nux_core-test_properties.o `test -f 'test_properties.cpp' || echo '$(srcdir)/'`test_properties.cpp

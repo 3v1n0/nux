@@ -117,6 +117,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-BezierCurveControl2.lo \
 	libnux_@NUX_API_VERSION@_la-Button.lo \
 	libnux_@NUX_API_VERSION@_la-Canvas.lo \
+	libnux_@NUX_API_VERSION@_la-CairoWrapper.lo \
 	libnux_@NUX_API_VERSION@_la-CheckBox.lo \
 	libnux_@NUX_API_VERSION@_la-ClientArea.lo \
 	libnux_@NUX_API_VERSION@_la-ColorArea.lo \
@@ -171,9 +172,6 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-Panel.lo \
 	libnux_@NUX_API_VERSION@_la-PopUpWindow.lo \
 	libnux_@NUX_API_VERSION@_la-PropertyList.lo \
-	libnux_@NUX_API_VERSION@_la-PushButton.lo \
-	libnux_@NUX_API_VERSION@_la-RadioButton.lo \
-	libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo \
 	libnux_@NUX_API_VERSION@_la-RangeValue.lo \
 	libnux_@NUX_API_VERSION@_la-RangeValueInteger.lo \
 	libnux_@NUX_API_VERSION@_la-RGBValuator.lo \
@@ -196,6 +194,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-Timeline.lo \
 	libnux_@NUX_API_VERSION@_la-TimelineEasings.lo \
 	libnux_@NUX_API_VERSION@_la-TimerProc.lo \
+	libnux_@NUX_API_VERSION@_la-ToggleButton.lo \
 	libnux_@NUX_API_VERSION@_la-ToolButton.lo \
 	libnux_@NUX_API_VERSION@_la-TreeControl.lo \
 	libnux_@NUX_API_VERSION@_la-Utils.lo \
@@ -509,6 +508,7 @@ source_cpp = \
   $(srcdir)/BezierCurveControl2.cpp \
   $(srcdir)/Button.cpp \
   $(srcdir)/Canvas.cpp \
+  $(srcdir)/CairoWrapper.cpp \
   $(srcdir)/CheckBox.cpp \
   $(srcdir)/ClientArea.cpp \
   $(srcdir)/ColorArea.cpp \
@@ -563,9 +563,6 @@ source_cpp = \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
   $(srcdir)/PropertyList.cpp \
-  $(srcdir)/PushButton.cpp \
-  $(srcdir)/RadioButton.cpp \
-  $(srcdir)/RadioButtonGroup.cpp \
   $(srcdir)/RangeValue.cpp \
   $(srcdir)/RangeValueInteger.cpp \
   $(srcdir)/RGBValuator.cpp \
@@ -588,6 +585,7 @@ source_cpp = \
   $(srcdir)/Timeline.cpp \
   $(srcdir)/TimelineEasings.cpp \
   $(srcdir)/TimerProc.cpp \
+  $(srcdir)/ToggleButton.cpp \
   $(srcdir)/ToolButton.cpp \
   $(srcdir)/TreeControl.cpp \
   $(srcdir)/Utils.cpp \
@@ -646,6 +644,7 @@ source_h = \
   $(srcdir)/BezierCurveControl2.h \
   $(srcdir)/Button.h \
   $(srcdir)/Canvas.h \
+  $(srcdir)/CairoWrapper.h \
   $(srcdir)/CheckBox.h \
   $(srcdir)/ClientArea.h \
   $(srcdir)/ColorArea.h \
@@ -700,9 +699,6 @@ source_h = \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
   $(srcdir)/PropertyList.h \
-  $(srcdir)/PushButton.h \
-  $(srcdir)/RadioButton.h \
-  $(srcdir)/RadioButtonGroup.h \
   $(srcdir)/RangeValue.h \
   $(srcdir)/RangeValueInteger.h \
   $(srcdir)/Readme.txt \
@@ -727,6 +723,7 @@ source_h = \
   $(srcdir)/TimelineEasings.h \
   $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
+  $(srcdir)/ToggleButton.h \
   $(srcdir)/TreeControl.h \
   $(srcdir)/Theme.h \
   $(srcdir)/Utils.h \
@@ -844,6 +841,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Button.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-CairoWrapper.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Canvas.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-CheckBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-CheckBoxProperty.Plo@am__quote@
@@ -911,12 +909,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Panel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-PopUpWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-PropertyList.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-PushButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBAProperty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBProperty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBValuator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButtonGroup.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValue.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValueInteger.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.Plo@am__quote@
@@ -944,6 +939,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Timeline.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimelineEasings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimerProc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ToggleButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ToolButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TreeControl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Utils.Plo@am__quote@
@@ -1277,6 +1273,14 @@ libnux_@NUX_API_VERSION@_la-Canvas.lo: $(srcdir)/Canvas.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Canvas.cpp' object='libnux_@NUX_API_VERSION@_la-Canvas.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Canvas.lo `test -f '$(srcdir)/Canvas.cpp' || echo '$(srcdir)/'`$(srcdir)/Canvas.cpp
+
+libnux_@NUX_API_VERSION@_la-CairoWrapper.lo: $(srcdir)/CairoWrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-CairoWrapper.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CairoWrapper.Tpo -c -o libnux_@NUX_API_VERSION@_la-CairoWrapper.lo `test -f '$(srcdir)/CairoWrapper.cpp' || echo '$(srcdir)/'`$(srcdir)/CairoWrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CairoWrapper.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CairoWrapper.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/CairoWrapper.cpp' object='libnux_@NUX_API_VERSION@_la-CairoWrapper.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-CairoWrapper.lo `test -f '$(srcdir)/CairoWrapper.cpp' || echo '$(srcdir)/'`$(srcdir)/CairoWrapper.cpp
 
 libnux_@NUX_API_VERSION@_la-CheckBox.lo: $(srcdir)/CheckBox.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-CheckBox.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CheckBox.Tpo -c -o libnux_@NUX_API_VERSION@_la-CheckBox.lo `test -f '$(srcdir)/CheckBox.cpp' || echo '$(srcdir)/'`$(srcdir)/CheckBox.cpp
@@ -1710,30 +1714,6 @@ libnux_@NUX_API_VERSION@_la-PropertyList.lo: $(srcdir)/PropertyList.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-PropertyList.lo `test -f '$(srcdir)/PropertyList.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyList.cpp
 
-libnux_@NUX_API_VERSION@_la-PushButton.lo: $(srcdir)/PushButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-PushButton.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-PushButton.Tpo -c -o libnux_@NUX_API_VERSION@_la-PushButton.lo `test -f '$(srcdir)/PushButton.cpp' || echo '$(srcdir)/'`$(srcdir)/PushButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-PushButton.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-PushButton.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PushButton.cpp' object='libnux_@NUX_API_VERSION@_la-PushButton.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-PushButton.lo `test -f '$(srcdir)/PushButton.cpp' || echo '$(srcdir)/'`$(srcdir)/PushButton.cpp
-
-libnux_@NUX_API_VERSION@_la-RadioButton.lo: $(srcdir)/RadioButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RadioButton.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Tpo -c -o libnux_@NUX_API_VERSION@_la-RadioButton.lo `test -f '$(srcdir)/RadioButton.cpp' || echo '$(srcdir)/'`$(srcdir)/RadioButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/RadioButton.cpp' object='libnux_@NUX_API_VERSION@_la-RadioButton.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-RadioButton.lo `test -f '$(srcdir)/RadioButton.cpp' || echo '$(srcdir)/'`$(srcdir)/RadioButton.cpp
-
-libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo: $(srcdir)/RadioButtonGroup.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButtonGroup.Tpo -c -o libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo `test -f '$(srcdir)/RadioButtonGroup.cpp' || echo '$(srcdir)/'`$(srcdir)/RadioButtonGroup.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButtonGroup.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButtonGroup.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/RadioButtonGroup.cpp' object='libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo `test -f '$(srcdir)/RadioButtonGroup.cpp' || echo '$(srcdir)/'`$(srcdir)/RadioButtonGroup.cpp
-
 libnux_@NUX_API_VERSION@_la-RangeValue.lo: $(srcdir)/RangeValue.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RangeValue.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValue.Tpo -c -o libnux_@NUX_API_VERSION@_la-RangeValue.lo `test -f '$(srcdir)/RangeValue.cpp' || echo '$(srcdir)/'`$(srcdir)/RangeValue.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValue.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValue.Plo
@@ -1909,6 +1889,14 @@ libnux_@NUX_API_VERSION@_la-TimerProc.lo: $(srcdir)/TimerProc.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TimerProc.cpp' object='libnux_@NUX_API_VERSION@_la-TimerProc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TimerProc.lo `test -f '$(srcdir)/TimerProc.cpp' || echo '$(srcdir)/'`$(srcdir)/TimerProc.cpp
+
+libnux_@NUX_API_VERSION@_la-ToggleButton.lo: $(srcdir)/ToggleButton.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ToggleButton.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ToggleButton.Tpo -c -o libnux_@NUX_API_VERSION@_la-ToggleButton.lo `test -f '$(srcdir)/ToggleButton.cpp' || echo '$(srcdir)/'`$(srcdir)/ToggleButton.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ToggleButton.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ToggleButton.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ToggleButton.cpp' object='libnux_@NUX_API_VERSION@_la-ToggleButton.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ToggleButton.lo `test -f '$(srcdir)/ToggleButton.cpp' || echo '$(srcdir)/'`$(srcdir)/ToggleButton.cpp
 
 libnux_@NUX_API_VERSION@_la-ToolButton.lo: $(srcdir)/ToolButton.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ToolButton.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ToolButton.Tpo -c -o libnux_@NUX_API_VERSION@_la-ToolButton.lo `test -f '$(srcdir)/ToolButton.cpp' || echo '$(srcdir)/'`$(srcdir)/ToolButton.cpp

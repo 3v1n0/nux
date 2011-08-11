@@ -699,7 +699,7 @@ namespace nux
   
   void GraphicsEngine::InitSLHorizontalHQGaussFilter(int sigma)
   {
-    int k = Clamp<int>(sigma, 1, 9);
+    int k = Clamp<int>(sigma, NUX_MIN_GAUSSIAN_SIGMA, NUX_MAX_GAUSSIAN_SIGMA);
     if (_horizontal_hq_gauss_filter_prog[k-1].IsValid())
     {
       // Shader program already compiled
@@ -750,7 +750,7 @@ namespace nux
                      sum += SampleTexture(TextureObject0, texCoord) * W[i];       \n\
                      texCoord += delta;                                           \n\
                      }                                                            \n\
-                     gl_FragColor = vec4(sum.x, sum.y, sum.z, sum.w);             \n\
+                     gl_FragColor = vec4(sum.x, sum.y, sum.z, 1.0);             \n\
                      }");
 
     int l = PSString.Size();
@@ -771,7 +771,7 @@ namespace nux
 
   void GraphicsEngine::InitSLVerticalHQGaussFilter(int sigma)
   {
-    int k = Clamp<int>(sigma, 1, 9);
+    int k = Clamp<int>(sigma, NUX_MIN_GAUSSIAN_SIGMA, NUX_MAX_GAUSSIAN_SIGMA);
     if (_vertical_hq_gauss_filter_prog[k-1].IsValid())
     {
       // Shader program already compiled
@@ -821,7 +821,7 @@ namespace nux
                      sum += SampleTexture (TextureObject0, texCoord) * W[i];      \n\
                      texCoord += delta;                                           \n\
                      }                                                            \n\
-                     gl_FragColor = vec4 (sum.x, sum.y, sum.z, sum.w);            \n\
+                     gl_FragColor = vec4 (sum.x, sum.y, sum.z, 1.0);            \n\
                      }");
 
     int l = PSString.Size();
@@ -1903,9 +1903,7 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_HorizontalHQGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
-    sigma = Clamp<float>(sigma, 1.0f, 9.0f);
-
-    int k = sigma;
+    int k = Clamp<float>(sigma, NUX_MIN_GAUSSIAN_SIGMA, NUX_MAX_GAUSSIAN_SIGMA);
 
     if (_horizontal_hq_gauss_filter_prog[k-1].IsValid() == false)
     {
@@ -1945,7 +1943,7 @@ namespace nux
     SetTexture (GL_TEXTURE0, device_texture);
     CHECKGL (glUniform1iARB (TextureObjectLocation, 0));
 
-    sigma = Clamp <float> (sigma, 0.1f, 9.0f);
+    sigma = Clamp <float> (sigma, 0.1f, NUX_MAX_GAUSSIAN_SIGMA);
     // Set the Gaussian weights
     {
       float *W;
@@ -1981,9 +1979,7 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_VerticalHQGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
-    sigma = Clamp<float>(sigma, 1.0f, 9.0f);
-
-    int k = sigma;
+    int k = Clamp<float>(sigma, NUX_MIN_GAUSSIAN_SIGMA, NUX_MAX_GAUSSIAN_SIGMA);
 
     if (_vertical_hq_gauss_filter_prog[k-1].IsValid() == false)
     {
@@ -2025,7 +2021,7 @@ namespace nux
 
     CHECKGL (glUniform1iARB (TextureObjectLocation, 0));
 
-    sigma = Clamp <float> (sigma, 0.1f, 9.0f);
+    sigma = Clamp <float> (sigma, 0.1f, NUX_MAX_GAUSSIAN_SIGMA);
     // Set the Gaussian weights
     {
       float *W;

@@ -26,27 +26,31 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
+#if defined(NUX_OS_WINDOWS)
+  #define __func__ __FUNCTION__
+#endif
+
 #define LOG_TRACE(logger) \
   if (!logger.IsTraceEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::TRACE, logger.module(), __FILE__, __LINE__).stream()
+  else ::nux::logging::LogStream(::nux::logging::Trace, logger.module(), __FILE__, __LINE__).stream()
 #define LOG_DEBUG(logger) \
   if (!logger.IsDebugEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::DEBUG, logger.module(), __FILE__, __LINE__).stream()
+  else ::nux::logging::LogStream(::nux::logging::Debug, logger.module(), __FILE__, __LINE__).stream()
 #define LOG_INFO(logger) \
   if (!logger.IsInfoEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::INFO, logger.module(), __FILE__, __LINE__).stream()
+  else ::nux::logging::LogStream(::nux::logging::Info, logger.module(), __FILE__, __LINE__).stream()
 #define LOG_WARN(logger) LOG_WARNING(logger)
 #define LOG_WARNING(logger) \
   if (!logger.IsWarningEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::WARNING, logger.module(), __FILE__, __LINE__).stream()
+  else ::nux::logging::LogStream(::nux::logging::Warning, logger.module(), __FILE__, __LINE__).stream()
 #define LOG_ERROR(logger) \
   if (!logger.IsErrorEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::ERROR, logger.module(), __FILE__, __LINE__).stream()
+  else ::nux::logging::LogStream(::nux::logging::Error, logger.module(), __FILE__, __LINE__).stream()
 
 // We shouldn't really be logging block level information at anything higher
 // than debug.
-#define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::TRACE, __PRETTY_FUNC__, __FILE__, __LINE__)
-#define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::DEBUG, __PRETTY_FUNC__, __FILE__, __LINE__)
+#define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Trace, __PRETTY_FUNCTION__, __FILE__, __LINE__)
+#define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Debug, __PRETTY_FUNCTION__, __FILE__, __LINE__)
 
 
 namespace nux {
@@ -54,13 +58,13 @@ namespace logging {
 
 enum Level
 {
-  NOT_SPECIFIED,
-  TRACE,
-  DEBUG,
-  INFO,
-  WARNING,
-  ERROR,
-  CRITICAL,
+  NotSpecified,
+  Trace,
+  Debug,
+  Info,
+  Warning,
+  Error,
+  Critical,
 };
 
 // Convert a string representation of a logging level into the enum value.

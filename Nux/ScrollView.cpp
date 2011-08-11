@@ -76,8 +76,9 @@ namespace nux
     m_ViewContentTopMargin       = 0;
     m_ViewContentBottomMargin    = 0;
     FormatContent();
-
-    ChildFocusChanged.connect (sigc::mem_fun (this, &ScrollView::OnChildFocusChanged));
+  
+    //FIXME disabling until we have better API for this
+    //ChildFocusChanged.connect (sigc::mem_fun (this, &ScrollView::OnChildFocusChanged));
 
     SetAcceptMouseWheelEvent(true);
   }

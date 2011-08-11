@@ -28,7 +28,7 @@
 #include "Layout.h"
 #include "HLayout.h"
 #include "VLayout.h"
-#include "PushButton.h"
+#include "ToggleButton.h"
 #include "TimerProc.h"
 
 namespace nux
@@ -157,10 +157,10 @@ namespace nux
 
     EditTextBox *m_MtxInput[3][3];
 
-    PushButton     *m_IdentityMtxBtn;
-    PushButton     *m_ZeroMtxBtn;
-    PushButton     *m_InverseMtxBtn;
-    PushButton     *m_NegateMtxBtn;
+    ToggleButton     *m_IdentityMtxBtn;
+    ToggleButton     *m_ZeroMtxBtn;
+    ToggleButton     *m_InverseMtxBtn;
+    ToggleButton     *m_NegateMtxBtn;
     HLayout    *m_MtxFunctionLayout;
 
     Matrix3x3<float> m_Matrix;

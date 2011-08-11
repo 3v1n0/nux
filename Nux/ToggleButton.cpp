@@ -16,37 +16,42 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *              Gordon Allott <gord.allott@canonical.com>
  *
  */
 
 
-#ifndef CHECKBOX_H
-#define CHECKBOX_H
-
-#include "AbstractButton.h"
+#include "Nux.h"
+#include "ToggleButton.h"
+#include "HLayout.h"
 
 namespace nux
 {
-  class CheckBox: public AbstractButton
+ToggleButton::ToggleButton (TextureArea *image, NUX_FILE_LINE_DECL)
+  : Button (image, NUX_FILE_LINE_PARAM)
   {
-  public:
-    CheckBox (std::string label, NUX_FILE_LINE_PROTO);
-    ~CheckBox();
+    togglable = true;
+  }
 
-    Property<std::string>   label;
+ToggleButton::ToggleButton (const std::string label, NUX_FILE_LINE_DECL)
+  : Button (label, NUX_FILE_LINE_PARAM)
+  {
+    togglable = true;
+  }
 
-  private:
-    void Init ();
+ToggleButton::ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
+  : Button (label,  image, NUX_FILE_LINE_PARAM)
+  {
+    togglable = true;
+  }
 
-    void OnStateChanged (int value);
-    void OnLabelChanged (std::string value);
-    void RebuildLayout ();
+ToggleButton::ToggleButton (NUX_FILE_LINE_DECL)
+  : Button (NUX_FILE_LINE_PARAM)
+  {
+    togglable = true;
+  }
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-
-  private:
-  };
+ToggleButton::~ToggleButton()
+{
 }
-
-#endif // CHECKBOX_H
+}
