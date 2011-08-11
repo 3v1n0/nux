@@ -32,6 +32,7 @@ test_nux_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_SOURCES = \
+  Helpers.h \
   Helpers.cpp \
   test_main.cpp \
   test_async_file_writer.cpp \
