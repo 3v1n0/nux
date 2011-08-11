@@ -123,6 +123,7 @@ Button::Button (NUX_FILE_LINE_DECL)
     StaticText *text = NULL;
     if (label().empty () == false) {
       text = new StaticText(TEXT (label().c_str()));
+      text->SetSensitive(false);
     }
 
     if (image != NULL && text != NULL) {
