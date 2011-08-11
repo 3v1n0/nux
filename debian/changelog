@@ -1,6 +1,8 @@
 nux (1.2.0-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+  * debian/rules:
+    - bump shlib
 
  -- Didier Roche <didrocks@ubuntu.com>  Thu, 11 Aug 2011 11:04:29 +0200
 
