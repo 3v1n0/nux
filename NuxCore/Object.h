@@ -25,8 +25,11 @@
 
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
+#include "ObjectType.h"
 #include "Property.h"
 #include "PropertyTraits.h"
+
+#define OnDestroyed object_destroyed
 
 namespace nux
 {
@@ -231,7 +234,7 @@ namespace nux
     int GetWeakReferenceCount () const;
 
     //! Signal emitted immediately before the object is destroyed.
-    sigc::signal <void, Object *> OnDestroyed;
+    sigc::signal <void, Object *> object_destroyed;
 
   protected:
     NThreadSafeCounter *_reference_count; //!< Reference count.

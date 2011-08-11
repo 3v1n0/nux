@@ -74,19 +74,19 @@ namespace nux
     return result;
   }
 
+// Calculate pixel size based on the Windows DPI of 96 for compatibility
+// reasons.
   CairoFont::CairoFont(const std::string &family,
-    /*PangoFontDescription *font,*/
-    double pt_size,
-    Style style,
-    Weight weight)
+                       /*PangoFontDescription *font,*/
+                       double pt_size,
+                       Style style,
+                       Weight weight)
+    : font_(pango_font_description_new())
+    , size_(pt_size * PANGO_SCALE * 96 / 72)
+    , style_(style)
+    , weight_(weight)
   {
-    font_ = pango_font_description_new();
-
     pango_font_description_set_family(font_, family.c_str());
-    // Calculate pixel size based on the Windows DPI of 96 for compatibility
-    // reasons.
-
-    size_ = pt_size * PANGO_SCALE * 96. / 72.;
     pango_font_description_set_absolute_size(font_, size_);
 
     if (weight_ == CairoFont::WEIGHT_BOLD)
@@ -103,7 +103,6 @@ namespace nux
   CairoFont::~CairoFont()
   {
     pango_font_description_free(font_);
-    font_ = NULL;
   }
 
   NUX_IMPLEMENT_OBJECT_TYPE (TextEntry);
@@ -175,7 +174,7 @@ namespace nux
 
     key_down.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
 
-    start_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
+    begin_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
     end_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);

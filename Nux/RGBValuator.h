@@ -31,13 +31,14 @@
 namespace nux
 {
 
-  class PushButton;
+  class ToggleButton;
   class VLayout;
   class HLayout;
   class EditTextBox;
 
   class RGBValuator : public View //public ValuatorAbstraction
   {
+    NUX_DECLARE_OBJECT_TYPE (RGBValuator, View);
   public:
     RGBValuator(NUX_FILE_LINE_PROTO);
     RGBValuator(Color const& color, NUX_FILE_LINE_PROTO);
@@ -153,8 +154,8 @@ namespace nux
     color::HueLightnessSaturation hls_;
     float alpha_;
 
-    PushButton *m_ColorModel;
-    PushButton *m_ColorFormat;
+    ToggleButton *m_ColorModel;
+    ToggleButton *m_ColorFormat;
 
     color::Model m_color_model;
     color::Format m_color_format;

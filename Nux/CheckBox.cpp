@@ -22,215 +22,105 @@
 
 #include "Nux.h"
 #include "HLayout.h"
+#include "VLayout.h"
 #include "EditTextBox.h"
 #include "CheckBox.h"
+#include "StaticText.h"
 
 namespace nux
 {
+  CheckBox::CheckBox (std::string label, NUX_FILE_LINE_DECL)
+        : AbstractButton (NUX_FILE_LINE_PARAM)
+        , label (label) {
+    togglable = true;
+    Init ();
+  }
 
-  CheckBox::CheckBox (const TCHAR *Caption, bool state, NUX_FILE_LINE_DECL)
-    :   AbstractButton (Caption, NUX_FILE_LINE_PARAM)
-  {
-    m_hlayout = 0;
-    m_TextArea = 0;
+  CheckBox::~CheckBox() {
+  }
 
-    m_hlayout   = new HLayout (NUX_TRACKER_LOCATION);
-    m_CheckArea = new InputArea(NUX_TRACKER_LOCATION);
-    m_TextArea  = new InputArea(NUX_TRACKER_LOCATION);
+  void CheckBox::Init () {
+    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    // Set Signals
-    m_CheckArea->mouse_click.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
-    mouse_click.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
+    state.changed.connect (sigc::mem_fun(this, &CheckBox::OnStateChanged));
 
-    m_CheckArea->mouse_move.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
-    mouse_move.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
+    // connect up to the label signal
+    label.changed.connect (sigc::mem_fun(this, &CheckBox::OnLabelChanged));
 
-    m_CheckArea->mouse_enter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
-    mouse_enter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
+    Layout *layout = new VLayout (NUX_TRACKER_LOCATION);
+    SetLayout (layout);
 
-    m_CheckArea->mouse_leave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
-    mouse_leave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
+    RebuildLayout();
+  }
 
-    m_CheckArea->mouse_up.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
-    mouse_up.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
+  void CheckBox::OnStateChanged (int value) {
+    RebuildLayout();
+  }
 
-    m_CheckArea->mouse_down.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
-    mouse_down.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
+  void CheckBox::OnLabelChanged (std::string value) {
+    RebuildLayout();
+  }
 
-    // Set Geometry
-    m_CheckArea->SetMinimumSize (14, 14);
-    m_CheckArea->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
+  void CheckBox::RebuildLayout () {
+    Layout *layout = new HLayout (NUX_TRACKER_LOCATION);
 
-    m_TextArea->SetMinimumSize (14, 14);
+    // add some padding for our checkbox draw
+    layout->AddLayout (new SpaceLayout (20, 20, 20, 20), 0);
 
-    // Do not configure m_TextArea-> This is done in setCaption according to the size of the caption text.
-
-    m_hlayout->SetHorizontalInternalMargin (4);
-    m_hlayout->AddView (m_CheckArea, 0);
-    m_hlayout->AddView (m_TextArea, 0);
-
-    // This is convenient to make the layout and the CheckBox fit the check area and the caption area.
-    // Since the check area is bigger than 4x4, it will force the layout and the CheckBox to grow.
-    // This is useful if the CheckBox is put in a vertical layout and it has a stretch factor of 0. Then the width of the CheckBox
-    // will be adjusted to fit the minimum width of the check area and the caption area.
-    {
-      m_hlayout->SetMinimumSize (1, 1);
-      SetMinimumSize (14, 14);
-      ApplyMinWidth();
-      ApplyMinHeight();
+    if (label().empty () == false) {
+      StaticText *text = new StaticText(TEXT (label().c_str()));
+      layout->AddView (text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
     }
 
-    SetLayout (m_hlayout);
+    // add some padding to our button, have to do it the lame way :(
+    Layout *HPadding = new HLayout (NUX_TRACKER_LOCATION);
+    Layout *VPadding = new VLayout (NUX_TRACKER_LOCATION);
 
-    SetState (state);
-    SetCaption (Caption);
+    HPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
+    VPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
+    VPadding->AddLayout (layout, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+    VPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
+    HPadding->AddLayout (VPadding, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+    HPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
 
-    if (Caption) m_TextArea->mouse_click.connect (sigc::mem_fun (this, &CheckBox::RecvClick) );
+    // NOTE - setting the layout here, unreferences the previous one, should cause all the memory
+    // to be freed
+    SetLayout (HPadding);
 
-    if (Caption) m_TextArea->mouse_move.connect (sigc::mem_fun (this, &CheckBox::RecvMouseMove) );
-
-    if (Caption) m_TextArea->mouse_enter.connect (sigc::mem_fun (this, &CheckBox::RecvMouseEnter) );
-
-    if (Caption) m_TextArea->mouse_leave.connect (sigc::mem_fun (this, &CheckBox::RecvMouseLeave) );
-
-    if (Caption) m_TextArea->mouse_up.connect (sigc::mem_fun (this, &CheckBox::RecvMouseUp) );
-
-    if (Caption) m_TextArea->mouse_down.connect (sigc::mem_fun (this, &CheckBox::RecvMouseDown) );
+    NeedRedraw();
   }
 
-  CheckBox::~CheckBox()
-  {
-  }
-
-  long CheckBox::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = m_CheckArea->OnEvent (ievent, ret, ProcessEventInfo);
-
-    if (m_TextArea->GetBaseString().Length() != 0 )
-    {
-      ret = m_TextArea->OnEvent (ievent, ret, ProcessEventInfo);
-    }
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
-  Area* CheckBox::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
-  {
-    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
-
-    if (mouse_inside == false)
-      return NULL;
-
-    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
-      return NULL;
-    return this;
-  }
-
-  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
-  {
+  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw) {
     Geometry base = GetGeometry();
 
-    GetPainter().PaintBackground (GfxContext, base);
-    GetPainter().PaintTextLineStatic (GfxContext, GetFont (), m_TextArea->GetGeometry(), m_TextArea->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+    if (state == NUX_STATE_ACTIVE) {
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, color::White, eAllCorners);
+    } else if (state == NUX_STATE_PRELIGHT) {
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, color::White, eAllCorners);
+    } else {
+      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, color::White, eAllCorners);
+    }
+
     InteractState is;
-    is.is_on = _state;
-    is.is_focus = IsMouseOwner();
+    is.is_on = active;
+    is.is_focus = NUX_STATE_ACTIVE;
+    is.is_prelight = NUX_STATE_PRELIGHT;
 
-    is.is_prelight = IsMouseInside();
+    Geometry base_state = GetGeometry();
+    base_state.SetWidth(20);
+    base_state.SetX(base_state.x + 12);
 
-    GetPainter().PaintCheckBox (GfxContext, m_CheckArea->GetGeometry(), is, Color (0xff000000) );
+    GetPainter().PaintCheckBox (GfxContext, base_state, is, Color (0xff000000) );
   }
 
-  void CheckBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
-  {
+  void CheckBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw) {
+    nux::Geometry base = GetGeometry ();
+    GfxContext.PushClippingRectangle (base);
 
-  }
+    if (GetCompositionLayout ())
+      GetCompositionLayout ()->ProcessDraw (GfxContext, force_draw);
 
-  void CheckBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-
-  }
-
-  void CheckBox::SetCaption (const TCHAR *caption)
-  {
-    if (caption == 0 || (StringLength (caption) == 0) )
-    {
-      m_TextArea->SetBaseString (TEXT ("") );
-    }
-    else
-      m_TextArea->SetBaseString (caption);
-
-    m_TextArea->SetMinimumWidth (4 + GetFont ()->GetStringWidth (m_TextArea->GetBaseString().GetTCharPtr() ) );
-  }
-
-  const NString &CheckBox::GetCaption() const
-  {
-    return m_TextArea->GetBaseString();
-  }
-
-
-  void CheckBox::SetState (bool State)
-  {
-    _state = State;
-    QueueDraw();
-  }
-
-  void CheckBox::SetState (bool State, bool EmitSignal)
-  {
-    _state = State;
-
-    if (EmitSignal)
-    {
-      sigToggled.emit();
-      sigStateChanged.emit (_state);
-    }
-
-    QueueDraw();
-  }
-
-  bool CheckBox::GetState() const
-  {
-    return _state;
-  }
-
-  void CheckBox::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    _state = !_state;
-    sigStateToggled.emit (this);
-    sigStateChanged.emit (_state);
-    QueueDraw();
-  }
-
-  void CheckBox::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-  void CheckBox::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-  void CheckBox::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-  void CheckBox::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-  void CheckBox::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-  void CheckBox::EmitStateSignal()
-  {
-    sigStateChanged.emit (_state);
+    GfxContext.PopClippingRectangle();
   }
 
 

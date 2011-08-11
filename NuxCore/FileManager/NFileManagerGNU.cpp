@@ -207,7 +207,6 @@ namespace nux
   NGNUSerialFileWriter::NGNUSerialFileWriter (t_int InFileDescriptor, LogOutputDevice &InError, t_int InPos)
     :   m_FileDescriptor (InFileDescriptor)
     ,   m_Error         (InError)
-    ,   m_Pos           (InPos)
     ,   m_BufferCount   (0)
   {
     m_Pos = Tell();
@@ -486,7 +485,8 @@ namespace nux
       return NULL;
     }
 
-    return new NGNUSerialFileWriter (FileDesc, Error, sb.st_size);
+    // The third param is never used.
+    return new NGNUSerialFileWriter (FileDesc, Error, 0);
   }
 
   t_s64 NFileManagerGNU::FileSize (const TCHAR *Filename)

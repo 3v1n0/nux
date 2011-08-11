@@ -54,7 +54,7 @@ namespace nux
 
     key_down.connect (sigc::mem_fun (this, &EditTextBox::RecvKeyEvent) );
 
-    start_key_focus.connect (sigc::mem_fun (this, &EditTextBox::RecvStartKeyFocus) );
+    begin_key_focus.connect (sigc::mem_fun (this, &EditTextBox::RecvStartKeyFocus) );
     end_key_focus.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
 
     SetText (Caption);

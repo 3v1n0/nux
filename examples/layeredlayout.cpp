@@ -26,7 +26,7 @@
 #include "Nux/HLayout.h"
 #include "Nux/VLayout.h"
 #include "Nux/LayeredLayout.h"
-#include "Nux/PushButton.h"
+#include "Nux/ToggleButton.h"
 #include "Nux/ComboBoxSimple.h"
 
 class Foo
@@ -53,27 +53,27 @@ public:
       layered->AddLayer (texture_area);
 
       nux::HLayout *hori = new nux::HLayout (NUX_TRACKER_LOCATION);
-      nux::PushButton* button = new nux::PushButton ("Big Button", NUX_TRACKER_LOCATION);
+      nux::Button* button = new nux::Button ("Big Button", NUX_TRACKER_LOCATION);
       button->SetMinMaxSize (200, 100);
       hori->AddView (button, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
       hori->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
       layered->AddLayer (hori);
 
       hori = new nux::HLayout (NUX_TRACKER_LOCATION);
-      button = new nux::PushButton (text, NUX_TRACKER_LOCATION);
+      button = new nux::ToggleButton (text, NUX_TRACKER_LOCATION);
       button->SetMinMaxSize (100, 50);
       hori->AddView (button, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
       hori->SetContentDistribution (nux::MAJOR_POSITION_CENTER);
       layered->AddLayout (hori);
 
-      button = new nux::PushButton ("This button is insensitive", NUX_TRACKER_LOCATION);
+      button = new nux::ToggleButton ("This button is insensitive", NUX_TRACKER_LOCATION);
       button->SetSensitive (false);
       layered->AddLayer (button, false, 10, 10, 180, 40);
 
-      button = new nux::PushButton ("This button has x, y, w, h set", NUX_TRACKER_LOCATION);
+      button = new nux::ToggleButton ("This button has x, y, w, h set", NUX_TRACKER_LOCATION);
       layered->AddLayer (button, false, 400, 10, 180, 40);
 
-      nux::ROPConfig rop; 
+      nux::ROPConfig rop;
       rop.Blend = true;
       rop.SrcBlend = GL_ONE;
       rop.DstBlend = GL_ONE_MINUS_SRC_ALPHA;
@@ -83,16 +83,16 @@ public:
       texture_area->SetPaintLayer (&c);
       layered->AddLayer (texture_area, false, 0, 100, 600, 200);
 
-      button = new nux::PushButton ("YOU CANT SEE ME!!!!!", NUX_TRACKER_LOCATION);
+      button = new nux::ToggleButton ("YOU CANT SEE ME!!!!!", NUX_TRACKER_LOCATION);
       layered->AddLayer (button, true);
       button->SetVisible (false);
-     
+
       layered->SetPaintAll (true);
       layered->SetInputMode (nux::LayeredLayout::INPUT_MODE_COMPOSITE);
 
       layered->Raise (hori, texture_area);
 
-      button = new nux::PushButton ("YOU CANT SEE ME!!!!!", NUX_TRACKER_LOCATION);
+      button = new nux::ToggleButton ("YOU CANT SEE ME!!!!!", NUX_TRACKER_LOCATION);
       layered->AddLayer (button, true);
       layered->RemoveLayer (button);
 
@@ -103,13 +103,13 @@ public:
     }
 
     main_layout->AddLayout (layered_layout, 1);
-    
-    nux::GetWindowThread ()->SetLayout(main_layout); 
+
+    nux::GetWindowThread ()->SetLayout(main_layout);
   }
-  
+
   ~Foo ()
   {
-  
+
   }
 
   void OnComboChangedFoRealz (nux::ComboBoxSimple *simple)
