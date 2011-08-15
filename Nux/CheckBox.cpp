@@ -30,58 +30,64 @@
 namespace nux
 {
   CheckBox::CheckBox (std::string label, NUX_FILE_LINE_DECL)
-        : AbstractButton (NUX_FILE_LINE_PARAM)
-        , label (label) {
-    togglable = true;
-    Init ();
+  : AbstractButton (NUX_FILE_LINE_PARAM)
+  , label(label)
+  {
+    togglable_ = true;
+    Init();
   }
 
-  CheckBox::~CheckBox() {
+  CheckBox::~CheckBox()
+  {
   }
 
-  void CheckBox::Init () {
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+  void CheckBox::Init()
+  {
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    state.changed.connect (sigc::mem_fun(this, &CheckBox::OnStateChanged));
+    state.changed.connect(sigc::mem_fun(this, &CheckBox::OnStateChanged));
 
     // connect up to the label signal
-    label.changed.connect (sigc::mem_fun(this, &CheckBox::OnLabelChanged));
+    label.changed.connect(sigc::mem_fun(this, &CheckBox::OnLabelChanged));
 
-    Layout *layout = new VLayout (NUX_TRACKER_LOCATION);
-    SetLayout (layout);
+    Layout *layout = new VLayout(NUX_TRACKER_LOCATION);
+    SetLayout(layout);
 
     RebuildLayout();
   }
 
-  void CheckBox::OnStateChanged (int value) {
+  void CheckBox::OnStateChanged(int value)
+  {
     RebuildLayout();
   }
 
-  void CheckBox::OnLabelChanged (std::string value) {
+  void CheckBox::OnLabelChanged(std::string value)
+  {
     RebuildLayout();
   }
 
-  void CheckBox::RebuildLayout () {
-    Layout *layout = new HLayout (NUX_TRACKER_LOCATION);
+  void CheckBox::RebuildLayout()
+  {
+    Layout *layout = new HLayout(NUX_TRACKER_LOCATION);
 
     // add some padding for our checkbox draw
-    layout->AddLayout (new SpaceLayout (20, 20, 20, 20), 0);
+    layout->AddLayout(new SpaceLayout(20, 20, 20, 20), 0);
 
-    if (label().empty () == false) {
-      StaticText *text = new StaticText(TEXT (label().c_str()));
+    if(label().empty() == false)
+    {
+      StaticText *text = new StaticText(TEXT(label().c_str()));
       layout->AddView (text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
     }
 
-    // add some padding to our button, have to do it the lame way :(
-    Layout *HPadding = new HLayout (NUX_TRACKER_LOCATION);
-    Layout *VPadding = new VLayout (NUX_TRACKER_LOCATION);
+    Layout *HPadding = new HLayout(NUX_TRACKER_LOCATION);
+    Layout *VPadding = new VLayout(NUX_TRACKER_LOCATION);
 
-    HPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout (layout, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    VPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
-    HPadding->AddLayout (VPadding, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    HPadding->AddLayout (new nux::SpaceLayout(12,12,12,12), 0);
+    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
+    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
+    VPadding->AddLayout(layout, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
+    HPadding->AddLayout(VPadding, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
 
     // NOTE - setting the layout here, unreferences the previous one, should cause all the memory
     // to be freed
@@ -90,15 +96,21 @@ namespace nux
     NeedRedraw();
   }
 
-  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw) {
+  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  {
     Geometry base = GetGeometry();
 
-    if (state == NUX_STATE_ACTIVE) {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_FOCUS, color::White, eAllCorners);
-    } else if (state == NUX_STATE_PRELIGHT) {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_PRELIGHT, color::White, eAllCorners);
-    } else {
-      GetPainter().PushDrawSliceScaledTextureLayer (GfxContext, base, eBUTTON_NORMAL, color::White, eAllCorners);
+    if(state == NUX_STATE_ACTIVE)
+    {
+      GetPainter().PushDrawSliceScaledTextureLayer(GfxContext, base, eBUTTON_FOCUS, color::White, eAllCorners);
+    }
+    else if(state == NUX_STATE_PRELIGHT)
+    {
+      GetPainter().PushDrawSliceScaledTextureLayer(GfxContext, base, eBUTTON_PRELIGHT, color::White, eAllCorners);
+    }
+    else
+    {
+      GetPainter().PushDrawSliceScaledTextureLayer(GfxContext, base, eBUTTON_NORMAL, color::White, eAllCorners);
     }
 
     InteractState is;
@@ -110,15 +122,16 @@ namespace nux
     base_state.SetWidth(20);
     base_state.SetX(base_state.x + 12);
 
-    GetPainter().PaintCheckBox (GfxContext, base_state, is, Color (0xff000000) );
+    GetPainter().PaintCheckBox(GfxContext, base_state, is, Color(0xff000000));
   }
 
-  void CheckBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw) {
-    nux::Geometry base = GetGeometry ();
-    GfxContext.PushClippingRectangle (base);
+  void CheckBox::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+  {
+    nux::Geometry base = GetGeometry();
+    GfxContext.PushClippingRectangle(base);
 
-    if (GetCompositionLayout ())
-      GetCompositionLayout ()->ProcessDraw (GfxContext, force_draw);
+    if(GetCompositionLayout())
+      GetCompositionLayout()->ProcessDraw (GfxContext, force_draw);
 
     GfxContext.PopClippingRectangle();
   }

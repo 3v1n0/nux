@@ -551,7 +551,9 @@ namespace nux
 
           if (abs (dnd_safety_y_) > 30 || abs (dnd_safety_x_) > 30)
           {
+#ifdef NUX_OS_LINUX
             mouse_owner_area_->StartDragAsSource ();
+#endif
             ResetMousePointerAreas ();
             return;
           }

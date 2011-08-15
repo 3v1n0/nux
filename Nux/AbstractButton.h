@@ -19,33 +19,45 @@
  *
  */
 
-
 #ifndef ABSTRACTBUTTON_H
 #define ABSTRACTBUTTON_H
+
 #include "View.h"
 #include "NuxCore/Property.h"
 
 namespace nux
 {
+  // Should not be here
+  enum State
+  {
+    NUX_STATE_ACTIVE = 0,
+    NUX_STATE_NORMAL = 1,
+    NUX_STATE_PRELIGHT = 2,
+    NUX_STATE_SELECTED = 3,
+    NUX_STATE_INSENSITIVE = 4
+  };
 
   //! The base class of Button
   class AbstractButton : public View
   {
+    NUX_DECLARE_OBJECT_TYPE(AbstractButton, View);
   public:
-    AbstractButton (NUX_FILE_LINE_PROTO);
+    AbstractButton(NUX_FILE_LINE_PROTO);
     ~AbstractButton();
 
-    // this should be an ROproperty but can't use that
-    Property<bool> togglable;
+    //! Emit the current state
+    void EmitState();
+    
     Property<bool> active;
+    sigc::signal<void, View*> changed;
 
-    /* NOTSURE - do we need an activated signal? technically you get that with active,
-     * this is just a simpler way of convaying the same information
-     * as the active property can be true/false
-     */
-    sigc::signal<void, View*> Activated;
-
+    
   protected:
+    bool togglable_;
+
+    // Implementation detail that should not be exported.
+    nux::Property<State> state;
+
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     void RecvMouseUp          (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDown        (int x, int y, unsigned long button_flags, unsigned long key_flags);

@@ -32,7 +32,6 @@ namespace nux
 
   View::View (NUX_FILE_LINE_DECL)
     :   InputArea (NUX_FILE_LINE_PARAM)
-    ,   state (NUX_STATE_NORMAL)
   {
     _font = GetSysFont ();
     _is_view_active     = true; // The view is active by default

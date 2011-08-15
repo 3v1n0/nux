@@ -26,12 +26,12 @@
 
 namespace nux
 {
-
   class HLayout;
   class VLayout;
   class TextureArea;
 
-  enum Position {
+  enum Position
+  {
     NUX_POSITION_LEFT,
     NUX_POSITION_RIGHT,
     NUX_POSITION_TOP,
@@ -40,37 +40,33 @@ namespace nux
 
   class Button: public AbstractButton
   {
-    NUX_DECLARE_OBJECT_TYPE (Button, View);
+    NUX_DECLARE_OBJECT_TYPE(Button, View);
   public:
-    Button (TextureArea *image, NUX_FILE_LINE_PROTO);
-    Button (const std::string label, NUX_FILE_LINE_PROTO);
-    Button (const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
-    Button (NUX_FILE_LINE_PROTO);
+    Button(TextureArea *image, NUX_FILE_LINE_PROTO);
+    Button(const std::string label, NUX_FILE_LINE_PROTO);
+    Button(const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
+    Button(NUX_FILE_LINE_PROTO);
     ~Button();
 
-    // This api sucks, it deviates from the property system api, but properties
-    // do not support nux objects
-    void SetImage (TextureArea *image);
-    TextureArea *GetImage ();
+    void SetImage(TextureArea *image);
+    TextureArea* GetImage();
 
-    Property<std::string>   label;
-    Property<Position>      image_position;
+    Property<std::string> label;
+    Property<Position>    image_position;
 
   protected:
-    void Init ();
+    void Init();
 
-    void OnStateChanged (int value);
-    void OnLabelChanged (std::string value);
-    void OnImageChanged (TextureArea *value);
-    void OnImagePositionChanged (int value);
-    void RebuildLayout ();
+    void OnStateChanged(int value);
+    void OnLabelChanged(std::string value);
+    void OnImageChanged(TextureArea *value);
+    void OnImagePositionChanged(int value);
+    void RebuildLayout();
 
     TextureArea *image;
 
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    //virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
   };
 }
 
