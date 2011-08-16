@@ -172,31 +172,31 @@ test_get_bitmap ()
 
 namespace {
 
-TEST (DISABLE_TestCairoWrapper, TestConstruction) {
+TEST (DISABLED_TestCairoWrapper, TestConstruction) {
   run_test (test_construction);
 }
 
-TEST (DISABLE_TestCairoWrapper, TestInvalidate) {
+TEST (DISABLED_TestCairoWrapper, TestInvalidate) {
   run_test (test_invalidate);
 }
 
-TEST (DISABLE_TestCairoWrapper, TestGetCairoSurface) {
+TEST (DISABLED_TestCairoWrapper, TestGetCairoSurface) {
   run_test (test_get_cairo_surface);
 }
 
-TEST (DISABLE_TestCairoWrapper, TestGetCairoContext) {
+TEST (DISABLED_TestCairoWrapper, TestGetCairoContext) {
   run_test (test_get_cairo_context);
 }
 
-TEST (DISABLE_TestCairoWrapper, TestDumpToFile) {
+TEST (DISABLED_TestCairoWrapper, TestDumpToFile) {
   run_test (test_dump_to_file);
 }
 
-TEST (DISABLE_TestCairoWrapper, TestGetTexture) {
+TEST (DISABLED_TestCairoWrapper, TestGetTexture) {
   run_test (test_get_texture);
 }
 
-TEST (DISABLE_TestCairoWrapper, TestGetBitmap) {
+TEST (DISABLED_TestCairoWrapper, TestGetBitmap) {
   run_test (test_get_bitmap);
 }
 }
