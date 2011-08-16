@@ -220,18 +220,22 @@ logging::Logger logger("nux.core.object");
 
     if (IsHeapAllocated ())
     {
-      // If the object has properly been UnReference, it should have gone through Destroy(). if that is the case then
-      // _reference_count should be NULL or its value (returned by GetValue ()) should be equal to 0;
-      // We can use this to detect when delete is called directly on an object.
-      nuxAssertMsg((_reference_count == 0) || (_reference_count && (_reference_count->GetValue () == 0)),
-                   TEXT("[Object::~Object] Invalid object destruction. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object.\nObject allocated at: %s [%d]"),
-                   _allocation_file_name.GetTCharPtr (),
-                   _allocation_line_number);
-      
-      nuxAssertMsg((_weak_reference_count == 0) || (_weak_reference_count && (_weak_reference_count->GetValue () > 0)),
-                   TEXT("[Object::~Object] Invalid value of the weak reference count pointer. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object.\nObject allocated at: %s [%d]"),
-                   _allocation_file_name.GetTCharPtr (),
-                   _allocation_line_number);
+      // If the object has properly been UnReference, it should have gone
+      // through Destroy(). if that is the case then _reference_count should
+      // be NULL or its value (returned by GetValue ()) should be equal to 0;
+      // We can use this to detect when delete is called directly on an
+      // object.
+      if (_reference_count && _reference_count->GetValue() > 0)
+      {
+        LOG_ERROR(logger) << "Invalid object destruction, still has "
+                          << _reference_count->GetValue() << " references."
+                          << "\nObject allocated at: " << GetAllocationLoation();
+      }
+      if (_weak_reference_count && _weak_reference_count->GetValue() == 0)
+      {
+        LOG_ERROR(logger) << "Invalid value of the weak reference count pointer."
+                          << "\nObject allocated at: " << GetAllocationLoation();
+      }
 
       if ((_reference_count == 0) && (_weak_reference_count == 0))
       {
@@ -239,8 +243,9 @@ logging::Logger logger("nux.core.object");
       }
       else
       {
-        // There is a smart pointer holding a weak reference to this object. It is the responsibility
-        // of the last smart pointer to delete '_destroyed'.
+        // There is a smart pointer holding a weak reference to this
+        // object. It is the responsibility of the last smart pointer to
+        // delete '_destroyed'.
       }
     }
     else
