@@ -384,7 +384,7 @@ BlockTracer::BlockTracer(Logger& logger,
   , filename_(filename)
   , line_number_(line_number)
 {
-  if (logger_.GetEffectiveLogLevel() >= level_)
+  if (logger_.GetEffectiveLogLevel() <= level_)
   {
     LogStream(level_, logger_.module(), filename_, line_number_).stream()
       << "+" << function_name_;
@@ -393,7 +393,7 @@ BlockTracer::BlockTracer(Logger& logger,
 
 BlockTracer::~BlockTracer()
 {
-  if (logger_.GetEffectiveLogLevel() >= level_)
+  if (logger_.GetEffectiveLogLevel() <= level_)
   {
     LogStream(level_, logger_.module(), filename_, line_number_).stream()
       << "-" << function_name_;

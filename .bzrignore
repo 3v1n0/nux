@@ -62,3 +62,4 @@ tests/relative
 Logs
 **/nux.log
 **/nux.log.*
+examples/cairo_wrapper
