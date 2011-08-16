@@ -39,9 +39,9 @@ logging::Logger logger("nux.core.object");
   NUX_IMPLEMENT_GLOBAL_OBJECT (ObjectStats);
 
   void ObjectStats::Constructor()
-    : _total_allocated_size(0)
-    , _number_of_objects(0)
   {
+    _total_allocated_size= 0;
+    _number_of_objects = 0;
   }
 
   void ObjectStats::Destructor()
@@ -53,11 +53,12 @@ logging::Logger logger("nux.core.object");
                 << _number_of_objects << " undeleted objects.\n";
     }
 
-    for (auto obj : _allocation_list)
+    for (auto ptr : _allocation_list)
     {
+      Object* obj = reinterpret_cast<Object*>(ptr);
       std::cerr << "\tUndeleted object: Type "
                 << obj->Type().m_Name << ", "
-                << obj->GetAllocationLoation();
+                << obj->GetAllocationLoation() << "\n";
     }
 #endif
   }

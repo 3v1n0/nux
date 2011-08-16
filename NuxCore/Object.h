@@ -39,8 +39,6 @@
 
 namespace nux
 {
-  class Object;
-
   template <typename T>
   class ObjectPtr;
 
@@ -51,7 +49,7 @@ namespace nux
   {
     NUX_DECLARE_GLOBAL_OBJECT (ObjectStats, GlobalSingletonInitializer);
   public:
-    typedef std::list<Object*> AllocationList;
+    typedef std::list<void*> AllocationList;
     AllocationList _allocation_list;
     int _total_allocated_size;  //! Total allocated memory size in bytes.
     int _number_of_objects;     //! Number of allocated objects;
