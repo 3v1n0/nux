@@ -19,6 +19,7 @@
  *
  */
 
+#include <iostream>
 #include <sstream>
 
 #include "NuxCore.h"
@@ -37,42 +38,26 @@ logging::Logger logger("nux.core.object");
   NUX_IMPLEMENT_OBJECT_TYPE (Object);
   NUX_IMPLEMENT_GLOBAL_OBJECT (ObjectStats);
 
-//   int ObjectStats::_total_allocated_size = 0;
-//   int ObjectStats::_number_of_objects = 0;
-//   ObjectStats::AllocationList ObjectStats::_allocation_list;
-
-  ObjectStats::AllocationList::AllocationList()
-  {
-
-  }
-
-  ObjectStats::AllocationList::~AllocationList()
-  {
-
-  }
-
   void ObjectStats::Constructor()
+    : _total_allocated_size(0)
+    , _number_of_objects(0)
   {
-    _total_allocated_size = 0;
-    _number_of_objects = 0;
   }
 
   void ObjectStats::Destructor()
   {
+#if defined(NUX_DEBUG)
     if (_number_of_objects)
     {
-      LOG_DEBUG(logger) << _number_of_objects << " undeleted objects.";
+      std::cerr << "[ObjectStats::Destructor] "
+                << _number_of_objects << " undeleted objects.\n";
     }
 
-#if defined(NUX_DEBUG)
-    AllocationList::iterator it;
-    for (it = _allocation_list.begin(); it != _allocation_list.end(); it++)
+    for (auto obj : _allocation_list)
     {
-      Object* obj = NUX_STATIC_CAST (Object*, (*it));
-      LOG_DEBUG(logger) << "Undeleted object: Type "
-                        << obj->Type().m_Name << ", "
-                        << obj->_allocation_file_name.GetTCharPtr()
-                        << "line " << obj->_allocation_line_number;
+      std::cerr << "\tUndeleted object: Type "
+                << obj->Type().m_Name << ", "
+                << obj->GetAllocationLoation();
     }
 #endif
   }
