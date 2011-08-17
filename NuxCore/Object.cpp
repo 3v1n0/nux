@@ -57,7 +57,7 @@ logging::Logger logger("nux.core.object");
     {
       Object* obj = reinterpret_cast<Object*>(ptr);
       std::cerr << "\tUndeleted object: Type "
-                << obj->Type().m_Name << ", "
+                << obj->Type().name << ", "
                 << obj->GetAllocationLoation() << "\n";
     }
 #endif
@@ -396,7 +396,7 @@ logging::Logger logger("nux.core.object");
     static int delete_depth = 0;
     ++delete_depth;
     object_destroyed.emit(this);
-    std::string obj_type(this->Type().m_Name);
+    const char* obj_type = this->Type().name;
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", about to delete "
                       << obj_type << " allocated at " << GetAllocationLoation();
     delete this;

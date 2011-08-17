@@ -169,7 +169,7 @@ namespace nux
       // make sure the result is valid
       if (CachedResource.IsNull() )
       {
-        nuxError (TEXT ("Cannot cache resource type %s"), Source->Type().GetName() );
+        nuxError (TEXT ("Cannot cache resource type %s"), Source->Type().name );
       }
       else
       {
