@@ -29,6 +29,7 @@ namespace nux
 {
   class CheckBox: public AbstractButton
   {
+    NUX_DECLARE_OBJECT_TYPE (CheckBox, AbstractButton);
   public:
     CheckBox (std::string label, NUX_FILE_LINE_PROTO);
     ~CheckBox();
