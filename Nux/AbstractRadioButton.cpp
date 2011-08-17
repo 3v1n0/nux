@@ -16,42 +16,26 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
- *              Gordon Allott <gord.allott@canonical.com>
  *
  */
 
-
 #include "Nux.h"
-#include "ToggleButton.h"
+
+#include "AbstractRadioButton.h"
 #include "HLayout.h"
 
 namespace nux
 {
-ToggleButton::ToggleButton (TextureArea *image, NUX_FILE_LINE_DECL)
-  : Button (image, NUX_FILE_LINE_PARAM)
+  NUX_IMPLEMENT_OBJECT_TYPE(AbstractRadioButton);
+
+  AbstractRadioButton::AbstractRadioButton (const TCHAR *Caption, NUX_FILE_LINE_DECL)
+    :   View (NUX_FILE_LINE_PARAM)
   {
-    togglable_ = true;
+    _state  = false;
   }
 
-ToggleButton::ToggleButton (const std::string label, NUX_FILE_LINE_DECL)
-  : Button (label, NUX_FILE_LINE_PARAM)
+  AbstractRadioButton::~AbstractRadioButton()
   {
-    togglable_ = true;
-  }
 
-ToggleButton::ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
-  : Button (label,  image, NUX_FILE_LINE_PARAM)
-  {
-    togglable_ = true;
   }
-
-ToggleButton::ToggleButton (NUX_FILE_LINE_DECL)
-  : Button (NUX_FILE_LINE_PARAM)
-  {
-    togglable_ = true;
-  }
-
-ToggleButton::~ToggleButton()
-{
-}
 }

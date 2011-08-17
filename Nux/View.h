@@ -31,18 +31,7 @@
 
 namespace nux
 {
-
   class Layout;
-
-  /* FIXME - this needs to be somewhere more obvious */
-  enum State
-  {
-    NUX_STATE_ACTIVE = 0,
-    NUX_STATE_NORMAL = 1,
-    NUX_STATE_PRELIGHT = 2,
-    NUX_STATE_SELECTED = 3,
-    NUX_STATE_INSENSITIVE = 4
-  };
 
   enum eControlType
   {
@@ -200,10 +189,6 @@ namespace nux
         Returns true if the view has a layout and passes focus to that layout
     */
     bool HasPassiveFocus ();
-
-
-    /* the current state of the widget. useful to lookup quickly */
-    nux::Property<State> state;
 
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();

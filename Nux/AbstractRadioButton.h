@@ -16,42 +16,33 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
- *              Gordon Allott <gord.allott@canonical.com>
  *
  */
 
 
-#include "Nux.h"
-#include "ToggleButton.h"
-#include "HLayout.h"
+#ifndef ABSTRACTRADIOBUTTON_H
+#define ABSTRACTRADIOBUTTON_H
 
 namespace nux
 {
-ToggleButton::ToggleButton (TextureArea *image, NUX_FILE_LINE_DECL)
-  : Button (image, NUX_FILE_LINE_PARAM)
+  //! The base class of Button, CheckBox, RadioButton and PushButton.
+  class AbstractRadioButton : public View
   {
-    togglable_ = true;
-  }
+    NUX_DECLARE_OBJECT_TYPE (AbstractRadioButton, View);
+  public:
+    AbstractRadioButton (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
+    ~AbstractRadioButton();
 
-ToggleButton::ToggleButton (const std::string label, NUX_FILE_LINE_DECL)
-  : Button (label, NUX_FILE_LINE_PARAM)
-  {
-    togglable_ = true;
-  }
+    virtual void SetCaption (const TCHAR *Caption) = 0;
+    virtual const NString &GetCaption() const = 0;
 
-ToggleButton::ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
-  : Button (label,  image, NUX_FILE_LINE_PARAM)
-  {
-    togglable_ = true;
-  }
+    virtual void SetState (bool b) = 0;
+    virtual void SetState (bool State, bool EmitSignal) = 0;
+    virtual bool GetState() const = 0;
 
-ToggleButton::ToggleButton (NUX_FILE_LINE_DECL)
-  : Button (NUX_FILE_LINE_PARAM)
-  {
-    togglable_ = true;
-  }
-
-ToggleButton::~ToggleButton()
-{
+  protected:
+    bool _state;
+  };
 }
-}
+
+#endif // ABSTRACTRADIOBUTTON_H
