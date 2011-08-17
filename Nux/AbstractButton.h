@@ -44,16 +44,17 @@ namespace nux
     AbstractButton(NUX_FILE_LINE_PROTO);
     ~AbstractButton();
 
-    //! Signal emitted when the button is clicked.
+    //! Signal emitted when the button is activated.
     Property<bool> active;
 
-    //! Signal emitted when the button is clicked.
-    sigc::signal<void, AbstractButton*> click;
+    //! Signal emitted when the button is activated.
+    sigc::signal<void, AbstractButton*> activated;
 
   protected:
     bool togglable_;
 
-    // Implementation detail that should not be exported.
+    //! Button state property.
+    // FIXME: Should be read only.
     nux::Property<State> state;
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);

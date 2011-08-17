@@ -74,7 +74,7 @@ namespace nux
       active = false;
     }
 
-    click.emit(this);
+    activated.emit(this);
     QueueDraw();
   }
 
