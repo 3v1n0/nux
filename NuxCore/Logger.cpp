@@ -57,6 +57,8 @@ private:
   std::string module_;
   Level level_;
   LoggerModulePtr parent_;
+  // An attempt to make sure the writer is around for as long as the loggers.
+  Writer& writer_;
 };
 
 class LoggerModules : boost::noncopyable
@@ -187,6 +189,7 @@ LoggerModule::LoggerModule(std::string const& module,
   : module_(module)
   , level_(NotSpecified)
   , parent_(parent)
+  , writer_(Writer::Instance())
 {
 }
 
