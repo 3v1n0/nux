@@ -247,11 +247,8 @@ namespace nux
     Object (const Object &);
     Object &operator = (const Object &);
 
-
-//#if defined(NUX_DEBUG)
-    NString _allocation_file_name;
-    int     _allocation_line_number;
-//#endif
+    const char* _allocation_file_name;
+    int _allocation_line_number;
 
     template <typename T>
     friend class ObjectPtr;

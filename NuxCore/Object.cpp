@@ -50,13 +50,15 @@ logging::Logger logger("nux.core.object");
     if (_number_of_objects)
     {
       std::cerr << "[ObjectStats::Destructor] "
-                << _number_of_objects << " undeleted objects.\n";
+                << _number_of_objects << " undeleted objects.\n\t"
+                << _allocation_list.size() << " items in allocation list.\n";
     }
 
+    int index = 0;
     for (auto ptr : _allocation_list)
     {
       Object* obj = reinterpret_cast<Object*>(ptr);
-      std::cerr << "\tUndeleted object: Type "
+      std::cerr << "\t" << ++index << " Undeleted object: Type "
                 << obj->Type().name << ", "
                 << obj->GetAllocationLoation() << "\n";
     }
@@ -379,7 +381,7 @@ logging::Logger logger("nux.core.object");
       if ((_weak_reference_count == NULL) && (_objectptr_count->GetValue() == 0))
       {
         nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
+        , _allocation_file_name
         , _allocation_line_number);
         nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid pointer for the weak reference count."));
       }
@@ -387,7 +389,7 @@ logging::Logger logger("nux.core.object");
       if ((_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
       {
         nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
-          , _allocation_file_name.GetTCharPtr ()
+          , _allocation_file_name
           , _allocation_line_number);
         nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid value of the weak reference count."));
       }
@@ -441,7 +443,7 @@ logging::Logger logger("nux.core.object");
 std::string Object::GetAllocationLoation() const
 {
   std::ostringstream sout;
-  sout << _allocation_file_name.GetTCharPtr()
+  sout << _allocation_file_name
        << ":" << _allocation_line_number;
   return sout.str();
 }
