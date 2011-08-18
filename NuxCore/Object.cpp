@@ -57,7 +57,7 @@ logging::Logger logger("nux.core.object");
     int index = 0;
     for (auto ptr : _allocation_list)
     {
-      Object* obj = reinterpret_cast<Object*>(ptr);
+      Object* obj = static_cast<Object*>(ptr);
       std::cerr << "\t" << ++index << " Undeleted object: Type "
                 << obj->Type().name << ", "
                 << obj->GetAllocationLoation() << "\n";
