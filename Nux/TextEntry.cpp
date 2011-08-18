@@ -161,7 +161,7 @@ namespace nux
     cairo_font_options_set_subpixel_order(font_options_, CAIRO_SUBPIXEL_ORDER_RGB);
 
     mouse_down.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDown));
-    mouse_drag.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDrag);
+    mouse_drag.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDrag));
     mouse_up.connect(sigc::mem_fun(this, &TextEntry::RecvMouseUp));
     mouse_double_click.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDoubleClick));
 
