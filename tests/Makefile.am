@@ -7,7 +7,6 @@ check_PROGRAMS = \
 test_nux_SOURCES = \
   test-canvas.cpp \
   test-nux.cpp \
-  test-object.cpp \
   test-system.cpp
 
 test_nux_CPPFLAGS = \
@@ -34,6 +33,7 @@ test_nux_LDADD = \
 gtest_nux_core_SOURCES = \
   Helpers.h \
   Helpers.cpp \
+  test_object.cpp \
   test_main.cpp \
   test_async_file_writer.cpp \
   test_logger.cpp \

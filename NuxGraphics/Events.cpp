@@ -82,6 +82,7 @@ namespace nux
 #if defined (NUX_OS_LINUX)
     e_x11_timestamp = 0;
     e_x11_window = 0;
+    e_x11_state = 0;
 #endif
 
     //Application = 0;

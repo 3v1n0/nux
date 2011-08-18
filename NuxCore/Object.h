@@ -236,6 +236,8 @@ namespace nux
     //! Signal emitted immediately before the object is destroyed.
     sigc::signal <void, Object *> object_destroyed;
 
+    std::string GetAllocationLoation() const;
+
   protected:
     NThreadSafeCounter *_reference_count; //!< Reference count.
     NThreadSafeCounter *_weak_reference_count; //!< Weak reference count.
