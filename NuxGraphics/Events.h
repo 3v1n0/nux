@@ -276,6 +276,7 @@ namespace nux
 #if defined(NUX_OS_LINUX)
     Time e_x11_timestamp; //! X11 timestamp
     Window e_x11_window; //!< X11 window.
+    unsigned int e_x11_state;
 #endif
 
 

@@ -1540,6 +1540,8 @@ namespace nux
         m_pEvent->e_keysym = keysym;
         m_pEvent->e_x11_keycode = xevent.xkey.keycode;
         m_pEvent->e_event = NUX_KEYDOWN;
+        m_pEvent->e_x11_timestamp = xevent.xkey.time;
+        m_pEvent->e_x11_state = xevent.xkey.state;
 
         char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
         Memset (m_pEvent->e_text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
@@ -1574,6 +1576,8 @@ namespace nux
         m_pEvent->e_keysym = keysym;
         m_pEvent->e_x11_keycode = xevent.xkey.keycode;
         m_pEvent->e_event = NUX_KEYUP;
+        m_pEvent->e_x11_timestamp = xevent.xkey.time;
+        m_pEvent->e_x11_state = xevent.xkey.state;
         break;
       }
 

@@ -151,7 +151,6 @@ namespace nux
 
     virtual void GeometryChanged ();
 
-  private:
     /**
      * Enum used to specify different motion types.
      */
