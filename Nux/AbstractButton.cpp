@@ -19,80 +19,92 @@
  *              Gordon Allott <gord.allott@canonical.com>
  *
  */
-#include "Nux.h"
 
+#include "Nux.h"
 #include "AbstractButton.h"
 #include "HLayout.h"
 
 namespace nux
 {
+  NUX_IMPLEMENT_OBJECT_TYPE(AbstractButton);
 
   AbstractButton::AbstractButton(NUX_FILE_LINE_DECL)
-      : View(NUX_FILE_LINE_PARAM)
-//      , togglable(false) - FIXME - property explodes if you do this
-//      , active(false);
+  : View(NUX_FILE_LINE_PARAM)
+  , state(NUX_STATE_NORMAL)
   {
     active = false;
-    togglable = false;
+    togglable_ = false;
     Init();
   }
 
-  AbstractButton::~AbstractButton() {
+  AbstractButton::~AbstractButton()
+  {
+
   }
 
-  void AbstractButton::Init () {
-    OnMouseClick.connect (sigc::mem_fun (this, &AbstractButton::RecvClick) );
-    OnMouseDown.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseDown) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseDown) );
-    OnMouseUp.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseUp) );
-    OnMouseMove.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseMove) );
-    OnMouseEnter.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseEnter) );
-    OnMouseLeave.connect (sigc::mem_fun (this, &AbstractButton::RecvMouseLeave) );
+  void AbstractButton::Init()
+  {
+    OnMouseClick.connect(sigc::mem_fun(this, &AbstractButton::RecvClick));
+    OnMouseDown.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
+    OnMouseDoubleClick.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
+    OnMouseUp.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseUp));
+    OnMouseMove.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseMove));
+    OnMouseEnter.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseEnter));
+    OnMouseLeave.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseLeave));
   }
 
-  long AbstractButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  long AbstractButton::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
   }
 
-  void AbstractButton::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void AbstractButton::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (togglable) {
+    if(togglable_)
+    {
       active = !active;
-    } else {
+    }
+    else
+    {
       active = true;
     }
 
-    Activated.emit (this);
-
-    if (togglable == false)
+    if(togglable_ == false)
+    {
       active = false;
+    }
 
-    NeedRedraw();
+    activated.emit(this);
+    QueueDraw();
   }
 
-  void AbstractButton::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags) {
+  void AbstractButton::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
     state = NUX_STATE_PRELIGHT;
     //state = 1;
-    NeedRedraw();
+    QueueDraw();
   }
 
-  void AbstractButton::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags) {
+  void AbstractButton::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
     state = NUX_STATE_ACTIVE;
-    NeedRedraw();
+    QueueDraw();
   }
 
-  void AbstractButton::RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags) {
+  void AbstractButton::RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  {
 
   }
 
-  void AbstractButton::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags) {
+  void AbstractButton::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
     state = NUX_STATE_PRELIGHT;
-    NeedRedraw();
+    QueueDraw();
   }
 
-  void AbstractButton::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags) {
+  void AbstractButton::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
     state = NUX_STATE_NORMAL;
-    NeedRedraw();
+    QueueDraw();
   }
 }
