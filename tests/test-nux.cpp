@@ -24,7 +24,6 @@
 #include <glib-object.h>
 
 void TestCanvasSuite();
-void TestObjectSuite();
 void TestSystemSuite();
 
 void test_timeline_create_suite ();
@@ -40,7 +39,6 @@ main (gint argc, gchar *argv[])
   GLogDevice.Disable ();
 
   /* First the Nux specific tests */
-  TestObjectSuite();
   TestSystemSuite();
   // TODO: fix the test
   // TestCanvasSuite();

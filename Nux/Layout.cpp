@@ -223,7 +223,11 @@ namespace nux
     }
     else
     {
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
+      std::list<Area *>::iterator pos = _layout_element_list.begin();
+#else
       auto pos = _layout_element_list.begin();
+#endif
       int idx = index;
       while (pos != _layout_element_list.end() && idx > 0)
       {
@@ -311,7 +315,11 @@ namespace nux
     }
     else
     {
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
+      std::list<Area *>::iterator pos = _layout_element_list.begin();
+#else
       auto pos = _layout_element_list.begin();
+#endif
       int idx = index;
       while (pos != _layout_element_list.end() && idx > 0)
       {
