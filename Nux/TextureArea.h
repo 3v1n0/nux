@@ -19,7 +19,6 @@
  *
  */
 
-
 #ifndef TEXTUREAREA_H
 #define TEXTUREAREA_H
 
@@ -27,12 +26,11 @@
 
 namespace nux
 {
-
-  class TextureArea : public View
+  class TextureArea: public View
   {
-    NUX_DECLARE_OBJECT_TYPE (TextureArea, View);
+    NUX_DECLARE_OBJECT_TYPE(TextureArea, View);
   public:
-    TextureArea (NUX_FILE_LINE_PROTO);
+    TextureArea(NUX_FILE_LINE_PROTO);
     virtual ~TextureArea();
 
     /*!
@@ -40,31 +38,31 @@ namespace nux
         It \a layer was allocated on the heap, it must be deleted later.
         @param layer A pointer to a BaseTexture class.
     */
-    void SetTexture (BaseTexture *texture);
+    void SetTexture(BaseTexture *texture);
 
     /*!
         Set the paint layer of this area. The \a layer argument to this function is cloned by this object.
         It \a layer was allocated on the heap, it must be deleted later.
         @param layer A pointer to a concrete class that inherit from AbstractPaintLayer.
     */
-    void SetPaintLayer (AbstractPaintLayer *layer);
+    void SetPaintLayer(AbstractPaintLayer *layer);
 
     //! Convenience function to set a 2D rotation when rendering the area.
     /*!
         The rotation is only used for rendering. It should not be used for something else.
     */
-    void Set2DRotation (float angle);
+    void Set2DRotation(float angle);
 
-    Matrix4 Get2DRotation () const;
+    Matrix4 Get2DRotation() const;
 
     sigc::signal<void, int, int> sigMouseDown;  //!< Signal emmitted when a mouse button is pressed over this area.
     sigc::signal<void, int, int> sigMouseDrag;  //!< Signal emmitted when the mouse is dragged over this area.
 
   protected:
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+
     void RecvMouseDown (int x, int y, long button_flags, long key_flags);
     void RecvMouseUp (int x, int y, long button_flags, long key_flags);
     void RecvMouseEnter (int x, int y, long button_flags, long key_flags);

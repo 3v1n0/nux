@@ -360,9 +360,7 @@ namespace nux
     //! Render the content of a top view.
     void RenderTopViewContent(BaseWindow *window, bool force_draw);
 
-    void RenderMainWindowComposition(bool force_draw, bool UseFBO);
-
-
+    void RenderMainWindowComposition(bool force_draw);
 
     /*!
         Render a textured quad the quad has the size of the texture. The texture maybe the main window texture or a BaseWindow texture.
@@ -380,25 +378,6 @@ namespace nux
         Set the main color render target as the texture to draw into.
     */
     void SetMainColorRT();
-
-    /*!
-        Draw a Texture into the main color render target.
-        @param x    Destination coordinates.
-        @param y    Destination coordinates.
-    */
-    void CopyTextureToMainColorRT(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y);
-
-    /*!
-        Set the composition render target as the texture to draw into.
-    */
-    void SetCompositionRT();
-
-    /*!
-        Draw a Texture into the composition render target.
-        @param x    Destination coordinates.
-        @param y    Destination coordinates.
-    */
-    void CopyTextureToCompositionRT(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y);
 
     //! Push a floating view just above another floating view.
     /*!
@@ -479,7 +458,6 @@ namespace nux
     };
     ObjectPtr<IOpenGLBaseTexture> m_MainColorRT;
     ObjectPtr<IOpenGLBaseTexture> m_MainDepthRT;
-    ObjectPtr<IOpenGLBaseTexture> m_CompositionRT;
 
     //! Return the RenderTargetTextures structure of a ViewWindow.
     RenderTargetTextures &GetWindowBuffer(BaseWindow* window);
@@ -539,10 +517,10 @@ namespace nux
     bool _pending_exclusive_input_mode_action;
 
     //! True while events are being processed inside ProcessEvent ().
-    bool _inside_event_processing;
+    bool inside_event_cycle_;
 
-    //! True while rendering is being done.
-    bool _inside_rendering_cycle;
+    //! True while inside the rendering cycle.
+    bool inside_rendering_cycle_;
 
     InputArea* OverlayDrawingCommand;
     ObjectWeakPtr<BaseWindow> m_OverlayWindow;            //!< The window that owns the overlay;
@@ -552,7 +530,7 @@ namespace nux
     Geometry    _tooltip_text_geometry;         //!< The geometry of the text area of the tooltip.
     Point _event_root;
 
-
+    bool on_menu_closure_continue_with_event_;
     AbstractPaintLayer *m_Background;
 
     std::list< ObjectWeakPtr<BaseWindow> > _view_window_list;

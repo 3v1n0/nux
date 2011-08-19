@@ -783,46 +783,6 @@ namespace nux
     return ret;
   }
 
-  long Layout::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    std::list<Area *>::iterator it;
-
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-    {
-      if (!(*it)->IsVisible () || !(*it)->IsSensitive ())
-        continue;
-
-      if ((*it)->IsView())
-      {
-        View *ic = NUX_STATIC_CAST (View*, (*it));
-        ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-      else if ( (*it)->IsLayout() )
-      {
-        Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
-        ret = layout->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-      // InputArea should be tested last
-      else if ((*it)->IsInputArea())
-      {
-        InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
-        ret = input_area->OnEvent (ievent, ret, ProcessEventInfo);
-      }
-    }
-
-    /* must do focus processing after sending events to children */
-    if ((ievent.e_event == NUX_KEYDOWN) && HasFocusControl () && (_ignore_focus == false))
-    {
-      ret |= ProcessFocusEvent (ievent, ret, ProcessEventInfo);
-    }
-
-    if (_ignore_focus)
-      _ignore_focus = false;
-
-    return ret;
-  }
-
   Area* Layout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);

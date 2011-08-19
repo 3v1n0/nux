@@ -52,50 +52,46 @@ namespace nux
     // m_UserTexture is delete by the user
   }
 
-  long TextureArea::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
-  }
-
   void TextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    GfxContext.PushModelViewMatrix (Matrix4::TRANSLATE(-GetBaseX () - GetBaseWidth () / 2, -GetBaseY () - GetBaseHeight () / 2, 0));
-    GfxContext.PushModelViewMatrix (Get2DRotation ());    
-    GfxContext.PushModelViewMatrix (Matrix4::TRANSLATE(GetBaseX () + GetBaseWidth () / 2, GetBaseY () + GetBaseHeight () / 2, 0));
+    // Ability to rotate the widget around its center
+    GfxContext.PushModelViewMatrix(Matrix4::TRANSLATE(-GetBaseX() - GetBaseWidth() / 2, -GetBaseY() - GetBaseHeight() / 2, 0));
+    GfxContext.PushModelViewMatrix(Get2DRotation());
+    GfxContext.PushModelViewMatrix(Matrix4::TRANSLATE(GetBaseX() + GetBaseWidth() / 2, GetBaseY() + GetBaseHeight() / 2, 0));
 
     // The TextureArea should not render the accumulated background. That is left to the caller.
     // GetPainter().PaintBackground (GfxContext, GetGeometry() );
 
     if (m_PaintLayer)
     {
-      m_PaintLayer->SetGeometry (GetGeometry ());
-      GetPainter ().RenderSinglePaintLayer (GfxContext, GetGeometry (), m_PaintLayer);
+      m_PaintLayer->SetGeometry(GetGeometry());
+      GetPainter().RenderSinglePaintLayer(GfxContext, GetGeometry(), m_PaintLayer);
     }
 
-    GfxContext.PopModelViewMatrix ();
-    GfxContext.PopModelViewMatrix ();
-    GfxContext.PopModelViewMatrix ();
+    GfxContext.PopModelViewMatrix();
+    GfxContext.PopModelViewMatrix();
+    GfxContext.PopModelViewMatrix();
   }
 
-  void TextureArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void TextureArea::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void TextureArea::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void TextureArea::PostDraw(GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void TextureArea::SetTexture (BaseTexture *texture)
+  void TextureArea::SetTexture(BaseTexture *texture)
   {
-    NUX_RETURN_IF_NULL (texture);
-    NUX_SAFE_DELETE (m_PaintLayer);
+    NUX_RETURN_IF_NULL(texture);
+    NUX_SAFE_DELETE(m_PaintLayer);
 
     TexCoordXForm texxform;
-    texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-    texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_PaintLayer = new TextureLayer (texture->GetDeviceTexture(), texxform, color::White);
+    texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
+    texxform.SetWrap(TEXWRAP_REPEAT, TEXWRAP_REPEAT);
+    m_PaintLayer = new TextureLayer(texture->GetDeviceTexture(), texxform, color::White);
 
     QueueDraw();
   }

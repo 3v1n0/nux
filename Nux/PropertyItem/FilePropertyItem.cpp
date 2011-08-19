@@ -52,8 +52,8 @@ namespace nux
   {
     long ret = TraverseInfo;
 
-    ret = m_TextEntry->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_OpenButton->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+//     ret = m_TextEntry->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+//     ret = m_OpenButton->BaseProcessEvent (ievent, ret, ProcessEventInfo);
     return ret;
   }
 
