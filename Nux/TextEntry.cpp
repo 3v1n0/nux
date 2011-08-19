@@ -181,7 +181,7 @@ namespace nux
     SetText (text);
 
     SetAcceptKeyboardEvent(true);
-    SetEnableDoubleClickEnable(true);
+    EnableDoubleClick(true);
   }
 
   TextEntry::~TextEntry ()

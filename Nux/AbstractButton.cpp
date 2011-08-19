@@ -44,13 +44,13 @@ namespace nux
 
   void AbstractButton::Init()
   {
-    OnMouseClick.connect(sigc::mem_fun(this, &AbstractButton::RecvClick));
-    OnMouseDown.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
-    OnMouseDoubleClick.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
-    OnMouseUp.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseUp));
-    OnMouseMove.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseMove));
-    OnMouseEnter.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseEnter));
-    OnMouseLeave.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseLeave));
+    mouse_click.connect(sigc::mem_fun(this, &AbstractButton::RecvClick));
+    mouse_down.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
+    mouse_double_click.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
+    mouse_up.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseUp));
+    mouse_move.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseMove));
+    mouse_enter.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseEnter));
+    mouse_leave.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseLeave));
   }
 
   long AbstractButton::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

@@ -217,14 +217,14 @@ namespace nux
 
   void MenuSeparator::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    Geometry base = GetGeometry ();
-    int y0 = base.y + base.GetHeight () / 2;
-    GetPainter ().Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, Color (0xFF222222));
-    GetPainter ().Draw2DLine (GfxContext, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color (0xFFAAAAAA) );
+    Geometry base = GetGeometry();
+    int y0 = base.y + base.GetHeight() / 2;
+    GetPainter().Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, Color(0xFF222222));
+    GetPainter().Draw2DLine (GfxContext, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color(0xFFAAAAAA));
   }
 
-  MenuPage::MenuPage (const TCHAR *title, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  MenuPage::MenuPage(const TCHAR *title, NUX_FILE_LINE_DECL)
+  : View (NUX_FILE_LINE_PARAM)
   {
     m_Parent = 0;
     m_item_width = MENU_ITEM_MIN_WIDTH;
@@ -233,20 +233,22 @@ namespace nux
     m_MenuWindow = 0;
     m_Name = title;
     m_IsTopOfMenuChain = false;
-    _font_name = g_strdup ("Ubuntu 12");
+    _font_name = g_strdup("Ubuntu 12");
+
+    on_closure_continue_with_event_ = false;
 
     // Set Original State
 
     // Set Signals
-    mouse_move.connect (sigc::mem_fun (this, &MenuPage::EmitMouseMove));
-    mouse_drag.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDrag));
-    mouse_down.connect (sigc::mem_fun (this, &MenuPage::EmitMouseDown));
-    mouse_up.connect (sigc::mem_fun (this, &MenuPage::EmitMouseUp));
-    mouse_leave.connect (sigc::mem_fun (this, &MenuPage::RecvMouseLeave));
-    mouse_down_outside_pointer_grab_area.connect (sigc::mem_fun (this, &MenuPage::Terminate));
+    mouse_move.connect(sigc::mem_fun(this, &MenuPage::EmitMouseMove));
+    mouse_drag.connect(sigc::mem_fun(this, &MenuPage::EmitMouseDrag));
+    mouse_down.connect(sigc::mem_fun(this, &MenuPage::EmitMouseDown));
+    mouse_up.connect(sigc::mem_fun(this, &MenuPage::EmitMouseUp));
+    mouse_leave.connect(sigc::mem_fun(this, &MenuPage::RecvMouseLeave));
+    mouse_down_outside_pointer_grab_area.connect(sigc::mem_fun (this, &MenuPage::Terminate));
 
     // Set Geometry
-    SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    SetGeometry(Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     // Set layout
 
@@ -1221,5 +1223,15 @@ namespace nux
   Geometry MenuPage::GetRootGeometry () const
   {
     return GetGeometry();
+  }
+
+  void MenuPage::SetOnClosureContinueEventCycle(bool on_closure_continue_with_event)
+  {
+    on_closure_continue_with_event_ = on_closure_continue_with_event;
+  }
+
+  bool MenuPage::OnClosureContinueEventCycle() const
+  {
+    return on_closure_continue_with_event_;
   }
 }
