@@ -305,12 +305,14 @@ void Tile::Draw(nux::GraphicsEngine &graphics_engine, bool force_draw)
   {
     nux::Color color = nux::color::RandomColor();
 
+    float w = width;
+    float h = height;
     float vertex_buffer[] =
     {
-      0.0f,  0.0f,   0.0f, 1.0f, 0.0f, 0.0f, 0, 0, color.red, color.green, color.blue, color.alpha,
-      0.0f,  height, 0.0f, 1.0f, 0.0f, 1.0f, 0, 0, color.red, color.green, color.blue, color.alpha,
-      width, height, 0.0f, 1.0f, 1.0f, 1.0f, 0, 0, color.red, color.green, color.blue, color.alpha,
-      width, 0.0f,   0.0f, 1.0f, 1.0f, 1.0f, 0, 0, color.red, color.green, color.blue, color.alpha,
+      0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0, 0, color.red, color.green, color.blue, color.alpha,
+      0.0f, h,    0.0f, 1.0f, 0.0f, 1.0f, 0, 0, color.red, color.green, color.blue, color.alpha,
+      w,    h,    0.0f, 1.0f, 1.0f, 1.0f, 0, 0, color.red, color.green, color.blue, color.alpha,
+      w,    0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0, 0, color.red, color.green, color.blue, color.alpha,
     };
 
     CHECKGL(glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0));
