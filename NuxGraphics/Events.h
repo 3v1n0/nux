@@ -114,18 +114,30 @@ namespace nux
 #define NUX_F23    NUX_VK_F23
 #define NUX_F24    NUX_VK_F24
 
-#define NUX_LEFT_MOUSE	1
-#define NUX_MIDDLE_MOUSE	2
-#define NUX_RIGHT_MOUSE	3
+  enum MouseButton
+  {
+    NUX_INVALID_MOUSE_BUTTON = 0,
+    NUX_MOUSE_BUTTON1 = 1,
+    NUX_MOUSE_BUTTON2 = 2,
+    NUX_MOUSE_BUTTON3 = 3,
+    NUX_MOUSE_BUTTON4 = 4,
+    NUX_MOUSE_BUTTON5 = 5,
+    NUX_MOUSE_BUTTON6 = 6,
+    NUX_LEFT_MOUSE = NUX_MOUSE_BUTTON1,   // Deprecated
+    NUX_MIDDLE_MOUSE = NUX_MOUSE_BUTTON2, // Deprecated
+    NUX_RIGHT_MOUSE = NUX_MOUSE_BUTTON3,  // Deprecated
+  };
 
-// Key States. Set in e_key_modifiers.
-#define NUX_STATE_SHIFT	      0x00010000
-#define NUX_STATE_CAPS_LOCK	  0x00020000
-#define NUX_STATE_CTRL		    0x00040000
-#define NUX_STATE_ALT		      0x00080000
-#define NUX_STATE_NUMLOCK	    0x00100000          // most X servers do this?
-#define NUX_STATE_META		    0x00400000          // correct for XFree86
-#define NUX_STATE_SCROLLLOCK	0x00800000          // correct for XFree86
+  enum KeyModifier
+  {
+    NUX_STATE_SHIFT	      = 0x00010000,
+    NUX_STATE_CAPS_LOCK	  = 0x00020000,
+    NUX_STATE_CTRL		    = 0x00040000,
+    NUX_STATE_ALT		      = 0x00080000,
+    NUX_STATE_NUMLOCK	    = 0x00100000,
+    NUX_STATE_META		    = 0x00400000,
+    NUX_STATE_SCROLLLOCK	= 0x00800000,
+  };
 
 // These flags describe the mouse button responsible for the mouse event.
 // They are valid only for the current frame.
@@ -203,9 +215,39 @@ namespace nux
     NUX_DND_LEAVE_WINDOW,   //!< Emitted when the DND action goes outside (XdndEnter) a window.
   };
 
-  unsigned long GetEventButton(unsigned long button_state);
-  bool GetButtonState(unsigned long button_state, int button);
+  //! Returns index of the mouse button that triggered an event.
+  /*!
+      Given the mouse button states of and event, returns the index of the button that
+      triggered an event. The index of the left mouse button is 1 and the index for the right 
+      mouse button is 2. If 0 is returned, then a mouse button didn't triggered the event.
+
+      @param button_state The mouse button states of an event.
+      @return The button that triggered the event.
+  */
+  MouseButton GetEventButton(unsigned long button_state);
+
+  //! Returns the state of a mouse button: pressed or released.
+  /*!
+      Given the mouse button states of and event, returns the state of a mouse button.
+      True is the button is pressed. False otherwise.
+
+      @param button_state The mouse button states of an event.
+      @param button Button to query (1 for left mouse button).
+      @return True is the button is pressed. False otherwise.
+  */
+  bool GetButtonState(unsigned long button_state, MouseButton button);
     
+  //! Returns the state of a special key: CTRL, Shift, Alt, NumLock...
+  /*!
+      Given the key modifiers states of and event, returns the state of a key modifier.
+      True is the key is pressed. False otherwise.
+
+      @param key_modifiers_state The key modifiers states of an event.
+      @param key_modifier Key modifier be query.
+      @return True is the key is pressed. False otherwise.
+  */
+  bool GetKeyModifierState(unsigned long key_modifiers_states, KeyModifier key_modifier);
+
   #define NUX_EVENT_TEXT_BUFFER_SIZE 16
 
   //! Nux event class.
@@ -227,20 +269,35 @@ namespace nux
     unsigned long GetKeyState()	const;
     unsigned long GetMouseState() const;
 
+    //! Returns index of the mouse button that triggered this event.
     /*!
-        Get the button responsible for the event.
-        @return The index of the button responsible for the event: 1 left mouse button, 2 middle mouse button, 3 right mouse button.
-    */
-    unsigned long GetEventButton() const;
+        Returns the index of the button that triggered this event.
+        The index of the left mouse button is 1 and the index for the right 
+        mouse button is 2. If 0 is returned, then a mouse button didn't triggered the event.
 
+        @return The button that triggered the event.
+    */
+    MouseButton GetEventButton() const;
+
+    //! Returns the state of a mouse button: pressed or released.
     /*!
-        Check if a mouse button is down.
-        @param button The button whose state is to be checked.
-        @return True if the button is down.
+        Returns the state of a mouse button.
+        True is the button is pressed. False otherwise.
+
+        @param button_index Button index to query (1 for left mouse button).
+        @return True is the button is pressed. False otherwise.
     */
-    bool GetButtonState(int button) const;
+    bool GetButtonState(MouseButton button) const;
 
+    //! Returns the state of a special key: CTRL, Shift, Alt, NumLock...
+    /*!
+        Returns the state of a key modifier.
+        True is the key is pressed. False otherwise.
 
+        @param key_modifier Key modifier be query.
+        @return True is the key is pressed. False otherwise.
+    */
+    bool GetKeyModifierState(KeyModifier key_modifier) const;
 
     //! Return virtual key code of the key that has triggered the last event.
     /*!
@@ -293,6 +350,6 @@ namespace nux
   };
 
   typedef Event IEvent;
-}
+};
 
 #endif // EVENTS_H

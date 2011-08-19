@@ -139,7 +139,7 @@ namespace nux
     SetCompositionLayout (m_VLayout);
     FormatContent();
 
-    m_TableArea->SetEnableDoubleClickEnable (false);
+    m_TableArea->EnableDoubleClick (false);
 
     ShowRowHeader (true);
     ShowColumnHeader (true);

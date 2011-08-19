@@ -61,7 +61,8 @@ logging::Logger logger("nux.core.object");
   {
     if (_number_of_objects)
     {
-      LOG_DEBUG(logger) << _number_of_objects << " undeleted objects.";
+      // FIXME: crash on Windows
+      //LOG_DEBUG(logger) << _number_of_objects << " undeleted objects.";
     }
 
 #if defined(NUX_DEBUG)
@@ -69,10 +70,11 @@ logging::Logger logger("nux.core.object");
     for (it = _allocation_list.begin(); it != _allocation_list.end(); it++)
     {
       Object* obj = NUX_STATIC_CAST (Object*, (*it));
-      LOG_DEBUG(logger) << "Undeleted object: Type "
-                        << obj->Type().m_Name << ", "
-                        << obj->_allocation_file_name.GetTCharPtr()
-                        << "line " << obj->_allocation_line_number;
+      // FIXME: crash on Windows
+//       LOG_DEBUG(logger) << "Undeleted object: Type "
+//                         << obj->Type().m_Name << ", "
+//                         << obj->_allocation_file_name.GetTCharPtr()
+//                         << "line " << obj->_allocation_line_number;
     }
 #endif
   }
@@ -200,8 +202,13 @@ logging::Logger logger("nux.core.object");
     const void *ptr = dynamic_cast<const void *> (this);
 
     // Search for ptr in allocation_list
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
+    std::list<void*>::iterator i = std::find(GObjectStats._allocation_list.begin(),
+      GObjectStats._allocation_list.end(), ptr);
+#else
     auto i = std::find(GObjectStats._allocation_list.begin(),
                        GObjectStats._allocation_list.end(), ptr);
+#endif
     return i != GObjectStats._allocation_list.end();
   }
 

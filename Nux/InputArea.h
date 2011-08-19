@@ -27,28 +27,11 @@
 #include "MouseHandler.h"
 
 #if defined(NUX_OS_WINDOWS)
-#include "NuxGraphics/Events.h"
+  #include "NuxGraphics/Events.h"
 #elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/Events.h"
+  #include "NuxGraphics/Events.h"
 #endif
-
 #include "NuxGraphics/GraphicsDisplay.h"
-
-
-#define OnMouseMove             mouse_move
-#define OnMouseDown             mouse_down
-#define OnMouseUp               mouse_up
-#define OnMouseEnter            mouse_enter
-#define OnMouseLeave            mouse_leave
-#define OnMouseClick            mouse_click
-#define OnMouseDoubleClick      mouse_double_click
-#define OnMouseDrag             mouse_drag
-#define OnMouseWheel            mouse_wheel
-#define OnMouseDownOutsideArea  mouse_down_outside_pointer_grab_area
-#define OnKeyEvent              key_down
-#define OnKeyReleased           key_up
-#define OnStartKeyboardReceiver begin_key_focus
-#define OnStopKeyboardReceiver  end_key_focus
 
 namespace nux
 {
@@ -152,9 +135,9 @@ namespace nux
     */
     bool IsMouseOwner();
 
-    //! Return true if the mouse pointer is inside the Area.
+    //! Returns true if the mouse pointer is inside the Area.
     /*!
-        Return true if during a call to FindAreaUnderMouse it the Area has been determined to be directly under the
+        Returns true if during a call to FindAreaUnderMouse it the Area has been determined to be directly under the
         mouse pointer. Note that is is true only for the first area that is found. there might be other areas that 
         which have the mouse pointer inside of them.
         
@@ -162,17 +145,17 @@ namespace nux
     */
     bool IsMouseInside();
 
-    //! Enable the double click signal on this InputArea.
-    void SetEnableDoubleClickEnable(bool double_click);
+    //! Enable the double click event signal on this InputArea.
+    void EnableDoubleClick(bool double_click);
 
-    //! Return True if the double click signal is enable for this InputArea.
-    bool DoubleClickEnable() const;
+    //! Returns true if the double click signal is enable for this InputArea.
+    bool DoubleClickEnabled() const;
 
     AreaEventProcessor _event_processor;
 
 #if defined (NUX_OS_LINUX)
-    void HandleDndEnter () { ProcessDndEnter (); }
-    void HandleDndLeave () { ProcessDndLeave (); }
+    void HandleDndEnter() {ProcessDndEnter ();}
+    void HandleDndLeave() {ProcessDndLeave ();}
 #endif
   private:
 

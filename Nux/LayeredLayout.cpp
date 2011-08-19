@@ -241,58 +241,6 @@ namespace nux
     _queued_draw = false;
   }
 
-  long LayeredLayout::ProcessOne (Area   *_area,
-                                  IEvent &ievent,
-                                  long    traverse_info,
-                                  long    process_event_info)
-  {
-    long ret = traverse_info;
-
-    if (_area->IsArea())
-    {
-      InputArea *area = NUX_STATIC_CAST (InputArea *, _area);
-      ret = area->OnEvent (ievent, ret, process_event_info);
-    }
-    else if (_area->IsView())
-    {
-      View *ic = NUX_STATIC_CAST (View *, _area);
-      ret = ic->ProcessEvent (ievent, ret, process_event_info);
-    }
-    else if (_area->IsLayout())
-    {
-      Layout *layout = NUX_STATIC_CAST (Layout *, _area);
-      ret = layout->ProcessEvent (ievent, ret, process_event_info);
-    }
-
-    return ret;
-  }
-
-  long LayeredLayout::ProcessEvent (IEvent &ievent, long traverse_info, long process_event_info)
-  {
-    long ret = traverse_info;
-
-    if (m_input_mode == INPUT_MODE_ACTIVE)
-    {
-      if (m_active_area && m_active_area->IsVisible () && m_active_area->IsSensitive ())
-        ret = ProcessOne (m_active_area, ievent, ret, process_event_info);
-    }
-    else
-    {
-      std::list<Area *>::reverse_iterator it, eit = _layout_element_list.rend ();
-
-      for (it = _layout_element_list.rbegin (); it != eit; ++it)
-      {
-        Area *area = (*it);
-
-        if (area->IsVisible () && area->IsSensitive ())
-        {
-          ret = ProcessOne (area, ievent, ret, process_event_info);
-        }
-      }
-    }
-    return ret;
-  }
-  
   Area* LayeredLayout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     if(m_active_area == NULL)
