@@ -27,6 +27,10 @@
 
 namespace nux
 {
+// TODO: write a nice is_instance (and is_derived_instance)
+
+//template <typename T, typename I>
+//bool is_instance(T const&
 
 struct NObjectType
 {
