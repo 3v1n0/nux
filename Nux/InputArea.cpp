@@ -135,12 +135,12 @@ logging::Logger logger("nux.inputarea");
     return _capture_mouse_down_any_where_else;
   }
 
-  void InputArea::SetEnableDoubleClickEnable (bool double_click)
+  void InputArea::EnableDoubleClick (bool double_click)
   {
     _double_click = double_click;
   }
 
-  bool InputArea::DoubleClickEnable() const
+  bool InputArea::DoubleClickEnabled() const
   {
     return _double_click;
   }
@@ -327,12 +327,12 @@ logging::Logger logger("nux.inputarea");
   // == Signals with 1 to 1 mapping to input device ==
   void InputArea::EmitMouseDownSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    OnMouseDown.emit(x, y, mouse_button_state, special_keys_state);
+    mouse_down.emit(x, y, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitMouseUpSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    OnMouseUp.emit(x, y, mouse_button_state, special_keys_state);
+    mouse_up.emit(x, y, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitMouseMoveSignal(int x, int y, int dx, int dy, unsigned long mouse_button_state, unsigned long special_keys_state)
@@ -377,18 +377,18 @@ logging::Logger logger("nux.inputarea");
   void InputArea::EmitMouseEnterSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
     _event_processor._current_mouse_in = true;
-    OnMouseEnter.emit(x, y, mouse_button_state, special_keys_state);
+    mouse_enter.emit(x, y, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitMouseLeaveSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
     _event_processor._current_mouse_in = false;
-    OnMouseLeave.emit(x, y, mouse_button_state, special_keys_state);
+    mouse_leave.emit(x, y, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitMouseClickSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    OnMouseClick.emit(x, y, mouse_button_state, special_keys_state);
+    mouse_click.emit(x, y, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitMouseDoubleClickSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)

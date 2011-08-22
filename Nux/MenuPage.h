@@ -138,6 +138,28 @@ namespace nux
 
     void SetFontName (char *font_name);
 
+        //! Let regular widgets process a mouse down event that closes the menu chain without a menu item selection.
+    /*!
+        When a menu chain closes as a result of a mouse down event outside of the menu chain,
+        there is still the possibility to let regular widgets process the event.
+        The flag is tested on the top level MenuPage of the menu chain.
+
+        @param propagate_when_closing_without_action Set to True to propagate the event to regular widgets
+        if the menu chain closes as a result of a mouse down event outside the menu chain.
+    */
+    void SetOnClosureContinueEventCycle(bool on_closure_continue_with_event);
+
+    //! Returns True if a mouse down that closes the menu chain can be processed by regular widgets.
+    /*!
+        When a menu chain closes as a result of a mouse down event outside of the menu chain,
+        there is still the possibility to let regular widgets process the event.
+        The flag is tested on the top level MenuPage of the menu chain.
+
+        @return True is a mouse down event that closes a menu chain without an item selection,
+        can be passed down the event cycle.
+    */
+    bool OnClosureContinueEventCycle() const;
+
   public:
     void StopActionSubMenu();
     void ExecuteActionItem (MenuItem *menuItem);
@@ -248,6 +270,8 @@ namespace nux
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
   private:
+
+    bool on_closure_continue_with_event_;
     int m_numItem;
     int m_HighlightedItem;
     bool m_IsActive;

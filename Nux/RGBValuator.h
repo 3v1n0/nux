@@ -59,7 +59,6 @@ namespace nux
     void SetColorModel(color::Model cm);
     void SetColorFormat(color::Format cf);
     Color GetColor() const;
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);

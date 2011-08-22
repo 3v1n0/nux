@@ -20,6 +20,10 @@
  *
  */
 
+//#if defined(NUX_OS_WINDOWS)
+#include "NuxCore.h"
+//#endif
+
 #include "System.h"
 #include "LoggingWriter.h"
 
@@ -158,6 +162,13 @@ void Writer::Impl::WriteMessage(Level severity,
     std::ostream& out = (*i)->out;
     out << sout.rdbuf() << std::endl;
   }
+
+#if defined(NUX_OS_WINDOWS) && defined(NUX_DEBUG)
+  // Quick hack to print messages to Visual Studio output.
+  // Should create a Visual Studio StreamWrapper instead!
+  OutputDebugString (sout.str().c_str());
+#endif
+
 }
 
 

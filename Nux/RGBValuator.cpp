@@ -142,19 +142,19 @@ namespace nux
     m_DoubleRegExp.SetMinimum (0);
 
     // Set Signals
-    m_RedValuator->OnMouseDown.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Red) );
-    m_GreenValuator->OnMouseDown.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Green) );
-    m_BlueValuator->OnMouseDown.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Blue) );
-    m_AlphaValuator->OnMouseDown.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Alpha) );
-    m_RedValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Red) );
-    m_GreenValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Green) );
-    m_BlueValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Blue) );
-    m_AlphaValuator->OnMouseDrag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Alpha) );
+    m_RedValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Red) );
+    m_GreenValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Green) );
+    m_BlueValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Blue) );
+    m_AlphaValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Alpha) );
+    m_RedValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Red) );
+    m_GreenValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Green) );
+    m_BlueValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Blue) );
+    m_AlphaValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Alpha) );
     //FIXME - m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorModel) );
     //FIXME - m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorFormat) );
-//    m_ColorModel->OnMouseDown.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->OnMouseUp.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->OnMouseEnter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
+//    m_ColorModel->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
+//    m_ColorModel->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
+//    m_ColorModel->mouse_enter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 
 
     m_ColorModel->SetFont (GetSysBoldFont() );
@@ -280,25 +280,6 @@ namespace nux
   RGBValuator::~RGBValuator()
   {
     NUX_SAFE_DELETE (m_CheckboardLayer);
-  }
-
-  long RGBValuator::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = m_RedValuator->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_GreenValuator->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_BlueValuator->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_AlphaValuator->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ColorModel->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ColorFormat->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-
-    ret = m_RedCaption->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_GreenCaption->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_BlueCaption->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_AlphaCaption->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
   }
 
   void RGBValuator::DrawRedMarker (GraphicsEngine &GfxContext)

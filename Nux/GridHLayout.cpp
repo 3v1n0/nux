@@ -329,10 +329,10 @@ namespace nux
 
         if (_force_children_size)
         {
-          (*it)->SetMinimumSize (_children_size.width, _children_size.height);
+          (*it)->SetMinimumSize(_children_size.width, _children_size.height);
         }
 
-        (*it)->SetGeometry (nux::Geometry (X, Y, _children_size.width, _children_size.height));
+        (*it)->SetGeometry(nux::Geometry (X, Y, _children_size.width, _children_size.height));
 
         (*it)->ComputeLayout2();
 
@@ -340,22 +340,22 @@ namespace nux
 
         it++;
 
-        if (!_partial_visibility && (X + _children_size.width > base.x + base.width))
+        if ((!_partial_visibility) && (X + _children_size.width > base.x + base.width))
         {
           X = base.x + m_h_out_margin;
           Y += _children_size.height + m_v_in_margin;
 
           first_element_of_row = true;
-          if(i < num_elements - 1)
+          if (i < num_elements - 1)
             ++num_row;
         }
-        else if (X > base.x + base.width)
+        else if (X >= base.x + base.width)
         {
           X = base.x + m_h_out_margin;
           Y += _children_size.height + m_v_in_margin;
 
           first_element_of_row = true;
-          if(i < num_elements - 1)
+          if (i < num_elements - 1)
             ++num_row;
         }
       }

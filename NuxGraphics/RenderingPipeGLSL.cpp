@@ -19,20 +19,15 @@
  *
  */
 
-
 #include "NuxCore/NuxCore.h"
-
 #include "NuxImage/ImageSurface.h"
-
 #include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
-
 #include "GLTextureResourceManager.h"
 #include "GLVertexResourceManager.h"
 #include "RenderingPipe.h"
 #include "GraphicsEngine.h"
-
 
 namespace nux
 {

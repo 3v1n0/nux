@@ -49,11 +49,11 @@ namespace nux
   public:
     View (NUX_FILE_LINE_DECL);
     virtual ~View();
-    //virtual RemoveView(View *ic);
 
   public:
 
-    long BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    // Deprecated
+    //long BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual long ComputeChildLayout();
     virtual void PositionChildLayout (float offsetX, float offsetY);
@@ -202,7 +202,9 @@ namespace nux
     void OnChildFocusChanged (/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
+    // ProcessEvent is deprecated. 
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {return 0;}
+
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
