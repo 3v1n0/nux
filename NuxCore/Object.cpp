@@ -189,8 +189,13 @@ logging::Logger logger("nux.core.object");
     const void *ptr = dynamic_cast<const void *> (this);
 
     // Search for ptr in allocation_list
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
+    std::list<void*>::iterator i = std::find(GObjectStats._allocation_list.begin(),
+      GObjectStats._allocation_list.end(), ptr);
+#else
     auto i = std::find(GObjectStats._allocation_list.begin(),
                        GObjectStats._allocation_list.end(), ptr);
+#endif
     return i != GObjectStats._allocation_list.end();
   }
 

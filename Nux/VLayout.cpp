@@ -379,9 +379,10 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
-        bool largerHeight = false;
-        bool smallerHeight = false;
-        bool smallerWidth = false;
+        bool larger_height  = false;
+        bool smaller_height = false;
+        bool smaller_width  = false;
+        bool larger_width   = false;
         t_s32 ret = 0;
 
         if (!(*it)->IsVisible ())
@@ -391,11 +392,12 @@ namespace nux
         {
           ret = (*it)->ComputeLayout2();
 
-          largerHeight = (ret & eLargerHeight) ? true : false;
-          smallerHeight = (ret & eSmallerHeight) ? true : false;
-          smallerWidth = (ret & eSmallerWidth) ? true : false;
+          larger_height   = (ret & eLargerHeight)   ? true : false;
+          smaller_height  = (ret & eSmallerHeight)  ? true : false;
+          smaller_width   = (ret & eSmallerWidth)   ? true : false;
+          larger_width    = (ret & eLargerWidth)    ? true : false;
 
-          if ( (largerHeight || smallerHeight) && ( (*it)->IsLayoutDone() == false) )
+          if ( (larger_height || smaller_height) && ( (*it)->IsLayoutDone() == false) )
           {
             // Stop computing the size of this layout. Its size was not convenient to its children. So the children size take priority
             // over the layout. In ComputeLayout2, the dimension of the layout has been set so it encompasses its children (and the margins).
@@ -403,7 +405,7 @@ namespace nux
             // of this layout is now 0.
             // This is the only place where a layout can have _layout_done set to "true".
 
-            // If (smallerHeight == true) the layout takes less space than anticipated.
+            // If (smaller_height == true) the layout takes less space than anticipated.
             // Set unadjusted_layout = true, so another pass will allow its sibling to claim more space.
             {
               unadjusted_layout = true;
@@ -411,14 +413,20 @@ namespace nux
             }
           }
 
-          if ( (smallerWidth == false) && ( (*it)->GetExtend() == eFull) && ( (*it)->GetBaseWidth() < (*it)->GetMaximumWidth() ) )
+          if ( (smaller_width == false) && ( (*it)->GetExtend() == eFull) && ( (*it)->GetBaseWidth() < (*it)->GetMaximumWidth() ) )
           {
-            // We catch all object whose size is possibly larger than the layout. We check there size at the end and
+            // Catch all object whose size is possibly larger than the layout. Check their size at the end and
             // recompute the layout if necessary.
             // For layout elements, make sure that the stretch factor is not 0. If it is, it means it will not use the
             // size provided by the parent layout. Its size will be adjusted to the minimum size of the layout content.
             if (! ( (*it)->IsLayout() && (*it)->GetStretchFactor() == 0) )
               FullSizeUnadjusted.push_back ( (*it)->GetBaseWidth() );
+          }
+
+          if ((smaller_width || larger_width) && ((*it)->GetExtend() == MINOR_SIZE_MATCHCONTENT))
+          {
+            (*it)->SetMinimumWidth((*it)->GetBaseWidth());
+            unadjusted_layout = true;
           }
 
           // Should be reactivate so that if the parent Layout does not call

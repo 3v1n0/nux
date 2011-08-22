@@ -109,8 +109,8 @@ namespace nux
   {
     long ret = TraverseInfo;
 
-    ret = m_ColorModel->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ColorFormat->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+//     ret = m_ColorModel->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+//     ret = m_ColorFormat->BaseProcessEvent (ievent, ret, ProcessEventInfo);
     return ret;
   }
 
