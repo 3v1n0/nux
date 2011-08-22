@@ -1204,12 +1204,14 @@ namespace nux
     // Do not re-order while we are traversing the list of BaseWindow.
     if (_inside_event_processing)
       return;
-    
+
     if (_always_on_front_window == NULL)
       return;
 
     std::list< ObjectWeakPtr<BaseWindow> >::iterator always_top_it = find (_view_window_list.begin(), _view_window_list.end(), _always_on_front_window);
-    if ((always_top_it != _view_window_list.end ()) && (always_top_it != _view_window_list.begin ()) && (_always_on_front_window != NULL))
+    if ((always_top_it != _view_window_list.end ()) &&
+        (always_top_it != _view_window_list.begin ()) &&
+        _always_on_front_window.IsValid())
     {
       _view_window_list.erase (always_top_it);
       _view_window_list.push_front (_always_on_front_window);

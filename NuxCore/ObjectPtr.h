@@ -24,7 +24,7 @@
 #ifndef NUXCORE_OBJECTPTR_H
 #define NUXCORE_OBJECTPTR_H
 
-#include <sigc++/signal.h>
+#include <sigc++/connection.h>
 #include <sigc++/functors/mem_fun.h>
 
 namespace nux
@@ -49,20 +49,16 @@ namespace nux
     //! Constructor
     ObjectPtr()
       : ptr_(nullptr)
-      , reference_count_(nullptr)
-      , objectptr_count_(nullptr)
     {
     }
 
     //! Copy constructor
     ObjectPtr(ObjectPtr<T> const& other)
       : ptr_(other.ptr_)
-      , reference_count_(other.reference_count_)
-      , objectptr_count_(other.objectptr_count_)
     {
       if (ptr_)
       {
-        objectptr_count_->Increment ();
+        ptr_->objectptr_count_->Increment();
         ptr_->Reference();
       }
     }
@@ -77,17 +73,12 @@ namespace nux
     template <typename O>
     ObjectPtr(ObjectPtr<O> const& other)
       : ptr_(nullptr)
-      , reference_count_(nullptr)
-      , objectptr_count_(nullptr)
     {
       if (other.ptr_ &&
           other.ptr_->Type().IsDerivedFromType(T::StaticObjectType))
       {
         ptr_ = static_cast<T*>(other.ptr_);
-        reference_count_ = ptr->reference_count_;
-        objectptr_count_ = ptr->objectptr_count_;
-
-        objectptr_count_->Increment();
+        ptr_->objectptr_count_->Increment();
         ptr_->Reference();
       }
     }
@@ -101,8 +92,6 @@ namespace nux
     */
     explicit ObjectPtr(T *ptr, bool WarnMissuse = false)
       : ptr_(nullptr)
-      , reference_count_(nullptr)
-      , objectptr_count_(nullptr)
     {
       if (ptr)
       {
@@ -112,9 +101,7 @@ namespace nux
         }
 
         ptr_ = ptr;
-        reference_count_ = ptr->reference_count_;
-        objectptr_count_ = ptr->objectptr_count_;
-        objectptr_count_->Increment();
+        ptr_->objectptr_count_->Increment();
         ptr_->Reference();
       }
     }
@@ -129,8 +116,6 @@ namespace nux
     template <typename O>
     explicit ObjectPtr(O *ptr, bool WarnMissuse = false)
       : ptr_(nullptr)
-      , reference_count_(nullptr)
-      , objectptr_count_(nullptr)
     {
       if (ptr &&
           ptr->Type().IsDerivedFromType(T::StaticObjectType))
@@ -141,9 +126,7 @@ namespace nux
         }
 
         ptr_ = static_cast<T*>(ptr);
-        reference_count_ = ptr->reference_count_;
-        objectptr_count_ = ptr->objectptr_count_;
-        objectptr_count_->Increment();
+        ptr_->objectptr_count_->Increment();
         ptr_->Reference();
       }
     }
@@ -195,8 +178,6 @@ namespace nux
     void Swap (ObjectPtr<T>& other)
     {
         std::swap(ptr_, other.ptr_);
-        std::swap(reference_count_, other.reference_count_);
-        std::swap(objectptr_count_, other.objectptr_count_);
     }
 
     //! Test validity of the smart pointer.
@@ -263,7 +244,7 @@ namespace nux
       if (ptr && (!ptr->Type().IsDerivedFromType(T::StaticObjectType)))
         return false;
 
-      return ptr_ == static_cost<T*>(ptr);
+      return ptr_ == static_cast<T*>(ptr);
     }
 
     template <typename U>
@@ -273,7 +254,7 @@ namespace nux
           (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
         return false;
 
-      return ptr_ == static_cost<T*>(other.ptr_);
+      return ptr_ == static_cast<T*>(other.ptr_);
     }
 
     template <typename U>
@@ -283,7 +264,7 @@ namespace nux
           (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
         return false;
 
-      return ptr_ == static_cost<T*>(other.ptr_);
+      return ptr_ == static_cast<T*>(other.ptr_);
     }
 
     //! Release the hosted pointer from this object.
@@ -302,25 +283,19 @@ namespace nux
 
     bool ReleaseReference()
     {
-      if (ptr_ == 0)
+      if (!ptr_)
       {
         return false;
       }
 
       // Decrease the number of strong reference on the hosted pointer.
-      objectptr_count_->Decrement();
+      ptr_->objectptr_count_->Decrement();
       bool destroyed = ptr_->UnReference();
-
       ptr_ = nullptr;
-      objectptr_count_ = nullptr;
-      reference_count_ = nullptr;
-
       return destroyed;
     }
 
     T* ptr_;
-    NThreadSafeCounter* _reference_count;
-    NThreadSafeCounter* _objectptr_count;
 
     /* template <typename U> */
     /* friend ObjectPtr<U> Create (); */
@@ -349,8 +324,8 @@ namespace nux
     /* template <typename U> */
     /* friend ObjectPtr<U> WrapWSPtr (U *u); */
 
-    /* template <typename O> */
-    /* friend class ObjectPtr; */
+    template <typename O>
+    friend class ObjectPtr;
 
     template <typename O>
     friend class ObjectWeakPtr;
@@ -441,7 +416,7 @@ namespace nux
       if (other.ptr_ &&
           (other.ptr_->Type().IsDerivedFromType(T::StaticObjectType)))
       {
-        ptr_ = static_cast<T*>(ptr);
+        ptr_ = static_cast<T*>(other.ptr_);
         ConnectListener();
       }
     }
@@ -457,7 +432,7 @@ namespace nux
       if (other.ptr_ &&
           (other.ptr_->Type().IsDerivedFromType(T::StaticObjectType)))
       {
-        ptr_ = static_cast<T*>(ptr);
+        ptr_ = static_cast<T*>(other.ptr_);
         ConnectListener();
       }
     }
@@ -575,23 +550,14 @@ namespace nux
       return (ptr_ > other.ptr_);
     }
 
-    bool operator != (T *ptr) const
+    template <typename U>
+    bool operator != (U other) const
     {
-      return ( (void *) ptr_ != (void *) ptr);
+      return !(*this == other);
     }
-
     bool operator == (T *ptr) const
     {
-      return ( (void *) ptr_ == (void *) ptr);
-    }
-
-    template<typename U>
-    bool operator != (U *ptr) const
-    {
-      if (ptr && (!ptr->Type().IsDerivedFromType (T::StaticObjectType) ) )
-        return true;
-
-      return ( (void *) ptr_ != (void *) ptr);
+      return ptr_ == ptr;
     }
 
     template<typename U>
@@ -600,24 +566,7 @@ namespace nux
       if (ptr && (!ptr->Type().IsDerivedFromType (T::StaticObjectType) ) )
         return false;
 
-      return ( (void *) ptr_ == (void *) ptr);
-    }
-
-    /*!
-        @other  A weak pointer
-        @return True is this weak pointer host a different pointer as the weak pointer passed as parameter.
-    */
-    template<typename U>
-    bool operator != (const ObjectWeakPtr<U>& other) const
-    {
-      // Test if the object in other has been destroyed. If yes, then we can't call other.ptr_->Type().
-      if (other._reference_count->GetValue () != 0)
-      {
-        if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
-          return true;
-      }
-
-      return ( (void *) ptr_ != (void *) other.ptr_);
+      return ptr_ == static_cast<T*>(ptr);
     }
 
     /*!
@@ -627,27 +576,10 @@ namespace nux
     template<typename U>
     bool operator == (const ObjectWeakPtr<U>& other) const
     {
-      // Test if the object in other has been destroyed. If yes, then we can't call other.ptr_->Type().
-      if (other._reference_count->GetValue () != 0)
-      {
-        if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType)))
-          return false;
-      }
-
-      return ( (void *) ptr_ == (void *) other.ptr_);
-    }
-
-    /*!
-        @other  An object pointer
-        @return True is this weak pointer host a different pointer as the object pointer passed as parameter.
-    */
-    template<typename U>
-    bool operator != (const ObjectPtr<U>& other) const
-    {
       if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
-        return true;
+        return false;
 
-      return ( (void *) ptr_ != (void *) other.ptr_);
+      return ptr_ == static_cast<T*>(other.ptr_);
     }
 
     /*!
@@ -660,7 +592,7 @@ namespace nux
       if (other.ptr_ && (!other.ptr_->Type().IsDerivedFromType (T::StaticObjectType) ) )
         return false;
 
-      return ( (void *) ptr_ == (void *) other.ptr_);
+      return ptr_ == static_cast<T*>(other.ptr_);
     }
 
     //! Return true is the hosted pointer is not null or has not been destroyed.

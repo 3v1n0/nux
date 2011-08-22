@@ -210,12 +210,6 @@ namespace nux
     */
     int GetReferenceCount () const;
 
-    //! Get the weak reference count of this object.
-    /*!
-        @return The weak reference count of this object.
-    */
-    int GetWeakReferenceCount () const;
-
     //! Signal emitted immediately before the object is destroyed.
     sigc::signal <void, Object *> object_destroyed;
 
@@ -237,11 +231,12 @@ namespace nux
     Object (const Object &);
     Object &operator = (const Object &);
 
-    const char* _allocation_file_name;
-    int _allocation_line_number;
+    const char* allocation_file_name_;
+    int allocation_line_number_;
 
-    NThreadSafeCounter *_reference_count; //!< Reference count.
-    NThreadSafeCounter *_objectptr_count; //!< Number of ObjectPtr hosting the object.
+    NThreadSafeCounter* reference_count_;
+    //!< Number of ObjectPtr hosting the object.
+    NThreadSafeCounter* objectptr_count_;
 
     template <typename T>
     friend class ObjectPtr;
