@@ -171,6 +171,26 @@ namespace nux
       return ptr_;
     }
 
+    //! Return the stored pointer.
+    /*!
+        Caller of this function should Reference the pointer if they intend to keep it.
+        @param Return the stored pointer.
+    */
+    const T* GetPointer () const
+    {
+      return ptr_;
+    }
+
+    //! Return the stored pointer.
+    /*!
+        Caller of this function should Reference the pointer if they intend to keep it.
+        @param Return the stored pointer.
+    */
+    T* GetPointer()
+    {
+      return ptr_;
+    }
+
     //! Swap the content of 2 smart pointers.
     /*!
         @param other Smart pointer to swap with.
