@@ -180,6 +180,11 @@ namespace nux
         std::swap(ptr_, other.ptr_);
     }
 
+    operator bool() const
+    {
+        return bool(ptr_);
+    }
+
     //! Test validity of the smart pointer.
     /*!
         Return True if the internal pointer is not null.
