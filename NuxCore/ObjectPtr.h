@@ -29,9 +29,6 @@
 
 namespace nux
 {
-
-// forward definitions
-
   template <typename T>
   class ObjectWeakPtr;
 
@@ -86,9 +83,11 @@ namespace nux
     //! Construction with a base pointer of type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
-        and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or
+        not. If ptr is not owned and WarnMissuse is True, then Print a warning
+        message. This is a debug feature to detect cases such as
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no
+        longer have a reference on ptr.
     */
     explicit ObjectPtr(T *ptr, bool WarnMissuse = false)
       : ptr_(nullptr)
@@ -109,9 +108,11 @@ namespace nux
     //! Construction with a base pointer of type O that inherits from type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
-        and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or
+        not. If ptr is not owned and WarnMissuse is True, then Print a warning
+        message. This is a debug feature to detect cases such as
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no
+        longer have a reference on ptr.
     */
     template <typename O>
     explicit ObjectPtr(O *ptr, bool WarnMissuse = false)
@@ -173,7 +174,8 @@ namespace nux
 
     //! Return the stored pointer.
     /*!
-        Caller of this function should Reference the pointer if they intend to keep it.
+        Caller of this function should Reference the pointer if they intend to
+        keep it.
         @param Return the stored pointer.
     */
     const T* GetPointer () const
@@ -183,7 +185,8 @@ namespace nux
 
     //! Return the stored pointer.
     /*!
-        Caller of this function should Reference the pointer if they intend to keep it.
+        Caller of this function should Reference the pointer if they intend to
+        keep it.
         @param Return the stored pointer.
     */
     T* GetPointer()
@@ -322,61 +325,21 @@ namespace nux
 
     T* ptr_;
 
-    /* template <typename U> */
-    /* friend ObjectPtr<U> Create (); */
-
-    /* template <typename U, typename P1> */
-    /* friend ObjectPtr<U> Create (P1 p1); */
-
-    /* template <typename U, typename P1, typename P2> */
-    /* friend ObjectPtr<U> Create (P1 p1, P2 p2); */
-
-    /* template <typename U, typename P1, typename P2, typename P3> */
-    /* friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3); */
-
-    /* template <typename U, typename P1, typename P2, typename P3, typename P4> */
-    /* friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3, P4 p4); */
-
-    /* template <typename U, typename P1, typename P2, typename P3, typename P4, typename P5> */
-    /* friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5); */
-
-    /* template <typename U, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6> */
-    /* friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6); */
-
-    /* template <typename U, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7> */
-    /* friend ObjectPtr<U> Create (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7); */
-
-    /* template <typename U> */
-    /* friend ObjectPtr<U> WrapWSPtr (U *u); */
-
     template <typename O>
     friend class ObjectPtr;
 
     template <typename O>
     friend class ObjectWeakPtr;
-
-    /* template <typename U, typename F> */
-    /* friend ObjectPtr<U> staticCast (const ObjectPtr<F>& from); */
-
-    /* template <typename U, typename F> */
-    /* friend ObjectPtr<U> constCast (const ObjectPtr<F>& from); */
-
-    /* template <typename U, typename F> */
-    /* friend ObjectPtr<U> dynamicCast (const ObjectPtr<F>& from); */
-
-    /* template <typename U, typename F> */
-    /* friend ObjectPtr<U> checkedCast (const ObjectPtr<F>& from); */
-
-    /* template <typename U, typename F> */
-    /* friend ObjectPtr<U> queryCast (const ObjectPtr<F>& from); */
   };
 
 
 //! A weak smart pointer class. Implemented as an intrusive smart pointer.
   /*!
-      A weak smart pointer is built from a smart pointer or another weak smart pointer. It increments and decrements
-      the total reference count of an pointer. Even is the original pointer is destroyed, weak smart pointers still point
-      to the RefCounts pointers of the original pointer and can use it to check if the pointer is still valid or not.
+      A weak smart pointer is built from a smart pointer or another weak smart
+      pointer. It increments and decrements the total reference count of an
+      pointer. Even is the original pointer is destroyed, weak smart pointers
+      still point to the RefCounts pointers of the original pointer and can
+      use it to check if the pointer is still valid or not.
   */
   template <typename T>
   class ObjectWeakPtr
@@ -391,9 +354,11 @@ namespace nux
     //! Construction with a base pointer of type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
-        and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or
+        not. If ptr is not owned and WarnMissuse is True, then Print a warning
+        message. This is a debug feature to detect cases such as
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no
+        longer have a reference on ptr.
     */
     explicit ObjectWeakPtr(T* ptr)
       : ptr_(ptr)
@@ -404,9 +369,11 @@ namespace nux
     //! Construction with a base pointer of type O that inherits from type T.
     /*!
         @param ptr Start maintaining a reference count of the passed pointer.
-        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or not. If ptr is not owned
-        and WarnMissuse is True, then Print a warning message. This is a debug feature to detect cases such as
-        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no longer have a reference on ptr.
+        @param WarnMissuse If True, then ObjectPtr test is ptr is owned or
+        not. If ptr is not owned and WarnMissuse is True, then Print a warning
+        message. This is a debug feature to detect cases such as
+        "ObjectPtr(ObjectA) myobject(ptr);", because the calling code will no
+        longer have a reference on ptr.
     */
     template <typename O>
     explicit ObjectWeakPtr(O* ptr, bool WarnMissuse = false)
