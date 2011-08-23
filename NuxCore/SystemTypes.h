@@ -140,18 +140,6 @@ namespace nux
 // Mac OS X      IA-32        4 bytes
 // Mac OS X      Intel 64     8 bytes
 
-#ifdef _WIN32
-    #define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
-#elif  _WIN64
-    #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
-#elif __linux
-    #define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
-#elif defined(__linux) && (defined(__ia64__) || defined(__amd64__))
-    #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
-#elif __APPLE__
-    #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
-#endif
-
 #define NUX_BYTE_SIZE   1
 #define NUX_WORD_SIZE   2
 #define NUX_FLOAT_SIZE  4
