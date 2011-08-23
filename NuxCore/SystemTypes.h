@@ -60,7 +60,7 @@ namespace nux
   typedef unsigned int            t_UTF32;
 #ifdef _WIN32
   typedef wchar_t             t_UTF16;
-#elif defined(__linux)
+#elif defined(__linux__)
   typedef wchar_t             t_UTF16;
 #elif defined (__APPLE__)
   typedef wchar_t             t_UTF16;
