@@ -136,6 +136,17 @@ namespace nux
     /*!
         @param other Smart pointer of type T.
     */
+    ObjectPtr& operator=(T* ptr)
+    {
+        ObjectPtr<T> temp(ptr);
+        Swap(temp);
+        return *this;
+    }
+
+    //! Assignment of a smart pointer of type T.
+    /*!
+        @param other Smart pointer of type T.
+    */
     ObjectPtr& operator=(ObjectPtr<T> const& other)
     {
         ObjectPtr<T> temp(other);
