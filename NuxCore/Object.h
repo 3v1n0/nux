@@ -29,44 +29,32 @@
 #include "Property.h"
 #include "PropertyTraits.h"
 
+#define NUX_FILE_LINE_PROTO     const char* __Nux_FileName__=__FILE__, int __Nux_LineNumber__ = __LINE__
+#define NUX_FILE_LINE_DECL      const char* __Nux_FileName__, int __Nux_LineNumber__
+#define NUX_FILE_LINE_PARAM     __Nux_FileName__, __Nux_LineNumber__
+#define NUX_TRACKER_LOCATION    __FILE__, __LINE__
+
 #define OnDestroyed object_destroyed
+
 
 namespace nux
 {
-
   template <typename T>
   class ObjectPtr;
 
   template <typename T>
   class ObjectWeakPtr;
 
-// #if defined(NUX_DEBUG)
-#define NUX_FILE_LINE_PROTO     const char* __Nux_FileName__=__FILE__, int __Nux_LineNumber__ = __LINE__
-#define NUX_FILE_LINE_DECL      const char* __Nux_FileName__, int __Nux_LineNumber__
-#define NUX_FILE_LINE_PARAM     __Nux_FileName__, __Nux_LineNumber__
-#define NUX_TRACKER_LOCATION    __FILE__, __LINE__
-// #else
-//     #define NUX_FILE_LINE_PROTO     int __Nux_Dummy__ = 0xD0DECADE
-//     #define NUX_FILE_LINE_DECL      int __Nux_Dummy__
-//     #define NUX_FILE_LINE_PARAM     __Nux_Dummy__
-//     #define NUX_TRACKER_LOCATION    0xD0DECADE
-// #endif
-
   class ObjectStats
   {
     NUX_DECLARE_GLOBAL_OBJECT (ObjectStats, GlobalSingletonInitializer);
   public:
-    class AllocationList : public std::list<void *>
-    {
-    public:
-      AllocationList();
-      ~AllocationList();
-    };
-
+    typedef std::list<void*> AllocationList;
     AllocationList _allocation_list;
     int _total_allocated_size;  //! Total allocated memory size in bytes.
     int _number_of_objects;     //! Number of allocated objects;
   };
+
 #define GObjectStats NUX_GLOBAL_OBJECT_INSTANCE(nux::ObjectStats)
 
 //! Base class of heap allocated objects.
@@ -170,22 +158,10 @@ namespace nux
     Trackable (const Trackable &);
     Trackable &operator= (const Trackable &);
 
-//     class AllocationList : public std::list<void *>
-//     {
-//     public:
-//       AllocationList();
-//       ~AllocationList();
-//     };
-
-    //static AllocationList m_allocation_list;
     static std::new_handler _new_current_handler;
-//     static int m_total_allocated_size;  //! Total allocated memory size in bytes.
-//     static int m_number_of_objects;     //! Number of allocated objects;
 
     bool _owns_the_reference;
     int _size_of_this_object;
-
-    //template<typename T> friend class Pointer;
   };
 
 //! The base class of Nux objects.
@@ -271,11 +247,8 @@ namespace nux
     Object (const Object &);
     Object &operator = (const Object &);
 
-
-//#if defined(NUX_DEBUG)
-    NString _allocation_file_name;
-    int     _allocation_line_number;
-//#endif
+    const char* _allocation_file_name;
+    int _allocation_line_number;
 
     template <typename T>
     friend class ObjectPtr;

@@ -27,6 +27,7 @@
 #include "System.h"
 #include "LoggingWriter.h"
 
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -35,6 +36,14 @@ namespace nux {
 namespace logging {
 
 namespace {
+
+Writer* pInstance;
+
+void cleanup_writer_instance()
+{
+  delete pInstance;
+  pInstance = 0;
+}
 
 struct StreamWrapper
 {
@@ -165,17 +174,28 @@ void Writer::Impl::WriteMessage(Level severity,
 
 Writer::Writer()
   : pimpl(new Impl())
-{}
+{
+#ifdef NUX_DEBUG
+  std::cerr << "nux::logging::Writer::Writer()\n";
+#endif
+}
 
 Writer::~Writer()
 {
   delete pimpl;
+#ifdef NUX_DEBUG
+  std::cerr << "nux::logging::Writer::~Writer()\n";
+#endif
 }
 
 Writer& Writer::Instance()
 {
-  static Writer instance;
-  return instance;
+  if (pInstance == 0)
+  {
+    pInstance = new Writer();
+    std::atexit(cleanup_writer_instance);
+  }
+  return *pInstance;
 }
 
 void Writer::WriteMessage(Level severity,

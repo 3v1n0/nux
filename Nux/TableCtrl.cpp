@@ -130,8 +130,8 @@ namespace nux
     SetMinimumSize (50, 50);
     SetGeometry (Geometry (0, 0, 50, 50) );
 
-    setTopBorder (0);
-    setBorder (0);
+    m_top_border = 0;
+    m_border = 0;
 
     SetViewContentRightMargin (2);
     SetViewContentBottomMargin (2);
@@ -150,11 +150,6 @@ namespace nux
     std::vector<ColumnHeader>::iterator it1;
     std::vector<RowHeader *>::iterator it2;
     std::vector<sizehandler2 *>::iterator it3;
-
-//    for(it1 = m_column_header.begin(); it1 != m_column_header.end(); it1++)
-//    {
-//        delete (*it1);
-//    }
 
     EmptyTable();
 

@@ -1,3 +1,4 @@
+// -*- Mode: C++; indent-tabs-mode: nil; tab-width: 2 -*-
 /*
  * Copyright 2010 Inalogic® Inc.
  *
@@ -19,25 +20,30 @@
  *
  */
 
-
 #ifndef NOBJECTTYPE_H
 #define NOBJECTTYPE_H
 
+#include <string>
+
+namespace nux
+{
+
 struct NObjectType
 {
-  const TCHAR *m_Name;
-  NObjectType *m_Super;
+  const char* name;
+  NObjectType* super;
+
   static const NObjectType  Null_Type;
 
   NObjectType()
-    :   m_Name (TEXT ("Null_Type") )
-    ,   m_Super (0)
+    : name("Null_Type")
+    , super(nullptr)
   {
   }
 
-  NObjectType (const TCHAR *Name, NObjectType *Super)
-    :   m_Name (Name)
-    ,   m_Super (Super)
+  NObjectType(const char* type_name, NObjectType* super_type)
+    : name(type_name)
+    , super(super_type)
   {
   }
 
@@ -53,21 +59,10 @@ struct NObjectType
     return !IsObjectType (Type);
   }
 
-  //! Return the name of the type.
-  inline const TCHAR              *GetName() const
-  {
-    return m_Name;
-  }
-
   //! Return true is this has the same type as the argument type.
   inline bool IsObjectType (const NObjectType &Type) const
   {
-    if (this == &Type)
-    {
-      return true;
-    }
-
-    return false;
+    return this == &Type;
   }
 
   //! Return true if this has the same type as the argument type or is derived from it.
@@ -80,7 +75,7 @@ struct NObjectType
       if (current_type == &Type)
         return true;
 
-      current_type = current_type->m_Super;
+      current_type = current_type->super;
     }
 
     return false;
@@ -88,13 +83,13 @@ struct NObjectType
 
   inline unsigned int SubClassDepth() const
   {
-    const NObjectType *current_type = this;
+    const NObjectType* current_type = this;
     unsigned int depth = 0;
 
     while (current_type)
     {
       depth++;
-      current_type = current_type->m_Super;
+      current_type = current_type->super;
     }
 
     return depth;
@@ -104,28 +99,27 @@ struct NObjectType
 #define NUX_DECLARE_OBJECT_TYPE(TypeName, SuperType)                            \
     public:                                                                 \
     typedef SuperType SuperObject;                                          \
-    static NObjectType StaticObjectType;                                    \
+    static ::nux::NObjectType StaticObjectType;                         \
     public:                                                                 \
-    virtual NObjectType& Type() const { return StaticObjectType; }          \
-    NObjectType& GetTypeInfo() const { return StaticObjectType; }
+    virtual ::nux::NObjectType& Type() const { return StaticObjectType; }          \
+    ::nux::NObjectType& GetTypeInfo() const { return StaticObjectType; }
 
 
 #define NUX_IMPLEMENT_OBJECT_TYPE(TypeName)                                     \
-    NObjectType TypeName::StaticObjectType(TEXT(#TypeName), &TypeName::SuperObject::StaticObjectType);
-
-// #define NUX_DECLARE_ROOT_OBJECT_TYPE(TypeName)      NUX_DECLARE_OBJECT_TYPE(TypeName, TypeName)
-// #define NUX_IMPLEMENT_ROOT_OBJECT_TYPE(TypeName)    NUX_IMPLEMENT_OBJECT_TYPE(TypeName)
+    ::nux::NObjectType TypeName::StaticObjectType(#TypeName, &TypeName::SuperObject::StaticObjectType);
 
 #define NUX_DECLARE_ROOT_OBJECT_TYPE(TypeName)                                  \
     public:                                                                 \
-    typedef NObjectType SuperObject;                                        \
-    static NObjectType StaticObjectType;                                    \
+    typedef ::nux::NObjectType SuperObject;                                        \
+    static ::nux::NObjectType StaticObjectType;                                    \
     public:                                                                 \
-    virtual NObjectType& Type() const { return StaticObjectType; }          \
-    NObjectType& GetTypeInfo() const { return StaticObjectType; }
+    virtual ::nux::NObjectType& Type() const { return StaticObjectType; }          \
+    ::nux::NObjectType& GetTypeInfo() const { return StaticObjectType; }
 
 #define NUX_IMPLEMENT_ROOT_OBJECT_TYPE(TypeName)                                \
-    NObjectType TypeName::StaticObjectType(TEXT(#TypeName), 0);
+    ::nux::NObjectType TypeName::StaticObjectType(#TypeName, 0);
+
+} // namespace nux
 
 #endif // NOBJECTTYPE_H
 

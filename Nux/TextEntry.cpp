@@ -107,78 +107,71 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE (TextEntry);
 
-  TextEntry::TextEntry (const TCHAR* text, NUX_FILE_LINE_DECL)
-    : View (NUX_FILE_LINE_PARAM)
+  TextEntry::TextEntry(const TCHAR* text, NUX_FILE_LINE_DECL)
+    : View(NUX_FILE_LINE_PARAM)
+    , _size_match_text(true)
+    , _texture2D(nullptr)
+    , _block_focus(false)
+    , canvas_(nullptr)
+    , cached_layout_(nullptr)
+    , preedit_attrs_(nullptr)
+    , last_dblclick_time_(0)
+    , cursor_(0)
+    , preedit_cursor_(0)
+    , selection_bound_(0)
+    , scroll_offset_x_(0)
+    , scroll_offset_y_(0)
+    , cursor_blink_timer_(0)
+    , cursor_blink_status_(0)
+    , visible_(true)
+    , focused_(false)
+    , need_im_reset_(false)
+    , overwrite_(false)
+    , select_words_(false)
+    , select_lines_(false)
+    , button_(false)
+    , bold_(false)
+    , underline_(false)
+    , strikeout_(false)
+    , italic_(false)
+    , multiline_(false)
+    , wrap_(false)
+    , cursor_visible_(false)
+    , readonly_(false)
+    , content_modified_(false)
+    , selection_changed_(false)
+    , cursor_moved_(false)
+    , update_canvas_(true)
+    , font_family_("Ubuntu")
+    , font_size_(12)
+    , font_options_(cairo_font_options_create())
+    , font_dpi_(96.0)
+    , _text_color(color::White)
+    , align_(CairoGraphics::ALIGN_LEFT)
+    , text_input_mode_(false)
+    , key_nav_mode_(false)
+
   {
-    _block_focus = false;
-    canvas_ = NULL;
-    //im_context_ = NULL;
-    cached_layout_ = NULL;
-    preedit_attrs_ = NULL;
-    last_dblclick_time_ = 0;
-    cursor_ = 0;
-    preedit_cursor_ = 0;
-    selection_bound_ = 0;
-    scroll_offset_x_ = 0;
-    scroll_offset_y_ = 0;
-    cursor_blink_timer_ = 0;
-    cursor_blink_status_ = 0;
-    visible_ = true;
-    focused_ = false;
-    need_im_reset_ = false;
-    overwrite_ = false;
-    select_words_ = false;
-    select_lines_ = false;
-    button_ = false;
-    bold_ = false;
-    underline_ = false;
-    strikeout_ = false;
-    italic_ = false;
-    multiline_ = false;
-    wrap_ = false;
-    cursor_visible_ = false;
-    readonly_ = false;
-    content_modified_ = false;
-    //selection_changed_ = false;
-    cursor_moved_ = false;
-    update_canvas_ = false;
+    // Protected member from View, not passable to constructor.
     _can_pass_focus_to_composite_layout = false;
-    //background_(new Texture(kDefaultBackgroundColor, 1)),
-    _text_color = kDefaultTextColor;
-    align_ = CairoGraphics::ALIGN_LEFT;
 
-    _size_match_text = true;
-    _text_color  = color::White;
-    _texture2D  = 0;
+    cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
+    cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
+    cairo_font_options_set_hint_metrics(font_options_, CAIRO_HINT_METRICS_ON);
+    cairo_font_options_set_subpixel_order(font_options_, CAIRO_SUBPIXEL_ORDER_RGB);
 
-    font_family_ = "Ubuntu";
-    font_size_ = 12;
+    mouse_down.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDown));
+    mouse_drag.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDrag));
+    mouse_up.connect(sigc::mem_fun(this, &TextEntry::RecvMouseUp));
+    mouse_double_click.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDoubleClick));
 
-    key_nav_mode_           = false;
-    text_input_mode_        = false;
+    key_down.connect(sigc::mem_fun(this, &TextEntry::RecvKeyEvent));
 
-    font_options_ = cairo_font_options_create ();
-    cairo_font_options_set_antialias (font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
-    cairo_font_options_set_hint_style (font_options_, CAIRO_HINT_STYLE_FULL);
-    cairo_font_options_set_hint_metrics (font_options_, CAIRO_HINT_METRICS_ON);
-    cairo_font_options_set_subpixel_order (font_options_, CAIRO_SUBPIXEL_ORDER_RGB);
+    begin_key_focus.connect(sigc::mem_fun(this, &TextEntry::RecvStartKeyFocus));
+    end_key_focus.connect(sigc::mem_fun(this, &TextEntry::RecvEndKeyFocus));
 
-    font_dpi_ = 96.0;
-
-    update_canvas_ = true;
-
-    mouse_down.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
-    mouse_drag.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDrag) );
-    mouse_up.connect (sigc::mem_fun (this, &TextEntry::RecvMouseUp) );
-    mouse_double_click.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDoubleClick) );
-
-    key_down.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
-
-    begin_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
-    end_key_focus.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
-
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    SetText (text);
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    SetText(text);
 
     SetAcceptKeyboardEvent(true);
     EnableDoubleClick(true);
@@ -634,7 +627,7 @@ namespace nux
     sigTextChanged.emit (this);
   }
 
-  std::string TextEntry::GetText ()
+  std::string const& TextEntry::GetText() const
   {
     return _text;
   }
@@ -648,7 +641,7 @@ namespace nux
     }
   }
 
-  Color TextEntry::GetTextColor () const
+  Color const& TextEntry::GetTextColor() const
   {
     return _text_color;
   }
@@ -1333,9 +1326,8 @@ namespace nux
       ascent = pango_font_metrics_get_ascent (metrics);
       descent = pango_font_metrics_get_descent (metrics);
 
-      full_height_ = PANGO_PIXELS (ascent + descent) + (kInnerBorderY * 2);
-
-      SetMinimumHeight (full_height_);
+      int full_height = PANGO_PIXELS (ascent + descent) + (kInnerBorderY * 2);
+      SetMinimumHeight(full_height);
 
       pango_font_metrics_unref (metrics);
     }

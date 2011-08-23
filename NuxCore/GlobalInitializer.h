@@ -23,6 +23,9 @@
 #ifndef NGLOBALINITIALIZER_H
 #define NGLOBALINITIALIZER_H
 
+#include "Macros.h"
+#include "System.h"
+
 #ifdef _WIN32
 #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                       \
         NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
@@ -100,6 +103,8 @@ namespace nux
   public:
     GlobalInitializer();
     ~GlobalInitializer();
+
+    static void ForceShutdown();
   private:
     static int m_Count;
   };

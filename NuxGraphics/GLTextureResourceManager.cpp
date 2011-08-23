@@ -53,7 +53,7 @@ namespace nux
   static T *UpCastResource (U *Src)
   {
     if (!Src || !Src->Type().IsDerivedFromType (T::StaticObjectType))
-      nuxError (TEXT ("[UpCastResource] Cast of %s to %s failed"), U::StaticObjectType.m_Name, T::StaticObjectType.m_Name);
+      nuxError (TEXT ("[UpCastResource] Cast of %s to %s failed"), U::StaticObjectType.name, T::StaticObjectType.name);
 
     return (T *) Src;
   }

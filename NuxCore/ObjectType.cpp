@@ -23,4 +23,7 @@
 #include "NuxCore.h"
 #include "ObjectType.h"
 
-const NObjectType NObjectType::Null_Type (TEXT ("NULL"), 0) ;
+namespace nux
+{
+const NObjectType NObjectType::Null_Type("NULL", 0);
+}

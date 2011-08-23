@@ -19,6 +19,7 @@
  *
  */
 
+#include <iostream>
 #include <sstream>
 
 #include "NuxCore.h"
@@ -37,44 +38,29 @@ logging::Logger logger("nux.core.object");
   NUX_IMPLEMENT_OBJECT_TYPE (Object);
   NUX_IMPLEMENT_GLOBAL_OBJECT (ObjectStats);
 
-//   int ObjectStats::_total_allocated_size = 0;
-//   int ObjectStats::_number_of_objects = 0;
-//   ObjectStats::AllocationList ObjectStats::_allocation_list;
-
-  ObjectStats::AllocationList::AllocationList()
-  {
-
-  }
-
-  ObjectStats::AllocationList::~AllocationList()
-  {
-
-  }
-
   void ObjectStats::Constructor()
   {
-    _total_allocated_size = 0;
+    _total_allocated_size= 0;
     _number_of_objects = 0;
   }
 
   void ObjectStats::Destructor()
   {
+#if defined(NUX_DEBUG)
     if (_number_of_objects)
     {
-      // FIXME: crash on Windows
-      //LOG_DEBUG(logger) << _number_of_objects << " undeleted objects.";
+      std::cerr << "[ObjectStats::Destructor] "
+                << _number_of_objects << " undeleted objects.\n\t"
+                << _allocation_list.size() << " items in allocation list.\n";
     }
 
-#if defined(NUX_DEBUG)
-    AllocationList::iterator it;
-    for (it = _allocation_list.begin(); it != _allocation_list.end(); it++)
+    int index = 0;
+    for (auto ptr : _allocation_list)
     {
-      Object* obj = NUX_STATIC_CAST (Object*, (*it));
-      // FIXME: crash on Windows
-//       LOG_DEBUG(logger) << "Undeleted object: Type "
-//                         << obj->Type().m_Name << ", "
-//                         << obj->_allocation_file_name.GetTCharPtr()
-//                         << "line " << obj->_allocation_line_number;
+      Object* obj = static_cast<Object*>(ptr);
+      std::cerr << "\t" << ++index << " Undeleted object: Type "
+                << obj->Type().name << ", "
+                << obj->GetAllocationLoation() << "\n";
     }
 #endif
   }
@@ -241,18 +227,22 @@ logging::Logger logger("nux.core.object");
 
     if (IsHeapAllocated ())
     {
-      // If the object has properly been UnReference, it should have gone through Destroy(). if that is the case then
-      // _reference_count should be NULL or its value (returned by GetValue ()) should be equal to 0;
-      // We can use this to detect when delete is called directly on an object.
-      nuxAssertMsg((_reference_count == 0) || (_reference_count && (_reference_count->GetValue () == 0)),
-                   TEXT("[Object::~Object] Invalid object destruction. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object.\nObject allocated at: %s [%d]"),
-                   _allocation_file_name.GetTCharPtr (),
-                   _allocation_line_number);
-      
-      nuxAssertMsg((_weak_reference_count == 0) || (_weak_reference_count && (_weak_reference_count->GetValue () > 0)),
-                   TEXT("[Object::~Object] Invalid value of the weak reference count pointer. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object.\nObject allocated at: %s [%d]"),
-                   _allocation_file_name.GetTCharPtr (),
-                   _allocation_line_number);
+      // If the object has properly been UnReference, it should have gone
+      // through Destroy(). if that is the case then _reference_count should
+      // be NULL or its value (returned by GetValue ()) should be equal to 0;
+      // We can use this to detect when delete is called directly on an
+      // object.
+      if (_reference_count && _reference_count->GetValue() > 0)
+      {
+        LOG_ERROR(logger) << "Invalid object destruction, still has "
+                          << _reference_count->GetValue() << " references."
+                          << "\nObject allocated at: " << GetAllocationLoation();
+      }
+      if (_weak_reference_count && _weak_reference_count->GetValue() == 0)
+      {
+        LOG_ERROR(logger) << "Invalid value of the weak reference count pointer."
+                          << "\nObject allocated at: " << GetAllocationLoation();
+      }
 
       if ((_reference_count == 0) && (_weak_reference_count == 0))
       {
@@ -260,8 +250,9 @@ logging::Logger logger("nux.core.object");
       }
       else
       {
-        // There is a smart pointer holding a weak reference to this object. It is the responsibility
-        // of the last smart pointer to delete '_destroyed'.
+        // There is a smart pointer holding a weak reference to this
+        // object. It is the responsibility of the last smart pointer to
+        // delete '_destroyed'.
       }
     }
     else
@@ -395,7 +386,7 @@ logging::Logger logger("nux.core.object");
       if ((_weak_reference_count == NULL) && (_objectptr_count->GetValue() == 0))
       {
         nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
+        , _allocation_file_name
         , _allocation_line_number);
         nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid pointer for the weak reference count."));
       }
@@ -403,7 +394,7 @@ logging::Logger logger("nux.core.object");
       if ((_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
       {
         nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
-          , _allocation_file_name.GetTCharPtr ()
+          , _allocation_file_name
           , _allocation_line_number);
         nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid value of the weak reference count."));
       }
@@ -412,7 +403,7 @@ logging::Logger logger("nux.core.object");
     static int delete_depth = 0;
     ++delete_depth;
     object_destroyed.emit(this);
-    std::string obj_type(this->Type().m_Name);
+    const char* obj_type = this->Type().name;
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", about to delete "
                       << obj_type << " allocated at " << GetAllocationLoation();
     delete this;
@@ -457,7 +448,7 @@ logging::Logger logger("nux.core.object");
 std::string Object::GetAllocationLoation() const
 {
   std::ostringstream sout;
-  sout << _allocation_file_name.GetTCharPtr()
+  sout << _allocation_file_name
        << ":" << _allocation_line_number;
   return sout.str();
 }
