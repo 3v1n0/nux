@@ -1,5 +1,6 @@
+// -*- Mode: C++; indent-tabs-mode: nil; tab-width: 2 -*-
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2011 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -206,78 +207,41 @@ logging::Logger logger("nux.core.object");
 //////////////////////////////////////////////////////////////////////
 
   Object::Object(bool OwnTheReference, NUX_FILE_LINE_DECL)
+    : allocation_file_name_(__Nux_FileName__)
+    , allocation_line_number_(__Nux_LineNumber__)
+    , reference_count_(new NThreadSafeCounter())
+    , objectptr_count_(new NThreadSafeCounter())
   {
-    _allocation_file_name      = __Nux_FileName__;
-    _allocation_line_number    = __Nux_LineNumber__;
-
-    _reference_count      = new NThreadSafeCounter();
-    _weak_reference_count = new NThreadSafeCounter();
-    _objectptr_count     = new NThreadSafeCounter();
-    _destroyed            = new bool(false);
-
-    _reference_count->Set (1);
-    _weak_reference_count->Set (1);
-
-    SetOwnedReference (OwnTheReference);
+    reference_count_->Set(1);
+    SetOwnedReference(OwnTheReference);
   }
 
   Object::~Object()
   {
-    *_destroyed = true;
-
-    if (IsHeapAllocated ())
+    if (IsHeapAllocated())
     {
       // If the object has properly been UnReference, it should have gone
       // through Destroy(). if that is the case then _reference_count should
       // be NULL or its value (returned by GetValue ()) should be equal to 0;
       // We can use this to detect when delete is called directly on an
       // object.
-      if (_reference_count && _reference_count->GetValue() > 0)
+      if (reference_count_->GetValue() > 0)
       {
-        LOG_ERROR(logger) << "Invalid object destruction, still has "
-                          << _reference_count->GetValue() << " references."
-                          << "\nObject allocated at: " << GetAllocationLoation();
-      }
-      if (_weak_reference_count && _weak_reference_count->GetValue() == 0)
-      {
-        LOG_ERROR(logger) << "Invalid value of the weak reference count pointer."
-                          << "\nObject allocated at: " << GetAllocationLoation();
-      }
-
-      if ((_reference_count == 0) && (_weak_reference_count == 0))
-      {
-        delete _destroyed;
-      }
-      else
-      {
-        // There is a smart pointer holding a weak reference to this
-        // object. It is the responsibility of the last smart pointer to
-        // delete '_destroyed'.
+        LOG_WARN(logger) << "Invalid object destruction, still has "
+                         << reference_count_->GetValue() << " references."
+                         << "\nObject allocated at: " << GetAllocationLoation();
       }
     }
-    else
-    {
-      delete _reference_count;
-      delete _weak_reference_count;
-      delete _objectptr_count;
-      delete _destroyed;
-    }
+    delete reference_count_;
+    delete objectptr_count_;
   }
 
   bool Object::Reference()
   {
-    if (!IsHeapAllocated ())
+    if (!IsHeapAllocated())
     {
-      LOG_ERROR(logger) << "Trying to reference an object that was not heap allocated. "
-                        << "\nObject allocated at: " << GetAllocationLoation();
-      return false;
-    }
-
-    if (_reference_count->GetValue() == 0 || *_destroyed)
-    {
-      // If this happens, all bets are off, and this may crash.
-      LOG_ERROR(logger) << "Trying to reference an object that has been deleted."
-                        << "\nObject allocated at: " << GetAllocationLoation();
+      LOG_WARN(logger) << "Trying to reference an object that was not heap allocated."
+                       << "\nObject allocated at: " << GetAllocationLoation();
       return false;
     }
 
@@ -288,8 +252,7 @@ logging::Logger logger("nux.core.object");
       return true;
     }
 
-    _reference_count->Increment();
-    _weak_reference_count->Increment();
+    reference_count_->Increment();
     return true;
   }
 
@@ -297,27 +260,26 @@ logging::Logger logger("nux.core.object");
   {
     if (!IsHeapAllocated())
     {
-      LOG_ERROR(logger) << "Trying to un-reference an object that was not heap allocated. "
-                        << "\nObject allocated at: " << GetAllocationLoation();
+      LOG_WARN(logger) << "Trying to un-reference an object that was not heap allocated."
+                       << "\nObject allocated at: " << GetAllocationLoation();
       return false;
     }
 
-    if (_objectptr_count->GetValue() == _reference_count->GetValue())
+    if (objectptr_count_->GetValue() == reference_count_->GetValue())
     {
       // There are ObjectPtr's hosting this object. Release all of them to
       // destroy this object.  This prevent from calling UnReference () many
       // times and destroying the object when there are ObjectPtr's hosting
       // it.  This method should not be called directly in that case.
-      LOG_ERROR(logger) << "There are ObjectPtr hosting this object. "
-                        << "Release all of them to destroy this object. "
-                        << "\nObject allocated at: " << GetAllocationLoation();
+      LOG_WARN(logger) << "There are ObjectPtr hosting this object. "
+                       << "Release all of them to destroy this object. "
+                       << "\nObject allocated at: " << GetAllocationLoation();
       return false;
     }
 
-    _reference_count->Decrement();
-    _weak_reference_count->Decrement();
+    reference_count_->Decrement();
 
-    if (_reference_count->GetValue() == 0)
+    if (reference_count_->GetValue() == 0)
     {
       Destroy();
       return true;
@@ -330,8 +292,8 @@ logging::Logger logger("nux.core.object");
   {
     if (!IsHeapAllocated())
     {
-      LOG_ERROR(logger) << "Trying to sink an object that was not heap allocated. "
-                        << "\nObject allocated at: " << GetAllocationLoation();
+      LOG_WARN(logger) << "Trying to sink an object that was not heap allocated."
+                       << "\nObject allocated at: " << GetAllocationLoation();
       return false;
     }
 
@@ -347,61 +309,27 @@ logging::Logger logger("nux.core.object");
 
   bool Object::Dispose()
   {
-    // The intent of the Dispose call is to destroy objects with a float reference (reference count is equal to 1 and
-    // the '_owns_the_reference' flag is set to false). In Nux, only widgets object can have a floating reference.
-    // And widgets are only visible if added to the widget tree. 
-    // When an object with a floating reference is added to the widget tree, it becomes "owned'. It looses it
-    // floating reference status but it still has a reference count number of 1.
-    // In practice, since widgets must be added to the widget tree, there should never be a need to call Dispose
+    // The intent of the Dispose call is to destroy objects with a float
+    // reference (reference count is equal to 1 and the '_owns_the_reference'
+    // flag is set to false). In Nux, only widgets object can have a floating
+    // reference.  And widgets are only visible if added to the widget tree.
+    // When an object with a floating reference is added to the widget tree,
+    // it becomes "owned'. It looses it floating reference status but it still
+    // has a reference count number of 1.  In practice, since widgets must be
+    // added to the widget tree, there should never be a need to call Dispose
     // (except in a few cases).
 
-    // Dispose() was designed to only destroy objects with floating references, while UnReference() destroys objects
-    // that are "owned" . That is now relaxed. Dispose() calls UnReference().
-
+    // Dispose() was designed to only destroy objects with floating
+    // references, while UnReference() destroys objects that are "owned".
+    // That is now relaxed. Dispose() calls UnReference().
     return UnReference();
   }
 
   void Object::Destroy()
   {
-    if (!IsHeapAllocated ())
-    {
-      LOG_ERROR(logger) << "Trying to destroy an object that was not heap allocated. "
-                        << "\nObject allocated at: " << GetAllocationLoation();
-      return;
-    }
-
-    nuxAssert (_reference_count->GetValue() == 0);
-
-    if ((_reference_count->GetValue() == 0) && (_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
-    {
-      delete _reference_count;
-      delete _weak_reference_count;
-      delete _objectptr_count;
-      _reference_count = 0;
-      _weak_reference_count = 0;
-      _objectptr_count = 0;
-    }
-    else
-    {
-      if ((_weak_reference_count == NULL) && (_objectptr_count->GetValue() == 0))
-      {
-        nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
-        , _allocation_file_name
-        , _allocation_line_number);
-        nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid pointer for the weak reference count."));
-      }
-
-      if ((_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
-      {
-        nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
-          , _allocation_file_name
-          , _allocation_line_number);
-        nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid value of the weak reference count."));
-      }
-    }
-
     static int delete_depth = 0;
     ++delete_depth;
+    // Weak smart pointers will clear their pointers when they get this signal.
     object_destroyed.emit(this);
     const char* obj_type = this->Type().name;
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", about to delete "
@@ -411,45 +339,15 @@ logging::Logger logger("nux.core.object");
     --delete_depth;
   }
 
-  void Object::IncrementWeakCounter()
-  {
-    if (!IsHeapAllocated ())
-    {
-      LOG_ERROR(logger) << "Trying to increment weak counter on an object that was not heap allocated. "
-                        << "\nObject allocated at: " << GetAllocationLoation();
-      return;
-    }
-
-    _weak_reference_count->Increment();
-  }
-
-  void Object::DecrementWeakCounter()
-  {
-    if (!IsHeapAllocated())
-    {
-      LOG_ERROR(logger) << "Trying to decrement weak counter on an object that was not heap allocated. "
-                        << "\nObject allocated at: " << GetAllocationLoation();
-      return;
-    }
-
-    _weak_reference_count->Decrement();
-  }
-
   int Object::GetReferenceCount() const
   {
-    return _reference_count->GetValue();
-  }
-
-  int Object::GetWeakReferenceCount() const
-  {
-    return _weak_reference_count->GetValue();
+    return reference_count_->GetValue();
   }
 
 std::string Object::GetAllocationLoation() const
 {
   std::ostringstream sout;
-  sout << _allocation_file_name
-       << ":" << _allocation_line_number;
+  sout << allocation_file_name_ << ":" << allocation_line_number_;
   return sout.str();
 }
 

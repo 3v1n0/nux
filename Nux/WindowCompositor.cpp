@@ -150,54 +150,47 @@ namespace nux
 
   void WindowCompositor::RegisterWindow (BaseWindow *window)
   {
-    if (window == 0)
+    if (!window)
       return;
-      
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
 
-    if (it == _view_window_list.end() )
+    auto it = find(_view_window_list.begin(), _view_window_list.end(), window);
+
+    if (it == _view_window_list.end())
     {
-      // The BaseWindow is referenced by the WindowCompositor.
-      //window->Reference();
-      _view_window_list.push_front (ObjectWeakPtr<BaseWindow> (window));
+      _view_window_list.push_front(ObjectWeakPtr<BaseWindow>(window));
       m_SelectedWindow = window;
 
       RenderTargetTextures rt;
 
       // Don't size the texture to the dimension of the window yet. this will be done later.
-      rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
-      rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
+      auto device = GetGraphicsDisplay()->GetGpuDevice();
+      rt.color_rt = device->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
+      rt.depth_rt = device->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
 
-      _window_to_texture_map.insert ( std::map< BaseWindow*, RenderTargetTextures >::value_type ( window, rt) );
+      _window_to_texture_map[window] = rt;
+
+      window->object_destroyed.connect(sigc::mem_fun(this, &WindowCompositor::UnRegisterWindow));
     }
   }
 
-  void WindowCompositor::UnRegisterWindow (BaseWindow *window)
+  void WindowCompositor::UnRegisterWindow(Object* obj)
   {
-    if (window == 0)
+    WeakBaseWindowPtr window(obj);
+    if (window.IsNull())
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
+    auto it = find(_view_window_list.begin(), _view_window_list.end(), window);
 
-    if (it != _view_window_list.end ())
+    if (it != _view_window_list.end())
     {
-      _view_window_list.erase (it); // @see STL for note about list.erase(it++). It is valid for lists.
+      _view_window_list.erase(it);
 
-      if (_view_window_list.size ())
-        m_SelectedWindow = (*_view_window_list.begin ());
+      if (_view_window_list.size())
+        m_SelectedWindow = *_view_window_list.begin();
 
-      std::map< BaseWindow*, RenderTargetTextures >::iterator it2 = _window_to_texture_map.find (window);
-
-      if (it2 != _window_to_texture_map.end ())
-      {
-        (*it2).second.color_rt = ObjectPtr<IOpenGLBaseTexture> (0);
-        (*it2).second.depth_rt = ObjectPtr<IOpenGLBaseTexture> (0);
-        _window_to_texture_map.erase (it2);
-      }
+      _window_to_texture_map.erase(window.GetPointer());
     }
   }
-
-
 
   Area* WindowCompositor::GetMouseOwnerArea()
   {
@@ -1212,12 +1205,14 @@ namespace nux
     // Do not re-order while we are traversing the list of BaseWindow.
     if (inside_event_cycle_)
       return;
-    
+
     if (_always_on_front_window == NULL)
       return;
 
     std::list< ObjectWeakPtr<BaseWindow> >::iterator always_top_it = find (_view_window_list.begin(), _view_window_list.end(), _always_on_front_window);
-    if ((always_top_it != _view_window_list.end ()) && (always_top_it != _view_window_list.begin ()) && (_always_on_front_window != NULL))
+    if ((always_top_it != _view_window_list.end ()) &&
+        (always_top_it != _view_window_list.begin ()) &&
+        _always_on_front_window.IsValid())
     {
       _view_window_list.erase (always_top_it);
       _view_window_list.push_front (_always_on_front_window);
