@@ -70,36 +70,6 @@ namespace nux
 
   typedef std::size_t                  t_size;
 
-// // HARDWARE
-// #if defined _M_X64
-//     typedef long long       t_integer;      // 64 bits
-//     typedef long long       *t_pointer;     // 64 bits
-//     const   long long       t_MaxInteger = 0xFFFFFFFFFFFFFFFF;
-//     typedef long long       t_saddress;
-//     typedef unsigned long long  t_uaddress;
-// // #elif defined _WIN32
-// //     typedef long           t_integer;   // 32 bits
-// //     typedef long           *t_pointer;   // 32 bits
-// //     const long t_MaxInteger = 0xFFFFFFFF;
-// //     typedef long            t_saddress;
-// //     typedef unsigned long   t_uaddress;
-// #elif defined(__linux) && (defined(__ia64__) || defined(__amd64__))
-//     typedef long long       t_integer;      // 64 bits
-//     typedef long long       *t_pointer;     // 64 bits
-//     const   long long       t_MaxInteger = 0xFFFFFFFFFFFFFFFF;
-// #elif defined __linux
-//     typedef long            t_integer;      // 32 bits
-//     typedef long            *t_pointer;     // 32 bits
-//     const   long            t_MaxInteger = 0xFFFFFFFF;
-// #elif defined __APPLE__
-//     typedef long long       t_integer;      // 64 bits
-//     typedef long long       *t_pointer;     // 64 bits
-//     const   long long       t_MaxInteger = 0xFFFFFFFFFFFFFFFF;
-// #endif
-
-
-
-
 // Compile Time
 #if defined(__LP64__) || defined(_LP64) || defined(_WIN64)
   typedef long long           t_saddress;
