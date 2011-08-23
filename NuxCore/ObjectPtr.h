@@ -35,10 +35,7 @@ namespace nux
   template <typename T>
   class ObjectPtr;
 
-  #define IntrusiveSP ObjectPtr
-  #define IntrusiveWeakSP ObjectWeakPtr
-
-//! A smart pointer class. Implemented as an intrusive smart pointer.
+  //! A smart pointer class. Implemented as an intrusive smart pointer.
   template <typename T>
   class ObjectPtr
   {
