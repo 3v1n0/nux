@@ -28,7 +28,7 @@
 namespace nux
 {
 
-  static const t_s32 VERROR = 0;
+  static const int VERROR = 0;
   NUX_IMPLEMENT_OBJECT_TYPE (VLayout);
 
   VLayout::VLayout (NUX_FILE_LINE_DECL)
@@ -111,11 +111,11 @@ namespace nux
       @param offset_space     The space at the top of all elements.
       @param element_margin   The margin between elements.
   */
-  void VLayout::ComputeStacking (t_s32 remaining_height, t_s32 &offset_space, t_s32 &element_margin)
+  void VLayout::ComputeStacking (int remaining_height, int &offset_space, int &element_margin)
   {
-    t_s32 per_element_space = 0;
-    t_s32 total_used_space = 0;
-    t_s32 n_elements = 0;
+    int per_element_space = 0;
+    int total_used_space = 0;
+    int n_elements = 0;
 
     std::list<Area *>::iterator it;
 
@@ -132,7 +132,7 @@ namespace nux
     if (n_elements != 0)
     {
       // Compute the space available for each element
-      per_element_space = (remaining_height - total_used_space) / t_s32 (n_elements);
+      per_element_space = (remaining_height - total_used_space) / int (n_elements);
     }
 
     if (per_element_space < 0)
@@ -140,7 +140,7 @@ namespace nux
       per_element_space = 0;
     }
 
-    t_s32 margin;
+    int margin;
 
     if (per_element_space > 0)
     {
@@ -210,7 +210,7 @@ namespace nux
       (*it)->SetLayoutDone (false);
     }
 
-    t_s32 original_width = GetBaseWidth();
+    int original_width = GetBaseWidth();
 
     if (GetStretchFactor() == 0)
     {
@@ -253,24 +253,24 @@ namespace nux
     do
     {
       // Get layout Width and Height
-      t_s32 width = GetBaseWidth();
-      t_s32 height = GetBaseHeight();
+      int width = GetBaseWidth();
+      int height = GetBaseHeight();
 
       // Remove the margins. This is the real width and height available to the children.
       width -= 2 * m_h_out_margin;
-      height -= (t_s32) (num_element - 1) * m_v_in_margin + 2 * m_v_out_margin;
+      height -= (int) (num_element - 1) * m_v_in_margin + 2 * m_v_out_margin;
 
       // Size the children according to their stretch factor.
       VLayoutManagement (width, height);
 
       // Objects have been resized, now position them.
-      t_s32 current_x = GetBaseX() + m_h_out_margin;
-      t_s32 current_y = GetBaseY() + m_v_out_margin;
+      int current_x = GetBaseX() + m_h_out_margin;
+      int current_y = GetBaseY() + m_v_out_margin;
 
-      //t_s32 per_element_space = 0;
-      //t_s32 total_used_space = 0;
-      t_s32 offset_space = 0;
-      t_s32 space_after_element = 0;
+      //int per_element_space = 0;
+      //int total_used_space = 0;
+      int offset_space = 0;
+      int space_after_element = 0;
       ComputeStacking (height, offset_space, space_after_element);
       current_y += offset_space;
 
@@ -295,7 +295,7 @@ namespace nux
           {
             // The size of the element in the minor dimension is a percentage of layout minor dimension size.
             // Note that children of the processed element may force it to have a bigger size.
-            t_s32 percentage_width = (width * percentage) / 100.0f;
+            int percentage_width = (width * percentage) / 100.0f;
             (*it)->SetBaseWidth (percentage_width);
             break;
           }
@@ -325,7 +325,7 @@ namespace nux
         // Compute the position of an element in the minor dimension.
         if ( (extend != eFull) || ( (*it)->GetBaseWidth() < width) )
         {
-          t_s32 widget_width = (*it)->GetBaseWidth();
+          int widget_width = (*it)->GetBaseWidth();
 
           switch (positioning)
           {
@@ -363,11 +363,11 @@ namespace nux
       m_contentWidth = GetBaseWidth() - 2 * m_h_out_margin; // Set to the size of the layout.
 
       if (num_element == 0)
-        m_fittingHeight = (t_s32) 2 * m_v_out_margin;
+        m_fittingHeight = (int) 2 * m_v_out_margin;
       else
-        m_fittingHeight = (t_s32) (num_element - 1) * m_v_in_margin + 2 * m_v_out_margin;
+        m_fittingHeight = (int) (num_element - 1) * m_v_in_margin + 2 * m_v_out_margin;
 
-      t_s32 element_width;
+      int element_width;
       unadjusted_layout = false;
 
       // This array is meant to store the sizes of some of the elements width. These elements must have eFull as extent and
@@ -375,7 +375,7 @@ namespace nux
       // and therefore its size has been set to 1x1 at the start of this function, there is a possibility that some of the elements don't have
       // the full width of the layout(these elements uses their minimum width because the layout was set to a size 1x1).
       // We check if that is the case and force a recompute.
-      std::vector<t_s32> FullSizeUnadjusted;
+      std::vector<int> FullSizeUnadjusted;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
@@ -383,7 +383,7 @@ namespace nux
         bool smaller_height = false;
         bool smaller_width  = false;
         bool larger_width   = false;
-        t_s32 ret = 0;
+        int ret = 0;
 
         if (!(*it)->IsVisible ())
           continue;
@@ -473,8 +473,8 @@ namespace nux
       // m_contentWidth + 2 * m_h_out_margin;
       SetBaseWidth (m_contentWidth + 2 * m_h_out_margin);
 
-      t_s32 temp = m_contentWidth;
-      std::vector<t_s32>::iterator IntIterator = FullSizeUnadjusted.begin();
+      int temp = m_contentWidth;
+      std::vector<int>::iterator IntIterator = FullSizeUnadjusted.begin();
 
       for (IntIterator = FullSizeUnadjusted.begin(); IntIterator != FullSizeUnadjusted.end(); IntIterator++)
       {
@@ -540,7 +540,7 @@ namespace nux
     return size_compliance;
   }
 
-  void VLayout::VLayoutManagement (t_s32 width, t_s32 height)
+  void VLayout::VLayoutManagement (int width, int height)
   {
     bool need_recompute = false;
 
@@ -612,7 +612,7 @@ namespace nux
 
       float cumul = 0;
       Area *LastElementThatCanBeResized = 0;
-      t_s32 total_distributed_size = 0;
+      int total_distributed_size = 0;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
@@ -773,18 +773,18 @@ namespace nux
           num_element++;
       }
       // Get layout Width and Height
-      t_s32 width = GetBaseWidth();
-      t_s32 height = GetBaseHeight();
+      int width = GetBaseWidth();
+      int height = GetBaseHeight();
       // remove the margins
       width -= 2 * m_h_out_margin;
-      height -= (t_s32) (num_element - 1) * m_v_in_margin + 2 * m_v_out_margin;
+      height -= (int) (num_element - 1) * m_v_in_margin + 2 * m_v_out_margin;
 
       // Objects have been resized, now position them.
-      t_s32 current_x = GetBaseX() + m_h_out_margin + offsetX; // add base offset in X (used for scrolling)
-      t_s32 current_y = GetBaseY() + m_v_out_margin + offsetY; // add base offset in Y (used for scrolling)
+      int current_x = GetBaseX() + m_h_out_margin + offsetX; // add base offset in X (used for scrolling)
+      int current_y = GetBaseY() + m_v_out_margin + offsetY; // add base offset in Y (used for scrolling)
 
-      t_s32 offset_space = 0;
-      t_s32 element_margin = 0;
+      int offset_space = 0;
+      int element_margin = 0;
       ComputeStacking (height, offset_space, element_margin);
       current_y += offset_space;
 
@@ -802,7 +802,7 @@ namespace nux
 
         if ( (extend != eFull) || ( (*it)->GetBaseWidth() < width) )
         {
-          t_s32 widget_width = (*it)->GetBaseWidth();
+          int widget_width = (*it)->GetBaseWidth();
 
           switch (positioning)
           {
