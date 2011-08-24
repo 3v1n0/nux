@@ -180,37 +180,39 @@ namespace nux
 
   BaseTexture *CreateTextureFromFile (const TCHAR *TextureFilename)
   {
-    NBitmapData *BitmapData = LoadImageFile (TextureFilename);
+    BaseTexture* texture = nullptr;
+
+    NBitmapData* BitmapData = LoadImageFile (TextureFilename);
     NUX_RETURN_VALUE_IF_NULL (BitmapData, 0);
 
     if (BitmapData->IsTextureData() )
     {
-      BaseTexture *texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-      texture->Update (BitmapData);
-      return texture;
+      texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
     }
     else if (BitmapData->IsCubemapTextureData() )
     {
-      TextureCube *texture = new TextureCube();
-      texture->Update (BitmapData);
-      return texture;
+      texture = new TextureCube();
     }
     else if (BitmapData->IsVolumeTextureData() )
     {
-      TextureVolume *texture = new TextureVolume();
-      texture->Update (BitmapData);
-      return texture;
+      texture = new TextureVolume();
     }
     else if (BitmapData->IsAnimatedTextureData() )
     {
-      TextureFrameAnimation *texture = new TextureFrameAnimation();
-      texture->Update (BitmapData);
-      return texture;
+      texture = new TextureFrameAnimation();
+    }
+
+    if (texture)
+    {
+      texture->Update(BitmapData);
+    }
+    else
+    {
+      nuxDebugMsg ("[CreateTextureFromFile] Invalid texture format type for file (%s)", TextureFilename);
     }
 
     delete BitmapData;
-    nuxDebugMsg ("[CreateTextureFromFile] Invalid texture format type for file (%s)", TextureFilename);
-    return 0;
+    return texture;
   }
 
   BaseTexture *CreateTextureFromBitmapData (const NBitmapData *BitmapData)
@@ -268,17 +270,20 @@ namespace nux
   }
 
   Texture2D::Texture2D(NUX_FILE_LINE_DECL)
+    : BaseTexture(NUX_FILE_LINE_PARAM)
   {
   }
 
   Texture2D::Texture2D (const Texture2D &texture, NUX_FILE_LINE_DECL)
+    : BaseTexture(NUX_FILE_LINE_PARAM)
   {
     _image = texture._image;
   }
 
-  Texture2D::Texture2D (const NTextureData &BaseTexture, NUX_FILE_LINE_DECL)
+  Texture2D::Texture2D (const NTextureData &texture_data, NUX_FILE_LINE_DECL)
+    : BaseTexture(NUX_FILE_LINE_PARAM)
   {
-    _image = BaseTexture;
+    _image = texture_data;
   }
 
   Texture2D &Texture2D::operator = (const Texture2D &texture)
