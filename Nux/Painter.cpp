@@ -172,6 +172,7 @@ namespace nux
 
   BasePainter::~BasePainter()
   {
+    EmptyBackgroundStack();
   }
 
   int BasePainter::PaintColorTextLineEdit (GraphicsEngine &GfxContext, const Geometry &g, const NString &Str,
@@ -782,7 +783,7 @@ namespace nux
 
   void BasePainter::PaintBackground (GraphicsEngine &GfxContext, const Geometry &geo)
   {
-    if (m_BackgroundStack.begin () == m_BackgroundStack.end ())
+    if (m_BackgroundStack.empty())
     {
       return;
     }
@@ -940,6 +941,10 @@ namespace nux
 
   void BasePainter::EmptyBackgroundStack()
   {
+    for (auto layer : m_BackgroundStack)
+    {
+      delete layer;
+    }
     m_BackgroundStack.clear();
   }
 
