@@ -224,7 +224,7 @@ namespace nux
 
     void PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, UXStyleImageRef style) const;
     void PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, BaseTexture *Texture,
-                            int border_left, int border_right, int border_top, int border_bottom, bool draw_borders_only) const;
+                            int border_left, int border_right, int border_top, int border_bottom, bool draw_borders_only, bool premultiply = true) const;
 
     //! Draw Check Box.
     /*!
