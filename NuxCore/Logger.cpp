@@ -23,6 +23,8 @@
 #include "Logger.h"
 #include "LoggingWriter.h"
 
+#include <execinfo.h>
+
 #include <map>
 #include <sstream>
 #include <vector>
@@ -375,6 +377,32 @@ Level get_logging_level(std::string level)
     return Error;
   return Warning;
 }
+
+std::string backtrace(int levels)
+{
+  std::ostringstream sout;
+  void* trace[256];
+  int n = ::backtrace(trace, 256);
+  if (!n) {
+    return sout.str();
+  }
+
+  char** strings = ::backtrace_symbols(trace, n);
+
+  if (levels != -1) {
+    n = std::min(n, levels);
+  }
+
+  for (int i = 0; i < n; ++i) {
+    sout << i << ": " << strings[i] << '\n';
+  }
+  if (strings) {
+    free (strings);
+  }
+
+  return sout.str();
+}
+
 
 BlockTracer::BlockTracer(Logger& logger,
                          Level level,
