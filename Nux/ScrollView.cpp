@@ -135,16 +135,16 @@ namespace nux
     }
     if (child->IsLayout ())
       return;
-    
+
     int child_y = child->GetGeometry ().y - GetGeometry ().y;
     int child_y_diff = child_y - abs (_delta_y);
 
-    
+
     if (child_y_diff + child->GetGeometry ().height < GetGeometry ().height && child_y_diff >= 0)
     {
       return;
     }
-    
+
     if (child_y_diff < 0)
     {
       ScrollUp (1, abs (child_y_diff));
@@ -155,7 +155,7 @@ namespace nux
 
       // always keeps the top of a view on the screen
       size += (child->GetGeometry ().height, GetGeometry ().height) ? child->GetGeometry ().height : GetGeometry ().height;
-      
+
       ScrollDown (1, size);
     }
 
@@ -224,7 +224,7 @@ namespace nux
   {
     // Test if the mouse is inside the ScrollView.
     // The last parameter of TestMousePointerInclusion is a boolean used to test if the case
-    // of mouse wheel events. If that boolean value is true, then TestMousePointerInclusion 
+    // of mouse wheel events. If that boolean value is true, then TestMousePointerInclusion
     // returns true only if the mouse pointer is over this area and the the area accepts
     // mouse wheel events (see Area::SetAcceptMouseWheelEvent)
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
@@ -363,8 +363,6 @@ namespace nux
 
   void ScrollView::PreLayoutManagement()
   {
-    // Reset the client view to the top left corner of the container.
-    _delta_x = _delta_y = 0;
     // Give the managed layout the same size and position as the Control.
 
     Geometry geo = GetGeometry();

@@ -201,7 +201,7 @@ namespace nux
 
   void TextEntry::DoSetFocused (bool focused)
   {
-    focused_ = focused;	
+    focused_ = focused;
     cursor_visible_ = focused; // visibilty of cursor depends on focus
     View::DoSetFocused (focused);
     if (focused == true)
@@ -209,7 +209,7 @@ namespace nux
       _block_focus = true;
       SetCursor(cursor_);
       QueueRefresh(true, true);
-      
+
       Area *_parent = GetParentObject();
       if (_parent == NULL)
         return;
@@ -249,9 +249,9 @@ namespace nux
     {
       FocusDirection direction;
       FocusEventType type;
-      
+
       direction = FOCUS_DIRECTION_NONE;
-      
+
       type = Focusable::GetFocusableEventType (event.e_event,
                                                event.GetKeySym(),
                                                event.GetText(),
@@ -274,7 +274,7 @@ namespace nux
             else if ( area->IsLayout() )
             {
               Layout *layout = NUX_STATIC_CAST (Layout *, area );
-              layout->SetFocusControl (true);   
+              layout->SetFocusControl (true);
               ret = layout->ProcessFocusEvent (event, ret, processEventInfo);
             }
           }
@@ -294,9 +294,9 @@ namespace nux
                          event.GetKeyRepeatCount());
       }
     }
-    
+
     if (_block_focus)
-    	_block_focus = false;
+      _block_focus = false;
 
 
     return ret;
@@ -905,25 +905,25 @@ namespace nux
       canvas->PopState();
     }
   }
-  
+
   bool TextEntry::CursorBlinkCallback(TextEntry *self)
   {
     if (self->cursor_blink_status_)
       self->ShowCursor();
     else
       self->HideCursor();
-  
+
     if (--self->cursor_blink_status_ < 0)
       self->cursor_blink_status_ = 2;
 
     return true;
   }
-  
+
   void TextEntry::QueueCursorBlink()
   {
     if (!cursor_blink_timer_)
-      cursor_blink_timer_ = g_timeout_add(kCursorBlinkTimeout, 
-                                          (GSourceFunc)&CursorBlinkCallback, 
+      cursor_blink_timer_ = g_timeout_add(kCursorBlinkTimeout,
+                                          (GSourceFunc)&CursorBlinkCallback,
                                           this);
   }
 
@@ -935,7 +935,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueRefresh(true, false);
+        QueueRefresh(false, false);
       }
     }
   }
@@ -948,7 +948,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueRefresh(true, false);
+        QueueRefresh(false, false);
       }
     }
   }
@@ -1321,7 +1321,7 @@ namespace nux
       context = pango_layout_get_context (layout);
       metrics = pango_context_get_metrics (context,
                                            pango_layout_get_font_description (layout),
-                            				       pango_context_get_language (context));
+                                           pango_context_get_language (context));
 
       ascent = pango_font_metrics_get_ascent (metrics);
       descent = pango_font_metrics_get_descent (metrics);
@@ -1602,7 +1602,7 @@ namespace nux
       if (step == VISUALLY)
       {
         DeleteText(cursor_ - GetPrevCharLength(cursor_), cursor_);
-      } 
+      }
       else if (step == WORDS)
       {
         int new_cursor;
