@@ -211,33 +211,37 @@ namespace nux
     _mouse_owner_menu_page  = NULL;
   }
 
-  void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type, InputArea** area_under_mouse_pointer, BaseWindow** window)
+  void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
+                                           NuxEventType event_type,
+                                           InputArea** area_under_mouse_pointer,
+                                           BaseWindow** window)
   {
     *area_under_mouse_pointer = NULL;
 
-    // Go through the list of BaseWindo and find the first area over which the mouse pointer is.
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator window_it;
-    window_it = _view_window_list.begin();
-    while((*area_under_mouse_pointer == NULL) && (window_it != _view_window_list.end()))
+    // Go through the list of BaseWindo and find the first area over which the
+    // mouse pointer is.
+    for (auto window_ptr : _view_window_list)
     {
-      if((*window_it).IsValid() && (*window_it)->IsVisible())
+      if (window_ptr.IsValid() && window_ptr->IsVisible())
       {
-        *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, (*window_it)->FindAreaUnderMouse(mouse_position, event_type));
-        if(area_under_mouse_pointer)
+        *area_under_mouse_pointer = static_cast<InputArea*>(window_ptr->FindAreaUnderMouse(mouse_position, event_type));
+        // I've kept this behaviour even though I think it should be *area_under_mouse_pointer.
+        if (area_under_mouse_pointer)
         {
           // We have found an area. We are going to exit the while loop.
-          *window = (*window_it).GetPointer();
+          *window = window_ptr.GetPointer();
+          break;
         }
       }
-      ++window_it;
     }
 
-    // If area_under_mouse_pointer is NULL, then the mouse pointer is not over any of the BaseWindow. Try the main window layout.
-    if(*area_under_mouse_pointer == NULL)
+    // If area_under_mouse_pointer is NULL, then the mouse pointer is not over
+    // any of the BaseWindow. Try the main window layout.
+    if (*area_under_mouse_pointer == NULL)
     {
       Layout* main_window_layout = GetWindowThread()->GetMainLayout();
-      if(main_window_layout)
-        *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
+      if (main_window_layout)
+        *area_under_mouse_pointer = static_cast<InputArea*>(main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
     }
   }
 
