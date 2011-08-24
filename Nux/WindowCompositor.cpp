@@ -1482,21 +1482,10 @@ namespace nux
 //                    }
           }
 
-          if (GetWindowThread ()->IsEmbeddedWindow() )
-          {
-            // In embedded mode, floating windows are composited over Nux main window which is probably empty. At least that
-            // is how things are at the moment. Compiste the floating windows onto the main texture without blending.
-            GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-          }
-          else
-          {
-            GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-          }
-
           CHECKGL ( glDepthMask (GL_FALSE) );
           {
             GetWindowThread ()->GetGraphicsEngine().ApplyClippingRectangle();
-            PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity ());
+            PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity (), window->premultiply());
           }
           CHECKGL ( glDepthMask (GL_TRUE) );
           GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
@@ -1628,7 +1617,7 @@ namespace nux
 
   }
 
-  void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity)
+  void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity, bool premultiply)
   {
     nuxAssert (HWTexture.IsValid() );
 
@@ -1668,11 +1657,10 @@ namespace nux
       TexCoordXForm texxform0;
       texxform0.FlipVCoord (true);
 
-      if (GetWindowThread()->IsEmbeddedWindow())
-      {
-        // Compose Nux's main texture onto another surface (a texture or the back buffer) with blending.
+      if (premultiply)
+        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+      else
         GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      }
 
       GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
       GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);

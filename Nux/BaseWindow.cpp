@@ -49,6 +49,7 @@ namespace nux
     , _paint_layer(new ColorLayer(Color(0xFF707070)))
     , _opacity (1.0f)
   {
+    premultiply = true;
     _name = WindowName;
     _child_need_redraw = true;
     m_TopBorder = 0;
