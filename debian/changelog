@@ -1,3 +1,10 @@
+nux (1.2.2-0ubuntu2) oneiric; urgency=low
+
+  * The package claims to be compliant to C++0x, but happily uses
+    old macros. Fix it.
+
+ -- Matthias Klose <doko@ubuntu.com>  Fri, 19 Aug 2011 19:08:29 +0200
+
 nux (1.2.2-0ubuntu1) oneiric; urgency=low
 
   * New upstream release.
