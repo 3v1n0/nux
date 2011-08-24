@@ -224,13 +224,12 @@ namespace nux
     {
       if (window_ptr.IsValid() && window_ptr->IsVisible())
       {
-        *area_under_mouse_pointer = static_cast<InputArea*>(window_ptr->FindAreaUnderMouse(mouse_position, event_type));
-        // I've kept this behaviour even though I think it should be *area_under_mouse_pointer.
-        if (area_under_mouse_pointer)
+        InputArea* area = static_cast<InputArea*>(window_ptr->FindAreaUnderMouse(mouse_position, event_type));
+        if (area)
         {
-          // We have found an area. We are going to exit the while loop.
+          *area_under_mouse_pointer = area;
           *window = window_ptr.GetPointer();
-          break;
+          return;
         }
       }
     }
