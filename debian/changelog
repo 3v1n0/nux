@@ -1,11 +1,11 @@
-nux (1.4.0-0ubuntu3) UNRELEASED; urgency=low
+nux (1.4.0-0ubuntu3) oneiric; urgency=low
 
   * Backport a small api tweak from trunk, it's a small abi break but required
     to fix an unity issue and better now than latter
   * debian/control: break on current unity, it will need a rebuild
   * debian/rules: updated shlibs
 
- -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 25 Aug 2011 22:46:26 +0200
+ -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 25 Aug 2011 23:03:03 +0200
 
 nux (1.4.0-0ubuntu2) oneiric; urgency=low
 
