@@ -1,11 +1,11 @@
-nux (1.4.0-0ubuntu1) UNRELEASED; urgency=low
+nux (1.4.0-0ubuntu1) oneiric; urgency=low
 
   * New upstream version:
     - "scrolling down in a lens brings it back to the top automatically" 
       (lp: #821534)
   * debian/rules: updated shlib
 
- -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 25 Aug 2011 13:39:26 +0200
+ -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 25 Aug 2011 13:42:45 +0200
 
 nux (1.2.2-0ubuntu2) oneiric; urgency=low
 
