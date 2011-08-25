@@ -1,3 +1,9 @@
+nux (1.4.0-0ubuntu2) oneiric; urgency=low
+
+  * Backport upstream revision to fix the opening effect of the unity dash
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 25 Aug 2011 18:53:09 +0200
+
 nux (1.4.0-0ubuntu1) oneiric; urgency=low
 
   * New upstream version:
