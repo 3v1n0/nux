@@ -246,28 +246,28 @@ namespace nux
 #endif
 
 #if defined (NUX_OS_WINDOWS)
-      if (_normal_font == 0)
+      if (_normal_font.IsNull())
       {
         FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
         _normal_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference ();
       }
 
-      if (_bold_font == 0)
+      if (_bold_font.IsNull())
       {
         FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
         _bold_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference ();
       }
 #else
-      if (_normal_font == 0)
+      if (_normal_font.IsNull())
       {
         FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
         _normal_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference ();
       }
 
-      if (_bold_font == 0)
+      if (_bold_font.IsNull())
       {
         FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
         _bold_font = ObjectPtr<FontTexture> (fnt);

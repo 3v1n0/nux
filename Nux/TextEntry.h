@@ -128,44 +128,15 @@ namespace nux
     sigc::signal <void> activated;
     sigc::signal <void, int> cursor_moved;
 
-//     void SetWidth(int width);
-//     int GetWidth();
-//     void SetHeight(int height);
-//     int GetHeight();
-//     void GetSizeRequest(int *width, int *height);
-//     void SetBold(bool bold);
-//     bool IsBold();
-//     void SetItalic(bool italic);
-//     bool IsItalic();
-//     void SetStrikeout(bool strikeout);
-//     bool IsStrikeout();
-//     void SetUnderline(bool underline);
-//     bool IsUnderline();
-//     void SetMultiline(bool multiline);
-//     bool IsMultiline();
-//     void SetWordWrap(bool wrap);
-//     bool IsWordWrap();
-//     void SetReadOnly(bool readonly);
-//     bool IsReadOnly();
     void SetText(const char *text);
-    std::string GetText();
-//     void SetBackground(Texture *background);
-//     const Texture *GetBackground();
+    std::string const& GetText() const;
+
     void SetTextColor(const Color &color);
-    Color GetTextColor() const;
+    Color const& GetTextColor() const;
     void SetFontFamily (const char *font);
     void SetFontSize (double font_size);
     void SetFontOptions (const cairo_font_options_t *options);
 
-//     std::string GetFontFamily();
-//     void OnFontSizeChange();
-//     void SetPasswordChar(const char *c);
-//     std::string GetPasswordChar();
-//     bool IsScrollBarRequired();
-//     void GetScrollBarInfo(int *range, int *line_step,
-//                           int *page_step, int *cur_pos);
-//     void ScrollTo(int position);
-//     void MarkRedraw();
     /** Select text between start and end. */
     void Select(int start, int end);
     /** Select all text */
@@ -174,13 +145,12 @@ namespace nux
     CairoGraphics::Alignment GetAlign() const;
     void SetAlign(CairoGraphics::Alignment align);
 
-    protected:
+  protected:
     virtual void DoSetFocused (bool focused);
     bool _block_focus; // used to selectively ignore focus keyevents
 
     virtual void GeometryChanged ();
-    
-    
+
     /**
      * Enum used to specify different motion types.
      */
@@ -217,17 +187,10 @@ namespace nux
     void ResetImContext();
     /** Reset preedit text */
     void ResetPreedit();
-//     /** Create a new im context according to current visibility setting */
-//     void InitImContext();
-//     /** Set the visibility of the edit control */
-//     void SetVisibility(bool visible);
-//
-//  /** Check if the cursor should be blinking */
-//  bool IsCursorBlinking();
     /** Send out a request to blink the cursor if necessary */
     void QueueCursorBlink();
     static bool CursorBlinkCallback(TextEntry *data);
-    
+
     void ShowCursor();
     void HideCursor();
 
@@ -301,67 +264,23 @@ namespace nux
     void Delete(MovementStep step);
     /** Switch between the overwrite mode and the insert mode*/
     void ToggleOverwrite();
-//
+
     /** Gets the color of selection background. */
     Color GetSelectionBackgroundColor();
     /** Gets the color of selection text. */
     Color GetSelectionTextColor();
-//
-//     /**
-//      * Gets the gtk widget used by the gadget host and the cursor location
-//      * for gtk im context. relative to the widget coordinate.
-//      */
-//     GtkWidget *GetWidgetAndCursorLocation(GdkRectangle *cur);
-//
+
     /**
      * Gets the cursor location in pango layout. The unit is pixel.
      */
     void GetCursorLocationInLayout(int *strong_x, int *strong_y, int *strong_height,
                                    int *weak_x, int *weak_y, int *weak_height);
 
-//     /**
-//      * Updates the cursor location of input method context.
-//      */
-//     void UpdateIMCursorLocation();
-//
-//     /** Callback function for IM "commit" signal */
-//     static void CommitCallback(GtkIMContext *context,
-//                                const char *str, void *gg);
-//     /** Callback function for IM "retrieve-surrounding" signal */
-//     static gboolean RetrieveSurroundingCallback(GtkIMContext *context,
-//                                                 void *gg);
-//     /** Callback function for IM "delete-surrounding" signal */
-//     static gboolean DeleteSurroundingCallback(GtkIMContext *context, int offset,
-//                                               int n_chars, void *gg);
-//     /** Callback function for IM "preedit-start" signal */
-//     static void PreeditStartCallback(GtkIMContext *context, void *gg);
-//     /** Callback function for IM "preedit-changed" signal */
-//     static void PreeditChangedCallback(GtkIMContext *context, void *gg);
-//     /** Callback function for IM "preedit-end" signal */
-//     static void PreeditEndCallback(GtkIMContext *context, void *gg);
-//     /**
-//      * Callback for gtk_clipboard_request_text function.
-//      * This function performs real paste.
-//      */
-//     static void PasteCallback(GtkClipboard *clipboard,
-//                               const gchar *str, void *gg);
-//
-//    private:
-//     /** Owner of this gtk edit implementation object. */
-//     GtkEditElement *owner_;
-//     /** Main loop object */
-//     MainLoopInterface *main_loop_;
-//     /** Graphics object, must be CairoGraphics */
-//     const GraphicsInterface *graphics_;
-//
     /** The CairoCanvas which hold cairo_t inside */
-    CairoGraphics *canvas_;
-
-//     /** Gtk InputMethod Context */
-//     GtkIMContext *im_context_;
+    CairoGraphics* canvas_;
 
     /** The cached Pango Layout */
-    PangoLayout *cached_layout_;
+    PangoLayout* cached_layout_;
 
     /** The text content of the edit control */
     std::string _text;
@@ -377,12 +296,7 @@ namespace nux
 
     /** Last time of mouse double click event. */
     t_u64 last_dblclick_time_;
-//
-//     /** Canvas width */
-//     int width_;
-//     /** Canvas height */
-//     int height_;
-//
+
     /** The current cursor position in number of bytes. */
     int cursor_;
     /**
@@ -463,11 +377,6 @@ namespace nux
 
     cairo_font_options_t *font_options_;
     double font_dpi_;
-
-    int full_height_;
-
-//     /** The background texture of the edit control */
-//     Texture *background_;
 
     /** The text color of the edit control */
     Color _text_color;

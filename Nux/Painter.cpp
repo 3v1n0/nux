@@ -172,6 +172,7 @@ namespace nux
 
   BasePainter::~BasePainter()
   {
+    EmptyBackgroundStack();
   }
 
   int BasePainter::PaintColorTextLineEdit (GraphicsEngine &GfxContext, const Geometry &g, const NString &Str,
@@ -578,7 +579,7 @@ namespace nux
 
   void BasePainter::PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, BaseTexture *texture,
                                        int border_left, int border_right, int border_top, int border_bottom,
-                                       bool draw_borders_only) const
+                                       bool draw_borders_only, bool premultiply) const
   {
     int tex_w = texture->GetWidth();
     int tex_h = texture->GetHeight();
@@ -598,7 +599,10 @@ namespace nux
       border_top = border_bottom = 0;
     }
 
-    GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if (premultiply)
+      GfxContext.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    else
+      GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::UNNORMALIZED_COORD);
@@ -782,7 +786,7 @@ namespace nux
 
   void BasePainter::PaintBackground (GraphicsEngine &GfxContext, const Geometry &geo)
   {
-    if (m_BackgroundStack.begin () == m_BackgroundStack.end ())
+    if (m_BackgroundStack.empty())
     {
       return;
     }
@@ -940,6 +944,10 @@ namespace nux
 
   void BasePainter::EmptyBackgroundStack()
   {
+    for (auto layer : m_BackgroundStack)
+    {
+      delete layer;
+    }
     m_BackgroundStack.clear();
   }
 

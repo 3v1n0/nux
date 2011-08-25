@@ -23,6 +23,7 @@ noinst_PROGRAMS = button \
                   tab_view \
                   textedit \
                   text_entry_focus \
+                  tiles_view \
                   timegraph \
                   timeline \
                   tooltip
@@ -89,6 +90,8 @@ pango_combobox_SOURCES = pango_combobox.cpp
 pango_combobox_LDADD = $(ALL_LIBS)
 rotate_texture_area_SOURCES = rotate_texture_area.cpp
 rotate_texture_area_LDADD = $(ALL_LIBS)
+tiles_view_SOURCES = tiles_view.cpp
+tiles_view_LDADD = $(ALL_LIBS)
 text_entry_focus_SOURCES = text_entry_focus.cpp
 text_entry_focus_LDADD = $(ALL_LIBS)
 

@@ -270,27 +270,6 @@ namespace nux
     }
   }
 
-  long Matrix3Editor::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-    for (int i = 0; i < 3; i++)
-    {
-      for (int j = 0; j < 3; j++)
-      {
-        ret = m_MtxInput[i][j]->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-    }
-
-    ret = m_IdentityMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ZeroMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_InverseMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_NegateMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
   void Matrix3Editor::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
     Geometry base = GetGeometry();

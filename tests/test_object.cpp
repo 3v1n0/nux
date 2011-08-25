@@ -168,33 +168,22 @@ TEST(TestObject, TestObjectPtr1) {
 
 TEST(TestObject, TestObjectPtr2) {
 
-  ChildOwnedObject *c = new ChildOwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
+  ChildOwnedObject *c = new ChildOwnedObject(NUX_TRACKER_LOCATION);
 
-  nux::ObjectPtr<OwnedObject> object_ptr0 (c); // ref count = 2
-
-  nux::ObjectWeakPtr<OwnedObject> object_ptr1 = object_ptr0; // ref count = 2, weak ref count = 3
-
-  nux::ObjectWeakPtr<OwnedObject> object_ptr2 = object_ptr1; // ref count = 2, weak ref count = 4
+  nux::ObjectPtr<OwnedObject> obj_ptr(c);
+  nux::ObjectWeakPtr<OwnedObject> weak_ptr(obj_ptr);
 
   EXPECT_THAT(c->GetReferenceCount(), Eq(2));
-  EXPECT_THAT(c->GetWeakReferenceCount(), Eq(4));
-
-  EXPECT_FALSE(c->UnReference()); // ref count = 2
+  EXPECT_FALSE(c->UnReference());
 
   EXPECT_THAT(c->GetReferenceCount(), Eq(1));
-  EXPECT_THAT(c->GetWeakReferenceCount(), Eq(3));
 
-  EXPECT_TRUE(object_ptr0.Release());
+  // Clearing the smart pointer deletes the object.
+  EXPECT_TRUE(obj_ptr.Release());
 
-  EXPECT_FALSE(object_ptr1.IsValid());
-  EXPECT_TRUE(object_ptr1.IsNull());
-  EXPECT_FALSE(object_ptr1());
-  EXPECT_THAT(object_ptr1.GetWeakReferenceCount(), Eq(2));
-
-  EXPECT_FALSE(object_ptr1.Release());
-
-  EXPECT_THAT(object_ptr2.GetWeakReferenceCount(), Eq(1));
-  EXPECT_TRUE(object_ptr2.Release());
+  EXPECT_FALSE(weak_ptr.IsValid());
+  EXPECT_TRUE(weak_ptr.IsNull());
+  EXPECT_FALSE(weak_ptr());
 }
 
 bool g_signal_called = false;

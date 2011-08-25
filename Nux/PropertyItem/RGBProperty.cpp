@@ -96,8 +96,8 @@ namespace nux
   {
     long ret = TraverseInfo;
 
-    ret = m_ColorModel->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ColorFormat->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+//     ret = m_ColorModel->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+//     ret = m_ColorFormat->BaseProcessEvent (ievent, ret, ProcessEventInfo);
     //     if(!(ret & eMouseEventSolved))
     //         ret = TableItem::ProcessPropertyEvent(ievent, TraverseInfo, ProcessEventInfo);
     return ret;

@@ -1,5 +1,6 @@
+// -*- Mode: C++; indent-tabs-mode: nil; tab-width: 2 -*-
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2011 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -20,8 +21,8 @@
  */
 
 
-#ifndef NUXOBJECT_H
-#define NUXOBJECT_H
+#ifndef NUXCORE_OBJECT_H
+#define NUXCORE_OBJECT_H
 
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
@@ -29,44 +30,32 @@
 #include "Property.h"
 #include "PropertyTraits.h"
 
+#define NUX_FILE_LINE_PROTO     const char* __Nux_FileName__=__FILE__, int __Nux_LineNumber__ = __LINE__
+#define NUX_FILE_LINE_DECL      const char* __Nux_FileName__, int __Nux_LineNumber__
+#define NUX_FILE_LINE_PARAM     __Nux_FileName__, __Nux_LineNumber__
+#define NUX_TRACKER_LOCATION    __FILE__, __LINE__
+
 #define OnDestroyed object_destroyed
+
 
 namespace nux
 {
-
   template <typename T>
   class ObjectPtr;
 
   template <typename T>
   class ObjectWeakPtr;
 
-// #if defined(NUX_DEBUG)
-#define NUX_FILE_LINE_PROTO     const char* __Nux_FileName__=__FILE__, int __Nux_LineNumber__ = __LINE__
-#define NUX_FILE_LINE_DECL      const char* __Nux_FileName__, int __Nux_LineNumber__
-#define NUX_FILE_LINE_PARAM     __Nux_FileName__, __Nux_LineNumber__
-#define NUX_TRACKER_LOCATION    __FILE__, __LINE__
-// #else
-//     #define NUX_FILE_LINE_PROTO     int __Nux_Dummy__ = 0xD0DECADE
-//     #define NUX_FILE_LINE_DECL      int __Nux_Dummy__
-//     #define NUX_FILE_LINE_PARAM     __Nux_Dummy__
-//     #define NUX_TRACKER_LOCATION    0xD0DECADE
-// #endif
-
   class ObjectStats
   {
     NUX_DECLARE_GLOBAL_OBJECT (ObjectStats, GlobalSingletonInitializer);
   public:
-    class AllocationList : public std::list<void *>
-    {
-    public:
-      AllocationList();
-      ~AllocationList();
-    };
-
+    typedef std::list<void*> AllocationList;
     AllocationList _allocation_list;
     int _total_allocated_size;  //! Total allocated memory size in bytes.
     int _number_of_objects;     //! Number of allocated objects;
   };
+
 #define GObjectStats NUX_GLOBAL_OBJECT_INSTANCE(nux::ObjectStats)
 
 //! Base class of heap allocated objects.
@@ -134,13 +123,15 @@ namespace nux
 
     //! Mark the object as owned.
     /*!
+        If this object is not owned, calling SinkReference() as the same
+        effect as calling Reference().
+
         @return True if the object was not owned previously
     */
     virtual bool SinkReference();
 
     //! Destroy and object that has a floating reference.
     /*!
-        If this object is not owned, calling SinkReference() as the same effect as calling Reference().
         @return True if the object has been destroyed
     */
     virtual bool Dispose();
@@ -167,25 +158,14 @@ namespace nux
     int _heap_allocated;
 
   private:
+    // Trackable objects are not copyable.
     Trackable (const Trackable &);
     Trackable &operator= (const Trackable &);
 
-//     class AllocationList : public std::list<void *>
-//     {
-//     public:
-//       AllocationList();
-//       ~AllocationList();
-//     };
-
-    //static AllocationList m_allocation_list;
     static std::new_handler _new_current_handler;
-//     static int m_total_allocated_size;  //! Total allocated memory size in bytes.
-//     static int m_number_of_objects;     //! Number of allocated objects;
 
     bool _owns_the_reference;
     int _size_of_this_object;
-
-    //template<typename T> friend class Pointer;
   };
 
 //! The base class of Nux objects.
@@ -204,19 +184,22 @@ namespace nux
 
     //! Decrease reference count.
     /*!
-        @return True if the object reference count has reached 0 and the object has been destroyed.
+        @return True if the object reference count has reached 0 and the
+        object has been destroyed.
     */
     bool UnReference();
 
     //! Mark the object as owned.
     /*!
+        If this object is not owned, calling SinkReference() as the same
+        effect as calling Reference().
+
         @return True if the object was not owned previously
     */
     virtual bool SinkReference();
 
     //! Destroy and object that has a floating reference.
     /*!
-        If this object is not owned, calling SinkReference() as the same effect as calling Reference().
         @return True is the object has been destroyed
     */
     virtual bool Dispose();
@@ -227,42 +210,19 @@ namespace nux
     */
     int GetReferenceCount () const;
 
-    //! Get the weak reference count of this object.
-    /*!
-        @return The weak reference count of this object.
-    */
-    int GetWeakReferenceCount () const;
-
     //! Signal emitted immediately before the object is destroyed.
     sigc::signal <void, Object *> object_destroyed;
 
     std::string GetAllocationLoation() const;
 
   protected:
-    NThreadSafeCounter *_reference_count; //!< Reference count.
-    NThreadSafeCounter *_weak_reference_count; //!< Weak reference count.
-    NThreadSafeCounter *_objectptr_count; //!< Number of ObjectPtr hosting the object.
-
-    /*! 
-        Between the time an object goes into Destroy () and the moment it goes into ~Object (), there is
-        the possibility that some weak smart pointer references of the object will be destroyed. For these smart pointers,
-        the reference count of the object is 0 and the weak reference count is > 0. We want the last weak pointer reference 
-        to set the object _reference_count and _weak_reference_count variable to 0 after deleting them (rather than leaving them as invalid pointers).
-        So when the object goes into the destructor (~Object ()) we can do some additional checks and verifications.
-        _destroyed is set to true before the destructor returns.
-    */
-    bool *_destroyed;
-
     //! Private destructor.
     /*
-        Private destructor. Ensure that Object cannot be created on the stack (only on the heap), but objects that inherits
-        from Object can stil be created on the stack or on the heap.
-        (MEC++ item27)
+        Private destructor. Ensure that Object cannot be created on the stack
+        (only on the heap), but objects that inherits from Object can stil be
+        created on the stack or on the heap.  (MEC++ item27)
     */
     virtual ~Object();
-
-    void IncrementWeakCounter();
-    void DecrementWeakCounter();
 
   private:
     //! Destroy the object.
@@ -271,11 +231,12 @@ namespace nux
     Object (const Object &);
     Object &operator = (const Object &);
 
+    const char* allocation_file_name_;
+    int allocation_line_number_;
 
-//#if defined(NUX_DEBUG)
-    NString _allocation_file_name;
-    int     _allocation_line_number;
-//#endif
+    NThreadSafeCounter* reference_count_;
+    //!< Number of ObjectPtr hosting the object.
+    NThreadSafeCounter* objectptr_count_;
 
     template <typename T>
     friend class ObjectPtr;

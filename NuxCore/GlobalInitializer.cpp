@@ -86,4 +86,9 @@ namespace nux
     }
   }
 
+void GlobalInitializer::ForceShutdown()
+{
+  SystemShutdown();
+}
+
 }

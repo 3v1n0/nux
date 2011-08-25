@@ -63,3 +63,4 @@ Logs
 **/nux.log
 **/nux.log.*
 examples/cairo_wrapper
+examples/tiles_view

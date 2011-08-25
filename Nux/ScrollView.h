@@ -1,5 +1,6 @@
+// -*- Mode: C++; indent-tabs-mode: nil; tab-width: 2 -*-
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2011 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -193,16 +194,6 @@ namespace nux
     bool m_horizontal_scrollbar_enable;
     bool m_vertical_scrollbar_enable;
 
-    int m_SizeGripDragPositionX; //<<<--- remove this
-    int m_SizeGripDragPositionY;
-
-    //int viewx;
-    // Internal function
-    int getBorder() const;
-    int getTopBorder() const;
-    void setBorder (int border);
-    void setTopBorder (int top_border);
-
     int m_top_border;
     int m_border;
 
@@ -232,8 +223,6 @@ namespace nux
     int m_ViewContentRightMargin;
     int m_ViewContentTopMargin;
     int m_ViewContentBottomMargin;
-
-    int top_hidden_surface_;
   };
 }
 

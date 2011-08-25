@@ -46,6 +46,7 @@ class Writer : boost::noncopyable
 {
 public:
   static Writer& Instance();
+  ~Writer();
 
   void WriteMessage(Level severity,
                     std::string const& module,
@@ -58,7 +59,6 @@ public:
 
 private:
   Writer();
-  ~Writer();
 
 private:
   class Impl;
