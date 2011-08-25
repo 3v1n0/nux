@@ -226,9 +226,9 @@ logging::Logger logger("nux.inputarea");
     _dnd_enabled_as_target = as_target;
   }
   
-  void InputArea::DndSourceDragBegin ()
+  bool InputArea::DndSourceDragBegin ()
   {
-  
+    return false;
   }
   
   NBitmapData * InputArea::DndSourceGetDragImage ()
@@ -278,8 +278,8 @@ logging::Logger logger("nux.inputarea");
     funcs.get_data_for_type = &InputArea::InnerDndSourceGetDataForType;
     funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
     
-    DndSourceDragBegin();
-    GetWindow().StartDndDrag(funcs, this);
+    if (DndSourceDragBegin())
+      GetWindow().StartDndDrag(funcs, this);
   }
 #endif
 

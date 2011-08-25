@@ -33,6 +33,7 @@ Architecture: any
 Depends: libnux-1.0-common (= ${source:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
+Breaks: unity (<< 4.10.0-0ubuntu2)
 Description: Visual rendering toolkit for real-time applications - shared lib
  Nux is a graphical user interface toolkit for applications that mixes opengl
  hardware acceleration with high quality visual rendering.
