@@ -52,9 +52,6 @@ namespace nux
     _resize_handle_height       = 20;
     _title_bar_height           = 20;
 
-    // Should be at the end of the constructor
-    //GetWindowCompositor().RegisterWindow(this);
-
     _minimize_button    = new InputArea(NUX_TRACKER_LOCATION);
     _minimize_button->Reference();
     _minimize_button->SetParentObject(this);

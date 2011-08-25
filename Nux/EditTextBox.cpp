@@ -76,7 +76,7 @@ namespace nux
     m_ScrollTimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &EditTextBox::ScrollTimerInterrupt) );
 
     SetAcceptKeyboardEvent(true);
-    SetEnableDoubleClickEnable(true);
+    EnableDoubleClick(true);
   }
 
   EditTextBox::~EditTextBox()

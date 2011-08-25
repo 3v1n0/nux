@@ -646,7 +646,7 @@ namespace nux
         nuxError(TEXT("[IOpenGLShaderProgram::Link] glValidateProgram: %s"), InfoLogBuffer);
       }
 
-      delete InfoLogBuffer;
+      delete [] InfoLogBuffer;
     }
 
     m_CompiledAndReady = true;

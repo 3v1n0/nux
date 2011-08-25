@@ -19,13 +19,11 @@
  *
  */
 
-
 #ifndef VSPLITTER_H
 #define VSPLITTER_H
 
 namespace nux
 {
-
   class layout;
 
   class VSplitter: public View
@@ -34,8 +32,6 @@ namespace nux
   public:
     VSplitter (NUX_FILE_LINE_PROTO);
     ~VSplitter();
-
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);

@@ -191,7 +191,7 @@ namespace nux
     int num_row = 0;
     int num_column = 0;
 
-    if(num_elements > 0)
+    if (num_elements > 0)
       ++num_column;
 
     if (_dynamic_column)
@@ -201,12 +201,12 @@ namespace nux
 
       bool first_element_of_column = true;
 
-      for(int i = 0; i < num_elements; i++)
+      for (int i = 0; i < num_elements; i++)
       {
         if (num_column == 1)
           num_row++;
 
-        if(first_element_of_column)
+        if (first_element_of_column)
         {
           first_element_of_column = false;
         }
@@ -224,7 +224,7 @@ namespace nux
 
         it++;
 
-        if (!_partial_visibility && (Y + _children_size.height > base.y + base.height - m_v_out_margin))
+        if ((!_partial_visibility) && (Y + _children_size.height > base.y + base.height - m_v_out_margin))
         {
           X += _children_size.width + m_h_in_margin;
           Y = base.y + m_v_out_margin;
@@ -233,13 +233,13 @@ namespace nux
           if(i < num_elements - 1)
             ++num_column;
         }
-        else if (Y > base.y + base.height)
+        else if (Y >= base.y + base.height)
         {
           X += _children_size.width + m_h_in_margin;
           Y = base.y + m_v_out_margin;
 
           first_element_of_column = true;
-          if(i < num_elements - 1)
+          if (i < num_elements - 1)
             ++num_column;
         }
       }

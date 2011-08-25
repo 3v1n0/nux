@@ -43,9 +43,9 @@ void RenderBlurredTexture ()
 
   graphics_display->ShowWindow();
 
-  nux::IntrusiveSP<nux::IOpenGLFrameBufferObject> fbo;
-  nux::IntrusiveSP<nux::IOpenGLBaseTexture> texture_rt;
-  nux::IntrusiveSP<nux::IOpenGLBaseTexture> depth_rt;
+  nux::ObjectPtr<nux::IOpenGLFrameBufferObject> fbo;
+  nux::ObjectPtr<nux::IOpenGLBaseTexture> texture_rt;
+  nux::ObjectPtr<nux::IOpenGLBaseTexture> depth_rt;
 
   fbo         = graphics_display->GetGpuDevice ()->CreateFrameBufferObject ();
   texture_rt  = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);

@@ -88,7 +88,6 @@ namespace nux
   public:
     Matrix3Editor (Matrix3 matrix = Matrix3::IDENTITY(), NUX_FILE_LINE_PROTO);
     ~Matrix3Editor();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);

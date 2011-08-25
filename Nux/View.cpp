@@ -90,17 +90,6 @@ namespace nux
     return TraverseInfo;
   }
 
-  long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
-    {
-      // Skip the area that has the exclusivity on events
-      return TraverseInfo;
-    }
-
-    return ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
-  }
-
   // NUXTODO: Find better name
   long View::ComputeLayout2()
   {
@@ -240,6 +229,7 @@ namespace nux
     return OnEvent (ievent, TraverseInfo, ProcessEventInfo);
   }
 
+
   void View::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     _full_redraw = false;
@@ -288,12 +278,17 @@ namespace nux
     _full_redraw = false;
   }
 
-  void View::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void View::Draw(GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void View::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void View::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+  {
+
+  }
+
+  void View::PostDraw(GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
