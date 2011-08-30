@@ -2581,7 +2581,19 @@ namespace nux
   void GraphicsDisplay::InitGlobalGrabWindow ()
   {
     Display *display = GetX11Display ();
-    _global_grab_window = XCreateSimpleWindow (display, DefaultRootWindow (display), -100, -100, 1, 1, 0, 0, 0);
+
+    XSetWindowAttributes attribs;
+    attribs.override_redirect = True;
+    _global_grab_window = XCreateWindow (display,
+                                         DefaultRootWindow (display),
+                                         -100, -100,                     // X, Y
+                                         1, 1,                           // Width, Height
+                                         0,                              // Border
+                                         0,                              // Depth
+                                         InputOnly,                      // Class
+                                         CopyFromParent,                 // Visual
+                                         CWOverrideRedirect,
+                                         &attribs);
     
     XSelectInput (display, _global_grab_window, StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PointerMotionMask);
     XMapRaised (display, _global_grab_window);

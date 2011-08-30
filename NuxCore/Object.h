@@ -25,6 +25,7 @@
 
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
+#include "ObjectType.h"
 #include "Property.h"
 #include "PropertyTraits.h"
 
@@ -234,6 +235,8 @@ namespace nux
 
     //! Signal emitted immediately before the object is destroyed.
     sigc::signal <void, Object *> object_destroyed;
+
+    std::string GetAllocationLoation() const;
 
   protected:
     NThreadSafeCounter *_reference_count; //!< Reference count.

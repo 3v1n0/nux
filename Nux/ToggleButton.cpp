@@ -15,30 +15,43 @@
  * You should have received a copy of both the GNU Lesser General Public
  * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
- * Authored by: Neil Jagdish Patel <neil.patel@canonical.com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *              Gordon Allott <gord.allott@canonical.com>
  *
  */
 
-#include "Object.h"
 
-#ifndef NUXINITIALLYUNOWNEDOBJECT_H
-#define NUXINITIALLYUNOWNEDOBJECT_H
+#include "Nux.h"
+#include "ToggleButton.h"
+#include "HLayout.h"
 
 namespace nux
 {
-
-//! The base class of Nux initially unowned objects.
-  class InitiallyUnownedObject: public Object
+ToggleButton::ToggleButton (TextureArea *image, NUX_FILE_LINE_DECL)
+  : Button (image, NUX_FILE_LINE_PARAM)
   {
-  public:
-    NUX_DECLARE_OBJECT_TYPE (InitiallyUnownedObject, Object);
+    togglable = true;
+  }
 
-    //! Constructor
-    InitiallyUnownedObject (NUX_FILE_LINE_PROTO);
-    ~InitiallyUnownedObject ();
-  };
+ToggleButton::ToggleButton (const std::string label, NUX_FILE_LINE_DECL)
+  : Button (label, NUX_FILE_LINE_PARAM)
+  {
+    togglable = true;
+  }
 
+ToggleButton::ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
+  : Button (label,  image, NUX_FILE_LINE_PARAM)
+  {
+    togglable = true;
+  }
+
+ToggleButton::ToggleButton (NUX_FILE_LINE_DECL)
+  : Button (NUX_FILE_LINE_PARAM)
+  {
+    togglable = true;
+  }
+
+ToggleButton::~ToggleButton()
+{
 }
-
-#endif // NUXINITIALLYUNOWNEDOBJECT_H
-
+}

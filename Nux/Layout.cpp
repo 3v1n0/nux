@@ -468,7 +468,7 @@ namespace nux
   {
     if (_layout_element_list.empty ())
       return false;
-    
+
     std::list<Area *>::const_iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
@@ -487,7 +487,7 @@ namespace nux
   {
     if (_layout_element_list.empty ())
       return false;
-    
+
     std::list<Area *>::reverse_iterator it;
     for (it = _layout_element_list.rbegin(); it != _layout_element_list.rend(); it++)
     {
@@ -613,7 +613,7 @@ namespace nux
     if (focused_child == NULL) return ProcessEventInfo;
     bool success = FocusPreviousChild (focused_child);
     //focused_child->SetFocused (false);
-    
+
     if (success == false)
     {
       Area *parent = GetParentObject ();
@@ -625,7 +625,7 @@ namespace nux
 
     return ProcessEventInfo;
   }
-  
+
   long Layout::DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     Area *focused_child = GetFocusedChild ();
@@ -644,7 +644,7 @@ namespace nux
 
     return ProcessEventInfo;
   }
-  
+
   long Layout::DoFocusUp (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     return DoFocusPrev (ievent, TraverseInfo, ProcessEventInfo);
@@ -666,7 +666,7 @@ namespace nux
   long Layout::ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
-   
+
 
     if (GetFocused () && (ievent.e_event == NUX_KEYDOWN))
     {
@@ -685,7 +685,7 @@ namespace nux
       if ((type == FOCUS_EVENT_DIRECTION) && (direction != FOCUS_DIRECTION_NONE))
       {
         focused_child = GetFocusedChild ();
-  
+
         /* if nothing is focused, focus the first child else send the event to the parent */
 
         if (focused_child == NULL)
@@ -825,9 +825,12 @@ namespace nux
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      Area* hit_view = NUX_STATIC_CAST(Area*, (*it)->FindAreaUnderMouse(mouse_position, event_type));
-      if(hit_view)
-        return hit_view;
+      if ((*it)->IsVisible() && (*it)->IsSensitive())
+      {
+        Area* hit_view = NUX_STATIC_CAST(Area*, (*it)->FindAreaUnderMouse(mouse_position, event_type));
+        if(hit_view)
+          return hit_view;
+      }
     }
 
     return NULL;
@@ -1021,7 +1024,7 @@ namespace nux
     std::list<Area *>::iterator it;
     if (_layout_element_list.empty ())
       return false;
-    
+
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       bool can_focus = false;

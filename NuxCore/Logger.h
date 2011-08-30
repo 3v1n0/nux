@@ -49,8 +49,8 @@
 
 // We shouldn't really be logging block level information at anything higher
 // than debug.
-#define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::TRACE, __PRETTY_FUNC__, __FILE__, __LINE__)
-#define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::DEBUG, __PRETTY_FUNC__, __FILE__, __LINE__)
+#define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Trace, __PRETTY_FUNCTION__, __FILE__, __LINE__)
+#define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Debug, __PRETTY_FUNCTION__, __FILE__, __LINE__)
 
 
 namespace nux {
@@ -58,7 +58,7 @@ namespace logging {
 
 enum Level
 {
-  NOT_SPECIFIED,
+  NotSpecified,
   Trace,
   Debug,
   Info,

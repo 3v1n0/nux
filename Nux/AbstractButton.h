@@ -22,25 +22,40 @@
 
 #ifndef ABSTRACTBUTTON_H
 #define ABSTRACTBUTTON_H
+#include "View.h"
+#include "NuxCore/Property.h"
 
 namespace nux
 {
-  //! The base class of Button, CheckBox, RadioButton and PushButton.
+
+  //! The base class of Button
   class AbstractButton : public View
   {
   public:
-    AbstractButton (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
+    AbstractButton (NUX_FILE_LINE_PROTO);
     ~AbstractButton();
 
-    virtual void SetCaption (const TCHAR *Caption) = 0;
-    virtual const NString &GetCaption() const = 0;
+    // this should be an ROproperty but can't use that
+    Property<bool> togglable;
+    Property<bool> active;
 
-    virtual void SetState (bool b) = 0;
-    virtual void SetState (bool State, bool EmitSignal) = 0;
-    virtual bool GetState() const = 0;
+    /* NOTSURE - do we need an activated signal? technically you get that with active,
+     * this is just a simpler way of convaying the same information
+     * as the active property can be true/false
+     */
+    sigc::signal<void, View*> Activated;
 
   protected:
-    bool _state;
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    void RecvMouseUp          (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDown        (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseMove        (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseEnter       (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseLeave       (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvClick            (int x, int y, unsigned long button_flags, unsigned long key_flags);
+
+  private:
+    void Init ();
   };
 }
 

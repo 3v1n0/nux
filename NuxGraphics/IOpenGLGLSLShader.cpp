@@ -213,7 +213,7 @@ namespace nux
     Memcpy (ShaderSource, _ShaderCode.GetTCharPtr(), CodeSize);
 
     CHECKGL ( glShaderSource (_OpenGLID, 1, (const GLcharARB **) &ShaderSource, NULL) );
-    delete ShaderSource;
+    delete [] ShaderSource;
 
     // compile vertex shader object
     CHECKGL ( glCompileShader (_OpenGLID) );
@@ -292,7 +292,7 @@ namespace nux
     Memset (ShaderSource, 0, CodeSize + 1);
     Memcpy (ShaderSource, _ShaderCode.m_string.c_str(), CodeSize);
     CHECKGL ( glShaderSource (_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize) );
-    delete ShaderSource;
+    delete [] ShaderSource;
 
     // compile pixel shader object
     CHECKGL ( glCompileShader (_OpenGLID) );
@@ -372,7 +372,7 @@ namespace nux
     Memset(ShaderSource, 0, CodeSize + 1);
     Memcpy(ShaderSource, _ShaderCode.m_string.c_str(), CodeSize);
     CHECKGL( glShaderSource(_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize) );
-    delete ShaderSource;
+    delete [] ShaderSource;
 
     // compile pixel shader object
     CHECKGL(glCompileShader(_OpenGLID) );

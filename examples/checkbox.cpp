@@ -29,15 +29,15 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 {
     nux::VLayout* MainVLayout = new nux::VLayout(TEXT(""), NUX_TRACKER_LOCATION);
 
-    nux::CheckBox* checkbox = new nux::CheckBox(TEXT("Hello World!"), false, NUX_TRACKER_LOCATION);
+    nux::CheckBox* checkbox = new nux::CheckBox("Hello World!", NUX_TRACKER_LOCATION);
 
     checkbox->SetMaximumWidth(80);
     checkbox->SetMaximumHeight(60);
 
-    
+
     MainVLayout->AddView(checkbox, 1, nux::eCenter, nux::eFull);
     MainVLayout->SetContentDistribution(nux::eStackCenter);
-    
+
     nux::GetWindowThread ()->SetLayout(MainVLayout);
     nux::ColorLayer background(nux::Color(0xFF4D4D4D));
     static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);

@@ -19,6 +19,7 @@
  *
  */
 
+#include <iostream>
 
 #include "GLResource.h"
 #include "IOpenGLResource.h"
@@ -66,32 +67,31 @@ namespace nux
 
   void RenderingStats::Destructor()
   {
+#ifdef DEBUG
     if (m_NumIndexBuffer != 0)
     {
-      nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Some index buffers have not been released.") );
+      std::cerr << "[RenderingStats::Destructor] Some index buffers have not been released.";
     }
 
     if (m_NumTex2D != 0)
     {
-      nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Some 2D textures have not been released.") );
-      std::vector<int>::iterator it;
-
-      for (it = _texture_2d_array.begin(); it != _texture_2d_array.end(); it++)
+      std::cerr << "[RenderingStats::Destructor] Some 2D textures have not been released.";
+      for (auto id: _texture_2d_array)
       {
-        nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Remaining 2D textures: %d."), *it);
+        std::cerr << "[RenderingStats::Destructor] Remaining 2D textures: " << id;
       }
     }
 
     if (m_NumTexRectangle != 0)
     {
-      nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Some rectangle textures buffers have not been released.") );
-      std::vector<int>::iterator it;
+      std::cerr << "[RenderingStats::Destructor] Some rectangle textures buffers have not been released.";
 
-      for (it = _texture_rect_array.begin(); it != _texture_rect_array.end(); it++)
+      for (auto id: _texture_rect_array)
       {
-        nuxDebugMsg (TEXT ("[RenderingStats::Destructor] Remaining Rectangle textures: %d."), *it);
+        std::cerr << "[RenderingStats::Destructor] Remaining Rectangle textures: " << id;
       }
     }
+#endif
   }
 
   void RenderingStats::Register (IOpenGLResource *GraphicsObject)

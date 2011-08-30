@@ -28,38 +28,48 @@ namespace nux
 {
 
   class HLayout;
+  class VLayout;
+  class TextureArea;
 
-  //! A Button control that represents a state.
+  enum Position {
+    NUX_POSITION_LEFT,
+    NUX_POSITION_RIGHT,
+    NUX_POSITION_TOP,
+    NUX_POSITION_BOTTOM
+  };
+
   class Button: public AbstractButton
   {
     NUX_DECLARE_OBJECT_TYPE (Button, View);
   public:
-    Button (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
+    Button (TextureArea *image, NUX_FILE_LINE_PROTO);
+    Button (const std::string label, NUX_FILE_LINE_PROTO);
+    Button (const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
+    Button (NUX_FILE_LINE_PROTO);
     ~Button();
 
-    virtual void SetCaption (const TCHAR *Caption);
-    virtual const NString &GetCaption() const;
+    // This api sucks, it deviates from the property system api, but properties
+    // do not support nux objects
+    void SetImage (TextureArea *image);
+    TextureArea *GetImage ();
 
-    virtual void SetState (bool State);
-    virtual void SetState (bool State, bool EmitSignal);
-    virtual bool GetState() const;
-
-    sigc::signal<void> sigClick;
-    sigc::signal<void> sigToggled;
-    sigc::signal<void, bool> sigStateChanged;
+    Property<std::string>   label;
+    Property<Position>      image_position;
 
   protected:
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    void Init ();
+
+    void OnStateChanged (int value);
+    void OnLabelChanged (std::string value);
+    void OnImageChanged (TextureArea *value);
+    void OnImagePositionChanged (int value);
+    void RebuildLayout ();
+
+    TextureArea *image;
+
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    //virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
   };
 }

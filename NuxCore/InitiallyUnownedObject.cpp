@@ -26,14 +26,11 @@
 
 namespace nux
 {
-
   NUX_IMPLEMENT_OBJECT_TYPE (InitiallyUnownedObject);
 
   InitiallyUnownedObject::InitiallyUnownedObject (NUX_FILE_LINE_DECL)
     : Object (false, NUX_FILE_LINE_PARAM)
   {
-    _allocation_file_name      = __Nux_FileName__;
-    m_allocation_line_number    = __Nux_LineNumber__;
   }
 
   InitiallyUnownedObject::~InitiallyUnownedObject()

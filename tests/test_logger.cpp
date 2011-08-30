@@ -36,50 +36,50 @@ TEST(TestLogger, TestModuleName) {
 
 TEST(TestLogger, TestSetLevel) {
   Logger logger("testing");
-  EXPECT_EQ(logger.GetLogLevel(), NOT_SPECIFIED);
-  EXPECT_EQ(logger.GetEffectiveLogLevel(), WARNING);
+  EXPECT_EQ(logger.GetLogLevel(), Level::NotSpecified);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), Level::Warning);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_TRUE(logger.IsWarningEnabled());
   EXPECT_FALSE(logger.IsInfoEnabled());
   EXPECT_FALSE(logger.IsDebugEnabled());
-  logger.SetLogLevel(DEBUG);
-  EXPECT_EQ(logger.GetLogLevel(), DEBUG);
-  EXPECT_EQ(logger.GetEffectiveLogLevel(), DEBUG);
+  logger.SetLogLevel(Level::Debug);
+  EXPECT_EQ(logger.GetLogLevel(), Level::Debug);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), Level::Debug);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_TRUE(logger.IsWarningEnabled());
   EXPECT_TRUE(logger.IsInfoEnabled());
   EXPECT_TRUE(logger.IsDebugEnabled());
-  logger.SetLogLevel(INFO);
-  EXPECT_EQ(logger.GetLogLevel(), INFO);
-  EXPECT_EQ(logger.GetEffectiveLogLevel(), INFO);
+  logger.SetLogLevel(Level::Info);
+  EXPECT_EQ(logger.GetLogLevel(), Level::Info);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), Level::Info);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_TRUE(logger.IsWarningEnabled());
   EXPECT_TRUE(logger.IsInfoEnabled());
   EXPECT_FALSE(logger.IsDebugEnabled());
-  logger.SetLogLevel(WARNING);
-  EXPECT_EQ(logger.GetLogLevel(), WARNING);
-  EXPECT_EQ(logger.GetEffectiveLogLevel(), WARNING);
+  logger.SetLogLevel(Level::Warning);
+  EXPECT_EQ(logger.GetLogLevel(), Level::Warning);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), Level::Warning);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_TRUE(logger.IsWarningEnabled());
   EXPECT_FALSE(logger.IsInfoEnabled());
   EXPECT_FALSE(logger.IsDebugEnabled());
-  logger.SetLogLevel(ERROR);
-  EXPECT_EQ(logger.GetLogLevel(), ERROR);
-  EXPECT_EQ(logger.GetEffectiveLogLevel(), ERROR);
+  logger.SetLogLevel(Level::Error);
+  EXPECT_EQ(logger.GetLogLevel(), Level::Error);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), Level::Error);
   EXPECT_TRUE(logger.IsErrorEnabled());
   EXPECT_FALSE(logger.IsWarningEnabled());
   EXPECT_FALSE(logger.IsInfoEnabled());
   EXPECT_FALSE(logger.IsDebugEnabled());
-  logger.SetLogLevel(NOT_SPECIFIED);
-  EXPECT_EQ(logger.GetLogLevel(), NOT_SPECIFIED);
-  EXPECT_EQ(logger.GetEffectiveLogLevel(), WARNING);
+  logger.SetLogLevel(Level::NotSpecified);
+  EXPECT_EQ(logger.GetLogLevel(), Level::NotSpecified);
+  EXPECT_EQ(logger.GetEffectiveLogLevel(), Level::Warning);
 }
 
 TEST(TestLogger, TestLevelsSharedForSameModule) {
   Logger logger1("testing.module");
   Logger logger2("testing.module");
 
-  logger1.SetLogLevel(INFO);
+  logger1.SetLogLevel(Level::Info);
   EXPECT_TRUE(logger1.IsInfoEnabled());
   EXPECT_TRUE(logger2.IsInfoEnabled());
 }
@@ -97,37 +97,37 @@ TEST(TestLogger, TestLevelsInherited) {
   Logger first("first");
   Logger second("first.second");
 
-  root.SetLogLevel(ERROR);
-  EXPECT_EQ(root.GetLogLevel(), ERROR);
-  EXPECT_EQ(root.GetEffectiveLogLevel(), ERROR);
-  EXPECT_EQ(first.GetLogLevel(), NOT_SPECIFIED);
-  EXPECT_EQ(first.GetEffectiveLogLevel(), ERROR);
-  EXPECT_EQ(second.GetLogLevel(), NOT_SPECIFIED);
-  EXPECT_EQ(second.GetEffectiveLogLevel(), ERROR);
+  root.SetLogLevel(Level::Error);
+  EXPECT_EQ(root.GetLogLevel(), Level::Error);
+  EXPECT_EQ(root.GetEffectiveLogLevel(), Level::Error);
+  EXPECT_EQ(first.GetLogLevel(), Level::NotSpecified);
+  EXPECT_EQ(first.GetEffectiveLogLevel(), Level::Error);
+  EXPECT_EQ(second.GetLogLevel(), Level::NotSpecified);
+  EXPECT_EQ(second.GetEffectiveLogLevel(), Level::Error);
 
-  first.SetLogLevel(DEBUG);
-  EXPECT_EQ(root.GetLogLevel(), ERROR);
-  EXPECT_EQ(root.GetEffectiveLogLevel(), ERROR);
-  EXPECT_EQ(first.GetLogLevel(), DEBUG);
-  EXPECT_EQ(first.GetEffectiveLogLevel(), DEBUG);
-  EXPECT_EQ(second.GetLogLevel(), NOT_SPECIFIED);
-  EXPECT_EQ(second.GetEffectiveLogLevel(), DEBUG);
+  first.SetLogLevel(Level::Debug);
+  EXPECT_EQ(root.GetLogLevel(), Level::Error);
+  EXPECT_EQ(root.GetEffectiveLogLevel(), Level::Error);
+  EXPECT_EQ(first.GetLogLevel(), Level::Debug);
+  EXPECT_EQ(first.GetEffectiveLogLevel(), Level::Debug);
+  EXPECT_EQ(second.GetLogLevel(), Level::NotSpecified);
+  EXPECT_EQ(second.GetEffectiveLogLevel(), Level::Debug);
 
-  second.SetLogLevel(INFO);
-  EXPECT_EQ(root.GetLogLevel(), ERROR);
-  EXPECT_EQ(root.GetEffectiveLogLevel(), ERROR);
-  EXPECT_EQ(first.GetLogLevel(), DEBUG);
-  EXPECT_EQ(first.GetEffectiveLogLevel(), DEBUG);
-  EXPECT_EQ(second.GetLogLevel(), INFO);
-  EXPECT_EQ(second.GetEffectiveLogLevel(), INFO);
+  second.SetLogLevel(Level::Info);
+  EXPECT_EQ(root.GetLogLevel(), Level::Error);
+  EXPECT_EQ(root.GetEffectiveLogLevel(), Level::Error);
+  EXPECT_EQ(first.GetLogLevel(), Level::Debug);
+  EXPECT_EQ(first.GetEffectiveLogLevel(), Level::Debug);
+  EXPECT_EQ(second.GetLogLevel(), Level::Info);
+  EXPECT_EQ(second.GetEffectiveLogLevel(), Level::Info);
 
-  first.SetLogLevel(NOT_SPECIFIED);
-  EXPECT_EQ(root.GetLogLevel(), ERROR);
-  EXPECT_EQ(root.GetEffectiveLogLevel(), ERROR);
-  EXPECT_EQ(first.GetLogLevel(), NOT_SPECIFIED);
-  EXPECT_EQ(first.GetEffectiveLogLevel(), ERROR);
-  EXPECT_EQ(second.GetLogLevel(), INFO);
-  EXPECT_EQ(second.GetEffectiveLogLevel(), INFO);
+  first.SetLogLevel(Level::NotSpecified);
+  EXPECT_EQ(root.GetLogLevel(), Level::Error);
+  EXPECT_EQ(root.GetEffectiveLogLevel(), Level::Error);
+  EXPECT_EQ(first.GetLogLevel(), Level::NotSpecified);
+  EXPECT_EQ(first.GetEffectiveLogLevel(), Level::Error);
+  EXPECT_EQ(second.GetLogLevel(), Level::Info);
+  EXPECT_EQ(second.GetEffectiveLogLevel(), Level::Info);
 }
 
 class UseTimezone
@@ -167,7 +167,7 @@ TEST(TestLoggingWriter, TestWriteMessage) {
   UseTimezone timezone(":Antarctica/Vostok");
   // This time is known to be: 2010-09-10 12:34:45 (UTC+12)
   std::time_t when = 1284078885;
-  writer.WriteMessage(ERROR, "test.module", "testfile.cpp",
+  writer.WriteMessage(Level::Error, "test.module", "testfile.cpp",
                       1234, when, "my message");
   std::string result = out.str();
   // Vostok is UTC+6
@@ -176,7 +176,7 @@ TEST(TestLoggingWriter, TestWriteMessage) {
 
 TEST(TestLogStream, TestSimpleConstruction) {
   // First test is to make sure a LogStream can be constructed and destructed.
-  LogStream test(DEBUG, "module", "filename", 42);
+  LogStream test(Level::Debug, "module", "filename", 42);
 }
 
 TEST(TestLogStream, TestOutput) {
@@ -184,7 +184,7 @@ TEST(TestLogStream, TestOutput) {
   std::stringstream out;
   Writer::Instance().SetOutputStream(out);
 
-  LogStream test(DEBUG, "module", "filename", 42);
+  LogStream test(Level::Debug, "module", "filename", 42);
   test << "testing message" << std::flush;
 
   std::string result = out.str();
@@ -199,7 +199,7 @@ TEST(TestLogStream, TestShortenedFilename) {
   std::stringstream out;
   Writer::Instance().SetOutputStream(out);
 
-  LogStream test(DEBUG, "module", "/some/absolute/filename", 42);
+  LogStream test(Level::Debug, "module", "/some/absolute/filename", 42);
   test << "testing message" << std::flush;
 
   std::string result = out.str();
@@ -212,7 +212,7 @@ TEST(TestLogStream, TestTemporary) {
   std::stringstream out;
   Writer::Instance().SetOutputStream(out);
 
-  LogStream(DEBUG, "module", "filename", 42).stream() << "testing message";
+  LogStream(Level::Debug, "module", "filename", 42).stream() << "testing message";
 
   std::string result = out.str();
 
@@ -231,7 +231,7 @@ TEST(TestLogStream, TestDebugMacro) {
 
   LOG_DEBUG(logger) << ++counter << "Not output, as not debug.";
 
-  logger.SetLogLevel(DEBUG);
+  logger.SetLogLevel(Level::Debug);
 
   LOG_DEBUG(logger) << ++counter << " Is output now.";
 
@@ -249,9 +249,9 @@ TEST(TestLogStream, TestBlockTracer) {
   Writer::Instance().SetOutputStream(out);
 
   Logger logger("test");
-  logger.SetLogLevel(DEBUG);
+  logger.SetLogLevel(Level::Debug);
   {
-    BlockTracer tracer(logger, DEBUG, "func_name", "file_name", 42);
+    BlockTracer tracer(logger, Level::Debug, "func_name", "file_name", 42);
   }
 
   std::string result = out.str();
@@ -262,29 +262,29 @@ TEST(TestLogStream, TestBlockTracer) {
 
 
 TEST(TestLogHelpers, TestGetLoggingLevel) {
-  EXPECT_THAT(get_logging_level("trace"), Eq(TRACE));
-  EXPECT_THAT(get_logging_level("TrAce"), Eq(TRACE));
-  EXPECT_THAT(get_logging_level("TRACE"), Eq(TRACE));
-  EXPECT_THAT(get_logging_level("debug"), Eq(DEBUG));
-  EXPECT_THAT(get_logging_level("DEBUG"), Eq(DEBUG));
-  EXPECT_THAT(get_logging_level("info"), Eq(INFO));
-  EXPECT_THAT(get_logging_level("INFO"), Eq(INFO));
-  EXPECT_THAT(get_logging_level("warn"), Eq(WARNING));
-  EXPECT_THAT(get_logging_level("WARN"), Eq(WARNING));
-  EXPECT_THAT(get_logging_level("warning"), Eq(WARNING));
-  EXPECT_THAT(get_logging_level("WARNING"), Eq(WARNING));
-  EXPECT_THAT(get_logging_level("error"), Eq(ERROR));
-  EXPECT_THAT(get_logging_level("ERROR"), Eq(ERROR));
+  EXPECT_THAT(get_logging_level("trace"), Eq(Level::Trace));
+  EXPECT_THAT(get_logging_level("TrAce"), Eq(Level::Trace));
+  EXPECT_THAT(get_logging_level("TRACE"), Eq(Level::Trace));
+  EXPECT_THAT(get_logging_level("debug"), Eq(Level::Debug));
+  EXPECT_THAT(get_logging_level("DEBUG"), Eq(Level::Debug));
+  EXPECT_THAT(get_logging_level("info"), Eq(Level::Info));
+  EXPECT_THAT(get_logging_level("INFO"), Eq(Level::Info));
+  EXPECT_THAT(get_logging_level("warn"), Eq(Level::Warning));
+  EXPECT_THAT(get_logging_level("WARN"), Eq(Level::Warning));
+  EXPECT_THAT(get_logging_level("warning"), Eq(Level::Warning));
+  EXPECT_THAT(get_logging_level("WARNING"), Eq(Level::Warning));
+  EXPECT_THAT(get_logging_level("error"), Eq(Level::Error));
+  EXPECT_THAT(get_logging_level("ERROR"), Eq(Level::Error));
   // Unknown levels result in WARNING
-  EXPECT_THAT(get_logging_level("critical"), Eq(WARNING));
-  EXPECT_THAT(get_logging_level("not_specified"), Eq(WARNING));
-  EXPECT_THAT(get_logging_level("other"), Eq(WARNING));
+  EXPECT_THAT(get_logging_level("critical"), Eq(Level::Warning));
+  EXPECT_THAT(get_logging_level("not_specified"), Eq(Level::Warning));
+  EXPECT_THAT(get_logging_level("other"), Eq(Level::Warning));
 }
 
 TEST(TestLogHelpers, TestResetLogging) {
   // First set root and another.
-  Logger("").SetLogLevel(DEBUG);
-  Logger("test.module").SetLogLevel(INFO);
+  Logger("").SetLogLevel(Level::Debug);
+  Logger("test.module").SetLogLevel(Level::Info);
 
   reset_logging();
 
@@ -297,8 +297,8 @@ TEST(TestLogHelpers, TestResetLogging) {
 TEST(TestLogHelpers, TestConfigureLoggingNull) {
 
   reset_logging();
-  Logger("").SetLogLevel(DEBUG);
-  Logger("test.module").SetLogLevel(INFO);
+  Logger("").SetLogLevel(Level::Debug);
+  Logger("test.module").SetLogLevel(Level::Info);
   // Configure passed a null pointer does nothing.
   configure_logging(NULL);
   std::string levels = dump_logging_levels();

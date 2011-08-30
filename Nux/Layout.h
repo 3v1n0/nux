@@ -285,11 +285,13 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE (SpaceLayout, Layout);
   public:
-    SpaceLayout()
+    SpaceLayout(NUX_FILE_LINE_PROTO)
+      : Layout (NUX_FILE_LINE_PARAM)
     {
     };
 
-    SpaceLayout (int minWidth, int maxWidth, int minHeight, int maxHeight)
+    SpaceLayout (int minWidth, int maxWidth, int minHeight, int maxHeight, NUX_FILE_LINE_PROTO)
+      : Layout (NUX_FILE_LINE_PARAM)
     {
       SetMinimumSize (minWidth, minHeight);
       SetMaximumSize (maxWidth, maxHeight);

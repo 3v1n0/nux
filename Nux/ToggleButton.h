@@ -15,30 +15,30 @@
  * You should have received a copy of both the GNU Lesser General Public
  * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
- * Authored by: Neil Jagdish Patel <neil.patel@canonical.com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
-#include "Object.h"
 
-#ifndef NUXINITIALLYUNOWNEDOBJECT_H
-#define NUXINITIALLYUNOWNEDOBJECT_H
+#ifndef TOGGLEBUTTON_H
+#define TOGGLEBUTTON_H
+#include "Button.h"
 
 namespace nux
 {
+  class HLayout;
 
-//! The base class of Nux initially unowned objects.
-  class InitiallyUnownedObject: public Object
+  //! A Button control that performs and action when clicked.
+  class ToggleButton: public Button
   {
   public:
-    NUX_DECLARE_OBJECT_TYPE (InitiallyUnownedObject, Object);
-
-    //! Constructor
-    InitiallyUnownedObject (NUX_FILE_LINE_PROTO);
-    ~InitiallyUnownedObject ();
+    ToggleButton (TextureArea *image, NUX_FILE_LINE_PROTO);
+    ToggleButton (const std::string label, NUX_FILE_LINE_PROTO);
+    ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
+    ToggleButton (NUX_FILE_LINE_PROTO);
+    ~ToggleButton ();
   };
 
 }
 
-#endif // NUXINITIALLYUNOWNEDOBJECT_H
-
+#endif // TOGGLEBUTTON_H
