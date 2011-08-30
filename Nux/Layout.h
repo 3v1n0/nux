@@ -147,15 +147,8 @@ namespace nux
     bool SearchInAllSubNodes (Area *bo);
     bool SearchInFirstSubNodes (Area *bo);
 
-    //! Process Event
-    /*!
-        Propagate event to all element contained in the layout.
-        \param ievent
-        \param TraverseInfo
-        \param ProcessEventInfo
-        \return The state of the Process Event.
-    */
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    // Deprectated. Do not use.
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {return 0;}
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 

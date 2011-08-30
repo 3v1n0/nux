@@ -25,35 +25,39 @@
 
 namespace nux
 {
-  
-  unsigned long GetEventButton(unsigned long button_state)
+  MouseButton GetEventButton(unsigned long button_state)
   {
     if ((button_state & NUX_EVENT_BUTTON1_DOWN) || (button_state & NUX_EVENT_BUTTON1_UP))
-      return 1;
+      return NUX_MOUSE_BUTTON1;
     else if ((button_state & NUX_EVENT_BUTTON2_DOWN) || (button_state & NUX_EVENT_BUTTON2_UP))
-      return 2;
+      return NUX_MOUSE_BUTTON2;
     else if ((button_state & NUX_EVENT_BUTTON3_DOWN) || (button_state & NUX_EVENT_BUTTON3_UP))
-      return 3;
+      return NUX_MOUSE_BUTTON3;
     else if ((button_state & NUX_EVENT_BUTTON4_DOWN) || (button_state & NUX_EVENT_BUTTON4_UP))
-      return 4;
+      return NUX_MOUSE_BUTTON4;
 
-    return 0;
+    return NUX_INVALID_MOUSE_BUTTON;
   }
   
-  bool GetButtonState(unsigned long button_state, int button)
+  bool GetButtonState(unsigned long button_state, MouseButton button)
   {
-    if (button == 1)
+    if (button == NUX_MOUSE_BUTTON1)
       return (button_state & NUX_STATE_BUTTON1_DOWN) ? true : false;
-    else if (button == 2)
+    else if (button == NUX_MOUSE_BUTTON2)
       return (button_state & NUX_STATE_BUTTON2_DOWN) ? true : false;
-    else if (button == 3)
+    else if (button == NUX_MOUSE_BUTTON3)
       return (button_state & NUX_STATE_BUTTON3_DOWN) ? true : false;
-    else if (button == 4)
+    else if (button == NUX_MOUSE_BUTTON4)
       return (button_state & NUX_STATE_BUTTON4_DOWN) ? true : false;
 
     return false;    
   }
   
+  bool GetKeyModifierState(unsigned long key_modifiers_states, KeyModifier key_modifier)
+  {
+    return ((key_modifiers_states & key_modifier) != 0);
+  }
+
   Event::Event()
   {
     Memset (e_text, 0, sizeof (e_text));
@@ -82,6 +86,7 @@ namespace nux
 #if defined (NUX_OS_LINUX)
     e_x11_timestamp = 0;
     e_x11_window = 0;
+    e_x11_state = 0;
 #endif
 
     //Application = 0;
@@ -131,21 +136,21 @@ namespace nux
     return e_mouse_state;
   }
 
-  unsigned long Event::GetEventButton() const
+  MouseButton Event::GetEventButton() const
   {
     if ((e_mouse_state & NUX_EVENT_BUTTON1_DOWN) || (e_mouse_state & NUX_EVENT_BUTTON1_UP))
-      return 1;
+      return NUX_MOUSE_BUTTON1;
     else if ((e_mouse_state & NUX_EVENT_BUTTON2_DOWN) || (e_mouse_state & NUX_EVENT_BUTTON2_UP))
-      return 2;
+      return NUX_MOUSE_BUTTON2;
     else if ((e_mouse_state & NUX_EVENT_BUTTON3_DOWN) || (e_mouse_state & NUX_EVENT_BUTTON3_UP))
-      return 3;
+      return NUX_MOUSE_BUTTON3;
     else if ((e_mouse_state & NUX_EVENT_BUTTON4_DOWN) || (e_mouse_state & NUX_EVENT_BUTTON4_UP))
-      return 4;
+      return NUX_MOUSE_BUTTON4;
 
-    return 0;
+    return NUX_INVALID_MOUSE_BUTTON;
   }
 
-  bool Event::GetButtonState(int button) const
+  bool Event::GetButtonState(MouseButton button) const
   {
     if (button == 1)
       return (e_mouse_state & NUX_STATE_BUTTON1_DOWN) ? true : false;
@@ -157,6 +162,11 @@ namespace nux
       return (e_mouse_state & NUX_STATE_BUTTON4_DOWN) ? true : false;
 
     return false;
+  }
+
+  bool Event::GetKeyModifierState(KeyModifier key_modifier) const
+  {
+    return ((e_key_modifiers & key_modifier) != 0);
   }
 
   //! Return virtual key code of the key that has triggered the last event.

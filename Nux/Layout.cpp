@@ -223,7 +223,11 @@ namespace nux
     }
     else
     {
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
+      std::list<Area *>::iterator pos = _layout_element_list.begin();
+#else
       auto pos = _layout_element_list.begin();
+#endif
       int idx = index;
       while (pos != _layout_element_list.end() && idx > 0)
       {
@@ -311,7 +315,11 @@ namespace nux
     }
     else
     {
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
+      std::list<Area *>::iterator pos = _layout_element_list.begin();
+#else
       auto pos = _layout_element_list.begin();
+#endif
       int idx = index;
       while (pos != _layout_element_list.end() && idx > 0)
       {
@@ -771,46 +779,6 @@ namespace nux
         ActivateFocus ();
       }
     }
-
-    return ret;
-  }
-
-  long Layout::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    std::list<Area *>::iterator it;
-
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-    {
-      if (!(*it)->IsVisible () || !(*it)->IsSensitive ())
-        continue;
-
-      if ((*it)->IsView())
-      {
-        View *ic = NUX_STATIC_CAST (View*, (*it));
-        ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-      else if ( (*it)->IsLayout() )
-      {
-        Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
-        ret = layout->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-      // InputArea should be tested last
-      else if ((*it)->IsInputArea())
-      {
-        InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
-        ret = input_area->OnEvent (ievent, ret, ProcessEventInfo);
-      }
-    }
-
-    /* must do focus processing after sending events to children */
-    if ((ievent.e_event == NUX_KEYDOWN) && HasFocusControl () && (_ignore_focus == false))
-    {
-      ret |= ProcessFocusEvent (ievent, ret, ProcessEventInfo);
-    }
-
-    if (_ignore_focus)
-      _ignore_focus = false;
 
     return ret;
   }

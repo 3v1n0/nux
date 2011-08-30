@@ -19,11 +19,23 @@
  *
  */
 
+#include "Nux.h"
 
-#include "NuxCore.h"
-#include "ObjectType.h"
+#include "AbstractRadioButton.h"
+#include "HLayout.h"
 
 namespace nux
 {
-const NObjectType NObjectType::Null_Type("NULL", 0);
+  NUX_IMPLEMENT_OBJECT_TYPE(AbstractRadioButton);
+
+  AbstractRadioButton::AbstractRadioButton (const TCHAR *Caption, NUX_FILE_LINE_DECL)
+    :   View (NUX_FILE_LINE_PARAM)
+  {
+    _state  = false;
+  }
+
+  AbstractRadioButton::~AbstractRadioButton()
+  {
+
+  }
 }

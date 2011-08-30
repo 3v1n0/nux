@@ -56,7 +56,7 @@ void RenderTexturePowerOfTwo ()
     TEXT("./data/mipmap1x1.png")
   };
 
-  nux::IntrusiveSP<nux::IOpenGLTexture2D> tex [9];
+  nux::ObjectPtr<nux::IOpenGLTexture2D> tex [9];
 
   for (int i = 0; i < 9; i++)
   {

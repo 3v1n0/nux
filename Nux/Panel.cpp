@@ -34,16 +34,8 @@ namespace nux
     :   ScrollView (NUX_FILE_LINE_PARAM)
     ,   m_layout (0)
   {
-    //vlayout = new VLayout();
-    //vlayout->SetVerticalInternalMargin(4);
-
-    setTopBorder (0);
-    setBorder (0);
-
-    //SetMinimumSize(200, 200);
-
-    //SetCompositionLayout(vlayout);
-    //FormatContent();
+    m_top_border = 0;
+    m_border = 0;
   }
 
   Panel::~Panel()

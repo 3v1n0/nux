@@ -51,6 +51,7 @@ namespace nux
 {
   class Tooltip : public BaseWindow
   {
+      NUX_DECLARE_OBJECT_TYPE(Tooltip, BaseWindow);
     public:
       Tooltip (int     x,
                int     y,
@@ -79,9 +80,8 @@ namespace nux
 
       void NotifyConfigurationChange (int width,
                                       int height);
-                                      
-      nux::CairoGraphics*   _cairo_graphics;
-      nux::BaseTexture*     _texture2D;
+
+      ObjectPtr<BaseTexture>  _texture2D;
       int                   _anchorX;
       int                   _anchorY;
       nux::NString          _labelText;
@@ -161,6 +161,8 @@ namespace nux
                       gint     height,
                       gfloat*  rgba);
   };
+
+  NUX_IMPLEMENT_OBJECT_TYPE(Tooltip);
 
   void
   DrawCairo (cairo_t* cr,
@@ -654,6 +656,7 @@ namespace nux
   Tooltip::Tooltip (int     x,
                     int     y,
                     NString text)
+    : BaseWindow("", NUX_TRACKER_LOCATION)
   {
     _anchorX   = x;
     _anchorY   = y;
@@ -673,9 +676,7 @@ namespace nux
 
   Tooltip::~Tooltip ()
   {
-    cairo_font_options_destroy (_fontOpts);
-    delete(_cairo_graphics);
-    delete(_texture2D);
+    cairo_font_options_destroy(_fontOpts);
   }
 
   long
@@ -781,10 +782,10 @@ namespace nux
     base.height = textHeight + 2 * V_MARGIN + 2 * PADDING_SIZE;
     SetGeometry (base);
 
-    _cairo_graphics = new CairoGraphics (CAIRO_FORMAT_ARGB32,
+    CairoGraphics* cairo_graphics = new CairoGraphics (CAIRO_FORMAT_ARGB32,
                                          base.GetWidth (),
                                          base.GetHeight ());
-    cairo_t *cr = _cairo_graphics->GetContext ();
+    cairo_t *cr = cairo_graphics->GetContext ();
 
     DrawTintDotHighlight (cr,
                           base.GetWidth (),
@@ -813,14 +814,17 @@ namespace nux
                base.GetHeight (),
                rgbaText);
 
-    nux::NBitmapData* bitmap =  _cairo_graphics->GetBitmap();
+    nux::NBitmapData* bitmap =  cairo_graphics->GetBitmap();
 
     // Texture2D is the high level representation of an image that is backed by
     // an actual opengl texture.
     _texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
+    // It is initially owned, and now we have a pointer to it, so unref
+    _texture2D->UnReference();
     _texture2D->Update(bitmap);
-    
-    delete _cairo_graphics;
+
+    delete bitmap;
+    delete cairo_graphics;
 
     return result;
   }
@@ -848,17 +852,10 @@ initGUIThread (nux::NThread* thread,
                void*         data)
 {
   nux::VLayout* layout  = new nux::VLayout (TEXT(""), NUX_TRACKER_LOCATION);
-  nux::Tooltip* tooltip1 = new nux::Tooltip (64, 64, TEXT("GEdit"));
-  nux::Tooltip* tooltip2 = new nux::Tooltip (64, 128, TEXT("Firefox"));
-  nux::Tooltip* tooltip3 = new nux::Tooltip (64, 192, TEXT("Chromium"));
-
-  tooltip1->ShowWindow(true);
-  tooltip2->ShowWindow(true);
-  tooltip3->ShowWindow(true);
 
   nux::ColorLayer background(nux::Color(0xFF4D4D4D));
   static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
-  
+
   nux::GetWindowThread ()->SetLayout (layout);
 }
 
@@ -875,8 +872,20 @@ int main (int          argc,
                                  0,
                                  &initGUIThread,
                                  0);
+
+  nux::Tooltip* tooltip1 = new nux::Tooltip (64, 64, TEXT("GEdit"));
+  nux::Tooltip* tooltip2 = new nux::Tooltip (64, 128, TEXT("Firefox"));
+  nux::Tooltip* tooltip3 = new nux::Tooltip (64, 192, TEXT("Chromium"));
+
+  tooltip1->ShowWindow(true);
+  tooltip2->ShowWindow(true);
+  tooltip3->ShowWindow(true);
+
   thread->Run (NULL);
 
+  tooltip3->UnReference();
+  tooltip2->UnReference();
+  tooltip1->UnReference();
   delete thread;
 
   return 0;

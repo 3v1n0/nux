@@ -54,10 +54,10 @@ namespace nux
     m_CurrentWindow             = NULL;
     m_MenuWindow                = NULL;
     _mouse_over_area            = NULL;
-    key_focus_area_         = NULL;
+    key_focus_area_             = NULL;
     _always_on_front_window     = NULL;
-    _inside_event_processing    = false;
-    _inside_rendering_cycle     = false;
+    inside_event_cycle_         = false;
+    inside_rendering_cycle_     = false;
     _exclusive_input_area       = NULL;
     _in_exclusive_input_mode    = false;
     _pending_exclusive_input_mode_action = false;
@@ -71,6 +71,7 @@ namespace nux
     _starting_menu_event_cycle  = false;
     _menu_is_active             = false;
     _enable_nux_new_event_architecture   = true;
+    on_menu_closure_continue_with_event_ = false;
 
     m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject ();
     // Do not leave the Fbo binded. Deactivate it.
@@ -149,54 +150,47 @@ namespace nux
 
   void WindowCompositor::RegisterWindow (BaseWindow *window)
   {
-    if (window == 0)
+    if (!window)
       return;
-      
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
 
-    if (it == _view_window_list.end() )
+    auto it = find(_view_window_list.begin(), _view_window_list.end(), window);
+
+    if (it == _view_window_list.end())
     {
-      // The BaseWindow is referenced by the WindowCompositor.
-      //window->Reference();
-      _view_window_list.push_front (ObjectWeakPtr<BaseWindow> (window));
+      _view_window_list.push_front(ObjectWeakPtr<BaseWindow>(window));
       m_SelectedWindow = window;
 
       RenderTargetTextures rt;
 
       // Don't size the texture to the dimension of the window yet. this will be done later.
-      rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
-      rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
+      auto device = GetGraphicsDisplay()->GetGpuDevice();
+      rt.color_rt = device->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_R8G8B8A8);
+      rt.depth_rt = device->CreateSystemCapableDeviceTexture (2, 2, 1, BITFMT_D24S8);
 
-      _window_to_texture_map.insert ( std::map< BaseWindow*, RenderTargetTextures >::value_type ( window, rt) );
+      _window_to_texture_map[window] = rt;
+
+      window->object_destroyed.connect(sigc::mem_fun(this, &WindowCompositor::UnRegisterWindow));
     }
   }
 
-  void WindowCompositor::UnRegisterWindow (BaseWindow *window)
+  void WindowCompositor::UnRegisterWindow(Object* obj)
   {
-    if (window == 0)
+    WeakBaseWindowPtr window(obj);
+    if (window.IsNull())
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end(), window);
+    auto it = find(_view_window_list.begin(), _view_window_list.end(), window);
 
-    if (it != _view_window_list.end ())
+    if (it != _view_window_list.end())
     {
-      _view_window_list.erase (it); // @see STL for note about list.erase(it++). It is valid for lists.
+      _view_window_list.erase(it);
 
-      if (_view_window_list.size ())
-        m_SelectedWindow = (*_view_window_list.begin ());
+      if (_view_window_list.size())
+        m_SelectedWindow = *_view_window_list.begin();
 
-      std::map< BaseWindow*, RenderTargetTextures >::iterator it2 = _window_to_texture_map.find (window);
-
-      if (it2 != _window_to_texture_map.end ())
-      {
-        (*it2).second.color_rt = ObjectPtr<IOpenGLBaseTexture> (0);
-        (*it2).second.depth_rt = ObjectPtr<IOpenGLBaseTexture> (0);
-        _window_to_texture_map.erase (it2);
-      }
+      _window_to_texture_map.erase(window.GetPointer());
     }
   }
-
-
 
   Area* WindowCompositor::GetMouseOwnerArea()
   {
@@ -217,33 +211,36 @@ namespace nux
     _mouse_owner_menu_page  = NULL;
   }
 
-  void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type, InputArea** area_under_mouse_pointer, BaseWindow** window)
+  void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
+                                           NuxEventType event_type,
+                                           InputArea** area_under_mouse_pointer,
+                                           BaseWindow** window)
   {
     *area_under_mouse_pointer = NULL;
 
-    // Go through the list of BaseWindo and find the first area over which the mouse pointer is.
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator window_it;
-    window_it = _view_window_list.begin();
-    while((*area_under_mouse_pointer == NULL) && (window_it != _view_window_list.end()))
+    // Go through the list of BaseWindo and find the first area over which the
+    // mouse pointer is.
+    for (auto window_ptr : _view_window_list)
     {
-      if((*window_it).IsValid() && (*window_it)->IsVisible())
+      if (window_ptr.IsValid() && window_ptr->IsVisible())
       {
-        *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, (*window_it)->FindAreaUnderMouse(mouse_position, event_type));
-        if(area_under_mouse_pointer)
+        InputArea* area = static_cast<InputArea*>(window_ptr->FindAreaUnderMouse(mouse_position, event_type));
+        if (area)
         {
-          // We have found an area. We are going to exit the while loop.
-          *window = (*window_it).GetPointer();
+          *area_under_mouse_pointer = area;
+          *window = window_ptr.GetPointer();
+          return;
         }
       }
-      ++window_it;
     }
 
-    // If area_under_mouse_pointer is NULL, then the mouse pointer is not over any of the BaseWindow. Try the main window layout.
-    if(*area_under_mouse_pointer == NULL)
+    // If area_under_mouse_pointer is NULL, then the mouse pointer is not over
+    // any of the BaseWindow. Try the main window layout.
+    if (*area_under_mouse_pointer == NULL)
     {
       Layout* main_window_layout = GetWindowThread()->GetMainLayout();
-      if(main_window_layout)
-        *area_under_mouse_pointer = NUX_STATIC_CAST(InputArea*, main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
+      if (main_window_layout)
+        *area_under_mouse_pointer = static_cast<InputArea*>(main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
     }
   }
 
@@ -443,7 +440,7 @@ namespace nux
         }
         else if (hit_view && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
         {
-          if ((event.e_event == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnable()))
+          if ((event.e_event == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnabled()))
           {
             // If the area does not accept double click events, transform the event into a mouse pressed.
             event.e_event = NUX_MOUSE_PRESSED;
@@ -551,7 +548,9 @@ namespace nux
 
           if (abs (dnd_safety_y_) > 30 || abs (dnd_safety_x_) > 30)
           {
+#ifdef NUX_OS_LINUX
             mouse_owner_area_->StartDragAsSource ();
+#endif
             ResetMousePointerAreas ();
             return;
           }
@@ -661,7 +660,7 @@ namespace nux
         }
         else if(hit_menu_page && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
         {
-          if(!hit_menu_page->DoubleClickEnable())
+          if(!hit_menu_page->DoubleClickEnabled())
           {
 
           }
@@ -706,8 +705,9 @@ namespace nux
           {
             (*_menu_chain->begin())->sigClosingMenu(*_menu_chain->begin());
             (*_menu_chain->begin())->StopMenu();
-          }
 
+            on_menu_closure_continue_with_event_ = (*_menu_chain->begin())->OnClosureContinueEventCycle();
+          }
           _mouse_over_menu_page = 0;
         }
       }
@@ -806,7 +806,9 @@ namespace nux
     {
       Layout* main_window_layout = GetWindowThread()->GetMainLayout();
       if(main_window_layout)
+      {
         *key_focus_area = NUX_STATIC_CAST(InputArea*, main_window_layout->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+      }
     }
   }
 
@@ -991,28 +993,33 @@ namespace nux
   // NUXTODO: rename as EventCycle
   void WindowCompositor::ProcessEvent (Event &event)
   {
-    if(_enable_nux_new_event_architecture)
+    inside_event_cycle_ = true;
+    if (_enable_nux_new_event_architecture)
     {
-      if(((event.e_event >= NUX_MOUSE_PRESSED) && (event.e_event <= NUX_MOUSE_WHEEL)) ||
+      if (((event.e_event >= NUX_MOUSE_PRESSED) && (event.e_event <= NUX_MOUSE_WHEEL)) ||
       (event.e_event == NUX_WINDOW_MOUSELEAVE))
       {
-        if(_menu_chain->size())
+        bool menu_active = false;
+        if (_menu_chain->size())
         {
+          menu_active = true;
           MenuEventCycle(event);
+          CleanMenu();
         }
-        else
+
+        if((menu_active && on_menu_closure_continue_with_event_) || !(menu_active))
         {
           MouseEventCycle(event);
         }
 
-        if(_starting_menu_event_cycle)
+        on_menu_closure_continue_with_event_ = false;
+
+        if (_starting_menu_event_cycle)
         {
           _starting_menu_event_cycle = false;
         }
-
-        CleanMenu();
       }
-      else if((event.e_event >= NUX_KEYDOWN) && (event.e_event <= NUX_KEYUP))
+      else if ((event.e_event >= NUX_KEYDOWN) && (event.e_event <= NUX_KEYUP))
       {
         KeyboardEventCycle(event);
       }
@@ -1020,12 +1027,11 @@ namespace nux
       {
         DndEventCycle(event);
       }
-
-      return;
     }
+    inside_event_cycle_ = false;
   }
 
-  long WindowCompositor::MenuEventCycle (Event &event, long TraverseInfo, long ProcessEventInfo)
+  long WindowCompositor::MenuEventCycle(Event &event, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
     std::list<MenuPage*>::iterator menu_it;
@@ -1200,14 +1206,16 @@ namespace nux
   void WindowCompositor::EnsureAlwaysOnFrontWindow ()
   {
     // Do not re-order while we are traversing the list of BaseWindow.
-    if (_inside_event_processing)
+    if (inside_event_cycle_)
       return;
-    
+
     if (_always_on_front_window == NULL)
       return;
 
     std::list< ObjectWeakPtr<BaseWindow> >::iterator always_top_it = find (_view_window_list.begin(), _view_window_list.end(), _always_on_front_window);
-    if ((always_top_it != _view_window_list.end ()) && (always_top_it != _view_window_list.begin ()) && (_always_on_front_window != NULL))
+    if ((always_top_it != _view_window_list.end ()) &&
+        (always_top_it != _view_window_list.begin ()) &&
+        _always_on_front_window.IsValid())
     {
       _view_window_list.erase (always_top_it);
       _view_window_list.push_front (_always_on_front_window);
@@ -1226,7 +1234,7 @@ namespace nux
 
   void WindowCompositor::Draw (bool SizeConfigurationEvent, bool force_draw)
   {
-    _inside_rendering_cycle = true;
+    inside_rendering_cycle_ = true;
     if (!GetWindowThread ()->GetWindow().isWindowMinimized())
     {
       //int w, h;
@@ -1244,24 +1252,24 @@ namespace nux
       {
         // We fall here after something dramatic has happen to the window such as a resizing. In this case
         // everything must be rendered. This is very costly and should happen rarely.
-        if (!GetWindowThread ()->IsEmbeddedWindow() )
-          RenderMainWindowComposition (true, true);
+        if (!GetWindowThread()->IsEmbeddedWindow())
+          RenderMainWindowComposition(true);
 
         {
-          RenderTopViews (true, _view_window_list, false);
-          RenderTopViews (true, _modal_view_window_list, true);
+          RenderTopViews(true, _view_window_list, false);
+          RenderTopViews(true, _modal_view_window_list, true);
 
-          DrawMenu (true);
-          DrawTooltip (true);
-          DrawOverlay (true);
+          DrawMenu(true);
+          DrawTooltip(true);
+          DrawOverlay(true);
         }
       }
       else if (m_PopupRemoved || m_MenuRemoved)
       {
         // A popup removed cause the whole window to be dirty (at least some part of it).
         // So exchange DrawList with a real Draw.
-        if (!GetWindowThread ()->IsEmbeddedWindow() )
-          RenderMainWindowComposition (false, true);
+        if (!GetWindowThread()->IsEmbeddedWindow())
+          RenderMainWindowComposition(false);
 
         {
           RenderTopViews(false, _view_window_list, false);
@@ -1275,7 +1283,7 @@ namespace nux
       else
       {
         if (!GetWindowThread()->IsEmbeddedWindow())
-          RenderMainWindowComposition(false, true);
+          RenderMainWindowComposition(false);
 
         {
           RenderTopViews(false, _view_window_list, false);
@@ -1292,7 +1300,7 @@ namespace nux
 
       GetWindowThread ()->GetGraphicsEngine().Pop2DWindow();
     }
-    _inside_rendering_cycle = false;
+    inside_rendering_cycle_ = false;
   }
 
   void WindowCompositor::DrawMenu (bool force_draw)
@@ -1477,22 +1485,10 @@ namespace nux
 //                    }
           }
 
-          if (GetWindowThread ()->IsEmbeddedWindow() )
-          {
-            // In embedded mode, floating windows are composited over Nux main window which is probably empty. At least that
-            // is how things are at the moment. Compiste the floating windows onto the main texture without blending.
-            GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-          }
-          else
-          {
-            GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-          }
-
           CHECKGL ( glDepthMask (GL_FALSE) );
           {
-            //CopyTextureToCompositionRT(rt.color_rt, window->GetBaseX(), window->GetBaseY());
             GetWindowThread ()->GetGraphicsEngine().ApplyClippingRectangle();
-            PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity ());
+            PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity (), window->premultiply());
           }
           CHECKGL ( glDepthMask (GL_TRUE) );
           GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
@@ -1550,59 +1546,51 @@ namespace nux
     GetWindowThread ()->GetGraphicsEngine().Pop2DWindow();
   }
 
-  void WindowCompositor::RenderMainWindowComposition (bool force_draw, bool UseFBO)
+  void WindowCompositor::RenderMainWindowComposition(bool force_draw)
   {
     t_s32 buffer_width, buffer_height;
 
-    if (UseFBO)
-    {
-      buffer_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-      buffer_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
+    buffer_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
+    buffer_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
 
-      if ( (!m_MainColorRT.IsValid() ) || (!m_MainDepthRT.IsValid() ) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height) )
-      {
-        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
-      }
-
-      m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget ( 0, m_MainColorRT->GetSurfaceLevel (0) );
-      m_FrameBufferObject->SetDepthSurface ( m_MainDepthRT->GetSurfaceLevel (0) );
-      m_FrameBufferObject->Activate();
-    }
-    else
+    if ((!m_MainColorRT.IsValid()) || (!m_MainDepthRT.IsValid()) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height))
     {
-      buffer_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-      buffer_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
+      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
     }
 
-    GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
-    GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
-    GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
+    m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
+    m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
+    m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+    m_FrameBufferObject->Activate();
+
+    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
+    GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
+    GetWindowThread()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
+    GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
     {
-      CHECKGL ( glClear (/*GL_COLOR_BUFFER_BIT |*/ GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
+      CHECKGL(glClear(/*GL_COLOR_BUFFER_BIT |*/ GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
       //Begin 2D Drawing
       {
         if (force_draw)
         {
-          GetPainter().PushDrawLayer (GetWindowThread ()->GetGraphicsEngine(), Geometry (0, 0, buffer_width, buffer_height), m_Background);
-          //GetPainter().PushBackground(GetWindowThread ()->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background, true);
+          GetPainter().PushDrawLayer(GetWindowThread()->GetGraphicsEngine(), Geometry (0, 0, buffer_width, buffer_height), m_Background);
+          //GetPainter().PushBackground(GetWindowThread()->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background, true);
 
-          GetWindowThread ()->ProcessDraw (GetWindowThread ()->GetGraphicsEngine(), true);
+          GetWindowThread()->ProcessDraw(GetWindowThread()->GetGraphicsEngine(), true);
 
-          nuxAssert (GetWindowThread ()->GetGraphicsEngine().GetNumberOfClippingRegions() == 0);
+          nuxAssert(GetWindowThread()->GetGraphicsEngine().GetNumberOfClippingRegions() == 0);
           GetPainter().PopBackground();
           GetPainter().EmptyBackgroundStack();
         }
         else
         {
-          GetPainter().PushLayer (GetWindowThread ()->GetGraphicsEngine(), Geometry (0, 0, buffer_width, buffer_height), m_Background);
-          //GetPainter().PushBackground(GetWindowThread ()->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background, false);
+          GetPainter().PushLayer (GetWindowThread()->GetGraphicsEngine(), Geometry (0, 0, buffer_width, buffer_height), m_Background);
+          //GetPainter().PushBackground(GetWindowThread()->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background, false);
 
-          GetWindowThread ()->ProcessDraw (GetWindowThread ()->GetGraphicsEngine(), false);
+          GetWindowThread()->ProcessDraw(GetWindowThread()->GetGraphicsEngine(), false);
 
-          nuxAssert (GetWindowThread ()->GetGraphicsEngine().GetNumberOfClippingRegions() == 0);
+          nuxAssert(GetWindowThread()->GetGraphicsEngine().GetNumberOfClippingRegions() == 0);
           GetPainter().PopBackground();
           GetPainter().EmptyBackgroundStack();
         }
@@ -1618,10 +1606,7 @@ namespace nux
     }
 
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
-    if (UseFBO)
-    {
-      m_FrameBufferObject->Deactivate();
-    }
+    m_FrameBufferObject->Deactivate();
 
     unsigned int window_width, window_height;
     window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
@@ -1631,94 +1616,11 @@ namespace nux
     GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
     GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
 
-    // Render the Buffer on the screen
-    if (UseFBO)
-    {
-      PresentBufferToScreen (m_MainColorRT, 0, 0, false);
-    }
+    PresentBufferToScreen (m_MainColorRT, 0, 0, false);
+
   }
 
-  void WindowCompositor::SetMainColorRT()
-  {
-    t_s32 buffer_width, buffer_height;
-    buffer_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-    buffer_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-
-    if ( (!m_MainColorRT.IsValid() ) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height) )
-    {
-      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-    }
-
-    // Setup the Composition Render Target
-    m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-    m_FrameBufferObject->SetRenderTarget (0, m_MainColorRT->GetSurfaceLevel (0));
-    m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
-    m_FrameBufferObject->Activate();
-    GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
-    GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
-  }
-
-  void WindowCompositor::CopyTextureToMainColorRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y)
-  {
-    SetMainColorRT();
-    HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
-    HWTexture->BindTextureToUnit (GL_TEXTURE0);
-    GetWindowThread ()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE1);
-
-    int TexWidth = HWTexture->GetWidth();
-    int TexHeight = HWTexture->GetHeight();
-
-    TexCoordXForm texxform;
-    texxform.FlipVCoord (true);
-    texxform.uscale = 1.0f;
-    texxform.vscale = 1.0f;
-    texxform.uwrap = TEXWRAP_REPEAT;
-    texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, color::White);
-  }
-
-  void WindowCompositor::SetCompositionRT()
-  {
-    t_s32 buffer_width, buffer_height;
-    buffer_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-    buffer_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-
-    if ( (!m_CompositionRT.IsValid() ) || (m_CompositionRT->GetWidth() != buffer_width) || (m_CompositionRT->GetHeight() != buffer_height) )
-    {
-      m_CompositionRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-    }
-
-    // Setup the Composition Render Target
-    m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-    m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0));
-    m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
-    m_FrameBufferObject->Activate();
-    GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
-    GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion ();
-    GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
-  }
-
-  void WindowCompositor::CopyTextureToCompositionRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y)
-  {
-    SetCompositionRT();
-    HWTexture->SetFiltering (GL_NEAREST, GL_NEAREST);
-    HWTexture->BindTextureToUnit (GL_TEXTURE0);
-    GetWindowThread ()->GetGraphicsEngine().DisableAllTextureMode (GL_TEXTURE1);
-
-    int TexWidth = HWTexture->GetWidth();
-    int TexHeight = HWTexture->GetHeight();
-
-    TexCoordXForm texxform;
-    texxform.FlipVCoord (true);
-    texxform.uscale = 1.0f;
-    texxform.vscale = 1.0f;
-    texxform.uwrap = TEXWRAP_REPEAT;
-    texxform.vwrap = TEXWRAP_REPEAT;
-    GetWindowThread ()->GetGraphicsEngine().QRP_1Tex (x, y, TexWidth, TexHeight, HWTexture, texxform, color::White);
-  }
-
-  void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity)
+  void WindowCompositor::PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity, bool premultiply)
   {
     nuxAssert (HWTexture.IsValid() );
 
@@ -1758,13 +1660,16 @@ namespace nux
       TexCoordXForm texxform0;
       texxform0.FlipVCoord (true);
 
-      if (GetWindowThread()->IsEmbeddedWindow())
+      if (premultiply)
       {
-        // Compose Nux's main texture onto another surface (a texture or the back buffer) with blending.
-        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (opacity, opacity, opacity, opacity));
       }
-
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
+      else
+      {
+        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
+      }
       GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
     }
   }
@@ -2062,7 +1967,6 @@ namespace nux
     nuxAssert(buffer_height >= 1);
 
     m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-    m_CompositionRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
     m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
 
     // Clear the buffer the first time...
@@ -2087,77 +1991,79 @@ namespace nux
 //     m_FullSceneMip2 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (Max (buffer_width / 8, 1), Max (buffer_height / 8, 1), 1, BITFMT_R8G8B8A8);
   }
 
-  void WindowCompositor::RestoreRenderingSurface ()
+  void WindowCompositor::RestoreRenderingSurface()
   {
-    BaseWindow *top_view = GetProcessingTopView ();
+    BaseWindow *top_view = GetProcessingTopView();
 
-    if (top_view && _inside_rendering_cycle)
+    if (top_view && inside_rendering_cycle_)
     {
-      nuxAssert (top_view->Type ().IsDerivedFromType (BaseWindow::StaticObjectType));
+      nuxAssert(top_view->Type().IsDerivedFromType (BaseWindow::StaticObjectType));
 
-      RenderTargetTextures rt = GetWindowBuffer (top_view);
+      RenderTargetTextures rt = GetWindowBuffer(top_view);
 
       int buffer_width = top_view->GetBaseWidth();
       int buffer_height = top_view->GetBaseHeight();
 
-      nuxAssert (buffer_width >= 1);
-      nuxAssert (buffer_height >= 1);
+      nuxAssert(buffer_width >= 1);
+      nuxAssert(buffer_height >= 1);
 
-      if ((rt.color_rt->GetWidth () != buffer_width) || (rt.color_rt->GetHeight () != buffer_height))
+      if ((rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height))
       {
-        rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
+        rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
+        rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8);
       }
 
-      m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget (0, rt.color_rt->GetSurfaceLevel (0));
-      m_FrameBufferObject->SetDepthSurface (rt.depth_rt->GetSurfaceLevel (0));
-      m_FrameBufferObject->Activate ();
+      m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
+      m_FrameBufferObject->SetRenderTarget(0, rt.color_rt->GetSurfaceLevel(0));
+      m_FrameBufferObject->SetDepthSurface(rt.depth_rt->GetSurfaceLevel(0));
+      m_FrameBufferObject->Activate();
 
-      GetWindowThread ()->GetGraphicsEngine ().SetViewport (0, 0, buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine ().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine ().ApplyClippingRectangle ();
+      GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
+      GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+      GetWindowThread()->GetGraphicsEngine().ApplyClippingRectangle();
+      //GetWindowThread()->GetGraphicsEngine().ApplyModelViewMatrix(); ???
     }
     else
     {
-      int buffer_width = GetWindowThread ()->GetGraphicsEngine ().GetWindowWidth ();
-      int buffer_height = GetWindowThread ()->GetGraphicsEngine ().GetWindowHeight ();
+      int buffer_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
+      int buffer_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
 
-      nuxAssert (buffer_width >= 1);
-      nuxAssert (buffer_height >= 1);
+      nuxAssert(buffer_width >= 1);
+      nuxAssert(buffer_height >= 1);
       // Restore Main Frame Buffer
-      m_FrameBufferObject->FormatFrameBufferObject (buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget (0, m_CompositionRT->GetSurfaceLevel (0));
-      m_FrameBufferObject->SetDepthSurface (ObjectPtr<IOpenGLSurface> (0));
-      m_FrameBufferObject->Activate ();
+      m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
+      m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
+      m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+      m_FrameBufferObject->Activate();
 
-      GetWindowThread ()->GetGraphicsEngine ().SetViewport (0, 0, buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine ().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
-      GetWindowThread ()->GetGraphicsEngine ().ApplyClippingRectangle ();
+      GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
+      GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+      GetWindowThread()->GetGraphicsEngine().ApplyClippingRectangle();
+      //GetWindowThread()->GetGraphicsEngine().ApplyModelViewMatrix(); ???
     }
   }
 
-  void* WindowCompositor::GetBackupTextureData (BaseWindow *base_window, int &width, int &height, int &format)
+  void* WindowCompositor::GetBackupTextureData(BaseWindow *base_window, int &width, int &height, int &format)
   {
     width = height = format = 0;
 
-    NUX_RETURN_VALUE_IF_NULL (base_window, 0);
+    NUX_RETURN_VALUE_IF_NULL(base_window, 0);
 
-    std::map< BaseWindow*, struct RenderTargetTextures >::iterator it;
+    std::map<BaseWindow*, struct RenderTargetTextures>::iterator it;
 
-    it = _window_to_texture_map.find (base_window);
+    it = _window_to_texture_map.find(base_window);
 
-    if (it == _window_to_texture_map.end ())
+    if (it == _window_to_texture_map.end())
     {
       return 0;
     }
 
-    if ((*it).second.color_rt.IsNull ())
+    if ((*it).second.color_rt.IsNull())
     {
       return 0;
     }
 
-    return (*it).second.color_rt->GetSurfaceData (0, width, height, format);
+    return (*it).second.color_rt->GetSurfaceData(0, width, height, format);
   }
 
 

@@ -267,27 +267,6 @@ namespace nux
     }
   }
 
-  long Matrix4Editor::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-    for (int i = 0; i < 4; i++)
-    {
-      for (int j = 0; j < 4; j++)
-      {
-        ret = m_MtxInput[i][j]->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-    }
-
-    ret = m_IdentityMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ZeroMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_InverseMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_NegateMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
   Area* Matrix4Editor::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     return View::FindAreaUnderMouse(mouse_position, event_type);

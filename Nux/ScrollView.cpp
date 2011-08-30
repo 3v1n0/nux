@@ -1,5 +1,6 @@
+// -*- Mode: C++; indent-tabs-mode: nil; tab-width: 2 -*-
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2011 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -31,17 +32,32 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(ScrollView);
 
-  ScrollView::ScrollView (NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  ScrollView::ScrollView(NUX_FILE_LINE_DECL)
+    : View(NUX_FILE_LINE_PARAM)
+    , m_MouseWheelScrollSize(32)
+      // TODO: these should really be Rects.
+    , m_ViewContentX(0)
+    , m_ViewContentY(0)
+    , m_ViewContentWidth(0)
+    , m_ViewContentHeight(0)
+    , m_ViewX(0)
+    , m_ViewY(0)
+    , m_ViewWidth(0)
+    , m_ViewHeight(0)
+    , m_TextureIndex(0)
+    , m_ReformatTexture(true)
+    , m_horizontal_scrollbar_enable(true)
+    , m_vertical_scrollbar_enable(true)
+    , m_top_border(4)
+    , m_border(4)
+    , _delta_x(0)
+    , _delta_y(0)
+    , m_bSizeMatchContent(false)
+    , m_ViewContentLeftMargin(0)
+    , m_ViewContentRightMargin(0)
+    , m_ViewContentTopMargin(0)
+    , m_ViewContentBottomMargin(0)
   {
-    m_vertical_scrollbar_enable     = true;
-    m_horizontal_scrollbar_enable   = true;
-    m_bSizeMatchContent             = false;
-    m_TextureIndex                  = 0;
-    m_ReformatTexture               = true;
-
-    _delta_x                        = 0;
-    _delta_y                        = 0;
 
     //GetPainter().CreateBackgroundTexture(m_BackgroundTexture);
     _hscrollbar = new HScrollBar (NUX_TRACKER_LOCATION);
@@ -66,17 +82,8 @@ namespace nux
     mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
     _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
 
-    setTopBorder (4);
-    setBorder (4);
-
-    m_MouseWheelScrollSize = 32;
-
-    m_ViewContentLeftMargin      = 0;
-    m_ViewContentRightMargin     = 0;
-    m_ViewContentTopMargin       = 0;
-    m_ViewContentBottomMargin    = 0;
     FormatContent();
-  
+
     //FIXME disabling until we have better API for this
     //ChildFocusChanged.connect (sigc::mem_fun (this, &ScrollView::OnChildFocusChanged));
 
@@ -128,16 +135,16 @@ namespace nux
     }
     if (child->IsLayout ())
       return;
-    
+
     int child_y = child->GetGeometry ().y - GetGeometry ().y;
     int child_y_diff = child_y - abs (_delta_y);
 
-    
+
     if (child_y_diff + child->GetGeometry ().height < GetGeometry ().height && child_y_diff >= 0)
     {
       return;
     }
-    
+
     if (child_y_diff < 0)
     {
       ScrollUp (1, abs (child_y_diff));
@@ -148,7 +155,7 @@ namespace nux
 
       // always keeps the top of a view on the screen
       size += (child->GetGeometry ().height, GetGeometry ().height) ? child->GetGeometry ().height : GetGeometry ().height;
-      
+
       ScrollDown (1, size);
     }
 
@@ -217,7 +224,7 @@ namespace nux
   {
     // Test if the mouse is inside the ScrollView.
     // The last parameter of TestMousePointerInclusion is a boolean used to test if the case
-    // of mouse wheel events. If that boolean value is true, then TestMousePointerInclusion 
+    // of mouse wheel events. If that boolean value is true, then TestMousePointerInclusion
     // returns true only if the mouse pointer is over this area and the the area accepts
     // mouse wheel events (see Area::SetAcceptMouseWheelEvent)
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
@@ -339,25 +346,6 @@ namespace nux
 ///////////////////////
 // Internal function //
 ///////////////////////
-  void ScrollView::setBorder (int border)
-  {
-    m_border = border;
-  }
-
-  void ScrollView::setTopBorder (int top_border)
-  {
-    m_top_border = top_border;
-  }
-
-  int ScrollView::getBorder() const
-  {
-    return m_border;
-  }
-
-  int ScrollView::getTopBorder() const
-  {
-    return m_top_border;
-  }
 
   void ScrollView::SetGeometry (const Geometry &geo)
   {
@@ -375,8 +363,6 @@ namespace nux
 
   void ScrollView::PreLayoutManagement()
   {
-    // Reset the client view to the top left corner of the container.
-    _delta_x = _delta_y = 0;
     // Give the managed layout the same size and position as the Control.
 
     Geometry geo = GetGeometry();
@@ -736,19 +722,6 @@ namespace nux
 
     w = _vscrollbar->GetBaseWidth();
     h = _hscrollbar->GetBaseHeight();
-
-//    m_ViewX = GetX() + m_border;
-//    m_ViewY = GetY() + m_top_border;
-//
-//    if(m_vertical_scrollbar_enable == false)
-//        m_ViewWidth = GetWidth() - 2*m_border - m_ViewContentRightMargin;
-//    else
-//        m_ViewWidth = GetWidth() - w - 2*m_border - m_ViewContentRightMargin;
-//
-//    if(m_horizontal_scrollbar_enable == false)
-//        m_ViewHeight = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin;
-//    else
-//        m_ViewHeight = GetBaseHeight() - h - m_top_border - m_border - m_ViewContentBottomMargin;
 
     m_ViewX = GetBaseX() + m_border + m_ViewContentLeftMargin;
     m_ViewY = GetBaseY() + m_top_border + m_ViewContentTopMargin;

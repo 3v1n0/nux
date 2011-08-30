@@ -227,12 +227,12 @@ namespace nux
           TextureRectangle *Texture = new TextureRectangle (NUX_TRACKER_LOCATION);
 #endif
 
-          NBitmapData *BitmapData = LoadImageFile (font_texture_file.GetTCharPtr ());
+          NBitmapData* bitmap_data = LoadImageFile(font_texture_file.GetTCharPtr ());
 
-          if (BitmapData)
-            Texture->Update (BitmapData, false);
+          if (bitmap_data)
+            Texture->Update (bitmap_data, false);
 
-          NUX_SAFE_DELETE (BitmapData);
+          delete bitmap_data;
           TextureArray.push_back (Texture);
         }
       }

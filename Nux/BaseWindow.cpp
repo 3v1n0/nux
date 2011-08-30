@@ -49,6 +49,7 @@ namespace nux
     , _paint_layer(new ColorLayer(Color(0xFF707070)))
     , _opacity (1.0f)
   {
+    premultiply = true;
     _name = WindowName;
     _child_need_redraw = true;
     m_TopBorder = 0;
@@ -86,11 +87,6 @@ namespace nux
     if (m_input_window)
       delete m_input_window;
 #endif
-
-    // At this stage, the reference count of this object is 0 and while the weak reference count is > 0.
-    // The weak reference count is probably 2: one reference in m_WindowList and another in m_WindowToTextureMap.
-    // Reference the object here to avoid it being destroy when the call from UnRegisterWindow returns;
-    GetWindowCompositor().UnRegisterWindow (this);
   }
 
   long BaseWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)

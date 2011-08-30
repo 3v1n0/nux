@@ -288,8 +288,8 @@ namespace nux
 
     if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
-      nuxAssertMsg (0, TEXT ("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s"), thread->Type().GetName() );
-      PrintOutputDebugString (TEXT ("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s"), thread->Type().GetName() );
+      nuxAssertMsg (0, TEXT ("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s"), thread->Type().name );
+      PrintOutputDebugString (TEXT ("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s"), thread->Type().name );
       NUX_HARDWARE_BREAK;
     }
 

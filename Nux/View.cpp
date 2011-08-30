@@ -32,7 +32,6 @@ namespace nux
 
   View::View (NUX_FILE_LINE_DECL)
     :   InputArea (NUX_FILE_LINE_PARAM)
-    ,   state (NUX_STATE_NORMAL)
   {
     _font = GetSysFont ();
     _is_view_active     = true; // The view is active by default
@@ -89,17 +88,6 @@ namespace nux
     }
 
     return TraverseInfo;
-  }
-
-  long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
-    {
-      // Skip the area that has the exclusivity on events
-      return TraverseInfo;
-    }
-
-    return ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
   }
 
   // NUXTODO: Find better name
@@ -241,6 +229,7 @@ namespace nux
     return OnEvent (ievent, TraverseInfo, ProcessEventInfo);
   }
 
+
   void View::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     _full_redraw = false;
@@ -289,12 +278,17 @@ namespace nux
     _full_redraw = false;
   }
 
-  void View::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void View::Draw(GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
 
-  void View::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void View::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+  {
+
+  }
+
+  void View::PostDraw(GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }

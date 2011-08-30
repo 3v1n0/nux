@@ -25,7 +25,10 @@
 
 #include "BaseWindow.h"
 
+#include <sigc++/trackable.h>
 #include <sigc++/connection.h>
+
+#include <NuxCore/ObjectPtr.h>
 
 namespace nux
 {
@@ -39,9 +42,11 @@ namespace nux
   class PaintLayer;
   class Event;
 
-  class WindowCompositor
+  class WindowCompositor : public sigc::trackable
   {
   public:
+    typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
+
     WindowCompositor();
     ~WindowCompositor();
 
@@ -360,9 +365,7 @@ namespace nux
     //! Render the content of a top view.
     void RenderTopViewContent(BaseWindow *window, bool force_draw);
 
-    void RenderMainWindowComposition(bool force_draw, bool UseFBO);
-
-
+    void RenderMainWindowComposition(bool force_draw);
 
     /*!
         Render a textured quad the quad has the size of the texture. The texture maybe the main window texture or a BaseWindow texture.
@@ -373,32 +376,13 @@ namespace nux
         @param RenderToMainTexture  If true, render to the main window texture. If false, render to the default back buffer.
         @param BluredBackground     If true, the texture is blended with the blurred version of the main window texture.
     */
-    void PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false, float opacity=1.0f);
+    void PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false, float opacity=1.0f, bool premultiply = false);
     void PresentRendering();
 
     /*!
         Set the main color render target as the texture to draw into.
     */
     void SetMainColorRT();
-
-    /*!
-        Draw a Texture into the main color render target.
-        @param x    Destination coordinates.
-        @param y    Destination coordinates.
-    */
-    void CopyTextureToMainColorRT(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y);
-
-    /*!
-        Set the composition render target as the texture to draw into.
-    */
-    void SetCompositionRT();
-
-    /*!
-        Draw a Texture into the composition render target.
-        @param x    Destination coordinates.
-        @param y    Destination coordinates.
-    */
-    void CopyTextureToCompositionRT(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y);
 
     //! Push a floating view just above another floating view.
     /*!
@@ -464,8 +448,8 @@ namespace nux
     void FloatingAreaConfigureNotify(int Width, int Height);
 
     void RegisterWindow(BaseWindow*);
-
-    void UnRegisterWindow(BaseWindow*);
+    // UnRegister is called via the object destroyed event, hence the Object*.
+    void UnRegisterWindow(Object*);
 
     //! Performs event cycle on menus.
     long MenuEventCycle(Event &event, long TraverseInfo, long ProcessEventInfo);
@@ -479,14 +463,13 @@ namespace nux
     };
     ObjectPtr<IOpenGLBaseTexture> m_MainColorRT;
     ObjectPtr<IOpenGLBaseTexture> m_MainDepthRT;
-    ObjectPtr<IOpenGLBaseTexture> m_CompositionRT;
 
     //! Return the RenderTargetTextures structure of a ViewWindow.
     RenderTargetTextures &GetWindowBuffer(BaseWindow* window);
 
-    ObjectWeakPtr<BaseWindow> m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
-    ObjectWeakPtr<BaseWindow> m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
-    ObjectWeakPtr<BaseWindow> m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
+    WeakBaseWindowPtr m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
+    WeakBaseWindowPtr m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
+    WeakBaseWindowPtr m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
     IEvent* m_CurrentEvent; 
 
     InputArea* _mouse_over_area;      //!< The base area that has the mouse directly over itself.
@@ -526,7 +509,7 @@ namespace nux
             * mouse enter/leave
     */
     InputArea* _exclusive_input_area;
-    
+
     /*!
         \a _exclusive_input_area is true when there is an active greedy input area.
     */
@@ -539,38 +522,38 @@ namespace nux
     bool _pending_exclusive_input_mode_action;
 
     //! True while events are being processed inside ProcessEvent ().
-    bool _inside_event_processing;
+    bool inside_event_cycle_;
 
-    //! True while rendering is being done.
-    bool _inside_rendering_cycle;
+    //! True while inside the rendering cycle.
+    bool inside_rendering_cycle_;
 
     InputArea* OverlayDrawingCommand;
-    ObjectWeakPtr<BaseWindow> m_OverlayWindow;            //!< The window that owns the overlay;
-    ObjectWeakPtr<BaseWindow> _tooltip_window;            //!< The window that owns the tooltip;
+    WeakBaseWindowPtr m_OverlayWindow;            //!< The window that owns the overlay;
+    WeakBaseWindowPtr _tooltip_window;            //!< The window that owns the tooltip;
     Geometry    _tooltip_geometry;              //!< The geometry of the entire tooltip It includes the decoration surrounding the text such as round corners.
     Geometry    _tooltip_mainwindow_geometry;   //!< Same as _tooltip_geometry but based on the entire physical window of the application.
     Geometry    _tooltip_text_geometry;         //!< The geometry of the text area of the tooltip.
     Point _event_root;
 
-
+    bool on_menu_closure_continue_with_event_;
     AbstractPaintLayer *m_Background;
 
-    std::list< ObjectWeakPtr<BaseWindow> > _view_window_list;
-    std::list< ObjectWeakPtr<BaseWindow> > _modal_view_window_list;
-    ObjectWeakPtr<BaseWindow>            _always_on_front_window;  //!< Floating view that always remains on top.
+    std::list<WeakBaseWindowPtr> _view_window_list;
+    std::list<WeakBaseWindowPtr> _modal_view_window_list;
+    WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
 
     std::list<MenuPage* > *_menu_chain;
 
     /*!
-        The BaseWindow where the last mouse down event happened. 
-        This BaseWindow will be raised to the top of the stack. 
+        The BaseWindow where the last mouse down event happened.
+        This BaseWindow will be raised to the top of the stack.
         \sa GetSelectedWindow.
     */
-    ObjectWeakPtr<BaseWindow> m_SelectedWindow;
+    WeakBaseWindowPtr m_SelectedWindow;
 
-    std::map< BaseWindow*, struct RenderTargetTextures > _window_to_texture_map;
+    std::map<BaseWindow*, struct RenderTargetTextures > _window_to_texture_map;
 
-    ObjectWeakPtr<BaseWindow> m_ModalWindow;
+    WeakBaseWindowPtr m_ModalWindow;
     Point m_MouseLastPos;
     Point m_MouseCurrentPos;
 
@@ -587,15 +570,6 @@ namespace nux
     InputArea *m_TooltipArea;
     int m_TooltipX;
     int m_TooltipY;
-
-    
-
-//     bool m_FullSceneBlurUpdated;
-//     ObjectPtr<IOpenGLBaseTexture> m_BlurTexture;
-//     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip0;
-//     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip1;
-//     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip2;
-
 
     //! Pointer grab stack.
     /*!

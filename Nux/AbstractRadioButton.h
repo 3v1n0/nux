@@ -20,10 +20,29 @@
  */
 
 
-#include "NuxCore.h"
-#include "ObjectType.h"
+#ifndef ABSTRACTRADIOBUTTON_H
+#define ABSTRACTRADIOBUTTON_H
 
 namespace nux
 {
-const NObjectType NObjectType::Null_Type("NULL", 0);
+  //! The base class of Button, CheckBox, RadioButton and PushButton.
+  class AbstractRadioButton : public View
+  {
+    NUX_DECLARE_OBJECT_TYPE (AbstractRadioButton, View);
+  public:
+    AbstractRadioButton (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
+    ~AbstractRadioButton();
+
+    virtual void SetCaption (const TCHAR *Caption) = 0;
+    virtual const NString &GetCaption() const = 0;
+
+    virtual void SetState (bool b) = 0;
+    virtual void SetState (bool State, bool EmitSignal) = 0;
+    virtual bool GetState() const = 0;
+
+  protected:
+    bool _state;
+  };
 }
+
+#endif // ABSTRACTRADIOBUTTON_H

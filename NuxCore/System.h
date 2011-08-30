@@ -29,7 +29,7 @@
 
 #ifdef _WIN32
     #define NUX_OS_WINDOWS
-#elif __linux
+#elif __linux__
     #define NUX_OS_LINUX
 #elif __APPLE__
     #define NUX_OS_MACOSX

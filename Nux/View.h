@@ -31,18 +31,7 @@
 
 namespace nux
 {
-
   class Layout;
-
-  /* FIXME - this needs to be somewhere more obvious */
-  enum State
-  {
-    NUX_STATE_ACTIVE = 0,
-    NUX_STATE_NORMAL = 1,
-    NUX_STATE_PRELIGHT = 2,
-    NUX_STATE_SELECTED = 3,
-    NUX_STATE_INSENSITIVE = 4
-  };
 
   enum eControlType
   {
@@ -60,11 +49,11 @@ namespace nux
   public:
     View (NUX_FILE_LINE_DECL);
     virtual ~View();
-    //virtual RemoveView(View *ic);
 
   public:
 
-    long BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    // Deprecated
+    //long BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual long ComputeChildLayout();
     virtual void PositionChildLayout (float offsetX, float offsetY);
@@ -201,10 +190,6 @@ namespace nux
     */
     bool HasPassiveFocus ();
 
-
-    /* the current state of the widget. useful to lookup quickly */
-    nux::Property<State> state;
-
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();
 
@@ -217,7 +202,9 @@ namespace nux
     void OnChildFocusChanged (/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
+    // ProcessEvent is deprecated. 
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {return 0;}
+
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
