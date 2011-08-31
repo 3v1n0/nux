@@ -195,8 +195,8 @@ logging::Logger logger("nux.image");
     m_Pitch = surface.m_Pitch;
     Alignment_ = surface.Alignment_;
 
-    RawData_ = new t_u8[surface.GetSize() ];
-    Memcpy (RawData_, surface.RawData_, surface.GetSize() );
+    RawData_ = new t_u8[surface.GetSize()];
+    Memcpy(RawData_, surface.RawData_, surface.GetSize());
   }
 
   ImageSurface &ImageSurface::operator = (const ImageSurface &surface)

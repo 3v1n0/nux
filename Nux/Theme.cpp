@@ -199,10 +199,11 @@ namespace nux
 
   UXTheme::~UXTheme()
   {
-    std::list<PainterImage *>::iterator it;
+    std::list<PainterImage*>::iterator it;
     for (it = m_PainterImageList.begin(); it != m_PainterImageList.end(); it++)
     {
       (*it)->texture->UnReference ();
+      delete (*it);
     }
     m_PainterImageList.clear ();
   }

@@ -32,7 +32,7 @@ namespace nux
   {
   public:
     SpinBoxDouble (double Value = 0, double Step = 1, double MinValue = 0, double MaxValue = 100, NUX_FILE_LINE_PROTO);
-    ~SpinBoxDouble();
+    virtual ~SpinBoxDouble();
 
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);

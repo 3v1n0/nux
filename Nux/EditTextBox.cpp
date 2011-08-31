@@ -81,6 +81,8 @@ namespace nux
 
   EditTextBox::~EditTextBox()
   {
+    delete m_BlinkTimerFunctor;
+    delete m_ScrollTimerFunctor;
     delete m_Validator;
 
     if (m_BlinkTimerHandler.IsValid() )

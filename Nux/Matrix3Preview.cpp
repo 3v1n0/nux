@@ -46,6 +46,8 @@ namespace nux
 
   Matrix3Preview::~Matrix3Preview()
   {
+    delete m_ChangeDetectionTimer;
+
     if (m_ChangeTimerHandler.IsValid() )
       GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 

@@ -240,7 +240,7 @@ namespace nux
     */
     bool IsValid() const
     {
-        return bool(ptr_);
+        return bool(ptr_ ? true : false);
     }
 
     bool operator < (T *ptr) const
