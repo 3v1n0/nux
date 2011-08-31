@@ -544,7 +544,7 @@ namespace nux
   void FloatingWindow::SetWindowTitle (const TCHAR *title)
   {
     NUX_RETURN_IF_NULL(title)
-    _window_title = Strdup (title);
+    _window_title = title;
   }
 
   NString FloatingWindow::GetWindowTitle()

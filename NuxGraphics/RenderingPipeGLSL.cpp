@@ -755,6 +755,7 @@ namespace nux
     _horizontal_hq_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
     PS->SetShaderCode(shader_prog, TEXT ("#define SAMPLERTEX2D"));
+    delete [] shader_prog;
 
     _horizontal_hq_gauss_filter_prog[k-1]->ClearShaderObjects();
     _horizontal_hq_gauss_filter_prog[k-1]->AddShaderObject(VS);
@@ -826,6 +827,7 @@ namespace nux
     _vertical_hq_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
     PS->SetShaderCode (shader_prog, TEXT ("#define SAMPLERTEX2D") );
+    delete [] shader_prog;
 
     _vertical_hq_gauss_filter_prog[k-1]->ClearShaderObjects();
     _vertical_hq_gauss_filter_prog[k-1]->AddShaderObject (VS);
