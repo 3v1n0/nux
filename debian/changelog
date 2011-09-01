@@ -1,6 +1,6 @@
 nux (1.6.0-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream release.
+  * New upstream release
   * debian/rules:
     - updated shlibs
 
