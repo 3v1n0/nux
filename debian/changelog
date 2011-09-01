@@ -1,10 +1,10 @@
-nux (1.6.0-0ubuntu1) UNRELEASED; urgency=low
+nux (1.6.0-0ubuntu1) oneiric; urgency=low
 
   * New upstream release
   * debian/rules:
     - updated shlibs
 
- -- Didier Roche <didrocks@ubuntu.com>  Thu, 01 Sep 2011 15:43:50 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 01 Sep 2011 17:32:57 +0200
 
 nux (1.4.0-0ubuntu3) oneiric; urgency=low
 
