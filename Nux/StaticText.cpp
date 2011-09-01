@@ -213,7 +213,7 @@ namespace nux
     surface = cairo_image_surface_create (CAIRO_FORMAT_A1, 1, 1);
     cr = cairo_create (surface);
 
-    cairo_font_options_t* font_options = cairo_font_options_create();
+    CairoFontOptions font_options;
 
     cairo_font_options_set_antialias      (font_options, CAIRO_ANTIALIAS_DEFAULT);
     cairo_font_options_set_subpixel_order (font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
@@ -265,7 +265,7 @@ namespace nux
 
     GetTextSize (textWidth, textHeight, _clipping);
 
-    cairo_font_options_t* font_options = cairo_font_options_create();
+    CairoFontOptions font_options;
 
     cairo_font_options_set_antialias      (font_options, CAIRO_ANTIALIAS_DEFAULT);
     cairo_font_options_set_subpixel_order (font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
