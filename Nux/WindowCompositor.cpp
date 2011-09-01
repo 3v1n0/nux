@@ -1661,11 +1661,15 @@ namespace nux
       texxform0.FlipVCoord (true);
 
       if (premultiply)
+      {
         GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (opacity, opacity, opacity, opacity));
+      }
       else
+      {
         GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
+        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
+      }
       GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
     }
   }
