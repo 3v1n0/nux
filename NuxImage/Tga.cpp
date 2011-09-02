@@ -192,11 +192,11 @@ namespace nux
     if (header.bpp == 32)
       bitmap_format = BITFMT_R8G8B8A8;
 
-#if defined(NUX_OS_WINDOWS) && (!defined(NUX_VISUAL_STUDIO_2010))
+#if defined(NUX_OS_WINDOWS) /*&& (!defined(NUX_VISUAL_STUDIO_2010))*/
     //boost::scoped_ptr<NTextureData> TextureObjectData(new NTextureData (bitmap_format, (header.width_hi << 8) | (header.width_lo), (header.height_hi << 8) | (header.height_lo), 1));
     NTextureData *TextureObjectData = new NTextureData (bitmap_format, (header.width_hi << 8) | (header.width_lo), (header.height_hi << 8) | (header.height_lo), 1);
 #else
-    std::scoped_ptr<NTextureData> TextureObjectData(new NTextureData (bitmap_format, (header.width_hi << 8) | (header.width_lo), (header.height_hi << 8) | (header.height_lo), 1));
+    std::unique_ptr<NTextureData> TextureObjectData(new NTextureData (bitmap_format, (header.width_hi << 8) | (header.width_lo), (header.height_hi << 8) | (header.height_lo), 1));
 #endif
 
     // Allocate memory for a temporary buffer

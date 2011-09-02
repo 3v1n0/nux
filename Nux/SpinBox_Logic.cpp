@@ -71,6 +71,8 @@ namespace nux
 
   SpinBox_Logic::~SpinBox_Logic()
   {
+    delete m_UpTimerCallback;
+    delete m_DownTimerCallback;
 //     m_SpinnerUpBtn->Dispose();
 //     m_SpinnerDownBtn->Dispose();
 //     m_EditLine->Dispose();

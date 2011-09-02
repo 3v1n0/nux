@@ -311,7 +311,7 @@ namespace nux
 
   private:
 
-    std::list<AbstractPaintLayer *> m_BackgroundStack;
+    std::list<AbstractPaintLayer*> m_BackgroundStack;
 
   };
 

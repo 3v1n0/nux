@@ -111,6 +111,7 @@ namespace nux
     delete left_callback;
     delete trackleft_callback;
     delete right_callback;
+    delete trackright_callback;
   }
 
   void HScrollBar::HScrollBarHandler (void *v)

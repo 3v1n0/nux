@@ -44,6 +44,8 @@ namespace nux
 
   Matrix4Preview::~Matrix4Preview()
   {
+    delete m_ChangeDetectionTimer;
+
     if (m_ChangeTimerHandler.IsValid() )
       GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 
