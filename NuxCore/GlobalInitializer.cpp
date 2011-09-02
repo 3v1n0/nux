@@ -25,7 +25,7 @@
 namespace nux
 {
 
-  static GlobalSingletonInitializer      *GGlobalInitializer   = 0;
+  static GlobalSingletonInitializer      *GGlobalInitializer = 0;
 
   static void SystemStart()
   {
