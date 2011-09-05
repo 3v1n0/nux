@@ -235,9 +235,7 @@ namespace nux
 
     const char* allocation_file_name_;
     int allocation_line_number_;
-#ifdef NUX_DEBUG
     std::string allocation_stacktrace_;
-#endif
 
     NThreadSafeCounter* reference_count_;
     //!< Number of ObjectPtr hosting the object.
