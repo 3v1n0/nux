@@ -33,6 +33,16 @@ namespace nux
 namespace
 {
 logging::Logger logger("nux.core.object");
+
+bool debug_object_allocation_stack()
+{
+  // If the extra long environment variable is set, then every object that is
+  // created will record it's backtrace during allocation.  This will slow
+  // down the library, so only use for local debugging.
+  static bool extra_debugging(::getenv("NUX_DEBUG_OBJECT_ALLOCATION_STACK"));
+  return extra_debugging;
+}
+
 }
 
   NUX_IMPLEMENT_ROOT_OBJECT_TYPE (Trackable);
@@ -58,14 +68,18 @@ logging::Logger logger("nux.core.object");
     int index = 0;
 
 #if defined(NUX_OS_WINDOWS)
-	// Visual Studio does not support range based for loops.
-	for (AllocationList::iterator ptr = _allocation_list.begin(); ptr != _allocation_list.end(); ++ptr)
-	{
-		Object* obj = static_cast<Object*>(*ptr);
-		std::cerr << "\t" << ++index << " Undeleted object: Type "
-			<< obj->Type().name << ", "
-			<< obj->GetAllocationLoation() << "\n";
-	}
+    // Visual Studio does not support range based for loops.
+    for (AllocationList::iterator ptr = _allocation_list.begin(); ptr != _allocation_list.end(); ++ptr)
+    {
+      Object* obj = static_cast<Object*>(*ptr);
+      std::cerr << "\t" << ++index << " Undeleted object: Type "
+                << obj->Type().name << ", "
+                << obj->GetAllocationLoation() << "\n";
+      if (debug_object_allocation_stack())
+      {
+        std::cerr << obj->allocation_stacktrace_ << "\n\n";
+      }
+    }
 
 #else
     for (auto ptr : _allocation_list)
@@ -74,6 +88,10 @@ logging::Logger logger("nux.core.object");
       std::cerr << "\t" << ++index << " Undeleted object: Type "
                 << obj->Type().name << ", "
                 << obj->GetAllocationLoation() << "\n";
+      if (debug_object_allocation_stack())
+      {
+        std::cerr << obj->allocation_stacktrace_ << "\n\n";
+      }
     }
 #endif
 #endif
@@ -227,6 +245,11 @@ logging::Logger logger("nux.core.object");
   {
     reference_count_->Set(1);
     SetOwnedReference(OwnTheReference);
+#ifdef NUX_DEBUG
+    if (debug_object_allocation_stack()) {
+      allocation_stacktrace_ = logging::backtrace();
+    }
+#endif
   }
 
   Object::~Object()
