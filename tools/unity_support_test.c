@@ -540,7 +540,8 @@ int main (int argc, char* argv[]) {
   display = XOpenDisplay (display_name);
   if (display == NULL) {
     results.error = strdup ("unable to open display");
-    results.result = 1;
+    // exit with 5, to tell "it's not an error we should cache"
+    results.result = 5;
   }
   else
   {
@@ -601,9 +602,11 @@ int main (int argc, char* argv[]) {
     free (results.error);
 
   // drop result file
-  sprintf(resultfilename, "/tmp/unity_support_test.%i", results.result);
-  resultfile = fopen(resultfilename, "w");
-  fclose(resultfile);
+  if (results.result != 5) {
+    sprintf(resultfilename, "/tmp/unity_support_test.%i", results.result);
+    resultfile = fopen(resultfilename, "w");
+    fclose(resultfile);
+  }
 
   return results.result;
 }
