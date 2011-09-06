@@ -1,5 +1,7 @@
 nux (1.6.0-0ubuntu2) UNRELEASED; urgency=low
 
+  * tools/unity_support_test.c:
+    - enables caching startup result
   * debian/50_check_unity_support, debian/nux-tools.install:
     - install new helper to check for unity support before logging into
       session (LP: #842656)
