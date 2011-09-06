@@ -1,3 +1,11 @@
+nux (1.6.0-0ubuntu2) UNRELEASED; urgency=low
+
+  * debian/50_check_unity_support, debian/nux-tools.install:
+    - install new helper to check for unity support before logging into
+      session (LP: #842656)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 06 Sep 2011 15:44:25 +0200
+
 nux (1.6.0-0ubuntu1) oneiric; urgency=low
 
   * New upstream release

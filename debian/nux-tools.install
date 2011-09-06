@@ -1,1 +1,2 @@
 debian/tmp/usr/lib/nux/unity_support_test
+debian/50_check_unity_support /etc/X11/Xsession.d
