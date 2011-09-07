@@ -74,7 +74,6 @@ namespace nux
     {
       return _Height;
     }
-    void WriteToFile(char *name);
 
   private:
     IOpenGLFrameBufferObject (NUX_FILE_LINE_PROTO);

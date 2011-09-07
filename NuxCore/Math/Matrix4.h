@@ -112,7 +112,6 @@ namespace nux
 
     void Zero();
     void Identity();
-    void Print();
 
     static Matrix4x4<T> IDENTITY();
     static Matrix4x4<T> ZERO();
@@ -1515,16 +1514,6 @@ namespace nux
 
   typedef Matrix4x4<float> Matrix4;
 
-  template <typename T>
-  void Matrix4x4<T>::Print()
-  {
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4; j++) {
-        std::cout << m[i][j] << " ";
-      }
-      std::cout << std::endl;
-    }
-  }
 }
 
 

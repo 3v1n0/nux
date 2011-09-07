@@ -131,7 +131,11 @@ namespace nux
     return glwindow;
   }
 #elif defined(NUX_OS_LINUX)
-  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, void *OpenGLContext)
+#ifdef NUX_OPENGLES_20
+  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, EGLContext OpenGLContext)
+#else
+  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
+#endif
   {
     if (GetGraphicsDisplay())
     {
