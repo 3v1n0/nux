@@ -220,15 +220,17 @@ namespace nux
 
     // Go through the list of BaseWindo and find the first area over which the
     // mouse pointer is.
-    for (auto window_ptr : _view_window_list)
+    std::list<WeakBaseWindowPtr>::iterator window_it;
+
+    for (window_it = _view_window_list.begin(); window_it != _view_window_list.end(); ++window_it)
     {
-      if (window_ptr.IsValid() && window_ptr->IsVisible())
+      if ((*window_it).IsValid() && (*window_it)->IsVisible())
       {
-        InputArea* area = static_cast<InputArea*>(window_ptr->FindAreaUnderMouse(mouse_position, event_type));
+        InputArea *area = static_cast<InputArea*>((*window_it)->FindAreaUnderMouse(mouse_position, event_type));
         if (area)
         {
           *area_under_mouse_pointer = area;
-          *window = window_ptr.GetPointer();
+          *window = (*window_it).GetPointer();
           return;
         }
       }
