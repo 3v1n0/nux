@@ -67,6 +67,8 @@ namespace nux
 
   ColorPreview::~ColorPreview()
   {
+    delete m_ChangeDetectionTimer;
+
     if (m_ChangeTimerHandler.IsValid() )
       GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 
