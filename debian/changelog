@@ -1,6 +1,9 @@
 nux (1.8.0-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+  * debian/control:
+    - bump shlib
+    - remove shlibs restriction (no more ABI breakage until finale)
 
  -- Didier Roche <didrocks@ubuntu.com>  Thu, 08 Sep 2011 17:33:56 +0200
 
