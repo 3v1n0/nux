@@ -1,6 +1,8 @@
 nux (1.8.0-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+    - Unity crashes if you open a quicklist and then the corresponding
+      launcher icon closes (LP: #801413)
   * debian/control:
     - bump shlib
     - remove shlibs restriction (no more ABI breakage until finale)
