@@ -113,6 +113,7 @@ namespace nux
     delete up_callback;
     delete trackup_callback;
     delete down_callback;
+    delete trackdown_callback;
   }
 
   void VScrollBar::VScrollBarHandler (void *v)

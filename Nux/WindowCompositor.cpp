@@ -220,15 +220,17 @@ namespace nux
 
     // Go through the list of BaseWindo and find the first area over which the
     // mouse pointer is.
-    for (auto window_ptr : _view_window_list)
+    std::list<WeakBaseWindowPtr>::iterator window_it;
+
+    for (window_it = _view_window_list.begin(); window_it != _view_window_list.end(); ++window_it)
     {
-      if (window_ptr.IsValid() && window_ptr->IsVisible())
+      if ((*window_it).IsValid() && (*window_it)->IsVisible())
       {
-        InputArea* area = static_cast<InputArea*>(window_ptr->FindAreaUnderMouse(mouse_position, event_type));
+        InputArea *area = static_cast<InputArea*>((*window_it)->FindAreaUnderMouse(mouse_position, event_type));
         if (area)
         {
           *area_under_mouse_pointer = area;
-          *window = window_ptr.GetPointer();
+          *window = (*window_it).GetPointer();
           return;
         }
       }
@@ -1397,32 +1399,56 @@ namespace nux
 
   void WindowCompositor::RenderTopViews (bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool drawModal)
   {
-    GetWindowThread ()->GetGraphicsEngine ().EmptyClippingRegion ();
+    // Before anything, deactivate the current frame buffer, set the viewport 
+    // to the size of the display and call EmptyClippingRegion().
+    // Then call GetScissorRect() to get the size of the global clipping area.
+    // This is is hack until we implement SetGlobalClippingRectangle() (the opposite of SetGlobalClippingRectangle).
+    GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+    GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0,
+                                                       GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
+                                                       GetWindowThread ()->GetGraphicsEngine().GetWindowHeight());
+    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion ();
+
+    Geometry global_clip_rect = GetWindowThread ()->GetGraphicsEngine().GetScissorRect();
+
+
+    global_clip_rect.y = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() - global_clip_rect.y - global_clip_rect.height;
+
     // Raw the windows from back to front;
     std::list< ObjectWeakPtr<BaseWindow> >::reverse_iterator rev_it;
 
     for (rev_it = WindowList.rbegin (); rev_it != WindowList.rend (); rev_it++)
     {
-      if (!(*rev_it).IsValid ())
+      if (!(*rev_it).IsValid())
         continue;
         
-      if ((drawModal == false) && (*rev_it)->IsModal ())
+      if ((drawModal == false) && (*rev_it)->IsModal())
         continue;
 
-      if ((*rev_it)->IsVisible() )
+      
+      if ((*rev_it)->IsVisible())
       {
-        RenderTargetTextures &rt = GetWindowBuffer ((*rev_it).GetPointer ());
-        BaseWindow *window = (*rev_it).GetPointer ();
+        if (global_clip_rect.Intersect((*rev_it)->GetGeometry()).IsNull())
+        {
+          // The global clipping area can be seen as a per monitor clipping region. It is mostly used in
+          // embedded mode with compiz.
+          // If we get here, it means that the BaseWindow we want to render is not in area of the monitor
+          // that compiz is currently rendering. So skip it.
+          continue;
+        }
+        
+        RenderTargetTextures &rt = GetWindowBuffer((*rev_it).GetPointer());
+        BaseWindow *window = (*rev_it).GetPointer();
 
         // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
-        if(force_draw || window->IsRedrawNeeded() || window->ChildNeedsRedraw ())
+        if (force_draw || window->IsRedrawNeeded() || window->ChildNeedsRedraw())
         {
           if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/)
           {
             t_s32 buffer_width = window->GetBaseWidth();
             t_s32 buffer_height = window->GetBaseHeight();
 
-            if ( (rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height) )
+            if ((rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height))
             {
               rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
               rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
@@ -1435,6 +1461,7 @@ namespace nux
             GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
             GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
             GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
+
             GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
 
             CHECKGL ( glClearColor (0, 0, 0, 0) );

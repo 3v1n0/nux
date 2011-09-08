@@ -933,7 +933,7 @@ namespace nux
   {
     nuxAssert (level >= 0);
 
-    while ( (level >= 1) && (m_BackgroundStack.size() > 0 ) )
+    while ((level >= 1) && (m_BackgroundStack.size() > 0))
     {
       AbstractPaintLayer *paint_layer = (*m_BackgroundStack.begin() );
       delete paint_layer;
@@ -944,11 +944,11 @@ namespace nux
 
   void BasePainter::EmptyBackgroundStack()
   {
-    for (auto layer : m_BackgroundStack)
+    std::list<AbstractPaintLayer*>::iterator background_layer_it;
+    for (background_layer_it = m_BackgroundStack.begin(); background_layer_it != m_BackgroundStack.end(); ++background_layer_it)
     {
-      delete layer;
+      delete (*background_layer_it);
     }
     m_BackgroundStack.clear();
   }
-
 }

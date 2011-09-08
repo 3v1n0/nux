@@ -56,6 +56,18 @@ logging::Logger logger("nux.core.object");
     }
 
     int index = 0;
+
+#if defined(NUX_OS_WINDOWS)
+	// Visual Studio does not support range based for loops.
+	for (AllocationList::iterator ptr = _allocation_list.begin(); ptr != _allocation_list.end(); ++ptr)
+	{
+		Object* obj = static_cast<Object*>(*ptr);
+		std::cerr << "\t" << ++index << " Undeleted object: Type "
+			<< obj->Type().name << ", "
+			<< obj->GetAllocationLoation() << "\n";
+	}
+
+#else
     for (auto ptr : _allocation_list)
     {
       Object* obj = static_cast<Object*>(ptr);
@@ -63,6 +75,7 @@ logging::Logger logger("nux.core.object");
                 << obj->Type().name << ", "
                 << obj->GetAllocationLoation() << "\n";
     }
+#endif
 #endif
   }
 
