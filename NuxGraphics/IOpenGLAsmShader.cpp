@@ -52,14 +52,18 @@ namespace nux
     :   IOpenGLAsmShader (ShaderName, RT_GLSL_VERTEXSHADER)
     ,   m_CompiledAndReady (false)
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glGenProgramsARB (1, &_OpenGLID) );
+#endif
   }
 
   IOpenGLAsmVertexShader::~IOpenGLAsmVertexShader()
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glDeleteProgramsARB (1, &_OpenGLID) );
     _OpenGLID = 0;
     m_CompiledAndReady = false;
+#endif
   }
 
   void IOpenGLAsmVertexShader::SetShaderCode (const TCHAR *ShaderCode)
@@ -73,6 +77,7 @@ namespace nux
   bool IOpenGLAsmVertexShader::Compile()
   {
     m_CompiledAndReady = false;
+#ifndef NUX_OPENGLES_20
     t_size CodeSize = _ShaderCode.Size();
 
     if (CodeSize == 0)
@@ -103,6 +108,7 @@ namespace nux
     delete[] ShaderSource;
 
     m_CompiledAndReady = true;
+#endif
     return m_CompiledAndReady;
   }
 
@@ -115,14 +121,18 @@ namespace nux
     :   IOpenGLAsmShader (ShaderName, RT_GLSL_PIXELSHADER)
     ,   m_CompiledAndReady (false)
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glGenProgramsARB (1, &_OpenGLID) );
+#endif
   }
 
   IOpenGLAsmPixelShader::~IOpenGLAsmPixelShader()
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glDeleteProgramsARB (1, &_OpenGLID) );
     _OpenGLID = 0;
     m_CompiledAndReady = false;
+#endif
   }
 
   void IOpenGLAsmPixelShader::SetShaderCode (const TCHAR *ShaderCode)
@@ -136,6 +146,7 @@ namespace nux
   bool IOpenGLAsmPixelShader::Compile()
   {
     m_CompiledAndReady = false;
+#ifndef NUX_OPENGLES_20
     t_size CodeSize = _ShaderCode.Size();
 
     if (CodeSize == 0)
@@ -165,6 +176,7 @@ namespace nux
     delete[] ShaderSource;
 
     m_CompiledAndReady = true;
+#endif
     return m_CompiledAndReady;
   }
 
@@ -244,20 +256,25 @@ namespace nux
 
   void IOpenGLAsmShaderProgram::Begin (void)
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glEnable (GL_VERTEX_PROGRAM_ARB) );
     CHECKGL ( glBindProgramARB (GL_VERTEX_PROGRAM_ARB, m_AsmVertexProgram->GetOpenGLID() ) );
     CHECKGL ( glEnable (GL_FRAGMENT_PROGRAM_ARB) );
     CHECKGL ( glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, m_AsmFragmentProgram->GetOpenGLID() ) );
+#endif
   }
 
   void IOpenGLAsmShaderProgram::End (void)
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glDisable (GL_VERTEX_PROGRAM_ARB) );
     CHECKGL ( glBindProgramARB (GL_VERTEX_PROGRAM_ARB, 0) );
     CHECKGL ( glDisable (GL_FRAGMENT_PROGRAM_ARB) );
     CHECKGL ( glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, 0) );
+#endif
   }
 
+#ifndef NUX_OPENGLES_20
   void IOpenGLAsmShaderProgram::SetVertexEnvParameter4dARB (t_uint32 index, double x, double y, double z, double w)
   {
     CHECKGL ( glProgramEnvParameter4dARB (GL_VERTEX_PROGRAM_ARB, index, x, y, z, w) );
@@ -337,5 +354,7 @@ namespace nux
   {
     CHECKGL ( glProgramEnvParameter4fvARB (GL_FRAGMENT_PROGRAM_ARB, index, params) );
   }
-
+#endif
 }
+
+

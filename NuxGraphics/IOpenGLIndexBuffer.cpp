@@ -79,9 +79,14 @@ namespace nux
 
     CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID) );
     // Map the Entire buffer into system memory
+#ifndef NUX_OPENGLES_20
     _MemMap = (BYTE *) glMapBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB); // todo: use Format instead of GL_WRITE_ONLY_ARB
     CHECKGL_MSG (glMapBufferARB);
     *ppbData = (void *) (_MemMap + OffsetToLock);
+#else
+    _MemMap = new BYTE[SizeToLock];
+    *ppbData = _MemMap;
+#endif
 
     _OffsetToLock   = OffsetToLock;
     _SizeToLock     = SizeToLock;
@@ -99,12 +104,18 @@ namespace nux
     // No need to bind
     CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID) );
 
+#ifndef NUX_OPENGLES_20
+    CHECKGL ( glUnmapBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB) );
+#else
+    CHECKGL( glBufferSubData (GL_ELEMENT_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap) );
+    delete [] _MemMap;
+#endif
+
+    CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+
     _MemMap         = 0;
     _OffsetToLock   = 0;
     _SizeToLock     = 0;
-
-    CHECKGL ( glUnmapBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB) );
-    CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
 
     return OGL_OK;
   }

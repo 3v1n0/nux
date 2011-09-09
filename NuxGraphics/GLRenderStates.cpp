@@ -40,8 +40,10 @@ namespace nux
     default_render_state[GFXRS_##state__].Checked   = checked__;            \
  
 
+#ifndef NUX_OPENGLES_20
       UL_MAP (FRONT_POLYGONMODE            ,           GL_FILL         ,       1);
       UL_MAP (BACK_POLYGONMODE             ,           GL_FILL         ,       1);
+#endif
       UL_MAP (CULLFACEENABLE               ,           GL_FALSE        ,       1);
       UL_MAP (CULLFACE                     ,           GL_BACK         ,       1);
       UL_MAP (FRONTFACE                    ,           GL_CCW          ,       1);

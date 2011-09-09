@@ -75,6 +75,8 @@ namespace nux
     nuxAssert (_OffsetToLock == 0);
     nuxAssert (_SizeToLock == 0);
 
+#ifndef NUX_OPENGLES_20
+//FIXME: GLES 2.0 doesn't support PBOs, we need to allocate client memory and copy data there
     // When locking it shouldn't matter if we use GL_PIXEL_UNPACK_BUFFER_ARB or GL_PIXEL_PACK_BUFFER_ARB.
     // We just want a pointer to the data.
     CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, _OpenGLID) );
@@ -88,19 +90,21 @@ namespace nux
 
     CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
+#endif
 
     return OGL_OK;
   }
 
   int IOpenGLPixelBufferObject::Unlock()
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, _OpenGLID) );
     //CHECKGL( glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap) );
 
     CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
     CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
-
+#endif
 
     _MemMap         = 0;
     _OffsetToLock   = 0;
@@ -110,12 +114,16 @@ namespace nux
 
   void IOpenGLPixelBufferObject::BindPackPixelBufferObject()
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL (glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, _OpenGLID) );
+#endif
   }
 
   void IOpenGLPixelBufferObject::BindUnpackPixelBufferObject()
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL (glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, _OpenGLID) );
+#endif
   }
 
   t_u32 IOpenGLPixelBufferObject::GetSize()

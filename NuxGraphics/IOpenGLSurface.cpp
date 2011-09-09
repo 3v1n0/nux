@@ -241,12 +241,17 @@ namespace nux
 
     BYTE *DataPtr = 0;
 
+#ifndef NUX_OPENGLES_20
     if (_STextureTarget == GL_TEXTURE_2D || _STextureTarget == GL_TEXTURE_RECTANGLE_ARB || _STextureTarget == GL_TEXTURE_CUBE_MAP || _STextureTarget == GL_TEXTURE_3D)
+#else
+    if (_STextureTarget == GL_TEXTURE_2D)
+#endif
     {
       int w = _Rect.right - _Rect.left;
       int h = _Rect.bottom - _Rect.top;
       CHECKGL ( glBindTexture (_STextureTarget, _BaseTexture->_OpenGLID) );
 
+#ifndef NUX_OPENGLES_20
       if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects() )
       {
         // Unmap the texture image buffer
@@ -257,11 +262,15 @@ namespace nux
       else
       {
         CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
+#endif
         DataPtr = (BYTE *) _LockedRect.pBits;
+#ifndef NUX_OPENGLES_20
       }
+#endif
 
       IOpenGLTexture2D *texture = (IOpenGLTexture2D *) _BaseTexture;
 
+#ifndef NUX_OPENGLES_20
       if ( /*texture->_PixelFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ||*/
         texture->_PixelFormat == BITFMT_DXT1 ||
         texture->_PixelFormat == BITFMT_DXT2 ||
@@ -344,6 +353,7 @@ namespace nux
         //CHECKGL( glPixelStorei(GL_UNPACK_ROW_LENGTH, w) );
         if (_STextureTarget != GL_TEXTURE_3D)
         {
+#endif
           CHECKGL ( glTexSubImage2D (_SSurfaceTarget,
                                      _SMipLevel,
                                      _Rect.left,
@@ -354,6 +364,7 @@ namespace nux
                                      GPixelFormats[texture->_PixelFormat].type,
                                      DataPtr
                                     ) );
+#ifndef NUX_OPENGLES_20
         }
         else
         {
@@ -388,12 +399,14 @@ namespace nux
         //                ) );
 
       }
+#endif
     }
     else
     {
       nuxDebugMsg (TEXT("[IOpenGLSurface::UnlockRect] Incorrect Texture Target."));
     }
 
+#ifndef NUX_OPENGLES_20
     if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects() )
     {
       CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
@@ -401,12 +414,15 @@ namespace nux
     }
     else
     {
+#endif
       //[DEBUGGING - NO PBO]
       if (_LockedRect.pBits)
       {
         delete [] ( (BYTE *) _LockedRect.pBits);
       }
+#ifndef NUX_OPENGLES_20
     }
+#endif
 
     CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetGraphicsDisplay()->GetGpuDevice()->GetPixelStoreAlignment() ) );
 
@@ -434,6 +450,7 @@ namespace nux
 
     CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, MemAlignment) );
 
+#ifndef NUX_OPENGLES_20
     if ( _BaseTexture->_PixelFormat == BITFMT_DXT1 ||
          _BaseTexture->_PixelFormat == BITFMT_DXT2 ||
          _BaseTexture->_PixelFormat == BITFMT_DXT3 ||
@@ -474,6 +491,7 @@ namespace nux
     {
       if (_STextureTarget != GL_TEXTURE_3D)
       {
+#endif
         glTexImage2D (
           _SSurfaceTarget,
           _SMipLevel,                 // level
@@ -485,6 +503,7 @@ namespace nux
           GPixelFormats[_BaseTexture->_PixelFormat].type,
           DummyBuffer);
         CHECKGL_MSG (glTexImage2D);
+#ifndef NUX_OPENGLES_20
       }
       else
       {
@@ -502,6 +521,7 @@ namespace nux
         //             CHECKGL_MSG(glTexImage3D);
       }
     }
+#endif
 
     delete [] DummyBuffer;
 
@@ -534,7 +554,11 @@ namespace nux
   {
     CHECKGL (glPixelStorei (GL_UNPACK_ALIGNMENT, _BaseTexture->GetFormatRowMemoryAlignment ()));
 
+#ifndef NUX_OPENGLES_20
     if (_STextureTarget == GL_TEXTURE_2D || _STextureTarget == GL_TEXTURE_RECTANGLE_ARB || _STextureTarget == GL_TEXTURE_CUBE_MAP || _STextureTarget == GL_TEXTURE_3D)
+#else
+    if (_STextureTarget == GL_TEXTURE_2D)
+#endif
     {
       CHECKGL ( glBindTexture (_STextureTarget, _BaseTexture->_OpenGLID) );
 
@@ -564,17 +588,14 @@ namespace nux
           height));
       }
 #else
-      if (_STextureTarget != GL_TEXTURE_3D)
-      {
-        CHECKGL (glCopyTexImage2D (_SSurfaceTarget,
-          _SMipLevel,
-          GPixelFormats [texture->_PixelFormat].Format,
-          x,
-          y,
-          width,
-          height,
-          0));
-      }
+      CHECKGL (glCopyTexImage2D (_SSurfaceTarget,
+        _SMipLevel,
+        GPixelFormats [_BaseTexture->_PixelFormat].Format,
+        x,
+        y,
+        width,
+        height,
+        0));
 #endif
     }
   }
@@ -585,6 +606,7 @@ namespace nux
     height = 0;
     format = BITFMT_UNKNOWN;
 
+#ifndef NUX_OPENGLES_20
     // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
     int texwidth = ImageSurface::GetLevelWidth (_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
     int texheight = ImageSurface::GetLevelHeight (_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
@@ -605,6 +627,10 @@ namespace nux
     height = _BaseTexture->_Height;
     format = BITFMT_R8G8B8A8;
     return img;
+#else
+//FIXME: need to render to framebuffer and use glReadPixels
+    return NULL;
+#endif
   }
 
 }

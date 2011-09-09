@@ -371,3 +371,4 @@ namespace nux
     return _ClippingRegionStack.size ();
   }
 }
+

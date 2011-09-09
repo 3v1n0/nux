@@ -80,10 +80,15 @@ namespace nux
     nuxAssert (_SizeToLock == 0);
 
     CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, _OpenGLID) );
+#ifndef NUX_OPENGLES_20
     // Map the Entire buffer into system memory
     _MemMap = (BYTE *) glMapBufferARB (GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
     CHECKGL_MSG (glMapBufferARB);
     *ppbData = (void *) (_MemMap + OffsetToLock);
+#else
+    _MemMap = new BYTE[SizeToLock];
+    *ppbData = _MemMap;
+#endif
 
     _OffsetToLock   = OffsetToLock;
     _SizeToLock     = SizeToLock;
@@ -96,9 +101,13 @@ namespace nux
   int IOpenGLVertexBuffer::Unlock()
   {
     CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, _OpenGLID) );
-    //CHECKGL( glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap) );
 
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glUnmapBufferARB (GL_ARRAY_BUFFER_ARB) );
+#else
+    CHECKGL( glBufferSubData (GL_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap) );
+    delete [] _MemMap;
+#endif
     CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
 
     _MemMap         = 0;

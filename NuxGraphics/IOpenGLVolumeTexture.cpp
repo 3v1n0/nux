@@ -36,6 +36,7 @@ namespace nux
     , BitmapFormat PixelFormat)
     : IOpenGLBaseTexture (RTVOLUMETEXTURE, Width, Height, Depth, Levels, PixelFormat)
   {
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glGenTextures (1, &_OpenGLID) );
     CHECKGL ( glBindTexture (GL_TEXTURE_3D, _OpenGLID) );
 
@@ -65,6 +66,7 @@ namespace nux
     SetWrap (GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
     SetRenderStates();
     GRunTimeStats.Register (this);
+#endif
   }
 
   IOpenGLVolumeTexture::~IOpenGLVolumeTexture()
@@ -177,3 +179,4 @@ namespace nux
   }
 
 }
+

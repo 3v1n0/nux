@@ -43,9 +43,11 @@ namespace nux
     {TEXWRAP_CLAMP_TO_EDGE,                 GL_CLAMP_TO_EDGE},
     {TEXWRAP_CLAMP_TO_BORDER,               GL_CLAMP_TO_BORDER},
     {TEXWRAP_MIRRORED_REPEAT,               GL_MIRRORED_REPEAT},
+#ifndef NUX_OPENGLES_20
     {TEXWRAP_MIRROR_CLAMP_EXT,              GL_MIRROR_CLAMP_EXT},
     {TEXWRAP_MIRROR_CLAMP_TO_EDGE_EXT,      GL_MIRROR_CLAMP_TO_EDGE_EXT},
     {TEXWRAP_MIRROR_CLAMP_TO_BORDER_EXT,    GL_MIRROR_CLAMP_TO_BORDER_EXT},
+#endif
     {TEXWRAP_UNKNOWN,                       0}
   };
 
@@ -286,6 +288,41 @@ namespace nux
         texxform.vwrap = TEXWRAP_CLAMP;
       }
     }
+
+#ifdef NUX_OPENGLES_20
+    // Enforce OpenGL ES 2.0 texture restrictions
+    // 1. There is neither CLAMP nor CLAMP_TO_BORDER
+    // 2. For NPOT textures, only CLAMP_TO_EDGE is supported
+    // 3. For NPOT textures, only NEAREST and LINEAR are supported
+    //
+    // The last two constraints are relaxed by the GL_OES_texture_npot
+    // extension which unfortunately is not supported by all implementations.
+    //
+    // Notes: we have mapped GL_CLAMP to GL_CLAMP_TO_EDGE in OpenGLMapping.h
+    // so we also "support" TEXWRAP_CLAMP.
+    if (texxform.uwrap == TEXWRAP_CLAMP_TO_BORDER ||
+        texxform.vwrap == TEXWRAP_CLAMP_TO_BORDER ||
+        (!tex->IsPowerOfTwo() &&
+         ((texxform.uwrap != TEXWRAP_CLAMP &&
+           texxform.uwrap != TEXWRAP_CLAMP_TO_EDGE) ||
+          (texxform.vwrap != TEXWRAP_CLAMP &&
+           texxform.vwrap != TEXWRAP_CLAMP_TO_EDGE))))
+    {
+      texxform.uwrap = TEXWRAP_CLAMP_TO_EDGE;
+      texxform.vwrap = TEXWRAP_CLAMP_TO_EDGE;
+    }
+
+    if (!tex->IsPowerOfTwo() &&
+        ((texxform.min_filter != TEXFILTER_NEAREST &&
+          texxform.min_filter != TEXFILTER_LINEAR) ||
+         (texxform.mag_filter != TEXFILTER_NEAREST &&
+          texxform.mag_filter != TEXFILTER_LINEAR)))
+    {
+      texxform.min_filter = TEXFILTER_LINEAR;
+      texxform.mag_filter = TEXFILTER_LINEAR;
+    }
+#endif
+
     tex->SetWrap (TexWrapGLMapping (texxform.uwrap), TexWrapGLMapping (texxform.vwrap), GL_CLAMP);
     tex->SetFiltering (TexFilterGLMapping (texxform.min_filter), TexFilterGLMapping (texxform.mag_filter) );
   }
@@ -559,7 +596,7 @@ namespace nux
     else
       return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #else
-    return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+    return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #endif
   }
 
