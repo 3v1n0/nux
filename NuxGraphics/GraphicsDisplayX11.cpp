@@ -527,6 +527,8 @@ namespace nux
     m_X11Window = X11Window;
     m_GLCtx = OpenGLContext;
 
+    m_X11Screen = DefaultScreen(m_X11Display);
+
     Window root_return;
     int x_return, y_return;
     unsigned int width_return, height_return;

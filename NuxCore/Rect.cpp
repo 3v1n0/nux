@@ -89,6 +89,11 @@ namespace nux
     return true;
   }
 
+  bool Rect::IsNull() const
+  {
+    return ((width == 0) || (height == 0));
+  }
+
   void Rect::Set (int px, int py, int w, int h)
   {
     x = px;

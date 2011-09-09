@@ -811,6 +811,7 @@ namespace nux
         _delta_x = 0;
       }
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      scrolling.emit(_delta_x, _delta_y);
     }
 
     if (m_CompositionLayout)
@@ -833,6 +834,7 @@ namespace nux
         _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
       }
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      scrolling.emit(_delta_x, _delta_y);
     }
 
     if (m_CompositionLayout)
@@ -855,6 +857,7 @@ namespace nux
         _delta_y = 0;
       }
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      scrolling.emit(_delta_x, _delta_y);
     }
 
     if (m_CompositionLayout)
@@ -877,6 +880,7 @@ namespace nux
         _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
       }
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      scrolling.emit(_delta_x, _delta_y);
     }
 
     if (m_CompositionLayout)

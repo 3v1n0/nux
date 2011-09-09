@@ -113,9 +113,13 @@ namespace nux
     Geometry m_ContentGeometry;
 
     // signals
-    sigc::signal<void> SigTest;
-    sigc::signal<void> sigMoveWindow;
-    sigc::signal<void, int, int, int, int> sigResize;
+    /*!
+        Emitted when scrolling happens. the parameters to the signals are:
+        int: value of the horizontal translation of the layout.
+        int: value of the vertical translation of the layout.
+        This signal is emitted only if the scroll view has a layout.
+    */
+    sigc::signal<void, int, int> scrolling;
 
   public:
     void    SetViewContentLeftMargin (int margin)

@@ -437,6 +437,11 @@ namespace nux
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
     sigc::signal<void, Area *, bool> OnVisibleChanged;
     sigc::signal<void, Area *, bool> OnSensitiveChanged;
+
+    /*!
+        This signal is only meant to inform of a change of size. When receiving this signal don't do anything
+        that could change the size of this object. Or you risk creating an infinite loop.
+    */
     sigc::signal<void, Area *, Geometry&> OnGeometryChanged;
 
     /*!
@@ -535,8 +540,17 @@ namespace nux
     */
     //virtual void RemoveChildObject(smptr(Area));
 
-    virtual void GeometryChangePending () {}
-    virtual void GeometryChanged () {}
+    /*!
+        This signal is only meant to inform that the size is about to change. When overriding this function,
+        don't do anything that could change the size of this object. Or you risk creating an infinite loop.
+    */
+    virtual void GeometryChangePending() {}
+    
+    /*!
+        This signal is only meant to inform that the size has changed. When overriding this function,
+        don't do anything that could change the size of this object. Or you risk creating an infinite loop.
+    */
+    virtual void GeometryChanged() {}
 
     //! Request a Layout recompute after a change of size
     /*

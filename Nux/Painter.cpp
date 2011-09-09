@@ -283,23 +283,23 @@ namespace nux
 // Draw QUADS    //
 ///////////////////
 
-  void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0) const
+  void BasePainter::Paint2DQuadColor(GraphicsEngine &GfxContext, const Geometry &g, const Color &c0) const
   {
     GfxContext.QRP_Color (g.x, g.y, g.GetWidth(), g.GetHeight(), c0);
   }
 
-  void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const
+  void BasePainter::Paint2DQuadColor(GraphicsEngine &GfxContext, const Geometry &g, const Color &c0_top_left, const Color &c1_bottom_left, const Color &c2_bottom_right, const Color &c3_top_right) const
   {
     GfxContext.QRP_Color (g.x, g.y, g.GetWidth(), g.GetHeight(), c0_top_left, c1_bottom_left, c2_bottom_right, c3_top_right);
   }
 
-  void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0) const
+  void BasePainter::Paint2DQuadColor(GraphicsEngine &GfxContext, int x, int y, int width, int height, const Color &c0) const
   {
     GfxContext.QRP_Color (x, y, width, height, c0);
   }
 
 
-  void BasePainter::Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const
+  void BasePainter::Paint2DQuadColor(GraphicsEngine &GfxContext, int x, int y, int width, int height, const Color &c0_top_left, const Color &c1_bottom_left, const Color &c2_bottom_right, const Color &c3_top_right) const
   {
     GfxContext.QRP_Color (x, y, width, height, c0_top_left, c1_bottom_left, c2_bottom_right, c3_top_right);
   }
@@ -386,7 +386,11 @@ namespace nux
 ////////////////////
 
 
-  void BasePainter::PaintShape (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha) const
+  void BasePainter::PaintShape(GraphicsEngine &GfxContext,
+                               const Geometry &geo,
+                               const Color &c0,
+                               UXStyleImageRef style,
+                               bool WriteAlpha) const
   {
     ROPConfig ROP;
     ROP.Blend = true;
@@ -395,7 +399,12 @@ namespace nux
     PaintShapeCornerROP (GfxContext, geo, c0, style, eCornerTopLeft | eCornerTopRight | eCornerBottomLeft | eCornerBottomRight, WriteAlpha, ROP);
   }
 
-  void BasePainter::PaintShapeCorner (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha) const
+  void BasePainter::PaintShapeCorner(GraphicsEngine &GfxContext,
+                                     const Geometry &geo,
+                                     const Color &c0,
+                                     UXStyleImageRef style,
+                                     long corners,
+                                     bool WriteAlpha) const
   {
     ROPConfig ROP;
     ROP.Blend = true;
@@ -404,12 +413,22 @@ namespace nux
     PaintShapeCornerROP (GfxContext, geo, c0, style, corners, WriteAlpha, ROP);
   }
 
-  void BasePainter::PaintShapeROP (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha, const ROPConfig &ROP) const
+  void BasePainter::PaintShapeROP(GraphicsEngine &GfxContext,
+                                  const Geometry &geo,
+                                  const Color &c0,
+                                  UXStyleImageRef style,
+                                  bool WriteAlpha, const ROPConfig &ROP) const
   {
     PaintShapeCornerROP (GfxContext, geo, c0, style, eCornerTopLeft | eCornerTopRight | eCornerBottomLeft | eCornerBottomRight, WriteAlpha, ROP);
   }
 
-  void BasePainter::PaintShapeCornerROP (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha, const ROPConfig &ROP) const
+  void BasePainter::PaintShapeCornerROP(GraphicsEngine &GfxContext,
+                                        const Geometry &geo,
+                                        const Color &c0,
+                                        UXStyleImageRef style,
+                                        long corners,
+                                        bool WriteAlpha,
+                                        const ROPConfig &ROP) const
   {
     const PainterImage *pimage = GetTheme().GetImage (style);
 

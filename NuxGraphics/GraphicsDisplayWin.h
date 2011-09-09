@@ -59,9 +59,9 @@ namespace nux
   private:
 #ifdef WIN32
     // WIN32 system variables
-    HGLRC       _opengl_rendering_context;  //!< OpenGL Rendering Context.
-    HDC         _device_context;            //!< Device Context.
-    HWND        m_hWnd;                     //!< Window Handle.
+    HGLRC       opengl_rendering_context_;  //!< OpenGL Rendering Context.
+    HDC         device_context_;            //!< Device Context.
+    HWND        wnd_handle_;                     //!< Window Handle.
     HWND        m_ParentWindow;
 
     TCHAR m_WindowClassName[256];
@@ -82,7 +82,7 @@ namespace nux
     bool m_fullscreen;
     unsigned int m_ScreenBitDepth;
 
-    // verifiy that the interface is properly created
+    // verify that the interface is properly created
     bool m_GfxInterfaceCreated;
 
     // Device information
@@ -91,7 +91,7 @@ namespace nux
 
     bool m_is_window_minimized;
 
-    HCURSOR m_Cursor;
+    HCURSOR cursor_;
 
     static int Win32KeySymToINL (int Keysym);
     static int Win32VKToNuxKey (int vk);
@@ -163,7 +163,7 @@ namespace nux
 
     HWND GetWindowHandle() const
     {
-      return m_hWnd;
+      return wnd_handle_;
     }
     HWND GetParentWindowHandle() const
     {
@@ -171,7 +171,7 @@ namespace nux
     }
     HDC GetWindowHDC() const
     {
-      return _device_context;
+      return device_context_;
     }
     bool IsChildWindow() const
     {

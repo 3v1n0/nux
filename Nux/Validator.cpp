@@ -28,7 +28,6 @@ namespace nux
 
   Validator::Validator()
   {
-    _regexp = 0;
   }
 
   Validator::~Validator()
@@ -38,25 +37,39 @@ namespace nux
 
   bool Validator::InitRegExp ()
   {
-    const char *error;
+    regex_ = _regexp_str.GetTCharPtr();
+
+    /*const char *error;
     int   erroffset;
     _regexp = pcre_compile (
-      _regexp_str.GetTCharPtr (),    /* the pattern */
+      _regexp_str.GetTCharPtr (),    / * the pattern * /
       PCRE_MULTILINE,
-      &error,         /* for error message */
-      &erroffset,     /* for error offset */
-      0);             /* use default character tables */
+      &error,         / * for error message * /
+      &erroffset,     / * for error offset * /
+      0);             / * use default character tables * /
 
     if (!_regexp)
     {
       nuxDebugMsg (TEXT("[IntegerValidator::IntegerValidator] Invalid regular expression: %s"), _regexp_str.GetTCharPtr ());
       return false;
     }    
+*/
     return true;
   }
 
-  Validator::State Validator::Validate (const TCHAR *str) const
+  Validator::State Validator::Validate (const char* str) const
   {
+    if (str == NULL)
+      return Validator::Invalid;
+    std::string search_string = str;
+
+    if (std::regex_match(search_string.begin(), search_string.end(), regex_))
+    {
+      return Validator::Acceptable;
+    }
+    return Validator::Acceptable;
+
+/*
     if (_regexp == 0)
       return Validator::Invalid;
 
@@ -76,6 +89,7 @@ namespace nux
     }
 
     return Validator::Acceptable;
+*/
   }
 
 }

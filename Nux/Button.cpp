@@ -158,25 +158,15 @@ namespace nux
     else if (image != NULL)
     {
       layout->AddView(image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      layout->SetContentDistribution(MAJOR_POSITION_CENTER);
     }
     else if (text != NULL)
     {
-      layout->AddView(text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      layout->AddView(text, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      layout->SetContentDistribution(MAJOR_POSITION_CENTER);
     }
 
-    Layout *HPadding = new HLayout(NUX_TRACKER_LOCATION);
-    Layout *VPadding = new VLayout(NUX_TRACKER_LOCATION);
-
-    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout(layout, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    HPadding->AddLayout(VPadding, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-
-    // NOTE - setting the layout here, unreferences the previous one, should cause all the memory
-    // to be freed
-    SetLayout (HPadding);
+    SetLayout(layout);
 
     QueueDraw();
   }
