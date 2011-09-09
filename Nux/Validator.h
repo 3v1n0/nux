@@ -24,7 +24,7 @@
 #define VALIDATOR_H
 
 #if defined (NUX_OS_WINDOWS)
-  #include "pcre/pcre.h"
+  #include <regex>
 #else
   #include <pcre.h>
 #endif
@@ -53,7 +53,7 @@ namespace nux
   protected:
     bool InitRegExp ();
     NString _regexp_str;
-    pcre *_regexp;
+    std::regex regex_;
   };
 }
 

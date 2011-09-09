@@ -168,11 +168,11 @@ namespace nux
                                      bool WriteAlphaChannel = true,
                                      TextAlignment alignment = eAlignTextLeft) const;
 
-    void Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0) const;
-    void Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const;
+    void Paint2DQuadColor(GraphicsEngine &GfxContext, const Geometry &g, const Color &c0) const;
+    void Paint2DQuadColor(GraphicsEngine &GfxContext, const Geometry &g, const Color &c0_top_left, const Color &c1_bottom_left, const Color &c2_bottom_right, const Color &c3_top_right) const;
 
-    void Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0) const;
-    void Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const;
+    void Paint2DQuadColor(GraphicsEngine &GfxContext, int x, int y, int width, int height, const Color &c0) const;
+    void Paint2DQuadColor(GraphicsEngine &GfxContext, int x, int y, int width, int height, const Color &c0_top_left, const Color &c1_bottom_left, const Color &c2_bottom_right, const Color &c3_top_right) const;
 
     //! Paint a 2D quad with a gradient color going from Top to Bottom.
     /*! Paint a 2D quad with a gradient color going from Top to Bottom.
@@ -180,16 +180,16 @@ namespace nux
         @param TopColor color at the top of the quad.
         @param TopColor color at the bottom of the quad.
     */
-    void Paint2DQuadVGradient (GraphicsEngine &GfxContext, const Geometry &g, Color TopColor, Color BottomColor) const;
+    void Paint2DQuadVGradient(GraphicsEngine &GfxContext, const Geometry &g, Color TopColor, Color BottomColor) const;
     //! Paint a 2D quad with a gradient color going from Left to Right.
     /*! Paint a 2D quad with a gradient color going from Left to Right.
         @param g Geometry of the quad.
         @param LeftColor color at the top of the quad.
         @param RightColor color at the bottom of the quad.
     */
-    void Paint2DQuadHGradient (GraphicsEngine &GfxContext, const Geometry &g, Color LeftColor, Color RightColor) const;
+    void Paint2DQuadHGradient(GraphicsEngine &GfxContext, const Geometry &g, Color LeftColor, Color RightColor) const;
 
-    void Paint2DQuadWireframe (GraphicsEngine &GfxContext, const Geometry &g, Color c0) const;
+    void Paint2DQuadWireframe(GraphicsEngine &GfxContext, const Geometry &g, Color c0) const;
     void Paint2DQuadWireframe (GraphicsEngine &GfxContext, const Geometry &g, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const;
 
     void Paint2DQuadWireframe (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0) const;
@@ -215,12 +215,17 @@ namespace nux
     ////////////////////
     // Themes         //
     ////////////////////
-    void PaintShape (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha = true) const;
-    void PaintShapeCorner (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha = true) const;
-    void PaintShapeROP (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha = true,
+    void PaintShape (GraphicsEngine &GfxContext, const Geometry &geo, const Color &c0, UXStyleImageRef style, bool WriteAlpha = true) const;
+    void PaintShapeCorner (GraphicsEngine &GfxContext, const Geometry &geo, const Color &c0, UXStyleImageRef style, long corners, bool WriteAlpha = true) const;
+    void PaintShapeROP (GraphicsEngine &GfxContext, const Geometry &geo, const Color &c0, UXStyleImageRef style, bool WriteAlpha = true,
                         const ROPConfig &ROP = ROPConfig::Default) const;
-    void PaintShapeCornerROP (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha = true,
-                              const ROPConfig &ROP = ROPConfig::Default) const;
+    void PaintShapeCornerROP(GraphicsEngine &GfxContext,
+                            const Geometry &geo,
+                            const Color &c0,
+                            UXStyleImageRef style,
+                            long corners,
+                            bool WriteAlpha = true,
+                            const ROPConfig &ROP = ROPConfig::Default) const;
 
     void PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, UXStyleImageRef style) const;
     void PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, BaseTexture *Texture,
