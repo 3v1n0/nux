@@ -2006,6 +2006,8 @@ namespace nux
     image = XGetImage (display, _dnd_source_window, 0, 0, data->GetWidth (), data->GetHeight (), AllPlanes, ZPixmap);
     GC gc = XCreateGC (display, _dnd_source_window, 0, NULL);
     
+    BitmapFormat format = data->GetFormat();
+    
     /* draw some shit */
     if (data->IsTextureData())
     {
@@ -2017,8 +2019,12 @@ namespace nux
         for (x = 0; x < data->GetWidth (); x++)
         {
           long pixel = (long) surface.Read (x, y);
-          
-          long a = ((pixel >> 24) & 0xff);
+	  long a;
+	  
+	  if (format  == BITFMT_R8G8B8)
+	    a = 255;
+	  else
+	    a = ((pixel >> 24) & 0xff);
           long r = (((pixel >> 16) & 0xff) * a) / 255;
           long g = (((pixel >> 8)  & 0xff) * a) / 255;
           long b = (((pixel >> 0)  & 0xff) * a) / 255;

@@ -908,7 +908,7 @@ namespace nux
       direction = KEY_NAV_RIGHT;
       break;
     case NUX_VK_LEFT_TAB:
-      direction = KEY_NAV_TAB_NEXT;
+      direction = KEY_NAV_TAB_PREVIOUS;
       break;
     case NUX_VK_TAB:
       direction = KEY_NAV_TAB_NEXT;
