@@ -256,7 +256,11 @@ namespace nux
 
     inline void EnableScissor (t_u32 bScissor = FALSE);
     inline void EnableFog (t_u32 bFog = FALSE);
+#ifndef NUX_OPENGLES_20
     inline void SetPolygonMode (t_u32 FrontMode = GL_FILL, t_u32 BackMode = GL_FILL);
+#else
+    inline void SetPolygonMode (t_u32 FrontMode, t_u32 BackMode);
+#endif
 
     inline void SetPolygonOffset (t_u32 bEnable,
                                   float Factor = 0.0f, float Units = 0.0f);
@@ -852,6 +856,7 @@ namespace nux
 //////////////////////////////////////
   inline void GpuRenderStates::HW__EnableAlphaTest (t_u32 b)
   {
+#ifndef NUX_OPENGLES_20
     if (b)
     {
       CHECKGL (glEnable (GL_ALPHA_TEST) );
@@ -862,11 +867,13 @@ namespace nux
     }
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTENABLE], b ? GL_TRUE : GL_FALSE);
+#endif
   }
 
   inline void GpuRenderStates::HW__SetAlphaTestFunc (t_u32 AlphaTestFunc_,
       BYTE  AlphaTestRef_)
   {
+#ifndef NUX_OPENGLES_20
     nuxAssertMsg (
       (AlphaTestFunc_ == GL_NEVER) ||
       (AlphaTestFunc_ == GL_LESS) ||
@@ -881,6 +888,7 @@ namespace nux
     CHECKGL (glAlphaFunc (AlphaTestFunc_, (float) AlphaTestRef_ * (1.0f / 255.0f) ) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTFUNC], AlphaTestFunc_);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_ALPHATESTREF], AlphaTestRef_);
+#endif
   }
 
   inline void GpuRenderStates::HW__EnableAlphaBlend (t_u32 b)
@@ -928,6 +936,21 @@ namespace nux
     t_u32 BlendOpRGB_,
     t_u32 BlendOpAlpha_)
   {
+#ifdef NUX_OPENGLES_20
+    nuxAssertMsg (
+      (BlendOpRGB_ == GL_FUNC_ADD) ||
+      (BlendOpRGB_ == GL_FUNC_SUBTRACT) ||
+      (BlendOpRGB_ == GL_FUNC_REVERSE_SUBTRACT),
+      TEXT ("Error(HW__SetAlphaBlendOp): Invalid Blend Equation RenderState") );
+    nuxAssertMsg (
+      (BlendOpAlpha_ == GL_FUNC_ADD) ||
+      (BlendOpAlpha_ == GL_FUNC_SUBTRACT) ||
+      (BlendOpAlpha_ == GL_FUNC_REVERSE_SUBTRACT),
+      TEXT ("Error(HW__SetAlphaBlendOp): Invalid Blend Equation RenderState") );
+
+    CHECKGL (glBlendEquationSeparate (BlendOpRGB_, BlendOpAlpha_) );
+
+#else
     nuxAssertMsg (
       (BlendOpRGB_ == GL_FUNC_ADD) ||
       (BlendOpRGB_ == GL_FUNC_SUBTRACT) ||
@@ -955,6 +978,7 @@ namespace nux
     {
       CHECKGL (glBlendEquation (BlendOpRGB_) );
     }
+#endif
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BLENDOP], BlendOpRGB_);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BLENDOPALPHA], BlendOpAlpha_);
@@ -1318,6 +1342,7 @@ namespace nux
 
   inline void GpuRenderStates::HW__EnableLineSmooth (t_u32 EnableLineSmooth)
   {
+#ifndef NUX_OPENGLES_20
     if (EnableLineSmooth)
     {
       CHECKGL (glEnable (GL_LINE_SMOOTH) );
@@ -1328,6 +1353,7 @@ namespace nux
     }
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_LINESMOOTHENABLE], EnableLineSmooth ? GL_TRUE : GL_FALSE);
+#endif
   }
 
   inline void GpuRenderStates::HW__SetLineWidth (t_u32 width,  t_u32 Hint)
@@ -1339,13 +1365,17 @@ namespace nux
       TEXT ("Error(HW__SetLineWidth): Invalid Line Hint RenderState") );
 
     CHECKGL (glLineWidth (width) );
-    CHECKGL (glHint (GL_LINE_SMOOTH_HINT, Hint) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_LINEWIDTH], width);
+
+#ifndef NUX_OPENGLES_20
+    CHECKGL (glHint (GL_LINE_SMOOTH_HINT, Hint) );
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_LINEHINT], Hint);
+#endif
   }
 
   inline void GpuRenderStates::HW__EnablePointSmooth (t_u32 EnablePointSmooth)
   {
+#ifndef NUX_OPENGLES_20
     if (EnablePointSmooth)
     {
       CHECKGL (glEnable (GL_POINT_SMOOTH) );
@@ -1356,10 +1386,12 @@ namespace nux
     }
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_POINTSMOOTHENABLE], EnablePointSmooth ? GL_TRUE : GL_FALSE);
+#endif
   }
 
   inline void GpuRenderStates::HW__SetPointSize (t_u32 size,  t_u32 Hint)
   {
+#ifndef NUX_OPENGLES_20
     nuxAssertMsg (
       (Hint == GL_NICEST) ||
       (Hint == GL_FASTEST) ||
@@ -1370,6 +1402,7 @@ namespace nux
     CHECKGL (glHint (GL_POINT_SMOOTH_HINT, Hint);)
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_POINTSIZE], size);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_POINTHINT], Hint);
+#endif
   }
 
   inline void GpuRenderStates::HW__SetColorMask (
@@ -1407,6 +1440,7 @@ namespace nux
 
   inline void GpuRenderStates::HW__EnableFog (t_u32 bFog)
   {
+#ifndef NUX_OPENGLES_20
     if (bFog)
     {
       CHECKGL (glEnable (GL_FOG) );
@@ -1417,10 +1451,12 @@ namespace nux
     }
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FOGENABLE], bFog ? GL_TRUE : GL_FALSE);
+#endif
   }
 
   inline void GpuRenderStates::HW__SetPolygonMode (t_u32 FrontMode, t_u32 BackMode)
   {
+#ifndef NUX_OPENGLES_20
     nuxAssertMsg (
       (FrontMode == GL_FILL) ||
       (FrontMode == GL_LINE) ||
@@ -1438,6 +1474,7 @@ namespace nux
 
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_FRONT_POLYGONMODE], FrontMode);
     SET_RS_VALUE (m_RenderStateChanges[GFXRS_BACK_POLYGONMODE], BackMode);
+#endif
   }
 
   inline void GpuRenderStates::HW__EnablePolygonOffset (t_u32 EnablePolygonOffset)

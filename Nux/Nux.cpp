@@ -124,9 +124,15 @@ namespace nux
   }
 
 #elif defined(NUX_OS_LINUX)
+#ifdef NUX_OPENGLES_20
+  WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,
+                                         ThreadUserInitFunc UserInitFunc,
+                                         void *InitData)
+#else
   WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
                                          ThreadUserInitFunc UserInitFunc,
                                          void *InitData)
+#endif
   {
     if (GetWindowThread() )
     {

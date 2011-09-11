@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 InalogicÂ® Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -98,19 +98,7 @@ namespace nux
       RetSource = ShaderSource.GetSubString (shaderStringStart, i - shaderStringStart);
 
       //Add the line directive to the shader source. See the documentation for GLSL #line directive.
-      // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
-      t_size Pos = RetSource.FindFirstOccurence (TEXT ("#version") );
-
-      while (RetSource[Pos] != TEXT ('\n') )
-      {
-        if (RetSource[Pos] == 0)
-          break;
-
-        ++Pos;
-      }
-
-      if (RetSource[Pos] != 0)
-        ++Pos;
+      t_size Pos = 0;
 
       t_size EndOfLinePosition = 0;
       t_size LinePosition = 0;
@@ -144,8 +132,7 @@ namespace nux
     if (ShaderPreprocessorDefines.Length() == 0)
       return;
 
-    // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
-    t_size Pos = RetSource.FindFirstOccurence (TEXT ("#version") );
+    t_size Pos = 0;
 
     if (Pos != tstring::npos)
     {
@@ -691,12 +678,12 @@ namespace nux
 
 
     //         Vertex Attribute Aliasing
-    //         GLSL attempts to eliminate aliasing of vertex attributes but this is integral to NVIDIA’s hardware
+    //         GLSL attempts to eliminate aliasing of vertex attributes but this is integral to NVIDIA's hardware
     //         approach and necessary for maintaining compatibility with existing OpenGL applications that NVIDIA customers rely on.
-    //         NVIDIA’s GLSL implementation therefore does not allow built-in vertex attributes to collide with a
+    //         NVIDIA's GLSL implementation therefore does not allow built-in vertex attributes to collide with a
     //         generic vertex attributes that is assigned to a particular vertex attribute index with glBindAttribLocation.
     //         For example, you should not use gl_Normal (a built-in vertex attribute) and also use glBindAttribLocation to
-    //         bind a generic vertex attribute named “whatever” to vertex attribute index 2 because gl_Normal aliases to index 2.
+    //         bind a generic vertex attribute named "whatever" to vertex attribute index 2 because gl_Normal aliases to index 2.
     //
     //         Built-in vertex attribute name      Incompatible aliased vertex attribute index
     //         gl_Vertex                           0
@@ -1225,10 +1212,12 @@ namespace nux
   void IOpenGLShaderProgram::GetObjectParameterfvARB (GLenum pname,
       GLfloat *params)
   {
+#ifndef NUX_OPENGLES_20
     glGetObjectParameterfvARB (_OpenGLID,
                                pname,
                                params);
     CHECKGL_MSG (glGetObjectParameterfvARB);
+#endif
   }
 
   bool IOpenGLShaderProgram::SetSampler (char *name, int texture_unit)

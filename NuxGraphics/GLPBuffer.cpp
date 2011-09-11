@@ -19,6 +19,7 @@
  *
  */
 
+#ifndef NUX_OPENGLES_20
 
 #include "NuxCore/NuxCore.h"
 #include "GLResource.h"
@@ -1059,3 +1060,6 @@ namespace nux
   }
 
 }
+
+#endif // NUX_OPENGLES_20
+

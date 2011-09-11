@@ -49,12 +49,14 @@ namespace nux
         case GL_INVALID_OPERATION:
           nuxWarningMsg (TEXT ("[CheckGLError] GL_INVALID_OPERATION error in File %s at line: %d"), file, line);
           break;
+#ifndef NUX_OPENGLES_20
         case GL_STACK_OVERFLOW:
           nuxWarningMsg (TEXT ("[CheckGLError] GL_STACK_OVERFLOW error in File %s at line: %d"), file, line);
           break;
         case GL_STACK_UNDERFLOW:
           nuxWarningMsg (TEXT ("[CheckGLError] GL_STACK_UNDERFLOW error in File %s at line: %d"), file, line);
           break;
+#endif
         case GL_OUT_OF_MEMORY:
           nuxWarningMsg (TEXT ("[CheckGLError] GL_OUT_OF_MEMORY error in File %s at line: %d"), file, line);
           break;
@@ -62,7 +64,9 @@ namespace nux
           nuxWarningMsg (TEXT ("[CheckGLError] UNKNOWN ERROR in File %s at line: %d"), file, line);
       }
 
+#ifndef NUX_OPENGLES_20
       nuxWarningMsg (TEXT ("[CheckGLError] OpenGL Error %d ( %s )  in File %s at line: %d \n"), glErr, ANSI_TO_TCHAR (gluErrorString (glErr) ), ANSI_TO_TCHAR (file), line);
+#endif
       retCode = 1;
 
 #ifdef NUX_DEBUG

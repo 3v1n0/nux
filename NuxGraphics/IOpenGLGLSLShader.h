@@ -165,13 +165,13 @@ namespace nux
 
     void GetUniformfv (char *name, GLfloat *values);
     void GetUniformiv (char *name, GLint *values);
-    int GetUniformLocationARB (const GLcharARB *name);
+    int GetUniformLocationARB (const GLchar *name);
     void GetActiveUniformARB (GLuint index,
                               GLsizei maxLength,
                               GLsizei *length,
                               GLint *size,
                               GLenum *type,
-                              GLcharARB *name);
+                              GLchar *name);
 
     //    glGetObjectParameterARBfv Parameters
     //        object

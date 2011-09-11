@@ -23,6 +23,8 @@
 #ifndef __PBUFFERS_H__
 #define __PBUFFERS_H__
 
+#ifndef NUX_OPENGLES_20
+
 #if defined(WIN32)
 #include "GLResource.h"
 
@@ -171,5 +173,7 @@ namespace nux
 #endif
   };
 }
+
+#endif // NUX_OPENGLES_20
 
 #endif // __PBUFFERS_H__
