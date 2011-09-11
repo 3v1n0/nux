@@ -2019,10 +2019,12 @@ namespace nux
         for (x = 0; x < data->GetWidth (); x++)
         {
           long pixel = (long) surface.Read (x, y);
-	  long a = 255;
+	  long a;
 	  
-	  if (format  == BITFMT_R8G8B8A8)
-	    long a = ((pixel >> 24) & 0xff);
+	  if (format  == BITFMT_R8G8B8)
+	    a = 255;
+	  else
+	    a = ((pixel >> 24) & 0xff);
           long r = (((pixel >> 16) & 0xff) * a) / 255;
           long g = (((pixel >> 8)  & 0xff) * a) / 255;
           long b = (((pixel >> 0)  & 0xff) * a) / 255;
