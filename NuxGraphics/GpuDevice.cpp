@@ -390,7 +390,7 @@ namespace nux
     _opengl_minor = 0;
 #endif
 
-    bool opengl_es_context_created = false;
+    //bool opengl_es_context_created = false;
 
 #if defined (NUX_OS_WINDOWS)
     if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || (_opengl_major >= 3) || opengl_es_20)

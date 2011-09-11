@@ -98,7 +98,19 @@ namespace nux
       RetSource = ShaderSource.GetSubString (shaderStringStart, i - shaderStringStart);
 
       //Add the line directive to the shader source. See the documentation for GLSL #line directive.
-      t_size Pos = 0;
+      // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
+      t_size Pos = RetSource.FindFirstOccurence (TEXT ("#version") );
+
+      while (RetSource[Pos] != TEXT ('\n') )
+      {
+        if (RetSource[Pos] == 0)
+          break;
+
+        ++Pos;
+      }
+
+      if (RetSource[Pos] != 0)
+        ++Pos;
 
       t_size EndOfLinePosition = 0;
       t_size LinePosition = 0;
@@ -132,7 +144,8 @@ namespace nux
     if (ShaderPreprocessorDefines.Length() == 0)
       return;
 
-    t_size Pos = 0;
+    // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
+    t_size Pos = RetSource.FindFirstOccurence (TEXT ("#version") );
 
     if (Pos != tstring::npos)
     {

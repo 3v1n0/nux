@@ -48,8 +48,11 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("               \n\
-                     uniform mat4 ViewProjectionMatrix;                 \n\
+    VSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                     "uniform mat4 ViewProjectionMatrix;                \n\
                      attribute vec4 AVertex;                            \n\
                      attribute vec4 VertexColor;                        \n\
                      varying vec4 vColor;                               \n\
@@ -61,11 +64,13 @@ namespace nux
 
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
 
-    PSString =  TEXT ("                             \n\
-                     #ifdef GL_ES                   \n\
-                     precision mediump float;       \n\
-                     #endif                         \n\
-                     varying vec4 vColor;           \n\
+    PSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                    "varying vec4 vColor;           \n\
                      void main()                    \n\
                      {                              \n\
                          gl_FragColor = vColor;     \n\
@@ -86,8 +91,11 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("               \n\
-                     attribute vec4 AVertex;                                 \n\
+    VSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                     "attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
                      uniform mat4 ViewProjectionMatrix;                      \n\
@@ -100,26 +108,19 @@ namespace nux
                      varyVertexColor = VertexColor;                          \n\
                      }");
 
-    PSString =  TEXT ("                                                          \n\
-                     #extension GL_ARB_texture_rectangle : enable                \n\
-                     #ifdef GL_ES                                                \n\
-                     precision mediump float;                                    \n\
-                     #endif                                                      \n\
-                     varying vec4 varyTexCoord0;                                 \n\
+    PSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                     "varying vec4 varyTexCoord0;                                 \n\
                      varying vec4 varyVertexColor;                               \n\
-                     #ifdef SAMPLERTEX2D                                         \n\
                      uniform sampler2D TextureObject0;                           \n\
                      vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
                      {                                                           \n\
                      return texture2D(TexObject, TexCoord.st);                   \n\
                      }                                                           \n\
-                     #elif defined SAMPLERTEX2DRECT                              \n\
-                     uniform sampler2DRect TextureObject0;                       \n\
-                     vec4 SampleTexture(sampler2DRect TexObject, vec4 TexCoord)  \n\
-                     {                                                           \n\
-                     return texture2DRect(TexObject, TexCoord.st);               \n\
-                     }                                                           \n\
-                     #endif                                                      \n\
                      void main()                                                 \n\
                      {                                                           \n\
                      vec4 v = SampleTexture(TextureObject0, varyTexCoord0);      \n\
@@ -145,8 +146,11 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("               \n\
-                     attribute vec4 AVertex;                                 \n\
+    VSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                     "attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
                      uniform mat4 ViewProjectionMatrix;                      \n\
@@ -159,26 +163,19 @@ namespace nux
                      varyVertexColor = VertexColor;                          \n\
                      }");
 
-    PSString =  TEXT ("                                                                 \n\
-                     #extension GL_ARB_texture_rectangle : enable                       \n\
-                     #ifdef GL_ES                                                       \n\
-                     precision mediump float;                                           \n\
-                     #endif                                                             \n\
-                     varying vec4 varyTexCoord0;                                        \n\
+    PSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                    "varying vec4 varyTexCoord0;                                        \n\
                      varying vec4 varyVertexColor;                                      \n\
-                     #ifdef SAMPLERTEX2D                                                \n\
                      uniform sampler2D TextureObject0;                                  \n\
                      vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)             \n\
                      {                                                                  \n\
                      return texture2D(TexObject, TexCoord.st);                          \n\
                      }                                                                  \n\
-                     #elif defined SAMPLERTEX2DRECT                                     \n\
-                     uniform sampler2DRect TextureObject0;                              \n\
-                     vec4 SampleTexture(sampler2DRect TexObject, vec4 TexCoord)         \n\
-                     {                                                                  \n\
-                     return texture2DRect(TexObject, TexCoord.st);                      \n\
-                     }                                                                  \n\
-                     #endif                                                             \n\
                      void main()                                                        \n\
                      {                                                                  \n\
                      float alpha = SampleTexture(TextureObject0, varyTexCoord0).w;      \n\
@@ -195,19 +192,6 @@ namespace nux
     CHECKGL ( glBindAttribLocation (m_SlColorModTexMaskAlpha->GetOpenGLID(), 1, "MyTextureCoord0") );
     CHECKGL ( glBindAttribLocation (m_SlColorModTexMaskAlpha->GetOpenGLID(), 2, "VectexColor") );
     m_SlColorModTexMaskAlpha->Link();
-
-#ifndef NUX_OPENGLES_20
-    m_SlColorModTexRectMaskAlpha = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
-    PS->SetShaderCode (TCHAR_TO_ANSI (*PSString), TEXT ("#define SAMPLERTEX2DRECT") );
-    m_SlColorModTexRectMaskAlpha->ClearShaderObjects();
-    m_SlColorModTexRectMaskAlpha->AddShaderObject (VS);
-    m_SlColorModTexRectMaskAlpha->AddShaderObject (PS);
-    CHECKGL ( glBindAttribLocation (m_SlColorModTexRectMaskAlpha->GetOpenGLID(), 0, "AVertex") );
-    CHECKGL ( glBindAttribLocation (m_SlColorModTexRectMaskAlpha->GetOpenGLID(), 1, "MyTextureCoord0") );
-    CHECKGL ( glBindAttribLocation (m_SlColorModTexRectMaskAlpha->GetOpenGLID(), 2, "VectexColor") );
-    m_SlColorModTexRectMaskAlpha->Link();
-#endif
   }
 
   void GraphicsEngine::InitSl2TextureAdd()
@@ -221,8 +205,11 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (  "                                                       \n\
-                        uniform mat4 ViewProjectionMatrix;                      \n\
+    VSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                        "uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
                         attribute vec4 MyTextureCoord1;                         \n\
@@ -235,36 +222,37 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (  "                                                           \n\
-                        #extension GL_ARB_texture_rectangle : enable                \n\
-                        #ifdef GL_ES                                                \n\
-                        precision mediump float;                                    \n\
-                        #endif                                                      \n\
-                        varying vec4 varyTexCoord0;                                 \n\
-                        varying vec4 varyTexCoord1;                                 \n\
-                        uniform vec4 color0;                                        \n\
-                        uniform vec4 color1;                                        \n\
-                        #ifdef SAMPLERTEX2D                                         \n\
-                        uniform sampler2D TextureObject0;                           \n\
-                        uniform sampler2D TextureObject1;                           \n\
-                        vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
-                        {                                                           \n\
-                        return texture2D(TexObject, TexCoord.st);                   \n\
-                        }                                                           \n\
-                        #elif defined SAMPLERTEX2DRECT                              \n\
-                        uniform sampler2DRect TextureObject0;                       \n\
-                        uniform sampler2DRect TextureObject1;                       \n\
-                        vec4 SampleTexture(sampler2DRect TexObject, vec4 TexCoord)  \n\
-                        {                                                           \n\
-                        return texture2DRect(TexObject, TexCoord.st);               \n\
-                        }                                                           \n\
-                        #endif                                                      \n\
-                        void main()                                                 \n\
-                        {                                                           \n\
-                        vec4 b0 = color0*SampleTexture(TextureObject0, varyTexCoord0);     \n\
-                        vec4 b1 = color1*SampleTexture(TextureObject1, varyTexCoord1);     \n\
-                        gl_FragColor = b0 + b1;                                             \n\
-                        }");
+    PSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                    "varying vec4 varyTexCoord0;                                 \n\
+                    varying vec4 varyTexCoord1;                                 \n\
+                    uniform vec4 color0;                                        \n\
+                    uniform vec4 color1;                                        \n\
+                    #ifdef SAMPLERTEX2D                                         \n\
+                    uniform sampler2D TextureObject0;                           \n\
+                    uniform sampler2D TextureObject1;                           \n\
+                    vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
+                    {                                                           \n\
+                    return texture2D(TexObject, TexCoord.st);                   \n\
+                    }                                                           \n\
+                    #elif defined SAMPLERTEX2DRECT                              \n\
+                    uniform sampler2DRect TextureObject0;                       \n\
+                    uniform sampler2DRect TextureObject1;                       \n\
+                    vec4 SampleTexture(sampler2DRect TexObject, vec4 TexCoord)  \n\
+                    {                                                           \n\
+                    return texture2DRect(TexObject, TexCoord.st);               \n\
+                    }                                                           \n\
+                    #endif                                                      \n\
+                    void main()                                                 \n\
+                    {                                                           \n\
+                    vec4 b0 = color0*SampleTexture(TextureObject0, varyTexCoord0);     \n\
+                    vec4 b1 = color1*SampleTexture(TextureObject1, varyTexCoord1);     \n\
+                    gl_FragColor = b0 + b1;                                             \n\
+                    }");
 
     m_Sl2TextureAdd = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
@@ -288,8 +276,11 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (  "                                                       \n\
-                        uniform mat4 ViewProjectionMatrix;                      \n\
+    VSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                        "uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
                         attribute vec4 MyTextureCoord1;                         \n\
@@ -302,27 +293,29 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (  "                                                           \n\
-                        #ifdef GL_ES                                                \n\
-                        precision mediump float;                                    \n\
-                        #endif                                                      \n\
-                        varying vec4 varyTexCoord0;                                 \n\
-                        varying vec4 varyTexCoord1;                                 \n\
-                        uniform vec4 color0;                                        \n\
-                        uniform vec4 color1;                                        \n\
-                        uniform sampler2D TextureObject0;                           \n\
-                        uniform sampler2D TextureObject1;                           \n\
-                        vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
-                        {                                                           \n\
-                          return texture2D(TexObject, TexCoord.st);                 \n\
-                        }                                                           \n\
-                        void main()                                                 \n\
-                        {                                                           \n\
-                          vec4 noise = SampleTexture (TextureObject0, varyTexCoord0); \n\
-                          vec4 noise_bx2 = color0 * (2.0 * noise - vec4 (1.0, 1.0, 1.0, 1.0));     \n\
-                          vec4 b1 = color1 * SampleTexture(TextureObject1, varyTexCoord1 + noise_bx2);     \n\
-                          gl_FragColor = b1;                                          \n\
-                        }");
+    PSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                    "varying vec4 varyTexCoord0;                                 \n\
+                    varying vec4 varyTexCoord1;                                 \n\
+                    uniform vec4 color0;                                        \n\
+                    uniform vec4 color1;                                        \n\
+                    uniform sampler2D TextureObject0;                           \n\
+                    uniform sampler2D TextureObject1;                           \n\
+                    vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
+                    {                                                           \n\
+                      return texture2D(TexObject, TexCoord.st);                 \n\
+                    }                                                           \n\
+                    void main()                                                 \n\
+                    {                                                           \n\
+                      vec4 noise = SampleTexture (TextureObject0, varyTexCoord0); \n\
+                      vec4 noise_bx2 = color0 * (2.0 * noise - vec4 (1.0, 1.0, 1.0, 1.0));     \n\
+                      vec4 b1 = color1 * SampleTexture(TextureObject1, varyTexCoord1 + noise_bx2);     \n\
+                      gl_FragColor = b1;                                          \n\
+                    }");
 
     m_Sl2TextureDepRead = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
@@ -346,8 +339,11 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (   "                                                       \n\
-                         uniform mat4 ViewProjectionMatrix;                      \n\
+    VSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                         "uniform mat4 ViewProjectionMatrix;                      \n\
                          attribute vec4 AVertex;                                 \n\
                          attribute vec4 MyTextureCoord0;                         \n\
                          attribute vec4 MyTextureCoord1;                         \n\
@@ -360,12 +356,13 @@ namespace nux
                          gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                          }");
 
-    PSString =  TEXT (   "                                                           \n\
-                         #extension GL_ARB_texture_rectangle : enable                \n\
-                         #ifdef GL_ES                                                \n\
-                         precision mediump float;                                    \n\
-                         #endif                                                      \n\
-                         varying vec4 varyTexCoord0;                                 \n\
+    PSString =  TEXT (   
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                         "varying vec4 varyTexCoord0;                                 \n\
                          varying vec4 varyTexCoord1;                                 \n\
                          uniform vec4 color0;                                        \n\
                          uniform vec4 color1;                                        \n\
@@ -413,8 +410,11 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =  TEXT (   "                                                      \n\
-                        uniform mat4 ViewProjectionMatrix;                      \n\
+    VSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                        "uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
                         attribute vec4 MyTextureCoord1;                         \n\
@@ -433,12 +433,13 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }");
 
-    PSString =  TEXT (   "                                                          \n\
-                        #extension GL_ARB_texture_rectangle : enable                \n\
-                        #ifdef GL_ES                                                \n\
-                        precision mediump float;                                    \n\
-                        #endif                                                      \n\
-                        varying vec4 varyTexCoord0;                                 \n\
+    PSString =  TEXT (   
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                        "varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
                         varying vec4 varyTexCoord2;                                 \n\
                         varying vec4 varyTexCoord3;                                 \n\
@@ -463,8 +464,6 @@ namespace nux
                           gl_FragColor = b0+b1+b2+b3;                                     \n\
                         }");
 
-    //vec4(v.w, v.w, v.w, v.w)
-
     // Textured 2D Primitive Shader
     m_Sl4TextureAdd = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
@@ -475,16 +474,6 @@ namespace nux
     m_Sl4TextureAdd->AddShaderObject (PS);
     CHECKGL ( glBindAttribLocation (m_Sl4TextureAdd->GetOpenGLID(), 0, "AVertex") );
     m_Sl4TextureAdd->Link();
-
-//     // Textured Rect Primitive Shader
-//     m_4TexBlendRectProg = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-//     VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-//     PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), TEXT("#define SAMPLERTEX2DRECT"));
-//     m_4TexBlendRectProg->ClearShaderObjects();
-//     m_4TexBlendRectProg->AddShaderObject(VS);
-//     m_4TexBlendRectProg->AddShaderObject(PS);
-//     CHECKGL( glBindAttribLocation(m_4TexBlendRectProg->GetOpenGLID(), 0, "AVertex") );
-//     m_4TexBlendRectProg->Link();
   }
 
   void GraphicsEngine::InitSLPower ()
@@ -494,8 +483,11 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("                                     \n\
-        uniform mat4 ViewProjectionMatrix;                  \n\
+    VSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+        "uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
         varying vec4 varyTexCoord0;                         \n\
@@ -505,11 +497,13 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
-    PSString =  TEXT ("                                                                                       \n\
-        #ifdef GL_ES                                                                                          \n\
-        precision mediump float;                                                                              \n\
-        #endif                                                                                                \n\
-        varying vec4 varyTexCoord0;                                                                           \n\
+    PSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+        "varying vec4 varyTexCoord0;                                                                           \n\
         uniform sampler2D TextureObject0;                                                                     \n\
         uniform vec2 TextureSize0;                                                                            \n\
         uniform vec4 exponent;                                                                                \n\
@@ -546,8 +540,11 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("                                      \n\
-        uniform mat4 ViewProjectionMatrix;                  \n\
+    VSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+        "uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
         varying vec4 varyTexCoord0;                         \n\
@@ -557,11 +554,13 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
-    PSString = TEXT ("                                                \n\
-        #ifdef GL_ES                                                  \n\
-        precision mediump float;                                      \n\
-        #endif                                                        \n\
-        varying vec4 varyTexCoord0;                                   \n\
+    PSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+        "varying vec4 varyTexCoord0;                                   \n\
         uniform sampler2D TextureObject0;                             \n\
         uniform vec4 color0;                                          \n\
         vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)        \n\
@@ -593,8 +592,11 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("                      \n\
-        uniform mat4 ViewProjectionMatrix;  \n\
+    VSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+        "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
         attribute vec4 VertexColor;         \n\
@@ -608,11 +610,13 @@ namespace nux
         }");
 
 
-    PSString = TEXT ("                                                \n\
-        #ifdef GL_ES                                                  \n\
-        precision mediump float;                                      \n\
-        #endif                                                        \n\
-        varying vec4 varyTexCoord0;                                   \n\
+    PSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+        "varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
         uniform vec2 TextureSize0;                                    \n\
@@ -665,8 +669,11 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString = TEXT ("                      \n\
-        uniform mat4 ViewProjectionMatrix;  \n\
+    VSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+        "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
         attribute vec4 VertexColor;         \n\
@@ -680,11 +687,13 @@ namespace nux
         }");
 
 
-    PSString = TEXT ("                                                \n\
-        #ifdef GL_ES                                                  \n\
-        precision mediump float;                                      \n\
-        #endif                                                        \n\
-        varying vec4 varyTexCoord0;                                   \n\
+    PSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+        "varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
         uniform vec2 TextureSize0;                                    \n\
@@ -744,8 +753,11 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("                                    \n\
-                     uniform mat4 ViewProjectionMatrix;   \n\
+    VSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                     "uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
                      attribute vec4 VertexColor;          \n\
@@ -759,11 +771,13 @@ namespace nux
                      }");
 
 
-    PSString = TEXT ("                                                            \n\
-                     #ifdef GL_ES                                                 \n\
-                     precision mediump float;                                     \n\
-                     #endif                                                       \n\
-                     varying vec4 varyTexCoord0;                                  \n\
+    PSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                     "varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
                      uniform vec2 TextureSize0;                                   \n\
@@ -819,8 +833,11 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString = TEXT ("                                    \n\
-                     uniform mat4 ViewProjectionMatrix;   \n\
+    VSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                     "uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
                      attribute vec4 VertexColor;          \n\
@@ -834,11 +851,13 @@ namespace nux
                      }");
 
 
-    PSString = TEXT ("                                                            \n\
-                     #ifdef GL_ES                                                 \n\
-                     precision mediump float;                                     \n\
-                     #endif                                                       \n\
-                     varying vec4 varyTexCoord0;                                  \n\
+    PSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                     "varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
                      uniform vec2 TextureSize0;                                   \n\
@@ -887,8 +906,11 @@ namespace nux
     NString PSString;
 
 
-    VSString = TEXT ("                      \n\
-        uniform mat4 ViewProjectionMatrix;  \n\
+    VSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+        "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
         varying vec4 varyTexCoord0;         \n\
@@ -898,12 +920,13 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }");
 
-    PSString = TEXT ("                                              \n\
-        #extension GL_ARB_texture_rectangle : enable                \n\
-        #ifdef GL_ES                                                \n\
-        precision mediump float;                                    \n\
-        #endif                                                      \n\
-        varying vec4 varyTexCoord0;                                 \n\
+    PSString = TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+        "varying vec4 varyTexCoord0;                                 \n\
         uniform sampler2D TextureObject0;                           \n\
         uniform vec4 color0;                                        \n\
         vec4 SampleTexture(sampler2D TexObject, vec2 TexCoord)      \n\
@@ -2573,8 +2596,11 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  TEXT ("               \n\
-                      attribute vec4 AVertex;                                 \n\
+    VSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#endif
+                      "attribute vec4 AVertex;                                 \n\
                       attribute vec4 MyTextureCoord0;                         \n\
                       attribute vec4 VertexColor;                             \n\
                       uniform mat4 ViewProjectionMatrix;                      \n\
@@ -2587,28 +2613,21 @@ namespace nux
                       varyVertexColor = VertexColor;                          \n\
                       }");
 
-    PSString =  TEXT ("                                                           \n\
-                      #extension GL_ARB_texture_rectangle : enable                \n\
-                      #ifdef GL_ES                                                \n\
-                      precision mediump float;                                    \n\
-                      #endif                                                      \n\
-                      varying vec4 varyTexCoord0;                                 \n\
+    PSString =  TEXT (
+#ifndef NUX_OPENGLES_20
+                    "#version 110               \n"
+#else
+                    "precision mediump float;   \n"
+#endif
+                      "varying vec4 varyTexCoord0;                                 \n\
                       varying vec4 varyVertexColor;                               \n\
                       uniform vec4 pixel_size;                                    \n\
                       uniform vec4 pixel_size_inv;                                \n\
-                      #ifdef SAMPLERTEX2D                                         \n\
                       uniform sampler2D TextureObject0;                           \n\
                       vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
                       {                                                           \n\
                         return texture2D(TexObject, TexCoord.st);                 \n\
                       }                                                           \n\
-                      #elif defined SAMPLERTEX2DRECT                              \n\
-                      uniform sampler2DRect TextureObject0;                       \n\
-                      vec4 SampleTexture(sampler2DRect TexObject, vec4 TexCoord)  \n\
-                      {                                                           \n\
-                        return texture2DRect(TexObject, TexCoord.st);             \n\
-                      }                                                           \n\
-                      #endif                                                      \n\
                       void main()                                                 \n\
                       {                                                           \n\
                         vec4 tex_coord = floor(varyTexCoord0 * pixel_size_inv) * pixel_size;          \n\
