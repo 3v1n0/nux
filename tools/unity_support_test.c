@@ -604,8 +604,9 @@ int main (int argc, char* argv[]) {
   // drop result file
   if (results.result != 5) {
     sprintf(resultfilename, "/tmp/unity_support_test.%i", results.result);
-    resultfile = fopen(resultfilename, "w");
-    fclose(resultfile);
+    resultfile = fopen(resultfilename, "w+");
+    if (resultfile)
+      fclose(resultfile);
   }
 
   return results.result;
