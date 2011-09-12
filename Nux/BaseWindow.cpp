@@ -412,7 +412,7 @@ namespace nux
     return m_TopBorder;
   }
 
-  void BaseWindow::ShowWindow (bool visible, bool StartModal /*  = false */)
+  void BaseWindow::ShowWindow(bool visible, bool StartModal /*  = false */)
   {
     if (visible == _is_visible)
       return;
@@ -424,22 +424,25 @@ namespace nux
     {
       if (m_layout)
       {
-        m_layout->SetGeometry (GetGeometry() );
+        m_layout->SetGeometry(GetGeometry());
       }
+
       _entering_visible_state = true;
 
-      sigVisible.emit (this);
+      sigVisible.emit(this);
+      GetWindowCompositor().sigVisibleViewWindow.emit(this);
 
       ComputeChildLayout();
     }
     else
     {
       _entering_hidden_state = true;
-      sigHidden.emit (this);
+      sigHidden.emit(this);
+      GetWindowCompositor().sigHiddenViewWindow.emit(this);
     }
     
     if (_is_modal)
-      GetWindowCompositor().StartModalWindow (ObjectWeakPtr<BaseWindow> (this));
+      GetWindowCompositor().StartModalWindow(ObjectWeakPtr<BaseWindow>(this));
 
     // Whether this view is added or removed, call QueueDraw. in the case where this view is removed, this is a signal 
     // that the region below this view need to be redrawn.
