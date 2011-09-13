@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 #include "WindowCompositor.h"
-
+#include "NuxCore/Logger.h"
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
@@ -33,9 +33,10 @@
 #include "NuxGraphics/FontTexture.h"
 namespace nux
 {
-
-// extern TimeCounter gTimeCounter;
-// float gTimeAccum = 0;
+namespace
+{
+logging::Logger logger("nux.window");
+}
 
   WindowCompositor::WindowCompositor()
   {
