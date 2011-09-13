@@ -98,38 +98,13 @@ logging::Logger logger("nux.window");
     m_MainColorRT.Release ();
     m_MainDepthRT.Release ();
     _menu_chain->clear();
-
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
-    for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
-    {
-      //(*it)->UnReference();
-    }
     _view_window_list.clear ();
-
-    //for(it = _modal_view_window_list.begin (); it != _modal_view_window_list.end (); it++)
-    //{
-    //  (*it)->UnReference();
-    //}
     _modal_view_window_list.clear ();
 
     NUX_SAFE_DELETE (_menu_chain);
     NUX_SAFE_DELETE (m_Background);
   }
 
-//   bool WindowCompositor::MouseDown (Point pt)
-//   {
-//     return false;
-//   }
-// 
-//   bool WindowCompositor::MouseMove (Point pt)
-//   {
-//     return false;
-//   }
-// 
-//   bool WindowCompositor::MouseUp (Point pt)
-//   {
-//     return true;
-//   }
 
   BaseWindow* WindowCompositor::GetSelectedWindow()
   {
