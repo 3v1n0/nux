@@ -127,11 +127,12 @@ logging::Logger logger("nux.window");
 
   void WindowCompositor::RegisterWindow (BaseWindow *window)
   {
+    LOG_DEBUG_BLOCK(logger);
     if (!window)
       return;
 
-    auto it = find(_view_window_list.begin(), _view_window_list.end(), window);
-
+    WindowList::iterator it = find(_view_window_list.begin(),
+                                   _view_window_list.end(), window);
     if (it == _view_window_list.end())
     {
       _view_window_list.push_front(ObjectWeakPtr<BaseWindow>(window));
@@ -152,21 +153,28 @@ logging::Logger logger("nux.window");
 
   void WindowCompositor::UnRegisterWindow(Object* obj)
   {
+    LOG_DEBUG_BLOCK(logger);
     WeakBaseWindowPtr window(obj);
     if (window.IsNull())
       return;
 
-    auto it = find(_view_window_list.begin(), _view_window_list.end(), window);
+    WindowList::iterator it = find(_view_window_list.begin(),
+                                   _view_window_list.end(), window);
+    if (it == _view_window_list.end())
+    {
+      // look for a weak pointer that has been cleared out.
+      it = find(_view_window_list.begin(),
+                _view_window_list.end(), WeakBaseWindowPtr());
+    }
 
     if (it != _view_window_list.end())
     {
       _view_window_list.erase(it);
 
       if (_view_window_list.size())
-        m_SelectedWindow = *_view_window_list.begin();
-
-      _window_to_texture_map.erase(window.GetPointer());
+        m_SelectedWindow = _view_window_list.front();
     }
+    _window_to_texture_map.erase(window.GetPointer());
   }
 
   Area* WindowCompositor::GetMouseOwnerArea()
