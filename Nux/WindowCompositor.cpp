@@ -205,7 +205,7 @@ logging::Logger logger("nux.window");
 
     // Go through the list of BaseWindo and find the first area over which the
     // mouse pointer is.
-    std::list<WeakBaseWindowPtr>::iterator window_it;
+    WindowList::iterator window_it;
 
     for (window_it = _view_window_list.begin(); window_it != _view_window_list.end(); ++window_it)
     {
@@ -772,7 +772,7 @@ logging::Logger logger("nux.window");
     *window = NULL;
 
     // Go through the list of BaseWindos and find the first area over which the mouse pointer is.
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator window_it;
+    WindowList::iterator window_it;
     window_it = _view_window_list.begin();
     while((*key_focus_area == NULL) && (window_it != _view_window_list.end()))
     {
@@ -1082,7 +1082,7 @@ logging::Logger logger("nux.window");
     if (window == 0)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_modal_view_window_list.begin(), _modal_view_window_list.end(), window);
+    WindowList::iterator it = find (_modal_view_window_list.begin(), _modal_view_window_list.end(), window);
 
     if (it == _modal_view_window_list.end() )
     {
@@ -1105,7 +1105,7 @@ logging::Logger logger("nux.window");
     if (window == 0)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end (), window);
+    WindowList::iterator it = find (_view_window_list.begin(), _view_window_list.end (), window);
 
     if (it != _view_window_list.end () )
     {
@@ -1125,7 +1125,7 @@ logging::Logger logger("nux.window");
     if (window == _always_on_front_window)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin (), _view_window_list.end (), window);
+    WindowList::iterator it = find (_view_window_list.begin (), _view_window_list.end (), window);
 
     if (it != _view_window_list.end() )
     {
@@ -1142,11 +1142,11 @@ logging::Logger logger("nux.window");
     NUX_RETURN_IF_NULL (bottom_floating_view);
     NUX_RETURN_IF_NULL (top_floating_view);
     NUX_RETURN_IF_FALSE (bottom_floating_view != top_floating_view)
-    
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it_top;
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it_bot;
-    
+
+    WindowList::iterator it;
+    WindowList::iterator it_top;
+    WindowList::iterator it_bot;
+
     int i = 0;
     int top_pos = -1;
     int bot_pos = -1;
@@ -1199,7 +1199,7 @@ logging::Logger logger("nux.window");
     if (_always_on_front_window == NULL)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator always_top_it = find (_view_window_list.begin(), _view_window_list.end(), _always_on_front_window);
+    WindowList::iterator always_top_it = find (_view_window_list.begin(), _view_window_list.end(), _always_on_front_window);
     if ((always_top_it != _view_window_list.end ()) &&
         (always_top_it != _view_window_list.begin ()) &&
         _always_on_front_window.IsValid())
@@ -1400,7 +1400,7 @@ logging::Logger logger("nux.window");
     global_clip_rect.y = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() - global_clip_rect.y - global_clip_rect.height;
 
     // Raw the windows from back to front;
-    std::list< ObjectWeakPtr<BaseWindow> >::reverse_iterator rev_it;
+    WindowList::reverse_iterator rev_it;
 
     for (rev_it = WindowList.rbegin (); rev_it != WindowList.rend (); rev_it++)
     {
@@ -1957,7 +1957,7 @@ logging::Logger logger("nux.window");
 
   void WindowCompositor::FloatingAreaConfigureNotify(int Width, int Height)
   {
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
+    WindowList::iterator it;
 
     for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
     {
