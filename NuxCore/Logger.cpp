@@ -20,10 +20,15 @@
  *
  */
 
+#pragma warning(disable: 4996)  // 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                                // 'std::_Equal1': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+
 #include "Logger.h"
 #include "LoggingWriter.h"
 
+#if defined(NUX_OS_LINUX)
 #include <execinfo.h>
+#endif
 
 #include <map>
 #include <sstream>
@@ -378,6 +383,7 @@ Level get_logging_level(std::string level)
   return Warning;
 }
 
+#if	defined(NUX_OS_LINUX)
 std::string backtrace(int levels)
 {
   std::ostringstream sout;
@@ -402,7 +408,7 @@ std::string backtrace(int levels)
 
   return sout.str();
 }
-
+#endif
 
 BlockTracer::BlockTracer(Logger& logger,
                          Level level,

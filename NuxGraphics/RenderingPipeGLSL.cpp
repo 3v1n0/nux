@@ -31,6 +31,17 @@
 
 namespace nux
 {
+#ifndef NUX_OPENGLES_20
+  #define VertexShaderHeader "#version 110               \n"
+#else
+  #define VertexShaderHeader 
+#endif
+
+#ifndef NUX_OPENGLES_20
+  #define FragmentShaderHeader "#version 110               \n"
+#else
+  #define FragmentShaderHeader "precision mediump float;   \n"
+#endif
 
 // For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
 // other attributes. Otherwise you get a bug on NVidia! Why is that???
@@ -49,9 +60,7 @@ namespace nux
     NString PSString;
 
     VSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                     VertexShaderHeader
                      "uniform mat4 ViewProjectionMatrix;                \n\
                      attribute vec4 AVertex;                            \n\
                      attribute vec4 VertexColor;                        \n\
@@ -65,11 +74,7 @@ namespace nux
     VS->SetShaderCode (TCHAR_TO_ANSI (*VSString) );
 
     PSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                     "varying vec4 vColor;           \n\
                      void main()                    \n\
                      {                              \n\
@@ -92,9 +97,7 @@ namespace nux
     NString PSString;
 
     VSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                     VertexShaderHeader
                      "attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
@@ -109,11 +112,7 @@ namespace nux
                      }");
 
     PSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                      "varying vec4 varyTexCoord0;                                 \n\
                      varying vec4 varyVertexColor;                               \n\
                      uniform sampler2D TextureObject0;                           \n\
@@ -147,9 +146,7 @@ namespace nux
     NString PSString;
 
     VSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                     VertexShaderHeader
                      "attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
@@ -164,11 +161,7 @@ namespace nux
                      }");
 
     PSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                     "varying vec4 varyTexCoord0;                                        \n\
                      varying vec4 varyVertexColor;                                      \n\
                      uniform sampler2D TextureObject0;                                  \n\
@@ -206,28 +199,22 @@ namespace nux
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     VSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
-                        "uniform mat4 ViewProjectionMatrix;                      \n\
-                        attribute vec4 AVertex;                                 \n\
-                        attribute vec4 MyTextureCoord0;                         \n\
-                        attribute vec4 MyTextureCoord1;                         \n\
-                        varying vec4 varyTexCoord0;                             \n\
-                        varying vec4 varyTexCoord1;                             \n\
-                        void main()                                             \n\
-                        {                                                       \n\
-                        varyTexCoord0 = MyTextureCoord0;                        \n\
-                        varyTexCoord1 = MyTextureCoord1;                        \n\
-                        gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
-                        }");
+                      VertexShaderHeader
+                      "uniform mat4 ViewProjectionMatrix;                      \n\
+                      attribute vec4 AVertex;                                 \n\
+                      attribute vec4 MyTextureCoord0;                         \n\
+                      attribute vec4 MyTextureCoord1;                         \n\
+                      varying vec4 varyTexCoord0;                             \n\
+                      varying vec4 varyTexCoord1;                             \n\
+                      void main()                                             \n\
+                      {                                                       \n\
+                      varyTexCoord0 = MyTextureCoord0;                        \n\
+                      varyTexCoord1 = MyTextureCoord1;                        \n\
+                      gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
+                      }");
 
     PSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                     "varying vec4 varyTexCoord0;                                 \n\
                     varying vec4 varyTexCoord1;                                 \n\
                     uniform vec4 color0;                                        \n\
@@ -277,9 +264,7 @@ namespace nux
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     VSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
                         "uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -294,11 +279,7 @@ namespace nux
                         }");
 
     PSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                     "varying vec4 varyTexCoord0;                                 \n\
                     varying vec4 varyTexCoord1;                                 \n\
                     uniform vec4 color0;                                        \n\
@@ -340,9 +321,7 @@ namespace nux
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     VSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
                          "uniform mat4 ViewProjectionMatrix;                      \n\
                          attribute vec4 AVertex;                                 \n\
                          attribute vec4 MyTextureCoord0;                         \n\
@@ -357,11 +336,7 @@ namespace nux
                          }");
 
     PSString =  TEXT (   
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                          "varying vec4 varyTexCoord0;                                 \n\
                          varying vec4 varyTexCoord1;                                 \n\
                          uniform vec4 color0;                                        \n\
@@ -411,9 +386,7 @@ namespace nux
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     VSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
                         "uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -434,11 +407,7 @@ namespace nux
                         }");
 
     PSString =  TEXT (   
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                         "varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
                         varying vec4 varyTexCoord2;                                 \n\
@@ -484,9 +453,7 @@ namespace nux
     NString PSString;
 
     VSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
         "uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -498,11 +465,7 @@ namespace nux
         }");
 
     PSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
         "varying vec4 varyTexCoord0;                                                                           \n\
         uniform sampler2D TextureObject0;                                                                     \n\
         uniform vec2 TextureSize0;                                                                            \n\
@@ -541,9 +504,7 @@ namespace nux
 
 
     VSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
         "uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -555,11 +516,7 @@ namespace nux
         }");
 
     PSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
         "varying vec4 varyTexCoord0;                                   \n\
         uniform sampler2D TextureObject0;                             \n\
         uniform vec4 color0;                                          \n\
@@ -593,9 +550,7 @@ namespace nux
 
 
     VSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
         "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -611,11 +566,7 @@ namespace nux
 
 
     PSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
         "varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -670,9 +621,7 @@ namespace nux
     NString PSString;
 
     VSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
         "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -688,11 +637,7 @@ namespace nux
 
 
     PSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
         "varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -754,9 +699,7 @@ namespace nux
 
 
     VSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
                      "uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
@@ -772,11 +715,7 @@ namespace nux
 
 
     PSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                      "varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
@@ -834,9 +773,7 @@ namespace nux
     NString PSString;
 
     VSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
                      "uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
@@ -852,11 +789,7 @@ namespace nux
 
 
     PSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                      "varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
@@ -907,9 +840,7 @@ namespace nux
 
 
     VSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
         "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -921,11 +852,7 @@ namespace nux
         }");
 
     PSString = TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
         "varying vec4 varyTexCoord0;                                 \n\
         uniform sampler2D TextureObject0;                           \n\
         uniform vec4 color0;                                        \n\
@@ -2597,9 +2524,7 @@ namespace nux
     NString PSString;
 
     VSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#endif
+                      VertexShaderHeader
                       "attribute vec4 AVertex;                                 \n\
                       attribute vec4 MyTextureCoord0;                         \n\
                       attribute vec4 VertexColor;                             \n\
@@ -2614,11 +2539,7 @@ namespace nux
                       }");
 
     PSString =  TEXT (
-#ifndef NUX_OPENGLES_20
-                    "#version 110               \n"
-#else
-                    "precision mediump float;   \n"
-#endif
+                    FragmentShaderHeader
                       "varying vec4 varyTexCoord0;                                 \n\
                       varying vec4 varyVertexColor;                               \n\
                       uniform vec4 pixel_size;                                    \n\
