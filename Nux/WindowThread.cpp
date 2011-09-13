@@ -1457,7 +1457,6 @@ logging::Logger logger("nux.windows.thread");
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
     m_window_compositor = new WindowCompositor;
-    // m_Theme = new UXTheme();
 
     SetThreadState (THREADRUNNING);
     m_ThreadCtorCalled = true;
@@ -1510,7 +1509,6 @@ logging::Logger logger("nux.windows.thread");
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
     m_window_compositor = new WindowCompositor;
-    // m_Theme = new UXTheme();
 
     SetThreadState (THREADRUNNING);
     m_ThreadCtorCalled = true;
@@ -1567,7 +1565,6 @@ logging::Logger logger("nux.windows.thread");
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
     m_window_compositor = new WindowCompositor;
-    // m_Theme = new UXTheme();
 
     SetThreadState (THREADRUNNING);
     m_ThreadCtorCalled = true;
