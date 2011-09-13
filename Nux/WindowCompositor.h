@@ -538,8 +538,9 @@ namespace nux
     bool on_menu_closure_continue_with_event_;
     AbstractPaintLayer *m_Background;
 
-    std::list<WeakBaseWindowPtr> _view_window_list;
-    std::list<WeakBaseWindowPtr> _modal_view_window_list;
+    typedef std::list<WeakBaseWindowPtr> WindowList;
+    WindowList _view_window_list;
+    WindowList _modal_view_window_list;
     WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
 
     std::list<MenuPage* > *_menu_chain;
