@@ -826,7 +826,7 @@ namespace nux
   {
     Area* area = GetToplevel ();
 
-    if (area->IsViewWindow ())
+    if (area && area->IsViewWindow ())
       return area;
 
     return NULL;
