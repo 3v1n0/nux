@@ -101,11 +101,8 @@ namespace nux
     {
       return *m_TimerHandler;
     }
-    
-    UXTheme &GetTheme() const
-    {
-      return *m_Theme;
-    }
+
+    UXTheme& GetTheme() const;
 
     void SetWindowSize (int width, int height);
 

@@ -342,11 +342,11 @@ logging::Logger logger("nux.core.object");
   {
     static int delete_depth = 0;
     ++delete_depth;
-    // Weak smart pointers will clear their pointers when they get this signal.
-    object_destroyed.emit(this);
     const char* obj_type = this->Type().name;
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", about to delete "
                       << obj_type << " allocated at " << GetAllocationLoation();
+    // Weak smart pointers will clear their pointers when they get this signal.
+    object_destroyed.emit(this);
     delete this;
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", delete successful for " << obj_type;
     --delete_depth;

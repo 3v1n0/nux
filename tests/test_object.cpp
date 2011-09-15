@@ -141,6 +141,17 @@ TEST(TestObject, TestObjectPtr) {
   object_ptr.Release();
 }
 
+TEST(TestObject, TestObjectPtrAdopt) {
+
+  OwnedObject* a = new OwnedObject(NUX_TRACKER_LOCATION);  // ref count = 1, owned
+
+  nux::ObjectPtr<OwnedObject> object_ptr;
+
+  object_ptr.Adopt(a);
+
+  EXPECT_THAT(a->GetReferenceCount(), Eq(1));
+}
+
 TEST(TestObject, TestObjectPtr1) {
 
   ChildOwnedObject *c = new ChildOwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
