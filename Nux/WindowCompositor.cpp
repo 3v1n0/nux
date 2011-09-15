@@ -1,5 +1,6 @@
+// -*- Mode: C++; indent-tabs-mode: nil; tab-width: 2 -*-
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010,2011 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -22,7 +23,7 @@
 
 #include "Nux.h"
 #include "WindowCompositor.h"
-
+#include "NuxCore/Logger.h"
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
@@ -33,9 +34,10 @@
 #include "NuxGraphics/FontTexture.h"
 namespace nux
 {
-
-// extern TimeCounter gTimeCounter;
-// float gTimeAccum = 0;
+namespace
+{
+logging::Logger logger("nux.window");
+}
 
   WindowCompositor::WindowCompositor()
   {
@@ -96,38 +98,13 @@ namespace nux
     m_MainColorRT.Release ();
     m_MainDepthRT.Release ();
     _menu_chain->clear();
-
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
-    for(it = _view_window_list.begin (); it != _view_window_list.end (); it++)
-    {
-      //(*it)->UnReference();
-    }
     _view_window_list.clear ();
-
-    //for(it = _modal_view_window_list.begin (); it != _modal_view_window_list.end (); it++)
-    //{
-    //  (*it)->UnReference();
-    //}
     _modal_view_window_list.clear ();
 
     NUX_SAFE_DELETE (_menu_chain);
     NUX_SAFE_DELETE (m_Background);
   }
 
-//   bool WindowCompositor::MouseDown (Point pt)
-//   {
-//     return false;
-//   }
-// 
-//   bool WindowCompositor::MouseMove (Point pt)
-//   {
-//     return false;
-//   }
-// 
-//   bool WindowCompositor::MouseUp (Point pt)
-//   {
-//     return true;
-//   }
 
   BaseWindow* WindowCompositor::GetSelectedWindow()
   {
@@ -150,11 +127,12 @@ namespace nux
 
   void WindowCompositor::RegisterWindow (BaseWindow *window)
   {
+    LOG_DEBUG_BLOCK(logger);
     if (!window)
       return;
 
-    auto it = find(_view_window_list.begin(), _view_window_list.end(), window);
-
+    WindowList::iterator it = find(_view_window_list.begin(),
+                                   _view_window_list.end(), window);
     if (it == _view_window_list.end())
     {
       _view_window_list.push_front(ObjectWeakPtr<BaseWindow>(window));
@@ -175,21 +153,28 @@ namespace nux
 
   void WindowCompositor::UnRegisterWindow(Object* obj)
   {
+    LOG_DEBUG_BLOCK(logger);
     WeakBaseWindowPtr window(obj);
     if (window.IsNull())
       return;
 
-    auto it = find(_view_window_list.begin(), _view_window_list.end(), window);
+    WindowList::iterator it = find(_view_window_list.begin(),
+                                   _view_window_list.end(), window);
+    if (it == _view_window_list.end())
+    {
+      // look for a weak pointer that has been cleared out.
+      it = find(_view_window_list.begin(),
+                _view_window_list.end(), WeakBaseWindowPtr());
+    }
 
     if (it != _view_window_list.end())
     {
       _view_window_list.erase(it);
 
       if (_view_window_list.size())
-        m_SelectedWindow = *_view_window_list.begin();
-
-      _window_to_texture_map.erase(window.GetPointer());
+        m_SelectedWindow = _view_window_list.front();
     }
+    _window_to_texture_map.erase(window.GetPointer());
   }
 
   Area* WindowCompositor::GetMouseOwnerArea()
@@ -220,7 +205,7 @@ namespace nux
 
     // Go through the list of BaseWindo and find the first area over which the
     // mouse pointer is.
-    std::list<WeakBaseWindowPtr>::iterator window_it;
+    WindowList::iterator window_it;
 
     for (window_it = _view_window_list.begin(); window_it != _view_window_list.end(); ++window_it)
     {
@@ -787,7 +772,7 @@ namespace nux
     *window = NULL;
 
     // Go through the list of BaseWindos and find the first area over which the mouse pointer is.
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator window_it;
+    WindowList::iterator window_it;
     window_it = _view_window_list.begin();
     while((*key_focus_area == NULL) && (window_it != _view_window_list.end()))
     {
@@ -1097,7 +1082,7 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_modal_view_window_list.begin(), _modal_view_window_list.end(), window);
+    WindowList::iterator it = find (_modal_view_window_list.begin(), _modal_view_window_list.end(), window);
 
     if (it == _modal_view_window_list.end() )
     {
@@ -1120,7 +1105,7 @@ namespace nux
     if (window == 0)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin(), _view_window_list.end (), window);
+    WindowList::iterator it = find (_view_window_list.begin(), _view_window_list.end (), window);
 
     if (it != _view_window_list.end () )
     {
@@ -1140,7 +1125,7 @@ namespace nux
     if (window == _always_on_front_window)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it = find (_view_window_list.begin (), _view_window_list.end (), window);
+    WindowList::iterator it = find (_view_window_list.begin (), _view_window_list.end (), window);
 
     if (it != _view_window_list.end() )
     {
@@ -1157,11 +1142,11 @@ namespace nux
     NUX_RETURN_IF_NULL (bottom_floating_view);
     NUX_RETURN_IF_NULL (top_floating_view);
     NUX_RETURN_IF_FALSE (bottom_floating_view != top_floating_view)
-    
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it_top;
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it_bot;
-    
+
+    WindowList::iterator it;
+    WindowList::iterator it_top;
+    WindowList::iterator it_bot;
+
     int i = 0;
     int top_pos = -1;
     int bot_pos = -1;
@@ -1214,7 +1199,7 @@ namespace nux
     if (_always_on_front_window == NULL)
       return;
 
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator always_top_it = find (_view_window_list.begin(), _view_window_list.end(), _always_on_front_window);
+    WindowList::iterator always_top_it = find (_view_window_list.begin(), _view_window_list.end(), _always_on_front_window);
     if ((always_top_it != _view_window_list.end ()) &&
         (always_top_it != _view_window_list.begin ()) &&
         _always_on_front_window.IsValid())
@@ -1415,7 +1400,7 @@ namespace nux
     global_clip_rect.y = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() - global_clip_rect.y - global_clip_rect.height;
 
     // Raw the windows from back to front;
-    std::list< ObjectWeakPtr<BaseWindow> >::reverse_iterator rev_it;
+    WindowList::reverse_iterator rev_it;
 
     for (rev_it = WindowList.rbegin (); rev_it != WindowList.rend (); rev_it++)
     {
@@ -1972,7 +1957,7 @@ namespace nux
 
   void WindowCompositor::FloatingAreaConfigureNotify(int Width, int Height)
   {
-    std::list< ObjectWeakPtr<BaseWindow> >::iterator it;
+    WindowList::iterator it;
 
     for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
     {
