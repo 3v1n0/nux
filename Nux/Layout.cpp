@@ -64,30 +64,8 @@ namespace nux
 
   void Layout::RemoveChildObject (Area *bo)
   {
-    bool was_focused = GetFocused ();
     std::list<Area *>::iterator it;
     it = std::find (_layout_element_list.begin(), _layout_element_list.end(), bo);
-
-    if ((*it)->GetFocused ())
-    {
-      // the child was focused, oh dear. lets handle that gracefully
-      if (_layout_element_list.size() > 1)
-      {
-        if (it == _layout_element_list.end ())
-        {
-          FocusPreviousChild ((*it));
-        }
-        else
-        {
-          FocusNextChild ((*it));
-        }
-      }
-
-      (*it)->SetFocused (false);
-    }
-
-    sigc::connection onchildfocuscon = _connection_map[bo];
-    onchildfocuscon.disconnect ();
 
     if (it != _layout_element_list.end())
     {
@@ -96,21 +74,6 @@ namespace nux
       ViewRemoved.emit (this, bo);
       bo->UnParentObject();
       _layout_element_list.erase (it);
-    }
-
-    if (IsEmpty () && was_focused)
-    {
-      // we are now empty, so we need to handle our focus state
-      Area *area = GetParentObject ();
-      if (area == NULL)
-        return;
-
-
-      if (area->IsLayout ())
-      {
-        Layout *parent = (Layout *)area;
-        parent->SetFocused (true);
-      }
     }
   }
 

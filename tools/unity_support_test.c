@@ -524,7 +524,7 @@ int main (int argc, char* argv[]) {
   }
 
   // can skip some tests if not forced
-  if (!forcecheck) {
+  if (!forcecheck && !print) {
       resultfile = fopen("/tmp/unity_support_test.0", "r");
       if (resultfile) {
           fclose(resultfile);
@@ -604,8 +604,9 @@ int main (int argc, char* argv[]) {
   // drop result file
   if (results.result != 5) {
     sprintf(resultfilename, "/tmp/unity_support_test.%i", results.result);
-    resultfile = fopen(resultfilename, "w");
-    fclose(resultfile);
+    resultfile = fopen(resultfilename, "w+");
+    if (resultfile)
+      fclose(resultfile);
   }
 
   return results.result;

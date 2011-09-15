@@ -826,7 +826,7 @@ namespace nux
   {
     Area* area = GetToplevel ();
 
-    if (area->IsViewWindow ())
+    if (area && area->IsViewWindow ())
       return area;
 
     return NULL;
@@ -975,6 +975,7 @@ namespace nux
     while (parent)
     {
       parent->next_object_to_key_focus_area_ = child;
+      parent->next_object_to_key_focus_area_->Reference();
       parent->has_key_focus_ = false;
       child = parent;
       parent = parent->GetParentObject();
@@ -988,6 +989,9 @@ namespace nux
     {
       next_object_to_key_focus_area_->ResetDownwardPathToKeyFocusArea();
     }
+    if(next_object_to_key_focus_area_)
+      next_object_to_key_focus_area_->UnReference();
+
     next_object_to_key_focus_area_ = NULL;
   }
 
@@ -998,6 +1002,9 @@ namespace nux
     {
       _parent_area->ResetUpwardPathToKeyFocusArea();
     }
+    if(next_object_to_key_focus_area_)
+      next_object_to_key_focus_area_->UnReference();
+
     next_object_to_key_focus_area_ = NULL;
   }
 

@@ -129,6 +129,18 @@ namespace nux
       }
     }
 
+    //! Take ownership of ptr.
+    void Adopt(T* ptr)
+    {
+        ObjectPtr<T> temp(ptr);
+        Swap(temp);
+        // Now we want to release the reference that was added on construction,
+        // but keep the smart pointer count.
+        if (ptr_)
+          ptr_->UnReference();
+    }
+
+
     //! Assignment of a smart pointer of type T.
     /*!
         @param other Smart pointer of type T.
