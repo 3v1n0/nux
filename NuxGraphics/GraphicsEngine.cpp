@@ -921,14 +921,17 @@ namespace nux
 
   void GraphicsEngine::PushIdentityModelViewMatrix ()
   {
-    _model_view_stack.push_back (_model_view_matrix);
-    _model_view_matrix = Matrix4::IDENTITY () * _model_view_matrix;
+    PushModelViewMatrix (Matrix4::IDENTITY());
   }
 
   void GraphicsEngine::PushModelViewMatrix (const Matrix4 &matrix)
   {
+    if (_model_view_stack.empty())
+      _model_view_matrix = matrix;
+    else
+      _model_view_matrix = matrix * (*_model_view_stack.rbegin());
+
     _model_view_stack.push_back (_model_view_matrix);
-    _model_view_matrix = matrix * _model_view_matrix;
   }
 
   void GraphicsEngine::Push2DTranslationModelViewMatrix (float tx, float ty, float tz)
@@ -941,6 +944,8 @@ namespace nux
 
   bool GraphicsEngine::PopModelViewMatrix ()
   {
+    _model_view_stack.pop_back();
+
     if (_model_view_stack.size () == 0)
     {
       _model_view_matrix = Matrix4::IDENTITY ();
@@ -948,7 +953,6 @@ namespace nux
     }
 
     _model_view_matrix = *_model_view_stack.rbegin();
-    _model_view_stack.pop_back();
 
     return true;
   }
