@@ -801,6 +801,8 @@ namespace nux
       Geometry layer_geo = layer->GetGeometry ();
       Geometry xform_geo = GfxContext.ModelViewXFormRect (geo);
 
+      Matrix4 model_view_old = GfxContext.GetModelViewMatrix();
+
       GfxContext.PushClippingRectangle (geo);
       GfxContext.SetModelViewMatrix (layer->GetModelViewMatrix ());
 
@@ -813,7 +815,7 @@ namespace nux
       RenderSinglePaintLayer (GfxContext, layer_geo, layer);
 
       // restore the model view matrix stack and the clipping rectangle stack.
-      GfxContext.ApplyModelViewMatrix ();
+      GfxContext.SetModelViewMatrix (model_view_old);
       GfxContext.PopClippingRectangle ();
     }
   }
