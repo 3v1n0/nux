@@ -946,7 +946,7 @@ namespace nux
   {
     _model_view_stack.pop_back();
 
-    if (_model_view_stack.size () == 0)
+    if (_model_view_stack.empty())
     {
       _model_view_matrix = Matrix4::IDENTITY ();
       return false;
@@ -970,7 +970,7 @@ namespace nux
 
   void GraphicsEngine::ApplyModelViewMatrix ()
   {
-    if (_model_view_stack.size () == 0)
+    if (_model_view_stack.empty())
     {
       _model_view_matrix = Matrix4::IDENTITY ();
       return;
