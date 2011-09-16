@@ -27,6 +27,15 @@
 
 namespace nux
 {
+  namespace local
+  {
+  namespace
+  {
+    GLuint last_loaded_shader = 0;
+    bool enable_tracking = false;
+  }
+  }
+  
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLShader);
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexShader);
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLPixelShader);
@@ -450,6 +459,9 @@ namespace nux
 
   IOpenGLShaderProgram::~IOpenGLShaderProgram()
   {
+    if (local::last_loaded_shader == _OpenGLID)
+      CHECKGL( glUseProgramObjectARB(0) );
+      
     CHECKGL( glDeleteProgram(_OpenGLID) );
     _OpenGLID = 0;
     m_CompiledAndReady = false;
@@ -660,14 +672,24 @@ namespace nux
     return m_CompiledAndReady;
   }
 
+  void IOpenGLShaderProgram::SetShaderTracking (bool enabled)
+  {
+    local::enable_tracking = enabled;
+    local::last_loaded_shader = 0;
+    CHECKGL( glUseProgramObjectARB(0) );
+  }
+
   void IOpenGLShaderProgram::Begin(void)
   {
+    if (local::last_loaded_shader == _OpenGLID && local::enable_tracking)
+      return;
     CHECKGL( glUseProgramObjectARB(_OpenGLID) );
   }
 
   void IOpenGLShaderProgram::End(void)
   {
-    CHECKGL( glUseProgramObjectARB(0) );
+    if (!local::enable_tracking)
+      CHECKGL( glUseProgramObjectARB(0) );
   }
 
   void IOpenGLShaderProgram::CheckAttributeLocation()
