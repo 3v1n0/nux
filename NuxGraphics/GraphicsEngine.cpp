@@ -929,7 +929,7 @@ namespace nux
     if (_model_view_stack.empty())
       _model_view_matrix = matrix;
     else
-      _model_view_matrix = matrix * (*_model_view_stack.rbegin());
+      _model_view_matrix = matrix * _model_view_stack.back();
 
     _model_view_stack.push_back (_model_view_matrix);
   }
@@ -944,7 +944,8 @@ namespace nux
 
   bool GraphicsEngine::PopModelViewMatrix ()
   {
-    _model_view_stack.pop_back();
+    if (!_model_view_stack.empty())
+      _model_view_stack.pop_back();
 
     if (_model_view_stack.empty())
     {
@@ -952,7 +953,7 @@ namespace nux
       return false;
     }
 
-    _model_view_matrix = *_model_view_stack.rbegin();
+    _model_view_matrix = _model_view_stack.back();
 
     return true;
   }
@@ -976,7 +977,7 @@ namespace nux
       return;
     }
 
-    _model_view_matrix = *_model_view_stack.rbegin();
+    _model_view_matrix = _model_view_stack.back();
   }
 
   Rect GraphicsEngine::ModelViewXFormRect (const Rect& rect)
