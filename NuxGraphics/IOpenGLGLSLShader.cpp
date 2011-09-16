@@ -35,7 +35,7 @@ namespace nux
     bool enable_tracking = false;
   }
   }
-  
+
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLShader);
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexShader);
   NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLPixelShader);
@@ -683,6 +683,8 @@ namespace nux
   {
     if (local::last_loaded_shader == _OpenGLID && local::enable_tracking)
       return;
+    
+    local::last_loaded_shader = _OpenGLID;
     CHECKGL( glUseProgramObjectARB(_OpenGLID) );
   }
 
