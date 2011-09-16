@@ -972,12 +972,9 @@ namespace nux
   void GraphicsEngine::ApplyModelViewMatrix ()
   {
     if (_model_view_stack.empty())
-    {
       _model_view_matrix = Matrix4::IDENTITY ();
-      return;
-    }
-
-    _model_view_matrix = _model_view_stack.back();
+    else
+      _model_view_matrix = _model_view_stack.back();
   }
 
   Rect GraphicsEngine::ModelViewXFormRect (const Rect& rect)
