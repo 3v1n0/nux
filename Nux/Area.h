@@ -546,10 +546,10 @@ namespace nux
     virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
 
     //! Return the absolute geometry starting with a relative geometry passed as argument.
-    Geometry InnerGetAbsoluteGeometry (const Geometry &geometry);
+    void InnerGetAbsoluteGeometry (Geometry &geometry);
 
     //! Return the absolute geometry starting with a relative geometry passed as argument.
-    Geometry InnerGetRootGeometry (const Geometry &geometry);
+    void InnerGetRootGeometry (Geometry &geometry);
 
 //     //! Add a "secondary" child to this Area. The
 //     /*!
