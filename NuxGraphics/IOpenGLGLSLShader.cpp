@@ -460,7 +460,10 @@ namespace nux
   IOpenGLShaderProgram::~IOpenGLShaderProgram()
   {
     if (local::last_loaded_shader == _OpenGLID)
+    {
       CHECKGL( glUseProgramObjectARB(0) );
+      local::last_loaded_shader = 0;
+    }
       
     CHECKGL( glDeleteProgram(_OpenGLID) );
     _OpenGLID = 0;
