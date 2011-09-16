@@ -921,13 +921,13 @@ namespace nux
 
   void GraphicsEngine::PushIdentityModelViewMatrix ()
   {
-    _model_view_stack.push_back (Matrix4::IDENTITY ());
+    _model_view_stack.push_back (_model_view_matrix);
     _model_view_matrix = Matrix4::IDENTITY () * _model_view_matrix;
   }
 
   void GraphicsEngine::PushModelViewMatrix (const Matrix4 &matrix)
   {
-    _model_view_stack.push_back (matrix);
+    _model_view_stack.push_back (_model_view_matrix);
     _model_view_matrix = matrix * _model_view_matrix;
   }
 
@@ -947,10 +947,8 @@ namespace nux
       return false;
     }
 
-    Matrix4 matrix = *_model_view_stack.rbegin();
-    matrix.Inverse();
+    _model_view_matrix = *_model_view_stack.rbegin();
     _model_view_stack.pop_back();
-    _model_view_matrix = _model_view_matrix * matrix;
 
     return true;
   }
@@ -968,13 +966,13 @@ namespace nux
 
   void GraphicsEngine::ApplyModelViewMatrix ()
   {
-    _model_view_matrix = Matrix4::IDENTITY ();
-
-    std::list<Matrix4>::iterator it;
-    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    if (_model_view_stack.size () == 0)
     {
-      _model_view_matrix = (*it) * _model_view_matrix;
+      _model_view_matrix = Matrix4::IDENTITY ();
+      return;
     }
+
+    _model_view_matrix = *_model_view_stack.rbegin();
   }
 
   Rect GraphicsEngine::ModelViewXFormRect (const Rect& rect)
