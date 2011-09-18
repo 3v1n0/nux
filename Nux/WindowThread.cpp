@@ -22,6 +22,7 @@
 
 #include "Nux.h"
 #include "Layout.h"
+#include "NuxCore/Logger.h"
 #include "NuxGraphics/GraphicsEngine.h"
 #include "ClientArea.h"
 #include "WindowCompositor.h"
@@ -33,7 +34,11 @@
 
 namespace nux
 {
-  
+namespace
+{
+logging::Logger logger("nux.windows.thread");
+}
+
     TimerFunctor *m_ScrollTimerFunctor;
     TimerHandle m_ScrollTimerHandler;  
 
@@ -351,8 +356,9 @@ namespace nux
     {
       if((m_GLibContext == 0) || (m_GLibLoop == 0))
       {
-          nuxDebugMsg(TEXT("[WindowThread::AddGLibTimeout] WARNING: Trying to set a timeout before GLib Context is created."));
-          return 0;
+        LOG_WARNING(logger) << "Trying to set a timeout before GLib Context is created.\n"
+                            << logging::backtrace();
+        return 0;
       }
 
       GSource *timeout_source;
@@ -1451,7 +1457,6 @@ namespace nux
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
     m_window_compositor = new WindowCompositor;
-    m_Theme = new UXTheme();
 
     SetThreadState (THREADRUNNING);
     m_ThreadCtorCalled = true;
@@ -1504,7 +1509,6 @@ namespace nux
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
     m_window_compositor = new WindowCompositor;
-    m_Theme = new UXTheme();
 
     SetThreadState (THREADRUNNING);
     m_ThreadCtorCalled = true;
@@ -1561,7 +1565,6 @@ namespace nux
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
     m_window_compositor = new WindowCompositor;
-    m_Theme = new UXTheme();
 
     SetThreadState (THREADRUNNING);
     m_ThreadCtorCalled = true;
@@ -1835,6 +1838,8 @@ namespace nux
 
     if (!IsEmbeddedWindow() )
       return;
+    
+    IOpenGLShaderProgram::SetShaderTracking(true);
 
     // Set Nux opengl states. The other plugin in compiz have changed the GPU opengl states.
     // Nux keep tracks of its own opengl states and restore them before doing any drawing.
@@ -1867,6 +1872,7 @@ namespace nux
     CHECKGL ( glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
     GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+    IOpenGLShaderProgram::SetShaderTracking(false);
   }
 
   int WindowThread::InstallEventInspector (EventInspector function, void* data)
@@ -1957,5 +1963,17 @@ namespace nux
 
     return discard_event;
   }
+
+
+UXTheme& WindowThread::GetTheme() const
+{
+  if (!m_Theme)
+  {
+    LOG_INFO(logger) << "Lazily creating nux::UXTheme";
+    const_cast<WindowThread*>(this)->m_Theme = new UXTheme();
+  }
+  return *m_Theme;
+}
+
 }
 

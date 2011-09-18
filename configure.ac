@@ -14,7 +14,7 @@
 #   - Increase interface_version to the next odd number
 # 
 m4_define([nux_major_version], [1])
-m4_define([nux_minor_version], [8])
+m4_define([nux_minor_version], [10])
 m4_define([nux_micro_version], [0])
 
 # Bump this when we break ABI
@@ -333,23 +333,23 @@ echo -e "${BOLD_GREEN} Nux - $VERSION"
 echo -e "${RESET}"
 
 echo -e "${GREEN} • Global:${RESET}"
-echo -e "        Prefix            : ${BOLD_WHITE}${prefix}"
+echo -e "        Prefix             : ${BOLD_WHITE}${prefix}"
 
 echo -e "${RESET}"
 echo -e "${GREEN} • Compiler Options:${RESET}"
-echo -e "        CFLAGS            : ${BOLD_WHITE}${CFLAGS} ${GCC_FLAGS}${RESET}" 
-echo -e "        Maintainer CFlags : ${BOLD_WHITE}${MAINTAINER_CFLAGS}${RESET}"
-echo -e "        Debug Mode        : ${BOLD_WHITE}${enable_debug}${RESET}"
+echo -e "        CFLAGS             : ${BOLD_WHITE}${CFLAGS} ${GCC_FLAGS}${RESET}" 
+echo -e "        Maintainer CFlags  : ${BOLD_WHITE}${MAINTAINER_CFLAGS}${RESET}"
+echo -e "        Debug Mode         : ${BOLD_WHITE}${enable_debug}${RESET}"
 
 echo -e "${RESET}"
 echo -e "${GREEN} • Documentation:${RESET}"
-echo -e "        Build Documenation: ${BOLD_WHITE}${enable_documentation}${RESET}"
+echo -e "        Build Documentation: ${BOLD_WHITE}${enable_documentation}${RESET}"
 
 echo -e "${RESET}"
 echo -e "${GREEN} • Misc Options:${RESET}"
-echo -e "        Build Examples    : ${BOLD_WHITE}${enable_examples}${RESET}"
-echo -e "        Build Gpu Tests   : ${BOLD_WHITE}${enable_gputests}${RESET}"
-echo -e "        Build Nux Tests   : ${BOLD_WHITE}${enable_tests}${RESET}"
+echo -e "        Build Examples     : ${BOLD_WHITE}${enable_examples}${RESET}"
+echo -e "        Build Gpu Tests    : ${BOLD_WHITE}${enable_gputests}${RESET}"
+echo -e "        Build Nux Tests    : ${BOLD_WHITE}${enable_tests}${RESET}"
 echo ""
 
 echo -e "${RESET}"
