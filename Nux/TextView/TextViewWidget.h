@@ -127,8 +127,6 @@ namespace nux
     sigc::signal<void, int, int, int, int> sigResize;
 
   protected:
-    //SmartPtrGLTexture m_BackgroundTexture;
-
     // Backup texture to speed up scrolling
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
     ObjectPtr<IOpenGLBaseTexture> m_TextureBuffer[2];

@@ -53,7 +53,7 @@ namespace nux
     NString text = NString::Printf (TEXT ("[ R:%d, G:%d, B:%d ]"), (int) (m_Color.red * 255), (int) (m_Color.green * 255), (int) (m_Color.blue * 255) );
     m_ColorValue->SetText (text);
 
-    m_ColorArea->OnMouseClick.connect (sigc::mem_fun (this, &ColorPreview::RecvClick) );
+    m_ColorArea->mouse_click.connect (sigc::mem_fun (this, &ColorPreview::RecvClick) );
 
     m_hlayout->AddView (m_ColorArea, 0);
     m_hlayout->AddView (m_ColorValue, 1);
@@ -67,10 +67,12 @@ namespace nux
 
   ColorPreview::~ColorPreview()
   {
+    delete m_ChangeDetectionTimer;
+
     if (m_ChangeTimerHandler.IsValid() )
       GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 
-    NUX_SAFE_DELETE (m_DialogThreadProxy);
+    delete m_DialogThreadProxy;
   }
 
   long ColorPreview::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -88,7 +90,7 @@ namespace nux
     GetPainter().PaintBackground (GfxContext, base);
     GetPainter().PaintShape (GfxContext, m_ColorArea->GetGeometry(), m_Color, eSHAPE_CORNER_ROUND4, false);
     //GetPainter().Paint2DQuadWireFrameColor(GfxContext, base, Color(COLOR_BACKGROUND_SECONDARY));
-    m_ColorValue->NeedRedraw();
+    m_ColorValue->QueueDraw();
   }
 
   void ColorPreview::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -115,7 +117,7 @@ namespace nux
     {
       m_DialogThreadProxy->m_bDialogChange = false;
       m_Color = m_DialogThreadProxy->GetColor();
-      NeedRedraw();
+      QueueDraw();
     }
 
     if (m_DialogThreadProxy->IsActive() )
@@ -129,7 +131,7 @@ namespace nux
 
       m_ChangeTimerHandler = 0;
       m_Color = m_DialogThreadProxy->GetColor();
-      NeedRedraw();
+      QueueDraw();
     }
   }
 

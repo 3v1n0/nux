@@ -46,8 +46,8 @@ namespace nux
     m_CancelButton->SetMinimumWidth (60);
     m_CancelButton->SetMinimumHeight (20);
 
-    m_OkButton->sigClick.connect (sigc::mem_fun (this, &Dialog::RecvOk) );
-    m_CancelButton->sigClick.connect (sigc::mem_fun (this, &Dialog::RecvCancel) );
+    //FIXME - m_OkButton->sigClick.connect (sigc::mem_fun (this, &Dialog::RecvOk) );
+    //FIXME - m_CancelButton->sigClick.connect (sigc::mem_fun (this, &Dialog::RecvCancel) );
 
     m_ButtonLayout->SetHorizontalInternalMargin (6);
     m_ButtonLayout->SetVerticalExternalMargin (2);

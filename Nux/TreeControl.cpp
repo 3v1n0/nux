@@ -185,10 +185,10 @@ namespace nux
       sigItemSelected.emit (m_selectedRow, m_selectedColumn);
       sigTableItemSelected.emit (*this, *m_selectedTableItem, m_selectedRow, m_selectedColumn);
     }
-    NeedRedraw();
+    QueueDraw();
   }
 
-  void TreeControl::OnMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TreeControl::mouse_double_click (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if ( (m_selectedRow == -1) || (m_selectedColumn == -1) )
     {

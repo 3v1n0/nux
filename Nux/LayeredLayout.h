@@ -184,7 +184,8 @@ namespace nux
     long ComputeLayout2 ();
     void GetCompositeList (std::list<Area *> *ViewList);
     void ProcessDraw (GraphicsEngine &gfx_context, bool force_draw);
-    long ProcessEvent (IEvent &ievent, long traverse_info, long process_event_info);
+    Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
     void AddLayout (Layout                *layouy,
                     unsigned int           stretch_factor = 1,
                     MinorDimensionPosition position       = eAbove,
@@ -203,10 +204,12 @@ namespace nux
     virtual long DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual bool FocusFirstChild ();
     virtual bool FocusLastChild ();
+
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
+    void OnLayerGeometryChanged(Area* area, Geometry geo);
     
   private:
     void PaintOne (Area *area, GraphicsEngine &GfxContext, bool force_draw);
-    long ProcessOne (Area *_area, IEvent &ievent, long traverse_info, long process_event_info);
     void ChildQueueDraw (Area *area);
     void ChildVisibilityChanged (Area *area, bool visible);
     

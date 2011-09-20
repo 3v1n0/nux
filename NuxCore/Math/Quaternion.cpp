@@ -46,7 +46,7 @@ namespace nux
 
   Quaternion::Quaternion (const Vector3 &vec, float angle)
   {
-    FromAngleAxis (angle, vec.x, vec.y, vec.z);
+    FromAngleAxis (vec.x, vec.y, vec.z, angle);
   }
 
   Quaternion::Quaternion (const Vector4 &vec)
@@ -54,12 +54,12 @@ namespace nux
     FromAngleAxis (vec.w, vec.x, vec.y, vec.z);
   }
 
-  Quaternion::Quaternion (t_float axis_x, t_float axis_y, t_float axis_z, t_float angle_radian)
+  Quaternion::Quaternion (float axis_x, float axis_y, float axis_z, float angle_radian)
   {
-    FromAngleAxis (angle_radian, axis_x, axis_y, axis_z);
+    FromAngleAxis (axis_x, axis_y, axis_z, angle_radian);
   }
 
-  Quaternion::Quaternion (t_float euler_x, t_float euler_y, t_float euler_z)
+  Quaternion::Quaternion (float euler_x, float euler_y, float euler_z)
   {
     FromEulerZXY (euler_x, euler_y, euler_z);
   }
@@ -101,7 +101,7 @@ namespace nux
   Quaternion Quaternion::operator * (const Quaternion &quat) const
   {
     Quaternion qt;
-    t_float x1, x2, y1, y2, z1, z2, w1, w2;
+    float x1, x2, y1, y2, z1, z2, w1, w2;
 
     x1 = x;
     y1 = y;
@@ -120,7 +120,7 @@ namespace nux
     return qt;
   }
 
-  Quaternion Quaternion::operator * (const t_float &f) const
+  Quaternion Quaternion::operator * (const float &f) const
   {
     Quaternion qt;
     qt.x = x * f;
@@ -130,7 +130,7 @@ namespace nux
     return qt;
   }
 
-  Quaternion Quaternion::operator / (const t_float &f) const
+  Quaternion Quaternion::operator / (const float &f) const
   {
     Quaternion qt;
     qt.x = x / f;
@@ -162,7 +162,7 @@ namespace nux
   Quaternion &Quaternion::operator *= (const Quaternion &quat)
   {
     Quaternion qt;
-    t_float x1, x2, y1, y2, z1, z2, w1, w2;
+    float x1, x2, y1, y2, z1, z2, w1, w2;
 
     x1 = x;
     y1 = y;
@@ -185,7 +185,7 @@ namespace nux
     return *this;
   }
 
-  Quaternion &Quaternion::operator *= (const t_float &f)
+  Quaternion &Quaternion::operator *= (const float &f)
   {
     x = x * f;
     y = y * f;
@@ -194,7 +194,7 @@ namespace nux
     return *this;
   }
 
-  Quaternion &Quaternion::operator /= (const t_float &f)
+  Quaternion &Quaternion::operator /= (const float &f)
   {
     x = x / f;
     y = y / f;
@@ -251,8 +251,8 @@ namespace nux
 
   void Quaternion::Inverse()
   {
-    t_float len;
-    len = (t_float) std::sqrt (x * x + y * y + z * z + w * w);
+    float len;
+    len = (float) std::sqrt (x * x + y * y + z * z + w * w);
     Conjugate();
     x = x / len;
     y = y / len;
@@ -262,8 +262,8 @@ namespace nux
 
   void Quaternion::Normalize()
   {
-    t_float len;
-    len = (t_float) std::sqrt (x * x + y * y + z * z + w * w);
+    float len;
+    len = (float) std::sqrt (x * x + y * y + z * z + w * w);
     x = x / len;
     y = y / len;
     z = z / len;
@@ -278,13 +278,13 @@ namespace nux
 
   Parameters:     - quat
 
-  Return Value:   t_float.
+  Return Value:   float.
 
   Comments:       None.
   \***************************************************************************************/
-  t_float Quaternion::DotProduct (const Quaternion &quat) const
+  float Quaternion::DotProduct (const Quaternion &quat) const
   {
-    t_float d_p;
+    float d_p;
     d_p = x * quat.x + y * quat.y + z * quat.z + w * quat.w;
     return d_p;
   }
@@ -296,14 +296,14 @@ namespace nux
 
   Parameters:     None.
 
-  Return Value:   t_float
+  Return Value:   float
 
   Comments:       None.
   \***************************************************************************************/
-  t_float Quaternion::Length() const
+  float Quaternion::Length() const
   {
-    t_float len;
-    len = (t_float) std::sqrt (x * x + y * y + z * z + w * w);
+    float len;
+    len = (float) std::sqrt (x * x + y * y + z * z + w * w);
     return len;
   }
 
@@ -322,25 +322,25 @@ namespace nux
 
   Comments:       None.
   \***************************************************************************************/
-  void Quaternion::FromAngleAxis (t_float axis_x, t_float axis_y, t_float axis_z, t_float angle_radian)
+  void Quaternion::FromAngleAxis (float axis_x, float axis_y, float axis_z, float angle_radian)
   {
-    t_float ax = axis_x;
-    t_float ay = axis_y;
-    t_float az = axis_z;
+    float ax = axis_x;
+    float ay = axis_y;
+    float az = axis_z;
 
     // required: Normalize the axis
 
-    t_float len = 1.0f / (t_float) std::sqrt ( ax * ax + ay * ay + az * az );
+    float len = 1.0f / (float) std::sqrt ( ax * ax + ay * ay + az * az );
 
     ax = ax * len;
     ay = ay * len;
     az = az * len;
 
-    t_float sin_theta_over_two = (t_float) std::sin ( angle_radian / 2.0);
+    float sin_theta_over_two = (float) std::sin ( angle_radian / 2.0);
     x = ax * sin_theta_over_two;
     y = ay * sin_theta_over_two;
     z = az * sin_theta_over_two;
-    w = (t_float) std::cos (angle_radian / 2.0);
+    w = (float) std::cos (angle_radian / 2.0);
   }
 
   /***************************************************************************************\
@@ -359,11 +359,11 @@ namespace nux
                       rotation around X axis
                       rotation around Z axis
   \***************************************************************************************/
-  void Quaternion::FromEulerZXY (t_float euler_x, t_float euler_y, t_float euler_z)
+  void Quaternion::FromEulerZXY (float euler_x, float euler_y, float euler_z)
   {
-    t_float roll_axis[3]  = {0.0f, 0.0f, 1.0f};
-    t_float pitch_axis[3] = {1.0f, 0.0f, 0.0f};
-    t_float yaw_axis[3]   = {0.0f, 1.0f, 0.0f};
+    float roll_axis[3]  = {0.0f, 0.0f, 1.0f};
+    float pitch_axis[3] = {1.0f, 0.0f, 0.0f};
+    float yaw_axis[3]   = {0.0f, 1.0f, 0.0f};
 
     Quaternion roll (euler_z, roll_axis[0], roll_axis[1], roll_axis[2]);
     Quaternion pitch (euler_x, pitch_axis[0], pitch_axis[1], pitch_axis[2]);
@@ -372,7 +372,7 @@ namespace nux
     (*this) = roll * pitch * yaw;
   }
 
-  void Quaternion::GetAngleAxis (Vector3 &axis, t_float &angle_radian) const
+  void Quaternion::GetAngleAxis (Vector3 &axis, float &angle_radian) const
   {
     Quaternion qt;
 
@@ -383,9 +383,9 @@ namespace nux
 
     // make a unit quaternion
     qt.Normalize();                                 // qt = sin(angle/2)*Uq + cos(angle/2)
-    angle_radian = 2.0f * (t_float) std::acos (qt.w);
-    t_float one_over_sin = 1.0f / (t_float) std::sqrt (qt.x * qt.x + qt.y * qt.y + qt.z * qt.z);
-    //t_float one_over_sin = 1.0f / (t_float) sin(angle_radian / 2.0f);
+    angle_radian = 2.0f * (float) std::acos (qt.w);
+    float one_over_sin = 1.0f / (float) std::sqrt (qt.x * qt.x + qt.y * qt.y + qt.z * qt.z);
+    //float one_over_sin = 1.0f / (float) sin(angle_radian / 2.0f);
 
     axis.x = qt.x * one_over_sin;
     axis.y = qt.y * one_over_sin;
@@ -407,11 +407,11 @@ namespace nux
   Matrix4 Quaternion::GetMatrix() const
   {
     Matrix4 mat4;
-    /*t_float x = x;
-    t_float y = y;
-    t_float z = z;
-    t_float w = w;*/
-    t_float s;
+    /*float x = x;
+    float y = y;
+    float z = z;
+    float w = w;*/
+    float s;
 
     s = 2.0f / ( (float) std::sqrt (x * x + y * y + z * z + w * w) );
 
@@ -441,7 +441,7 @@ namespace nux
   /*const Quaternion operator * (const Quaternion& quat1, const Quaternion& quat2)
   {
       Quaternion qt;
-      t_float x1, x2, y1, y2, z1, z2, w1, w2;
+      float x1, x2, y1, y2, z1, z2, w1, w2;
 
       x1 = quat1.x;
       y1 = quat1.y;
@@ -461,7 +461,7 @@ namespace nux
       return qt;
   }*/
 
-  Quaternion operator * (t_float f, const Quaternion &quat)
+  Quaternion operator * (float f, const Quaternion &quat)
   {
     Quaternion qt;
     qt.x = quat.x * f;
@@ -471,7 +471,7 @@ namespace nux
     return qt;
   }
 
-  Quaternion Slerp (const t_float t, const Quaternion &lhs, const Quaternion &rhs)
+  Quaternion Slerp (const float t, const Quaternion &lhs, const Quaternion &rhs)
   {
     // the slerp of a pair of unit quaterions is the weighted
     // interpolation between them, where the interpolation weight is
@@ -495,8 +495,8 @@ namespace nux
     // them as 4-length vectors -- V1.V2 = cos(theta)
 
 
-    t_float cosine_angle, angle_over_two;
-    t_float coef1, coef2;
+    float cosine_angle, angle_over_two;
+    float coef1, coef2;
     Quaternion qt;
     Quaternion lhs_n, rhs_n;
 
@@ -514,12 +514,12 @@ namespace nux
       rhs_n = - rhs_n;
     }
 
-    angle_over_two = (t_float) std::acos (cosine_angle);
+    angle_over_two = (float) std::acos (cosine_angle);
 
     if ( (1 - cosine_angle) > 0.000001)
     {
-      coef1 = (t_float) std::sin (angle_over_two * (1 - t) ) / (t_float) std::sin (angle_over_two);
-      coef2 = (t_float) std::sin (angle_over_two * t)      / (t_float) std::sin (angle_over_two);
+      coef1 = (float) std::sin (angle_over_two * (1 - t) ) / (float) std::sin (angle_over_two);
+      coef2 = (float) std::sin (angle_over_two * t)      / (float) std::sin (angle_over_two);
     }
     else
     {

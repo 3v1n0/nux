@@ -117,6 +117,10 @@ namespace nux
     unsigned short first;
     unsigned short second;
     short          amount;
+
+    KerningPair()
+      : first(0), second(0), amount(0)
+    {}
   };
 
   struct Charset
@@ -138,6 +142,18 @@ namespace nux
     CharDescriptor Chars[256];
     unsigned short NumKerningPairs;
     KerningPair *Kerning;
+
+    Charset()
+    : italic(false), bold(false), LineHeight(0), Base(0), Width(0), Height(0)
+        , Pages(0), FontHeight(0), Ascent(0), Descent(0), AvgCharWidth(0)
+        , MaxCharWidth(0), InternalLeading(0), ExternalLeading(0)
+        , NumChar(0), NumKerningPairs(0), Kerning(nullptr)
+    {}
+
+    ~Charset()
+    {
+      delete [] Kerning;
+    }
   };
 
 // Information about a glyph. Tex_y2 can be calculated from tex_y1

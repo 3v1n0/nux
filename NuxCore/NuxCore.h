@@ -82,24 +82,6 @@
 #define NUX_IN
 #define NUX_OUT
 
-#define NUX_0       0
-#define NUX_1       1
-#define NUX_2       2
-#define NUX_4       4
-#define NUX_8       8
-#define NUX_16      16
-#define NUX_32      32
-#define NUX_64      64
-#define NUX_128     128
-#define NUX_256     256
-#define NUX_512     512
-#define NUX_1024    1024
-#define NUX_2048    2048
-#define NUX_4096    4096
-#define NUX_8192    8192
-#define NUX_16384   16384
-#define NUX_65536   65536
-
 #define NUX_MAKEFOURCHARTAG(ch0, ch1, ch2, ch3)  \
     ((DWORD)(BYTE)(ch0) |               \
     ((DWORD)(BYTE)(ch1) << 8) |         \
@@ -111,18 +93,21 @@
 #define INLDELETE delete
 #define INLDELETEARRAY delete []
 
-#define NUX_RUNTIME_ERROR(str, ...)             LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
-#define NUX_ERROR_IF_NULL(test, str, ...)       if(test == 0)   LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
-#define NUX_ERROR_IF_TRUE(test, str, ...)       if(test)        LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
-#define NUX_ERROR_IF_FALSE(test, str, ...)      if(!(test))     LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_RUNTIME_ERROR(str, ...)               LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_ERROR_IF_NULL(test, str, ...)         if((test) == 0)   LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_ERROR_IF_TRUE(test, str, ...)         if(test)        LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
+#define NUX_ERROR_IF_FALSE(test, str, ...)        if(!(test))     LogOutputErrorMessage(__FILE__, __LINE__, str, ##__VA_ARGS__);
 
-#define NUX_RETURN_IF_NULL(test)                if(test == 0)   return;
-#define NUX_RETURN_IF_TRUE(test)                if(test)        return;
-#define NUX_RETURN_IF_FALSE(test)               if(!(test))     return;
+#define NUX_RETURN_IF_NULL(test)                  if((test) == 0) return;
+#define NUX_RETURN_IF_NOTNULL(test)               if((test) != 0) return;
+#define NUX_RETURN_IF_TRUE(test)                  if(test)        return;
+#define NUX_RETURN_IF_FALSE(test)                 if(!(test))     return;
+#define NUX_RETURN_IF_FAIL(test)                  if(!(test))     return;
 
-#define NUX_RETURN_VALUE_IF_NULL(test, value)   if(test == 0)   return value;
-#define NUX_RETURN_VALUE_IF_TRUE(test, value)   if(test)        return value;
-#define NUX_RETURN_VALUE_IF_FALSE(test, value)  if(!(test))     return value;
+#define NUX_RETURN_VALUE_IF_NULL(test, value)     if((test) == 0) return value;
+#define NUX_RETURN_VALUE_IF_NOTNULL(test, value)  if((test) != 0) return value;
+#define NUX_RETURN_VALUE_IF_TRUE(test, value)     if(test)        return value;
+#define NUX_RETURN_VALUE_IF_FALSE(test, value)    if(!(test))     return value;
 
 
 // Structure Alignment
@@ -176,6 +161,7 @@ namespace nux
     va_list arg_list;                                           \
     va_start(arg_list, fmt);                                    \
     result = GetVariableArgs(msg, size, len, fmt, arg_list);    \
+    va_end(arg_list);                                           \
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -504,12 +490,6 @@ namespace nux
     #define NUX_BREAK_ASM_INT3
 #endif
 
-// Simple version of the PURE_VIRTUAL. Use it before output macros nuxError is define.
-#if NUX_CHECK_PUREVIRTUALS
-#define NUX_PURE_VIRTUAL = 0;
-#else
-#define NUX_PURE_VIRTUAL { inlDebugBreak(); }
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 //      Variadic function prototypes.
@@ -660,13 +640,6 @@ namespace nux
   bool OutputRedirectorReady();
 
 
-
-#if CHECK_PUREVIRTUALS
-#define PURE_VIRTUAL(func,extra) =0;
-#else
-#define PURE_VIRTUAL(func,extra) { nuxError(TEXT("Pure virtual not implemented (%s)"), TEXT(#func)); extra }
-#endif
-
   enum EFileWrite
   {
     FILEWRITE_NOFAIL            = 0x01,
@@ -727,7 +700,6 @@ namespace nux
 */
 
 #include "NUniqueIndex.h"
-//#include "SmartPtr/ObjectPtr.h"
 
 //#include "GlobalInitializer.h"
 

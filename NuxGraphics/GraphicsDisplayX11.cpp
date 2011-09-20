@@ -509,7 +509,7 @@ namespace nux
     m_GraphicsContext = new GraphicsEngine (*this);
 
     //EnableVSyncSwapControl();
-    //DisableVSyncSwapControl();
+    DisableVSyncSwapControl();
     
     InitGlobalGrabWindow ();
 
@@ -526,6 +526,8 @@ namespace nux
     m_X11Display = X11Display;
     m_X11Window = X11Window;
     m_GLCtx = OpenGLContext;
+
+    m_X11Screen = DefaultScreen (m_X11Display);
 
     Window root_return;
     int x_return, y_return;
@@ -1101,16 +1103,16 @@ namespace nux
       if (xevent.xbutton.button == Button4)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSEWHEEL;
-        m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
+        m_pEvent->e_event = NUX_MOUSE_WHEEL;
+        m_pEvent->e_wheeldelta = NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
 
       if (xevent.xbutton.button == Button5)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSEWHEEL;
-        m_pEvent->e_wheeldelta = +NUX_MOUSEWHEEL_DELTA;
+        m_pEvent->e_event = NUX_MOUSE_WHEEL;
+        m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
 
@@ -1540,6 +1542,8 @@ namespace nux
         m_pEvent->e_keysym = keysym;
         m_pEvent->e_x11_keycode = xevent.xkey.keycode;
         m_pEvent->e_event = NUX_KEYDOWN;
+        m_pEvent->e_x11_timestamp = xevent.xkey.time;
+        m_pEvent->e_x11_state = xevent.xkey.state;
 
         char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
         Memset (m_pEvent->e_text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
@@ -1574,6 +1578,8 @@ namespace nux
         m_pEvent->e_keysym = keysym;
         m_pEvent->e_x11_keycode = xevent.xkey.keycode;
         m_pEvent->e_event = NUX_KEYUP;
+        m_pEvent->e_x11_timestamp = xevent.xkey.time;
+        m_pEvent->e_x11_state = xevent.xkey.state;
         break;
       }
 
@@ -2000,6 +2006,8 @@ namespace nux
     image = XGetImage (display, _dnd_source_window, 0, 0, data->GetWidth (), data->GetHeight (), AllPlanes, ZPixmap);
     GC gc = XCreateGC (display, _dnd_source_window, 0, NULL);
     
+    BitmapFormat format = data->GetFormat();
+    
     /* draw some shit */
     if (data->IsTextureData())
     {
@@ -2011,8 +2019,12 @@ namespace nux
         for (x = 0; x < data->GetWidth (); x++)
         {
           long pixel = (long) surface.Read (x, y);
-          
-          long a = ((pixel >> 24) & 0xff);
+	  long a;
+	  
+	  if (format  == BITFMT_R8G8B8)
+	    a = 255;
+	  else
+	    a = ((pixel >> 24) & 0xff);
           long r = (((pixel >> 16) & 0xff) * a) / 255;
           long g = (((pixel >> 8)  & 0xff) * a) / 255;
           long b = (((pixel >> 0)  & 0xff) * a) / 255;
@@ -2470,7 +2482,19 @@ namespace nux
   void GraphicsDisplay::InitGlobalGrabWindow ()
   {
     Display *display = GetX11Display ();
-    _global_grab_window = XCreateSimpleWindow (display, DefaultRootWindow (display), -100, -100, 1, 1, 0, 0, 0);
+
+    XSetWindowAttributes attribs;
+    attribs.override_redirect = True;
+    _global_grab_window = XCreateWindow (display,
+                                         DefaultRootWindow (display),
+                                         -100, -100,                     // X, Y
+                                         1, 1,                           // Width, Height
+                                         0,                              // Border
+                                         0,                              // Depth
+                                         InputOnly,                      // Class
+                                         CopyFromParent,                 // Visual
+                                         CWOverrideRedirect,
+                                         &attribs);
     
     XSelectInput (display, _global_grab_window, StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PointerMotionMask);
     XMapRaised (display, _global_grab_window);

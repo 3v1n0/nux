@@ -207,7 +207,7 @@ namespace nux
 
       if (res != conversionOK)
       {
-        delete utf8string;
+        delete [] utf8string;
         utf8string = 0;
       }
 
@@ -244,7 +244,7 @@ namespace nux
 
       if (res != conversionOK)
       {
-        delete utf16string;
+        delete [] utf16string;
         utf16string = 0;
       }
 

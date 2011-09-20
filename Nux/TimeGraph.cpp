@@ -110,7 +110,8 @@ namespace nux
 
   TimeGraph::~TimeGraph()
   {
-    DestroyLayout();
+    NUX_SAFE_DELETE (m_DrawFunctionShader);
+    NUX_SAFE_DELETE (m_BackgroundLayer);
   }
 
   void TimeGraph::InitializeWidgets()
@@ -141,9 +142,9 @@ namespace nux
     m_GraphBarIcon->SetMinMaxSize (16, 16);
 
 
-    m_GraphBarIcon->OnMouseClick.connect (sigc::mem_fun (this, &TimeGraph::RecvShowBarGraphics) );
-    m_GraphIcon->OnMouseClick.connect (sigc::mem_fun (this, &TimeGraph::RecvShowCurveGraphics) );
-    m_ValueIcon->OnMouseClick.connect (sigc::mem_fun (this, &TimeGraph::RecvShowValue) );
+    m_GraphBarIcon->mouse_click.connect (sigc::mem_fun (this, &TimeGraph::RecvShowBarGraphics) );
+    m_GraphIcon->mouse_click.connect (sigc::mem_fun (this, &TimeGraph::RecvShowCurveGraphics) );
+    m_ValueIcon->mouse_click.connect (sigc::mem_fun (this, &TimeGraph::RecvShowValue) );
 
     m_GraphTitle->SetFont (GetSysBoldFont() );
     m_hlayout->AddView (new SpaceLayout (40, 40, 0, AREA_MAX_HEIGHT), 1);
@@ -177,28 +178,22 @@ namespace nux
     m_ValueIcon     = new InputArea (NUX_TRACKER_LOCATION);
   }
 
-  void TimeGraph::DestroyLayout()
-  {
-    NUX_SAFE_DELETE (m_DrawFunctionShader);
-    NUX_SAFE_DELETE (m_BackgroundLayer);
-  }
-
   void TimeGraph::RecvShowBarGraphics (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     m_Option = SHOW_COLUMN;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TimeGraph::RecvShowCurveGraphics (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     m_Option = SHOW_GRAPH;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TimeGraph::RecvShowValue (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     m_Option = SHOW_VALUE;
-    NeedRedraw();
+    QueueDraw();
   }
 
 
@@ -436,7 +431,7 @@ namespace nux
   {
     m_minY = minY;
     m_maxY = maxY;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TimeGraph::AddValue (float Value)
@@ -463,25 +458,25 @@ namespace nux
       return;
 
     m_DynValueArray[index].Update (Value);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TimeGraph::ShowGraphStyle()
   {
     m_Option = SHOW_GRAPH;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TimeGraph::ShowColumnStyle()
   {
     m_Option = SHOW_COLUMN;
-    NeedRedraw();
+    QueueDraw();
   }
 
   void TimeGraph::ShowNumberStyle()
   {
     m_Option = SHOW_VALUE;
-    NeedRedraw();
+    QueueDraw();
   }
 
 

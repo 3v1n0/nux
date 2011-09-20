@@ -39,10 +39,10 @@ namespace nux
     m_blue = new ColorGradientPropertyItem (TEXT ("Blue") );
     m_alpha = new ColorGradientPropertyItem (TEXT ("Alpha") );
 
-    m_ColorModel = new PushButton (TEXT ("RGB"), NUX_TRACKER_LOCATION);
+    m_ColorModel = new ToggleButton ("RGB", NUX_TRACKER_LOCATION);
     m_ColorModel->SetMinMaxSize (32, 14);
     m_ColorModel->SetFont (GetSysBoldFont () );
-    m_ColorFormat = new PushButton (TEXT ("float"), NUX_TRACKER_LOCATION);
+    m_ColorFormat = new ToggleButton ("float", NUX_TRACKER_LOCATION);
     m_ColorFormat->SetMinMaxSize (32, 14);
     m_ColorFormat->SetFont (GetSysBoldFont () );
 
@@ -86,8 +86,8 @@ namespace nux
     m_blue->sigValueChanged.connect ( sigc::mem_fun (this, &RGBAPropertyItem::BlueChange) );
     m_alpha->sigValueChanged.connect ( sigc::mem_fun (this, &RGBAPropertyItem::AlphaChange) );
 
-    m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBAPropertyItem::OnChangeColorModel) );
-    m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBAPropertyItem::OnChangeColorFormat) );
+    //FIXME - m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBAPropertyItem::OnChangeColorModel) );
+    //FIXME - m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBAPropertyItem::OnChangeColorFormat) );
 
     NODE_SIG_CONNECT (m_red->sigValueChanged, RGBAPropertyItem, RecvPropertyChange);
     NODE_SIG_CONNECT (m_green->sigValueChanged, RGBAPropertyItem, RecvPropertyChange);
@@ -99,18 +99,18 @@ namespace nux
   {
     m_ColorModel->Dispose();
     m_ColorFormat->Dispose();
-    NUX_SAFE_DELETE (m_red);
-    NUX_SAFE_DELETE (m_green);
-    NUX_SAFE_DELETE (m_blue);
-    NUX_SAFE_DELETE (m_alpha);
+    delete m_red;
+    delete m_green;
+    delete m_blue;
+    delete m_alpha;
   }
 
   long RGBAPropertyItem::ProcessPropertyEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
 
-    ret = m_ColorModel->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ColorFormat->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+//     ret = m_ColorModel->BaseProcessEvent (ievent, ret, ProcessEventInfo);
+//     ret = m_ColorFormat->BaseProcessEvent (ievent, ret, ProcessEventInfo);
     return ret;
   }
 
@@ -146,9 +146,9 @@ namespace nux
     }
 
     UpdateStartToEndColors();
-    m_green->NeedRedraw();
-    m_blue->NeedRedraw();
-    m_alpha->NeedRedraw();
+    m_green->QueueDraw();
+    m_blue->QueueDraw();
+    m_alpha->QueueDraw();
   }
 
   void RGBAPropertyItem::GreenChange (ColorGradient *slider)
@@ -160,9 +160,9 @@ namespace nux
     }
 
     UpdateStartToEndColors();
-    m_red->NeedRedraw();
-    m_blue->NeedRedraw();
-    m_alpha->NeedRedraw();
+    m_red->QueueDraw();
+    m_blue->QueueDraw();
+    m_alpha->QueueDraw();
   }
 
   void RGBAPropertyItem::BlueChange (ColorGradient *slider)
@@ -174,19 +174,19 @@ namespace nux
     }
 
     UpdateStartToEndColors();
-    m_red->NeedRedraw();
-    m_green->NeedRedraw();
-    m_alpha->NeedRedraw();
+    m_red->QueueDraw();
+    m_green->QueueDraw();
+    m_alpha->QueueDraw();
   }
 
   void RGBAPropertyItem::AlphaChange (ColorGradient *slider)
   {
     UpdateStartToEndColors();
 
-    m_red->NeedRedraw();
-    m_green->NeedRedraw();
-    m_blue->NeedRedraw();
-    m_alpha->NeedRedraw();
+    m_red->QueueDraw();
+    m_green->QueueDraw();
+    m_blue->QueueDraw();
+    m_alpha->QueueDraw();
   }
 
   void RGBAPropertyItem::DrawProperty (GraphicsEngine &GfxContext, TableCtrl *table, bool force_draw, Geometry geo, const BasePainter &Painter,
@@ -240,8 +240,8 @@ namespace nux
       SetColor(color_.red, color_.green, color_.blue, color_.alpha);
     }
 
-    m_green->NeedRedraw();
-    m_blue->NeedRedraw();
+    m_green->QueueDraw();
+    m_blue->QueueDraw();
   }
 
   void RGBAPropertyItem::SetColorModel(color::Model cm)
@@ -249,7 +249,7 @@ namespace nux
     if (cm == color::RGB)
     {
       color_model_ = color::RGB;
-      m_ColorModel->SetCaption (TEXT ("RGB") );
+      //FIXME - m_ColorModel->SetCaption (TEXT ("RGB") );
 
       m_red->SetName (TEXT ("Red") );
       m_green->SetName (TEXT ("Green") );
@@ -260,7 +260,7 @@ namespace nux
     if (cm == color::HSV)
     {
       color_model_ = color::HSV;
-      m_ColorModel->SetCaption (TEXT ("HSV") );
+      //FIXME - m_ColorModel->SetCaption (TEXT ("HSV") );
 
       m_red->SetName (TEXT ("Hue") );
       m_green->SetName (TEXT ("Saturation") );
@@ -271,7 +271,7 @@ namespace nux
     if (cm == color::HLS)
     {
       color_model_ = color::HLS;
-      m_ColorModel->SetCaption (TEXT ("HLS") );
+      //FIXME - m_ColorModel->SetCaption (TEXT ("HLS") );
 
       m_red->SetName (TEXT ("Hue") );
       m_green->SetName (TEXT ("Light") );
@@ -282,7 +282,7 @@ namespace nux
     if (cm == color::YUV)
     {
       color_model_ = color::YUV;
-      m_ColorModel->SetBaseString (TEXT ("YUV") );
+      //FIXME - m_ColorModel->SetBaseString (TEXT ("YUV") );
 
 //         m_ComponentLabel0->SetBaseString(TEXT("Y"));
 //         m_ComponentLabel1->SetBaseString(TEXT("U"));
@@ -297,17 +297,17 @@ namespace nux
     if (color_format_ == color::FLOAT)
     {
       color_format_ = color::INT;
-      m_ColorFormat->SetCaption (TEXT ("int") );
+      //FIXME - m_ColorFormat->SetCaption (TEXT ("int") );
     }
     else if (color_format_ == color::INT)
     {
       color_format_ = color::HEX;
-      m_ColorFormat->SetCaption (TEXT ("hex") );
+      //FIXME - m_ColorFormat->SetCaption (TEXT ("hex") );
     }
     else if (color_format_ == color::HEX)
     {
       color_format_ = color::FLOAT;
-      m_ColorFormat->SetCaption (TEXT ("float") );
+      //FIXME - m_ColorFormat->SetCaption (TEXT ("float") );
     }
 
     m_red->SetColorFormat (color_format_);

@@ -36,10 +36,6 @@ namespace nux
     //! Constructor
     InitiallyUnownedObject (NUX_FILE_LINE_PROTO);
     ~InitiallyUnownedObject ();
-
-  private:
-    NString _allocation_file_name;
-    int     m_allocation_line_number;
   };
 
 }

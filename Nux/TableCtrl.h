@@ -428,11 +428,11 @@ namespace nux
     /////////////////
     //  EMITERS    //
     /////////////////
-    // OnMouseDoubleClick and OnMouseDown have a custom implementation in TreeView. We need to make them virtual.
-    virtual void OnMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    // mouse_double_click and OnMouseDown have a custom implementation in TreeView. We need to make them virtual.
+    virtual void mouse_double_click (int x, int y, unsigned long button_flags, unsigned long key_flags);
     virtual void OnMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void OnMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void mouse_drag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnKeyboardFocus();
     void OnLostKeyboardFocus();
     void OnResizeHeaderMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, t_u32 header_pos);
@@ -455,7 +455,7 @@ namespace nux
   protected:
 
     // for debugging purpose to find out who called NeedReedraw for the TableCtrl.
-    void NeedRedraw();
+    void QueueDraw();
 
     virtual void SetGeometry (const Geometry &geo);
     friend class ComboBoxComplex;

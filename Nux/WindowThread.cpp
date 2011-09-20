@@ -22,6 +22,7 @@
 
 #include "Nux.h"
 #include "Layout.h"
+#include "NuxCore/Logger.h"
 #include "NuxGraphics/GraphicsEngine.h"
 #include "ClientArea.h"
 #include "WindowCompositor.h"
@@ -33,7 +34,11 @@
 
 namespace nux
 {
-  
+namespace
+{
+logging::Logger logger("nux.windows.thread");
+}
+
     TimerFunctor *m_ScrollTimerFunctor;
     TimerHandle m_ScrollTimerHandler;  
 
@@ -351,8 +356,9 @@ namespace nux
     {
       if((m_GLibContext == 0) || (m_GLibLoop == 0))
       {
-          nuxDebugMsg(TEXT("[WindowThread::AddGLibTimeout] WARNING: Trying to set a timeout before GLib Context is created."));
-          return 0;
+        LOG_WARNING(logger) << "Trying to set a timeout before GLib Context is created.\n"
+                            << logging::backtrace();
+        return 0;
       }
 
       GSource *timeout_source;
@@ -485,7 +491,7 @@ namespace nux
     }
     
     _focused_area = focused_area;
-    _focused_area_destroyed_con = focused_area->OnDestroyed.connect (sigc::mem_fun (this, &WindowThread::OnFocusedAreaDestroyed));
+    _focused_area_destroyed_con = focused_area->object_destroyed.connect (sigc::mem_fun (this, &WindowThread::OnFocusedAreaDestroyed));
     
   }
 
@@ -903,8 +909,6 @@ namespace nux
 #endif
   {
     IEvent event;
-    float ms;
-    bool KeepRunning = true;
 
     if (!IsEmbeddedWindow() && GetWindow().IsPauseThreadGraphicsRendering() )
     {
@@ -915,23 +919,17 @@ namespace nux
     WindowThread *Application = GetWindowThread ();
 
 #if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
-    while (KeepRunning)
+    while (true)
 #endif
     {
       _inside_main_loop = true;
       if(Application->m_bFirstDrawPass)
       {
-        ms = 0.0f;
         GetTimer().StartEarlyTimerObjects ();
-      }
-      else
-      {
-        ms = GetWindow().GetFrameTime();
       }
 
       memset(&event, 0, sizeof(IEvent));
       GetWindow().GetSystemEvent(&event);
-      
 
       if ((event.e_event == NUX_DND_ENTER_WINDOW) ||
         (event.e_event == NUX_DND_LEAVE_WINDOW))
@@ -972,8 +970,7 @@ namespace nux
 
       if((event.e_event ==	NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
       {
-          KeepRunning = false;
-          return 0; //break;
+          return 0;
       }
       
       if (IsEmbeddedWindow () && (event.e_event == NUX_SIZE_CONFIGURATION))
@@ -999,7 +996,7 @@ namespace nux
           (event.e_event == NUX_DND_DROP) ||
           (event.e_event == NUX_DND_ENTER) ||
           (event.e_event == NUX_DND_LEAVE) ||
-          (event.e_event == NUX_MOUSEWHEEL))
+          (event.e_event == NUX_MOUSE_WHEEL))
       {
           //DISPATCH EVENT HERE
           //event.Application = Application;
@@ -1460,7 +1457,6 @@ namespace nux
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
     m_window_compositor = new WindowCompositor;
-    m_Theme = new UXTheme();
 
     SetThreadState (THREADRUNNING);
     m_ThreadCtorCalled = true;
@@ -1513,7 +1509,6 @@ namespace nux
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
     m_window_compositor = new WindowCompositor;
-    m_Theme = new UXTheme();
 
     SetThreadState (THREADRUNNING);
     m_ThreadCtorCalled = true;
@@ -1541,16 +1536,6 @@ namespace nux
     }
 
     inlSetThreadLocalStorage (ThreadLocal_InalogicAppImpl, this);
-    GraphicsDisplay *ParentWindow = 0;
-
-    if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType (WindowThread::StaticObjectType) )
-    {
-      ParentWindow = &static_cast<WindowThread *> (m_Parent)->GetWindow();
-    }
-    else
-    {
-      ParentWindow = 0;
-    }
 
     if (X11Display)
     {
@@ -1580,7 +1565,6 @@ namespace nux
     m_Painter = new BasePainter();
     m_TimerHandler = new TimerHandler();
     m_window_compositor = new WindowCompositor;
-    m_Theme = new UXTheme();
 
     SetThreadState (THREADRUNNING);
     m_ThreadCtorCalled = true;
@@ -1760,7 +1744,7 @@ namespace nux
         (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
         (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
         (nux_event.e_event == NUX_WINDOW_MOUSELEAVE) ||
-        (nux_event.e_event == NUX_MOUSEWHEEL))
+        (nux_event.e_event == NUX_MOUSE_WHEEL))
     {
         //DISPATCH EVENT HERE
         //nux_event.Application = Application;
@@ -1854,6 +1838,8 @@ namespace nux
 
     if (!IsEmbeddedWindow() )
       return;
+    
+    IOpenGLShaderProgram::SetShaderTracking(true);
 
     // Set Nux opengl states. The other plugin in compiz have changed the GPU opengl states.
     // Nux keep tracks of its own opengl states and restore them before doing any drawing.
@@ -1886,6 +1872,7 @@ namespace nux
     CHECKGL ( glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
     GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+    IOpenGLShaderProgram::SetShaderTracking(false);
   }
 
   int WindowThread::InstallEventInspector (EventInspector function, void* data)
@@ -1976,5 +1963,17 @@ namespace nux
 
     return discard_event;
   }
+
+
+UXTheme& WindowThread::GetTheme() const
+{
+  if (!m_Theme)
+  {
+    LOG_INFO(logger) << "Lazily creating nux::UXTheme";
+    const_cast<WindowThread*>(this)->m_Theme = new UXTheme();
+  }
+  return *m_Theme;
+}
+
 }
 

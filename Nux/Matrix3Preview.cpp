@@ -37,7 +37,7 @@ namespace nux
 
     SetMinMaxSize (30, 30);
 
-    OnMouseClick.connect (sigc::mem_fun (this, &Matrix3Preview::RecvClick) );
+    mouse_click.connect (sigc::mem_fun (this, &Matrix3Preview::RecvClick) );
 
     m_ChangeDetectionTimer = new TimerFunctor();
     m_ChangeDetectionTimer->OnTimerExpired.connect (sigc::mem_fun (this, &Matrix3Preview::RecvTimer) );
@@ -46,6 +46,8 @@ namespace nux
 
   Matrix3Preview::~Matrix3Preview()
   {
+    delete m_ChangeDetectionTimer;
+
     if (m_ChangeTimerHandler.IsValid() )
       GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
 

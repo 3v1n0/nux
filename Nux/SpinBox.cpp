@@ -53,11 +53,6 @@ namespace nux
     m_SpinnerDownBtn->SetMinimumSize (15, 10);
     m_SpinnerDownBtn->SetGeometry (Geometry (0, 0, 15, 10) );
 
-    m_UpTimerCallback = new TimerFunctor;
-    m_UpTimerCallback->OnTimerExpired.connect (sigc::mem_fun (this, &SpinBox_Logic::TimerSpinUpBtn) );
-    m_DownTimerCallback = new TimerFunctor;
-    m_DownTimerCallback->OnTimerExpired.connect (sigc::mem_fun (this, &SpinBox_Logic::TimerSpinDownBtn) );
-
     // Set the minimum size of this widget.
     // This is use by TextLineEditPropertyItem::GetItemBestHeight
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -75,7 +70,6 @@ namespace nux
 
   SpinBox::~SpinBox()
   {
-
   }
 
   void SpinBox::InitializeWidgets()
@@ -134,7 +128,7 @@ namespace nux
     else
       GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
 
-    m_EditLine->NeedRedraw();
+    m_EditLine->QueueDraw();
   }
 
   void SpinBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
@@ -153,7 +147,7 @@ namespace nux
     m_EditLine->SetText (NString::Printf ("%d", m_iValue) );
     sigValueChanged.emit (this);
     sigValue.emit (m_iValue);
-    NeedRedraw();
+    QueueDraw();
   }
 
   int SpinBox::GetValue() const
@@ -168,7 +162,7 @@ namespace nux
     if (m_Step <= 0)
       m_Step = 1;
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   int SpinBox::GetStep() const
@@ -193,7 +187,7 @@ namespace nux
     m_iValue = m_IntValidator.GetClampedValue (m_iValue);
     sigValueChanged.emit (this);
     sigValue.emit (m_iValue);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox::ImplementIncrementBtn()
@@ -207,7 +201,7 @@ namespace nux
       else
         m_UpTimerHandler = GetTimer().AddTimerHandler (800, m_UpTimerCallback, 0);
 
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);
@@ -226,7 +220,7 @@ namespace nux
       else
         m_DownTimerHandler = GetTimer().AddTimerHandler (800, m_DownTimerCallback, 0);
 
-      NeedRedraw();
+      QueueDraw();
     }
 
     sigValueChanged.emit (this);

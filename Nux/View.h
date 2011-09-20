@@ -25,10 +25,12 @@
 
 #include "Nux.h"
 #include "Focusable.h"
+#include "NuxCore/Property.h"
+
+#define NeedRedraw QueueDraw
 
 namespace nux
 {
-
   class Layout;
 
   enum eControlType
@@ -41,17 +43,17 @@ namespace nux
     ePopupBox
   };
 
-  class View: public InputArea //Area
+  class View: public InputArea
   {
     NUX_DECLARE_OBJECT_TYPE (View, InputArea);
   public:
     View (NUX_FILE_LINE_DECL);
     virtual ~View();
-    //virtual RemoveView(View *ic);
 
   public:
 
-    long BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    // Deprecated
+    //long BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual long ComputeChildLayout();
     virtual void PositionChildLayout (float offsetX, float offsetY);
@@ -118,7 +120,6 @@ namespace nux
         Emits the signal \i OnQueueDraw.
     */
     virtual void QueueDraw ();
-    virtual void NeedRedraw (); //!< Deprecated. Use QueueDraw.
 
     //! Causes a soft redraw. The widget parameter _need_redraw is set to false. The widget DrawContent() and PostDraw() are called.
     virtual void NeedSoftRedraw();
@@ -189,13 +190,21 @@ namespace nux
     */
     bool HasPassiveFocus ();
 
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
+    virtual bool AcceptKeyNavFocus();
+
+    void IsHitDetectionSkipingChildren(bool skip_children);
+
+
   protected:
     bool _can_focus;
 
-    void OnChildFocusChanged (Area *parent, Area *child);
+    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) = 0;
+    // ProcessEvent is deprecated. 
+    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {return 0;}
+
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
@@ -204,7 +213,6 @@ namespace nux
 
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
 
     Color m_TextColor;
     ObjectPtr<FontTexture> _font;
@@ -228,6 +236,12 @@ namespace nux
 
     virtual void GeometryChangePending ();
     virtual void GeometryChanged ();
+
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
+    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
+                          unsigned long x11_key_code,
+                          unsigned long special_keys_state);
 
     Layout *m_CompositionLayout;
 

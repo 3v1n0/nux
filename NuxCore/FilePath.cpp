@@ -142,7 +142,7 @@ namespace nux
       }
     }
 
-    nuxDebugMsg (TEXT ("FilePath::GetFile] Cannot find file: %s"), filename);
+    nuxDebugMsg (TEXT ("[FilePath::GetFile] Cannot find file: %s"), filename);
     return NString (TEXT ("") );
   }
 

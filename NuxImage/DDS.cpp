@@ -39,7 +39,7 @@ static const unsigned long FOURCC_DXT5 = 0x35545844l; //(MAKEFOURCC('D','X','T',
 namespace nux
 {
 
-  NBitmapData *Load_DDS_File (const TCHAR *filename)
+  NBitmapData* LoadFileFormat_DDS(const TCHAR *filename)
   {
     std::ifstream file;
 
@@ -57,7 +57,7 @@ namespace nux
     if (stat (filename, &file_info) != 0)
 #endif
     {
-      nuxAssertMsg (0, TEXT ("[Load_DDS_File] File not found.") );
+      nuxAssertMsg (0, TEXT ("[LoadFileFormat_DDS] File not found.") );
       return 0;
     }
 
@@ -65,7 +65,7 @@ namespace nux
 
     if (!file.is_open() )
     {
-      nuxAssertMsg (0, TEXT ("[Load_DDS_File] Cannot open file.") );
+      nuxAssertMsg (0, TEXT ("[LoadFileFormat_DDS] Cannot open file.") );
       return 0;
     }
 
@@ -80,7 +80,7 @@ namespace nux
 
     if (file.fail() || file.eof() )
     {
-      nuxAssertMsg (0, TEXT ("[Load_DDS_File] Cannot read the expected content size.") );
+      nuxAssertMsg (0, TEXT ("[LoadFileFormat_DDS] Cannot read the expected content size.") );
       return 0;
     }
 

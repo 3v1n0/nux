@@ -1,5 +1,6 @@
+// -*- Mode: C++; indent-tabs-mode: nil; tab-width: 2 -*-
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2011 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -19,53 +20,62 @@
  *
  */
 
+#include <iostream>
+#include <sstream>
 
 #include "NuxCore.h"
 #include "Object.h"
 #include "ObjectPtr.h"
+#include "Logger.h"
 
 namespace nux
 {
+namespace
+{
+logging::Logger logger("nux.core.object");
+}
 
   NUX_IMPLEMENT_ROOT_OBJECT_TYPE (Trackable);
   NUX_IMPLEMENT_OBJECT_TYPE (Object);
   NUX_IMPLEMENT_GLOBAL_OBJECT (ObjectStats);
 
-//   int ObjectStats::_total_allocated_size = 0;
-//   int ObjectStats::_number_of_objects = 0;
-//   ObjectStats::AllocationList ObjectStats::_allocation_list;
-
-  ObjectStats::AllocationList::AllocationList()
-  {
-
-  }
-
-  ObjectStats::AllocationList::~AllocationList()
-  {
-
-  }
-
   void ObjectStats::Constructor()
   {
-    _total_allocated_size = 0;
+    _total_allocated_size= 0;
     _number_of_objects = 0;
   }
 
   void ObjectStats::Destructor()
   {
+#if defined(NUX_DEBUG)
     if (_number_of_objects)
     {
-      nuxDebugMsg (TEXT("[ObjectStats::Destructor] %d undeleted objects."), _number_of_objects);
+      std::cerr << "[ObjectStats::Destructor] "
+                << _number_of_objects << " undeleted objects.\n\t"
+                << _allocation_list.size() << " items in allocation list.\n";
     }
 
-#if defined(NUX_DEBUG)
-    AllocationList::iterator it;
-    for (it = _allocation_list.begin(); it != _allocation_list.end(); it++)
+    int index = 0;
+
+#if defined(NUX_OS_WINDOWS)
+	// Visual Studio does not support range based for loops.
+	for (AllocationList::iterator ptr = _allocation_list.begin(); ptr != _allocation_list.end(); ++ptr)
+	{
+		Object* obj = static_cast<Object*>(*ptr);
+		std::cerr << "\t" << ++index << " Undeleted object: Type "
+			<< obj->Type().name << ", "
+			<< obj->GetAllocationLoation() << "\n";
+	}
+
+#else
+    for (auto ptr : _allocation_list)
     {
-      Object* obj = NUX_STATIC_CAST (Object*, (*it));
-      nuxDebugMsg (TEXT("Undeleted object: Type %s, %s line %d"), obj->Type().m_Name, obj->_allocation_file_name.GetTCharPtr(), obj->_allocation_line_number);
-
+      Object* obj = static_cast<Object*>(ptr);
+      std::cerr << "\t" << ++index << " Undeleted object: Type "
+                << obj->Type().name << ", "
+                << obj->GetAllocationLoation() << "\n";
     }
+#endif
 #endif
   }
 
@@ -74,7 +84,7 @@ namespace nux
   Trackable::Trackable()
   {
     _heap_allocated = -1;
-    
+
     _owns_the_reference = false;
   }
 
@@ -111,28 +121,27 @@ namespace nux
   {
     if (_owns_the_reference == true)
     {
-      nuxDebugMsg (TEXT ("[Trackable::SetOwnedReference] Do not change the ownership if is already set to true!") );
+      LOG_DEBUG(logger) << "Do not change the ownership if is already set to true!";
       return;
     }
 
     _owns_the_reference = b;
   }
 
-  std::new_handler
-  Trackable::set_new_handler (std::new_handler handler)
+  std::new_handler Trackable::set_new_handler (std::new_handler handler)
   {
     std::new_handler old_handler = _new_current_handler;
     _new_current_handler = handler;
     return old_handler;
   }
 
-  void*
-  Trackable::operator new (size_t size)
+  void* Trackable::operator new (size_t size)
   {
     // Set the new_handler for this call
     std::new_handler global_handler  = std::set_new_handler (_new_current_handler);
 
-    // If allocation fails _new_current_handler is called, if specified, otherwise the global new_handler is called.
+    // If allocation fails _new_current_handler is called, if specified,
+    // otherwise the global new_handler is called.
     void *ptr;
 
     try
@@ -177,7 +186,7 @@ namespace nux
     }
   }
 
-  bool Trackable::IsHeapAllocated () 
+  bool Trackable::IsHeapAllocated()
   {
     if (_heap_allocated == -1)
     {
@@ -187,13 +196,19 @@ namespace nux
     return (_heap_allocated == 1 ? true : false);
   }
 
-  bool Trackable::IsDynamic () const
+  bool Trackable::IsDynamic() const
   {
     // Get pointer to beginning of the memory occupied by this.
     const void *ptr = dynamic_cast<const void *> (this);
 
     // Search for ptr in allocation_list
-    ObjectStats::AllocationList::iterator i = std::find (GObjectStats._allocation_list.begin(), GObjectStats._allocation_list.end(), ptr);
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
+    std::list<void*>::iterator i = std::find(GObjectStats._allocation_list.begin(),
+      GObjectStats._allocation_list.end(), ptr);
+#else
+    auto i = std::find(GObjectStats._allocation_list.begin(),
+                       GObjectStats._allocation_list.end(), ptr);
+#endif
     return i != GObjectStats._allocation_list.end();
   }
 
@@ -204,121 +219,80 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////
 
-  Object::Object (bool OwnTheReference, NUX_FILE_LINE_DECL)
+  Object::Object(bool OwnTheReference, NUX_FILE_LINE_DECL)
+    : allocation_file_name_(__Nux_FileName__)
+    , allocation_line_number_(__Nux_LineNumber__)
+    , reference_count_(new NThreadSafeCounter())
+    , objectptr_count_(new NThreadSafeCounter())
   {
-// #if defined(NUX_DEBUG)
-    _allocation_file_name      = __Nux_FileName__;
-    _allocation_line_number    = __Nux_LineNumber__;
-// #endif
-
-    _reference_count      = new NThreadSafeCounter();
-    _weak_reference_count = new NThreadSafeCounter();
-    _objectptr_count     = new NThreadSafeCounter();
-    _destroyed            = new bool;
-    *_destroyed           = false;
-
-    _reference_count->Set (1);
-    _weak_reference_count->Set (1);
-
-    SetOwnedReference (OwnTheReference);
+    reference_count_->Set(1);
+    SetOwnedReference(OwnTheReference);
   }
 
   Object::~Object()
   {
-    *_destroyed = true;
-
-    if (IsHeapAllocated ())
+    if (IsHeapAllocated())
     {
-      // If the object has properly been UnReference, it should have gone through Destroy(). if that is the case then
-      // _reference_count should be NULL or its value (returned by GetValue ()) should be equal to 0;
-      // We can use this to detect when delete is called directly on an object.
-      nuxAssertMsg((_reference_count == 0) || (_reference_count && (_reference_count->GetValue () == 0)),
-                   TEXT("[Object::~Object] Invalid object destruction. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object.\nObject allocated at: %s [%d]"),
-                   _allocation_file_name.GetTCharPtr (),
-                   _allocation_line_number);
-      
-      nuxAssertMsg((_weak_reference_count == 0) || (_weak_reference_count && (_weak_reference_count->GetValue () > 0)),
-                   TEXT("[Object::~Object] Invalid value of the weak reference count pointer. Make sure to call UnReference or Dispose (if the object has never been referenced) on the object.\nObject allocated at: %s [%d]"),
-                   _allocation_file_name.GetTCharPtr (),
-                   _allocation_line_number);
-
-      if ((_reference_count == 0) && (_weak_reference_count == 0))
+      // If the object has properly been UnReference, it should have gone
+      // through Destroy(). if that is the case then _reference_count should
+      // be NULL or its value (returned by GetValue ()) should be equal to 0;
+      // We can use this to detect when delete is called directly on an
+      // object.
+      if (reference_count_->GetValue() > 0)
       {
-        delete _destroyed;
-      }
-      else
-      {
-        // There is a smart pointer holding a weak reference to this object. It is the responsibility
-        // of the last smart pointer to delete '_destroyed'.
+        LOG_WARN(logger) << "Invalid object destruction, still has "
+                         << reference_count_->GetValue() << " references."
+                         << "\nObject allocated at: " << GetAllocationLoation();
       }
     }
-    else
-    {
-      delete _reference_count;
-      delete _weak_reference_count;
-      delete _objectptr_count;
-      delete _destroyed;
-    }
+    delete reference_count_;
+    delete objectptr_count_;
   }
 
   bool Object::Reference()
   {
-    if (!IsHeapAllocated ())
+    if (!IsHeapAllocated())
     {
-      nuxDebugMsg (TEXT ("[Object::Reference] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxAssertMsg (0, TEXT("[Object::Reference] Trying to reference an object that was not heap allocated."));
+      LOG_WARN(logger) << "Trying to reference an object that was not heap allocated."
+                       << "\nObject allocated at: " << GetAllocationLoation();
       return false;
     }
 
-    if (_reference_count->GetValue() == 0)
+    if (!OwnsTheReference())
     {
-      nuxDebugMsg (TEXT ("[Object::Reference] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxAssertMsg (0, TEXT("[Object::Reference] Trying to reference an object that has been delete."));
-      return false;
-    }
-
-    if (!OwnsTheReference() )
-    {
-      SetOwnedReference (true);
+      SetOwnedReference(true);
       // The ref count remains at 1. Exit the method.
       return true;
     }
 
-    _reference_count->Increment();
-    _weak_reference_count->Increment();
+    reference_count_->Increment();
     return true;
   }
 
   bool Object::UnReference()
   {
-    if (!IsHeapAllocated ())
+    if (!IsHeapAllocated())
     {
-      nuxDebugMsg (TEXT ("[Object::UnReference] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxAssertMsg (0, TEXT("[Object::UnReference] Trying to un-reference an object that was not heap allocated."));
+      LOG_WARN(logger) << "Trying to un-reference an object that was not heap allocated."
+                       << "\nObject allocated at: " << GetAllocationLoation();
       return false;
     }
 
-    if (_objectptr_count->GetValue() == _reference_count->GetValue())
+    if (objectptr_count_->GetValue() == reference_count_->GetValue())
     {
-      // There are ObjectPtr's hosting this object. Release all of them to destroy this object.
-      // This prevent from calling UnReference () many times and destroying the object when there are ObjectPtr's hosting it.
-      nuxDebugMsg (TEXT ("[Object::UnReference] Warning on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxDebugMsg (TEXT ("[Object::UnReference] There are ObjectPtr hosting this object. Release all of them to destroy this object."));
+      // There are ObjectPtr's hosting this object. Release all of them to
+      // destroy this object.  This prevent from calling UnReference () many
+      // times and destroying the object when there are ObjectPtr's hosting
+      // it.  This method should not be called directly in that case.
+      LOG_WARN(logger) << "There are ObjectPtr hosting this object. "
+                       << "Release all of them to destroy this object. "
+                       << "\nObject allocated at: " << GetAllocationLoation();
       return false;
     }
 
-    _reference_count->Decrement();
-    _weak_reference_count->Decrement();
+    reference_count_->Decrement();
 
-    if ( (_reference_count->GetValue() == 0) && IsHeapAllocated () )
+    if (reference_count_->GetValue() == 0)
     {
       Destroy();
       return true;
@@ -329,18 +303,16 @@ namespace nux
 
   bool Object::SinkReference()
   {
-    if (!IsHeapAllocated ())
+    if (!IsHeapAllocated())
     {
-      nuxDebugMsg (TEXT ("[Object::SinkReference] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxAssertMsg (0, TEXT("[Object::SinkReference] Trying to sink an object that was not heap allocated."));
+      LOG_WARN(logger) << "Trying to sink an object that was not heap allocated."
+                       << "\nObject allocated at: " << GetAllocationLoation();
       return false;
     }
 
-    if (!OwnsTheReference() )
+    if (!OwnsTheReference())
     {
-      SetOwnedReference (true);
+      SetOwnedReference(true);
       // The ref count remains at 1. Exit the method.
       return true;
     }
@@ -350,102 +322,47 @@ namespace nux
 
   bool Object::Dispose()
   {
-    // The intent of the Dispose call is to destroy objects with a float reference (reference count is equal to 1 and
-    // the '_owns_the_reference' flag is set to false). In Nux, only widgets object can have a floating reference.
-    // And widgets are only visible if added to the widget tree. 
-    // When an object with a floating reference is added to the widget tree, it becomes "owned'. It looses it
-    // floating reference status but it still has a reference count number of 1.
-    // In practice, since widgets must be added to the widget tree, there should never be a need to call Dispose
+    // The intent of the Dispose call is to destroy objects with a float
+    // reference (reference count is equal to 1 and the '_owns_the_reference'
+    // flag is set to false). In Nux, only widgets object can have a floating
+    // reference.  And widgets are only visible if added to the widget tree.
+    // When an object with a floating reference is added to the widget tree,
+    // it becomes "owned'. It looses it floating reference status but it still
+    // has a reference count number of 1.  In practice, since widgets must be
+    // added to the widget tree, there should never be a need to call Dispose
     // (except in a few cases).
 
-    // Dispose() was designed to only destroy objects with floating references, while UnReference() destroys objects
-    // that are "owned" . That is now relaxed. Dispose() calls UnReference().
-
+    // Dispose() was designed to only destroy objects with floating
+    // references, while UnReference() destroys objects that are "owned".
+    // That is now relaxed. Dispose() calls UnReference().
     return UnReference();
   }
 
   void Object::Destroy()
   {
-    if (!IsHeapAllocated ())
-    {
-      nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxAssertMsg (0, TEXT("[Object::Destroy] Trying to destroy an object that was not heap allocated."));
-      return;
-    }
-
-    nuxAssert (_reference_count->GetValue() == 0);
-
-    if ((_reference_count->GetValue() == 0) && (_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
-    {
-      delete _reference_count;
-      delete _weak_reference_count;
-      delete _objectptr_count;
-      _reference_count = 0;
-      _weak_reference_count = 0;
-      _objectptr_count = 0;
-    }
-    else
-    {
-      if ((_weak_reference_count == NULL) && (_objectptr_count->GetValue() == 0))
-      {
-        nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-        nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid pointer for the weak reference count."));
-      }
-
-      if ((_weak_reference_count->GetValue() == 0) && (_objectptr_count->GetValue() == 0))
-      {
-        nuxDebugMsg (TEXT ("[Object::Destroy] Error on object allocated at %s [%d]:")
-          , _allocation_file_name.GetTCharPtr ()
-          , _allocation_line_number);
-        nuxAssertMsg (0, TEXT("[Object::Destroy] Invalid value of the weak reference count."));
-      }
-      //nuxDebugMsg (TEXT("[Object::Destroy] There are weak references pending on this object. This is OK!"));
-    }
-
-    OnDestroyed.emit (this);
+    static int delete_depth = 0;
+    ++delete_depth;
+    const char* obj_type = this->Type().name;
+    LOG_TRACE(logger) << "Depth: " << delete_depth << ", about to delete "
+                      << obj_type << " allocated at " << GetAllocationLoation();
+    // Weak smart pointers will clear their pointers when they get this signal.
+    object_destroyed.emit(this);
     delete this;
+    LOG_TRACE(logger) << "Depth: " << delete_depth << ", delete successful for " << obj_type;
+    --delete_depth;
   }
 
-  void Object::IncrementWeakCounter()
+  int Object::GetReferenceCount() const
   {
-    if (!IsHeapAllocated ())
-    {
-      nuxDebugMsg (TEXT ("[Object::IncrementWeakCounter] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxAssertMsg (0, TEXT("[Object::IncrementWeakCounter] Trying to increment weak counter on an object that was not heap allocated."));
-      return;
-    }
-
-    _weak_reference_count->Increment();
+    return reference_count_->GetValue();
   }
 
-  void Object::DecrementWeakCounter()
-  {
-    if (!IsHeapAllocated ())
-    {
-      nuxDebugMsg (TEXT ("[Object::DecrementWeakCounter] Error on object allocated at %s [%d]:")
-        , _allocation_file_name.GetTCharPtr ()
-        , _allocation_line_number);
-      nuxAssertMsg (0, TEXT("[Object::DecrementWeakCounter] Trying to decrement weak counter on an object that was not heap allocated."));
-      return;
-    }
+std::string Object::GetAllocationLoation() const
+{
+  std::ostringstream sout;
+  sout << allocation_file_name_ << ":" << allocation_line_number_;
+  return sout.str();
+}
 
-    _weak_reference_count->Decrement();
-  }
-
-  int Object::GetReferenceCount () const
-  {
-    return _reference_count->GetValue();
-  }
-
-  int Object::GetWeakReferenceCount () const
-  {
-    return _weak_reference_count->GetValue();
-  }
 }
 

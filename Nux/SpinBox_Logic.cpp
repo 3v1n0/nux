@@ -41,27 +41,27 @@ namespace nux
     m_EditLine->SetPrefix (TEXT ("") );
 
     // Set Signals
-    m_SpinnerUpBtn->OnMouseDown.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvIncrement) );
-    m_SpinnerUpBtn->OnMouseDoubleClick.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvIncrement) );
-    m_SpinnerUpBtn->OnMouseUp.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvSpinnerMouseUp) );
-    m_SpinnerUpBtn->OnMouseClick.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvSpinnerMouseUp) );
-    m_SpinnerUpBtn->OnMouseEnter.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseEnter) );
-    m_SpinnerUpBtn->OnMouseLeave.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseLeave) );
+    m_SpinnerUpBtn->mouse_down.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvIncrement) );
+    m_SpinnerUpBtn->mouse_double_click.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvIncrement) );
+    m_SpinnerUpBtn->mouse_up.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvSpinnerMouseUp) );
+    m_SpinnerUpBtn->mouse_click.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvSpinnerMouseUp) );
+    m_SpinnerUpBtn->mouse_enter.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseEnter) );
+    m_SpinnerUpBtn->mouse_leave.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseLeave) );
 
-    m_SpinnerDownBtn->OnMouseDown.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvDecrement) );
-    m_SpinnerDownBtn->OnMouseDoubleClick.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvDecrement) );
-    m_SpinnerDownBtn->OnMouseUp.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvSpinnerMouseUp) );
-    m_SpinnerDownBtn->OnMouseClick.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvSpinnerMouseUp) );
-    m_SpinnerDownBtn->OnMouseEnter.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseEnter) );
-    m_SpinnerDownBtn->OnMouseLeave.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseLeave) );
+    m_SpinnerDownBtn->mouse_down.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvDecrement) );
+    m_SpinnerDownBtn->mouse_double_click.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvDecrement) );
+    m_SpinnerDownBtn->mouse_up.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvSpinnerMouseUp) );
+    m_SpinnerDownBtn->mouse_click.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvSpinnerMouseUp) );
+    m_SpinnerDownBtn->mouse_enter.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseEnter) );
+    m_SpinnerDownBtn->mouse_leave.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseLeave) );
 
     m_EditLine->sigValidateEntry.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvValidateEntry) );
     m_EditLine->sigStartKeyboardFocus.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvStartKeyboardFocus) );
     m_EditLine->sigEndKeyboardFocus.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvEndKeyboardFocus) );
     m_EditLine->sigEscapeKeyboardFocus.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvEscapeKeyboardFocus) );
     m_EditLine->sigEditChange.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvEditChange) );
-    m_EditLine->OnMouseEnter.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseEnter) );
-    m_EditLine->OnMouseLeave.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseLeave) );
+    m_EditLine->mouse_enter.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseEnter) );
+    m_EditLine->mouse_leave.connect (sigc::mem_fun (this, &SpinBox_Logic::RecvMouseLeave) );
 
     m_UpTimerCallback = new TimerFunctor;
     m_UpTimerCallback->OnTimerExpired.connect (sigc::mem_fun (this, &SpinBox_Logic::TimerSpinUpBtn) );
@@ -71,6 +71,8 @@ namespace nux
 
   SpinBox_Logic::~SpinBox_Logic()
   {
+    delete m_UpTimerCallback;
+    delete m_DownTimerCallback;
 //     m_SpinnerUpBtn->Dispose();
 //     m_SpinnerDownBtn->Dispose();
 //     m_EditLine->Dispose();
@@ -95,7 +97,7 @@ namespace nux
       m_DownTimerHandler = 0;
     }
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox_Logic::RecvDecrement (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -115,42 +117,42 @@ namespace nux
 
   void SpinBox_Logic::RecvStartKeyboardFocus (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox_Logic::RecvEndKeyboardFocus (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox_Logic::RecvEscapeKeyboardFocus (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox_Logic::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox_Logic::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox_Logic::RecvMouseMove (int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox_Logic::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox_Logic::RecvEditChange (EditTextBox *textbox)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
   void SpinBox_Logic::RecvValidateEntry (EditTextBox *textbox)

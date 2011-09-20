@@ -27,52 +27,26 @@
 
 namespace nux
 {
-  class HLayout;
-  class InputArea;
-
   class CheckBox: public AbstractButton
   {
+    NUX_DECLARE_OBJECT_TYPE (CheckBox, AbstractButton);
   public:
-    CheckBox (const TCHAR *Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
+    CheckBox (std::string label, NUX_FILE_LINE_PROTO);
     ~CheckBox();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
-    void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if a click happen. The state change and the check box need to redraw itself.
-    */
-    void RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if the mouse is released. Whether a click happened or not,
-        the check box need to redraw itself.
-    */
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-
-    sigc::signal<void, CheckBox *> sigStateToggled;
-    sigc::signal<void> sigToggled;
-    sigc::signal<void, bool> sigStateChanged;
-
-    void EmitStateSignal();
-
-    virtual void SetCaption (const TCHAR *Caption);
-    virtual const NString &GetCaption() const;
-
-    virtual void SetState (bool State);
-    virtual void SetState (bool State, bool EmitSignal);
-    virtual bool GetState() const;
+    Property<std::string>   label;
 
   private:
-    HLayout    *m_hlayout;
-    InputArea   *m_TextArea;
-    InputArea   *m_CheckArea;
-    bool        m_State;
+    void Init ();
+
+    void OnStateChanged (int value);
+    void OnLabelChanged (std::string value);
+    void RebuildLayout ();
+
+    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+
+  private:
   };
 }
 

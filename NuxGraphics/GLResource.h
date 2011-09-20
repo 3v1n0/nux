@@ -34,7 +34,6 @@
 #include "NuxImage/BitmapFormats.h"
 #include "NuxCore/Parsing.h"
 #include "NuxCore/Object.h"
-#include "NuxCore/SmartPtr/GenericSmartPointer.h"
 #include "NuxCore/ObjectPtr.h"
 
 #include "NuxCore/Math/MathUtility.h"
@@ -73,8 +72,6 @@ namespace nux
 
 #define NUX_ENABLE_CG_SHADERS 0
 
-//#define NUX_OPENGLES_20
-
 #if defined(NUX_OS_WINDOWS)
   #include "GL/glew.h"
   #include "GL/wglew.h"
@@ -92,11 +89,15 @@ namespace nux
 #elif defined(NUX_OS_LINUX)
 
   #ifdef NUX_OPENGLES_20
-    #define GLEW_MX
+    #ifndef GLEW_MX
+      #define GLEW_MX
+    #endif
     #include "EGL/egl.h"
     #include "GLES2/gl2.h"
   #else
-    #define GLEW_MX
+    #ifndef GLEW_MX
+      #define GLEW_MX
+    #endif
     #include "GL/glew.h"
     #include "GL/glxew.h"
     
@@ -246,7 +247,7 @@ namespace nux
     PRIMITIVE_TYPE_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
   } PRIMITIVE_TYPE;
 
-  typedef enum
+  enum OpenGLResourceType
   {
     RTINDEXBUFFER,
     RTVERTEXBUFFER,
@@ -263,11 +264,12 @@ namespace nux
     RTFRAMEBUFFEROBJECT,
     RT_GLSL_VERTEXSHADER,
     RT_GLSL_PIXELSHADER,
+    RT_GLSL_GEOMETRYSHADER,
     RT_GLSL_SHADERPROGRAM,
     RT_CG_VERTEXSHADER,
     RT_CG_PIXELSHADER,
     RT_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
-  } OpenGLResourceType;
+  };
 
   /* Multi-Sample buffer types */
   typedef enum
@@ -493,53 +495,37 @@ namespace nux
       Offset = 0;
       Type = ATTRIB_CT_UNKNOWN;
       NumComponent = 0;
-      Usage = ATTRIB_USAGE_DECL_POSITION;
-      UsageIndex = 0;
-      Method = 0;
+      stride_ = 0;
     }
 
-    VERTEXELEMENT (int stream, int offset, ATTRIB_COMPONENT_TYPE type, BYTE numcomponents, ATTRIB_USAGE_DECL usage, BYTE usageindex, BYTE method = 0)
+    VERTEXELEMENT(
+      int stream,
+      int offset,
+      ATTRIB_COMPONENT_TYPE type,
+      BYTE numcomponents,
+      int stride)
     {
       Stream = stream;
       Offset = offset;
       Type = type;
       NumComponent = numcomponents;
-      Usage = usage;
-      UsageIndex = usageindex;
-      Method = method;
+      stride_ = stride;
     }
 
     int Stream;
     int Offset;
-
     // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE ...
     ATTRIB_COMPONENT_TYPE Type;
-    //DWORD Stride;
-
     // This can be 1, 2, 3 or 4; For a position (xyzw), it will be 4. For a texture coordinate (uv) it will be 2.
-    BYTE NumComponent;
-
-    ATTRIB_USAGE_DECL Usage;
-
-    // Use this index in association with TEXCOORD or COLOR to identify the texture
-    // coordinate set or the color set.
-    BYTE UsageIndex;
-
-    BYTE Method; // Should be always 0 for D3DDECLMETHOD_DEFAULT = 0
-
-    // The vertex attribute Cg parameter that will be bound to the vertex element;
-//    CGparameter CgParameter;
-//    VERTEXELEMENT()
-//    {
-//        CgParameter = 0;
-//    }
-//    void setCgParameter(CGparameter parameter)
-//    {
-//        cgParameter = parameter;
-//    }
+    int NumComponent;
+    int stride_;
   };
 
-#define DECL_END VERTEXELEMENT(0xFF/*Stream*/,0/*Offset*/,ATTRIB_CT_UNKNOWN/*Type*/,0/*NumComponent*/,ATTRIB_USAGE_DECL_POSITION/*Usage*/,0/*UsageIndex*/, 0 /*CgParameter*/)
+#define DECL_END VERTEXELEMENT( \
+  0xFF,                       \
+  0,                          \
+  ATTRIB_CT_UNKNOWN,          \
+  0, 0)
 
   unsigned int GetVertexElementSize (VERTEXELEMENT vtxelement);
 

@@ -25,6 +25,7 @@
 
 #include <sigc++/sigc++.h>
 #include "NuxCore/InitiallyUnownedObject.h"
+#include "NuxGraphics/Events.h"
 #include "Focusable.h"
 #include "Utils.h"
 #include "WidgetMetrics.h"
@@ -121,6 +122,18 @@ namespace nux
     eForceComply        = SIZE_FORCE_COMPLY,    //!< Deprecated.
   } SizeCompliance;
 
+  enum KeyNavDirection
+  {
+    KEY_NAV_NONE,
+    KEY_NAV_UP,
+    KEY_NAV_DOWN,
+    KEY_NAV_RIGHT,
+    KEY_NAV_LEFT,
+    KEY_NAV_TAB_NEXT,
+    KEY_NAV_TAB_PREVIOUS,
+    KEY_NAV_ENTER,
+  };
+
   class Layout;
   class View;
   class Area;
@@ -187,7 +200,7 @@ namespace nux
         @return The Geometry of the object.
         @sa GetBaseWidth(), GetBaseHeight(), GetBaseX(), GetBaseY().
     */
-    Geometry GetGeometry() const;
+    Geometry const& GetGeometry() const;
 
     //! Set the geometry of the object.
     /*!
@@ -235,6 +248,35 @@ namespace nux
         @return True if this area has a top level parent.
     */
     bool HasTopLevelParent ();
+
+    //! Return true is area is a child of the given parent in the widget tree.
+    /*!
+        @param parent Area to test if it is a parent of this area.
+        @return True if this area is area is a child of parent in the widget tree.
+    */
+    bool IsChildOf(Area* parent);
+
+    /*!
+        Test if a point is inside the area.
+
+        @param p A 2D point.
+        @param event_type The type of mouse event (a parameter of FindAreaUnderMouse).
+
+        @return True if p is located inside the Area.
+    */
+    bool TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type);
+
+    /*!
+        Test if a point is inside the area and if the area accepts mouse wheel events.
+
+        @param p A 2D point.
+        @param event_type The type of mouse event (a parameter of FindAreaUnderMouse).
+        @param filter_mouse_wheel_event If the event type is NUX_MOUSE_WHEEL and the mouse is over this area and this
+        area does not accept mouse wheel events, then return false.
+
+        @return True if p is located inside the Area.
+    */
+    bool TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event);
 
     virtual long ComputeChildLayout ();
     virtual void PositionChildLayout (float offsetX, float offsetY);
@@ -300,9 +342,17 @@ namespace nux
     virtual bool DoCanFocus ();
     virtual void DoActivateFocus ();
     
-    sigc::signal <void, Area *> FocusActivated;
-    sigc::signal <void, Area *> FocusChanged;
-    sigc::signal <void, Area*, Area*> ChildFocusChanged; // sends parent + child
+    sigc::signal<void, Area *> FocusActivated;
+    sigc::signal<void, Area *> FocusChanged;
+    sigc::signal<void, Area*> ChildFocusChanged; // sends parent + child
+
+    /*!
+        This signal is propagated upward so all parent of this area can reconfigure themselves.
+        For instance, scroll views will translate their content to make the focused object visible.
+    */
+    sigc::signal<void, Area*> OnKeyNavChangeReconfigure; 
+    sigc::signal<void, Area*> OnKeyNavFocusChange;
+    sigc::signal<void, Area*> OnKeyNavFocusActivate;
 
     //! Queue a relayout
     /*!
@@ -339,7 +389,7 @@ namespace nux
         \li GetRootGeometry ()
         \li GetAbsoluteGeometry ()
     */
-    Geometry GetAbsoluteGeometry () const;
+    virtual Geometry GetAbsoluteGeometry () const;
 
     //! Return the area absolute x coordinate.
     int GetAbsoluteX () const;
@@ -364,7 +414,7 @@ namespace nux
         Return the position of the Area inside the physical window.
         For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry () is equivalent to GetGeometry ().
     */
-    Geometry GetRootGeometry () const;
+    virtual Geometry GetRootGeometry () const;
 
     //! Return the area root x coordinate.
     int GetRootX () const;
@@ -408,7 +458,75 @@ namespace nux
           \li GetAbsoluteGeometry ()
     */
     virtual void UnParentObject ();
+
+    /*!
+        Return the area under the mouse pointer.
+
+        @return The Area under the mouse pointer.
+    */
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
+
+    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
+        unsigned long x11_key_code,
+        unsigned long special_keys_state);
+
+    void SetPathToKeyFocusArea();
+    void ResetDownwardPathToKeyFocusArea();
+    void ResetUpwardPathToKeyFocusArea();
+
+    //! Return True if the the area knows what to do with the key event.
+    virtual bool InspectKeyEvent(unsigned int eventType,
+      unsigned int keysym,
+      const char* character);
+
+    virtual bool AcceptKeyNavFocus();
     
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
+
+    bool HasKeyFocus() const;
+
+    //! Set to True to initiate a layout reconfiguration when the geometry of this widget changes.
+    /*!
+        When the geometry of an area changes, the new geometry can be recursively propagated to all its 
+        parent so a layout reconfiguration is initiated.
+        \sa ReconfigureParentLayout()
+        \sa _on_geometry_changeg_reconfigure_parent_layout
+
+        @param reconfigure_parent_layout Set it to True to reconfigure this area parent layouts.
+    */
+    void SetReconfigureParentLayoutOnGeometryChange(bool reconfigure_parent_layout);
+
+    //! Return True if the the parent layouts of this area should be reconfigured on geometry changed.
+    /*!
+        @return True if the parent layouts of this area must be reconfigured on a geometry change.
+    */
+    bool ReconfigureParentLayoutOnGeometryChange();
+
+    //! Enable keyboard event processing.
+    /*!
+        @param accept_key_event Set it to true if the area accepts keyboard events.
+    */
+    void SetAcceptKeyboardEvent(bool accept_key_event);
+
+    //! Return true if the Area is interested in keyboard events.
+    /*!
+        @return True if the area accepts in keyboard events.
+    */
+    bool AcceptKeyboardEvent() const;
+
+    //! Enable mouse wheel event processing.
+    /*!
+        @param accept_mouse_wheel_event Set it to true if the area accepts mouse wheel events.
+    */
+    void SetAcceptMouseWheelEvent(bool accept_mouse_wheel_event);
+
+    //! Return true if the area is accepts mouse wheel events.
+    /*!
+        @return True if the area accepts mouse wheel events.
+    */
+    bool AcceptMouseWheelEvent() const;
+
   protected:
     bool _is_focused;
     /*
@@ -428,19 +546,24 @@ namespace nux
     virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
 
     //! Return the absolute geometry starting with a relative geometry passed as argument.
-    Geometry InnerGetAbsoluteGeometry (const Geometry &geometry);
+    void InnerGetAbsoluteGeometry (Geometry &geometry);
 
     //! Return the absolute geometry starting with a relative geometry passed as argument.
-    Geometry InnerGetRootGeometry (const Geometry &geometry);
+    void InnerGetRootGeometry (Geometry &geometry);
 
 //     //! Add a "secondary" child to this Area. The
 //     /*!
 //         @return True if the child has been added; False otherwise;
 //     */
 //     bool Secondary (Area *child);
+   
+    bool _on_geometry_changeg_reconfigure_parent_layout;
 
+    bool                    has_key_focus_;
+
+    Area                    *next_object_to_key_focus_area_;
   private:
-    void InitiateResizeLayout (Area *child = 0);
+    void ReconfigureParentLayout(Area *child = 0);
     void CheckMinSize();
     void CheckMaxSize();
 
@@ -455,6 +578,7 @@ namespace nux
         A Area cannot have children (that may change later).
     */
     Area                    *_parent_area;
+    
 
     LayoutProperties        *_layout_properties;
     bool                    _visible;
@@ -477,6 +601,9 @@ namespace nux
     bool                    _3d_area;         //!< True if the area is resides in a 3D space.
 
     std::list<Area*>        _children_list;
+
+    bool                    _accept_mouse_wheel_event;
+    bool                    _accept_keyboard_event;
 
     friend class Layout;
     friend class View;

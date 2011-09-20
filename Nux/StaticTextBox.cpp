@@ -55,7 +55,7 @@ namespace nux
 
   StaticTextBox::~StaticTextBox()
   {
-    NUX_SAFE_DELETE (m_Background);
+    delete m_Background;
   }
 
   long StaticTextBox::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
@@ -123,7 +123,7 @@ namespace nux
     if (GetMinWidthMatchText() )
       AdjustMinWidthToMatchText();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void StaticTextBox::SetMinWidthMatchText (bool b)
@@ -157,8 +157,12 @@ namespace nux
 
   void StaticTextBox::SetBackground (AbstractPaintLayer *layer)
   {
-    NUX_SAFE_DELETE (m_Background);
+    delete m_Background;
     m_Background = layer->Clone();
   }
 
+  bool StaticTextBox::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

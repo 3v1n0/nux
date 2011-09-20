@@ -48,12 +48,6 @@ namespace nux
     FloatingWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
     ~FloatingWindow();
 
-
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
     void SetVisibleSizeGrip (bool b)
     {
       if (b && (m_bSizeMatchLayout) )
@@ -93,10 +87,18 @@ namespace nux
 
       return true;
     }
+
   protected:
+    virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+    virtual void Draw(GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &GfxContext, bool force_draw);
+
     virtual void PreLayoutManagement();
-    virtual long PostLayoutManagement (long LayoutResult);
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual long PostLayoutManagement(long LayoutResult);
+    virtual void PositionChildLayout(float offsetX, float offsetY);
+
     //! Layout the window elements.
     /*!
         Layout elements such as button on the title bar, and the resize widget according to the current
@@ -138,8 +140,9 @@ namespace nux
 
     friend class PopUpWindow;
     friend class ComboBox_Logic_WindowView;
+    friend class ComboBoxComplex;
     friend class WindowCompositor;
   };
-
 }
+
 #endif // FLOATINGWINDOW_H

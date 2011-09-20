@@ -31,13 +31,14 @@
 namespace nux
 {
 
-  class PushButton;
+  class ToggleButton;
   class VLayout;
   class HLayout;
   class EditTextBox;
 
   class RGBValuator : public View //public ValuatorAbstraction
   {
+    NUX_DECLARE_OBJECT_TYPE (RGBValuator, View);
   public:
     RGBValuator(NUX_FILE_LINE_PROTO);
     RGBValuator(Color const& color, NUX_FILE_LINE_PROTO);
@@ -58,7 +59,6 @@ namespace nux
     void SetColorModel(color::Model cm);
     void SetColorFormat(color::Format cf);
     Color GetColor() const;
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
@@ -110,7 +110,8 @@ namespace nux
   protected:
     void InitializeWidgets();
     void InitializeLayout();
-    void DestroyLayout();
+
+    virtual bool AcceptKeyNavFocus();
 
   private:
     void DrawRedMarker (GraphicsEngine &GfxContext);
@@ -152,8 +153,8 @@ namespace nux
     color::HueLightnessSaturation hls_;
     float alpha_;
 
-    PushButton *m_ColorModel;
-    PushButton *m_ColorFormat;
+    ToggleButton *m_ColorModel;
+    ToggleButton *m_ColorFormat;
 
     color::Model m_color_model;
     color::Format m_color_format;

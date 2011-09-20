@@ -16,26 +16,95 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *              Gordon Allott <gord.allott@canonical.com>
  *
  */
 
-
 #include "Nux.h"
-
 #include "AbstractButton.h"
 #include "HLayout.h"
 
 namespace nux
 {
-  AbstractButton::AbstractButton (const TCHAR *Caption, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  NUX_IMPLEMENT_OBJECT_TYPE(AbstractButton);
+
+  AbstractButton::AbstractButton(NUX_FILE_LINE_DECL)
+  : View(NUX_FILE_LINE_PARAM)
+  , state(NUX_STATE_NORMAL)
   {
-    _state  = false;
-    EnableDoubleClick(false);
+    active = false;
+    togglable_ = false;
+    Init();
   }
 
   AbstractButton::~AbstractButton()
   {
 
+  }
+
+  void AbstractButton::Init()
+  {
+    mouse_click.connect(sigc::mem_fun(this, &AbstractButton::RecvClick));
+    mouse_down.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
+    mouse_double_click.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
+    mouse_up.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseUp));
+    mouse_move.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseMove));
+    mouse_enter.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseEnter));
+    mouse_leave.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseLeave));
+  }
+
+  long AbstractButton::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  {
+    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
+  }
+
+  void AbstractButton::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    if(togglable_)
+    {
+      active = !active;
+    }
+    else
+    {
+      active = true;
+    }
+
+    if(togglable_ == false)
+    {
+      active = false;
+    }
+
+    activated.emit(this);
+    QueueDraw();
+  }
+
+  void AbstractButton::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    state = NUX_STATE_PRELIGHT;
+    //state = 1;
+    QueueDraw();
+  }
+
+  void AbstractButton::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    state = NUX_STATE_ACTIVE;
+    QueueDraw();
+  }
+
+  void AbstractButton::RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  {
+
+  }
+
+  void AbstractButton::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    state = NUX_STATE_PRELIGHT;
+    QueueDraw();
+  }
+
+  void AbstractButton::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    state = NUX_STATE_NORMAL;
+    QueueDraw();
   }
 }

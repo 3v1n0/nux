@@ -25,104 +25,112 @@
 
 namespace nux
 {
-  RadioButtonGroup::RadioButtonGroup (NUX_FILE_LINE_DECL)
-    : Object (false, NUX_FILE_LINE_PARAM)  // RadioButtonGroup is created as unowned
+  NUX_IMPLEMENT_OBJECT_TYPE(RadioButtonGroup);
+
+  RadioButtonGroup::RadioButtonGroup(NUX_FILE_LINE_DECL)
+    : InitiallyUnownedObject(NUX_FILE_LINE_PARAM)  // RadioButtonGroup is created as unowned
   {
     m_ActiveRadioButtonIndex = 0;
   }
 
   RadioButtonGroup::~RadioButtonGroup()
   {
-    std::vector<RadioButton *>::iterator it;
+    std::vector<ObjectWeakPtr<RadioButton> >::iterator it;
 
-    for (it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
+    for(it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
     {
-      if ( (*it) )
+      if((*it).IsValid())
       {
-        (*it)->m_Group = 0;
+        (*it)->SetRadioGroupSelector(NULL);
         (*it)->m_GroupId = -1;
       }
     }
   }
 
 
-  void RadioButtonGroup::ConnectButton (RadioButton *radio)
+  void RadioButtonGroup::ConnectButton(RadioButton *radio)
   {
-    std::vector<RadioButton *>::iterator it;
+    NUX_RETURN_IF_NULL(radio);
 
-    for (it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
+    if(!radio->Type().IsDerivedFromType(RadioButton::StaticObjectType))
     {
-      if ( (*it) && ( (*it) == radio) )
+      return;
+    }
+
+    std::vector<ObjectWeakPtr<RadioButton> >::iterator it;
+
+    for(it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
+    {
+      if((*it).IsValid() && ((*it).GetPointer() == radio))
       {
         // already in
         return;
       }
     }
 
-    t_u32 index = (t_u32) m_RadioButtonArray.size();
+    size_t index = (unsigned int) m_RadioButtonArray.size();
 
-    if (index == 0)
+    if(index == 0)
     {
       // Inserting the first radio button
-      if (radio->m_Group)
+      if(radio->GetRadioGroupSelector())
       {
         // Disconnect from the other selector
-        radio->m_Group->DisconnectButton (radio);
+        radio->GetRadioGroupSelector()->DisconnectButton(radio);
       }
 
-      radio->SetRadioGroupSelector (this);
+      radio->SetRadioGroupSelector(this);
       radio->m_GroupId = 0;
-      radio->SetStatePrivate (true);
-      m_RadioButtonArray.push_back (radio);
+      radio->SetStatePrivate(true);
+      m_RadioButtonArray.push_back(ObjectWeakPtr<RadioButton>(radio));
       m_ActiveRadioButtonIndex = 0;
     }
     else
     {
-      if (radio->m_Group)
+      if(radio->GetRadioGroupSelector())
       {
         // Disconnect from the other selector
-        radio->m_Group->DisconnectButton (radio);
+        radio->GetRadioGroupSelector()->DisconnectButton (radio);
       }
 
-      radio->SetRadioGroupSelector (this);
+      radio->SetRadioGroupSelector(this);
       radio->m_GroupId = index;
       // When a radio button is added to a group that is not empty, its check state is set to false.
-      radio->SetStatePrivate (false);
-      m_RadioButtonArray.push_back (radio);
+      radio->SetStatePrivate(false);
+      m_RadioButtonArray.push_back(ObjectWeakPtr<RadioButton>(radio));
     }
   }
 
-  void RadioButtonGroup::ActivateButton (RadioButton *radio)
+  void RadioButtonGroup::ActivateButton(RadioButton *radio)
   {
-    std::vector<RadioButton *>::iterator it = find (m_RadioButtonArray.begin(), m_RadioButtonArray.end(), radio);
+    std::vector<ObjectWeakPtr<RadioButton> >::iterator it = find (m_RadioButtonArray.begin(), m_RadioButtonArray.end(), radio);
 
-    if (it == m_RadioButtonArray.end() )
+    if (it == m_RadioButtonArray.end())
       return;
 
     for (it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
     {
-      if ( (*it) && ( (*it) != radio) )
+      if((*it).IsValid() && ((*it).GetPointer() != radio))
       {
         (*it)->SetStatePrivate (false, true);
       }
     }
 
-    radio->SetStatePrivate (true, true);
+    radio->SetStatePrivate(true, true);
   }
 
-  void RadioButtonGroup::DisconnectButton (RadioButton *radio)
+  void RadioButtonGroup::DisconnectButton(RadioButton *radio)
   {
     bool found = false;
-    t_u32 array_size = (t_u32) m_RadioButtonArray.size();
-    std::vector<RadioButton *>::iterator it;
+    size_t array_size = (unsigned int) m_RadioButtonArray.size();
+    std::vector<ObjectWeakPtr<RadioButton> >::iterator it;
     it = m_RadioButtonArray.begin();
-    t_s32 i;
+    size_t i;
 
-    for (i = 0; i < (t_s32) array_size; i++, it++)
+    for(i = 0; i < array_size; i++, it++)
     {
-      if (m_RadioButtonArray[i] == radio)
+      if(m_RadioButtonArray[i] == radio)
       {
-        //radio->m_Group = 0;
         radio->m_GroupId = -1;
         radio->SetStatePrivate (false);
         m_RadioButtonArray.erase (it);
@@ -131,7 +139,7 @@ namespace nux
       }
     }
 
-    if (found && (i - 1 > 0) )
+    if(found && (i - 1 > 0) && (m_RadioButtonArray.size() >0))
     {
       // The previous button becomes active
       m_RadioButtonArray[i]->SetStatePrivate (true);
@@ -140,22 +148,22 @@ namespace nux
 
   void RadioButtonGroup::NotifyClick (RadioButton *radio)
   {
-    std::vector<RadioButton *>::iterator it;
+    std::vector<ObjectWeakPtr<RadioButton> >::iterator it;
 
-    for (it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
+    for(it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
     {
-      if ( (*it) != radio)
+      if ((*it).GetPointer() != radio)
       {
-        if ( (*it) )
+        if((*it).IsValid())
         {
           (*it)->SetStatePrivate (false, true);
         }
       }
       else
       {
-        if ( (*it) )
+        if((*it).IsValid())
         {
-          (*it)->SetStatePrivate (true,  true);
+          (*it)->SetStatePrivate(true,  true);
         }
       }
     }
@@ -163,25 +171,25 @@ namespace nux
 
   void RadioButtonGroup::SetActiveButton (RadioButton *radio, bool EmitSignal)
   {
-    std::vector<RadioButton *>::iterator it = find (m_RadioButtonArray.begin(), m_RadioButtonArray.end(), radio);
+    std::vector<ObjectWeakPtr<RadioButton> >::iterator it = find (m_RadioButtonArray.begin(), m_RadioButtonArray.end(), radio);
 
-    if (it == m_RadioButtonArray.end() )
+    if(it == m_RadioButtonArray.end())
       return;
 
-    for (it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
+    for(it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
     {
-      if ( (*it) != radio)
+      if((*it) != radio)
       {
-        if ( (*it) )
+        if((*it).IsValid())
         {
-          (*it)->SetStatePrivate (false, EmitSignal);
+          (*it)->SetStatePrivate(false, EmitSignal);
         }
       }
       else
       {
-        if ( (*it) )
+        if((*it).IsValid())
         {
-          (*it)->SetStatePrivate (true,  EmitSignal);
+          (*it)->SetStatePrivate(true,  EmitSignal);
         }
       }
     }

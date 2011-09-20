@@ -69,90 +69,11 @@ namespace nux
     std::vector< MySplitter* >::iterator it2;
     for (it2 = m_SplitterObject.begin(); it2 != m_SplitterObject.end(); it2++)
     {
-      (*it2)->UnReference();
+      (*it2)->UnParentObject();
     }
     m_SplitterObject.clear();
 
     m_SplitConfig.clear();
-  }
-
-  long VSplitter::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    long ProcEvInfo = ProcessEventInfo;
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!_geometry.IsPointInside (ievent.e_x, ievent.e_y) )
-      {
-        ProcEvInfo |= eDoNotProcess;
-        //return TraverseInfo;
-      }
-    }
-
-//    Geometry base = GetGeometry();
-//    // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
-//    Geometry viewGeometry = Geometry(base.x, base.y, base.GetWidth(), base.GetBaseHeight());
-//    bool traverse = true;
-//    if(ievent.e_event == I_ButtonPress)
-//    {
-//        if(!viewGeometry.IsPointInside(ievent.x, ievent.y))
-//        {
-//            ProcEvInfo = eDoNotProcess;
-//            traverse = false;
-//        }
-//    }
-
-    //if(traverse)
-    {
-      std::vector<MySplitter *>::iterator it_splitter;
-
-      for (it_splitter = m_SplitterObject.begin(); it_splitter != m_SplitterObject.end(); it_splitter++)
-      {
-        ret = (*it_splitter)->OnEvent (ievent, ret, ProcEvInfo);
-      }
-
-      std::vector<Area *>::iterator it;
-
-      for (it = m_InterfaceObject.begin(),
-           it_splitter = m_SplitterObject.begin();
-           it != m_InterfaceObject.end();
-           it++, it_splitter++)
-      {
-        Geometry clip_geo;
-        clip_geo.SetX ( ( (*it)->GetGeometry().x) );
-        clip_geo.SetY ( ( (*it)->GetGeometry().y) );
-        clip_geo.SetWidth ( (*it_splitter)->GetGeometry().x - (*it)->GetGeometry().x);
-        clip_geo.SetHeight ( (*it)->GetGeometry().GetHeight() );
-
-        long DoNotProcess = ProcEvInfo;
-
-        if (clip_geo.IsPointInside (ievent.e_x, ievent.e_y) == false)
-        {
-          DoNotProcess |= eDoNotProcess;
-        }
-
-        if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
-        {
-          View *ic = NUX_STATIC_CAST (View *, (*it) );
-          ret = ic->BaseProcessEvent (ievent, ret, ProcEvInfo | DoNotProcess);
-        }
-        else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
-        {
-          InputArea *base_area = NUX_STATIC_CAST (InputArea *, (*it) );
-          ret = base_area->OnEvent (ievent, ret, ProcEvInfo | DoNotProcess);
-        }
-        else if ( (*it)->Type().IsDerivedFromType (Layout::StaticObjectType) )
-        {
-          Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
-          ret = layout->ProcessEvent (ievent, ret, ProcEvInfo | DoNotProcess);
-        }
-      }
-    }
-
-    ret = PostProcessEvent2 (ievent, ret, ProcEvInfo);
-
-    return ret;
   }
 
   void VSplitter::Draw (GraphicsEngine &GfxContext, bool force_draw)
@@ -318,12 +239,14 @@ namespace nux
   {
     if (ic)
     {
-      MySplitter *splitter = new MySplitter;
-      splitter->SinkReference();
+      MySplitter* splitter = new MySplitter;
+      splitter->SetParentObject(this);
+      //splitter->SinkReference();
+
       t_u32 no = (t_u32) m_InterfaceObject.size();
-      splitter->OnMouseDown.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseDown), no) );
-      splitter->OnMouseUp.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseUp), no) );
-      splitter->OnMouseDrag.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseDrag), no) );
+      splitter->mouse_down.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseDown), no) );
+      splitter->mouse_up.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseUp), no) );
+      splitter->mouse_drag.connect (sigc::bind ( sigc::mem_fun (this, &VSplitter::OnSplitterMouseDrag), no) );
 
       ic->SetParentObject (this);
       m_InterfaceObject.push_back (ic);
@@ -550,7 +473,6 @@ namespace nux
 
   void VSplitter::OnSplitterMouseDrag (t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
   {
-    bool recompute = false;
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
     t_s32 num_element = (t_s32) m_SplitterObject.size();
 
@@ -560,7 +482,6 @@ namespace nux
       return;
     }
 
-    recompute = true;
     mvt_dx = x - m_point.x;
     mvt_dy = 0;
 
@@ -624,7 +545,7 @@ namespace nux
     m_initial_config = false;
     ComputeChildLayout();
 
-    NeedRedraw();
+    QueueDraw();
   }
 
 // VSplitter need to re implement DoneRedraw because it does not
@@ -636,16 +557,159 @@ namespace nux
     for (it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
     {
       //(*it)->DoneRedraw();
-      if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
+      if((*it)->Type().IsDerivedFromType (View::StaticObjectType))
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = NUX_STATIC_CAST(View *, (*it));
         ic->DoneRedraw();
       }
-      else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
+      else if((*it)->Type().IsObjectType (InputArea::StaticObjectType))
       {
         //InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
       }
     }
   }
 
+  Area* VSplitter::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
+
+    if(mouse_inside == false)
+      return NULL;
+
+    std::vector<MySplitter*>::iterator splitter_it;
+    for (splitter_it = m_SplitterObject.begin(); splitter_it != m_SplitterObject.end(); splitter_it++)
+    {
+      Area* found_area = (*splitter_it)->FindAreaUnderMouse(mouse_position, event_type);
+      if(found_area)
+        return found_area;
+    }
+
+    std::vector<Area *>::iterator it;
+    for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
+    {
+      Area* found_area = (*it)->FindAreaUnderMouse(mouse_position, event_type);
+
+      if(found_area)
+        return found_area;
+    }
+
+    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
+  }
+
+  bool VSplitter::AcceptKeyNavFocus()
+  {
+    return false;
+  }
+
+  Area* VSplitter::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (m_InterfaceObject.size() == 0)
+      return NULL;
+
+    if (next_object_to_key_focus_area_)
+    {
+      if ((direction == KEY_NAV_UP) || (direction == KEY_NAV_DOWN))
+      {
+        // Don't know what to do with this
+        return NULL;
+      }
+      std::vector<Area*>::iterator it;
+      std::vector<Area*>::iterator it_next;
+      it = std::find (m_InterfaceObject.begin(), m_InterfaceObject.end(), next_object_to_key_focus_area_);
+
+      if (it == m_InterfaceObject.end())
+      {
+        // Should never happen
+        nuxAssert (0);
+        return NULL;
+      }
+
+      it_next = it;
+      ++it_next;
+
+      if ((direction == KEY_NAV_LEFT) && (it == m_InterfaceObject.begin()))
+      {
+        // can't go further
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_RIGHT) && (it_next == m_InterfaceObject.end()))
+      {
+        // can't go further
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_LEFT))
+      {
+        --it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          if (it == m_InterfaceObject.begin())
+            break;
+
+          --it;
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if ((direction == KEY_NAV_RIGHT))
+      {
+        ++it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == m_InterfaceObject.end())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+    }
+    else
+    {
+      Area* key_nav_focus = NULL;
+      
+      if (direction == KEY_NAV_LEFT)
+      {
+        std::vector<Area*>::reverse_iterator it = m_InterfaceObject.rbegin();
+        key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == m_InterfaceObject.rend())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+      }
+      else
+      {
+        std::vector<Area*>::iterator it = m_InterfaceObject.begin();
+        key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          if (it == m_InterfaceObject.end())
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+      }
+      return key_nav_focus;
+    }
+
+    return NULL;
+  }
 }

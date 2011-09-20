@@ -45,7 +45,6 @@ namespace nux
 
   ColorGradient::~ColorGradient()
   {
-    DestroyLayout();
   }
 
   void ColorGradient::InitializeWidgets()
@@ -53,9 +52,9 @@ namespace nux
     //////////////////
     // Set Signals  //
     //////////////////
-    m_Percentage->OnMouseDown.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseDown) );
-    m_Percentage->OnMouseUp.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseUp) );
-    m_Percentage->OnMouseDrag.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseDrag) );
+    m_Percentage->mouse_down.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseDown) );
+    m_Percentage->mouse_up.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseUp) );
+    m_Percentage->mouse_drag.connect ( sigc::mem_fun (this, &ColorGradient::OnReceiveMouseDrag) );
 
     m_ValueString->sigValidateKeyboardEntry.connect (sigc::mem_fun (this, &ColorGradient::OnValidateKeyboardEntry) );
 
@@ -91,11 +90,6 @@ namespace nux
     m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
   }
 
-  void ColorGradient::DestroyLayout()
-  {
-  }
-
-
   long ColorGradient::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     m_CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_LCONTROL);
@@ -107,7 +101,7 @@ namespace nux
 
     if (m_ValueString->IsRedrawNeeded() )
     {
-      NeedRedraw();
+      QueueDraw();
     }
 
     return ret;
@@ -136,7 +130,6 @@ namespace nux
 
   void ColorGradient::Draw (GraphicsEngine &GfxContext, bool force_draw)
   {
-    bool highlighted;
     Geometry base = GetGeometry();
 
     Geometry P = m_Percentage->GetGeometry();
@@ -188,12 +181,6 @@ namespace nux
     }
 
     m_ValueString->ProcessDraw (GfxContext, true);
-
-    if (m_ValueString->IsMouseInside() )
-      highlighted = true;
-    else
-      highlighted = false;
-
     DrawMarker (GfxContext);
   }
 
@@ -256,7 +243,7 @@ namespace nux
     }
 
     //m_ValueString->SetText(NString::Printf("%.3f", m_Value));
-    NeedRedraw();
+    QueueDraw();
   }
 
   float ColorGradient::GetValue() const
@@ -282,7 +269,7 @@ namespace nux
     sigFloatChanged.emit (m_Value);
     sigMouseDown.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::OnReceiveMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -301,7 +288,7 @@ namespace nux
     sigFloatChanged.emit (m_Value);
     sigMouseUp.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::OnReceiveMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -319,7 +306,7 @@ namespace nux
     sigFloatChanged.emit (m_Value);
     sigMouseDrag.emit (m_Value);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::OnKeyboardFocus()
@@ -354,7 +341,7 @@ namespace nux
     sigValueChanged.emit (this);
     sigFloatChanged.emit (m_Value);
     sigSetTypedValue.emit (f);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::EmitFloatChangedSignal()
@@ -365,7 +352,7 @@ namespace nux
   void ColorGradient::AddColorMark (DOUBLE x, Color color, bool selected)
   {
     m_ColorMarkGroup.AddColorMark (x, color, selected);
-    NeedRedraw();
+    QueueDraw();
   }
 
   void ColorGradient::Reset()

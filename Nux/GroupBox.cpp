@@ -95,7 +95,7 @@ namespace nux
 
     if (m_layout != 0)
     {
-      m_layout->NeedRedraw();
+      m_layout->QueueDraw();
     }
 
     GfxContext.PopClippingRectangle();
@@ -241,4 +241,8 @@ namespace nux
     }
   }
 
+  bool GroupBox::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }

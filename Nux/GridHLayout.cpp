@@ -158,7 +158,7 @@ namespace nux
       if (focused_child)
       {
         focused_child->SetFocused (true);
-        ChildFocusChanged.emit (this, focused_child);
+        ChildFocusChanged.emit (/*this,*/ focused_child);
       }
       else
       {
@@ -193,7 +193,7 @@ namespace nux
       if (focused_child)
       {
         focused_child->SetFocused (true);
-        ChildFocusChanged.emit (this, focused_child);
+        ChildFocusChanged.emit (/*this,*/ focused_child);
       }
       else
       {
@@ -255,12 +255,12 @@ namespace nux
     {
       if ( (*it)->IsView() )
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = static_cast<View *>(*it);
         ViewList->push_back (ic);
       }
       else if ( (*it)->IsLayout() )
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+        Layout *layout = static_cast<Layout *>(*it);
         layout->GetCompositeList (ViewList);
       }
     }
@@ -316,26 +316,23 @@ namespace nux
       int Y = base.y + m_v_out_margin;
 
       bool first_element_of_row = true;
-      bool first_row = true;
 
-      for(int i = 0; i < num_elements; i++) 
+      for(int i = 0; i < num_elements; i++)
       {
         if (num_row == 1)
           num_column++;
 
         if(first_element_of_row)
         {
-          first_row = false;
-          
           first_element_of_row = false;
         }
 
         if (_force_children_size)
         {
-          (*it)->SetMinimumSize (_children_size.width, _children_size.height);
+          (*it)->SetMinimumSize(_children_size.width, _children_size.height);
         }
 
-        (*it)->SetGeometry (nux::Geometry (X, Y, _children_size.width, _children_size.height));
+        (*it)->SetGeometry(nux::Geometry (X, Y, _children_size.width, _children_size.height));
 
         (*it)->ComputeLayout2();
 
@@ -343,22 +340,22 @@ namespace nux
 
         it++;
 
-        if (!_partial_visibility && (X + _children_size.width > base.x + base.width))
+        if ((!_partial_visibility) && (X + _children_size.width > base.x + base.width))
         {
           X = base.x + m_h_out_margin;
           Y += _children_size.height + m_v_in_margin;
 
           first_element_of_row = true;
-          if(i < num_elements - 1)
+          if (i < num_elements - 1)
             ++num_row;
         }
-        else if (X > base.x + base.width)
+        else if (X >= base.x + base.width)
         {
           X = base.x + m_h_out_margin;
           Y += _children_size.height + m_v_in_margin;
 
           first_element_of_row = true;
-          if(i < num_elements - 1)
+          if (i < num_elements - 1)
             ++num_row;
         }
       }
@@ -421,69 +418,228 @@ namespace nux
 
   void GridHLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
+    if (_layout_element_list.size() == 0)
+      return;
+
     std::list<Area *> elements;
     std::list<Area *>::iterator it = _layout_element_list.begin ();
 
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+    GfxContext.PushModelViewMatrix(Get2DMatrix());
 
-    for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
+    Geometry base = GetGeometry();
+    Geometry absolute_geometry = GetAbsoluteGeometry();
+    Geometry parent_geometry = absolute_geometry;
+    Geometry visibility_geometry = absolute_geometry;
+    if (GetToplevel())
     {
-      if ((*it)->IsVisible ())
-        elements.push_back (*it);
+      parent_geometry = GetToplevel()->GetAbsoluteGeometry();
     }
 
-    it = elements.begin ();
+    visibility_geometry = parent_geometry.Intersect(absolute_geometry);
 
-    Geometry base = GetGeometry ();
-    Geometry parent_geometry = GetAbsoluteGeometry ();
-    Geometry visibility_geometry = parent_geometry;
-    if (GetToplevel ())
-    {
-      parent_geometry = GetToplevel ()->GetAbsoluteGeometry ();
-    }
+    GfxContext.PushClippingRectangle(base);
 
-    visibility_geometry = parent_geometry.Intersect (GetAbsoluteGeometry ());
+    it = _layout_element_list.begin();
 
-    GfxContext.PushClippingRectangle (base);
-
+    bool first = false;
+    bool last = false;
     for (int j = 0; j < _num_row; j++)
     {
       for (int i = 0; i < _num_column; i++)
       {
-        if (it == elements.end ())
+        if (it == _layout_element_list.end())
           break;
 
-        Geometry intersection = visibility_geometry.Intersect ((*it)->GetAbsoluteGeometry ());
+        if ((*it)->IsVisible() == false)
+        {
+          ++it;
+          continue;
+        }
+
+        Geometry it_geo = (*it)->GetAbsoluteGeometry();
+        Geometry intersection = visibility_geometry.Intersect(it_geo);
 
         // Test if the element is inside the Grid before rendering.
-        if (!intersection.IsNull ())
+        if (!intersection.IsNull())
         {
-          int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
-          int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
-
-          GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
-
-          if ((*it)->IsView ())
+          if (first == false)
           {
-            View *ic = NUX_STATIC_CAST (View *, (*it));
-            ic->ProcessDraw (GfxContext, force_draw);
-          }
-          else if ((*it)->IsLayout ())
-          {
-            Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
-            layout->ProcessDraw (GfxContext, force_draw);
+            first = true; // First invisible child.
           }
 
-          GfxContext.PopClippingRectangle ();
+          int x = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
+          int y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
+
+          GfxContext.PushClippingRectangle(Geometry (x, y, _children_size.width, _children_size.height));
+
+          if ((*it)->IsView())
+          {
+            View *ic = static_cast<View *>(*it);
+            ic->ProcessDraw(GfxContext, force_draw);
+          }
+          else if ((*it)->IsLayout())
+          {
+            Layout *layout = static_cast<Layout *>(*it);
+            layout->ProcessDraw(GfxContext, force_draw);
+          }
+
+          GfxContext.PopClippingRectangle();
+        }
+        else
+        {
+          if (first)
+          {
+            // First invisible child. Exit!
+            last = true;
+          }
+        }
+
+        if (first && last)
+        {
+          // Early exit
+          break;
         }
 
         it++;
       }
+      if (first && last)
+        break;
     }
 
     GfxContext.PopClippingRectangle ();
     GfxContext.PopModelViewMatrix ();
 
     _queued_draw = false;
+  }
+
+  Area* GridHLayout::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (_layout_element_list.size() == 0)
+      return NULL;
+
+    if (IsVisible() == false)
+      return NULL;
+
+    if (next_object_to_key_focus_area_)
+    {
+      std::list<Area*>::iterator it;
+      std::list<Area*>::iterator it_next;
+      it = std::find (_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
+      it_next = it;
+      ++it_next;
+
+      if (it == _layout_element_list.end())
+      {
+        // Should never happen
+        nuxAssert (0);
+        return NULL;
+      }
+
+      int position = GetChildPos(*it); // note that (*it) == next_object_to_key_focus_area_
+      int nun_column = GetNumColumn();
+      int nun_row = GetNumRow();
+
+      if ((direction == KEY_NAV_LEFT) && (it == _layout_element_list.begin()))
+      {
+        // first item
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_RIGHT) && (it_next == _layout_element_list.end()))
+      {
+        // last item
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_LEFT) && ((position % nun_column) == 0))
+      {
+        // Left edge
+        return NULL;
+      }
+      
+      if ((direction == KEY_NAV_RIGHT) && (position == (position / nun_column) * nun_column + (nun_column -1)))
+      {
+        // right edge
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_UP) && ((position / nun_column) == 0))
+      {
+        // top edge
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_DOWN) && ((position / nun_column) == nun_row))
+      {
+        // bottom edge
+        return NULL;
+      }
+
+      //////
+      if (direction == KEY_NAV_LEFT)
+      {
+        --it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          int pos = GetChildPos(*it);
+          if (it == _layout_element_list.begin() || ((pos % nun_column) == 0))
+            break;
+
+          --it;
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if (direction == KEY_NAV_RIGHT)
+      {
+        ++it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          int pos = GetChildPos(*it);
+
+          if ((it == _layout_element_list.end()) || (pos == (pos / nun_column) * nun_column + (nun_column -1)))
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if (direction == KEY_NAV_UP)
+      {
+        for (int i = 0; i < nun_column; ++i)
+        {
+          --it;
+        }
+        return (*it)->KeyNavIteration(direction);
+      }
+
+      if (direction == KEY_NAV_DOWN)
+      {
+        for (int i = 0; i < nun_column; ++i)
+        {
+          ++it;
+          if (it == _layout_element_list.end())
+            return NULL;
+        }
+        return (*it)->KeyNavIteration(direction);
+      }
+    }
+    else
+    {
+      std::list<Area*>::iterator it;
+      it = _layout_element_list.begin();
+      return (*it)->KeyNavIteration(direction);
+    }
+
+    return NULL;
   }
 }

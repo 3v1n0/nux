@@ -64,6 +64,8 @@ namespace nux
     virtual void ScrollUp (float stepy, int mousedy);
     virtual void ScrollDown (float stepy, int mousedy);
 
+    virtual bool AcceptKeyNavFocus();
+
   private:
     Layout *m_layout;
   };

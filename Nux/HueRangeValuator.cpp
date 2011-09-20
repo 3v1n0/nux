@@ -43,7 +43,6 @@ namespace nux
 
   HueRangeValuator::~HueRangeValuator()
   {
-    DestroyLayout();
   }
 
   void HueRangeValuator::InitializeWidgets()
@@ -52,11 +51,6 @@ namespace nux
   }
 
   void HueRangeValuator::InitializeLayout()
-  {
-
-  }
-
-  void HueRangeValuator::DestroyLayout()
   {
 
   }
@@ -126,7 +120,7 @@ namespace nux
                                  Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v) );
     }
 
-    m_ValueString->NeedRedraw();
+    m_ValueString->QueueDraw();
     DrawMarker (GfxContext);
 
     GfxContext.PopClippingRectangle();

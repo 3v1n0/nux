@@ -29,7 +29,7 @@
 
 #ifdef _WIN32
     #define NUX_OS_WINDOWS
-#elif __linux
+#elif __linux__
     #define NUX_OS_LINUX
 #elif __APPLE__
     #define NUX_OS_MACOSX
@@ -108,13 +108,16 @@
 #define VISUAL_STUDIO_2008_COMPILER     1500
 #define VISUAL_STUDIO_2005_COMPILER     1400
 #define VISUAL_STUDIO_2003_COMPILER     1310
+#define VISUAL_STUDIO_2003_COMPILER     1310
 
-#if _MSC_VER >= 1500
-#define NUX_VISUAL_STUDIO_2008
+#if _MSC_VER >= 1600
+  #define NUX_VISUAL_STUDIO_2010
+#elif _MSC_VER >= 1500
+  #define NUX_VISUAL_STUDIO_2008
 #elif _MSC_VER >= 1400
-#define NUX_VISUAL_STUDIO_2005
+  #define NUX_VISUAL_STUDIO_2005
 #elif _MSC_VER >= 1310
-#define NUX_VISUAL_STUDIO_2003
+  #define NUX_VISUAL_STUDIO_2003
 #endif
 
 // Compiler string.

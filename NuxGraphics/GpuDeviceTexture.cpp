@@ -97,6 +97,20 @@ namespace nux
     return 1;
   }
 
+  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id,
+    int width,
+    int height,
+    int levels,
+    BitmapFormat pixel_format)
+  {
+    IOpenGLTexture2D *ptr;
+    ptr = new IOpenGLTexture2D (width, height, levels, pixel_format, true, NUX_TRACKER_LOCATION); // ref count = 1;
+    ptr->_OpenGLID = id;
+    ObjectPtr<IOpenGLTexture2D> h = ObjectPtr<IOpenGLTexture2D> (ptr); // ref count = 2
+    ptr->UnReference (); // ref count = 1
+    return h;
+  }
+
   ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture (
     int Width
     , int Height

@@ -20,12 +20,15 @@
  */
 
 
-#ifndef STACKMANAGER_H
-#define STACKMANAGER_H
+#ifndef WINDOWCOMPOSITOR_H
+#define WINDOWCOMPOSITOR_H
 
 #include "BaseWindow.h"
 
+#include <sigc++/trackable.h>
 #include <sigc++/connection.h>
+
+#include <NuxCore/ObjectPtr.h>
 
 namespace nux
 {
@@ -36,13 +39,14 @@ namespace nux
   class View;
   class InputArea;
   class Area;
-  class BaseWindow;
   class PaintLayer;
   class Event;
 
-  class WindowCompositor
+  class WindowCompositor : public sigc::trackable
   {
   public:
+    typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
+
     WindowCompositor();
     ~WindowCompositor();
 
@@ -53,35 +57,145 @@ namespace nux
     //! Get the Geometry of the tooltip based on the MainWindow.
     Geometry GetTooltipMainWindowGeometry() const;
 
-    bool MouseDown (Point pt);
+//     bool MouseDown(Point pt);
+// 
+//     bool MouseMove(Point pt);
+//     bool MouseUp(Point pt);
 
-    bool MouseMove (Point pt);
-    bool MouseUp (Point pt);
+    void ProcessEvent(Event &event);
 
-    void ProcessEvent (IEvent &ievent);
+    //====================================
+    void MouseEventCycle(Event &event);
+    void DndEventCycle(Event &event);
+    bool _enable_nux_new_event_architecture;
 
 
+    Point _mouse_position_on_owner;
+    Point _mouse_position;
+
+    //! Get Mouse position relative to the top left corner of the window.
+    Point GetMousePosition();
+    
+    void KeyboardEventCycle(Event &event);
+
+    void MenuEventCycle(Event &event);
+    MenuPage* _mouse_owner_menu_page;
+    MenuPage* _mouse_over_menu_page;
+    bool      _starting_menu_event_cycle;
+    bool      _menu_is_active;
+
+    void SetKeyFocusArea(InputArea* area);
+    InputArea* GetKeyFocusArea();
+
+    //! Signal emitted when a BaseWindow becomes visible.
+    /*!
+        This signal is emitted after the BaseWindow has emitted it own sigVisible signal. 
+    */
+    sigc::signal<void, BaseWindow*> sigVisibleViewWindow;    //!< Signal emitted when the BaseWindow becomes visible.
+
+    //! Signal emitted when a BaseWindow becomes hidden.
+    /*!
+        This signal is emitted after the BaseWindow has emitted it own sigHidden signal. 
+    */
+    sigc::signal<void, BaseWindow*> sigHiddenViewWindow;    //!< Signal emitted when the BaseWindow becomes hidden.
+
+  private:
+
+    //! Traverse the widget tree and found the area that is right below the mouse pointer.
+    void GetAreaUnderMouse(const Point& mouse_position,
+                           NuxEventType event_type,
+                           InputArea** area_under_mouse_pointer,
+                           BaseWindow** window);
+
+    //! Traverse the widget tree and found the area has the key focus.
+    void FindKeyFocusArea(NuxEventType event_type,
+                          unsigned int key_symbol,
+                          unsigned int special_keys_state,
+                          InputArea** key_focus_area,
+                          BaseWindow** window);
+    
+    //! Traverse the widget tree and found the area has the key focus, but start from a specified widget.
+    void FindKeyFocusAreaFrom(NuxEventType event_type,
+      unsigned int key_symbol,
+      unsigned int special_keys_state,
+      InputArea* root_search_area,
+      InputArea** key_focus_area,
+      BaseWindow** window);
+
+    void ResetMousePointerAreas();
+
+    //! Get the area upon which the mouse button is currently down.
+    Area* GetMouseOwnerArea();
+    //! Set the area upon which the mouse button is currently down.
+    void SetMouseOwnerArea(Area* area);
+
+    //! Set the area that is right below the mouse pointer.
+    void SetMouseOverArea(Area* area);
+    
+    //! Set The BaseWindow of the area that is the mouse owner.
+    void SetMouseOwnerBaseWindow(BaseWindow* base_window);
+
+    //! Callback: called when mouse_over_area_ is destroyed.
+    void OnMouseOverViewDestroyed(Object* area);
+    
+    //! Callback: called when mouse_owner_area_ is destroyed.
+    void OnMouseOwnerViewDestroyed(Object* area);
+
+    //! Callback: called when key_focus_area_ is destroyed.
+    void OnKeyNavFocusDestroyed(Object* area);
+
+    //! Callback: called when mouse_owner_basewindow_connection_ is destroyed.
+    void OnMouseOwnerBaseWindowDestroyed(Object* area);
+
+    void SendKeyEvent(InputArea* input_area, NuxEventType event_type,
+      unsigned int key_sym,
+      unsigned long x11_key_code,
+      unsigned long special_keys_state,
+      const char* text,
+      int key_repeat_count);
+
+    //! The InputArea that has the keyboard navigation focus.
+    /*!
+        The InputArea that has the mouse focus also has the keyboard focus. That is if _mouse_focus_area is not Null
+        then _mouse_focus_area is equal to _mouse_focus_area;
+    */
+    InputArea* key_focus_area_;
+    InputArea* mouse_owner_area_;
+    InputArea* mouse_over_area_;
+    BaseWindow* mouse_owner_base_window_;
+
+    int dnd_safety_x_;
+    int dnd_safety_y_;
+
+    sigc::connection mouse_over_view_connection_;
+    sigc::connection mouse_owner_view_connection_;
+    sigc::connection mouse_owner_basewindow_connection_;
+    sigc::connection key_focus_area_connection_;
+
+    //====================================
+  
+  public:
     ObjectPtr<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
       return m_FrameBufferObject;
     }
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
 
-    ObjectPtr< IOpenGLBaseTexture > GetScreenBlurTexture();
+    ObjectPtr<IOpenGLBaseTexture> GetScreenBlurTexture();
 
-    void StartModalWindow (ObjectWeakPtr<BaseWindow>);
-    void StopModalWindow (ObjectWeakPtr<BaseWindow>);
+    void StartModalWindow(ObjectWeakPtr<BaseWindow>);
+    void StopModalWindow(ObjectWeakPtr<BaseWindow>);
 
     void AddMenu(MenuPage* menu, BaseWindow *window, bool OverrideCurrentMenuChain = true);
     void RemoveMenu(MenuPage* menu);
     void CleanMenu();
 
-    void PushModalWindow (ObjectWeakPtr<BaseWindow> window);
+    void PushModalWindow(ObjectWeakPtr<BaseWindow> window);
 
-    void SetWidgetDrawingOverlay (InputArea *ic, BaseWindow *OverlayWindow);
+    void SetWidgetDrawingOverlay(InputArea *ic, BaseWindow *OverlayWindow);
     InputArea *GetWidgetDrawingOverlay();
 
-    void SetTooltip (InputArea *TooltipArea, const TCHAR *TooltipText, int x, int y);
+    void SetTooltip(InputArea *TooltipArea, const TCHAR *TooltipText, int x, int y);
     /*!
         Return true if the mouse is still inside the area that initiated the tooltip;
 
@@ -89,7 +203,7 @@ namespace nux
         @param y    The mouse y coordinate on screen.
         @return     Return true is the mouse is still inside the area.
     */
-    bool ValidateMouseInsideTooltipArea (int x, int y);
+    bool ValidateMouseInsideTooltipArea(int x, int y);
     /*!
         Return true if there is a valid tooltip active.
 
@@ -103,22 +217,19 @@ namespace nux
       _event_root = Point(x, y);
     }
 
+    //TODO: DEPRECATED
     const IEvent *GetCurrentEvent() const
     {
-      return m_CurrentEvent;
+      return NULL;
     }
 
-    long DispatchEventToArea (Event &event, Area* area, long TraverseInfo, long ProcessEventInfo);
-
-    long DispatchEventToView (Event &event, View* view, long TraverseInfo, long ProcessEventInfo);
-
-    void SetBackgroundPaintLayer (AbstractPaintLayer *bkg);
+    void SetBackgroundPaintLayer(AbstractPaintLayer *bkg);
 
     /*!
         A special BaseWindow that is always on top of all other BaseWindow. It is even above the BaseWindow that is selected.
         \sa m_SelectedWindow, \sa GetSelectedWindow.
     */
-    void SetAlwaysOnFrontWindow (BaseWindow *window);
+    void SetAlwaysOnFrontWindow(BaseWindow *window);
 
 
     //! Enable the exclusive event input mode.
@@ -131,7 +242,7 @@ namespace nux
         \sa DisableExclusiveInputArea.
         @return True, if the exclusive input mode was enabled.
     */
-    bool EnableExclusiveInputArea (InputArea *input_area);
+    bool EnableExclusiveInputArea(InputArea *input_area);
     
     //! Disable the exclusive event input mode.
     /*!
@@ -139,22 +250,22 @@ namespace nux
         \sa EnableExclusiveInputArea.
         @return True, if the exclusive input mode was disabled.
     */
-    bool DisableExclusiveInputArea (InputArea *input_area);
+    bool DisableExclusiveInputArea(InputArea *input_area);
 
     //! Return true if the system is in exclusive input event mode.
     /*!
         @return True if the system is in exclusive input mode.
     */
-    bool InExclusiveInputMode ();
+    bool InExclusiveInputMode();
 
     //! Set the rendering surface for the current rendering.
     /*!
         This function is used to restore the rendering surface according to the system state. This is necessary after using a custom frame buffer object.
     */
-    void RestoreRenderingSurface ();
+    void RestoreRenderingSurface();
 
     //! Get the backup texture data of this BaseWindow,
-    void* GetBackupTextureData (BaseWindow *base_window, int &width, int &height, int &format);
+    void* GetBackupTextureData(BaseWindow *base_window, int &width, int &height, int &format);
 
     //! Reset the DND focus area
     /*!
@@ -165,15 +276,15 @@ namespace nux
 
     // SetDnDArea is declared as private.
     //void SetDnDArea (InputArea* area);
-    InputArea* GetDnDArea ();
+    InputArea* GetDnDArea();
 
     //! Get the top view that is being processed (event or rendering).
     /*!
         Get the active ViewWindow during and event processing or rendering.
     */
-    BaseWindow* GetProcessingTopView ()
+    BaseWindow* GetProcessingTopView()
     {
-      return m_CurrentWindow.GetPointer ();
+      return m_CurrentWindow.GetPointer();
     }
 
     // Pointer Grab API
@@ -187,7 +298,7 @@ namespace nux
         @param area The area to put at the top of the pointer grab stack.
         @return True if the Area was successfully added at the top of the pointer grab stack.
     */
-    bool GrabPointerAdd (InputArea* area);
+    bool GrabPointerAdd(InputArea* area);
 
     //! Remove an area from the pointer grab stack
     /*!
@@ -197,13 +308,13 @@ namespace nux
         @param area The area to remove from the top of the pointer grab stack.
         @return True if the Area was successfully removed.
     */
-    bool GrabPointerRemove (InputArea* area);
+    bool GrabPointerRemove(InputArea* area);
 
     //! Returns True if the area parameter is inside the pointer grab stack.
-    bool IsInPointerGrabStack (InputArea* area);
+    bool IsInPointerGrabStack(InputArea* area);
 
     //! Returns the area at the top of the pointer grab stack.
-    InputArea* GetPointerGrabArea ();
+    InputArea* GetPointerGrabArea();
 
     // Keyboard Grab API
 
@@ -216,7 +327,7 @@ namespace nux
         @param area The area to put at the top of the keyboard grab stack.
         @return True if the Area was successfully added at the top of the keyboard grab stack.
     */
-    bool GrabKeyboardAdd (InputArea* area);
+    bool GrabKeyboardAdd(InputArea* area);
 
     //! Remove an area from the keyboard grab stack
     /*!
@@ -226,7 +337,7 @@ namespace nux
         @param area The area to remove from the top of the keyboard grab stack.
         @return True if the Area was successfully removed.
     */
-    bool GrabKeyboardRemove (InputArea* area);
+    bool GrabKeyboardRemove(InputArea* area);
 
     //! Returns True if the area parameter is inside the keyboard grab stack.
     bool IsInKeyboardGrabStack (InputArea* area);
@@ -236,28 +347,25 @@ namespace nux
 
   private:
     //! Render the interface.
-    void Draw (bool SizeConfigurationEvent, bool force_draw);
+    void Draw(bool SizeConfigurationEvent, bool force_draw);
 
-    void DrawPopup (bool force_draw);
-    void DrawMenu (bool force_draw);
-    void DrawOverlay (bool force_draw);
-    void DrawTooltip (bool force_draw);
+    void DrawPopup(bool force_draw);
+    void DrawMenu(bool force_draw);
+    void DrawOverlay(bool force_draw);
+    void DrawTooltip(bool force_draw);
 
     //! Render all top views.
     /*!
         @force_draw True if the entire surface of the backup rendering mush flushed.
         @WindowList The list of top views.
         @draw_modal True if the top view that is modal is to be rendered.
-        @use_fbo True if TopViews should be backed by an fbo.
     */
-    void RenderTopViews (bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool draw_modal, bool use_fbo);
+    void RenderTopViews(bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool draw_modal);
 
     //! Render the content of a top view.
-    void RenderTopViewContent (BaseWindow *window, bool force_draw);
+    void RenderTopViewContent(BaseWindow *window, bool force_draw);
 
-    void RenderMainWindowComposition (bool force_draw, bool UseFBO);
-
-
+    void RenderMainWindowComposition(bool force_draw);
 
     /*!
         Render a textured quad the quad has the size of the texture. The texture maybe the main window texture or a BaseWindow texture.
@@ -268,32 +376,13 @@ namespace nux
         @param RenderToMainTexture  If true, render to the main window texture. If false, render to the default back buffer.
         @param BluredBackground     If true, the texture is blended with the blurred version of the main window texture.
     */
-    void PresentBufferToScreen (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false, float opacity=1.0f);
+    void PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false, float opacity=1.0f, bool premultiply = false);
     void PresentRendering();
 
     /*!
         Set the main color render target as the texture to draw into.
     */
     void SetMainColorRT();
-
-    /*!
-        Draw a Texture into the main color render target.
-        @param x    Destination coordinates.
-        @param y    Destination coordinates.
-    */
-    void CopyTextureToMainColorRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y);
-
-    /*!
-        Set the composition render target as the texture to draw into.
-    */
-    void SetCompositionRT();
-
-    /*!
-        Draw a Texture into the composition render target.
-        @param x    Destination coordinates.
-        @param y    Destination coordinates.
-    */
-    void CopyTextureToCompositionRT (ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y);
 
     //! Push a floating view just above another floating view.
     /*!
@@ -303,9 +392,9 @@ namespace nux
         @param strict If true and top_floating_view is already above bottom_floating_view, then bring top_floating_view lower
         so that it is strictly above bottom_floating_view.
     */
-    void PushHigher (BaseWindow *top_floating_view, BaseWindow *bottom_floating_view, bool strict = false);
+    void PushHigher(BaseWindow *top_floating_view, BaseWindow *bottom_floating_view, bool strict = false);
     //! Push a floating view at the top of the stack.
-    void PushToFront (BaseWindow *bottom_floating_view);
+    void PushToFront(BaseWindow *bottom_floating_view);
     //! Push a floating view at the bottom of the stack.
     void PushToBack (BaseWindow *bottom_floating_view);
 
@@ -319,7 +408,7 @@ namespace nux
     
     BaseWindow *GetFocusAreaWindow()
     {
-      return m_FocusAreaWindow.GetPointer ();
+      return m_FocusAreaWindow.GetPointer();
     }
 
     //! Set the top view that is about to be processed (event or rendering).
@@ -327,26 +416,26 @@ namespace nux
         Before event processing or rendering, this should be called to set the ViewWindow that is about 
         to be processed. This function is used internally by the system.
     */
-    void SetProcessingTopView (BaseWindow* window)
+    void SetProcessingTopView(BaseWindow* window)
     {
       m_CurrentWindow = window;
     }
 
     private:
 
-    void SetFocusAreaWindow (BaseWindow *window)
+    void SetFocusAreaWindow(BaseWindow *window)
     {
       m_FocusAreaWindow = window;
     }
 
-    void SetCurrentEvent (IEvent *event)
+    void SetCurrentEvent(IEvent *event)
     {
       m_CurrentEvent = event;
     }
 
-    void EnsureAlwaysOnFrontWindow ();
+    void EnsureAlwaysOnFrontWindow();
 
-    void FormatRenderTargets (int width, int height);
+    void FormatRenderTargets(int width, int height);
 
     //void UpdatePostProcessRT();
 
@@ -356,56 +445,14 @@ namespace nux
         @param Width    New width of the window.
         @param Height   New height of the window.
     */
-    void FloatingAreaConfigureNotify (int Width, int Height);
+    void FloatingAreaConfigureNotify(int Width, int Height);
 
-    void SetMouseFocusArea (InputArea* area);
-    
-    InputArea* GetMouseFocusArea ();
-    
-    void OnMouseFocusAreaDestroyed (Object* area)
-    {
-      if (_mouse_focus_area == area)
-        SetMouseFocusArea (NULL);
-    }
-
-    void SetMouseOverArea (InputArea* area);
-
-    InputArea* GetMouseOverArea ();
-
-    void OnMouseOverAreaDestroyed (Object* area)
-    {
-      if (_mouse_over_area == area)
-        SetMouseOverArea (NULL);
-    }
-
-    void SetPreviousMouseOverArea (InputArea* area);
-
-    InputArea* GetPreviousMouseOverArea ();
-
-    void OnPreviousMouseOverAreaDestroyed (Object* area)
-    {
-      if (_previous_mouse_over_area == area)
-        SetPreviousMouseOverArea (NULL);
-    }
-    
-    void SetKeyboardFocusArea (InputArea* area);
-
-    InputArea* GetKeyboardFocusArea ();
-
-    void OnKeyboardFocusAreaDestroyed (Object* area);
-
-    void RegisterWindow (BaseWindow*);
-
-    void UnRegisterWindow (BaseWindow*);
-
-    //! Performs a pre-event cycle on ViewWindows.
-    void ViewWindowPreEventCycle ();
-
-    //! Performs a post-event cycle on ViewWindows.
-    void ViewWindowPostEventCycle ();
+    void RegisterWindow(BaseWindow*);
+    // UnRegister is called via the object destroyed event, hence the Object*.
+    void UnRegisterWindow(Object*);
 
     //! Performs event cycle on menus.
-    long MenuEventCycle (Event &event, long TraverseInfo, long ProcessEventInfo);
+    long MenuEventCycle(Event &event, long TraverseInfo, long ProcessEventInfo);
 
     // We use Rectangle texture to attach to the frame-buffer because some GPU like the Geforce FX 5600 do not
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
@@ -416,32 +463,18 @@ namespace nux
     };
     ObjectPtr<IOpenGLBaseTexture> m_MainColorRT;
     ObjectPtr<IOpenGLBaseTexture> m_MainDepthRT;
-    ObjectPtr<IOpenGLBaseTexture> m_CompositionRT;
 
     //! Return the RenderTargetTextures structure of a ViewWindow.
-    RenderTargetTextures &GetWindowBuffer (BaseWindow* window);
+    RenderTargetTextures &GetWindowBuffer(BaseWindow* window);
 
-    ObjectWeakPtr<BaseWindow> m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
-    ObjectWeakPtr<BaseWindow> m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
-    ObjectWeakPtr<BaseWindow> m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
+    WeakBaseWindowPtr m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
+    WeakBaseWindowPtr m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
+    WeakBaseWindowPtr m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
     IEvent* m_CurrentEvent; 
 
-    /*!
-        The area that has the mouse focus. Mouse focus happens when the mouse down is received on and area.
-        The mouse focus stops when the last mouse button is released.
-        Incidentally, when the mouse focus first occurs on an area, we set the keyboard focus over that area.
-        The keyboard focus of an area stops when the mouse down happens over a different area.
-    */
-    InputArea* _mouse_focus_area;
     InputArea* _mouse_over_area;      //!< The base area that has the mouse directly over itself.
     InputArea* _previous_mouse_over_area;
-    //! The InputArea that has the keyboard focus.
-    /*!
-        The InputArea that has the mouse focus also has the keyboard focus. That is if _mouse_focus_area is not Null
-        then _mouse_focus_area is equal to _mouse_focus_area;
-    */
-    InputArea* _keyboard_focus_area;
-    
+
     void SetDnDArea (InputArea* area);
 
     // DnD support
@@ -476,7 +509,7 @@ namespace nux
             * mouse enter/leave
     */
     InputArea* _exclusive_input_area;
-    
+
     /*!
         \a _exclusive_input_area is true when there is an active greedy input area.
     */
@@ -489,50 +522,39 @@ namespace nux
     bool _pending_exclusive_input_mode_action;
 
     //! True while events are being processed inside ProcessEvent ().
-    bool _inside_event_processing;
+    bool inside_event_cycle_;
 
-    //! True while rendering is being done.
-    bool _inside_rendering_cycle;
-
-    //! Signal emitted when a BaseWindow becomes visible.
-    /*!
-        This signal is emitted after the BaseWindow has emitted it own sigVisible signal. 
-    */
-    sigc::signal<void, BaseWindow* > sigVisibleViewWindow;    //!< Signal emitted when the BaseWindow becomes visible.
-
-    //! Signal emitted when a BaseWindow becomes hidden.
-    /*!
-        This signal is emitted after the BaseWindow has emitted it own sigHidden signal. 
-    */
-    sigc::signal<void, BaseWindow* > sigHiddenViewWindow;    //!< Signal emitted when the BaseWindow becomes hidden.
+    //! True while inside the rendering cycle.
+    bool inside_rendering_cycle_;
 
     InputArea* OverlayDrawingCommand;
-    ObjectWeakPtr<BaseWindow> m_OverlayWindow;            //!< The window that owns the overlay;
-    ObjectWeakPtr<BaseWindow> _tooltip_window;            //!< The window that owns the tooltip;
+    WeakBaseWindowPtr m_OverlayWindow;            //!< The window that owns the overlay;
+    WeakBaseWindowPtr _tooltip_window;            //!< The window that owns the tooltip;
     Geometry    _tooltip_geometry;              //!< The geometry of the entire tooltip It includes the decoration surrounding the text such as round corners.
     Geometry    _tooltip_mainwindow_geometry;   //!< Same as _tooltip_geometry but based on the entire physical window of the application.
     Geometry    _tooltip_text_geometry;         //!< The geometry of the text area of the tooltip.
     Point _event_root;
 
-
+    bool on_menu_closure_continue_with_event_;
     AbstractPaintLayer *m_Background;
 
-    std::list< ObjectWeakPtr<BaseWindow> > _view_window_list;
-    std::list< ObjectWeakPtr<BaseWindow> > _modal_view_window_list;
-    ObjectWeakPtr<BaseWindow>            _always_on_front_window;  //!< Floating view that always remains on top.
+    typedef std::list<WeakBaseWindowPtr> WindowList;
+    WindowList _view_window_list;
+    WindowList _modal_view_window_list;
+    WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
 
-    std::list<MenuPage *> *m_MenuList;
+    std::list<MenuPage* > *_menu_chain;
 
     /*!
-        The BaseWindow where the last mouse down event happened. 
-        This BaseWindow will be raised to the top of the stack. 
+        The BaseWindow where the last mouse down event happened.
+        This BaseWindow will be raised to the top of the stack.
         \sa GetSelectedWindow.
     */
-    ObjectWeakPtr<BaseWindow> m_SelectedWindow;
+    WeakBaseWindowPtr m_SelectedWindow;
 
-    std::map< BaseWindow*, struct RenderTargetTextures > _window_to_texture_map;
+    std::map<BaseWindow*, struct RenderTargetTextures > _window_to_texture_map;
 
-    ObjectWeakPtr<BaseWindow> m_ModalWindow;
+    WeakBaseWindowPtr m_ModalWindow;
     Point m_MouseLastPos;
     Point m_MouseCurrentPos;
 
@@ -550,25 +572,13 @@ namespace nux
     int m_TooltipX;
     int m_TooltipY;
 
-    sigc::connection _previous_mouse_over_area_conn;
-    sigc::connection _keyboard_focus_area_conn;
-    sigc::connection _mouse_focus_area_conn;
-    sigc::connection _mouse_over_area_conn;
-
-//     bool m_FullSceneBlurUpdated;
-//     ObjectPtr<IOpenGLBaseTexture> m_BlurTexture;
-//     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip0;
-//     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip1;
-//     ObjectPtr<IOpenGLBaseTexture> m_FullSceneMip2;
-
-
     //! Pointer grab stack.
     /*!
         The head of the list is the top of the stack.
         \sa GrabPointerAdd, GrabPointerRemove.
 
     */
-    std::list<InputArea*> _pointer_grab_stack;
+    std::list<InputArea*> pointer_grab_stack_;
 
     //! Keyboard grab stack.
     /*!
@@ -576,7 +586,7 @@ namespace nux
         \sa GrabKeyboardAdd, GrabKeyboardRemove.
 
     */
-    std::list<InputArea*> _keyboard_grab_stack;
+    std::list<InputArea*> keyboard_grab_stack_;
 
   private:
     WindowCompositor (const WindowCompositor &);
@@ -598,5 +608,5 @@ namespace nux
   };
 
 }
-#endif // STACKMANAGER_H
+#endif // WINDOWCOMPOSITOR_H
 

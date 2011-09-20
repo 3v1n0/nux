@@ -1,12 +1,12 @@
+if BUILD_TESTS
 check_PROGRAMS = \
   test-nux \
   gtest-nux-core
 
 # Please keep alphabetical
 test_nux_SOURCES = \
+  test-canvas.cpp \
   test-nux.cpp \
-  test-timeline.cpp \
-  test-object.cpp \
   test-system.cpp
 
 test_nux_CPPFLAGS = \
@@ -31,7 +31,15 @@ test_nux_LDADD = \
   $(NUX_LIBS)
 
 gtest_nux_core_SOURCES = \
-  test_properties.cpp
+  Helpers.h \
+  Helpers.cpp \
+  test_object.cpp \
+  test_main.cpp \
+  test_async_file_writer.cpp \
+  test_logger.cpp \
+  test_cairo_wrapper.cpp \
+  test_properties.cpp \
+  test_rolling_file_appender.cpp
 
 gtest_nux_core_CPPFLAGS = \
   -I$(srcdir) \
@@ -49,10 +57,14 @@ gtest_nux_core_CPPFLAGS = \
 
 gtest_nux_core_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS)
 
 gtest_nux_core_LDFLAGS = \
-  -lpthread -lgtest -lgtest_main
+  -lpthread -lgtest -lgmock \
+  -lboost_filesystem -lboost_system
 
 
 #run make test as part of make check
@@ -80,3 +92,6 @@ clean-generic:
 	rm -f test-nux-results.xml test-nux-results.html
 
 .PHONY: check-report full-report gtest test
+
+endif
+

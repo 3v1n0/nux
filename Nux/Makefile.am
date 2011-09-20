@@ -61,6 +61,8 @@ source_cpp = \
   $(srcdir)/BezierCurveControl.cpp \
   $(srcdir)/BezierCurveControl2.cpp \
   $(srcdir)/Button.cpp \
+  $(srcdir)/Canvas.cpp \
+  $(srcdir)/CairoWrapper.cpp \
   $(srcdir)/CheckBox.cpp \
   $(srcdir)/ClientArea.cpp \
   $(srcdir)/ColorArea.cpp \
@@ -115,9 +117,6 @@ source_cpp = \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
   $(srcdir)/PropertyList.cpp \
-  $(srcdir)/PushButton.cpp \
-  $(srcdir)/RadioButton.cpp \
-  $(srcdir)/RadioButtonGroup.cpp \
   $(srcdir)/RangeValue.cpp \
   $(srcdir)/RangeValueInteger.cpp \
   $(srcdir)/RGBValuator.cpp \
@@ -140,6 +139,7 @@ source_cpp = \
   $(srcdir)/Timeline.cpp \
   $(srcdir)/TimelineEasings.cpp \
   $(srcdir)/TimerProc.cpp \
+  $(srcdir)/ToggleButton.cpp \
   $(srcdir)/ToolButton.cpp \
   $(srcdir)/TreeControl.cpp \
   $(srcdir)/Utils.cpp \
@@ -197,6 +197,8 @@ source_h = \
   $(srcdir)/BezierCurveControl.h \
   $(srcdir)/BezierCurveControl2.h \
   $(srcdir)/Button.h \
+  $(srcdir)/Canvas.h \
+  $(srcdir)/CairoWrapper.h \
   $(srcdir)/CheckBox.h \
   $(srcdir)/ClientArea.h \
   $(srcdir)/ColorArea.h \
@@ -251,9 +253,6 @@ source_h = \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
   $(srcdir)/PropertyList.h \
-  $(srcdir)/PushButton.h \
-  $(srcdir)/RadioButton.h \
-  $(srcdir)/RadioButtonGroup.h \
   $(srcdir)/RangeValue.h \
   $(srcdir)/RangeValueInteger.h \
   $(srcdir)/Readme.txt \
@@ -278,6 +277,7 @@ source_h = \
   $(srcdir)/TimelineEasings.h \
   $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
+  $(srcdir)/ToggleButton.h \
   $(srcdir)/TreeControl.h \
   $(srcdir)/Theme.h \
   $(srcdir)/Utils.h \

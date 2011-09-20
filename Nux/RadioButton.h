@@ -23,7 +23,7 @@
 #ifndef RADIOBUTTON_H
 #define RADIOBUTTON_H
 
-#include "AbstractButton.h"
+#include "AbstractRadioButton.h"
 
 namespace nux
 {
@@ -31,8 +31,9 @@ namespace nux
   class RadioButtonGroup;
   class HLayout;
 
-  class RadioButton: public AbstractButton
+  class RadioButton: public AbstractRadioButton
   {
+    NUX_DECLARE_OBJECT_TYPE (RadioButton, AbstractRadioButton);
   public:
     RadioButton (const TCHAR *Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
 
@@ -70,8 +71,13 @@ namespace nux
     virtual void SetState (bool State, bool EmitSignal);
     virtual bool GetState() const;
 
+  protected:
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
   private:
-    void SetRadioGroupSelector (RadioButtonGroup *RadioSelector);
+    void SetRadioGroupSelector(RadioButtonGroup *RadioSelector);
+    RadioButtonGroup* GetRadioGroupSelector();
+
     //! Intended for RadioButtonGroup only.
     void SetStatePrivate (bool State);
     //! Intended for RadioButtonGroup only.
@@ -83,7 +89,7 @@ namespace nux
     InputArea   *m_CheckArea;
     bool        m_State;
 
-    RadioButtonGroup *m_Group;
+    RadioButtonGroup *radio_button_group_;
     int m_GroupId;
 
     friend class RadioButtonGroup;

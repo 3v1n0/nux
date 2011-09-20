@@ -172,6 +172,7 @@ namespace nux
 
   BasePainter::~BasePainter()
   {
+    EmptyBackgroundStack();
   }
 
   int BasePainter::PaintColorTextLineEdit (GraphicsEngine &GfxContext, const Geometry &g, const NString &Str,
@@ -429,12 +430,12 @@ namespace nux
     t_u32 current_green_mask;
     t_u32 current_blue_mask;
     t_u32 current_alpha_mask;
-    
+
     // Get the current color mask and blend states. They will be restored later.
     GfxContext.GetRenderStates ().GetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
     GfxContext.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
 
-    
+
     GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, WriteAlpha ? GL_TRUE : GL_FALSE);
     GfxContext.GetRenderStates().SetBlend (ROP.Blend, ROP.SrcBlend, ROP.DstBlend);
 
@@ -578,7 +579,7 @@ namespace nux
 
   void BasePainter::PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, BaseTexture *texture,
                                        int border_left, int border_right, int border_top, int border_bottom,
-                                       bool draw_borders_only) const
+                                       bool draw_borders_only, bool premultiply) const
   {
     int tex_w = texture->GetWidth();
     int tex_h = texture->GetHeight();
@@ -598,7 +599,10 @@ namespace nux
       border_top = border_bottom = 0;
     }
 
-    GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if (premultiply)
+      GfxContext.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    else
+      GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType (TexCoordXForm::UNNORMALIZED_COORD);
@@ -782,7 +786,7 @@ namespace nux
 
   void BasePainter::PaintBackground (GraphicsEngine &GfxContext, const Geometry &geo)
   {
-    if (m_BackgroundStack.begin () == m_BackgroundStack.end ())
+    if (m_BackgroundStack.empty())
     {
       return;
     }
@@ -929,7 +933,7 @@ namespace nux
   {
     nuxAssert (level >= 0);
 
-    while ( (level >= 1) && (m_BackgroundStack.size() > 0 ) )
+    while ((level >= 1) && (m_BackgroundStack.size() > 0))
     {
       AbstractPaintLayer *paint_layer = (*m_BackgroundStack.begin() );
       delete paint_layer;
@@ -940,7 +944,11 @@ namespace nux
 
   void BasePainter::EmptyBackgroundStack()
   {
+    std::list<AbstractPaintLayer*>::iterator background_layer_it;
+    for (background_layer_it = m_BackgroundStack.begin(); background_layer_it != m_BackgroundStack.end(); ++background_layer_it)
+    {
+      delete (*background_layer_it);
+    }
     m_BackgroundStack.clear();
   }
-
 }

@@ -74,19 +74,19 @@ namespace nux
     return result;
   }
 
+// Calculate pixel size based on the Windows DPI of 96 for compatibility
+// reasons.
   CairoFont::CairoFont(const std::string &family,
-    /*PangoFontDescription *font,*/
-    double pt_size,
-    Style style,
-    Weight weight)
+                       /*PangoFontDescription *font,*/
+                       double pt_size,
+                       Style style,
+                       Weight weight)
+    : font_(pango_font_description_new())
+    , size_(pt_size * PANGO_SCALE * 96 / 72)
+    , style_(style)
+    , weight_(weight)
   {
-    font_ = pango_font_description_new();
-
     pango_font_description_set_family(font_, family.c_str());
-    // Calculate pixel size based on the Windows DPI of 96 for compatibility
-    // reasons.
-
-    size_ = pt_size * PANGO_SCALE * 96. / 72.;
     pango_font_description_set_absolute_size(font_, size_);
 
     if (weight_ == CairoFont::WEIGHT_BOLD)
@@ -103,87 +103,85 @@ namespace nux
   CairoFont::~CairoFont()
   {
     pango_font_description_free(font_);
-    font_ = NULL;
   }
 
   NUX_IMPLEMENT_OBJECT_TYPE (TextEntry);
 
-  TextEntry::TextEntry (const TCHAR* text, NUX_FILE_LINE_DECL)
-    : View (NUX_FILE_LINE_PARAM)
+  TextEntry::TextEntry(const TCHAR* text, NUX_FILE_LINE_DECL)
+    : View(NUX_FILE_LINE_PARAM)
+    , _size_match_text(true)
+    , _texture2D(nullptr)
+    , _block_focus(false)
+    , canvas_(nullptr)
+    , cached_layout_(nullptr)
+    , preedit_attrs_(nullptr)
+    , last_dblclick_time_(0)
+    , cursor_(0)
+    , preedit_cursor_(0)
+    , selection_bound_(0)
+    , scroll_offset_x_(0)
+    , scroll_offset_y_(0)
+    , cursor_blink_timer_(0)
+    , cursor_blink_status_(0)
+    , visible_(true)
+    , focused_(false)
+    , need_im_reset_(false)
+    , overwrite_(false)
+    , select_words_(false)
+    , select_lines_(false)
+    , button_(false)
+    , bold_(false)
+    , underline_(false)
+    , strikeout_(false)
+    , italic_(false)
+    , multiline_(false)
+    , wrap_(false)
+    , cursor_visible_(false)
+    , readonly_(false)
+    , content_modified_(false)
+    , selection_changed_(false)
+    , cursor_moved_(false)
+    , update_canvas_(true)
+    , font_family_("Ubuntu")
+    , font_size_(12)
+    , font_options_(cairo_font_options_create())
+    , font_dpi_(96.0)
+    , _text_color(color::White)
+    , align_(CairoGraphics::ALIGN_LEFT)
+    , text_input_mode_(false)
+    , key_nav_mode_(false)
+
   {
-    _block_focus = false;
-    canvas_ = NULL;
-    //im_context_ = NULL;
-    cached_layout_ = NULL;
-    preedit_attrs_ = NULL;
-    last_dblclick_time_ = 0;
-    cursor_ = 0;
-    preedit_cursor_ = 0;
-    selection_bound_ = 0;
-    scroll_offset_x_ = 0;
-    scroll_offset_y_ = 0;
-    cursor_blink_timer_ = 0;
-    cursor_blink_status_ = 0;
-    visible_ = true;
-    focused_ = false;
-    need_im_reset_ = false;
-    overwrite_ = false;
-    select_words_ = false;
-    select_lines_ = false;
-    button_ = false;
-    bold_ = false;
-    underline_ = false;
-    strikeout_ = false;
-    italic_ = false;
-    multiline_ = false;
-    wrap_ = false;
-    cursor_visible_ = true;
-    readonly_ = false;
-    content_modified_ = false;
-    //selection_changed_ = false;
-    cursor_moved_ = false;
-    update_canvas_ = false;
+    // Protected member from View, not passable to constructor.
     _can_pass_focus_to_composite_layout = false;
-    //background_(new Texture(kDefaultBackgroundColor, 1)),
-    _text_color = kDefaultTextColor;
-    align_ = CairoGraphics::ALIGN_LEFT;
 
-    _size_match_text = true;
-    _text_color  = color::White;
-    _texture2D  = 0;
+    cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
+    cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
+    cairo_font_options_set_hint_metrics(font_options_, CAIRO_HINT_METRICS_ON);
+    cairo_font_options_set_subpixel_order(font_options_, CAIRO_SUBPIXEL_ORDER_RGB);
 
-    font_family_ = "Ubuntu";
-    font_size_ = 12;
+    mouse_down.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDown));
+    mouse_drag.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDrag));
+    mouse_up.connect(sigc::mem_fun(this, &TextEntry::RecvMouseUp));
+    mouse_double_click.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDoubleClick));
 
-    font_options_ = cairo_font_options_create ();
-    cairo_font_options_set_antialias (font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
-    cairo_font_options_set_hint_style (font_options_, CAIRO_HINT_STYLE_FULL);
-    cairo_font_options_set_hint_metrics (font_options_, CAIRO_HINT_METRICS_ON);
-    cairo_font_options_set_subpixel_order (font_options_, CAIRO_SUBPIXEL_ORDER_RGB);
+    key_down.connect(sigc::mem_fun(this, &TextEntry::RecvKeyEvent));
 
-    font_dpi_ = 96.0;
+    begin_key_focus.connect(sigc::mem_fun(this, &TextEntry::RecvStartKeyFocus));
+    end_key_focus.connect(sigc::mem_fun(this, &TextEntry::RecvEndKeyFocus));
 
-    update_canvas_ = true;
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    SetText(text);
 
-    OnMouseDown.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDown) );
-    OnMouseDrag.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDrag) );
-    OnMouseUp.connect (sigc::mem_fun (this, &TextEntry::RecvMouseUp) );
-    OnMouseDoubleClick.connect (sigc::mem_fun (this, &TextEntry::RecvMouseDoubleClick) );
-
-    OnKeyEvent.connect (sigc::mem_fun (this, &TextEntry::RecvKeyEvent) );
-
-    OnStartFocus.connect (sigc::mem_fun (this, &TextEntry::RecvStartKeyFocus) );
-    OnEndFocus.connect (sigc::mem_fun (this, &TextEntry::RecvEndKeyFocus) );
-
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    SetText (text);
-
-    EnableKeyboardFocusOnMouseDown (true);
-    //MainDraw (canvas_);
+    SetAcceptKeyboardEvent(true);
+    EnableDoubleClick(true);
   }
 
   TextEntry::~TextEntry ()
   {
+    if(cursor_blink_timer_)
+      g_source_remove(cursor_blink_timer_);
+
     cairo_font_options_destroy (font_options_);
     if (_texture2D)
       _texture2D->UnReference ();
@@ -203,14 +201,15 @@ namespace nux
 
   void TextEntry::DoSetFocused (bool focused)
   {
-		
+    focused_ = focused;
+    cursor_visible_ = focused; // visibilty of cursor depends on focus
     View::DoSetFocused (focused);
     if (focused == true)
     {
       _block_focus = true;
-      SetCursor(0);
-      QueueRefresh(false, true);
-      
+      SetCursor(cursor_);
+      QueueRefresh(true, true);
+
       Area *_parent = GetParentObject();
       if (_parent == NULL)
         return;
@@ -226,7 +225,10 @@ namespace nux
         parent->SetFocusControl (false);
       }
     }
-
+    else
+    {
+      QueueRefresh(true, false); // needed to hide cursor
+    }
   }
 
   void TextEntry::GeometryChanged ()
@@ -247,9 +249,9 @@ namespace nux
     {
       FocusDirection direction;
       FocusEventType type;
-      
+
       direction = FOCUS_DIRECTION_NONE;
-      
+
       type = Focusable::GetFocusableEventType (event.e_event,
                                                event.GetKeySym(),
                                                event.GetText(),
@@ -272,15 +274,14 @@ namespace nux
             else if ( area->IsLayout() )
             {
               Layout *layout = NUX_STATIC_CAST (Layout *, area );
-              layout->SetFocusControl (true);   
+              layout->SetFocusControl (true);
               ret = layout->ProcessFocusEvent (event, ret, processEventInfo);
             }
           }
         }
         else
         {
-          OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
-                           event.e_event, event.GetKeySym(),
+          key_down.emit (event.e_event, event.GetKeySym(),
                            event.GetKeyState(), event.GetText(),
                            event.GetKeyRepeatCount());
           //ret = PostProcessEvent2 (event, ret, processEventInfo);
@@ -288,18 +289,24 @@ namespace nux
       }
       else
       {
-        OnKeyEvent.emit (GetWindowThread ()->GetGraphicsEngine(),
-                         event.e_event, event.GetKeySym(),
+        key_down.emit (event.e_event, event.GetKeySym(),
                          event.GetKeyState(), event.GetText(),
                          event.GetKeyRepeatCount());
       }
     }
-    
+
     if (_block_focus)
-    	_block_focus = false;
+      _block_focus = false;
 
 
     return ret;
+  }
+
+  Area* TextEntry::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    Area* area = View::FindAreaUnderMouse(mouse_position, event_type);
+
+    return area;
   }
 
   void TextEntry::ProcessMouseEvent (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
@@ -361,6 +368,9 @@ namespace nux
     const TCHAR*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
+    if (event_type == NUX_KEYDOWN)
+      text_input_mode_ = true;
+
 //     GdkEventKey *gdk_event = static_cast<GdkEventKey *>(event.GetOriginalEvent());
 //     ASSERT(gdk_event);
 //
@@ -392,7 +402,7 @@ namespace nux
     bool shift = (state & NUX_STATE_SHIFT);
     bool ctrl = (state & NUX_STATE_CTRL);
 
-    // DLOG("TextEntry::OnKeyEvent(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
+    // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
 
     if (event_type == NUX_KEYDOWN)
     {
@@ -535,7 +545,6 @@ namespace nux
   }
 
   void TextEntry::RecvKeyEvent (
-    GraphicsEngine &GfxContext ,   /*Graphics Context for text operation*/
     unsigned long    eventType  ,   /*event type*/
     unsigned long    keysym     ,   /*event keysym*/
     unsigned long    state      ,   /*event state*/
@@ -547,11 +556,17 @@ namespace nux
 
   void TextEntry::RecvStartKeyFocus ()
   {
+    key_nav_mode_           = true;
+    text_input_mode_        = false;
+
     FocusInx ();
   }
 
   void TextEntry::RecvEndKeyFocus ()
   {
+    key_nav_mode_     = false;
+    text_input_mode_  = false;
+
     FocusOutx ();
   }
 
@@ -612,7 +627,7 @@ namespace nux
     sigTextChanged.emit (this);
   }
 
-  std::string TextEntry::GetText ()
+  std::string const& TextEntry::GetText() const
   {
     return _text;
   }
@@ -626,7 +641,7 @@ namespace nux
     }
   }
 
-  Color TextEntry::GetTextColor () const
+  Color const& TextEntry::GetTextColor() const
   {
     return _text_color;
   }
@@ -684,10 +699,11 @@ namespace nux
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
       }
+      cursor_visible_ = true; // show cursor when getting focus
       selection_changed_ = true;
       cursor_moved_ = true;
       // Don't adjust scroll.
-      QueueRefresh(false, false);
+      QueueRefresh(true, false);
     }
   }
 
@@ -701,10 +717,11 @@ namespace nux
         need_im_reset_ = true;
         //gtk_im_context_focus_out(im_context_);
       }
+      cursor_visible_ = false; // hide cursor when losing focus
       selection_changed_ = true;
       cursor_moved_ = true;
       // Don't adjust scroll.
-      QueueRefresh(false, false);
+      QueueRefresh(true, false);
     }
   }
 
@@ -795,7 +812,7 @@ namespace nux
       AdjustScroll();
 
     QueueTextDraw();
-    //todo: QueueCursorBlink();
+    QueueCursorBlink();
   }
 
   void TextEntry::ResetImContext()
@@ -889,6 +906,27 @@ namespace nux
     }
   }
 
+  bool TextEntry::CursorBlinkCallback(TextEntry *self)
+  {
+    if (self->cursor_blink_status_)
+      self->ShowCursor();
+    else
+      self->HideCursor();
+
+    if (--self->cursor_blink_status_ < 0)
+      self->cursor_blink_status_ = 2;
+
+    return true;
+  }
+
+  void TextEntry::QueueCursorBlink()
+  {
+    if (!cursor_blink_timer_)
+      cursor_blink_timer_ = g_timeout_add(kCursorBlinkTimeout,
+                                          (GSourceFunc)&CursorBlinkCallback,
+                                          this);
+  }
+
   void TextEntry::ShowCursor()
   {
     if (!cursor_visible_)
@@ -897,7 +935,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueTextDraw();
+        QueueRefresh(false, false);
       }
     }
   }
@@ -910,7 +948,7 @@ namespace nux
       if (focused_ && !readonly_)
       {
         cursor_moved_ = true;
-        QueueTextDraw();
+        QueueRefresh(false, false);
       }
     }
   }
@@ -1283,14 +1321,13 @@ namespace nux
       context = pango_layout_get_context (layout);
       metrics = pango_context_get_metrics (context,
                                            pango_layout_get_font_description (layout),
-                            				       pango_context_get_language (context));
+                                           pango_context_get_language (context));
 
       ascent = pango_font_metrics_get_ascent (metrics);
       descent = pango_font_metrics_get_descent (metrics);
 
-      full_height_ = PANGO_PIXELS (ascent + descent) + (kInnerBorderY * 2);
-
-      SetMinimumHeight (full_height_);
+      int full_height = PANGO_PIXELS (ascent + descent) + (kInnerBorderY * 2);
+      SetMinimumHeight(full_height);
 
       pango_font_metrics_unref (metrics);
     }
@@ -1565,7 +1602,7 @@ namespace nux
       if (step == VISUALLY)
       {
         DeleteText(cursor_ - GetPrevCharLength(cursor_), cursor_);
-      } 
+      }
       else if (step == WORDS)
       {
         int new_cursor;
@@ -2063,5 +2100,44 @@ namespace nux
     font_options_ = cairo_font_options_copy (options);
 
     QueueRefresh(true, true);
+  }
+
+  bool TextEntry::InspectKeyEvent(unsigned int eventType,
+    unsigned int key_sym,
+    const char* character)
+  {
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false))
+    {
+      if (key_sym == NUX_VK_ENTER ||
+        key_sym == NUX_KP_ENTER ||
+        key_sym == NUX_VK_UP ||
+        key_sym == NUX_VK_DOWN ||
+        key_sym == NUX_VK_LEFT ||
+        key_sym == NUX_VK_RIGHT ||
+        key_sym == NUX_VK_LEFT_TAB ||
+        key_sym == NUX_VK_TAB ||
+        key_sym == NUX_VK_ESCAPE)
+      {
+        return false;
+      }
+    }
+
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == true))
+    {
+      // Enable to exit the TextEntry when in write mode (hack for unity dash)
+      if (key_sym == NUX_VK_UP ||
+      key_sym == NUX_VK_DOWN ||
+      key_sym == NUX_VK_ESCAPE)
+      {
+        return false;
+      }
+    }
+
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == false) && (text_input_mode_ == false))
+    {
+      return false;
+    }
+
+    return true;
   }
 }

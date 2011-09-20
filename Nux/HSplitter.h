@@ -23,10 +23,8 @@
 #ifndef HSPLITTER_H
 #define HSPLITTER_H
 
-
 namespace nux
 {
-
   class Layout;
 
   class HSplitter: public View
@@ -36,7 +34,6 @@ namespace nux
     HSplitter (NUX_FILE_LINE_PROTO);
     ~HSplitter();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
@@ -63,6 +60,8 @@ namespace nux
       return true;
     }
 
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
   protected:
     virtual long ComputeChildLayout();
     virtual void DoneRedraw();
@@ -76,6 +75,9 @@ namespace nux
     {
       return m_ResizeOnSplitterRelease;
     }
+
+    virtual bool AcceptKeyNavFocus();
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
 
   private:
     typedef InputArea MySplitter;

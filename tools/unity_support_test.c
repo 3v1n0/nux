@@ -179,7 +179,7 @@ static void print_report (const char* vendor, const char* renderer,
                "GL framebuffer object:    %s\n"
                "GL version is 1.4+:       %s\n"
                "\n"
-               "Unity supported:          %s\n",
+               "Unity 3D supported:       %s\n",
                flags & FLAG_GL_ARB_VERTEX_PROGRAM ? yes : no,
                flags & FLAG_GL_ARB_FRAGMENT_PROGRAM ? yes : no,
                flags & FLAG_GL_ARB_VERTEX_BUFFER_OBJECT ? yes : no,
@@ -484,17 +484,14 @@ int main (int argc, char* argv[]) {
   Display      *display = NULL;
   GLXContext   context = NULL;
   TestResults  results;
+  char         resultfilename[30];
+  FILE         *resultfile;
+  int          forcecheck = 0;
 
   results.indirect = 0;
   results.compiz = 0;
   results.flags = 0;
   results.error = NULL;
-  results.flags = 0;
-
-  if (getenv ("UNITY_FORCE_START")) {
-    fprintf (stdout, "Warning: UNITY_FORCE_START enabled, no check for unity or compiz support.\n");
-    return 0;
-  }
 
   // Basic command-line parsing.
   for (int i = 1; i < argc; i++) {
@@ -512,6 +509,9 @@ int main (int argc, char* argv[]) {
     } else if ((strncmp (argv[i], "-c", 2) == 0) ||
                (strncmp (argv[i], "--compiz", 8) == 0)) {
       results.compiz = 1;
+    } else if ((strncmp (argv[i], "-f", 2) == 0) ||
+               (strncmp (argv[i], "--force-check", 13) == 0)) {
+      forcecheck = 1;
     } else if ((strncmp (argv[i], "-h", 2) == 0) ||
                (strncmp (argv[i], "--help", 6) == 0)) {
       print_help ();
@@ -523,11 +523,25 @@ int main (int argc, char* argv[]) {
     }
   }
 
+  // can skip some tests if not forced
+  if (!forcecheck && !print) {
+      resultfile = fopen("/tmp/unity_support_test.0", "r");
+      if (resultfile) {
+          fclose(resultfile);
+          return 0;
+      }
+      if (getenv ("UNITY_FORCE_START")) {
+          fprintf (stdout, "Warning: UNITY_FORCE_START enabled, no check for unity or compiz support.\n");
+          return 0;
+      }
+  }
+
   // Open a X11 connection and get the root window.
   display = XOpenDisplay (display_name);
   if (display == NULL) {
     results.error = strdup ("unable to open display");
-    results.result = 1;
+    // exit with 5, to tell "it's not an error we should cache"
+    results.result = 5;
   }
   else
   {
@@ -586,6 +600,14 @@ int main (int argc, char* argv[]) {
     XCloseDisplay (display);
   if (results.error != NULL)
     free (results.error);
+
+  // drop result file
+  if (results.result != 5) {
+    sprintf(resultfilename, "/tmp/unity_support_test.%i", results.result);
+    resultfile = fopen(resultfilename, "w+");
+    if (resultfile)
+      fclose(resultfile);
+  }
 
   return results.result;
 }

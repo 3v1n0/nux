@@ -44,7 +44,7 @@ namespace nux
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    OnMouseDownOutsideArea.connect (sigc::mem_fun (this, &View::DoMouseDownOutsideArea));
+    mouse_down_outside_pointer_grab_area.connect (sigc::mem_fun (this, &View::DoMouseDownOutsideArea));
   }
 
   View::~View()
@@ -53,7 +53,7 @@ namespace nux
     {
       nux::GetWindowThread ()->SetFocusedArea (NULL);
     }
-    
+
     // It is possible that the object is in the refresh list. Remove it here before it is deleted.
     GetWindowThread()->RemoveObjectFromLayoutQueue(this);
 
@@ -80,7 +80,7 @@ namespace nux
       GetLayout ()->SetFocused (false);
       GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
     }
-    
+
     if (parent != NULL && parent->IsLayout ())
     {
       Layout *parent_layout = (Layout *)parent;
@@ -88,17 +88,6 @@ namespace nux
     }
 
     return TraverseInfo;
-  }
-
-  long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
-    {
-      // Skip the area that has the exclusivity on events
-      return TraverseInfo;
-    }
-
-    return ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
   }
 
   // NUXTODO: Find better name
@@ -240,6 +229,7 @@ namespace nux
     return OnEvent (ievent, TraverseInfo, ProcessEventInfo);
   }
 
+
   void View::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     _full_redraw = false;
@@ -288,12 +278,17 @@ namespace nux
     _full_redraw = false;
   }
 
-  void View::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void View::Draw(GraphicsEngine &GfxContext, bool force_draw)
   {
-    
+
   }
 
-  void View::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void View::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+  {
+
+  }
+
+  void View::PostDraw(GraphicsEngine &GfxContext, bool force_draw)
   {
 
   }
@@ -303,7 +298,7 @@ namespace nux
     //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetWindowThread ();
     if(application)
-    {       
+    {
       application->AddToDrawList(this);
       application->RequestRedraw();
       //GetWindowCompositor().AddToDrawList(this);
@@ -313,11 +308,6 @@ namespace nux
 
     _need_redraw = true;
     OnQueueDraw.emit (this);
-  }
-
-  void View::NeedRedraw()
-  {
-    QueueDraw ();
   }
 
   void View::NeedSoftRedraw()
@@ -364,6 +354,7 @@ namespace nux
 
   bool View::SetLayout (Layout *layout)
   {
+    nuxAssert(layout->IsLayout());
     NUX_RETURN_VALUE_IF_NULL (layout, false);
     NUX_RETURN_VALUE_IF_TRUE (m_CompositionLayout == layout, true);
 
@@ -407,10 +398,9 @@ namespace nux
     return true;
   }
 
-  //propogate the signal 
-  void View::OnChildFocusChanged (Area *parent, Area *child)
+  void View::OnChildFocusChanged (/*Area *parent,*/ Area *child)
   {
-    ChildFocusChanged.emit (parent, child);
+    ChildFocusChanged.emit (/*parent,*/ child);
   }
 
   bool View::SetCompositionLayout (Layout *layout)
@@ -517,7 +507,7 @@ namespace nux
     }
 
     InputArea::DoSetFocused (focused);
-    
+
     if (HasPassiveFocus ())
     {
       Layout *layout = GetLayout ();
@@ -555,10 +545,10 @@ namespace nux
   {
     if (IsVisible () == false)
       return false;
-    
+
     if (_can_focus == false)
       return false;
-    
+
     if (_can_pass_focus_to_composite_layout)
     {
       if (GetLayout () != NULL)
@@ -607,24 +597,85 @@ namespace nux
     }
   }
 
-  bool View::HasFocusControl ()
+  bool View::HasFocusControl()
   {
-    Area *_parent = GetParentObject ();
+    Area *_parent = GetParentObject();
     if (_parent == NULL)
       return false;
 
-    if (_parent->IsView ())
+    if (_parent->IsView())
     {
       View *parent = (View*)_parent;
-      return parent->HasFocusControl ();
+      return parent->HasFocusControl();
     }
-    else if (_parent->IsLayout ())
+    else if (_parent->IsLayout())
     {
       Layout *parent = (Layout *)_parent;
-      return parent->HasFocusControl ();
+      return parent->HasFocusControl();
     }
     return false;
   }
 
+  Area* View::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  {
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
+    if (mouse_inside == false)
+      return NULL;
+
+    if (m_CompositionLayout)
+    {
+      Area* view = m_CompositionLayout->FindAreaUnderMouse(mouse_position, event_type);
+
+      if (view)
+        return view;
+    }
+
+    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+      return NULL;
+    return this;
+  }
+
+  Area* View::FindKeyFocusArea(unsigned int key_symbol,
+                      unsigned long x11_key_code,
+                      unsigned long special_keys_state)
+  {
+    if (has_key_focus_)
+    {
+      return this;
+    }
+    else if (next_object_to_key_focus_area_)
+    {
+      return next_object_to_key_focus_area_->FindKeyFocusArea(key_symbol, x11_key_code, special_keys_state);
+    }
+    return NULL;
+  }
+
+  Area* View::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (next_object_to_key_focus_area_)
+    {
+      return NULL;
+    }
+
+    if (IsVisible() == false)
+      return NULL;
+
+    if (AcceptKeyNavFocus())
+    {
+      QueueDraw();
+      return this;
+    }
+    else if (m_CompositionLayout)
+    {
+      return m_CompositionLayout->KeyNavIteration(direction);
+    }
+
+    return NULL;
+  }
+
+  bool View::AcceptKeyNavFocus()
+  {
+    return true;
+  }
 }

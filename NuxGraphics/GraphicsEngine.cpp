@@ -206,8 +206,8 @@ namespace nux
 
         InitSl2TextureDepRead ();
 
-        InitSLHorizontalHQGaussFilter ();
-        InitSLVerticalHQGaussFilter ();
+        InitSLHorizontalHQGaussFilter (1);
+        InitSLVerticalHQGaussFilter (1);
       }
       else if (_graphics_display.GetGpuDevice()->GetGpuInfo ().Support_ARB_Fragment_Shader () &&
         _graphics_display.GetGpuDevice()->GetGpuInfo ().Support_ARB_Vertex_Program () &&
@@ -246,28 +246,28 @@ namespace nux
 #endif
 
 #if defined (NUX_OS_WINDOWS)
-      if (_normal_font == 0)
+      if (_normal_font.IsNull())
       {
         FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
         _normal_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference ();
       }
 
-      if (_bold_font == 0)
+      if (_bold_font.IsNull())
       {
         FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Tahoma_size_8_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
         _bold_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference ();
       }
 #else
-      if (_normal_font == 0)
+      if (_normal_font.IsNull())
       {
         FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
         _normal_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference ();
       }
 
-      if (_bold_font == 0)
+      if (_bold_font.IsNull())
       {
         FontTexture* fnt = new FontTexture (GNuxGraphicsResources.FindResourceLocation (TEXT ("Fonts/Ubuntu_size_10_bold.txt"), true).GetTCharPtr(), NUX_TRACKER_LOCATION);
         _bold_font = ObjectPtr<FontTexture> (fnt);
@@ -307,9 +307,14 @@ namespace nux
 
   void GraphicsEngine::EvaluateGpuCaps ()
   {
+#ifdef NUX_OS_WINDOWS
+    if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader() &&
+      _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader())
+#else
     if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader() &&
       _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
-      _graphics_display.GetGpuDevice()->GetGPUBrand() ==  GPU_BRAND_NVIDIA)
+      (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() >= 2))
+#endif
     {
       NString renderer_string = ANSI_TO_TCHAR (NUX_REINTERPRET_CAST (const char *, glGetString (GL_RENDERER)));
       CHECKGL_MSG (glGetString (GL_RENDERER));
@@ -916,28 +921,17 @@ namespace nux
 
   void GraphicsEngine::PushIdentityModelViewMatrix ()
   {
-    _model_view_stack.push_back (Matrix4::IDENTITY ());
-
-    _model_view_matrix = Matrix4::IDENTITY ();
-
-    std::list<Matrix4>::iterator it;
-    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
-    {
-      _model_view_matrix = (*it) * _model_view_matrix;
-    }
+    PushModelViewMatrix (Matrix4::IDENTITY());
   }
 
   void GraphicsEngine::PushModelViewMatrix (const Matrix4 &matrix)
   {
-    _model_view_stack.push_back (matrix);
+    if (_model_view_stack.empty())
+      _model_view_matrix = matrix;
+    else
+      _model_view_matrix = matrix * _model_view_stack.back();
 
-    _model_view_matrix = Matrix4::IDENTITY ();
-    
-    std::list<Matrix4>::iterator it;
-    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
-    {
-      _model_view_matrix = (*it) * _model_view_matrix;
-    }
+    _model_view_stack.push_back (_model_view_matrix);
   }
 
   void GraphicsEngine::Push2DTranslationModelViewMatrix (float tx, float ty, float tz)
@@ -950,20 +944,16 @@ namespace nux
 
   bool GraphicsEngine::PopModelViewMatrix ()
   {
-    if (_model_view_stack.size () == 0)
+    if (!_model_view_stack.empty())
+      _model_view_stack.pop_back();
+
+    if (_model_view_stack.empty())
     {
       _model_view_matrix = Matrix4::IDENTITY ();
       return false;
     }
 
-    _model_view_stack.pop_back();
-
-    _model_view_matrix = Matrix4::IDENTITY ();
-    std::list<Matrix4>::iterator it;
-    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
-    {
-      _model_view_matrix = (*it) * _model_view_matrix;
-    }
+    _model_view_matrix = _model_view_stack.back();
 
     return true;
   }
@@ -981,13 +971,10 @@ namespace nux
 
   void GraphicsEngine::ApplyModelViewMatrix ()
   {
-    _model_view_matrix = Matrix4::IDENTITY ();
-
-    std::list<Matrix4>::iterator it;
-    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
-    {
-      _model_view_matrix = (*it) * _model_view_matrix;
-    }
+    if (_model_view_stack.empty())
+      _model_view_matrix = Matrix4::IDENTITY ();
+    else
+      _model_view_matrix = _model_view_stack.back();
   }
 
   Rect GraphicsEngine::ModelViewXFormRect (const Rect& rect)
@@ -1297,7 +1284,6 @@ namespace nux
   void GraphicsEngine::UpdateResource (ResourceData *Resource)
   {
     ObjectPtr< CachedResourceData > GLResource = ResourceCache.FindCachedResourceById (Resource->GetResourceIndex() ); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
-    bool bUpdated = FALSE;
 
     if (GLResource.IsValid() )
     {
@@ -1310,7 +1296,6 @@ namespace nux
         // Check if the updater is valid for updating the resource.
         if ( ResourceUpdater->UpdatesThisResource (Resource) )
         {
-          bUpdated = ResourceUpdater->UpdateResource (GLResource, Resource);
           break;
         }
       }
@@ -1324,19 +1309,29 @@ namespace nux
 
   void GraphicsEngine::SetFrameBufferHelper (
     ObjectPtr<IOpenGLFrameBufferObject>& fbo,
-    ObjectPtr<IOpenGLTexture2D>& colorbuffer,
-    ObjectPtr<IOpenGLTexture2D>& depthbuffer,
+    ObjectPtr<IOpenGLBaseTexture>& colorbuffer,
+    ObjectPtr<IOpenGLBaseTexture>& depthbuffer,
     int width, int height)
   {
-    //if ((colorbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height))
+    if ((colorbuffer.IsValid() == false) || (colorbuffer->GetWidth() != width) || (colorbuffer->GetHeight() != height))
     {
       colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8);
+    }
+
+    if ((depthbuffer.IsValid()) && ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
+    {
+      // Generate a new depth texture only if a valid one was passed to this function.
       depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8);
     }
 
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
     fbo->SetRenderTarget(0, colorbuffer->GetSurfaceLevel(0));
-    fbo->SetDepthSurface(depthbuffer->GetSurfaceLevel(0));
+    
+    if (depthbuffer.IsValid())
+      fbo->SetDepthSurface(depthbuffer->GetSurfaceLevel(0));
+    else
+      fbo->SetDepthSurface(ObjectPtr<IOpenGLSurface>(NULL));
+
     fbo->Activate();
     fbo->EmptyClippingRegion();
     SetContext(0, 0, width, height);

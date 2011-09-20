@@ -124,20 +124,28 @@ namespace nux
   Rect Rect::Intersect (const Rect &r) const
   {
     // Get the corner points.
-    const Point &ul1 = Point (x, y);
-    const Point &ul2 = Point (r.x, r.y);
-    int x = Max<int> (ul1.x, ul2.x);
-    int y = Max<int> (ul1.y, ul2.y);
-    int w = Min<int> (ul1.x + width,  ul2.x + r.width) - x;
-    int h = Min<int> (ul1.y + height, ul2.y + r.height) - y;
 
-    if (w < 0 || h < 0)
+    bool intersect = ! ((r.x > x + width) ||
+                      (r.x + r.width < x) ||
+                      (r.y > y + height) ||
+                      (r.y + r.height < y));
+
+    if (intersect)
+    {
+      const Point &ul1 = Point (x, y);
+      const Point &ul2 = Point (r.x, r.y);
+      int xx = Max<int> (ul1.x, ul2.x);
+      int yy = Max<int> (ul1.y, ul2.y);
+      int ww = Min<int> (ul1.x + width,  ul2.x + r.width) - xx;
+      int hh = Min<int> (ul1.y + height, ul2.y + r.height) - yy;
+
+      return Rect (xx, yy, ww, hh);
+    }
+    else
     {
       // No intersection
       return Rect ();
     }
-
-    return Rect (x, y, w, h);
   }
 
   // expand the width by factor_x and the height by factor_y

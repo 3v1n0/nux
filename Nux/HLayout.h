@@ -30,18 +30,18 @@ namespace nux
 
   class HLayout: public Layout
   {
-    NUX_DECLARE_OBJECT_TYPE (HLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(HLayout, Layout);
   public:
-    HLayout (NUX_FILE_LINE_PROTO);
-    HLayout (NString name, NUX_FILE_LINE_PROTO);
-    ~HLayout ();
+    HLayout(NUX_FILE_LINE_PROTO);
+    HLayout(NString name, NUX_FILE_LINE_PROTO);
+    ~HLayout();
 
-    virtual long ComputeLayout2 ();
-    virtual void ComputePosition2 (float offsetX, float offsetY);
-    virtual void HLayoutManagement (t_s32 width, t_s32 height);
-    virtual t_u32 getMaxStretchFactor ();
+    virtual long ComputeLayout2();
+    virtual void ComputePosition2(float offsetX, float offsetY);
+    virtual void HLayoutManagement(int width, int height);
+    virtual t_u32 GetMaxStretchFactor();
 
-    virtual void GetCompositeList (std::list<Area *> *ViewList);
+    virtual void GetCompositeList(std::list<Area *> *ViewList);
 
     //! Compute the how elements are spread inside the layout
     /*!
@@ -49,11 +49,12 @@ namespace nux
         @param offset_space     The space at the left of all elements.
         @param element_margin   The margin between elements.
     */
-    void ComputeStacking (t_s32 remaining_width, t_s32 &offset_space, t_s32 &element_margin);
+    void ComputeStacking(int remaining_width, int &offset_space, int &element_margin);
 
   protected:
     virtual long DoFocusUp  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual long DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
   };
 }
 

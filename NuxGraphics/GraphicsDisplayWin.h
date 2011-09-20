@@ -101,7 +101,7 @@ namespace nux
     int m_num_device_modes;
 
     // Event object
-    IEvent *m_pEvent;
+    Event *event_;
 
     // Creation
     bool IsGfxInterfaceCreated();
@@ -146,8 +146,8 @@ namespace nux
     void SwapBuffer (bool glswap = true);
 
     // Event methods
-    void GetSystemEvent (IEvent *evt);
-    IEvent &GetCurrentEvent();
+    void GetSystemEvent (Event *evt);
+    Event &GetCurrentEvent();
 
     bool isWindowMinimized() const
     {
@@ -212,7 +212,7 @@ namespace nux
     void SetWindowCursor (HCURSOR cursor);
     HCURSOR GetWindowCursor() const;
 
-    void ProcessForeignWin32Event (HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, IEvent *event);
+    void ProcessForeignWin32Event (HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, Event *event);
     LRESULT ProcessWin32Event (HWND hWnd, t_u32 uMsg, WPARAM wParam, LPARAM lParam);
 
     //! Pause graphics rendering.

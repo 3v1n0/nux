@@ -41,18 +41,18 @@ namespace nux
 
     HLayout *ButtonLayout (new HLayout (TEXT ("Dialog Buttons") ) );
 
-    PushButton *OkButton (new PushButton (TEXT ("OK") ) );
+    ToggleButton *OkButton (new ToggleButton ("OK"));
     OkButton->SetMinimumWidth (60);
     OkButton->SetMinimumHeight (20);
 
-    PushButton *CancelButton (new PushButton (TEXT ("Cancel") ) );
+    ToggleButton *CancelButton (new ToggleButton ("Cancel"));
     CancelButton->SetMinimumWidth (60);
     CancelButton->SetMinimumHeight (20);
 
-    OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
-    OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix4DialogProxy::RecvDialogOk), matrixeditor) );
-    CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix4DialogProxy::RecvDialogCancel), matrixeditor) );
-    CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
+    //FIXME - OkButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix4DialogProxy::RecvDialogOk), matrixeditor) );
+    //FIXME - CancelButton->sigClick.connect (sigc::bind (sigc::mem_fun (matrixeditorproxy, &Matrix4DialogProxy::RecvDialogCancel), matrixeditor) );
+    //FIXME - CancelButton->sigClick.connect (sigc::mem_fun (static_cast<WindowThread *> (thread), &WindowThread::TerminateThread) );
 
     ButtonLayout->SetHorizontalInternalMargin (6);
     ButtonLayout->SetVerticalExternalMargin (2);
@@ -141,8 +141,8 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
     ,   m_Matrix (matrix)
   {
-    m_vlayout           = new VLayout (NUX_TRACKER_LOCATION);
-    mtx_layout          = new VLayout (NUX_TRACKER_LOCATION);
+    m_vlayout           = new VLayout ("Matrix4", NUX_TRACKER_LOCATION);
+    mtx_layout          = new VLayout ("MatrixEdit", NUX_TRACKER_LOCATION);
     m_MtxFunctionLayout = new HLayout (NUX_TRACKER_LOCATION);
 
     mtx_row_layout[0]   = new HLayout (NUX_TRACKER_LOCATION);
@@ -150,20 +150,15 @@ namespace nux
     mtx_row_layout[2]   = new HLayout (NUX_TRACKER_LOCATION);
     mtx_row_layout[3]   = new HLayout (NUX_TRACKER_LOCATION);
 
-    m_IdentityMtxBtn    = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_ZeroMtxBtn        = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_InverseMtxBtn     = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
-    m_NegateMtxBtn      = new PushButton (TEXT (""), NUX_TRACKER_LOCATION);
+    m_IdentityMtxBtn    = new ToggleButton ("", NUX_TRACKER_LOCATION);
+    m_ZeroMtxBtn        = new ToggleButton ("", NUX_TRACKER_LOCATION);
+    m_InverseMtxBtn     = new ToggleButton ("", NUX_TRACKER_LOCATION);
+    m_NegateMtxBtn      = new ToggleButton ("", NUX_TRACKER_LOCATION);
 
-    m_IdentityMtxBtn->EnableDoubleClick(false);
-    m_ZeroMtxBtn->EnableDoubleClick(false);
-    m_InverseMtxBtn->EnableDoubleClick(false);
-    m_NegateMtxBtn->EnableDoubleClick(false);
-
-    m_IdentityMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvIdentityMatrixCmd) );
-    m_ZeroMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvZeroMatrixCmd) );
-    m_InverseMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvInverseMatrixCmd) );
-    m_NegateMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvNegateMatrixCmd) );
+    //FIXME - m_IdentityMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvIdentityMatrixCmd) );
+    //FIXME - m_ZeroMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvZeroMatrixCmd) );
+    //FIXME - m_InverseMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvInverseMatrixCmd) );
+    //FIXME - m_NegateMtxBtn->sigClick.connect (sigc::mem_fun (this, &Matrix4Editor::RecvNegateMatrixCmd) );
 
     for (int i = 0; i < 4; i++)
     {
@@ -181,8 +176,6 @@ namespace nux
     for (int i = 0; i < 4; i++)
     {
       mtx_row_layout[i]->SetHorizontalInternalMargin (4);
-      //mtx_row_layout[i]->SetHorizontalExternalMargin(4);
-      //mtx_row_layout[i]->SetVerticalExternalMargin(2);
       mtx_row_layout[i]->SetContentDistribution (eStackLeft);
     }
 
@@ -190,7 +183,7 @@ namespace nux
     {
       for (int j = 0; j < 4; j++)
       {
-        mtx_row_layout[i]->AddView (m_MtxInput[i][j], 0, eCenter, eFull);
+        mtx_row_layout[i]->AddView (m_MtxInput[i][j], 0, eCenter, eMatchContent);
       }
     }
 
@@ -201,10 +194,10 @@ namespace nux
 
     mtx_layout->SetContentDistribution (eStackExpand);
 
-    m_IdentityMtxBtn->SetCaption (TEXT ("Id") );
-    m_ZeroMtxBtn->SetCaption (TEXT ("Zero") );
-    m_InverseMtxBtn->SetCaption (TEXT ("Inv") );
-    m_NegateMtxBtn->SetCaption (TEXT ("+/-") );
+    //FIXME - m_IdentityMtxBtn->SetCaption (TEXT ("Id") );
+    //FIXME - m_ZeroMtxBtn->SetCaption (TEXT ("Zero") );
+    //FIXME - m_InverseMtxBtn->SetCaption (TEXT ("Inv") );
+    //FIXME - m_NegateMtxBtn->SetCaption (TEXT ("+/-") );
 
     m_MtxFunctionLayout->AddView (m_IdentityMtxBtn, 0);
     m_MtxFunctionLayout->AddView (m_ZeroMtxBtn, 0);
@@ -220,9 +213,9 @@ namespace nux
     mtx_layout->SetVerticalExternalMargin (4);
     mtx_layout->SetVerticalInternalMargin (4);
 
-    m_vlayout->AddLayout (mtx_layout, 0, eCenter, eMatchContent);
-    m_vlayout->AddLayout (m_MtxFunctionLayout, 0,  eCenter, eMatchContent);
-    m_vlayout->SetContentDistribution (eStackCenter);
+    m_vlayout->AddLayout(mtx_layout, 0, eCenter, eMatchContent);
+    m_vlayout->AddLayout(m_MtxFunctionLayout, 0, eCenter, eMatchContent);
+    m_vlayout->SetContentDistribution(MAJOR_POSITION_CENTER);
 
     SetCompositionLayout (m_vlayout);
     WriteMatrix();
@@ -274,25 +267,9 @@ namespace nux
     }
   }
 
-  long Matrix4Editor::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  Area* Matrix4Editor::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    long ret = TraverseInfo;
-
-    for (int i = 0; i < 4; i++)
-    {
-      for (int j = 0; j < 4; j++)
-      {
-        ret = m_MtxInput[i][j]->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-    }
-
-    ret = m_IdentityMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_ZeroMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_InverseMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = m_NegateMtxBtn->BaseProcessEvent (ievent, ret, ProcessEventInfo);
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
+    return View::FindAreaUnderMouse(mouse_position, event_type);
   }
 
   void Matrix4Editor::Draw (GraphicsEngine &GfxContext, bool force_draw)
@@ -305,14 +282,14 @@ namespace nux
     {
       for (int j = 0; j < 4; j++)
       {
-        m_MtxInput[i][j]->NeedRedraw();
+        m_MtxInput[i][j]->QueueDraw();
       }
     }
 
-    m_IdentityMtxBtn->NeedRedraw();
-    m_ZeroMtxBtn->NeedRedraw();
-    m_InverseMtxBtn->NeedRedraw();
-    m_NegateMtxBtn->NeedRedraw();
+    m_IdentityMtxBtn->QueueDraw();
+    m_ZeroMtxBtn->QueueDraw();
+    m_InverseMtxBtn->QueueDraw();
+    m_NegateMtxBtn->QueueDraw();
     //GetPainter().PopBackground();
 
     //GetPainter().PopBackground();
@@ -349,7 +326,7 @@ namespace nux
 
   void Matrix4Editor::SetParameterName (const char *parameter_name)
   {
-    NeedRedraw();
+    QueueDraw();
   }
 
 /////////////////
@@ -380,7 +357,7 @@ namespace nux
     WriteMatrix();
     sigMatrixChanged.emit (this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Matrix4Editor::RecvZeroMatrixCmd()
@@ -389,16 +366,16 @@ namespace nux
     WriteMatrix();
     sigMatrixChanged.emit (this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Matrix4Editor::RecvInverseMatrixCmd()
   {
-    m_Matrix.Zero();
+    m_Matrix.Inverse();
     WriteMatrix();
     sigMatrixChanged.emit (this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
   void Matrix4Editor::RecvNegateMatrixCmd()
@@ -407,7 +384,7 @@ namespace nux
     WriteMatrix();
     sigMatrixChanged.emit (this);
 
-    NeedRedraw();
+    QueueDraw();
   }
 
 

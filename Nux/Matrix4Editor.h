@@ -28,7 +28,7 @@
 #include "Layout.h"
 #include "HLayout.h"
 #include "VLayout.h"
-#include "PushButton.h"
+#include "ToggleButton.h"
 #include "TimerProc.h"
 
 namespace nux
@@ -87,7 +87,8 @@ namespace nux
   public:
     Matrix4Editor (Matrix4 matrix = Matrix4::IDENTITY(), NUX_FILE_LINE_PROTO);
     ~Matrix4Editor();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
@@ -157,10 +158,10 @@ namespace nux
 
     EditTextBox *m_MtxInput[4][4];
 
-    PushButton *m_IdentityMtxBtn;
-    PushButton *m_ZeroMtxBtn;
-    PushButton *m_InverseMtxBtn;
-    PushButton *m_NegateMtxBtn;
+    ToggleButton *m_IdentityMtxBtn;
+    ToggleButton *m_ZeroMtxBtn;
+    ToggleButton *m_InverseMtxBtn;
+    ToggleButton *m_NegateMtxBtn;
     HLayout *m_MtxFunctionLayout;
 
 

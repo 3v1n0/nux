@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010, 2011 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -31,6 +31,26 @@
 
 namespace nux
 {
+class CairoFontOptions
+{
+public:
+  CairoFontOptions()
+    : font_options_(::cairo_font_options_create())
+    {}
+
+  ~CairoFontOptions()
+  {
+    ::cairo_font_options_destroy(font_options_);
+  }
+
+  operator cairo_font_options_t*()
+  {
+    return font_options_;
+  }
+
+private:
+  cairo_font_options_t* font_options_;
+};
 
 
 //! A cairo graphics container

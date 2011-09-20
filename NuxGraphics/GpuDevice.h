@@ -267,10 +267,16 @@ namespace nux
 
   public:
     ObjectPtr<IOpenGLTexture2D> CreateTexture (
-      int Width
-      , int Height
-      , int Levels
-      , BitmapFormat PixelFormat);
+      int Width,
+      int Height,
+      int Levels,
+      BitmapFormat PixelFormat);
+
+    ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(int id,
+      int Width,
+      int Height,
+      int Levels,
+      BitmapFormat PixelFormat);
 
     ObjectPtr<IOpenGLRectangleTexture> CreateRectangleTexture (
       int Width
@@ -358,9 +364,7 @@ namespace nux
       unsigned int StreamNumber,
       ObjectPtr<IOpenGLVertexBuffer> pStreamData,
       unsigned int OffsetInBytes,
-      unsigned int Stride,
-      unsigned int NumComponent = 0,
-      unsigned int ComponentFormat = 0);
+      unsigned int Stride);
 
     //! Setup a NULL vertex buffer
     void InvalidateVertexBuffer();
@@ -513,6 +517,8 @@ namespace nux
 
   public:
     
+    ObjectPtr<IOpenGLTexture2D> backup_texture0_;
+
 #if defined (NUX_OS_WINDOWS)
     GpuDevice (unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
       HDC device_context,

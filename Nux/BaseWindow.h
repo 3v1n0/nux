@@ -23,6 +23,8 @@
 #ifndef BASEWINDOW_H
 #define BASEWINDOW_H
 
+
+#include <boost/scoped_ptr.hpp>
 #include "ScrollView.h"
 
 #if defined(NUX_OS_WINDOWS)
@@ -34,7 +36,6 @@
 
 #include "InputArea.h"
 #include "MouseHandler.h"
-#include "StaticTextBox.h"
 #include "PaintLayer.h"
 
 namespace nux
@@ -70,6 +71,9 @@ namespace nux
     BaseWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
     virtual ~BaseWindow();
 
+    nux::Property<bool> premultiply;
+
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
@@ -185,6 +189,10 @@ namespace nux
     }
   protected:
     
+    void SetAcceptKeyNavFocus(bool accept);
+    bool accept_key_nav_focus_;
+    virtual bool AcceptKeyNavFocus();
+
      //! Callback function to set the window position and size.
     ConfigureNotifyCallback m_configure_notify_callback;
     //! Callback data for ConfigureNotifyCallback.
@@ -220,7 +228,7 @@ namespace nux
     void SetTopBorder (int border);
     int m_TopBorder;
     int m_Border;
-    AbstractPaintLayer *_paint_layer;
+    boost::scoped_ptr<AbstractPaintLayer> _paint_layer;
 
     bool _entering_visible_state;  //!< the window is about to be made visible during event processing
     bool _entering_hidden_state;   //!< the window is about to be made hidden during event processing

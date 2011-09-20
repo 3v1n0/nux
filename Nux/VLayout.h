@@ -37,11 +37,11 @@ namespace nux
     ~VLayout ();
 
     virtual long ComputeLayout2();
-    virtual void ComputePosition2 (float offsetX, float offsetY);
-    virtual void VLayoutManagement (t_s32 width, t_s32 height);
-    virtual t_u32 getMaxStretchFactor();
+    virtual void ComputePosition2(float offsetX, float offsetY);
+    virtual void VLayoutManagement(int width, int height);
+    virtual t_u32 GetMaxStretchFactor();
 
-    virtual void GetCompositeList (std::list<Area *> *ViewList);
+    virtual void GetCompositeList(std::list<Area *> *ViewList);
 
     //! Compute the how elements are spread inside the layout
     /*!
@@ -49,9 +49,10 @@ namespace nux
         @param offset_space     The space at the top of all elements.
         @param element_margin   The margin between elements.
     */
-    void ComputeStacking (t_s32 length, t_s32 &offset_space, t_s32 &element_margin);
+    void ComputeStacking(int length, int &offset_space, int &element_margin);
 
   protected:
+    virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
   };

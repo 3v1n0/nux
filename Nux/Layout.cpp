@@ -26,7 +26,8 @@
 
 namespace nux
 {
-  NUX_IMPLEMENT_OBJECT_TYPE (Layout);
+  NUX_IMPLEMENT_OBJECT_TYPE(Layout);
+  NUX_IMPLEMENT_OBJECT_TYPE(SpaceLayout);
 
   Layout::Layout (NUX_FILE_LINE_DECL)
     :   Area (NUX_FILE_LINE_PARAM)
@@ -63,30 +64,8 @@ namespace nux
 
   void Layout::RemoveChildObject (Area *bo)
   {
-    bool was_focused = GetFocused ();
     std::list<Area *>::iterator it;
     it = std::find (_layout_element_list.begin(), _layout_element_list.end(), bo);
-
-    if ((*it)->GetFocused ())
-    {
-      // the child was focused, oh dear. lets handle that gracefully
-      if (_layout_element_list.size() > 1)
-      {
-        if (it == _layout_element_list.end ())
-        {
-          FocusPreviousChild ((*it));
-        }
-        else
-        {
-          FocusNextChild ((*it));
-        }
-      }
-
-      (*it)->SetFocused (false);
-    }
-
-    sigc::connection onchildfocuscon = _connection_map[bo];
-    onchildfocuscon.disconnect ();
 
     if (it != _layout_element_list.end())
     {
@@ -95,21 +74,6 @@ namespace nux
       ViewRemoved.emit (this, bo);
       bo->UnParentObject();
       _layout_element_list.erase (it);
-    }
-
-    if (IsEmpty () && was_focused)
-    {
-      // we are now empty, so we need to handle our focus state
-      Area *area = GetParentObject ();
-      if (area == NULL)
-        return;
-
-
-      if (area->IsLayout ())
-      {
-        Layout *parent = (Layout *)area;
-        parent->SetFocused (true);
-      }
     }
   }
 
@@ -163,15 +127,15 @@ namespace nux
     return false;
   }
 
-  void Layout::OnChildFocusChanged (Area *parent, Area *child)
+  void Layout::OnChildFocusChanged (/*Area *parent,*/ Area *child)
   {
-    ChildFocusChanged.emit (parent, child);
+    ChildFocusChanged.emit (/*parent,*/ child);
   }
 
 // If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
 // and the children will take their natural size by expending WidgetLayout.
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-  void Layout::AddLayout (Layout *layout, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage)
+  void Layout::AddLayout (Layout *layout, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
     nuxAssertMsg (layout != 0, TEXT ("[Layout::AddView] Invalid parameter.") );
     NUX_RETURN_IF_TRUE (layout == 0);
@@ -182,6 +146,8 @@ namespace nux
     Area *parent = layout->GetParentObject();
     nuxAssertMsg (parent == 0, TEXT ("[Layout::AddLayout] Trying to add an object that already has a parent.") );
     NUX_RETURN_IF_TRUE (parent != 0);
+
+    nuxAssertMsg (index >= 0, TEXT ("[Layout::AddLayout] Invalid index position. Adding at the beginning of the list..") );
 
     layout->SetStretchFactor (stretchFactor);
     layout->SetPositioning (minor_position);
@@ -211,7 +177,29 @@ namespace nux
       //ChildFocusChanged (this, layout);
     }
 
-    _layout_element_list.push_back (layout);
+    if (index < 0)
+      index = NUX_LAYOUT_BEGIN;
+
+    if (index == NUX_LAYOUT_END || index >= _layout_element_list.size())
+    {
+      _layout_element_list.push_back (layout);
+    }
+    else
+    {
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
+      std::list<Area *>::iterator pos = _layout_element_list.begin();
+#else
+      auto pos = _layout_element_list.begin();
+#endif
+      int idx = index;
+      while (pos != _layout_element_list.end() && idx > 0)
+      {
+        idx--;
+        pos++;
+      }
+      _layout_element_list.insert(pos, layout);
+    }
+
     _connection_map[layout] = layout->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
 
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
@@ -239,9 +227,10 @@ namespace nux
       /param minor_position Controls how the layout position the object.
       /param minor_size Controls the object minor dimension size.
       /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
+      /param index Controls the object position in the layout children.
   */
 
-  void Layout::AddView (Area *bo, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage)
+  void Layout::AddView (Area *bo, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
     nuxAssertMsg (bo != 0, TEXT ("[Layout::AddView] Invalid parameter.") );
     NUX_RETURN_IF_TRUE (bo == 0);
@@ -249,6 +238,8 @@ namespace nux
     Area *parent = bo->GetParentObject();
     nuxAssertMsg (parent == 0, TEXT ("[Layout::AddView] Trying to add an object that already has a parent.") );
     NUX_RETURN_IF_TRUE (parent != 0);
+
+    nuxAssertMsg (index >= 0, TEXT ("[Layout::AddView] Invalid index position. Adding at the beginning of the list..") );
 
     bo->SetStretchFactor (stretchFactor);
     bo->SetPositioning (minor_position);
@@ -278,15 +269,36 @@ namespace nux
       //ChildFocusChanged (this, bo);
     //}
 
+    if (index < 0)
+      index = NUX_LAYOUT_BEGIN;
 
-    _layout_element_list.push_back (bo);
+    if (index == NUX_LAYOUT_END || index >= _layout_element_list.size())
+    {
+      _layout_element_list.push_back (bo);
+    }
+    else
+    {
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
+      std::list<Area *>::iterator pos = _layout_element_list.begin();
+#else
+      auto pos = _layout_element_list.begin();
+#endif
+      int idx = index;
+      while (pos != _layout_element_list.end() && idx > 0)
+      {
+        idx--;
+        pos++;
+      }
+      _layout_element_list.insert(pos, bo);
+    }
+
     _connection_map[bo] = bo->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
 
     ViewAdded.emit (this, bo);
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
   }
 
-  void Layout::AddSpace (unsigned int width, unsigned int stretchFactor)
+  void Layout::AddSpace (unsigned int width, unsigned int stretchFactor, LayoutPosition index)
   {
     AddLayout (new SpaceLayout(), stretchFactor);
   }
@@ -427,14 +439,14 @@ namespace nux
   {
     if (_layout_element_list.empty ())
       return false;
-    
+
     std::list<Area *>::const_iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ((*it)->CanFocus ())
       {
         (*it)->SetFocused (true);
-        ChildFocusChanged (this, (*it));
+        ChildFocusChanged (/*this,*/ (*it));
         return true;
       }
     }
@@ -446,14 +458,14 @@ namespace nux
   {
     if (_layout_element_list.empty ())
       return false;
-    
+
     std::list<Area *>::reverse_iterator it;
     for (it = _layout_element_list.rbegin(); it != _layout_element_list.rend(); it++)
     {
       if ((*it)->CanFocus ())
       {
         (*it)->SetFocused (true);
-        ChildFocusChanged (this, (*it));
+        ChildFocusChanged (/*this,*/ (*it));
         return true;
       }
     }
@@ -474,7 +486,7 @@ namespace nux
         if ((*it)->CanFocus ())
         {
           (*it)->SetFocused (true);
-          ChildFocusChanged (this, (*it));
+          ChildFocusChanged (/*this,*/ (*it));
           return true;
         }
       }
@@ -501,7 +513,7 @@ namespace nux
         if ((*it)->CanFocus ())
         {
           (*it)->SetFocused (true);
-          ChildFocusChanged (this, (*it));
+          ChildFocusChanged (/*this,*/ (*it));
           return true;
         }
       }
@@ -572,7 +584,7 @@ namespace nux
     if (focused_child == NULL) return ProcessEventInfo;
     bool success = FocusPreviousChild (focused_child);
     //focused_child->SetFocused (false);
-    
+
     if (success == false)
     {
       Area *parent = GetParentObject ();
@@ -584,7 +596,7 @@ namespace nux
 
     return ProcessEventInfo;
   }
-  
+
   long Layout::DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     Area *focused_child = GetFocusedChild ();
@@ -603,7 +615,7 @@ namespace nux
 
     return ProcessEventInfo;
   }
-  
+
   long Layout::DoFocusUp (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     return DoFocusPrev (ievent, TraverseInfo, ProcessEventInfo);
@@ -625,7 +637,7 @@ namespace nux
   long Layout::ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
     long ret = TraverseInfo;
-   
+
 
     if (GetFocused () && (ievent.e_event == NUX_KEYDOWN))
     {
@@ -644,7 +656,7 @@ namespace nux
       if ((type == FOCUS_EVENT_DIRECTION) && (direction != FOCUS_DIRECTION_NONE))
       {
         focused_child = GetFocusedChild ();
-  
+
         /* if nothing is focused, focus the first child else send the event to the parent */
 
         if (focused_child == NULL)
@@ -734,44 +746,25 @@ namespace nux
     return ret;
   }
 
-  long Layout::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  Area* Layout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    long ret = TraverseInfo;
-    std::list<Area *>::iterator it;
+    bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
+    if(mouse_inside == false)
+      return NULL;
+
+    std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if (!(*it)->IsVisible () || !(*it)->IsSensitive ())
-        continue;
-
-      if ((*it)->IsView())
+      if ((*it)->IsVisible() && (*it)->IsSensitive())
       {
-        View *ic = NUX_STATIC_CAST (View*, (*it));
-        ret = ic->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-      else if ( (*it)->IsLayout() )
-      {
-        Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
-        ret = layout->ProcessEvent (ievent, ret, ProcessEventInfo);
-      }
-      // InputArea should be tested last
-      else if ((*it)->IsInputArea())
-      {
-        InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
-        ret = input_area->OnEvent (ievent, ret, ProcessEventInfo);
+        Area* hit_view = NUX_STATIC_CAST(Area*, (*it)->FindAreaUnderMouse(mouse_position, event_type));
+        if(hit_view)
+          return hit_view;
       }
     }
 
-    /* must do focus processing after sending events to children */
-    if ((ievent.e_event == NUX_KEYDOWN) && HasFocusControl () && (_ignore_focus == false))
-    {
-      ret |= ProcessFocusEvent (ievent, ret, ProcessEventInfo);
-    }
-
-    if (_ignore_focus)
-      _ignore_focus = false;
-
-    return ret;
+    return NULL;
   }
 
   void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
@@ -826,22 +819,17 @@ namespace nux
       if ((*it)->IsView ())
       {
         View *ic = NUX_STATIC_CAST (View *, (*it));
-        ic->NeedRedraw ();
+        ic->QueueDraw ();
       }
       else if ((*it)->IsLayout ())
       {
         Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
-        layout->NeedRedraw ();
+        layout->QueueDraw ();
       }
     }
 
     _queued_draw = true;
     OnQueueDraw.emit (this);
-  }
-
-  void Layout::NeedRedraw ()
-  {
-    QueueDraw ();
   }
 
   bool Layout::IsQueuedForDraw ()
@@ -930,13 +918,6 @@ namespace nux
     else
     {
       SetFocusControl (true);
-      bool has_focused_child = false;
-      std::list<Area *>::iterator it;
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-      {
-        if ((*it)->GetFocused ())
-          has_focused_child = true;
-      }
 
       if (GetFocused () == false)
       {
@@ -974,7 +955,7 @@ namespace nux
     std::list<Area *>::iterator it;
     if (_layout_element_list.empty ())
       return false;
-    
+
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       bool can_focus = false;
@@ -1001,4 +982,8 @@ namespace nux
     return false;
   }
 
+  bool Layout::AcceptKeyNavFocus()
+  {
+    return false;
+  }
 }
