@@ -433,6 +433,7 @@ logging::Logger logger("nux.window");
             event.e_event = NUX_MOUSE_PRESSED;
           }
 
+          bool emit_double_click_signal = false;
           if (mouse_over_area_ && (hit_view != mouse_over_area_))
           {
             // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
@@ -445,6 +446,10 @@ logging::Logger logger("nux.window");
             int y = event.e_y - geo.y;
 
             mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+          }
+          else if (mouse_over_area_ && (hit_view == mouse_over_area_) && (event.e_event == NUX_MOUSE_DOUBLECLICK))
+          {
+            emit_double_click_signal = true;
           }
 
           SetMouseOverArea(hit_view);
@@ -474,7 +479,14 @@ logging::Logger logger("nux.window");
             }
           }
 
-          mouse_over_area_->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          if (emit_double_click_signal)
+          {
+            mouse_over_area_->EmitMouseDoubleClickSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          }
+          else
+          {
+            mouse_over_area_->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          }
         }
         else if (hit_view && (event.e_event == NUX_MOUSE_WHEEL))
         {
