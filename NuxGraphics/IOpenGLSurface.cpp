@@ -502,7 +502,7 @@ namespace nux
       }
     }
 
-    delete [] DummyBuffer;
+    free (DummyBuffer);
 
 
     //    { //[DEBUGGING - Red Texture]
