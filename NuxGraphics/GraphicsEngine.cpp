@@ -1307,6 +1307,7 @@ namespace nux
         // Check if the updater is valid for updating the resource.
         if ( ResourceUpdater->UpdatesThisResource (Resource) )
         {
+          ResourceUpdater->UpdateResource(GLResource, Resource);
           break;
         }
       }
