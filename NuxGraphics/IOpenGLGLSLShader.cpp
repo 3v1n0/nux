@@ -596,7 +596,7 @@ namespace nux
 
     if (NumAttachedShaders)
     {
-      delete ShaderObjects;
+      delete[] ShaderObjects;
     }
 
     for (int i = 0; i < (int) ShaderObjectList.size(); i++)
