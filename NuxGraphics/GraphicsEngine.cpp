@@ -139,6 +139,17 @@ namespace nux
   }
 
 
+  FxStructure::FxStructure()
+  {
+    src_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
+    dst_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
+    temp_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
+  }
+
+  FxStructure::~FxStructure()
+  {
+  }
+
   GraphicsEngine::GraphicsEngine (GraphicsDisplay &GlWindow, bool create_rendering_data)
     :   _graphics_display (GlWindow)
   {
