@@ -113,16 +113,15 @@ logging::Logger logger("nux.window");
 
   WindowCompositor::RenderTargetTextures &WindowCompositor::GetWindowBuffer (BaseWindow *window)
   {
-    RenderTargetTextures invalid;
-    RenderTargetTextures &ret = invalid;
+    static RenderTargetTextures invalid;
     std::map< BaseWindow*, RenderTargetTextures >::iterator it = _window_to_texture_map.find (window);
 
     if (it != _window_to_texture_map.end())
     {
-      return (*it).second;
+      return it->second;
     }
-
-    return ret;
+    LOG_WARN(logger) << "No RenderTargetTextures for window.";
+    return invalid;
   }
 
   void WindowCompositor::RegisterWindow (BaseWindow *window)
