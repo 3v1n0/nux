@@ -1,6 +1,8 @@
 nux (1.12.0-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+    - valgrind: Mismatched free in libnux (LP: #785118)
+    - other misc rendering optimizations
 
  -- Didier Roche <didrocks@ubuntu.com>  Mon, 26 Sep 2011 11:44:07 +0200
 
