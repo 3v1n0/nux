@@ -63,6 +63,12 @@ namespace nux
     BITFMT_D24S8,
     BITFMT_A8,                  // Gray level 8 bits
 
+    BITFMT_DXT1,
+    BITFMT_DXT2,
+    BITFMT_DXT3,
+    BITFMT_DXT4,
+    BITFMT_DXT5,
+
 #ifndef NUX_OPENGLES_20
     BITFMT_A8R8G8B8,            // 32-bit ARGB pixel format with alpha, using 8 bits per channel.
     BITFMT_A8B8G8R8,            // 32-bit ABGR pixel format with alpha, using 8 bits per channel.
@@ -70,12 +76,6 @@ namespace nux
     BITFMT_RGBA16F,
     BITFMT_RGB32F,
     BITFMT_RGBA32F,
-
-    BITFMT_DXT1,
-    BITFMT_DXT2,
-    BITFMT_DXT3,
-    BITFMT_DXT4,
-    BITFMT_DXT5,
 
     BITFMT_R10G10B10A2,         // 32-bit pixel format using 10 bits for each color and 2 bits for alpha.
     BITFMT_B10G10R10A2,         // 32-bit pixel format using 10 bits for each color and 2 bits for alpha.
