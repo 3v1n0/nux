@@ -1,10 +1,10 @@
-nux (1.12.0-0ubuntu1) UNRELEASED; urgency=low
+nux (1.12.0-0ubuntu1) oneiric; urgency=low
 
   * New upstream release.
     - valgrind: Mismatched free in libnux (LP: #785118)
     - other misc rendering optimizations
 
- -- Didier Roche <didrocks@ubuntu.com>  Mon, 26 Sep 2011 11:44:07 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 26 Sep 2011 12:31:59 +0200
 
 nux (1.10.0-0ubuntu1) oneiric; urgency=low
 
