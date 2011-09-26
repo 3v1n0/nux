@@ -112,6 +112,8 @@ namespace nux
     void Begin();
     void End();
 
+    static void SetShaderTracking (bool enabled);
+
   public:
 
     bool SetUniform1f (char *varname, GLfloat v0);

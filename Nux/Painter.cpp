@@ -951,4 +951,27 @@ namespace nux
     }
     m_BackgroundStack.clear();
   }
+
+namespace local
+{
+namespace
+{
+  std::list<std::list<AbstractPaintLayer*> > hack_stack;
+}
+}
+
+  void BasePainter::PushBackgroundStack()
+  {
+    local::hack_stack.push_back(m_BackgroundStack);
+    m_BackgroundStack.clear();
+  }
+
+  void BasePainter::PopBackgroundStack()
+  {
+    // clear and delete
+    EmptyBackgroundStack();
+
+    m_BackgroundStack = local::hack_stack.back();
+    local::hack_stack.pop_back();
+  }
 }

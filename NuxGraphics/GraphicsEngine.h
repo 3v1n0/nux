@@ -91,6 +91,16 @@ namespace nux
 
   } OpenGLContext;
 
+  class FxStructure
+  {
+  public:
+    FxStructure();
+    ~FxStructure();
+    ObjectPtr<IOpenGLBaseTexture> dst_texture;
+    ObjectPtr<IOpenGLBaseTexture> src_texture;
+    ObjectPtr<IOpenGLBaseTexture> temp_texture;
+  };
+
   //! Rendering engine class
   class GraphicsEngine
   {
@@ -125,7 +135,6 @@ namespace nux
     void EnableTextureMode (int TextureUnit, int TextureMode);
     void DisableTextureMode (int TextureUnit, int TextureMode);
     void DisableAllTextureMode (int TextureUnit);
-
 
     ///////////////////
     // DRAW TEXTURE  //
@@ -251,6 +260,10 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetBlurTexture (
       int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& color, float sigma = 1.0f, int num_pass = 1);
+
+    void QRP_ASM_GetBlurTextureFx (
+      int x, int y, int buffer_width, int buffer_height,
+      FxStructure *fx_structure, TexCoordXForm &texxform, const Color& color, float sigma = 1.0f, int num_pass = 1);
 
     //! Replicate the alpha channel in all components of the texture.
     /*!
@@ -395,6 +408,12 @@ namespace nux
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0, float sigma = 1.0f, int num_pass = 1);
 
+    void QRP_GLSL_GetHQBlurFx (
+      int x, int y,
+      int buffer_width, int buffer_height,
+      FxStructure *fx_structure, TexCoordXForm &texxform,
+      const Color& c0, float sigma = 1.0f, int num_pass = 1);
+
     void QRP_GLSL_DisturbedTexture (
       int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
@@ -404,6 +423,11 @@ namespace nux
       int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
       ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
+
+    void QRP_GLSL_GetDisturbedTextureFx(
+      int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
+      FxStructure *fx_structure, TexCoordXForm &texxform1, const Color& c1);
 
     //! Pixel blocks.
     /*!

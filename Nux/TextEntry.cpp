@@ -649,6 +649,7 @@ namespace nux
 
   void TextEntry::MainDraw ()
   {
+
     CairoGraphics *edit_canvas = EnsureCanvas();
 
     if (update_canvas_ || !last_selection_region_.empty() || !selection_region_.empty())
@@ -679,12 +680,14 @@ namespace nux
     NBitmapData* bitmap = final_canvas->GetBitmap ();
     delete final_canvas;
 
-    if (_texture2D)
-      _texture2D->UnReference ();
+    if (!_texture2D || _texture2D->GetWidth() != bitmap->GetWidth() || _texture2D->GetHeight() != bitmap->GetHeight())
+    {
+      if (_texture2D)
+        _texture2D->UnReference ();
+      _texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
+    }
 
-    _texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     _texture2D->Update (bitmap);
-
     delete bitmap;
   }
 

@@ -1991,6 +1991,67 @@ namespace nux
     return _offscreen_color_rt0;
   }
 
+  void GraphicsEngine::QRP_ASM_GetBlurTextureFx (
+      int x, int y, int buffer_width, int buffer_height,
+      FxStructure *fx_structure, TexCoordXForm &texxform, const Color& color, float sigma, int num_pass)
+  {
+    int quad_width = fx_structure->src_texture->GetWidth ();
+    int quad_height = fx_structure->src_texture->GetHeight ();
+
+    num_pass = Clamp<int> (num_pass, 1, 5);
+
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
+    int previous_width = 0;
+    int previous_height = 0;
+    if (prevFBO.IsValid ())
+    {
+      previous_width = prevFBO->GetWidth ();
+      previous_height = prevFBO->GetHeight ();
+    }
+    else
+    {
+      previous_width = _graphics_display.GetWindowWidth ();
+      previous_height = _graphics_display.GetWindowHeight ();
+    }
+
+    CHECKGL (glClearColor (0, 0, 0, 0));
+    fx_structure->src_texture->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    fx_structure->src_texture->SetFiltering(GL_NEAREST, GL_NEAREST);
+    fx_structure->dst_texture->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    fx_structure->dst_texture->SetFiltering(GL_NEAREST, GL_NEAREST);
+    fx_structure->temp_texture->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    fx_structure->temp_texture->SetFiltering(GL_NEAREST, GL_NEAREST);
+        
+    SetFrameBufferHelper(_offscreen_fbo, fx_structure->dst_texture, _offscreen_depth_rt0, buffer_width, buffer_height);
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    QRP_ASM_1Tex(x, y, quad_width, quad_height, fx_structure->src_texture, texxform, color::White);
+
+    TexCoordXForm texxform1;
+    for (int i = 0; i < num_pass; i++)
+    {
+      SetFrameBufferHelper(_offscreen_fbo, fx_structure->temp_texture, _offscreen_depth_rt1, buffer_width, buffer_height);
+      glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+      QRP_ASM_HorizontalGauss(0, 0, buffer_width, buffer_height, fx_structure->dst_texture, texxform1, color);
+
+      SetFrameBufferHelper(_offscreen_fbo, fx_structure->dst_texture, _offscreen_depth_rt0, buffer_width, buffer_height);
+      glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+      QRP_ASM_VerticalGauss(0, 0, buffer_width, buffer_height, fx_structure->temp_texture, texxform1, color);
+    }
+
+    _offscreen_fbo->Deactivate();
+
+    if (prevFBO.IsValid ())
+    {
+      prevFBO->Activate (true);
+      SetViewport(0, 0, previous_width, previous_height);
+    }
+    else
+    {
+      SetViewport(0, 0, previous_width, previous_height);
+    }
+  }      
+
   ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetPower (
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color & c0, const Vector4 &exponent)
   {

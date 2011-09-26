@@ -547,10 +547,8 @@ logging::Logger logger("nux.image");
     if ( (width_ == 0) || (height_ == 0) )
       return;
 
-    for (i = 0; i < GetSize(); i++)
-    {
-      RawData_[i] = 0;
-    }
+    auto size = GetSize ();
+    memset(RawData_, 0, size);
   }
 
   void ImageSurface::FlipHorizontal()
