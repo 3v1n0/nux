@@ -1698,8 +1698,13 @@ namespace nux
     ResetImContext();
     int new_cursor = 0;
     // Clear selection first if not extend it.
-    if (cursor_ != selection_bound_ && !extend_selection)
-      SetCursor(cursor_);
+    if (!extend_selection)
+    {
+      selection_changed_ = true;
+      cursor_moved_ = true;
+      selection_bound_ = cursor_;
+      cursor_moved.emit (cursor_);
+    }
 
     // Calculate the new offset after motion.
     switch(step)
