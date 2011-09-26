@@ -48,8 +48,8 @@ namespace nux
     , m_ReformatTexture(true)
     , m_horizontal_scrollbar_enable(true)
     , m_vertical_scrollbar_enable(true)
-    , m_top_border(4)
-    , m_border(4)
+    , m_top_border(0)
+    , m_border(0)
     , _delta_x(0)
     , _delta_y(0)
     , m_bSizeMatchContent(false)
@@ -291,6 +291,9 @@ namespace nux
 
   void ScrollView::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
+    if (IsFullRedraw())
+      GetPainter().PushBackgroundStack();
+      
     GfxContext.PushClippingRectangle (GetGeometry ());
 
     GfxContext.PushClippingRectangle (Rect (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
@@ -319,6 +322,9 @@ namespace nux
     }
 
     GfxContext.PopClippingRectangle();
+
+    if (IsFullRedraw())
+      GetPainter().PopBackgroundStack();
   }
 
   void ScrollView::PostDraw (GraphicsEngine &GfxContext, bool force_draw)

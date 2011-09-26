@@ -309,6 +309,9 @@ namespace nux
     void EmptyBackgroundStack();
     void PaintBackground (GraphicsEngine &GfxContext, const Geometry &geo);
 
+    void PushBackgroundStack();
+    void PopBackgroundStack();
+
   private:
 
     std::list<AbstractPaintLayer*> m_BackgroundStack;

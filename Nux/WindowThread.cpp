@@ -1838,6 +1838,8 @@ logging::Logger logger("nux.windows.thread");
 
     if (!IsEmbeddedWindow() )
       return;
+    
+    IOpenGLShaderProgram::SetShaderTracking(true);
 
     // Set Nux opengl states. The other plugin in compiz have changed the GPU opengl states.
     // Nux keep tracks of its own opengl states and restore them before doing any drawing.
@@ -1870,6 +1872,7 @@ logging::Logger logger("nux.windows.thread");
     CHECKGL ( glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE) );
 
     GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+    IOpenGLShaderProgram::SetShaderTracking(false);
   }
 
   int WindowThread::InstallEventInspector (EventInspector function, void* data)
