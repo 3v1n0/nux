@@ -1401,16 +1401,15 @@ logging::Logger logger("nux.window");
     // to the size of the display and call EmptyClippingRegion().
     // Then call GetScissorRect() to get the size of the global clipping area.
     // This is is hack until we implement SetGlobalClippingRectangle() (the opposite of SetGlobalClippingRectangle).
+    GraphicsEngine& graphics_engine = GetWindowThread()->GetGraphicsEngine();
+    unsigned int window_width = graphics_engine.GetWindowWidth();
+    unsigned int window_height = graphics_engine.GetWindowHeight();
     GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
-    GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0,
-                                                       GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
-                                                       GetWindowThread ()->GetGraphicsEngine().GetWindowHeight());
-    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion ();
+    graphics_engine.SetViewport(0, 0, window_width, window_height);
+    graphics_engine.EmptyClippingRegion();
 
-    Geometry global_clip_rect = GetWindowThread ()->GetGraphicsEngine().GetScissorRect();
-
-
-    global_clip_rect.y = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() - global_clip_rect.y - global_clip_rect.height;
+    Geometry global_clip_rect = graphics_engine.GetScissorRect();
+    global_clip_rect.y = window_height - global_clip_rect.y - global_clip_rect.height;
 
     // Raw the windows from back to front;
     WindowList::reverse_iterator rev_it;
@@ -1419,11 +1418,10 @@ logging::Logger logger("nux.window");
     {
       if (!(*rev_it).IsValid())
         continue;
-        
+
       if ((drawModal == false) && (*rev_it)->IsModal())
         continue;
 
-      
       if ((*rev_it)->IsVisible())
       {
         if (global_clip_rect.Intersect((*rev_it)->GetGeometry()).IsNull())
