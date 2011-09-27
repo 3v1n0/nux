@@ -1394,7 +1394,7 @@ logging::Logger logger("nux.window");
   }
 
   void WindowCompositor::RenderTopViews(bool force_draw,
-                                        WindowList& windows,
+                                        WindowList& windows_to_render,
                                         bool drawModal)
   {
     // Before anything, deactivate the current frame buffer, set the viewport 
@@ -1411,12 +1411,20 @@ logging::Logger logger("nux.window");
     Geometry global_clip_rect = graphics_engine.GetScissorRect();
     global_clip_rect.y = window_height - global_clip_rect.y - global_clip_rect.height;
 
-    // Raw the windows from back to front;
-    WindowList::reverse_iterator rev_it;
-
-    for (rev_it = windows.rbegin (); rev_it != windows.rend (); rev_it++)
+    // Always make a copy of the windows to render.  We have no control over
+    // the windows we are actually drawing.  It has been observed that some
+    // windows modify the windows stack during the draw process.
+    //
+    // So... we take a copy of the window list.  As much as I'd love to just
+    // have BaseWindow* in the container, again, we have no control over the
+    // windows we are drawing and one may just decide to unregister or destroy
+    // another window mid-render.  Since we are contructing a copy of the
+    // list, lets reverse it as we are constructing, as we want to draw the
+    // windows from back to front.
+    WindowList windows(windows_to_render.rbegin(), windows_to_render.rend());
+    for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
     {
-      WeakBaseWindowPtr& window_ptr = *rev_it;
+      WeakBaseWindowPtr& window_ptr = *it;
       if (window_ptr.IsNull())
         continue;
 
