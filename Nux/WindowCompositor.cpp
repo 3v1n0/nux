@@ -1393,7 +1393,9 @@ logging::Logger logger("nux.window");
     GetPainter().EmptyBackgroundStack();
   }
 
-  void WindowCompositor::RenderTopViews (bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool drawModal)
+  void WindowCompositor::RenderTopViews(bool force_draw,
+                                        WindowList& windows,
+                                        bool drawModal)
   {
     // Before anything, deactivate the current frame buffer, set the viewport 
     // to the size of the display and call EmptyClippingRegion().
@@ -1413,7 +1415,7 @@ logging::Logger logger("nux.window");
     // Raw the windows from back to front;
     WindowList::reverse_iterator rev_it;
 
-    for (rev_it = WindowList.rbegin (); rev_it != WindowList.rend (); rev_it++)
+    for (rev_it = windows.rbegin (); rev_it != windows.rend (); rev_it++)
     {
       if (!(*rev_it).IsValid())
         continue;
