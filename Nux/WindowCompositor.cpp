@@ -1426,17 +1426,19 @@ logging::Logger logger("nux.window");
       {
         if (global_clip_rect.Intersect((*rev_it)->GetGeometry()).IsNull())
         {
-          // The global clipping area can be seen as a per monitor clipping region. It is mostly used in
-          // embedded mode with compiz.
-          // If we get here, it means that the BaseWindow we want to render is not in area of the monitor
-          // that compiz is currently rendering. So skip it.
+          // The global clipping area can be seen as a per monitor clipping
+          // region. It is mostly used in embedded mode with compiz.  If we
+          // get here, it means that the BaseWindow we want to render is not
+          // in area of the monitor that compiz is currently rendering. So
+          // skip it.
           continue;
         }
-        
-        RenderTargetTextures &rt = GetWindowBuffer((*rev_it).GetPointer());
-        BaseWindow *window = (*rev_it).GetPointer();
 
-        // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
+        RenderTargetTextures& rt = GetWindowBuffer((*rev_it).GetPointer());
+        BaseWindow* window = (*rev_it).GetPointer();
+
+        // Based on the areas that requested a rendering inside the
+        // BaseWindow, render the BaseWindow or just use its cache.
         if (force_draw || window->IsRedrawNeeded() || window->ChildNeedsRedraw())
         {
           if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/)
@@ -1444,7 +1446,8 @@ logging::Logger logger("nux.window");
             t_s32 buffer_width = window->GetBaseWidth();
             t_s32 buffer_height = window->GetBaseHeight();
 
-            if ((rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height))
+            if ((rt.color_rt->GetWidth() != buffer_width) ||
+                (rt.color_rt->GetHeight() != buffer_height))
             {
               rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
               rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
@@ -1454,11 +1457,11 @@ logging::Logger logger("nux.window");
             m_FrameBufferObject->SetRenderTarget ( 0, rt.color_rt->GetSurfaceLevel (0) );
             m_FrameBufferObject->SetDepthSurface ( rt.depth_rt->GetSurfaceLevel (0) );
             m_FrameBufferObject->Activate();
-            GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
-            GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
-            GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
+            graphics_engine.SetViewport(0, 0, buffer_width, buffer_height);
+            graphics_engine.SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+            graphics_engine.EmptyClippingRegion();
 
-            GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
+            graphics_engine.SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
 
             CHECKGL ( glClearColor (0, 0, 0, 0) );
             GLuint clear_color_buffer_bit = (force_draw || window->IsRedrawNeeded() ) ? GL_COLOR_BUFFER_BIT : 0;
@@ -1470,36 +1473,31 @@ logging::Logger logger("nux.window");
             int y = window->GetBaseY();
             Matrix4 mat;
             mat.Translate (x, y, 0);
-            GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
-                GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
-
-            //GetWindowThread ()->GetGraphicsEngine().Push2DModelViewMatrix(mat);
+            graphics_engine.SetOrthographicProjectionMatrix(window_width, window_height);
           }
 
-          RenderTopViewContent (/*fbo,*/ window, force_draw);
+          RenderTopViewContent(window, force_draw);
         }
-        
-        if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/)
+
+        if (rt.color_rt.IsValid())
         {
-          // GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
           m_FrameBufferObject->Deactivate();
 
           // Enable this to render the drop shadow under windows: not perfect yet...
           if (0)
           {
-            unsigned int window_width, window_height;
-            window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-            window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-            GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-            GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, window_width, window_height);
-            GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
-            GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
+            graphics_engine.EmptyClippingRegion();
+            graphics_engine.SetOpenGLClippingRectangle(0, 0, window_width, window_height);
+            graphics_engine.SetViewport(0, 0, window_width, window_height);
+            graphics_engine.SetOrthographicProjectionMatrix(window_width, window_height);
 
-            Geometry shadow (window->GetBaseX(), window->GetBaseY(), window->GetBaseWidth(), window->GetBaseHeight() );
+            Geometry shadow(window->GetBaseX(), window->GetBaseY(),
+                            window->GetBaseWidth(), window->GetBaseHeight());
             //if(window->IsVisibleSizeGrip())
             {
               shadow.OffsetPosition (4, 4);
-              GetPainter().PaintShape (GetWindowThread ()->GetGraphicsEngine(), shadow, Color (0xFF000000), eSHAPE_CORNER_SHADOW);
+              GetPainter().PaintShape (graphics_engine, shadow, color::Black,
+                                       eSHAPE_CORNER_SHADOW);
             }
 //                    else
 //                    {
@@ -1510,22 +1508,13 @@ logging::Logger logger("nux.window");
 
           CHECKGL ( glDepthMask (GL_FALSE) );
           {
-            GetWindowThread ()->GetGraphicsEngine().ApplyClippingRectangle();
+            graphics_engine.ApplyClippingRectangle();
             PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity (), window->premultiply());
           }
           CHECKGL ( glDepthMask (GL_TRUE) );
-          GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
+          graphics_engine.GetRenderStates().SetBlend(false);
         }
-        else
-        {
-//                int x = window->GetX();
-//                int y = window->GetY();
-//                Matrix4 mat;
-//                mat.Translate(x, y, 0);
-          //GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, 0, 0);
-          //GetWindowThread ()->GetGraphicsEngine().Pop2DModelViewMatrix();
-        }
-        
+
         window->_child_need_redraw = false;
       }
       else
