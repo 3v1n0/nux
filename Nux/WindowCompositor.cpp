@@ -1416,15 +1416,17 @@ logging::Logger logger("nux.window");
 
     for (rev_it = windows.rbegin (); rev_it != windows.rend (); rev_it++)
     {
-      if (!(*rev_it).IsValid())
+      WeakBaseWindowPtr& window_ptr = *rev_it;
+      if (window_ptr.IsNull())
         continue;
 
-      if ((drawModal == false) && (*rev_it)->IsModal())
+      BaseWindow* window = window_ptr.GetPointer();
+      if (!drawModal && window->IsModal())
         continue;
 
-      if ((*rev_it)->IsVisible())
+      if (window->IsVisible())
       {
-        if (global_clip_rect.Intersect((*rev_it)->GetGeometry()).IsNull())
+        if (global_clip_rect.Intersect(window->GetGeometry()).IsNull())
         {
           // The global clipping area can be seen as a per monitor clipping
           // region. It is mostly used in embedded mode with compiz.  If we
@@ -1434,8 +1436,7 @@ logging::Logger logger("nux.window");
           continue;
         }
 
-        RenderTargetTextures& rt = GetWindowBuffer((*rev_it).GetPointer());
-        BaseWindow* window = (*rev_it).GetPointer();
+        RenderTargetTextures& rt = GetWindowBuffer(window);
 
         // Based on the areas that requested a rendering inside the
         // BaseWindow, render the BaseWindow or just use its cache.
@@ -1519,9 +1520,9 @@ logging::Logger logger("nux.window");
       }
       else
       {
-        ObjectWeakPtr<BaseWindow> window = *rev_it;
+        // Invisible window, nothing to draw.
         window->_child_need_redraw = false;
-        window->DoneRedraw ();
+        window->DoneRedraw();
       }
     }
 
