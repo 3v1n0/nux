@@ -48,7 +48,6 @@
 
 #include <iostream>
 #include <stdexcept>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -67,7 +66,7 @@
 
 
 // WIN32_SECURE if define for the latest version of Visual Studio starting at VS 2005. We use it for security improvement.
-#if (defined NUX_VISUAL_STUDIO_2005) || (defined NUX_VISUAL_STUDIO_2008)
+#if (defined NUX_VISUAL_STUDIO_2005) || (defined NUX_VISUAL_STUDIO_2008) || (defined NUX_VISUAL_STUDIO_2010)
 #define WIN32_SECURE
 #endif
 

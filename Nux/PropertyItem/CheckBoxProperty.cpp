@@ -31,7 +31,7 @@ namespace nux
 
   CheckBoxPropertyItem::CheckBoxPropertyItem (std::string label, NUX_FILE_LINE_DECL)
     :   SectionProperty (label.c_str(), NODE_TYPE_CHECKBOX)
-    ,   CheckBox (label, NUX_FILE_LINE_PARAM)
+    ,   CheckBox (label, false, NUX_FILE_LINE_PARAM)
   {
     //FIXME - needs updating to the latest Button codebase
     //SetState (on);

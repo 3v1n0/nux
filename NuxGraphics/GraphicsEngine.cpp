@@ -1294,9 +1294,9 @@ namespace nux
 
   void GraphicsEngine::UpdateResource (ResourceData *Resource)
   {
-    ObjectPtr< CachedResourceData > GLResource = ResourceCache.FindCachedResourceById (Resource->GetResourceIndex() ); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
+    ObjectPtr<CachedResourceData> GLResource = ResourceCache.FindCachedResourceById(Resource->GetResourceIndex()); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
 
-    if (GLResource.IsValid() )
+    if (GLResource.IsValid())
     {
       // Iterate through all resource updater types (list is sorted by subclass depth).
       for (t_u32 i = 0; i < ResourceCache.GetResourceUpdaters().size(); ++i)
@@ -1305,7 +1305,7 @@ namespace nux
         nuxAssert (ResourceUpdater);
 
         // Check if the updater is valid for updating the resource.
-        if ( ResourceUpdater->UpdatesThisResource (Resource) )
+        if (ResourceUpdater->UpdatesThisResource(Resource))
         {
           ResourceUpdater->UpdateResource(GLResource, Resource);
           break;

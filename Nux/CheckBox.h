@@ -27,27 +27,54 @@
 
 namespace nux
 {
+  class HLayout;
+  class InputArea;
+  class StaticText;
+
   class CheckBox: public AbstractButton
   {
-    NUX_DECLARE_OBJECT_TYPE (CheckBox, AbstractButton);
+    NUX_DECLARE_OBJECT_TYPE(CheckBox, AbstractButton);
   public:
-    CheckBox (std::string label, NUX_FILE_LINE_PROTO);
+    CheckBox (const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
     ~CheckBox();
 
-    Property<std::string>   label;
+    sigc::signal<void, CheckBox *> sigStateToggled;
+    sigc::signal<void> sigToggled;
+    sigc::signal<void, bool> sigStateChanged;
 
-  private:
-    void Init ();
+    //! Set the label.
+    /*!
+        Set the label of this CheckBox. If the \a label argument is an empty string, then the the CheckBox label is destroyed,
+        and the content of the CheckBox is re-arranged accordingly.
 
-    void OnStateChanged (int value);
-    void OnLabelChanged (std::string value);
-    void RebuildLayout ();
+        @param label The label of the CheckBox.
+    */
+    void SetLabel(const std::string &checkbox_label);
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    //!Return the label of this CheckBox.
+    /*!
+        Return the label of this CheckBox.
 
-  private:
+        @return The CheckBox label string.
+    */
+    std::string GetLabel() const;
+
+    void SetState (bool State);
+    void SetState (bool State, bool EmitSignal);
+    bool GetState() const;
+
+  protected:
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+
+    std::string label_;
+    StaticText *static_text_;
+
+    HLayout   *hlayout_;
+    InputArea *text_area_;
+    InputArea *check_area_;
+    bool      state_;
   };
+
 }
 
 #endif // CHECKBOX_H

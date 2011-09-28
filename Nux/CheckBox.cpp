@@ -31,99 +31,115 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(CheckBox);
   
-  CheckBox::CheckBox (std::string label, NUX_FILE_LINE_DECL)
-  : AbstractButton (NUX_FILE_LINE_PARAM)
-  , label(label)
+  CheckBox::CheckBox (const std::string &str, bool state, NUX_FILE_LINE_DECL)
+    : AbstractButton(NUX_FILE_LINE_PARAM)
   {
-    togglable_ = true;
-    Init();
+    label_ = str;
+    state_ = state;
+    hlayout_ = 0;
+    text_area_ = 0;
+
+    static_text_  = new StaticText(label_, NUX_TRACKER_LOCATION);
+    hlayout_      = new HLayout(NUX_TRACKER_LOCATION);
+    check_area_   = new InputArea(NUX_TRACKER_LOCATION);
+    text_area_    = new InputArea(NUX_TRACKER_LOCATION);
+
+    check_area_->SetSensitive(false);
+    static_text_->SetSensitive(false);
+
+    // Set Geometry
+    check_area_->SetMinimumSize(14, 14);
+    check_area_->SetMaximumSize(14, 14);
+    text_area_->SetMinimumSize(14, 14);
+
+    // Do not configure text_area_-> This is done in setCaption according to the size of the caption text.
+
+    hlayout_->SetHorizontalInternalMargin (4);
+    hlayout_->SetContentDistribution(MAJOR_POSITION_CENTER);
+    hlayout_->AddView(check_area_, 0, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
+    hlayout_->AddView(static_text_, 1, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
+
+//     // This is convenient to make the layout and the CheckBox fit the check area and the caption area.
+//     // Since the check area is bigger than 4x4, it will force the layout and the CheckBox to grow.
+//     // This is useful if the CheckBox is put in a vertical layout and it has a stretch factor of 0. Then the width of the CheckBox
+//     // will be adjusted to fit the minimum width of the check area and the caption area.
+//     {
+//       hlayout_->SetMinimumSize (1, 1);
+//       SetMinimumSize (14, 14);
+//       ApplyMinWidth();
+//       ApplyMinHeight();
+//     }
+
+    SetLayout (hlayout_);
+
   }
 
   CheckBox::~CheckBox()
   {
   }
 
-  void CheckBox::Init()
+  void CheckBox::SetLabel(const std::string &checkbox_label)
   {
-    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-
-    state.changed.connect(sigc::mem_fun(this, &CheckBox::OnStateChanged));
-
-    // connect up to the label signal
-    label.changed.connect(sigc::mem_fun(this, &CheckBox::OnLabelChanged));
-
-    Layout *layout = new VLayout(NUX_TRACKER_LOCATION);
-    SetLayout(layout);
-
-    RebuildLayout();
-  }
-
-  void CheckBox::OnStateChanged(int value)
-  {
+    label_ = checkbox_label;
+    static_text_->SetText(label_);
     QueueDraw();
   }
 
-  void CheckBox::OnLabelChanged(std::string value)
+  std::string CheckBox::GetLabel() const
   {
-    RebuildLayout();
+    return label_;
   }
 
-  void CheckBox::RebuildLayout()
-  {
-    Layout *layout = new HLayout(NUX_TRACKER_LOCATION);
-
-    // add some padding for our checkbox draw
-    layout->AddLayout(new SpaceLayout(20, 20, 20, 20), 0);
-
-    if(label().empty() == false)
-    {
-      StaticText *text = new StaticText(TEXT(label().c_str()));
-      layout->AddView (text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    }
-
-    Layout *HPadding = new HLayout(NUX_TRACKER_LOCATION);
-    Layout *VPadding = new VLayout(NUX_TRACKER_LOCATION);
-
-    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout(layout, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    HPadding->AddLayout(VPadding, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-
-    // NOTE - setting the layout here, unreferences the previous one, should cause all the memory
-    // to be freed
-    SetLayout (HPadding);
-
-    QueueDraw();
-  }
-
-  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void CheckBox::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
+    GetPainter().PaintBackground(graphics_engine, base);
+
     InteractState is;
-    is.is_on = active;
-    is.is_focus = NUX_STATE_ACTIVE;
-    is.is_prelight = NUX_STATE_PRELIGHT;
+    is.is_on = active_;
 
-    Geometry base_state = GetGeometry();
-    base_state.SetWidth(20);
-    base_state.SetX(base_state.x + 12);
+    if(visual_state_ == STATE_PRESSED)
+    {
+      is.is_focus = true;
+    }
+    else if(visual_state_ == STATE_PRELIGHT)
+    {
+      is.is_prelight = true;
+    }
+    else
+    {
+      is.is_focus = false;
+      is.is_prelight = false;
+    }
 
-    GetPainter().PaintCheckBox(GfxContext, base_state, is, Color(0xff000000));
+    GetPainter().PaintCheckBox (graphics_engine, check_area_->GetGeometry(), is, Color (0xff000000) );
+
+    static_text_->ProcessDraw(graphics_engine, true);
   }
 
-  void CheckBox::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+
+  void CheckBox::SetState (bool state)
   {
-    nux::Geometry base = GetGeometry();
-    GfxContext.PushClippingRectangle(base);
-
-    if(GetCompositionLayout())
-      GetCompositionLayout()->ProcessDraw (GfxContext, force_draw);
-
-    GfxContext.PopClippingRectangle();
+    state_ = state;
+    NeedRedraw();
   }
 
+  void CheckBox::SetState (bool state, bool EmitSignal)
+  {
+    state_ = state;
 
+    if (EmitSignal)
+    {
+      sigToggled.emit();
+      sigStateChanged.emit (state_);
+    }
+
+    NeedRedraw();
+  }
+
+  bool CheckBox::GetState() const
+  {
+    return state_;
+  }
 }

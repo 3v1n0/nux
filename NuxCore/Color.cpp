@@ -203,18 +203,18 @@ Color operator * (Color const& c, float scalar)
 
   void RGBtoHSV ( float r, float g, float b, float &h, float &s, float &v )
   {
-    float min, max, delta;
+    float mini, maxi, delta;
 
-    min = std::min(std::min(r, g), b);
-    max = std::max(std::max(r, g), b);
-    v = max;				// v
+    mini = std::min(std::min(r, g), b);
+    maxi = std::max(std::max(r, g), b);
+    v = maxi;   // v
 
-    delta = max - min;
+    delta = maxi - mini;
 
 
-    if ( max != 0 )
+    if ( maxi != 0 )
     {
-      s = delta / max;		// s
+      s = delta / maxi; // s
     }
     else
     {
@@ -231,14 +231,14 @@ Color operator * (Color const& c, float scalar)
       return;
     }
 
-    if ( r == max )
-      h = ( g - b ) / delta;		// between yellow & magenta
-    else if ( g == max )
-      h = 2 + ( b - r ) / delta;	// between cyan & yellow
+    if ( r == maxi)
+      h = ( g - b ) / delta;      // between yellow & magenta
+    else if ( g == maxi)
+      h = 2 + ( b - r ) / delta;  // between cyan & yellow
     else
-      h = 4 + ( r - g ) / delta;	// between magenta & cyan
+      h = 4 + ( r - g ) / delta;  // between magenta & cyan
 
-    h *= 60;				// degrees
+    h *= 60;  // degrees
 
     if ( h < 0 )
       h += 360;
@@ -263,9 +263,9 @@ Color operator * (Color const& c, float scalar)
       return;
     }
 
-    h /= 60;			// sector 0 to 5
+    h /= 60;        // sector 0 to 5
     i = (int) std::floor ( h );
-    f = h - i;			// factorial part of h
+    f = h - i;      // factorial part of h
     p = v * ( 1 - s );
     q = v * ( 1 - s * f );
     t = v * ( 1 - s * ( 1 - f ) );

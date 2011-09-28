@@ -83,17 +83,13 @@ namespace nux
     sigc::signal<void, ActionItem *> sigActionTriggered;
 
   protected:
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
     void RecvClosingMenuSignal(MenuPage* menu_page);
 
     MenuPage   *m_CurrentMenu;
     ActionItem *m_SelectedAction;
-
-    virtual void DoSetFocused (bool focused);
-    bool        m_block_focus; // used to selectively ignore focus keyevents
-
   };
 
 }

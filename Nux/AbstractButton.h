@@ -27,13 +27,13 @@
 
 namespace nux
 {
-  enum State
+  enum ButtonVisualState
   {
-    NUX_STATE_ACTIVE = 0,
-    NUX_STATE_NORMAL = 1,
-    NUX_STATE_PRELIGHT = 2,
-    NUX_STATE_SELECTED = 3,
-    NUX_STATE_INSENSITIVE = 4
+    STATE_PRESSED = 0, //STATE_ACTIVE = 0,
+    STATE_NORMAL = 1,
+    STATE_PRELIGHT = 2,
+    STATE_SELECTED = 3,
+    STATE_INSENSITIVE = 4
   };
 
   //! The base class of Button widgets.
@@ -41,6 +41,8 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(AbstractButton, View);
   public:
+
+
     AbstractButton(NUX_FILE_LINE_PROTO);
     ~AbstractButton();
 
@@ -49,15 +51,15 @@ namespace nux
 
     //! Signal emitted when the button is activated.
     sigc::signal<void, AbstractButton*> activated;
+    sigc::signal<void, AbstractButton*> changed_visual_state;
+
+    ButtonVisualState GetVisualState();
+    bool IsActive();
 
   protected:
-    bool togglable_;
-
-    //! Button state property.
-    // FIXME: Should be read only.
-    nux::Property<State> state;
-
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    bool persistent_active_state_;
+    bool active_;
+    ButtonVisualState visual_state_;
 
     void RecvMouseUp    (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDown  (int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -65,9 +67,6 @@ namespace nux
     void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvClick      (int x, int y, unsigned long button_flags, unsigned long key_flags);
-
-  private:
-    void Init ();
   };
 }
 

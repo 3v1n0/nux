@@ -84,9 +84,6 @@ namespace nux
 
     FormatContent();
 
-    //FIXME disabling until we have better API for this
-    //ChildFocusChanged.connect (sigc::mem_fun (this, &ScrollView::OnChildFocusChanged));
-
     SetAcceptMouseWheelEvent(true);
   }
 
@@ -121,44 +118,6 @@ namespace nux
     // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters
     _hscrollbar->UnReference ();
     _vscrollbar->UnReference ();
-  }
-
-  void ScrollView::OnChildFocusChanged (/*Area *parent,*/ Area *child)
-  {
-    if (child->IsView ())
-    {
-      View *view = (View*)child;
-      if (view->HasPassiveFocus ())
-      {
-        return;
-      }
-    }
-    if (child->IsLayout ())
-      return;
-
-    int child_y = child->GetGeometry ().y - GetGeometry ().y;
-    int child_y_diff = child_y - abs (_delta_y);
-
-
-    if (child_y_diff + child->GetGeometry ().height < GetGeometry ().height && child_y_diff >= 0)
-    {
-      return;
-    }
-
-    if (child_y_diff < 0)
-    {
-      ScrollUp (1, abs (child_y_diff));
-    }
-    else
-    {
-      int size = child_y_diff - GetGeometry ().height;
-
-      // always keeps the top of a view on the screen
-      size += (child->GetGeometry ().height, GetGeometry ().height) ? child->GetGeometry ().height : GetGeometry ().height;
-
-      ScrollDown (1, size);
-    }
-
   }
 
   long ScrollView::ProcessEvent (Event &event, long TraverseInfo, long ProcessEventInfo)
@@ -817,6 +776,7 @@ namespace nux
         _delta_x = 0;
       }
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      scrolling.emit(_delta_x, _delta_y);
     }
 
     if (m_CompositionLayout)
@@ -839,6 +799,7 @@ namespace nux
         _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
       }
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      scrolling.emit(_delta_x, _delta_y);
     }
 
     if (m_CompositionLayout)
@@ -861,6 +822,7 @@ namespace nux
         _delta_y = 0;
       }
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      scrolling.emit(_delta_x, _delta_y);
     }
 
     if (m_CompositionLayout)
@@ -883,6 +845,7 @@ namespace nux
         _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
       }
       m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      scrolling.emit(_delta_x, _delta_y);
     }
 
     if (m_CompositionLayout)

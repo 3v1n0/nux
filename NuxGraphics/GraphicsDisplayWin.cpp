@@ -106,22 +106,22 @@ namespace nux
   HDC   GraphicsDisplay::sMainDC = 0;
 
   GraphicsDisplay::GraphicsDisplay()
-    :   event_ (NULL)
-    ,   m_GfxInterfaceCreated (false)
-    ,   m_fullscreen (false)
-    ,   m_ScreenBitDepth (32)
-    ,   m_num_device_modes (0)
-    ,   m_index_of_current_mode (-1)
-    ,   m_DeviceFactory (0)
-    ,   m_GraphicsContext (0)
-// ,   m_GLEWContext(0)
-// ,   m_WGLEWContext(0)
-    ,   m_Style (WINDOWSTYLE_NORMAL)
-    ,   m_Cursor (0)
-    ,   m_PauseGraphicsRendering (false)
-    ,   m_ParentWindow (0)
-    ,   m_dwExStyle (0)
-    ,   m_dwStyle (0)
+    : event_ (NULL)
+    , m_GfxInterfaceCreated (false)
+    , m_fullscreen (false)
+    , m_ScreenBitDepth (32)
+    , m_num_device_modes (0)
+    , m_index_of_current_mode (-1)
+    , m_DeviceFactory (0)
+    , m_GraphicsContext (0)
+    , m_Style (WINDOWSTYLE_NORMAL)
+    , cursor_ (0)
+    , m_PauseGraphicsRendering (false)
+    , m_ParentWindow (0)
+    , m_dwExStyle (0)
+    , m_dwStyle (0)
+    , device_context_(NULL)
+    , wnd_handle_(NULL)
   {
     inlSetThreadLocalStorage (_TLS_GraphicsDisplay, this);
 
@@ -191,11 +191,11 @@ namespace nux
     WindowRect.top      = (long) 0;
     WindowRect.bottom   = (long) m_ViewportSize.height;
 
-    m_fullscreen = FullscreenFlag;								// Set The Global Fullscreen Flag
-    m_index_of_current_mode = -1;								// assume -1 if the mode is not fullscreen
+    m_fullscreen = FullscreenFlag;              // Set The Global Fullscreen Flag
+    m_index_of_current_mode = -1;               // assume -1 if the mode is not fullscreen
 
 
-    if (m_fullscreen)									        // Attempt Fullscreen Mode?
+    if (m_fullscreen)                           // Attempt Fullscreen Mode?
     {
       // check if resolution is supported
       bool mode_supported = false;
@@ -217,7 +217,7 @@ namespace nux
         if (inlWin32MessageBox (NULL, TEXT ("Info"), MBTYPE_Ok, MBICON_Information, MBMODAL_ApplicationModal,
                                 TEXT ("The requested fullscreen mode is not supported by your monitor.\nUsing windowed mode instead.") ) == MBRES_Yes)
         {
-          m_fullscreen = FALSE;		// Windowed Mode Selected.  Fullscreen = FALSE
+          m_fullscreen = FALSE;   // Windowed Mode Selected.  Fullscreen = FALSE
         }
       }
 
@@ -342,7 +342,7 @@ namespace nux
     m_WindowTitle = WindowTitle;
 
     // Create The Window
-    if (! (m_hWnd = ::CreateWindowEx (m_dwExStyle,                      // Extended Style For The Window
+    if (! (wnd_handle_ = ::CreateWindowEx (m_dwExStyle,                      // Extended Style For The Window
                                       WINDOW_CLASS_NAME,                  // Class Name
                                       m_WindowTitle.GetTCharPtr(),        // Window Title
                                       m_dwStyle |                           // Defined Window Style
@@ -361,15 +361,15 @@ namespace nux
                                                  // Return FALSE
     }
 
-    static	PIXELFORMATDESCRIPTOR pfd =				// pfd Tells Windows How We Want Things To Be
+    static	PIXELFORMATDESCRIPTOR pfd =   // pfd Tells Windows How We Want Things To Be
     {
-      sizeof (PIXELFORMATDESCRIPTOR),				// Size Of This Pixel Format Descriptor
-      1,											// Version Number
-      PFD_DRAW_TO_WINDOW |						// Format Must Support Window
-      PFD_SUPPORT_OPENGL |						// Format Must Support OpenGL
-      PFD_DOUBLEBUFFER,		                    // Must Support Double Buffering
-      PFD_TYPE_RGBA,								// Request An RGBA Format
-      24,	//        cColorBits
+      sizeof (PIXELFORMATDESCRIPTOR),     // Size Of This Pixel Format Descriptor
+      1,                                  // Version Number
+      PFD_DRAW_TO_WINDOW |                // Format Must Support Window
+      PFD_SUPPORT_OPENGL |                // Format Must Support OpenGL
+      PFD_DOUBLEBUFFER,                   // Must Support Double Buffering
+      PFD_TYPE_RGBA,                      // Request An RGBA Format
+      24,                                 //        cColorBits
       //        Specifies the number of color bitplanes in each color buffer.
       //        For RGBA pixel types, it is the size of the color buffer, excluding the alpha bitplanes.
       //        For color-index pixels, it is the size of the color-index buffer.
@@ -421,44 +421,45 @@ namespace nux
       //        Ignored. Earlier implementations of OpenGL used this member, but it is no longer used.
     };
 
-    if (! (_device_context = GetDC (m_hWnd) ) ) // Did We Get A Device Context?
+    device_context_ = GetDC(wnd_handle_);
+    if (device_context_ == NULL) // Did We Get A Device Context?
     {
       DestroyOpenGLWindow();
-      MessageBox (NULL, TEXT ("Can't Create A GL Device Context."), TEXT ("ERROR"), MB_OK | MB_ICONERROR);
+      MessageBox(NULL, TEXT ("Can't Create A GL Device Context."), TEXT("ERROR"), MB_OK | MB_ICONERROR);
       return FALSE;
     }
 
-    if (! (m_PixelFormat = ChoosePixelFormat (_device_context, &pfd) ) ) // Did Windows Find A Matching Pixel Format?
+    if (! (m_PixelFormat = ChoosePixelFormat (device_context_, &pfd) ) ) // Did Windows Find A Matching Pixel Format?
     {
       DestroyOpenGLWindow();
-      MessageBox (NULL, TEXT ("Can't Find A Suitable PixelFormat."), TEXT ("ERROR"), MB_OK | MB_ICONERROR);
+      MessageBox(NULL, TEXT ("Can't Find A Suitable PixelFormat."), TEXT("ERROR"), MB_OK | MB_ICONERROR);
       return FALSE;
     }
 
-    if (!SetPixelFormat (_device_context, m_PixelFormat, &pfd) )        // Are We Able To Set The Pixel Format?
+    if (!SetPixelFormat(device_context_, m_PixelFormat, &pfd))        // Are We Able To Set The Pixel Format?
     {
       DestroyOpenGLWindow();
-      MessageBox (NULL, TEXT ("Can't Set The PixelFormat."), TEXT ("ERROR"), MB_OK | MB_ICONERROR);
+      MessageBox(NULL, TEXT("Can't Set The PixelFormat."), TEXT("ERROR"), MB_OK | MB_ICONERROR);
       return FALSE;
     }
 
-    if (! (_opengl_rendering_context = wglCreateContext (_device_context) ) )               // Are We Able To Get A Rendering Context?
+    if (!(opengl_rendering_context_ = wglCreateContext(device_context_)))               // Are We Able To Get A Rendering Context?
     {
       DestroyOpenGLWindow();
-      MessageBox (NULL, TEXT ("Can't Create A GL Rendering Context."), TEXT ("ERROR"), MB_OK | MB_ICONERROR);
+      MessageBox(NULL, TEXT ("Can't Create A GL Rendering Context."), TEXT("ERROR"), MB_OK | MB_ICONERROR);
       return FALSE;
     }
 
     if (sMainGLRC == 0)
     {
-      sMainGLRC = _opengl_rendering_context;
-      sMainDC = _device_context;
+      sMainGLRC = opengl_rendering_context_;
+      sMainDC = device_context_;
     }
     else
     {
-//         wglMakeCurrent(_device_context, 0);
+//         wglMakeCurrent(device_context_, 0);
 //         // Make the newly created context share it resources with all the other OpenGL context
-//         if(wglShareLists(sMainGLRC, _opengl_rendering_context) == FALSE)
+//         if(wglShareLists(sMainGLRC, opengl_rendering_context_) == FALSE)
 //         {
 //             DWORD err = GetLastError();
 //             DestroyOpenGLWindow();
@@ -471,15 +472,15 @@ namespace nux
     // When not in 64-bit you can disable the warning:
     // Project Properties --> C/C++ tab --> General --> Select "NO" for - Detect 64-bit Portability Issues.
     // See also SetWindowLongPtr
-    SetWindowLongPtr (m_hWnd, GWLP_USERDATA, (NUX_PTRSIZE_LONG) this);
+    SetWindowLongPtr(wnd_handle_, GWLP_USERDATA, (NUX_PTRSIZE_LONG) this);
 
-    //::ShowWindow(m_hWnd,SW_SHOW);						// Show The Window
-    ::SetForegroundWindow (m_hWnd);						// Slightly Higher Priority
-    ::SetFocus (m_hWnd);									// Sets Keyboard Focus To The Window
+    //::ShowWindow(wnd_handle_,SW_SHOW);           // Show The Window
+    ::SetForegroundWindow(wnd_handle_);           // Slightly Higher Priority
+    ::SetFocus(wnd_handle_);                      // Sets Keyboard Focus To The Window
 
     MakeGLContextCurrent();
-    glClearColor (0.0, 0.0, 0.0, 0.0);
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     SwapBuffer();
 
     m_GfxInterfaceCreated = true;
@@ -487,18 +488,18 @@ namespace nux
     //m_GLEWContext = new GLEWContext();
     //m_WGLEWContext = new WGLEWContext();
 
-    HGLRC new_opengl_rendering_context = _opengl_rendering_context;
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
-      _device_context,
+    HGLRC new_opengl_rendering_context = opengl_rendering_context_;
+    m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
+      device_context_,
       new_opengl_rendering_context,
       1, 0, false);
 
     if (new_opengl_rendering_context != 0)
     {
-      _opengl_rendering_context = new_opengl_rendering_context;
+      opengl_rendering_context_ = new_opengl_rendering_context;
     }
 
-    m_GraphicsContext = new GraphicsEngine (*this, create_rendering_data);
+    m_GraphicsContext = new GraphicsEngine(*this, create_rendering_data);
 
     //EnableVSyncSwapControl();
     //DisableVSyncSwapControl();
@@ -508,32 +509,32 @@ namespace nux
     return true;
   }
 
-  bool GraphicsDisplay::CreateFromOpenGLWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
+  bool GraphicsDisplay::CreateFromOpenGLWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
   {
     // Do not make the opengl context current
     // Do not swap the framebuffer
     // Do not clear the depth or color buffer
     // Do not enable/disable VSync
 
-    m_hWnd = WindowHandle;
-    _device_context = WindowDCHandle;
-    _opengl_rendering_context = OpenGLRenderingContext;
+    wnd_handle_ = WindowHandle;
+    device_context_ = WindowDCHandle;
+    opengl_rendering_context_ = OpenGLRenderingContext;
 
     RECT rect;
-    ::GetClientRect (m_hWnd, &rect);
+    ::GetClientRect (wnd_handle_, &rect);
     m_WindowSize = Size (rect.right - rect.left, rect.bottom - rect.top);
     m_ViewportSize = Size (rect.right - rect.left, rect.bottom - rect.top);
 
     // The opengl context should be made current by an external entity.
 
     m_GfxInterfaceCreated = true;
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
-      _device_context,
-      _opengl_rendering_context);
+    m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
+      device_context_,
+      opengl_rendering_context_);
 
-    m_GraphicsContext = new GraphicsEngine (*this);
+    m_GraphicsContext = new GraphicsEngine(*this);
 
-    InitGlobalGrabWindow ();
+    InitGlobalGrabWindow();
 
     return true;
   }
@@ -543,7 +544,7 @@ namespace nux
     return m_GraphicsContext;
   }
   
-  GpuDevice* GraphicsDisplay::GetGpuDevice () const
+  GpuDevice* GraphicsDisplay::GetGpuDevice() const
   {
     return m_DeviceFactory;
   }
@@ -552,34 +553,34 @@ namespace nux
   // NUXTODO: remove this call. Make a direct access to GpuInfo via GpuDevice.
   bool GraphicsDisplay::HasFrameBufferSupport()
   {
-    return m_DeviceFactory->GetGpuInfo ().Support_EXT_Framebuffer_Object ();
+    return m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object();
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GraphicsDisplay::GetWindowSize (int &w, int &h)
+  void GraphicsDisplay::GetWindowSize(int &w, int &h)
   {
     w = m_WindowSize.width;
     h = m_WindowSize.height;
   }
 
 //---------------------------------------------------------------------------------------------------------
-  int GraphicsDisplay::GetWindowWidth ()
+  int GraphicsDisplay::GetWindowWidth()
   {
     return m_WindowSize.width;
   }
 
 //---------------------------------------------------------------------------------------------------------
-  int GraphicsDisplay::GetWindowHeight ()
+  int GraphicsDisplay::GetWindowHeight()
   {
     return m_WindowSize.height;
   }
 
-  void GraphicsDisplay::ResetWindowSize ()
+  void GraphicsDisplay::ResetWindowSize()
   {
     RECT rect;
-    ::GetClientRect (m_hWnd, &rect);
-    m_WindowSize = Size (rect.right - rect.left, rect.bottom - rect.top);
-    m_ViewportSize = Size (rect.right - rect.left, rect.bottom - rect.top);
+    ::GetClientRect(wnd_handle_, &rect);
+    m_WindowSize = Size(rect.right - rect.left, rect.bottom - rect.top);
+    m_ViewportSize = Size(rect.right - rect.left, rect.bottom - rect.top);
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -587,7 +588,7 @@ namespace nux
   {
     RECT window_rect;
     RECT new_rect;
-    ::GetWindowRect (m_hWnd, &window_rect);
+    ::GetWindowRect (wnd_handle_, &window_rect);
 
     new_rect.left = 0;
     new_rect.right = width;
@@ -595,7 +596,7 @@ namespace nux
     new_rect.bottom = height;
     BOOL b = ::AdjustWindowRectEx (&new_rect, m_dwStyle, FALSE, m_dwExStyle);    // Adjust Window To True Requested Size
 
-    ::MoveWindow (m_hWnd,
+    ::MoveWindow (wnd_handle_,
                   window_rect.left,
                   window_rect.top,
                   (new_rect.right - new_rect.left),
@@ -621,7 +622,7 @@ namespace nux
   {
     POINT pt;
     ::GetCursorPos (&pt);
-    ScreenToClient (m_hWnd, &pt);
+    ScreenToClient (wnd_handle_, &pt);
     Point point (pt.x, pt.y);
     return point;
   }
@@ -630,7 +631,7 @@ namespace nux
   {
     POINT pt;
     ::GetCursorPos (&pt);
-    ::ScreenToClient (m_hWnd, &pt);
+    ::ScreenToClient (wnd_handle_, &pt);
     Point point (pt.x, pt.y);
     return point;
   }
@@ -638,7 +639,7 @@ namespace nux
   Point GraphicsDisplay::GetWindowCoord ()
   {
     RECT rect;
-    ::GetWindowRect (m_hWnd, &rect);
+    ::GetWindowRect (wnd_handle_, &rect);
     Point point (rect.left, rect.top);
     return point;
   }
@@ -646,7 +647,7 @@ namespace nux
   Rect GraphicsDisplay::GetWindowGeometry ()
   {
     RECT rect;
-    ::GetClientRect (m_hWnd, &rect);
+    ::GetClientRect (wnd_handle_, &rect);
     Rect geo (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
     return geo;
   }
@@ -654,21 +655,21 @@ namespace nux
   Rect GraphicsDisplay::GetNCWindowGeometry ()
   {
     RECT rect;
-    ::GetWindowRect (m_hWnd, &rect);
+    ::GetWindowRect (wnd_handle_, &rect);
     Rect geo (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
     return geo;
   }
 
   void GraphicsDisplay::MakeGLContextCurrent (bool b)
   {
-    HGLRC glrc = _opengl_rendering_context;
+    HGLRC glrc = opengl_rendering_context_;
 
     if (b == false)
     {
       glrc = 0;
     }
 
-    if (!wglMakeCurrent (_device_context, glrc) )
+    if (!wglMakeCurrent (device_context_, glrc) )
     {
       NString error = inlGetSystemErrorMessage();
       DestroyOpenGLWindow();
@@ -683,7 +684,7 @@ namespace nux
 
     if (glswap)
     {
-      SwapBuffers (_device_context);
+      SwapBuffers (device_context_);
     }
 
     m_FrameTime = m_Timer.PassedMilliseconds();
@@ -711,38 +712,38 @@ namespace nux
   {
     if (m_GfxInterfaceCreated == true)
     {
-      if (m_fullscreen)										// Are We In Fullscreen Mode?
+      if (m_fullscreen)                                   // Are We In Fullscreen Mode?
       {
-        ChangeDisplaySettings (NULL, 0);					// If So Switch Back To The Desktop
-        ShowCursor (TRUE);								// Show Mouse Pointer
+        ChangeDisplaySettings (NULL, 0);                  // If So Switch Back To The Desktop
+        ShowCursor (TRUE);                                // Show Mouse Pointer
       }
 
-      if (_opengl_rendering_context)											// Do We Have A Rendering Context?
+      if (opengl_rendering_context_)                      // Do We Have A Rendering Context?
       {
-        if (!wglMakeCurrent (_device_context, NULL) )					// Are We Able To Release The DC And RC Contexts?
+        if (!wglMakeCurrent (device_context_, NULL) )     // Are We Able To Release The DC And RC Contexts?
         {
           MessageBox (NULL, TEXT ("Release Of DC And RC Failed."), TEXT ("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
         }
 
-        if (!wglDeleteContext (_opengl_rendering_context) )						// Are We Able To Delete The RC?
+        if (!wglDeleteContext (opengl_rendering_context_) )           // Are We Able To Delete The RC?
         {
           MessageBox (NULL, TEXT ("Release Rendering Context Failed."), TEXT ("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
         }
 
-        _opengl_rendering_context = NULL;										// Set RC To NULL
+        opengl_rendering_context_ = NULL;                             // Set RC To NULL
       }
 
-      if (_device_context && !ReleaseDC (m_hWnd, _device_context) )					// Are We Able To Release The DC
+      if (device_context_ && (ReleaseDC(wnd_handle_, device_context_) == 0))   // Are We Able To Release The DC
       {
-        MessageBox (NULL, TEXT ("Release Device Context Failed."), TEXT ("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
-        _device_context = NULL;										// Set DC To NULL
+        MessageBox(NULL, TEXT ("Release Device Context Failed."), TEXT ("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
       }
+      device_context_ = NULL;                                       // Set DC To NULL
 
-      if (m_hWnd && ! (::DestroyWindow (m_hWnd) ) )					// Are We Able To Destroy The Window?
+      if (wnd_handle_ && (::DestroyWindow(wnd_handle_) == 0))                       // Are We Able To Destroy The Window?
       {
-        MessageBox (NULL, TEXT ("Could Not Release window handle."), TEXT ("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
-        m_hWnd = NULL;										// Set Window Handle To NULL
+        MessageBox(NULL, TEXT("Could Not Release window handle."), TEXT("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
       }
+      wnd_handle_ = NULL;                                                // Set Window Handle To NULL
     }
 
     m_GfxInterfaceCreated = false;
@@ -1670,9 +1671,9 @@ namespace nux
 
       case WM_SETCURSOR:
 
-        if ( (LOWORD (lParam) == HTCLIENT) && m_Cursor)
+        if ( (LOWORD (lParam) == HTCLIENT) && cursor_)
         {
-          SetCursor (m_Cursor);
+          SetCursor (cursor_);
           return TRUE; //return FALSE;
         }
         else
@@ -2268,35 +2269,35 @@ namespace nux
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::ShowWindow()
   {
-    ::ShowWindow (m_hWnd, SW_SHOW);
+    ::ShowWindow(wnd_handle_, SW_SHOW);
   }
 
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::HideWindow()
   {
-    ::ShowWindow (m_hWnd, SW_HIDE);
+    ::ShowWindow(wnd_handle_, SW_HIDE);
   }
 
   bool GraphicsDisplay::IsWindowVisible ()
   {
-    return (::IsWindowVisible (m_hWnd) ? true : false);
+    return (::IsWindowVisible(wnd_handle_) ? true : false);
   }
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::EnterMaximizeWindow()
   {
-    ::ShowWindow (m_hWnd, SW_MAXIMIZE);
+    ::ShowWindow(wnd_handle_, SW_MAXIMIZE);
   }
 
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::ExitMaximizeWindow()
   {
-    ::ShowWindow (m_hWnd, SW_RESTORE);
+    ::ShowWindow(wnd_handle_, SW_RESTORE);
   }
 
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::SetWindowTitle (const TCHAR *Title)
   {
-    SetWindowText (m_hWnd, Title);
+    SetWindowText(wnd_handle_, Title);
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -2309,18 +2310,18 @@ namespace nux
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::EnableVSyncSwapControl()
   {
-    if (HasVSyncSwapControl() )
+    if (HasVSyncSwapControl())
     {
-      wglSwapIntervalEXT (1);
+      wglSwapIntervalEXT(1);
     }
   }
 
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::DisableVSyncSwapControl()
   {
-    if (HasVSyncSwapControl() )
+    if (HasVSyncSwapControl())
     {
-      wglSwapIntervalEXT (0);
+      wglSwapIntervalEXT(0);
     }
   }
 
@@ -2334,38 +2335,38 @@ namespace nux
     m_Timer.Reset();
   }
 
-  bool GraphicsDisplay::StartOpenFileDialog (FileDialogOption &fdo)
+  bool GraphicsDisplay::StartOpenFileDialog(FileDialogOption &fdo)
   {
-    return Win32OpenFileDialog (GetWindowHandle(), fdo);
+    return Win32OpenFileDialog(GetWindowHandle(), fdo);
   }
 
-  bool GraphicsDisplay::StartSaveFileDialog (FileDialogOption &fdo)
+  bool GraphicsDisplay::StartSaveFileDialog(FileDialogOption &fdo)
   {
-    return Win32SaveFileDialog (GetWindowHandle(), fdo);
+    return Win32SaveFileDialog(GetWindowHandle(), fdo);
   }
 
-  bool GraphicsDisplay::StartColorDialog (ColorDialogOption &cdo)
+  bool GraphicsDisplay::StartColorDialog(ColorDialogOption &cdo)
   {
-    return Win32ColorDialog (GetWindowHandle(), cdo);
+    return Win32ColorDialog(GetWindowHandle(), cdo);
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GraphicsDisplay::SetWindowCursor (HCURSOR cursor)
+  void GraphicsDisplay::SetWindowCursor(HCURSOR cursor)
   {
-    m_Cursor = cursor;
+    cursor_ = cursor;
   }
 
 //---------------------------------------------------------------------------------------------------------
   HCURSOR GraphicsDisplay::GetWindowCursor() const
   {
-    return m_Cursor;
+    return cursor_;
   }
 
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::PauseThreadGraphicsRendering()
   {
     m_PauseGraphicsRendering = true;
-    MakeGLContextCurrent (false);
+    MakeGLContextCurrent(false);
   }
 
 //---------------------------------------------------------------------------------------------------------
