@@ -442,7 +442,6 @@ namespace nux
     _ready_for_next_fake_event = true;
     _fake_event_mode = false;
     _processing_fake_event = false;
-    _focused_area = NULL;
   }
 
   WindowThread::~WindowThread()
@@ -466,35 +465,6 @@ namespace nux
       XCloseDisplay(_x11display);
     }
 #endif
-  }
-
-  void WindowThread::SetFocusedArea (Area *focused_area)
-  {
-    if (focused_area == _focused_area)
-      return; 
-    
-    if (_focused_area != NULL)
-    {
-      _focused_area->SetFocused (false);
-
-      if (_focused_area_destroyed_con.empty () == false)
-      {
-        _focused_area_destroyed_con.disconnect ();
-      }
-
-    }
-    
-    _focused_area = focused_area;
-    _focused_area_destroyed_con = focused_area->object_destroyed.connect (sigc::mem_fun (this, &WindowThread::OnFocusedAreaDestroyed));
-    
-  }
-
-  void WindowThread::OnFocusedAreaDestroyed (Object *object)
-  {
-    if (object == _focused_area)
-    {
-      _focused_area = NULL;
-    }
   }
 
   void WindowThread::AsyncWakeUpCallback (void* data)

@@ -53,8 +53,6 @@ namespace nux
 
   protected:
     virtual Area* KeyNavIteration(KeyNavDirection direction);
-    virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
   };
 }
 

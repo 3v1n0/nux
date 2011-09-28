@@ -448,6 +448,7 @@ namespace nux
             event.e_event = NUX_MOUSE_PRESSED;
           }
 
+          bool emit_double_click_signal = false;
           if (mouse_over_area_ && (hit_view != mouse_over_area_))
           {
             // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
@@ -461,6 +462,12 @@ namespace nux
 
             mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
           }
+          else if (mouse_over_area_ && (hit_view == mouse_over_area_) && (event.e_event == NUX_MOUSE_DOUBLECLICK))
+          {
+            // Double click is emitted, if the second click happened on the same area as the first click.
+            // This means mouse_over_area_ is not null and is equal to hit_view.
+            emit_double_click_signal = true;
+          }
 
           SetMouseOverArea(hit_view);
           SetMouseOwnerArea(hit_view);
@@ -468,7 +475,7 @@ namespace nux
 
           // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
           // from the area returned by GetAreaUnderMouse, then stop that receiver from receiving anymore keyboard events and switch
-          // make the found area the new receiver (if it accept keyboard events).
+          // make mouse_over_area_ the new receiver (if it accept keyboard events).
           if (mouse_over_area_ != GetKeyFocusArea())
           {
             InputArea* grab_area = GetKeyboardGrabArea();
@@ -489,7 +496,14 @@ namespace nux
             }
           }
 
-          mouse_over_area_->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          if (emit_double_click_signal)
+          {
+            mouse_over_area_->EmitMouseDoubleClickSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          }
+          else
+          {
+            mouse_over_area_->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          }
         }
         else if (hit_view && (event.e_event == NUX_MOUSE_WHEEL))
         {
@@ -503,7 +517,12 @@ namespace nux
             int x = event.e_x - geo.x;
             int y = event.e_y - geo.y;
 
-            mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+            // Mouse wheel events are stationary. The mouse can remain inside an area while the mouse wheel is spinning.
+            // This shouldn't qualify as a mouse leave event.
+            if (event.e_event != NUX_MOUSE_WHEEL)
+            {
+              mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+            }
           }
 
 //           if(GetKeyFocusArea() && (event.e_event == NUX_MOUSE_PRESSED))
@@ -1694,7 +1713,7 @@ namespace nux
       }
       else
       {
-        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
         GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
       }
       GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);

@@ -50,7 +50,7 @@ namespace nux
    * Note that if there's no alpha channel, the argument is ignored.
    * @return The resulting texture.
    */
-  BaseTexture *CreateTexture2DFromFile (const char *filename, int max_size,
+  BaseTexture *CreateTexture2DFromFile(const char *filename, int max_size,
                                         bool premultiply);
 
   /*!
@@ -62,18 +62,18 @@ namespace nux
    * Note that if there's no alpha channel, the argument is ignored.
    * @return The resulting texture.
    */
-  BaseTexture *CreateTexture2DFromPixbuf (GdkPixbuf *pixbuf, bool premultiply);
+  BaseTexture *CreateTexture2DFromPixbuf(GdkPixbuf *pixbuf, bool premultiply);
 
   // FIXME(loicm) Should be deprecated.
-  BaseTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf);
+  BaseTexture *CreateTextureFromPixbuf(GdkPixbuf *pixbuf);
 
-  BaseTexture *CreateTextureFromFile (const TCHAR *TextureFilename);
-  BaseTexture *CreateTextureFromBitmapData (const NBitmapData *BitmapData);
+  BaseTexture *CreateTextureFromFile(const TCHAR *TextureFilename);
+  BaseTexture *CreateTextureFromBitmapData(const NBitmapData *BitmapData);
 
   //! Abstract base class for textures.
   class BaseTexture: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (BaseTexture, ResourceData);
+    NUX_DECLARE_OBJECT_TYPE(BaseTexture, ResourceData);
 
     BaseTexture(NUX_FILE_LINE_PROTO);
     virtual ~BaseTexture();
@@ -100,19 +100,19 @@ namespace nux
       GetDeviceTexture () or GetCachedTexture () is called.
       @return True if there was no error during the update.
     */
-    virtual bool Update (const TCHAR *filename, bool UpdateAndCacheResource = true) = 0;
+    virtual bool Update(const TCHAR *filename, bool UpdateAndCacheResource = true) = 0;
 
-    virtual void GetData (void *Buffer, int MipIndex, int StrideY, int face = 0) = 0;
+    virtual void GetData(void *Buffer, int MipIndex, int StrideY, int face = 0) = 0;
 
     /*!
       @return The texture width.
     */
-    virtual int GetWidth () const = 0;
+    virtual int GetWidth() const = 0;
 
     /*!
       @return The texture height.
     */
-    virtual int GetHeight () const = 0;
+    virtual int GetHeight() const = 0;
 
     /*!
       @return The texture depth. Return 1 for Texture2D, TextureCube, TextureRenctangle. TextureVolume and TextureFrameAnimation have a depth equal or greater than 1.
@@ -126,7 +126,7 @@ namespace nux
     /*!
       @return True if the width and height of the texture are powers of two.
     */
-    virtual bool IsPowerOfTwo () const = 0;
+    virtual bool IsPowerOfTwo() const = 0;
 
     /*!
       @return The texture data format.
@@ -136,32 +136,34 @@ namespace nux
     /*!
       @return The number of mip maps in the texture.
     */
-    virtual int GetNumMipLevel () const = 0;
+    virtual int GetNumMipLevel() const = 0;
 
     /*!
       @return True if the texture storage contains valid bitmap data.
     */
-    virtual bool IsNull () const = 0;
+    virtual bool IsNull() const = 0;
 
     /*!
       Clone the texture.
       @return A cloned version of this texture.
     */
-    virtual BaseTexture* Clone () const = 0;
+    virtual BaseTexture* Clone() const = 0;
 
     /*!
-      Cache the texture if it hasn't been been already and return the device texture.
+        Cache the texture if it hasn't been been already and return the device texture.
+        \sa IOpenGLBaseTexture;
 
-      @return The device texture.
+        @return The device texture.
     */
-    ObjectPtr < IOpenGLBaseTexture > GetDeviceTexture ();
+    ObjectPtr<IOpenGLBaseTexture> GetDeviceTexture();
 
     /*!
-      Cache the texture if it hasn't been been already and return the cached texture.
+        Cache the texture if it hasn't been been already and return the cached texture.
+        \sa CachedBaseTexture;
 
-      @return The cached texture.
+        @return The cached texture.
     */
-    ObjectPtr < CachedBaseTexture > GetCachedTexture ();
+    ObjectPtr<CachedBaseTexture> GetCachedTexture();
   };
 
   //! General Texture

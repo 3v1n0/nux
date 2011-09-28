@@ -52,8 +52,6 @@ namespace nux
     void ComputeStacking(int remaining_width, int &offset_space, int &element_margin);
 
   protected:
-    virtual long DoFocusUp  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual Area* KeyNavIteration(KeyNavDirection direction);
   };
 }

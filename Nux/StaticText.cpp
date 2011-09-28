@@ -13,7 +13,9 @@
 
 namespace nux
 {
-  StaticText::StaticText (const TCHAR* text, NUX_FILE_LINE_DECL)
+  NUX_IMPLEMENT_OBJECT_TYPE(StaticText);
+
+  StaticText::StaticText (const std::string &text, NUX_FILE_LINE_DECL)
     : View (NUX_FILE_LINE_PARAM)
   {
     _size_match_text = true;
@@ -23,7 +25,7 @@ namespace nux
     _clipping = 0;
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    SetText (text);
+    SetText(text);
   }
 
   StaticText::~StaticText ()
@@ -162,15 +164,20 @@ namespace nux
     // intentionally left empty
   }
 
-  void StaticText::SetText (NString text)
+  void StaticText::SetText (const std::string &text)
   {
-    if (_text != text)
+    if (text_ != text)
     {
-      _text = text;
+      text_ = text;
       UpdateTextRendering ();
 
       sigTextChanged.emit (this);
     }
+  }
+
+  std::string StaticText::GetText() const
+  {
+    return text_;
   }
 
   void StaticText::SetTextColor (Color textColor)
@@ -193,7 +200,7 @@ namespace nux
 
   void StaticText::GetTextSize (int &width, int &height, int clipping)
   {
-    GetTextSize (_font_string, _text.GetTCharPtr (), width, height, clipping);
+    GetTextSize (_font_string, text_.c_str(), width, height, clipping);
   }
 
   void StaticText::GetTextSize (const TCHAR* font, const TCHAR *char_str, int& width, int& height, int clipping)
@@ -280,7 +287,8 @@ namespace nux
 
     pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
     pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
-    pango_layout_set_markup (layout, _text.GetTCharPtr(), -1);
+    pango_layout_set_markup (layout, text_.c_str(), -1);
+
     if (_clipping)
       pango_layout_set_width (layout, _clipping * PANGO_SCALE);
 
@@ -330,9 +338,9 @@ namespace nux
 
     _texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     _texture2D->Update (bitmap);
-		
-		delete bitmap;
-		cairo_destroy (cr);
+
+    delete bitmap;
+    cairo_destroy (cr);
     delete _cairoGraphics;
     _cairoGraphics = 0;
   }

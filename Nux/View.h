@@ -24,7 +24,6 @@
 #define ABSTRACTOBJECTBASE_H
 
 #include "Nux.h"
-#include "Focusable.h"
 #include "NuxCore/Property.h"
 
 #define NeedRedraw QueueDraw
@@ -177,19 +176,6 @@ namespace nux
 
     sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
 
-    virtual long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void DoSetFocused (bool focused);
-    virtual bool DoCanFocus ();
-    virtual bool DoGetFocused ();
-    void SetCanFocus (bool can_focus);
-    void SetFocusControl (bool focus_control);
-    bool HasFocusControl ();
-
-    /*
-        Returns true if the view has a layout and passes focus to that layout
-    */
-    bool HasPassiveFocus ();
-
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();
 
@@ -208,8 +194,6 @@ namespace nux
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
-    void DoMouseDownOutsideArea (int x, int y,unsigned long mousestate, unsigned long keystate);
 
     void InitializeWidgets();
     void InitializeLayout();

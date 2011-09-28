@@ -200,11 +200,6 @@ namespace nux
     void Clear ();
 
   protected:
-    virtual long DoFocusPrev  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual bool FocusFirstChild ();
-    virtual bool FocusLastChild ();
-
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     void OnLayerGeometryChanged(Area* area, Geometry geo);
     

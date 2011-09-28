@@ -20,9 +20,6 @@
  *
  */
 
-#include <iostream>
-#include <sstream>
-
 #include "NuxCore.h"
 #include "Object.h"
 #include "ObjectPtr.h"

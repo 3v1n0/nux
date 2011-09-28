@@ -19,31 +19,26 @@
  *
  */
 
-
 #include "Nux.h"
 #include "TextureArea.h"
 #include "NuxImage/ImageSurface.h"
 
 namespace nux
 {
-  NUX_IMPLEMENT_OBJECT_TYPE (TextureArea);
+  NUX_IMPLEMENT_OBJECT_TYPE(TextureArea);
 
-  TextureArea::TextureArea (NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  TextureArea::TextureArea(NUX_FILE_LINE_DECL)
+  : View(NUX_FILE_LINE_PARAM)
   {
-    //SetMinMaxSize(50, 50);
+    mouse_down.connect(sigc::mem_fun (this, &TextureArea::RecvMouseDown));
+    mouse_up.connect(sigc::mem_fun (this, &TextureArea::RecvMouseUp));
+    mouse_enter.connect(sigc::mem_fun (this, &TextureArea::RecvMouseEnter));
+    mouse_leave.connect(sigc::mem_fun (this, &TextureArea::RecvMouseLeave));
+    mouse_click.connect(sigc::mem_fun (this, &TextureArea::RecvMouseClick));
+    mouse_drag.connect(sigc::mem_fun (this, &TextureArea::RecvMouseDrag));
 
-    mouse_down.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDown));
-    mouse_up.connect (sigc::mem_fun (this, &TextureArea::RecvMouseUp));
-    
-    mouse_enter.connect (sigc::mem_fun (this, &TextureArea::RecvMouseEnter));
-    mouse_leave.connect (sigc::mem_fun (this, &TextureArea::RecvMouseLeave));
-    mouse_click.connect (sigc::mem_fun (this, &TextureArea::RecvMouseClick));
-
-    mouse_drag.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDrag));
-
-    m_PaintLayer = new ColorLayer (Color (0xFFFF40FF));
-    _2d_rotate.Identity ();
+    m_PaintLayer = new ColorLayer(nux::color::Black);
+    _2d_rotate.Identity();
   }
 
   TextureArea::~TextureArea()
@@ -86,7 +81,7 @@ namespace nux
   void TextureArea::SetTexture(BaseTexture *texture)
   {
     NUX_RETURN_IF_NULL(texture);
-    NUX_SAFE_DELETE(m_PaintLayer);
+    delete m_PaintLayer;
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
@@ -96,12 +91,26 @@ namespace nux
     QueueDraw();
   }
 
+  void TextureArea::SetColor(const Color &color)
+  {
+    delete m_PaintLayer;
+    m_PaintLayer = new ColorLayer(color);
+    QueueDraw();
+  }
+
   void TextureArea::SetPaintLayer (AbstractPaintLayer *layer)
   {
     NUX_SAFE_DELETE (m_PaintLayer);
     m_PaintLayer = layer->Clone();
 
     QueueDraw();
+  }
+
+  AbstractPaintLayer* TextureArea::GetPaintLayer() const
+  {
+    if (m_PaintLayer == NULL)
+      return NULL;
+    return m_PaintLayer->Clone();
   }
 
 // void TextureArea::SetTexture(const TCHAR* TextureFilename)

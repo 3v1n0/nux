@@ -47,8 +47,8 @@ namespace nux
 
     _stretch_factor = 1;
     _layout_properties = NULL;
-    _visible = true;
-    _sensitive = true;
+    visible_ = true;
+    sensitive_ = true;
 
     _on_geometry_changeg_reconfigure_parent_layout = true;
     _accept_mouse_wheel_event = false;
@@ -548,32 +548,32 @@ namespace nux
 
   void Area::SetVisible (bool visible)
   {
-    if (_visible == visible)
+    if (visible_ == visible)
       return;
 
-    _visible = visible;
+    visible_ = visible;
 
-    OnVisibleChanged.emit (this, _visible);
+    OnVisibleChanged.emit (this, visible_);
   }
 
   bool Area::IsVisible ()
   {
-    return _visible;
+    return visible_;
   }
 
   void Area::SetSensitive (bool sensitive)
   {
-    if (_sensitive == sensitive)
+    if (sensitive_ == sensitive)
       return;
 
-    _sensitive = sensitive;
+    sensitive_ = sensitive;
 
-    OnSensitiveChanged.emit (this, _sensitive);
+    OnSensitiveChanged.emit (this, sensitive_);
   }
 
   bool Area::IsSensitive ()
   {
-    return _sensitive;
+    return sensitive_;
   }
 
   MinorDimensionPosition Area::GetPositioning()
@@ -906,6 +906,9 @@ namespace nux
 
   bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type)
   {
+    if (IsSensitive() == false)
+      return false;
+
     bool mouse_pointer_inside_area = false;
 
     if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
@@ -929,6 +932,9 @@ namespace nux
 
   bool Area::TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event_type)
   {
+    if (IsSensitive() == false)
+      return false;
+
     bool mouse_pointer_inside_area = false;
 
     if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
@@ -1010,6 +1016,9 @@ namespace nux
 
   bool Area::AcceptKeyNavFocus()
   {
+    if (IsSensitive() == false)
+      return false;
+
     return true;
   }
 

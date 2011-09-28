@@ -81,7 +81,6 @@ namespace nux
     ~TextEntry ();
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
@@ -146,7 +145,6 @@ namespace nux
     void SetAlign(CairoGraphics::Alignment align);
 
   protected:
-    virtual void DoSetFocused (bool focused);
     bool _block_focus; // used to selectively ignore focus keyevents
 
     virtual void GeometryChanged ();

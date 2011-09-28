@@ -7,8 +7,10 @@ namespace nux
   class CairoGraphics;
   class StaticText: public View
   {
+    NUX_DECLARE_OBJECT_TYPE(StaticText, View);
   public:
-    StaticText (const TCHAR* text, NUX_FILE_LINE_PROTO);
+    //StaticText (const TCHAR* text, NUX_FILE_LINE_PROTO);
+    StaticText (const std::string &text, NUX_FILE_LINE_PROTO);
 
     ~StaticText ();
 
@@ -22,7 +24,9 @@ namespace nux
     //! Return true if the widget with changes to match the text width.
     bool GetSizeMatchText () const;
 
-    void SetText (NString text);
+    void SetText(const std::string &text);
+    std::string GetText() const;
+
     void SetTextColor (Color textColor);
     void SetFontName (const char *font_name);
     
@@ -45,7 +49,7 @@ namespace nux
     void DrawContent (GraphicsEngine& gfxContext, bool forceDraw);
     void PostDraw (GraphicsEngine& gfxContext, bool forceDraw);
 
-    NString _text;
+    std::string text_;
     Color _textColor;
 
     CairoGraphics *_cairoGraphics;

@@ -70,11 +70,6 @@ namespace nux
     {
       if ((*it) == child)
         break;
-
-      if ((*it)->CanFocus ())
-      {
-        position++;
-      }
     }
 
     return position;
@@ -88,11 +83,6 @@ namespace nux
     {
       if (position == pos)
         return (*it);
-
-      if ((*it)->CanFocus ())
-      {
-        position++;
-      }
     }   
 
     return NULL;

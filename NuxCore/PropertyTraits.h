@@ -19,6 +19,9 @@
  * Authored by: Tim Penhey <tim.penhey@canonical.com>
  *
  */
+
+#pragma warning(disable : 4355) // warning C4355: 'this' : used in base member initializer list
+
 #ifndef NUXCORE_PROPERTY_TRAITS_H
 #define NUXCORE_PROPERTY_TRAITS_H
 

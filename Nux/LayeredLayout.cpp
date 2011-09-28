@@ -82,37 +82,6 @@ namespace nux
   {
   }
 
-  long LayeredLayout::DoFocusPrev (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    if (GetInputMode () == INPUT_MODE_ACTIVE)
-    {
-      Area *parent = GetParentObject ();
-      if (parent != NULL)
-        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
-    }
-    else
-    {
-      return Layout::DoFocusPrev (ievent, TraverseInfo, ProcessEventInfo);
-    }
-
-    return TraverseInfo;
-  }
-
-  long LayeredLayout::DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    if (GetInputMode () == INPUT_MODE_ACTIVE)
-    {
-      Area *parent = GetParentObject ();
-      if (parent != NULL)
-        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
-    }
-    else
-    {
-      return Layout::DoFocusNext (ievent, TraverseInfo, ProcessEventInfo);
-    }
-    
-    return TraverseInfo;
-  }
   void LayeredLayout::GetCompositeList (std::list<Area *> *ViewList)
   {
     std::list<Area *>::iterator it;
@@ -406,7 +375,6 @@ namespace nux
 
     m_active_index = index_;
     m_active_area = NULL;
-    bool is_focused = GetFocused ();
 
     for (it = _layout_element_list.begin (); it != eit; ++it)
     {
@@ -418,14 +386,10 @@ namespace nux
       if ((*it)->IsView ())
       {
         static_cast<View *> (*it)->QueueDraw ();
-        if (is_focused)
-          static_cast<View *> (*it)->SetFocused (true);
       } 
       else if ((*it)->IsLayout ())
       {
         static_cast<Layout *> (*it)->QueueDraw ();
-        if (is_focused)
-          static_cast<Layout *> (*it)->SetFocused (true);
       }
 
       i++;
@@ -607,28 +571,6 @@ namespace nux
 
     _layout_element_list.erase (area_it);
     _layout_element_list.insert (_layout_element_list.begin (), area);
-  }
-
-  bool LayeredLayout::FocusFirstChild ()
-  {
-    if (m_input_mode == INPUT_MODE_ACTIVE)
-    {
-      m_active_area->SetFocused (true);
-      return true;
-    }
-    else
-      return Layout::FocusFirstChild ();
-  }
- 
-  bool LayeredLayout::FocusLastChild ()
-  {
-    if (m_input_mode == INPUT_MODE_ACTIVE)
-    {
-      m_active_area->SetFocused (true);
-      return true;
-    }
-    else
-      return Layout::FocusLastChild ();
   }
 
   Area* LayeredLayout::KeyNavIteration(KeyNavDirection direction)

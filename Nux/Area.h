@@ -26,7 +26,6 @@
 #include <sigc++/sigc++.h>
 #include "NuxCore/InitiallyUnownedObject.h"
 #include "NuxGraphics/Events.h"
-#include "Focusable.h"
 #include "Utils.h"
 #include "WidgetMetrics.h"
 
@@ -138,7 +137,7 @@ namespace nux
   class View;
   class Area;
 
-  class Area: public InitiallyUnownedObject, public Focusable
+  class Area: public InitiallyUnownedObject
   {
     NUX_DECLARE_OBJECT_TYPE (Area, InitiallyUnownedObject);
   public:
@@ -323,19 +322,25 @@ namespace nux
     */
     bool IsVisible ();
 
-    //! Set sensitivity of the area
+    //! Set sensitivity of the area.
     /*!
-        If sensitive, an area will receive input events. Default is true.
-        @param  if the area should receive input events
+        A insensitive Area will not receive input events.\n
+        If the Area has a layout, the event will be passed down to it. Sensitivity only control an area's ability to receive input events (keyboard, mouse, touch).
+        An area that is not sensitive will return false in \a TestMousePointerInclusion, \a TestMousePointerInclusionFilterMouseWheel and \a AcceptKeyNavFocus.\n
+        Sensitivity does not affect layouts since they do not process events.
+
+        By default, an area is sensitive.
+
+        @param sensitive If the area should receive input events
     */
-    void SetSensitive  (bool sensitive);
+    void SetSensitive(bool sensitive);
 
     //! Get whether the area is sensitive
     /*!
         Gets whether the area is sensitive to input events
         @return whether the area is visible
     */
-    bool IsSensitive ();
+    bool IsSensitive();
 
     virtual bool DoGetFocused ();
     virtual void DoSetFocused (bool focused);
@@ -595,8 +600,8 @@ namespace nux
     
 
     LayoutProperties        *_layout_properties;
-    bool                    _visible;
-    bool                    _sensitive;
+    bool                    visible_;
+    bool                    sensitive_;
 
     NString                 _base_string;     //!< A text string property for this area.
 

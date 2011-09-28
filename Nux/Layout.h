@@ -23,8 +23,6 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
-#include "Focusable.h"
-
 namespace nux
 {
 
@@ -74,6 +72,51 @@ namespace nux
     virtual void AddSpace (unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END);
 
     virtual void Clear();
+
+    void SetLeftAndRightPadding(int padding);
+    void SetTopAndBottomPadding(int padding);
+
+    //! Set the left/right and top/bottom padding of the layout.
+    /*!
+        Set the left/right and top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param left_right_padding The left/right padding value of the layout.
+        @param top_bottom_padding The top/bottom padding value of the layout.
+    */
+    void SetPadding(int left_right_padding, int top_bottom_padding);
+
+    //! Set the horizontal and vertical space between the children of the layout.
+    /*!
+        Set the horizontal and vertical space between the children of the layout. \n
+        For and HLayout only the horizontal space is taken into account. For and VLayout only the vertical space is taken into account.\n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+        \sa SetHorizontalSpaceBetweenItems, SetVerticalSpaceBetweenItems.
+
+        @param horizontal_space The horizontal space between the children of the layout.
+        @param vertical_padding The vertical space between the children of the layout.
+    */
+    void SetSpaceBetweenItems(int horizontal_space, int vertical_space);
+
+    //! Set the horizontal space between the children of the layout.
+    /*!
+        Set the horizontal space between the children of the layout. In a VLayout, children of the layout are placed
+        horizontally, on after the other, from left to right. This function set the space allowed between the children.
+        Valid only for HLayouts, HGridLayouts and VGridLayout.
+
+        @param horizontal_space The horizontal space between the children of the layout.
+    */
+    void SetHorizontalSpaceBetweenItems(int horizontal_space);
+    
+    //! Set the vertical space between the children of the layout.
+    /*!
+        Set the vertical space between the children of the layout. In a VLayout, children of the layout are placed
+        vertically, on after the other, from top to bottom. This function set the space allowed between the children.
+        Valid only for VLayouts, HGridLayouts and VGridLayout.
+
+        @param vertical_space The vertical space between the children of the layout.
+    */
+    void SetVerticalSpaceBetweenItems(int vertical_space);
 
     virtual unsigned int GetMaxStretchFactor();
     unsigned int GetMinStretchFactor();
@@ -216,37 +259,9 @@ namespace nux
     sigc::signal<void, Area*>   OnChildQueueDraw;
     sigc::signal<void, Layout*, Area*> ViewAdded;
     sigc::signal<void, Layout*, Area*> ViewRemoved;
-    
-    virtual void DoSetFocused (bool focused);
-    virtual bool DoGetFocused ();
-    virtual bool DoCanFocus ();
-    virtual void DoActivateFocus ();
-
-    bool HasFocusableEntries ();
-
-    // this should not be public, but has to be because of nux's object setup
-    long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    bool _has_focus_control;
-    void SetFocusControl (bool focus_control);
-    bool HasFocusControl ();
-    bool _ignore_focus;
 
   protected:
-    Area*GetFocusedChild ();
-    virtual long DoFocusPrev  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusNext  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusUp    (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusDown  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual bool FocusFirstChild ();
-    virtual bool FocusLastChild ();
-    virtual bool FocusNextChild (Area *child);
-    virtual bool FocusPreviousChild (Area *child);
-    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
-    
     virtual bool AcceptKeyNavFocus();
-    std::map<Area*, sigc::connection> _connection_map; // map our children to connections
     
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
 
@@ -268,8 +283,6 @@ namespace nux
     NString m_name;
 
     LayoutContentDistribution m_ContentStacking;
-
-    long SendEventToArea (Area *area, IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
   };
 
 
