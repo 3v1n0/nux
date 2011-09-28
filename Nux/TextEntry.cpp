@@ -577,6 +577,8 @@ namespace nux
 
     gfxContext.PushClippingRectangle (base);
 
+    nux::GetPainter().PaintBackground(gfxContext, base);
+
     Color col = color::Black;
     col.alpha = 0;
     gfxContext.QRP_Color (base.x,
