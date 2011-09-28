@@ -46,7 +46,11 @@ namespace nux
 
   ResourceData::~ResourceData ()
   {
-    GetGraphicsDisplay()->GetGraphicsEngine()->FlushCachedResourceData(this);
+    // If the windows thread is deleted before any texture type resource, the
+    // graphics display will not exist.
+    GraphicsDisplay* display = GetGraphicsDisplay();
+    if (display)
+      display->GetGraphicsEngine()->FlushCachedResourceData(this);
   }
 
   int ResourceData::GetResourceIndex() const

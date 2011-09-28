@@ -649,6 +649,7 @@ namespace nux
 
   void TextEntry::MainDraw ()
   {
+
     CairoGraphics *edit_canvas = EnsureCanvas();
 
     if (update_canvas_ || !last_selection_region_.empty() || !selection_region_.empty())
@@ -679,12 +680,14 @@ namespace nux
     NBitmapData* bitmap = final_canvas->GetBitmap ();
     delete final_canvas;
 
-    if (_texture2D)
-      _texture2D->UnReference ();
+    if (!_texture2D || _texture2D->GetWidth() != bitmap->GetWidth() || _texture2D->GetHeight() != bitmap->GetHeight())
+    {
+      if (_texture2D)
+        _texture2D->UnReference ();
+      _texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
+    }
 
-    _texture2D = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     _texture2D->Update (bitmap);
-
     delete bitmap;
   }
 
@@ -1695,8 +1698,13 @@ namespace nux
     ResetImContext();
     int new_cursor = 0;
     // Clear selection first if not extend it.
-    if (cursor_ != selection_bound_ && !extend_selection)
-      SetCursor(cursor_);
+    if (!extend_selection)
+    {
+      selection_changed_ = true;
+      cursor_moved_ = true;
+      selection_bound_ = cursor_;
+      cursor_moved.emit (cursor_);
+    }
 
     // Calculate the new offset after motion.
     switch(step)

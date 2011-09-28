@@ -1750,6 +1750,10 @@ namespace nux
   void GraphicsDisplay::HandleDndSelectionRequest (XEvent xevent)
   {
     XEvent result;
+    
+    if (!_dnd_source_funcs.get_data_for_type)
+      return;
+
     result.xselection.type = SelectionNotify;
     result.xselection.display = xevent.xany.display;
     result.xselection.requestor = xevent.xselectionrequest.requestor;

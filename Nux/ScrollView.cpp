@@ -291,6 +291,9 @@ namespace nux
 
   void ScrollView::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
   {
+    if (IsFullRedraw())
+      GetPainter().PushBackgroundStack();
+      
     GfxContext.PushClippingRectangle (GetGeometry ());
 
     GfxContext.PushClippingRectangle (Rect (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
@@ -319,6 +322,9 @@ namespace nux
     }
 
     GfxContext.PopClippingRectangle();
+
+    if (IsFullRedraw())
+      GetPainter().PopBackgroundStack();
   }
 
   void ScrollView::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
