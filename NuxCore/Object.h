@@ -233,7 +233,7 @@ namespace nux
     Object (const Object &);
     Object &operator = (const Object &);
 
-    const char* allocation_file_name_;
+    std::string allocation_file_name_;
     int allocation_line_number_;
     std::string allocation_stacktrace_;
 
