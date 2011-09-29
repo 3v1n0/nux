@@ -14,7 +14,7 @@
 #   - Increase interface_version to the next odd number
 # 
 m4_define([nux_major_version], [1])
-m4_define([nux_minor_version], [12])
+m4_define([nux_minor_version], [14])
 m4_define([nux_micro_version], [0])
 
 # Bump this when we break ABI
