@@ -22,6 +22,7 @@ Build-Depends: debhelper (>= 7.0.50~),
                libx11-dev,
                libpcre3-dev,
                libpci-dev,
+               libxinerama-dev,
 Standards-Version: 3.9.2
 Section: libs
 Homepage: http://launchpad.net/nux

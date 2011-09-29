@@ -103,15 +103,69 @@ namespace nux
 
   void XInputWindow::SetStruts()
   {
-    int screenHeight, screenWidth;
+    int n_info;
+    XineramaScreenInfo *info = XineramaQueryScreens (display_, &n_info);
+    Region             screen_region;
+    Region             total_screen_region = XCreateRegion ();
+    Region             input_window_region = XCreateRegion ();
+    Region             intersection = XCreateRegion ();
+    XineramaScreenInfo monitor;
+    XRectangle         tmp_rect;
+    int largestWidth = 0, largestHeight = 0;
+    int screenWidth, screenHeight;
     long int data[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    screenHeight = XDisplayHeight(display_, 0);
-    screenWidth = XDisplayWidth(display_, 0);
+    /* Find the screen that this region intersects */
+    tmp_rect.x = geometry_.x;
+    tmp_rect.y = geometry_.y;
+    tmp_rect.width = geometry_.width;
+    tmp_rect.height = geometry_.height;
+
+    XUnionRectWithRegion (&tmp_rect, input_window_region, input_window_region);
+
+    for (int i = 0; i < n_info; i++)
+    {
+      tmp_rect.x = info[i].x_org;
+      tmp_rect.y = info[i].y_org;
+      tmp_rect.width = info[i].width;
+      tmp_rect.height = info[i].height;
+
+      screen_region = XCreateRegion ();
+
+      XUnionRectWithRegion (&tmp_rect, screen_region, screen_region);
+      XUnionRegion (screen_region, total_screen_region, total_screen_region);
+      XIntersectRegion (screen_region, input_window_region, intersection);
+
+      if (!XEmptyRegion (intersection))
+      {
+        int width = intersection->extents.x2 - intersection->extents.x1;
+        int height = intersection->extents.y2 - intersection->extents.y1;
+
+        if ((width * height) > (largestWidth * largestHeight))
+        {
+          largestWidth = width;
+          largestHeight = height;
+
+          monitor = info[i];
+        }
+      }
+
+      XDestroyRegion (screen_region);
+    }
+
+    screenWidth = total_screen_region->extents.x2 - total_screen_region->extents.x1;
+    screenHeight = total_screen_region->extents.y2 - total_screen_region->extents.y1;
+
+    XDestroyRegion (input_window_region);
+    XDestroyRegion (intersection);
+    XDestroyRegion (total_screen_region);
+
+    if (info)
+      XFree (info);
 
     if (geometry_.width > geometry_.height)
     {
-      if (geometry_.y < screenHeight / 2)
+      if (geometry_.y - monitor.y_org < monitor.height / 2)
       {
         /* top */
         data[2] = geometry_.y + geometry_.height;
@@ -128,7 +182,7 @@ namespace nux
     }
     else
     {
-      if (geometry_.x < screenWidth / 2)
+      if (geometry_.x - monitor.x_org < monitor.width / 2)
       {
         /* left */
         data[0] = geometry_.x + geometry_.width;
