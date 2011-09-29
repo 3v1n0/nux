@@ -1,6 +1,16 @@
-nux (1.14.0-0ubuntu2) UNRELEASED; urgency=low
+nux (1.14.0-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+    - compiz crashed with SIGSEGV in nux::WindowCompositor::FindKeyFocusArea()
+      (LP: #845873)
+    - compiz crashed with SIGSEGV in sigc::signal_base::impl() (LP: #831769)
+    - can't maximize windows on second monitor and Qt windows displayed in
+      wrong place (LP: #861341)
+    - Dash - Dash should support drag and drop to external applications
+      (LP: #857431)
+    - Dash - When the Dash is re-opened and statefully displaying a previous
+      query, it should be possible to add to the query by pressing the 'right
+      arrow cursor key' (LP: #841828)
   * debian/control:
     - build-dep on libxinerama-dev
 
