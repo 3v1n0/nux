@@ -28,6 +28,7 @@
 #include <X11/Xatom.h>
 /* keysym.h contains keysymbols which we use to resolv what keys that are being pressed */
 #include <X11/keysym.h>
+#include <X11/Xregion.h>
 
 #include <X11/extensions/xf86vmode.h>
 

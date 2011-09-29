@@ -113,16 +113,15 @@ logging::Logger logger("nux.window");
 
   WindowCompositor::RenderTargetTextures &WindowCompositor::GetWindowBuffer (BaseWindow *window)
   {
-    RenderTargetTextures invalid;
-    RenderTargetTextures &ret = invalid;
+    static RenderTargetTextures invalid;
     std::map< BaseWindow*, RenderTargetTextures >::iterator it = _window_to_texture_map.find (window);
 
     if (it != _window_to_texture_map.end())
     {
-      return (*it).second;
+      return it->second;
     }
-
-    return ret;
+    LOG_WARN(logger) << "No RenderTargetTextures for window.";
+    return invalid;
   }
 
   void WindowCompositor::RegisterWindow (BaseWindow *window)
@@ -433,6 +432,7 @@ logging::Logger logger("nux.window");
             event.e_event = NUX_MOUSE_PRESSED;
           }
 
+          bool emit_double_click_signal = false;
           if (mouse_over_area_ && (hit_view != mouse_over_area_))
           {
             // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
@@ -445,6 +445,10 @@ logging::Logger logger("nux.window");
             int y = event.e_y - geo.y;
 
             mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+          }
+          else if (mouse_over_area_ && (hit_view == mouse_over_area_) && (event.e_event == NUX_MOUSE_DOUBLECLICK))
+          {
+            emit_double_click_signal = true;
           }
 
           SetMouseOverArea(hit_view);
@@ -474,7 +478,14 @@ logging::Logger logger("nux.window");
             }
           }
 
-          mouse_over_area_->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          if (emit_double_click_signal)
+          {
+            mouse_over_area_->EmitMouseDoubleClickSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          }
+          else
+          {
+            mouse_over_area_->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+          }
         }
         else if (hit_view && (event.e_event == NUX_MOUSE_WHEEL))
         {
@@ -1382,50 +1393,61 @@ logging::Logger logger("nux.window");
     GetPainter().EmptyBackgroundStack();
   }
 
-  void WindowCompositor::RenderTopViews (bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool drawModal)
+  void WindowCompositor::RenderTopViews(bool force_draw,
+                                        WindowList& windows_to_render,
+                                        bool drawModal)
   {
     // Before anything, deactivate the current frame buffer, set the viewport 
     // to the size of the display and call EmptyClippingRegion().
     // Then call GetScissorRect() to get the size of the global clipping area.
     // This is is hack until we implement SetGlobalClippingRectangle() (the opposite of SetGlobalClippingRectangle).
+    GraphicsEngine& graphics_engine = GetWindowThread()->GetGraphicsEngine();
+    unsigned int window_width = graphics_engine.GetWindowWidth();
+    unsigned int window_height = graphics_engine.GetWindowHeight();
     GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
-    GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0,
-                                                       GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
-                                                       GetWindowThread ()->GetGraphicsEngine().GetWindowHeight());
-    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion ();
+    graphics_engine.SetViewport(0, 0, window_width, window_height);
+    graphics_engine.EmptyClippingRegion();
 
-    Geometry global_clip_rect = GetWindowThread ()->GetGraphicsEngine().GetScissorRect();
+    Geometry global_clip_rect = graphics_engine.GetScissorRect();
+    global_clip_rect.y = window_height - global_clip_rect.y - global_clip_rect.height;
 
-
-    global_clip_rect.y = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() - global_clip_rect.y - global_clip_rect.height;
-
-    // Raw the windows from back to front;
-    WindowList::reverse_iterator rev_it;
-
-    for (rev_it = WindowList.rbegin (); rev_it != WindowList.rend (); rev_it++)
+    // Always make a copy of the windows to render.  We have no control over
+    // the windows we are actually drawing.  It has been observed that some
+    // windows modify the windows stack during the draw process.
+    //
+    // So... we take a copy of the window list.  As much as I'd love to just
+    // have BaseWindow* in the container, again, we have no control over the
+    // windows we are drawing and one may just decide to unregister or destroy
+    // another window mid-render.  Since we are contructing a copy of the
+    // list, lets reverse it as we are constructing, as we want to draw the
+    // windows from back to front.
+    WindowList windows(windows_to_render.rbegin(), windows_to_render.rend());
+    for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
     {
-      if (!(*rev_it).IsValid())
-        continue;
-        
-      if ((drawModal == false) && (*rev_it)->IsModal())
+      WeakBaseWindowPtr& window_ptr = *it;
+      if (window_ptr.IsNull())
         continue;
 
-      
-      if ((*rev_it)->IsVisible())
+      BaseWindow* window = window_ptr.GetPointer();
+      if (!drawModal && window->IsModal())
+        continue;
+
+      if (window->IsVisible())
       {
-        if (global_clip_rect.Intersect((*rev_it)->GetGeometry()).IsNull())
+        if (global_clip_rect.Intersect(window->GetGeometry()).IsNull())
         {
-          // The global clipping area can be seen as a per monitor clipping region. It is mostly used in
-          // embedded mode with compiz.
-          // If we get here, it means that the BaseWindow we want to render is not in area of the monitor
-          // that compiz is currently rendering. So skip it.
+          // The global clipping area can be seen as a per monitor clipping
+          // region. It is mostly used in embedded mode with compiz.  If we
+          // get here, it means that the BaseWindow we want to render is not
+          // in area of the monitor that compiz is currently rendering. So
+          // skip it.
           continue;
         }
-        
-        RenderTargetTextures &rt = GetWindowBuffer((*rev_it).GetPointer());
-        BaseWindow *window = (*rev_it).GetPointer();
 
-        // Based on the areas that requested a rendering inside the BaseWindow, render the BaseWindow or just use its cache. 
+        RenderTargetTextures& rt = GetWindowBuffer(window);
+
+        // Based on the areas that requested a rendering inside the
+        // BaseWindow, render the BaseWindow or just use its cache.
         if (force_draw || window->IsRedrawNeeded() || window->ChildNeedsRedraw())
         {
           if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/)
@@ -1433,7 +1455,8 @@ logging::Logger logger("nux.window");
             t_s32 buffer_width = window->GetBaseWidth();
             t_s32 buffer_height = window->GetBaseHeight();
 
-            if ((rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height))
+            if ((rt.color_rt->GetWidth() != buffer_width) ||
+                (rt.color_rt->GetHeight() != buffer_height))
             {
               rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
               rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (buffer_width, buffer_height, 1, BITFMT_D24S8);
@@ -1443,11 +1466,11 @@ logging::Logger logger("nux.window");
             m_FrameBufferObject->SetRenderTarget ( 0, rt.color_rt->GetSurfaceLevel (0) );
             m_FrameBufferObject->SetDepthSurface ( rt.depth_rt->GetSurfaceLevel (0) );
             m_FrameBufferObject->Activate();
-            GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, buffer_width, buffer_height);
-            GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (buffer_width, buffer_height);
-            GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
+            graphics_engine.SetViewport(0, 0, buffer_width, buffer_height);
+            graphics_engine.SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+            graphics_engine.EmptyClippingRegion();
 
-            GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, buffer_width, buffer_height);
+            graphics_engine.SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
 
             CHECKGL ( glClearColor (0, 0, 0, 0) );
             GLuint clear_color_buffer_bit = (force_draw || window->IsRedrawNeeded() ) ? GL_COLOR_BUFFER_BIT : 0;
@@ -1459,36 +1482,31 @@ logging::Logger logger("nux.window");
             int y = window->GetBaseY();
             Matrix4 mat;
             mat.Translate (x, y, 0);
-            GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (GetWindowThread ()->GetGraphicsEngine().GetWindowWidth(),
-                GetWindowThread ()->GetGraphicsEngine().GetWindowHeight() );
-
-            //GetWindowThread ()->GetGraphicsEngine().Push2DModelViewMatrix(mat);
+            graphics_engine.SetOrthographicProjectionMatrix(window_width, window_height);
           }
 
-          RenderTopViewContent (/*fbo,*/ window, force_draw);
+          RenderTopViewContent(window, force_draw);
         }
-        
-        if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/)
+
+        if (rt.color_rt.IsValid())
         {
-          // GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
           m_FrameBufferObject->Deactivate();
 
           // Enable this to render the drop shadow under windows: not perfect yet...
           if (0)
           {
-            unsigned int window_width, window_height;
-            window_width = GetWindowThread ()->GetGraphicsEngine().GetWindowWidth();
-            window_height = GetWindowThread ()->GetGraphicsEngine().GetWindowHeight();
-            GetWindowThread ()->GetGraphicsEngine().EmptyClippingRegion();
-            GetWindowThread ()->GetGraphicsEngine().SetOpenGLClippingRectangle (0, 0, window_width, window_height);
-            GetWindowThread ()->GetGraphicsEngine().SetViewport (0, 0, window_width, window_height);
-            GetWindowThread ()->GetGraphicsEngine().SetOrthographicProjectionMatrix (window_width, window_height);
+            graphics_engine.EmptyClippingRegion();
+            graphics_engine.SetOpenGLClippingRectangle(0, 0, window_width, window_height);
+            graphics_engine.SetViewport(0, 0, window_width, window_height);
+            graphics_engine.SetOrthographicProjectionMatrix(window_width, window_height);
 
-            Geometry shadow (window->GetBaseX(), window->GetBaseY(), window->GetBaseWidth(), window->GetBaseHeight() );
+            Geometry shadow(window->GetBaseX(), window->GetBaseY(),
+                            window->GetBaseWidth(), window->GetBaseHeight());
             //if(window->IsVisibleSizeGrip())
             {
               shadow.OffsetPosition (4, 4);
-              GetPainter().PaintShape (GetWindowThread ()->GetGraphicsEngine(), shadow, Color (0xFF000000), eSHAPE_CORNER_SHADOW);
+              GetPainter().PaintShape (graphics_engine, shadow, color::Black,
+                                       eSHAPE_CORNER_SHADOW);
             }
 //                    else
 //                    {
@@ -1499,29 +1517,20 @@ logging::Logger logger("nux.window");
 
           CHECKGL ( glDepthMask (GL_FALSE) );
           {
-            GetWindowThread ()->GetGraphicsEngine().ApplyClippingRectangle();
+            graphics_engine.ApplyClippingRectangle();
             PresentBufferToScreen (rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity (), window->premultiply());
           }
           CHECKGL ( glDepthMask (GL_TRUE) );
-          GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
+          graphics_engine.GetRenderStates().SetBlend(false);
         }
-        else
-        {
-//                int x = window->GetX();
-//                int y = window->GetY();
-//                Matrix4 mat;
-//                mat.Translate(x, y, 0);
-          //GetWindowThread ()->GetGraphicsEngine().SetContext (0, 0, 0, 0);
-          //GetWindowThread ()->GetGraphicsEngine().Pop2DModelViewMatrix();
-        }
-        
+
         window->_child_need_redraw = false;
       }
       else
       {
-        ObjectWeakPtr<BaseWindow> window = *rev_it;
+        // Invisible window, nothing to draw.
         window->_child_need_redraw = false;
-        window->DoneRedraw ();
+        window->DoneRedraw();
       }
     }
 

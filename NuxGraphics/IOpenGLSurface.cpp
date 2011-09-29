@@ -429,8 +429,7 @@ namespace nux
     nuxAssert ( texheight > 0 ); // Should never happen
     nuxAssert ( size > 0 ); // Should never happen
 
-    BYTE *DummyBuffer = new BYTE[size];
-    Memset (DummyBuffer, 0, size);
+    BYTE *DummyBuffer = (BYTE *) calloc (size, sizeof(BYTE));
 
     CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, MemAlignment) );
 
@@ -503,7 +502,7 @@ namespace nux
       }
     }
 
-    delete [] DummyBuffer;
+    free (DummyBuffer);
 
 
     //    { //[DEBUGGING - Red Texture]

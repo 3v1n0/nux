@@ -32,6 +32,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 // Enables colored console output at build time.
 #define COLORED_OUTPUT 1
@@ -75,6 +77,8 @@ struct PciDevice gpu_blacklist[] = {
   { 0x8086, 0x3577 },  // Intel : 82830M/MG
   { 0x8086, 0x2562 },  // Intel : 82845G aka Poulsbo
   { 0x1002, 0x4c57 },  // ATI : Radeon Mobility 7500
+  { 0x10de, 0x0322 },  // nVidia: GeForce FX 5200
+  { 0x10de, 0x0326 },  // nVidia: GeForce FX 5500
   { 0x10de, 0x0240 },  // nVidia: GeForce 6150
   { 0x10de, 0x01d3 },  // nVidia: GeForce Go 7300 SE / 7200 GS
   { 0x10de, 0x01d7 },  // nVidia: GeForce Go 7300 / Quadro NVS 110M
@@ -485,7 +489,7 @@ int main (int argc, char* argv[]) {
   GLXContext   context = NULL;
   TestResults  results;
   char         resultfilename[30];
-  FILE         *resultfile;
+  int          resultfile;
   int          forcecheck = 0;
 
   results.indirect = 0;
@@ -525,9 +529,7 @@ int main (int argc, char* argv[]) {
 
   // can skip some tests if not forced
   if (!forcecheck && !print) {
-      resultfile = fopen("/tmp/unity_support_test.0", "r");
-      if (resultfile) {
-          fclose(resultfile);
+      if (access("/tmp/unity_support_test.0", F_OK) == 0) {
           return 0;
       }
       if (getenv ("UNITY_FORCE_START")) {
@@ -604,9 +606,9 @@ int main (int argc, char* argv[]) {
   // drop result file
   if (results.result != 5) {
     sprintf(resultfilename, "/tmp/unity_support_test.%i", results.result);
-    resultfile = fopen(resultfilename, "w+");
-    if (resultfile)
-      fclose(resultfile);
+    resultfile = open(resultfilename, O_CREAT|O_WRONLY|O_EXCL, 0666);
+    if (resultfile > 0)
+      close(resultfile);
   }
 
   return results.result;

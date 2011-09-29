@@ -222,11 +222,16 @@ namespace nux
       gfx_context.GetRenderStates ().GetBlend (alpha, src, dest);
       gfx_context.GetRenderStates ().SetBlend (true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
+      nux::GetPainter().PaintBackground(gfx_context, base);
+      nux::GetPainter().PushBackgroundStack();
+
       for (it = _layout_element_list.begin (); it != eit; ++it)
       {
         if ((*it)->IsVisible ())
-          PaintOne (static_cast<Area *> (*it), gfx_context, m_child_draw_queued ? true : force_draw);
+          PaintOne (static_cast<Area *> (*it), gfx_context, true);
       }
+
+      nux::GetPainter().PopBackgroundStack();
 
       gfx_context.GetRenderStates ().SetBlend (alpha, src, dest);
 
