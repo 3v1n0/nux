@@ -1,4 +1,4 @@
-nux (1.14.0-0ubuntu1) UNRELEASED; urgency=low
+nux (1.14.0-0ubuntu1) oneiric; urgency=low
 
   * New upstream release.
     - compiz crashed with SIGSEGV in nux::WindowCompositor::FindKeyFocusArea()
@@ -11,10 +11,11 @@ nux (1.14.0-0ubuntu1) UNRELEASED; urgency=low
     - Dash - When the Dash is re-opened and statefully displaying a previous
       query, it should be possible to add to the query by pressing the 'right
       arrow cursor key' (LP: #841828)
+    - blacklist old geforce fx cards for unity-3d (LP: #769402)
   * debian/control:
     - build-dep on libxinerama-dev
 
- -- Didier Roche <didrocks@ubuntu.com>  Thu, 29 Sep 2011 17:36:45 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 29 Sep 2011 18:46:45 +0200
 
 nux (1.12.0-0ubuntu1) oneiric; urgency=low
 
