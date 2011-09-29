@@ -49,13 +49,18 @@ namespace nux
 
   View::~View()
   {
-    if (GetFocused () && HasPassiveFocus() == false)
+    // It is possible that the window thread has been deleted before the view
+    // itself, so check prior to calling.
+    WindowThread* wt = GetWindowThread();
+    if (GetFocused() && HasPassiveFocus() == false && wt)
     {
-      nux::GetWindowThread ()->SetFocusedArea (NULL);
+      wt->SetFocusedArea (NULL);
     }
 
-    // It is possible that the object is in the refresh list. Remove it here before it is deleted.
-    GetWindowThread()->RemoveObjectFromLayoutQueue(this);
+    // It is possible that the object is in the refresh list. Remove it here
+    // before it is deleted.
+    if (wt)
+      wt->RemoveObjectFromLayoutQueue(this);
 
     RemoveLayout();
   }
