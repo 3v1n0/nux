@@ -199,6 +199,8 @@ namespace nux
                                          bool FullscreenFlag,
                                          bool create_rendering_data)
   {
+    int xinerama_event, xinerama_error;
+    int xinerama_major, xinerama_minor;
     NScopeLock Scope (&CreateOpenGLWindow_CriticalSection);
 
     m_GfxInterfaceCreated = false;
@@ -223,6 +225,8 @@ namespace nux
 
     m_X11Screen = DefaultScreen (m_X11Display);
     XF86VidModeQueryVersion (m_X11Display, &_x11_major, &_x11_minor);
+    XineramaQueryVersion (m_X11Display, &xinerama_major, &xinerama_minor);
+    XineramaQueryExtension (m_X11Display, &xinerama_event, &xinerama_error);
 
     XF86VidModeGetAllModeLines (m_X11Display, m_X11Screen, &m_NumVideoModes, &m_X11VideoModes);
     m_X11OriginalVideoMode = *m_X11VideoModes[0];
