@@ -238,7 +238,7 @@ bool debug_object_allocation_stack()
 //////////////////////////////////////////////////////////////////////
 
   Object::Object(bool OwnTheReference, NUX_FILE_LINE_DECL)
-    : allocation_file_name_(__Nux_FileName__)
+    : allocation_file_name_(std::string(__Nux_FileName__).substr()) // attempt to force a copy.
     , allocation_line_number_(__Nux_LineNumber__)
     , reference_count_(new NThreadSafeCounter())
     , objectptr_count_(new NThreadSafeCounter())
