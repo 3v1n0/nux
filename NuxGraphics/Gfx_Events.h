@@ -398,6 +398,7 @@ namespace nux
       e_keysym = 0;
       e_key_repeat_count = 0;
       e_wheeldelta = 0;
+      e_key_modifiers = 0;
     }
 
     unsigned long VirtualKeycodeState[NUX_MAX_VK];

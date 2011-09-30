@@ -1595,6 +1595,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_press (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ButtonPress event."));
         break;
@@ -1612,6 +1613,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_release (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ButtonRelease event."));
         break;
