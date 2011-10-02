@@ -475,8 +475,14 @@ namespace nux
   void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     std::list<Area *>::iterator it;
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
-    GfxContext.PushClippingRectangle (GetGeometry ());
+    GfxContext.PushModelViewMatrix(Get2DMatrix());
+
+    // Clip against the padding region.
+    Geometry clip_geo = GetGeometry();
+    clip_geo.OffsetPosition(left_padding_, top_padding_);
+    clip_geo.OffsetSize(-left_padding_ - right_padding_, -top_padding_ - bottom_padding_);
+
+    GfxContext.PushClippingRectangle(clip_geo);
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
@@ -501,8 +507,8 @@ namespace nux
       }
     }
 
-    GfxContext.PopClippingRectangle ();
-    GfxContext.PopModelViewMatrix ();
+    GfxContext.PopClippingRectangle();
+    GfxContext.PopModelViewMatrix();
 
     //GfxContext.PopClipOffset ();
 

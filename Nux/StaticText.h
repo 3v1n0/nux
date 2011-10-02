@@ -64,12 +64,14 @@ namespace nux
 
     bool _size_match_text;
 
+    int clip_to_width_; //!< Wrapping of line.
+
+    float font_size_;
     std::string font_name_;
 
-    int clip_to_width_;
-    float font_size_;
+    ObjectPtr<nux::IOpenGLBaseTexture> dw_texture_;
 
-#if 1 //defined(NUX_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     void ComputeTextSize();
     void RasterizeText(Color color);
     void UpdateTextRendering ();
@@ -78,9 +80,11 @@ namespace nux
     float layout_top_;
     float dpi_scale_x;
     float dpi_scale_y;
-    ObjectPtr<nux::IOpenGLBaseTexture> dw_texture_;
+    
 #else
     float dpy_;
+    std::string pango_font_name_;
+
     void ComputeTextSize();
     void RasterizeText(void* cairo_context, Color color);
     void UpdateTextRendering ();
@@ -88,6 +92,8 @@ namespace nux
     CairoGraphics *cairo_graphics_;
 #endif
 
+  private:
+    int padding_; //!< Adds a padding around the entire text box.
   };
 
 }

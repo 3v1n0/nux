@@ -14,15 +14,17 @@
 
 namespace nux
 {
+
   NUX_IMPLEMENT_OBJECT_TYPE(StaticText);
 
   StaticText::StaticText (const std::string &text, NUX_FILE_LINE_DECL)
     : View (NUX_FILE_LINE_PARAM)
   {
+    padding_ = 2;
     text_width_ = 0;
     text_height_ = 0;
 
-#if 1 //defined(NUX_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     layout_left_ = 0;
     layout_top_ = 0;
     
@@ -34,16 +36,20 @@ namespace nux
     // PixelToDIP = (pixels/dpi)*96.0f
 
     font_size_ = 12.0f;
+    font_name_ = "Tahoma";
 
 #else
-    font_size_ = 10.0f;
+    font_size_ = 20.0f;
+    font_name_ = "Ubuntu";
+    std::ostringstream os;
+    os << font_name_ << " " << font_size_;
+    pango_font_name_ = std::string(os.str());
+
     dpy_ = 96.0f;
 #endif
 
     _size_match_text = true;
     text_color_ = color::White;
-    rasterized_text_texture_  = 0;
-    font_name_ = "Ubuntu 20";
     clip_to_width_ = 0;
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -57,8 +63,8 @@ namespace nux
       delete (cairo_graphics_);
 #endif
 
-    if (rasterized_text_texture_ != 0)
-      rasterized_text_texture_->UnReference();
+    if (dw_texture_.IsValid())
+      dw_texture_->UnReference();
   }
 
   void StaticText::PreLayoutManagement()
@@ -73,7 +79,7 @@ namespace nux
 
     SetBaseSize(textWidth, textHeight);
 
-    if (rasterized_text_texture_ == 0)
+    if (dw_texture_.IsNull())
     {
       UpdateTextRendering();
     }
@@ -158,7 +164,7 @@ namespace nux
       base.y,
       base.width,
       base.height,
-      dw_texture_, //rasterized_text_texture_->GetDeviceTexture(),
+      dw_texture_,
       texxform,
       text_color_);
 
@@ -201,6 +207,12 @@ namespace nux
 
     font_name_ = font_name;
 
+#if defined(NUX_OS_LINUX)
+    std::ostringstream os;
+    os << font_name_ << " " << font_size_;
+    pango_font_name_ = std::string(os.str());
+#endif
+
     ComputeTextSize();
     UpdateTextRendering();
 
@@ -227,7 +239,7 @@ namespace nux
     return sz;
   }
 
-#if 1
+#if defined(NUX_OS_WINDOWS)
   void StaticText::ComputeTextSize()
   {
     HRESULT hr;
@@ -237,7 +249,7 @@ namespace nux
     IDWriteTextFormat *pTextFormat = NULL;
 
     hr = pDWriteFactory->CreateTextFormat(
-        L"Tahoma",                  // Font family name.
+        ANSICHAR_TO_UNICHAR(font_name_.c_str()),                  // Font family name.
         NULL,                       // Font collection (NULL sets it to use the system font collection).
         DWRITE_FONT_WEIGHT_REGULAR,
         DWRITE_FONT_STYLE_NORMAL,
@@ -275,11 +287,11 @@ namespace nux
     DWRITE_TEXT_METRICS metrics;
     pTextLayout_->GetMetrics(&metrics);
 
-    text_width_ = metrics.widthIncludingTrailingWhitespace;
-    text_height_ = metrics.height;
+    text_width_ = metrics.widthIncludingTrailingWhitespace * dpi_scale_x + 2 * padding_;
+    text_height_ = metrics.height * dpi_scale_y + 2 * padding_;
     
-    layout_top_ = metrics.top;
-    layout_left_ = metrics.left;
+    layout_top_ = metrics.top * dpi_scale_x;
+    layout_left_ = metrics.left * dpi_scale_y;
 
     if (pTextLayout_)
     {
@@ -312,7 +324,7 @@ namespace nux
     IDWriteTextFormat *pTextFormat = NULL;
 
     hr = pDWriteFactory->CreateTextFormat(
-      L"Tahoma",                  // Font family name.
+      ANSICHAR_TO_UNICHAR(font_name_.c_str()),                  // Font family name.
       NULL,                       // Font collection (NULL sets it to use the system font collection).
       DWRITE_FONT_WEIGHT_REGULAR,
       DWRITE_FONT_STYLE_NORMAL,
@@ -343,8 +355,8 @@ namespace nux
       TCHAR_TO_UNICHAR(text_.c_str()),      // The string to be laid out and formatted.
       text_.length(),                       // The length of the string.
       pTextFormat,                         // The text format to apply to the string (contains font information, etc).
-      text_width_,                                    // The width of the layout box.
-      text_height_,                                    // The height of the layout box.
+      text_width_ / dpi_scale_x,                                    // The width of the layout box.
+      text_height_ / dpi_scale_y,                                    // The height of the layout box.
       &pTextLayout_                         // The IDWriteTextLayout interface pointer.
       );
 
@@ -353,8 +365,8 @@ namespace nux
     if (SUCCEEDED(hr))
     {
       hr = pWICFactory->CreateBitmap(
-        text_width_,
-        text_height_,
+        text_width_ / dpi_scale_x,
+        text_height_ / dpi_scale_y,
         GUID_WICPixelFormat32bppPBGRA,
         WICBitmapCacheOnLoad,
         &pWICBitmap);
@@ -384,7 +396,7 @@ namespace nux
     hr = pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF(color.red, color.green, color.blue, color.alpha)), &pBrush);
 
 
-    D2D1_POINT_2F origin = D2D1::Point2F(static_cast<FLOAT>(layout_left_ / dpi_scale_x), static_cast<FLOAT>((0) / dpi_scale_y));
+    D2D1_POINT_2F origin = D2D1::Point2F(static_cast<FLOAT>(padding_ / dpi_scale_x), static_cast<FLOAT>(padding_ / dpi_scale_y));
 
     if (SUCCEEDED(hr))
     {
@@ -466,8 +478,6 @@ namespace nux
 #else
   void StaticText::ComputeTextSize()
   {
-    ComputeTextSizeW32();
-
     cairo_surface_t*      pango_surface = NULL;
     cairo_t*              cairo_ctx     = NULL;
     PangoLayout*          pango_layout  = NULL;
@@ -492,7 +502,7 @@ namespace nux
     }
 
     // Create font description: "[FAMILY-LIST] [STYLE-OPTIONS] [SIZE]"
-    font_desc = pango_font_description_from_string(font_name_.c_str());
+    font_desc = pango_font_description_from_string(pango_font_name_.c_str());
     {
       pango_font_description_set_weight(font_desc, PANGO_WEIGHT_NORMAL);
       pango_layout_set_font_description(pango_layout, font_desc);
@@ -525,8 +535,8 @@ namespace nux
     pango_layout_context_changed(pango_layout);
     pango_layout_get_extents(pango_layout, &ink_rect, &logical_rect);
 
-    text_width_ = logical_rect.width / PANGO_SCALE;
-    text_height_ = logical_rect.height / PANGO_SCALE;
+    text_width_ = logical_rect.width / PANGO_SCALE + 2 * padding_;
+    text_height_ = logical_rect.height / PANGO_SCALE + 2 * padding_;
 
     // clean up
     pango_font_description_free(font_desc);
@@ -553,7 +563,7 @@ namespace nux
     }
 
     // Create font description: "[FAMILY-LIST] [STYLE-OPTIONS] [SIZE]"
-    font_desc = pango_font_description_from_string(font_name_.c_str());
+    font_desc = pango_font_description_from_string(pango_font_name_.c_str());
     {
       pango_font_description_set_weight(font_desc, PANGO_WEIGHT_NORMAL);
       pango_layout_set_font_description(pango_layout, font_desc);
@@ -585,7 +595,7 @@ namespace nux
 
     pango_layout_context_changed(pango_layout);
 
-    cairo_move_to(cairo_ctx, 0.0f, 0.0f);
+    cairo_move_to(cairo_ctx, padding_, padding_);
     pango_cairo_show_layout(cairo_ctx, pango_layout);
 
     // clean up
@@ -617,11 +627,14 @@ namespace nux
     // NTexture2D is the high level representation of an image that is backed by
     // an actual opengl texture.
 
-    if (rasterized_text_texture_)
-      rasterized_text_texture_->UnReference();
+    BaseTexture *rasterized_text_texture = NULL;
 
-    rasterized_text_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-    rasterized_text_texture_->Update(bitmap);
+    rasterized_text_texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
+    rasterized_text_texture->Update(bitmap);
+    dw_texture_ = rasterized_text_texture->GetDeviceTexture();
+
+    rasterized_text_texture->UnReference();
+    rasterized_text_texture = NULL;
 
     delete bitmap;
     cairo_destroy(cairo_ctx);
